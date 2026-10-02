@@ -1,6 +1,8 @@
 use super::{NODE_HEIGHT, NODE_WIDTH, Point};
 use crate::model::Graph;
 use std::cmp::Ordering;
+mod channels;
+use channels::HorizontalChannels;
 
 pub(super) fn route(
     graph: &Graph,
@@ -29,7 +31,7 @@ pub(super) fn route(
         }
     }
 
-    let mut channel_uses = vec![0usize; channels.len()];
+    let mut channels = HorizontalChannels::new(channels);
     graph
         .edges
         .iter()
@@ -55,23 +57,12 @@ pub(super) fn route(
                     vec![start, Point { x, y: start.y }, Point { x, y: end.y }, end]
                 }
                 _ => {
-                    let channel = (0..channels.len())
-                        .min_by_key(|&i| {
-                            (
-                                start.y.abs_diff(channels[i])
-                                    + end.y.abs_diff(channels[i])
-                                    + channel_uses[i] * 16,
-                                i,
-                            )
-                        })
-                        .unwrap();
-                    channel_uses[channel] += 1;
-                    let y = channels[channel];
                     let left = start.x + lane;
                     let right = match ranks[b].cmp(&ranks[a]) {
                         Ordering::Greater => end.x - 24 - edge % 5 * 10,
                         Ordering::Equal | Ordering::Less => end.x + lane,
                     };
+                    let y = channels.allocate(left, right, start.y, end.y);
                     vec![
                         start,
                         Point {
