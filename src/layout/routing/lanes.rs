@@ -27,8 +27,21 @@ pub(super) struct VerticalLanes {
 
 impl VerticalLanes {
     pub(super) fn allocate(&mut self, gutter: usize, from: usize, to: usize) -> Lane {
+        let lane = self.preview(gutter, from, to);
         let range = from.min(to)..from.max(to);
         let lanes = self.gutters.entry(gutter).or_default();
+        if lane.index == lanes.len() {
+            lanes.push(Vec::new());
+        }
+        if !range.is_empty() {
+            lanes[lane.index].push(range);
+        }
+        lane
+    }
+
+    pub(super) fn preview(&self, gutter: usize, from: usize, to: usize) -> Lane {
+        let range = from.min(to)..from.max(to);
+        let lanes = self.gutters.get(&gutter).map_or(&[][..], Vec::as_slice);
         let index = match lanes.iter().position(|occupied| {
             range.is_empty()
                 || occupied
@@ -36,14 +49,8 @@ impl VerticalLanes {
                     .all(|existing| existing.start >= range.end || range.start >= existing.end)
         }) {
             Some(index) => index,
-            None => {
-                lanes.push(Vec::new());
-                lanes.len() - 1
-            }
+            None => lanes.len(),
         };
-        if !range.is_empty() {
-            lanes[index].push(range);
-        }
         Lane { gutter, index }
     }
 

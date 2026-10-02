@@ -1,7 +1,10 @@
 use super::{NODE_HEIGHT, NODE_WIDTH, Point};
 use crate::model::Graph;
 use std::cmp::Ordering;
+mod channels;
+mod coverage;
 mod lanes;
+use channels::HorizontalChannels;
 use lanes::{Lane, VerticalLanes};
 
 #[cfg(test)]
@@ -49,50 +52,64 @@ pub(super) fn route(
         }
     }
 
-    let mut channel_uses = vec![0usize; channels.len()];
-    let mut lanes = VerticalLanes::default();
-    let routes: Vec<_> = graph
-        .edges
-        .iter()
-        .enumerate()
-        .map(|(edge, &(a, b))| {
-            let source_y = positions[a].y + source_ports[edge];
-            let target_y = positions[b].y + target_ports[edge];
-            match ranks[b].checked_sub(ranks[a]) {
-                Some(0 | 1) => Route::Direct(lanes.allocate(ranks[a], source_y, target_y)),
-                _ => {
-                    let channel = (0..channels.len())
-                        .min_by_key(|&i| {
-                            (
-                                source_y.abs_diff(channels[i])
-                                    + target_y.abs_diff(channels[i])
-                                    + channel_uses[i] * 16,
-                                i,
-                            )
-                        })
-                        .unwrap();
-                    channel_uses[channel] += 1;
-                    let y = channels[channel];
-                    let gutter = match ranks[b].cmp(&ranks[a]) {
-                        Ordering::Greater => ranks[b] - 1,
-                        Ordering::Equal | Ordering::Less => ranks[b],
-                    };
-                    Route::Channel {
-                        source: lanes.allocate(ranks[a], source_y, y),
-                        target: lanes.allocate(gutter, y, target_y),
-                        y,
+    let columns = ranks.iter().max().copied().unwrap_or(0) + 1;
+    let mut gutter_widths = vec![100; columns];
+    let (routes, column_x, width) = loop {
+        let mut column_x = Vec::with_capacity(columns);
+        let mut x = 60;
+        for &width in &gutter_widths {
+            column_x.push(x);
+            x += NODE_WIDTH + width;
+        }
+        let mut occupied = HorizontalChannels::new(channels);
+        let mut lanes = VerticalLanes::default();
+        let lane_x = |lane: Lane| column_x[lane.gutter] + NODE_WIDTH + lane.offset();
+        let routes: Vec<_> = graph
+            .edges
+            .iter()
+            .enumerate()
+            .map(|(edge, &(a, b))| {
+                let source_y = positions[a].y + source_ports[edge];
+                let target_y = positions[b].y + target_ports[edge];
+                match ranks[b].checked_sub(ranks[a]) {
+                    Some(0 | 1) => Route::Direct(lanes.allocate(ranks[a], source_y, target_y)),
+                    _ => {
+                        let gutter = match ranks[b].cmp(&ranks[a]) {
+                            Ordering::Greater => ranks[b] - 1,
+                            Ordering::Equal | Ordering::Less => ranks[b],
+                        };
+                        let ranges: Vec<_> = channels
+                            .iter()
+                            .map(|&y| {
+                                (
+                                    lane_x(lanes.preview(ranks[a], source_y, y)),
+                                    lane_x(lanes.preview(gutter, y, target_y)),
+                                )
+                            })
+                            .collect();
+                        let y = occupied.allocate_candidates(&ranges, source_y, target_y);
+                        Route::Channel {
+                            source: lanes.allocate(ranks[a], source_y, y),
+                            target: lanes.allocate(gutter, y, target_y),
+                            y,
+                        }
                     }
                 }
+            })
+            .collect();
+        let mut expanded = false;
+        for (column, width) in gutter_widths.iter_mut().enumerate() {
+            let needed = lanes.width(column);
+            if needed > *width {
+                *width = needed;
+                expanded = true;
             }
-        })
-        .collect();
-    let columns = ranks.iter().max().copied().unwrap_or(0) + 1;
-    let mut column_x = Vec::with_capacity(columns);
-    let mut x = 60;
-    for column in 0..columns {
-        column_x.push(x);
-        x += NODE_WIDTH + lanes.width(column);
-    }
+        }
+        match expanded {
+            true => continue,
+            false => break (routes, column_x, (x + 20).max(1040)),
+        }
+    };
     for (index, position) in positions.iter_mut().enumerate() {
         position.x = column_x[ranks[index]];
     }
@@ -137,10 +154,7 @@ pub(super) fn route(
             })
         })
         .collect();
-    Routed {
-        paths,
-        width: (x + 20).max(1040),
-    }
+    Routed { paths, width }
 }
 
 fn simplify(points: Vec<Point>) -> Vec<Point> {
