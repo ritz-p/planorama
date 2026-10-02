@@ -30,10 +30,9 @@ fn color(action: Action) -> (&'static str, &'static str) {
 }
 
 fn shorten(text: &str, length: usize) -> String {
-    if text.chars().count() <= length {
-        text.into()
-    } else {
-        format!("{}…", text.chars().take(length - 1).collect::<String>())
+    match text.chars().count() {
+        count if count <= length => text.into(),
+        _ => format!("{}…", text.chars().take(length - 1).collect::<String>()),
     }
 }
 
@@ -86,7 +85,10 @@ pub fn render(graph: &Graph) -> String {
             write!(
                 path,
                 "{} {} {} ",
-                if i == 0 { "M" } else { "L" },
+                match i {
+                    0 => "M",
+                    _ => "L",
+                },
                 point.x,
                 point.y
             )
@@ -98,12 +100,12 @@ pub fn render(graph: &Graph) -> String {
         let (x, y) = (layout.positions[i].x, layout.positions[i].y);
         let (background, border) = color(node.action);
         let address = escape(&node.address);
-        let local = if node.module == "root" {
-            node.address.as_str()
-        } else {
-            node.address
-                .strip_prefix(&format!("{}.", node.module))
-                .unwrap_or(&node.address)
+        let local = match node.module.as_str() {
+            "root" => node.address.as_str(),
+            module => node
+                .address
+                .strip_prefix(&format!("{module}."))
+                .unwrap_or(&node.address),
         };
         let lines: Vec<_> = local
             .chars()
@@ -123,10 +125,11 @@ pub fn render(graph: &Graph) -> String {
         )
         .unwrap();
         for (line, text) in lines.iter().enumerate() {
-            let text = if line == 1 && local.chars().count() > 70 {
-                format!("{}…", text.chars().take(34).collect::<String>())
-            } else {
-                text.clone()
+            let text = match line {
+                1 if local.chars().count() > 70 => {
+                    format!("{}…", text.chars().take(34).collect::<String>())
+                }
+                _ => text.clone(),
             };
             writeln!(
                 svg,
