@@ -1,6 +1,20 @@
 use super::*;
 
 #[test]
+fn candidate_specific_ranges_are_scored_and_reserved() {
+    let mut channels = HorizontalChannels::new(&[100, 120]);
+    assert_eq!(channels.allocate(20, 80, 100, 100), 100);
+    assert_eq!(
+        channels.allocate_candidates(&[(30, 60), (100, 160)], 100, 100),
+        120
+    );
+    assert_eq!(
+        channels.allocate_candidates(&[(30, 60), (110, 150)], 120, 120),
+        100
+    );
+}
+
+#[test]
 fn overlapping_ranges_use_another_channel_even_when_it_is_farther() {
     let mut channels = HorizontalChannels::new(&[100, 120, 500]);
     assert_eq!(channels.allocate(20, 80, 100, 100), 100);

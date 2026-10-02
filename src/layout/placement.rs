@@ -6,7 +6,6 @@ const COLUMN_STEP: usize = 420;
 const ROW_STEP: usize = 144;
 
 pub(super) struct Placement<'a> {
-    pub width: usize,
     pub height: usize,
     pub positions: Vec<Point>,
     pub bands: Vec<Band<'a>>,
@@ -98,7 +97,6 @@ pub(super) fn place<'a>(graph: &'a Graph, ranks: &[usize]) -> Placement<'a> {
     }
 
     Placement {
-        width: (columns * COLUMN_STEP + 80).max(1040),
         height: (top + 40).max(300),
         positions,
         channels,
