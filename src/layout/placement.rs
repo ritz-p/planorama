@@ -1,4 +1,3 @@
-//! Place resource cards in module bands and reduce edge crossings.
 use super::{Band, Point};
 use crate::model::Graph;
 use std::collections::BTreeMap;
@@ -52,7 +51,6 @@ pub(super) fn place<'a>(graph: &'a Graph, ranks: &[usize]) -> Placement<'a> {
             top: 0,
         })
         .collect();
-    // Keep root first, then module paths in deterministic lexical order.
     groups.sort_by_key(|g| (g.label != "root", g.label));
     let mut top = 160;
     let mut channels = Vec::new();
@@ -71,8 +69,6 @@ pub(super) fn place<'a>(graph: &'a Graph, ranks: &[usize]) -> Placement<'a> {
         incoming[b].push(a);
         outgoing[a].push(b);
     }
-    // Alternating barycentric sweeps reduce crossings without disturbing
-    // module bands or dependency ranks. Ties retain their previous order.
     for sweep in 0..6 {
         let forward = sweep % 2 == 0;
         for step in 0..columns {

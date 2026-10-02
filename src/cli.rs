@@ -1,4 +1,3 @@
-//! Command-line arguments and input/output orchestration.
 use crate::layout::Layout;
 use crate::{plan, svg};
 use std::io::{self, Read, Write};

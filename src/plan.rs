@@ -1,8 +1,7 @@
-//! Convert Terraform plan JSON into a renderer-independent graph.
-
 mod address;
 mod references;
 #[cfg(test)]
+#[path = "../tests/unit/plan.rs"]
 mod tests;
 
 use crate::model::{Action, Graph, Node};
@@ -26,7 +25,6 @@ pub fn parse(json: &str) -> Result<Graph, String> {
     }
     let mut nodes = BTreeMap::new();
     collect_values(&plan["planned_values"]["root_module"], &mut nodes, false);
-    // Include deleted resources absent from planned_values.
     for change in plan["resource_changes"].as_array().into_iter().flatten() {
         let address = change["address"]
             .as_str()
@@ -48,9 +46,6 @@ pub fn parse(json: &str) -> Result<Graph, String> {
         &BTreeSet::new(),
         &mut symbols,
     );
-    // Terraform can omit data sources already read during plan from both
-    // planned_values and resource_changes. Recover only data sources still
-    // in configuration, without reintroducing removed or managed resources.
     let mut prior_data = BTreeMap::new();
     collect_values(
         &plan["prior_state"]["values"]["root_module"],

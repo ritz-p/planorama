@@ -1,4 +1,3 @@
-//! Colors and label presentation rules.
 use crate::model::Action;
 
 pub(super) fn label(action: Action) -> &'static str {

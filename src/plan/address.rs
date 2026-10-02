@@ -1,4 +1,3 @@
-// Strip instance keys without splitting dots or brackets inside quoted keys.
 pub(super) fn static_address(address: &str) -> String {
     let mut result = String::new();
     let (mut depth, mut quoted, mut escaped) = (0usize, false, false);
@@ -47,15 +46,5 @@ pub(super) fn module_of(address: &str) -> String {
 }
 
 #[cfg(test)]
-mod tests {
-    use super::*;
-    #[test]
-    fn indexed_addresses_preserve_module_keys() {
-        let address = "module.app[\"a.b]c\"].module.inner[0].aws_instance.web[\"x.y\"]";
-        assert_eq!(
-            static_address(address),
-            "module.app.module.inner.aws_instance.web"
-        );
-        assert_eq!(module_of(address), "module.app[\"a.b]c\"].module.inner[0]");
-    }
-}
+#[path = "../../tests/unit/plan/address.rs"]
+mod tests;

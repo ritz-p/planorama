@@ -1,0 +1,18 @@
+use super::*;
+use crate::model::{Action, Node};
+#[test]
+fn cycle_is_condensed_and_dependents_follow() {
+    let nodes = (0..4)
+        .map(|i| Node {
+            address: i.to_string(),
+            resource_type: "test".into(),
+            module: "root".into(),
+            action: Action::Create,
+        })
+        .collect();
+    let graph = Graph {
+        nodes,
+        edges: vec![(0, 1), (1, 0), (1, 2), (2, 3)],
+    };
+    assert_eq!(compute(&graph), vec![0, 0, 1, 2]);
+}

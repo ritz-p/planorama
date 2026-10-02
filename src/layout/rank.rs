@@ -1,8 +1,6 @@
 use crate::model::Graph;
 use std::collections::BTreeSet;
 
-/// Condense strongly connected components, then rank the resulting DAG.
-/// Iterative DFS avoids a call-stack limit for long dependency chains.
 pub(super) fn compute(graph: &Graph) -> Vec<usize> {
     let n = graph.nodes.len();
     let mut next = vec![Vec::new(); n];
@@ -73,24 +71,7 @@ pub(super) fn compute(graph: &Graph) -> Vec<usize> {
     }
     component.into_iter().map(|c| rank[c]).collect()
 }
+
 #[cfg(test)]
-mod tests {
-    use super::*;
-    use crate::model::{Action, Node};
-    #[test]
-    fn cycle_is_condensed_and_dependents_follow() {
-        let nodes = (0..4)
-            .map(|i| Node {
-                address: i.to_string(),
-                resource_type: "test".into(),
-                module: "root".into(),
-                action: Action::Create,
-            })
-            .collect();
-        let graph = Graph {
-            nodes,
-            edges: vec![(0, 1), (1, 0), (1, 2), (2, 3)],
-        };
-        assert_eq!(compute(&graph), vec![0, 0, 1, 2]);
-    }
-}
+#[path = "../../tests/unit/layout/rank.rs"]
+mod tests;
