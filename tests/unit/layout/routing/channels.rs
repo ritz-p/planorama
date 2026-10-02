@@ -43,3 +43,33 @@ fn allocations_are_deterministic() {
     };
     assert_eq!(allocate(), allocate());
 }
+
+#[test]
+fn indexed_allocation_preserves_the_scan_based_selection() {
+    let ys = [10, 50, 100, 200];
+    let mut channels = HorizontalChannels::new(&ys);
+    let mut history = vec![Vec::<(usize, usize)>::new(); ys.len()];
+    for i in 0..1_000usize {
+        let a = i * 37 % 513;
+        let b = i * 61 % 513;
+        let (from, to) = (a.min(b), a.max(b));
+        let (source, target) = (i * 13 % 201, i * 17 % 201);
+        let index = (0..ys.len())
+            .min_by_key(|&index| {
+                let overlap: u128 = history[index]
+                    .iter()
+                    .map(|&(a, b)| b.min(to).saturating_sub(a.max(from)) as u128)
+                    .sum();
+                (
+                    overlap,
+                    source.abs_diff(ys[index]) as u128 + target.abs_diff(ys[index]) as u128,
+                    index,
+                )
+            })
+            .unwrap();
+        assert_eq!(channels.allocate(a, b, source, target), ys[index]);
+        if from != to {
+            history[index].push((from, to));
+        }
+    }
+}

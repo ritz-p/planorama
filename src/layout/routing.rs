@@ -2,6 +2,7 @@ use super::{NODE_HEIGHT, NODE_WIDTH, Point};
 use crate::model::Graph;
 use std::cmp::Ordering;
 mod channels;
+mod coverage;
 use channels::HorizontalChannels;
 
 pub(super) fn route(
