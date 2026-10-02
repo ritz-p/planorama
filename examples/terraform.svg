@@ -1,0 +1,107 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1760" height="2344" viewBox="0 0 1760 2344" role="img" aria-labelledby="title description">
+<title id="title">Terraform plan</title>
+<desc id="description">13 resources, 31 reference edges. Arrows point from dependencies to dependent resources. References are conservative, not Terraform execution order.</desc>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/></marker></defs>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<g font-family="ui-monospace, SFMono-Regular, Consolas, monospace">
+<text x="40" y="45" font-size="25" font-weight="700" fill="#0f172a">Terraform plan</text>
+<text x="40" y="73" font-size="13" fill="#475569">13 resources · 31 reference edges · dependency → dependent</text>
+<rect x="40" y="100" width="12" height="12" fill="#ecfdf5" stroke="#047857"/><text x="59" y="111" font-size="12" fill="#047857">create (13)</text>
+<rect x="180" y="100" width="12" height="12" fill="#eff6ff" stroke="#1d4ed8"/><text x="199" y="111" font-size="12" fill="#1d4ed8">update (0)</text>
+<rect x="320" y="100" width="12" height="12" fill="#fef2f2" stroke="#b91c1c"/><text x="339" y="111" font-size="12" fill="#b91c1c">delete (0)</text>
+<rect x="460" y="100" width="12" height="12" fill="#fff7ed" stroke="#c2410c"/><text x="479" y="111" font-size="12" fill="#c2410c">replace (0)</text>
+<rect x="600" y="100" width="12" height="12" fill="#faf5ff" stroke="#7e22ce"/><text x="619" y="111" font-size="12" fill="#7e22ce">read (0)</text>
+<rect x="740" y="100" width="12" height="12" fill="#f8fafc" stroke="#64748b"/><text x="759" y="111" font-size="12" fill="#64748b">unchanged (0)</text>
+<rect x="880" y="100" width="12" height="12" fill="#fefce8" stroke="#854d0e"/><text x="899" y="111" font-size="12" fill="#854d0e">other (0)</text>
+<rect x="35" y="160" width="1690" height="488" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-dasharray="5 4"/><text x="52" y="185" font-size="13" font-weight="700" fill="#475569"><title>root</title>root</text>
+<rect x="35" y="672" width="1690" height="200" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-dasharray="5 4"/><text x="52" y="697" font-size="13" font-weight="700" fill="#475569"><title>module.replica[0]</title>module.replica[0]</text>
+<rect x="35" y="896" width="1690" height="200" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-dasharray="5 4"/><text x="52" y="921" font-size="13" font-weight="700" fill="#475569"><title>module.replica[1]</title>module.replica[1]</text>
+<rect x="35" y="1120" width="1690" height="344" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-dasharray="5 4"/><text x="52" y="1145" font-size="13" font-weight="700" fill="#475569"><title>module.service[&quot;api&quot;]</title>module.service[&quot;api&quot;]</text>
+<rect x="35" y="1488" width="1690" height="200" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-dasharray="5 4"/><text x="52" y="1513" font-size="13" font-weight="700" fill="#475569"><title>module.service[&quot;api&quot;].module.nested</title>module.service[&quot;api&quot;].module.nested</text>
+<rect x="35" y="1712" width="1690" height="344" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-dasharray="5 4"/><text x="52" y="1737" font-size="13" font-weight="700" fill="#475569"><title>module.service[&quot;web&quot;]</title>module.service[&quot;web&quot;]</text>
+<rect x="35" y="2080" width="1690" height="200" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-dasharray="5 4"/><text x="52" y="2105" font-size="13" font-weight="700" fill="#475569"><title>module.service[&quot;web&quot;].module.nested</title>module.service[&quot;web&quot;].module.nested</text>
+<path d="M 1220 1584 L 1244 1584 L 1244 252 L 1320 252 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.service[&quot;api&quot;].module.nested.terraform_data.leaf → terraform_data.consumer</title></path>
+<path d="M 800 1216 L 834 1216 L 834 1580 L 900 1580 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.service[&quot;api&quot;].terraform_data.worker[0] → module.service[&quot;api&quot;].module.nested.terraform_data.leaf</title></path>
+<path d="M 800 1230 L 844 1230 L 844 2172 L 900 2172 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.service[&quot;api&quot;].terraform_data.worker[0] → module.service[&quot;web&quot;].module.nested.terraform_data.leaf</title></path>
+<path d="M 800 1202 L 854 1202 L 854 336 L 1266 336 L 1266 236 L 1320 236 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.service[&quot;api&quot;].terraform_data.worker[0] → terraform_data.consumer</title></path>
+<path d="M 800 1360 L 864 1360 L 864 1588 L 900 1588 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.service[&quot;api&quot;].terraform_data.worker[1] → module.service[&quot;api&quot;].module.nested.terraform_data.leaf</title></path>
+<path d="M 800 1374 L 824 1374 L 824 2180 L 900 2180 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.service[&quot;api&quot;].terraform_data.worker[1] → module.service[&quot;web&quot;].module.nested.terraform_data.leaf</title></path>
+<path d="M 800 1346 L 834 1346 L 834 480 L 1286 480 L 1286 244 L 1320 244 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.service[&quot;api&quot;].terraform_data.worker[1] → terraform_data.consumer</title></path>
+<path d="M 1220 2176 L 1264 2176 L 1264 276 L 1320 276 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.service[&quot;web&quot;].module.nested.terraform_data.leaf → terraform_data.consumer</title></path>
+<path d="M 800 1808 L 854 1808 L 854 1596 L 900 1596 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.service[&quot;web&quot;].terraform_data.worker[0] → module.service[&quot;api&quot;].module.nested.terraform_data.leaf</title></path>
+<path d="M 800 1822 L 864 1822 L 864 2188 L 900 2188 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.service[&quot;web&quot;].terraform_data.worker[0] → module.service[&quot;web&quot;].module.nested.terraform_data.leaf</title></path>
+<path d="M 800 1794 L 824 1794 L 824 624 L 1296 624 L 1296 260 L 1320 260 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.service[&quot;web&quot;].terraform_data.worker[0] → terraform_data.consumer</title></path>
+<path d="M 800 1952 L 834 1952 L 834 1604 L 900 1604 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.service[&quot;web&quot;].terraform_data.worker[1] → module.service[&quot;api&quot;].module.nested.terraform_data.leaf</title></path>
+<path d="M 800 1966 L 844 1966 L 844 2196 L 900 2196 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.service[&quot;web&quot;].terraform_data.worker[1] → module.service[&quot;web&quot;].module.nested.terraform_data.leaf</title></path>
+<path d="M 800 1938 L 854 1938 L 854 704 L 1266 704 L 1266 268 L 1320 268 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.service[&quot;web&quot;].terraform_data.worker[1] → terraform_data.consumer</title></path>
+<path d="M 380 256 L 480 256 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>terraform_data.independent → terraform_data.explicit</title></path>
+<path d="M 380 378 L 404 378 L 404 758 L 480 758 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>terraform_data.network → module.replica[0].terraform_data.leaf</title></path>
+<path d="M 380 384 L 414 384 L 414 982 L 480 982 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>terraform_data.network → module.replica[1].terraform_data.leaf</title></path>
+<path d="M 380 403 L 424 403 L 424 848 L 856 848 L 856 1564 L 900 1564 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>terraform_data.network → module.service[&quot;api&quot;].module.nested.terraform_data.leaf</title></path>
+<path d="M 380 390 L 434 390 L 434 1206 L 480 1206 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>terraform_data.network → module.service[&quot;api&quot;].terraform_data.worker[0]</title></path>
+<path d="M 380 396 L 444 396 L 444 1350 L 480 1350 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>terraform_data.network → module.service[&quot;api&quot;].terraform_data.worker[1]</title></path>
+<path d="M 380 421 L 404 421 L 404 928 L 876 928 L 876 2156 L 900 2156 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>terraform_data.network → module.service[&quot;web&quot;].module.nested.terraform_data.leaf</title></path>
+<path d="M 380 409 L 414 409 L 414 1798 L 480 1798 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>terraform_data.network → module.service[&quot;web&quot;].terraform_data.worker[0]</title></path>
+<path d="M 380 415 L 424 415 L 424 1942 L 480 1942 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>terraform_data.network → module.service[&quot;web&quot;].terraform_data.worker[1]</title></path>
+<path d="M 380 522 L 434 522 L 434 777 L 480 777 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>terraform_data.ready → module.replica[0].terraform_data.leaf</title></path>
+<path d="M 380 528 L 444 528 L 444 1001 L 480 1001 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>terraform_data.ready → module.replica[1].terraform_data.leaf</title></path>
+<path d="M 380 547 L 404 547 L 404 1072 L 876 1072 L 876 1572 L 900 1572 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>terraform_data.ready → module.service[&quot;api&quot;].module.nested.terraform_data.leaf</title></path>
+<path d="M 380 534 L 414 534 L 414 1225 L 480 1225 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>terraform_data.ready → module.service[&quot;api&quot;].terraform_data.worker[0]</title></path>
+<path d="M 380 540 L 424 540 L 424 1369 L 480 1369 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>terraform_data.ready → module.service[&quot;api&quot;].terraform_data.worker[1]</title></path>
+<path d="M 380 565 L 434 565 L 434 1152 L 846 1152 L 846 2164 L 900 2164 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>terraform_data.ready → module.service[&quot;web&quot;].module.nested.terraform_data.leaf</title></path>
+<path d="M 380 553 L 444 553 L 444 1817 L 480 1817 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>terraform_data.ready → module.service[&quot;web&quot;].terraform_data.worker[0]</title></path>
+<path d="M 380 559 L 404 559 L 404 1961 L 480 1961 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>terraform_data.ready → module.service[&quot;web&quot;].terraform_data.worker[1]</title></path>
+<g id="resource-0"><title>module.replica[0].terraform_data.leaf — create</title><rect x="480" y="720" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5"/>
+<text x="492" y="740" font-size="11" fill="#047857">terraform_data · create</text>
+<text x="492" y="765" font-size="13" fill="#0f172a">terraform_data.leaf</text>
+</g>
+<g id="resource-1"><title>module.replica[1].terraform_data.leaf — create</title><rect x="480" y="944" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5"/>
+<text x="492" y="964" font-size="11" fill="#047857">terraform_data · create</text>
+<text x="492" y="989" font-size="13" fill="#0f172a">terraform_data.leaf</text>
+</g>
+<g id="resource-2"><title>module.service[&quot;api&quot;].module.nested.terraform_data.leaf — create</title><rect x="900" y="1536" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5"/>
+<text x="912" y="1556" font-size="11" fill="#047857">terraform_data · create</text>
+<text x="912" y="1581" font-size="13" fill="#0f172a">terraform_data.leaf</text>
+</g>
+<g id="resource-3"><title>module.service[&quot;api&quot;].terraform_data.worker[0] — create</title><rect x="480" y="1168" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5"/>
+<text x="492" y="1188" font-size="11" fill="#047857">terraform_data · create</text>
+<text x="492" y="1213" font-size="13" fill="#0f172a">terraform_data.worker[0]</text>
+</g>
+<g id="resource-4"><title>module.service[&quot;api&quot;].terraform_data.worker[1] — create</title><rect x="480" y="1312" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5"/>
+<text x="492" y="1332" font-size="11" fill="#047857">terraform_data · create</text>
+<text x="492" y="1357" font-size="13" fill="#0f172a">terraform_data.worker[1]</text>
+</g>
+<g id="resource-5"><title>module.service[&quot;web&quot;].module.nested.terraform_data.leaf — create</title><rect x="900" y="2128" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5"/>
+<text x="912" y="2148" font-size="11" fill="#047857">terraform_data · create</text>
+<text x="912" y="2173" font-size="13" fill="#0f172a">terraform_data.leaf</text>
+</g>
+<g id="resource-6"><title>module.service[&quot;web&quot;].terraform_data.worker[0] — create</title><rect x="480" y="1760" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5"/>
+<text x="492" y="1780" font-size="11" fill="#047857">terraform_data · create</text>
+<text x="492" y="1805" font-size="13" fill="#0f172a">terraform_data.worker[0]</text>
+</g>
+<g id="resource-7"><title>module.service[&quot;web&quot;].terraform_data.worker[1] — create</title><rect x="480" y="1904" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5"/>
+<text x="492" y="1924" font-size="11" fill="#047857">terraform_data · create</text>
+<text x="492" y="1949" font-size="13" fill="#0f172a">terraform_data.worker[1]</text>
+</g>
+<g id="resource-8"><title>terraform_data.consumer — create</title><rect x="1320" y="208" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5"/>
+<text x="1332" y="228" font-size="11" fill="#047857">terraform_data · create</text>
+<text x="1332" y="253" font-size="13" fill="#0f172a">terraform_data.consumer</text>
+</g>
+<g id="resource-9"><title>terraform_data.explicit — create</title><rect x="480" y="208" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5"/>
+<text x="492" y="228" font-size="11" fill="#047857">terraform_data · create</text>
+<text x="492" y="253" font-size="13" fill="#0f172a">terraform_data.explicit</text>
+</g>
+<g id="resource-10"><title>terraform_data.independent — create</title><rect x="60" y="208" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5"/>
+<text x="72" y="228" font-size="11" fill="#047857">terraform_data · create</text>
+<text x="72" y="253" font-size="13" fill="#0f172a">terraform_data.independent</text>
+</g>
+<g id="resource-11"><title>terraform_data.network — create</title><rect x="60" y="352" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5"/>
+<text x="72" y="372" font-size="11" fill="#047857">terraform_data · create</text>
+<text x="72" y="397" font-size="13" fill="#0f172a">terraform_data.network</text>
+</g>
+<g id="resource-12"><title>terraform_data.ready — create</title><rect x="60" y="496" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5"/>
+<text x="72" y="516" font-size="11" fill="#047857">terraform_data · create</text>
+<text x="72" y="541" font-size="13" fill="#0f172a">terraform_data.ready</text>
+</g>
+</g>
+</svg>

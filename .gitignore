@@ -1,0 +1,7 @@
+/target
+/output
+/plan.json
+/*.tfplan
+.terraform/
+*.tfstate
+*.tfstate.*
