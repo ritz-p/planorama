@@ -1,4 +1,5 @@
 use crate::graph::Graph;
+use std::cmp::Ordering;
 use std::collections::BTreeMap;
 
 pub const NODE_WIDTH: usize = 320;
@@ -91,26 +92,24 @@ impl<'a> Layout<'a> {
         for sweep in 0..6 {
             let forward = sweep % 2 == 0;
             for step in 0..columns {
-                let rank = if forward { step } else { columns - step - 1 };
-                let neighbors = if forward { &incoming } else { &outgoing };
+                let (rank, neighbors) = match forward {
+                    true => (step, &incoming),
+                    false => (columns - step - 1, &outgoing),
+                };
                 for group in &mut groups {
                     group.columns[rank].sort_by_cached_key(|&node| {
                         let ys: Vec<_> = neighbors[node]
                             .iter()
                             .copied()
-                            .filter(|&other| {
-                                if forward {
-                                    ranks[other] < rank
-                                } else {
-                                    ranks[other] > rank
-                                }
+                            .filter(|&other| match forward {
+                                true => ranks[other] < rank,
+                                false => ranks[other] > rank,
                             })
                             .map(|other| positions[other].y as u64)
                             .collect();
-                        if ys.is_empty() {
-                            positions[node].y as u64 * 1024
-                        } else {
-                            ys.iter().sum::<u64>() * 1024 / ys.len() as u64
+                        match ys.as_slice() {
+                            [] => positions[node].y as u64 * 1024,
+                            ys => ys.iter().sum::<u64>() * 1024 / ys.len() as u64,
                         }
                     });
                 }
@@ -152,50 +151,51 @@ impl<'a> Layout<'a> {
                     y: source.y + source_ports[edge],
                 };
                 let end = Point {
-                    x: if ranks[b] > ranks[a] {
-                        target.x
-                    } else {
-                        target.x + NODE_WIDTH
+                    x: match ranks[b].cmp(&ranks[a]) {
+                        Ordering::Greater => target.x,
+                        Ordering::Equal | Ordering::Less => target.x + NODE_WIDTH,
                     },
                     y: target.y + target_ports[edge],
                 };
                 let lane = 24 + (edge % 5) * 10;
-                let route = if ranks[b] == ranks[a] + 1 || ranks[b] == ranks[a] {
-                    let x = start.x + lane;
-                    vec![start, Point { x, y: start.y }, Point { x, y: end.y }, end]
-                } else {
-                    // Every horizontal channel is in a global gap between node rows.
-                    // All vertical segments are in column gutters. Thus even long
-                    // edges cannot cut through intermediate resource cards.
-                    let channel = (0..channels.len())
-                        .min_by_key(|&i| {
-                            (
-                                start.y.abs_diff(channels[i])
-                                    + end.y.abs_diff(channels[i])
-                                    + channel_uses[i] * 16,
-                                i,
-                            )
-                        })
-                        .unwrap();
-                    channel_uses[channel] += 1;
-                    let y = channels[channel];
-                    let left = start.x + lane;
-                    let right = if ranks[b] > ranks[a] {
-                        end.x - 24 - edge % 5 * 10
-                    } else {
-                        end.x + lane
-                    };
-                    vec![
-                        start,
-                        Point {
-                            x: left,
-                            y: start.y,
-                        },
-                        Point { x: left, y },
-                        Point { x: right, y },
-                        Point { x: right, y: end.y },
-                        end,
-                    ]
+                let route = match ranks[b].checked_sub(ranks[a]) {
+                    Some(0 | 1) => {
+                        let x = start.x + lane;
+                        vec![start, Point { x, y: start.y }, Point { x, y: end.y }, end]
+                    }
+                    _ => {
+                        // Every horizontal channel is in a global gap between node rows.
+                        // All vertical segments are in column gutters. Thus even long
+                        // edges cannot cut through intermediate resource cards.
+                        let channel = (0..channels.len())
+                            .min_by_key(|&i| {
+                                (
+                                    start.y.abs_diff(channels[i])
+                                        + end.y.abs_diff(channels[i])
+                                        + channel_uses[i] * 16,
+                                    i,
+                                )
+                            })
+                            .unwrap();
+                        channel_uses[channel] += 1;
+                        let y = channels[channel];
+                        let left = start.x + lane;
+                        let right = match ranks[b].cmp(&ranks[a]) {
+                            Ordering::Greater => end.x - 24 - edge % 5 * 10,
+                            Ordering::Equal | Ordering::Less => end.x + lane,
+                        };
+                        vec![
+                            start,
+                            Point {
+                                x: left,
+                                y: start.y,
+                            },
+                            Point { x: left, y },
+                            Point { x: right, y },
+                            Point { x: right, y: end.y },
+                            end,
+                        ]
+                    }
                 };
                 simplify(route)
             })
@@ -223,13 +223,12 @@ fn simplify(points: Vec<Point>) -> Vec<Point> {
         if result.last() == Some(&point) {
             continue;
         }
-        while result.len() >= 2 {
-            let a = result[result.len() - 2];
-            let b = result[result.len() - 1];
-            if (a.x == b.x && b.x == point.x) || (a.y == b.y && b.y == point.y) {
-                result.pop();
-            } else {
-                break;
+        loop {
+            match result.as_slice() {
+                [.., a, b] if (a.x == b.x && b.x == point.x) || (a.y == b.y && b.y == point.y) => {
+                    result.pop();
+                }
+                _ => break,
             }
         }
         result.push(point);

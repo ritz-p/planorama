@@ -31,10 +31,8 @@ impl Action {
             .flatten()
             .filter_map(Value::as_str)
             .collect();
-        if actions.contains(&"create") && actions.contains(&"delete") {
-            return Self::Replace;
-        }
         match actions.as_slice() {
+            actions if actions.contains(&"create") && actions.contains(&"delete") => Self::Replace,
             ["no-op"] => Self::Unchanged,
             ["create"] => Self::Create,
             ["update"] => Self::Update,
@@ -64,30 +62,15 @@ fn static_address(address: &str) -> String {
     let mut result = String::new();
     let (mut depth, mut quoted, mut escaped) = (0usize, false, false);
     for c in address.chars() {
-        if depth > 0 {
-            if escaped {
-                escaped = false;
-                continue;
-            }
-            if quoted && c == '\\' {
-                escaped = true;
-                continue;
-            }
-            if c == '"' {
-                quoted = !quoted;
-            }
-            if !quoted {
-                if c == '[' {
-                    depth += 1;
-                }
-                if c == ']' {
-                    depth -= 1;
-                }
-            }
-        } else if c == '[' {
-            depth = 1;
-        } else {
-            result.push(c);
+        match (depth, escaped, quoted, c) {
+            (0, _, _, '[') => depth = 1,
+            (0, _, _, c) => result.push(c),
+            (_, true, _, _) => escaped = false,
+            (_, _, true, '\\') => escaped = true,
+            (_, _, _, '"') => quoted = !quoted,
+            (_, _, false, '[') => depth += 1,
+            (_, _, false, ']') => depth -= 1,
+            _ => {}
         }
     }
     result
@@ -98,28 +81,17 @@ fn module_of(address: &str) -> String {
     let (mut depth, mut quoted, mut escaped) = (0usize, false, false);
     let mut parts = Vec::new();
     for (i, c) in address.char_indices() {
-        if escaped {
-            escaped = false;
-            continue;
-        }
-        if quoted && c == '\\' {
-            escaped = true;
-            continue;
-        }
-        if c == '"' && depth > 0 {
-            quoted = !quoted;
-        }
-        if !quoted {
-            if c == '[' {
-                depth += 1;
-            }
-            if c == ']' {
-                depth = depth.saturating_sub(1);
-            }
-            if c == '.' && depth == 0 {
+        match (escaped, quoted, c) {
+            (true, _, _) => escaped = false,
+            (_, true, '\\') => escaped = true,
+            (_, _, '"') if depth > 0 => quoted = !quoted,
+            (_, false, '[') => depth += 1,
+            (_, false, ']') => depth = depth.saturating_sub(1),
+            (_, false, '.') if depth == 0 => {
                 parts.push((boundary, i));
                 boundary = i + 1;
             }
+            _ => {}
         }
     }
     parts.push((boundary, address.len()));
@@ -127,10 +99,9 @@ fn module_of(address: &str) -> String {
     while count + 1 < parts.len() && &address[parts[count].0..parts[count].1] == "module" {
         count += 2;
     }
-    if count == 0 {
-        "root".into()
-    } else {
-        address[..parts[count - 1].1].into()
+    match count {
+        0 => "root".into(),
+        _ => address[..parts[count - 1].1].into(),
     }
 }
 
@@ -175,10 +146,9 @@ fn references(value: &Value, found: &mut BTreeSet<String>) {
 }
 
 fn qualify(scope: &str, reference: &str) -> String {
-    if scope.is_empty() {
-        reference.into()
-    } else {
-        format!("{scope}.{reference}")
+    match scope {
+        "" => reference.into(),
+        _ => format!("{scope}.{reference}"),
     }
 }
 
@@ -271,8 +241,9 @@ impl Graph {
         let version = plan["format_version"]
             .as_str()
             .ok_or("missing format_version; expected terraform show -json output")?;
-        if version.split('.').next() != Some("1") {
-            return Err(format!("unsupported plan format_version: {version}"));
+        match version.split('.').next() {
+            Some("1") => {}
+            _ => return Err(format!("unsupported plan format_version: {version}")),
         }
         if !plan["resource_changes"].is_array() && !plan["planned_values"].is_object() {
             return Err("expected plan JSON containing resource_changes or planned_values".into());
@@ -333,32 +304,37 @@ impl Graph {
                 if !visited.insert(reference.clone()) {
                     continue;
                 }
-                if let Some((_, sources)) = instances
+                match instances
                     .iter()
                     .filter(|(key, _)| prefix_match(&reference, key))
                     .max_by_key(|(key, _)| key.len())
                 {
-                    for &source in sources {
-                        if source != target {
-                            edges.insert((source, target));
-                        }
-                    }
-                } else if let Some((_, aliases)) = symbols
-                    .iter()
-                    .filter(|(key, _)| prefix_match(&reference, key))
-                    .max_by_key(|(key, _)| key.len())
-                {
-                    pending.extend(aliases.iter().cloned());
-                } else if reference.starts_with("module.") {
-                    for (key, sources) in &instances {
-                        if prefix_match(key, &reference) {
-                            for &source in sources {
-                                if source != target {
-                                    edges.insert((source, target));
-                                }
+                    Some((_, sources)) => {
+                        for &source in sources {
+                            if source != target {
+                                edges.insert((source, target));
                             }
                         }
                     }
+                    None => match symbols
+                        .iter()
+                        .filter(|(key, _)| prefix_match(&reference, key))
+                        .max_by_key(|(key, _)| key.len())
+                    {
+                        Some((_, aliases)) => pending.extend(aliases.iter().cloned()),
+                        None if reference.starts_with("module.") => {
+                            for (key, sources) in &instances {
+                                if prefix_match(key, &reference) {
+                                    for &source in sources {
+                                        if source != target {
+                                            edges.insert((source, target));
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        None => {}
+                    },
                 }
             }
         }
@@ -386,12 +362,13 @@ impl Graph {
             }
             let mut stack = vec![(root, false)];
             while let Some((node, done)) = stack.pop() {
-                if done {
-                    order.push(node);
-                    continue;
-                }
-                if visited[node] {
-                    continue;
+                match (done, visited[node]) {
+                    (true, _) => {
+                        order.push(node);
+                        continue;
+                    }
+                    (false, true) => continue,
+                    (false, false) => {}
                 }
                 visited[node] = true;
                 stack.push((node, true));
