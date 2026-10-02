@@ -1,8 +1,8 @@
-//! Compute node placement and edge geometry independently of SVG rendering.
 mod placement;
 mod rank;
 mod routing;
 #[cfg(test)]
+#[path = "../tests/unit/layout.rs"]
 mod tests;
 
 use crate::model::Graph;
@@ -27,7 +27,6 @@ pub struct Layout<'a> {
     pub height: usize,
     pub positions: Vec<Point>,
     pub bands: Vec<Band<'a>>,
-    /// Paths correspond one-to-one with Graph::edges.
     pub paths: Vec<Vec<Point>>,
 }
 

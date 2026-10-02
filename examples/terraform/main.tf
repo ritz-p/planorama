@@ -2,7 +2,6 @@ terraform {
   required_version = ">= 1.9.0, < 2.0.0"
 }
 
-# Uses only Terraform's built-in provider. No credentials or cloud resources.
 resource "terraform_data" "network" {
   input = { names = ["api", "web"] }
 }
@@ -36,7 +35,6 @@ resource "terraform_data" "explicit" {
   depends_on = [terraform_data.independent]
 }
 
-# Read during plan from a checked-in, synthetic local state snapshot.
 data "terraform_remote_state" "existing" {
   backend = "local"
   config = {
@@ -44,7 +42,6 @@ data "terraform_remote_state" "existing" {
   }
 }
 
-# The dependency on a resource being created defers this read until apply.
 data "terraform_remote_state" "after_ready" {
   backend = "local"
   config = {

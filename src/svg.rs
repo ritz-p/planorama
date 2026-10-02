@@ -1,6 +1,6 @@
-//! Serialize the graph and its geometry as a standalone SVG document.
 mod style;
 #[cfg(test)]
+#[path = "../tests/unit/svg.rs"]
 mod tests;
 
 use crate::layout::Layout;

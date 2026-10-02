@@ -91,18 +91,34 @@ src/
 ├── plan.rs               # plan JSON → Graph
 ├── plan/
 │   ├── address.rs        # モジュール・インスタンスのアドレス解析
-│   ├── references.rs     # 参照解決・依存関係の構築
-│   └── tests.rs          # plan の読み取り・参照解決のテスト
+│   └── references.rs     # 参照解決・依存関係の構築
 ├── layout.rs             # Graph → Layout、座標・経路のデータ型
 ├── layout/
 │   ├── rank.rs           # 循環参照の処理・依存階層の計算
 │   ├── placement.rs      # ノード配置・交差を減らす並べ替え
-│   ├── routing.rs        # 接続線の経路計算
-│   └── tests.rs          # 配置・経路のテスト
+│   └── routing.rs        # 接続線の経路計算
 ├── svg.rs                # Graph + Layout → SVG
 └── svg/
-    ├── style.rs          # 配色・変更種別ラベル・文字の省略
-    └── tests.rs          # 描画・エスケープのテスト
+    └── style.rs          # 配色・変更種別ラベル・文字の省略
 ```
 
 `cli` が `plan::parse` → `Layout::new` → `svg::render` の順に呼び出します。`model` は JSON や描画に依存せず、`layout` は Terraform 固有の入力形式を扱いません。`svg` は計算済みの座標と経路を受け取って描画します。
+
+テストコードとテストデータは、ルートの `tests/` に集約しています。
+
+```text
+tests/
+├── cli.rs                # CLI の結合テスト
+├── fixtures/
+│   └── terraform-plan.json
+└── unit/
+    ├── plan.rs           # plan の読み取り・参照解決
+    ├── plan/
+    │   └── address.rs    # アドレス解析
+    ├── layout.rs         # 配置・経路
+    ├── layout/
+    │   └── rank.rs       # 循環参照・依存階層
+    └── svg.rs            # 描画・エスケープ
+```
+
+単体テストは実装側の `#[cfg(test)]` と `#[path = "..."]` で読み込みます。テストのために内部関数を公開する必要はなく、実装ファイルには読み込み宣言だけを置きます。実行方法はこれまでどおり `docker compose run --rm dev cargo test --locked` です。

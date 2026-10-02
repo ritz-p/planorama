@@ -1,4 +1,3 @@
-//! Route orthogonal edges through the gaps between resource cards.
 use super::{NODE_HEIGHT, NODE_WIDTH, Point};
 use crate::model::Graph;
 use std::cmp::Ordering;
@@ -56,9 +55,6 @@ pub(super) fn route(
                     vec![start, Point { x, y: start.y }, Point { x, y: end.y }, end]
                 }
                 _ => {
-                    // Every horizontal channel is in a global gap between node rows.
-                    // All vertical segments are in column gutters. Thus even long
-                    // edges cannot cut through intermediate resource cards.
                     let channel = (0..channels.len())
                         .min_by_key(|&i| {
                             (

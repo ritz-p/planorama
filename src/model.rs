@@ -1,5 +1,3 @@
-//! Shared resource and dependency graph types.
-
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Action {
     Unchanged,
@@ -21,6 +19,5 @@ pub struct Node {
 
 pub struct Graph {
     pub nodes: Vec<Node>,
-    /// (dependency, dependent), sorted and deduplicated.
     pub edges: Vec<(usize, usize)>,
 }

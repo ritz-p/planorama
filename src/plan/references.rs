@@ -1,5 +1,3 @@
-//! Resolve expression references and module aliases into graph edges.
-
 use super::address::static_address;
 use crate::model::Node;
 use serde_json::Value;
@@ -33,7 +31,6 @@ fn qualify(scope: &str, reference: &str) -> String {
     }
 }
 
-// Module inputs and outputs become aliases, allowing references across modules.
 pub(super) fn collect_config(
     module: &Value,
     scope: &str,
