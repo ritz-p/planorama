@@ -1,0 +1,14 @@
+{
+  "version": 4,
+  "terraform_version": "1.9.8",
+  "serial": 1,
+  "lineage": "12a8d410-910e-4a80-8052-63bbd9f374d1",
+  "outputs": {
+    "network_id": {
+      "value": "demo-network",
+      "type": "string",
+      "sensitive": false
+    }
+  },
+  "resources": []
+}
