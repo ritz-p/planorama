@@ -36,14 +36,14 @@ pub struct Layout<'a> {
 impl<'a> Layout<'a> {
     pub fn new(graph: &'a Graph) -> Self {
         let ranks = rank::compute(graph);
-        let placement = placement::place(graph, &ranks);
-        let paths = routing::route(graph, &ranks, &placement.positions, &placement.channels);
+        let mut placement = placement::place(graph, &ranks);
+        let routed = routing::route(graph, &ranks, &mut placement.positions, &placement.channels);
         Self {
-            width: placement.width,
+            width: routed.width,
             height: placement.height,
             positions: placement.positions,
             bands: placement.bands,
-            paths,
+            paths: routed.paths,
         }
     }
 }
