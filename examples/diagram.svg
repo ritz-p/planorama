@@ -1,23 +1,25 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1340" height="936" viewBox="0 0 1340 936" role="img" aria-labelledby="title description">
+<svg xmlns="http://www.w3.org/2000/svg" width="1340" height="1080" viewBox="0 0 1340 1080" role="img" aria-labelledby="title description">
 <title id="title">Terraform plan</title>
-<desc id="description">5 resources, 3 reference edges. Arrows point from dependencies to dependent resources. References are conservative, not Terraform execution order.</desc>
+<desc id="description">6 resources, 5 reference edges. Arrows point from dependencies to dependent resources. References are conservative, not Terraform execution order.</desc>
 <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/></marker></defs>
 <rect width="100%" height="100%" fill="#ffffff"/>
 <g font-family="ui-monospace, SFMono-Regular, Consolas, monospace">
 <text x="40" y="45" font-size="25" font-weight="700" fill="#0f172a">Terraform plan</text>
-<text x="40" y="73" font-size="13" fill="#475569">5 resources · 3 reference edges · dependency → dependent</text>
+<text x="40" y="73" font-size="13" fill="#475569">6 resources · 5 reference edges · dependency → dependent</text>
 <rect x="40" y="100" width="12" height="12" fill="#ecfdf5" stroke="#047857"/><text x="59" y="111" font-size="12" fill="#047857">create (1)</text>
 <rect x="180" y="100" width="12" height="12" fill="#eff6ff" stroke="#1d4ed8"/><text x="199" y="111" font-size="12" fill="#1d4ed8">update (1)</text>
 <rect x="320" y="100" width="12" height="12" fill="#fef2f2" stroke="#b91c1c"/><text x="339" y="111" font-size="12" fill="#b91c1c">delete (1)</text>
 <rect x="460" y="100" width="12" height="12" fill="#fff7ed" stroke="#c2410c"/><text x="479" y="111" font-size="12" fill="#c2410c">replace (1)</text>
 <rect x="600" y="100" width="12" height="12" fill="#faf5ff" stroke="#7e22ce"/><text x="619" y="111" font-size="12" fill="#7e22ce">read (0)</text>
-<rect x="740" y="100" width="12" height="12" fill="#f8fafc" stroke="#64748b"/><text x="759" y="111" font-size="12" fill="#64748b">unchanged (1)</text>
+<rect x="740" y="100" width="12" height="12" fill="#f8fafc" stroke="#64748b"/><text x="759" y="111" font-size="12" fill="#64748b">unchanged (2)</text>
 <rect x="880" y="100" width="12" height="12" fill="#fefce8" stroke="#854d0e"/><text x="899" y="111" font-size="12" fill="#854d0e">other (0)</text>
-<rect x="35" y="160" width="1270" height="344" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-dasharray="5 4"/><text x="52" y="185" font-size="13" font-weight="700" fill="#475569"><title>root</title>root</text>
-<rect x="35" y="528" width="1270" height="344" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-dasharray="5 4"/><text x="52" y="553" font-size="13" font-weight="700" fill="#475569"><title>module.app</title>module.app</text>
-<path d="M 380 400 L 404 400 L 404 624 L 480 624 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>aws_vpc.main → module.app.aws_subnet.main</title></path>
-<path d="M 800 614 L 834 614 L 834 624 L 900 624 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.app.aws_subnet.main → module.app.aws_instance.web[0]</title></path>
-<path d="M 800 633 L 844 633 L 844 768 L 900 768 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.app.aws_subnet.main → module.app.aws_instance.web[1]</title></path>
+<rect x="35" y="160" width="1270" height="488" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-dasharray="5 4"/><text x="52" y="185" font-size="13" font-weight="700" fill="#475569"><title>root</title>root</text>
+<rect x="35" y="672" width="1270" height="344" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-dasharray="5 4"/><text x="52" y="697" font-size="13" font-weight="700" fill="#475569"><title>module.app</title>module.app</text>
+<path d="M 380 400 L 404 400 L 404 768 L 480 768 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>aws_vpc.main → module.app.aws_subnet.main</title></path>
+<path d="M 380 534 L 414 534 L 414 624 L 866 624 L 866 758 L 900 758 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>data.aws_ami.latest → module.app.aws_instance.web[0]</title></path>
+<path d="M 380 553 L 424 553 L 424 704 L 856 704 L 856 902 L 900 902 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>data.aws_ami.latest → module.app.aws_instance.web[1]</title></path>
+<path d="M 800 758 L 854 758 L 854 777 L 900 777 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.app.aws_subnet.main → module.app.aws_instance.web[0]</title></path>
+<path d="M 800 777 L 864 777 L 864 921 L 900 921 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.app.aws_subnet.main → module.app.aws_instance.web[1]</title></path>
 <g id="resource-0"><title>aws_s3_bucket.legacy — delete</title><rect x="60" y="208" width="320" height="96" rx="8" fill="#fef2f2" stroke="#b91c1c" stroke-width="1.5"/>
 <text x="72" y="228" font-size="11" fill="#b91c1c">aws_s3_bucket · delete</text>
 <text x="72" y="253" font-size="13" fill="#0f172a">aws_s3_bucket.legacy</text>
@@ -26,17 +28,21 @@
 <text x="72" y="372" font-size="11" fill="#64748b">aws_vpc · unchanged</text>
 <text x="72" y="397" font-size="13" fill="#0f172a">aws_vpc.main</text>
 </g>
-<g id="resource-2"><title>module.app.aws_instance.web[0] — create</title><rect x="900" y="576" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5"/>
-<text x="912" y="596" font-size="11" fill="#047857">aws_instance · create</text>
-<text x="912" y="621" font-size="13" fill="#0f172a">aws_instance.web[0]</text>
+<g id="resource-2"><title>data.aws_ami.latest — unchanged</title><rect x="60" y="496" width="320" height="96" rx="8" fill="#f8fafc" stroke="#64748b" stroke-width="1.5"/>
+<text x="72" y="516" font-size="11" fill="#64748b">aws_ami · unchanged</text>
+<text x="72" y="541" font-size="13" fill="#0f172a">data.aws_ami.latest</text>
 </g>
-<g id="resource-3"><title>module.app.aws_instance.web[1] — replace</title><rect x="900" y="720" width="320" height="96" rx="8" fill="#fff7ed" stroke="#c2410c" stroke-width="1.5"/>
-<text x="912" y="740" font-size="11" fill="#c2410c">aws_instance · replace</text>
-<text x="912" y="765" font-size="13" fill="#0f172a">aws_instance.web[1]</text>
+<g id="resource-3"><title>module.app.aws_instance.web[0] — create</title><rect x="900" y="720" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5"/>
+<text x="912" y="740" font-size="11" fill="#047857">aws_instance · create</text>
+<text x="912" y="765" font-size="13" fill="#0f172a">aws_instance.web[0]</text>
 </g>
-<g id="resource-4"><title>module.app.aws_subnet.main — update</title><rect x="480" y="576" width="320" height="96" rx="8" fill="#eff6ff" stroke="#1d4ed8" stroke-width="1.5"/>
-<text x="492" y="596" font-size="11" fill="#1d4ed8">aws_subnet · update</text>
-<text x="492" y="621" font-size="13" fill="#0f172a">aws_subnet.main</text>
+<g id="resource-4"><title>module.app.aws_instance.web[1] — replace</title><rect x="900" y="864" width="320" height="96" rx="8" fill="#fff7ed" stroke="#c2410c" stroke-width="1.5"/>
+<text x="912" y="884" font-size="11" fill="#c2410c">aws_instance · replace</text>
+<text x="912" y="909" font-size="13" fill="#0f172a">aws_instance.web[1]</text>
+</g>
+<g id="resource-5"><title>module.app.aws_subnet.main — update</title><rect x="480" y="720" width="320" height="96" rx="8" fill="#eff6ff" stroke="#1d4ed8" stroke-width="1.5"/>
+<text x="492" y="740" font-size="11" fill="#1d4ed8">aws_subnet · update</text>
+<text x="492" y="765" font-size="13" fill="#0f172a">aws_subnet.main</text>
 </g>
 </g>
 </svg>

@@ -35,3 +35,27 @@ resource "terraform_data" "independent" {
 resource "terraform_data" "explicit" {
   depends_on = [terraform_data.independent]
 }
+
+# Read during plan from a checked-in, synthetic local state snapshot.
+data "terraform_remote_state" "existing" {
+  backend = "local"
+  config = {
+    path = "${path.module}/shared-state.json"
+  }
+}
+
+# The dependency on a resource being created defers this read until apply.
+data "terraform_remote_state" "after_ready" {
+  backend = "local"
+  config = {
+    path = "${path.module}/shared-state.json"
+  }
+  depends_on = [terraform_data.ready]
+}
+
+resource "terraform_data" "from_state" {
+  input = {
+    existing = data.terraform_remote_state.existing.outputs.network_id
+    deferred = data.terraform_remote_state.after_ready.outputs.network_id
+  }
+}

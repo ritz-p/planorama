@@ -20,14 +20,23 @@ docker compose run --rm dev cargo run --locked -- examples/plan.json -o diagram.
 
 ## Terraform を含む動作確認
 
-外部のクラウドや認証情報を使わず、組み込みの `terraform_data` リソースだけでサンプル plan を生成できます。Terraform も Docker 内で実行します。
+外部のクラウドや認証情報を使わず、組み込みの `terraform_data` リソースと `terraform_remote_state` データソースでサンプル plan を生成できます。Terraform も Docker 内で実行します。
 
 ```sh
 docker compose run --rm terraform-example
 docker compose run --rm dev cargo run --locked -- output/terraform-plan.json -o output/terraform.svg
 ```
 
-サンプルには 13 リソース、入れ子のモジュール、`count`、`for_each`、モジュールとリソースの `depends_on` が含まれます。`plan` までを実行し、`apply` は実行しません。テスト用に生成した JSON を `tests/fixtures/terraform-plan.json` に保存しており、通常の `cargo test` では Terraform 自体は不要です。
+サンプルには 14 リソースと 2 データソース、入れ子のモジュール、`count`、`for_each`、モジュールとリソースの `depends_on` が含まれます。`plan` までを実行し、`apply` は実行しません。テスト用に生成した JSON を `tests/fixtures/terraform-plan.json` に保存しており、通常の `cargo test` では Terraform 自体は不要です。
+
+データソースは `examples/terraform/shared-state.json` の架空のローカル state を読みます。[terraform_remote_state](https://developer.hashicorp.com/terraform/language/state/remote-state-data) を使った次の 2 パターンを確認できます。
+
+- `data.terraform_remote_state.existing`：plan 時に読み取り済みで、図では `unchanged`。
+- `data.terraform_remote_state.after_ready`：`terraform_data.ready` の変更を待って apply 時に読むため、図では紫色の `read`。
+
+両方のデータソースを `terraform_data.from_state` が参照します。図では `terraform_data.ready → data.terraform_remote_state.after_ready → terraform_data.from_state` の依存関係を確認できます。
+
+簡単な `examples/plan.json` は手書きの AWS 風サンプルで、`data.aws_ami.latest` をモジュールの入力変数経由で 2 つの EC2 インスタンスが参照する例も含みます。
 
 ## 実際の plan を図にする
 
@@ -53,6 +62,7 @@ docker compose run --rm dev cargo build --locked --release
 
 - 作成・更新・削除・置換・読み取り・変更なしを色とラベルで区別します。
 - 変更なしのリソースも含め、削除されるリソースも残します。
+- 読み取り済みの `data` が `prior_state` にのみ存在する場合も、構成に残っていれば図へ補います。
 - モジュールのインスタンスごとに枠でまとめます。
 - 矢印は依存元から依存先へ向けます。
 - 構成の式、count、for_each の参照を解析し、モジュールの入力変数・出力経由の参照も追跡します。

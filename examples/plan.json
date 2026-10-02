@@ -2,7 +2,10 @@
   "format_version": "1.2",
   "terraform_version": "1.9.0",
   "planned_values": {"root_module": {
-    "resources": [{"address":"aws_vpc.main","type":"aws_vpc"}],
+    "resources": [
+      {"address":"aws_vpc.main","type":"aws_vpc"},
+      {"address":"data.aws_ami.latest","mode":"data","type":"aws_ami"}
+    ],
     "child_modules": [{"address":"module.app","resources":[
       {"address":"module.app.aws_subnet.main","type":"aws_subnet"},
       {"address":"module.app.aws_instance.web[0]","type":"aws_instance"},
@@ -10,6 +13,7 @@
     ]}]
   }},
   "resource_changes": [
+    {"address":"data.aws_ami.latest","mode":"data","type":"aws_ami","change":{"actions":["no-op"]}},
     {"address":"aws_vpc.main","type":"aws_vpc","change":{"actions":["no-op"]}},
     {"address":"module.app.aws_subnet.main","type":"aws_subnet","change":{"actions":["update"]}},
     {"address":"module.app.aws_instance.web[0]","type":"aws_instance","change":{"actions":["create"]}},
@@ -17,12 +21,21 @@
     {"address":"aws_s3_bucket.legacy","type":"aws_s3_bucket","change":{"actions":["delete"]}}
   ],
   "configuration": {"root_module": {
-    "resources":[{"address":"aws_vpc.main","type":"aws_vpc"}],
+    "resources":[
+      {"address":"aws_vpc.main","type":"aws_vpc"},
+      {"address":"data.aws_ami.latest","mode":"data","type":"aws_ami"}
+    ],
     "module_calls": {"app": {
-      "expressions":{"vpc_id":{"references":["aws_vpc.main.id"]}},
+      "expressions":{
+        "vpc_id":{"references":["aws_vpc.main.id"]},
+        "ami_id":{"references":["data.aws_ami.latest.id"]}
+      },
       "module": {"resources":[
         {"address":"aws_subnet.main","type":"aws_subnet","expressions":{"vpc_id":{"references":["var.vpc_id"]}}},
-        {"address":"aws_instance.web","type":"aws_instance","expressions":{"subnet_id":{"references":["aws_subnet.main.id"]}}}
+        {"address":"aws_instance.web","type":"aws_instance","expressions":{
+          "subnet_id":{"references":["aws_subnet.main.id"]},
+          "ami":{"references":["var.ami_id"]}
+        }}
       ]}
     }}
   }}
