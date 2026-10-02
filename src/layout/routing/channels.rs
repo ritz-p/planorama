@@ -26,6 +26,7 @@ impl HorizontalChannels {
         }
     }
 
+    #[cfg(test)]
     pub(super) fn allocate(
         &mut self,
         from: usize,
@@ -33,11 +34,22 @@ impl HorizontalChannels {
         source_y: usize,
         target_y: usize,
     ) -> usize {
+        self.allocate_candidates(&vec![(from, to); self.channels.len()], source_y, target_y)
+    }
+
+    pub(super) fn allocate_candidates(
+        &mut self,
+        ranges: &[(usize, usize)],
+        source_y: usize,
+        target_y: usize,
+    ) -> usize {
+        assert_eq!(ranges.len(), self.channels.len());
         let index = self
             .channels
             .iter()
             .enumerate()
             .min_by_key(|(index, channel)| {
+                let (from, to) = ranges[*index];
                 let overlap = channel.occupied.overlap(from, to);
                 let distance =
                     source_y.abs_diff(channel.y) as u128 + target_y.abs_diff(channel.y) as u128;
@@ -46,6 +58,7 @@ impl HorizontalChannels {
             .map(|(index, _)| index)
             .expect("routing requires a horizontal channel");
         let channel = &mut self.channels[index];
+        let (from, to) = ranges[index];
         channel.occupied.insert(from, to);
         channel.y
     }
