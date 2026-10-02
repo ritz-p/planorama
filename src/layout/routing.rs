@@ -1,13 +1,33 @@
 use super::{NODE_HEIGHT, NODE_WIDTH, Point};
 use crate::model::Graph;
 use std::cmp::Ordering;
+mod lanes;
+use lanes::{Lane, VerticalLanes};
+
+#[cfg(test)]
+#[path = "../../tests/unit/layout/routing.rs"]
+mod tests;
+
+pub(super) struct Routed {
+    pub paths: Vec<Vec<Point>>,
+    pub width: usize,
+}
+
+enum Route {
+    Direct(Lane),
+    Channel {
+        source: Lane,
+        target: Lane,
+        y: usize,
+    },
+}
 
 pub(super) fn route(
     graph: &Graph,
     ranks: &[usize],
-    positions: &[Point],
+    positions: &mut [Point],
     channels: &[usize],
-) -> Vec<Vec<Point>> {
+) -> Routed {
     let mut source_ports = vec![0; graph.edges.len()];
     let mut target_ports = vec![0; graph.edges.len()];
     let mut sources = vec![Vec::new(); graph.nodes.len()];
@@ -30,36 +50,22 @@ pub(super) fn route(
     }
 
     let mut channel_uses = vec![0usize; channels.len()];
-    graph
+    let mut lanes = VerticalLanes::default();
+    let routes: Vec<_> = graph
         .edges
         .iter()
         .enumerate()
         .map(|(edge, &(a, b))| {
-            let source = positions[a];
-            let target = positions[b];
-            let start = Point {
-                x: source.x + NODE_WIDTH,
-                y: source.y + source_ports[edge],
-            };
-            let end = Point {
-                x: match ranks[b].cmp(&ranks[a]) {
-                    Ordering::Greater => target.x,
-                    Ordering::Equal | Ordering::Less => target.x + NODE_WIDTH,
-                },
-                y: target.y + target_ports[edge],
-            };
-            let lane = 24 + (edge % 5) * 10;
-            let route = match ranks[b].checked_sub(ranks[a]) {
-                Some(0 | 1) => {
-                    let x = start.x + lane;
-                    vec![start, Point { x, y: start.y }, Point { x, y: end.y }, end]
-                }
+            let source_y = positions[a].y + source_ports[edge];
+            let target_y = positions[b].y + target_ports[edge];
+            match ranks[b].checked_sub(ranks[a]) {
+                Some(0 | 1) => Route::Direct(lanes.allocate(ranks[a], source_y, target_y)),
                 _ => {
                     let channel = (0..channels.len())
                         .min_by_key(|&i| {
                             (
-                                start.y.abs_diff(channels[i])
-                                    + end.y.abs_diff(channels[i])
+                                source_y.abs_diff(channels[i])
+                                    + target_y.abs_diff(channels[i])
                                     + channel_uses[i] * 16,
                                 i,
                             )
@@ -67,11 +73,55 @@ pub(super) fn route(
                         .unwrap();
                     channel_uses[channel] += 1;
                     let y = channels[channel];
-                    let left = start.x + lane;
-                    let right = match ranks[b].cmp(&ranks[a]) {
-                        Ordering::Greater => end.x - 24 - edge % 5 * 10,
-                        Ordering::Equal | Ordering::Less => end.x + lane,
+                    let gutter = match ranks[b].cmp(&ranks[a]) {
+                        Ordering::Greater => ranks[b] - 1,
+                        Ordering::Equal | Ordering::Less => ranks[b],
                     };
+                    Route::Channel {
+                        source: lanes.allocate(ranks[a], source_y, y),
+                        target: lanes.allocate(gutter, y, target_y),
+                        y,
+                    }
+                }
+            }
+        })
+        .collect();
+    let columns = ranks.iter().max().copied().unwrap_or(0) + 1;
+    let mut column_x = Vec::with_capacity(columns);
+    let mut x = 60;
+    for column in 0..columns {
+        column_x.push(x);
+        x += NODE_WIDTH + lanes.width(column);
+    }
+    for (index, position) in positions.iter_mut().enumerate() {
+        position.x = column_x[ranks[index]];
+    }
+    let lane_x = |lane: Lane| column_x[lane.gutter] + NODE_WIDTH + lane.offset();
+    let paths = graph
+        .edges
+        .iter()
+        .zip(routes)
+        .enumerate()
+        .map(|(edge, (&(a, b), route))| {
+            let start = Point {
+                x: positions[a].x + NODE_WIDTH,
+                y: positions[a].y + source_ports[edge],
+            };
+            let end = Point {
+                x: match ranks[b].cmp(&ranks[a]) {
+                    Ordering::Greater => positions[b].x,
+                    Ordering::Equal | Ordering::Less => positions[b].x + NODE_WIDTH,
+                },
+                y: positions[b].y + target_ports[edge],
+            };
+            simplify(match route {
+                Route::Direct(lane) => {
+                    let x = lane_x(lane);
+                    vec![start, Point { x, y: start.y }, Point { x, y: end.y }, end]
+                }
+                Route::Channel { source, target, y } => {
+                    let left = lane_x(source);
+                    let right = lane_x(target);
                     vec![
                         start,
                         Point {
@@ -84,10 +134,13 @@ pub(super) fn route(
                         end,
                     ]
                 }
-            };
-            simplify(route)
+            })
         })
-        .collect()
+        .collect();
+    Routed {
+        paths,
+        width: (x + 20).max(1040),
+    }
 }
 
 fn simplify(points: Vec<Point>) -> Vec<Point> {

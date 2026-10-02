@@ -89,3 +89,15 @@ fn dense_dag_and_multiple_modules_avoid_cards() {
         &crate::plan::parse(include_str!("../../tests/fixtures/terraform-plan.json")).unwrap(),
     );
 }
+
+#[test]
+fn dense_bipartite_graph_expands_gutters_without_crossing_cards() {
+    let graph = graph(
+        16,
+        (0..8).flat_map(|a| (8..16).map(move |b| (a, b))).collect(),
+    );
+    check_geometry(&graph);
+    let layout = Layout::new(&graph);
+    assert!(layout.positions[8].x - layout.positions[0].x > 420);
+    assert_eq!(layout.paths, Layout::new(&graph).paths);
+}
