@@ -78,3 +78,31 @@ docker compose run --rm dev cargo build --locked --release
 配置はモジュールごとの帯と依存階層を使います。ノードを横切らない直角の経路を計算しますが、交差数の最小化は保証せず、密なグラフでは線同士が重なることがあります。長いラベルは省略し、完全なアドレスを SVG の title に保持します。構成情報がない plan は、リソースと変更種別のみを表示します。
 
 入力形式の詳細は [Terraform JSON Output Format](https://developer.hashicorp.com/terraform/internals/json-format) を参照してください。
+
+## コード構成
+
+モジュールは `mod.rs` を使わず、同名の `.rs` とディレクトリで構成します。`plan` は Terraform plan JSON の読み取りを担当し、サンプル設定の `examples/terraform/` と区別しています。
+
+```text
+src/
+├── main.rs               # 起動・終了コード・エラー表示
+├── cli.rs                # 引数解析・ファイル入出力・処理の呼び出し
+├── model.rs              # Action / Node / Graph の共通データ型
+├── plan.rs               # plan JSON → Graph
+├── plan/
+│   ├── address.rs        # モジュール・インスタンスのアドレス解析
+│   ├── references.rs     # 参照解決・依存関係の構築
+│   └── tests.rs          # plan の読み取り・参照解決のテスト
+├── layout.rs             # Graph → Layout、座標・経路のデータ型
+├── layout/
+│   ├── rank.rs           # 循環参照の処理・依存階層の計算
+│   ├── placement.rs      # ノード配置・交差を減らす並べ替え
+│   ├── routing.rs        # 接続線の経路計算
+│   └── tests.rs          # 配置・経路のテスト
+├── svg.rs                # Graph + Layout → SVG
+└── svg/
+    ├── style.rs          # 配色・変更種別ラベル・文字の省略
+    └── tests.rs          # 描画・エスケープのテスト
+```
+
+`cli` が `plan::parse` → `Layout::new` → `svg::render` の順に呼び出します。`model` は JSON や描画に依存せず、`layout` は Terraform 固有の入力形式を扱いません。`svg` は計算済みの座標と経路を受け取って描画します。
