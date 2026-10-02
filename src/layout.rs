@@ -1,3 +1,6 @@
+#[cfg(test)]
+#[path = "../tests/support/layout_metrics.rs"]
+pub(crate) mod metrics;
 mod placement;
 mod rank;
 mod routing;
