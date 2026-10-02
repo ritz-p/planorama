@@ -1,6 +1,12 @@
-use crate::graph::{Action, Graph};
+//! Serialize the graph and its geometry as a standalone SVG document.
+mod style;
+#[cfg(test)]
+mod tests;
+
 use crate::layout::Layout;
+use crate::model::{Action, Graph};
 use std::fmt::Write;
+use style::{color, label, shorten};
 
 fn escape(value: &str) -> String {
     value
@@ -17,27 +23,7 @@ fn escape(value: &str) -> String {
         .collect()
 }
 
-fn color(action: Action) -> (&'static str, &'static str) {
-    match action {
-        Action::Create => ("#ecfdf5", "#047857"),
-        Action::Update => ("#eff6ff", "#1d4ed8"),
-        Action::Delete => ("#fef2f2", "#b91c1c"),
-        Action::Replace => ("#fff7ed", "#c2410c"),
-        Action::Read => ("#faf5ff", "#7e22ce"),
-        Action::Unchanged => ("#f8fafc", "#64748b"),
-        Action::Other => ("#fefce8", "#854d0e"),
-    }
-}
-
-fn shorten(text: &str, length: usize) -> String {
-    match text.chars().count() {
-        count if count <= length => text.into(),
-        _ => format!("{}…", text.chars().take(length - 1).collect::<String>()),
-    }
-}
-
-pub fn render(graph: &Graph) -> String {
-    let layout = Layout::new(graph);
+pub fn render(graph: &Graph, layout: &Layout<'_>) -> String {
     let (width, height) = (layout.width, layout.height);
     let mut svg = format!(
         r##"<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}" role="img" aria-labelledby="title description">
@@ -69,7 +55,7 @@ pub fn render(graph: &Graph) -> String {
         let x = 40 + i * 140;
         let (background, border) = color(*action);
         let count = graph.nodes.iter().filter(|n| n.action == *action).count();
-        writeln!(svg, r#"<rect x="{x}" y="100" width="12" height="12" fill="{background}" stroke="{border}"/><text x="{}" y="111" font-size="12" fill="{border}">{} ({count})</text>"#, x + 19, action.label()).unwrap();
+        writeln!(svg, r#"<rect x="{x}" y="100" width="12" height="12" fill="{background}" stroke="{border}"/><text x="{}" y="111" font-size="12" fill="{border}">{} ({count})</text>"#, x + 19, label(*action)).unwrap();
     }
     for band in &layout.bands {
         let (module, y, h) = (band.label, band.top, band.height);
@@ -114,14 +100,14 @@ pub fn render(graph: &Graph) -> String {
             .take(2)
             .map(|c| c.iter().collect::<String>())
             .collect();
-        writeln!(svg, r#"<g id="resource-{i}"><title>{address} — {}</title><rect x="{x}" y="{y}" width="320" height="96" rx="8" fill="{background}" stroke="{border}" stroke-width="1.5"/>"#, node.action.label()).unwrap();
+        writeln!(svg, r#"<g id="resource-{i}"><title>{address} — {}</title><rect x="{x}" y="{y}" width="320" height="96" rx="8" fill="{background}" stroke="{border}" stroke-width="1.5"/>"#, label(node.action)).unwrap();
         writeln!(
             svg,
             r#"<text x="{}" y="{}" font-size="11" fill="{border}">{} · {}</text>"#,
             x + 12,
             y + 20,
             escape(&shorten(&node.resource_type, 25)),
-            node.action.label()
+            label(node.action)
         )
         .unwrap();
         for (line, text) in lines.iter().enumerate() {
@@ -147,39 +133,4 @@ pub fn render(graph: &Graph) -> String {
     }
     svg.push_str("</g>\n</svg>\n");
     svg
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use crate::graph::Node;
-    #[test]
-    fn escapes_untrusted_labels_and_omits_values() {
-        let graph = Graph {
-            nodes: vec![Node {
-                address: "test.<script>&\"".into(),
-                resource_type: "test".into(),
-                module: "root".into(),
-                action: Action::Create,
-            }],
-            edges: vec![],
-        };
-        let svg = render(&graph);
-        assert!(!svg.contains("<script>"));
-        assert!(svg.contains("&lt;script&gt;&amp;&quot;"));
-        let graph = Graph::parse(r#"{"format_version":"1.0","resource_changes":[{"address":"test.main","change":{"actions":["create"],"after":{"password":"TOP_SECRET"}}}]}"#).unwrap();
-        assert!(!render(&graph).contains("TOP_SECRET"));
-    }
-    #[test]
-    fn output_is_deterministic_and_empty_plans_render() {
-        let graph = Graph::parse(include_str!("../examples/plan.json")).unwrap();
-        assert_eq!(render(&graph), render(&graph));
-        assert!(
-            render(&Graph {
-                nodes: vec![],
-                edges: vec![]
-            })
-            .contains("No resources")
-        );
-    }
 }
