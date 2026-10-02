@@ -1,6 +1,17 @@
 use super::*;
 
 #[test]
+fn preview_does_not_reserve_lanes() {
+    let mut lanes = VerticalLanes::default();
+    lanes.allocate(0, 100, 200);
+    let next = lanes.preview(0, 150, 250);
+    assert_eq!(next.index, 1);
+    assert_eq!(lanes.preview(0, 150, 250), next);
+    assert_eq!(lanes.allocate(0, 150, 250), next);
+    assert_eq!(lanes.preview(0, 200, 300).index, 0);
+}
+
+#[test]
 fn overlapping_ranges_allocate_more_than_five_lanes() {
     let mut lanes = VerticalLanes::default();
     for index in 0..12 {

@@ -3,6 +3,50 @@ use crate::model::{Action, Node};
 use std::collections::BTreeSet;
 
 #[test]
+fn long_edges_use_separate_channels_after_gutter_expansion() {
+    let graph = Graph {
+        nodes: (0..18)
+            .map(|i| Node {
+                address: format!("test.n{i}"),
+                resource_type: "test".into(),
+                module: "root".into(),
+                action: Action::Create,
+            })
+            .collect(),
+        edges: (0..8)
+            .map(|i| (i, 15 - i))
+            .chain([(0, 16), (0, 17)])
+            .collect(),
+    };
+    let ranks: Vec<_> = (0..18).map(|i| i / 8).collect();
+    let initial: Vec<_> = (0..18)
+        .map(|i| Point {
+            x: 60 + i / 8 * 420,
+            y: 208 + i % 8 * 144,
+        })
+        .collect();
+    let mut positions = initial.clone();
+    let routed = route(&graph, &ranks, &mut positions, &[192, 1360]);
+    assert!(positions[8].x - positions[0].x > 420);
+    let bridge_y: Vec<_> = routed.paths[8..]
+        .iter()
+        .map(|path| {
+            path.windows(2)
+                .find(|s| s[0].y == s[1].y && s[0].x.abs_diff(s[1].x) > NODE_WIDTH)
+                .unwrap()[0]
+                .y
+        })
+        .collect();
+    assert_ne!(bridge_y[0], bridge_y[1]);
+    assert!(routed.paths.iter().flatten().all(|p| p.x < routed.width));
+    let mut again = initial;
+    assert_eq!(
+        routed.paths,
+        route(&graph, &ranks, &mut again, &[192, 1360]).paths
+    );
+}
+
+#[test]
 fn eight_overlapping_edges_get_distinct_lanes_inside_the_gutter() {
     let graph = Graph {
         nodes: (0..16)
