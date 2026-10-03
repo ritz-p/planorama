@@ -2,6 +2,8 @@ services:
   dev:
     build: .
     working_dir: /workspace
+    init: true
+    command: ["sleep", "infinity"]
     volumes:
       - .:/workspace
       - cargo-registry:/usr/local/cargo/registry

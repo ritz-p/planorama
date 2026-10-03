@@ -7,11 +7,11 @@ Terraform plan JSON を SVG に変換する Rust 製 CLI です。JSON 解析、
 Docker Desktop を Linux コンテナモードで起動してください。ホストへの Rust インストールは不要です。
 
 ```sh
-docker compose build
-docker compose run --rm dev cargo fmt --all --check
-docker compose run --rm dev cargo test --locked
-docker compose run --rm dev cargo clippy --locked --all-targets --all-features -- -D warnings
-docker compose run --rm dev cargo run --locked -- examples/plan.json -o diagram.svg
+docker compose up -d --build dev
+docker compose exec dev cargo fmt --check
+docker compose exec dev cargo test --locked
+docker compose exec dev cargo clippy --locked --all-targets -- -D warnings
+docker compose exec dev cargo run --locked -- examples/plan.json -o diagram.svg
 ```
 
 `diagram.svg` がリポジトリ直下に出力されます。ブラウザで開くと図を閲覧でき、リソースにマウスを重ねると完全なアドレスを確認できます。ソースはバインドマウント、Cargo のキャッシュとビルド成果物は Docker の named volume に保存します。
@@ -29,12 +29,22 @@ Clippy は全ターゲット・全 feature に対して警告をエラーにし�
 CI は Formatting・Clippy・Tests・MSRV の 4 ジョブを独立して実行します。ビルドとテストには `--locked` を付け、MSRV ジョブは開発用の指定を明示的に上書きして Rust 1.85.0 を検証します。ローカルでも同じ確認ができます。
 
 ```sh
-docker compose run --rm dev cargo fmt --all --check
-docker compose run --rm dev cargo clippy --locked --all-targets --all-features -- -D warnings
-docker compose run --rm dev cargo test --locked --all-targets --all-features
+docker compose exec dev cargo fmt --all --check
+docker compose exec dev cargo clippy --locked --all-targets --all-features -- -D warnings
+docker compose exec dev cargo test --locked --all-targets --all-features
 docker build --build-arg RUST_VERSION=1.85.0 -t planorama-msrv .
-docker run --rm --mount type=bind,source=.,target=/workspace --env CARGO_TARGET_DIR=/tmp/planorama-target planorama-msrv cargo +1.85.0 test --locked --all-targets --all-features
+docker exec --mount type=bind,source=.,target=/workspace --env CARGO_TARGET_DIR=/tmp/planorama-target planorama-msrv cargo +1.85.0 test --locked --all-targets --all-features
 ```
+
+開発コンテナは Cargo コマンド終了後も起動し続けます。作業を始めるときは `docker compose up -d --build dev` を実行してください。シェルには `docker compose exec dev bash` で入り、`cargo test --locked` などを直接実行できます。シェルを `exit` してもコンテナは停止しません。スクリプトや標準入力を使う場合は `docker compose exec -T dev ...` とします。
+
+```sh
+docker compose stop dev
+docker compose start dev
+docker compose down
+```
+
+`stop` / `start` は同じコンテナを停止・再開し、`down` はコンテナを削除します。`down` 後も named volume のキャッシュは残り、`up -d --build dev` で再作成できます。Dockerfile を変更した場合もこのコマンドで再ビルドします。一度だけ実行する場合は、従来の `docker compose run --rm dev cargo test --locked` も利用できます。
 
 ## Terraform を含む動作確認
 
@@ -42,7 +52,7 @@ docker run --rm --mount type=bind,source=.,target=/workspace --env CARGO_TARGET_
 
 ```sh
 docker compose run --rm terraform-example
-docker compose run --rm dev cargo run --locked -- output/terraform-plan.json -o output/terraform.svg
+docker compose exec dev cargo run --locked -- output/terraform-plan.json -o output/terraform.svg
 ```
 
 サンプルには 14 リソースと 2 データソース、入れ子のモジュール、`count`、`for_each`、モジュールとリソースの `depends_on` が含まれます。`plan` までを実行し、`apply` は実行しません。テスト用に生成した JSON を `tests/fixtures/terraform-plan.json` に保存しており、通常の `cargo test` では Terraform 自体は不要です。
@@ -63,15 +73,15 @@ Terraform を実行できる環境で保存済み plan を JSON に変換し、�
 ```sh
 terraform plan -out=tfplan
 terraform show -json tfplan > plan.json
-docker compose run --rm dev cargo run --locked -- plan.json -o diagram.svg
+docker compose exec dev cargo run --locked -- plan.json -o diagram.svg
 ```
 
 入力は `terraform show -json` の plan 形式です。`terraform plan -json` のイベントストリームや state JSON は対象外です。PowerShell 5.1 ではリダイレクトが UTF-16 になるため、Terraform の JSON を UTF-8 で保存してください。
 
 ```sh
-docker compose run --rm dev cargo run --locked -- --help
-docker compose run --rm -T dev cargo run --locked -- - -o - < plan.json > diagram.svg
-docker compose run --rm dev cargo build --locked --release
+docker compose exec dev cargo run --locked -- --help
+docker compose exec -T dev cargo run --locked -- - -o - < plan.json > diagram.svg
+docker compose exec dev cargo build --locked --release
 ```
 
 標準入力の例は POSIX シェル向けです。最後のバイナリは Linux 用で、コンテナの `/workspace/target/release/planorama` に生成されます。
@@ -94,7 +104,7 @@ docker compose run --rm dev cargo build --locked --release
 fan-out と fan-in を続けたサンプルは [bundling.svg](examples/bundling.svg) です。再生成できます。
 
 ```sh
-docker compose run --rm dev cargo run --locked -- examples/bundling-plan.json -o examples/bundling.svg
+docker compose exec dev cargo run --locked -- examples/bundling-plan.json -o examples/bundling.svg
 ```
 
 配置の並べ替えでは、2 階層以上離れた辺を途中の階層ごとの仮想ノードで分割します。仮想ノードは依存元のモジュール帯に置き、通常のノードと一緒に重心による並べ替えへ参加させます。仮想ノードの行は余白として残るため、長い辺が多いと図の高さが増えます。リソースのアドレスや依存関係は変更せず、仮想ノードをカードとして描画することもありません。接続線は元の辺ごとに 1 本の折れ線として生成します。
@@ -160,4 +170,4 @@ tests/
     └── svg.rs            # 描画・エスケープ
 ```
 
-単体テストは実装側の `#[cfg(test)]` と `#[path = "..."]` で読み込みます。テストのために内部関数を公開する必要はなく、実装ファイルには読み込み宣言だけを置きます。実行方法はこれまでどおり `docker compose run --rm dev cargo test --locked` です。
+単体テストは実装側の `#[cfg(test)]` と `#[path = "..."]` で読み込みます。テストのために内部関数を公開する必要はなく、実装ファイルには読み込み宣言だけを置きます。実行方法はこれまでどおり `docker compose exec dev cargo test --locked` です。
