@@ -1,6 +1,12 @@
 use super::{Band, Point};
 use crate::model::Graph;
 use std::collections::BTreeMap;
+mod expanded;
+use expanded::Expanded;
+
+#[cfg(test)]
+#[path = "../../tests/unit/layout/placement.rs"]
+mod tests;
 
 const COLUMN_STEP: usize = 420;
 const ROW_STEP: usize = 144;
@@ -33,12 +39,13 @@ fn update_positions(groups: &[Group<'_>], positions: &mut [Point]) {
 }
 
 pub(super) fn place<'a>(graph: &'a Graph, ranks: &[usize]) -> Placement<'a> {
+    let expanded = Expanded::new(graph, ranks);
     let columns = ranks.iter().max().copied().unwrap_or(0) + 1;
     let mut modules = BTreeMap::new();
-    for (node, resource) in graph.nodes.iter().enumerate() {
+    for (node, vertex) in expanded.vertices.iter().enumerate() {
         modules
-            .entry(resource.module.as_str())
-            .or_insert_with(|| vec![Vec::new(); columns])[ranks[node]]
+            .entry(vertex.module)
+            .or_insert_with(|| vec![Vec::new(); columns])[vertex.rank]
             .push(node);
     }
     let mut groups: Vec<_> = modules
@@ -60,20 +67,14 @@ pub(super) fn place<'a>(graph: &'a Graph, ranks: &[usize]) -> Placement<'a> {
         }
         top += group.rows * ROW_STEP + 80;
     }
-    let mut positions = vec![Point { x: 0, y: 0 }; graph.nodes.len()];
+    let mut positions = vec![Point { x: 0, y: 0 }; expanded.vertices.len()];
     update_positions(&groups, &mut positions);
-    let mut incoming = vec![Vec::new(); graph.nodes.len()];
-    let mut outgoing = vec![Vec::new(); graph.nodes.len()];
-    for &(a, b) in &graph.edges {
-        incoming[b].push(a);
-        outgoing[a].push(b);
-    }
     for sweep in 0..6 {
         let forward = sweep % 2 == 0;
         for step in 0..columns {
             let (rank, neighbors) = match forward {
-                true => (step, &incoming),
-                false => (columns - step - 1, &outgoing),
+                true => (step, &expanded.incoming),
+                false => (columns - step - 1, &expanded.outgoing),
             };
             for group in &mut groups {
                 group.columns[rank].sort_by_cached_key(|&node| {
@@ -81,8 +82,8 @@ pub(super) fn place<'a>(graph: &'a Graph, ranks: &[usize]) -> Placement<'a> {
                         .iter()
                         .copied()
                         .filter(|&other| match forward {
-                            true => ranks[other] < rank,
-                            false => ranks[other] > rank,
+                            true => expanded.vertices[other].rank < rank,
+                            false => expanded.vertices[other].rank > rank,
                         })
                         .map(|other| positions[other].y as u64)
                         .collect();
@@ -96,9 +97,15 @@ pub(super) fn place<'a>(graph: &'a Graph, ranks: &[usize]) -> Placement<'a> {
         }
     }
 
+    let mut resource_positions = vec![Point { x: 0, y: 0 }; graph.nodes.len()];
+    for (vertex, position) in expanded.vertices.iter().zip(positions) {
+        if let Some(resource) = vertex.resource {
+            resource_positions[resource] = position;
+        }
+    }
     Placement {
         height: (top + 40).max(300),
-        positions,
+        positions: resource_positions,
         channels,
         bands: groups
             .into_iter()

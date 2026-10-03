@@ -62,6 +62,32 @@ fn sweeps_uncross_reversed_dependencies() {
 }
 
 #[test]
+fn virtual_nodes_do_not_become_resources_or_visible_edges() {
+    let graph = graph(4, vec![(0, 1), (1, 2), (2, 3), (0, 3)]);
+    let original_addresses: Vec<_> = graph
+        .nodes
+        .iter()
+        .map(|node| node.address.clone())
+        .collect();
+    let layout = Layout::new(&graph);
+    assert_eq!(layout.positions.len(), graph.nodes.len());
+    assert_eq!(layout.paths.len(), graph.edges.len());
+    let svg = crate::svg::render(&graph, &layout);
+    assert!(svg.contains("4 resources, 4 reference edges"));
+    assert_eq!(svg.matches("marker-end=").count(), 4);
+    assert_eq!(
+        original_addresses,
+        graph
+            .nodes
+            .iter()
+            .map(|node| node.address.clone())
+            .collect::<Vec<_>>()
+    );
+    assert_eq!(svg, crate::svg::render(&graph, &Layout::new(&graph)));
+    check_geometry(&graph);
+}
+
+#[test]
 fn long_edges_and_cycles_avoid_cards() {
     check_geometry(&graph(
         6,
@@ -102,13 +128,15 @@ fn dense_graph_quality_metrics_are_deterministic() {
     assert_eq!(
         metrics,
         metrics::LayoutMetrics {
-            overlap_distance: 15964,
-            crossing_count: 465,
+            overlap_distance: 0,
+            crossing_count: 896,
             bend_count: 128,
-            total_path_length: 23398,
+            total_path_length: 88372,
         }
     );
     assert_eq!(metrics, metrics::measure(&Layout::new(&graph).paths));
+}
+
 #[test]
 fn dense_bipartite_graph_expands_gutters_without_crossing_cards() {
     let graph = graph(
