@@ -144,11 +144,13 @@ docker compose exec dev cargo run --locked -- examples/bundling-plan.json -o exa
 
 ## コード構成
 
+`semantic/containment.rs` は managed の Subnet の `vpc_id`、EC2 の `subnet_id` が対応する親へ一意に解決する場合、その依存辺を `Containment` にします。タグ・`depends_on`・定数 ID・未解決参照・複数候補は変換しません。data の親を参照する managed の子には対応しますが、data の検索条件は包含に変換しません。包含推定はノード数・辺数・順序を保持し、その後に関連付けの変換を実行します。SVG では `data-edge-kind="containment"` として表現します。サンプルは [containment.svg](examples/containment.svg) です。
+
 `semantic/associations.rs` は managed の `aws_route_table_association` を、Subnet → RouteTable の `Association` 辺へ置き換えます。`subnet_id` と `route_table_id` がそれぞれ一意に解決でき、元の依存辺がその 2 本だけの場合に限定します。追加の依存先・利用元、複数候補、未解決参照、定数だけの ID、data の関連付けは元のカードを残します。生グラフは変更しません。SVG の意味付き辺には `data-edge-kind` を付けます。サンプルは [association.svg](examples/association.svg) です。
 
 `TerraformGraph` は描画用グラフに加えて属性名・参照先・解決できたかを保持します。属性値そのものは保持しません。`depends_on`、count、for_each は従来の依存辺には反映しますが、属性の参照情報には混ぜません。属性参照が未解決・複数候補の場合、後続の意味変換は元の関係を維持できます。
 
-CLI の処理は `plan::parse → TerraformGraph → semantic::transform → ArchitectureGraph → Layout → SVG` の順です。変換は元の Terraform グラフを借用し、独立した描画用グラフを返します。対応する関連付けリソースだけを意味変換し、それ以外はノード・辺・順序を保持します。将来の変換規則は `semantic` 内に順序を明示して追加し、JSON 読み取りや SVG 生成から分離します。
+CLI の処理は `plan::parse → TerraformGraph → semantic::transform → ArchitectureGraph → Layout → SVG` の順です。変換は元の Terraform グラフを借用し、独立した描画用グラフを返します。包含推定の後、対応する関連付けリソースを辺へ変換し、ノード番号を再割り当てします。将来の変換規則は `semantic` 内に順序を明示して追加し、JSON 読み取りや SVG 生成から分離します。
 
 依存関係は `Edge { from, to, kind, change }` で保持します。`EdgeKind` は `Dependency` / `Association` / `Connection` / `Containment` を区別し、plan の参照はすべて `Dependency` として読み込みます。関連付けを辺へ変換する際は、元のアドレスと変更種別を `change` に残します。同じ端点を持つ別の関連付けも個別に保持します。
 
