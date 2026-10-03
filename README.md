@@ -8,15 +8,33 @@ Docker Desktop を Linux コンテナモードで起動してください。ホ�
 
 ```sh
 docker compose build
-docker compose run --rm dev cargo fmt --check
+docker compose run --rm dev cargo fmt --all --check
 docker compose run --rm dev cargo test --locked
-docker compose run --rm dev cargo clippy --locked --all-targets -- -D warnings
+docker compose run --rm dev cargo clippy --locked --all-targets --all-features -- -D warnings
 docker compose run --rm dev cargo run --locked -- examples/plan.json -o diagram.svg
 ```
 
 `diagram.svg` がリポジトリ直下に出力されます。ブラウザで開くと図を閲覧でき、リソースにマウスを重ねると完全なアドレスを確認できます。ソースはバインドマウント、Cargo のキャッシュとビルド成果物は Docker の named volume に保存します。
 
 生成済みの図は [examples/diagram.svg](examples/diagram.svg)、モジュールを含む実際の Terraform plan の図は [examples/terraform.svg](examples/terraform.svg) で確認できます。
+
+## Rust ツールチェーンと品質方針
+
+MSRV（最低対応 Rust バージョン）は **1.85.0** です。[Rust 2024 edition の導入バージョン](https://blog.rust-lang.org/2025/02/20/Rust-1.85.0.html)を下限とし、`Cargo.toml` の `rust-version` に宣言しています。依存関係を更新する場合も `Cargo.lock` をコミットし、MSRV でテストを通してください。
+
+開発用コンテナと `rust-toolchain.toml` は **1.85.1** に固定しています。rustfmt の標準設定を使い、整形結果をツールチェーン間で揃えます。整形する場合は `docker compose run --rm dev cargo fmt --all` を実行します。
+
+Clippy は全ターゲット・全 feature に対して警告をエラーにします。プロジェクト全体の一括 `allow` は追加せず、例外が必要なら最小範囲に限定して PR に理由を記載してください。ツールチェーンを更新する場合は Dockerfile と `rust-toolchain.toml` を一緒に更新します。MSRV を引き上げる場合は Cargo.toml、CI、本文も更新します。
+
+CI は Formatting・Clippy・Tests・MSRV の 4 ジョブを独立して実行します。ビルドとテストには `--locked` を付け、MSRV ジョブは開発用の指定を明示的に上書きして Rust 1.85.0 を検証します。ローカルでも同じ確認ができます。
+
+```sh
+docker compose run --rm dev cargo fmt --all --check
+docker compose run --rm dev cargo clippy --locked --all-targets --all-features -- -D warnings
+docker compose run --rm dev cargo test --locked --all-targets --all-features
+docker build --build-arg RUST_VERSION=1.85.0 -t planorama-msrv .
+docker run --rm --mount type=bind,source=.,target=/workspace --env CARGO_TARGET_DIR=/tmp/planorama-target planorama-msrv cargo +1.85.0 test --locked --all-targets --all-features
+```
 
 ## Terraform を含む動作確認
 
