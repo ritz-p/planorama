@@ -1,5 +1,6 @@
 use super::address::module_of;
-use crate::model::{Action, EntityMode, Node, ResourceRole};
+use crate::classification;
+use crate::model::{Action, EntityMode, Node};
 use serde_json::Value;
 
 #[cfg(test)]
@@ -23,12 +24,13 @@ pub(super) fn parse(resource: &Value, address: &str, action: Action) -> Node {
             false => EntityMode::Managed,
         },
     };
+    let resource_type = resource["type"].as_str().unwrap_or("resource");
     Node {
         address: address.into(),
-        resource_type: resource["type"].as_str().unwrap_or("resource").into(),
+        resource_type: resource_type.into(),
         module,
         action,
         mode,
-        role: ResourceRole::Unknown,
+        role: classification::classify(resource_type),
     }
 }
