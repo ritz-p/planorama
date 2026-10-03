@@ -1,10 +1,12 @@
 use super::{NODE_HEIGHT, NODE_WIDTH, Point};
 use crate::model::Graph;
 use std::cmp::Ordering;
+mod bundles;
 mod candidates;
 mod coverage;
 mod lanes;
 mod scoring;
+use bundles::Bundles;
 use candidates::RouteCandidate;
 use lanes::VerticalLanes;
 use scoring::Scorer;
@@ -16,6 +18,7 @@ mod tests;
 pub(super) struct Routed {
     pub paths: Vec<Vec<Point>>,
     pub width: usize,
+    pub junctions: Vec<Point>,
 }
 
 pub(super) fn route(
@@ -45,6 +48,8 @@ pub(super) fn route(
         }
     }
 
+    let bundles = Bundles::new(graph, ranks);
+    bundles.align_ports(&mut source_ports, &mut target_ports);
     let columns = ranks.iter().max().copied().unwrap_or(0) + 1;
     let mut gutter_widths = vec![100; columns];
     loop {
@@ -59,6 +64,7 @@ pub(super) fn route(
         }
         let mut scorer = Scorer::default();
         let mut lanes = VerticalLanes::default();
+        let mut bundle_lanes = vec![None; bundles.len()];
         let mut paths = Vec::with_capacity(graph.edges.len());
         for (edge, &(a, b)) in graph.edges.iter().enumerate() {
             let start = Point {
@@ -73,11 +79,32 @@ pub(super) fn route(
                 y: positions[b].y + target_ports[edge],
             };
             let candidates: Vec<_> = match ranks[b].checked_sub(ranks[a]) {
-                Some(0 | 1) => lanes
-                    .candidates(ranks[a], start.y, end.y, 3)
-                    .into_iter()
-                    .map(|lane| RouteCandidate::direct(start, end, lane, &column_x))
-                    .collect(),
+                Some(0 | 1) => match bundles.group(edge) {
+                    Some(group) => {
+                        let lane = *bundle_lanes[group].get_or_insert_with(|| {
+                            let (from, to) =
+                                bundles.span(group, graph, positions, &source_ports, &target_ports);
+                            let lane = lanes
+                                .candidates(ranks[a], from, to, 3)
+                                .into_iter()
+                                .min_by_key(|lane| {
+                                    let x = column_x[lane.gutter] + NODE_WIDTH + lane.offset();
+                                    scorer.score(
+                                        &[Point { x, y: from }, Point { x, y: to }],
+                                        positions,
+                                    )
+                                })
+                                .expect("bundling requires a lane");
+                            lanes.reserve(lane, from, to);
+                            lane
+                        });
+                        vec![lane]
+                    }
+                    None => lanes.candidates(ranks[a], start.y, end.y, 3),
+                }
+                .into_iter()
+                .map(|lane| RouteCandidate::direct(start, end, lane, &column_x))
+                .collect(),
                 _ => {
                     let gutter = match ranks[b].cmp(&ranks[a]) {
                         Ordering::Greater => ranks[b] - 1,
@@ -102,7 +129,9 @@ pub(super) fn route(
                 .into_iter()
                 .min_by_key(|candidate| scorer.score(&candidate.points, positions))
                 .expect("routing requires a route candidate");
-            chosen.reserve(&mut lanes);
+            if bundles.group(edge).is_none() {
+                chosen.reserve(&mut lanes);
+            }
             scorer.insert(chosen.points.clone());
             paths.push(chosen.points);
         }
@@ -118,6 +147,7 @@ pub(super) fn route(
             true => continue,
             false => {
                 return Routed {
+                    junctions: bundles.junctions(&paths),
                     paths,
                     width: (x + 20).max(1040),
                 };
