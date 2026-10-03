@@ -1,6 +1,70 @@
 use super::*;
 use crate::model::{Action, Node};
 
+fn star_paths(count: usize) -> Vec<Vec<Point>> {
+    (0..count)
+        .map(|y| {
+            vec![
+                Point { x: 0, y: 0 },
+                Point { x: 10, y: 0 },
+                Point { x: 10, y },
+                Point { x: 20, y },
+            ]
+        })
+        .collect()
+}
+
+fn one_bundle(count: usize) -> Bundles {
+    Bundles {
+        groups: vec![Bundle {
+            edges: (0..count).collect(),
+            shared: Shared::Source,
+        }],
+        membership: vec![Some(0); count],
+    }
+}
+
+#[test]
+fn ten_thousand_edge_stars_find_all_branch_points_in_both_directions() {
+    let bundles = one_bundle(10_000);
+    let mut paths = star_paths(10_000);
+    let expected: Vec<_> = (0..9_999).map(|y| Point { x: 10, y }).collect();
+    assert_eq!(bundles.junctions(&paths), expected);
+    for path in &mut paths {
+        path.reverse();
+    }
+    assert_eq!(bundles.junctions(&paths), expected);
+}
+
+#[test]
+fn sweep_preserves_junctions_at_touching_intervals_and_horizontal_subdivisions() {
+    let paths = vec![
+        vec![
+            Point { x: 0, y: 10 },
+            Point { x: 10, y: 10 },
+            Point { x: 10, y: 20 },
+            Point { x: 20, y: 20 },
+        ],
+        vec![
+            Point { x: 0, y: 20 },
+            Point { x: 10, y: 20 },
+            Point { x: 10, y: 30 },
+            Point { x: 20, y: 30 },
+        ],
+        vec![
+            Point { x: 0, y: 20 },
+            Point { x: 10, y: 20 },
+            Point { x: 20, y: 20 },
+        ],
+    ];
+    assert_eq!(
+        one_bundle(3).junctions(&paths),
+        vec![Point { x: 10, y: 20 }]
+    );
+    let straight = vec![vec![Point { x: 0, y: 0 }, Point { x: 20, y: 0 }]; 2];
+    assert!(one_bundle(2).junctions(&straight).is_empty());
+}
+
 fn graph(count: usize, edges: Vec<(usize, usize)>) -> Graph {
     Graph {
         nodes: (0..count)

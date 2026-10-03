@@ -104,42 +104,40 @@ impl Bundles {
     pub(super) fn junctions(&self, paths: &[Vec<Point>]) -> Vec<Point> {
         let mut result = BTreeSet::new();
         for group in &self.groups {
-            let segments: Vec<_> = group
-                .edges
-                .iter()
-                .flat_map(|&edge| paths[edge].windows(2))
-                .collect();
-            let x = match segments
-                .iter()
-                .find(|s| s[0].x == s[1].x && s[0].y != s[1].y)
-            {
+            let segments = || group.edges.iter().flat_map(|&edge| paths[edge].windows(2));
+            let x = match segments().find(|s| s[0].x == s[1].x && s[0].y != s[1].y) {
                 Some(segment) => segment[0].x,
                 None => continue,
             };
-            let ys: BTreeSet<_> = segments.iter().flat_map(|s| [s[0].y, s[1].y]).collect();
-            for y in ys {
-                let mut directions = 0u8;
-                for segment in &segments {
-                    let (a, b) = (segment[0], segment[1]);
-                    match (a.x == b.x, a.y == b.y) {
-                        (true, _) if a.x == x && y >= a.y.min(b.y) && y <= a.y.max(b.y) => {
-                            if y > a.y.min(b.y) {
-                                directions |= 1;
-                            }
-                            if y < a.y.max(b.y) {
-                                directions |= 2;
-                            }
-                        }
-                        (_, true) if a.y == y && x >= a.x.min(b.x) && x <= a.x.max(b.x) => {
-                            if x > a.x.min(b.x) {
-                                directions |= 4;
-                            }
-                            if x < a.x.max(b.x) {
-                                directions |= 8;
-                            }
-                        }
-                        _ => {}
+            let mut events: BTreeMap<usize, JunctionEvent> = BTreeMap::new();
+            for segment in segments() {
+                let (a, b) = (segment[0], segment[1]);
+                match (a.x == b.x, a.y == b.y) {
+                    (true, false) if a.x == x => {
+                        events.entry(a.y.min(b.y)).or_default().starts += 1;
+                        events.entry(a.y.max(b.y)).or_default().ends += 1;
                     }
+                    (_, true) if x >= a.x.min(b.x) && x <= a.x.max(b.x) => {
+                        let event = events.entry(a.y).or_default();
+                        if x > a.x.min(b.x) {
+                            event.directions |= 4;
+                        }
+                        if x < a.x.max(b.x) {
+                            event.directions |= 8;
+                        }
+                    }
+                    _ => {}
+                }
+            }
+            let mut active = 0;
+            for (y, event) in events {
+                let mut directions = event.directions;
+                if active > 0 {
+                    directions |= 1;
+                }
+                active = active - event.ends + event.starts;
+                if active > 0 {
+                    directions |= 2;
                 }
                 if directions.count_ones() >= 3 {
                     result.insert((x, y));
@@ -148,4 +146,11 @@ impl Bundles {
         }
         result.into_iter().map(|(x, y)| Point { x, y }).collect()
     }
+}
+
+#[derive(Default)]
+struct JunctionEvent {
+    starts: usize,
+    ends: usize,
+    directions: u8,
 }
