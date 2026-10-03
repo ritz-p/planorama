@@ -1,3 +1,4 @@
+mod containers;
 #[cfg(test)]
 #[path = "../tests/support/layout_metrics.rs"]
 pub(crate) mod metrics;
@@ -25,7 +26,16 @@ pub struct Band<'a> {
     pub height: usize,
 }
 
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct Bounds {
+    pub origin: Point,
+    pub width: usize,
+    pub height: usize,
+}
+
 pub struct Layout<'a> {
+    pub containers: Vec<(usize, Bounds)>,
+    pub parents: Vec<Option<usize>>,
     pub width: usize,
     pub height: usize,
     pub positions: Vec<Point>,
@@ -36,10 +46,19 @@ pub struct Layout<'a> {
 
 impl<'a> Layout<'a> {
     pub fn new(graph: &'a Graph) -> Self {
+        if graph
+            .nodes
+            .iter()
+            .any(|node| node.role == crate::model::ResourceRole::Container)
+        {
+            return containers::place(graph);
+        }
         let ranks = rank::compute(graph);
         let mut placement = placement::place(graph, &ranks);
         let routed = routing::route(graph, &ranks, &mut placement.positions, &placement.channels);
         Self {
+            containers: Vec::new(),
+            parents: vec![None; graph.nodes.len()],
             width: routed.width,
             height: placement.height,
             positions: placement.positions,
