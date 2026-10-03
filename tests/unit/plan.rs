@@ -1,4 +1,36 @@
 use super::*;
+
+#[test]
+fn modes_are_preserved_from_values_changes_and_recovered_prior_state() {
+    let graph = parse(r#"{
+        "format_version":"1.2",
+        "planned_values":{"root_module":{"resources":[
+            {"address":"aws_vpc.main","type":"aws_vpc","mode":"managed"},
+            {"address":"data.aws_vpc.shared","type":"aws_vpc","mode":"data"}
+        ]}},
+        "resource_changes":[{"address":"data.aws_ami.latest","type":"aws_ami","mode":"data","change":{"actions":["read"]}}],
+        "prior_state":{"values":{"root_module":{"resources":[
+            {"address":"data.custom_item.prior","type":"custom_item","mode":"data"}
+        ]}}},
+        "configuration":{"root_module":{"resources":[{"address":"data.custom_item.prior"}]}}
+    }"#).unwrap();
+    assert_eq!(graph.nodes.len(), 4);
+    for node in &graph.nodes {
+        let expected = match node.address.as_str() {
+            "aws_vpc.main" => EntityMode::Managed,
+            _ => EntityMode::Data,
+        };
+        assert_eq!(node.mode, expected);
+    }
+    let prior = graph
+        .nodes
+        .iter()
+        .find(|node| node.address == "data.custom_item.prior")
+        .unwrap();
+    assert_eq!(prior.role, crate::model::ResourceRole::Unknown);
+    let svg = crate::svg::render(&graph, &crate::layout::Layout::new(&graph));
+    assert!(svg.contains("data.custom_item.prior"));
+}
 #[test]
 fn real_terraform_plan_preserves_module_dependencies() {
     let graph = parse(include_str!("../../tests/fixtures/terraform-plan.json")).unwrap();

@@ -9,6 +9,8 @@ fn graph(count: usize, edges: Vec<(usize, usize)>) -> Graph {
                 resource_type: "test".into(),
                 module: "root".into(),
                 action: Action::Create,
+                mode: crate::model::EntityMode::Managed,
+                role: crate::model::ResourceRole::Unknown,
             })
             .collect(),
         edges,

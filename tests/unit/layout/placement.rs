@@ -10,6 +10,8 @@ fn long_edges_order_through_three_ranks_deterministically() {
                 resource_type: "test".into(),
                 module: "root".into(),
                 action: Action::Create,
+                mode: crate::model::EntityMode::Managed,
+                role: crate::model::ResourceRole::Unknown,
             })
             .collect(),
         edges: vec![(0, 3), (1, 2)],
