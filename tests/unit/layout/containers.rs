@@ -9,6 +9,31 @@ fn fixture() -> Graph {
     semantic::transform(&raw).0
 }
 
+#[test]
+fn parallel_association_changes_have_distinct_ports_and_paths() {
+    let raw = plan::parse(include_str!("../../fixtures/association-plan.json")).unwrap();
+    let mut graph = semantic::transform(&raw).0;
+    let mut other = graph.edges[0].clone();
+    let change = other.change.as_mut().unwrap();
+    change.address = "aws_route_table_association.other".into();
+    change.action = Action::Update;
+    graph.edges.push(other);
+    let layout = Layout::new(&graph);
+    assert_ne!(layout.paths[0], layout.paths[1]);
+    assert_ne!(layout.paths[0].first(), layout.paths[1].first());
+    assert_ne!(layout.paths[0].last(), layout.paths[1].last());
+    let output = svg::render(&graph, &layout);
+    for expected in [
+        "association; create: aws_route_table_association.private",
+        "association; update: aws_route_table_association.other",
+        "marker-end=\"url(#arrow-create)\"",
+        "marker-end=\"url(#arrow-update)\"",
+    ] {
+        assert!(output.contains(expected));
+    }
+    verify(&graph);
+}
+
 fn overlaps(a: Bounds, b: Bounds) -> bool {
     a.origin.x < b.origin.x + b.width
         && b.origin.x < a.origin.x + a.width
