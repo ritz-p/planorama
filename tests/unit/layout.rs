@@ -117,6 +117,27 @@ fn dense_dag_and_multiple_modules_avoid_cards() {
 }
 
 #[test]
+fn dense_graph_quality_metrics_are_deterministic() {
+    let edges = (0..4)
+        .flat_map(|a| (4..12).map(move |b| (a, b)))
+        .chain((4..8).flat_map(|a| (8..12).map(move |b| (a, b))))
+        .collect();
+    let graph = graph(12, edges);
+    check_geometry(&graph);
+    let metrics = metrics::measure(&Layout::new(&graph).paths);
+    assert_eq!(
+        metrics,
+        metrics::LayoutMetrics {
+            overlap_distance: 0,
+            crossing_count: 896,
+            bend_count: 128,
+            total_path_length: 88372,
+        }
+    );
+    assert_eq!(metrics, metrics::measure(&Layout::new(&graph).paths));
+}
+
+#[test]
 fn dense_bipartite_graph_expands_gutters_without_crossing_cards() {
     let graph = graph(
         16,
