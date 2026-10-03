@@ -1,4 +1,4 @@
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub enum Action {
     Unchanged,
     Create,
@@ -16,7 +16,6 @@ pub struct Node {
     pub module: String,
     pub action: Action,
     pub mode: EntityMode,
-    #[allow(dead_code, reason = "Role-specific rendering is not implemented yet")]
     pub role: ResourceRole,
 }
 
@@ -59,15 +58,22 @@ pub enum EdgeKind {
     Containment,
 }
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Edge {
     pub from: usize,
     pub to: usize,
     pub kind: EdgeKind,
+    pub change: Option<EdgeChange>,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
+pub struct EdgeChange {
+    pub address: String,
+    pub action: Action,
 }
 
 impl Edge {
-    pub fn endpoints(self) -> (usize, usize) {
+    pub fn endpoints(&self) -> (usize, usize) {
         (self.from, self.to)
     }
 }
@@ -78,6 +84,7 @@ impl From<(usize, usize)> for Edge {
             from,
             to,
             kind: EdgeKind::Dependency,
+            change: None,
         }
     }
 }

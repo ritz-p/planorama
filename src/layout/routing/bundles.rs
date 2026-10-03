@@ -1,5 +1,5 @@
 use crate::layout::{NODE_HEIGHT, Point};
-use crate::model::Graph;
+use crate::model::{EdgeKind, Graph};
 use std::collections::{BTreeMap, BTreeSet};
 
 #[cfg(test)]
@@ -40,6 +40,8 @@ impl Bundles {
             for (edge, link) in graph.edges.iter().enumerate() {
                 let (source, target) = link.endpoints();
                 if ranks[target] != ranks[source] + 1
+                    || link.kind != EdgeKind::Dependency
+                    || link.change.is_some()
                     || graph.nodes[source].module != graph.nodes[target].module
                     || result.membership[edge].is_some()
                 {
