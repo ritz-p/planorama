@@ -15,6 +15,11 @@ pub(super) fn collect(
 ) -> Vec<AttributeReference> {
     let mut expressions = BTreeMap::new();
     collect_expressions(module, "", &mut expressions);
+    let aliases = symbols
+        .iter()
+        .filter(|(key, _)| !expressions.contains_key(*key))
+        .map(|(key, references)| (key.clone(), references.clone()))
+        .collect();
     let mut instances: BTreeMap<String, Vec<usize>> = BTreeMap::new();
     for (index, node) in nodes.iter().enumerate() {
         instances
@@ -26,7 +31,7 @@ pub(super) fn collect(
     for (target, node) in nodes.iter().enumerate() {
         if let Some(attributes) = expressions.get(&static_address(&node.address)) {
             for (attribute, refs) in attributes {
-                let (sources, complete) = resolve(refs, &instances, symbols);
+                let (sources, complete) = resolve(refs, &instances, &aliases);
                 result.push(AttributeReference {
                     target,
                     attribute: attribute.clone(),
@@ -45,12 +50,9 @@ fn collect_expressions(
     found: &mut BTreeMap<String, BTreeMap<String, BTreeSet<String>>>,
 ) {
     for resource in module["resources"].as_array().into_iter().flatten() {
-        if let (Some(address), Some(expressions)) = (
-            resource["address"].as_str(),
-            resource["expressions"].as_object(),
-        ) {
+        if let Some(address) = resource["address"].as_str() {
             let attributes = found.entry(qualify(scope, address)).or_default();
-            for (name, expression) in expressions {
+            for (name, expression) in resource["expressions"].as_object().into_iter().flatten() {
                 let mut refs = BTreeSet::new();
                 references(expression, &mut refs);
                 attributes.insert(
@@ -98,6 +100,17 @@ fn resolve(
             {
                 Some((_, aliases)) if !aliases.is_empty() => {
                     pending.extend(aliases.iter().cloned())
+                }
+                None if reference.starts_with("module.") => {
+                    let descendants: Vec<_> = instances
+                        .iter()
+                        .filter(|(key, _)| prefix_match(key, &reference))
+                        .flat_map(|(_, indices)| indices.iter().copied())
+                        .collect();
+                    if descendants.is_empty() {
+                        complete = false;
+                    }
+                    sources.extend(descendants);
                 }
                 _ => complete = false,
             },

@@ -1,3 +1,4 @@
+mod relationships;
 mod style;
 #[cfg(test)]
 #[path = "../tests/unit/svg.rs"]
@@ -25,20 +26,22 @@ fn escape(value: &str) -> String {
 
 pub fn render(graph: &Graph, layout: &Layout<'_>) -> String {
     let (width, height) = (layout.width, layout.height);
+    let (description, summary) = relationships::captions(graph);
+    let markers = relationships::markers(graph);
+    let semantic_edges = graph
+        .edges
+        .iter()
+        .any(|edge| edge.kind != EdgeKind::Dependency);
     let mut svg = format!(
         r##"<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}" role="img" aria-labelledby="title description">
 <title id="title">Terraform plan</title>
-<desc id="description">{} resources, {} reference edges. Arrows point from dependencies to dependent resources. References are conservative, not Terraform execution order.</desc>
-<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/></marker></defs>
+<desc id="description">{description}</desc>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/></marker>{markers}</defs>
 <rect width="100%" height="100%" fill="#ffffff"/>
 <g font-family="ui-monospace, SFMono-Regular, Consolas, monospace">
 <text x="40" y="45" font-size="25" font-weight="700" fill="#0f172a">Terraform plan</text>
-<text x="40" y="73" font-size="13" fill="#475569">{} resources · {} reference edges · dependency → dependent</text>
+<text x="40" y="73" font-size="13" fill="#475569">{summary}</text>
 "##,
-        graph.nodes.len(),
-        graph.edges.len(),
-        graph.nodes.len(),
-        graph.edges.len()
     );
     for (i, action) in [
         Action::Create,
@@ -54,7 +57,16 @@ pub fn render(graph: &Graph, layout: &Layout<'_>) -> String {
     {
         let x = 40 + i * 140;
         let (background, border) = color(*action);
-        let count = graph.nodes.iter().filter(|n| n.action == *action).count();
+        let count = graph.nodes.iter().filter(|n| n.action == *action).count()
+            + graph
+                .edges
+                .iter()
+                .filter(|edge| {
+                    edge.change
+                        .as_ref()
+                        .is_some_and(|change| change.action == *action)
+                })
+                .count();
         writeln!(svg, r#"<rect x="{x}" y="100" width="12" height="12" fill="{background}" stroke="{border}"/><text x="{}" y="111" font-size="12" fill="{border}">{} ({count})</text>"#, x + 19, label(*action)).unwrap();
     }
     for band in &layout.bands {
@@ -68,11 +80,14 @@ pub fn render(graph: &Graph, layout: &Layout<'_>) -> String {
             EdgeKind::Connection => " data-edge-kind=\"connection\"",
             EdgeKind::Containment => " data-edge-kind=\"containment\"",
         };
-        let (a, b) = edge.endpoints();
-        let title = escape(&format!(
-            "{} → {}",
-            graph.nodes[a].address, graph.nodes[b].address
-        ));
+        let title = relationships::title(graph, edge, semantic_edges);
+        let (stroke, marker) = match &edge.change {
+            Some(change) => (
+                color(change.action).1,
+                format!("arrow-{}", label(change.action)),
+            ),
+            None => ("#94a3b8", "arrow".into()),
+        };
         let mut path = String::new();
         for (i, point) in points.iter().enumerate() {
             write!(
@@ -87,7 +102,7 @@ pub fn render(graph: &Graph, layout: &Layout<'_>) -> String {
             )
             .unwrap();
         }
-        writeln!(svg, r##"<path d="{path}"{relation} fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>{title}</title></path>"##).unwrap();
+        writeln!(svg, r##"<path d="{path}"{relation} fill="none" stroke="{stroke}" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#{marker})"><title>{title}</title></path>"##).unwrap();
     }
     for point in &layout.junctions {
         writeln!(

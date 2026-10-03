@@ -1,4 +1,4 @@
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub enum Action {
     Unchanged,
     Create,
@@ -58,15 +58,22 @@ pub enum EdgeKind {
     Containment,
 }
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Edge {
     pub from: usize,
     pub to: usize,
     pub kind: EdgeKind,
+    pub change: Option<EdgeChange>,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
+pub struct EdgeChange {
+    pub address: String,
+    pub action: Action,
 }
 
 impl Edge {
-    pub fn endpoints(self) -> (usize, usize) {
+    pub fn endpoints(&self) -> (usize, usize) {
         (self.from, self.to)
     }
 }
@@ -77,6 +84,7 @@ impl From<(usize, usize)> for Edge {
             from,
             to,
             kind: EdgeKind::Dependency,
+            change: None,
         }
     }
 }

@@ -1,4 +1,5 @@
 use crate::model::{ArchitectureGraph, TerraformGraph};
+mod associations;
 mod containment;
 
 #[cfg(test)]
@@ -6,5 +7,9 @@ mod containment;
 mod tests;
 
 pub fn transform(raw: &TerraformGraph) -> ArchitectureGraph {
-    ArchitectureGraph(containment::infer(raw))
+    let contained = TerraformGraph {
+        graph: containment::infer(raw),
+        attributes: raw.attributes.clone(),
+    };
+    ArchitectureGraph(associations::lower(&contained))
 }

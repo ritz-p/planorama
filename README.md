@@ -144,13 +144,17 @@ docker compose exec dev cargo run --locked -- examples/bundling-plan.json -o exa
 
 ## コード構成
 
-`semantic/containment.rs` は managed の Subnet の `vpc_id`、EC2 の `subnet_id` が対応する親へ一意に解決する場合、その依存辺を `Containment` にします。タグ・`depends_on`・定数 ID・未解決参照・複数候補は変換せず、元の依存を残します。data の親を参照する managed の子には対応しますが、data の検索条件は包含に変換しません。対応は VPC → Subnet → EC2 に限定しています。元の Terraform グラフは保持し、描画用グラフでもノード数・辺数・順序を変えません。SVG では `data-edge-kind="containment"` として表現し、カードの入れ子表示は行いません。サンプルは [containment.svg](examples/containment.svg) です。
+`semantic/containment.rs` は managed の Subnet の `vpc_id`、EC2 の `subnet_id` が対応する親へ一意に解決する場合、その依存辺を `Containment` にします。タグ・`depends_on`・定数 ID・未解決参照・複数候補は変換しません。data の親を参照する managed の子には対応しますが、data の検索条件は包含に変換しません。包含推定はノード数・辺数・順序を保持し、その後に関連付けの変換を実行します。SVG では `data-edge-kind="containment"` として表現します。サンプルは [containment.svg](examples/containment.svg) です。
+
+`semantic/associations.rs` は managed の `aws_route_table_association` を、Subnet → RouteTable の `Association` 辺へ置き換えます。`subnet_id` と `route_table_id` がそれぞれ一意に解決でき、元の依存辺がその 2 本だけの場合に限定します。追加の依存先・利用元、複数候補、未解決参照、定数だけの ID、data の関連付けは元のカードを残します。生グラフは変更しません。SVG の意味付き辺には `data-edge-kind` を付けます。サンプルは [association.svg](examples/association.svg) です。
 
 `TerraformGraph` は描画用グラフに加えて属性名・参照先・解決できたかを保持します。属性値そのものは保持しません。`depends_on`、count、for_each は従来の依存辺には反映しますが、属性の参照情報には混ぜません。属性参照が未解決・複数候補の場合、後続の意味変換は元の関係を維持できます。
 
-CLI の処理は `plan::parse → TerraformGraph → semantic::transform → ArchitectureGraph → Layout → SVG` の順です。変換は元の Terraform グラフを借用し、独立した描画用グラフを返します。明示的な親属性から包含関係を推定し、ノードと辺の順序は保持します。将来の変換規則は `semantic` 内に順序を明示して追加し、JSON 読み取りや SVG 生成から分離します。
+CLI の処理は `plan::parse → TerraformGraph → semantic::transform → ArchitectureGraph → Layout → SVG` の順です。変換は元の Terraform グラフを借用し、独立した描画用グラフを返します。包含推定の後、対応する関連付けリソースを辺へ変換し、ノード番号を再割り当てします。将来の変換規則は `semantic` 内に順序を明示して追加し、JSON 読み取りや SVG 生成から分離します。
 
-依存関係は `Edge { from, to, kind }` で保持します。`EdgeKind` は `Dependency` / `Association` / `Connection` / `Containment` を区別し、plan の参照はすべて `Dependency` として読み込みます。現在の配置・描画は端点を使うため、型付けによる出力変更はありません。
+依存関係は `Edge { from, to, kind, change }` で保持します。`EdgeKind` は `Dependency` / `Association` / `Connection` / `Containment` を区別し、plan の参照はすべて `Dependency` として読み込みます。関連付けを辺へ変換する際は、元のアドレスと変更種別を `change` に残します。同じ端点を持つ別の関連付けも個別に保持します。
+
+関連付けの変更種別は辺と矢印の色、辺のタイトル、凡例の件数に反映します。意味付き辺を含む SVG はリソース数とカード数を区別し、辺を `relationships` と表示します。各辺のタイトルで関係の種類を確認できます。通常の依存辺だけの場合は従来の説明・表示を維持します。
 
 モジュールは `mod.rs` を使わず、同名の `.rs` とディレクトリで構成します。`plan` は Terraform plan JSON の読み取りを担当し、サンプル設定の `examples/terraform/` と区別しています。
 
@@ -173,7 +177,7 @@ src/
     └── style.rs          # 配色・変更種別ラベル・文字の省略
 ```
 
-`cli` が `plan::parse` → `semantic::transform` → `Layout::new` → `svg::render` の順に呼び出します。`model` は JSON や描画に依存せず、`layout` は Terraform 固有の入力形式を扱いません。`svg` は計算済みの座標と経路を受け取って描画します。
+`cli` が `plan::parse` → `Layout::new` → `svg::render` の順に呼び出します。`model` は JSON や描画に依存せず、`layout` は Terraform 固有の入力形式を扱いません。`svg` は計算済みの座標と経路を受け取って描画します。
 
 テストコードとテストデータは、ルートの `tests/` に集約しています。
 
