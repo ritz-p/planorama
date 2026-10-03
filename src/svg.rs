@@ -1,4 +1,5 @@
 mod containers;
+mod entities;
 mod relationships;
 mod roles;
 mod style;
@@ -137,13 +138,18 @@ pub fn render(graph: &Graph, layout: &Layout<'_>) -> String {
             .take(2)
             .map(|c| c.iter().collect::<String>())
             .collect();
-        writeln!(svg, r#"<g id="resource-{i}"><title>{address} — {}</title><rect x="{x}" y="{y}" width="320" height="96" rx="8" fill="{background}" stroke="{border}" stroke-width="1.5"/>"#, label(node.action)).unwrap();
+        let mode = entities::border(node.mode);
+        writeln!(svg, r#"<g id="resource-{i}"><title>{address} — {}</title><rect x="{x}" y="{y}" width="320" height="96" rx="8" fill="{background}" stroke="{border}" stroke-width="1.5"{mode}/>"#, label(node.action)).unwrap();
+        svg.push_str(&entities::badge(node.mode, x, y));
         writeln!(
             svg,
             r#"<text x="{}" y="{}" font-size="11" fill="{border}">{} · {}</text>"#,
             x + 12,
             y + 20,
-            escape(&shorten(&node.resource_type, 25)),
+            escape(&shorten(
+                &node.resource_type,
+                entities::type_limit(node.mode)
+            )),
             label(node.action)
         )
         .unwrap();
@@ -175,7 +181,7 @@ pub fn render(graph: &Graph, layout: &Layout<'_>) -> String {
         svg.push_str("</g>\n");
     }
     if graph.nodes.is_empty() {
-        svg.push_str("<text x=\"40\" y=\"185\" font-size=\"16\" fill=\"#64748b\">No resources in this plan.</text>\n");
+        svg.push_str("<text x=\"40\" y=\"185\" font-size=\"16\" fill=\"#64748b\">No resources to display.</text>\n");
     }
     svg.push_str("</g>\n</svg>\n");
     svg
