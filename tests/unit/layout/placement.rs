@@ -14,7 +14,10 @@ fn long_edges_order_through_three_ranks_deterministically() {
                 role: crate::model::ResourceRole::Unknown,
             })
             .collect(),
-        edges: vec![(0, 3), (1, 2)],
+        edges: vec![(0, 3), (1, 2)]
+            .into_iter()
+            .map(crate::model::Edge::from)
+            .collect(),
     };
     let ranks = [0, 0, 3, 3];
     let placement = place(&graph, &ranks);

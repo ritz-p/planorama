@@ -61,7 +61,8 @@ pub fn render(graph: &Graph, layout: &Layout<'_>) -> String {
         let (module, y, h) = (band.label, band.top, band.height);
         writeln!(svg, r##"<rect x="35" y="{y}" width="{}" height="{h}" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-dasharray="5 4"/><text x="52" y="{}" font-size="13" font-weight="700" fill="#475569"><title>{}</title>{}</text>"##, width - 70, y + 25, escape(module), escape(&shorten(module, 110))).unwrap();
     }
-    for (&(a, b), points) in graph.edges.iter().zip(&layout.paths) {
+    for (edge, points) in graph.edges.iter().zip(&layout.paths) {
+        let (a, b) = edge.endpoints();
         let title = escape(&format!(
             "{} → {}",
             graph.nodes[a].address, graph.nodes[b].address

@@ -29,7 +29,8 @@ impl<'a> Expanded<'a> {
             })
             .collect();
         let mut edges = Vec::new();
-        for &(source, target) in &graph.edges {
+        for edge in &graph.edges {
+            let (source, target) = edge.endpoints();
             let mut previous = source;
             for rank in ranks[source] + 1..ranks[target] {
                 let dummy = vertices.len();

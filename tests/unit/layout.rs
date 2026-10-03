@@ -13,7 +13,7 @@ fn graph(count: usize, edges: Vec<(usize, usize)>) -> Graph {
                 role: crate::model::ResourceRole::Unknown,
             })
             .collect(),
-        edges,
+        edges: edges.into_iter().map(crate::model::Edge::from).collect(),
     }
 }
 
@@ -73,7 +73,8 @@ fn bundled_stars_avoid_cards_and_keep_individual_svg_relationships() {
         assert_eq!(svg.matches("marker-end=").count(), 3);
         assert!(!layout.junctions.is_empty());
         assert_eq!(svg.matches("<circle ").count(), layout.junctions.len());
-        for &(a, b) in &graph.edges {
+        for edge in &graph.edges {
+            let (a, b) = edge.endpoints();
             assert!(svg.contains(&format!("<title>test.n{a} → test.n{b}</title>")));
         }
         assert_eq!(svg, crate::svg::render(&graph, &Layout::new(&graph)));

@@ -5,7 +5,8 @@ pub(super) fn compute(graph: &Graph) -> Vec<usize> {
     let n = graph.nodes.len();
     let mut next = vec![Vec::new(); n];
     let mut previous = vec![Vec::new(); n];
-    for &(a, b) in &graph.edges {
+    for edge in &graph.edges {
+        let (a, b) = edge.endpoints();
         next[a].push(b);
         previous[b].push(a);
     }
@@ -52,7 +53,8 @@ pub(super) fn compute(graph: &Graph) -> Vec<usize> {
     }
     let mut links = vec![BTreeSet::new(); count];
     let mut degree = vec![0; count];
-    for &(a, b) in &graph.edges {
+    for edge in &graph.edges {
+        let (a, b) = edge.endpoints();
         let (a, b) = (component[a], component[b]);
         if a != b && links[a].insert(b) {
             degree[b] += 1;
