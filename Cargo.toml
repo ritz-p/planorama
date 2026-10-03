@@ -15,6 +15,7 @@ path = "tests/integration/terraform_plan.rs"
 [[test]]
 name = "rendering"
 path = "tests/integration/rendering.rs"
+rust-version = "1.85"
 
 [dependencies]
 serde_json = "1"
