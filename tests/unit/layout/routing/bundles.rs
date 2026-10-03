@@ -77,7 +77,7 @@ fn graph(count: usize, edges: Vec<(usize, usize)>) -> Graph {
                 role: crate::model::ResourceRole::Unknown,
             })
             .collect(),
-        edges,
+        edges: edges.into_iter().map(crate::model::Edge::from).collect(),
     }
 }
 

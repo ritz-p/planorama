@@ -26,7 +26,8 @@ impl Bundles {
     pub(super) fn new(graph: &Graph, ranks: &[usize]) -> Self {
         let mut incoming = vec![0; graph.nodes.len()];
         let mut outgoing = vec![0; graph.nodes.len()];
-        for &(source, target) in &graph.edges {
+        for edge in &graph.edges {
+            let (source, target) = edge.endpoints();
             outgoing[source] += 1;
             incoming[target] += 1;
         }
@@ -36,7 +37,8 @@ impl Bundles {
         };
         for shared in [Shared::Source, Shared::Target] {
             let mut groups: BTreeMap<usize, Vec<usize>> = BTreeMap::new();
-            for (edge, &(source, target)) in graph.edges.iter().enumerate() {
+            for (edge, link) in graph.edges.iter().enumerate() {
+                let (source, target) = link.endpoints();
                 if ranks[target] != ranks[source] + 1
                     || graph.nodes[source].module != graph.nodes[target].module
                     || result.membership[edge].is_some()
@@ -92,7 +94,7 @@ impl Bundles {
             .edges
             .iter()
             .flat_map(|&edge| {
-                let (source, target) = graph.edges[edge];
+                let (source, target) = graph.edges[edge].endpoints();
                 [
                     positions[source].y + sources[edge],
                     positions[target].y + targets[edge],

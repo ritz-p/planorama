@@ -115,7 +115,7 @@ fn prefix_match(reference: &str, key: &str) -> bool {
 pub(super) fn resolve(
     nodes: &[Node],
     symbols: &BTreeMap<String, BTreeSet<String>>,
-) -> Vec<(usize, usize)> {
+) -> Vec<crate::model::Edge> {
     let mut instances: BTreeMap<String, Vec<usize>> = BTreeMap::new();
     for (i, node) in nodes.iter().enumerate() {
         instances
@@ -167,5 +167,5 @@ pub(super) fn resolve(
             }
         }
     }
-    edges.into_iter().collect()
+    edges.into_iter().map(crate::model::Edge::from).collect()
 }

@@ -31,18 +31,19 @@ pub(super) fn route(
     let mut target_ports = vec![0; graph.edges.len()];
     let mut sources = vec![Vec::new(); graph.nodes.len()];
     let mut targets = vec![Vec::new(); graph.nodes.len()];
-    for (edge, &(a, b)) in graph.edges.iter().enumerate() {
+    for (edge, link) in graph.edges.iter().enumerate() {
+        let (a, b) = link.endpoints();
         sources[a].push(edge);
         targets[b].push(edge);
     }
     for edges in &mut sources {
-        edges.sort_by_key(|&edge| (positions[graph.edges[edge].1].y, edge));
+        edges.sort_by_key(|&edge| (positions[graph.edges[edge].to].y, edge));
         for (port, &edge) in edges.iter().enumerate() {
             source_ports[edge] = 20 + (port + 1) * (NODE_HEIGHT - 40) / (edges.len() + 1);
         }
     }
     for edges in &mut targets {
-        edges.sort_by_key(|&edge| (positions[graph.edges[edge].0].y, edge));
+        edges.sort_by_key(|&edge| (positions[graph.edges[edge].from].y, edge));
         for (port, &edge) in edges.iter().enumerate() {
             target_ports[edge] = 20 + (port + 1) * (NODE_HEIGHT - 40) / (edges.len() + 1);
         }
@@ -66,7 +67,8 @@ pub(super) fn route(
         let mut lanes = VerticalLanes::default();
         let mut bundle_lanes = vec![None; bundles.len()];
         let mut paths = Vec::with_capacity(graph.edges.len());
-        for (edge, &(a, b)) in graph.edges.iter().enumerate() {
+        for (edge, link) in graph.edges.iter().enumerate() {
+            let (a, b) = link.endpoints();
             let start = Point {
                 x: positions[a].x + NODE_WIDTH,
                 y: positions[a].y + source_ports[edge],

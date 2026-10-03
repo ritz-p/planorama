@@ -19,7 +19,7 @@ fn fan_out_and_fan_in_share_trunks_and_preserve_endpoints() {
                     role: crate::model::ResourceRole::Unknown,
                 })
                 .collect(),
-            edges,
+            edges: edges.into_iter().map(crate::model::Edge::from).collect(),
         };
         let initial: Vec<_> = (0..4)
             .map(|i| Point {
@@ -39,7 +39,8 @@ fn fan_out_and_fan_in_share_trunks_and_preserve_endpoints() {
         assert_eq!(xs.len(), 1);
         assert_eq!(routed.paths.len(), graph.edges.len());
         assert_eq!(routed.junctions.len(), 2);
-        for (path, &(source, target)) in routed.paths.iter().zip(&graph.edges) {
+        for (path, edge) in routed.paths.iter().zip(&graph.edges) {
+            let (source, target) = edge.endpoints();
             assert_eq!(
                 path[0],
                 Point {
@@ -75,7 +76,10 @@ fn unrelated_edges_cannot_reuse_an_occupied_bundle_trunk() {
                 role: crate::model::ResourceRole::Unknown,
             })
             .collect(),
-        edges: vec![(0, 2), (0, 3), (1, 4)],
+        edges: vec![(0, 2), (0, 3), (1, 4)]
+            .into_iter()
+            .map(crate::model::Edge::from)
+            .collect(),
     };
     let ranks = [0, 0, 1, 1, 1];
     let mut positions = vec![
@@ -119,6 +123,7 @@ fn long_edges_use_separate_channels_after_gutter_expansion() {
         edges: (0..8)
             .map(|i| (i, 15 - i))
             .chain([(0, 16), (0, 17)])
+            .map(crate::model::Edge::from)
             .collect(),
     };
     let ranks: Vec<_> = (0..18).map(|i| i / 8).collect();
@@ -162,7 +167,9 @@ fn eight_overlapping_edges_get_distinct_lanes_inside_the_gutter() {
                 role: crate::model::ResourceRole::Unknown,
             })
             .collect(),
-        edges: (0..8).map(|i| (i, 15 - i)).collect(),
+        edges: (0..8)
+            .map(|i| crate::model::Edge::from((i, 15 - i)))
+            .collect(),
     };
     let ranks: Vec<_> = (0..16).map(|i| i / 8).collect();
     let initial: Vec<_> = (0..16)

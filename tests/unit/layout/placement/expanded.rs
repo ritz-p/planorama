@@ -13,7 +13,7 @@ fn graph(edges: Vec<(usize, usize)>) -> Graph {
                 role: crate::model::ResourceRole::Unknown,
             })
             .collect(),
-        edges,
+        edges: edges.into_iter().map(crate::model::Edge::from).collect(),
     }
 }
 
@@ -42,7 +42,14 @@ fn three_rank_span_has_two_virtual_vertices_and_adjacent_transitions() {
         }
     }
     assert_eq!(graph.nodes.len(), 4);
-    assert_eq!(graph.edges, [(0, 1), (1, 2), (2, 3), (0, 3)]);
+    assert_eq!(
+        graph
+            .edges
+            .iter()
+            .map(|edge| edge.endpoints())
+            .collect::<Vec<_>>(),
+        [(0, 1), (1, 2), (2, 3), (0, 3)]
+    );
 }
 
 #[test]
