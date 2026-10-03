@@ -2,12 +2,14 @@ use super::{NODE_HEIGHT, NODE_WIDTH, Point};
 use crate::model::Graph;
 use std::cmp::Ordering;
 mod bundles;
-mod channels;
+mod candidates;
 mod coverage;
 mod lanes;
+mod scoring;
 use bundles::Bundles;
-use channels::HorizontalChannels;
-use lanes::{Lane, VerticalLanes};
+use candidates::RouteCandidate;
+use lanes::VerticalLanes;
+use scoring::Scorer;
 
 #[cfg(test)]
 #[path = "../../tests/unit/layout/routing.rs"]
@@ -17,15 +19,6 @@ pub(super) struct Routed {
     pub paths: Vec<Vec<Point>>,
     pub width: usize,
     pub junctions: Vec<Point>,
-}
-
-enum Route {
-    Direct(Lane),
-    Channel {
-        source: Lane,
-        target: Lane,
-        y: usize,
-    },
 }
 
 pub(super) fn route(
@@ -59,88 +52,21 @@ pub(super) fn route(
     bundles.align_ports(&mut source_ports, &mut target_ports);
     let columns = ranks.iter().max().copied().unwrap_or(0) + 1;
     let mut gutter_widths = vec![100; columns];
-    let (routes, column_x, width) = loop {
+    loop {
         let mut column_x = Vec::with_capacity(columns);
         let mut x = 60;
         for &width in &gutter_widths {
             column_x.push(x);
             x += NODE_WIDTH + width;
         }
-        let mut occupied = HorizontalChannels::new(channels);
+        for (index, position) in positions.iter_mut().enumerate() {
+            position.x = column_x[ranks[index]];
+        }
+        let mut scorer = Scorer::default();
         let mut lanes = VerticalLanes::default();
         let mut bundle_lanes = vec![None; bundles.len()];
-        let lane_x = |lane: Lane| column_x[lane.gutter] + NODE_WIDTH + lane.offset();
-        let routes: Vec<_> = graph
-            .edges
-            .iter()
-            .enumerate()
-            .map(|(edge, &(a, b))| {
-                let source_y = positions[a].y + source_ports[edge];
-                let target_y = positions[b].y + target_ports[edge];
-                match ranks[b].checked_sub(ranks[a]) {
-                    Some(0 | 1) => {
-                        let lane = match bundles.group(edge) {
-                            Some(group) => *bundle_lanes[group].get_or_insert_with(|| {
-                                let (from, to) = bundles.span(
-                                    group,
-                                    graph,
-                                    positions,
-                                    &source_ports,
-                                    &target_ports,
-                                );
-                                lanes.allocate(ranks[a], from, to)
-                            }),
-                            None => lanes.allocate(ranks[a], source_y, target_y),
-                        };
-                        Route::Direct(lane)
-                    }
-                    _ => {
-                        let gutter = match ranks[b].cmp(&ranks[a]) {
-                            Ordering::Greater => ranks[b] - 1,
-                            Ordering::Equal | Ordering::Less => ranks[b],
-                        };
-                        let ranges: Vec<_> = channels
-                            .iter()
-                            .map(|&y| {
-                                (
-                                    lane_x(lanes.preview(ranks[a], source_y, y)),
-                                    lane_x(lanes.preview(gutter, y, target_y)),
-                                )
-                            })
-                            .collect();
-                        let y = occupied.allocate_candidates(&ranges, source_y, target_y);
-                        Route::Channel {
-                            source: lanes.allocate(ranks[a], source_y, y),
-                            target: lanes.allocate(gutter, y, target_y),
-                            y,
-                        }
-                    }
-                }
-            })
-            .collect();
-        let mut expanded = false;
-        for (column, width) in gutter_widths.iter_mut().enumerate() {
-            let needed = lanes.width(column);
-            if needed > *width {
-                *width = needed;
-                expanded = true;
-            }
-        }
-        match expanded {
-            true => continue,
-            false => break (routes, column_x, (x + 20).max(1040)),
-        }
-    };
-    for (index, position) in positions.iter_mut().enumerate() {
-        position.x = column_x[ranks[index]];
-    }
-    let lane_x = |lane: Lane| column_x[lane.gutter] + NODE_WIDTH + lane.offset();
-    let paths: Vec<_> = graph
-        .edges
-        .iter()
-        .zip(routes)
-        .enumerate()
-        .map(|(edge, (&(a, b), route))| {
+        let mut paths = Vec::with_capacity(graph.edges.len());
+        for (edge, &(a, b)) in graph.edges.iter().enumerate() {
             let start = Point {
                 x: positions[a].x + NODE_WIDTH,
                 y: positions[a].y + source_ports[edge],
@@ -152,37 +78,83 @@ pub(super) fn route(
                 },
                 y: positions[b].y + target_ports[edge],
             };
-            simplify(match route {
-                Route::Direct(lane) => {
-                    let x = lane_x(lane);
-                    vec![start, Point { x, y: start.y }, Point { x, y: end.y }, end]
+            let candidates: Vec<_> = match ranks[b].checked_sub(ranks[a]) {
+                Some(0 | 1) => match bundles.group(edge) {
+                    Some(group) => {
+                        let lane = *bundle_lanes[group].get_or_insert_with(|| {
+                            let (from, to) =
+                                bundles.span(group, graph, positions, &source_ports, &target_ports);
+                            let lane = lanes
+                                .candidates(ranks[a], from, to, 3)
+                                .into_iter()
+                                .min_by_key(|lane| {
+                                    let x = column_x[lane.gutter] + NODE_WIDTH + lane.offset();
+                                    scorer.score(
+                                        &[Point { x, y: from }, Point { x, y: to }],
+                                        positions,
+                                    )
+                                })
+                                .expect("bundling requires a lane");
+                            lanes.reserve(lane, from, to);
+                            lane
+                        });
+                        vec![lane]
+                    }
+                    None => lanes.candidates(ranks[a], start.y, end.y, 3),
                 }
-                Route::Channel { source, target, y } => {
-                    let left = lane_x(source);
-                    let right = lane_x(target);
-                    vec![
-                        start,
-                        Point {
-                            x: left,
-                            y: start.y,
-                        },
-                        Point { x: left, y },
-                        Point { x: right, y },
-                        Point { x: right, y: end.y },
-                        end,
-                    ]
+                .into_iter()
+                .map(|lane| RouteCandidate::direct(start, end, lane, &column_x))
+                .collect(),
+                _ => {
+                    let gutter = match ranks[b].cmp(&ranks[a]) {
+                        Ordering::Greater => ranks[b] - 1,
+                        Ordering::Equal | Ordering::Less => ranks[b],
+                    };
+                    channels
+                        .iter()
+                        .map(|&y| {
+                            RouteCandidate::channel(
+                                start,
+                                end,
+                                lanes.preview(ranks[a], start.y, y),
+                                lanes.preview(gutter, y, end.y),
+                                y,
+                                &column_x,
+                            )
+                        })
+                        .collect()
                 }
-            })
-        })
-        .collect();
-    let junctions = bundles.junctions(&paths);
-    Routed {
-        paths,
-        width,
-        junctions,
+            };
+            let chosen = candidates
+                .into_iter()
+                .min_by_key(|candidate| scorer.score(&candidate.points, positions))
+                .expect("routing requires a route candidate");
+            if bundles.group(edge).is_none() {
+                chosen.reserve(&mut lanes);
+            }
+            scorer.insert(chosen.points.clone());
+            paths.push(chosen.points);
+        }
+        let mut expanded = false;
+        for (column, width) in gutter_widths.iter_mut().enumerate() {
+            let needed = lanes.width(column);
+            if needed > *width {
+                *width = needed;
+                expanded = true;
+            }
+        }
+        match expanded {
+            true => continue,
+            false => {
+                return Routed {
+                    junctions: bundles.junctions(&paths),
+                    paths,
+                    width: (x + 20).max(1040),
+                };
+            }
+        }
     }
 }
-
 fn simplify(points: Vec<Point>) -> Vec<Point> {
     let mut result: Vec<Point> = Vec::new();
     for point in points {

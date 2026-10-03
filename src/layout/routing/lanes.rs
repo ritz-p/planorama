@@ -26,32 +26,48 @@ pub(super) struct VerticalLanes {
 }
 
 impl VerticalLanes {
+    #[cfg(test)]
     pub(super) fn allocate(&mut self, gutter: usize, from: usize, to: usize) -> Lane {
         let lane = self.preview(gutter, from, to);
-        let range = from.min(to)..from.max(to);
-        let lanes = self.gutters.entry(gutter).or_default();
-        if lane.index == lanes.len() {
-            lanes.push(Vec::new());
-        }
-        if !range.is_empty() {
-            lanes[lane.index].push(range);
-        }
+        self.reserve(lane, from, to);
         lane
     }
 
+    pub(super) fn reserve(&mut self, lane: Lane, from: usize, to: usize) {
+        let range = from.min(to)..from.max(to);
+        let lanes = self.gutters.entry(lane.gutter).or_default();
+        lanes.resize_with(lanes.len().max(lane.index + 1), Vec::new);
+        if !range.is_empty() {
+            lanes[lane.index].push(range);
+        }
+    }
+
     pub(super) fn preview(&self, gutter: usize, from: usize, to: usize) -> Lane {
+        self.candidates(gutter, from, to, 1)[0]
+    }
+
+    pub(super) fn candidates(
+        &self,
+        gutter: usize,
+        from: usize,
+        to: usize,
+        count: usize,
+    ) -> Vec<Lane> {
         let range = from.min(to)..from.max(to);
         let lanes = self.gutters.get(&gutter).map_or(&[][..], Vec::as_slice);
-        let index = match lanes.iter().position(|occupied| {
-            range.is_empty()
-                || occupied
-                    .iter()
-                    .all(|existing| existing.start >= range.end || range.start >= existing.end)
-        }) {
-            Some(index) => index,
-            None => lanes.len(),
-        };
-        Lane { gutter, index }
+        (0..)
+            .filter(|&index| match lanes.get(index) {
+                None => true,
+                Some(occupied) => {
+                    range.is_empty()
+                        || occupied.iter().all(|existing| {
+                            existing.start >= range.end || range.start >= existing.end
+                        })
+                }
+            })
+            .take(count)
+            .map(|index| Lane { gutter, index })
+            .collect()
     }
 
     pub(super) fn width(&self, gutter: usize) -> usize {

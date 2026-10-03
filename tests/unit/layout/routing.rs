@@ -62,7 +62,7 @@ fn fan_out_and_fan_in_share_trunks_and_preserve_endpoints() {
 
 #[test]
 fn unrelated_edges_cannot_reuse_an_occupied_bundle_trunk() {
-    let graph = Graph {
+    let mut graph = Graph {
         nodes: (0..5)
             .map(|i| Node {
                 address: format!("test.n{i}"),
@@ -89,6 +89,14 @@ fn unrelated_edges_cannot_reuse_an_occupied_bundle_trunk() {
             .x
     };
     assert_ne!(vertical_x(&routed.paths[1]), vertical_x(&routed.paths[2]));
+    graph.edges.swap(1, 2);
+    let interleaved = route(&graph, &ranks, &mut positions, &[192, 800]);
+    assert_ne!(
+        vertical_x(&interleaved.paths[1]),
+        vertical_x(&interleaved.paths[2])
+    );
+    assert_eq!(routed.paths[0], interleaved.paths[0]);
+    assert_eq!(routed.paths[1], interleaved.paths[2]);
 }
 
 #[test]
