@@ -1,5 +1,5 @@
-use std::io::Write;
-use std::process::{Command, Stdio};
+mod support;
+use std::process::Command;
 
 fn cli() -> Command {
     Command::new(env!("CARGO_BIN_EXE_planorama"))
@@ -7,20 +7,7 @@ fn cli() -> Command {
 
 #[test]
 fn stdin_to_stdout_is_svg_and_diagnostics_stay_on_stderr() {
-    let mut child = cli()
-        .args(["-", "-o", "-"])
-        .stdin(Stdio::piped())
-        .stdout(Stdio::piped())
-        .stderr(Stdio::piped())
-        .spawn()
-        .unwrap();
-    child
-        .stdin
-        .take()
-        .unwrap()
-        .write_all(include_bytes!("../examples/plan.json"))
-        .unwrap();
-    let output = child.wait_with_output().unwrap();
+    let output = support::run(include_bytes!("../../examples/plan.json"));
     assert!(output.status.success());
     assert!(output.stdout.starts_with(b"<svg "));
     assert!(output.stdout.ends_with(b"</svg>\n"));
@@ -29,15 +16,7 @@ fn stdin_to_stdout_is_svg_and_diagnostics_stay_on_stderr() {
 
 #[test]
 fn invalid_json_fails_without_svg() {
-    let mut child = cli()
-        .args(["-", "-o", "-"])
-        .stdin(Stdio::piped())
-        .stdout(Stdio::piped())
-        .stderr(Stdio::piped())
-        .spawn()
-        .unwrap();
-    child.stdin.take().unwrap().write_all(b"broken").unwrap();
-    let output = child.wait_with_output().unwrap();
+    let output = support::run(b"broken");
     assert!(!output.status.success());
     assert!(output.stdout.is_empty());
     assert!(String::from_utf8_lossy(&output.stderr).contains("invalid JSON"));
@@ -51,7 +30,7 @@ fn refuses_to_overwrite_input() {
     assert!(String::from_utf8_lossy(&output.stderr).contains("different files"));
     assert_eq!(
         std::fs::read(path).unwrap(),
-        include_bytes!("../examples/plan.json")
+        include_bytes!("../../examples/plan.json")
     );
 }
 

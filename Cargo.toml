@@ -2,6 +2,19 @@
 name = "planorama"
 version = "0.1.0"
 edition = "2024"
+autotests = false
+
+[[test]]
+name = "cli"
+path = "tests/integration/cli.rs"
+
+[[test]]
+name = "terraform_plan"
+path = "tests/integration/terraform_plan.rs"
+
+[[test]]
+name = "rendering"
+path = "tests/integration/rendering.rs"
 
 [dependencies]
 serde_json = "1"
