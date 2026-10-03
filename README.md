@@ -150,6 +150,8 @@ data は役割とは別に破線と `external` バッジで表示します。VPC
 
 メタデータ型の `data.aws_region`、`data.aws_partition`、`data.aws_caller_identity`、`data.aws_availability_zones`、`data.aws_iam_policy_document` は描画用グラフから省略します。同じ型でも managed リソースは省略しません。省略ノードに接続する辺も除き、表示ノード間の直接の辺を保持します。経由した関係の推測・付け替えは行いません。元の Terraform グラフは全情報を保持し、SVG の件数・凡例は表示対象のみを集計します。外部リソースのサンプルは [data.svg](examples/data.svg)（入力: [data-plan.json](examples/data-plan.json)）です。
 
+コンテナはヘッダーだけでなく枠全体を変更種別の色で塗ります。最上位を従来の背景色とし、包含の深さに応じて同系色を5段階で濃くします。6階層目以降は5段階目の色を使います。通常のリソースカードの色と変更種別の凡例は維持します。
+
 `layout/containers.rs` は Container を子の大きさに合わせた入れ子の枠として配置します。包含辺は枠で表し、その他の辺はカードのヘッダーと無関係なコンテナを避ける直角経路で接続します。循環・複数の親候補がある包含辺は入れ子にせず線を残します。最上位リソースを所属モジュールの帯に配置し、モジュールをまたぐ子は親の枠を優先しつつ各カードに元のモジュール名を表示します。Container がない図は従来の階層配置を使います。
 
 `semantic/containment.rs` は managed の Subnet の `vpc_id`、EC2 の `subnet_id` が対応する親へ一意に解決する場合、その依存辺を `Containment` にします。タグ・`depends_on`・定数 ID・未解決参照・複数候補は変換しません。data の親を参照する managed の子には対応しますが、data の検索条件は包含に変換しません。包含推定はノード数・辺数・順序を保持し、その後に関連付けの変換を実行します。SVG では `data-edge-kind="containment"` を保持し、確定した包含関係を入れ子の枠として表現します。サンプルは [containment.svg](examples/containment.svg) です。
