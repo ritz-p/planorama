@@ -1,5 +1,5 @@
 use crate::layout::Layout;
-use crate::{plan, svg};
+use crate::{plan, semantic, svg};
 use std::io::{self, Read, Write};
 use std::path::{Path, PathBuf};
 
@@ -60,7 +60,8 @@ pub fn run() -> Result<(), String> {
         }
         path => std::fs::read_to_string(path).map_err(|e| format!("cannot read {path}: {e}"))?,
     };
-    let graph = plan::parse(&json)?;
+    let raw = plan::parse(&json)?;
+    let graph = semantic::transform(&raw);
     let layout = Layout::new(&graph);
     let image = svg::render(&graph, &layout);
     match output.as_path() {

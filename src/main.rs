@@ -3,6 +3,7 @@ mod cli;
 mod layout;
 mod model;
 mod plan;
+mod semantic;
 mod svg;
 
 use std::process::ExitCode;

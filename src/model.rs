@@ -9,7 +9,7 @@ pub enum Action {
     Other,
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Node {
     pub address: String,
     pub resource_type: String,
@@ -38,10 +38,14 @@ pub enum ResourceRole {
     Unknown,
 }
 
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Graph {
     pub nodes: Vec<Node>,
     pub edges: Vec<Edge>,
 }
+
+mod graphs;
+pub use graphs::{ArchitectureGraph, AttributeReference, TerraformGraph};
 
 #[allow(
     dead_code,

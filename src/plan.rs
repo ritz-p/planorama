@@ -1,17 +1,18 @@
 mod address;
+mod attributes;
 mod entity;
 mod references;
 #[cfg(test)]
 #[path = "../tests/unit/plan.rs"]
 mod tests;
 
-use crate::model::{Action, EntityMode, Graph, Node};
+use crate::model::{Action, EntityMode, Graph, Node, TerraformGraph};
 use address::static_address;
 use references::{collect_config, resolve};
 use serde_json::Value;
 use std::collections::{BTreeMap, BTreeSet};
 
-pub fn parse(json: &str) -> Result<Graph, String> {
+pub fn parse(json: &str) -> Result<TerraformGraph, String> {
     let plan: Value = serde_json::from_str(json.trim_start_matches('\u{feff}'))
         .map_err(|e| format!("invalid JSON: {e}"))?;
     let version = plan["format_version"]
@@ -55,7 +56,11 @@ pub fn parse(json: &str) -> Result<Graph, String> {
     }
     let nodes: Vec<_> = nodes.into_values().collect();
     let edges = resolve(&nodes, &symbols);
-    Ok(Graph { nodes, edges })
+    let attributes = attributes::collect(&plan["configuration"]["root_module"], &nodes, &symbols);
+    Ok(TerraformGraph {
+        graph: Graph { nodes, edges },
+        attributes,
+    })
 }
 
 fn parse_action(actions: &Value) -> Action {

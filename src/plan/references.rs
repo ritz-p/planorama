@@ -3,7 +3,7 @@ use crate::model::Node;
 use serde_json::Value;
 use std::collections::{BTreeMap, BTreeSet};
 
-fn references(value: &Value, found: &mut BTreeSet<String>) {
+pub(super) fn references(value: &Value, found: &mut BTreeSet<String>) {
     match value {
         Value::Object(object) => {
             if let Some(refs) = object.get("references").and_then(Value::as_array) {
@@ -24,7 +24,7 @@ fn references(value: &Value, found: &mut BTreeSet<String>) {
     }
 }
 
-fn qualify(scope: &str, reference: &str) -> String {
+pub(super) fn qualify(scope: &str, reference: &str) -> String {
     match scope {
         "" => reference.into(),
         _ => format!("{scope}.{reference}"),
@@ -105,7 +105,7 @@ pub(super) fn collect_config(
     }
 }
 
-fn prefix_match(reference: &str, key: &str) -> bool {
+pub(super) fn prefix_match(reference: &str, key: &str) -> bool {
     reference == key
         || reference
             .strip_prefix(key)
