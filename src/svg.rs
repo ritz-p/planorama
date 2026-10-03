@@ -1,5 +1,6 @@
 mod containers;
 mod relationships;
+mod roles;
 mod style;
 #[cfg(test)]
 #[path = "../tests/unit/svg.rs"]
@@ -162,16 +163,14 @@ pub fn render(graph: &Graph, layout: &Layout<'_>) -> String {
             )
             .unwrap();
         }
-        if !layout.containers.is_empty() {
-            writeln!(
-                svg,
-                r##"<text x="{}" y="{}" font-size="10" fill="#64748b"><title>{}</title>{}</text>"##,
-                x + 12,
-                y + 84,
-                escape(&node.module),
-                escape(&shorten(&node.module, 43))
-            )
-            .unwrap();
+        let role = roles::annotation(node.role, &node.module);
+        let footer = match role.is_empty() {
+            false => role,
+            true if !layout.containers.is_empty() => escape(&shorten(&node.module, 43)),
+            true => String::new(),
+        };
+        if !footer.is_empty() {
+            writeln!(svg, r##"<text x="{}" y="{}" font-size="10" fill="#64748b"{}><title>{}</title>{footer}</text>"##, x + 12, y + 84, roles::attributes(node.role), escape(&node.module)).unwrap();
         }
         svg.push_str("</g>\n");
     }
