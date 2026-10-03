@@ -1,4 +1,5 @@
 mod relationships;
+mod roles;
 mod style;
 #[cfg(test)]
 #[path = "../tests/unit/svg.rs"]
@@ -153,6 +154,17 @@ pub fn render(graph: &Graph, layout: &Layout<'_>) -> String {
                 x + 12,
                 y + 45 + line * 20,
                 escape(&text)
+            )
+            .unwrap();
+        }
+        let role = roles::annotation(node.role, &node.module);
+        if !role.is_empty() {
+            writeln!(
+                svg,
+                r##"<text x="{}" y="{}" font-size="10" fill="#64748b"{}>{role}</text>"##,
+                x + 12,
+                y + 84,
+                roles::attributes(node.role)
             )
             .unwrap();
         }
