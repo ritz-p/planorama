@@ -144,6 +144,8 @@ docker compose exec dev cargo run --locked -- examples/bundling-plan.json -o exa
 
 ## コード構成
 
+`Policy`（Security Group、NACL）は属性値を含めない軽量なカードと `policy` ラベルで表示します。`Controller`（ASG、ECS Service）は通常のカードに `controller` ラベルを付けます。どちらもリソース名・変更種別・依存辺・分類を保持し、省略しません。ルール一覧や管理対象のグループ化は行わず、今後の専用表示に備えて分類を残します。
+
 `semantic/containment.rs` は managed の Subnet の `vpc_id`、EC2 の `subnet_id` が対応する親へ一意に解決する場合、その依存辺を `Containment` にします。タグ・`depends_on`・定数 ID・未解決参照・複数候補は変換しません。data の親を参照する managed の子には対応しますが、data の検索条件は包含に変換しません。包含推定はノード数・辺数・順序を保持し、その後に関連付けの変換を実行します。SVG では `data-edge-kind="containment"` として表現します。サンプルは [containment.svg](examples/containment.svg) です。
 
 `semantic/associations.rs` は managed の `aws_route_table_association` を、Subnet → RouteTable の `Association` 辺へ置き換えます。`subnet_id` と `route_table_id` がそれぞれ一意に解決でき、元の依存辺がその 2 本だけの場合に限定します。追加の依存先・利用元、複数候補、未解決参照、定数だけの ID、data の関連付けは元のカードを残します。生グラフは変更しません。SVG の意味付き辺には `data-edge-kind` を付けます。サンプルは [association.svg](examples/association.svg) です。

@@ -1,6 +1,32 @@
 use super::*;
 
 #[test]
+fn policy_and_controller_fallbacks_keep_resources_actions_and_dependencies() {
+    let raw = crate::plan::parse(r#"{"format_version":"1.2","resource_changes":[
+        {"address":"aws_security_group.app","type":"aws_security_group","change":{"actions":["update"]}},
+        {"address":"aws_ecs_service.app","type":"aws_ecs_service","change":{"actions":["create"]}}
+    ],"configuration":{"root_module":{"resources":[
+        {"address":"aws_security_group.app"},
+        {"address":"aws_ecs_service.app","expressions":{"security_groups":{"references":["aws_security_group.app.id"]}}}
+    ]}}}"#).unwrap();
+    let graph = crate::semantic::transform(&raw);
+    assert_eq!(graph.0, raw.graph);
+    let output = render(&graph, &Layout::new(&graph));
+    for value in [
+        "data-role=\"policy\"",
+        "data-role=\"controller\"",
+        "aws_security_group.app",
+        "aws_ecs_service.app",
+        "update (1)",
+        "create (1)",
+    ] {
+        assert!(output.contains(value), "missing {value}");
+    }
+    assert_eq!(output.matches("marker-end=").count(), 1);
+    assert_eq!(output, render(&graph, &Layout::new(&graph)));
+}
+
+#[test]
 fn mixed_relationships_identify_each_kind_without_dependency_only_captions() {
     let raw = crate::plan::parse(include_str!("../fixtures/association-plan.json")).unwrap();
     let mut graph = crate::semantic::transform(&raw);
