@@ -120,7 +120,8 @@ pub fn render(graph: &Graph, layout: &Layout<'_>) -> String {
     }
     for (i, node) in graph.nodes.iter().enumerate() {
         let (x, y) = (layout.positions[i].x, layout.positions[i].y);
-        let (background, border) = color(node.action);
+        let background = containers::background(graph, layout, i);
+        let border = color(node.action).1;
         let address = escape(&node.address);
         let local = match node.module.as_str() {
             "root" => node.address.as_str(),
