@@ -1,0 +1,19 @@
+name: Cargo fmt
+
+on:
+  pull_request:
+    paths:
+      - '**.rs'
+      - .github/workflows/cargo_fmt.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  formatting:
+    name: Formatting
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - run: docker compose run --build --rm -T dev cargo fmt --all --check
