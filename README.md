@@ -88,7 +88,7 @@ docker compose exec dev cargo build --locked --release
 
 ## 初期版の表示仕様
 
-内部モデルは Terraform の所有形態を `EntityMode`（`Managed` / `Data`）、アーキテクチャ上の役割を `ResourceRole`（`Container` / `Node` / `Connector` / `Association` / `Policy` / `Controller` / `Unknown`）として別々に保持します。mode は JSON の値を優先し、省略されたサンプルではモジュール部分を除いたリソースアドレスから補います。分類は JSON パーサーから独立した `classification` がリソース型名だけを使って行い、managed / data の違いで役割は変わりません。未知の型は `Unknown` になり、従来どおり描画します。役割別描画の導入までは role フィールドだけ未使用警告の例外としています。
+内部モデルは Terraform の所有形態を `EntityMode`（`Managed` / `Data`）、アーキテクチャ上の役割を `ResourceRole`（`Container` / `Node` / `Connector` / `Association` / `Policy` / `Controller` / `Unknown`）として別々に保持します。mode は JSON の値を優先し、省略されたサンプルではモジュール部分を除いたリソースアドレスから補います。分類は JSON パーサーから独立した `classification` がリソース型名だけを使って行い、managed / data の違いで役割は変わりません。未知の型は `Unknown` になり、従来どおり描画します。role は意味変換の判定に使用します。
 
 AWS の初期分類は `classification/aws.rs` に閉じ込めています。型名の完全一致で分類し、表示や依存関係は変更しません。
 
@@ -144,9 +144,11 @@ docker compose exec dev cargo run --locked -- examples/bundling-plan.json -o exa
 
 ## コード構成
 
+`semantic/associations.rs` は managed の `aws_route_table_association` を、Subnet → RouteTable の `Association` 辺へ置き換えます。`subnet_id` と `route_table_id` がそれぞれ一意に解決でき、元の依存辺がその 2 本だけの場合に限定します。追加の依存先・利用元、複数候補、未解決参照、定数だけの ID、data の関連付けは元のカードを残します。生グラフは変更しません。SVG の意味付き辺には `data-edge-kind` を付けます。サンプルは [association.svg](examples/association.svg) です。
+
 `TerraformGraph` は描画用グラフに加えて属性名・参照先・解決できたかを保持します。属性値そのものは保持しません。`depends_on`、count、for_each は従来の依存辺には反映しますが、属性の参照情報には混ぜません。属性参照が未解決・複数候補の場合、後続の意味変換は元の関係を維持できます。
 
-CLI の処理は `plan::parse → TerraformGraph → semantic::transform → ArchitectureGraph → Layout → SVG` の順です。変換は元の Terraform グラフを借用し、独立した描画用グラフを返します。現段階はノード・辺・順序をそのまま保持する恒等変換です。将来の変換規則は `semantic` 内に順序を明示して追加し、JSON 読み取りや SVG 生成から分離します。
+CLI の処理は `plan::parse → TerraformGraph → semantic::transform → ArchitectureGraph → Layout → SVG` の順です。変換は元の Terraform グラフを借用し、独立した描画用グラフを返します。対応する関連付けリソースだけを意味変換し、それ以外はノード・辺・順序を保持します。将来の変換規則は `semantic` 内に順序を明示して追加し、JSON 読み取りや SVG 生成から分離します。
 
 依存関係は `Edge { from, to, kind }` で保持します。`EdgeKind` は `Dependency` / `Association` / `Connection` / `Containment` を区別し、plan の参照はすべて `Dependency` として読み込みます。現在の配置・描画は端点を使うため、型付けによる出力変更はありません。
 

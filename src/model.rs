@@ -16,7 +16,6 @@ pub struct Node {
     pub module: String,
     pub action: Action,
     pub mode: EntityMode,
-    #[allow(dead_code, reason = "Role-specific rendering is not implemented yet")]
     pub role: ResourceRole,
 }
 

@@ -1,5 +1,14 @@
 mod support;
 
+#[test]
+fn association_resources_are_lowered_by_the_cli() {
+    let svg = render(include_bytes!("../fixtures/association-plan.json"));
+    assert!(svg.contains("2 resources, 1 reference edges"));
+    assert!(svg.contains("aws_subnet.private → aws_route_table.private"));
+    assert!(!svg.contains("aws_route_table_association.private"));
+    assert!(svg.contains("data-edge-kind=\"association\""));
+}
+
 fn render(input: &[u8]) -> String {
     let output = support::run(input);
     assert!(
