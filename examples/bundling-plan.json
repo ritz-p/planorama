@@ -1,0 +1,106 @@
+{
+  "format_version": "1.2",
+  "resource_changes": [
+    {
+      "address": "terraform_data.seed",
+      "type": "terraform_data",
+      "change": {
+        "actions": [
+          "create"
+        ]
+      }
+    },
+    {
+      "address": "terraform_data.a",
+      "type": "terraform_data",
+      "change": {
+        "actions": [
+          "create"
+        ]
+      }
+    },
+    {
+      "address": "terraform_data.b",
+      "type": "terraform_data",
+      "change": {
+        "actions": [
+          "create"
+        ]
+      }
+    },
+    {
+      "address": "terraform_data.c",
+      "type": "terraform_data",
+      "change": {
+        "actions": [
+          "create"
+        ]
+      }
+    },
+    {
+      "address": "terraform_data.aggregate",
+      "type": "terraform_data",
+      "change": {
+        "actions": [
+          "create"
+        ]
+      }
+    }
+  ],
+  "configuration": {
+    "root_module": {
+      "resources": [
+        {
+          "address": "terraform_data.seed",
+          "type": "terraform_data"
+        },
+        {
+          "address": "terraform_data.a",
+          "type": "terraform_data",
+          "expressions": {
+            "input": {
+              "references": [
+                "terraform_data.seed.output"
+              ]
+            }
+          }
+        },
+        {
+          "address": "terraform_data.b",
+          "type": "terraform_data",
+          "expressions": {
+            "input": {
+              "references": [
+                "terraform_data.seed.output"
+              ]
+            }
+          }
+        },
+        {
+          "address": "terraform_data.c",
+          "type": "terraform_data",
+          "expressions": {
+            "input": {
+              "references": [
+                "terraform_data.seed.output"
+              ]
+            }
+          }
+        },
+        {
+          "address": "terraform_data.aggregate",
+          "type": "terraform_data",
+          "expressions": {
+            "input": {
+              "references": [
+                "terraform_data.a.output",
+                "terraform_data.b.output",
+                "terraform_data.c.output"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}
