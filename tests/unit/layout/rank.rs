@@ -8,6 +8,8 @@ fn cycle_is_condensed_and_dependents_follow() {
             resource_type: "test".into(),
             module: "root".into(),
             action: Action::Create,
+            mode: crate::model::EntityMode::Managed,
+            role: crate::model::ResourceRole::Unknown,
         })
         .collect();
     let graph = Graph {

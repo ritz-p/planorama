@@ -15,6 +15,8 @@ fn fan_out_and_fan_in_share_trunks_and_preserve_endpoints() {
                     resource_type: "test".into(),
                     module: "root".into(),
                     action: Action::Create,
+                    mode: crate::model::EntityMode::Managed,
+                    role: crate::model::ResourceRole::Unknown,
                 })
                 .collect(),
             edges,
@@ -69,6 +71,8 @@ fn unrelated_edges_cannot_reuse_an_occupied_bundle_trunk() {
                 resource_type: "test".into(),
                 module: "root".into(),
                 action: Action::Create,
+                mode: crate::model::EntityMode::Managed,
+                role: crate::model::ResourceRole::Unknown,
             })
             .collect(),
         edges: vec![(0, 2), (0, 3), (1, 4)],
@@ -108,6 +112,8 @@ fn long_edges_use_separate_channels_after_gutter_expansion() {
                 resource_type: "test".into(),
                 module: "root".into(),
                 action: Action::Create,
+                mode: crate::model::EntityMode::Managed,
+                role: crate::model::ResourceRole::Unknown,
             })
             .collect(),
         edges: (0..8)
@@ -152,6 +158,8 @@ fn eight_overlapping_edges_get_distinct_lanes_inside_the_gutter() {
                 resource_type: "test".into(),
                 module: "root".into(),
                 action: Action::Create,
+                mode: crate::model::EntityMode::Managed,
+                role: crate::model::ResourceRole::Unknown,
             })
             .collect(),
         edges: (0..8).map(|i| (i, 15 - i)).collect(),

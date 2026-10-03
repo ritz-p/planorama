@@ -1,11 +1,12 @@
 mod address;
+mod entity;
 mod references;
 #[cfg(test)]
 #[path = "../tests/unit/plan.rs"]
 mod tests;
 
-use crate::model::{Action, Graph, Node};
-use address::{module_of, static_address};
+use crate::model::{Action, EntityMode, Graph, Node};
+use address::static_address;
 use references::{collect_config, resolve};
 use serde_json::Value;
 use std::collections::{BTreeMap, BTreeSet};
@@ -31,12 +32,7 @@ pub fn parse(json: &str) -> Result<Graph, String> {
             .ok_or("resource change is missing address")?;
         nodes.insert(
             address.into(),
-            Node {
-                address: address.into(),
-                module: module_of(address),
-                resource_type: change["type"].as_str().unwrap_or("resource").into(),
-                action: parse_action(&change["change"]["actions"]),
-            },
+            entity::parse(change, address, parse_action(&change["change"]["actions"])),
         );
     }
     let mut symbols = BTreeMap::new();
@@ -82,16 +78,12 @@ fn parse_action(actions: &Value) -> Action {
 
 fn collect_values(module: &Value, nodes: &mut BTreeMap<String, Node>, data_only: bool) {
     for resource in module["resources"].as_array().into_iter().flatten() {
-        if data_only && resource["mode"] != "data" {
-            continue;
-        }
         if let Some(address) = resource["address"].as_str() {
-            nodes.entry(address.into()).or_insert_with(|| Node {
-                address: address.into(),
-                module: module_of(address),
-                resource_type: resource["type"].as_str().unwrap_or("resource").into(),
-                action: Action::Unchanged,
-            });
+            let node = entity::parse(resource, address, Action::Unchanged);
+            if data_only && node.mode != EntityMode::Data {
+                continue;
+            }
+            nodes.entry(address.into()).or_insert(node);
         }
     }
     for child in module["child_modules"].as_array().into_iter().flatten() {
