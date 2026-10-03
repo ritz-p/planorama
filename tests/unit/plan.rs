@@ -1,6 +1,39 @@
 use super::*;
 
 #[test]
+fn classification_uses_types_independently_of_entity_mode_and_input_source() {
+    use crate::model::ResourceRole;
+    let graph = parse(r#"{
+        "format_version":"1.2",
+        "planned_values":{"root_module":{"resources":[
+            {"address":"aws_vpc.main","type":"aws_vpc","mode":"managed"},
+            {"address":"data.aws_vpc.shared","type":"aws_vpc","mode":"data"},
+            {"address":"custom_unknown.item","type":"custom_unknown"}
+        ]}},
+        "resource_changes":[{"address":"aws_instance.app","type":"aws_instance","change":{"actions":["create"]}}],
+        "prior_state":{"values":{"root_module":{"resources":[
+            {"address":"data.aws_security_group.shared","type":"aws_security_group","mode":"data"}
+        ]}}},
+        "configuration":{"root_module":{"resources":[{"address":"data.aws_security_group.shared"}]}}
+    }"#).unwrap();
+    assert_eq!(graph.nodes.len(), 5);
+    for node in &graph.nodes {
+        let expected = match node.address.as_str() {
+            "aws_vpc.main" => (EntityMode::Managed, ResourceRole::Container),
+            "data.aws_vpc.shared" => (EntityMode::Data, ResourceRole::Container),
+            "aws_instance.app" => (EntityMode::Managed, ResourceRole::Node),
+            "data.aws_security_group.shared" => (EntityMode::Data, ResourceRole::Policy),
+            _ => (EntityMode::Managed, ResourceRole::Unknown),
+        };
+        assert_eq!((node.mode, node.role), expected);
+    }
+    assert!(
+        crate::svg::render(&graph, &crate::layout::Layout::new(&graph))
+            .contains("custom_unknown.item")
+    );
+}
+
+#[test]
 fn modes_are_preserved_from_values_changes_and_recovered_prior_state() {
     let graph = parse(r#"{
         "format_version":"1.2",
