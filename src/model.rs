@@ -26,10 +26,6 @@ pub enum EntityMode {
     Data,
 }
 
-#[allow(
-    dead_code,
-    reason = "Provider classifiers will populate these architectural roles"
-)]
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 pub enum ResourceRole {
     Container,

@@ -1,3 +1,4 @@
+mod classification;
 mod cli;
 mod layout;
 mod model;
