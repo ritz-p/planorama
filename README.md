@@ -155,9 +155,17 @@ src/
 
 テストコードとテストデータは、ルートの `tests/` に集約しています。
 
+`tests/unit/` はパーサー内部・参照解決・配置や経路・描画ヘルパーを検証し、対象モジュール内にコンパイルします。`tests/integration/` は実際の CLI バイナリを起動して入力 JSON から SVG までの動作を検証し、内部モジュールを読み込みません。共通の入力データは `tests/fixtures/` や既存の `examples/` を参照し、複製しません。`tests/support/layout_metrics.rs` は単体テスト専用の計測ヘルパーです。
+
+Cargo.toml の `autotests = false` と `[[test]]` で 3 つの結合テストを明示的に登録しています。結合テストのクレートを増やすときは登録も追加してください。`cargo test --locked` は単体・結合の両方を実行します。CLI の結合テストだけなら `docker compose run --rm dev cargo test --locked --test cli`、単体テストだけなら `docker compose run --rm dev cargo test --locked --bin planorama` を使えます。
+
 ```text
 tests/
-├── cli.rs                # CLI の結合テスト
+├── integration/          # 公開 CLI 経由の結合テスト
+│   ├── cli.rs            # 引数・標準入出力・エラー
+│   ├── terraform_plan.rs # 実際の plan の依存関係
+│   ├── rendering.rs      # JSON → SVG の回帰確認
+│   └── support.rs        # CLI 起動ヘルパー
 ├── fixtures/
 │   └── terraform-plan.json
 └── unit/
