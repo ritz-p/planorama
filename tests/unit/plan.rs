@@ -1,6 +1,25 @@
 use super::*;
 
 #[test]
+fn parsed_edges_are_ordered_dependencies() {
+    let graph = parse(include_str!("../../tests/fixtures/terraform-plan.json")).unwrap();
+    assert_eq!(graph.edges.len(), 34);
+    assert!(
+        graph
+            .edges
+            .iter()
+            .all(|edge| edge.kind == crate::model::EdgeKind::Dependency)
+    );
+    assert!(graph.edges.windows(2).all(|pair| pair[0] < pair[1]));
+    assert_eq!(
+        graph.edges,
+        parse(include_str!("../../tests/fixtures/terraform-plan.json"))
+            .unwrap()
+            .edges
+    );
+}
+
+#[test]
 fn classification_uses_types_independently_of_entity_mode_and_input_source() {
     use crate::model::ResourceRole;
     let graph = parse(r#"{
@@ -79,7 +98,8 @@ fn real_terraform_plan_preserves_module_dependencies() {
     let edges: BTreeSet<_> = graph
         .edges
         .iter()
-        .map(|&(a, b)| {
+        .map(|edge| {
+            let (a, b) = edge.endpoints();
             (
                 graph.nodes[a].address.as_str(),
                 graph.nodes[b].address.as_str(),
@@ -128,9 +148,21 @@ fn real_data_sources_preserve_read_status_and_both_edge_directions() {
     let consumer = index("terraform_data.from_state");
     assert_eq!(graph.nodes[existing].action, Action::Unchanged);
     assert_eq!(graph.nodes[deferred].action, Action::Read);
-    assert!(graph.edges.contains(&(ready, deferred)));
-    assert!(graph.edges.contains(&(existing, consumer)));
-    assert!(graph.edges.contains(&(deferred, consumer)));
+    assert!(
+        graph
+            .edges
+            .contains(&crate::model::Edge::from((ready, deferred)))
+    );
+    assert!(
+        graph
+            .edges
+            .contains(&crate::model::Edge::from((existing, consumer)))
+    );
+    assert!(
+        graph
+            .edges
+            .contains(&crate::model::Edge::from((deferred, consumer)))
+    );
 }
 
 #[test]
@@ -173,7 +205,11 @@ fn example_covers_changes_and_module_input_edges() {
     assert_eq!(graph.nodes[ami].action, Action::Unchanged);
     for (index, node) in graph.nodes.iter().enumerate() {
         if node.resource_type == "aws_instance" {
-            assert!(graph.edges.contains(&(ami, index)));
+            assert!(
+                graph
+                    .edges
+                    .contains(&crate::model::Edge::from((ami, index)))
+            );
         }
     }
     let subnet = graph
@@ -186,7 +222,11 @@ fn example_covers_changes_and_module_input_edges() {
         .iter()
         .position(|n| n.resource_type == "aws_vpc")
         .unwrap();
-    assert!(graph.edges.contains(&(vpc, subnet)));
+    assert!(
+        graph
+            .edges
+            .contains(&crate::model::Edge::from((vpc, subnet)))
+    );
     assert_eq!(
         graph
             .nodes
@@ -232,5 +272,5 @@ fn module_output_resolves_to_resource() {
         }}}
       }}
     }"#).unwrap();
-    assert_eq!(graph.edges, vec![(1, 0)]);
+    assert_eq!(graph.edges, vec![crate::model::Edge::from((1, 0))]);
 }

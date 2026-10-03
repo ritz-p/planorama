@@ -14,7 +14,10 @@ fn cycle_is_condensed_and_dependents_follow() {
         .collect();
     let graph = Graph {
         nodes,
-        edges: vec![(0, 1), (1, 0), (1, 2), (2, 3)],
+        edges: vec![(0, 1), (1, 0), (1, 2), (2, 3)]
+            .into_iter()
+            .map(crate::model::Edge::from)
+            .collect(),
     };
     assert_eq!(compute(&graph), vec![0, 0, 1, 2]);
 }
