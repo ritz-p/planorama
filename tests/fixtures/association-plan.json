@@ -1,0 +1,16 @@
+{
+  "format_version": "1.2",
+  "resource_changes": [
+    {"address": "aws_subnet.private", "type": "aws_subnet", "change": {"actions": ["create"]}},
+    {"address": "aws_route_table.private", "type": "aws_route_table", "change": {"actions": ["create"]}},
+    {"address": "aws_route_table_association.private", "type": "aws_route_table_association", "change": {"actions": ["create"]}}
+  ],
+  "configuration": {"root_module": {"resources": [
+    {"address": "aws_subnet.private"},
+    {"address": "aws_route_table.private"},
+    {"address": "aws_route_table_association.private", "expressions": {
+      "subnet_id": {"references": ["aws_subnet.private.id"]},
+      "route_table_id": {"references": ["aws_route_table.private.id"]}
+    }}
+  ]}}
+}

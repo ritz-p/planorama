@@ -71,8 +71,16 @@ pub fn run() -> Result<(), String> {
         _ => {
             std::fs::write(&output, image)
                 .map_err(|e| format!("cannot write {}: {e}", output.display()))?;
+            let (nodes, edges) = match graph
+                .edges
+                .iter()
+                .any(|edge| edge.kind != crate::model::EdgeKind::Dependency)
+            {
+                true => ("cards", "relationships"),
+                false => ("resources", "reference edges"),
+            };
             eprintln!(
-                "Wrote {} ({} resources, {} reference edges)",
+                "Wrote {} ({} {nodes}, {} {edges})",
                 output.display(),
                 graph.nodes.len(),
                 graph.edges.len()

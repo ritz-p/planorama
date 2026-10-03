@@ -114,3 +114,16 @@ fn independent_stars_do_not_share_membership() {
     assert_eq!(bundles.len(), 2);
     assert_eq!(bundles.membership, [Some(0), Some(0), Some(1), Some(1)]);
 }
+
+#[test]
+fn semantic_edges_and_resource_changes_are_not_bundled() {
+    let mut graph = graph(3, vec![(0, 1), (0, 2)]);
+    graph.edges[0].kind = EdgeKind::Association;
+    assert_eq!(Bundles::new(&graph, &[0, 1, 1]).len(), 0);
+    graph.edges[0].kind = EdgeKind::Dependency;
+    graph.edges[0].change = Some(crate::model::EdgeChange {
+        address: "test.relationship".into(),
+        action: Action::Update,
+    });
+    assert_eq!(Bundles::new(&graph, &[0, 1, 1]).len(), 0);
+}
