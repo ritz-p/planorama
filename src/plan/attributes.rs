@@ -99,6 +99,17 @@ fn resolve(
                 Some((_, aliases)) if !aliases.is_empty() => {
                     pending.extend(aliases.iter().cloned())
                 }
+                None if reference.starts_with("module.") => {
+                    let descendants: Vec<_> = instances
+                        .iter()
+                        .filter(|(key, _)| prefix_match(key, &reference))
+                        .flat_map(|(_, indices)| indices.iter().copied())
+                        .collect();
+                    if descendants.is_empty() {
+                        complete = false;
+                    }
+                    sources.extend(descendants);
+                }
                 _ => complete = false,
             },
         }

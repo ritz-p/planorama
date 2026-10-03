@@ -1,6 +1,52 @@
 use crate::plan;
 
 #[test]
+fn whole_module_attributes_include_all_descendant_instances() {
+    let raw = plan::parse(include_str!("../../fixtures/terraform-plan.json")).unwrap();
+    let target = raw
+        .nodes
+        .iter()
+        .position(|n| n.address == "terraform_data.consumer")
+        .unwrap();
+    let attribute = raw
+        .attributes
+        .iter()
+        .find(|a| a.target == target && a.attribute == "input")
+        .unwrap();
+    let expected: Vec<_> = raw
+        .nodes
+        .iter()
+        .enumerate()
+        .filter(|(_, n)| n.address.starts_with("module.service["))
+        .map(|(i, _)| i)
+        .collect();
+    assert!(!expected.is_empty());
+    assert_eq!(attribute.sources, expected);
+    assert!(attribute.complete);
+}
+
+#[test]
+fn module_expansion_respects_boundaries_and_incomplete_references() {
+    use std::collections::{BTreeMap, BTreeSet};
+    let instances = BTreeMap::from([
+        ("module.app.aws_vpc.main".into(), vec![0]),
+        ("module.app.module.child.aws_subnet.main".into(), vec![1]),
+        ("module.apple.aws_vpc.main".into(), vec![2]),
+    ]);
+    for (refs, expected, complete) in [
+        (vec!["module.app"], vec![0, 1], true),
+        (vec!["module.missing"], vec![], false),
+        (vec!["module.app", "module.missing"], vec![0, 1], false),
+    ] {
+        let refs: BTreeSet<_> = refs.into_iter().map(str::to_owned).collect();
+        assert_eq!(
+            super::resolve(&refs, &instances, &BTreeMap::new()),
+            (expected, complete)
+        );
+    }
+}
+
+#[test]
 fn attribute_provenance_excludes_depends_on_and_marks_partial_resolution() {
     let raw = plan::parse(
         r#"{
