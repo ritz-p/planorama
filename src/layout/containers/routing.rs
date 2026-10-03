@@ -34,20 +34,45 @@ pub(super) fn crosses(a: Point, b: Point, bounds: Bounds) -> bool {
 }
 
 pub(super) fn route(graph: &Graph, layout: &Layout<'_>) -> Vec<Vec<Point>> {
+    let mut outgoing = vec![Vec::new(); graph.nodes.len()];
+    let mut incoming = vec![Vec::new(); graph.nodes.len()];
+    for (index, edge) in graph.edges.iter().enumerate() {
+        if edge.kind != EdgeKind::Containment || layout.parents[edge.to] != Some(edge.from) {
+            outgoing[edge.from].push(index);
+            incoming[edge.to].push(index);
+        }
+    }
+    let mut source_ports = vec![0; graph.edges.len()];
+    let mut target_ports = vec![0; graph.edges.len()];
+    for (groups, ports) in [
+        (&outgoing, &mut source_ports),
+        (&incoming, &mut target_ports),
+    ] {
+        for edges in groups {
+            for (slot, &edge) in edges.iter().enumerate() {
+                ports[edge] = 20 + (slot + 1) * (NODE_HEIGHT - 40) / (edges.len() + 1);
+            }
+        }
+    }
     graph
         .edges
         .iter()
-        .map(|edge| {
+        .enumerate()
+        .map(|(index, edge)| {
             if edge.kind == EdgeKind::Containment && layout.parents[edge.to] == Some(edge.from) {
                 return Vec::new();
             }
             let start = Point {
                 x: layout.positions[edge.from].x + NODE_WIDTH,
-                y: layout.positions[edge.from].y + 32,
+                y: layout.positions[edge.from].y + source_ports[index],
             };
             let end = Point {
                 x: layout.positions[edge.to].x + NODE_WIDTH,
-                y: layout.positions[edge.to].y + 64,
+                y: layout.positions[edge.to].y
+                    + match edge.from == edge.to {
+                        true => NODE_HEIGHT - 12,
+                        false => target_ports[index],
+                    },
             };
             let mut obstacles: Vec<_> = layout
                 .positions
