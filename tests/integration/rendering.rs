@@ -1,6 +1,14 @@
 mod support;
 
 #[test]
+fn cli_emits_containment_metadata_without_dropping_resources_or_dependencies() {
+    let svg = render(include_bytes!("../fixtures/containment-plan.json"));
+    assert!(svg.contains("3 resources (3 cards), 3 relationships"));
+    assert_eq!(svg.matches("data-edge-kind=\"containment\"").count(), 2);
+    assert_eq!(svg.matches("marker-end=").count(), 3);
+}
+
+#[test]
 fn association_resources_are_lowered_by_the_cli() {
     let svg = render(include_bytes!("../fixtures/association-plan.json"));
     assert!(svg.contains("3 resources (2 cards), 1 relationships"));
