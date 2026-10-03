@@ -67,7 +67,20 @@ pub(super) fn route(graph: &Graph, layout: &Layout<'_>) -> Vec<Vec<Point>> {
                     })
                     .map(|(_, bounds)| *bounds),
             );
-            find_path(start, end, &obstacles)
+            let mut path = vec![start];
+            path.extend(find_path(
+                Point {
+                    x: start.x + 16,
+                    ..start
+                },
+                Point {
+                    x: end.x + 16,
+                    ..end
+                },
+                &obstacles,
+            ));
+            path.push(end);
+            path
         })
         .collect()
 }

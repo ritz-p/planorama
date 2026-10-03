@@ -18,6 +18,13 @@ fn overlaps(a: Bounds, b: Bounds) -> bool {
 
 fn verify(graph: &Graph) {
     let layout = Layout::new(graph);
+    for path in layout.paths.iter().filter(|path| !path.is_empty()) {
+        assert_eq!(path[0].y, path[1].y);
+        assert!(path[0].x < path[1].x);
+        let last = path.len() - 1;
+        assert_eq!(path[last].y, path[last - 1].y);
+        assert!(path[last].x < path[last - 1].x);
+    }
     for &(parent, bounds) in &layout.containers {
         assert!(bounds.origin.x + bounds.width <= layout.width);
         assert!(bounds.origin.y + bounds.height <= layout.height);
