@@ -88,6 +88,8 @@ docker compose exec dev cargo build --locked --release
 
 ## 初期版の表示仕様
 
+内部モデルは Terraform の所有形態を `EntityMode`（`Managed` / `Data`）、アーキテクチャ上の役割を `ResourceRole`（`Container` / `Node` / `Connector` / `Association` / `Policy` / `Controller` / `Unknown`）として別々に保持します。mode は JSON の値を優先し、省略されたサンプルではモジュール部分を除いたリソースアドレスから補います。この段階の role はすべて `Unknown` で、未分類のリソースも従来どおり描画します。分類器・役割別描画を後続で導入するまで、未使用警告の例外は役割 enum と role フィールドだけに限定しています。
+
 - 作成・更新・削除・置換・読み取り・変更なしを色とラベルで区別します。
 - 変更なしのリソースも含め、削除されるリソースも残します。
 - 読み取り済みの `data` が `prior_state` にのみ存在する場合も、構成に残っていれば図へ補います。
