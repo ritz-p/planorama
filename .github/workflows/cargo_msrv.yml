@@ -2,6 +2,11 @@ name: Cargo msrv
 
 on:
   pull_request:
+    paths:
+      - Cargo.toml
+      - rust-toolchain.toml
+      - Dockerfile
+      - .github/workflows/cargo_msrv.yml
   workflow_dispatch:
 
 env:
@@ -17,4 +22,4 @@ jobs:
     steps:
       - uses: actions/checkout@v7.0.1
       - run: docker build --build-arg RUST_VERSION=${{ env.RUST_VERSION }} --tag planorama-msrv .
-      - run: docker run --rm --volume "$PWD:/workspace" --env CARGO_TARGET_DIR=/tmp/planorama-target planorama-msrv cargo +${{ RUST_VERSION }}  test --locked --all-targets --all-features
+      - run: docker run --rm --volume "$PWD:/workspace" --env CARGO_TARGET_DIR=/tmp/planorama-target planorama-msrv cargo +${{ env.RUST_VERSION }}  test --locked --all-targets --all-features

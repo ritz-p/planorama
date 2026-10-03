@@ -2,6 +2,9 @@ name: Cargo fmt
 
 on:
   pull_request:
+    paths:
+      - '**.rs'
+      - .github/workflows/cargo_fmt.yml
   workflow_dispatch:
 
 permissions:

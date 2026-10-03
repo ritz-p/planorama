@@ -2,6 +2,9 @@ name: Cargo clippy
 
 on:
   pull_request:
+    paths:
+      - '**.rs'
+      - .github/workflows/cargo_clippy.yml
   workflow_dispatch:
 
 permissions:

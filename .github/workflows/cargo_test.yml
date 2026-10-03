@@ -2,6 +2,9 @@ name: Cargo test
 
 on:
   pull_request:
+    paths:
+      - '**.rs'
+      - .github/workflows/cargo_test.yml
   workflow_dispatch:
 
 permissions:
