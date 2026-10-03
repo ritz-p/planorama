@@ -62,6 +62,34 @@ fn sweeps_uncross_reversed_dependencies() {
 }
 
 #[test]
+fn bundled_stars_avoid_cards_and_keep_individual_svg_relationships() {
+    for edges in [vec![(0, 1), (0, 2), (0, 3)], vec![(0, 3), (1, 3), (2, 3)]] {
+        let graph = graph(4, edges);
+        check_geometry(&graph);
+        let layout = Layout::new(&graph);
+        let svg = crate::svg::render(&graph, &layout);
+        assert_eq!(svg.matches("marker-end=").count(), 3);
+        assert!(!layout.junctions.is_empty());
+        assert_eq!(svg.matches("<circle ").count(), layout.junctions.len());
+        for &(a, b) in &graph.edges {
+            assert!(svg.contains(&format!("<title>test.n{a} → test.n{b}</title>")));
+        }
+        assert_eq!(svg, crate::svg::render(&graph, &Layout::new(&graph)));
+    }
+}
+
+#[test]
+fn bundling_sample_preserves_both_stages_of_dependencies() {
+    let graph = crate::plan::parse(include_str!("../../examples/bundling-plan.json")).unwrap();
+    assert_eq!(graph.nodes.len(), 5);
+    assert_eq!(graph.edges.len(), 6);
+    let layout = Layout::new(&graph);
+    assert_eq!(layout.paths.len(), 6);
+    assert!(!layout.junctions.is_empty());
+    check_geometry(&graph);
+}
+
+#[test]
 fn long_edges_and_cycles_avoid_cards() {
     check_geometry(&graph(
         6,

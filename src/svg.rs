@@ -82,6 +82,14 @@ pub fn render(graph: &Graph, layout: &Layout<'_>) -> String {
         }
         writeln!(svg, r##"<path d="{path}" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>{title}</title></path>"##).unwrap();
     }
+    for point in &layout.junctions {
+        writeln!(
+            svg,
+            r##"<circle cx="{}" cy="{}" r="3" fill="#94a3b8"/>"##,
+            point.x, point.y
+        )
+        .unwrap();
+    }
     for (i, node) in graph.nodes.iter().enumerate() {
         let (x, y) = (layout.positions[i].x, layout.positions[i].y);
         let (background, border) = color(node.action);

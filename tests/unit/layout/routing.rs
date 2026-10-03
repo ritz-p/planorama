@@ -3,6 +3,95 @@ use crate::model::{Action, Node};
 use std::collections::BTreeSet;
 
 #[test]
+fn fan_out_and_fan_in_share_trunks_and_preserve_endpoints() {
+    for (edges, ranks) in [
+        (vec![(0, 1), (0, 2), (0, 3)], vec![0, 1, 1, 1]),
+        (vec![(0, 3), (1, 3), (2, 3)], vec![0, 0, 0, 1]),
+    ] {
+        let graph = Graph {
+            nodes: (0..4)
+                .map(|i| Node {
+                    address: format!("test.n{i}"),
+                    resource_type: "test".into(),
+                    module: "root".into(),
+                    action: Action::Create,
+                })
+                .collect(),
+            edges,
+        };
+        let initial: Vec<_> = (0..4)
+            .map(|i| Point {
+                x: 60 + ranks[i] * 420,
+                y: 208 + i * 144,
+            })
+            .collect();
+        let mut positions = initial.clone();
+        let routed = route(&graph, &ranks, &mut positions, &[192, 800]);
+        let xs: BTreeSet<_> = routed
+            .paths
+            .iter()
+            .flat_map(|path| path.windows(2))
+            .filter(|s| s[0].x == s[1].x && s[0].y != s[1].y)
+            .map(|s| s[0].x)
+            .collect();
+        assert_eq!(xs.len(), 1);
+        assert_eq!(routed.paths.len(), graph.edges.len());
+        assert_eq!(routed.junctions.len(), 2);
+        for (path, &(source, target)) in routed.paths.iter().zip(&graph.edges) {
+            assert_eq!(
+                path[0],
+                Point {
+                    x: positions[source].x + NODE_WIDTH,
+                    y: positions[source].y + NODE_HEIGHT / 2
+                }
+            );
+            assert_eq!(
+                *path.last().unwrap(),
+                Point {
+                    x: positions[target].x,
+                    y: positions[target].y + NODE_HEIGHT / 2
+                }
+            );
+        }
+        let mut again = initial;
+        let repeated = route(&graph, &ranks, &mut again, &[192, 800]);
+        assert_eq!(routed.paths, repeated.paths);
+        assert_eq!(routed.junctions, repeated.junctions);
+    }
+}
+
+#[test]
+fn unrelated_edges_cannot_reuse_an_occupied_bundle_trunk() {
+    let graph = Graph {
+        nodes: (0..5)
+            .map(|i| Node {
+                address: format!("test.n{i}"),
+                resource_type: "test".into(),
+                module: "root".into(),
+                action: Action::Create,
+            })
+            .collect(),
+        edges: vec![(0, 2), (0, 3), (1, 4)],
+    };
+    let ranks = [0, 0, 1, 1, 1];
+    let mut positions = vec![
+        Point { x: 60, y: 208 },
+        Point { x: 60, y: 352 },
+        Point { x: 480, y: 208 },
+        Point { x: 480, y: 496 },
+        Point { x: 480, y: 640 },
+    ];
+    let routed = route(&graph, &ranks, &mut positions, &[192, 800]);
+    let vertical_x = |path: &[Point]| {
+        path.windows(2)
+            .find(|s| s[0].x == s[1].x && s[0].y != s[1].y)
+            .unwrap()[0]
+            .x
+    };
+    assert_ne!(vertical_x(&routed.paths[1]), vertical_x(&routed.paths[2]));
+}
+
+#[test]
 fn long_edges_use_separate_channels_after_gutter_expansion() {
     let graph = Graph {
         nodes: (0..18)
