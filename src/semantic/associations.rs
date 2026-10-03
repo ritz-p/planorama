@@ -1,4 +1,4 @@
-use crate::model::{Edge, EdgeKind, EntityMode, Graph, ResourceRole, TerraformGraph};
+use crate::model::{Edge, EdgeChange, EdgeKind, EntityMode, Graph, ResourceRole, TerraformGraph};
 use std::collections::BTreeMap;
 
 #[cfg(test)]
@@ -44,6 +44,10 @@ pub(super) fn lower(raw: &TerraformGraph) -> Graph {
                         from,
                         to,
                         kind: EdgeKind::Association,
+                        change: Some(EdgeChange {
+                            address: node.address.clone(),
+                            action: node.action,
+                        }),
                     },
                 );
             }
@@ -70,7 +74,7 @@ pub(super) fn lower(raw: &TerraformGraph) -> Graph {
                 .map(|(from, to)| Edge {
                     from,
                     to,
-                    kind: edge.kind,
+                    ..edge.clone()
                 })
         })
         .collect();

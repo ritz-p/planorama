@@ -150,7 +150,9 @@ docker compose exec dev cargo run --locked -- examples/bundling-plan.json -o exa
 
 CLI の処理は `plan::parse → TerraformGraph → semantic::transform → ArchitectureGraph → Layout → SVG` の順です。変換は元の Terraform グラフを借用し、独立した描画用グラフを返します。対応する関連付けリソースだけを意味変換し、それ以外はノード・辺・順序を保持します。将来の変換規則は `semantic` 内に順序を明示して追加し、JSON 読み取りや SVG 生成から分離します。
 
-依存関係は `Edge { from, to, kind }` で保持します。`EdgeKind` は `Dependency` / `Association` / `Connection` / `Containment` を区別し、plan の参照はすべて `Dependency` として読み込みます。現在の配置・描画は端点を使うため、型付けによる出力変更はありません。
+依存関係は `Edge { from, to, kind, change }` で保持します。`EdgeKind` は `Dependency` / `Association` / `Connection` / `Containment` を区別し、plan の参照はすべて `Dependency` として読み込みます。関連付けを辺へ変換する際は、元のアドレスと変更種別を `change` に残します。同じ端点を持つ別の関連付けも個別に保持します。
+
+関連付けの変更種別は辺と矢印の色、辺のタイトル、凡例の件数に反映します。意味付き辺を含む SVG はリソース数とカード数を区別し、辺を `relationships` と表示します。各辺のタイトルで関係の種類を確認できます。通常の依存辺だけの場合は従来の説明・表示を維持します。
 
 モジュールは `mod.rs` を使わず、同名の `.rs` とディレクトリで構成します。`plan` は Terraform plan JSON の読み取りを担当し、サンプル設定の `examples/terraform/` と区別しています。
 
