@@ -28,6 +28,7 @@ pub struct Layout<'a> {
     pub positions: Vec<Point>,
     pub bands: Vec<Band<'a>>,
     pub paths: Vec<Vec<Point>>,
+    pub junctions: Vec<Point>,
 }
 
 impl<'a> Layout<'a> {
@@ -41,6 +42,7 @@ impl<'a> Layout<'a> {
             positions: placement.positions,
             bands: placement.bands,
             paths: routed.paths,
+            junctions: routed.junctions,
         }
     }
 }

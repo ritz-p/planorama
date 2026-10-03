@@ -1,9 +1,11 @@
 use super::{NODE_HEIGHT, NODE_WIDTH, Point};
 use crate::model::Graph;
 use std::cmp::Ordering;
+mod bundles;
 mod channels;
 mod coverage;
 mod lanes;
+use bundles::Bundles;
 use channels::HorizontalChannels;
 use lanes::{Lane, VerticalLanes};
 
@@ -14,6 +16,7 @@ mod tests;
 pub(super) struct Routed {
     pub paths: Vec<Vec<Point>>,
     pub width: usize,
+    pub junctions: Vec<Point>,
 }
 
 enum Route {
@@ -52,6 +55,8 @@ pub(super) fn route(
         }
     }
 
+    let bundles = Bundles::new(graph, ranks);
+    bundles.align_ports(&mut source_ports, &mut target_ports);
     let columns = ranks.iter().max().copied().unwrap_or(0) + 1;
     let mut gutter_widths = vec![100; columns];
     let (routes, column_x, width) = loop {
@@ -63,6 +68,7 @@ pub(super) fn route(
         }
         let mut occupied = HorizontalChannels::new(channels);
         let mut lanes = VerticalLanes::default();
+        let mut bundle_lanes = vec![None; bundles.len()];
         let lane_x = |lane: Lane| column_x[lane.gutter] + NODE_WIDTH + lane.offset();
         let routes: Vec<_> = graph
             .edges
@@ -72,7 +78,22 @@ pub(super) fn route(
                 let source_y = positions[a].y + source_ports[edge];
                 let target_y = positions[b].y + target_ports[edge];
                 match ranks[b].checked_sub(ranks[a]) {
-                    Some(0 | 1) => Route::Direct(lanes.allocate(ranks[a], source_y, target_y)),
+                    Some(0 | 1) => {
+                        let lane = match bundles.group(edge) {
+                            Some(group) => *bundle_lanes[group].get_or_insert_with(|| {
+                                let (from, to) = bundles.span(
+                                    group,
+                                    graph,
+                                    positions,
+                                    &source_ports,
+                                    &target_ports,
+                                );
+                                lanes.allocate(ranks[a], from, to)
+                            }),
+                            None => lanes.allocate(ranks[a], source_y, target_y),
+                        };
+                        Route::Direct(lane)
+                    }
                     _ => {
                         let gutter = match ranks[b].cmp(&ranks[a]) {
                             Ordering::Greater => ranks[b] - 1,
@@ -114,7 +135,7 @@ pub(super) fn route(
         position.x = column_x[ranks[index]];
     }
     let lane_x = |lane: Lane| column_x[lane.gutter] + NODE_WIDTH + lane.offset();
-    let paths = graph
+    let paths: Vec<_> = graph
         .edges
         .iter()
         .zip(routes)
@@ -154,7 +175,12 @@ pub(super) fn route(
             })
         })
         .collect();
-    Routed { paths, width }
+    let junctions = bundles.junctions(&paths);
+    Routed {
+        paths,
+        width,
+        junctions,
+    }
 }
 
 fn simplify(points: Vec<Point>) -> Vec<Point> {

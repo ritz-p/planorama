@@ -71,6 +71,14 @@ docker compose run --rm dev cargo build --locked --release
 - 依存階層ごとの並べ替えで線の交差を減らし、ノード間の余白に接続線を通します。同じ入力から同じ SVG を生成します。
 - 属性値は一切描画しません。plan JSON 自体には機密値が含まれ得るため、Git 管理から除外しています。
 
+同じモジュール内の隣接列では、共通の依存元または依存先を持つ辺を明示的に束ねます。fan-out は各依存先の入次数が 1、fan-in は各依存元の出次数が 1 のグループを対象にし、多対多の関係を誤って表現しないようにします。幹線の縦区間はグループ全体で予約し、無関係な辺との共有を防ぎます。分岐点には丸印を付け、各辺の title と矢印を残します。長い辺・循環・モジュール間の辺は個別に描画します。
+
+fan-out と fan-in を続けたサンプルは [bundling.svg](examples/bundling.svg) です。再生成できます。
+
+```sh
+docker compose run --rm dev cargo run --locked -- examples/bundling-plan.json -o examples/bundling.svg
+```
+
 ## 制限
 
 縦の接続線は列間の通路ごとに使用中の y 区間を記録します。重ならないレーンを先頭から再利用し、すべて埋まっている場合はレーンを追加します。必要なレーン数に応じて列間と SVG の横幅を広げ、ノードへのはみ出しを防ぎます。
