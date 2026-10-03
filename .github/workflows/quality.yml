@@ -13,27 +13,27 @@ jobs:
     name: Formatting
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7.0.1
       - run: docker compose run --build --rm -T dev cargo fmt --all --check
 
   clippy:
     name: Clippy
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7.0.1
       - run: docker compose run --build --rm -T dev cargo clippy --locked --all-targets --all-features -- -D warnings
 
   tests:
     name: Tests
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7.0.1
       - run: docker compose run --build --rm -T dev cargo test --locked --all-targets --all-features
 
   msrv:
     name: MSRV 1.85.0
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7.0.1
       - run: docker build --build-arg RUST_VERSION=1.85.0 --tag planorama-msrv .
       - run: docker run --rm --volume "$PWD:/workspace" --env CARGO_TARGET_DIR=/tmp/planorama-target planorama-msrv cargo +1.85.0 test --locked --all-targets --all-features
