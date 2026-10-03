@@ -1,0 +1,16 @@
+name: Cargo test
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  tests:
+    name: Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - run: docker compose run --build --rm -T dev cargo test --locked --all-targets --all-features
