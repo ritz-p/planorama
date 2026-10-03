@@ -4,7 +4,7 @@ mod style;
 mod tests;
 
 use crate::layout::Layout;
-use crate::model::{Action, Graph};
+use crate::model::{Action, EdgeKind, Graph};
 use std::fmt::Write;
 use style::{color, label, shorten};
 
@@ -62,6 +62,12 @@ pub fn render(graph: &Graph, layout: &Layout<'_>) -> String {
         writeln!(svg, r##"<rect x="35" y="{y}" width="{}" height="{h}" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-dasharray="5 4"/><text x="52" y="{}" font-size="13" font-weight="700" fill="#475569"><title>{}</title>{}</text>"##, width - 70, y + 25, escape(module), escape(&shorten(module, 110))).unwrap();
     }
     for (edge, points) in graph.edges.iter().zip(&layout.paths) {
+        let relation = match edge.kind {
+            EdgeKind::Dependency => "",
+            EdgeKind::Association => " data-edge-kind=\"association\"",
+            EdgeKind::Connection => " data-edge-kind=\"connection\"",
+            EdgeKind::Containment => " data-edge-kind=\"containment\"",
+        };
         let (a, b) = edge.endpoints();
         let title = escape(&format!(
             "{} → {}",
@@ -81,7 +87,7 @@ pub fn render(graph: &Graph, layout: &Layout<'_>) -> String {
             )
             .unwrap();
         }
-        writeln!(svg, r##"<path d="{path}" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>{title}</title></path>"##).unwrap();
+        writeln!(svg, r##"<path d="{path}"{relation} fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>{title}</title></path>"##).unwrap();
     }
     for point in &layout.junctions {
         writeln!(

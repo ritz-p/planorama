@@ -2,9 +2,8 @@ use super::*;
 use crate::{layout::Layout, plan, svg};
 
 #[test]
-fn identity_preserves_structure_order_and_svg() {
+fn unmatched_graphs_preserve_structure_order_and_svg() {
     for input in [
-        include_str!("../../examples/plan.json"),
         include_str!("../fixtures/terraform-plan.json"),
         include_str!("../../examples/bundling-plan.json"),
         r#"{"format_version":"1.0","resource_changes":[]}"#,

@@ -1,5 +1,13 @@
 mod support;
 
+#[test]
+fn cli_emits_containment_metadata_without_dropping_resources_or_dependencies() {
+    let svg = render(include_bytes!("../fixtures/containment-plan.json"));
+    assert!(svg.contains("3 resources, 3 reference edges"));
+    assert_eq!(svg.matches("data-edge-kind=\"containment\"").count(), 2);
+    assert_eq!(svg.matches("marker-end=").count(), 3);
+}
+
 fn render(input: &[u8]) -> String {
     let output = support::run(input);
     assert!(
