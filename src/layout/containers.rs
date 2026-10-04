@@ -1,6 +1,7 @@
-use super::{Band, Bounds, Layout, NODE_HEIGHT, NODE_WIDTH, Point};
+use super::{Bounds, Layout, NODE_HEIGHT, NODE_WIDTH, Point};
 use crate::model::{EdgeKind, Graph, ResourceRole};
-use std::collections::{BTreeMap, BTreeSet};
+use std::collections::BTreeSet;
+mod ordering;
 mod routing;
 
 #[cfg(test)]
@@ -48,21 +49,18 @@ pub(super) fn place(graph: &Graph) -> Layout<'_> {
         .map(|edges| NODE_HEIGHT.max(edges.len() + 41))
         .collect();
     let mut children = vec![Vec::new(); graph.nodes.len()];
-    let mut modules: BTreeMap<&str, Vec<usize>> = BTreeMap::new();
+    let keys = ordering::structural_keys(graph);
     for (node, parent) in parents.iter().enumerate() {
-        match parent {
-            Some(parent) => children[*parent].push(node),
-            None => modules
-                .entry(&graph.nodes[node].module)
-                .or_default()
-                .push(node),
+        if let Some(parent) = parent {
+            children[*parent].push(node);
         }
     }
-    for nodes in children.iter_mut().chain(modules.values_mut()) {
-        nodes.sort_by_key(|&node| &graph.nodes[node].address);
+    for nodes in &mut children {
+        nodes.sort_by_key(|&node| (graph.nodes[node].resource_address().local(), keys[node]));
     }
+    let roots = ordering::roots(graph, &parents, &keys);
     let mut order = Vec::new();
-    let mut pending: Vec<_> = modules.values().flatten().copied().collect();
+    let mut pending = roots.clone();
     while let Some(node) = pending.pop() {
         order.push(node);
         pending.extend(children[node].iter().copied());
@@ -96,48 +94,37 @@ pub(super) fn place(graph: &Graph) -> Layout<'_> {
         containers: Vec::new(),
         parents,
     };
-    let mut modules: Vec<_> = modules.into_iter().collect();
-    modules.sort_by_key(|(name, _)| (*name != "root", *name));
-    let mut top = 160;
-    for (label, roots) in modules {
-        let mut y = top + 48;
-        for root in roots {
-            layout.positions[root] = Point { x: 60, y };
-            let mut pending = vec![root];
-            while let Some(node) = pending.pop() {
-                let origin = layout.positions[node];
-                let (width, height) = sizes[node];
-                layout.width = layout.width.max(origin.x + width + 80);
-                if graph.nodes[node].role == ResourceRole::Container {
-                    layout.containers.push((
-                        node,
-                        Bounds {
-                            origin,
-                            width,
-                            height,
-                        },
-                    ));
-                }
-                let mut child_y = origin.y + layout.header_heights[node] + PADDING;
-                for &child in &children[node] {
-                    layout.positions[child] = Point {
-                        x: origin.x + PADDING,
-                        y: child_y,
-                    };
-                    child_y += sizes[child].1 + PADDING;
-                }
-                pending.extend(children[node].iter().rev().copied());
+    let mut y = 160;
+    for root in roots {
+        layout.positions[root] = Point { x: 60, y };
+        let mut pending = vec![root];
+        while let Some(node) = pending.pop() {
+            let origin = layout.positions[node];
+            let (width, height) = sizes[node];
+            layout.width = layout.width.max(origin.x + width + 80);
+            if graph.nodes[node].role == ResourceRole::Container {
+                layout.containers.push((
+                    node,
+                    Bounds {
+                        origin,
+                        width,
+                        height,
+                    },
+                ));
             }
-            y += sizes[root].1 + PADDING;
+            let mut child_y = origin.y + layout.header_heights[node] + PADDING;
+            for &child in &children[node] {
+                layout.positions[child] = Point {
+                    x: origin.x + PADDING,
+                    y: child_y,
+                };
+                child_y += sizes[child].1 + PADDING;
+            }
+            pending.extend(children[node].iter().rev().copied());
         }
-        layout.bands.push(Band {
-            label,
-            top,
-            height: y - top,
-        });
-        top = y + PADDING;
+        y += sizes[root].1 + PADDING;
     }
-    layout.height = top + 40;
-    layout.paths = routing::route(graph, &layout);
+    layout.height = (y + 40).max(300);
+    layout.paths = routing::route(graph, &layout, &keys);
     layout
 }

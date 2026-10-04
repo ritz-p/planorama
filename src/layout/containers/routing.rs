@@ -50,7 +50,7 @@ pub(super) fn incidents(graph: &Graph, parents: &[Option<usize>]) -> Vec<Vec<(us
     incident
 }
 
-pub(super) fn route(graph: &Graph, layout: &Layout<'_>) -> Vec<Vec<Point>> {
+pub(super) fn route(graph: &Graph, layout: &Layout<'_>, keys: &[usize]) -> Vec<Vec<Point>> {
     let mut right_edges: Vec<_> = layout
         .positions
         .iter()
@@ -59,7 +59,23 @@ pub(super) fn route(graph: &Graph, layout: &Layout<'_>) -> Vec<Vec<Point>> {
     for &(node, bounds) in &layout.containers {
         right_edges[node] = bounds.origin.x + bounds.width;
     }
-    let incident = incidents(graph, &layout.parents);
+    let mut incident = incidents(graph, &layout.parents);
+    for edges in &mut incident {
+        edges.sort_by_key(|&(index, source)| {
+            let edge = &graph.edges[index];
+            let peer = match source {
+                true => edge.to,
+                false => edge.from,
+            };
+            (
+                keys[peer],
+                source,
+                edge.kind,
+                edge.change.as_ref().map(|change| change.action),
+                edge.change.as_ref().map(|change| change.local_address()),
+            )
+        });
+    }
     let mut source_ports = vec![0; graph.edges.len()];
     let mut target_ports = vec![0; graph.edges.len()];
     for (node, edges) in incident.iter().enumerate() {

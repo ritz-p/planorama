@@ -1,4 +1,4 @@
-use super::Node;
+use super::{EdgeChange, Node};
 use std::borrow::Cow;
 
 #[cfg(test)]
@@ -29,6 +29,19 @@ impl Node {
     }
 }
 
+impl EdgeChange {
+    pub fn local_address(&self) -> &str {
+        ResourceAddress {
+            terraform_address: &self.address,
+            module_path: match module_of(&self.address) {
+                "root" => ModulePath::Root,
+                module => ModulePath::Child(module),
+            },
+        }
+        .local()
+    }
+}
+
 impl<'a> ResourceAddress<'a> {
     pub fn terraform(self) -> &'a str {
         self.terraform_address
@@ -50,5 +63,34 @@ impl<'a> ResourceAddress<'a> {
                 .and_then(|suffix| suffix.strip_prefix('.'))
                 .unwrap_or(self.terraform_address),
         }
+    }
+}
+
+pub(crate) fn module_of(address: &str) -> &str {
+    let mut boundary = 0;
+    let (mut depth, mut quoted, mut escaped) = (0usize, false, false);
+    let mut parts = Vec::new();
+    for (i, c) in address.char_indices() {
+        match (escaped, quoted, c) {
+            (true, _, _) => escaped = false,
+            (_, true, '\\') => escaped = true,
+            (_, _, '"') if depth > 0 => quoted = !quoted,
+            (_, false, '[') => depth += 1,
+            (_, false, ']') => depth = depth.saturating_sub(1),
+            (_, false, '.') if depth == 0 => {
+                parts.push((boundary, i));
+                boundary = i + 1;
+            }
+            _ => {}
+        }
+    }
+    parts.push((boundary, address.len()));
+    let mut count = 0;
+    while count + 1 < parts.len() && &address[parts[count].0..parts[count].1] == "module" {
+        count += 2;
+    }
+    match count {
+        0 => "root",
+        _ => &address[..parts[count - 1].1],
     }
 }

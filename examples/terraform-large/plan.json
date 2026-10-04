@@ -1,0 +1,1710 @@
+{
+  "configuration": {
+    "root_module": {
+      "module_calls": {
+        "application": {
+          "expressions": {
+            "ami_id": {
+              "references": [
+                "module.shared.ami_id"
+              ]
+            },
+            "log_group": {
+              "references": [
+                "aws_cloudwatch_log_group.app.name"
+              ]
+            },
+            "private_a": {
+              "references": [
+                "module.network.private_a"
+              ]
+            },
+            "private_b": {
+              "references": [
+                "module.network.private_b"
+              ]
+            },
+            "public_subnets": {
+              "references": [
+                "module.network.public_a",
+                "module.network.public_b"
+              ]
+            },
+            "shared_security_group_id": {
+              "references": [
+                "module.shared.security_group_id"
+              ]
+            },
+            "vpc_id": {
+              "references": [
+                "module.network.vpc_id"
+              ]
+            }
+          },
+          "module": {
+            "module_calls": {},
+            "outputs": {
+              "dns_name": {
+                "expression": {
+                  "references": [
+                    "aws_lb.app.dns_name"
+                  ]
+                }
+              },
+              "security_group_id": {
+                "expression": {
+                  "references": [
+                    "aws_security_group.app.id"
+                  ]
+                }
+              }
+            },
+            "resources": [
+              {
+                "address": "aws_ecs_cluster.app",
+                "expressions": {
+                  "name": {
+                    "constant_value": "planorama-app"
+                  }
+                },
+                "mode": "managed",
+                "name": "app",
+                "type": "aws_ecs_cluster"
+              },
+              {
+                "address": "aws_ecs_service.app",
+                "expressions": {
+                  "cluster": {
+                    "references": [
+                      "aws_ecs_cluster.app.id"
+                    ]
+                  },
+                  "desired_count": {
+                    "constant_value": 0
+                  },
+                  "launch_type": {
+                    "constant_value": "FARGATE"
+                  },
+                  "name": {
+                    "constant_value": "planorama-app"
+                  },
+                  "network_configuration": {
+                    "references": [
+                      "aws_security_group.app.id",
+                      "var.private_a",
+                      "var.private_b",
+                      "var.shared_security_group_id"
+                    ]
+                  },
+                  "tags": {
+                    "references": [
+                      "var.log_group"
+                    ]
+                  },
+                  "task_definition": {
+                    "references": [
+                      "aws_ecs_task_definition.app.arn"
+                    ]
+                  }
+                },
+                "mode": "managed",
+                "name": "app",
+                "type": "aws_ecs_service"
+              },
+              {
+                "address": "aws_ecs_task_definition.app",
+                "expressions": {
+                  "container_definitions": {
+                    "constant_value": "[{\"name\":\"app\",\"image\":\"public.ecr.aws/nginx/nginx:stable\",\"essential\":true,\"portMappings\":[{\"containerPort\":8080}]}]"
+                  },
+                  "cpu": {
+                    "constant_value": "256"
+                  },
+                  "execution_role_arn": {
+                    "references": [
+                      "aws_iam_role.task.arn"
+                    ]
+                  },
+                  "family": {
+                    "constant_value": "planorama-app"
+                  },
+                  "memory": {
+                    "constant_value": "512"
+                  },
+                  "network_mode": {
+                    "constant_value": "awsvpc"
+                  },
+                  "requires_compatibilities": {
+                    "constant_value": [
+                      "FARGATE"
+                    ]
+                  }
+                },
+                "mode": "managed",
+                "name": "app",
+                "type": "aws_ecs_task_definition"
+              },
+              {
+                "address": "aws_iam_instance_profile.app",
+                "expressions": {
+                  "name": {
+                    "constant_value": "planorama-app"
+                  },
+                  "role": {
+                    "references": [
+                      "aws_iam_role.instance.name"
+                    ]
+                  }
+                },
+                "mode": "managed",
+                "name": "app",
+                "type": "aws_iam_instance_profile"
+              },
+              {
+                "address": "aws_iam_role.instance",
+                "expressions": {
+                  "assume_role_policy": {
+                    "constant_value": "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Principal\":{\"Service\":\"ec2.amazonaws.com\"},\"Action\":\"sts:AssumeRole\"}]}"
+                  },
+                  "name": {
+                    "constant_value": "planorama-instance"
+                  }
+                },
+                "mode": "managed",
+                "name": "instance",
+                "type": "aws_iam_role"
+              },
+              {
+                "address": "aws_iam_role.task",
+                "expressions": {
+                  "assume_role_policy": {
+                    "constant_value": "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Principal\":{\"Service\":\"ecs-tasks.amazonaws.com\"},\"Action\":\"sts:AssumeRole\"}]}"
+                  },
+                  "name": {
+                    "constant_value": "planorama-task"
+                  }
+                },
+                "mode": "managed",
+                "name": "task",
+                "type": "aws_iam_role"
+              },
+              {
+                "address": "aws_instance.workers_a",
+                "count_expression": {
+                  "constant_value": 2
+                },
+                "expressions": {
+                  "ami": {
+                    "references": [
+                      "var.ami_id"
+                    ]
+                  },
+                  "iam_instance_profile": {
+                    "references": [
+                      "aws_iam_instance_profile.app.name"
+                    ]
+                  },
+                  "instance_type": {
+                    "constant_value": "t3.micro"
+                  },
+                  "subnet_id": {
+                    "references": [
+                      "var.private_a"
+                    ]
+                  },
+                  "tags": {
+                    "references": [
+                      "count.index"
+                    ]
+                  },
+                  "vpc_security_group_ids": {
+                    "references": [
+                      "aws_security_group.app.id"
+                    ]
+                  }
+                },
+                "mode": "managed",
+                "name": "workers_a",
+                "type": "aws_instance"
+              },
+              {
+                "address": "aws_instance.workers_b",
+                "count_expression": {
+                  "constant_value": 2
+                },
+                "expressions": {
+                  "ami": {
+                    "references": [
+                      "var.ami_id"
+                    ]
+                  },
+                  "iam_instance_profile": {
+                    "references": [
+                      "aws_iam_instance_profile.app.name"
+                    ]
+                  },
+                  "instance_type": {
+                    "constant_value": "t3.micro"
+                  },
+                  "subnet_id": {
+                    "references": [
+                      "var.private_b"
+                    ]
+                  },
+                  "tags": {
+                    "references": [
+                      "count.index"
+                    ]
+                  },
+                  "vpc_security_group_ids": {
+                    "references": [
+                      "aws_security_group.app.id"
+                    ]
+                  }
+                },
+                "mode": "managed",
+                "name": "workers_b",
+                "type": "aws_instance"
+              },
+              {
+                "address": "aws_lb.app",
+                "expressions": {
+                  "internal": {
+                    "constant_value": true
+                  },
+                  "load_balancer_type": {
+                    "constant_value": "application"
+                  },
+                  "name": {
+                    "constant_value": "planorama-example"
+                  },
+                  "security_groups": {
+                    "references": [
+                      "aws_security_group.alb.id"
+                    ]
+                  },
+                  "subnets": {
+                    "references": [
+                      "var.public_subnets"
+                    ]
+                  }
+                },
+                "mode": "managed",
+                "name": "app",
+                "type": "aws_lb"
+              },
+              {
+                "address": "aws_lb_listener.http",
+                "expressions": {
+                  "default_action": {
+                    "references": [
+                      "aws_lb_target_group.app.arn"
+                    ]
+                  },
+                  "load_balancer_arn": {
+                    "references": [
+                      "aws_lb.app.arn"
+                    ]
+                  },
+                  "port": {
+                    "constant_value": 80
+                  },
+                  "protocol": {
+                    "constant_value": "HTTP"
+                  }
+                },
+                "mode": "managed",
+                "name": "http",
+                "type": "aws_lb_listener"
+              },
+              {
+                "address": "aws_lb_target_group.app",
+                "expressions": {
+                  "name": {
+                    "constant_value": "planorama-example"
+                  },
+                  "port": {
+                    "constant_value": 8080
+                  },
+                  "protocol": {
+                    "constant_value": "HTTP"
+                  },
+                  "target_type": {
+                    "constant_value": "instance"
+                  },
+                  "vpc_id": {
+                    "references": [
+                      "var.vpc_id"
+                    ]
+                  }
+                },
+                "mode": "managed",
+                "name": "app",
+                "type": "aws_lb_target_group"
+              },
+              {
+                "address": "aws_lb_target_group_attachment.a0",
+                "expressions": {
+                  "port": {
+                    "constant_value": 8080
+                  },
+                  "target_group_arn": {
+                    "references": [
+                      "aws_lb_target_group.app.arn"
+                    ]
+                  },
+                  "target_id": {
+                    "references": [
+                      "aws_instance.workers_a[0].id"
+                    ]
+                  }
+                },
+                "mode": "managed",
+                "name": "a0",
+                "type": "aws_lb_target_group_attachment"
+              },
+              {
+                "address": "aws_lb_target_group_attachment.a1",
+                "expressions": {
+                  "port": {
+                    "constant_value": 8080
+                  },
+                  "target_group_arn": {
+                    "references": [
+                      "aws_lb_target_group.app.arn"
+                    ]
+                  },
+                  "target_id": {
+                    "references": [
+                      "aws_instance.workers_a[1].id"
+                    ]
+                  }
+                },
+                "mode": "managed",
+                "name": "a1",
+                "type": "aws_lb_target_group_attachment"
+              },
+              {
+                "address": "aws_lb_target_group_attachment.b0",
+                "expressions": {
+                  "port": {
+                    "constant_value": 8080
+                  },
+                  "target_group_arn": {
+                    "references": [
+                      "aws_lb_target_group.app.arn"
+                    ]
+                  },
+                  "target_id": {
+                    "references": [
+                      "aws_instance.workers_b[0].id"
+                    ]
+                  }
+                },
+                "mode": "managed",
+                "name": "b0",
+                "type": "aws_lb_target_group_attachment"
+              },
+              {
+                "address": "aws_lb_target_group_attachment.b1",
+                "expressions": {
+                  "port": {
+                    "constant_value": 8080
+                  },
+                  "target_group_arn": {
+                    "references": [
+                      "aws_lb_target_group.app.arn"
+                    ]
+                  },
+                  "target_id": {
+                    "references": [
+                      "aws_instance.workers_b[1].id"
+                    ]
+                  }
+                },
+                "mode": "managed",
+                "name": "b1",
+                "type": "aws_lb_target_group_attachment"
+              },
+              {
+                "address": "aws_security_group.alb",
+                "expressions": {
+                  "ingress": {
+                    "constant_value": [
+                      {
+                        "cidr_blocks": [
+                          "10.42.0.0/16"
+                        ],
+                        "description": "Example HTTP",
+                        "from_port": 80,
+                        "ipv6_cidr_blocks": [],
+                        "prefix_list_ids": [],
+                        "protocol": "tcp",
+                        "security_groups": [],
+                        "self": false,
+                        "to_port": 80
+                      }
+                    ]
+                  },
+                  "name": {
+                    "constant_value": "planorama-alb"
+                  },
+                  "vpc_id": {
+                    "references": [
+                      "var.vpc_id"
+                    ]
+                  }
+                },
+                "mode": "managed",
+                "name": "alb",
+                "type": "aws_security_group"
+              },
+              {
+                "address": "aws_security_group.app",
+                "expressions": {
+                  "ingress": {
+                    "references": [
+                      "aws_security_group.alb.id"
+                    ]
+                  },
+                  "name": {
+                    "constant_value": "planorama-app"
+                  },
+                  "vpc_id": {
+                    "references": [
+                      "var.vpc_id"
+                    ]
+                  }
+                },
+                "mode": "managed",
+                "name": "app",
+                "type": "aws_security_group"
+              }
+            ]
+          }
+        },
+        "database": {
+          "expressions": {
+            "app_security_group_id": {
+              "references": [
+                "module.application.security_group_id"
+              ]
+            },
+            "private_subnets": {
+              "references": [
+                "module.network.private_a",
+                "module.network.private_b"
+              ]
+            },
+            "vpc_id": {
+              "references": [
+                "module.network.vpc_id"
+              ]
+            }
+          },
+          "module": {
+            "module_calls": {},
+            "outputs": {},
+            "resources": [
+              {
+                "address": "aws_cloudwatch_metric_alarm.database_cpu",
+                "expressions": {
+                  "alarm_name": {
+                    "constant_value": "planorama-database-cpu"
+                  },
+                  "comparison_operator": {
+                    "constant_value": "GreaterThanThreshold"
+                  },
+                  "dimensions": {
+                    "references": [
+                      "aws_db_instance.database.id"
+                    ]
+                  },
+                  "evaluation_periods": {
+                    "constant_value": 2
+                  },
+                  "metric_name": {
+                    "constant_value": "CPUUtilization"
+                  },
+                  "namespace": {
+                    "constant_value": "AWS/RDS"
+                  },
+                  "period": {
+                    "constant_value": 120
+                  },
+                  "statistic": {
+                    "constant_value": "Average"
+                  },
+                  "threshold": {
+                    "constant_value": 80
+                  }
+                },
+                "mode": "managed",
+                "name": "database_cpu",
+                "type": "aws_cloudwatch_metric_alarm"
+              },
+              {
+                "address": "aws_db_instance.database",
+                "expressions": {
+                  "allocated_storage": {
+                    "constant_value": 20
+                  },
+                  "db_subnet_group_name": {
+                    "references": [
+                      "aws_db_subnet_group.database.name"
+                    ]
+                  },
+                  "engine": {
+                    "constant_value": "postgres"
+                  },
+                  "identifier": {
+                    "constant_value": "planorama-database"
+                  },
+                  "instance_class": {
+                    "constant_value": "db.t3.micro"
+                  },
+                  "manage_master_user_password": {
+                    "constant_value": true
+                  },
+                  "skip_final_snapshot": {
+                    "constant_value": true
+                  },
+                  "storage_encrypted": {
+                    "constant_value": true
+                  },
+                  "username": {
+                    "constant_value": "exampleadmin"
+                  },
+                  "vpc_security_group_ids": {
+                    "references": [
+                      "aws_security_group.database.id"
+                    ]
+                  }
+                },
+                "mode": "managed",
+                "name": "database",
+                "type": "aws_db_instance"
+              },
+              {
+                "address": "aws_db_subnet_group.database",
+                "expressions": {
+                  "name": {
+                    "constant_value": "planorama-database"
+                  },
+                  "subnet_ids": {
+                    "references": [
+                      "var.private_subnets"
+                    ]
+                  }
+                },
+                "mode": "managed",
+                "name": "database",
+                "type": "aws_db_subnet_group"
+              },
+              {
+                "address": "aws_security_group.database",
+                "expressions": {
+                  "ingress": {
+                    "references": [
+                      "var.app_security_group_id"
+                    ]
+                  },
+                  "name": {
+                    "constant_value": "planorama-database"
+                  },
+                  "vpc_id": {
+                    "references": [
+                      "var.vpc_id"
+                    ]
+                  }
+                },
+                "mode": "managed",
+                "name": "database",
+                "type": "aws_security_group"
+              }
+            ]
+          }
+        },
+        "network": {
+          "expressions": {
+            "region": {
+              "references": [
+                "var.region"
+              ]
+            },
+            "shared_vpc_id": {
+              "references": [
+                "module.shared.vpc_id"
+              ]
+            }
+          },
+          "module": {
+            "module_calls": {},
+            "outputs": {
+              "private_a": {
+                "expression": {
+                  "references": [
+                    "aws_subnet.private_a.id"
+                  ]
+                }
+              },
+              "private_b": {
+                "expression": {
+                  "references": [
+                    "aws_subnet.private_b.id"
+                  ]
+                }
+              },
+              "public_a": {
+                "expression": {
+                  "references": [
+                    "aws_subnet.public_a.id"
+                  ]
+                }
+              },
+              "public_b": {
+                "expression": {
+                  "references": [
+                    "aws_subnet.public_b.id"
+                  ]
+                }
+              },
+              "vpc_id": {
+                "expression": {
+                  "references": [
+                    "aws_vpc.main.id"
+                  ]
+                }
+              }
+            },
+            "resources": [
+              {
+                "address": "aws_eip.nat",
+                "expressions": {
+                  "domain": {
+                    "constant_value": "vpc"
+                  }
+                },
+                "mode": "managed",
+                "name": "nat",
+                "type": "aws_eip"
+              },
+              {
+                "address": "aws_internet_gateway.main",
+                "expressions": {
+                  "vpc_id": {
+                    "references": [
+                      "aws_vpc.main.id"
+                    ]
+                  }
+                },
+                "mode": "managed",
+                "name": "main",
+                "type": "aws_internet_gateway"
+              },
+              {
+                "address": "aws_nat_gateway.main",
+                "depends_on": [
+                  "aws_internet_gateway.main"
+                ],
+                "expressions": {
+                  "allocation_id": {
+                    "references": [
+                      "aws_eip.nat.id"
+                    ]
+                  },
+                  "subnet_id": {
+                    "references": [
+                      "aws_subnet.public_a.id"
+                    ]
+                  }
+                },
+                "mode": "managed",
+                "name": "main",
+                "type": "aws_nat_gateway"
+              },
+              {
+                "address": "aws_route.internet",
+                "expressions": {
+                  "destination_cidr_block": {
+                    "constant_value": "0.0.0.0/0"
+                  },
+                  "gateway_id": {
+                    "references": [
+                      "aws_internet_gateway.main.id"
+                    ]
+                  },
+                  "route_table_id": {
+                    "references": [
+                      "aws_route_table.public.id"
+                    ]
+                  }
+                },
+                "mode": "managed",
+                "name": "internet",
+                "type": "aws_route"
+              },
+              {
+                "address": "aws_route.nat",
+                "expressions": {
+                  "destination_cidr_block": {
+                    "constant_value": "0.0.0.0/0"
+                  },
+                  "nat_gateway_id": {
+                    "references": [
+                      "aws_nat_gateway.main.id"
+                    ]
+                  },
+                  "route_table_id": {
+                    "references": [
+                      "aws_route_table.private.id"
+                    ]
+                  }
+                },
+                "mode": "managed",
+                "name": "nat",
+                "type": "aws_route"
+              },
+              {
+                "address": "aws_route_table.private",
+                "expressions": {
+                  "vpc_id": {
+                    "references": [
+                      "aws_vpc.main.id"
+                    ]
+                  }
+                },
+                "mode": "managed",
+                "name": "private",
+                "type": "aws_route_table"
+              },
+              {
+                "address": "aws_route_table.public",
+                "expressions": {
+                  "vpc_id": {
+                    "references": [
+                      "aws_vpc.main.id"
+                    ]
+                  }
+                },
+                "mode": "managed",
+                "name": "public",
+                "type": "aws_route_table"
+              },
+              {
+                "address": "aws_route_table_association.private_a",
+                "expressions": {
+                  "route_table_id": {
+                    "references": [
+                      "aws_route_table.private.id"
+                    ]
+                  },
+                  "subnet_id": {
+                    "references": [
+                      "aws_subnet.private_a.id"
+                    ]
+                  }
+                },
+                "mode": "managed",
+                "name": "private_a",
+                "type": "aws_route_table_association"
+              },
+              {
+                "address": "aws_route_table_association.private_b",
+                "expressions": {
+                  "route_table_id": {
+                    "references": [
+                      "aws_route_table.private.id"
+                    ]
+                  },
+                  "subnet_id": {
+                    "references": [
+                      "aws_subnet.private_b.id"
+                    ]
+                  }
+                },
+                "mode": "managed",
+                "name": "private_b",
+                "type": "aws_route_table_association"
+              },
+              {
+                "address": "aws_route_table_association.public_a",
+                "expressions": {
+                  "route_table_id": {
+                    "references": [
+                      "aws_route_table.public.id"
+                    ]
+                  },
+                  "subnet_id": {
+                    "references": [
+                      "aws_subnet.public_a.id"
+                    ]
+                  }
+                },
+                "mode": "managed",
+                "name": "public_a",
+                "type": "aws_route_table_association"
+              },
+              {
+                "address": "aws_route_table_association.public_b",
+                "expressions": {
+                  "route_table_id": {
+                    "references": [
+                      "aws_route_table.public.id"
+                    ]
+                  },
+                  "subnet_id": {
+                    "references": [
+                      "aws_subnet.public_b.id"
+                    ]
+                  }
+                },
+                "mode": "managed",
+                "name": "public_b",
+                "type": "aws_route_table_association"
+              },
+              {
+                "address": "aws_security_group.endpoints",
+                "expressions": {
+                  "name": {
+                    "constant_value": "planorama-endpoints"
+                  },
+                  "vpc_id": {
+                    "references": [
+                      "aws_vpc.main.id"
+                    ]
+                  }
+                },
+                "mode": "managed",
+                "name": "endpoints",
+                "type": "aws_security_group"
+              },
+              {
+                "address": "aws_subnet.private_a",
+                "expressions": {
+                  "availability_zone": {
+                    "references": [
+                      "var.region"
+                    ]
+                  },
+                  "cidr_block": {
+                    "constant_value": "10.42.10.0/24"
+                  },
+                  "vpc_id": {
+                    "references": [
+                      "aws_vpc.main.id"
+                    ]
+                  }
+                },
+                "mode": "managed",
+                "name": "private_a",
+                "type": "aws_subnet"
+              },
+              {
+                "address": "aws_subnet.private_b",
+                "expressions": {
+                  "availability_zone": {
+                    "references": [
+                      "var.region"
+                    ]
+                  },
+                  "cidr_block": {
+                    "constant_value": "10.42.11.0/24"
+                  },
+                  "vpc_id": {
+                    "references": [
+                      "aws_vpc.main.id"
+                    ]
+                  }
+                },
+                "mode": "managed",
+                "name": "private_b",
+                "type": "aws_subnet"
+              },
+              {
+                "address": "aws_subnet.public_a",
+                "expressions": {
+                  "availability_zone": {
+                    "references": [
+                      "var.region"
+                    ]
+                  },
+                  "cidr_block": {
+                    "constant_value": "10.42.0.0/24"
+                  },
+                  "map_public_ip_on_launch": {
+                    "constant_value": true
+                  },
+                  "vpc_id": {
+                    "references": [
+                      "aws_vpc.main.id"
+                    ]
+                  }
+                },
+                "mode": "managed",
+                "name": "public_a",
+                "type": "aws_subnet"
+              },
+              {
+                "address": "aws_subnet.public_b",
+                "expressions": {
+                  "availability_zone": {
+                    "references": [
+                      "var.region"
+                    ]
+                  },
+                  "cidr_block": {
+                    "constant_value": "10.42.1.0/24"
+                  },
+                  "map_public_ip_on_launch": {
+                    "constant_value": true
+                  },
+                  "vpc_id": {
+                    "references": [
+                      "aws_vpc.main.id"
+                    ]
+                  }
+                },
+                "mode": "managed",
+                "name": "public_b",
+                "type": "aws_subnet"
+              },
+              {
+                "address": "aws_vpc.main",
+                "expressions": {
+                  "cidr_block": {
+                    "constant_value": "10.42.0.0/16"
+                  },
+                  "enable_dns_hostnames": {
+                    "constant_value": true
+                  }
+                },
+                "mode": "managed",
+                "name": "main",
+                "type": "aws_vpc"
+              },
+              {
+                "address": "aws_vpc_endpoint.logs",
+                "expressions": {
+                  "security_group_ids": {
+                    "references": [
+                      "aws_security_group.endpoints.id"
+                    ]
+                  },
+                  "service_name": {
+                    "references": [
+                      "var.region"
+                    ]
+                  },
+                  "subnet_ids": {
+                    "references": [
+                      "aws_subnet.private_a.id",
+                      "aws_subnet.private_b.id"
+                    ]
+                  },
+                  "vpc_endpoint_type": {
+                    "constant_value": "Interface"
+                  },
+                  "vpc_id": {
+                    "references": [
+                      "aws_vpc.main.id"
+                    ]
+                  }
+                },
+                "mode": "managed",
+                "name": "logs",
+                "type": "aws_vpc_endpoint"
+              },
+              {
+                "address": "aws_vpc_peering_connection.shared",
+                "expressions": {
+                  "auto_accept": {
+                    "constant_value": false
+                  },
+                  "peer_vpc_id": {
+                    "references": [
+                      "var.shared_vpc_id"
+                    ]
+                  },
+                  "vpc_id": {
+                    "references": [
+                      "aws_vpc.main.id"
+                    ]
+                  }
+                },
+                "mode": "managed",
+                "name": "shared",
+                "type": "aws_vpc_peering_connection"
+              }
+            ]
+          }
+        },
+        "shared": {
+          "expressions": {
+            "security_group_id": {
+              "references": [
+                "var.shared_security_group_id"
+              ]
+            },
+            "vpc_id": {
+              "references": [
+                "var.shared_vpc_id"
+              ]
+            }
+          },
+          "module": {
+            "module_calls": {},
+            "outputs": {
+              "ami_id": {
+                "expression": {
+                  "references": [
+                    "data.aws_ami.app.id"
+                  ]
+                }
+              },
+              "security_group_id": {
+                "expression": {
+                  "references": [
+                    "data.aws_security_group.shared.id"
+                  ]
+                }
+              },
+              "vpc_id": {
+                "expression": {
+                  "references": [
+                    "data.aws_vpc.shared.id"
+                  ]
+                }
+              }
+            },
+            "resources": [
+              {
+                "address": "data.aws_ami.app",
+                "expressions": {
+                  "filter": {
+                    "constant_value": [
+                      {
+                        "name": "name",
+                        "values": [
+                          "al2023-ami-2023.*-x86_64"
+                        ]
+                      }
+                    ]
+                  },
+                  "most_recent": {
+                    "constant_value": true
+                  },
+                  "owners": {
+                    "constant_value": [
+                      "amazon"
+                    ]
+                  }
+                },
+                "mode": "data",
+                "name": "app",
+                "type": "aws_ami"
+              },
+              {
+                "address": "data.aws_caller_identity.current",
+                "expressions": {},
+                "mode": "data",
+                "name": "current",
+                "type": "aws_caller_identity"
+              },
+              {
+                "address": "data.aws_region.current",
+                "expressions": {},
+                "mode": "data",
+                "name": "current",
+                "type": "aws_region"
+              },
+              {
+                "address": "data.aws_security_group.shared",
+                "expressions": {
+                  "id": {
+                    "references": [
+                      "var.security_group_id"
+                    ]
+                  }
+                },
+                "mode": "data",
+                "name": "shared",
+                "type": "aws_security_group"
+              },
+              {
+                "address": "data.aws_vpc.shared",
+                "expressions": {
+                  "id": {
+                    "references": [
+                      "var.vpc_id"
+                    ]
+                  }
+                },
+                "mode": "data",
+                "name": "shared",
+                "type": "aws_vpc"
+              }
+            ]
+          }
+        }
+      },
+      "outputs": {
+        "load_balancer_dns": {
+          "expression": {
+            "references": [
+              "module.application.dns_name"
+            ]
+          }
+        }
+      },
+      "resources": [
+        {
+          "address": "aws_cloudwatch_log_group.app",
+          "expressions": {
+            "name": {
+              "constant_value": "/planorama/large-example"
+            },
+            "retention_in_days": {
+              "constant_value": 7
+            }
+          },
+          "mode": "managed",
+          "name": "app",
+          "type": "aws_cloudwatch_log_group"
+        }
+      ]
+    }
+  },
+  "format_version": "1.2",
+  "resource_changes": [
+    {
+      "address": "aws_cloudwatch_log_group.app",
+      "change": {
+        "actions": [
+          "create"
+        ]
+      },
+      "mode": "managed",
+      "name": "app",
+      "type": "aws_cloudwatch_log_group"
+    },
+    {
+      "address": "module.application.aws_ecs_cluster.app",
+      "change": {
+        "actions": [
+          "create"
+        ]
+      },
+      "mode": "managed",
+      "name": "app",
+      "type": "aws_ecs_cluster"
+    },
+    {
+      "address": "module.application.aws_ecs_service.app",
+      "change": {
+        "actions": [
+          "create"
+        ]
+      },
+      "mode": "managed",
+      "name": "app",
+      "type": "aws_ecs_service"
+    },
+    {
+      "address": "module.application.aws_ecs_task_definition.app",
+      "change": {
+        "actions": [
+          "create"
+        ]
+      },
+      "mode": "managed",
+      "name": "app",
+      "type": "aws_ecs_task_definition"
+    },
+    {
+      "address": "module.application.aws_iam_instance_profile.app",
+      "change": {
+        "actions": [
+          "create"
+        ]
+      },
+      "mode": "managed",
+      "name": "app",
+      "type": "aws_iam_instance_profile"
+    },
+    {
+      "address": "module.application.aws_iam_role.instance",
+      "change": {
+        "actions": [
+          "create"
+        ]
+      },
+      "mode": "managed",
+      "name": "instance",
+      "type": "aws_iam_role"
+    },
+    {
+      "address": "module.application.aws_iam_role.task",
+      "change": {
+        "actions": [
+          "create"
+        ]
+      },
+      "mode": "managed",
+      "name": "task",
+      "type": "aws_iam_role"
+    },
+    {
+      "address": "module.application.aws_instance.workers_a[0]",
+      "change": {
+        "actions": [
+          "create"
+        ]
+      },
+      "mode": "managed",
+      "name": "workers_a",
+      "type": "aws_instance"
+    },
+    {
+      "address": "module.application.aws_instance.workers_a[1]",
+      "change": {
+        "actions": [
+          "create"
+        ]
+      },
+      "mode": "managed",
+      "name": "workers_a",
+      "type": "aws_instance"
+    },
+    {
+      "address": "module.application.aws_instance.workers_b[0]",
+      "change": {
+        "actions": [
+          "create"
+        ]
+      },
+      "mode": "managed",
+      "name": "workers_b",
+      "type": "aws_instance"
+    },
+    {
+      "address": "module.application.aws_instance.workers_b[1]",
+      "change": {
+        "actions": [
+          "create"
+        ]
+      },
+      "mode": "managed",
+      "name": "workers_b",
+      "type": "aws_instance"
+    },
+    {
+      "address": "module.application.aws_lb.app",
+      "change": {
+        "actions": [
+          "create"
+        ]
+      },
+      "mode": "managed",
+      "name": "app",
+      "type": "aws_lb"
+    },
+    {
+      "address": "module.application.aws_lb_listener.http",
+      "change": {
+        "actions": [
+          "create"
+        ]
+      },
+      "mode": "managed",
+      "name": "http",
+      "type": "aws_lb_listener"
+    },
+    {
+      "address": "module.application.aws_lb_target_group.app",
+      "change": {
+        "actions": [
+          "create"
+        ]
+      },
+      "mode": "managed",
+      "name": "app",
+      "type": "aws_lb_target_group"
+    },
+    {
+      "address": "module.application.aws_lb_target_group_attachment.a0",
+      "change": {
+        "actions": [
+          "create"
+        ]
+      },
+      "mode": "managed",
+      "name": "a0",
+      "type": "aws_lb_target_group_attachment"
+    },
+    {
+      "address": "module.application.aws_lb_target_group_attachment.a1",
+      "change": {
+        "actions": [
+          "create"
+        ]
+      },
+      "mode": "managed",
+      "name": "a1",
+      "type": "aws_lb_target_group_attachment"
+    },
+    {
+      "address": "module.application.aws_lb_target_group_attachment.b0",
+      "change": {
+        "actions": [
+          "create"
+        ]
+      },
+      "mode": "managed",
+      "name": "b0",
+      "type": "aws_lb_target_group_attachment"
+    },
+    {
+      "address": "module.application.aws_lb_target_group_attachment.b1",
+      "change": {
+        "actions": [
+          "create"
+        ]
+      },
+      "mode": "managed",
+      "name": "b1",
+      "type": "aws_lb_target_group_attachment"
+    },
+    {
+      "address": "module.application.aws_security_group.alb",
+      "change": {
+        "actions": [
+          "create"
+        ]
+      },
+      "mode": "managed",
+      "name": "alb",
+      "type": "aws_security_group"
+    },
+    {
+      "address": "module.application.aws_security_group.app",
+      "change": {
+        "actions": [
+          "create"
+        ]
+      },
+      "mode": "managed",
+      "name": "app",
+      "type": "aws_security_group"
+    },
+    {
+      "address": "module.database.aws_cloudwatch_metric_alarm.database_cpu",
+      "change": {
+        "actions": [
+          "create"
+        ]
+      },
+      "mode": "managed",
+      "name": "database_cpu",
+      "type": "aws_cloudwatch_metric_alarm"
+    },
+    {
+      "address": "module.database.aws_db_instance.database",
+      "change": {
+        "actions": [
+          "create"
+        ]
+      },
+      "mode": "managed",
+      "name": "database",
+      "type": "aws_db_instance"
+    },
+    {
+      "address": "module.database.aws_db_subnet_group.database",
+      "change": {
+        "actions": [
+          "create"
+        ]
+      },
+      "mode": "managed",
+      "name": "database",
+      "type": "aws_db_subnet_group"
+    },
+    {
+      "address": "module.database.aws_security_group.database",
+      "change": {
+        "actions": [
+          "create"
+        ]
+      },
+      "mode": "managed",
+      "name": "database",
+      "type": "aws_security_group"
+    },
+    {
+      "address": "module.network.aws_eip.nat",
+      "change": {
+        "actions": [
+          "create"
+        ]
+      },
+      "mode": "managed",
+      "name": "nat",
+      "type": "aws_eip"
+    },
+    {
+      "address": "module.network.aws_internet_gateway.main",
+      "change": {
+        "actions": [
+          "create"
+        ]
+      },
+      "mode": "managed",
+      "name": "main",
+      "type": "aws_internet_gateway"
+    },
+    {
+      "address": "module.network.aws_nat_gateway.main",
+      "change": {
+        "actions": [
+          "create"
+        ]
+      },
+      "mode": "managed",
+      "name": "main",
+      "type": "aws_nat_gateway"
+    },
+    {
+      "address": "module.network.aws_route.internet",
+      "change": {
+        "actions": [
+          "create"
+        ]
+      },
+      "mode": "managed",
+      "name": "internet",
+      "type": "aws_route"
+    },
+    {
+      "address": "module.network.aws_route.nat",
+      "change": {
+        "actions": [
+          "create"
+        ]
+      },
+      "mode": "managed",
+      "name": "nat",
+      "type": "aws_route"
+    },
+    {
+      "address": "module.network.aws_route_table.private",
+      "change": {
+        "actions": [
+          "create"
+        ]
+      },
+      "mode": "managed",
+      "name": "private",
+      "type": "aws_route_table"
+    },
+    {
+      "address": "module.network.aws_route_table.public",
+      "change": {
+        "actions": [
+          "create"
+        ]
+      },
+      "mode": "managed",
+      "name": "public",
+      "type": "aws_route_table"
+    },
+    {
+      "address": "module.network.aws_route_table_association.private_a",
+      "change": {
+        "actions": [
+          "create"
+        ]
+      },
+      "mode": "managed",
+      "name": "private_a",
+      "type": "aws_route_table_association"
+    },
+    {
+      "address": "module.network.aws_route_table_association.private_b",
+      "change": {
+        "actions": [
+          "create"
+        ]
+      },
+      "mode": "managed",
+      "name": "private_b",
+      "type": "aws_route_table_association"
+    },
+    {
+      "address": "module.network.aws_route_table_association.public_a",
+      "change": {
+        "actions": [
+          "create"
+        ]
+      },
+      "mode": "managed",
+      "name": "public_a",
+      "type": "aws_route_table_association"
+    },
+    {
+      "address": "module.network.aws_route_table_association.public_b",
+      "change": {
+        "actions": [
+          "create"
+        ]
+      },
+      "mode": "managed",
+      "name": "public_b",
+      "type": "aws_route_table_association"
+    },
+    {
+      "address": "module.network.aws_security_group.endpoints",
+      "change": {
+        "actions": [
+          "create"
+        ]
+      },
+      "mode": "managed",
+      "name": "endpoints",
+      "type": "aws_security_group"
+    },
+    {
+      "address": "module.network.aws_subnet.private_a",
+      "change": {
+        "actions": [
+          "create"
+        ]
+      },
+      "mode": "managed",
+      "name": "private_a",
+      "type": "aws_subnet"
+    },
+    {
+      "address": "module.network.aws_subnet.private_b",
+      "change": {
+        "actions": [
+          "create"
+        ]
+      },
+      "mode": "managed",
+      "name": "private_b",
+      "type": "aws_subnet"
+    },
+    {
+      "address": "module.network.aws_subnet.public_a",
+      "change": {
+        "actions": [
+          "create"
+        ]
+      },
+      "mode": "managed",
+      "name": "public_a",
+      "type": "aws_subnet"
+    },
+    {
+      "address": "module.network.aws_subnet.public_b",
+      "change": {
+        "actions": [
+          "create"
+        ]
+      },
+      "mode": "managed",
+      "name": "public_b",
+      "type": "aws_subnet"
+    },
+    {
+      "address": "module.network.aws_vpc.main",
+      "change": {
+        "actions": [
+          "create"
+        ]
+      },
+      "mode": "managed",
+      "name": "main",
+      "type": "aws_vpc"
+    },
+    {
+      "address": "module.network.aws_vpc_endpoint.logs",
+      "change": {
+        "actions": [
+          "create"
+        ]
+      },
+      "mode": "managed",
+      "name": "logs",
+      "type": "aws_vpc_endpoint"
+    },
+    {
+      "address": "module.network.aws_vpc_peering_connection.shared",
+      "change": {
+        "actions": [
+          "create"
+        ]
+      },
+      "mode": "managed",
+      "name": "shared",
+      "type": "aws_vpc_peering_connection"
+    },
+    {
+      "address": "module.shared.data.aws_ami.app",
+      "change": {
+        "actions": [
+          "no-op"
+        ]
+      },
+      "mode": "data",
+      "name": "app",
+      "type": "aws_ami"
+    },
+    {
+      "address": "module.shared.data.aws_caller_identity.current",
+      "change": {
+        "actions": [
+          "no-op"
+        ]
+      },
+      "mode": "data",
+      "name": "current",
+      "type": "aws_caller_identity"
+    },
+    {
+      "address": "module.shared.data.aws_region.current",
+      "change": {
+        "actions": [
+          "no-op"
+        ]
+      },
+      "mode": "data",
+      "name": "current",
+      "type": "aws_region"
+    },
+    {
+      "address": "module.shared.data.aws_security_group.shared",
+      "change": {
+        "actions": [
+          "no-op"
+        ]
+      },
+      "mode": "data",
+      "name": "shared",
+      "type": "aws_security_group"
+    },
+    {
+      "address": "module.shared.data.aws_vpc.shared",
+      "change": {
+        "actions": [
+          "no-op"
+        ]
+      },
+      "mode": "data",
+      "name": "shared",
+      "type": "aws_vpc"
+    }
+  ],
+  "terraform_version": "1.9.8"
+}
