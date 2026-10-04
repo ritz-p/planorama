@@ -87,6 +87,30 @@ fn overlaps(a: Bounds, b: Bounds) -> bool {
 
 fn verify(graph: &Graph) {
     let layout = Layout::new(graph);
+    for (edge, path) in graph
+        .edges
+        .iter()
+        .zip(&layout.paths)
+        .filter(|(_, path)| !path.is_empty())
+    {
+        for (node, point) in [
+            (edge.from, path.first().unwrap()),
+            (edge.to, path.last().unwrap()),
+        ] {
+            let bounds = layout
+                .containers
+                .iter()
+                .find(|(index, _)| *index == node)
+                .map(|(_, bounds)| *bounds)
+                .unwrap_or(Bounds {
+                    origin: layout.positions[node],
+                    width: NODE_WIDTH,
+                    height: NODE_HEIGHT,
+                });
+            assert_eq!(point.x, bounds.origin.x + bounds.width);
+            assert!(point.y > bounds.origin.y && point.y < bounds.origin.y + bounds.height);
+        }
+    }
     for path in layout.paths.iter().filter(|path| !path.is_empty()) {
         assert_eq!(path[0].y, path[1].y);
         assert!(path[0].x < path[1].x);
@@ -143,6 +167,47 @@ fn verify(graph: &Graph) {
         svg::render(graph, &layout),
         svg::render(graph, &Layout::new(graph))
     );
+}
+
+#[test]
+fn relationships_anchor_to_outer_frames_for_nested_peer_and_external_containers() {
+    for mode in [EntityMode::Managed, EntityMode::Data] {
+        let mut graph = fixture();
+        let root = graph
+            .nodes
+            .iter()
+            .position(|node| node.resource_type == "aws_vpc")
+            .unwrap();
+        let subnet = graph
+            .nodes
+            .iter()
+            .position(|node| node.resource_type == "aws_subnet")
+            .unwrap();
+        let peer = graph.nodes.len();
+        let mut node = graph.nodes[root].clone();
+        node.address = "aws_vpc.peer".into();
+        node.mode = mode;
+        graph.nodes.push(node);
+        let card = graph.nodes.len();
+        let mut node = graph
+            .nodes
+            .iter()
+            .find(|node| node.resource_type == "aws_instance")
+            .unwrap()
+            .clone();
+        node.address = "aws_instance.external".into();
+        graph.nodes.push(node);
+        graph
+            .edges
+            .extend([(root, peer), (peer, subnet), (subnet, card), (card, root)].map(Edge::from));
+        let layout = Layout::new(&graph);
+        assert!(
+            layout.paths[layout.paths.len() - 4..]
+                .iter()
+                .all(|path| !path.is_empty())
+        );
+        verify(&graph);
+    }
 }
 
 #[test]
