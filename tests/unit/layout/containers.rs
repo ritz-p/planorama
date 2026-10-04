@@ -10,6 +10,114 @@ fn fixture() -> Graph {
 }
 
 #[test]
+fn relationship_names_distinguish_same_named_subnets_after_reparsing() {
+    use serde_json::json;
+    use std::collections::BTreeMap;
+    for nested in [false, true] {
+        let mut input = json!({
+            "format_version":"1.2",
+            "resource_changes":[
+                {"address":"aws_vpc.main","type":"aws_vpc","change":{"actions":["create"]}},
+                {"address":"aws_route_table.main","type":"aws_route_table","change":{"actions":["create"]}}
+            ],
+            "configuration":{"root_module":{
+                "resources":[{"address":"aws_vpc.main"},{"address":"aws_route_table.main"}],
+                "module_calls":{}
+            }}
+        });
+        for (module, association) in [("a", "alpha"), ("b", "beta")] {
+            for (kind, name) in [
+                ("aws_subnet", "main"),
+                ("aws_route_table_association", association),
+            ] {
+                input["resource_changes"]
+                    .as_array_mut()
+                    .unwrap()
+                    .push(json!({
+                        "address":format!("module.{module}.{kind}.{name}"),
+                        "type":kind,"change":{"actions":["create"]}
+                    }));
+            }
+            let subnet_expressions = match nested {
+                true => json!({"vpc_id":{"references":["var.vpc"]}}),
+                false => json!({}),
+            };
+            input["configuration"]["root_module"]["module_calls"][module] = json!({
+                "expressions":{
+                    "table":{"references":["aws_route_table.main.id"]},
+                    "vpc":{"references":["aws_vpc.main.id"]}
+                },
+                "module":{"resources":[
+                    {"address":"aws_subnet.main","expressions":subnet_expressions},
+                    {"address":format!("aws_route_table_association.{association}"),"expressions":{
+                        "subnet_id":{"references":["aws_subnet.main.id"]},
+                        "route_table_id":{"references":["var.table"]}
+                    }}
+                ]}
+            });
+        }
+        let original = semantic::transform(&plan::parse(&input.to_string()).unwrap()).0;
+        let calls = input["configuration"]["root_module"]["module_calls"]
+            .as_object_mut()
+            .unwrap();
+        let call = calls.remove("a").unwrap();
+        calls.insert("z".into(), call);
+        let renamed = semantic::transform(
+            &plan::parse(&input.to_string().replace("module.a.", "module.z.")).unwrap(),
+        )
+        .0;
+        let identity = |node: &Node| node.address.replace("module.z.", "module.a.");
+        assert_ne!(
+            original.nodes.iter().map(identity).collect::<Vec<_>>(),
+            renamed.nodes.iter().map(identity).collect::<Vec<_>>()
+        );
+        assert_eq!(
+            original
+                .edges
+                .iter()
+                .filter(|edge| edge.kind == EdgeKind::Association)
+                .count(),
+            2
+        );
+        let snapshot = |graph: &Graph| {
+            let layout = Layout::new(graph);
+            assert_eq!(
+                layout.parents.iter().flatten().count(),
+                if nested { 2 } else { 0 }
+            );
+            let positions: BTreeMap<_, _> = graph
+                .nodes
+                .iter()
+                .enumerate()
+                .map(|(index, node)| (identity(node), layout.positions[index]))
+                .collect();
+            let paths: BTreeMap<_, _> = graph
+                .edges
+                .iter()
+                .zip(layout.paths)
+                .map(|(edge, path)| {
+                    (
+                        (
+                            identity(&graph.nodes[edge.from]),
+                            identity(&graph.nodes[edge.to]),
+                            edge.kind,
+                            edge.change
+                                .as_ref()
+                                .map(|change| change.local_address().to_owned()),
+                        ),
+                        path,
+                    )
+                })
+                .collect();
+            (positions, paths)
+        };
+        assert_eq!(snapshot(&original), snapshot(&renamed));
+        verify(&original);
+        verify(&renamed);
+    }
+}
+
+#[test]
 fn reparsed_parallel_associations_keep_ports_when_modules_are_renamed() {
     use serde_json::json;
     use std::collections::BTreeMap;

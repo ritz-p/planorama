@@ -24,8 +24,9 @@ pub(super) fn structural_keys(graph: &Graph) -> Vec<usize> {
     let mut neighbors = vec![Vec::new(); graph.nodes.len()];
     for edge in &graph.edges {
         let action = edge.change.as_ref().map(|change| change.action);
-        neighbors[edge.from].push((true, edge.kind, action, edge.to));
-        neighbors[edge.to].push((false, edge.kind, action, edge.from));
+        let identity = edge.change.as_ref().map(|change| change.local_address());
+        neighbors[edge.from].push((true, edge.kind, action, identity, edge.to));
+        neighbors[edge.to].push((false, edge.kind, action, identity, edge.from));
     }
     loop {
         let signatures: Vec<_> = neighbors
@@ -34,7 +35,9 @@ pub(super) fn structural_keys(graph: &Graph) -> Vec<usize> {
             .map(|(node, edges)| {
                 let mut adjacent: Vec<_> = edges
                     .iter()
-                    .map(|&(outgoing, kind, action, other)| (outgoing, kind, action, colors[other]))
+                    .map(|&(outgoing, kind, action, identity, other)| {
+                        (outgoing, kind, action, identity, colors[other])
+                    })
                     .collect();
                 adjacent.sort();
                 (colors[node], adjacent)
