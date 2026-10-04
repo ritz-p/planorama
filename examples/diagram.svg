@@ -17,8 +17,8 @@
 <g data-container="resource-1"><title>aws_vpc.main</title><rect x="60" y="344" width="480" height="584" rx="12" fill="#f8fafc" stroke="#64748b" stroke-width="2" data-mode="managed"/></g>
 <g data-container="resource-5"><title>module.app.aws_subnet.main</title><rect x="100" y="480" width="400" height="408" rx="12" fill="#dbeafe" stroke="#1d4ed8" stroke-width="2" data-mode="managed"/></g>
 <g data-edge-kind="containment" data-source="resource-1" data-target="resource-5"><title>aws_vpc.main → module.app.aws_subnet.main (containment)</title></g>
-<path d="M 380 1006 L 396 1006 L 476 1006 L 476 664 L 460 664 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>data.aws_ami.latest → module.app.aws_instance.web[0] (dependency)</title></path>
-<path d="M 380 1025 L 396 1025 L 476 1025 L 476 800 L 460 800 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>data.aws_ami.latest → module.app.aws_instance.web[1] (dependency)</title></path>
+<path d="M 380 1006 L 396 1006 L 468 1006 Q 476 1006 476 998 L 476 672 Q 476 664 468 664 L 460 664 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>data.aws_ami.latest → module.app.aws_instance.web[0] (dependency)</title></path>
+<path d="M 380 1025 L 396 1025 L 468 1025 Q 476 1025 476 1017 L 476 808 Q 476 800 468 800 L 460 800 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>data.aws_ami.latest → module.app.aws_instance.web[1] (dependency)</title></path>
 <g data-edge-kind="containment" data-source="resource-5" data-target="resource-3"><title>module.app.aws_subnet.main → module.app.aws_instance.web[0] (containment)</title></g>
 <g data-edge-kind="containment" data-source="resource-5" data-target="resource-4"><title>module.app.aws_subnet.main → module.app.aws_instance.web[1] (containment)</title></g>
 <g id="resource-0"><title>aws_s3_bucket.legacy — delete</title>
