@@ -59,6 +59,14 @@ fn collect_expressions(
                     name.clone(),
                     refs.into_iter().map(|r| qualify(scope, &r)).collect(),
                 );
+                if name == "network_configuration" {
+                    if let Some(refs) = subnet_references(expression) {
+                        attributes.insert(
+                            "network_configuration.subnets".into(),
+                            refs.into_iter().map(|r| qualify(scope, &r)).collect(),
+                        );
+                    }
+                }
             }
         }
     }
@@ -70,6 +78,29 @@ fn collect_expressions(
                 found,
             );
         }
+    }
+}
+
+fn subnet_references(block: &Value) -> Option<BTreeSet<String>> {
+    match block {
+        Value::Array(blocks) if !blocks.is_empty() => {
+            let mut found = BTreeSet::new();
+            for block in blocks {
+                found.extend(subnet_references(block)?);
+            }
+            Some(found)
+        }
+        Value::Object(fields) => {
+            let expression = fields.get("subnets")?;
+            let refs = expression.get("references")?.as_array()?;
+            if refs.is_empty() || expression.get("constant_value").is_some() {
+                return None;
+            }
+            refs.iter()
+                .map(|value| value.as_str().map(str::to_owned))
+                .collect()
+        }
+        _ => None,
     }
 }
 

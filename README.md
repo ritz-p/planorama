@@ -226,3 +226,5 @@ tests/
 ```
 
 単体テストは実装側の `#[cfg(test)]` と `#[path = "..."]` で読み込みます。テストのために内部関数を公開する必要はなく、実装ファイルには読み込み宣言だけを置きます。実行方法はこれまでどおり `docker compose exec dev cargo test --locked` です。
+
+Multi-subnet ALBs (`subnets`) and ECS Services (`network_configuration.subnets`) use one physical containment parent: a single resolved subnet or the nearest unambiguous common container ancestor. Multiple subnet references remain visible Connection edges. Unresolved references, unrelated resource types, missing ancestry, ambiguous parents, and cycles do not invent a parent. Nested ECS subnet expressions are analyzed separately from security-group fields; flattened block references cannot establish membership. Data resources remain external, while a known data VPC can contain managed resources. See [the multi-container regression diagram](examples/multi-container.svg).

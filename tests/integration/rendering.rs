@@ -97,3 +97,16 @@ fn bundled_fixture_preserves_individual_dependency_arrows() {
         )));
     }
 }
+#[test]
+fn multi_container_fixture_renders_one_card_per_resource_and_subnet_connections() {
+    let output = support::run(include_bytes!("../fixtures/multi-container-plan.json"));
+    assert!(output.status.success());
+    let svg = String::from_utf8(output.stdout).unwrap();
+    assert_eq!(svg.matches("<g id=\"resource-").count(), 6);
+    assert_eq!(svg.matches("data-edge-kind=\"connection\"").count(), 4);
+    assert_eq!(svg.matches("data-edge-kind=\"containment\"").count(), 4);
+    assert_eq!(
+        svg,
+        include_str!("../../examples/multi-container.svg").replace("\r\n", "\n")
+    );
+}

@@ -318,18 +318,22 @@ fn large_aws_example_keeps_cross_module_containment_and_multi_subnet_relationshi
             assert_ne!(graph.nodes[worker].module, graph.nodes[subnet].module);
         }
     }
-    for resource_type in [
-        "aws_lb",
-        "aws_lb_target_group",
-        "aws_ecs_service",
-        "aws_db_instance",
-    ] {
+    for resource_type in ["aws_lb_target_group", "aws_db_instance"] {
         let node = graph
             .nodes
             .iter()
             .position(|node| node.resource_type == resource_type)
             .unwrap();
         assert!(layout.parents[node].is_none());
+    }
+    for resource_type in ["aws_lb", "aws_ecs_service"] {
+        let node = graph
+            .nodes
+            .iter()
+            .position(|node| node.resource_type == resource_type)
+            .unwrap();
+        let parent = layout.parents[node].unwrap();
+        assert_eq!(graph.nodes[parent].address, "module.network.aws_vpc.main");
     }
     let service = graph
         .nodes

@@ -88,14 +88,22 @@
                   "name": {
                     "constant_value": "planorama-app"
                   },
-                  "network_configuration": {
-                    "references": [
-                      "aws_security_group.app.id",
-                      "var.private_a",
-                      "var.private_b",
-                      "var.shared_security_group_id"
-                    ]
-                  },
+                  "network_configuration": [
+                    {
+                      "security_groups": {
+                        "references": [
+                          "aws_security_group.app.id",
+                          "var.shared_security_group_id"
+                        ]
+                      },
+                      "subnets": {
+                        "references": [
+                          "var.private_a",
+                          "var.private_b"
+                        ]
+                      }
+                    }
+                  ],
                   "tags": {
                     "references": [
                       "var.log_group"

@@ -1,11 +1,11 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1100" height="6152" viewBox="0 0 1100 6152" role="img" aria-labelledby="title description">
 <title id="title">Terraform plan</title>
-<desc id="description">46 resources (42 cards), 78 relationships. Lines show architectural relationships. Edge titles identify the relationship kind and Terraform change.</desc>
+<desc id="description">46 resources (42 cards), 80 relationships. Lines show architectural relationships. Edge titles identify the relationship kind and Terraform change.</desc>
 <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/></marker><marker id="arrow-create" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#047857"/></marker></defs>
 <rect width="100%" height="100%" fill="#ffffff"/>
 <g font-family="ui-monospace, SFMono-Regular, Consolas, monospace">
 <text x="40" y="45" font-size="25" font-weight="700" fill="#0f172a">Terraform plan</text>
-<text x="40" y="73" font-size="13" fill="#475569">46 resources (42 cards) · 78 relationships</text>
+<text x="40" y="73" font-size="13" fill="#475569">46 resources (42 cards) · 80 relationships</text>
 <rect x="40" y="100" width="12" height="12" fill="#ecfdf5" stroke="#047857"/><text x="59" y="111" font-size="12" fill="#047857">create (43)</text>
 <rect x="180" y="100" width="12" height="12" fill="#eff6ff" stroke="#1d4ed8"/><text x="199" y="111" font-size="12" fill="#1d4ed8">update (0)</text>
 <rect x="320" y="100" width="12" height="12" fill="#fef2f2" stroke="#b91c1c"/><text x="339" y="111" font-size="12" fill="#b91c1c">delete (0)</text>
@@ -13,302 +13,304 @@
 <rect x="600" y="100" width="12" height="12" fill="#faf5ff" stroke="#7e22ce"/><text x="619" y="111" font-size="12" fill="#7e22ce">read (0)</text>
 <rect x="740" y="100" width="12" height="12" fill="#f8fafc" stroke="#64748b"/><text x="759" y="111" font-size="12" fill="#64748b">unchanged (3)</text>
 <rect x="880" y="100" width="12" height="12" fill="#fefce8" stroke="#854d0e"/><text x="899" y="111" font-size="12" fill="#854d0e">other (0)</text>
-<g data-container="resource-36"><title>module.network.aws_vpc.main</title><rect x="60" y="160" width="480" height="1384" rx="12" fill="#ecfdf5" stroke="#047857" stroke-width="2" data-mode="managed"/></g>
-<g data-container="resource-32"><title>module.network.aws_subnet.private_a</title><rect x="100" y="296" width="400" height="408" rx="12" fill="#d1fae5" stroke="#047857" stroke-width="2" data-mode="managed"/></g>
-<g data-container="resource-33"><title>module.network.aws_subnet.private_b</title><rect x="100" y="744" width="400" height="408" rx="12" fill="#d1fae5" stroke="#047857" stroke-width="2" data-mode="managed"/></g>
-<g data-container="resource-34"><title>module.network.aws_subnet.public_a</title><rect x="100" y="1192" width="400" height="136" rx="12" fill="#d1fae5" stroke="#047857" stroke-width="2" data-mode="managed"/></g>
-<g data-container="resource-35"><title>module.network.aws_subnet.public_b</title><rect x="100" y="1368" width="400" height="136" rx="12" fill="#d1fae5" stroke="#047857" stroke-width="2" data-mode="managed"/></g>
-<g data-container="resource-41"><title>module.shared.data.aws_vpc.shared</title><rect x="60" y="5664" width="400" height="136" rx="12" fill="#f8fafc" stroke="#64748b" stroke-width="2" data-mode="data" stroke-dasharray="6 4"/></g>
-<path d="M 380 4488 L 388 4488 Q 396 4488 396 4480 L 396 1755 Q 396 1747 388 1747 L 380 1747 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>aws_cloudwatch_log_group.app → module.application.aws_ecs_service.app (dependency)</title></path>
-<path d="M 380 4624 L 388 4624 Q 396 4624 396 4616 L 396 1762 Q 396 1754 388 1754 L 380 1754 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.application.aws_ecs_cluster.app → module.application.aws_ecs_service.app (dependency)</title></path>
-<path d="M 380 4750 L 388 4750 Q 396 4750 396 4742 L 396 1769 Q 396 1761 388 1761 L 380 1761 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.application.aws_ecs_task_definition.app → module.application.aws_ecs_service.app (dependency)</title></path>
-<path d="M 380 1894 L 388 1894 Q 396 1894 396 1886 L 396 1704 Q 396 1696 404 1696 L 508 1696 Q 516 1696 516 1688 L 516 552 Q 516 544 508 544 L 484 544 Q 476 544 476 536 L 476 469 Q 476 461 468 461 L 460 461 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.application.aws_iam_instance_profile.app → module.application.aws_instance.workers_a[0] (dependency)</title></path>
-<path d="M 380 1904 L 388 1904 Q 396 1904 396 1896 L 396 1704 Q 396 1696 404 1696 L 508 1696 Q 516 1696 516 1688 L 516 736 Q 516 728 508 728 L 484 728 Q 476 728 476 720 L 476 605 Q 476 597 468 597 L 460 597 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.application.aws_iam_instance_profile.app → module.application.aws_instance.workers_a[1] (dependency)</title></path>
-<path d="M 380 1913 L 388 1913 Q 396 1913 396 1905 L 396 1704 Q 396 1696 404 1696 L 508 1696 Q 516 1696 516 1688 L 516 1000 Q 516 992 508 992 L 484 992 Q 476 992 476 984 L 476 917 Q 476 909 468 909 L 460 909 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.application.aws_iam_instance_profile.app → module.application.aws_instance.workers_b[0] (dependency)</title></path>
-<path d="M 380 1922 L 388 1922 Q 396 1922 396 1914 L 396 1704 Q 396 1696 404 1696 L 508 1696 Q 516 1696 516 1688 L 516 1184 Q 516 1176 508 1176 L 484 1176 Q 476 1176 476 1168 L 476 1053 Q 476 1045 468 1045 L 460 1045 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.application.aws_iam_instance_profile.app → module.application.aws_instance.workers_b[1] (dependency)</title></path>
-<path d="M 380 5032 L 388 5032 Q 396 5032 396 5024 L 396 1893 Q 396 1885 388 1885 L 380 1885 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.application.aws_iam_role.instance → module.application.aws_iam_instance_profile.app (dependency)</title></path>
-<path d="M 380 6024 L 388 6024 Q 396 6024 396 6016 L 396 5824 Q 396 5816 404 5816 L 468 5816 Q 476 5816 476 5808 L 476 4832 Q 476 4824 468 4824 L 404 4824 Q 396 4824 396 4816 L 396 4777 Q 396 4769 388 4769 L 380 4769 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.application.aws_iam_role.task → module.application.aws_ecs_task_definition.app (dependency)</title></path>
-<path d="M 460 470 L 468 470 Q 476 470 476 478 L 476 544 Q 476 552 484 552 L 508 552 Q 516 552 516 560 L 516 2376 Q 516 2384 508 2384 L 404 2384 Q 396 2384 396 2392 L 396 2426 Q 396 2434 388 2434 L 380 2434 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.application.aws_instance.workers_a[0] → module.application.aws_lb_target_group_attachment.a0 (dependency)</title></path>
-<path d="M 460 480 L 468 480 Q 476 480 476 488 L 476 544 Q 476 552 484 552 L 508 552 Q 516 552 516 560 L 516 2512 Q 516 2520 508 2520 L 404 2520 Q 396 2520 396 2528 L 396 2562 Q 396 2570 388 2570 L 380 2570 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.application.aws_instance.workers_a[0] → module.application.aws_lb_target_group_attachment.a1 (dependency)</title></path>
-<path d="M 460 606 L 476 606 L 508 606 Q 516 606 516 614 L 516 2376 Q 516 2384 508 2384 L 404 2384 Q 396 2384 396 2392 L 396 2440 Q 396 2448 388 2448 L 380 2448 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.application.aws_instance.workers_a[1] → module.application.aws_lb_target_group_attachment.a0 (dependency)</title></path>
-<path d="M 460 616 L 476 616 L 508 616 Q 516 616 516 624 L 516 2512 Q 516 2520 508 2520 L 404 2520 Q 396 2520 396 2528 L 396 2576 Q 396 2584 388 2584 L 380 2584 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.application.aws_instance.workers_a[1] → module.application.aws_lb_target_group_attachment.a1 (dependency)</title></path>
-<path d="M 460 918 L 468 918 Q 476 918 476 926 L 476 992 Q 476 1000 484 1000 L 508 1000 Q 516 1000 516 1008 L 516 2648 Q 516 2656 508 2656 L 404 2656 Q 396 2656 396 2664 L 396 2698 Q 396 2706 388 2706 L 380 2706 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.application.aws_instance.workers_b[0] → module.application.aws_lb_target_group_attachment.b0 (dependency)</title></path>
-<path d="M 460 928 L 468 928 Q 476 928 476 936 L 476 992 Q 476 1000 484 1000 L 508 1000 Q 516 1000 516 1008 L 516 2784 Q 516 2792 508 2792 L 404 2792 Q 396 2792 396 2800 L 396 2834 Q 396 2842 388 2842 L 380 2842 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.application.aws_instance.workers_b[0] → module.application.aws_lb_target_group_attachment.b1 (dependency)</title></path>
-<path d="M 460 1054 L 476 1054 L 508 1054 Q 516 1054 516 1062 L 516 2648 Q 516 2656 508 2656 L 404 2656 Q 396 2656 396 2664 L 396 2712 Q 396 2720 388 2720 L 380 2720 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.application.aws_instance.workers_b[1] → module.application.aws_lb_target_group_attachment.b0 (dependency)</title></path>
-<path d="M 460 1064 L 476 1064 L 508 1064 Q 516 1064 516 1072 L 516 2784 Q 516 2792 508 2792 L 404 2792 Q 396 2792 396 2800 L 396 2848 Q 396 2856 388 2856 L 380 2856 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.application.aws_instance.workers_b[1] → module.application.aws_lb_target_group_attachment.b1 (dependency)</title></path>
-<path d="M 380 2159 L 388 2159 Q 396 2159 396 2167 L 396 5286 Q 396 5294 388 5294 L 380 5294 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.application.aws_lb.app → module.application.aws_lb_listener.http (dependency)</title></path>
-<path d="M 380 2292 L 388 2292 Q 396 2292 396 2300 L 396 5305 Q 396 5313 388 5313 L 380 5313 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.application.aws_lb_target_group.app → module.application.aws_lb_listener.http (dependency)</title></path>
-<path d="M 380 2300 L 388 2300 Q 396 2300 396 2308 L 396 2454 Q 396 2462 388 2462 L 380 2462 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.application.aws_lb_target_group.app → module.application.aws_lb_target_group_attachment.a0 (dependency)</title></path>
-<path d="M 380 2308 L 388 2308 Q 396 2308 396 2316 L 396 2590 Q 396 2598 388 2598 L 380 2598 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.application.aws_lb_target_group.app → module.application.aws_lb_target_group_attachment.a1 (dependency)</title></path>
-<path d="M 380 2316 L 388 2316 Q 396 2316 396 2324 L 396 2726 Q 396 2734 388 2734 L 380 2734 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.application.aws_lb_target_group.app → module.application.aws_lb_target_group_attachment.b0 (dependency)</title></path>
-<path d="M 380 2324 L 388 2324 Q 396 2324 396 2332 L 396 2862 Q 396 2870 388 2870 L 380 2870 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.application.aws_lb_target_group.app → module.application.aws_lb_target_group_attachment.b1 (dependency)</title></path>
-<path d="M 380 3386 L 388 3386 Q 396 3386 396 3378 L 396 2178 Q 396 2170 388 2170 L 380 2170 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.application.aws_security_group.alb → module.application.aws_lb.app (dependency)</title></path>
-<path d="M 380 3400 L 388 3400 Q 396 3400 396 3408 L 396 3537 Q 396 3545 388 3545 L 380 3545 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.application.aws_security_group.alb → module.application.aws_security_group.app (dependency)</title></path>
-<path d="M 380 3514 L 388 3514 Q 396 3514 396 3506 L 396 1776 Q 396 1768 388 1768 L 380 1768 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.application.aws_security_group.app → module.application.aws_ecs_service.app (dependency)</title></path>
-<path d="M 380 3520 L 388 3520 Q 396 3520 396 3512 L 396 1704 Q 396 1696 404 1696 L 508 1696 Q 516 1696 516 1688 L 516 552 Q 516 544 508 544 L 484 544 Q 476 544 476 536 L 476 497 Q 476 489 468 489 L 460 489 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.application.aws_security_group.app → module.application.aws_instance.workers_a[0] (dependency)</title></path>
-<path d="M 380 3526 L 388 3526 Q 396 3526 396 3518 L 396 1704 Q 396 1696 404 1696 L 508 1696 Q 516 1696 516 1688 L 516 736 Q 516 728 508 728 L 484 728 Q 476 728 476 720 L 476 633 Q 476 625 468 625 L 460 625 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.application.aws_security_group.app → module.application.aws_instance.workers_a[1] (dependency)</title></path>
-<path d="M 380 3532 L 388 3532 Q 396 3532 396 3524 L 396 1704 Q 396 1696 404 1696 L 508 1696 Q 516 1696 516 1688 L 516 1000 Q 516 992 508 992 L 484 992 Q 476 992 476 984 L 476 945 Q 476 937 468 937 L 460 937 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.application.aws_security_group.app → module.application.aws_instance.workers_b[0] (dependency)</title></path>
-<path d="M 380 3539 L 388 3539 Q 396 3539 396 3531 L 396 1704 Q 396 1696 404 1696 L 508 1696 Q 516 1696 516 1688 L 516 1184 Q 516 1176 508 1176 L 484 1176 Q 476 1176 476 1168 L 476 1081 Q 476 1073 468 1073 L 460 1073 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.application.aws_security_group.app → module.application.aws_instance.workers_b[1] (dependency)</title></path>
-<path d="M 380 3551 L 388 3551 Q 396 3551 396 3559 L 396 3664 Q 396 3672 388 3672 L 380 3672 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.application.aws_security_group.app → module.database.aws_security_group.database (dependency)</title></path>
-<path d="M 380 4338 L 388 4338 Q 396 4338 396 4346 L 396 5640 Q 396 5648 404 5648 L 468 5648 Q 476 5648 476 5656 L 476 5816 Q 476 5824 468 5824 L 404 5824 Q 396 5824 396 5832 L 396 5880 Q 396 5888 388 5888 L 380 5888 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.database.aws_db_instance.database → module.database.aws_cloudwatch_metric_alarm.database_cpu (dependency)</title></path>
-<path d="M 380 1618 L 388 1618 Q 396 1618 396 1626 L 396 4344 Q 396 4352 388 4352 L 380 4352 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.database.aws_db_subnet_group.database → module.database.aws_db_instance.database (dependency)</title></path>
-<path d="M 380 3658 L 388 3658 Q 396 3658 396 3666 L 396 4358 Q 396 4366 388 4366 L 380 4366 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.database.aws_security_group.database → module.database.aws_db_instance.database (dependency)</title></path>
-<path d="M 380 5440 L 388 5440 Q 396 5440 396 5432 L 396 2983 Q 396 2975 388 2975 L 380 2975 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.network.aws_eip.nat → module.network.aws_nat_gateway.main (dependency)</title></path>
-<path d="M 380 2026 L 388 2026 Q 396 2026 396 2034 L 396 2978 Q 396 2986 388 2986 L 380 2986 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.network.aws_internet_gateway.main → module.network.aws_nat_gateway.main (dependency)</title></path>
-<path d="M 380 2040 L 388 2040 Q 396 2040 396 2048 L 396 5150 Q 396 5158 388 5158 L 380 5158 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.network.aws_internet_gateway.main → module.network.aws_route.internet (dependency)</title></path>
-<path d="M 380 2997 L 388 2997 Q 396 2997 396 3005 L 396 5558 Q 396 5566 388 5566 L 380 5566 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.network.aws_nat_gateway.main → module.network.aws_route.nat (dependency)</title></path>
-<path d="M 380 3111 L 388 3111 Q 396 3111 396 3119 L 396 5577 Q 396 5585 388 5585 L 380 5585 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.network.aws_route_table.private → module.network.aws_route.nat (dependency)</title></path>
-<path d="M 380 3247 L 388 3247 Q 396 3247 396 3255 L 396 5169 Q 396 5177 388 5177 L 380 5177 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.network.aws_route_table.public → module.network.aws_route.internet (dependency)</title></path>
-<path d="M 380 3817 L 388 3817 Q 396 3817 396 3825 L 396 3919 Q 396 3927 388 3927 L 380 3927 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.network.aws_security_group.endpoints → module.network.aws_vpc_endpoint.logs (dependency)</title></path>
-<path d="M 500 338 L 508 338 Q 516 338 516 346 L 516 1696 Q 516 1704 508 1704 L 404 1704 Q 396 1704 396 1712 L 396 1767 Q 396 1775 388 1775 L 380 1775 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.network.aws_subnet.private_a → module.application.aws_ecs_service.app (dependency)</title></path>
+<g data-container="resource-36"><title>module.network.aws_vpc.main</title><rect x="60" y="160" width="480" height="1656" rx="12" fill="#ecfdf5" stroke="#047857" stroke-width="2" data-mode="managed"/></g>
+<g data-container="resource-32"><title>module.network.aws_subnet.private_a</title><rect x="100" y="568" width="400" height="408" rx="12" fill="#d1fae5" stroke="#047857" stroke-width="2" data-mode="managed"/></g>
+<g data-container="resource-33"><title>module.network.aws_subnet.private_b</title><rect x="100" y="1016" width="400" height="408" rx="12" fill="#d1fae5" stroke="#047857" stroke-width="2" data-mode="managed"/></g>
+<g data-container="resource-34"><title>module.network.aws_subnet.public_a</title><rect x="100" y="1464" width="400" height="136" rx="12" fill="#d1fae5" stroke="#047857" stroke-width="2" data-mode="managed"/></g>
+<g data-container="resource-35"><title>module.network.aws_subnet.public_b</title><rect x="100" y="1640" width="400" height="136" rx="12" fill="#d1fae5" stroke="#047857" stroke-width="2" data-mode="managed"/></g>
+<g data-container="resource-41"><title>module.shared.data.aws_vpc.shared</title><rect x="60" y="5800" width="400" height="136" rx="12" fill="#f8fafc" stroke="#64748b" stroke-width="2" data-mode="data" stroke-dasharray="6 4"/></g>
+<path d="M 380 1904 L 396 1904 L 508 1904 Q 516 1904 516 1896 L 516 416 Q 516 408 508 408 L 444 408 Q 436 408 436 400 L 436 331 Q 436 323 428 323 L 420 323 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>aws_cloudwatch_log_group.app → module.application.aws_ecs_service.app (dependency)</title></path>
+<path d="M 380 2176 L 388 2176 Q 396 2176 396 2168 L 396 1976 Q 396 1968 404 1968 L 508 1968 Q 516 1968 516 1960 L 516 416 Q 516 408 508 408 L 444 408 Q 436 408 436 400 L 436 338 Q 436 330 428 330 L 420 330 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.application.aws_ecs_cluster.app → module.application.aws_ecs_service.app (dependency)</title></path>
+<path d="M 380 2302 L 388 2302 Q 396 2302 396 2294 L 396 1976 Q 396 1968 404 1968 L 508 1968 Q 516 1968 516 1960 L 516 416 Q 516 408 508 408 L 444 408 Q 436 408 436 400 L 436 345 Q 436 337 428 337 L 420 337 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.application.aws_ecs_task_definition.app → module.application.aws_ecs_service.app (dependency)</title></path>
+<path d="M 380 2438 L 388 2438 Q 396 2438 396 2430 L 396 1976 Q 396 1968 404 1968 L 508 1968 Q 516 1968 516 1960 L 516 824 Q 516 816 508 816 L 484 816 Q 476 816 476 808 L 476 741 Q 476 733 468 733 L 460 733 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.application.aws_iam_instance_profile.app → module.application.aws_instance.workers_a[0] (dependency)</title></path>
+<path d="M 380 2448 L 388 2448 Q 396 2448 396 2440 L 396 1976 Q 396 1968 404 1968 L 508 1968 Q 516 1968 516 1960 L 516 1008 Q 516 1000 508 1000 L 484 1000 Q 476 1000 476 992 L 476 877 Q 476 869 468 869 L 460 869 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.application.aws_iam_instance_profile.app → module.application.aws_instance.workers_a[1] (dependency)</title></path>
+<path d="M 380 2457 L 388 2457 Q 396 2457 396 2449 L 396 1976 Q 396 1968 404 1968 L 508 1968 Q 516 1968 516 1960 L 516 1272 Q 516 1264 508 1264 L 484 1264 Q 476 1264 476 1256 L 476 1189 Q 476 1181 468 1181 L 460 1181 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.application.aws_iam_instance_profile.app → module.application.aws_instance.workers_b[0] (dependency)</title></path>
+<path d="M 380 2466 L 388 2466 Q 396 2466 396 2458 L 396 1976 Q 396 1968 404 1968 L 508 1968 Q 516 1968 516 1960 L 516 1456 Q 516 1448 508 1448 L 484 1448 Q 476 1448 476 1440 L 476 1325 Q 476 1317 468 1317 L 460 1317 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.application.aws_iam_instance_profile.app → module.application.aws_instance.workers_b[1] (dependency)</title></path>
+<path d="M 380 5304 L 388 5304 Q 396 5304 396 5296 L 396 2437 Q 396 2429 388 2429 L 380 2429 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.application.aws_iam_role.instance → module.application.aws_iam_instance_profile.app (dependency)</title></path>
+<path d="M 380 5168 L 388 5168 Q 396 5168 396 5160 L 396 2329 Q 396 2321 388 2321 L 380 2321 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.application.aws_iam_role.task → module.application.aws_ecs_task_definition.app (dependency)</title></path>
+<path d="M 460 742 L 468 742 Q 476 742 476 750 L 476 816 Q 476 824 484 824 L 508 824 Q 516 824 516 832 L 516 2920 Q 516 2928 508 2928 L 404 2928 Q 396 2928 396 2936 L 396 2970 Q 396 2978 388 2978 L 380 2978 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.application.aws_instance.workers_a[0] → module.application.aws_lb_target_group_attachment.a0 (dependency)</title></path>
+<path d="M 460 752 L 468 752 Q 476 752 476 760 L 476 816 Q 476 824 484 824 L 508 824 Q 516 824 516 832 L 516 3056 Q 516 3064 508 3064 L 404 3064 Q 396 3064 396 3072 L 396 3106 Q 396 3114 388 3114 L 380 3114 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.application.aws_instance.workers_a[0] → module.application.aws_lb_target_group_attachment.a1 (dependency)</title></path>
+<path d="M 460 878 L 476 878 L 508 878 Q 516 878 516 886 L 516 2920 Q 516 2928 508 2928 L 404 2928 Q 396 2928 396 2936 L 396 2984 Q 396 2992 388 2992 L 380 2992 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.application.aws_instance.workers_a[1] → module.application.aws_lb_target_group_attachment.a0 (dependency)</title></path>
+<path d="M 460 888 L 476 888 L 508 888 Q 516 888 516 896 L 516 3056 Q 516 3064 508 3064 L 404 3064 Q 396 3064 396 3072 L 396 3120 Q 396 3128 388 3128 L 380 3128 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.application.aws_instance.workers_a[1] → module.application.aws_lb_target_group_attachment.a1 (dependency)</title></path>
+<path d="M 460 1190 L 468 1190 Q 476 1190 476 1198 L 476 1264 Q 476 1272 484 1272 L 508 1272 Q 516 1272 516 1280 L 516 3192 Q 516 3200 508 3200 L 404 3200 Q 396 3200 396 3208 L 396 3242 Q 396 3250 388 3250 L 380 3250 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.application.aws_instance.workers_b[0] → module.application.aws_lb_target_group_attachment.b0 (dependency)</title></path>
+<path d="M 460 1200 L 468 1200 Q 476 1200 476 1208 L 476 1264 Q 476 1272 484 1272 L 508 1272 Q 516 1272 516 1280 L 516 3328 Q 516 3336 508 3336 L 404 3336 Q 396 3336 396 3344 L 396 3378 Q 396 3386 388 3386 L 380 3386 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.application.aws_instance.workers_b[0] → module.application.aws_lb_target_group_attachment.b1 (dependency)</title></path>
+<path d="M 460 1326 L 476 1326 L 508 1326 Q 516 1326 516 1334 L 516 3192 Q 516 3200 508 3200 L 404 3200 Q 396 3200 396 3208 L 396 3256 Q 396 3264 388 3264 L 380 3264 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.application.aws_instance.workers_b[1] → module.application.aws_lb_target_group_attachment.b0 (dependency)</title></path>
+<path d="M 460 1336 L 476 1336 L 508 1336 Q 516 1336 516 1344 L 516 3328 Q 516 3336 508 3336 L 404 3336 Q 396 3336 396 3344 L 396 3392 Q 396 3400 388 3400 L 380 3400 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.application.aws_instance.workers_b[1] → module.application.aws_lb_target_group_attachment.b1 (dependency)</title></path>
+<path d="M 420 463 L 428 463 Q 436 463 436 471 L 436 544 Q 436 552 444 552 L 508 552 Q 516 552 516 560 L 516 2648 Q 516 2656 508 2656 L 404 2656 Q 396 2656 396 2664 L 396 2702 Q 396 2710 388 2710 L 380 2710 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.application.aws_lb.app → module.application.aws_lb_listener.http (dependency)</title></path>
+<path d="M 380 2836 L 388 2836 Q 396 2836 396 2828 L 396 2737 Q 396 2729 388 2729 L 380 2729 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.application.aws_lb_target_group.app → module.application.aws_lb_listener.http (dependency)</title></path>
+<path d="M 380 2844 L 388 2844 Q 396 2844 396 2852 L 396 2998 Q 396 3006 388 3006 L 380 3006 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.application.aws_lb_target_group.app → module.application.aws_lb_target_group_attachment.a0 (dependency)</title></path>
+<path d="M 380 2852 L 388 2852 Q 396 2852 396 2860 L 396 3134 Q 396 3142 388 3142 L 380 3142 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.application.aws_lb_target_group.app → module.application.aws_lb_target_group_attachment.a1 (dependency)</title></path>
+<path d="M 380 2860 L 388 2860 Q 396 2860 396 2868 L 396 3270 Q 396 3278 388 3278 L 380 3278 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.application.aws_lb_target_group.app → module.application.aws_lb_target_group_attachment.b0 (dependency)</title></path>
+<path d="M 380 2868 L 388 2868 Q 396 2868 396 2876 L 396 3406 Q 396 3414 388 3414 L 380 3414 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.application.aws_lb_target_group.app → module.application.aws_lb_target_group_attachment.b1 (dependency)</title></path>
+<path d="M 380 3930 L 388 3930 Q 396 3930 396 3922 L 396 1976 Q 396 1968 404 1968 L 508 1968 Q 516 1968 516 1960 L 516 552 Q 516 544 508 544 L 444 544 Q 436 544 436 536 L 436 482 Q 436 474 428 474 L 420 474 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.application.aws_security_group.alb → module.application.aws_lb.app (dependency)</title></path>
+<path d="M 380 3944 L 388 3944 Q 396 3944 396 3952 L 396 4081 Q 396 4089 388 4089 L 380 4089 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.application.aws_security_group.alb → module.application.aws_security_group.app (dependency)</title></path>
+<path d="M 380 4058 L 388 4058 Q 396 4058 396 4050 L 396 1976 Q 396 1968 404 1968 L 508 1968 Q 516 1968 516 1960 L 516 416 Q 516 408 508 408 L 444 408 Q 436 408 436 400 L 436 352 Q 436 344 428 344 L 420 344 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.application.aws_security_group.app → module.application.aws_ecs_service.app (dependency)</title></path>
+<path d="M 380 4064 L 388 4064 Q 396 4064 396 4056 L 396 1976 Q 396 1968 404 1968 L 508 1968 Q 516 1968 516 1960 L 516 824 Q 516 816 508 816 L 484 816 Q 476 816 476 808 L 476 769 Q 476 761 468 761 L 460 761 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.application.aws_security_group.app → module.application.aws_instance.workers_a[0] (dependency)</title></path>
+<path d="M 380 4070 L 388 4070 Q 396 4070 396 4062 L 396 1976 Q 396 1968 404 1968 L 508 1968 Q 516 1968 516 1960 L 516 1008 Q 516 1000 508 1000 L 484 1000 Q 476 1000 476 992 L 476 905 Q 476 897 468 897 L 460 897 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.application.aws_security_group.app → module.application.aws_instance.workers_a[1] (dependency)</title></path>
+<path d="M 380 4076 L 388 4076 Q 396 4076 396 4068 L 396 1976 Q 396 1968 404 1968 L 508 1968 Q 516 1968 516 1960 L 516 1272 Q 516 1264 508 1264 L 484 1264 Q 476 1264 476 1256 L 476 1217 Q 476 1209 468 1209 L 460 1209 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.application.aws_security_group.app → module.application.aws_instance.workers_b[0] (dependency)</title></path>
+<path d="M 380 4083 L 388 4083 Q 396 4083 396 4075 L 396 1976 Q 396 1968 404 1968 L 508 1968 Q 516 1968 516 1960 L 516 1456 Q 516 1448 508 1448 L 484 1448 Q 476 1448 476 1440 L 476 1353 Q 476 1345 468 1345 L 460 1345 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.application.aws_security_group.app → module.application.aws_instance.workers_b[1] (dependency)</title></path>
+<path d="M 380 4095 L 388 4095 Q 396 4095 396 4103 L 396 4208 Q 396 4216 388 4216 L 380 4216 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.application.aws_security_group.app → module.database.aws_security_group.database (dependency)</title></path>
+<path d="M 380 5018 L 388 5018 Q 396 5018 396 5026 L 396 5776 Q 396 5784 404 5784 L 468 5784 Q 476 5784 476 5792 L 476 5952 Q 476 5960 468 5960 L 404 5960 Q 396 5960 396 5968 L 396 6016 Q 396 6024 388 6024 L 380 6024 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.database.aws_db_instance.database → module.database.aws_cloudwatch_metric_alarm.database_cpu (dependency)</title></path>
+<path d="M 380 2026 L 388 2026 Q 396 2026 396 2034 L 396 5024 Q 396 5032 388 5032 L 380 5032 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.database.aws_db_subnet_group.database → module.database.aws_db_instance.database (dependency)</title></path>
+<path d="M 380 4202 L 388 4202 Q 396 4202 396 4210 L 396 5038 Q 396 5046 388 5046 L 380 5046 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.database.aws_security_group.database → module.database.aws_db_instance.database (dependency)</title></path>
+<path d="M 380 5576 L 388 5576 Q 396 5576 396 5568 L 396 3527 Q 396 3519 388 3519 L 380 3519 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.network.aws_eip.nat → module.network.aws_nat_gateway.main (dependency)</title></path>
+<path d="M 380 2570 L 388 2570 Q 396 2570 396 2578 L 396 3522 Q 396 3530 388 3530 L 380 3530 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.network.aws_internet_gateway.main → module.network.aws_nat_gateway.main (dependency)</title></path>
+<path d="M 380 2584 L 388 2584 Q 396 2584 396 2592 L 396 5422 Q 396 5430 388 5430 L 380 5430 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.network.aws_internet_gateway.main → module.network.aws_route.internet (dependency)</title></path>
+<path d="M 380 3541 L 388 3541 Q 396 3541 396 3549 L 396 5694 Q 396 5702 388 5702 L 380 5702 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.network.aws_nat_gateway.main → module.network.aws_route.nat (dependency)</title></path>
+<path d="M 380 3655 L 388 3655 Q 396 3655 396 3663 L 396 5713 Q 396 5721 388 5721 L 380 5721 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.network.aws_route_table.private → module.network.aws_route.nat (dependency)</title></path>
+<path d="M 380 3791 L 388 3791 Q 396 3791 396 3799 L 396 5441 Q 396 5449 388 5449 L 380 5449 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.network.aws_route_table.public → module.network.aws_route.internet (dependency)</title></path>
+<path d="M 380 4361 L 388 4361 Q 396 4361 396 4369 L 396 4463 Q 396 4471 388 4471 L 380 4471 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.network.aws_security_group.endpoints → module.network.aws_vpc_endpoint.logs (dependency)</title></path>
+<path d="M 500 610 L 508 610 Q 516 610 516 602 L 516 416 Q 516 408 508 408 L 444 408 Q 436 408 436 400 L 436 359 Q 436 351 428 351 L 420 351 " data-edge-kind="connection" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.network.aws_subnet.private_a → module.application.aws_ecs_service.app (connection)</title></path>
 <g data-edge-kind="containment" data-source="resource-32" data-target="resource-7"><title>module.network.aws_subnet.private_a → module.application.aws_instance.workers_a[0] (containment)</title></g>
 <g data-edge-kind="containment" data-source="resource-32" data-target="resource-8"><title>module.network.aws_subnet.private_a → module.application.aws_instance.workers_a[1] (containment)</title></g>
-<path d="M 500 327 L 508 327 Q 516 327 516 335 L 516 1512 Q 516 1520 508 1520 L 404 1520 Q 396 1520 396 1528 L 396 1624 Q 396 1632 388 1632 L 380 1632 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.network.aws_subnet.private_a → module.database.aws_db_subnet_group.database (dependency)</title></path>
-<path d="M 500 349 L 508 349 Q 516 349 516 357 L 516 3056 Q 516 3064 508 3064 L 404 3064 Q 396 3064 396 3072 L 396 3114 Q 396 3122 388 3122 L 380 3122 " data-edge-kind="association" fill="none" stroke="#047857" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow-create)"><title>module.network.aws_subnet.private_a → module.network.aws_route_table.private (association; create: module.network.aws_route_table_association.private_a)</title></path>
-<path d="M 500 360 L 508 360 Q 516 360 516 368 L 516 3872 Q 516 3880 508 3880 L 404 3880 Q 396 3880 396 3888 L 396 3930 Q 396 3938 388 3938 L 380 3938 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.network.aws_subnet.private_a → module.network.aws_vpc_endpoint.logs (dependency)</title></path>
-<path d="M 500 786 L 508 786 Q 516 786 516 794 L 516 1696 Q 516 1704 508 1704 L 404 1704 Q 396 1704 396 1712 L 396 1774 Q 396 1782 388 1782 L 380 1782 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.network.aws_subnet.private_b → module.application.aws_ecs_service.app (dependency)</title></path>
+<path d="M 500 599 L 508 599 Q 516 599 516 607 L 516 1968 Q 516 1976 508 1976 L 404 1976 Q 396 1976 396 1984 L 396 2032 Q 396 2040 388 2040 L 380 2040 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.network.aws_subnet.private_a → module.database.aws_db_subnet_group.database (dependency)</title></path>
+<path d="M 500 621 L 508 621 Q 516 621 516 629 L 516 3600 Q 516 3608 508 3608 L 404 3608 Q 396 3608 396 3616 L 396 3658 Q 396 3666 388 3666 L 380 3666 " data-edge-kind="association" fill="none" stroke="#047857" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow-create)"><title>module.network.aws_subnet.private_a → module.network.aws_route_table.private (association; create: module.network.aws_route_table_association.private_a)</title></path>
+<path d="M 500 632 L 508 632 Q 516 632 516 640 L 516 4416 Q 516 4424 508 4424 L 404 4424 Q 396 4424 396 4432 L 396 4474 Q 396 4482 388 4482 L 380 4482 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.network.aws_subnet.private_a → module.network.aws_vpc_endpoint.logs (dependency)</title></path>
+<path d="M 500 1058 L 508 1058 Q 516 1058 516 1050 L 516 416 Q 516 408 508 408 L 444 408 Q 436 408 436 400 L 436 366 Q 436 358 428 358 L 420 358 " data-edge-kind="connection" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.network.aws_subnet.private_b → module.application.aws_ecs_service.app (connection)</title></path>
 <g data-edge-kind="containment" data-source="resource-33" data-target="resource-9"><title>module.network.aws_subnet.private_b → module.application.aws_instance.workers_b[0] (containment)</title></g>
 <g data-edge-kind="containment" data-source="resource-33" data-target="resource-10"><title>module.network.aws_subnet.private_b → module.application.aws_instance.workers_b[1] (containment)</title></g>
-<path d="M 500 775 L 508 775 Q 516 775 516 783 L 516 1512 Q 516 1520 508 1520 L 404 1520 Q 396 1520 396 1528 L 396 1638 Q 396 1646 388 1646 L 380 1646 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.network.aws_subnet.private_b → module.database.aws_db_subnet_group.database (dependency)</title></path>
-<path d="M 500 797 L 508 797 Q 516 797 516 805 L 516 3056 Q 516 3064 508 3064 L 404 3064 Q 396 3064 396 3072 L 396 3125 Q 396 3133 388 3133 L 380 3133 " data-edge-kind="association" fill="none" stroke="#047857" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow-create)"><title>module.network.aws_subnet.private_b → module.network.aws_route_table.private (association; create: module.network.aws_route_table_association.private_b)</title></path>
-<path d="M 500 808 L 508 808 Q 516 808 516 816 L 516 3872 Q 516 3880 508 3880 L 404 3880 Q 396 3880 396 3888 L 396 3941 Q 396 3949 388 3949 L 380 3949 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.network.aws_subnet.private_b → module.network.aws_vpc_endpoint.logs (dependency)</title></path>
-<path d="M 500 1226 L 508 1226 Q 516 1226 516 1234 L 516 2104 Q 516 2112 508 2112 L 404 2112 Q 396 2112 396 2120 L 396 2173 Q 396 2181 388 2181 L 380 2181 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.network.aws_subnet.public_a → module.application.aws_lb.app (dependency)</title></path>
-<path d="M 500 1240 L 508 1240 Q 516 1240 516 1248 L 516 2920 Q 516 2928 508 2928 L 404 2928 Q 396 2928 396 2936 L 396 3000 Q 396 3008 388 3008 L 380 3008 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.network.aws_subnet.public_a → module.network.aws_nat_gateway.main (dependency)</title></path>
-<path d="M 500 1254 L 508 1254 Q 516 1254 516 1262 L 516 3192 Q 516 3200 508 3200 L 404 3200 Q 396 3200 396 3208 L 396 3250 Q 396 3258 388 3258 L 380 3258 " data-edge-kind="association" fill="none" stroke="#047857" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow-create)"><title>module.network.aws_subnet.public_a → module.network.aws_route_table.public (association; create: module.network.aws_route_table_association.public_a)</title></path>
-<path d="M 500 1406 L 508 1406 Q 516 1406 516 1414 L 516 2104 Q 516 2112 508 2112 L 404 2112 Q 396 2112 396 2120 L 396 2184 Q 396 2192 388 2192 L 380 2192 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.network.aws_subnet.public_b → module.application.aws_lb.app (dependency)</title></path>
-<path d="M 500 1425 L 508 1425 Q 516 1425 516 1433 L 516 3192 Q 516 3200 508 3200 L 404 3200 Q 396 3200 396 3208 L 396 3261 Q 396 3269 388 3269 L 380 3269 " data-edge-kind="association" fill="none" stroke="#047857" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow-create)"><title>module.network.aws_subnet.public_b → module.network.aws_route_table.public (association; create: module.network.aws_route_table_association.public_b)</title></path>
-<path d="M 540 190 L 548 190 Q 556 190 556 198 L 556 2240 Q 556 2248 548 2248 L 404 2248 Q 396 2248 396 2256 L 396 2324 Q 396 2332 388 2332 L 380 2332 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.network.aws_vpc.main → module.application.aws_lb_target_group.app (dependency)</title></path>
-<path d="M 540 205 L 548 205 Q 556 205 556 213 L 556 3328 Q 556 3336 548 3336 L 404 3336 Q 396 3336 396 3344 L 396 3406 Q 396 3414 388 3414 L 380 3414 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.network.aws_vpc.main → module.application.aws_security_group.alb (dependency)</title></path>
-<path d="M 540 210 L 548 210 Q 556 210 556 218 L 556 3464 Q 556 3472 548 3472 L 404 3472 Q 396 3472 396 3480 L 396 3549 Q 396 3557 388 3557 L 380 3557 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.network.aws_vpc.main → module.application.aws_security_group.app (dependency)</title></path>
-<path d="M 540 215 L 548 215 Q 556 215 556 223 L 556 3600 Q 556 3608 548 3608 L 404 3608 Q 396 3608 396 3616 L 396 3678 Q 396 3686 388 3686 L 380 3686 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.network.aws_vpc.main → module.database.aws_security_group.database (dependency)</title></path>
-<path d="M 540 185 L 548 185 Q 556 185 556 193 L 556 1968 Q 556 1976 548 1976 L 404 1976 Q 396 1976 396 1984 L 396 2046 Q 396 2054 388 2054 L 380 2054 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.network.aws_vpc.main → module.network.aws_internet_gateway.main (dependency)</title></path>
-<path d="M 540 195 L 548 195 Q 556 195 556 203 L 556 3056 Q 556 3064 548 3064 L 404 3064 Q 396 3064 396 3072 L 396 3136 Q 396 3144 388 3144 L 380 3144 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.network.aws_vpc.main → module.network.aws_route_table.private (dependency)</title></path>
-<path d="M 540 200 L 548 200 Q 556 200 556 208 L 556 3192 Q 556 3200 548 3200 L 404 3200 Q 396 3200 396 3208 L 396 3272 Q 396 3280 388 3280 L 380 3280 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.network.aws_vpc.main → module.network.aws_route_table.public (dependency)</title></path>
-<path d="M 540 220 L 548 220 Q 556 220 556 228 L 556 3736 Q 556 3744 548 3744 L 404 3744 Q 396 3744 396 3752 L 396 3790 Q 396 3798 388 3798 L 380 3798 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.network.aws_vpc.main → module.network.aws_security_group.endpoints (dependency)</title></path>
+<path d="M 500 1047 L 508 1047 Q 516 1047 516 1055 L 516 1968 Q 516 1976 508 1976 L 404 1976 Q 396 1976 396 1984 L 396 2046 Q 396 2054 388 2054 L 380 2054 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.network.aws_subnet.private_b → module.database.aws_db_subnet_group.database (dependency)</title></path>
+<path d="M 500 1069 L 508 1069 Q 516 1069 516 1077 L 516 3600 Q 516 3608 508 3608 L 404 3608 Q 396 3608 396 3616 L 396 3669 Q 396 3677 388 3677 L 380 3677 " data-edge-kind="association" fill="none" stroke="#047857" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow-create)"><title>module.network.aws_subnet.private_b → module.network.aws_route_table.private (association; create: module.network.aws_route_table_association.private_b)</title></path>
+<path d="M 500 1080 L 508 1080 Q 516 1080 516 1088 L 516 4416 Q 516 4424 508 4424 L 404 4424 Q 396 4424 396 4432 L 396 4485 Q 396 4493 388 4493 L 380 4493 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.network.aws_subnet.private_b → module.network.aws_vpc_endpoint.logs (dependency)</title></path>
+<path d="M 500 1498 L 508 1498 Q 516 1498 516 1490 L 516 552 Q 516 544 508 544 L 444 544 Q 436 544 436 536 L 436 493 Q 436 485 428 485 L 420 485 " data-edge-kind="connection" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.network.aws_subnet.public_a → module.application.aws_lb.app (connection)</title></path>
+<path d="M 500 1512 L 508 1512 Q 516 1512 516 1520 L 516 3464 Q 516 3472 508 3472 L 404 3472 Q 396 3472 396 3480 L 396 3544 Q 396 3552 388 3552 L 380 3552 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.network.aws_subnet.public_a → module.network.aws_nat_gateway.main (dependency)</title></path>
+<path d="M 500 1526 L 508 1526 Q 516 1526 516 1534 L 516 3736 Q 516 3744 508 3744 L 404 3744 Q 396 3744 396 3752 L 396 3794 Q 396 3802 388 3802 L 380 3802 " data-edge-kind="association" fill="none" stroke="#047857" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow-create)"><title>module.network.aws_subnet.public_a → module.network.aws_route_table.public (association; create: module.network.aws_route_table_association.public_a)</title></path>
+<path d="M 500 1678 L 508 1678 Q 516 1678 516 1670 L 516 552 Q 516 544 508 544 L 444 544 Q 436 544 436 536 L 436 504 Q 436 496 428 496 L 420 496 " data-edge-kind="connection" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.network.aws_subnet.public_b → module.application.aws_lb.app (connection)</title></path>
+<path d="M 500 1697 L 508 1697 Q 516 1697 516 1705 L 516 3736 Q 516 3744 508 3744 L 404 3744 Q 396 3744 396 3752 L 396 3805 Q 396 3813 388 3813 L 380 3813 " data-edge-kind="association" fill="none" stroke="#047857" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow-create)"><title>module.network.aws_subnet.public_b → module.network.aws_route_table.public (association; create: module.network.aws_route_table_association.public_b)</title></path>
+<g data-edge-kind="containment" data-source="resource-36" data-target="resource-2"><title>module.network.aws_vpc.main → module.application.aws_ecs_service.app (containment)</title></g>
+<g data-edge-kind="containment" data-source="resource-36" data-target="resource-11"><title>module.network.aws_vpc.main → module.application.aws_lb.app (containment)</title></g>
+<path d="M 540 190 L 548 190 Q 556 190 556 198 L 556 2784 Q 556 2792 548 2792 L 404 2792 Q 396 2792 396 2800 L 396 2868 Q 396 2876 388 2876 L 380 2876 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.network.aws_vpc.main → module.application.aws_lb_target_group.app (dependency)</title></path>
+<path d="M 540 205 L 548 205 Q 556 205 556 213 L 556 3872 Q 556 3880 548 3880 L 404 3880 Q 396 3880 396 3888 L 396 3950 Q 396 3958 388 3958 L 380 3958 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.network.aws_vpc.main → module.application.aws_security_group.alb (dependency)</title></path>
+<path d="M 540 210 L 548 210 Q 556 210 556 218 L 556 4008 Q 556 4016 548 4016 L 404 4016 Q 396 4016 396 4024 L 396 4093 Q 396 4101 388 4101 L 380 4101 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.network.aws_vpc.main → module.application.aws_security_group.app (dependency)</title></path>
+<path d="M 540 215 L 548 215 Q 556 215 556 223 L 556 4144 Q 556 4152 548 4152 L 404 4152 Q 396 4152 396 4160 L 396 4222 Q 396 4230 388 4230 L 380 4230 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.network.aws_vpc.main → module.database.aws_security_group.database (dependency)</title></path>
+<path d="M 540 185 L 548 185 Q 556 185 556 193 L 556 2512 Q 556 2520 548 2520 L 404 2520 Q 396 2520 396 2528 L 396 2590 Q 396 2598 388 2598 L 380 2598 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.network.aws_vpc.main → module.network.aws_internet_gateway.main (dependency)</title></path>
+<path d="M 540 195 L 548 195 Q 556 195 556 203 L 556 3600 Q 556 3608 548 3608 L 404 3608 Q 396 3608 396 3616 L 396 3680 Q 396 3688 388 3688 L 380 3688 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.network.aws_vpc.main → module.network.aws_route_table.private (dependency)</title></path>
+<path d="M 540 200 L 548 200 Q 556 200 556 208 L 556 3736 Q 556 3744 548 3744 L 404 3744 Q 396 3744 396 3752 L 396 3816 Q 396 3824 388 3824 L 380 3824 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.network.aws_vpc.main → module.network.aws_route_table.public (dependency)</title></path>
+<path d="M 540 220 L 548 220 Q 556 220 556 228 L 556 4280 Q 556 4288 548 4288 L 404 4288 Q 396 4288 396 4296 L 396 4334 Q 396 4342 388 4342 L 380 4342 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.network.aws_vpc.main → module.network.aws_security_group.endpoints (dependency)</title></path>
 <g data-edge-kind="containment" data-source="resource-36" data-target="resource-32"><title>module.network.aws_vpc.main → module.network.aws_subnet.private_a (containment)</title></g>
 <g data-edge-kind="containment" data-source="resource-36" data-target="resource-33"><title>module.network.aws_vpc.main → module.network.aws_subnet.private_b (containment)</title></g>
 <g data-edge-kind="containment" data-source="resource-36" data-target="resource-34"><title>module.network.aws_vpc.main → module.network.aws_subnet.public_a (containment)</title></g>
 <g data-edge-kind="containment" data-source="resource-36" data-target="resource-35"><title>module.network.aws_vpc.main → module.network.aws_subnet.public_b (containment)</title></g>
-<path d="M 540 225 L 548 225 Q 556 225 556 233 L 556 3872 Q 556 3880 548 3880 L 404 3880 Q 396 3880 396 3888 L 396 3952 Q 396 3960 388 3960 L 380 3960 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.network.aws_vpc.main → module.network.aws_vpc_endpoint.logs (dependency)</title></path>
-<path d="M 540 230 L 548 230 Q 556 230 556 238 L 556 4008 Q 556 4016 548 4016 L 404 4016 Q 396 4016 396 4024 L 396 4062 Q 396 4070 388 4070 L 380 4070 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.network.aws_vpc.main → module.network.aws_vpc_peering_connection.shared (dependency)</title></path>
-<path d="M 380 4199 L 388 4199 Q 396 4199 396 4191 L 396 1704 Q 396 1696 404 1696 L 508 1696 Q 516 1696 516 1688 L 516 552 Q 516 544 508 544 L 484 544 Q 476 544 476 536 L 476 506 Q 476 498 468 498 L 460 498 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.shared.data.aws_ami.app → module.application.aws_instance.workers_a[0] (dependency)</title></path>
-<path d="M 380 4210 L 388 4210 Q 396 4210 396 4202 L 396 1704 Q 396 1696 404 1696 L 508 1696 Q 516 1696 516 1688 L 516 736 Q 516 728 508 728 L 484 728 Q 476 728 476 720 L 476 642 Q 476 634 468 634 L 460 634 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.shared.data.aws_ami.app → module.application.aws_instance.workers_a[1] (dependency)</title></path>
-<path d="M 380 4221 L 388 4221 Q 396 4221 396 4213 L 396 1704 Q 396 1696 404 1696 L 508 1696 Q 516 1696 516 1688 L 516 1000 Q 516 992 508 992 L 484 992 Q 476 992 476 984 L 476 954 Q 476 946 468 946 L 460 946 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.shared.data.aws_ami.app → module.application.aws_instance.workers_b[0] (dependency)</title></path>
-<path d="M 380 4232 L 388 4232 Q 396 4232 396 4224 L 396 1704 Q 396 1696 404 1696 L 508 1696 Q 516 1696 516 1688 L 516 1184 Q 516 1176 508 1176 L 484 1176 Q 476 1176 476 1168 L 476 1090 Q 476 1082 468 1082 L 460 1082 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.shared.data.aws_ami.app → module.application.aws_instance.workers_b[1] (dependency)</title></path>
-<path d="M 380 4896 L 388 4896 Q 396 4896 396 4888 L 396 1797 Q 396 1789 388 1789 L 380 1789 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.shared.data.aws_security_group.shared → module.application.aws_ecs_service.app (dependency)</title></path>
-<path d="M 460 5712 L 468 5712 Q 476 5712 476 5704 L 476 4152 Q 476 4144 468 4144 L 404 4144 Q 396 4144 396 4136 L 396 4097 Q 396 4089 388 4089 L 380 4089 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.shared.data.aws_vpc.shared → module.network.aws_vpc_peering_connection.shared (dependency)</title></path>
+<path d="M 540 225 L 548 225 Q 556 225 556 233 L 556 4416 Q 556 4424 548 4424 L 404 4424 Q 396 4424 396 4432 L 396 4496 Q 396 4504 388 4504 L 380 4504 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.network.aws_vpc.main → module.network.aws_vpc_endpoint.logs (dependency)</title></path>
+<path d="M 540 230 L 548 230 Q 556 230 556 238 L 556 4552 Q 556 4560 548 4560 L 404 4560 Q 396 4560 396 4568 L 396 4606 Q 396 4614 388 4614 L 380 4614 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.network.aws_vpc.main → module.network.aws_vpc_peering_connection.shared (dependency)</title></path>
+<path d="M 380 4743 L 388 4743 Q 396 4743 396 4735 L 396 1976 Q 396 1968 404 1968 L 508 1968 Q 516 1968 516 1960 L 516 824 Q 516 816 508 816 L 484 816 Q 476 816 476 808 L 476 778 Q 476 770 468 770 L 460 770 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.shared.data.aws_ami.app → module.application.aws_instance.workers_a[0] (dependency)</title></path>
+<path d="M 380 4754 L 388 4754 Q 396 4754 396 4746 L 396 1976 Q 396 1968 404 1968 L 508 1968 Q 516 1968 516 1960 L 516 1008 Q 516 1000 508 1000 L 484 1000 Q 476 1000 476 992 L 476 914 Q 476 906 468 906 L 460 906 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.shared.data.aws_ami.app → module.application.aws_instance.workers_a[1] (dependency)</title></path>
+<path d="M 380 4765 L 388 4765 Q 396 4765 396 4757 L 396 1976 Q 396 1968 404 1968 L 508 1968 Q 516 1968 516 1960 L 516 1272 Q 516 1264 508 1264 L 484 1264 Q 476 1264 476 1256 L 476 1226 Q 476 1218 468 1218 L 460 1218 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.shared.data.aws_ami.app → module.application.aws_instance.workers_b[0] (dependency)</title></path>
+<path d="M 380 4776 L 388 4776 Q 396 4776 396 4768 L 396 1976 Q 396 1968 404 1968 L 508 1968 Q 516 1968 516 1960 L 516 1456 Q 516 1448 508 1448 L 484 1448 Q 476 1448 476 1440 L 476 1362 Q 476 1354 468 1354 L 460 1354 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.shared.data.aws_ami.app → module.application.aws_instance.workers_b[1] (dependency)</title></path>
+<path d="M 380 4896 L 388 4896 Q 396 4896 396 4888 L 396 1976 Q 396 1968 404 1968 L 508 1968 Q 516 1968 516 1960 L 516 416 Q 516 408 508 408 L 444 408 Q 436 408 436 400 L 436 373 Q 436 365 428 365 L 420 365 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.shared.data.aws_security_group.shared → module.application.aws_ecs_service.app (dependency)</title></path>
+<path d="M 460 5848 L 468 5848 Q 476 5848 476 5840 L 476 4696 Q 476 4688 468 4688 L 404 4688 Q 396 4688 396 4680 L 396 4641 Q 396 4633 388 4633 L 380 4633 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.shared.data.aws_vpc.shared → module.network.aws_vpc_peering_connection.shared (dependency)</title></path>
 <g id="resource-0" data-qualified-address="module.root.aws_cloudwatch_log_group.app"><title>aws_cloudwatch_log_group.app — create</title>
-<rect x="60" y="4440" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
-<text x="72" y="4460" font-size="11" fill="#047857">aws_cloudwatch_log_group · create</text>
-<text x="72" y="4485" font-size="13" fill="#0f172a">aws_cloudwatch_log_group.app</text>
-<text x="72" y="4524" font-size="10" fill="#64748b"><title>root</title>root</text>
+<rect x="60" y="1856" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
+<text x="72" y="1876" font-size="11" fill="#047857">aws_cloudwatch_log_group · create</text>
+<text x="72" y="1901" font-size="13" fill="#0f172a">aws_cloudwatch_log_group.app</text>
+<text x="72" y="1940" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
 <g id="resource-1" data-qualified-address="module.application.aws_ecs_cluster.app"><title>module.application.aws_ecs_cluster.app — create</title>
-<rect x="60" y="4576" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
-<text x="72" y="4596" font-size="11" fill="#047857">aws_ecs_cluster · create</text>
-<text x="72" y="4621" font-size="13" fill="#0f172a">aws_ecs_cluster.app</text>
-<text x="72" y="4660" font-size="10" fill="#64748b"><title>module.application</title>module.application</text>
-</g>
-<g id="resource-2" data-qualified-address="module.application.aws_ecs_service.app"><title>module.application.aws_ecs_service.app — create</title>
-<rect x="60" y="1720" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
-<text x="72" y="1740" font-size="11" fill="#047857">aws_ecs_service · create</text>
-<text x="72" y="1765" font-size="13" fill="#0f172a">aws_ecs_service.app</text>
-<text x="72" y="1804" font-size="10" fill="#64748b" data-role="controller"><title>module.application</title>controller · module.application</text>
-</g>
-<g id="resource-3" data-qualified-address="module.application.aws_ecs_task_definition.app"><title>module.application.aws_ecs_task_definition.app — create</title>
-<rect x="60" y="4712" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
-<text x="72" y="4732" font-size="11" fill="#047857">aws_ecs_task_definition · create</text>
-<text x="72" y="4757" font-size="13" fill="#0f172a">aws_ecs_task_definition.app</text>
-<text x="72" y="4796" font-size="10" fill="#64748b"><title>module.application</title>module.application</text>
-</g>
-<g id="resource-4" data-qualified-address="module.application.aws_iam_instance_profile.app"><title>module.application.aws_iam_instance_profile.app — create</title>
-<rect x="60" y="1856" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
-<text x="72" y="1876" font-size="11" fill="#047857">aws_iam_instance_profile · create</text>
-<text x="72" y="1901" font-size="13" fill="#0f172a">aws_iam_instance_profile.app</text>
-<text x="72" y="1940" font-size="10" fill="#64748b"><title>module.application</title>module.application</text>
-</g>
-<g id="resource-5" data-qualified-address="module.application.aws_iam_role.instance"><title>module.application.aws_iam_role.instance — create</title>
-<rect x="60" y="4984" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
-<text x="72" y="5004" font-size="11" fill="#047857">aws_iam_role · create</text>
-<text x="72" y="5029" font-size="13" fill="#0f172a">aws_iam_role.instance</text>
-<text x="72" y="5068" font-size="10" fill="#64748b"><title>module.application</title>module.application</text>
-</g>
-<g id="resource-6" data-qualified-address="module.application.aws_iam_role.task"><title>module.application.aws_iam_role.task — create</title>
-<rect x="60" y="5976" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
-<text x="72" y="5996" font-size="11" fill="#047857">aws_iam_role · create</text>
-<text x="72" y="6021" font-size="13" fill="#0f172a">aws_iam_role.task</text>
-<text x="72" y="6060" font-size="10" fill="#64748b"><title>module.application</title>module.application</text>
-</g>
-<g id="resource-7" data-qualified-address="module.application.aws_instance.workers_a[0]"><title>module.application.aws_instance.workers_a[0] — create</title>
-<rect x="140" y="432" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
-<text x="152" y="452" font-size="11" fill="#047857">aws_instance · create</text>
-<text x="152" y="477" font-size="13" fill="#0f172a">aws_instance.workers_a[0]</text>
-<text x="152" y="516" font-size="10" fill="#64748b"><title>module.application</title>module.application</text>
-</g>
-<g id="resource-8" data-qualified-address="module.application.aws_instance.workers_a[1]"><title>module.application.aws_instance.workers_a[1] — create</title>
-<rect x="140" y="568" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
-<text x="152" y="588" font-size="11" fill="#047857">aws_instance · create</text>
-<text x="152" y="613" font-size="13" fill="#0f172a">aws_instance.workers_a[1]</text>
-<text x="152" y="652" font-size="10" fill="#64748b"><title>module.application</title>module.application</text>
-</g>
-<g id="resource-9" data-qualified-address="module.application.aws_instance.workers_b[0]"><title>module.application.aws_instance.workers_b[0] — create</title>
-<rect x="140" y="880" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
-<text x="152" y="900" font-size="11" fill="#047857">aws_instance · create</text>
-<text x="152" y="925" font-size="13" fill="#0f172a">aws_instance.workers_b[0]</text>
-<text x="152" y="964" font-size="10" fill="#64748b"><title>module.application</title>module.application</text>
-</g>
-<g id="resource-10" data-qualified-address="module.application.aws_instance.workers_b[1]"><title>module.application.aws_instance.workers_b[1] — create</title>
-<rect x="140" y="1016" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
-<text x="152" y="1036" font-size="11" fill="#047857">aws_instance · create</text>
-<text x="152" y="1061" font-size="13" fill="#0f172a">aws_instance.workers_b[1]</text>
-<text x="152" y="1100" font-size="10" fill="#64748b"><title>module.application</title>module.application</text>
-</g>
-<g id="resource-11" data-qualified-address="module.application.aws_lb.app"><title>module.application.aws_lb.app — create</title>
 <rect x="60" y="2128" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
-<text x="72" y="2148" font-size="11" fill="#047857">aws_lb · create</text>
-<text x="72" y="2173" font-size="13" fill="#0f172a">aws_lb.app</text>
+<text x="72" y="2148" font-size="11" fill="#047857">aws_ecs_cluster · create</text>
+<text x="72" y="2173" font-size="13" fill="#0f172a">aws_ecs_cluster.app</text>
 <text x="72" y="2212" font-size="10" fill="#64748b"><title>module.application</title>module.application</text>
 </g>
-<g id="resource-12" data-qualified-address="module.application.aws_lb_listener.http"><title>module.application.aws_lb_listener.http — create</title>
-<rect x="60" y="5256" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
-<text x="72" y="5276" font-size="11" fill="#047857">aws_lb_listener · create</text>
-<text x="72" y="5301" font-size="13" fill="#0f172a">aws_lb_listener.http</text>
-<text x="72" y="5340" font-size="10" fill="#64748b"><title>module.application</title>module.application</text>
+<g id="resource-2" data-qualified-address="module.application.aws_ecs_service.app"><title>module.application.aws_ecs_service.app — create</title>
+<rect x="100" y="296" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
+<text x="112" y="316" font-size="11" fill="#047857">aws_ecs_service · create</text>
+<text x="112" y="341" font-size="13" fill="#0f172a">aws_ecs_service.app</text>
+<text x="112" y="380" font-size="10" fill="#64748b" data-role="controller"><title>module.application</title>controller · module.application</text>
 </g>
-<g id="resource-13" data-qualified-address="module.application.aws_lb_target_group.app"><title>module.application.aws_lb_target_group.app — create</title>
+<g id="resource-3" data-qualified-address="module.application.aws_ecs_task_definition.app"><title>module.application.aws_ecs_task_definition.app — create</title>
 <rect x="60" y="2264" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
-<text x="72" y="2284" font-size="11" fill="#047857">aws_lb_target_group · create</text>
-<text x="72" y="2309" font-size="13" fill="#0f172a">aws_lb_target_group.app</text>
+<text x="72" y="2284" font-size="11" fill="#047857">aws_ecs_task_definition · create</text>
+<text x="72" y="2309" font-size="13" fill="#0f172a">aws_ecs_task_definition.app</text>
 <text x="72" y="2348" font-size="10" fill="#64748b"><title>module.application</title>module.application</text>
 </g>
-<g id="resource-14" data-qualified-address="module.application.aws_lb_target_group_attachment.a0"><title>module.application.aws_lb_target_group_attachment.a0 — create</title>
+<g id="resource-4" data-qualified-address="module.application.aws_iam_instance_profile.app"><title>module.application.aws_iam_instance_profile.app — create</title>
 <rect x="60" y="2400" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
-<text x="72" y="2420" font-size="11" fill="#047857">aws_lb_target_group_atta… · create</text>
-<text x="72" y="2445" font-size="13" fill="#0f172a">aws_lb_target_group_attachment.a0</text>
+<text x="72" y="2420" font-size="11" fill="#047857">aws_iam_instance_profile · create</text>
+<text x="72" y="2445" font-size="13" fill="#0f172a">aws_iam_instance_profile.app</text>
 <text x="72" y="2484" font-size="10" fill="#64748b"><title>module.application</title>module.application</text>
 </g>
-<g id="resource-15" data-qualified-address="module.application.aws_lb_target_group_attachment.a1"><title>module.application.aws_lb_target_group_attachment.a1 — create</title>
-<rect x="60" y="2536" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
-<text x="72" y="2556" font-size="11" fill="#047857">aws_lb_target_group_atta… · create</text>
-<text x="72" y="2581" font-size="13" fill="#0f172a">aws_lb_target_group_attachment.a1</text>
-<text x="72" y="2620" font-size="10" fill="#64748b"><title>module.application</title>module.application</text>
+<g id="resource-5" data-qualified-address="module.application.aws_iam_role.instance"><title>module.application.aws_iam_role.instance — create</title>
+<rect x="60" y="5256" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
+<text x="72" y="5276" font-size="11" fill="#047857">aws_iam_role · create</text>
+<text x="72" y="5301" font-size="13" fill="#0f172a">aws_iam_role.instance</text>
+<text x="72" y="5340" font-size="10" fill="#64748b"><title>module.application</title>module.application</text>
 </g>
-<g id="resource-16" data-qualified-address="module.application.aws_lb_target_group_attachment.b0"><title>module.application.aws_lb_target_group_attachment.b0 — create</title>
+<g id="resource-6" data-qualified-address="module.application.aws_iam_role.task"><title>module.application.aws_iam_role.task — create</title>
+<rect x="60" y="5120" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
+<text x="72" y="5140" font-size="11" fill="#047857">aws_iam_role · create</text>
+<text x="72" y="5165" font-size="13" fill="#0f172a">aws_iam_role.task</text>
+<text x="72" y="5204" font-size="10" fill="#64748b"><title>module.application</title>module.application</text>
+</g>
+<g id="resource-7" data-qualified-address="module.application.aws_instance.workers_a[0]"><title>module.application.aws_instance.workers_a[0] — create</title>
+<rect x="140" y="704" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
+<text x="152" y="724" font-size="11" fill="#047857">aws_instance · create</text>
+<text x="152" y="749" font-size="13" fill="#0f172a">aws_instance.workers_a[0]</text>
+<text x="152" y="788" font-size="10" fill="#64748b"><title>module.application</title>module.application</text>
+</g>
+<g id="resource-8" data-qualified-address="module.application.aws_instance.workers_a[1]"><title>module.application.aws_instance.workers_a[1] — create</title>
+<rect x="140" y="840" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
+<text x="152" y="860" font-size="11" fill="#047857">aws_instance · create</text>
+<text x="152" y="885" font-size="13" fill="#0f172a">aws_instance.workers_a[1]</text>
+<text x="152" y="924" font-size="10" fill="#64748b"><title>module.application</title>module.application</text>
+</g>
+<g id="resource-9" data-qualified-address="module.application.aws_instance.workers_b[0]"><title>module.application.aws_instance.workers_b[0] — create</title>
+<rect x="140" y="1152" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
+<text x="152" y="1172" font-size="11" fill="#047857">aws_instance · create</text>
+<text x="152" y="1197" font-size="13" fill="#0f172a">aws_instance.workers_b[0]</text>
+<text x="152" y="1236" font-size="10" fill="#64748b"><title>module.application</title>module.application</text>
+</g>
+<g id="resource-10" data-qualified-address="module.application.aws_instance.workers_b[1]"><title>module.application.aws_instance.workers_b[1] — create</title>
+<rect x="140" y="1288" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
+<text x="152" y="1308" font-size="11" fill="#047857">aws_instance · create</text>
+<text x="152" y="1333" font-size="13" fill="#0f172a">aws_instance.workers_b[1]</text>
+<text x="152" y="1372" font-size="10" fill="#64748b"><title>module.application</title>module.application</text>
+</g>
+<g id="resource-11" data-qualified-address="module.application.aws_lb.app"><title>module.application.aws_lb.app — create</title>
+<rect x="100" y="432" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
+<text x="112" y="452" font-size="11" fill="#047857">aws_lb · create</text>
+<text x="112" y="477" font-size="13" fill="#0f172a">aws_lb.app</text>
+<text x="112" y="516" font-size="10" fill="#64748b"><title>module.application</title>module.application</text>
+</g>
+<g id="resource-12" data-qualified-address="module.application.aws_lb_listener.http"><title>module.application.aws_lb_listener.http — create</title>
 <rect x="60" y="2672" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
-<text x="72" y="2692" font-size="11" fill="#047857">aws_lb_target_group_atta… · create</text>
-<text x="72" y="2717" font-size="13" fill="#0f172a">aws_lb_target_group_attachment.b0</text>
+<text x="72" y="2692" font-size="11" fill="#047857">aws_lb_listener · create</text>
+<text x="72" y="2717" font-size="13" fill="#0f172a">aws_lb_listener.http</text>
 <text x="72" y="2756" font-size="10" fill="#64748b"><title>module.application</title>module.application</text>
 </g>
-<g id="resource-17" data-qualified-address="module.application.aws_lb_target_group_attachment.b1"><title>module.application.aws_lb_target_group_attachment.b1 — create</title>
+<g id="resource-13" data-qualified-address="module.application.aws_lb_target_group.app"><title>module.application.aws_lb_target_group.app — create</title>
 <rect x="60" y="2808" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
-<text x="72" y="2828" font-size="11" fill="#047857">aws_lb_target_group_atta… · create</text>
-<text x="72" y="2853" font-size="13" fill="#0f172a">aws_lb_target_group_attachment.b1</text>
+<text x="72" y="2828" font-size="11" fill="#047857">aws_lb_target_group · create</text>
+<text x="72" y="2853" font-size="13" fill="#0f172a">aws_lb_target_group.app</text>
 <text x="72" y="2892" font-size="10" fill="#64748b"><title>module.application</title>module.application</text>
 </g>
-<g id="resource-18" data-qualified-address="module.application.aws_security_group.alb"><title>module.application.aws_security_group.alb — create</title>
+<g id="resource-14" data-qualified-address="module.application.aws_lb_target_group_attachment.a0"><title>module.application.aws_lb_target_group_attachment.a0 — create</title>
+<rect x="60" y="2944" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
+<text x="72" y="2964" font-size="11" fill="#047857">aws_lb_target_group_atta… · create</text>
+<text x="72" y="2989" font-size="13" fill="#0f172a">aws_lb_target_group_attachment.a0</text>
+<text x="72" y="3028" font-size="10" fill="#64748b"><title>module.application</title>module.application</text>
+</g>
+<g id="resource-15" data-qualified-address="module.application.aws_lb_target_group_attachment.a1"><title>module.application.aws_lb_target_group_attachment.a1 — create</title>
+<rect x="60" y="3080" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
+<text x="72" y="3100" font-size="11" fill="#047857">aws_lb_target_group_atta… · create</text>
+<text x="72" y="3125" font-size="13" fill="#0f172a">aws_lb_target_group_attachment.a1</text>
+<text x="72" y="3164" font-size="10" fill="#64748b"><title>module.application</title>module.application</text>
+</g>
+<g id="resource-16" data-qualified-address="module.application.aws_lb_target_group_attachment.b0"><title>module.application.aws_lb_target_group_attachment.b0 — create</title>
+<rect x="60" y="3216" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
+<text x="72" y="3236" font-size="11" fill="#047857">aws_lb_target_group_atta… · create</text>
+<text x="72" y="3261" font-size="13" fill="#0f172a">aws_lb_target_group_attachment.b0</text>
+<text x="72" y="3300" font-size="10" fill="#64748b"><title>module.application</title>module.application</text>
+</g>
+<g id="resource-17" data-qualified-address="module.application.aws_lb_target_group_attachment.b1"><title>module.application.aws_lb_target_group_attachment.b1 — create</title>
 <rect x="60" y="3352" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
-<text x="72" y="3372" font-size="11" fill="#047857">aws_security_group · create</text>
-<text x="72" y="3397" font-size="13" fill="#0f172a">aws_security_group.alb</text>
-<text x="72" y="3436" font-size="10" fill="#64748b" data-role="policy"><title>module.application</title>policy · module.application</text>
+<text x="72" y="3372" font-size="11" fill="#047857">aws_lb_target_group_atta… · create</text>
+<text x="72" y="3397" font-size="13" fill="#0f172a">aws_lb_target_group_attachment.b1</text>
+<text x="72" y="3436" font-size="10" fill="#64748b"><title>module.application</title>module.application</text>
+</g>
+<g id="resource-18" data-qualified-address="module.application.aws_security_group.alb"><title>module.application.aws_security_group.alb — create</title>
+<rect x="60" y="3896" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
+<text x="72" y="3916" font-size="11" fill="#047857">aws_security_group · create</text>
+<text x="72" y="3941" font-size="13" fill="#0f172a">aws_security_group.alb</text>
+<text x="72" y="3980" font-size="10" fill="#64748b" data-role="policy"><title>module.application</title>policy · module.application</text>
 </g>
 <g id="resource-19" data-qualified-address="module.application.aws_security_group.app"><title>module.application.aws_security_group.app — create</title>
-<rect x="60" y="3488" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
-<text x="72" y="3508" font-size="11" fill="#047857">aws_security_group · create</text>
-<text x="72" y="3533" font-size="13" fill="#0f172a">aws_security_group.app</text>
-<text x="72" y="3572" font-size="10" fill="#64748b" data-role="policy"><title>module.application</title>policy · module.application</text>
+<rect x="60" y="4032" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
+<text x="72" y="4052" font-size="11" fill="#047857">aws_security_group · create</text>
+<text x="72" y="4077" font-size="13" fill="#0f172a">aws_security_group.app</text>
+<text x="72" y="4116" font-size="10" fill="#64748b" data-role="policy"><title>module.application</title>policy · module.application</text>
 </g>
 <g id="resource-20" data-qualified-address="module.database.aws_cloudwatch_metric_alarm.database_cpu"><title>module.database.aws_cloudwatch_metric_alarm.database_cpu — create</title>
-<rect x="60" y="5840" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
-<text x="72" y="5860" font-size="11" fill="#047857">aws_cloudwatch_metric_al… · create</text>
-<text x="72" y="5885" font-size="13" fill="#0f172a">aws_cloudwatch_metric_alarm.databas</text>
-<text x="72" y="5905" font-size="13" fill="#0f172a">e_cpu</text>
-<text x="72" y="5924" font-size="10" fill="#64748b"><title>module.database</title>module.database</text>
+<rect x="60" y="5976" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
+<text x="72" y="5996" font-size="11" fill="#047857">aws_cloudwatch_metric_al… · create</text>
+<text x="72" y="6021" font-size="13" fill="#0f172a">aws_cloudwatch_metric_alarm.databas</text>
+<text x="72" y="6041" font-size="13" fill="#0f172a">e_cpu</text>
+<text x="72" y="6060" font-size="10" fill="#64748b"><title>module.database</title>module.database</text>
 </g>
 <g id="resource-21" data-qualified-address="module.database.aws_db_instance.database"><title>module.database.aws_db_instance.database — create</title>
-<rect x="60" y="4304" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
-<text x="72" y="4324" font-size="11" fill="#047857">aws_db_instance · create</text>
-<text x="72" y="4349" font-size="13" fill="#0f172a">aws_db_instance.database</text>
-<text x="72" y="4388" font-size="10" fill="#64748b"><title>module.database</title>module.database</text>
+<rect x="60" y="4984" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
+<text x="72" y="5004" font-size="11" fill="#047857">aws_db_instance · create</text>
+<text x="72" y="5029" font-size="13" fill="#0f172a">aws_db_instance.database</text>
+<text x="72" y="5068" font-size="10" fill="#64748b"><title>module.database</title>module.database</text>
 </g>
 <g id="resource-22" data-qualified-address="module.database.aws_db_subnet_group.database"><title>module.database.aws_db_subnet_group.database — create</title>
-<rect x="60" y="1584" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
-<text x="72" y="1604" font-size="11" fill="#047857">aws_db_subnet_group · create</text>
-<text x="72" y="1629" font-size="13" fill="#0f172a">aws_db_subnet_group.database</text>
-<text x="72" y="1668" font-size="10" fill="#64748b"><title>module.database</title>module.database</text>
+<rect x="60" y="1992" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
+<text x="72" y="2012" font-size="11" fill="#047857">aws_db_subnet_group · create</text>
+<text x="72" y="2037" font-size="13" fill="#0f172a">aws_db_subnet_group.database</text>
+<text x="72" y="2076" font-size="10" fill="#64748b"><title>module.database</title>module.database</text>
 </g>
 <g id="resource-23" data-qualified-address="module.database.aws_security_group.database"><title>module.database.aws_security_group.database — create</title>
-<rect x="60" y="3624" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
-<text x="72" y="3644" font-size="11" fill="#047857">aws_security_group · create</text>
-<text x="72" y="3669" font-size="13" fill="#0f172a">aws_security_group.database</text>
-<text x="72" y="3708" font-size="10" fill="#64748b" data-role="policy"><title>module.database</title>policy · module.database</text>
+<rect x="60" y="4168" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
+<text x="72" y="4188" font-size="11" fill="#047857">aws_security_group · create</text>
+<text x="72" y="4213" font-size="13" fill="#0f172a">aws_security_group.database</text>
+<text x="72" y="4252" font-size="10" fill="#64748b" data-role="policy"><title>module.database</title>policy · module.database</text>
 </g>
 <g id="resource-24" data-qualified-address="module.network.aws_eip.nat"><title>module.network.aws_eip.nat — create</title>
-<rect x="60" y="5392" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
-<text x="72" y="5412" font-size="11" fill="#047857">aws_eip · create</text>
-<text x="72" y="5437" font-size="13" fill="#0f172a">aws_eip.nat</text>
-<text x="72" y="5476" font-size="10" fill="#64748b"><title>module.network</title>module.network</text>
-</g>
-<g id="resource-25" data-qualified-address="module.network.aws_internet_gateway.main"><title>module.network.aws_internet_gateway.main — create</title>
-<rect x="60" y="1992" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
-<text x="72" y="2012" font-size="11" fill="#047857">aws_internet_gateway · create</text>
-<text x="72" y="2037" font-size="13" fill="#0f172a">aws_internet_gateway.main</text>
-<text x="72" y="2076" font-size="10" fill="#64748b"><title>module.network</title>module.network</text>
-</g>
-<g id="resource-26" data-qualified-address="module.network.aws_nat_gateway.main"><title>module.network.aws_nat_gateway.main — create</title>
-<rect x="60" y="2944" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
-<text x="72" y="2964" font-size="11" fill="#047857">aws_nat_gateway · create</text>
-<text x="72" y="2989" font-size="13" fill="#0f172a">aws_nat_gateway.main</text>
-<text x="72" y="3028" font-size="10" fill="#64748b"><title>module.network</title>module.network</text>
-</g>
-<g id="resource-27" data-qualified-address="module.network.aws_route.internet"><title>module.network.aws_route.internet — create</title>
-<rect x="60" y="5120" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
-<text x="72" y="5140" font-size="11" fill="#047857">aws_route · create</text>
-<text x="72" y="5165" font-size="13" fill="#0f172a">aws_route.internet</text>
-<text x="72" y="5204" font-size="10" fill="#64748b"><title>module.network</title>module.network</text>
-</g>
-<g id="resource-28" data-qualified-address="module.network.aws_route.nat"><title>module.network.aws_route.nat — create</title>
 <rect x="60" y="5528" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
-<text x="72" y="5548" font-size="11" fill="#047857">aws_route · create</text>
-<text x="72" y="5573" font-size="13" fill="#0f172a">aws_route.nat</text>
+<text x="72" y="5548" font-size="11" fill="#047857">aws_eip · create</text>
+<text x="72" y="5573" font-size="13" fill="#0f172a">aws_eip.nat</text>
 <text x="72" y="5612" font-size="10" fill="#64748b"><title>module.network</title>module.network</text>
 </g>
+<g id="resource-25" data-qualified-address="module.network.aws_internet_gateway.main"><title>module.network.aws_internet_gateway.main — create</title>
+<rect x="60" y="2536" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
+<text x="72" y="2556" font-size="11" fill="#047857">aws_internet_gateway · create</text>
+<text x="72" y="2581" font-size="13" fill="#0f172a">aws_internet_gateway.main</text>
+<text x="72" y="2620" font-size="10" fill="#64748b"><title>module.network</title>module.network</text>
+</g>
+<g id="resource-26" data-qualified-address="module.network.aws_nat_gateway.main"><title>module.network.aws_nat_gateway.main — create</title>
+<rect x="60" y="3488" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
+<text x="72" y="3508" font-size="11" fill="#047857">aws_nat_gateway · create</text>
+<text x="72" y="3533" font-size="13" fill="#0f172a">aws_nat_gateway.main</text>
+<text x="72" y="3572" font-size="10" fill="#64748b"><title>module.network</title>module.network</text>
+</g>
+<g id="resource-27" data-qualified-address="module.network.aws_route.internet"><title>module.network.aws_route.internet — create</title>
+<rect x="60" y="5392" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
+<text x="72" y="5412" font-size="11" fill="#047857">aws_route · create</text>
+<text x="72" y="5437" font-size="13" fill="#0f172a">aws_route.internet</text>
+<text x="72" y="5476" font-size="10" fill="#64748b"><title>module.network</title>module.network</text>
+</g>
+<g id="resource-28" data-qualified-address="module.network.aws_route.nat"><title>module.network.aws_route.nat — create</title>
+<rect x="60" y="5664" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
+<text x="72" y="5684" font-size="11" fill="#047857">aws_route · create</text>
+<text x="72" y="5709" font-size="13" fill="#0f172a">aws_route.nat</text>
+<text x="72" y="5748" font-size="10" fill="#64748b"><title>module.network</title>module.network</text>
+</g>
 <g id="resource-29" data-qualified-address="module.network.aws_route_table.private"><title>module.network.aws_route_table.private — create</title>
-<rect x="60" y="3080" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
-<text x="72" y="3100" font-size="11" fill="#047857">aws_route_table · create</text>
-<text x="72" y="3125" font-size="13" fill="#0f172a">aws_route_table.private</text>
-<text x="72" y="3164" font-size="10" fill="#64748b"><title>module.network</title>module.network</text>
+<rect x="60" y="3624" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
+<text x="72" y="3644" font-size="11" fill="#047857">aws_route_table · create</text>
+<text x="72" y="3669" font-size="13" fill="#0f172a">aws_route_table.private</text>
+<text x="72" y="3708" font-size="10" fill="#64748b"><title>module.network</title>module.network</text>
 </g>
 <g id="resource-30" data-qualified-address="module.network.aws_route_table.public"><title>module.network.aws_route_table.public — create</title>
-<rect x="60" y="3216" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
-<text x="72" y="3236" font-size="11" fill="#047857">aws_route_table · create</text>
-<text x="72" y="3261" font-size="13" fill="#0f172a">aws_route_table.public</text>
-<text x="72" y="3300" font-size="10" fill="#64748b"><title>module.network</title>module.network</text>
+<rect x="60" y="3760" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
+<text x="72" y="3780" font-size="11" fill="#047857">aws_route_table · create</text>
+<text x="72" y="3805" font-size="13" fill="#0f172a">aws_route_table.public</text>
+<text x="72" y="3844" font-size="10" fill="#64748b"><title>module.network</title>module.network</text>
 </g>
 <g id="resource-31" data-qualified-address="module.network.aws_security_group.endpoints"><title>module.network.aws_security_group.endpoints — create</title>
-<rect x="60" y="3760" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
-<text x="72" y="3780" font-size="11" fill="#047857">aws_security_group · create</text>
-<text x="72" y="3805" font-size="13" fill="#0f172a">aws_security_group.endpoints</text>
-<text x="72" y="3844" font-size="10" fill="#64748b" data-role="policy"><title>module.network</title>policy · module.network</text>
+<rect x="60" y="4304" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
+<text x="72" y="4324" font-size="11" fill="#047857">aws_security_group · create</text>
+<text x="72" y="4349" font-size="13" fill="#0f172a">aws_security_group.endpoints</text>
+<text x="72" y="4388" font-size="10" fill="#64748b" data-role="policy"><title>module.network</title>policy · module.network</text>
 </g>
 <g id="resource-32" data-qualified-address="module.network.aws_subnet.private_a"><title>module.network.aws_subnet.private_a — create</title>
-<text x="112" y="316" font-size="11" fill="#047857">aws_subnet · create</text>
-<text x="112" y="341" font-size="13" fill="#0f172a">aws_subnet.private_a</text>
-<text x="112" y="380" font-size="10" fill="#64748b"><title>module.network</title>module.network</text>
+<text x="112" y="588" font-size="11" fill="#047857">aws_subnet · create</text>
+<text x="112" y="613" font-size="13" fill="#0f172a">aws_subnet.private_a</text>
+<text x="112" y="652" font-size="10" fill="#64748b"><title>module.network</title>module.network</text>
 </g>
 <g id="resource-33" data-qualified-address="module.network.aws_subnet.private_b"><title>module.network.aws_subnet.private_b — create</title>
-<text x="112" y="764" font-size="11" fill="#047857">aws_subnet · create</text>
-<text x="112" y="789" font-size="13" fill="#0f172a">aws_subnet.private_b</text>
-<text x="112" y="828" font-size="10" fill="#64748b"><title>module.network</title>module.network</text>
+<text x="112" y="1036" font-size="11" fill="#047857">aws_subnet · create</text>
+<text x="112" y="1061" font-size="13" fill="#0f172a">aws_subnet.private_b</text>
+<text x="112" y="1100" font-size="10" fill="#64748b"><title>module.network</title>module.network</text>
 </g>
 <g id="resource-34" data-qualified-address="module.network.aws_subnet.public_a"><title>module.network.aws_subnet.public_a — create</title>
-<text x="112" y="1212" font-size="11" fill="#047857">aws_subnet · create</text>
-<text x="112" y="1237" font-size="13" fill="#0f172a">aws_subnet.public_a</text>
-<text x="112" y="1276" font-size="10" fill="#64748b"><title>module.network</title>module.network</text>
+<text x="112" y="1484" font-size="11" fill="#047857">aws_subnet · create</text>
+<text x="112" y="1509" font-size="13" fill="#0f172a">aws_subnet.public_a</text>
+<text x="112" y="1548" font-size="10" fill="#64748b"><title>module.network</title>module.network</text>
 </g>
 <g id="resource-35" data-qualified-address="module.network.aws_subnet.public_b"><title>module.network.aws_subnet.public_b — create</title>
-<text x="112" y="1388" font-size="11" fill="#047857">aws_subnet · create</text>
-<text x="112" y="1413" font-size="13" fill="#0f172a">aws_subnet.public_b</text>
-<text x="112" y="1452" font-size="10" fill="#64748b"><title>module.network</title>module.network</text>
+<text x="112" y="1660" font-size="11" fill="#047857">aws_subnet · create</text>
+<text x="112" y="1685" font-size="13" fill="#0f172a">aws_subnet.public_b</text>
+<text x="112" y="1724" font-size="10" fill="#64748b"><title>module.network</title>module.network</text>
 </g>
 <g id="resource-36" data-qualified-address="module.network.aws_vpc.main"><title>module.network.aws_vpc.main — create</title>
 <text x="72" y="180" font-size="11" fill="#047857">aws_vpc · create</text>
@@ -316,22 +318,22 @@
 <text x="72" y="244" font-size="10" fill="#64748b"><title>module.network</title>module.network</text>
 </g>
 <g id="resource-37" data-qualified-address="module.network.aws_vpc_endpoint.logs"><title>module.network.aws_vpc_endpoint.logs — create</title>
-<rect x="60" y="3896" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
-<text x="72" y="3916" font-size="11" fill="#047857">aws_vpc_endpoint · create</text>
-<text x="72" y="3941" font-size="13" fill="#0f172a">aws_vpc_endpoint.logs</text>
-<text x="72" y="3980" font-size="10" fill="#64748b"><title>module.network</title>module.network</text>
+<rect x="60" y="4440" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
+<text x="72" y="4460" font-size="11" fill="#047857">aws_vpc_endpoint · create</text>
+<text x="72" y="4485" font-size="13" fill="#0f172a">aws_vpc_endpoint.logs</text>
+<text x="72" y="4524" font-size="10" fill="#64748b"><title>module.network</title>module.network</text>
 </g>
 <g id="resource-38" data-qualified-address="module.network.aws_vpc_peering_connection.shared"><title>module.network.aws_vpc_peering_connection.shared — create</title>
-<rect x="60" y="4032" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
-<text x="72" y="4052" font-size="11" fill="#047857">aws_vpc_peering_connecti… · create</text>
-<text x="72" y="4077" font-size="13" fill="#0f172a">aws_vpc_peering_connection.shared</text>
-<text x="72" y="4116" font-size="10" fill="#64748b"><title>module.network</title>module.network</text>
+<rect x="60" y="4576" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
+<text x="72" y="4596" font-size="11" fill="#047857">aws_vpc_peering_connecti… · create</text>
+<text x="72" y="4621" font-size="13" fill="#0f172a">aws_vpc_peering_connection.shared</text>
+<text x="72" y="4660" font-size="10" fill="#64748b"><title>module.network</title>module.network</text>
 </g>
 <g id="resource-39" data-qualified-address="module.shared.data.aws_ami.app"><title>module.shared.data.aws_ami.app — unchanged</title>
-<rect x="60" y="4168" width="320" height="96" rx="8" fill="#f8fafc" stroke="#64748b" stroke-width="1.5" data-mode="data" stroke-dasharray="6 4"/>
-<g data-external="true"><title>External resource: read by Terraform, not managed by this configuration</title><rect x="302" y="4175" width="68" height="18" rx="4" fill="#e2e8f0"/><text x="308" y="4188" font-size="10" fill="#334155">external</text></g><text x="72" y="4188" font-size="11" fill="#64748b">aws_ami · unchanged</text>
-<text x="72" y="4213" font-size="13" fill="#0f172a">data.aws_ami.app</text>
-<text x="72" y="4252" font-size="10" fill="#64748b"><title>module.shared</title>module.shared</text>
+<rect x="60" y="4712" width="320" height="96" rx="8" fill="#f8fafc" stroke="#64748b" stroke-width="1.5" data-mode="data" stroke-dasharray="6 4"/>
+<g data-external="true"><title>External resource: read by Terraform, not managed by this configuration</title><rect x="302" y="4719" width="68" height="18" rx="4" fill="#e2e8f0"/><text x="308" y="4732" font-size="10" fill="#334155">external</text></g><text x="72" y="4732" font-size="11" fill="#64748b">aws_ami · unchanged</text>
+<text x="72" y="4757" font-size="13" fill="#0f172a">data.aws_ami.app</text>
+<text x="72" y="4796" font-size="10" fill="#64748b"><title>module.shared</title>module.shared</text>
 </g>
 <g id="resource-40" data-qualified-address="module.shared.data.aws_security_group.shared"><title>module.shared.data.aws_security_group.shared — unchanged</title>
 <rect x="60" y="4848" width="320" height="96" rx="8" fill="#f8fafc" stroke="#64748b" stroke-width="1.5" data-mode="data" stroke-dasharray="6 4"/>
@@ -340,9 +342,9 @@
 <text x="72" y="4932" font-size="10" fill="#64748b" data-role="policy"><title>module.shared</title>policy · module.shared</text>
 </g>
 <g id="resource-41" data-qualified-address="module.shared.data.aws_vpc.shared"><title>module.shared.data.aws_vpc.shared — unchanged</title>
-<g data-external="true"><title>External resource: read by Terraform, not managed by this configuration</title><rect x="302" y="5671" width="68" height="18" rx="4" fill="#e2e8f0"/><text x="308" y="5684" font-size="10" fill="#334155">external</text></g><text x="72" y="5684" font-size="11" fill="#64748b">aws_vpc · unchanged</text>
-<text x="72" y="5709" font-size="13" fill="#0f172a">data.aws_vpc.shared</text>
-<text x="72" y="5748" font-size="10" fill="#64748b"><title>module.shared</title>module.shared</text>
+<g data-external="true"><title>External resource: read by Terraform, not managed by this configuration</title><rect x="302" y="5807" width="68" height="18" rx="4" fill="#e2e8f0"/><text x="308" y="5820" font-size="10" fill="#334155">external</text></g><text x="72" y="5820" font-size="11" fill="#64748b">aws_vpc · unchanged</text>
+<text x="72" y="5845" font-size="13" fill="#0f172a">data.aws_vpc.shared</text>
+<text x="72" y="5884" font-size="10" fill="#64748b"><title>module.shared</title>module.shared</text>
 </g>
 </g>
 </svg>
