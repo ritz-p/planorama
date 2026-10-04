@@ -1,5 +1,7 @@
 mod containers;
+mod entities;
 mod relationships;
+mod roles;
 mod style;
 #[cfg(test)]
 #[path = "../tests/unit/svg.rs"]
@@ -138,6 +140,7 @@ pub fn render(graph: &Graph, layout: &Layout<'_>) -> String {
             .take(2)
             .map(|c| c.iter().collect::<String>())
             .collect();
+        let mode = entities::border(node.mode);
         writeln!(
             svg,
             r#"<g id="resource-{i}"><title>{address} — {}</title>"#,
@@ -145,14 +148,18 @@ pub fn render(graph: &Graph, layout: &Layout<'_>) -> String {
         )
         .unwrap();
         if node.role != crate::model::ResourceRole::Container {
-            writeln!(svg, r#"<rect x="{x}" y="{y}" width="320" height="{header_height}" rx="8" fill="{background}" stroke="{border}" stroke-width="1.5"/>"#).unwrap();
+            writeln!(svg, r#"<rect x="{x}" y="{y}" width="320" height="{header_height}" rx="8" fill="{background}" stroke="{border}" stroke-width="1.5"{mode}/>"#).unwrap();
         }
+        svg.push_str(&entities::badge(node.mode, x, y));
         writeln!(
             svg,
             r#"<text x="{}" y="{}" font-size="11" fill="{border}">{} · {}</text>"#,
             x + 12,
             y + 20,
-            escape(&shorten(&node.resource_type, 25)),
+            escape(&shorten(
+                &node.resource_type,
+                entities::type_limit(node.mode)
+            )),
             label(node.action)
         )
         .unwrap();
@@ -172,21 +179,19 @@ pub fn render(graph: &Graph, layout: &Layout<'_>) -> String {
             )
             .unwrap();
         }
-        if !layout.containers.is_empty() {
-            writeln!(
-                svg,
-                r##"<text x="{}" y="{}" font-size="10" fill="#64748b"><title>{}</title>{}</text>"##,
-                x + 12,
-                y + header_height - 12,
-                escape(&node.module),
-                escape(&shorten(&node.module, 43))
-            )
-            .unwrap();
+        let role = roles::annotation(node.role, &node.module);
+        let footer = match role.is_empty() {
+            false => role,
+            true if !layout.containers.is_empty() => escape(&shorten(&node.module, 43)),
+            true => String::new(),
+        };
+        if !footer.is_empty() {
+            writeln!(svg, r##"<text x="{}" y="{}" font-size="10" fill="#64748b"{}><title>{}</title>{footer}</text>"##, x + 12, y + header_height - 12, roles::attributes(node.role), escape(&node.module)).unwrap();
         }
         svg.push_str("</g>\n");
     }
     if graph.nodes.is_empty() {
-        svg.push_str("<text x=\"40\" y=\"185\" font-size=\"16\" fill=\"#64748b\">No resources in this plan.</text>\n");
+        svg.push_str("<text x=\"40\" y=\"185\" font-size=\"16\" fill=\"#64748b\">No resources to display.</text>\n");
     }
     svg.push_str("</g>\n</svg>\n");
     svg
