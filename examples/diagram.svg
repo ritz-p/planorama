@@ -20,38 +20,38 @@
 <path d="M 380 841 L 388 841 Q 396 841 396 833 L 396 776 Q 396 768 404 768 L 468 768 Q 476 768 476 760 L 476 624 Q 476 616 468 616 L 460 616 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>data.aws_ami.latest → module.app.aws_instance.web[1] (dependency)</title></path>
 <g data-edge-kind="containment" data-source="resource-5" data-target="resource-3"><title>module.app.aws_subnet.main → module.app.aws_instance.web[0] (containment)</title></g>
 <g data-edge-kind="containment" data-source="resource-5" data-target="resource-4"><title>module.app.aws_subnet.main → module.app.aws_instance.web[1] (containment)</title></g>
-<g id="resource-0" data-qualified-address="module.root.aws_s3_bucket.legacy"><title>aws_s3_bucket.legacy — delete</title>
+<g id="resource-0" data-qualified-address="module.root.aws_s3_bucket.legacy" data-terraform-address="aws_s3_bucket.legacy"><title>module.root.aws_s3_bucket.legacy — delete</title>
 <rect x="60" y="920" width="320" height="96" rx="8" fill="#fef2f2" stroke="#b91c1c" stroke-width="1.5" data-mode="managed"/>
 <text x="72" y="940" font-size="11" fill="#b91c1c">aws_s3_bucket · delete</text>
-<text x="72" y="965" font-size="13" fill="#0f172a">aws_s3_bucket.legacy</text>
+<text x="72" y="965" font-size="13" fill="#0f172a">module.root.aws_s3_bucket.legacy</text>
 <text x="72" y="1004" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
-<g id="resource-1" data-qualified-address="module.root.aws_vpc.main"><title>aws_vpc.main — unchanged</title>
+<g id="resource-1" data-qualified-address="module.root.aws_vpc.main" data-terraform-address="aws_vpc.main"><title>module.root.aws_vpc.main — unchanged</title>
 <text x="72" y="180" font-size="11" fill="#64748b">aws_vpc · unchanged</text>
-<text x="72" y="205" font-size="13" fill="#0f172a">aws_vpc.main</text>
+<text x="72" y="205" font-size="13" fill="#0f172a">module.root.aws_vpc.main</text>
 <text x="72" y="244" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
-<g id="resource-2" data-qualified-address="module.root.data.aws_ami.latest"><title>data.aws_ami.latest — unchanged</title>
+<g id="resource-2" data-qualified-address="module.root.data.aws_ami.latest" data-terraform-address="data.aws_ami.latest"><title>module.root.data.aws_ami.latest — unchanged</title>
 <rect x="60" y="784" width="320" height="96" rx="8" fill="#f8fafc" stroke="#64748b" stroke-width="1.5" data-mode="data" stroke-dasharray="6 4"/>
 <g data-external="true"><title>External resource: read by Terraform, not managed by this configuration</title><rect x="302" y="791" width="68" height="18" rx="4" fill="#e2e8f0"/><text x="308" y="804" font-size="10" fill="#334155">external</text></g><text x="72" y="804" font-size="11" fill="#64748b">aws_ami · unchanged</text>
-<text x="72" y="829" font-size="13" fill="#0f172a">data.aws_ami.latest</text>
+<text x="72" y="829" font-size="13" fill="#0f172a">module.root.data.aws_ami.latest</text>
 <text x="72" y="868" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
-<g id="resource-3" data-qualified-address="module.app.aws_instance.web[0]"><title>module.app.aws_instance.web[0] — create</title>
+<g id="resource-3" data-qualified-address="module.app.aws_instance.web[0]" data-terraform-address="module.app.aws_instance.web[0]"><title>module.app.aws_instance.web[0] — create</title>
 <rect x="140" y="432" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text x="152" y="452" font-size="11" fill="#047857">aws_instance · create</text>
-<text x="152" y="477" font-size="13" fill="#0f172a">aws_instance.web[0]</text>
+<text x="152" y="477" font-size="13" fill="#0f172a">module.app.aws_instance.web[0]</text>
 <text x="152" y="516" font-size="10" fill="#64748b"><title>module.app</title>module.app</text>
 </g>
-<g id="resource-4" data-qualified-address="module.app.aws_instance.web[1]"><title>module.app.aws_instance.web[1] — replace</title>
+<g id="resource-4" data-qualified-address="module.app.aws_instance.web[1]" data-terraform-address="module.app.aws_instance.web[1]"><title>module.app.aws_instance.web[1] — replace</title>
 <rect x="140" y="568" width="320" height="96" rx="8" fill="#fff7ed" stroke="#c2410c" stroke-width="1.5" data-mode="managed"/>
 <text x="152" y="588" font-size="11" fill="#c2410c">aws_instance · replace</text>
-<text x="152" y="613" font-size="13" fill="#0f172a">aws_instance.web[1]</text>
+<text x="152" y="613" font-size="13" fill="#0f172a">module.app.aws_instance.web[1]</text>
 <text x="152" y="652" font-size="10" fill="#64748b"><title>module.app</title>module.app</text>
 </g>
-<g id="resource-5" data-qualified-address="module.app.aws_subnet.main"><title>module.app.aws_subnet.main — update</title>
+<g id="resource-5" data-qualified-address="module.app.aws_subnet.main" data-terraform-address="module.app.aws_subnet.main"><title>module.app.aws_subnet.main — update</title>
 <text x="112" y="316" font-size="11" fill="#1d4ed8">aws_subnet · update</text>
-<text x="112" y="341" font-size="13" fill="#0f172a">aws_subnet.main</text>
+<text x="112" y="341" font-size="13" fill="#0f172a">module.app.aws_subnet.main</text>
 <text x="112" y="380" font-size="10" fill="#64748b"><title>module.app</title>module.app</text>
 </g>
 </g>
