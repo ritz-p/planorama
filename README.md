@@ -146,6 +146,8 @@ docker compose exec dev cargo run --locked -- examples/bundling-plan.json -o exa
 
 ## コード構成
 
+`svg/paths.rs` は直角の経路点を SVG に変換するときだけ角を丸めます。標準半径は 8 px で、前後の区間長の半分を超えないよう縮めます。短い区間には 0.5 px 単位も使い、始点・終点と矢印の向きは維持します。経路探索・配置・衝突判定の座標は変更しません。
+
 data は役割とは別に破線と `external` バッジで表示します。VPC・Subnet などの Container は外部リソースでも枠になり、managed の子を包含できます。data の検索条件から包含を推測しません。Policy・Controller の表示ルールも併用します。未知の data 型は情報を失わないよう外部カードとして残します。
 
 メタデータ型の `data.aws_region`、`data.aws_partition`、`data.aws_caller_identity`、`data.aws_availability_zones`、`data.aws_iam_policy_document` は描画用グラフから省略します。同じ型でも managed リソースは省略しません。省略ノードに接続する辺も除き、表示ノード間の直接の辺を保持します。経由した関係の推測・付け替えは行いません。元の Terraform グラフは全情報を保持し、SVG の件数・凡例は表示対象のみを集計します。外部リソースのサンプルは [data.svg](examples/data.svg)（入力: [data-plan.json](examples/data-plan.json)）です。

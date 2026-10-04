@@ -1,5 +1,6 @@
 mod containers;
 mod entities;
+mod paths;
 mod relationships;
 mod roles;
 mod style;
@@ -96,20 +97,7 @@ pub fn render(graph: &Graph, layout: &Layout<'_>) -> String {
             ),
             None => ("#94a3b8", "arrow".into()),
         };
-        let mut path = String::new();
-        for (i, point) in points.iter().enumerate() {
-            write!(
-                path,
-                "{} {} {} ",
-                match i {
-                    0 => "M",
-                    _ => "L",
-                },
-                point.x,
-                point.y
-            )
-            .unwrap();
-        }
+        let path = paths::rounded(points);
         writeln!(svg, r##"<path d="{path}"{relation} fill="none" stroke="{stroke}" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#{marker})"><title>{title}</title></path>"##).unwrap();
     }
     for point in &layout.junctions {
