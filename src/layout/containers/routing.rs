@@ -48,23 +48,21 @@ pub(super) fn route(graph: &Graph, layout: &Layout<'_>) -> Vec<Vec<Point>> {
     for &(node, bounds) in &layout.containers {
         right_edges[node] = bounds.origin.x + bounds.width;
     }
-    let mut outgoing = vec![Vec::new(); graph.nodes.len()];
-    let mut incoming = vec![Vec::new(); graph.nodes.len()];
+    let mut incident = vec![Vec::new(); graph.nodes.len()];
     for (index, edge) in graph.edges.iter().enumerate() {
         if !represented_by_nesting(edge, layout) {
-            outgoing[edge.from].push(index);
-            incoming[edge.to].push(index);
+            incident[edge.from].push((index, true));
+            incident[edge.to].push((index, false));
         }
     }
     let mut source_ports = vec![0; graph.edges.len()];
     let mut target_ports = vec![0; graph.edges.len()];
-    for (groups, ports) in [
-        (&outgoing, &mut source_ports),
-        (&incoming, &mut target_ports),
-    ] {
-        for edges in groups {
-            for (slot, &edge) in edges.iter().enumerate() {
-                ports[edge] = 20 + (slot + 1) * (NODE_HEIGHT - 40) / (edges.len() + 1);
+    for edges in &incident {
+        for (slot, &(edge, source)) in edges.iter().enumerate() {
+            let port = 20 + (slot + 1) * (NODE_HEIGHT - 40) / (edges.len() + 1);
+            match source {
+                true => source_ports[edge] = port,
+                false => target_ports[edge] = port,
             }
         }
     }
@@ -82,11 +80,7 @@ pub(super) fn route(graph: &Graph, layout: &Layout<'_>) -> Vec<Vec<Point>> {
             };
             let end = Point {
                 x: right_edges[edge.to],
-                y: layout.positions[edge.to].y
-                    + match edge.from == edge.to {
-                        true => NODE_HEIGHT - 12,
-                        false => target_ports[index],
-                    },
+                y: layout.positions[edge.to].y + target_ports[index],
             };
             let mut obstacles: Vec<_> = layout
                 .positions

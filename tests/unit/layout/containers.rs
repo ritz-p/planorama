@@ -10,6 +10,56 @@ fn fixture() -> Graph {
 }
 
 #[test]
+fn reciprocal_relationships_and_self_loops_use_distinct_incoming_and_outgoing_ports() {
+    for role in [ResourceRole::Container, ResourceRole::Node] {
+        let mut node = fixture()
+            .nodes
+            .into_iter()
+            .find(|node| node.role == ResourceRole::Container)
+            .unwrap();
+        let mut nodes = Vec::new();
+        for index in 0..3 {
+            node.address = format!("test.peer{index}");
+            node.role = match index {
+                2 => ResourceRole::Container,
+                _ => role,
+            };
+            nodes.push(node.clone());
+        }
+        let edges = [
+            (0, 1, Action::Create),
+            (1, 0, Action::Update),
+            (0, 0, Action::Delete),
+        ]
+        .into_iter()
+        .enumerate()
+        .map(|(index, (from, to, action))| Edge {
+            from,
+            to,
+            kind: EdgeKind::Association,
+            change: Some(crate::model::EdgeChange {
+                address: format!("test.relationship{index}"),
+                action,
+            }),
+        })
+        .collect();
+        let graph = Graph { nodes, edges };
+        let layout = Layout::new(&graph);
+        assert_ne!(layout.paths[0].first(), layout.paths[1].last());
+        assert_ne!(layout.paths[0].last(), layout.paths[1].first());
+        let reversed: Vec<_> = layout.paths[1].iter().rev().copied().collect();
+        assert_ne!(layout.paths[0], reversed);
+        assert_ne!(layout.paths[2].first(), layout.paths[2].last());
+        let output = svg::render(&graph, &layout);
+        for (index, action) in ["create", "update", "delete"].iter().enumerate() {
+            assert!(output.contains(&format!("association; {action}: test.relationship{index}")));
+            assert!(output.contains(&format!("marker-end=\"url(#arrow-{action})\"")));
+        }
+        verify(&graph);
+    }
+}
+
+#[test]
 fn nesting_hides_ancestor_references_but_keeps_sibling_and_external_connections() {
     let mut graph = fixture();
     let parent = graph
