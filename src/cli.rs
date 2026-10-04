@@ -3,7 +3,7 @@ use crate::{plan, semantic, svg};
 use std::io::{self, Read, Write};
 use std::path::{Path, PathBuf};
 
-const HELP: &str = "planorama — Terraform plan JSON → SVG (pure Rust)\n\nUsage: planorama <plan.json | -> [-o <diagram.svg | ->]\n\n  -o, --output PATH   Output file (default: diagram.svg); '-' for stdout\n  -h, --help          Show help\n  -V, --version       Show version\n\nInput: terraform show -json <saved-plan> (not terraform plan -json).\nArrows point from a dependency to its dependent resource.\nAttribute values are never included in the diagram.\n";
+const HELP: &str = "planorama — Terraform plan JSON → SVG (pure Rust)\n\nUsage: planorama <plan.json | -> [-o <diagram.svg | ->]\n\n  -o, --output PATH   Output file (default: diagram.svg); '-' for stdout\n  -h, --help          Show help\n  -V, --version       Show version\n\nInput: terraform show -json <saved-plan> (not terraform plan -json).\nLines show reference or architectural relationships; containment uses nested boxes.\nAttribute values are never included in the diagram.\n";
 
 pub fn run() -> Result<(), String> {
     let mut input = None;
