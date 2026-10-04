@@ -10,6 +10,42 @@ fn fixture() -> Graph {
 }
 
 #[test]
+fn architecture_parentage_and_geometry_do_not_depend_on_module_membership() {
+    let raw = plan::parse(include_str!(
+        "../../fixtures/cross-module-containment-plan.json"
+    ))
+    .unwrap();
+    let graph = semantic::transform(&raw).0;
+    let layout = Layout::new(&graph);
+    let subnet = graph
+        .nodes
+        .iter()
+        .position(|node| node.resource_type == "aws_subnet")
+        .unwrap();
+    let workload = graph
+        .nodes
+        .iter()
+        .position(|node| node.resource_type == "aws_instance")
+        .unwrap();
+    assert_eq!(layout.parents[workload], Some(subnet));
+    assert!(layout.bands.is_empty());
+    let output = svg::render(&graph, &layout);
+    assert!(output.contains("module.network"));
+    assert!(output.contains("module.application"));
+    let mut relocated = graph.clone();
+    for node in &mut relocated.nodes {
+        node.address = node.resource_address().local().to_owned();
+        node.module = "root".into();
+    }
+    let other = Layout::new(&relocated);
+    assert_eq!(layout.positions, other.positions);
+    assert_eq!(layout.parents, other.parents);
+    assert_eq!(layout.containers, other.containers);
+    assert_eq!(layout.paths, other.paths);
+    verify(&graph);
+}
+
+#[test]
 fn high_degree_ports_expand_headers_and_remain_distinct_inside_parent_bounds() {
     for role in [ResourceRole::Container, ResourceRole::Node] {
         for count in [56, 57, 100] {
@@ -377,7 +413,7 @@ fn peer_containers_and_cross_module_children_remain_separate_and_identifiable() 
             assert!(!overlaps(peer, bounds));
         }
     }
-    assert_eq!(layout.bands.len(), 2);
+    assert!(layout.bands.is_empty());
     assert!(svg::render(&graph, &layout).contains("module.compute"));
 }
 
