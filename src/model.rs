@@ -43,6 +43,7 @@ pub struct Graph {
     pub edges: Vec<Edge>,
 }
 
+mod address;
 mod graphs;
 pub use graphs::{ArchitectureGraph, AttributeReference, TerraformGraph};
 
