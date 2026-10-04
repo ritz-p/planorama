@@ -10,6 +10,84 @@ fn fixture() -> Graph {
 }
 
 #[test]
+fn reparsed_module_renames_preserve_fan_in_and_fan_out_ports_and_paths() {
+    use serde_json::json;
+    use std::collections::BTreeMap;
+    let mut input = json!({
+        "format_version":"1.2",
+        "resource_changes":[
+            {"address":"aws_vpc.main","type":"aws_vpc","change":{"actions":["create"]}},
+            {"address":"aws_s3_bucket.source","type":"aws_s3_bucket","change":{"actions":["create"]}},
+            {"address":"aws_s3_bucket.sink","type":"aws_s3_bucket","change":{"actions":["create"]}}
+        ],
+        "configuration":{"root_module":{
+            "resources":[
+                {"address":"aws_vpc.main"},
+                {"address":"aws_s3_bucket.source"},
+                {"address":"aws_s3_bucket.sink","expressions":{"tags":{"references":["module.a.id","module.b.id"]}}}
+            ],
+            "module_calls":{}
+        }}
+    });
+    for (module, name) in [("a", "alpha"), ("b", "beta")] {
+        input["resource_changes"]
+            .as_array_mut()
+            .unwrap()
+            .push(json!({
+                "address":format!("module.{module}.aws_instance.{name}"),
+                "type":"aws_instance","change":{"actions":["create"]}
+            }));
+        input["configuration"]["root_module"]["module_calls"][module] = json!({
+            "expressions":{"source":{"references":["aws_s3_bucket.source.id"]}},
+            "module":{
+                "resources":[{"address":format!("aws_instance.{name}"),"expressions":{"tags":{"references":["var.source"]}}}],
+                "outputs":{"id":{"expression":{"references":[format!("aws_instance.{name}.id")]}}}
+            }
+        });
+    }
+    let original = semantic::transform(&plan::parse(&input.to_string()).unwrap()).0;
+    let calls = input["configuration"]["root_module"]["module_calls"]
+        .as_object_mut()
+        .unwrap();
+    let renamed_call = calls.remove("a").unwrap();
+    calls.insert("z".into(), renamed_call);
+    let renamed = semantic::transform(
+        &plan::parse(&input.to_string().replace("module.a.", "module.z.")).unwrap(),
+    )
+    .0;
+    let identity = |node: &Node| node.address.replace("module.z.", "module.a.");
+    let edge_ids = |graph: &Graph| {
+        graph
+            .edges
+            .iter()
+            .map(|edge| {
+                (
+                    identity(&graph.nodes[edge.from]),
+                    identity(&graph.nodes[edge.to]),
+                    edge.kind,
+                )
+            })
+            .collect::<Vec<_>>()
+    };
+    assert_eq!(original.edges.len(), 4);
+    assert_ne!(edge_ids(&original), edge_ids(&renamed));
+    let snapshot = |graph: &Graph| {
+        let layout = Layout::new(graph);
+        let positions: BTreeMap<_, _> = graph
+            .nodes
+            .iter()
+            .zip(&layout.positions)
+            .map(|(node, point)| (identity(node), *point))
+            .collect();
+        let paths: BTreeMap<_, _> = edge_ids(graph).into_iter().zip(layout.paths).collect();
+        (positions, paths)
+    };
+    assert_eq!(snapshot(&original), snapshot(&renamed));
+    verify(&original);
+    verify(&renamed);
+}
+
+#[test]
 fn large_aws_example_keeps_cross_module_containment_and_multi_subnet_relationships() {
     let raw = plan::parse(include_str!("../../../examples/terraform-large/plan.json")).unwrap();
     assert!(raw.nodes.len() >= 45);

@@ -125,6 +125,6 @@ pub(super) fn place(graph: &Graph) -> Layout<'_> {
         y += sizes[root].1 + PADDING;
     }
     layout.height = (y + 40).max(300);
-    layout.paths = routing::route(graph, &layout);
+    layout.paths = routing::route(graph, &layout, &keys);
     layout
 }
