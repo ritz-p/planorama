@@ -1,0 +1,9 @@
+{
+  "variable": {"vpc_id": {"type": "string"}, "private_subnets": {"type": "list(string)"}, "app_security_group_id": {"type": "string"}},
+  "resource": {
+    "aws_security_group": {"database": {"name": "planorama-database", "vpc_id": "${var.vpc_id}", "ingress": [{"from_port": 5432, "to_port": 5432, "protocol": "tcp", "description": "Example application access", "self": false, "cidr_blocks": [], "ipv6_cidr_blocks": [], "prefix_list_ids": [], "security_groups": ["${var.app_security_group_id}"]}]}},
+    "aws_db_subnet_group": {"database": {"name": "planorama-database", "subnet_ids": "${var.private_subnets}"}},
+    "aws_db_instance": {"database": {"identifier": "planorama-database", "allocated_storage": 20, "engine": "postgres", "instance_class": "db.t3.micro", "username": "exampleadmin", "manage_master_user_password": true, "storage_encrypted": true, "db_subnet_group_name": "${aws_db_subnet_group.database.name}", "vpc_security_group_ids": ["${aws_security_group.database.id}"], "skip_final_snapshot": true}},
+    "aws_cloudwatch_metric_alarm": {"database_cpu": {"alarm_name": "planorama-database-cpu", "comparison_operator": "GreaterThanThreshold", "evaluation_periods": 2, "metric_name": "CPUUtilization", "namespace": "AWS/RDS", "period": 120, "statistic": "Average", "threshold": 80, "dimensions": {"DBInstanceIdentifier": "${aws_db_instance.database.id}"}}}
+  }
+}

@@ -2,6 +2,35 @@ use crate::{layout::Layout, plan, semantic, svg};
 use serde_json::json;
 
 #[test]
+fn relationship_local_addresses_preserve_resource_keys_and_strip_nested_modules() {
+    for (native, local) in [
+        (
+            "aws_route_table_association.main",
+            "aws_route_table_association.main",
+        ),
+        (
+            "module.root.aws_route_table_association.main[1]",
+            "aws_route_table_association.main[1]",
+        ),
+        (
+            r#"module.network["a.b"].module.routes[0].aws_route_table_association.main["x.y"]"#,
+            r#"aws_route_table_association.main["x.y"]"#,
+        ),
+        (
+            r#"module.network["a\".b"].aws_route_table_association.main["x\".y"]"#,
+            r#"aws_route_table_association.main["x\".y"]"#,
+        ),
+    ] {
+        let change = crate::model::EdgeChange {
+            address: native.into(),
+            action: crate::model::Action::Create,
+        };
+        assert_eq!(change.local_address(), local);
+        assert_eq!(change.address, native);
+    }
+}
+
+#[test]
 fn qualified_addresses_preserve_native_module_and_instance_identity() {
     for (native, module, local, qualified) in [
         (

@@ -1,0 +1,35 @@
+{
+  "variable": {
+    "vpc_id": {"type": "string"}, "public_subnets": {"type": "list(string)"},
+    "private_a": {"type": "string"}, "private_b": {"type": "string"},
+    "ami_id": {"type": "string"}, "shared_security_group_id": {"type": "string"}, "log_group": {"type": "string"}
+  },
+  "resource": {
+    "aws_security_group": {
+      "alb": {"name": "planorama-alb", "vpc_id": "${var.vpc_id}", "ingress": [{"from_port": 80, "to_port": 80, "protocol": "tcp", "description": "Example HTTP", "self": false, "ipv6_cidr_blocks": [], "prefix_list_ids": [], "security_groups": [], "cidr_blocks": ["10.42.0.0/16"]}]},
+      "app": {"name": "planorama-app", "vpc_id": "${var.vpc_id}", "ingress": [{"from_port": 8080, "to_port": 8080, "protocol": "tcp", "description": "Example application access", "self": false, "cidr_blocks": [], "ipv6_cidr_blocks": [], "prefix_list_ids": [], "security_groups": ["${aws_security_group.alb.id}"]}]}
+    },
+    "aws_lb": {"app": {"name": "planorama-example", "internal": true, "load_balancer_type": "application", "subnets": "${var.public_subnets}", "security_groups": ["${aws_security_group.alb.id}"]}},
+    "aws_lb_target_group": {"app": {"name": "planorama-example", "port": 8080, "protocol": "HTTP", "vpc_id": "${var.vpc_id}", "target_type": "instance"}},
+    "aws_lb_listener": {"http": {"load_balancer_arn": "${aws_lb.app.arn}", "port": 80, "protocol": "HTTP", "default_action": [{"type": "forward", "target_group_arn": "${aws_lb_target_group.app.arn}"}]}},
+    "aws_iam_role": {
+      "instance": {"name": "planorama-instance", "assume_role_policy": "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Principal\":{\"Service\":\"ec2.amazonaws.com\"},\"Action\":\"sts:AssumeRole\"}]}"},
+      "task": {"name": "planorama-task", "assume_role_policy": "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Principal\":{\"Service\":\"ecs-tasks.amazonaws.com\"},\"Action\":\"sts:AssumeRole\"}]}"}
+    },
+    "aws_iam_instance_profile": {"app": {"name": "planorama-app", "role": "${aws_iam_role.instance.name}"}},
+    "aws_instance": {
+      "workers_a": {"count": 2, "ami": "${var.ami_id}", "instance_type": "t3.micro", "subnet_id": "${var.private_a}", "iam_instance_profile": "${aws_iam_instance_profile.app.name}", "vpc_security_group_ids": ["${aws_security_group.app.id}"], "tags": {"Name": "planorama-a-${count.index}"}},
+      "workers_b": {"count": 2, "ami": "${var.ami_id}", "instance_type": "t3.micro", "subnet_id": "${var.private_b}", "iam_instance_profile": "${aws_iam_instance_profile.app.name}", "vpc_security_group_ids": ["${aws_security_group.app.id}"], "tags": {"Name": "planorama-b-${count.index}"}}
+    },
+    "aws_lb_target_group_attachment": {
+      "a0": {"target_group_arn": "${aws_lb_target_group.app.arn}", "target_id": "${aws_instance.workers_a[0].id}", "port": 8080},
+      "a1": {"target_group_arn": "${aws_lb_target_group.app.arn}", "target_id": "${aws_instance.workers_a[1].id}", "port": 8080},
+      "b0": {"target_group_arn": "${aws_lb_target_group.app.arn}", "target_id": "${aws_instance.workers_b[0].id}", "port": 8080},
+      "b1": {"target_group_arn": "${aws_lb_target_group.app.arn}", "target_id": "${aws_instance.workers_b[1].id}", "port": 8080}
+    },
+    "aws_ecs_cluster": {"app": {"name": "planorama-app"}},
+    "aws_ecs_task_definition": {"app": {"family": "planorama-app", "network_mode": "awsvpc", "requires_compatibilities": ["FARGATE"], "cpu": "256", "memory": "512", "execution_role_arn": "${aws_iam_role.task.arn}", "container_definitions": "[{\"name\":\"app\",\"image\":\"public.ecr.aws/nginx/nginx:stable\",\"essential\":true,\"portMappings\":[{\"containerPort\":8080}]}]"}},
+    "aws_ecs_service": {"app": {"name": "planorama-app", "cluster": "${aws_ecs_cluster.app.id}", "task_definition": "${aws_ecs_task_definition.app.arn}", "launch_type": "FARGATE", "desired_count": 0, "network_configuration": [{"subnets": ["${var.private_a}", "${var.private_b}"], "security_groups": ["${aws_security_group.app.id}", "${var.shared_security_group_id}"]}], "tags": {"logs": "${var.log_group}"}}}
+  },
+  "output": {"security_group_id": {"value": "${aws_security_group.app.id}"}, "dns_name": {"value": "${aws_lb.app.dns_name}"}}
+}

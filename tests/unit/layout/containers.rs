@@ -10,6 +10,464 @@ fn fixture() -> Graph {
 }
 
 #[test]
+fn relationship_names_distinguish_same_named_subnets_after_reparsing() {
+    use serde_json::json;
+    use std::collections::BTreeMap;
+    for nested in [false, true] {
+        let mut input = json!({
+            "format_version":"1.2",
+            "resource_changes":[
+                {"address":"aws_vpc.main","type":"aws_vpc","change":{"actions":["create"]}},
+                {"address":"aws_route_table.main","type":"aws_route_table","change":{"actions":["create"]}}
+            ],
+            "configuration":{"root_module":{
+                "resources":[{"address":"aws_vpc.main"},{"address":"aws_route_table.main"}],
+                "module_calls":{}
+            }}
+        });
+        for (module, association) in [("a", "alpha"), ("b", "beta")] {
+            for (kind, name) in [
+                ("aws_subnet", "main"),
+                ("aws_route_table_association", association),
+            ] {
+                input["resource_changes"]
+                    .as_array_mut()
+                    .unwrap()
+                    .push(json!({
+                        "address":format!("module.{module}.{kind}.{name}"),
+                        "type":kind,"change":{"actions":["create"]}
+                    }));
+            }
+            let subnet_expressions = match nested {
+                true => json!({"vpc_id":{"references":["var.vpc"]}}),
+                false => json!({}),
+            };
+            input["configuration"]["root_module"]["module_calls"][module] = json!({
+                "expressions":{
+                    "table":{"references":["aws_route_table.main.id"]},
+                    "vpc":{"references":["aws_vpc.main.id"]}
+                },
+                "module":{"resources":[
+                    {"address":"aws_subnet.main","expressions":subnet_expressions},
+                    {"address":format!("aws_route_table_association.{association}"),"expressions":{
+                        "subnet_id":{"references":["aws_subnet.main.id"]},
+                        "route_table_id":{"references":["var.table"]}
+                    }}
+                ]}
+            });
+        }
+        let original = semantic::transform(&plan::parse(&input.to_string()).unwrap()).0;
+        let calls = input["configuration"]["root_module"]["module_calls"]
+            .as_object_mut()
+            .unwrap();
+        let call = calls.remove("a").unwrap();
+        calls.insert("z".into(), call);
+        let renamed = semantic::transform(
+            &plan::parse(&input.to_string().replace("module.a.", "module.z.")).unwrap(),
+        )
+        .0;
+        let identity = |node: &Node| node.address.replace("module.z.", "module.a.");
+        assert_ne!(
+            original.nodes.iter().map(identity).collect::<Vec<_>>(),
+            renamed.nodes.iter().map(identity).collect::<Vec<_>>()
+        );
+        assert_eq!(
+            original
+                .edges
+                .iter()
+                .filter(|edge| edge.kind == EdgeKind::Association)
+                .count(),
+            2
+        );
+        let snapshot = |graph: &Graph| {
+            let layout = Layout::new(graph);
+            assert_eq!(
+                layout.parents.iter().flatten().count(),
+                if nested { 2 } else { 0 }
+            );
+            let positions: BTreeMap<_, _> = graph
+                .nodes
+                .iter()
+                .enumerate()
+                .map(|(index, node)| (identity(node), layout.positions[index]))
+                .collect();
+            let paths: BTreeMap<_, _> = graph
+                .edges
+                .iter()
+                .zip(layout.paths)
+                .map(|(edge, path)| {
+                    (
+                        (
+                            identity(&graph.nodes[edge.from]),
+                            identity(&graph.nodes[edge.to]),
+                            edge.kind,
+                            edge.change
+                                .as_ref()
+                                .map(|change| change.local_address().to_owned()),
+                        ),
+                        path,
+                    )
+                })
+                .collect();
+            (positions, paths)
+        };
+        assert_eq!(snapshot(&original), snapshot(&renamed));
+        verify(&original);
+        verify(&renamed);
+    }
+}
+
+#[test]
+fn reparsed_parallel_associations_keep_ports_when_modules_are_renamed() {
+    use serde_json::json;
+    use std::collections::BTreeMap;
+    for (first, second) in [("alpha", "beta"), ("main[0]", "main[1]")] {
+        let mut input = json!({
+            "format_version":"1.2",
+            "resource_changes":[
+                {"address":"aws_subnet.private","type":"aws_subnet","change":{"actions":["create"]}},
+                {"address":"aws_route_table.private","type":"aws_route_table","change":{"actions":["create"]}}
+            ],
+            "configuration":{"root_module":{
+                "resources":[{"address":"aws_subnet.private"},{"address":"aws_route_table.private"}],
+                "module_calls":{}
+            }}
+        });
+        for (module, name) in [("a", first), ("b", second)] {
+            input["resource_changes"]
+                .as_array_mut()
+                .unwrap()
+                .push(json!({
+                    "address":format!("module.{module}.aws_route_table_association.{name}"),
+                    "type":"aws_route_table_association","change":{"actions":["create"]}
+                }));
+            input["configuration"]["root_module"]["module_calls"][module] = json!({
+                "expressions":{
+                    "subnet":{"references":["aws_subnet.private.id"]},
+                    "table":{"references":["aws_route_table.private.id"]}
+                },
+                "module":{"resources":[{
+                    "address":format!("aws_route_table_association.{}", name.split('[').next().unwrap()),
+                    "expressions":{
+                        "subnet_id":{"references":["var.subnet"]},
+                        "route_table_id":{"references":["var.table"]}
+                    }
+                }]}
+            });
+        }
+        let original = semantic::transform(&plan::parse(&input.to_string()).unwrap()).0;
+        let calls = input["configuration"]["root_module"]["module_calls"]
+            .as_object_mut()
+            .unwrap();
+        let call = calls.remove("a").unwrap();
+        calls.insert("z".into(), call);
+        let renamed = semantic::transform(
+            &plan::parse(&input.to_string().replace("module.a.", "module.z.")).unwrap(),
+        )
+        .0;
+        let identity = |edge: &Edge| {
+            edge.change
+                .as_ref()
+                .unwrap()
+                .address
+                .replace("module.z.", "module.a.")
+        };
+        assert_eq!(original.edges.len(), 2);
+        assert!(
+            original
+                .edges
+                .iter()
+                .all(|edge| edge.kind == EdgeKind::Association)
+        );
+        assert_ne!(
+            original.edges.iter().map(identity).collect::<Vec<_>>(),
+            renamed.edges.iter().map(identity).collect::<Vec<_>>()
+        );
+        let snapshot = |graph: &Graph| {
+            let layout = Layout::new(graph);
+            let paths: BTreeMap<_, _> =
+                graph.edges.iter().map(identity).zip(layout.paths).collect();
+            (layout.positions, paths)
+        };
+        assert_eq!(snapshot(&original), snapshot(&renamed));
+        verify(&original);
+        verify(&renamed);
+    }
+}
+
+#[test]
+fn reparsed_module_renames_preserve_fan_in_and_fan_out_ports_and_paths() {
+    use serde_json::json;
+    use std::collections::BTreeMap;
+    let mut input = json!({
+        "format_version":"1.2",
+        "resource_changes":[
+            {"address":"aws_vpc.main","type":"aws_vpc","change":{"actions":["create"]}},
+            {"address":"aws_s3_bucket.source","type":"aws_s3_bucket","change":{"actions":["create"]}},
+            {"address":"aws_s3_bucket.sink","type":"aws_s3_bucket","change":{"actions":["create"]}}
+        ],
+        "configuration":{"root_module":{
+            "resources":[
+                {"address":"aws_vpc.main"},
+                {"address":"aws_s3_bucket.source"},
+                {"address":"aws_s3_bucket.sink","expressions":{"tags":{"references":["module.a.id","module.b.id"]}}}
+            ],
+            "module_calls":{}
+        }}
+    });
+    for (module, name) in [("a", "alpha"), ("b", "beta")] {
+        input["resource_changes"]
+            .as_array_mut()
+            .unwrap()
+            .push(json!({
+                "address":format!("module.{module}.aws_instance.{name}"),
+                "type":"aws_instance","change":{"actions":["create"]}
+            }));
+        input["configuration"]["root_module"]["module_calls"][module] = json!({
+            "expressions":{"source":{"references":["aws_s3_bucket.source.id"]}},
+            "module":{
+                "resources":[{"address":format!("aws_instance.{name}"),"expressions":{"tags":{"references":["var.source"]}}}],
+                "outputs":{"id":{"expression":{"references":[format!("aws_instance.{name}.id")]}}}
+            }
+        });
+    }
+    let original = semantic::transform(&plan::parse(&input.to_string()).unwrap()).0;
+    let calls = input["configuration"]["root_module"]["module_calls"]
+        .as_object_mut()
+        .unwrap();
+    let renamed_call = calls.remove("a").unwrap();
+    calls.insert("z".into(), renamed_call);
+    let renamed = semantic::transform(
+        &plan::parse(&input.to_string().replace("module.a.", "module.z.")).unwrap(),
+    )
+    .0;
+    let identity = |node: &Node| node.address.replace("module.z.", "module.a.");
+    let edge_ids = |graph: &Graph| {
+        graph
+            .edges
+            .iter()
+            .map(|edge| {
+                (
+                    identity(&graph.nodes[edge.from]),
+                    identity(&graph.nodes[edge.to]),
+                    edge.kind,
+                )
+            })
+            .collect::<Vec<_>>()
+    };
+    assert_eq!(original.edges.len(), 4);
+    assert_ne!(edge_ids(&original), edge_ids(&renamed));
+    let snapshot = |graph: &Graph| {
+        let layout = Layout::new(graph);
+        let positions: BTreeMap<_, _> = graph
+            .nodes
+            .iter()
+            .zip(&layout.positions)
+            .map(|(node, point)| (identity(node), *point))
+            .collect();
+        let paths: BTreeMap<_, _> = edge_ids(graph).into_iter().zip(layout.paths).collect();
+        (positions, paths)
+    };
+    assert_eq!(snapshot(&original), snapshot(&renamed));
+    verify(&original);
+    verify(&renamed);
+}
+
+#[test]
+fn large_aws_example_keeps_cross_module_containment_and_multi_subnet_relationships() {
+    let raw = plan::parse(include_str!("../../../examples/terraform-large/plan.json")).unwrap();
+    assert!(raw.nodes.len() >= 45);
+    let ranks = crate::layout::rank::compute(&raw.graph);
+    assert!(ranks.iter().copied().max().unwrap() >= 4);
+    assert!(
+        raw.edges
+            .iter()
+            .any(|edge| ranks[edge.to] > ranks[edge.from] + 1)
+    );
+    let workers: Vec<_> = raw
+        .nodes
+        .iter()
+        .enumerate()
+        .filter(|(_, node)| node.resource_type == "aws_instance")
+        .map(|(index, _)| ranks[index])
+        .collect();
+    assert_eq!(workers.len(), 4);
+    assert!(workers.iter().all(|rank| *rank == workers[0]));
+    let original = raw.clone();
+    let graph = semantic::transform(&raw).0;
+    assert_eq!(raw, original);
+    assert!(graph.edges.len() >= 70);
+    let layout = Layout::new(&graph);
+    assert!(layout.bands.is_empty());
+    for zone in ["a", "b"] {
+        let subnet = graph
+            .nodes
+            .iter()
+            .position(|node| node.address == format!("module.network.aws_subnet.private_{zone}"))
+            .unwrap();
+        for index in 0..2 {
+            let worker = graph
+                .nodes
+                .iter()
+                .position(|node| {
+                    node.address
+                        == format!("module.application.aws_instance.workers_{zone}[{index}]")
+                })
+                .unwrap();
+            assert_eq!(layout.parents[worker], Some(subnet));
+            assert_ne!(graph.nodes[worker].module, graph.nodes[subnet].module);
+        }
+    }
+    for resource_type in [
+        "aws_lb",
+        "aws_lb_target_group",
+        "aws_ecs_service",
+        "aws_db_instance",
+    ] {
+        let node = graph
+            .nodes
+            .iter()
+            .position(|node| node.resource_type == resource_type)
+            .unwrap();
+        assert!(layout.parents[node].is_none());
+    }
+    let service = graph
+        .nodes
+        .iter()
+        .position(|node| node.resource_type == "aws_ecs_service")
+        .unwrap();
+    assert_eq!(
+        graph
+            .edges
+            .iter()
+            .filter(
+                |edge| edge.to == service && graph.nodes[edge.from].resource_type == "aws_subnet"
+            )
+            .count(),
+        2
+    );
+    assert_eq!(
+        graph
+            .edges
+            .iter()
+            .filter(|edge| edge.kind == EdgeKind::Association)
+            .count(),
+        4
+    );
+    for role in [
+        ResourceRole::Container,
+        ResourceRole::Node,
+        ResourceRole::Connector,
+        ResourceRole::Policy,
+        ResourceRole::Controller,
+        ResourceRole::Unknown,
+    ] {
+        assert!(graph.nodes.iter().any(|node| node.role == role));
+    }
+    verify(&graph);
+}
+
+#[test]
+fn duplicate_local_names_use_topology_after_module_renames_and_node_reordering() {
+    for nested in [false, true] {
+        let mut graph = fixture();
+        let subnet = graph
+            .nodes
+            .iter()
+            .position(|node| node.resource_type == "aws_subnet")
+            .unwrap();
+        let template = graph
+            .nodes
+            .iter()
+            .find(|node| node.resource_type == "aws_instance")
+            .unwrap()
+            .clone();
+        let first = graph.nodes.len();
+        for (module, target) in [("a", "a"), ("b", "b")] {
+            let worker = graph.nodes.len();
+            graph.nodes.push(Node {
+                address: format!("module.{module}.aws_instance.main"),
+                module: format!("module.{module}"),
+                ..template.clone()
+            });
+            graph.nodes.push(Node {
+                address: format!("aws_s3_bucket.{target}"),
+                resource_type: "aws_s3_bucket".into(),
+                module: "root".into(),
+                ..template.clone()
+            });
+            graph.edges.push(Edge::from((worker, worker + 1)));
+            if nested {
+                graph.edges.push(Edge {
+                    kind: EdgeKind::Containment,
+                    ..Edge::from((subnet, worker))
+                });
+            }
+        }
+        let before = Layout::new(&graph);
+        let mut renamed = graph.clone();
+        for (index, module) in [(first, "z"), (first + 2, "a")] {
+            renamed.nodes[index].module = format!("module.{module}");
+            renamed.nodes[index].address = format!("module.{module}.aws_instance.main");
+        }
+        let count = renamed.nodes.len();
+        renamed.nodes.reverse();
+        for edge in &mut renamed.edges {
+            edge.from = count - 1 - edge.from;
+            edge.to = count - 1 - edge.to;
+        }
+        let after = Layout::new(&renamed);
+        for node in 0..count {
+            assert_eq!(before.positions[node], after.positions[count - 1 - node]);
+        }
+        assert_eq!(before.paths, after.paths);
+        assert_eq!(
+            ordering::structural_keys(&graph),
+            ordering::structural_keys(&renamed)
+                .into_iter()
+                .rev()
+                .collect::<Vec<_>>()
+        );
+    }
+}
+
+#[test]
+fn architecture_parentage_and_geometry_do_not_depend_on_module_membership() {
+    let raw = plan::parse(include_str!(
+        "../../fixtures/cross-module-containment-plan.json"
+    ))
+    .unwrap();
+    let graph = semantic::transform(&raw).0;
+    let layout = Layout::new(&graph);
+    let subnet = graph
+        .nodes
+        .iter()
+        .position(|node| node.resource_type == "aws_subnet")
+        .unwrap();
+    let workload = graph
+        .nodes
+        .iter()
+        .position(|node| node.resource_type == "aws_instance")
+        .unwrap();
+    assert_eq!(layout.parents[workload], Some(subnet));
+    assert!(layout.bands.is_empty());
+    let output = svg::render(&graph, &layout);
+    assert!(output.contains("module.network"));
+    assert!(output.contains("module.application"));
+    let mut relocated = graph.clone();
+    for node in &mut relocated.nodes {
+        node.address = node.resource_address().local().to_owned();
+        node.module = "root".into();
+    }
+    let other = Layout::new(&relocated);
+    assert_eq!(layout.positions, other.positions);
+    assert_eq!(layout.parents, other.parents);
+    assert_eq!(layout.containers, other.containers);
+    assert_eq!(layout.paths, other.paths);
+    verify(&graph);
+}
+
+#[test]
 fn high_degree_ports_expand_headers_and_remain_distinct_inside_parent_bounds() {
     for role in [ResourceRole::Container, ResourceRole::Node] {
         for count in [56, 57, 100] {
@@ -377,7 +835,7 @@ fn peer_containers_and_cross_module_children_remain_separate_and_identifiable() 
             assert!(!overlaps(peer, bounds));
         }
     }
-    assert_eq!(layout.bands.len(), 2);
+    assert!(layout.bands.is_empty());
     assert!(svg::render(&graph, &layout).contains("module.compute"));
 }
 

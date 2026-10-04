@@ -1,0 +1,30 @@
+{
+  "terraform": {
+    "required_version": ">= 1.9, < 2.0",
+    "required_providers": {"aws": {"source": "hashicorp/aws", "version": "~> 5.0"}}
+  },
+  "provider": {"aws": {"region": "${var.region}"}},
+  "variable": {
+    "region": {"type": "string", "default": "us-east-1"},
+    "shared_vpc_id": {"type": "string", "default": "vpc-0123456789abcdef0"},
+    "shared_security_group_id": {"type": "string", "default": "sg-0123456789abcdef0"}
+  },
+  "resource": {"aws_cloudwatch_log_group": {"app": {"name": "/planorama/large-example", "retention_in_days": 7}}},
+  "module": {
+    "shared": {"source": "./shared", "vpc_id": "${var.shared_vpc_id}", "security_group_id": "${var.shared_security_group_id}"},
+    "network": {"source": "./network", "region": "${var.region}", "shared_vpc_id": "${module.shared.vpc_id}"},
+    "application": {
+      "source": "./application", "vpc_id": "${module.network.vpc_id}",
+      "public_subnets": ["${module.network.public_a}", "${module.network.public_b}"],
+      "private_a": "${module.network.private_a}", "private_b": "${module.network.private_b}",
+      "ami_id": "${module.shared.ami_id}", "shared_security_group_id": "${module.shared.security_group_id}",
+      "log_group": "${aws_cloudwatch_log_group.app.name}"
+    },
+    "database": {
+      "source": "./database", "vpc_id": "${module.network.vpc_id}",
+      "private_subnets": ["${module.network.private_a}", "${module.network.private_b}"],
+      "app_security_group_id": "${module.application.security_group_id}"
+    }
+  },
+  "output": {"load_balancer_dns": {"value": "${module.application.dns_name}"}}
+}

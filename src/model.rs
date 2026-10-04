@@ -44,6 +44,7 @@ pub struct Graph {
 }
 
 mod address;
+pub(crate) use address::module_of;
 mod graphs;
 pub use graphs::{ArchitectureGraph, AttributeReference, TerraformGraph};
 

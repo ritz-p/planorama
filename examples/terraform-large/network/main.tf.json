@@ -1,0 +1,34 @@
+{
+  "variable": {"region": {"type": "string"}, "shared_vpc_id": {"type": "string"}},
+  "resource": {
+    "aws_vpc": {"main": {"cidr_block": "10.42.0.0/16", "enable_dns_hostnames": true}},
+    "aws_subnet": {
+      "public_a": {"vpc_id": "${aws_vpc.main.id}", "cidr_block": "10.42.0.0/24", "availability_zone": "${var.region}a", "map_public_ip_on_launch": true},
+      "public_b": {"vpc_id": "${aws_vpc.main.id}", "cidr_block": "10.42.1.0/24", "availability_zone": "${var.region}b", "map_public_ip_on_launch": true},
+      "private_a": {"vpc_id": "${aws_vpc.main.id}", "cidr_block": "10.42.10.0/24", "availability_zone": "${var.region}a"},
+      "private_b": {"vpc_id": "${aws_vpc.main.id}", "cidr_block": "10.42.11.0/24", "availability_zone": "${var.region}b"}
+    },
+    "aws_internet_gateway": {"main": {"vpc_id": "${aws_vpc.main.id}"}},
+    "aws_eip": {"nat": {"domain": "vpc"}},
+    "aws_nat_gateway": {"main": {"allocation_id": "${aws_eip.nat.id}", "subnet_id": "${aws_subnet.public_a.id}", "depends_on": ["aws_internet_gateway.main"]}},
+    "aws_route_table": {"public": {"vpc_id": "${aws_vpc.main.id}"}, "private": {"vpc_id": "${aws_vpc.main.id}"}},
+    "aws_route": {
+      "internet": {"route_table_id": "${aws_route_table.public.id}", "destination_cidr_block": "0.0.0.0/0", "gateway_id": "${aws_internet_gateway.main.id}"},
+      "nat": {"route_table_id": "${aws_route_table.private.id}", "destination_cidr_block": "0.0.0.0/0", "nat_gateway_id": "${aws_nat_gateway.main.id}"}
+    },
+    "aws_route_table_association": {
+      "public_a": {"subnet_id": "${aws_subnet.public_a.id}", "route_table_id": "${aws_route_table.public.id}"},
+      "public_b": {"subnet_id": "${aws_subnet.public_b.id}", "route_table_id": "${aws_route_table.public.id}"},
+      "private_a": {"subnet_id": "${aws_subnet.private_a.id}", "route_table_id": "${aws_route_table.private.id}"},
+      "private_b": {"subnet_id": "${aws_subnet.private_b.id}", "route_table_id": "${aws_route_table.private.id}"}
+    },
+    "aws_security_group": {"endpoints": {"name": "planorama-endpoints", "vpc_id": "${aws_vpc.main.id}"}},
+    "aws_vpc_endpoint": {"logs": {"vpc_id": "${aws_vpc.main.id}", "service_name": "com.amazonaws.${var.region}.logs", "vpc_endpoint_type": "Interface", "subnet_ids": ["${aws_subnet.private_a.id}", "${aws_subnet.private_b.id}"], "security_group_ids": ["${aws_security_group.endpoints.id}"]}},
+    "aws_vpc_peering_connection": {"shared": {"vpc_id": "${aws_vpc.main.id}", "peer_vpc_id": "${var.shared_vpc_id}", "auto_accept": false}}
+  },
+  "output": {
+    "vpc_id": {"value": "${aws_vpc.main.id}"},
+    "public_a": {"value": "${aws_subnet.public_a.id}"}, "public_b": {"value": "${aws_subnet.public_b.id}"},
+    "private_a": {"value": "${aws_subnet.private_a.id}"}, "private_b": {"value": "${aws_subnet.private_b.id}"}
+  }
+}
