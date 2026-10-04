@@ -34,6 +34,7 @@ pub struct Bounds {
 }
 
 pub struct Layout<'a> {
+    pub header_heights: Vec<usize>,
     pub containers: Vec<(usize, Bounds)>,
     pub parents: Vec<Option<usize>>,
     pub width: usize,
@@ -57,6 +58,7 @@ impl<'a> Layout<'a> {
         let mut placement = placement::place(graph, &ranks);
         let routed = routing::route(graph, &ranks, &mut placement.positions, &placement.channels);
         Self {
+            header_heights: vec![NODE_HEIGHT; graph.nodes.len()],
             containers: Vec::new(),
             parents: vec![None; graph.nodes.len()],
             width: routed.width,
