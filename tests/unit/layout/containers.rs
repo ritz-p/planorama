@@ -10,6 +10,100 @@ fn fixture() -> Graph {
 }
 
 #[test]
+fn large_aws_example_keeps_cross_module_containment_and_multi_subnet_relationships() {
+    let raw = plan::parse(include_str!("../../../examples/terraform-large/plan.json")).unwrap();
+    assert!(raw.nodes.len() >= 45);
+    let ranks = crate::layout::rank::compute(&raw.graph);
+    assert!(ranks.iter().copied().max().unwrap() >= 4);
+    assert!(
+        raw.edges
+            .iter()
+            .any(|edge| ranks[edge.to] > ranks[edge.from] + 1)
+    );
+    let workers: Vec<_> = raw
+        .nodes
+        .iter()
+        .enumerate()
+        .filter(|(_, node)| node.resource_type == "aws_instance")
+        .map(|(index, _)| ranks[index])
+        .collect();
+    assert_eq!(workers.len(), 4);
+    assert!(workers.iter().all(|rank| *rank == workers[0]));
+    let original = raw.clone();
+    let graph = semantic::transform(&raw).0;
+    assert_eq!(raw, original);
+    assert!(graph.edges.len() >= 70);
+    let layout = Layout::new(&graph);
+    assert!(layout.bands.is_empty());
+    for zone in ["a", "b"] {
+        let subnet = graph
+            .nodes
+            .iter()
+            .position(|node| node.address == format!("module.network.aws_subnet.private_{zone}"))
+            .unwrap();
+        for index in 0..2 {
+            let worker = graph
+                .nodes
+                .iter()
+                .position(|node| {
+                    node.address
+                        == format!("module.application.aws_instance.workers_{zone}[{index}]")
+                })
+                .unwrap();
+            assert_eq!(layout.parents[worker], Some(subnet));
+            assert_ne!(graph.nodes[worker].module, graph.nodes[subnet].module);
+        }
+    }
+    for resource_type in [
+        "aws_lb",
+        "aws_lb_target_group",
+        "aws_ecs_service",
+        "aws_db_instance",
+    ] {
+        let node = graph
+            .nodes
+            .iter()
+            .position(|node| node.resource_type == resource_type)
+            .unwrap();
+        assert!(layout.parents[node].is_none());
+    }
+    let service = graph
+        .nodes
+        .iter()
+        .position(|node| node.resource_type == "aws_ecs_service")
+        .unwrap();
+    assert_eq!(
+        graph
+            .edges
+            .iter()
+            .filter(
+                |edge| edge.to == service && graph.nodes[edge.from].resource_type == "aws_subnet"
+            )
+            .count(),
+        2
+    );
+    assert_eq!(
+        graph
+            .edges
+            .iter()
+            .filter(|edge| edge.kind == EdgeKind::Association)
+            .count(),
+        4
+    );
+    for role in [
+        ResourceRole::Container,
+        ResourceRole::Node,
+        ResourceRole::Connector,
+        ResourceRole::Policy,
+        ResourceRole::Controller,
+        ResourceRole::Unknown,
+    ] {
+        assert!(graph.nodes.iter().any(|node| node.role == role));
+    }
+    verify(&graph);
+}
+
+#[test]
 fn architecture_parentage_and_geometry_do_not_depend_on_module_membership() {
     let raw = plan::parse(include_str!(
         "../../fixtures/cross-module-containment-plan.json"

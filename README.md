@@ -140,11 +140,13 @@ docker compose exec dev cargo run --locked -- examples/bundling-plan.json -o exa
 
 図は構成から推定した参照関係で、Terraform の厳密な実行グラフではありません。構成にない参照、provider 内部の依存、削除専用リソースの過去の依存関係は復元しません。`count` / `for_each` のリソース・モジュール参照は対応する全インスタンスへ展開するため、実際より多くの線になる場合があります。locals を介する参照は追跡しません。
 
-配置はモジュールごとの帯と依存階層を使います。ノードを横切らない直角の経路を計算しますが、交差数の最小化は保証せず、密なグラフでは線同士が重なることがあります。長いラベルは省略し、完全なアドレスを SVG の title に保持します。構成情報がない plan は、リソースと変更種別のみを表示します。
+Container のない図はモジュールごとの帯と依存階層を使い、Container のある図はモジュール境界に依存しない包含配置を使います。ノードを横切らない直角の経路を計算しますが、交差数の最小化は保証せず、密なグラフでは線同士が重なることがあります。長いラベルは省略し、完全なアドレスを SVG の title に保持します。構成情報がない plan は、リソースと変更種別のみを表示します。
 
 入力形式の詳細は [Terraform JSON Output Format](https://developer.hashicorp.com/terraform/internals/json-format) を参照してください。
 
 ## コード構成
+
+大きな AWS 構成の回帰サンプルは [terraform-large](examples/terraform-large/README.md) と [生成 SVG](examples/terraform-large/diagram.svg) にあります。4モジュールに分けた Terraform JSON 形式のソースから、AWS 認証なしで代表的な plan fixture を Rust で再生成できます。fixture は実際の `terraform show` 出力ではなく、参照・配置の検証用データです。
 
 `Node::resource_address()` は Terraform の正規アドレスとモジュール情報を借用する構造化ビューです。`terraform()` は入力のアドレスをそのまま返し、`qualified()` は root リソースだけに表示用の `module.root.` を付け、`local()` はモジュール部分を除いたカード表示名を返します。インデックスや引用符は保持します。SVG は `data-qualified-address` に表示用アドレスを記録します。参照解決・グラフの識別・配置には合成プレフィックスを使いません。実在する `module.root` と表示名が一致する場合もあるため、識別には必ず Terraform アドレスを使います。
 

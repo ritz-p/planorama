@@ -19,3 +19,7 @@ path = "tests/integration/rendering.rs"
 
 [dependencies]
 serde_json = "1"
+
+[[test]]
+name = "large_example"
+path = "tests/integration/large_example.rs"
