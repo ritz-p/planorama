@@ -1,5 +1,6 @@
 use crate::model::{EdgeKind, EntityMode, Graph, ResourceRole, TerraformGraph};
 use std::collections::BTreeSet;
+mod spanning;
 
 #[cfg(test)]
 #[path = "../../tests/unit/semantic/containment.rs"]
@@ -33,5 +34,5 @@ pub(super) fn infer(raw: &TerraformGraph) -> Graph {
             edge.kind = EdgeKind::Containment;
         }
     }
-    graph
+    spanning::infer(raw, graph)
 }
