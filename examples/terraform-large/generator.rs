@@ -50,7 +50,13 @@ fn module(path: &Path, scope: &str, changes: &mut Vec<Value>) -> Result<Value, S
                         key.as_str(),
                         "count" | "depends_on" | "provider" | "lifecycle"
                     ) {
-                        expressions.insert(key.clone(), expression(value)?);
+                        let generated = match (resource_type.as_str(), key.as_str()) {
+                            ("aws_ecs_service", "network_configuration") => {
+                                network_configuration(value)?
+                            }
+                            _ => expression(value)?,
+                        };
+                        expressions.insert(key.clone(), generated);
                     }
                 }
                 let mut resource = json!({"address":address,"mode":mode,"type":resource_type,"name":name,"expressions":expressions});
@@ -100,6 +106,24 @@ fn module(path: &Path, scope: &str, changes: &mut Vec<Value>) -> Result<Value, S
         );
     }
     Ok(json!({"resources":resources,"module_calls":calls,"outputs":outputs}))
+}
+
+fn network_configuration(value: &Value) -> Result<Value, String> {
+    let blocks = value
+        .as_array()
+        .ok_or("fixture network_configuration must be an array")?;
+    let mut generated = Vec::new();
+    for block in blocks {
+        let mut expressions = Map::new();
+        for (key, value) in block
+            .as_object()
+            .ok_or("fixture network_configuration block must be an object")?
+        {
+            expressions.insert(key.clone(), expression(value)?);
+        }
+        generated.push(Value::Object(expressions));
+    }
+    Ok(Value::Array(generated))
 }
 
 fn expression(value: &Value) -> Result<Value, String> {
