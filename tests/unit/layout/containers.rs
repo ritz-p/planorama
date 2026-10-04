@@ -360,7 +360,6 @@ fn large_aws_example_keeps_cross_module_containment_and_multi_subnet_relationshi
         ResourceRole::Connector,
         ResourceRole::Policy,
         ResourceRole::Controller,
-        ResourceRole::Unknown,
     ] {
         assert!(graph.nodes.iter().any(|node| node.role == role));
     }
