@@ -10,6 +10,84 @@ fn fixture() -> Graph {
 }
 
 #[test]
+fn reparsed_parallel_associations_keep_ports_when_modules_are_renamed() {
+    use serde_json::json;
+    use std::collections::BTreeMap;
+    for (first, second) in [("alpha", "beta"), ("main[0]", "main[1]")] {
+        let mut input = json!({
+            "format_version":"1.2",
+            "resource_changes":[
+                {"address":"aws_subnet.private","type":"aws_subnet","change":{"actions":["create"]}},
+                {"address":"aws_route_table.private","type":"aws_route_table","change":{"actions":["create"]}}
+            ],
+            "configuration":{"root_module":{
+                "resources":[{"address":"aws_subnet.private"},{"address":"aws_route_table.private"}],
+                "module_calls":{}
+            }}
+        });
+        for (module, name) in [("a", first), ("b", second)] {
+            input["resource_changes"]
+                .as_array_mut()
+                .unwrap()
+                .push(json!({
+                    "address":format!("module.{module}.aws_route_table_association.{name}"),
+                    "type":"aws_route_table_association","change":{"actions":["create"]}
+                }));
+            input["configuration"]["root_module"]["module_calls"][module] = json!({
+                "expressions":{
+                    "subnet":{"references":["aws_subnet.private.id"]},
+                    "table":{"references":["aws_route_table.private.id"]}
+                },
+                "module":{"resources":[{
+                    "address":format!("aws_route_table_association.{}", name.split('[').next().unwrap()),
+                    "expressions":{
+                        "subnet_id":{"references":["var.subnet"]},
+                        "route_table_id":{"references":["var.table"]}
+                    }
+                }]}
+            });
+        }
+        let original = semantic::transform(&plan::parse(&input.to_string()).unwrap()).0;
+        let calls = input["configuration"]["root_module"]["module_calls"]
+            .as_object_mut()
+            .unwrap();
+        let call = calls.remove("a").unwrap();
+        calls.insert("z".into(), call);
+        let renamed = semantic::transform(
+            &plan::parse(&input.to_string().replace("module.a.", "module.z.")).unwrap(),
+        )
+        .0;
+        let identity = |edge: &Edge| {
+            edge.change
+                .as_ref()
+                .unwrap()
+                .address
+                .replace("module.z.", "module.a.")
+        };
+        assert_eq!(original.edges.len(), 2);
+        assert!(
+            original
+                .edges
+                .iter()
+                .all(|edge| edge.kind == EdgeKind::Association)
+        );
+        assert_ne!(
+            original.edges.iter().map(identity).collect::<Vec<_>>(),
+            renamed.edges.iter().map(identity).collect::<Vec<_>>()
+        );
+        let snapshot = |graph: &Graph| {
+            let layout = Layout::new(graph);
+            let paths: BTreeMap<_, _> =
+                graph.edges.iter().map(identity).zip(layout.paths).collect();
+            (layout.positions, paths)
+        };
+        assert_eq!(snapshot(&original), snapshot(&renamed));
+        verify(&original);
+        verify(&renamed);
+    }
+}
+
+#[test]
 fn reparsed_module_renames_preserve_fan_in_and_fan_out_ports_and_paths() {
     use serde_json::json;
     use std::collections::BTreeMap;

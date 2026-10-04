@@ -72,6 +72,7 @@ pub(super) fn route(graph: &Graph, layout: &Layout<'_>, keys: &[usize]) -> Vec<V
                 source,
                 edge.kind,
                 edge.change.as_ref().map(|change| change.action),
+                edge.change.as_ref().map(|change| change.local_address()),
             )
         });
     }
