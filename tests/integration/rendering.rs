@@ -1,11 +1,44 @@
 mod support;
 
 #[test]
+fn committed_svg_samples_match_the_current_renderer() {
+    for (input, expected) in [
+        (
+            include_bytes!("../../examples/plan.json").as_slice(),
+            include_str!("../../examples/diagram.svg"),
+        ),
+        (
+            include_bytes!("../../examples/bundling-plan.json").as_slice(),
+            include_str!("../../examples/bundling.svg"),
+        ),
+        (
+            include_bytes!("../fixtures/terraform-plan.json").as_slice(),
+            include_str!("../../examples/terraform.svg"),
+        ),
+        (
+            include_bytes!("../fixtures/association-plan.json").as_slice(),
+            include_str!("../../examples/association.svg"),
+        ),
+        (
+            include_bytes!("../fixtures/containment-plan.json").as_slice(),
+            include_str!("../../examples/containment.svg"),
+        ),
+        (
+            include_bytes!("../../examples/data-plan.json").as_slice(),
+            include_str!("../../examples/data.svg"),
+        ),
+    ] {
+        assert_eq!(render(input), expected.replace("\r\n", "\n"));
+    }
+}
+
+#[test]
 fn cli_emits_containment_metadata_without_dropping_resources_or_dependencies() {
     let svg = render(include_bytes!("../fixtures/containment-plan.json"));
     assert!(svg.contains("3 resources (3 cards), 3 relationships"));
     assert_eq!(svg.matches("data-edge-kind=\"containment\"").count(), 2);
-    assert_eq!(svg.matches("marker-end=").count(), 3);
+    assert_eq!(svg.matches("marker-end=").count(), 0);
+    assert_eq!(svg.matches("data-container=").count(), 2);
 }
 
 #[test]

@@ -103,10 +103,10 @@ AWS の初期分類は `classification/aws.rs` に閉じ込めています。型
 | その他 | `Unknown` |
 
 - 作成・更新・削除・置換・読み取り・変更なしを色とラベルで区別します。
-- 変更なしのリソースも含め、削除されるリソースも残します。
+- 表示対象は変更なし・削除も残します。後述のメタデータ data だけは省略します。
 - 読み取り済みの `data` が `prior_state` にのみ存在する場合も、構成に残っていれば図へ補います。
-- モジュールのインスタンスごとに枠でまとめます。
-- 矢印は依存元から依存先へ向けます。
+- 最上位のリソースをモジュールのインスタンスごとの帯でまとめます。包含関係は入れ子の枠で表し、各カードに元のモジュール名を残します。
+- 参照の矢印は依存元から依存先へ向け、関連付けの線には関係の種類を付けます。
 - 構成の式、count、for_each の参照を解析し、モジュールの入力変数・出力経由の参照も追跡します。
 - モジュール自体の count / for_each / depends_on の参照を、入れ子を含む子リソースへ反映します。
 - 強連結成分をまとめて階層を計算するため、循環参照があっても配置できます。
@@ -124,6 +124,8 @@ docker compose exec dev cargo run --locked -- examples/bundling-plan.json -o exa
 配置の並べ替えでは、2 階層以上離れた辺を途中の階層ごとの仮想ノードで分割します。仮想ノードは依存元のモジュール帯に置き、通常のノードと一緒に重心による並べ替えへ参加させます。仮想ノードの行は余白として残るため、長い辺が多いと図の高さが増えます。リソースのアドレスや依存関係は変更せず、仮想ノードをカードとして描画することもありません。接続線は元の辺ごとに 1 本の折れ線として生成します。
 
 ## 制限
+
+以下の階層・レーン・束ね処理は Container のない図に適用します。Container のある図は親子を縦に配置し、カードと無関係な枠を避ける直角経路を探索します。こちらは幹線の共有や交差数の最小化を行わないため、依存が多い場合は図が縦長になり、線が重なる場合があります。
 
 経路候補は直角の折れ線として生成します。隣接列・同じ列では空いている縦レーンを最大 3 本、離れた列では各水平通路を候補にします。候補を「カード内部の通過数 → 線の重複長 → 交差数 → 曲がり数 → 経路長」の辞書順で比較し、同点なら生成順で選びます。短さより重なりの回避を優先します。
 レイアウトの品質計測ヘルパーを `tests/support/layout_metrics.rs` に用意しています。`layout::metrics::measure` に経路を渡すと、異なるエッジ間の重複長・交差数・90 度の曲がり数・総経路長を取得できます。テスト時だけ読み込まれ、CLI の出力には影響しません。
@@ -144,9 +146,18 @@ docker compose exec dev cargo run --locked -- examples/bundling-plan.json -o exa
 
 ## コード構成
 
-`Policy`（Security Group、NACL）は属性値を含めない軽量なカードと `policy` ラベルで表示します。`Controller`（ASG、ECS Service）は通常のカードに `controller` ラベルを付けます。どちらもリソース名・変更種別・依存辺・分類を保持し、省略しません。ルール一覧や管理対象のグループ化は行わず、今後の専用表示に備えて分類を残します。
+data は役割とは別に破線と `external` バッジで表示します。VPC・Subnet などの Container は外部リソースでも枠になり、managed の子を包含できます。data の検索条件から包含を推測しません。Policy・Controller の表示ルールも併用します。未知の data 型は情報を失わないよう外部カードとして残します。
 
-`semantic/containment.rs` は managed の Subnet の `vpc_id`、EC2 の `subnet_id` が対応する親へ一意に解決する場合、その依存辺を `Containment` にします。タグ・`depends_on`・定数 ID・未解決参照・複数候補は変換しません。data の親を参照する managed の子には対応しますが、data の検索条件は包含に変換しません。包含推定はノード数・辺数・順序を保持し、その後に関連付けの変換を実行します。SVG では `data-edge-kind="containment"` として表現します。サンプルは [containment.svg](examples/containment.svg) です。
+メタデータ型の `data.aws_region`、`data.aws_partition`、`data.aws_caller_identity`、`data.aws_availability_zones`、`data.aws_iam_policy_document` は描画用グラフから省略します。同じ型でも managed リソースは省略しません。省略ノードに接続する辺も除き、表示ノード間の直接の辺を保持します。経由した関係の推測・付け替えは行いません。元の Terraform グラフは全情報を保持し、SVG の件数・凡例は表示対象のみを集計します。外部リソースのサンプルは [data.svg](examples/data.svg)（入力: [data-plan.json](examples/data-plan.json)）です。
+
+コンテナの枠線は外周だけに描き、ヘッダーの内枠は描きません。入れ子の祖先・子孫間の参照線は省略し、包含を枠だけで表します。兄弟間・外部との接続や関連付けの辺は維持します。省略した参照もグラフと SVG のタイトル情報には残します。
+
+コンテナはヘッダーだけでなく枠全体を変更種別の色で塗ります。最上位を従来の背景色とし、包含の深さに応じて同系色を5段階で濃くします。6階層目以降は5段階目の色を使います。通常のリソースカードの色と変更種別の凡例は維持します。
+
+`layout/containers.rs` は Container を子の大きさに合わせた入れ子の枠として配置します。包含辺は枠で表し、その他の辺はカードのヘッダーと無関係なコンテナを避ける直角経路で接続します。循環・複数の親候補がある包含辺は入れ子にせず線を残します。最上位リソースを所属モジュールの帯に配置し、モジュールをまたぐ子は親の枠を優先しつつ各カードに元のモジュール名を表示します。Container がない図は従来の階層配置を使います。
+
+`semantic/containment.rs` は managed の Subnet の `vpc_id`、EC2 の `subnet_id` が対応する親へ一意に解決する場合、その依存辺を `Containment` にします。タグ・`depends_on`・定数 ID・未解決参照・複数候補は変換しません。data の親を参照する managed の子には対応しますが、data の検索条件は包含に変換しません。包含推定はノード数・辺数・順序を保持し、その後に関連付けの変換を実行します。SVG では `data-edge-kind="containment"` を保持し、確定した包含関係を入れ子の枠として表現します。サンプルは [containment.svg](examples/containment.svg) です。
+`Policy`（Security Group、NACL）は属性値を含めない軽量なカードと `policy` ラベルで表示します。`Controller`（ASG、ECS Service）は通常のカードに `controller` ラベルを付けます。どちらもリソース名・変更種別・依存辺・分類を保持し、省略しません。ルール一覧や管理対象のグループ化は行わず、今後の専用表示に備えて分類を残します。
 
 `semantic/associations.rs` は managed の `aws_route_table_association` を、Subnet → RouteTable の `Association` 辺へ置き換えます。`subnet_id` と `route_table_id` がそれぞれ一意に解決でき、元の依存辺がその 2 本だけの場合に限定します。追加の依存先・利用元、複数候補、未解決参照、定数だけの ID、data の関連付けは元のカードを残します。生グラフは変更しません。SVG の意味付き辺には `data-edge-kind` を付けます。サンプルは [association.svg](examples/association.svg) です。
 

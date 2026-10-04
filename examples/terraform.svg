@@ -54,69 +54,85 @@
 <path d="M 380 566 L 524 566 L 524 912 L 972 912 L 972 2732 L 996 2732 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>terraform_data.ready → module.service[&quot;web&quot;].module.nested.terraform_data.leaf</title></path>
 <path d="M 380 555 L 534 555 L 534 2374 L 568 2374 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>terraform_data.ready → module.service[&quot;web&quot;].terraform_data.worker[0]</title></path>
 <path d="M 380 560 L 544 560 L 544 2518 L 568 2518 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>terraform_data.ready → module.service[&quot;web&quot;].terraform_data.worker[1]</title></path>
-<g id="resource-0"><title>data.terraform_remote_state.after_ready — read</title><rect x="568" y="352" width="320" height="96" rx="8" fill="#faf5ff" stroke="#7e22ce" stroke-width="1.5"/>
-<text x="580" y="372" font-size="11" fill="#7e22ce">terraform_remote_state · read</text>
+<g id="resource-0"><title>data.terraform_remote_state.after_ready — read</title>
+<rect x="568" y="352" width="320" height="96" rx="8" fill="#faf5ff" stroke="#7e22ce" stroke-width="1.5" data-mode="data" stroke-dasharray="6 4"/>
+<g data-external="true"><title>External resource: read by Terraform, not managed by this configuration</title><rect x="810" y="359" width="68" height="18" rx="4" fill="#e2e8f0"/><text x="816" y="372" font-size="10" fill="#334155">external</text></g><text x="580" y="372" font-size="11" fill="#7e22ce">terraform_remote_… · read</text>
 <text x="580" y="397" font-size="13" fill="#0f172a">data.terraform_remote_state.after_r</text>
 <text x="580" y="417" font-size="13" fill="#0f172a">eady</text>
 </g>
-<g id="resource-1"><title>data.terraform_remote_state.existing — unchanged</title><rect x="60" y="208" width="320" height="96" rx="8" fill="#f8fafc" stroke="#64748b" stroke-width="1.5"/>
-<text x="72" y="228" font-size="11" fill="#64748b">terraform_remote_state · unchanged</text>
+<g id="resource-1"><title>data.terraform_remote_state.existing — unchanged</title>
+<rect x="60" y="208" width="320" height="96" rx="8" fill="#f8fafc" stroke="#64748b" stroke-width="1.5" data-mode="data" stroke-dasharray="6 4"/>
+<g data-external="true"><title>External resource: read by Terraform, not managed by this configuration</title><rect x="302" y="215" width="68" height="18" rx="4" fill="#e2e8f0"/><text x="308" y="228" font-size="10" fill="#334155">external</text></g><text x="72" y="228" font-size="11" fill="#64748b">terraform_remote_… · unchanged</text>
 <text x="72" y="253" font-size="13" fill="#0f172a">data.terraform_remote_state.existin</text>
 <text x="72" y="273" font-size="13" fill="#0f172a">g</text>
 </g>
-<g id="resource-2"><title>module.replica[0].terraform_data.leaf — create</title><rect x="568" y="1296" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5"/>
+<g id="resource-2"><title>module.replica[0].terraform_data.leaf — create</title>
+<rect x="568" y="1296" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text x="580" y="1316" font-size="11" fill="#047857">terraform_data · create</text>
 <text x="580" y="1341" font-size="13" fill="#0f172a">terraform_data.leaf</text>
 </g>
-<g id="resource-3"><title>module.replica[1].terraform_data.leaf — create</title><rect x="568" y="1520" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5"/>
+<g id="resource-3"><title>module.replica[1].terraform_data.leaf — create</title>
+<rect x="568" y="1520" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text x="580" y="1540" font-size="11" fill="#047857">terraform_data · create</text>
 <text x="580" y="1565" font-size="13" fill="#0f172a">terraform_data.leaf</text>
 </g>
-<g id="resource-4"><title>module.service[&quot;api&quot;].module.nested.terraform_data.leaf — create</title><rect x="996" y="2112" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5"/>
+<g id="resource-4"><title>module.service[&quot;api&quot;].module.nested.terraform_data.leaf — create</title>
+<rect x="996" y="2112" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text x="1008" y="2132" font-size="11" fill="#047857">terraform_data · create</text>
 <text x="1008" y="2157" font-size="13" fill="#0f172a">terraform_data.leaf</text>
 </g>
-<g id="resource-5"><title>module.service[&quot;api&quot;].terraform_data.worker[0] — create</title><rect x="568" y="1744" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5"/>
+<g id="resource-5"><title>module.service[&quot;api&quot;].terraform_data.worker[0] — create</title>
+<rect x="568" y="1744" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text x="580" y="1764" font-size="11" fill="#047857">terraform_data · create</text>
 <text x="580" y="1789" font-size="13" fill="#0f172a">terraform_data.worker[0]</text>
 </g>
-<g id="resource-6"><title>module.service[&quot;api&quot;].terraform_data.worker[1] — create</title><rect x="568" y="1888" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5"/>
+<g id="resource-6"><title>module.service[&quot;api&quot;].terraform_data.worker[1] — create</title>
+<rect x="568" y="1888" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text x="580" y="1908" font-size="11" fill="#047857">terraform_data · create</text>
 <text x="580" y="1933" font-size="13" fill="#0f172a">terraform_data.worker[1]</text>
 </g>
-<g id="resource-7"><title>module.service[&quot;web&quot;].module.nested.terraform_data.leaf — create</title><rect x="996" y="2704" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5"/>
+<g id="resource-7"><title>module.service[&quot;web&quot;].module.nested.terraform_data.leaf — create</title>
+<rect x="996" y="2704" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text x="1008" y="2724" font-size="11" fill="#047857">terraform_data · create</text>
 <text x="1008" y="2749" font-size="13" fill="#0f172a">terraform_data.leaf</text>
 </g>
-<g id="resource-8"><title>module.service[&quot;web&quot;].terraform_data.worker[0] — create</title><rect x="568" y="2336" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5"/>
+<g id="resource-8"><title>module.service[&quot;web&quot;].terraform_data.worker[0] — create</title>
+<rect x="568" y="2336" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text x="580" y="2356" font-size="11" fill="#047857">terraform_data · create</text>
 <text x="580" y="2381" font-size="13" fill="#0f172a">terraform_data.worker[0]</text>
 </g>
-<g id="resource-9"><title>module.service[&quot;web&quot;].terraform_data.worker[1] — create</title><rect x="568" y="2480" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5"/>
+<g id="resource-9"><title>module.service[&quot;web&quot;].terraform_data.worker[1] — create</title>
+<rect x="568" y="2480" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text x="580" y="2500" font-size="11" fill="#047857">terraform_data · create</text>
 <text x="580" y="2525" font-size="13" fill="#0f172a">terraform_data.worker[1]</text>
 </g>
-<g id="resource-10"><title>terraform_data.consumer — create</title><rect x="1416" y="208" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5"/>
+<g id="resource-10"><title>terraform_data.consumer — create</title>
+<rect x="1416" y="208" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text x="1428" y="228" font-size="11" fill="#047857">terraform_data · create</text>
 <text x="1428" y="253" font-size="13" fill="#0f172a">terraform_data.consumer</text>
 </g>
-<g id="resource-11"><title>terraform_data.explicit — create</title><rect x="568" y="496" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5"/>
+<g id="resource-11"><title>terraform_data.explicit — create</title>
+<rect x="568" y="496" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text x="580" y="516" font-size="11" fill="#047857">terraform_data · create</text>
 <text x="580" y="541" font-size="13" fill="#0f172a">terraform_data.explicit</text>
 </g>
-<g id="resource-12"><title>terraform_data.from_state — create</title><rect x="996" y="208" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5"/>
+<g id="resource-12"><title>terraform_data.from_state — create</title>
+<rect x="996" y="208" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text x="1008" y="228" font-size="11" fill="#047857">terraform_data · create</text>
 <text x="1008" y="253" font-size="13" fill="#0f172a">terraform_data.from_state</text>
 </g>
-<g id="resource-13"><title>terraform_data.independent — create</title><rect x="60" y="352" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5"/>
+<g id="resource-13"><title>terraform_data.independent — create</title>
+<rect x="60" y="352" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text x="72" y="372" font-size="11" fill="#047857">terraform_data · create</text>
 <text x="72" y="397" font-size="13" fill="#0f172a">terraform_data.independent</text>
 </g>
-<g id="resource-14"><title>terraform_data.network — create</title><rect x="60" y="640" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5"/>
+<g id="resource-14"><title>terraform_data.network — create</title>
+<rect x="60" y="640" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text x="72" y="660" font-size="11" fill="#047857">terraform_data · create</text>
 <text x="72" y="685" font-size="13" fill="#0f172a">terraform_data.network</text>
 </g>
-<g id="resource-15"><title>terraform_data.ready — create</title><rect x="60" y="496" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5"/>
+<g id="resource-15"><title>terraform_data.ready — create</title>
+<rect x="60" y="496" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text x="72" y="516" font-size="11" fill="#047857">terraform_data · create</text>
 <text x="72" y="541" font-size="13" fill="#0f172a">terraform_data.ready</text>
 </g>

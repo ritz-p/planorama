@@ -1,6 +1,7 @@
 use crate::model::{ArchitectureGraph, TerraformGraph};
 mod associations;
 mod containment;
+mod data;
 
 #[cfg(test)]
 #[path = "../tests/unit/semantic.rs"]
@@ -11,5 +12,5 @@ pub fn transform(raw: &TerraformGraph) -> ArchitectureGraph {
         graph: containment::infer(raw),
         attributes: raw.attributes.clone(),
     };
-    ArchitectureGraph(associations::lower(&contained))
+    ArchitectureGraph(data::visible(associations::lower(&contained)))
 }
