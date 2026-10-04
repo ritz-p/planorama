@@ -1,5 +1,5 @@
 use super::super::{Bounds, Layout, NODE_HEIGHT, NODE_WIDTH, Point};
-use crate::model::{EdgeKind, Graph};
+use crate::model::{Edge, EdgeKind, Graph};
 use std::cmp::Reverse;
 use std::collections::BinaryHeap;
 
@@ -33,11 +33,17 @@ pub(super) fn crosses(a: Point, b: Point, bounds: Bounds) -> bool {
     }
 }
 
+fn represented_by_nesting(edge: &Edge, layout: &Layout<'_>) -> bool {
+    matches!(edge.kind, EdgeKind::Dependency | EdgeKind::Containment)
+        && edge.from != edge.to
+        && (ancestor(layout, edge.from, edge.to) || ancestor(layout, edge.to, edge.from))
+}
+
 pub(super) fn route(graph: &Graph, layout: &Layout<'_>) -> Vec<Vec<Point>> {
     let mut outgoing = vec![Vec::new(); graph.nodes.len()];
     let mut incoming = vec![Vec::new(); graph.nodes.len()];
     for (index, edge) in graph.edges.iter().enumerate() {
-        if edge.kind != EdgeKind::Containment || layout.parents[edge.to] != Some(edge.from) {
+        if !represented_by_nesting(edge, layout) {
             outgoing[edge.from].push(index);
             incoming[edge.to].push(index);
         }
@@ -59,7 +65,7 @@ pub(super) fn route(graph: &Graph, layout: &Layout<'_>) -> Vec<Vec<Point>> {
         .iter()
         .enumerate()
         .map(|(index, edge)| {
-            if edge.kind == EdgeKind::Containment && layout.parents[edge.to] == Some(edge.from) {
+            if represented_by_nesting(edge, layout) {
                 return Vec::new();
             }
             let start = Point {
