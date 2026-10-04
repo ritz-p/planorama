@@ -113,14 +113,10 @@ pub fn render(graph: &Graph, layout: &Layout<'_>) -> String {
         let header_height = layout.header_heights[i];
         let background = containers::background(graph, layout, i);
         let border = color(node.action).1;
-        let address = escape(&node.address);
-        let local = match node.module.as_str() {
-            "root" => node.address.as_str(),
-            module => node
-                .address
-                .strip_prefix(&format!("{module}."))
-                .unwrap_or(&node.address),
-        };
+        let resource_address = node.resource_address();
+        let address = escape(resource_address.terraform());
+        let qualified = escape(&resource_address.qualified());
+        let local = resource_address.local();
         let lines: Vec<_> = local
             .chars()
             .collect::<Vec<_>>()
@@ -131,7 +127,7 @@ pub fn render(graph: &Graph, layout: &Layout<'_>) -> String {
         let mode = entities::border(node.mode);
         writeln!(
             svg,
-            r#"<g id="resource-{i}"><title>{address} — {}</title>"#,
+            r#"<g id="resource-{i}" data-qualified-address="{qualified}"><title>{address} — {}</title>"#,
             label(node.action)
         )
         .unwrap();

@@ -146,6 +146,8 @@ docker compose exec dev cargo run --locked -- examples/bundling-plan.json -o exa
 
 ## コード構成
 
+`Node::resource_address()` は Terraform の正規アドレスとモジュール情報を借用する構造化ビューです。`terraform()` は入力のアドレスをそのまま返し、`qualified()` は root リソースだけに表示用の `module.root.` を付け、`local()` はモジュール部分を除いたカード表示名を返します。インデックスや引用符は保持します。SVG は `data-qualified-address` に表示用アドレスを記録します。参照解決・グラフの識別・配置には合成プレフィックスを使いません。実在する `module.root` と表示名が一致する場合もあるため、識別には必ず Terraform アドレスを使います。
+
 `svg/paths.rs` は直角の経路点を SVG に変換するときだけ角を丸めます。標準半径は 8 px で、前後の区間長の半分を超えないよう縮めます。短い区間には 0.5 px 単位も使い、始点・終点と矢印の向きは維持します。経路探索・配置・衝突判定の座標は変更しません。
 
 data は役割とは別に破線と `external` バッジで表示します。VPC・Subnet などの Container は外部リソースでも枠になり、managed の子を包含できます。data の検索条件から包含を推測しません。Policy・Controller の表示ルールも併用します。未知の data 型は情報を失わないよう外部カードとして残します。

@@ -24,46 +24,46 @@
 <path d="M 460 830 L 468 830 Q 476 830 476 822 L 476 328 Q 476 320 468 320 L 404 320 Q 396 320 396 312 L 396 273 Q 396 265 388 265 L 380 265 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>data.aws_subnet.shared → aws_ecs_service.app (dependency)</title></path>
 <g data-edge-kind="containment" data-source="resource-7" data-target="resource-2"><title>data.aws_vpc.shared → aws_subnet.app (containment)</title></g>
 <path d="M 540 1016 L 556 1016 L 484 1016 Q 476 1016 476 1008 L 476 857 Q 476 849 468 849 L 460 849 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>data.aws_vpc.shared → data.aws_subnet.shared (dependency)</title></path>
-<g id="resource-0"><title>aws_ecs_service.app — update</title>
+<g id="resource-0" data-qualified-address="module.root.aws_ecs_service.app"><title>aws_ecs_service.app — update</title>
 <rect x="60" y="208" width="320" height="96" rx="8" fill="#eff6ff" stroke="#1d4ed8" stroke-width="1.5" data-mode="managed"/>
 <text x="72" y="228" font-size="11" fill="#1d4ed8">aws_ecs_service · update</text>
 <text x="72" y="253" font-size="13" fill="#0f172a">aws_ecs_service.app</text>
 <text x="72" y="292" font-size="10" fill="#64748b" data-role="controller"><title>root</title>controller · root</text>
 </g>
-<g id="resource-1"><title>aws_instance.app — create</title>
+<g id="resource-1" data-qualified-address="module.root.aws_instance.app"><title>aws_instance.app — create</title>
 <rect x="140" y="1240" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text x="152" y="1260" font-size="11" fill="#047857">aws_instance · create</text>
 <text x="152" y="1285" font-size="13" fill="#0f172a">aws_instance.app</text>
 <text x="152" y="1324" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
-<g id="resource-2"><title>aws_subnet.app — create</title>
+<g id="resource-2" data-qualified-address="module.root.aws_subnet.app"><title>aws_subnet.app — create</title>
 <text x="112" y="1124" font-size="11" fill="#047857">aws_subnet · create</text>
 <text x="112" y="1149" font-size="13" fill="#0f172a">aws_subnet.app</text>
 <text x="112" y="1188" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
-<g id="resource-3"><title>aws_vpc.app — create</title>
+<g id="resource-3" data-qualified-address="module.root.aws_vpc.app"><title>aws_vpc.app — create</title>
 <text x="72" y="364" font-size="11" fill="#047857">aws_vpc · create</text>
 <text x="72" y="389" font-size="13" fill="#0f172a">aws_vpc.app</text>
 <text x="72" y="428" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
-<g id="resource-4"><title>data.aws_lb.shared — unchanged</title>
+<g id="resource-4" data-qualified-address="module.root.data.aws_lb.shared"><title>data.aws_lb.shared — unchanged</title>
 <rect x="60" y="520" width="320" height="96" rx="8" fill="#f8fafc" stroke="#64748b" stroke-width="1.5" data-mode="data" stroke-dasharray="6 4"/>
 <g data-external="true"><title>External resource: read by Terraform, not managed by this configuration</title><rect x="302" y="527" width="68" height="18" rx="4" fill="#e2e8f0"/><text x="308" y="540" font-size="10" fill="#334155">external</text></g><text x="72" y="540" font-size="11" fill="#64748b">aws_lb · unchanged</text>
 <text x="72" y="565" font-size="13" fill="#0f172a">data.aws_lb.shared</text>
 <text x="72" y="604" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
-<g id="resource-5"><title>data.aws_security_group.shared — unchanged</title>
+<g id="resource-5" data-qualified-address="module.root.data.aws_security_group.shared"><title>data.aws_security_group.shared — unchanged</title>
 <rect x="60" y="656" width="320" height="96" rx="8" fill="#f8fafc" stroke="#64748b" stroke-width="1.5" data-mode="data" stroke-dasharray="6 4"/>
 <g data-external="true"><title>External resource: read by Terraform, not managed by this configuration</title><rect x="302" y="663" width="68" height="18" rx="4" fill="#e2e8f0"/><text x="308" y="676" font-size="10" fill="#334155">external</text></g><text x="72" y="676" font-size="11" fill="#64748b">aws_security_group · unchanged</text>
 <text x="72" y="701" font-size="13" fill="#0f172a">data.aws_security_group.shared</text>
 <text x="72" y="740" font-size="10" fill="#64748b" data-role="policy"><title>root</title>policy · root</text>
 </g>
-<g id="resource-6"><title>data.aws_subnet.shared — unchanged</title>
+<g id="resource-6" data-qualified-address="module.root.data.aws_subnet.shared"><title>data.aws_subnet.shared — unchanged</title>
 <g data-external="true"><title>External resource: read by Terraform, not managed by this configuration</title><rect x="302" y="799" width="68" height="18" rx="4" fill="#e2e8f0"/><text x="308" y="812" font-size="10" fill="#334155">external</text></g><text x="72" y="812" font-size="11" fill="#64748b">aws_subnet · unchanged</text>
 <text x="72" y="837" font-size="13" fill="#0f172a">data.aws_subnet.shared</text>
 <text x="72" y="876" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
-<g id="resource-7"><title>data.aws_vpc.shared — unchanged</title>
+<g id="resource-7" data-qualified-address="module.root.data.aws_vpc.shared"><title>data.aws_vpc.shared — unchanged</title>
 <g data-external="true"><title>External resource: read by Terraform, not managed by this configuration</title><rect x="302" y="975" width="68" height="18" rx="4" fill="#e2e8f0"/><text x="308" y="988" font-size="10" fill="#334155">external</text></g><text x="72" y="988" font-size="11" fill="#64748b">aws_vpc · unchanged</text>
 <text x="72" y="1013" font-size="13" fill="#0f172a">data.aws_vpc.shared</text>
 <text x="72" y="1052" font-size="10" fill="#64748b"><title>root</title>root</text>
