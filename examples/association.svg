@@ -14,7 +14,7 @@
 <rect x="740" y="100" width="12" height="12" fill="#f8fafc" stroke="#64748b"/><text x="759" y="111" font-size="12" fill="#64748b">unchanged (0)</text>
 <rect x="880" y="100" width="12" height="12" fill="#fefce8" stroke="#854d0e"/><text x="899" y="111" font-size="12" fill="#854d0e">other (0)</text>
 <g data-container="resource-1"><title>aws_subnet.private</title><rect x="60" y="160" width="400" height="136" rx="12" fill="#ecfdf5" stroke="#047857" stroke-width="2" data-mode="managed"/></g>
-<path d="M 460 208 L 468 208 Q 476 208 476 216 L 476 376 Q 476 384 468 384 L 396 384 L 380 384 " data-edge-kind="association" fill="none" stroke="#047857" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow-create)"><title>aws_subnet.private → aws_route_table.private (association; create: aws_route_table_association.private)</title></path>
+<path d="M 460 228 L 468 228 Q 476 228 476 236 L 476 376 Q 476 384 468 384 L 396 384 L 380 384 " data-edge-kind="association" fill="none" stroke="#047857" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow-create)"><title>aws_subnet.private → aws_route_table.private (association; create: aws_route_table_association.private)</title></path>
 <g id="resource-0" data-qualified-address="module.root.aws_route_table.private"><title>aws_route_table.private — create</title>
 <rect x="60" y="336" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text x="72" y="356" font-size="11" fill="#047857">aws_route_table · create</text>

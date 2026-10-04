@@ -1,4 +1,4 @@
-use super::super::{Bounds, Layout, NODE_WIDTH, Point};
+use super::super::{Bounds, Layout, Point};
 use crate::model::{Edge, EdgeKind, Graph};
 use std::cmp::Reverse;
 use std::collections::BinaryHeap;
@@ -51,14 +51,6 @@ pub(super) fn incidents(graph: &Graph, parents: &[Option<usize>]) -> Vec<Vec<(us
 }
 
 pub(super) fn route(graph: &Graph, layout: &Layout<'_>, keys: &[usize]) -> Vec<Vec<Point>> {
-    let mut right_edges: Vec<_> = layout
-        .positions
-        .iter()
-        .map(|point| point.x + NODE_WIDTH)
-        .collect();
-    for &(node, bounds) in &layout.containers {
-        right_edges[node] = bounds.origin.x + bounds.width;
-    }
     let mut incident = incidents(graph, &layout.parents);
     for edges in &mut incident {
         edges.sort_by_key(|&(index, source)| {
@@ -80,7 +72,7 @@ pub(super) fn route(graph: &Graph, layout: &Layout<'_>, keys: &[usize]) -> Vec<V
     let mut target_ports = vec![0; graph.edges.len()];
     for (node, edges) in incident.iter().enumerate() {
         for (slot, &(edge, source)) in edges.iter().enumerate() {
-            let port = 20 + (slot + 1) * (layout.header_heights[node] - 40) / (edges.len() + 1);
+            let port = 20 + (slot + 1) * (layout.bounds[node].height - 40) / (edges.len() + 1);
             match source {
                 true => source_ports[edge] = port,
                 false => target_ports[edge] = port,
@@ -96,33 +88,26 @@ pub(super) fn route(graph: &Graph, layout: &Layout<'_>, keys: &[usize]) -> Vec<V
                 return Vec::new();
             }
             let start = Point {
-                x: right_edges[edge.from],
-                y: layout.positions[edge.from].y + source_ports[index],
+                x: layout.bounds[edge.from].right(),
+                y: layout.bounds[edge.from].origin.y + source_ports[index],
             };
             let end = Point {
-                x: right_edges[edge.to],
-                y: layout.positions[edge.to].y + target_ports[index],
+                x: layout.bounds[edge.to].right(),
+                y: layout.bounds[edge.to].origin.y + target_ports[index],
             };
-            let mut obstacles: Vec<_> = layout
-                .positions
+            let obstacles: Vec<_> = layout
+                .bounds
                 .iter()
                 .enumerate()
-                .map(|(node, &origin)| Bounds {
-                    origin,
-                    width: NODE_WIDTH,
-                    height: layout.header_heights[node],
+                .map(|(node, &bounds)| {
+                    match ancestor(&layout.parents, node, edge.from)
+                        || ancestor(&layout.parents, node, edge.to)
+                    {
+                        true => bounds.header(layout.header_heights[node]),
+                        false => bounds,
+                    }
                 })
                 .collect();
-            obstacles.extend(
-                layout
-                    .containers
-                    .iter()
-                    .filter(|(node, _)| {
-                        !ancestor(&layout.parents, *node, edge.from)
-                            && !ancestor(&layout.parents, *node, edge.to)
-                    })
-                    .map(|(_, bounds)| *bounds),
-            );
             let mut path = vec![start];
             path.extend(find_path(
                 Point {

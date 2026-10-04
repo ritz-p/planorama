@@ -10,6 +10,51 @@ fn fixture() -> Graph {
 }
 
 #[test]
+fn expanded_container_ports_and_obstacles_use_the_rendered_bounds() {
+    let mut graph = fixture();
+    let parent = graph
+        .nodes
+        .iter()
+        .position(|node| node.resource_type == "aws_vpc")
+        .unwrap();
+    let external = graph.nodes.len();
+    graph.nodes.push(Node {
+        address: "aws_s3_bucket.external".into(),
+        resource_type: "aws_s3_bucket".into(),
+        module: "root".into(),
+        action: Action::Create,
+        mode: EntityMode::Managed,
+        role: ResourceRole::Node,
+    });
+    graph.edges.push(Edge::from((parent, external)));
+    let layout = Layout::new(&graph);
+    assert_eq!(layout.bounds.len(), graph.nodes.len());
+    assert!(layout.bounds[parent].width > NODE_WIDTH);
+    assert!(layout.bounds[parent].height > layout.header_heights[parent]);
+    let path = layout.paths.last().unwrap();
+    let bounds = layout.bounds[parent];
+    assert_eq!(
+        path[0],
+        Point {
+            x: bounds.right(),
+            y: bounds.origin.y + bounds.height / 2
+        }
+    );
+    let output = svg::render(&graph, &layout);
+    assert!(output.contains(&format!(
+        "x=\"{}\" y=\"{}\" width=\"{}\" height=\"{}\"",
+        bounds.origin.x, bounds.origin.y, bounds.width, bounds.height
+    )));
+    for (node, bounds) in layout.bounds.iter().enumerate() {
+        assert_eq!(bounds.origin, layout.positions[node]);
+        if !layout.containers.contains(&node) {
+            assert_eq!(bounds.height, layout.header_heights[node]);
+        }
+    }
+    verify(&graph);
+}
+
+#[test]
 fn relationship_names_distinguish_same_named_subnets_after_reparsing() {
     use serde_json::json;
     use std::collections::BTreeMap;
@@ -661,16 +706,7 @@ fn verify(graph: &Graph) {
             (edge.from, path.first().unwrap()),
             (edge.to, path.last().unwrap()),
         ] {
-            let bounds = layout
-                .containers
-                .iter()
-                .find(|(index, _)| *index == node)
-                .map(|(_, bounds)| *bounds)
-                .unwrap_or(Bounds {
-                    origin: layout.positions[node],
-                    width: NODE_WIDTH,
-                    height: layout.header_heights[node],
-                });
+            let bounds = layout.bounds[node];
             assert_eq!(point.x, bounds.origin.x + bounds.width);
             assert!(point.y > bounds.origin.y && point.y < bounds.origin.y + bounds.height);
         }
@@ -682,23 +718,15 @@ fn verify(graph: &Graph) {
         assert_eq!(path[last].y, path[last - 1].y);
         assert!(path[last].x < path[last - 1].x);
     }
-    for &(parent, bounds) in &layout.containers {
+    for &parent in &layout.containers {
+        let bounds = layout.bounds[parent];
         assert!(bounds.origin.x + bounds.width <= layout.width);
         assert!(bounds.origin.y + bounds.height <= layout.height);
         for (child, parent_index) in layout.parents.iter().enumerate() {
             if *parent_index != Some(parent) {
                 continue;
             }
-            let child_bounds = layout
-                .containers
-                .iter()
-                .find(|(node, _)| *node == child)
-                .map(|(_, bounds)| *bounds)
-                .unwrap_or(Bounds {
-                    origin: layout.positions[child],
-                    width: NODE_WIDTH,
-                    height: layout.header_heights[child],
-                });
+            let child_bounds = layout.bounds[child];
             assert!(child_bounds.origin.x >= bounds.origin.x + PADDING);
             assert!(
                 child_bounds.origin.y >= bounds.origin.y + layout.header_heights[parent] + PADDING
@@ -815,12 +843,7 @@ fn peer_containers_and_cross_module_children_remain_separate_and_identifiable() 
     graph.edges.push(Edge::from((graph.nodes.len() - 1, 0)));
     verify(&graph);
     let layout = Layout::new(&graph);
-    let peer = layout
-        .containers
-        .iter()
-        .find(|(node, _)| *node == graph.nodes.len() - 1)
-        .unwrap()
-        .1;
+    let peer = layout.bounds[graph.nodes.len() - 1];
     for (edge, path) in graph.edges.iter().zip(&layout.paths) {
         if edge.from == graph.nodes.len() - 1 || edge.to == graph.nodes.len() - 1 {
             continue;
@@ -829,7 +852,8 @@ fn peer_containers_and_cross_module_children_remain_separate_and_identifiable() 
             assert!(!routing::crosses(pair[0], pair[1], peer));
         }
     }
-    for &(node, bounds) in &layout.containers {
+    for &node in &layout.containers {
+        let bounds = layout.bounds[node];
         if node != graph.nodes.len() - 1 {
             assert!(!overlaps(peer, bounds));
         }
