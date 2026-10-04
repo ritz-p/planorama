@@ -107,7 +107,7 @@
 <rect x="60" y="4576" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text x="72" y="4596" font-size="11" fill="#047857">aws_ecs_cluster · create</text>
 <text x="72" y="4621" font-size="13" fill="#0f172a">aws_ecs_cluster.app</text>
-<text x="72" y="4660" font-size="10" fill="#64748b"><title>module.application</title>module.application</text>
+<text x="72" y="4660" font-size="10" fill="#64748b" data-role="controller"><title>module.application</title>controller · module.application</text>
 </g>
 <g id="resource-2" data-qualified-address="module.application.aws_ecs_service.app"><title>module.application.aws_ecs_service.app — create</title>
 <rect x="60" y="1720" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
@@ -119,25 +119,25 @@
 <rect x="60" y="4712" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text x="72" y="4732" font-size="11" fill="#047857">aws_ecs_task_definition · create</text>
 <text x="72" y="4757" font-size="13" fill="#0f172a">aws_ecs_task_definition.app</text>
-<text x="72" y="4796" font-size="10" fill="#64748b"><title>module.application</title>module.application</text>
+<text x="72" y="4796" font-size="10" fill="#64748b" data-role="controller"><title>module.application</title>controller · module.application</text>
 </g>
 <g id="resource-4" data-qualified-address="module.application.aws_iam_instance_profile.app"><title>module.application.aws_iam_instance_profile.app — create</title>
 <rect x="60" y="1856" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text x="72" y="1876" font-size="11" fill="#047857">aws_iam_instance_profile · create</text>
 <text x="72" y="1901" font-size="13" fill="#0f172a">aws_iam_instance_profile.app</text>
-<text x="72" y="1940" font-size="10" fill="#64748b"><title>module.application</title>module.application</text>
+<text x="72" y="1940" font-size="10" fill="#64748b" data-role="policy"><title>module.application</title>policy · module.application</text>
 </g>
 <g id="resource-5" data-qualified-address="module.application.aws_iam_role.instance"><title>module.application.aws_iam_role.instance — create</title>
 <rect x="60" y="4984" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text x="72" y="5004" font-size="11" fill="#047857">aws_iam_role · create</text>
 <text x="72" y="5029" font-size="13" fill="#0f172a">aws_iam_role.instance</text>
-<text x="72" y="5068" font-size="10" fill="#64748b"><title>module.application</title>module.application</text>
+<text x="72" y="5068" font-size="10" fill="#64748b" data-role="policy"><title>module.application</title>policy · module.application</text>
 </g>
 <g id="resource-6" data-qualified-address="module.application.aws_iam_role.task"><title>module.application.aws_iam_role.task — create</title>
 <rect x="60" y="5976" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text x="72" y="5996" font-size="11" fill="#047857">aws_iam_role · create</text>
 <text x="72" y="6021" font-size="13" fill="#0f172a">aws_iam_role.task</text>
-<text x="72" y="6060" font-size="10" fill="#64748b"><title>module.application</title>module.application</text>
+<text x="72" y="6060" font-size="10" fill="#64748b" data-role="policy"><title>module.application</title>policy · module.application</text>
 </g>
 <g id="resource-7" data-qualified-address="module.application.aws_instance.workers_a[0]"><title>module.application.aws_instance.workers_a[0] — create</title>
 <rect x="140" y="432" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
@@ -179,7 +179,7 @@
 <rect x="60" y="2264" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text x="72" y="2284" font-size="11" fill="#047857">aws_lb_target_group · create</text>
 <text x="72" y="2309" font-size="13" fill="#0f172a">aws_lb_target_group.app</text>
-<text x="72" y="2348" font-size="10" fill="#64748b"><title>module.application</title>module.application</text>
+<text x="72" y="2348" font-size="10" fill="#64748b" data-role="controller"><title>module.application</title>controller · module.application</text>
 </g>
 <g id="resource-14" data-qualified-address="module.application.aws_lb_target_group_attachment.a0"><title>module.application.aws_lb_target_group_attachment.a0 — create</title>
 <rect x="60" y="2400" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
@@ -222,7 +222,7 @@
 <text x="72" y="5860" font-size="11" fill="#047857">aws_cloudwatch_metric_al… · create</text>
 <text x="72" y="5885" font-size="13" fill="#0f172a">aws_cloudwatch_metric_alarm.databas</text>
 <text x="72" y="5905" font-size="13" fill="#0f172a">e_cpu</text>
-<text x="72" y="5924" font-size="10" fill="#64748b"><title>module.database</title>module.database</text>
+<text x="72" y="5924" font-size="10" fill="#64748b" data-role="controller"><title>module.database</title>controller · module.database</text>
 </g>
 <g id="resource-21" data-qualified-address="module.database.aws_db_instance.database"><title>module.database.aws_db_instance.database — create</title>
 <rect x="60" y="4304" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
