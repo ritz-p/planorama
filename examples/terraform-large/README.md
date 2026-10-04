@@ -16,7 +16,7 @@ docker compose run --rm -T dev cargo test --locked --test large_example
 
 No AWS account, credentials, Terraform installation, or provider download is needed for these commands. The committed `plan.json` is a **synthetic, representative plan fixture**, not output captured from `terraform show`. The Rust generator reads the actual `main.tf.json` files and derives configuration references, module input/output aliases, and native addresses. Managed instances use `create`; data instances use `no-op`. There are no resolved attribute values, state, secrets, real IDs, or provider execution results in the fixture.
 
-The generator deliberately supports only this example's subset: local modules, literal `count`, constants, and `${traversal}` interpolations. It is not a Terraform evaluator. It rejects `for_each`, computed counts, and function interpolations rather than inventing their results. Regression tests compare regenerated fixture bytes with the committed input and rendered SVG with the committed output.
+The generator deliberately supports only this example's subset: single-instance local modules, resource-level literal `count`, constants, and `${traversal}` interpolations. It is not a Terraform evaluator. It rejects resource-level `for_each`, computed counts, and function interpolations rather than inventing their results. Module-level `count` (including literal counts), `for_each`, `depends_on`, and `providers` are also rejected, including in nested modules, instead of treating these meta-arguments as inputs. Regression tests compare regenerated fixture bytes with the committed input and rendered SVG with the committed output.
 
 ## Terraform validation and real plans
 

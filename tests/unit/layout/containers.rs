@@ -104,6 +104,70 @@ fn large_aws_example_keeps_cross_module_containment_and_multi_subnet_relationshi
 }
 
 #[test]
+fn duplicate_local_names_use_topology_after_module_renames_and_node_reordering() {
+    for nested in [false, true] {
+        let mut graph = fixture();
+        let subnet = graph
+            .nodes
+            .iter()
+            .position(|node| node.resource_type == "aws_subnet")
+            .unwrap();
+        let template = graph
+            .nodes
+            .iter()
+            .find(|node| node.resource_type == "aws_instance")
+            .unwrap()
+            .clone();
+        let first = graph.nodes.len();
+        for (module, target) in [("a", "a"), ("b", "b")] {
+            let worker = graph.nodes.len();
+            graph.nodes.push(Node {
+                address: format!("module.{module}.aws_instance.main"),
+                module: format!("module.{module}"),
+                ..template.clone()
+            });
+            graph.nodes.push(Node {
+                address: format!("aws_s3_bucket.{target}"),
+                resource_type: "aws_s3_bucket".into(),
+                module: "root".into(),
+                ..template.clone()
+            });
+            graph.edges.push(Edge::from((worker, worker + 1)));
+            if nested {
+                graph.edges.push(Edge {
+                    kind: EdgeKind::Containment,
+                    ..Edge::from((subnet, worker))
+                });
+            }
+        }
+        let before = Layout::new(&graph);
+        let mut renamed = graph.clone();
+        for (index, module) in [(first, "z"), (first + 2, "a")] {
+            renamed.nodes[index].module = format!("module.{module}");
+            renamed.nodes[index].address = format!("module.{module}.aws_instance.main");
+        }
+        let count = renamed.nodes.len();
+        renamed.nodes.reverse();
+        for edge in &mut renamed.edges {
+            edge.from = count - 1 - edge.from;
+            edge.to = count - 1 - edge.to;
+        }
+        let after = Layout::new(&renamed);
+        for node in 0..count {
+            assert_eq!(before.positions[node], after.positions[count - 1 - node]);
+        }
+        assert_eq!(before.paths, after.paths);
+        assert_eq!(
+            ordering::structural_keys(&graph),
+            ordering::structural_keys(&renamed)
+                .into_iter()
+                .rev()
+                .collect::<Vec<_>>()
+        );
+    }
+}
+
+#[test]
 fn architecture_parentage_and_geometry_do_not_depend_on_module_membership() {
     let raw = plan::parse(include_str!(
         "../../fixtures/cross-module-containment-plan.json"

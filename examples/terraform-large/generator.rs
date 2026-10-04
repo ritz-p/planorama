@@ -73,6 +73,13 @@ fn module(path: &Path, scope: &str, changes: &mut Vec<Value>) -> Result<Value, S
     }
     let mut calls = Map::new();
     for (name, call) in config["module"].as_object().into_iter().flatten() {
+        for argument in ["count", "for_each", "depends_on", "providers"] {
+            if call.get(argument).is_some() {
+                return Err(format!(
+                    "fixture generator does not support module meta-argument {argument}: {scope}module.{name}"
+                ));
+            }
+        }
         let relative = call["source"].as_str().ok_or("module source is required")?;
         if !relative.starts_with("./") {
             return Err("fixture modules must be local".into());

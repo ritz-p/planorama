@@ -1,7 +1,54 @@
 use crate::model::{Graph, ResourceRole};
 use std::collections::{BTreeSet, VecDeque};
 
-pub(super) fn roots(graph: &Graph, parents: &[Option<usize>]) -> Vec<usize> {
+pub(super) fn structural_keys(graph: &Graph) -> Vec<usize> {
+    fn ranks<T: Ord>(keys: &[T]) -> Vec<usize> {
+        let unique: BTreeSet<_> = keys.iter().collect();
+        let ordered: Vec<_> = unique.into_iter().collect();
+        keys.iter()
+            .map(|key| ordered.binary_search(&key).unwrap())
+            .collect()
+    }
+    let labels: Vec<_> = graph
+        .nodes
+        .iter()
+        .map(|node| {
+            (
+                node.resource_address().local(),
+                node.resource_type.as_str(),
+                format!("{:?}/{:?}/{:?}", node.role, node.mode, node.action),
+            )
+        })
+        .collect();
+    let mut colors = ranks(&labels);
+    let mut neighbors = vec![Vec::new(); graph.nodes.len()];
+    for edge in &graph.edges {
+        let action = edge.change.as_ref().map(|change| change.action);
+        neighbors[edge.from].push((true, edge.kind, action, edge.to));
+        neighbors[edge.to].push((false, edge.kind, action, edge.from));
+    }
+    loop {
+        let signatures: Vec<_> = neighbors
+            .iter()
+            .enumerate()
+            .map(|(node, edges)| {
+                let mut adjacent: Vec<_> = edges
+                    .iter()
+                    .map(|&(outgoing, kind, action, other)| (outgoing, kind, action, colors[other]))
+                    .collect();
+                adjacent.sort();
+                (colors[node], adjacent)
+            })
+            .collect();
+        let next = ranks(&signatures);
+        match next == colors {
+            true => return colors,
+            false => colors = next,
+        }
+    }
+}
+
+pub(super) fn roots(graph: &Graph, parents: &[Option<usize>], keys: &[usize]) -> Vec<usize> {
     let owners: Vec<_> = (0..graph.nodes.len())
         .map(|mut node| {
             while let Some(parent) = parents[node] {
@@ -22,7 +69,7 @@ pub(super) fn roots(graph: &Graph, parents: &[Option<usize>]) -> Vec<usize> {
         (
             graph.nodes[node].role != ResourceRole::Container,
             graph.nodes[node].resource_address().local(),
-            graph.nodes[node].address.as_str(),
+            keys[node],
         )
     };
     let mut roots: Vec<_> = parents
