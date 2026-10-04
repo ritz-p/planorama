@@ -1,0 +1,15 @@
+{
+  "variable": {"vpc_id": {"type": "string"}, "security_group_id": {"type": "string"}},
+  "data": {
+    "aws_vpc": {"shared": {"id": "${var.vpc_id}"}},
+    "aws_security_group": {"shared": {"id": "${var.security_group_id}"}},
+    "aws_ami": {"app": {"most_recent": true, "owners": ["amazon"], "filter": [{"name": "name", "values": ["al2023-ami-2023.*-x86_64"]}]}},
+    "aws_region": {"current": {}},
+    "aws_caller_identity": {"current": {}}
+  },
+  "output": {
+    "vpc_id": {"value": "${data.aws_vpc.shared.id}"},
+    "security_group_id": {"value": "${data.aws_security_group.shared.id}"},
+    "ami_id": {"value": "${data.aws_ami.app.id}"}
+  }
+}
