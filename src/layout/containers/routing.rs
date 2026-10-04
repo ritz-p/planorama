@@ -40,6 +40,14 @@ fn represented_by_nesting(edge: &Edge, layout: &Layout<'_>) -> bool {
 }
 
 pub(super) fn route(graph: &Graph, layout: &Layout<'_>) -> Vec<Vec<Point>> {
+    let mut right_edges: Vec<_> = layout
+        .positions
+        .iter()
+        .map(|point| point.x + NODE_WIDTH)
+        .collect();
+    for &(node, bounds) in &layout.containers {
+        right_edges[node] = bounds.origin.x + bounds.width;
+    }
     let mut outgoing = vec![Vec::new(); graph.nodes.len()];
     let mut incoming = vec![Vec::new(); graph.nodes.len()];
     for (index, edge) in graph.edges.iter().enumerate() {
@@ -69,11 +77,11 @@ pub(super) fn route(graph: &Graph, layout: &Layout<'_>) -> Vec<Vec<Point>> {
                 return Vec::new();
             }
             let start = Point {
-                x: layout.positions[edge.from].x + NODE_WIDTH,
+                x: right_edges[edge.from],
                 y: layout.positions[edge.from].y + source_ports[index],
             };
             let end = Point {
-                x: layout.positions[edge.to].x + NODE_WIDTH,
+                x: right_edges[edge.to],
                 y: layout.positions[edge.to].y
                     + match edge.from == edge.to {
                         true => NODE_HEIGHT - 12,
