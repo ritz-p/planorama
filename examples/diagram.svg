@@ -16,37 +16,41 @@
 <rect x="35" y="160" width="1030" height="944" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-dasharray="5 4"/><text x="52" y="185" font-size="13" font-weight="700" fill="#475569"><title>root</title>root</text>
 <g data-container="resource-1"><title>aws_vpc.main</title><rect x="60" y="344" width="480" height="584" rx="12" fill="#f8fafc" stroke="#64748b" stroke-width="2" data-mode="managed"/></g>
 <g data-container="resource-5"><title>module.app.aws_subnet.main</title><rect x="100" y="480" width="400" height="408" rx="12" fill="#dbeafe" stroke="#1d4ed8" stroke-width="2" data-mode="managed"/></g>
-<g data-edge-kind="containment" data-parent="resource-1" data-child="resource-5"><title>aws_vpc.main → module.app.aws_subnet.main (containment)</title></g>
+<g data-edge-kind="containment" data-source="resource-1" data-target="resource-5"><title>aws_vpc.main → module.app.aws_subnet.main (containment)</title></g>
 <path d="M 380 1006 L 396 1006 L 476 1006 L 476 664 L 460 664 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>data.aws_ami.latest → module.app.aws_instance.web[0] (dependency)</title></path>
 <path d="M 380 1025 L 396 1025 L 476 1025 L 476 800 L 460 800 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>data.aws_ami.latest → module.app.aws_instance.web[1] (dependency)</title></path>
-<g data-edge-kind="containment" data-parent="resource-5" data-child="resource-3"><title>module.app.aws_subnet.main → module.app.aws_instance.web[0] (containment)</title></g>
-<g data-edge-kind="containment" data-parent="resource-5" data-child="resource-4"><title>module.app.aws_subnet.main → module.app.aws_instance.web[1] (containment)</title></g>
-<g id="resource-0"><title>aws_s3_bucket.legacy — delete</title><rect x="60" y="208" width="320" height="96" rx="8" fill="#fef2f2" stroke="#b91c1c" stroke-width="1.5" data-mode="managed"/>
+<g data-edge-kind="containment" data-source="resource-5" data-target="resource-3"><title>module.app.aws_subnet.main → module.app.aws_instance.web[0] (containment)</title></g>
+<g data-edge-kind="containment" data-source="resource-5" data-target="resource-4"><title>module.app.aws_subnet.main → module.app.aws_instance.web[1] (containment)</title></g>
+<g id="resource-0"><title>aws_s3_bucket.legacy — delete</title>
+<rect x="60" y="208" width="320" height="96" rx="8" fill="#fef2f2" stroke="#b91c1c" stroke-width="1.5" data-mode="managed"/>
 <text x="72" y="228" font-size="11" fill="#b91c1c">aws_s3_bucket · delete</text>
 <text x="72" y="253" font-size="13" fill="#0f172a">aws_s3_bucket.legacy</text>
 <text x="72" y="292" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
-<g id="resource-1"><title>aws_vpc.main — unchanged</title><rect x="60" y="344" width="320" height="96" rx="8" fill="#f8fafc" stroke="#64748b" stroke-width="1.5" data-mode="managed"/>
+<g id="resource-1"><title>aws_vpc.main — unchanged</title>
 <text x="72" y="364" font-size="11" fill="#64748b">aws_vpc · unchanged</text>
 <text x="72" y="389" font-size="13" fill="#0f172a">aws_vpc.main</text>
 <text x="72" y="428" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
-<g id="resource-2"><title>data.aws_ami.latest — unchanged</title><rect x="60" y="968" width="320" height="96" rx="8" fill="#f8fafc" stroke="#64748b" stroke-width="1.5" data-mode="data" stroke-dasharray="6 4"/>
+<g id="resource-2"><title>data.aws_ami.latest — unchanged</title>
+<rect x="60" y="968" width="320" height="96" rx="8" fill="#f8fafc" stroke="#64748b" stroke-width="1.5" data-mode="data" stroke-dasharray="6 4"/>
 <g data-external="true"><title>External resource: read by Terraform, not managed by this configuration</title><rect x="302" y="975" width="68" height="18" rx="4" fill="#e2e8f0"/><text x="308" y="988" font-size="10" fill="#334155">external</text></g><text x="72" y="988" font-size="11" fill="#64748b">aws_ami · unchanged</text>
 <text x="72" y="1013" font-size="13" fill="#0f172a">data.aws_ami.latest</text>
 <text x="72" y="1052" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
-<g id="resource-3"><title>module.app.aws_instance.web[0] — create</title><rect x="140" y="616" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
+<g id="resource-3"><title>module.app.aws_instance.web[0] — create</title>
+<rect x="140" y="616" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text x="152" y="636" font-size="11" fill="#047857">aws_instance · create</text>
 <text x="152" y="661" font-size="13" fill="#0f172a">aws_instance.web[0]</text>
 <text x="152" y="700" font-size="10" fill="#64748b"><title>module.app</title>module.app</text>
 </g>
-<g id="resource-4"><title>module.app.aws_instance.web[1] — replace</title><rect x="140" y="752" width="320" height="96" rx="8" fill="#fff7ed" stroke="#c2410c" stroke-width="1.5" data-mode="managed"/>
+<g id="resource-4"><title>module.app.aws_instance.web[1] — replace</title>
+<rect x="140" y="752" width="320" height="96" rx="8" fill="#fff7ed" stroke="#c2410c" stroke-width="1.5" data-mode="managed"/>
 <text x="152" y="772" font-size="11" fill="#c2410c">aws_instance · replace</text>
 <text x="152" y="797" font-size="13" fill="#0f172a">aws_instance.web[1]</text>
 <text x="152" y="836" font-size="10" fill="#64748b"><title>module.app</title>module.app</text>
 </g>
-<g id="resource-5"><title>module.app.aws_subnet.main — update</title><rect x="100" y="480" width="320" height="96" rx="8" fill="#dbeafe" stroke="#1d4ed8" stroke-width="1.5" data-mode="managed"/>
+<g id="resource-5"><title>module.app.aws_subnet.main — update</title>
 <text x="112" y="500" font-size="11" fill="#1d4ed8">aws_subnet · update</text>
 <text x="112" y="525" font-size="13" fill="#0f172a">aws_subnet.main</text>
 <text x="112" y="564" font-size="10" fill="#64748b"><title>module.app</title>module.app</text>

@@ -86,7 +86,7 @@ pub fn render(graph: &Graph, layout: &Layout<'_>) -> String {
         };
         let title = relationships::title(graph, edge, semantic_edges);
         if points.is_empty() {
-            writeln!(svg, r#"<g{relation} data-parent="resource-{}" data-child="resource-{}"><title>{title}</title></g>"#, edge.from, edge.to).unwrap();
+            writeln!(svg, r#"<g{relation} data-source="resource-{}" data-target="resource-{}"><title>{title}</title></g>"#, edge.from, edge.to).unwrap();
             continue;
         }
         let (stroke, marker) = match &edge.change {
@@ -140,7 +140,15 @@ pub fn render(graph: &Graph, layout: &Layout<'_>) -> String {
             .map(|c| c.iter().collect::<String>())
             .collect();
         let mode = entities::border(node.mode);
-        writeln!(svg, r#"<g id="resource-{i}"><title>{address} — {}</title><rect x="{x}" y="{y}" width="320" height="96" rx="8" fill="{background}" stroke="{border}" stroke-width="1.5"{mode}/>"#, label(node.action)).unwrap();
+        writeln!(
+            svg,
+            r#"<g id="resource-{i}"><title>{address} — {}</title>"#,
+            label(node.action)
+        )
+        .unwrap();
+        if node.role != crate::model::ResourceRole::Container {
+            writeln!(svg, r#"<rect x="{x}" y="{y}" width="320" height="96" rx="8" fill="{background}" stroke="{border}" stroke-width="1.5"{mode}/>"#).unwrap();
+        }
         svg.push_str(&entities::badge(node.mode, x, y));
         writeln!(
             svg,

@@ -10,6 +10,50 @@ fn fixture() -> Graph {
 }
 
 #[test]
+fn nesting_hides_ancestor_references_but_keeps_sibling_and_external_connections() {
+    let mut graph = fixture();
+    let parent = graph
+        .nodes
+        .iter()
+        .position(|node| node.resource_type == "aws_subnet")
+        .unwrap();
+    let child = graph
+        .nodes
+        .iter()
+        .position(|node| node.resource_type == "aws_instance")
+        .unwrap();
+    let root = graph
+        .nodes
+        .iter()
+        .position(|node| node.resource_type == "aws_vpc")
+        .unwrap();
+    let sibling = graph.nodes.len();
+    let mut node = graph.nodes[child].clone();
+    node.address = "aws_instance.sibling".into();
+    graph.nodes.push(node.clone());
+    node.address = "aws_instance.external".into();
+    graph.nodes.push(node);
+    graph.edges.extend([
+        Edge {
+            kind: EdgeKind::Containment,
+            ..Edge::from((parent, sibling))
+        },
+        Edge::from((child, root)),
+        Edge::from((child, sibling)),
+        Edge::from((child, sibling + 1)),
+    ]);
+    let original = graph.clone();
+    let layout = Layout::new(&graph);
+    let paths = &layout.paths[layout.paths.len() - 4..];
+    assert!(paths[0].is_empty());
+    assert!(paths[1].is_empty());
+    assert!(!paths[2].is_empty());
+    assert!(!paths[3].is_empty());
+    assert_eq!(graph, original);
+    verify(&graph);
+}
+
+#[test]
 fn parallel_association_changes_have_distinct_ports_and_paths() {
     let raw = plan::parse(include_str!("../../fixtures/association-plan.json")).unwrap();
     let mut graph = semantic::transform(&raw).0;
@@ -110,7 +154,7 @@ fn nested_vpc_subnet_ec2_reserve_space_and_route_extra_dependencies() {
     assert_eq!(layout.parents.iter().flatten().count(), 2);
     assert_eq!(
         layout.paths.iter().filter(|path| path.is_empty()).count(),
-        2
+        3
     );
 }
 

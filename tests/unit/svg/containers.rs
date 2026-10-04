@@ -67,9 +67,9 @@ fn five_container_shades_fill_both_headers_and_bounds_and_clamp_deeper_nesting()
                 .split("</g>")
                 .next()
                 .unwrap();
-            for element in [boundary, header] {
-                assert!(element.contains(&format!("fill=\"{shade}\"")));
-            }
+            assert!(boundary.contains(&format!("fill=\"{shade}\"")));
+            assert_eq!(boundary.matches("<rect ").count(), 1);
+            assert!(!header.contains("<rect "));
         }
     }
 }

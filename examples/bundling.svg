@@ -24,23 +24,28 @@
 <circle cx="404" cy="400" r="3" fill="#94a3b8"/>
 <circle cx="824" cy="256" r="3" fill="#94a3b8"/>
 <circle cx="824" cy="400" r="3" fill="#94a3b8"/>
-<g id="resource-0"><title>terraform_data.a — create</title><rect x="480" y="208" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
+<g id="resource-0"><title>terraform_data.a — create</title>
+<rect x="480" y="208" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text x="492" y="228" font-size="11" fill="#047857">terraform_data · create</text>
 <text x="492" y="253" font-size="13" fill="#0f172a">terraform_data.a</text>
 </g>
-<g id="resource-1"><title>terraform_data.aggregate — create</title><rect x="900" y="208" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
+<g id="resource-1"><title>terraform_data.aggregate — create</title>
+<rect x="900" y="208" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text x="912" y="228" font-size="11" fill="#047857">terraform_data · create</text>
 <text x="912" y="253" font-size="13" fill="#0f172a">terraform_data.aggregate</text>
 </g>
-<g id="resource-2"><title>terraform_data.b — create</title><rect x="480" y="352" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
+<g id="resource-2"><title>terraform_data.b — create</title>
+<rect x="480" y="352" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text x="492" y="372" font-size="11" fill="#047857">terraform_data · create</text>
 <text x="492" y="397" font-size="13" fill="#0f172a">terraform_data.b</text>
 </g>
-<g id="resource-3"><title>terraform_data.c — create</title><rect x="480" y="496" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
+<g id="resource-3"><title>terraform_data.c — create</title>
+<rect x="480" y="496" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text x="492" y="516" font-size="11" fill="#047857">terraform_data · create</text>
 <text x="492" y="541" font-size="13" fill="#0f172a">terraform_data.c</text>
 </g>
-<g id="resource-4"><title>terraform_data.seed — create</title><rect x="60" y="208" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
+<g id="resource-4"><title>terraform_data.seed — create</title>
+<rect x="60" y="208" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text x="72" y="228" font-size="11" fill="#047857">terraform_data · create</text>
 <text x="72" y="253" font-size="13" fill="#0f172a">terraform_data.seed</text>
 </g>
