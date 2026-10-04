@@ -34,7 +34,8 @@ pub(super) fn background(graph: &Graph, layout: &Layout<'_>, node: usize) -> &'s
 
 pub(super) fn boundaries(graph: &Graph, layout: &Layout<'_>) -> String {
     let mut svg = String::new();
-    for &(node, bounds) in &layout.containers {
+    for &node in &layout.containers {
+        let bounds = layout.bounds[node];
         let (x, y, width, height) = (
             bounds.origin.x,
             bounds.origin.y,

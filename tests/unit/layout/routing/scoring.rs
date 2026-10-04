@@ -29,7 +29,7 @@ fn card_interiors_take_priority_over_edge_overlap() {
     let around = points(&[(0, 150), (0, 250), (500, 250), (500, 150)]);
     scorer.insert(around.clone());
     let through = points(&[(0, 150), (500, 150)]);
-    let nodes = [Point { x: 100, y: 100 }];
+    let nodes = [Bounds::card(Point { x: 100, y: 100 })];
     assert!(scorer.score(&around, &nodes) < scorer.score(&through, &nodes));
 }
 
