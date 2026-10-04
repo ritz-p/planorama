@@ -122,6 +122,7 @@ pub fn render(graph: &Graph, layout: &Layout<'_>) -> String {
     }
     for (i, node) in graph.nodes.iter().enumerate() {
         let (x, y) = (layout.positions[i].x, layout.positions[i].y);
+        let header_height = layout.header_heights[i];
         let background = containers::background(graph, layout, i);
         let border = color(node.action).1;
         let address = escape(&node.address);
@@ -147,7 +148,7 @@ pub fn render(graph: &Graph, layout: &Layout<'_>) -> String {
         )
         .unwrap();
         if node.role != crate::model::ResourceRole::Container {
-            writeln!(svg, r#"<rect x="{x}" y="{y}" width="320" height="96" rx="8" fill="{background}" stroke="{border}" stroke-width="1.5"{mode}/>"#).unwrap();
+            writeln!(svg, r#"<rect x="{x}" y="{y}" width="320" height="{header_height}" rx="8" fill="{background}" stroke="{border}" stroke-width="1.5"{mode}/>"#).unwrap();
         }
         svg.push_str(&entities::badge(node.mode, x, y));
         writeln!(
@@ -185,7 +186,7 @@ pub fn render(graph: &Graph, layout: &Layout<'_>) -> String {
             true => String::new(),
         };
         if !footer.is_empty() {
-            writeln!(svg, r##"<text x="{}" y="{}" font-size="10" fill="#64748b"{}><title>{}</title>{footer}</text>"##, x + 12, y + 84, roles::attributes(node.role), escape(&node.module)).unwrap();
+            writeln!(svg, r##"<text x="{}" y="{}" font-size="10" fill="#64748b"{}><title>{}</title>{footer}</text>"##, x + 12, y + header_height - 12, roles::attributes(node.role), escape(&node.module)).unwrap();
         }
         svg.push_str("</g>\n");
     }

@@ -43,6 +43,10 @@ fn parents(graph: &Graph) -> Vec<Option<usize>> {
 
 pub(super) fn place(graph: &Graph) -> Layout<'_> {
     let parents = parents(graph);
+    let header_heights: Vec<_> = routing::incidents(graph, &parents)
+        .iter()
+        .map(|edges| NODE_HEIGHT.max(edges.len() + 41))
+        .collect();
     let mut children = vec![Vec::new(); graph.nodes.len()];
     let mut modules: BTreeMap<&str, Vec<usize>> = BTreeMap::new();
     for (node, parent) in parents.iter().enumerate() {
@@ -63,7 +67,10 @@ pub(super) fn place(graph: &Graph) -> Layout<'_> {
         order.push(node);
         pending.extend(children[node].iter().copied());
     }
-    let mut sizes = vec![(NODE_WIDTH, NODE_HEIGHT); graph.nodes.len()];
+    let mut sizes: Vec<_> = header_heights
+        .iter()
+        .map(|&height| (NODE_WIDTH, height))
+        .collect();
     for &node in order.iter().rev() {
         if graph.nodes[node].role == ResourceRole::Container {
             let width = children[node]
@@ -75,10 +82,11 @@ pub(super) fn place(graph: &Graph) -> Layout<'_> {
                 .iter()
                 .map(|&child| sizes[child].1 + PADDING)
                 .sum();
-            sizes[node] = (width + PADDING * 2, NODE_HEIGHT + PADDING + height);
+            sizes[node] = (width + PADDING * 2, header_heights[node] + PADDING + height);
         }
     }
     let mut layout = Layout {
+        header_heights,
         width: 1100,
         height: 300,
         positions: vec![Point { x: 0, y: 0 }; graph.nodes.len()],
@@ -110,7 +118,7 @@ pub(super) fn place(graph: &Graph) -> Layout<'_> {
                         },
                     ));
                 }
-                let mut child_y = origin.y + NODE_HEIGHT + PADDING;
+                let mut child_y = origin.y + layout.header_heights[node] + PADDING;
                 for &child in &children[node] {
                     layout.positions[child] = Point {
                         x: origin.x + PADDING,

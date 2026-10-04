@@ -10,6 +10,63 @@ fn fixture() -> Graph {
 }
 
 #[test]
+fn high_degree_ports_expand_headers_and_remain_distinct_inside_parent_bounds() {
+    for role in [ResourceRole::Container, ResourceRole::Node] {
+        for count in [56, 57, 100] {
+            let mut graph = fixture();
+            for (index, node) in graph.nodes.iter_mut().enumerate() {
+                node.role = match index {
+                    0 => ResourceRole::Container,
+                    _ => role,
+                };
+            }
+            graph.edges = [1, 2]
+                .map(|child| Edge {
+                    kind: EdgeKind::Containment,
+                    ..Edge::from((0, child))
+                })
+                .into();
+            graph.edges.extend((0..count).map(|index| Edge {
+                kind: EdgeKind::Association,
+                change: Some(crate::model::EdgeChange {
+                    address: format!("test.relationship{index}"),
+                    action: Action::Create,
+                }),
+                ..Edge::from((1, 2))
+            }));
+            let layout = Layout::new(&graph);
+            for node in [1, 2] {
+                assert!(layout.header_heights[node] >= count + 41);
+            }
+            let paths = &layout.paths[2..];
+            let sources: BTreeSet<_> = paths.iter().map(|path| path[0].y).collect();
+            let targets: BTreeSet<_> = paths.iter().map(|path| path.last().unwrap().y).collect();
+            assert_eq!(sources.len(), count);
+            assert_eq!(targets.len(), count);
+            let output = svg::render(&graph, &layout);
+            if role == ResourceRole::Node {
+                assert!(output.contains(&format!(
+                    "width=\"320\" height=\"{}\"",
+                    layout.header_heights[1]
+                )));
+            }
+            verify(&graph);
+            for index in (2..graph.edges.len()).step_by(2) {
+                let edge = &mut graph.edges[index];
+                std::mem::swap(&mut edge.from, &mut edge.to);
+            }
+            let layout = Layout::new(&graph);
+            let mut ports = [BTreeSet::new(), BTreeSet::new()];
+            for (edge, path) in graph.edges[2..].iter().zip(&layout.paths[2..]) {
+                assert!(ports[edge.from - 1].insert(path[0].y));
+                assert!(ports[edge.to - 1].insert(path.last().unwrap().y));
+            }
+            verify(&graph);
+        }
+    }
+}
+
+#[test]
 fn reciprocal_relationships_and_self_loops_use_distinct_incoming_and_outgoing_ports() {
     for role in [ResourceRole::Container, ResourceRole::Node] {
         let mut node = fixture()
@@ -155,7 +212,7 @@ fn verify(graph: &Graph) {
                 .unwrap_or(Bounds {
                     origin: layout.positions[node],
                     width: NODE_WIDTH,
-                    height: NODE_HEIGHT,
+                    height: layout.header_heights[node],
                 });
             assert_eq!(point.x, bounds.origin.x + bounds.width);
             assert!(point.y > bounds.origin.y && point.y < bounds.origin.y + bounds.height);
@@ -183,10 +240,12 @@ fn verify(graph: &Graph) {
                 .unwrap_or(Bounds {
                     origin: layout.positions[child],
                     width: NODE_WIDTH,
-                    height: NODE_HEIGHT,
+                    height: layout.header_heights[child],
                 });
             assert!(child_bounds.origin.x >= bounds.origin.x + PADDING);
-            assert!(child_bounds.origin.y >= bounds.origin.y + NODE_HEIGHT + PADDING);
+            assert!(
+                child_bounds.origin.y >= bounds.origin.y + layout.header_heights[parent] + PADDING
+            );
             assert!(
                 child_bounds.origin.x + child_bounds.width + PADDING
                     <= bounds.origin.x + bounds.width
@@ -201,10 +260,17 @@ fn verify(graph: &Graph) {
         let a = Bounds {
             origin,
             width: NODE_WIDTH,
-            height: NODE_HEIGHT,
+            height: layout.header_heights[i],
         };
-        for &other in &layout.positions[i + 1..] {
-            assert!(!overlaps(a, Bounds { origin: other, ..a }));
+        for (j, &other) in layout.positions.iter().enumerate().skip(i + 1) {
+            assert!(!overlaps(
+                a,
+                Bounds {
+                    origin: other,
+                    height: layout.header_heights[j],
+                    ..a
+                }
+            ));
         }
         for path in &layout.paths {
             for pair in path.windows(2) {
