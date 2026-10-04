@@ -1,4 +1,4 @@
-use super::{NODE_HEIGHT, NODE_WIDTH, Point};
+use super::{Bounds, Point};
 use crate::model::Graph;
 use std::cmp::Ordering;
 mod bundles;
@@ -24,7 +24,7 @@ pub(super) struct Routed {
 pub(super) fn route(
     graph: &Graph,
     ranks: &[usize],
-    positions: &mut [Point],
+    bounds: &mut [Bounds],
     channels: &[usize],
 ) -> Routed {
     let mut source_ports = vec![0; graph.edges.len()];
@@ -36,33 +36,42 @@ pub(super) fn route(
         sources[a].push(edge);
         targets[b].push(edge);
     }
-    for edges in &mut sources {
-        edges.sort_by_key(|&edge| (positions[graph.edges[edge].to].y, edge));
+    for (node, edges) in sources.iter_mut().enumerate() {
+        edges.sort_by_key(|&edge| (bounds[graph.edges[edge].to].origin.y, edge));
         for (port, &edge) in edges.iter().enumerate() {
-            source_ports[edge] = 20 + (port + 1) * (NODE_HEIGHT - 40) / (edges.len() + 1);
+            source_ports[edge] = 20 + (port + 1) * (bounds[node].height - 40) / (edges.len() + 1);
         }
     }
-    for edges in &mut targets {
-        edges.sort_by_key(|&edge| (positions[graph.edges[edge].from].y, edge));
+    for (node, edges) in targets.iter_mut().enumerate() {
+        edges.sort_by_key(|&edge| (bounds[graph.edges[edge].from].origin.y, edge));
         for (port, &edge) in edges.iter().enumerate() {
-            target_ports[edge] = 20 + (port + 1) * (NODE_HEIGHT - 40) / (edges.len() + 1);
+            target_ports[edge] = 20 + (port + 1) * (bounds[node].height - 40) / (edges.len() + 1);
         }
     }
 
     let bundles = Bundles::new(graph, ranks);
-    bundles.align_ports(&mut source_ports, &mut target_ports);
+    bundles.align_ports(graph, bounds, &mut source_ports, &mut target_ports);
     let columns = ranks.iter().max().copied().unwrap_or(0) + 1;
+    let mut column_widths = vec![0; columns];
+    for (node, bound) in bounds.iter().enumerate() {
+        column_widths[ranks[node]] = column_widths[ranks[node]].max(bound.width);
+    }
     let mut gutter_widths = vec![100; columns];
     loop {
         let mut column_x = Vec::with_capacity(columns);
         let mut x = 60;
-        for &width in &gutter_widths {
+        for (column, &width) in gutter_widths.iter().enumerate() {
             column_x.push(x);
-            x += NODE_WIDTH + width;
+            x += column_widths[column] + width;
         }
-        for (index, position) in positions.iter_mut().enumerate() {
-            position.x = column_x[ranks[index]];
+        for (index, bounds) in bounds.iter_mut().enumerate() {
+            bounds.origin.x = column_x[ranks[index]];
         }
+        let column_right: Vec<_> = column_x
+            .iter()
+            .zip(&column_widths)
+            .map(|(x, width)| x + width)
+            .collect();
         let mut scorer = Scorer::default();
         let mut lanes = VerticalLanes::default();
         let mut bundle_lanes = vec![None; bundles.len()];
@@ -70,31 +79,29 @@ pub(super) fn route(
         for (edge, link) in graph.edges.iter().enumerate() {
             let (a, b) = link.endpoints();
             let start = Point {
-                x: positions[a].x + NODE_WIDTH,
-                y: positions[a].y + source_ports[edge],
+                x: bounds[a].right(),
+                y: bounds[a].origin.y + source_ports[edge],
             };
             let end = Point {
                 x: match ranks[b].cmp(&ranks[a]) {
-                    Ordering::Greater => positions[b].x,
-                    Ordering::Equal | Ordering::Less => positions[b].x + NODE_WIDTH,
+                    Ordering::Greater => bounds[b].origin.x,
+                    Ordering::Equal | Ordering::Less => bounds[b].right(),
                 },
-                y: positions[b].y + target_ports[edge],
+                y: bounds[b].origin.y + target_ports[edge],
             };
             let candidates: Vec<_> = match ranks[b].checked_sub(ranks[a]) {
                 Some(0 | 1) => match bundles.group(edge) {
                     Some(group) => {
                         let lane = *bundle_lanes[group].get_or_insert_with(|| {
                             let (from, to) =
-                                bundles.span(group, graph, positions, &source_ports, &target_ports);
+                                bundles.span(group, graph, bounds, &source_ports, &target_ports);
                             let lane = lanes
                                 .candidates(ranks[a], from, to, 3)
                                 .into_iter()
                                 .min_by_key(|lane| {
-                                    let x = column_x[lane.gutter] + NODE_WIDTH + lane.offset();
-                                    scorer.score(
-                                        &[Point { x, y: from }, Point { x, y: to }],
-                                        positions,
-                                    )
+                                    let x = column_right[lane.gutter] + lane.offset();
+                                    scorer
+                                        .score(&[Point { x, y: from }, Point { x, y: to }], bounds)
                                 })
                                 .expect("bundling requires a lane");
                             lanes.reserve(lane, from, to);
@@ -105,7 +112,7 @@ pub(super) fn route(
                     None => lanes.candidates(ranks[a], start.y, end.y, 3),
                 }
                 .into_iter()
-                .map(|lane| RouteCandidate::direct(start, end, lane, &column_x))
+                .map(|lane| RouteCandidate::direct(start, end, lane, &column_right))
                 .collect(),
                 _ => {
                     let gutter = match ranks[b].cmp(&ranks[a]) {
@@ -121,7 +128,7 @@ pub(super) fn route(
                                 lanes.preview(ranks[a], start.y, y),
                                 lanes.preview(gutter, y, end.y),
                                 y,
-                                &column_x,
+                                &column_right,
                             )
                         })
                         .collect()
@@ -129,7 +136,7 @@ pub(super) fn route(
             };
             let chosen = candidates
                 .into_iter()
-                .min_by_key(|candidate| scorer.score(&candidate.points, positions))
+                .min_by_key(|candidate| scorer.score(&candidate.points, bounds))
                 .expect("routing requires a route candidate");
             if bundles.group(edge).is_none() {
                 chosen.reserve(&mut lanes);

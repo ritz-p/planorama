@@ -226,3 +226,5 @@ tests/
 ```
 
 単体テストは実装側の `#[cfg(test)]` と `#[path = "..."]` で読み込みます。テストのために内部関数を公開する必要はなく、実装ファイルには読み込み宣言だけを置きます。実行方法はこれまでどおり `docker compose exec dev cargo test --locked` です。
+
+All rendered nodes expose their actual geometry through `Layout::bounds`. Container membership stores indices only; SVG rendering and both routing paths consume the same bounds. Container ports span the expanded outer frame, while header bounds remain available to protect labels when routing through an ancestor. Ordinary-card bundling and scoring also use bounds; `positions` remains the placement-coordinate view.
