@@ -19,18 +19,18 @@
 <g data-edge-kind="containment" data-source="resource-1" data-target="resource-0"><title>aws_subnet.private → aws_instance.app (containment)</title></g>
 <g data-source="resource-2" data-target="resource-0"><title>aws_vpc.main → aws_instance.app (dependency)</title></g>
 <g data-edge-kind="containment" data-source="resource-2" data-target="resource-1"><title>aws_vpc.main → aws_subnet.private (containment)</title></g>
-<g id="resource-0"><title>aws_instance.app — create</title>
+<g id="resource-0" data-qualified-address="module.root.aws_instance.app"><title>aws_instance.app — create</title>
 <rect x="140" y="480" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text x="152" y="500" font-size="11" fill="#047857">aws_instance · create</text>
 <text x="152" y="525" font-size="13" fill="#0f172a">aws_instance.app</text>
 <text x="152" y="564" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
-<g id="resource-1"><title>aws_subnet.private — create</title>
+<g id="resource-1" data-qualified-address="module.root.aws_subnet.private"><title>aws_subnet.private — create</title>
 <text x="112" y="364" font-size="11" fill="#047857">aws_subnet · create</text>
 <text x="112" y="389" font-size="13" fill="#0f172a">aws_subnet.private</text>
 <text x="112" y="428" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
-<g id="resource-2"><title>aws_vpc.main — create</title>
+<g id="resource-2" data-qualified-address="module.root.aws_vpc.main"><title>aws_vpc.main — create</title>
 <text x="72" y="228" font-size="11" fill="#047857">aws_vpc · create</text>
 <text x="72" y="253" font-size="13" fill="#0f172a">aws_vpc.main</text>
 <text x="72" y="292" font-size="10" fill="#64748b"><title>root</title>root</text>
