@@ -49,20 +49,16 @@ pub(super) fn place(graph: &Graph) -> Layout<'_> {
         .map(|edges| NODE_HEIGHT.max(edges.len() + 41))
         .collect();
     let mut children = vec![Vec::new(); graph.nodes.len()];
+    let keys = ordering::structural_keys(graph);
     for (node, parent) in parents.iter().enumerate() {
         if let Some(parent) = parent {
             children[*parent].push(node);
         }
     }
     for nodes in &mut children {
-        nodes.sort_by_key(|&node| {
-            (
-                graph.nodes[node].resource_address().local(),
-                &graph.nodes[node].address,
-            )
-        });
+        nodes.sort_by_key(|&node| (graph.nodes[node].resource_address().local(), keys[node]));
     }
-    let roots = ordering::roots(graph, &parents);
+    let roots = ordering::roots(graph, &parents, &keys);
     let mut order = Vec::new();
     let mut pending = roots.clone();
     while let Some(node) = pending.pop() {
