@@ -15,11 +15,11 @@
 <rect x="880" y="100" width="12" height="12" fill="#fefce8" stroke="#854d0e"/><text x="899" y="111" font-size="12" fill="#854d0e">other (0)</text>
 <rect x="35" y="160" width="1270" height="488" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-dasharray="5 4"/><text x="52" y="185" font-size="13" font-weight="700" fill="#475569"><title>root</title>root</text>
 <path d="M 800 256 L 900 256 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>terraform_data.a → terraform_data.aggregate</title></path>
-<path d="M 800 400 L 824 400 L 824 256 L 900 256 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>terraform_data.b → terraform_data.aggregate</title></path>
-<path d="M 800 544 L 824 544 L 824 256 L 900 256 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>terraform_data.c → terraform_data.aggregate</title></path>
+<path d="M 800 400 L 816 400 Q 824 400 824 392 L 824 264 Q 824 256 832 256 L 900 256 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>terraform_data.b → terraform_data.aggregate</title></path>
+<path d="M 800 544 L 816 544 Q 824 544 824 536 L 824 264 Q 824 256 832 256 L 900 256 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>terraform_data.c → terraform_data.aggregate</title></path>
 <path d="M 380 256 L 480 256 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>terraform_data.seed → terraform_data.a</title></path>
-<path d="M 380 256 L 404 256 L 404 400 L 480 400 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>terraform_data.seed → terraform_data.b</title></path>
-<path d="M 380 256 L 404 256 L 404 544 L 480 544 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>terraform_data.seed → terraform_data.c</title></path>
+<path d="M 380 256 L 396 256 Q 404 256 404 264 L 404 392 Q 404 400 412 400 L 480 400 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>terraform_data.seed → terraform_data.b</title></path>
+<path d="M 380 256 L 396 256 Q 404 256 404 264 L 404 536 Q 404 544 412 544 L 480 544 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>terraform_data.seed → terraform_data.c</title></path>
 <circle cx="404" cy="256" r="3" fill="#94a3b8"/>
 <circle cx="404" cy="400" r="3" fill="#94a3b8"/>
 <circle cx="824" cy="256" r="3" fill="#94a3b8"/>
