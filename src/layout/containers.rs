@@ -84,6 +84,7 @@ pub(super) fn place(graph: &Graph) -> Layout<'_> {
         }
     }
     let mut layout = Layout {
+        bounds: vec![Bounds::card(Point { x: 0, y: 0 }); graph.nodes.len()],
         header_heights,
         width: 1100,
         height: 300,
@@ -101,16 +102,14 @@ pub(super) fn place(graph: &Graph) -> Layout<'_> {
         while let Some(node) = pending.pop() {
             let origin = layout.positions[node];
             let (width, height) = sizes[node];
+            layout.bounds[node] = Bounds {
+                origin,
+                width,
+                height,
+            };
             layout.width = layout.width.max(origin.x + width + 80);
             if graph.nodes[node].role == ResourceRole::Container {
-                layout.containers.push((
-                    node,
-                    Bounds {
-                        origin,
-                        width,
-                        height,
-                    },
-                ));
+                layout.containers.push(node);
             }
             let mut child_y = origin.y + layout.header_heights[node] + PADDING;
             for &child in &children[node] {
