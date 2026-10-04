@@ -1,4 +1,5 @@
 use super::*;
+use crate::layout::{NODE_HEIGHT, NODE_WIDTH};
 use crate::model::{Action, Node};
 use std::collections::BTreeSet;
 
@@ -22,9 +23,11 @@ fn fan_out_and_fan_in_share_trunks_and_preserve_endpoints() {
             edges: edges.into_iter().map(crate::model::Edge::from).collect(),
         };
         let initial: Vec<_> = (0..4)
-            .map(|i| Point {
-                x: 60 + ranks[i] * 420,
-                y: 208 + i * 144,
+            .map(|i| {
+                Bounds::card(Point {
+                    x: 60 + ranks[i] * 420,
+                    y: 208 + i * 144,
+                })
             })
             .collect();
         let mut positions = initial.clone();
@@ -44,15 +47,15 @@ fn fan_out_and_fan_in_share_trunks_and_preserve_endpoints() {
             assert_eq!(
                 path[0],
                 Point {
-                    x: positions[source].x + NODE_WIDTH,
-                    y: positions[source].y + NODE_HEIGHT / 2
+                    x: positions[source].origin.x + NODE_WIDTH,
+                    y: positions[source].origin.y + NODE_HEIGHT / 2
                 }
             );
             assert_eq!(
                 *path.last().unwrap(),
                 Point {
-                    x: positions[target].x,
-                    y: positions[target].y + NODE_HEIGHT / 2
+                    x: positions[target].origin.x,
+                    y: positions[target].origin.y + NODE_HEIGHT / 2
                 }
             );
         }
@@ -82,13 +85,16 @@ fn unrelated_edges_cannot_reuse_an_occupied_bundle_trunk() {
             .collect(),
     };
     let ranks = [0, 0, 1, 1, 1];
-    let mut positions = vec![
+    let mut positions: Vec<_> = vec![
         Point { x: 60, y: 208 },
         Point { x: 60, y: 352 },
         Point { x: 480, y: 208 },
         Point { x: 480, y: 496 },
         Point { x: 480, y: 640 },
-    ];
+    ]
+    .into_iter()
+    .map(Bounds::card)
+    .collect();
     let routed = route(&graph, &ranks, &mut positions, &[192, 800]);
     let vertical_x = |path: &[Point]| {
         path.windows(2)
@@ -128,14 +134,16 @@ fn long_edges_use_separate_channels_after_gutter_expansion() {
     };
     let ranks: Vec<_> = (0..18).map(|i| i / 8).collect();
     let initial: Vec<_> = (0..18)
-        .map(|i| Point {
-            x: 60 + i / 8 * 420,
-            y: 208 + i % 8 * 144,
+        .map(|i| {
+            Bounds::card(Point {
+                x: 60 + i / 8 * 420,
+                y: 208 + i % 8 * 144,
+            })
         })
         .collect();
     let mut positions = initial.clone();
     let routed = route(&graph, &ranks, &mut positions, &[192, 1360]);
-    assert!(positions[8].x - positions[0].x > 420);
+    assert!(positions[8].origin.x - positions[0].origin.x > 420);
     let bridge_y: Vec<_> = routed.paths[8..]
         .iter()
         .map(|path| {
@@ -173,9 +181,11 @@ fn eight_overlapping_edges_get_distinct_lanes_inside_the_gutter() {
     };
     let ranks: Vec<_> = (0..16).map(|i| i / 8).collect();
     let initial: Vec<_> = (0..16)
-        .map(|i| Point {
-            x: 60 + i / 8 * 420,
-            y: 208 + i % 8 * 144,
+        .map(|i| {
+            Bounds::card(Point {
+                x: 60 + i / 8 * 420,
+                y: 208 + i % 8 * 144,
+            })
         })
         .collect();
     let mut positions = initial.clone();
@@ -188,10 +198,10 @@ fn eight_overlapping_edges_get_distinct_lanes_inside_the_gutter() {
         .map(|s| s[0].x)
         .collect();
     assert_eq!(xs.len(), 8);
-    assert!(positions[8].x - positions[0].x > 420);
+    assert!(positions[8].origin.x - positions[0].origin.x > 420);
     assert!(
         xs.iter()
-            .all(|&x| x > positions[0].x + NODE_WIDTH && x < positions[8].x)
+            .all(|&x| x > positions[0].origin.x + NODE_WIDTH && x < positions[8].origin.x)
     );
     assert!(routed.paths.iter().flatten().all(|p| p.x < routed.width));
     let mut again = initial;

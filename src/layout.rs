@@ -33,9 +33,28 @@ pub struct Bounds {
     pub height: usize,
 }
 
+impl Bounds {
+    pub fn card(origin: Point) -> Self {
+        Self {
+            origin,
+            width: NODE_WIDTH,
+            height: NODE_HEIGHT,
+        }
+    }
+
+    pub fn right(self) -> usize {
+        self.origin.x + self.width
+    }
+
+    pub fn header(self, height: usize) -> Self {
+        Self { height, ..self }
+    }
+}
+
 pub struct Layout<'a> {
     pub header_heights: Vec<usize>,
-    pub containers: Vec<(usize, Bounds)>,
+    pub bounds: Vec<Bounds>,
+    pub containers: Vec<usize>,
     pub parents: Vec<Option<usize>>,
     pub width: usize,
     pub height: usize,
@@ -55,15 +74,18 @@ impl<'a> Layout<'a> {
             return containers::place(graph);
         }
         let ranks = rank::compute(graph);
-        let mut placement = placement::place(graph, &ranks);
-        let routed = routing::route(graph, &ranks, &mut placement.positions, &placement.channels);
+        let placement = placement::place(graph, &ranks);
+        let mut bounds: Vec<_> = placement.positions.into_iter().map(Bounds::card).collect();
+        let routed = routing::route(graph, &ranks, &mut bounds, &placement.channels);
+        let positions = bounds.iter().map(|bounds| bounds.origin).collect();
         Self {
+            bounds,
             header_heights: vec![NODE_HEIGHT; graph.nodes.len()],
             containers: Vec::new(),
             parents: vec![None; graph.nodes.len()],
             width: routed.width,
             height: placement.height,
-            positions: placement.positions,
+            positions,
             bands: placement.bands,
             paths: routed.paths,
             junctions: routed.junctions,

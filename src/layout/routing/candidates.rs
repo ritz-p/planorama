@@ -1,6 +1,6 @@
 use super::lanes::{Lane, VerticalLanes};
 use super::simplify;
-use crate::layout::{NODE_WIDTH, Point};
+use crate::layout::Point;
 
 pub(super) struct RouteCandidate {
     pub points: Vec<Point>,
@@ -9,7 +9,7 @@ pub(super) struct RouteCandidate {
 
 impl RouteCandidate {
     pub(super) fn direct(start: Point, end: Point, lane: Lane, columns: &[usize]) -> Self {
-        let x = columns[lane.gutter] + NODE_WIDTH + lane.offset();
+        let x = columns[lane.gutter] + lane.offset();
         Self {
             points: simplify(vec![
                 start,
@@ -29,8 +29,8 @@ impl RouteCandidate {
         y: usize,
         columns: &[usize],
     ) -> Self {
-        let left = columns[source.gutter] + NODE_WIDTH + source.offset();
-        let right = columns[target.gutter] + NODE_WIDTH + target.offset();
+        let left = columns[source.gutter] + source.offset();
+        let right = columns[target.gutter] + target.offset();
         Self {
             points: simplify(vec![
                 start,

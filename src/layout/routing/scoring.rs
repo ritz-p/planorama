@@ -1,5 +1,5 @@
 use super::coverage::Coverage;
-use crate::layout::{NODE_HEIGHT, NODE_WIDTH, Point};
+use crate::layout::{Bounds, Point};
 use std::collections::{BTreeMap, BTreeSet};
 
 #[cfg(test)]
@@ -23,7 +23,7 @@ pub(super) struct Scorer {
 }
 
 impl Scorer {
-    pub(super) fn score(&self, points: &[Point], nodes: &[Point]) -> Score {
+    pub(super) fn score(&self, points: &[Point], nodes: &[Bounds]) -> Score {
         let mut score = Score {
             node_crossings: 0,
             overlap: 0,
@@ -44,16 +44,16 @@ impl Scorer {
                 .iter()
                 .filter(|node| match horizontal {
                     true => {
-                        a.y > node.y
-                            && a.y < node.y + NODE_HEIGHT
-                            && a.x.max(b.x) > node.x
-                            && a.x.min(b.x) < node.x + NODE_WIDTH
+                        a.y > node.origin.y
+                            && a.y < node.origin.y + node.height
+                            && a.x.max(b.x) > node.origin.x
+                            && a.x.min(b.x) < node.right()
                     }
                     false => {
-                        a.x > node.x
-                            && a.x < node.x + NODE_WIDTH
-                            && a.y.max(b.y) > node.y
-                            && a.y.min(b.y) < node.y + NODE_HEIGHT
+                        a.x > node.origin.x
+                            && a.x < node.right()
+                            && a.y.max(b.y) > node.origin.y
+                            && a.y.min(b.y) < node.origin.y + node.height
                     }
                 })
                 .count();

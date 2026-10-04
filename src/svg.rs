@@ -109,7 +109,9 @@ pub fn render(graph: &Graph, layout: &Layout<'_>) -> String {
         .unwrap();
     }
     for (i, node) in graph.nodes.iter().enumerate() {
-        let (x, y) = (layout.positions[i].x, layout.positions[i].y);
+        let bounds = layout.bounds[i];
+        let (x, y) = (bounds.origin.x, bounds.origin.y);
+        let card_width = bounds.width;
         let header_height = layout.header_heights[i];
         let background = containers::background(graph, layout, i);
         let border = color(node.action).1;
@@ -132,7 +134,7 @@ pub fn render(graph: &Graph, layout: &Layout<'_>) -> String {
         )
         .unwrap();
         if node.role != crate::model::ResourceRole::Container {
-            writeln!(svg, r#"<rect x="{x}" y="{y}" width="320" height="{header_height}" rx="8" fill="{background}" stroke="{border}" stroke-width="1.5"{mode}/>"#).unwrap();
+            writeln!(svg, r#"<rect x="{x}" y="{y}" width="{card_width}" height="{header_height}" rx="8" fill="{background}" stroke="{border}" stroke-width="1.5"{mode}/>"#).unwrap();
         }
         svg.push_str(&entities::badge(node.mode, x, y));
         writeln!(

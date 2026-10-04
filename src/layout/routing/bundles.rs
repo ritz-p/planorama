@@ -1,4 +1,4 @@
-use crate::layout::{NODE_HEIGHT, Point};
+use crate::layout::{Bounds, Point};
 use crate::model::{EdgeKind, Graph};
 use std::collections::{BTreeMap, BTreeSet};
 
@@ -73,12 +73,18 @@ impl Bundles {
         self.membership[edge]
     }
 
-    pub(super) fn align_ports(&self, sources: &mut [usize], targets: &mut [usize]) {
+    pub(super) fn align_ports(
+        &self,
+        graph: &Graph,
+        bounds: &[Bounds],
+        sources: &mut [usize],
+        targets: &mut [usize],
+    ) {
         for group in &self.groups {
             for &edge in &group.edges {
                 match group.shared {
-                    Shared::Source => sources[edge] = NODE_HEIGHT / 2,
-                    Shared::Target => targets[edge] = NODE_HEIGHT / 2,
+                    Shared::Source => sources[edge] = bounds[graph.edges[edge].from].height / 2,
+                    Shared::Target => targets[edge] = bounds[graph.edges[edge].to].height / 2,
                 }
             }
         }
@@ -88,7 +94,7 @@ impl Bundles {
         &self,
         index: usize,
         graph: &Graph,
-        positions: &[Point],
+        bounds: &[Bounds],
         sources: &[usize],
         targets: &[usize],
     ) -> (usize, usize) {
@@ -98,8 +104,8 @@ impl Bundles {
             .flat_map(|&edge| {
                 let (source, target) = graph.edges[edge].endpoints();
                 [
-                    positions[source].y + sources[edge],
-                    positions[target].y + targets[edge],
+                    bounds[source].origin.y + sources[edge],
+                    bounds[target].origin.y + targets[edge],
                 ]
             })
             .fold((usize::MAX, 0), |(low, high), y| (low.min(y), high.max(y)))
