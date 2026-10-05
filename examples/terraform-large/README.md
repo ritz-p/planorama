@@ -22,7 +22,7 @@ The generator deliberately supports only this example's subset: single-instance 
 
 The `.tf.json` files are Terraform source, not a second hand-maintained topology. Terraform 1.9+ and the AWS 5.x provider can validate them:
 
-Validation was run with Terraform 1.9.8 and AWS provider 5.100.0; the provider lock file is committed. The fixture itself has 48 resource instances. The current renderer produces 42 cards and 80 relationships after lowering four associations, omitting two metadata data sources, and inferring two common-parent containment relationships.
+Validation was run with Terraform 1.9.8 and AWS provider 5.100.0; the provider lock file is committed. The fixture itself has 48 resource instances. The current renderer produces 42 cards and 76 relationships after lowering four associations, omitting two metadata data sources, and inferring two common-parent containment relationships. Resolving exact worker indices removes four false-positive attachment relationships compared with the previous 80-relationship diagram.
 
 ```sh
 terraform -chdir=examples/terraform-large init -backend=false

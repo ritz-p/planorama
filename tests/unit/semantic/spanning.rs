@@ -6,6 +6,54 @@ fn fixture() -> Value {
     serde_json::from_str(include_str!("../../fixtures/multi-container-plan.json")).unwrap()
 }
 
+#[test]
+fn indexed_ecs_subnets_discard_terraform_traversal_prefixes() {
+    for (first, second) in [("0", "1"), ("\"blue\"", "\"green\"")] {
+        for blocks in [false, true] {
+            let selected = format!("aws_subnet.app[{first}]");
+            let other = format!("aws_subnet.app[{second}]");
+            let block = json!({"subnets": {"references": [
+                format!("{selected}.id"), selected, "aws_subnet.app"
+            ]}});
+            let raw = plan::parse(&json!({
+                "format_version": "1.2",
+                "resource_changes": [
+                    {"address": "aws_vpc.main", "type": "aws_vpc"},
+                    {"address": selected, "type": "aws_subnet"},
+                    {"address": other, "type": "aws_subnet"},
+                    {"address": "aws_ecs_service.app", "type": "aws_ecs_service"}
+                ],
+                "configuration": {"root_module": {"resources": [
+                    {"address": "aws_subnet.app", "expressions": {"vpc_id": {"references": ["aws_vpc.main.id"]}}},
+                    {"address": "aws_ecs_service.app", "expressions": {
+                        "network_configuration": if blocks { json!([block]) } else { block }
+                    }}
+                ]}}
+            }).to_string()).unwrap();
+            let attribute = raw
+                .attributes
+                .iter()
+                .find(|a| a.attribute == "network_configuration.subnets")
+                .unwrap();
+            assert!(attribute.complete);
+            assert_eq!(attribute.sources.len(), 1);
+            assert_eq!(raw.nodes[attribute.sources[0]].address, selected);
+            let graph = semantic::transform(&raw).0;
+            let ecs = index(&graph, "aws_ecs_service.app");
+            assert_eq!(
+                Layout::new(&graph).parents[ecs],
+                Some(index(&graph, &selected))
+            );
+            assert!(
+                !graph
+                    .edges
+                    .iter()
+                    .any(|edge| edge.from == index(&graph, &other) && edge.to == ecs)
+            );
+        }
+    }
+}
+
 fn index(graph: &Graph, address: &str) -> usize {
     graph
         .nodes

@@ -1,4 +1,4 @@
-use super::address::static_address;
+use super::address::{contextualize, matches_instance, static_address};
 use crate::model::Node;
 use serde_json::Value;
 use std::collections::{BTreeMap, BTreeSet};
@@ -7,7 +7,21 @@ pub(super) fn references(value: &Value, found: &mut BTreeSet<String>) {
     match value {
         Value::Object(object) => {
             if let Some(refs) = object.get("references").and_then(Value::as_array) {
-                found.extend(refs.iter().filter_map(Value::as_str).map(str::to_owned));
+                // Terraform emits traversal prefixes alongside the full reference.
+                // Keep the most specific traversals within this expression.
+                let refs: Vec<_> = refs.iter().filter_map(Value::as_str).collect();
+                found.extend(
+                    refs.iter()
+                        .filter(|&&reference| {
+                            !refs.iter().any(|&other| {
+                                other != reference
+                                    && other.strip_prefix(reference).is_some_and(|suffix| {
+                                        suffix.starts_with('.') || suffix.starts_with('[')
+                                    })
+                            })
+                        })
+                        .map(|&reference| reference.to_owned()),
+                );
             }
             for (key, value) in object {
                 if key != "constant_value" && key != "references" {
@@ -126,56 +140,105 @@ pub(super) fn resolve(
     nodes: &[Node],
     symbols: &BTreeMap<String, BTreeSet<String>>,
 ) -> Vec<crate::model::Edge> {
-    let mut instances: BTreeMap<String, Vec<usize>> = BTreeMap::new();
-    for (i, node) in nodes.iter().enumerate() {
-        instances
-            .entry(static_address(&node.address))
-            .or_default()
-            .push(i);
-    }
+    let instances = instance_map(nodes);
     let mut edges = BTreeSet::new();
     for (target, node) in nodes.iter().enumerate() {
-        let key = static_address(&node.address);
-        let mut pending: Vec<_> = symbols.get(&key).into_iter().flatten().cloned().collect();
-        let mut visited = BTreeSet::new();
-        while let Some(reference) = pending.pop() {
-            let reference = static_address(&reference);
-            if !visited.insert(reference.clone()) {
-                continue;
-            }
-            match instances
+        if let Some(refs) = symbols.get(&static_address(&node.address)) {
+            let refs = refs
                 .iter()
-                .filter(|(key, _)| prefix_match(&reference, key))
-                .max_by_key(|(key, _)| key.len())
-            {
-                Some((_, sources)) => {
-                    for &source in sources {
-                        if source != target {
-                            edges.insert((source, target));
-                        }
-                    }
+                .map(|r| contextualize(r, &node.address))
+                .collect();
+            let (sources, _) = resolve_sources(&refs, &instances, symbols);
+            for source in sources {
+                if source != target {
+                    edges.insert((source, target));
                 }
-                None => match symbols
-                    .iter()
-                    .filter(|(key, _)| prefix_match(&reference, key))
-                    .max_by_key(|(key, _)| key.len())
-                {
-                    Some((_, aliases)) => pending.extend(aliases.iter().cloned()),
-                    None if reference.starts_with("module.") => {
-                        for (key, sources) in &instances {
-                            if prefix_match(key, &reference) {
-                                for &source in sources {
-                                    if source != target {
-                                        edges.insert((source, target));
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    None => {}
-                },
             }
         }
     }
     edges.into_iter().map(crate::model::Edge::from).collect()
+}
+
+pub(super) fn instance_map(nodes: &[Node]) -> BTreeMap<String, Vec<usize>> {
+    nodes
+        .iter()
+        .enumerate()
+        .map(|(i, node)| (node.address.clone(), vec![i]))
+        .collect()
+}
+
+pub(super) fn resolve_sources(
+    refs: &BTreeSet<String>,
+    instances: &BTreeMap<String, Vec<usize>>,
+    symbols: &BTreeMap<String, BTreeSet<String>>,
+) -> (Vec<usize>, bool) {
+    let mut pending: Vec<_> = refs.iter().cloned().map(|r| (r, false)).collect();
+    let mut visited = BTreeSet::new();
+    let mut active = BTreeSet::new();
+    let mut sources = BTreeSet::new();
+    let mut complete = !pending.is_empty();
+    while let Some((reference, exiting)) = pending.pop() {
+        if exiting {
+            active.remove(&reference);
+            continue;
+        }
+        if active.contains(&reference) {
+            complete = false;
+            continue;
+        }
+        if !visited.insert(reference.clone()) {
+            continue;
+        }
+        active.insert(reference.clone());
+        pending.push((reference.clone(), true));
+        let normalized = static_address(&reference);
+        let resource_key = instances
+            .keys()
+            .map(|key| static_address(key))
+            .filter(|key| prefix_match(&normalized, key))
+            .max_by_key(String::len);
+        if let Some(key) = resource_key {
+            let matching: Vec<_> = instances
+                .iter()
+                .filter(|(address, _)| {
+                    static_address(address) == key && matches_instance(&reference, address)
+                })
+                .flat_map(|(_, indices)| indices.iter().copied())
+                .collect();
+            if matching.is_empty() {
+                complete = false;
+            }
+            sources.extend(matching);
+            continue;
+        }
+        match symbols
+            .iter()
+            .filter(|(key, _)| prefix_match(&normalized, key))
+            .max_by_key(|(key, _)| key.len())
+        {
+            Some((_, aliases)) if !aliases.is_empty() => {
+                pending.extend(
+                    aliases
+                        .iter()
+                        .map(|alias| (contextualize(alias, &reference), false)),
+                );
+            }
+            None if normalized.starts_with("module.") => {
+                let matching: Vec<_> = instances
+                    .iter()
+                    .filter(|(address, _)| {
+                        prefix_match(&static_address(address), &normalized)
+                            && matches_instance(&reference, address)
+                    })
+                    .flat_map(|(_, indices)| indices.iter().copied())
+                    .collect();
+                if matching.is_empty() {
+                    complete = false;
+                }
+                sources.extend(matching);
+            }
+            _ => complete = false,
+        }
+    }
+    (sources.into_iter().collect(), complete)
 }
