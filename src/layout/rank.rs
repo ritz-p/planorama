@@ -2,11 +2,14 @@ use crate::model::Graph;
 use std::collections::BTreeSet;
 
 pub(super) fn compute(graph: &Graph) -> Vec<usize> {
-    let n = graph.nodes.len();
+    let edges: Vec<_> = graph.edges.iter().map(|edge| edge.endpoints()).collect();
+    compute_edges(graph.nodes.len(), &edges)
+}
+
+pub(super) fn compute_edges(n: usize, edges: &[(usize, usize)]) -> Vec<usize> {
     let mut next = vec![Vec::new(); n];
     let mut previous = vec![Vec::new(); n];
-    for edge in &graph.edges {
-        let (a, b) = edge.endpoints();
+    for &(a, b) in edges {
         next[a].push(b);
         previous[b].push(a);
     }
@@ -53,8 +56,7 @@ pub(super) fn compute(graph: &Graph) -> Vec<usize> {
     }
     let mut links = vec![BTreeSet::new(); count];
     let mut degree = vec![0; count];
-    for edge in &graph.edges {
-        let (a, b) = edge.endpoints();
+    for &(a, b) in edges {
         let (a, b) = (component[a], component[b]);
         if a != b && links[a].insert(b) {
             degree[b] += 1;
