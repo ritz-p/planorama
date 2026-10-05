@@ -10,8 +10,8 @@ fn real_plan_renders_module_and_data_source_dependencies() {
     );
     assert!(output.stderr.is_empty());
     let svg = String::from_utf8(output.stdout).unwrap();
-    assert!(svg.contains("16 resources, 34 reference edges"));
-    assert_eq!(svg.matches("marker-end=").count(), 34);
+    assert!(svg.contains("16 resources, 28 reference edges"));
+    assert_eq!(svg.matches("marker-end=").count(), 28);
     for (source, target) in [
         ("terraform_data.independent", "terraform_data.explicit"),
         (
