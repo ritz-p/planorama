@@ -2,6 +2,34 @@ use super::*;
 use crate::layout::metrics::measure;
 
 #[test]
+fn symmetric_peers_keep_ports_and_routes_when_edges_are_reordered() {
+    let mut graph = ranked_fixture();
+    graph.nodes.truncate(4);
+    for (node, module) in [(1, "a"), (2, "b")] {
+        graph.nodes[node].address = format!("module.{module}.test.same");
+        graph.nodes[node].module = format!("module.{module}");
+    }
+    graph.edges = (1..4)
+        .map(|node| Edge {
+            kind: EdgeKind::Containment,
+            ..Edge::from((0, node))
+        })
+        .collect();
+    graph.edges.extend([Edge::from((1, 3)), Edge::from((2, 3))]);
+    let keys = ordering::structural_keys(&graph);
+    assert_eq!(keys[1], keys[2]);
+    let before = Layout::new(&graph);
+    let mut reordered = graph.clone();
+    reordered.edges.reverse();
+    let after = Layout::new(&reordered);
+    assert_eq!(before.bounds, after.bounds);
+    assert_eq!(
+        before.paths,
+        after.paths.into_iter().rev().collect::<Vec<_>>()
+    );
+}
+
+#[test]
 fn coincident_crossings_make_a_long_clear_detour_worthwhile() {
     use crate::layout::routing::scoring::Scorer;
     let start = Point { x: 100, y: 2000 };

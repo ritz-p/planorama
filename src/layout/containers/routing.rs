@@ -61,6 +61,17 @@ pub(super) fn route_with_quality(
     keys: &[usize],
     quality: bool,
 ) -> Vec<Vec<Point>> {
+    // Structural keys intentionally tie for symmetric nodes. Final geometry
+    // distinguishes those peers without depending on edge input order.
+    let geometry = |node: usize| {
+        let bounds = layout.bounds[node];
+        (
+            bounds.origin.x,
+            bounds.origin.y,
+            bounds.width,
+            bounds.height,
+        )
+    };
     let mut incident = incidents(graph, &layout.parents);
     for edges in &mut incident {
         edges.sort_by_key(|&(index, source)| {
@@ -75,6 +86,8 @@ pub(super) fn route_with_quality(
                 edge.kind,
                 edge.change.as_ref().map(|change| change.action),
                 edge.change.as_ref().map(|change| change.local_address()),
+                geometry(peer),
+                edge.change.as_ref().map(|change| change.address.as_str()),
             )
         });
     }
@@ -98,6 +111,9 @@ pub(super) fn route_with_quality(
             edge.kind,
             edge.change.as_ref().map(|c| c.action),
             edge.change.as_ref().map(|c| c.local_address()),
+            geometry(edge.from),
+            geometry(edge.to),
+            edge.change.as_ref().map(|change| change.address.as_str()),
         )
     });
     let mut scorer = Scorer::default();
