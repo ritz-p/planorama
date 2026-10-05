@@ -2,6 +2,27 @@ use super::*;
 use crate::layout::metrics::measure;
 
 #[test]
+fn coincident_crossings_make_a_long_clear_detour_worthwhile() {
+    use crate::layout::routing::scoring::Scorer;
+    let start = Point { x: 100, y: 2000 };
+    let end = Point { x: 500, y: 2000 };
+    let obstacles = [Bounds {
+        origin: Point { x: 200, y: 4000 },
+        width: 100,
+        height: 100,
+    }];
+    let occupied = vec![Point { x: 350, y: 500 }, Point { x: 350, y: 3500 }];
+    let mut scorer = Scorer::default();
+    for _ in 0..4 {
+        scorer.insert(occupied.clone());
+    }
+    let direct = routing::path_between(start, end, &obstacles, None);
+    let detour = routing::path_between(start, end, &obstacles, Some(&scorer));
+    assert_eq!(measure(&[occupied.clone(), direct]).crossing_count, 1);
+    assert_eq!(measure(&[occupied, detour]).crossing_count, 0);
+}
+
+#[test]
 fn congested_container_routes_improve_over_shortest_paths() {
     let raw = plan::parse(include_str!(
         "../../../../examples/terraform-large/plan.json"
