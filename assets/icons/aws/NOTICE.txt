@@ -1,0 +1,8 @@
+AWS Architecture Icons, release 07312026.
+Copyright Amazon Web Services, Inc. or its affiliates. All rights reserved.
+AWS service names and artwork are trademarks or other proprietary assets of AWS.
+Source: https://aws.amazon.com/architecture/icons/
+Terms: https://aws.amazon.com/terms/
+These assets are used to illustrate AWS architecture. They are not licensed
+under Planorama's original glyph MIT notice or any repository code license.
+No AWS endorsement is implied. Consult the AWS terms for other uses.

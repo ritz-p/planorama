@@ -1,28 +1,15 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1100" height="512" viewBox="0 0 1100 512" role="img" aria-labelledby="title description">
 <title id="title">Terraform plan</title>
 <desc id="description">3 resources (2 cards), 1 relationships. Lines show architectural relationships. Edge titles identify the relationship kind and Terraform change.</desc>
-<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/></marker><marker id="arrow-create" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#047857"/></marker><metadata id="planorama-icons-license">MIT License
-
-Copyright (c) 2026 Planorama contributors
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of the Planorama service glyphs and associated documentation files (the
-&quot;Software&quot;), to deal in the Software without restriction, including without
-limitation the rights to use, copy, modify, merge, publish, distribute,
-sublicense, and/or sell copies of the Software, and to permit persons to whom
-the Software is furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-</metadata><symbol id="planorama-icon-aws-subnet" viewBox="0 0 24 24"><rect width="24" height="24" rx="4" fill="#6346a6"/><g fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="5" width="14" height="14" rx="2"/><path d="M5 12h14M12 5v14"/></g></symbol><symbol id="planorama-icon-aws-route" viewBox="0 0 24 24"><rect width="24" height="24" rx="4" fill="#6346a6"/><g fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 18h5V6h8m-3-3 3 3-3 3M10 13h8m-3-3 3 3-3 3"/><circle cx="5" cy="18" r="2"/></g></symbol></defs>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/></marker><marker id="arrow-create" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#047857"/></marker><metadata id="planorama-icons-license">AWS Architecture Icons, release 07312026.
+Copyright Amazon Web Services, Inc. or its affiliates. All rights reserved.
+AWS service names and artwork are trademarks or other proprietary assets of AWS.
+Source: https://aws.amazon.com/architecture/icons/
+Terms: https://aws.amazon.com/terms/
+These assets are used to illustrate AWS architecture. They are not licensed
+under Planorama&apos;s original glyph MIT notice or any repository code license.
+No AWS endorsement is implied. Consult the AWS terms for other uses.
+</metadata><symbol id="planorama-icon-aws-vpc" viewBox="0 0 24 24"><image width="24" height="24" preserveAspectRatio="xMidYMid meet" href="data:image/svg+xml,%3C%3Fxml%20version%3D%221.0%22%20encoding%3D%22UTF-8%22%3F%3E%0A%3Csvg%20width%3D%2264px%22%20height%3D%2264px%22%20viewBox%3D%220%200%2064%2064%22%20version%3D%221.1%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20xmlns%3Axlink%3D%22http%3A%2F%2Fwww.w3.org%2F1999%2Fxlink%22%3E%0A%20%20%20%20%3Ctitle%3EIcon-Architecture%2F48%2FArch_Amazon-Virtual-Private-Cloud_48%3C%2Ftitle%3E%0A%20%20%20%20%3Cg%20id%3D%22Icon-Architecture%2F48%2FArch_Amazon-Virtual-Private-Cloud_48%22%20stroke%3D%22none%22%20stroke-width%3D%221%22%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%0A%20%20%20%20%20%20%20%20%3Cg%20id%3D%22Icon-Architecture-BG%2F48%2FNetworking-Content-Delivery%22%20fill%3D%22%238C4FFF%22%3E%0A%20%20%20%20%20%20%20%20%20%20%20%20%3Crect%20id%3D%22Rectangle%22%20x%3D%220%22%20y%3D%220%22%20width%3D%2264%22%20height%3D%2264%22%3E%3C%2Frect%3E%0A%20%20%20%20%20%20%20%20%3C%2Fg%3E%0A%20%20%20%20%20%20%20%20%3Cpath%20d%3D%22M48%2C33.9772867%20L44.499%2C32.5082867%20L44.499%2C46.8782867%20C47.906%2C46.1472867%2047.998%2C42.1812867%2048%2C41.9952867%20L48%2C33.9772867%20Z%20M42.499%2C46.9232867%20L42.499%2C32.5082867%20L39%2C33.9772867%20L39%2C42.0042867%20C39.008%2C42.4662867%2039.183%2C46.3392867%2042.499%2C46.9232867%20L42.499%2C46.9232867%20Z%20M43.112%2C30.0822867%20C43.358%2C29.9772867%2043.638%2C29.9782867%2043.886%2C30.0812867%20L49.387%2C32.3902867%20C49.759%2C32.5462867%2050%2C32.9092867%2050%2C33.3122867%20L50%2C42.0042867%20C49.978%2C44.4312867%2048.562%2C49.0042867%2043.37%2C49.0042867%20C38.393%2C49.0042867%2037.026%2C44.4322867%2037%2C42.0152867%20L37%2C33.3122867%20C37%2C32.9092867%2037.241%2C32.5462867%2037.613%2C32.3902867%20L43.112%2C30.0822867%20Z%20M52%2C30.7922867%20L43.492%2C27.0922867%20L34.9998912%2C30.6682867%20L34.9998912%2C41.0252867%20C34.999%2C41.0902867%2034.963%2C46.0092867%2037.807%2C48.8942867%20C39.187%2C50.2942867%2041.059%2C51.0042867%2043.37%2C51.0042867%20C51.808%2C51.0042867%2051.996%2C41.4252867%2052%2C41.0182867%20L52%2C30.7922867%20Z%20M54%2C30.1362867%20L54%2C41.0252867%20C53.973%2C45.1732867%2051.716%2C53.0042867%2043.37%2C53.0042867%20C40.498%2C53.0042867%2038.145%2C52.0902867%2036.373%2C50.2882867%20C32.941%2C46.7972867%2032.996%2C41.2432867%2033%2C41.0082867%20L33%2C30.0042867%20C33%2C29.6022867%2033.241%2C29.2382867%2033.612%2C29.0822867%20L43.111%2C25.0822867%20C43.363%2C24.9762867%2043.647%2C24.9782867%2043.897%2C25.0872867%20L53.398%2C29.2192867%20C53.764%2C29.3782867%2054%2C29.7382867%2054%2C30.1362867%20L54%2C30.1362867%20Z%20M19%2C38.0042867%20L30%2C38.0042867%20L30%2C40.0042867%20L19%2C40.0042867%20C14.216%2C40.0042867%2010.271%2C36.4832867%2010.02%2C31.9882867%20C10.002%2C31.8132867%2010%2C31.5992867%2010%2C31.3852867%20C10%2C26.0862867%2013.654%2C24.0382867%2015.919%2C23.2782867%20C15.902%2C23.0632867%2015.891%2C22.8432867%2015.891%2C22.6262867%20C15.891%2C18.0392867%2018.658%2C13.7012867%2022.621%2C12.0792867%20C27.58%2C10.0492867%2033.235%2C10.9372867%2036.695%2C14.2852867%20C37.718%2C15.2822867%2038.604%2C16.5962867%2039.343%2C18.2062867%20C40.299%2C17.4222867%2041.392%2C17.0042867%2042.523%2C17.0042867%20C45.234%2C17.0042867%2048.281%2C19.2962867%2048.9%2C23.0622867%20C51.069%2C23.3442867%2052.936%2C24.6392867%2053.896%2C26.5822867%20L52.104%2C27.4692867%20C51.34%2C25.9252867%2049.806%2C25.0042867%2048%2C25.0042867%20C47.471%2C25.0042867%2047.033%2C24.5912867%2047.002%2C24.0632867%20C46.807%2C20.7622867%2044.275%2C19.0042867%2042.523%2C19.0042867%20C41.55%2C19.0042867%2040.582%2C19.5742867%2039.797%2C20.6082867%20C39.575%2C20.8992867%2039.215%2C21.0482867%2038.852%2C20.9932867%20C38.49%2C20.9382867%2038.187%2C20.6912867%2038.062%2C20.3482867%20C37.327%2C18.3462867%2036.398%2C16.7892867%2035.302%2C15.7202867%20C32.406%2C12.9172867%2027.615%2C12.1962867%2023.379%2C13.9302867%20C19.775%2C15.4052867%2017.891%2C19.4212867%2017.891%2C22.6262867%20C17.891%2C23.0262867%2017.947%2C23.5032867%2017.993%2C23.8862867%20C18.053%2C24.3862867%2017.73%2C24.8532867%2017.24%2C24.9752867%20C15.283%2C25.4592867%2012%2C26.9372867%2012%2C31.3852867%20C12%2C31.5352867%2011.998%2C31.6852867%2012.013%2C31.8362867%20C12.209%2C35.3122867%2015.276%2C38.0042867%2019%2C38.0042867%20L19%2C38.0042867%20Z%22%20id%3D%22Amazon-Virtual-Private-Cloud_Icon_48_Squid%22%20fill%3D%22%23FFFFFF%22%3E%3C%2Fpath%3E%0A%20%20%20%20%3C%2Fg%3E%0A%3C%2Fsvg%3E"/></symbol></defs>
 <rect width="100%" height="100%" fill="#ffffff"/>
 <g font-family="ui-monospace, SFMono-Regular, Consolas, monospace">
 <text x="40" y="45" font-size="25" font-weight="700" fill="#0f172a">Terraform plan</text>
@@ -39,13 +26,13 @@ SOFTWARE.
 <g id="resource-0" data-qualified-address="module.root.aws_route_table.private" data-terraform-address="aws_route_table.private"><title>module.root.aws_route_table.private — create</title>
 <rect x="60" y="336" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text x="72" y="356" font-size="11" fill="#047857">aws_route_table · create</text>
-<use href="#planorama-icon-aws-route" x="72" y="364" width="24" height="24" aria-hidden="true"/><text x="104" y="381" font-size="13" fill="#0f172a">module.root.aws_route_table.priva</text>
+<use href="#planorama-icon-aws-vpc" x="72" y="364" width="24" height="24" aria-hidden="true"/><text x="104" y="381" font-size="13" fill="#0f172a">module.root.aws_route_table.priva</text>
 <text x="104" y="401" font-size="13" fill="#0f172a">te</text>
 <text x="72" y="420" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
 <g id="resource-1" data-qualified-address="module.root.aws_subnet.private" data-terraform-address="aws_subnet.private"><title>module.root.aws_subnet.private — create</title>
 <text x="72" y="180" font-size="11" fill="#047857">aws_subnet · create</text>
-<use href="#planorama-icon-aws-subnet" x="72" y="188" width="24" height="24" aria-hidden="true"/><text x="104" y="205" font-size="13" fill="#0f172a">module.root.aws_subnet.private</text>
+<use href="#planorama-icon-aws-vpc" x="72" y="188" width="24" height="24" aria-hidden="true"/><text x="104" y="205" font-size="13" fill="#0f172a">module.root.aws_subnet.private</text>
 <text x="72" y="244" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
 </g>

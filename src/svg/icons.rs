@@ -2,7 +2,7 @@ use crate::{
     icons::{Provider, ResourceIcon, icon_for},
     model::Node,
 };
-use std::collections::BTreeSet;
+use std::collections::BTreeMap;
 use std::fmt::Write;
 
 #[cfg(test)]
@@ -11,7 +11,7 @@ mod tests;
 
 pub(super) const SIZE: usize = 24;
 pub(super) const GAP: usize = 8;
-const LICENSE: &str = include_str!("../../docs/icons-LICENSE.txt");
+const NOTICE: &str = include_str!("../../assets/icons/aws/NOTICE.txt");
 
 pub(super) fn for_node(node: &Node) -> Option<ResourceIcon> {
     icon_for(
@@ -21,20 +21,38 @@ pub(super) fn for_node(node: &Node) -> Option<ResourceIcon> {
 }
 
 pub(super) fn definitions(nodes: &[Node]) -> String {
-    let used: BTreeSet<_> = nodes.iter().filter_map(for_node).collect();
+    let used: BTreeMap<_, _> = nodes
+        .iter()
+        .filter_map(for_node)
+        .map(|icon| (icon.id(), icon))
+        .collect();
     let mut svg = String::new();
     if !used.is_empty() {
         write!(
             svg,
             "<metadata id=\"planorama-icons-license\">{}</metadata>",
-            super::escape(LICENSE)
+            super::escape(&NOTICE.replace("\r\n", "\n"))
         )
         .unwrap();
     }
-    for icon in used {
-        write!(svg, r##"<symbol id="{}" viewBox="0 0 24 24"><rect width="24" height="24" rx="4" fill="{}"/><g fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">{}</g></symbol>"##, icon.id(), icon.color(), icon.shapes()).unwrap();
+    for (id, icon) in used {
+        let data = data_uri(icon.svg());
+        write!(svg, r#"<symbol id="{id}" viewBox="0 0 24 24"><image width="24" height="24" preserveAspectRatio="xMidYMid meet" href="{data}"/></symbol>"#).unwrap();
     }
     svg
+}
+
+fn data_uri(svg: &str) -> String {
+    let mut result = String::from("data:image/svg+xml,");
+    for byte in svg.bytes() {
+        match byte {
+            b'A'..=b'Z' | b'a'..=b'z' | b'0'..=b'9' | b'-' | b'_' | b'.' | b'~' => {
+                result.push(byte as char)
+            }
+            _ => write!(result, "%{byte:02X}").unwrap(),
+        }
+    }
+    result
 }
 
 pub(super) fn render(icon: ResourceIcon, x: usize, y: usize) -> String {
