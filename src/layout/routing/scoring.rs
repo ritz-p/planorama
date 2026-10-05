@@ -19,10 +19,26 @@ pub(in crate::layout) struct Score {
 pub(in crate::layout) struct Scorer {
     horizontal: BTreeMap<usize, Coverage>,
     vertical: BTreeMap<usize, Coverage>,
+    horizontal_paths: BTreeMap<usize, Vec<(usize, usize, usize)>>,
+    vertical_paths: BTreeMap<usize, Vec<(usize, usize, usize)>>,
     paths: Vec<Vec<Point>>,
 }
 
 impl Scorer {
+    pub(in crate::layout) fn overlaps(&self, points: &[Point]) -> bool {
+        points.windows(2).any(|pair| {
+            let (a, b) = (pair[0], pair[1]);
+            let (index, coordinate, from, to) = if a.y == b.y {
+                (&self.horizontal, a.y, a.x, b.x)
+            } else {
+                (&self.vertical, a.x, a.y, b.y)
+            };
+            index
+                .get(&coordinate)
+                .is_some_and(|coverage| coverage.overlap(from, to) > 0)
+        })
+    }
+
     pub(in crate::layout) fn readability_cost(&self, points: &[Point]) -> u128 {
         let score = self.score(points, &[]);
         score.overlap * 8 + score.crossings as u128 * 2048 + score.bends as u128 * 24 + score.length
@@ -84,6 +100,18 @@ impl Scorer {
                 true => self.horizontal.entry(a.y).or_default().insert(a.x, b.x),
                 false => self.vertical.entry(a.x).or_default().insert(a.y, b.y),
             }
+            let (index, coordinate, from, to) = if a.y == b.y {
+                (&mut self.horizontal_paths, a.y, a.x, b.x)
+            } else {
+                (&mut self.vertical_paths, a.x, a.y, b.y)
+            };
+            if from != to {
+                index.entry(coordinate).or_default().push((
+                    self.paths.len(),
+                    from.min(to),
+                    from.max(to),
+                ));
+            }
         }
         self.paths.push(points);
     }
@@ -93,9 +121,9 @@ impl Scorer {
     pub(in crate::layout) fn segment_cost(&self, a: Point, b: Point) -> u128 {
         let horizontal = a.y == b.y;
         let (parallel, perpendicular, coordinate, from, to) = if horizontal {
-            (&self.horizontal, &self.vertical, a.y, a.x, b.x)
+            (&self.horizontal, &self.vertical_paths, a.y, a.x, b.x)
         } else {
-            (&self.vertical, &self.horizontal, a.x, a.y, b.y)
+            (&self.vertical, &self.horizontal_paths, a.x, a.y, b.y)
         };
         let overlap = parallel.get(&coordinate).map_or(0, |c| c.overlap(from, to));
         let crossings = perpendicular
@@ -103,10 +131,15 @@ impl Scorer {
                 std::ops::Bound::Excluded(from.min(to)),
                 std::ops::Bound::Included(from.max(to)),
             ))
-            .filter(|(_, coverage)| {
-                coverage.overlap(coordinate.saturating_sub(1), coordinate + 1) > 0
+            .map(|(_, segments)| {
+                segments
+                    .iter()
+                    .filter(|&&(_, from, to)| from < coordinate && coordinate < to)
+                    .map(|&(path, _, _)| path)
+                    .collect::<BTreeSet<_>>()
+                    .len()
             })
-            .count();
+            .sum::<usize>();
         overlap * 8 + crossings as u128 * 2048
     }
 }

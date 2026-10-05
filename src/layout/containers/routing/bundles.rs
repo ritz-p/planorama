@@ -17,8 +17,25 @@ pub(super) fn try_bundle(
     targets: &[usize],
     scorer: &Scorer,
 ) -> Option<Bundle> {
+    [16, 24, 8].into_iter().find_map(|clearance| {
+        let trunk = layout.bounds[group.target]
+            .origin
+            .x
+            .checked_sub(clearance)?;
+        candidate(graph, layout, group, sources, targets, scorer, trunk)
+    })
+}
+
+fn candidate(
+    graph: &Graph,
+    layout: &Layout<'_>,
+    group: &Group,
+    sources: &[usize],
+    targets: &[usize],
+    scorer: &Scorer,
+    trunk: usize,
+) -> Option<Bundle> {
     let target = layout.bounds[group.target];
-    let trunk = target.origin.x.checked_sub(16)?;
     if group
         .sources
         .iter()
@@ -51,6 +68,11 @@ pub(super) fn try_bundle(
             end,
         ];
         path.dedup();
+        // Sharing is intentional only within this candidate group. Occupied
+        // segments belong to other relationships and must remain distinct.
+        if scorer.overlaps(&path) {
+            return None;
+        }
         let obstacles = obstacles(layout, edge);
         if path
             .windows(2)

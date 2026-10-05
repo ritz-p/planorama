@@ -9,6 +9,34 @@ fn dense() -> Graph {
 }
 
 #[test]
+fn different_spanning_targets_do_not_share_bundle_segments() {
+    let raw = plan::parse(include_str!("../../../fixtures/multi-container-plan.json")).unwrap();
+    let graph = semantic::transform(&raw).0;
+    let layout = Layout::new(&graph);
+    let groups = affinity::groups(&graph, &layout.parents);
+    assert_eq!(groups.len(), 2);
+    for &first in &groups[0].edges {
+        for &second in &groups[1].edges {
+            assert_eq!(
+                measure(&[layout.paths[first].clone(), layout.paths[second].clone()])
+                    .overlap_distance,
+                0,
+                "different targets share a connection segment"
+            );
+        }
+    }
+    verify(&graph);
+    let mut reordered = graph.clone();
+    reordered.edges.reverse();
+    let other = Layout::new(&reordered);
+    assert_eq!(
+        layout.paths,
+        other.paths.into_iter().rev().collect::<Vec<_>>()
+    );
+    assert_eq!(layout.junctions, other.junctions);
+}
+
+#[test]
 fn three_subnet_alb_stays_in_vpc_and_moves_to_the_source_median() {
     let graph = dense();
     let original = graph.clone();

@@ -5,6 +5,22 @@ fn points(values: &[(usize, usize)]) -> Vec<Point> {
 }
 
 #[test]
+fn grid_crossings_preserve_path_multiplicity_but_not_repeated_segments() {
+    let mut scorer = Scorer::default();
+    for _ in 0..3 {
+        scorer.insert(points(&[(50, 10), (50, 90), (50, 10)]));
+    }
+    let a = Point { x: 10, y: 50 };
+    let b = Point { x: 90, y: 50 };
+    assert_eq!(scorer.score(&[a, b], &[]).crossings, 3);
+    assert_eq!(scorer.segment_cost(a, b), 3 * 2048);
+    assert_eq!(
+        scorer.segment_cost(Point { x: 10, y: 10 }, Point { x: 90, y: 10 }),
+        0
+    );
+}
+
+#[test]
 fn grid_cost_counts_crossings_at_subdivision_vertices_and_occupied_segments() {
     let mut scorer = Scorer::default();
     scorer.insert(points(&[(50, 10), (50, 90)]));
