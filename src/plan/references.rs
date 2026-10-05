@@ -37,6 +37,16 @@ pub(super) fn collect_config(
     inherited: &BTreeSet<String>,
     symbols: &mut BTreeMap<String, BTreeSet<String>>,
 ) {
+    if let Some(locals) = module["locals"].as_object() {
+        for (name, expression) in locals {
+            let mut refs = BTreeSet::new();
+            references(expression, &mut refs);
+            symbols.insert(
+                qualify(scope, &format!("local.{name}")),
+                refs.into_iter().map(|r| qualify(scope, &r)).collect(),
+            );
+        }
+    }
     for resource in module["resources"].as_array().into_iter().flatten() {
         if let Some(address) = resource["address"].as_str() {
             let mut refs = BTreeSet::new();
