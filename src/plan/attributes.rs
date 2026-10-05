@@ -94,9 +94,12 @@ fn subnet_references(block: &Value) -> Option<BTreeSet<String>> {
             if refs.is_empty() || expression.get("constant_value").is_some() {
                 return None;
             }
-            refs.iter()
-                .map(|value| value.as_str().map(str::to_owned))
-                .collect()
+            if refs.iter().any(|value| !value.is_string()) {
+                return None;
+            }
+            let mut found = BTreeSet::new();
+            references(expression, &mut found);
+            Some(found)
         }
         _ => None,
     }
