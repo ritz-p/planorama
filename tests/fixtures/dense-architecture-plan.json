@@ -1,0 +1,21 @@
+{
+  "format_version": "1.2",
+  "resource_changes": [
+    {"address": "aws_vpc.main", "type": "aws_vpc"},
+    {"address": "aws_subnet.app[0]", "type": "aws_subnet"},
+    {"address": "aws_subnet.app[1]", "type": "aws_subnet"},
+    {"address": "aws_subnet.app[2]", "type": "aws_subnet"},
+    {"address": "aws_subnet.app[3]", "type": "aws_subnet"},
+    {"address": "aws_subnet.app[4]", "type": "aws_subnet"},
+    {"address": "aws_subnet.app[5]", "type": "aws_subnet"},
+    {"address": "aws_s3_bucket.logs[0]", "type": "aws_s3_bucket"},
+    {"address": "aws_s3_bucket.logs[1]", "type": "aws_s3_bucket"},
+    {"address": "aws_s3_bucket.logs[2]", "type": "aws_s3_bucket"},
+    {"address": "aws_s3_bucket.logs[3]", "type": "aws_s3_bucket"},
+    {"address": "aws_s3_bucket.logs[4]", "type": "aws_s3_bucket"},
+    {"address": "aws_s3_bucket.logs[5]", "type": "aws_s3_bucket"}
+  ],
+  "configuration": {"root_module": {"resources": [
+    {"address": "aws_subnet.app", "expressions": {"vpc_id": {"references": ["aws_vpc.main.id"]}}}
+  ]}}
+}
