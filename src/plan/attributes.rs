@@ -109,15 +109,26 @@ fn resolve(
     instances: &BTreeMap<String, Vec<usize>>,
     symbols: &BTreeMap<String, BTreeSet<String>>,
 ) -> (Vec<usize>, bool) {
-    let mut pending: Vec<_> = refs.iter().cloned().collect();
+    let mut pending: Vec<_> = refs.iter().cloned().map(|r| (r, false)).collect();
     let mut visited = BTreeSet::new();
+    let mut active = BTreeSet::new();
     let mut sources = BTreeSet::new();
     let mut complete = !pending.is_empty();
-    while let Some(reference) = pending.pop() {
+    while let Some((reference, exiting)) = pending.pop() {
         let reference = static_address(&reference);
+        if exiting {
+            active.remove(&reference);
+            continue;
+        }
+        if active.contains(&reference) {
+            complete = false;
+            continue;
+        }
         if !visited.insert(reference.clone()) {
             continue;
         }
+        active.insert(reference.clone());
+        pending.push((reference.clone(), true));
         match instances
             .iter()
             .filter(|(key, _)| prefix_match(&reference, key))
@@ -130,7 +141,7 @@ fn resolve(
                 .max_by_key(|(key, _)| key.len())
             {
                 Some((_, aliases)) if !aliases.is_empty() => {
-                    pending.extend(aliases.iter().cloned())
+                    pending.extend(aliases.iter().cloned().map(|r| (r, false)))
                 }
                 None if reference.starts_with("module.") => {
                     let descendants: Vec<_> = instances

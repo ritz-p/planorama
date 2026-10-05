@@ -1,5 +1,8 @@
 use super::*;
 
+#[path = "plan/locals.rs"]
+mod locals;
+
 #[test]
 fn parsed_edges_are_ordered_dependencies() {
     let graph = parse(include_str!("../../tests/fixtures/terraform-plan.json")).unwrap();
