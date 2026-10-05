@@ -24,6 +24,8 @@ The `.tf.json` files are Terraform source, not a second hand-maintained topology
 
 Validation was run with Terraform 1.9.8 and AWS provider 5.100.0; the provider lock file is committed. The fixture itself has 48 resource instances. The current renderer produces 42 cards and 76 relationships after lowering four associations, omitting two metadata data sources, and inferring two common-parent containment relationships. Resolving exact worker indices removes four false-positive attachment relationships compared with the previous 80-relationship diagram.
 
+Rank-based placement inside containers reduces this diagram's height from 6152 to 5880 pixels while preserving all 76 relationships and the containment hierarchy. Root groups still stack vertically; the improvement applies within architecture containers.
+
 ```sh
 terraform -chdir=examples/terraform-large init -backend=false
 terraform -chdir=examples/terraform-large validate

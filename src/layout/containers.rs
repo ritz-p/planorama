@@ -2,6 +2,7 @@ use super::{Bounds, Layout, NODE_HEIGHT, NODE_WIDTH, Point};
 use crate::model::{EdgeKind, Graph, ResourceRole};
 use std::collections::BTreeSet;
 mod ordering;
+mod placement;
 mod routing;
 
 #[cfg(test)]
@@ -69,18 +70,27 @@ pub(super) fn place(graph: &Graph) -> Layout<'_> {
         .iter()
         .map(|&height| (NODE_WIDTH, height))
         .collect();
+    let mut offsets = vec![Point { x: 0, y: 0 }; graph.nodes.len()];
     for &node in order.iter().rev() {
         if graph.nodes[node].role == ResourceRole::Container {
-            let width = children[node]
-                .iter()
-                .map(|&child| sizes[child].0)
-                .max()
-                .unwrap_or(NODE_WIDTH);
-            let height: usize = children[node]
-                .iter()
-                .map(|&child| sizes[child].1 + PADDING)
-                .sum();
-            sizes[node] = (width + PADDING * 2, header_heights[node] + PADDING + height);
+            let columns = placement::columns(graph, node, &children[node], &parents);
+            let mut x = PADDING;
+            let mut height = header_heights[node] + PADDING;
+            for column in columns {
+                let width = column
+                    .iter()
+                    .map(|&child| sizes[child].0)
+                    .max()
+                    .unwrap_or(0);
+                let mut y = header_heights[node] + PADDING;
+                for child in column {
+                    offsets[child] = Point { x, y };
+                    y += sizes[child].1 + PADDING;
+                }
+                height = height.max(y);
+                x += width + PADDING;
+            }
+            sizes[node] = (x.max(NODE_WIDTH + PADDING * 2), height);
         }
     }
     let mut layout = Layout {
@@ -111,13 +121,11 @@ pub(super) fn place(graph: &Graph) -> Layout<'_> {
             if graph.nodes[node].role == ResourceRole::Container {
                 layout.containers.push(node);
             }
-            let mut child_y = origin.y + layout.header_heights[node] + PADDING;
             for &child in &children[node] {
                 layout.positions[child] = Point {
-                    x: origin.x + PADDING,
-                    y: child_y,
+                    x: origin.x + offsets[child].x,
+                    y: origin.y + offsets[child].y,
                 };
-                child_y += sizes[child].1 + PADDING;
             }
             pending.extend(children[node].iter().rev().copied());
         }

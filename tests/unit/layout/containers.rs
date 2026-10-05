@@ -9,6 +9,109 @@ fn fixture() -> Graph {
     semantic::transform(&raw).0
 }
 
+fn ranked_fixture() -> Graph {
+    let template = fixture().nodes.remove(0);
+    let nodes = (0..7)
+        .map(|i| Node {
+            address: format!("test.node{i}"),
+            module: "root".into(),
+            role: if i == 0 {
+                ResourceRole::Container
+            } else {
+                ResourceRole::Node
+            },
+            ..template.clone()
+        })
+        .collect();
+    let mut edges: Vec<_> = (1..7)
+        .map(|child| Edge {
+            kind: EdgeKind::Containment,
+            ..Edge::from((0, child))
+        })
+        .collect();
+    edges.extend([(1, 3), (2, 4), (3, 5), (4, 6)].map(Edge::from));
+    Graph { nodes, edges }
+}
+
+#[test]
+fn multiple_ranks_reduce_height_and_keep_same_rank_siblings_separate() {
+    let graph = ranked_fixture();
+    let layout = Layout::new(&graph);
+    for (from, to) in [(1, 3), (2, 4), (3, 5), (4, 6)] {
+        assert!(layout.bounds[from].right() < layout.bounds[to].origin.x);
+    }
+    for (a, b) in [(1, 2), (3, 4), (5, 6)] {
+        assert_eq!(layout.positions[a].x, layout.positions[b].x);
+        assert!(!overlaps(layout.bounds[a], layout.bounds[b]));
+    }
+    let vertical_height = layout.header_heights[0]
+        + PADDING
+        + (1..7)
+            .map(|i| layout.bounds[i].height + PADDING)
+            .sum::<usize>();
+    assert!(layout.bounds[0].height < vertical_height / 2);
+    assert_eq!(graph, ranked_fixture());
+    verify(&graph);
+}
+
+#[test]
+fn nested_subtree_relationships_rank_sibling_containers_using_final_sizes() {
+    let mut graph = ranked_fixture();
+    graph.nodes[1].role = ResourceRole::Container;
+    graph.nodes[2].role = ResourceRole::Container;
+    graph.edges = [(0, 1), (0, 2), (1, 3), (1, 5), (2, 4), (2, 6)]
+        .map(|pair| Edge {
+            kind: EdgeKind::Containment,
+            ..Edge::from(pair)
+        })
+        .into();
+    graph.edges.extend([(3, 5), (4, 6), (5, 4)].map(Edge::from));
+    let layout = Layout::new(&graph);
+    assert_eq!(
+        layout.parents,
+        vec![None, Some(0), Some(0), Some(1), Some(2), Some(1), Some(2)]
+    );
+    for (from, to) in [(1, 2), (3, 5), (4, 6)] {
+        assert!(layout.bounds[from].right() < layout.positions[to].x);
+    }
+    assert!(layout.bounds[1].width > 2 * NODE_WIDTH);
+    assert!(layout.bounds[0].width > layout.bounds[1].width + layout.bounds[2].width);
+    verify(&graph);
+}
+
+#[test]
+fn cyclic_children_share_a_rank_and_external_edges_do_not_change_membership() {
+    let mut graph = ranked_fixture();
+    graph.edges.extend([Edge::from((3, 1)), Edge::from((3, 3))]);
+    let mut external = graph.nodes[1].clone();
+    external.address = "test.external".into();
+    graph.nodes.push(external);
+    graph.edges.extend([Edge::from((7, 1)), Edge::from((5, 7))]);
+    let layout = Layout::new(&graph);
+    assert_eq!(layout.positions[1].x, layout.positions[3].x);
+    assert!(layout.positions[5].x > layout.bounds[3].right());
+    assert_eq!(layout.parents[7], None);
+    verify(&graph);
+
+    let mut reordered = graph.clone();
+    let count = reordered.nodes.len();
+    reordered.nodes.reverse();
+    reordered.edges.reverse();
+    for edge in &mut reordered.edges {
+        edge.from = count - 1 - edge.from;
+        edge.to = count - 1 - edge.to;
+    }
+    let again = Layout::new(&reordered);
+    assert_eq!(
+        layout.bounds,
+        again.bounds.into_iter().rev().collect::<Vec<_>>()
+    );
+    assert_eq!(
+        layout.paths,
+        again.paths.into_iter().rev().collect::<Vec<_>>()
+    );
+}
+
 #[test]
 fn expanded_container_ports_and_obstacles_use_the_rendered_bounds() {
     let mut graph = fixture();
@@ -700,6 +803,16 @@ fn overlaps(a: Bounds, b: Bounds) -> bool {
 
 fn verify(graph: &Graph) {
     let layout = Layout::new(graph);
+    for (i, parent) in layout.parents.iter().enumerate() {
+        for (j, other_parent) in layout.parents.iter().enumerate().skip(i + 1) {
+            if parent == other_parent {
+                assert!(
+                    !overlaps(layout.bounds[i], layout.bounds[j]),
+                    "siblings {i} and {j} overlap"
+                );
+            }
+        }
+    }
     for (edge, path) in graph
         .edges
         .iter()
