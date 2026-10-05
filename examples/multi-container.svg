@@ -25,37 +25,37 @@
 <g data-edge-kind="containment" data-source="resource-5" data-target="resource-4"><title>aws_vpc.main → aws_subnet.b (containment)</title></g>
 <g data-edge-kind="containment" data-source="resource-5" data-target="resource-0"><title>aws_vpc.main → aws_ecs_service.app (containment)</title></g>
 <g data-edge-kind="containment" data-source="resource-5" data-target="resource-1"><title>aws_vpc.main → aws_lb.app (containment)</title></g>
-<g id="resource-0" data-qualified-address="module.root.aws_ecs_service.app"><title>aws_ecs_service.app — create</title>
+<g id="resource-0" data-qualified-address="module.root.aws_ecs_service.app" data-terraform-address="aws_ecs_service.app"><title>module.root.aws_ecs_service.app — create</title>
 <rect x="100" y="296" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text x="112" y="316" font-size="11" fill="#047857">aws_ecs_service · create</text>
-<text x="112" y="341" font-size="13" fill="#0f172a">aws_ecs_service.app</text>
+<text x="112" y="341" font-size="13" fill="#0f172a">module.root.aws_ecs_service.app</text>
 <text x="112" y="380" font-size="10" fill="#64748b" data-role="controller"><title>root</title>controller · root</text>
 </g>
-<g id="resource-1" data-qualified-address="module.root.aws_lb.app"><title>aws_lb.app — create</title>
+<g id="resource-1" data-qualified-address="module.root.aws_lb.app" data-terraform-address="aws_lb.app"><title>module.root.aws_lb.app — create</title>
 <rect x="100" y="432" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text x="112" y="452" font-size="11" fill="#047857">aws_lb · create</text>
-<text x="112" y="477" font-size="13" fill="#0f172a">aws_lb.app</text>
+<text x="112" y="477" font-size="13" fill="#0f172a">module.root.aws_lb.app</text>
 <text x="112" y="516" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
-<g id="resource-2" data-qualified-address="module.root.aws_security_group.app"><title>aws_security_group.app — create</title>
+<g id="resource-2" data-qualified-address="module.root.aws_security_group.app" data-terraform-address="aws_security_group.app"><title>module.root.aws_security_group.app — create</title>
 <rect x="60" y="960" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text x="72" y="980" font-size="11" fill="#047857">aws_security_group · create</text>
-<text x="72" y="1005" font-size="13" fill="#0f172a">aws_security_group.app</text>
+<text x="72" y="1005" font-size="13" fill="#0f172a">module.root.aws_security_group.app</text>
 <text x="72" y="1044" font-size="10" fill="#64748b" data-role="policy"><title>root</title>policy · root</text>
 </g>
-<g id="resource-3" data-qualified-address="module.root.aws_subnet.a"><title>aws_subnet.a — create</title>
+<g id="resource-3" data-qualified-address="module.root.aws_subnet.a" data-terraform-address="aws_subnet.a"><title>module.root.aws_subnet.a — create</title>
 <text x="112" y="588" font-size="11" fill="#047857">aws_subnet · create</text>
-<text x="112" y="613" font-size="13" fill="#0f172a">aws_subnet.a</text>
+<text x="112" y="613" font-size="13" fill="#0f172a">module.root.aws_subnet.a</text>
 <text x="112" y="652" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
-<g id="resource-4" data-qualified-address="module.root.aws_subnet.b"><title>aws_subnet.b — create</title>
+<g id="resource-4" data-qualified-address="module.root.aws_subnet.b" data-terraform-address="aws_subnet.b"><title>module.root.aws_subnet.b — create</title>
 <text x="112" y="764" font-size="11" fill="#047857">aws_subnet · create</text>
-<text x="112" y="789" font-size="13" fill="#0f172a">aws_subnet.b</text>
+<text x="112" y="789" font-size="13" fill="#0f172a">module.root.aws_subnet.b</text>
 <text x="112" y="828" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
-<g id="resource-5" data-qualified-address="module.root.aws_vpc.main"><title>aws_vpc.main — create</title>
+<g id="resource-5" data-qualified-address="module.root.aws_vpc.main" data-terraform-address="aws_vpc.main"><title>module.root.aws_vpc.main — create</title>
 <text x="72" y="180" font-size="11" fill="#047857">aws_vpc · create</text>
-<text x="72" y="205" font-size="13" fill="#0f172a">aws_vpc.main</text>
+<text x="72" y="205" font-size="13" fill="#0f172a">module.root.aws_vpc.main</text>
 <text x="72" y="244" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
 </g>

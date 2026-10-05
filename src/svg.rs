@@ -13,6 +13,13 @@ use crate::model::{Action, EdgeKind, Graph};
 use std::fmt::Write;
 use style::{color, label, shorten};
 
+#[derive(Clone, Copy, Default)]
+pub enum AddressFormat {
+    #[default]
+    Qualified,
+    Terraform,
+}
+
 fn escape(value: &str) -> String {
     value
         .chars()
@@ -29,6 +36,14 @@ fn escape(value: &str) -> String {
 }
 
 pub fn render(graph: &Graph, layout: &Layout<'_>) -> String {
+    render_with_format(graph, layout, AddressFormat::Qualified)
+}
+
+pub fn render_with_format(
+    graph: &Graph,
+    layout: &Layout<'_>,
+    address_format: AddressFormat,
+) -> String {
     let (width, height) = (layout.width, layout.height);
     let (description, summary) = relationships::captions(graph);
     let markers = relationships::markers(graph);
@@ -118,8 +133,12 @@ pub fn render(graph: &Graph, layout: &Layout<'_>) -> String {
         let resource_address = node.resource_address();
         let address = escape(resource_address.terraform());
         let qualified = escape(&resource_address.qualified());
-        let local = resource_address.local();
-        let lines: Vec<_> = local
+        let selected = match address_format {
+            AddressFormat::Qualified => resource_address.qualified(),
+            AddressFormat::Terraform => resource_address.terraform().into(),
+        };
+        let selected_title = escape(&selected);
+        let lines: Vec<_> = selected
             .chars()
             .collect::<Vec<_>>()
             .chunks(35)
@@ -129,7 +148,7 @@ pub fn render(graph: &Graph, layout: &Layout<'_>) -> String {
         let mode = entities::border(node.mode);
         writeln!(
             svg,
-            r#"<g id="resource-{i}" data-qualified-address="{qualified}"><title>{address} — {}</title>"#,
+            r#"<g id="resource-{i}" data-qualified-address="{qualified}" data-terraform-address="{address}"><title>{selected_title} — {}</title>"#,
             label(node.action)
         )
         .unwrap();
@@ -151,7 +170,7 @@ pub fn render(graph: &Graph, layout: &Layout<'_>) -> String {
         .unwrap();
         for (line, text) in lines.iter().enumerate() {
             let text = match line {
-                1 if local.chars().count() > 70 => {
+                1 if selected.chars().count() > 70 => {
                     format!("{}…", text.chars().take(34).collect::<String>())
                 }
                 _ => text.clone(),
