@@ -1,5 +1,6 @@
 mod containers;
 mod entities;
+mod icons;
 mod paths;
 mod relationships;
 mod roles;
@@ -47,6 +48,7 @@ pub fn render_with_format(
     let (width, height) = (layout.width, layout.height);
     let (description, summary) = relationships::captions(graph);
     let markers = relationships::markers(graph);
+    let icon_definitions = icons::definitions(&graph.nodes);
     let semantic_edges = graph
         .edges
         .iter()
@@ -55,7 +57,7 @@ pub fn render_with_format(
         r##"<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}" role="img" aria-labelledby="title description">
 <title id="title">Terraform plan</title>
 <desc id="description">{description}</desc>
-<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/></marker>{markers}</defs>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/></marker>{markers}{icon_definitions}</defs>
 <rect width="100%" height="100%" fill="#ffffff"/>
 <g font-family="ui-monospace, SFMono-Regular, Consolas, monospace">
 <text x="40" y="45" font-size="25" font-weight="700" fill="#0f172a">Terraform plan</text>
@@ -138,10 +140,16 @@ pub fn render_with_format(
             AddressFormat::Terraform => resource_address.terraform().into(),
         };
         let selected_title = escape(&selected);
+        let icon = icons::for_node(node);
+        let inset = match icon {
+            Some(_) => 12 + icons::SIZE + icons::GAP,
+            None => 12,
+        };
+        let line_length = (card_width.saturating_sub(inset + 12) / 8).clamp(1, 35);
         let lines: Vec<_> = selected
             .chars()
             .collect::<Vec<_>>()
-            .chunks(35)
+            .chunks(line_length)
             .take(2)
             .map(|c| c.iter().collect::<String>())
             .collect();
@@ -168,17 +176,23 @@ pub fn render_with_format(
             label(node.action)
         )
         .unwrap();
+        if let Some(icon) = icon {
+            svg.push_str(&icons::render(icon, x + 12, y + 28));
+        }
         for (line, text) in lines.iter().enumerate() {
             let text = match line {
-                1 if selected.chars().count() > 70 => {
-                    format!("{}…", text.chars().take(34).collect::<String>())
+                1 if selected.chars().count() > line_length * 2 => {
+                    format!(
+                        "{}…",
+                        text.chars().take(line_length - 1).collect::<String>()
+                    )
                 }
                 _ => text.clone(),
             };
             writeln!(
                 svg,
                 r##"<text x="{}" y="{}" font-size="13" fill="#0f172a">{}</text>"##,
-                x + 12,
+                x + inset,
                 y + 45 + line * 20,
                 escape(&text)
             )
