@@ -12,7 +12,9 @@ fn congested_container_routes_improve_over_shortest_paths() {
     let baseline =
         routing::route_with_quality(&graph, &layout, &ordering::structural_keys(&graph), false);
     let old = measure(&baseline);
-    let new = measure(&layout.paths);
+    let scored =
+        routing::route_with_quality(&graph, &layout, &ordering::structural_keys(&graph), true);
+    let new = measure(&scored);
     eprintln!("shortest: {old:?}; scored: {new:?}");
     assert!(new.overlap_distance < old.overlap_distance / 4);
     // Separating coincident lines exposes crossings that overlap-only metrics

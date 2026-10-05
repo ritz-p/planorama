@@ -1,6 +1,7 @@
 use super::{Bounds, Layout, NODE_HEIGHT, NODE_WIDTH, Point};
 use crate::model::{EdgeKind, Graph, ResourceRole};
 use std::collections::BTreeSet;
+mod affinity;
 mod ordering;
 mod placement;
 mod routing;
@@ -44,7 +45,16 @@ fn parents(graph: &Graph) -> Vec<Option<usize>> {
 }
 
 pub(super) fn place(graph: &Graph) -> Layout<'_> {
+    place_with_affinity(graph, true)
+}
+
+fn place_with_affinity(graph: &Graph, enabled: bool) -> Layout<'_> {
     let parents = parents(graph);
+    let affinities = if enabled {
+        affinity::groups(graph, &parents)
+    } else {
+        Vec::new()
+    };
     let header_heights: Vec<_> = routing::incidents(graph, &parents)
         .iter()
         .map(|edges| NODE_HEIGHT.max(edges.len() + 41))
@@ -73,8 +83,10 @@ pub(super) fn place(graph: &Graph) -> Layout<'_> {
     let mut offsets = vec![Point { x: 0, y: 0 }; graph.nodes.len()];
     for &node in order.iter().rev() {
         if graph.nodes[node].role == ResourceRole::Container {
-            let columns = placement::columns(graph, Some(node), &children[node], &parents);
+            let mut columns = placement::columns(graph, Some(node), &children[node], &parents);
+            affinity::cohere(&mut columns, &affinities);
             let (width, height) = placement::pack(&columns, &sizes, &mut offsets);
+            affinity::align(&children[node], &affinities, &sizes, &mut offsets, height);
             for &child in &children[node] {
                 offsets[child].x += PADDING;
                 offsets[child].y += header_heights[node] + PADDING;
@@ -134,6 +146,8 @@ pub(super) fn place(graph: &Graph) -> Layout<'_> {
         }
     }
     layout.height = (root_height + 240).max(300);
-    layout.paths = routing::route(graph, &layout, &keys);
+    let routed = routing::route(graph, &layout, &keys, enabled);
+    layout.paths = routed.paths;
+    layout.junctions = routed.junctions;
     layout
 }
