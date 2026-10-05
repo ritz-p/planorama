@@ -1,7 +1,28 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1100" height="688" viewBox="0 0 1100 688" role="img" aria-labelledby="title description">
 <title id="title">Terraform plan</title>
 <desc id="description">3 resources (3 cards), 3 relationships. Lines show architectural relationships. Edge titles identify the relationship kind and Terraform change.</desc>
-<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/></marker></defs>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/></marker><metadata id="planorama-icons-license">MIT License
+
+Copyright (c) 2026 Planorama contributors
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of the Planorama service glyphs and associated documentation files (the
+&quot;Software&quot;), to deal in the Software without restriction, including without
+limitation the rights to use, copy, modify, merge, publish, distribute,
+sublicense, and/or sell copies of the Software, and to permit persons to whom
+the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+</metadata><symbol id="planorama-icon-aws-vpc" viewBox="0 0 24 24"><rect width="24" height="24" rx="4" fill="#6346a6"/><g fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="6" width="14" height="12" rx="3"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/><path d="M10.5 12h3M12 3v3m0 12v3"/></g></symbol><symbol id="planorama-icon-aws-subnet" viewBox="0 0 24 24"><rect width="24" height="24" rx="4" fill="#6346a6"/><g fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="5" width="14" height="14" rx="2"/><path d="M5 12h14M12 5v14"/></g></symbol><symbol id="planorama-icon-aws-ec2" viewBox="0 0 24 24"><rect width="24" height="24" rx="4" fill="#a54e08"/><g fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="7" width="10" height="10" rx="1"/><path d="M9 3v4m6-4v4M9 17v4m6-4v4M3 9h4m-4 6h4m10-6h4m-4 6h4"/></g></symbol></defs>
 <rect width="100%" height="100%" fill="#ffffff"/>
 <g font-family="ui-monospace, SFMono-Regular, Consolas, monospace">
 <text x="40" y="45" font-size="25" font-weight="700" fill="#0f172a">Terraform plan</text>
@@ -21,17 +42,17 @@
 <g id="resource-0" data-qualified-address="module.root.aws_instance.app" data-terraform-address="aws_instance.app"><title>module.root.aws_instance.app — create</title>
 <rect x="140" y="432" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text x="152" y="452" font-size="11" fill="#047857">aws_instance · create</text>
-<text x="152" y="477" font-size="13" fill="#0f172a">module.root.aws_instance.app</text>
+<use href="#planorama-icon-aws-ec2" x="152" y="460" width="24" height="24" aria-hidden="true"/><text x="184" y="477" font-size="13" fill="#0f172a">module.root.aws_instance.app</text>
 <text x="152" y="516" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
 <g id="resource-1" data-qualified-address="module.root.aws_subnet.private" data-terraform-address="aws_subnet.private"><title>module.root.aws_subnet.private — create</title>
 <text x="112" y="316" font-size="11" fill="#047857">aws_subnet · create</text>
-<text x="112" y="341" font-size="13" fill="#0f172a">module.root.aws_subnet.private</text>
+<use href="#planorama-icon-aws-subnet" x="112" y="324" width="24" height="24" aria-hidden="true"/><text x="144" y="341" font-size="13" fill="#0f172a">module.root.aws_subnet.private</text>
 <text x="112" y="380" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
 <g id="resource-2" data-qualified-address="module.root.aws_vpc.main" data-terraform-address="aws_vpc.main"><title>module.root.aws_vpc.main — create</title>
 <text x="72" y="180" font-size="11" fill="#047857">aws_vpc · create</text>
-<text x="72" y="205" font-size="13" fill="#0f172a">module.root.aws_vpc.main</text>
+<use href="#planorama-icon-aws-vpc" x="72" y="188" width="24" height="24" aria-hidden="true"/><text x="104" y="205" font-size="13" fill="#0f172a">module.root.aws_vpc.main</text>
 <text x="72" y="244" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
 </g>

@@ -1,7 +1,28 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1100" height="1448" viewBox="0 0 1100 1448" role="img" aria-labelledby="title description">
 <title id="title">Terraform plan</title>
 <desc id="description">8 resources (8 cards), 6 relationships. Lines show architectural relationships. Edge titles identify the relationship kind and Terraform change.</desc>
-<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/></marker></defs>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/></marker><metadata id="planorama-icons-license">MIT License
+
+Copyright (c) 2026 Planorama contributors
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of the Planorama service glyphs and associated documentation files (the
+&quot;Software&quot;), to deal in the Software without restriction, including without
+limitation the rights to use, copy, modify, merge, publish, distribute,
+sublicense, and/or sell copies of the Software, and to permit persons to whom
+the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+</metadata><symbol id="planorama-icon-aws-vpc" viewBox="0 0 24 24"><rect width="24" height="24" rx="4" fill="#6346a6"/><g fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="6" width="14" height="12" rx="3"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/><path d="M10.5 12h3M12 3v3m0 12v3"/></g></symbol><symbol id="planorama-icon-aws-subnet" viewBox="0 0 24 24"><rect width="24" height="24" rx="4" fill="#6346a6"/><g fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="5" width="14" height="14" rx="2"/><path d="M5 12h14M12 5v14"/></g></symbol><symbol id="planorama-icon-aws-ec2" viewBox="0 0 24 24"><rect width="24" height="24" rx="4" fill="#a54e08"/><g fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="7" width="10" height="10" rx="1"/><path d="M9 3v4m6-4v4M9 17v4m6-4v4M3 9h4m-4 6h4m10-6h4m-4 6h4"/></g></symbol><symbol id="planorama-icon-aws-elb" viewBox="0 0 24 24"><rect width="24" height="24" rx="4" fill="#6346a6"/><g fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h7m0 0 6-6m-6 6 6 6"/><rect x="17" y="4" width="4" height="4" rx="1"/><rect x="17" y="16" width="4" height="4" rx="1"/><circle cx="5" cy="12" r="2"/></g></symbol><symbol id="planorama-icon-aws-ecs" viewBox="0 0 24 24"><rect width="24" height="24" rx="4" fill="#a54e08"/><g fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m12 4 8 4v8l-8 4-8-4V8zm-8 4 8 4 8-4m-8 4v8"/></g></symbol><symbol id="planorama-icon-aws-security" viewBox="0 0 24 24"><rect width="24" height="24" rx="4" fill="#a53655"/><g fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 8 3v6c0 5-8 9-8 9s-8-4-8-9V6zM8 12l3 3 5-6"/></g></symbol></defs>
 <rect width="100%" height="100%" fill="#ffffff"/>
 <g font-family="ui-monospace, SFMono-Regular, Consolas, monospace">
 <text x="40" y="45" font-size="25" font-weight="700" fill="#0f172a">Terraform plan</text>
@@ -26,46 +47,46 @@
 <g id="resource-0" data-qualified-address="module.root.aws_ecs_service.app" data-terraform-address="aws_ecs_service.app"><title>module.root.aws_ecs_service.app — update</title>
 <rect x="60" y="1000" width="320" height="96" rx="8" fill="#eff6ff" stroke="#1d4ed8" stroke-width="1.5" data-mode="managed"/>
 <text x="72" y="1020" font-size="11" fill="#1d4ed8">aws_ecs_service · update</text>
-<text x="72" y="1045" font-size="13" fill="#0f172a">module.root.aws_ecs_service.app</text>
+<use href="#planorama-icon-aws-ecs" x="72" y="1028" width="24" height="24" aria-hidden="true"/><text x="104" y="1045" font-size="13" fill="#0f172a">module.root.aws_ecs_service.app</text>
 <text x="72" y="1084" font-size="10" fill="#64748b" data-role="controller"><title>root</title>controller · root</text>
 </g>
 <g id="resource-1" data-qualified-address="module.root.aws_instance.app" data-terraform-address="aws_instance.app"><title>module.root.aws_instance.app — create</title>
 <rect x="140" y="784" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text x="152" y="804" font-size="11" fill="#047857">aws_instance · create</text>
-<text x="152" y="829" font-size="13" fill="#0f172a">module.root.aws_instance.app</text>
+<use href="#planorama-icon-aws-ec2" x="152" y="812" width="24" height="24" aria-hidden="true"/><text x="184" y="829" font-size="13" fill="#0f172a">module.root.aws_instance.app</text>
 <text x="152" y="868" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
 <g id="resource-2" data-qualified-address="module.root.aws_subnet.app" data-terraform-address="aws_subnet.app"><title>module.root.aws_subnet.app — create</title>
 <text x="112" y="668" font-size="11" fill="#047857">aws_subnet · create</text>
-<text x="112" y="693" font-size="13" fill="#0f172a">module.root.aws_subnet.app</text>
+<use href="#planorama-icon-aws-subnet" x="112" y="676" width="24" height="24" aria-hidden="true"/><text x="144" y="693" font-size="13" fill="#0f172a">module.root.aws_subnet.app</text>
 <text x="112" y="732" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
 <g id="resource-3" data-qualified-address="module.root.aws_vpc.app" data-terraform-address="aws_vpc.app"><title>module.root.aws_vpc.app — create</title>
 <text x="72" y="180" font-size="11" fill="#047857">aws_vpc · create</text>
-<text x="72" y="205" font-size="13" fill="#0f172a">module.root.aws_vpc.app</text>
+<use href="#planorama-icon-aws-vpc" x="72" y="188" width="24" height="24" aria-hidden="true"/><text x="104" y="205" font-size="13" fill="#0f172a">module.root.aws_vpc.app</text>
 <text x="72" y="244" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
 <g id="resource-4" data-qualified-address="module.root.data.aws_lb.shared" data-terraform-address="data.aws_lb.shared"><title>module.root.data.aws_lb.shared — unchanged</title>
 <rect x="60" y="1272" width="320" height="96" rx="8" fill="#f8fafc" stroke="#64748b" stroke-width="1.5" data-mode="data" stroke-dasharray="6 4"/>
 <g data-external="true"><title>External resource: read by Terraform, not managed by this configuration</title><rect x="302" y="1279" width="68" height="18" rx="4" fill="#e2e8f0"/><text x="308" y="1292" font-size="10" fill="#334155">external</text></g><text x="72" y="1292" font-size="11" fill="#64748b">aws_lb · unchanged</text>
-<text x="72" y="1317" font-size="13" fill="#0f172a">module.root.data.aws_lb.shared</text>
+<use href="#planorama-icon-aws-elb" x="72" y="1300" width="24" height="24" aria-hidden="true"/><text x="104" y="1317" font-size="13" fill="#0f172a">module.root.data.aws_lb.shared</text>
 <text x="72" y="1356" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
 <g id="resource-5" data-qualified-address="module.root.data.aws_security_group.shared" data-terraform-address="data.aws_security_group.shared"><title>module.root.data.aws_security_group.shared — unchanged</title>
 <rect x="60" y="1136" width="320" height="96" rx="8" fill="#f8fafc" stroke="#64748b" stroke-width="1.5" data-mode="data" stroke-dasharray="6 4"/>
 <g data-external="true"><title>External resource: read by Terraform, not managed by this configuration</title><rect x="302" y="1143" width="68" height="18" rx="4" fill="#e2e8f0"/><text x="308" y="1156" font-size="10" fill="#334155">external</text></g><text x="72" y="1156" font-size="11" fill="#64748b">aws_security_group · unchanged</text>
-<text x="72" y="1181" font-size="13" fill="#0f172a">module.root.data.aws_security_group</text>
-<text x="72" y="1201" font-size="13" fill="#0f172a">.shared</text>
+<use href="#planorama-icon-aws-security" x="72" y="1164" width="24" height="24" aria-hidden="true"/><text x="104" y="1181" font-size="13" fill="#0f172a">module.root.data.aws_security_gro</text>
+<text x="104" y="1201" font-size="13" fill="#0f172a">up.shared</text>
 <text x="72" y="1220" font-size="10" fill="#64748b" data-role="policy"><title>root</title>policy · root</text>
 </g>
 <g id="resource-6" data-qualified-address="module.root.data.aws_subnet.shared" data-terraform-address="data.aws_subnet.shared"><title>module.root.data.aws_subnet.shared — unchanged</title>
 <g data-external="true"><title>External resource: read by Terraform, not managed by this configuration</title><rect x="302" y="343" width="68" height="18" rx="4" fill="#e2e8f0"/><text x="308" y="356" font-size="10" fill="#334155">external</text></g><text x="72" y="356" font-size="11" fill="#64748b">aws_subnet · unchanged</text>
-<text x="72" y="381" font-size="13" fill="#0f172a">module.root.data.aws_subnet.shared</text>
+<use href="#planorama-icon-aws-subnet" x="72" y="364" width="24" height="24" aria-hidden="true"/><text x="104" y="381" font-size="13" fill="#0f172a">module.root.data.aws_subnet.shared</text>
 <text x="72" y="420" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
 <g id="resource-7" data-qualified-address="module.root.data.aws_vpc.shared" data-terraform-address="data.aws_vpc.shared"><title>module.root.data.aws_vpc.shared — unchanged</title>
 <g data-external="true"><title>External resource: read by Terraform, not managed by this configuration</title><rect x="302" y="519" width="68" height="18" rx="4" fill="#e2e8f0"/><text x="308" y="532" font-size="10" fill="#334155">external</text></g><text x="72" y="532" font-size="11" fill="#64748b">aws_vpc · unchanged</text>
-<text x="72" y="557" font-size="13" fill="#0f172a">module.root.data.aws_vpc.shared</text>
+<use href="#planorama-icon-aws-vpc" x="72" y="540" width="24" height="24" aria-hidden="true"/><text x="104" y="557" font-size="13" fill="#0f172a">module.root.data.aws_vpc.shared</text>
 <text x="72" y="596" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
 </g>

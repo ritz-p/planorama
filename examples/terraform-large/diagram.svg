@@ -1,7 +1,28 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1100" height="6152" viewBox="0 0 1100 6152" role="img" aria-labelledby="title description">
 <title id="title">Terraform plan</title>
 <desc id="description">46 resources (42 cards), 80 relationships. Lines show architectural relationships. Edge titles identify the relationship kind and Terraform change.</desc>
-<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/></marker><marker id="arrow-create" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#047857"/></marker></defs>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/></marker><marker id="arrow-create" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#047857"/></marker><metadata id="planorama-icons-license">MIT License
+
+Copyright (c) 2026 Planorama contributors
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of the Planorama service glyphs and associated documentation files (the
+&quot;Software&quot;), to deal in the Software without restriction, including without
+limitation the rights to use, copy, modify, merge, publish, distribute,
+sublicense, and/or sell copies of the Software, and to permit persons to whom
+the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+</metadata><symbol id="planorama-icon-aws-vpc" viewBox="0 0 24 24"><rect width="24" height="24" rx="4" fill="#6346a6"/><g fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="6" width="14" height="12" rx="3"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/><path d="M10.5 12h3M12 3v3m0 12v3"/></g></symbol><symbol id="planorama-icon-aws-subnet" viewBox="0 0 24 24"><rect width="24" height="24" rx="4" fill="#6346a6"/><g fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="5" width="14" height="14" rx="2"/><path d="M5 12h14M12 5v14"/></g></symbol><symbol id="planorama-icon-aws-ec2" viewBox="0 0 24 24"><rect width="24" height="24" rx="4" fill="#a54e08"/><g fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="7" width="10" height="10" rx="1"/><path d="M9 3v4m6-4v4M9 17v4m6-4v4M3 9h4m-4 6h4m10-6h4m-4 6h4"/></g></symbol><symbol id="planorama-icon-aws-gateway" viewBox="0 0 24 24"><rect width="24" height="24" rx="4" fill="#6346a6"/><g fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 5h8v14H8zM3 9h8m-3-3 3 3-3 3m13 3h-8m3-3-3 3 3 3"/></g></symbol><symbol id="planorama-icon-aws-route" viewBox="0 0 24 24"><rect width="24" height="24" rx="4" fill="#6346a6"/><g fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 18h5V6h8m-3-3 3 3-3 3M10 13h8m-3-3 3 3-3 3"/><circle cx="5" cy="18" r="2"/></g></symbol><symbol id="planorama-icon-aws-endpoint" viewBox="0 0 24 24"><rect width="24" height="24" rx="4" fill="#6346a6"/><g fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h6m4 0h6M7 9l3 3-3 3m10-6-3 3 3 3"/><rect x="10" y="5" width="4" height="14" rx="1"/></g></symbol><symbol id="planorama-icon-aws-elb" viewBox="0 0 24 24"><rect width="24" height="24" rx="4" fill="#6346a6"/><g fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h7m0 0 6-6m-6 6 6 6"/><rect x="17" y="4" width="4" height="4" rx="1"/><rect x="17" y="16" width="4" height="4" rx="1"/><circle cx="5" cy="12" r="2"/></g></symbol><symbol id="planorama-icon-aws-ecs" viewBox="0 0 24 24"><rect width="24" height="24" rx="4" fill="#a54e08"/><g fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m12 4 8 4v8l-8 4-8-4V8zm-8 4 8 4 8-4m-8 4v8"/></g></symbol><symbol id="planorama-icon-aws-rds" viewBox="0 0 24 24"><rect width="24" height="24" rx="4" fill="#285bb5"/><g fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="6" rx="7" ry="3"/><path d="M5 6v12c0 4 14 4 14 0V6M5 12c0 4 14 4 14 0"/></g></symbol><symbol id="planorama-icon-aws-iam" viewBox="0 0 24 24"><rect width="24" height="24" rx="4" fill="#a53655"/><g fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3M12 14v3"/></g></symbol><symbol id="planorama-icon-aws-security" viewBox="0 0 24 24"><rect width="24" height="24" rx="4" fill="#a53655"/><g fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 8 3v6c0 5-8 9-8 9s-8-4-8-9V6zM8 12l3 3 5-6"/></g></symbol><symbol id="planorama-icon-aws-monitoring" viewBox="0 0 24 24"><rect width="24" height="24" rx="4" fill="#9a3f86"/><g fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="m5 13 4-5 4 6 5-6M9 21h6m-3-3v3"/></g></symbol></defs>
 <rect width="100%" height="100%" fill="#ffffff"/>
 <g font-family="ui-monospace, SFMono-Regular, Consolas, monospace">
 <text x="40" y="45" font-size="25" font-weight="700" fill="#0f172a">Terraform plan</text>
@@ -102,277 +123,278 @@
 <g id="resource-0" data-qualified-address="module.root.aws_cloudwatch_log_group.app" data-terraform-address="aws_cloudwatch_log_group.app"><title>module.root.aws_cloudwatch_log_group.app — create</title>
 <rect x="60" y="1856" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text x="72" y="1876" font-size="11" fill="#047857">aws_cloudwatch_log_group · create</text>
-<text x="72" y="1901" font-size="13" fill="#0f172a">module.root.aws_cloudwatch_log_grou</text>
-<text x="72" y="1921" font-size="13" fill="#0f172a">p.app</text>
+<use href="#planorama-icon-aws-monitoring" x="72" y="1884" width="24" height="24" aria-hidden="true"/><text x="104" y="1901" font-size="13" fill="#0f172a">module.root.aws_cloudwatch_log_gr</text>
+<text x="104" y="1921" font-size="13" fill="#0f172a">oup.app</text>
 <text x="72" y="1940" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
 <g id="resource-1" data-qualified-address="module.application.aws_ecs_cluster.app" data-terraform-address="module.application.aws_ecs_cluster.app"><title>module.application.aws_ecs_cluster.app — create</title>
 <rect x="60" y="2128" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text x="72" y="2148" font-size="11" fill="#047857">aws_ecs_cluster · create</text>
-<text x="72" y="2173" font-size="13" fill="#0f172a">module.application.aws_ecs_cluster.</text>
-<text x="72" y="2193" font-size="13" fill="#0f172a">app</text>
+<use href="#planorama-icon-aws-ecs" x="72" y="2156" width="24" height="24" aria-hidden="true"/><text x="104" y="2173" font-size="13" fill="#0f172a">module.application.aws_ecs_cluste</text>
+<text x="104" y="2193" font-size="13" fill="#0f172a">r.app</text>
 <text x="72" y="2212" font-size="10" fill="#64748b" data-role="controller"><title>module.application</title>controller · module.application</text>
 </g>
 <g id="resource-2" data-qualified-address="module.application.aws_ecs_service.app" data-terraform-address="module.application.aws_ecs_service.app"><title>module.application.aws_ecs_service.app — create</title>
 <rect x="100" y="296" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text x="112" y="316" font-size="11" fill="#047857">aws_ecs_service · create</text>
-<text x="112" y="341" font-size="13" fill="#0f172a">module.application.aws_ecs_service.</text>
-<text x="112" y="361" font-size="13" fill="#0f172a">app</text>
+<use href="#planorama-icon-aws-ecs" x="112" y="324" width="24" height="24" aria-hidden="true"/><text x="144" y="341" font-size="13" fill="#0f172a">module.application.aws_ecs_servic</text>
+<text x="144" y="361" font-size="13" fill="#0f172a">e.app</text>
 <text x="112" y="380" font-size="10" fill="#64748b" data-role="controller"><title>module.application</title>controller · module.application</text>
 </g>
 <g id="resource-3" data-qualified-address="module.application.aws_ecs_task_definition.app" data-terraform-address="module.application.aws_ecs_task_definition.app"><title>module.application.aws_ecs_task_definition.app — create</title>
 <rect x="60" y="2264" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text x="72" y="2284" font-size="11" fill="#047857">aws_ecs_task_definition · create</text>
-<text x="72" y="2309" font-size="13" fill="#0f172a">module.application.aws_ecs_task_def</text>
-<text x="72" y="2329" font-size="13" fill="#0f172a">inition.app</text>
+<use href="#planorama-icon-aws-ecs" x="72" y="2292" width="24" height="24" aria-hidden="true"/><text x="104" y="2309" font-size="13" fill="#0f172a">module.application.aws_ecs_task_d</text>
+<text x="104" y="2329" font-size="13" fill="#0f172a">efinition.app</text>
 <text x="72" y="2348" font-size="10" fill="#64748b" data-role="controller"><title>module.application</title>controller · module.application</text>
 </g>
 <g id="resource-4" data-qualified-address="module.application.aws_iam_instance_profile.app" data-terraform-address="module.application.aws_iam_instance_profile.app"><title>module.application.aws_iam_instance_profile.app — create</title>
 <rect x="60" y="2400" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text x="72" y="2420" font-size="11" fill="#047857">aws_iam_instance_profile · create</text>
-<text x="72" y="2445" font-size="13" fill="#0f172a">module.application.aws_iam_instance</text>
-<text x="72" y="2465" font-size="13" fill="#0f172a">_profile.app</text>
+<use href="#planorama-icon-aws-iam" x="72" y="2428" width="24" height="24" aria-hidden="true"/><text x="104" y="2445" font-size="13" fill="#0f172a">module.application.aws_iam_instan</text>
+<text x="104" y="2465" font-size="13" fill="#0f172a">ce_profile.app</text>
 <text x="72" y="2484" font-size="10" fill="#64748b" data-role="policy"><title>module.application</title>policy · module.application</text>
 </g>
 <g id="resource-5" data-qualified-address="module.application.aws_iam_role.instance" data-terraform-address="module.application.aws_iam_role.instance"><title>module.application.aws_iam_role.instance — create</title>
 <rect x="60" y="5256" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text x="72" y="5276" font-size="11" fill="#047857">aws_iam_role · create</text>
-<text x="72" y="5301" font-size="13" fill="#0f172a">module.application.aws_iam_role.ins</text>
-<text x="72" y="5321" font-size="13" fill="#0f172a">tance</text>
+<use href="#planorama-icon-aws-iam" x="72" y="5284" width="24" height="24" aria-hidden="true"/><text x="104" y="5301" font-size="13" fill="#0f172a">module.application.aws_iam_role.i</text>
+<text x="104" y="5321" font-size="13" fill="#0f172a">nstance</text>
 <text x="72" y="5340" font-size="10" fill="#64748b" data-role="policy"><title>module.application</title>policy · module.application</text>
 </g>
 <g id="resource-6" data-qualified-address="module.application.aws_iam_role.task" data-terraform-address="module.application.aws_iam_role.task"><title>module.application.aws_iam_role.task — create</title>
 <rect x="60" y="5120" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text x="72" y="5140" font-size="11" fill="#047857">aws_iam_role · create</text>
-<text x="72" y="5165" font-size="13" fill="#0f172a">module.application.aws_iam_role.tas</text>
-<text x="72" y="5185" font-size="13" fill="#0f172a">k</text>
+<use href="#planorama-icon-aws-iam" x="72" y="5148" width="24" height="24" aria-hidden="true"/><text x="104" y="5165" font-size="13" fill="#0f172a">module.application.aws_iam_role.t</text>
+<text x="104" y="5185" font-size="13" fill="#0f172a">ask</text>
 <text x="72" y="5204" font-size="10" fill="#64748b" data-role="policy"><title>module.application</title>policy · module.application</text>
 </g>
 <g id="resource-7" data-qualified-address="module.application.aws_instance.workers_a[0]" data-terraform-address="module.application.aws_instance.workers_a[0]"><title>module.application.aws_instance.workers_a[0] — create</title>
 <rect x="140" y="704" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text x="152" y="724" font-size="11" fill="#047857">aws_instance · create</text>
-<text x="152" y="749" font-size="13" fill="#0f172a">module.application.aws_instance.wor</text>
-<text x="152" y="769" font-size="13" fill="#0f172a">kers_a[0]</text>
+<use href="#planorama-icon-aws-ec2" x="152" y="732" width="24" height="24" aria-hidden="true"/><text x="184" y="749" font-size="13" fill="#0f172a">module.application.aws_instance.w</text>
+<text x="184" y="769" font-size="13" fill="#0f172a">orkers_a[0]</text>
 <text x="152" y="788" font-size="10" fill="#64748b"><title>module.application</title>module.application</text>
 </g>
 <g id="resource-8" data-qualified-address="module.application.aws_instance.workers_a[1]" data-terraform-address="module.application.aws_instance.workers_a[1]"><title>module.application.aws_instance.workers_a[1] — create</title>
 <rect x="140" y="840" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text x="152" y="860" font-size="11" fill="#047857">aws_instance · create</text>
-<text x="152" y="885" font-size="13" fill="#0f172a">module.application.aws_instance.wor</text>
-<text x="152" y="905" font-size="13" fill="#0f172a">kers_a[1]</text>
+<use href="#planorama-icon-aws-ec2" x="152" y="868" width="24" height="24" aria-hidden="true"/><text x="184" y="885" font-size="13" fill="#0f172a">module.application.aws_instance.w</text>
+<text x="184" y="905" font-size="13" fill="#0f172a">orkers_a[1]</text>
 <text x="152" y="924" font-size="10" fill="#64748b"><title>module.application</title>module.application</text>
 </g>
 <g id="resource-9" data-qualified-address="module.application.aws_instance.workers_b[0]" data-terraform-address="module.application.aws_instance.workers_b[0]"><title>module.application.aws_instance.workers_b[0] — create</title>
 <rect x="140" y="1152" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text x="152" y="1172" font-size="11" fill="#047857">aws_instance · create</text>
-<text x="152" y="1197" font-size="13" fill="#0f172a">module.application.aws_instance.wor</text>
-<text x="152" y="1217" font-size="13" fill="#0f172a">kers_b[0]</text>
+<use href="#planorama-icon-aws-ec2" x="152" y="1180" width="24" height="24" aria-hidden="true"/><text x="184" y="1197" font-size="13" fill="#0f172a">module.application.aws_instance.w</text>
+<text x="184" y="1217" font-size="13" fill="#0f172a">orkers_b[0]</text>
 <text x="152" y="1236" font-size="10" fill="#64748b"><title>module.application</title>module.application</text>
 </g>
 <g id="resource-10" data-qualified-address="module.application.aws_instance.workers_b[1]" data-terraform-address="module.application.aws_instance.workers_b[1]"><title>module.application.aws_instance.workers_b[1] — create</title>
 <rect x="140" y="1288" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text x="152" y="1308" font-size="11" fill="#047857">aws_instance · create</text>
-<text x="152" y="1333" font-size="13" fill="#0f172a">module.application.aws_instance.wor</text>
-<text x="152" y="1353" font-size="13" fill="#0f172a">kers_b[1]</text>
+<use href="#planorama-icon-aws-ec2" x="152" y="1316" width="24" height="24" aria-hidden="true"/><text x="184" y="1333" font-size="13" fill="#0f172a">module.application.aws_instance.w</text>
+<text x="184" y="1353" font-size="13" fill="#0f172a">orkers_b[1]</text>
 <text x="152" y="1372" font-size="10" fill="#64748b"><title>module.application</title>module.application</text>
 </g>
 <g id="resource-11" data-qualified-address="module.application.aws_lb.app" data-terraform-address="module.application.aws_lb.app"><title>module.application.aws_lb.app — create</title>
 <rect x="100" y="432" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text x="112" y="452" font-size="11" fill="#047857">aws_lb · create</text>
-<text x="112" y="477" font-size="13" fill="#0f172a">module.application.aws_lb.app</text>
+<use href="#planorama-icon-aws-elb" x="112" y="460" width="24" height="24" aria-hidden="true"/><text x="144" y="477" font-size="13" fill="#0f172a">module.application.aws_lb.app</text>
 <text x="112" y="516" font-size="10" fill="#64748b"><title>module.application</title>module.application</text>
 </g>
 <g id="resource-12" data-qualified-address="module.application.aws_lb_listener.http" data-terraform-address="module.application.aws_lb_listener.http"><title>module.application.aws_lb_listener.http — create</title>
 <rect x="60" y="2672" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text x="72" y="2692" font-size="11" fill="#047857">aws_lb_listener · create</text>
-<text x="72" y="2717" font-size="13" fill="#0f172a">module.application.aws_lb_listener.</text>
-<text x="72" y="2737" font-size="13" fill="#0f172a">http</text>
+<use href="#planorama-icon-aws-elb" x="72" y="2700" width="24" height="24" aria-hidden="true"/><text x="104" y="2717" font-size="13" fill="#0f172a">module.application.aws_lb_listene</text>
+<text x="104" y="2737" font-size="13" fill="#0f172a">r.http</text>
 <text x="72" y="2756" font-size="10" fill="#64748b"><title>module.application</title>module.application</text>
 </g>
 <g id="resource-13" data-qualified-address="module.application.aws_lb_target_group.app" data-terraform-address="module.application.aws_lb_target_group.app"><title>module.application.aws_lb_target_group.app — create</title>
 <rect x="60" y="2808" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text x="72" y="2828" font-size="11" fill="#047857">aws_lb_target_group · create</text>
-<text x="72" y="2853" font-size="13" fill="#0f172a">module.application.aws_lb_target_gr</text>
-<text x="72" y="2873" font-size="13" fill="#0f172a">oup.app</text>
+<use href="#planorama-icon-aws-elb" x="72" y="2836" width="24" height="24" aria-hidden="true"/><text x="104" y="2853" font-size="13" fill="#0f172a">module.application.aws_lb_target_</text>
+<text x="104" y="2873" font-size="13" fill="#0f172a">group.app</text>
 <text x="72" y="2892" font-size="10" fill="#64748b" data-role="controller"><title>module.application</title>controller · module.application</text>
 </g>
 <g id="resource-14" data-qualified-address="module.application.aws_lb_target_group_attachment.a0" data-terraform-address="module.application.aws_lb_target_group_attachment.a0"><title>module.application.aws_lb_target_group_attachment.a0 — create</title>
 <rect x="60" y="2944" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text x="72" y="2964" font-size="11" fill="#047857">aws_lb_target_group_atta… · create</text>
-<text x="72" y="2989" font-size="13" fill="#0f172a">module.application.aws_lb_target_gr</text>
-<text x="72" y="3009" font-size="13" fill="#0f172a">oup_attachment.a0</text>
+<use href="#planorama-icon-aws-elb" x="72" y="2972" width="24" height="24" aria-hidden="true"/><text x="104" y="2989" font-size="13" fill="#0f172a">module.application.aws_lb_target_</text>
+<text x="104" y="3009" font-size="13" fill="#0f172a">group_attachment.a0</text>
 <text x="72" y="3028" font-size="10" fill="#64748b"><title>module.application</title>module.application</text>
 </g>
 <g id="resource-15" data-qualified-address="module.application.aws_lb_target_group_attachment.a1" data-terraform-address="module.application.aws_lb_target_group_attachment.a1"><title>module.application.aws_lb_target_group_attachment.a1 — create</title>
 <rect x="60" y="3080" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text x="72" y="3100" font-size="11" fill="#047857">aws_lb_target_group_atta… · create</text>
-<text x="72" y="3125" font-size="13" fill="#0f172a">module.application.aws_lb_target_gr</text>
-<text x="72" y="3145" font-size="13" fill="#0f172a">oup_attachment.a1</text>
+<use href="#planorama-icon-aws-elb" x="72" y="3108" width="24" height="24" aria-hidden="true"/><text x="104" y="3125" font-size="13" fill="#0f172a">module.application.aws_lb_target_</text>
+<text x="104" y="3145" font-size="13" fill="#0f172a">group_attachment.a1</text>
 <text x="72" y="3164" font-size="10" fill="#64748b"><title>module.application</title>module.application</text>
 </g>
 <g id="resource-16" data-qualified-address="module.application.aws_lb_target_group_attachment.b0" data-terraform-address="module.application.aws_lb_target_group_attachment.b0"><title>module.application.aws_lb_target_group_attachment.b0 — create</title>
 <rect x="60" y="3216" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text x="72" y="3236" font-size="11" fill="#047857">aws_lb_target_group_atta… · create</text>
-<text x="72" y="3261" font-size="13" fill="#0f172a">module.application.aws_lb_target_gr</text>
-<text x="72" y="3281" font-size="13" fill="#0f172a">oup_attachment.b0</text>
+<use href="#planorama-icon-aws-elb" x="72" y="3244" width="24" height="24" aria-hidden="true"/><text x="104" y="3261" font-size="13" fill="#0f172a">module.application.aws_lb_target_</text>
+<text x="104" y="3281" font-size="13" fill="#0f172a">group_attachment.b0</text>
 <text x="72" y="3300" font-size="10" fill="#64748b"><title>module.application</title>module.application</text>
 </g>
 <g id="resource-17" data-qualified-address="module.application.aws_lb_target_group_attachment.b1" data-terraform-address="module.application.aws_lb_target_group_attachment.b1"><title>module.application.aws_lb_target_group_attachment.b1 — create</title>
 <rect x="60" y="3352" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text x="72" y="3372" font-size="11" fill="#047857">aws_lb_target_group_atta… · create</text>
-<text x="72" y="3397" font-size="13" fill="#0f172a">module.application.aws_lb_target_gr</text>
-<text x="72" y="3417" font-size="13" fill="#0f172a">oup_attachment.b1</text>
+<use href="#planorama-icon-aws-elb" x="72" y="3380" width="24" height="24" aria-hidden="true"/><text x="104" y="3397" font-size="13" fill="#0f172a">module.application.aws_lb_target_</text>
+<text x="104" y="3417" font-size="13" fill="#0f172a">group_attachment.b1</text>
 <text x="72" y="3436" font-size="10" fill="#64748b"><title>module.application</title>module.application</text>
 </g>
 <g id="resource-18" data-qualified-address="module.application.aws_security_group.alb" data-terraform-address="module.application.aws_security_group.alb"><title>module.application.aws_security_group.alb — create</title>
 <rect x="60" y="3896" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text x="72" y="3916" font-size="11" fill="#047857">aws_security_group · create</text>
-<text x="72" y="3941" font-size="13" fill="#0f172a">module.application.aws_security_gro</text>
-<text x="72" y="3961" font-size="13" fill="#0f172a">up.alb</text>
+<use href="#planorama-icon-aws-security" x="72" y="3924" width="24" height="24" aria-hidden="true"/><text x="104" y="3941" font-size="13" fill="#0f172a">module.application.aws_security_g</text>
+<text x="104" y="3961" font-size="13" fill="#0f172a">roup.alb</text>
 <text x="72" y="3980" font-size="10" fill="#64748b" data-role="policy"><title>module.application</title>policy · module.application</text>
 </g>
 <g id="resource-19" data-qualified-address="module.application.aws_security_group.app" data-terraform-address="module.application.aws_security_group.app"><title>module.application.aws_security_group.app — create</title>
 <rect x="60" y="4032" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text x="72" y="4052" font-size="11" fill="#047857">aws_security_group · create</text>
-<text x="72" y="4077" font-size="13" fill="#0f172a">module.application.aws_security_gro</text>
-<text x="72" y="4097" font-size="13" fill="#0f172a">up.app</text>
+<use href="#planorama-icon-aws-security" x="72" y="4060" width="24" height="24" aria-hidden="true"/><text x="104" y="4077" font-size="13" fill="#0f172a">module.application.aws_security_g</text>
+<text x="104" y="4097" font-size="13" fill="#0f172a">roup.app</text>
 <text x="72" y="4116" font-size="10" fill="#64748b" data-role="policy"><title>module.application</title>policy · module.application</text>
 </g>
 <g id="resource-20" data-qualified-address="module.database.aws_cloudwatch_metric_alarm.database_cpu" data-terraform-address="module.database.aws_cloudwatch_metric_alarm.database_cpu"><title>module.database.aws_cloudwatch_metric_alarm.database_cpu — create</title>
 <rect x="60" y="5976" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text x="72" y="5996" font-size="11" fill="#047857">aws_cloudwatch_metric_al… · create</text>
-<text x="72" y="6021" font-size="13" fill="#0f172a">module.database.aws_cloudwatch_metr</text>
-<text x="72" y="6041" font-size="13" fill="#0f172a">ic_alarm.database_cpu</text>
+<use href="#planorama-icon-aws-monitoring" x="72" y="6004" width="24" height="24" aria-hidden="true"/><text x="104" y="6021" font-size="13" fill="#0f172a">module.database.aws_cloudwatch_me</text>
+<text x="104" y="6041" font-size="13" fill="#0f172a">tric_alarm.database_cpu</text>
 <text x="72" y="6060" font-size="10" fill="#64748b" data-role="controller"><title>module.database</title>controller · module.database</text>
 </g>
 <g id="resource-21" data-qualified-address="module.database.aws_db_instance.database" data-terraform-address="module.database.aws_db_instance.database"><title>module.database.aws_db_instance.database — create</title>
 <rect x="60" y="4984" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text x="72" y="5004" font-size="11" fill="#047857">aws_db_instance · create</text>
-<text x="72" y="5029" font-size="13" fill="#0f172a">module.database.aws_db_instance.dat</text>
-<text x="72" y="5049" font-size="13" fill="#0f172a">abase</text>
+<use href="#planorama-icon-aws-rds" x="72" y="5012" width="24" height="24" aria-hidden="true"/><text x="104" y="5029" font-size="13" fill="#0f172a">module.database.aws_db_instance.d</text>
+<text x="104" y="5049" font-size="13" fill="#0f172a">atabase</text>
 <text x="72" y="5068" font-size="10" fill="#64748b"><title>module.database</title>module.database</text>
 </g>
 <g id="resource-22" data-qualified-address="module.database.aws_db_subnet_group.database" data-terraform-address="module.database.aws_db_subnet_group.database"><title>module.database.aws_db_subnet_group.database — create</title>
 <rect x="60" y="1992" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text x="72" y="2012" font-size="11" fill="#047857">aws_db_subnet_group · create</text>
-<text x="72" y="2037" font-size="13" fill="#0f172a">module.database.aws_db_subnet_group</text>
-<text x="72" y="2057" font-size="13" fill="#0f172a">.database</text>
+<use href="#planorama-icon-aws-rds" x="72" y="2020" width="24" height="24" aria-hidden="true"/><text x="104" y="2037" font-size="13" fill="#0f172a">module.database.aws_db_subnet_gro</text>
+<text x="104" y="2057" font-size="13" fill="#0f172a">up.database</text>
 <text x="72" y="2076" font-size="10" fill="#64748b"><title>module.database</title>module.database</text>
 </g>
 <g id="resource-23" data-qualified-address="module.database.aws_security_group.database" data-terraform-address="module.database.aws_security_group.database"><title>module.database.aws_security_group.database — create</title>
 <rect x="60" y="4168" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text x="72" y="4188" font-size="11" fill="#047857">aws_security_group · create</text>
-<text x="72" y="4213" font-size="13" fill="#0f172a">module.database.aws_security_group.</text>
-<text x="72" y="4233" font-size="13" fill="#0f172a">database</text>
+<use href="#planorama-icon-aws-security" x="72" y="4196" width="24" height="24" aria-hidden="true"/><text x="104" y="4213" font-size="13" fill="#0f172a">module.database.aws_security_grou</text>
+<text x="104" y="4233" font-size="13" fill="#0f172a">p.database</text>
 <text x="72" y="4252" font-size="10" fill="#64748b" data-role="policy"><title>module.database</title>policy · module.database</text>
 </g>
 <g id="resource-24" data-qualified-address="module.network.aws_eip.nat" data-terraform-address="module.network.aws_eip.nat"><title>module.network.aws_eip.nat — create</title>
 <rect x="60" y="5528" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text x="72" y="5548" font-size="11" fill="#047857">aws_eip · create</text>
-<text x="72" y="5573" font-size="13" fill="#0f172a">module.network.aws_eip.nat</text>
+<use href="#planorama-icon-aws-ec2" x="72" y="5556" width="24" height="24" aria-hidden="true"/><text x="104" y="5573" font-size="13" fill="#0f172a">module.network.aws_eip.nat</text>
 <text x="72" y="5612" font-size="10" fill="#64748b"><title>module.network</title>module.network</text>
 </g>
 <g id="resource-25" data-qualified-address="module.network.aws_internet_gateway.main" data-terraform-address="module.network.aws_internet_gateway.main"><title>module.network.aws_internet_gateway.main — create</title>
 <rect x="60" y="2536" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text x="72" y="2556" font-size="11" fill="#047857">aws_internet_gateway · create</text>
-<text x="72" y="2581" font-size="13" fill="#0f172a">module.network.aws_internet_gateway</text>
-<text x="72" y="2601" font-size="13" fill="#0f172a">.main</text>
+<use href="#planorama-icon-aws-gateway" x="72" y="2564" width="24" height="24" aria-hidden="true"/><text x="104" y="2581" font-size="13" fill="#0f172a">module.network.aws_internet_gatew</text>
+<text x="104" y="2601" font-size="13" fill="#0f172a">ay.main</text>
 <text x="72" y="2620" font-size="10" fill="#64748b"><title>module.network</title>module.network</text>
 </g>
 <g id="resource-26" data-qualified-address="module.network.aws_nat_gateway.main" data-terraform-address="module.network.aws_nat_gateway.main"><title>module.network.aws_nat_gateway.main — create</title>
 <rect x="60" y="3488" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text x="72" y="3508" font-size="11" fill="#047857">aws_nat_gateway · create</text>
-<text x="72" y="3533" font-size="13" fill="#0f172a">module.network.aws_nat_gateway.main</text>
+<use href="#planorama-icon-aws-gateway" x="72" y="3516" width="24" height="24" aria-hidden="true"/><text x="104" y="3533" font-size="13" fill="#0f172a">module.network.aws_nat_gateway.ma</text>
+<text x="104" y="3553" font-size="13" fill="#0f172a">in</text>
 <text x="72" y="3572" font-size="10" fill="#64748b"><title>module.network</title>module.network</text>
 </g>
 <g id="resource-27" data-qualified-address="module.network.aws_route.internet" data-terraform-address="module.network.aws_route.internet"><title>module.network.aws_route.internet — create</title>
 <rect x="60" y="5392" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text x="72" y="5412" font-size="11" fill="#047857">aws_route · create</text>
-<text x="72" y="5437" font-size="13" fill="#0f172a">module.network.aws_route.internet</text>
+<use href="#planorama-icon-aws-route" x="72" y="5420" width="24" height="24" aria-hidden="true"/><text x="104" y="5437" font-size="13" fill="#0f172a">module.network.aws_route.internet</text>
 <text x="72" y="5476" font-size="10" fill="#64748b"><title>module.network</title>module.network</text>
 </g>
 <g id="resource-28" data-qualified-address="module.network.aws_route.nat" data-terraform-address="module.network.aws_route.nat"><title>module.network.aws_route.nat — create</title>
 <rect x="60" y="5664" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text x="72" y="5684" font-size="11" fill="#047857">aws_route · create</text>
-<text x="72" y="5709" font-size="13" fill="#0f172a">module.network.aws_route.nat</text>
+<use href="#planorama-icon-aws-route" x="72" y="5692" width="24" height="24" aria-hidden="true"/><text x="104" y="5709" font-size="13" fill="#0f172a">module.network.aws_route.nat</text>
 <text x="72" y="5748" font-size="10" fill="#64748b"><title>module.network</title>module.network</text>
 </g>
 <g id="resource-29" data-qualified-address="module.network.aws_route_table.private" data-terraform-address="module.network.aws_route_table.private"><title>module.network.aws_route_table.private — create</title>
 <rect x="60" y="3624" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text x="72" y="3644" font-size="11" fill="#047857">aws_route_table · create</text>
-<text x="72" y="3669" font-size="13" fill="#0f172a">module.network.aws_route_table.priv</text>
-<text x="72" y="3689" font-size="13" fill="#0f172a">ate</text>
+<use href="#planorama-icon-aws-route" x="72" y="3652" width="24" height="24" aria-hidden="true"/><text x="104" y="3669" font-size="13" fill="#0f172a">module.network.aws_route_table.pr</text>
+<text x="104" y="3689" font-size="13" fill="#0f172a">ivate</text>
 <text x="72" y="3708" font-size="10" fill="#64748b"><title>module.network</title>module.network</text>
 </g>
 <g id="resource-30" data-qualified-address="module.network.aws_route_table.public" data-terraform-address="module.network.aws_route_table.public"><title>module.network.aws_route_table.public — create</title>
 <rect x="60" y="3760" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text x="72" y="3780" font-size="11" fill="#047857">aws_route_table · create</text>
-<text x="72" y="3805" font-size="13" fill="#0f172a">module.network.aws_route_table.publ</text>
-<text x="72" y="3825" font-size="13" fill="#0f172a">ic</text>
+<use href="#planorama-icon-aws-route" x="72" y="3788" width="24" height="24" aria-hidden="true"/><text x="104" y="3805" font-size="13" fill="#0f172a">module.network.aws_route_table.pu</text>
+<text x="104" y="3825" font-size="13" fill="#0f172a">blic</text>
 <text x="72" y="3844" font-size="10" fill="#64748b"><title>module.network</title>module.network</text>
 </g>
 <g id="resource-31" data-qualified-address="module.network.aws_security_group.endpoints" data-terraform-address="module.network.aws_security_group.endpoints"><title>module.network.aws_security_group.endpoints — create</title>
 <rect x="60" y="4304" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text x="72" y="4324" font-size="11" fill="#047857">aws_security_group · create</text>
-<text x="72" y="4349" font-size="13" fill="#0f172a">module.network.aws_security_group.e</text>
-<text x="72" y="4369" font-size="13" fill="#0f172a">ndpoints</text>
+<use href="#planorama-icon-aws-security" x="72" y="4332" width="24" height="24" aria-hidden="true"/><text x="104" y="4349" font-size="13" fill="#0f172a">module.network.aws_security_group</text>
+<text x="104" y="4369" font-size="13" fill="#0f172a">.endpoints</text>
 <text x="72" y="4388" font-size="10" fill="#64748b" data-role="policy"><title>module.network</title>policy · module.network</text>
 </g>
 <g id="resource-32" data-qualified-address="module.network.aws_subnet.private_a" data-terraform-address="module.network.aws_subnet.private_a"><title>module.network.aws_subnet.private_a — create</title>
 <text x="112" y="588" font-size="11" fill="#047857">aws_subnet · create</text>
-<text x="112" y="613" font-size="13" fill="#0f172a">module.network.aws_subnet.private_a</text>
+<use href="#planorama-icon-aws-subnet" x="112" y="596" width="24" height="24" aria-hidden="true"/><text x="144" y="613" font-size="13" fill="#0f172a">module.network.aws_subnet.private_a</text>
 <text x="112" y="652" font-size="10" fill="#64748b"><title>module.network</title>module.network</text>
 </g>
 <g id="resource-33" data-qualified-address="module.network.aws_subnet.private_b" data-terraform-address="module.network.aws_subnet.private_b"><title>module.network.aws_subnet.private_b — create</title>
 <text x="112" y="1036" font-size="11" fill="#047857">aws_subnet · create</text>
-<text x="112" y="1061" font-size="13" fill="#0f172a">module.network.aws_subnet.private_b</text>
+<use href="#planorama-icon-aws-subnet" x="112" y="1044" width="24" height="24" aria-hidden="true"/><text x="144" y="1061" font-size="13" fill="#0f172a">module.network.aws_subnet.private_b</text>
 <text x="112" y="1100" font-size="10" fill="#64748b"><title>module.network</title>module.network</text>
 </g>
 <g id="resource-34" data-qualified-address="module.network.aws_subnet.public_a" data-terraform-address="module.network.aws_subnet.public_a"><title>module.network.aws_subnet.public_a — create</title>
 <text x="112" y="1484" font-size="11" fill="#047857">aws_subnet · create</text>
-<text x="112" y="1509" font-size="13" fill="#0f172a">module.network.aws_subnet.public_a</text>
+<use href="#planorama-icon-aws-subnet" x="112" y="1492" width="24" height="24" aria-hidden="true"/><text x="144" y="1509" font-size="13" fill="#0f172a">module.network.aws_subnet.public_a</text>
 <text x="112" y="1548" font-size="10" fill="#64748b"><title>module.network</title>module.network</text>
 </g>
 <g id="resource-35" data-qualified-address="module.network.aws_subnet.public_b" data-terraform-address="module.network.aws_subnet.public_b"><title>module.network.aws_subnet.public_b — create</title>
 <text x="112" y="1660" font-size="11" fill="#047857">aws_subnet · create</text>
-<text x="112" y="1685" font-size="13" fill="#0f172a">module.network.aws_subnet.public_b</text>
+<use href="#planorama-icon-aws-subnet" x="112" y="1668" width="24" height="24" aria-hidden="true"/><text x="144" y="1685" font-size="13" fill="#0f172a">module.network.aws_subnet.public_b</text>
 <text x="112" y="1724" font-size="10" fill="#64748b"><title>module.network</title>module.network</text>
 </g>
 <g id="resource-36" data-qualified-address="module.network.aws_vpc.main" data-terraform-address="module.network.aws_vpc.main"><title>module.network.aws_vpc.main — create</title>
 <text x="72" y="180" font-size="11" fill="#047857">aws_vpc · create</text>
-<text x="72" y="205" font-size="13" fill="#0f172a">module.network.aws_vpc.main</text>
+<use href="#planorama-icon-aws-vpc" x="72" y="188" width="24" height="24" aria-hidden="true"/><text x="104" y="205" font-size="13" fill="#0f172a">module.network.aws_vpc.main</text>
 <text x="72" y="244" font-size="10" fill="#64748b"><title>module.network</title>module.network</text>
 </g>
 <g id="resource-37" data-qualified-address="module.network.aws_vpc_endpoint.logs" data-terraform-address="module.network.aws_vpc_endpoint.logs"><title>module.network.aws_vpc_endpoint.logs — create</title>
 <rect x="60" y="4440" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text x="72" y="4460" font-size="11" fill="#047857">aws_vpc_endpoint · create</text>
-<text x="72" y="4485" font-size="13" fill="#0f172a">module.network.aws_vpc_endpoint.log</text>
-<text x="72" y="4505" font-size="13" fill="#0f172a">s</text>
+<use href="#planorama-icon-aws-endpoint" x="72" y="4468" width="24" height="24" aria-hidden="true"/><text x="104" y="4485" font-size="13" fill="#0f172a">module.network.aws_vpc_endpoint.l</text>
+<text x="104" y="4505" font-size="13" fill="#0f172a">ogs</text>
 <text x="72" y="4524" font-size="10" fill="#64748b"><title>module.network</title>module.network</text>
 </g>
 <g id="resource-38" data-qualified-address="module.network.aws_vpc_peering_connection.shared" data-terraform-address="module.network.aws_vpc_peering_connection.shared"><title>module.network.aws_vpc_peering_connection.shared — create</title>
 <rect x="60" y="4576" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text x="72" y="4596" font-size="11" fill="#047857">aws_vpc_peering_connecti… · create</text>
-<text x="72" y="4621" font-size="13" fill="#0f172a">module.network.aws_vpc_peering_conn</text>
-<text x="72" y="4641" font-size="13" fill="#0f172a">ection.shared</text>
+<use href="#planorama-icon-aws-vpc" x="72" y="4604" width="24" height="24" aria-hidden="true"/><text x="104" y="4621" font-size="13" fill="#0f172a">module.network.aws_vpc_peering_co</text>
+<text x="104" y="4641" font-size="13" fill="#0f172a">nnection.shared</text>
 <text x="72" y="4660" font-size="10" fill="#64748b"><title>module.network</title>module.network</text>
 </g>
 <g id="resource-39" data-qualified-address="module.shared.data.aws_ami.app" data-terraform-address="module.shared.data.aws_ami.app"><title>module.shared.data.aws_ami.app — unchanged</title>
 <rect x="60" y="4712" width="320" height="96" rx="8" fill="#f8fafc" stroke="#64748b" stroke-width="1.5" data-mode="data" stroke-dasharray="6 4"/>
 <g data-external="true"><title>External resource: read by Terraform, not managed by this configuration</title><rect x="302" y="4719" width="68" height="18" rx="4" fill="#e2e8f0"/><text x="308" y="4732" font-size="10" fill="#334155">external</text></g><text x="72" y="4732" font-size="11" fill="#64748b">aws_ami · unchanged</text>
-<text x="72" y="4757" font-size="13" fill="#0f172a">module.shared.data.aws_ami.app</text>
+<use href="#planorama-icon-aws-ec2" x="72" y="4740" width="24" height="24" aria-hidden="true"/><text x="104" y="4757" font-size="13" fill="#0f172a">module.shared.data.aws_ami.app</text>
 <text x="72" y="4796" font-size="10" fill="#64748b"><title>module.shared</title>module.shared</text>
 </g>
 <g id="resource-40" data-qualified-address="module.shared.data.aws_security_group.shared" data-terraform-address="module.shared.data.aws_security_group.shared"><title>module.shared.data.aws_security_group.shared — unchanged</title>
 <rect x="60" y="4848" width="320" height="96" rx="8" fill="#f8fafc" stroke="#64748b" stroke-width="1.5" data-mode="data" stroke-dasharray="6 4"/>
 <g data-external="true"><title>External resource: read by Terraform, not managed by this configuration</title><rect x="302" y="4855" width="68" height="18" rx="4" fill="#e2e8f0"/><text x="308" y="4868" font-size="10" fill="#334155">external</text></g><text x="72" y="4868" font-size="11" fill="#64748b">aws_security_group · unchanged</text>
-<text x="72" y="4893" font-size="13" fill="#0f172a">module.shared.data.aws_security_gro</text>
-<text x="72" y="4913" font-size="13" fill="#0f172a">up.shared</text>
+<use href="#planorama-icon-aws-security" x="72" y="4876" width="24" height="24" aria-hidden="true"/><text x="104" y="4893" font-size="13" fill="#0f172a">module.shared.data.aws_security_g</text>
+<text x="104" y="4913" font-size="13" fill="#0f172a">roup.shared</text>
 <text x="72" y="4932" font-size="10" fill="#64748b" data-role="policy"><title>module.shared</title>policy · module.shared</text>
 </g>
 <g id="resource-41" data-qualified-address="module.shared.data.aws_vpc.shared" data-terraform-address="module.shared.data.aws_vpc.shared"><title>module.shared.data.aws_vpc.shared — unchanged</title>
 <g data-external="true"><title>External resource: read by Terraform, not managed by this configuration</title><rect x="302" y="5807" width="68" height="18" rx="4" fill="#e2e8f0"/><text x="308" y="5820" font-size="10" fill="#334155">external</text></g><text x="72" y="5820" font-size="11" fill="#64748b">aws_vpc · unchanged</text>
-<text x="72" y="5845" font-size="13" fill="#0f172a">module.shared.data.aws_vpc.shared</text>
+<use href="#planorama-icon-aws-vpc" x="72" y="5828" width="24" height="24" aria-hidden="true"/><text x="104" y="5845" font-size="13" fill="#0f172a">module.shared.data.aws_vpc.shared</text>
 <text x="72" y="5884" font-size="10" fill="#64748b"><title>module.shared</title>module.shared</text>
 </g>
 </g>

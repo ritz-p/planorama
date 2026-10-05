@@ -1,7 +1,28 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1100" height="512" viewBox="0 0 1100 512" role="img" aria-labelledby="title description">
 <title id="title">Terraform plan</title>
 <desc id="description">3 resources (2 cards), 1 relationships. Lines show architectural relationships. Edge titles identify the relationship kind and Terraform change.</desc>
-<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/></marker><marker id="arrow-create" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#047857"/></marker></defs>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/></marker><marker id="arrow-create" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#047857"/></marker><metadata id="planorama-icons-license">MIT License
+
+Copyright (c) 2026 Planorama contributors
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of the Planorama service glyphs and associated documentation files (the
+&quot;Software&quot;), to deal in the Software without restriction, including without
+limitation the rights to use, copy, modify, merge, publish, distribute,
+sublicense, and/or sell copies of the Software, and to permit persons to whom
+the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+</metadata><symbol id="planorama-icon-aws-subnet" viewBox="0 0 24 24"><rect width="24" height="24" rx="4" fill="#6346a6"/><g fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="5" width="14" height="14" rx="2"/><path d="M5 12h14M12 5v14"/></g></symbol><symbol id="planorama-icon-aws-route" viewBox="0 0 24 24"><rect width="24" height="24" rx="4" fill="#6346a6"/><g fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 18h5V6h8m-3-3 3 3-3 3M10 13h8m-3-3 3 3-3 3"/><circle cx="5" cy="18" r="2"/></g></symbol></defs>
 <rect width="100%" height="100%" fill="#ffffff"/>
 <g font-family="ui-monospace, SFMono-Regular, Consolas, monospace">
 <text x="40" y="45" font-size="25" font-weight="700" fill="#0f172a">Terraform plan</text>
@@ -18,12 +39,13 @@
 <g id="resource-0" data-qualified-address="module.root.aws_route_table.private" data-terraform-address="aws_route_table.private"><title>module.root.aws_route_table.private — create</title>
 <rect x="60" y="336" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text x="72" y="356" font-size="11" fill="#047857">aws_route_table · create</text>
-<text x="72" y="381" font-size="13" fill="#0f172a">module.root.aws_route_table.private</text>
+<use href="#planorama-icon-aws-route" x="72" y="364" width="24" height="24" aria-hidden="true"/><text x="104" y="381" font-size="13" fill="#0f172a">module.root.aws_route_table.priva</text>
+<text x="104" y="401" font-size="13" fill="#0f172a">te</text>
 <text x="72" y="420" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
 <g id="resource-1" data-qualified-address="module.root.aws_subnet.private" data-terraform-address="aws_subnet.private"><title>module.root.aws_subnet.private — create</title>
 <text x="72" y="180" font-size="11" fill="#047857">aws_subnet · create</text>
-<text x="72" y="205" font-size="13" fill="#0f172a">module.root.aws_subnet.private</text>
+<use href="#planorama-icon-aws-subnet" x="72" y="188" width="24" height="24" aria-hidden="true"/><text x="104" y="205" font-size="13" fill="#0f172a">module.root.aws_subnet.private</text>
 <text x="72" y="244" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
 </g>
