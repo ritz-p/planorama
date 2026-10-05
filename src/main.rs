@@ -1,5 +1,6 @@
 mod classification;
 mod cli;
+mod icons;
 mod layout;
 mod model;
 mod plan;
