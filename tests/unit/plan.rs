@@ -3,10 +3,13 @@ use super::*;
 #[path = "plan/locals.rs"]
 mod locals;
 
+#[path = "plan/instances.rs"]
+mod instances;
+
 #[test]
 fn parsed_edges_are_ordered_dependencies() {
     let graph = parse(include_str!("../../tests/fixtures/terraform-plan.json")).unwrap();
-    assert_eq!(graph.edges.len(), 34);
+    assert_eq!(graph.edges.len(), 28);
     assert!(
         graph
             .edges
@@ -123,7 +126,22 @@ fn real_terraform_plan_preserves_module_dependencies() {
         "module.service[\"api\"].terraform_data.worker[0]",
         "module.service[\"api\"].module.nested.terraform_data.leaf",
     )));
-    assert_eq!(edges.len(), 34);
+    assert_eq!(edges.len(), 28);
+    // Previously these references expanded to all four workers for both leaves.
+    for scope in ["api", "web"] {
+        let leaf = format!("module.service[\"{scope}\"].module.nested.terraform_data.leaf");
+        let workers: Vec<_> = edges
+            .iter()
+            .filter(|(source, target)| *target == leaf && source.contains("terraform_data.worker"))
+            .map(|(source, _)| *source)
+            .collect();
+        assert_eq!(
+            workers,
+            [format!(
+                "module.service[\"{scope}\"].terraform_data.worker[0]"
+            )]
+        );
+    }
 }
 
 #[test]
