@@ -61,6 +61,11 @@ pub(super) fn find_path(
         ];
         for next in neighbors.into_iter().flatten() {
             let (a, b) = (point(current), point(next));
+            // The caller attaches a rightward source stub and a leftward
+            // target stub. Do not reverse over either fixed segment.
+            if (current == first && b.x < a.x) || (next == last && a.x < b.x) {
+                continue;
+            }
             if obstacles.iter().any(|&bounds| crosses(a, b, bounds)) {
                 continue;
             }

@@ -2,6 +2,36 @@ use super::*;
 use crate::layout::metrics::measure;
 
 #[test]
+fn container_port_stubs_are_not_immediately_retraced() {
+    let raw = plan::parse(include_str!(
+        "../../../../examples/terraform-large/plan.json"
+    ))
+    .unwrap();
+    let graph = semantic::transform(&raw).0;
+    let layout = Layout::new(&graph);
+    for (edge, path) in graph.edges.iter().zip(&layout.paths) {
+        for points in path.windows(3) {
+            let [a, b, c] = [points[0], points[1], points[2]];
+            let reverses = (a.y == b.y
+                && b.y == c.y
+                && a.x.cmp(&b.x) != b.x.cmp(&c.x)
+                && a.x != b.x
+                && b.x != c.x)
+                || (a.x == b.x
+                    && b.x == c.x
+                    && a.y.cmp(&b.y) != b.y.cmp(&c.y)
+                    && a.y != b.y
+                    && b.y != c.y);
+            assert!(
+                !reverses,
+                "{} -> {} retraces {points:?}",
+                graph.nodes[edge.from].address, graph.nodes[edge.to].address
+            );
+        }
+    }
+}
+
+#[test]
 fn symmetric_peers_keep_ports_and_routes_when_edges_are_reordered() {
     let mut graph = ranked_fixture();
     graph.nodes.truncate(4);
@@ -34,11 +64,18 @@ fn coincident_crossings_make_a_long_clear_detour_worthwhile() {
     use crate::layout::routing::scoring::Scorer;
     let start = Point { x: 100, y: 2000 };
     let end = Point { x: 500, y: 2000 };
-    let obstacles = [Bounds {
-        origin: Point { x: 200, y: 4000 },
-        width: 100,
-        height: 100,
-    }];
+    let obstacles = [
+        Bounds {
+            origin: Point { x: 200, y: 4000 },
+            width: 100,
+            height: 100,
+        },
+        Bounds {
+            origin: Point { x: 600, y: 2040 },
+            width: 100,
+            height: 100,
+        },
+    ];
     let occupied = vec![Point { x: 350, y: 500 }, Point { x: 350, y: 3500 }];
     let mut scorer = Scorer::default();
     for _ in 0..4 {
@@ -92,11 +129,18 @@ fn crossing_penalty_selects_a_clear_detour_when_available() {
     use crate::layout::routing::scoring::Scorer;
     let start = Point { x: 100, y: 100 };
     let end = Point { x: 500, y: 100 };
-    let obstacles = [Bounds {
-        origin: Point { x: 200, y: 200 },
-        width: 100,
-        height: 100,
-    }];
+    let obstacles = [
+        Bounds {
+            origin: Point { x: 200, y: 200 },
+            width: 100,
+            height: 100,
+        },
+        Bounds {
+            origin: Point { x: 600, y: 140 },
+            width: 100,
+            height: 100,
+        },
+    ];
     let occupied = vec![Point { x: 350, y: 80 }, Point { x: 350, y: 150 }];
     let shortest = routing::path_between(start, end, &obstacles, None);
     let mut scorer = Scorer::default();
