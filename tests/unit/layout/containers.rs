@@ -4,6 +4,9 @@ use crate::{
     plan, semantic, svg,
 };
 
+#[path = "containers/wrapping.rs"]
+mod wrapping;
+
 fn fixture() -> Graph {
     let raw = plan::parse(include_str!("../../fixtures/containment-plan.json")).unwrap();
     semantic::transform(&raw).0

@@ -73,26 +73,27 @@ pub(super) fn place(graph: &Graph) -> Layout<'_> {
     let mut offsets = vec![Point { x: 0, y: 0 }; graph.nodes.len()];
     for &node in order.iter().rev() {
         if graph.nodes[node].role == ResourceRole::Container {
-            let columns = placement::columns(graph, node, &children[node], &parents);
-            let mut x = PADDING;
-            let mut height = header_heights[node] + PADDING;
-            for column in columns {
-                let width = column
-                    .iter()
-                    .map(|&child| sizes[child].0)
-                    .max()
-                    .unwrap_or(0);
-                let mut y = header_heights[node] + PADDING;
-                for child in column {
-                    offsets[child] = Point { x, y };
-                    y += sizes[child].1 + PADDING;
-                }
-                height = height.max(y);
-                x += width + PADDING;
+            let columns = placement::columns(graph, Some(node), &children[node], &parents);
+            let (width, height) = placement::pack(&columns, &sizes, &mut offsets);
+            for &child in &children[node] {
+                offsets[child].x += PADDING;
+                offsets[child].y += header_heights[node] + PADDING;
             }
-            sizes[node] = (x.max(NODE_WIDTH + PADDING * 2), height);
+            sizes[node] = (
+                width.max(NODE_WIDTH) + PADDING * 2,
+                header_heights[node]
+                    + PADDING
+                    + height
+                    + if children[node].is_empty() {
+                        0
+                    } else {
+                        PADDING
+                    },
+            );
         }
     }
+    let columns = placement::columns(graph, None, &roots, &parents);
+    let (_, root_height) = placement::pack(&columns, &sizes, &mut offsets);
     let mut layout = Layout {
         bounds: vec![Bounds::card(Point { x: 0, y: 0 }); graph.nodes.len()],
         header_heights,
@@ -105,9 +106,11 @@ pub(super) fn place(graph: &Graph) -> Layout<'_> {
         containers: Vec::new(),
         parents,
     };
-    let mut y = 160;
     for root in roots {
-        layout.positions[root] = Point { x: 60, y };
+        layout.positions[root] = Point {
+            x: 60 + offsets[root].x,
+            y: 160 + offsets[root].y,
+        };
         let mut pending = vec![root];
         while let Some(node) = pending.pop() {
             let origin = layout.positions[node];
@@ -129,9 +132,8 @@ pub(super) fn place(graph: &Graph) -> Layout<'_> {
             }
             pending.extend(children[node].iter().rev().copied());
         }
-        y += sizes[root].1 + PADDING;
     }
-    layout.height = (y + 40).max(300);
+    layout.height = (root_height + 240).max(300);
     layout.paths = routing::route(graph, &layout, &keys);
     layout
 }
