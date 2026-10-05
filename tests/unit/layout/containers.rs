@@ -7,6 +7,9 @@ use crate::{
 #[path = "containers/wrapping.rs"]
 mod wrapping;
 
+#[path = "containers/quality.rs"]
+mod quality;
+
 fn fixture() -> Graph {
     let raw = plan::parse(include_str!("../../fixtures/containment-plan.json")).unwrap();
     semantic::transform(&raw).0

@@ -5,6 +5,26 @@ fn points(values: &[(usize, usize)]) -> Vec<Point> {
 }
 
 #[test]
+fn grid_cost_counts_crossings_at_subdivision_vertices_and_occupied_segments() {
+    let mut scorer = Scorer::default();
+    scorer.insert(points(&[(50, 10), (50, 90)]));
+    let full = scorer.segment_cost(Point { x: 10, y: 50 }, Point { x: 90, y: 50 });
+    let split = scorer.segment_cost(Point { x: 10, y: 50 }, Point { x: 50, y: 50 })
+        + scorer.segment_cost(Point { x: 50, y: 50 }, Point { x: 90, y: 50 });
+    assert!(full > 0);
+    assert_eq!(full, split);
+    assert_eq!(
+        full,
+        scorer.segment_cost(Point { x: 90, y: 50 }, Point { x: 10, y: 50 })
+    );
+    assert!(scorer.segment_cost(Point { x: 50, y: 20 }, Point { x: 50, y: 80 }) > 0);
+    assert_eq!(
+        scorer.segment_cost(Point { x: 10, y: 100 }, Point { x: 90, y: 100 }),
+        0
+    );
+}
+
+#[test]
 fn longer_clear_route_beats_shorter_overlapping_route() {
     let mut scorer = Scorer::default();
     scorer.insert(points(&[(20, 50), (80, 50)]));

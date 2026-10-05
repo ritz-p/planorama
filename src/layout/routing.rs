@@ -5,7 +5,7 @@ mod bundles;
 mod candidates;
 mod coverage;
 mod lanes;
-mod scoring;
+pub(super) mod scoring;
 use bundles::Bundles;
 use candidates::RouteCandidate;
 use lanes::VerticalLanes;

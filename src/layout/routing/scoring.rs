@@ -7,7 +7,7 @@ use std::collections::{BTreeMap, BTreeSet};
 mod tests;
 
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord)]
-pub(super) struct Score {
+pub(in crate::layout) struct Score {
     node_crossings: usize,
     overlap: u128,
     crossings: usize,
@@ -16,14 +16,19 @@ pub(super) struct Score {
 }
 
 #[derive(Default)]
-pub(super) struct Scorer {
+pub(in crate::layout) struct Scorer {
     horizontal: BTreeMap<usize, Coverage>,
     vertical: BTreeMap<usize, Coverage>,
     paths: Vec<Vec<Point>>,
 }
 
 impl Scorer {
-    pub(super) fn score(&self, points: &[Point], nodes: &[Bounds]) -> Score {
+    pub(in crate::layout) fn readability_cost(&self, points: &[Point]) -> u128 {
+        let score = self.score(points, &[]);
+        score.overlap * 8 + score.crossings as u128 * 2048 + score.bends as u128 * 24 + score.length
+    }
+
+    pub(in crate::layout) fn score(&self, points: &[Point], nodes: &[Bounds]) -> Score {
         let mut score = Score {
             node_crossings: 0,
             overlap: 0,
@@ -72,7 +77,7 @@ impl Scorer {
         score
     }
 
-    pub(super) fn insert(&mut self, points: Vec<Point>) {
+    pub(in crate::layout) fn insert(&mut self, points: Vec<Point>) {
         for pair in points.windows(2) {
             let (a, b) = (pair[0], pair[1]);
             match a.y == b.y {
@@ -81,6 +86,28 @@ impl Scorer {
             }
         }
         self.paths.push(points);
+    }
+
+    /// Search cost for a grid segment. Half-open crossing ranges count a
+    /// crossing once even when an occupied line falls on a grid vertex.
+    pub(in crate::layout) fn segment_cost(&self, a: Point, b: Point) -> u128 {
+        let horizontal = a.y == b.y;
+        let (parallel, perpendicular, coordinate, from, to) = if horizontal {
+            (&self.horizontal, &self.vertical, a.y, a.x, b.x)
+        } else {
+            (&self.vertical, &self.horizontal, a.x, a.y, b.y)
+        };
+        let overlap = parallel.get(&coordinate).map_or(0, |c| c.overlap(from, to));
+        let crossings = perpendicular
+            .range((
+                std::ops::Bound::Excluded(from.min(to)),
+                std::ops::Bound::Included(from.max(to)),
+            ))
+            .filter(|(_, coverage)| {
+                coverage.overlap(coordinate.saturating_sub(1), coordinate + 1) > 0
+            })
+            .count();
+        overlap * 8 + crossings as u128 * 2048
     }
 }
 
