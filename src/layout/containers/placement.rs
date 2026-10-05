@@ -1,3 +1,5 @@
+use super::PADDING;
+use crate::layout::Point;
 use crate::layout::rank;
 use crate::model::{EdgeKind, Graph};
 use std::collections::{BTreeMap, BTreeSet};
@@ -6,7 +8,7 @@ use std::collections::{BTreeMap, BTreeSet};
 /// Nesting controls membership; only non-containment edges determine columns.
 pub(super) fn columns(
     graph: &Graph,
-    parent: usize,
+    parent: Option<usize>,
     children: &[usize],
     parents: &[Option<usize>],
 ) -> Vec<Vec<usize>> {
@@ -17,13 +19,15 @@ pub(super) fn columns(
         .collect();
     let owners: Vec<_> = (0..graph.nodes.len())
         .map(|mut node| {
-            while let Some(ancestor) = parents[node] {
-                if ancestor == parent {
+            loop {
+                if parents[node] == parent {
                     return indices.get(&node).copied();
                 }
-                node = ancestor;
+                match parents[node] {
+                    Some(ancestor) => node = ancestor,
+                    None => return None,
+                }
             }
-            None
         })
         .collect();
     let edges: BTreeSet<_> = graph
@@ -42,4 +46,58 @@ pub(super) fn columns(
         columns[rank].push(node);
     }
     columns
+}
+
+/// Try bounded-height columns and choose a compact envelope near a landscape
+/// aspect ratio. Rank groups never interleave, so wrapping preserves flow.
+pub(super) fn pack(
+    columns: &[Vec<usize>],
+    sizes: &[(usize, usize)],
+    offsets: &mut [Point],
+) -> (usize, usize) {
+    let nodes: Vec<_> = columns.iter().flatten().copied().collect();
+    if nodes.is_empty() {
+        return (0, 0);
+    }
+    let minimum = nodes.iter().map(|&node| sizes[node].1).max().unwrap();
+    let total: usize = nodes.iter().map(|&node| sizes[node].1 + PADDING).sum();
+    let heights: BTreeSet<_> = (1..=nodes.len().min(64))
+        .map(|count| (total / count).max(minimum))
+        .chain([minimum])
+        .collect();
+    let mut best = None;
+    for limit in heights {
+        let (mut x, mut height) = (0, 0);
+        let mut positions = Vec::with_capacity(nodes.len());
+        for column in columns {
+            let (mut y, mut width) = (0, 0);
+            for &node in column {
+                let (w, h) = sizes[node];
+                if y > 0 && y + h > limit {
+                    x += width + PADDING;
+                    y = 0;
+                    width = 0;
+                }
+                positions.push((node, Point { x, y }));
+                height = height.max(y + h);
+                width = width.max(w);
+                y += h + PADDING;
+            }
+            x += width + PADDING;
+        }
+        let width = x.saturating_sub(PADDING);
+        let score = (
+            (width as u128 * 10).max(height as u128 * 17),
+            width as u128 * height as u128,
+            width,
+        );
+        if best.as_ref().is_none_or(|(old, _, _)| score < *old) {
+            best = Some((score, (width, height), positions));
+        }
+    }
+    let (_, size, positions) = best.unwrap();
+    for (node, position) in positions {
+        offsets[node] = position;
+    }
+    size
 }
