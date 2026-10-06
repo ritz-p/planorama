@@ -147,3 +147,51 @@ fn crossing_penalty_selects_a_clear_detour_when_available() {
     assert_eq!(measure(&[occupied.clone(), shortest]).crossing_count, 1);
     assert_eq!(measure(&[occupied, detour]).crossing_count, 0);
 }
+
+#[test]
+fn completed_paths_compact_stubs_before_scoring_and_occupancy() {
+    use crate::layout::routing::scoring::Scorer;
+    for (start, end, expected, split) in [
+        (
+            Point { x: 100, y: 100 },
+            Point { x: 500, y: 220 },
+            vec![
+                Point { x: 100, y: 100 },
+                Point { x: 516, y: 100 },
+                Point { x: 516, y: 220 },
+                Point { x: 500, y: 220 },
+            ],
+            Point { x: 116, y: 100 },
+        ),
+        (
+            Point { x: 500, y: 100 },
+            Point { x: 100, y: 220 },
+            vec![
+                Point { x: 500, y: 100 },
+                Point { x: 516, y: 100 },
+                Point { x: 516, y: 220 },
+                Point { x: 100, y: 220 },
+            ],
+            Point { x: 116, y: 220 },
+        ),
+    ] {
+        for quality in [false, true] {
+            let mut scorer = Scorer::default();
+            let path = routing::path_between(start, end, &[], quality.then_some(&scorer));
+            assert_eq!(path, expected);
+            assert_eq!(scorer.readability_cost(&path), 552 + 2 * 24);
+            scorer.insert(path);
+            let crossing = [
+                Point {
+                    x: split.x,
+                    y: split.y - 10,
+                },
+                Point {
+                    x: split.x,
+                    y: split.y + 10,
+                },
+            ];
+            assert_eq!(scorer.readability_cost(&crossing), 20 + 2048);
+        }
+    }
+}
