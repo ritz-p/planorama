@@ -1,5 +1,7 @@
 use super::address::{contextualize, static_address};
-use super::references::{instance_map, qualify, references, resolve_sources as resolve};
+use super::references::{
+    instance_map, qualify, qualify_reference, references, resolve_sources as resolve,
+};
 use crate::model::{AttributeReference, Node};
 use serde_json::Value;
 use std::collections::{BTreeMap, BTreeSet};
@@ -70,13 +72,17 @@ fn collect_expressions(
                 references(expression, &mut refs);
                 attributes.insert(
                     name.clone(),
-                    refs.into_iter().map(|r| qualify(scope, &r)).collect(),
+                    refs.into_iter()
+                        .map(|r| qualify_reference(scope, &r))
+                        .collect(),
                 );
                 if name == "network_configuration" {
                     if let Some(refs) = subnet_references(expression) {
                         attributes.insert(
                             "network_configuration.subnets".into(),
-                            refs.into_iter().map(|r| qualify(scope, &r)).collect(),
+                            refs.into_iter()
+                                .map(|r| qualify_reference(scope, &r))
+                                .collect(),
                         );
                     }
                 }
@@ -118,7 +124,9 @@ fn graph_expressions(value: &Value, scope: &str) -> BTreeMap<String, BTreeSet<St
         if !refs.is_empty() {
             result.insert(
                 name.into(),
-                refs.into_iter().map(|r| qualify(scope, &r)).collect(),
+                refs.into_iter()
+                    .map(|r| qualify_reference(scope, &r))
+                    .collect(),
             );
         }
     }

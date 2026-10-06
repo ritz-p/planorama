@@ -45,6 +45,17 @@ pub(super) fn qualify(scope: &str, reference: &str) -> String {
     }
 }
 
+pub(super) fn qualify_reference(scope: &str, reference: &str) -> String {
+    // Iteration context has no resource identity. Keep its original root so
+    // it cannot collide with a module output named count or each. Explicit
+    // module traversals still receive normal lexical qualification.
+    if !reference.starts_with("module.") && super::address::meta_reference(reference) {
+        reference.into()
+    } else {
+        qualify(scope, reference)
+    }
+}
+
 pub(super) fn collect_config(
     module: &Value,
     scope: &str,
@@ -57,7 +68,9 @@ pub(super) fn collect_config(
             references(expression, &mut refs);
             symbols.insert(
                 qualify(scope, &format!("local.{name}")),
-                refs.into_iter().map(|r| qualify(scope, &r)).collect(),
+                refs.into_iter()
+                    .map(|r| qualify_reference(scope, &r))
+                    .collect(),
             );
         }
     }
@@ -75,7 +88,10 @@ pub(super) fn collect_config(
                     .filter_map(Value::as_str)
                     .map(str::to_owned),
             );
-            let mut qualified: BTreeSet<_> = refs.into_iter().map(|r| qualify(scope, &r)).collect();
+            let mut qualified: BTreeSet<_> = refs
+                .into_iter()
+                .map(|r| qualify_reference(scope, &r))
+                .collect();
             qualified.extend(inherited.iter().cloned());
             symbols.insert(qualify(scope, address), qualified);
         }
@@ -86,7 +102,9 @@ pub(super) fn collect_config(
             references(output, &mut refs);
             symbols.insert(
                 qualify(scope, &format!("output.{name}")),
-                refs.into_iter().map(|r| qualify(scope, &r)).collect(),
+                refs.into_iter()
+                    .map(|r| qualify_reference(scope, &r))
+                    .collect(),
             );
         }
     }
@@ -99,7 +117,9 @@ pub(super) fn collect_config(
                     references(expression, &mut refs);
                     symbols.insert(
                         format!("{child}.var.{name}"),
-                        refs.into_iter().map(|r| qualify(scope, &r)).collect(),
+                        refs.into_iter()
+                            .map(|r| qualify_reference(scope, &r))
+                            .collect(),
                     );
                 }
             }
@@ -115,7 +135,7 @@ pub(super) fn collect_config(
                     .map(str::to_owned),
             );
             let mut dependencies = inherited.clone();
-            dependencies.extend(call_refs.into_iter().map(|r| qualify(scope, &r)));
+            dependencies.extend(call_refs.into_iter().map(|r| qualify_reference(scope, &r)));
             collect_config(&call["module"], &child, &dependencies, symbols);
             if let Some(outputs) = call["module"]["outputs"].as_object() {
                 for name in outputs.keys() {

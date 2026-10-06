@@ -419,3 +419,61 @@ fn module_outputs_named_count_and_each_resolve_before_metadata() {
         assert!(crate::semantic::diagnostics::collect(&raw).is_empty());
     }
 }
+
+#[test]
+fn scoped_iteration_metadata_does_not_resolve_through_same_named_outputs() {
+    use serde_json::json;
+    for (name, field) in [
+        ("count", "index"),
+        ("each", "key"),
+        ("each", "value.subnet_id"),
+    ] {
+        for constant in [false, true] {
+            let output = if constant {
+                json!({"constant_value":{"index":1,"key":"safe"}})
+            } else {
+                json!({"references":["test.source.id"]})
+            };
+            let input = json!({"format_version":"1.2","resource_changes":[
+                {"address":"module.worker[0].test.source","type":"test"},
+                {"address":"module.worker[0].test.child","type":"test"},
+                {"address":"test.caller","type":"test"}
+            ],"configuration":{"root_module":{
+                "resources":[{"address":"test.caller","expressions":{"input":{"references":[format!("module.worker[0].{name}.{field}")]}}}],
+                "module_calls":{"worker":{"module":{
+                    "resources":[{"address":"test.source"},{"address":"test.child","expressions":{"input":{"references":[format!("{name}.{field}")]}}}],
+                    "outputs":{name:{"expression":output}}
+                }}}
+            }}}).to_string();
+            let raw = parse(&input).unwrap();
+            let child = raw
+                .nodes
+                .iter()
+                .position(|node| node.address.ends_with("test.child"))
+                .unwrap();
+            let caller = raw
+                .nodes
+                .iter()
+                .position(|node| node.address == "test.caller")
+                .unwrap();
+            let child_ref = raw.attributes.iter().find(|r| r.target == child).unwrap();
+            assert!(child_ref.sources.is_empty());
+            assert!(!child_ref.complete);
+            assert_eq!(
+                child_ref.issues,
+                std::collections::BTreeSet::from([
+                    crate::model::DiagnosticReason::DynamicInstanceSelection
+                ])
+            );
+            assert!(!raw.edges.iter().any(|edge| edge.to == child));
+            let caller_ref = raw.attributes.iter().find(|r| r.target == caller).unwrap();
+            assert!(
+                !caller_ref
+                    .issues
+                    .contains(&crate::model::DiagnosticReason::DynamicInstanceSelection)
+            );
+            assert_eq!(caller_ref.complete, !constant);
+            assert_eq!(caller_ref.sources.len(), usize::from(!constant));
+        }
+    }
+}
