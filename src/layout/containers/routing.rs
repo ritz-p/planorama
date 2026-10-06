@@ -87,6 +87,7 @@ pub(super) fn route_with_quality(
                 edge.change.as_ref().map(|change| change.action),
                 edge.change.as_ref().map(|change| change.local_address()),
                 geometry(peer),
+                graph.nodes[peer].address.as_str(),
                 edge.change.as_ref().map(|change| change.address.as_str()),
             )
         });
@@ -113,6 +114,10 @@ pub(super) fn route_with_quality(
             edge.change.as_ref().map(|c| c.local_address()),
             geometry(edge.from),
             geometry(edge.to),
+            (
+                graph.nodes[edge.from].address.as_str(),
+                graph.nodes[edge.to].address.as_str(),
+            ),
             edge.change.as_ref().map(|change| change.address.as_str()),
         )
     });
