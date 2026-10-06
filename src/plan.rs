@@ -1,6 +1,7 @@
 mod address;
 mod attributes;
 mod entity;
+mod providers;
 mod references;
 #[cfg(test)]
 #[path = "../tests/unit/plan.rs"]
@@ -31,10 +32,15 @@ pub fn parse(json: &str) -> Result<TerraformGraph, String> {
         let address = change["address"]
             .as_str()
             .ok_or("resource change is missing address")?;
-        nodes.insert(
-            address.into(),
-            entity::parse(change, address, parse_action(&change["change"]["actions"])),
-        );
+        let mut node = entity::parse(change, address, parse_action(&change["change"]["actions"]));
+        if !node.provider.is_explicit() {
+            if let Some(previous) = nodes.remove(address) {
+                if previous.provider.is_explicit() {
+                    node.provider = previous.provider;
+                }
+            }
+        }
+        nodes.insert(address.into(), node);
     }
     let mut symbols = BTreeMap::new();
     collect_config(
@@ -54,7 +60,8 @@ pub fn parse(json: &str) -> Result<TerraformGraph, String> {
             nodes.entry(address).or_insert(node);
         }
     }
-    let nodes: Vec<_> = nodes.into_values().collect();
+    let mut nodes: Vec<_> = nodes.into_values().collect();
+    providers::enrich(&plan["configuration"], &mut nodes);
     let edges = resolve(&nodes, &symbols);
     let attributes = attributes::collect(&plan["configuration"]["root_module"], &nodes, &symbols);
     Ok(TerraformGraph {

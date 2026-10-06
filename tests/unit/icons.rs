@@ -38,7 +38,10 @@ fn provider_lookup_shares_service_icons_and_handles_unknown_types() {
         "azurerm_virtual_network",
     ] {
         assert_eq!(
-            icon_for(Provider::from_resource_type(resource_type), resource_type),
+            icon_for(
+                Provider::from_identity(&crate::model::ProviderIdentity::inferred(resource_type)),
+                resource_type
+            ),
             None
         );
     }

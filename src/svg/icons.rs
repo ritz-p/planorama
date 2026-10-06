@@ -14,10 +14,7 @@ pub(super) const GAP: usize = 8;
 const NOTICE: &str = include_str!("../../assets/icons/aws/NOTICE.txt");
 
 pub(super) fn for_node(node: &Node) -> Option<ResourceIcon> {
-    icon_for(
-        Provider::from_resource_type(&node.resource_type),
-        &node.resource_type,
-    )
+    icon_for(Provider::from_identity(&node.provider), &node.resource_type)
 }
 
 pub(super) fn definitions(nodes: &[Node]) -> String {

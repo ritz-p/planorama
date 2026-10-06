@@ -9,6 +9,7 @@ pub(super) fn visible(mut graph: Graph) -> Graph {
     let mut next = 0;
     for (index, node) in graph.nodes.iter().enumerate() {
         let metadata = node.mode == EntityMode::Data
+            && node.provider.is_aws()
             && matches!(
                 node.resource_type.as_str(),
                 "aws_region"

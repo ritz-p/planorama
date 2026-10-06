@@ -12,10 +12,10 @@ pub enum Provider {
 }
 
 impl Provider {
-    pub fn from_resource_type(resource_type: &str) -> Self {
-        match resource_type.strip_prefix("aws_") {
-            Some(_) => Self::Aws,
-            None => Self::Other,
+    pub fn from_identity(provider: &crate::model::ProviderIdentity) -> Self {
+        match provider.is_aws() {
+            true => Self::Aws,
+            false => Self::Other,
         }
     }
 }

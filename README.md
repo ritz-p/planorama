@@ -242,3 +242,5 @@ Resource labels default to full Planorama-qualified addresses (`module.root.aws_
 Resource addresses display 24px official AWS service icons for mapped AWS resource types. Icons are shared SVG symbols embedded in the document, with no external assets or runtime downloads. Unmapped types render without icons; address format, graph identity, and ResourceRole remain independent. Artwork source, version, and export licensing are documented in [Resource icons](docs/icons.md).
 
 実際の Terraform 1.9.8 / AWS provider 5.100.0 の `terraform show -json` 出力を使った追加の互換性 fixture は [aws-captured](tests/fixtures/aws-captured/README.md) にあります。ネットワークを無効にして取得した plan で、通常のテストに Terraform や AWS 認証情報は不要です。
+
+ノードの `ProviderIdentity` は `provider_name` を優先し、ない場合は configuration の `provider_config_key` と `provider_config.full_name` から解決します。`hashicorp/aws` のような2要素の source は `registry.terraform.io/` を補います。明示情報と型名による推定は区別して保持し、情報がない最小入力では `aws_` 型だけを従来どおり AWS と推定します。明示された別 provider や解決できない provider binding は AWS として扱いません。分類・アイコン・AWS 固有の意味変換はこの識別情報を参照します。
