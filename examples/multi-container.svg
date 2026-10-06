@@ -26,13 +26,14 @@ No AWS endorsement is implied. Consult the AWS terms for other uses.
 <g data-container="resource-4"><title>aws_subnet.b</title><rect x="460" y="472" width="400" height="136" rx="12" fill="#d1fae5" stroke="#047857" stroke-width="2" data-mode="managed"/></g>
 <path d="M 380 208 L 388 208 Q 396 208 396 216 L 396 272 Q 396 280 404 280 L 1228 280 Q 1236 280 1236 288 L 1236 322 Q 1236 330 1228 330 L 1220 330 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>aws_security_group.app → aws_ecs_service.app (dependency)</title></path>
 <path d="M 860 334 L 879 334 Q 884 334 884 339 L 884 339 Q 884 344 889 344 L 900 344 " data-edge-kind="connection" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>aws_subnet.a → aws_ecs_service.app (connection)</title></path>
-<path d="M 860 353 L 868 353 Q 876 353 876 361 L 876 462 Q 876 470 868 470 L 460 470 Q 452 470 452 478 L 452 608 Q 452 616 460 616 L 1228 616 Q 1236 616 1236 608 L 1236 478 Q 1236 470 1228 470 L 1220 470 " data-edge-kind="connection" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>aws_subnet.a → aws_lb.app (connection)</title></path>
+<path d="M 860 353 L 868 353 Q 876 353 876 361 L 876 462 Q 876 470 884 470 L 900 470 " data-edge-kind="connection" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>aws_subnet.a → aws_lb.app (connection)</title></path>
 <path d="M 860 510 L 876 510 Q 884 510 884 502 L 884 352 Q 884 344 892 344 L 900 344 " data-edge-kind="connection" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>aws_subnet.b → aws_ecs_service.app (connection)</title></path>
-<path d="M 860 529 L 1228 529 Q 1236 529 1236 521 L 1236 497 Q 1236 489 1228 489 L 1220 489 " data-edge-kind="connection" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>aws_subnet.b → aws_lb.app (connection)</title></path>
+<path d="M 860 529 L 868 529 Q 876 529 876 521 L 876 478 Q 876 470 884 470 L 900 470 " data-edge-kind="connection" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>aws_subnet.b → aws_lb.app (connection)</title></path>
 <g data-edge-kind="containment" data-source="resource-5" data-target="resource-3"><title>aws_vpc.main → aws_subnet.a (containment)</title></g>
 <g data-edge-kind="containment" data-source="resource-5" data-target="resource-4"><title>aws_vpc.main → aws_subnet.b (containment)</title></g>
 <g data-edge-kind="containment" data-source="resource-5" data-target="resource-0"><title>aws_vpc.main → aws_ecs_service.app (containment)</title></g>
 <g data-edge-kind="containment" data-source="resource-5" data-target="resource-1"><title>aws_vpc.main → aws_lb.app (containment)</title></g>
+<circle cx="876" cy="470" r="3" fill="#94a3b8"/>
 <circle cx="884" cy="344" r="3" fill="#94a3b8"/>
 <g id="resource-0" data-qualified-address="module.root.aws_ecs_service.app" data-terraform-address="aws_ecs_service.app"><title>module.root.aws_ecs_service.app — create</title>
 <rect x="900" y="296" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>

@@ -39,13 +39,18 @@ impl Scorer {
         })
     }
 
-    /// Crossings exposed when a horizontal port stub and search segment merge.
-    /// The ordinary half-open segment cost excludes this lower endpoint.
-    pub(in crate::layout) fn horizontal_junction_cost(&self, point: Point) -> u128 {
-        self.vertical_paths.get(&point.x).map_or(0, |segments| {
+    /// Crossings at a grid vertex, charged only for straight continuation.
+    /// Segment costs exclude both endpoints until the next direction is known.
+    pub(in crate::layout) fn junction_cost(&self, point: Point, horizontal: bool) -> u128 {
+        let (index, coordinate, along) = if horizontal {
+            (&self.vertical_paths, point.x, point.y)
+        } else {
+            (&self.horizontal_paths, point.y, point.x)
+        };
+        index.get(&coordinate).map_or(0, |segments| {
             segments
                 .iter()
-                .filter(|&&(_, from, to)| from < point.y && point.y < to)
+                .filter(|&&(_, from, to)| from < along && along < to)
                 .map(|&(path, _, _)| path)
                 .collect::<BTreeSet<_>>()
                 .len() as u128
@@ -130,8 +135,8 @@ impl Scorer {
         self.paths.push(points);
     }
 
-    /// Search cost for a grid segment. Half-open crossing ranges count a
-    /// crossing once even when an occupied line falls on a grid vertex.
+    /// Search cost for a grid segment, excluding endpoint crossings.
+    /// The search charges those separately when it knows the next direction.
     pub(in crate::layout) fn segment_cost(&self, a: Point, b: Point) -> u128 {
         let horizontal = a.y == b.y;
         let (parallel, perpendicular, coordinate, from, to) = if horizontal {
@@ -143,7 +148,7 @@ impl Scorer {
         let crossings = perpendicular
             .range((
                 std::ops::Bound::Excluded(from.min(to)),
-                std::ops::Bound::Included(from.max(to)),
+                std::ops::Bound::Excluded(from.max(to)),
             ))
             .map(|(_, segments)| {
                 segments

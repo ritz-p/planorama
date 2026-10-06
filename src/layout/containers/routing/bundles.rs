@@ -51,6 +51,7 @@ fn candidate(
     let mut ys = vec![end.y];
     let mut bundled_cost = 0;
     let mut independent_cost = 0;
+    let mut independent_overlaps = false;
     for &index in &group.edges {
         let edge = &graph.edges[index];
         let source = layout.bounds[edge.from];
@@ -85,12 +86,15 @@ fn candidate(
             y: target.origin.y + targets[index],
         };
         let independent = path_between(start, independent_end, &obstacles, Some(scorer));
+        independent_overlaps |= scorer.overlaps(&independent);
         bundled_cost += scorer.readability_cost(&path);
         independent_cost += scorer.readability_cost(&independent);
         ys.push(start.y);
         paths.push((index, path));
     }
-    if bundled_cost >= independent_cost {
+    // A cheaper independent route may follow another target's trunk briefly.
+    // Prefer this conflict-free bundle over that ambiguous shared segment.
+    if !independent_overlaps && bundled_cost >= independent_cost {
         return None;
     }
     ys.sort_unstable();

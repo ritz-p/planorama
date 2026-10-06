@@ -78,13 +78,13 @@ pub(super) fn find_path(
             let next_direction = if a.y == b.y { 1 } else { 2 };
             let penalty = scorer.map_or(0, |s| {
                 s.segment_cost(a, b)
-                    + if current == first && next_direction == 1 {
-                        s.horizontal_junction_cost(a)
+                    + if direction == next_direction {
+                        s.junction_cost(a, next_direction == 1)
                     } else {
                         0
                     }
                     + if next == last && next_direction == 1 {
-                        s.horizontal_junction_cost(b)
+                        s.junction_cost(b, true)
                     } else {
                         0
                     }

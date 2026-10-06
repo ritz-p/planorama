@@ -21,7 +21,10 @@ fn different_spanning_targets_do_not_share_bundle_segments() {
                 measure(&[layout.paths[first].clone(), layout.paths[second].clone()])
                     .overlap_distance,
                 0,
-                "different targets share a connection segment"
+                "different targets share a connection segment: {:?} / {:?}; junctions {:?}",
+                layout.paths[first],
+                layout.paths[second],
+                layout.junctions
             );
         }
     }
