@@ -361,3 +361,46 @@ fn graph_only_references_keep_diagnostics_for_resources_and_module_calls() {
         }
     }
 }
+
+#[test]
+fn whole_resource_dependencies_accept_count_and_for_each_instances() {
+    use serde_json::json;
+    for keys in [["[0]", "[1]"], ["[\"a\"]", "[\"b\"]"]] {
+        for inherited in [false, true] {
+            for missing in [false, true] {
+                let mut dependencies = vec!["test.worker"];
+                if missing {
+                    dependencies.push("test.missing");
+                }
+                let resource = json!({"address":"test.consumer","depends_on":dependencies});
+                let root = if inherited {
+                    json!({"module_calls":{"child":{"depends_on":dependencies,"module":{"resources":[{"address":"test.consumer"}]}}}})
+                } else {
+                    json!({"resources":[resource]})
+                };
+                let consumer = if inherited {
+                    "module.child.test.consumer"
+                } else {
+                    "test.consumer"
+                };
+                let input = json!({"format_version":"1.2","resource_changes":[
+                    {"address":format!("test.worker{}", keys[0]),"type":"test"},
+                    {"address":format!("test.worker{}", keys[1]),"type":"test"},
+                    {"address":consumer,"type":"test"}
+                ],"configuration":{"root_module":root}})
+                .to_string();
+                let output = support::run_with_args(input.as_bytes(), &["--diagnostics"]);
+                assert!(output.status.success());
+                let warnings = String::from_utf8(output.stderr).unwrap();
+                if missing {
+                    assert!(warnings.contains("unresolved reference"), "{warnings}");
+                } else {
+                    assert!(warnings.is_empty(), "{warnings}");
+                }
+                let svg = String::from_utf8(output.stdout).unwrap();
+                assert!(svg.contains("3 resources, 2 reference edges"));
+                assert_eq!(svg.as_bytes(), support::run(input.as_bytes()).stdout);
+            }
+        }
+    }
+}

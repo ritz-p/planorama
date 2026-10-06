@@ -7,7 +7,12 @@ pub fn collect(raw: &TerraformGraph) -> Vec<Diagnostic> {
     let mut found = BTreeSet::new();
     // Reuse actual inference so ancestry handling stays aligned with rendering.
     let contained = super::containment::infer(raw);
-    for reference in raw.attributes.iter().chain(&raw.graph_references) {
+    for (reference, dependency_metadata) in raw
+        .attributes
+        .iter()
+        .map(|r| (r, false))
+        .chain(raw.graph_references.iter().map(|r| (r, true)))
+    {
         let node = &raw.nodes[reference.target];
         let plural = node.provider.is_aws()
             && matches!(
@@ -17,7 +22,13 @@ pub fn collect(raw: &TerraformGraph) -> Vec<Diagnostic> {
         for &reason in &reference.issues {
             // Collection-valued subnet relationships intentionally resolve to
             // several sources. Their endpoint types are checked below.
-            if reason == Reason::MultipleMatchingInstances && plural && reference.complete {
+            let whole_dependency = dependency_metadata
+                && (reference.attribute == "depends_on"
+                    || reference.attribute.ends_with(".depends_on"));
+            if reason == Reason::MultipleMatchingInstances
+                && (plural || whole_dependency)
+                && reference.complete
+            {
                 continue;
             }
             found.insert(Diagnostic {
