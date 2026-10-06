@@ -17,14 +17,17 @@ pub fn collect(raw: &TerraformGraph) -> Vec<Diagnostic> {
         let plural = node.provider.is_aws()
             && matches!(
                 (node.resource_type.as_str(), reference.attribute.as_str()),
-                ("aws_lb", "subnets") | ("aws_ecs_service", "network_configuration.subnets")
+                ("aws_lb", "subnets")
+                    | (
+                        "aws_ecs_service",
+                        "network_configuration" | "network_configuration.subnets"
+                    )
             );
         for &reason in &reference.issues {
-            // Collection-valued subnet relationships intentionally resolve to
-            // several sources. Their endpoint types are checked below.
-            let whole_dependency = dependency_metadata
-                && (reference.attribute == "depends_on"
-                    || reference.attribute.ends_with(".depends_on"));
+            // Network collections (including the aggregate ECS block) and
+            // dependency metadata legitimately resolve to multiple instances.
+            // Semantic endpoint types are checked separately below.
+            let whole_dependency = dependency_metadata;
             if reason == Reason::MultipleMatchingInstances
                 && (plural || whole_dependency)
                 && reference.complete

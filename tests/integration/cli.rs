@@ -404,3 +404,45 @@ fn whole_resource_dependencies_accept_count_and_for_each_instances() {
         }
     }
 }
+
+#[test]
+fn collection_metadata_and_ecs_blocks_accept_multiple_instances() {
+    use serde_json::json;
+    for keys in [["[0]", "[1]"], ["[\"a\"]", "[\"b\"]"]] {
+        for field in [
+            "count_expression",
+            "for_each_expression",
+            "network_configuration",
+        ] {
+            for missing in [false, true] {
+                let mut refs = vec!["aws_subnet.private.id"];
+                if missing {
+                    refs.push("aws_subnet.missing.id");
+                }
+                let mut consumer = json!({"address":"aws_ecs_service.app","expressions":{"network_configuration":[{"subnets":{"references":["aws_subnet.private.id"]}}]}});
+                if field == "network_configuration" {
+                    consumer["expressions"][field] = json!([{"subnets":{"references":refs}}]);
+                } else {
+                    consumer[field] = json!({"references":refs});
+                }
+                let input = json!({"format_version":"1.2","resource_changes":[
+                    {"address":"aws_vpc.main","type":"aws_vpc"},
+                    {"address":format!("aws_subnet.private{}", keys[0]),"type":"aws_subnet"},
+                    {"address":format!("aws_subnet.private{}", keys[1]),"type":"aws_subnet"},
+                    {"address":"aws_ecs_service.app","type":"aws_ecs_service"}
+                ],"configuration":{"root_module":{"resources":[
+                    {"address":"aws_subnet.private","expressions":{"vpc_id":{"references":["aws_vpc.main.id"]}}}, consumer
+                ]}}}).to_string();
+                let output = support::run_with_args(input.as_bytes(), &["--diagnostics"]);
+                assert!(output.status.success());
+                let warnings = String::from_utf8(output.stderr).unwrap();
+                if missing {
+                    assert!(warnings.contains("unresolved reference"), "{warnings}");
+                } else {
+                    assert!(warnings.is_empty(), "{warnings}");
+                }
+                assert_eq!(output.stdout, support::run(input.as_bytes()).stdout);
+            }
+        }
+    }
+}
