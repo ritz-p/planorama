@@ -76,6 +76,18 @@ pub(super) fn dynamic_selection(reference: &str) -> bool {
         })
 }
 
+pub(super) fn meta_reference(reference: &str) -> bool {
+    let parts = parts(reference);
+    let mut local = parts.as_slice();
+    while let ["module", _, rest @ ..] = local {
+        local = rest;
+    }
+    matches!(
+        local,
+        ["count", "index"] | ["each", "key"] | ["each", "value"]
+    )
+}
+
 // Attribute traversals after the resource address do not select instances.
 pub(super) fn matches_instance(reference: &str, instance: &str) -> bool {
     parts(reference)

@@ -197,6 +197,12 @@ pub(super) fn resolve_sources(
         if super::address::dynamic_selection(&reference) {
             issues.insert(DiagnosticReason::DynamicInstanceSelection);
         }
+        // Terraform emits iteration metadata as standalone traversals. It is
+        // dynamic context, not a missing resource or alias, even in modules.
+        if super::address::meta_reference(&reference) {
+            complete = false;
+            continue;
+        }
         let resource_key = instances
             .keys()
             .map(|key| static_address(key))

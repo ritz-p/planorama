@@ -215,3 +215,38 @@ fn diagnostics_explain_ambiguous_parents_and_unsafe_association_lowering() {
     assert!(diagnostics.contains("additional relationships prevent association lowering: address=\"aws_route_table_association.private\""));
     assert_eq!(output.stdout, support::run(input).stdout);
 }
+
+#[test]
+fn iteration_meta_references_are_dynamic_not_unresolved_in_root_and_modules() {
+    use serde_json::json;
+    for reference in ["count.index", "each.key", "each.value"] {
+        for nested in [false, true] {
+            let address = if nested {
+                "module.worker[0].test.item"
+            } else {
+                "test.item"
+            };
+            let resource =
+                json!({"address":"test.item","expressions":{"tags":{"references":[reference]}}});
+            let module = if nested {
+                json!({"module_calls":{"worker":{"module":{"resources":[resource]}}}})
+            } else {
+                json!({"resources":[resource]})
+            };
+            let input = json!({"format_version":"1.2","resource_changes":[{"address":address,"type":"test"}],"configuration":{"root_module":module}}).to_string();
+            let output = support::run_with_args(input.as_bytes(), &["--diagnostics"]);
+            assert!(output.status.success());
+            let diagnostics = String::from_utf8(output.stderr).unwrap();
+            assert!(
+                diagnostics.contains("dynamic instance selection"),
+                "{diagnostics}"
+            );
+            assert!(
+                !diagnostics.contains("unresolved reference"),
+                "{diagnostics}"
+            );
+            assert_eq!(diagnostics.lines().count(), 1);
+            assert_eq!(output.stdout, support::run(input.as_bytes()).stdout);
+        }
+    }
+}
