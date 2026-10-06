@@ -200,3 +200,48 @@ fn completed_paths_compact_stubs_before_scoring_and_occupancy() {
         }
     }
 }
+
+#[test]
+fn stub_junction_crossings_select_a_turn_away_detour() {
+    use crate::layout::routing::scoring::Scorer;
+    for (start, end, junction) in [
+        (
+            Point { x: 100, y: 100 },
+            Point { x: 500, y: 220 },
+            Point { x: 116, y: 100 },
+        ),
+        (
+            Point { x: 500, y: 100 },
+            Point { x: 100, y: 220 },
+            Point { x: 116, y: 220 },
+        ),
+    ] {
+        let obstacles = [Bounds {
+            origin: Point { x: 207, y: 148 },
+            width: 100,
+            height: 60,
+        }];
+        let mut scorer = Scorer::default();
+        scorer.insert(vec![
+            Point {
+                x: junction.x,
+                y: junction.y - 10,
+            },
+            Point {
+                x: junction.x,
+                y: junction.y + 10,
+            },
+        ]);
+        let direct = routing::path_between(start, end, &obstacles, Some(&Scorer::default()));
+        let detour = routing::path_between(start, end, &obstacles, Some(&scorer));
+        assert!(
+            scorer.readability_cost(&detour) < scorer.readability_cost(&direct),
+            "start={start:?} direct={direct:?} detour={detour:?}"
+        );
+        // Turning at the junction may overlap the occupied line briefly, but
+        // must avoid the 2048-point crossing exposed by a straight continuation.
+        assert!(
+            scorer.readability_cost(&detour) - Scorer::default().readability_cost(&detour) < 2048
+        );
+    }
+}
