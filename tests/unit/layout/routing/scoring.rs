@@ -5,6 +5,43 @@ fn points(values: &[(usize, usize)]) -> Vec<Point> {
 }
 
 #[test]
+fn grid_crossings_preserve_path_multiplicity_but_not_repeated_segments() {
+    let mut scorer = Scorer::default();
+    for _ in 0..3 {
+        scorer.insert(points(&[(50, 10), (50, 90), (50, 10)]));
+    }
+    let a = Point { x: 10, y: 50 };
+    let b = Point { x: 90, y: 50 };
+    assert_eq!(scorer.score(&[a, b], &[]).crossings, 3);
+    assert_eq!(scorer.segment_cost(a, b), 3 * 2048);
+    assert_eq!(
+        scorer.segment_cost(Point { x: 10, y: 10 }, Point { x: 90, y: 10 }),
+        0
+    );
+}
+
+#[test]
+fn grid_cost_counts_crossings_at_subdivision_vertices_and_occupied_segments() {
+    let mut scorer = Scorer::default();
+    scorer.insert(points(&[(50, 10), (50, 90)]));
+    let full = scorer.segment_cost(Point { x: 10, y: 50 }, Point { x: 90, y: 50 });
+    let split = scorer.segment_cost(Point { x: 10, y: 50 }, Point { x: 50, y: 50 })
+        + scorer.segment_cost(Point { x: 50, y: 50 }, Point { x: 90, y: 50 })
+        + scorer.junction_cost(Point { x: 50, y: 50 }, true);
+    assert!(full > 0);
+    assert_eq!(full, split);
+    assert_eq!(
+        full,
+        scorer.segment_cost(Point { x: 90, y: 50 }, Point { x: 10, y: 50 })
+    );
+    assert!(scorer.segment_cost(Point { x: 50, y: 20 }, Point { x: 50, y: 80 }) > 0);
+    assert_eq!(
+        scorer.segment_cost(Point { x: 10, y: 100 }, Point { x: 90, y: 100 }),
+        0
+    );
+}
+
+#[test]
 fn longer_clear_route_beats_shorter_overlapping_route() {
     let mut scorer = Scorer::default();
     scorer.insert(points(&[(20, 50), (80, 50)]));
@@ -58,4 +95,28 @@ fn equal_overlap_and_crossings_prefer_fewer_bends_then_shorter_paths() {
     let detour = points(&[(0, 10), (0, 30), (100, 30), (100, 10)]);
     assert!(scorer.score(&direct, &[]) < scorer.score(&detour, &[]));
     assert!(scorer.score(&direct, &[]) < scorer.score(&points(&[(0, 10), (200, 10)]), &[]));
+}
+
+#[test]
+fn bend_contacts_have_no_crossing_cost_in_either_direction_or_axis() {
+    for horizontal in [true, false] {
+        let point = |x, y| {
+            if horizontal {
+                Point { x, y }
+            } else {
+                Point { x: y, y: x }
+            }
+        };
+        let mut scorer = Scorer::default();
+        scorer.insert(vec![point(50, 10), point(50, 90)]);
+        for x in [10, 90] {
+            let approach = scorer.segment_cost(point(x, 50), point(50, 50));
+            let departure = scorer.segment_cost(point(50, 50), point(50, 100));
+            let path = [point(x, 50), point(50, 50), point(50, 100)];
+            let score = scorer.score(&path, &[]);
+            assert_eq!(score.crossings, 0);
+            assert_eq!(approach + departure, score.overlap * 8);
+            assert_eq!(scorer.junction_cost(point(50, 50), horizontal), 2048);
+        }
+    }
 }

@@ -7,7 +7,7 @@ use std::collections::{BTreeMap, BTreeSet};
 mod tests;
 
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord)]
-pub(super) struct Score {
+pub(in crate::layout) struct Score {
     node_crossings: usize,
     overlap: u128,
     crossings: usize,
@@ -16,14 +16,40 @@ pub(super) struct Score {
 }
 
 #[derive(Default)]
-pub(super) struct Scorer {
+pub(in crate::layout) struct Scorer {
     horizontal: BTreeMap<usize, Coverage>,
     vertical: BTreeMap<usize, Coverage>,
+    horizontal_paths: BTreeMap<usize, Vec<(usize, usize, usize)>>,
+    vertical_paths: BTreeMap<usize, Vec<(usize, usize, usize)>>,
     paths: Vec<Vec<Point>>,
 }
 
 impl Scorer {
-    pub(super) fn score(&self, points: &[Point], nodes: &[Bounds]) -> Score {
+    /// Crossings at a grid vertex, charged only for straight continuation.
+    /// Segment costs exclude both endpoints until the next direction is known.
+    pub(in crate::layout) fn junction_cost(&self, point: Point, horizontal: bool) -> u128 {
+        let (index, coordinate, along) = if horizontal {
+            (&self.vertical_paths, point.x, point.y)
+        } else {
+            (&self.horizontal_paths, point.y, point.x)
+        };
+        index.get(&coordinate).map_or(0, |segments| {
+            segments
+                .iter()
+                .filter(|&&(_, from, to)| from < along && along < to)
+                .map(|&(path, _, _)| path)
+                .collect::<BTreeSet<_>>()
+                .len() as u128
+                * 2048
+        })
+    }
+
+    pub(in crate::layout) fn readability_cost(&self, points: &[Point]) -> u128 {
+        let score = self.score(points, &[]);
+        score.overlap * 8 + score.crossings as u128 * 2048 + score.bends as u128 * 24 + score.length
+    }
+
+    pub(in crate::layout) fn score(&self, points: &[Point], nodes: &[Bounds]) -> Score {
         let mut score = Score {
             node_crossings: 0,
             overlap: 0,
@@ -72,15 +98,54 @@ impl Scorer {
         score
     }
 
-    pub(super) fn insert(&mut self, points: Vec<Point>) {
+    pub(in crate::layout) fn insert(&mut self, points: Vec<Point>) {
         for pair in points.windows(2) {
             let (a, b) = (pair[0], pair[1]);
             match a.y == b.y {
                 true => self.horizontal.entry(a.y).or_default().insert(a.x, b.x),
                 false => self.vertical.entry(a.x).or_default().insert(a.y, b.y),
             }
+            let (index, coordinate, from, to) = if a.y == b.y {
+                (&mut self.horizontal_paths, a.y, a.x, b.x)
+            } else {
+                (&mut self.vertical_paths, a.x, a.y, b.y)
+            };
+            if from != to {
+                index.entry(coordinate).or_default().push((
+                    self.paths.len(),
+                    from.min(to),
+                    from.max(to),
+                ));
+            }
         }
         self.paths.push(points);
+    }
+
+    /// Search cost for a grid segment, excluding endpoint crossings.
+    /// The search charges those separately when it knows the next direction.
+    pub(in crate::layout) fn segment_cost(&self, a: Point, b: Point) -> u128 {
+        let horizontal = a.y == b.y;
+        let (parallel, perpendicular, coordinate, from, to) = if horizontal {
+            (&self.horizontal, &self.vertical_paths, a.y, a.x, b.x)
+        } else {
+            (&self.vertical, &self.horizontal_paths, a.x, a.y, b.y)
+        };
+        let overlap = parallel.get(&coordinate).map_or(0, |c| c.overlap(from, to));
+        let crossings = perpendicular
+            .range((
+                std::ops::Bound::Excluded(from.min(to)),
+                std::ops::Bound::Excluded(from.max(to)),
+            ))
+            .map(|(_, segments)| {
+                segments
+                    .iter()
+                    .filter(|&&(_, from, to)| from < coordinate && coordinate < to)
+                    .map(|&(path, _, _)| path)
+                    .collect::<BTreeSet<_>>()
+                    .len()
+            })
+            .sum::<usize>();
+        overlap * 8 + crossings as u128 * 2048
     }
 }
 
