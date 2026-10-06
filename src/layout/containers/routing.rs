@@ -1,7 +1,8 @@
 use super::super::{Bounds, Layout, Point};
+use crate::layout::routing::scoring::Scorer;
 use crate::model::{Edge, EdgeKind, Graph};
-use std::cmp::Reverse;
-use std::collections::BinaryHeap;
+mod search;
+use search::find_path;
 
 fn ancestor(parents: &[Option<usize>], parent: usize, mut node: usize) -> bool {
     loop {
@@ -51,6 +52,26 @@ pub(super) fn incidents(graph: &Graph, parents: &[Option<usize>]) -> Vec<Vec<(us
 }
 
 pub(super) fn route(graph: &Graph, layout: &Layout<'_>, keys: &[usize]) -> Vec<Vec<Point>> {
+    route_with_quality(graph, layout, keys, true)
+}
+
+pub(super) fn route_with_quality(
+    graph: &Graph,
+    layout: &Layout<'_>,
+    keys: &[usize],
+    quality: bool,
+) -> Vec<Vec<Point>> {
+    // Structural keys intentionally tie for symmetric nodes. Final geometry
+    // distinguishes those peers without depending on edge input order.
+    let geometry = |node: usize| {
+        let bounds = layout.bounds[node];
+        (
+            bounds.origin.x,
+            bounds.origin.y,
+            bounds.width,
+            bounds.height,
+        )
+    };
     let mut incident = incidents(graph, &layout.parents);
     for edges in &mut incident {
         edges.sort_by_key(|&(index, source)| {
@@ -65,6 +86,9 @@ pub(super) fn route(graph: &Graph, layout: &Layout<'_>, keys: &[usize]) -> Vec<V
                 edge.kind,
                 edge.change.as_ref().map(|change| change.action),
                 edge.change.as_ref().map(|change| change.local_address()),
+                geometry(peer),
+                graph.nodes[peer].address.as_str(),
+                edge.change.as_ref().map(|change| change.address.as_str()),
             )
         });
     }
@@ -79,120 +103,114 @@ pub(super) fn route(graph: &Graph, layout: &Layout<'_>, keys: &[usize]) -> Vec<V
             }
         }
     }
-    graph
-        .edges
+    let mut order: Vec<_> = (0..graph.edges.len()).collect();
+    order.sort_by_key(|&index| {
+        let edge = &graph.edges[index];
+        (
+            keys[edge.from],
+            keys[edge.to],
+            edge.kind,
+            edge.change.as_ref().map(|c| c.action),
+            edge.change.as_ref().map(|c| c.local_address()),
+            geometry(edge.from),
+            geometry(edge.to),
+            (
+                graph.nodes[edge.from].address.as_str(),
+                graph.nodes[edge.to].address.as_str(),
+            ),
+            edge.change.as_ref().map(|change| change.address.as_str()),
+        )
+    });
+    let mut scorer = Scorer::default();
+    let mut paths = vec![Vec::new(); graph.edges.len()];
+    for index in order {
+        let edge = &graph.edges[index];
+        if represented_by_nesting(edge, &layout.parents) {
+            continue;
+        }
+        let start = Point {
+            x: layout.bounds[edge.from].right(),
+            y: layout.bounds[edge.from].origin.y + source_ports[index],
+        };
+        let end = Point {
+            x: layout.bounds[edge.to].right(),
+            y: layout.bounds[edge.to].origin.y + target_ports[index],
+        };
+        let obstacles = obstacles(layout, edge);
+        let path = path_between(start, end, &obstacles, quality.then_some(&scorer));
+        scorer.insert(path.clone());
+        paths[index] = path;
+    }
+    paths
+}
+
+pub(super) fn obstacles(layout: &Layout<'_>, edge: &Edge) -> Vec<Bounds> {
+    layout
+        .bounds
         .iter()
         .enumerate()
-        .map(|(index, edge)| {
-            if represented_by_nesting(edge, &layout.parents) {
-                return Vec::new();
+        .map(|(node, &bounds)| {
+            if ancestor(&layout.parents, node, edge.from)
+                || ancestor(&layout.parents, node, edge.to)
+            {
+                bounds.header(layout.header_heights[node])
+            } else {
+                bounds
             }
-            let start = Point {
-                x: layout.bounds[edge.from].right(),
-                y: layout.bounds[edge.from].origin.y + source_ports[index],
-            };
-            let end = Point {
-                x: layout.bounds[edge.to].right(),
-                y: layout.bounds[edge.to].origin.y + target_ports[index],
-            };
-            let obstacles: Vec<_> = layout
-                .bounds
-                .iter()
-                .enumerate()
-                .map(|(node, &bounds)| {
-                    match ancestor(&layout.parents, node, edge.from)
-                        || ancestor(&layout.parents, node, edge.to)
-                    {
-                        true => bounds.header(layout.header_heights[node]),
-                        false => bounds,
-                    }
-                })
-                .collect();
-            let mut path = vec![start];
-            path.extend(find_path(
-                Point {
-                    x: start.x + 16,
-                    ..start
-                },
-                Point {
-                    x: end.x + 16,
-                    ..end
-                },
-                &obstacles,
-            ));
-            path.push(end);
-            path
         })
         .collect()
 }
 
-fn find_path(start: Point, end: Point, obstacles: &[Bounds]) -> Vec<Point> {
-    let mut xs = vec![start.x, end.x];
-    let mut ys = vec![start.y, end.y];
-    for bounds in obstacles {
-        xs.extend([bounds.origin.x - 16, bounds.origin.x + bounds.width + 16]);
-        ys.extend([bounds.origin.y - 16, bounds.origin.y + bounds.height + 16]);
-    }
-    xs.sort_unstable();
-    xs.dedup();
-    ys.sort_unstable();
-    ys.dedup();
-    let index = |point: Point| {
-        ys.binary_search(&point.y).unwrap() * xs.len() + xs.binary_search(&point.x).unwrap()
+pub(super) fn path_between(
+    start: Point,
+    end: Point,
+    obstacles: &[Bounds],
+    scorer: Option<&Scorer>,
+) -> Vec<Point> {
+    let first = Point {
+        x: start.x + 16,
+        ..start
     };
-    let point = |index: usize| Point {
-        x: xs[index % xs.len()],
-        y: ys[index / xs.len()],
+    let last = Point {
+        x: end.x + 16,
+        ..end
     };
-    let (first, last) = (index(start), index(end));
-    let mut distances = vec![usize::MAX; xs.len() * ys.len()];
-    let mut previous = vec![None; distances.len()];
-    let mut queue = BinaryHeap::from([Reverse((0, first))]);
-    distances[first] = 0;
-    while let Some(Reverse((distance, current))) = queue.pop() {
-        if current == last {
-            break;
-        }
-        if distance != distances[current] {
-            continue;
-        }
-        let (x, y) = (current % xs.len(), current / xs.len());
-        let neighbors = [
-            x.checked_sub(1).map(|x| y * xs.len() + x),
-            (x + 1 < xs.len()).then_some(current + 1),
-            y.checked_sub(1).map(|y| y * xs.len() + x),
-            (y + 1 < ys.len()).then_some(current + xs.len()),
-        ];
-        for next in neighbors.into_iter().flatten() {
-            let (a, b) = (point(current), point(next));
-            if obstacles.iter().any(|&bounds| crosses(a, b, bounds)) {
+    let finish = |middle: Vec<Point>| {
+        let mut path: Vec<Point> = Vec::new();
+        for point in std::iter::once(start)
+            .chain(middle)
+            .chain(std::iter::once(end))
+        {
+            if path.last() == Some(&point) {
                 continue;
             }
-            let candidate = distance + a.x.abs_diff(b.x) + a.y.abs_diff(b.y);
-            if candidate < distances[next] {
-                distances[next] = candidate;
-                previous[next] = Some(current);
-                queue.push(Reverse((candidate, next)));
+            if path.len() >= 2 {
+                let (a, b) = (path[path.len() - 2], path[path.len() - 1]);
+                // Remove only a straight continuation, preserving any reversal.
+                if (a.x == b.x
+                    && b.x == point.x
+                    && a.y.abs_diff(b.y) + b.y.abs_diff(point.y) == a.y.abs_diff(point.y))
+                    || (a.y == b.y
+                        && b.y == point.y
+                        && a.x.abs_diff(b.x) + b.x.abs_diff(point.x) == a.x.abs_diff(point.x))
+                {
+                    path.pop();
+                }
+            }
+            path.push(point);
+        }
+        path
+    };
+    let shortest = finish(find_path(first, last, obstacles, None));
+    match scorer {
+        Some(scorer) => {
+            let candidate = finish(find_path(first, last, obstacles, Some(scorer)));
+            if scorer.readability_cost(&candidate) < scorer.readability_cost(&shortest) {
+                candidate
+            } else {
+                shortest
             }
         }
+        None => shortest,
     }
-    let mut path = vec![end];
-    let mut current = last;
-    while current != first {
-        current =
-            previous[current].expect("nested layout leaves routing corridors around every card");
-        path.push(point(current));
-    }
-    path.reverse();
-    let mut compact: Vec<Point> = Vec::new();
-    for point in path {
-        if compact.len() >= 2 {
-            let (a, b) = (compact[compact.len() - 2], compact[compact.len() - 1]);
-            if (a.x == b.x && b.x == point.x) || (a.y == b.y && b.y == point.y) {
-                compact.pop();
-            }
-        }
-        compact.push(point);
-    }
-    compact
 }

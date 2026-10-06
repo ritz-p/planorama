@@ -57,7 +57,13 @@ pub(super) fn place(graph: &Graph) -> Layout<'_> {
         }
     }
     for nodes in &mut children {
-        nodes.sort_by_key(|&node| (graph.nodes[node].resource_address().local(), keys[node]));
+        nodes.sort_by_key(|&node| {
+            (
+                graph.nodes[node].resource_address().local(),
+                keys[node],
+                graph.nodes[node].address.as_str(),
+            )
+        });
     }
     let roots = ordering::roots(graph, &parents, &keys);
     let mut order = Vec::new();

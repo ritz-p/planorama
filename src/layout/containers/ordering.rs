@@ -73,6 +73,7 @@ pub(super) fn roots(graph: &Graph, parents: &[Option<usize>], keys: &[usize]) ->
             graph.nodes[node].role != ResourceRole::Container,
             graph.nodes[node].resource_address().local(),
             keys[node],
+            graph.nodes[node].address.as_str(),
         )
     };
     let mut roots: Vec<_> = parents

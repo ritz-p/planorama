@@ -26,6 +26,8 @@ Validation was run with Terraform 1.9.8 and AWS provider 5.100.0; the provider l
 
 Rank-based placement first reduced the diagram height from 6152 to 5880 pixels. Balanced wrapping at each container and the virtual root now produces a 3300 × 1448 diagram while preserving all 76 relationships and the containment hierarchy.
 
+On this wrapped geometry, occupancy-aware routing reduces pairwise overlapping segment distance from 83755 to 6322 pixels. Crossing count changes from 108 to 37; the regression also checks a combined overlap/crossing/bend/length cost rather than claiming every metric improves. Total path length changes from 76043 to 87355 pixels. A separate regression verifies that an available clear detour is preferred over a crossing.
+
 ```sh
 terraform -chdir=examples/terraform-large init -backend=false
 terraform -chdir=examples/terraform-large validate
