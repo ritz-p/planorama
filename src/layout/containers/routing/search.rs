@@ -2,6 +2,10 @@ use super::{Bounds, Point, Scorer, crosses};
 use std::cmp::Reverse;
 use std::collections::BinaryHeap;
 
+#[cfg(test)]
+#[path = "../../../../tests/unit/layout/containers/search.rs"]
+mod tests;
+
 pub(super) fn find_path(
     start: Point,
     end: Point,
@@ -40,8 +44,10 @@ pub(super) fn find_path(
     // Retain arrival direction so bend penalties preserve optimal substructure.
     let mut distances = vec![u128::MAX; xs.len() * ys.len() * 3];
     let mut previous = vec![None; distances.len()];
-    let mut queue = BinaryHeap::from([Reverse((0, first * 3))]);
-    distances[first * 3] = 0;
+    // The source stub is horizontal, so an initial vertical step is a bend.
+    let initial = first * 3 + 1;
+    let mut queue = BinaryHeap::from([Reverse((0, initial))]);
+    distances[initial] = 0;
     let mut final_state = None;
     while let Some(Reverse((distance, state))) = queue.pop() {
         let (current, direction) = (state / 3, state % 3);
@@ -72,11 +78,15 @@ pub(super) fn find_path(
             let next_direction = if a.y == b.y { 1 } else { 2 };
             let penalty = scorer.map_or(0, |s| {
                 s.segment_cost(a, b)
-                    + if direction != 0 && direction != next_direction {
+                    + if direction != next_direction {
                         24
                     } else {
                         0
                     }
+                    // Include the horizontal target stub before queueing the
+                    // terminal state; otherwise early exit can pick a worse
+                    // arrival direction even when a cheaper one is pending.
+                    + if next == last && next_direction != 1 { 24 } else { 0 }
             });
             let candidate =
                 distance + a.x.abs_diff(b.x) as u128 + a.y.abs_diff(b.y) as u128 + penalty;
@@ -90,7 +100,7 @@ pub(super) fn find_path(
     }
     let mut state = final_state.expect("nested layout leaves routing corridors around every card");
     let mut path = vec![end];
-    while state != first * 3 {
+    while state != initial {
         state = previous[state].expect("reachable grid state has a predecessor");
         path.push(point(state / 3));
     }
