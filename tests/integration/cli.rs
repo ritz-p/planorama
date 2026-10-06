@@ -369,6 +369,7 @@ fn whole_resource_dependencies_accept_count_and_for_each_instances() {
         for inherited in [false, true] {
             for missing in [false, true] {
                 let mut dependencies = vec!["test.worker"];
+
                 if missing {
                     dependencies.push("test.missing");
                 }
@@ -392,6 +393,10 @@ fn whole_resource_dependencies_accept_count_and_for_each_instances() {
                 let output = support::run_with_args(input.as_bytes(), &["--diagnostics"]);
                 assert!(output.status.success());
                 let warnings = String::from_utf8(output.stderr).unwrap();
+                assert!(
+                    !warnings.contains("multiple matching instances"),
+                    "{warnings}"
+                );
                 if missing {
                     assert!(warnings.contains("unresolved reference"), "{warnings}");
                 } else {
@@ -416,6 +421,7 @@ fn collection_metadata_and_ecs_blocks_accept_multiple_instances() {
         ] {
             for missing in [false, true] {
                 let mut refs = vec!["aws_subnet.private.id"];
+
                 if missing {
                     refs.push("aws_subnet.missing.id");
                 }
@@ -436,6 +442,10 @@ fn collection_metadata_and_ecs_blocks_accept_multiple_instances() {
                 let output = support::run_with_args(input.as_bytes(), &["--diagnostics"]);
                 assert!(output.status.success());
                 let warnings = String::from_utf8(output.stderr).unwrap();
+                assert!(
+                    !warnings.contains("multiple matching instances"),
+                    "{warnings}"
+                );
                 if missing {
                     assert!(warnings.contains("unresolved reference"), "{warnings}");
                 } else {

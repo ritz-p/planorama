@@ -28,10 +28,7 @@ pub fn collect(raw: &TerraformGraph) -> Vec<Diagnostic> {
             // dependency metadata legitimately resolve to multiple instances.
             // Semantic endpoint types are checked separately below.
             let whole_dependency = dependency_metadata;
-            if reason == Reason::MultipleMatchingInstances
-                && (plural || whole_dependency)
-                && reference.complete
-            {
+            if reason == Reason::MultipleMatchingInstances && (plural || whole_dependency) {
                 continue;
             }
             found.insert(Diagnostic {
