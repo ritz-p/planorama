@@ -241,4 +241,4 @@ Resource labels default to full Planorama-qualified addresses (`module.root.aws_
 
 Resource addresses display 24px official AWS service icons for mapped AWS resource types. Icons are shared SVG symbols embedded in the document, with no external assets or runtime downloads. Unmapped types render without icons; address format, graph identity, and ResourceRole remain independent. Artwork source, version, and export licensing are documented in [Resource icons](docs/icons.md).
 
-ÀÛ‚Ì Terraform 1.9.8 / AWS provider 5.100.0 ‚Ì `terraform show -json` o—Í‚ğg‚Á‚½’Ç‰Á‚ÌŒİŠ·« fixture ‚Í [aws-captured](tests/fixtures/aws-captured/README.md) ‚É‚ ‚è‚Ü‚·Bƒlƒbƒgƒ[ƒN‚ğ–³Œø‚É‚µ‚Äæ“¾‚µ‚½ plan ‚ÅA’Êí‚ÌƒeƒXƒg‚É Terraform ‚â AWS ”FØî•ñ‚Í•s—v‚Å‚·B
+å®Ÿéš›ã® Terraform 1.9.8 / AWS provider 5.100.0 ã® `terraform show -json` å‡ºåŠ›ã‚’ä½¿ã£ãŸè¿½åŠ ã®äº’æ›æ€§ fixture ã¯ [aws-captured](tests/fixtures/aws-captured/README.md) ã«ã‚ã‚Šã¾ã™ã€‚ãƒãƒƒãƒˆãƒ¯ãƒ¼ã‚¯ã‚’ç„¡åŠ¹ã«ã—ã¦å–å¾—ã—ãŸ plan ã§ã€é€šå¸¸ã®ãƒ†ã‚¹ãƒˆã« Terraform ã‚„ AWS èªè¨¼æƒ…å ±ã¯ä¸è¦ã§ã™ã€‚
