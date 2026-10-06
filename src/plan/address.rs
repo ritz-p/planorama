@@ -68,12 +68,7 @@ pub(super) fn dynamic_selection(reference: &str) -> bool {
     parts(reference)
         .iter()
         .any(|part| part.contains('[') && known_key(part).is_none())
-        || parts(reference).windows(2).any(|pair| {
-            matches!(
-                pair,
-                ["count", "index"] | ["each", "key"] | ["each", "value"]
-            )
-        })
+        || meta_reference(reference)
 }
 
 pub(super) fn meta_reference(reference: &str) -> bool {
@@ -82,10 +77,8 @@ pub(super) fn meta_reference(reference: &str) -> bool {
     while let ["module", _, rest @ ..] = local {
         local = rest;
     }
-    matches!(
-        local,
-        ["count", "index"] | ["each", "key"] | ["each", "value"]
-    )
+    matches!(local, ["count", "index"] | ["each", "key"])
+        || matches!(local, ["each", value, ..] if name(value) == "value")
 }
 
 // Attribute traversals after the resource address do not select instances.

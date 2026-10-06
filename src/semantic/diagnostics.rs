@@ -5,6 +5,8 @@ use std::collections::BTreeSet;
 /// Only addresses, attribute names and fixed category text can reach the output.
 pub fn collect(raw: &TerraformGraph) -> Vec<Diagnostic> {
     let mut found = BTreeSet::new();
+    // Reuse actual inference so ancestry handling stays aligned with rendering.
+    let contained = super::containment::infer(raw);
     for reference in &raw.attributes {
         let node = &raw.nodes[reference.target];
         let plural = node.provider.is_aws()
@@ -81,6 +83,19 @@ pub fn collect(raw: &TerraformGraph) -> Vec<Diagnostic> {
                     reason,
                 });
             }
+        }
+        if endpoints_valid
+            && matches!(node.resource_type.as_str(), "aws_lb" | "aws_ecs_service")
+            && !contained
+                .edges
+                .iter()
+                .any(|edge| edge.to == target && edge.kind == crate::model::EdgeKind::Containment)
+        {
+            found.insert(Diagnostic {
+                address: node.address.clone(),
+                attribute: expected[0].0.into(),
+                reason: Reason::AmbiguousContainmentParent,
+            });
         }
         if endpoints_valid && node.resource_type == "aws_route_table_association" {
             let incoming: BTreeSet<_> = raw

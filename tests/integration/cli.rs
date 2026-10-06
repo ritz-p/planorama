@@ -219,7 +219,13 @@ fn diagnostics_explain_ambiguous_parents_and_unsafe_association_lowering() {
 #[test]
 fn iteration_meta_references_are_dynamic_not_unresolved_in_root_and_modules() {
     use serde_json::json;
-    for reference in ["count.index", "each.key", "each.value"] {
+    for reference in [
+        "count.index",
+        "each.key",
+        "each.value",
+        "each.value.subnet_id",
+        "each.value[\"subnet_id\"]",
+    ] {
         for nested in [false, true] {
             let address = if nested {
                 "module.worker[0].test.item"
@@ -246,6 +252,40 @@ fn iteration_meta_references_are_dynamic_not_unresolved_in_root_and_modules() {
                 "{diagnostics}"
             );
             assert_eq!(diagnostics.lines().count(), 1);
+            assert_eq!(output.stdout, support::run(input.as_bytes()).stdout);
+        }
+    }
+}
+
+#[test]
+fn spanning_resources_diagnose_disjoint_subnet_ancestry() {
+    use serde_json::json;
+    for resource_type in ["aws_lb", "aws_ecs_service"] {
+        for shared in [true, false] {
+            let input = json!({"format_version":"1.2","resource_changes":[
+                {"address":"aws_vpc.a","type":"aws_vpc"}, {"address":"aws_vpc.b","type":"aws_vpc"},
+                {"address":"aws_subnet.a","type":"aws_subnet"}, {"address":"aws_subnet.b","type":"aws_subnet"},
+                {"address":format!("{resource_type}.app"),"type":resource_type}
+            ],"configuration":{"root_module":{"resources":[
+                {"address":"aws_subnet.a","expressions":{"vpc_id":{"references":["aws_vpc.a.id"]}}},
+                {"address":"aws_subnet.b","expressions":{"vpc_id":{"references":[if shared {"aws_vpc.a.id"} else {"aws_vpc.b.id"}]}}},
+                {"address":format!("{resource_type}.app"),"expressions": if resource_type == "aws_lb" {
+                    json!({"subnets":{"references":["aws_subnet.a.id","aws_subnet.b.id"]}})
+                } else { json!({"network_configuration":[{"subnets":{"references":["aws_subnet.a.id","aws_subnet.b.id"]}}]}) }}
+            ]}}}).to_string();
+            let output = support::run_with_args(input.as_bytes(), &["--diagnostics"]);
+            assert!(output.status.success());
+            let warnings = String::from_utf8(output.stderr).unwrap();
+            if shared {
+                assert!(warnings.is_empty(), "{warnings}");
+            } else {
+                assert!(
+                    warnings.contains("ambiguous containment parent"),
+                    "{warnings}"
+                );
+                assert!(warnings.contains(&format!("{resource_type}.app")));
+                assert!(warnings.contains("subnets"));
+            }
             assert_eq!(output.stdout, support::run(input.as_bytes()).stdout);
         }
     }
