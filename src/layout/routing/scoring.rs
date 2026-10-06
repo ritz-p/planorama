@@ -25,6 +25,20 @@ pub(in crate::layout) struct Scorer {
 }
 
 impl Scorer {
+    /// Crossings exposed when a horizontal port stub and search segment merge.
+    /// The ordinary half-open segment cost excludes this lower endpoint.
+    pub(in crate::layout) fn horizontal_junction_cost(&self, point: Point) -> u128 {
+        self.vertical_paths.get(&point.x).map_or(0, |segments| {
+            segments
+                .iter()
+                .filter(|&&(_, from, to)| from < point.y && point.y < to)
+                .map(|&(path, _, _)| path)
+                .collect::<BTreeSet<_>>()
+                .len() as u128
+                * 2048
+        })
+    }
+
     pub(in crate::layout) fn readability_cost(&self, points: &[Point]) -> u128 {
         let score = self.score(points, &[]);
         score.overlap * 8 + score.crossings as u128 * 2048 + score.bends as u128 * 24 + score.length
