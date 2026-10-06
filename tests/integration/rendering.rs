@@ -4,6 +4,10 @@ mod support;
 fn committed_svg_samples_match_the_current_renderer() {
     for (input, expected) in [
         (
+            include_bytes!("../fixtures/spanning-dense-plan.json").as_slice(),
+            include_str!("../../examples/spanning-dense.svg"),
+        ),
+        (
             include_bytes!("../fixtures/dense-architecture-plan.json").as_slice(),
             include_str!("../../examples/dense-architecture.svg"),
         ),

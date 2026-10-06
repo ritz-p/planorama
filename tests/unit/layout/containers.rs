@@ -10,6 +10,9 @@ mod wrapping;
 #[path = "containers/quality.rs"]
 mod quality;
 
+#[path = "containers/affinity.rs"]
+mod affinity_tests;
+
 fn fixture() -> Graph {
     let raw = plan::parse(include_str!("../../fixtures/containment-plan.json")).unwrap();
     semantic::transform(&raw).0
@@ -830,16 +833,30 @@ fn verify(graph: &Graph) {
             (edge.to, path.last().unwrap()),
         ] {
             let bounds = layout.bounds[node];
-            assert_eq!(point.x, bounds.origin.x + bounds.width);
+            assert!(
+                point.x == bounds.right()
+                    || (node == edge.to
+                        && edge.kind == EdgeKind::Connection
+                        && point.x == bounds.origin.x)
+            );
             assert!(point.y > bounds.origin.y && point.y < bounds.origin.y + bounds.height);
         }
     }
-    for path in layout.paths.iter().filter(|path| !path.is_empty()) {
+    for (edge, path) in graph
+        .edges
+        .iter()
+        .zip(&layout.paths)
+        .filter(|(_, path)| !path.is_empty())
+    {
         assert_eq!(path[0].y, path[1].y);
         assert!(path[0].x < path[1].x);
         let last = path.len() - 1;
         assert_eq!(path[last].y, path[last - 1].y);
-        assert!(path[last].x < path[last - 1].x);
+        if path[last].x == layout.bounds[edge.to].origin.x {
+            assert!(path[last].x > path[last - 1].x);
+        } else {
+            assert!(path[last].x < path[last - 1].x);
+        }
     }
     for &parent in &layout.containers {
         let bounds = layout.bounds[parent];
