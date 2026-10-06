@@ -133,6 +133,7 @@ fn expanded_container_ports_and_obstacles_use_the_rendered_bounds() {
     graph.nodes.push(Node {
         address: "aws_s3_bucket.external".into(),
         resource_type: "aws_s3_bucket".into(),
+        provider: crate::model::ProviderIdentity::inferred("aws_s3_bucket"),
         module: "root".into(),
         action: Action::Create,
         mode: EntityMode::Managed,
@@ -553,6 +554,7 @@ fn duplicate_local_names_use_topology_after_module_renames_and_node_reordering()
             graph.nodes.push(Node {
                 address: format!("aws_s3_bucket.{target}"),
                 resource_type: "aws_s3_bucket".into(),
+                provider: crate::model::ProviderIdentity::inferred("aws_s3_bucket"),
                 module: "root".into(),
                 ..template.clone()
             });
@@ -975,6 +977,7 @@ fn peer_containers_and_cross_module_children_remain_separate_and_identifiable() 
     graph.nodes.push(Node {
         address: "aws_vpc.peer".into(),
         resource_type: "aws_vpc".into(),
+        provider: crate::model::ProviderIdentity::inferred("aws_vpc"),
         module: "module.network".into(),
         action: Action::Create,
         mode: EntityMode::Managed,

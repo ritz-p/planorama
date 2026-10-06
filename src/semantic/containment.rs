@@ -10,7 +10,7 @@ pub(super) fn infer(raw: &TerraformGraph) -> Graph {
     let mut relationships = BTreeSet::new();
     for reference in &raw.attributes {
         let child = &raw.nodes[reference.target];
-        if child.mode != EntityMode::Managed || !reference.complete {
+        if child.mode != EntityMode::Managed || !child.provider.is_aws() || !reference.complete {
             continue;
         }
         let parent_type = match (child.resource_type.as_str(), reference.attribute.as_str()) {
@@ -22,6 +22,7 @@ pub(super) fn infer(raw: &TerraformGraph) -> Graph {
             let node = &raw.nodes[*parent];
             if *parent != reference.target
                 && node.resource_type == parent_type
+                && node.provider.is_aws()
                 && node.role == ResourceRole::Container
             {
                 relationships.insert((*parent, reference.target));

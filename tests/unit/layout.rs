@@ -7,6 +7,7 @@ fn graph(count: usize, edges: Vec<(usize, usize)>) -> Graph {
             .map(|i| Node {
                 address: format!("test.n{i}"),
                 resource_type: "test".into(),
+                provider: crate::model::ProviderIdentity::inferred("test"),
                 module: "root".into(),
                 action: Action::Create,
                 mode: crate::model::EntityMode::Managed,

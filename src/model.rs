@@ -13,6 +13,7 @@ pub enum Action {
 pub struct Node {
     pub address: String,
     pub resource_type: String,
+    pub provider: ProviderIdentity,
     pub module: String,
     pub action: Action,
     pub mode: EntityMode,
@@ -46,7 +47,9 @@ pub struct Graph {
 mod address;
 pub(crate) use address::module_of;
 mod graphs;
+mod provider;
 pub use graphs::{ArchitectureGraph, AttributeReference, TerraformGraph};
+pub use provider::ProviderIdentity;
 
 #[allow(
     dead_code,

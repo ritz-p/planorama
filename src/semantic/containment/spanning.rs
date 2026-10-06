@@ -44,6 +44,7 @@ pub(super) fn infer(raw: &TerraformGraph, mut graph: Graph) -> Graph {
     for reference in &raw.attributes {
         let node = &raw.nodes[reference.target];
         if node.mode != EntityMode::Managed
+            || !node.provider.is_aws()
             || !reference.complete
             || reference.sources.is_empty()
             || !parents[reference.target].is_empty()

@@ -6,6 +6,7 @@ fn cycle_is_condensed_and_dependents_follow() {
         .map(|i| Node {
             address: i.to_string(),
             resource_type: "test".into(),
+            provider: crate::model::ProviderIdentity::inferred("test"),
             module: "root".into(),
             action: Action::Create,
             mode: crate::model::EntityMode::Managed,

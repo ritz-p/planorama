@@ -295,3 +295,85 @@ fn module_output_resolves_to_resource() {
     }"#).unwrap();
     assert_eq!(graph.edges, vec![crate::model::Edge::from((1, 0))]);
 }
+
+#[test]
+fn provider_identity_prefers_explicit_metadata_and_configuration_bindings() {
+    use crate::model::ProviderIdentity;
+    let raw = parse(r#"{
+        "format_version":"1.2",
+        "planned_values":{"root_module":{"resources":[{"address":"aws_vpc.prior","type":"aws_vpc","provider_name":"example.com/acme/custom"}]}},
+        "resource_changes":[
+            {"address":"aws_vpc.explicit","type":"aws_vpc","provider_name":"hashicorp/aws"},
+            {"address":"aws_vpc.foreign","type":"aws_vpc","provider_name":"registry.terraform.io/acme/custom"},
+            {"address":"aws_vpc.fallback","type":"aws_vpc"},
+            {"address":"aws_vpc.prior","type":"aws_vpc"},
+            {"address":"module.net[0].aws_vpc.bound","type":"aws_vpc"},
+            {"address":"other_item.unknown","type":"other_item"}
+        ],
+        "configuration":{
+            "provider_config":{"aws.other":{"full_name":"registry.terraform.io/hashicorp/google"}},
+            "root_module":{"module_calls":{"net":{"module":{"resources":[{"address":"aws_vpc.bound","provider_config_key":"aws.other"}]}}}}
+        }
+    }"#).unwrap();
+    let node = |address: &str| {
+        raw.nodes
+            .iter()
+            .find(|node| node.address == address)
+            .unwrap()
+    };
+    assert_eq!(
+        node("aws_vpc.explicit").provider.source(),
+        Some("registry.terraform.io/hashicorp/aws")
+    );
+    assert!(node("aws_vpc.explicit").provider.is_explicit());
+    assert_eq!(
+        node("aws_vpc.fallback").provider,
+        ProviderIdentity::InferredAws
+    );
+    assert_eq!(
+        node("other_item.unknown").provider,
+        ProviderIdentity::Unknown
+    );
+    for address in [
+        "aws_vpc.foreign",
+        "aws_vpc.prior",
+        "module.net[0].aws_vpc.bound",
+    ] {
+        assert_eq!(node(address).role, crate::model::ResourceRole::Unknown);
+        assert!(!node(address).provider.is_aws());
+    }
+    assert_eq!(
+        node("module.net[0].aws_vpc.bound").provider.source(),
+        Some("registry.terraform.io/hashicorp/google")
+    );
+}
+
+#[test]
+fn captured_aws_entities_keep_explicit_provider_identity() {
+    let raw = parse(include_str!("../fixtures/aws-captured/plan.json")).unwrap();
+    assert_eq!(raw.nodes.len(), 8);
+    assert!(
+        raw.nodes
+            .iter()
+            .all(|node| node.provider.is_explicit() && node.provider.is_aws())
+    );
+}
+
+#[test]
+fn foreign_aws_lookalikes_do_not_gain_aws_semantics_or_icons() {
+    let raw = parse(r#"{"format_version":"1.2","resource_changes":[
+        {"address":"data.aws_region.custom","mode":"data","type":"aws_region","provider_name":"acme/custom"},
+        {"address":"aws_vpc.custom","type":"aws_vpc","provider_name":"acme/custom"},
+        {"address":"aws_subnet.custom","type":"aws_subnet","provider_name":"acme/custom"}
+    ],"configuration":{"root_module":{"resources":[{"address":"aws_subnet.custom","expressions":{"vpc_id":{"references":["aws_vpc.custom.id"]}}}]}}}"#).unwrap();
+    let graph = crate::semantic::transform(&raw);
+    assert_eq!(graph.nodes.len(), 3);
+    assert!(
+        graph
+            .edges
+            .iter()
+            .all(|edge| edge.kind == crate::model::EdgeKind::Dependency)
+    );
+    let svg = crate::svg::render(&graph, &crate::layout::Layout::new(&graph));
+    assert!(!svg.contains("planorama-icon-aws"));
+}

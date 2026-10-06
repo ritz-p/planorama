@@ -1,6 +1,6 @@
 use super::address::module_of;
 use crate::classification;
-use crate::model::{Action, EntityMode, Node};
+use crate::model::{Action, EntityMode, Node, ProviderIdentity};
 use serde_json::Value;
 
 #[cfg(test)]
@@ -25,12 +25,17 @@ pub(super) fn parse(resource: &Value, address: &str, action: Action) -> Node {
         },
     };
     let resource_type = resource["type"].as_str().unwrap_or("resource");
+    let provider = resource["provider_name"]
+        .as_str()
+        .map(ProviderIdentity::from_source)
+        .unwrap_or_else(|| ProviderIdentity::inferred(resource_type));
     Node {
         address: address.into(),
         resource_type: resource_type.into(),
         module,
         action,
         mode,
-        role: classification::classify(resource_type),
+        role: classification::classify(&provider, resource_type),
+        provider,
     }
 }

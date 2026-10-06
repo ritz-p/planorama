@@ -2,7 +2,13 @@ use super::*;
 
 #[test]
 fn dispatches_aws_and_preserves_unknown_provider_types() {
-    assert_eq!(classify("aws_vpc"), ResourceRole::Container);
+    assert_eq!(
+        classify(
+            &crate::model::ProviderIdentity::inferred("aws_vpc"),
+            "aws_vpc"
+        ),
+        ResourceRole::Container
+    );
     for resource_type in [
         "azurerm_virtual_network",
         "terraform_data",
@@ -11,6 +17,12 @@ fn dispatches_aws_and_preserves_unknown_provider_types() {
         "aws_unknown",
         "",
     ] {
-        assert_eq!(classify(resource_type), ResourceRole::Unknown);
+        assert_eq!(
+            classify(
+                &crate::model::ProviderIdentity::inferred(resource_type),
+                resource_type
+            ),
+            ResourceRole::Unknown
+        );
     }
 }

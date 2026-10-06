@@ -6,9 +6,12 @@ use crate::model::ResourceRole;
 #[path = "../tests/unit/classification.rs"]
 mod tests;
 
-pub(crate) fn classify(resource_type: &str) -> ResourceRole {
-    match resource_type.strip_prefix("aws_") {
-        Some(_) => aws::classify(resource_type),
-        None => ResourceRole::Unknown,
+pub(crate) fn classify(
+    provider: &crate::model::ProviderIdentity,
+    resource_type: &str,
+) -> ResourceRole {
+    match provider.is_aws() {
+        true => aws::classify(resource_type),
+        false => ResourceRole::Unknown,
     }
 }
