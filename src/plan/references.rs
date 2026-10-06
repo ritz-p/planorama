@@ -194,12 +194,19 @@ pub(super) fn resolve_sources(
         active.insert(reference.clone());
         pending.push((reference.clone(), true));
         let normalized = static_address(&reference);
-        if super::address::dynamic_selection(&reference) {
+        let binding = symbols
+            .iter()
+            .filter(|(key, _)| prefix_match(&normalized, key))
+            .max_by_key(|(key, _)| key.len());
+        let metadata = super::address::meta_reference(&reference);
+        // Module outputs named count/each take precedence over the syntactic
+        // metadata heuristic, including outputs whose values have no sources.
+        if super::address::dynamic_selection(&reference) && !(metadata && binding.is_some()) {
             issues.insert(DiagnosticReason::DynamicInstanceSelection);
         }
         // Terraform emits iteration metadata as standalone traversals. It is
         // dynamic context, not a missing resource or alias, even in modules.
-        if super::address::meta_reference(&reference) {
+        if metadata && binding.is_none() {
             complete = false;
             continue;
         }
@@ -225,11 +232,7 @@ pub(super) fn resolve_sources(
             sources.extend(matching);
             continue;
         }
-        match symbols
-            .iter()
-            .filter(|(key, _)| prefix_match(&normalized, key))
-            .max_by_key(|(key, _)| key.len())
-        {
+        match binding {
             Some((_, aliases)) if !aliases.is_empty() => {
                 pending.extend(
                     aliases

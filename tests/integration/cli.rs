@@ -290,3 +290,29 @@ fn spanning_resources_diagnose_disjoint_subnet_ancestry() {
         }
     }
 }
+
+#[test]
+fn mixed_semantic_candidates_report_type_mismatch_before_ambiguity() {
+    use serde_json::json;
+    for (resource_type, provider) in [("aws_subnet", "hashicorp/aws"), ("aws_vpc", "acme/custom")] {
+        let input = json!({"format_version":"1.2","resource_changes":[
+            {"address":"aws_vpc.valid","type":"aws_vpc"},
+            {"address":"other.invalid","type":resource_type,"provider_name":provider},
+            {"address":"aws_subnet.child","type":"aws_subnet"}
+        ],"configuration":{"root_module":{"resources":[
+            {"address":"aws_subnet.child","expressions":{"vpc_id":{"references":["aws_vpc.valid.id","other.invalid.id"]}}}
+        ]}}}).to_string();
+        let result = support::run_with_args(input.as_bytes(), &["--diagnostics"]);
+        assert!(result.status.success());
+        let warnings = String::from_utf8(result.stderr).unwrap();
+        assert!(
+            warnings.contains("semantic endpoint type mismatch: address=\"aws_subnet.child\""),
+            "{warnings}"
+        );
+        assert!(
+            !warnings.contains("ambiguous containment parent"),
+            "{warnings}"
+        );
+        assert_eq!(result.stdout, support::run(input.as_bytes()).stdout);
+    }
+}

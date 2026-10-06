@@ -59,11 +59,6 @@ pub fn collect(raw: &TerraformGraph) -> Vec<Diagnostic> {
                         None
                     }
                 }
-                Some(r) if !plural && r.sources.len() > 1 => Some(if containment {
-                    Reason::AmbiguousContainmentParent
-                } else {
-                    Reason::MultipleMatchingInstances
-                }),
                 Some(r)
                     if r.sources.iter().any(|&source| {
                         source == target
@@ -73,6 +68,11 @@ pub fn collect(raw: &TerraformGraph) -> Vec<Diagnostic> {
                 {
                     Some(Reason::EndpointTypeMismatch)
                 }
+                Some(r) if !plural && r.sources.len() > 1 => Some(if containment {
+                    Reason::AmbiguousContainmentParent
+                } else {
+                    Reason::MultipleMatchingInstances
+                }),
                 _ => None,
             };
             if let Some(reason) = reason {

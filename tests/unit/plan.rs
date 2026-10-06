@@ -377,3 +377,45 @@ fn foreign_aws_lookalikes_do_not_gain_aws_semantics_or_icons() {
     let svg = crate::svg::render(&graph, &crate::layout::Layout::new(&graph));
     assert!(!svg.contains("planorama-icon-aws"));
 }
+
+#[test]
+fn module_outputs_named_count_and_each_resolve_before_metadata() {
+    use serde_json::json;
+    for (output, field) in [("count", "index"), ("each", "value")] {
+        let input = json!({"format_version":"1.2","resource_changes":[
+            {"address":"module.worker[0].aws_vpc.main","type":"aws_vpc"},
+            {"address":"aws_subnet.child","type":"aws_subnet"}
+        ],"configuration":{"root_module":{
+            "resources":[{"address":"aws_subnet.child","expressions":{"vpc_id":{"references":[format!("module.worker[0].{output}.{field}")]}}}],
+            "module_calls":{"worker":{"module":{
+                "resources":[{"address":"aws_vpc.main"}],
+                "outputs":{output:{"expression":{"references":["aws_vpc.main.id"]}}}
+            }}}
+        }}});
+        let raw = parse(&input.to_string()).unwrap();
+        let parent = raw
+            .nodes
+            .iter()
+            .position(|n| n.address == "module.worker[0].aws_vpc.main")
+            .unwrap();
+        let child = raw
+            .nodes
+            .iter()
+            .position(|n| n.address == "aws_subnet.child")
+            .unwrap();
+        assert!(
+            raw.edges
+                .iter()
+                .any(|edge| edge.from == parent && edge.to == child)
+        );
+        let reference = raw
+            .attributes
+            .iter()
+            .find(|r| r.target == child && r.attribute == "vpc_id")
+            .unwrap();
+        assert_eq!(reference.sources, vec![parent]);
+        assert!(reference.complete);
+        assert!(reference.issues.is_empty(), "{:?}", reference.issues);
+        assert!(crate::semantic::diagnostics::collect(&raw).is_empty());
+    }
+}
