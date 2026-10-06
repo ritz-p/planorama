@@ -16,6 +16,7 @@ pub(super) fn lower(raw: &TerraformGraph) -> Graph {
     let mut replacements = BTreeMap::new();
     for (index, node) in raw.nodes.iter().enumerate() {
         if node.role != ResourceRole::Association
+            || !node.provider.is_aws()
             || node.resource_type != "aws_route_table_association"
             || node.mode != EntityMode::Managed
         {
@@ -98,8 +99,9 @@ fn endpoint(
             if reference.complete
                 && *source != target
                 && raw.nodes[*source].resource_type == resource_type =>
+        // Provider identity prevents custom lookalike types becoming AWS endpoints.
         {
-            Some(*source)
+            raw.nodes[*source].provider.is_aws().then_some(*source)
         }
         _ => None,
     }
