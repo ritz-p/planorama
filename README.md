@@ -244,3 +244,11 @@ Resource addresses display 24px official AWS service icons for mapped AWS resour
 実際の Terraform 1.9.8 / AWS provider 5.100.0 の `terraform show -json` 出力を使った追加の互換性 fixture は [aws-captured](tests/fixtures/aws-captured/README.md) にあります。ネットワークを無効にして取得した plan で、通常のテストに Terraform や AWS 認証情報は不要です。
 
 ノードの `ProviderIdentity` は `provider_name` を優先し、ない場合は configuration の `provider_config_key` と `provider_config.full_name` から解決します。`hashicorp/aws` のような2要素の source は `registry.terraform.io/` を補います。明示情報と型名による推定は区別して保持し、情報がない最小入力では `aws_` 型だけを従来どおり AWS と推定します。明示された別 provider や解決できない provider binding は AWS として扱いません。分類・アイコン・AWS 固有の意味変換はこの識別情報を参照します。
+
+`--diagnostics` を指定すると、参照解決と意味変換の保守的なフォールバック理由を stderr に出力します。SVG と通常の終了条件は変わりません。
+
+```sh
+planorama plan.json -o diagram.svg --diagnostics
+```
+
+診断には Terraform アドレス、属性名、未解決参照・複数インスタンス候補・動的選択・alias/local/module の循環・期待属性の欠落・型不一致・包含親の曖昧さなどの理由を含みます。属性値や式の内容は出力しません。正常に解決した複数 Subnet への接続は曖昧さとして報告しません。定数 ID や Terraform JSON に定義が含まれない local など、対応するリソースを安全に特定できない場合にも理由を表示します。診断は入力の不正や Terraform 自体のエラーを意味するとは限りません。オプションを省略すると診断は出力しません。

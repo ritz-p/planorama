@@ -1,5 +1,5 @@
 use super::address::{contextualize, matches_instance, static_address};
-use crate::model::Node;
+use crate::model::{DiagnosticReason, Node, Resolution};
 use serde_json::Value;
 use std::collections::{BTreeMap, BTreeSet};
 
@@ -148,8 +148,8 @@ pub(super) fn resolve(
                 .iter()
                 .map(|r| contextualize(r, &node.address))
                 .collect();
-            let (sources, _) = resolve_sources(&refs, &instances, symbols);
-            for source in sources {
+            let resolution = resolve_sources(&refs, &instances, symbols);
+            for source in resolution.sources {
                 if source != target {
                     edges.insert((source, target));
                 }
@@ -171,12 +171,13 @@ pub(super) fn resolve_sources(
     refs: &BTreeSet<String>,
     instances: &BTreeMap<String, Vec<usize>>,
     symbols: &BTreeMap<String, BTreeSet<String>>,
-) -> (Vec<usize>, bool) {
+) -> Resolution {
     let mut pending: Vec<_> = refs.iter().cloned().map(|r| (r, false)).collect();
     let mut visited = BTreeSet::new();
     let mut active = BTreeSet::new();
     let mut sources = BTreeSet::new();
     let mut complete = !pending.is_empty();
+    let mut issues = BTreeSet::new();
     while let Some((reference, exiting)) = pending.pop() {
         if exiting {
             active.remove(&reference);
@@ -184,6 +185,7 @@ pub(super) fn resolve_sources(
         }
         if active.contains(&reference) {
             complete = false;
+            issues.insert(DiagnosticReason::AliasCycle);
             continue;
         }
         if !visited.insert(reference.clone()) {
@@ -192,6 +194,9 @@ pub(super) fn resolve_sources(
         active.insert(reference.clone());
         pending.push((reference.clone(), true));
         let normalized = static_address(&reference);
+        if super::address::dynamic_selection(&reference) {
+            issues.insert(DiagnosticReason::DynamicInstanceSelection);
+        }
         let resource_key = instances
             .keys()
             .map(|key| static_address(key))
@@ -207,6 +212,9 @@ pub(super) fn resolve_sources(
                 .collect();
             if matching.is_empty() {
                 complete = false;
+                issues.insert(DiagnosticReason::UnresolvedReference);
+            } else if matching.len() > 1 {
+                issues.insert(DiagnosticReason::MultipleMatchingInstances);
             }
             sources.extend(matching);
             continue;
@@ -234,11 +242,21 @@ pub(super) fn resolve_sources(
                     .collect();
                 if matching.is_empty() {
                     complete = false;
+                    issues.insert(DiagnosticReason::UnresolvedReference);
+                } else if matching.len() > 1 {
+                    issues.insert(DiagnosticReason::MultipleMatchingInstances);
                 }
                 sources.extend(matching);
             }
-            _ => complete = false,
+            _ => {
+                complete = false;
+                issues.insert(DiagnosticReason::UnresolvedReference);
+            }
         }
     }
-    (sources.into_iter().collect(), complete)
+    Resolution {
+        sources: sources.into_iter().collect(),
+        complete,
+        issues,
+    }
 }

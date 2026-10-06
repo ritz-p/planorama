@@ -99,3 +99,119 @@ fn selected_addresses_keep_modules_indices_and_full_titles() {
         assert!(svg.contains("data-terraform-address=\"aws_vpc.main\""));
     }
 }
+
+#[test]
+fn optional_diagnostics_distinguish_failures_without_changing_svg_or_leaking_values() {
+    use serde_json::json;
+    let cases = [
+        (
+            json!({"references":["aws_subnet.missing.id"]}),
+            json!({}),
+            "unresolved reference",
+        ),
+        (
+            json!({"references":["aws_subnet.private.id"]}),
+            json!({}),
+            "multiple matching instances",
+        ),
+        (
+            json!({"references":["aws_subnet.private[count.index].id"]}),
+            json!({}),
+            "dynamic instance selection",
+        ),
+        (
+            json!({"references":["local.a"]}),
+            json!({"a":{"references":["local.b"]},"b":{"references":["local.a"]}}),
+            "alias/local/module resolution cycle",
+        ),
+        (
+            json!({"references":["aws_vpc.main.id"]}),
+            json!({}),
+            "semantic endpoint type mismatch",
+        ),
+        (
+            json!({"constant_value":"TOP_SECRET"}),
+            json!({}),
+            "attribute has no resolvable resource reference",
+        ),
+    ];
+    for (expression, locals, reason) in cases {
+        let input = json!({"format_version":"1.2","resource_changes":[
+            {"address":"aws_vpc.main","type":"aws_vpc"},
+            {"address":"aws_subnet.private[0]","type":"aws_subnet"},
+            {"address":"aws_subnet.private[1]","type":"aws_subnet"},
+            {"address":"aws_instance.app","type":"aws_instance","change":{"after":{"password":"TOP_SECRET"}}}
+        ],"configuration":{"root_module":{"locals":locals,"resources":[
+            {"address":"aws_subnet.private","expressions":{"vpc_id":{"references":["aws_vpc.main.id"]}}},
+            {"address":"aws_instance.app","expressions":{"subnet_id":expression,"password":{"constant_value":"TOP_SECRET"}}}
+        ]}}}).to_string();
+        let normal = support::run(input.as_bytes());
+        let output = support::run_with_args(input.as_bytes(), &["--diagnostics"]);
+        assert!(output.status.success());
+        assert_eq!(output.stdout, normal.stdout);
+        assert!(normal.stderr.is_empty());
+        let diagnostics = String::from_utf8(output.stderr).unwrap();
+        assert!(diagnostics.contains(reason), "{diagnostics}");
+        assert!(diagnostics.contains("address=\"aws_instance.app\""));
+        assert!(diagnostics.contains("attribute=\"subnet_id\""));
+        assert!(!diagnostics.contains("TOP_SECRET"));
+        assert!(!String::from_utf8_lossy(&output.stdout).contains("TOP_SECRET"));
+        assert_eq!(
+            diagnostics.as_bytes(),
+            support::run_with_args(input.as_bytes(), &["--diagnostics"]).stderr
+        );
+    }
+}
+
+#[test]
+fn successful_reference_resolution_has_no_diagnostics_including_subnet_collections() {
+    let input = br#"{"format_version":"1.2","resource_changes":[
+        {"address":"aws_vpc.main","type":"aws_vpc"},
+        {"address":"aws_subnet.private[0]","type":"aws_subnet"},
+        {"address":"aws_subnet.private[1]","type":"aws_subnet"},
+        {"address":"aws_lb.app","type":"aws_lb"}
+    ],"configuration":{"root_module":{"resources":[
+        {"address":"aws_subnet.private","expressions":{"vpc_id":{"references":["aws_vpc.main.id"]}}},
+        {"address":"aws_lb.app","expressions":{"subnets":{"references":["aws_subnet.private"]}}}
+    ]}}}"#;
+    let output = support::run_with_args(input, &["--diagnostics"]);
+    assert!(output.status.success());
+    assert!(
+        output.stderr.is_empty(),
+        "{}",
+        String::from_utf8_lossy(&output.stderr)
+    );
+    assert_eq!(output.stdout, support::run(input).stdout);
+}
+
+#[test]
+fn diagnostics_explain_missing_semantic_attributes() {
+    let input = br#"{"format_version":"1.2","resource_changes":[{"address":"aws_instance.app","type":"aws_instance"}]}"#;
+    let output = support::run_with_args(input, &["--diagnostics"]);
+    assert!(output.status.success());
+    let diagnostics = String::from_utf8(output.stderr).unwrap();
+    assert!(diagnostics.contains("missing expected attribute"));
+    assert!(diagnostics.contains("subnet_id"));
+}
+
+#[test]
+fn diagnostics_explain_ambiguous_parents_and_unsafe_association_lowering() {
+    let input = br#"{"format_version":"1.2","resource_changes":[
+        {"address":"aws_vpc.a","type":"aws_vpc"},
+        {"address":"aws_vpc.b","type":"aws_vpc"},
+        {"address":"aws_subnet.private","type":"aws_subnet"},
+        {"address":"aws_route_table.private","type":"aws_route_table"},
+        {"address":"aws_route_table_association.private","type":"aws_route_table_association"},
+        {"address":"test.consumer","type":"test"}
+    ],"configuration":{"root_module":{"resources":[
+        {"address":"aws_subnet.private","expressions":{"vpc_id":{"references":["aws_vpc.a.id","aws_vpc.b.id"]}}},
+        {"address":"aws_route_table_association.private","expressions":{"subnet_id":{"references":["aws_subnet.private.id"]},"route_table_id":{"references":["aws_route_table.private.id"]}}},
+        {"address":"test.consumer","expressions":{"input":{"references":["aws_route_table_association.private.id"]}}}
+    ]}}}"#;
+    let output = support::run_with_args(input, &["--diagnostics"]);
+    assert!(output.status.success());
+    let diagnostics = String::from_utf8(output.stderr).unwrap();
+    assert!(diagnostics.contains("ambiguous containment parent: address=\"aws_subnet.private\""));
+    assert!(diagnostics.contains("additional relationships prevent association lowering: address=\"aws_route_table_association.private\""));
+    assert_eq!(output.stdout, support::run(input).stdout);
+}

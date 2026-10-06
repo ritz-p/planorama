@@ -29,12 +29,13 @@ pub(super) fn collect(
                     .iter()
                     .map(|r| contextualize(r, &node.address))
                     .collect();
-                let (sources, complete) = resolve(&refs, &instances, &aliases);
+                let resolution = resolve(&refs, &instances, &aliases);
                 result.push(AttributeReference {
                     target,
                     attribute: attribute.clone(),
-                    sources,
-                    complete,
+                    sources: resolution.sources,
+                    complete: resolution.complete,
+                    issues: resolution.issues,
                 });
             }
         }

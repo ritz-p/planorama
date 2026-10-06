@@ -2,6 +2,7 @@ use crate::model::{ArchitectureGraph, TerraformGraph};
 mod associations;
 mod containment;
 mod data;
+pub mod diagnostics;
 
 #[cfg(test)]
 #[path = "../tests/unit/semantic.rs"]

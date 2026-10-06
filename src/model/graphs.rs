@@ -13,6 +13,7 @@ pub struct AttributeReference {
     pub attribute: String,
     pub sources: Vec<usize>,
     pub complete: bool,
+    pub issues: std::collections::BTreeSet<super::DiagnosticReason>,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]

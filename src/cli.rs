@@ -3,15 +3,17 @@ use crate::{plan, semantic, svg};
 use std::io::{self, Read, Write};
 use std::path::{Path, PathBuf};
 
-const HELP: &str = "planorama — Terraform plan JSON → SVG (pure Rust)\n\nUsage: planorama <plan.json | -> [-o <diagram.svg | ->] [--address-format qualified|terraform]\n\n  -o, --output PATH   Output file (default: diagram.svg); '-' for stdout\n  --address-format FORMAT  Resource labels: qualified (default) or terraform\n  -h, --help          Show help\n  -V, --version       Show version\n\nInput: terraform show -json <saved-plan> (not terraform plan -json).\nLines show reference or architectural relationships; containment uses nested boxes.\nAttribute values are never included in the diagram.\n";
+const HELP: &str = "planorama — Terraform plan JSON → SVG (pure Rust)\n\nUsage: planorama <plan.json | -> [-o <diagram.svg | ->] [--address-format qualified|terraform] [--diagnostics]\n\n  -o, --output PATH   Output file (default: diagram.svg); '-' for stdout\n  --address-format FORMAT  Resource labels: qualified (default) or terraform\n  --diagnostics      Explain unresolved references and semantic fallbacks on stderr\n  -h, --help          Show help\n  -V, --version       Show version\n\nInput: terraform show -json <saved-plan> (not terraform plan -json).\nLines show reference or architectural relationships; containment uses nested boxes.\nAttribute values are never included in the diagram.\n";
 
 pub fn run() -> Result<(), String> {
     let mut input = None;
     let mut output = PathBuf::from("diagram.svg");
     let mut address_format = svg::AddressFormat::default();
+    let mut diagnostics = false;
     let mut args = std::env::args().skip(1);
     while let Some(arg) = args.next() {
         match arg.as_str() {
+            "--diagnostics" => diagnostics = true,
             "-h" | "--help" => {
                 print!("{HELP}");
                 return Ok(());
@@ -74,6 +76,20 @@ pub fn run() -> Result<(), String> {
         path => std::fs::read_to_string(path).map_err(|e| format!("cannot read {path}: {e}"))?,
     };
     let raw = plan::parse(&json)?;
+    if diagnostics {
+        let mut stderr = io::stderr().lock();
+        for diagnostic in semantic::diagnostics::collect(&raw) {
+            // Debug formatting escapes control characters in untrusted names.
+            writeln!(
+                stderr,
+                "warning: {}: address={:?}, attribute={:?}",
+                diagnostic.reason.description(),
+                diagnostic.address,
+                diagnostic.attribute
+            )
+            .map_err(|e| format!("cannot write diagnostics: {e}"))?;
+        }
+    }
     let graph = semantic::transform(&raw);
     let layout = Layout::new(&graph);
     let image = match address_format {

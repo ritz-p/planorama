@@ -64,6 +64,18 @@ enum ValueKey {
     Number(u64),
 }
 
+pub(super) fn dynamic_selection(reference: &str) -> bool {
+    parts(reference)
+        .iter()
+        .any(|part| part.contains('[') && known_key(part).is_none())
+        || parts(reference).windows(2).any(|pair| {
+            matches!(
+                pair,
+                ["count", "index"] | ["each", "key"] | ["each", "value"]
+            )
+        })
+}
+
 // Attribute traversals after the resource address do not select instances.
 pub(super) fn matches_instance(reference: &str, instance: &str) -> bool {
     parts(reference)
