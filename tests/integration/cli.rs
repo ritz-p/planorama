@@ -316,3 +316,48 @@ fn mixed_semantic_candidates_report_type_mismatch_before_ambiguity() {
         assert_eq!(result.stdout, support::run(input.as_bytes()).stdout);
     }
 }
+
+#[test]
+fn graph_only_references_keep_diagnostics_for_resources_and_module_calls() {
+    use serde_json::json;
+    for field in ["depends_on", "count_expression", "for_each_expression"] {
+        for module_call in [false, true] {
+            for resolved in [false, true] {
+                let expression = if field == "depends_on" {
+                    json!(["test.source"])
+                } else {
+                    json!({"references":["test.source.id"]})
+                };
+                let mut resource = json!({"address":"test.consumer"});
+                let root = if module_call {
+                    json!({"module_calls":{"worker":{field:expression,"module":{"resources":[resource]}}}})
+                } else {
+                    resource[field] = expression;
+                    json!({"resources":[resource]})
+                };
+                let address = if module_call {
+                    "module.worker.test.consumer"
+                } else {
+                    "test.consumer"
+                };
+                let mut changes = vec![json!({"address":address,"type":"test"})];
+                if resolved {
+                    changes.push(json!({"address":"test.source","type":"test"}));
+                }
+                let input = json!({"format_version":"1.2","resource_changes":changes,"configuration":{"root_module":root}}).to_string();
+                let output = support::run_with_args(input.as_bytes(), &["--diagnostics"]);
+                assert!(output.status.success());
+                let warnings = String::from_utf8(output.stderr).unwrap();
+                if resolved {
+                    assert!(warnings.is_empty(), "{warnings}");
+                } else {
+                    assert!(warnings.contains("unresolved reference"), "{warnings}");
+                    assert!(warnings.contains(address), "{warnings}");
+                    assert!(warnings.contains(field), "{warnings}");
+                    assert_eq!(warnings.lines().count(), 1);
+                }
+                assert_eq!(output.stdout, support::run(input.as_bytes()).stdout);
+            }
+        }
+    }
+}

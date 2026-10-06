@@ -63,10 +63,22 @@ pub fn parse(json: &str) -> Result<TerraformGraph, String> {
     let mut nodes: Vec<_> = nodes.into_values().collect();
     providers::enrich(&plan["configuration"], &mut nodes);
     let edges = resolve(&nodes, &symbols);
-    let attributes = attributes::collect(&plan["configuration"]["root_module"], &nodes, &symbols);
+    let attributes = attributes::collect(
+        &plan["configuration"]["root_module"],
+        &nodes,
+        &symbols,
+        false,
+    );
+    let graph_references = attributes::collect(
+        &plan["configuration"]["root_module"],
+        &nodes,
+        &symbols,
+        true,
+    );
     Ok(TerraformGraph {
         graph: Graph { nodes, edges },
         attributes,
+        graph_references,
     })
 }
 

@@ -12,6 +12,7 @@ pub fn transform(raw: &TerraformGraph) -> ArchitectureGraph {
     let contained = TerraformGraph {
         graph: containment::infer(raw),
         attributes: raw.attributes.clone(),
+        graph_references: raw.graph_references.clone(),
     };
     ArchitectureGraph(data::visible(associations::lower(&contained)))
 }

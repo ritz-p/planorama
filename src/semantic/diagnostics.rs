@@ -7,7 +7,7 @@ pub fn collect(raw: &TerraformGraph) -> Vec<Diagnostic> {
     let mut found = BTreeSet::new();
     // Reuse actual inference so ancestry handling stays aligned with rendering.
     let contained = super::containment::infer(raw);
-    for reference in &raw.attributes {
+    for reference in raw.attributes.iter().chain(&raw.graph_references) {
         let node = &raw.nodes[reference.target];
         let plural = node.provider.is_aws()
             && matches!(
