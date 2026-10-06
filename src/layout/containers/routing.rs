@@ -1,6 +1,7 @@
 use super::super::{Bounds, Layout, Point};
 use crate::layout::routing::scoring::Scorer;
 use crate::model::{Edge, EdgeKind, Graph};
+mod bundles;
 mod search;
 use search::find_path;
 
@@ -51,16 +52,32 @@ pub(super) fn incidents(graph: &Graph, parents: &[Option<usize>]) -> Vec<Vec<(us
     incident
 }
 
-pub(super) fn route(graph: &Graph, layout: &Layout<'_>, keys: &[usize]) -> Vec<Vec<Point>> {
-    route_with_quality(graph, layout, keys, true)
+pub(super) struct Routed {
+    pub paths: Vec<Vec<Point>>,
+    pub junctions: Vec<Point>,
 }
 
+pub(super) fn route(graph: &Graph, layout: &Layout<'_>, keys: &[usize], bundle: bool) -> Routed {
+    route_impl(graph, layout, keys, true, bundle)
+}
+
+#[cfg(test)]
 pub(super) fn route_with_quality(
     graph: &Graph,
     layout: &Layout<'_>,
     keys: &[usize],
     quality: bool,
 ) -> Vec<Vec<Point>> {
+    route_impl(graph, layout, keys, quality, false).paths
+}
+
+fn route_impl(
+    graph: &Graph,
+    layout: &Layout<'_>,
+    keys: &[usize],
+    quality: bool,
+    bundle: bool,
+) -> Routed {
     // Structural keys intentionally tie for symmetric nodes. Final geometry
     // distinguishes those peers without depending on edge input order.
     let geometry = |node: usize| {
@@ -96,7 +113,12 @@ pub(super) fn route_with_quality(
     let mut target_ports = vec![0; graph.edges.len()];
     for (node, edges) in incident.iter().enumerate() {
         for (slot, &(edge, source)) in edges.iter().enumerate() {
-            let port = 20 + (slot + 1) * (layout.bounds[node].height - 40) / (edges.len() + 1);
+            let height = if bundle && source && graph.edges[edge].kind == EdgeKind::Connection {
+                layout.header_heights[node]
+            } else {
+                layout.bounds[node].height
+            };
+            let port = 20 + (slot + 1) * (height - 40) / (edges.len() + 1);
             match source {
                 true => source_ports[edge] = port,
                 false => target_ports[edge] = port,
@@ -123,10 +145,37 @@ pub(super) fn route_with_quality(
     });
     let mut scorer = Scorer::default();
     let mut paths = vec![Vec::new(); graph.edges.len()];
+    let groups = super::affinity::groups(graph, &layout.parents);
+    let mut attempted = std::collections::BTreeSet::new();
+    let mut junctions = Vec::new();
     for index in order {
         let edge = &graph.edges[index];
         if represented_by_nesting(edge, &layout.parents) {
             continue;
+        }
+        if !paths[index].is_empty() {
+            continue;
+        }
+        if bundle {
+            if let Some(group) = groups.iter().find(|group| group.edges.contains(&index)) {
+                if attempted.insert(group.target) {
+                    if let Some(bundled) = bundles::try_bundle(
+                        graph,
+                        layout,
+                        group,
+                        &source_ports,
+                        &target_ports,
+                        &scorer,
+                    ) {
+                        for (index, path) in bundled.paths {
+                            scorer.insert(path.clone());
+                            paths[index] = path;
+                        }
+                        junctions.extend(bundled.junctions);
+                        continue;
+                    }
+                }
+            }
         }
         let start = Point {
             x: layout.bounds[edge.from].right(),
@@ -141,7 +190,9 @@ pub(super) fn route_with_quality(
         scorer.insert(path.clone());
         paths[index] = path;
     }
-    paths
+    junctions.sort_by_key(|point| (point.x, point.y));
+    junctions.dedup();
+    Routed { paths, junctions }
 }
 
 pub(super) fn obstacles(layout: &Layout<'_>, edge: &Edge) -> Vec<Bounds> {

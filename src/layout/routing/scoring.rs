@@ -25,6 +25,20 @@ pub(in crate::layout) struct Scorer {
 }
 
 impl Scorer {
+    pub(in crate::layout) fn overlaps(&self, points: &[Point]) -> bool {
+        points.windows(2).any(|pair| {
+            let (a, b) = (pair[0], pair[1]);
+            let (index, coordinate, from, to) = if a.y == b.y {
+                (&self.horizontal, a.y, a.x, b.x)
+            } else {
+                (&self.vertical, a.x, a.y, b.y)
+            };
+            index
+                .get(&coordinate)
+                .is_some_and(|coverage| coverage.overlap(from, to) > 0)
+        })
+    }
+
     /// Crossings at a grid vertex, charged only for straight continuation.
     /// Segment costs exclude both endpoints until the next direction is known.
     pub(in crate::layout) fn junction_cost(&self, point: Point, horizontal: bool) -> u128 {

@@ -1,0 +1,16 @@
+{
+  "format_version": "1.2",
+  "resource_changes": [
+    {"address": "aws_vpc.main", "type": "aws_vpc"},
+    {"address": "aws_subnet.a", "type": "aws_subnet"},
+    {"address": "aws_subnet.b", "type": "aws_subnet"},
+    {"address": "aws_subnet.c", "type": "aws_subnet"},
+    {"address": "aws_lb.app", "type": "aws_lb"}
+  ],
+  "configuration": {"root_module": {"resources": [
+    {"address": "aws_subnet.a", "expressions": {"vpc_id": {"references": ["aws_vpc.main.id"]}}},
+    {"address": "aws_subnet.b", "expressions": {"vpc_id": {"references": ["aws_vpc.main.id"]}}},
+    {"address": "aws_subnet.c", "expressions": {"vpc_id": {"references": ["aws_vpc.main.id"]}}},
+    {"address": "aws_lb.app", "expressions": {"subnets": {"references": ["aws_subnet.a.id", "aws_subnet.b.id", "aws_subnet.c.id"]}}}
+  ]}}
+}
