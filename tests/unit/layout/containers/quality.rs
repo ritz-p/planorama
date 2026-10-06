@@ -57,6 +57,38 @@ fn symmetric_peers_keep_ports_and_routes_when_edges_are_reordered() {
         before.paths,
         after.paths.into_iter().rev().collect::<Vec<_>>()
     );
+
+    // Qualified identities must retain their geometry and routes even when
+    // structurally identical nodes move to different input indices.
+    for nested in [true, false] {
+        let mut original = graph.clone();
+        if !nested {
+            original
+                .edges
+                .retain(|edge| edge.kind != EdgeKind::Containment);
+        }
+        let baseline = Layout::new(&original);
+        let mut reordered = original.clone();
+        reordered.nodes.swap(1, 2);
+        let remap = |node| match node {
+            1 => 2,
+            2 => 1,
+            other => other,
+        };
+        for edge in &mut reordered.edges {
+            edge.from = remap(edge.from);
+            edge.to = remap(edge.to);
+        }
+        reordered.edges.reverse();
+        let result = Layout::new(&reordered);
+        for node in 0..original.nodes.len() {
+            assert_eq!(baseline.bounds[node], result.bounds[remap(node)]);
+        }
+        assert_eq!(
+            baseline.paths,
+            result.paths.into_iter().rev().collect::<Vec<_>>()
+        );
+    }
 }
 
 #[test]
