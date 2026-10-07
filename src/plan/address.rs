@@ -64,6 +64,28 @@ enum ValueKey {
     Number(u64),
 }
 
+pub(super) fn dynamic_selection(reference: &str, resource_address: Option<&str>) -> bool {
+    let traversal = parts(reference);
+    let mut module_end = 0;
+    while module_end + 1 < traversal.len() && traversal[module_end] == "module" {
+        module_end += 2;
+    }
+    let end = resource_address.map_or(module_end, |address| parts(address).len());
+    traversal
+        .iter()
+        .take(end)
+        .any(|part| part.contains('[') && known_key(part).is_none())
+}
+
+pub(super) fn meta_reference(reference: &str) -> bool {
+    let parts = parts(reference);
+    // Local iteration metadata is preserved unqualified by qualify_reference.
+    // A module-qualified traversal always denotes an output, even if absent.
+    let local = parts.as_slice();
+    matches!(local, ["count", "index"] | ["each", "key"])
+        || matches!(local, ["each", value, ..] if name(value) == "value")
+}
+
 // Attribute traversals after the resource address do not select instances.
 pub(super) fn matches_instance(reference: &str, instance: &str) -> bool {
     parts(reference)
@@ -78,6 +100,9 @@ pub(super) fn matches_instance(reference: &str, instance: &str) -> bool {
 // Carry the concrete module scope through locals, outputs and input aliases.
 // A reference to an ancestor or an unrelated module keeps its own scope.
 pub(super) fn contextualize(reference: &str, context: &str) -> String {
+    if let Some(reference) = reference.strip_prefix(MODULE_REFERENCE) {
+        return format!("{MODULE_REFERENCE}{}", contextualize(reference, context));
+    }
     let mut reference = parts(reference);
     let context = parts(context);
     let mut i = 0;
@@ -98,6 +123,10 @@ pub(super) fn contextualize(reference: &str, context: &str) -> String {
     }
     reference.join(".")
 }
+
+// Internal tag preserves caller-visible module traversals through qualification.
+// It is never a Terraform address and is removed before resolving/displaying.
+pub(super) const MODULE_REFERENCE: &str = "@module:";
 
 #[cfg(test)]
 #[path = "../../tests/unit/plan/address.rs"]

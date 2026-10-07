@@ -1,5 +1,5 @@
 use super::address::{contextualize, matches_instance, static_address};
-use crate::model::Node;
+use crate::model::{DiagnosticReason, Node, Resolution};
 use serde_json::Value;
 use std::collections::{BTreeMap, BTreeSet};
 
@@ -45,19 +45,57 @@ pub(super) fn qualify(scope: &str, reference: &str) -> String {
     }
 }
 
+pub(super) fn qualify_reference(scope: &str, reference: &str) -> String {
+    if reference.starts_with("module.") {
+        return format!(
+            "{}{}",
+            super::address::MODULE_REFERENCE,
+            qualify(scope, reference)
+        );
+    }
+    // Iteration context has no resource identity. Keep its original root so
+    // it cannot collide with a module output named count or each. Explicit
+    // module traversals still receive normal lexical qualification.
+    if builtin_value(reference)
+        || (!reference.starts_with("module.") && super::address::meta_reference(reference))
+    {
+        reference.into()
+    } else {
+        qualify(scope, reference)
+    }
+}
+
+fn builtin_value(reference: &str) -> bool {
+    matches!(
+        reference,
+        "path.module" | "path.root" | "path.cwd" | "terraform.workspace"
+    )
+}
+
 pub(super) fn collect_config(
     module: &Value,
     scope: &str,
     inherited: &BTreeSet<String>,
     symbols: &mut BTreeMap<String, BTreeSet<String>>,
 ) {
+    if let Some(variables) = module["variables"].as_object() {
+        for name in variables.keys() {
+            // Preserve supplied module-input aliases: they may carry actual
+            // resource provenance. Declarations/defaults alone carry none.
+            symbols
+                .entry(qualify(scope, &format!("var.{name}")))
+                .or_default();
+        }
+    }
     if let Some(locals) = module["locals"].as_object() {
         for (name, expression) in locals {
             let mut refs = BTreeSet::new();
             references(expression, &mut refs);
             symbols.insert(
                 qualify(scope, &format!("local.{name}")),
-                refs.into_iter().map(|r| qualify(scope, &r)).collect(),
+                refs.into_iter()
+                    .map(|r| qualify_reference(scope, &r))
+                    .collect(),
             );
         }
     }
@@ -75,7 +113,10 @@ pub(super) fn collect_config(
                     .filter_map(Value::as_str)
                     .map(str::to_owned),
             );
-            let mut qualified: BTreeSet<_> = refs.into_iter().map(|r| qualify(scope, &r)).collect();
+            let mut qualified: BTreeSet<_> = refs
+                .into_iter()
+                .map(|r| qualify_reference(scope, &r))
+                .collect();
             qualified.extend(inherited.iter().cloned());
             symbols.insert(qualify(scope, address), qualified);
         }
@@ -86,7 +127,9 @@ pub(super) fn collect_config(
             references(output, &mut refs);
             symbols.insert(
                 qualify(scope, &format!("output.{name}")),
-                refs.into_iter().map(|r| qualify(scope, &r)).collect(),
+                refs.into_iter()
+                    .map(|r| qualify_reference(scope, &r))
+                    .collect(),
             );
         }
     }
@@ -99,7 +142,9 @@ pub(super) fn collect_config(
                     references(expression, &mut refs);
                     symbols.insert(
                         format!("{child}.var.{name}"),
-                        refs.into_iter().map(|r| qualify(scope, &r)).collect(),
+                        refs.into_iter()
+                            .map(|r| qualify_reference(scope, &r))
+                            .collect(),
                     );
                 }
             }
@@ -115,7 +160,7 @@ pub(super) fn collect_config(
                     .map(str::to_owned),
             );
             let mut dependencies = inherited.clone();
-            dependencies.extend(call_refs.into_iter().map(|r| qualify(scope, &r)));
+            dependencies.extend(call_refs.into_iter().map(|r| qualify_reference(scope, &r)));
             collect_config(&call["module"], &child, &dependencies, symbols);
             if let Some(outputs) = call["module"]["outputs"].as_object() {
                 for name in outputs.keys() {
@@ -148,8 +193,8 @@ pub(super) fn resolve(
                 .iter()
                 .map(|r| contextualize(r, &node.address))
                 .collect();
-            let (sources, _) = resolve_sources(&refs, &instances, symbols);
-            for source in sources {
+            let resolution = resolve_sources(&refs, &instances, symbols);
+            for source in resolution.sources {
                 if source != target {
                     edges.insert((source, target));
                 }
@@ -171,12 +216,13 @@ pub(super) fn resolve_sources(
     refs: &BTreeSet<String>,
     instances: &BTreeMap<String, Vec<usize>>,
     symbols: &BTreeMap<String, BTreeSet<String>>,
-) -> (Vec<usize>, bool) {
+) -> Resolution {
     let mut pending: Vec<_> = refs.iter().cloned().map(|r| (r, false)).collect();
     let mut visited = BTreeSet::new();
     let mut active = BTreeSet::new();
     let mut sources = BTreeSet::new();
     let mut complete = !pending.is_empty();
+    let mut issues = BTreeSet::new();
     while let Some((reference, exiting)) = pending.pop() {
         if exiting {
             active.remove(&reference);
@@ -184,6 +230,7 @@ pub(super) fn resolve_sources(
         }
         if active.contains(&reference) {
             complete = false;
+            issues.insert(DiagnosticReason::AliasCycle);
             continue;
         }
         if !visited.insert(reference.clone()) {
@@ -191,54 +238,111 @@ pub(super) fn resolve_sources(
         }
         active.insert(reference.clone());
         pending.push((reference.clone(), true));
-        let normalized = static_address(&reference);
+        let caller_module = reference.starts_with(super::address::MODULE_REFERENCE);
+        let reference = reference
+            .strip_prefix(super::address::MODULE_REFERENCE)
+            .unwrap_or(&reference);
+        let normalized = static_address(reference);
+        if builtin_value(reference) {
+            complete = false;
+            continue;
+        }
+        let output_binding = if caller_module {
+            let parts = super::address::parts(&normalized);
+            let mut end = 0;
+            while end + 1 < parts.len() && parts[end] == "module" {
+                end += 2;
+            }
+            (end < parts.len())
+                .then(|| parts[..=end].join("."))
+                .and_then(|key| symbols.get_key_value(&key))
+        } else {
+            None
+        };
+        let binding = output_binding.or_else(|| {
+            symbols
+                .iter()
+                .filter(|(key, _)| prefix_match(&normalized, key))
+                .max_by_key(|(key, _)| key.len())
+        });
         let resource_key = instances
             .keys()
             .map(|key| static_address(key))
-            .filter(|key| prefix_match(&normalized, key))
+            .filter(|key| output_binding.is_none() && prefix_match(&normalized, key))
             .max_by_key(String::len);
+        let metadata = super::address::meta_reference(reference);
+        // Module outputs named count/each take precedence over the syntactic
+        // metadata heuristic, including outputs whose values have no sources.
+        if super::address::dynamic_selection(reference, resource_key.as_deref())
+            || (metadata && binding.is_none())
+        {
+            issues.insert(DiagnosticReason::DynamicInstanceSelection);
+        }
+        // Terraform emits iteration metadata as standalone traversals. It is
+        // dynamic context, not a missing resource or alias, even in modules.
+        if metadata && binding.is_none() {
+            complete = false;
+            continue;
+        }
+
         if let Some(key) = resource_key {
             let matching: Vec<_> = instances
                 .iter()
                 .filter(|(address, _)| {
-                    static_address(address) == key && matches_instance(&reference, address)
+                    static_address(address) == key && matches_instance(reference, address)
                 })
                 .flat_map(|(_, indices)| indices.iter().copied())
                 .collect();
             if matching.is_empty() {
                 complete = false;
+                issues.insert(DiagnosticReason::UnresolvedReference);
+            } else if matching.len() > 1 {
+                issues.insert(DiagnosticReason::MultipleMatchingInstances);
             }
             sources.extend(matching);
             continue;
         }
-        match symbols
-            .iter()
-            .filter(|(key, _)| prefix_match(&normalized, key))
-            .max_by_key(|(key, _)| key.len())
-        {
+        match binding {
             Some((_, aliases)) if !aliases.is_empty() => {
                 pending.extend(
                     aliases
                         .iter()
-                        .map(|alias| (contextualize(alias, &reference), false)),
+                        .map(|alias| (contextualize(alias, reference), false)),
                 );
             }
+            Some(_) => {
+                // A defined constant alias is not missing. It contributes no
+                // resource provenance, so semantic inference stays conservative
+                // without producing an unresolved-reference diagnostic.
+                complete = false;
+            }
             None if normalized.starts_with("module.") => {
+                // A whole-module traversal denotes all matching descendants,
+                // not a choice of one endpoint. Multiplicity is expected even
+                // when other traversals in the expression remain unresolved.
                 let matching: Vec<_> = instances
                     .iter()
                     .filter(|(address, _)| {
                         prefix_match(&static_address(address), &normalized)
-                            && matches_instance(&reference, address)
+                            && matches_instance(reference, address)
                     })
                     .flat_map(|(_, indices)| indices.iter().copied())
                     .collect();
                 if matching.is_empty() {
                     complete = false;
+                    issues.insert(DiagnosticReason::UnresolvedReference);
                 }
                 sources.extend(matching);
             }
-            _ => complete = false,
+            _ => {
+                complete = false;
+                issues.insert(DiagnosticReason::UnresolvedReference);
+            }
         }
     }
-    (sources.into_iter().collect(), complete)
+    Resolution {
+        sources: sources.into_iter().collect(),
+        complete,
+        issues,
+    }
 }

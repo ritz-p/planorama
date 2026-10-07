@@ -2,8 +2,13 @@ use std::io::Write;
 use std::process::{Command, Output, Stdio};
 
 pub fn run(input: &[u8]) -> Output {
+    run_with_args(input, &[])
+}
+
+pub fn run_with_args(input: &[u8], args: &[&str]) -> Output {
     let mut child = Command::new(env!("CARGO_BIN_EXE_planorama"))
         .args(["-", "-o", "-"])
+        .args(args)
         .stdin(Stdio::piped())
         .stdout(Stdio::piped())
         .stderr(Stdio::piped())

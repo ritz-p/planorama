@@ -5,6 +5,8 @@ use std::ops::Deref;
 pub struct TerraformGraph {
     pub graph: Graph,
     pub attributes: Vec<AttributeReference>,
+    /// Dependency metadata stays separate from semantic attribute provenance.
+    pub graph_references: Vec<AttributeReference>,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -13,6 +15,7 @@ pub struct AttributeReference {
     pub attribute: String,
     pub sources: Vec<usize>,
     pub complete: bool,
+    pub issues: std::collections::BTreeSet<super::DiagnosticReason>,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]

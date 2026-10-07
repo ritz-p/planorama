@@ -43,6 +43,13 @@ pub fn parse(json: &str) -> Result<TerraformGraph, String> {
         nodes.insert(address.into(), node);
     }
     let mut symbols = BTreeMap::new();
+    // Real plan JSON stores root inputs outside configuration.root_module.
+    // Register names only: values are neither resource provenance nor diagnostics.
+    if let Some(variables) = plan["variables"].as_object() {
+        for name in variables.keys() {
+            symbols.insert(format!("var.{name}"), BTreeSet::new());
+        }
+    }
     collect_config(
         &plan["configuration"]["root_module"],
         "",
@@ -63,10 +70,22 @@ pub fn parse(json: &str) -> Result<TerraformGraph, String> {
     let mut nodes: Vec<_> = nodes.into_values().collect();
     providers::enrich(&plan["configuration"], &mut nodes);
     let edges = resolve(&nodes, &symbols);
-    let attributes = attributes::collect(&plan["configuration"]["root_module"], &nodes, &symbols);
+    let attributes = attributes::collect(
+        &plan["configuration"]["root_module"],
+        &nodes,
+        &symbols,
+        false,
+    );
+    let graph_references = attributes::collect(
+        &plan["configuration"]["root_module"],
+        &nodes,
+        &symbols,
+        true,
+    );
     Ok(TerraformGraph {
         graph: Graph { nodes, edges },
         attributes,
+        graph_references,
     })
 }
 

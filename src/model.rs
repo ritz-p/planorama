@@ -46,8 +46,11 @@ pub struct Graph {
 
 mod address;
 pub(crate) use address::module_of;
+mod diagnostics;
 mod graphs;
 mod provider;
+pub(crate) use diagnostics::Resolution;
+pub use diagnostics::{Diagnostic, DiagnosticReason};
 pub use graphs::{ArchitectureGraph, AttributeReference, TerraformGraph};
 pub use provider::ProviderIdentity;
 
