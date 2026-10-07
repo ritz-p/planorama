@@ -22,7 +22,7 @@ The generator deliberately supports only this example's subset: single-instance 
 
 The `.tf.json` files are Terraform source, not a second hand-maintained topology. Terraform 1.9+ and the AWS 5.x provider can validate them:
 
-Validation was run with Terraform 1.9.8 and AWS provider 5.100.0; the provider lock file is committed. The fixture itself has 48 resource instances. The current renderer produces 42 cards and 77 relationships after lowering four associations, omitting two metadata data sources, and inferring three common-parent containment relationships. RDS inherits the VPC scope through its DB subnet group, which remains visible with its dependencies.
+Validation was run with Terraform 1.9.8 and AWS provider 5.100.0; the provider lock file is committed. The fixture itself has 48 resource instances. The current renderer produces 38 cards and 73 relationships after lowering four route-table associations and four target-group attachments, omitting two metadata data sources, and inferring three common-parent containment relationships. RDS inherits the VPC scope through its DB subnet group, which remains visible with its dependencies.
 
 Balanced wrapping preserves containment while reducing vertical growth; the committed SVG records the current dimensions after network-scope inference.
 
@@ -44,7 +44,7 @@ A real plan additionally needs AWS credentials and existing VPC/security-group I
 
 ## Expected display
 
-The managed VPC contains four subnet boxes; private subnet boxes contain the application module's EC2 workers. The ALB and ECS Service are also contained by the common VPC, with separate connections to each referenced subnet. Route-table associations become four action-carrying edges. Shared VPC, Security Group, and AMI data sources remain external entities; region/account metadata data sources are omitted. Security Groups and ECS Services retain the Policy/Controller fallback annotations. Module names remain card metadata; architecture layout has no module bands.
+The managed VPC contains four subnet boxes; private subnet boxes contain the application module's EC2 workers. The ALB and ECS Service are also contained by the common VPC, with separate connections to each referenced subnet. RDS shares that VPC through its DB subnet group. Route-table associations and target-group attachments become eight action-carrying edges. Shared VPC, Security Group, and AMI data sources remain external entities; region/account metadata data sources are omitted. Security Groups and ECS Services retain the Policy/Controller fallback annotations. Module names remain card metadata; architecture layout has no module bands.
 
 The generator preserves the ECS `network_configuration` block's individual expressions so subnet membership can be distinguished from Security Group references, following Terraform's [block expressions representation](https://developer.hashicorp.com/terraform/internals/json-format#block-expressions-representation).
 

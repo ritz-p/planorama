@@ -148,3 +148,146 @@ fn expanded_resource_instances_remain_visible_when_endpoint_is_ambiguous() {
     let raw = plan::parse(&input.to_string()).unwrap();
     assert_eq!(semantic::transform(&raw).0, raw.graph);
 }
+
+fn relationship_input(kind: &str) -> Value {
+    let [(from_attr, from_type), (to_attr, to_type)] = rule(kind).unwrap();
+    json!({
+        "format_version":"1.2",
+        "resource_changes":[
+            {"address":format!("{from_type}.main"),"type":from_type},
+            {"address":format!("{to_type}.main"),"type":to_type},
+            {"address":format!("{kind}.main"),"type":kind,"change":{"actions":["create"]}}
+        ],
+        "configuration":{"root_module":{"resources":[{
+            "address":format!("{kind}.main"),"expressions":{
+                (from_attr):{"references":[format!("{from_type}.main.id")]},
+                (to_attr):{"references":[format!("{to_type}.main.id")]}
+            }
+        }]}}
+    })
+}
+
+fn assert_relationship_actions(kind: &str) {
+    use crate::model::Action;
+    for (actions, action) in [
+        (vec!["create"], Action::Create),
+        (vec!["update"], Action::Update),
+        (vec!["delete"], Action::Delete),
+        (vec!["delete", "create"], Action::Replace),
+        (vec!["no-op"], Action::Unchanged),
+    ] {
+        let mut input = relationship_input(kind);
+        input["resource_changes"][2]["change"]["actions"] = json!(actions);
+        let raw = plan::parse(&input.to_string()).unwrap();
+        let original = raw.clone();
+        let graph = semantic::transform(&raw);
+        assert_eq!(raw, original);
+        assert_eq!(graph.nodes.len(), 2);
+        assert_eq!(graph.edges.len(), 1);
+        let edge = &graph.edges[0];
+        assert_eq!(edge.kind, EdgeKind::Association);
+        let [(.., from_type), (.., to_type)] = rule(kind).unwrap();
+        assert_eq!(graph.nodes[edge.from].resource_type, from_type);
+        assert_eq!(graph.nodes[edge.to].resource_type, to_type);
+        assert_eq!(
+            edge.change,
+            Some(EdgeChange {
+                address: format!("{kind}.main"),
+                action
+            })
+        );
+        assert_eq!(graph, semantic::transform(&raw));
+    }
+}
+
+#[test]
+fn target_group_attachment_lowers_with_action_metadata() {
+    assert_relationship_actions("aws_lb_target_group_attachment");
+}
+
+#[test]
+fn endpoint_route_table_association_lowers_with_action_metadata() {
+    assert_relationship_actions("aws_vpc_endpoint_route_table_association");
+}
+
+#[test]
+fn new_relationships_preserve_helpers_when_lowering_is_uncertain() {
+    for kind in [
+        "aws_lb_target_group_attachment",
+        "aws_vpc_endpoint_route_table_association",
+    ] {
+        for (attribute, endpoint_type) in rule(kind).unwrap() {
+            for scenario in [
+                "missing",
+                "literal",
+                "unresolved",
+                "ambiguous",
+                "wrong_type",
+                "foreign_endpoint",
+                "foreign_helper",
+                "dynamic",
+                "data",
+                "extra_input",
+                "consumer",
+            ] {
+                let mut input = relationship_input(kind);
+                let expressions =
+                    &mut input["configuration"]["root_module"]["resources"][0]["expressions"];
+                match scenario {
+                    "missing" => {
+                        expressions.as_object_mut().unwrap().remove(attribute);
+                    }
+                    "literal" => expressions[attribute] = json!({"constant_value":"literal-id"}),
+                    "unresolved" => {
+                        expressions[attribute] =
+                            json!({"references":[format!("{endpoint_type}.main.id"),"var.unknown"]})
+                    }
+                    "ambiguous" => {
+                        expressions[attribute] = json!({"references":[format!("{endpoint_type}.main.id"),format!("{endpoint_type}.other.id")]})
+                    }
+                    "wrong_type" => {
+                        expressions[attribute] = json!({"references":["terraform_data.extra.id"]})
+                    }
+                    _ => {}
+                }
+                if scenario == "ambiguous" {
+                    input["resource_changes"].as_array_mut().unwrap().push(
+                        json!({"address":format!("{endpoint_type}.other"),"type":endpoint_type}),
+                    );
+                }
+                if matches!(scenario, "extra_input" | "consumer" | "wrong_type") {
+                    input["resource_changes"]
+                        .as_array_mut()
+                        .unwrap()
+                        .push(json!({"address":"terraform_data.extra","type":"terraform_data"}));
+                }
+                match scenario {
+                    "foreign_endpoint" => {
+                        for resource in input["resource_changes"].as_array_mut().unwrap() {
+                            if resource["type"] == endpoint_type { resource["provider_name"] = json!("registry.terraform.io/custom/aws"); }
+                        }
+                    }
+                    "foreign_helper" => input["resource_changes"][2]["provider_name"] = json!("registry.terraform.io/custom/aws"),
+                    "data" => input["resource_changes"][2]["mode"] = json!("data"),
+                    "extra_input" => input["configuration"]["root_module"]["resources"][0]["depends_on"] = json!(["terraform_data.extra"]),
+                    "consumer" => input["configuration"]["root_module"]["resources"].as_array_mut().unwrap().push(json!({"address":"terraform_data.extra","expressions":{"input":{"references":[format!("{kind}.main.id")]}}})),
+                    _ => {}
+                }
+                let mut raw = plan::parse(&input.to_string()).unwrap();
+                if scenario == "dynamic" {
+                    raw.attributes
+                        .iter_mut()
+                        .find(|r| r.attribute == attribute)
+                        .unwrap()
+                        .issues
+                        .insert(crate::model::DiagnosticReason::DynamicInstanceSelection);
+                }
+                assert_eq!(
+                    semantic::transform(&raw).0,
+                    raw.graph,
+                    "{kind} {attribute} {scenario}"
+                );
+            }
+        }
+    }
+}
