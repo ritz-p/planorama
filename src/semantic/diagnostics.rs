@@ -111,7 +111,11 @@ pub fn collect(raw: &TerraformGraph) -> Vec<Diagnostic> {
             }
         }
         if endpoints_valid
-            && matches!(node.resource_type.as_str(), "aws_lb" | "aws_ecs_service")
+            && (matches!(node.resource_type.as_str(), "aws_lb" | "aws_ecs_service")
+                || (matches!(
+                    node.resource_type.as_str(),
+                    "aws_db_instance" | "aws_rds_cluster"
+                ) && super::containment::resolved_subnets(raw, target).is_some()))
             && !contained
                 .edges
                 .iter()

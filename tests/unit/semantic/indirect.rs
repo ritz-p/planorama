@@ -15,6 +15,7 @@ fn rds_inherits_single_or_common_parent_and_preserves_group_dependencies() {
                 json!({"references":["aws_subnet.a.id"]});
         }
         let raw = plan::parse(&input.to_string()).unwrap();
+        assert!(semantic::diagnostics::collect(&raw).is_empty());
         let graph = semantic::transform(&raw).0;
         assert_eq!(graph.nodes, raw.nodes);
         for kind in ["aws_db_instance", "aws_rds_cluster"] {
@@ -44,6 +45,58 @@ fn rds_inherits_single_or_common_parent_and_preserves_group_dependencies() {
         for edge in &raw.edges {
             if raw.nodes[edge.to].resource_type == "aws_db_subnet_group" {
                 assert!(graph.edges.contains(edge));
+            }
+        }
+    }
+}
+
+#[test]
+fn diagnostics_distinguish_indirect_ancestry_from_second_hop_failures() {
+    for scenario in ["disjoint", "unresolved", "literal", "wrong_type", "dynamic"] {
+        let mut input = fixture();
+        let resources = &mut input["configuration"]["root_module"]["resources"];
+        match scenario {
+            "disjoint" => resources[1]["expressions"] = json!({}),
+            "unresolved" => {
+                resources[2]["expressions"]["subnet_ids"] =
+                    json!({"references":["aws_subnet.a.id", "var.missing"]})
+            }
+            "literal" => {
+                resources[2]["expressions"]["subnet_ids"] = json!({"constant_value":["subnet-123"]})
+            }
+            "wrong_type" => {
+                resources[2]["expressions"]["subnet_ids"] =
+                    json!({"references":["aws_vpc.main.id"]})
+            }
+            _ => {}
+        }
+        let mut raw = plan::parse(&input.to_string()).unwrap();
+        if scenario == "dynamic" {
+            raw.attributes
+                .iter_mut()
+                .find(|r| r.attribute == "subnet_ids")
+                .unwrap()
+                .issues
+                .insert(DiagnosticReason::DynamicInstanceSelection);
+        }
+        let diagnostics = semantic::diagnostics::collect(&raw);
+        for kind in ["aws_db_instance", "aws_rds_cluster"] {
+            let workload: Vec<_> = diagnostics
+                .iter()
+                .filter(|d| d.address == format!("{kind}.main"))
+                .collect();
+            if scenario == "disjoint" {
+                assert_eq!(workload.len(), 1);
+                assert_eq!(workload[0].attribute, "db_subnet_group_name");
+                assert_eq!(
+                    workload[0].reason,
+                    DiagnosticReason::AmbiguousContainmentParent
+                );
+            } else {
+                assert!(workload.is_empty(), "{scenario}: {workload:?}");
+                assert!(diagnostics.iter().any(
+                    |d| d.address == "aws_db_subnet_group.main" && d.attribute == "subnet_ids"
+                ));
             }
         }
     }

@@ -25,6 +25,31 @@ fn static_reference<'a>(
         })
 }
 
+/// Resolve both hops identically for placement and fallback diagnostics.
+pub(in crate::semantic) fn resolved_subnets(
+    raw: &TerraformGraph,
+    target: usize,
+) -> Option<&[usize]> {
+    let group_ref = static_reference(raw, target, "db_subnet_group_name")?;
+    let [group] = group_ref.sources.as_slice() else {
+        return None;
+    };
+    let group_node = &raw.nodes[*group];
+    if group_node.resource_type != "aws_db_subnet_group" || !group_node.provider.is_aws() {
+        return None;
+    }
+    let subnets = static_reference(raw, *group, "subnet_ids")?;
+    subnets
+        .sources
+        .iter()
+        .all(|&source| {
+            raw.nodes[source].resource_type == "aws_subnet"
+                && raw.nodes[source].provider.is_aws()
+                && raw.nodes[source].role == ResourceRole::Container
+        })
+        .then_some(subnets.sources.as_slice())
+}
+
 pub(super) fn infer(raw: &TerraformGraph, mut graph: Graph) -> Graph {
     let mut parents = vec![BTreeSet::new(); graph.nodes.len()];
     for edge in &graph.edges {
@@ -43,27 +68,10 @@ pub(super) fn infer(raw: &TerraformGraph, mut graph: Graph) -> Graph {
         {
             continue;
         }
-        let Some(group_ref) = static_reference(raw, target, "db_subnet_group_name") else {
+        let Some(subnets) = resolved_subnets(raw, target) else {
             continue;
         };
-        let [group] = group_ref.sources.as_slice() else {
-            continue;
-        };
-        let group_node = &raw.nodes[*group];
-        if group_node.resource_type != "aws_db_subnet_group" || !group_node.provider.is_aws() {
-            continue;
-        }
-        let Some(subnets) = static_reference(raw, *group, "subnet_ids") else {
-            continue;
-        };
-        if !subnets.sources.iter().all(|&source| {
-            raw.nodes[source].resource_type == "aws_subnet"
-                && raw.nodes[source].provider.is_aws()
-                && raw.nodes[source].role == ResourceRole::Container
-        }) {
-            continue;
-        }
-        let Some(parent) = super::spanning::common_parent(&subnets.sources, &parents) else {
+        let Some(parent) = super::spanning::common_parent(subnets, &parents) else {
             continue;
         };
         if parent == target || raw.nodes[parent].role != ResourceRole::Container {
