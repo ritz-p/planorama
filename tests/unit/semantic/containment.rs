@@ -76,7 +76,7 @@ fn unsupported_types_and_data_queries_keep_dependency_edges() {
         let mut input = input();
         match scenario {
             0 => {
-                input["resource_changes"][1]["type"] = json!("aws_security_group");
+                input["resource_changes"][1]["type"] = json!("aws_iam_role");
                 input["resource_changes"][2]["type"] = json!("aws_network_interface");
             }
             _ => {
@@ -115,4 +115,51 @@ fn multiple_possible_parents_preserve_all_original_dependencies() {
     ]);
     let raw = plan::parse(&input.to_string()).unwrap();
     assert_eq!(semantic::transform(&raw).0, raw.graph);
+}
+
+#[test]
+fn explicit_network_scope_rules_require_static_single_endpoints() {
+    for (child_type, attribute, parent_type) in [
+        ("aws_nat_gateway", "subnet_id", "aws_subnet"),
+        ("aws_vpc_endpoint", "vpc_id", "aws_vpc"),
+        ("aws_route_table", "vpc_id", "aws_vpc"),
+        ("aws_security_group", "vpc_id", "aws_vpc"),
+        ("aws_network_acl", "vpc_id", "aws_vpc"),
+    ] {
+        for scenario in 0..8 {
+            let mut value = json!({"format_version":"1.2","resource_changes":[
+                {"address":format!("{parent_type}.a[0]"),"type":parent_type},
+                {"address":format!("{parent_type}.b"),"type":parent_type},
+                {"address":format!("{child_type}.child"),"type":child_type}
+            ],"configuration":{"root_module":{"resources":[
+                {"address":format!("{child_type}.child"),"expressions":{attribute:{"references":[format!("{parent_type}.a[0].id")]}}}
+            ]}}});
+            let expr = &mut value["configuration"]["root_module"]["resources"][0]["expressions"];
+            match scenario {
+                1 => *expr = json!({attribute:{"constant_value":"literal-id"}}),
+                2 => {
+                    *expr = json!({attribute:{"references":[format!("{parent_type}.a[0].id"),format!("{parent_type}.b.id")]}})
+                }
+                3 => *expr = json!({attribute:{"references":["var.missing"]}}),
+                4 => *expr = json!({"tags":{"references":[format!("{parent_type}.a[0].id")]}}),
+                5 => {
+                    *expr = json!({attribute:{"references":[format!("{parent_type}.a[count.index].id")]}})
+                }
+                6 => value["resource_changes"][2]["provider_name"] = json!("acme/custom"),
+                7 => value["resource_changes"][2]["mode"] = json!("data"),
+                _ => {}
+            }
+            let raw = plan::parse(&value.to_string()).unwrap();
+            let graph = semantic::transform(&raw);
+            assert_eq!(
+                graph
+                    .edges
+                    .iter()
+                    .filter(|e| e.kind == EdgeKind::Containment)
+                    .count(),
+                usize::from(scenario == 0),
+                "{child_type} scenario {scenario}"
+            );
+        }
+    }
 }

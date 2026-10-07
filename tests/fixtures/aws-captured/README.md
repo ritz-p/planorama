@@ -1,4 +1,4 @@
-﻿# Captured Terraform AWS plan
+# Captured Terraform AWS plan
 
 `plan.json` was captured with **Terraform 1.9.8**, **hashicorp/aws 5.100.0**, linux_amd64, from the adjacent HCL using real `terraform plan -out` and `terraform show -json`. It is additional to the synthetic large fixture, which remains unchanged.
 
@@ -25,4 +25,4 @@ For the original capture, initialization also ran offline, mounting the existing
 
 The full JSON was reviewed before commit: no actual credentials, account IDs, private hostnames, production IDs, or sensitive attribute values are present. Dummy environment credentials are not serialized. Managed resource identifiers remain unknown (`after_unknown`), and all known values originate from this public fixture configuration or provider defaults. `sanitize.ps1` removes only the volatile top-level timestamp and pretty-prints with LF/UTF-8; it does not manufacture resources or expressions. It is not a sanitizer for arbitrary real-world plans. The ignored binary plan and raw JSON are not committed.
 
-Stable expectations: 8 parsed entities (7 managed creates and one locally computed data source), 7 visible cards, 12 relationships, 3 containment relationships, and 2 subnet-to-ALB connections. Repeated rendering must be byte-identical.
+Stable expectations: 8 parsed entities (7 managed creates and one locally computed data source), 7 visible cards, 12 relationships, 4 containment relationships, and 2 subnet-to-ALB connections. Repeated rendering must be byte-identical.
