@@ -18,6 +18,7 @@ pub fn collect(raw: &TerraformGraph) -> Vec<Diagnostic> {
             && matches!(
                 (node.resource_type.as_str(), reference.attribute.as_str()),
                 ("aws_lb", "subnets")
+                    | ("aws_db_subnet_group", "subnet_ids")
                     | (
                         "aws_ecs_service",
                         "network_configuration" | "network_configuration.subnets"
@@ -49,6 +50,10 @@ pub fn collect(raw: &TerraformGraph) -> Vec<Diagnostic> {
         } else {
             match node.resource_type.as_str() {
                 "aws_lb" => &[("subnets", "aws_subnet", true, false)],
+                "aws_db_subnet_group" => &[("subnet_ids", "aws_subnet", true, false)],
+                "aws_db_instance" | "aws_rds_cluster" => {
+                    &[("db_subnet_group_name", "aws_db_subnet_group", false, true)]
+                }
                 "aws_ecs_service" => {
                     &[("network_configuration.subnets", "aws_subnet", true, false)]
                 }

@@ -476,7 +476,7 @@ fn large_aws_example_keeps_cross_module_containment_and_multi_subnet_relationshi
             assert_ne!(graph.nodes[worker].module, graph.nodes[subnet].module);
         }
     }
-    for resource_type in ["aws_lb_target_group", "aws_db_instance"] {
+    for resource_type in ["aws_lb_target_group"] {
         let node = graph
             .nodes
             .iter()
@@ -484,7 +484,7 @@ fn large_aws_example_keeps_cross_module_containment_and_multi_subnet_relationshi
             .unwrap();
         assert!(layout.parents[node].is_none());
     }
-    for resource_type in ["aws_lb", "aws_ecs_service"] {
+    for resource_type in ["aws_lb", "aws_ecs_service", "aws_db_instance"] {
         let node = graph
             .nodes
             .iter()
