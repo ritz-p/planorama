@@ -22,7 +22,7 @@ fn ancestry(node: usize, parents: &[BTreeSet<usize>]) -> Option<Vec<usize>> {
     }
 }
 
-fn common_parent(nodes: &[usize], parents: &[BTreeSet<usize>]) -> Option<usize> {
+pub(super) fn common_parent(nodes: &[usize], parents: &[BTreeSet<usize>]) -> Option<usize> {
     let chains: Vec<_> = nodes
         .iter()
         .map(|&node| ancestry(node, parents))
