@@ -1,5 +1,7 @@
 use crate::model::{EdgeKind, EntityMode, Graph, ResourceRole, TerraformGraph};
 use std::collections::BTreeSet;
+mod indirect;
+pub(super) use indirect::resolved_subnets;
 mod spanning;
 
 pub(super) fn direct_rule(resource_type: &str) -> Option<(&'static str, &'static str)> {
@@ -51,5 +53,5 @@ pub(super) fn infer(raw: &TerraformGraph) -> Graph {
             edge.kind = EdgeKind::Containment;
         }
     }
-    spanning::infer(raw, graph)
+    indirect::infer(raw, spanning::infer(raw, graph))
 }

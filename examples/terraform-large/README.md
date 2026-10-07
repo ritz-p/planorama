@@ -22,7 +22,7 @@ The generator deliberately supports only this example's subset: single-instance 
 
 The `.tf.json` files are Terraform source, not a second hand-maintained topology. Terraform 1.9+ and the AWS 5.x provider can validate them:
 
-Validation was run with Terraform 1.9.8 and AWS provider 5.100.0; the provider lock file is committed. The fixture itself has 48 resource instances. The current renderer produces 42 cards and 76 relationships after lowering four associations, omitting two metadata data sources, and inferring two common-parent containment relationships. Resolving exact worker indices removes four false-positive attachment relationships compared with the previous 80-relationship diagram.
+Validation was run with Terraform 1.9.8 and AWS provider 5.100.0; the provider lock file is committed. The fixture itself has 48 resource instances. The current renderer produces 42 cards and 77 relationships after lowering four associations, omitting two metadata data sources, and inferring three common-parent containment relationships. RDS inherits the VPC scope through its DB subnet group, which remains visible with its dependencies.
 
 Balanced wrapping preserves containment while reducing vertical growth; the committed SVG records the current dimensions after network-scope inference.
 
