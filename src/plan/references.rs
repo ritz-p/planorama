@@ -49,11 +49,20 @@ pub(super) fn qualify_reference(scope: &str, reference: &str) -> String {
     // Iteration context has no resource identity. Keep its original root so
     // it cannot collide with a module output named count or each. Explicit
     // module traversals still receive normal lexical qualification.
-    if !reference.starts_with("module.") && super::address::meta_reference(reference) {
+    if builtin_value(reference)
+        || (!reference.starts_with("module.") && super::address::meta_reference(reference))
+    {
         reference.into()
     } else {
         qualify(scope, reference)
     }
+}
+
+fn builtin_value(reference: &str) -> bool {
+    matches!(
+        reference,
+        "path.module" | "path.root" | "path.cwd" | "terraform.workspace"
+    )
 }
 
 pub(super) fn collect_config(
@@ -62,6 +71,15 @@ pub(super) fn collect_config(
     inherited: &BTreeSet<String>,
     symbols: &mut BTreeMap<String, BTreeSet<String>>,
 ) {
+    if let Some(variables) = module["variables"].as_object() {
+        for name in variables.keys() {
+            // Preserve supplied module-input aliases: they may carry actual
+            // resource provenance. Declarations/defaults alone carry none.
+            symbols
+                .entry(qualify(scope, &format!("var.{name}")))
+                .or_default();
+        }
+    }
     if let Some(locals) = module["locals"].as_object() {
         for (name, expression) in locals {
             let mut refs = BTreeSet::new();
@@ -214,6 +232,10 @@ pub(super) fn resolve_sources(
         active.insert(reference.clone());
         pending.push((reference.clone(), true));
         let normalized = static_address(&reference);
+        if builtin_value(&reference) {
+            complete = false;
+            continue;
+        }
         let binding = symbols
             .iter()
             .filter(|(key, _)| prefix_match(&normalized, key))

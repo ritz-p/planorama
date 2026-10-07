@@ -607,3 +607,53 @@ fn metadata_named_outputs_keep_dynamic_module_index_diagnostics() {
         }
     }
 }
+
+#[test]
+fn declared_variables_and_builtin_values_are_not_unresolved_resources() {
+    use serde_json::json;
+    for reference in [
+        "var.region",
+        "var.settings.name",
+        "path.module",
+        "path.root",
+        "path.cwd",
+        "terraform.workspace",
+        "var.missing",
+        "path.missing",
+    ] {
+        for nested in [false, true] {
+            let module = json!({"variables":{"region":{"default":"TOP_SECRET"},"settings":{}},"resources":[
+                {"address":"test.consumer","expressions":{"input":{"references":[reference]}}},
+                {"address":"aws_instance.consumer","expressions":{"subnet_id":{"references":[reference]}}}
+            ]});
+            let (scope, root) = if nested {
+                (
+                    "module.child.",
+                    json!({"module_calls":{"child":{"module":module}}}),
+                )
+            } else {
+                ("", module)
+            };
+            let input = json!({"format_version":"1.2","resource_changes":[
+                {"address":format!("{scope}test.consumer"),"type":"test"},
+                {"address":format!("{scope}aws_instance.consumer"),"type":"aws_instance"}
+            ],"configuration":{"root_module":root}})
+            .to_string();
+            let output = support::run_with_args(input.as_bytes(), &["--diagnostics"]);
+            assert!(output.status.success());
+            let warnings = String::from_utf8(output.stderr).unwrap();
+            if reference.ends_with("missing") {
+                assert!(warnings.contains("unresolved reference"), "{warnings}");
+            } else {
+                assert!(!warnings.contains("unresolved reference"), "{warnings}");
+                assert!(
+                    warnings.contains("attribute has no resolvable resource reference"),
+                    "{warnings}"
+                );
+                assert_eq!(warnings.lines().count(), 1);
+            }
+            assert!(!warnings.contains("TOP_SECRET"));
+            assert_eq!(output.stdout, support::run(input.as_bytes()).stdout);
+        }
+    }
+}
