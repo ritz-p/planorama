@@ -512,7 +512,7 @@ fn large_aws_example_keeps_cross_module_containment_and_multi_subnet_relationshi
             .iter()
             .filter(|edge| edge.kind == EdgeKind::Association)
             .count(),
-        4
+        8
     );
     for role in [
         ResourceRole::Container,

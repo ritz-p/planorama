@@ -9,6 +9,8 @@ pub mod diagnostics;
 mod tests;
 
 pub fn transform(raw: &TerraformGraph) -> ArchitectureGraph {
+    // Fixed order: direct/spanning/indirect containment, relationship lowering,
+    // then data-source visibility. Lowering must see all original consumers.
     let contained = TerraformGraph {
         graph: containment::infer(raw),
         attributes: raw.attributes.clone(),

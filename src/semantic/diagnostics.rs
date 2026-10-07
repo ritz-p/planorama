@@ -45,7 +45,11 @@ pub fn collect(raw: &TerraformGraph) -> Vec<Diagnostic> {
         }
         let direct = super::containment::direct_rule(&node.resource_type)
             .map(|(attribute, parent)| [(attribute, parent, false, true)]);
+        let association = super::associations::rule(&node.resource_type)
+            .map(|rule| rule.map(|(attribute, endpoint)| (attribute, endpoint, false, false)));
         let expected: &[(&str, &str, bool, bool)] = if let Some(rule) = &direct {
+            rule
+        } else if let Some(rule) = &association {
             rule
         } else {
             match node.resource_type.as_str() {
@@ -57,10 +61,6 @@ pub fn collect(raw: &TerraformGraph) -> Vec<Diagnostic> {
                 "aws_ecs_service" => {
                     &[("network_configuration.subnets", "aws_subnet", true, false)]
                 }
-                "aws_route_table_association" => &[
-                    ("subnet_id", "aws_subnet", false, false),
-                    ("route_table_id", "aws_route_table", false, false),
-                ],
                 _ => &[],
             }
         };
@@ -127,14 +127,11 @@ pub fn collect(raw: &TerraformGraph) -> Vec<Diagnostic> {
                 reason: Reason::AmbiguousContainmentParent,
             });
         }
-        if endpoints_valid && node.resource_type == "aws_route_table_association" {
+        if endpoints_valid && association.is_some() {
             let incoming: BTreeSet<_> = raw
                 .attributes
                 .iter()
-                .filter(|r| {
-                    r.target == target
-                        && matches!(r.attribute.as_str(), "subnet_id" | "route_table_id")
-                })
+                .filter(|r| r.target == target && expected.iter().any(|rule| rule.0 == r.attribute))
                 .flat_map(|r| r.sources.iter().copied())
                 .collect();
             let incident: Vec<_> = raw
@@ -149,7 +146,11 @@ pub fn collect(raw: &TerraformGraph) -> Vec<Diagnostic> {
             {
                 found.insert(Diagnostic {
                     address: node.address.clone(),
-                    attribute: "subnet_id,route_table_id".into(),
+                    attribute: expected
+                        .iter()
+                        .map(|rule| rule.0)
+                        .collect::<Vec<_>>()
+                        .join(","),
                     reason: Reason::AdditionalRelationships,
                 });
             }
