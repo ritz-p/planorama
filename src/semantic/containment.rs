@@ -2,6 +2,15 @@ use crate::model::{EdgeKind, EntityMode, Graph, ResourceRole, TerraformGraph};
 use std::collections::BTreeSet;
 mod spanning;
 
+pub(super) fn direct_rule(resource_type: &str) -> Option<(&'static str, &'static str)> {
+    match resource_type {
+        "aws_subnet" | "aws_vpc_endpoint" | "aws_route_table" | "aws_security_group"
+        | "aws_network_acl" => Some(("vpc_id", "aws_vpc")),
+        "aws_instance" | "aws_nat_gateway" => Some(("subnet_id", "aws_subnet")),
+        _ => None,
+    }
+}
+
 #[cfg(test)]
 #[path = "../../tests/unit/semantic/containment.rs"]
 mod tests;
@@ -10,14 +19,21 @@ pub(super) fn infer(raw: &TerraformGraph) -> Graph {
     let mut relationships = BTreeSet::new();
     for reference in &raw.attributes {
         let child = &raw.nodes[reference.target];
-        if child.mode != EntityMode::Managed || !child.provider.is_aws() || !reference.complete {
+        if child.mode != EntityMode::Managed
+            || !child.provider.is_aws()
+            || !reference.complete
+            || reference
+                .issues
+                .contains(&crate::model::DiagnosticReason::DynamicInstanceSelection)
+        {
             continue;
         }
-        let parent_type = match (child.resource_type.as_str(), reference.attribute.as_str()) {
-            ("aws_subnet", "vpc_id") => "aws_vpc",
-            ("aws_instance", "subnet_id") => "aws_subnet",
-            _ => continue,
+        let Some((attribute, parent_type)) = direct_rule(&child.resource_type) else {
+            continue;
         };
+        if reference.attribute != attribute {
+            continue;
+        }
         if let [parent] = reference.sources.as_slice() {
             let node = &raw.nodes[*parent];
             if *parent != reference.target

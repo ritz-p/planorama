@@ -2,7 +2,7 @@
 
 This is a layout/debugging example, not a production deployment. The JSON-formatted Terraform source is split across `network`, `application`, `database`, and `shared` modules. Module membership intentionally differs from containment: application EC2 instances belong to subnets in the network module.
 
-The topology includes four subnets in two availability zones, Internet/NAT gateways, public/private routing and four route-table associations, an interface endpoint, VPC peering, an ALB with a target group/listener/attachments, four counted EC2 workers, an ECS service, RDS, IAM roles, security groups, and existing-infrastructure data lookups. Multi-subnet resources remain relationships; neither the ALB nor the target group is treated as a physical container. Current containment inference covers VPC → Subnet → EC2 only.
+The topology includes four subnets in two availability zones, Internet/NAT gateways, public/private routing and four route-table associations, an interface endpoint, VPC peering, an ALB with a target group/listener/attachments, four counted EC2 workers, an ECS service, RDS, IAM roles, security groups, and existing-infrastructure data lookups. Multi-subnet resources remain relationships; neither the ALB nor the target group is treated as a physical container. Explicit network containment also covers NAT gateways in subnets and VPC endpoints, route tables, security groups, and network ACLs in VPCs.
 
 ## Offline regeneration
 
@@ -24,9 +24,9 @@ The `.tf.json` files are Terraform source, not a second hand-maintained topology
 
 Validation was run with Terraform 1.9.8 and AWS provider 5.100.0; the provider lock file is committed. The fixture itself has 48 resource instances. The current renderer produces 42 cards and 76 relationships after lowering four associations, omitting two metadata data sources, and inferring two common-parent containment relationships. Resolving exact worker indices removes four false-positive attachment relationships compared with the previous 80-relationship diagram.
 
-Rank-based placement first reduced the diagram height from 6152 to 5880 pixels. Balanced wrapping at each container and the virtual root now produces a 3300 × 1448 diagram while preserving all 76 relationships and the containment hierarchy.
+Balanced wrapping preserves containment while reducing vertical growth; the committed SVG records the current dimensions after network-scope inference.
 
-Before applying spanning-resource affinity, on the wrapped geometry occupancy-aware routing reduces pairwise overlapping segment distance from 83755 to 6322 pixels. Crossing count changes from 108 to 37; the regression also checks a combined overlap/crossing/bend/length cost rather than claiming every metric improves. Total path length changes from 76043 to 87355 pixels. A separate regression verifies that an available clear detour is preferred over a crossing.
+The layout regression compares occupancy-aware routing with shortest paths on the current geometry, requiring a substantial overlap reduction and a lower combined overlap/crossing/bend/length cost.
 
 ```sh
 terraform -chdir=examples/terraform-large init -backend=false
@@ -50,4 +50,4 @@ The generator preserves the ECS `network_configuration` block's individual expre
 
 The larger diagram intentionally exposes long paths, fan-in/fan-out and routing congestion. Overlapping edge segments and a tall layout remain possible; the fixture does not assert that this renderer achieves a globally optimal layout.
 
-Spanning-resource affinity keeps the same 3300 × 1448 envelope for this example. The dedicated [three-subnet ALB fixture](../spanning-dense.svg) isolates its benefit: total connection length falls from 1852 to 478 pixels, crossings fall from 2 to 0, and bends fall from 10 to 6. Shared-trunk overlap is intentional; every connection remains individually inspectable.
+The dedicated [three-subnet ALB fixture](../spanning-dense.svg) isolates its benefit: total connection length falls from 1852 to 478 pixels, crossings fall from 2 to 0, and bends fall from 10 to 6. Shared-trunk overlap is intentional; every connection remains individually inspectable.

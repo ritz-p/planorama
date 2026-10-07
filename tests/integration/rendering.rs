@@ -118,3 +118,15 @@ fn multi_container_fixture_renders_one_card_per_resource_and_subnet_connections(
         include_str!("../../examples/multi-container.svg").replace("\r\n", "\n")
     );
 }
+
+#[test]
+fn explicit_network_scopes_render_as_nested_architecture() {
+    let input = include_bytes!("../fixtures/network-scope-plan.json");
+    let result = support::run(input);
+    assert!(result.status.success());
+    let svg = String::from_utf8(result.stdout).unwrap();
+    assert!(svg.contains("7 resources (7 cards), 6 relationships"));
+    assert_eq!(svg.matches("data-edge-kind=\"containment\"").count(), 6);
+    assert_eq!(svg.matches("marker-end=").count(), 0);
+    assert_eq!(svg.as_bytes(), support::run(input).stdout);
+}

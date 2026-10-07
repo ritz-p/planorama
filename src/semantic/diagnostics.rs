@@ -42,16 +42,22 @@ pub fn collect(raw: &TerraformGraph) -> Vec<Diagnostic> {
         if node.mode != EntityMode::Managed || !node.provider.is_aws() {
             continue;
         }
-        let expected: &[(&str, &str, bool, bool)] = match node.resource_type.as_str() {
-            "aws_subnet" => &[("vpc_id", "aws_vpc", false, true)],
-            "aws_instance" => &[("subnet_id", "aws_subnet", false, true)],
-            "aws_lb" => &[("subnets", "aws_subnet", true, false)],
-            "aws_ecs_service" => &[("network_configuration.subnets", "aws_subnet", true, false)],
-            "aws_route_table_association" => &[
-                ("subnet_id", "aws_subnet", false, false),
-                ("route_table_id", "aws_route_table", false, false),
-            ],
-            _ => &[],
+        let direct = super::containment::direct_rule(&node.resource_type)
+            .map(|(attribute, parent)| [(attribute, parent, false, true)]);
+        let expected: &[(&str, &str, bool, bool)] = if let Some(rule) = &direct {
+            rule
+        } else {
+            match node.resource_type.as_str() {
+                "aws_lb" => &[("subnets", "aws_subnet", true, false)],
+                "aws_ecs_service" => {
+                    &[("network_configuration.subnets", "aws_subnet", true, false)]
+                }
+                "aws_route_table_association" => &[
+                    ("subnet_id", "aws_subnet", false, false),
+                    ("route_table_id", "aws_route_table", false, false),
+                ],
+                _ => &[],
+            }
         };
         let mut endpoints_valid = !expected.is_empty();
         for &(attribute, resource_type, plural, containment) in expected {
