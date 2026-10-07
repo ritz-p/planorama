@@ -97,10 +97,8 @@ fn module_expansion_respects_boundaries_and_incomplete_references() {
         (vec!["module.app", "module.missing"], vec![0, 1], false),
     ] {
         let refs: BTreeSet<_> = refs.into_iter().map(str::to_owned).collect();
-        assert_eq!(
-            super::resolve(&refs, &instances, &BTreeMap::new()),
-            (expected, complete)
-        );
+        let result = super::resolve(&refs, &instances, &BTreeMap::new());
+        assert_eq!((result.sources, result.complete), (expected, complete));
     }
 }
 

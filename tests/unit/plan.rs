@@ -377,3 +377,159 @@ fn foreign_aws_lookalikes_do_not_gain_aws_semantics_or_icons() {
     let svg = crate::svg::render(&graph, &crate::layout::Layout::new(&graph));
     assert!(!svg.contains("planorama-icon-aws"));
 }
+
+#[test]
+fn module_outputs_named_count_and_each_resolve_before_metadata() {
+    use serde_json::json;
+    for (output, field) in [("count", "index"), ("each", "value")] {
+        let input = json!({"format_version":"1.2","resource_changes":[
+            {"address":"module.worker[0].aws_vpc.main","type":"aws_vpc"},
+            {"address":"aws_subnet.child","type":"aws_subnet"}
+        ],"configuration":{"root_module":{
+            "resources":[{"address":"aws_subnet.child","expressions":{"vpc_id":{"references":[format!("module.worker[0].{output}.{field}")]}}}],
+            "module_calls":{"worker":{"module":{
+                "resources":[{"address":"aws_vpc.main"}],
+                "outputs":{output:{"expression":{"references":["aws_vpc.main.id"]}}}
+            }}}
+        }}});
+        let raw = parse(&input.to_string()).unwrap();
+        let parent = raw
+            .nodes
+            .iter()
+            .position(|n| n.address == "module.worker[0].aws_vpc.main")
+            .unwrap();
+        let child = raw
+            .nodes
+            .iter()
+            .position(|n| n.address == "aws_subnet.child")
+            .unwrap();
+        assert!(
+            raw.edges
+                .iter()
+                .any(|edge| edge.from == parent && edge.to == child)
+        );
+        let reference = raw
+            .attributes
+            .iter()
+            .find(|r| r.target == child && r.attribute == "vpc_id")
+            .unwrap();
+        assert_eq!(reference.sources, vec![parent]);
+        assert!(reference.complete);
+        assert!(reference.issues.is_empty(), "{:?}", reference.issues);
+        assert!(crate::semantic::diagnostics::collect(&raw).is_empty());
+    }
+}
+
+#[test]
+fn scoped_iteration_metadata_does_not_resolve_through_same_named_outputs() {
+    use serde_json::json;
+    for (name, field) in [
+        ("count", "index"),
+        ("each", "key"),
+        ("each", "value.subnet_id"),
+    ] {
+        for constant in [false, true] {
+            let output = if constant {
+                json!({"constant_value":{"index":1,"key":"safe"}})
+            } else {
+                json!({"references":["test.source.id"]})
+            };
+            let input = json!({"format_version":"1.2","resource_changes":[
+                {"address":"module.worker[0].test.source","type":"test"},
+                {"address":"module.worker[0].test.child","type":"test"},
+                {"address":"test.caller","type":"test"}
+            ],"configuration":{"root_module":{
+                "resources":[{"address":"test.caller","expressions":{"input":{"references":[format!("module.worker[0].{name}.{field}")]}}}],
+                "module_calls":{"worker":{"module":{
+                    "resources":[{"address":"test.source"},{"address":"test.child","expressions":{"input":{"references":[format!("{name}.{field}")]}}}],
+                    "outputs":{name:{"expression":output}}
+                }}}
+            }}}).to_string();
+            let raw = parse(&input).unwrap();
+            let child = raw
+                .nodes
+                .iter()
+                .position(|node| node.address.ends_with("test.child"))
+                .unwrap();
+            let caller = raw
+                .nodes
+                .iter()
+                .position(|node| node.address == "test.caller")
+                .unwrap();
+            let child_ref = raw.attributes.iter().find(|r| r.target == child).unwrap();
+            assert!(child_ref.sources.is_empty());
+            assert!(!child_ref.complete);
+            assert_eq!(
+                child_ref.issues,
+                std::collections::BTreeSet::from([
+                    crate::model::DiagnosticReason::DynamicInstanceSelection
+                ])
+            );
+            assert!(!raw.edges.iter().any(|edge| edge.to == child));
+            let caller_ref = raw.attributes.iter().find(|r| r.target == caller).unwrap();
+            assert!(
+                !caller_ref
+                    .issues
+                    .contains(&crate::model::DiagnosticReason::DynamicInstanceSelection)
+            );
+            assert_eq!(caller_ref.complete, !constant);
+            assert_eq!(caller_ref.sources.len(), usize::from(!constant));
+        }
+    }
+}
+
+#[test]
+fn caller_module_outputs_override_colliding_private_resource_addresses() {
+    use serde_json::json;
+    for constant in [false, true] {
+        let output = if constant {
+            json!({"constant_value":{"main":"TOP_SECRET"}})
+        } else {
+            json!({"references":["aws_vpc.actual.id"]})
+        };
+        let input = json!({"format_version":"1.2","resource_changes":[
+            {"address":"module.worker[0].aws_vpc.main","type":"aws_vpc"},
+            {"address":"module.worker[0].aws_vpc.actual","type":"aws_vpc"},
+            {"address":"module.worker[0].aws_subnet.internal","type":"aws_subnet"},
+            {"address":"aws_subnet.caller","type":"aws_subnet"}
+        ],"configuration":{"root_module":{
+            "resources":[{"address":"aws_subnet.caller","expressions":{"vpc_id":{"references":["module.worker[0].aws_vpc.main"]}}}],
+            "module_calls":{"worker":{"module":{
+                "resources":[{"address":"aws_vpc.main"},{"address":"aws_vpc.actual"},{"address":"aws_subnet.internal","expressions":{"vpc_id":{"references":["aws_vpc.main.id"]}}}],
+                "outputs":{"aws_vpc":{"expression":output}}
+            }}}
+        }}}).to_string();
+        let raw = parse(&input).unwrap();
+        let index = |address: &str| raw.nodes.iter().position(|n| n.address == address).unwrap();
+        let caller = index("aws_subnet.caller");
+        let private = index("module.worker[0].aws_vpc.main");
+        let actual = index("module.worker[0].aws_vpc.actual");
+        let internal = index("module.worker[0].aws_subnet.internal");
+        assert!(
+            raw.edges
+                .iter()
+                .any(|e| e.from == private && e.to == internal)
+        );
+        assert!(
+            !raw.edges
+                .iter()
+                .any(|e| e.from == private && e.to == caller)
+        );
+        let reference = raw.attributes.iter().find(|r| r.target == caller).unwrap();
+        assert_eq!(
+            reference.sources,
+            if constant { vec![] } else { vec![actual] }
+        );
+        assert_eq!(reference.complete, !constant);
+        let diagnostics = crate::semantic::diagnostics::collect(&raw);
+        if constant {
+            assert_eq!(diagnostics.len(), 1);
+            assert_eq!(
+                diagnostics[0].reason,
+                crate::model::DiagnosticReason::NoResourceReference
+            );
+        } else {
+            assert!(diagnostics.is_empty());
+        }
+    }
+}
