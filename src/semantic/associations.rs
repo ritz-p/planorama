@@ -5,6 +5,24 @@ use std::collections::BTreeMap;
 #[path = "../../tests/unit/semantic/associations.rs"]
 mod tests;
 
+pub(super) fn rule(resource_type: &str) -> Option<[(&'static str, &'static str); 2]> {
+    match resource_type {
+        "aws_route_table_association" => Some([
+            ("subnet_id", "aws_subnet"),
+            ("route_table_id", "aws_route_table"),
+        ]),
+        "aws_lb_target_group_attachment" => Some([
+            ("target_group_arn", "aws_lb_target_group"),
+            ("target_id", "aws_instance"),
+        ]),
+        "aws_vpc_endpoint_route_table_association" => Some([
+            ("vpc_endpoint_id", "aws_vpc_endpoint"),
+            ("route_table_id", "aws_route_table"),
+        ]),
+        _ => None,
+    }
+}
+
 pub(super) fn lower(raw: &TerraformGraph) -> Graph {
     let mut incident_edges = vec![Vec::new(); raw.nodes.len()];
     for edge in &raw.edges {
@@ -17,16 +35,20 @@ pub(super) fn lower(raw: &TerraformGraph) -> Graph {
     for (index, node) in raw.nodes.iter().enumerate() {
         if node.role != ResourceRole::Association
             || !node.provider.is_aws()
-            || node.resource_type != "aws_route_table_association"
             || node.mode != EntityMode::Managed
         {
             continue;
         }
-        let endpoints = endpoint(raw, index, "subnet_id", "aws_subnet").zip(endpoint(
+        let Some([(from_attribute, from_type), (to_attribute, to_type)]) =
+            rule(&node.resource_type)
+        else {
+            continue;
+        };
+        let endpoints = endpoint(raw, index, from_attribute, from_type).zip(endpoint(
             raw,
             index,
-            "route_table_id",
-            "aws_route_table",
+            to_attribute,
+            to_type,
         ));
         if let Some((from, to)) = endpoints {
             let incident = &incident_edges[index];
@@ -57,6 +79,8 @@ pub(super) fn lower(raw: &TerraformGraph) -> Graph {
     if replacements.is_empty() {
         return raw.graph.clone();
     }
+    // Evaluate every rule against the same graph, then remove helpers and remap
+    // once. This prevents one lowering from enabling another through lost edges.
     let mut indices = vec![None; raw.nodes.len()];
     let mut nodes = Vec::new();
     for (index, node) in raw.nodes.iter().enumerate() {
@@ -97,6 +121,9 @@ fn endpoint(
     match reference.sources.as_slice() {
         [source]
             if reference.complete
+                && !reference
+                    .issues
+                    .contains(&crate::model::DiagnosticReason::DynamicInstanceSelection)
                 && *source != target
                 && raw.nodes[*source].resource_type == resource_type =>
         // Provider identity prevents custom lookalike types becoming AWS endpoints.

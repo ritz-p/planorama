@@ -1,0 +1,32 @@
+{
+  "format_version": "1.2",
+  "resource_changes": [
+    {"address":"aws_vpc.main","type":"aws_vpc"},
+    {"address":"aws_subnet.main","type":"aws_subnet"},
+    {"address":"aws_route_table.main","type":"aws_route_table"},
+    {"address":"aws_vpc_endpoint.main","type":"aws_vpc_endpoint"},
+    {"address":"aws_lb_target_group.main","type":"aws_lb_target_group"},
+    {"address":"aws_instance.main","type":"aws_instance"},
+    {"address":"aws_route_table_association.main","type":"aws_route_table_association","change":{"actions":["create"]}},
+    {"address":"aws_lb_target_group_attachment.main","type":"aws_lb_target_group_attachment","change":{"actions":["delete","create"]}},
+    {"address":"aws_vpc_endpoint_route_table_association.main","type":"aws_vpc_endpoint_route_table_association","change":{"actions":["delete"]}}
+  ],
+  "configuration":{"root_module":{"resources":[
+    {"address":"aws_subnet.main","expressions":{"vpc_id":{"references":["aws_vpc.main.id"]}}},
+    {"address":"aws_route_table.main","expressions":{"vpc_id":{"references":["aws_vpc.main.id"]}}},
+    {"address":"aws_vpc_endpoint.main","expressions":{"vpc_id":{"references":["aws_vpc.main.id"]}}},
+    {"address":"aws_instance.main","expressions":{"subnet_id":{"references":["aws_subnet.main.id"]}}},
+    {"address":"aws_route_table_association.main","expressions":{
+      "subnet_id":{"references":["aws_subnet.main.id"]},
+      "route_table_id":{"references":["aws_route_table.main.id"]}
+    }},
+    {"address":"aws_lb_target_group_attachment.main","expressions":{
+      "target_group_arn":{"references":["aws_lb_target_group.main.arn"]},
+      "target_id":{"references":["aws_instance.main.id"]}
+    }},
+    {"address":"aws_vpc_endpoint_route_table_association.main","expressions":{
+      "vpc_endpoint_id":{"references":["aws_vpc_endpoint.main.id"]},
+      "route_table_id":{"references":["aws_route_table.main.id"]}
+    }}
+  ]}}
+}

@@ -140,3 +140,22 @@ fn rds_subnet_group_fixture_preserves_cards_and_infers_common_scope() {
     assert_eq!(svg.matches("<g id=\"resource-").count(), 6);
     assert_eq!(svg, render(input));
 }
+
+#[test]
+fn mixed_aws_relationships_render_actions_without_helper_cards() {
+    let input = include_bytes!("../fixtures/aws-relationships-plan.json");
+    let svg = render(input);
+    assert!(svg.contains("9 resources (6 cards), 7 relationships"));
+    assert_eq!(svg.matches("data-edge-kind=\"association\"").count(), 3);
+    assert_eq!(svg.matches("data-edge-kind=\"containment\"").count(), 4);
+    for (kind, action) in [
+        ("aws_route_table_association", "create"),
+        ("aws_lb_target_group_attachment", "replace"),
+        ("aws_vpc_endpoint_route_table_association", "delete"),
+    ] {
+        assert!(!svg.contains(&format!("<title>{kind}.main</title>")));
+        assert!(svg.contains(&format!("association; {action}: {kind}.main")));
+        assert!(svg.contains(&format!("{action} (1)")));
+    }
+    assert_eq!(svg, render(input));
+}

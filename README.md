@@ -169,7 +169,15 @@ data は役割とは別に破線と `external` バッジで表示します。VPC
 `semantic/containment.rs` は managed の Subnet の `vpc_id`、EC2 の `subnet_id` が対応する親へ一意に解決する場合、その依存辺を `Containment` にします。タグ・`depends_on`・定数 ID・未解決参照・複数候補は変換しません。data の親を参照する managed の子には対応しますが、data の検索条件は包含に変換しません。包含推定はノード数・辺数・順序を保持し、その後に関連付けの変換を実行します。SVG では `data-edge-kind="containment"` を保持し、確定した包含関係を入れ子の枠として表現します。サンプルは [containment.svg](examples/containment.svg) です。
 `Policy`（Security Group、NACL）は属性値を含めない軽量なカードと `policy` ラベルで表示します。`Controller`（ASG、ECS Service）は通常のカードに `controller` ラベルを付けます。どちらもリソース名・変更種別・依存辺・分類を保持し、省略しません。ルール一覧や管理対象のグループ化は行わず、今後の専用表示に備えて分類を残します。
 
-`semantic/associations.rs` は managed の `aws_route_table_association` を、Subnet → RouteTable の `Association` 辺へ置き換えます。`subnet_id` と `route_table_id` がそれぞれ一意に解決でき、元の依存辺がその 2 本だけの場合に限定します。追加の依存先・利用元、複数候補、未解決参照、定数だけの ID、data の関連付けは元のカードを残します。生グラフは変更しません。SVG の意味付き辺には `data-edge-kind` を付けます。サンプルは [association.svg](examples/association.svg) です。
+`semantic/associations.rs` は managed の関連付けリソースを `Association` 辺へ置き換えます。対応するルールは次のとおりです。
+
+| リソース | 端点の属性 | 描画する関係 |
+| --- | --- | --- |
+| `aws_route_table_association` | `subnet_id`, `route_table_id` | Subnet → Route Table |
+| `aws_lb_target_group_attachment` | `target_group_arn`, `target_id` | Target Group → EC2 Instance |
+| `aws_vpc_endpoint_route_table_association` | `vpc_endpoint_id`, `route_table_id` | VPC Endpoint → Route Table |
+
+両端が静的かつ一意に解決でき、元の依存辺がその2本だけの場合に限定します。追加の依存先・利用元、複数候補、未解決参照、動的な選択、定数だけの ID、data の関連付けは元のカードを残します。Target Group の IP・Lambda・ALB ターゲットも対象外です。元のアドレスと変更種別は辺に保持します。全ルールを同じグラフ上で判定してからまとめてノード番号を振り直すため、変換途中の削除によって後続の判定が変わることはありません。生グラフは変更しません。SVG の意味付き辺には `data-edge-kind` を付けます。サンプルは [association.svg](examples/association.svg) と [aws-relationships.svg](examples/aws-relationships.svg) です。
 
 `TerraformGraph` は描画用グラフに加えて属性名・参照先・解決できたかを保持します。属性値そのものは保持しません。`depends_on`、count、for_each は従来の依存辺には反映しますが、属性の参照情報には混ぜません。属性参照が未解決・複数候補の場合、後続の意味変換は元の関係を維持できます。
 
@@ -230,7 +238,7 @@ tests/
 単体テストは実装側の `#[cfg(test)]` と `#[path = "..."]` で読み込みます。テストのために内部関数を公開する必要はなく、実装ファイルには読み込み宣言だけを置きます。実行方法はこれまでどおり `docker compose exec dev cargo test --locked` です。
 
 Multi-subnet ALBs (`subnets`) and ECS Services (`network_configuration.subnets`) use one physical containment parent: a single resolved subnet or the nearest unambiguous common container ancestor. Multiple subnet references remain visible Connection edges. Unresolved references, unrelated resource types, missing ancestry, ambiguous parents, and cycles do not invent a parent. Nested ECS subnet expressions are analyzed separately from security-group fields; flattened block references cannot establish membership. Data resources remain external, while a known data VPC can contain managed resources. See [the multi-container regression diagram](examples/multi-container.svg).
-AWS classification covers the large Terraform example and selected networking, load-balancing, compute, database, storage, and API resources. VPC and Subnet are the only spatial containers. Gateways, routes, load balancers, and API entry points are Connectors; orchestration and target-group resources are Controllers; IAM and listener rules are Policies. Attachment resources are Associations, but only explicitly supported route-table associations are lowered to edges; other associations remain visible cards. Data entities use the same type classifier. Unknown and unlisted types retain the Unknown fallback. These roles describe visualization behavior, not a claim that logical ownership implies physical containment.
+AWS classification covers the large Terraform example and selected networking, load-balancing, compute, database, storage, and API resources. VPC and Subnet are the only spatial containers. Gateways, routes, load balancers, and API entry points are Connectors; orchestration and target-group resources are Controllers; IAM and listener rules are Policies. Attachment resources are Associations; only the explicitly supported relationship rules above lower them to edges. Other associations remain visible cards. Data entities use the same type classifier. Unknown and unlisted types retain the Unknown fallback. These roles describe visualization behavior, not a claim that logical ownership implies physical containment.
 All rendered nodes expose their actual geometry through `Layout::bounds`. Container membership stores indices only; SVG rendering and both routing paths consume the same bounds. Container ports span the expanded outer frame, while header bounds remain available to protect labels when routing through an ancestor. Ordinary-card bundling and scoring also use bounds; `positions` remains the placement-coordinate view.
 
 Container routing compares obstacle-free shortest paths with occupancy-aware alternatives. Shared segment coverage and crossing costs discourage congested corridors; arrival direction adds a bend penalty. Edges are routed in structural order for deterministic results, including when input nodes/edges are reordered. Routes never cross unrelated container frames or card/header interiors; ancestor traversal and nesting-only edge suppression retain their existing semantics.

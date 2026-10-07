@@ -68,7 +68,7 @@ fn large_fixture_is_reproducible_from_terraform_sources_and_renders_deterministi
         svg,
         include_str!("../../examples/terraform-large/diagram.svg").replace("\r\n", "\n")
     );
-    assert_eq!(svg.matches("data-edge-kind=\"association\"").count(), 4);
+    assert_eq!(svg.matches("data-edge-kind=\"association\"").count(), 8);
     assert_eq!(svg.matches("data-container=").count(), 6);
     assert_eq!(svg.matches("data-external=\"true\"").count(), 3);
     assert!(svg.contains("module.application.aws_instance.workers_a[0]"));
