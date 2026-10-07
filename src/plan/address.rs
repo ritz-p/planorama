@@ -75,7 +75,6 @@ pub(super) fn dynamic_selection(reference: &str, resource_address: Option<&str>)
         .iter()
         .take(end)
         .any(|part| part.contains('[') && known_key(part).is_none())
-        || meta_reference(reference)
 }
 
 pub(super) fn meta_reference(reference: &str) -> bool {

@@ -24,7 +24,7 @@ fn ordinary_count_and_each_names_are_not_iteration_metadata() {
         "module.app[0].each.value.subnet_id",
         "module.app.each.value[\"subnet_id\"]",
     ] {
-        assert!(dynamic_selection(reference, None), "{reference}");
+        assert!(!dynamic_selection(reference, None), "{reference}");
         assert!(meta_reference(reference), "{reference}");
     }
 }

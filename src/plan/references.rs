@@ -227,7 +227,7 @@ pub(super) fn resolve_sources(
         // Module outputs named count/each take precedence over the syntactic
         // metadata heuristic, including outputs whose values have no sources.
         if super::address::dynamic_selection(&reference, resource_key.as_deref())
-            && !(metadata && binding.is_some())
+            || (metadata && binding.is_none())
         {
             issues.insert(DiagnosticReason::DynamicInstanceSelection);
         }

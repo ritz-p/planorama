@@ -574,3 +574,36 @@ fn defined_constant_aliases_are_not_missing_references() {
         assert_eq!(result.stdout, support::run(input.as_bytes()).stdout);
     }
 }
+
+#[test]
+fn metadata_named_outputs_keep_dynamic_module_index_diagnostics() {
+    use serde_json::json;
+    for (name, field) in [("count", "index"), ("each", "value")] {
+        for dynamic in [false, true] {
+            let selector = if dynamic { "count.index" } else { "0" };
+            let input = json!({"format_version":"1.2","resource_changes":[
+                {"address":"module.worker[0].test.source","type":"test"},
+                {"address":"test.consumer[0]","type":"test"}
+            ],"configuration":{"root_module":{
+                "resources":[{"address":"test.consumer","expressions":{"input":{"references":[format!("module.worker[{selector}].{name}.{field}")]}}}],
+                "module_calls":{"worker":{"module":{"resources":[{"address":"test.source"}],"outputs":{name:{"expression":{"references":["test.source.id"]}}}}}}
+            }}}).to_string();
+            let output = support::run_with_args(input.as_bytes(), &["--diagnostics"]);
+            assert!(output.status.success());
+            let warnings = String::from_utf8(output.stderr).unwrap();
+            if dynamic {
+                assert!(
+                    warnings.contains("dynamic instance selection"),
+                    "{warnings}"
+                );
+                assert_eq!(warnings.lines().count(), 1);
+            } else {
+                assert!(warnings.is_empty(), "{warnings}");
+            }
+            assert_eq!(output.stdout, support::run(input.as_bytes()).stdout);
+            assert!(
+                String::from_utf8_lossy(&output.stdout).contains("2 resources, 1 reference edges")
+            );
+        }
+    }
+}
