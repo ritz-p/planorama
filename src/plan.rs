@@ -43,6 +43,13 @@ pub fn parse(json: &str) -> Result<TerraformGraph, String> {
         nodes.insert(address.into(), node);
     }
     let mut symbols = BTreeMap::new();
+    // Real plan JSON stores root inputs outside configuration.root_module.
+    // Register names only: values are neither resource provenance nor diagnostics.
+    if let Some(variables) = plan["variables"].as_object() {
+        for name in variables.keys() {
+            symbols.insert(format!("var.{name}"), BTreeSet::new());
+        }
+    }
     collect_config(
         &plan["configuration"]["root_module"],
         "",

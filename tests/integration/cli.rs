@@ -657,3 +657,42 @@ fn declared_variables_and_builtin_values_are_not_unresolved_resources() {
         }
     }
 }
+
+#[test]
+fn plan_level_root_variables_resolve_through_child_inputs_without_values() {
+    use serde_json::json;
+    for declared in [false, true] {
+        let input = json!({"format_version":"1.2",
+            "variables": if declared { json!({"region":{"value":"TOP_SECRET"}}) } else { json!({}) },
+            "resource_changes":[
+                {"address":"test.root","type":"test"},
+                {"address":"module.child.test.inner","type":"test"},
+                {"address":"module.child.aws_instance.inner","type":"aws_instance"}
+            ],"configuration":{"root_module":{
+                "resources":[{"address":"test.root","expressions":{"region":{"references":["var.region"]}}}],
+                "module_calls":{"child":{"expressions":{"input":{"references":["var.region"]}},"module":{
+                    "variables":{"input":{}},
+                    "resources":[
+                        {"address":"test.inner","expressions":{"region":{"references":["var.input"]}}},
+                        {"address":"aws_instance.inner","expressions":{"subnet_id":{"references":["var.input"]}}}
+                    ]
+                }}}
+            }}}).to_string();
+        let output = support::run_with_args(input.as_bytes(), &["--diagnostics"]);
+        assert!(output.status.success());
+        let warnings = String::from_utf8(output.stderr).unwrap();
+        if declared {
+            assert!(!warnings.contains("unresolved reference"), "{warnings}");
+            assert!(
+                warnings.contains("attribute has no resolvable resource reference"),
+                "{warnings}"
+            );
+            assert_eq!(warnings.lines().count(), 1);
+        } else {
+            assert!(warnings.contains("unresolved reference"), "{warnings}");
+        }
+        assert!(!warnings.contains("TOP_SECRET"));
+        assert!(!String::from_utf8_lossy(&output.stdout).contains("TOP_SECRET"));
+        assert_eq!(output.stdout, support::run(input.as_bytes()).stdout);
+    }
+}
