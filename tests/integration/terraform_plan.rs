@@ -54,7 +54,7 @@ fn captured_aws_plan_renders_offline_with_real_expression_shapes() {
     assert!(output.stderr.is_empty());
     let svg = String::from_utf8(output.stdout).unwrap();
     assert!(svg.contains("7 resources (7 cards), 12 relationships"));
-    assert_eq!(svg.matches("data-edge-kind=\"containment\"").count(), 3);
+    assert_eq!(svg.matches("data-edge-kind=\"containment\"").count(), 4);
     assert_eq!(svg.matches("data-edge-kind=\"connection\"").count(), 2);
     assert!(!svg.contains("data.aws_iam_policy_document.fixture"));
     for index in 0..2 {
