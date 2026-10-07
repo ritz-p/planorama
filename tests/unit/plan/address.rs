@@ -25,7 +25,11 @@ fn ordinary_count_and_each_names_are_not_iteration_metadata() {
         "module.app.each.value[\"subnet_id\"]",
     ] {
         assert!(!dynamic_selection(reference, None), "{reference}");
-        assert!(meta_reference(reference), "{reference}");
+        assert_eq!(
+            meta_reference(reference),
+            !reference.starts_with("module."),
+            "{reference}"
+        );
     }
 }
 

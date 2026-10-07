@@ -79,10 +79,9 @@ pub(super) fn dynamic_selection(reference: &str, resource_address: Option<&str>)
 
 pub(super) fn meta_reference(reference: &str) -> bool {
     let parts = parts(reference);
-    let mut local = parts.as_slice();
-    while let ["module", _, rest @ ..] = local {
-        local = rest;
-    }
+    // Local iteration metadata is preserved unqualified by qualify_reference.
+    // A module-qualified traversal always denotes an output, even if absent.
+    let local = parts.as_slice();
     matches!(local, ["count", "index"] | ["each", "key"])
         || matches!(local, ["each", value, ..] if name(value) == "value")
 }

@@ -696,3 +696,27 @@ fn plan_level_root_variables_resolve_through_child_inputs_without_values() {
         assert_eq!(output.stdout, support::run(input.as_bytes()).stdout);
     }
 }
+
+#[test]
+fn absent_metadata_named_module_outputs_are_unresolved_not_iteration_context() {
+    use serde_json::json;
+    for output in ["count.index", "each.key", "each.value.subnet_id"] {
+        let input = json!({"format_version":"1.2","resource_changes":[
+            {"address":"module.worker.test.inner","type":"test"},
+            {"address":"test.consumer","type":"test"}
+        ],"configuration":{"root_module":{
+            "resources":[{"address":"test.consumer","expressions":{"input":{"references":[format!("module.worker.{output}")]}}}],
+            "module_calls":{"worker":{"module":{"resources":[{"address":"test.inner"}]}}}
+        }}}).to_string();
+        let result = support::run_with_args(input.as_bytes(), &["--diagnostics"]);
+        assert!(result.status.success());
+        let warnings = String::from_utf8(result.stderr).unwrap();
+        assert!(warnings.contains("unresolved reference"), "{warnings}");
+        assert!(
+            !warnings.contains("dynamic instance selection"),
+            "{warnings}"
+        );
+        assert_eq!(warnings.lines().count(), 1);
+        assert_eq!(result.stdout, support::run(input.as_bytes()).stdout);
+    }
+}
