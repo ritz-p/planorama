@@ -456,3 +456,32 @@ fn collection_metadata_and_ecs_blocks_accept_multiple_instances() {
         }
     }
 }
+
+#[test]
+fn attribute_and_module_output_indexing_do_not_select_resource_instances() {
+    use serde_json::json;
+    for reference in [
+        "test.source.tags[var.key]",
+        "module.worker.result[var.key]",
+        "module.worker.result.items[var.key]",
+    ] {
+        let input = json!({"format_version":"1.2","resource_changes":[
+            {"address":"test.source","type":"test"},
+            {"address":"module.worker.test.source","type":"test"},
+            {"address":"test.consumer","type":"test"}
+        ],"configuration":{"root_module":{
+            "resources":[{"address":"test.consumer","expressions":{"input":{"references":[reference]}}}],
+            "module_calls":{"worker":{"module":{"resources":[{"address":"test.source"}],"outputs":{"result":{"expression":{"references":["test.source.id"]}}}}}}
+        }}}).to_string();
+        let output = support::run_with_args(input.as_bytes(), &["--diagnostics"]);
+        assert!(output.status.success());
+        assert!(
+            output.stderr.is_empty(),
+            "{}",
+            String::from_utf8_lossy(&output.stderr)
+        );
+        let svg = String::from_utf8(output.stdout).unwrap();
+        assert!(svg.contains("3 resources, 1 reference edges"));
+        assert_eq!(svg.as_bytes(), support::run(input.as_bytes()).stdout);
+    }
+}

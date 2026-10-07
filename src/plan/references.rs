@@ -218,10 +218,17 @@ pub(super) fn resolve_sources(
             .iter()
             .filter(|(key, _)| prefix_match(&normalized, key))
             .max_by_key(|(key, _)| key.len());
+        let resource_key = instances
+            .keys()
+            .map(|key| static_address(key))
+            .filter(|key| prefix_match(&normalized, key))
+            .max_by_key(String::len);
         let metadata = super::address::meta_reference(&reference);
         // Module outputs named count/each take precedence over the syntactic
         // metadata heuristic, including outputs whose values have no sources.
-        if super::address::dynamic_selection(&reference) && !(metadata && binding.is_some()) {
+        if super::address::dynamic_selection(&reference, resource_key.as_deref())
+            && !(metadata && binding.is_some())
+        {
             issues.insert(DiagnosticReason::DynamicInstanceSelection);
         }
         // Terraform emits iteration metadata as standalone traversals. It is
@@ -230,11 +237,7 @@ pub(super) fn resolve_sources(
             complete = false;
             continue;
         }
-        let resource_key = instances
-            .keys()
-            .map(|key| static_address(key))
-            .filter(|key| prefix_match(&normalized, key))
-            .max_by_key(String::len);
+
         if let Some(key) = resource_key {
             let matching: Vec<_> = instances
                 .iter()

@@ -64,9 +64,16 @@ enum ValueKey {
     Number(u64),
 }
 
-pub(super) fn dynamic_selection(reference: &str) -> bool {
-    parts(reference)
+pub(super) fn dynamic_selection(reference: &str, resource_address: Option<&str>) -> bool {
+    let traversal = parts(reference);
+    let mut module_end = 0;
+    while module_end + 1 < traversal.len() && traversal[module_end] == "module" {
+        module_end += 2;
+    }
+    let end = resource_address.map_or(module_end, |address| parts(address).len());
+    traversal
         .iter()
+        .take(end)
         .any(|part| part.contains('[') && known_key(part).is_none())
         || meta_reference(reference)
 }
