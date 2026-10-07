@@ -263,6 +263,12 @@ pub(super) fn resolve_sources(
                         .map(|alias| (contextualize(alias, &reference), false)),
                 );
             }
+            Some(_) => {
+                // A defined constant alias is not missing. It contributes no
+                // resource provenance, so semantic inference stays conservative
+                // without producing an unresolved-reference diagnostic.
+                complete = false;
+            }
             None if normalized.starts_with("module.") => {
                 // A whole-module traversal denotes all matching descendants,
                 // not a choice of one endpoint. Multiplicity is expected even

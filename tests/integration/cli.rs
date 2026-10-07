@@ -536,3 +536,41 @@ fn whole_module_collections_are_not_ambiguous() {
         "{warnings}"
     );
 }
+
+#[test]
+fn defined_constant_aliases_are_not_missing_references() {
+    use serde_json::json;
+    for reference in ["local.tags", "module.constants.value", "module.child.value"] {
+        let input = json!({"format_version":"1.2","resource_changes":[
+            {"address":"test.consumer","type":"test"},
+            {"address":"aws_instance.consumer","type":"aws_instance"},
+            {"address":"module.child.test.inner","type":"test"}
+        ],"configuration":{"root_module":{
+            "locals":{"tags":{"constant_value":"TOP_SECRET"}},
+            "resources":[
+                {"address":"test.consumer","expressions":{"tags":{"references":[reference]}}},
+                {"address":"aws_instance.consumer","expressions":{"subnet_id":{"references":[reference]}}}
+            ],
+            "module_calls":{
+                "constants":{"module":{"outputs":{"value":{"expression":{"constant_value":"TOP_SECRET"}}}}},
+                "child":{"expressions":{"input":{"constant_value":"TOP_SECRET"}},"module":{
+                    "resources":[{"address":"test.inner","expressions":{"tags":{"references":["var.input"]}}}],
+                    "outputs":{"value":{"expression":{"references":["var.input"]}}}
+                }}
+            }
+        }}}).to_string();
+        let result = support::run_with_args(input.as_bytes(), &["--diagnostics"]);
+        assert!(result.status.success());
+        let warnings = String::from_utf8(result.stderr).unwrap();
+        assert!(!warnings.contains("unresolved reference"), "{warnings}");
+        assert!(
+            warnings.contains(
+                "attribute has no resolvable resource reference: address=\"aws_instance.consumer\""
+            ),
+            "{warnings}"
+        );
+        assert_eq!(warnings.lines().count(), 1, "{warnings}");
+        assert!(!warnings.contains("TOP_SECRET"));
+        assert_eq!(result.stdout, support::run(input.as_bytes()).stdout);
+    }
+}
