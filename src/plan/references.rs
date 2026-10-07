@@ -264,6 +264,9 @@ pub(super) fn resolve_sources(
                 );
             }
             None if normalized.starts_with("module.") => {
+                // A whole-module traversal denotes all matching descendants,
+                // not a choice of one endpoint. Multiplicity is expected even
+                // when other traversals in the expression remain unresolved.
                 let matching: Vec<_> = instances
                     .iter()
                     .filter(|(address, _)| {
@@ -275,8 +278,6 @@ pub(super) fn resolve_sources(
                 if matching.is_empty() {
                     complete = false;
                     issues.insert(DiagnosticReason::UnresolvedReference);
-                } else if matching.len() > 1 {
-                    issues.insert(DiagnosticReason::MultipleMatchingInstances);
                 }
                 sources.extend(matching);
             }

@@ -485,3 +485,54 @@ fn attribute_and_module_output_indexing_do_not_select_resource_instances() {
         assert_eq!(svg.as_bytes(), support::run(input.as_bytes()).stdout);
     }
 }
+
+#[test]
+fn whole_module_collections_are_not_ambiguous() {
+    use serde_json::json;
+    for modules in [
+        ["module.service[0]", "module.service[1]"],
+        ["module.service[\"api\"]", "module.service[\"web\"]"],
+    ] {
+        for missing in [false, true] {
+            let mut refs = vec!["module.service"];
+            if missing {
+                refs.push("module.absent");
+            }
+            let input = json!({"format_version":"1.2","resource_changes":[
+                {"address":format!("{}.test.first", modules[0]),"type":"test"},
+                {"address":format!("{}.test.second", modules[0]),"type":"test"},
+                {"address":format!("{}.test.first", modules[1]),"type":"test"},
+                {"address":"test.consumer","type":"test"}
+            ],"configuration":{"root_module":{"resources":[{"address":"test.consumer","expressions":{"input":{"references":refs}}}]}}}).to_string();
+            let output = support::run_with_args(input.as_bytes(), &["--diagnostics"]);
+            assert!(output.status.success());
+            let warnings = String::from_utf8(output.stderr).unwrap();
+            assert!(
+                !warnings.contains("multiple matching instances"),
+                "{warnings}"
+            );
+            if missing {
+                assert!(warnings.contains("unresolved reference"), "{warnings}");
+            } else {
+                assert!(warnings.is_empty(), "{warnings}");
+            }
+            let svg = String::from_utf8(output.stdout).unwrap();
+            assert!(svg.contains("4 resources, 3 reference edges"));
+            assert_eq!(svg.as_bytes(), support::run(input.as_bytes()).stdout);
+        }
+    }
+    let output = support::run_with_args(
+        include_bytes!("../fixtures/terraform-plan.json"),
+        &["--diagnostics"],
+    );
+    assert!(output.status.success());
+    let warnings = String::from_utf8(output.stderr).unwrap();
+    assert!(
+        !warnings
+            .lines()
+            .any(|line| line.contains("multiple matching instances")
+                && line.contains("address=\"terraform_data.consumer\"")
+                && line.contains("attribute=\"input\"")),
+        "{warnings}"
+    );
+}
