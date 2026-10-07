@@ -46,6 +46,13 @@ pub(super) fn qualify(scope: &str, reference: &str) -> String {
 }
 
 pub(super) fn qualify_reference(scope: &str, reference: &str) -> String {
+    if reference.starts_with("module.") {
+        return format!(
+            "{}{}",
+            super::address::MODULE_REFERENCE,
+            qualify(scope, reference)
+        );
+    }
     // Iteration context has no resource identity. Keep its original root so
     // it cannot collide with a module output named count or each. Explicit
     // module traversals still receive normal lexical qualification.
@@ -231,24 +238,42 @@ pub(super) fn resolve_sources(
         }
         active.insert(reference.clone());
         pending.push((reference.clone(), true));
-        let normalized = static_address(&reference);
-        if builtin_value(&reference) {
+        let caller_module = reference.starts_with(super::address::MODULE_REFERENCE);
+        let reference = reference
+            .strip_prefix(super::address::MODULE_REFERENCE)
+            .unwrap_or(&reference);
+        let normalized = static_address(reference);
+        if builtin_value(reference) {
             complete = false;
             continue;
         }
-        let binding = symbols
-            .iter()
-            .filter(|(key, _)| prefix_match(&normalized, key))
-            .max_by_key(|(key, _)| key.len());
+        let output_binding = if caller_module {
+            let parts = super::address::parts(&normalized);
+            let mut end = 0;
+            while end + 1 < parts.len() && parts[end] == "module" {
+                end += 2;
+            }
+            (end < parts.len())
+                .then(|| parts[..=end].join("."))
+                .and_then(|key| symbols.get_key_value(&key))
+        } else {
+            None
+        };
+        let binding = output_binding.or_else(|| {
+            symbols
+                .iter()
+                .filter(|(key, _)| prefix_match(&normalized, key))
+                .max_by_key(|(key, _)| key.len())
+        });
         let resource_key = instances
             .keys()
             .map(|key| static_address(key))
-            .filter(|key| prefix_match(&normalized, key))
+            .filter(|key| output_binding.is_none() && prefix_match(&normalized, key))
             .max_by_key(String::len);
-        let metadata = super::address::meta_reference(&reference);
+        let metadata = super::address::meta_reference(reference);
         // Module outputs named count/each take precedence over the syntactic
         // metadata heuristic, including outputs whose values have no sources.
-        if super::address::dynamic_selection(&reference, resource_key.as_deref())
+        if super::address::dynamic_selection(reference, resource_key.as_deref())
             || (metadata && binding.is_none())
         {
             issues.insert(DiagnosticReason::DynamicInstanceSelection);
@@ -264,7 +289,7 @@ pub(super) fn resolve_sources(
             let matching: Vec<_> = instances
                 .iter()
                 .filter(|(address, _)| {
-                    static_address(address) == key && matches_instance(&reference, address)
+                    static_address(address) == key && matches_instance(reference, address)
                 })
                 .flat_map(|(_, indices)| indices.iter().copied())
                 .collect();
@@ -282,7 +307,7 @@ pub(super) fn resolve_sources(
                 pending.extend(
                     aliases
                         .iter()
-                        .map(|alias| (contextualize(alias, &reference), false)),
+                        .map(|alias| (contextualize(alias, reference), false)),
                 );
             }
             Some(_) => {
@@ -299,7 +324,7 @@ pub(super) fn resolve_sources(
                     .iter()
                     .filter(|(address, _)| {
                         prefix_match(&static_address(address), &normalized)
-                            && matches_instance(&reference, address)
+                            && matches_instance(reference, address)
                     })
                     .flat_map(|(_, indices)| indices.iter().copied())
                     .collect();

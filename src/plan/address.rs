@@ -100,6 +100,9 @@ pub(super) fn matches_instance(reference: &str, instance: &str) -> bool {
 // Carry the concrete module scope through locals, outputs and input aliases.
 // A reference to an ancestor or an unrelated module keeps its own scope.
 pub(super) fn contextualize(reference: &str, context: &str) -> String {
+    if let Some(reference) = reference.strip_prefix(MODULE_REFERENCE) {
+        return format!("{MODULE_REFERENCE}{}", contextualize(reference, context));
+    }
     let mut reference = parts(reference);
     let context = parts(context);
     let mut i = 0;
@@ -120,6 +123,10 @@ pub(super) fn contextualize(reference: &str, context: &str) -> String {
     }
     reference.join(".")
 }
+
+// Internal tag preserves caller-visible module traversals through qualification.
+// It is never a Terraform address and is removed before resolving/displaying.
+pub(super) const MODULE_REFERENCE: &str = "@module:";
 
 #[cfg(test)]
 #[path = "../../tests/unit/plan/address.rs"]
