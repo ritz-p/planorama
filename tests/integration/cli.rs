@@ -720,3 +720,42 @@ fn absent_metadata_named_module_outputs_are_unresolved_not_iteration_context() {
         assert_eq!(result.stdout, support::run(input.as_bytes()).stdout);
     }
 }
+
+#[test]
+fn partial_semantic_provenance_is_distinct_from_source_free_attributes() {
+    use serde_json::json;
+    for constant in ["local.vpc_id", "path.module", "var.vpc_id"] {
+        for partial in [false, true] {
+            let mut refs = vec![constant];
+            if partial {
+                refs.push("aws_vpc.main.id");
+            }
+            let input = json!({"format_version":"1.2","variables":{"vpc_id":{"value":"TOP_SECRET"}},"resource_changes":[
+                {"address":"aws_vpc.main","type":"aws_vpc"},
+                {"address":"aws_subnet.child","type":"aws_subnet"}
+            ],"configuration":{"root_module":{
+                "locals":{"vpc_id":{"constant_value":"TOP_SECRET"}},
+                "resources":[{"address":"aws_subnet.child","expressions":{"vpc_id":{"references":refs}}}]
+            }}}).to_string();
+            let output = support::run_with_args(input.as_bytes(), &["--diagnostics"]);
+            assert!(output.status.success());
+            let warnings = String::from_utf8(output.stderr).unwrap();
+            assert_eq!(warnings.lines().count(), 1, "{warnings}");
+            assert_eq!(
+                warnings.contains("only part of the attribute resolves to resource references"),
+                partial,
+                "{warnings}"
+            );
+            assert_eq!(
+                warnings.contains("attribute has no resolvable resource reference"),
+                !partial,
+                "{warnings}"
+            );
+            assert!(warnings.contains("address=\"aws_subnet.child\", attribute=\"vpc_id\""));
+            assert!(!warnings.contains("TOP_SECRET"));
+            let svg = String::from_utf8(output.stdout).unwrap();
+            assert!(!svg.contains("data-edge-kind=\"containment\""));
+            assert_eq!(svg.as_bytes(), support::run(input.as_bytes()).stdout);
+        }
+    }
+}

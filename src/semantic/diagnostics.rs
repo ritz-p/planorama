@@ -64,7 +64,11 @@ pub fn collect(raw: &TerraformGraph) -> Vec<Diagnostic> {
                 Some(r) if !r.complete || r.sources.is_empty() => {
                     // Detailed resolution failures have already been emitted.
                     if r.issues.is_empty() {
-                        Some(Reason::NoResourceReference)
+                        Some(if r.sources.is_empty() {
+                            Reason::NoResourceReference
+                        } else {
+                            Reason::PartialResourceProvenance
+                        })
                     } else {
                         endpoints_valid = false;
                         None

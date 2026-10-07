@@ -8,6 +8,7 @@ pub enum DiagnosticReason {
     AliasCycle,
     MissingAttribute,
     NoResourceReference,
+    PartialResourceProvenance,
     EndpointTypeMismatch,
     AmbiguousContainmentParent,
     AdditionalRelationships,
@@ -22,6 +23,9 @@ impl DiagnosticReason {
             Self::AliasCycle => "alias/local/module resolution cycle",
             Self::MissingAttribute => "missing expected attribute",
             Self::NoResourceReference => "attribute has no resolvable resource reference",
+            Self::PartialResourceProvenance => {
+                "only part of the attribute resolves to resource references"
+            }
             Self::EndpointTypeMismatch => "semantic endpoint type mismatch",
             Self::AmbiguousContainmentParent => "ambiguous containment parent",
             Self::AdditionalRelationships => {
