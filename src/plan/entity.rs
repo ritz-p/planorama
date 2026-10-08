@@ -33,6 +33,7 @@ pub(super) fn parse(resource: &Value, address: &str, action: Action) -> Node {
         address: address.into(),
         deposed_key: resource["deposed"].as_str().map(str::to_owned),
         previous_address: resource["previous_address"].as_str().map(str::to_owned),
+        metadata: Default::default(),
         resource_type: resource_type.into(),
         module,
         action,

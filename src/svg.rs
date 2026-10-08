@@ -1,6 +1,7 @@
 mod containers;
 mod entities;
 mod icons;
+mod operations;
 mod paths;
 mod relationships;
 mod roles;
@@ -103,6 +104,11 @@ pub fn render_with_format(
             EdgeKind::Containment => " data-edge-kind=\"containment\"",
         };
         let title = relationships::title(graph, edge, semantic_edges);
+        let operation = edge
+            .change
+            .as_ref()
+            .map(|change| operations::attributes(&change.metadata))
+            .unwrap_or_default();
         let previous = edge
             .change
             .as_ref()
@@ -110,7 +116,7 @@ pub fn render_with_format(
             .map(|address| format!(" data-previous-address=\"{}\"", escape(address)))
             .unwrap_or_default();
         if points.is_empty() {
-            writeln!(svg, r#"<g{relation}{previous} data-source="resource-{}" data-target="resource-{}"><title>{title}</title></g>"#, edge.from, edge.to).unwrap();
+            writeln!(svg, r#"<g{relation}{previous}{operation} data-source="resource-{}" data-target="resource-{}"><title>{title}</title></g>"#, edge.from, edge.to).unwrap();
             continue;
         }
         let (stroke, marker) = match &edge.change {
@@ -121,7 +127,7 @@ pub fn render_with_format(
             None => ("#94a3b8", "arrow".into()),
         };
         let path = paths::rounded(points);
-        writeln!(svg, r##"<path d="{path}"{relation}{previous} fill="none" stroke="{stroke}" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#{marker})"><title>{title}</title></path>"##).unwrap();
+        writeln!(svg, r##"<path d="{path}"{relation}{previous}{operation} fill="none" stroke="{stroke}" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#{marker})"><title>{title}</title></path>"##).unwrap();
     }
     for point in &layout.junctions {
         writeln!(
@@ -160,6 +166,8 @@ pub fn render_with_format(
             .map(|c| c.iter().collect::<String>())
             .collect();
         let mode = entities::border(node.mode);
+        let operation = operations::attributes(&node.metadata);
+        let operation_label = operations::label(node.action, &node.metadata);
         let previous = node
             .previous_address
             .as_ref()
@@ -172,8 +180,7 @@ pub fn render_with_format(
             .unwrap_or_default();
         writeln!(
             svg,
-            r#"<g id="resource-{i}" data-qualified-address="{qualified}" data-terraform-address="{address}"{deposed}{previous}><title>{selected_title} — {}</title>"#,
-            label(node.action)
+            r#"<g id="resource-{i}" data-qualified-address="{qualified}" data-terraform-address="{address}"{deposed}{previous}{operation}><title>{selected_title} — {operation_label}</title>"#,
         )
         .unwrap();
         if node.role != crate::model::ResourceRole::Container {
@@ -187,9 +194,13 @@ pub fn render_with_format(
             y + 20,
             escape(&shorten(
                 &node.resource_type,
-                entities::type_limit(node.mode)
+                entities::type_limit(node.mode).saturating_sub(
+                    operation_label
+                        .len()
+                        .saturating_sub(label(node.action).len())
+                )
             )),
-            label(node.action)
+            operation_label
         )
         .unwrap();
         if let Some(icon) = icon {

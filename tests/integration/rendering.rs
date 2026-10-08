@@ -1,6 +1,23 @@
 mod support;
 
 #[test]
+fn lifecycle_fixture_distinguishes_import_forget_and_destroy_without_values() {
+    let input = include_bytes!("../fixtures/lifecycle-plan.json");
+    let svg = render(input);
+    assert_eq!(svg.matches("data-import=\"true\"").count(), 2);
+    assert!(svg.contains("data-state-removal=\"forget\""));
+    assert!(svg.contains("data-state-removal=\"create then forget\""));
+    assert!(svg.contains("import / update"));
+    assert!(svg.contains("delete (1)"));
+    assert!(!svg.contains("TOP_SECRET"));
+    let diagnostic = support::run_with_args(input, &["--diagnostics"]);
+    assert!(diagnostic.status.success());
+    assert!(!String::from_utf8_lossy(&diagnostic.stderr).contains("TOP_SECRET"));
+    assert_eq!(svg.as_bytes(), diagnostic.stdout);
+    assert_eq!(svg, render(input));
+}
+
+#[test]
 fn moved_metadata_survives_cards_and_lowered_relationships_and_is_escaped() {
     let mut input: serde_json::Value =
         serde_json::from_slice(include_bytes!("../fixtures/association-plan.json")).unwrap();

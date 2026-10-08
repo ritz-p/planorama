@@ -193,6 +193,7 @@ fn assert_relationship_actions(kind: &str) {
             edge.change,
             Some(EdgeChange {
                 previous_address: None,
+                metadata: Default::default(),
                 address: format!("{kind}.main"),
                 action
             })

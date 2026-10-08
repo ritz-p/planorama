@@ -14,6 +14,7 @@ pub struct Node {
     pub address: String,
     pub deposed_key: Option<String>,
     pub previous_address: Option<String>,
+    pub metadata: ChangeMetadata,
     pub resource_type: String,
     pub provider: ProviderIdentity,
     pub module: String,
@@ -50,10 +51,12 @@ mod address;
 pub(crate) use address::module_of;
 mod diagnostics;
 mod graphs;
+mod operations;
 mod provider;
 pub(crate) use diagnostics::Resolution;
 pub use diagnostics::{Diagnostic, DiagnosticReason};
 pub use graphs::{ArchitectureGraph, AttributeReference, TerraformGraph};
+pub use operations::{ChangeMetadata, ImportMetadata, StateRemoval};
 pub use provider::ProviderIdentity;
 
 #[allow(
@@ -80,6 +83,7 @@ pub struct Edge {
 pub struct EdgeChange {
     pub address: String,
     pub previous_address: Option<String>,
+    pub metadata: ChangeMetadata,
     pub action: Action,
 }
 
