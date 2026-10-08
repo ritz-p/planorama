@@ -1,6 +1,82 @@
 use crate::plan;
 
 #[test]
+fn generic_nested_paths_preserve_fields_depth_scope_and_repeated_blocks() {
+    use serde_json::json;
+    let block = |name: &str| {
+        json!({
+            "target_group_arn":{"references":[format!("aws_lb_target_group.{name}.arn")]},
+            "forward":[{"target_group":[{"arn":{"references":[format!("aws_lb_target_group.{name}.arn")]}}]}]
+        })
+    };
+    let mut input = json!({"format_version":"1.2", "resource_changes":[
+        {"address":"module.app.aws_lb_target_group.a","type":"aws_lb_target_group"},
+        {"address":"module.app.aws_lb_target_group.b","type":"aws_lb_target_group"},
+        {"address":"module.app.aws_lb_listener.main","type":"aws_lb_listener"}
+    ], "configuration":{"root_module":{"module_calls":{"app":{"module":{"resources":[{
+        "address":"aws_lb_listener.main",
+        "unrelated_metadata":{"references":["aws_lb_target_group.a.arn"]},
+        "expressions":{
+            "default_action":[block("a"),block("b")],
+            "network_configuration":{"subnets":{"references":["aws_lb_target_group.a.arn"]},"security_groups":{"references":["aws_lb_target_group.b.arn"]}},
+            "tags":{"constant_value":{"references":["TOP_SECRET"],"nested":{"references":["aws_lb_target_group.a.arn"]}}}
+        }
+    }]}}}}}});
+    let raw = plan::parse(&input.to_string()).unwrap();
+    for (name, count) in [
+        ("default_action", 2),
+        ("default_action.target_group_arn", 2),
+        ("default_action.forward.target_group.arn", 2),
+        ("network_configuration.subnets", 1),
+        ("network_configuration.security_groups", 1),
+    ] {
+        let attr = raw.attributes.iter().find(|r| r.attribute == name).unwrap();
+        assert!(attr.complete, "{name}");
+        assert_eq!(attr.sources.len(), count);
+        assert!(attr.sources.iter().all(|&i| {
+            raw.nodes[i]
+                .address
+                .starts_with("module.app.aws_lb_target_group.")
+        }));
+    }
+    assert!(
+        !raw.attributes
+            .iter()
+            .any(|r| r.attribute.starts_with("tags.")
+                || r.attribute.contains("references")
+                || r.attribute.contains("metadata"))
+    );
+    assert!(!format!("{raw:?}").contains("TOP_SECRET"));
+    input["configuration"]["root_module"]["module_calls"]["app"]["module"]["resources"][0]["expressions"]["default_action"].as_array_mut().unwrap().reverse();
+    assert_eq!(raw, plan::parse(&input.to_string()).unwrap());
+}
+
+#[test]
+fn repeated_nested_fields_require_complete_provenance_in_every_block() {
+    use serde_json::json;
+    for other in [
+        json!({}),
+        json!({"target":{"constant_value":"id"}}),
+        json!({"target":{"references":["var.missing"]}}),
+        json!({"target":{"references":["terraform_data.a.id", false]}}),
+    ] {
+        let raw = plan::parse(&json!({"format_version":"1.2", "resource_changes":[
+            {"address":"terraform_data.a","type":"terraform_data"},
+            {"address":"terraform_data.b","type":"terraform_data"}
+        ], "configuration":{"root_module":{"resources":[{"address":"terraform_data.b","expressions":{
+            "blocks":[{"target":{"references":["terraform_data.a.id"]}},other]
+        }}]}}}).to_string()).unwrap();
+        let attr = raw
+            .attributes
+            .iter()
+            .find(|r| r.attribute == "blocks.target")
+            .unwrap();
+        assert_eq!(attr.sources.len(), 1);
+        assert!(!attr.complete);
+    }
+}
+
+#[test]
 fn absent_resources_do_not_resolve_to_their_configuration_dependencies() {
     use serde_json::json;
     for scope in ["", "module.child.", "module.parent.module.child."] {

@@ -6,6 +6,8 @@ use crate::model::{AttributeReference, Node};
 use serde_json::Value;
 use std::collections::{BTreeMap, BTreeSet};
 
+type ExpressionPaths = BTreeMap<String, (BTreeSet<String>, bool)>;
+
 #[cfg(test)]
 #[path = "../../tests/unit/plan/attributes.rs"]
 mod tests;
@@ -30,7 +32,7 @@ pub(super) fn collect(
             continue;
         }
         if let Some(attributes) = expressions.get(&static_address(&node.address)) {
-            for (attribute, refs) in attributes {
+            for (attribute, (refs, structurally_complete)) in attributes {
                 let refs = refs
                     .iter()
                     .map(|r| contextualize(r, &node.address))
@@ -40,7 +42,7 @@ pub(super) fn collect(
                     target,
                     attribute: attribute.clone(),
                     sources: resolution.sources,
-                    complete: resolution.complete,
+                    complete: resolution.complete && *structurally_complete,
                     issues: resolution.issues,
                 });
             }
@@ -53,7 +55,7 @@ fn collect_expressions(
     module: &Value,
     scope: &str,
     inherited: &BTreeMap<String, BTreeSet<String>>,
-    found: &mut BTreeMap<String, BTreeMap<String, BTreeSet<String>>>,
+    found: &mut BTreeMap<String, ExpressionPaths>,
     graph_only: bool,
 ) {
     for resource in module["resources"].as_array().into_iter().flatten() {
@@ -63,9 +65,13 @@ fn collect_expressions(
                 attributes.extend(
                     inherited
                         .iter()
-                        .map(|(name, refs)| (name.clone(), refs.clone())),
+                        .map(|(name, refs)| (name.clone(), (refs.clone(), true))),
                 );
-                attributes.extend(graph_expressions(resource, scope));
+                attributes.extend(
+                    graph_expressions(resource, scope)
+                        .into_iter()
+                        .map(|(name, refs)| (name, (refs, true))),
+                );
             }
             for (name, expression) in resource["expressions"].as_object().into_iter().flatten() {
                 if graph_only {
@@ -75,17 +81,23 @@ fn collect_expressions(
                 references(expression, &mut refs);
                 attributes.insert(
                     name.clone(),
-                    refs.into_iter()
-                        .map(|r| qualify_reference(scope, &r))
-                        .collect(),
+                    (
+                        refs.into_iter()
+                            .map(|r| qualify_reference(scope, &r))
+                            .collect(),
+                        true,
+                    ),
                 );
-                if name == "network_configuration" {
-                    if let Some(refs) = subnet_references(expression) {
+                for (path, (refs, complete)) in nested_paths(expression, name) {
+                    if path != *name {
                         attributes.insert(
-                            "network_configuration.subnets".into(),
-                            refs.into_iter()
-                                .map(|r| qualify_reference(scope, &r))
-                                .collect(),
+                            path,
+                            (
+                                refs.into_iter()
+                                    .map(|r| qualify_reference(scope, &r))
+                                    .collect(),
+                                complete,
+                            ),
                         );
                     }
                 }
@@ -136,28 +148,52 @@ fn graph_expressions(value: &Value, scope: &str) -> BTreeMap<String, BTreeSet<St
     result
 }
 
-fn subnet_references(block: &Value) -> Option<BTreeSet<String>> {
-    match block {
-        Value::Array(blocks) if !blocks.is_empty() => {
-            let mut found = BTreeSet::new();
-            for block in blocks {
-                found.extend(subnet_references(block)?);
-            }
-            Some(found)
+fn nested_paths(value: &Value, path: &str) -> ExpressionPaths {
+    match value {
+        // Expression objects are leaves. Never walk literal values or expression metadata.
+        Value::Object(fields)
+            if fields.contains_key("references") || fields.contains_key("constant_value") =>
+        {
+            let mut refs = BTreeSet::new();
+            references(value, &mut refs);
+            let complete = !fields.contains_key("constant_value")
+                && fields
+                    .get("references")
+                    .and_then(Value::as_array)
+                    .is_some_and(|refs| !refs.is_empty() && refs.iter().all(Value::is_string));
+            BTreeMap::from([(path.into(), (refs, complete))])
         }
-        Value::Object(fields) => {
-            let expression = fields.get("subnets")?;
-            let refs = expression.get("references")?.as_array()?;
-            if refs.is_empty() || expression.get("constant_value").is_some() {
-                return None;
-            }
-            if refs.iter().any(|value| !value.is_string()) {
-                return None;
-            }
-            let mut found = BTreeSet::new();
-            references(expression, &mut found);
-            Some(found)
+        Value::Object(fields) => fields
+            .iter()
+            .flat_map(|(name, value)| nested_paths(value, &format!("{path}.{name}")))
+            .collect(),
+        Value::Array(blocks) => {
+            let blocks: Vec<_> = blocks
+                .iter()
+                .map(|block| nested_paths(block, path))
+                .collect();
+            let paths: BTreeSet<_> = blocks
+                .iter()
+                .flat_map(|block| block.keys().cloned())
+                .collect();
+            paths
+                .into_iter()
+                .map(|path| {
+                    let mut refs = BTreeSet::new();
+                    let mut complete = true;
+                    for block in &blocks {
+                        match block.get(&path) {
+                            Some((part, valid)) => {
+                                refs.extend(part.iter().cloned());
+                                complete &= valid;
+                            }
+                            None => complete = false,
+                        }
+                    }
+                    (path, (refs, complete))
+                })
+                .collect()
         }
-        _ => None,
+        _ => BTreeMap::new(),
     }
 }
