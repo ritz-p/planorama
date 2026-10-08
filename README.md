@@ -2,6 +2,18 @@
 
 Import and state-removal operations are represented separately from ordinary action colors. See [Terraform operation metadata](docs/operations.md) for supported JSON shapes, value redaction, and limitations.
 
+Security Group attachments use explicit AWS references to draw `Connection` edges from each Security Group to its consumer. Policy cards and VPC/subnet containment remain intact. See [security-groups.svg](examples/security-groups.svg).
+
+| Consumer | Attachment attribute |
+| --- | --- |
+| EC2 instance | `vpc_security_group_ids` |
+| Load Balancer | `security_groups` |
+| RDS instance / cluster | `vpc_security_group_ids` |
+| ECS service | `network_configuration.security_groups` |
+| VPC endpoint | `security_group_ids` |
+
+Each endpoint must resolve completely and statically to an AWS Security Group. Multiple explicitly identified groups and exact indexed references are supported, including external SG data sources. Unresolved parts, dynamic selection, ambiguous unindexed instances, wrong endpoint types/providers, literal IDs, tags, and EC2's name-based `security_groups` field stay ordinary dependencies. Missing optional attachment attributes are not diagnosed as errors. ECS task definitions and other unsupported attachment shapes are not inferred. This is an attachment diagram, not an analysis of firewall rules or reachability.
+
 Terraform plan JSON を SVG に変換する Rust 製 CLI です。JSON 解析、依存関係の整理、レイアウト、SVG 生成を Rust 内で行い、Graphviz や Node.js は使用しません。
 
 ## Docker で開発

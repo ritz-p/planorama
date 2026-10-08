@@ -1,6 +1,29 @@
 mod support;
 
 #[test]
+fn security_groups_fixture_preserves_policy_cards_and_inspectable_connections() {
+    let input = include_bytes!("../fixtures/security-groups-plan.json");
+    let svg = render(input);
+    assert!(svg.contains("7 resources (7 cards), 10 relationships"));
+    assert_eq!(svg.matches("data-edge-kind=\"connection\"").count(), 4);
+    assert_eq!(svg.matches("data-edge-kind=\"containment\"").count(), 6);
+    for (group, target) in [
+        ("web", "aws_instance.app"),
+        ("shared", "aws_instance.app"),
+        ("web", "aws_lb.app"),
+        ("shared", "aws_ecs_service.app"),
+    ] {
+        assert!(svg.contains(&format!(
+            "aws_security_group.{group} → {target} (connection)"
+        )));
+        assert!(svg.contains(&format!(
+            "data-terraform-address=\"aws_security_group.{group}\""
+        )));
+    }
+    assert_eq!(svg, render(input));
+}
+
+#[test]
 fn drift_fixture_keeps_apply_actions_and_reports_drift_without_values() {
     let input = include_bytes!("../fixtures/drift-plan.json");
     let svg = render(input);
@@ -180,7 +203,7 @@ fn multi_container_fixture_renders_one_card_per_resource_and_subnet_connections(
     assert!(output.status.success());
     let svg = String::from_utf8(output.stdout).unwrap();
     assert_eq!(svg.matches("<g id=\"resource-").count(), 6);
-    assert_eq!(svg.matches("data-edge-kind=\"connection\"").count(), 4);
+    assert_eq!(svg.matches("data-edge-kind=\"connection\"").count(), 5);
     assert_eq!(svg.matches("data-edge-kind=\"containment\"").count(), 4);
     assert_eq!(
         svg,

@@ -44,6 +44,8 @@ A real plan additionally needs AWS credentials and existing VPC/security-group I
 
 ## Expected display
 
+Explicit Security Group attachments are `Connection` edges from the policy to each EC2/LB/RDS/ECS/VPC-endpoint consumer. SG policy cards and their independent VPC placement remain visible. Ambiguous references are left as dependencies.
+
 The managed VPC contains four subnet boxes; private subnet boxes contain the application module's EC2 workers. The ALB and ECS Service are also contained by the common VPC, with separate connections to each referenced subnet. RDS shares that VPC through its DB subnet group. Route-table associations and target-group attachments become eight action-carrying edges. Shared VPC, Security Group, and AMI data sources remain external entities; region/account metadata data sources are omitted. Security Groups and ECS Services retain the Policy/Controller fallback annotations. Module names remain card metadata; architecture layout has no module bands.
 
 The generator preserves the ECS `network_configuration` block's individual expressions so subnet membership can be distinguished from Security Group references, following Terraform's [block expressions representation](https://developer.hashicorp.com/terraform/internals/json-format#block-expressions-representation).
