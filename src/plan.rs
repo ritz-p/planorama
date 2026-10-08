@@ -28,19 +28,22 @@ pub fn parse(json: &str) -> Result<TerraformGraph, String> {
     }
     let mut nodes = BTreeMap::new();
     collect_values(&plan["planned_values"]["root_module"], &mut nodes, false);
+    let planned_providers: BTreeMap<_, _> = nodes
+        .iter()
+        .filter(|(_, node)| node.provider.is_explicit())
+        .map(|(key, node)| (key.clone(), node.provider.clone()))
+        .collect();
     for change in plan["resource_changes"].as_array().into_iter().flatten() {
         let address = change["address"]
             .as_str()
             .ok_or("resource change is missing address")?;
         let mut node = entity::parse(change, address, parse_action(&change["change"]["actions"]));
         if !node.provider.is_explicit() {
-            if let Some(previous) = nodes.remove(address) {
-                if previous.provider.is_explicit() {
-                    node.provider = previous.provider;
-                }
+            if let Some(provider) = planned_providers.get(&(address.to_owned(), None)) {
+                node.provider = provider.clone();
             }
         }
-        nodes.insert(address.into(), node);
+        nodes.insert((address.to_owned(), node.deposed_key.clone()), node);
     }
     let mut symbols = BTreeMap::new();
     // Real plan JSON stores root inputs outside configuration.root_module.
@@ -63,7 +66,7 @@ pub fn parse(json: &str) -> Result<TerraformGraph, String> {
         true,
     );
     for (address, node) in prior_data {
-        if symbols.contains_key(&static_address(&address)) {
+        if symbols.contains_key(&static_address(&address.0)) {
             nodes.entry(address).or_insert(node);
         }
     }
@@ -107,14 +110,18 @@ fn parse_action(actions: &Value) -> Action {
     }
 }
 
-fn collect_values(module: &Value, nodes: &mut BTreeMap<String, Node>, data_only: bool) {
+fn collect_values(
+    module: &Value,
+    nodes: &mut BTreeMap<(String, Option<String>), Node>,
+    data_only: bool,
+) {
     for resource in module["resources"].as_array().into_iter().flatten() {
         if let Some(address) = resource["address"].as_str() {
             let node = entity::parse(resource, address, Action::Unchanged);
             if data_only && node.mode != EntityMode::Data {
                 continue;
             }
-            nodes.entry(address.into()).or_insert(node);
+            nodes.entry((address.into(), None)).or_insert(node);
         }
     }
     for child in module["child_modules"].as_array().into_iter().flatten() {

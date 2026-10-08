@@ -188,6 +188,10 @@ pub(super) fn resolve(
     let instances = instance_map(nodes);
     let mut edges = BTreeSet::new();
     for (target, node) in nodes.iter().enumerate() {
+        // Configuration describes the current object, not its deposed predecessors.
+        if node.deposed_key.is_some() {
+            continue;
+        }
         if let Some(refs) = symbols.get(&static_address(&node.address)) {
             let refs = refs
                 .iter()
@@ -208,6 +212,7 @@ pub(super) fn instance_map(nodes: &[Node]) -> BTreeMap<String, Vec<usize>> {
     nodes
         .iter()
         .enumerate()
+        .filter(|(_, node)| node.deposed_key.is_none())
         .map(|(i, node)| (node.address.clone(), vec![i]))
         .collect()
 }

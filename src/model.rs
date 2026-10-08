@@ -12,6 +12,7 @@ pub enum Action {
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Node {
     pub address: String,
+    pub deposed_key: Option<String>,
     pub resource_type: String,
     pub provider: ProviderIdentity,
     pub module: String,

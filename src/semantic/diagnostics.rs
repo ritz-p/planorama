@@ -40,7 +40,8 @@ pub fn collect(raw: &TerraformGraph) -> Vec<Diagnostic> {
         }
     }
     for (target, node) in raw.nodes.iter().enumerate() {
-        if node.mode != EntityMode::Managed || !node.provider.is_aws() {
+        if node.mode != EntityMode::Managed || !node.provider.is_aws() || node.deposed_key.is_some()
+        {
             continue;
         }
         let direct = super::containment::direct_rule(&node.resource_type)
