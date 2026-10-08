@@ -3,9 +3,42 @@ use crate::model::{DiagnosticReason, Node, Resolution};
 use serde_json::Value;
 use std::collections::{BTreeMap, BTreeSet};
 
+pub(super) fn expression_object(fields: &serde_json::Map<String, Value>) -> bool {
+    if !fields.contains_key("references") && !fields.contains_key("constant_value") {
+        return false;
+    }
+    if let Some(values) = fields.get("references").and_then(Value::as_array) {
+        // Empty arrays need sibling evidence to distinguish a block from an
+        // empty reference expression. Literal metadata is not such evidence.
+        if values.is_empty() {
+            return !fields.iter().any(|(name, value)| {
+                name != "references"
+                    && name != "constant_value"
+                    && (value.is_object() || value.is_array())
+            });
+        }
+        // Reference metadata contains strings, whereas child blocks contain objects.
+        return !values.iter().all(Value::is_object);
+    }
+    // A direct block contains expression objects as fields. A lone
+    // constant_value remains a literal: its object contents are ambiguous.
+    !(fields
+        .values()
+        .all(|value| value.is_object() || value.is_array())
+        && fields.iter().any(|(name, value)| {
+            name != "constant_value" && (value.is_object() || value.is_array())
+        }))
+}
+
 pub(super) fn references(value: &Value, found: &mut BTreeSet<String>) {
     match value {
         Value::Object(object) => {
+            if !expression_object(object) {
+                for value in object.values() {
+                    references(value, found);
+                }
+                return;
+            }
             if let Some(refs) = object.get("references").and_then(Value::as_array) {
                 // Terraform emits traversal prefixes alongside the full reference.
                 // Keep the most specific traversals within this expression.
@@ -31,7 +64,15 @@ pub(super) fn references(value: &Value, found: &mut BTreeSet<String>) {
         }
         Value::Array(values) => {
             for value in values {
-                references(value, found);
+                // Arrays in configuration expressions contain block field maps.
+                // Their field names are provider attributes, not expression metadata.
+                if let Value::Object(fields) = value {
+                    for expression in fields.values() {
+                        references(expression, found);
+                    }
+                } else {
+                    references(value, found);
+                }
             }
         }
         _ => {}
