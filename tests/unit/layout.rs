@@ -6,6 +6,7 @@ fn graph(count: usize, edges: Vec<(usize, usize)>) -> Graph {
         nodes: (0..count)
             .map(|i| Node {
                 deposed_key: None,
+                previous_address: None,
                 address: format!("test.n{i}"),
                 resource_type: "test".into(),
                 provider: crate::model::ProviderIdentity::inferred("test"),

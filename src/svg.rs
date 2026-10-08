@@ -103,8 +103,14 @@ pub fn render_with_format(
             EdgeKind::Containment => " data-edge-kind=\"containment\"",
         };
         let title = relationships::title(graph, edge, semantic_edges);
+        let previous = edge
+            .change
+            .as_ref()
+            .and_then(|change| change.previous_address.as_ref())
+            .map(|address| format!(" data-previous-address=\"{}\"", escape(address)))
+            .unwrap_or_default();
         if points.is_empty() {
-            writeln!(svg, r#"<g{relation} data-source="resource-{}" data-target="resource-{}"><title>{title}</title></g>"#, edge.from, edge.to).unwrap();
+            writeln!(svg, r#"<g{relation}{previous} data-source="resource-{}" data-target="resource-{}"><title>{title}</title></g>"#, edge.from, edge.to).unwrap();
             continue;
         }
         let (stroke, marker) = match &edge.change {
@@ -115,7 +121,7 @@ pub fn render_with_format(
             None => ("#94a3b8", "arrow".into()),
         };
         let path = paths::rounded(points);
-        writeln!(svg, r##"<path d="{path}"{relation} fill="none" stroke="{stroke}" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#{marker})"><title>{title}</title></path>"##).unwrap();
+        writeln!(svg, r##"<path d="{path}"{relation}{previous} fill="none" stroke="{stroke}" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#{marker})"><title>{title}</title></path>"##).unwrap();
     }
     for point in &layout.junctions {
         writeln!(
@@ -154,6 +160,11 @@ pub fn render_with_format(
             .map(|c| c.iter().collect::<String>())
             .collect();
         let mode = entities::border(node.mode);
+        let previous = node
+            .previous_address
+            .as_ref()
+            .map(|address| format!(" data-previous-address=\"{}\"", escape(address)))
+            .unwrap_or_default();
         let deposed = node
             .deposed_key
             .as_ref()
@@ -161,7 +172,7 @@ pub fn render_with_format(
             .unwrap_or_default();
         writeln!(
             svg,
-            r#"<g id="resource-{i}" data-qualified-address="{qualified}" data-terraform-address="{address}"{deposed}><title>{selected_title} — {}</title>"#,
+            r#"<g id="resource-{i}" data-qualified-address="{qualified}" data-terraform-address="{address}"{deposed}{previous}><title>{selected_title} — {}</title>"#,
             label(node.action)
         )
         .unwrap();

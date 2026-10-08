@@ -1,6 +1,67 @@
 use super::*;
 
 #[test]
+fn moves_preserve_provenance_without_aliasing_previous_addresses() {
+    for (current, previous) in [
+        ("terraform_data.current", "terraform_data.old"),
+        (
+            "module.new.terraform_data.current",
+            "module.old.terraform_data.old",
+        ),
+        (
+            "module.new[\"a\"].terraform_data.current[0]",
+            "module.old.terraform_data.old[\"b\"]",
+        ),
+    ] {
+        let input = serde_json::json!({"format_version":"1.2", "resource_changes":[
+            {"address":current,"previous_address":previous,"type":"terraform_data","change":{"actions":["no-op"]}},
+            {"address":"terraform_data.consumer","type":"terraform_data"}
+        ],"configuration":{"root_module":{"resources":[{"address":"terraform_data.consumer","expressions":{
+            "current":{"references":[format!("{current}.output")]},
+            "previous":{"references":[format!("{previous}.output")]}
+        }}]}}});
+        let raw = parse(&input.to_string()).unwrap();
+        let node = raw.nodes.iter().find(|n| n.address == current).unwrap();
+        assert_eq!(node.previous_address.as_deref(), Some(previous));
+        assert_eq!(node.action, Action::Unchanged);
+        assert_eq!(node.resource_address().terraform(), current);
+        assert!(
+            raw.nodes
+                .iter()
+                .find(|n| n.address == "terraform_data.consumer")
+                .unwrap()
+                .previous_address
+                .is_none()
+        );
+        let old = raw
+            .attributes
+            .iter()
+            .find(|r| r.attribute == "previous")
+            .unwrap();
+        assert!(!old.complete);
+        assert!(old.sources.is_empty());
+        let current_ref = raw
+            .attributes
+            .iter()
+            .find(|r| r.attribute == "current")
+            .unwrap();
+        assert!(current_ref.complete);
+        assert_eq!(current_ref.sources.len(), 1);
+        let graph = crate::semantic::transform(&raw);
+        assert_eq!(
+            graph
+                .nodes
+                .iter()
+                .find(|n| n.address == current)
+                .unwrap()
+                .previous_address
+                .as_deref(),
+            Some(previous)
+        );
+    }
+}
+
+#[test]
 fn deposed_objects_coexist_and_current_configuration_only_targets_current_objects() {
     let mut input: Value =
         serde_json::from_str(include_str!("../fixtures/deposed-plan.json")).unwrap();

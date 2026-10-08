@@ -69,6 +69,7 @@ pub(super) fn lower(raw: &TerraformGraph) -> Graph {
                         kind: EdgeKind::Association,
                         change: Some(EdgeChange {
                             address: node.address.clone(),
+                            previous_address: node.previous_address.clone(),
                             action: node.action,
                         }),
                     },

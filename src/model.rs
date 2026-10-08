@@ -13,6 +13,7 @@ pub enum Action {
 pub struct Node {
     pub address: String,
     pub deposed_key: Option<String>,
+    pub previous_address: Option<String>,
     pub resource_type: String,
     pub provider: ProviderIdentity,
     pub module: String,
@@ -78,6 +79,7 @@ pub struct Edge {
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub struct EdgeChange {
     pub address: String,
+    pub previous_address: Option<String>,
     pub action: Action,
 }
 
