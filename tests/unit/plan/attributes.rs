@@ -1,6 +1,55 @@
 use crate::plan;
 
 #[test]
+fn direct_blocks_can_contain_child_blocks_named_references() {
+    use serde_json::json;
+    for sibling in [false, true] {
+        let mut block = json!({"references":[
+            {"target":{"references":["terraform_data.a.output"]}},
+            {"target":{"references":["terraform_data.b.output"]}}
+        ]});
+        if sibling {
+            block["sibling"] = json!({"references":["terraform_data.a.output"]});
+        }
+        let mut input = json!({"format_version":"1.2","resource_changes":[
+            {"address":"terraform_data.a","type":"terraform_data"},
+            {"address":"terraform_data.b","type":"terraform_data"},
+            {"address":"terraform_data.consumer","type":"terraform_data"}
+        ],"configuration":{"root_module":{"resources":[{"address":"terraform_data.consumer","expressions":{
+            "block":block,
+            "literal":{"constant_value":{"references":[{"target":{"references":["TOP_SECRET"]}}]}}
+        }}]}}});
+        let raw = plan::parse(&input.to_string()).unwrap();
+        let attribute = raw
+            .attributes
+            .iter()
+            .find(|r| r.attribute == "block.references.target")
+            .unwrap();
+        assert!(attribute.complete);
+        assert_eq!(attribute.sources.len(), 2);
+        assert_eq!(raw.edges.len(), 2);
+        if sibling {
+            assert!(
+                raw.attributes
+                    .iter()
+                    .any(|r| r.attribute == "block.sibling" && r.complete)
+            );
+        }
+        assert!(!format!("{raw:?}").contains("TOP_SECRET"));
+        assert!(
+            !raw.attributes
+                .iter()
+                .any(|r| r.attribute.starts_with("literal."))
+        );
+        input["configuration"]["root_module"]["resources"][0]["expressions"]["block"]["references"]
+            .as_array_mut()
+            .unwrap()
+            .reverse();
+        assert_eq!(raw, plan::parse(&input.to_string()).unwrap());
+    }
+}
+
+#[test]
 fn direct_block_metadata_named_fields_keep_paths_and_literal_privacy() {
     use serde_json::json;
     for name in ["references", "constant_value"] {

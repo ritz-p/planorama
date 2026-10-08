@@ -7,8 +7,10 @@ pub(super) fn expression_object(fields: &serde_json::Map<String, Value>) -> bool
     if !fields.contains_key("references") && !fields.contains_key("constant_value") {
         return false;
     }
-    if fields.get("references").is_some_and(Value::is_array) {
-        return true;
+    if let Some(values) = fields.get("references").and_then(Value::as_array) {
+        // Reference metadata contains strings; a nonempty array of objects is
+        // a child block named "references". Empty/malformed metadata stays a leaf.
+        return values.is_empty() || !values.iter().all(Value::is_object);
     }
     // A direct block contains expression objects as fields. A lone
     // constant_value remains a literal: its object contents are ambiguous.
