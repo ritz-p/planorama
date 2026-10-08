@@ -5,6 +5,7 @@ fn cycle_is_condensed_and_dependents_follow() {
     let nodes = (0..4)
         .map(|i| Node {
             deposed_key: None,
+            previous_address: None,
             address: i.to_string(),
             resource_type: "test".into(),
             provider: crate::model::ProviderIdentity::inferred("test"),

@@ -16,6 +16,7 @@ fn five_container_shades_fill_both_headers_and_bounds_and_clamp_deeper_nesting()
             nodes: (0..7)
                 .map(|index| Node {
                     deposed_key: None,
+                    previous_address: None,
                     address: format!("test.container{index}"),
                     resource_type: "test".into(),
                     provider: crate::model::ProviderIdentity::inferred("test"),

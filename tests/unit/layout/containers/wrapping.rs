@@ -52,6 +52,7 @@ fn nested_variable_size_groups_keep_final_bounds_and_rank_flow() {
     for i in 7..19 {
         graph.nodes.push(Node {
             deposed_key: None,
+            previous_address: None,
             address: format!("test.child{i}"),
             ..template.clone()
         });
