@@ -3,6 +3,16 @@
 pub struct ChangeMetadata {
     pub import: Option<ImportMetadata>,
     pub state_removal: Option<StateRemoval>,
+    pub drift: std::collections::BTreeSet<super::Action>,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
+pub struct DriftRecord {
+    pub address: String,
+    pub deposed_key: Option<String>,
+    pub previous_address: Option<String>,
+    pub action: super::Action,
+    pub matched: bool,
 }
 
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, PartialOrd, Ord)]

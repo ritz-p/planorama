@@ -1,6 +1,29 @@
 mod support;
 
 #[test]
+fn drift_fixture_keeps_apply_actions_and_reports_drift_without_values() {
+    let input = include_bytes!("../fixtures/drift-plan.json");
+    let svg = render(input);
+    assert!(svg.contains("data-drift=\"delete\""));
+    assert!(svg.contains("data-drift=\"update\""));
+    assert!(svg.contains("create (1)"));
+    assert!(svg.contains("delete (0)"));
+    assert!(!svg.contains("TOP_SECRET"));
+    let output = support::run_with_args(input, &["--diagnostics"]);
+    assert!(output.status.success());
+    assert_eq!(svg.as_bytes(), output.stdout);
+    let diagnostics = String::from_utf8(output.stderr).unwrap();
+    assert_eq!(
+        diagnostics
+            .matches("Terraform-reported resource drift")
+            .count(),
+        2
+    );
+    assert!(!diagnostics.contains("TOP_SECRET"));
+    assert_eq!(svg, render(input));
+}
+
+#[test]
 fn lifecycle_fixture_distinguishes_import_forget_and_destroy_without_values() {
     let input = include_bytes!("../fixtures/lifecycle-plan.json");
     let svg = render(input);

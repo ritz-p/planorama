@@ -12,11 +12,17 @@ pub enum DiagnosticReason {
     EndpointTypeMismatch,
     AmbiguousContainmentParent,
     AdditionalRelationships,
+    DriftDetected,
+    DriftUnmatched,
 }
 
 impl DiagnosticReason {
     pub fn description(self) -> &'static str {
         match self {
+            Self::DriftDetected => {
+                "Terraform-reported resource drift (separate from planned action)"
+            }
+            Self::DriftUnmatched => "Terraform-reported drift could not be matched conservatively",
             Self::UnresolvedReference => "unresolved reference",
             Self::MultipleMatchingInstances => "multiple matching instances",
             Self::DynamicInstanceSelection => "dynamic instance selection",
