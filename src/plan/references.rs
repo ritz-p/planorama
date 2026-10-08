@@ -17,9 +17,9 @@ pub(super) fn expression_object(fields: &serde_json::Map<String, Value>) -> bool
     !(fields
         .values()
         .all(|value| value.is_object() || value.is_array())
-        && fields
-            .iter()
-            .any(|(name, value)| name != "constant_value" && value.is_object()))
+        && fields.iter().any(|(name, value)| {
+            name != "constant_value" && (value.is_object() || value.is_array())
+        }))
 }
 
 pub(super) fn references(value: &Value, found: &mut BTreeSet<String>) {

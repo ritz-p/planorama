@@ -1,6 +1,55 @@
 use crate::plan;
 
 #[test]
+fn array_siblings_disambiguate_constant_value_named_provider_fields() {
+    use serde_json::json;
+    for children in [
+        json!([]),
+        json!([{"target":{"references":["terraform_data.child.output"]}}]),
+    ] {
+        let has_child = !children.as_array().unwrap().is_empty();
+        let input = json!({"format_version":"1.2","resource_changes":[
+            {"address":"terraform_data.source","type":"terraform_data"},
+            {"address":"terraform_data.child","type":"terraform_data"},
+            {"address":"terraform_data.consumer","type":"terraform_data"}
+        ],"configuration":{"root_module":{"resources":[{"address":"terraform_data.consumer","expressions":{
+            "block":{"constant_value":{"references":["terraform_data.source.output"]},"children":children},
+            "literal":{"constant_value":{"constant_value":{"references":["TOP_SECRET"]},"children":[{"target":{"references":["TOP_SECRET"]}}]}}
+        }}]}}});
+        let raw = plan::parse(&input.to_string()).unwrap();
+        let attribute = raw
+            .attributes
+            .iter()
+            .find(|r| r.attribute == "block.constant_value")
+            .unwrap();
+        assert!(attribute.complete);
+        assert_eq!(attribute.sources.len(), 1);
+        assert_eq!(
+            raw.nodes[attribute.sources[0]].address,
+            "terraform_data.source"
+        );
+        if has_child {
+            let child = raw
+                .attributes
+                .iter()
+                .find(|r| r.attribute == "block.children.target")
+                .unwrap();
+            assert!(child.complete);
+            assert_eq!(child.sources.len(), 1);
+            assert_eq!(raw.nodes[child.sources[0]].address, "terraform_data.child");
+        }
+        assert_eq!(raw.edges.len(), if has_child { 2 } else { 1 });
+        assert!(
+            !raw.attributes
+                .iter()
+                .any(|r| r.attribute.starts_with("literal."))
+        );
+        assert!(!format!("{raw:?}").contains("TOP_SECRET"));
+        assert_eq!(raw, plan::parse(&input.to_string()).unwrap());
+    }
+}
+
+#[test]
 fn direct_blocks_can_contain_child_blocks_named_references() {
     use serde_json::json;
     for sibling in [false, true] {
