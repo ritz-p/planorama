@@ -15,6 +15,7 @@ pub fn transform(raw: &TerraformGraph) -> ArchitectureGraph {
         graph: containment::infer(raw),
         attributes: raw.attributes.clone(),
         graph_references: raw.graph_references.clone(),
+        drift: raw.drift.clone(),
     };
     ArchitectureGraph(data::visible(associations::lower(&contained)))
 }

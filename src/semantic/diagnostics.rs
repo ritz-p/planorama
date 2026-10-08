@@ -5,6 +5,17 @@ use std::collections::BTreeSet;
 /// Only addresses, attribute names and fixed category text can reach the output.
 pub fn collect(raw: &TerraformGraph) -> Vec<Diagnostic> {
     let mut found = BTreeSet::new();
+    for drift in &raw.drift {
+        found.insert(Diagnostic {
+            address: drift.address.clone(),
+            attribute: "resource_drift".into(),
+            reason: if drift.matched {
+                Reason::DriftDetected
+            } else {
+                Reason::DriftUnmatched
+            },
+        });
+    }
     // Reuse actual inference so ancestry handling stays aligned with rendering.
     let contained = super::containment::infer(raw);
     for (reference, dependency_metadata) in raw

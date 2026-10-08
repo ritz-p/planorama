@@ -1,5 +1,6 @@
 mod address;
 mod attributes;
+mod drift;
 mod entity;
 mod operations;
 mod providers;
@@ -24,7 +25,10 @@ pub fn parse(json: &str) -> Result<TerraformGraph, String> {
         Some("1") => {}
         _ => return Err(format!("unsupported plan format_version: {version}")),
     }
-    if !plan["resource_changes"].is_array() && !plan["planned_values"].is_object() {
+    if !plan["resource_changes"].is_array()
+        && !plan["planned_values"].is_object()
+        && !plan["resource_drift"].is_array()
+    {
         return Err("expected plan JSON containing resource_changes or planned_values".into());
     }
     let mut nodes = BTreeMap::new();
@@ -74,6 +78,7 @@ pub fn parse(json: &str) -> Result<TerraformGraph, String> {
     }
     let mut nodes: Vec<_> = nodes.into_values().collect();
     providers::enrich(&plan["configuration"], &mut nodes);
+    let drift = drift::collect(&plan, &mut nodes)?;
     let edges = resolve(&nodes, &symbols);
     let attributes = attributes::collect(
         &plan["configuration"]["root_module"],
@@ -91,6 +96,7 @@ pub fn parse(json: &str) -> Result<TerraformGraph, String> {
         graph: Graph { nodes, edges },
         attributes,
         graph_references,
+        drift,
     })
 }
 

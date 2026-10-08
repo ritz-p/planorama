@@ -7,6 +7,7 @@ pub struct TerraformGraph {
     pub attributes: Vec<AttributeReference>,
     /// Dependency metadata stays separate from semantic attribute provenance.
     pub graph_references: Vec<AttributeReference>,
+    pub drift: Vec<super::DriftRecord>,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
