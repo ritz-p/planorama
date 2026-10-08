@@ -1,6 +1,40 @@
 use crate::plan;
 
 #[test]
+fn direct_block_metadata_named_fields_keep_paths_and_literal_privacy() {
+    use serde_json::json;
+    for name in ["references", "constant_value"] {
+        let raw = plan::parse(&json!({"format_version":"1.2","resource_changes":[
+            {"address":"terraform_data.source","type":"terraform_data"},
+            {"address":"terraform_data.consumer","type":"terraform_data"}
+        ],"configuration":{"root_module":{"resources":[{"address":"terraform_data.consumer","expressions":{
+            "block":{
+                (name):{"references":["terraform_data.source.output"]},
+                "sibling":{"references":["terraform_data.source.output"]},
+                "deeper":{(name):{"references":["terraform_data.source.output"]},"sibling":{"constant_value":false}}
+            },
+            "literal":{"constant_value":{"references":["TOP_SECRET"],"sibling":{"references":["TOP_SECRET"]}}}
+        }}]}}}).to_string()).unwrap();
+        for path in [
+            format!("block.{name}"),
+            "block.sibling".into(),
+            format!("block.deeper.{name}"),
+        ] {
+            let attribute = raw.attributes.iter().find(|r| r.attribute == path).unwrap();
+            assert!(attribute.complete, "{path}");
+            assert_eq!(attribute.sources.len(), 1);
+        }
+        assert_eq!(raw.edges.len(), 1);
+        assert!(
+            !raw.attributes
+                .iter()
+                .any(|r| r.attribute.starts_with("literal."))
+        );
+        assert!(!format!("{raw:?}").contains("TOP_SECRET"));
+    }
+}
+
+#[test]
 fn repeated_block_fields_can_use_expression_metadata_names() {
     use serde_json::json;
     for name in ["references", "constant_value"] {

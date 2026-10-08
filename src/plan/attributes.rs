@@ -151,9 +151,7 @@ fn graph_expressions(value: &Value, scope: &str) -> BTreeMap<String, BTreeSet<St
 fn nested_paths(value: &Value, path: &str) -> ExpressionPaths {
     match value {
         // Expression objects are leaves. Never walk literal values or expression metadata.
-        Value::Object(fields)
-            if fields.contains_key("references") || fields.contains_key("constant_value") =>
-        {
+        Value::Object(fields) if super::references::expression_object(fields) => {
             let mut refs = BTreeSet::new();
             references(value, &mut refs);
             let complete = !fields.contains_key("constant_value")
