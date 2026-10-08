@@ -16,6 +16,8 @@ pub struct AttributeReference {
     pub attribute: String,
     pub sources: Vec<usize>,
     pub complete: bool,
+    /// Value-free proof that the entire planned ID collection matches its sources.
+    pub collection_ids_complete: bool,
     pub issues: std::collections::BTreeSet<super::DiagnosticReason>,
 }
 

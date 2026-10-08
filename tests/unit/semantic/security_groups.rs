@@ -3,13 +3,14 @@ use crate::{plan, semantic};
 use serde_json::{Value, json};
 
 fn fixture(kind: &str, expression: Value) -> Value {
+    let count = expression["references"].as_array().map_or(0, Vec::len);
     let mut expressions = json!({});
     if kind == "aws_ecs_service" {
         expressions["network_configuration"] = json!([{"security_groups":expression}]);
     } else {
         expressions[attribute(kind).unwrap()] = expression;
     }
-    json!({"format_version":"1.2","resource_changes":[
+    let mut input = json!({"format_version":"1.2","resource_changes":[
         {"address":"aws_vpc.main","type":"aws_vpc"},
         {"address":"aws_security_group.a","type":"aws_security_group"},
         {"address":"aws_security_group.b","type":"aws_security_group"},
@@ -18,7 +19,77 @@ fn fixture(kind: &str, expression: Value) -> Value {
         {"address":"aws_security_group.a","expressions":{"vpc_id":{"references":["aws_vpc.main.id"]}}},
         {"address":"aws_security_group.b","expressions":{"vpc_id":{"references":["aws_vpc.main.id"]}}},
         {"address":format!("{kind}.app"),"expressions":expressions}
-    ]}}})
+    ]}}});
+    for index in [1, 2] {
+        input["resource_changes"][index]["change"]["after_unknown"]["id"] = json!(true);
+    }
+    let mask = json!(vec![true; count]);
+    if kind == "aws_ecs_service" {
+        input["resource_changes"][3]["change"]["after_unknown"] =
+            json!({"network_configuration":[{"security_groups":mask}]});
+    } else {
+        input["resource_changes"][3]["change"]["after_unknown"][attribute(kind).unwrap()] = mask;
+    }
+    input
+}
+
+#[test]
+fn planned_collection_proof_rejects_literal_elements_and_missing_or_unknown_shapes() {
+    for kind in [
+        "aws_instance",
+        "aws_lb",
+        "aws_db_instance",
+        "aws_rds_cluster",
+        "aws_ecs_service",
+        "aws_vpc_endpoint",
+    ] {
+        for scenario in [
+            "mixed",
+            "same_length_literal",
+            "missing",
+            "unknown_length",
+            "known_match",
+            "known_mismatch",
+        ] {
+            let mut input = fixture(kind, json!({"references":["aws_security_group.a.id"]}));
+            let (values, mask) = match scenario {
+                "mixed" => (json!([null, "TOP_SECRET_LITERAL"]), json!([true, false])),
+                "same_length_literal" => (json!(["TOP_SECRET_LITERAL"]), json!([false])),
+                "known_match" => (json!(["sg-known"]), json!([false])),
+                "known_mismatch" => (json!(["TOP_SECRET_LITERAL"]), json!([false])),
+                "unknown_length" => (Value::Null, json!(true)),
+                _ => (Value::Null, Value::Null),
+            };
+            if scenario.starts_with("known") {
+                input["resource_changes"][1]["change"] = json!({"after":{"id":"sg-known"}});
+            }
+            if kind == "aws_ecs_service" {
+                input["resource_changes"][3]["change"] = json!({"after":{"network_configuration":[{"security_groups":values}]},"after_unknown":{"network_configuration":[{"security_groups":mask}]}});
+            } else {
+                input["resource_changes"][3]["change"] = json!({"after":{(attribute(kind).unwrap()):values},"after_unknown":{(attribute(kind).unwrap()):mask}});
+            }
+            let raw = plan::parse(&input.to_string()).unwrap();
+            let graph = semantic::transform(&raw);
+            assert_eq!(
+                graph
+                    .edges
+                    .iter()
+                    .filter(|e| e.kind == EdgeKind::Connection)
+                    .count(),
+                usize::from(scenario == "known_match"),
+                "{kind} {scenario}"
+            );
+            assert!(!format!("{raw:?}").contains("TOP_SECRET"));
+            if scenario != "known_match" {
+                assert!(
+                    semantic::diagnostics::collect(&raw)
+                        .iter()
+                        .any(|d| d.attribute == attribute(kind).unwrap()
+                            && d.reason == DiagnosticReason::PartialResourceProvenance)
+                );
+            }
+        }
+    }
 }
 
 #[test]

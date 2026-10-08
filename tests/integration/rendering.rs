@@ -1,6 +1,26 @@
 mod support;
 
 #[test]
+fn mixed_literal_security_group_ids_keep_dependency_edges_and_redacted_diagnostics() {
+    let mut input: serde_json::Value =
+        serde_json::from_slice(include_bytes!("../fixtures/security-groups-plan.json")).unwrap();
+    let change = &mut input["resource_changes"][4]["change"];
+    change["after"] = serde_json::json!({"vpc_security_group_ids":[null,"TOP_SECRET_LITERAL"]});
+    change["after_unknown"] = serde_json::json!({"vpc_security_group_ids":[true,false]});
+    let bytes = input.to_string();
+    let svg = render(bytes.as_bytes());
+    assert_eq!(svg.matches("data-edge-kind=\"connection\"").count(), 2);
+    assert!(svg.contains("aws_security_group.web → aws_instance.app (dependency)"));
+    let result = support::run_with_args(bytes.as_bytes(), &["--diagnostics"]);
+    assert!(result.status.success());
+    assert_eq!(svg.as_bytes(), result.stdout);
+    let diagnostics = String::from_utf8(result.stderr).unwrap();
+    assert!(diagnostics.contains("only part of the attribute resolves to resource references"));
+    assert!(!diagnostics.contains("TOP_SECRET"));
+    assert!(!svg.contains("TOP_SECRET"));
+}
+
+#[test]
 fn security_groups_fixture_preserves_policy_cards_and_inspectable_connections() {
     let input = include_bytes!("../fixtures/security-groups-plan.json");
     let svg = render(input);

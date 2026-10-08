@@ -43,6 +43,7 @@ pub(super) fn collect(
                     attribute: attribute.clone(),
                     sources: resolution.sources,
                     complete: resolution.complete && *structurally_complete,
+                    collection_ids_complete: false,
                     issues: resolution.issues,
                 });
             }

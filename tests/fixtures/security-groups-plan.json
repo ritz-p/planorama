@@ -3,11 +3,11 @@
   "resource_changes":[
     {"address":"aws_vpc.main","type":"aws_vpc"},
     {"address":"aws_subnet.app","type":"aws_subnet"},
-    {"address":"aws_security_group.web","type":"aws_security_group"},
-    {"address":"aws_security_group.shared","type":"aws_security_group"},
-    {"address":"aws_instance.app","type":"aws_instance"},
-    {"address":"aws_lb.app","type":"aws_lb"},
-    {"address":"aws_ecs_service.app","type":"aws_ecs_service"}
+    {"address":"aws_security_group.web","type":"aws_security_group","change":{"after_unknown":{"id":true}}},
+    {"address":"aws_security_group.shared","type":"aws_security_group","change":{"after_unknown":{"id":true}}},
+    {"address":"aws_instance.app","type":"aws_instance","change":{"after_unknown":{"vpc_security_group_ids":[true,true]}}},
+    {"address":"aws_lb.app","type":"aws_lb","change":{"after_unknown":{"security_groups":[true]}}},
+    {"address":"aws_ecs_service.app","type":"aws_ecs_service","change":{"after_unknown":{"network_configuration":[{"security_groups":[true]}]}}}
   ],
   "configuration":{"root_module":{"resources":[
     {"address":"aws_subnet.app","expressions":{"vpc_id":{"references":["aws_vpc.main.id"]}}},

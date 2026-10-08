@@ -44,6 +44,10 @@ pub(super) fn failure(
                 || !raw.nodes[source].provider.is_aws()
         })
         .then_some(DiagnosticReason::EndpointTypeMismatch)
+        .or_else(|| {
+            (!reference.collection_ids_complete)
+                .then_some(DiagnosticReason::PartialResourceProvenance)
+        })
 }
 
 pub(super) fn infer(raw: &TerraformGraph, mut graph: Graph) -> Graph {
