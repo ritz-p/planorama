@@ -1,6 +1,24 @@
 mod support;
 
 #[test]
+fn moved_metadata_survives_cards_and_lowered_relationships_and_is_escaped() {
+    let mut input: serde_json::Value =
+        serde_json::from_slice(include_bytes!("../fixtures/association-plan.json")).unwrap();
+    input["resource_changes"][0]["previous_address"] =
+        serde_json::json!("aws_subnet.old[\"<a>&\"]");
+    input["resource_changes"][2]["previous_address"] =
+        serde_json::json!("module.old.aws_route_table_association.private");
+    let svg = render(input.to_string().as_bytes());
+    assert!(svg.contains("data-previous-address=\"aws_subnet.old[&quot;&lt;a&gt;&amp;&quot;]\""));
+    assert!(
+        svg.contains("data-previous-address=\"module.old.aws_route_table_association.private\"")
+    );
+    assert_eq!(svg.matches("data-previous-address=").count(), 2);
+    assert!(svg.contains("data-terraform-address=\"aws_subnet.private\""));
+    assert!(!svg.contains("<a>"));
+}
+
+#[test]
 fn deposed_fixture_preserves_every_change_card_and_action() {
     let input = include_bytes!("../fixtures/deposed-plan.json");
     let svg = render(input);

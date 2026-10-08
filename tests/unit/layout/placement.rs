@@ -7,6 +7,7 @@ fn long_edges_order_through_three_ranks_deterministically() {
         nodes: (0..4)
             .map(|i| Node {
                 deposed_key: None,
+                previous_address: None,
                 address: format!("test.n{i}"),
                 resource_type: "test".into(),
                 provider: crate::model::ProviderIdentity::inferred("test"),

@@ -23,6 +23,7 @@ fn ranked_fixture() -> Graph {
     let nodes = (0..7)
         .map(|i| Node {
             deposed_key: None,
+            previous_address: None,
             address: format!("test.node{i}"),
             module: "root".into(),
             role: if i == 0 {
@@ -133,6 +134,7 @@ fn expanded_container_ports_and_obstacles_use_the_rendered_bounds() {
     let external = graph.nodes.len();
     graph.nodes.push(Node {
         deposed_key: None,
+        previous_address: None,
         address: "aws_s3_bucket.external".into(),
         resource_type: "aws_s3_bucket".into(),
         provider: crate::model::ProviderIdentity::inferred("aws_s3_bucket"),
@@ -548,12 +550,14 @@ fn duplicate_local_names_use_topology_after_module_renames_and_node_reordering()
             let worker = graph.nodes.len();
             graph.nodes.push(Node {
                 deposed_key: None,
+                previous_address: None,
                 address: format!("module.{module}.aws_instance.main"),
                 module: format!("module.{module}"),
                 ..template.clone()
             });
             graph.nodes.push(Node {
                 deposed_key: None,
+                previous_address: None,
                 address: format!("aws_s3_bucket.{target}"),
                 resource_type: "aws_s3_bucket".into(),
                 provider: crate::model::ProviderIdentity::inferred("aws_s3_bucket"),
@@ -651,6 +655,7 @@ fn high_degree_ports_expand_headers_and_remain_distinct_inside_parent_bounds() {
             graph.edges.extend((0..count).map(|index| Edge {
                 kind: EdgeKind::Association,
                 change: Some(crate::model::EdgeChange {
+                    previous_address: None,
                     address: format!("test.relationship{index}"),
                     action: Action::Create,
                 }),
@@ -717,6 +722,7 @@ fn reciprocal_relationships_and_self_loops_use_distinct_incoming_and_outgoing_po
             to,
             kind: EdgeKind::Association,
             change: Some(crate::model::EdgeChange {
+                previous_address: None,
                 address: format!("test.relationship{index}"),
                 action,
             }),
@@ -978,6 +984,7 @@ fn peer_containers_and_cross_module_children_remain_separate_and_identifiable() 
     }
     graph.nodes.push(Node {
         deposed_key: None,
+        previous_address: None,
         address: "aws_vpc.peer".into(),
         resource_type: "aws_vpc".into(),
         provider: crate::model::ProviderIdentity::inferred("aws_vpc"),

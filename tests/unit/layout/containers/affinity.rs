@@ -175,6 +175,7 @@ fn wrapping_keeps_related_containers_consecutive_and_uses_safe_fallbacks() {
         let index = graph.nodes.len();
         graph.nodes.push(Node {
             deposed_key: None,
+            previous_address: None,
             address: format!("aws_subnet.{name}"),
             ..template.clone()
         });
@@ -204,6 +205,7 @@ fn wrapping_keeps_related_containers_consecutive_and_uses_safe_fallbacks() {
     for edge in &mut graph.edges {
         if edge.kind == EdgeKind::Connection {
             edge.change = Some(crate::model::EdgeChange {
+                previous_address: None,
                 address: "test.changed".into(),
                 action: Action::Update,
             });
