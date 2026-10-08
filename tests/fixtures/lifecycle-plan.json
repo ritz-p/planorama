@@ -1,0 +1,10 @@
+{
+  "format_version":"1.2",
+  "resource_changes":[
+    {"address":"terraform_data.imported","type":"terraform_data","change":{"actions":["update"],"importing":{"id":"TOP_SECRET_ID"},"after":{"secret":"TOP_SECRET_ATTRIBUTE"}}},
+    {"address":"terraform_data.identity","type":"terraform_data","change":{"actions":["no-op"],"importing":{"identity":{"secret":"TOP_SECRET_IDENTITY"}}}},
+    {"address":"terraform_data.forgotten","type":"terraform_data","change":{"actions":["forget"],"before":{"secret":"TOP_SECRET_BEFORE"}}},
+    {"address":"terraform_data.replaced","type":"terraform_data","change":{"actions":["create","forget"]}},
+    {"address":"terraform_data.destroyed","type":"terraform_data","change":{"actions":["delete"]}}
+  ]
+}

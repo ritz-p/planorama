@@ -14,6 +14,7 @@ fn fan_out_and_fan_in_share_trunks_and_preserve_endpoints() {
                 .map(|i| Node {
                     deposed_key: None,
                     previous_address: None,
+                    metadata: Default::default(),
                     address: format!("test.n{i}"),
                     resource_type: "test".into(),
                     provider: crate::model::ProviderIdentity::inferred("test"),
@@ -76,6 +77,7 @@ fn unrelated_edges_cannot_reuse_an_occupied_bundle_trunk() {
             .map(|i| Node {
                 deposed_key: None,
                 previous_address: None,
+                metadata: Default::default(),
                 address: format!("test.n{i}"),
                 resource_type: "test".into(),
                 provider: crate::model::ProviderIdentity::inferred("test"),
@@ -126,6 +128,7 @@ fn long_edges_use_separate_channels_after_gutter_expansion() {
             .map(|i| Node {
                 deposed_key: None,
                 previous_address: None,
+                metadata: Default::default(),
                 address: format!("test.n{i}"),
                 resource_type: "test".into(),
                 provider: crate::model::ProviderIdentity::inferred("test"),
@@ -178,6 +181,7 @@ fn eight_overlapping_edges_get_distinct_lanes_inside_the_gutter() {
             .map(|i| Node {
                 deposed_key: None,
                 previous_address: None,
+                metadata: Default::default(),
                 address: format!("test.n{i}"),
                 resource_type: "test".into(),
                 provider: crate::model::ProviderIdentity::inferred("test"),

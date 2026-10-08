@@ -176,6 +176,7 @@ fn wrapping_keeps_related_containers_consecutive_and_uses_safe_fallbacks() {
         graph.nodes.push(Node {
             deposed_key: None,
             previous_address: None,
+            metadata: Default::default(),
             address: format!("aws_subnet.{name}"),
             ..template.clone()
         });
@@ -206,6 +207,7 @@ fn wrapping_keeps_related_containers_consecutive_and_uses_safe_fallbacks() {
         if edge.kind == EdgeKind::Connection {
             edge.change = Some(crate::model::EdgeChange {
                 previous_address: None,
+                metadata: Default::default(),
                 address: "test.changed".into(),
                 action: Action::Update,
             });

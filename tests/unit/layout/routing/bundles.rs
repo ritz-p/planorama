@@ -71,6 +71,7 @@ fn graph(count: usize, edges: Vec<(usize, usize)>) -> Graph {
             .map(|i| Node {
                 deposed_key: None,
                 previous_address: None,
+                metadata: Default::default(),
                 address: format!("test.n{i}"),
                 resource_type: "test".into(),
                 provider: crate::model::ProviderIdentity::inferred("test"),
@@ -126,6 +127,7 @@ fn semantic_edges_and_resource_changes_are_not_bundled() {
     graph.edges[0].kind = EdgeKind::Dependency;
     graph.edges[0].change = Some(crate::model::EdgeChange {
         previous_address: None,
+        metadata: Default::default(),
         address: "test.relationship".into(),
         action: Action::Update,
     });
