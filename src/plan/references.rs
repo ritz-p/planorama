@@ -8,9 +8,17 @@ pub(super) fn expression_object(fields: &serde_json::Map<String, Value>) -> bool
         return false;
     }
     if let Some(values) = fields.get("references").and_then(Value::as_array) {
-        // Reference metadata contains strings; a nonempty array of objects is
-        // a child block named "references". Empty/malformed metadata stays a leaf.
-        return values.is_empty() || !values.iter().all(Value::is_object);
+        // Empty arrays need sibling evidence to distinguish a block from an
+        // empty reference expression. Literal metadata is not such evidence.
+        if values.is_empty() {
+            return !fields.iter().any(|(name, value)| {
+                name != "references"
+                    && name != "constant_value"
+                    && (value.is_object() || value.is_array())
+            });
+        }
+        // Reference metadata contains strings, whereas child blocks contain objects.
+        return !values.iter().all(Value::is_object);
     }
     // A direct block contains expression objects as fields. A lone
     // constant_value remains a literal: its object contents are ambiguous.

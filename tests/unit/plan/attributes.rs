@@ -1,6 +1,51 @@
 use crate::plan;
 
 #[test]
+fn empty_references_child_blocks_preserve_sibling_paths() {
+    use serde_json::json;
+    for nested in [false, true] {
+        let expression = json!({"references":["terraform_data.a.output"]});
+        let sibling = if nested {
+            json!([{"target":expression}])
+        } else {
+            expression
+        };
+        let input = json!({"format_version":"1.2","resource_changes":[
+            {"address":"terraform_data.a","type":"terraform_data"},
+            {"address":"terraform_data.consumer","type":"terraform_data"}
+        ],"configuration":{"root_module":{"resources":[{"address":"terraform_data.consumer","expressions":{
+            "block":{"references":[],"sibling":sibling},
+            "empty":{"references":[]},
+            "literal":{"references":[],"constant_value":{"sibling":{"references":["TOP_SECRET"]}}}
+        }}]}}});
+        let raw = plan::parse(&input.to_string()).unwrap();
+        let path = if nested {
+            "block.sibling.target"
+        } else {
+            "block.sibling"
+        };
+        let attribute = raw.attributes.iter().find(|r| r.attribute == path).unwrap();
+        assert!(attribute.complete);
+        assert_eq!(attribute.sources.len(), 1);
+        assert_eq!(raw.edges.len(), 1);
+        let empty = raw
+            .attributes
+            .iter()
+            .find(|r| r.attribute == "empty")
+            .unwrap();
+        assert!(!empty.complete);
+        assert!(empty.sources.is_empty());
+        assert!(
+            !raw.attributes
+                .iter()
+                .any(|r| r.attribute.starts_with("empty.") || r.attribute.starts_with("literal."))
+        );
+        assert!(!format!("{raw:?}").contains("TOP_SECRET"));
+        assert_eq!(raw, plan::parse(&input.to_string()).unwrap());
+    }
+}
+
+#[test]
 fn array_siblings_disambiguate_constant_value_named_provider_fields() {
     use serde_json::json;
     for children in [
