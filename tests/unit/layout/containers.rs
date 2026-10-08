@@ -22,6 +22,7 @@ fn ranked_fixture() -> Graph {
     let template = fixture().nodes.remove(0);
     let nodes = (0..7)
         .map(|i| Node {
+            deposed_key: None,
             address: format!("test.node{i}"),
             module: "root".into(),
             role: if i == 0 {
@@ -131,6 +132,7 @@ fn expanded_container_ports_and_obstacles_use_the_rendered_bounds() {
         .unwrap();
     let external = graph.nodes.len();
     graph.nodes.push(Node {
+        deposed_key: None,
         address: "aws_s3_bucket.external".into(),
         resource_type: "aws_s3_bucket".into(),
         provider: crate::model::ProviderIdentity::inferred("aws_s3_bucket"),
@@ -545,11 +547,13 @@ fn duplicate_local_names_use_topology_after_module_renames_and_node_reordering()
         for (module, target) in [("a", "a"), ("b", "b")] {
             let worker = graph.nodes.len();
             graph.nodes.push(Node {
+                deposed_key: None,
                 address: format!("module.{module}.aws_instance.main"),
                 module: format!("module.{module}"),
                 ..template.clone()
             });
             graph.nodes.push(Node {
+                deposed_key: None,
                 address: format!("aws_s3_bucket.{target}"),
                 resource_type: "aws_s3_bucket".into(),
                 provider: crate::model::ProviderIdentity::inferred("aws_s3_bucket"),
@@ -973,6 +977,7 @@ fn peer_containers_and_cross_module_children_remain_separate_and_identifiable() 
         }
     }
     graph.nodes.push(Node {
+        deposed_key: None,
         address: "aws_vpc.peer".into(),
         resource_type: "aws_vpc".into(),
         provider: crate::model::ProviderIdentity::inferred("aws_vpc"),
