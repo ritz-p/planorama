@@ -49,7 +49,7 @@ pub(super) fn title(graph: &Graph, edge: &Edge, semantic_edges: bool) -> String 
         Some(change) => write!(
             title,
             " ({kind}; {}: {})",
-            label(change.action),
+            super::operations::label(change.action, &change.metadata),
             change.address
         )
         .unwrap(),

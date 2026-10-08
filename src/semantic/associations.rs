@@ -70,6 +70,7 @@ pub(super) fn lower(raw: &TerraformGraph) -> Graph {
                         change: Some(EdgeChange {
                             address: node.address.clone(),
                             previous_address: node.previous_address.clone(),
+                            metadata: node.metadata.clone(),
                             action: node.action,
                         }),
                     },

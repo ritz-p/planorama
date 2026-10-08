@@ -53,6 +53,7 @@ fn nested_variable_size_groups_keep_final_bounds_and_rank_flow() {
         graph.nodes.push(Node {
             deposed_key: None,
             previous_address: None,
+            metadata: Default::default(),
             address: format!("test.child{i}"),
             ..template.clone()
         });

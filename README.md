@@ -1,5 +1,7 @@
 # planorama
 
+Import and state-removal operations are represented separately from ordinary action colors. See [Terraform operation metadata](docs/operations.md) for supported JSON shapes, value redaction, and limitations.
+
 Terraform plan JSON を SVG に変換する Rust 製 CLI です。JSON 解析、依存関係の整理、レイアウト、SVG 生成を Rust 内で行い、Graphviz や Node.js は使用しません。
 
 ## Docker で開発

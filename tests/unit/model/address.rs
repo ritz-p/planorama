@@ -23,6 +23,7 @@ fn relationship_local_addresses_preserve_resource_keys_and_strip_nested_modules(
     ] {
         let change = crate::model::EdgeChange {
             previous_address: None,
+            metadata: Default::default(),
             address: native.into(),
             action: crate::model::Action::Create,
         };
