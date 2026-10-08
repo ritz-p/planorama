@@ -1,5 +1,57 @@
 use super::*;
 
+#[test]
+fn deposed_objects_coexist_and_current_configuration_only_targets_current_objects() {
+    let mut input: Value =
+        serde_json::from_str(include_str!("../fixtures/deposed-plan.json")).unwrap();
+    let graph = parse(&input.to_string()).unwrap();
+    assert_eq!(graph.nodes.len(), 4);
+    assert_eq!(
+        graph
+            .nodes
+            .iter()
+            .filter(|n| n.address == "terraform_data.source")
+            .count(),
+        3
+    );
+    assert_eq!(
+        graph
+            .nodes
+            .iter()
+            .filter(|n| n.action == Action::Delete)
+            .count(),
+        2
+    );
+    assert_eq!(graph.edges.len(), 1);
+    assert!(graph.nodes[graph.edges[0].from].deposed_key.is_none());
+    assert!(graph.nodes[graph.edges[0].to].deposed_key.is_none());
+    input["resource_changes"].as_array_mut().unwrap().reverse();
+    assert_eq!(graph, parse(&input.to_string()).unwrap());
+    input["resource_changes"]
+        .as_array_mut()
+        .unwrap()
+        .retain(|c| c["change"]["actions"][0] != "create");
+    let only_old = parse(&input.to_string()).unwrap();
+    assert_eq!(only_old.nodes.len(), 3);
+    assert!(only_old.edges.is_empty());
+}
+
+#[test]
+fn planned_current_and_deposed_changes_keep_independent_provider_metadata() {
+    let mut input = serde_json::json!({"format_version":"1.2",
+    "planned_values":{"root_module":{"resources":[{"address":"aws_instance.app","type":"aws_instance","provider_name":"registry.terraform.io/hashicorp/aws"}]}},
+    "resource_changes":[
+        {"address":"aws_instance.app","type":"aws_instance","provider_name":"registry.terraform.io/custom/aws","change":{"actions":["create"]}},
+        {"address":"aws_instance.app","type":"aws_instance","deposed":"old","change":{"actions":["delete"]}}
+    ]});
+    let graph = parse(&input.to_string()).unwrap();
+    assert_eq!(graph.nodes.len(), 2);
+    assert!(!graph.nodes[0].provider.is_aws());
+    assert!(graph.nodes[1].provider.is_aws());
+    input["resource_changes"].as_array_mut().unwrap().reverse();
+    assert_eq!(graph, parse(&input.to_string()).unwrap());
+}
+
 #[path = "plan/locals.rs"]
 mod locals;
 

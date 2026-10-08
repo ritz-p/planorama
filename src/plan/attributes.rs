@@ -26,6 +26,9 @@ pub(super) fn collect(
     let instances = instance_map(nodes);
     let mut result = Vec::new();
     for (target, node) in nodes.iter().enumerate() {
+        if node.deposed_key.is_some() {
+            continue;
+        }
         if let Some(attributes) = expressions.get(&static_address(&node.address)) {
             for (attribute, refs) in attributes {
                 let refs = refs

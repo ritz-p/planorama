@@ -1,0 +1,13 @@
+{
+  "format_version":"1.2",
+  "resource_changes":[
+    {"address":"terraform_data.source","type":"terraform_data","change":{"actions":["create"]}},
+    {"address":"terraform_data.source","type":"terraform_data","deposed":"old-b","change":{"actions":["delete"]}},
+    {"address":"terraform_data.source","type":"terraform_data","deposed":"old-a","change":{"actions":["delete"]}},
+    {"address":"terraform_data.consumer","type":"terraform_data","change":{"actions":["update"]}}
+  ],
+  "configuration":{"root_module":{"resources":[
+    {"address":"terraform_data.source"},
+    {"address":"terraform_data.consumer","expressions":{"input":{"references":["terraform_data.source.output"]}}}
+  ]}}
+}

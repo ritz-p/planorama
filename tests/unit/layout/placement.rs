@@ -6,6 +6,7 @@ fn long_edges_order_through_three_ranks_deterministically() {
     let graph = Graph {
         nodes: (0..4)
             .map(|i| Node {
+                deposed_key: None,
                 address: format!("test.n{i}"),
                 resource_type: "test".into(),
                 provider: crate::model::ProviderIdentity::inferred("test"),

@@ -154,9 +154,14 @@ pub fn render_with_format(
             .map(|c| c.iter().collect::<String>())
             .collect();
         let mode = entities::border(node.mode);
+        let deposed = node
+            .deposed_key
+            .as_ref()
+            .map(|key| format!(" data-deposed-key=\"{}\"", escape(key)))
+            .unwrap_or_default();
         writeln!(
             svg,
-            r#"<g id="resource-{i}" data-qualified-address="{qualified}" data-terraform-address="{address}"><title>{selected_title} — {}</title>"#,
+            r#"<g id="resource-{i}" data-qualified-address="{qualified}" data-terraform-address="{address}"{deposed}><title>{selected_title} — {}</title>"#,
             label(node.action)
         )
         .unwrap();

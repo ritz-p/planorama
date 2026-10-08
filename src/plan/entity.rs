@@ -31,6 +31,7 @@ pub(super) fn parse(resource: &Value, address: &str, action: Action) -> Node {
         .unwrap_or_else(|| ProviderIdentity::inferred(resource_type));
     Node {
         address: address.into(),
+        deposed_key: resource["deposed"].as_str().map(str::to_owned),
         resource_type: resource_type.into(),
         module,
         action,

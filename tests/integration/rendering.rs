@@ -1,6 +1,17 @@
 mod support;
 
 #[test]
+fn deposed_fixture_preserves_every_change_card_and_action() {
+    let input = include_bytes!("../fixtures/deposed-plan.json");
+    let svg = render(input);
+    assert_eq!(svg.matches("<g id=\"resource-").count(), 4);
+    assert_eq!(svg.matches("data-deposed-key=").count(), 2);
+    assert!(svg.contains("delete (2)"));
+    assert!(svg.contains("create (1)"));
+    assert_eq!(svg, render(input));
+}
+
+#[test]
 fn committed_svg_samples_match_the_current_renderer() {
     for (input, expected) in [
         (

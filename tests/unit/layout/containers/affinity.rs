@@ -174,6 +174,7 @@ fn wrapping_keeps_related_containers_consecutive_and_uses_safe_fallbacks() {
     for name in ["aa", "bb", "cc"] {
         let index = graph.nodes.len();
         graph.nodes.push(Node {
+            deposed_key: None,
             address: format!("aws_subnet.{name}"),
             ..template.clone()
         });
