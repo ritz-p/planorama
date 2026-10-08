@@ -31,7 +31,15 @@ pub(super) fn references(value: &Value, found: &mut BTreeSet<String>) {
         }
         Value::Array(values) => {
             for value in values {
-                references(value, found);
+                // Arrays in configuration expressions contain block field maps.
+                // Their field names are provider attributes, not expression metadata.
+                if let Value::Object(fields) = value {
+                    for expression in fields.values() {
+                        references(expression, found);
+                    }
+                } else {
+                    references(value, found);
+                }
             }
         }
         _ => {}

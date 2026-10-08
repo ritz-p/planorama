@@ -1,6 +1,54 @@
 use crate::plan;
 
 #[test]
+fn repeated_block_fields_can_use_expression_metadata_names() {
+    use serde_json::json;
+    for name in ["references", "constant_value"] {
+        let block = |source: &str| {
+            json!({
+                (name): {"references":[format!("terraform_data.{source}.output")]},
+                "sibling":{"references":["terraform_data.sibling.output"]},
+                "nested":[{(name):{"references":[format!("terraform_data.{source}.output")]}}],
+                "literal":{"constant_value":{"references":["TOP_SECRET"],"constant_value":"TOP_SECRET"}}
+            })
+        };
+        let mut input = json!({"format_version":"1.2", "resource_changes":[
+            {"address":"terraform_data.a","type":"terraform_data"},
+            {"address":"terraform_data.b","type":"terraform_data"},
+            {"address":"terraform_data.sibling","type":"terraform_data"},
+            {"address":"terraform_data.consumer","type":"terraform_data"}
+        ], "configuration":{"root_module":{"resources":[{"address":"terraform_data.consumer","expressions":{
+            "blocks":[block("a"),block("b")]
+        }}]}}});
+        let raw = plan::parse(&input.to_string()).unwrap();
+        for path in [
+            format!("blocks.{name}"),
+            format!("blocks.nested.{name}"),
+            "blocks.sibling".into(),
+        ] {
+            let attribute = raw.attributes.iter().find(|r| r.attribute == path).unwrap();
+            assert!(attribute.complete, "{path}");
+            assert_eq!(
+                attribute.sources.len(),
+                if path == "blocks.sibling" { 1 } else { 2 }
+            );
+        }
+        assert_eq!(raw.edges.len(), 3);
+        assert!(
+            !raw.attributes
+                .iter()
+                .any(|r| r.attribute.starts_with("blocks.literal."))
+        );
+        assert!(!format!("{raw:?}").contains("TOP_SECRET"));
+        input["configuration"]["root_module"]["resources"][0]["expressions"]["blocks"]
+            .as_array_mut()
+            .unwrap()
+            .reverse();
+        assert_eq!(raw, plan::parse(&input.to_string()).unwrap());
+    }
+}
+
+#[test]
 fn generic_nested_paths_preserve_fields_depth_scope_and_repeated_blocks() {
     use serde_json::json;
     let block = |name: &str| {

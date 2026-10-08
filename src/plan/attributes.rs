@@ -163,14 +163,16 @@ fn nested_paths(value: &Value, path: &str) -> ExpressionPaths {
                     .is_some_and(|refs| !refs.is_empty() && refs.iter().all(Value::is_string));
             BTreeMap::from([(path.into(), (refs, complete))])
         }
-        Value::Object(fields) => fields
-            .iter()
-            .flat_map(|(name, value)| nested_paths(value, &format!("{path}.{name}")))
-            .collect(),
+        Value::Object(fields) => block_paths(fields, path),
         Value::Array(blocks) => {
             let blocks: Vec<_> = blocks
                 .iter()
-                .map(|block| nested_paths(block, path))
+                // Array entries are block field maps, even when a provider
+                // names a field "references" or "constant_value".
+                .map(|block| match block {
+                    Value::Object(fields) => block_paths(fields, path),
+                    _ => BTreeMap::new(),
+                })
                 .collect();
             let paths: BTreeSet<_> = blocks
                 .iter()
@@ -196,4 +198,11 @@ fn nested_paths(value: &Value, path: &str) -> ExpressionPaths {
         }
         _ => BTreeMap::new(),
     }
+}
+
+fn block_paths(fields: &serde_json::Map<String, Value>, path: &str) -> ExpressionPaths {
+    fields
+        .iter()
+        .flat_map(|(name, value)| nested_paths(value, &format!("{path}.{name}")))
+        .collect()
 }
