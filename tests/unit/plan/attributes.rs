@@ -1,6 +1,307 @@
 use crate::plan;
 
 #[test]
+fn empty_references_child_blocks_preserve_sibling_paths() {
+    use serde_json::json;
+    for nested in [false, true] {
+        let expression = json!({"references":["terraform_data.a.output"]});
+        let sibling = if nested {
+            json!([{"target":expression}])
+        } else {
+            expression
+        };
+        let input = json!({"format_version":"1.2","resource_changes":[
+            {"address":"terraform_data.a","type":"terraform_data"},
+            {"address":"terraform_data.consumer","type":"terraform_data"}
+        ],"configuration":{"root_module":{"resources":[{"address":"terraform_data.consumer","expressions":{
+            "block":{"references":[],"sibling":sibling},
+            "empty":{"references":[]},
+            "literal":{"references":[],"constant_value":{"sibling":{"references":["TOP_SECRET"]}}}
+        }}]}}});
+        let raw = plan::parse(&input.to_string()).unwrap();
+        let path = if nested {
+            "block.sibling.target"
+        } else {
+            "block.sibling"
+        };
+        let attribute = raw.attributes.iter().find(|r| r.attribute == path).unwrap();
+        assert!(attribute.complete);
+        assert_eq!(attribute.sources.len(), 1);
+        assert_eq!(raw.edges.len(), 1);
+        let empty = raw
+            .attributes
+            .iter()
+            .find(|r| r.attribute == "empty")
+            .unwrap();
+        assert!(!empty.complete);
+        assert!(empty.sources.is_empty());
+        assert!(
+            !raw.attributes
+                .iter()
+                .any(|r| r.attribute.starts_with("empty.") || r.attribute.starts_with("literal."))
+        );
+        assert!(!format!("{raw:?}").contains("TOP_SECRET"));
+        assert_eq!(raw, plan::parse(&input.to_string()).unwrap());
+    }
+}
+
+#[test]
+fn array_siblings_disambiguate_constant_value_named_provider_fields() {
+    use serde_json::json;
+    for children in [
+        json!([]),
+        json!([{"target":{"references":["terraform_data.child.output"]}}]),
+    ] {
+        let has_child = !children.as_array().unwrap().is_empty();
+        let input = json!({"format_version":"1.2","resource_changes":[
+            {"address":"terraform_data.source","type":"terraform_data"},
+            {"address":"terraform_data.child","type":"terraform_data"},
+            {"address":"terraform_data.consumer","type":"terraform_data"}
+        ],"configuration":{"root_module":{"resources":[{"address":"terraform_data.consumer","expressions":{
+            "block":{"constant_value":{"references":["terraform_data.source.output"]},"children":children},
+            "literal":{"constant_value":{"constant_value":{"references":["TOP_SECRET"]},"children":[{"target":{"references":["TOP_SECRET"]}}]}}
+        }}]}}});
+        let raw = plan::parse(&input.to_string()).unwrap();
+        let attribute = raw
+            .attributes
+            .iter()
+            .find(|r| r.attribute == "block.constant_value")
+            .unwrap();
+        assert!(attribute.complete);
+        assert_eq!(attribute.sources.len(), 1);
+        assert_eq!(
+            raw.nodes[attribute.sources[0]].address,
+            "terraform_data.source"
+        );
+        if has_child {
+            let child = raw
+                .attributes
+                .iter()
+                .find(|r| r.attribute == "block.children.target")
+                .unwrap();
+            assert!(child.complete);
+            assert_eq!(child.sources.len(), 1);
+            assert_eq!(raw.nodes[child.sources[0]].address, "terraform_data.child");
+        }
+        assert_eq!(raw.edges.len(), if has_child { 2 } else { 1 });
+        assert!(
+            !raw.attributes
+                .iter()
+                .any(|r| r.attribute.starts_with("literal."))
+        );
+        assert!(!format!("{raw:?}").contains("TOP_SECRET"));
+        assert_eq!(raw, plan::parse(&input.to_string()).unwrap());
+    }
+}
+
+#[test]
+fn direct_blocks_can_contain_child_blocks_named_references() {
+    use serde_json::json;
+    for sibling in [false, true] {
+        let mut block = json!({"references":[
+            {"target":{"references":["terraform_data.a.output"]}},
+            {"target":{"references":["terraform_data.b.output"]}}
+        ]});
+        if sibling {
+            block["sibling"] = json!({"references":["terraform_data.a.output"]});
+        }
+        let mut input = json!({"format_version":"1.2","resource_changes":[
+            {"address":"terraform_data.a","type":"terraform_data"},
+            {"address":"terraform_data.b","type":"terraform_data"},
+            {"address":"terraform_data.consumer","type":"terraform_data"}
+        ],"configuration":{"root_module":{"resources":[{"address":"terraform_data.consumer","expressions":{
+            "block":block,
+            "literal":{"constant_value":{"references":[{"target":{"references":["TOP_SECRET"]}}]}}
+        }}]}}});
+        let raw = plan::parse(&input.to_string()).unwrap();
+        let attribute = raw
+            .attributes
+            .iter()
+            .find(|r| r.attribute == "block.references.target")
+            .unwrap();
+        assert!(attribute.complete);
+        assert_eq!(attribute.sources.len(), 2);
+        assert_eq!(raw.edges.len(), 2);
+        if sibling {
+            assert!(
+                raw.attributes
+                    .iter()
+                    .any(|r| r.attribute == "block.sibling" && r.complete)
+            );
+        }
+        assert!(!format!("{raw:?}").contains("TOP_SECRET"));
+        assert!(
+            !raw.attributes
+                .iter()
+                .any(|r| r.attribute.starts_with("literal."))
+        );
+        input["configuration"]["root_module"]["resources"][0]["expressions"]["block"]["references"]
+            .as_array_mut()
+            .unwrap()
+            .reverse();
+        assert_eq!(raw, plan::parse(&input.to_string()).unwrap());
+    }
+}
+
+#[test]
+fn direct_block_metadata_named_fields_keep_paths_and_literal_privacy() {
+    use serde_json::json;
+    for name in ["references", "constant_value"] {
+        let raw = plan::parse(&json!({"format_version":"1.2","resource_changes":[
+            {"address":"terraform_data.source","type":"terraform_data"},
+            {"address":"terraform_data.consumer","type":"terraform_data"}
+        ],"configuration":{"root_module":{"resources":[{"address":"terraform_data.consumer","expressions":{
+            "block":{
+                (name):{"references":["terraform_data.source.output"]},
+                "sibling":{"references":["terraform_data.source.output"]},
+                "deeper":{(name):{"references":["terraform_data.source.output"]},"sibling":{"constant_value":false}}
+            },
+            "literal":{"constant_value":{"references":["TOP_SECRET"],"sibling":{"references":["TOP_SECRET"]}}}
+        }}]}}}).to_string()).unwrap();
+        for path in [
+            format!("block.{name}"),
+            "block.sibling".into(),
+            format!("block.deeper.{name}"),
+        ] {
+            let attribute = raw.attributes.iter().find(|r| r.attribute == path).unwrap();
+            assert!(attribute.complete, "{path}");
+            assert_eq!(attribute.sources.len(), 1);
+        }
+        assert_eq!(raw.edges.len(), 1);
+        assert!(
+            !raw.attributes
+                .iter()
+                .any(|r| r.attribute.starts_with("literal."))
+        );
+        assert!(!format!("{raw:?}").contains("TOP_SECRET"));
+    }
+}
+
+#[test]
+fn repeated_block_fields_can_use_expression_metadata_names() {
+    use serde_json::json;
+    for name in ["references", "constant_value"] {
+        let block = |source: &str| {
+            json!({
+                (name): {"references":[format!("terraform_data.{source}.output")]},
+                "sibling":{"references":["terraform_data.sibling.output"]},
+                "nested":[{(name):{"references":[format!("terraform_data.{source}.output")]}}],
+                "literal":{"constant_value":{"references":["TOP_SECRET"],"constant_value":"TOP_SECRET"}}
+            })
+        };
+        let mut input = json!({"format_version":"1.2", "resource_changes":[
+            {"address":"terraform_data.a","type":"terraform_data"},
+            {"address":"terraform_data.b","type":"terraform_data"},
+            {"address":"terraform_data.sibling","type":"terraform_data"},
+            {"address":"terraform_data.consumer","type":"terraform_data"}
+        ], "configuration":{"root_module":{"resources":[{"address":"terraform_data.consumer","expressions":{
+            "blocks":[block("a"),block("b")]
+        }}]}}});
+        let raw = plan::parse(&input.to_string()).unwrap();
+        for path in [
+            format!("blocks.{name}"),
+            format!("blocks.nested.{name}"),
+            "blocks.sibling".into(),
+        ] {
+            let attribute = raw.attributes.iter().find(|r| r.attribute == path).unwrap();
+            assert!(attribute.complete, "{path}");
+            assert_eq!(
+                attribute.sources.len(),
+                if path == "blocks.sibling" { 1 } else { 2 }
+            );
+        }
+        assert_eq!(raw.edges.len(), 3);
+        assert!(
+            !raw.attributes
+                .iter()
+                .any(|r| r.attribute.starts_with("blocks.literal."))
+        );
+        assert!(!format!("{raw:?}").contains("TOP_SECRET"));
+        input["configuration"]["root_module"]["resources"][0]["expressions"]["blocks"]
+            .as_array_mut()
+            .unwrap()
+            .reverse();
+        assert_eq!(raw, plan::parse(&input.to_string()).unwrap());
+    }
+}
+
+#[test]
+fn generic_nested_paths_preserve_fields_depth_scope_and_repeated_blocks() {
+    use serde_json::json;
+    let block = |name: &str| {
+        json!({
+            "target_group_arn":{"references":[format!("aws_lb_target_group.{name}.arn")]},
+            "forward":[{"target_group":[{"arn":{"references":[format!("aws_lb_target_group.{name}.arn")]}}]}]
+        })
+    };
+    let mut input = json!({"format_version":"1.2", "resource_changes":[
+        {"address":"module.app.aws_lb_target_group.a","type":"aws_lb_target_group"},
+        {"address":"module.app.aws_lb_target_group.b","type":"aws_lb_target_group"},
+        {"address":"module.app.aws_lb_listener.main","type":"aws_lb_listener"}
+    ], "configuration":{"root_module":{"module_calls":{"app":{"module":{"resources":[{
+        "address":"aws_lb_listener.main",
+        "unrelated_metadata":{"references":["aws_lb_target_group.a.arn"]},
+        "expressions":{
+            "default_action":[block("a"),block("b")],
+            "network_configuration":{"subnets":{"references":["aws_lb_target_group.a.arn"]},"security_groups":{"references":["aws_lb_target_group.b.arn"]}},
+            "tags":{"constant_value":{"references":["TOP_SECRET"],"nested":{"references":["aws_lb_target_group.a.arn"]}}}
+        }
+    }]}}}}}});
+    let raw = plan::parse(&input.to_string()).unwrap();
+    for (name, count) in [
+        ("default_action", 2),
+        ("default_action.target_group_arn", 2),
+        ("default_action.forward.target_group.arn", 2),
+        ("network_configuration.subnets", 1),
+        ("network_configuration.security_groups", 1),
+    ] {
+        let attr = raw.attributes.iter().find(|r| r.attribute == name).unwrap();
+        assert!(attr.complete, "{name}");
+        assert_eq!(attr.sources.len(), count);
+        assert!(attr.sources.iter().all(|&i| {
+            raw.nodes[i]
+                .address
+                .starts_with("module.app.aws_lb_target_group.")
+        }));
+    }
+    assert!(
+        !raw.attributes
+            .iter()
+            .any(|r| r.attribute.starts_with("tags.")
+                || r.attribute.contains("references")
+                || r.attribute.contains("metadata"))
+    );
+    assert!(!format!("{raw:?}").contains("TOP_SECRET"));
+    input["configuration"]["root_module"]["module_calls"]["app"]["module"]["resources"][0]["expressions"]["default_action"].as_array_mut().unwrap().reverse();
+    assert_eq!(raw, plan::parse(&input.to_string()).unwrap());
+}
+
+#[test]
+fn repeated_nested_fields_require_complete_provenance_in_every_block() {
+    use serde_json::json;
+    for other in [
+        json!({}),
+        json!({"target":{"constant_value":"id"}}),
+        json!({"target":{"references":["var.missing"]}}),
+        json!({"target":{"references":["terraform_data.a.id", false]}}),
+    ] {
+        let raw = plan::parse(&json!({"format_version":"1.2", "resource_changes":[
+            {"address":"terraform_data.a","type":"terraform_data"},
+            {"address":"terraform_data.b","type":"terraform_data"}
+        ], "configuration":{"root_module":{"resources":[{"address":"terraform_data.b","expressions":{
+            "blocks":[{"target":{"references":["terraform_data.a.id"]}},other]
+        }}]}}}).to_string()).unwrap();
+        let attr = raw
+            .attributes
+            .iter()
+            .find(|r| r.attribute == "blocks.target")
+            .unwrap();
+        assert_eq!(attr.sources.len(), 1);
+        assert!(!attr.complete);
+    }
+}
+
+#[test]
 fn absent_resources_do_not_resolve_to_their_configuration_dependencies() {
     use serde_json::json;
     for scope in ["", "module.child.", "module.parent.module.child."] {
