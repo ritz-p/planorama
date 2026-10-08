@@ -11,3 +11,11 @@ Exact action arrays `['forget']`, `['create','forget']`, and `['forget','create'
 Only operations explicitly reported in the resource-change list are interpreted. Standalone CLI import/state-rm history, inferred imports based on values, `removed` configuration without a reported forget action, deferred-change lists, action-invocation lists, and unfamiliar action combinations are not interpreted. Unsupported combinations keep the generic action fallback. A non-object `importing` value is ignored.
 
 The supported shapes follow [Terraform's JSON plan implementation](https://github.com/hashicorp/terraform/blob/main/internal/command/jsonplan/plan.go). The regression input is [lifecycle-plan.json](../tests/fixtures/lifecycle-plan.json).
+
+## Resource drift
+
+`resource_drift` is collected separately in `TerraformGraph.drift`. Each record retains its address, optional deposed key, drift-specific previous address, action category and matching status. Matching uses the exact current address/deposed pair and compatible resource type, mode and provider; previous addresses never become aliases. Conflicting records remain available and produce an unmatched-drift diagnostic rather than changing an unrelated resource.
+
+Matching nodes carry drift action categories in `metadata.drift`, independently of their planned `Action`. Drift-only objects receive a card with no planned change (`Unchanged`); drift deletion is not planned destruction. Consistent duplicate drift records are retained, with deterministic category sets on cards. Contradictory drift-only identities are not arbitrarily assigned a card. Relationship lowering preserves matched drift metadata too.
+
+Default colors and visible action labels still describe the apply plan. SVG exposes `data-drift` categories, and `--diagnostics` reports Terraform-reported drift, including unmatched records. No raw before/after values or identities are stored. This feature consumes reported drift only; it does not query providers or compute drift from state. Unknown action sequences use the existing `Other` category. See [drift-plan.json](../tests/fixtures/drift-plan.json).

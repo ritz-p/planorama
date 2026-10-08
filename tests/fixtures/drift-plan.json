@@ -1,0 +1,10 @@
+{
+  "format_version":"1.2",
+  "resource_changes":[
+    {"address":"terraform_data.planned","type":"terraform_data","change":{"actions":["create"]}}
+  ],
+  "resource_drift":[
+    {"address":"terraform_data.planned","type":"terraform_data","change":{"actions":["delete"],"before":{"secret":"TOP_SECRET"}}},
+    {"address":"terraform_data.drift_only","type":"terraform_data","change":{"actions":["update"],"before":{"secret":"TOP_SECRET"},"after":{"secret":"TOP_SECRET"}}}
+  ]
+}

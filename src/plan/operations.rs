@@ -29,5 +29,6 @@ pub(super) fn parse(change: &Value) -> ChangeMetadata {
     ChangeMetadata {
         import,
         state_removal,
+        ..Default::default()
     }
 }
