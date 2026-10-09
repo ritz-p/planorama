@@ -38,7 +38,7 @@ fn filtering_does_not_mutate_source_graph_or_plan() {
     let raw =
         crate::plan::parse(include_str!("../../tests/fixtures/containment-plan.json")).unwrap();
     let original = raw.clone();
-    let graph = super::transform(&raw);
+    let graph = crate::semantic::transform(&raw);
     let before = graph.clone();
     single(
         &graph,

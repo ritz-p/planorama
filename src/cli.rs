@@ -14,7 +14,7 @@ pub fn run() -> Result<(), String> {
     let mut output = PathBuf::from("diagram.svg");
     let mut address_format = svg::AddressFormat::default();
     let mut diagnostics = false;
-    let mut filter = semantic::filter::Options::default();
+    let mut filter = crate::view::Options::default();
     let mut args = std::env::args().skip(1);
     while let Some(arg) = args.next() {
         match arg.as_str() {
@@ -150,7 +150,7 @@ pub fn run() -> Result<(), String> {
             .map_err(|e| format!("cannot write diagnostics: {e}"))?;
         }
     }
-    let graph = semantic::filter::single(&semantic::transform(&raw), &filter)?;
+    let graph = crate::view::single(&semantic::transform(&raw), &filter)?;
     let layout = Layout::new(&graph);
     let image = match address_format {
         svg::AddressFormat::Qualified => svg::render(&graph, &layout),

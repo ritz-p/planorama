@@ -1,8 +1,5 @@
 use crate::layout::{Bounds, Layout, Point};
-use crate::model::{
-    StateId,
-    cross_state::{Architecture, Endpoint},
-};
+use crate::model::{StateId, cross_state::Endpoint};
 use std::collections::BTreeMap;
 use std::fmt::Write;
 
@@ -34,7 +31,10 @@ impl StateObstacles {
     }
 }
 
-pub fn render_states(architecture: &Architecture, format: super::AddressFormat) -> String {
+pub fn render_states(
+    architecture: &crate::view::ViewArchitecture,
+    format: super::AddressFormat,
+) -> String {
     let graphs = &architecture.states;
     let mut endpoints = BTreeMap::new();
     let mut obstacles = BTreeMap::new();
@@ -228,7 +228,7 @@ fn cross_state_paths_avoid_intervening_cards_and_describe_dependencies() {
             })
         })
         .collect();
-    let mut architecture = Architecture {
+    let mut architecture = crate::model::cross_state::Architecture {
         states: BTreeMap::from([(first.clone(), graph.clone()), (second.clone(), graph)]),
         relationships: vec![crate::model::cross_state::CrossStateEdge {
             from: Endpoint {
@@ -243,7 +243,10 @@ fn cross_state_paths_avoid_intervening_cards_and_describe_dependencies() {
             output: "value".into(),
         }],
     };
-    let svg = render_states(&architecture, super::AddressFormat::Qualified);
+    let svg = render_states(
+        &crate::view::apply(&architecture, &Default::default()).unwrap(),
+        super::AddressFormat::Qualified,
+    );
     assert!(svg.contains("2 named states with 1 cross-state dependencies"));
     let line = svg
         .lines()
@@ -285,7 +288,10 @@ fn cross_state_paths_avoid_intervening_cards_and_describe_dependencies() {
     let mut parallel = architecture.relationships[0].clone();
     parallel.output = "second_value".into();
     architecture.relationships.push(parallel);
-    let svg = render_states(&architecture, super::AddressFormat::Qualified);
+    let svg = render_states(
+        &crate::view::apply(&architecture, &Default::default()).unwrap(),
+        super::AddressFormat::Qualified,
+    );
     let paths: std::collections::BTreeSet<_> = svg
         .lines()
         .filter(|line| line.contains("data-cross-state=\"true\""))
@@ -304,7 +310,10 @@ fn cross_state_paths_avoid_intervening_cards_and_describe_dependencies() {
     architecture.relationships.reverse();
     assert_eq!(
         svg,
-        render_states(&architecture, super::AddressFormat::Qualified)
+        render_states(
+            &crate::view::apply(&architecture, &Default::default()).unwrap(),
+            super::AddressFormat::Qualified
+        )
     );
 }
 
