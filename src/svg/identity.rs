@@ -1,7 +1,7 @@
-use crate::model::Node;
+use crate::model::architecture::Node;
 use std::fmt::Write;
 
-pub(super) fn architecture(id: &crate::model::ArchitectureId) -> String {
+pub(super) fn architecture(id: &crate::model::architecture::ArchitectureId) -> String {
     let mut encoded = String::from("architecture-");
     for byte in id.as_str().bytes() {
         write!(encoded, "{byte:02x}").unwrap();

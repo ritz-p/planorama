@@ -1,4 +1,4 @@
-use crate::model::Graph;
+use crate::model::architecture::Graph;
 
 #[cfg(test)]
 #[path = "../../../tests/unit/layout/placement/expanded.rs"]

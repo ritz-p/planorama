@@ -63,10 +63,8 @@ pub struct PlanStatus {
 }
 
 mod address;
-mod architecture;
-pub use architecture::{
-    ArchitectureEntity, ArchitectureEntityKind, ArchitectureId, TerraformEntityId,
-};
+pub(crate) mod architecture;
+pub use architecture::{ArchitectureEntity, ArchitectureId, TerraformEntityId};
 mod checks;
 mod components;
 pub(crate) use address::module_of;

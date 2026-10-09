@@ -19,6 +19,12 @@ with named state identities and explicit cross-state relationships.
 
 ## Contracts and visibility
 
+Layout, SVG and view import `model::architecture`, an explicit facade that exposes
+architecture/presentation contracts but does not re-export `TerraformPlan`,
+`TerraformEntity`, `TerraformReference` or ingestion attribute-resolution records.
+The semantic stage bridges ingestion and architecture. This keeps implementation
+imports aligned with the data boundaries without introducing a plugin framework.
+
 `TerraformEntity` and `TerraformReference` preserve ingestion facts without roles
 or architecture identity. `Node` is a classified architecture card; it is not the
 ingestion entity. Synthetic components share `ArchitectureId` with card entities.
@@ -55,3 +61,20 @@ Layout implementation cleanup remains in #82–#86. Geometry features such as
 side-aware attachment belong in #81, not in Terraform or AWS semantics. Adding a
 provider extends `provider` dispatch and a provider-owned module; it does not add
 resource-type tables to generic semantics, layout or SVG.
+
+## Integration audit (#109)
+
+| Completion condition | Implementation and verification |
+| --- | --- |
+| Ingestion separated from presentation | #110 `model/terraform`; parser/model tests |
+| Native and synthetic architecture identity | #111 `model/architecture`; identity/source tests |
+| Native relationships and multiple provenance records | #112 `model/relationships`; lowered/inferred/synthetic endpoint tests |
+| Provider-owned rules | #113 `provider/aws`; provider identity and semantic regressions |
+| Immutable view selection | #114 `view`; focus, ancestors, components and cross-state integration tests |
+| Intentional dependencies and visibility | #115 and this facade; all-target Clippy and private child tests |
+
+`model` retains shared lifecycle facts because architecture provenance legitimately
+describes Terraform changes. This is distinct from leaking parser implementation
+or raw attribute values. Layout refactors and side-aware routing are verified
+separately in [routing](routing.md); multi-state integration is documented in
+[multi-plan](multi-plan.md).

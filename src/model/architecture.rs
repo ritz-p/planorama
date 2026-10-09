@@ -1,4 +1,10 @@
-use super::{Graph, TerraformEntity};
+//! Architecture/view-facing contracts. Ingestion structs are not re-exported here.
+use super::TerraformEntity;
+pub(crate) use super::cross_state::{Architecture, CrossStateEdge, CrossStateProvenance, Endpoint};
+pub(crate) use super::{
+    Action, ArchitectureGraph, AttributePathStep, ChangeMetadata, CheckResult, Edge, EdgeKind,
+    EntityMode, Graph, Node, RelationshipProvenance, ResourceRole, StateId,
+};
 use std::fmt::Write;
 #[cfg(test)]
 #[path = "../../tests/unit/model/architecture.rs"]

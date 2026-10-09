@@ -1,5 +1,5 @@
 use super::{Bounds, Layout, NODE_HEIGHT, NODE_WIDTH, Point};
-use crate::model::{Graph, ResourceRole};
+use crate::model::architecture::{Graph, ResourceRole};
 
 mod affinity;
 pub(super) mod ordering;

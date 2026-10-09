@@ -1,5 +1,5 @@
 use super::{Band, Point};
-use crate::model::Graph;
+use crate::model::architecture::Graph;
 use std::collections::BTreeMap;
 mod expanded;
 use expanded::Expanded;

@@ -1,6 +1,6 @@
 use super::{Layout, Point, Scorer, crosses, obstacles, path_between};
 use crate::layout::containers::affinity::Group;
-use crate::model::Graph;
+use crate::model::architecture::Graph;
 
 pub(super) struct Bundle {
     pub paths: Vec<(usize, Vec<Point>)>,

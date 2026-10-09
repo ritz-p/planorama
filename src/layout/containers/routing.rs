@@ -1,6 +1,6 @@
 use super::super::{Bounds, Layout, Point, Port, Side};
 use crate::layout::routing_shared::scoring::Scorer;
-use crate::model::{Edge, EdgeKind, Graph};
+use crate::model::architecture::{Edge, EdgeKind, Graph};
 mod bundles;
 use crate::layout::routing_shared::search;
 use search::find_path;

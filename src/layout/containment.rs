@@ -1,5 +1,5 @@
 use super::containers::ordering;
-use crate::model::{EdgeKind, Graph, ResourceRole};
+use crate::model::architecture::{EdgeKind, Graph, ResourceRole};
 use std::collections::BTreeSet;
 
 /// Derived geometry hierarchy. Ambiguous parents and ancestry cycles stay roots.
@@ -88,7 +88,7 @@ fn parents(graph: &Graph) -> Vec<Option<usize>> {
 fn hierarchy_preserves_roots_nested_children_ambiguity_and_cycles() {
     let raw = crate::plan::parse(r#"{"format_version":"1.2","resource_changes":[{"address":"aws_vpc.a","type":"aws_vpc"},{"address":"aws_vpc.b","type":"aws_vpc"},{"address":"aws_vpc.c","type":"aws_vpc"}]}"#).unwrap();
     let mut graph = crate::semantic::transform(&raw).0;
-    let edge = |from, to| crate::model::Edge {
+    let edge = |from, to| crate::model::architecture::Edge {
         from,
         to,
         kind: EdgeKind::Containment,

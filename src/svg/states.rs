@@ -1,5 +1,5 @@
 use crate::layout::{Bounds, Layout, Point};
-use crate::model::{StateId, cross_state::Endpoint};
+use crate::model::architecture::{Endpoint, StateId};
 use std::collections::BTreeMap;
 use std::fmt::Write;
 
@@ -92,10 +92,10 @@ pub fn render_states(
     }
     let mut links = String::new();
     let mut link_count = 0;
-    let mut relationships: Vec<_> = architecture.relationships.iter().collect();
+    let mut relationships: Vec<_> = architecture.relationships().iter().collect();
     relationships.sort();
     for edge in relationships {
-        let crate::model::cross_state::CrossStateProvenance::TerraformRemoteState {
+        let crate::model::architecture::CrossStateProvenance::TerraformRemoteState {
             remote,
             output,
         } = &edge.provenance;
@@ -232,9 +232,9 @@ fn cross_state_paths_avoid_intervening_cards_and_describe_dependencies() {
             })
         })
         .collect();
-    let mut architecture = crate::model::cross_state::Architecture {
+    let mut architecture = crate::model::architecture::Architecture {
         states: BTreeMap::from([(first.clone(), graph.clone()), (second.clone(), graph)]),
-        relationships: vec![crate::model::cross_state::CrossStateEdge {
+        relationships: vec![crate::model::architecture::CrossStateEdge {
             from: Endpoint {
                 state: first,
                 address: "test.a".into(),
@@ -243,7 +243,7 @@ fn cross_state_paths_avoid_intervening_cards_and_describe_dependencies() {
                 state: second,
                 address: "test.a".into(),
             },
-            provenance: crate::model::cross_state::CrossStateProvenance::TerraformRemoteState {
+            provenance: crate::model::architecture::CrossStateProvenance::TerraformRemoteState {
                 remote: "data.terraform_remote_state.x".into(),
                 output: "value".into(),
             },
@@ -292,7 +292,7 @@ fn cross_state_paths_avoid_intervening_cards_and_describe_dependencies() {
         }
     }
     let mut parallel = architecture.relationships[0].clone();
-    let crate::model::cross_state::CrossStateProvenance::TerraformRemoteState { output, .. } =
+    let crate::model::architecture::CrossStateProvenance::TerraformRemoteState { output, .. } =
         &mut parallel.provenance;
     *output = "second_value".into();
     architecture.relationships.push(parallel);

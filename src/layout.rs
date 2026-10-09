@@ -16,7 +16,7 @@ mod routing_shared;
 #[path = "../tests/unit/layout.rs"]
 mod tests;
 
-use crate::model::Graph;
+use crate::model::architecture::Graph;
 
 pub(crate) fn route_to_margin(start: Point, end: Point, obstacles: &[Bounds]) -> Vec<Point> {
     routing_shared::search::to_margin(start, end, obstacles)
@@ -50,7 +50,7 @@ impl<'a> Layout<'a> {
     pub fn component_bounds<'b>(
         &self,
         graph: &'b Graph,
-    ) -> Vec<(&'b crate::model::ArchitectureId, Bounds)> {
+    ) -> Vec<(&'b crate::model::architecture::ArchitectureId, Bounds)> {
         let mut top = self.height + if graph.checks.is_empty() { 0 } else { 24 };
         graph
             .components

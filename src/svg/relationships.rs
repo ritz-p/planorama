@@ -1,5 +1,5 @@
 use super::{color, escape, label};
-use crate::model::{Edge, EdgeKind, Graph};
+use crate::model::architecture::{Edge, EdgeKind, Graph};
 use std::collections::BTreeSet;
 use std::fmt::Write;
 

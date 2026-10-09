@@ -1,4 +1,4 @@
-use crate::model::Graph;
+use crate::model::architecture::Graph;
 use std::collections::BTreeSet;
 
 pub(super) fn compute(graph: &Graph) -> Vec<usize> {
