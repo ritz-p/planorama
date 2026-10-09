@@ -1,7 +1,7 @@
 use crate::model::{Graph, ResourceRole};
 use std::collections::{BTreeSet, VecDeque};
 
-pub(super) fn structural_keys(graph: &Graph) -> Vec<usize> {
+pub(in crate::layout) fn structural_keys(graph: &Graph) -> Vec<usize> {
     fn ranks<T: Ord>(keys: &[T]) -> Vec<usize> {
         let unique: BTreeSet<_> = keys.iter().collect();
         let ordered: Vec<_> = unique.into_iter().collect();
@@ -51,7 +51,11 @@ pub(super) fn structural_keys(graph: &Graph) -> Vec<usize> {
     }
 }
 
-pub(super) fn roots(graph: &Graph, parents: &[Option<usize>], keys: &[usize]) -> Vec<usize> {
+pub(in crate::layout) fn roots(
+    graph: &Graph,
+    parents: &[Option<usize>],
+    keys: &[usize],
+) -> Vec<usize> {
     let owners: Vec<_> = (0..graph.nodes.len())
         .map(|mut node| {
             while let Some(parent) = parents[node] {

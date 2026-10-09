@@ -1,5 +1,7 @@
 //! Provider-neutral geometry for architecture/view graphs; no Terraform interpretation.
 mod containers;
+mod containment;
+pub(crate) use containment::ContainmentTree;
 #[cfg(test)]
 #[path = "../tests/support/layout_metrics.rs"]
 pub(crate) mod metrics;
@@ -60,7 +62,7 @@ pub struct Layout<'a> {
     pub header_heights: Vec<usize>,
     pub bounds: Vec<Bounds>,
     pub containers: Vec<usize>,
-    pub parents: Vec<Option<usize>>,
+    pub containment: ContainmentTree,
     pub width: usize,
     pub height: usize,
     pub positions: Vec<Point>,
@@ -109,7 +111,7 @@ impl<'a> Layout<'a> {
             bounds,
             header_heights: vec![NODE_HEIGHT; graph.nodes.len()],
             containers: Vec::new(),
-            parents: vec![None; graph.nodes.len()],
+            containment: ContainmentTree::new(graph),
             width: routed.width,
             height: placement.height,
             positions,
