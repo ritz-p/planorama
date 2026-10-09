@@ -1,6 +1,67 @@
 use serde_json::json;
 
 #[test]
+fn full_splats_preserve_all_sources_without_guessing_dynamic_keys() {
+    for (reference, complete) in [
+        ("test.pool[*].id", true),
+        ("test.pool[*]", true),
+        ("test.pool[var.key].id", false),
+        ("test.pool.id", false),
+        ("test.pool.items[*].id", false),
+    ] {
+        let input = json!({"format_version":"1.2","resource_changes":[
+            {"address":"test.pool[0]","type":"test"},
+            {"address":"test.pool[1]","type":"test"},
+            {"address":"test.fixed","type":"test"}
+        ],"configuration":{"root_module":{
+            "locals":{"selected":{"references":[reference]}},
+            "outputs":{"x":{"expression":{"references":["local.selected","test.fixed.id"]}}}
+        }}});
+        let raw = crate::plan::parse(&input.to_string()).unwrap();
+        assert_eq!(raw.outputs[0].complete, complete, "{reference}");
+        assert_eq!(
+            raw.outputs[0].sources,
+            if complete {
+                vec!["test.fixed", "test.pool[0]", "test.pool[1]"]
+            } else {
+                vec!["test.fixed"]
+            },
+            "{reference}"
+        );
+    }
+}
+
+#[test]
+fn full_splats_only_resolve_explicitly_selected_dimensions() {
+    for (module, resource, complete, expected_count) in [
+        ("module.child[*].result", "test.pool[*].id", true, 4),
+        ("module.child[0].result", "test.pool[*].id", true, 2),
+        ("module.child[*].result", "test.pool[0].id", true, 2),
+        ("module.child.result", "test.pool[*].id", false, 0),
+        ("module.child[var.key].result", "test.pool[*].id", false, 0),
+        ("module.child[*].result", "test.pool.id", false, 0),
+        ("module.child[*].result", "test.pool[var.key].id", false, 0),
+    ] {
+        let input = json!({"format_version":"1.2","resource_changes":[
+            {"address":"module.child[0].test.pool[0]","type":"test"},
+            {"address":"module.child[0].test.pool[1]","type":"test"},
+            {"address":"module.child[1].test.pool[0]","type":"test"},
+            {"address":"module.child[1].test.pool[1]","type":"test"}
+        ],"configuration":{"root_module":{
+            "module_calls":{"child":{"module":{"outputs":{"result":{"expression":{"references":[resource]}}}}}},
+            "outputs":{"x":{"expression":{"references":[module]}}}
+        }}});
+        let raw = crate::plan::parse(&input.to_string()).unwrap();
+        assert_eq!(raw.outputs[0].complete, complete, "{module}: {resource}");
+        assert_eq!(
+            raw.outputs[0].sources.len(),
+            expected_count,
+            "{module}: {resource}"
+        );
+    }
+}
+
+#[test]
 fn dynamic_and_narrowed_aliases_do_not_claim_aggregate_sources() {
     for reference in [
         "local.targets[var.key].id",
