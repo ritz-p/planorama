@@ -1,11 +1,12 @@
-use crate::model::{DiagnosticReason, EntityMode, Graph, SyntheticComponent, TerraformGraph};
+use crate::model::{DiagnosticReason, EntityMode, Graph, SyntheticComponent};
+use crate::semantic::Input;
 use std::collections::{BTreeMap, BTreeSet};
 
 #[cfg(test)]
 #[path = "../../tests/unit/semantic/components.rs"]
 mod tests;
 
-pub(super) fn infer(raw: &TerraformGraph, graph: &Graph) -> Vec<SyntheticComponent> {
+pub(super) fn infer(raw: &Input, graph: &Graph) -> Vec<SyntheticComponent> {
     let mut counts = BTreeMap::new();
     for node in &raw.nodes {
         *counts.entry(node.address.as_str()).or_insert(0) += 1;

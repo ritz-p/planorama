@@ -1,5 +1,5 @@
 //! Check planned identifier collections without retaining values in the graph.
-use crate::model::{AttributeReference, Node};
+use crate::model::{AttributeReference, TerraformEntity};
 use serde_json::Value;
 use std::collections::BTreeMap;
 
@@ -74,7 +74,11 @@ fn collection<'a>(value: &'a Value, unknown: &'a Value, path: &[&str]) -> Option
     collection(&value[path[0]], &unknown[path[0]], &path[1..])
 }
 
-pub(super) fn annotate(plan: &Value, nodes: &[Node], references: &mut [AttributeReference]) {
+pub(super) fn annotate(
+    plan: &Value,
+    nodes: &[TerraformEntity],
+    references: &mut [AttributeReference],
+) {
     let mut values = BTreeMap::new();
     // Prior data can supply IDs when a cached data read has no resource change.
     let mut prior = BTreeMap::new();

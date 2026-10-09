@@ -147,7 +147,7 @@ fn supported_families_keep_single_and_multiple_security_groups_and_containment()
         ] {
             let raw = plan::parse(&fixture(kind, json!({"references":refs})).to_string()).unwrap();
             let graph = semantic::transform(&raw).0;
-            assert_eq!(graph.nodes, raw.nodes);
+            assert_eq!(graph.nodes, crate::semantic::base_graph(&raw).nodes);
             let connections: Vec<_> = graph
                 .edges
                 .iter()
@@ -238,7 +238,7 @@ fn unresolved_ambiguous_dynamic_foreign_and_unrelated_references_remain_dependen
                 !graph.edges.iter().any(|e| e.kind == EdgeKind::Connection),
                 "{kind} {scenario}"
             );
-            assert_eq!(graph.nodes, raw.nodes);
+            assert_eq!(graph.nodes, crate::semantic::base_graph(&raw).nodes);
             let target = graph
                 .nodes
                 .iter()

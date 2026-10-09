@@ -1,5 +1,4 @@
 use super::*;
-use crate::model::ResourceRole;
 use serde_json::json;
 
 #[test]
@@ -16,7 +15,7 @@ fn explicit_mode_is_independent_of_action_and_address() {
             Action::Unchanged,
         );
         assert_eq!(node.mode, expected);
-        assert_eq!(node.role, ResourceRole::Container);
+        assert_eq!(node.resource_type, "aws_vpc");
         assert_eq!(node.action, Action::Unchanged);
     }
 }

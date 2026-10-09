@@ -16,13 +16,13 @@ pub use states::parse_inputs;
 #[path = "../tests/unit/plan.rs"]
 mod tests;
 
-use crate::model::{Action, EntityMode, Graph, Node, PlanStatus, TerraformGraph};
+use crate::model::{Action, EntityMode, PlanStatus, TerraformEntity, TerraformPlan};
 use address::static_address;
 use references::{collect_config, resolve};
 use serde_json::Value;
 use std::collections::{BTreeMap, BTreeSet};
 
-pub fn parse(json: &str) -> Result<TerraformGraph, String> {
+pub fn parse(json: &str) -> Result<TerraformPlan, String> {
     let plan: Value = serde_json::from_str(json.trim_start_matches('\u{feff}'))
         .map_err(|e| format!("invalid JSON: {e}"))?;
     let version = plan["format_version"]
@@ -102,20 +102,17 @@ pub fn parse(json: &str) -> Result<TerraformGraph, String> {
         &symbols,
         true,
     );
-    Ok(TerraformGraph {
+    Ok(TerraformPlan {
         remote_references: remote::collect(&plan["configuration"]["root_module"], &nodes),
         outputs: outputs::collect(&plan["configuration"]["root_module"], &nodes, &symbols),
-        graph: Graph {
-            components: Vec::new(),
-            checks: checks::parse(&plan["checks"], &nodes),
-            status: PlanStatus {
-                applyable: plan["applyable"].as_bool(),
-                complete: plan["complete"].as_bool(),
-                errored: plan["errored"].as_bool(),
-            },
-            nodes,
-            edges,
+        checks: checks::parse(&plan["checks"], &nodes),
+        status: PlanStatus {
+            applyable: plan["applyable"].as_bool(),
+            complete: plan["complete"].as_bool(),
+            errored: plan["errored"].as_bool(),
         },
+        nodes,
+        edges,
         attributes,
         graph_references,
         drift,
@@ -143,7 +140,7 @@ fn parse_action(actions: &Value) -> Action {
 
 fn collect_values(
     module: &Value,
-    nodes: &mut BTreeMap<(String, Option<String>), Node>,
+    nodes: &mut BTreeMap<(String, Option<String>), TerraformEntity>,
     data_only: bool,
 ) {
     for resource in module["resources"].as_array().into_iter().flatten() {

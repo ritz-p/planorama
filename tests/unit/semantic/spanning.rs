@@ -68,7 +68,7 @@ fn alb_and_ecs_share_the_vpc_without_losing_subnet_connections() {
     let original = raw.clone();
     let graph = semantic::transform(&raw).0;
     assert_eq!(raw, original);
-    assert_eq!(graph.nodes, raw.nodes);
+    assert_eq!(graph.nodes, crate::semantic::base_graph(&raw).nodes);
     let vpc = index(&graph, "aws_vpc.main");
     let layout = Layout::new(&graph);
     for address in ["aws_lb.app", "aws_ecs_service.app"] {

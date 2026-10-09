@@ -12,9 +12,14 @@ fn infers_only_explicit_parent_attributes_and_preserves_raw_graph() {
     let original = raw.clone();
     let architecture = semantic::transform(&raw);
     assert_eq!(raw, original);
-    assert_eq!(architecture.nodes, raw.nodes);
+    assert_eq!(architecture.nodes, crate::semantic::base_graph(&raw).nodes);
     assert_eq!(architecture.edges.len(), raw.edges.len());
-    assert!(raw.edges.iter().all(|e| e.kind == EdgeKind::Dependency));
+    assert!(
+        crate::semantic::base_graph(&raw)
+            .edges
+            .iter()
+            .all(|e| e.kind == EdgeKind::Dependency)
+    );
     for edge in &architecture.edges {
         let types = (
             architecture.nodes[edge.from].resource_type.as_str(),
@@ -66,7 +71,10 @@ fn tags_depends_on_constants_and_partial_references_are_not_containment() {
             };
         }
         let raw = plan::parse(&input.to_string()).unwrap();
-        assert_eq!(semantic::transform(&raw).0, raw.graph);
+        assert_eq!(
+            semantic::transform(&raw).0,
+            crate::semantic::base_graph(&raw)
+        );
     }
 }
 
@@ -85,7 +93,10 @@ fn unsupported_types_and_data_queries_keep_dependency_edges() {
             }
         }
         let raw = plan::parse(&input.to_string()).unwrap();
-        assert_eq!(semantic::transform(&raw).0, raw.graph);
+        assert_eq!(
+            semantic::transform(&raw).0,
+            crate::semantic::base_graph(&raw)
+        );
     }
 }
 
@@ -114,7 +125,10 @@ fn multiple_possible_parents_preserve_all_original_dependencies() {
         json!({"address":"aws_subnet.private[1]","type":"aws_subnet"}),
     ]);
     let raw = plan::parse(&input.to_string()).unwrap();
-    assert_eq!(semantic::transform(&raw).0, raw.graph);
+    assert_eq!(
+        semantic::transform(&raw).0,
+        crate::semantic::base_graph(&raw)
+    );
 }
 
 #[test]

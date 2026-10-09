@@ -90,7 +90,9 @@ fn bundled_stars_avoid_cards_and_keep_individual_svg_relationships() {
 
 #[test]
 fn bundling_sample_preserves_both_stages_of_dependencies() {
-    let graph = crate::plan::parse(include_str!("../../examples/bundling-plan.json")).unwrap();
+    let graph = crate::semantic::base_graph(
+        &crate::plan::parse(include_str!("../../examples/bundling-plan.json")).unwrap(),
+    );
     assert_eq!(graph.nodes.len(), 5);
     assert_eq!(graph.edges.len(), 6);
     let layout = Layout::new(&graph);
@@ -131,7 +133,9 @@ fn long_edges_and_cycles_avoid_cards() {
         6,
         vec![(0, 1), (1, 2), (2, 3), (0, 3), (3, 4), (4, 3), (0, 5)],
     ));
-    check_geometry(&crate::plan::parse(include_str!("../../examples/plan.json")).unwrap());
+    check_geometry(&crate::semantic::base_graph(
+        &crate::plan::parse(include_str!("../../examples/plan.json")).unwrap(),
+    ));
 }
 
 #[test]
@@ -149,9 +153,9 @@ fn dense_dag_and_multiple_modules_avoid_cards() {
         node.module = format!("module.group{}", i % 3);
     }
     check_geometry(&graph);
-    check_geometry(
+    check_geometry(&crate::semantic::base_graph(
         &crate::plan::parse(include_str!("../../tests/fixtures/terraform-plan.json")).unwrap(),
-    );
+    ));
 }
 
 #[test]

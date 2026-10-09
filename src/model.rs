@@ -71,14 +71,16 @@ mod graphs;
 mod operations;
 mod provider;
 mod states;
+mod terraform;
 pub(crate) use diagnostics::Resolution;
 pub use diagnostics::{Diagnostic, DiagnosticReason};
-pub use graphs::{ArchitectureGraph, AttributeReference, StateOutput, TerraformGraph};
+pub use graphs::{ArchitectureGraph, AttributeReference, StateOutput};
 pub use operations::{
     AttributePathStep, ChangeMetadata, DriftRecord, ImportMetadata, RelevantAttribute, StateRemoval,
 };
 pub use provider::ProviderIdentity;
 pub use states::{MultiPlan, PlanInput, StateId};
+pub use terraform::{TerraformEntity, TerraformPlan, TerraformReference};
 
 #[allow(
     dead_code,

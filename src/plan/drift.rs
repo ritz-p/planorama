@@ -1,4 +1,4 @@
-use crate::model::{Action, DriftRecord, Node};
+use crate::model::{Action, DriftRecord, TerraformEntity};
 use serde_json::Value;
 use std::collections::BTreeMap;
 
@@ -6,13 +6,16 @@ use std::collections::BTreeMap;
 #[path = "../../tests/unit/plan/drift.rs"]
 mod tests;
 
-fn compatible(left: &Node, right: &Node) -> bool {
+fn compatible(left: &TerraformEntity, right: &TerraformEntity) -> bool {
     left.resource_type == right.resource_type
         && left.mode == right.mode
         && (left.provider == right.provider || (left.provider.is_aws() && right.provider.is_aws()))
 }
 
-pub(super) fn collect(plan: &Value, nodes: &mut Vec<Node>) -> Result<Vec<DriftRecord>, String> {
+pub(super) fn collect(
+    plan: &Value,
+    nodes: &mut Vec<TerraformEntity>,
+) -> Result<Vec<DriftRecord>, String> {
     let mut changes = Vec::new();
     for change in plan["resource_drift"].as_array().into_iter().flatten() {
         let address = change["address"]
