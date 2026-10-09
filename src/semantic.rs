@@ -10,6 +10,7 @@ pub mod cross_state;
 mod data;
 pub mod diagnostics;
 pub mod filter;
+mod relationships;
 mod routes;
 mod security_groups;
 
@@ -25,5 +26,6 @@ pub fn transform(plan: &TerraformPlan) -> ArchitectureGraph {
     let contained = Input { graph, ..raw };
     let mut graph = data::visible(associations::lower(&contained));
     graph.components = components::infer(&contained, &graph);
+    graph.relationships = relationships::collect(&graph, plan);
     ArchitectureGraph(graph)
 }

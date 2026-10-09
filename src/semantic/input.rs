@@ -29,7 +29,8 @@ impl Input {
 }
 
 pub(crate) fn base_graph(plan: &TerraformPlan) -> Graph {
-    Graph {
+    let mut graph = Graph {
+        relationships: Vec::new(),
         components: Vec::new(),
         checks: plan.checks.clone(),
         status: plan.status,
@@ -55,5 +56,7 @@ pub(crate) fn base_graph(plan: &TerraformPlan) -> Graph {
             .iter()
             .map(|edge| edge.endpoints().into())
             .collect(),
-    }
+    };
+    graph.relationships = super::relationships::collect(&graph, plan);
+    graph
 }
