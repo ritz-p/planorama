@@ -10,12 +10,18 @@ const HELP: &str = "planorama — Terraform plan JSON → SVG (pure Rust)\n\nUsa
 pub fn run() -> Result<(), String> {
     let mut input = None;
     let mut state_inputs = std::collections::BTreeMap::new();
+    let mut mappings = Vec::new();
     let mut output = PathBuf::from("diagram.svg");
     let mut address_format = svg::AddressFormat::default();
     let mut diagnostics = false;
     let mut args = std::env::args().skip(1);
     while let Some(arg) = args.next() {
         match arg.as_str() {
+            "--remote-state" => mappings.push(crate::model::cross_state::Mapping::parse(
+                &args
+                    .next()
+                    .ok_or("--remote-state requires CONSUMER:ADDRESS=PRODUCER")?,
+            )?),
             "--state" => {
                 let named = args.next().ok_or("--state requires ID=PATH")?;
                 let (id, path) = named.split_once('=').ok_or("--state requires ID=PATH")?;
@@ -65,7 +71,16 @@ pub fn run() -> Result<(), String> {
         if input.is_some() {
             return Err("do not mix --state with a positional input".into());
         }
-        return states::run(state_inputs, &output, address_format, diagnostics);
+        return states::run(
+            state_inputs,
+            &output,
+            address_format,
+            diagnostics,
+            &mappings,
+        );
+    }
+    if !mappings.is_empty() {
+        return Err("--remote-state requires named --state inputs".into());
     }
     let input = input.ok_or("missing input; use --help for usage")?;
     if input != "-" && output != Path::new("-") {

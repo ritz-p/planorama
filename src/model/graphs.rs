@@ -3,6 +3,7 @@ use std::ops::Deref;
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct TerraformGraph {
+    pub remote_references: Vec<super::cross_state::RemoteReference>,
     pub outputs: Vec<StateOutput>,
     pub graph: Graph,
     pub attributes: Vec<AttributeReference>,
