@@ -1,3 +1,4 @@
+mod checks;
 mod containers;
 mod entities;
 mod icons;
@@ -46,7 +47,8 @@ pub fn render_with_format(
     layout: &Layout<'_>,
     address_format: AddressFormat,
 ) -> String {
-    let (width, height) = (layout.width, layout.height);
+    let check_offset = if graph.checks.is_empty() { 0 } else { 24 };
+    let (width, height) = (layout.width, layout.height + check_offset);
     let (description, summary) = relationships::captions(graph);
     let markers = relationships::markers(graph);
     let icon_definitions = icons::definitions(&graph.nodes);
@@ -113,6 +115,10 @@ pub fn render_with_format(
             write!(svg, " {name}: {value}").unwrap();
         }
         svg.push_str("</text>\n</g>\n");
+    }
+    if check_offset != 0 {
+        svg.push_str(&checks::render(&graph.checks));
+        svg.push_str("<g transform=\"translate(0 24)\">\n");
     }
     for band in &layout.bands {
         let (module, y, h) = (band.label, band.top, band.height);
@@ -262,6 +268,9 @@ pub fn render_with_format(
     }
     if graph.nodes.is_empty() {
         svg.push_str("<text x=\"40\" y=\"185\" font-size=\"16\" fill=\"#64748b\">No resources to display.</text>\n");
+    }
+    if check_offset != 0 {
+        svg.push_str("</g>\n");
     }
     svg.push_str("</g>\n</svg>\n");
     svg
