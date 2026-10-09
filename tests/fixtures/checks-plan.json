@@ -1,0 +1,20 @@
+{
+  "format_version": "1.2",
+  "applyable": true,
+  "complete": false,
+  "errored": false,
+  "resource_changes": [
+    {"address":"terraform_data.app[0]","mode":"managed","type":"terraform_data","change":{"actions":["update"]}},
+    {"address":"terraform_data.app[1]","mode":"managed","type":"terraform_data","change":{"actions":["no-op"]}}
+  ],
+  "checks": [
+    {"address":{"kind":"resource","mode":"managed","type":"terraform_data","name":"app","to_display":"terraform_data.app"},"status":"fail","instances":[
+      {"address":{"to_display":"terraform_data.app[0]","instance_key":0},"status":"fail","problems":[{"message":"TOP_SECRET evaluated value"}]},
+      {"address":{"to_display":"terraform_data.app[1]","instance_key":1},"status":"pass"}
+    ]},
+    {"address":{"kind":"output_value","to_display":"output.ready"},"status":"pass","instances":[{"status":"pass"}]},
+    {"address":{"kind":"check","to_display":"check.error"},"status":"error","instances":[{"status":"error","problems":[{"message":"TOP_SECRET error"}]}]},
+    {"address":{"kind":"check","to_display":"check.pending"},"status":"unknown"},
+    {"address":{"kind":"future"},"status":"future<&status","details":{"value":"TOP_SECRET"}}
+  ]
+}

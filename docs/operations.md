@@ -1,5 +1,7 @@
 # Terraform operation metadata
 
+Plan-level checks, including resource preconditions and postconditions, are documented in [Terraform check results](checks.md).
+
 ## Replacement reasons
 
 Replacement path strings can also be collection keys or set elements. Before retaining paths, both `before_sensitive` and `after_sensitive` are checked. Paths entering a sensitive subtree are omitted in full (including when only a descendant is marked sensitive), so secret keys never reach the model, SVG titles, or data attributes. Other paths remain available; omitted paths are not replaced with misleading truncated paths.

@@ -1,5 +1,6 @@
 mod address;
 mod attributes;
+mod checks;
 mod collections;
 mod drift;
 mod entity;
@@ -97,6 +98,7 @@ pub fn parse(json: &str) -> Result<TerraformGraph, String> {
     );
     Ok(TerraformGraph {
         graph: Graph {
+            checks: checks::parse(&plan["checks"], &nodes),
             status: PlanStatus {
                 applyable: plan["applyable"].as_bool(),
                 complete: plan["complete"].as_bool(),

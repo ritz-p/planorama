@@ -43,6 +43,7 @@ pub enum ResourceRole {
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Graph {
+    pub checks: Vec<CheckResult>,
     pub status: PlanStatus,
     pub nodes: Vec<Node>,
     pub edges: Vec<Edge>,
@@ -58,7 +59,9 @@ pub struct PlanStatus {
 }
 
 mod address;
+mod checks;
 pub(crate) use address::module_of;
+pub use checks::{CheckInstance, CheckResult};
 mod diagnostics;
 mod graphs;
 mod operations;

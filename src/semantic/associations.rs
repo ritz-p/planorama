@@ -108,6 +108,7 @@ pub(super) fn lower(raw: &TerraformGraph) -> Graph {
     edges.sort();
     edges.dedup();
     Graph {
+        checks: raw.checks.clone(),
         status: raw.status,
         nodes,
         edges,
