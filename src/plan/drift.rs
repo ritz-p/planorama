@@ -60,6 +60,7 @@ pub(super) fn collect(plan: &Value, nodes: &mut Vec<Node>) -> Result<Vec<DriftRe
                 nodes[index].metadata.drift.insert(change.action);
             }
             found.push(DriftRecord {
+                relevant: false,
                 address: address.clone(),
                 deposed_key: deposed_key.clone(),
                 previous_address: change.previous_address,

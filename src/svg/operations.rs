@@ -15,6 +15,14 @@ pub(super) fn label(action: Action, metadata: &ChangeMetadata) -> String {
 
 pub(super) fn attributes(metadata: &ChangeMetadata) -> String {
     let mut result = String::new();
+    if let Some(paths) = &metadata.relevant_attributes {
+        write!(
+            result,
+            " data-plan-relevant=\"true\" data-relevant-attributes=\"{}\"",
+            super::escape(&serialize_paths(paths))
+        )
+        .unwrap();
+    }
     if let Some(reason) = &metadata.action_reason {
         write!(result, " data-action-reason=\"{}\"", super::escape(reason)).unwrap();
     }
@@ -40,30 +48,43 @@ pub(super) fn attributes(metadata: &ChangeMetadata) -> String {
 }
 
 fn paths_json(metadata: &ChangeMetadata) -> Option<String> {
-    metadata.replace_paths.as_ref().map(|paths| {
-        serde_json::Value::Array(
-            paths
-                .iter()
-                .map(|path| {
-                    serde_json::Value::Array(
-                        path.iter()
-                            .map(|step| match step {
-                                AttributePathStep::Attribute(name) => {
-                                    serde_json::Value::String(name.clone())
-                                }
-                                AttributePathStep::Index(index) => (*index).into(),
-                            })
-                            .collect(),
-                    )
-                })
-                .collect(),
-        )
-        .to_string()
-    })
+    metadata
+        .replace_paths
+        .as_ref()
+        .map(|paths| serialize_paths(paths))
+}
+
+fn serialize_paths(paths: &[Vec<AttributePathStep>]) -> String {
+    serde_json::Value::Array(
+        paths
+            .iter()
+            .map(|path| {
+                serde_json::Value::Array(
+                    path.iter()
+                        .map(|step| match step {
+                            AttributePathStep::Attribute(name) => {
+                                serde_json::Value::String(name.clone())
+                            }
+                            AttributePathStep::Index(index) => (*index).into(),
+                        })
+                        .collect(),
+                )
+            })
+            .collect(),
+    )
+    .to_string()
 }
 
 pub(super) fn details(metadata: &ChangeMetadata) -> String {
     let mut result = String::new();
+    if let Some(paths) = &metadata.relevant_attributes {
+        write!(
+            result,
+            "; Terraform-reported plan relevance; attributes: {}",
+            serialize_paths(paths)
+        )
+        .unwrap();
+    }
     if let Some(reason) = &metadata.action_reason {
         write!(result, "; reason: {reason}").unwrap();
     }
