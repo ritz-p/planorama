@@ -5,7 +5,7 @@ pub(crate) use input::Input;
 pub(crate) use input::base_graph;
 pub mod cross_state;
 pub mod diagnostics;
-mod relationships;
+pub(crate) mod relationships;
 
 #[cfg(test)]
 #[path = "../tests/unit/semantic.rs"]
@@ -16,6 +16,6 @@ pub fn transform(plan: &TerraformPlan) -> ArchitectureGraph {
     // Fixed order: direct/spanning/indirect containment, security-group connections, relationship lowering,
     // then data-source visibility. Lowering must see all original consumers.
     let mut graph = crate::provider::transform(raw);
-    graph.relationships = relationships::collect(&graph, plan);
+    graph.relationships = relationships::collect(&graph);
     ArchitectureGraph(graph)
 }
