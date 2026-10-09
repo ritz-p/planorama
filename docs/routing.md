@@ -1,5 +1,42 @@
 # Geometry-aware attachment
 
+## Layout/routing integration (#82)
+
+| Stage | Shared contract | Implemented in |
+| --- | --- | --- |
+| Derived hierarchy | `ContainmentTree`: unique parents, deterministic children/roots, inclusive ancestry, cycle/ambiguity handling | #83 `layout/containment.rs` |
+| Geometry | `Bounds`, `Point`, `Side`, `Port`; actual card/container dimensions | #84 `layout/geometry.rs` |
+| Routing primitives | Obstacle intersection, segment coverage, scoring, orthogonal search, explicit simplification policies | #85 `layout/routing_shared` |
+| Orchestration | One hierarchy → placement → routing → final geometry pipeline; specialized strategies below stages | #86 `layout/pipeline.rs` |
+
+`Layout::new` constructs the hierarchy once. Both strategies retain it in the
+result; nested placement only computes geometry, and routing uses that same
+hierarchy for endpoint ancestry and obstacles. Flat routing keeps rank lanes and
+bundling; nested routing keeps recursive packing and endpoint-aware search. They
+share geometry, occupancy and candidate scoring rather than becoming one oversized
+router. Named-state margin routes also use the shared search.
+
+The integration preserves semantic edges, containment and provider classification.
+The extraction commits #83–#86 intentionally leave SVGs unchanged. #81 separately
+introduces the visual changes described below. Regression coverage includes nested
+roots/cycles, variable-sized bounds, crowded lanes, high-degree ports, spanning
+bundles, module/input reordering, captured Terraform plans and checked-in SVGs.
+
+Validation uses the Docker service:
+
+```sh
+docker compose exec -T dev cargo fmt --check
+docker compose exec -T dev cargo clippy --locked --all-targets -- -D warnings
+docker compose exec -T dev cargo test --locked
+```
+
+The final integration passes 321 tests; the opt-in benchmark is ignored in the
+normal suite. Performance measurements are documented separately in
+[benchmarking](benchmarks.md). Port-candidate evaluation adds search work;
+the routing improvements are not a claim of faster execution.
+
+## Attachment policy
+
 Layout derives a containment tree once, places cards/containers, then routes
 their relationships. Flat and nested strategies share bounds, four-sided ports,
 obstacle intersection, segment occupancy, scoring and orthogonal grid search.
