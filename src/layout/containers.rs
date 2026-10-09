@@ -12,12 +12,24 @@ mod tests;
 
 const PADDING: usize = 40;
 
-pub(super) fn place(graph: &Graph) -> Layout<'_> {
-    place_with_affinity(graph, true)
+pub(super) fn route(graph: &Graph, layout: &mut Layout<'_>, bundle: bool) {
+    let routed = routing::route(graph, layout, &layout.containment.keys, bundle);
+    layout.paths = routed.paths;
+    layout.junctions = routed.junctions;
 }
 
+#[cfg(test)]
 fn place_with_affinity(graph: &Graph, enabled: bool) -> Layout<'_> {
-    let tree = super::ContainmentTree::new(graph);
+    let mut layout = place_geometry(graph, super::ContainmentTree::new(graph), enabled);
+    route(graph, &mut layout, enabled);
+    layout
+}
+
+pub(super) fn place_geometry(
+    graph: &Graph,
+    tree: super::ContainmentTree,
+    enabled: bool,
+) -> Layout<'_> {
     let parents = &tree.parents;
     let affinities = if enabled {
         affinity::groups(graph, parents)
@@ -29,7 +41,7 @@ fn place_with_affinity(graph: &Graph, enabled: bool) -> Layout<'_> {
         .map(|edges| NODE_HEIGHT.max(edges.len() + 41))
         .collect();
     let children = &tree.children;
-    let keys = &tree.keys;
+
     let roots = &tree.roots;
     let mut order = Vec::new();
     let mut pending = roots.clone();
@@ -77,9 +89,9 @@ fn place_with_affinity(graph: &Graph, enabled: bool) -> Layout<'_> {
         paths: Vec::new(),
         junctions: Vec::new(),
         containers: Vec::new(),
-        containment: tree.clone(),
+        containment: tree,
     };
-    for &root in roots {
+    for &root in &layout.containment.roots {
         layout.positions[root] = Point {
             x: 60 + offsets[root].x,
             y: 160 + offsets[root].y,
@@ -97,18 +109,15 @@ fn place_with_affinity(graph: &Graph, enabled: bool) -> Layout<'_> {
             if graph.nodes[node].role == ResourceRole::Container {
                 layout.containers.push(node);
             }
-            for &child in &children[node] {
+            for &child in &layout.containment.children[node] {
                 layout.positions[child] = Point {
                     x: origin.x + offsets[child].x,
                     y: origin.y + offsets[child].y,
                 };
             }
-            pending.extend(children[node].iter().rev().copied());
+            pending.extend(layout.containment.children[node].iter().rev().copied());
         }
     }
     layout.height = (root_height + 240).max(300);
-    let routed = routing::route(graph, &layout, keys, enabled);
-    layout.paths = routed.paths;
-    layout.junctions = routed.junctions;
     layout
 }
