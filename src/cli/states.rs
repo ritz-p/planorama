@@ -55,6 +55,10 @@ pub(super) fn run(
             .map_err(|e| format!("cannot write diagnostics: {e}"))?;
         }
         for edge in &cross.edges {
+            let crate::model::cross_state::CrossStateProvenance::TerraformRemoteState {
+                remote,
+                output,
+            } = &edge.provenance;
             writeln!(
                 stderr,
                 "cross-state: {:?}:{:?} -> {:?}:{:?} via {:?}.outputs.{:?}",
@@ -62,8 +66,8 @@ pub(super) fn run(
                 edge.from.address,
                 edge.to.state.as_str(),
                 edge.to.address,
-                edge.remote,
-                edge.output
+                remote,
+                output
             )
             .map_err(|e| format!("cannot write diagnostics: {e}"))?;
         }
