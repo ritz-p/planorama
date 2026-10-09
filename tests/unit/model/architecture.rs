@@ -83,6 +83,7 @@ fn layout_uses_native_identity_and_can_position_an_address_free_aggregate() {
     let only_aggregate = Graph {
         nodes: vec![],
         edges: vec![],
+        relationships: Vec::new(),
         components: vec![component.clone()],
         checks: vec![],
         status: Default::default(),

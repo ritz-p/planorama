@@ -215,6 +215,11 @@ pub fn apply(all: &Architecture, options: &Options) -> Result<Architecture, Stri
                 .0
                 .components
                 .retain(|c| c.members.iter().all(|m| addresses.contains(m.as_str())));
+            let ids: BTreeSet<_> = graph.entities().map(|e| e.id.clone()).collect();
+            graph
+                .0
+                .relationships
+                .retain(|r| ids.contains(&r.from) && ids.contains(&r.to));
             (state.clone(), graph)
         })
         .collect();

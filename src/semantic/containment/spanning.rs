@@ -83,7 +83,28 @@ pub(super) fn infer(raw: &Input, mut graph: Graph) -> Graph {
                 }
             }
         }
+        for &source in &reference.sources {
+            if Some(source) != parent {
+                crate::semantic::relationships::record_reference(
+                    &mut graph,
+                    source,
+                    reference.target,
+                    EdgeKind::Connection,
+                );
+            }
+        }
         if let Some(parent) = parent {
+            let mut proof = evidence(&graph, parent, &reference.sources, &parents);
+            proof.extend(reference.sources.iter().map(|&source| {
+                crate::semantic::relationships::reference(&graph, source, reference.target)
+            }));
+            crate::semantic::relationships::record(
+                &mut graph,
+                parent,
+                reference.target,
+                EdgeKind::Containment,
+                proof,
+            );
             if !graph.edges.iter().any(|edge| {
                 edge.from == parent
                     && edge.to == reference.target
@@ -97,4 +118,31 @@ pub(super) fn infer(raw: &Input, mut graph: Graph) -> Graph {
         }
     }
     graph
+}
+
+/// Only the containment ancestry used by common_parent can support this rule.
+pub(super) fn evidence(
+    graph: &Graph,
+    ancestor: usize,
+    sources: &[usize],
+    parents: &[BTreeSet<usize>],
+) -> Vec<crate::model::RelationshipProvenance> {
+    let mut proof = Vec::new();
+    for &source in sources {
+        let mut node = source;
+        while node != ancestor {
+            let Some(&parent) = parents[node].first() else {
+                break;
+            };
+            if let Some(relationship) = graph.relationships.iter().find(|r| {
+                r.kind == EdgeKind::Containment
+                    && r.from == graph.nodes[parent].entity.id
+                    && r.to == graph.nodes[node].entity.id
+            }) {
+                proof.extend(relationship.provenance.iter().cloned());
+            }
+            node = parent;
+        }
+    }
+    proof
 }

@@ -54,5 +54,13 @@ pub(super) fn infer(raw: &Input) -> Graph {
             edge.kind = EdgeKind::Containment;
         }
     }
+    for (from, to) in relationships {
+        crate::semantic::relationships::record_reference(
+            &mut graph,
+            from,
+            to,
+            EdgeKind::Containment,
+        );
+    }
     indirect::infer(raw, spanning::infer(raw, graph))
 }

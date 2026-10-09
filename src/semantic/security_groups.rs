@@ -56,13 +56,23 @@ pub(super) fn infer(raw: &Input, mut graph: Graph) -> Graph {
         {
             continue;
         }
+        let mut inferred = Vec::new();
         for edge in &mut graph.edges {
             if edge.to == reference.target
                 && edge.kind == EdgeKind::Dependency
                 && reference.sources.contains(&edge.from)
             {
                 edge.kind = EdgeKind::Connection;
+                inferred.push(edge.endpoints());
             }
+        }
+        for (from, to) in inferred {
+            crate::semantic::relationships::record_reference(
+                &mut graph,
+                from,
+                to,
+                EdgeKind::Connection,
+            );
         }
     }
     graph

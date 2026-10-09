@@ -55,6 +55,10 @@ fn paths_json(metadata: &ChangeMetadata) -> Option<String> {
 }
 
 fn serialize_paths(paths: &[Vec<AttributePathStep>]) -> String {
+    path_values(paths).to_string()
+}
+
+fn path_values(paths: &[Vec<AttributePathStep>]) -> serde_json::Value {
     serde_json::Value::Array(
         paths
             .iter()
@@ -72,7 +76,17 @@ fn serialize_paths(paths: &[Vec<AttributePathStep>]) -> String {
             })
             .collect(),
     )
-    .to_string()
+}
+
+pub(super) fn metadata(metadata: &ChangeMetadata) -> serde_json::Value {
+    serde_json::json!({
+        "import": metadata.import.map(|import| serde_json::json!({"has_id":import.has_id,"has_identity":import.has_identity,"unknown":import.unknown})),
+        "state_removal": metadata.state_removal.map(|removal| removal.label()),
+        "drift": metadata.drift.iter().map(|action| super::style::label(*action)).collect::<Vec<_>>(),
+        "action_reason": metadata.action_reason,
+        "replace_paths": metadata.replace_paths.as_deref().map(path_values),
+        "relevant_attributes": metadata.relevant_attributes.as_deref().map(path_values),
+    })
 }
 
 pub(super) fn details(metadata: &ChangeMetadata) -> String {

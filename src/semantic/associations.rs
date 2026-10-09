@@ -106,6 +106,7 @@ pub(super) fn lower(raw: &Input) -> Graph {
     edges.sort();
     edges.dedup();
     Graph {
+        relationships: raw.relationships.clone(),
         components: raw.components.clone(),
         checks: raw.checks.clone(),
         status: raw.status,

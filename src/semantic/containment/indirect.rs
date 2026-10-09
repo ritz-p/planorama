@@ -74,6 +74,25 @@ pub(super) fn infer(raw: &Input, mut graph: Graph) -> Graph {
         if parent == target || raw.nodes[parent].role != ResourceRole::Container {
             continue;
         }
+        let group = static_reference(raw, target, "db_subnet_group_name")
+            .expect("resolved subnet group")
+            .sources[0];
+        let mut proof = super::spanning::evidence(&graph, parent, subnets, &parents);
+        proof.extend(
+            subnets
+                .iter()
+                .map(|&source| crate::semantic::relationships::reference(&graph, source, group)),
+        );
+        proof.push(crate::semantic::relationships::reference(
+            &graph, group, target,
+        ));
+        crate::semantic::relationships::record(
+            &mut graph,
+            parent,
+            target,
+            EdgeKind::Containment,
+            proof,
+        );
         // Keep the group card and both dependency hops; only add the derived scope.
         if let Some(edge) = graph
             .edges
