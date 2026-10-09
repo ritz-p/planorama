@@ -10,6 +10,7 @@ pub(super) fn run(
     format: svg::AddressFormat,
     diagnostics: bool,
     mappings: &[crate::model::cross_state::Mapping],
+    filter: &semantic::filter::Options,
 ) -> Result<(), String> {
     if inputs.values().filter(|path| path.as_str() == "-").count() > 1 {
         return Err("stdin may be used by only one state".into());
@@ -100,6 +101,7 @@ pub(super) fn run(
         states: graphs,
         relationships: cross.edges,
     };
+    let architecture = semantic::filter::apply(&architecture, filter)?;
     let image = svg::render_states(&architecture, format);
     if output == Path::new("-") {
         io::stdout()
