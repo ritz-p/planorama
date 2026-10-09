@@ -1,5 +1,7 @@
 # Terraform operation metadata
 
+Supported route resources retain their operation metadata when lowered to [route relationships](routes.md).
+
 Plan-level checks, including resource preconditions and postconditions, are documented in [Terraform check results](checks.md).
 
 ## Replacement reasons

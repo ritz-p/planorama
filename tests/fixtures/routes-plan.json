@@ -1,0 +1,15 @@
+{
+  "format_version":"1.2",
+  "resource_changes":[
+    {"address":"aws_route_table.public","type":"aws_route_table","change":{"actions":["no-op"],"after":{"id":"TOP_SECRET_TABLE"}}},
+    {"address":"aws_internet_gateway.main","type":"aws_internet_gateway","change":{"actions":["no-op"],"after":{"id":"TOP_SECRET_TARGET"}}},
+    {"address":"aws_route.default","type":"aws_route","action_reason":"replace_because_cannot_update","change":{"actions":["delete","create"],"replace_paths":[["gateway_id"]],"after":{"route_table_id":"TOP_SECRET_TABLE","gateway_id":"TOP_SECRET_TARGET"}}},
+    {"address":"aws_route.second","type":"aws_route","change":{"actions":["create"],"after":{"route_table_id":"TOP_SECRET_TABLE","gateway_id":"TOP_SECRET_TARGET"}}},
+    {"address":"aws_route.literal","type":"aws_route","change":{"actions":["delete"]}}
+  ],
+  "configuration":{"root_module":{"resources":[
+    {"address":"aws_route.default","expressions":{"route_table_id":{"references":["aws_route_table.public.id"]},"gateway_id":{"references":["aws_internet_gateway.main.id"]},"destination_cidr_block":{"constant_value":"TOP_SECRET_CIDR"}}},
+    {"address":"aws_route.second","expressions":{"route_table_id":{"references":["aws_route_table.public.id"]},"gateway_id":{"references":["aws_internet_gateway.main.id"]}}},
+    {"address":"aws_route.literal","expressions":{"route_table_id":{"references":["aws_route_table.public.id"]},"gateway_id":{"constant_value":"TOP_SECRET_ID"}}}
+  ]}}
+}

@@ -3,6 +3,7 @@ mod associations;
 mod containment;
 mod data;
 pub mod diagnostics;
+mod routes;
 mod security_groups;
 
 #[cfg(test)]

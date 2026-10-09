@@ -14,11 +14,23 @@ pub enum DiagnosticReason {
     AdditionalRelationships,
     DriftDetected,
     DriftUnmatched,
+    UnsupportedRouteTarget,
+    AmbiguousRouteTarget,
+    NonIdReference,
+    UnprovenEndpointValue,
+    DeposedEndpoint,
 }
 
 impl DiagnosticReason {
     pub fn description(self) -> &'static str {
         match self {
+            Self::UnsupportedRouteTarget => "unsupported route target",
+            Self::AmbiguousRouteTarget => "multiple route target attributes",
+            Self::NonIdReference => "endpoint reference does not select resource IDs exclusively",
+            Self::UnprovenEndpointValue => {
+                "planned endpoint value is not proven to equal the referenced resource ID"
+            }
+            Self::DeposedEndpoint => "deposed resource cannot be a route endpoint",
             Self::DriftDetected => {
                 "Terraform-reported resource drift (separate from planned action)"
             }
