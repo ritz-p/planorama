@@ -1,6 +1,30 @@
 mod support;
 
 #[test]
+fn synthetic_components_are_distinct_and_link_to_original_changes() {
+    let input = include_bytes!("../fixtures/components-plan.json");
+    let svg = render(input);
+    assert_eq!(svg.matches("data-entity-kind=\"synthetic\"").count(), 1);
+    assert_eq!(
+        svg.matches("data-component-id=\"logical:load_balancer:aws_lb.app\"")
+            .count(),
+        4
+    );
+    assert!(svg.contains("Logical component: Load balancer: aws_lb.app"));
+    assert!(svg.contains("update: aws_lb_listener.https"));
+    assert!(svg.contains("replace: aws_lb_listener_rule.api"));
+    assert!(svg.contains("data-previous-address=\"aws_lb_listener_rule.old\""));
+    assert_eq!(svg.matches("data-source-address=").count(), 3);
+    assert!(!svg.contains("data-container="));
+    assert!(svg.contains("unchanged (1)"));
+    assert!(svg.contains("create (2)"));
+    assert!(svg.contains("id=\"plan-checks\""));
+    assert!(svg.contains("id=\"plan-status\""));
+    assert!(!svg.contains("TOP_SECRET"));
+    assert_eq!(svg, render(input));
+}
+
+#[test]
 fn referenced_ids_with_different_planned_values_keep_route_cards() {
     let mut input: serde_json::Value =
         serde_json::from_slice(include_bytes!("../fixtures/routes-plan.json")).unwrap();
@@ -347,6 +371,10 @@ fn deposed_fixture_preserves_every_change_card_and_action() {
 #[test]
 fn committed_svg_samples_match_the_current_renderer() {
     for (input, expected) in [
+        (
+            include_bytes!("../fixtures/components-plan.json").as_slice(),
+            include_str!("../../examples/components.svg"),
+        ),
         (
             include_bytes!("../fixtures/routes-plan.json").as_slice(),
             include_str!("../../examples/routes.svg"),

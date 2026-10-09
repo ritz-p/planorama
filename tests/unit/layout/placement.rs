@@ -4,6 +4,7 @@ use crate::model::{Action, Node};
 #[test]
 fn long_edges_order_through_three_ranks_deterministically() {
     let graph = Graph {
+        components: Vec::new(),
         checks: Vec::new(),
         status: Default::default(),
         nodes: (0..4)
