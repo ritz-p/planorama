@@ -1,6 +1,56 @@
 mod support;
 
 #[test]
+fn resource_ids_survive_reordering_insertions_and_label_changes() {
+    let addresses = [
+        "module.app[0].test_item.x[\"a/b & 日本語\"]",
+        "test_item.x[0]",
+        "test_item.x[1]",
+    ];
+    let mut resources: Vec<_> = addresses
+        .iter()
+        .map(|address| {
+            serde_json::json!({
+                "address": address, "type": "test_item", "mode": "managed",
+                "change": {"actions": ["no-op"]}
+            })
+        })
+        .collect();
+    let mut deposed = resources[0].clone();
+    deposed["deposed"] = "old/key".into();
+    resources.push(deposed);
+    let make = |resources: &Vec<serde_json::Value>| {
+        serde_json::json!({"format_version":"1.2","resource_changes":resources}).to_string()
+    };
+    let ids = |svg: &str| {
+        svg.lines()
+            .filter_map(|line| line.strip_prefix("<g id=\"resource-"))
+            .map(|line| line.split('"').next().unwrap().to_owned())
+            .collect::<std::collections::BTreeSet<_>>()
+    };
+    let original = ids(&render(make(&resources).as_bytes()));
+    assert_eq!(original.len(), 4);
+    assert!(
+        original
+            .iter()
+            .all(|id| id.bytes().all(|b| b.is_ascii_alphanumeric() || b == b'-'))
+    );
+    resources.reverse();
+    assert_eq!(original, ids(&render(make(&resources).as_bytes())));
+    resources.push(
+        serde_json::json!({"address":"aaa.extra","type":"aaa","change":{"actions":["create"]}}),
+    );
+    let changed = support::run_with_args(
+        make(&resources).as_bytes(),
+        &["--address-format", "terraform"],
+    );
+    assert!(changed.status.success());
+    let inserted = ids(&String::from_utf8(changed.stdout).unwrap());
+    assert!(original.is_subset(&inserted));
+    assert_eq!(inserted.len(), 5);
+}
+
+#[test]
 fn synthetic_components_are_distinct_and_link_to_original_changes() {
     let input = include_bytes!("../fixtures/components-plan.json");
     let svg = render(input);

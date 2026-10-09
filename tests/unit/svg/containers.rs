@@ -60,15 +60,16 @@ fn five_container_shades_fill_both_headers_and_bounds_and_clamp_deeper_nesting()
         );
         let output = crate::svg::render(&graph, &layout);
         for (node, shade) in shades.iter().enumerate().take(6) {
+            let id = crate::svg::identity::resource(&graph.nodes[node]);
             let boundary = output
-                .split(&format!("data-container=\"resource-{node}\""))
+                .split(&format!("data-container=\"{id}\""))
                 .nth(1)
                 .unwrap()
                 .split("</g>")
                 .next()
                 .unwrap();
             let header = output
-                .split(&format!("id=\"resource-{node}\""))
+                .split(&format!("id=\"{id}\""))
                 .nth(1)
                 .unwrap()
                 .split("</g>")

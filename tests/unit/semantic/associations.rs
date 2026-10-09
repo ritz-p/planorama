@@ -62,9 +62,12 @@ fn lowering_preserves_every_action_in_relationship_and_legend() {
         assert!(image.contains(&format!(
             "association; {label}: aws_route_table_association.private"
         )));
-        assert!(image.contains(&format!(
-            "data-edge-kind=\"association\" fill=\"none\" stroke=\"{color}\""
-        )));
+        assert!(
+            image
+                .lines()
+                .any(|line| line.contains("data-edge-kind=\"association\"")
+                    && line.contains(&format!("fill=\"none\" stroke=\"{color}\"")))
+        );
         assert!(image.contains(&format!("marker-end=\"url(#arrow-{label})\"")));
     }
 }
