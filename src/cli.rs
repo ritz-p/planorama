@@ -5,7 +5,7 @@ use std::path::{Path, PathBuf};
 mod files;
 mod states;
 
-const HELP: &str = "planorama — Terraform plan JSON → SVG (pure Rust)\n\nUsage: planorama <plan.json | -> [-o <diagram.svg | ->] [--address-format qualified|terraform] [--diagnostics]\n\n  -o, --output PATH   Output file (default: diagram.svg); '-' for stdout\n  --address-format FORMAT  Resource labels: qualified (default) or terraform\n  --remote-state CONSUMER:ADDRESS=PRODUCER  Map a named remote-state data source\n  --diagnostics      Explain unresolved references and semantic fallbacks on stderr\n  -h, --help          Show help\n  -V, --version       Show version\n\nInput: terraform show -json <saved-plan> (not terraform plan -json).\nLines show reference or architectural relationships; containment uses nested boxes.\nAttribute values are never included in the diagram.\n";
+const HELP: &str = "planorama — Terraform plan JSON → SVG (pure Rust)\n\nUsage: planorama <plan.json | -> [-o <diagram.svg | ->] [--address-format qualified|terraform] [--diagnostics]\n\n  -o, --output PATH   Output file (default: diagram.svg); '-' for stdout\n  --address-format FORMAT  Resource labels: qualified (default) or terraform\n  --changed-only     Retain changes and required context\n  --focus ADDRESS    Select a resource (STATE:ADDRESS for named states)\n  --focus-depth N    Neighbor depth (default: 1; requires --focus)\n  --remote-state CONSUMER:ADDRESS=PRODUCER  Map a named remote-state data source\n  --diagnostics      Explain unresolved references and semantic fallbacks on stderr\n  -h, --help          Show help\n  -V, --version       Show version\n\nInput: terraform show -json <saved-plan> (not terraform plan -json).\nLines show reference or architectural relationships; containment uses nested boxes.\nAttribute values are never included in the diagram.\n";
 
 pub fn run() -> Result<(), String> {
     let mut input = None;
@@ -14,9 +14,20 @@ pub fn run() -> Result<(), String> {
     let mut output = PathBuf::from("diagram.svg");
     let mut address_format = svg::AddressFormat::default();
     let mut diagnostics = false;
+    let mut filter = semantic::filter::Options::default();
     let mut args = std::env::args().skip(1);
     while let Some(arg) = args.next() {
         match arg.as_str() {
+            "--changed-only" => filter.changed_only = true,
+            "--focus" => filter.focus = Some(args.next().ok_or("--focus requires an address")?),
+            "--focus-depth" => {
+                filter.depth = Some(
+                    args.next()
+                        .ok_or("--focus-depth requires a nonnegative integer")?
+                        .parse()
+                        .map_err(|_| "--focus-depth requires a nonnegative integer")?,
+                )
+            }
             "--remote-state" => mappings.push(crate::model::cross_state::Mapping::parse(
                 &args
                     .next()
@@ -67,6 +78,7 @@ pub fn run() -> Result<(), String> {
             },
         }
     }
+    filter.validate()?;
     if !state_inputs.is_empty() {
         if input.is_some() {
             return Err("do not mix --state with a positional input".into());
@@ -77,6 +89,7 @@ pub fn run() -> Result<(), String> {
             address_format,
             diagnostics,
             &mappings,
+            &filter,
         );
     }
     if !mappings.is_empty() {
@@ -137,7 +150,7 @@ pub fn run() -> Result<(), String> {
             .map_err(|e| format!("cannot write diagnostics: {e}"))?;
         }
     }
-    let graph = semantic::transform(&raw);
+    let graph = semantic::filter::single(&semantic::transform(&raw), &filter)?;
     let layout = Layout::new(&graph);
     let image = match address_format {
         svg::AddressFormat::Qualified => svg::render(&graph, &layout),
