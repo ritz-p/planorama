@@ -263,14 +263,31 @@ pub(super) fn resolve_sources(
     instances: &BTreeMap<String, Vec<usize>>,
     symbols: &BTreeMap<String, BTreeSet<String>>,
 ) -> Resolution {
-    let mut pending: Vec<_> = refs.iter().cloned().map(|r| (r, false)).collect();
+    resolve_with_policy(refs, instances, symbols, false)
+}
+
+pub(super) fn resolve_output_sources(
+    refs: &BTreeSet<String>,
+    instances: &BTreeMap<String, Vec<usize>>,
+    aliases: &BTreeMap<String, BTreeSet<String>>,
+) -> Resolution {
+    resolve_with_policy(refs, instances, aliases, true)
+}
+
+fn resolve_with_policy(
+    refs: &BTreeSet<String>,
+    instances: &BTreeMap<String, Vec<usize>>,
+    symbols: &BTreeMap<String, BTreeSet<String>>,
+    exact_sources: bool,
+) -> Resolution {
+    let mut pending: Vec<_> = refs.iter().cloned().map(|r| (r, false, false)).collect();
     let mut visited = BTreeSet::new();
     let mut active = BTreeSet::new();
     let mut sources = BTreeSet::new();
     let mut complete = !pending.is_empty();
     let mut ids_only = true;
     let mut issues = BTreeSet::new();
-    while let Some((reference, exiting)) = pending.pop() {
+    while let Some((reference, exiting, inherited_ambiguity)) = pending.pop() {
         if exiting {
             active.remove(&reference);
             continue;
@@ -280,11 +297,11 @@ pub(super) fn resolve_sources(
             issues.insert(DiagnosticReason::AliasCycle);
             continue;
         }
-        if !visited.insert(reference.clone()) {
+        if !visited.insert((reference.clone(), inherited_ambiguity)) {
             continue;
         }
         active.insert(reference.clone());
-        pending.push((reference.clone(), true));
+        pending.push((reference.clone(), true, inherited_ambiguity));
         let caller_module = reference.starts_with(super::address::MODULE_REFERENCE);
         let reference = reference
             .strip_prefix(super::address::MODULE_REFERENCE)
@@ -320,9 +337,17 @@ pub(super) fn resolve_sources(
         let metadata = super::address::meta_reference(reference);
         // Module outputs named count/each take precedence over the syntactic
         // metadata heuristic, including outputs whose values have no sources.
-        if super::address::dynamic_selection(reference, resource_key.as_deref())
-            || (metadata && binding.is_none())
-        {
+        let selection_key = resource_key.as_deref().or_else(|| {
+            exact_sources
+                .then(|| binding.map(|(key, _)| key.as_str()))
+                .flatten()
+        });
+        let dynamic = if exact_sources {
+            super::address::dynamic_selection_with_splats(reference, selection_key, true)
+        } else {
+            super::address::dynamic_selection(reference, selection_key)
+        };
+        if dynamic || (metadata && binding.is_none()) {
             issues.insert(DiagnosticReason::DynamicInstanceSelection);
         }
         // Terraform emits iteration metadata as standalone traversals. It is
@@ -333,21 +358,53 @@ pub(super) fn resolve_sources(
         }
 
         if let Some(key) = resource_key {
+            // Terraform can split a dynamic selector from its collection traversal.
+            // Even one current instance does not prove which element was selected.
+            let implicit_collection = exact_sources
+                && normalized == key
+                && super::address::parts(reference)
+                    .last()
+                    .is_some_and(|part| !part.contains('['))
+                && instances.keys().any(|address| {
+                    static_address(address) == key
+                        && super::address::parts(address)
+                            .last()
+                            .is_some_and(|part| part.contains('['))
+                });
+            if implicit_collection {
+                complete = false;
+                issues.insert(DiagnosticReason::DynamicInstanceSelection);
+            }
             ids_only &= normalized == format!("{key}.id") && reference.ends_with(".id");
             let matching: Vec<_> = instances
                 .iter()
                 .filter(|(address, _)| {
                     static_address(address) == key && matches_instance(reference, address)
                 })
-                .flat_map(|(_, indices)| indices.iter().copied())
                 .collect();
+            let ambiguous = matching.len() > 1
+                && (!exact_sources
+                    || matching
+                        .iter()
+                        .map(|(address, _)| super::address::selection_group(reference, address))
+                        .collect::<BTreeSet<_>>()
+                        .len()
+                        > 1);
             if matching.is_empty() {
                 complete = false;
                 issues.insert(DiagnosticReason::UnresolvedReference);
-            } else if matching.len() > 1 {
+            } else if ambiguous {
                 issues.insert(DiagnosticReason::MultipleMatchingInstances);
             }
-            sources.extend(matching);
+            if !exact_sources
+                || !(dynamic || inherited_ambiguity || implicit_collection || ambiguous)
+            {
+                sources.extend(
+                    matching
+                        .into_iter()
+                        .flat_map(|(_, indices)| indices.iter().copied()),
+                );
+            }
             continue;
         }
         match binding {
@@ -355,11 +412,49 @@ pub(super) fn resolve_sources(
                 // Selecting a field of an alias is not proof that its underlying
                 // resource ID is the selected value.
                 ids_only &= normalized == *key;
-                pending.extend(
-                    aliases
-                        .iter()
-                        .map(|alias| (contextualize(alias, reference), false)),
-                );
+                // Flattened expression references cannot prove which aggregate
+                // field/index supplies a narrowed value, even for static selection.
+                let key_parts = super::address::parts(key);
+                let module_object = key_parts.len() % 2 == 0
+                    && key_parts.chunks_exact(2).all(|pair| pair[0] == "module");
+                // Like resource collections, Terraform may serialize a module
+                // selector separately. A lone existing instance is not evidence
+                // that an unindexed module traversal selects that instance.
+                let implicit_collection = exact_sources
+                    && module_object
+                    && normalized == *key
+                    && super::address::parts(reference)
+                        .last()
+                        .is_some_and(|part| !part.contains('['))
+                    && instances.keys().any(|address| {
+                        prefix_match(&static_address(address), key)
+                            && matches_instance(reference, address)
+                            && super::address::parts(address)
+                                .get(key_parts.len() - 1)
+                                .is_some_and(|part| part.contains('['))
+                    });
+                if implicit_collection {
+                    complete = false;
+                    issues.insert(DiagnosticReason::DynamicInstanceSelection);
+                }
+                let narrowed = exact_sources
+                    && (normalized != *key
+                        || (!module_object
+                            && super::address::parts(reference)
+                                .get(key_parts.len() - 1)
+                                .is_some_and(|part| part.contains('['))));
+                if narrowed {
+                    complete = false;
+                    issues.insert(DiagnosticReason::PartialResourceProvenance);
+                }
+                pending.extend(aliases.iter().map(|alias| {
+                    (
+                        contextualize(alias, reference),
+                        false,
+                        exact_sources
+                            && (dynamic || inherited_ambiguity || narrowed || implicit_collection),
+                    )
+                }));
             }
             Some(_) => {
                 // A defined constant alias is not missing. It contributes no
@@ -368,6 +463,11 @@ pub(super) fn resolve_sources(
                 complete = false;
             }
             None if normalized.starts_with("module.") => {
+                if exact_sources {
+                    complete = false;
+                    issues.insert(DiagnosticReason::UnresolvedReference);
+                    continue;
+                }
                 ids_only = false;
                 // A whole-module traversal denotes all matching descendants,
                 // not a choice of one endpoint. Multiplicity is expected even

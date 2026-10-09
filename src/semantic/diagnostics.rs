@@ -5,6 +5,15 @@ use std::collections::BTreeSet;
 /// Only addresses, attribute names and fixed category text can reach the output.
 pub fn collect(raw: &TerraformGraph) -> Vec<Diagnostic> {
     let mut found = BTreeSet::new();
+    for output in &raw.outputs {
+        for &reason in &output.issues {
+            found.insert(Diagnostic {
+                address: format!("output.{}", output.name),
+                attribute: "value".into(),
+                reason,
+            });
+        }
+    }
     for drift in &raw.drift {
         found.insert(Diagnostic {
             address: drift.address.clone(),
