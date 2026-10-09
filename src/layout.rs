@@ -11,6 +11,10 @@ mod tests;
 
 use crate::model::Graph;
 
+pub fn route_to_margin(start: Point, end: Point, obstacles: &[Bounds]) -> Vec<Point> {
+    containers::to_margin(start, end, obstacles)
+}
+
 pub const NODE_WIDTH: usize = 320;
 pub const NODE_HEIGHT: usize = 96;
 

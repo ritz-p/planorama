@@ -82,3 +82,9 @@ pub struct Resolution {
     pub edges: Vec<CrossStateEdge>,
     pub diagnostics: Vec<CrossDiagnostic>,
 }
+
+/// State-local architecture graphs plus dependencies with cross-state provenance.
+pub struct Architecture {
+    pub states: std::collections::BTreeMap<StateId, super::ArchitectureGraph>,
+    pub relationships: Vec<CrossStateEdge>,
+}

@@ -5,6 +5,9 @@ mod affinity;
 mod ordering;
 mod placement;
 mod routing;
+pub(super) fn to_margin(start: Point, end: Point, obstacles: &[Bounds]) -> Vec<Point> {
+    routing::to_margin(start, end, obstacles)
+}
 
 #[cfg(test)]
 #[path = "../../tests/unit/layout/containers.rs"]

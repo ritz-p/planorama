@@ -96,7 +96,11 @@ pub(super) fn run(
         }
         graphs.insert(id.clone(), semantic::transform(raw));
     }
-    let image = svg::render_states(&graphs, format);
+    let architecture = crate::model::cross_state::Architecture {
+        states: graphs,
+        relationships: cross.edges,
+    };
+    let image = svg::render_states(&architecture, format);
     if output == Path::new("-") {
         io::stdout()
             .write_all(image.as_bytes())
@@ -104,7 +108,11 @@ pub(super) fn run(
     } else {
         std::fs::write(output, image)
             .map_err(|e| format!("cannot write {}: {e}", output.display()))?;
-        eprintln!("Wrote {} ({} states)", output.display(), graphs.len());
+        eprintln!(
+            "Wrote {} ({} states)",
+            output.display(),
+            architecture.states.len()
+        );
     }
     Ok(())
 }
