@@ -420,6 +420,26 @@ fn resolve_with_policy(
                 let key_parts = super::address::parts(key);
                 let module_object = key_parts.len() % 2 == 0
                     && key_parts.chunks_exact(2).all(|pair| pair[0] == "module");
+                // Like resource collections, Terraform may serialize a module
+                // selector separately. A lone existing instance is not evidence
+                // that an unindexed module traversal selects that instance.
+                let implicit_collection = exact_sources
+                    && module_object
+                    && normalized == *key
+                    && super::address::parts(reference)
+                        .last()
+                        .is_some_and(|part| !part.contains('['))
+                    && instances.keys().any(|address| {
+                        prefix_match(&static_address(address), key)
+                            && matches_instance(reference, address)
+                            && super::address::parts(address)
+                                .get(key_parts.len() - 1)
+                                .is_some_and(|part| part.contains('['))
+                    });
+                if implicit_collection {
+                    complete = false;
+                    issues.insert(DiagnosticReason::DynamicInstanceSelection);
+                }
                 let narrowed = exact_sources
                     && (normalized != *key
                         || (!module_object
@@ -434,7 +454,8 @@ fn resolve_with_policy(
                     (
                         contextualize(alias, reference),
                         false,
-                        exact_sources && (dynamic || inherited_ambiguity || narrowed),
+                        exact_sources
+                            && (dynamic || inherited_ambiguity || narrowed || implicit_collection),
                     )
                 }));
             }
