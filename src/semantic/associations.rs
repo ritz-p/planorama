@@ -41,7 +41,8 @@ pub(super) fn lower(raw: &TerraformGraph) -> Graph {
             continue;
         }
         let endpoints = if node.resource_type == "aws_route" {
-            super::routes::endpoints(raw, index)
+            // Invalid routes stay visible; --diagnostics exposes the same failure.
+            super::routes::endpoints(raw, index).ok()
         } else {
             rule(&node.resource_type).and_then(
                 |[(from_attribute, from_type), (to_attribute, to_type)]| {
@@ -56,15 +57,7 @@ pub(super) fn lower(raw: &TerraformGraph) -> Graph {
         };
         if let Some((from, to)) = endpoints {
             let incident = &incident_edges[index];
-            if incident.len() == 2
-                && incident.iter().all(|e| {
-                    e.to == index
-                        && e.kind == EdgeKind::Dependency
-                        && (e.from == from || e.from == to)
-                })
-                && incident.iter().any(|e| e.from == from)
-                && incident.iter().any(|e| e.from == to)
-            {
+            if can_lower(index, from, to, incident) {
                 replacements.insert(
                     index,
                     Edge {
@@ -117,6 +110,15 @@ pub(super) fn lower(raw: &TerraformGraph) -> Graph {
         nodes,
         edges,
     }
+}
+
+pub(super) fn can_lower(index: usize, from: usize, to: usize, incident: &[&Edge]) -> bool {
+    incident.len() == 2
+        && incident.iter().all(|e| {
+            e.to == index && e.kind == EdgeKind::Dependency && (e.from == from || e.from == to)
+        })
+        && incident.iter().any(|e| e.from == from)
+        && incident.iter().any(|e| e.from == to)
 }
 
 pub(super) fn endpoint(
