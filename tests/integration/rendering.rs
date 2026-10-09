@@ -1,6 +1,42 @@
 mod support;
 
 #[test]
+fn check_summary_preserves_actions_and_redacts_evaluated_messages() {
+    let input = include_bytes!("../fixtures/checks-plan.json");
+    let svg = render(input);
+    assert!(svg.contains(
+        "Checks (objects): 1 pass / 1 fail / 1 error / 1 unknown / 1 other / 0 unavailable"
+    ));
+    assert!(svg.contains("terraform_data.app[0]: fail"));
+    assert!(svg.contains("terraform_data.app[1]: pass"));
+    assert!(svg.contains("future&lt;&amp;status"));
+    assert!(svg.contains("update (1)"));
+    assert!(svg.contains("unchanged (1)"));
+    assert!(svg.contains("id=\"plan-status\""));
+    assert!(svg.contains("transform=\"translate(0 24)\""));
+    let output = support::run_with_args(input, &["--diagnostics"]);
+    assert!(output.status.success());
+    assert_eq!(svg.as_bytes(), output.stdout);
+    assert!(!svg.contains("TOP_SECRET"));
+    assert!(
+        !String::from_utf8(output.stderr)
+            .unwrap()
+            .contains("TOP_SECRET")
+    );
+    let mut plan: serde_json::Value = serde_json::from_slice(input).unwrap();
+    plan["checks"].as_array_mut().unwrap().reverse();
+    plan["checks"][4]["instances"]
+        .as_array_mut()
+        .unwrap()
+        .reverse();
+    assert_eq!(render(plan.to_string().as_bytes()), svg);
+    let empty =
+        render(br#"{"format_version":"1.2","resource_changes":[],"checks":[{"status":"error"}]}"#);
+    assert!(empty.contains("0 pass / 0 fail / 1 error"));
+    assert!(empty.contains("No resources to display"));
+}
+
+#[test]
 fn sensitive_replacement_keys_do_not_reach_cards_edges_or_diagnostics() {
     for fixture in [
         include_bytes!("../fixtures/replacement-reasons-plan.json").as_slice(),
@@ -205,6 +241,10 @@ fn deposed_fixture_preserves_every_change_card_and_action() {
 #[test]
 fn committed_svg_samples_match_the_current_renderer() {
     for (input, expected) in [
+        (
+            include_bytes!("../fixtures/checks-plan.json").as_slice(),
+            include_str!("../../examples/checks.svg"),
+        ),
         (
             include_bytes!("../fixtures/spanning-dense-plan.json").as_slice(),
             include_str!("../../examples/spanning-dense.svg"),
