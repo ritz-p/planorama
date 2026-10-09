@@ -1,5 +1,5 @@
 use crate::layout::{Bounds, Point};
-use crate::model::{EdgeKind, Graph};
+use crate::model::architecture::{EdgeKind, Graph};
 use std::collections::{BTreeMap, BTreeSet};
 
 #[cfg(test)]

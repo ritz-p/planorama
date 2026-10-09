@@ -1,5 +1,5 @@
 use super::{Bounds, Point, Side};
-use crate::model::Graph;
+use crate::model::architecture::Graph;
 use std::cmp::Ordering;
 mod bundles;
 mod candidates;

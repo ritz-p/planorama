@@ -1,4 +1,4 @@
-use crate::model::{Graph, ResourceRole};
+use crate::model::architecture::{Graph, ResourceRole};
 use std::collections::{BTreeSet, VecDeque};
 
 pub(in crate::layout) fn structural_keys(graph: &Graph) -> Vec<usize> {

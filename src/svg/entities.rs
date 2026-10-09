@@ -1,4 +1,4 @@
-use crate::model::EntityMode;
+use crate::model::architecture::EntityMode;
 
 pub(super) fn border(mode: EntityMode) -> &'static str {
     match mode {

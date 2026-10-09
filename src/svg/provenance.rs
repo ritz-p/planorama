@@ -1,4 +1,4 @@
-use crate::model::{ArchitectureEntityKind, Graph, RelationshipProvenance};
+use crate::model::architecture::{ArchitectureEntityKind, Graph, RelationshipProvenance};
 
 pub(super) fn metadata(graph: &Graph) -> String {
     let entities: Vec<_> = graph.entities().map(|entity| {

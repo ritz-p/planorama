@@ -19,7 +19,7 @@ pub use states::render_states;
 mod tests;
 
 use crate::layout::Layout;
-use crate::model::{Action, EdgeKind, Graph};
+use crate::model::architecture::{Action, EdgeKind, Graph};
 use std::fmt::Write;
 use style::{color, label, shorten};
 
@@ -246,7 +246,7 @@ pub(crate) fn render_with_format(
             r#"<g id="{resource_id}" data-architecture-id="{architecture_id}" data-qualified-address="{qualified}" data-terraform-address="{address}"{deposed}{previous}{operation}{component}><title>{selected_title} — {operation_label}{operation_details}</title>"#,
         )
         .unwrap();
-        if node.role != crate::model::ResourceRole::Container {
+        if node.role != crate::model::architecture::ResourceRole::Container {
             writeln!(svg, r#"<rect x="{x}" y="{y}" width="{card_width}" height="{header_height}" rx="8" fill="{background}" stroke="{border}" stroke-width="1.5"{mode}/>"#).unwrap();
         }
         svg.push_str(&entities::badge(node.mode, x, y));

@@ -1,4 +1,4 @@
-use crate::model::{Action, AttributePathStep, ChangeMetadata};
+use crate::model::architecture::{Action, AttributePathStep, ChangeMetadata};
 use std::fmt::Write;
 
 pub(super) fn label(action: Action, metadata: &ChangeMetadata) -> String {

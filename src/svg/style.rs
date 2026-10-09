@@ -1,4 +1,4 @@
-use crate::model::Action;
+use crate::model::architecture::Action;
 
 pub(super) fn label(action: Action) -> &'static str {
     match action {
