@@ -2,20 +2,37 @@ use crate::layout::Layout;
 use crate::{plan, semantic, svg};
 use std::io::{self, Read, Write};
 use std::path::{Path, PathBuf};
+mod files;
+mod states;
 
 const HELP: &str = "planorama — Terraform plan JSON → SVG (pure Rust)\n\nUsage: planorama <plan.json | -> [-o <diagram.svg | ->] [--address-format qualified|terraform] [--diagnostics]\n\n  -o, --output PATH   Output file (default: diagram.svg); '-' for stdout\n  --address-format FORMAT  Resource labels: qualified (default) or terraform\n  --diagnostics      Explain unresolved references and semantic fallbacks on stderr\n  -h, --help          Show help\n  -V, --version       Show version\n\nInput: terraform show -json <saved-plan> (not terraform plan -json).\nLines show reference or architectural relationships; containment uses nested boxes.\nAttribute values are never included in the diagram.\n";
 
 pub fn run() -> Result<(), String> {
     let mut input = None;
+    let mut state_inputs = std::collections::BTreeMap::new();
     let mut output = PathBuf::from("diagram.svg");
     let mut address_format = svg::AddressFormat::default();
     let mut diagnostics = false;
     let mut args = std::env::args().skip(1);
     while let Some(arg) = args.next() {
         match arg.as_str() {
+            "--state" => {
+                let named = args.next().ok_or("--state requires ID=PATH")?;
+                let (id, path) = named.split_once('=').ok_or("--state requires ID=PATH")?;
+                let id = crate::model::StateId::new(id)?;
+                if path.is_empty() {
+                    return Err("--state requires a nonempty input path".into());
+                }
+                if state_inputs.contains_key(&id) {
+                    return Err(format!("duplicate state ID: {}", id.as_str()));
+                }
+                state_inputs.insert(id, path.to_owned());
+            }
             "--diagnostics" => diagnostics = true,
             "-h" | "--help" => {
-                print!("{HELP}");
+                print!(
+                    "{HELP}\nMultiple plans: planorama --state ID=PATH [--state ID=PATH ...] [-o diagram.svg]\nState IDs are explicit and unique (1-64 ASCII letters, digits, '.', '_' or '-').\nOne named input may use '-' for stdin; do not mix --state with a positional input.\n"
+                );
                 return Ok(());
             }
             "-V" | "--version" => {
@@ -44,8 +61,15 @@ pub fn run() -> Result<(), String> {
             },
         }
     }
+    if !state_inputs.is_empty() {
+        if input.is_some() {
+            return Err("do not mix --state with a positional input".into());
+        }
+        return states::run(state_inputs, &output, address_format, diagnostics);
+    }
     let input = input.ok_or("missing input; use --help for usage")?;
     if input != "-" && output != Path::new("-") {
+        files::reject_same_file(Path::new(&input), &output)?;
         let absolute = match &output {
             path if path.is_absolute() => path.clone(),
             path => std::env::current_dir()
