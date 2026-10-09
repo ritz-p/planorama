@@ -161,6 +161,17 @@ fn route_impl(
             &obstacles,
             quality.then_some(&scorer),
         );
+        let path = if quality {
+            crate::layout::routing_shared::ports::select(
+                layout.bounds[edge.from],
+                layout.bounds[edge.to],
+                path,
+                &obstacles,
+                &scorer,
+            )
+        } else {
+            path
+        };
         scorer.insert(path.clone());
         paths[index] = path;
     }

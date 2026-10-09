@@ -253,11 +253,19 @@ fn eight_overlapping_edges_get_distinct_lanes_inside_the_gutter() {
         .filter(|s| s[0].x == s[1].x && s[0].y != s[1].y)
         .map(|s| s[0].x)
         .collect();
-    assert_eq!(xs.len(), 8);
+    // Side-aware detours may use more than one vertical lane per edge.
+    assert!(xs.len() >= 8);
     assert!(positions[8].origin.x - positions[0].origin.x > 420);
+    // Top/bottom ports may leave the original inter-column gutter, but no
+    // resulting segment may enter an unrelated card (or its own endpoint card).
     assert!(
-        xs.iter()
-            .all(|&x| x > positions[0].origin.x + NODE_WIDTH && x < positions[8].origin.x)
+        routed
+            .paths
+            .iter()
+            .flat_map(|path| path.windows(2))
+            .all(|segment| positions.iter().all(
+                |&bounds| !crate::layout::routing_shared::crosses(segment[0], segment[1], bounds)
+            ))
     );
     assert!(routed.paths.iter().flatten().all(|p| p.x < routed.width));
     let mut again = initial;
