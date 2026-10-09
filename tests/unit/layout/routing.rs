@@ -15,6 +15,12 @@ fn fan_out_and_fan_in_share_trunks_and_preserve_endpoints() {
             status: Default::default(),
             nodes: (0..4)
                 .map(|i| Node {
+                    entity: crate::model::ArchitectureEntity::terraform(
+                        crate::model::TerraformEntityId {
+                            address: format!("test.n{i}"),
+                            deposed_key: None,
+                        },
+                    ),
                     deposed_key: None,
                     previous_address: None,
                     metadata: Default::default(),
@@ -81,6 +87,12 @@ fn unrelated_edges_cannot_reuse_an_occupied_bundle_trunk() {
         status: Default::default(),
         nodes: (0..5)
             .map(|i| Node {
+                entity: crate::model::ArchitectureEntity::terraform(
+                    crate::model::TerraformEntityId {
+                        address: format!("test.n{i}"),
+                        deposed_key: None,
+                    },
+                ),
                 deposed_key: None,
                 previous_address: None,
                 metadata: Default::default(),
@@ -135,6 +147,12 @@ fn long_edges_use_separate_channels_after_gutter_expansion() {
         status: Default::default(),
         nodes: (0..18)
             .map(|i| Node {
+                entity: crate::model::ArchitectureEntity::terraform(
+                    crate::model::TerraformEntityId {
+                        address: format!("test.n{i}"),
+                        deposed_key: None,
+                    },
+                ),
                 deposed_key: None,
                 previous_address: None,
                 metadata: Default::default(),
@@ -191,6 +209,12 @@ fn eight_overlapping_edges_get_distinct_lanes_inside_the_gutter() {
         status: Default::default(),
         nodes: (0..16)
             .map(|i| Node {
+                entity: crate::model::ArchitectureEntity::terraform(
+                    crate::model::TerraformEntityId {
+                        address: format!("test.n{i}"),
+                        deposed_key: None,
+                    },
+                ),
                 deposed_key: None,
                 previous_address: None,
                 metadata: Default::default(),

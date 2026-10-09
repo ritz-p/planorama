@@ -23,7 +23,8 @@ pub(super) fn membership(graph: &Graph) -> BTreeMap<&str, &str> {
         .collect()
 }
 
-pub(super) fn render(graph: &Graph, mut top: usize, width: usize) -> String {
+pub(super) fn render(graph: &Graph, layout: &crate::layout::Layout<'_>) -> String {
+    let width = layout.width;
     let nodes: BTreeMap<_, _> = graph
         .nodes
         .iter()
@@ -31,15 +32,18 @@ pub(super) fn render(graph: &Graph, mut top: usize, width: usize) -> String {
         .map(|(i, n)| (n.address.as_str(), (i, n)))
         .collect();
     let mut svg = String::new();
-    for (index, component) in graph.components.iter().enumerate() {
-        let height = 56 + component.members.len() * 24;
+    for (component, (id, bounds)) in graph.components.iter().zip(layout.component_bounds(graph)) {
+        let height = bounds.height;
+        let top = bounds.origin.y;
+        let dom_id = super::identity::architecture(id);
+        let architecture_id = super::escape(id.as_str());
         let label = super::escape(&component.label);
         let limit = width.saturating_sub(120) / 8;
         let heading = super::escape(&super::style::shorten(
             &format!("Logical component: {}", component.label),
             limit,
         ));
-        writeln!(svg, r##"<g id="component-{index}" data-entity-kind="synthetic" data-component-id="{}" data-component-kind="{}"><title>{label}</title><rect x="35" y="{top}" width="{}" height="{height}" rx="12" fill="#f5f3ff" stroke="#8b5cf6" stroke-dasharray="6 3"/><text x="52" y="{}" font-size="13" font-weight="700" fill="#5b21b6">{heading}</text>"##, super::escape(&component.id), super::escape(&component.kind), width - 70, top + 24).unwrap();
+        writeln!(svg, r##"<g id="{dom_id}" data-architecture-id="{architecture_id}" data-entity-kind="synthetic" data-component-id="{}" data-component-kind="{}"><title>{label}</title><rect x="35" y="{top}" width="{}" height="{height}" rx="12" fill="#f5f3ff" stroke="#8b5cf6" stroke-dasharray="6 3"/><text x="52" y="{}" font-size="13" font-weight="700" fill="#5b21b6">{heading}</text>"##, super::escape(&component.id), super::escape(&component.kind), width - 70, top + 24).unwrap();
         for (row, address) in component.members.iter().enumerate() {
             if let Some((_, node)) = nodes.get(address.as_str()) {
                 let resource_id = super::identity::resource(node);
@@ -56,7 +60,6 @@ pub(super) fn render(graph: &Graph, mut top: usize, width: usize) -> String {
             }
         }
         svg.push_str("</g>\n");
-        top += height + 20;
     }
     svg
 }

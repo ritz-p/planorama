@@ -8,6 +8,12 @@ fn graph(edges: Vec<(usize, usize)>) -> Graph {
         status: Default::default(),
         nodes: (0..4)
             .map(|i| Node {
+                entity: crate::model::ArchitectureEntity::terraform(
+                    crate::model::TerraformEntityId {
+                        address: format!("test.n{i}"),
+                        deposed_key: None,
+                    },
+                ),
                 deposed_key: None,
                 previous_address: None,
                 metadata: Default::default(),

@@ -107,7 +107,7 @@ fn route_impl(
                 edge.change.as_ref().map(|change| change.action),
                 edge.change.as_ref().map(|change| change.local_address()),
                 geometry(peer),
-                graph.nodes[peer].address.as_str(),
+                graph.nodes[peer].entity.id.as_str(),
                 edge.change.as_ref().map(|change| change.address.as_str()),
             )
         });
@@ -140,8 +140,8 @@ fn route_impl(
             geometry(edge.from),
             geometry(edge.to),
             (
-                graph.nodes[edge.from].address.as_str(),
-                graph.nodes[edge.to].address.as_str(),
+                graph.nodes[edge.from].entity.id.as_str(),
+                graph.nodes[edge.to].entity.id.as_str(),
             ),
             edge.change.as_ref().map(|change| change.address.as_str()),
         )

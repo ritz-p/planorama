@@ -74,6 +74,17 @@ pub(super) fn infer(raw: &Input, graph: &Graph) -> Vec<SyntheticComponent> {
         .map(|(anchor, members)| {
             let address = &raw.nodes[anchor].address;
             SyntheticComponent {
+                entity: crate::model::ArchitectureEntity::synthetic(
+                    "load_balancer",
+                    address,
+                    members
+                        .iter()
+                        .map(|address| crate::model::TerraformEntityId {
+                            address: address.clone(),
+                            deposed_key: None,
+                        })
+                        .collect(),
+                ),
                 id: format!("logical:load_balancer:{address}"),
                 kind: "load_balancer".into(),
                 label: format!("Load balancer: {address}"),

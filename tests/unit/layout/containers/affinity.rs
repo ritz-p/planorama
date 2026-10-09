@@ -174,6 +174,10 @@ fn wrapping_keeps_related_containers_consecutive_and_uses_safe_fallbacks() {
     for name in ["aa", "bb", "cc"] {
         let index = graph.nodes.len();
         graph.nodes.push(Node {
+            entity: crate::model::ArchitectureEntity::terraform(crate::model::TerraformEntityId {
+                address: format!("aws_subnet.{name}"),
+                deposed_key: None,
+            }),
             deposed_key: None,
             previous_address: None,
             metadata: Default::default(),

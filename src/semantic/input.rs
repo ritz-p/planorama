@@ -37,6 +37,7 @@ pub(crate) fn base_graph(plan: &TerraformPlan) -> Graph {
             .nodes
             .iter()
             .map(|fact| Node {
+                entity: crate::model::ArchitectureEntity::terraform(fact.into()),
                 address: fact.address.clone(),
                 deposed_key: fact.deposed_key.clone(),
                 previous_address: fact.previous_address.clone(),

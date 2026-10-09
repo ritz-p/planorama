@@ -11,6 +11,7 @@ pub enum Action {
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Node {
+    pub entity: ArchitectureEntity,
     pub address: String,
     pub deposed_key: Option<String>,
     pub previous_address: Option<String>,
@@ -60,6 +61,10 @@ pub struct PlanStatus {
 }
 
 mod address;
+mod architecture;
+pub use architecture::{
+    ArchitectureEntity, ArchitectureEntityKind, ArchitectureId, TerraformEntityId,
+};
 mod checks;
 mod components;
 pub(crate) use address::module_of;
