@@ -1,6 +1,56 @@
 mod support;
 
 #[test]
+fn relationship_patterns_are_distinct_and_nesting_stays_line_free() {
+    for (input, kind, width, dash) in [
+        (
+            include_bytes!("../../examples/plan.json").as_slice(),
+            "dependency",
+            "1.5",
+            None,
+        ),
+        (
+            include_bytes!("../fixtures/association-plan.json").as_slice(),
+            "association",
+            "2",
+            Some("7 4"),
+        ),
+        (
+            include_bytes!("../fixtures/security-groups-plan.json").as_slice(),
+            "connection",
+            "2.5",
+            Some("2 4"),
+        ),
+    ] {
+        let svg = render(input);
+        let paths: Vec<_> = svg
+            .lines()
+            .filter(|line| {
+                line.starts_with("<path ") && line.contains(&format!("data-edge-kind=\"{kind}\""))
+            })
+            .collect();
+        assert!(!paths.is_empty());
+        for path in paths {
+            assert!(path.contains(&format!("stroke-width=\"{width}\"")));
+            match dash {
+                Some(dash) => assert!(path.contains(&format!("stroke-dasharray=\"{dash}\""))),
+                None => assert!(!path.contains("stroke-dasharray")),
+            }
+        }
+        assert!(
+            svg.contains("Thin solid: dependency. Dashed: association. Thick dotted: connection.")
+        );
+    }
+    let svg = render(include_bytes!("../fixtures/containment-plan.json"));
+    assert!(svg.contains("<g data-edge-kind=\"containment\""));
+    assert!(
+        !svg.lines()
+            .any(|line| line.starts_with("<path ")
+                && line.contains("data-edge-kind=\"containment\""))
+    );
+}
+
+#[test]
 fn resource_ids_survive_reordering_insertions_and_label_changes() {
     let addresses = [
         "module.app[0].test_item.x[\"a/b & 日本語\"]",

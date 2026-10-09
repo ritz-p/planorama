@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1100" height="688" viewBox="0 0 1100 688" role="img" aria-labelledby="title description">
 <title id="title">Terraform plan</title>
-<desc id="description">3 resources (3 cards), 3 relationships. Lines show architectural relationships. Edge titles identify the relationship kind and Terraform change.</desc>
+<desc id="description">3 resources (3 cards), 3 relationships. Lines show architectural relationships. Edge titles identify the relationship kind and Terraform change. Thin solid: dependency. Dashed: association. Thick dotted: connection. Nested boxes: containment. Edge color preserves the Terraform action when available.</desc>
 <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/></marker><metadata id="planorama-icons-license">AWS Architecture Icons, release 07312026.
 Copyright Amazon Web Services, Inc. or its affiliates. All rights reserved.
 AWS service names and artwork are trademarks or other proprietary assets of AWS.
@@ -24,7 +24,7 @@ No AWS endorsement is implied. Consult the AWS terms for other uses.
 <g data-container="resource-6177735f7670632e6d61696e-current"><title>aws_vpc.main</title><rect x="60" y="160" width="480" height="448" rx="12" fill="#ecfdf5" stroke="#047857" stroke-width="2" data-mode="managed"/></g>
 <g data-container="resource-6177735f7375626e65742e70726976617465-current"><title>aws_subnet.private</title><rect x="100" y="296" width="400" height="272" rx="12" fill="#d1fae5" stroke="#047857" stroke-width="2" data-mode="managed"/></g>
 <g data-edge-kind="containment" data-source="resource-6177735f7375626e65742e70726976617465-current" data-target="resource-6177735f696e7374616e63652e617070-current"><title>aws_subnet.private → aws_instance.app (containment)</title></g>
-<g data-source="resource-6177735f7670632e6d61696e-current" data-target="resource-6177735f696e7374616e63652e617070-current"><title>aws_vpc.main → aws_instance.app (dependency)</title></g>
+<g data-edge-kind="dependency" data-source="resource-6177735f7670632e6d61696e-current" data-target="resource-6177735f696e7374616e63652e617070-current"><title>aws_vpc.main → aws_instance.app (dependency)</title></g>
 <g data-edge-kind="containment" data-source="resource-6177735f7670632e6d61696e-current" data-target="resource-6177735f7375626e65742e70726976617465-current"><title>aws_vpc.main → aws_subnet.private (containment)</title></g>
 <g id="resource-6177735f696e7374616e63652e617070-current" data-qualified-address="module.root.aws_instance.app" data-terraform-address="aws_instance.app"><title>module.root.aws_instance.app — create</title>
 <rect x="140" y="432" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>

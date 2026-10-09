@@ -4,7 +4,7 @@
 <g id="state-6170706c69636174696f6e-state" data-state-id="application"><text x="40" y="85" font-family="ui-monospace, Consolas, monospace" font-size="20" font-weight="700" fill="#0f172a">State: application</text>
 <svg y="100" xmlns="http://www.w3.org/2000/svg" width="1040" height="448" viewBox="0 0 1040 448" role="img" aria-labelledby="state-6170706c69636174696f6e-title state-6170706c69636174696f6e-description">
 <title id="state-6170706c69636174696f6e-title">Terraform plan</title>
-<desc id="state-6170706c69636174696f6e-description">2 resources, 1 reference edges. Arrows point from dependencies to dependent resources. References are conservative, not Terraform execution order.</desc>
+<desc id="state-6170706c69636174696f6e-description">2 resources, 1 reference edges. Arrows point from dependencies to dependent resources. References are conservative, not Terraform execution order. Thin solid: dependency. Dashed: association. Thick dotted: connection. Nested boxes: containment. Edge color preserves the Terraform action when available.</desc>
 <defs><marker id="state-6170706c69636174696f6e-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/></marker><metadata id="state-6170706c69636174696f6e-planorama-icons-license">AWS Architecture Icons, release 07312026.
 Copyright Amazon Web Services, Inc. or its affiliates. All rights reserved.
 AWS service names and artwork are trademarks or other proprietary assets of AWS.
@@ -33,7 +33,7 @@ No AWS endorsement is implied. Consult the AWS terms for other uses.
 </title><text x="40" y="161" font-size="12" fill="#475569">Checks (objects): 0 pass / 1 fail / 0 error / 0 unknown / 0 other / 0 unavailable</text></g>
 <g transform="translate(0 24)">
 <rect x="35" y="160" width="970" height="200" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-dasharray="5 4"/><text x="52" y="185" font-size="13" font-weight="700" fill="#475569"><title>root</title>root</text>
-<path d="M 380 256 L 480 256 " data-source="state-6170706c69636174696f6e-resource-6177735f73656375726974795f67726f75702e617070-current" data-target="state-6170706c69636174696f6e-resource-6177735f696e7374616e63652e617070-current" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#state-6170706c69636174696f6e-arrow)"><title>aws_security_group.app → aws_instance.app</title></path>
+<path d="M 380 256 L 480 256 " data-edge-kind="dependency" data-source="state-6170706c69636174696f6e-resource-6177735f73656375726974795f67726f75702e617070-current" data-target="state-6170706c69636174696f6e-resource-6177735f696e7374616e63652e617070-current" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#state-6170706c69636174696f6e-arrow)"><title>aws_security_group.app → aws_instance.app</title></path>
 <g id="state-6170706c69636174696f6e-resource-6177735f696e7374616e63652e617070-current" data-qualified-address="module.root.aws_instance.app" data-terraform-address="aws_instance.app"><title>module.root.aws_instance.app — create</title>
 <rect x="480" y="208" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text x="492" y="228" font-size="11" fill="#047857">aws_instance · create</text>
@@ -53,7 +53,7 @@ No AWS endorsement is implied. Consult the AWS terms for other uses.
 <g id="state-6e6574776f726b-state" data-state-id="network"><text x="40" y="593" font-family="ui-monospace, Consolas, monospace" font-size="20" font-weight="700" fill="#0f172a">State: network</text>
 <svg y="608" xmlns="http://www.w3.org/2000/svg" width="1040" height="592" viewBox="0 0 1040 592" role="img" aria-labelledby="state-6e6574776f726b-title state-6e6574776f726b-description">
 <title id="state-6e6574776f726b-title">Terraform plan</title>
-<desc id="state-6e6574776f726b-description">3 resources, 1 reference edges. Arrows point from dependencies to dependent resources. References are conservative, not Terraform execution order.</desc>
+<desc id="state-6e6574776f726b-description">3 resources, 1 reference edges. Arrows point from dependencies to dependent resources. References are conservative, not Terraform execution order. Thin solid: dependency. Dashed: association. Thick dotted: connection. Nested boxes: containment. Edge color preserves the Terraform action when available.</desc>
 <defs><marker id="state-6e6574776f726b-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/></marker><metadata id="state-6e6574776f726b-planorama-icons-license">AWS Architecture Icons, release 07312026.
 Copyright Amazon Web Services, Inc. or its affiliates. All rights reserved.
 AWS service names and artwork are trademarks or other proprietary assets of AWS.
@@ -81,7 +81,7 @@ No AWS endorsement is implied. Consult the AWS terms for other uses.
 </title><text x="40" y="161" font-size="12" fill="#475569">Checks (objects): 1 pass / 0 fail / 0 error / 0 unknown / 0 other / 0 unavailable</text></g>
 <g transform="translate(0 24)">
 <rect x="35" y="160" width="970" height="344" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-dasharray="5 4"/><text x="52" y="185" font-size="13" font-weight="700" fill="#475569"><title>root</title>root</text>
-<path d="M 380 256 L 480 256 " data-source="state-6e6574776f726b-resource-6177735f73656375726974795f67726f75702e617070-current" data-target="state-6e6574776f726b-resource-6177735f696e7374616e63652e617070-current" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#state-6e6574776f726b-arrow)"><title>aws_security_group.app → aws_instance.app</title></path>
+<path d="M 380 256 L 480 256 " data-edge-kind="dependency" data-source="state-6e6574776f726b-resource-6177735f73656375726974795f67726f75702e617070-current" data-target="state-6e6574776f726b-resource-6177735f696e7374616e63652e617070-current" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#state-6e6574776f726b-arrow)"><title>aws_security_group.app → aws_instance.app</title></path>
 <g id="state-6e6574776f726b-resource-6177735f696e7374616e63652e617070-current" data-qualified-address="module.root.aws_instance.app" data-terraform-address="aws_instance.app"><title>module.root.aws_instance.app — unchanged</title>
 <rect x="480" y="208" width="320" height="96" rx="8" fill="#f8fafc" stroke="#64748b" stroke-width="1.5" data-mode="managed"/>
 <text x="492" y="228" font-size="11" fill="#64748b">aws_instance · unchanged</text>

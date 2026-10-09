@@ -71,7 +71,7 @@ pub fn render_with_format(
     let mut svg = format!(
         r##"<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}" role="img" aria-labelledby="title description">
 <title id="title">Terraform plan</title>
-<desc id="description">{description}</desc>
+<desc id="description">{description} Thin solid: dependency. Dashed: association. Thick dotted: connection. Nested boxes: containment. Edge color preserves the Terraform action when available.</desc>
 <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/></marker>{markers}{icon_definitions}</defs>
 <rect width="100%" height="100%" fill="#ffffff"/>
 <g font-family="ui-monospace, SFMono-Regular, Consolas, monospace">
@@ -139,7 +139,7 @@ pub fn render_with_format(
     svg.push_str(&containers::boundaries(graph, layout));
     for (edge, points) in graph.edges.iter().zip(&layout.paths) {
         let relation = match edge.kind {
-            EdgeKind::Dependency => "",
+            EdgeKind::Dependency => " data-edge-kind=\"dependency\"",
             EdgeKind::Association => " data-edge-kind=\"association\"",
             EdgeKind::Connection => " data-edge-kind=\"connection\"",
             EdgeKind::Containment => " data-edge-kind=\"containment\"",
@@ -170,7 +170,8 @@ pub fn render_with_format(
             None => ("#94a3b8", "arrow".into()),
         };
         let path = paths::rounded(points);
-        writeln!(svg, r##"<path d="{path}"{relation}{previous}{operation} data-source="{source}" data-target="{target}" fill="none" stroke="{stroke}" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#{marker})"><title>{title}</title></path>"##).unwrap();
+        let style = relationships::style(edge.kind);
+        writeln!(svg, r##"<path d="{path}"{relation}{previous}{operation} data-source="{source}" data-target="{target}" fill="none" stroke="{stroke}" {style} stroke-linejoin="round" marker-end="url(#{marker})"><title>{title}</title></path>"##).unwrap();
     }
     for point in &layout.junctions {
         writeln!(
