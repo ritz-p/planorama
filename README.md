@@ -290,3 +290,5 @@ Nested configuration blocks expose dotted attribute paths generically, including
 Moved-resource provenance is stored in TerraformEntity.previous_address and projected to Node.previous_address only when Terraform reports previous_address. TerraformEntity.address remains the current canonical input identity, and old addresses do not become dependency aliases. Relationship lowering copies the provenance into EdgeChange.previous_address. SVG cards and lowered relationships expose escaped data-previous-address metadata; ordinary resources and action classification are unchanged. This metadata can be inspected without retaining or reparsing raw plan JSON.
 
 Layer responsibilities and dependency rules: [Architecture contracts](docs/architecture.md).
+
+Layout stages, shared routing primitives and attachment policy: [Routing](docs/routing.md).
