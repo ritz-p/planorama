@@ -197,11 +197,11 @@ data は役割とは別に破線と `external` バッジで表示します。VPC
 
 両端が静的かつ一意に解決でき、元の依存辺がその2本だけの場合に限定します。追加の依存先・利用元、複数候補、未解決参照、動的な選択、定数だけの ID、data の関連付けは元のカードを残します。Target Group の IP・Lambda・ALB ターゲットも対象外です。元のアドレスと変更種別は辺に保持します。全ルールを同じグラフ上で判定してからまとめてノード番号を振り直すため、変換途中の削除によって後続の判定が変わることはありません。生グラフは変更しません。SVG の意味付き辺には `data-edge-kind` を付けます。サンプルは [association.svg](examples/association.svg) と [aws-relationships.svg](examples/aws-relationships.svg) です。
 
-`TerraformGraph` は描画用グラフに加えて属性名・参照先・解決できたかを保持します。属性値そのものは保持しません。`depends_on`、count、for_each は従来の依存辺には反映しますが、属性の参照情報には混ぜません。属性参照が未解決・複数候補の場合、後続の意味変換は元の関係を維持できます。
+`TerraformPlan` は描画モデルから独立した `TerraformEntity` と `TerraformReference`、属性名・参照先・解決状態を保持します。属性値そのものや architecture の役割は保持しません。`depends_on`、count、for_each は依存参照には反映しますが、属性の参照情報には混ぜません。属性参照が未解決・複数候補の場合、後続の意味変換は元の関係を維持できます。
 
-CLI の処理は `plan::parse → TerraformGraph → semantic::transform → ArchitectureGraph → Layout → SVG` の順です。変換は元の Terraform グラフを借用し、独立した描画用グラフを返します。包含推定の後、対応する関連付けリソースを辺へ変換し、ノード番号を再割り当てします。将来の変換規則は `semantic` 内に順序を明示して追加し、JSON 読み取りや SVG 生成から分離します。
+CLI の処理は `plan::parse → TerraformPlan → semantic::transform → ArchitectureGraph → Layout → SVG` の順です。意味変換の入口で provider と resource type から役割を分類し、元の Terraform facts を変更せず独立した描画用グラフを返します。包含推定の後、対応する関連付けリソースを辺へ変換し、ノード番号を再割り当てします。変換規則は `semantic` 内に順序を明示し、JSON 読み取りや SVG 生成から分離します。詳細は [モデル境界](docs/models.md) を参照してください。
 
-依存関係は `Edge { from, to, kind, change }` で保持します。`EdgeKind` は `Dependency` / `Association` / `Connection` / `Containment` を区別し、plan の参照はすべて `Dependency` として読み込みます。関連付けを辺へ変換する際は、元のアドレスと変更種別を `change` に残します。同じ端点を持つ別の関連付けも個別に保持します。
+plan の依存参照は `TerraformReference { from, to }` で保持し、意味変換の入口で architecture の `Edge { from, to, kind, change }` に変換します。`EdgeKind` は `Dependency` / `Association` / `Connection` / `Containment` を区別します。関連付けを辺へ変換する際は、元のアドレスと変更種別を `change` に残します。同じ端点を持つ別の関連付けも個別に保持します。
 
 関連付けの変更種別は辺と矢印の色、辺のタイトル、凡例の件数に反映します。意味付き辺を含む SVG はリソース数とカード数を区別し、辺を `relationships` と表示します。各辺のタイトルで関係の種類を確認できます。通常の依存辺だけの場合は従来の説明・表示を維持します。
 
@@ -287,4 +287,4 @@ Resource-change identity is the pair of the canonical Terraform address and opti
 
 Nested configuration blocks expose dotted attribute paths generically, including network_configuration.security_groups and default_action.forward.target_group.arn. Repeated blocks merge references at the same path in deterministic order. A path is complete only when every repeated block supplies complete reference provenance; missing, literal or malformed entries prevent semantic inference. Existing top-level aggregate references remain available. Literal values and expression metadata are not traversed as attribute paths.
 
-Moved-resource provenance is stored separately as Node.previous_address only when Terraform reports previous_address. Node.address remains the current canonical identity, and old addresses do not become dependency aliases. Relationship lowering copies the provenance into EdgeChange.previous_address. SVG cards and lowered relationships expose escaped data-previous-address metadata; ordinary resources and action classification are unchanged. This metadata can be inspected without retaining or reparsing raw plan JSON.
+Moved-resource provenance is stored in TerraformEntity.previous_address and projected to Node.previous_address only when Terraform reports previous_address. TerraformEntity.address remains the current canonical input identity, and old addresses do not become dependency aliases. Relationship lowering copies the provenance into EdgeChange.previous_address. SVG cards and lowered relationships expose escaped data-previous-address metadata; ordinary resources and action classification are unchanged. This metadata can be inspected without retaining or reparsing raw plan JSON.

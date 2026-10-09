@@ -1,18 +1,6 @@
 use super::Graph;
 use std::ops::Deref;
 
-#[derive(Clone, Debug, PartialEq, Eq)]
-pub struct TerraformGraph {
-    pub remote_references: Vec<super::cross_state::RemoteReference>,
-    pub outputs: Vec<StateOutput>,
-    pub graph: Graph,
-    pub attributes: Vec<AttributeReference>,
-    /// Dependency metadata stays separate from semantic attribute provenance.
-    pub graph_references: Vec<AttributeReference>,
-    pub drift: Vec<super::DriftRecord>,
-    pub relevant_attributes: Vec<super::RelevantAttribute>,
-}
-
 /// Root outputs are state-local; sources are Terraform-native addresses.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct StateOutput {
@@ -39,14 +27,6 @@ pub struct AttributeReference {
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct ArchitectureGraph(pub Graph);
-
-impl Deref for TerraformGraph {
-    type Target = Graph;
-
-    fn deref(&self) -> &Self::Target {
-        &self.graph
-    }
-}
 
 impl Deref for ArchitectureGraph {
     type Target = Graph;

@@ -1,4 +1,5 @@
-use crate::model::{Edge, EdgeChange, EdgeKind, EntityMode, Graph, ResourceRole, TerraformGraph};
+use crate::model::{Edge, EdgeChange, EdgeKind, EntityMode, Graph, ResourceRole};
+use crate::semantic::Input;
 use std::collections::BTreeMap;
 
 #[cfg(test)]
@@ -23,7 +24,7 @@ pub(super) fn rule(resource_type: &str) -> Option<[(&'static str, &'static str);
     }
 }
 
-pub(super) fn lower(raw: &TerraformGraph) -> Graph {
+pub(super) fn lower(raw: &Input) -> Graph {
     let mut incident_edges = vec![Vec::new(); raw.nodes.len()];
     for edge in &raw.edges {
         incident_edges[edge.from].push(edge);
@@ -123,7 +124,7 @@ pub(super) fn can_lower(index: usize, from: usize, to: usize, incident: &[&Edge]
 }
 
 pub(super) fn endpoint(
-    raw: &TerraformGraph,
+    raw: &Input,
     target: usize,
     attribute: &str,
     resource_type: &str,

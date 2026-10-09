@@ -17,7 +17,7 @@ fn rds_inherits_single_or_common_parent_and_preserves_group_dependencies() {
         let raw = plan::parse(&input.to_string()).unwrap();
         assert!(semantic::diagnostics::collect(&raw).is_empty());
         let graph = semantic::transform(&raw).0;
-        assert_eq!(graph.nodes, raw.nodes);
+        assert_eq!(graph.nodes, crate::semantic::base_graph(&raw).nodes);
         for kind in ["aws_db_instance", "aws_rds_cluster"] {
             let target = graph
                 .nodes
@@ -44,7 +44,7 @@ fn rds_inherits_single_or_common_parent_and_preserves_group_dependencies() {
         }
         for edge in &raw.edges {
             if raw.nodes[edge.to].resource_type == "aws_db_subnet_group" {
-                assert!(graph.edges.contains(edge));
+                assert!(graph.edges.contains(&edge.endpoints().into()));
             }
         }
     }

@@ -1,10 +1,11 @@
-use crate::model::{Diagnostic, DiagnosticReason as Reason, TerraformGraph};
+use crate::model::{Diagnostic, DiagnosticReason as Reason};
+use crate::semantic::Input;
 
 #[cfg(test)]
 #[path = "../../tests/unit/semantic/routes.rs"]
 mod tests;
 
-pub(super) fn endpoints(raw: &TerraformGraph, route: usize) -> Result<(usize, usize), Diagnostic> {
+pub(super) fn endpoints(raw: &Input, route: usize) -> Result<(usize, usize), Diagnostic> {
     let failure = |attribute: &str, reason| Diagnostic {
         address: raw.nodes[route].address.clone(),
         attribute: attribute.into(),

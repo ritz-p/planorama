@@ -23,7 +23,7 @@ fn metadata_is_hidden_only_for_data_and_surviving_edges_are_remapped() {
                 {"address": "aws_instance.app", "type": "aws_instance"}
             ]
         }).to_string()).unwrap();
-        let mut graph = raw.graph.clone();
+        let mut graph = crate::semantic::base_graph(&raw).clone();
         let hidden = graph
             .nodes
             .iter()
@@ -107,7 +107,10 @@ fn infrastructure_data_keeps_roles_actions_and_external_container_styling() {
 #[test]
 fn unknown_data_is_visible_and_all_metadata_can_render_an_empty_diagram() {
     let raw = plan::parse(r#"{"format_version":"1.2","resource_changes":[{"address":"data.custom_lookup.value","type":"custom_lookup","mode":"data"}]}"#).unwrap();
-    assert_eq!(semantic::transform(&raw).0, raw.graph);
+    assert_eq!(
+        semantic::transform(&raw).0,
+        crate::semantic::base_graph(&raw)
+    );
     let raw = plan::parse(r#"{"format_version":"1.2","resource_changes":[{"address":"data.aws_region.current","type":"aws_region","mode":"data"}]}"#).unwrap();
     let architecture = semantic::transform(&raw);
     assert!(architecture.nodes.is_empty());

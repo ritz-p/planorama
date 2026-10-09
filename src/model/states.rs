@@ -1,4 +1,4 @@
-use super::TerraformGraph;
+use super::TerraformPlan;
 use std::collections::BTreeMap;
 
 /// Explicit caller-supplied identity, never inferred from a path or backend.
@@ -33,5 +33,5 @@ pub struct PlanInput {
 /// (StateId, local identity); no flattening or cross-state inference occurs.
 #[derive(Debug, PartialEq, Eq)]
 pub struct MultiPlan {
-    pub states: BTreeMap<StateId, TerraformGraph>,
+    pub states: BTreeMap<StateId, TerraformPlan>,
 }

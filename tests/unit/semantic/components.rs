@@ -9,9 +9,9 @@ fn input() -> Value {
 fn logical_components_preserve_source_resources_actions_and_edges() {
     let raw = plan::parse(&input().to_string()).unwrap();
     let graph = semantic::transform(&raw);
-    assert!(raw.components.is_empty());
-    assert_eq!(graph.nodes, raw.nodes);
-    assert_eq!(graph.edges, raw.edges);
+    assert!(crate::semantic::base_graph(&raw).components.is_empty());
+    assert_eq!(graph.nodes, crate::semantic::base_graph(&raw).nodes);
+    assert_eq!(graph.edges, crate::semantic::base_graph(&raw).edges);
     assert_eq!(graph.checks, raw.checks);
     assert_eq!(graph.components.len(), 1);
     let component = &graph.components[0];

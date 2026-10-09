@@ -1,7 +1,7 @@
 use crate::model::{
     AttributeReference, DiagnosticReason, Edge, EdgeKind, EntityMode, Graph, ResourceRole,
-    TerraformGraph,
 };
+use crate::semantic::Input;
 use std::collections::BTreeSet;
 
 #[cfg(test)]
@@ -9,7 +9,7 @@ use std::collections::BTreeSet;
 mod tests;
 
 fn static_reference<'a>(
-    raw: &'a TerraformGraph,
+    raw: &'a Input,
     target: usize,
     attribute: &str,
 ) -> Option<&'a AttributeReference> {
@@ -26,10 +26,7 @@ fn static_reference<'a>(
 }
 
 /// Resolve both hops identically for placement and fallback diagnostics.
-pub(in crate::semantic) fn resolved_subnets(
-    raw: &TerraformGraph,
-    target: usize,
-) -> Option<&[usize]> {
+pub(in crate::semantic) fn resolved_subnets(raw: &Input, target: usize) -> Option<&[usize]> {
     let group_ref = static_reference(raw, target, "db_subnet_group_name")?;
     let [group] = group_ref.sources.as_slice() else {
         return None;
@@ -50,7 +47,7 @@ pub(in crate::semantic) fn resolved_subnets(
         .then_some(subnets.sources.as_slice())
 }
 
-pub(super) fn infer(raw: &TerraformGraph, mut graph: Graph) -> Graph {
+pub(super) fn infer(raw: &Input, mut graph: Graph) -> Graph {
     let mut parents = vec![BTreeSet::new(); graph.nodes.len()];
     for edge in &graph.edges {
         if edge.kind == EdgeKind::Containment {

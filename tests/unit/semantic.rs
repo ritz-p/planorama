@@ -56,10 +56,10 @@ fn unmatched_graphs_preserve_structure_order_and_svg() {
     ] {
         let raw = plan::parse(input).unwrap();
         let architecture = transform(&raw);
-        assert_eq!(architecture.0, raw.graph);
+        assert_eq!(architecture.0, crate::semantic::base_graph(&raw));
         assert_eq!(architecture, transform(&raw));
         assert_eq!(
-            svg::render(&raw, &Layout::new(&raw)),
+            svg::render(&base_graph(&raw), &Layout::new(&base_graph(&raw))),
             svg::render(&architecture, &Layout::new(&architecture))
         );
     }
@@ -73,5 +73,5 @@ fn architecture_changes_do_not_mutate_raw_terraform_graph() {
     architecture.0.nodes[0].address = "changed".into();
     architecture.0.edges.clear();
     assert_eq!(raw, original);
-    assert_ne!(architecture.0, raw.graph);
+    assert_ne!(architecture.0, crate::semantic::base_graph(&raw));
 }

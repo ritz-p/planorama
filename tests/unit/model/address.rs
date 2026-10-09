@@ -82,7 +82,8 @@ fn qualified_addresses_preserve_native_module_and_instance_identity() {
             &json!({"format_version":"1.2","resource_changes":[{"address":native}]}).to_string(),
         )
         .unwrap();
-        let node = &raw.nodes[0];
+        let graph = crate::semantic::base_graph(&raw);
+        let node = &graph.nodes[0];
         let address = node.resource_address();
         assert_eq!(node.address, native);
         assert_eq!(node.module, module);

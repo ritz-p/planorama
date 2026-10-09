@@ -1,5 +1,5 @@
 use super::address::{contextualize, matches_instance, static_address};
-use crate::model::{DiagnosticReason, Node, Resolution};
+use crate::model::{DiagnosticReason, Resolution, TerraformEntity};
 use serde_json::Value;
 use std::collections::{BTreeMap, BTreeSet};
 
@@ -223,9 +223,9 @@ pub(super) fn prefix_match(reference: &str, key: &str) -> bool {
 }
 
 pub(super) fn resolve(
-    nodes: &[Node],
+    nodes: &[TerraformEntity],
     symbols: &BTreeMap<String, BTreeSet<String>>,
-) -> Vec<crate::model::Edge> {
+) -> Vec<crate::model::TerraformReference> {
     let instances = instance_map(nodes);
     let mut edges = BTreeSet::new();
     for (target, node) in nodes.iter().enumerate() {
@@ -246,10 +246,13 @@ pub(super) fn resolve(
             }
         }
     }
-    edges.into_iter().map(crate::model::Edge::from).collect()
+    edges
+        .into_iter()
+        .map(crate::model::TerraformReference::from)
+        .collect()
 }
 
-pub(super) fn instance_map(nodes: &[Node]) -> BTreeMap<String, Vec<usize>> {
+pub(super) fn instance_map(nodes: &[TerraformEntity]) -> BTreeMap<String, Vec<usize>> {
     nodes
         .iter()
         .enumerate()

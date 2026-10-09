@@ -109,7 +109,10 @@ fn unresolved_ambiguous_or_non_attribute_dependencies_preserve_original_node() {
         input["configuration"]["root_module"]["resources"][2]["depends_on"] =
             json!(["aws_subnet.private", "aws_route_table.private"]);
         let raw = plan::parse(&input.to_string()).unwrap();
-        assert_eq!(semantic::transform(&raw).0, raw.graph);
+        assert_eq!(
+            semantic::transform(&raw).0,
+            crate::semantic::base_graph(&raw)
+        );
     }
 }
 
@@ -136,7 +139,10 @@ fn extra_incoming_or_outgoing_edges_and_data_mode_are_preserved() {
             _ => input["resource_changes"][2]["mode"] = json!("data"),
         }
         let raw = plan::parse(&input.to_string()).unwrap();
-        assert_eq!(semantic::transform(&raw).0, raw.graph);
+        assert_eq!(
+            semantic::transform(&raw).0,
+            crate::semantic::base_graph(&raw)
+        );
     }
 }
 
@@ -149,7 +155,10 @@ fn expanded_resource_instances_remain_visible_when_endpoint_is_ambiguous() {
         .unwrap()
         .push(json!({"address":"aws_subnet.private[1]","type":"aws_subnet"}));
     let raw = plan::parse(&input.to_string()).unwrap();
-    assert_eq!(semantic::transform(&raw).0, raw.graph);
+    assert_eq!(
+        semantic::transform(&raw).0,
+        crate::semantic::base_graph(&raw)
+    );
 }
 
 fn relationship_input(kind: &str) -> Value {
@@ -289,7 +298,7 @@ fn new_relationships_preserve_helpers_when_lowering_is_uncertain() {
                 }
                 assert_eq!(
                     semantic::transform(&raw).0,
-                    raw.graph,
+                    crate::semantic::base_graph(&raw),
                     "{kind} {attribute} {scenario}"
                 );
             }

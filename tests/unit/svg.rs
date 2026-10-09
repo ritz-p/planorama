@@ -10,7 +10,7 @@ fn policy_and_controller_fallbacks_keep_resources_actions_and_dependencies() {
         {"address":"aws_ecs_service.app","expressions":{"security_groups":{"references":["aws_security_group.app.id"]}}}
     ]}}}"#).unwrap();
     let graph = crate::semantic::transform(&raw);
-    assert_eq!(graph.0, raw.graph);
+    assert_eq!(graph.0, crate::semantic::base_graph(&raw));
     let output = render(&graph, &Layout::new(&graph));
     for value in [
         "data-role=\"policy\"",

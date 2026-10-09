@@ -447,7 +447,7 @@ fn reparsed_module_renames_preserve_fan_in_and_fan_out_ports_and_paths() {
 fn large_aws_example_keeps_cross_module_containment_and_multi_subnet_relationships() {
     let raw = plan::parse(include_str!("../../../examples/terraform-large/plan.json")).unwrap();
     assert!(raw.nodes.len() >= 45);
-    let ranks = crate::layout::rank::compute(&raw.graph);
+    let ranks = crate::layout::rank::compute(&crate::semantic::base_graph(&raw));
     assert!(ranks.iter().copied().max().unwrap() >= 4);
     assert!(
         raw.edges

@@ -1,4 +1,5 @@
-use crate::model::{Edge, EdgeKind, EntityMode, Graph, ResourceRole, TerraformGraph};
+use crate::model::{Edge, EdgeKind, EntityMode, Graph, ResourceRole};
+use crate::semantic::Input;
 use std::collections::BTreeSet;
 
 #[cfg(test)]
@@ -34,7 +35,7 @@ pub(super) fn common_parent(nodes: &[usize], parents: &[BTreeSet<usize>]) -> Opt
         .find(|candidate| chains.iter().all(|chain| chain.contains(candidate)))
 }
 
-pub(super) fn infer(raw: &TerraformGraph, mut graph: Graph) -> Graph {
+pub(super) fn infer(raw: &Input, mut graph: Graph) -> Graph {
     let mut parents = vec![BTreeSet::new(); graph.nodes.len()];
     for edge in &graph.edges {
         if edge.kind == EdgeKind::Containment {

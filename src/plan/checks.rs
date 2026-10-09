@@ -1,4 +1,4 @@
-use crate::model::{CheckInstance, CheckResult, EntityMode, Node};
+use crate::model::{CheckInstance, CheckResult, EntityMode, TerraformEntity};
 use serde_json::Value;
 use std::collections::HashMap;
 
@@ -6,7 +6,7 @@ use std::collections::HashMap;
 #[path = "../../tests/unit/plan/checks.rs"]
 mod tests;
 
-pub(super) fn parse(value: &Value, nodes: &[Node]) -> Vec<CheckResult> {
+pub(super) fn parse(value: &Value, nodes: &[TerraformEntity]) -> Vec<CheckResult> {
     let Some(checks) = value.as_array() else {
         return Vec::new();
     };
@@ -54,7 +54,7 @@ fn status(value: &Value) -> Option<String> {
 fn resource(
     address: &Value,
     instance: &Value,
-    resources: &HashMap<&str, Option<&Node>>,
+    resources: &HashMap<&str, Option<&TerraformEntity>>,
 ) -> Option<String> {
     if address["kind"].as_str()? != "resource" {
         return None;
