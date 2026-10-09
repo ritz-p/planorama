@@ -1,10 +1,10 @@
 use super::address::static_address;
 use super::references::qualify;
-use crate::model::{Node, ProviderIdentity};
+use crate::model::{ProviderIdentity, TerraformEntity};
 use serde_json::Value;
 use std::collections::BTreeMap;
 
-pub(super) fn enrich(configuration: &Value, nodes: &mut [Node]) {
+pub(super) fn enrich(configuration: &Value, nodes: &mut [TerraformEntity]) {
     let mut resources = BTreeMap::new();
     collect(
         &configuration["root_module"],
@@ -18,7 +18,6 @@ pub(super) fn enrich(configuration: &Value, nodes: &mut [Node]) {
                 node.provider = provider.clone();
             }
         }
-        node.role = crate::classification::classify(&node.provider, &node.resource_type);
     }
 }
 

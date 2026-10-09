@@ -1,4 +1,5 @@
-use crate::model::{EdgeKind, EntityMode, Graph, ResourceRole, TerraformGraph};
+use crate::model::{EdgeKind, EntityMode, Graph, ResourceRole};
+use crate::semantic::Input;
 use std::collections::BTreeSet;
 mod indirect;
 pub(super) use indirect::resolved_subnets;
@@ -17,7 +18,7 @@ pub(super) fn direct_rule(resource_type: &str) -> Option<(&'static str, &'static
 #[path = "../../tests/unit/semantic/containment.rs"]
 mod tests;
 
-pub(super) fn infer(raw: &TerraformGraph) -> Graph {
+pub(super) fn infer(raw: &Input) -> Graph {
     let mut relationships = BTreeSet::new();
     for reference in &raw.attributes {
         let child = &raw.nodes[reference.target];

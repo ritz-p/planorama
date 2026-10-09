@@ -24,7 +24,7 @@ fn large_fixture_attachments_select_one_worker_instead_of_both() {
     }
 }
 
-fn parse(module: Value, addresses: &[&str]) -> crate::model::TerraformGraph {
+fn parse(module: Value, addresses: &[&str]) -> crate::model::TerraformPlan {
     plan::parse(&json!({
         "format_version": "1.2",
         "resource_changes": addresses.iter().map(|address| json!({"address": address})).collect::<Vec<_>>(),
@@ -33,7 +33,7 @@ fn parse(module: Value, addresses: &[&str]) -> crate::model::TerraformGraph {
 }
 
 fn sources(
-    raw: &crate::model::TerraformGraph,
+    raw: &crate::model::TerraformPlan,
     target: &str,
     attribute: &str,
 ) -> (Vec<String>, bool) {

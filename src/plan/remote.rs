@@ -1,8 +1,8 @@
-use crate::model::{Node, cross_state::RemoteReference};
+use crate::model::{TerraformEntity, cross_state::RemoteReference};
 use serde_json::Value;
 use std::collections::{BTreeMap, BTreeSet};
 
-pub(super) fn collect(module: &Value, nodes: &[Node]) -> Vec<RemoteReference> {
+pub(super) fn collect(module: &Value, nodes: &[TerraformEntity]) -> Vec<RemoteReference> {
     let mut expressions = BTreeMap::new();
     walk(module, "", &BTreeSet::new(), &mut expressions);
     let mut result = BTreeSet::new();

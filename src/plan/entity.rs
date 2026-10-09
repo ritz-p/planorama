@@ -1,13 +1,13 @@
 use super::address::module_of;
-use crate::classification;
-use crate::model::{Action, EntityMode, Node, ProviderIdentity};
+
+use crate::model::{Action, EntityMode, ProviderIdentity, TerraformEntity};
 use serde_json::Value;
 
 #[cfg(test)]
 #[path = "../../tests/unit/plan/entity.rs"]
 mod tests;
 
-pub(super) fn parse(resource: &Value, address: &str, action: Action) -> Node {
+pub(super) fn parse(resource: &Value, address: &str, action: Action) -> TerraformEntity {
     let module = module_of(address);
     let local_address = match module.as_str() {
         "root" => address,
@@ -29,7 +29,7 @@ pub(super) fn parse(resource: &Value, address: &str, action: Action) -> Node {
         .as_str()
         .map(ProviderIdentity::from_source)
         .unwrap_or_else(|| ProviderIdentity::inferred(resource_type));
-    Node {
+    TerraformEntity {
         address: address.into(),
         deposed_key: resource["deposed"].as_str().map(str::to_owned),
         previous_address: resource["previous_address"].as_str().map(str::to_owned),
@@ -38,7 +38,7 @@ pub(super) fn parse(resource: &Value, address: &str, action: Action) -> Node {
         module,
         action,
         mode,
-        role: classification::classify(&provider, resource_type),
+
         provider,
     }
 }

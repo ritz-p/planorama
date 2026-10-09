@@ -1,6 +1,5 @@
-use crate::model::{
-    AttributeReference, DiagnosticReason, EdgeKind, EntityMode, Graph, TerraformGraph,
-};
+use crate::model::{AttributeReference, DiagnosticReason, EdgeKind, EntityMode, Graph};
+use crate::semantic::Input;
 
 #[cfg(test)]
 #[path = "../../tests/unit/semantic/security_groups.rs"]
@@ -16,10 +15,7 @@ pub(super) fn attribute(resource_type: &str) -> Option<&'static str> {
     }
 }
 
-pub(super) fn failure(
-    raw: &TerraformGraph,
-    reference: &AttributeReference,
-) -> Option<DiagnosticReason> {
+pub(super) fn failure(raw: &Input, reference: &AttributeReference) -> Option<DiagnosticReason> {
     if !reference.complete || reference.sources.is_empty() {
         return Some(if reference.sources.is_empty() {
             DiagnosticReason::NoResourceReference
@@ -50,7 +46,7 @@ pub(super) fn failure(
         })
 }
 
-pub(super) fn infer(raw: &TerraformGraph, mut graph: Graph) -> Graph {
+pub(super) fn infer(raw: &Input, mut graph: Graph) -> Graph {
     for reference in &raw.attributes {
         let node = &raw.nodes[reference.target];
         if node.mode != EntityMode::Managed

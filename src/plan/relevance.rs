@@ -1,4 +1,4 @@
-use crate::model::{AttributePathStep, DriftRecord, Node, RelevantAttribute};
+use crate::model::{AttributePathStep, DriftRecord, RelevantAttribute, TerraformEntity};
 use serde_json::Value;
 use std::collections::BTreeMap;
 
@@ -8,7 +8,7 @@ mod tests;
 
 pub(super) fn collect(
     plan: &Value,
-    nodes: &mut [Node],
+    nodes: &mut [TerraformEntity],
     drift: &mut [DriftRecord],
 ) -> Vec<RelevantAttribute> {
     let mut addresses = BTreeMap::new();

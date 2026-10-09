@@ -1,9 +1,12 @@
-use crate::model::{Diagnostic, DiagnosticReason as Reason, EntityMode, TerraformGraph};
+use crate::model::{Diagnostic, DiagnosticReason as Reason, EntityMode};
+use crate::semantic::Input;
 use std::collections::BTreeSet;
 
 /// Explain conservative inference using the same attribute resolutions as transforms.
 /// Only addresses, attribute names and fixed category text can reach the output.
-pub fn collect(raw: &TerraformGraph) -> Vec<Diagnostic> {
+pub fn collect(plan: &crate::model::TerraformPlan) -> Vec<Diagnostic> {
+    let input = Input::new(plan);
+    let raw = &input;
     let mut found = BTreeSet::new();
     for output in &raw.outputs {
         for &reason in &output.issues {

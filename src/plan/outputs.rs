@@ -1,4 +1,4 @@
-use crate::model::{DiagnosticReason as Reason, Node, StateOutput};
+use crate::model::{DiagnosticReason as Reason, StateOutput, TerraformEntity};
 use serde_json::Value;
 use std::collections::{BTreeMap, BTreeSet};
 
@@ -8,7 +8,7 @@ mod tests;
 
 pub(super) fn collect(
     module: &Value,
-    nodes: &[Node],
+    nodes: &[TerraformEntity],
     symbols: &BTreeMap<String, BTreeSet<String>>,
 ) -> Vec<StateOutput> {
     let instances = super::references::instance_map(nodes);

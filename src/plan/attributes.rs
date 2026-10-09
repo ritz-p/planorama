@@ -2,7 +2,7 @@ use super::address::{contextualize, static_address};
 use super::references::{
     instance_map, qualify, qualify_reference, references, resolve_sources as resolve,
 };
-use crate::model::{AttributeReference, Node};
+use crate::model::{AttributeReference, TerraformEntity};
 use serde_json::Value;
 use std::collections::{BTreeMap, BTreeSet};
 
@@ -14,7 +14,7 @@ mod tests;
 
 pub(super) fn collect(
     module: &Value,
-    nodes: &[Node],
+    nodes: &[TerraformEntity],
     symbols: &BTreeMap<String, BTreeSet<String>>,
     graph_only: bool,
 ) -> Vec<AttributeReference> {

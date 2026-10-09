@@ -66,6 +66,7 @@ fn expanded_roles_cover_managed_and_equivalent_data_entities() {
                 {"address":format!("data.{resource_type}.main"),"type":resource_type,"mode":"data","change":{"actions":["read"]}}
             ]});
             let graph = plan::parse(&input.to_string()).unwrap();
+            let graph = crate::semantic::base_graph(&graph);
             assert_eq!(graph.nodes.len(), 2);
             assert!(graph.nodes.iter().all(|node| node.role == expected));
             assert!(

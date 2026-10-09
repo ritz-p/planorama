@@ -55,7 +55,7 @@ fn moves_preserve_provenance_without_aliasing_previous_addresses() {
         let node = raw.nodes.iter().find(|n| n.address == current).unwrap();
         assert_eq!(node.previous_address.as_deref(), Some(previous));
         assert_eq!(node.action, Action::Unchanged);
-        assert_eq!(node.resource_address().terraform(), current);
+        assert_eq!(node.address, current);
         assert!(
             raw.nodes
                 .iter()
@@ -154,12 +154,7 @@ mod instances;
 fn parsed_edges_are_ordered_dependencies() {
     let graph = parse(include_str!("../../tests/fixtures/terraform-plan.json")).unwrap();
     assert_eq!(graph.edges.len(), 28);
-    assert!(
-        graph
-            .edges
-            .iter()
-            .all(|edge| edge.kind == crate::model::EdgeKind::Dependency)
-    );
+    assert!(graph.edges.iter().all(|edge| edge.from != edge.to));
     assert!(graph.edges.windows(2).all(|pair| pair[0] < pair[1]));
     assert_eq!(
         graph.edges,
@@ -185,6 +180,7 @@ fn classification_uses_types_independently_of_entity_mode_and_input_source() {
         ]}}},
         "configuration":{"root_module":{"resources":[{"address":"data.aws_security_group.shared"}]}}
     }"#).unwrap();
+    let graph = crate::semantic::base_graph(&graph);
     assert_eq!(graph.nodes.len(), 5);
     for node in &graph.nodes {
         let expected = match node.address.as_str() {
@@ -224,6 +220,7 @@ fn modes_are_preserved_from_values_changes_and_recovered_prior_state() {
         };
         assert_eq!(node.mode, expected);
     }
+    let graph = crate::semantic::base_graph(&graph);
     let prior = graph
         .nodes
         .iter()
@@ -316,17 +313,21 @@ fn real_data_sources_preserve_read_status_and_both_edge_directions() {
     assert!(
         graph
             .edges
-            .contains(&crate::model::Edge::from((ready, deferred)))
+            .contains(&crate::model::TerraformReference::from((ready, deferred)))
     );
     assert!(
         graph
             .edges
-            .contains(&crate::model::Edge::from((existing, consumer)))
+            .contains(&crate::model::TerraformReference::from((
+                existing, consumer
+            )))
     );
     assert!(
         graph
             .edges
-            .contains(&crate::model::Edge::from((deferred, consumer)))
+            .contains(&crate::model::TerraformReference::from((
+                deferred, consumer
+            )))
     );
 }
 
@@ -373,7 +374,7 @@ fn example_covers_changes_and_module_input_edges() {
             assert!(
                 graph
                     .edges
-                    .contains(&crate::model::Edge::from((ami, index)))
+                    .contains(&crate::model::TerraformReference::from((ami, index)))
             );
         }
     }
@@ -390,7 +391,7 @@ fn example_covers_changes_and_module_input_edges() {
     assert!(
         graph
             .edges
-            .contains(&crate::model::Edge::from((vpc, subnet)))
+            .contains(&crate::model::TerraformReference::from((vpc, subnet)))
     );
     assert_eq!(
         graph
@@ -437,7 +438,10 @@ fn module_output_resolves_to_resource() {
         }}}
       }}
     }"#).unwrap();
-    assert_eq!(graph.edges, vec![crate::model::Edge::from((1, 0))]);
+    assert_eq!(
+        graph.edges,
+        vec![crate::model::TerraformReference::from((1, 0))]
+    );
 }
 
 #[test]
@@ -483,7 +487,10 @@ fn provider_identity_prefers_explicit_metadata_and_configuration_bindings() {
         "aws_vpc.prior",
         "module.net[0].aws_vpc.bound",
     ] {
-        assert_eq!(node(address).role, crate::model::ResourceRole::Unknown);
+        assert_eq!(
+            crate::classification::classify(&node(address).provider, &node(address).resource_type),
+            crate::model::ResourceRole::Unknown
+        );
         assert!(!node(address).provider.is_aws());
     }
     assert_eq!(
@@ -512,12 +519,7 @@ fn foreign_aws_lookalikes_do_not_gain_aws_semantics_or_icons() {
     ],"configuration":{"root_module":{"resources":[{"address":"aws_subnet.custom","expressions":{"vpc_id":{"references":["aws_vpc.custom.id"]}}}]}}}"#).unwrap();
     let graph = crate::semantic::transform(&raw);
     assert_eq!(graph.nodes.len(), 3);
-    assert!(
-        graph
-            .edges
-            .iter()
-            .all(|edge| edge.kind == crate::model::EdgeKind::Dependency)
-    );
+    assert!(graph.edges.iter().all(|edge| edge.from != edge.to));
     let svg = crate::svg::render(&graph, &crate::layout::Layout::new(&graph));
     assert!(!svg.contains("planorama-icon-aws"));
 }
