@@ -1,3 +1,4 @@
+//! SVG presentation of resolved architecture and layout; no semantic inference.
 mod checks;
 mod components;
 mod containers;
@@ -44,7 +45,7 @@ fn escape(value: &str) -> String {
         .collect()
 }
 
-pub fn render(graph: &Graph, layout: &Layout<'_>) -> String {
+pub(crate) fn render(graph: &Graph, layout: &Layout<'_>) -> String {
     render_with_format(graph, layout, AddressFormat::Qualified)
 }
 
@@ -58,7 +59,7 @@ fn dimensions(graph: &Graph, layout: &Layout<'_>) -> (usize, usize) {
     )
 }
 
-pub fn render_with_format(
+pub(crate) fn render_with_format(
     graph: &Graph,
     layout: &Layout<'_>,
     address_format: AddressFormat,

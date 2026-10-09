@@ -1,3 +1,4 @@
+//! Provider-neutral geometry for architecture/view graphs; no Terraform interpretation.
 mod containers;
 #[cfg(test)]
 #[path = "../tests/support/layout_metrics.rs"]
@@ -11,7 +12,7 @@ mod tests;
 
 use crate::model::Graph;
 
-pub fn route_to_margin(start: Point, end: Point, obstacles: &[Bounds]) -> Vec<Point> {
+pub(crate) fn route_to_margin(start: Point, end: Point, obstacles: &[Bounds]) -> Vec<Point> {
     containers::to_margin(start, end, obstacles)
 }
 
