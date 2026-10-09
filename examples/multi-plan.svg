@@ -1,8 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="1220" viewBox="0 0 1120 1220" role="img" aria-labelledby="multi-title multi-description">
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="1364" viewBox="0 0 1120 1364" role="img" aria-labelledby="multi-title multi-description">
 <title id="multi-title">Terraform plans</title><desc id="multi-description">2 independent states. Resource identities and relationships are scoped to each state.</desc>
 <rect width="100%" height="100%" fill="#ffffff"/><text x="40" y="35" font-family="ui-monospace, Consolas, monospace" font-size="25" fill="#0f172a">Terraform plans</text>
 <g id="state-6170706c69636174696f6e-state" data-state-id="application"><text x="40" y="85" font-family="ui-monospace, Consolas, monospace" font-size="20" font-weight="700" fill="#0f172a">State: application</text>
-<svg y="100" xmlns="http://www.w3.org/2000/svg" width="1040" height="448" viewBox="0 0 1040 448" role="img" aria-labelledby="state-6170706c69636174696f6e-title state-6170706c69636174696f6e-description">
+<svg y="100" xmlns="http://www.w3.org/2000/svg" width="1040" height="520" viewBox="0 0 1040 520" role="img" aria-labelledby="state-6170706c69636174696f6e-title state-6170706c69636174696f6e-description">
 <title id="state-6170706c69636174696f6e-title">Terraform plan</title>
 <desc id="state-6170706c69636174696f6e-description">2 resources, 1 reference edges. Arrows point from dependencies to dependent resources. References are conservative, not Terraform execution order. Thin solid: dependency. Dashed: association. Thick dotted: connection. Nested boxes: containment. Edge color preserves the Terraform action when available.</desc>
 <defs><marker id="state-6170706c69636174696f6e-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/></marker><metadata id="state-6170706c69636174696f6e-planorama-icons-license">AWS Architecture Icons, release 07312026.
@@ -45,6 +45,14 @@ No AWS endorsement is implied. Consult the AWS terms for other uses.
 <g id="state-6170706c69636174696f6e-plan-status" data-plan-applyable="false" data-plan-complete="false" data-plan-errored="true">
 <text x="40" y="137" font-size="12" fill="#475569">Plan status: applyable: false complete: false errored: true</text>
 </g>
+<g id="state-6170706c69636174696f6e-relationship-legend" font-size="12" fill="#475569">
+<text x="40" y="157">Relationship lines: color = relationship action (not endpoint actions)</text>
+<path d="M 40 177 H 66" stroke="#94a3b8" stroke-width="2"/><text x="73" y="181">no independent change</text>
+<text x="40" y="205">Line style:</text><path d="M 140 201 H 170" stroke="#64748b" stroke-width="1.5"/><text x="178" y="205">dependency</text>
+<path d="M 340 201 H 370" stroke="#64748b" stroke-width="2" stroke-dasharray="7 4"/><text x="378" y="205">association</text>
+<path d="M 540 201 H 570" stroke="#64748b" stroke-width="2.5" stroke-dasharray="2 4" stroke-linecap="round"/><text x="578" y="205">connection</text>
+</g>
+<g transform="translate(0 72)">
 <g id="state-6170706c69636174696f6e-plan-checks"><title>Object: fail
   unassociated instance: fail
 </title><text x="40" y="161" font-size="12" fill="#475569">Checks (objects): 0 pass / 1 fail / 0 error / 0 unknown / 0 other / 0 unavailable</text></g>
@@ -65,10 +73,11 @@ No AWS endorsement is implied. Consult the AWS terms for other uses.
 </g>
 </g>
 </g>
+</g>
 </svg>
 </g>
-<g id="state-6e6574776f726b-state" data-state-id="network"><text x="40" y="593" font-family="ui-monospace, Consolas, monospace" font-size="20" font-weight="700" fill="#0f172a">State: network</text>
-<svg y="608" xmlns="http://www.w3.org/2000/svg" width="1040" height="592" viewBox="0 0 1040 592" role="img" aria-labelledby="state-6e6574776f726b-title state-6e6574776f726b-description">
+<g id="state-6e6574776f726b-state" data-state-id="network"><text x="40" y="665" font-family="ui-monospace, Consolas, monospace" font-size="20" font-weight="700" fill="#0f172a">State: network</text>
+<svg y="680" xmlns="http://www.w3.org/2000/svg" width="1040" height="664" viewBox="0 0 1040 664" role="img" aria-labelledby="state-6e6574776f726b-title state-6e6574776f726b-description">
 <title id="state-6e6574776f726b-title">Terraform plan</title>
 <desc id="state-6e6574776f726b-description">3 resources, 1 reference edges. Arrows point from dependencies to dependent resources. References are conservative, not Terraform execution order. Thin solid: dependency. Dashed: association. Thick dotted: connection. Nested boxes: containment. Edge color preserves the Terraform action when available.</desc>
 <defs><marker id="state-6e6574776f726b-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/></marker><metadata id="state-6e6574776f726b-planorama-icons-license">AWS Architecture Icons, release 07312026.
@@ -111,6 +120,14 @@ No AWS endorsement is implied. Consult the AWS terms for other uses.
 <g id="state-6e6574776f726b-plan-status" data-plan-applyable="true" data-plan-complete="true" data-plan-errored="false">
 <text x="40" y="137" font-size="12" fill="#475569">Plan status: applyable: true complete: true errored: false</text>
 </g>
+<g id="state-6e6574776f726b-relationship-legend" font-size="12" fill="#475569">
+<text x="40" y="157">Relationship lines: color = relationship action (not endpoint actions)</text>
+<path d="M 40 177 H 66" stroke="#94a3b8" stroke-width="2"/><text x="73" y="181">no independent change</text>
+<text x="40" y="205">Line style:</text><path d="M 140 201 H 170" stroke="#64748b" stroke-width="1.5"/><text x="178" y="205">dependency</text>
+<path d="M 340 201 H 370" stroke="#64748b" stroke-width="2" stroke-dasharray="7 4"/><text x="378" y="205">association</text>
+<path d="M 540 201 H 570" stroke="#64748b" stroke-width="2.5" stroke-dasharray="2 4" stroke-linecap="round"/><text x="578" y="205">connection</text>
+</g>
+<g transform="translate(0 72)">
 <g id="state-6e6574776f726b-plan-checks"><title>Object: pass
 </title><text x="40" y="161" font-size="12" fill="#475569">Checks (objects): 1 pass / 0 fail / 0 error / 0 unknown / 0 other / 0 unavailable</text></g>
 <g transform="translate(0 24)">
@@ -134,6 +151,7 @@ No AWS endorsement is implied. Consult the AWS terms for other uses.
 <use href="#state-6e6574776f726b-planorama-icon-aws-vpc" x="72" y="380" width="24" height="24" aria-hidden="true"/><text x="104" y="397" font-size="13" fill="#0f172a">module.root.aws_security_group.ap</text>
 <text x="104" y="417" font-size="13" fill="#0f172a">p</text>
 <text x="72" y="436" font-size="10" fill="#64748b" data-role="policy"><title>root</title>policy · root</text>
+</g>
 </g>
 </g>
 </g>

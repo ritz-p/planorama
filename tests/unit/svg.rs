@@ -1,6 +1,42 @@
 use super::*;
 
 #[test]
+fn relationship_legend_explains_colors_and_omits_line_free_graphs() {
+    let raw = crate::plan::parse(include_str!("../fixtures/association-plan.json")).unwrap();
+    let mut graph = crate::semantic::transform(&raw);
+    for action in [
+        Action::Create,
+        Action::Update,
+        Action::Delete,
+        Action::Replace,
+        Action::Read,
+        Action::Unchanged,
+        Action::Other,
+    ] {
+        graph.0.edges[0].change.as_mut().unwrap().action = action;
+        let output = render(&graph, &Layout::new(&graph));
+        assert!(output.contains("color = relationship action (not endpoint actions)"));
+        assert!(output.contains("no independent change"));
+        let legend = output
+            .split("id=\"relationship-legend\"")
+            .nth(1)
+            .unwrap()
+            .split("</g>")
+            .next()
+            .unwrap();
+        assert!(legend.contains(color(action).1));
+        assert!(legend.contains(label(action)));
+        assert_eq!(output, render(&graph, &Layout::new(&graph)));
+    }
+    graph.0.edges[0].change = None;
+    assert!(render(&graph, &Layout::new(&graph)).contains("no independent change"));
+    graph.0.edges[0].kind = EdgeKind::Containment;
+    assert!(!render(&graph, &Layout::new(&graph)).contains("id=\"relationship-legend\""));
+    graph.0.edges.clear();
+    assert!(!render(&graph, &Layout::new(&graph)).contains("id=\"relationship-legend\""));
+}
+
+#[test]
 fn policy_and_controller_fallbacks_keep_resources_actions_and_dependencies() {
     let raw = crate::plan::parse(r#"{"format_version":"1.2","resource_changes":[
         {"address":"aws_security_group.app","type":"aws_security_group","change":{"actions":["update"]}},
