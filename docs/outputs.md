@@ -8,3 +8,6 @@ the expression metadata does not identify which aggregate field supplied the val
 Bare instance-collection traversals also remain conservative even with only one
 current instance: Terraform may serialize a selector as a separate reference.
 Independently exact resource traversals remain available alongside these unknowns.
+Explicit full splats (`test.pool[*].id`, including splatted module instances)
+retain all selected sources. Only explicitly splatted dimensions permit multiple
+matches; an unspecified or dynamic selector in another dimension remains ambiguous.
