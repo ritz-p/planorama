@@ -57,6 +57,27 @@ pub fn collect(raw: &TerraformGraph) -> Vec<Diagnostic> {
         }
         let direct = super::containment::direct_rule(&node.resource_type)
             .map(|(attribute, parent)| [(attribute, parent, false, true)]);
+        if node.resource_type == "aws_route" {
+            match super::routes::endpoints(raw, target) {
+                Err(diagnostic) => {
+                    found.insert(diagnostic);
+                }
+                Ok((from, to)) => {
+                    let incident: Vec<_> = raw
+                        .edges
+                        .iter()
+                        .filter(|e| e.from == target || e.to == target)
+                        .collect();
+                    if !super::associations::can_lower(target, from, to, &incident) {
+                        found.insert(Diagnostic {
+                            address: node.address.clone(),
+                            attribute: "route_table_id,route_target".into(),
+                            reason: Reason::AdditionalRelationships,
+                        });
+                    }
+                }
+            }
+        }
         // Security-group attachment attributes are optional; absent attributes
         // do not imply missing provenance or an invalid Terraform configuration.
         if let Some(attribute) = super::security_groups::attribute(&node.resource_type) {

@@ -1,6 +1,92 @@
 mod support;
 
 #[test]
+fn referenced_ids_with_different_planned_values_keep_route_cards() {
+    let mut input: serde_json::Value =
+        serde_json::from_slice(include_bytes!("../fixtures/routes-plan.json")).unwrap();
+    input["resource_changes"][2]["change"]["after"]["gateway_id"] =
+        "TOP_SECRET_OTHER_GATEWAY".into();
+    let bytes = input.to_string();
+    let output = support::run_with_args(bytes.as_bytes(), &["--diagnostics"]);
+    assert!(output.status.success());
+    let svg = String::from_utf8(output.stdout).unwrap();
+    let stderr = String::from_utf8(output.stderr).unwrap();
+    assert!(!svg.contains("association; replace: aws_route.default"));
+    assert!(svg.contains("data-terraform-address=\"aws_route.default\""));
+    assert!(svg.contains("association; create: aws_route.second"));
+    assert!(stderr.contains("planned endpoint value is not proven"));
+    assert!(!format!("{svg}{stderr}").contains("TOP_SECRET"));
+}
+
+#[test]
+fn route_fallback_diagnostics_explain_rejections_without_exposing_values() {
+    for (case, reason) in [
+        (0, "attribute has no resolvable resource reference"),
+        (1, "unsupported route target"),
+        (2, "missing expected attribute"),
+        (3, "additional relationships prevent association lowering"),
+        (4, "multiple route target attributes"),
+    ] {
+        let mut input: serde_json::Value =
+            serde_json::from_slice(include_bytes!("../fixtures/routes-plan.json")).unwrap();
+        let expressions = &mut input["configuration"]["root_module"]["resources"][0]["expressions"];
+        match case {
+            0 => expressions["gateway_id"] = serde_json::json!({"constant_value":"TOP_SECRET"}),
+            1 => {
+                expressions.as_object_mut().unwrap().remove("gateway_id");
+                expressions["vpc_endpoint_id"] = serde_json::json!({"constant_value":"TOP_SECRET"});
+            }
+            2 => {
+                expressions
+                    .as_object_mut()
+                    .unwrap()
+                    .remove("route_table_id");
+            }
+            3 => {
+                input["configuration"]["root_module"]["resources"][1]["expressions"]["extra"] =
+                    serde_json::json!({"references":["aws_route.default.id"]})
+            }
+            _ => expressions["nat_gateway_id"] = serde_json::json!({"constant_value":"TOP_SECRET"}),
+        }
+        let bytes = input.to_string();
+        let output = support::run_with_args(bytes.as_bytes(), &["--diagnostics"]);
+        assert!(output.status.success());
+        assert_eq!(output.stdout, render(bytes.as_bytes()).as_bytes());
+        let stderr = String::from_utf8(output.stderr).unwrap();
+        assert!(
+            stderr
+                .lines()
+                .any(|line| line.contains("aws_route.default") && line.contains(reason)),
+            "{stderr}"
+        );
+        assert!(!stderr.contains("TOP_SECRET"));
+    }
+    let output = support::run_with_args(
+        include_bytes!("../fixtures/routes-plan.json"),
+        &["--diagnostics"],
+    );
+    let stderr = String::from_utf8(output.stderr).unwrap();
+    assert!(
+        !stderr
+            .lines()
+            .any(|line| line.contains("aws_route.default") || line.contains("aws_route.second"))
+    );
+}
+
+#[test]
+fn routes_render_as_individually_inspectable_relationships() {
+    let input = include_bytes!("../fixtures/routes-plan.json");
+    let svg = render(input);
+    assert!(svg.contains("association; replace: aws_route.default"));
+    assert!(svg.contains("association; create: aws_route.second"));
+    assert!(svg.contains("aws_route.literal"));
+    assert_eq!(svg.matches("data-edge-kind=\"association\"").count(), 2);
+    assert!(svg.contains("data-action-reason=\"replace_because_cannot_update\""));
+    assert!(!svg.contains("TOP_SECRET"));
+    assert_eq!(svg, render(input));
+}
+
+#[test]
 fn drift_relevance_exposes_safe_paths_and_unresolved_diagnostics() {
     let mut input: serde_json::Value =
         serde_json::from_slice(include_bytes!("../fixtures/drift-plan.json")).unwrap();
@@ -261,6 +347,10 @@ fn deposed_fixture_preserves_every_change_card_and_action() {
 #[test]
 fn committed_svg_samples_match_the_current_renderer() {
     for (input, expected) in [
+        (
+            include_bytes!("../fixtures/routes-plan.json").as_slice(),
+            include_str!("../../examples/routes.svg"),
+        ),
         (
             include_bytes!("../fixtures/checks-plan.json").as_slice(),
             include_str!("../../examples/checks.svg"),
