@@ -2,6 +2,65 @@ use super::*;
 use serde_json::json;
 
 #[test]
+fn replacement_reasons_and_typed_paths_are_independent_of_actions_and_values() {
+    use crate::model::{Action, AttributePathStep as Step};
+    let raw =
+        crate::plan::parse(include_str!("../../fixtures/replacement-reasons-plan.json")).unwrap();
+    let node = |name: &str| {
+        raw.nodes
+            .iter()
+            .find(|n| n.address == format!("terraform_data.{name}"))
+            .unwrap()
+    };
+    assert_eq!(
+        node("tainted").metadata.action_reason.as_deref(),
+        Some("replace_because_tainted")
+    );
+    assert_eq!(node("tainted").action, Action::Replace);
+    assert_eq!(
+        node("paths").metadata.replace_paths,
+        Some(vec![
+            vec![Step::Attribute("subnet_id".into())],
+            vec![
+                Step::Attribute("network".into()),
+                Step::Index(0),
+                Step::Attribute("tags".into()),
+                Step::Attribute("key.with[brackets]".into())
+            ]
+        ])
+    );
+    assert_eq!(
+        node("future").metadata.action_reason.as_deref(),
+        Some("future<&reason")
+    );
+    assert_eq!(node("unspecified").action, Action::Replace);
+    assert_eq!(node("unspecified").metadata, Default::default());
+    assert_eq!(node("ordinary").action, Action::Create);
+    assert_eq!(node("ordinary").metadata, Default::default());
+    assert!(!format!("{raw:?}").contains("TOP_SECRET"));
+}
+
+#[test]
+fn invalid_path_steps_do_not_become_truncated_replacement_paths() {
+    use crate::model::AttributePathStep as Step;
+    let metadata = parse(
+        &json!({"replace_paths":[[],["valid",4],["bad",true],["negative",-1],"invalid",["fraction",1.5]]}),
+    );
+    assert_eq!(
+        metadata.replace_paths,
+        Some(vec![
+            vec![],
+            vec![Step::Attribute("valid".into()), Step::Index(4)]
+        ])
+    );
+    assert_eq!(
+        parse(&json!({"replace_paths":[]})).replace_paths,
+        Some(vec![])
+    );
+    assert_eq!(parse(&json!({"replace_paths":false})).replace_paths, None);
+}
+
+#[test]
 fn import_metadata_is_value_free_and_independent_of_planned_action() {
     for importing in [
         json!({}),

@@ -1,6 +1,30 @@
 mod support;
 
 #[test]
+fn replacement_reasons_are_escaped_and_visible_on_cards_and_lowered_edges() {
+    let input = include_bytes!("../fixtures/replacement-reasons-plan.json");
+    let svg = render(input);
+    assert!(svg.contains("reason: replace_because_tainted"));
+    assert!(svg.contains("replacement paths: [[&quot;subnet_id&quot;]"));
+    assert!(svg.contains("future&lt;&amp;reason"));
+    assert!(!svg.contains("future<&reason"));
+    assert!(!svg.contains("TOP_SECRET"));
+    assert!(svg.contains("replace (4)"));
+    assert_eq!(svg, render(input));
+    let mut input: serde_json::Value =
+        serde_json::from_slice(include_bytes!("../fixtures/association-plan.json")).unwrap();
+    input["resource_changes"][2]["action_reason"] =
+        serde_json::json!("replace_because_cannot_update");
+    input["resource_changes"][2]["change"] =
+        serde_json::json!({"actions":["delete","create"],"replace_paths":[["subnet_id"]]});
+    let svg = render(input.to_string().as_bytes());
+    assert!(svg.contains("data-action-reason=\"replace_because_cannot_update\""));
+    assert!(svg.contains("data-replace-paths=\"[[&quot;subnet_id&quot;]]\""));
+    assert!(svg.contains("association; replace: aws_route_table_association.private"));
+    assert!(svg.contains("replacement paths:"));
+}
+
+#[test]
 fn mixed_literal_security_group_ids_keep_dependency_edges_and_redacted_diagnostics() {
     let mut input: serde_json::Value =
         serde_json::from_slice(include_bytes!("../fixtures/security-groups-plan.json")).unwrap();

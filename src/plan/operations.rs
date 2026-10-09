@@ -1,4 +1,4 @@
-use crate::model::{ChangeMetadata, ImportMetadata, StateRemoval};
+use crate::model::{AttributePathStep, ChangeMetadata, ImportMetadata, StateRemoval};
 use serde_json::Value;
 
 #[cfg(test)]
@@ -29,6 +29,21 @@ pub(super) fn parse(change: &Value) -> ChangeMetadata {
     ChangeMetadata {
         import,
         state_removal,
+        replace_paths: change["replace_paths"].as_array().map(|paths| {
+            paths
+                .iter()
+                .filter_map(|path| {
+                    path.as_array()?
+                        .iter()
+                        .map(|step| match step {
+                            Value::String(name) => Some(AttributePathStep::Attribute(name.clone())),
+                            Value::Number(index) => index.as_u64().map(AttributePathStep::Index),
+                            _ => None,
+                        })
+                        .collect::<Option<Vec<_>>>()
+                })
+                .collect()
+        }),
         ..Default::default()
     }
 }

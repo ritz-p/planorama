@@ -1,0 +1,10 @@
+{
+  "format_version":"1.2",
+  "resource_changes":[
+    {"address":"terraform_data.tainted","type":"terraform_data","action_reason":"replace_because_tainted","change":{"actions":["delete","create"],"before":{"secret":"TOP_SECRET"}}},
+    {"address":"terraform_data.paths","type":"terraform_data","action_reason":"replace_because_cannot_update","change":{"actions":["create","delete"],"replace_paths":[["subnet_id"],["network",0,"tags","key.with[brackets]"]],"after":{"secret":"TOP_SECRET"}}},
+    {"address":"terraform_data.future","type":"terraform_data","action_reason":"future<&reason","change":{"actions":["delete","create"],"replace_paths":[["quote\"<&",2]]}},
+    {"address":"terraform_data.unspecified","type":"terraform_data","change":{"actions":["delete","create"]}},
+    {"address":"terraform_data.ordinary","type":"terraform_data","change":{"actions":["create"]}}
+  ]
+}

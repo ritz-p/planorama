@@ -168,6 +168,7 @@ pub fn render_with_format(
         let mode = entities::border(node.mode);
         let operation = operations::attributes(&node.metadata);
         let operation_label = operations::label(node.action, &node.metadata);
+        let operation_details = escape(&operations::details(&node.metadata));
         let previous = node
             .previous_address
             .as_ref()
@@ -180,7 +181,7 @@ pub fn render_with_format(
             .unwrap_or_default();
         writeln!(
             svg,
-            r#"<g id="resource-{i}" data-qualified-address="{qualified}" data-terraform-address="{address}"{deposed}{previous}{operation}><title>{selected_title} — {operation_label}</title>"#,
+            r#"<g id="resource-{i}" data-qualified-address="{qualified}" data-terraform-address="{address}"{deposed}{previous}{operation}><title>{selected_title} — {operation_label}{operation_details}</title>"#,
         )
         .unwrap();
         if node.role != crate::model::ResourceRole::Container {
