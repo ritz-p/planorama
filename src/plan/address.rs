@@ -65,16 +65,46 @@ enum ValueKey {
 }
 
 pub(super) fn dynamic_selection(reference: &str, resource_address: Option<&str>) -> bool {
+    dynamic_selection_with_splats(reference, resource_address, false)
+}
+
+pub(super) fn full_splat(part: &str) -> bool {
+    part.strip_prefix(name(part)) == Some("[*]")
+}
+
+// Full splats select every instance, unlike an unknown keyed selection. Only
+// output provenance opts into this; dependency/semantic resolution is unchanged.
+pub(super) fn dynamic_selection_with_splats(
+    reference: &str,
+    resource_address: Option<&str>,
+    allow_splats: bool,
+) -> bool {
     let traversal = parts(reference);
     let mut module_end = 0;
     while module_end + 1 < traversal.len() && traversal[module_end] == "module" {
         module_end += 2;
     }
     let end = resource_address.map_or(module_end, |address| parts(address).len());
-    traversal
+    traversal.iter().take(end).any(|part| {
+        part.contains('[') && known_key(part).is_none() && !(allow_splats && full_splat(part))
+    })
+}
+
+// Collapse only explicitly splatted dimensions. Differences in any other
+// module/resource dimension still represent an ambiguous instance selection.
+pub(super) fn selection_group(reference: &str, instance: &str) -> String {
+    parts(reference)
         .iter()
-        .take(end)
-        .any(|part| part.contains('[') && known_key(part).is_none())
+        .zip(parts(instance))
+        .map(|(reference, instance)| {
+            if full_splat(reference) {
+                name(instance)
+            } else {
+                instance
+            }
+        })
+        .collect::<Vec<_>>()
+        .join(".")
 }
 
 pub(super) fn meta_reference(reference: &str) -> bool {
