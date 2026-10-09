@@ -7,6 +7,17 @@ fn cli() -> Command {
 }
 
 #[test]
+fn help_documents_remote_state_mapping_syntax() {
+    let output = cli().arg("--help").output().unwrap();
+    assert!(output.status.success());
+    assert!(
+        String::from_utf8(output.stdout)
+            .unwrap()
+            .contains("--remote-state CONSUMER:ADDRESS=PRODUCER")
+    );
+}
+
+#[test]
 fn stdin_to_stdout_is_svg_and_diagnostics_stay_on_stderr() {
     let output = support::run(include_bytes!("../../examples/plan.json"));
     assert!(output.status.success());

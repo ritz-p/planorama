@@ -1,5 +1,7 @@
 # Multiple plans and state identity
 
+Use `--remote-state CONSUMER:DATA_ADDRESS=PRODUCER` to explicitly connect an exact `data.terraform_remote_state.NAME.outputs.OUTPUT` traversal to a loaded producer state. Repeat mappings as needed; conflicting producers remain ambiguous and emit no relationship. Root output provenance must be complete and nonempty. `--diagnostics` reports successful chains and unmapped, missing or incomplete sources without backend configuration or output values. This initial resolver handles direct exact traversals, including statically identified module instances; it does not guess backend identity or resolve dynamic output selections.
+
 Name each input explicitly with repeatable `--state ID=PATH` arguments:
 
 ```sh

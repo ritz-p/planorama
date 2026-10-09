@@ -2,6 +2,7 @@ use crate::model::{ArchitectureGraph, TerraformGraph};
 mod associations;
 mod components;
 mod containment;
+pub mod cross_state;
 mod data;
 pub mod diagnostics;
 mod routes;
@@ -15,6 +16,7 @@ pub fn transform(raw: &TerraformGraph) -> ArchitectureGraph {
     // Fixed order: direct/spanning/indirect containment, security-group connections, relationship lowering,
     // then data-source visibility. Lowering must see all original consumers.
     let contained = TerraformGraph {
+        remote_references: raw.remote_references.clone(),
         outputs: raw.outputs.clone(),
         graph: security_groups::infer(raw, containment::infer(raw)),
         attributes: raw.attributes.clone(),
