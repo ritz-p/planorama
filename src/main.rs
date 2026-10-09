@@ -1,3 +1,5 @@
+#[cfg(test)]
+mod benchmarks;
 mod classification;
 mod cli;
 mod icons;
