@@ -7,6 +7,7 @@ pub(crate) use containment::ContainmentTree;
 #[cfg(test)]
 #[path = "../tests/support/layout_metrics.rs"]
 pub(crate) mod metrics;
+mod pipeline;
 mod placement;
 mod rank;
 mod routing;
@@ -67,29 +68,9 @@ impl<'a> Layout<'a> {
             .collect()
     }
     pub fn new(graph: &'a Graph) -> Self {
-        if graph
-            .nodes
-            .iter()
-            .any(|node| node.role == crate::model::ResourceRole::Container)
-        {
-            return containers::place(graph);
-        }
-        let ranks = rank::compute(graph);
-        let placement = placement::place(graph, &ranks);
-        let mut bounds: Vec<_> = placement.positions.into_iter().map(Bounds::card).collect();
-        let routed = routing::route(graph, &ranks, &mut bounds, &placement.channels);
-        let positions = bounds.iter().map(|bounds| bounds.origin).collect();
-        Self {
-            bounds,
-            header_heights: vec![NODE_HEIGHT; graph.nodes.len()],
-            containers: Vec::new(),
-            containment: ContainmentTree::new(graph),
-            width: routed.width,
-            height: placement.height,
-            positions,
-            bands: placement.bands,
-            paths: routed.paths,
-            junctions: routed.junctions,
-        }
+        let containment = ContainmentTree::new(graph);
+        let mut placed = pipeline::place(graph, containment);
+        pipeline::route(graph, &mut placed);
+        placed.layout
     }
 }
