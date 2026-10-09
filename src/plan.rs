@@ -45,6 +45,7 @@ pub fn parse(json: &str) -> Result<TerraformGraph, String> {
             .ok_or("resource change is missing address")?;
         let mut node = entity::parse(change, address, parse_action(&change["change"]["actions"]));
         node.metadata = operations::parse(&change["change"]);
+        node.metadata.action_reason = change["action_reason"].as_str().map(str::to_owned);
         if !node.provider.is_explicit() {
             if let Some(provider) = planned_providers.get(&(address.to_owned(), None)) {
                 node.provider = provider.clone();

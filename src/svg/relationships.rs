@@ -56,6 +56,9 @@ pub(super) fn title(graph: &Graph, edge: &Edge, semantic_edges: bool) -> String 
         None if semantic_edges => write!(title, " ({kind})").unwrap(),
         None => {}
     }
+    if let Some(change) = &edge.change {
+        title.push_str(&super::operations::details(&change.metadata));
+    }
     escape(&title)
 }
 
