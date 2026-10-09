@@ -1,12 +1,14 @@
 use crate::layout::Layout;
-use crate::model::{ArchitectureGraph, StateId};
+use crate::model::{
+    StateId,
+    cross_state::{Architecture, Endpoint},
+};
 use std::collections::BTreeMap;
 use std::fmt::Write;
 
-pub fn render_states(
-    graphs: &BTreeMap<StateId, ArchitectureGraph>,
-    format: super::AddressFormat,
-) -> String {
+pub fn render_states(architecture: &Architecture, format: super::AddressFormat) -> String {
+    let graphs = &architecture.states;
+    let mut endpoints = BTreeMap::new();
     let mut sections = String::new();
     let mut top = 60;
     let mut width = 1120;
@@ -15,11 +17,56 @@ pub fn render_states(
         width = width.max(layout.width);
         let (_, height) = super::dimensions(graph, &layout);
         let prefix = prefix(id);
+        let check_offset = if graph.checks.is_empty() { 0 } else { 24 };
+        for (index, node) in graph
+            .nodes
+            .iter()
+            .enumerate()
+            .filter(|(_, n)| n.deposed_key.is_none())
+        {
+            let bounds = layout.bounds[index];
+            endpoints.insert(
+                Endpoint {
+                    state: id.clone(),
+                    address: node.address.clone(),
+                },
+                (
+                    bounds.right(),
+                    top + 40 + check_offset + bounds.origin.y + layout.header_heights[index] / 2,
+                    format!("{prefix}resource-{index}"),
+                ),
+            );
+        }
         let document = namespace(&super::render_with_format(graph, &layout, format), &prefix);
         writeln!(sections, r##"<g id="{prefix}state" data-state-id="{}"><text x="40" y="{}" font-family="ui-monospace, Consolas, monospace" font-size="20" font-weight="700" fill="#0f172a">State: {}</text>"##, super::escape(id.as_str()), top + 25, super::escape(id.as_str())).unwrap();
         sections.push_str(&document.replacen("<svg ", &format!("<svg y=\"{}\" ", top + 40), 1));
         sections.push_str("</g>\n");
         top += height + 60;
+    }
+    let mut links = String::new();
+    for edge in &architecture.relationships {
+        let (Some((sx, sy, source)), Some((tx, ty, target))) =
+            (endpoints.get(&edge.from), endpoints.get(&edge.to))
+        else {
+            continue;
+        };
+        let lane = width + 30;
+        let title = super::escape(&format!(
+            "{}:{} -> {}:{} via {}.outputs.{} (cross-state dependency)",
+            edge.from.state.as_str(),
+            edge.from.address,
+            edge.to.state.as_str(),
+            edge.to.address,
+            edge.remote,
+            edge.output
+        ));
+        writeln!(links, r##"<path data-edge-kind="dependency" data-cross-state="true" data-source="{source}" data-target="{target}" data-source-state="{}" data-target-state="{}" data-remote-state="{}" data-output="{}" d="M {sx} {sy} H {lane} V {ty} H {tx}" fill="none" stroke="#2563eb" stroke-width="1.5" stroke-dasharray="7 4" marker-end="url(#cross-state-arrow)"><title>{title}</title></path>"##, super::escape(edge.from.state.as_str()),super::escape(edge.to.state.as_str()),super::escape(&edge.remote),super::escape(&edge.output)).unwrap();
+    }
+    if !links.is_empty() {
+        width += 80;
+        sections.push_str("<defs><marker id=\"cross-state-arrow\" viewBox=\"0 0 10 10\" refX=\"9\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto-start-reverse\"><path d=\"M 0 0 L 10 5 L 0 10 z\" fill=\"#2563eb\"/></marker></defs>\n");
+        sections.push_str(&links);
+        sections.push_str("<text x=\"350\" y=\"35\" font-family=\"ui-monospace, Consolas, monospace\" font-size=\"12\" fill=\"#2563eb\">Dashed blue: cross-state dependency</text>\n");
     }
     format!(
         r##"<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{top}" viewBox="0 0 {width} {top}" role="img" aria-labelledby="multi-title multi-description">
