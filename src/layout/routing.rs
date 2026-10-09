@@ -141,8 +141,19 @@ pub(super) fn route(
             if bundles.group(edge).is_none() {
                 chosen.reserve(&mut lanes);
             }
-            scorer.insert(chosen.points.clone());
-            paths.push(chosen.points);
+            let points = if bundles.group(edge).is_none() {
+                super::routing_shared::ports::select(
+                    bounds[a],
+                    bounds[b],
+                    chosen.points,
+                    bounds,
+                    &scorer,
+                )
+            } else {
+                chosen.points
+            };
+            scorer.insert(points.clone());
+            paths.push(points);
         }
         let mut expanded = false;
         for (column, width) in gutter_widths.iter_mut().enumerate() {
