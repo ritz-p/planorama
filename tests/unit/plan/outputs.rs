@@ -106,6 +106,37 @@ fn whole_module_output_only_follows_exported_values() {
 }
 
 #[test]
+fn split_module_selectors_do_not_choose_a_single_instance() {
+    for selector in ["var.key", "count.index", "each.key"] {
+        for (instance, reference, selected) in [
+            ("module.child[0]", "module.child", false),
+            ("module.child[\"a\"]", "module.child", false),
+            ("module.child[0]", "module.child[0]", true),
+            ("module.child[0]", "module.child[*]", true),
+            ("module.child", "module.child", true),
+        ] {
+            let address = format!("{instance}.test.a");
+            let input = json!({"format_version":"1.2","resource_changes":[
+                {"address":address,"type":"test"},
+                {"address":"test.fixed","type":"test"}
+            ],"configuration":{"root_module":{
+                "module_calls":{"child":{"module":{"outputs":{"result":{"expression":{"references":["test.a.id"]}}}}}},
+                "locals":{"selected":{"references":[reference,selector]}},
+                "outputs":{"x":{"expression":{"references":["local.selected","test.fixed.id"]}}}
+            }}});
+            let raw = crate::plan::parse(&input.to_string()).unwrap();
+            assert!(!raw.outputs[0].complete);
+            let expected = if selected {
+                vec![address.as_str(), "test.fixed"]
+            } else {
+                vec!["test.fixed"]
+            };
+            assert_eq!(raw.outputs[0].sources, expected, "{reference}: {selector}");
+        }
+    }
+}
+
+#[test]
 fn split_selectors_do_not_choose_a_single_collection_instance() {
     for selector in ["var.key", "count.index", "each.key"] {
         let input = json!({"format_version":"1.2","variables":{"key":{}},"resource_changes":[{"address":"test.pool[0]","type":"test"},{"address":"test.fixed","type":"test"}],"configuration":{"root_module":{"outputs":{"x":{"expression":{"references":["test.pool",selector,"test.fixed.id"]}}}}}});
