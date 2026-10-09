@@ -43,6 +43,7 @@ pub enum ResourceRole {
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Graph {
+    pub components: Vec<SyntheticComponent>,
     pub checks: Vec<CheckResult>,
     pub status: PlanStatus,
     pub nodes: Vec<Node>,
@@ -60,8 +61,10 @@ pub struct PlanStatus {
 
 mod address;
 mod checks;
+mod components;
 pub(crate) use address::module_of;
 pub use checks::{CheckInstance, CheckResult};
+pub use components::SyntheticComponent;
 mod diagnostics;
 mod graphs;
 mod operations;

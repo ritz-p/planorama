@@ -1,5 +1,7 @@
 # Terraform operation metadata
 
+[Logical architecture components](components.md) retain original resource cards and their complete change information.
+
 Plan-level checks, including resource preconditions and postconditions, are documented in [Terraform check results](checks.md).
 
 ## Replacement reasons

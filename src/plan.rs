@@ -98,6 +98,7 @@ pub fn parse(json: &str) -> Result<TerraformGraph, String> {
     );
     Ok(TerraformGraph {
         graph: Graph {
+            components: Vec::new(),
             checks: checks::parse(&plan["checks"], &nodes),
             status: PlanStatus {
                 applyable: plan["applyable"].as_bool(),

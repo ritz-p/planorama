@@ -1,5 +1,6 @@
 use crate::model::{ArchitectureGraph, TerraformGraph};
 mod associations;
+mod components;
 mod containment;
 mod data;
 pub mod diagnostics;
@@ -18,5 +19,7 @@ pub fn transform(raw: &TerraformGraph) -> ArchitectureGraph {
         graph_references: raw.graph_references.clone(),
         drift: raw.drift.clone(),
     };
-    ArchitectureGraph(data::visible(associations::lower(&contained)))
+    let mut graph = data::visible(associations::lower(&contained));
+    graph.components = components::infer(raw, &graph);
+    ArchitectureGraph(graph)
 }
