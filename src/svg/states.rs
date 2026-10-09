@@ -47,7 +47,7 @@ pub fn render_states(architecture: &Architecture, format: super::AddressFormat) 
                 (
                     bounds.right(),
                     top + 40 + check_offset + bounds.origin.y + layout.header_heights[index] / 2,
-                    format!("{prefix}resource-{index}"),
+                    format!("{prefix}{}", super::identity::resource(node)),
                 ),
             );
         }
@@ -134,6 +134,10 @@ fn namespace(svg: &str, prefix: &str) -> String {
     // These are renderer-owned quoted attributes. User content is XML-escaped
     // before this stage, so it cannot masquerade as an attribute or reference.
     svg.replace(" id=\"", &format!(" id=\"{prefix}"))
+        .replace(
+            "data-container=\"resource-",
+            &format!("data-container=\"{prefix}resource-"),
+        )
         .replace(" href=\"#", &format!(" href=\"#{prefix}"))
         .replace("marker-end=\"url(#", &format!("marker-end=\"url(#{prefix}"))
         .replace(

@@ -41,7 +41,8 @@ pub(super) fn render(graph: &Graph, mut top: usize, width: usize) -> String {
         ));
         writeln!(svg, r##"<g id="component-{index}" data-entity-kind="synthetic" data-component-id="{}" data-component-kind="{}"><title>{label}</title><rect x="35" y="{top}" width="{}" height="{height}" rx="12" fill="#f5f3ff" stroke="#8b5cf6" stroke-dasharray="6 3"/><text x="52" y="{}" font-size="13" font-weight="700" fill="#5b21b6">{heading}</text>"##, super::escape(&component.id), super::escape(&component.kind), width - 70, top + 24).unwrap();
         for (row, address) in component.members.iter().enumerate() {
-            if let Some((node_index, node)) = nodes.get(address.as_str()) {
+            if let Some((_, node)) = nodes.get(address.as_str()) {
+                let resource_id = super::identity::resource(node);
                 let operation = super::operations::label(node.action, &node.metadata);
                 let title = super::escape(&format!(
                     "{address}; {operation}{}",
@@ -51,7 +52,7 @@ pub(super) fn render(graph: &Graph, mut top: usize, width: usize) -> String {
                     &format!("{operation}: {address}"),
                     limit,
                 ));
-                writeln!(svg, r##"<a href="#resource-{node_index}" data-source-address="{}"><title>{title}</title><text x="52" y="{}" font-size="12" fill="#334155">{text}</text></a>"##, super::escape(address), top + 48 + row * 24).unwrap();
+                writeln!(svg, r##"<a href="#{resource_id}" data-source-address="{}"><title>{title}</title><text x="52" y="{}" font-size="12" fill="#334155">{text}</text></a>"##, super::escape(address), top + 48 + row * 24).unwrap();
             }
         }
         svg.push_str("</g>\n");
