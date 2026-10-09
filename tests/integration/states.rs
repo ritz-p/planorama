@@ -7,6 +7,41 @@ fn cli() -> Command {
 }
 
 #[test]
+fn cross_state_edges_connect_real_resources_and_are_order_independent() {
+    let render = |reverse| {
+        let mut inputs = vec![
+            format!("producer={}", fixture("multi/producer.json")),
+            format!("consumer={}", fixture("multi/consumer.json")),
+        ];
+        if reverse {
+            inputs.reverse();
+        }
+        let mut command = cli();
+        for input in inputs {
+            command.args(["--state", &input]);
+        }
+        let output = command
+            .args([
+                "--remote-state",
+                "consumer:data.terraform_remote_state.network=producer",
+                "-o",
+                "-",
+            ])
+            .output()
+            .unwrap();
+        assert!(output.status.success());
+        String::from_utf8(output.stdout).unwrap()
+    };
+    let svg = render(false);
+    assert_eq!(svg, render(true));
+    assert_eq!(svg.matches("data-cross-state=\"true\"").count(), 3);
+    assert!(svg.contains("data-source-state=\"producer\" data-target-state=\"consumer\""));
+    assert!(svg.contains("producer:aws_subnet.app -&gt; consumer:aws_instance.app"));
+    assert!(svg.contains("data-remote-state=\"data.terraform_remote_state.network\""));
+    assert!(!svg.contains("TOP_SECRET"));
+}
+
+#[test]
 fn remote_state_mapping_reports_resolved_and_unmapped_provenance() {
     for mapped in [false, true] {
         let mut command = cli();
