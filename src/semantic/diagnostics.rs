@@ -57,6 +57,25 @@ pub fn collect(raw: &TerraformGraph) -> Vec<Diagnostic> {
         }
         let direct = super::containment::direct_rule(&node.resource_type)
             .map(|(attribute, parent)| [(attribute, parent, false, true)]);
+        // Security-group attachment attributes are optional; absent attributes
+        // do not imply missing provenance or an invalid Terraform configuration.
+        if let Some(attribute) = super::security_groups::attribute(&node.resource_type) {
+            if let Some(reference) = raw
+                .attributes
+                .iter()
+                .find(|r| r.target == target && r.attribute == attribute)
+            {
+                if let Some(reason) = super::security_groups::failure(raw, reference) {
+                    if reference.issues.is_empty() || reason == Reason::EndpointTypeMismatch {
+                        found.insert(Diagnostic {
+                            address: node.address.clone(),
+                            attribute: attribute.into(),
+                            reason,
+                        });
+                    }
+                }
+            }
+        }
         let association = super::associations::rule(&node.resource_type)
             .map(|rule| rule.map(|(attribute, endpoint)| (attribute, endpoint, false, false)));
         let expected: &[(&str, &str, bool, bool)] = if let Some(rule) = &direct {

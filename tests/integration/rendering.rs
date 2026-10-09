@@ -1,6 +1,49 @@
 mod support;
 
 #[test]
+fn mixed_literal_security_group_ids_keep_dependency_edges_and_redacted_diagnostics() {
+    let mut input: serde_json::Value =
+        serde_json::from_slice(include_bytes!("../fixtures/security-groups-plan.json")).unwrap();
+    let change = &mut input["resource_changes"][4]["change"];
+    change["after"] = serde_json::json!({"vpc_security_group_ids":[null,"TOP_SECRET_LITERAL"]});
+    change["after_unknown"] = serde_json::json!({"vpc_security_group_ids":[true,false]});
+    let bytes = input.to_string();
+    let svg = render(bytes.as_bytes());
+    assert_eq!(svg.matches("data-edge-kind=\"connection\"").count(), 2);
+    assert!(svg.contains("aws_security_group.web → aws_instance.app (dependency)"));
+    let result = support::run_with_args(bytes.as_bytes(), &["--diagnostics"]);
+    assert!(result.status.success());
+    assert_eq!(svg.as_bytes(), result.stdout);
+    let diagnostics = String::from_utf8(result.stderr).unwrap();
+    assert!(diagnostics.contains("only part of the attribute resolves to resource references"));
+    assert!(!diagnostics.contains("TOP_SECRET"));
+    assert!(!svg.contains("TOP_SECRET"));
+}
+
+#[test]
+fn security_groups_fixture_preserves_policy_cards_and_inspectable_connections() {
+    let input = include_bytes!("../fixtures/security-groups-plan.json");
+    let svg = render(input);
+    assert!(svg.contains("7 resources (7 cards), 10 relationships"));
+    assert_eq!(svg.matches("data-edge-kind=\"connection\"").count(), 4);
+    assert_eq!(svg.matches("data-edge-kind=\"containment\"").count(), 6);
+    for (group, target) in [
+        ("web", "aws_instance.app"),
+        ("shared", "aws_instance.app"),
+        ("web", "aws_lb.app"),
+        ("shared", "aws_ecs_service.app"),
+    ] {
+        assert!(svg.contains(&format!(
+            "aws_security_group.{group} → {target} (connection)"
+        )));
+        assert!(svg.contains(&format!(
+            "data-terraform-address=\"aws_security_group.{group}\""
+        )));
+    }
+    assert_eq!(svg, render(input));
+}
+
+#[test]
 fn drift_fixture_keeps_apply_actions_and_reports_drift_without_values() {
     let input = include_bytes!("../fixtures/drift-plan.json");
     let svg = render(input);
@@ -180,7 +223,7 @@ fn multi_container_fixture_renders_one_card_per_resource_and_subnet_connections(
     assert!(output.status.success());
     let svg = String::from_utf8(output.stdout).unwrap();
     assert_eq!(svg.matches("<g id=\"resource-").count(), 6);
-    assert_eq!(svg.matches("data-edge-kind=\"connection\"").count(), 4);
+    assert_eq!(svg.matches("data-edge-kind=\"connection\"").count(), 5);
     assert_eq!(svg.matches("data-edge-kind=\"containment\"").count(), 4);
     assert_eq!(
         svg,

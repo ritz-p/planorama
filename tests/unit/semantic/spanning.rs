@@ -99,7 +99,7 @@ fn alb_and_ecs_share_the_vpc_without_losing_subnet_connections() {
         graph
             .edges
             .iter()
-            .any(|edge| edge.from == sg && edge.kind == EdgeKind::Dependency)
+            .any(|edge| edge.from == sg && edge.kind == EdgeKind::Connection)
     );
     assert_eq!(
         svg::render(&graph, &layout),
