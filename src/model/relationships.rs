@@ -1,0 +1,48 @@
+use super::{ArchitectureId, EdgeChange, EdgeKind, TerraformEntityId};
+#[cfg(test)]
+#[path = "../../tests/unit/model/relationships.rs"]
+mod tests;
+
+/// Evidence is independent of relationship endpoints and of layout node indices.
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
+pub enum RelationshipProvenance {
+    Resource {
+        source: TerraformEntityId,
+        change: EdgeChange,
+    },
+    Reference {
+        from: TerraformEntityId,
+        to: TerraformEntityId,
+    },
+}
+
+/// Architecture-native relationship. Endpoints may identify cards or synthetic
+/// entities. Several Terraform resources/references can explain one relationship.
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
+pub struct ArchitectureRelationship {
+    pub from: ArchitectureId,
+    pub to: ArchitectureId,
+    pub kind: EdgeKind,
+    pub inferred: bool,
+    pub provenance: Vec<RelationshipProvenance>,
+}
+
+impl ArchitectureRelationship {
+    pub fn new(
+        from: ArchitectureId,
+        to: ArchitectureId,
+        kind: EdgeKind,
+        inferred: bool,
+        mut provenance: Vec<RelationshipProvenance>,
+    ) -> Self {
+        provenance.sort();
+        provenance.dedup();
+        Self {
+            from,
+            to,
+            kind,
+            inferred,
+            provenance,
+        }
+    }
+}

@@ -44,6 +44,7 @@ pub enum ResourceRole {
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Graph {
+    pub relationships: Vec<ArchitectureRelationship>,
     pub components: Vec<SyntheticComponent>,
     pub checks: Vec<CheckResult>,
     pub status: PlanStatus,
@@ -73,6 +74,8 @@ pub use components::SyntheticComponent;
 pub mod cross_state;
 mod diagnostics;
 mod graphs;
+mod relationships;
+pub use relationships::{ArchitectureRelationship, RelationshipProvenance};
 mod operations;
 mod provider;
 mod states;

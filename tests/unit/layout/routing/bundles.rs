@@ -67,6 +67,7 @@ fn sweep_preserves_junctions_at_touching_intervals_and_horizontal_subdivisions()
 
 fn graph(count: usize, edges: Vec<(usize, usize)>) -> Graph {
     Graph {
+        relationships: Vec::new(),
         components: Vec::new(),
         checks: Vec::new(),
         status: Default::default(),
