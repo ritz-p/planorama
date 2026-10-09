@@ -1,6 +1,19 @@
 mod support;
 
 #[test]
+fn routes_render_as_individually_inspectable_relationships() {
+    let input = include_bytes!("../fixtures/routes-plan.json");
+    let svg = render(input);
+    assert!(svg.contains("association; replace: aws_route.default"));
+    assert!(svg.contains("association; create: aws_route.second"));
+    assert!(svg.contains("aws_route.literal"));
+    assert_eq!(svg.matches("data-edge-kind=\"association\"").count(), 2);
+    assert!(svg.contains("data-action-reason=\"replace_because_cannot_update\""));
+    assert!(!svg.contains("TOP_SECRET"));
+    assert_eq!(svg, render(input));
+}
+
+#[test]
 fn check_summary_preserves_actions_and_redacts_evaluated_messages() {
     let input = include_bytes!("../fixtures/checks-plan.json");
     let svg = render(input);
@@ -241,6 +254,10 @@ fn deposed_fixture_preserves_every_change_card_and_action() {
 #[test]
 fn committed_svg_samples_match_the_current_renderer() {
     for (input, expected) in [
+        (
+            include_bytes!("../fixtures/routes-plan.json").as_slice(),
+            include_str!("../../examples/routes.svg"),
+        ),
         (
             include_bytes!("../fixtures/checks-plan.json").as_slice(),
             include_str!("../../examples/checks.svg"),
