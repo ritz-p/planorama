@@ -45,7 +45,8 @@ pub(super) fn boundaries(graph: &Graph, layout: &Layout<'_>) -> String {
         let border = color(graph.nodes[node].action).1;
         let mode = super::entities::border(graph.nodes[node].mode);
         let background = background(graph, layout, node);
-        writeln!(svg, r##"<g data-container="resource-{node}"><title>{}</title><rect x="{x}" y="{y}" width="{width}" height="{height}" rx="12" fill="{background}" stroke="{border}" stroke-width="2"{mode}/></g>"##, escape(&graph.nodes[node].address)).unwrap();
+        let id = super::identity::resource(&graph.nodes[node]);
+        writeln!(svg, r##"<g data-container="{id}"><title>{}</title><rect x="{x}" y="{y}" width="{width}" height="{height}" rx="12" fill="{background}" stroke="{border}" stroke-width="2"{mode}/></g>"##, escape(&graph.nodes[node].address)).unwrap();
     }
     svg
 }

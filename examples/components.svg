@@ -29,33 +29,33 @@ No AWS endorsement is implied. Consult the AWS terms for other uses.
 </title><text x="40" y="161" font-size="12" fill="#475569">Checks (objects): 0 pass / 0 fail / 0 error / 1 unknown / 0 other / 0 unavailable</text></g>
 <g transform="translate(0 24)">
 <rect x="35" y="160" width="1270" height="488" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-dasharray="5 4"/><text x="52" y="185" font-size="13" font-weight="700" fill="#475569"><title>root</title>root</text>
-<path d="M 380 256 L 480 256 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>aws_lb.app → aws_lb_listener.https</title></path>
-<path d="M 800 256 L 900 256 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>aws_lb_listener.https → aws_lb_listener_rule.api</title></path>
-<path d="M 380 400 L 396 400 Q 404 400 404 392 L 404 264 Q 404 256 412 256 L 480 256 " fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>aws_lb_target_group.shared → aws_lb_listener.https</title></path>
+<path d="M 380 256 L 480 256 " data-source="resource-6177735f6c622e617070-current" data-target="resource-6177735f6c625f6c697374656e65722e6874747073-current" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>aws_lb.app → aws_lb_listener.https</title></path>
+<path d="M 800 256 L 900 256 " data-source="resource-6177735f6c625f6c697374656e65722e6874747073-current" data-target="resource-6177735f6c625f6c697374656e65725f72756c652e617069-current" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>aws_lb_listener.https → aws_lb_listener_rule.api</title></path>
+<path d="M 380 400 L 396 400 Q 404 400 404 392 L 404 264 Q 404 256 412 256 L 480 256 " data-source="resource-6177735f6c625f7461726765745f67726f75702e736861726564-current" data-target="resource-6177735f6c625f6c697374656e65722e6874747073-current" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>aws_lb_target_group.shared → aws_lb_listener.https</title></path>
 <circle cx="404" cy="256" r="3" fill="#94a3b8"/>
-<g id="resource-0" data-qualified-address="module.root.aws_lb.app" data-terraform-address="aws_lb.app" data-component-id="logical:load_balancer:aws_lb.app"><title>module.root.aws_lb.app — unchanged</title>
+<g id="resource-6177735f6c622e617070-current" data-qualified-address="module.root.aws_lb.app" data-terraform-address="aws_lb.app" data-component-id="logical:load_balancer:aws_lb.app"><title>module.root.aws_lb.app — unchanged</title>
 <rect x="60" y="208" width="320" height="96" rx="8" fill="#f8fafc" stroke="#64748b" stroke-width="1.5" data-mode="managed"/>
 <text x="72" y="228" font-size="11" fill="#64748b">aws_lb · unchanged</text>
 <use href="#planorama-icon-aws-elb" x="72" y="236" width="24" height="24" aria-hidden="true"/><text x="104" y="253" font-size="13" fill="#0f172a">module.root.aws_lb.app</text>
 </g>
-<g id="resource-1" data-qualified-address="module.root.aws_lb.other" data-terraform-address="aws_lb.other"><title>module.root.aws_lb.other — create</title>
+<g id="resource-6177735f6c622e6f74686572-current" data-qualified-address="module.root.aws_lb.other" data-terraform-address="aws_lb.other"><title>module.root.aws_lb.other — create</title>
 <rect x="60" y="496" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text x="72" y="516" font-size="11" fill="#047857">aws_lb · create</text>
 <use href="#planorama-icon-aws-elb" x="72" y="524" width="24" height="24" aria-hidden="true"/><text x="104" y="541" font-size="13" fill="#0f172a">module.root.aws_lb.other</text>
 </g>
-<g id="resource-2" data-qualified-address="module.root.aws_lb_listener.https" data-terraform-address="aws_lb_listener.https" data-component-id="logical:load_balancer:aws_lb.app"><title>module.root.aws_lb_listener.https — update</title>
+<g id="resource-6177735f6c625f6c697374656e65722e6874747073-current" data-qualified-address="module.root.aws_lb_listener.https" data-terraform-address="aws_lb_listener.https" data-component-id="logical:load_balancer:aws_lb.app"><title>module.root.aws_lb_listener.https — update</title>
 <rect x="480" y="208" width="320" height="96" rx="8" fill="#eff6ff" stroke="#1d4ed8" stroke-width="1.5" data-mode="managed"/>
 <text x="492" y="228" font-size="11" fill="#1d4ed8">aws_lb_listener · update</text>
 <use href="#planorama-icon-aws-elb" x="492" y="236" width="24" height="24" aria-hidden="true"/><text x="524" y="253" font-size="13" fill="#0f172a">module.root.aws_lb_listener.https</text>
 </g>
-<g id="resource-3" data-qualified-address="module.root.aws_lb_listener_rule.api" data-terraform-address="aws_lb_listener_rule.api" data-previous-address="aws_lb_listener_rule.old" data-action-reason="replace_because_cannot_update" data-replace-paths="[[&quot;listener_arn&quot;]]" data-component-id="logical:load_balancer:aws_lb.app"><title>module.root.aws_lb_listener_rule.api — replace; reason: replace_because_cannot_update; replacement paths: [[&quot;listener_arn&quot;]]</title>
+<g id="resource-6177735f6c625f6c697374656e65725f72756c652e617069-current" data-qualified-address="module.root.aws_lb_listener_rule.api" data-terraform-address="aws_lb_listener_rule.api" data-previous-address="aws_lb_listener_rule.old" data-action-reason="replace_because_cannot_update" data-replace-paths="[[&quot;listener_arn&quot;]]" data-component-id="logical:load_balancer:aws_lb.app"><title>module.root.aws_lb_listener_rule.api — replace; reason: replace_because_cannot_update; replacement paths: [[&quot;listener_arn&quot;]]</title>
 <rect x="900" y="208" width="320" height="96" rx="8" fill="#fff7ed" stroke="#c2410c" stroke-width="1.5" data-mode="managed"/>
 <text x="912" y="228" font-size="11" fill="#c2410c">aws_lb_listener_rule · replace</text>
 <use href="#planorama-icon-aws-elb" x="912" y="236" width="24" height="24" aria-hidden="true"/><text x="944" y="253" font-size="13" fill="#0f172a">module.root.aws_lb_listener_rule.</text>
 <text x="944" y="273" font-size="13" fill="#0f172a">api</text>
 <text x="912" y="292" font-size="10" fill="#64748b" data-role="policy"><title>root</title>policy · root</text>
 </g>
-<g id="resource-4" data-qualified-address="module.root.aws_lb_target_group.shared" data-terraform-address="aws_lb_target_group.shared"><title>module.root.aws_lb_target_group.shared — create</title>
+<g id="resource-6177735f6c625f7461726765745f67726f75702e736861726564-current" data-qualified-address="module.root.aws_lb_target_group.shared" data-terraform-address="aws_lb_target_group.shared"><title>module.root.aws_lb_target_group.shared — create</title>
 <rect x="60" y="352" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text x="72" y="372" font-size="11" fill="#047857">aws_lb_target_group · create</text>
 <use href="#planorama-icon-aws-elb" x="72" y="380" width="24" height="24" aria-hidden="true"/><text x="104" y="397" font-size="13" fill="#0f172a">module.root.aws_lb_target_group.s</text>
@@ -64,9 +64,9 @@ No AWS endorsement is implied. Consult the AWS terms for other uses.
 </g>
 </g>
 <g id="component-0" data-entity-kind="synthetic" data-component-id="logical:load_balancer:aws_lb.app" data-component-kind="load_balancer"><title>Load balancer: aws_lb.app</title><rect x="35" y="736" width="1270" height="128" rx="12" fill="#f5f3ff" stroke="#8b5cf6" stroke-dasharray="6 3"/><text x="52" y="760" font-size="13" font-weight="700" fill="#5b21b6">Logical component: Load balancer: aws_lb.app</text>
-<a href="#resource-0" data-source-address="aws_lb.app"><title>aws_lb.app; unchanged</title><text x="52" y="784" font-size="12" fill="#334155">unchanged: aws_lb.app</text></a>
-<a href="#resource-2" data-source-address="aws_lb_listener.https"><title>aws_lb_listener.https; update</title><text x="52" y="808" font-size="12" fill="#334155">update: aws_lb_listener.https</text></a>
-<a href="#resource-3" data-source-address="aws_lb_listener_rule.api"><title>aws_lb_listener_rule.api; replace; reason: replace_because_cannot_update; replacement paths: [[&quot;listener_arn&quot;]]</title><text x="52" y="832" font-size="12" fill="#334155">replace: aws_lb_listener_rule.api</text></a>
+<a href="#resource-6177735f6c622e617070-current" data-source-address="aws_lb.app"><title>aws_lb.app; unchanged</title><text x="52" y="784" font-size="12" fill="#334155">unchanged: aws_lb.app</text></a>
+<a href="#resource-6177735f6c625f6c697374656e65722e6874747073-current" data-source-address="aws_lb_listener.https"><title>aws_lb_listener.https; update</title><text x="52" y="808" font-size="12" fill="#334155">update: aws_lb_listener.https</text></a>
+<a href="#resource-6177735f6c625f6c697374656e65725f72756c652e617069-current" data-source-address="aws_lb_listener_rule.api"><title>aws_lb_listener_rule.api; replace; reason: replace_because_cannot_update; replacement paths: [[&quot;listener_arn&quot;]]</title><text x="52" y="832" font-size="12" fill="#334155">replace: aws_lb_listener_rule.api</text></a>
 </g>
 </g>
 </svg>

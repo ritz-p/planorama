@@ -3,6 +3,7 @@ mod components;
 mod containers;
 mod entities;
 mod icons;
+mod identity;
 mod operations;
 mod paths;
 mod relationships;
@@ -155,8 +156,10 @@ pub fn render_with_format(
             .and_then(|change| change.previous_address.as_ref())
             .map(|address| format!(" data-previous-address=\"{}\"", escape(address)))
             .unwrap_or_default();
+        let source = identity::resource(&graph.nodes[edge.from]);
+        let target = identity::resource(&graph.nodes[edge.to]);
         if points.is_empty() {
-            writeln!(svg, r#"<g{relation}{previous}{operation} data-source="resource-{}" data-target="resource-{}"><title>{title}</title></g>"#, edge.from, edge.to).unwrap();
+            writeln!(svg, r#"<g{relation}{previous}{operation} data-source="{source}" data-target="{target}"><title>{title}</title></g>"#).unwrap();
             continue;
         }
         let (stroke, marker) = match &edge.change {
@@ -167,7 +170,7 @@ pub fn render_with_format(
             None => ("#94a3b8", "arrow".into()),
         };
         let path = paths::rounded(points);
-        writeln!(svg, r##"<path d="{path}"{relation}{previous}{operation} fill="none" stroke="{stroke}" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#{marker})"><title>{title}</title></path>"##).unwrap();
+        writeln!(svg, r##"<path d="{path}"{relation}{previous}{operation} data-source="{source}" data-target="{target}" fill="none" stroke="{stroke}" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#{marker})"><title>{title}</title></path>"##).unwrap();
     }
     for point in &layout.junctions {
         writeln!(
@@ -178,6 +181,7 @@ pub fn render_with_format(
         .unwrap();
     }
     for (i, node) in graph.nodes.iter().enumerate() {
+        let resource_id = identity::resource(node);
         let bounds = layout.bounds[i];
         let (x, y) = (bounds.origin.x, bounds.origin.y);
         let card_width = bounds.width;
@@ -225,7 +229,7 @@ pub fn render_with_format(
             .unwrap_or_default();
         writeln!(
             svg,
-            r#"<g id="resource-{i}" data-qualified-address="{qualified}" data-terraform-address="{address}"{deposed}{previous}{operation}{component}><title>{selected_title} — {operation_label}{operation_details}</title>"#,
+            r#"<g id="{resource_id}" data-qualified-address="{qualified}" data-terraform-address="{address}"{deposed}{previous}{operation}{component}><title>{selected_title} — {operation_label}{operation_details}</title>"#,
         )
         .unwrap();
         if node.role != crate::model::ResourceRole::Container {
