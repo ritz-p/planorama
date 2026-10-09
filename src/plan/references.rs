@@ -263,14 +263,31 @@ pub(super) fn resolve_sources(
     instances: &BTreeMap<String, Vec<usize>>,
     symbols: &BTreeMap<String, BTreeSet<String>>,
 ) -> Resolution {
-    let mut pending: Vec<_> = refs.iter().cloned().map(|r| (r, false)).collect();
+    resolve_with_policy(refs, instances, symbols, false)
+}
+
+pub(super) fn resolve_output_sources(
+    refs: &BTreeSet<String>,
+    instances: &BTreeMap<String, Vec<usize>>,
+    aliases: &BTreeMap<String, BTreeSet<String>>,
+) -> Resolution {
+    resolve_with_policy(refs, instances, aliases, true)
+}
+
+fn resolve_with_policy(
+    refs: &BTreeSet<String>,
+    instances: &BTreeMap<String, Vec<usize>>,
+    symbols: &BTreeMap<String, BTreeSet<String>>,
+    exact_sources: bool,
+) -> Resolution {
+    let mut pending: Vec<_> = refs.iter().cloned().map(|r| (r, false, false)).collect();
     let mut visited = BTreeSet::new();
     let mut active = BTreeSet::new();
     let mut sources = BTreeSet::new();
     let mut complete = !pending.is_empty();
     let mut ids_only = true;
     let mut issues = BTreeSet::new();
-    while let Some((reference, exiting)) = pending.pop() {
+    while let Some((reference, exiting, inherited_ambiguity)) = pending.pop() {
         if exiting {
             active.remove(&reference);
             continue;
@@ -280,11 +297,11 @@ pub(super) fn resolve_sources(
             issues.insert(DiagnosticReason::AliasCycle);
             continue;
         }
-        if !visited.insert(reference.clone()) {
+        if !visited.insert((reference.clone(), inherited_ambiguity)) {
             continue;
         }
         active.insert(reference.clone());
-        pending.push((reference.clone(), true));
+        pending.push((reference.clone(), true, inherited_ambiguity));
         let caller_module = reference.starts_with(super::address::MODULE_REFERENCE);
         let reference = reference
             .strip_prefix(super::address::MODULE_REFERENCE)
@@ -320,9 +337,8 @@ pub(super) fn resolve_sources(
         let metadata = super::address::meta_reference(reference);
         // Module outputs named count/each take precedence over the syntactic
         // metadata heuristic, including outputs whose values have no sources.
-        if super::address::dynamic_selection(reference, resource_key.as_deref())
-            || (metadata && binding.is_none())
-        {
+        let dynamic = super::address::dynamic_selection(reference, resource_key.as_deref());
+        if dynamic || (metadata && binding.is_none()) {
             issues.insert(DiagnosticReason::DynamicInstanceSelection);
         }
         // Terraform emits iteration metadata as standalone traversals. It is
@@ -347,7 +363,9 @@ pub(super) fn resolve_sources(
             } else if matching.len() > 1 {
                 issues.insert(DiagnosticReason::MultipleMatchingInstances);
             }
-            sources.extend(matching);
+            if !exact_sources || !(dynamic || inherited_ambiguity || matching.len() > 1) {
+                sources.extend(matching);
+            }
             continue;
         }
         match binding {
@@ -355,11 +373,13 @@ pub(super) fn resolve_sources(
                 // Selecting a field of an alias is not proof that its underlying
                 // resource ID is the selected value.
                 ids_only &= normalized == *key;
-                pending.extend(
-                    aliases
-                        .iter()
-                        .map(|alias| (contextualize(alias, reference), false)),
-                );
+                pending.extend(aliases.iter().map(|alias| {
+                    (
+                        contextualize(alias, reference),
+                        false,
+                        exact_sources && (dynamic || inherited_ambiguity),
+                    )
+                }));
             }
             Some(_) => {
                 // A defined constant alias is not missing. It contributes no

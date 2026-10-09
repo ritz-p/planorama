@@ -12,6 +12,8 @@ pub(super) fn collect(
     symbols: &BTreeMap<String, BTreeSet<String>>,
 ) -> Vec<StateOutput> {
     let instances = super::references::instance_map(nodes);
+    let mut aliases = symbols.clone();
+    remove_resource_bindings(module, "", &mut aliases);
     module["outputs"]
         .as_object()
         .into_iter()
@@ -24,7 +26,8 @@ pub(super) fn collect(
                 .into_iter()
                 .map(|r| super::references::qualify_reference("", &r))
                 .collect();
-            let mut resolved = super::references::resolve_sources(&refs, &instances, symbols);
+            let mut resolved =
+                super::references::resolve_output_sources(&refs, &instances, &aliases);
             let shape = expression["references"]
                 .as_array()
                 .is_some_and(|refs| !refs.is_empty() && refs.iter().all(Value::is_string))
@@ -41,18 +44,35 @@ pub(super) fn collect(
             }
             StateOutput {
                 name: name.clone(),
-                sources: if ambiguous {
-                    Vec::new()
-                } else {
-                    resolved
-                        .sources
-                        .into_iter()
-                        .map(|i| nodes[i].address.clone())
-                        .collect()
-                },
+                sources: resolved
+                    .sources
+                    .into_iter()
+                    .map(|i| nodes[i].address.clone())
+                    .collect(),
                 complete,
                 issues: resolved.issues,
             }
         })
         .collect()
+}
+
+fn remove_resource_bindings(
+    module: &Value,
+    scope: &str,
+    aliases: &mut BTreeMap<String, BTreeSet<String>>,
+) {
+    for resource in module["resources"].as_array().into_iter().flatten() {
+        if let Some(address) = resource["address"].as_str() {
+            aliases.remove(&super::references::qualify(scope, address));
+        }
+    }
+    if let Some(calls) = module["module_calls"].as_object() {
+        for (name, call) in calls {
+            remove_resource_bindings(
+                &call["module"],
+                &super::references::qualify(scope, &format!("module.{name}")),
+                aliases,
+            );
+        }
+    }
 }
