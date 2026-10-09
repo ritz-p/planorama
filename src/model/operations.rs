@@ -6,6 +6,8 @@ pub struct ChangeMetadata {
     pub drift: std::collections::BTreeSet<super::Action>,
     pub action_reason: Option<String>,
     pub replace_paths: Option<Vec<Vec<AttributePathStep>>>,
+    /// Some means Terraform reports relevance; empty means all paths were redacted.
+    pub relevant_attributes: Option<Vec<Vec<AttributePathStep>>>,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
@@ -16,10 +18,19 @@ pub enum AttributePathStep {
 
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub struct DriftRecord {
+    pub relevant: bool,
     pub address: String,
     pub deposed_key: Option<String>,
     pub previous_address: Option<String>,
     pub action: super::Action,
+    pub matched: bool,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
+pub struct RelevantAttribute {
+    pub resource: String,
+    /// None when the path is sensitive or the source cannot be resolved safely.
+    pub path: Option<Vec<AttributePathStep>>,
     pub matched: bool,
 }
 

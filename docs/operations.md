@@ -30,6 +30,10 @@ The supported shapes follow [Terraform's JSON plan implementation](https://githu
 
 ## Resource drift
 
+`relevant_attributes` is retained as value-free provenance in `TerraformGraph.relevant_attributes`. Exact, unique non-deposed resource matches carry relevant paths in operation metadata and SVG titles/data attributes, including lowered edges. Matched drift records expose `relevant`; false means unclassified, not proof that drift was unrelated. Terraform does not supply a destination resource here, so no causal edge is invented. `--diagnostics` lists matched and unresolved sources. Missing metadata preserves existing behavior.
+
+Paths use typed string/index steps. Sensitivity is checked against changes, drift, planned values and prior state; sensitive paths and paths from unresolved sources are withheld. Resource-level reported relevance remains available when paths are redacted. Malformed paths are ignored. No attribute values are retained, compared, or rendered.
+
 `resource_drift` is collected separately in `TerraformGraph.drift`. Each record retains its address, optional deposed key, drift-specific previous address, action category and matching status. Matching uses the exact current address/deposed pair and compatible resource type, mode and provider; previous addresses never become aliases. Conflicting records remain available and produce an unmatched-drift diagnostic rather than changing an unrelated resource.
 
 Matching nodes carry drift action categories in `metadata.drift`, independently of their planned `Action`. Drift-only objects receive a card with no planned change (`Unchanged`); drift deletion is not planned destruction. Consistent duplicate drift records are retained, with deterministic category sets on cards. Contradictory drift-only identities are not arbitrarily assigned a card. Relationship lowering preserves matched drift metadata too.

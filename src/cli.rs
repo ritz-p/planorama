@@ -78,6 +78,14 @@ pub fn run() -> Result<(), String> {
     let raw = plan::parse(&json)?;
     if diagnostics {
         let mut stderr = io::stderr().lock();
+        for relevant in &raw.relevant_attributes {
+            writeln!(
+                stderr,
+                "relevance: resource={:?}, matched={}, path={:?}",
+                relevant.resource, relevant.matched, relevant.path
+            )
+            .map_err(|e| format!("cannot write diagnostics: {e}"))?;
+        }
         for diagnostic in semantic::diagnostics::collect(&raw) {
             // Debug formatting escapes control characters in untrusted names.
             writeln!(
