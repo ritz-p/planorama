@@ -1,4 +1,4 @@
-use super::ResourceIcon;
+use crate::icons::ResourceIcon;
 
 pub(super) fn icon_for(resource_type: &str) -> Option<ResourceIcon> {
     Some(match resource_type {

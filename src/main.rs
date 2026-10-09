@@ -6,6 +6,7 @@ mod icons;
 mod layout;
 mod model;
 mod plan;
+mod provider;
 mod semantic;
 mod svg;
 

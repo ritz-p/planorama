@@ -2,7 +2,7 @@ use crate::model::{AttributeReference, DiagnosticReason, EdgeKind, EntityMode, G
 use crate::semantic::Input;
 
 #[cfg(test)]
-#[path = "../../tests/unit/semantic/security_groups.rs"]
+#[path = "../../../tests/unit/semantic/security_groups.rs"]
 mod tests;
 
 pub(super) fn attribute(resource_type: &str) -> Option<&'static str> {

@@ -3,7 +3,7 @@ use crate::semantic::Input;
 use std::collections::{BTreeMap, BTreeSet};
 
 #[cfg(test)]
-#[path = "../../tests/unit/semantic/components.rs"]
+#[path = "../../../tests/unit/semantic/components.rs"]
 mod tests;
 
 pub(super) fn infer(raw: &Input, graph: &Graph) -> Vec<SyntheticComponent> {

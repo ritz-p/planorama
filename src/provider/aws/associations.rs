@@ -3,7 +3,7 @@ use crate::semantic::Input;
 use std::collections::BTreeMap;
 
 #[cfg(test)]
-#[path = "../../tests/unit/semantic/associations.rs"]
+#[path = "../../../tests/unit/semantic/associations.rs"]
 mod tests;
 
 pub(super) fn rule(resource_type: &str) -> Option<[(&'static str, &'static str); 2]> {
