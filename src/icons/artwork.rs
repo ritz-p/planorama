@@ -28,32 +28,51 @@ impl ResourceIcon {
     pub fn svg(self) -> &'static str {
         match self {
             Self::Vpc | Self::Subnet | Self::Gateway | Self::Route | Self::Security => {
-                include_str!("../../assets/icons/aws/Amazon-Virtual-Private-Cloud.svg")
+                include_str!(concat!(
+                    env!("OUT_DIR"),
+                    "/Amazon-Virtual-Private-Cloud.svg"
+                ))
             }
-            Self::Ec2 => include_str!("../../assets/icons/aws/Amazon-EC2.svg"),
-            Self::Endpoint => include_str!("../../assets/icons/aws/AWS-PrivateLink.svg"),
-            Self::LoadBalancer => include_str!("../../assets/icons/aws/Elastic-Load-Balancing.svg"),
-            Self::Lambda => include_str!("../../assets/icons/aws/AWS-Lambda.svg"),
+            Self::Ec2 => include_str!(concat!(env!("OUT_DIR"), "/Amazon-EC2.svg")),
+            Self::Endpoint => include_str!(concat!(env!("OUT_DIR"), "/AWS-PrivateLink.svg")),
+            Self::LoadBalancer => {
+                include_str!(concat!(env!("OUT_DIR"), "/Elastic-Load-Balancing.svg"))
+            }
+            Self::Lambda => include_str!(concat!(env!("OUT_DIR"), "/AWS-Lambda.svg")),
             Self::Ecs => {
-                include_str!("../../assets/icons/aws/Amazon-Elastic-Container-Service.svg")
+                include_str!(concat!(
+                    env!("OUT_DIR"),
+                    "/Amazon-Elastic-Container-Service.svg"
+                ))
             }
             Self::Eks => {
-                include_str!("../../assets/icons/aws/Amazon-Elastic-Kubernetes-Service.svg")
+                include_str!(concat!(
+                    env!("OUT_DIR"),
+                    "/Amazon-Elastic-Kubernetes-Service.svg"
+                ))
             }
-            Self::Database => include_str!("../../assets/icons/aws/Amazon-RDS.svg"),
-            Self::DynamoDb => include_str!("../../assets/icons/aws/Amazon-DynamoDB.svg"),
-            Self::Cache => include_str!("../../assets/icons/aws/Amazon-ElastiCache.svg"),
-            Self::Search => include_str!("../../assets/icons/aws/Amazon-OpenSearch-Service.svg"),
+            Self::Database => include_str!(concat!(env!("OUT_DIR"), "/Amazon-RDS.svg")),
+            Self::DynamoDb => include_str!(concat!(env!("OUT_DIR"), "/Amazon-DynamoDB.svg")),
+            Self::Cache => include_str!(concat!(env!("OUT_DIR"), "/Amazon-ElastiCache.svg")),
+            Self::Search => {
+                include_str!(concat!(env!("OUT_DIR"), "/Amazon-OpenSearch-Service.svg"))
+            }
             Self::Storage => {
-                include_str!("../../assets/icons/aws/Amazon-Simple-Storage-Service.svg")
+                include_str!(concat!(
+                    env!("OUT_DIR"),
+                    "/Amazon-Simple-Storage-Service.svg"
+                ))
             }
-            Self::CloudFront => include_str!("../../assets/icons/aws/Amazon-CloudFront.svg"),
-            Self::ApiGateway => include_str!("../../assets/icons/aws/Amazon-API-Gateway.svg"),
+            Self::CloudFront => include_str!(concat!(env!("OUT_DIR"), "/Amazon-CloudFront.svg")),
+            Self::ApiGateway => include_str!(concat!(env!("OUT_DIR"), "/Amazon-API-Gateway.svg")),
             Self::Iam => {
-                include_str!("../../assets/icons/aws/AWS-Identity-and-Access-Management.svg")
+                include_str!(concat!(
+                    env!("OUT_DIR"),
+                    "/AWS-Identity-and-Access-Management.svg"
+                ))
             }
-            Self::Monitoring => include_str!("../../assets/icons/aws/Amazon-CloudWatch.svg"),
-            Self::Scaling => include_str!("../../assets/icons/aws/Amazon-EC2-Auto-Scaling.svg"),
+            Self::Monitoring => include_str!(concat!(env!("OUT_DIR"), "/Amazon-CloudWatch.svg")),
+            Self::Scaling => include_str!(concat!(env!("OUT_DIR"), "/Amazon-EC2-Auto-Scaling.svg")),
         }
     }
 }

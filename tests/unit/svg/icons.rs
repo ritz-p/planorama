@@ -1,4 +1,6 @@
 use super::*;
+#[path = "icon_import.rs"]
+mod icon_import;
 
 #[test]
 fn symbols_are_deduplicated_and_used_locally_on_cards_and_containers() {
@@ -25,8 +27,9 @@ fn symbols_are_deduplicated_and_used_locally_on_cards_and_containers() {
         assert_eq!(svg.matches("planorama-icons-license").count(), 1);
         assert!(svg.contains("AWS Architecture Icons, release 07312026"));
         assert!(!svg.contains("MIT License"));
-        assert_eq!(svg.matches("<image ").count(), 2);
-        assert_eq!(svg.matches("href=\"data:image/svg+xml,").count(), 2);
+        assert!(!svg.contains("<image "));
+        assert!(!svg.contains("data:image/svg+xml,"));
+        assert!(svg.contains("viewBox=\"0 0 64 64\"><g"));
         for (node, position) in graph.nodes.iter().zip(&layout.positions) {
             let x = position.x;
             let y = position.y;
@@ -53,21 +56,7 @@ fn symbols_are_deduplicated_and_used_locally_on_cards_and_containers() {
 }
 
 #[test]
-fn official_assets_are_encoded_losslessly_and_shared_by_service() {
-    let sample = "<svg id=\"x\">#&%\n日本語</svg>";
-    let encoded = data_uri(sample);
-    let mut decoded = Vec::new();
-    let mut bytes = encoded.strip_prefix("data:image/svg+xml,").unwrap().bytes();
-    while let Some(byte) = bytes.next() {
-        match byte {
-            b'%' => {
-                let hex = [bytes.next().unwrap(), bytes.next().unwrap()];
-                decoded.push(u8::from_str_radix(std::str::from_utf8(&hex).unwrap(), 16).unwrap());
-            }
-            _ => decoded.push(byte),
-        }
-    }
-    assert_eq!(decoded, sample.as_bytes());
+fn official_assets_are_inline_and_shared_by_service() {
     assert_eq!(ResourceIcon::Vpc.id(), ResourceIcon::Subnet.id());
     assert_eq!(ResourceIcon::Vpc.svg(), ResourceIcon::Subnet.svg());
     assert!(ResourceIcon::Ec2.svg().contains("Arch_Amazon-EC2_48"));

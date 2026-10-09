@@ -167,13 +167,13 @@ fn prefix(id: &StateId) -> String {
 fn namespace(svg: &str, prefix: &str) -> String {
     // These are renderer-owned quoted attributes. User content is XML-escaped
     // before this stage, so it cannot masquerade as an attribute or reference.
-    svg.replace(" id=\"", &format!(" id=\"{prefix}"))
+    let mut scoped = svg
+        .replace(" id=\"", &format!(" id=\"{prefix}"))
         .replace(
             "data-container=\"resource-",
             &format!("data-container=\"{prefix}resource-"),
         )
         .replace(" href=\"#", &format!(" href=\"#{prefix}"))
-        .replace("marker-end=\"url(#", &format!("marker-end=\"url(#{prefix}"))
         .replace(
             "data-source=\"resource-",
             &format!("data-source=\"{prefix}resource-"),
@@ -185,7 +185,25 @@ fn namespace(svg: &str, prefix: &str) -> String {
         .replace(
             "aria-labelledby=\"title description\"",
             &format!("aria-labelledby=\"{prefix}title {prefix}description\""),
-        )
+        );
+    for attribute in ["marker-end", "fill", "stroke", "clip-path", "mask"] {
+        scoped = scoped.replace(
+            &format!(" {attribute}=\"url(#"),
+            &format!(" {attribute}=\"url(#{prefix}"),
+        );
+    }
+    scoped
+}
+
+#[cfg(test)]
+#[test]
+fn namespacing_only_rewrites_fragment_reference_attributes() {
+    let input = r##"<svg><g id="paint" data-action-reason="url(#ticket)"><title>url(#ticket)</title></g><path fill="url(#paint)" stroke="url(#paint)" clip-path="url(#paint)" mask="url(#paint)" marker-end="url(#paint)"/><use href="#paint"/></svg>"##;
+    let scoped = namespace(input, "state-x-");
+    assert!(scoped.contains("data-action-reason=\"url(#ticket)\""));
+    assert!(scoped.contains("<title>url(#ticket)</title>"));
+    assert_eq!(scoped.matches("url(#state-x-paint)").count(), 5);
+    assert!(scoped.contains("href=\"#state-x-paint\""));
 }
 
 #[cfg(test)]

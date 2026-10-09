@@ -12,7 +12,15 @@ AWS owns these assets. They are **not MIT-licensed**. The official page permits 
 
 ## Rendering and mapping
 
-Rust's `include_str!` embeds the SVG files at build time. Each used asset is percent-encoded as an SVG data URI in an image inside a reusable symbol. This isolates internal IDs, styles, and gradients while preserving original colors, shapes, and aspect ratio. Repeated services share one symbol. There are no runtime downloads or external rendering dependencies. Cards and container headers display the symbols at 24px beside the selected full address.
+The build script parses the bundled SVG files and emits reusable inline symbols.
+Original geometry, groups, view boxes, gradients, clip paths and masks are preserved;
+internal IDs and local references are deterministically namespaced per service.
+An element/attribute allowlist rejects scripts, event handlers, CSS, images,
+external references, duplicate IDs and unresolved local references at build time.
+Rust's `include_str!` embeds the validated symbols, so no XML parser or asset
+files are needed at runtime. Repeated services share one symbol. Cards and
+container headers display the symbols at 24px beside the selected full address.
+Named state panels additionally namespace all IDs and fragment references.
 
 Selection is provider-aware and independent of ResourceRole. Managed/data entities share the same service icon. Related resources intentionally use service-level icons: subnet, gateway, routing, peering, and network security resources use Amazon VPC; listeners and target groups use Elastic Load Balancing. No public/private subnet status is inferred from the resource type. Unknown providers/types render without an icon.
 
