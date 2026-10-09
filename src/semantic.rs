@@ -5,6 +5,7 @@ mod containment;
 pub mod cross_state;
 mod data;
 pub mod diagnostics;
+pub mod filter;
 mod routes;
 mod security_groups;
 
