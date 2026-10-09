@@ -66,7 +66,9 @@ mod provider;
 pub(crate) use diagnostics::Resolution;
 pub use diagnostics::{Diagnostic, DiagnosticReason};
 pub use graphs::{ArchitectureGraph, AttributeReference, TerraformGraph};
-pub use operations::{ChangeMetadata, DriftRecord, ImportMetadata, StateRemoval};
+pub use operations::{
+    AttributePathStep, ChangeMetadata, DriftRecord, ImportMetadata, StateRemoval,
+};
 pub use provider::ProviderIdentity;
 
 #[allow(

@@ -1,6 +1,57 @@
 mod support;
 
 #[test]
+fn sensitive_replacement_keys_do_not_reach_cards_edges_or_diagnostics() {
+    for fixture in [
+        include_bytes!("../fixtures/replacement-reasons-plan.json").as_slice(),
+        include_bytes!("../fixtures/association-plan.json").as_slice(),
+    ] {
+        for field in ["before_sensitive", "after_sensitive"] {
+            let mut input: serde_json::Value = serde_json::from_slice(fixture).unwrap();
+            for resource in input["resource_changes"].as_array_mut().unwrap() {
+                resource["change"]["replace_paths"] =
+                    serde_json::json!([["tokens", "TOP_SECRET_PATH_KEY"], ["public_attribute"]]);
+                resource["change"][field] = serde_json::json!({"tokens":true});
+            }
+            let result = support::run_with_args(input.to_string().as_bytes(), &["--diagnostics"]);
+            assert!(result.status.success());
+            let svg = String::from_utf8(result.stdout).unwrap();
+            assert!(!svg.contains("TOP_SECRET"));
+            assert!(
+                !String::from_utf8(result.stderr)
+                    .unwrap()
+                    .contains("TOP_SECRET")
+            );
+            assert!(svg.contains("data-replace-paths=\"[[&quot;public_attribute&quot;]]\""));
+        }
+    }
+}
+
+#[test]
+fn replacement_reasons_are_escaped_and_visible_on_cards_and_lowered_edges() {
+    let input = include_bytes!("../fixtures/replacement-reasons-plan.json");
+    let svg = render(input);
+    assert!(svg.contains("reason: replace_because_tainted"));
+    assert!(svg.contains("replacement paths: [[&quot;subnet_id&quot;]"));
+    assert!(svg.contains("future&lt;&amp;reason"));
+    assert!(!svg.contains("future<&reason"));
+    assert!(!svg.contains("TOP_SECRET"));
+    assert!(svg.contains("replace (4)"));
+    assert_eq!(svg, render(input));
+    let mut input: serde_json::Value =
+        serde_json::from_slice(include_bytes!("../fixtures/association-plan.json")).unwrap();
+    input["resource_changes"][2]["action_reason"] =
+        serde_json::json!("replace_because_cannot_update");
+    input["resource_changes"][2]["change"] =
+        serde_json::json!({"actions":["delete","create"],"replace_paths":[["subnet_id"]]});
+    let svg = render(input.to_string().as_bytes());
+    assert!(svg.contains("data-action-reason=\"replace_because_cannot_update\""));
+    assert!(svg.contains("data-replace-paths=\"[[&quot;subnet_id&quot;]]\""));
+    assert!(svg.contains("association; replace: aws_route_table_association.private"));
+    assert!(svg.contains("replacement paths:"));
+}
+
+#[test]
 fn plan_status_survives_lowering_without_changing_resource_rendering() {
     let mut input: serde_json::Value =
         serde_json::from_slice(include_bytes!("../fixtures/association-plan.json")).unwrap();
