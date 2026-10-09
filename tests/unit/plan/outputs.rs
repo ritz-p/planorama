@@ -1,0 +1,230 @@
+use serde_json::json;
+
+#[test]
+fn full_splats_preserve_all_sources_without_guessing_dynamic_keys() {
+    for (reference, complete) in [
+        ("test.pool[*].id", true),
+        ("test.pool[*]", true),
+        ("test.pool[var.key].id", false),
+        ("test.pool.id", false),
+        ("test.pool.items[*].id", false),
+    ] {
+        let input = json!({"format_version":"1.2","resource_changes":[
+            {"address":"test.pool[0]","type":"test"},
+            {"address":"test.pool[1]","type":"test"},
+            {"address":"test.fixed","type":"test"}
+        ],"configuration":{"root_module":{
+            "locals":{"selected":{"references":[reference]}},
+            "outputs":{"x":{"expression":{"references":["local.selected","test.fixed.id"]}}}
+        }}});
+        let raw = crate::plan::parse(&input.to_string()).unwrap();
+        assert_eq!(raw.outputs[0].complete, complete, "{reference}");
+        assert_eq!(
+            raw.outputs[0].sources,
+            if complete {
+                vec!["test.fixed", "test.pool[0]", "test.pool[1]"]
+            } else {
+                vec!["test.fixed"]
+            },
+            "{reference}"
+        );
+    }
+}
+
+#[test]
+fn full_splats_only_resolve_explicitly_selected_dimensions() {
+    for (module, resource, complete, expected_count) in [
+        ("module.child[*].result", "test.pool[*].id", true, 4),
+        ("module.child[0].result", "test.pool[*].id", true, 2),
+        ("module.child[*].result", "test.pool[0].id", true, 2),
+        ("module.child.result", "test.pool[*].id", false, 0),
+        ("module.child[var.key].result", "test.pool[*].id", false, 0),
+        ("module.child[*].result", "test.pool.id", false, 0),
+        ("module.child[*].result", "test.pool[var.key].id", false, 0),
+    ] {
+        let input = json!({"format_version":"1.2","resource_changes":[
+            {"address":"module.child[0].test.pool[0]","type":"test"},
+            {"address":"module.child[0].test.pool[1]","type":"test"},
+            {"address":"module.child[1].test.pool[0]","type":"test"},
+            {"address":"module.child[1].test.pool[1]","type":"test"}
+        ],"configuration":{"root_module":{
+            "module_calls":{"child":{"module":{"outputs":{"result":{"expression":{"references":[resource]}}}}}},
+            "outputs":{"x":{"expression":{"references":[module]}}}
+        }}});
+        let raw = crate::plan::parse(&input.to_string()).unwrap();
+        assert_eq!(raw.outputs[0].complete, complete, "{module}: {resource}");
+        assert_eq!(
+            raw.outputs[0].sources.len(),
+            expected_count,
+            "{module}: {resource}"
+        );
+    }
+}
+
+#[test]
+fn dynamic_and_narrowed_aliases_do_not_claim_aggregate_sources() {
+    for reference in [
+        "local.targets[var.key].id",
+        "local.targets.a",
+        "local.targets[\"a\"]",
+        "module.child.result.a",
+    ] {
+        let input = json!({"format_version":"1.2","resource_changes":[{"address":"test.a","type":"test"},{"address":"test.b","type":"test"},{"address":"test.fixed","type":"test"}],"configuration":{"root_module":{
+            "locals":{"targets":{"references":["test.a.id","test.b.id"]}},
+            "module_calls":{"child":{"expressions":{"input":{"references":["test.a.id","test.b.id"]}},"module":{"outputs":{"result":{"expression":{"references":["var.input"]}}}}}},
+            "outputs":{"x":{"expression":{"references":[reference,"test.fixed.id"]}}}
+        }}});
+        let raw = crate::plan::parse(&input.to_string()).unwrap();
+        assert!(!raw.outputs[0].complete, "{reference}");
+        assert_eq!(raw.outputs[0].sources, vec!["test.fixed"], "{reference}");
+    }
+}
+
+#[test]
+fn whole_module_output_only_follows_exported_values() {
+    for constant in [false, true] {
+        let expression = if constant {
+            json!({"constant_value":"safe"})
+        } else {
+            json!({"references":["test.a.id"]})
+        };
+        let input = json!({"format_version":"1.2","resource_changes":[{"address":"module.child[0].test.a","type":"test"},{"address":"module.child[0].test.internal","type":"test"}],"configuration":{"root_module":{
+            "module_calls":{"child":{"module":{"resources":[{"address":"test.a"},{"address":"test.internal"}],"outputs":{"result":{"expression":expression}}}}},
+            "outputs":{"x":{"expression":{"references":["module.child[0]"]}}}
+        }}});
+        let raw = crate::plan::parse(&input.to_string()).unwrap();
+        assert_eq!(raw.outputs[0].complete, !constant);
+        assert_eq!(
+            raw.outputs[0].sources,
+            if constant {
+                vec![]
+            } else {
+                vec!["module.child[0].test.a"]
+            }
+        );
+    }
+}
+
+#[test]
+fn split_module_selectors_do_not_choose_a_single_instance() {
+    for selector in ["var.key", "count.index", "each.key"] {
+        for (instance, reference, selected) in [
+            ("module.child[0]", "module.child", false),
+            ("module.child[\"a\"]", "module.child", false),
+            ("module.child[0]", "module.child[0]", true),
+            ("module.child[0]", "module.child[*]", true),
+            ("module.child", "module.child", true),
+        ] {
+            let address = format!("{instance}.test.a");
+            let input = json!({"format_version":"1.2","resource_changes":[
+                {"address":address,"type":"test"},
+                {"address":"test.fixed","type":"test"}
+            ],"configuration":{"root_module":{
+                "module_calls":{"child":{"module":{"outputs":{"result":{"expression":{"references":["test.a.id"]}}}}}},
+                "locals":{"selected":{"references":[reference,selector]}},
+                "outputs":{"x":{"expression":{"references":["local.selected","test.fixed.id"]}}}
+            }}});
+            let raw = crate::plan::parse(&input.to_string()).unwrap();
+            assert!(!raw.outputs[0].complete);
+            let expected = if selected {
+                vec![address.as_str(), "test.fixed"]
+            } else {
+                vec!["test.fixed"]
+            };
+            assert_eq!(raw.outputs[0].sources, expected, "{reference}: {selector}");
+        }
+    }
+}
+
+#[test]
+fn split_selectors_do_not_choose_a_single_collection_instance() {
+    for selector in ["var.key", "count.index", "each.key"] {
+        let input = json!({"format_version":"1.2","variables":{"key":{}},"resource_changes":[{"address":"test.pool[0]","type":"test"},{"address":"test.fixed","type":"test"}],"configuration":{"root_module":{"outputs":{"x":{"expression":{"references":["test.pool",selector,"test.fixed.id"]}}}}}});
+        let raw = crate::plan::parse(&input.to_string()).unwrap();
+        assert!(!raw.outputs[0].complete);
+        assert_eq!(raw.outputs[0].sources, vec!["test.fixed"]);
+    }
+}
+
+#[test]
+fn absent_resources_are_not_aliases_and_exact_sources_survive_ambiguity() {
+    let input = json!({"format_version":"1.2","resource_changes":[
+        {"address":"test.fixed","type":"test"}, {"address":"test.pool[0]","type":"test"},{"address":"test.pool[1]","type":"test"}
+    ],"configuration":{"root_module":{
+        "resources":[{"address":"test.zero","expressions":{"input":{"references":["test.fixed.id"]}}}],
+        "locals":{"mixed":{"references":["test.fixed.id","test.pool[var.key].id"]}},
+        "outputs":{
+            "zero":{"expression":{"references":["test.zero[*].id"]}},
+            "mixed":{"expression":{"references":["test.fixed.id","test.pool[var.key].id"]}},
+            "alias":{"expression":{"references":["local.mixed"]}}
+        }
+    }}});
+    let raw = crate::plan::parse(&input.to_string()).unwrap();
+    for output in &raw.outputs {
+        assert!(!output.complete);
+        assert_eq!(
+            output.sources,
+            if output.name == "zero" {
+                vec![]
+            } else {
+                vec!["test.fixed"]
+            }
+        );
+    }
+}
+
+#[test]
+fn output_provenance_resolves_aliases_modules_and_multiple_sources_without_values() {
+    let input = json!({"format_version":"1.2","resource_changes":[{"address":"terraform_data.a","type":"terraform_data"},{"address":"terraform_data.b","type":"terraform_data"}],"output_changes":{"direct":{"after":"TOP_SECRET"}},"configuration":{"root_module":{
+    "locals":{"alias":{"references":["terraform_data.a.id"]}},
+    "module_calls":{"child":{"module":{"outputs":{"result":{"expression":{"references":["var.input"]}}}},"expressions":{"input":{"references":["terraform_data.b.id"]}}}},
+    "outputs":{
+        "direct":{"expression":{"references":["terraform_data.a.id"]}},
+        "alias":{"expression":{"references":["local.alias"]}},
+        "module":{"expression":{"references":["module.child.result"]}},
+        "multiple":{"expression":{"references":["terraform_data.a.id","terraform_data.b.id"]}},
+        "literal":{"expression":{"constant_value":"TOP_SECRET"}},
+        "missing":{"expression":{"references":["terraform_data.missing.id"]}}
+    }}}});
+    let raw = crate::plan::parse(&input.to_string()).unwrap();
+    for name in ["direct", "alias", "module", "multiple"] {
+        assert!(
+            raw.outputs
+                .iter()
+                .find(|o| o.name == name)
+                .unwrap()
+                .complete,
+            "{name}"
+        );
+    }
+    assert_eq!(
+        raw.outputs
+            .iter()
+            .find(|o| o.name == "multiple")
+            .unwrap()
+            .sources
+            .len(),
+        2
+    );
+    for name in ["literal", "missing"] {
+        let output = raw.outputs.iter().find(|o| o.name == name).unwrap();
+        assert!(!output.complete);
+        assert!(output.sources.is_empty());
+    }
+    assert!(!format!("{raw:?}").contains("TOP_SECRET"));
+    assert!(
+        crate::semantic::diagnostics::collect(&raw)
+            .iter()
+            .any(|d| d.address == "output.missing")
+    );
+}
+
+#[test]
+fn dynamic_or_ambiguous_outputs_do_not_choose_instances() {
+    for reference in ["terraform_data.a[var.index].id", "terraform_data.a.id"] {
+        let input = json!({"format_version":"1.2","resource_changes":[{"address":"terraform_data.a[0]","type":"terraform_data"},{"address":"terraform_data.a[1]","type":"terraform_data"}],"configuration":{"root_module":{"outputs":{"x":{"expression":{"references":[reference]}}}}}});
+        let raw = crate::plan::parse(&input.to_string()).unwrap();
+        assert!(!raw.outputs[0].complete);
+        assert!(raw.outputs[0].sources.is_empty());
+    }
+}

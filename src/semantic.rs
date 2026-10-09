@@ -15,6 +15,7 @@ pub fn transform(raw: &TerraformGraph) -> ArchitectureGraph {
     // Fixed order: direct/spanning/indirect containment, security-group connections, relationship lowering,
     // then data-source visibility. Lowering must see all original consumers.
     let contained = TerraformGraph {
+        outputs: raw.outputs.clone(),
         graph: security_groups::infer(raw, containment::infer(raw)),
         attributes: raw.attributes.clone(),
         graph_references: raw.graph_references.clone(),
