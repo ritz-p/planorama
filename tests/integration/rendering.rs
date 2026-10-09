@@ -1,6 +1,45 @@
 mod support;
 
 #[test]
+fn plan_status_survives_lowering_without_changing_resource_rendering() {
+    let mut input: serde_json::Value =
+        serde_json::from_slice(include_bytes!("../fixtures/association-plan.json")).unwrap();
+    for key in ["applyable", "complete", "errored"] {
+        input.as_object_mut().unwrap().remove(key);
+    }
+    let baseline = render(input.to_string().as_bytes());
+    assert!(!baseline.contains("id=\"plan-status\""));
+    for (applyable, complete, errored) in [
+        (true, true, false),
+        (true, false, false),
+        (false, false, true),
+        (false, true, false),
+    ] {
+        input["applyable"] = applyable.into();
+        input["complete"] = complete.into();
+        input["errored"] = errored.into();
+        let bytes = input.to_string();
+        let svg = render(bytes.as_bytes());
+        assert_eq!(svg, render(bytes.as_bytes()));
+        for (key, value) in [
+            ("applyable", applyable),
+            ("complete", complete),
+            ("errored", errored),
+        ] {
+            assert!(svg.contains(&format!("data-plan-{key}=\"{value}\"")));
+            assert!(svg.contains(&format!("{key}: {value}")));
+        }
+        let start = svg.find("<g id=\"plan-status\"").unwrap();
+        let end = start + svg[start..].find("</g>\n").unwrap() + "</g>\n".len();
+        assert_eq!(format!("{}{}", &svg[..start], &svg[end..]), baseline);
+    }
+    let svg = render(br#"{"format_version":"1.2","resource_changes":[],"complete":false}"#);
+    assert!(svg.contains("applyable: unknown complete: false errored: unknown"));
+    assert!(!svg.contains("data-plan-applyable"));
+    assert!(!svg.contains("data-plan-errored"));
+}
+
+#[test]
 fn mixed_literal_security_group_ids_keep_dependency_edges_and_redacted_diagnostics() {
     let mut input: serde_json::Value =
         serde_json::from_slice(include_bytes!("../fixtures/security-groups-plan.json")).unwrap();
