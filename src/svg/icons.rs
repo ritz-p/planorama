@@ -32,24 +32,10 @@ pub(super) fn definitions(nodes: &[Node]) -> String {
         )
         .unwrap();
     }
-    for (id, icon) in used {
-        let data = data_uri(icon.svg());
-        write!(svg, r#"<symbol id="{id}" viewBox="0 0 24 24"><image width="24" height="24" preserveAspectRatio="xMidYMid meet" href="{data}"/></symbol>"#).unwrap();
+    for icon in used.values() {
+        svg.push_str(icon.svg());
     }
     svg
-}
-
-fn data_uri(svg: &str) -> String {
-    let mut result = String::from("data:image/svg+xml,");
-    for byte in svg.bytes() {
-        match byte {
-            b'A'..=b'Z' | b'a'..=b'z' | b'0'..=b'9' | b'-' | b'_' | b'.' | b'~' => {
-                result.push(byte as char)
-            }
-            _ => write!(result, "%{byte:02X}").unwrap(),
-        }
-    }
-    result
 }
 
 pub(super) fn render(icon: ResourceIcon, x: usize, y: usize) -> String {

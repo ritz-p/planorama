@@ -139,7 +139,7 @@ fn namespace(svg: &str, prefix: &str) -> String {
             &format!("data-container=\"{prefix}resource-"),
         )
         .replace(" href=\"#", &format!(" href=\"#{prefix}"))
-        .replace("marker-end=\"url(#", &format!("marker-end=\"url(#{prefix}"))
+        .replace("url(#", &format!("url(#{prefix}"))
         .replace(
             "data-source=\"resource-",
             &format!("data-source=\"{prefix}resource-"),
