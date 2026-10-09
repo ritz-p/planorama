@@ -95,6 +95,10 @@ pub fn render_states(
     let mut relationships: Vec<_> = architecture.relationships.iter().collect();
     relationships.sort();
     for edge in relationships {
+        let crate::model::cross_state::CrossStateProvenance::TerraformRemoteState {
+            remote,
+            output,
+        } = &edge.provenance;
         let (Some((sx, sy, source, source_index)), Some((tx, ty, target, target_index))) =
             (endpoints.get(&edge.from), endpoints.get(&edge.to))
         else {
@@ -124,10 +128,10 @@ pub fn render_states(
             edge.from.address,
             edge.to.state.as_str(),
             edge.to.address,
-            edge.remote,
-            edge.output
+            remote,
+            output
         ));
-        writeln!(links, r##"<path data-edge-kind="dependency" data-cross-state="true" data-source="{source}" data-target="{target}" data-source-state="{}" data-target-state="{}" data-remote-state="{}" data-output="{}" d="{}" fill="none" stroke="#2563eb" stroke-width="1.5" stroke-dasharray="7 4" marker-end="url(#cross-state-arrow)"><title>{title}</title></path>"##, super::escape(edge.from.state.as_str()),super::escape(edge.to.state.as_str()),super::escape(&edge.remote),super::escape(&edge.output),path.trim()).unwrap();
+        writeln!(links, r##"<path data-edge-kind="dependency" data-cross-state="true" data-source="{source}" data-target="{target}" data-source-state="{}" data-target-state="{}" data-remote-state="{}" data-output="{}" d="{}" fill="none" stroke="#2563eb" stroke-width="1.5" stroke-dasharray="7 4" marker-end="url(#cross-state-arrow)"><title>{title}</title></path>"##, super::escape(edge.from.state.as_str()),super::escape(edge.to.state.as_str()),super::escape(remote),super::escape(output),path.trim()).unwrap();
     }
     if !links.is_empty() {
         width += 80 + (link_count - 1) * 12;
@@ -239,8 +243,10 @@ fn cross_state_paths_avoid_intervening_cards_and_describe_dependencies() {
                 state: second,
                 address: "test.a".into(),
             },
-            remote: "data.terraform_remote_state.x".into(),
-            output: "value".into(),
+            provenance: crate::model::cross_state::CrossStateProvenance::TerraformRemoteState {
+                remote: "data.terraform_remote_state.x".into(),
+                output: "value".into(),
+            },
         }],
     };
     let svg = render_states(
@@ -286,7 +292,9 @@ fn cross_state_paths_avoid_intervening_cards_and_describe_dependencies() {
         }
     }
     let mut parallel = architecture.relationships[0].clone();
-    parallel.output = "second_value".into();
+    let crate::model::cross_state::CrossStateProvenance::TerraformRemoteState { output, .. } =
+        &mut parallel.provenance;
+    *output = "second_value".into();
     architecture.relationships.push(parallel);
     let svg = render_states(
         &crate::view::apply(&architecture, &Default::default()).unwrap(),
