@@ -7,6 +7,55 @@ fn cli() -> Command {
 }
 
 #[test]
+fn cross_state_resolution_never_substitutes_equal_output_values_for_provenance() {
+    for literal in [false, true] {
+        let mut producer: serde_json::Value =
+            serde_json::from_str(include_str!("../fixtures/multi/producer.json")).unwrap();
+        producer["output_changes"] = serde_json::json!({"subnet":{"after":"PRIVATE_SAME_VALUE"}});
+        if literal {
+            producer["configuration"]["root_module"]["outputs"]["subnet"]["expression"] =
+                serde_json::json!({"constant_value":"PRIVATE_SAME_VALUE"});
+        }
+        let mut child = cli()
+            .args([
+                "--state",
+                "producer=-",
+                "--state",
+                &format!("consumer={}", fixture("multi/consumer.json")),
+                "--remote-state",
+                "consumer:data.terraform_remote_state.network=producer",
+                "--diagnostics",
+                "-o",
+                "-",
+            ])
+            .stdin(Stdio::piped())
+            .stdout(Stdio::piped())
+            .stderr(Stdio::piped())
+            .spawn()
+            .unwrap();
+        child
+            .stdin
+            .take()
+            .unwrap()
+            .write_all(producer.to_string().as_bytes())
+            .unwrap();
+        let output = child.wait_with_output().unwrap();
+        assert!(output.status.success());
+        let svg = String::from_utf8(output.stdout).unwrap();
+        let diagnostics = String::from_utf8(output.stderr).unwrap();
+        assert_eq!(
+            svg.matches("data-cross-state=\"true\"").count(),
+            if literal { 2 } else { 3 }
+        );
+        assert_eq!(
+            diagnostics.contains("producer output provenance is unresolved"),
+            literal
+        );
+        assert!(!svg.contains("PRIVATE_SAME_VALUE") && !diagnostics.contains("PRIVATE_SAME_VALUE"));
+    }
+}
+
+#[test]
 fn cross_state_edges_connect_real_resources_and_are_order_independent() {
     let render = |reverse| {
         let mut inputs = vec![

@@ -58,8 +58,10 @@ pub fn resolve(plans: &MultiPlan, mappings: &[Mapping]) -> Resolution {
                                 address: source.clone(),
                             },
                             to: consumer.clone(),
-                            remote: reference.remote.clone(),
-                            output: reference.output.clone(),
+                            provenance: CrossStateProvenance::TerraformRemoteState {
+                                remote: reference.remote.clone(),
+                                output: reference.output.clone(),
+                            },
                         });
                     }
                 }

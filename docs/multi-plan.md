@@ -1,5 +1,19 @@
 # Multiple plans and state identity
 
+The #124 integration combines #125 (named inputs), #126 (output provenance),
+#127 (explicit remote-state resolution) and #128 (architecture/SVG relationships).
+Cross-state endpoints are independent of the evidence mechanism: the core stores
+a `CrossStateProvenance` variant, initially `TerraformRemoteState`. Future explicit
+mechanisms can supply their own evidence without changing state identity or
+inventing remote-state addresses. No additional mechanism is currently supported.
+
+Known limit: Terraform may serialize a full splat and a computed single-element
+selection into the same bare collection reference. Without distinguishing expression
+information, that output remains incomplete; Planorama does not infer all instances
+from a bare collection or compare output values to recover missing syntax. Explicit
+complete provenance still resolves multiple sources. Missing, ambiguous or incomplete
+provenance produces diagnostics and no guessed cross-state relationship.
+
 Resolved mappings appear as dashed cross-state dependency lines connecting actual resource cards. `data-source-state`, `data-target-state`, `data-remote-state` and `data-output` retain the full chain; source/target DOM references point into their own state sections. These relationships live separately from state-local graphs and never introduce containment. Source nodes removed by semantic lowering are not replaced with a guessed endpoint. Unmapped inputs retain independent-state output.
 
 Use `--remote-state CONSUMER:DATA_ADDRESS=PRODUCER` to explicitly connect an exact `data.terraform_remote_state.NAME.outputs.OUTPUT` traversal to a loaded producer state. Repeat mappings as needed; conflicting producers remain ambiguous and emit no relationship. Root output provenance must be complete and nonempty. `--diagnostics` reports successful chains and unmapped, missing or incomplete sources without backend configuration or output values. This initial resolver handles direct exact traversals, including statically identified module instances; it does not guess backend identity or resolve dynamic output selections.

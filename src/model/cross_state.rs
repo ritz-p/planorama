@@ -39,13 +39,18 @@ pub struct Endpoint {
     pub address: String,
 }
 
-/// A dependency with explicit remote-output provenance, not cross-state containment.
+/// Evidence mechanism is separate from the cross-state architecture endpoints.
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
+pub enum CrossStateProvenance {
+    TerraformRemoteState { remote: String, output: String },
+}
+
+/// A dependency with explicit provenance, never cross-state containment.
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub struct CrossStateEdge {
     pub from: Endpoint,
     pub to: Endpoint,
-    pub remote: String,
-    pub output: String,
+    pub provenance: CrossStateProvenance,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
