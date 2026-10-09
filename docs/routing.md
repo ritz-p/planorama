@@ -30,7 +30,7 @@ docker compose exec -T dev cargo clippy --locked --all-targets -- -D warnings
 docker compose exec -T dev cargo test --locked
 ```
 
-The final integration passes 321 tests; the opt-in benchmark is ignored in the
+The final integration passes 323 tests; the opt-in benchmark is ignored in the
 normal suite. Performance measurements are documented separately in
 [benchmarking](benchmarks.md). Port-candidate evaluation adds search work;
 the routing improvements are not a claim of faster execution.
