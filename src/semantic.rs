@@ -18,6 +18,7 @@ pub fn transform(raw: &TerraformGraph) -> ArchitectureGraph {
         attributes: raw.attributes.clone(),
         graph_references: raw.graph_references.clone(),
         drift: raw.drift.clone(),
+        relevant_attributes: raw.relevant_attributes.clone(),
     };
     let mut graph = data::visible(associations::lower(&contained));
     graph.components = components::infer(raw, &graph);

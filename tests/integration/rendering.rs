@@ -25,6 +25,26 @@ fn synthetic_components_are_distinct_and_link_to_original_changes() {
 }
 
 #[test]
+fn drift_relevance_exposes_safe_paths_and_unresolved_diagnostics() {
+    let mut input: serde_json::Value =
+        serde_json::from_slice(include_bytes!("../fixtures/drift-plan.json")).unwrap();
+    input["relevant_attributes"] = serde_json::json!([
+        {"resource":"terraform_data.planned","attribute":["network",0,"id"]},
+        {"resource":"terraform_data.missing","attribute":["TOP_SECRET"]}
+    ]);
+    let bytes = input.to_string();
+    let output = support::run_with_args(bytes.as_bytes(), &["--diagnostics"]);
+    assert!(output.status.success());
+    let svg = String::from_utf8(output.stdout).unwrap();
+    let diagnostics = String::from_utf8(output.stderr).unwrap();
+    assert_eq!(svg.matches("data-plan-relevant=\"true\"").count(), 1);
+    assert!(svg.contains("data-relevant-attributes=\"[[&quot;network&quot;,0,&quot;id&quot;]]\""));
+    assert!(svg.contains("data-drift=\"delete\""));
+    assert!(diagnostics.contains("matched=false"));
+    assert!(!format!("{svg}{diagnostics}").contains("TOP_SECRET"));
+}
+
+#[test]
 fn check_summary_preserves_actions_and_redacts_evaluated_messages() {
     let input = include_bytes!("../fixtures/checks-plan.json");
     let svg = render(input);

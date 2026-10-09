@@ -7,6 +7,7 @@ mod entity;
 mod operations;
 mod providers;
 mod references;
+mod relevance;
 #[cfg(test)]
 #[path = "../tests/unit/plan.rs"]
 mod tests;
@@ -81,7 +82,8 @@ pub fn parse(json: &str) -> Result<TerraformGraph, String> {
     }
     let mut nodes: Vec<_> = nodes.into_values().collect();
     providers::enrich(&plan["configuration"], &mut nodes);
-    let drift = drift::collect(&plan, &mut nodes)?;
+    let mut drift = drift::collect(&plan, &mut nodes)?;
+    let relevant_attributes = relevance::collect(&plan, &mut nodes, &mut drift);
     let edges = resolve(&nodes, &symbols);
     let mut attributes = attributes::collect(
         &plan["configuration"]["root_module"],
@@ -111,6 +113,7 @@ pub fn parse(json: &str) -> Result<TerraformGraph, String> {
         attributes,
         graph_references,
         drift,
+        relevant_attributes,
     })
 }
 
