@@ -107,7 +107,11 @@ pub(super) fn lower(raw: &TerraformGraph) -> Graph {
         .collect();
     edges.sort();
     edges.dedup();
-    Graph { nodes, edges }
+    Graph {
+        status: raw.status,
+        nodes,
+        edges,
+    }
 }
 
 fn endpoint(

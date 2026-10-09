@@ -33,7 +33,16 @@ pub(super) fn parse(change: &Value) -> ChangeMetadata {
             paths
                 .iter()
                 .filter_map(|path| {
-                    path.as_array()?
+                    let steps = path.as_array()?;
+                    // Keys and set elements can themselves be secrets. Check both
+                    // sensitivity trees before cloning any part of the path.
+                    if ["before_sensitive", "after_sensitive"]
+                        .iter()
+                        .any(|field| sensitive_path(&change[*field], steps))
+                    {
+                        return None;
+                    }
+                    steps
                         .iter()
                         .map(|step| match step {
                             Value::String(name) => Some(AttributePathStep::Attribute(name.clone())),
@@ -46,4 +55,36 @@ pub(super) fn parse(change: &Value) -> ChangeMetadata {
         }),
         ..Default::default()
     }
+}
+
+fn contains_sensitive(value: &Value) -> bool {
+    match value {
+        Value::Bool(true) => true,
+        Value::Array(values) => values.iter().any(contains_sensitive),
+        Value::Object(values) => values.values().any(contains_sensitive),
+        _ => false,
+    }
+}
+
+fn sensitive_path(mut sensitivity: &Value, steps: &[Value]) -> bool {
+    if sensitivity == &Value::Bool(true) {
+        return true;
+    }
+    for step in steps {
+        sensitivity = match step {
+            Value::String(key) => sensitivity.get(key),
+            Value::Number(index) => index
+                .as_u64()
+                .and_then(|i| usize::try_from(i).ok())
+                .and_then(|i| sensitivity.get(i)),
+            _ => None,
+        }
+        .unwrap_or(&Value::Null);
+        // Conservatively omit the whole path when its subtree is sensitive:
+        // without a schema we cannot distinguish attributes from secret keys.
+        if contains_sensitive(sensitivity) {
+            return true;
+        }
+    }
+    false
 }

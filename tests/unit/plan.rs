@@ -1,6 +1,37 @@
 use super::*;
 
 #[test]
+fn plan_status_preserves_all_boolean_combinations_and_unknowns() {
+    for applyable in [None, Some(false), Some(true)] {
+        for complete in [None, Some(false), Some(true)] {
+            for errored in [None, Some(false), Some(true)] {
+                let mut input = serde_json::json!({"format_version":"1.2","resource_changes":[]});
+                for (name, value) in [
+                    ("applyable", applyable),
+                    ("complete", complete),
+                    ("errored", errored),
+                ] {
+                    if let Some(value) = value {
+                        input[name] = value.into();
+                    }
+                }
+                let graph = parse(&input.to_string()).unwrap();
+                assert_eq!(
+                    graph.status,
+                    PlanStatus {
+                        applyable,
+                        complete,
+                        errored
+                    }
+                );
+            }
+        }
+    }
+    let graph = parse(r#"{"format_version":"1.2","resource_changes":[],"applyable":"false","complete":0,"errored":null}"#).unwrap();
+    assert_eq!(graph.status, PlanStatus::default());
+}
+
+#[test]
 fn moves_preserve_provenance_without_aliasing_previous_addresses() {
     for (current, previous) in [
         ("terraform_data.current", "terraform_data.old"),

@@ -2,6 +2,31 @@ use super::*;
 use serde_json::json;
 
 #[test]
+fn sensitive_replacement_paths_are_omitted_before_retaining_keys() {
+    for field in ["before_sensitive", "after_sensitive"] {
+        for sensitivity in [
+            json!({"tokens":true}),
+            json!({"tokens":{"TOP_SECRET":true}}),
+            json!({"tokens":[{"secret":true}]}),
+        ] {
+            let mut change = json!({"replace_paths":[["tokens","TOP_SECRET"],["tokens",0,"secret"],["public",0,"name"]]});
+            change[field] = sensitivity;
+            let metadata = parse(&change);
+            assert!(!format!("{metadata:?}").contains("TOP_SECRET"));
+            assert_eq!(
+                metadata.replace_paths,
+                parse(&json!({"replace_paths":[["public",0,"name"]]})).replace_paths
+            );
+        }
+        let mut change = json!({"replace_paths":[["TOP_SECRET"]]});
+        change[field] = json!(true);
+        assert_eq!(parse(&change).replace_paths, Some(vec![]));
+    }
+    let change = json!({"replace_paths":[["public","key"]],"before_sensitive":{"public":false},"after_sensitive":{"public":{"key":false}}});
+    assert_eq!(parse(&change).replace_paths.as_ref().unwrap().len(), 1);
+}
+
+#[test]
 fn replacement_reasons_and_typed_paths_are_independent_of_actions_and_values() {
     use crate::model::{Action, AttributePathStep as Step};
     let raw =

@@ -2,9 +2,17 @@
 
 ## Replacement reasons
 
+Replacement path strings can also be collection keys or set elements. Before retaining paths, both `before_sensitive` and `after_sensitive` are checked. Paths entering a sensitive subtree are omitted in full (including when only a descendant is marked sensitive), so secret keys never reach the model, SVG titles, or data attributes. Other paths remain available; omitted paths are not replaced with misleading truncated paths.
+
 Resource-level `action_reason` is retained verbatim, including unknown future reason strings. `change.replace_paths` stores paths as typed string keys and unsigned integer indices, independently of the planned action. SVG titles and `data-action-reason` / `data-replace-paths` expose these details on cards and lowered relationships, with XML escaping. Paths use JSON-array notation so dotted keys, quoted map keys and numeric indices remain unambiguous. They identify attributes without storing their before/after values.
 
 Missing metadata does not alter replacement behavior or ordinary rendering. Explicit empty path lists and empty root paths are preserved. Malformed path entries (non-arrays or steps other than strings/nonnegative integer indices) are ignored as whole paths, never truncated into misleading valid paths. See [replacement-reasons-plan.json](../tests/fixtures/replacement-reasons-plan.json).
+
+## Plan status
+
+`Graph.status` retains the top-level `applyable`, `complete`, and `errored` flags as `Option<bool>`. Missing, null, or non-boolean values remain unknown, distinct from explicit false. Each graph owns the status of its input plan; statuses of different plans are never combined or inferred from resource actions.
+
+When at least one flag is supplied, the SVG header displays all three flags (using `unknown` for missing flags). The `plan-status` group also exposes each known flag as `data-plan-applyable`, `data-plan-complete`, or `data-plan-errored`. Older plans without flags retain their existing output. Incomplete and errored plans remain distinct; these flags do not change resource actions, colors, or the CLI exit status.
 
 `Node.metadata` and lowered `EdgeChange.metadata` carry operation information separately from `Action`. The existing action palette and legend remain compatible; additional operation labels and SVG data attributes distinguish lifecycle behavior.
 
