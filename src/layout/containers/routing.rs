@@ -1,4 +1,4 @@
-use super::super::{Bounds, Layout, Point};
+use super::super::{Bounds, Layout, Point, Port, Side};
 use crate::layout::routing::scoring::Scorer;
 use crate::model::{Edge, EdgeKind, Graph};
 mod bundles;
@@ -171,16 +171,15 @@ fn route_impl(
                 }
             }
         }
-        let start = Point {
-            x: layout.bounds[edge.from].right(),
-            y: layout.bounds[edge.from].origin.y + source_ports[index],
-        };
-        let end = Point {
-            x: layout.bounds[edge.to].right(),
-            y: layout.bounds[edge.to].origin.y + target_ports[index],
-        };
+        let start: Port = layout.bounds[edge.from].port(Side::Right, source_ports[index]);
+        let end = layout.bounds[edge.to].port(Side::Right, target_ports[index]);
         let obstacles = obstacles(layout, edge);
-        let path = path_between(start, end, &obstacles, quality.then_some(&scorer));
+        let path = path_between(
+            start.point,
+            end.point,
+            &obstacles,
+            quality.then_some(&scorer),
+        );
         scorer.insert(path.clone());
         paths[index] = path;
     }

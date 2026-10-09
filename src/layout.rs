@@ -1,4 +1,6 @@
 //! Provider-neutral geometry for architecture/view graphs; no Terraform interpretation.
+mod geometry;
+pub(crate) use geometry::{Bounds, Point, Port, Side};
 mod containers;
 mod containment;
 pub(crate) use containment::ContainmentTree;
@@ -21,41 +23,10 @@ pub(crate) fn route_to_margin(start: Point, end: Point, obstacles: &[Bounds]) ->
 pub const NODE_WIDTH: usize = 320;
 pub const NODE_HEIGHT: usize = 96;
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub struct Point {
-    pub x: usize,
-    pub y: usize,
-}
-
 pub struct Band<'a> {
     pub label: &'a str,
     pub top: usize,
     pub height: usize,
-}
-
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub struct Bounds {
-    pub origin: Point,
-    pub width: usize,
-    pub height: usize,
-}
-
-impl Bounds {
-    pub fn card(origin: Point) -> Self {
-        Self {
-            origin,
-            width: NODE_WIDTH,
-            height: NODE_HEIGHT,
-        }
-    }
-
-    pub fn right(self) -> usize {
-        self.origin.x + self.width
-    }
-
-    pub fn header(self, height: usize) -> Self {
-        Self { height, ..self }
-    }
 }
 
 pub struct Layout<'a> {

@@ -1,4 +1,4 @@
-use super::{Bounds, Point};
+use super::{Bounds, Point, Side};
 use crate::model::Graph;
 use std::cmp::Ordering;
 mod bundles;
@@ -78,17 +78,17 @@ pub(super) fn route(
         let mut paths = Vec::with_capacity(graph.edges.len());
         for (edge, link) in graph.edges.iter().enumerate() {
             let (a, b) = link.endpoints();
-            let start = Point {
-                x: bounds[a].right(),
-                y: bounds[a].origin.y + source_ports[edge],
-            };
-            let end = Point {
-                x: match ranks[b].cmp(&ranks[a]) {
-                    Ordering::Greater => bounds[b].origin.x,
-                    Ordering::Equal | Ordering::Less => bounds[b].right(),
-                },
-                y: bounds[b].origin.y + target_ports[edge],
-            };
+            let start = bounds[a].port(Side::Right, source_ports[edge]).point;
+            let end = bounds[b]
+                .port(
+                    if ranks[b] > ranks[a] {
+                        Side::Left
+                    } else {
+                        Side::Right
+                    },
+                    target_ports[edge],
+                )
+                .point;
             let candidates: Vec<_> = match ranks[b].checked_sub(ranks[a]) {
                 Some(0 | 1) => match bundles.group(edge) {
                     Some(group) => {
