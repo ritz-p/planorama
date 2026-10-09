@@ -3,6 +3,7 @@ use crate::model::{Action, Node};
 
 fn graph(count: usize, edges: Vec<(usize, usize)>) -> Graph {
     Graph {
+        status: Default::default(),
         nodes: (0..count)
             .map(|i| Node {
                 deposed_key: None,

@@ -91,6 +91,29 @@ pub fn render_with_format(
                 .count();
         writeln!(svg, r#"<rect x="{x}" y="100" width="12" height="12" fill="{background}" stroke="{border}"/><text x="{}" y="111" font-size="12" fill="{border}">{} ({count})</text>"#, x + 19, label(*action)).unwrap();
     }
+    if graph.status != Default::default() {
+        svg.push_str("<g id=\"plan-status\"");
+        let flags = [
+            ("applyable", graph.status.applyable),
+            ("complete", graph.status.complete),
+            ("errored", graph.status.errored),
+        ];
+        for (name, value) in flags {
+            if let Some(value) = value {
+                write!(svg, " data-plan-{name}=\"{value}\"").unwrap();
+            }
+        }
+        svg.push_str(">\n<text x=\"40\" y=\"137\" font-size=\"12\" fill=\"#475569\">Plan status:");
+        for (name, value) in flags {
+            let value = match value {
+                Some(true) => "true",
+                Some(false) => "false",
+                None => "unknown",
+            };
+            write!(svg, " {name}: {value}").unwrap();
+        }
+        svg.push_str("</text>\n</g>\n");
+    }
     for band in &layout.bands {
         let (module, y, h) = (band.label, band.top, band.height);
         writeln!(svg, r##"<rect x="35" y="{y}" width="{}" height="{h}" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-dasharray="5 4"/><text x="52" y="{}" font-size="13" font-weight="700" fill="#475569"><title>{}</title>{}</text>"##, width - 70, y + 25, escape(module), escape(&shorten(module, 110))).unwrap();

@@ -42,7 +42,11 @@ fn ranked_fixture() -> Graph {
         })
         .collect();
     edges.extend([(1, 3), (2, 4), (3, 5), (4, 6)].map(Edge::from));
-    Graph { nodes, edges }
+    Graph {
+        status: Default::default(),
+        nodes,
+        edges,
+    }
 }
 
 #[test]
@@ -734,7 +738,11 @@ fn reciprocal_relationships_and_self_loops_use_distinct_incoming_and_outgoing_po
             }),
         })
         .collect();
-        let graph = Graph { nodes, edges };
+        let graph = Graph {
+            status: Default::default(),
+            nodes,
+            edges,
+        };
         let layout = Layout::new(&graph);
         assert_ne!(layout.paths[0].first(), layout.paths[1].last());
         assert_ne!(layout.paths[0].last(), layout.paths[1].first());

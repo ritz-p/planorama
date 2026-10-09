@@ -1,5 +1,11 @@
 # Terraform operation metadata
 
+## Plan status
+
+`Graph.status` retains the top-level `applyable`, `complete`, and `errored` flags as `Option<bool>`. Missing, null, or non-boolean values remain unknown, distinct from explicit false. Each graph owns the status of its input plan; statuses of different plans are never combined or inferred from resource actions.
+
+When at least one flag is supplied, the SVG header displays all three flags (using `unknown` for missing flags). The `plan-status` group also exposes each known flag as `data-plan-applyable`, `data-plan-complete`, or `data-plan-errored`. Older plans without flags retain their existing output. Incomplete and errored plans remain distinct; these flags do not change resource actions, colors, or the CLI exit status.
+
 `Node.metadata` and lowered `EdgeChange.metadata` carry operation information separately from `Action`. The existing action palette and legend remain compatible; additional operation labels and SVG data attributes distinguish lifecycle behavior.
 
 ## Import and state removal

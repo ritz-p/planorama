@@ -10,7 +10,7 @@ mod references;
 #[path = "../tests/unit/plan.rs"]
 mod tests;
 
-use crate::model::{Action, EntityMode, Graph, Node, TerraformGraph};
+use crate::model::{Action, EntityMode, Graph, Node, PlanStatus, TerraformGraph};
 use address::static_address;
 use references::{collect_config, resolve};
 use serde_json::Value;
@@ -95,7 +95,15 @@ pub fn parse(json: &str) -> Result<TerraformGraph, String> {
         true,
     );
     Ok(TerraformGraph {
-        graph: Graph { nodes, edges },
+        graph: Graph {
+            status: PlanStatus {
+                applyable: plan["applyable"].as_bool(),
+                complete: plan["complete"].as_bool(),
+                errored: plan["errored"].as_bool(),
+            },
+            nodes,
+            edges,
+        },
         attributes,
         graph_references,
         drift,
