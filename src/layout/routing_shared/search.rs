@@ -3,10 +3,10 @@ use std::cmp::Reverse;
 use std::collections::BinaryHeap;
 
 #[cfg(test)]
-#[path = "../../../../tests/unit/layout/containers/search.rs"]
+#[path = "../../../tests/unit/layout/containers/search.rs"]
 mod tests;
 
-pub(super) fn find_path(
+pub(in crate::layout) fn find_path(
     start: Point,
     end: Point,
     obstacles: &[Bounds],
@@ -15,7 +15,7 @@ pub(super) fn find_path(
     search(start, end, obstacles, scorer, true)
 }
 
-pub(super) fn to_margin(start: Point, end: Point, obstacles: &[Bounds]) -> Vec<Point> {
+pub(in crate::layout) fn to_margin(start: Point, end: Point, obstacles: &[Bounds]) -> Vec<Point> {
     search(start, end, obstacles, None, false)
 }
 
@@ -129,15 +129,5 @@ fn search(
         path.push(point(state / 3));
     }
     path.reverse();
-    let mut compact: Vec<Point> = Vec::new();
-    for point in path {
-        if compact.len() >= 2 {
-            let (a, b) = (compact[compact.len() - 2], compact[compact.len() - 1]);
-            if (a.x == b.x && b.x == point.x) || (a.y == b.y && b.y == point.y) {
-                compact.pop();
-            }
-        }
-        compact.push(point);
-    }
-    compact
+    super::simplify(path, super::Simplification::CollapseCollinear)
 }

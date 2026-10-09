@@ -1,30 +1,11 @@
 use super::super::{Bounds, Layout, Point, Port, Side};
-use crate::layout::routing::scoring::Scorer;
+use crate::layout::routing_shared::scoring::Scorer;
 use crate::model::{Edge, EdgeKind, Graph};
 mod bundles;
-mod search;
+use crate::layout::routing_shared::search;
 use search::find_path;
-pub(super) fn to_margin(start: Point, end: Point, obstacles: &[Bounds]) -> Vec<Point> {
-    search::to_margin(start, end, obstacles)
-}
 
-pub(super) fn crosses(a: Point, b: Point, bounds: Bounds) -> bool {
-    let Point { x, y } = bounds.origin;
-    match a.x == b.x {
-        true => {
-            a.x > x
-                && a.x < x + bounds.width
-                && a.y.max(b.y) > y
-                && a.y.min(b.y) < y + bounds.height
-        }
-        false => {
-            a.y > y
-                && a.y < y + bounds.height
-                && a.x.max(b.x) > x
-                && a.x.min(b.x) < x + bounds.width
-        }
-    }
-}
+use crate::layout::routing_shared::{Simplification, crosses, simplify};
 
 fn represented_by_nesting(edge: &Edge, tree: &crate::layout::ContainmentTree) -> bool {
     matches!(edge.kind, EdgeKind::Dependency | EdgeKind::Containment)
@@ -220,30 +201,12 @@ pub(super) fn path_between(
         ..end
     };
     let finish = |middle: Vec<Point>| {
-        let mut path: Vec<Point> = Vec::new();
-        for point in std::iter::once(start)
-            .chain(middle)
-            .chain(std::iter::once(end))
-        {
-            if path.last() == Some(&point) {
-                continue;
-            }
-            if path.len() >= 2 {
-                let (a, b) = (path[path.len() - 2], path[path.len() - 1]);
-                // Remove only a straight continuation, preserving any reversal.
-                if (a.x == b.x
-                    && b.x == point.x
-                    && a.y.abs_diff(b.y) + b.y.abs_diff(point.y) == a.y.abs_diff(point.y))
-                    || (a.y == b.y
-                        && b.y == point.y
-                        && a.x.abs_diff(b.x) + b.x.abs_diff(point.x) == a.x.abs_diff(point.x))
-                {
-                    path.pop();
-                }
-            }
-            path.push(point);
-        }
-        path
+        simplify(
+            std::iter::once(start)
+                .chain(middle)
+                .chain(std::iter::once(end)),
+            Simplification::PreserveReversals,
+        )
     };
     let shortest = finish(find_path(first, last, obstacles, None));
     match scorer {
