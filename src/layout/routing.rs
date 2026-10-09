@@ -3,9 +3,9 @@ use crate::model::Graph;
 use std::cmp::Ordering;
 mod bundles;
 mod candidates;
-mod coverage;
+
 mod lanes;
-pub(super) mod scoring;
+use super::routing_shared::scoring;
 use bundles::Bundles;
 use candidates::RouteCandidate;
 use lanes::VerticalLanes;
@@ -165,20 +165,8 @@ pub(super) fn route(
     }
 }
 fn simplify(points: Vec<Point>) -> Vec<Point> {
-    let mut result: Vec<Point> = Vec::new();
-    for point in points {
-        if result.last() == Some(&point) {
-            continue;
-        }
-        loop {
-            match result.as_slice() {
-                [.., a, b] if (a.x == b.x && b.x == point.x) || (a.y == b.y && b.y == point.y) => {
-                    result.pop();
-                }
-                _ => break,
-            }
-        }
-        result.push(point);
-    }
-    result
+    super::routing_shared::simplify(
+        points,
+        super::routing_shared::Simplification::CollapseCollinear,
+    )
 }

@@ -952,7 +952,7 @@ fn verify(graph: &Graph) {
         for path in &layout.paths {
             for pair in path.windows(2) {
                 assert!(pair[0].x == pair[1].x || pair[0].y == pair[1].y);
-                assert!(!routing::crosses(pair[0], pair[1], a));
+                assert!(!crate::layout::routing_shared::crosses(pair[0], pair[1], a));
             }
         }
     }
@@ -1049,7 +1049,9 @@ fn peer_containers_and_cross_module_children_remain_separate_and_identifiable() 
             continue;
         }
         for pair in path.windows(2) {
-            assert!(!routing::crosses(pair[0], pair[1], peer));
+            assert!(!crate::layout::routing_shared::crosses(
+                pair[0], pair[1], peer
+            ));
         }
     }
     for &node in &layout.containers {

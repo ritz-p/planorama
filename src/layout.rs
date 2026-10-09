@@ -10,6 +10,7 @@ pub(crate) mod metrics;
 mod placement;
 mod rank;
 mod routing;
+mod routing_shared;
 #[cfg(test)]
 #[path = "../tests/unit/layout.rs"]
 mod tests;
@@ -17,7 +18,7 @@ mod tests;
 use crate::model::Graph;
 
 pub(crate) fn route_to_margin(start: Point, end: Point, obstacles: &[Bounds]) -> Vec<Point> {
-    containers::to_margin(start, end, obstacles)
+    routing_shared::search::to_margin(start, end, obstacles)
 }
 
 pub const NODE_WIDTH: usize = 320;

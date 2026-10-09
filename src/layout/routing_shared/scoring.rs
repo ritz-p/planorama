@@ -82,20 +82,7 @@ impl Scorer {
             score.length += a.x.abs_diff(b.x) as u128 + a.y.abs_diff(b.y) as u128;
             score.node_crossings += nodes
                 .iter()
-                .filter(|node| match horizontal {
-                    true => {
-                        a.y > node.origin.y
-                            && a.y < node.origin.y + node.height
-                            && a.x.max(b.x) > node.origin.x
-                            && a.x.min(b.x) < node.right()
-                    }
-                    false => {
-                        a.x > node.origin.x
-                            && a.x < node.right()
-                            && a.y.max(b.y) > node.origin.y
-                            && a.y.min(b.y) < node.origin.y + node.height
-                    }
-                })
+                .filter(|&&node| super::crosses(a, b, node))
                 .count();
         }
         for path in &self.paths {

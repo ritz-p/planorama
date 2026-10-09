@@ -93,7 +93,7 @@ fn symmetric_peers_keep_ports_and_routes_when_edges_are_reordered() {
 
 #[test]
 fn coincident_crossings_make_a_long_clear_detour_worthwhile() {
-    use crate::layout::routing::scoring::Scorer;
+    use crate::layout::routing_shared::scoring::Scorer;
     let start = Point { x: 100, y: 2000 };
     let end = Point { x: 500, y: 2000 };
     let obstacles = [
@@ -153,7 +153,7 @@ fn congested_container_routes_improve_over_shortest_paths() {
             assert!(
                 !obstacles
                     .iter()
-                    .any(|&b| routing::crosses(pair[0], pair[1], b))
+                    .any(|&b| crate::layout::routing_shared::crosses(pair[0], pair[1], b))
             );
         }
     }
@@ -161,7 +161,7 @@ fn congested_container_routes_improve_over_shortest_paths() {
 
 #[test]
 fn crossing_penalty_selects_a_clear_detour_when_available() {
-    use crate::layout::routing::scoring::Scorer;
+    use crate::layout::routing_shared::scoring::Scorer;
     let start = Point { x: 100, y: 100 };
     let end = Point { x: 500, y: 100 };
     let obstacles = [
@@ -187,7 +187,7 @@ fn crossing_penalty_selects_a_clear_detour_when_available() {
 
 #[test]
 fn completed_paths_compact_stubs_before_scoring_and_occupancy() {
-    use crate::layout::routing::scoring::Scorer;
+    use crate::layout::routing_shared::scoring::Scorer;
     for (start, end, expected, split) in [
         (
             Point { x: 100, y: 100 },
@@ -235,7 +235,7 @@ fn completed_paths_compact_stubs_before_scoring_and_occupancy() {
 
 #[test]
 fn stub_junction_crossings_select_a_turn_away_detour() {
-    use crate::layout::routing::scoring::Scorer;
+    use crate::layout::routing_shared::scoring::Scorer;
     for (start, end, junction) in [
         (
             Point { x: 100, y: 100 },

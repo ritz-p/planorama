@@ -93,7 +93,7 @@ fn three_subnet_alb_stays_in_vpc_and_moves_to_the_source_median() {
             assert!(
                 !routing::obstacles(&layout, edge)
                     .iter()
-                    .any(|&b| routing::crosses(pair[0], pair[1], b))
+                    .any(|&b| crate::layout::routing_shared::crosses(pair[0], pair[1], b))
             );
         }
     }
@@ -205,7 +205,7 @@ fn wrapping_keeps_related_containers_consecutive_and_uses_safe_fallbacks() {
             assert!(
                 !routing::obstacles(&layout, edge)
                     .iter()
-                    .any(|&b| routing::crosses(pair[0], pair[1], b))
+                    .any(|&b| crate::layout::routing_shared::crosses(pair[0], pair[1], b))
             );
         }
     }
