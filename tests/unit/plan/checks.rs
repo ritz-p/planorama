@@ -2,6 +2,40 @@ use super::*;
 use serde_json::json;
 
 #[test]
+fn indexed_addresses_keep_ambiguity_independent_of_node_order() {
+    let input: Value =
+        serde_json::from_str(include_str!("../../fixtures/checks-plan.json")).unwrap();
+    let raw = crate::plan::parse(&input.to_string()).unwrap();
+    let current = raw.nodes[0].clone();
+    let mut deposed = current.clone();
+    deposed.deposed_key = Some("old".into());
+    for mut nodes in [
+        vec![current.clone(), current.clone()],
+        vec![current.clone(), deposed.clone()],
+        vec![deposed.clone()],
+        vec![deposed.clone(), current.clone(), deposed],
+    ] {
+        // Another unique resource must remain associated in all cases.
+        nodes.push(raw.nodes[1].clone());
+        let expected = parse(&input["checks"], &nodes);
+        assert!(
+            !expected
+                .iter()
+                .flat_map(|c| &c.instances)
+                .any(|i| i.resource.as_deref() == Some(current.address.as_str()))
+        );
+        assert!(
+            expected
+                .iter()
+                .flat_map(|c| &c.instances)
+                .any(|i| i.resource.as_deref() == Some(raw.nodes[1].address.as_str()))
+        );
+        nodes.reverse();
+        assert_eq!(parse(&input["checks"], &nodes), expected);
+    }
+}
+
+#[test]
 fn module_and_data_instances_require_exact_dynamic_addresses() {
     for (address, static_address, mode) in [
         (

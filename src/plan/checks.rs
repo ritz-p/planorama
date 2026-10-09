@@ -1,15 +1,29 @@
 use crate::model::{CheckInstance, CheckResult, EntityMode, Node};
 use serde_json::Value;
+use std::collections::HashMap;
 
 #[cfg(test)]
 #[path = "../../tests/unit/plan/checks.rs"]
 mod tests;
 
 pub(super) fn parse(value: &Value, nodes: &[Node]) -> Vec<CheckResult> {
-    let mut results: Vec<_> = value
-        .as_array()
-        .into_iter()
-        .flatten()
+    let Some(checks) = value.as_array() else {
+        return Vec::new();
+    };
+    if checks.is_empty() {
+        return Vec::new();
+    }
+    // None records an ambiguous address or a deposed-only object. Keep that
+    // state even if a later node with the same address is current.
+    let mut resources = HashMap::with_capacity(nodes.len());
+    for node in nodes {
+        resources
+            .entry(node.address.as_str())
+            .and_modify(|entry| *entry = None)
+            .or_insert_with(|| node.deposed_key.is_none().then_some(node));
+    }
+    let mut results: Vec<_> = checks
+        .iter()
         .filter(|result| result.is_object())
         .map(|result| {
             let mut instances: Vec<_> = result["instances"]
@@ -19,7 +33,7 @@ pub(super) fn parse(value: &Value, nodes: &[Node]) -> Vec<CheckResult> {
                 .filter(|instance| instance.is_object())
                 .map(|instance| CheckInstance {
                     status: status(&instance["status"]),
-                    resource: resource(&result["address"], &instance["address"], nodes),
+                    resource: resource(&result["address"], &instance["address"], &resources),
                 })
                 .collect();
             instances.sort();
@@ -37,17 +51,16 @@ fn status(value: &Value) -> Option<String> {
     value.as_str().map(str::to_owned)
 }
 
-fn resource(address: &Value, instance: &Value, nodes: &[Node]) -> Option<String> {
+fn resource(
+    address: &Value,
+    instance: &Value,
+    resources: &HashMap<&str, Option<&Node>>,
+) -> Option<String> {
     if address["kind"].as_str()? != "resource" {
         return None;
     }
     let display = instance["to_display"].as_str()?;
-    let mut matches = nodes.iter().filter(|node| node.address == display);
-    let node = matches.next()?;
-    // A check address cannot select between current and deposed objects.
-    if matches.next().is_some() || node.deposed_key.is_some() {
-        return None;
-    }
+    let node = resources.get(display).copied().flatten()?;
     let mode = match node.mode {
         EntityMode::Managed => "managed",
         EntityMode::Data => "data",
