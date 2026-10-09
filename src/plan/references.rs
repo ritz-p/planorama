@@ -342,7 +342,11 @@ fn resolve_with_policy(
                 .then(|| binding.map(|(key, _)| key.as_str()))
                 .flatten()
         });
-        let dynamic = super::address::dynamic_selection(reference, selection_key);
+        let dynamic = if exact_sources {
+            super::address::dynamic_selection_with_splats(reference, selection_key, true)
+        } else {
+            super::address::dynamic_selection(reference, selection_key)
+        };
         if dynamic || (metadata && binding.is_none()) {
             issues.insert(DiagnosticReason::DynamicInstanceSelection);
         }
@@ -377,18 +381,29 @@ fn resolve_with_policy(
                 .filter(|(address, _)| {
                     static_address(address) == key && matches_instance(reference, address)
                 })
-                .flat_map(|(_, indices)| indices.iter().copied())
                 .collect();
+            let ambiguous = matching.len() > 1
+                && (!exact_sources
+                    || matching
+                        .iter()
+                        .map(|(address, _)| super::address::selection_group(reference, address))
+                        .collect::<BTreeSet<_>>()
+                        .len()
+                        > 1);
             if matching.is_empty() {
                 complete = false;
                 issues.insert(DiagnosticReason::UnresolvedReference);
-            } else if matching.len() > 1 {
+            } else if ambiguous {
                 issues.insert(DiagnosticReason::MultipleMatchingInstances);
             }
             if !exact_sources
-                || !(dynamic || inherited_ambiguity || implicit_collection || matching.len() > 1)
+                || !(dynamic || inherited_ambiguity || implicit_collection || ambiguous)
             {
-                sources.extend(matching);
+                sources.extend(
+                    matching
+                        .into_iter()
+                        .flat_map(|(_, indices)| indices.iter().copied()),
+                );
             }
             continue;
         }
