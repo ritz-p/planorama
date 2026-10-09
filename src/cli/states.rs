@@ -9,6 +9,7 @@ pub(super) fn run(
     output: &Path,
     format: svg::AddressFormat,
     diagnostics: bool,
+    mappings: &[crate::model::cross_state::Mapping],
 ) -> Result<(), String> {
     if inputs.values().filter(|path| path.as_str() == "-").count() > 1 {
         return Err("stdin may be used by only one state".into());
@@ -37,6 +38,35 @@ pub(super) fn run(
         })
         .collect::<Result<Vec<_>, String>>()?;
     let plans = plan::parse_inputs(inputs)?;
+    let cross = semantic::cross_state::resolve(&plans, mappings);
+    if diagnostics {
+        let mut stderr = io::stderr().lock();
+        for diagnostic in &cross.diagnostics {
+            writeln!(
+                stderr,
+                "state={:?}: {}: address={:?}, remote={:?}, output={:?}",
+                diagnostic.consumer.state.as_str(),
+                diagnostic.reason.description(),
+                diagnostic.consumer.address,
+                diagnostic.remote,
+                diagnostic.output
+            )
+            .map_err(|e| format!("cannot write diagnostics: {e}"))?;
+        }
+        for edge in &cross.edges {
+            writeln!(
+                stderr,
+                "cross-state: {:?}:{:?} -> {:?}:{:?} via {:?}.outputs.{:?}",
+                edge.from.state.as_str(),
+                edge.from.address,
+                edge.to.state.as_str(),
+                edge.to.address,
+                edge.remote,
+                edge.output
+            )
+            .map_err(|e| format!("cannot write diagnostics: {e}"))?;
+        }
+    }
     let mut graphs = BTreeMap::new();
     for (id, raw) in &plans.states {
         if diagnostics {

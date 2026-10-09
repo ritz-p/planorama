@@ -9,6 +9,7 @@ mod outputs;
 mod providers;
 mod references;
 mod relevance;
+mod remote;
 mod states;
 pub use states::parse_inputs;
 #[cfg(test)]
@@ -102,6 +103,7 @@ pub fn parse(json: &str) -> Result<TerraformGraph, String> {
         true,
     );
     Ok(TerraformGraph {
+        remote_references: remote::collect(&plan["configuration"]["root_module"], &nodes),
         outputs: outputs::collect(&plan["configuration"]["root_module"], &nodes, &symbols),
         graph: Graph {
             components: Vec::new(),

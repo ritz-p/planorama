@@ -7,6 +7,37 @@ fn cli() -> Command {
 }
 
 #[test]
+fn remote_state_mapping_reports_resolved_and_unmapped_provenance() {
+    for mapped in [false, true] {
+        let mut command = cli();
+        command.args([
+            "--state",
+            &format!("producer={}", fixture("multi/producer.json")),
+            "--state",
+            &format!("consumer={}", fixture("multi/consumer.json")),
+            "--diagnostics",
+            "-o",
+            "-",
+        ]);
+        if mapped {
+            command.args([
+                "--remote-state",
+                "consumer:data.terraform_remote_state.network=producer",
+            ]);
+        }
+        let output = command.output().unwrap();
+        assert!(output.status.success());
+        let stderr = String::from_utf8(output.stderr).unwrap();
+        assert!(stderr.contains(if mapped {
+            "cross-state:"
+        } else {
+            "unmapped remote state"
+        }));
+        assert!(!stderr.contains("TOP_SECRET"));
+    }
+}
+
+#[test]
 fn hard_linked_output_cannot_truncate_single_or_named_inputs() {
     let root = std::env::temp_dir().join(format!("planorama-hardlink-{}", std::process::id()));
     std::fs::create_dir_all(&root).unwrap();
