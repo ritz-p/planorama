@@ -340,7 +340,12 @@ fn resolve_with_policy(
         let metadata = super::address::meta_reference(reference);
         // Module outputs named count/each take precedence over the syntactic
         // metadata heuristic, including outputs whose values have no sources.
-        let dynamic = super::address::dynamic_selection(reference, resource_key.as_deref());
+        let selection_key = resource_key.as_deref().or_else(|| {
+            exact_sources
+                .then(|| binding.map(|(key, _)| key.as_str()))
+                .flatten()
+        });
+        let dynamic = super::address::dynamic_selection(reference, selection_key);
         if dynamic || (metadata && binding.is_none()) {
             issues.insert(DiagnosticReason::DynamicInstanceSelection);
         }
@@ -352,6 +357,23 @@ fn resolve_with_policy(
         }
 
         if let Some(key) = resource_key {
+            // Terraform can split a dynamic selector from its collection traversal.
+            // Even one current instance does not prove which element was selected.
+            let implicit_collection = exact_sources
+                && normalized == key
+                && super::address::parts(reference)
+                    .last()
+                    .is_some_and(|part| !part.contains('['))
+                && instances.keys().any(|address| {
+                    static_address(address) == key
+                        && super::address::parts(address)
+                            .last()
+                            .is_some_and(|part| part.contains('['))
+                });
+            if implicit_collection {
+                complete = false;
+                issues.insert(DiagnosticReason::DynamicInstanceSelection);
+            }
             ids_only &= normalized == format!("{key}.id") && reference.ends_with(".id");
             let matching: Vec<_> = instances
                 .iter()
@@ -366,7 +388,9 @@ fn resolve_with_policy(
             } else if matching.len() > 1 {
                 issues.insert(DiagnosticReason::MultipleMatchingInstances);
             }
-            if !exact_sources || !(dynamic || inherited_ambiguity || matching.len() > 1) {
+            if !exact_sources
+                || !(dynamic || inherited_ambiguity || implicit_collection || matching.len() > 1)
+            {
                 sources.extend(matching);
             }
             continue;
@@ -376,11 +400,26 @@ fn resolve_with_policy(
                 // Selecting a field of an alias is not proof that its underlying
                 // resource ID is the selected value.
                 ids_only &= normalized == *key;
+                // Flattened expression references cannot prove which aggregate
+                // field/index supplies a narrowed value, even for static selection.
+                let key_parts = super::address::parts(key);
+                let module_object = key_parts.len() % 2 == 0
+                    && key_parts.chunks_exact(2).all(|pair| pair[0] == "module");
+                let narrowed = exact_sources
+                    && (normalized != *key
+                        || (!module_object
+                            && super::address::parts(reference)
+                                .get(key_parts.len() - 1)
+                                .is_some_and(|part| part.contains('['))));
+                if narrowed {
+                    complete = false;
+                    issues.insert(DiagnosticReason::PartialResourceProvenance);
+                }
                 pending.extend(aliases.iter().map(|alias| {
                     (
                         contextualize(alias, reference),
                         false,
-                        exact_sources && (dynamic || inherited_ambiguity),
+                        exact_sources && (dynamic || inherited_ambiguity || narrowed),
                     )
                 }));
             }
@@ -391,6 +430,11 @@ fn resolve_with_policy(
                 complete = false;
             }
             None if normalized.starts_with("module.") => {
+                if exact_sources {
+                    complete = false;
+                    issues.insert(DiagnosticReason::UnresolvedReference);
+                    continue;
+                }
                 ids_only = false;
                 // A whole-module traversal denotes all matching descendants,
                 // not a choice of one endpoint. Multiplicity is expected even
