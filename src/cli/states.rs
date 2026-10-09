@@ -88,6 +88,7 @@ fn protect_input(input: &str, output: &Path) -> Result<(), String> {
     if output == Path::new("-") {
         return Ok(());
     }
+    super::files::reject_same_file(Path::new(input), output)?;
     let absolute = if output.is_absolute() {
         output.to_owned()
     } else {

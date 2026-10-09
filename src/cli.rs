@@ -2,6 +2,7 @@ use crate::layout::Layout;
 use crate::{plan, semantic, svg};
 use std::io::{self, Read, Write};
 use std::path::{Path, PathBuf};
+mod files;
 mod states;
 
 const HELP: &str = "planorama — Terraform plan JSON → SVG (pure Rust)\n\nUsage: planorama <plan.json | -> [-o <diagram.svg | ->] [--address-format qualified|terraform] [--diagnostics]\n\n  -o, --output PATH   Output file (default: diagram.svg); '-' for stdout\n  --address-format FORMAT  Resource labels: qualified (default) or terraform\n  --diagnostics      Explain unresolved references and semantic fallbacks on stderr\n  -h, --help          Show help\n  -V, --version       Show version\n\nInput: terraform show -json <saved-plan> (not terraform plan -json).\nLines show reference or architectural relationships; containment uses nested boxes.\nAttribute values are never included in the diagram.\n";
@@ -68,6 +69,7 @@ pub fn run() -> Result<(), String> {
     }
     let input = input.ok_or("missing input; use --help for usage")?;
     if input != "-" && output != Path::new("-") {
+        files::reject_same_file(Path::new(&input), &output)?;
         let absolute = match &output {
             path if path.is_absolute() => path.clone(),
             path => std::env::current_dir()

@@ -5,6 +5,46 @@ use std::process::{Command, Output, Stdio};
 fn cli() -> Command {
     Command::new(env!("CARGO_BIN_EXE_planorama"))
 }
+
+#[test]
+fn hard_linked_output_cannot_truncate_single_or_named_inputs() {
+    let root = std::env::temp_dir().join(format!("planorama-hardlink-{}", std::process::id()));
+    std::fs::create_dir_all(&root).unwrap();
+    let input = root.join("input.json");
+    let alias = root.join("alias.svg");
+    let separate = root.join("separate.svg");
+    let bytes = include_bytes!("../fixtures/multi/application.json");
+    std::fs::write(&input, bytes).unwrap();
+    std::fs::hard_link(&input, &alias).unwrap();
+    for named in [false, true] {
+        let mut command = cli();
+        if named {
+            command.args([
+                "--state",
+                &format!("a={}", fixture("multi/network.json")),
+                "--state",
+                &format!("z={}", input.display()),
+            ]);
+        } else {
+            command.arg(&input);
+        }
+        let output = command.arg("-o").arg(&alias).output().unwrap();
+        assert!(!output.status.success());
+        assert!(String::from_utf8_lossy(&output.stderr).contains("different files"));
+        assert_eq!(std::fs::read(&input).unwrap(), bytes);
+        assert_eq!(std::fs::read(&alias).unwrap(), bytes);
+    }
+    // Equal contents in a distinct file must not be mistaken for identity.
+    std::fs::write(&separate, bytes).unwrap();
+    let output = cli().arg(&input).arg("-o").arg(&separate).output().unwrap();
+    assert!(output.status.success());
+    assert!(std::fs::read(&separate).unwrap().starts_with(b"<svg"));
+    assert_eq!(std::fs::read(&input).unwrap(), bytes);
+    for path in [alias, separate, input] {
+        std::fs::remove_file(path).unwrap();
+    }
+    std::fs::remove_dir(root).unwrap();
+}
 fn fixture(name: &str) -> String {
     format!("{}/tests/fixtures/{name}", env!("CARGO_MANIFEST_DIR"))
 }
