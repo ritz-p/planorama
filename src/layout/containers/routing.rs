@@ -8,18 +8,6 @@ pub(super) fn to_margin(start: Point, end: Point, obstacles: &[Bounds]) -> Vec<P
     search::to_margin(start, end, obstacles)
 }
 
-fn ancestor(parents: &[Option<usize>], parent: usize, mut node: usize) -> bool {
-    loop {
-        if parent == node {
-            return true;
-        }
-        match parents[node] {
-            Some(next) => node = next,
-            None => return false,
-        }
-    }
-}
-
 pub(super) fn crosses(a: Point, b: Point, bounds: Bounds) -> bool {
     let Point { x, y } = bounds.origin;
     match a.x == b.x {
@@ -38,16 +26,19 @@ pub(super) fn crosses(a: Point, b: Point, bounds: Bounds) -> bool {
     }
 }
 
-fn represented_by_nesting(edge: &Edge, parents: &[Option<usize>]) -> bool {
+fn represented_by_nesting(edge: &Edge, tree: &crate::layout::ContainmentTree) -> bool {
     matches!(edge.kind, EdgeKind::Dependency | EdgeKind::Containment)
         && edge.from != edge.to
-        && (ancestor(parents, edge.from, edge.to) || ancestor(parents, edge.to, edge.from))
+        && (tree.is_ancestor(edge.from, edge.to) || tree.is_ancestor(edge.to, edge.from))
 }
 
-pub(super) fn incidents(graph: &Graph, parents: &[Option<usize>]) -> Vec<Vec<(usize, bool)>> {
+pub(super) fn incidents(
+    graph: &Graph,
+    tree: &crate::layout::ContainmentTree,
+) -> Vec<Vec<(usize, bool)>> {
     let mut incident = vec![Vec::new(); graph.nodes.len()];
     for (index, edge) in graph.edges.iter().enumerate() {
-        if !represented_by_nesting(edge, parents) {
+        if !represented_by_nesting(edge, tree) {
             incident[edge.from].push((index, true));
             incident[edge.to].push((index, false));
         }
@@ -92,7 +83,7 @@ fn route_impl(
             bounds.height,
         )
     };
-    let mut incident = incidents(graph, &layout.parents);
+    let mut incident = incidents(graph, &layout.containment);
     for edges in &mut incident {
         edges.sort_by_key(|&(index, source)| {
             let edge = &graph.edges[index];
@@ -148,12 +139,12 @@ fn route_impl(
     });
     let mut scorer = Scorer::default();
     let mut paths = vec![Vec::new(); graph.edges.len()];
-    let groups = super::affinity::groups(graph, &layout.parents);
+    let groups = super::affinity::groups(graph, &layout.containment.parents);
     let mut attempted = std::collections::BTreeSet::new();
     let mut junctions = Vec::new();
     for index in order {
         let edge = &graph.edges[index];
-        if represented_by_nesting(edge, &layout.parents) {
+        if represented_by_nesting(edge, &layout.containment) {
             continue;
         }
         if !paths[index].is_empty() {
@@ -204,8 +195,8 @@ pub(super) fn obstacles(layout: &Layout<'_>, edge: &Edge) -> Vec<Bounds> {
         .iter()
         .enumerate()
         .map(|(node, &bounds)| {
-            if ancestor(&layout.parents, node, edge.from)
-                || ancestor(&layout.parents, node, edge.to)
+            if layout.containment.is_ancestor(node, edge.from)
+                || layout.containment.is_ancestor(node, edge.to)
             {
                 bounds.header(layout.header_heights[node])
             } else {

@@ -91,7 +91,7 @@ fn infrastructure_data_keeps_roles_actions_and_external_container_styling() {
         .position(|node| node.address == "aws_subnet.app")
         .unwrap();
     assert_eq!(architecture.nodes[vpc].role, ResourceRole::Container);
-    assert_eq!(layout.parents[subnet], Some(vpc));
+    assert_eq!(layout.containment.parents[subnet], Some(vpc));
     assert_eq!(output.matches("data-external=\"true\"").count(), 4);
     assert!(output.contains("data-mode=\"data\" stroke-dasharray=\"6 4\""));
     assert!(output.contains("data-mode=\"managed\""));

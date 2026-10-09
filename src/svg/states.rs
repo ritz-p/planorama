@@ -61,7 +61,7 @@ pub fn render_states(
                     })
                     .collect::<Vec<_>>(),
                 headers: layout.header_heights.clone(),
-                parents: layout.parents.clone(),
+                parents: layout.containment.parents.clone(),
             },
         );
         for (index, node) in graph

@@ -1,8 +1,8 @@
 use super::{Bounds, Layout, NODE_HEIGHT, NODE_WIDTH, Point};
-use crate::model::{EdgeKind, Graph, ResourceRole};
-use std::collections::BTreeSet;
+use crate::model::{Graph, ResourceRole};
+
 mod affinity;
-mod ordering;
+pub(super) mod ordering;
 mod placement;
 mod routing;
 pub(super) fn to_margin(start: Point, end: Point, obstacles: &[Bounds]) -> Vec<Point> {
@@ -15,70 +15,25 @@ mod tests;
 
 const PADDING: usize = 40;
 
-fn parents(graph: &Graph) -> Vec<Option<usize>> {
-    let mut candidates = vec![BTreeSet::new(); graph.nodes.len()];
-    for edge in &graph.edges {
-        if edge.kind == EdgeKind::Containment
-            && edge.from != edge.to
-            && graph.nodes[edge.from].role == ResourceRole::Container
-        {
-            candidates[edge.to].insert(edge.from);
-        }
-    }
-    let mut parents: Vec<_> = candidates
-        .iter()
-        .map(|values| match values.len() {
-            1 => values.first().copied(),
-            _ => None,
-        })
-        .collect();
-    let original = parents.clone();
-    for (node, parent) in parents.iter_mut().enumerate() {
-        let mut visited = BTreeSet::from([node]);
-        let mut current = original[node];
-        while let Some(ancestor) = current {
-            if !visited.insert(ancestor) {
-                *parent = None;
-                break;
-            }
-            current = original[ancestor];
-        }
-    }
-    parents
-}
-
 pub(super) fn place(graph: &Graph) -> Layout<'_> {
     place_with_affinity(graph, true)
 }
 
 fn place_with_affinity(graph: &Graph, enabled: bool) -> Layout<'_> {
-    let parents = parents(graph);
+    let tree = super::ContainmentTree::new(graph);
+    let parents = &tree.parents;
     let affinities = if enabled {
-        affinity::groups(graph, &parents)
+        affinity::groups(graph, parents)
     } else {
         Vec::new()
     };
-    let header_heights: Vec<_> = routing::incidents(graph, &parents)
+    let header_heights: Vec<_> = routing::incidents(graph, &tree)
         .iter()
         .map(|edges| NODE_HEIGHT.max(edges.len() + 41))
         .collect();
-    let mut children = vec![Vec::new(); graph.nodes.len()];
-    let keys = ordering::structural_keys(graph);
-    for (node, parent) in parents.iter().enumerate() {
-        if let Some(parent) = parent {
-            children[*parent].push(node);
-        }
-    }
-    for nodes in &mut children {
-        nodes.sort_by_key(|&node| {
-            (
-                graph.nodes[node].resource_address().local(),
-                keys[node],
-                graph.nodes[node].entity.id.as_str(),
-            )
-        });
-    }
-    let roots = ordering::roots(graph, &parents, &keys);
+    let children = &tree.children;
+    let keys = &tree.keys;
+    let roots = &tree.roots;
     let mut order = Vec::new();
     let mut pending = roots.clone();
     while let Some(node) = pending.pop() {
@@ -92,7 +47,7 @@ fn place_with_affinity(graph: &Graph, enabled: bool) -> Layout<'_> {
     let mut offsets = vec![Point { x: 0, y: 0 }; graph.nodes.len()];
     for &node in order.iter().rev() {
         if graph.nodes[node].role == ResourceRole::Container {
-            let mut columns = placement::columns(graph, Some(node), &children[node], &parents);
+            let mut columns = placement::columns(graph, Some(node), &children[node], parents);
             affinity::cohere(&mut columns, &affinities);
             let (width, height) = placement::pack(&columns, &sizes, &mut offsets);
             affinity::align(&children[node], &affinities, &sizes, &mut offsets, height);
@@ -113,7 +68,7 @@ fn place_with_affinity(graph: &Graph, enabled: bool) -> Layout<'_> {
             );
         }
     }
-    let columns = placement::columns(graph, None, &roots, &parents);
+    let columns = placement::columns(graph, None, roots, parents);
     let (_, root_height) = placement::pack(&columns, &sizes, &mut offsets);
     let mut layout = Layout {
         bounds: vec![Bounds::card(Point { x: 0, y: 0 }); graph.nodes.len()],
@@ -125,9 +80,9 @@ fn place_with_affinity(graph: &Graph, enabled: bool) -> Layout<'_> {
         paths: Vec::new(),
         junctions: Vec::new(),
         containers: Vec::new(),
-        parents,
+        containment: tree.clone(),
     };
-    for root in roots {
+    for &root in roots {
         layout.positions[root] = Point {
             x: 60 + offsets[root].x,
             y: 160 + offsets[root].y,
@@ -155,7 +110,7 @@ fn place_with_affinity(graph: &Graph, enabled: bool) -> Layout<'_> {
         }
     }
     layout.height = (root_height + 240).max(300);
-    let routed = routing::route(graph, &layout, &keys, enabled);
+    let routed = routing::route(graph, &layout, keys, enabled);
     layout.paths = routed.paths;
     layout.junctions = routed.junctions;
     layout

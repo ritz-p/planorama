@@ -13,7 +13,7 @@ fn different_spanning_targets_do_not_share_bundle_segments() {
     let raw = plan::parse(include_str!("../../../fixtures/multi-container-plan.json")).unwrap();
     let graph = semantic::transform(&raw).0;
     let layout = Layout::new(&graph);
-    let groups = affinity::groups(&graph, &layout.parents);
+    let groups = affinity::groups(&graph, &layout.containment.parents);
     assert_eq!(groups.len(), 2);
     for &first in &groups[0].edges {
         for &second in &groups[1].edges {
@@ -45,7 +45,7 @@ fn three_subnet_alb_stays_in_vpc_and_moves_to_the_source_median() {
     let original = graph.clone();
     let before = place_with_affinity(&graph, false);
     let layout = Layout::new(&graph);
-    let group = affinity::groups(&graph, &layout.parents).remove(0);
+    let group = affinity::groups(&graph, &layout.containment.parents).remove(0);
     let mut centers: Vec<_> = group
         .sources
         .iter()
@@ -58,7 +58,10 @@ fn three_subnet_alb_stays_in_vpc_and_moves_to_the_source_median() {
     };
     assert!(distance(&layout) < distance(&before));
     assert_eq!(distance(&layout), 0);
-    assert_eq!(layout.parents[group.target], before.parents[group.target]);
+    assert_eq!(
+        layout.containment.parents[group.target],
+        before.containment.parents[group.target]
+    );
     assert_eq!(layout.bounds.len(), graph.nodes.len());
     assert_eq!(graph, original);
     verify(&graph);
@@ -145,7 +148,7 @@ fn two_subnet_alb_and_ecs_use_the_same_generic_affinity_rule() {
         };
         let graph = semantic::transform(&plan::parse(&input.to_string()).unwrap()).0;
         let layout = Layout::new(&graph);
-        let group = affinity::groups(&graph, &layout.parents).remove(0);
+        let group = affinity::groups(&graph, &layout.containment.parents).remove(0);
         assert_eq!(group.sources.len(), 2);
         assert!(!layout.junctions.is_empty());
         assert!(
@@ -190,7 +193,7 @@ fn wrapping_keeps_related_containers_consecutive_and_uses_safe_fallbacks() {
         });
     }
     let layout = Layout::new(&graph);
-    let group = affinity::groups(&graph, &layout.parents).remove(0);
+    let group = affinity::groups(&graph, &layout.containment.parents).remove(0);
     let xs: BTreeSet<_> = group
         .sources
         .iter()
@@ -206,7 +209,7 @@ fn wrapping_keeps_related_containers_consecutive_and_uses_safe_fallbacks() {
             );
         }
     }
-    let parents = layout.parents;
+    let parents = layout.containment.parents;
     for edge in &mut graph.edges {
         if edge.kind == EdgeKind::Connection {
             edge.change = Some(crate::model::EdgeChange {

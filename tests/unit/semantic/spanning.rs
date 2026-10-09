@@ -41,7 +41,7 @@ fn indexed_ecs_subnets_discard_terraform_traversal_prefixes() {
             let graph = semantic::transform(&raw).0;
             let ecs = index(&graph, "aws_ecs_service.app");
             assert_eq!(
-                Layout::new(&graph).parents[ecs],
+                Layout::new(&graph).containment.parents[ecs],
                 Some(index(&graph, &selected))
             );
             assert!(
@@ -73,7 +73,7 @@ fn alb_and_ecs_share_the_vpc_without_losing_subnet_connections() {
     let layout = Layout::new(&graph);
     for address in ["aws_lb.app", "aws_ecs_service.app"] {
         let child = index(&graph, address);
-        assert_eq!(layout.parents[child], Some(vpc));
+        assert_eq!(layout.containment.parents[child], Some(vpc));
         assert_eq!(
             graph
                 .edges
@@ -150,7 +150,7 @@ fn disconnected_vpcs_keep_connections_and_single_subnet_uses_that_subnet() {
         let alb = index(&graph, "aws_lb.app");
         let layout = Layout::new(&graph);
         assert_eq!(
-            layout.parents[alb],
+            layout.containment.parents[alb],
             single.then(|| index(&graph, "aws_subnet.a"))
         );
         if !single {
@@ -206,7 +206,7 @@ fn ecs_subnet_path_excludes_security_groups_and_unresolved_sibling_fields() {
         let graph = semantic::transform(&raw).0;
         let service = index(&graph, "aws_ecs_service.app");
         assert_eq!(
-            Layout::new(&graph).parents[service],
+            Layout::new(&graph).containment.parents[service],
             Some(index(&graph, "aws_vpc.main"))
         );
     }
@@ -215,7 +215,7 @@ fn ecs_subnet_path_excludes_security_groups_and_unresolved_sibling_fields() {
         [0]["subnets"] = json!({"references":["aws_subnet.a.id","var.unknown"]});
     let graph = semantic::transform(&plan::parse(&input.to_string()).unwrap()).0;
     assert_eq!(
-        Layout::new(&graph).parents[index(&graph, "aws_ecs_service.app")],
+        Layout::new(&graph).containment.parents[index(&graph, "aws_ecs_service.app")],
         None
     );
 }
@@ -241,7 +241,7 @@ fn missing_or_constant_nested_subnets_do_not_borrow_sibling_references() {
                 .filter(|edge| edge.to == service)
                 .all(|edge| edge.kind == EdgeKind::Dependency)
         );
-        assert_eq!(Layout::new(&graph).parents[service], None);
+        assert_eq!(Layout::new(&graph).containment.parents[service], None);
     }
 }
 
@@ -256,6 +256,9 @@ fn common_data_vpc_can_contain_managed_spanning_resources() {
     let vpc = index(&graph, "data.aws_vpc.main");
     let layout = Layout::new(&graph);
     for resource in ["aws_lb.app", "aws_ecs_service.app"] {
-        assert_eq!(layout.parents[index(&graph, resource)], Some(vpc));
+        assert_eq!(
+            layout.containment.parents[index(&graph, resource)],
+            Some(vpc)
+        );
     }
 }

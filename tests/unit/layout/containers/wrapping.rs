@@ -20,11 +20,12 @@ fn dense_same_rank_and_root_groups_wrap_without_changing_containment() {
         .enumerate()
         .filter(|(_, n)| n.resource_type == "aws_subnet")
         .map(|(i, _)| {
-            assert_eq!(layout.parents[i], Some(vpc));
+            assert_eq!(layout.containment.parents[i], Some(vpc));
             layout.positions[i].x
         })
         .collect();
     let root_x: BTreeSet<_> = layout
+        .containment
         .parents
         .iter()
         .enumerate()

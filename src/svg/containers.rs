@@ -15,10 +15,10 @@ pub(super) fn background(graph: &Graph, layout: &Layout<'_>, node: usize) -> &'s
         return color(action).0;
     }
     let mut depth = 0;
-    let mut parent = layout.parents[node];
+    let mut parent = layout.containment.parents[node];
     while let Some(index) = parent {
         depth += 1;
-        parent = layout.parents[index];
+        parent = layout.containment.parents[index];
     }
     let shades = match action {
         Action::Create => ["#ecfdf5", "#d1fae5", "#a7f3d0", "#8be8c3", "#6ee7b7"],
