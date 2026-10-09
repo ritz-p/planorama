@@ -4,6 +4,9 @@ use crate::model::{Edge, EdgeKind, Graph};
 mod bundles;
 mod search;
 use search::find_path;
+pub(super) fn to_margin(start: Point, end: Point, obstacles: &[Bounds]) -> Vec<Point> {
+    search::to_margin(start, end, obstacles)
+}
 
 fn ancestor(parents: &[Option<usize>], parent: usize, mut node: usize) -> bool {
     loop {

@@ -1,4 +1,4 @@
-use crate::layout::Layout;
+use crate::layout::{Layout, Point};
 use crate::model::{
     StateId,
     cross_state::{Architecture, Endpoint},
@@ -9,6 +9,7 @@ use std::fmt::Write;
 pub fn render_states(architecture: &Architecture, format: super::AddressFormat) -> String {
     let graphs = &architecture.states;
     let mut endpoints = BTreeMap::new();
+    let mut obstacles = BTreeMap::new();
     let mut sections = String::new();
     let mut top = 60;
     let mut width = 1120;
@@ -18,6 +19,19 @@ pub fn render_states(architecture: &Architecture, format: super::AddressFormat) 
         let (_, height) = super::dimensions(graph, &layout);
         let prefix = prefix(id);
         let check_offset = if graph.checks.is_empty() { 0 } else { 24 };
+        obstacles.insert(
+            id.clone(),
+            layout
+                .bounds
+                .iter()
+                .enumerate()
+                .map(|(i, b)| {
+                    let mut header = b.header(layout.header_heights[i]);
+                    header.origin.y += top + 40 + check_offset;
+                    header
+                })
+                .collect::<Vec<_>>(),
+        );
         for (index, node) in graph
             .nodes
             .iter()
@@ -44,6 +58,7 @@ pub fn render_states(architecture: &Architecture, format: super::AddressFormat) 
         top += height + 60;
     }
     let mut links = String::new();
+    let mut link_count = 0;
     for edge in &architecture.relationships {
         let (Some((sx, sy, source)), Some((tx, ty, target))) =
             (endpoints.get(&edge.from), endpoints.get(&edge.to))
@@ -51,6 +66,23 @@ pub fn render_states(architecture: &Architecture, format: super::AddressFormat) 
             continue;
         };
         let lane = width + 30;
+        let mut points = crate::layout::route_to_margin(
+            Point { x: *sx, y: *sy },
+            Point { x: lane, y: *sy },
+            &obstacles[&edge.from.state],
+        );
+        let mut arrival = crate::layout::route_to_margin(
+            Point { x: *tx, y: *ty },
+            Point { x: lane, y: *ty },
+            &obstacles[&edge.to.state],
+        );
+        arrival.reverse();
+        points.extend(arrival);
+        let mut path = String::new();
+        for (i, p) in points.iter().enumerate() {
+            write!(path, "{} {} {} ", if i == 0 { "M" } else { "L" }, p.x, p.y).unwrap();
+        }
+        link_count += 1;
         let title = super::escape(&format!(
             "{}:{} -> {}:{} via {}.outputs.{} (cross-state dependency)",
             edge.from.state.as_str(),
@@ -60,7 +92,7 @@ pub fn render_states(architecture: &Architecture, format: super::AddressFormat) 
             edge.remote,
             edge.output
         ));
-        writeln!(links, r##"<path data-edge-kind="dependency" data-cross-state="true" data-source="{source}" data-target="{target}" data-source-state="{}" data-target-state="{}" data-remote-state="{}" data-output="{}" d="M {sx} {sy} H {lane} V {ty} H {tx}" fill="none" stroke="#2563eb" stroke-width="1.5" stroke-dasharray="7 4" marker-end="url(#cross-state-arrow)"><title>{title}</title></path>"##, super::escape(edge.from.state.as_str()),super::escape(edge.to.state.as_str()),super::escape(&edge.remote),super::escape(&edge.output)).unwrap();
+        writeln!(links, r##"<path data-edge-kind="dependency" data-cross-state="true" data-source="{source}" data-target="{target}" data-source-state="{}" data-target-state="{}" data-remote-state="{}" data-output="{}" d="{}" fill="none" stroke="#2563eb" stroke-width="1.5" stroke-dasharray="7 4" marker-end="url(#cross-state-arrow)"><title>{title}</title></path>"##, super::escape(edge.from.state.as_str()),super::escape(edge.to.state.as_str()),super::escape(&edge.remote),super::escape(&edge.output),path.trim()).unwrap();
     }
     if !links.is_empty() {
         width += 80;
@@ -68,13 +100,23 @@ pub fn render_states(architecture: &Architecture, format: super::AddressFormat) 
         sections.push_str(&links);
         sections.push_str("<text x=\"350\" y=\"35\" font-family=\"ui-monospace, Consolas, monospace\" font-size=\"12\" fill=\"#2563eb\">Dashed blue: cross-state dependency</text>\n");
     }
+    let description = if link_count == 0 {
+        format!(
+            "{} independent states. Resource identities and relationships are scoped to each state.",
+            graphs.len()
+        )
+    } else {
+        format!(
+            "{} named states with {link_count} cross-state dependencies. Resource identities are scoped to each state; blue dashed paths connect output producers to consumers across states.",
+            graphs.len()
+        )
+    };
     format!(
         r##"<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{top}" viewBox="0 0 {width} {top}" role="img" aria-labelledby="multi-title multi-description">
-<title id="multi-title">Terraform plans</title><desc id="multi-description">{} independent states. Resource identities and relationships are scoped to each state.</desc>
+<title id="multi-title">Terraform plans</title><desc id="multi-description">{description}</desc>
 <rect width="100%" height="100%" fill="#ffffff"/><text x="40" y="35" font-family="ui-monospace, Consolas, monospace" font-size="25" fill="#0f172a">Terraform plans</text>
 {sections}</svg>
-"##,
-        graphs.len()
+"##
     )
 }
 
@@ -106,4 +148,80 @@ fn namespace(svg: &str, prefix: &str) -> String {
             "aria-labelledby=\"title description\"",
             &format!("aria-labelledby=\"{prefix}title {prefix}description\""),
         )
+}
+
+#[cfg(test)]
+#[test]
+fn cross_state_paths_avoid_intervening_cards_and_describe_dependencies() {
+    let raw = crate::plan::parse(r#"{"format_version":"1.2","resource_changes":[{"address":"test.a","type":"test"},{"address":"test.b","type":"test"}],"configuration":{"root_module":{"resources":[{"address":"test.b","expressions":{"input":{"references":["test.a.id"]}}}]}}}"#).unwrap();
+    let graph = crate::semantic::transform(&raw);
+    let first = StateId::new("first").unwrap();
+    let second = StateId::new("second").unwrap();
+    let local = Layout::new(&graph);
+    assert!(local.bounds[0].right() < local.bounds[1].right());
+    let (_, height) = super::dimensions(&graph, &local);
+    let obstacles: Vec<_> = [100, 100 + height + 60]
+        .into_iter()
+        .flat_map(|offset| {
+            local.bounds.iter().map(move |b| {
+                let mut b = *b;
+                b.origin.y += offset;
+                b
+            })
+        })
+        .collect();
+    let architecture = Architecture {
+        states: BTreeMap::from([(first.clone(), graph.clone()), (second.clone(), graph)]),
+        relationships: vec![crate::model::cross_state::CrossStateEdge {
+            from: Endpoint {
+                state: first,
+                address: "test.a".into(),
+            },
+            to: Endpoint {
+                state: second,
+                address: "test.a".into(),
+            },
+            remote: "data.terraform_remote_state.x".into(),
+            output: "value".into(),
+        }],
+    };
+    let svg = render_states(&architecture, super::AddressFormat::Qualified);
+    assert!(svg.contains("2 named states with 1 cross-state dependencies"));
+    let line = svg
+        .lines()
+        .find(|l| l.contains("data-cross-state=\"true\""))
+        .unwrap();
+    let path = line
+        .split(" d=\"")
+        .nth(1)
+        .unwrap()
+        .split('"')
+        .next()
+        .unwrap();
+    let tokens: Vec<_> = path.split_whitespace().collect();
+    let points: Vec<Point> = tokens
+        .chunks_exact(3)
+        .map(|p| Point {
+            x: p[1].parse().unwrap(),
+            y: p[2].parse().unwrap(),
+        })
+        .collect();
+    assert!(points.len() > 4);
+    for segment in points.windows(2) {
+        let (a, b) = (segment[0], segment[1]);
+        for obstacle in &obstacles {
+            let crosses = if a.x == b.x {
+                a.x > obstacle.origin.x
+                    && a.x < obstacle.right()
+                    && a.y.max(b.y) > obstacle.origin.y
+                    && a.y.min(b.y) < obstacle.origin.y + obstacle.height
+            } else {
+                a.y > obstacle.origin.y
+                    && a.y < obstacle.origin.y + obstacle.height
+                    && a.x.max(b.x) > obstacle.origin.x
+                    && a.x.min(b.x) < obstacle.right()
+            };
+            assert!(!crosses, "{segment:?} crosses {obstacle:?}");
+        }
+    }
 }

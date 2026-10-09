@@ -12,6 +12,20 @@ pub(super) fn find_path(
     obstacles: &[Bounds],
     scorer: Option<&Scorer>,
 ) -> Vec<Point> {
+    search(start, end, obstacles, scorer, true)
+}
+
+pub(super) fn to_margin(start: Point, end: Point, obstacles: &[Bounds]) -> Vec<Point> {
+    search(start, end, obstacles, None, false)
+}
+
+fn search(
+    start: Point,
+    end: Point,
+    obstacles: &[Bounds],
+    scorer: Option<&Scorer>,
+    fixed_ports: bool,
+) -> Vec<Point> {
     let mut xs = vec![start.x, end.x];
     let mut ys = vec![start.y, end.y];
     for bounds in obstacles {
@@ -69,7 +83,7 @@ pub(super) fn find_path(
             let (a, b) = (point(current), point(next));
             // The caller attaches a rightward source stub and a leftward
             // target stub. Do not reverse over either fixed segment.
-            if (current == first && b.x < a.x) || (next == last && a.x < b.x) {
+            if fixed_ports && ((current == first && b.x < a.x) || (next == last && a.x < b.x)) {
                 continue;
             }
             if obstacles.iter().any(|&bounds| crosses(a, b, bounds)) {
