@@ -4,6 +4,7 @@ mod containers;
 mod entities;
 mod icons;
 mod identity;
+mod legend;
 mod operations;
 mod paths;
 mod provenance;
@@ -50,7 +51,10 @@ pub fn render(graph: &Graph, layout: &Layout<'_>) -> String {
 fn dimensions(graph: &Graph, layout: &Layout<'_>) -> (usize, usize) {
     (
         layout.width,
-        layout.height + if graph.checks.is_empty() { 0 } else { 24 } + components::height(graph),
+        layout.height
+            + if graph.checks.is_empty() { 0 } else { 24 }
+            + components::height(graph)
+            + legend::height(graph),
     )
 }
 
@@ -129,6 +133,11 @@ pub fn render_with_format(
             write!(svg, " {name}: {value}").unwrap();
         }
         svg.push_str("</text>\n</g>\n");
+    }
+    let legend_height = legend::height(graph);
+    if legend_height != 0 {
+        svg.push_str(&legend::render(graph));
+        writeln!(svg, "<g transform=\"translate(0 {legend_height})\">").unwrap();
     }
     if check_offset != 0 {
         svg.push_str(&checks::render(&graph.checks));
@@ -296,6 +305,9 @@ pub fn render_with_format(
         svg.push_str("</g>\n");
     }
     svg.push_str(&components::render(graph, layout));
+    if legend_height != 0 {
+        svg.push_str("</g>\n");
+    }
     svg.push_str("</g>\n</svg>\n");
     svg
 }
