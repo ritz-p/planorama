@@ -1,3 +1,4 @@
+//! Domain contracts shared by ingestion, architecture, view and presentation.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub enum Action {
     Unchanged,

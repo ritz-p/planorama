@@ -1,3 +1,4 @@
+//! File I/O and orchestration of ingestion, semantics, projection, layout and rendering.
 use crate::layout::Layout;
 use crate::{plan, semantic, svg};
 use std::io::{self, Read, Write};
@@ -7,7 +8,7 @@ mod states;
 
 const HELP: &str = "planorama — Terraform plan JSON → SVG (pure Rust)\n\nUsage: planorama <plan.json | -> [-o <diagram.svg | ->] [--address-format qualified|terraform] [--diagnostics]\n\n  -o, --output PATH   Output file (default: diagram.svg); '-' for stdout\n  --address-format FORMAT  Resource labels: qualified (default) or terraform\n  --changed-only     Retain changes and required context\n  --focus ADDRESS    Select a resource (STATE:ADDRESS for named states)\n  --focus-depth N    Neighbor depth (default: 1; requires --focus)\n  --remote-state CONSUMER:ADDRESS=PRODUCER  Map a named remote-state data source\n  --diagnostics      Explain unresolved references and semantic fallbacks on stderr\n  -h, --help          Show help\n  -V, --version       Show version\n\nInput: terraform show -json <saved-plan> (not terraform plan -json).\nLines show reference or architectural relationships; containment uses nested boxes.\nAttribute values are never included in the diagram.\n";
 
-pub fn run() -> Result<(), String> {
+pub(crate) fn run() -> Result<(), String> {
     let mut input = None;
     let mut state_inputs = std::collections::BTreeMap::new();
     let mut mappings = Vec::new();

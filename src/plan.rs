@@ -1,3 +1,4 @@
+//! Terraform JSON ingestion into domain facts; no architecture or presentation decisions.
 mod address;
 mod attributes;
 mod checks;
@@ -22,7 +23,7 @@ use references::{collect_config, resolve};
 use serde_json::Value;
 use std::collections::{BTreeMap, BTreeSet};
 
-pub fn parse(json: &str) -> Result<TerraformPlan, String> {
+pub(crate) fn parse(json: &str) -> Result<TerraformPlan, String> {
     let plan: Value = serde_json::from_str(json.trim_start_matches('\u{feff}'))
         .map_err(|e| format!("invalid JSON: {e}"))?;
     let version = plan["format_version"]
