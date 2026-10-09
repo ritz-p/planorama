@@ -3,7 +3,7 @@ use crate::semantic::Input;
 use std::collections::BTreeSet;
 
 #[cfg(test)]
-#[path = "../../../tests/unit/semantic/spanning.rs"]
+#[path = "../../../../tests/unit/semantic/spanning.rs"]
 mod tests;
 
 fn ancestry(node: usize, parents: &[BTreeSet<usize>]) -> Option<Vec<usize>> {

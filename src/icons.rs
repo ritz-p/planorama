@@ -1,5 +1,4 @@
 mod artwork;
-mod aws;
 
 #[cfg(test)]
 #[path = "../tests/unit/icons.rs"]
@@ -47,7 +46,7 @@ pub enum ResourceIcon {
 
 pub fn icon_for(provider: Provider, resource_type: &str) -> Option<ResourceIcon> {
     match provider {
-        Provider::Aws => aws::icon_for(resource_type),
+        Provider::Aws => crate::provider::aws::icon_for(resource_type),
         Provider::Other => None,
     }
 }

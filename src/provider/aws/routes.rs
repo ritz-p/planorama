@@ -2,7 +2,7 @@ use crate::model::{Diagnostic, DiagnosticReason as Reason};
 use crate::semantic::Input;
 
 #[cfg(test)]
-#[path = "../../tests/unit/semantic/routes.rs"]
+#[path = "../../../tests/unit/semantic/routes.rs"]
 mod tests;
 
 pub(super) fn endpoints(raw: &Input, route: usize) -> Result<(usize, usize), Diagnostic> {

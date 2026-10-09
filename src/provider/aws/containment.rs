@@ -15,7 +15,7 @@ pub(super) fn direct_rule(resource_type: &str) -> Option<(&'static str, &'static
 }
 
 #[cfg(test)]
-#[path = "../../tests/unit/semantic/containment.rs"]
+#[path = "../../../tests/unit/semantic/containment.rs"]
 mod tests;
 
 pub(super) fn infer(raw: &Input) -> Graph {

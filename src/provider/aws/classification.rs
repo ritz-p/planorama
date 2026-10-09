@@ -1,7 +1,7 @@
 use crate::model::ResourceRole;
 
 #[cfg(test)]
-#[path = "../../tests/unit/classification/aws.rs"]
+#[path = "../../../tests/unit/classification/aws.rs"]
 mod tests;
 
 pub(super) fn classify(resource_type: &str) -> ResourceRole {
