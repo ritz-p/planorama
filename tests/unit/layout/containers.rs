@@ -1,8 +1,10 @@
 use super::*;
+use crate::model::EdgeKind;
 use crate::{
     model::{Action, Edge, EntityMode, Node},
     plan, semantic, svg,
 };
+use std::collections::BTreeSet;
 
 #[path = "containers/wrapping.rs"]
 mod wrapping;
@@ -91,7 +93,7 @@ fn nested_subtree_relationships_rank_sibling_containers_using_final_sizes() {
     graph.edges.extend([(3, 5), (4, 6), (5, 4)].map(Edge::from));
     let layout = Layout::new(&graph);
     assert_eq!(
-        layout.parents,
+        layout.containment.parents,
         vec![None, Some(0), Some(0), Some(1), Some(2), Some(1), Some(2)]
     );
     for (from, to) in [(1, 2), (3, 5), (4, 6)] {
@@ -113,7 +115,7 @@ fn cyclic_children_share_a_rank_and_external_edges_do_not_change_membership() {
     let layout = Layout::new(&graph);
     assert_eq!(layout.positions[1].x, layout.positions[3].x);
     assert!(layout.positions[5].x > layout.bounds[3].right());
-    assert_eq!(layout.parents[7], None);
+    assert_eq!(layout.containment.parents[7], None);
     verify(&graph);
 
     let mut reordered = graph.clone();
@@ -261,7 +263,7 @@ fn relationship_names_distinguish_same_named_subnets_after_reparsing() {
         let snapshot = |graph: &Graph| {
             let layout = Layout::new(graph);
             assert_eq!(
-                layout.parents.iter().flatten().count(),
+                layout.containment.parents.iter().flatten().count(),
                 if nested { 2 } else { 0 }
             );
             let positions: BTreeMap<_, _> = graph
@@ -493,7 +495,7 @@ fn large_aws_example_keeps_cross_module_containment_and_multi_subnet_relationshi
                         == format!("module.application.aws_instance.workers_{zone}[{index}]")
                 })
                 .unwrap();
-            assert_eq!(layout.parents[worker], Some(subnet));
+            assert_eq!(layout.containment.parents[worker], Some(subnet));
             assert_ne!(graph.nodes[worker].module, graph.nodes[subnet].module);
         }
     }
@@ -502,14 +504,14 @@ fn large_aws_example_keeps_cross_module_containment_and_multi_subnet_relationshi
         .iter()
         .position(|node| node.resource_type == "aws_lb_target_group")
         .unwrap();
-    assert!(layout.parents[target_group].is_none());
+    assert!(layout.containment.parents[target_group].is_none());
     for resource_type in ["aws_lb", "aws_ecs_service", "aws_db_instance"] {
         let node = graph
             .nodes
             .iter()
             .position(|node| node.resource_type == resource_type)
             .unwrap();
-        let parent = layout.parents[node].unwrap();
+        let parent = layout.containment.parents[node].unwrap();
         assert_eq!(graph.nodes[parent].address, "module.network.aws_vpc.main");
     }
     let service = graph
@@ -648,7 +650,7 @@ fn architecture_parentage_and_geometry_do_not_depend_on_module_membership() {
         .iter()
         .position(|node| node.resource_type == "aws_instance")
         .unwrap();
-    assert_eq!(layout.parents[workload], Some(subnet));
+    assert_eq!(layout.containment.parents[workload], Some(subnet));
     assert!(layout.bands.is_empty());
     let output = svg::render(&graph, &layout);
     assert!(output.contains("module.network"));
@@ -660,7 +662,7 @@ fn architecture_parentage_and_geometry_do_not_depend_on_module_membership() {
     }
     let other = Layout::new(&relocated);
     assert_eq!(layout.positions, other.positions);
-    assert_eq!(layout.parents, other.parents);
+    assert_eq!(layout.containment.parents, other.containment.parents);
     assert_eq!(layout.containers, other.containers);
     assert_eq!(layout.paths, other.paths);
     verify(&graph);
@@ -862,8 +864,8 @@ fn overlaps(a: Bounds, b: Bounds) -> bool {
 
 fn verify(graph: &Graph) {
     let layout = Layout::new(graph);
-    for (i, parent) in layout.parents.iter().enumerate() {
-        for (j, other_parent) in layout.parents.iter().enumerate().skip(i + 1) {
+    for (i, parent) in layout.containment.parents.iter().enumerate() {
+        for (j, other_parent) in layout.containment.parents.iter().enumerate().skip(i + 1) {
             if parent == other_parent {
                 assert!(
                     !overlaps(layout.bounds[i], layout.bounds[j]),
@@ -912,7 +914,7 @@ fn verify(graph: &Graph) {
         let bounds = layout.bounds[parent];
         assert!(bounds.origin.x + bounds.width <= layout.width);
         assert!(bounds.origin.y + bounds.height <= layout.height);
-        for (child, parent_index) in layout.parents.iter().enumerate() {
+        for (child, parent_index) in layout.containment.parents.iter().enumerate() {
             if *parent_index != Some(parent) {
                 continue;
             }
@@ -1007,7 +1009,7 @@ fn nested_vpc_subnet_ec2_reserve_space_and_route_extra_dependencies() {
     verify(&graph);
     let layout = Layout::new(&graph);
     assert_eq!(layout.containers.len(), 2);
-    assert_eq!(layout.parents.iter().flatten().count(), 2);
+    assert_eq!(layout.containment.parents.iter().flatten().count(), 2);
     assert_eq!(
         layout.paths.iter().filter(|path| path.is_empty()).count(),
         3
@@ -1076,7 +1078,7 @@ fn ambiguous_parents_and_cycles_keep_visible_edges_instead_of_nesting() {
         edge.kind = EdgeKind::Containment;
     }
     let layout = Layout::new(&graph);
-    assert!(layout.parents.iter().all(Option::is_none));
+    assert!(layout.containment.parents.iter().all(Option::is_none));
     assert!(layout.paths.iter().all(|path| !path.is_empty()));
     verify(&graph);
 }
