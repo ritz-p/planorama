@@ -5,7 +5,6 @@ pub(crate) use input::Input;
 pub(crate) use input::base_graph;
 pub mod cross_state;
 pub mod diagnostics;
-pub mod filter;
 mod relationships;
 
 #[cfg(test)]
