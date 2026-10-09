@@ -5,6 +5,7 @@ mod collections;
 mod drift;
 mod entity;
 mod operations;
+mod outputs;
 mod providers;
 mod references;
 mod relevance;
@@ -101,6 +102,7 @@ pub fn parse(json: &str) -> Result<TerraformGraph, String> {
         true,
     );
     Ok(TerraformGraph {
+        outputs: outputs::collect(&plan["configuration"]["root_module"], &nodes, &symbols),
         graph: Graph {
             components: Vec::new(),
             checks: checks::parse(&plan["checks"], &nodes),
