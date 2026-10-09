@@ -1,7 +1,7 @@
 use super::PADDING;
 use crate::layout::Point;
 use crate::layout::rank;
-use crate::model::{EdgeKind, Graph};
+use crate::model::architecture::{EdgeKind, Graph};
 use std::collections::{BTreeMap, BTreeSet};
 
 /// Project relationships between descendant resources onto the direct children.

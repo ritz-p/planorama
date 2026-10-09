@@ -1,5 +1,5 @@
 use super::{escape, shorten};
-use crate::model::ResourceRole;
+use crate::model::architecture::ResourceRole;
 
 pub(super) fn annotation(role: ResourceRole, module: &str) -> String {
     let name = match role {

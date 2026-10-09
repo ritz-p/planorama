@@ -1,4 +1,4 @@
-use crate::model::CheckResult;
+use crate::model::architecture::CheckResult;
 use std::fmt::Write;
 
 pub(super) fn render(checks: &[CheckResult]) -> String {

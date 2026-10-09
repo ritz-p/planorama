@@ -1,5 +1,5 @@
-use crate::model::cross_state::{Architecture, Endpoint};
-use crate::model::{Action, ArchitectureGraph, ChangeMetadata, EdgeKind, StateId};
+use crate::model::architecture::{Action, ArchitectureGraph, ChangeMetadata, EdgeKind, StateId};
+use crate::model::architecture::{Architecture, Endpoint};
 use std::collections::{BTreeMap, BTreeSet};
 
 #[derive(Default)]

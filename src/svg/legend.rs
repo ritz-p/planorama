@@ -1,4 +1,4 @@
-use crate::model::{Action, EdgeKind, Graph};
+use crate::model::architecture::{Action, EdgeKind, Graph};
 use std::collections::BTreeSet;
 use std::fmt::Write;
 

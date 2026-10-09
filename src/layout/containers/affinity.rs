@@ -1,5 +1,5 @@
 use super::{PADDING, Point};
-use crate::model::{EdgeKind, Graph, ResourceRole};
+use crate::model::architecture::{EdgeKind, Graph, ResourceRole};
 use std::collections::{BTreeMap, BTreeSet};
 
 pub(super) struct Group {
