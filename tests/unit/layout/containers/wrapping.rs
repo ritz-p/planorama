@@ -51,6 +51,10 @@ fn nested_variable_size_groups_keep_final_bounds_and_rank_flow() {
     let template = graph.nodes[2].clone();
     for i in 7..19 {
         graph.nodes.push(Node {
+            entity: crate::model::ArchitectureEntity::terraform(crate::model::TerraformEntityId {
+                address: format!("test.child{i}"),
+                deposed_key: None,
+            }),
             deposed_key: None,
             previous_address: None,
             metadata: Default::default(),

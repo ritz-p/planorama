@@ -46,6 +46,7 @@ No AWS endorsement is implied. Consult the AWS terms for other uses.
 <g font-family="ui-monospace, SFMono-Regular, Consolas, monospace">
 <text x="40" y="45" font-size="25" font-weight="700" fill="#0f172a">Terraform plan</text>
 <text x="40" y="73" font-size="13" fill="#475569">7 resources (7 cards) · 10 relationships</text>
+<metadata id="architecture-entities">[{&quot;id&quot;:&quot;terraform:6177735f6563735f736572766963652e617070-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_ecs_service.app&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:6177735f696e7374616e63652e617070-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_instance.app&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:6177735f6c622e617070-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_lb.app&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:6177735f73656375726974795f67726f75702e736861726564-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_security_group.shared&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:6177735f73656375726974795f67726f75702e776562-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_security_group.web&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:6177735f7375626e65742e617070-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_subnet.app&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:6177735f7670632e6d61696e-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_vpc.main&quot;,&quot;deposed_key&quot;:null}]}]</metadata>
 <rect x="40" y="100" width="12" height="12" fill="#ecfdf5" stroke="#047857"/><text x="59" y="111" font-size="12" fill="#047857">create (0)</text>
 <rect x="180" y="100" width="12" height="12" fill="#eff6ff" stroke="#1d4ed8"/><text x="199" y="111" font-size="12" fill="#1d4ed8">update (0)</text>
 <rect x="320" y="100" width="12" height="12" fill="#fef2f2" stroke="#b91c1c"/><text x="339" y="111" font-size="12" fill="#b91c1c">delete (0)</text>
@@ -65,44 +66,44 @@ No AWS endorsement is implied. Consult the AWS terms for other uses.
 <g data-edge-kind="containment" data-source="resource-6177735f7670632e6d61696e-current" data-target="resource-6177735f73656375726974795f67726f75702e736861726564-current"><title>aws_vpc.main → aws_security_group.shared (containment)</title></g>
 <g data-edge-kind="containment" data-source="resource-6177735f7670632e6d61696e-current" data-target="resource-6177735f73656375726974795f67726f75702e776562-current"><title>aws_vpc.main → aws_security_group.web (containment)</title></g>
 <g data-edge-kind="containment" data-source="resource-6177735f7670632e6d61696e-current" data-target="resource-6177735f7375626e65742e617070-current"><title>aws_vpc.main → aws_subnet.app (containment)</title></g>
-<g id="resource-6177735f6563735f736572766963652e617070-current" data-qualified-address="module.root.aws_ecs_service.app" data-terraform-address="aws_ecs_service.app"><title>module.root.aws_ecs_service.app — other</title>
+<g id="resource-6177735f6563735f736572766963652e617070-current" data-architecture-id="terraform:6177735f6563735f736572766963652e617070-current" data-qualified-address="module.root.aws_ecs_service.app" data-terraform-address="aws_ecs_service.app"><title>module.root.aws_ecs_service.app — other</title>
 <rect x="500" y="432" width="320" height="96" rx="8" fill="#fefce8" stroke="#854d0e" stroke-width="1.5" data-mode="managed"/>
 <text x="512" y="452" font-size="11" fill="#854d0e">aws_ecs_service · other</text>
 <use href="#planorama-icon-aws-ecs" x="512" y="460" width="24" height="24" aria-hidden="true"/><text x="544" y="477" font-size="13" fill="#0f172a">module.root.aws_ecs_service.app</text>
 <text x="512" y="516" font-size="10" fill="#64748b" data-role="controller"><title>root</title>controller · root</text>
 </g>
-<g id="resource-6177735f696e7374616e63652e617070-current" data-qualified-address="module.root.aws_instance.app" data-terraform-address="aws_instance.app"><title>module.root.aws_instance.app — other</title>
+<g id="resource-6177735f696e7374616e63652e617070-current" data-architecture-id="terraform:6177735f696e7374616e63652e617070-current" data-qualified-address="module.root.aws_instance.app" data-terraform-address="aws_instance.app"><title>module.root.aws_instance.app — other</title>
 <rect x="500" y="568" width="320" height="96" rx="8" fill="#fefce8" stroke="#854d0e" stroke-width="1.5" data-mode="managed"/>
 <text x="512" y="588" font-size="11" fill="#854d0e">aws_instance · other</text>
 <use href="#planorama-icon-aws-ec2" x="512" y="596" width="24" height="24" aria-hidden="true"/><text x="544" y="613" font-size="13" fill="#0f172a">module.root.aws_instance.app</text>
 <text x="512" y="652" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
-<g id="resource-6177735f6c622e617070-current" data-qualified-address="module.root.aws_lb.app" data-terraform-address="aws_lb.app"><title>module.root.aws_lb.app — other</title>
+<g id="resource-6177735f6c622e617070-current" data-architecture-id="terraform:6177735f6c622e617070-current" data-qualified-address="module.root.aws_lb.app" data-terraform-address="aws_lb.app"><title>module.root.aws_lb.app — other</title>
 <rect x="500" y="704" width="320" height="96" rx="8" fill="#fefce8" stroke="#854d0e" stroke-width="1.5" data-mode="managed"/>
 <text x="512" y="724" font-size="11" fill="#854d0e">aws_lb · other</text>
 <use href="#planorama-icon-aws-elb" x="512" y="732" width="24" height="24" aria-hidden="true"/><text x="544" y="749" font-size="13" fill="#0f172a">module.root.aws_lb.app</text>
 <text x="512" y="788" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
-<g id="resource-6177735f73656375726974795f67726f75702e736861726564-current" data-qualified-address="module.root.aws_security_group.shared" data-terraform-address="aws_security_group.shared"><title>module.root.aws_security_group.shared — other</title>
+<g id="resource-6177735f73656375726974795f67726f75702e736861726564-current" data-architecture-id="terraform:6177735f73656375726974795f67726f75702e736861726564-current" data-qualified-address="module.root.aws_security_group.shared" data-terraform-address="aws_security_group.shared"><title>module.root.aws_security_group.shared — other</title>
 <rect x="100" y="296" width="320" height="96" rx="8" fill="#fefce8" stroke="#854d0e" stroke-width="1.5" data-mode="managed"/>
 <text x="112" y="316" font-size="11" fill="#854d0e">aws_security_group · other</text>
 <use href="#planorama-icon-aws-vpc" x="112" y="324" width="24" height="24" aria-hidden="true"/><text x="144" y="341" font-size="13" fill="#0f172a">module.root.aws_security_group.sh</text>
 <text x="144" y="361" font-size="13" fill="#0f172a">ared</text>
 <text x="112" y="380" font-size="10" fill="#64748b" data-role="policy"><title>root</title>policy · root</text>
 </g>
-<g id="resource-6177735f73656375726974795f67726f75702e776562-current" data-qualified-address="module.root.aws_security_group.web" data-terraform-address="aws_security_group.web"><title>module.root.aws_security_group.web — other</title>
+<g id="resource-6177735f73656375726974795f67726f75702e776562-current" data-architecture-id="terraform:6177735f73656375726974795f67726f75702e776562-current" data-qualified-address="module.root.aws_security_group.web" data-terraform-address="aws_security_group.web"><title>module.root.aws_security_group.web — other</title>
 <rect x="100" y="432" width="320" height="96" rx="8" fill="#fefce8" stroke="#854d0e" stroke-width="1.5" data-mode="managed"/>
 <text x="112" y="452" font-size="11" fill="#854d0e">aws_security_group · other</text>
 <use href="#planorama-icon-aws-vpc" x="112" y="460" width="24" height="24" aria-hidden="true"/><text x="144" y="477" font-size="13" fill="#0f172a">module.root.aws_security_group.we</text>
 <text x="144" y="497" font-size="13" fill="#0f172a">b</text>
 <text x="112" y="516" font-size="10" fill="#64748b" data-role="policy"><title>root</title>policy · root</text>
 </g>
-<g id="resource-6177735f7375626e65742e617070-current" data-qualified-address="module.root.aws_subnet.app" data-terraform-address="aws_subnet.app"><title>module.root.aws_subnet.app — other</title>
+<g id="resource-6177735f7375626e65742e617070-current" data-architecture-id="terraform:6177735f7375626e65742e617070-current" data-qualified-address="module.root.aws_subnet.app" data-terraform-address="aws_subnet.app"><title>module.root.aws_subnet.app — other</title>
 <text x="472" y="316" font-size="11" fill="#854d0e">aws_subnet · other</text>
 <use href="#planorama-icon-aws-vpc" x="472" y="324" width="24" height="24" aria-hidden="true"/><text x="504" y="341" font-size="13" fill="#0f172a">module.root.aws_subnet.app</text>
 <text x="472" y="380" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
-<g id="resource-6177735f7670632e6d61696e-current" data-qualified-address="module.root.aws_vpc.main" data-terraform-address="aws_vpc.main"><title>module.root.aws_vpc.main — other</title>
+<g id="resource-6177735f7670632e6d61696e-current" data-architecture-id="terraform:6177735f7670632e6d61696e-current" data-qualified-address="module.root.aws_vpc.main" data-terraform-address="aws_vpc.main"><title>module.root.aws_vpc.main — other</title>
 <text x="72" y="180" font-size="11" fill="#854d0e">aws_vpc · other</text>
 <use href="#planorama-icon-aws-vpc" x="72" y="188" width="24" height="24" aria-hidden="true"/><text x="104" y="205" font-size="13" fill="#0f172a">module.root.aws_vpc.main</text>
 <text x="72" y="244" font-size="10" fill="#64748b"><title>root</title>root</text>

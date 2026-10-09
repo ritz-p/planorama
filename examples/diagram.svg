@@ -40,6 +40,7 @@ No AWS endorsement is implied. Consult the AWS terms for other uses.
 <g font-family="ui-monospace, SFMono-Regular, Consolas, monospace">
 <text x="40" y="45" font-size="25" font-weight="700" fill="#0f172a">Terraform plan</text>
 <text x="40" y="73" font-size="13" fill="#475569">6 resources (6 cards) · 5 relationships</text>
+<metadata id="architecture-entities">[{&quot;id&quot;:&quot;terraform:6177735f73335f6275636b65742e6c6567616379-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_s3_bucket.legacy&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:6177735f7670632e6d61696e-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_vpc.main&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:646174612e6177735f616d692e6c6174657374-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;data.aws_ami.latest&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:6d6f64756c652e6170702e6177735f696e7374616e63652e7765625b305d-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;module.app.aws_instance.web[0]&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:6d6f64756c652e6170702e6177735f696e7374616e63652e7765625b315d-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;module.app.aws_instance.web[1]&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:6d6f64756c652e6170702e6177735f7375626e65742e6d61696e-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;module.app.aws_subnet.main&quot;,&quot;deposed_key&quot;:null}]}]</metadata>
 <rect x="40" y="100" width="12" height="12" fill="#ecfdf5" stroke="#047857"/><text x="59" y="111" font-size="12" fill="#047857">create (1)</text>
 <rect x="180" y="100" width="12" height="12" fill="#eff6ff" stroke="#1d4ed8"/><text x="199" y="111" font-size="12" fill="#1d4ed8">update (1)</text>
 <rect x="320" y="100" width="12" height="12" fill="#fef2f2" stroke="#b91c1c"/><text x="339" y="111" font-size="12" fill="#b91c1c">delete (1)</text>
@@ -54,36 +55,36 @@ No AWS endorsement is implied. Consult the AWS terms for other uses.
 <path d="M 380 217 L 388 217 Q 396 217 396 209 L 396 160 Q 396 152 404 152 L 404 152 Q 412 152 412 160 L 412 400 Q 412 408 420 408 L 836 408 Q 844 408 844 416 L 844 608 Q 844 616 836 616 L 820 616 " data-edge-kind="dependency" data-source="resource-646174612e6177735f616d692e6c6174657374-current" data-target="resource-6d6f64756c652e6170702e6177735f696e7374616e63652e7765625b315d-current" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>data.aws_ami.latest → module.app.aws_instance.web[1] (dependency)</title></path>
 <g data-edge-kind="containment" data-source="resource-6d6f64756c652e6170702e6177735f7375626e65742e6d61696e-current" data-target="resource-6d6f64756c652e6170702e6177735f696e7374616e63652e7765625b305d-current"><title>module.app.aws_subnet.main → module.app.aws_instance.web[0] (containment)</title></g>
 <g data-edge-kind="containment" data-source="resource-6d6f64756c652e6170702e6177735f7375626e65742e6d61696e-current" data-target="resource-6d6f64756c652e6170702e6177735f696e7374616e63652e7765625b315d-current"><title>module.app.aws_subnet.main → module.app.aws_instance.web[1] (containment)</title></g>
-<g id="resource-6177735f73335f6275636b65742e6c6567616379-current" data-qualified-address="module.root.aws_s3_bucket.legacy" data-terraform-address="aws_s3_bucket.legacy"><title>module.root.aws_s3_bucket.legacy — delete</title>
+<g id="resource-6177735f73335f6275636b65742e6c6567616379-current" data-architecture-id="terraform:6177735f73335f6275636b65742e6c6567616379-current" data-qualified-address="module.root.aws_s3_bucket.legacy" data-terraform-address="aws_s3_bucket.legacy"><title>module.root.aws_s3_bucket.legacy — delete</title>
 <rect x="60" y="296" width="320" height="96" rx="8" fill="#fef2f2" stroke="#b91c1c" stroke-width="1.5" data-mode="managed"/>
 <text x="72" y="316" font-size="11" fill="#b91c1c">aws_s3_bucket · delete</text>
 <use href="#planorama-icon-aws-s3" x="72" y="324" width="24" height="24" aria-hidden="true"/><text x="104" y="341" font-size="13" fill="#0f172a">module.root.aws_s3_bucket.legacy</text>
 <text x="72" y="380" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
-<g id="resource-6177735f7670632e6d61696e-current" data-qualified-address="module.root.aws_vpc.main" data-terraform-address="aws_vpc.main"><title>module.root.aws_vpc.main — unchanged</title>
+<g id="resource-6177735f7670632e6d61696e-current" data-architecture-id="terraform:6177735f7670632e6d61696e-current" data-qualified-address="module.root.aws_vpc.main" data-terraform-address="aws_vpc.main"><title>module.root.aws_vpc.main — unchanged</title>
 <text x="432" y="180" font-size="11" fill="#64748b">aws_vpc · unchanged</text>
 <use href="#planorama-icon-aws-vpc" x="432" y="188" width="24" height="24" aria-hidden="true"/><text x="464" y="205" font-size="13" fill="#0f172a">module.root.aws_vpc.main</text>
 <text x="432" y="244" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
-<g id="resource-646174612e6177735f616d692e6c6174657374-current" data-qualified-address="module.root.data.aws_ami.latest" data-terraform-address="data.aws_ami.latest"><title>module.root.data.aws_ami.latest — unchanged</title>
+<g id="resource-646174612e6177735f616d692e6c6174657374-current" data-architecture-id="terraform:646174612e6177735f616d692e6c6174657374-current" data-qualified-address="module.root.data.aws_ami.latest" data-terraform-address="data.aws_ami.latest"><title>module.root.data.aws_ami.latest — unchanged</title>
 <rect x="60" y="160" width="320" height="96" rx="8" fill="#f8fafc" stroke="#64748b" stroke-width="1.5" data-mode="data" stroke-dasharray="6 4"/>
 <g data-external="true"><title>External resource: read by Terraform, not managed by this configuration</title><rect x="302" y="167" width="68" height="18" rx="4" fill="#e2e8f0"/><text x="308" y="180" font-size="10" fill="#334155">external</text></g><text x="72" y="180" font-size="11" fill="#64748b">aws_ami · unchanged</text>
 <use href="#planorama-icon-aws-ec2" x="72" y="188" width="24" height="24" aria-hidden="true"/><text x="104" y="205" font-size="13" fill="#0f172a">module.root.data.aws_ami.latest</text>
 <text x="72" y="244" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
-<g id="resource-6d6f64756c652e6170702e6177735f696e7374616e63652e7765625b305d-current" data-qualified-address="module.app.aws_instance.web[0]" data-terraform-address="module.app.aws_instance.web[0]"><title>module.app.aws_instance.web[0] — create</title>
+<g id="resource-6d6f64756c652e6170702e6177735f696e7374616e63652e7765625b305d-current" data-architecture-id="terraform:6d6f64756c652e6170702e6177735f696e7374616e63652e7765625b305d-current" data-qualified-address="module.app.aws_instance.web[0]" data-terraform-address="module.app.aws_instance.web[0]"><title>module.app.aws_instance.web[0] — create</title>
 <rect x="500" y="432" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text x="512" y="452" font-size="11" fill="#047857">aws_instance · create</text>
 <use href="#planorama-icon-aws-ec2" x="512" y="460" width="24" height="24" aria-hidden="true"/><text x="544" y="477" font-size="13" fill="#0f172a">module.app.aws_instance.web[0]</text>
 <text x="512" y="516" font-size="10" fill="#64748b"><title>module.app</title>module.app</text>
 </g>
-<g id="resource-6d6f64756c652e6170702e6177735f696e7374616e63652e7765625b315d-current" data-qualified-address="module.app.aws_instance.web[1]" data-terraform-address="module.app.aws_instance.web[1]"><title>module.app.aws_instance.web[1] — replace</title>
+<g id="resource-6d6f64756c652e6170702e6177735f696e7374616e63652e7765625b315d-current" data-architecture-id="terraform:6d6f64756c652e6170702e6177735f696e7374616e63652e7765625b315d-current" data-qualified-address="module.app.aws_instance.web[1]" data-terraform-address="module.app.aws_instance.web[1]"><title>module.app.aws_instance.web[1] — replace</title>
 <rect x="500" y="568" width="320" height="96" rx="8" fill="#fff7ed" stroke="#c2410c" stroke-width="1.5" data-mode="managed"/>
 <text x="512" y="588" font-size="11" fill="#c2410c">aws_instance · replace</text>
 <use href="#planorama-icon-aws-ec2" x="512" y="596" width="24" height="24" aria-hidden="true"/><text x="544" y="613" font-size="13" fill="#0f172a">module.app.aws_instance.web[1]</text>
 <text x="512" y="652" font-size="10" fill="#64748b"><title>module.app</title>module.app</text>
 </g>
-<g id="resource-6d6f64756c652e6170702e6177735f7375626e65742e6d61696e-current" data-qualified-address="module.app.aws_subnet.main" data-terraform-address="module.app.aws_subnet.main"><title>module.app.aws_subnet.main — update</title>
+<g id="resource-6d6f64756c652e6170702e6177735f7375626e65742e6d61696e-current" data-architecture-id="terraform:6d6f64756c652e6170702e6177735f7375626e65742e6d61696e-current" data-qualified-address="module.app.aws_subnet.main" data-terraform-address="module.app.aws_subnet.main"><title>module.app.aws_subnet.main — update</title>
 <text x="472" y="316" font-size="11" fill="#1d4ed8">aws_subnet · update</text>
 <use href="#planorama-icon-aws-vpc" x="472" y="324" width="24" height="24" aria-hidden="true"/><text x="504" y="341" font-size="13" fill="#0f172a">module.app.aws_subnet.main</text>
 <text x="472" y="380" font-size="10" fill="#64748b"><title>module.app</title>module.app</text>

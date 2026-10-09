@@ -32,6 +32,7 @@ No AWS endorsement is implied. Consult the AWS terms for other uses.
 <g font-family="ui-monospace, SFMono-Regular, Consolas, monospace">
 <text x="40" y="45" font-size="25" font-weight="700" fill="#0f172a">Terraform plan</text>
 <text x="40" y="73" font-size="13" fill="#475569">13 resources (13 cards) · 6 relationships</text>
+<metadata id="architecture-entities">[{&quot;id&quot;:&quot;terraform:6177735f73335f6275636b65742e6c6f67735b305d-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_s3_bucket.logs[0]&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:6177735f73335f6275636b65742e6c6f67735b315d-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_s3_bucket.logs[1]&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:6177735f73335f6275636b65742e6c6f67735b325d-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_s3_bucket.logs[2]&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:6177735f73335f6275636b65742e6c6f67735b335d-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_s3_bucket.logs[3]&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:6177735f73335f6275636b65742e6c6f67735b345d-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_s3_bucket.logs[4]&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:6177735f73335f6275636b65742e6c6f67735b355d-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_s3_bucket.logs[5]&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:6177735f7375626e65742e6170705b305d-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_subnet.app[0]&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:6177735f7375626e65742e6170705b315d-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_subnet.app[1]&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:6177735f7375626e65742e6170705b325d-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_subnet.app[2]&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:6177735f7375626e65742e6170705b335d-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_subnet.app[3]&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:6177735f7375626e65742e6170705b345d-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_subnet.app[4]&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:6177735f7375626e65742e6170705b355d-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_subnet.app[5]&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:6177735f7670632e6d61696e-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_vpc.main&quot;,&quot;deposed_key&quot;:null}]}]</metadata>
 <rect x="40" y="100" width="12" height="12" fill="#ecfdf5" stroke="#047857"/><text x="59" y="111" font-size="12" fill="#047857">create (0)</text>
 <rect x="180" y="100" width="12" height="12" fill="#eff6ff" stroke="#1d4ed8"/><text x="199" y="111" font-size="12" fill="#1d4ed8">update (0)</text>
 <rect x="320" y="100" width="12" height="12" fill="#fef2f2" stroke="#b91c1c"/><text x="339" y="111" font-size="12" fill="#b91c1c">delete (0)</text>
@@ -52,73 +53,73 @@ No AWS endorsement is implied. Consult the AWS terms for other uses.
 <g data-edge-kind="containment" data-source="resource-6177735f7670632e6d61696e-current" data-target="resource-6177735f7375626e65742e6170705b335d-current"><title>aws_vpc.main → aws_subnet.app[3] (containment)</title></g>
 <g data-edge-kind="containment" data-source="resource-6177735f7670632e6d61696e-current" data-target="resource-6177735f7375626e65742e6170705b345d-current"><title>aws_vpc.main → aws_subnet.app[4] (containment)</title></g>
 <g data-edge-kind="containment" data-source="resource-6177735f7670632e6d61696e-current" data-target="resource-6177735f7375626e65742e6170705b355d-current"><title>aws_vpc.main → aws_subnet.app[5] (containment)</title></g>
-<g id="resource-6177735f73335f6275636b65742e6c6f67735b305d-current" data-qualified-address="module.root.aws_s3_bucket.logs[0]" data-terraform-address="aws_s3_bucket.logs[0]"><title>module.root.aws_s3_bucket.logs[0] — other</title>
+<g id="resource-6177735f73335f6275636b65742e6c6f67735b305d-current" data-architecture-id="terraform:6177735f73335f6275636b65742e6c6f67735b305d-current" data-qualified-address="module.root.aws_s3_bucket.logs[0]" data-terraform-address="aws_s3_bucket.logs[0]"><title>module.root.aws_s3_bucket.logs[0] — other</title>
 <rect x="1020" y="160" width="320" height="96" rx="8" fill="#fefce8" stroke="#854d0e" stroke-width="1.5" data-mode="managed"/>
 <text x="1032" y="180" font-size="11" fill="#854d0e">aws_s3_bucket · other</text>
 <use href="#planorama-icon-aws-s3" x="1032" y="188" width="24" height="24" aria-hidden="true"/><text x="1064" y="205" font-size="13" fill="#0f172a">module.root.aws_s3_bucket.logs[0]</text>
 <text x="1032" y="244" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
-<g id="resource-6177735f73335f6275636b65742e6c6f67735b315d-current" data-qualified-address="module.root.aws_s3_bucket.logs[1]" data-terraform-address="aws_s3_bucket.logs[1]"><title>module.root.aws_s3_bucket.logs[1] — other</title>
+<g id="resource-6177735f73335f6275636b65742e6c6f67735b315d-current" data-architecture-id="terraform:6177735f73335f6275636b65742e6c6f67735b315d-current" data-qualified-address="module.root.aws_s3_bucket.logs[1]" data-terraform-address="aws_s3_bucket.logs[1]"><title>module.root.aws_s3_bucket.logs[1] — other</title>
 <rect x="1020" y="296" width="320" height="96" rx="8" fill="#fefce8" stroke="#854d0e" stroke-width="1.5" data-mode="managed"/>
 <text x="1032" y="316" font-size="11" fill="#854d0e">aws_s3_bucket · other</text>
 <use href="#planorama-icon-aws-s3" x="1032" y="324" width="24" height="24" aria-hidden="true"/><text x="1064" y="341" font-size="13" fill="#0f172a">module.root.aws_s3_bucket.logs[1]</text>
 <text x="1032" y="380" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
-<g id="resource-6177735f73335f6275636b65742e6c6f67735b325d-current" data-qualified-address="module.root.aws_s3_bucket.logs[2]" data-terraform-address="aws_s3_bucket.logs[2]"><title>module.root.aws_s3_bucket.logs[2] — other</title>
+<g id="resource-6177735f73335f6275636b65742e6c6f67735b325d-current" data-architecture-id="terraform:6177735f73335f6275636b65742e6c6f67735b325d-current" data-qualified-address="module.root.aws_s3_bucket.logs[2]" data-terraform-address="aws_s3_bucket.logs[2]"><title>module.root.aws_s3_bucket.logs[2] — other</title>
 <rect x="1020" y="432" width="320" height="96" rx="8" fill="#fefce8" stroke="#854d0e" stroke-width="1.5" data-mode="managed"/>
 <text x="1032" y="452" font-size="11" fill="#854d0e">aws_s3_bucket · other</text>
 <use href="#planorama-icon-aws-s3" x="1032" y="460" width="24" height="24" aria-hidden="true"/><text x="1064" y="477" font-size="13" fill="#0f172a">module.root.aws_s3_bucket.logs[2]</text>
 <text x="1032" y="516" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
-<g id="resource-6177735f73335f6275636b65742e6c6f67735b335d-current" data-qualified-address="module.root.aws_s3_bucket.logs[3]" data-terraform-address="aws_s3_bucket.logs[3]"><title>module.root.aws_s3_bucket.logs[3] — other</title>
+<g id="resource-6177735f73335f6275636b65742e6c6f67735b335d-current" data-architecture-id="terraform:6177735f73335f6275636b65742e6c6f67735b335d-current" data-qualified-address="module.root.aws_s3_bucket.logs[3]" data-terraform-address="aws_s3_bucket.logs[3]"><title>module.root.aws_s3_bucket.logs[3] — other</title>
 <rect x="1020" y="568" width="320" height="96" rx="8" fill="#fefce8" stroke="#854d0e" stroke-width="1.5" data-mode="managed"/>
 <text x="1032" y="588" font-size="11" fill="#854d0e">aws_s3_bucket · other</text>
 <use href="#planorama-icon-aws-s3" x="1032" y="596" width="24" height="24" aria-hidden="true"/><text x="1064" y="613" font-size="13" fill="#0f172a">module.root.aws_s3_bucket.logs[3]</text>
 <text x="1032" y="652" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
-<g id="resource-6177735f73335f6275636b65742e6c6f67735b345d-current" data-qualified-address="module.root.aws_s3_bucket.logs[4]" data-terraform-address="aws_s3_bucket.logs[4]"><title>module.root.aws_s3_bucket.logs[4] — other</title>
+<g id="resource-6177735f73335f6275636b65742e6c6f67735b345d-current" data-architecture-id="terraform:6177735f73335f6275636b65742e6c6f67735b345d-current" data-qualified-address="module.root.aws_s3_bucket.logs[4]" data-terraform-address="aws_s3_bucket.logs[4]"><title>module.root.aws_s3_bucket.logs[4] — other</title>
 <rect x="1020" y="704" width="320" height="96" rx="8" fill="#fefce8" stroke="#854d0e" stroke-width="1.5" data-mode="managed"/>
 <text x="1032" y="724" font-size="11" fill="#854d0e">aws_s3_bucket · other</text>
 <use href="#planorama-icon-aws-s3" x="1032" y="732" width="24" height="24" aria-hidden="true"/><text x="1064" y="749" font-size="13" fill="#0f172a">module.root.aws_s3_bucket.logs[4]</text>
 <text x="1032" y="788" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
-<g id="resource-6177735f73335f6275636b65742e6c6f67735b355d-current" data-qualified-address="module.root.aws_s3_bucket.logs[5]" data-terraform-address="aws_s3_bucket.logs[5]"><title>module.root.aws_s3_bucket.logs[5] — other</title>
+<g id="resource-6177735f73335f6275636b65742e6c6f67735b355d-current" data-architecture-id="terraform:6177735f73335f6275636b65742e6c6f67735b355d-current" data-qualified-address="module.root.aws_s3_bucket.logs[5]" data-terraform-address="aws_s3_bucket.logs[5]"><title>module.root.aws_s3_bucket.logs[5] — other</title>
 <rect x="1380" y="160" width="320" height="96" rx="8" fill="#fefce8" stroke="#854d0e" stroke-width="1.5" data-mode="managed"/>
 <text x="1392" y="180" font-size="11" fill="#854d0e">aws_s3_bucket · other</text>
 <use href="#planorama-icon-aws-s3" x="1392" y="188" width="24" height="24" aria-hidden="true"/><text x="1424" y="205" font-size="13" fill="#0f172a">module.root.aws_s3_bucket.logs[5]</text>
 <text x="1392" y="244" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
-<g id="resource-6177735f7375626e65742e6170705b305d-current" data-qualified-address="module.root.aws_subnet.app[0]" data-terraform-address="aws_subnet.app[0]"><title>module.root.aws_subnet.app[0] — other</title>
+<g id="resource-6177735f7375626e65742e6170705b305d-current" data-architecture-id="terraform:6177735f7375626e65742e6170705b305d-current" data-qualified-address="module.root.aws_subnet.app[0]" data-terraform-address="aws_subnet.app[0]"><title>module.root.aws_subnet.app[0] — other</title>
 <text x="112" y="316" font-size="11" fill="#854d0e">aws_subnet · other</text>
 <use href="#planorama-icon-aws-vpc" x="112" y="324" width="24" height="24" aria-hidden="true"/><text x="144" y="341" font-size="13" fill="#0f172a">module.root.aws_subnet.app[0]</text>
 <text x="112" y="380" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
-<g id="resource-6177735f7375626e65742e6170705b315d-current" data-qualified-address="module.root.aws_subnet.app[1]" data-terraform-address="aws_subnet.app[1]"><title>module.root.aws_subnet.app[1] — other</title>
+<g id="resource-6177735f7375626e65742e6170705b315d-current" data-architecture-id="terraform:6177735f7375626e65742e6170705b315d-current" data-qualified-address="module.root.aws_subnet.app[1]" data-terraform-address="aws_subnet.app[1]"><title>module.root.aws_subnet.app[1] — other</title>
 <text x="112" y="492" font-size="11" fill="#854d0e">aws_subnet · other</text>
 <use href="#planorama-icon-aws-vpc" x="112" y="500" width="24" height="24" aria-hidden="true"/><text x="144" y="517" font-size="13" fill="#0f172a">module.root.aws_subnet.app[1]</text>
 <text x="112" y="556" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
-<g id="resource-6177735f7375626e65742e6170705b325d-current" data-qualified-address="module.root.aws_subnet.app[2]" data-terraform-address="aws_subnet.app[2]"><title>module.root.aws_subnet.app[2] — other</title>
+<g id="resource-6177735f7375626e65742e6170705b325d-current" data-architecture-id="terraform:6177735f7375626e65742e6170705b325d-current" data-qualified-address="module.root.aws_subnet.app[2]" data-terraform-address="aws_subnet.app[2]"><title>module.root.aws_subnet.app[2] — other</title>
 <text x="112" y="668" font-size="11" fill="#854d0e">aws_subnet · other</text>
 <use href="#planorama-icon-aws-vpc" x="112" y="676" width="24" height="24" aria-hidden="true"/><text x="144" y="693" font-size="13" fill="#0f172a">module.root.aws_subnet.app[2]</text>
 <text x="112" y="732" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
-<g id="resource-6177735f7375626e65742e6170705b335d-current" data-qualified-address="module.root.aws_subnet.app[3]" data-terraform-address="aws_subnet.app[3]"><title>module.root.aws_subnet.app[3] — other</title>
+<g id="resource-6177735f7375626e65742e6170705b335d-current" data-architecture-id="terraform:6177735f7375626e65742e6170705b335d-current" data-qualified-address="module.root.aws_subnet.app[3]" data-terraform-address="aws_subnet.app[3]"><title>module.root.aws_subnet.app[3] — other</title>
 <text x="552" y="316" font-size="11" fill="#854d0e">aws_subnet · other</text>
 <use href="#planorama-icon-aws-vpc" x="552" y="324" width="24" height="24" aria-hidden="true"/><text x="584" y="341" font-size="13" fill="#0f172a">module.root.aws_subnet.app[3]</text>
 <text x="552" y="380" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
-<g id="resource-6177735f7375626e65742e6170705b345d-current" data-qualified-address="module.root.aws_subnet.app[4]" data-terraform-address="aws_subnet.app[4]"><title>module.root.aws_subnet.app[4] — other</title>
+<g id="resource-6177735f7375626e65742e6170705b345d-current" data-architecture-id="terraform:6177735f7375626e65742e6170705b345d-current" data-qualified-address="module.root.aws_subnet.app[4]" data-terraform-address="aws_subnet.app[4]"><title>module.root.aws_subnet.app[4] — other</title>
 <text x="552" y="492" font-size="11" fill="#854d0e">aws_subnet · other</text>
 <use href="#planorama-icon-aws-vpc" x="552" y="500" width="24" height="24" aria-hidden="true"/><text x="584" y="517" font-size="13" fill="#0f172a">module.root.aws_subnet.app[4]</text>
 <text x="552" y="556" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
-<g id="resource-6177735f7375626e65742e6170705b355d-current" data-qualified-address="module.root.aws_subnet.app[5]" data-terraform-address="aws_subnet.app[5]"><title>module.root.aws_subnet.app[5] — other</title>
+<g id="resource-6177735f7375626e65742e6170705b355d-current" data-architecture-id="terraform:6177735f7375626e65742e6170705b355d-current" data-qualified-address="module.root.aws_subnet.app[5]" data-terraform-address="aws_subnet.app[5]"><title>module.root.aws_subnet.app[5] — other</title>
 <text x="552" y="668" font-size="11" fill="#854d0e">aws_subnet · other</text>
 <use href="#planorama-icon-aws-vpc" x="552" y="676" width="24" height="24" aria-hidden="true"/><text x="584" y="693" font-size="13" fill="#0f172a">module.root.aws_subnet.app[5]</text>
 <text x="552" y="732" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
-<g id="resource-6177735f7670632e6d61696e-current" data-qualified-address="module.root.aws_vpc.main" data-terraform-address="aws_vpc.main"><title>module.root.aws_vpc.main — other</title>
+<g id="resource-6177735f7670632e6d61696e-current" data-architecture-id="terraform:6177735f7670632e6d61696e-current" data-qualified-address="module.root.aws_vpc.main" data-terraform-address="aws_vpc.main"><title>module.root.aws_vpc.main — other</title>
 <text x="72" y="180" font-size="11" fill="#854d0e">aws_vpc · other</text>
 <use href="#planorama-icon-aws-vpc" x="72" y="188" width="24" height="24" aria-hidden="true"/><text x="104" y="205" font-size="13" fill="#0f172a">module.root.aws_vpc.main</text>
 <text x="72" y="244" font-size="10" fill="#64748b"><title>root</title>root</text>

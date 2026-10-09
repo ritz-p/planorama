@@ -24,3 +24,25 @@ Terraform models under explicit `StateId`s.
 This separation intentionally preserves existing diagrams: snapshot tests cover
 the boundary and regression tests retain provider resolution, reference evidence,
 deposed/moved/import/removed/drift behavior and non-mutation of parsed input.
+
+## Architecture identity and provenance
+
+Cards and logical components now contain `ArchitectureEntity`, with an opaque
+`ArchitectureId`, explicit Terraform/synthetic kind, and ordered, deduplicated
+`TerraformEntityId` provenance. Terraform source identity includes the deposed
+key. Synthetic identity uses a component kind and stable inference anchor, so
+membership and display-label changes do not become identity changes. Both kinds
+are available through `Graph::entities()`; synthetic components have no required
+Terraform address of their own and do not acquire a spatial container role.
+
+Identity is scoped by the containing state. Cross-state identity is the pair of
+`StateId` and architecture/source ID. Existing Terraform card fields and component
+member labels remain display projections; their native entity metadata is the
+identity/provenance boundary. Layout ordering uses architecture IDs, and logical
+panel bounds are keyed by those IDs independently of source addresses. Positional
+edge indices remain an internal graph representation.
+
+SVGs expose `data-architecture-id` and an `architecture-entities` JSON metadata
+element containing the source addresses/deposed keys for every entity. Existing
+Terraform address metadata and stable resource DOM IDs remain available. Synthetic
+DOM IDs derive from architecture identity instead of panel position.

@@ -30,6 +30,7 @@ No AWS endorsement is implied. Consult the AWS terms for other uses.
 <g font-family="ui-monospace, SFMono-Regular, Consolas, monospace">
 <text x="40" y="45" font-size="25" font-weight="700" fill="#0f172a">Terraform plan</text>
 <text x="40" y="73" font-size="13" fill="#475569">3 resources (3 cards) · 3 relationships</text>
+<metadata id="architecture-entities">[{&quot;id&quot;:&quot;terraform:6177735f696e7374616e63652e617070-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_instance.app&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:6177735f7375626e65742e70726976617465-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_subnet.private&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:6177735f7670632e6d61696e-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_vpc.main&quot;,&quot;deposed_key&quot;:null}]}]</metadata>
 <rect x="40" y="100" width="12" height="12" fill="#ecfdf5" stroke="#047857"/><text x="59" y="111" font-size="12" fill="#047857">create (3)</text>
 <rect x="180" y="100" width="12" height="12" fill="#eff6ff" stroke="#1d4ed8"/><text x="199" y="111" font-size="12" fill="#1d4ed8">update (0)</text>
 <rect x="320" y="100" width="12" height="12" fill="#fef2f2" stroke="#b91c1c"/><text x="339" y="111" font-size="12" fill="#b91c1c">delete (0)</text>
@@ -42,18 +43,18 @@ No AWS endorsement is implied. Consult the AWS terms for other uses.
 <g data-edge-kind="containment" data-source="resource-6177735f7375626e65742e70726976617465-current" data-target="resource-6177735f696e7374616e63652e617070-current"><title>aws_subnet.private → aws_instance.app (containment)</title></g>
 <g data-edge-kind="dependency" data-source="resource-6177735f7670632e6d61696e-current" data-target="resource-6177735f696e7374616e63652e617070-current"><title>aws_vpc.main → aws_instance.app (dependency)</title></g>
 <g data-edge-kind="containment" data-source="resource-6177735f7670632e6d61696e-current" data-target="resource-6177735f7375626e65742e70726976617465-current"><title>aws_vpc.main → aws_subnet.private (containment)</title></g>
-<g id="resource-6177735f696e7374616e63652e617070-current" data-qualified-address="module.root.aws_instance.app" data-terraform-address="aws_instance.app"><title>module.root.aws_instance.app — create</title>
+<g id="resource-6177735f696e7374616e63652e617070-current" data-architecture-id="terraform:6177735f696e7374616e63652e617070-current" data-qualified-address="module.root.aws_instance.app" data-terraform-address="aws_instance.app"><title>module.root.aws_instance.app — create</title>
 <rect x="140" y="432" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text x="152" y="452" font-size="11" fill="#047857">aws_instance · create</text>
 <use href="#planorama-icon-aws-ec2" x="152" y="460" width="24" height="24" aria-hidden="true"/><text x="184" y="477" font-size="13" fill="#0f172a">module.root.aws_instance.app</text>
 <text x="152" y="516" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
-<g id="resource-6177735f7375626e65742e70726976617465-current" data-qualified-address="module.root.aws_subnet.private" data-terraform-address="aws_subnet.private"><title>module.root.aws_subnet.private — create</title>
+<g id="resource-6177735f7375626e65742e70726976617465-current" data-architecture-id="terraform:6177735f7375626e65742e70726976617465-current" data-qualified-address="module.root.aws_subnet.private" data-terraform-address="aws_subnet.private"><title>module.root.aws_subnet.private — create</title>
 <text x="112" y="316" font-size="11" fill="#047857">aws_subnet · create</text>
 <use href="#planorama-icon-aws-vpc" x="112" y="324" width="24" height="24" aria-hidden="true"/><text x="144" y="341" font-size="13" fill="#0f172a">module.root.aws_subnet.private</text>
 <text x="112" y="380" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
-<g id="resource-6177735f7670632e6d61696e-current" data-qualified-address="module.root.aws_vpc.main" data-terraform-address="aws_vpc.main"><title>module.root.aws_vpc.main — create</title>
+<g id="resource-6177735f7670632e6d61696e-current" data-architecture-id="terraform:6177735f7670632e6d61696e-current" data-qualified-address="module.root.aws_vpc.main" data-terraform-address="aws_vpc.main"><title>module.root.aws_vpc.main — create</title>
 <text x="72" y="180" font-size="11" fill="#047857">aws_vpc · create</text>
 <use href="#planorama-icon-aws-vpc" x="72" y="188" width="24" height="24" aria-hidden="true"/><text x="104" y="205" font-size="13" fill="#0f172a">module.root.aws_vpc.main</text>
 <text x="72" y="244" font-size="10" fill="#64748b"><title>root</title>root</text>

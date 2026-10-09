@@ -6,6 +6,7 @@ mod icons;
 mod identity;
 mod operations;
 mod paths;
+mod provenance;
 mod relationships;
 mod roles;
 mod states;
@@ -79,6 +80,7 @@ pub fn render_with_format(
 <text x="40" y="73" font-size="13" fill="#475569">{summary}</text>
 "##,
     );
+    svg.push_str(&provenance::metadata(graph));
     for (i, action) in [
         Action::Create,
         Action::Update,
@@ -183,6 +185,7 @@ pub fn render_with_format(
     }
     for (i, node) in graph.nodes.iter().enumerate() {
         let resource_id = identity::resource(node);
+        let architecture_id = escape(node.entity.id.as_str());
         let bounds = layout.bounds[i];
         let (x, y) = (bounds.origin.x, bounds.origin.y);
         let card_width = bounds.width;
@@ -230,7 +233,7 @@ pub fn render_with_format(
             .unwrap_or_default();
         writeln!(
             svg,
-            r#"<g id="{resource_id}" data-qualified-address="{qualified}" data-terraform-address="{address}"{deposed}{previous}{operation}{component}><title>{selected_title} — {operation_label}{operation_details}</title>"#,
+            r#"<g id="{resource_id}" data-architecture-id="{architecture_id}" data-qualified-address="{qualified}" data-terraform-address="{address}"{deposed}{previous}{operation}{component}><title>{selected_title} — {operation_label}{operation_details}</title>"#,
         )
         .unwrap();
         if node.role != crate::model::ResourceRole::Container {
@@ -292,11 +295,7 @@ pub fn render_with_format(
     if check_offset != 0 {
         svg.push_str("</g>\n");
     }
-    svg.push_str(&components::render(
-        graph,
-        layout.height + check_offset,
-        width,
-    ));
+    svg.push_str(&components::render(graph, layout));
     svg.push_str("</g>\n</svg>\n");
     svg
 }
