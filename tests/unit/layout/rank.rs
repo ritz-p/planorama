@@ -17,6 +17,7 @@ fn cycle_is_condensed_and_dependents_follow() {
         })
         .collect();
     let graph = Graph {
+        status: Default::default(),
         nodes,
         edges: vec![(0, 1), (1, 0), (1, 2), (2, 3)]
             .into_iter()

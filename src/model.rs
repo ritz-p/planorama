@@ -43,8 +43,18 @@ pub enum ResourceRole {
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Graph {
+    pub status: PlanStatus,
     pub nodes: Vec<Node>,
     pub edges: Vec<Edge>,
+}
+
+/// Status reported by one input plan; absent flags remain unknown.
+/// Multiple plans must retain their own status rather than combining flags.
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+pub struct PlanStatus {
+    pub applyable: Option<bool>,
+    pub complete: Option<bool>,
+    pub errored: Option<bool>,
 }
 
 mod address;
