@@ -1,0 +1,18 @@
+{
+  "format_version":"1.2",
+  "applyable":true,
+  "complete":true,
+  "errored":false,
+  "resource_changes":[
+    {"address":"aws_lb.app","type":"aws_lb","change":{"actions":["no-op"]}},
+    {"address":"aws_lb_listener.https","type":"aws_lb_listener","change":{"actions":["update"]}},
+    {"address":"aws_lb_listener_rule.api","type":"aws_lb_listener_rule","previous_address":"aws_lb_listener_rule.old","action_reason":"replace_because_cannot_update","change":{"actions":["delete","create"],"replace_paths":[["listener_arn"]]}},
+    {"address":"aws_lb_target_group.shared","type":"aws_lb_target_group","change":{"actions":["create"]}},
+    {"address":"aws_lb.other","type":"aws_lb","change":{"actions":["create"]}}
+  ],
+  "configuration":{"root_module":{"resources":[
+    {"address":"aws_lb_listener.https","expressions":{"load_balancer_arn":{"references":["aws_lb.app.arn"]},"default_action":[{"target_group_arn":{"references":["aws_lb_target_group.shared.arn"]}}]}},
+    {"address":"aws_lb_listener_rule.api","expressions":{"listener_arn":{"references":["aws_lb_listener.https.arn"]},"condition":[{"path_pattern":{"constant_value":["TOP_SECRET_PATH"]}}]}}
+  ]}},
+  "checks":[{"address":{"kind":"resource","mode":"managed","type":"aws_lb","to_display":"aws_lb.app"},"status":"unknown","instances":[{"address":{"to_display":"aws_lb.app"},"status":"unknown"}]}]
+}

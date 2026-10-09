@@ -10,6 +10,7 @@ fn fan_out_and_fan_in_share_trunks_and_preserve_endpoints() {
         (vec![(0, 3), (1, 3), (2, 3)], vec![0, 0, 0, 1]),
     ] {
         let graph = Graph {
+            components: Vec::new(),
             checks: Vec::new(),
             status: Default::default(),
             nodes: (0..4)
@@ -75,6 +76,7 @@ fn fan_out_and_fan_in_share_trunks_and_preserve_endpoints() {
 #[test]
 fn unrelated_edges_cannot_reuse_an_occupied_bundle_trunk() {
     let mut graph = Graph {
+        components: Vec::new(),
         checks: Vec::new(),
         status: Default::default(),
         nodes: (0..5)
@@ -128,6 +130,7 @@ fn unrelated_edges_cannot_reuse_an_occupied_bundle_trunk() {
 #[test]
 fn long_edges_use_separate_channels_after_gutter_expansion() {
     let graph = Graph {
+        components: Vec::new(),
         checks: Vec::new(),
         status: Default::default(),
         nodes: (0..18)
@@ -183,6 +186,7 @@ fn long_edges_use_separate_channels_after_gutter_expansion() {
 #[test]
 fn eight_overlapping_edges_get_distinct_lanes_inside_the_gutter() {
     let graph = Graph {
+        components: Vec::new(),
         checks: Vec::new(),
         status: Default::default(),
         nodes: (0..16)

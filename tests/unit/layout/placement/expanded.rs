@@ -3,6 +3,7 @@ use crate::model::{Action, Node};
 
 fn graph(edges: Vec<(usize, usize)>) -> Graph {
     Graph {
+        components: Vec::new(),
         checks: Vec::new(),
         status: Default::default(),
         nodes: (0..4)

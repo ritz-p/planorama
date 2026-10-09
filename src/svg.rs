@@ -1,4 +1,5 @@
 mod checks;
+mod components;
 mod containers;
 mod entities;
 mod icons;
@@ -48,7 +49,11 @@ pub fn render_with_format(
     address_format: AddressFormat,
 ) -> String {
     let check_offset = if graph.checks.is_empty() { 0 } else { 24 };
-    let (width, height) = (layout.width, layout.height + check_offset);
+    let (width, height) = (
+        layout.width,
+        layout.height + check_offset + components::height(graph),
+    );
+    let membership = components::membership(graph);
     let (description, summary) = relationships::captions(graph);
     let markers = relationships::markers(graph);
     let icon_definitions = icons::definitions(&graph.nodes);
@@ -196,6 +201,10 @@ pub fn render_with_format(
             .collect();
         let mode = entities::border(node.mode);
         let operation = operations::attributes(&node.metadata);
+        let component = membership
+            .get(node.address.as_str())
+            .map(|id| format!(" data-component-id=\"{}\"", escape(id)))
+            .unwrap_or_default();
         let operation_label = operations::label(node.action, &node.metadata);
         let operation_details = escape(&operations::details(&node.metadata));
         let previous = node
@@ -210,7 +219,7 @@ pub fn render_with_format(
             .unwrap_or_default();
         writeln!(
             svg,
-            r#"<g id="resource-{i}" data-qualified-address="{qualified}" data-terraform-address="{address}"{deposed}{previous}{operation}><title>{selected_title} — {operation_label}{operation_details}</title>"#,
+            r#"<g id="resource-{i}" data-qualified-address="{qualified}" data-terraform-address="{address}"{deposed}{previous}{operation}{component}><title>{selected_title} — {operation_label}{operation_details}</title>"#,
         )
         .unwrap();
         if node.role != crate::model::ResourceRole::Container {
@@ -272,6 +281,11 @@ pub fn render_with_format(
     if check_offset != 0 {
         svg.push_str("</g>\n");
     }
+    svg.push_str(&components::render(
+        graph,
+        layout.height + check_offset,
+        width,
+    ));
     svg.push_str("</g>\n</svg>\n");
     svg
 }

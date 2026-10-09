@@ -13,6 +13,7 @@ fn five_container_shades_fill_both_headers_and_bounds_and_clamp_deeper_nesting()
         Action::Other,
     ] {
         let graph = Graph {
+            components: Vec::new(),
             checks: Vec::new(),
             status: Default::default(),
             nodes: (0..7)
