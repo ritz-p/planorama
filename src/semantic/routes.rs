@@ -49,6 +49,8 @@ pub(super) fn endpoints(raw: &TerraformGraph, route: usize) -> Result<(usize, us
             Some(Reason::MultipleMatchingInstances)
         } else if !reference.ids_only {
             Some(Reason::NonIdReference)
+        } else if !reference.scalar_id_matches {
+            Some(Reason::UnprovenEndpointValue)
         } else {
             None
         };

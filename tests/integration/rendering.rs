@@ -1,6 +1,24 @@
 mod support;
 
 #[test]
+fn referenced_ids_with_different_planned_values_keep_route_cards() {
+    let mut input: serde_json::Value =
+        serde_json::from_slice(include_bytes!("../fixtures/routes-plan.json")).unwrap();
+    input["resource_changes"][2]["change"]["after"]["gateway_id"] =
+        "TOP_SECRET_OTHER_GATEWAY".into();
+    let bytes = input.to_string();
+    let output = support::run_with_args(bytes.as_bytes(), &["--diagnostics"]);
+    assert!(output.status.success());
+    let svg = String::from_utf8(output.stdout).unwrap();
+    let stderr = String::from_utf8(output.stderr).unwrap();
+    assert!(!svg.contains("association; replace: aws_route.default"));
+    assert!(svg.contains("data-terraform-address=\"aws_route.default\""));
+    assert!(svg.contains("association; create: aws_route.second"));
+    assert!(stderr.contains("planned endpoint value is not proven"));
+    assert!(!format!("{svg}{stderr}").contains("TOP_SECRET"));
+}
+
+#[test]
 fn route_fallback_diagnostics_explain_rejections_without_exposing_values() {
     for (case, reason) in [
         (0, "attribute has no resolvable resource reference"),
