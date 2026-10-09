@@ -5,7 +5,7 @@ use crate::semantic::Input;
 use std::collections::BTreeSet;
 
 #[cfg(test)]
-#[path = "../../../tests/unit/semantic/indirect.rs"]
+#[path = "../../../../tests/unit/semantic/indirect.rs"]
 mod tests;
 
 fn static_reference<'a>(
@@ -26,7 +26,7 @@ fn static_reference<'a>(
 }
 
 /// Resolve both hops identically for placement and fallback diagnostics.
-pub(in crate::semantic) fn resolved_subnets(raw: &Input, target: usize) -> Option<&[usize]> {
+pub(in crate::provider::aws) fn resolved_subnets(raw: &Input, target: usize) -> Option<&[usize]> {
     let group_ref = static_reference(raw, target, "db_subnet_group_name")?;
     let [group] = group_ref.sources.as_slice() else {
         return None;

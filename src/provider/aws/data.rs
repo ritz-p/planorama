@@ -1,7 +1,7 @@
 use crate::model::{EntityMode, Graph};
 
 #[cfg(test)]
-#[path = "../../tests/unit/semantic/data.rs"]
+#[path = "../../../tests/unit/semantic/data.rs"]
 mod tests;
 
 pub(super) fn visible(mut graph: Graph) -> Graph {

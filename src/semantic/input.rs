@@ -1,7 +1,7 @@
 use crate::model::{AttributeReference, DriftRecord, Graph, Node, StateOutput, TerraformPlan};
 
 /// Transient classified projection owned by the semantic layer, never ingestion.
-pub(super) struct Input {
+pub(crate) struct Input {
     pub graph: Graph,
     pub attributes: Vec<AttributeReference>,
     pub graph_references: Vec<AttributeReference>,
