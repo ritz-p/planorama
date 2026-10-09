@@ -11,12 +11,13 @@ pub(super) fn collect(module: &Value, nodes: &[Node]) -> Vec<RemoteReference> {
             for reference in refs {
                 let reference = super::address::contextualize(reference, &node.address);
                 let parts = super::address::parts(&reference);
-                let Some(i) = parts
-                    .windows(2)
-                    .position(|p| p == ["data", "terraform_remote_state"])
-                else {
+                let mut i = 0;
+                while i + 1 < parts.len() && parts[i] == "module" && !parts[i + 1].is_empty() {
+                    i += 2;
+                }
+                if parts.get(i..i + 2) != Some(&["data", "terraform_remote_state"][..]) {
                     continue;
-                };
+                }
                 if parts.len() != i + 5 || parts[i + 3] != "outputs" {
                     continue;
                 }
@@ -44,6 +45,8 @@ fn walk(module: &Value, scope: &str, found: &mut BTreeMap<String, BTreeSet<Strin
         if let Some(address) = resource["address"].as_str() {
             let mut refs = BTreeSet::new();
             super::references::references(&resource["expressions"], &mut refs);
+            super::references::references(&resource["count_expression"], &mut refs);
+            super::references::references(&resource["for_each_expression"], &mut refs);
             found.insert(
                 super::references::qualify(scope, address),
                 refs.into_iter()
@@ -58,5 +61,23 @@ fn walk(module: &Value, scope: &str, found: &mut BTreeMap<String, BTreeSet<Strin
             &super::references::qualify(scope, &format!("module.{name}")),
             found,
         );
+    }
+}
+
+#[cfg(test)]
+#[test]
+fn instance_expressions_are_collected_but_attribute_names_are_not_remote_roots() {
+    for field in ["count_expression", "for_each_expression"] {
+        let mut resource = serde_json::json!({"address":"test.app"});
+        resource[field] = serde_json::json!({"references":["data.terraform_remote_state.network.outputs.subnets"]});
+        resource["expressions"] = serde_json::json!({"input":{"references":["terraform_data.config.output.data.terraform_remote_state.name.outputs.value"]}});
+        let input = serde_json::json!({"format_version":"1.2","resource_changes":[{"address":"test.app[0]","type":"test"}],"configuration":{"root_module":{"resources":[resource]}}});
+        let raw = crate::plan::parse(&input.to_string()).unwrap();
+        assert_eq!(raw.remote_references.len(), 1);
+        assert_eq!(
+            raw.remote_references[0].remote,
+            "data.terraform_remote_state.network"
+        );
+        assert_eq!(raw.remote_references[0].consumer, "test.app[0]");
     }
 }
