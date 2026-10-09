@@ -5,8 +5,8 @@
     {"address":"aws_subnet.a","type":"aws_subnet","change":{"actions":["create"]}},
     {"address":"aws_subnet.b","type":"aws_subnet","change":{"actions":["create"]}},
     {"address":"aws_lb.app","type":"aws_lb","change":{"actions":["create"]}},
-    {"address":"aws_ecs_service.app","type":"aws_ecs_service","change":{"actions":["create"]}},
-    {"address":"aws_security_group.app","type":"aws_security_group","change":{"actions":["create"]}}
+    {"address":"aws_ecs_service.app","type":"aws_ecs_service","change":{"actions":["create"],"after_unknown":{"network_configuration":[{"security_groups":[true]}]}}},
+    {"address":"aws_security_group.app","type":"aws_security_group","change":{"actions":["create"],"after_unknown":{"id":true}}}
   ],
   "configuration":{"root_module":{"resources":[
     {"address":"aws_vpc.main"},

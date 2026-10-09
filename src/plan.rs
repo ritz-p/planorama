@@ -1,5 +1,6 @@
 mod address;
 mod attributes;
+mod collections;
 mod drift;
 mod entity;
 mod operations;
@@ -80,12 +81,13 @@ pub fn parse(json: &str) -> Result<TerraformGraph, String> {
     providers::enrich(&plan["configuration"], &mut nodes);
     let drift = drift::collect(&plan, &mut nodes)?;
     let edges = resolve(&nodes, &symbols);
-    let attributes = attributes::collect(
+    let mut attributes = attributes::collect(
         &plan["configuration"]["root_module"],
         &nodes,
         &symbols,
         false,
     );
+    collections::annotate(&plan, &nodes, &mut attributes);
     let graph_references = attributes::collect(
         &plan["configuration"]["root_module"],
         &nodes,
