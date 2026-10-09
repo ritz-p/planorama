@@ -1,6 +1,60 @@
 use serde_json::json;
 
 #[test]
+fn dynamic_and_narrowed_aliases_do_not_claim_aggregate_sources() {
+    for reference in [
+        "local.targets[var.key].id",
+        "local.targets.a",
+        "local.targets[\"a\"]",
+        "module.child.result.a",
+    ] {
+        let input = json!({"format_version":"1.2","resource_changes":[{"address":"test.a","type":"test"},{"address":"test.b","type":"test"},{"address":"test.fixed","type":"test"}],"configuration":{"root_module":{
+            "locals":{"targets":{"references":["test.a.id","test.b.id"]}},
+            "module_calls":{"child":{"expressions":{"input":{"references":["test.a.id","test.b.id"]}},"module":{"outputs":{"result":{"expression":{"references":["var.input"]}}}}}},
+            "outputs":{"x":{"expression":{"references":[reference,"test.fixed.id"]}}}
+        }}});
+        let raw = crate::plan::parse(&input.to_string()).unwrap();
+        assert!(!raw.outputs[0].complete, "{reference}");
+        assert_eq!(raw.outputs[0].sources, vec!["test.fixed"], "{reference}");
+    }
+}
+
+#[test]
+fn whole_module_output_only_follows_exported_values() {
+    for constant in [false, true] {
+        let expression = if constant {
+            json!({"constant_value":"safe"})
+        } else {
+            json!({"references":["test.a.id"]})
+        };
+        let input = json!({"format_version":"1.2","resource_changes":[{"address":"module.child[0].test.a","type":"test"},{"address":"module.child[0].test.internal","type":"test"}],"configuration":{"root_module":{
+            "module_calls":{"child":{"module":{"resources":[{"address":"test.a"},{"address":"test.internal"}],"outputs":{"result":{"expression":expression}}}}},
+            "outputs":{"x":{"expression":{"references":["module.child[0]"]}}}
+        }}});
+        let raw = crate::plan::parse(&input.to_string()).unwrap();
+        assert_eq!(raw.outputs[0].complete, !constant);
+        assert_eq!(
+            raw.outputs[0].sources,
+            if constant {
+                vec![]
+            } else {
+                vec!["module.child[0].test.a"]
+            }
+        );
+    }
+}
+
+#[test]
+fn split_selectors_do_not_choose_a_single_collection_instance() {
+    for selector in ["var.key", "count.index", "each.key"] {
+        let input = json!({"format_version":"1.2","variables":{"key":{}},"resource_changes":[{"address":"test.pool[0]","type":"test"},{"address":"test.fixed","type":"test"}],"configuration":{"root_module":{"outputs":{"x":{"expression":{"references":["test.pool",selector,"test.fixed.id"]}}}}}});
+        let raw = crate::plan::parse(&input.to_string()).unwrap();
+        assert!(!raw.outputs[0].complete);
+        assert_eq!(raw.outputs[0].sources, vec!["test.fixed"]);
+    }
+}
+
+#[test]
 fn absent_resources_are_not_aliases_and_exact_sources_survive_ambiguity() {
     let input = json!({"format_version":"1.2","resource_changes":[
         {"address":"test.fixed","type":"test"}, {"address":"test.pool[0]","type":"test"},{"address":"test.pool[1]","type":"test"}
