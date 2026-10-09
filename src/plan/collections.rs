@@ -125,6 +125,22 @@ pub(super) fn annotate(plan: &Value, nodes: &[Node], references: &mut [Attribute
             })
             .collect();
         let (value, unknown) = evidence[reference.target];
+        if let [source] = reference.sources.as_slice() {
+            let (source_value, source_unknown) = evidence[*source];
+            // Unknown values do not prove identity: a conditional can return
+            // an unrelated ID even when every resource traversal ends in .id.
+            if !reference.attribute.contains('.')
+                && unknown != &Value::Bool(true)
+                && source_unknown != &Value::Bool(true)
+            {
+                if let (Some(Id::Known(actual)), Some(Id::Known(expected))) = (
+                    id(&value[&reference.attribute], &unknown[&reference.attribute]),
+                    id(&source_value["id"], &source_unknown["id"]),
+                ) {
+                    reference.scalar_id_matches = !actual.is_empty() && actual == expected;
+                }
+            }
+        }
         let observed = collection(
             value,
             unknown,

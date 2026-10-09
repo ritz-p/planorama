@@ -33,34 +33,31 @@ pub(super) fn lower(raw: &TerraformGraph) -> Graph {
     }
     let mut replacements = BTreeMap::new();
     for (index, node) in raw.nodes.iter().enumerate() {
-        if node.role != ResourceRole::Association
+        if (node.role != ResourceRole::Association && node.resource_type != "aws_route")
             || !node.provider.is_aws()
             || node.mode != EntityMode::Managed
+            || node.deposed_key.is_some()
         {
             continue;
         }
-        let Some([(from_attribute, from_type), (to_attribute, to_type)]) =
-            rule(&node.resource_type)
-        else {
-            continue;
+        let endpoints = if node.resource_type == "aws_route" {
+            // Invalid routes stay visible; --diagnostics exposes the same failure.
+            super::routes::endpoints(raw, index).ok()
+        } else {
+            rule(&node.resource_type).and_then(
+                |[(from_attribute, from_type), (to_attribute, to_type)]| {
+                    endpoint(raw, index, from_attribute, from_type).zip(endpoint(
+                        raw,
+                        index,
+                        to_attribute,
+                        to_type,
+                    ))
+                },
+            )
         };
-        let endpoints = endpoint(raw, index, from_attribute, from_type).zip(endpoint(
-            raw,
-            index,
-            to_attribute,
-            to_type,
-        ));
         if let Some((from, to)) = endpoints {
             let incident = &incident_edges[index];
-            if incident.len() == 2
-                && incident.iter().all(|e| {
-                    e.to == index
-                        && e.kind == EdgeKind::Dependency
-                        && (e.from == from || e.from == to)
-                })
-                && incident.iter().any(|e| e.from == from)
-                && incident.iter().any(|e| e.from == to)
-            {
+            if can_lower(index, from, to, incident) {
                 replacements.insert(
                     index,
                     Edge {
@@ -116,7 +113,16 @@ pub(super) fn lower(raw: &TerraformGraph) -> Graph {
     }
 }
 
-fn endpoint(
+pub(super) fn can_lower(index: usize, from: usize, to: usize, incident: &[&Edge]) -> bool {
+    incident.len() == 2
+        && incident.iter().all(|e| {
+            e.to == index && e.kind == EdgeKind::Dependency && (e.from == from || e.from == to)
+        })
+        && incident.iter().any(|e| e.from == from)
+        && incident.iter().any(|e| e.from == to)
+}
+
+pub(super) fn endpoint(
     raw: &TerraformGraph,
     target: usize,
     attribute: &str,
