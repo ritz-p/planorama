@@ -1,4 +1,5 @@
 use super::{Bounds, Point, Scorer, crosses};
+use crate::layout::Side;
 use std::cmp::Reverse;
 use std::collections::BinaryHeap;
 
@@ -12,20 +13,27 @@ pub(in crate::layout) fn find_path(
     obstacles: &[Bounds],
     scorer: Option<&Scorer>,
 ) -> Vec<Point> {
-    search(start, end, obstacles, scorer, true)
+    search(
+        start,
+        end,
+        obstacles,
+        scorer,
+        Some((Side::Right, Side::Right)),
+    )
+    .expect("nested layout leaves routing corridors around every card")
 }
 
 pub(in crate::layout) fn to_margin(start: Point, end: Point, obstacles: &[Bounds]) -> Vec<Point> {
-    search(start, end, obstacles, None, false)
+    search(start, end, obstacles, None, None).expect("state margin is reachable")
 }
 
-fn search(
+pub(super) fn search(
     start: Point,
     end: Point,
     obstacles: &[Bounds],
     scorer: Option<&Scorer>,
-    fixed_ports: bool,
-) -> Vec<Point> {
+    ports: Option<(Side, Side)>,
+) -> Option<Vec<Point>> {
     let mut xs = vec![start.x, end.x];
     let mut ys = vec![start.y, end.y];
     for bounds in obstacles {
@@ -58,8 +66,14 @@ fn search(
     // Retain arrival direction so bend penalties preserve optimal substructure.
     let mut distances = vec![u128::MAX; xs.len() * ys.len() * 3];
     let mut previous = vec![None; distances.len()];
-    // The source stub is horizontal, so an initial vertical step is a bend.
-    let initial = first * 3 + 1;
+    // Arrival direction includes the selected source stub's axis.
+    let direction = |side| match side {
+        Side::Left | Side::Right => 1,
+        Side::Top | Side::Bottom => 2,
+    };
+    let (initial_direction, final_direction) =
+        ports.map_or((1, 1), |(a, b)| (direction(a), direction(b)));
+    let initial = first * 3 + initial_direction;
     let mut queue = BinaryHeap::from([Reverse((0, initial))]);
     distances[initial] = 0;
     let mut final_state = None;
@@ -81,9 +95,11 @@ fn search(
         ];
         for next in neighbors.into_iter().flatten() {
             let (a, b) = (point(current), point(next));
-            // The caller attaches a rightward source stub and a leftward
-            // target stub. Do not reverse over either fixed segment.
-            if fixed_ports && ((current == first && b.x < a.x) || (next == last && a.x < b.x)) {
+            // Do not reverse over either selected endpoint's outward stub.
+            if ports.is_some_and(|(source, target)| {
+                (current == first && reverses(source, a, b))
+                    || (next == last && reverses(target, b, a))
+            }) {
                 continue;
             }
             if obstacles.iter().any(|&bounds| crosses(a, b, bounds)) {
@@ -97,8 +113,8 @@ fn search(
                     } else {
                         0
                     }
-                    + if next == last && next_direction == 1 {
-                        s.junction_cost(b, true)
+                    + if next == last && next_direction == final_direction {
+                        s.junction_cost(b, final_direction == 1)
                     } else {
                         0
                     }
@@ -107,10 +123,10 @@ fn search(
                     } else {
                         0
                     }
-                    // Include the horizontal target stub before queueing the
+                    // Include the selected target stub before queueing the
                     // terminal state; otherwise early exit can pick a worse
                     // arrival direction even when a cheaper one is pending.
-                    + if next == last && next_direction != 1 { 24 } else { 0 }
+                    + if next == last && next_direction != final_direction { 24 } else { 0 }
             });
             let candidate =
                 distance + a.x.abs_diff(b.x) as u128 + a.y.abs_diff(b.y) as u128 + penalty;
@@ -122,12 +138,24 @@ fn search(
             }
         }
     }
-    let mut state = final_state.expect("nested layout leaves routing corridors around every card");
+    let mut state = final_state?;
     let mut path = vec![end];
     while state != initial {
         state = previous[state].expect("reachable grid state has a predecessor");
         path.push(point(state / 3));
     }
     path.reverse();
-    super::simplify(path, super::Simplification::CollapseCollinear)
+    Some(super::simplify(
+        path,
+        super::Simplification::CollapseCollinear,
+    ))
+}
+
+fn reverses(side: Side, a: Point, b: Point) -> bool {
+    match side {
+        Side::Right => b.x < a.x,
+        Side::Left => b.x > a.x,
+        Side::Bottom => b.y < a.y,
+        Side::Top => b.y > a.y,
+    }
 }

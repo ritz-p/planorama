@@ -2,10 +2,6 @@
 use super::{NODE_HEIGHT, NODE_WIDTH};
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
-#[allow(
-    dead_code,
-    reason = "All four sides are the port contract; side selection follows in #81"
-)]
 pub(crate) enum Side {
     Left,
     Right,
@@ -17,6 +13,23 @@ pub(crate) enum Side {
 pub(crate) struct Port {
     pub point: Point,
     pub side: Side,
+}
+impl Port {
+    pub fn outward(self, distance: usize) -> Point {
+        let Point { x, y } = self.point;
+        match self.side {
+            Side::Left => Point {
+                x: x.saturating_sub(distance),
+                y,
+            },
+            Side::Right => Point { x: x + distance, y },
+            Side::Top => Point {
+                x,
+                y: y.saturating_sub(distance),
+            },
+            Side::Bottom => Point { x, y: y + distance },
+        }
+    }
 }
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct Point {

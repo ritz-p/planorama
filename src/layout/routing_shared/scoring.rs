@@ -25,6 +25,11 @@ pub(in crate::layout) struct Scorer {
 }
 
 impl Scorer {
+    pub(in crate::layout) fn uses_endpoint(&self, point: Point) -> bool {
+        self.paths
+            .iter()
+            .any(|path| path.first() == Some(&point) || path.last() == Some(&point))
+    }
     pub(in crate::layout) fn overlaps(&self, points: &[Point]) -> bool {
         points.windows(2).any(|pair| {
             let (a, b) = (pair[0], pair[1]);

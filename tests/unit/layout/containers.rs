@@ -719,8 +719,9 @@ fn high_degree_ports_expand_headers_and_remain_distinct_inside_parent_bounds() {
             let layout = Layout::new(&graph);
             let mut ports = [BTreeSet::new(), BTreeSet::new()];
             for (edge, path) in graph.edges[2..].iter().zip(&layout.paths[2..]) {
-                assert!(ports[edge.from - 1].insert(path[0].y));
-                assert!(ports[edge.to - 1].insert(path.last().unwrap().y));
+                assert!(ports[edge.from - 1].insert((path[0].x, path[0].y)));
+                let last = path.last().unwrap();
+                assert!(ports[edge.to - 1].insert((last.x, last.y)));
             }
             verify(&graph);
         }
@@ -885,13 +886,17 @@ fn verify(graph: &Graph) {
             (edge.to, path.last().unwrap()),
         ] {
             let bounds = layout.bounds[node];
+            let vertical = (point.x == bounds.right() || point.x == bounds.origin.x)
+                && point.y > bounds.origin.y
+                && point.y < bounds.origin.y + bounds.height;
+            let horizontal = (point.y == bounds.origin.y
+                || point.y == bounds.origin.y + bounds.height)
+                && point.x > bounds.origin.x
+                && point.x < bounds.right();
             assert!(
-                point.x == bounds.right()
-                    || (node == edge.to
-                        && edge.kind == EdgeKind::Connection
-                        && point.x == bounds.origin.x)
+                vertical || horizontal,
+                "port {point:?} is not on {bounds:?}"
             );
-            assert!(point.y > bounds.origin.y && point.y < bounds.origin.y + bounds.height);
         }
     }
     for (edge, path) in graph
@@ -900,14 +905,21 @@ fn verify(graph: &Graph) {
         .zip(&layout.paths)
         .filter(|(_, path)| !path.is_empty())
     {
-        assert_eq!(path[0].y, path[1].y);
-        assert!(path[0].x < path[1].x);
         let last = path.len() - 1;
-        assert_eq!(path[last].y, path[last - 1].y);
-        if path[last].x == layout.bounds[edge.to].origin.x {
-            assert!(path[last].x > path[last - 1].x);
-        } else {
-            assert!(path[last].x < path[last - 1].x);
+        for (node, port, outside) in [
+            (edge.from, path[0], path[1]),
+            (edge.to, path[last], path[last - 1]),
+        ] {
+            let bounds = layout.bounds[node];
+            if port.x == bounds.origin.x {
+                assert!(outside.x < port.x && outside.y == port.y);
+            } else if port.x == bounds.right() {
+                assert!(outside.x > port.x && outside.y == port.y);
+            } else if port.y == bounds.origin.y {
+                assert!(outside.y < port.y && outside.x == port.x);
+            } else {
+                assert!(outside.y > port.y && outside.x == port.x);
+            }
         }
     }
     for &parent in &layout.containers {
