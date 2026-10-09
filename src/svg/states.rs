@@ -46,7 +46,8 @@ pub fn render_states(architecture: &Architecture, format: super::AddressFormat) 
         width = width.max(layout.width);
         let (_, height) = super::dimensions(graph, &layout);
         let prefix = prefix(id);
-        let check_offset = if graph.checks.is_empty() { 0 } else { 24 };
+        let check_offset =
+            if graph.checks.is_empty() { 0 } else { 24 } + super::legend::height(graph);
         obstacles.insert(
             id.clone(),
             StateObstacles {
@@ -216,7 +217,8 @@ fn cross_state_paths_avoid_intervening_cards_and_describe_dependencies() {
     let local = Layout::new(&graph);
     assert!(local.bounds[0].right() < local.bounds[1].right());
     let (_, height) = super::dimensions(&graph, &local);
-    let obstacles: Vec<_> = [100, 100 + height + 60]
+    let offset = 100 + super::legend::height(&graph);
+    let obstacles: Vec<_> = [offset, offset + height + 60]
         .into_iter()
         .flat_map(|offset| {
             local.bounds.iter().map(move |b| {
