@@ -4,7 +4,7 @@ use std::collections::{BTreeMap, BTreeSet};
 
 pub(super) fn collect(module: &Value, nodes: &[TerraformEntity]) -> Vec<RemoteReference> {
     let mut expressions = BTreeMap::new();
-    walk(module, "", &mut expressions);
+    walk(module, "", &BTreeSet::new(), &mut expressions);
     let mut result = BTreeSet::new();
     for node in nodes.iter().filter(|n| n.deposed_key.is_none()) {
         if let Some(refs) = expressions.get(&super::address::static_address(&node.address)) {
@@ -40,27 +40,80 @@ pub(super) fn collect(module: &Value, nodes: &[TerraformEntity]) -> Vec<RemoteRe
     result.into_iter().collect()
 }
 
-fn walk(module: &Value, scope: &str, found: &mut BTreeMap<String, BTreeSet<String>>) {
+fn walk(
+    module: &Value,
+    scope: &str,
+    inherited: &BTreeSet<String>,
+    found: &mut BTreeMap<String, BTreeSet<String>>,
+) {
     for resource in module["resources"].as_array().into_iter().flatten() {
         if let Some(address) = resource["address"].as_str() {
             let mut refs = BTreeSet::new();
             super::references::references(&resource["expressions"], &mut refs);
             super::references::references(&resource["count_expression"], &mut refs);
             super::references::references(&resource["for_each_expression"], &mut refs);
-            found.insert(
-                super::references::qualify(scope, address),
-                refs.into_iter()
-                    .map(|r| super::references::qualify(scope, &r))
-                    .collect(),
-            );
+            let mut qualified: BTreeSet<_> = refs
+                .into_iter()
+                .map(|r| super::references::qualify(scope, &r))
+                .collect();
+            qualified.extend(inherited.iter().cloned());
+            found.insert(super::references::qualify(scope, address), qualified);
         }
     }
     for (name, call) in module["module_calls"].as_object().into_iter().flatten() {
+        let mut call_refs = BTreeSet::new();
+        super::references::references(&call["count_expression"], &mut call_refs);
+        super::references::references(&call["for_each_expression"], &mut call_refs);
+        let mut dependencies = inherited.clone();
+        dependencies.extend(
+            call_refs
+                .into_iter()
+                .map(|r| super::references::qualify(scope, &r)),
+        );
         walk(
             &call["module"],
             &super::references::qualify(scope, &format!("module.{name}")),
+            &dependencies,
             found,
         );
+    }
+}
+
+#[cfg(test)]
+#[test]
+fn module_instance_references_reach_nested_resources_in_the_original_scope() {
+    for field in ["count_expression", "for_each_expression"] {
+        let mut outer = serde_json::json!({"module":{"module_calls":{"inner":{"module":{"resources":[{"address":"test.a"},{"address":"test.b"}]}}}}});
+        outer[field] =
+            serde_json::json!({"references":["data.terraform_remote_state.root.outputs.count"]});
+        outer["module"]["module_calls"]["inner"][field] =
+            serde_json::json!({"references":["data.terraform_remote_state.local.outputs.keys"]});
+        let addresses = [
+            "module.outer[0].module.inner[\"blue\"].test.a",
+            "module.outer[0].module.inner[\"blue\"].test.b",
+        ];
+        let changes: Vec<_> = addresses
+            .iter()
+            .map(|address| serde_json::json!({"address":address,"type":"test"}))
+            .collect();
+        let input = serde_json::json!({"format_version":"1.2","resource_changes":changes,"configuration":{"root_module":{"module_calls":{"outer":outer}}}});
+        let raw = crate::plan::parse(&input.to_string()).unwrap();
+        assert_eq!(raw.remote_references.len(), 4);
+        for address in addresses {
+            let remotes: BTreeSet<_> = raw
+                .remote_references
+                .iter()
+                .filter(|r| r.consumer == address)
+                .map(|r| r.remote.as_str())
+                .collect();
+            assert_eq!(
+                remotes,
+                BTreeSet::from([
+                    "data.terraform_remote_state.root",
+                    "module.outer[0].data.terraform_remote_state.local"
+                ])
+            );
+        }
     }
 }
 

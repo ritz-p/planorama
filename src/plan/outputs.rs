@@ -68,11 +68,18 @@ fn remove_resource_bindings(
     }
     if let Some(calls) = module["module_calls"].as_object() {
         for (name, call) in calls {
-            remove_resource_bindings(
-                &call["module"],
-                &super::references::qualify(scope, &format!("module.{name}")),
-                aliases,
-            );
+            let child = super::references::qualify(scope, &format!("module.{name}"));
+            // A module value exposes its outputs, never its internal resources.
+            let outputs = call["module"]["outputs"]
+                .as_object()
+                .into_iter()
+                .flatten()
+                .map(|(name, _)| {
+                    super::references::qualify_reference("", &format!("{child}.{name}"))
+                })
+                .collect();
+            aliases.insert(child.clone(), outputs);
+            remove_resource_bindings(&call["module"], &child, aliases);
         }
     }
 }
