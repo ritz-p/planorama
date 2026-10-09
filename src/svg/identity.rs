@@ -1,6 +1,14 @@
 use crate::model::Node;
 use std::fmt::Write;
 
+pub(super) fn architecture(id: &crate::model::ArchitectureId) -> String {
+    let mut encoded = String::from("architecture-");
+    for byte in id.as_str().bytes() {
+        write!(encoded, "{byte:02x}").unwrap();
+    }
+    encoded
+}
+
 pub(super) fn resource(node: &Node) -> String {
     let mut id = String::from("resource-");
     for byte in node.address.bytes() {

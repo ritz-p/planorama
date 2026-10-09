@@ -34,6 +34,7 @@ No AWS endorsement is implied. Consult the AWS terms for other uses.
 <g font-family="ui-monospace, SFMono-Regular, Consolas, monospace">
 <text x="40" y="45" font-size="25" font-weight="700" fill="#0f172a">Terraform plan</text>
 <text x="40" y="73" font-size="13" fill="#475569">2 resources · 1 reference edges · dependency → dependent</text>
+<metadata id="state-6170706c69636174696f6e-architecture-entities">[{&quot;id&quot;:&quot;terraform:6177735f696e7374616e63652e617070-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_instance.app&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:6177735f73656375726974795f67726f75702e617070-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_security_group.app&quot;,&quot;deposed_key&quot;:null}]}]</metadata>
 <rect x="40" y="100" width="12" height="12" fill="#ecfdf5" stroke="#047857"/><text x="59" y="111" font-size="12" fill="#047857">create (2)</text>
 <rect x="180" y="100" width="12" height="12" fill="#eff6ff" stroke="#1d4ed8"/><text x="199" y="111" font-size="12" fill="#1d4ed8">update (0)</text>
 <rect x="320" y="100" width="12" height="12" fill="#fef2f2" stroke="#b91c1c"/><text x="339" y="111" font-size="12" fill="#b91c1c">delete (0)</text>
@@ -50,12 +51,12 @@ No AWS endorsement is implied. Consult the AWS terms for other uses.
 <g transform="translate(0 24)">
 <rect x="35" y="160" width="970" height="200" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-dasharray="5 4"/><text x="52" y="185" font-size="13" font-weight="700" fill="#475569"><title>root</title>root</text>
 <path d="M 380 256 L 480 256 " data-edge-kind="dependency" data-source="state-6170706c69636174696f6e-resource-6177735f73656375726974795f67726f75702e617070-current" data-target="state-6170706c69636174696f6e-resource-6177735f696e7374616e63652e617070-current" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#state-6170706c69636174696f6e-arrow)"><title>aws_security_group.app → aws_instance.app</title></path>
-<g id="state-6170706c69636174696f6e-resource-6177735f696e7374616e63652e617070-current" data-qualified-address="module.root.aws_instance.app" data-terraform-address="aws_instance.app"><title>module.root.aws_instance.app — create</title>
+<g id="state-6170706c69636174696f6e-resource-6177735f696e7374616e63652e617070-current" data-architecture-id="terraform:6177735f696e7374616e63652e617070-current" data-qualified-address="module.root.aws_instance.app" data-terraform-address="aws_instance.app"><title>module.root.aws_instance.app — create</title>
 <rect x="480" y="208" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text x="492" y="228" font-size="11" fill="#047857">aws_instance · create</text>
 <use href="#state-6170706c69636174696f6e-planorama-icon-aws-ec2" x="492" y="236" width="24" height="24" aria-hidden="true"/><text x="524" y="253" font-size="13" fill="#0f172a">module.root.aws_instance.app</text>
 </g>
-<g id="state-6170706c69636174696f6e-resource-6177735f73656375726974795f67726f75702e617070-current" data-qualified-address="module.root.aws_security_group.app" data-terraform-address="aws_security_group.app"><title>module.root.aws_security_group.app — create</title>
+<g id="state-6170706c69636174696f6e-resource-6177735f73656375726974795f67726f75702e617070-current" data-architecture-id="terraform:6177735f73656375726974795f67726f75702e617070-current" data-qualified-address="module.root.aws_security_group.app" data-terraform-address="aws_security_group.app"><title>module.root.aws_security_group.app — create</title>
 <rect x="60" y="208" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text x="72" y="228" font-size="11" fill="#047857">aws_security_group · create</text>
 <use href="#state-6170706c69636174696f6e-planorama-icon-aws-vpc" x="72" y="236" width="24" height="24" aria-hidden="true"/><text x="104" y="253" font-size="13" fill="#0f172a">module.root.aws_security_group.ap</text>
@@ -99,6 +100,7 @@ No AWS endorsement is implied. Consult the AWS terms for other uses.
 <g font-family="ui-monospace, SFMono-Regular, Consolas, monospace">
 <text x="40" y="45" font-size="25" font-weight="700" fill="#0f172a">Terraform plan</text>
 <text x="40" y="73" font-size="13" fill="#475569">3 resources · 1 reference edges · dependency → dependent</text>
+<metadata id="state-6e6574776f726b-architecture-entities">[{&quot;id&quot;:&quot;terraform:6177735f696e7374616e63652e617070-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_instance.app&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:6177735f73656375726974795f67726f75702e617070-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_security_group.app&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:6177735f73656375726974795f67726f75702e617070-deposed-6f6c64&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_security_group.app&quot;,&quot;deposed_key&quot;:&quot;old&quot;}]}]</metadata>
 <rect x="40" y="100" width="12" height="12" fill="#ecfdf5" stroke="#047857"/><text x="59" y="111" font-size="12" fill="#047857">create (0)</text>
 <rect x="180" y="100" width="12" height="12" fill="#eff6ff" stroke="#1d4ed8"/><text x="199" y="111" font-size="12" fill="#1d4ed8">update (1)</text>
 <rect x="320" y="100" width="12" height="12" fill="#fef2f2" stroke="#b91c1c"/><text x="339" y="111" font-size="12" fill="#b91c1c">delete (1)</text>
@@ -114,19 +116,19 @@ No AWS endorsement is implied. Consult the AWS terms for other uses.
 <g transform="translate(0 24)">
 <rect x="35" y="160" width="970" height="344" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-dasharray="5 4"/><text x="52" y="185" font-size="13" font-weight="700" fill="#475569"><title>root</title>root</text>
 <path d="M 380 256 L 480 256 " data-edge-kind="dependency" data-source="state-6e6574776f726b-resource-6177735f73656375726974795f67726f75702e617070-current" data-target="state-6e6574776f726b-resource-6177735f696e7374616e63652e617070-current" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#state-6e6574776f726b-arrow)"><title>aws_security_group.app → aws_instance.app</title></path>
-<g id="state-6e6574776f726b-resource-6177735f696e7374616e63652e617070-current" data-qualified-address="module.root.aws_instance.app" data-terraform-address="aws_instance.app"><title>module.root.aws_instance.app — unchanged</title>
+<g id="state-6e6574776f726b-resource-6177735f696e7374616e63652e617070-current" data-architecture-id="terraform:6177735f696e7374616e63652e617070-current" data-qualified-address="module.root.aws_instance.app" data-terraform-address="aws_instance.app"><title>module.root.aws_instance.app — unchanged</title>
 <rect x="480" y="208" width="320" height="96" rx="8" fill="#f8fafc" stroke="#64748b" stroke-width="1.5" data-mode="managed"/>
 <text x="492" y="228" font-size="11" fill="#64748b">aws_instance · unchanged</text>
 <use href="#state-6e6574776f726b-planorama-icon-aws-ec2" x="492" y="236" width="24" height="24" aria-hidden="true"/><text x="524" y="253" font-size="13" fill="#0f172a">module.root.aws_instance.app</text>
 </g>
-<g id="state-6e6574776f726b-resource-6177735f73656375726974795f67726f75702e617070-current" data-qualified-address="module.root.aws_security_group.app" data-terraform-address="aws_security_group.app"><title>module.root.aws_security_group.app — update</title>
+<g id="state-6e6574776f726b-resource-6177735f73656375726974795f67726f75702e617070-current" data-architecture-id="terraform:6177735f73656375726974795f67726f75702e617070-current" data-qualified-address="module.root.aws_security_group.app" data-terraform-address="aws_security_group.app"><title>module.root.aws_security_group.app — update</title>
 <rect x="60" y="208" width="320" height="96" rx="8" fill="#eff6ff" stroke="#1d4ed8" stroke-width="1.5" data-mode="managed"/>
 <text x="72" y="228" font-size="11" fill="#1d4ed8">aws_security_group · update</text>
 <use href="#state-6e6574776f726b-planorama-icon-aws-vpc" x="72" y="236" width="24" height="24" aria-hidden="true"/><text x="104" y="253" font-size="13" fill="#0f172a">module.root.aws_security_group.ap</text>
 <text x="104" y="273" font-size="13" fill="#0f172a">p</text>
 <text x="72" y="292" font-size="10" fill="#64748b" data-role="policy"><title>root</title>policy · root</text>
 </g>
-<g id="state-6e6574776f726b-resource-6177735f73656375726974795f67726f75702e617070-deposed-6f6c64" data-qualified-address="module.root.aws_security_group.app" data-terraform-address="aws_security_group.app" data-deposed-key="old"><title>module.root.aws_security_group.app — delete</title>
+<g id="state-6e6574776f726b-resource-6177735f73656375726974795f67726f75702e617070-deposed-6f6c64" data-architecture-id="terraform:6177735f73656375726974795f67726f75702e617070-deposed-6f6c64" data-qualified-address="module.root.aws_security_group.app" data-terraform-address="aws_security_group.app" data-deposed-key="old"><title>module.root.aws_security_group.app — delete</title>
 <rect x="60" y="352" width="320" height="96" rx="8" fill="#fef2f2" stroke="#b91c1c" stroke-width="1.5" data-mode="managed"/>
 <text x="72" y="372" font-size="11" fill="#b91c1c">aws_security_group · delete</text>
 <use href="#state-6e6574776f726b-planorama-icon-aws-vpc" x="72" y="380" width="24" height="24" aria-hidden="true"/><text x="104" y="397" font-size="13" fill="#0f172a">module.root.aws_security_group.ap</text>

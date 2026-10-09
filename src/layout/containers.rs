@@ -74,7 +74,7 @@ fn place_with_affinity(graph: &Graph, enabled: bool) -> Layout<'_> {
             (
                 graph.nodes[node].resource_address().local(),
                 keys[node],
-                graph.nodes[node].address.as_str(),
+                graph.nodes[node].entity.id.as_str(),
             )
         });
     }
