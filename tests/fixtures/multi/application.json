@@ -1,0 +1,11 @@
+{
+  "format_version":"1.2","applyable":false,"complete":false,"errored":true,
+  "resource_changes":[
+    {"address":"aws_security_group.app","type":"aws_security_group","change":{"actions":["create"]}},
+    {"address":"aws_instance.app","type":"aws_instance","change":{"actions":["create"]}}
+  ],
+  "configuration":{"root_module":{"resources":[
+    {"address":"aws_instance.app","expressions":{"security_groups":{"references":["aws_security_group.app.id"]},"other":{"references":["aws_security_group.missing.id"]}}}
+  ]}},
+  "checks":[{"status":"fail","instances":[{"status":"fail","problems":[{"message":"TOP_SECRET"}]}]}]
+}

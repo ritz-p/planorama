@@ -18,6 +18,7 @@ name = "rendering"
 path = "tests/integration/rendering.rs"
 
 [dependencies]
+same-file = "1.0.6"
 serde_json = "1"
 
 [[test]]

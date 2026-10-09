@@ -7,7 +7,9 @@ mod operations;
 mod paths;
 mod relationships;
 mod roles;
+mod states;
 mod style;
+pub use states::render_states;
 #[cfg(test)]
 #[path = "../tests/unit/svg.rs"]
 mod tests;
@@ -43,16 +45,20 @@ pub fn render(graph: &Graph, layout: &Layout<'_>) -> String {
     render_with_format(graph, layout, AddressFormat::Qualified)
 }
 
+fn dimensions(graph: &Graph, layout: &Layout<'_>) -> (usize, usize) {
+    (
+        layout.width,
+        layout.height + if graph.checks.is_empty() { 0 } else { 24 } + components::height(graph),
+    )
+}
+
 pub fn render_with_format(
     graph: &Graph,
     layout: &Layout<'_>,
     address_format: AddressFormat,
 ) -> String {
     let check_offset = if graph.checks.is_empty() { 0 } else { 24 };
-    let (width, height) = (
-        layout.width,
-        layout.height + check_offset + components::height(graph),
-    );
+    let (width, height) = dimensions(graph, layout);
     let membership = components::membership(graph);
     let (description, summary) = relationships::captions(graph);
     let markers = relationships::markers(graph);
