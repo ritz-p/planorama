@@ -66,7 +66,7 @@ fn contains_sensitive(value: &Value) -> bool {
     }
 }
 
-fn sensitive_path(mut sensitivity: &Value, steps: &[Value]) -> bool {
+pub(super) fn sensitive_path(mut sensitivity: &Value, steps: &[Value]) -> bool {
     if sensitivity == &Value::Bool(true) {
         return true;
     }

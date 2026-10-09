@@ -18,6 +18,7 @@ pub fn transform(raw: &TerraformGraph) -> ArchitectureGraph {
         attributes: raw.attributes.clone(),
         graph_references: raw.graph_references.clone(),
         drift: raw.drift.clone(),
+        relevant_attributes: raw.relevant_attributes.clone(),
     };
     ArchitectureGraph(data::visible(associations::lower(&contained)))
 }
