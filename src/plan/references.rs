@@ -268,6 +268,7 @@ pub(super) fn resolve_sources(
     let mut active = BTreeSet::new();
     let mut sources = BTreeSet::new();
     let mut complete = !pending.is_empty();
+    let mut ids_only = true;
     let mut issues = BTreeSet::new();
     while let Some((reference, exiting)) = pending.pop() {
         if exiting {
@@ -332,6 +333,7 @@ pub(super) fn resolve_sources(
         }
 
         if let Some(key) = resource_key {
+            ids_only &= normalized == format!("{key}.id") && reference.ends_with(".id");
             let matching: Vec<_> = instances
                 .iter()
                 .filter(|(address, _)| {
@@ -349,7 +351,10 @@ pub(super) fn resolve_sources(
             continue;
         }
         match binding {
-            Some((_, aliases)) if !aliases.is_empty() => {
+            Some((key, aliases)) if !aliases.is_empty() => {
+                // Selecting a field of an alias is not proof that its underlying
+                // resource ID is the selected value.
+                ids_only &= normalized == *key;
                 pending.extend(
                     aliases
                         .iter()
@@ -363,6 +368,7 @@ pub(super) fn resolve_sources(
                 complete = false;
             }
             None if normalized.starts_with("module.") => {
+                ids_only = false;
                 // A whole-module traversal denotes all matching descendants,
                 // not a choice of one endpoint. Multiplicity is expected even
                 // when other traversals in the expression remain unresolved.
@@ -389,6 +395,7 @@ pub(super) fn resolve_sources(
     Resolution {
         sources: sources.into_iter().collect(),
         complete,
+        ids_only,
         issues,
     }
 }

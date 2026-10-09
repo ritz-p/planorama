@@ -80,17 +80,22 @@ pub(super) fn annotate(plan: &Value, nodes: &[Node], references: &mut [Attribute
     let mut prior = BTreeMap::new();
     resources(&plan["prior_state"]["values"]["root_module"], &mut prior);
     resources(&plan["planned_values"]["root_module"], &mut values);
+    let changes: BTreeMap<_, _> = plan["resource_changes"]
+        .as_array()
+        .into_iter()
+        .flatten()
+        .filter_map(|change| {
+            change["address"]
+                .as_str()
+                .map(|address| ((address, change["deposed"].as_str()), change))
+        })
+        .collect();
     let evidence: Vec<_> = nodes
         .iter()
         .map(|node| {
-            let change = plan["resource_changes"]
-                .as_array()
-                .into_iter()
-                .flatten()
-                .find(|change| {
-                    change["address"].as_str() == Some(&node.address)
-                        && change["deposed"].as_str() == node.deposed_key.as_deref()
-                });
+            let change = changes
+                .get(&(node.address.as_str(), node.deposed_key.as_deref()))
+                .copied();
             let planned = values.get(node.address.as_str()).copied().or_else(|| {
                 (node.mode == crate::model::EntityMode::Data)
                     .then(|| prior.get(node.address.as_str()).copied())
@@ -108,7 +113,7 @@ pub(super) fn annotate(plan: &Value, nodes: &[Node], references: &mut [Attribute
         })
         .collect();
     for reference in references {
-        if !reference.complete || reference.sources.is_empty() {
+        if !reference.complete || !reference.ids_only || reference.sources.is_empty() {
             continue;
         }
         let expected: Option<Vec<_>> = reference

@@ -2,6 +2,40 @@ use crate::{plan, semantic};
 use serde_json::json;
 
 #[test]
+fn module_output_id_provenance_and_current_deposed_evidence_stay_distinct() {
+    for field in ["id", "vpc_id"] {
+        let mut input = json!({"format_version":"1.2","resource_changes":[
+            {"address":"module.network.aws_security_group.main","type":"aws_security_group","deposed":"old","change":{"after":{"id":"sg-old"}}},
+            {"address":"module.network.aws_security_group.main","type":"aws_security_group","change":{"after_unknown":{"id":true,"vpc_id":true}}},
+            {"address":"aws_instance.main","type":"aws_instance","change":{"after_unknown":{"vpc_security_group_ids":[true]}}}
+        ],"configuration":{"root_module":{
+            "resources":[{"address":"aws_instance.main","expressions":{"vpc_security_group_ids":{"references":["module.network.group"]}}}],
+            "module_calls":{"network":{"module":{"resources":[{"address":"aws_security_group.main"}],"outputs":{"group":{"expression":{"references":[format!("aws_security_group.main.{field}")]}}}}}}
+        }}});
+        let raw = plan::parse(&input.to_string()).unwrap();
+        let reference = raw
+            .attributes
+            .iter()
+            .find(|r| r.attribute == "vpc_security_group_ids")
+            .unwrap();
+        assert_eq!(reference.collection_ids_complete, field == "id");
+        input["resource_changes"].as_array_mut().unwrap().reverse();
+        assert_eq!(raw, plan::parse(&input.to_string()).unwrap());
+        input["configuration"]["root_module"]["resources"][0]["expressions"]["vpc_security_group_ids"]
+            ["references"] = json!(["module.network.group.other_field"]);
+        let projected = plan::parse(&input.to_string()).unwrap();
+        assert!(
+            !projected
+                .attributes
+                .iter()
+                .find(|r| r.attribute == "vpc_security_group_ids")
+                .unwrap()
+                .collection_ids_complete
+        );
+    }
+}
+
+#[test]
 fn planned_values_in_child_modules_prove_ids_without_retaining_them() {
     for mixed in [false, true] {
         let ids = if mixed {

@@ -2,6 +2,45 @@ use super::*;
 use crate::{plan, semantic};
 use serde_json::{Value, json};
 
+#[test]
+fn unknown_non_id_traversals_cannot_prove_security_group_attachments() {
+    for kind in [
+        "aws_instance",
+        "aws_lb",
+        "aws_db_instance",
+        "aws_rds_cluster",
+        "aws_ecs_service",
+        "aws_vpc_endpoint",
+    ] {
+        for field in ["id", "vpc_id", "name", "id[0]"] {
+            for alias in [false, true] {
+                let traversal = format!("aws_security_group.a.{field}");
+                let selected = if alias {
+                    "local.attachment"
+                } else {
+                    &traversal
+                };
+                let mut input = fixture(kind, json!({"references":[selected]}));
+                input["configuration"]["root_module"]["locals"] =
+                    json!({"attachment":{"references":[traversal]}});
+                input["resource_changes"][1]["change"]["after_unknown"]["vpc_id"] = json!(true);
+                input["resource_changes"][1]["change"]["after_unknown"]["name"] = json!(true);
+                let raw = plan::parse(&input.to_string()).unwrap();
+                let graph = semantic::transform(&raw);
+                assert_eq!(
+                    graph
+                        .edges
+                        .iter()
+                        .filter(|e| e.kind == EdgeKind::Connection)
+                        .count(),
+                    usize::from(field == "id"),
+                    "{kind} {field} alias={alias}"
+                );
+            }
+        }
+    }
+}
+
 fn fixture(kind: &str, expression: Value) -> Value {
     let count = expression["references"].as_array().map_or(0, Vec::len);
     let mut expressions = json!({});
