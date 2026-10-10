@@ -37,8 +37,8 @@ subnet connections. Flat diagrams with numbered relationships also use obstacle-
 search to preserve the reserved terminal corridors. Bundled edges retain individual metadata and junction markers.
 See [bundling](../examples/bundling.svg) and [spanning connections](../examples/spanning-dense.svg).
 
-Independent paths compare the existing route with facing side pairs on actual
-bounds. Outward stubs and distinct endpoint slots protect labels and high-degree
+Independent paths compare route quality on actual bounds, preferring facing
+side pairs when quality is equal. Outward stubs and distinct endpoint slots protect labels and high-degree
 ports. Unrelated cards/container interiors are obstacles; endpoint ancestors permit
 traversal outside their headers. The containment tree determines these scopes;
 peer cards and unrelated nested containers remain full obstacles. Connections
