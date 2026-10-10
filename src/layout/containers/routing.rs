@@ -62,13 +62,71 @@ pub(super) fn incidents(
     incident
 }
 
-pub(super) struct Routed {
+pub(in crate::layout) struct Routed {
     pub paths: Vec<Vec<Point>>,
     pub junctions: Vec<Point>,
 }
 
 pub(super) fn route(graph: &Graph, layout: &Layout<'_>, keys: &[usize], bundle: bool) -> Routed {
     route_impl(graph, layout, keys, true, bundle, true)
+}
+
+pub(in crate::layout) fn route_selected(
+    graph: &Graph,
+    layout: &Layout<'_>,
+    sides: &[[Side; 2]],
+) -> Routed {
+    route_selected_impl(
+        graph,
+        layout,
+        &layout.containment.keys,
+        true,
+        true,
+        true,
+        Some(sides),
+    )
+}
+
+#[test]
+fn refined_ancestor_edges_keep_allocated_sides_and_distinct_ports() {
+    let raw = crate::plan::parse(r#"{"format_version":"1.2","resource_changes":[{"address":"test.parent","type":"test"},{"address":"test.child","type":"test"}]}"#).unwrap();
+    let mut graph = crate::semantic::transform(&raw).0;
+    graph.nodes[0].role = crate::model::ResourceRole::Container;
+    graph.edges = vec![Edge {
+        kind: EdgeKind::Containment,
+        ..Edge::from((0, 1))
+    }];
+    graph.edges.extend((0..3).map(|i| Edge {
+        kind: EdgeKind::Association,
+        change: Some(crate::model::EdgeChange {
+            address: format!("test.link{i}"),
+            directionality: crate::model::Directionality::Directed,
+            action: crate::model::Action::Create,
+            previous_address: None,
+            metadata: Default::default(),
+        }),
+        ..Edge::from((0, 1))
+    }));
+    let layout = super::place_geometry(&graph, crate::layout::ContainmentTree::new(&graph), true);
+    let routed = route_selected(&graph, &layout, &[[Side::Right; 2]; 4]);
+    let mut sources = Vec::new();
+    let mut targets = Vec::new();
+    for path in &routed.paths[1..] {
+        let start = path[0];
+        let end = *path.last().unwrap();
+        assert_eq!(start.x, layout.bounds[0].right());
+        assert_eq!(end.x, layout.bounds[1].right());
+        sources.push(start.y);
+        targets.push(end.y);
+    }
+    for mut offsets in [sources, targets] {
+        offsets.sort_unstable();
+        assert!(
+            offsets
+                .windows(2)
+                .all(|p| p[1] - p[0] >= crate::layout::routing_shared::slots::MIN_SPACING)
+        );
+    }
 }
 
 #[cfg(test)]
@@ -88,6 +146,18 @@ fn route_impl(
     quality: bool,
     bundle: bool,
     shortcuts: bool,
+) -> Routed {
+    route_selected_impl(graph, layout, keys, quality, bundle, shortcuts, None)
+}
+
+fn route_selected_impl(
+    graph: &Graph,
+    layout: &Layout<'_>,
+    keys: &[usize],
+    quality: bool,
+    bundle: bool,
+    shortcuts: bool,
+    sides: Option<&[[Side; 2]]>,
 ) -> Routed {
     let geometry = |node: usize| {
         let bounds = layout.bounds[node];
@@ -110,17 +180,23 @@ fn route_impl(
         })
         .collect();
     let mut source_ports = vec![0; graph.edges.len()];
-    let (source_slots, target_slots) =
-        crate::layout::routing_shared::slots::assign(graph, &layout.bounds, &incident);
+    let (source_slots, target_slots) = crate::layout::routing_shared::slots::assign_selected(
+        graph,
+        &layout.bounds,
+        &incident,
+        sides,
+    );
     let mut target_ports = vec![0; graph.edges.len()];
     for (node, edges) in incident.iter().enumerate() {
         for &(edge, source) in edges {
+            let side = sides.map_or(Side::Right, |s| s[edge][usize::from(!source)]);
             let mut port = if source {
-                source_slots[edge][Side::Right as usize]
+                source_slots[edge][side as usize]
             } else {
-                target_slots[edge][Side::Right as usize]
+                target_slots[edge][side as usize]
             };
-            if bundle
+            if sides.is_none()
+                && bundle
                 && source
                 && graph.edges[edge].kind == EdgeKind::Connection
                 && !numbered_targets[node]
@@ -153,13 +229,14 @@ fn route_impl(
             edge.change.as_ref().map(|change| change.address.as_str()),
         )
     });
-    let terminals = numbered::Terminals::new(
+    let terminals = numbered::Terminals::with_sides(
         graph,
         layout,
         &order,
         (&source_ports, &target_ports),
         (&source_slots, &target_slots),
         quality,
+        sides,
     );
     let reservations = terminals.all();
     let mut scorer = Scorer::default();
@@ -173,7 +250,7 @@ fn route_impl(
         let edge = &graph.edges[index];
         let [start, end] = terminals.ports[index];
         let obstacles = terminals.barriers(layout, graph, index);
-        let path = if resource_edges[index] {
+        let path = if resource_edges[index] || sides.is_some() {
             crate::layout::routing_shared::ports::connect_with_clearances(
                 start,
                 end,
@@ -181,7 +258,7 @@ fn route_impl(
                 quality.then_some(scorer),
                 terminals.clearances[index],
             )
-            .expect("reserved numbered ports have a clear orthogonal corridor")
+            .unwrap_or_else(|| panic!("reserved ports have no corridor: edge={index}, start={start:?}, end={end:?}, selected={}", sides.is_some()))
         } else {
             path_with_clearance(
                 start.point,
@@ -191,7 +268,7 @@ fn route_impl(
                 [16; 2],
             )
         };
-        let path = if quality && !resource_edges[index] {
+        let path = if sides.is_none() && quality && !resource_edges[index] {
             crate::layout::routing_shared::ports::select_with_slots(
                 layout.bounds[edge.from],
                 layout.bounds[edge.to],
@@ -203,7 +280,7 @@ fn route_impl(
         } else {
             path
         };
-        if !resource_edges[index] {
+        if sides.is_none() && !resource_edges[index] {
             container_endpoint_path(layout, edge, path, &obstacles, scorer)
         } else {
             path
@@ -223,7 +300,7 @@ fn route_impl(
         if !paths[index].is_empty() {
             continue;
         }
-        if bundle && !resource_edges[index] {
+        if sides.is_none() && bundle && !resource_edges[index] {
             if let Some((group_index, group)) = groups.iter().enumerate().find(|(_, group)| {
                 group.edges.contains(&index)
                     && group

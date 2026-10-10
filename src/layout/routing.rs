@@ -37,6 +37,17 @@ fn route_impl(
     channels: &[usize],
     shortcuts: bool,
 ) -> Routed {
+    route_selected(graph, ranks, bounds, channels, shortcuts, None)
+}
+
+pub(super) fn route_selected(
+    graph: &Graph,
+    ranks: &[usize],
+    bounds: &mut [Bounds],
+    channels: &[usize],
+    shortcuts: bool,
+    sides: Option<&[[Side; 2]]>,
+) -> Routed {
     let mut source_ports = vec![0; graph.edges.len()];
     let mut target_ports = vec![0; graph.edges.len()];
     let mut sources = vec![Vec::new(); graph.nodes.len()];
@@ -57,14 +68,18 @@ fn route_impl(
         })
         .collect();
     let (source_slots, target_slots) =
-        super::routing_shared::slots::assign(graph, bounds, &incident);
+        super::routing_shared::slots::assign_selected(graph, bounds, &incident, sides);
     for (index, edge) in graph.edges.iter().enumerate() {
-        source_ports[index] = source_slots[index][Side::Right as usize];
-        target_ports[index] = target_slots[index][if ranks[edge.to] > ranks[edge.from] {
-            Side::Left
-        } else {
-            Side::Right
-        } as usize];
+        source_ports[index] =
+            source_slots[index][sides.map_or(Side::Right, |s| s[index][0]) as usize];
+        target_ports[index] = target_slots[index][sides.map_or(
+            if ranks[edge.to] > ranks[edge.from] {
+                Side::Left
+            } else {
+                Side::Right
+            },
+            |s| s[index][1],
+        ) as usize];
     }
     let bundles = Bundles::new(graph, ranks);
     let containment = super::ContainmentTree::new(graph);
@@ -172,7 +187,21 @@ fn route_impl(
             if bundles.group(edge).is_none() {
                 chosen.reserve(&mut lanes);
             }
-            let points = if bundles.group(edge).is_none() {
+            let points = if let Some(sides) = sides.filter(|_| bundles.group(edge).is_none()) {
+                let selected_start = bounds[a].port(sides[edge][0], source_ports[edge]);
+                let selected_end = bounds[b].port(sides[edge][1], target_ports[edge]);
+                if selected_start.point == start && selected_end.point == end {
+                    chosen.points
+                } else {
+                    super::routing_shared::ports::connect(
+                        selected_start,
+                        selected_end,
+                        bounds,
+                        Some(&scorer),
+                    )
+                    .expect("selected sides have an orthogonal corridor")
+                }
+            } else if bundles.group(edge).is_none() {
                 super::routing_shared::ports::select_with_slots(
                     bounds[a],
                     bounds[b],

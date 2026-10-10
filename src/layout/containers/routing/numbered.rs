@@ -12,6 +12,7 @@ pub(super) struct Terminals {
 }
 
 impl Terminals {
+    #[cfg(test)]
     pub fn new(
         graph: &Graph,
         layout: &Layout<'_>,
@@ -19,6 +20,18 @@ impl Terminals {
         offsets: (&[usize], &[usize]),
         slots: (&[[usize; 4]], &[[usize; 4]]),
         quality: bool,
+    ) -> Self {
+        Self::with_sides(graph, layout, order, offsets, slots, quality, None)
+    }
+
+    pub fn with_sides(
+        graph: &Graph,
+        layout: &Layout<'_>,
+        order: &[usize],
+        offsets: (&[usize], &[usize]),
+        slots: (&[[usize; 4]], &[[usize; 4]]),
+        quality: bool,
+        sides: Option<&[[Side; 2]]>,
     ) -> Self {
         let ends = relationship_markers::ends(graph);
         let clearance = relationship_markers::clearance(graph);
@@ -28,8 +41,9 @@ impl Terminals {
             .enumerate()
             .map(|(i, e)| {
                 [
-                    layout.bounds[e.from].port(Side::Right, offsets.0[i]),
-                    layout.bounds[e.to].port(Side::Right, offsets.1[i]),
+                    layout.bounds[e.from]
+                        .port(sides.map_or(Side::Right, |s| s[i][0]), offsets.0[i]),
+                    layout.bounds[e.to].port(sides.map_or(Side::Right, |s| s[i][1]), offsets.1[i]),
                 ]
             })
             .collect();
@@ -53,7 +67,7 @@ impl Terminals {
             clearances,
             reservations,
         };
-        if !quality {
+        if !quality || sides.is_some() {
             return result;
         }
         for &index in order {

@@ -58,6 +58,7 @@ fn update_positions(
     }
     (top, channels)
 }
+#[cfg(test)]
 pub(super) fn place<'a>(graph: &'a Graph, ranks: &[usize]) -> Placement<'a> {
     place_with_heights(graph, ranks, &vec![super::NODE_HEIGHT; graph.nodes.len()])
 }
