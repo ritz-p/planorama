@@ -71,6 +71,16 @@ impl Terminals {
                     layout.bounds[edge.from].port(a, slots.0[index][a as usize]),
                     layout.bounds[edge.to].port(b, slots.1[index][b as usize]),
                 ];
+                if pair.iter().zip(old).any(|(candidate, previous)| {
+                    candidate.point != previous.point
+                        && result.ports.iter().enumerate().any(|(other, ports)| {
+                            other != index
+                                && !represented_by_nesting(&graph.edges[other], &layout.containment)
+                                && ports.iter().any(|port| port.point == candidate.point)
+                        })
+                }) {
+                    continue;
+                }
                 let corridors =
                     ports::terminal_corridors(pair[0], pair[1], result.clearances[index]);
                 let mut protected = barriers.clone();
@@ -133,6 +143,44 @@ fn overlaps(a: Bounds, b: Bounds) -> bool {
         && b.origin.x < a.right()
         && a.origin.y < b.origin.y + b.height
         && b.origin.y < a.origin.y + a.height
+}
+
+#[test]
+fn parallel_directed_numbered_edges_keep_distinct_endpoints() {
+    use std::collections::BTreeMap;
+    let mut graph = crate::semantic::transform(
+        &crate::plan::parse(include_str!("../../../../tests/fixtures/routes-plan.json")).unwrap(),
+    )
+    .0;
+    let snapshot = |graph: &Graph| {
+        let layout = Layout::new(graph);
+        let mut endpoints = BTreeMap::new();
+        let mut paths = BTreeMap::new();
+        for (edge, path) in graph.edges.iter().zip(&layout.paths) {
+            if path.is_empty() {
+                continue;
+            }
+            for (node, point) in [(edge.from, path[0]), (edge.to, *path.last().unwrap())] {
+                assert!(
+                    endpoints.insert((node, point.x, point.y), edge).is_none(),
+                    "duplicate endpoint for {} at {point:?}",
+                    graph.nodes[node].address
+                );
+            }
+            paths.insert(
+                (
+                    edge.from,
+                    edge.to,
+                    edge.change.as_ref().map(|c| c.address.clone()),
+                ),
+                path.clone(),
+            );
+        }
+        paths
+    };
+    let original = snapshot(&graph);
+    graph.edges.reverse();
+    assert_eq!(original, snapshot(&graph));
 }
 
 #[test]
