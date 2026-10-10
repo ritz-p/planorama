@@ -14,7 +14,6 @@ pub(crate) fn reference(graph: &Graph, from: usize, to: usize) -> RelationshipPr
     }
 }
 
-/// Inference owns its evidence: never reconstruct it from arbitrary graph paths.
 pub(crate) fn record(
     graph: &mut Graph,
     from: usize,

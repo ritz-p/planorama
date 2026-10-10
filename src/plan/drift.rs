@@ -43,8 +43,6 @@ pub(super) fn collect(
         let target = match current {
             Some(index) => Some(index),
             None if changes.iter().all(|node| compatible(&changes[0], node)) => {
-                // Drift-only entries have no planned apply action. Do not copy
-                // drift actions, imports or move provenance into apply metadata.
                 let mut node = changes
                     .iter()
                     .find(|node| node.provider.is_explicit())

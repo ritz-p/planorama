@@ -60,7 +60,6 @@ pub struct Diagnostic {
     pub reason: DiagnosticReason,
 }
 
-/// Resolution details contain categories only, never expression/attribute values.
 #[derive(Default)]
 pub(crate) struct Resolution {
     pub sources: Vec<usize>,

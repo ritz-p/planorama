@@ -44,8 +44,6 @@ impl Scorer {
         })
     }
 
-    /// Crossings at a grid vertex, charged only for straight continuation.
-    /// Segment costs exclude both endpoints until the next direction is known.
     pub(in crate::layout) fn junction_cost(&self, point: Point, horizontal: bool) -> u128 {
         let (index, coordinate, along) = if horizontal {
             (&self.vertical_paths, point.x, point.y)
@@ -127,8 +125,6 @@ impl Scorer {
         self.paths.push(points);
     }
 
-    /// Search cost for a grid segment, excluding endpoint crossings.
-    /// The search charges those separately when it knows the next direction.
     pub(in crate::layout) fn segment_cost(&self, a: Point, b: Point) -> u128 {
         let horizontal = a.y == b.y;
         let (parallel, perpendicular, coordinate, from, to) = if horizontal {

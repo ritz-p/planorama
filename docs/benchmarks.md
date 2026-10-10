@@ -1,6 +1,6 @@
 # Offline pipeline benchmarks
 
-Run `cargo test --release --locked benchmarks::pipeline -- --ignored --nocapture`
+Run `docker compose exec -T dev cargo test --release --locked benchmarks::pipeline -- --ignored --nocapture`
 from the repository root. No Terraform, credentials, network or benchmark library
 is required after dependencies have been fetched. Normal tests skip measurements.
 
@@ -10,9 +10,8 @@ reference up to four preceding instances within each group, exercising routing
 without introducing random inputs. These are bounded-degree architecture graphs,
 not an all-to-all worst case. Groups do not communicate across VPCs.
 
-Set `PLANORAMA_BENCH_SIZES=100,500` to select scales and
-`PLANORAMA_BENCH_REPEATS=3` for multiple measured runs (PowerShell:
-`$env:PLANORAMA_BENCH_REPEATS='3'`). Run in release mode on an idle machine and
+Pass `-e PLANORAMA_BENCH_SIZES=100,500 -e PLANORAMA_BENCH_REPEATS=3` to
+`docker compose exec` to select scales and repeats. Run in release mode on an idle machine and
 compare medians with identical compiler, hardware, power settings and input hashes.
 
 Output includes generator version, revision/dirty state, compiler, OS, architecture,

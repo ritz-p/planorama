@@ -1,4 +1,3 @@
-//! Value-free Terraform facts. No architecture roles, components or edge kinds.
 use super::{Action, ChangeMetadata, EntityMode, ProviderConfiguration, ProviderIdentity};
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -15,7 +14,6 @@ pub struct TerraformEntity {
     pub mode: EntityMode,
 }
 
-/// Resolved source/consumer indices in this plan's entity list.
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub struct TerraformReference {
     pub from: usize,

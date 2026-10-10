@@ -22,7 +22,6 @@ pub(super) fn endpoints(raw: &Input, route: usize) -> Result<(usize, usize), Dia
     let target = targets
         .next()
         .ok_or_else(|| failure("route_target", Reason::MissingAttribute))?;
-    // Even a second literal/unsupported target makes the route ambiguous.
     if targets.next().is_some() {
         return Err(failure("route_target", Reason::AmbiguousRouteTarget));
     }

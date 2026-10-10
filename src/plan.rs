@@ -1,4 +1,3 @@
-//! Terraform JSON ingestion into domain facts; no architecture or presentation decisions.
 mod address;
 mod attributes;
 mod checks;
@@ -61,8 +60,6 @@ pub(crate) fn parse(json: &str) -> Result<TerraformPlan, String> {
         nodes.insert((address.to_owned(), node.deposed_key.clone()), node);
     }
     let mut symbols = BTreeMap::new();
-    // Real plan JSON stores root inputs outside configuration.root_module.
-    // Register names only: values are neither resource provenance nor diagnostics.
     if let Some(variables) = plan["variables"].as_object() {
         for name in variables.keys() {
             symbols.insert(format!("var.{name}"), BTreeSet::new());

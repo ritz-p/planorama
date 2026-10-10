@@ -1,4 +1,3 @@
-//! Provider-neutral rectangle and edge attachment geometry.
 use super::{NODE_HEIGHT, NODE_WIDTH};
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -45,8 +44,6 @@ pub struct Bounds {
 }
 
 impl Bounds {
-    /// Offset is measured from the top/left of this rectangle, clamped to its side.
-    /// Use `header(height)` to request ports on a container's visible header.
     pub fn port(self, side: Side, offset: usize) -> Port {
         let Point { x, y } = self.origin;
         let point = match side {

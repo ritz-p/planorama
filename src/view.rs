@@ -1,11 +1,8 @@
-//! Immutable projection of a complete architecture into a user-selected view.
-//! No Terraform parsing or semantic inference occurs in this layer.
 mod filter;
 use crate::model::architecture::{Architecture, ArchitectureGraph, Graph};
 pub use filter::Options;
 use std::ops::Deref;
 
-/// Owned projected graph; construction is restricted to this projection stage.
 pub struct ViewGraph(ArchitectureGraph);
 impl Deref for ViewGraph {
     type Target = Graph;
@@ -14,7 +11,6 @@ impl Deref for ViewGraph {
     }
 }
 
-/// State identities and cross-state provenance survive projection together.
 pub struct ViewArchitecture(Architecture);
 impl ViewArchitecture {
     pub fn relationships(&self) -> &[crate::model::architecture::CrossStateEdge] {

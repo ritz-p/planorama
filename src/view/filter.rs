@@ -163,7 +163,6 @@ pub fn apply(all: &Architecture, options: &Options) -> Result<Architecture, Stri
     if options.changed_only {
         selected.retain(|k| changed.contains(k));
     }
-    // Close over required spatial ancestry and cross-state context, not local siblings.
     loop {
         let count = selected.len();
         for (parent, child) in &parents {

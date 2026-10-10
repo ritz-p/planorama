@@ -40,7 +40,6 @@ fn collect(
             let provider = providers[key]["full_name"]
                 .as_str()
                 .map(ProviderIdentity::from_source)
-                // An explicit but unresolved binding must not imply HashiCorp AWS.
                 .unwrap_or_else(|| ProviderIdentity::from_source("unknown"));
             let configuration = ProviderConfiguration {
                 key: key.into(),

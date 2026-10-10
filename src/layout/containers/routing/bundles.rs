@@ -7,8 +7,6 @@ pub(super) struct Bundle {
     pub junctions: Vec<Point>,
 }
 
-/// Bundle only connections with one inspectable target, no change metadata,
-/// and clear branches to a shared gutter. Otherwise use independent routes.
 pub(super) fn try_bundle(
     graph: &Graph,
     layout: &Layout<'_>,
@@ -69,8 +67,6 @@ fn candidate(
             end,
         ];
         path.dedup();
-        // Sharing is intentional only within this candidate group. Occupied
-        // segments belong to other relationships and must remain distinct.
         if scorer.overlaps(&path) {
             return None;
         }
@@ -92,8 +88,6 @@ fn candidate(
         ys.push(start.y);
         paths.push((index, path));
     }
-    // A cheaper independent route may follow another target's trunk briefly.
-    // Prefer this conflict-free bundle over that ambiguous shared segment.
     if !independent_overlaps && bundled_cost >= independent_cost {
         return None;
     }

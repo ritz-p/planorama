@@ -53,8 +53,6 @@ fn route_impl(
     quality: bool,
     bundle: bool,
 ) -> Routed {
-    // Structural keys intentionally tie for symmetric nodes. Final geometry
-    // distinguishes those peers without depending on edge input order.
     let geometry = |node: usize| {
         let bounds = layout.bounds[node];
         (

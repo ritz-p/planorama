@@ -13,6 +13,13 @@ classification. Its `nodes`/`edges` fields are Terraform entities/references, no
 rendering objects. A reference has only source and consumer; it does not claim
 containment, connection or association semantics.
 
+References retain static instance keys and module scopes. Dependency resolution
+can expand unknown selections to candidate instances, while semantic rules require
+their own completeness checks. Module inputs/outputs and serialized local definitions
+are followed with cycle detection; absent local definitions cannot be reconstructed.
+Nested block fields retain dotted paths, and repeated blocks require complete
+provenance in every entry. Literal values are not traversed as expressions.
+
 `semantic::transform` consumes this domain model. Its private `Input` projection
 classifies provider/resource roles at the boundary, then applies containment,
 connection, association, visibility and component rules. Diagnostics use the same
@@ -32,18 +39,19 @@ Current configuration enriches only current objects. Deposed predecessors retain
 their resource-level provider source or legacy fallback, with no configuration key
 or alias inferred from the current resource at the same address.
 
+Source resolution prefers `provider_name`, then configuration `full_name` for
+current objects. Two-part source names receive the `registry.terraform.io/` prefix.
+Only legacy inputs without explicit provider information infer AWS from `aws_`
+types; an explicit foreign or unresolved binding does not imply HashiCorp AWS.
+
 Configuration keys are state-local: cross-state identity requires `(StateId, key)`.
 Matching aliases in two states do not imply a shared account or region. Both the
 Terraform facts and architecture cards retain these identities; provider expressions,
 credentials and region/account values are neither stored nor inferred.
 
-This separation intentionally preserves existing diagrams: snapshot tests cover
-the boundary and regression tests retain provider resolution, reference evidence,
-deposed/moved/import/removed/drift behavior and non-mutation of parsed input.
-
 ## Architecture identity and provenance
 
-Cards and logical components now contain `ArchitectureEntity`, with an opaque
+Cards and logical components contain `ArchitectureEntity`, with an opaque
 `ArchitectureId`, explicit Terraform/synthetic kind, and ordered, deduplicated
 `TerraformEntityId` provenance. Terraform source identity includes the deposed
 key. Synthetic identity uses a component kind and stable inference anchor, so
@@ -54,7 +62,8 @@ Terraform address of their own and do not acquire a spatial container role.
 Identity is scoped by the containing state. Cross-state identity is the pair of
 `StateId` and architecture/source ID. Existing Terraform card fields and component
 member labels remain display projections; their native entity metadata is the
-identity/provenance boundary. Layout ordering uses architecture IDs, and logical
+identity/provenance boundary. Layout uses structural ordering with identity
+tie-breakers, and logical
 panel bounds are keyed by those IDs independently of source addresses. Positional
 edge indices remain an internal graph representation.
 

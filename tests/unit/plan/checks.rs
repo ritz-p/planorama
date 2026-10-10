@@ -15,7 +15,6 @@ fn indexed_addresses_keep_ambiguity_independent_of_node_order() {
         vec![deposed.clone()],
         vec![deposed.clone(), current.clone(), deposed],
     ] {
-        // Another unique resource must remain associated in all cases.
         nodes.push(raw.nodes[1].clone());
         let expected = parse(&input["checks"], &nodes);
         assert!(

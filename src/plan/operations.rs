@@ -16,7 +16,6 @@ pub(super) fn parse(change: &Value) -> ChangeMetadata {
                 .and_then(Value::as_bool)
                 .unwrap_or(false),
         });
-    // Match full arrays, including order, rather than guessing from one token.
     let actions = change["actions"]
         .as_array()
         .and_then(|values| values.iter().map(Value::as_str).collect::<Option<Vec<_>>>());
@@ -34,8 +33,6 @@ pub(super) fn parse(change: &Value) -> ChangeMetadata {
                 .iter()
                 .filter_map(|path| {
                     let steps = path.as_array()?;
-                    // Keys and set elements can themselves be secrets. Check both
-                    // sensitivity trees before cloning any part of the path.
                     if ["before_sensitive", "after_sensitive"]
                         .iter()
                         .any(|field| sensitive_path(&change[*field], steps))
@@ -80,8 +77,6 @@ pub(super) fn sensitive_path(mut sensitivity: &Value, steps: &[Value]) -> bool {
             _ => None,
         }
         .unwrap_or(&Value::Null);
-        // Conservatively omit the whole path when its subtree is sensitive:
-        // without a schema we cannot distinguish attributes from secret keys.
         if contains_sensitive(sensitivity) {
             return true;
         }

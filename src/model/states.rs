@@ -1,7 +1,6 @@
 use super::TerraformPlan;
 use std::collections::BTreeMap;
 
-/// Explicit caller-supplied identity, never inferred from a path or backend.
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub struct StateId(String);
 
@@ -28,9 +27,6 @@ pub struct PlanInput {
     pub plan_json: String,
 }
 
-/// Graph indices, Terraform addresses, deposed identities, checks, and logical
-/// component IDs are local to each state partition. Cross-state identity is
-/// (StateId, local identity); no flattening or cross-state inference occurs.
 #[derive(Debug, PartialEq, Eq)]
 pub struct MultiPlan {
     pub states: BTreeMap<StateId, TerraformPlan>,
