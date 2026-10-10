@@ -607,7 +607,8 @@ fn association_resources_are_lowered_by_the_cli() {
     let svg = render(include_bytes!("../fixtures/association-plan.json"));
     assert!(svg.contains("3 resources (2 cards), 1 relationships"));
     assert!(svg.contains("aws_subnet.private → aws_route_table.private"));
-    assert!(!svg.contains("<title>aws_route_table_association.private</title>"));
+    assert!(!svg.contains("data-terraform-address=\"aws_route_table_association.private\""));
+    assert!(svg.contains("data-source-address=\"aws_route_table_association.private\""));
     assert!(svg.contains("association; create: aws_route_table_association.private"));
     assert!(svg.contains("create (3)"));
     assert!(!svg.contains("reference edges"));
@@ -706,7 +707,8 @@ fn mixed_aws_relationships_render_actions_without_helper_cards() {
         ("aws_lb_target_group_attachment", "replace"),
         ("aws_vpc_endpoint_route_table_association", "delete"),
     ] {
-        assert!(!svg.contains(&format!("<title>{kind}.main</title>")));
+        assert!(!svg.contains(&format!("data-terraform-address=\"{kind}.main\"")));
+        assert!(svg.contains(&format!("data-source-address=\"{kind}.main\"")));
         assert!(svg.contains(&format!("association; {action}: {kind}.main")));
         assert!(svg.contains(&format!("{action} (1)")));
     }

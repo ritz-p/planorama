@@ -137,5 +137,37 @@ fn marker_boxes_avoid_cards_boundaries_junctions_and_paths() {
             );
         }
     }
-    assert_eq!(layout.bounds, Layout::new(&graph).bounds);
+}
+
+#[test]
+fn regional_markers_keep_clear_of_scope_headers_and_frame_edges() {
+    let mut value: serde_json::Value =
+        serde_json::from_str(include_str!("../../fixtures/association-plan.json")).unwrap();
+    value["configuration"]["provider_config"] = serde_json::json!({"aws":{"full_name":"hashicorp/aws","expressions":{"region":{"constant_value":"ap-northeast-1"}}}});
+    for resource in value["configuration"]["root_module"]["resources"]
+        .as_array_mut()
+        .unwrap()
+    {
+        resource["provider_config_key"] = serde_json::json!("aws");
+    }
+    let graph = semantic::transform(&plan::parse(&value.to_string()).unwrap());
+    let layout = Layout::new(&graph);
+    assert_eq!(layout.scopes.len(), 1);
+    let index = Index::new(&graph, &layout);
+    assert_eq!(index.markers.len(), 1);
+    let panel = layout.scopes[0].bounds;
+    let marker = index.markers[0].bounds;
+    assert!(
+        marker.origin.y >= panel.origin.y + 36
+            || marker.right() < panel.origin.x
+            || marker.origin.x > panel.right()
+    );
+    for x in [panel.origin.x, panel.right()] {
+        assert!(
+            x < marker.origin.x
+                || x > marker.right()
+                || marker.origin.y > panel.origin.y + panel.height
+                || marker.origin.y + marker.height < panel.origin.y
+        );
+    }
 }

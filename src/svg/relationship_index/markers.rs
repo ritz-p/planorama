@@ -3,28 +3,14 @@ use crate::model::ResourceRole;
 
 pub(super) fn place(graph: &Graph, layout: &Layout<'_>, entries: &[Entry<'_>]) -> Vec<Marker> {
     let mut occupied = Vec::new();
+    for panel in &layout.scopes {
+        occupied.push(panel.bounds.header(36));
+        occupied.extend(borders(panel.bounds));
+    }
     for (index, bounds) in layout.bounds.iter().copied().enumerate() {
         occupied.push(bounds.header(layout.header_heights[index]));
         if graph.nodes[index].role == ResourceRole::Container {
-            occupied.extend([
-                Bounds { width: 4, ..bounds },
-                Bounds {
-                    origin: Point {
-                        x: bounds.right().saturating_sub(4),
-                        y: bounds.origin.y,
-                    },
-                    width: 4,
-                    ..bounds
-                },
-                Bounds {
-                    origin: Point {
-                        x: bounds.origin.x,
-                        y: bounds.origin.y + bounds.height.saturating_sub(4),
-                    },
-                    height: 4,
-                    ..bounds
-                },
-            ]);
+            occupied.extend(borders(bounds));
         }
     }
     for point in layout.junctions.iter().chain(
@@ -145,6 +131,7 @@ pub(super) fn place(graph: &Graph, layout: &Layout<'_>, entries: &[Entry<'_>]) -
                     .iter()
                     .enumerate()
                     .map(|(i, bounds)| bounds.header(layout.header_heights[i]))
+                    .chain(layout.scopes.iter().map(|panel| panel.bounds.header(36)))
                     .chain(markers.iter().map(|marker: &Marker| marker.bounds))
                     .filter(|b| !contains(*b, anchor))
                     .collect();
@@ -164,6 +151,28 @@ pub(super) fn place(graph: &Graph, layout: &Layout<'_>, entries: &[Entry<'_>]) -
         }
     }
     markers
+}
+
+fn borders(bounds: Bounds) -> [Bounds; 3] {
+    [
+        Bounds { width: 4, ..bounds },
+        Bounds {
+            origin: Point {
+                x: bounds.right().saturating_sub(4),
+                y: bounds.origin.y,
+            },
+            width: 4,
+            ..bounds
+        },
+        Bounds {
+            origin: Point {
+                x: bounds.origin.x,
+                y: bounds.origin.y + bounds.height.saturating_sub(4),
+            },
+            height: 4,
+            ..bounds
+        },
+    ]
 }
 
 fn distance(a: Point, b: Point) -> usize {
