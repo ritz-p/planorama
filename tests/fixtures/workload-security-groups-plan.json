@@ -1,0 +1,18 @@
+{
+  "format_version":"1.2",
+  "resource_changes":[
+    {"address":"aws_vpc.main","type":"aws_vpc"},
+    {"address":"aws_security_group.a","type":"aws_security_group","change":{"after_unknown":{"id":true}}},
+    {"address":"aws_security_group.b","type":"aws_security_group","change":{"after_unknown":{"id":true}}},
+    {"address":"aws_lambda_function.main","type":"aws_lambda_function","change":{"after_unknown":{"vpc_config":[{"security_group_ids":[true,true]}]}}},
+    {"address":"aws_eks_cluster.main","type":"aws_eks_cluster","change":{"after_unknown":{"vpc_config":[{"security_group_ids":[true,true]}]}}},
+    {"address":"aws_opensearch_domain.main","type":"aws_opensearch_domain","change":{"after_unknown":{"vpc_options":[{"security_group_ids":[true,true]}]}}}
+  ],
+  "configuration":{"root_module":{"resources":[
+    {"address":"aws_security_group.a","expressions":{"vpc_id":{"references":["aws_vpc.main.id"]}}},
+    {"address":"aws_security_group.b","expressions":{"vpc_id":{"references":["aws_vpc.main.id"]}}},
+    {"address":"aws_lambda_function.main","expressions":{"vpc_config":[{"security_group_ids":{"references":["aws_security_group.a.id","aws_security_group.b.id"]}}]}},
+    {"address":"aws_eks_cluster.main","expressions":{"vpc_config":[{"security_group_ids":{"references":["aws_security_group.a.id","aws_security_group.b.id"]}}]}},
+    {"address":"aws_opensearch_domain.main","expressions":{"vpc_options":[{"security_group_ids":{"references":["aws_security_group.a.id","aws_security_group.b.id"]}}]}}
+  ]}}
+}

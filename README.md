@@ -15,6 +15,10 @@ Security Group attachments use explicit AWS references to draw `Connection` edge
 | RDS instance / cluster | `vpc_security_group_ids` |
 | ECS service | `network_configuration.security_groups` |
 | VPC endpoint | `security_group_ids` |
+| Lambda, EKS | `vpc_config.security_group_ids` |
+| OpenSearch | `vpc_options.security_group_ids` |
+
+The [workload SG example](examples/workload-security-groups.svg) shows multiple groups attached independently to Lambda, EKS, and OpenSearch. Nested attachments use the same complete planned-ID collection checks as existing SG rules; flattened blocks and sibling fields cannot prove attachment.
 
 Each endpoint must resolve completely and statically to an AWS Security Group. Multiple explicitly identified groups and exact indexed references are supported, including external SG data sources. The parser also checks the entire planned ID collection against the referenced resources' IDs using `change.after`, `after_unknown`, or `planned_values` (and cached prior data-source IDs). Known IDs and individual unknown slots must match in number and value/unknown status. Only the proof result is retained, not the IDs. Mixed literal lists, missing value evidence, unknown whole collections, unresolved parts, dynamic selection, ambiguous unindexed instances, wrong endpoint types/providers, tags, and EC2's name-based `security_groups` field stay ordinary dependencies. This can conservatively leave valid attachments as dependencies when Terraform does not expose enough collection shape information. Missing optional attachment attributes are not diagnosed as errors. ECS task definitions and other unsupported attachment shapes are not inferred. This is an attachment diagram, not an analysis of firewall rules or reachability.
 

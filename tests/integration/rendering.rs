@@ -1,6 +1,31 @@
 mod support;
 
 #[test]
+fn workload_security_groups_keep_policy_cards_and_individual_connections() {
+    let input = include_bytes!("../fixtures/workload-security-groups-plan.json");
+    let svg = render(input);
+    assert_eq!(svg.matches("data-edge-kind=\"connection\"").count(), 6);
+    assert_eq!(svg.matches("data-edge-kind=\"containment\"").count(), 2);
+    assert_eq!(svg.matches("data-role=\"policy\"").count(), 2);
+    for kind in [
+        "aws_lambda_function",
+        "aws_eks_cluster",
+        "aws_opensearch_domain",
+    ] {
+        for group in ["a", "b"] {
+            assert!(svg.contains(&format!(
+                "aws_security_group.{group} → {kind}.main (connection)"
+            )));
+        }
+    }
+    assert_eq!(
+        svg,
+        include_str!("../../examples/workload-security-groups.svg").replace("\r\n", "\n")
+    );
+    assert_eq!(svg, render(input));
+}
+
+#[test]
 fn relationship_patterns_are_distinct_and_nesting_stays_line_free() {
     for (input, kind, width, dash) in [
         (
