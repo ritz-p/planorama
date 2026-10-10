@@ -61,6 +61,7 @@ pub fn resolve(plans: &MultiPlan, mappings: &[Mapping]) -> Resolution {
                             provenance: CrossStateProvenance::TerraformRemoteState {
                                 remote: reference.remote.clone(),
                                 output: reference.output.clone(),
+                                output_action: output.action,
                             },
                         });
                     }

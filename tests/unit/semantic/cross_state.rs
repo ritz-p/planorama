@@ -1,5 +1,33 @@
 use super::*;
 use crate::model::{PlanInput, StateId};
+
+#[test]
+fn same_named_output_actions_stay_with_the_mapped_producer() {
+    let mut plans = plans();
+    let mut second = plans.states[&StateId::new("producer").unwrap()].clone();
+    for output in &mut second.outputs {
+        output.action = Some(crate::model::Action::Delete);
+    }
+    plans.states.insert(StateId::new("second").unwrap(), second);
+    for (producer, expected) in [
+        ("producer", None),
+        ("second", Some(crate::model::Action::Delete)),
+    ] {
+        let result = resolve(
+            &plans,
+            &[Mapping::parse(&format!(
+                "consumer:data.terraform_remote_state.network={producer}"
+            ))
+            .unwrap()],
+        );
+        assert_eq!(result.edges.len(), 3);
+        for edge in result.edges {
+            let CrossStateProvenance::TerraformRemoteState { output_action, .. } = edge.provenance;
+            assert_eq!(output_action, expected);
+            assert_eq!(edge.from.state.as_str(), producer);
+        }
+    }
+}
 fn plans() -> MultiPlan {
     crate::plan::parse_inputs(vec![
         PlanInput {

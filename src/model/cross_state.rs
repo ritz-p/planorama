@@ -41,7 +41,11 @@ pub struct Endpoint {
 
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub enum CrossStateProvenance {
-    TerraformRemoteState { remote: String, output: String },
+    TerraformRemoteState {
+        remote: String,
+        output: String,
+        output_action: Option<super::Action>,
+    },
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]

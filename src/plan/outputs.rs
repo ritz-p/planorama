@@ -8,6 +8,7 @@ mod tests;
 
 pub(super) fn collect(
     module: &Value,
+    changes: &Value,
     nodes: &[TerraformEntity],
     symbols: &BTreeMap<String, BTreeSet<String>>,
 ) -> Vec<StateOutput> {
@@ -44,6 +45,9 @@ pub(super) fn collect(
             }
             StateOutput {
                 name: name.clone(),
+                action: changes
+                    .get(name)
+                    .map(|change| super::parse_action(&change["actions"])),
                 sources: resolved
                     .sources
                     .into_iter()

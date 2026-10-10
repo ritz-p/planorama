@@ -98,6 +98,7 @@ pub fn render_states(
         let crate::model::architecture::CrossStateProvenance::TerraformRemoteState {
             remote,
             output,
+            output_action,
         } = &edge.provenance;
         let (Some((sx, sy, source, source_index)), Some((tx, ty, target, target_index))) =
             (endpoints.get(&edge.from), endpoints.get(&edge.to))
@@ -122,6 +123,9 @@ pub fn render_states(
             write!(path, "{} {} {} ", if i == 0 { "M" } else { "L" }, p.x, p.y).unwrap();
         }
         link_count += 1;
+        let action_metadata = output_action
+            .map(|action| format!(" data-output-action=\"{}\"", super::label(action)))
+            .unwrap_or_default();
         let title = super::escape(&format!(
             "{}:{} -> {}:{} via {}.outputs.{} (cross-state dependency)",
             edge.from.state.as_str(),
@@ -131,7 +135,7 @@ pub fn render_states(
             remote,
             output
         ));
-        writeln!(links, r##"<path data-edge-kind="dependency" data-cross-state="true" data-source="{source}" data-target="{target}" data-source-state="{}" data-target-state="{}" data-remote-state="{}" data-output="{}" d="{}" fill="none" stroke="#2563eb" stroke-width="1.5" stroke-dasharray="7 4" marker-end="url(#cross-state-arrow)"><title>{title}</title></path>"##, super::escape(edge.from.state.as_str()),super::escape(edge.to.state.as_str()),super::escape(remote),super::escape(output),path.trim()).unwrap();
+        writeln!(links, r##"<path data-edge-kind="dependency" data-cross-state="true"{action_metadata} data-source="{source}" data-target="{target}" data-source-state="{}" data-target-state="{}" data-remote-state="{}" data-output="{}" d="{}" fill="none" stroke="#2563eb" stroke-width="1.5" stroke-dasharray="7 4" marker-end="url(#cross-state-arrow)"><title>{title}</title></path>"##, super::escape(edge.from.state.as_str()),super::escape(edge.to.state.as_str()),super::escape(remote),super::escape(output),path.trim()).unwrap();
     }
     if !links.is_empty() {
         width += 80 + (link_count - 1) * 12;
@@ -243,6 +247,7 @@ fn cross_state_paths_avoid_intervening_cards_and_describe_dependencies() {
             provenance: crate::model::architecture::CrossStateProvenance::TerraformRemoteState {
                 remote: "data.terraform_remote_state.x".into(),
                 output: "value".into(),
+                output_action: None,
             },
         }],
     };
