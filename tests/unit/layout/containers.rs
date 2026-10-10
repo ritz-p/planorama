@@ -20,6 +20,69 @@ fn fixture() -> Graph {
     semantic::transform(&raw).0
 }
 
+#[test]
+fn hierarchy_obstacles_and_direct_container_endpoints() {
+    let mut graph = ranked_fixture();
+    graph.nodes[1].role = ResourceRole::Container;
+    graph.nodes[2].role = ResourceRole::Container;
+    graph.edges = [(0, 1), (0, 2), (1, 3), (1, 5), (2, 4), (2, 6)]
+        .map(|pair| Edge {
+            kind: EdgeKind::Containment,
+            ..Edge::from(pair)
+        })
+        .into();
+    for (from, to) in [(3, 0), (0, 3), (3, 4), (3, 5)] {
+        let mut case = graph.clone();
+        case.edges.push(Edge {
+            from,
+            to,
+            kind: EdgeKind::Connection,
+            change: None,
+        });
+        let layout = Layout::new(&case);
+        if from == 3 && to == 0 {
+            let rendered = svg::render(&case, &layout);
+            let snapshot = "examples/hierarchy-routing.svg";
+            if std::env::var_os("UPDATE_ROUTING_SNAPSHOT").is_some() {
+                std::fs::write(snapshot, &rendered).unwrap();
+            }
+            assert_eq!(rendered, std::fs::read_to_string(snapshot).unwrap());
+        }
+        let edge = case.edges.last().unwrap();
+        let obstacles = routing::obstacles(&layout, edge);
+        for (node, &bounds) in layout.bounds.iter().enumerate() {
+            let scope = layout.containers.contains(&node)
+                && (layout.containment.is_ancestor(node, from)
+                    || layout.containment.is_ancestor(node, to));
+            assert_eq!(
+                obstacles[node],
+                if scope {
+                    bounds.header(layout.header_heights[node])
+                } else {
+                    bounds
+                }
+            );
+        }
+        let path = layout.paths.last().unwrap();
+        assert!(!path.is_empty());
+        assert!(path.windows(2).all(|p| {
+            (p[0].x == p[1].x || p[0].y == p[1].y)
+                && obstacles
+                    .iter()
+                    .all(|&b| !crate::layout::routing_shared::crosses(p[0], p[1], b))
+        }));
+        if from == 0 || to == 0 {
+            let bounds = layout.bounds[0];
+            assert!(path.iter().all(|p| p.x >= bounds.origin.x
+                && p.x <= bounds.right()
+                && p.y >= bounds.origin.y + layout.header_heights[0]
+                && p.y <= bounds.origin.y + bounds.height));
+        }
+        assert_eq!(layout.paths, Layout::new(&case).paths);
+        assert!(layout.paths[..6].iter().all(Vec::is_empty));
+    }
+}
+
 fn ranked_fixture() -> Graph {
     let template = fixture().nodes.remove(0);
     let nodes = (0..7)

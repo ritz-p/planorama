@@ -222,6 +222,11 @@ fn route_impl(
         } else {
             path
         };
+        let path = if !resource_edges[index] {
+            container_endpoint_path(layout, edge, path, &obstacles, &scorer)
+        } else {
+            path
+        };
         scorer.insert(path.clone());
         paths[index] = path;
     }
@@ -236,8 +241,9 @@ pub(super) fn obstacles(layout: &Layout<'_>, edge: &Edge) -> Vec<Bounds> {
         .iter()
         .enumerate()
         .map(|(node, &bounds)| {
-            if layout.containment.is_ancestor(node, edge.from)
-                || layout.containment.is_ancestor(node, edge.to)
+            if layout.containers.contains(&node)
+                && (layout.containment.is_ancestor(node, edge.from)
+                    || layout.containment.is_ancestor(node, edge.to))
             {
                 bounds.header(layout.header_heights[node])
             } else {
@@ -246,6 +252,80 @@ pub(super) fn obstacles(layout: &Layout<'_>, edge: &Edge) -> Vec<Bounds> {
         })
         .chain(layout.scopes.iter().map(|panel| panel.bounds.header(36)))
         .collect()
+}
+
+fn container_endpoint_path(
+    layout: &Layout<'_>,
+    edge: &Edge,
+    mut best: Vec<Point>,
+    obstacles: &[Bounds],
+    scorer: &Scorer,
+) -> Vec<Point> {
+    for (container, child, reverse) in [(edge.to, edge.from, false), (edge.from, edge.to, true)] {
+        if container == child || !layout.containment.is_ancestor(container, child) {
+            continue;
+        }
+        let bounds = layout.bounds[container];
+        let node = layout.bounds[child];
+        let x = node.origin.x + node.width / 2;
+        let y = node.origin.y + node.height / 2;
+        let pairs = [
+            (
+                node.port(Side::Top, node.width / 2),
+                Port {
+                    point: Point {
+                        x,
+                        y: bounds.origin.y + layout.header_heights[container],
+                    },
+                    side: Side::Bottom,
+                },
+            ),
+            (
+                node.port(Side::Left, node.height / 2),
+                Port {
+                    point: Point {
+                        x: bounds.origin.x,
+                        y,
+                    },
+                    side: Side::Right,
+                },
+            ),
+            (
+                node.port(Side::Right, node.height / 2),
+                Port {
+                    point: Point {
+                        x: bounds.right(),
+                        y,
+                    },
+                    side: Side::Left,
+                },
+            ),
+            (
+                node.port(Side::Bottom, node.width / 2),
+                Port {
+                    point: Point {
+                        x,
+                        y: bounds.origin.y + bounds.height,
+                    },
+                    side: Side::Top,
+                },
+            ),
+        ];
+        for (a, b) in pairs {
+            let (start, end) = if reverse { (b, a) } else { (a, b) };
+            if scorer.uses_endpoint(start.point) || scorer.uses_endpoint(end.point) {
+                continue;
+            }
+            if let Some(candidate) =
+                crate::layout::routing_shared::ports::connect(start, end, obstacles, Some(scorer))
+            {
+                if scorer.score(&candidate, obstacles) < scorer.score(&best, obstacles) {
+                    best = candidate;
+                }
+            }
+        }
+    }
+    best
 }
 
 pub(super) fn path_between(
