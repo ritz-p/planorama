@@ -7,6 +7,37 @@ fn graph() -> Graph {
 }
 
 #[test]
+fn markers_stay_on_the_line_near_the_destination_in_each_direction() {
+    use crate::layout::Point;
+    let graph = graph();
+    for (start, end) in [
+        (Point { x: 2000, y: 2000 }, Point { x: 2300, y: 2000 }),
+        (Point { x: 2300, y: 2000 }, Point { x: 2000, y: 2000 }),
+        (Point { x: 2000, y: 2000 }, Point { x: 2000, y: 2300 }),
+        (Point { x: 2000, y: 2300 }, Point { x: 2000, y: 2000 }),
+    ] {
+        let mut layout = Layout::new(&graph);
+        layout.paths[0] = vec![start, end];
+        layout.width = 2600;
+        layout.height = 2600;
+        let index = Index::new(&graph, &layout);
+        let bounds = index.markers[0].bounds;
+        let center = Point {
+            x: bounds.origin.x + bounds.width / 2,
+            y: bounds.origin.y + bounds.height / 2,
+        };
+        assert_eq!(center.x == end.x, start.x == end.x);
+        assert_eq!(center.y == end.y, start.y == end.y);
+        let distance = center.x.abs_diff(end.x) + center.y.abs_diff(end.y);
+        assert!(
+            (23..=30).contains(&distance),
+            "{start:?} -> {end:?}: {center:?}"
+        );
+        assert_eq!(index.width, layout.width);
+    }
+}
+
+#[test]
 fn resource_provenance_is_indexed_and_reference_provenance_is_not() {
     let graph = graph();
     let layout = Layout::new(&graph);

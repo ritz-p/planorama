@@ -17,8 +17,10 @@ inferred relationships receive no resource number. Numbering sorts by source
 identity, then endpoints and relationship kind, independent of edge-vector order.
 Filtering can renumber the visible subset; named states have separate indexes.
 
-Markers avoid cards, container boundaries, arrowheads and junctions. Dense paths
-can use a marker in the right margin with a thin leader. Index height follows the
+Markers sit on the relationship path near its destination, leaving room for the
+arrowhead. Placement searches backward from the destination to avoid cards,
+boundaries, junctions and other labels. Congested paths use the least obstructed
+position on the path. Index height follows the
 number of entries and wrapped lines; card placement and relationship routes stay
 unchanged. Existing edge titles and provenance metadata remain available, and
 attribute values are excluded.

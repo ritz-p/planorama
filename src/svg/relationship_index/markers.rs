@@ -1,5 +1,7 @@
-use super::{Bounds, Entry, Graph, Layout, Marker, Point};
+use super::{Bounds, Entry, Graph, Layout, Marker};
+use crate::layout::Point;
 use crate::model::ResourceRole;
+use std::cmp::Ordering;
 
 pub(super) fn place(graph: &Graph, layout: &Layout<'_>, entries: &[Entry<'_>]) -> Vec<Marker> {
     let mut occupied = Vec::new();
@@ -31,121 +33,79 @@ pub(super) fn place(graph: &Graph, layout: &Layout<'_>, entries: &[Entry<'_>]) -
     let mut markers = Vec::new();
     for (i, entry) in entries.iter().enumerate() {
         let number = i + 1;
-        let width = number.to_string().len() * 8 + 24;
+        let width = number.to_string().len() * 8 + 16;
         for &edge in &entry.edges {
             let path = &layout.paths[edge];
-            let mut segments: Vec<_> = path.windows(2).collect();
-            segments.sort_by_key(|s| std::cmp::Reverse(distance(s[0], s[1])));
-            let mut placed = None;
-            'search: for segment in &segments {
+            let mut best = None;
+            let mut remaining = 0;
+            for segment in path.windows(2).rev() {
                 let (a, b) = (segment[0], segment[1]);
                 let length = distance(a, b);
-                for step in
-                    std::iter::once(length / 2).chain((12..length.saturating_sub(12)).step_by(12))
-                {
-                    let point = if a.x == b.x {
-                        Point {
-                            x: a.x,
-                            y: a.y.min(b.y) + step,
-                        }
-                    } else {
-                        Point {
-                            x: a.x.min(b.x) + step,
-                            y: a.y,
-                        }
+                let half = if a.x == b.x { 11 } else { width / 2 };
+                for step in half + 6..length.saturating_sub(half + 5) {
+                    let point = Point {
+                        x: match a.x.cmp(&b.x) {
+                            Ordering::Equal => b.x,
+                            Ordering::Less => b.x - step,
+                            Ordering::Greater => b.x + step,
+                        },
+                        y: match a.y.cmp(&b.y) {
+                            Ordering::Equal => b.y,
+                            Ordering::Less => b.y - step,
+                            Ordering::Greater => b.y + step,
+                        },
                     };
-                    let candidates = if a.x == b.x {
-                        [
-                            (point.x as isize + 6, point.y as isize - 11),
-                            (point.x as isize - width as isize - 6, point.y as isize - 11),
-                            (point.x as isize - width as isize / 2, point.y as isize - 11),
-                        ]
-                    } else {
-                        [
-                            (point.x as isize - width as isize / 2, point.y as isize - 28),
-                            (point.x as isize - width as isize / 2, point.y as isize + 6),
-                            (point.x as isize - width as isize / 2, point.y as isize - 11),
-                        ]
+                    let bounds = Bounds {
+                        origin: Point {
+                            x: point.x.saturating_sub(width / 2),
+                            y: point.y.saturating_sub(11),
+                        },
+                        width,
+                        height: 22,
                     };
-                    for (x, y) in candidates {
-                        if x < 20 || y < 150 {
-                            continue;
-                        }
-                        let bounds = Bounds {
-                            origin: Point {
-                                x: x as usize,
-                                y: y as usize,
-                            },
-                            width,
-                            height: 22,
-                        };
-                        if bounds.right() + 20 > layout.width
-                            || bounds.origin.y + 30 > layout.height
-                            || occupied.iter().any(|&b| overlaps(bounds, b))
-                            || layout.paths.iter().enumerate().any(|(index, p)| {
-                                index != edge && p.windows(2).any(|s| crosses(s[0], s[1], bounds))
-                            })
-                        {
-                            continue;
-                        }
-                        placed = Some(Marker {
-                            number,
-                            bounds,
-                            leader: Vec::new(),
-                        });
-                        break 'search;
+                    let obstruction: usize =
+                        occupied.iter().map(|&b| overlap_area(bounds, b)).sum();
+                    let crossings = layout
+                        .paths
+                        .iter()
+                        .enumerate()
+                        .filter(|(index, p)| {
+                            *index != edge && p.windows(2).any(|s| crosses(s[0], s[1], bounds))
+                        })
+                        .count();
+                    let score = (obstruction, crossings, remaining + step);
+                    if best.as_ref().is_none_or(|(old, _)| score < *old) {
+                        best = Some((score, bounds));
+                    }
+                    if obstruction == 0 && crossings == 0 {
+                        break;
                     }
                 }
+                if best
+                    .as_ref()
+                    .is_some_and(|(score, _)| score.0 == 0 && score.1 == 0)
+                {
+                    break;
+                }
+                remaining += length;
             }
-            let marker = placed.unwrap_or_else(|| {
-                let segment = segments[0];
-                let anchor = Point {
-                    x: (segment[0].x + segment[1].x) / 2,
-                    y: (segment[0].y + segment[1].y) / 2,
+            let bounds = best.map(|(_, bounds)| bounds).unwrap_or_else(|| {
+                let a = path[path.len() - 2];
+                let b = path[path.len() - 1];
+                let point = Point {
+                    x: (a.x + b.x) / 2,
+                    y: (a.y + b.y) / 2,
                 };
-                let mut column = 0;
-                let bounds = 'slots: loop {
-                    for y in std::iter::once(
-                        anchor
-                            .y
-                            .clamp(160, layout.height.saturating_sub(30).max(160)),
-                    )
-                    .chain((160..layout.height.saturating_sub(30).max(190)).step_by(30))
-                    {
-                        let bounds = Bounds {
-                            origin: Point {
-                                x: layout.width + 20 + column * (width + 12),
-                                y,
-                            },
-                            width,
-                            height: 22,
-                        };
-                        if !occupied.iter().any(|&b| overlaps(bounds, b)) {
-                            break 'slots bounds;
-                        }
-                    }
-                    column += 1;
-                };
-                let obstacles: Vec<_> = layout
-                    .bounds
-                    .iter()
-                    .enumerate()
-                    .map(|(i, bounds)| bounds.header(layout.header_heights[i]))
-                    .chain(layout.scopes.iter().map(|panel| panel.bounds.header(36)))
-                    .chain(markers.iter().map(|marker: &Marker| marker.bounds))
-                    .filter(|b| !contains(*b, anchor))
-                    .collect();
-                let end = Point {
-                    x: bounds.origin.x,
-                    y: bounds.origin.y + 11,
-                };
-                let leader = crate::layout::route_to_margin(anchor, end, &obstacles);
-                Marker {
-                    number,
-                    bounds,
-                    leader,
+                Bounds {
+                    origin: Point {
+                        x: point.x.saturating_sub(width / 2),
+                        y: point.y.saturating_sub(11),
+                    },
+                    width,
+                    height: 22,
                 }
             });
+            let marker = Marker { number, bounds };
             occupied.push(marker.bounds);
             markers.push(marker);
         }
@@ -179,20 +139,14 @@ fn distance(a: Point, b: Point) -> usize {
     a.x.abs_diff(b.x) + a.y.abs_diff(b.y)
 }
 
-fn contains(bounds: Bounds, point: Point) -> bool {
-    point.x >= bounds.origin.x
-        && point.x <= bounds.right()
-        && point.y >= bounds.origin.y
-        && point.y <= bounds.origin.y + bounds.height
+fn overlap_area(a: Bounds, b: Bounds) -> usize {
+    a.right()
+        .min(b.right())
+        .saturating_sub(a.origin.x.max(b.origin.x))
+        * (a.origin.y + a.height)
+            .min(b.origin.y + b.height)
+            .saturating_sub(a.origin.y.max(b.origin.y))
 }
-
-fn overlaps(a: Bounds, b: Bounds) -> bool {
-    a.origin.x < b.right() + 3
-        && b.origin.x < a.right() + 3
-        && a.origin.y < b.origin.y + b.height + 3
-        && b.origin.y < a.origin.y + a.height + 3
-}
-
 fn crosses(a: Point, b: Point, bounds: Bounds) -> bool {
     if a.x == b.x {
         a.x >= bounds.origin.x

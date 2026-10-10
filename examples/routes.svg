@@ -63,9 +63,9 @@ No AWS endorsement is implied. Consult the AWS terms for other uses.
 <text x="104" y="273" font-size="13" fill="#0f172a">c</text>
 </g>
 <g data-relationship-marker="1"><title>Relationship resource [1]</title>
-<rect x="426" y="218" width="32" height="22" rx="4" fill="#ffffff" stroke="#64748b"/><text x="442" y="233" text-anchor="middle" font-size="12" fill="#334155">[1]</text></g>
+<rect x="444" y="235" width="24" height="22" rx="4" fill="#ffffff" stroke="#64748b"/><text x="456" y="250" text-anchor="middle" font-size="12" fill="#334155">[1]</text></g>
 <g data-relationship-marker="2"><title>Relationship resource [2]</title>
-<rect x="426" y="271" width="32" height="22" rx="4" fill="#ffffff" stroke="#64748b"/><text x="442" y="286" text-anchor="middle" font-size="12" fill="#334155">[2]</text></g>
+<rect x="420" y="254" width="24" height="22" rx="4" fill="#ffffff" stroke="#64748b"/><text x="432" y="269" text-anchor="middle" font-size="12" fill="#334155">[2]</text></g>
 <g data-relationship-index="true"><text x="40" y="592" font-size="16" font-weight="700" fill="#334155">Relationship resources</text>
 <g data-relationship-entry="1"><text x="52" y="616" font-size="12" fill="#334155">[1]</text>
 <text data-source-address="aws_route.default" font-size="12" fill="#334155"><title>aws_route.default</title>
