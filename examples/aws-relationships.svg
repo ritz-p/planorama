@@ -111,23 +111,29 @@ No AWS endorsement is implied. Consult the AWS terms for other uses.
 <text x="472" y="692" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
 <g data-relationship-marker="1"><title>Relationship resource [1]</title>
-<rect x="472" y="471" width="24" height="18" rx="4" fill="#ffffff" stroke="#64748b"/><text x="484" y="484" text-anchor="middle" font-size="11" fill="#334155">[1]</text></g>
+<rect x="472" y="471" width="24" height="18" rx="4" fill="#ffffff" stroke="#c2410c" stroke-width="2" stroke-dasharray="7 4"/><text x="484" y="484" text-anchor="middle" font-size="11" fill="#334155">[1]</text>
+</g>
 <g data-relationship-marker="2"><title>Relationship resource [2]</title>
-<rect x="872" y="325" width="24" height="18" rx="4" fill="#ffffff" stroke="#64748b"/><text x="884" y="338" text-anchor="middle" font-size="11" fill="#334155">[2]</text></g>
+<rect x="872" y="325" width="24" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="884" y="338" text-anchor="middle" font-size="11" fill="#334155">[2]</text>
+</g>
 <g data-relationship-marker="3"><title>Relationship resource [3]</title>
-<rect x="872" y="344" width="24" height="18" rx="4" fill="#ffffff" stroke="#64748b"/><text x="884" y="357" text-anchor="middle" font-size="11" fill="#334155">[3]</text></g>
+<rect x="872" y="344" width="24" height="18" rx="4" fill="#ffffff" stroke="#b91c1c" stroke-width="2" stroke-dasharray="7 4"/><text x="884" y="357" text-anchor="middle" font-size="11" fill="#334155">[3]</text>
+</g>
 <g data-relationship-index="true"><text x="40" y="848" font-size="16" font-weight="700" fill="#334155">Relationship resources</text>
-<g data-relationship-entry="1"><text x="52" y="872" font-size="12" fill="#334155">[1]</text>
+<g data-relationship-entry="1">
+<rect x="52" y="859" width="24" height="18" rx="4" fill="#ffffff" stroke="#c2410c" stroke-width="2" stroke-dasharray="7 4"/><text x="64" y="872" text-anchor="middle" font-size="11" fill="#334155">[1]</text>
 <text data-source-address="aws_lb_target_group_attachment.main" font-size="12" fill="#334155"><title>aws_lb_target_group_attachment.main</title>
 <tspan x="100" y="872" xml:space="preserve">aws_lb_target_group_attachment.main</tspan>
 </text>
 </g>
-<g data-relationship-entry="2"><text x="52" y="900" font-size="12" fill="#334155">[2]</text>
+<g data-relationship-entry="2">
+<rect x="52" y="887" width="24" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="64" y="900" text-anchor="middle" font-size="11" fill="#334155">[2]</text>
 <text data-source-address="aws_route_table_association.main" font-size="12" fill="#334155"><title>aws_route_table_association.main</title>
 <tspan x="100" y="900" xml:space="preserve">aws_route_table_association.main</tspan>
 </text>
 </g>
-<g data-relationship-entry="3"><text x="52" y="928" font-size="12" fill="#334155">[3]</text>
+<g data-relationship-entry="3">
+<rect x="52" y="915" width="24" height="18" rx="4" fill="#ffffff" stroke="#b91c1c" stroke-width="2" stroke-dasharray="7 4"/><text x="64" y="928" text-anchor="middle" font-size="11" fill="#334155">[3]</text>
 <text data-source-address="aws_vpc_endpoint_route_table_association.main" font-size="12" fill="#334155"><title>aws_vpc_endpoint_route_table_association.main</title>
 <tspan x="100" y="928" xml:space="preserve">aws_vpc_endpoint_route_table_association.main</tspan>
 </text>

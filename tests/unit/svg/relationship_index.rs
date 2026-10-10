@@ -7,6 +7,78 @@ fn graph() -> Graph {
 }
 
 #[test]
+fn marker_borders_match_relationship_actions_and_line_patterns() {
+    use crate::model::Action;
+    for kind in [
+        EdgeKind::Dependency,
+        EdgeKind::Association,
+        EdgeKind::Connection,
+    ] {
+        for action in [
+            None,
+            Some(Action::Create),
+            Some(Action::Delete),
+            Some(Action::Update),
+            Some(Action::Replace),
+            Some(Action::Read),
+            Some(Action::Unchanged),
+            Some(Action::Other),
+        ] {
+            let mut graph = graph();
+            graph.edges[0].kind = kind;
+            if let Some(action) = action {
+                graph.edges[0].change.as_mut().unwrap().action = action;
+            } else {
+                graph.edges[0].change = None;
+            }
+            for relationship in &mut graph.relationships {
+                relationship.kind = kind;
+                for source in &mut relationship.provenance {
+                    if let RelationshipProvenance::Resource { change, .. } = source {
+                        if let Some(action) = action {
+                            change.action = action;
+                        }
+                    }
+                }
+            }
+            let svg = svg::render(&graph, &Layout::new(&graph));
+            let document = roxmltree::Document::parse(&svg).unwrap();
+            let path = document
+                .descendants()
+                .find(|n| n.has_tag_name("path") && n.attribute("data-edge-kind").is_some())
+                .unwrap();
+            let marker = document
+                .descendants()
+                .find(|n| n.attribute("data-relationship-marker") == Some("1"))
+                .unwrap();
+            let border = marker.children().find(|n| n.has_tag_name("rect")).unwrap();
+            let entry = document
+                .descendants()
+                .find(|n| n.attribute("data-relationship-entry") == Some("1"))
+                .unwrap();
+            let index_border = entry.children().find(|n| n.has_tag_name("rect")).unwrap();
+            for attribute in [
+                "stroke",
+                "stroke-width",
+                "stroke-dasharray",
+                "stroke-linecap",
+            ] {
+                assert_eq!(
+                    border.attribute(attribute),
+                    path.attribute(attribute),
+                    "{kind:?} {action:?}: {attribute}"
+                );
+                assert_eq!(
+                    index_border.attribute(attribute),
+                    border.attribute(attribute),
+                    "index {kind:?} {action:?}: {attribute}"
+                );
+            }
+        }
+    }
+}
+
+#[test]
 fn markers_stay_on_the_line_near_the_destination_in_each_direction() {
     use crate::layout::Point;
     let graph = graph();

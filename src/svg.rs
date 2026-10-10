@@ -187,12 +187,10 @@ pub(crate) fn render_with_format(
             writeln!(svg, r#"<g{relation}{previous}{operation} data-source="{source}" data-target="{target}"><title>{title}</title></g>"#).unwrap();
             continue;
         }
-        let (stroke, marker) = match &edge.change {
-            Some(change) => (
-                color(change.action).1,
-                format!("arrow-{}", label(change.action)),
-            ),
-            None => ("#94a3b8", "arrow".into()),
+        let stroke = relationships::stroke(edge);
+        let marker = match &edge.change {
+            Some(change) => format!("arrow-{}", label(change.action)),
+            None => "arrow".into(),
         };
         let path = paths::rounded(points);
         let style = relationships::style(edge.kind);

@@ -19,6 +19,8 @@ type Key<'a> = (
 pub(super) struct Entry<'a> {
     sources: Vec<&'a TerraformEntityId>,
     edges: Vec<usize>,
+    stroke: &'static str,
+    style: &'static str,
 }
 
 pub(super) struct Index<'a> {
@@ -30,6 +32,8 @@ pub(super) struct Index<'a> {
 struct Marker {
     number: usize,
     bounds: Bounds,
+    stroke: &'static str,
+    style: &'static str,
 }
 
 impl<'a> Index<'a> {
@@ -74,10 +78,16 @@ impl<'a> Index<'a> {
             .map(|((sources, ..), mut edges)| {
                 edges.sort_unstable();
                 edges.dedup();
-                Entry { sources, edges }
+                let edge = &graph.edges[edges[0]];
+                Entry {
+                    sources,
+                    edges,
+                    stroke: super::relationships::stroke(edge),
+                    style: super::relationships::style(edge.kind),
+                }
             })
             .collect();
-        let markers = markers::place(layout, &entries);
+        let markers = markers::place(graph, layout, &entries);
         let width = markers.iter().fold(layout.width, |width, marker| {
             width.max(marker.bounds.right() + 20)
         });
@@ -123,8 +133,11 @@ impl<'a> Index<'a> {
         for marker in &self.markers {
             let number = marker.number;
             let bounds = marker.bounds;
+            let stroke = marker.stroke;
+            let style = marker.style;
             writeln!(svg, "<g data-relationship-marker=\"{number}\"><title>Relationship resource [{number}]</title>").unwrap();
-            writeln!(svg, r##"<rect x="{}" y="{}" width="{}" height="{}" rx="4" fill="#ffffff" stroke="#64748b"/><text x="{}" y="{}" text-anchor="middle" font-size="11" fill="#334155">[{number}]</text></g>"##, bounds.origin.x, bounds.origin.y, bounds.width, bounds.height, bounds.origin.x + bounds.width / 2, bounds.origin.y + 13).unwrap();
+            svg.push_str(&badge(number, bounds, stroke, style));
+            svg.push_str("</g>\n");
         }
         svg
     }
@@ -141,7 +154,13 @@ impl<'a> Index<'a> {
         let mut y = top + 48;
         for (i, entry) in self.entries.iter().enumerate() {
             let number = i + 1;
-            writeln!(svg, r##"<g data-relationship-entry="{number}"><text x="52" y="{y}" font-size="12" fill="#334155">[{number}]</text>"##).unwrap();
+            writeln!(svg, r##"<g data-relationship-entry="{number}">"##).unwrap();
+            let bounds = Bounds {
+                origin: crate::layout::Point { x: 52, y: y - 13 },
+                width: number.to_string().len() * 8 + 16,
+                height: 18,
+            };
+            svg.push_str(&badge(number, bounds, entry.stroke, entry.style));
             if entry.sources.len() > 1 {
                 writeln!(svg, r##"<text x="100" y="{y}" font-size="12" fill="#334155">{} Terraform resources</text>"##, entry.sources.len()).unwrap();
                 y += 20;
@@ -166,6 +185,19 @@ impl<'a> Index<'a> {
         svg.push_str("</g>\n");
         svg
     }
+}
+
+fn badge(number: usize, bounds: Bounds, stroke: &str, style: &str) -> String {
+    format!(
+        r##"<rect x="{}" y="{}" width="{}" height="{}" rx="4" fill="#ffffff" stroke="{stroke}" {style}/><text x="{}" y="{}" text-anchor="middle" font-size="11" fill="#334155">[{number}]</text>
+"##,
+        bounds.origin.x,
+        bounds.origin.y,
+        bounds.width,
+        bounds.height,
+        bounds.origin.x + bounds.width / 2,
+        bounds.origin.y + 13
+    )
 }
 
 fn display(source: &TerraformEntityId) -> String {

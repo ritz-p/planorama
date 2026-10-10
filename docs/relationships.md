@@ -19,7 +19,10 @@ Filtering can renumber the visible subset; named states have separate indexes.
 
 Markers are fixed immediately before the destination, aligned with the final
 segment and separated from the connection point by four pixels. The compact
-badge stays at that endpoint even on short or congested paths. Index height follows the
+badge stays at that endpoint even on short or congested paths. Its border uses the
+relationship's action color, stroke width and line pattern (solid for dependency,
+dashed for association, dotted for connection). The corresponding number badge
+in the relationship index uses the same border color and pattern. Index height follows the
 number of entries and wrapped lines; card placement and relationship routes stay
 unchanged. Existing edge titles and provenance metadata remain available, and
 attribute values are excluded.

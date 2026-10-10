@@ -1,8 +1,8 @@
-use super::{Bounds, Entry, Layout, Marker};
+use super::{Bounds, Entry, Graph, Layout, Marker};
 use crate::layout::Point;
 use std::cmp::Ordering;
 
-pub(super) fn place(layout: &Layout<'_>, entries: &[Entry<'_>]) -> Vec<Marker> {
+pub(super) fn place(graph: &Graph, layout: &Layout<'_>, entries: &[Entry<'_>]) -> Vec<Marker> {
     let mut markers = Vec::new();
     for (i, entry) in entries.iter().enumerate() {
         let number = i + 1;
@@ -32,6 +32,8 @@ pub(super) fn place(layout: &Layout<'_>, entries: &[Entry<'_>]) -> Vec<Marker> {
             };
             markers.push(Marker {
                 number,
+                stroke: super::super::relationships::stroke(&graph.edges[edge]),
+                style: super::super::relationships::style(graph.edges[edge].kind),
                 bounds: Bounds {
                     origin: Point {
                         x: center.x.saturating_sub(width / 2),

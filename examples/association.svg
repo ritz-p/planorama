@@ -55,9 +55,11 @@ No AWS endorsement is implied. Consult the AWS terms for other uses.
 <text x="72" y="244" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
 <g data-relationship-marker="1"><title>Relationship resource [1]</title>
-<rect x="472" y="199" width="24" height="18" rx="4" fill="#ffffff" stroke="#64748b"/><text x="484" y="212" text-anchor="middle" font-size="11" fill="#334155">[1]</text></g>
+<rect x="472" y="199" width="24" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="484" y="212" text-anchor="middle" font-size="11" fill="#334155">[1]</text>
+</g>
 <g data-relationship-index="true"><text x="40" y="400" font-size="16" font-weight="700" fill="#334155">Relationship resources</text>
-<g data-relationship-entry="1"><text x="52" y="424" font-size="12" fill="#334155">[1]</text>
+<g data-relationship-entry="1">
+<rect x="52" y="411" width="24" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="64" y="424" text-anchor="middle" font-size="11" fill="#334155">[1]</text>
 <text data-source-address="aws_route_table_association.private" font-size="12" fill="#334155"><title>aws_route_table_association.private</title>
 <tspan x="100" y="424" xml:space="preserve">aws_route_table_association.private</tspan>
 </text>

@@ -3,6 +3,12 @@ use crate::model::architecture::{Edge, EdgeKind, Graph};
 use std::collections::BTreeSet;
 use std::fmt::Write;
 
+pub(super) fn stroke(edge: &Edge) -> &'static str {
+    edge.change
+        .as_ref()
+        .map_or("#94a3b8", |change| color(change.action).1)
+}
+
 pub(super) fn style(kind: EdgeKind) -> &'static str {
     match kind {
         EdgeKind::Dependency | EdgeKind::Containment => r#"stroke-width="1.5""#,
