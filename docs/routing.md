@@ -69,6 +69,9 @@ when intentionally updating that test's SVG.
 
 Incident slots use peer center coordinates: vertical order on left/right sides,
 horizontal order on top/bottom sides. Stable identities break geometric ties.
+Baseline and side-aware candidates share this ordering and marker-aware allocator.
+Keeping a side preserves the existing offset; changing a side uses its projected
+slot. Top/bottom slots account for marker width, and left/right slots for height.
 Intentional bundle alignment and numbered terminal spacing remain constraints.
 Numbered relationships select facing sides before routing and reserve their final
 badge corridors. Candidates are rejected when badges overlap cards, protected
@@ -113,8 +116,7 @@ reordering and SVG regressions. `tests/support/layout_metrics.rs` measures pairw
 overlap, internal orthogonal crossings, bends and length; endpoint contacts and
 self-crossings are excluded. Run the [Docker checks](../README.md#開発・検証).
 The large fixture also checks every visible edge: at most 14 bends and a length
-at most twice its shortest valid reference plus 128 pixels. The current fixture
-has 53 visible paths, at most 12 bends and a maximum stretch of about 1.687.
+at most twice its shortest valid reference plus 128 pixels.
 The reference keeps the rendered ports and terminal clearance, protects container
 boundaries, headers and numbered corridors, and ignores soft-card and edge-conflict
 costs. Its rectilinear search includes exact obstacle boundaries, so necessary
