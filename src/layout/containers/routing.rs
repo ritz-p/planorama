@@ -329,6 +329,77 @@ pub(super) fn soft_obstacles(layout: &Layout<'_>, edge: &Edge) -> Vec<Bounds> {
         .collect()
 }
 
+#[cfg(test)]
+pub(super) fn shortest_valid_route(graph: &Graph, layout: &Layout<'_>, index: usize) -> Vec<Point> {
+    use crate::layout::routing_shared::ports;
+    let port = |a: Point, b: Point| Port {
+        point: a,
+        side: match a.x.cmp(&b.x) {
+            std::cmp::Ordering::Equal => {
+                if a.y > b.y {
+                    Side::Top
+                } else {
+                    Side::Bottom
+                }
+            }
+            std::cmp::Ordering::Greater => Side::Left,
+            std::cmp::Ordering::Less => Side::Right,
+        },
+    };
+    let numbered = crate::layout::relationship_markers::ends(graph);
+    let clearance = crate::layout::relationship_markers::clearance(graph);
+    let path = &layout.paths[index];
+    if path.len() < 2 {
+        return path.clone();
+    }
+    let start = port(path[0], path[1]);
+    let end = port(path[path.len() - 1], path[path.len() - 2]);
+    let stubs = [path[1], path[path.len() - 2]]
+        .into_iter()
+        .zip([start, end])
+        .enumerate()
+        .map(|(i, (adjacent, p))| {
+            if numbered[index][i] {
+                clearance
+            } else {
+                16.min(p.point.x.abs_diff(adjacent.x) + p.point.y.abs_diff(adjacent.y))
+            }
+        })
+        .collect::<Vec<_>>();
+    let mut barriers = obstacles(layout, &graph.edges[index]);
+    for (i, other) in layout.paths.iter().enumerate() {
+        if other.len() < 2 {
+            continue;
+        }
+        let a = port(other[0], other[1]);
+        let b = port(other[other.len() - 1], other[other.len() - 2]);
+        barriers.extend(ports::terminal_corridors(
+            a,
+            b,
+            numbered[i].map(|n| if n { clearance } else { 16 }),
+        ));
+    }
+    let middle = search::shortest(
+        start.outward(stubs[0]),
+        end.outward(stubs[1]),
+        &barriers,
+        (start.side, end.side),
+    )
+    .expect("rendered route proves that a valid corridor exists");
+    let reference = simplify(
+        std::iter::once(start.point)
+            .chain(middle)
+            .chain(std::iter::once(end.point)),
+        Simplification::PreserveReversals,
+    );
+    assert!(reference.windows(2).all(|p| {
+        obstacles(layout, &graph.edges[index])
+            .iter()
+            .all(|&b| !crate::layout::routing_shared::crosses(p[0], p[1], b))
+    }));
+    reference
+}
+
 fn container_endpoint_path(
     layout: &Layout<'_>,
     edge: &Edge,

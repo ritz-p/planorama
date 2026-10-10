@@ -5,6 +5,53 @@ fn path(points: &[(usize, usize)]) -> Vec<Point> {
 }
 
 #[test]
+fn per_edge_metrics_measure_detours_and_name_extreme_routes() {
+    let direct = path(&[(0, 0), (100, 0)]);
+    let detour = path(&[(0, 0), (0, 40), (100, 40), (100, 0)]);
+    assert_eq!(
+        measure_edge(&detour, &direct),
+        EdgeMetrics {
+            bends: 2,
+            length: 180,
+            shortest_valid_length: 100,
+            excess_distance: 80
+        }
+    );
+    let long = path(&[(0, 0), (0, 2000), (100, 2000), (100, 0)]);
+    let metrics = measure_edge(&long, &direct);
+    let failure = metrics
+        .violation("test.source", "test.target", 14, 2, 128)
+        .unwrap();
+    for expected in [
+        "test.source -> test.target",
+        "bends=2",
+        "length=4100",
+        "shortest=100",
+        "excess=4000",
+        "stretch=41.000",
+    ] {
+        assert!(failure.contains(expected));
+    }
+    let legitimate = path(&[(0, 0), (1000000, 0)]);
+    assert!(
+        measure_edge(&legitimate, &legitimate)
+            .violation("a", "b", 14, 2, 128)
+            .is_none()
+    );
+    let zigzag: Vec<_> = (0..=24)
+        .map(|i| Point {
+            x: (i + 1) / 2 * 10,
+            y: i / 2 * 10,
+        })
+        .collect();
+    let shortest = path(&[(0, 0), (120, 0), (120, 120)]);
+    let metrics = measure_edge(&zigzag, &shortest);
+    assert_eq!(metrics.bends, 23);
+    assert!(metrics.violation("zig", "zag", 14, 2, 128).is_some());
+    assert_eq!(measure_edge(&[], &[]).length, 0);
+}
+
+#[test]
 fn empty_and_degenerate_paths_have_zero_cost() {
     assert_eq!(measure(&[]), LayoutMetrics::default());
     assert_eq!(

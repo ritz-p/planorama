@@ -46,6 +46,9 @@ Module names remain card metadata rather than layout bands. The diagram exercise
 wrapping, long paths and congestion; tests check geometry and routing quality
 without claiming globally optimal layout. See [routing](../../docs/routing.md)
 and the smaller [spanning example](../spanning-dense.svg).
+Per-edge regression guards allow up to 14 bends and twice the shortest valid
+route length plus 128 pixels. The reference uses the same hard boundaries,
+ports and marker clearance. Failures identify the offending endpoint addresses.
 
 ## Terraform validation
 
