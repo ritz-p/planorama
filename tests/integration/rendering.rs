@@ -615,8 +615,8 @@ fn explicit_network_scopes_render_as_nested_architecture() {
 fn rds_subnet_group_fixture_preserves_cards_and_infers_common_scope() {
     let input = include_bytes!("../fixtures/rds-subnet-group-plan.json");
     let svg = render(input);
-    assert!(svg.contains("6 resources (6 cards), 8 relationships"));
-    assert_eq!(svg.matches("data-edge-kind=\"containment\"").count(), 4);
+    assert!(svg.contains("6 resources (6 cards), 9 relationships"));
+    assert_eq!(svg.matches("data-edge-kind=\"containment\"").count(), 5);
     assert_eq!(svg.matches("<g id=\"resource-").count(), 6);
     assert_eq!(svg, render(input));
 }

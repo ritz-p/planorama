@@ -1,0 +1,16 @@
+{
+  "format_version": "1.2",
+  "resource_changes": [
+    {"address":"aws_vpc.main","type":"aws_vpc"},
+    {"address":"aws_subnet.a","type":"aws_subnet"},
+    {"address":"aws_subnet.b","type":"aws_subnet"},
+    {"address":"aws_db_subnet_group.main","type":"aws_db_subnet_group"},
+    {"address":"aws_elasticache_subnet_group.main","type":"aws_elasticache_subnet_group"}
+  ],
+  "configuration":{"root_module":{"resources":[
+    {"address":"aws_subnet.a","expressions":{"vpc_id":{"references":["aws_vpc.main.id"]}}},
+    {"address":"aws_subnet.b","expressions":{"vpc_id":{"references":["aws_vpc.main.id"]}}},
+    {"address":"aws_db_subnet_group.main","expressions":{"subnet_ids":{"references":["aws_subnet.a.id","aws_subnet.b.id"]}}},
+    {"address":"aws_elasticache_subnet_group.main","expressions":{"subnet_ids":{"references":["aws_subnet.a.id","aws_subnet.b.id"]}}}
+  ]}}
+}
