@@ -62,9 +62,14 @@ fn dense_horizontal_ports_expand_flat_rows_and_nested_containers() {
             }
         }
         let expected = layout.bounds;
+        let expected_paths = layout.paths;
         graph.edges.reverse();
         let reversed = Layout::new(&graph);
         assert_eq!(expected, reversed.bounds);
+        assert_eq!(
+            expected_paths,
+            reversed.paths.into_iter().rev().collect::<Vec<_>>()
+        );
     }
 }
 pub(super) struct Placed<'a> {
