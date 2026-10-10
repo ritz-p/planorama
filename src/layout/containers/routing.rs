@@ -87,6 +87,48 @@ pub(in crate::layout) fn route_selected(
     )
 }
 
+#[test]
+fn refined_ancestor_edges_keep_allocated_sides_and_distinct_ports() {
+    let raw = crate::plan::parse(r#"{"format_version":"1.2","resource_changes":[{"address":"test.parent","type":"test"},{"address":"test.child","type":"test"}]}"#).unwrap();
+    let mut graph = crate::semantic::transform(&raw).0;
+    graph.nodes[0].role = crate::model::ResourceRole::Container;
+    graph.edges = vec![Edge {
+        kind: EdgeKind::Containment,
+        ..Edge::from((0, 1))
+    }];
+    graph.edges.extend((0..3).map(|i| Edge {
+        kind: EdgeKind::Association,
+        change: Some(crate::model::EdgeChange {
+            address: format!("test.link{i}"),
+            directionality: crate::model::Directionality::Directed,
+            action: crate::model::Action::Create,
+            previous_address: None,
+            metadata: Default::default(),
+        }),
+        ..Edge::from((0, 1))
+    }));
+    let layout = super::place_geometry(&graph, crate::layout::ContainmentTree::new(&graph), true);
+    let routed = route_selected(&graph, &layout, &[[Side::Right; 2]; 4]);
+    let mut sources = Vec::new();
+    let mut targets = Vec::new();
+    for path in &routed.paths[1..] {
+        let start = path[0];
+        let end = *path.last().unwrap();
+        assert_eq!(start.x, layout.bounds[0].right());
+        assert_eq!(end.x, layout.bounds[1].right());
+        sources.push(start.y);
+        targets.push(end.y);
+    }
+    for mut offsets in [sources, targets] {
+        offsets.sort_unstable();
+        assert!(
+            offsets
+                .windows(2)
+                .all(|p| p[1] - p[0] >= crate::layout::routing_shared::slots::MIN_SPACING)
+        );
+    }
+}
+
 #[cfg(test)]
 pub(super) fn route_with_quality(
     graph: &Graph,
@@ -238,7 +280,7 @@ fn route_selected_impl(
         } else {
             path
         };
-        if !resource_edges[index] {
+        if sides.is_none() && !resource_edges[index] {
             container_endpoint_path(layout, edge, path, &obstacles, scorer)
         } else {
             path
