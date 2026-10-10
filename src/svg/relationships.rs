@@ -52,8 +52,14 @@ pub(super) fn captions(graph: &Graph) -> (String, String) {
 
 pub(super) fn title(graph: &Graph, edge: &Edge, semantic_edges: bool) -> String {
     let mut title = format!(
-        "{} → {}",
-        graph.nodes[edge.from].address, graph.nodes[edge.to].address
+        "{} {} {}",
+        graph.nodes[edge.from].address,
+        if edge.directionality() == crate::model::Directionality::Undirected {
+            "↔"
+        } else {
+            "→"
+        },
+        graph.nodes[edge.to].address
     );
     let kind = match edge.kind {
         EdgeKind::Dependency => "dependency",

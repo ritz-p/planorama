@@ -10,7 +10,7 @@ pub(super) fn metadata(graph: &Graph) -> String {
             RelationshipProvenance::Resource { source, change } => serde_json::json!({"kind":"resource", "address":source.address, "deposed_key":source.deposed_key, "action":super::label(change.action), "operation":super::operations::label(change.action,&change.metadata), "metadata":super::operations::metadata(&change.metadata), "previous_address":change.previous_address}),
             RelationshipProvenance::Reference { from, to } => serde_json::json!({"kind":"reference", "from":from.address, "from_deposed_key":from.deposed_key, "to":to.address, "to_deposed_key":to.deposed_key}),
         }).collect();
-        serde_json::json!({"from":relationship.from.as_str(), "to":relationship.to.as_str(), "kind":format!("{:?}",relationship.kind).to_lowercase(), "inferred":relationship.inferred, "provenance":provenance})
+        serde_json::json!({"from":relationship.from.as_str(), "to":relationship.to.as_str(), "kind":format!("{:?}",relationship.kind).to_lowercase(), "directionality":relationship.directionality().as_str(), "inferred":relationship.inferred, "provenance":provenance})
     }).collect();
     format!(
         "<metadata id=\"architecture-entities\">{}</metadata>\n<metadata id=\"architecture-relationships\">{}</metadata>\n",

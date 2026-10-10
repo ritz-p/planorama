@@ -814,6 +814,7 @@ fn high_degree_ports_expand_headers_and_remain_distinct_inside_parent_bounds() {
             graph.edges.extend((0..count).map(|index| Edge {
                 kind: EdgeKind::Association,
                 change: Some(crate::model::EdgeChange {
+                    directionality: crate::model::Directionality::Undirected,
                     previous_address: None,
                     metadata: Default::default(),
                     address: format!("test.relationship{index}"),
@@ -883,6 +884,7 @@ fn reciprocal_relationships_and_self_loops_use_distinct_incoming_and_outgoing_po
             to,
             kind: EdgeKind::Association,
             change: Some(crate::model::EdgeChange {
+                directionality: crate::model::Directionality::Undirected,
                 previous_address: None,
                 metadata: Default::default(),
                 address: format!("test.relationship{index}"),
@@ -907,7 +909,7 @@ fn reciprocal_relationships_and_self_loops_use_distinct_incoming_and_outgoing_po
         let output = svg::render(&graph, &layout);
         for (index, action) in ["create", "update", "delete"].iter().enumerate() {
             assert!(output.contains(&format!("association; {action}: test.relationship{index}")));
-            assert!(output.contains(&format!("marker-end=\"url(#arrow-{action})\"")));
+            assert!(!output.contains("marker-end="));
         }
         verify(&graph);
     }
@@ -974,8 +976,8 @@ fn parallel_association_changes_have_distinct_ports_and_paths() {
     for expected in [
         "association; create: aws_route_table_association.private",
         "association; update: aws_route_table_association.other",
-        "marker-end=\"url(#arrow-create)\"",
-        "marker-end=\"url(#arrow-update)\"",
+        "data-directionality=\"undirected\"",
+        "stroke-dasharray=\"7 4\"",
     ] {
         assert!(output.contains(expected));
     }

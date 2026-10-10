@@ -211,6 +211,7 @@ fn wrapping_keeps_related_containers_consecutive_and_uses_safe_fallbacks() {
     for edge in &mut graph.edges {
         if edge.kind == EdgeKind::Connection {
             edge.change = Some(crate::model::EdgeChange {
+                directionality: crate::model::Directionality::Undirected,
                 previous_address: None,
                 metadata: Default::default(),
                 address: "test.changed".into(),

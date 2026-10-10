@@ -1,11 +1,12 @@
 # Relationship styles
 
-Dependency lines are thin and solid. Lowered associations are dashed (7/4),
-and inferred connections are thicker and dotted (2/4 with round caps). These
+Dependency lines are thin and solid. Ordinary associations are undirected and
+dashed (7/4), with no arrowheads. Lowered routes retain directional arrowheads.
+Inferred connections are thicker and dotted (2/4 with round caps). These
 patterns remain distinct in grayscale. Containment uses nested boundaries;
 an edge represented by nesting does not receive a redundant line.
 
-Colors and matching arrowheads describe the Terraform change. Every edge retains
+Colors and directed arrowheads describe the Terraform change. Every edge retains
 `data-edge-kind`, stable source/target IDs and a descriptive title. Cross-state dependencies use
 blue dashed gutter routes and visible cross-state legend.
 
@@ -17,9 +18,11 @@ inferred relationships receive no resource number. Numbering sorts by source
 identity, then endpoints and relationship kind, independent of edge-vector order.
 Filtering can renumber the visible subset; named states have separate indexes.
 
-Markers are fixed immediately before the destination, aligned with the final
-segment with 10 pixels of clearance for a fixed-size arrowhead. Targets with
-numbered relationships reserve extra space only around numbered incoming ports.
+Undirected associations display the same number near both endpoints, with one
+relationship-index entry. Directed relationships display it before the destination.
+Markers align with the terminal segment, 10 pixels from the endpoint to leave
+room for directed arrowheads. Endpoints with
+numbered relationships reserve extra space only around their numbered ports.
 Ordinary incident ports keep their normal density.
 Routing reserves a straight terminal segment long enough for the complete badge
 and arrowhead. Other paths, including bundled relationships, avoid this space.

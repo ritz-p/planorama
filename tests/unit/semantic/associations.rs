@@ -68,7 +68,7 @@ fn lowering_preserves_every_action_in_relationship_and_legend() {
                 .any(|line| line.contains("data-edge-kind=\"association\"")
                     && line.contains(&format!("fill=\"none\" stroke=\"{color}\"")))
         );
-        assert!(image.contains(&format!("marker-end=\"url(#arrow-{label})\"")));
+        assert!(!image.contains("marker-end="));
     }
 }
 
@@ -204,6 +204,7 @@ fn assert_relationship_actions(kind: &str) {
         assert_eq!(
             edge.change,
             Some(EdgeChange {
+                directionality: crate::model::Directionality::Undirected,
                 previous_address: None,
                 metadata: Default::default(),
                 address: format!("{kind}.main"),

@@ -109,6 +109,7 @@ pub struct Edge {
 
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub struct EdgeChange {
+    pub directionality: Directionality,
     pub address: String,
     pub previous_address: Option<String>,
     pub metadata: ChangeMetadata,
@@ -116,8 +117,32 @@ pub struct EdgeChange {
 }
 
 impl Edge {
+    pub fn directionality(&self) -> Directionality {
+        if self.kind == EdgeKind::Association {
+            self.change
+                .as_ref()
+                .map_or(Directionality::Undirected, |c| c.directionality)
+        } else {
+            Directionality::Directed
+        }
+    }
     pub fn endpoints(&self) -> (usize, usize) {
         (self.from, self.to)
+    }
+}
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
+pub enum Directionality {
+    Directed,
+    Undirected,
+}
+
+impl Directionality {
+    pub fn as_str(self) -> &'static str {
+        match self {
+            Self::Directed => "directed",
+            Self::Undirected => "undirected",
+        }
     }
 }
 

@@ -66,6 +66,11 @@ pub(super) fn lower(raw: &Input) -> Graph {
                         to,
                         kind: EdgeKind::Association,
                         change: Some(EdgeChange {
+                            directionality: if node.resource_type == "aws_route" {
+                                crate::model::Directionality::Directed
+                            } else {
+                                crate::model::Directionality::Undirected
+                            },
                             address: node.address.clone(),
                             previous_address: node.previous_address.clone(),
                             metadata: node.metadata.clone(),

@@ -99,12 +99,13 @@ fn route_impl(
     };
     let mut incident = incidents(graph, &layout.containment);
     let resource_edges = crate::layout::resource_edges(graph);
+    let numbered = crate::layout::relationship_markers::ends(graph);
     let numbered_targets: Vec<_> = incident
         .iter()
         .map(|edges| {
             edges
                 .iter()
-                .any(|&(edge, source)| !source && resource_edges[edge])
+                .any(|&(edge, source)| numbered[edge][usize::from(!source)])
         })
         .collect();
     for edges in &mut incident {
@@ -134,7 +135,7 @@ fn route_impl(
     for (node, edges) in incident.iter().enumerate() {
         let ports = crate::layout::relationship_markers::ports(
             edges,
-            &resource_edges,
+            &numbered,
             layout.bounds[node].height,
         );
         for (slot, &(edge, source)) in edges.iter().enumerate() {
@@ -164,21 +165,27 @@ fn route_impl(
         .edges
         .iter()
         .enumerate()
-        .filter_map(|(index, edge)| {
+        .flat_map(|(index, edge)| {
             if !resource_edges[index] || represented_by_nesting(edge, &layout.containment) {
-                return None;
+                return Vec::new();
             }
-            let end = layout.bounds[edge.to]
-                .port(Side::Right, target_ports[index])
-                .point;
-            Some(Bounds {
-                origin: Point {
-                    x: end.x,
-                    y: end.y.saturating_sub(spacing / 2),
-                },
-                width: clearance - 4,
-                height: spacing,
+            [
+                (edge.from, source_ports[index], numbered[index][0]),
+                (edge.to, target_ports[index], numbered[index][1]),
+            ]
+            .into_iter()
+            .filter_map(|(node, offset, enabled)| {
+                let end = layout.bounds[node].port(Side::Right, offset).point;
+                enabled.then_some(Bounds {
+                    origin: Point {
+                        x: end.x,
+                        y: end.y.saturating_sub(spacing / 2),
+                    },
+                    width: clearance - 4,
+                    height: spacing,
+                })
             })
+            .collect::<Vec<_>>()
         })
         .collect();
     let reservations = crate::layout::relationship_markers::merge_corridors(reservations);
@@ -217,7 +224,10 @@ fn route_impl(
             end.point,
             &obstacles,
             quality.then_some(scorer),
-            if resource_edges[index] { clearance } else { 16 },
+            [
+                if numbered[index][0] { clearance } else { 16 },
+                if numbered[index][1] { clearance } else { 16 },
+            ],
         );
         let path = if quality && !resource_edges[index] {
             crate::layout::routing_shared::ports::select_with_slots(
@@ -415,7 +425,7 @@ pub(super) fn path_between(
     obstacles: &[Bounds],
     scorer: Option<&Scorer>,
 ) -> Vec<Point> {
-    path_with_clearance(start, end, obstacles, scorer, 16)
+    path_with_clearance(start, end, obstacles, scorer, [16; 2])
 }
 
 fn path_with_clearance(
@@ -423,14 +433,14 @@ fn path_with_clearance(
     end: Point,
     obstacles: &[Bounds],
     scorer: Option<&Scorer>,
-    clearance: usize,
+    clearance: [usize; 2],
 ) -> Vec<Point> {
     let first = Point {
-        x: start.x + 16,
+        x: start.x + clearance[0],
         ..start
     };
     let last = Point {
-        x: end.x + clearance,
+        x: end.x + clearance[1],
         ..end
     };
     let finish = |middle: Vec<Point>| {

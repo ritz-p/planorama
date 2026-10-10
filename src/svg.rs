@@ -204,7 +204,13 @@ fn render_with_index(
         };
         let path = paths::rounded(points);
         let style = relationships::style(edge.kind);
-        writeln!(svg, r##"<path d="{path}"{relation}{previous}{operation} data-source="{source}" data-target="{target}" fill="none" stroke="{stroke}" {style} stroke-linejoin="round" marker-end="url(#{marker})"><title>{title}</title></path>"##).unwrap();
+        let direction = edge.directionality().as_str();
+        let arrow = if edge.directionality() == crate::model::Directionality::Directed {
+            format!(r#" marker-end="url(#{marker})""#)
+        } else {
+            String::new()
+        };
+        writeln!(svg, r##"<path d="{path}"{relation}{previous}{operation} data-directionality="{direction}" data-source="{source}" data-target="{target}" fill="none" stroke="{stroke}" {style} stroke-linejoin="round"{arrow}><title>{title}</title></path>"##).unwrap();
     }
     for point in &layout.junctions {
         writeln!(

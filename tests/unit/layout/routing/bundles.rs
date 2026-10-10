@@ -137,6 +137,7 @@ fn semantic_edges_and_resource_changes_are_not_bundled() {
     assert_eq!(Bundles::new(&graph, &[0, 1, 1]).len(), 0);
     graph.edges[0].kind = EdgeKind::Dependency;
     graph.edges[0].change = Some(crate::model::EdgeChange {
+        directionality: crate::model::Directionality::Undirected,
         previous_address: None,
         metadata: Default::default(),
         address: "test.relationship".into(),

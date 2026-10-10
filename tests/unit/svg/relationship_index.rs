@@ -40,12 +40,72 @@ fn dense_graph(count: usize, kind: EdgeKind) -> Graph {
 }
 
 #[test]
+fn associations_are_undirected_but_routes_and_dependencies_keep_arrows() {
+    for fixture in [
+        include_str!("../../fixtures/aws-relationships-plan.json"),
+        include_str!("../../fixtures/routes-plan.json"),
+    ] {
+        let graph = semantic::transform(&plan::parse(fixture).unwrap()).0;
+        let layout = Layout::new(&graph);
+        let svg = svg::render(&graph, &layout);
+        let doc = roxmltree::Document::parse(&svg).unwrap();
+        let paths: Vec<_> = doc
+            .descendants()
+            .filter(|n| n.has_tag_name("path") && n.attribute("data-edge-kind").is_some())
+            .collect();
+        let edges = graph
+            .edges
+            .iter()
+            .zip(&layout.paths)
+            .filter(|(_, p)| !p.is_empty())
+            .map(|(e, _)| e);
+        for (path, edge) in paths.iter().zip(edges) {
+            let directed = edge.directionality() == crate::model::Directionality::Directed;
+            assert_eq!(path.attribute("marker-end").is_some(), directed);
+            assert_eq!(
+                path.attribute("data-directionality"),
+                Some(edge.directionality().as_str())
+            );
+            if edge.kind == EdgeKind::Association {
+                assert_eq!(path.attribute("stroke-dasharray"), Some("7 4"));
+            }
+        }
+        let index = Index::new(&graph, &layout);
+        for (i, entry) in index.entries.iter().enumerate() {
+            let expected: usize = entry
+                .edges
+                .iter()
+                .map(|&e| {
+                    if graph.edges[e].directionality() == crate::model::Directionality::Undirected {
+                        2
+                    } else {
+                        1
+                    }
+                })
+                .sum();
+            assert_eq!(
+                index.markers.iter().filter(|m| m.number == i + 1).count(),
+                expected
+            );
+        }
+        assert_marker_routes(&graph, &layout);
+    }
+}
+
+#[test]
 fn dense_targets_keep_distinct_numbers_readable() {
     for kind in [EdgeKind::Association, EdgeKind::Connection] {
         let graph = dense_graph(12, kind);
         let layout = Layout::new(&graph);
         let index = Index::new(&graph, &layout);
-        assert_eq!(index.markers.len(), 12);
+        assert_eq!(
+            index.markers.len(),
+            if kind == EdgeKind::Association {
+                24
+            } else {
+                12
+            }
+        );
         assert_marker_routes(&graph, &layout);
         for (i, marker) in index.markers.iter().enumerate() {
             for other in &index.markers[i + 1..] {
@@ -116,7 +176,7 @@ fn hundreds_of_numbered_relationships_keep_clear_terminal_corridors() {
     let started = std::time::Instant::now();
     let layout = Layout::new(&graph);
     eprintln!("200 numbered relationships: {:?}", started.elapsed());
-    assert_eq!(Index::new(&graph, &layout).markers.len(), 200);
+    assert_eq!(Index::new(&graph, &layout).markers.len(), 400);
     assert_marker_routes(&graph, &layout);
 }
 
@@ -205,21 +265,25 @@ fn marker_borders_match_relationship_actions_and_line_patterns() {
                 .find(|n| n.attribute("data-relationship-marker") == Some("1"))
                 .unwrap();
             let border = marker.children().find(|n| n.has_tag_name("rect")).unwrap();
-            let arrow_id = path
-                .attribute("marker-end")
-                .unwrap()
-                .strip_prefix("url(#")
-                .unwrap()
-                .strip_suffix(')')
-                .unwrap();
-            let arrow = document
-                .descendants()
-                .find(|n| n.attribute("id") == Some(arrow_id))
-                .unwrap();
-            assert_eq!(arrow.attribute("markerUnits"), Some("userSpaceOnUse"));
-            let arrow_width: f64 = arrow.attribute("markerWidth").unwrap().parse().unwrap();
-            let border_width: f64 = border.attribute("stroke-width").unwrap().parse().unwrap();
-            assert!(arrow_width + border_width / 2.0 < 10.0);
+            if kind != EdgeKind::Association {
+                let arrow_id = path
+                    .attribute("marker-end")
+                    .unwrap()
+                    .strip_prefix("url(#")
+                    .unwrap()
+                    .strip_suffix(')')
+                    .unwrap();
+                let arrow = document
+                    .descendants()
+                    .find(|n| n.attribute("id") == Some(arrow_id))
+                    .unwrap();
+                assert_eq!(arrow.attribute("markerUnits"), Some("userSpaceOnUse"));
+                let arrow_width: f64 = arrow.attribute("markerWidth").unwrap().parse().unwrap();
+                let border_width: f64 = border.attribute("stroke-width").unwrap().parse().unwrap();
+                assert!(arrow_width + border_width / 2.0 < 10.0);
+            } else {
+                assert!(path.attribute("marker-end").is_none());
+            }
             let entry = document
                 .descendants()
                 .find(|n| n.attribute("data-relationship-entry") == Some("1"))
@@ -297,15 +361,33 @@ fn routed_badges_fit_terminal_segments_and_avoid_other_paths() {
 
 fn assert_marker_routes(graph: &Graph, layout: &Layout<'_>) {
     let index = Index::new(graph, layout);
-    let edges = index.entries.iter().flat_map(|entry| entry.edges.iter());
-    for (marker, &edge) in index.markers.iter().zip(edges) {
+    let edges = index
+        .entries
+        .iter()
+        .flat_map(|entry| entry.edges.iter())
+        .flat_map(|&edge| {
+            let mut ends = vec![(edge, false)];
+            if graph.edges[edge].directionality() == crate::model::Directionality::Undirected {
+                ends.push((edge, true));
+            }
+            ends
+        });
+    for (marker, (edge, source)) in index.markers.iter().zip(edges) {
         let bounds = marker.bounds;
-        let terminal = layout.paths[edge]
-            .windows(2)
-            .rev()
-            .find(|s| s[0] != s[1])
-            .unwrap();
-        let (before, target) = (terminal[0], terminal[1]);
+        let terminal = if source {
+            &layout.paths[edge][..2]
+        } else {
+            layout.paths[edge]
+                .windows(2)
+                .rev()
+                .find(|s| s[0] != s[1])
+                .unwrap()
+        };
+        let (before, target) = if source {
+            (terminal[1], terminal[0])
+        } else {
+            (terminal[0], terminal[1])
+        };
         if before.y == target.y {
             assert_eq!(bounds.origin.y + bounds.height / 2, target.y);
             assert!(
@@ -324,7 +406,9 @@ fn assert_marker_routes(graph: &Graph, layout: &Layout<'_>) {
         for (other, path) in layout.paths.iter().enumerate() {
             let segments = path.windows(2).count();
             for (position, segment) in path.windows(2).enumerate() {
-                if other == edge && position + 1 == segments {
+                if other == edge
+                    && ((source && position == 0) || (!source && position + 1 == segments))
+                {
                     continue;
                 }
                 let (a, b) = (segment[0], segment[1]);
@@ -354,7 +438,7 @@ fn resource_provenance_is_indexed_and_reference_provenance_is_not() {
     let layout = Layout::new(&graph);
     let index = Index::new(&graph, &layout);
     assert_eq!(index.entries.len(), 1);
-    assert_eq!(index.markers.len(), 1);
+    assert_eq!(index.markers.len(), 2);
     let svg = svg::render(&graph, &layout);
     assert!(svg.contains("Relationship resources"));
     assert!(svg.contains("data-relationship-marker=\"1\""));
@@ -496,7 +580,7 @@ fn regional_markers_keep_clear_of_scope_headers_and_frame_edges() {
     let layout = Layout::new(&graph);
     assert_eq!(layout.scopes.len(), 1);
     let index = Index::new(&graph, &layout);
-    assert_eq!(index.markers.len(), 1);
+    assert_eq!(index.markers.len(), 2);
     let panel = layout.scopes[0].bounds;
     let marker = index.markers[0].bounds;
     assert!(
