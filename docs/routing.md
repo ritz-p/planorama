@@ -58,7 +58,8 @@ search indexes blocked grid edges once per search and checks them in constant ti
 instead of scanning all rectangles for every candidate segment.
 
 Candidate scoring prioritizes obstacle crossings, overlap, edge crossings, bends
-and length. Occupancy-aware alternatives discourage crowded corridors. Selection
+and length. Straight, one-bend and two-bend candidates compete with grid-search
+paths under the same safety and endpoint-direction checks. Occupancy-aware alternatives discourage crowded corridors. Selection
 is deterministic but local, so it does not guarantee a global optimum or a crossing-free
 diagram. Named-state edges use shared search with an external state gutter.
 
