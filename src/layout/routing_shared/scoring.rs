@@ -13,6 +13,7 @@ pub(in crate::layout) struct Score {
     crossings: usize,
     bends: usize,
     length: u128,
+    upper_detours: usize,
 }
 
 #[derive(Default)]
@@ -22,9 +23,17 @@ pub(in crate::layout) struct Scorer {
     horizontal_paths: BTreeMap<usize, Vec<(usize, usize, usize)>>,
     vertical_paths: BTreeMap<usize, Vec<(usize, usize, usize)>>,
     paths: Vec<Vec<Point>>,
+    peers: Vec<Bounds>,
 }
 
 impl Scorer {
+    pub(in crate::layout) fn set_peers(&mut self, peers: Vec<Bounds>) {
+        self.peers = peers;
+    }
+
+    pub(in crate::layout) fn peers(&self) -> &[Bounds] {
+        &self.peers
+    }
     pub(in crate::layout) fn uses_endpoint(&self, point: Point) -> bool {
         self.paths
             .iter()
@@ -73,6 +82,18 @@ impl Scorer {
             crossings: 0,
             bends: points.len().saturating_sub(2),
             length: 0,
+            upper_detours: self
+                .peers
+                .iter()
+                .filter(|b| {
+                    points.windows(2).any(|p| {
+                        p[0].y == p[1].y
+                            && p[0].y <= b.origin.y
+                            && p[0].x.min(p[1].x) < b.right()
+                            && p[0].x.max(p[1].x) > b.origin.x
+                    })
+                })
+                .count(),
         };
         for pair in points.windows(2) {
             let (a, b) = (pair[0], pair[1]);

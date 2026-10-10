@@ -1,5 +1,27 @@
 use super::{Point, Simplification, simplify};
 
+#[test]
+fn short_perpendicular_connections_keep_sixteen_pixel_endpoint_stubs() {
+    use crate::layout::{Port, Side};
+    let a = Port {
+        point: Point { x: 100, y: 100 },
+        side: Side::Right,
+    };
+    let b = Port {
+        point: Point { x: 108, y: 108 },
+        side: Side::Top,
+    };
+    let path = super::ports::connect(a, b, &[], None).unwrap();
+    assert!(path[1].x >= 116);
+    assert!(path[path.len() - 2].y <= 92);
+    assert!(!super::ports::valid(
+        &[a.point, Point { x: 108, y: 100 }, b.point],
+        a,
+        b,
+        &[]
+    ));
+}
+
 pub(super) fn candidates(start: Point, end: Point) -> Vec<Vec<Point>> {
     let x = start.x.min(end.x) + start.x.abs_diff(end.x) / 2;
     let y = start.y.min(end.y) + start.y.abs_diff(end.y) / 2;
@@ -79,23 +101,41 @@ fn simple_routes_respect_ports_obstacles_and_edge_conflicts() {
 }
 
 #[test]
-fn short_perpendicular_connections_keep_sixteen_pixel_endpoint_stubs() {
-    use crate::layout::{Port, Side};
+fn peer_detours_prefer_below_unless_safety_or_conflicts_override() {
+    use super::{
+        Scorer,
+        ports::{connect, valid},
+    };
+    use crate::layout::{Bounds, Port, Side};
     let a = Port {
         point: Point { x: 100, y: 100 },
         side: Side::Right,
     };
     let b = Port {
-        point: Point { x: 108, y: 108 },
-        side: Side::Top,
+        point: Point { x: 500, y: 100 },
+        side: Side::Left,
     };
-    let path = super::ports::connect(a, b, &[], None).unwrap();
-    assert!(path[1].x >= 116);
-    assert!(path[path.len() - 2].y <= 92);
-    assert!(!super::ports::valid(
-        &[a.point, Point { x: 108, y: 100 }, b.point],
-        a,
-        b,
-        &[]
-    ));
+    let peer = Bounds {
+        origin: Point { x: 250, y: 60 },
+        width: 100,
+        height: 80,
+    };
+    let mut scorer = Scorer::default();
+    scorer.set_peers(vec![peer]);
+    let lower = connect(a, b, &[peer], Some(&scorer)).unwrap();
+    assert!(lower.iter().any(|p| p.y > 140), "{lower:?}");
+    let blocked = [
+        peer,
+        Bounds {
+            origin: Point { x: 110, y: 140 },
+            width: 380,
+            height: 100,
+        },
+    ];
+    let upper = connect(a, b, &blocked, Some(&scorer)).unwrap();
+    assert!(upper.iter().any(|p| p.y < 60));
+    assert!(valid(&upper, a, b, &blocked));
+    scorer.insert(vec![Point { x: 200, y: 140 }, Point { x: 200, y: 200 }]);
+    let clear = connect(a, b, &[peer], Some(&scorer)).unwrap();
+    assert!(clear.iter().any(|p| p.y < 60), "{clear:?}");
 }

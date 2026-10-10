@@ -107,6 +107,29 @@ pub(in crate::layout) fn connect(
         .into_iter()
         .filter(|path| valid(path, start, end, obstacles))
         .collect::<Vec<_>>();
+    for peer in quality.peers() {
+        for y in [8, 16, 24].into_iter().flat_map(|gap| {
+            [
+                peer.origin.y.saturating_sub(gap),
+                peer.origin.y + peer.height + gap,
+            ]
+        }) {
+            let path = simplify(
+                [
+                    start.point,
+                    first,
+                    Point { x: first.x, y },
+                    Point { x: last.x, y },
+                    last,
+                    end.point,
+                ],
+                Simplification::PreserveReversals,
+            );
+            if valid(&path, start, end, obstacles) {
+                candidates.push(path);
+            }
+        }
+    }
     if let Some(middle) =
         search::search(first, last, obstacles, scorer, Some((start.side, end.side)))
     {
