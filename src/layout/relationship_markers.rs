@@ -115,7 +115,8 @@ pub(super) fn padding(graph: &Graph) -> usize {
     } else {
         1
     };
-    (clearance(graph) * terminals + 24).max(40)
+    let clearance = clearance(graph);
+    (clearance + 24).max(clearance * terminals).max(40)
 }
 
 pub(super) fn merge_corridors(mut bounds: Vec<super::Bounds>) -> Vec<super::Bounds> {
