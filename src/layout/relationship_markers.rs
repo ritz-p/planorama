@@ -4,15 +4,28 @@ pub(crate) const HEIGHT: usize = 18;
 pub(crate) const GAP: usize = 10;
 pub(super) const PORT_SPACING: usize = HEIGHT + 6;
 
-fn slot_width(edge: usize, source: bool, numbered: &[bool]) -> usize {
-    if !source && numbered[edge] {
+pub(super) fn ends(graph: &Graph) -> Vec<[bool; 2]> {
+    super::resource_edges(graph)
+        .into_iter()
+        .zip(&graph.edges)
+        .map(|(numbered, edge)| {
+            [
+                numbered && edge.directionality() == crate::model::Directionality::Undirected,
+                numbered,
+            ]
+        })
+        .collect()
+}
+
+fn slot_width(edge: usize, source: bool, numbered: &[[bool; 2]]) -> usize {
+    if numbered[edge][usize::from(!source)] {
         PORT_SPACING
     } else {
         1
     }
 }
 
-pub(super) fn port_span(incidents: &[(usize, bool)], numbered: &[bool]) -> usize {
+pub(super) fn port_span(incidents: &[(usize, bool)], numbered: &[[bool; 2]]) -> usize {
     incidents
         .iter()
         .map(|&(edge, source)| slot_width(edge, source, numbered))
@@ -20,7 +33,11 @@ pub(super) fn port_span(incidents: &[(usize, bool)], numbered: &[bool]) -> usize
         + 1
 }
 
-pub(super) fn ports(incidents: &[(usize, bool)], numbered: &[bool], height: usize) -> Vec<usize> {
+pub(super) fn ports(
+    incidents: &[(usize, bool)],
+    numbered: &[[bool; 2]],
+    height: usize,
+) -> Vec<usize> {
     let extra = height.saturating_sub(40 + port_span(incidents, numbered));
     let mut used = 0;
     incidents

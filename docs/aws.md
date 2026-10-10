@@ -107,9 +107,9 @@ Examples: [security-groups.svg](../examples/security-groups.svg),
 
 | Resource | Endpoint attributes | Relationship |
 | --- | --- | --- |
-| `aws_route_table_association` | `subnet_id`, `route_table_id` | Subnet → Route Table |
-| `aws_lb_target_group_attachment` | `target_group_arn`, `target_id` | Target Group → EC2 Instance |
-| `aws_vpc_endpoint_route_table_association` | `vpc_endpoint_id`, `route_table_id` | VPC Endpoint → Route Table |
+| `aws_route_table_association` | `subnet_id`, `route_table_id` | Subnet ↔ Route Table |
+| `aws_lb_target_group_attachment` | `target_group_arn`, `target_id` | Target Group ↔ EC2 Instance |
+| `aws_vpc_endpoint_route_table_association` | `vpc_endpoint_id`, `route_table_id` | VPC Endpoint ↔ Route Table |
 
 These managed helper cards become Association edges only when both endpoints are
 statically and uniquely resolved and the helper has exactly those two incident
