@@ -29,11 +29,43 @@ fn markers_stay_on_the_line_near_the_destination_in_each_direction() {
         assert_eq!(center.x == end.x, start.x == end.x);
         assert_eq!(center.y == end.y, start.y == end.y);
         let distance = center.x.abs_diff(end.x) + center.y.abs_diff(end.y);
-        assert!(
-            (23..=30).contains(&distance),
-            "{start:?} -> {end:?}: {center:?}"
+        assert_eq!(
+            distance,
+            if start.x == end.x {
+                bounds.height / 2 + 4
+            } else {
+                bounds.width / 2 + 4
+            }
         );
         assert_eq!(index.width, layout.width);
+    }
+}
+
+#[test]
+fn short_final_segments_keep_the_number_at_the_connection_point() {
+    use crate::layout::Point;
+    let graph = graph();
+    for length in [8, 16, 24] {
+        let mut layout = Layout::new(&graph);
+        let target = Point { x: 2300, y: 2200 };
+        layout.paths[0] = vec![
+            Point {
+                x: 2300 - length,
+                y: 1800,
+            },
+            Point {
+                x: 2300 - length,
+                y: 2200,
+            },
+            target,
+            target,
+        ];
+        layout.width = 2600;
+        layout.height = 2600;
+        let index = Index::new(&graph, &layout);
+        let bounds = index.markers[0].bounds;
+        assert_eq!(bounds.right() + 4, target.x);
+        assert_eq!(bounds.origin.y + bounds.height / 2, target.y);
     }
 }
 

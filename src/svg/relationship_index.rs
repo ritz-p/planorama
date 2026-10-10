@@ -77,7 +77,7 @@ impl<'a> Index<'a> {
                 Entry { sources, edges }
             })
             .collect();
-        let markers = markers::place(graph, layout, &entries);
+        let markers = markers::place(layout, &entries);
         let width = markers.iter().fold(layout.width, |width, marker| {
             width.max(marker.bounds.right() + 20)
         });
@@ -124,7 +124,7 @@ impl<'a> Index<'a> {
             let number = marker.number;
             let bounds = marker.bounds;
             writeln!(svg, "<g data-relationship-marker=\"{number}\"><title>Relationship resource [{number}]</title>").unwrap();
-            writeln!(svg, r##"<rect x="{}" y="{}" width="{}" height="{}" rx="4" fill="#ffffff" stroke="#64748b"/><text x="{}" y="{}" text-anchor="middle" font-size="12" fill="#334155">[{number}]</text></g>"##, bounds.origin.x, bounds.origin.y, bounds.width, bounds.height, bounds.origin.x + bounds.width / 2, bounds.origin.y + 15).unwrap();
+            writeln!(svg, r##"<rect x="{}" y="{}" width="{}" height="{}" rx="4" fill="#ffffff" stroke="#64748b"/><text x="{}" y="{}" text-anchor="middle" font-size="11" fill="#334155">[{number}]</text></g>"##, bounds.origin.x, bounds.origin.y, bounds.width, bounds.height, bounds.origin.x + bounds.width / 2, bounds.origin.y + 13).unwrap();
         }
         svg
     }
