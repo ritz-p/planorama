@@ -1,5 +1,27 @@
 use super::{Point, Simplification, simplify};
 
+#[test]
+fn short_perpendicular_connections_keep_sixteen_pixel_endpoint_stubs() {
+    use crate::layout::{Port, Side};
+    let a = Port {
+        point: Point { x: 100, y: 100 },
+        side: Side::Right,
+    };
+    let b = Port {
+        point: Point { x: 108, y: 108 },
+        side: Side::Top,
+    };
+    let path = super::ports::connect(a, b, &[], None).unwrap();
+    assert!(path[1].x >= 116);
+    assert!(path[path.len() - 2].y <= 92);
+    assert!(!super::ports::valid(
+        &[a.point, Point { x: 108, y: 100 }, b.point],
+        a,
+        b,
+        &[]
+    ));
+}
+
 pub(super) fn candidates(start: Point, end: Point) -> Vec<Vec<Point>> {
     let x = start.x.min(end.x) + start.x.abs_diff(end.x) / 2;
     let y = start.y.min(end.y) + start.y.abs_diff(end.y) / 2;
