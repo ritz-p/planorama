@@ -21,7 +21,10 @@ pub(super) fn place(graph: &Graph, tree: ContainmentTree) -> Placed<'_> {
                 .scope
                 .as_ref()
                 .is_some_and(|s| s.region.is_some())
-    }) {
+    }) || super::resource_edges(graph)
+        .into_iter()
+        .any(|indexed| indexed)
+    {
         Placed {
             layout: containers::place_geometry(graph, tree, true),
             strategy: Strategy::Nested,

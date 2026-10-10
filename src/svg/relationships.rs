@@ -88,7 +88,7 @@ pub(super) fn markers(graph: &Graph) -> String {
     for action in actions {
         let name = label(action);
         let border = color(action).1;
-        write!(markers, r##"<marker id="arrow-{name}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="{border}"/></marker>"##).unwrap();
+        write!(markers, r##"<marker id="arrow-{name}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="{border}"/></marker>"##).unwrap();
     }
     markers
 }

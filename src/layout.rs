@@ -25,6 +25,33 @@ pub(crate) fn route_to_margin(start: Point, end: Point, obstacles: &[Bounds]) ->
 pub const NODE_WIDTH: usize = 320;
 pub const NODE_HEIGHT: usize = 96;
 
+fn resource_edges(graph: &Graph) -> Vec<bool> {
+    let relationships: std::collections::BTreeSet<_> = graph
+        .relationships
+        .iter()
+        .filter(|relationship| {
+            relationship.provenance.iter().any(|provenance| {
+                matches!(
+                    provenance,
+                    crate::model::RelationshipProvenance::Resource { .. }
+                )
+            })
+        })
+        .map(|relationship| (&relationship.from, &relationship.to, relationship.kind))
+        .collect();
+    graph
+        .edges
+        .iter()
+        .map(|edge| {
+            relationships.contains(&(
+                &graph.nodes[edge.from].entity.id,
+                &graph.nodes[edge.to].entity.id,
+                edge.kind,
+            ))
+        })
+        .collect()
+}
+
 pub struct Band<'a> {
     pub label: &'a str,
     pub top: usize,

@@ -7,6 +7,95 @@ fn graph() -> Graph {
 }
 
 #[test]
+fn dense_targets_keep_distinct_numbers_readable() {
+    for kind in [EdgeKind::Association, EdgeKind::Connection] {
+        let mut graph = graph();
+        let edge = graph.edges[0].clone();
+        let relationship = graph
+            .relationships
+            .iter()
+            .find(|r| {
+                r.provenance
+                    .iter()
+                    .any(|p| matches!(p, RelationshipProvenance::Resource { .. }))
+            })
+            .unwrap()
+            .clone();
+        graph.edges.clear();
+        graph.relationships.clear();
+        for number in 0..5 {
+            let mut edge = edge.clone();
+            edge.kind = kind;
+            edge.change.as_mut().unwrap().address = format!("association.test_{number}");
+            let mut relationship = relationship.clone();
+            relationship.kind = kind;
+            for provenance in &mut relationship.provenance {
+                if let RelationshipProvenance::Resource { source, change } = provenance {
+                    source.address = edge.change.as_ref().unwrap().address.clone();
+                    *change = edge.change.as_ref().unwrap().clone();
+                }
+            }
+            graph.edges.push(edge);
+            graph.relationships.push(relationship);
+        }
+        let layout = Layout::new(&graph);
+        let index = Index::new(&graph, &layout);
+        assert_eq!(index.markers.len(), 5);
+        for (i, marker) in index.markers.iter().enumerate() {
+            for other in &index.markers[i + 1..] {
+                let (a, b) = (marker.bounds, other.bounds);
+                assert!(
+                    a.right() + 3 <= b.origin.x
+                        || b.right() + 3 <= a.origin.x
+                        || a.origin.y + a.height + 3 <= b.origin.y
+                        || b.origin.y + b.height + 3 <= a.origin.y,
+                    "{kind:?}: {a:?} overlaps {b:?}"
+                );
+            }
+        }
+    }
+}
+
+#[test]
+fn wide_addresses_wrap_within_the_canvas_and_reserved_height() {
+    let mut graph = graph();
+    let address = format!(
+        "aws_route_table_association.example[\"{}\"]",
+        "東京大阪".repeat(80)
+    );
+    for relationship in &mut graph.relationships {
+        for provenance in &mut relationship.provenance {
+            if let RelationshipProvenance::Resource { source, .. } = provenance {
+                source.address = address.clone();
+            }
+        }
+    }
+    let layout = Layout::new(&graph);
+    let index = Index::new(&graph, &layout);
+    let svg = index.render(0);
+    let document = roxmltree::Document::parse(&svg).unwrap();
+    let lines: Vec<_> = document
+        .descendants()
+        .filter(|n| n.has_tag_name("tspan"))
+        .collect();
+    assert_eq!(
+        lines.iter().filter_map(|n| n.text()).collect::<String>(),
+        address
+    );
+    for line in &lines {
+        let width: usize = line
+            .text()
+            .unwrap()
+            .chars()
+            .map(|c| if c.is_ascii() { 8 } else { 16 })
+            .sum();
+        assert!(100 + width <= index.width);
+        assert!(line.attribute("y").unwrap().parse::<usize>().unwrap() + 4 < index.height());
+    }
+    assert_eq!(index.height(), 60 + lines.len() * 20 + 8);
+}
+
+#[test]
 fn marker_borders_match_relationship_actions_and_line_patterns() {
     use crate::model::Action;
     for kind in [
@@ -52,6 +141,21 @@ fn marker_borders_match_relationship_actions_and_line_patterns() {
                 .find(|n| n.attribute("data-relationship-marker") == Some("1"))
                 .unwrap();
             let border = marker.children().find(|n| n.has_tag_name("rect")).unwrap();
+            let arrow_id = path
+                .attribute("marker-end")
+                .unwrap()
+                .strip_prefix("url(#")
+                .unwrap()
+                .strip_suffix(')')
+                .unwrap();
+            let arrow = document
+                .descendants()
+                .find(|n| n.attribute("id") == Some(arrow_id))
+                .unwrap();
+            assert_eq!(arrow.attribute("markerUnits"), Some("userSpaceOnUse"));
+            let arrow_width: f64 = arrow.attribute("markerWidth").unwrap().parse().unwrap();
+            let border_width: f64 = border.attribute("stroke-width").unwrap().parse().unwrap();
+            assert!(arrow_width + border_width / 2.0 < 10.0);
             let entry = document
                 .descendants()
                 .find(|n| n.attribute("data-relationship-entry") == Some("1"))
@@ -104,9 +208,9 @@ fn markers_stay_on_the_line_near_the_destination_in_each_direction() {
         assert_eq!(
             distance,
             if start.x == end.x {
-                bounds.height / 2 + 4
+                bounds.height / 2 + 10
             } else {
-                bounds.width / 2 + 4
+                bounds.width / 2 + 10
             }
         );
         assert_eq!(index.width, layout.width);
@@ -136,7 +240,7 @@ fn short_final_segments_keep_the_number_at_the_connection_point() {
         layout.height = 2600;
         let index = Index::new(&graph, &layout);
         let bounds = index.markers[0].bounds;
-        assert_eq!(bounds.right() + 4, target.x);
+        assert_eq!(bounds.right() + 10, target.x);
         assert_eq!(bounds.origin.y + bounds.height / 2, target.y);
     }
 }

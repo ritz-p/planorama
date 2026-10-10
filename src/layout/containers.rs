@@ -36,13 +36,22 @@ pub(super) fn place_geometry(
     } else {
         Vec::new()
     };
+    let resource_edges = super::resource_edges(graph);
     let header_heights: Vec<_> = routing::incidents(graph, &tree)
         .iter()
         .enumerate()
         .map(|(node, edges)| {
             let inferred =
                 tree.parents[node].is_some_and(|parent| graph.derived_containment(parent, node));
-            (NODE_HEIGHT + if inferred { 18 } else { 0 }).max(edges.len() + 41)
+            let spacing = if edges
+                .iter()
+                .any(|&(edge, source)| !source && resource_edges[edge])
+            {
+                (edges.len() + 1) * 24 + 40
+            } else {
+                edges.len() + 41
+            };
+            (NODE_HEIGHT + if inferred { 18 } else { 0 }).max(spacing)
         })
         .collect();
     let children = &tree.children;

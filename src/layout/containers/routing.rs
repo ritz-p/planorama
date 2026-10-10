@@ -63,6 +63,17 @@ fn route_impl(
         )
     };
     let mut incident = incidents(graph, &layout.containment);
+    let resource_edges = crate::layout::resource_edges(graph);
+    let dense_targets: Vec<_> = incident
+        .iter()
+        .map(|edges| {
+            edges
+                .iter()
+                .filter(|&&(edge, source)| !source && resource_edges[edge])
+                .count()
+                > 1
+        })
+        .collect();
     for edges in &mut incident {
         edges.sort_by_key(|&(index, source)| {
             let edge = &graph.edges[index];
@@ -129,7 +140,7 @@ fn route_impl(
         if !paths[index].is_empty() {
             continue;
         }
-        if bundle {
+        if bundle && !resource_edges[index] {
             if let Some(group) = groups.iter().find(|group| group.edges.contains(&index)) {
                 if attempted.insert(group.target) {
                     if let Some(bundled) = bundles::try_bundle(
@@ -159,7 +170,7 @@ fn route_impl(
             &obstacles,
             quality.then_some(&scorer),
         );
-        let path = if quality {
+        let path = if quality && !(resource_edges[index] && dense_targets[edge.to]) {
             crate::layout::routing_shared::ports::select(
                 layout.bounds[edge.from],
                 layout.bounds[edge.to],

@@ -14,9 +14,9 @@ pub(super) fn place(graph: &Graph, layout: &Layout<'_>, entries: &[Entry<'_>]) -
             };
             let (before, target) = (segment[0], segment[1]);
             let offset = if before.x == target.x {
-                height / 2 + 4
+                height / 2 + 10
             } else {
-                width / 2 + 4
+                width / 2 + 10
             };
             let center = Point {
                 x: match before.x.cmp(&target.x) {

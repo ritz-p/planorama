@@ -50,6 +50,7 @@ pub(crate) fn render(graph: &Graph, layout: &Layout<'_>) -> String {
     render_with_format(graph, layout, AddressFormat::Qualified)
 }
 
+#[cfg(test)]
 fn dimensions(graph: &Graph, layout: &Layout<'_>) -> (usize, usize) {
     let index = relationship_index::Index::new(graph, layout);
     dimensions_with_index(graph, layout, &index)
@@ -75,9 +76,18 @@ pub(crate) fn render_with_format(
     layout: &Layout<'_>,
     address_format: AddressFormat,
 ) -> String {
-    let check_offset = if graph.checks.is_empty() { 0 } else { 24 };
     let relationship_index = relationship_index::Index::new(graph, layout);
-    let (width, height) = dimensions_with_index(graph, layout, &relationship_index);
+    render_with_index(graph, layout, address_format, &relationship_index)
+}
+
+fn render_with_index(
+    graph: &Graph,
+    layout: &Layout<'_>,
+    address_format: AddressFormat,
+    relationship_index: &relationship_index::Index<'_>,
+) -> String {
+    let check_offset = if graph.checks.is_empty() { 0 } else { 24 };
+    let (width, height) = dimensions_with_index(graph, layout, relationship_index);
     let membership = components::membership(graph);
     let (description, summary) = relationships::captions(graph);
     let markers = relationships::markers(graph);
@@ -90,7 +100,7 @@ pub(crate) fn render_with_format(
         r##"<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}" role="img" aria-labelledby="title description">
 <title id="title">Terraform plan</title>
 <desc id="description">{description} Thin solid: dependency. Dashed: association. Thick dotted: connection. Nested boxes: containment. Edge color preserves the Terraform action when available.</desc>
-<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/></marker>{markers}{icon_definitions}</defs>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/></marker>{markers}{icon_definitions}</defs>
 <rect width="100%" height="100%" fill="#ffffff"/>
 <g font-family="ui-monospace, SFMono-Regular, Consolas, monospace">
 <text x="40" y="45" font-size="25" font-weight="700" fill="#0f172a">Terraform plan</text>

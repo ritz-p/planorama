@@ -5,6 +5,7 @@ use std::fmt::Write;
 
 struct StateObstacles {
     scopes: Vec<Bounds>,
+    markers: Vec<Bounds>,
     bounds: Vec<Bounds>,
     headers: Vec<usize>,
     parents: Vec<Option<usize>>,
@@ -29,6 +30,7 @@ impl StateObstacles {
                 }
             })
             .chain(self.scopes.iter().copied())
+            .chain(self.markers.iter().copied())
             .collect()
     }
 }
@@ -45,7 +47,8 @@ pub fn render_states(
     let mut width = 1120;
     for (id, graph) in graphs {
         let layout = Layout::new(graph);
-        let (state_width, height) = super::dimensions(graph, &layout);
+        let index = super::relationship_index::Index::new(graph, &layout);
+        let (state_width, height) = super::dimensions_with_index(graph, &layout, &index);
         width = width.max(state_width);
         let prefix = prefix(id);
         let check_offset =
@@ -53,6 +56,13 @@ pub fn render_states(
         obstacles.insert(
             id.clone(),
             StateObstacles {
+                markers: index
+                    .marker_bounds()
+                    .map(|mut bounds| {
+                        bounds.origin.y += top + 40 + check_offset;
+                        bounds
+                    })
+                    .collect(),
                 scopes: layout
                     .scopes
                     .iter()
@@ -95,7 +105,10 @@ pub fn render_states(
                 ),
             );
         }
-        let document = namespace(&super::render_with_format(graph, &layout, format), &prefix);
+        let document = namespace(
+            &super::render_with_index(graph, &layout, format, &index),
+            &prefix,
+        );
         writeln!(sections, r##"<g id="{prefix}state" data-state-id="{}"><text x="40" y="{}" font-family="ui-monospace, Consolas, monospace" font-size="20" font-weight="700" fill="#0f172a">State: {}</text>"##, super::escape(id.as_str()), top + 25, super::escape(id.as_str())).unwrap();
         sections.push_str(&document.replacen("<svg ", &format!("<svg y=\"{}\" ", top + 40), 1));
         sections.push_str("</g>\n");
@@ -343,6 +356,7 @@ fn cross_state_obstacles_only_relax_the_endpoint_and_its_ancestors() {
     };
     let state = StateObstacles {
         scopes: Vec::new(),
+        markers: vec![rectangle(270, 219, 24, 18)],
         bounds: vec![
             rectangle(50, 100, 400, 300),
             rectangle(80, 180, 150, 96),
@@ -354,25 +368,27 @@ fn cross_state_obstacles_only_relax_the_endpoint_and_its_ancestors() {
     let obstacles = state.for_endpoint(1);
     assert_eq!(obstacles[0], state.bounds[0].header(60));
     assert_eq!(obstacles[2], state.bounds[2]);
+    assert_eq!(obstacles[3], state.markers[0]);
     let route = crate::layout::route_to_margin(
         Point { x: 230, y: 228 },
         Point { x: 900, y: 228 },
         &obstacles,
     );
-    let unrelated = state.bounds[2];
-    for segment in route.windows(2) {
-        let (a, b) = (segment[0], segment[1]);
-        let crosses = if a.x == b.x {
-            a.x > unrelated.origin.x
-                && a.x < unrelated.right()
-                && a.y.max(b.y) > unrelated.origin.y
-                && a.y.min(b.y) < unrelated.origin.y + unrelated.height
-        } else {
-            a.y > unrelated.origin.y
-                && a.y < unrelated.origin.y + unrelated.height
-                && a.x.max(b.x) > unrelated.origin.x
-                && a.x.min(b.x) < unrelated.right()
-        };
-        assert!(!crosses, "{segment:?}");
+    for unrelated in [state.bounds[2], state.markers[0]] {
+        for segment in route.windows(2) {
+            let (a, b) = (segment[0], segment[1]);
+            let crosses = if a.x == b.x {
+                a.x > unrelated.origin.x
+                    && a.x < unrelated.right()
+                    && a.y.max(b.y) > unrelated.origin.y
+                    && a.y.min(b.y) < unrelated.origin.y + unrelated.height
+            } else {
+                a.y > unrelated.origin.y
+                    && a.y < unrelated.origin.y + unrelated.height
+                    && a.x.max(b.x) > unrelated.origin.x
+                    && a.x.min(b.x) < unrelated.right()
+            };
+            assert!(!crosses, "{segment:?}");
+        }
     }
 }
