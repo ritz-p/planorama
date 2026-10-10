@@ -6,21 +6,21 @@ pub(in crate::layout) fn simplify_routes(
     order: impl IntoIterator<Item = usize>,
     obstacles: impl Fn(usize) -> Vec<Bounds>,
 ) {
+    let mut scorer = Scorer::default();
+    for path in paths.iter() {
+        scorer.insert(path.clone());
+    }
     for index in order {
         if paths[index].len() < 3 {
             continue;
         }
-        let mut scorer = Scorer::default();
-        for (other, path) in paths.iter().enumerate() {
-            if other != index {
-                scorer.insert(path.clone());
-            }
-        }
+        scorer.remove(index);
         paths[index] = simplify_path(
             std::mem::take(&mut paths[index]),
             &obstacles(index),
             &scorer,
         );
+        scorer.replace(index, paths[index].clone());
     }
 }
 
