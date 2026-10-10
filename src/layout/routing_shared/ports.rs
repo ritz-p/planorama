@@ -61,11 +61,19 @@ pub(in crate::layout) fn select_with_slots(
     for (rank, (a, b)) in pairs.into_iter().enumerate() {
         let start = source.port(
             a,
-            slots.map_or_else(|| offset(source, first, a), |s| s.0[a as usize]),
+            if on_side(source, first, a) {
+                offset(source, first, a)
+            } else {
+                slots.map_or_else(|| offset(source, first, a), |s| s.0[a as usize])
+            },
         );
         let end = target.port(
             b,
-            slots.map_or_else(|| offset(target, last, b), |s| s.1[b as usize]),
+            if on_side(target, last, b) {
+                offset(target, last, b)
+            } else {
+                slots.map_or_else(|| offset(target, last, b), |s| s.1[b as usize])
+            },
         );
         if start.point == first && end.point == last {
             preference = preference.min(rank);
@@ -88,6 +96,43 @@ pub(in crate::layout) fn select_with_slots(
         }
     }
     best
+}
+
+fn on_side(bounds: Bounds, point: Point, side: Side) -> bool {
+    match side {
+        Side::Left => point.x == bounds.origin.x,
+        Side::Right => point.x == bounds.right(),
+        Side::Top => point.y == bounds.origin.y,
+        Side::Bottom => point.y == bounds.origin.y + bounds.height,
+    }
+}
+
+#[test]
+fn target_side_change_preserves_source_offset() {
+    let source = Bounds {
+        origin: Point { x: 100, y: 100 },
+        width: 200,
+        height: 160,
+    };
+    let target = Bounds {
+        origin: Point { x: 600, y: 100 },
+        ..source
+    };
+    let start = source.port(Side::Right, 45);
+    let end = target.port(Side::Right, 70);
+    let obstacles = [source, target];
+    let baseline = connect(start, end, &obstacles, None).unwrap();
+    let slots = [100; 4];
+    let path = select_with_slots(
+        source,
+        target,
+        baseline,
+        &obstacles,
+        &Scorer::default(),
+        Some((&slots, &slots)),
+    );
+    assert_eq!(path.first(), Some(&start.point));
+    assert_eq!(path.last(), Some(&target.port(Side::Left, 100).point));
 }
 
 pub(in crate::layout) fn connect(

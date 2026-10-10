@@ -46,29 +46,26 @@ fn route_impl(
         sources[a].push(edge);
         targets[b].push(edge);
     }
-    for (node, edges) in sources.iter_mut().enumerate() {
-        edges.sort_by_key(|&edge| {
-            (
-                bounds[graph.edges[edge].to].origin.y,
-                graph.nodes[graph.edges[edge].to].entity.id.as_str(),
-            )
-        });
-        for (port, &edge) in edges.iter().enumerate() {
-            source_ports[edge] = 20 + (port + 1) * (bounds[node].height - 40) / (edges.len() + 1);
-        }
+    let incident: Vec<_> = sources
+        .iter()
+        .zip(&targets)
+        .map(|(s, t)| {
+            s.iter()
+                .map(|&e| (e, true))
+                .chain(t.iter().map(|&e| (e, false)))
+                .collect()
+        })
+        .collect();
+    let (source_slots, target_slots) =
+        super::routing_shared::slots::assign(graph, bounds, &incident);
+    for (index, edge) in graph.edges.iter().enumerate() {
+        source_ports[index] = source_slots[index][Side::Right as usize];
+        target_ports[index] = target_slots[index][if ranks[edge.to] > ranks[edge.from] {
+            Side::Left
+        } else {
+            Side::Right
+        } as usize];
     }
-    for (node, edges) in targets.iter_mut().enumerate() {
-        edges.sort_by_key(|&edge| {
-            (
-                bounds[graph.edges[edge].from].origin.y,
-                graph.nodes[graph.edges[edge].from].entity.id.as_str(),
-            )
-        });
-        for (port, &edge) in edges.iter().enumerate() {
-            target_ports[edge] = 20 + (port + 1) * (bounds[node].height - 40) / (edges.len() + 1);
-        }
-    }
-
     let bundles = Bundles::new(graph, ranks);
     let containment = super::ContainmentTree::new(graph);
     bundles.align_ports(graph, bounds, &mut source_ports, &mut target_ports);

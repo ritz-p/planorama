@@ -98,7 +98,7 @@ fn route_impl(
             bounds.height,
         )
     };
-    let mut incident = incidents(graph, &layout.containment);
+    let incident = incidents(graph, &layout.containment);
     let resource_edges = crate::layout::resource_edges(graph);
     let numbered = crate::layout::relationship_markers::ends(graph);
     let numbered_targets: Vec<_> = incident
@@ -109,51 +109,26 @@ fn route_impl(
                 .any(|&(edge, source)| numbered[edge][usize::from(!source)])
         })
         .collect();
-    for edges in &mut incident {
-        edges.sort_by_key(|&(index, source)| {
-            let edge = &graph.edges[index];
-            let peer = match source {
-                true => edge.to,
-                false => edge.from,
-            };
-            (
-                layout.bounds[peer].origin.y * 2 + layout.bounds[peer].height,
-                keys[peer],
-                source,
-                edge.kind,
-                edge.change.as_ref().map(|change| change.action),
-                edge.change.as_ref().map(|change| change.local_address()),
-                geometry(peer),
-                graph.nodes[peer].entity.id.as_str(),
-                edge.change.as_ref().map(|change| change.address.as_str()),
-            )
-        });
-    }
     let mut source_ports = vec![0; graph.edges.len()];
     let (source_slots, target_slots) =
         crate::layout::routing_shared::slots::assign(graph, &layout.bounds, &incident);
     let mut target_ports = vec![0; graph.edges.len()];
     for (node, edges) in incident.iter().enumerate() {
-        let ports = crate::layout::relationship_markers::ports(
-            edges,
-            &numbered,
-            layout.bounds[node].height,
-        );
-        for (slot, &(edge, source)) in edges.iter().enumerate() {
-            let height = if bundle
+        for &(edge, source) in edges {
+            let mut port = if source {
+                source_slots[edge][Side::Right as usize]
+            } else {
+                target_slots[edge][Side::Right as usize]
+            };
+            if bundle
                 && source
                 && graph.edges[edge].kind == EdgeKind::Connection
                 && !numbered_targets[node]
             {
-                layout.header_heights[node]
-            } else {
-                layout.bounds[node].height
-            };
-            let port = if numbered_targets[node] {
-                ports[slot]
-            } else {
-                20 + (slot + 1) * (height - 40) / (edges.len() + 1)
-            };
+                port = 20
+                    + port.saturating_sub(20) * layout.header_heights[node].saturating_sub(40)
+                        / layout.bounds[node].height.saturating_sub(40).max(1);
+            }
             match source {
                 true => source_ports[edge] = port,
                 false => target_ports[edge] = port,
