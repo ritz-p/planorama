@@ -66,8 +66,9 @@ Intentional bundle alignment and numbered terminal spacing remain constraints.
 Numbered ports at both ends of undirected associations, or the destination of
 directed relationships, reserve badge-sized slots; other incident ports retain
 normal spacing. Adjacent terminal corridors are merged before routing. Orthogonal
-search indexes blocked grid edges once per search and checks them in constant time,
-instead of scanning all rectangles for every candidate segment.
+search indexes blocked grid edges and soft-card occlusion costs once per search,
+then looks them up in constant time for each candidate segment. Bundle branches
+use their own endpoint exclusions when evaluating soft-card occlusion.
 
 Hard obstacle violations are rejected. Readability cost is path length plus 96 per
 bend, 512 per crossing, eight per overlapping pixel and two per occluded card pixel.

@@ -166,7 +166,8 @@ fn candidate(
         {
             return None;
         }
-        bundled_cost += scorer.readability_cost(&path);
+        bundled_cost +=
+            scorer.readability_cost_with_soft(&path, &super::soft_obstacles(layout, edge));
         coordinates.push(along(start.point));
         paths.push((index, path));
     }
