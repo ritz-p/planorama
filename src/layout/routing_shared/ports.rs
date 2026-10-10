@@ -21,21 +21,31 @@ pub(in crate::layout) fn select(
     if target.origin.y + target.height < source.origin.y {
         pairs.push((Side::Top, Side::Bottom));
     }
-    let offset = |bounds: Bounds, point: Point, side| match side {
-        Side::Left | Side::Right => point.y.saturating_sub(bounds.origin.y),
-        Side::Top | Side::Bottom => {
-            point.y.saturating_sub(bounds.origin.y).min(bounds.height) * bounds.width
-                / bounds.height.max(1)
-        }
+    let offset = |bounds: Bounds, point: Point, side| {
+        let horizontal = point.x > bounds.origin.x
+            && point.x < bounds.right()
+            && (point.y == bounds.origin.y || point.y == bounds.origin.y + bounds.height);
+        let (position, extent) = if horizontal {
+            (point.x.saturating_sub(bounds.origin.x), bounds.width)
+        } else {
+            (point.y.saturating_sub(bounds.origin.y), bounds.height)
+        };
+        let size = match side {
+            Side::Left | Side::Right => bounds.height,
+            Side::Top | Side::Bottom => bounds.width,
+        };
+        position.min(extent) * size / extent.max(1)
     };
     let (Some(&first), Some(&last)) = (baseline.first(), baseline.last()) else {
         return baseline;
     };
     let mut best = baseline;
-    for (a, b) in pairs {
+    let mut preference = pairs.len();
+    for (rank, (a, b)) in pairs.into_iter().enumerate() {
         let start = source.port(a, offset(source, first, a));
         let end = target.port(b, offset(target, last, b));
         if start.point == first && end.point == last {
+            preference = preference.min(rank);
             continue;
         }
         for quality in [None, Some(scorer)] {
@@ -45,8 +55,11 @@ pub(in crate::layout) fn select(
                 {
                     continue;
                 }
-                if scorer.score(&candidate, obstacles) < scorer.score(&best, obstacles) {
+                if (scorer.score(&candidate, obstacles), rank)
+                    < (scorer.score(&best, obstacles), preference)
+                {
                     best = candidate;
+                    preference = rank;
                 }
             }
         }
@@ -188,4 +201,40 @@ fn side_selection_preserves_obstacle_avoidance() {
             .windows(2)
             .all(|p| obstacles.iter().all(|&b| !crosses(p[0], p[1], b)))
     );
+}
+
+#[test]
+fn equal_quality_facing_pairs_have_an_explicit_preference() {
+    let source = Bounds {
+        origin: Point { x: 100, y: 100 },
+        width: 80,
+        height: 80,
+    };
+    let target = Bounds {
+        origin: Point { x: 300, y: 300 },
+        ..source
+    };
+    let obstacles = [source, target];
+    let scorer = Scorer::default();
+    let baseline = connect(
+        source.port(Side::Bottom, 40),
+        target.port(Side::Top, 40),
+        &obstacles,
+        None,
+    )
+    .unwrap();
+    let preferred = connect(
+        source.port(Side::Right, 40),
+        target.port(Side::Left, 40),
+        &obstacles,
+        None,
+    )
+    .unwrap();
+    assert_eq!(
+        scorer.score(&baseline, &obstacles),
+        scorer.score(&preferred, &obstacles)
+    );
+    let chosen = select(source, target, baseline, &obstacles, &scorer);
+    assert_eq!(chosen.first(), Some(&source.port(Side::Right, 40).point));
+    assert_eq!(chosen.last(), Some(&target.port(Side::Left, 40).point));
 }
