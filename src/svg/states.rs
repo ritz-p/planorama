@@ -4,6 +4,7 @@ use std::collections::BTreeMap;
 use std::fmt::Write;
 
 struct StateObstacles {
+    scopes: Vec<Bounds>,
     bounds: Vec<Bounds>,
     headers: Vec<usize>,
     parents: Vec<Option<usize>>,
@@ -27,6 +28,7 @@ impl StateObstacles {
                     *b
                 }
             })
+            .chain(self.scopes.iter().copied())
             .collect()
     }
 }
@@ -51,6 +53,15 @@ pub fn render_states(
         obstacles.insert(
             id.clone(),
             StateObstacles {
+                scopes: layout
+                    .scopes
+                    .iter()
+                    .map(|panel| {
+                        let mut header = panel.bounds.header(36);
+                        header.origin.y += top + 40 + check_offset;
+                        header
+                    })
+                    .collect(),
                 bounds: layout
                     .bounds
                     .iter()
@@ -331,6 +342,7 @@ fn cross_state_obstacles_only_relax_the_endpoint_and_its_ancestors() {
         height,
     };
     let state = StateObstacles {
+        scopes: Vec::new(),
         bounds: vec![
             rectangle(50, 100, 400, 300),
             rectangle(80, 180, 150, 96),

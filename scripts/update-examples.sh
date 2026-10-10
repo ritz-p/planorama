@@ -3,7 +3,7 @@ set -eu
 cd "$(dirname "$0")/.."
 cargo build --locked
 binary=target/debug/planorama
-for name in association aws-relationships checks components containment dense-architecture multi-container network-scope rds-subnet-group routes security-groups spanning-dense subnet-groups terraform vpc-workloads workload-security-groups; do
+for name in association aws-relationships checks components containment dense-architecture multi-container network-scope rds-subnet-group regions routes security-groups spanning-dense subnet-groups terraform vpc-workloads workload-security-groups; do
     "$binary" "tests/fixtures/$name-plan.json" -o "examples/$name.svg"
 done
 "$binary" examples/plan.json -o examples/diagram.svg

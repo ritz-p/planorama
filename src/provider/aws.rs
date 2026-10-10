@@ -6,7 +6,9 @@ mod data;
 pub(super) mod diagnostics;
 mod icons;
 mod routes;
+mod scope;
 mod security_groups;
+pub(super) use scope::scope;
 
 pub(crate) fn classify(resource_type: &str) -> crate::model::ResourceRole {
     classification::classify(resource_type)

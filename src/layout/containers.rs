@@ -3,7 +3,7 @@ use crate::model::architecture::{Graph, ResourceRole};
 
 mod affinity;
 pub(super) mod ordering;
-mod placement;
+pub(super) mod placement;
 mod routing;
 
 #[cfg(test)]
@@ -82,9 +82,9 @@ pub(super) fn place_geometry(
             );
         }
     }
-    let columns = placement::columns(graph, None, roots, parents);
-    let (_, root_height) = placement::pack(&columns, &sizes, &mut offsets);
+    let (root_height, scopes) = super::scopes::pack(graph, &tree, &sizes, &mut offsets);
     let mut layout = Layout {
+        scopes,
         bounds: vec![Bounds::card(Point { x: 0, y: 0 }); graph.nodes.len()],
         header_heights,
         width: 1100,
@@ -124,5 +124,8 @@ pub(super) fn place_geometry(
         }
     }
     layout.height = (root_height + 240).max(300);
+    for panel in &layout.scopes {
+        layout.width = layout.width.max(panel.bounds.right() + 40);
+    }
     layout
 }

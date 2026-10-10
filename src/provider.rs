@@ -1,5 +1,15 @@
 pub(crate) mod aws;
 
+pub(crate) fn scope(
+    entity: &crate::model::TerraformEntity,
+) -> Option<crate::model::architecture::DeploymentScope> {
+    entity
+        .provider
+        .is_aws()
+        .then(|| aws::scope(entity))
+        .flatten()
+}
+
 pub(crate) fn classify(
     provider: &crate::model::ProviderIdentity,
     resource_type: &str,

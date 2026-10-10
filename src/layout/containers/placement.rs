@@ -4,7 +4,7 @@ use crate::layout::rank;
 use crate::model::architecture::{EdgeKind, Graph};
 use std::collections::{BTreeMap, BTreeSet};
 
-pub(super) fn columns(
+pub(in crate::layout) fn columns(
     graph: &Graph,
     parent: Option<usize>,
     children: &[usize],
@@ -45,7 +45,7 @@ pub(super) fn columns(
     columns
 }
 
-pub(super) fn pack(
+pub(in crate::layout) fn pack(
     columns: &[Vec<usize>],
     sizes: &[(usize, usize)],
     offsets: &mut [Point],

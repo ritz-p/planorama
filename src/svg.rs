@@ -10,6 +10,7 @@ mod paths;
 mod provenance;
 mod relationships;
 mod roles;
+mod scopes;
 mod states;
 mod style;
 pub use states::render_states;
@@ -147,6 +148,7 @@ pub(crate) fn render_with_format(
         let (module, y, h) = (band.label, band.top, band.height);
         writeln!(svg, r##"<rect x="35" y="{y}" width="{}" height="{h}" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-dasharray="5 4"/><text x="52" y="{}" font-size="13" font-weight="700" fill="#475569"><title>{}</title>{}</text>"##, width - 70, y + 25, escape(module), escape(&shorten(module, 110))).unwrap();
     }
+    svg.push_str(&scopes::render(layout));
     svg.push_str(&containers::boundaries(graph, layout));
     for (edge, points) in graph.edges.iter().zip(&layout.paths) {
         let relation = match edge.kind {
