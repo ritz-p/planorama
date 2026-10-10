@@ -38,24 +38,7 @@ pub(super) fn place_geometry(
     } else {
         Vec::new()
     };
-    let resource_edges = super::resource_edges(graph);
-    let header_heights: Vec<_> = routing::incidents(graph, &tree)
-        .iter()
-        .enumerate()
-        .map(|(node, edges)| {
-            let inferred =
-                tree.parents[node].is_some_and(|parent| graph.derived_containment(parent, node));
-            let spacing = if edges
-                .iter()
-                .any(|&(edge, source)| !source && resource_edges[edge])
-            {
-                (edges.len() + 1) * super::relationship_markers::PORT_SPACING + 40
-            } else {
-                edges.len() + 41
-            };
-            (NODE_HEIGHT + if inferred { 18 } else { 0 }).max(spacing)
-        })
-        .collect();
+    let header_heights = header_heights(graph, &tree);
     let children = &tree.children;
 
     let roots = &tree.roots;
@@ -146,4 +129,18 @@ pub(super) fn place_geometry(
         layout.width = layout.width.max(panel.bounds.right() + 40);
     }
     layout
+}
+
+pub(super) fn header_heights(graph: &Graph, tree: &super::ContainmentTree) -> Vec<usize> {
+    let numbered = super::resource_edges(graph);
+    routing::incidents(graph, tree)
+        .iter()
+        .enumerate()
+        .map(|(node, edges)| {
+            let inferred =
+                tree.parents[node].is_some_and(|parent| graph.derived_containment(parent, node));
+            (NODE_HEIGHT + if inferred { 18 } else { 0 })
+                .max(40 + super::relationship_markers::port_span(edges, &numbered))
+        })
+        .collect()
 }

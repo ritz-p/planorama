@@ -19,9 +19,10 @@ column. Dense ranks wrap into adjacent columns, and containers grow around their
 children. Related subnet containers can be kept adjacent to shorten connections.
 Module membership does not control containment or create module bands.
 
-Without containers, resources use module bands and dependency ranks. Long edges
+Without containers or regional scope panels, resources use module bands and dependency ranks. Long edges
 participate in ordering through virtual intermediate vertices, which are not
-rendered as cards. Address labels, action metadata and provider roles do not change
+rendered as cards. Numbered relationships retain these bands; rows accommodate
+the actual card heights. Address labels, action metadata and provider roles do not change
 during layout.
 
 Structural keys make ordering deterministic under input reordering. Symmetric
@@ -32,13 +33,19 @@ module can therefore change the order of otherwise indistinguishable resources.
 
 Flat routing uses rank lanes and compatible fan-in/fan-out bundles. Nested routing
 uses recursive packing and obstacle-aware search, with shared gutters for compatible
-subnet connections. Bundled edges retain individual metadata and junction markers.
+subnet connections. Flat diagrams with numbered relationships also use obstacle-aware
+search to preserve the reserved terminal corridors. Bundled edges retain individual metadata and junction markers.
 See [bundling](../examples/bundling.svg) and [spanning connections](../examples/spanning-dense.svg).
 
 Independent paths compare the existing route with facing side pairs on actual
 bounds. Outward stubs and distinct endpoint slots protect labels and high-degree
 ports. Unrelated cards/container interiors are obstacles; endpoint ancestors permit
 traversal outside their headers.
+
+Only numbered incoming ports reserve badge-sized slots; other incident ports retain
+normal spacing. Adjacent terminal corridors are merged before routing. Orthogonal
+search indexes blocked grid edges once per search and checks them in constant time,
+instead of scanning all rectangles for every candidate segment.
 
 Candidate scoring prioritizes obstacle crossings, overlap, edge crossings, bends
 and length. Occupancy-aware alternatives discourage crowded corridors. Selection

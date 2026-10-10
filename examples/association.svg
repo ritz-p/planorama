@@ -41,7 +41,7 @@ No AWS endorsement is implied. Consult the AWS terms for other uses.
 </g>
 <g transform="translate(0 72)">
 <g data-container="resource-6177735f7375626e65742e70726976617465-current"><title>aws_subnet.private</title><rect x="60" y="160" width="452" height="162" rx="12" fill="#ecfdf5" stroke="#047857" stroke-width="2" data-mode="managed"/></g>
-<path d="M 512 241 L 562 241 Q 570 241 570 249 L 570 256 Q 570 264 578 264 L 932 264 Q 940 264 940 256 L 940 216 Q 940 208 932 208 L 898 208 " data-edge-kind="association" data-source="resource-6177735f7375626e65742e70726976617465-current" data-target="resource-6177735f726f7574655f7461626c652e70726976617465-current" fill="none" stroke="#047857" stroke-width="2" stroke-dasharray="7 4" stroke-linejoin="round" marker-end="url(#arrow-create)"><title>aws_subnet.private → aws_route_table.private (association; create: aws_route_table_association.private)</title></path>
+<path d="M 512 241 L 562 241 Q 570 241 570 249 L 570 256 Q 570 264 578 264 L 932 264 Q 940 264 940 256 L 940 215 Q 940 207 932 207 L 898 207 " data-edge-kind="association" data-source="resource-6177735f7375626e65742e70726976617465-current" data-target="resource-6177735f726f7574655f7461626c652e70726976617465-current" fill="none" stroke="#047857" stroke-width="2" stroke-dasharray="7 4" stroke-linejoin="round" marker-end="url(#arrow-create)"><title>aws_subnet.private → aws_route_table.private (association; create: aws_route_table_association.private)</title></path>
 <g id="resource-6177735f726f7574655f7461626c652e70726976617465-current" data-architecture-id="terraform:6177735f726f7574655f7461626c652e70726976617465-current" data-qualified-address="module.root.aws_route_table.private" data-terraform-address="aws_route_table.private"><title>module.root.aws_route_table.private — create</title>
 <rect x="578" y="160" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text x="590" y="180" font-size="11" fill="#047857">aws_route_table · create</text>
@@ -55,7 +55,7 @@ No AWS endorsement is implied. Consult the AWS terms for other uses.
 <text x="72" y="244" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
 <g data-relationship-marker="1"><title>Relationship resource [1]</title>
-<rect x="908" y="199" width="24" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="920" y="212" text-anchor="middle" font-size="11" fill="#334155">[1]</text>
+<rect x="908" y="198" width="24" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="920" y="211" text-anchor="middle" font-size="11" fill="#334155">[1]</text>
 </g>
 <g data-relationship-index="true"><text x="40" y="426" font-size="16" font-weight="700" fill="#334155">Relationship resources</text>
 <g data-relationship-entry="1">

@@ -6,38 +6,43 @@ fn graph() -> Graph {
         .0
 }
 
+fn dense_graph(count: usize, kind: EdgeKind) -> Graph {
+    let mut graph = graph();
+    let edge = graph.edges[0].clone();
+    let relationship = graph
+        .relationships
+        .iter()
+        .find(|r| {
+            r.provenance
+                .iter()
+                .any(|p| matches!(p, RelationshipProvenance::Resource { .. }))
+        })
+        .unwrap()
+        .clone();
+    graph.edges.clear();
+    graph.relationships.clear();
+    for number in 0..count {
+        let mut edge = edge.clone();
+        edge.kind = kind;
+        edge.change.as_mut().unwrap().address = format!("association.test_{number}");
+        let mut relationship = relationship.clone();
+        relationship.kind = kind;
+        for provenance in &mut relationship.provenance {
+            if let RelationshipProvenance::Resource { source, change } = provenance {
+                source.address = edge.change.as_ref().unwrap().address.clone();
+                *change = edge.change.as_ref().unwrap().clone();
+            }
+        }
+        graph.edges.push(edge);
+        graph.relationships.push(relationship);
+    }
+    graph
+}
+
 #[test]
 fn dense_targets_keep_distinct_numbers_readable() {
     for kind in [EdgeKind::Association, EdgeKind::Connection] {
-        let mut graph = graph();
-        let edge = graph.edges[0].clone();
-        let relationship = graph
-            .relationships
-            .iter()
-            .find(|r| {
-                r.provenance
-                    .iter()
-                    .any(|p| matches!(p, RelationshipProvenance::Resource { .. }))
-            })
-            .unwrap()
-            .clone();
-        graph.edges.clear();
-        graph.relationships.clear();
-        for number in 0..12 {
-            let mut edge = edge.clone();
-            edge.kind = kind;
-            edge.change.as_mut().unwrap().address = format!("association.test_{number}");
-            let mut relationship = relationship.clone();
-            relationship.kind = kind;
-            for provenance in &mut relationship.provenance {
-                if let RelationshipProvenance::Resource { source, change } = provenance {
-                    source.address = edge.change.as_ref().unwrap().address.clone();
-                    *change = edge.change.as_ref().unwrap().clone();
-                }
-            }
-            graph.edges.push(edge);
-            graph.relationships.push(relationship);
-        }
+        let graph = dense_graph(12, kind);
         let layout = Layout::new(&graph);
         let index = Index::new(&graph, &layout);
         assert_eq!(index.markers.len(), 12);
@@ -55,6 +60,64 @@ fn dense_targets_keep_distinct_numbers_readable() {
             }
         }
     }
+}
+
+#[test]
+fn indexed_flat_graphs_preserve_root_and_child_module_bands() {
+    let mut graph = dense_graph(12, EdgeKind::Association);
+    for node in &mut graph.nodes {
+        node.role = crate::model::ResourceRole::Node;
+    }
+    graph.nodes[0].module = "module.network".into();
+    graph.nodes[1].module = "module.application".into();
+    let mut root = graph.nodes[0].clone();
+    root.module = "root".into();
+    root.address = "test.root".into();
+    root.entity = crate::model::ArchitectureEntity::terraform(TerraformEntityId {
+        address: root.address.clone(),
+        deposed_key: None,
+    });
+    graph.nodes.push(root);
+    let layout = Layout::new(&graph);
+    assert_eq!(layout.bands.len(), 3);
+    assert_eq!(layout.bands[0].label, "root");
+    for (node, bounds) in graph.nodes.iter().zip(&layout.bounds) {
+        let band = layout
+            .bands
+            .iter()
+            .find(|band| band.label == node.module)
+            .unwrap();
+        assert!(bounds.origin.y >= band.top + 48);
+        assert!(bounds.origin.y + bounds.height <= band.top + band.height);
+    }
+    assert_marker_routes(&graph, &layout);
+}
+
+#[test]
+fn one_numbered_port_does_not_expand_every_port_on_a_hub() {
+    let mut graph = dense_graph(1, EdgeKind::Association);
+    let target = graph.edges[0].to;
+    let source = graph.edges[0].from;
+    for _ in 0..99 {
+        graph.edges.push(crate::model::Edge::from((target, source)));
+    }
+    let layout = Layout::new(&graph);
+    assert!(
+        layout.header_heights[target] <= 170,
+        "{}",
+        layout.header_heights[target]
+    );
+    assert_marker_routes(&graph, &layout);
+}
+
+#[test]
+fn hundreds_of_numbered_relationships_keep_clear_terminal_corridors() {
+    let graph = dense_graph(200, EdgeKind::Association);
+    let started = std::time::Instant::now();
+    let layout = Layout::new(&graph);
+    eprintln!("200 numbered relationships: {:?}", started.elapsed());
+    assert_eq!(Index::new(&graph, &layout).markers.len(), 200);
+    assert_marker_routes(&graph, &layout);
 }
 
 #[test]

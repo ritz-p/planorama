@@ -19,7 +19,8 @@ Filtering can renumber the visible subset; named states have separate indexes.
 
 Markers are fixed immediately before the destination, aligned with the final
 segment with 10 pixels of clearance for a fixed-size arrowhead. Targets with
-numbered relationships reserve space between ports to keep the badges readable.
+numbered relationships reserve extra space only around numbered incoming ports.
+Ordinary incident ports keep their normal density.
 Routing reserves a straight terminal segment long enough for the complete badge
 and arrowhead. Other paths, including bundled relationships, avoid this space.
 Card and container spacing expands with the number of digits in the index.

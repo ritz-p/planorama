@@ -21,40 +21,63 @@ pub(super) fn place(graph: &Graph, tree: ContainmentTree) -> Placed<'_> {
                 .scope
                 .as_ref()
                 .is_some_and(|s| s.region.is_some())
-    }) || super::resource_edges(graph)
-        .into_iter()
-        .any(|indexed| indexed)
-    {
+    }) {
         Placed {
             layout: containers::place_geometry(graph, tree, true),
             strategy: Strategy::Nested,
         }
     } else {
         let ranks = rank::compute(graph);
-        let placement = placement::place(graph, &ranks);
+        let indexed = super::resource_edges(graph)
+            .into_iter()
+            .any(|indexed| indexed);
+        let header_heights = if indexed {
+            containers::header_heights(graph, &tree)
+        } else {
+            vec![NODE_HEIGHT; graph.nodes.len()]
+        };
+        let placement = if indexed {
+            placement::place_with_heights(graph, &ranks, &header_heights)
+        } else {
+            placement::place(graph, &ranks)
+        };
         let bounds = placement
             .positions
             .iter()
             .copied()
-            .map(Bounds::card)
-            .collect();
+            .zip(&header_heights)
+            .map(|(origin, &height)| Bounds {
+                height,
+                ..Bounds::card(origin)
+            })
+            .collect::<Vec<_>>();
+        let width = bounds
+            .iter()
+            .map(|b| b.right() + 80)
+            .max()
+            .unwrap_or(1040)
+            .max(1040);
         Placed {
             layout: Layout {
                 scopes: Vec::new(),
                 bounds,
-                header_heights: vec![NODE_HEIGHT; graph.nodes.len()],
+                header_heights,
                 containers: Vec::new(),
                 containment: tree,
-                width: 1040,
+                width,
                 height: placement.height,
                 positions: placement.positions,
                 bands: placement.bands,
                 paths: Vec::new(),
                 junctions: Vec::new(),
             },
-            strategy: Strategy::Flat {
-                ranks,
-                channels: placement.channels,
+            strategy: if indexed {
+                Strategy::Nested
+            } else {
+                Strategy::Flat {
+                    ranks,
+                    channels: placement.channels,
+                }
             },
         }
     }

@@ -94,6 +94,11 @@ fn route_impl(
     let mut source_ports = vec![0; graph.edges.len()];
     let mut target_ports = vec![0; graph.edges.len()];
     for (node, edges) in incident.iter().enumerate() {
+        let ports = crate::layout::relationship_markers::ports(
+            edges,
+            &resource_edges,
+            layout.bounds[node].height,
+        );
         for (slot, &(edge, source)) in edges.iter().enumerate() {
             let height = if bundle
                 && source
@@ -104,7 +109,11 @@ fn route_impl(
             } else {
                 layout.bounds[node].height
             };
-            let port = 20 + (slot + 1) * (height - 40) / (edges.len() + 1);
+            let port = if numbered_targets[node] {
+                ports[slot]
+            } else {
+                20 + (slot + 1) * (height - 40) / (edges.len() + 1)
+            };
             match source {
                 true => source_ports[edge] = port,
                 false => target_ports[edge] = port,
@@ -134,6 +143,7 @@ fn route_impl(
             })
         })
         .collect();
+    let reservations = crate::layout::relationship_markers::merge_corridors(reservations);
     let mut order: Vec<_> = (0..graph.edges.len()).collect();
     order.sort_by_key(|&index| {
         let edge = &graph.edges[index];
