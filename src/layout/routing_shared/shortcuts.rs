@@ -98,4 +98,16 @@ fn shortcuts_preserve_ports_and_reject_obstacles_and_conflicts() {
     assert!(result[1].x > result[0].x);
     assert_eq!(result.first(), reversed.first());
     assert_eq!(result.last(), reversed.last());
+    let start = Port {
+        point: Point { x: 100, y: 100 },
+        side: Side::Right,
+    };
+    let end = Port {
+        point: Point { x: 108, y: 108 },
+        side: Side::Top,
+    };
+    let routed = ports::connect(start, end, &[], None).unwrap();
+    let shortened = simplify_path(routed, &[], &scorer);
+    assert!(shortened[1].x >= 116);
+    assert!(shortened[shortened.len() - 2].y <= 92);
 }
