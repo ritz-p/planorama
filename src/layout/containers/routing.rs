@@ -192,6 +192,7 @@ pub(super) fn obstacles(layout: &Layout<'_>, edge: &Edge) -> Vec<Bounds> {
                 bounds
             }
         })
+        .chain(layout.scopes.iter().map(|panel| panel.bounds.header(36)))
         .collect()
 }
 

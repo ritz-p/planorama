@@ -65,6 +65,13 @@ pub struct ArchitectureEntity {
     pub id: ArchitectureId,
     pub kind: ArchitectureEntityKind,
     pub provenance: Vec<TerraformEntityId>,
+    pub scope: Option<DeploymentScope>,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
+pub struct DeploymentScope {
+    pub provider: String,
+    pub region: Option<super::RegionScope>,
 }
 
 impl ArchitectureEntity {
@@ -73,6 +80,7 @@ impl ArchitectureEntity {
             id: ArchitectureId::terraform(&source),
             kind: ArchitectureEntityKind::Terraform,
             provenance: vec![source],
+            scope: None,
         }
     }
     pub fn synthetic(kind: &str, key: &str, mut provenance: Vec<TerraformEntityId>) -> Self {
@@ -82,6 +90,7 @@ impl ArchitectureEntity {
             id: ArchitectureId::synthetic(kind, key),
             kind: ArchitectureEntityKind::Synthetic,
             provenance,
+            scope: None,
         }
     }
 }
