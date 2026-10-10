@@ -68,11 +68,12 @@ pub(super) fn port_span(incidents: &[(usize, bool)], numbered: &[[bool; 2]]) -> 
         + 1
 }
 
-pub(super) fn ports_with_spacing(
+pub(super) fn ports_with_minimum(
     incidents: &[(usize, bool)],
     numbered: &[[bool; 2]],
     height: usize,
     spacing: usize,
+    minimum: usize,
 ) -> Vec<usize> {
     let widths: Vec<_> = incidents
         .iter()
@@ -80,7 +81,7 @@ pub(super) fn ports_with_spacing(
             if numbered[edge][usize::from(!source)] {
                 spacing
             } else {
-                1
+                minimum
             }
         })
         .collect();
