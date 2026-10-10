@@ -6,12 +6,15 @@ use std::collections::{BTreeMap, BTreeSet};
 #[path = "../../../tests/unit/layout/routing/scoring.rs"]
 mod tests;
 
+pub(in crate::layout) const CROSSING_COST: u128 = 512;
+pub(in crate::layout) const BEND_COST: u128 = 96;
+
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub(in crate::layout) struct Score {
     node_crossings: usize,
+    cost: u128,
     overlap: u128,
     crossings: usize,
-    occlusion_cost: u128,
     bends: usize,
     length: u128,
     upper_detours: usize,
@@ -91,9 +94,7 @@ impl Scorer {
         let a = self.score(old, obstacles);
         let b = self.score(new, obstacles);
         b.node_crossings == 0
-            && b.overlap <= a.overlap
-            && b.crossings <= a.crossings
-            && b.occlusion_cost <= a.occlusion_cost
+            && b.cost < a.cost
             && b.bends <= a.bends
             && b.length <= a.length
             && (b.bends < a.bends || b.length < a.length)
@@ -138,20 +139,12 @@ impl Scorer {
                 .map(|&(path, _, _)| path)
                 .collect::<BTreeSet<_>>()
                 .len() as u128
-                * 2048
+                * CROSSING_COST
         })
     }
 
     pub(in crate::layout) fn readability_cost(&self, points: &[Point]) -> u128 {
-        let score = self.score(points, &[]);
-        score.overlap * 8
-            + score.crossings as u128 * 2048
-            + score.bends as u128 * 24
-            + score.length
-            + points
-                .windows(2)
-                .map(|p| self.occlusion(p[0], p[1]))
-                .sum::<u128>()
+        self.score(points, &[]).cost
     }
 
     pub(in crate::layout) fn readability_cost_with_soft(
@@ -173,13 +166,9 @@ impl Scorer {
     pub(in crate::layout) fn score(&self, points: &[Point], nodes: &[Bounds]) -> Score {
         let mut score = Score {
             node_crossings: 0,
+            cost: 0,
             overlap: 0,
             crossings: 0,
-            occlusion_cost: if self.soft.is_empty() {
-                0
-            } else {
-                points.len().saturating_sub(2) as u128 * 24
-            },
             bends: points.len().saturating_sub(2),
             length: 0,
             upper_detours: self
@@ -204,10 +193,7 @@ impl Scorer {
             };
             score.overlap += index.get(&coordinate).map_or(0, |c| c.overlap(from, to));
             score.length += a.x.abs_diff(b.x) as u128 + a.y.abs_diff(b.y) as u128;
-            if !self.soft.is_empty() {
-                score.occlusion_cost +=
-                    a.x.abs_diff(b.x) as u128 + a.y.abs_diff(b.y) as u128 + self.occlusion(a, b);
-            }
+            score.cost += self.occlusion(a, b);
             score.node_crossings += nodes
                 .iter()
                 .filter(|&&node| super::crosses(a, b, node))
@@ -242,6 +228,10 @@ impl Scorer {
             }
         }
         score.crossings = crossings.len();
+        score.cost += score.overlap * 8
+            + score.crossings as u128 * CROSSING_COST
+            + score.bends as u128 * BEND_COST
+            + score.length;
         score
     }
 
@@ -332,7 +322,7 @@ impl Scorer {
                     .len()
             })
             .sum::<usize>();
-        overlap * 8 + crossings as u128 * 2048
+        overlap * 8 + crossings as u128 * CROSSING_COST
     }
 }
 

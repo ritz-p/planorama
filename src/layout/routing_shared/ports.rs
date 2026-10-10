@@ -205,7 +205,7 @@ fn soft_cards_allow_large_savings_but_prefer_small_detours() {
                 x: 300,
                 y: 500 - height / 2,
             },
-            width: 120,
+            width: 240,
             height,
         };
         let mut scorer = Scorer::default();
