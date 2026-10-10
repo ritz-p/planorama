@@ -140,6 +140,11 @@ pub(in crate::layout) fn valid(
     path.len() >= 2
         && forward(start, path[1])
         && forward(end, path[path.len() - 2])
+        && (path.len() == 2
+            || (start.point.x.abs_diff(path[1].x) + start.point.y.abs_diff(path[1].y) >= 16
+                && end.point.x.abs_diff(path[path.len() - 2].x)
+                    + end.point.y.abs_diff(path[path.len() - 2].y)
+                    >= 16))
         && path.windows(2).all(|p| {
             (p[0].x == p[1].x || p[0].y == p[1].y)
                 && obstacles.iter().all(|&b| !crosses(p[0], p[1], b))

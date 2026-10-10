@@ -77,3 +77,25 @@ fn simple_routes_respect_ports_obstacles_and_edge_conflicts() {
     assert!(!scorer.overlaps(&clear));
     assert!(clear.len() > 2);
 }
+
+#[test]
+fn short_perpendicular_connections_keep_sixteen_pixel_endpoint_stubs() {
+    use crate::layout::{Port, Side};
+    let a = Port {
+        point: Point { x: 100, y: 100 },
+        side: Side::Right,
+    };
+    let b = Port {
+        point: Point { x: 108, y: 108 },
+        side: Side::Top,
+    };
+    let path = super::ports::connect(a, b, &[], None).unwrap();
+    assert!(path[1].x >= 116);
+    assert!(path[path.len() - 2].y <= 92);
+    assert!(!super::ports::valid(
+        &[a.point, Point { x: 108, y: 100 }, b.point],
+        a,
+        b,
+        &[]
+    ));
+}
