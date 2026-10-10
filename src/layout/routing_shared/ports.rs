@@ -190,6 +190,44 @@ pub(in crate::layout) fn valid_with_clearance(
 }
 
 #[test]
+fn soft_cards_allow_large_savings_but_prefer_small_detours() {
+    let start = Port {
+        point: Point { x: 100, y: 500 },
+        side: Side::Right,
+    };
+    let end = Port {
+        point: Point { x: 600, y: 500 },
+        side: Side::Left,
+    };
+    for (height, crossed) in [(40, false), (900, true)] {
+        let card = Bounds {
+            origin: Point {
+                x: 300,
+                y: 500 - height / 2,
+            },
+            width: 120,
+            height,
+        };
+        let mut scorer = Scorer::default();
+        scorer.set_soft(vec![card]);
+        let path = connect(start, end, &[], Some(&scorer)).unwrap();
+        assert_eq!(
+            path.windows(2).any(|p| crosses(p[0], p[1], card)),
+            crossed,
+            "{path:?}"
+        );
+        let shortened = super::shortcuts::simplify_path(path, &[], &scorer);
+        assert_eq!(
+            shortened.windows(2).any(|p| crosses(p[0], p[1], card)),
+            crossed
+        );
+        let hard = connect(start, end, &[card], Some(&scorer)).unwrap();
+        let hard = super::shortcuts::simplify_path(hard, &[card], &scorer);
+        assert!(hard.windows(2).all(|p| !crosses(p[0], p[1], card)));
+    }
+}
+
+#[test]
 fn chooses_facing_sides_for_horizontal_vertical_and_container_bounds() {
     let card = |x, y| Bounds {
         origin: Point { x, y },

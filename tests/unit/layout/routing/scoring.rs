@@ -149,6 +149,28 @@ fn equal_overlap_and_crossings_prefer_fewer_bends_then_shorter_paths() {
 }
 
 #[test]
+fn branch_soft_cost_uses_its_own_endpoint_exclusions() {
+    let mut scorer = Scorer::default();
+    let path = points(&[(0, 50), (100, 50)]);
+    let card = Bounds {
+        origin: Point { x: 20, y: 20 },
+        width: 40,
+        height: 60,
+    };
+    let clear = scorer.readability_cost(&path);
+    assert_eq!(
+        scorer.readability_cost_with_soft(&path, &[card]),
+        clear + 80
+    );
+    scorer.set_soft(vec![card]);
+    assert_eq!(scorer.readability_cost_with_soft(&path, &[]), clear);
+    assert_eq!(
+        scorer.readability_cost_with_soft(&path, &[card]),
+        clear + 80
+    );
+}
+
+#[test]
 fn bend_contacts_have_no_crossing_cost_in_either_direction_or_axis() {
     for horizontal in [true, false] {
         let point = |x, y| {

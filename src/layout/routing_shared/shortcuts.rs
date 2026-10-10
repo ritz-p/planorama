@@ -6,6 +6,15 @@ pub(in crate::layout) fn simplify_routes(
     order: impl IntoIterator<Item = usize>,
     obstacles: impl Fn(usize) -> Vec<Bounds>,
 ) {
+    simplify_routes_with_soft(paths, order, obstacles, |_| Vec::new());
+}
+
+pub(in crate::layout) fn simplify_routes_with_soft(
+    paths: &mut [Vec<Point>],
+    order: impl IntoIterator<Item = usize>,
+    obstacles: impl Fn(usize) -> Vec<Bounds>,
+    soft: impl Fn(usize) -> Vec<Bounds>,
+) {
     let mut scorer = Scorer::default();
     for path in paths.iter() {
         scorer.insert(path.clone());
@@ -15,6 +24,7 @@ pub(in crate::layout) fn simplify_routes(
             continue;
         }
         scorer.remove(index);
+        scorer.set_soft(soft(index));
         paths[index] = simplify_path(
             std::mem::take(&mut paths[index]),
             &obstacles(index),
