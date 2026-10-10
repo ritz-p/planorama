@@ -1,4 +1,5 @@
-use super::{Bounds, Point, Scorer, crosses};
+use super::{Bounds, Point, Scorer};
+mod obstacles;
 use crate::layout::Side;
 use std::cmp::Reverse;
 use std::collections::BinaryHeap;
@@ -56,6 +57,7 @@ pub(super) fn search(
     xs.dedup();
     ys.sort_unstable();
     ys.dedup();
+    let blocked = obstacles::Grid::new(&xs, &ys, obstacles);
     let index =
         |p: Point| ys.binary_search(&p.y).unwrap() * xs.len() + xs.binary_search(&p.x).unwrap();
     let point = |i: usize| Point {
@@ -99,7 +101,7 @@ pub(super) fn search(
             }) {
                 continue;
             }
-            if obstacles.iter().any(|&bounds| crosses(a, b, bounds)) {
+            if blocked.blocks(current, next) {
                 continue;
             }
             let next_direction = if a.y == b.y { 1 } else { 2 };

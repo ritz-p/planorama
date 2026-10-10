@@ -7,6 +7,56 @@ fn cli() -> Command {
 }
 
 #[test]
+fn relationship_indexes_fit_inside_each_named_state_and_outer_canvas() {
+    let path = fixture("aws-relationships-plan.json");
+    let output = cli()
+        .args([
+            "--state",
+            &format!("first={path}"),
+            "--state",
+            &format!("second={path}"),
+            "-o",
+            "-",
+        ])
+        .output()
+        .unwrap();
+    assert!(output.status.success());
+    let svg = String::from_utf8(output.stdout).unwrap();
+    let document = roxmltree::Document::parse(&svg).unwrap();
+    let outer_width: usize = document
+        .root_element()
+        .attribute("width")
+        .unwrap()
+        .parse()
+        .unwrap();
+    for state in document
+        .descendants()
+        .filter(|n| n.attribute("data-state-id").is_some())
+    {
+        let nested = state.children().find(|n| n.has_tag_name("svg")).unwrap();
+        let width: usize = nested.attribute("width").unwrap().parse().unwrap();
+        let height: usize = nested.attribute("height").unwrap().parse().unwrap();
+        assert!(width <= outer_width);
+        assert_eq!(
+            nested
+                .descendants()
+                .filter(|n| n.attribute("data-relationship-entry").is_some())
+                .count(),
+            3
+        );
+        for marker in nested
+            .descendants()
+            .filter(|n| n.attribute("data-relationship-marker").is_some())
+        {
+            let rectangle = marker.children().find(|n| n.has_tag_name("rect")).unwrap();
+            let number = |key| rectangle.attribute(key).unwrap().parse::<usize>().unwrap();
+            assert!(number("x") + number("width") <= width);
+            assert!(number("y") + number("height") <= height);
+        }
+    }
+}
+
+#[test]
 fn cross_state_resolution_never_substitutes_equal_output_values_for_provenance() {
     for literal in [false, true] {
         let mut producer: serde_json::Value =

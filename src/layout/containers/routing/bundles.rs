@@ -1,4 +1,4 @@
-use super::{Layout, Point, Scorer, crosses, obstacles, path_between};
+use super::{Bounds, Layout, Point, Scorer, crosses, obstacles, path_between};
 use crate::layout::containers::affinity::Group;
 use crate::model::architecture::Graph;
 
@@ -14,13 +14,22 @@ pub(super) fn try_bundle(
     sources: &[usize],
     targets: &[usize],
     scorer: &Scorer,
+    reservations: &[Bounds],
 ) -> Option<Bundle> {
     [16, 24, 8].into_iter().find_map(|clearance| {
         let trunk = layout.bounds[group.target]
             .origin
             .x
             .checked_sub(clearance)?;
-        candidate(graph, layout, group, sources, targets, scorer, trunk)
+        candidate(
+            graph,
+            layout,
+            group,
+            (sources, targets),
+            scorer,
+            trunk,
+            reservations,
+        )
     })
 }
 
@@ -28,11 +37,12 @@ fn candidate(
     graph: &Graph,
     layout: &Layout<'_>,
     group: &Group,
-    sources: &[usize],
-    targets: &[usize],
+    ports: (&[usize], &[usize]),
     scorer: &Scorer,
     trunk: usize,
+    reservations: &[Bounds],
 ) -> Option<Bundle> {
+    let (sources, targets) = ports;
     let target = layout.bounds[group.target];
     if group
         .sources
@@ -70,7 +80,8 @@ fn candidate(
         if scorer.overlaps(&path) {
             return None;
         }
-        let obstacles = obstacles(layout, edge);
+        let mut obstacles = obstacles(layout, edge);
+        obstacles.extend_from_slice(reservations);
         if path
             .windows(2)
             .any(|pair| obstacles.iter().any(|&b| crosses(pair[0], pair[1], b)))
