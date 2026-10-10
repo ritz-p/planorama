@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="676" viewBox="0 0 1100 676" role="img" aria-labelledby="title description">
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="702" viewBox="0 0 1100 702" role="img" aria-labelledby="title description">
 <title id="title">Terraform plan</title>
 <desc id="description">5 resources (3 cards), 3 relationships. Lines show architectural relationships. Edge titles identify the relationship kind and Terraform change. Thin solid: dependency. Dashed: association. Thick dotted: connection. Nested boxes: containment. Edge color preserves the Terraform action when available.</desc>
 <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/></marker><marker id="arrow-create" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#047857"/></marker><marker id="arrow-replace" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#c2410c"/></marker><metadata id="planorama-icons-license">AWS Architecture Icons, release 07312026.
@@ -41,19 +41,19 @@ No AWS endorsement is implied. Consult the AWS terms for other uses.
 <path d="M 540 201 H 570" stroke="#64748b" stroke-width="2.5" stroke-dasharray="2 4" stroke-linecap="round"/><text x="578" y="205">connection</text>
 </g>
 <g transform="translate(0 72)">
-<path d="M 380 208 L 388 208 Q 396 208 396 216 L 396 264 Q 396 272 404 272 L 748 272 Q 756 272 756 264 L 756 236 Q 756 228 748 228 L 740 228 " data-edge-kind="association" data-action-reason="replace_because_cannot_update" data-replace-paths="[[&quot;gateway_id&quot;]]" data-source="resource-6177735f726f7574655f7461626c652e7075626c6963-current" data-target="resource-6177735f696e7465726e65745f676174657761792e6d61696e-current" fill="none" stroke="#c2410c" stroke-width="2" stroke-dasharray="7 4" stroke-linejoin="round" marker-end="url(#arrow-replace)"><title>aws_route_table.public → aws_internet_gateway.main (association; replace: aws_route.default); reason: replace_because_cannot_update; replacement paths: [[&quot;gateway_id&quot;]]</title></path>
-<path d="M 380 194 L 404 194 Q 412 194 412 186 L 412 160 Q 412 152 420 152 L 748 152 Q 756 152 756 160 L 756 196 Q 756 204 748 204 L 740 204 " data-edge-kind="association" data-source="resource-6177735f726f7574655f7461626c652e7075626c6963-current" data-target="resource-6177735f696e7465726e65745f676174657761792e6d61696e-current" fill="none" stroke="#047857" stroke-width="2" stroke-dasharray="7 4" stroke-linejoin="round" marker-end="url(#arrow-create)"><title>aws_route_table.public → aws_internet_gateway.main (association; create: aws_route.second)</title></path>
-<path d="M 266 256 L 266 288 Q 266 296 274 296 L 572 296 Q 580 296 580 304 L 580 312 " data-edge-kind="dependency" data-source="resource-6177735f726f7574655f7461626c652e7075626c6963-current" data-target="resource-6177735f726f7574652e6c69746572616c-current" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>aws_route_table.public → aws_route.literal (dependency)</title></path>
+<path d="M 380 208 L 430 208 Q 438 208 438 216 L 438 264 Q 438 272 446 272 L 800 272 Q 808 272 808 264 L 808 236 Q 808 228 800 228 L 766 228 " data-edge-kind="association" data-action-reason="replace_because_cannot_update" data-replace-paths="[[&quot;gateway_id&quot;]]" data-source="resource-6177735f726f7574655f7461626c652e7075626c6963-current" data-target="resource-6177735f696e7465726e65745f676174657761792e6d61696e-current" fill="none" stroke="#c2410c" stroke-width="2" stroke-dasharray="7 4" stroke-linejoin="round" marker-end="url(#arrow-replace)"><title>aws_route_table.public → aws_internet_gateway.main (association; replace: aws_route.default); reason: replace_because_cannot_update; replacement paths: [[&quot;gateway_id&quot;]]</title></path>
+<path d="M 380 194 L 430 194 Q 438 194 438 186 L 438 160 Q 438 152 446 152 L 800 152 Q 808 152 808 160 L 808 196 Q 808 204 800 204 L 766 204 " data-edge-kind="association" data-source="resource-6177735f726f7574655f7461626c652e7075626c6963-current" data-target="resource-6177735f696e7465726e65745f676174657761792e6d61696e-current" fill="none" stroke="#047857" stroke-width="2" stroke-dasharray="7 4" stroke-linejoin="round" marker-end="url(#arrow-create)"><title>aws_route_table.public → aws_internet_gateway.main (association; create: aws_route.second)</title></path>
+<path d="M 380 222 L 388 222 Q 396 222 396 230 L 396 378 Q 396 386 404 386 L 446 386 " data-edge-kind="dependency" data-source="resource-6177735f726f7574655f7461626c652e7075626c6963-current" data-target="resource-6177735f726f7574652e6c69746572616c-current" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>aws_route_table.public → aws_route.literal (dependency)</title></path>
 <g id="resource-6177735f696e7465726e65745f676174657761792e6d61696e-current" data-architecture-id="terraform:6177735f696e7465726e65745f676174657761792e6d61696e-current" data-qualified-address="module.root.aws_internet_gateway.main" data-terraform-address="aws_internet_gateway.main"><title>module.root.aws_internet_gateway.main — unchanged</title>
-<rect x="420" y="160" width="320" height="112" rx="8" fill="#f8fafc" stroke="#64748b" stroke-width="1.5" data-mode="managed"/>
-<text x="432" y="180" font-size="11" fill="#64748b">aws_internet_gateway · unchanged</text>
-<use href="#planorama-icon-aws-vpc" x="432" y="188" width="24" height="24" aria-hidden="true"/><text x="464" y="205" font-size="13" fill="#0f172a">module.root.aws_internet_gateway.</text>
-<text x="464" y="225" font-size="13" fill="#0f172a">main</text>
+<rect x="446" y="160" width="320" height="112" rx="8" fill="#f8fafc" stroke="#64748b" stroke-width="1.5" data-mode="managed"/>
+<text x="458" y="180" font-size="11" fill="#64748b">aws_internet_gateway · unchanged</text>
+<use href="#planorama-icon-aws-vpc" x="458" y="188" width="24" height="24" aria-hidden="true"/><text x="490" y="205" font-size="13" fill="#0f172a">module.root.aws_internet_gateway.</text>
+<text x="490" y="225" font-size="13" fill="#0f172a">main</text>
 </g>
 <g id="resource-6177735f726f7574652e6c69746572616c-current" data-architecture-id="terraform:6177735f726f7574652e6c69746572616c-current" data-qualified-address="module.root.aws_route.literal" data-terraform-address="aws_route.literal"><title>module.root.aws_route.literal — delete</title>
-<rect x="420" y="312" width="320" height="96" rx="8" fill="#fef2f2" stroke="#b91c1c" stroke-width="1.5" data-mode="managed"/>
-<text x="432" y="332" font-size="11" fill="#b91c1c">aws_route · delete</text>
-<use href="#planorama-icon-aws-vpc" x="432" y="340" width="24" height="24" aria-hidden="true"/><text x="464" y="357" font-size="13" fill="#0f172a">module.root.aws_route.literal</text>
+<rect x="446" y="338" width="320" height="96" rx="8" fill="#fef2f2" stroke="#b91c1c" stroke-width="1.5" data-mode="managed"/>
+<text x="458" y="358" font-size="11" fill="#b91c1c">aws_route · delete</text>
+<use href="#planorama-icon-aws-vpc" x="458" y="366" width="24" height="24" aria-hidden="true"/><text x="490" y="383" font-size="13" fill="#0f172a">module.root.aws_route.literal</text>
 </g>
 <g id="resource-6177735f726f7574655f7461626c652e7075626c6963-current" data-architecture-id="terraform:6177735f726f7574655f7461626c652e7075626c6963-current" data-qualified-address="module.root.aws_route_table.public" data-terraform-address="aws_route_table.public"><title>module.root.aws_route_table.public — unchanged</title>
 <rect x="60" y="160" width="320" height="96" rx="8" fill="#f8fafc" stroke="#64748b" stroke-width="1.5" data-mode="managed"/>
@@ -62,22 +62,22 @@ No AWS endorsement is implied. Consult the AWS terms for other uses.
 <text x="104" y="225" font-size="13" fill="#0f172a">c</text>
 </g>
 <g data-relationship-marker="1"><title>Relationship resource [1]</title>
-<rect x="750" y="219" width="24" height="18" rx="4" fill="#ffffff" stroke="#c2410c" stroke-width="2" stroke-dasharray="7 4"/><text x="762" y="232" text-anchor="middle" font-size="11" fill="#334155">[1]</text>
+<rect x="776" y="219" width="24" height="18" rx="4" fill="#ffffff" stroke="#c2410c" stroke-width="2" stroke-dasharray="7 4"/><text x="788" y="232" text-anchor="middle" font-size="11" fill="#334155">[1]</text>
 </g>
 <g data-relationship-marker="2"><title>Relationship resource [2]</title>
-<rect x="750" y="195" width="24" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="762" y="208" text-anchor="middle" font-size="11" fill="#334155">[2]</text>
+<rect x="776" y="195" width="24" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="788" y="208" text-anchor="middle" font-size="11" fill="#334155">[2]</text>
 </g>
-<g data-relationship-index="true"><text x="40" y="512" font-size="16" font-weight="700" fill="#334155">Relationship resources</text>
+<g data-relationship-index="true"><text x="40" y="538" font-size="16" font-weight="700" fill="#334155">Relationship resources</text>
 <g data-relationship-entry="1">
-<rect x="52" y="523" width="24" height="18" rx="4" fill="#ffffff" stroke="#c2410c" stroke-width="2" stroke-dasharray="7 4"/><text x="64" y="536" text-anchor="middle" font-size="11" fill="#334155">[1]</text>
+<rect x="52" y="549" width="24" height="18" rx="4" fill="#ffffff" stroke="#c2410c" stroke-width="2" stroke-dasharray="7 4"/><text x="64" y="562" text-anchor="middle" font-size="11" fill="#334155">[1]</text>
 <text data-source-address="aws_route.default" font-size="12" fill="#334155"><title>aws_route.default</title>
-<tspan x="100" y="536" xml:space="preserve">aws_route.default</tspan>
+<tspan x="100" y="562" xml:space="preserve">aws_route.default</tspan>
 </text>
 </g>
 <g data-relationship-entry="2">
-<rect x="52" y="551" width="24" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="64" y="564" text-anchor="middle" font-size="11" fill="#334155">[2]</text>
+<rect x="52" y="577" width="24" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="64" y="590" text-anchor="middle" font-size="11" fill="#334155">[2]</text>
 <text data-source-address="aws_route.second" font-size="12" fill="#334155"><title>aws_route.second</title>
-<tspan x="100" y="564" xml:space="preserve">aws_route.second</tspan>
+<tspan x="100" y="590" xml:space="preserve">aws_route.second</tspan>
 </text>
 </g>
 </g>

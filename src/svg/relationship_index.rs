@@ -160,8 +160,8 @@ impl<'a> Index<'a> {
             writeln!(svg, r##"<g data-relationship-entry="{number}">"##).unwrap();
             let bounds = Bounds {
                 origin: crate::layout::Point { x: 52, y: y - 13 },
-                width: number.to_string().len() * 8 + 16,
-                height: 18,
+                width: crate::layout::relationship_markers::width(number),
+                height: crate::layout::relationship_markers::HEIGHT,
             };
             svg.push_str(&badge(number, bounds, entry.stroke, entry.style));
             if entry.sources.len() > 1 {

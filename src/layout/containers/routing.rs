@@ -64,14 +64,12 @@ fn route_impl(
     };
     let mut incident = incidents(graph, &layout.containment);
     let resource_edges = crate::layout::resource_edges(graph);
-    let dense_targets: Vec<_> = incident
+    let numbered_targets: Vec<_> = incident
         .iter()
         .map(|edges| {
             edges
                 .iter()
-                .filter(|&&(edge, source)| !source && resource_edges[edge])
-                .count()
-                > 1
+                .any(|&(edge, source)| !source && resource_edges[edge])
         })
         .collect();
     for edges in &mut incident {
@@ -97,7 +95,11 @@ fn route_impl(
     let mut target_ports = vec![0; graph.edges.len()];
     for (node, edges) in incident.iter().enumerate() {
         for (slot, &(edge, source)) in edges.iter().enumerate() {
-            let height = if bundle && source && graph.edges[edge].kind == EdgeKind::Connection {
+            let height = if bundle
+                && source
+                && graph.edges[edge].kind == EdgeKind::Connection
+                && !numbered_targets[node]
+            {
                 layout.header_heights[node]
             } else {
                 layout.bounds[node].height
@@ -109,6 +111,29 @@ fn route_impl(
             }
         }
     }
+    let clearance = crate::layout::relationship_markers::clearance(graph);
+    let spacing = crate::layout::relationship_markers::PORT_SPACING;
+    let reservations: Vec<_> = graph
+        .edges
+        .iter()
+        .enumerate()
+        .filter_map(|(index, edge)| {
+            if !resource_edges[index] || represented_by_nesting(edge, &layout.containment) {
+                return None;
+            }
+            let end = layout.bounds[edge.to]
+                .port(Side::Right, target_ports[index])
+                .point;
+            Some(Bounds {
+                origin: Point {
+                    x: end.x,
+                    y: end.y.saturating_sub(spacing / 2),
+                },
+                width: clearance - 4,
+                height: spacing,
+            })
+        })
+        .collect();
     let mut order: Vec<_> = (0..graph.edges.len()).collect();
     order.sort_by_key(|&index| {
         let edge = &graph.edges[index];
@@ -141,7 +166,10 @@ fn route_impl(
             continue;
         }
         if bundle && !resource_edges[index] {
-            if let Some(group) = groups.iter().find(|group| group.edges.contains(&index)) {
+            if let Some(group) = groups.iter().find(|group| {
+                group.edges.contains(&index)
+                    && group.edges.iter().all(|&edge| !resource_edges[edge])
+            }) {
                 if attempted.insert(group.target) {
                     if let Some(bundled) = bundles::try_bundle(
                         graph,
@@ -150,6 +178,7 @@ fn route_impl(
                         &source_ports,
                         &target_ports,
                         &scorer,
+                        &reservations,
                     ) {
                         for (index, path) in bundled.paths {
                             scorer.insert(path.clone());
@@ -163,14 +192,16 @@ fn route_impl(
         }
         let start: Port = layout.bounds[edge.from].port(Side::Right, source_ports[index]);
         let end = layout.bounds[edge.to].port(Side::Right, target_ports[index]);
-        let obstacles = obstacles(layout, edge);
-        let path = path_between(
+        let mut obstacles = obstacles(layout, edge);
+        obstacles.extend_from_slice(&reservations);
+        let path = path_with_clearance(
             start.point,
             end.point,
             &obstacles,
             quality.then_some(&scorer),
+            if resource_edges[index] { clearance } else { 16 },
         );
-        let path = if quality && !(resource_edges[index] && dense_targets[edge.to]) {
+        let path = if quality && !resource_edges[index] {
             crate::layout::routing_shared::ports::select(
                 layout.bounds[edge.from],
                 layout.bounds[edge.to],
@@ -213,12 +244,22 @@ pub(super) fn path_between(
     obstacles: &[Bounds],
     scorer: Option<&Scorer>,
 ) -> Vec<Point> {
+    path_with_clearance(start, end, obstacles, scorer, 16)
+}
+
+fn path_with_clearance(
+    start: Point,
+    end: Point,
+    obstacles: &[Bounds],
+    scorer: Option<&Scorer>,
+    clearance: usize,
+) -> Vec<Point> {
     let first = Point {
         x: start.x + 16,
         ..start
     };
     let last = Point {
-        x: end.x + 16,
+        x: end.x + clearance,
         ..end
     };
     let finish = |middle: Vec<Point>| {

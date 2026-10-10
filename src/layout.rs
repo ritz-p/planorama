@@ -9,6 +9,7 @@ pub(crate) mod metrics;
 mod pipeline;
 mod placement;
 mod rank;
+pub(crate) mod relationship_markers;
 mod routing;
 mod routing_shared;
 mod scopes;

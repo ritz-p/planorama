@@ -1,22 +1,23 @@
 use super::{Bounds, Entry, Graph, Layout, Marker};
 use crate::layout::Point;
+use crate::layout::relationship_markers::{GAP, HEIGHT, width};
 use std::cmp::Ordering;
 
 pub(super) fn place(graph: &Graph, layout: &Layout<'_>, entries: &[Entry<'_>]) -> Vec<Marker> {
     let mut markers = Vec::new();
     for (i, entry) in entries.iter().enumerate() {
         let number = i + 1;
-        let width = number.to_string().len() * 8 + 16;
-        let height = 18;
+        let width = width(number);
+        let height = HEIGHT;
         for &edge in &entry.edges {
             let Some(segment) = layout.paths[edge].windows(2).rev().find(|s| s[0] != s[1]) else {
                 continue;
             };
             let (before, target) = (segment[0], segment[1]);
             let offset = if before.x == target.x {
-                height / 2 + 10
+                height / 2 + GAP
             } else {
-                width / 2 + 10
+                width / 2 + GAP
             };
             let center = Point {
                 x: match before.x.cmp(&target.x) {

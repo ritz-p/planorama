@@ -23,7 +23,7 @@ fn dense_targets_keep_distinct_numbers_readable() {
             .clone();
         graph.edges.clear();
         graph.relationships.clear();
-        for number in 0..5 {
+        for number in 0..12 {
             let mut edge = edge.clone();
             edge.kind = kind;
             edge.change.as_mut().unwrap().address = format!("association.test_{number}");
@@ -40,7 +40,8 @@ fn dense_targets_keep_distinct_numbers_readable() {
         }
         let layout = Layout::new(&graph);
         let index = Index::new(&graph, &layout);
-        assert_eq!(index.markers.len(), 5);
+        assert_eq!(index.markers.len(), 12);
+        assert_marker_routes(&graph, &layout);
         for (i, marker) in index.markers.iter().enumerate() {
             for other in &index.markers[i + 1..] {
                 let (a, b) = (marker.bounds, other.bounds);
@@ -218,33 +219,72 @@ fn markers_stay_on_the_line_near_the_destination_in_each_direction() {
 }
 
 #[test]
-fn short_final_segments_keep_the_number_at_the_connection_point() {
-    use crate::layout::Point;
-    let graph = graph();
-    for length in [8, 16, 24] {
-        let mut layout = Layout::new(&graph);
-        let target = Point { x: 2300, y: 2200 };
-        layout.paths[0] = vec![
-            Point {
-                x: 2300 - length,
-                y: 1800,
-            },
-            Point {
-                x: 2300 - length,
-                y: 2200,
-            },
-            target,
-            target,
-        ];
-        layout.width = 2600;
-        layout.height = 2600;
-        let index = Index::new(&graph, &layout);
-        let bounds = index.markers[0].bounds;
-        assert_eq!(bounds.right() + 10, target.x);
-        assert_eq!(bounds.origin.y + bounds.height / 2, target.y);
+fn routed_badges_fit_terminal_segments_and_avoid_other_paths() {
+    for fixture in [
+        include_str!("../../fixtures/association-plan.json"),
+        include_str!("../../fixtures/aws-relationships-plan.json"),
+        include_str!("../../fixtures/routes-plan.json"),
+        include_str!("../../../examples/terraform-large/plan.json"),
+    ] {
+        let graph = semantic::transform(&plan::parse(fixture).unwrap());
+        let layout = Layout::new(&graph);
+        assert_marker_routes(&graph, &layout);
     }
 }
 
+fn assert_marker_routes(graph: &Graph, layout: &Layout<'_>) {
+    let index = Index::new(graph, layout);
+    let edges = index.entries.iter().flat_map(|entry| entry.edges.iter());
+    for (marker, &edge) in index.markers.iter().zip(edges) {
+        let bounds = marker.bounds;
+        let terminal = layout.paths[edge]
+            .windows(2)
+            .rev()
+            .find(|s| s[0] != s[1])
+            .unwrap();
+        let (before, target) = (terminal[0], terminal[1]);
+        if before.y == target.y {
+            assert_eq!(bounds.origin.y + bounds.height / 2, target.y);
+            assert!(
+                bounds.origin.x >= before.x.min(target.x)
+                    && bounds.right() <= before.x.max(target.x),
+                "marker {}: {bounds:?}, terminal {terminal:?}",
+                marker.number
+            );
+        } else {
+            assert_eq!(bounds.origin.x + bounds.width / 2, target.x);
+            assert!(
+                bounds.origin.y >= before.y.min(target.y)
+                    && bounds.origin.y + bounds.height <= before.y.max(target.y)
+            );
+        }
+        for (other, path) in layout.paths.iter().enumerate() {
+            let segments = path.windows(2).count();
+            for (position, segment) in path.windows(2).enumerate() {
+                if other == edge && position + 1 == segments {
+                    continue;
+                }
+                let (a, b) = (segment[0], segment[1]);
+                let crosses = if a.x == b.x {
+                    a.x > bounds.origin.x.saturating_sub(2)
+                        && a.x < bounds.right() + 2
+                        && a.y.max(b.y) > bounds.origin.y.saturating_sub(2)
+                        && a.y.min(b.y) < bounds.origin.y + bounds.height + 2
+                } else {
+                    a.y > bounds.origin.y.saturating_sub(2)
+                        && a.y < bounds.origin.y + bounds.height + 2
+                        && a.x.max(b.x) > bounds.origin.x.saturating_sub(2)
+                        && a.x.min(b.x) < bounds.right() + 2
+                };
+                assert!(
+                    !crosses,
+                    "marker {} on edge {edge}: {bounds:?} crosses edge {other} segment {segment:?}",
+                    marker.number
+                );
+            }
+        }
+    }
+}
 #[test]
 fn resource_provenance_is_indexed_and_reference_provenance_is_not() {
     let graph = graph();

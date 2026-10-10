@@ -20,6 +20,9 @@ Filtering can renumber the visible subset; named states have separate indexes.
 Markers are fixed immediately before the destination, aligned with the final
 segment with 10 pixels of clearance for a fixed-size arrowhead. Targets with
 numbered relationships reserve space between ports to keep the badges readable.
+Routing reserves a straight terminal segment long enough for the complete badge
+and arrowhead. Other paths, including bundled relationships, avoid this space.
+Card and container spacing expands with the number of digits in the index.
 Each badge uses the relationship's action color, stroke width and line pattern (solid for dependency,
 dashed for association, dotted for connection). The corresponding number badge
 in the relationship index uses the same border color and pattern. Index height follows the
