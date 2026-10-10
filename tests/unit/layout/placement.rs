@@ -22,6 +22,7 @@ fn long_edges_order_through_three_ranks_deterministically() {
                 address: format!("test.n{i}"),
                 resource_type: "test".into(),
                 provider: crate::model::ProviderIdentity::inferred("test"),
+                provider_configuration: None,
                 module: "root".into(),
                 action: Action::Create,
                 mode: crate::model::EntityMode::Managed,

@@ -1,3 +1,9 @@
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
+pub struct ProviderConfiguration {
+    pub key: String,
+    pub alias: Option<String>,
+}
+
 /// Explicit Terraform provider source, or a conservative legacy fallback.
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub enum ProviderIdentity {

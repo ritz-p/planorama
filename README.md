@@ -2,7 +2,7 @@
 
 Multiple plans can be loaded with explicit state identities: `planorama --state network=network/plan.json --state application=application/plan.json -o architecture.svg`. Identical Terraform addresses remain distinct across states. See [multi-plan usage and identity rules](docs/multi-plan.md) and the [SVG example](examples/multi-plan.svg).
 
-Multiple plans can be loaded with explicit state identities: `planorama --state network=network/plan.json --state application=application/plan.json -o architecture.svg`. Identical Terraform addresses remain distinct across states. See [multi-plan usage and identity rules](docs/multi-plan.md) and the [SVG example](examples/multi-plan.svg).
+Provider source and state-local configuration keys/aliases are retained separately. See [provider identity rules](docs/models.md).
 
 Import and state-removal operations are represented separately from ordinary action colors. See [Terraform operation metadata](docs/operations.md) for supported JSON shapes, value redaction, and limitations.
 
