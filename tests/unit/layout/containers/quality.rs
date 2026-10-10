@@ -2,6 +2,64 @@ use super::*;
 use crate::layout::metrics::measure;
 
 #[test]
+fn large_fixture_limits_each_edges_bends_and_valid_route_stretch() {
+    use crate::layout::metrics::measure_edge;
+    use std::collections::BTreeMap;
+    let raw = plan::parse(include_str!(
+        "../../../../examples/terraform-large/plan.json"
+    ))
+    .unwrap();
+    let mut graph = semantic::transform(&raw).0;
+    let snapshot = |graph: &Graph| {
+        let layout = Layout::new(graph);
+        let mut failures = Vec::new();
+        let mut result = BTreeMap::new();
+        for (index, edge) in graph.edges.iter().enumerate() {
+            let path = &layout.paths[index];
+            if path.is_empty() {
+                continue;
+            }
+            let reference = routing::shortest_valid_route(graph, &layout, index);
+            let metrics = measure_edge(path, &reference);
+            let from = graph.nodes[edge.from].address.clone();
+            let to = graph.nodes[edge.to].address.clone();
+            if let Some(failure) = metrics.violation(&from, &to, 14, 2, 128) {
+                failures.push(failure);
+            }
+            result.insert(
+                (
+                    from,
+                    to,
+                    edge.kind,
+                    edge.change.as_ref().map(|c| c.address.clone()),
+                ),
+                metrics,
+            );
+        }
+        eprintln!(
+            "per-edge: count={}, max_bends={}, max_excess={}, max_stretch={:.3}, extreme_routes={}",
+            result.len(),
+            result.values().map(|m| m.bends).max().unwrap_or(0),
+            result
+                .values()
+                .map(|m| m.excess_distance)
+                .max()
+                .unwrap_or(0),
+            result
+                .values()
+                .map(|m| m.length as f64 / m.shortest_valid_length.max(1) as f64)
+                .fold(0.0, f64::max),
+            failures.len()
+        );
+        assert!(failures.is_empty(), "{}", failures.join("\n"));
+        result
+    };
+    let original = snapshot(&graph);
+    graph.edges.reverse();
+    assert_eq!(original, snapshot(&graph));
+}
+
+#[test]
 fn container_port_stubs_are_not_immediately_retraced() {
     let raw = plan::parse(include_str!(
         "../../../../examples/terraform-large/plan.json"
