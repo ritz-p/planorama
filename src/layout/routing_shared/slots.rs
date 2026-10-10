@@ -21,6 +21,9 @@ pub(in crate::layout) fn assign(
                 };
                 (
                     coordinate,
+                    edge.change
+                        .as_ref()
+                        .map(|c| (b.origin.x, b.origin.y, c.local_address())),
                     graph.nodes[peer].entity.id.as_str(),
                     source,
                     edge.kind,

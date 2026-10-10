@@ -2,6 +2,7 @@ use super::super::{Bounds, Layout, Point, Port, Side};
 use crate::layout::routing_shared::scoring::Scorer;
 use crate::model::architecture::{Edge, EdgeKind, Graph};
 mod bundles;
+mod numbered;
 use crate::layout::routing_shared::search;
 use search::find_path;
 
@@ -159,36 +160,6 @@ fn route_impl(
             }
         }
     }
-    let clearance = crate::layout::relationship_markers::clearance(graph);
-    let spacing = crate::layout::relationship_markers::PORT_SPACING;
-    let reservations: Vec<_> = graph
-        .edges
-        .iter()
-        .enumerate()
-        .flat_map(|(index, edge)| {
-            if !resource_edges[index] || represented_by_nesting(edge, &layout.containment) {
-                return Vec::new();
-            }
-            [
-                (edge.from, source_ports[index], numbered[index][0]),
-                (edge.to, target_ports[index], numbered[index][1]),
-            ]
-            .into_iter()
-            .filter_map(|(node, offset, enabled)| {
-                let end = layout.bounds[node].port(Side::Right, offset).point;
-                enabled.then_some(Bounds {
-                    origin: Point {
-                        x: end.x,
-                        y: end.y.saturating_sub(spacing / 2),
-                    },
-                    width: clearance - 4,
-                    height: spacing,
-                })
-            })
-            .collect::<Vec<_>>()
-        })
-        .collect();
-    let reservations = crate::layout::relationship_markers::merge_corridors(reservations);
     let mut order: Vec<_> = (0..graph.edges.len()).collect();
     order.sort_by_key(|&index| {
         let edge = &graph.edges[index];
@@ -207,6 +178,15 @@ fn route_impl(
             edge.change.as_ref().map(|change| change.address.as_str()),
         )
     });
+    let terminals = numbered::Terminals::new(
+        graph,
+        layout,
+        &order,
+        (&source_ports, &target_ports),
+        (&source_slots, &target_slots),
+        quality,
+    );
+    let reservations = terminals.all();
     let mut scorer = Scorer::default();
     let mut paths = vec![Vec::new(); graph.edges.len()];
     let groups = super::affinity::groups(graph, &layout.containment.parents);
@@ -215,20 +195,26 @@ fn route_impl(
     let mut bundled_edges = vec![false; graph.edges.len()];
     let independent = |index: usize, scorer: &Scorer| {
         let edge = &graph.edges[index];
-        let start: Port = layout.bounds[edge.from].port(Side::Right, source_ports[index]);
-        let end = layout.bounds[edge.to].port(Side::Right, target_ports[index]);
-        let mut obstacles = obstacles(layout, edge);
-        obstacles.extend_from_slice(&reservations);
-        let path = path_with_clearance(
-            start.point,
-            end.point,
-            &obstacles,
-            quality.then_some(scorer),
-            [
-                if numbered[index][0] { clearance } else { 16 },
-                if numbered[index][1] { clearance } else { 16 },
-            ],
-        );
+        let [start, end] = terminals.ports[index];
+        let obstacles = terminals.barriers(layout, graph, index);
+        let path = if resource_edges[index] {
+            crate::layout::routing_shared::ports::connect_with_clearances(
+                start,
+                end,
+                &obstacles,
+                quality.then_some(scorer),
+                terminals.clearances[index],
+            )
+            .expect("reserved numbered ports have a clear orthogonal corridor")
+        } else {
+            path_with_clearance(
+                start.point,
+                end.point,
+                &obstacles,
+                quality.then_some(scorer),
+                [16; 2],
+            )
+        };
         let path = if quality && !resource_edges[index] {
             crate::layout::routing_shared::ports::select_with_slots(
                 layout.bounds[edge.from],
@@ -292,17 +278,12 @@ fn route_impl(
         paths[index] = path;
     }
     if shortcuts {
-        crate::layout::routing_shared::shortcuts::simplify_routes_with_soft(
+        crate::layout::routing_shared::shortcuts::simplify_routes_with_clearances(
             &mut paths,
-            order
-                .into_iter()
-                .filter(|&index| !resource_edges[index] && !bundled_edges[index]),
-            |index| {
-                let mut barriers = obstacles(layout, &graph.edges[index]);
-                barriers.extend_from_slice(&reservations);
-                barriers
-            },
+            order.into_iter().filter(|&index| !bundled_edges[index]),
+            |index| terminals.barriers(layout, graph, index),
             |index| soft_obstacles(layout, &graph.edges[index]),
+            |index| terminals.clearances[index],
         );
     }
     junctions.sort_by_key(|point| (point.x, point.y));
@@ -455,11 +436,9 @@ fn path_with_clearance(
     match scorer {
         Some(scorer) => {
             let candidate = finish(find_path(first, last, obstacles, Some(scorer)));
-            if scorer.readability_cost(&candidate) < scorer.readability_cost(&shortest) {
-                candidate
-            } else {
-                shortest
-            }
+            scorer
+                .choose(vec![shortest, candidate], obstacles)
+                .expect("shortest route is within its detour budget")
         }
         None => shortest,
     }

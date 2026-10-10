@@ -31,6 +31,7 @@ fn update_positions(
     positions: &mut [Point],
     heights: &[usize],
     column_step: usize,
+    row_gap: usize,
 ) -> (usize, Vec<usize>) {
     let mut top = 160;
     let mut channels = Vec::new();
@@ -49,7 +50,7 @@ fn update_positions(
                     height = height.max(heights[node]);
                 }
             }
-            offset += height + ROW_STEP - super::NODE_HEIGHT;
+            offset += height + row_gap;
         }
         channels.push(top + 32 + offset);
         group.height = offset + 56;
@@ -76,6 +77,7 @@ pub(super) fn place_with_heights<'a>(
                 .map_or(super::NODE_HEIGHT, |node| heights[node])
         })
         .collect();
+    let row_gap = (ROW_STEP - super::NODE_HEIGHT).max(super::relationship_markers::padding(graph));
     let column_step =
         COLUMN_STEP.max(super::NODE_WIDTH + super::relationship_markers::padding(graph));
     let columns = ranks.iter().max().copied().unwrap_or(0) + 1;
@@ -98,7 +100,7 @@ pub(super) fn place_with_heights<'a>(
         .collect();
     groups.sort_by_key(|g| (g.label != "root", g.label));
     let mut positions = vec![Point { x: 0, y: 0 }; expanded.vertices.len()];
-    update_positions(&mut groups, &mut positions, &heights, column_step);
+    update_positions(&mut groups, &mut positions, &heights, column_step, row_gap);
     for sweep in 0..6 {
         let forward = sweep % 2 == 0;
         for step in 0..columns {
@@ -123,11 +125,12 @@ pub(super) fn place_with_heights<'a>(
                     }
                 });
             }
-            update_positions(&mut groups, &mut positions, &heights, column_step);
+            update_positions(&mut groups, &mut positions, &heights, column_step, row_gap);
         }
     }
 
-    let (top, channels) = update_positions(&mut groups, &mut positions, &heights, column_step);
+    let (top, channels) =
+        update_positions(&mut groups, &mut positions, &heights, column_step, row_gap);
     let mut resource_positions = vec![Point { x: 0, y: 0 }; graph.nodes.len()];
     for (vertex, position) in expanded.vertices.iter().zip(positions) {
         if let Some(resource) = vertex.resource {

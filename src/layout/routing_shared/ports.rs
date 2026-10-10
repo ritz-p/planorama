@@ -96,8 +96,18 @@ pub(in crate::layout) fn connect(
     obstacles: &[Bounds],
     scorer: Option<&Scorer>,
 ) -> Option<Vec<Point>> {
-    let first = start.outward(16);
-    let last = end.outward(16);
+    connect_with_clearances(start, end, obstacles, scorer, [16; 2])
+}
+
+pub(in crate::layout) fn connect_with_clearances(
+    start: Port,
+    end: Port,
+    obstacles: &[Bounds],
+    scorer: Option<&Scorer>,
+    clearances: [usize; 2],
+) -> Option<Vec<Point>> {
+    let first = start.outward(clearances[0]);
+    let last = end.outward(clearances[1]);
     if first == start.point
         || last == end.point
         || obstacles
@@ -110,7 +120,7 @@ pub(in crate::layout) fn connect(
     let quality = scorer.unwrap_or(&default_scorer);
     let mut candidates = super::simple::candidates(start.point, end.point)
         .into_iter()
-        .filter(|path| valid(path, start, end, obstacles))
+        .filter(|path| valid_with_clearances(path, start, end, obstacles, clearances))
         .collect::<Vec<_>>();
     for peer in quality.peers() {
         for y in [8, 16, 24].into_iter().flat_map(|gap| {
@@ -130,29 +140,39 @@ pub(in crate::layout) fn connect(
                 ],
                 Simplification::PreserveReversals,
             );
-            if valid(&path, start, end, obstacles) {
+            if valid_with_clearances(&path, start, end, obstacles, clearances) {
                 candidates.push(path);
             }
         }
     }
-    if let Some(middle) =
-        search::search(first, last, obstacles, scorer, Some((start.side, end.side)))
+    let mut barriers = obstacles.to_vec();
+    barriers.extend(terminal_corridors(start, end, clearances));
+    for occupancy in [None, scorer]
+        .into_iter()
+        .take(if scorer.is_some() { 2 } else { 1 })
     {
-        let path = simplify(
-            std::iter::once(start.point)
-                .chain(middle)
-                .chain(std::iter::once(end.point)),
-            Simplification::PreserveReversals,
-        );
-        if valid(&path, start, end, obstacles) {
-            candidates.push(path);
+        if let Some(middle) = search::search(
+            first,
+            last,
+            &barriers,
+            occupancy,
+            Some((start.side, end.side)),
+        ) {
+            let path = simplify(
+                std::iter::once(start.point)
+                    .chain(middle)
+                    .chain(std::iter::once(end.point)),
+                Simplification::PreserveReversals,
+            );
+            if valid_with_clearances(&path, start, end, obstacles, clearances) {
+                candidates.push(path);
+            }
         }
     }
-    candidates
-        .into_iter()
-        .min_by_key(|path| quality.score(path, obstacles))
+    quality.choose(candidates, obstacles)
 }
 
+#[cfg(test)]
 pub(in crate::layout) fn valid(
     path: &[Point],
     start: Port,
@@ -169,6 +189,29 @@ pub(in crate::layout) fn valid_with_clearance(
     obstacles: &[Bounds],
     clearance: usize,
 ) -> bool {
+    valid_with_clearances(path, start, end, obstacles, [clearance; 2])
+}
+
+pub(in crate::layout) fn terminal_corridors(
+    start: Port,
+    end: Port,
+    clearances: [usize; 2],
+) -> Vec<Bounds> {
+    [start, end]
+        .into_iter()
+        .zip(clearances)
+        .filter(|&(_, clearance)| clearance > 16)
+        .map(|(port, clearance)| crate::layout::relationship_markers::corridor(port, clearance))
+        .collect()
+}
+
+pub(in crate::layout) fn valid_with_clearances(
+    path: &[Point],
+    start: Port,
+    end: Port,
+    obstacles: &[Bounds],
+    clearances: [usize; 2],
+) -> bool {
     let forward = |port: Port, other: Point| match port.side {
         Side::Left => other.y == port.point.y && other.x < port.point.x,
         Side::Right => other.y == port.point.y && other.x > port.point.x,
@@ -179,10 +222,21 @@ pub(in crate::layout) fn valid_with_clearance(
         && forward(start, path[1])
         && forward(end, path[path.len() - 2])
         && (path.len() == 2
-            || (start.point.x.abs_diff(path[1].x) + start.point.y.abs_diff(path[1].y) >= clearance
+            || (start.point.x.abs_diff(path[1].x) + start.point.y.abs_diff(path[1].y)
+                >= clearances[0]
                 && end.point.x.abs_diff(path[path.len() - 2].x)
                     + end.point.y.abs_diff(path[path.len() - 2].y)
-                    >= clearance))
+                    >= clearances[1]))
+        && (path.len() != 2
+            || clearances == [16; 2]
+            || start.point.x.abs_diff(end.point.x) + start.point.y.abs_diff(end.point.y)
+                >= clearances.iter().sum())
+        && (path.len() < 3
+            || path[1..path.len() - 1].windows(2).all(|p| {
+                terminal_corridors(start, end, clearances)
+                    .iter()
+                    .all(|&b| !crosses(p[0], p[1], b))
+            }))
         && path.windows(2).all(|p| {
             (p[0].x == p[1].x || p[0].y == p[1].y)
                 && obstacles.iter().all(|&b| !crosses(p[0], p[1], b))
