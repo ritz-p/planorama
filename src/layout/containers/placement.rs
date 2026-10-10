@@ -1,4 +1,3 @@
-use super::PADDING;
 use crate::layout::Point;
 use crate::layout::rank;
 use crate::model::architecture::{EdgeKind, Graph};
@@ -49,13 +48,14 @@ pub(in crate::layout) fn pack(
     columns: &[Vec<usize>],
     sizes: &[(usize, usize)],
     offsets: &mut [Point],
+    padding: usize,
 ) -> (usize, usize) {
     let nodes: Vec<_> = columns.iter().flatten().copied().collect();
     if nodes.is_empty() {
         return (0, 0);
     }
     let minimum = nodes.iter().map(|&node| sizes[node].1).max().unwrap();
-    let total: usize = nodes.iter().map(|&node| sizes[node].1 + PADDING).sum();
+    let total: usize = nodes.iter().map(|&node| sizes[node].1 + padding).sum();
     let heights: BTreeSet<_> = (1..=nodes.len().min(64))
         .map(|count| (total / count).max(minimum))
         .chain([minimum])
@@ -69,18 +69,18 @@ pub(in crate::layout) fn pack(
             for &node in column {
                 let (w, h) = sizes[node];
                 if y > 0 && y + h > limit {
-                    x += width + PADDING;
+                    x += width + padding;
                     y = 0;
                     width = 0;
                 }
                 positions.push((node, Point { x, y }));
                 height = height.max(y + h);
                 width = width.max(w);
-                y += h + PADDING;
+                y += h + padding;
             }
-            x += width + PADDING;
+            x += width + padding;
         }
-        let width = x.saturating_sub(PADDING);
+        let width = x.saturating_sub(padding);
         let score = (
             (width as u128 * 10).max(height as u128 * 17),
             width as u128 * height as u128,

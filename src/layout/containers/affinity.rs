@@ -1,4 +1,4 @@
-use super::{PADDING, Point};
+use super::Point;
 use crate::model::architecture::{EdgeKind, Graph, ResourceRole};
 use std::collections::{BTreeMap, BTreeSet};
 
@@ -65,6 +65,7 @@ pub(super) fn align(
     sizes: &[(usize, usize)],
     offsets: &mut [Point],
     height: usize,
+    padding: usize,
 ) {
     for &target in children {
         let Some(group) = groups.iter().find(|group| group.target == target) else {
@@ -85,8 +86,8 @@ pub(super) fn align(
         let mut candidates = vec![offsets[target].y, desired.min(max_y)];
         for &other in children {
             if other != target {
-                candidates.push((offsets[other].y + sizes[other].1 + PADDING).min(max_y));
-                candidates.push(offsets[other].y.saturating_sub(sizes[target].1 + PADDING));
+                candidates.push((offsets[other].y + sizes[other].1 + padding).min(max_y));
+                candidates.push(offsets[other].y.saturating_sub(sizes[target].1 + padding));
             }
         }
         let x = offsets[target].x;
@@ -96,10 +97,10 @@ pub(super) fn align(
                 y <= max_y
                     && children.iter().all(|&other| {
                         other == target
-                            || x + sizes[target].0 + PADDING <= offsets[other].x
-                            || offsets[other].x + sizes[other].0 + PADDING <= x
-                            || y + sizes[target].1 + PADDING <= offsets[other].y
-                            || offsets[other].y + sizes[other].1 + PADDING <= y
+                            || x + sizes[target].0 + padding <= offsets[other].x
+                            || offsets[other].x + sizes[other].0 + padding <= x
+                            || y + sizes[target].1 + padding <= offsets[other].y
+                            || offsets[other].y + sizes[other].1 + padding <= y
                     })
             })
             .min_by_key(|&y| (y.abs_diff(desired), y))

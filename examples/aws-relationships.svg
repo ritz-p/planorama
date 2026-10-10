@@ -1,7 +1,7 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1340" height="896" viewBox="0 0 1340 896" role="img" aria-labelledby="title description">
+<svg xmlns="http://www.w3.org/2000/svg" width="1496" height="1170" viewBox="0 0 1496 1170" role="img" aria-labelledby="title description">
 <title id="title">Terraform plan</title>
 <desc id="description">9 resources (6 cards), 7 relationships. Lines show architectural relationships. Edge titles identify the relationship kind and Terraform change. Thin solid: dependency. Dashed: association. Thick dotted: connection. Nested boxes: containment. Edge color preserves the Terraform action when available.</desc>
-<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/></marker><marker id="arrow-create" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#047857"/></marker><marker id="arrow-delete" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#b91c1c"/></marker><marker id="arrow-replace" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#c2410c"/></marker><metadata id="planorama-icons-license">AWS Architecture Icons, release 07312026.
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/></marker><marker id="arrow-create" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#047857"/></marker><marker id="arrow-delete" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#b91c1c"/></marker><marker id="arrow-replace" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#c2410c"/></marker><metadata id="planorama-icons-license">AWS Architecture Icons, release 07312026.
 Copyright Amazon Web Services, Inc. or its affiliates. All rights reserved.
 AWS service names and artwork are trademarks or other proprietary assets of AWS.
 Source: https://aws.amazon.com/architecture/icons/
@@ -66,20 +66,20 @@ No AWS endorsement is implied. Consult the AWS terms for other uses.
 <path d="M 540 201 H 570" stroke="#64748b" stroke-width="2.5" stroke-dasharray="2 4" stroke-linecap="round"/><text x="578" y="205">connection</text>
 </g>
 <g transform="translate(0 72)">
-<g data-container="resource-6177735f7670632e6d61696e-current"><title>aws_vpc.main</title><rect x="420" y="160" width="840" height="584" rx="12" fill="#fefce8" stroke="#854d0e" stroke-width="2" data-mode="managed"/></g>
-<g data-container="resource-6177735f7375626e65742e6d61696e-current"><title>aws_subnet.main</title><rect x="460" y="296" width="400" height="272" rx="12" fill="#fef9c3" stroke="#854d0e" stroke-width="2" data-mode="managed"/></g>
-<path d="M 380 208 L 388 208 Q 396 208 396 216 L 396 472 Q 396 480 404 480 L 500 480 " data-edge-kind="association" data-source="resource-6177735f6c625f7461726765745f67726f75702e6d61696e-current" data-target="resource-6177735f696e7374616e63652e6d61696e-current" fill="none" stroke="#c2410c" stroke-width="2" stroke-dasharray="7 4" stroke-linejoin="round" marker-end="url(#arrow-replace)"><title>aws_lb_target_group.main → aws_instance.main (association; replace: aws_lb_target_group_attachment.main)</title></path>
+<g data-container="resource-6177735f7670632e6d61696e-current"><title>aws_vpc.main</title><rect x="446" y="160" width="970" height="714" rx="12" fill="#fefce8" stroke="#854d0e" stroke-width="2" data-mode="managed"/></g>
+<g data-container="resource-6177735f7375626e65742e6d61696e-current"><title>aws_subnet.main</title><rect x="512" y="322" width="452" height="324" rx="12" fill="#fef9c3" stroke="#854d0e" stroke-width="2" data-mode="managed"/></g>
+<path d="M 380 208 L 430 208 Q 438 208 438 216 L 438 468 Q 438 476 446 476 L 932 476 Q 940 476 940 484 L 940 523 Q 940 531 932 531 L 898 531 " data-edge-kind="association" data-source="resource-6177735f6c625f7461726765745f67726f75702e6d61696e-current" data-target="resource-6177735f696e7374616e63652e6d61696e-current" fill="none" stroke="#c2410c" stroke-width="2" stroke-dasharray="7 4" stroke-linejoin="round" marker-end="url(#arrow-replace)"><title>aws_lb_target_group.main → aws_instance.main (association; replace: aws_lb_target_group_attachment.main)</title></path>
 <g data-edge-kind="containment" data-source="resource-6177735f7375626e65742e6d61696e-current" data-target="resource-6177735f696e7374616e63652e6d61696e-current"><title>aws_subnet.main → aws_instance.main (containment)</title></g>
-<path d="M 860 432 L 868 432 Q 876 432 876 424 L 876 342 Q 876 334 884 334 L 900 334 " data-edge-kind="association" data-source="resource-6177735f7375626e65742e6d61696e-current" data-target="resource-6177735f726f7574655f7461626c652e6d61696e-current" fill="none" stroke="#047857" stroke-width="2" stroke-dasharray="7 4" stroke-linejoin="round" marker-end="url(#arrow-create)"><title>aws_subnet.main → aws_route_table.main (association; create: aws_route_table_association.main)</title></path>
+<path d="M 964 484 L 1384 484 Q 1392 484 1392 476 L 1392 364 Q 1392 356 1384 356 L 1350 356 " data-edge-kind="association" data-source="resource-6177735f7375626e65742e6d61696e-current" data-target="resource-6177735f726f7574655f7461626c652e6d61696e-current" fill="none" stroke="#047857" stroke-width="2" stroke-dasharray="7 4" stroke-linejoin="round" marker-end="url(#arrow-create)"><title>aws_subnet.main → aws_route_table.main (association; create: aws_route_table_association.main)</title></path>
 <g data-edge-kind="containment" data-source="resource-6177735f7670632e6d61696e-current" data-target="resource-6177735f726f7574655f7461626c652e6d61696e-current"><title>aws_vpc.main → aws_route_table.main (containment)</title></g>
 <g data-edge-kind="containment" data-source="resource-6177735f7670632e6d61696e-current" data-target="resource-6177735f7375626e65742e6d61696e-current"><title>aws_vpc.main → aws_subnet.main (containment)</title></g>
 <g data-edge-kind="containment" data-source="resource-6177735f7670632e6d61696e-current" data-target="resource-6177735f7670635f656e64706f696e742e6d61696e-current"><title>aws_vpc.main → aws_vpc_endpoint.main (containment)</title></g>
-<path d="M 780 656 L 876 656 Q 884 656 884 648 L 884 361 Q 884 353 892 353 L 900 353 " data-edge-kind="association" data-source="resource-6177735f7670635f656e64706f696e742e6d61696e-current" data-target="resource-6177735f726f7574655f7461626c652e6d61696e-current" fill="none" stroke="#b91c1c" stroke-width="2" stroke-dasharray="7 4" stroke-linejoin="round" marker-end="url(#arrow-delete)"><title>aws_vpc_endpoint.main → aws_route_table.main (association; delete: aws_vpc_endpoint_route_table_association.main)</title></path>
+<path d="M 832 760 L 1388 760 Q 1396 760 1396 752 L 1396 386 Q 1396 384 1394 384 L 1393 384 Q 1392 384 1392 383 L 1392 383 Q 1392 382 1391 382 L 1350 382 " data-edge-kind="association" data-source="resource-6177735f7670635f656e64706f696e742e6d61696e-current" data-target="resource-6177735f726f7574655f7461626c652e6d61696e-current" fill="none" stroke="#b91c1c" stroke-width="2" stroke-dasharray="7 4" stroke-linejoin="round" marker-end="url(#arrow-delete)"><title>aws_vpc_endpoint.main → aws_route_table.main (association; delete: aws_vpc_endpoint_route_table_association.main)</title></path>
 <g id="resource-6177735f696e7374616e63652e6d61696e-current" data-architecture-id="terraform:6177735f696e7374616e63652e6d61696e-current" data-qualified-address="module.root.aws_instance.main" data-terraform-address="aws_instance.main"><title>module.root.aws_instance.main — other</title>
-<rect x="500" y="432" width="320" height="96" rx="8" fill="#fefce8" stroke="#854d0e" stroke-width="1.5" data-mode="managed"/>
-<text x="512" y="452" font-size="11" fill="#854d0e">aws_instance · other</text>
-<use href="#planorama-icon-aws-ec2" x="512" y="460" width="24" height="24" aria-hidden="true"/><text x="544" y="477" font-size="13" fill="#0f172a">module.root.aws_instance.main</text>
-<text x="512" y="516" font-size="10" fill="#64748b"><title>root</title>root</text>
+<rect x="578" y="484" width="320" height="96" rx="8" fill="#fefce8" stroke="#854d0e" stroke-width="1.5" data-mode="managed"/>
+<text x="590" y="504" font-size="11" fill="#854d0e">aws_instance · other</text>
+<use href="#planorama-icon-aws-ec2" x="590" y="512" width="24" height="24" aria-hidden="true"/><text x="622" y="529" font-size="13" fill="#0f172a">module.root.aws_instance.main</text>
+<text x="590" y="568" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
 <g id="resource-6177735f6c625f7461726765745f67726f75702e6d61696e-current" data-architecture-id="terraform:6177735f6c625f7461726765745f67726f75702e6d61696e-current" data-qualified-address="module.root.aws_lb_target_group.main" data-terraform-address="aws_lb_target_group.main"><title>module.root.aws_lb_target_group.main — other</title>
 <rect x="60" y="160" width="320" height="96" rx="8" fill="#fefce8" stroke="#854d0e" stroke-width="1.5" data-mode="managed"/>
@@ -89,26 +89,55 @@ No AWS endorsement is implied. Consult the AWS terms for other uses.
 <text x="72" y="244" font-size="10" fill="#64748b" data-role="controller"><title>root</title>controller · root</text>
 </g>
 <g id="resource-6177735f726f7574655f7461626c652e6d61696e-current" data-architecture-id="terraform:6177735f726f7574655f7461626c652e6d61696e-current" data-qualified-address="module.root.aws_route_table.main" data-terraform-address="aws_route_table.main"><title>module.root.aws_route_table.main — other</title>
-<rect x="900" y="296" width="320" height="96" rx="8" fill="#fefce8" stroke="#854d0e" stroke-width="1.5" data-mode="managed"/>
-<text x="912" y="316" font-size="11" fill="#854d0e">aws_route_table · other</text>
-<use href="#planorama-icon-aws-vpc" x="912" y="324" width="24" height="24" aria-hidden="true"/><text x="944" y="341" font-size="13" fill="#0f172a">module.root.aws_route_table.main</text>
-<text x="912" y="380" font-size="10" fill="#64748b"><title>root</title>root</text>
+<rect x="1030" y="322" width="320" height="96" rx="8" fill="#fefce8" stroke="#854d0e" stroke-width="1.5" data-mode="managed"/>
+<text x="1042" y="342" font-size="11" fill="#854d0e">aws_route_table · other</text>
+<use href="#planorama-icon-aws-vpc" x="1042" y="350" width="24" height="24" aria-hidden="true"/><text x="1074" y="367" font-size="13" fill="#0f172a">module.root.aws_route_table.main</text>
+<text x="1042" y="406" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
 <g id="resource-6177735f7375626e65742e6d61696e-current" data-architecture-id="terraform:6177735f7375626e65742e6d61696e-current" data-qualified-address="module.root.aws_subnet.main" data-terraform-address="aws_subnet.main"><title>module.root.aws_subnet.main — other</title>
-<text x="472" y="316" font-size="11" fill="#854d0e">aws_subnet · other</text>
-<use href="#planorama-icon-aws-vpc" x="472" y="324" width="24" height="24" aria-hidden="true"/><text x="504" y="341" font-size="13" fill="#0f172a">module.root.aws_subnet.main</text>
-<text x="472" y="380" font-size="10" fill="#64748b"><title>root</title>root</text>
+<text x="524" y="342" font-size="11" fill="#854d0e">aws_subnet · other</text>
+<use href="#planorama-icon-aws-vpc" x="524" y="350" width="24" height="24" aria-hidden="true"/><text x="556" y="367" font-size="13" fill="#0f172a">module.root.aws_subnet.main</text>
+<text x="524" y="406" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
 <g id="resource-6177735f7670632e6d61696e-current" data-architecture-id="terraform:6177735f7670632e6d61696e-current" data-qualified-address="module.root.aws_vpc.main" data-terraform-address="aws_vpc.main"><title>module.root.aws_vpc.main — other</title>
-<text x="432" y="180" font-size="11" fill="#854d0e">aws_vpc · other</text>
-<use href="#planorama-icon-aws-vpc" x="432" y="188" width="24" height="24" aria-hidden="true"/><text x="464" y="205" font-size="13" fill="#0f172a">module.root.aws_vpc.main</text>
-<text x="432" y="244" font-size="10" fill="#64748b"><title>root</title>root</text>
+<text x="458" y="180" font-size="11" fill="#854d0e">aws_vpc · other</text>
+<use href="#planorama-icon-aws-vpc" x="458" y="188" width="24" height="24" aria-hidden="true"/><text x="490" y="205" font-size="13" fill="#0f172a">module.root.aws_vpc.main</text>
+<text x="458" y="244" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
 <g id="resource-6177735f7670635f656e64706f696e742e6d61696e-current" data-architecture-id="terraform:6177735f7670635f656e64706f696e742e6d61696e-current" data-qualified-address="module.root.aws_vpc_endpoint.main" data-terraform-address="aws_vpc_endpoint.main"><title>module.root.aws_vpc_endpoint.main — other</title>
-<rect x="460" y="608" width="320" height="96" rx="8" fill="#fefce8" stroke="#854d0e" stroke-width="1.5" data-mode="managed"/>
-<text x="472" y="628" font-size="11" fill="#854d0e">aws_vpc_endpoint · other</text>
-<use href="#planorama-icon-aws-endpoint" x="472" y="636" width="24" height="24" aria-hidden="true"/><text x="504" y="653" font-size="13" fill="#0f172a">module.root.aws_vpc_endpoint.main</text>
-<text x="472" y="692" font-size="10" fill="#64748b"><title>root</title>root</text>
+<rect x="512" y="712" width="320" height="96" rx="8" fill="#fefce8" stroke="#854d0e" stroke-width="1.5" data-mode="managed"/>
+<text x="524" y="732" font-size="11" fill="#854d0e">aws_vpc_endpoint · other</text>
+<use href="#planorama-icon-aws-endpoint" x="524" y="740" width="24" height="24" aria-hidden="true"/><text x="556" y="757" font-size="13" fill="#0f172a">module.root.aws_vpc_endpoint.main</text>
+<text x="524" y="796" font-size="10" fill="#64748b"><title>root</title>root</text>
+</g>
+<g data-relationship-marker="1"><title>Relationship resource [1]</title>
+<rect x="908" y="522" width="24" height="18" rx="4" fill="#ffffff" stroke="#c2410c" stroke-width="2" stroke-dasharray="7 4"/><text x="920" y="535" text-anchor="middle" font-size="11" fill="#334155">[1]</text>
+</g>
+<g data-relationship-marker="2"><title>Relationship resource [2]</title>
+<rect x="1360" y="347" width="24" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="1372" y="360" text-anchor="middle" font-size="11" fill="#334155">[2]</text>
+</g>
+<g data-relationship-marker="3"><title>Relationship resource [3]</title>
+<rect x="1360" y="373" width="24" height="18" rx="4" fill="#ffffff" stroke="#b91c1c" stroke-width="2" stroke-dasharray="7 4"/><text x="1372" y="386" text-anchor="middle" font-size="11" fill="#334155">[3]</text>
+</g>
+<g data-relationship-index="true"><text x="40" y="978" font-size="16" font-weight="700" fill="#334155">Relationship resources</text>
+<g data-relationship-entry="1">
+<rect x="52" y="989" width="24" height="18" rx="4" fill="#ffffff" stroke="#c2410c" stroke-width="2" stroke-dasharray="7 4"/><text x="64" y="1002" text-anchor="middle" font-size="11" fill="#334155">[1]</text>
+<text data-source-address="aws_lb_target_group_attachment.main" font-size="12" fill="#334155"><title>aws_lb_target_group_attachment.main</title>
+<tspan x="100" y="1002" xml:space="preserve">aws_lb_target_group_attachment.main</tspan>
+</text>
+</g>
+<g data-relationship-entry="2">
+<rect x="52" y="1017" width="24" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="64" y="1030" text-anchor="middle" font-size="11" fill="#334155">[2]</text>
+<text data-source-address="aws_route_table_association.main" font-size="12" fill="#334155"><title>aws_route_table_association.main</title>
+<tspan x="100" y="1030" xml:space="preserve">aws_route_table_association.main</tspan>
+</text>
+</g>
+<g data-relationship-entry="3">
+<rect x="52" y="1045" width="24" height="18" rx="4" fill="#ffffff" stroke="#b91c1c" stroke-width="2" stroke-dasharray="7 4"/><text x="64" y="1058" text-anchor="middle" font-size="11" fill="#334155">[3]</text>
+<text data-source-address="aws_vpc_endpoint_route_table_association.main" font-size="12" fill="#334155"><title>aws_vpc_endpoint_route_table_association.main</title>
+<tspan x="100" y="1058" xml:space="preserve">aws_vpc_endpoint_route_table_association.main</tspan>
+</text>
+</g>
 </g>
 </g>
 </g>

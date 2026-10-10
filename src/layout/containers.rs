@@ -10,6 +10,7 @@ mod routing;
 #[path = "../../tests/unit/layout/containers.rs"]
 mod tests;
 
+#[cfg(test)]
 const PADDING: usize = 40;
 
 pub(super) fn route(graph: &Graph, layout: &mut Layout<'_>, bundle: bool) {
@@ -31,20 +32,13 @@ pub(super) fn place_geometry(
     enabled: bool,
 ) -> Layout<'_> {
     let parents = &tree.parents;
+    let padding = super::relationship_markers::padding(graph);
     let affinities = if enabled {
         affinity::groups(graph, parents)
     } else {
         Vec::new()
     };
-    let header_heights: Vec<_> = routing::incidents(graph, &tree)
-        .iter()
-        .enumerate()
-        .map(|(node, edges)| {
-            let inferred =
-                tree.parents[node].is_some_and(|parent| graph.derived_containment(parent, node));
-            (NODE_HEIGHT + if inferred { 18 } else { 0 }).max(edges.len() + 41)
-        })
-        .collect();
+    let header_heights = header_heights(graph, &tree);
     let children = &tree.children;
 
     let roots = &tree.roots;
@@ -63,21 +57,28 @@ pub(super) fn place_geometry(
         if graph.nodes[node].role == ResourceRole::Container {
             let mut columns = placement::columns(graph, Some(node), &children[node], parents);
             affinity::cohere(&mut columns, &affinities);
-            let (width, height) = placement::pack(&columns, &sizes, &mut offsets);
-            affinity::align(&children[node], &affinities, &sizes, &mut offsets, height);
+            let (width, height) = placement::pack(&columns, &sizes, &mut offsets, padding);
+            affinity::align(
+                &children[node],
+                &affinities,
+                &sizes,
+                &mut offsets,
+                height,
+                padding,
+            );
             for &child in &children[node] {
-                offsets[child].x += PADDING;
-                offsets[child].y += header_heights[node] + PADDING;
+                offsets[child].x += padding;
+                offsets[child].y += header_heights[node] + padding;
             }
             sizes[node] = (
-                width.max(NODE_WIDTH) + PADDING * 2,
+                width.max(NODE_WIDTH) + padding * 2,
                 header_heights[node]
-                    + PADDING
+                    + padding
                     + height
                     + if children[node].is_empty() {
                         0
                     } else {
-                        PADDING
+                        padding
                     },
             );
         }
@@ -128,4 +129,18 @@ pub(super) fn place_geometry(
         layout.width = layout.width.max(panel.bounds.right() + 40);
     }
     layout
+}
+
+pub(super) fn header_heights(graph: &Graph, tree: &super::ContainmentTree) -> Vec<usize> {
+    let numbered = super::resource_edges(graph);
+    routing::incidents(graph, tree)
+        .iter()
+        .enumerate()
+        .map(|(node, edges)| {
+            let inferred =
+                tree.parents[node].is_some_and(|parent| graph.derived_containment(parent, node));
+            (NODE_HEIGHT + if inferred { 18 } else { 0 })
+                .max(40 + super::relationship_markers::port_span(edges, &numbered))
+        })
+        .collect()
 }

@@ -12,6 +12,7 @@ pub(super) fn pack(
     sizes: &[(usize, usize)],
     offsets: &mut [Point],
 ) -> (usize, Vec<ScopePanel>) {
+    let spacing = super::relationship_markers::padding(graph);
     let mut groups: BTreeMap<Option<DeploymentScope>, Vec<usize>> = BTreeMap::new();
     for &root in &tree.roots {
         let scope = graph.nodes[root].entity.scope.as_ref();
@@ -28,7 +29,10 @@ pub(super) fn pack(
     }
     if !groups.keys().flatten().any(|scope| scope.region.is_some()) {
         let columns = placement::columns(graph, None, &tree.roots, &tree.parents);
-        return (placement::pack(&columns, sizes, offsets).1, Vec::new());
+        return (
+            placement::pack(&columns, sizes, offsets, spacing).1,
+            Vec::new(),
+        );
     }
     let mut top = 0;
     let mut panels = Vec::new();
@@ -38,7 +42,7 @@ pub(super) fn pack(
         .chain(groups.iter().filter(|(scope, _)| scope.is_none()))
     {
         let columns = placement::columns(graph, None, roots, &tree.parents);
-        let (width, height) = placement::pack(&columns, sizes, offsets);
+        let (width, height) = placement::pack(&columns, sizes, offsets, spacing);
         let padding = if scope.is_some() { 40 } else { 0 };
         for &root in roots {
             offsets[root].y += top + padding;
@@ -51,7 +55,7 @@ pub(super) fn pack(
                         x: 40,
                         y: 160 + top,
                     },
-                    width: width + 40,
+                    width: width + spacing.max(40),
                     height: height + 60,
                 },
             });

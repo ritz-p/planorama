@@ -5,7 +5,7 @@
 <svg y="100" xmlns="http://www.w3.org/2000/svg" width="1040" height="520" viewBox="0 0 1040 520" role="img" aria-labelledby="state-6170706c69636174696f6e-title state-6170706c69636174696f6e-description">
 <title id="state-6170706c69636174696f6e-title">Terraform plan</title>
 <desc id="state-6170706c69636174696f6e-description">2 resources, 1 reference edges. Arrows point from dependencies to dependent resources. References are conservative, not Terraform execution order. Thin solid: dependency. Dashed: association. Thick dotted: connection. Nested boxes: containment. Edge color preserves the Terraform action when available.</desc>
-<defs><marker id="state-6170706c69636174696f6e-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/></marker><metadata id="state-6170706c69636174696f6e-planorama-icons-license">AWS Architecture Icons, release 07312026.
+<defs><marker id="state-6170706c69636174696f6e-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/></marker><metadata id="state-6170706c69636174696f6e-planorama-icons-license">AWS Architecture Icons, release 07312026.
 Copyright Amazon Web Services, Inc. or its affiliates. All rights reserved.
 AWS service names and artwork are trademarks or other proprietary assets of AWS.
 Source: https://aws.amazon.com/architecture/icons/
@@ -81,7 +81,7 @@ No AWS endorsement is implied. Consult the AWS terms for other uses.
 <svg y="680" xmlns="http://www.w3.org/2000/svg" width="1040" height="664" viewBox="0 0 1040 664" role="img" aria-labelledby="state-6e6574776f726b-title state-6e6574776f726b-description">
 <title id="state-6e6574776f726b-title">Terraform plan</title>
 <desc id="state-6e6574776f726b-description">3 resources, 1 reference edges. Arrows point from dependencies to dependent resources. References are conservative, not Terraform execution order. Thin solid: dependency. Dashed: association. Thick dotted: connection. Nested boxes: containment. Edge color preserves the Terraform action when available.</desc>
-<defs><marker id="state-6e6574776f726b-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/></marker><metadata id="state-6e6574776f726b-planorama-icons-license">AWS Architecture Icons, release 07312026.
+<defs><marker id="state-6e6574776f726b-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/></marker><metadata id="state-6e6574776f726b-planorama-icons-license">AWS Architecture Icons, release 07312026.
 Copyright Amazon Web Services, Inc. or its affiliates. All rights reserved.
 AWS service names and artwork are trademarks or other proprietary assets of AWS.
 Source: https://aws.amazon.com/architecture/icons/
