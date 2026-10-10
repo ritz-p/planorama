@@ -102,7 +102,12 @@ pub(crate) fn parse(json: &str) -> Result<TerraformPlan, String> {
     );
     Ok(TerraformPlan {
         remote_references: remote::collect(&plan["configuration"]["root_module"], &nodes),
-        outputs: outputs::collect(&plan["configuration"]["root_module"], &nodes, &symbols),
+        outputs: outputs::collect(
+            &plan["configuration"]["root_module"],
+            &plan["output_changes"],
+            &nodes,
+            &symbols,
+        ),
         checks: checks::parse(&plan["checks"], &nodes),
         status: PlanStatus {
             applyable: plan["applyable"].as_bool(),

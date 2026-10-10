@@ -4,6 +4,7 @@ use std::ops::Deref;
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct StateOutput {
     pub name: String,
+    pub action: Option<super::Action>,
     pub sources: Vec<String>,
     pub complete: bool,
     pub issues: std::collections::BTreeSet<super::DiagnosticReason>,

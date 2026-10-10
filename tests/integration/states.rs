@@ -61,7 +61,7 @@ fn cross_state_resolution_never_substitutes_equal_output_values_for_provenance()
     for literal in [false, true] {
         let mut producer: serde_json::Value =
             serde_json::from_str(include_str!("../fixtures/multi/producer.json")).unwrap();
-        producer["output_changes"] = serde_json::json!({"subnet":{"after":"PRIVATE_SAME_VALUE"}});
+        producer["output_changes"] = serde_json::json!({"subnet":{"actions":["update"],"before":"PRIVATE_SAME_VALUE","after":"PRIVATE_SAME_VALUE"}});
         if literal {
             producer["configuration"]["root_module"]["outputs"]["subnet"]["expression"] =
                 serde_json::json!({"constant_value":"PRIVATE_SAME_VALUE"});
@@ -102,6 +102,7 @@ fn cross_state_resolution_never_substitutes_equal_output_values_for_provenance()
             literal
         );
         assert!(!svg.contains("PRIVATE_SAME_VALUE") && !diagnostics.contains("PRIVATE_SAME_VALUE"));
+        assert_eq!(svg.contains("data-output-action=\"update\""), !literal);
     }
 }
 

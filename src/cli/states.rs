@@ -57,6 +57,7 @@ pub(super) fn run(
             let crate::model::cross_state::CrossStateProvenance::TerraformRemoteState {
                 remote,
                 output,
+                ..
             } = &edge.provenance;
             writeln!(
                 stderr,
