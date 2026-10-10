@@ -7,6 +7,40 @@ use search::find_path;
 
 use crate::layout::routing_shared::{Simplification, simplify};
 
+#[test]
+fn shortcut_pass_preserves_nested_ports_and_bundles() {
+    let raw = crate::plan::parse(include_str!(
+        "../../../tests/fixtures/spanning-dense-plan.json"
+    ))
+    .unwrap();
+    let graph = crate::semantic::transform(&raw).0;
+    let tree = crate::layout::ContainmentTree::new(&graph);
+    let keys = tree.keys.clone();
+    let layout = super::place_geometry(&graph, tree, true);
+    let before = route_impl(&graph, &layout, &keys, true, true, false);
+    let after = route_impl(&graph, &layout, &keys, true, true, true);
+    for (a, b) in before.paths.iter().zip(&after.paths) {
+        assert_eq!(a.first(), b.first());
+        assert_eq!(a.last(), b.last());
+        assert!(b.len() <= a.len());
+    }
+    assert_eq!(before.junctions, after.junctions);
+    for (edge, (a, b)) in graph
+        .edges
+        .iter()
+        .zip(before.paths.iter().zip(&after.paths))
+    {
+        if edge.kind == EdgeKind::Connection {
+            assert_eq!(a, b);
+        }
+    }
+    let a = crate::layout::metrics::measure(&before.paths);
+    let b = crate::layout::metrics::measure(&after.paths);
+    assert!(b.total_path_length <= a.total_path_length);
+    assert!(b.overlap_distance <= a.overlap_distance);
+    assert!(b.crossing_count <= a.crossing_count);
+}
+
 fn represented_by_nesting(edge: &Edge, tree: &crate::layout::ContainmentTree) -> bool {
     matches!(edge.kind, EdgeKind::Dependency | EdgeKind::Containment)
         && edge.from != edge.to
@@ -33,7 +67,7 @@ pub(super) struct Routed {
 }
 
 pub(super) fn route(graph: &Graph, layout: &Layout<'_>, keys: &[usize], bundle: bool) -> Routed {
-    route_impl(graph, layout, keys, true, bundle)
+    route_impl(graph, layout, keys, true, bundle, true)
 }
 
 #[cfg(test)]
@@ -43,7 +77,7 @@ pub(super) fn route_with_quality(
     keys: &[usize],
     quality: bool,
 ) -> Vec<Vec<Point>> {
-    route_impl(graph, layout, keys, quality, false).paths
+    route_impl(graph, layout, keys, quality, false, true).paths
 }
 
 fn route_impl(
@@ -52,6 +86,7 @@ fn route_impl(
     keys: &[usize],
     quality: bool,
     bundle: bool,
+    shortcuts: bool,
 ) -> Routed {
     let geometry = |node: usize| {
         let bounds = layout.bounds[node];
@@ -170,7 +205,8 @@ fn route_impl(
     let groups = super::affinity::groups(graph, &layout.containment.parents);
     let mut attempted = std::collections::BTreeSet::new();
     let mut junctions = Vec::new();
-    for index in order {
+    let mut bundled_edges = vec![false; graph.edges.len()];
+    for &index in &order {
         let edge = &graph.edges[index];
         scorer.set_peers(
             layout
@@ -199,6 +235,7 @@ fn route_impl(
                         &reservations,
                     ) {
                         for (index, path) in bundled.paths {
+                            bundled_edges[index] = true;
                             scorer.insert(path.clone());
                             paths[index] = path;
                         }
@@ -236,13 +273,21 @@ fn route_impl(
         } else {
             path
         };
-        let path = if !resource_edges[index] {
-            crate::layout::routing_shared::shortcuts::simplify_path(path, &obstacles, &scorer)
-        } else {
-            path
-        };
         scorer.insert(path.clone());
         paths[index] = path;
+    }
+    if shortcuts {
+        crate::layout::routing_shared::shortcuts::simplify_routes(
+            &mut paths,
+            order
+                .into_iter()
+                .filter(|&index| !resource_edges[index] && !bundled_edges[index]),
+            |index| {
+                let mut barriers = obstacles(layout, &graph.edges[index]);
+                barriers.extend_from_slice(&reservations);
+                barriers
+            },
+        );
     }
     junctions.sort_by_key(|point| (point.x, point.y));
     junctions.dedup();

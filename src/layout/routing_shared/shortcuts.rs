@@ -1,6 +1,29 @@
 use super::{Bounds, Point, Scorer, Simplification, ports, simple, simplify};
 use crate::layout::{Port, Side};
 
+pub(in crate::layout) fn simplify_routes(
+    paths: &mut [Vec<Point>],
+    order: impl IntoIterator<Item = usize>,
+    obstacles: impl Fn(usize) -> Vec<Bounds>,
+) {
+    for index in order {
+        if paths[index].len() < 3 {
+            continue;
+        }
+        let mut scorer = Scorer::default();
+        for (other, path) in paths.iter().enumerate() {
+            if other != index {
+                scorer.insert(path.clone());
+            }
+        }
+        paths[index] = simplify_path(
+            std::mem::take(&mut paths[index]),
+            &obstacles(index),
+            &scorer,
+        );
+    }
+}
+
 pub(in crate::layout) fn simplify_path(
     mut path: Vec<Point>,
     obstacles: &[Bounds],
@@ -57,6 +80,27 @@ pub(in crate::layout) fn simplify_path(
             None => return path,
         }
     }
+}
+
+#[test]
+fn completed_later_paths_block_shortcuts_and_excluded_paths_are_unchanged() {
+    let dogleg = vec![
+        Point { x: 100, y: 100 },
+        Point { x: 140, y: 100 },
+        Point { x: 140, y: 160 },
+        Point { x: 260, y: 160 },
+        Point { x: 260, y: 100 },
+        Point { x: 300, y: 100 },
+    ];
+    let mut paths = vec![
+        dogleg,
+        vec![Point { x: 200, y: 80 }, Point { x: 200, y: 120 }],
+    ];
+    let protected = paths[1].clone();
+    simplify_routes(&mut paths, [0], |_| Vec::new());
+    assert!(paths[0].len() > 2);
+    assert_eq!(paths[1], protected);
+    assert_eq!(crate::layout::metrics::measure(&paths).crossing_count, 0);
 }
 
 #[test]
