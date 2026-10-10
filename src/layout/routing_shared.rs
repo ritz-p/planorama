@@ -3,6 +3,7 @@ mod coverage;
 pub(super) mod ports;
 pub(super) mod scoring;
 pub(super) mod search;
+pub(super) mod slots;
 use scoring::Scorer;
 
 pub(super) enum Simplification {
