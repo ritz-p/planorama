@@ -46,8 +46,18 @@ types; an explicit foreign or unresolved binding does not imply HashiCorp AWS.
 
 Configuration keys are state-local: cross-state identity requires `(StateId, key)`.
 Matching aliases in two states do not imply a shared account or region. Both the
-Terraform facts and architecture cards retain these identities; provider expressions,
-credentials and region/account values are neither stored nor inferred.
+Terraform facts and architecture cards retain these identities.
+
+`provider_configuration.region` is an optional `RegionScope`, resolved only from
+an AWS configuration's literal `expressions.region.constant_value`. Both the
+configuration source and resource provider must identify HashiCorp AWS. A nonempty
+string of lowercase ASCII letters, digits and hyphens is retained; references,
+dynamic expressions, malformed values and missing settings remain unknown. Module
+resources use their exact provider binding. Aliases, names, tags, ARNs, IDs,
+environment variables and Terraform input variable values are never used to infer
+a region. Credentials and unrelated provider expressions are not retained.
+Region is provider deployment metadata, independent of state identity and resource
+containment; it does not classify global AWS resources as regional.
 
 ## Architecture identity and provenance
 

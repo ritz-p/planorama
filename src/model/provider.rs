@@ -2,7 +2,11 @@
 pub struct ProviderConfiguration {
     pub key: String,
     pub alias: Option<String>,
+    pub region: Option<RegionScope>,
 }
+
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
+pub struct RegionScope(pub String);
 
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub enum ProviderIdentity {
