@@ -189,7 +189,8 @@ fn route_impl(
     let reservations = terminals.all();
     let mut scorer = Scorer::default();
     let mut paths = vec![Vec::new(); graph.edges.len()];
-    let groups = super::affinity::groups(graph, &layout.containment.parents);
+    let mut groups = super::affinity::groups(graph, &layout.containment.parents);
+    groups.extend(bundles::dependencies(graph, layout));
     let mut attempted = std::collections::BTreeSet::new();
     let mut junctions = Vec::new();
     let mut bundled_edges = vec![false; graph.edges.len()];
@@ -248,11 +249,14 @@ fn route_impl(
             continue;
         }
         if bundle && !resource_edges[index] {
-            if let Some(group) = groups.iter().find(|group| {
+            if let Some((group_index, group)) = groups.iter().enumerate().find(|(_, group)| {
                 group.edges.contains(&index)
-                    && group.edges.iter().all(|&edge| !resource_edges[edge])
+                    && group
+                        .edges
+                        .iter()
+                        .all(|&edge| !resource_edges[edge] && paths[edge].is_empty())
             }) {
-                if attempted.insert(group.target) {
+                if attempted.insert(group_index) {
                     if let Some(bundled) = bundles::try_bundle(
                         graph,
                         layout,

@@ -3,6 +3,7 @@ use crate::model::architecture::{EdgeKind, Graph, ResourceRole};
 use std::collections::{BTreeMap, BTreeSet};
 
 pub(super) struct Group {
+    pub reverse: bool,
     pub target: usize,
     pub sources: Vec<usize>,
     pub edges: Vec<usize>,
@@ -26,6 +27,7 @@ pub(super) fn groups(graph: &Graph, parents: &[Option<usize>]) -> Vec<Group> {
         .filter_map(|(target, edges)| {
             let sources: BTreeSet<_> = edges.iter().map(|&i| graph.edges[i].from).collect();
             (sources.len() > 1 && sources.len() == edges.len()).then(|| Group {
+                reverse: false,
                 target,
                 sources: sources.into_iter().collect(),
                 edges,

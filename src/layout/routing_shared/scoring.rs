@@ -61,8 +61,11 @@ impl Scorer {
     }
 
     fn occlusion(&self, a: Point, b: Point) -> u128 {
-        self.soft
-            .iter()
+        Self::occlusion_in(&self.soft, a, b)
+    }
+
+    fn occlusion_in(soft: &[Bounds], a: Point, b: Point) -> u128 {
+        soft.iter()
             .filter(|&&bounds| super::crosses(a, b, bounds))
             .map(|bounds| {
                 if a.y == b.y {
@@ -162,6 +165,22 @@ impl Scorer {
 
     pub(in crate::layout) fn readability_cost(&self, points: &[Point]) -> u128 {
         self.score(points, &[]).cost
+    }
+
+    pub(in crate::layout) fn readability_cost_with_soft(
+        &self,
+        points: &[Point],
+        soft: &[Bounds],
+    ) -> u128 {
+        self.readability_cost(points)
+            - points
+                .windows(2)
+                .map(|p| self.occlusion(p[0], p[1]))
+                .sum::<u128>()
+            + points
+                .windows(2)
+                .map(|p| Self::occlusion_in(soft, p[0], p[1]))
+                .sum::<u128>()
     }
 
     pub(in crate::layout) fn score(&self, points: &[Point], nodes: &[Bounds]) -> Score {

@@ -33,11 +33,17 @@ module can therefore change the order of otherwise indistinguishable resources.
 
 Flat routing uses rank lanes and compatible fan-in/fan-out bundles. Nested routing
 uses recursive packing and obstacle-aware search, with shared gutters for compatible
-subnet connections. Flat diagrams with numbered relationships also use obstacle-aware
+subnet connections and Dependency fan-in/fan-out groups. Dependency groups share a
+source or target and peer containment parent; unrelated sibling scopes remain separate.
+Every branch is validated against its own hard boundaries. Resource-backed numbered
+dependencies remain independent. Flat diagrams with numbered relationships also use obstacle-aware
 search to preserve the reserved terminal corridors. Bundled edges retain individual metadata and junction markers.
-Connection bundles use the same facing-side candidates and explicit ports as
+Connection and Dependency bundles use the same facing-side candidates and explicit ports as
 independent routes, supporting horizontal and vertical trunks. Unsafe or more
 expensive bundles fall back to independent paths; eligible groups need not bundle.
+For Dependency groups, each eliminated duplicate terminal reduces bundle cost by
+one bend (96), allowing a modest distance increase for a clearer common junction.
+All original graph edges, arrows and metadata remain separate.
 Each side uses its assigned incident slots. The cost baseline uses the independent
 router and its shortcut pass, regardless of the bundle's direction. It evaluates
 the group against paths available at the decision point, then restores the routing
