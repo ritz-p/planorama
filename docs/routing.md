@@ -38,6 +38,8 @@ source or target and peer containment parent; unrelated sibling scopes remain se
 Every branch is validated against its own hard boundaries. Resource-backed numbered
 dependencies remain independent. Flat diagrams with numbered relationships also use obstacle-aware
 search to preserve the reserved terminal corridors. Bundled edges retain individual metadata and junction markers.
+When a relationship has numbers at both ends, packing reserves space for both
+terminal clearances between adjacent cards so facing ports remain usable.
 Connection and Dependency bundles use the same facing-side candidates and explicit ports as
 independent routes, supporting horizontal and vertical trunks. Unsafe or more
 expensive bundles fall back to independent paths; eligible groups need not bundle.
@@ -75,8 +77,9 @@ headers or other reserved terminals. Crowded sides retain the spaced baseline po
 Numbered ports at both ends of undirected associations, or the destination of
 directed relationships, reserve badge-sized slots; other incident ports retain
 normal spacing. Adjacent terminal corridors are merged before routing. Orthogonal
-search indexes blocked grid edges once per search and checks them in constant time,
-instead of scanning all rectangles for every candidate segment.
+search indexes blocked grid edges and soft-card occlusion costs once per search,
+then looks them up in constant time for each candidate segment. Bundle branches
+use their own endpoint exclusions when evaluating soft-card occlusion.
 
 Hard obstacle violations are rejected. Readability cost is path length plus 96 per
 bend, 512 per crossing, eight per overlapping pixel and two per occluded card pixel.
