@@ -80,6 +80,7 @@ fn route_impl(
                 false => edge.from,
             };
             (
+                layout.bounds[peer].origin.y * 2 + layout.bounds[peer].height,
                 keys[peer],
                 source,
                 edge.kind,
@@ -92,6 +93,8 @@ fn route_impl(
         });
     }
     let mut source_ports = vec![0; graph.edges.len()];
+    let (source_slots, target_slots) =
+        crate::layout::routing_shared::slots::assign(graph, &layout.bounds, &incident);
     let mut target_ports = vec![0; graph.edges.len()];
     for (node, edges) in incident.iter().enumerate() {
         let ports = crate::layout::relationship_markers::ports(
@@ -212,12 +215,13 @@ fn route_impl(
             if resource_edges[index] { clearance } else { 16 },
         );
         let path = if quality && !resource_edges[index] {
-            crate::layout::routing_shared::ports::select(
+            crate::layout::routing_shared::ports::select_with_slots(
                 layout.bounds[edge.from],
                 layout.bounds[edge.to],
                 path,
                 &obstacles,
                 &scorer,
+                Some((&source_slots[index], &target_slots[index])),
             )
         } else {
             path
