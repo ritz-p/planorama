@@ -21,6 +21,42 @@ fn fixture() -> Graph {
 }
 
 #[test]
+fn external_routes_respect_ancestor_scopes_and_unrelated_containers() {
+    let mut graph = ranked_fixture();
+    for node in [1, 2, 4] {
+        graph.nodes[node].role = ResourceRole::Container;
+    }
+    graph.edges = [(0, 1), (0, 2), (1, 3), (2, 5)]
+        .map(|pair| Edge {
+            kind: EdgeKind::Containment,
+            ..Edge::from(pair)
+        })
+        .into();
+    for (from, to) in [(6, 0), (6, 1), (6, 3), (3, 6)] {
+        let mut case = graph.clone();
+        case.edges.push(Edge::from((from, to)));
+        let layout = Layout::new(&case);
+        let edge = case.edges.last().unwrap();
+        let barriers = routing::obstacles(&layout, edge);
+        assert!(barriers.contains(&layout.bounds[2]));
+        assert!(barriers.contains(&layout.bounds[4]));
+        let path = layout.paths.last().unwrap();
+        assert!(!path.is_empty());
+        assert!(path.windows(2).all(|p| {
+            barriers
+                .iter()
+                .all(|&b| !crate::layout::routing_shared::crosses(p[0], p[1], b))
+        }));
+        assert_eq!(path, Layout::new(&case).paths.last().unwrap());
+        let rendered = svg::render(&case, &layout);
+        assert!(
+            rendered.find("<path d=\"M").unwrap()
+                < rendered.rfind("data-architecture-id=").unwrap()
+        );
+    }
+}
+
+#[test]
 fn hierarchy_obstacles_and_direct_container_endpoints() {
     let mut graph = ranked_fixture();
     graph.nodes[1].role = ResourceRole::Container;
@@ -54,13 +90,14 @@ fn hierarchy_obstacles_and_direct_container_endpoints() {
             let scope = layout.containers.contains(&node)
                 && (layout.containment.is_ancestor(node, from)
                     || layout.containment.is_ancestor(node, to));
+            let hard = layout.containers.contains(&node) || node == from || node == to;
             assert_eq!(
-                obstacles[node],
-                if scope {
+                obstacles.contains(&if scope {
                     bounds.header(layout.header_heights[node])
                 } else {
                     bounds
-                }
+                }),
+                hard
             );
         }
         let path = layout.paths.last().unwrap();
@@ -1053,7 +1090,9 @@ fn verify(graph: &Graph) {
         for path in &layout.paths {
             for pair in path.windows(2) {
                 assert!(pair[0].x == pair[1].x || pair[0].y == pair[1].y);
-                assert!(!crate::layout::routing_shared::crosses(pair[0], pair[1], a));
+                if layout.containers.contains(&i) {
+                    assert!(!crate::layout::routing_shared::crosses(pair[0], pair[1], a));
+                }
             }
         }
     }

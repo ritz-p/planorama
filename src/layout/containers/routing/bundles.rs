@@ -61,6 +61,7 @@ fn independent_cost(
     let mut cost = 0;
     let checkpoint = scorer.len();
     let peers = scorer.peers().to_vec();
+    let soft = scorer.soft().to_vec();
     let mut paths = Vec::new();
     let mut order = group.edges.clone();
     order.sort_by_key(|&index| {
@@ -77,6 +78,7 @@ fn independent_cost(
     });
     for &index in &order {
         let edge = &graph.edges[index];
+        scorer.set_soft(super::soft_obstacles(layout, edge));
         scorer.set_peers(
             layout
                 .containment
@@ -87,6 +89,7 @@ fn independent_cost(
         paths.push(path);
     }
     for (slot, &index) in order.iter().enumerate() {
+        scorer.set_soft(super::soft_obstacles(layout, &graph.edges[index]));
         let mut barriers = obstacles(layout, &graph.edges[index]);
         barriers.extend_from_slice(reservations);
         scorer.remove(checkpoint + slot);
@@ -98,12 +101,14 @@ fn independent_cost(
         scorer.replace(checkpoint + slot, paths[slot].clone());
     }
     scorer.truncate(checkpoint);
-    for path in paths {
+    for (index, path) in order.into_iter().zip(paths) {
+        scorer.set_soft(super::soft_obstacles(layout, &graph.edges[index]));
         cost += scorer.readability_cost(&path);
         scorer.insert(path);
     }
     scorer.truncate(checkpoint);
     scorer.set_peers(peers);
+    scorer.set_soft(soft);
     cost
 }
 
@@ -161,7 +166,8 @@ fn candidate(
         {
             return None;
         }
-        bundled_cost += scorer.readability_cost(&path);
+        bundled_cost +=
+            scorer.readability_cost_with_soft(&path, &super::soft_obstacles(layout, edge));
         coordinates.push(along(start.point));
         paths.push((index, path));
     }

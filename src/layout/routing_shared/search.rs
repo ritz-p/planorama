@@ -1,5 +1,6 @@
 use super::{Bounds, Point, Scorer};
 mod obstacles;
+mod occlusion;
 use crate::layout::Side;
 use std::cmp::Reverse;
 use std::collections::BinaryHeap;
@@ -37,7 +38,10 @@ pub(super) fn search(
 ) -> Option<Vec<Point>> {
     let mut xs = vec![start.x, end.x];
     let mut ys = vec![start.y, end.y];
-    for bounds in obstacles {
+    for bounds in obstacles
+        .iter()
+        .chain(scorer.into_iter().flat_map(|s| s.soft()))
+    {
         for clearance in if scorer.is_some() {
             &[8, 16, 24][..]
         } else {
@@ -58,6 +62,7 @@ pub(super) fn search(
     ys.sort_unstable();
     ys.dedup();
     let blocked = obstacles::Grid::new(&xs, &ys, obstacles);
+    let occlusion = scorer.map(|s| occlusion::Grid::new(&xs, &ys, s.soft()));
     let index =
         |p: Point| ys.binary_search(&p.y).unwrap() * xs.len() + xs.binary_search(&p.x).unwrap();
     let point = |i: usize| Point {
@@ -106,7 +111,10 @@ pub(super) fn search(
             }
             let next_direction = if a.y == b.y { 1 } else { 2 };
             let penalty = scorer.map_or(0, |s| {
-                s.segment_cost(a, b)
+                s.conflict_cost(a, b)
+                    + occlusion
+                        .as_ref()
+                        .map_or(0, |grid| grid.cost(current, next))
                     + if direction == next_direction {
                         s.junction_cost(a, next_direction == 1)
                     } else {
