@@ -149,12 +149,15 @@ fn two_subnet_alb_and_ecs_use_the_same_generic_affinity_rule() {
         let layout = Layout::new(&graph);
         let group = affinity::groups(&graph, &layout.containment.parents).remove(0);
         assert_eq!(group.sources.len(), 2);
-        assert!(
-            group
-                .edges
-                .iter()
-                .all(|&i| layout.paths[i].last().unwrap().x == layout.positions[group.target].x)
-        );
+        assert!(group.edges.iter().all(|&i| {
+            let end = layout.paths[i].last().unwrap();
+            let target = layout.bounds[group.target];
+            end.x == target.origin.x
+                || end.x == target.right()
+                || end.y == target.origin.y
+                || end.y == target.origin.y + target.height
+        }));
+        verify(&graph);
     }
 }
 

@@ -120,8 +120,19 @@ pub(super) fn route_selected(
             super::routing_shared::slots::assign(graph, bounds, &incident);
         let mut lanes = VerticalLanes::default();
         let mut bundle_lanes = vec![None; bundles.len()];
-        let mut paths = Vec::with_capacity(graph.edges.len());
-        for (edge, link) in graph.edges.iter().enumerate() {
+        let mut paths = vec![Vec::new(); graph.edges.len()];
+        let mut order: Vec<_> = (0..graph.edges.len()).collect();
+        order.sort_by_key(|&i| {
+            let edge = &graph.edges[i];
+            (
+                graph.nodes[edge.from].entity.id.as_str(),
+                graph.nodes[edge.to].entity.id.as_str(),
+                edge.kind,
+                edge.change.as_ref().map(|c| (c.address.as_str(), c.action)),
+            )
+        });
+        for &edge in &order {
+            let link = &graph.edges[edge];
             let (a, b) = link.endpoints();
             scorer.set_peers(containment.routing_peers(a, b, bounds));
             let start = bounds[a].port(Side::Right, source_ports[edge]).point;
@@ -214,7 +225,7 @@ pub(super) fn route_selected(
                 chosen.points
             };
             scorer.insert(points.clone());
-            paths.push(points);
+            paths[edge] = points;
         }
         let mut expanded = false;
         for (column, width) in gutter_widths.iter_mut().enumerate() {
@@ -230,7 +241,9 @@ pub(super) fn route_selected(
                 if shortcuts {
                     super::routing_shared::shortcuts::simplify_routes(
                         &mut paths,
-                        (0..graph.edges.len()).filter(|&edge| bundles.group(edge).is_none()),
+                        order
+                            .into_iter()
+                            .filter(|&edge| bundles.group(edge).is_none()),
                         |_| bounds.to_vec(),
                     );
                 }

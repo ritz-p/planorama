@@ -70,29 +70,52 @@ impl Terminals {
         if !quality || sides.is_some() {
             return result;
         }
+        let mut scorer = Scorer::default();
         for &index in order {
             let edge = &graph.edges[index];
             if !ends[index][1] || represented_by_nesting(edge, &layout.containment) {
                 continue;
             }
             let barriers = result.barriers(layout, graph, index);
-            let mut scorer = Scorer::default();
             scorer.set_soft(soft_obstacles(layout, edge));
+            scorer.set_peers(
+                layout
+                    .containment
+                    .routing_peers(edge.from, edge.to, &layout.bounds),
+            );
             let old = result.ports[index];
-            let mut cost = None;
-            for (a, b) in ports::facing_pairs(layout.bounds[edge.from], layout.bounds[edge.to]) {
-                let pair = [
-                    if a == old[0].side {
-                        old[0]
-                    } else {
-                        layout.bounds[edge.from].port(a, slots.0[index][a as usize])
-                    },
-                    if b == old[1].side {
-                        old[1]
-                    } else {
-                        layout.bounds[edge.to].port(b, slots.1[index][b as usize])
-                    },
-                ];
+            let mut candidates = Vec::new();
+            let mut pairs = Vec::new();
+            let mut options: Vec<_> =
+                ports::candidate_pairs(layout.bounds[edge.from], layout.bounds[edge.to])
+                    .into_iter()
+                    .enumerate()
+                    .map(|(rank, (a, b))| {
+                        let pair = [
+                            if a == old[0].side {
+                                old[0]
+                            } else {
+                                layout.bounds[edge.from].port(a, slots.0[index][a as usize])
+                            },
+                            if b == old[1].side {
+                                old[1]
+                            } else {
+                                layout.bounds[edge.to].port(b, slots.1[index][b as usize])
+                            },
+                        ];
+                        (
+                            ports::cost_bound(pair[0], pair[1], result.clearances[index]),
+                            rank,
+                            pair,
+                        )
+                    })
+                    .collect();
+            options.sort_by_key(|&(bound, rank, _)| (bound, rank));
+            let mut limit = u128::MAX;
+            for (bound, rank, pair) in options {
+                if bound > limit {
+                    break;
+                }
                 if pair.iter().zip(old).any(|(candidate, previous)| {
                     candidate.point != previous.point
                         && result.ports.iter().enumerate().any(|(other, ports)| {
@@ -113,30 +136,51 @@ impl Terminals {
                 {
                     continue;
                 }
-                if let Some(path) = ports::connect_with_clearances(
+                let mut optimal = false;
+                for path in ports::candidates_with_clearances(
                     pair[0],
                     pair[1],
                     &barriers,
                     Some(&scorer),
                     result.clearances[index],
                 ) {
-                    let cost = cost.get_or_insert_with(|| {
-                        ports::connect_with_clearances(
-                            old[0],
-                            old[1],
-                            &barriers,
-                            Some(&scorer),
-                            result.clearances[index],
-                        )
-                        .map_or(u128::MAX, |p| scorer.readability_cost(&p))
-                    });
-                    let candidate = scorer.readability_cost(&path);
-                    if candidate <= *cost {
-                        *cost = candidate;
-                        result.ports[index] = pair;
-                        result.reservations[index] = corridors;
+                    optimal = scorer.readability_cost(&path)
+                        == ports::distance_bound(layout.bounds[edge.from], layout.bounds[edge.to]);
+                    candidates.push((rank, path));
+                    pairs.push(pair);
+                    if optimal {
+                        break;
                     }
                 }
+                if optimal {
+                    break;
+                }
+                if let Some(best) =
+                    scorer.best_index(candidates.iter().map(|(_, p)| p.as_slice()), &barriers)
+                {
+                    limit = scorer.readability_cost(&candidates[best].1);
+                }
+            }
+            candidates.sort_by_key(|(rank, _)| *rank);
+            if let Some(path) =
+                scorer.choose(candidates.into_iter().map(|(_, p)| p).collect(), &barriers)
+            {
+                if let Some(pair) = pairs.into_iter().find(|p| {
+                    Some(&p[0].point) == path.first()
+                        && Some(&p[1].point) == path.last()
+                        && ports::valid_with_clearances(
+                            &path,
+                            p[0],
+                            p[1],
+                            &barriers,
+                            result.clearances[index],
+                        )
+                }) {
+                    result.ports[index] = pair;
+                    result.reservations[index] =
+                        ports::terminal_corridors(pair[0], pair[1], result.clearances[index]);
+                }
+                scorer.insert(path);
             }
         }
         result
@@ -181,6 +225,10 @@ fn parallel_directed_numbered_edges_keep_distinct_endpoints() {
         for (edge, path) in graph.edges.iter().zip(&layout.paths) {
             if path.is_empty() {
                 continue;
+            }
+            if edge.change.is_some() {
+                assert_eq!(path[0].x, layout.bounds[edge.from].right());
+                assert_eq!(path.last().unwrap().x, layout.bounds[edge.to].origin.x);
             }
             for (node, point) in [(edge.from, path[0]), (edge.to, *path.last().unwrap())] {
                 assert!(

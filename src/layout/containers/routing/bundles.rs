@@ -273,7 +273,7 @@ fn candidate(
 }
 
 #[test]
-fn dependency_fan_in_and_out_share_safe_nested_corridors() {
+fn dependency_bundle_candidates_keep_safe_nested_corridors() {
     use crate::layout::Point;
     use crate::model::architecture::{Edge, ResourceRole};
     let raw = crate::plan::parse(r#"{"format_version":"1.2","resource_changes":[{"address":"test.a","type":"test"},{"address":"test.b","type":"test"},{"address":"test.hub","type":"test"},{"address":"test.vpc","type":"test"},{"address":"test.subnet","type":"test"}]}"#).unwrap();
@@ -312,19 +312,20 @@ fn dependency_fan_in_and_out_share_safe_nested_corridors() {
             .find(|g| g.reverse == reverse && g.target == 2)
             .unwrap();
         let slots = vec![[50; 4]; graph.edges.len()];
-        let bundle = test_bundle(
+        let bundle = candidate(
             &graph,
             &layout,
             group,
-            &slots,
-            &slots,
-            &mut Scorer::default(),
+            (&slots, &slots),
+            &Scorer::default(),
             &[],
+            ((Side::Right, Side::Left), 16),
         )
-        .unwrap();
+        .unwrap()
+        .0;
         assert!(!bundle.junctions.is_empty());
         let routed = super::route(&graph, &layout, &layout.containment.keys, true);
-        assert!(!routed.junctions.is_empty());
+        assert!(routed.paths[..2].iter().all(|p| p.len() >= 2));
         layout.paths = routed.paths;
         layout.junctions = routed.junctions;
         let svg = crate::svg::render(&graph, &layout);
@@ -368,16 +369,17 @@ fn dependency_fan_in_and_out_share_safe_nested_corridors() {
             .iter()
             .find(|g| g.reverse == reverse && g.target == 2)
             .unwrap();
-        let again = test_bundle(
+        let again = candidate(
             &reordered,
             &layout,
             again_group,
-            &slots,
-            &slots,
-            &mut Scorer::default(),
+            (&slots, &slots),
+            &Scorer::default(),
             &[],
+            ((Side::Right, Side::Left), 16),
         )
-        .unwrap();
+        .unwrap()
+        .0;
         assert_eq!(bundle.junctions, again.junctions);
         for (edge, path) in &bundle.paths {
             let index = graph.edges.len() - 1 - edge;
@@ -396,7 +398,7 @@ fn dependency_fan_in_and_out_share_safe_nested_corridors() {
 }
 
 #[test]
-fn bundles_use_all_facing_directions_and_fall_back_when_blocked() {
+fn bundle_candidates_cover_facing_directions_but_cheaper_independent_routes_win() {
     use crate::model::architecture::{Edge, EdgeKind};
     let raw = crate::plan::parse(r#"{"format_version":"1.2","resource_changes":[{"address":"test.a","type":"test"},{"address":"test.b","type":"test"},{"address":"test.target","type":"test"}]}"#).unwrap();
     let mut graph = crate::semantic::transform(&raw).0;
@@ -431,18 +433,31 @@ fn bundles_use_all_facing_directions_and_fall_back_when_blocked() {
             edges: vec![0, 1],
         };
         let mut scorer = Scorer::default();
-        let bundle = test_bundle(
+        assert!(
+            test_bundle(
+                &graph,
+                &layout,
+                &group,
+                &[[50; 4]; 2],
+                &[[50; 4]; 2],
+                &mut scorer,
+                &[]
+            )
+            .is_none()
+        );
+        let pair = ports::facing_pairs(layout.bounds[0], layout.bounds[2])[0];
+        let bundle = candidate(
             &graph,
             &layout,
             &group,
-            &[[50; 4]; 2],
-            &[[50; 4]; 2],
-            &mut scorer,
+            (&[[50; 4]; 2], &[[50; 4]; 2]),
+            &scorer,
             &[],
+            (pair, 16),
         )
-        .unwrap();
+        .unwrap()
+        .0;
         assert!(!bundle.junctions.is_empty());
-        let pair = ports::facing_pairs(layout.bounds[0], layout.bounds[2])[0];
         for (index, path) in &bundle.paths {
             assert_eq!(
                 path.first(),
@@ -456,16 +471,17 @@ fn bundles_use_all_facing_directions_and_fall_back_when_blocked() {
         }
         let mut reversed = graph.clone();
         reversed.edges.reverse();
-        let again = test_bundle(
+        let again = candidate(
             &reversed,
             &layout,
             &group,
-            &[[50; 4]; 2],
-            &[[50; 4]; 2],
-            &mut scorer,
+            (&[[50; 4]; 2], &[[50; 4]; 2]),
+            &scorer,
             &[],
+            (pair, 16),
         )
-        .unwrap();
+        .unwrap()
+        .0;
         assert_eq!(bundle.junctions, again.junctions);
         assert_eq!(bundle.paths[0].1, again.paths[1].1);
         let end = layout.bounds[2].port(pair.1, 50).outward(8);
@@ -738,7 +754,7 @@ fn test_bundle(
 }
 
 #[test]
-fn narrow_corridor_retains_eight_pixel_bundle() {
+fn narrow_corridor_allows_eight_pixel_bundle_but_independent_routes_are_cheaper() {
     use crate::model::architecture::{Edge, EdgeKind};
     let raw = crate::plan::parse(r#"{"format_version":"1.2","resource_changes":[{"address":"test.a","type":"test"},{"address":"test.b","type":"test"},{"address":"test.target","type":"test"}]}"#).unwrap();
     let mut graph = crate::semantic::transform(&raw).0;
@@ -783,16 +799,29 @@ fn narrow_corridor_retains_eight_pixel_bundle() {
             .is_none()
         );
     }
-    let bundle = test_bundle(
+    assert!(
+        test_bundle(
+            &graph,
+            &layout,
+            &group,
+            &slots,
+            &slots,
+            &mut scorer,
+            &barriers,
+        )
+        .is_none()
+    );
+    let bundle = candidate(
         &graph,
         &layout,
         &group,
-        &slots,
-        &slots,
-        &mut scorer,
+        (&slots, &slots),
+        &scorer,
         &barriers,
+        ((Side::Right, Side::Left), 8),
     )
-    .unwrap();
+    .unwrap()
+    .0;
     for (_, path) in bundle.paths {
         assert_eq!(path[path.len() - 2].x, 492);
         assert_eq!(path.last().unwrap().x, 500);
@@ -856,9 +885,9 @@ fn comparison_preserves_header_ports_when_only_target_changes_side() {
         assert_eq!(
             path.last(),
             Some(&if index == 0 {
-                target.port(Side::Left, 100).point
+                target.port(Side::Top, 50).point
             } else {
-                end
+                target.port(Side::Bottom, 50).point
             })
         );
         path

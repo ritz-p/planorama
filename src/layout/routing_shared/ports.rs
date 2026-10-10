@@ -29,6 +29,47 @@ pub(in crate::layout) fn facing_pairs(source: Bounds, target: Bounds) -> Vec<(Si
     pairs
 }
 
+pub(in crate::layout) fn candidate_pairs(source: Bounds, target: Bounds) -> Vec<(Side, Side)> {
+    let mut pairs = facing_pairs(source, target);
+    for a in [Side::Left, Side::Right, Side::Top, Side::Bottom] {
+        for b in [Side::Left, Side::Right, Side::Top, Side::Bottom] {
+            if !pairs.contains(&(a, b)) {
+                pairs.push((a, b));
+            }
+        }
+    }
+    pairs
+}
+
+pub(in crate::layout) fn distance_bound(source: Bounds, target: Bounds) -> u128 {
+    (source.origin.x.saturating_sub(target.right())
+        + target.origin.x.saturating_sub(source.right())
+        + source
+            .origin
+            .y
+            .saturating_sub(target.origin.y + target.height)
+        + target
+            .origin
+            .y
+            .saturating_sub(source.origin.y + source.height)) as u128
+}
+
+pub(in crate::layout) fn cost_bound(start: Port, end: Port, clearance: [usize; 2]) -> u128 {
+    let distance = |a: Point, b: Point| a.x.abs_diff(b.x) as u128 + a.y.abs_diff(b.y) as u128;
+    if valid_with_clearances(&[start.point, end.point], start, end, &[], clearance) {
+        return distance(start.point, end.point);
+    }
+    let vertical = |side| matches!(side, Side::Top | Side::Bottom);
+    let bends = if vertical(start.side) == vertical(end.side) {
+        2
+    } else {
+        1
+    };
+    distance(start.outward(clearance[0]), end.outward(clearance[1]))
+        + clearance.iter().sum::<usize>() as u128
+        + bends * super::scoring::BEND_COST
+}
+
 pub(in crate::layout) fn select_with_slots(
     source: Bounds,
     target: Bounds,
@@ -37,7 +78,7 @@ pub(in crate::layout) fn select_with_slots(
     scorer: &Scorer,
     slots: Option<(&[usize; 4], &[usize; 4])>,
 ) -> Vec<Point> {
-    let pairs = facing_pairs(source, target);
+    let pairs = candidate_pairs(source, target);
     let offset = |bounds: Bounds, point: Point, side| {
         let horizontal = point.x > bounds.origin.x
             && point.x < bounds.right()
@@ -56,46 +97,63 @@ pub(in crate::layout) fn select_with_slots(
     let (Some(&first), Some(&last)) = (baseline.first(), baseline.last()) else {
         return baseline;
     };
-    let mut best = baseline;
-    let mut preference = pairs.len();
-    for (rank, (a, b)) in pairs.into_iter().enumerate() {
-        let start = source.port(
-            a,
-            if on_side(source, first, a) {
-                offset(source, first, a)
-            } else {
-                slots.map_or_else(|| offset(source, first, a), |s| s.0[a as usize])
-            },
-        );
-        let end = target.port(
-            b,
-            if on_side(target, last, b) {
-                offset(target, last, b)
-            } else {
-                slots.map_or_else(|| offset(target, last, b), |s| s.1[b as usize])
-            },
-        );
-        if start.point == first && end.point == last {
-            preference = preference.min(rank);
+    let mut pairs: Vec<_> = pairs
+        .into_iter()
+        .enumerate()
+        .map(|(rank, (a, b))| {
+            let start = source.port(
+                a,
+                if on_side(source, first, a) {
+                    offset(source, first, a)
+                } else {
+                    slots.map_or_else(|| offset(source, first, a), |s| s.0[a as usize])
+                },
+            );
+            let end = target.port(
+                b,
+                if on_side(target, last, b) {
+                    offset(target, last, b)
+                } else {
+                    slots.map_or_else(|| offset(target, last, b), |s| s.1[b as usize])
+                },
+            );
+            (cost_bound(start, end, [16; 2]), rank, start, end)
+        })
+        .collect();
+    pairs.sort_by_key(|&(bound, rank, _, _)| (bound, rank));
+    let mut candidates = Vec::new();
+    let mut limit = u128::MAX;
+    for (bound, rank, start, end) in pairs {
+        if bound > limit {
+            break;
+        }
+        if (start.point != first && scorer.uses_endpoint(start.point))
+            || (end.point != last && scorer.uses_endpoint(end.point))
+        {
             continue;
         }
-        for quality in [None, Some(scorer)] {
-            if let Some(candidate) = connect(start, end, obstacles, quality) {
-                if (start.point != first && scorer.uses_endpoint(start.point))
-                    || (end.point != last && scorer.uses_endpoint(end.point))
-                {
-                    continue;
-                }
-                if (scorer.score(&candidate, obstacles), rank)
-                    < (scorer.score(&best, obstacles), preference)
-                {
-                    best = candidate;
-                    preference = rank;
-                }
+        if start.point == first
+            && end.point == last
+            && valid_with_clearances(&baseline, start, end, obstacles, [16; 2])
+        {
+            candidates.push((rank, baseline.clone()));
+        }
+        for candidate in candidates_with_clearances(start, end, obstacles, Some(scorer), [16; 2]) {
+            if scorer.readability_cost(&candidate) == distance_bound(source, target) {
+                return candidate;
             }
+            candidates.push((rank, candidate));
+        }
+        if let Some(best) =
+            scorer.best_index(candidates.iter().map(|(_, p)| p.as_slice()), obstacles)
+        {
+            limit = scorer.readability_cost(&candidates[best].1);
         }
     }
-    best
+    candidates.sort_by_key(|(rank, _)| *rank);
+    scorer
+        .choose(candidates.into_iter().map(|(_, p)| p).collect(), obstacles)
+        .unwrap_or(baseline)
 }
 
 fn on_side(bounds: Bounds, point: Point, side: Side) -> bool {
@@ -135,6 +193,137 @@ fn target_side_change_preserves_source_offset() {
     assert_eq!(path.last(), Some(&target.port(Side::Left, 100).point));
 }
 
+#[test]
+fn side_selection_is_independent_of_the_legacy_pair() {
+    let source = Bounds {
+        origin: Point { x: 100, y: 100 },
+        width: 160,
+        height: 160,
+    };
+    for target in [
+        Bounds {
+            origin: Point { x: 600, y: 100 },
+            ..source
+        },
+        Bounds {
+            origin: Point { x: 100, y: 600 },
+            ..source
+        },
+    ] {
+        let obstacles = [source, target];
+        let mut expected = None;
+        for (a, b) in [
+            (Side::Right, Side::Right),
+            (Side::Left, Side::Left),
+            (Side::Top, Side::Bottom),
+        ] {
+            let baseline =
+                connect(source.port(a, 80), target.port(b, 80), &obstacles, None).unwrap();
+            let selected = select(source, target, baseline, &obstacles, &Scorer::default());
+            if let Some(expected) = &expected {
+                assert_eq!(&selected, expected);
+            }
+            expected = Some(selected);
+        }
+    }
+}
+
+#[test]
+fn blocked_facing_ports_choose_a_shorter_valid_alternative() {
+    let source = Bounds {
+        origin: Point { x: 100, y: 100 },
+        width: 100,
+        height: 100,
+    };
+    let target = Bounds {
+        origin: Point { x: 600, y: 100 },
+        ..source
+    };
+    let blocker = Bounds {
+        origin: Point { x: 205, y: 90 },
+        width: 30,
+        height: 130,
+    };
+    let obstacles = [source, target, blocker];
+    assert!(
+        connect(
+            source.port(Side::Right, 50),
+            target.port(Side::Left, 50),
+            &obstacles,
+            None
+        )
+        .is_none()
+    );
+    let baseline = connect(
+        source.port(Side::Left, 50),
+        target.port(Side::Right, 50),
+        &obstacles,
+        None,
+    )
+    .unwrap();
+    let scorer = Scorer::default();
+    let selected = select(source, target, baseline.clone(), &obstacles, &scorer);
+    assert!(scorer.readability_cost(&selected) < scorer.readability_cost(&baseline));
+    assert!(
+        selected
+            .windows(2)
+            .all(|p| obstacles.iter().all(|&b| !crosses(p[0], p[1], b)))
+    );
+}
+
+#[test]
+fn bounded_selection_matches_exhaustive_candidate_cost() {
+    let source = Bounds {
+        origin: Point { x: 100, y: 100 },
+        width: 100,
+        height: 100,
+    };
+    let target = Bounds {
+        origin: Point { x: 500, y: 300 },
+        ..source
+    };
+    for blocker in [
+        Bounds {
+            origin: Point { x: 250, y: 120 },
+            width: 100,
+            height: 250,
+        },
+        Bounds {
+            origin: Point { x: 350, y: 210 },
+            width: 120,
+            height: 40,
+        },
+    ] {
+        let obstacles = [source, target, blocker];
+        let mut scorer = Scorer::default();
+        scorer.insert(vec![Point { x: 80, y: 220 }, Point { x: 650, y: 220 }]);
+        let baseline = connect(
+            source.port(Side::Right, 50),
+            target.port(Side::Right, 50),
+            &obstacles,
+            None,
+        )
+        .unwrap();
+        let selected = select(source, target, baseline, &obstacles, &scorer);
+        let mut all = Vec::new();
+        for (a, b) in candidate_pairs(source, target) {
+            let start = source.port(a, 50);
+            let end = target.port(b, 50);
+            for path in candidates_with_clearances(start, end, &obstacles, Some(&scorer), [16; 2]) {
+                assert!(
+                    cost_bound(start, end, [16; 2]) <= Scorer::default().readability_cost(&path)
+                );
+                all.push(path);
+            }
+        }
+        let exhaustive = scorer.choose(all, &obstacles).unwrap();
+        assert_eq!(
+            scorer.score(&selected, &obstacles),
+            scorer.score(&exhaustive, &obstacles)
+        );
+    }
+}
+
 pub(in crate::layout) fn connect(
     start: Port,
     end: Port,
@@ -151,6 +340,20 @@ pub(in crate::layout) fn connect_with_clearances(
     scorer: Option<&Scorer>,
     clearances: [usize; 2],
 ) -> Option<Vec<Point>> {
+    let default_scorer = Scorer::default();
+    scorer.unwrap_or(&default_scorer).choose(
+        candidates_with_clearances(start, end, obstacles, scorer, clearances),
+        obstacles,
+    )
+}
+
+pub(in crate::layout) fn candidates_with_clearances(
+    start: Port,
+    end: Port,
+    obstacles: &[Bounds],
+    scorer: Option<&Scorer>,
+    clearances: [usize; 2],
+) -> Vec<Vec<Point>> {
     let first = start.outward(clearances[0]);
     let last = end.outward(clearances[1]);
     if first == start.point
@@ -159,7 +362,7 @@ pub(in crate::layout) fn connect_with_clearances(
             .iter()
             .any(|&b| crosses(start.point, first, b) || crosses(last, end.point, b))
     {
-        return None;
+        return Vec::new();
     }
     let default_scorer = Scorer::default();
     let quality = scorer.unwrap_or(&default_scorer);
@@ -214,7 +417,7 @@ pub(in crate::layout) fn connect_with_clearances(
             }
         }
     }
-    quality.choose(candidates, obstacles)
+    candidates
 }
 
 #[cfg(test)]
@@ -381,14 +584,21 @@ fn chooses_facing_sides_for_horizontal_vertical_and_container_bounds() {
                 bounds.width / 2
             }
         };
-        assert_eq!(
-            chosen.first(),
-            Some(&source.port(from_side, offset(source, from_side)).point)
-        );
-        assert_eq!(
-            chosen.last(),
-            Some(&target.port(to_side, offset(target, to_side)).point)
-        );
+        if source.width == target.width && source.height == target.height {
+            assert_eq!(
+                chosen.first(),
+                Some(&source.port(from_side, offset(source, from_side)).point)
+            );
+            assert_eq!(
+                chosen.last(),
+                Some(&target.port(to_side, offset(target, to_side)).point)
+            );
+        } else {
+            assert!(
+                Scorer::default().readability_cost(&chosen)
+                    <= Scorer::default().readability_cost(&baseline)
+            );
+        }
         assert_eq!(
             chosen,
             select(source, target, baseline, &obstacles, &Scorer::default())
@@ -434,7 +644,7 @@ fn side_selection_preserves_obstacle_avoidance() {
 }
 
 #[test]
-fn equal_quality_facing_pairs_have_an_explicit_preference() {
+fn perpendicular_pair_beats_equal_quality_facing_pairs() {
     let source = Bounds {
         origin: Point { x: 100, y: 100 },
         width: 80,
@@ -466,5 +676,6 @@ fn equal_quality_facing_pairs_have_an_explicit_preference() {
     );
     let chosen = select(source, target, baseline, &obstacles, &scorer);
     assert_eq!(chosen.first(), Some(&source.port(Side::Right, 40).point));
-    assert_eq!(chosen.last(), Some(&target.port(Side::Left, 40).point));
+    assert_eq!(chosen.last(), Some(&target.port(Side::Top, 40).point));
+    assert!(scorer.readability_cost(&chosen) < scorer.readability_cost(&preferred));
 }
