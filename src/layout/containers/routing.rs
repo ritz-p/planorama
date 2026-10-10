@@ -261,7 +261,7 @@ fn route_impl(
                         layout,
                         group,
                         (&source_slots, &target_slots),
-                        &scorer,
+                        &mut scorer,
                         &reservations,
                         independent,
                     ) {

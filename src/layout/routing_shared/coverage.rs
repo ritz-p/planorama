@@ -2,7 +2,7 @@
 #[path = "../../../tests/unit/layout/routing/coverage.rs"]
 mod tests;
 
-#[derive(Clone, Default)]
+#[derive(Default)]
 pub(super) struct Coverage {
     total: u128,
     covering: u128,
