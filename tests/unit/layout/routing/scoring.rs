@@ -5,6 +5,57 @@ fn points(values: &[(usize, usize)]) -> Vec<Point> {
 }
 
 #[test]
+fn replacing_routes_matches_a_fresh_index() {
+    let mut paths = vec![
+        points(&[(10, 50), (90, 50), (10, 50)]),
+        points(&[(50, 10), (50, 90), (50, 10)]),
+        points(&[(20, 50), (80, 50), (80, 100)]),
+    ];
+    let mut scorer = Scorer::default();
+    for path in &paths {
+        scorer.insert(path.clone());
+    }
+    let queries = [
+        points(&[(0, 50), (100, 50)]),
+        points(&[(50, 0), (50, 100)]),
+        points(&[(0, 30), (100, 30), (100, 70), (0, 70)]),
+    ];
+    for index in [0, 1, 2, 0] {
+        scorer.remove(index);
+        let mut fresh = Scorer::default();
+        for (other, path) in paths.iter().enumerate() {
+            if other != index {
+                fresh.insert(path.clone());
+            }
+        }
+        for query in &queries {
+            assert_eq!(scorer.score(query, &[]), fresh.score(query, &[]));
+            let expected: usize = fresh
+                .paths
+                .iter()
+                .map(|path| {
+                    query
+                        .windows(2)
+                        .flat_map(|a| path.windows(2).filter_map(move |b| crossing(a, b)))
+                        .collect::<BTreeSet<_>>()
+                        .len()
+                })
+                .sum();
+            assert_eq!(scorer.score(query, &[]).crossings, expected);
+            for pair in query.windows(2) {
+                assert_eq!(
+                    scorer.segment_cost(pair[0], pair[1]),
+                    fresh.segment_cost(pair[0], pair[1])
+                );
+            }
+        }
+        paths[index] = queries[index].clone();
+        scorer.replace(index, paths[index].clone());
+        assert_eq!(scorer.paths.len(), paths.len());
+    }
+}
+
+#[test]
 fn grid_crossings_preserve_path_multiplicity_but_not_repeated_segments() {
     let mut scorer = Scorer::default();
     for _ in 0..3 {

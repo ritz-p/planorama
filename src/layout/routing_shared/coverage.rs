@@ -11,35 +11,57 @@ pub(super) struct Coverage {
 }
 
 impl Coverage {
+    pub(super) fn is_empty(&self) -> bool {
+        self.total == 0
+    }
+
     pub(super) fn insert(&mut self, from: usize, to: usize) {
-        self.insert_in(from.min(to), from.max(to), 0, usize::MAX);
+        self.update_in(from.min(to), from.max(to), 0, usize::MAX, false);
+    }
+
+    pub(super) fn remove(&mut self, from: usize, to: usize) {
+        self.update_in(from.min(to), from.max(to), 0, usize::MAX, true);
     }
 
     pub(super) fn overlap(&self, from: usize, to: usize) -> u128 {
         self.overlap_in(from.min(to), from.max(to), 0, usize::MAX)
     }
 
-    fn insert_in(&mut self, from: usize, to: usize, start: usize, end: usize) {
+    fn update_in(&mut self, from: usize, to: usize, start: usize, end: usize, remove: bool) {
         let from = from.max(start);
         let to = to.min(end);
         if from >= to {
             return;
         }
-        self.total += (to - from) as u128;
+        if remove {
+            self.total -= (to - from) as u128;
+        } else {
+            self.total += (to - from) as u128;
+        }
         if from == start && to == end {
-            self.covering += 1;
+            if remove {
+                self.covering -= 1;
+            } else {
+                self.covering += 1;
+            }
             return;
         }
         let mid = start + (end - start) / 2;
         if from < mid {
             self.left
                 .get_or_insert_with(Default::default)
-                .insert_in(from, to, start, mid);
+                .update_in(from, to, start, mid, remove);
+            if self.left.as_ref().is_some_and(|child| child.total == 0) {
+                self.left = None;
+            }
         }
         if to > mid {
             self.right
                 .get_or_insert_with(Default::default)
-                .insert_in(from, to, mid, end);
+                .update_in(from, to, mid, end, remove);
+            if self.right.as_ref().is_some_and(|child| child.total == 0) {
+                self.right = None;
+            }
         }
     }
 

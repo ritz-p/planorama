@@ -27,6 +27,33 @@ pub(in crate::layout) struct Scorer {
 }
 
 impl Scorer {
+    pub(in crate::layout) fn safe_shortcut(
+        &self,
+        old: &[Point],
+        new: &[Point],
+        obstacles: &[Bounds],
+    ) -> bool {
+        let length = |path: &[Point]| {
+            path.windows(2)
+                .map(|p| p[0].x.abs_diff(p[1].x) as u128 + p[0].y.abs_diff(p[1].y) as u128)
+                .sum::<u128>()
+        };
+        if new.len() > old.len()
+            || length(new) > length(old)
+            || (new.len() == old.len() && length(new) == length(old))
+        {
+            return false;
+        }
+        let a = self.score(old, obstacles);
+        let b = self.score(new, obstacles);
+        b.node_crossings == 0
+            && b.overlap <= a.overlap
+            && b.crossings <= a.crossings
+            && b.bends <= a.bends
+            && b.length <= a.length
+            && (b.bends < a.bends || b.length < a.length)
+    }
+
     pub(in crate::layout) fn set_peers(&mut self, peers: Vec<Bounds>) {
         self.peers = peers;
     }
@@ -109,21 +136,77 @@ impl Scorer {
                 .filter(|&&node| super::crosses(a, b, node))
                 .count();
         }
-        for path in &self.paths {
-            let mut crossings = BTreeSet::new();
-            for first in points.windows(2) {
-                for second in path.windows(2) {
-                    if let Some(point) = crossing(first, second) {
-                        crossings.insert(point);
+        let mut crossings = BTreeSet::new();
+        for pair in points.windows(2) {
+            let (a, b) = (pair[0], pair[1]);
+            let horizontal = a.y == b.y;
+            let (index, coordinate, from, to) = if horizontal {
+                (&self.vertical_paths, a.y, a.x, b.x)
+            } else {
+                (&self.horizontal_paths, a.x, a.y, b.y)
+            };
+            if from == to {
+                continue;
+            }
+            for (&along, segments) in index.range((
+                std::ops::Bound::Excluded(from.min(to)),
+                std::ops::Bound::Excluded(from.max(to)),
+            )) {
+                for &(path, start, end) in segments {
+                    if start < coordinate && coordinate < end {
+                        let (x, y) = if horizontal {
+                            (along, coordinate)
+                        } else {
+                            (coordinate, along)
+                        };
+                        crossings.insert((path, x, y));
                     }
                 }
             }
-            score.crossings += crossings.len();
         }
+        score.crossings = crossings.len();
         score
     }
 
     pub(in crate::layout) fn insert(&mut self, points: Vec<Point>) {
+        let index = self.paths.len();
+        self.paths.push(Vec::new());
+        self.replace(index, points);
+    }
+
+    pub(in crate::layout) fn remove(&mut self, index: usize) {
+        let points = std::mem::take(&mut self.paths[index]);
+        for pair in points.windows(2) {
+            let (a, b) = (pair[0], pair[1]);
+            let (coverage, segments, coordinate, from, to) = if a.y == b.y {
+                (
+                    &mut self.horizontal,
+                    &mut self.horizontal_paths,
+                    a.y,
+                    a.x,
+                    b.x,
+                )
+            } else {
+                (&mut self.vertical, &mut self.vertical_paths, a.x, a.y, b.y)
+            };
+            if from == to {
+                continue;
+            }
+            coverage.get_mut(&coordinate).unwrap().remove(from, to);
+            if coverage[&coordinate].is_empty() {
+                coverage.remove(&coordinate);
+            }
+            if let Some(entries) = segments.get_mut(&coordinate) {
+                entries.retain(|&(path, _, _)| path != index);
+                if entries.is_empty() {
+                    segments.remove(&coordinate);
+                }
+            }
+        }
+    }
+
+    pub(in crate::layout) fn replace(&mut self, path_index: usize, points: Vec<Point>) {
+        self.remove(path_index);
         for pair in points.windows(2) {
             let (a, b) = (pair[0], pair[1]);
             match a.y == b.y {
@@ -136,14 +219,13 @@ impl Scorer {
                 (&mut self.vertical_paths, a.x, a.y, b.y)
             };
             if from != to {
-                index.entry(coordinate).or_default().push((
-                    self.paths.len(),
-                    from.min(to),
-                    from.max(to),
-                ));
+                index
+                    .entry(coordinate)
+                    .or_default()
+                    .push((path_index, from.min(to), from.max(to)));
             }
         }
-        self.paths.push(points);
+        self.paths[path_index] = points;
     }
 
     pub(in crate::layout) fn segment_cost(&self, a: Point, b: Point) -> u128 {
@@ -172,6 +254,7 @@ impl Scorer {
     }
 }
 
+#[cfg(test)]
 fn crossing(first: &[Point], second: &[Point]) -> Option<(usize, usize)> {
     let (h, v) = match (first[0].y == first[1].y, second[0].y == second[1].y) {
         (true, false) => (first, second),
