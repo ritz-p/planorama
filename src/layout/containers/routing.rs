@@ -229,8 +229,8 @@ fn route_impl(
                         graph,
                         layout,
                         group,
-                        &source_ports,
-                        &target_ports,
+                        &source_slots,
+                        &target_slots,
                         &scorer,
                         &reservations,
                     ) {

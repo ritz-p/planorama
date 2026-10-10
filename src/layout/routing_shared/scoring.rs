@@ -16,7 +16,7 @@ pub(in crate::layout) struct Score {
     upper_detours: usize,
 }
 
-#[derive(Default)]
+#[derive(Clone, Default)]
 pub(in crate::layout) struct Scorer {
     horizontal: BTreeMap<usize, Coverage>,
     vertical: BTreeMap<usize, Coverage>,

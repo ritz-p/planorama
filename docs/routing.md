@@ -38,6 +38,8 @@ search to preserve the reserved terminal corridors. Bundled edges retain individ
 Connection bundles use the same facing-side candidates and explicit ports as
 independent routes, supporting horizontal and vertical trunks. Unsafe or more
 expensive bundles fall back to independent paths; eligible groups need not bundle.
+Each side uses its assigned incident slots. The cost baseline selects independent
+paths across all eligible facing-side pairs, regardless of the bundle's direction.
 See [bundling](../examples/bundling.svg) and [spanning connections](../examples/spanning-dense.svg).
 
 Independent paths compare route quality on actual bounds, preferring facing

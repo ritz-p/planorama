@@ -90,6 +90,33 @@ pub(in crate::layout) fn select_with_slots(
     best
 }
 
+pub(in crate::layout) fn best_with_slots(
+    source: Bounds,
+    target: Bounds,
+    slots: (&[usize; 4], &[usize; 4]),
+    obstacles: &[Bounds],
+    scorer: &Scorer,
+) -> Option<Vec<Point>> {
+    let baseline = std::iter::once((Side::Right, Side::Right))
+        .chain(facing_pairs(source, target))
+        .find_map(|(a, b)| {
+            connect(
+                source.port(a, slots.0[a as usize]),
+                target.port(b, slots.1[b as usize]),
+                obstacles,
+                Some(scorer),
+            )
+        })?;
+    Some(select_with_slots(
+        source,
+        target,
+        baseline,
+        obstacles,
+        scorer,
+        Some(slots),
+    ))
+}
+
 pub(in crate::layout) fn connect(
     start: Port,
     end: Port,

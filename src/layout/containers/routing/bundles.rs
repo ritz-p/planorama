@@ -1,4 +1,4 @@
-use super::{Bounds, Layout, Point, Port, Scorer, Side, obstacles};
+use super::{Bounds, Layout, Point, Scorer, Side, obstacles};
 use crate::layout::containers::affinity::Group;
 use crate::layout::routing_shared::{Simplification, ports, simplify};
 use crate::model::architecture::Graph;
@@ -12,14 +12,22 @@ pub(super) fn try_bundle(
     graph: &Graph,
     layout: &Layout<'_>,
     group: &Group,
-    sources: &[usize],
-    targets: &[usize],
+    sources: &[[usize; 4]],
+    targets: &[[usize; 4]],
     scorer: &Scorer,
     reservations: &[Bounds],
 ) -> Option<Bundle> {
     let target = layout.bounds[group.target];
     let first = *group.sources.first()?;
     let pairs = ports::facing_pairs(layout.bounds[first], target);
+    let independent_cost = independent_cost(
+        graph,
+        layout,
+        group,
+        (sources, targets),
+        scorer,
+        reservations,
+    )?;
     let mut best = None;
     for pair in pairs {
         if !group
@@ -39,7 +47,7 @@ pub(super) fn try_bundle(
                 reservations,
                 (pair, clearance),
             ) {
-                if best.as_ref().is_none_or(|(_, old)| cost < *old) {
+                if cost <= independent_cost && best.as_ref().is_none_or(|(_, old)| cost < *old) {
                     best = Some((bundle, cost));
                 }
             }
@@ -48,29 +56,69 @@ pub(super) fn try_bundle(
     best.map(|(bundle, _)| bundle)
 }
 
-fn endpoint(bounds: Bounds, side: Side, offset: usize) -> Port {
-    let offset = match side {
-        Side::Left | Side::Right => offset,
-        Side::Top | Side::Bottom => offset * bounds.width / bounds.height.max(1),
-    };
-    bounds.port(side, offset)
+fn independent_cost(
+    graph: &Graph,
+    layout: &Layout<'_>,
+    group: &Group,
+    slots: (&[[usize; 4]], &[[usize; 4]]),
+    scorer: &Scorer,
+    reservations: &[Bounds],
+) -> Option<u128> {
+    let mut cost = 0;
+    let mut occupancy = scorer.clone();
+    let mut order = group.edges.clone();
+    order.sort_by_key(|&index| {
+        let edge = &graph.edges[index];
+        let bounds = layout.bounds[edge.from];
+        (
+            layout.containment.keys[edge.from],
+            bounds.origin.x,
+            bounds.origin.y,
+            bounds.width,
+            bounds.height,
+            graph.nodes[edge.from].entity.id.as_str(),
+        )
+    });
+    for index in order {
+        let edge = &graph.edges[index];
+        occupancy.set_peers(
+            layout
+                .containment
+                .routing_peers(edge.from, edge.to, &layout.bounds),
+        );
+        let mut barriers = obstacles(layout, edge);
+        barriers.extend_from_slice(reservations);
+        let path = ports::best_with_slots(
+            layout.bounds[edge.from],
+            layout.bounds[edge.to],
+            (&slots.0[index], &slots.1[index]),
+            &barriers,
+            &occupancy,
+        )?;
+        cost += occupancy.readability_cost(&path);
+        occupancy.insert(path);
+    }
+    Some(cost)
 }
 
 fn candidate(
     graph: &Graph,
     layout: &Layout<'_>,
     group: &Group,
-    offsets: (&[usize], &[usize]),
+    offsets: (&[[usize; 4]], &[[usize; 4]]),
     scorer: &Scorer,
     reservations: &[Bounds],
     choice: ((Side, Side), usize),
 ) -> Option<(Bundle, u128)> {
     let ((source_side, target_side), clearance) = choice;
     let target = layout.bounds[group.target];
-    let end = endpoint(
-        target,
+    let end = target.port(
         target_side,
-        group.edges.iter().map(|&i| offsets.1[i]).min()?,
+        group
+            .edges
+            .iter()
+            .map(|&i| offsets.1[i][target_side as usize])
+            .min()?,
     );
     let trunk = end.outward(clearance);
     if trunk == end.point {
@@ -81,12 +129,10 @@ fn candidate(
     let mut paths = Vec::new();
     let mut coordinates = vec![along(end.point)];
     let mut bundled_cost = 0;
-    let mut independent_cost = 0;
-    let mut independent_overlaps = false;
-    let mut independent_group = Scorer::default();
     for &index in &group.edges {
         let edge = &graph.edges[index];
-        let start = endpoint(layout.bounds[edge.from], source_side, offsets.0[index]);
+        let start =
+            layout.bounds[edge.from].port(source_side, offsets.0[index][source_side as usize]);
         let branch = if horizontal {
             Point {
                 x: trunk.x,
@@ -107,19 +153,9 @@ fn candidate(
         if !ports::valid(&path, start, end, &barriers) || scorer.overlaps(&path) {
             return None;
         }
-        let independent_end = endpoint(target, target_side, offsets.1[index]);
-        let independent = ports::connect(start, independent_end, &barriers, Some(scorer))?;
-        independent_overlaps |= scorer.overlaps(&independent);
         bundled_cost += scorer.readability_cost(&path);
-        independent_cost += scorer.readability_cost(&independent);
-        independent_cost += independent_group.readability_cost(&independent)
-            - Scorer::default().readability_cost(&independent);
-        independent_group.insert(independent);
         coordinates.push(along(start.point));
         paths.push((index, path));
-    }
-    if !independent_overlaps && bundled_cost > independent_cost {
-        return None;
     }
     coordinates.sort_unstable();
     coordinates.dedup();
@@ -179,8 +215,16 @@ fn bundles_use_all_facing_directions_and_fall_back_when_blocked() {
             edges: vec![0, 1],
         };
         let scorer = Scorer::default();
-        let bundle =
-            try_bundle(&graph, &layout, &group, &[50, 50], &[50, 50], &scorer, &[]).unwrap();
+        let bundle = try_bundle(
+            &graph,
+            &layout,
+            &group,
+            &[[50; 4]; 2],
+            &[[50; 4]; 2],
+            &scorer,
+            &[],
+        )
+        .unwrap();
         assert!(!bundle.junctions.is_empty());
         let pair = ports::facing_pairs(layout.bounds[0], layout.bounds[2])[0];
         for (index, path) in &bundle.paths {
@@ -200,8 +244,8 @@ fn bundles_use_all_facing_directions_and_fall_back_when_blocked() {
             &reversed,
             &layout,
             &group,
-            &[50, 50],
-            &[50, 50],
+            &[[50; 4]; 2],
+            &[[50; 4]; 2],
             &scorer,
             &[],
         )
@@ -222,12 +266,171 @@ fn bundles_use_all_facing_directions_and_fall_back_when_blocked() {
                 &graph,
                 &layout,
                 &group,
-                &[50, 50],
-                &[50, 50],
+                &[[50; 4]; 2],
+                &[[50; 4]; 2],
                 &scorer,
                 &[blocker]
             )
             .is_none()
         );
     }
+}
+
+#[test]
+fn vertical_bundles_use_projected_slots_with_other_incident_edges() {
+    use crate::model::architecture::{Edge, EdgeKind};
+    let raw = crate::plan::parse(r#"{"format_version":"1.2","resource_changes":[{"address":"test.a","type":"test"},{"address":"test.b","type":"test"},{"address":"test.target","type":"test"},{"address":"test.other","type":"test"}]}"#).unwrap();
+    let mut graph = crate::semantic::transform(&raw).0;
+    graph.edges = [(0, 2), (1, 2), (0, 3), (2, 3)]
+        .map(|pair| Edge {
+            kind: EdgeKind::Connection,
+            ..Edge::from(pair)
+        })
+        .into();
+    let mut layout = Layout::new(&graph);
+    layout.bounds = [
+        (100, 100, 180, 100),
+        (350, 100, 180, 100),
+        (500, 500, 240, 120),
+        (700, 50, 100, 100),
+    ]
+    .map(|(x, y, width, height)| Bounds {
+        origin: Point { x, y },
+        width,
+        height,
+    })
+    .into();
+    let incident = super::incidents(&graph, &layout.containment);
+    let (sources, targets) =
+        crate::layout::routing_shared::slots::assign(&graph, &layout.bounds, &incident);
+    let group = Group {
+        sources: vec![0, 1],
+        target: 2,
+        edges: vec![0, 1],
+    };
+    let scorer = Scorer::default();
+    let (bundle, _) = candidate(
+        &graph,
+        &layout,
+        &group,
+        (&sources, &targets),
+        &scorer,
+        &[],
+        ((Side::Bottom, Side::Top), 16),
+    )
+    .unwrap();
+    let offset = targets[0][Side::Top as usize].min(targets[1][Side::Top as usize]);
+    for (index, path) in &bundle.paths {
+        let source = graph.edges[*index].from;
+        assert_eq!(
+            path.first(),
+            Some(
+                &layout.bounds[source]
+                    .port(Side::Bottom, sources[*index][Side::Bottom as usize])
+                    .point
+            )
+        );
+        assert_eq!(
+            path.last(),
+            Some(&layout.bounds[2].port(Side::Top, offset).point)
+        );
+    }
+    assert!(sources[0][Side::Bottom as usize] < sources[2][Side::Bottom as usize]);
+    assert!(targets[0][Side::Top as usize] < targets[1][Side::Top as usize]);
+    assert_ne!(
+        sources[0][Side::Bottom as usize],
+        sources[0][Side::Right as usize] * layout.bounds[0].width / layout.bounds[0].height
+    );
+    let mut graph = graph.clone();
+    graph.edges.reverse();
+    let (sources, targets) = crate::layout::routing_shared::slots::assign(
+        &graph,
+        &layout.bounds,
+        &super::incidents(&graph, &layout.containment),
+    );
+    let reordered = Group {
+        sources: vec![0, 1],
+        target: 2,
+        edges: vec![2, 3],
+    };
+    let (again, _) = candidate(
+        &graph,
+        &layout,
+        &reordered,
+        (&sources, &targets),
+        &scorer,
+        &[],
+        ((Side::Bottom, Side::Top), 16),
+    )
+    .unwrap();
+    assert_eq!(bundle.paths[0].1, again.paths[1].1);
+    assert_eq!(bundle.junctions, again.junctions);
+}
+
+#[test]
+fn blocked_vertical_trunk_does_not_hide_cheaper_vertical_independent_routes() {
+    use crate::model::architecture::{Edge, EdgeKind};
+    let raw = crate::plan::parse(r#"{"format_version":"1.2","resource_changes":[{"address":"test.a","type":"test"},{"address":"test.b","type":"test"},{"address":"test.target","type":"test"}]}"#).unwrap();
+    let mut graph = crate::semantic::transform(&raw).0;
+    graph.edges = [(0, 2), (1, 2)]
+        .map(|pair| Edge {
+            kind: EdgeKind::Connection,
+            ..Edge::from(pair)
+        })
+        .into();
+    let mut layout = Layout::new(&graph);
+    layout.bounds = [(100, 100), (100, 350), (500, 700)]
+        .map(|(x, y)| Bounds {
+            origin: Point { x, y },
+            width: 100,
+            height: 200,
+        })
+        .into();
+    let slots = [[100, 100, 50, 50]; 2];
+    let group = Group {
+        sources: vec![0, 1],
+        target: 2,
+        edges: vec![0, 1],
+    };
+    let scorer = Scorer::default();
+    let barriers = [Bounds {
+        origin: Point { x: 300, y: 660 },
+        width: 100,
+        height: 40,
+    }];
+    let (_, horizontal_cost) = candidate(
+        &graph,
+        &layout,
+        &group,
+        (&slots, &slots),
+        &scorer,
+        &barriers,
+        ((Side::Right, Side::Left), 16),
+    )
+    .unwrap();
+    for clearance in [8, 16, 24] {
+        assert!(
+            candidate(
+                &graph,
+                &layout,
+                &group,
+                (&slots, &slots),
+                &scorer,
+                &barriers,
+                ((Side::Bottom, Side::Top), clearance)
+            )
+            .is_none()
+        );
+    }
+    let cost = independent_cost(
+        &graph,
+        &layout,
+        &group,
+        (&slots, &slots),
+        &scorer,
+        &barriers,
+    )
+    .unwrap();
+    assert!(cost < horizontal_cost, "{cost} >= {horizontal_cost}");
+    assert!(try_bundle(&graph, &layout, &group, &slots, &slots, &scorer, &barriers).is_none());
 }
