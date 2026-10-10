@@ -1,0 +1,18 @@
+{
+  "format_version": "1.2",
+  "resource_changes": [
+    {"address":"aws_vpc.main","type":"aws_vpc"},
+    {"address":"aws_subnet.a","type":"aws_subnet"},
+    {"address":"aws_subnet.b","type":"aws_subnet"},
+    {"address":"aws_lambda_function.main","type":"aws_lambda_function"},
+    {"address":"aws_eks_cluster.main","type":"aws_eks_cluster"},
+    {"address":"aws_opensearch_domain.main","type":"aws_opensearch_domain"}
+  ],
+  "configuration":{"root_module":{"resources":[
+    {"address":"aws_subnet.a","expressions":{"vpc_id":{"references":["aws_vpc.main.id"]}}},
+    {"address":"aws_subnet.b","expressions":{"vpc_id":{"references":["aws_vpc.main.id"]}}},
+    {"address":"aws_lambda_function.main","expressions":{"vpc_config":[{"subnet_ids":{"references":["aws_subnet.a.id","aws_subnet.b.id"]}}]}},
+    {"address":"aws_eks_cluster.main","expressions":{"vpc_config":[{"subnet_ids":{"references":["aws_subnet.a.id","aws_subnet.b.id"]}}]}},
+    {"address":"aws_opensearch_domain.main","expressions":{"vpc_options":[{"subnet_ids":{"references":["aws_subnet.a.id","aws_subnet.b.id"]}}]}}
+  ]}}
+}
