@@ -315,7 +315,12 @@ impl Scorer {
         self.paths[path_index] = points;
     }
 
+    #[cfg(test)]
     pub(in crate::layout) fn segment_cost(&self, a: Point, b: Point) -> u128 {
+        self.conflict_cost(a, b) + self.occlusion(a, b)
+    }
+
+    pub(in crate::layout) fn conflict_cost(&self, a: Point, b: Point) -> u128 {
         let horizontal = a.y == b.y;
         let (parallel, perpendicular, coordinate, from, to) = if horizontal {
             (&self.horizontal, &self.vertical_paths, a.y, a.x, b.x)
@@ -337,7 +342,7 @@ impl Scorer {
                     .len()
             })
             .sum::<usize>();
-        overlap * 8 + crossings as u128 * CROSSING_COST + self.occlusion(a, b)
+        overlap * 8 + crossings as u128 * CROSSING_COST
     }
 }
 
