@@ -1,8 +1,12 @@
 use super::address::static_address;
 use super::references::qualify;
-use crate::model::{ProviderIdentity, TerraformEntity};
+use crate::model::{ProviderConfiguration, ProviderIdentity, TerraformEntity};
 use serde_json::Value;
 use std::collections::BTreeMap;
+
+#[cfg(test)]
+#[path = "../../tests/unit/plan/providers.rs"]
+mod tests;
 
 pub(super) fn enrich(configuration: &Value, nodes: &mut [TerraformEntity]) {
     let mut resources = BTreeMap::new();
@@ -12,9 +16,10 @@ pub(super) fn enrich(configuration: &Value, nodes: &mut [TerraformEntity]) {
         &configuration["provider_config"],
         &mut resources,
     );
-    for node in nodes {
-        if !node.provider.is_explicit() {
-            if let Some(provider) = resources.get(&static_address(&node.address)) {
+    for node in nodes.iter_mut().filter(|node| node.deposed_key.is_none()) {
+        if let Some((provider, configuration)) = resources.get(&static_address(&node.address)) {
+            node.provider_configuration = Some(configuration.clone());
+            if !node.provider.is_explicit() {
                 node.provider = provider.clone();
             }
         }
@@ -25,7 +30,7 @@ fn collect(
     module: &Value,
     scope: &str,
     providers: &Value,
-    found: &mut BTreeMap<String, ProviderIdentity>,
+    found: &mut BTreeMap<String, (ProviderIdentity, ProviderConfiguration)>,
 ) {
     for resource in module["resources"].as_array().into_iter().flatten() {
         if let (Some(address), Some(key)) = (
@@ -37,7 +42,11 @@ fn collect(
                 .map(ProviderIdentity::from_source)
                 // An explicit but unresolved binding must not imply HashiCorp AWS.
                 .unwrap_or_else(|| ProviderIdentity::from_source("unknown"));
-            found.insert(qualify(scope, address), provider);
+            let configuration = ProviderConfiguration {
+                key: key.into(),
+                alias: providers[key]["alias"].as_str().map(str::to_owned),
+            };
+            found.insert(qualify(scope, address), (provider, configuration));
         }
     }
     if let Some(calls) = module["module_calls"].as_object() {

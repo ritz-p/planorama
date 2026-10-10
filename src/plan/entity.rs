@@ -40,5 +40,6 @@ pub(super) fn parse(resource: &Value, address: &str, action: Action) -> Terrafor
         mode,
 
         provider,
+        provider_configuration: None,
     }
 }

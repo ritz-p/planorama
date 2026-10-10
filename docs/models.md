@@ -21,6 +21,22 @@ the current card projection copies the safe metadata required for existing SVGs.
 Layout/rendering consume architecture graphs only. Named plans keep separate
 Terraform models under explicit `StateId`s.
 
+Provider source (`ProviderIdentity`, such as `registry.terraform.io/hashicorp/aws`)
+is separate from `provider_configuration`. The latter preserves Terraform's opaque
+`provider_config_key` and the alias explicitly supplied in configuration metadata.
+Default and aliased bindings retain their exact keys, including module bindings;
+aliases are not guessed from key spelling. An unresolved key is retained with no
+alias, while absent bindings remain `None`. Resource-level provider source keeps
+precedence over configuration metadata, preserving provider classification.
+Current configuration enriches only current objects. Deposed predecessors retain
+their resource-level provider source or legacy fallback, with no configuration key
+or alias inferred from the current resource at the same address.
+
+Configuration keys are state-local: cross-state identity requires `(StateId, key)`.
+Matching aliases in two states do not imply a shared account or region. Both the
+Terraform facts and architecture cards retain these identities; provider expressions,
+credentials and region/account values are neither stored nor inferred.
+
 This separation intentionally preserves existing diagrams: snapshot tests cover
 the boundary and regression tests retain provider resolution, reference evidence,
 deposed/moved/import/removed/drift behavior and non-mutation of parsed input.

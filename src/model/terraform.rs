@@ -1,5 +1,5 @@
 //! Value-free Terraform facts. No architecture roles, components or edge kinds.
-use super::{Action, ChangeMetadata, EntityMode, ProviderIdentity};
+use super::{Action, ChangeMetadata, EntityMode, ProviderConfiguration, ProviderIdentity};
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct TerraformEntity {
@@ -9,6 +9,7 @@ pub struct TerraformEntity {
     pub metadata: ChangeMetadata,
     pub resource_type: String,
     pub provider: ProviderIdentity,
+    pub provider_configuration: Option<ProviderConfiguration>,
     pub module: String,
     pub action: Action,
     pub mode: EntityMode,

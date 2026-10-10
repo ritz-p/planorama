@@ -19,6 +19,7 @@ pub struct Node {
     pub metadata: ChangeMetadata,
     pub resource_type: String,
     pub provider: ProviderIdentity,
+    pub provider_configuration: Option<ProviderConfiguration>,
     pub module: String,
     pub action: Action,
     pub mode: EntityMode,
@@ -85,7 +86,7 @@ pub use graphs::{ArchitectureGraph, AttributeReference, StateOutput};
 pub use operations::{
     AttributePathStep, ChangeMetadata, DriftRecord, ImportMetadata, RelevantAttribute, StateRemoval,
 };
-pub use provider::ProviderIdentity;
+pub use provider::{ProviderConfiguration, ProviderIdentity};
 pub use states::{MultiPlan, PlanInput, StateId};
 pub use terraform::{TerraformEntity, TerraformPlan, TerraformReference};
 

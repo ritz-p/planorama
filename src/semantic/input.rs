@@ -45,6 +45,7 @@ pub(crate) fn base_graph(plan: &TerraformPlan) -> Graph {
                 metadata: fact.metadata.clone(),
                 resource_type: fact.resource_type.clone(),
                 provider: fact.provider.clone(),
+                provider_configuration: fact.provider_configuration.clone(),
                 module: fact.module.clone(),
                 action: fact.action,
                 mode: fact.mode,
