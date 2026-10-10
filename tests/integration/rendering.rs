@@ -1,3 +1,4 @@
+mod regions;
 mod support;
 
 #[test]

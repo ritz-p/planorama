@@ -11,6 +11,7 @@ mod placement;
 mod rank;
 mod routing;
 mod routing_shared;
+mod scopes;
 #[cfg(test)]
 #[path = "../tests/unit/layout.rs"]
 mod tests;
@@ -31,6 +32,7 @@ pub struct Band<'a> {
 }
 
 pub struct Layout<'a> {
+    pub scopes: Vec<ScopePanel>,
     pub header_heights: Vec<usize>,
     pub bounds: Vec<Bounds>,
     pub containers: Vec<usize>,
@@ -41,6 +43,11 @@ pub struct Layout<'a> {
     pub bands: Vec<Band<'a>>,
     pub paths: Vec<Vec<Point>>,
     pub junctions: Vec<Point>,
+}
+
+pub struct ScopePanel {
+    pub scope: crate::model::architecture::DeploymentScope,
+    pub bounds: Bounds,
 }
 
 impl<'a> Layout<'a> {

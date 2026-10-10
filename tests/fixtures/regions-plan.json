@@ -1,0 +1,40 @@
+{
+  "format_version": "1.2",
+  "resource_changes": [
+    {"address":"aws_vpc.tokyo","type":"aws_vpc"},
+    {"address":"aws_vpc.tokyo_second","type":"aws_vpc"},
+    {"address":"aws_subnet.tokyo","type":"aws_subnet"},
+    {"address":"aws_instance.tokyo","type":"aws_instance"},
+    {"address":"aws_vpc.virginia","type":"aws_vpc"},
+    {"address":"aws_subnet.virginia","type":"aws_subnet"},
+    {"address":"aws_instance.virginia","type":"aws_instance"},
+    {"address":"aws_iam_role.app","type":"aws_iam_role"},
+    {"address":"aws_cloudfront_distribution.app","type":"aws_cloudfront_distribution"},
+    {"address":"aws_route53_zone.app","type":"aws_route53_zone"},
+    {"address":"aws_instance.unknown","type":"aws_instance"},
+    {"address":"aws_unclassified.app","type":"aws_unclassified"}
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws.tokyo":{"full_name":"hashicorp/aws","alias":"tokyo","expressions":{"region":{"constant_value":"ap-northeast-1"}}},
+      "aws.virginia":{"full_name":"hashicorp/aws","alias":"virginia","expressions":{"region":{"constant_value":"us-east-1"}}},
+      "aws.unknown":{"full_name":"hashicorp/aws","alias":"us-west-2","expressions":{"region":{"references":["var.region"]}}}
+    },
+    "root_module": {
+      "resources": [
+        {"address":"aws_vpc.tokyo","provider_config_key":"aws.tokyo"},
+        {"address":"aws_vpc.tokyo_second","provider_config_key":"aws.tokyo"},
+        {"address":"aws_subnet.tokyo","provider_config_key":"aws.tokyo","expressions":{"vpc_id":{"references":["aws_vpc.tokyo.id"]}}},
+        {"address":"aws_instance.tokyo","provider_config_key":"aws.tokyo","expressions":{"subnet_id":{"references":["aws_subnet.tokyo.id"]}}},
+        {"address":"aws_vpc.virginia","provider_config_key":"aws.virginia"},
+        {"address":"aws_subnet.virginia","provider_config_key":"aws.virginia","expressions":{"vpc_id":{"references":["aws_vpc.virginia.id"]}}},
+        {"address":"aws_instance.virginia","provider_config_key":"aws.virginia","expressions":{"subnet_id":{"references":["aws_subnet.virginia.id"]},"user_data":{"references":["aws_instance.tokyo.id"]}}},
+        {"address":"aws_iam_role.app","provider_config_key":"aws.tokyo"},
+        {"address":"aws_cloudfront_distribution.app","provider_config_key":"aws.virginia"},
+        {"address":"aws_route53_zone.app","provider_config_key":"aws.tokyo"},
+        {"address":"aws_instance.unknown","provider_config_key":"aws.unknown"},
+        {"address":"aws_unclassified.app","provider_config_key":"aws.tokyo"}
+      ]
+    }
+  }
+}

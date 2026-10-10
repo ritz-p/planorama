@@ -14,11 +14,14 @@ pub(super) struct Placed<'a> {
 }
 
 pub(super) fn place(graph: &Graph, tree: ContainmentTree) -> Placed<'_> {
-    if graph
-        .nodes
-        .iter()
-        .any(|node| node.role == ResourceRole::Container)
-    {
+    if graph.nodes.iter().any(|node| {
+        node.role == ResourceRole::Container
+            || node
+                .entity
+                .scope
+                .as_ref()
+                .is_some_and(|s| s.region.is_some())
+    }) {
         Placed {
             layout: containers::place_geometry(graph, tree, true),
             strategy: Strategy::Nested,
@@ -34,6 +37,7 @@ pub(super) fn place(graph: &Graph, tree: ContainmentTree) -> Placed<'_> {
             .collect();
         Placed {
             layout: Layout {
+                scopes: Vec::new(),
                 bounds,
                 header_heights: vec![NODE_HEIGHT; graph.nodes.len()],
                 containers: Vec::new(),
