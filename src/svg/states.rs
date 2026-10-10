@@ -45,8 +45,8 @@ pub fn render_states(
     let mut width = 1120;
     for (id, graph) in graphs {
         let layout = Layout::new(graph);
-        width = width.max(layout.width);
-        let (_, height) = super::dimensions(graph, &layout);
+        let (state_width, height) = super::dimensions(graph, &layout);
+        width = width.max(state_width);
         let prefix = prefix(id);
         let check_offset =
             if graph.checks.is_empty() { 0 } else { 24 } + super::legend::height(graph);

@@ -25,7 +25,7 @@ fn lowers_resolved_relationship_and_remaps_indices_without_mutating_raw() {
     assert_eq!(architecture, semantic::transform(&raw));
     assert!(
         !svg::render(&architecture, &Layout::new(&architecture))
-            .contains("<title>aws_route_table_association.private</title>")
+            .contains("data-terraform-address=\"aws_route_table_association.private\"")
     );
 }
 

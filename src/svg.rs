@@ -8,6 +8,7 @@ mod legend;
 mod operations;
 mod paths;
 mod provenance;
+mod relationship_index;
 mod relationships;
 mod roles;
 mod scopes;
@@ -50,12 +51,22 @@ pub(crate) fn render(graph: &Graph, layout: &Layout<'_>) -> String {
 }
 
 fn dimensions(graph: &Graph, layout: &Layout<'_>) -> (usize, usize) {
+    let index = relationship_index::Index::new(graph, layout);
+    dimensions_with_index(graph, layout, &index)
+}
+
+fn dimensions_with_index(
+    graph: &Graph,
+    layout: &Layout<'_>,
+    index: &relationship_index::Index<'_>,
+) -> (usize, usize) {
     (
-        layout.width,
+        index.width,
         layout.height
             + if graph.checks.is_empty() { 0 } else { 24 }
             + components::height(graph)
-            + legend::height(graph),
+            + legend::height(graph)
+            + index.height(),
     )
 }
 
@@ -65,7 +76,8 @@ pub(crate) fn render_with_format(
     address_format: AddressFormat,
 ) -> String {
     let check_offset = if graph.checks.is_empty() { 0 } else { 24 };
-    let (width, height) = dimensions(graph, layout);
+    let relationship_index = relationship_index::Index::new(graph, layout);
+    let (width, height) = dimensions_with_index(graph, layout, &relationship_index);
     let membership = components::membership(graph);
     let (description, summary) = relationships::captions(graph);
     let markers = relationships::markers(graph);
@@ -308,10 +320,14 @@ pub(crate) fn render_with_format(
     if graph.nodes.is_empty() {
         svg.push_str("<text x=\"40\" y=\"185\" font-size=\"16\" fill=\"#64748b\">No resources to display.</text>\n");
     }
+    svg.push_str(&relationship_index.markers());
     if check_offset != 0 {
         svg.push_str("</g>\n");
     }
     svg.push_str(&components::render(graph, layout));
+    svg.push_str(
+        &relationship_index.render(layout.height + check_offset + components::height(graph)),
+    );
     if legend_height != 0 {
         svg.push_str("</g>\n");
     }
