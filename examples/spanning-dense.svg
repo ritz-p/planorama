@@ -51,20 +51,21 @@ No AWS endorsement is implied. Consult the AWS terms for other uses.
 <g data-container="resource-6177735f7375626e65742e61-current"><title>aws_subnet.a</title><rect x="100" y="296" width="400" height="136" rx="12" fill="#fef9c3" stroke="#854d0e" stroke-width="2" data-mode="managed"/></g>
 <g data-container="resource-6177735f7375626e65742e62-current"><title>aws_subnet.b</title><rect x="100" y="472" width="400" height="136" rx="12" fill="#fef9c3" stroke="#854d0e" stroke-width="2" data-mode="managed"/></g>
 <g data-container="resource-6177735f7375626e65742e63-current"><title>aws_subnet.c</title><rect x="100" y="648" width="400" height="136" rx="12" fill="#fef9c3" stroke="#854d0e" stroke-width="2" data-mode="managed"/></g>
-<path d="M 500 344 L 516 344 Q 524 344 524 352 L 524 518 Q 524 526 532 526 L 540 526 " data-edge-kind="connection" data-source="resource-6177735f7375626e65742e61-current" data-target="resource-6177735f6c622e617070-current" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-dasharray="2 4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"><title>aws_subnet.a → aws_lb.app (connection)</title></path>
-<path d="M 500 520 L 521 520 Q 524 520 524 523 L 524 523 Q 524 526 527 526 L 540 526 " data-edge-kind="connection" data-source="resource-6177735f7375626e65742e62-current" data-target="resource-6177735f6c622e617070-current" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-dasharray="2 4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"><title>aws_subnet.b → aws_lb.app (connection)</title></path>
-<path d="M 500 696 L 516 696 Q 524 696 524 688 L 524 534 Q 524 526 532 526 L 540 526 " data-edge-kind="connection" data-source="resource-6177735f7375626e65742e63-current" data-target="resource-6177735f6c622e617070-current" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-dasharray="2 4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"><title>aws_subnet.c → aws_lb.app (connection)</title></path>
+<path d="M 500 344 L 516 344 Q 524 344 524 352 L 524 513 Q 524 521 532 521 L 540 521 " data-edge-kind="connection" data-source="resource-6177735f7375626e65742e61-current" data-target="resource-6177735f6c622e617070-current" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-dasharray="2 4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"><title>aws_subnet.a → aws_lb.app (connection)</title></path>
+<path d="M 500 520 L 523.5 520 Q 524 520 524 520.5 L 524 520.5 Q 524 521 524.5 521 L 540 521 " data-edge-kind="connection" data-source="resource-6177735f7375626e65742e62-current" data-target="resource-6177735f6c622e617070-current" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-dasharray="2 4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"><title>aws_subnet.b → aws_lb.app (connection)</title></path>
+<path d="M 500 696 L 516 696 Q 524 696 524 688 L 524 529 Q 524 521 532 521 L 540 521 " data-edge-kind="connection" data-source="resource-6177735f7375626e65742e63-current" data-target="resource-6177735f6c622e617070-current" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-dasharray="2 4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"><title>aws_subnet.c → aws_lb.app (connection)</title></path>
 <g data-edge-kind="containment" data-source="resource-6177735f7670632e6d61696e-current" data-target="resource-6177735f7375626e65742e61-current"><title>aws_vpc.main → aws_subnet.a (containment)</title></g>
 <g data-edge-kind="containment" data-source="resource-6177735f7670632e6d61696e-current" data-target="resource-6177735f7375626e65742e62-current"><title>aws_vpc.main → aws_subnet.b (containment)</title></g>
 <g data-edge-kind="containment" data-source="resource-6177735f7670632e6d61696e-current" data-target="resource-6177735f7375626e65742e63-current"><title>aws_vpc.main → aws_subnet.c (containment)</title></g>
 <g data-edge-kind="containment" data-source="resource-6177735f7670632e6d61696e-current" data-target="resource-6177735f6c622e617070-current"><title>aws_vpc.main → aws_lb.app (containment)</title></g>
 <circle cx="524" cy="520" r="3" fill="#94a3b8"/>
-<circle cx="524" cy="526" r="3" fill="#94a3b8"/>
+<circle cx="524" cy="521" r="3" fill="#94a3b8"/>
 <g id="resource-6177735f6c622e617070-current" data-architecture-id="terraform:6177735f6c622e617070-current" data-qualified-address="module.root.aws_lb.app" data-terraform-address="aws_lb.app"><title>module.root.aws_lb.app — other</title>
-<rect x="540" y="492" width="320" height="96" rx="8" fill="#fefce8" stroke="#854d0e" stroke-width="1.5" data-mode="managed"/>
-<text x="552" y="512" font-size="11" fill="#854d0e">aws_lb · other</text>
-<use href="#planorama-icon-aws-elb" x="552" y="520" width="24" height="24" aria-hidden="true"/><text x="584" y="537" font-size="13" fill="#0f172a">module.root.aws_lb.app</text>
-<text x="552" y="576" font-size="10" fill="#64748b"><title>root</title>root</text>
+<rect x="540" y="483" width="320" height="114" rx="8" fill="#fefce8" stroke="#854d0e" stroke-width="1.5" data-mode="managed"/>
+<text x="552" y="503" font-size="11" fill="#854d0e">aws_lb · other</text>
+<use href="#planorama-icon-aws-elb" x="552" y="511" width="24" height="24" aria-hidden="true"/><text x="584" y="528" font-size="13" fill="#0f172a">module.root.aws_lb.app</text>
+<text x="552" y="585" font-size="10" fill="#64748b"><title>root</title>root</text>
+<text x="552" y="567" font-size="10" fill="#64748b" data-placement="inferred">inferred placement</text>
 </g>
 <g id="resource-6177735f7375626e65742e61-current" data-architecture-id="terraform:6177735f7375626e65742e61-current" data-qualified-address="module.root.aws_subnet.a" data-terraform-address="aws_subnet.a"><title>module.root.aws_subnet.a — other</title>
 <text x="112" y="316" font-size="11" fill="#854d0e">aws_subnet · other</text>

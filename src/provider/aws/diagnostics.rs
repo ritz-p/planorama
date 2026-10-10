@@ -38,15 +38,23 @@ pub fn collect(plan: &crate::model::TerraformPlan) -> Vec<Diagnostic> {
     {
         let node = &raw.nodes[reference.target];
         let plural = node.provider.is_aws()
-            && matches!(
+            && (super::containment::vpc_scope_attribute(&node.resource_type).is_some_and(
+                |attribute| {
+                    attribute == reference.attribute
+                        || attribute
+                            .split_once('.')
+                            .is_some_and(|(block, _)| block == reference.attribute)
+                },
+            ) || matches!(
                 (node.resource_type.as_str(), reference.attribute.as_str()),
                 ("aws_lb", "subnets")
                     | ("aws_db_subnet_group", "subnet_ids")
+                    | ("aws_elasticache_subnet_group", "subnet_ids")
                     | (
                         "aws_ecs_service",
                         "network_configuration" | "network_configuration.subnets"
                     )
-            );
+            ));
         for &reason in &reference.issues {
             // Network collections (including the aggregate ECS block) and
             // dependency metadata legitimately resolve to multiple instances.
@@ -111,14 +119,25 @@ pub fn collect(plan: &crate::model::TerraformPlan) -> Vec<Diagnostic> {
         }
         let association = super::associations::rule(&node.resource_type)
             .map(|rule| rule.map(|(attribute, endpoint)| (attribute, endpoint, false, false)));
+        let vpc_scope = super::containment::vpc_scope_attribute(&node.resource_type)
+            .filter(|attribute| {
+                raw.attributes
+                    .iter()
+                    .any(|r| r.target == target && r.attribute == *attribute)
+            })
+            .map(|attribute| [(attribute, "aws_subnet", true, false)]);
         let expected: &[(&str, &str, bool, bool)] = if let Some(rule) = &direct {
             rule
         } else if let Some(rule) = &association {
             rule
+        } else if let Some(rule) = &vpc_scope {
+            rule
         } else {
             match node.resource_type.as_str() {
                 "aws_lb" => &[("subnets", "aws_subnet", true, false)],
-                "aws_db_subnet_group" => &[("subnet_ids", "aws_subnet", true, false)],
+                "aws_db_subnet_group" | "aws_elasticache_subnet_group" => {
+                    &[("subnet_ids", "aws_subnet", true, false)]
+                }
                 "aws_db_instance" | "aws_rds_cluster" => {
                     &[("db_subnet_group_name", "aws_db_subnet_group", false, true)]
                 }
@@ -175,7 +194,14 @@ pub fn collect(plan: &crate::model::TerraformPlan) -> Vec<Diagnostic> {
             }
         }
         if endpoints_valid
-            && (matches!(node.resource_type.as_str(), "aws_lb" | "aws_ecs_service")
+            && (vpc_scope.is_some()
+                || matches!(
+                    node.resource_type.as_str(),
+                    "aws_lb"
+                        | "aws_ecs_service"
+                        | "aws_db_subnet_group"
+                        | "aws_elasticache_subnet_group"
+                )
                 || (matches!(
                     node.resource_type.as_str(),
                     "aws_db_instance" | "aws_rds_cluster"

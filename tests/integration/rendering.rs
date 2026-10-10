@@ -1,6 +1,53 @@
 mod support;
 
 #[test]
+fn vpc_workloads_keep_subnet_references_and_show_derived_placement() {
+    let svg = render(include_bytes!("../fixtures/vpc-workloads-plan.json"));
+    assert_eq!(svg.matches("data-placement=\"inferred\"").count(), 3);
+    assert_eq!(svg.matches("data-edge-kind=\"containment\"").count(), 5);
+    assert_eq!(svg.matches("data-edge-kind=\"dependency\"").count(), 6);
+    assert_eq!(
+        svg,
+        include_str!("../../examples/vpc-workloads.svg").replace("\r\n", "\n")
+    );
+}
+
+#[test]
+fn inferred_placement_notes_use_provenance_and_fit_below_long_addresses() {
+    let input = include_bytes!("../fixtures/subnet-groups-plan.json");
+    let svg = render(input);
+    assert_eq!(svg.matches("data-placement=\"inferred\"").count(), 2);
+    assert_eq!(
+        svg,
+        include_str!("../../examples/subnet-groups.svg").replace("\r\n", "\n")
+    );
+    let direct = render(include_bytes!("../fixtures/network-scope-plan.json"));
+    assert!(!direct.contains("inferred placement"));
+    let long_input = String::from_utf8(input.to_vec()).unwrap().replace(
+        "aws_db_subnet_group.main",
+        "aws_db_subnet_group.very_long_resource_address_that_requires_two_lines_and_truncation",
+    );
+    let svg = render(long_input.as_bytes());
+    let doc = roxmltree::Document::parse(&svg).unwrap();
+    for note in doc
+        .descendants()
+        .filter(|n| n.attribute("data-placement") == Some("inferred"))
+    {
+        let card = note.parent().unwrap();
+        let rect = card.children().find(|n| n.has_tag_name("rect")).unwrap();
+        let y = |n: roxmltree::Node| n.attribute("y").unwrap().parse::<usize>().unwrap();
+        let height = rect.attribute("height").unwrap().parse::<usize>().unwrap();
+        assert!(y(note) >= y(rect) + 80);
+        assert!(y(note) < y(rect) + height - 12);
+        assert!(
+            card.children()
+                .filter(|n| n.has_tag_name("text") && n.attribute("font-size") == Some("13"))
+                .all(|n| y(n) + 10 < y(note))
+        );
+    }
+}
+
+#[test]
 fn relationship_patterns_are_distinct_and_nesting_stays_line_free() {
     for (input, kind, width, dash) in [
         (
@@ -615,8 +662,8 @@ fn explicit_network_scopes_render_as_nested_architecture() {
 fn rds_subnet_group_fixture_preserves_cards_and_infers_common_scope() {
     let input = include_bytes!("../fixtures/rds-subnet-group-plan.json");
     let svg = render(input);
-    assert!(svg.contains("6 resources (6 cards), 8 relationships"));
-    assert_eq!(svg.matches("data-edge-kind=\"containment\"").count(), 4);
+    assert!(svg.contains("6 resources (6 cards), 9 relationships"));
+    assert_eq!(svg.matches("data-edge-kind=\"containment\"").count(), 5);
     assert_eq!(svg.matches("<g id=\"resource-").count(), 6);
     assert_eq!(svg, render(input));
 }
