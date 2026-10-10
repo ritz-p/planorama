@@ -65,8 +65,9 @@ Intentional bundle alignment and numbered terminal spacing remain constraints.
 
 Only numbered incoming ports reserve badge-sized slots; other incident ports retain
 normal spacing. Adjacent terminal corridors are merged before routing. Orthogonal
-search indexes blocked grid edges once per search and checks them in constant time,
-instead of scanning all rectangles for every candidate segment.
+search indexes blocked grid edges and soft-card occlusion costs once per search,
+then looks them up in constant time for each candidate segment. Bundle branches
+use their own endpoint exclusions when evaluating soft-card occlusion.
 
 Candidate scoring prioritizes obstacle crossings, overlap and edge crossings, then
 balances length, bends and soft-card occlusion. Straight, one-bend and two-bend candidates compete with grid-search
