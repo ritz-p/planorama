@@ -1,12 +1,24 @@
 use super::{Bounds, Point, Scorer, Simplification, crosses, search, simplify};
 use crate::layout::{Port, Side};
 
+#[cfg(test)]
 pub(in crate::layout) fn select(
     source: Bounds,
     target: Bounds,
     baseline: Vec<Point>,
     obstacles: &[Bounds],
     scorer: &Scorer,
+) -> Vec<Point> {
+    select_with_slots(source, target, baseline, obstacles, scorer, None)
+}
+
+pub(in crate::layout) fn select_with_slots(
+    source: Bounds,
+    target: Bounds,
+    baseline: Vec<Point>,
+    obstacles: &[Bounds],
+    scorer: &Scorer,
+    slots: Option<(&[usize; 4], &[usize; 4])>,
 ) -> Vec<Point> {
     let mut pairs = Vec::new();
     if source.right() < target.origin.x {
@@ -42,8 +54,14 @@ pub(in crate::layout) fn select(
     let mut best = baseline;
     let mut preference = pairs.len();
     for (rank, (a, b)) in pairs.into_iter().enumerate() {
-        let start = source.port(a, offset(source, first, a));
-        let end = target.port(b, offset(target, last, b));
+        let start = source.port(
+            a,
+            slots.map_or_else(|| offset(source, first, a), |s| s.0[a as usize]),
+        );
+        let end = target.port(
+            b,
+            slots.map_or_else(|| offset(target, last, b), |s| s.1[b as usize]),
+        );
         if start.point == first && end.point == last {
             preference = preference.min(rank);
             continue;

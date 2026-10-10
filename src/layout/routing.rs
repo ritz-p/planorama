@@ -37,13 +37,23 @@ pub(super) fn route(
         targets[b].push(edge);
     }
     for (node, edges) in sources.iter_mut().enumerate() {
-        edges.sort_by_key(|&edge| (bounds[graph.edges[edge].to].origin.y, edge));
+        edges.sort_by_key(|&edge| {
+            (
+                bounds[graph.edges[edge].to].origin.y,
+                graph.nodes[graph.edges[edge].to].entity.id.as_str(),
+            )
+        });
         for (port, &edge) in edges.iter().enumerate() {
             source_ports[edge] = 20 + (port + 1) * (bounds[node].height - 40) / (edges.len() + 1);
         }
     }
     for (node, edges) in targets.iter_mut().enumerate() {
-        edges.sort_by_key(|&edge| (bounds[graph.edges[edge].from].origin.y, edge));
+        edges.sort_by_key(|&edge| {
+            (
+                bounds[graph.edges[edge].from].origin.y,
+                graph.nodes[graph.edges[edge].from].entity.id.as_str(),
+            )
+        });
         for (port, &edge) in edges.iter().enumerate() {
             target_ports[edge] = 20 + (port + 1) * (bounds[node].height - 40) / (edges.len() + 1);
         }
@@ -73,6 +83,18 @@ pub(super) fn route(
             .map(|(x, width)| x + width)
             .collect();
         let mut scorer = Scorer::default();
+        let incident: Vec<_> = sources
+            .iter()
+            .zip(&targets)
+            .map(|(s, t)| {
+                s.iter()
+                    .map(|&e| (e, true))
+                    .chain(t.iter().map(|&e| (e, false)))
+                    .collect()
+            })
+            .collect();
+        let (source_slots, target_slots) =
+            super::routing_shared::slots::assign(graph, bounds, &incident);
         let mut lanes = VerticalLanes::default();
         let mut bundle_lanes = vec![None; bundles.len()];
         let mut paths = Vec::with_capacity(graph.edges.len());
@@ -142,12 +164,13 @@ pub(super) fn route(
                 chosen.reserve(&mut lanes);
             }
             let points = if bundles.group(edge).is_none() {
-                super::routing_shared::ports::select(
+                super::routing_shared::ports::select_with_slots(
                     bounds[a],
                     bounds[b],
                     chosen.points,
                     bounds,
                     &scorer,
+                    Some((&source_slots[edge], &target_slots[edge])),
                 )
             } else {
                 chosen.points
