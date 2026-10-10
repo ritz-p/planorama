@@ -27,6 +27,17 @@ pub(in crate::layout) struct Scorer {
 }
 
 impl Scorer {
+    pub(in crate::layout) fn len(&self) -> usize {
+        self.paths.len()
+    }
+
+    pub(in crate::layout) fn truncate(&mut self, len: usize) {
+        for index in (len..self.paths.len()).rev() {
+            self.remove(index);
+        }
+        self.paths.truncate(len);
+    }
+
     pub(in crate::layout) fn safe_shortcut(
         &self,
         old: &[Point],
