@@ -200,6 +200,8 @@ pub(crate) fn render_with_format(
         let (x, y) = (bounds.origin.x, bounds.origin.y);
         let card_width = bounds.width;
         let header_height = layout.header_heights[i];
+        let inferred = layout.containment.parents[i]
+            .is_some_and(|parent| graph.derived_containment(parent, i));
         let background = containers::background(graph, layout, i);
         let border = color(node.action).1;
         let resource_address = node.resource_address();
@@ -296,6 +298,9 @@ pub(crate) fn render_with_format(
         };
         if !footer.is_empty() {
             writeln!(svg, r##"<text x="{}" y="{}" font-size="10" fill="#64748b"{}><title>{}</title>{footer}</text>"##, x + 12, y + header_height - 12, roles::attributes(node.role), escape(&node.module)).unwrap();
+        }
+        if inferred {
+            writeln!(svg, r##"<text x="{}" y="{}" font-size="10" fill="#64748b" data-placement="inferred">inferred placement</text>"##, x + 12, y + header_height - 30).unwrap();
         }
         svg.push_str("</g>\n");
     }
