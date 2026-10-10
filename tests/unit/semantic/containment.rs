@@ -180,3 +180,39 @@ fn explicit_network_scope_rules_require_static_single_endpoints() {
         }
     }
 }
+
+#[test]
+fn target_group_vpc_reference_is_optional_but_invalid_references_are_diagnosed() {
+    for scenario in 0..3 {
+        let expressions = match scenario {
+            0 => json!({"target_type":{"constant_value":"lambda"}}),
+            1 => json!({"vpc_id":{"constant_value":"TOP_SECRET_LITERAL"}}),
+            _ => json!({"vpc_id":{"references":["aws_vpc.main.id"]}}),
+        };
+        let input = json!({"format_version":"1.2","resource_changes":[
+            {"address":"aws_vpc.main","type":"aws_vpc"},
+            {"address":"aws_lb_target_group.main","type":"aws_lb_target_group"}
+        ],"configuration":{"root_module":{"resources":[
+            {"address":"aws_lb_target_group.main","expressions":expressions}
+        ]}}});
+        let raw = plan::parse(&input.to_string()).unwrap();
+        let diagnostics = semantic::diagnostics::collect(&raw);
+        assert_eq!(diagnostics.len(), usize::from(scenario == 1));
+        if let Some(diagnostic) = diagnostics.first() {
+            assert_eq!(diagnostic.attribute, "vpc_id");
+            assert_eq!(
+                diagnostic.reason,
+                crate::model::DiagnosticReason::NoResourceReference
+            );
+        }
+        assert!(!format!("{diagnostics:?}").contains("TOP_SECRET"));
+        assert_eq!(
+            semantic::transform(&raw)
+                .edges
+                .iter()
+                .filter(|e| e.kind == EdgeKind::Containment)
+                .count(),
+            usize::from(scenario == 2)
+        );
+    }
+}
