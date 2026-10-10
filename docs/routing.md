@@ -66,6 +66,13 @@ containment layer; obstacle and edge-conflict quality remain authoritative. Sele
 is deterministic but local, so it does not guarantee a global optimum or a crossing-free
 diagram. Named-state edges use shared search with an external state gutter.
 
+After all routes are fixed, independent unnumbered routes remove safe orthogonal
+doglegs while retaining both attachment points and endpoint directions. Shortening
+does not feed back into endpoint selection or routing. Each shortcut is checked
+against all other completed paths, must avoid obstacles,
+increase neither overlaps nor crossings, and reduce bends or length. Bundles and
+numbered terminal corridors are excluded to preserve their shared geometry.
+
 SVG rendering consumes the final geometry and rounds corners without changing
 relationship identity. Nested containment edges receive no redundant path.
 
