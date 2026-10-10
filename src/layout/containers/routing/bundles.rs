@@ -805,7 +805,7 @@ fn narrow_corridor_retains_eight_pixel_bundle() {
 }
 
 #[test]
-fn comparison_preserves_header_ports_when_facing_slots_are_blocked() {
+fn comparison_preserves_header_ports_when_only_target_changes_side() {
     use crate::model::architecture::{Edge, EdgeKind};
     let raw = crate::plan::parse(r#"{"format_version":"1.2","resource_changes":[{"address":"test.a","type":"test"},{"address":"test.b","type":"test"},{"address":"test.target","type":"test"}]}"#).unwrap();
     let mut graph = crate::semantic::transform(&raw).0;
@@ -853,7 +853,14 @@ fn comparison_preserves_header_ports_when_facing_slots_are_blocked() {
             Some((&slots[index], &slots[index])),
         );
         assert_eq!(path.first(), Some(&start));
-        assert_eq!(path.last(), Some(&end));
+        assert_eq!(
+            path.last(),
+            Some(&if index == 0 {
+                target.port(Side::Left, 100).point
+            } else {
+                end
+            })
+        );
         path
     };
     let mut occupancy = Scorer::default();

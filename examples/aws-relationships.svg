@@ -68,13 +68,13 @@ No AWS endorsement is implied. Consult the AWS terms for other uses.
 <g transform="translate(0 72)">
 <g data-container="resource-6177735f7670632e6d61696e-current"><title>aws_vpc.main</title><rect x="464" y="160" width="1060" height="804" rx="12" fill="#fefce8" stroke="#854d0e" stroke-width="2" data-mode="managed"/></g>
 <g data-container="resource-6177735f7375626e65742e6d61696e-current"><title>aws_subnet.main</title><rect x="548" y="340" width="488" height="360" rx="12" fill="#fef9c3" stroke="#854d0e" stroke-width="2" data-mode="managed"/></g>
-<path d="M 380 208 L 414 208 Q 422 208 422 216 L 422 560 Q 422 568 430 568 L 632 568 " data-edge-kind="association" data-directionality="undirected" data-source="resource-6177735f6c625f7461726765745f67726f75702e6d61696e-current" data-target="resource-6177735f696e7374616e63652e6d61696e-current" fill="none" stroke="#c2410c" stroke-width="2" stroke-dasharray="7 4" stroke-linejoin="round"><title>aws_lb_target_group.main ↔ aws_instance.main (association; replace: aws_lb_target_group_attachment.main)</title></path>
+<path d="M 380 207 L 414 207 Q 422 207 422 215 L 422 559 Q 422 567 430 567 L 632 567 " data-edge-kind="association" data-directionality="undirected" data-source="resource-6177735f6c625f7461726765745f67726f75702e6d61696e-current" data-target="resource-6177735f696e7374616e63652e6d61696e-current" fill="none" stroke="#c2410c" stroke-width="2" stroke-dasharray="7 4" stroke-linejoin="round"><title>aws_lb_target_group.main ↔ aws_instance.main (association; replace: aws_lb_target_group_attachment.main)</title></path>
 <g data-edge-kind="containment" data-source="resource-6177735f7375626e65742e6d61696e-current" data-target="resource-6177735f696e7374616e63652e6d61696e-current"><title>aws_subnet.main → aws_instance.main (containment)</title></g>
-<path d="M 1036 520 L 1070 520 Q 1078 520 1078 512 L 1078 386 Q 1078 378 1086 378 L 1120 378 " data-edge-kind="association" data-directionality="undirected" data-source="resource-6177735f7375626e65742e6d61696e-current" data-target="resource-6177735f726f7574655f7461626c652e6d61696e-current" fill="none" stroke="#047857" stroke-width="2" stroke-dasharray="7 4" stroke-linejoin="round"><title>aws_subnet.main ↔ aws_route_table.main (association; create: aws_route_table_association.main)</title></path>
+<path d="M 1036 519 L 1070 519 Q 1078 519 1078 511 L 1078 382 Q 1078 374 1086 374 L 1120 374 " data-edge-kind="association" data-directionality="undirected" data-source="resource-6177735f7375626e65742e6d61696e-current" data-target="resource-6177735f726f7574655f7461626c652e6d61696e-current" fill="none" stroke="#047857" stroke-width="2" stroke-dasharray="7 4" stroke-linejoin="round"><title>aws_subnet.main ↔ aws_route_table.main (association; create: aws_route_table_association.main)</title></path>
 <g data-edge-kind="containment" data-source="resource-6177735f7670632e6d61696e-current" data-target="resource-6177735f726f7574655f7461626c652e6d61696e-current"><title>aws_vpc.main → aws_route_table.main (containment)</title></g>
 <g data-edge-kind="containment" data-source="resource-6177735f7670632e6d61696e-current" data-target="resource-6177735f7375626e65742e6d61696e-current"><title>aws_vpc.main → aws_subnet.main (containment)</title></g>
 <g data-edge-kind="containment" data-source="resource-6177735f7670632e6d61696e-current" data-target="resource-6177735f7670635f656e64706f696e742e6d61696e-current"><title>aws_vpc.main → aws_vpc_endpoint.main (containment)</title></g>
-<path d="M 708 784 L 708 716 Q 708 708 716 708 L 1225 708 Q 1233 708 1233 700 L 1233 436 " data-edge-kind="association" data-directionality="undirected" data-source="resource-6177735f7670635f656e64706f696e742e6d61696e-current" data-target="resource-6177735f726f7574655f7461626c652e6d61696e-current" fill="none" stroke="#b91c1c" stroke-width="2" stroke-dasharray="7 4" stroke-linejoin="round"><title>aws_vpc_endpoint.main ↔ aws_route_table.main (association; delete: aws_vpc_endpoint_route_table_association.main)</title></path>
+<path d="M 868 831 L 1074 831 Q 1082 831 1082 823 L 1082 404 Q 1082 402 1080 402 L 1079 402 Q 1078 402 1078 401 L 1078 401 Q 1078 400 1079 400 L 1120 400 " data-edge-kind="association" data-directionality="undirected" data-source="resource-6177735f7670635f656e64706f696e742e6d61696e-current" data-target="resource-6177735f726f7574655f7461626c652e6d61696e-current" fill="none" stroke="#b91c1c" stroke-width="2" stroke-dasharray="7 4" stroke-linejoin="round"><title>aws_vpc_endpoint.main ↔ aws_route_table.main (association; delete: aws_vpc_endpoint_route_table_association.main)</title></path>
 <g id="resource-6177735f696e7374616e63652e6d61696e-current" data-architecture-id="terraform:6177735f696e7374616e63652e6d61696e-current" data-qualified-address="module.root.aws_instance.main" data-terraform-address="aws_instance.main"><title>module.root.aws_instance.main — other</title>
 <rect x="632" y="520" width="320" height="96" rx="8" fill="#fefce8" stroke="#854d0e" stroke-width="1.5" data-mode="managed"/>
 <text x="644" y="540" font-size="11" fill="#854d0e">aws_instance · other</text>
@@ -111,22 +111,22 @@ No AWS endorsement is implied. Consult the AWS terms for other uses.
 <text x="560" y="868" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
 <g data-relationship-marker="1"><title>Relationship resource [1]</title>
-<rect x="598" y="559" width="24" height="18" rx="4" fill="#ffffff" stroke="#c2410c" stroke-width="2" stroke-dasharray="7 4"/><text x="610" y="572" text-anchor="middle" font-size="11" fill="#334155">[1]</text>
+<rect x="598" y="558" width="24" height="18" rx="4" fill="#ffffff" stroke="#c2410c" stroke-width="2" stroke-dasharray="7 4"/><text x="610" y="571" text-anchor="middle" font-size="11" fill="#334155">[1]</text>
 </g>
 <g data-relationship-marker="1"><title>Relationship resource [1]</title>
-<rect x="390" y="199" width="24" height="18" rx="4" fill="#ffffff" stroke="#c2410c" stroke-width="2" stroke-dasharray="7 4"/><text x="402" y="212" text-anchor="middle" font-size="11" fill="#334155">[1]</text>
+<rect x="390" y="198" width="24" height="18" rx="4" fill="#ffffff" stroke="#c2410c" stroke-width="2" stroke-dasharray="7 4"/><text x="402" y="211" text-anchor="middle" font-size="11" fill="#334155">[1]</text>
 </g>
 <g data-relationship-marker="2"><title>Relationship resource [2]</title>
-<rect x="1086" y="369" width="24" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="1098" y="382" text-anchor="middle" font-size="11" fill="#334155">[2]</text>
+<rect x="1086" y="365" width="24" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="1098" y="378" text-anchor="middle" font-size="11" fill="#334155">[2]</text>
 </g>
 <g data-relationship-marker="2"><title>Relationship resource [2]</title>
-<rect x="1046" y="511" width="24" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="1058" y="524" text-anchor="middle" font-size="11" fill="#334155">[2]</text>
+<rect x="1046" y="510" width="24" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="1058" y="523" text-anchor="middle" font-size="11" fill="#334155">[2]</text>
 </g>
 <g data-relationship-marker="3"><title>Relationship resource [3]</title>
-<rect x="1221" y="446" width="24" height="18" rx="4" fill="#ffffff" stroke="#b91c1c" stroke-width="2" stroke-dasharray="7 4"/><text x="1233" y="459" text-anchor="middle" font-size="11" fill="#334155">[3]</text>
+<rect x="1086" y="391" width="24" height="18" rx="4" fill="#ffffff" stroke="#b91c1c" stroke-width="2" stroke-dasharray="7 4"/><text x="1098" y="404" text-anchor="middle" font-size="11" fill="#334155">[3]</text>
 </g>
 <g data-relationship-marker="3"><title>Relationship resource [3]</title>
-<rect x="696" y="756" width="24" height="18" rx="4" fill="#ffffff" stroke="#b91c1c" stroke-width="2" stroke-dasharray="7 4"/><text x="708" y="769" text-anchor="middle" font-size="11" fill="#334155">[3]</text>
+<rect x="878" y="822" width="24" height="18" rx="4" fill="#ffffff" stroke="#b91c1c" stroke-width="2" stroke-dasharray="7 4"/><text x="890" y="835" text-anchor="middle" font-size="11" fill="#334155">[3]</text>
 </g>
 <g data-relationship-index="true"><text x="40" y="1068" font-size="16" font-weight="700" fill="#334155">Relationship resources</text>
 <g data-relationship-entry="1">

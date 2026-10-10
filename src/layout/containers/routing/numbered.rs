@@ -68,8 +68,16 @@ impl Terminals {
             let mut cost = None;
             for (a, b) in ports::facing_pairs(layout.bounds[edge.from], layout.bounds[edge.to]) {
                 let pair = [
-                    layout.bounds[edge.from].port(a, slots.0[index][a as usize]),
-                    layout.bounds[edge.to].port(b, slots.1[index][b as usize]),
+                    if a == old[0].side {
+                        old[0]
+                    } else {
+                        layout.bounds[edge.from].port(a, slots.0[index][a as usize])
+                    },
+                    if b == old[1].side {
+                        old[1]
+                    } else {
+                        layout.bounds[edge.to].port(b, slots.1[index][b as usize])
+                    },
                 ];
                 if pair.iter().zip(old).any(|(candidate, previous)| {
                     candidate.point != previous.point

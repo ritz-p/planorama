@@ -68,18 +68,29 @@ pub(super) fn port_span(incidents: &[(usize, bool)], numbered: &[[bool; 2]]) -> 
         + 1
 }
 
-pub(super) fn ports(
+pub(super) fn ports_with_spacing(
     incidents: &[(usize, bool)],
     numbered: &[[bool; 2]],
     height: usize,
+    spacing: usize,
 ) -> Vec<usize> {
-    let extra = height.saturating_sub(40 + port_span(incidents, numbered));
+    let widths: Vec<_> = incidents
+        .iter()
+        .map(|&(edge, source)| {
+            if numbered[edge][usize::from(!source)] {
+                spacing
+            } else {
+                1
+            }
+        })
+        .collect();
+    let extra = height.saturating_sub(41 + widths.iter().sum::<usize>());
     let mut used = 0;
     incidents
         .iter()
         .enumerate()
-        .map(|(slot, &(edge, source))| {
-            let width = slot_width(edge, source, numbered);
+        .map(|(slot, _)| {
+            let width = widths[slot];
             let port = 20 + used + width.div_ceil(2) + (slot + 1) * extra / (incidents.len() + 1);
             used += width;
             port
