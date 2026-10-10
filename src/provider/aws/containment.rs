@@ -9,8 +9,12 @@ pub(super) use vpc_scope::attribute as vpc_scope_attribute;
 
 pub(super) fn direct_rule(resource_type: &str) -> Option<(&'static str, &'static str)> {
     match resource_type {
-        "aws_subnet" | "aws_vpc_endpoint" | "aws_route_table" | "aws_security_group"
-        | "aws_network_acl" => Some(("vpc_id", "aws_vpc")),
+        "aws_subnet"
+        | "aws_vpc_endpoint"
+        | "aws_route_table"
+        | "aws_security_group"
+        | "aws_network_acl"
+        | "aws_lb_target_group" => Some(("vpc_id", "aws_vpc")),
         "aws_instance" | "aws_nat_gateway" => Some(("subnet_id", "aws_subnet")),
         _ => None,
     }

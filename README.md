@@ -279,7 +279,7 @@ planorama plan.json -o diagram.svg --diagnostics
 
 診断には Terraform アドレス、属性名、未解決参照・複数インスタンス候補・動的選択・alias/local/module の循環・期待属性の欠落・型不一致・包含親の曖昧さなどの理由を含みます。属性値や式の内容は出力しません。正常に解決した複数 Subnet への接続は曖昧さとして報告しません。定数 ID や Terraform JSON に定義が含まれない local など、対応するリソースを安全に特定できない場合にも理由を表示します。診断は入力の不正や Terraform 自体のエラーを意味するとは限りません。オプションを省略すると診断は出力しません。
 
-Network containment also recognizes `aws_nat_gateway.subnet_id` and the `vpc_id` of VPC endpoints, route tables, security groups, and network ACLs. Only complete, static, single AWS endpoints produce containment; constants, tags, data queries, ambiguous and dynamic references remain ordinary relationships. See [network scope example](examples/network-scope.svg).
+Network containment also recognizes `aws_nat_gateway.subnet_id` and the `vpc_id` of VPC endpoints, route tables, security groups, network ACLs, and load balancer target groups. Only complete, static, single AWS endpoints produce containment; constants, tags, data queries, ambiguous and dynamic references remain ordinary relationships. See [network scope example](examples/network-scope.svg).
 
 RDS instances and clusters inherit network placement through a statically resolved `db_subnet_group_name` and the group's `subnet_ids`. One subnet places the workload within that subnet; multiple subnets use their nearest common parent. Unresolved, dynamic, literal or incompatible references leave placement unchanged. The subnet-group card and dependencies are preserved. See [RDS subnet-group example](examples/rds-subnet-group.svg).
 
