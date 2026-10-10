@@ -101,17 +101,54 @@ pub(in crate::layout) fn connect(
     {
         return None;
     }
-    let middle = search::search(first, last, obstacles, scorer, Some((start.side, end.side)))?;
-    let path = simplify(
-        std::iter::once(start.point)
-            .chain(middle)
-            .chain(std::iter::once(end.point)),
-        Simplification::PreserveReversals,
-    );
-    (!path
-        .windows(2)
-        .any(|p| obstacles.iter().any(|&b| crosses(p[0], p[1], b))))
-    .then_some(path)
+    let default_scorer = Scorer::default();
+    let quality = scorer.unwrap_or(&default_scorer);
+    let mut candidates = super::simple::candidates(start.point, end.point)
+        .into_iter()
+        .filter(|path| valid(path, start, end, obstacles))
+        .collect::<Vec<_>>();
+    if let Some(middle) =
+        search::search(first, last, obstacles, scorer, Some((start.side, end.side)))
+    {
+        let path = simplify(
+            std::iter::once(start.point)
+                .chain(middle)
+                .chain(std::iter::once(end.point)),
+            Simplification::PreserveReversals,
+        );
+        if valid(&path, start, end, obstacles) {
+            candidates.push(path);
+        }
+    }
+    candidates
+        .into_iter()
+        .min_by_key(|path| quality.score(path, obstacles))
+}
+
+pub(in crate::layout) fn valid(
+    path: &[Point],
+    start: Port,
+    end: Port,
+    obstacles: &[Bounds],
+) -> bool {
+    let forward = |port: Port, other: Point| match port.side {
+        Side::Left => other.y == port.point.y && other.x < port.point.x,
+        Side::Right => other.y == port.point.y && other.x > port.point.x,
+        Side::Top => other.x == port.point.x && other.y < port.point.y,
+        Side::Bottom => other.x == port.point.x && other.y > port.point.y,
+    };
+    path.len() >= 2
+        && forward(start, path[1])
+        && forward(end, path[path.len() - 2])
+        && (path.len() == 2
+            || (start.point.x.abs_diff(path[1].x) + start.point.y.abs_diff(path[1].y) >= 16
+                && end.point.x.abs_diff(path[path.len() - 2].x)
+                    + end.point.y.abs_diff(path[path.len() - 2].y)
+                    >= 16))
+        && path.windows(2).all(|p| {
+            (p[0].x == p[1].x || p[0].y == p[1].y)
+                && obstacles.iter().all(|&b| !crosses(p[0], p[1], b))
+        })
 }
 
 #[test]
