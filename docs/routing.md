@@ -33,6 +33,8 @@ then assigns geometry-ordered slots on the selected sides and reroutes. Side
 choices remain fixed during this refinement; card width does not expand for
 top/bottom demand. Rank-lane bundles retain their alignment; refined nested
 routes use independent paths to keep the selected per-side demand fixed.
+Ancestor/descendant routes also retain their allocated sides during refinement;
+the container-boundary shortcut does not reselect their endpoints afterward.
 
 Structural keys make ordering deterministic under input reordering. Symmetric
 resources use complete Terraform identities as a final tie-breaker; renaming a
