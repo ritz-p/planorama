@@ -39,13 +39,11 @@ pub struct Endpoint {
     pub address: String,
 }
 
-/// Evidence mechanism is separate from the cross-state architecture endpoints.
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub enum CrossStateProvenance {
     TerraformRemoteState { remote: String, output: String },
 }
 
-/// A dependency with explicit provenance, never cross-state containment.
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub struct CrossStateEdge {
     pub from: Endpoint,
@@ -88,7 +86,6 @@ pub struct Resolution {
     pub diagnostics: Vec<CrossDiagnostic>,
 }
 
-/// State-local architecture graphs plus dependencies with cross-state provenance.
 pub struct Architecture {
     pub states: std::collections::BTreeMap<StateId, super::ArchitectureGraph>,
     pub relationships: Vec<CrossStateEdge>,

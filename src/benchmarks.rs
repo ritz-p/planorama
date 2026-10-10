@@ -1,4 +1,3 @@
-//! Opt-in, offline pipeline measurements. See docs/benchmarks.md.
 use serde_json::json;
 use std::time::Instant;
 
@@ -84,7 +83,6 @@ fn pipeline() {
     println!(
         "pattern,nodes,edges,run,input_bytes,input_fnv1a,svg_bytes,parse_ms,semantic_ms,layout_ms,render_ms,total_ms"
     );
-    // Untimed warmup for allocator and code pages, without doing large routing work.
     let warm = crate::semantic::transform(&crate::plan::parse(&generate(20, false)).unwrap());
     std::hint::black_box(crate::svg::render(
         &warm,

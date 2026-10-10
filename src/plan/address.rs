@@ -20,7 +20,6 @@ pub(super) fn module_of(address: &str) -> String {
     crate::model::module_of(address).to_owned()
 }
 
-// Split traversals only outside index expressions and quoted instance keys.
 pub(super) fn parts(address: &str) -> Vec<&str> {
     let (mut start, mut depth, mut quoted, mut escaped) = (0, 0usize, false, false);
     let mut result = Vec::new();
@@ -72,8 +71,6 @@ pub(super) fn full_splat(part: &str) -> bool {
     part.strip_prefix(name(part)) == Some("[*]")
 }
 
-// Full splats select every instance, unlike an unknown keyed selection. Only
-// output provenance opts into this; dependency/semantic resolution is unchanged.
 pub(super) fn dynamic_selection_with_splats(
     reference: &str,
     resource_address: Option<&str>,
@@ -90,8 +87,6 @@ pub(super) fn dynamic_selection_with_splats(
     })
 }
 
-// Collapse only explicitly splatted dimensions. Differences in any other
-// module/resource dimension still represent an ambiguous instance selection.
 pub(super) fn selection_group(reference: &str, instance: &str) -> String {
     parts(reference)
         .iter()
@@ -109,14 +104,11 @@ pub(super) fn selection_group(reference: &str, instance: &str) -> String {
 
 pub(super) fn meta_reference(reference: &str) -> bool {
     let parts = parts(reference);
-    // Local iteration metadata is preserved unqualified by qualify_reference.
-    // A module-qualified traversal always denotes an output, even if absent.
     let local = parts.as_slice();
     matches!(local, ["count", "index"] | ["each", "key"])
         || matches!(local, ["each", value, ..] if name(value) == "value")
 }
 
-// Attribute traversals after the resource address do not select instances.
 pub(super) fn matches_instance(reference: &str, instance: &str) -> bool {
     parts(reference)
         .iter()
@@ -127,8 +119,6 @@ pub(super) fn matches_instance(reference: &str, instance: &str) -> bool {
         })
 }
 
-// Carry the concrete module scope through locals, outputs and input aliases.
-// A reference to an ancestor or an unrelated module keeps its own scope.
 pub(super) fn contextualize(reference: &str, context: &str) -> String {
     if let Some(reference) = reference.strip_prefix(MODULE_REFERENCE) {
         return format!("{MODULE_REFERENCE}{}", contextualize(reference, context));
@@ -154,8 +144,6 @@ pub(super) fn contextualize(reference: &str, context: &str) -> String {
     reference.join(".")
 }
 
-// Internal tag preserves caller-visible module traversals through qualification.
-// It is never a Terraform address and is removed before resolving/displaying.
 pub(super) const MODULE_REFERENCE: &str = "@module:";
 
 #[cfg(test)]

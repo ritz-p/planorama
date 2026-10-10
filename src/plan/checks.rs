@@ -13,8 +13,6 @@ pub(super) fn parse(value: &Value, nodes: &[TerraformEntity]) -> Vec<CheckResult
     if checks.is_empty() {
         return Vec::new();
     }
-    // None records an ambiguous address or a deposed-only object. Keep that
-    // state even if a later node with the same address is current.
     let mut resources = HashMap::with_capacity(nodes.len());
     for node in nodes {
         resources

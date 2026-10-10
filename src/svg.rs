@@ -1,4 +1,3 @@
-//! SVG presentation of resolved architecture and layout; no semantic inference.
 mod checks;
 mod components;
 mod containers;

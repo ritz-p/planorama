@@ -1,4 +1,3 @@
-//! Static provider dispatch. Concrete resource/attribute rules belong to providers.
 pub(crate) mod aws;
 
 pub(crate) fn classify(

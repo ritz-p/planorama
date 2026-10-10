@@ -1,4 +1,3 @@
-//! Shared routing geometry, occupancy/scoring and orthogonal search primitives.
 use super::{Bounds, Point};
 mod coverage;
 pub(super) mod ports;

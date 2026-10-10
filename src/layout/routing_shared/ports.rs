@@ -1,8 +1,6 @@
 use super::{Bounds, Point, Scorer, Simplification, crosses, search, simplify};
 use crate::layout::{Port, Side};
 
-/// Compare geometry-facing port pairs with the router's existing candidate.
-/// Blocked candidates are omitted; existing bundling decisions stay with callers.
 pub(in crate::layout) fn select(
     source: Bounds,
     target: Bounds,
@@ -42,8 +40,6 @@ pub(in crate::layout) fn select(
         }
         for quality in [None, Some(scorer)] {
             if let Some(candidate) = connect(start, end, obstacles, quality) {
-                // Integer port projection onto shorter sides must not merge
-                // independently allocated incident slots on high-degree nodes.
                 if (start.point != first && scorer.uses_endpoint(start.point))
                     || (end.point != last && scorer.uses_endpoint(end.point))
                 {

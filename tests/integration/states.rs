@@ -149,7 +149,6 @@ fn hard_linked_output_cannot_truncate_single_or_named_inputs() {
         assert_eq!(std::fs::read(&input).unwrap(), bytes);
         assert_eq!(std::fs::read(&alias).unwrap(), bytes);
     }
-    // Equal contents in a distinct file must not be mistaken for identity.
     std::fs::write(&separate, bytes).unwrap();
     let output = cli().arg(&input).arg("-o").arg(&separate).output().unwrap();
     assert!(output.status.success());

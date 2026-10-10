@@ -120,7 +120,6 @@ pub(super) fn infer(raw: &Input, mut graph: Graph) -> Graph {
     graph
 }
 
-/// Only the containment ancestry used by common_parent can support this rule.
 pub(super) fn evidence(
     graph: &Graph,
     ancestor: usize,

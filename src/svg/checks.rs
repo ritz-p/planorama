@@ -2,7 +2,6 @@ use crate::model::architecture::CheckResult;
 use std::fmt::Write;
 
 pub(super) fn render(checks: &[CheckResult]) -> String {
-    // Count static objects only: instance statuses are details, not extra checks.
     let mut counts = [0usize; 6];
     let mut details = String::new();
     for check in checks {

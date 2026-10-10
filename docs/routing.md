@@ -1,65 +1,57 @@
-# Geometry-aware attachment
+# Layout and routing
 
-## Layout/routing integration (#82)
-
-| Stage | Shared contract | Implemented in |
+| Stage | Contract | Implementation |
 | --- | --- | --- |
-| Derived hierarchy | `ContainmentTree`: unique parents, deterministic children/roots, inclusive ancestry, cycle/ambiguity handling | #83 `layout/containment.rs` |
-| Geometry | `Bounds`, `Point`, `Side`, `Port`; actual card/container dimensions | #84 `layout/geometry.rs` |
-| Routing primitives | Obstacle intersection, segment coverage, scoring, orthogonal search, explicit simplification policies | #85 `layout/routing_shared` |
-| Orchestration | One hierarchy → placement → routing → final geometry pipeline; specialized strategies below stages | #86 `layout/pipeline.rs` |
+| Hierarchy | Unique parents, deterministic roots/children, ancestry, cycle handling | `layout/containment.rs` |
+| Geometry | Bounds, points, four-sided ports | `layout/geometry.rs` |
+| Shared routing | Obstacles, coverage, scoring, orthogonal search | `layout/routing_shared` |
+| Pipeline | Hierarchy → placement → routing → final geometry | `layout/pipeline.rs` |
 
-`Layout::new` constructs the hierarchy once. Both strategies retain it in the
-result; nested placement only computes geometry, and routing uses that same
-hierarchy for endpoint ancestry and obstacles. Flat routing keeps rank lanes and
-bundling; nested routing keeps recursive packing and endpoint-aware search. They
-share geometry, occupancy and candidate scoring rather than becoming one oversized
-router. Named-state margin routes also use the shared search.
+`Layout::new` builds one containment tree. Ambiguous or cyclic containment remains
+an edge rather than nesting. Both placement strategies share the tree and actual
+card/container bounds.
 
-The integration preserves semantic edges, containment and provider classification.
-The extraction commits #83–#86 intentionally leave SVGs unchanged. #81 separately
-introduces the visual changes described below. Regression coverage includes nested
-roots/cycles, variable-sized bounds, crowded lanes, high-degree ports, spanning
-bundles, module/input reordering, captured Terraform plans and checked-in SVGs.
+## Placement
 
-Validation uses the Docker service:
+With containers, direct children occupy columns based on non-containment
+relationships; descendant relationships influence sibling ranks. Cycles share a
+column. Dense ranks wrap into adjacent columns, and containers grow around their
+children. Related subnet containers can be kept adjacent to shorten connections.
+Module membership does not control containment or create module bands.
 
-```sh
-docker compose exec -T dev cargo fmt --check
-docker compose exec -T dev cargo clippy --locked --all-targets -- -D warnings
-docker compose exec -T dev cargo test --locked
-```
+Without containers, resources use module bands and dependency ranks. Long edges
+participate in ordering through virtual intermediate vertices, which are not
+rendered as cards. Address labels, action metadata and provider roles do not change
+during layout.
 
-The final integration passes 323 tests; the opt-in benchmark is ignored in the
-normal suite. Performance measurements are documented separately in
-[benchmarking](benchmarks.md). Port-candidate evaluation adds search work;
-the routing improvements are not a claim of faster execution.
+Structural keys make ordering deterministic under input reordering. Symmetric
+resources use complete Terraform identities as a final tie-breaker; renaming a
+module can therefore change the order of otherwise indistinguishable resources.
 
-## Attachment policy
+## Paths and attachment
 
-Layout derives a containment tree once, places cards/containers, then routes
-their relationships. Flat and nested strategies share bounds, four-sided ports,
-obstacle intersection, segment occupancy, scoring and orthogonal grid search.
+Flat routing uses rank lanes and compatible fan-in/fan-out bundles. Nested routing
+uses recursive packing and obstacle-aware search, with shared gutters for compatible
+subnet connections. Bundled edges retain individual metadata and junction markers.
+See [bundling](../examples/bundling.svg) and [spanning connections](../examples/spanning-dense.svg).
 
-For independent paths, both routers compare their existing route with facing
-port pairs: right/left for a target to the right, left/right for a target to the
-left, and bottom/top or top/bottom for vertically separated bounds. Diagonal
-separation may offer both orientations. Actual expanded container bounds are
-used. Stubs leave the selected side outward; blocked candidates are discarded.
-An already selected compatible bundle retains its shared route and junctions.
+Independent paths compare the existing route with facing side pairs on actual
+bounds. Outward stubs and distinct endpoint slots protect labels and high-degree
+ports. Unrelated cards/container interiors are obstacles; endpoint ancestors permit
+traversal outside their headers.
 
-Selection is deterministic and prioritizes obstacle crossings, overlap, edge
-crossings, bends and length in that order. Unrelated container interiors stay
-obstacles; only the endpoints' containment ancestry is relaxed to header bounds.
-Endpoint slots remain distinct even when projected onto a shorter side. A
-candidate that does not improve the score leaves the original route in place.
-This is local route optimization, not a global optimality guarantee.
+Candidate scoring prioritizes obstacle crossings, overlap, edge crossings, bends
+and length. Occupancy-aware alternatives discourage crowded corridors. Selection
+is deterministic but local, so it does not guarantee a global optimum or a crossing-free
+diagram. Named-state edges use shared search with an external state gutter.
 
-The dense unit-test graph changes from 896 to 739 crossings and from 88,372 to
-86,722 units of path length; bends change from 128 to 136. Overlap remains zero.
-The corresponding deterministic regression was intentionally updated for #81.
-The earlier refactors #83–#86 preserve output; #81 is the visual behavior change.
+SVG rendering consumes the final geometry and rounds corners without changing
+relationship identity. Nested containment edges receive no redundant path.
 
-Named-state edges continue to use the shared orthogonal search and an external
-state gutter. Their explicit state/output provenance and obstacle rules remain
-separate from state-local port selection.
+## Verification
+
+Tests cover hierarchy, variable-sized bounds, dense routing, bundles, input/module
+reordering and SVG regressions. `tests/support/layout_metrics.rs` measures pairwise
+overlap, internal orthogonal crossings, bends and length; endpoint contacts and
+self-crossings are excluded. Run the [Docker checks](../README.md#開発・検証).
+Performance measurements are documented in [benchmarks](benchmarks.md).

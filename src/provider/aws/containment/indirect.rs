@@ -25,7 +25,6 @@ fn static_reference<'a>(
         })
 }
 
-/// Resolve both hops identically for placement and fallback diagnostics.
 pub(in crate::provider::aws) fn resolved_subnets(raw: &Input, target: usize) -> Option<&[usize]> {
     let group_ref = static_reference(raw, target, "db_subnet_group_name")?;
     let [group] = group_ref.sources.as_slice() else {
@@ -93,7 +92,6 @@ pub(super) fn infer(raw: &Input, mut graph: Graph) -> Graph {
             EdgeKind::Containment,
             proof,
         );
-        // Keep the group card and both dependency hops; only add the derived scope.
         if let Some(edge) = graph
             .edges
             .iter_mut()

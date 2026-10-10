@@ -2,7 +2,6 @@ use super::containers::ordering;
 use crate::model::architecture::{EdgeKind, Graph, ResourceRole};
 use std::collections::BTreeSet;
 
-/// Derived geometry hierarchy. Ambiguous parents and ancestry cycles stay roots.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub(crate) struct ContainmentTree {
     pub parents: Vec<Option<usize>>,
@@ -38,7 +37,6 @@ impl ContainmentTree {
             keys,
         }
     }
-    /// Inclusive ancestry, also useful for identifying endpoint-owned obstacles.
     pub fn is_ancestor(&self, ancestor: usize, mut node: usize) -> bool {
         loop {
             if ancestor == node {

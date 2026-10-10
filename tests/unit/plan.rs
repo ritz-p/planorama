@@ -268,7 +268,6 @@ fn real_terraform_plan_preserves_module_dependencies() {
         "module.service[\"api\"].module.nested.terraform_data.leaf",
     )));
     assert_eq!(edges.len(), 28);
-    // Previously these references expanded to all four workers for both leaves.
     for scope in ["api", "web"] {
         let leaf = format!("module.service[\"{scope}\"].module.nested.terraform_data.leaf");
         let workers: Vec<_> = edges

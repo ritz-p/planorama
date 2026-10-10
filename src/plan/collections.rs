@@ -1,4 +1,3 @@
-//! Check planned identifier collections without retaining values in the graph.
 use crate::model::{AttributeReference, TerraformEntity};
 use serde_json::Value;
 use std::collections::BTreeMap;
@@ -80,7 +79,6 @@ pub(super) fn annotate(
     references: &mut [AttributeReference],
 ) {
     let mut values = BTreeMap::new();
-    // Prior data can supply IDs when a cached data read has no resource change.
     let mut prior = BTreeMap::new();
     resources(&plan["prior_state"]["values"]["root_module"], &mut prior);
     resources(&plan["planned_values"]["root_module"], &mut values);
@@ -131,8 +129,6 @@ pub(super) fn annotate(
         let (value, unknown) = evidence[reference.target];
         if let [source] = reference.sources.as_slice() {
             let (source_value, source_unknown) = evidence[*source];
-            // Unknown values do not prove identity: a conditional can return
-            // an unrelated ID even when every resource traversal ends in .id.
             if !reference.attribute.contains('.')
                 && unknown != &Value::Bool(true)
                 && source_unknown != &Value::Bool(true)

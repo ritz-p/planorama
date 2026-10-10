@@ -2,8 +2,6 @@ use crate::model::{Diagnostic, DiagnosticReason as Reason, EntityMode};
 use crate::semantic::Input;
 use std::collections::BTreeSet;
 
-/// Explain conservative inference using the same attribute resolutions as transforms.
-/// Only addresses, attribute names and fixed category text can reach the output.
 pub fn collect(plan: &crate::model::TerraformPlan) -> Vec<Diagnostic> {
     let input = Input::new(plan);
     let raw = &input;
@@ -28,7 +26,6 @@ pub fn collect(plan: &crate::model::TerraformPlan) -> Vec<Diagnostic> {
             },
         });
     }
-    // Reuse actual inference so ancestry handling stays aligned with rendering.
     let contained = super::containment::infer(raw);
     for (reference, dependency_metadata) in raw
         .attributes
@@ -56,9 +53,6 @@ pub fn collect(plan: &crate::model::TerraformPlan) -> Vec<Diagnostic> {
                     )
             ));
         for &reason in &reference.issues {
-            // Network collections (including the aggregate ECS block) and
-            // dependency metadata legitimately resolve to multiple instances.
-            // Semantic endpoint types are checked separately below.
             let whole_dependency = dependency_metadata;
             if reason == Reason::MultipleMatchingInstances && (plural || whole_dependency) {
                 continue;
@@ -105,8 +99,6 @@ pub fn collect(plan: &crate::model::TerraformPlan) -> Vec<Diagnostic> {
                 }
             }
         }
-        // Security-group attachment attributes are optional; absent attributes
-        // do not imply missing provenance or an invalid Terraform configuration.
         if let Some(attribute) = super::security_groups::attribute(&node.resource_type) {
             if let Some(reference) = raw
                 .attributes
@@ -163,7 +155,6 @@ pub fn collect(plan: &crate::model::TerraformPlan) -> Vec<Diagnostic> {
             let reason = match reference {
                 None => Some(Reason::MissingAttribute),
                 Some(r) if !r.complete || r.sources.is_empty() => {
-                    // Detailed resolution failures have already been emitted.
                     if r.issues.is_empty() {
                         Some(if r.sources.is_empty() {
                             Reason::NoResourceReference

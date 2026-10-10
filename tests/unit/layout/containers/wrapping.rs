@@ -34,8 +34,6 @@ fn dense_same_rank_and_root_groups_wrap_without_changing_containment() {
         .collect();
     assert!(subnet_x.len() >= 2);
     assert!(root_x.len() >= 2);
-    // The old single-column diagram was 2248 px tall. Keep both dimensions
-    // bounded rather than merely trading a vertical strip for a horizontal one.
     assert!(layout.height < 1500, "{} x {}", layout.width, layout.height);
     assert!(layout.width < 2500, "{} x {}", layout.width, layout.height);
     assert_eq!(graph, original);

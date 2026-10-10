@@ -1,4 +1,3 @@
-//! AWS classification, architecture inference, diagnostics and icon mappings.
 mod associations;
 mod classification;
 mod components;

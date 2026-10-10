@@ -69,7 +69,6 @@ fn remove_resource_bindings(
     if let Some(calls) = module["module_calls"].as_object() {
         for (name, call) in calls {
             let child = super::references::qualify(scope, &format!("module.{name}"));
-            // A module value exposes its outputs, never its internal resources.
             let outputs = call["module"]["outputs"]
                 .as_object()
                 .into_iter()

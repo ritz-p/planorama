@@ -6,6 +6,14 @@ Supported route resources retain their operation metadata when lowered to [route
 
 Plan-level checks, including resource preconditions and postconditions, are documented in [Terraform check results](checks.md).
 
+## Resource moves and deposed objects
+
+`previous_address` retains Terraform-reported move provenance without becoming a
+reference alias. Cards and lowered edges expose it as `data-previous-address`.
+The current address and optional deposed key identify separate objects; old objects
+retain their own actions and `data-deposed-key`. Current configuration and planned
+values apply only to current objects.
+
 ## Replacement reasons
 
 Replacement path strings can also be collection keys or set elements. Before retaining paths, both `before_sensitive` and `after_sensitive` are checked. Paths entering a sensitive subtree are omitted in full (including when only a descendant is marked sensitive), so secret keys never reach the model, SVG titles, or data attributes. Other paths remain available; omitted paths are not replaced with misleading truncated paths.

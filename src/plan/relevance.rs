@@ -49,7 +49,6 @@ pub(super) fn collect(
             continue;
         }
         let index = addresses.get(resource).copied().flatten();
-        // Unresolved sources provide no trustworthy sensitivity context.
         let hidden = index.is_none()
             || sensitivity.get(resource).is_some_and(|trees| {
                 trees

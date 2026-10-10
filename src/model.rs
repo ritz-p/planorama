@@ -1,4 +1,3 @@
-//! Domain contracts shared by ingestion, architecture, view and presentation.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub enum Action {
     Unchanged,
@@ -54,8 +53,6 @@ pub struct Graph {
     pub edges: Vec<Edge>,
 }
 
-/// Status reported by one input plan; absent flags remain unknown.
-/// Multiple plans must retain their own status rather than combining flags.
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 pub struct PlanStatus {
     pub applyable: Option<bool>,

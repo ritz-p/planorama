@@ -8,7 +8,7 @@ The selected original SVG files are stored unchanged under `assets/icons/aws/`. 
 
 AWS owns these assets. They are **not MIT-licensed**. The official page permits customers and partners to use the assets in architecture diagrams; the [AWS Site Terms](https://aws.amazon.com/terms/) also apply. The downloaded package contains SVG/PNG assets and no separate license document. This is not a grant of unrestricted redistribution or sublicensing rights. The selected assets support this AWS architecture diagram renderer, not a standalone icon distribution service. For other uses, consult AWS's terms or obtain permission. Planorama does not imply AWS endorsement.
 
-`assets/icons/aws/NOTICE.txt` records ownership and source, and is embedded once in every diagram containing official icons. The previous original-glyph MIT notice has been removed because it does not apply to these assets.
+`assets/icons/aws/NOTICE.txt` records ownership and source, and is embedded once in every diagram containing official icons.
 
 ## Rendering and mapping
 

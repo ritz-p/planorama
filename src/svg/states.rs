@@ -159,7 +159,6 @@ pub fn render_states(
     )
 }
 
-// Hex encoding is injective and independent of file paths and input ordering.
 fn prefix(id: &StateId) -> String {
     let mut prefix = String::from("state-");
     for byte in id.as_str().bytes() {
@@ -170,8 +169,6 @@ fn prefix(id: &StateId) -> String {
 }
 
 fn namespace(svg: &str, prefix: &str) -> String {
-    // These are renderer-owned quoted attributes. User content is XML-escaped
-    // before this stage, so it cannot masquerade as an attribute or reference.
     let mut scoped = svg
         .replace(" id=\"", &format!(" id=\"{prefix}"))
         .replace(

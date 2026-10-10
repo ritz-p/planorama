@@ -8,8 +8,6 @@ pub(super) fn expression_object(fields: &serde_json::Map<String, Value>) -> bool
         return false;
     }
     if let Some(values) = fields.get("references").and_then(Value::as_array) {
-        // Empty arrays need sibling evidence to distinguish a block from an
-        // empty reference expression. Literal metadata is not such evidence.
         if values.is_empty() {
             return !fields.iter().any(|(name, value)| {
                 name != "references"
@@ -17,11 +15,8 @@ pub(super) fn expression_object(fields: &serde_json::Map<String, Value>) -> bool
                     && (value.is_object() || value.is_array())
             });
         }
-        // Reference metadata contains strings, whereas child blocks contain objects.
         return !values.iter().all(Value::is_object);
     }
-    // A direct block contains expression objects as fields. A lone
-    // constant_value remains a literal: its object contents are ambiguous.
     !(fields
         .values()
         .all(|value| value.is_object() || value.is_array())
@@ -40,8 +35,6 @@ pub(super) fn references(value: &Value, found: &mut BTreeSet<String>) {
                 return;
             }
             if let Some(refs) = object.get("references").and_then(Value::as_array) {
-                // Terraform emits traversal prefixes alongside the full reference.
-                // Keep the most specific traversals within this expression.
                 let refs: Vec<_> = refs.iter().filter_map(Value::as_str).collect();
                 found.extend(
                     refs.iter()
@@ -64,8 +57,6 @@ pub(super) fn references(value: &Value, found: &mut BTreeSet<String>) {
         }
         Value::Array(values) => {
             for value in values {
-                // Arrays in configuration expressions contain block field maps.
-                // Their field names are provider attributes, not expression metadata.
                 if let Value::Object(fields) = value {
                     for expression in fields.values() {
                         references(expression, found);
@@ -94,9 +85,6 @@ pub(super) fn qualify_reference(scope: &str, reference: &str) -> String {
             qualify(scope, reference)
         );
     }
-    // Iteration context has no resource identity. Keep its original root so
-    // it cannot collide with a module output named count or each. Explicit
-    // module traversals still receive normal lexical qualification.
     if builtin_value(reference)
         || (!reference.starts_with("module.") && super::address::meta_reference(reference))
     {
@@ -121,8 +109,6 @@ pub(super) fn collect_config(
 ) {
     if let Some(variables) = module["variables"].as_object() {
         for name in variables.keys() {
-            // Preserve supplied module-input aliases: they may carry actual
-            // resource provenance. Declarations/defaults alone carry none.
             symbols
                 .entry(qualify(scope, &format!("var.{name}")))
                 .or_default();
@@ -229,7 +215,6 @@ pub(super) fn resolve(
     let instances = instance_map(nodes);
     let mut edges = BTreeSet::new();
     for (target, node) in nodes.iter().enumerate() {
-        // Configuration describes the current object, not its deposed predecessors.
         if node.deposed_key.is_some() {
             continue;
         }
@@ -338,8 +323,6 @@ fn resolve_with_policy(
             .filter(|key| output_binding.is_none() && prefix_match(&normalized, key))
             .max_by_key(String::len);
         let metadata = super::address::meta_reference(reference);
-        // Module outputs named count/each take precedence over the syntactic
-        // metadata heuristic, including outputs whose values have no sources.
         let selection_key = resource_key.as_deref().or_else(|| {
             exact_sources
                 .then(|| binding.map(|(key, _)| key.as_str()))
@@ -353,16 +336,12 @@ fn resolve_with_policy(
         if dynamic || (metadata && binding.is_none()) {
             issues.insert(DiagnosticReason::DynamicInstanceSelection);
         }
-        // Terraform emits iteration metadata as standalone traversals. It is
-        // dynamic context, not a missing resource or alias, even in modules.
         if metadata && binding.is_none() {
             complete = false;
             continue;
         }
 
         if let Some(key) = resource_key {
-            // Terraform can split a dynamic selector from its collection traversal.
-            // Even one current instance does not prove which element was selected.
             let implicit_collection = exact_sources
                 && normalized == key
                 && super::address::parts(reference)
@@ -412,17 +391,10 @@ fn resolve_with_policy(
         }
         match binding {
             Some((key, aliases)) if !aliases.is_empty() => {
-                // Selecting a field of an alias is not proof that its underlying
-                // resource ID is the selected value.
                 ids_only &= normalized == *key;
-                // Flattened expression references cannot prove which aggregate
-                // field/index supplies a narrowed value, even for static selection.
                 let key_parts = super::address::parts(key);
                 let module_object = key_parts.len() % 2 == 0
                     && key_parts.chunks_exact(2).all(|pair| pair[0] == "module");
-                // Like resource collections, Terraform may serialize a module
-                // selector separately. A lone existing instance is not evidence
-                // that an unindexed module traversal selects that instance.
                 let implicit_collection = exact_sources
                     && module_object
                     && normalized == *key
@@ -460,9 +432,6 @@ fn resolve_with_policy(
                 }));
             }
             Some(_) => {
-                // A defined constant alias is not missing. It contributes no
-                // resource provenance, so semantic inference stays conservative
-                // without producing an unresolved-reference diagnostic.
                 complete = false;
             }
             None if normalized.starts_with("module.") => {
@@ -472,9 +441,6 @@ fn resolve_with_policy(
                     continue;
                 }
                 ids_only = false;
-                // A whole-module traversal denotes all matching descendants,
-                // not a choice of one endpoint. Multiplicity is expected even
-                // when other traversals in the expression remain unresolved.
                 let matching: Vec<_> = instances
                     .iter()
                     .filter(|(address, _)| {

@@ -58,8 +58,6 @@ fn symmetric_peers_keep_ports_and_routes_when_edges_are_reordered() {
         after.paths.into_iter().rev().collect::<Vec<_>>()
     );
 
-    // Qualified identities must retain their geometry and routes even when
-    // structurally identical nodes move to different input indices.
     for nested in [true, false] {
         let mut original = graph.clone();
         if !nested {
@@ -134,12 +132,7 @@ fn congested_container_routes_improve_over_shortest_paths() {
         routing::route_with_quality(&graph, &layout, &ordering::structural_keys(&graph), true);
     let new = measure(&scored);
     eprintln!("shortest: {old:?}; scored: {new:?}");
-    // With spanning-resource placement, endpoint-aware bend costs can trade
-    // some overlap for fewer crossings. Still require a two-thirds reduction
-    // as well as the combined readability improvement below.
     assert!(new.overlap_distance < old.overlap_distance / 3);
-    // Separating coincident lines exposes crossings that overlap-only metrics
-    // hide. Charge those explicitly rather than claiming crossings decreased.
     let cost = |m: &crate::layout::metrics::LayoutMetrics| {
         m.overlap_distance * 8
             + m.crossing_count as u128 * 2048
@@ -270,8 +263,6 @@ fn stub_junction_crossings_select_a_turn_away_detour() {
             scorer.readability_cost(&detour) < scorer.readability_cost(&direct),
             "start={start:?} direct={direct:?} detour={detour:?}"
         );
-        // Turning at the junction may overlap the occupied line briefly, but
-        // must avoid the 2048-point crossing exposed by a straight continuation.
         assert!(
             scorer.readability_cost(&detour) - Scorer::default().readability_cost(&detour) < 2048
         );

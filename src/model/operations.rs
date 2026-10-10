@@ -1,4 +1,3 @@
-/// Operation metadata excludes before/after values and sensitive import identities.
 #[derive(Clone, Debug, Default, PartialEq, Eq, PartialOrd, Ord)]
 pub struct ChangeMetadata {
     pub import: Option<ImportMetadata>,
@@ -6,7 +5,6 @@ pub struct ChangeMetadata {
     pub drift: std::collections::BTreeSet<super::Action>,
     pub action_reason: Option<String>,
     pub replace_paths: Option<Vec<Vec<AttributePathStep>>>,
-    /// Some means Terraform reports relevance; empty means all paths were redacted.
     pub relevant_attributes: Option<Vec<Vec<AttributePathStep>>>,
 }
 
@@ -29,7 +27,6 @@ pub struct DriftRecord {
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub struct RelevantAttribute {
     pub resource: String,
-    /// None when the path is sensitive or the source cannot be resolved safely.
     pub path: Option<Vec<AttributePathStep>>,
     pub matched: bool,
 }

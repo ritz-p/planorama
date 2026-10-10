@@ -1,4 +1,3 @@
-﻿# Only for this disposable fixture, not a sanitizer for arbitrary production plans.
 $ErrorActionPreference = 'Stop'
 $plan = Get-Content (Join-Path $PSScriptRoot 'raw.json') -Raw -Encoding UTF8 | ConvertFrom-Json
 $plan.PSObject.Properties.Remove('timestamp')
