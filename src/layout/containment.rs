@@ -11,6 +11,38 @@ pub(crate) struct ContainmentTree {
 }
 
 impl ContainmentTree {
+    pub fn routing_peers(
+        &self,
+        from: usize,
+        to: usize,
+        bounds: &[super::Bounds],
+    ) -> Vec<super::Bounds> {
+        if self.parents[from] != self.parents[to]
+            || self.is_ancestor(from, to)
+            || self.is_ancestor(to, from)
+        {
+            return Vec::new();
+        }
+        let a = bounds[from];
+        let b = bounds[to];
+        let y1 = a.origin.y + a.height / 2;
+        let y2 = b.origin.y + b.height / 2;
+        bounds
+            .iter()
+            .enumerate()
+            .filter_map(|(node, &obstacle)| {
+                (node != from
+                    && node != to
+                    && self.parents[node] == self.parents[from]
+                    && obstacle.origin.x >= a.right().min(b.right())
+                    && obstacle.right() <= a.origin.x.max(b.origin.x)
+                    && obstacle.origin.y < y1.min(y2)
+                    && obstacle.origin.y + obstacle.height > y1.max(y2))
+                .then_some(obstacle)
+            })
+            .collect()
+    }
+
     pub fn new(graph: &Graph) -> Self {
         let parents = parents(graph);
         let keys = ordering::structural_keys(graph);
