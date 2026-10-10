@@ -239,6 +239,7 @@ fn route_impl(
     };
     for &index in &order {
         let edge = &graph.edges[index];
+        scorer.set_soft(soft_obstacles(layout, edge));
         scorer.set_peers(
             layout
                 .containment
@@ -281,7 +282,7 @@ fn route_impl(
         paths[index] = path;
     }
     if shortcuts {
-        crate::layout::routing_shared::shortcuts::simplify_routes(
+        crate::layout::routing_shared::shortcuts::simplify_routes_with_soft(
             &mut paths,
             order
                 .into_iter()
@@ -291,6 +292,7 @@ fn route_impl(
                 barriers.extend_from_slice(&reservations);
                 barriers
             },
+            |index| soft_obstacles(layout, &graph.edges[index]),
         );
     }
     junctions.sort_by_key(|point| (point.x, point.y));
@@ -303,6 +305,9 @@ pub(super) fn obstacles(layout: &Layout<'_>, edge: &Edge) -> Vec<Bounds> {
         .bounds
         .iter()
         .enumerate()
+        .filter(|&(node, _)| {
+            layout.containers.contains(&node) || node == edge.from || node == edge.to
+        })
         .map(|(node, &bounds)| {
             if layout.containers.contains(&node)
                 && (layout.containment.is_ancestor(node, edge.from)
@@ -314,6 +319,18 @@ pub(super) fn obstacles(layout: &Layout<'_>, edge: &Edge) -> Vec<Bounds> {
             }
         })
         .chain(layout.scopes.iter().map(|panel| panel.bounds.header(36)))
+        .collect()
+}
+
+pub(super) fn soft_obstacles(layout: &Layout<'_>, edge: &Edge) -> Vec<Bounds> {
+    layout
+        .bounds
+        .iter()
+        .enumerate()
+        .filter_map(|(node, &bounds)| {
+            (!layout.containers.contains(&node) && node != edge.from && node != edge.to)
+                .then_some(bounds)
+        })
         .collect()
 }
 

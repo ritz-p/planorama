@@ -37,7 +37,10 @@ pub(super) fn search(
 ) -> Option<Vec<Point>> {
     let mut xs = vec![start.x, end.x];
     let mut ys = vec![start.y, end.y];
-    for bounds in obstacles {
+    for bounds in obstacles
+        .iter()
+        .chain(scorer.into_iter().flat_map(|s| s.soft()))
+    {
         for clearance in if scorer.is_some() {
             &[8, 16, 24][..]
         } else {
