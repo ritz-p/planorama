@@ -90,33 +90,6 @@ pub(in crate::layout) fn select_with_slots(
     best
 }
 
-pub(in crate::layout) fn best_with_slots(
-    source: Bounds,
-    target: Bounds,
-    slots: (&[usize; 4], &[usize; 4]),
-    obstacles: &[Bounds],
-    scorer: &Scorer,
-) -> Option<Vec<Point>> {
-    let baseline = std::iter::once((Side::Right, Side::Right))
-        .chain(facing_pairs(source, target))
-        .find_map(|(a, b)| {
-            connect(
-                source.port(a, slots.0[a as usize]),
-                target.port(b, slots.1[b as usize]),
-                obstacles,
-                Some(scorer),
-            )
-        })?;
-    Some(select_with_slots(
-        source,
-        target,
-        baseline,
-        obstacles,
-        scorer,
-        Some(slots),
-    ))
-}
-
 pub(in crate::layout) fn connect(
     start: Port,
     end: Port,
@@ -186,6 +159,16 @@ pub(in crate::layout) fn valid(
     end: Port,
     obstacles: &[Bounds],
 ) -> bool {
+    valid_with_clearance(path, start, end, obstacles, 16)
+}
+
+pub(in crate::layout) fn valid_with_clearance(
+    path: &[Point],
+    start: Port,
+    end: Port,
+    obstacles: &[Bounds],
+    clearance: usize,
+) -> bool {
     let forward = |port: Port, other: Point| match port.side {
         Side::Left => other.y == port.point.y && other.x < port.point.x,
         Side::Right => other.y == port.point.y && other.x > port.point.x,
@@ -196,10 +179,10 @@ pub(in crate::layout) fn valid(
         && forward(start, path[1])
         && forward(end, path[path.len() - 2])
         && (path.len() == 2
-            || (start.point.x.abs_diff(path[1].x) + start.point.y.abs_diff(path[1].y) >= 16
+            || (start.point.x.abs_diff(path[1].x) + start.point.y.abs_diff(path[1].y) >= clearance
                 && end.point.x.abs_diff(path[path.len() - 2].x)
                     + end.point.y.abs_diff(path[path.len() - 2].y)
-                    >= 16))
+                    >= clearance))
         && path.windows(2).all(|p| {
             (p[0].x == p[1].x || p[0].y == p[1].y)
                 && obstacles.iter().all(|&b| !crosses(p[0], p[1], b))

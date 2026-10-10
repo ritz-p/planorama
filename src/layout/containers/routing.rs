@@ -206,6 +206,37 @@ fn route_impl(
     let mut attempted = std::collections::BTreeSet::new();
     let mut junctions = Vec::new();
     let mut bundled_edges = vec![false; graph.edges.len()];
+    let independent = |index: usize, scorer: &Scorer| {
+        let edge = &graph.edges[index];
+        let start: Port = layout.bounds[edge.from].port(Side::Right, source_ports[index]);
+        let end = layout.bounds[edge.to].port(Side::Right, target_ports[index]);
+        let mut obstacles = obstacles(layout, edge);
+        obstacles.extend_from_slice(&reservations);
+        let path = path_with_clearance(
+            start.point,
+            end.point,
+            &obstacles,
+            quality.then_some(scorer),
+            if resource_edges[index] { clearance } else { 16 },
+        );
+        let path = if quality && !resource_edges[index] {
+            crate::layout::routing_shared::ports::select_with_slots(
+                layout.bounds[edge.from],
+                layout.bounds[edge.to],
+                path,
+                &obstacles,
+                scorer,
+                Some((&source_slots[index], &target_slots[index])),
+            )
+        } else {
+            path
+        };
+        if !resource_edges[index] {
+            container_endpoint_path(layout, edge, path, &obstacles, scorer)
+        } else {
+            path
+        }
+    };
     for &index in &order {
         let edge = &graph.edges[index];
         scorer.set_peers(
@@ -229,10 +260,10 @@ fn route_impl(
                         graph,
                         layout,
                         group,
-                        &source_slots,
-                        &target_slots,
+                        (&source_slots, &target_slots),
                         &scorer,
                         &reservations,
+                        independent,
                     ) {
                         for (index, path) in bundled.paths {
                             bundled_edges[index] = true;
@@ -245,34 +276,7 @@ fn route_impl(
                 }
             }
         }
-        let start: Port = layout.bounds[edge.from].port(Side::Right, source_ports[index]);
-        let end = layout.bounds[edge.to].port(Side::Right, target_ports[index]);
-        let mut obstacles = obstacles(layout, edge);
-        obstacles.extend_from_slice(&reservations);
-        let path = path_with_clearance(
-            start.point,
-            end.point,
-            &obstacles,
-            quality.then_some(&scorer),
-            if resource_edges[index] { clearance } else { 16 },
-        );
-        let path = if quality && !resource_edges[index] {
-            crate::layout::routing_shared::ports::select_with_slots(
-                layout.bounds[edge.from],
-                layout.bounds[edge.to],
-                path,
-                &obstacles,
-                &scorer,
-                Some((&source_slots[index], &target_slots[index])),
-            )
-        } else {
-            path
-        };
-        let path = if !resource_edges[index] {
-            container_endpoint_path(layout, edge, path, &obstacles, &scorer)
-        } else {
-            path
-        };
+        let path = independent(index, &scorer);
         scorer.insert(path.clone());
         paths[index] = path;
     }
