@@ -28,6 +28,19 @@ pub struct ArchitectureRelationship {
 }
 
 impl ArchitectureRelationship {
+    pub fn derived_containment(&self) -> bool {
+        self.kind == EdgeKind::Containment
+            && self.inferred
+            && !self.provenance.is_empty()
+            && !self.provenance.iter().any(|proof| match proof {
+                RelationshipProvenance::Reference { from, to } => {
+                    ArchitectureId::terraform(from) == self.from
+                        && ArchitectureId::terraform(to) == self.to
+                }
+                RelationshipProvenance::Resource { .. } => false,
+            })
+    }
+
     pub fn new(
         from: ArchitectureId,
         to: ArchitectureId,
