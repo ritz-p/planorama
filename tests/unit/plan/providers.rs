@@ -167,3 +167,63 @@ fn equal_provider_aliases_remain_scoped_to_their_named_states() {
         plan::parse_inputs(vec![input("second"), input("first")]).unwrap()
     );
 }
+
+#[test]
+fn current_provider_binding_is_not_applied_to_deposed_predecessors() {
+    for explicit_source in [false, true] {
+        for current_present in [false, true] {
+            let mut value = fixture();
+            let address = "aws_vpc.default[0]";
+            let mut predecessor = json!({
+                "address":address, "type":"aws_vpc", "deposed":"old",
+                "change":{"actions":["delete"]}
+            });
+            let expected_source = if explicit_source {
+                predecessor["provider_name"] = json!("acme/historical");
+                ProviderIdentity::from_source("acme/historical")
+            } else {
+                ProviderIdentity::inferred("aws_vpc")
+            };
+            let changes = value["resource_changes"].as_array_mut().unwrap();
+            if current_present {
+                changes[0] =
+                    json!({"address":address,"type":"aws_vpc","change":{"actions":["create"]}});
+            } else {
+                changes.remove(0);
+            }
+            changes.push(predecessor);
+            value["configuration"]["root_module"]["resources"][0]["provider_config_key"] =
+                json!("aws.tokyo");
+            let raw = plan::parse(&value.to_string()).unwrap();
+            let graph = semantic::transform(&raw);
+            let old = raw
+                .nodes
+                .iter()
+                .find(|n| n.address == address && n.deposed_key.is_some())
+                .unwrap();
+            assert!(old.provider_configuration.is_none());
+            assert_eq!(old.provider, expected_source);
+            let projected = graph
+                .nodes
+                .iter()
+                .find(|n| n.address == address && n.deposed_key.is_some())
+                .unwrap();
+            assert!(projected.provider_configuration.is_none());
+            assert_eq!(projected.provider, expected_source);
+            if current_present {
+                let current = raw
+                    .nodes
+                    .iter()
+                    .find(|n| n.address == address && n.deposed_key.is_none())
+                    .unwrap();
+                let configuration = current.provider_configuration.as_ref().unwrap();
+                assert_eq!(configuration.key, "aws.tokyo");
+                assert_eq!(configuration.alias.as_deref(), Some("tokyo"));
+                assert_eq!(
+                    current.provider,
+                    ProviderIdentity::from_source("hashicorp/aws")
+                );
+            }
+        }
+    }
+}

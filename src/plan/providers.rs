@@ -16,7 +16,7 @@ pub(super) fn enrich(configuration: &Value, nodes: &mut [TerraformEntity]) {
         &configuration["provider_config"],
         &mut resources,
     );
-    for node in nodes {
+    for node in nodes.iter_mut().filter(|node| node.deposed_key.is_none()) {
         if let Some((provider, configuration)) = resources.get(&static_address(&node.address)) {
             node.provider_configuration = Some(configuration.clone());
             if !node.provider.is_explicit() {

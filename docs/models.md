@@ -28,6 +28,9 @@ Default and aliased bindings retain their exact keys, including module bindings;
 aliases are not guessed from key spelling. An unresolved key is retained with no
 alias, while absent bindings remain `None`. Resource-level provider source keeps
 precedence over configuration metadata, preserving provider classification.
+Current configuration enriches only current objects. Deposed predecessors retain
+their resource-level provider source or legacy fallback, with no configuration key
+or alias inferred from the current resource at the same address.
 
 Configuration keys are state-local: cross-state identity requires `(StateId, key)`.
 Matching aliases in two states do not imply a shared account or region. Both the
