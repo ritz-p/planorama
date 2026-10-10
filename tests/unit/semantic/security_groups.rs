@@ -11,6 +11,9 @@ fn unknown_non_id_traversals_cannot_prove_security_group_attachments() {
         "aws_rds_cluster",
         "aws_ecs_service",
         "aws_vpc_endpoint",
+        "aws_lambda_function",
+        "aws_eks_cluster",
+        "aws_opensearch_domain",
     ] {
         for field in ["id", "vpc_id", "name", "id[0]"] {
             for alias in [false, true] {
@@ -43,12 +46,7 @@ fn unknown_non_id_traversals_cannot_prove_security_group_attachments() {
 
 fn fixture(kind: &str, expression: Value) -> Value {
     let count = expression["references"].as_array().map_or(0, Vec::len);
-    let mut expressions = json!({});
-    if kind == "aws_ecs_service" {
-        expressions["network_configuration"] = json!([{"security_groups":expression}]);
-    } else {
-        expressions[attribute(kind).unwrap()] = expression;
-    }
+    let expressions = attachment(kind, expression);
     let mut input = json!({"format_version":"1.2","resource_changes":[
         {"address":"aws_vpc.main","type":"aws_vpc"},
         {"address":"aws_security_group.a","type":"aws_security_group"},
@@ -63,13 +61,55 @@ fn fixture(kind: &str, expression: Value) -> Value {
         input["resource_changes"][index]["change"]["after_unknown"]["id"] = json!(true);
     }
     let mask = json!(vec![true; count]);
-    if kind == "aws_ecs_service" {
-        input["resource_changes"][3]["change"]["after_unknown"] =
-            json!({"network_configuration":[{"security_groups":mask}]});
-    } else {
-        input["resource_changes"][3]["change"]["after_unknown"][attribute(kind).unwrap()] = mask;
-    }
+    input["resource_changes"][3]["change"]["after_unknown"] = attachment(kind, mask);
     input
+}
+
+fn attachment(kind: &str, value: Value) -> Value {
+    let attribute = attribute(kind).unwrap();
+    match attribute.split_once('.') {
+        Some((block, field)) => json!({block:[{field:value}]}),
+        None => json!({attribute:value}),
+    }
+}
+
+#[test]
+fn nested_workload_attachments_do_not_borrow_block_or_sibling_references() {
+    for (kind, block) in [
+        ("aws_lambda_function", "vpc_config"),
+        ("aws_eks_cluster", "vpc_config"),
+        ("aws_opensearch_domain", "vpc_options"),
+    ] {
+        for scenario in 0..4 {
+            let mut input = fixture(kind, json!({"references":["aws_security_group.a.id"]}));
+            let expressions =
+                &mut input["configuration"]["root_module"]["resources"][2]["expressions"][block];
+            *expressions = match scenario {
+                0 => json!({"references":["aws_security_group.a.id"]}),
+                1 => json!([{"subnet_ids":{"references":["aws_security_group.a.id"]}}]),
+                2 => json!([{"security_group_ids":{"references":["aws_security_group.a.id"]}},{}]),
+                _ => json!({"security_group_ids":{"references":["aws_security_group.a.id"]}}),
+            };
+            let graph = semantic::transform(&plan::parse(&input.to_string()).unwrap());
+            assert_eq!(
+                graph
+                    .edges
+                    .iter()
+                    .filter(|e| e.kind == EdgeKind::Connection)
+                    .count(),
+                usize::from(scenario == 3),
+                "{kind} scenario {scenario}"
+            );
+            assert_eq!(
+                graph
+                    .edges
+                    .iter()
+                    .filter(|e| e.kind == EdgeKind::Containment)
+                    .count(),
+                2
+            );
+        }
+    }
 }
 
 #[test]
@@ -81,6 +121,9 @@ fn planned_collection_proof_rejects_literal_elements_and_missing_or_unknown_shap
         "aws_rds_cluster",
         "aws_ecs_service",
         "aws_vpc_endpoint",
+        "aws_lambda_function",
+        "aws_eks_cluster",
+        "aws_opensearch_domain",
     ] {
         for scenario in [
             "mixed",
@@ -102,11 +145,8 @@ fn planned_collection_proof_rejects_literal_elements_and_missing_or_unknown_shap
             if scenario.starts_with("known") {
                 input["resource_changes"][1]["change"] = json!({"after":{"id":"sg-known"}});
             }
-            if kind == "aws_ecs_service" {
-                input["resource_changes"][3]["change"] = json!({"after":{"network_configuration":[{"security_groups":values}]},"after_unknown":{"network_configuration":[{"security_groups":mask}]}});
-            } else {
-                input["resource_changes"][3]["change"] = json!({"after":{(attribute(kind).unwrap()):values},"after_unknown":{(attribute(kind).unwrap()):mask}});
-            }
+            input["resource_changes"][3]["change"] =
+                json!({"after":attachment(kind, values),"after_unknown":attachment(kind, mask)});
             let raw = plan::parse(&input.to_string()).unwrap();
             let graph = semantic::transform(&raw);
             assert_eq!(
@@ -140,6 +180,9 @@ fn supported_families_keep_single_and_multiple_security_groups_and_containment()
         "aws_rds_cluster",
         "aws_ecs_service",
         "aws_vpc_endpoint",
+        "aws_lambda_function",
+        "aws_eks_cluster",
+        "aws_opensearch_domain",
     ] {
         for refs in [
             json!(["aws_security_group.a.id"]),
@@ -191,6 +234,9 @@ fn unresolved_ambiguous_dynamic_foreign_and_unrelated_references_remain_dependen
         "aws_rds_cluster",
         "aws_ecs_service",
         "aws_vpc_endpoint",
+        "aws_lambda_function",
+        "aws_eks_cluster",
+        "aws_opensearch_domain",
     ] {
         for scenario in [
             "literal",

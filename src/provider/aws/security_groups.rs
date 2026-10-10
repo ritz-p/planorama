@@ -11,6 +11,8 @@ pub(super) fn attribute(resource_type: &str) -> Option<&'static str> {
         "aws_lb" => Some("security_groups"),
         "aws_ecs_service" => Some("network_configuration.security_groups"),
         "aws_vpc_endpoint" => Some("security_group_ids"),
+        "aws_lambda_function" | "aws_eks_cluster" => Some("vpc_config.security_group_ids"),
+        "aws_opensearch_domain" => Some("vpc_options.security_group_ids"),
         _ => None,
     }
 }
