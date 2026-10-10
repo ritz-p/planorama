@@ -63,7 +63,8 @@ Incident slots use peer center coordinates: vertical order on left/right sides,
 horizontal order on top/bottom sides. Stable identities break geometric ties.
 Intentional bundle alignment and numbered terminal spacing remain constraints.
 
-Only numbered incoming ports reserve badge-sized slots; other incident ports retain
+Numbered ports at both ends of undirected associations, or the destination of
+directed relationships, reserve badge-sized slots; other incident ports retain
 normal spacing. Adjacent terminal corridors are merged before routing. Orthogonal
 search indexes blocked grid edges once per search and checks them in constant time,
 instead of scanning all rectangles for every candidate segment.

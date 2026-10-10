@@ -606,7 +606,7 @@ fn cli_emits_containment_metadata_without_dropping_resources_or_dependencies() {
 fn association_resources_are_lowered_by_the_cli() {
     let svg = render(include_bytes!("../fixtures/association-plan.json"));
     assert!(svg.contains("3 resources (2 cards), 1 relationships"));
-    assert!(svg.contains("aws_subnet.private → aws_route_table.private"));
+    assert!(svg.contains("aws_subnet.private ↔ aws_route_table.private"));
     assert!(!svg.contains("data-terraform-address=\"aws_route_table_association.private\""));
     assert!(svg.contains("data-source-address=\"aws_route_table_association.private\""));
     assert!(svg.contains("association; create: aws_route_table_association.private"));

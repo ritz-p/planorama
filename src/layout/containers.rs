@@ -132,7 +132,7 @@ pub(super) fn place_geometry(
 }
 
 pub(super) fn header_heights(graph: &Graph, tree: &super::ContainmentTree) -> Vec<usize> {
-    let numbered = super::resource_edges(graph);
+    let numbered = super::relationship_markers::ends(graph);
     routing::incidents(graph, tree)
         .iter()
         .enumerate()

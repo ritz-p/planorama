@@ -25,6 +25,18 @@ pub struct ArchitectureRelationship {
 }
 
 impl ArchitectureRelationship {
+    pub fn directionality(&self) -> super::Directionality {
+        if self.kind != EdgeKind::Association {
+            return super::Directionality::Directed;
+        }
+        self.provenance
+            .iter()
+            .find_map(|p| match p {
+                RelationshipProvenance::Resource { change, .. } => Some(change.directionality),
+                _ => None,
+            })
+            .unwrap_or(super::Directionality::Undirected)
+    }
     pub fn derived_containment(&self) -> bool {
         self.kind == EdgeKind::Containment
             && self.inferred
