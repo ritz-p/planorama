@@ -1,6 +1,28 @@
 use crate::model::*;
 
 #[test]
+fn derived_containment_depends_on_reference_evidence_not_resource_types() {
+    let raw =
+        crate::plan::parse(include_str!("../../fixtures/rds-subnet-group-plan.json")).unwrap();
+    let mut graph = crate::semantic::transform(&raw).0;
+    for node in &mut graph.nodes {
+        node.resource_type = "unrelated_type".into();
+    }
+    for edge in graph
+        .edges
+        .iter()
+        .filter(|e| e.kind == EdgeKind::Containment)
+    {
+        assert_eq!(
+            graph.derived_containment(edge.from, edge.to),
+            !graph.nodes[edge.to].address.starts_with("aws_subnet.")
+        );
+    }
+    let rendered = crate::svg::render(&graph, &crate::layout::Layout::new(&graph));
+    assert_eq!(rendered.matches("data-placement=\"inferred\"").count(), 3);
+}
+
+#[test]
 fn containment_provenance_excludes_other_dependency_paths() {
     let mut input: serde_json::Value =
         serde_json::from_str(include_str!("../../fixtures/rds-subnet-group-plan.json")).unwrap();

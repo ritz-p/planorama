@@ -34,7 +34,7 @@ impl ArchitectureId {
     pub fn as_str(&self) -> &str {
         &self.0
     }
-    fn terraform(source: &TerraformEntityId) -> Self {
+    pub(super) fn terraform(source: &TerraformEntityId) -> Self {
         Self(format!(
             "terraform:{}-{}",
             hex(&source.address),
@@ -90,6 +90,14 @@ impl ArchitectureEntity {
 }
 
 impl Graph {
+    pub fn derived_containment(&self, parent: usize, child: usize) -> bool {
+        self.relationships.iter().any(|relationship| {
+            relationship.from == self.nodes[parent].entity.id
+                && relationship.to == self.nodes[child].entity.id
+                && relationship.derived_containment()
+        })
+    }
+
     /// Both card entities and logical aggregate entities share this identity boundary.
     pub fn entities(&self) -> impl Iterator<Item = &ArchitectureEntity> {
         self.nodes
