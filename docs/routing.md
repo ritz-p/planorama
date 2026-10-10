@@ -35,6 +35,9 @@ Flat routing uses rank lanes and compatible fan-in/fan-out bundles. Nested routi
 uses recursive packing and obstacle-aware search, with shared gutters for compatible
 subnet connections. Flat diagrams with numbered relationships also use obstacle-aware
 search to preserve the reserved terminal corridors. Bundled edges retain individual metadata and junction markers.
+Connection bundles use the same facing-side candidates and explicit ports as
+independent routes, supporting horizontal and vertical trunks. Unsafe or more
+expensive bundles fall back to independent paths; eligible groups need not bundle.
 See [bundling](../examples/bundling.svg) and [spanning connections](../examples/spanning-dense.svg).
 
 Independent paths compare route quality on actual bounds, preferring facing

@@ -5,7 +5,7 @@ mod bundles;
 use crate::layout::routing_shared::search;
 use search::find_path;
 
-use crate::layout::routing_shared::{Simplification, crosses, simplify};
+use crate::layout::routing_shared::{Simplification, simplify};
 
 fn represented_by_nesting(edge: &Edge, tree: &crate::layout::ContainmentTree) -> bool {
     matches!(edge.kind, EdgeKind::Dependency | EdgeKind::Containment)
@@ -342,6 +342,7 @@ fn container_endpoint_path(
     best
 }
 
+#[cfg(test)]
 pub(super) fn path_between(
     start: Point,
     end: Point,

@@ -12,14 +12,7 @@ pub(in crate::layout) fn select(
     select_with_slots(source, target, baseline, obstacles, scorer, None)
 }
 
-pub(in crate::layout) fn select_with_slots(
-    source: Bounds,
-    target: Bounds,
-    baseline: Vec<Point>,
-    obstacles: &[Bounds],
-    scorer: &Scorer,
-    slots: Option<(&[usize; 4], &[usize; 4])>,
-) -> Vec<Point> {
+pub(in crate::layout) fn facing_pairs(source: Bounds, target: Bounds) -> Vec<(Side, Side)> {
     let mut pairs = Vec::new();
     if source.right() < target.origin.x {
         pairs.push((Side::Right, Side::Left));
@@ -33,6 +26,18 @@ pub(in crate::layout) fn select_with_slots(
     if target.origin.y + target.height < source.origin.y {
         pairs.push((Side::Top, Side::Bottom));
     }
+    pairs
+}
+
+pub(in crate::layout) fn select_with_slots(
+    source: Bounds,
+    target: Bounds,
+    baseline: Vec<Point>,
+    obstacles: &[Bounds],
+    scorer: &Scorer,
+    slots: Option<(&[usize; 4], &[usize; 4])>,
+) -> Vec<Point> {
+    let pairs = facing_pairs(source, target);
     let offset = |bounds: Bounds, point: Point, side| {
         let horizontal = point.x > bounds.origin.x
             && point.x < bounds.right()
