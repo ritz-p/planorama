@@ -5,6 +5,7 @@ mod indirect;
 pub(super) use indirect::resolved_subnets;
 mod spanning;
 mod vpc_scope;
+pub(super) use vpc_scope::attribute as vpc_scope_attribute;
 
 pub(super) fn direct_rule(resource_type: &str) -> Option<(&'static str, &'static str)> {
     match resource_type {

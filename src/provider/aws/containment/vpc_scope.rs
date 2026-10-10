@@ -6,6 +6,15 @@ use std::collections::BTreeSet;
 #[path = "../../../../tests/unit/semantic/vpc_scope.rs"]
 mod tests;
 
+pub(in crate::provider::aws) fn attribute(resource_type: &str) -> Option<&'static str> {
+    match resource_type {
+        "aws_db_subnet_group" | "aws_elasticache_subnet_group" => Some("subnet_ids"),
+        "aws_lambda_function" | "aws_eks_cluster" => Some("vpc_config.subnet_ids"),
+        "aws_opensearch_domain" => Some("vpc_options.subnet_ids"),
+        _ => None,
+    }
+}
+
 pub(super) fn infer(raw: &Input, mut graph: Graph) -> Graph {
     let mut parents = vec![BTreeSet::new(); graph.nodes.len()];
     for edge in &graph.edges {
@@ -18,11 +27,7 @@ pub(super) fn infer(raw: &Input, mut graph: Graph) -> Graph {
         let node = &raw.nodes[target];
         if node.mode != EntityMode::Managed
             || !node.provider.is_aws()
-            || !matches!(
-                node.resource_type.as_str(),
-                "aws_db_subnet_group" | "aws_elasticache_subnet_group"
-            )
-            || reference.attribute != "subnet_ids"
+            || attribute(&node.resource_type) != Some(reference.attribute.as_str())
             || !reference.complete
             || reference.sources.is_empty()
             || reference
