@@ -54,7 +54,7 @@ pub(in crate::layout) fn select(
     best
 }
 
-fn connect(
+pub(in crate::layout) fn connect(
     start: Port,
     end: Port,
     obstacles: &[Bounds],
