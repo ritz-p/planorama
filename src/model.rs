@@ -83,7 +83,7 @@ pub use graphs::{ArchitectureGraph, AttributeReference, StateOutput};
 pub use operations::{
     AttributePathStep, ChangeMetadata, DriftRecord, ImportMetadata, RelevantAttribute, StateRemoval,
 };
-pub use provider::{ProviderConfiguration, ProviderIdentity};
+pub use provider::{ProviderConfiguration, ProviderIdentity, RegionScope};
 pub use states::{MultiPlan, PlanInput, StateId};
 pub use terraform::{TerraformEntity, TerraformPlan, TerraformReference};
 

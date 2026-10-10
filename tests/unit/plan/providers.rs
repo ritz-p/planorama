@@ -17,12 +17,105 @@ fn fixture() -> Value {
         "configuration": {
             "provider_config": {
                 "aws":{"full_name":"registry.terraform.io/hashicorp/aws","expressions":{"access_key":{"constant_value":"TOP_SECRET"}}},
-                "aws.tokyo":{"full_name":"registry.terraform.io/hashicorp/aws","alias":"tokyo","expressions":{"region":{"constant_value":"PRIVATE_REGION"}}},
+                "aws.tokyo":{"full_name":"registry.terraform.io/hashicorp/aws","alias":"tokyo","expressions":{"region":{"constant_value":"ap-northeast-1"}}},
                 "aws.virginia":{"full_name":"registry.terraform.io/hashicorp/aws","alias":"virginia"}
             },
             "root_module":{"resources":resources.iter().map(|(address, key)| json!({"address":address,"provider_config_key":key})).collect::<Vec<_>>()}
         }
     })
+}
+
+#[test]
+fn static_regions_follow_exact_bindings_and_survive_projection() {
+    let mut value = fixture();
+    for (key, region) in [
+        ("aws", "eu-west-1"),
+        ("aws.tokyo", "ap-northeast-1"),
+        ("aws.virginia", "us-east-1"),
+    ] {
+        value["configuration"]["provider_config"][key]["expressions"]["region"] =
+            json!({"constant_value":region});
+    }
+    value["resource_changes"]
+        .as_array_mut()
+        .unwrap()
+        .push(json!({"address":"module.child[0].aws_vpc.main","type":"aws_vpc"}));
+    value["configuration"]["root_module"]["module_calls"]["child"] = json!({"module":{"resources":[{"address":"aws_vpc.main","provider_config_key":"aws.tokyo"}]}});
+    let raw = plan::parse(&value.to_string()).unwrap();
+    let graph = semantic::transform(&raw);
+    for (address, region) in [
+        ("aws_vpc.default", "eu-west-1"),
+        ("aws_vpc.tokyo", "ap-northeast-1"),
+        ("aws_vpc.virginia", "us-east-1"),
+        ("module.child[0].aws_vpc.main", "ap-northeast-1"),
+    ] {
+        let node = raw.nodes.iter().find(|n| n.address == address).unwrap();
+        assert_eq!(
+            node.provider_configuration
+                .as_ref()
+                .unwrap()
+                .region
+                .as_ref()
+                .map(|r| r.0.as_str()),
+            Some(region)
+        );
+        assert_eq!(
+            graph
+                .nodes
+                .iter()
+                .find(|n| n.address == address)
+                .unwrap()
+                .provider_configuration,
+            node.provider_configuration
+        );
+    }
+    assert!(!format!("{raw:?}{graph:?}").contains("TOP_SECRET"));
+    value["resource_changes"].as_array_mut().unwrap().reverse();
+    assert_eq!(raw, plan::parse(&value.to_string()).unwrap());
+}
+
+#[test]
+fn unresolved_regions_and_foreign_providers_never_borrow_a_region() {
+    for expression in [
+        json!({"references":["var.region"]}),
+        json!({"constant_value":"us-east-1","references":["var.region"]}),
+        json!({"constant_value":42}),
+        json!({"constant_value":""}),
+        json!({"constant_value":"unsafe<region>"}),
+        Value::Null,
+    ] {
+        let mut value = fixture();
+        value["configuration"]["provider_config"]["aws.tokyo"]["expressions"]["region"] =
+            expression;
+        let raw = plan::parse(&value.to_string()).unwrap();
+        assert!(raw.nodes.iter().all(|n| {
+            n.provider_configuration
+                .as_ref()
+                .is_none_or(|c| c.region.is_none())
+        }));
+    }
+    for foreign_resource in [false, true] {
+        let mut value = fixture();
+        value["configuration"]["provider_config"]["aws"]["expressions"]["region"] =
+            json!({"constant_value":"us-east-1"});
+        if foreign_resource {
+            value["resource_changes"][0]["provider_name"] = json!("acme/custom");
+        } else {
+            value["configuration"]["provider_config"]["aws"]["full_name"] = json!("acme/custom");
+        }
+        let raw = plan::parse(&value.to_string()).unwrap();
+        assert!(
+            raw.nodes
+                .iter()
+                .find(|n| n.address == "aws_vpc.default")
+                .unwrap()
+                .provider_configuration
+                .as_ref()
+                .unwrap()
+                .region
+                .is_none()
+        );
+    }
 }
 
 #[test]
@@ -52,7 +145,7 @@ fn default_and_aliases_preserve_source_and_configuration_separately() {
         assert_eq!(projected.role, ResourceRole::Container);
     }
     assert!(!format!("{raw:?}{graph:?}").contains("TOP_SECRET"));
-    assert!(!format!("{raw:?}{graph:?}").contains("PRIVATE_REGION"));
+
     let mut reordered = value.clone();
     reordered["resource_changes"]
         .as_array_mut()
@@ -81,7 +174,7 @@ fn module_instances_retain_exact_provider_bindings() {
         value["configuration"]["root_module"]["module_calls"][name] =
             json!({"module":{"resources":[{"address":"aws_vpc.main","provider_config_key":key}]}});
     }
-    value["configuration"]["provider_config"]["module.local:aws.secondary"] = json!({"full_name":"hashicorp/aws","alias":"secondary","module_address":"module.local","expressions":{"secret_key":{"constant_value":"TOP_SECRET"}}});
+    value["configuration"]["provider_config"]["module.local:aws.secondary"] = json!({"full_name":"hashicorp/aws","alias":"secondary","module_address":"module.local","expressions":{"secret_key":{"constant_value":"TOP_SECRET"},"region":{"constant_value":"ap-northeast-1"}}});
     let raw = plan::parse(&value.to_string()).unwrap();
     for (name, key, alias) in [
         ("inherited", "aws.tokyo", "tokyo"),
@@ -96,6 +189,7 @@ fn module_instances_retain_exact_provider_bindings() {
         let config = node.provider_configuration.as_ref().unwrap();
         assert_eq!(config.key, key);
         assert_eq!(config.alias.as_deref(), Some(alias));
+        assert_eq!(config.region.as_ref().unwrap().0, "ap-northeast-1");
     }
     assert!(!format!("{raw:?}").contains("TOP_SECRET"));
 }

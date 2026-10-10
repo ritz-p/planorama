@@ -1,6 +1,6 @@
 use super::address::static_address;
 use super::references::qualify;
-use crate::model::{ProviderConfiguration, ProviderIdentity, TerraformEntity};
+use crate::model::{ProviderConfiguration, ProviderIdentity, RegionScope, TerraformEntity};
 use serde_json::Value;
 use std::collections::BTreeMap;
 
@@ -18,10 +18,14 @@ pub(super) fn enrich(configuration: &Value, nodes: &mut [TerraformEntity]) {
     );
     for node in nodes.iter_mut().filter(|node| node.deposed_key.is_none()) {
         if let Some((provider, configuration)) = resources.get(&static_address(&node.address)) {
-            node.provider_configuration = Some(configuration.clone());
             if !node.provider.is_explicit() {
                 node.provider = provider.clone();
             }
+            let mut configuration = configuration.clone();
+            if !node.provider.is_aws() {
+                configuration.region = None;
+            }
+            node.provider_configuration = Some(configuration);
         }
     }
 }
@@ -44,6 +48,7 @@ fn collect(
             let configuration = ProviderConfiguration {
                 key: key.into(),
                 alias: providers[key]["alias"].as_str().map(str::to_owned),
+                region: static_region(&provider, &providers[key]["expressions"]["region"]),
             };
             found.insert(qualify(scope, address), (provider, configuration));
         }
@@ -58,4 +63,19 @@ fn collect(
             );
         }
     }
+}
+
+fn static_region(provider: &ProviderIdentity, expression: &Value) -> Option<RegionScope> {
+    if !provider.is_aws() || expression.get("references").is_some() {
+        return None;
+    }
+    expression["constant_value"]
+        .as_str()
+        .filter(|region| {
+            !region.is_empty()
+                && region
+                    .bytes()
+                    .all(|b| b.is_ascii_lowercase() || b.is_ascii_digit() || b == b'-')
+        })
+        .map(|region| RegionScope(region.to_owned()))
 }
