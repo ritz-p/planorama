@@ -5,6 +5,25 @@ fn points(values: &[(usize, usize)]) -> Vec<Point> {
 }
 
 #[test]
+fn candidate_budget_limits_stretch_even_under_heavy_congestion() {
+    let short = points(&[(100, 500), (600, 500)]);
+    let long = points(&[
+        (100, 500),
+        (140, 500),
+        (140, 2500),
+        (560, 2500),
+        (560, 500),
+        (600, 500),
+    ]);
+    let mut scorer = Scorer::default();
+    for _ in 0..100 {
+        scorer.insert(points(&[(350, 400), (350, 600)]));
+    }
+    assert!(scorer.score(&long, &[]) < scorer.score(&short, &[]));
+    assert_eq!(scorer.choose(vec![long, short.clone()], &[]), Some(short));
+}
+
+#[test]
 fn crossing_avoidance_has_a_finite_length_and_bend_budget() {
     let direct = points(&[(100, 500), (600, 500)]);
     let modest = points(&[
