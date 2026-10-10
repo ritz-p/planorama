@@ -4,6 +4,33 @@ use crate::model::{Action, Node};
 use std::collections::BTreeSet;
 
 #[test]
+fn shortcut_pass_preserves_all_flat_ports_and_never_lengthens_later_routes() {
+    let raw = crate::plan::parse(include_str!("../../fixtures/terraform-plan.json")).unwrap();
+    let graph = crate::semantic::transform(&raw).0;
+    let ranks = crate::layout::rank::compute(&graph);
+    let placed = crate::layout::placement::place(&graph, &ranks);
+    let mut bounds: Vec<_> = placed.positions.iter().copied().map(Bounds::card).collect();
+    let before = route_impl(&graph, &ranks, &mut bounds.clone(), &placed.channels, false);
+    let after = route_impl(&graph, &ranks, &mut bounds, &placed.channels, true);
+    for (a, b) in before.paths.iter().zip(&after.paths) {
+        assert_eq!(a.first(), b.first());
+        assert_eq!(a.last(), b.last());
+        assert!(b.len() <= a.len());
+        let length = |p: &[Point]| {
+            p.windows(2)
+                .map(|s| s[0].x.abs_diff(s[1].x) + s[0].y.abs_diff(s[1].y))
+                .sum::<usize>()
+        };
+        assert!(length(b) <= length(a));
+    }
+    let a = crate::layout::metrics::measure(&before.paths);
+    let b = crate::layout::metrics::measure(&after.paths);
+    assert!(b.overlap_distance <= a.overlap_distance);
+    assert!(b.crossing_count <= a.crossing_count);
+    assert_eq!(before.junctions, after.junctions);
+}
+
+#[test]
 fn fan_out_and_fan_in_share_trunks_and_preserve_endpoints() {
     for (edges, ranks) in [
         (vec![(0, 1), (0, 2), (0, 3)], vec![0, 1, 1, 1]),

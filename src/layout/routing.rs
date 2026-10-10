@@ -27,6 +27,16 @@ pub(super) fn route(
     bounds: &mut [Bounds],
     channels: &[usize],
 ) -> Routed {
+    route_impl(graph, ranks, bounds, channels, true)
+}
+
+fn route_impl(
+    graph: &Graph,
+    ranks: &[usize],
+    bounds: &mut [Bounds],
+    channels: &[usize],
+    shortcuts: bool,
+) -> Routed {
     let mut source_ports = vec![0; graph.edges.len()];
     let mut target_ports = vec![0; graph.edges.len()];
     let mut sources = vec![Vec::new(); graph.nodes.len()];
@@ -177,11 +187,6 @@ pub(super) fn route(
             } else {
                 chosen.points
             };
-            let points = if bundles.group(edge).is_none() {
-                super::routing_shared::shortcuts::simplify_path(points, bounds, &scorer)
-            } else {
-                points
-            };
             scorer.insert(points.clone());
             paths.push(points);
         }
@@ -196,6 +201,13 @@ pub(super) fn route(
         match expanded {
             true => continue,
             false => {
+                if shortcuts {
+                    super::routing_shared::shortcuts::simplify_routes(
+                        &mut paths,
+                        (0..graph.edges.len()).filter(|&edge| bundles.group(edge).is_none()),
+                        |_| bounds.to_vec(),
+                    );
+                }
                 return Routed {
                     junctions: bundles.junctions(&paths),
                     paths,
