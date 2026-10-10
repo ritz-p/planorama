@@ -1,4 +1,3 @@
-//! Provider-neutral geometry for architecture/view graphs; no Terraform interpretation.
 mod geometry;
 pub(crate) use geometry::{Bounds, Point, Port, Side};
 mod containers;
@@ -45,8 +44,6 @@ pub struct Layout<'a> {
 }
 
 impl<'a> Layout<'a> {
-    /// Logical panels are positioned using architecture IDs and member counts;
-    /// no Terraform address or spatial-container role is required.
     pub fn component_bounds<'b>(
         &self,
         graph: &'b Graph,

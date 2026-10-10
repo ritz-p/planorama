@@ -79,8 +79,6 @@ pub(super) fn lower(raw: &Input) -> Graph {
     if replacements.is_empty() {
         return raw.graph.clone();
     }
-    // Evaluate every rule against the same graph, then remove helpers and remap
-    // once. This prevents one lowering from enabling another through lost edges.
     let mut indices = vec![None; raw.nodes.len()];
     let mut nodes = Vec::new();
     for (index, node) in raw.nodes.iter().enumerate() {
@@ -142,7 +140,6 @@ pub(super) fn endpoint(
                     .contains(&crate::model::DiagnosticReason::DynamicInstanceSelection)
                 && *source != target
                 && raw.nodes[*source].resource_type == resource_type =>
-        // Provider identity prevents custom lookalike types becoming AWS endpoints.
         {
             raw.nodes[*source].provider.is_aws().then_some(*source)
         }

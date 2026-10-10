@@ -3,7 +3,6 @@ use super::{ArchitectureId, EdgeChange, EdgeKind, TerraformEntityId};
 #[path = "../../tests/unit/model/relationships.rs"]
 mod tests;
 
-/// Evidence is independent of relationship endpoints and of layout node indices.
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub enum RelationshipProvenance {
     Resource {
@@ -16,8 +15,6 @@ pub enum RelationshipProvenance {
     },
 }
 
-/// Architecture-native relationship. Endpoints may identify cards or synthetic
-/// entities. Several Terraform resources/references can explain one relationship.
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub struct ArchitectureRelationship {
     pub from: ArchitectureId,

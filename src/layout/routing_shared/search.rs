@@ -63,10 +63,8 @@ pub(super) fn search(
         y: ys[i / xs.len()],
     };
     let (first, last) = (index(start), index(end));
-    // Retain arrival direction so bend penalties preserve optimal substructure.
     let mut distances = vec![u128::MAX; xs.len() * ys.len() * 3];
     let mut previous = vec![None; distances.len()];
-    // Arrival direction includes the selected source stub's axis.
     let direction = |side| match side {
         Side::Left | Side::Right => 1,
         Side::Top | Side::Bottom => 2,
@@ -95,7 +93,6 @@ pub(super) fn search(
         ];
         for next in neighbors.into_iter().flatten() {
             let (a, b) = (point(current), point(next));
-            // Do not reverse over either selected endpoint's outward stub.
             if ports.is_some_and(|(source, target)| {
                 (current == first && reverses(source, a, b))
                     || (next == last && reverses(target, b, a))
@@ -118,15 +115,12 @@ pub(super) fn search(
                     } else {
                         0
                     }
-                    + if direction != next_direction {
+                    + if direction != next_direction { 24 } else { 0 }
+                    + if next == last && next_direction != final_direction {
                         24
                     } else {
                         0
                     }
-                    // Include the selected target stub before queueing the
-                    // terminal state; otherwise early exit can pick a worse
-                    // arrival direction even when a cheaper one is pending.
-                    + if next == last && next_direction != final_direction { 24 } else { 0 }
             });
             let candidate =
                 distance + a.x.abs_diff(b.x) as u128 + a.y.abs_diff(b.y) as u128 + penalty;

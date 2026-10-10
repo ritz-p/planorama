@@ -4,8 +4,6 @@ use crate::layout::rank;
 use crate::model::architecture::{EdgeKind, Graph};
 use std::collections::{BTreeMap, BTreeSet};
 
-/// Project relationships between descendant resources onto the direct children.
-/// Nesting controls membership; only non-containment edges determine columns.
 pub(super) fn columns(
     graph: &Graph,
     parent: Option<usize>,
@@ -41,15 +39,12 @@ pub(super) fn columns(
         .collect();
     let ranks = rank::compute_edges(children.len(), &edges.into_iter().collect::<Vec<_>>());
     let mut columns = vec![Vec::new(); ranks.iter().max().map_or(0, |rank| rank + 1)];
-    // Keep the structural ordering computed by the caller within each rank.
     for (&node, rank) in children.iter().zip(ranks) {
         columns[rank].push(node);
     }
     columns
 }
 
-/// Try bounded-height columns and choose a compact envelope near a landscape
-/// aspect ratio. Rank groups never interleave, so wrapping preserves flow.
 pub(super) fn pack(
     columns: &[Vec<usize>],
     sizes: &[(usize, usize)],

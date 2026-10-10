@@ -34,7 +34,6 @@ pub(super) fn groups(graph: &Graph, parents: &[Option<usize>]) -> Vec<Group> {
         .collect()
 }
 
-/// Keep related source containers consecutive within their existing rank.
 pub(super) fn cohere(columns: &mut [Vec<usize>], groups: &[Group]) {
     for column in columns {
         let mut representatives: Vec<_> = (0..column.len()).collect();
@@ -60,8 +59,6 @@ pub(super) fn cohere(columns: &mut [Vec<usize>], groups: &[Group]) {
     }
 }
 
-/// Move within the packed envelope only. X/rank, containment, and routing gaps
-/// remain fixed; other siblings bound the available vertical intervals.
 pub(super) fn align(
     children: &[usize],
     groups: &[Group],

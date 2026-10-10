@@ -1,4 +1,3 @@
-//! Architecture/view-facing contracts. Ingestion structs are not re-exported here.
 use super::TerraformEntity;
 pub(crate) use super::cross_state::{Architecture, CrossStateEdge, CrossStateProvenance, Endpoint};
 pub(crate) use super::{
@@ -10,7 +9,6 @@ use std::fmt::Write;
 #[path = "../../tests/unit/model/architecture.rs"]
 mod tests;
 
-/// Identity is local to a named state; use (StateId, TerraformEntityId) across plans.
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub struct TerraformEntityId {
     pub address: String,
@@ -26,7 +24,6 @@ impl From<&TerraformEntity> for TerraformEntityId {
     }
 }
 
-/// Opaque architecture identity; neither a label nor an SVG DOM identifier.
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub struct ArchitectureId(String);
 
@@ -98,7 +95,6 @@ impl Graph {
         })
     }
 
-    /// Both card entities and logical aggregate entities share this identity boundary.
     pub fn entities(&self) -> impl Iterator<Item = &ArchitectureEntity> {
         self.nodes
             .iter()

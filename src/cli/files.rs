@@ -1,7 +1,5 @@
 use std::path::Path;
 
-/// Canonical paths do not detect hard links. Compare platform file identities
-/// before opening the output for truncation, and fail closed on lookup errors.
 pub(super) fn reject_same_file(input: &Path, output: &Path) -> Result<(), String> {
     let input_handle = same_file::Handle::from_path(input)
         .map_err(|e| format!("cannot read {}: {e}", input.display()))?;

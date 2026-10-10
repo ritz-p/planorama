@@ -1,80 +1,37 @@
 # Architecture and dependency contracts
 
-The data pipeline is `CLI -> TerraformPlan -> ArchitectureGraph -> ViewGraph -> Layout -> SVG`.
-These arrows describe processing, not Rust imports: a consumer imports its input
-contracts from `model`, not the implementation of the preceding stage. The CLI
-coordinates the stages and owns file I/O. Multi-state input follows the same stages
-with named state identities and explicit cross-state relationships.
+The processing pipeline is `CLI → TerraformPlan → ArchitectureGraph → ViewGraph → Layout → SVG`.
+The CLI owns file I/O and coordinates each stage. Named-state inputs preserve the
+same boundaries and carry explicit cross-state relationships.
 
-| Module | Owns | Must not do |
-| --- | --- | --- |
-| `plan` | Terraform JSON ingestion, native identity, changes, reference/output facts | Import layout, SVG, provider rules or view selection |
-| `model` | Shared domain contracts, architecture identity and value-free provenance | Invoke parsing, inference or rendering in production |
-| `semantic` | Complete architecture transformation and native relationship evidence | Filter the input to satisfy a requested view |
-| `provider` | Static provider dispatch | Introduce a dynamic plugin system without a demonstrated need |
-| `provider/aws` | AWS types, attributes, classification, containment, lowering, components, diagnostics and icon mapping | Change another provider's lookalike resource semantics |
-| `view` | Immutable selection, neighbor expansion, ancestor/component context and endpoint retention | Parse Terraform or infer new architecture relationships |
-| `layout` | Derived containment, placement, bounds, ports and routes | Match AWS resource types, inspect Terraform JSON or infer architecture semantics |
-| `svg` | Self-contained drawing, text, legends, metadata and presentation | Create semantic relationships or inspect Terraform JSON |
-
-## Contracts and visibility
-
-Layout, SVG and view import `model::architecture`, an explicit facade that exposes
-architecture/presentation contracts but does not re-export `TerraformPlan`,
-`TerraformEntity`, `TerraformReference` or ingestion attribute-resolution records.
-The semantic stage bridges ingestion and architecture. This keeps implementation
-imports aligned with the data boundaries without introducing a plugin framework.
-
-`TerraformEntity` and `TerraformReference` preserve ingestion facts without roles
-or architecture identity. `Node` is a classified architecture card; it is not the
-ingestion entity. Synthetic components share `ArchitectureId` with card entities.
-`ArchitectureRelationship` uses architecture IDs and multiple resource/reference
-provenance records, including an explicit inferred flag. `Graph.edges` is the
-indexed geometry adapter; layout need not understand relationship evidence.
-
-The semantic stage finalizes native relationships after provider transformations.
-Projection retains both the indexed adapter and native relationships only when
-their required endpoints survive. Source architecture data remains immutable.
-`ViewGraph` and `ViewArchitecture` have private constructors and no mutable deref.
-The CLI passes the resulting view to layout/rendering, including the unfiltered case.
-
-The model may retain value-free Terraform identity and lifecycle metadata as
-architecture provenance. Terraform JSON traversal and attribute-value analysis
-stop at ingestion; downstream rendering formats already-decided metadata. Provider
-diagnostics reuse the semantic input and the same rules as transformation.
-
-Implementation submodules remain private. Entry points are crate-visible rather
-than public library APIs. Unit tests are child modules (often loaded from `tests/unit`
-using `#[path]`) so they can test private code without widening production visibility.
-Test-only ingestion helpers are gated by `#[cfg(test)]`; they are not reverse
-production dependencies.
-
-## Verification and further work
-
-Existing tests cover ingestion immutability, provider identity, synthetic identity,
-native relationship evidence, projection immutability and ancestor retention,
-deterministic routing, SVG escaping and captured Terraform input. Run them and
-Clippy through the Docker development service. Refactors must preserve generated
-examples unless an intentional presentation change is documented.
-
-Layout implementation cleanup remains in #82–#86. Geometry features such as
-side-aware attachment belong in #81, not in Terraform or AWS semantics. Adding a
-provider extends `provider` dispatch and a provider-owned module; it does not add
-resource-type tables to generic semantics, layout or SVG.
-
-## Integration audit (#109)
-
-| Completion condition | Implementation and verification |
+| Module | Responsibility |
 | --- | --- |
-| Ingestion separated from presentation | #110 `model/terraform`; parser/model tests |
-| Native and synthetic architecture identity | #111 `model/architecture`; identity/source tests |
-| Native relationships and multiple provenance records | #112 `model/relationships`; lowered/inferred/synthetic endpoint tests |
-| Provider-owned rules | #113 `provider/aws`; provider identity and semantic regressions |
-| Immutable view selection | #114 `view`; focus, ancestors, components and cross-state integration tests |
-| Intentional dependencies and visibility | #115 and this facade; all-target Clippy and private child tests |
+| `plan` | Terraform JSON ingestion, native identity, changes, reference/output facts |
+| `model` | Shared domain contracts, architecture identity and value-free provenance |
+| `semantic` | Architecture transformation and final relationship evidence |
+| `provider/aws` | AWS classification, containment, connections, lowering, components, diagnostics and icons |
+| `view` | Immutable selection, neighbor expansion and required context |
+| `layout` | Containment hierarchy, placement, bounds, ports and routes |
+| `svg` | Drawing, text, legends and metadata |
 
-`model` retains shared lifecycle facts because architecture provenance legitimately
-describes Terraform changes. This is distinct from leaking parser implementation
-or raw attribute values. Layout refactors and side-aware routing are verified
-separately in [routing](routing.md); multi-state integration is documented in
-[multi-plan](multi-plan.md).
+Ingestion does not import provider rules, layout or SVG. Layout, view and SVG use
+the `model::architecture` facade, which excludes Terraform ingestion contracts.
+AWS resource-type and attribute rules belong in `provider/aws`; rendering and
+layout do not infer semantic relationships.
+
+The semantic input projects Terraform facts into classified cards without mutating
+the plan. AWS transformation applies containment, SG connections, association
+lowering, data visibility and logical components. Native relationships are finalized
+after these transformations. See [models](models.md) and [AWS rules](aws.md).
+
+`ArchitectureRelationship` uses stable architecture IDs and resource/reference
+provenance. `Graph.edges` is the indexed adapter used by geometry. Layout uses the
+model's derived-containment predicate to reserve annotation space.
+
+View projection retains relationships only when their required endpoints survive.
+`ViewGraph` and `ViewArchitecture` have private constructors and no mutable deref.
+Even unfiltered CLI output passes through projection.
+
+Implementation submodules remain private; entry points are crate-visible.
+Unit tests can access private code through child modules loaded from `tests/unit`.
+Integration tests invoke the CLI. Run the Docker checks in the [README](../README.md).

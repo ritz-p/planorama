@@ -121,8 +121,6 @@ fn collect_expressions(
     }
 }
 
-// These references participate in dependency routing but live outside the
-// resource's attribute expressions in Terraform's configuration JSON.
 fn graph_expressions(value: &Value, scope: &str) -> BTreeMap<String, BTreeSet<String>> {
     let mut result = BTreeMap::new();
     for name in ["depends_on", "count_expression", "for_each_expression"] {
@@ -153,7 +151,6 @@ fn graph_expressions(value: &Value, scope: &str) -> BTreeMap<String, BTreeSet<St
 
 fn nested_paths(value: &Value, path: &str) -> ExpressionPaths {
     match value {
-        // Expression objects are leaves. Never walk literal values or expression metadata.
         Value::Object(fields) if super::references::expression_object(fields) => {
             let mut refs = BTreeSet::new();
             references(value, &mut refs);
@@ -168,8 +165,6 @@ fn nested_paths(value: &Value, path: &str) -> ExpressionPaths {
         Value::Array(blocks) => {
             let blocks: Vec<_> = blocks
                 .iter()
-                // Array entries are block field maps, even when a provider
-                // names a field "references" or "constant_value".
                 .map(|block| match block {
                     Value::Object(fields) => block_paths(fields, path),
                     _ => BTreeMap::new(),

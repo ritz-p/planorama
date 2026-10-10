@@ -1,4 +1,3 @@
-//! File I/O and orchestration of ingestion, semantics, projection, layout and rendering.
 use crate::layout::Layout;
 use crate::{plan, semantic, svg};
 use std::io::{self, Read, Write};
@@ -140,7 +139,6 @@ pub(crate) fn run() -> Result<(), String> {
             .map_err(|e| format!("cannot write diagnostics: {e}"))?;
         }
         for diagnostic in semantic::diagnostics::collect(&raw) {
-            // Debug formatting escapes control characters in untrusted names.
             writeln!(
                 stderr,
                 "warning: {}: address={:?}, attribute={:?}",

@@ -1,4 +1,3 @@
-//! Common hierarchy -> placement -> geometry -> routing stages.
 use super::{Bounds, ContainmentTree, Layout, NODE_HEIGHT, containers, placement, rank, routing};
 use crate::model::architecture::{Graph, ResourceRole};
 

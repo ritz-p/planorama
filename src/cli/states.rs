@@ -15,7 +15,6 @@ pub(super) fn run(
     if inputs.values().filter(|path| path.as_str() == "-").count() > 1 {
         return Err("stdin may be used by only one state".into());
     }
-    // Validate every path before reading stdin or writing any output.
     for (id, path) in &inputs {
         protect_input(path, output).map_err(|e| format!("state {:?}: {e}", id.as_str()))?;
     }
