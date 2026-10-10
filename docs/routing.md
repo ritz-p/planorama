@@ -69,8 +69,10 @@ search indexes blocked grid edges and soft-card occlusion costs once per search,
 then looks them up in constant time for each candidate segment. Bundle branches
 use their own endpoint exclusions when evaluating soft-card occlusion.
 
-Candidate scoring prioritizes obstacle crossings, overlap and edge crossings, then
-balances length, bends and soft-card occlusion. Straight, one-bend and two-bend candidates compete with grid-search
+Hard obstacle violations are rejected. Readability cost is path length plus 96 per
+bend, 512 per crossing, eight per overlapping pixel and two per occluded card pixel.
+Thus a minor crossing improvement cannot justify an unlimited detour. Search,
+candidate comparison and shortcutting share these weights. Straight, one-bend and two-bend candidates compete with grid-search
 paths under the same safety and endpoint-direction checks. Occupancy-aware alternatives
 discourage crowded corridors. Selection prefers the lower corridor for otherwise
 equal upper/lower detours around blocking peers in the same
@@ -82,7 +84,7 @@ After all routes are fixed, independent unnumbered routes remove safe orthogonal
 doglegs while retaining both attachment points and endpoint directions. Shortening
 does not feed back into endpoint selection or routing. Each shortcut is checked
 against all other completed paths, must avoid obstacles,
-increase neither overlaps nor crossings, and reduce bends or length. Bundles and
+reduce weighted readability cost and reduce bends or length without increasing either. Bundles and
 numbered terminal corridors are excluded to preserve their shared geometry.
 
 SVG rendering consumes the final geometry and rounds corners without changing

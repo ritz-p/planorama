@@ -5,6 +5,45 @@ fn points(values: &[(usize, usize)]) -> Vec<Point> {
 }
 
 #[test]
+fn crossing_avoidance_has_a_finite_length_and_bend_budget() {
+    let direct = points(&[(100, 500), (600, 500)]);
+    let modest = points(&[
+        (100, 500),
+        (140, 500),
+        (140, 550),
+        (560, 550),
+        (560, 500),
+        (600, 500),
+    ]);
+    let extreme = points(&[
+        (100, 500),
+        (140, 500),
+        (140, 2000),
+        (560, 2000),
+        (560, 500),
+        (600, 500),
+    ]);
+    let mut scorer = Scorer::default();
+    scorer.insert(points(&[(350, 480), (350, 520)]));
+    assert!(scorer.score(&direct, &[]) < scorer.score(&extreme, &[]));
+    assert!(scorer.score(&modest, &[]) < scorer.score(&direct, &[]));
+    assert!(scorer.safe_shortcut(&extreme, &direct, &[]));
+    assert!(!scorer.safe_shortcut(&modest, &direct, &[]));
+    for _ in 0..7 {
+        scorer.insert(points(&[(350, 480), (350, 520)]));
+    }
+    assert!(scorer.score(&extreme, &[]) < scorer.score(&direct, &[]));
+    let zigzag: Vec<_> = (0..24)
+        .map(|i| Point {
+            x: 100 + (i / 2) * 40,
+            y: 550 + (i % 4 / 2) * 10,
+        })
+        .collect();
+    let scorer = Scorer::default();
+    assert!(scorer.score(&direct, &[]) < scorer.score(&zigzag, &[]));
+}
+
+#[test]
 fn replacing_routes_matches_a_fresh_index() {
     let mut paths = vec![
         points(&[(10, 50), (90, 50), (10, 50)]),
@@ -64,7 +103,7 @@ fn grid_crossings_preserve_path_multiplicity_but_not_repeated_segments() {
     let a = Point { x: 10, y: 50 };
     let b = Point { x: 90, y: 50 };
     assert_eq!(scorer.score(&[a, b], &[]).crossings, 3);
-    assert_eq!(scorer.segment_cost(a, b), 3 * 2048);
+    assert_eq!(scorer.segment_cost(a, b), 3 * 512);
     assert_eq!(
         scorer.segment_cost(Point { x: 10, y: 10 }, Point { x: 90, y: 10 }),
         0
@@ -189,7 +228,7 @@ fn bend_contacts_have_no_crossing_cost_in_either_direction_or_axis() {
             let score = scorer.score(&path, &[]);
             assert_eq!(score.crossings, 0);
             assert_eq!(approach + departure, score.overlap * 8);
-            assert_eq!(scorer.junction_cost(point(50, 50), horizontal), 2048);
+            assert_eq!(scorer.junction_cost(point(50, 50), horizontal), 512);
         }
     }
 }
