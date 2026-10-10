@@ -25,6 +25,17 @@ rendered as cards. Numbered relationships retain these bands; rows accommodate
 the actual card heights. Address labels, action metadata and provider roles do not change
 during layout.
 
+After initial routing, left and right endpoint demand determines each card's
+height: the larger side wins, with 16px ordinary slots and 24px numbered slots,
+plus edge padding and the minimum content height. Opposite sides share the same
+vertical span. One deterministic refinement repacks containers and flat rows,
+then assigns geometry-ordered slots on the selected sides and reroutes. Side
+choices remain fixed during this refinement; card width does not expand for
+top/bottom demand. Rank-lane bundles retain their alignment; refined nested
+routes use independent paths to keep the selected per-side demand fixed.
+Ancestor/descendant routes also retain their allocated sides during refinement;
+the container-boundary shortcut does not reselect their endpoints afterward.
+
 Structural keys make ordering deterministic under input reordering. Symmetric
 resources use complete Terraform identities as a final tie-breaker; renaming a
 module can therefore change the order of otherwise indistinguishable resources.

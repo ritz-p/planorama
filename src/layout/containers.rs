@@ -4,7 +4,7 @@ use crate::model::architecture::{Graph, ResourceRole};
 mod affinity;
 pub(super) mod ordering;
 pub(super) mod placement;
-mod routing;
+pub(super) mod routing;
 
 #[cfg(test)]
 #[path = "../../tests/unit/layout/containers.rs"]
@@ -31,6 +31,16 @@ pub(super) fn place_geometry(
     tree: super::ContainmentTree,
     enabled: bool,
 ) -> Layout<'_> {
+    let heights = header_heights(graph, &tree);
+    place_with_heights(graph, tree, enabled, heights)
+}
+
+pub(super) fn place_with_heights(
+    graph: &Graph,
+    tree: super::ContainmentTree,
+    enabled: bool,
+    header_heights: Vec<usize>,
+) -> Layout<'_> {
     let parents = &tree.parents;
     let padding = super::relationship_markers::padding(graph);
     let affinities = if enabled {
@@ -38,7 +48,6 @@ pub(super) fn place_geometry(
     } else {
         Vec::new()
     };
-    let header_heights = header_heights(graph, &tree);
     let children = &tree.children;
 
     let roots = &tree.roots;

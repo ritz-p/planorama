@@ -163,7 +163,7 @@ fn one_numbered_port_does_not_expand_every_port_on_a_hub() {
     }
     let layout = Layout::new(&graph);
     assert!(
-        layout.header_heights[target] <= 170,
+        layout.header_heights[target] < 41 + 100 * 24,
         "{}",
         layout.header_heights[target]
     );

@@ -23,7 +23,8 @@ relationship-index entry. Directed relationships display it before the destinati
 Markers align with the terminal segment, 10 pixels from the endpoint to leave
 room for directed arrowheads. Endpoints with
 numbered relationships reserve extra space only around their numbered ports.
-Ordinary incident ports keep their normal density.
+Ordinary left/right ports reserve at least 16 pixels; numbered ports reserve
+24 pixels. Card height follows the denser side rather than the combined count.
 Routing reserves a straight terminal segment long enough for the complete badge
 and arrowhead. Other paths, including bundled relationships, avoid this space.
 Card and container spacing expands with the number of digits in the index.
