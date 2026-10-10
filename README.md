@@ -285,6 +285,8 @@ RDS instances and clusters inherit network placement through a statically resolv
 
 DB and ElastiCache subnet-group cards use their referenced subnets' common VPC, including when only one subnet is referenced. Mixed or missing VPC ancestry leaves the group outside containers. Original subnet dependencies and the reference chain supporting the derived placement are retained.
 
+Lambda and EKS (`vpc_config.subnet_ids`) and OpenSearch (`vpc_options.subnet_ids`) use the same common-VPC placement. Only complete, static AWS subnet references qualify; flattened block references and sibling fields do not establish placement. These cards retain their subnet dependencies and show the inferred-placement note. See [VPC workloads](examples/vpc-workloads.svg).
+
 Resource-change identity is the pair of the canonical Terraform address and optional Terraform deposed key. Current and deposed objects remain separate cards with their own actions; SVG records the key in data-deposed-key without rewriting the primary address. Configuration references resolve only to current objects, and current configuration is not applied to deposed predecessors. Planned values fill the current object only. See tests/fixtures/deposed-plan.json.
 
 Nested configuration blocks expose dotted attribute paths generically, including network_configuration.security_groups and default_action.forward.target_group.arn. Repeated blocks merge references at the same path in deterministic order. A path is complete only when every repeated block supplies complete reference provenance; missing, literal or malformed entries prevent semantic inference. Existing top-level aggregate references remain available. Literal values and expression metadata are not traversed as attribute paths.

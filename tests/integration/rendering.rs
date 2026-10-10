@@ -1,6 +1,18 @@
 mod support;
 
 #[test]
+fn vpc_workloads_keep_subnet_references_and_show_derived_placement() {
+    let svg = render(include_bytes!("../fixtures/vpc-workloads-plan.json"));
+    assert_eq!(svg.matches("data-placement=\"inferred\"").count(), 3);
+    assert_eq!(svg.matches("data-edge-kind=\"containment\"").count(), 5);
+    assert_eq!(svg.matches("data-edge-kind=\"dependency\"").count(), 6);
+    assert_eq!(
+        svg,
+        include_str!("../../examples/vpc-workloads.svg").replace("\r\n", "\n")
+    );
+}
+
+#[test]
 fn inferred_placement_notes_use_provenance_and_fit_below_long_addresses() {
     let input = include_bytes!("../fixtures/subnet-groups-plan.json");
     let svg = render(input);
