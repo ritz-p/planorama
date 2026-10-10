@@ -61,8 +61,11 @@ impl Scorer {
     }
 
     fn occlusion(&self, a: Point, b: Point) -> u128 {
-        self.soft
-            .iter()
+        Self::occlusion_in(&self.soft, a, b)
+    }
+
+    fn occlusion_in(soft: &[Bounds], a: Point, b: Point) -> u128 {
+        soft.iter()
             .filter(|&&bounds| super::crosses(a, b, bounds))
             .map(|bounds| {
                 if a.y == b.y {
@@ -162,6 +165,22 @@ impl Scorer {
 
     pub(in crate::layout) fn readability_cost(&self, points: &[Point]) -> u128 {
         self.score(points, &[]).cost
+    }
+
+    pub(in crate::layout) fn readability_cost_with_soft(
+        &self,
+        points: &[Point],
+        soft: &[Bounds],
+    ) -> u128 {
+        self.readability_cost(points)
+            - points
+                .windows(2)
+                .map(|p| self.occlusion(p[0], p[1]))
+                .sum::<u128>()
+            + points
+                .windows(2)
+                .map(|p| Self::occlusion_in(soft, p[0], p[1]))
+                .sum::<u128>()
     }
 
     pub(in crate::layout) fn score(&self, points: &[Point], nodes: &[Bounds]) -> Score {
@@ -296,7 +315,12 @@ impl Scorer {
         self.paths[path_index] = points;
     }
 
+    #[cfg(test)]
     pub(in crate::layout) fn segment_cost(&self, a: Point, b: Point) -> u128 {
+        self.conflict_cost(a, b) + self.occlusion(a, b)
+    }
+
+    pub(in crate::layout) fn conflict_cost(&self, a: Point, b: Point) -> u128 {
         let horizontal = a.y == b.y;
         let (parallel, perpendicular, coordinate, from, to) = if horizontal {
             (&self.horizontal, &self.vertical_paths, a.y, a.x, b.x)
@@ -318,7 +342,7 @@ impl Scorer {
                     .len()
             })
             .sum::<usize>();
-        overlap * 8 + crossings as u128 * CROSSING_COST + self.occlusion(a, b)
+        overlap * 8 + crossings as u128 * CROSSING_COST
     }
 }
 
