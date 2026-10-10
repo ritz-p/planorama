@@ -38,7 +38,12 @@ pub(super) fn place_geometry(
     };
     let header_heights: Vec<_> = routing::incidents(graph, &tree)
         .iter()
-        .map(|edges| NODE_HEIGHT.max(edges.len() + 41))
+        .enumerate()
+        .map(|(node, edges)| {
+            let inferred =
+                tree.parents[node].is_some_and(|parent| graph.derived_containment(parent, node));
+            (NODE_HEIGHT + if inferred { 18 } else { 0 }).max(edges.len() + 41)
+        })
         .collect();
     let children = &tree.children;
 
