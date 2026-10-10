@@ -2,6 +2,49 @@ use super::*;
 use crate::model::{Action, Node};
 
 #[test]
+fn numbered_cycles_reserve_both_terminal_clearances_between_flat_rows() {
+    use crate::layout::{Layout, relationship_markers};
+    use crate::model::{Directionality, Edge, ResourceRole};
+    for direction in [Directionality::Directed, Directionality::Undirected] {
+        let mut graph = crate::semantic::transform(
+            &crate::plan::parse(include_str!("../../fixtures/association-plan.json")).unwrap(),
+        )
+        .0;
+        for node in &mut graph.nodes {
+            node.role = ResourceRole::Node;
+        }
+        graph.edges[0].change.as_mut().unwrap().directionality = direction;
+        let (from, to) = graph.edges[0].endpoints();
+        graph.edges.push(Edge::from((to, from)));
+        let ranks = crate::layout::rank::compute(&graph);
+        assert_eq!(ranks[from], ranks[to]);
+        let clearance = relationship_markers::clearance(&graph);
+        let required = clearance
+            + if direction == Directionality::Undirected {
+                clearance
+            } else {
+                16
+            };
+        for height in [super::super::NODE_HEIGHT, 180] {
+            let placed = place_with_heights(&graph, &ranks, &vec![height; graph.nodes.len()]);
+            assert_eq!(placed.positions[from].x, placed.positions[to].x);
+            assert!(placed.positions[from].y.abs_diff(placed.positions[to].y) >= height + required);
+        }
+        let layout = Layout::new(&graph);
+        let path = &layout.paths[0];
+        let source = layout.bounds[from];
+        let target = layout.bounds[to];
+        let (start_y, end_y) = if source.origin.y < target.origin.y {
+            (source.origin.y + source.height, target.origin.y)
+        } else {
+            (source.origin.y, target.origin.y + target.height)
+        };
+        assert_eq!(path[0].y, start_y);
+        assert_eq!(path.last().unwrap().y, end_y);
+    }
+}
+
+#[test]
 fn long_edges_order_through_three_ranks_deterministically() {
     let graph = Graph {
         relationships: Vec::new(),

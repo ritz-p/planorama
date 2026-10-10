@@ -35,6 +35,8 @@ Flat routing uses rank lanes and compatible fan-in/fan-out bundles. Nested routi
 uses recursive packing and obstacle-aware search, with shared gutters for compatible
 subnet connections. Flat diagrams with numbered relationships also use obstacle-aware
 search to preserve the reserved terminal corridors. Bundled edges retain individual metadata and junction markers.
+When a relationship has numbers at both ends, packing reserves space for both
+terminal clearances between adjacent cards so facing ports remain usable.
 Connection bundles use the same facing-side candidates and explicit ports as
 independent routes, supporting horizontal and vertical trunks. Unsafe or more
 expensive bundles fall back to independent paths; eligible groups need not bundle.
@@ -62,6 +64,9 @@ when intentionally updating that test's SVG.
 Incident slots use peer center coordinates: vertical order on left/right sides,
 horizontal order on top/bottom sides. Stable identities break geometric ties.
 Intentional bundle alignment and numbered terminal spacing remain constraints.
+Numbered relationships select facing sides before routing and reserve their final
+badge corridors. Candidates are rejected when badges overlap cards, protected
+headers or other reserved terminals. Crowded sides retain the spaced baseline ports.
 
 Numbered ports at both ends of undirected associations, or the destination of
 directed relationships, reserve badge-sized slots; other incident ports retain
@@ -75,18 +80,22 @@ bend, 512 per crossing, eight per overlapping pixel and two per occluded card pi
 Thus a minor crossing improvement cannot justify an unlimited detour. Search,
 candidate comparison and shortcutting share these weights. Straight, one-bend and two-bend candidates compete with grid-search
 paths under the same safety and endpoint-direction checks. Occupancy-aware alternatives
+are limited to six additional bends and twice the reference length plus 512 pixels
+relative to the simplest valid candidate at the same ports. This keeps numbered
+terminal reservations from inducing excessive congestion detours. These alternatives
 discourage crowded corridors. Selection prefers the lower corridor for otherwise
 equal upper/lower detours around blocking peers in the same
 containment layer; obstacle and edge-conflict quality remain authoritative. Selection
 is deterministic but local, so it does not guarantee a global optimum or a crossing-free
 diagram. Named-state edges use shared search with an external state gutter.
 
-After all routes are fixed, independent unnumbered routes remove safe orthogonal
+After all routes are fixed, independent routes remove safe orthogonal
 doglegs while retaining both attachment points and endpoint directions. Shortening
 does not feed back into endpoint selection or routing. Each shortcut is checked
 against all other completed paths, must avoid obstacles,
-reduce weighted readability cost and reduce bends or length without increasing either. Bundles and
-numbered terminal corridors are excluded to preserve their shared geometry.
+reduce weighted readability cost and reduce bends or length without increasing either.
+Numbered routes retain badge-sized terminal lengths and protect their badge corridors;
+their middle segments can be shortened. Bundles retain their shared geometry.
 
 SVG rendering consumes the final geometry and rounds corners without changing
 relationship identity. Nested containment edges receive no redundant path.

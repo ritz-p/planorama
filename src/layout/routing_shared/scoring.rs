@@ -32,6 +32,26 @@ pub(in crate::layout) struct Scorer {
 }
 
 impl Scorer {
+    pub(in crate::layout) fn choose(
+        &self,
+        candidates: Vec<Vec<Point>>,
+        obstacles: &[Bounds],
+    ) -> Option<Vec<Point>> {
+        let reference = candidates.iter().min_by_key(|p| {
+            let s = self.score(p, obstacles);
+            (s.node_crossings, s.length + s.bends as u128 * BEND_COST)
+        })?;
+        let baseline = self.score(reference, obstacles);
+        candidates
+            .into_iter()
+            .filter(|p| {
+                let s = self.score(p, obstacles);
+                s.node_crossings <= baseline.node_crossings
+                    && s.bends <= baseline.bends + 6
+                    && s.length <= baseline.length * 2 + 512
+            })
+            .min_by_key(|p| self.score(p, obstacles))
+    }
     pub(in crate::layout) fn set_soft(&mut self, soft: Vec<Bounds>) {
         self.soft = soft;
     }

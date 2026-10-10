@@ -4,6 +4,41 @@ pub(crate) const HEIGHT: usize = 18;
 pub(crate) const GAP: usize = 10;
 pub(super) const PORT_SPACING: usize = HEIGHT + 6;
 
+pub(in crate::layout) fn corridor(port: super::Port, clearance: usize) -> super::Bounds {
+    use super::{Bounds, Point, Side};
+    let other = port.outward(clearance - 4);
+    let vertical = matches!(port.side, Side::Top | Side::Bottom);
+    let half = if vertical {
+        (clearance - GAP - 8 + 6) / 2
+    } else {
+        PORT_SPACING / 2
+    };
+    Bounds {
+        origin: Point {
+            x: port
+                .point
+                .x
+                .min(other.x)
+                .saturating_sub(if vertical { half } else { 0 }),
+            y: port
+                .point
+                .y
+                .min(other.y)
+                .saturating_sub(if vertical { 0 } else { half }),
+        },
+        width: if vertical {
+            half * 2
+        } else {
+            port.point.x.abs_diff(other.x)
+        },
+        height: if vertical {
+            port.point.y.abs_diff(other.y)
+        } else {
+            half * 2
+        },
+    }
+}
+
 pub(super) fn ends(graph: &Graph) -> Vec<[bool; 2]> {
     super::resource_edges(graph)
         .into_iter()
@@ -75,7 +110,13 @@ pub(super) fn clearance(graph: &Graph) -> usize {
 }
 
 pub(super) fn padding(graph: &Graph) -> usize {
-    (clearance(graph) + 24).max(40)
+    let terminals = if ends(graph).iter().any(|ends| ends[0] && ends[1]) {
+        2
+    } else {
+        1
+    };
+    let clearance = clearance(graph);
+    (clearance + 24).max(clearance * terminals).max(40)
 }
 
 pub(super) fn merge_corridors(mut bounds: Vec<super::Bounds>) -> Vec<super::Bounds> {

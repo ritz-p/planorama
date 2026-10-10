@@ -15,6 +15,16 @@ pub(in crate::layout) fn simplify_routes_with_soft(
     obstacles: impl Fn(usize) -> Vec<Bounds>,
     soft: impl Fn(usize) -> Vec<Bounds>,
 ) {
+    simplify_routes_with_clearances(paths, order, obstacles, soft, |_| [16; 2]);
+}
+
+pub(in crate::layout) fn simplify_routes_with_clearances(
+    paths: &mut [Vec<Point>],
+    order: impl IntoIterator<Item = usize>,
+    obstacles: impl Fn(usize) -> Vec<Bounds>,
+    soft: impl Fn(usize) -> Vec<Bounds>,
+    clearances: impl Fn(usize) -> [usize; 2],
+) {
     let mut scorer = Scorer::default();
     for path in paths.iter() {
         scorer.insert(path.clone());
@@ -25,19 +35,29 @@ pub(in crate::layout) fn simplify_routes_with_soft(
         }
         scorer.remove(index);
         scorer.set_soft(soft(index));
-        paths[index] = simplify_path(
+        paths[index] = simplify_path_with_clearances(
             std::mem::take(&mut paths[index]),
             &obstacles(index),
             &scorer,
+            clearances(index),
         );
         scorer.replace(index, paths[index].clone());
     }
 }
 
 pub(in crate::layout) fn simplify_path(
+    path: Vec<Point>,
+    obstacles: &[Bounds],
+    scorer: &Scorer,
+) -> Vec<Point> {
+    simplify_path_with_clearances(path, obstacles, scorer, [16; 2])
+}
+
+pub(in crate::layout) fn simplify_path_with_clearances(
     mut path: Vec<Point>,
     obstacles: &[Bounds],
     scorer: &Scorer,
+    clearances: [usize; 2],
 ) -> Vec<Point> {
     path = simplify(path, Simplification::PreserveReversals);
     if path.len() < 3 {
@@ -72,7 +92,7 @@ pub(in crate::layout) fn simplify_path(
                             .chain(path[to + 1..].iter().copied()),
                         Simplification::PreserveReversals,
                     );
-                    if ports::valid(&candidate, start, end, obstacles)
+                    if ports::valid_with_clearances(&candidate, start, end, obstacles, clearances)
                         && candidate.windows(3).all(|p| {
                             !((p[0].x == p[1].x && p[1].x == p[2].x)
                                 || (p[0].y == p[1].y && p[1].y == p[2].y))
@@ -90,6 +110,57 @@ pub(in crate::layout) fn simplify_path(
             None => return path,
         }
     }
+}
+
+#[test]
+fn numbered_shortcuts_remove_middle_doglegs_and_preserve_badge_space() {
+    let path: Vec<_> = [
+        (100, 100),
+        (160, 100),
+        (160, 160),
+        (260, 160),
+        (260, 100),
+        (320, 100),
+    ]
+    .into_iter()
+    .map(|(x, y)| Point { x, y })
+    .collect();
+    let scorer = Scorer::default();
+    assert_eq!(
+        simplify_path_with_clearances(path.clone(), &[], &scorer, [50; 2]),
+        vec![path[0], path[5]]
+    );
+    let start = Port {
+        point: path[0],
+        side: Side::Right,
+    };
+    let end = Port {
+        point: Point { x: 200, y: 160 },
+        side: Side::Left,
+    };
+    let short = [
+        start.point,
+        Point { x: 120, y: 100 },
+        Point { x: 120, y: 160 },
+        end.point,
+    ];
+    assert!(ports::valid(&short, start, end, &[]));
+    assert!(!ports::valid_with_clearances(
+        &short,
+        start,
+        end,
+        &[],
+        [50; 2]
+    ));
+    let routed = ports::connect_with_clearances(start, end, &[], None, [50; 2]).unwrap();
+    let simplified = simplify_path_with_clearances(routed, &[], &scorer, [50; 2]);
+    assert!(ports::valid_with_clearances(
+        &simplified,
+        start,
+        end,
+        &[],
+        [50; 2]
+    ));
 }
 
 #[test]

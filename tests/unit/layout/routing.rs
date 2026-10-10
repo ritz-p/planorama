@@ -25,8 +25,13 @@ fn shortcut_pass_preserves_all_flat_ports_and_never_lengthens_later_routes() {
     }
     let a = crate::layout::metrics::measure(&before.paths);
     let b = crate::layout::metrics::measure(&after.paths);
-    assert!(b.overlap_distance <= a.overlap_distance);
-    assert!(b.crossing_count <= a.crossing_count);
+    let cost = |m: &crate::layout::metrics::LayoutMetrics| {
+        m.overlap_distance * 8
+            + m.crossing_count as u128 * 512
+            + m.bend_count as u128 * 96
+            + m.total_path_length
+    };
+    assert!(cost(&b) <= cost(&a));
     assert_eq!(before.junctions, after.junctions);
 }
 

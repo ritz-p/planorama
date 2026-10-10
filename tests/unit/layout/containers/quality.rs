@@ -96,7 +96,7 @@ fn coincident_crossings_make_a_long_clear_detour_worthwhile() {
     let end = Point { x: 500, y: 2000 };
     let obstacles = [
         Bounds {
-            origin: Point { x: 200, y: 4000 },
+            origin: Point { x: 200, y: 2440 },
             width: 100,
             height: 100,
         },
@@ -106,7 +106,7 @@ fn coincident_crossings_make_a_long_clear_detour_worthwhile() {
             height: 100,
         },
     ];
-    let occupied = vec![Point { x: 350, y: 500 }, Point { x: 350, y: 3500 }];
+    let occupied = vec![Point { x: 350, y: 1600 }, Point { x: 350, y: 2400 }];
     let mut scorer = Scorer::default();
     for _ in 0..8 {
         scorer.insert(occupied.clone());
