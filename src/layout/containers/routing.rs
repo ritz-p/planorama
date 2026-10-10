@@ -172,6 +172,11 @@ fn route_impl(
     let mut junctions = Vec::new();
     for index in order {
         let edge = &graph.edges[index];
+        scorer.set_peers(
+            layout
+                .containment
+                .routing_peers(edge.from, edge.to, &layout.bounds),
+        );
         if represented_by_nesting(edge, &layout.containment) {
             continue;
         }

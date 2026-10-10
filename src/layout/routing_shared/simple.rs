@@ -77,3 +77,43 @@ fn simple_routes_respect_ports_obstacles_and_edge_conflicts() {
     assert!(!scorer.overlaps(&clear));
     assert!(clear.len() > 2);
 }
+
+#[test]
+fn peer_detours_prefer_below_unless_safety_or_conflicts_override() {
+    use super::{
+        Scorer,
+        ports::{connect, valid},
+    };
+    use crate::layout::{Bounds, Port, Side};
+    let a = Port {
+        point: Point { x: 100, y: 100 },
+        side: Side::Right,
+    };
+    let b = Port {
+        point: Point { x: 500, y: 100 },
+        side: Side::Left,
+    };
+    let peer = Bounds {
+        origin: Point { x: 250, y: 60 },
+        width: 100,
+        height: 80,
+    };
+    let mut scorer = Scorer::default();
+    scorer.set_peers(vec![peer]);
+    let lower = connect(a, b, &[peer], Some(&scorer)).unwrap();
+    assert!(lower.iter().any(|p| p.y > 140), "{lower:?}");
+    let blocked = [
+        peer,
+        Bounds {
+            origin: Point { x: 110, y: 140 },
+            width: 380,
+            height: 100,
+        },
+    ];
+    let upper = connect(a, b, &blocked, Some(&scorer)).unwrap();
+    assert!(upper.iter().any(|p| p.y < 60));
+    assert!(valid(&upper, a, b, &blocked));
+    scorer.insert(vec![Point { x: 200, y: 140 }, Point { x: 200, y: 200 }]);
+    let clear = connect(a, b, &[peer], Some(&scorer)).unwrap();
+    assert!(clear.iter().any(|p| p.y < 60), "{clear:?}");
+}

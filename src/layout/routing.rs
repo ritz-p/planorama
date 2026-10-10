@@ -60,6 +60,7 @@ pub(super) fn route(
     }
 
     let bundles = Bundles::new(graph, ranks);
+    let containment = super::ContainmentTree::new(graph);
     bundles.align_ports(graph, bounds, &mut source_ports, &mut target_ports);
     let columns = ranks.iter().max().copied().unwrap_or(0) + 1;
     let mut column_widths = vec![0; columns];
@@ -100,6 +101,7 @@ pub(super) fn route(
         let mut paths = Vec::with_capacity(graph.edges.len());
         for (edge, link) in graph.edges.iter().enumerate() {
             let (a, b) = link.endpoints();
+            scorer.set_peers(containment.routing_peers(a, b, bounds));
             let start = bounds[a].port(Side::Right, source_ports[edge]).point;
             let end = bounds[b]
                 .port(

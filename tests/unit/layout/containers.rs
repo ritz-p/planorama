@@ -83,6 +83,31 @@ fn hierarchy_obstacles_and_direct_container_endpoints() {
     }
 }
 
+#[test]
+fn peer_detour_scope_uses_nested_parentage_and_excludes_ancestor_targets() {
+    let graph = ranked_fixture();
+    let tree = crate::layout::ContainmentTree::new(&graph);
+    let mut bounds = vec![
+        Bounds {
+            origin: Point { x: 1000, y: 1000 },
+            width: 100,
+            height: 80
+        };
+        7
+    ];
+    for (i, x) in [(1, 100), (2, 300), (3, 500)] {
+        bounds[i].origin = Point { x, y: 100 };
+    }
+    assert_eq!(tree.routing_peers(1, 3, &bounds), vec![bounds[2]]);
+    assert!(tree.routing_peers(1, 0, &bounds).is_empty());
+    let mut reordered = graph.clone();
+    reordered.edges.reverse();
+    assert_eq!(
+        tree.routing_peers(1, 3, &bounds),
+        crate::layout::ContainmentTree::new(&reordered).routing_peers(1, 3, &bounds)
+    );
+}
+
 fn ranked_fixture() -> Graph {
     let template = fixture().nodes.remove(0);
     let nodes = (0..7)
