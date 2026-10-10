@@ -36,12 +36,37 @@ pub(super) fn search(
     scorer: Option<&Scorer>,
     ports: Option<(Side, Side)>,
 ) -> Option<Vec<Point>> {
+    search_grid(start, end, obstacles, scorer, ports, false)
+}
+
+#[cfg(test)]
+pub(in crate::layout) fn shortest(
+    start: Point,
+    end: Point,
+    obstacles: &[Bounds],
+    ports: (Side, Side),
+) -> Option<Vec<Point>> {
+    search_grid(start, end, obstacles, None, Some(ports), true)
+}
+
+fn search_grid(
+    start: Point,
+    end: Point,
+    obstacles: &[Bounds],
+    scorer: Option<&Scorer>,
+    ports: Option<(Side, Side)>,
+    exact: bool,
+) -> Option<Vec<Point>> {
     let mut xs = vec![start.x, end.x];
     let mut ys = vec![start.y, end.y];
     for bounds in obstacles
         .iter()
         .chain(scorer.into_iter().flat_map(|s| s.soft()))
     {
+        if exact {
+            xs.extend([bounds.origin.x, bounds.right()]);
+            ys.extend([bounds.origin.y, bounds.origin.y + bounds.height]);
+        }
         for clearance in if scorer.is_some() {
             &[8, 16, 24][..]
         } else {
@@ -166,4 +191,24 @@ fn reverses(side: Side, a: Point, b: Point) -> bool {
         Side::Bottom => b.y < a.y,
         Side::Top => b.y > a.y,
     }
+}
+
+#[test]
+fn shortest_reference_includes_required_hard_obstacle_detours() {
+    let start = Point { x: 100, y: 200 };
+    let end = Point { x: 500, y: 200 };
+    let barrier = Bounds {
+        origin: Point { x: 250, y: 100 },
+        width: 100,
+        height: 200,
+    };
+    let path = shortest(start, end, &[barrier], (Side::Right, Side::Left)).unwrap();
+    assert!(
+        path.windows(2)
+            .all(|p| !super::crosses(p[0], p[1], barrier))
+    );
+    assert_eq!(
+        crate::layout::metrics::measure(&[path]).total_path_length,
+        600
+    );
 }

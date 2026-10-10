@@ -13,6 +13,51 @@ pub(crate) struct LayoutMetrics {
     pub total_path_length: u128,
 }
 
+#[derive(Debug, PartialEq, Eq)]
+pub(crate) struct EdgeMetrics {
+    pub bends: usize,
+    pub length: u128,
+    pub shortest_valid_length: u128,
+    pub excess_distance: u128,
+}
+
+impl EdgeMetrics {
+    pub fn violation(
+        &self,
+        from: &str,
+        to: &str,
+        max_bends: usize,
+        max_stretch: u128,
+        slack: u128,
+    ) -> Option<String> {
+        (self.bends > max_bends || self.length > self.shortest_valid_length * max_stretch + slack)
+            .then(|| {
+                format!(
+                    "{from} -> {to}: bends={}, length={}, shortest={}, excess={}, stretch={:.3}",
+                    self.bends,
+                    self.length,
+                    self.shortest_valid_length,
+                    self.excess_distance,
+                    self.length as f64 / self.shortest_valid_length.max(1) as f64
+                )
+            })
+    }
+}
+
+pub(crate) fn measure_edge(path: &[Point], shortest_valid: &[Point]) -> EdgeMetrics {
+    assert_eq!(path.first(), shortest_valid.first());
+    assert_eq!(path.last(), shortest_valid.last());
+    let metrics = measure(&[path.to_vec()]);
+    let shortest_valid_length = total_path_length(&segments(&[shortest_valid.to_vec()]));
+    assert!(shortest_valid_length <= metrics.total_path_length);
+    EdgeMetrics {
+        bends: metrics.bend_count,
+        length: metrics.total_path_length,
+        shortest_valid_length,
+        excess_distance: metrics.total_path_length - shortest_valid_length,
+    }
+}
+
 #[derive(Clone, Copy, PartialEq, Eq)]
 enum Axis {
     Horizontal,
