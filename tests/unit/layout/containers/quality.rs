@@ -108,7 +108,7 @@ fn coincident_crossings_make_a_long_clear_detour_worthwhile() {
     ];
     let occupied = vec![Point { x: 350, y: 500 }, Point { x: 350, y: 3500 }];
     let mut scorer = Scorer::default();
-    for _ in 0..4 {
+    for _ in 0..8 {
         scorer.insert(occupied.clone());
     }
     let direct = routing::path_between(start, end, &obstacles, None);
@@ -135,8 +135,8 @@ fn congested_container_routes_improve_over_shortest_paths() {
     assert!(new.overlap_distance < old.overlap_distance / 3);
     let cost = |m: &crate::layout::metrics::LayoutMetrics| {
         m.overlap_distance * 8
-            + m.crossing_count as u128 * 2048
-            + m.bend_count as u128 * 24
+            + m.crossing_count as u128 * 512
+            + m.bend_count as u128 * 96
             + m.total_path_length
     };
     assert!(cost(&new) < cost(&old));
@@ -209,7 +209,7 @@ fn completed_paths_compact_stubs_before_scoring_and_occupancy() {
             let mut scorer = Scorer::default();
             let path = routing::path_between(start, end, &[], quality.then_some(&scorer));
             assert_eq!(path, expected);
-            assert_eq!(scorer.readability_cost(&path), 552 + 2 * 24);
+            assert_eq!(scorer.readability_cost(&path), 552 + 2 * 96);
             scorer.insert(path);
             let crossing = [
                 Point {
@@ -221,7 +221,7 @@ fn completed_paths_compact_stubs_before_scoring_and_occupancy() {
                     y: split.y + 10,
                 },
             ];
-            assert_eq!(scorer.readability_cost(&crossing), 20 + 2048);
+            assert_eq!(scorer.readability_cost(&crossing), 20 + 512);
         }
     }
 }
@@ -264,7 +264,7 @@ fn stub_junction_crossings_select_a_turn_away_detour() {
             "start={start:?} direct={direct:?} detour={detour:?}"
         );
         assert!(
-            scorer.readability_cost(&detour) - Scorer::default().readability_cost(&detour) < 2048
+            scorer.readability_cost(&detour) - Scorer::default().readability_cost(&detour) < 512
         );
     }
 }

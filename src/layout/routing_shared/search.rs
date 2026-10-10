@@ -120,9 +120,13 @@ pub(super) fn search(
                     } else {
                         0
                     }
-                    + if direction != next_direction { 24 } else { 0 }
+                    + if direction != next_direction {
+                        super::scoring::BEND_COST
+                    } else {
+                        0
+                    }
                     + if next == last && next_direction != final_direction {
-                        24
+                        super::scoring::BEND_COST
                     } else {
                         0
                     }
