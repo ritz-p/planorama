@@ -21,6 +21,7 @@ fn graph(count: usize, edges: Vec<(usize, usize)>) -> Graph {
                 address: format!("test.n{i}"),
                 resource_type: "test".into(),
                 provider: crate::model::ProviderIdentity::inferred("test"),
+                provider_configuration: None,
                 module: "root".into(),
                 action: Action::Create,
                 mode: crate::model::EntityMode::Managed,
