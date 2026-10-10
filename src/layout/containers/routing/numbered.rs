@@ -136,6 +136,70 @@ fn overlaps(a: Bounds, b: Bounds) -> bool {
 }
 
 #[test]
+fn packed_siblings_leave_room_for_both_numbered_terminals() {
+    use crate::model::{Edge, EdgeKind, ResourceRole};
+    let base = crate::semantic::transform(
+        &crate::plan::parse(include_str!(
+            "../../../../tests/fixtures/association-plan.json"
+        ))
+        .unwrap(),
+    )
+    .0;
+    for nested in [false, true] {
+        let mut graph = base.clone();
+        if nested {
+            let parent = graph.nodes.len();
+            let mut node = graph.nodes[0].clone();
+            node.address = "aws_vpc.parent".into();
+            node.role = ResourceRole::Container;
+            graph.nodes.push(node);
+            for child in 0..parent {
+                graph.edges.push(Edge {
+                    kind: EdgeKind::Containment,
+                    ..Edge::from((parent, child))
+                });
+            }
+        }
+        let layout = Layout::new(&graph);
+        let edge = &graph.edges[0];
+        let path = &layout.paths[0];
+        let (from, to) = (layout.bounds[edge.from], layout.bounds[edge.to]);
+        let pairs = ports::facing_pairs(from, to);
+        assert!(
+            pairs.iter().any(|&(a, b)| {
+                let start = from.port(
+                    a,
+                    if matches!(a, Side::Left | Side::Right) {
+                        path[0].y.saturating_sub(from.origin.y)
+                    } else {
+                        path[0].x.saturating_sub(from.origin.x)
+                    },
+                );
+                let last = *path.last().unwrap();
+                let end = to.port(
+                    b,
+                    if matches!(b, Side::Left | Side::Right) {
+                        last.y.saturating_sub(to.origin.y)
+                    } else {
+                        last.x.saturating_sub(to.origin.x)
+                    },
+                );
+                start.point == path[0]
+                    && end.point == last
+                    && ports::valid_with_clearances(
+                        path,
+                        start,
+                        end,
+                        &obstacles(&layout, edge),
+                        [relationship_markers::clearance(&graph); 2],
+                    )
+            }),
+            "nested={nested}, bounds={from:?}, {to:?}, path={path:?}"
+        );
+    }
+}
+
+#[test]
 fn numbered_relationships_choose_facing_source_and_target_sides() {
     use crate::layout::Point;
     let graph = crate::semantic::transform(
