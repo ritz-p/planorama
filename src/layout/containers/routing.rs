@@ -236,6 +236,11 @@ fn route_impl(
         } else {
             path
         };
+        let path = if !resource_edges[index] {
+            crate::layout::routing_shared::shortcuts::simplify_path(path, &obstacles, &scorer)
+        } else {
+            path
+        };
         scorer.insert(path.clone());
         paths[index] = path;
     }

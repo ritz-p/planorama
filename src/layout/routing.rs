@@ -177,6 +177,11 @@ pub(super) fn route(
             } else {
                 chosen.points
             };
+            let points = if bundles.group(edge).is_none() {
+                super::routing_shared::shortcuts::simplify_path(points, bounds, &scorer)
+            } else {
+                points
+            };
             scorer.insert(points.clone());
             paths.push(points);
         }

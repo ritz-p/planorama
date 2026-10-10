@@ -27,6 +27,33 @@ pub(in crate::layout) struct Scorer {
 }
 
 impl Scorer {
+    pub(in crate::layout) fn safe_shortcut(
+        &self,
+        old: &[Point],
+        new: &[Point],
+        obstacles: &[Bounds],
+    ) -> bool {
+        let length = |path: &[Point]| {
+            path.windows(2)
+                .map(|p| p[0].x.abs_diff(p[1].x) as u128 + p[0].y.abs_diff(p[1].y) as u128)
+                .sum::<u128>()
+        };
+        if new.len() > old.len()
+            || length(new) > length(old)
+            || (new.len() == old.len() && length(new) == length(old))
+        {
+            return false;
+        }
+        let a = self.score(old, obstacles);
+        let b = self.score(new, obstacles);
+        b.node_crossings == 0
+            && b.overlap <= a.overlap
+            && b.crossings <= a.crossings
+            && b.bends <= a.bends
+            && b.length <= a.length
+            && (b.bends < a.bends || b.length < a.length)
+    }
+
     pub(in crate::layout) fn set_peers(&mut self, peers: Vec<Bounds>) {
         self.peers = peers;
     }
