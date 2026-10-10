@@ -118,7 +118,18 @@ pub fn apply(all: &Architecture, options: &Options) -> Result<Architecture, Stri
     let cross: Vec<_> = all
         .relationships
         .iter()
-        .filter_map(|e| Some((endpoint(&e.from)?, endpoint(&e.to)?)))
+        .filter_map(|e| {
+            let from = endpoint(&e.from)?;
+            let to = endpoint(&e.to)?;
+            let crate::model::architecture::CrossStateProvenance::TerraformRemoteState {
+                output_action,
+                ..
+            } = &e.provenance;
+            if output_action.is_some_and(|action| action != Action::Unchanged) {
+                changed.extend([from.clone(), to.clone()]);
+            }
+            Some((from, to))
+        })
         .collect();
     for (from, to) in &cross {
         neighbors

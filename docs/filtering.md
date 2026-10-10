@@ -9,7 +9,8 @@ An address shared by current and deposed objects is ambiguous.
 
 `--changed-only` retains non-no-op actions and resources with move, import,
 removal, drift or other change metadata, including endpoints of changed lowered
-relationships. Combined with focus it intersects these selections first.
+relationships and resolved cross-state relationships whose producer output has a
+non-no-op action. Combined with focus it intersects these selections first.
 Containment ancestors are then retained automatically. Cross-state relationships
 retain both endpoints transitively, even at depth zero, to preserve provenance.
 Context nodes can therefore be unchanged or outside the requested depth.

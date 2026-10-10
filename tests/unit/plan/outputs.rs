@@ -1,6 +1,29 @@
 use serde_json::json;
 
 #[test]
+fn root_output_actions_are_value_free_and_do_not_change_provenance() {
+    use crate::model::Action;
+    for (actions, expected) in [
+        (json!(["create"]), Action::Create),
+        (json!(["update"]), Action::Update),
+        (json!(["delete"]), Action::Delete),
+        (json!(["no-op"]), Action::Unchanged),
+        (json!(["future"]), Action::Other),
+    ] {
+        let mut input = json!({"format_version":"1.2","resource_changes":[{"address":"test.a","type":"test"}],"configuration":{"root_module":{"outputs":{"value":{"expression":{"references":["test.a.id"]}}}}}});
+        let baseline = crate::plan::parse(&input.to_string()).unwrap();
+        assert_eq!(baseline.outputs[0].action, None);
+        input["output_changes"] = json!({"value":{"actions":actions,"before":"PRIVATE_OUTPUT","after":"PRIVATE_OUTPUT","after_sensitive":true},"unmatched":{"actions":["delete"]}});
+        let parsed = crate::plan::parse(&input.to_string()).unwrap();
+        assert_eq!(parsed.outputs.len(), 1);
+        assert_eq!(parsed.outputs[0].action, Some(expected));
+        assert_eq!(parsed.outputs[0].sources, baseline.outputs[0].sources);
+        assert_eq!(parsed.outputs[0].complete, baseline.outputs[0].complete);
+        assert!(!format!("{parsed:?}").contains("PRIVATE_OUTPUT"));
+    }
+}
+
+#[test]
 fn full_splats_preserve_all_sources_without_guessing_dynamic_keys() {
     for (reference, complete) in [
         ("test.pool[*].id", true),
