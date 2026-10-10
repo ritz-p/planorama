@@ -605,8 +605,8 @@ fn explicit_network_scopes_render_as_nested_architecture() {
     let result = support::run(input);
     assert!(result.status.success());
     let svg = String::from_utf8(result.stdout).unwrap();
-    assert!(svg.contains("7 resources (7 cards), 6 relationships"));
-    assert_eq!(svg.matches("data-edge-kind=\"containment\"").count(), 6);
+    assert!(svg.contains("8 resources (8 cards), 7 relationships"));
+    assert_eq!(svg.matches("data-edge-kind=\"containment\"").count(), 7);
     assert_eq!(svg.matches("marker-end=").count(), 0);
     assert_eq!(svg.as_bytes(), support::run(input).stdout);
 }

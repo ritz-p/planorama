@@ -139,8 +139,9 @@ fn explicit_network_scope_rules_require_static_single_endpoints() {
         ("aws_route_table", "vpc_id", "aws_vpc"),
         ("aws_security_group", "vpc_id", "aws_vpc"),
         ("aws_network_acl", "vpc_id", "aws_vpc"),
+        ("aws_lb_target_group", "vpc_id", "aws_vpc"),
     ] {
-        for scenario in 0..8 {
+        for scenario in 0..10 {
             let mut value = json!({"format_version":"1.2","resource_changes":[
                 {"address":format!("{parent_type}.a[0]"),"type":parent_type},
                 {"address":format!("{parent_type}.b"),"type":parent_type},
@@ -161,6 +162,8 @@ fn explicit_network_scope_rules_require_static_single_endpoints() {
                 }
                 6 => value["resource_changes"][2]["provider_name"] = json!("acme/custom"),
                 7 => value["resource_changes"][2]["mode"] = json!("data"),
+                8 => value["resource_changes"][0]["type"] = json!("aws_iam_role"),
+                9 => value["resource_changes"][0]["provider_name"] = json!("acme/custom"),
                 _ => {}
             }
             let raw = plan::parse(&value.to_string()).unwrap();

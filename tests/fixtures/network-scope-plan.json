@@ -7,7 +7,8 @@
     {"address":"aws_vpc_endpoint.main","type":"aws_vpc_endpoint"},
     {"address":"aws_route_table.main","type":"aws_route_table"},
     {"address":"aws_security_group.main","type":"aws_security_group"},
-    {"address":"aws_network_acl.main","type":"aws_network_acl"}
+    {"address":"aws_network_acl.main","type":"aws_network_acl"},
+    {"address":"aws_lb_target_group.main","type":"aws_lb_target_group"}
   ],
   "configuration":{"root_module":{"resources":[
     {"address":"aws_subnet.private","expressions":{"vpc_id":{"references":["aws_vpc.main.id"]}}},
@@ -15,6 +16,7 @@
     {"address":"aws_vpc_endpoint.main","expressions":{"vpc_id":{"references":["aws_vpc.main.id"]}}},
     {"address":"aws_route_table.main","expressions":{"vpc_id":{"references":["aws_vpc.main.id"]}}},
     {"address":"aws_security_group.main","expressions":{"vpc_id":{"references":["aws_vpc.main.id"]}}},
-    {"address":"aws_network_acl.main","expressions":{"vpc_id":{"references":["aws_vpc.main.id"]}}}
+    {"address":"aws_network_acl.main","expressions":{"vpc_id":{"references":["aws_vpc.main.id"]}}},
+    {"address":"aws_lb_target_group.main","expressions":{"vpc_id":{"references":["aws_vpc.main.id"]}}}
   ]}}
 }
