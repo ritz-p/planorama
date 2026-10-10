@@ -63,7 +63,11 @@ routing and final shortcutting; bundle selection remains a local decision.
 See [bundling](../examples/bundling.svg) and [spanning connections](../examples/spanning-dense.svg).
 
 Independent paths compare route quality on actual bounds, preferring facing
-side pairs when quality is equal. Outward stubs and distinct endpoint slots protect labels and high-degree
+side pairs when quality is equal. All sixteen side pairs compete using valid
+orthogonal paths, with the same hard boundaries, soft-card cost, occupancy cost
+and detour budget. The old endpoint pair has no cost preference. Candidates are
+searched by a direction-aware lower cost bound; remaining pairs are skipped only
+when their bounds exceed the best eligible route's cost. Outward stubs and distinct endpoint slots protect labels and high-degree
 ports. Unrelated container interiors and all container headers are hard obstacles;
 endpoint ancestors permit traversal outside their headers. The containment tree
 determines these scopes. In nested routing, ordinary peer cards are soft occluders:
@@ -82,9 +86,10 @@ Baseline and side-aware candidates share this ordering and marker-aware allocato
 Keeping a side preserves the existing offset; changing a side uses its projected
 slot. Top/bottom slots account for marker width, and left/right slots for height.
 Intentional bundle alignment and numbered terminal spacing remain constraints.
-Numbered relationships select facing sides before routing and reserve their final
+Numbered relationships select their lowest-cost valid sides before routing and reserve their final
 badge corridors. Candidates are rejected when badges overlap cards, protected
-headers or other reserved terminals. Crowded sides retain the spaced baseline ports.
+headers or other reserved terminals. Parallel relationships can choose the same
+side pair while retaining distinct slots.
 
 Numbered ports at both ends of undirected associations, or the destination of
 directed relationships, reserve badge-sized slots; other incident ports retain
@@ -99,7 +104,7 @@ Thus a minor crossing improvement cannot justify an unlimited detour. Search,
 candidate comparison and shortcutting share these weights. Straight, one-bend and two-bend candidates compete with grid-search
 paths under the same safety and endpoint-direction checks. Occupancy-aware alternatives
 are limited to six additional bends and twice the reference length plus 512 pixels
-relative to the simplest valid candidate at the same ports. This keeps numbered
+relative to the simplest valid candidate across the evaluated ports. This keeps numbered
 terminal reservations from inducing excessive congestion detours. These alternatives
 discourage crowded corridors. Selection prefers the lower corridor for otherwise
 equal upper/lower detours around blocking peers in the same
