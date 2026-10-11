@@ -27,6 +27,20 @@ edges project to their direct sibling owners, including external peers at their
 common enclosing scope. Repeated relationships retain their weight. Scopes with
 special connection affinity keep their existing grouping and alignment instead.
 
+Packing evaluates at most 65 height limits. The compactness baseline minimizes
+`max(10 × width, 17 × height)`, then area. Candidates may exceed that baseline's
+span by at most 10% and area by at most 25%; these bounds allow nearby shapes
+without exchanging a compact container for a long strip. Within those bounds,
+the objective is Manhattan distance between projected peer centers plus the
+router's 512-pixel crossing penalty for intersecting straight-line estimates.
+Repeated relationships weight both signals. Compactness breaks routing-cost ties.
+The hub regressions cover useful shape changes and the shape bounds under heavy
+relationship weights; variable-height cases use actual card centers.
+Crossing estimates sample at most 256 distinct segments in geometric order,
+keeping evaluation bounded and independent of input order. Full routing runs
+only after placement. Special affinity scopes retain compact-only selection
+because straight-line estimates do not model their shared connection routes.
+
 Without containers or regional scope panels, resources use module bands and dependency ranks. Long edges
 participate in ordering through virtual intermediate vertices, which are not
 rendered as cards. Numbered relationships retain these bands; rows accommodate
