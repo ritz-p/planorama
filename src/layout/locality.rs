@@ -57,6 +57,13 @@ pub(super) fn refine(graph: &Graph, layout: &mut Layout<'_>) {
             .flat_map(|g| g.sources.into_iter().chain([g.target]))
             .collect();
     let padding = super::relationship_markers::padding(graph);
+    let mut peers = vec![Vec::new(); graph.nodes.len()];
+    for edge in &graph.edges {
+        if edge.kind != EdgeKind::Containment && edge.from != edge.to {
+            peers[edge.from].push(edge.to);
+            peers[edge.to].push(edge.from);
+        }
+    }
     for (node, owner) in preferences {
         if graph.nodes[node].role == ResourceRole::Container
             || !layout.containment.children[node].is_empty()
@@ -111,20 +118,9 @@ pub(super) fn refine(graph: &Graph, layout: &mut Layout<'_>) {
         };
         let ys = axes(ys, min_y, max_y, target.origin.y);
         let score = |candidate: Bounds| {
-            let relationship: u128 = graph
-                .edges
+            let relationship: u128 = peers[node]
                 .iter()
-                .filter(|e| e.kind != EdgeKind::Containment && e.from != e.to)
-                .filter_map(|e| {
-                    if e.from == node {
-                        Some(e.to)
-                    } else if e.to == node {
-                        Some(e.from)
-                    } else {
-                        None
-                    }
-                })
-                .map(|peer| distance(candidate, layout.bounds[peer]))
+                .map(|&peer| distance(candidate, layout.bounds[peer]))
                 .sum();
             let owner_distance = distance(candidate, target);
             let intrusion = owners
