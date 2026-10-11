@@ -58,6 +58,7 @@ No AWS endorsement is implied. Consult the AWS terms for other uses.
   unassociated instance: fail
 </title><text x="40" y="161" font-size="12" fill="#475569">Checks (objects): 0 pass / 1 fail / 0 error / 0 unknown / 0 other / 0 unavailable</text></g>
 <g transform="translate(0 24)">
+<g data-architecture="true" transform="translate(0 0)">
 <rect x="35" y="160" width="970" height="200" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-dasharray="5 4"/><text x="52" y="185" font-size="13" font-weight="700" fill="#475569"><title>root</title>root</text>
 <path d="M 380 256 L 480 256 " data-edge-kind="dependency" data-directionality="directed" data-source="state-6170706c69636174696f6e-resource-6177735f73656375726974795f67726f75702e617070-current" data-target="state-6170706c69636174696f6e-resource-6177735f696e7374616e63652e617070-current" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#state-6170706c69636174696f6e-arrow)"><title>aws_security_group.app → aws_instance.app</title></path>
 <g id="state-6170706c69636174696f6e-resource-6177735f696e7374616e63652e617070-current" data-architecture-id="terraform:6177735f696e7374616e63652e617070-current" data-qualified-address="module.root.aws_instance.app" data-terraform-address="aws_instance.app"><title>module.root.aws_instance.app — create</title>
@@ -74,6 +75,7 @@ No AWS endorsement is implied. Consult the AWS terms for other uses.
 </g>
 <g data-endpoints="true" data-source="state-6170706c69636174696f6e-resource-6177735f73656375726974795f67726f75702e617070-current" data-target="state-6170706c69636174696f6e-resource-6177735f696e7374616e63652e617070-current" aria-hidden="true">
 <circle data-endpoint="source" cx="380" cy="256" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+</g>
 </g>
 </g>
 </g>
@@ -135,6 +137,7 @@ No AWS endorsement is implied. Consult the AWS terms for other uses.
 <g id="state-6e6574776f726b-plan-checks"><title>Object: pass
 </title><text x="40" y="161" font-size="12" fill="#475569">Checks (objects): 1 pass / 0 fail / 0 error / 0 unknown / 0 other / 0 unavailable</text></g>
 <g transform="translate(0 24)">
+<g data-architecture="true" transform="translate(0 0)">
 <rect x="35" y="160" width="970" height="344" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-dasharray="5 4"/><text x="52" y="185" font-size="13" font-weight="700" fill="#475569"><title>root</title>root</text>
 <path d="M 380 256 L 480 256 " data-edge-kind="dependency" data-directionality="directed" data-source="state-6e6574776f726b-resource-6177735f73656375726974795f67726f75702e617070-current" data-target="state-6e6574776f726b-resource-6177735f696e7374616e63652e617070-current" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#state-6e6574776f726b-arrow)"><title>aws_security_group.app → aws_instance.app</title></path>
 <g id="state-6e6574776f726b-resource-6177735f696e7374616e63652e617070-current" data-architecture-id="terraform:6177735f696e7374616e63652e617070-current" data-qualified-address="module.root.aws_instance.app" data-terraform-address="aws_instance.app"><title>module.root.aws_instance.app — unchanged</title>
@@ -158,6 +161,7 @@ No AWS endorsement is implied. Consult the AWS terms for other uses.
 </g>
 <g data-endpoints="true" data-source="state-6e6574776f726b-resource-6177735f73656375726974795f67726f75702e617070-current" data-target="state-6e6574776f726b-resource-6177735f696e7374616e63652e617070-current" aria-hidden="true">
 <circle data-endpoint="source" cx="380" cy="256" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+</g>
 </g>
 </g>
 </g>

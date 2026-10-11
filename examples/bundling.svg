@@ -23,6 +23,7 @@
 <path d="M 540 201 H 570" stroke="#64748b" stroke-width="2.5" stroke-dasharray="2 4" stroke-linecap="round"/><text x="578" y="205">connection</text>
 </g>
 <g transform="translate(0 72)">
+<g data-architecture="true" transform="translate(0 0)">
 <rect x="35" y="160" width="1270" height="488" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-dasharray="5 4"/><text x="52" y="185" font-size="13" font-weight="700" fill="#475569"><title>root</title>root</text>
 <path d="M 800 246 L 819 246 Q 824 246 824 251 L 824 251 Q 824 256 829 256 L 900 256 " data-edge-kind="dependency" data-directionality="directed" data-source="resource-7465727261666f726d5f646174612e61-current" data-target="resource-7465727261666f726d5f646174612e616767726567617465-current" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>terraform_data.a → terraform_data.aggregate</title></path>
 <path d="M 800 390 L 816 390 Q 824 390 824 382 L 824 264 Q 824 256 832 256 L 900 256 " data-edge-kind="dependency" data-directionality="directed" data-source="resource-7465727261666f726d5f646174612e62-current" data-target="resource-7465727261666f726d5f646174612e616767726567617465-current" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>terraform_data.b → terraform_data.aggregate</title></path>
@@ -72,6 +73,7 @@
 <circle data-endpoint="source" cx="380" cy="256" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
 <g data-endpoints="true" data-source="resource-7465727261666f726d5f646174612e73656564-current" data-target="resource-7465727261666f726d5f646174612e63-current" aria-hidden="true">
 <circle data-endpoint="source" cx="380" cy="256" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+</g>
 </g>
 </g>
 </svg>

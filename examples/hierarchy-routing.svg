@@ -39,6 +39,7 @@ No AWS endorsement is implied. Consult the AWS terms for other uses.
 <path d="M 540 201 H 570" stroke="#64748b" stroke-width="2.5" stroke-dasharray="2 4" stroke-linecap="round"/><text x="578" y="205">connection</text>
 </g>
 <g transform="translate(0 72)">
+<g data-architecture="true" transform="translate(0 0)">
 <g data-container="resource-746573742e6e6f646530-current"><title>test.node0</title><rect x="60" y="160" width="920" height="584" rx="12" fill="#ecfdf5" stroke="#047857" stroke-width="2" data-mode="managed"/></g>
 <g data-container="resource-746573742e6e6f646531-current"><title>test.node1</title><rect x="100" y="296" width="400" height="408" rx="12" fill="#d1fae5" stroke="#047857" stroke-width="2" data-mode="managed"/></g>
 <g data-container="resource-746573742e6e6f646532-current"><title>test.node2</title><rect x="540" y="296" width="400" height="408" rx="12" fill="#d1fae5" stroke="#047857" stroke-width="2" data-mode="managed"/></g>
@@ -90,6 +91,7 @@ No AWS endorsement is implied. Consult the AWS terms for other uses.
 </g>
 <g data-endpoints="true" data-source="resource-746573742e6e6f646533-current" data-target="resource-746573742e6e6f646530-current" aria-hidden="true">
 <circle data-endpoint="source" cx="140" cy="480" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/><circle data-endpoint="target" cx="60" cy="480" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/><path data-endpoint-arrow="true" d="M 66.3 483.5 L 59.3 480 L 66.3 476.5 Z" fill="#94a3b8"/>
+</g>
 </g>
 </g>
 </g>

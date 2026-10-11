@@ -63,6 +63,7 @@ No AWS endorsement is implied. Consult the AWS terms for other uses.
 <path d="M 540 201 H 570" stroke="#64748b" stroke-width="2.5" stroke-dasharray="2 4" stroke-linecap="round"/><text x="578" y="205">connection</text>
 </g>
 <g transform="translate(0 72)">
+<g data-architecture="true" transform="translate(0 0)">
 <g data-container="resource-6177735f7670632e6d61696e-current"><title>aws_vpc.main</title><rect x="60" y="160" width="840" height="720" rx="12" fill="#fefce8" stroke="#854d0e" stroke-width="2" data-mode="managed"/></g>
 <g data-container="resource-6177735f7375626e65742e617070-current"><title>aws_subnet.app</title><rect x="460" y="296" width="400" height="544" rx="12" fill="#fef9c3" stroke="#854d0e" stroke-width="2" data-mode="managed"/></g>
 <path d="M 420 422 L 452 422 Q 460 422 460 430 L 460 472 Q 460 480 468 480 L 500 480 " data-edge-kind="connection" data-directionality="directed" data-source="resource-6177735f73656375726974795f67726f75702e736861726564-current" data-target="resource-6177735f6563735f736572766963652e617070-current" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-dasharray="2 4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"><title>aws_security_group.shared → aws_ecs_service.app (connection)</title></path>
@@ -128,6 +129,7 @@ No AWS endorsement is implied. Consult the AWS terms for other uses.
 </g>
 <g data-endpoints="true" data-source="resource-6177735f73656375726974795f67726f75702e776562-current" data-target="resource-6177735f6c622e617070-current" aria-hidden="true">
 <circle data-endpoint="source" cx="306" cy="616" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/><circle data-endpoint="target" cx="500" cy="752" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/><path data-endpoint-arrow="true" d="M 493.7 748.5 L 500.7 752 L 493.7 755.5 Z" fill="#94a3b8"/>
+</g>
 </g>
 </g>
 </g>

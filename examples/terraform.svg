@@ -26,6 +26,7 @@
 <path d="M 540 201 H 570" stroke="#64748b" stroke-width="2.5" stroke-dasharray="2 4" stroke-linecap="round"/><text x="578" y="205">connection</text>
 </g>
 <g transform="translate(0 72)">
+<g data-architecture="true" transform="translate(0 0)">
 <rect x="35" y="160" width="1768" height="1098" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-dasharray="5 4"/><text x="52" y="185" font-size="13" font-weight="700" fill="#475569"><title>root</title>root</text>
 <rect x="35" y="1282" width="1768" height="200" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-dasharray="5 4"/><text x="52" y="1307" font-size="13" font-weight="700" fill="#475569"><title>module.replica[0]</title>module.replica[0]</text>
 <rect x="35" y="1506" width="1768" height="200" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-dasharray="5 4"/><text x="52" y="1531" font-size="13" font-weight="700" fill="#475569"><title>module.replica[1]</title>module.replica[1]</text>
@@ -209,6 +210,7 @@
 <circle data-endpoint="source" cx="192" cy="617" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
 <g data-endpoints="true" data-source="resource-7465727261666f726d5f646174612e7265616479-current" data-target="resource-6d6f64756c652e736572766963655b22776562225d2e7465727261666f726d5f646174612e776f726b65725b315d-current" aria-hidden="true">
 <circle data-endpoint="source" cx="248" cy="617" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+</g>
 </g>
 </g>
 </svg>

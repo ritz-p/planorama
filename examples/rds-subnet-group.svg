@@ -47,6 +47,7 @@ No AWS endorsement is implied. Consult the AWS terms for other uses.
 <path d="M 540 201 H 570" stroke="#64748b" stroke-width="2.5" stroke-dasharray="2 4" stroke-linecap="round"/><text x="578" y="205">connection</text>
 </g>
 <g transform="translate(0 72)">
+<g data-architecture="true" transform="translate(0 0)">
 <g data-container="resource-6177735f7670632e6d61696e-current"><title>aws_vpc.main</title><rect x="60" y="160" width="1200" height="488" rx="12" fill="#fefce8" stroke="#854d0e" stroke-width="2" data-mode="managed"/></g>
 <g data-container="resource-6177735f7375626e65742e61-current"><title>aws_subnet.a</title><rect x="100" y="296" width="400" height="136" rx="12" fill="#fef9c3" stroke="#854d0e" stroke-width="2" data-mode="managed"/></g>
 <g data-container="resource-6177735f7375626e65742e62-current"><title>aws_subnet.b</title><rect x="100" y="472" width="400" height="136" rx="12" fill="#fef9c3" stroke="#854d0e" stroke-width="2" data-mode="managed"/></g>
@@ -105,6 +106,7 @@ No AWS endorsement is implied. Consult the AWS terms for other uses.
 <circle data-endpoint="source" cx="500" cy="364" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
 <g data-endpoints="true" data-source="resource-6177735f7375626e65742e62-current" data-target="resource-6177735f64625f7375626e65745f67726f75702e6d61696e-current" aria-hidden="true">
 <circle data-endpoint="source" cx="500" cy="540" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+</g>
 </g>
 </g>
 </svg>
