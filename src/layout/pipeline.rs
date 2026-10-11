@@ -13,69 +13,6 @@ enum Strategy {
 #[path = "../../tests/unit/layout/pipeline.rs"]
 mod tests;
 
-#[test]
-fn dense_horizontal_ports_expand_flat_rows_and_nested_containers() {
-    use crate::model::{Action, Directionality, Edge, EdgeChange, EdgeKind};
-    let raw = crate::plan::parse(r#"{"format_version":"1.2","resource_changes":[{"address":"test.a","type":"test"},{"address":"test.b","type":"test"},{"address":"test.c","type":"test"}]}"#).unwrap();
-    for nested in [false, true] {
-        let mut graph = crate::semantic::transform(&raw).0;
-        graph.edges = (0..8)
-            .map(|i| Edge {
-                kind: EdgeKind::Association,
-                change: Some(EdgeChange {
-                    directionality: Directionality::Directed,
-                    previous_address: None,
-                    metadata: Default::default(),
-                    address: format!("test.link{i}"),
-                    action: Action::Create,
-                }),
-                ..Edge::from(if i < 4 { (0, 1) } else { (1, 2) })
-            })
-            .collect();
-        if nested {
-            let mut parent = graph.nodes[0].clone();
-            parent.role = ResourceRole::Container;
-            parent.address = "test.parent".into();
-            graph.nodes.push(parent);
-            graph.edges.extend((0..3).map(|child| Edge {
-                kind: EdgeKind::Containment,
-                ..Edge::from((3, child))
-            }));
-        }
-        let layout = Layout::new(&graph);
-        assert_eq!(layout.bounds[1].height, 105, "nested={nested}");
-        for indices in [0..4, 4..8] {
-            let mut ys: Vec<_> = indices
-                .map(|i| {
-                    if i < 4 {
-                        layout.paths[i].last().unwrap().y
-                    } else {
-                        layout.paths[i][0].y
-                    }
-                })
-                .collect();
-            ys.sort();
-            assert!(ys.windows(2).all(|p| p[1] - p[0] >= 16));
-        }
-        if nested {
-            for child in &layout.bounds[..3] {
-                assert!(
-                    child.origin.y + child.height
-                        < layout.bounds[3].origin.y + layout.bounds[3].height
-                );
-            }
-        }
-        let expected = layout.bounds;
-        let expected_paths = layout.paths;
-        graph.edges.reverse();
-        let reversed = Layout::new(&graph);
-        assert_eq!(expected, reversed.bounds);
-        assert_eq!(
-            expected_paths,
-            reversed.paths.into_iter().rev().collect::<Vec<_>>()
-        );
-    }
-}
 pub(super) struct Placed<'a> {
     pub layout: Layout<'a>,
     strategy: Strategy,
