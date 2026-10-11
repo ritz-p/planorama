@@ -105,7 +105,7 @@ impl Bundles {
             candidates.dedup();
             let chosen = candidates.into_iter().find(|&offset| {
                 graph.edges.iter().enumerate().all(|(edge, link)| {
-                    if group.edges.contains(&edge) {
+                    if self.membership[edge] == Some(index) {
                         return true;
                     }
                     [(0, link.from, sources[edge]), (1, link.to, targets[edge])]

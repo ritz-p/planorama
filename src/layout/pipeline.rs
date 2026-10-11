@@ -9,6 +9,10 @@ enum Strategy {
     Nested,
 }
 
+#[cfg(test)]
+#[path = "../../tests/unit/layout/pipeline.rs"]
+mod tests;
+
 #[test]
 fn dense_horizontal_ports_expand_flat_rows_and_nested_containers() {
     use crate::model::{Action, Directionality, Edge, EdgeChange, EdgeKind};
@@ -167,6 +171,10 @@ pub(super) fn route<'a>(graph: &'a Graph, placed: &mut Placed<'a>) {
         }
         Strategy::Nested => containers::route(graph, &mut placed.layout, true),
     }
+    refine(graph, placed);
+}
+
+fn refine<'a>(graph: &'a Graph, placed: &mut Placed<'a>) {
     let side = |a: super::Point, b: super::Point| match a.x.cmp(&b.x) {
         std::cmp::Ordering::Equal => {
             if a.y > b.y {
@@ -194,7 +202,7 @@ pub(super) fn route<'a>(graph: &'a Graph, placed: &mut Placed<'a>) {
         })
         .collect();
     let visible: Vec<_> = placed.layout.paths.iter().map(|p| p.len() >= 2).collect();
-    super::routing_shared::slots::fit_sides(
+    let sides_changed = super::routing_shared::slots::fit_sides(
         graph,
         &placed.layout.bounds,
         &mut sides,
@@ -215,7 +223,8 @@ pub(super) fn route<'a>(graph: &'a Graph, placed: &mut Placed<'a>) {
             )
         })
         .collect();
-    if heights != placed.layout.header_heights
+    if sides_changed
+        || heights != placed.layout.header_heights
         || super::routing_shared::slots::crowded(graph, &placed.layout.paths, &sides)
     {
         super::routing_shared::slots::fit_sides(

@@ -377,13 +377,14 @@ pub(in crate::layout) fn fit_sides(
     sides: &mut [[Side; 2]],
     visible: &[bool],
     paths: Option<&[Vec<crate::layout::Point>]>,
-) {
+) -> bool {
     let numbered = crate::layout::relationship_markers::ends(graph);
     let mut demand = vec![[0; 2]; graph.nodes.len()];
     let mut occupied = std::collections::BTreeSet::new();
     let width = crate::layout::relationship_markers::clearance(graph)
         .saturating_sub(crate::layout::relationship_markers::GAP + 8)
         + 6;
+    let mut changed = false;
     for (index, edge) in graph.edges.iter().enumerate().filter(|(i, _)| visible[*i]) {
         for (end, node) in [edge.from, edge.to].into_iter().enumerate() {
             if matches!(sides[index][end], Side::Top | Side::Bottom) {
@@ -429,9 +430,11 @@ pub(in crate::layout) fn fit_sides(
                 } else {
                     Side::Right
                 };
+                changed = true;
             }
         }
     }
+    changed
 }
 
 pub(in crate::layout) fn required_heights(
