@@ -116,7 +116,6 @@ pub(super) fn route<'a>(graph: &'a Graph, placed: &mut Placed<'a>) {
     }
     refine(graph, placed);
     super::routing_shared::refinement::refine(graph, &mut placed.layout);
-    super::routing_shared::spacing::refine(graph, &mut placed.layout);
 }
 
 fn refine<'a>(graph: &'a Graph, placed: &mut Placed<'a>) {

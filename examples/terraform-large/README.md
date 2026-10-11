@@ -107,31 +107,51 @@ length (5,675 → 1,457), bends (10 → 8), and unchanged area (3,135,600 pixels
 
 ## Parallel route clearance
 
-The final lane-spacing pass reduces sustained independent runs below 16px from
-5,678 to 671 projected pixels (88.2%). Minimum effective clearance among those
-runs improves from 1 to 6px; constrained residual runs remain rather than causing
-unbounded packing growth. The metric ignores the first/last 32px at real endpoints,
-runs shorter than 64px, perpendicular crossings and intentional shared trunks.
-Instance Profile is now logical and its worker references are linked text, so
-dedicated horizontal/vertical fixtures retain that independent-routing regression.
+The revised spacing pass plans complete lanes before changing routes. It reserves
+missing corridor capacity, reroutes impacted independent edges, then compares
+final per-edge shape and proximity. Six corridor attempts and 64px growth per
+axis bound the work. Whole-route clarity takes priority over the soft 16px target.
+Failed expansion and routing restore geometry and paths together.
 
-| Metric | Before | After |
-| --- | ---: | ---: |
-| Layout width × height | 4196 × 2391 | 4262 × 2391 |
-| Total path length | 34189 | 35016 |
-| Bends | 79 | 79 |
-| Crossings | 62 | 65 |
-| Exact overlap length | 737 | 745 |
-| Too-close projected length | 5678 | 671 |
-| Minimum effective parallel clearance | 1 | 6 |
-| Docker test-profile layout time, two runs | 5.631 / 5.614 s | 5.634 / 5.735 s |
+The metric ignores the first/last 32px at real endpoints, runs shorter than 64px,
+perpendicular crossings and intentional shared trunks. Instance Profile is now
+logical and its worker references are linked text; focused mixed-edge fixtures
+preserve horizontal/vertical independent-routing coverage.
 
-Layout dimensions exclude SVG annotation sections. Measurements used the same
-container and compiler; times are observations, not CI thresholds. Final geometry,
-per-edge detour bounds and residual clearance are checked after input reordering.
-The focused congested fixture widens only its shared gap by 11px to reach 16px
-separation, preserving port offsets and bends. Its unobstructed counterpart needs
-no diagram growth. Both cover mixed numbered/ordinary edges and both axes.
+| Metric | Before #291 | Initial PR | Revised |
+| --- | ---: | ---: | ---: |
+| Layout width × height | 4196 × 2391 | 4262 × 2391 | 4208 × 2391 |
+| Total path length | 34189 | 35016 | 34331 |
+| Bends | 79 | 79 | 77 |
+| Crossings | 62 | 65 | 64 |
+| Exact overlap length | 737 | 745 | 737 |
+| Too-close projected length | 5678 | 671 | 3706 |
+| Minimum effective parallel clearance | 1 | 6 | 6 |
+| Docker test-profile layout time, two runs | 5.631 / 5.614 s | 5.898 / 5.707 s | 7.219 / 7.036 s |
+
+Layout dimensions exclude SVG annotations. The final SVG is 4208 × 3481 pixels.
+The revision accepts more residual proximity than the initial PR in exchange for
+shorter, simpler paths and less growth. It still removes 34.7% of the original
+close projected length. Runtime adds about 1.3 seconds over the initial PR on this
+machine; times are observations, not CI assertions. This is a bounded routing
+tradeoff, not a claim that all lanes reach 16px or that aggregate bends prove
+visual quality.
+
+The [37-edge comparison](routing-comparison.md) records lengths, bends, short
+offsets, reversals/backtracking, S-jogs and stretch before/after the refinement.
+Private-b subnet → DB subnet group drops from four bends to two. ECS and VPC
+endpoint subnet connectors retain simple two-bend paths. Private Route Table
+associations retain only the turns required by fixed ports, numbered-marker
+clearance and the neighboring subnet container. Full and enlarged SVG inspection
+covers these corridors. Geometry, shape and metrics agree after edge reordering.
+
+The focused narrow corridor carries Dependency, numbered Association and
+Connection edges. Three lanes require a 44px gap expansion; final rerouting
+produces ordered two-bend routes at 16px separation, distinct from translated old
+paths. The transposed fixture covers horizontal routing. Seven lanes exceed the
+growth budget and keep clean two-bend paths with residual proximity. Separate
+checks protect shared trunks and verify rollback of paths, junctions, scopes and
+bands when expanded routing cannot be accepted.
 
 ## Terraform validation
 

@@ -100,6 +100,12 @@ impl<'a> Layout<'a> {
     }
 
     pub fn new(graph: &'a Graph) -> Self {
+        let mut layout = Self::unspaced(graph);
+        routing_shared::spacing::refine(graph, &mut layout);
+        layout
+    }
+
+    fn unspaced(graph: &'a Graph) -> Self {
         if graph.nodes.iter().any(|n| {
             n.placement == crate::model::Placement::Logical
                 || crate::view::routes::owner(graph, n).is_some()

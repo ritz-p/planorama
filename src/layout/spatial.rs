@@ -3,7 +3,7 @@ use crate::model::architecture::Graph;
 
 pub(super) fn layout(graph: &Graph) -> Layout<'_> {
     let projected = crate::view::spatial::project(graph);
-    let spatial = Layout::new(&projected.graph);
+    let spatial = Layout::unspaced(&projected.graph);
     let empty = Bounds {
         origin: Point { x: 0, y: 0 },
         width: 0,
@@ -130,7 +130,6 @@ pub(super) fn layout(graph: &Graph) -> Layout<'_> {
             .collect();
         super::containers::route(&routing, &mut layout, true);
         super::routing_shared::refinement::refine(&routing, &mut layout);
-        super::routing_shared::spacing::refine(&routing, &mut layout);
         let routed = std::mem::replace(&mut layout.paths, vec![Vec::new(); graph.edges.len()]);
         for (index, path) in indices.into_iter().zip(routed) {
             layout.paths[index] = path;
