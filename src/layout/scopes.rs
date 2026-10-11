@@ -1,6 +1,6 @@
 use super::{Bounds, ContainmentTree, Point, ScopePanel, containers::placement};
 use crate::model::architecture::{DeploymentScope, Graph};
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, BTreeSet};
 
 #[cfg(test)]
 #[path = "../../tests/unit/layout/scopes.rs"]
@@ -13,6 +13,7 @@ pub(super) fn pack(
     offsets: &mut [Point],
 ) -> (usize, Vec<ScopePanel>) {
     let spacing = super::relationship_markers::padding(graph);
+    let protected = super::containers::affinity::protected_roots(graph, &tree.parents);
     let mut groups: BTreeMap<Option<DeploymentScope>, Vec<usize>> = BTreeMap::new();
     for &root in &tree.roots {
         let scope = graph.nodes[root].entity.scope.as_ref();
@@ -31,9 +32,8 @@ pub(super) fn pack(
         let columns = placement::columns(graph, None, &tree.roots, &tree.parents);
         let (_, height) = placement::pack(&columns, sizes, offsets, spacing);
         let relationships = placement::relationships(graph, &tree.roots, &tree.parents);
-        if super::containers::affinity::groups(graph, &tree.parents).is_empty() {
-            placement::refine(&tree.roots, &relationships, sizes, offsets, height, spacing);
-        }
+        let movable = movable_roots(&tree.roots, &protected, offsets);
+        placement::refine(&movable, &relationships, sizes, offsets, height, spacing);
         return (height, Vec::new());
     }
     let mut top = 0;
@@ -46,9 +46,8 @@ pub(super) fn pack(
         let columns = placement::columns(graph, None, roots, &tree.parents);
         let (width, height) = placement::pack(&columns, sizes, offsets, spacing);
         let relationships = placement::relationships(graph, roots, &tree.parents);
-        if super::containers::affinity::groups(graph, &tree.parents).is_empty() {
-            placement::refine(roots, &relationships, sizes, offsets, height, spacing);
-        }
+        let movable = movable_roots(roots, &protected, offsets);
+        placement::refine(&movable, &relationships, sizes, offsets, height, spacing);
         let padding = if scope.is_some() { 40 } else { 0 };
         for &root in roots {
             offsets[root].y += top + padding;
@@ -69,4 +68,17 @@ pub(super) fn pack(
         top += height + padding + 60;
     }
     (top, panels)
+}
+
+fn movable_roots(roots: &[usize], protected: &BTreeSet<usize>, offsets: &[Point]) -> Vec<usize> {
+    let columns: BTreeSet<_> = roots
+        .iter()
+        .filter(|node| protected.contains(node))
+        .map(|&node| offsets[node].x)
+        .collect();
+    roots
+        .iter()
+        .copied()
+        .filter(|&node| !columns.contains(&offsets[node].x))
+        .collect()
 }

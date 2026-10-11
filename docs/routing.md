@@ -26,6 +26,8 @@ the deterministic initial order. Columns, sizes and parents stay fixed. Descenda
 edges project to their direct sibling owners, including external peers at their
 common enclosing scope. Repeated relationships retain their weight. Scopes with
 special connection affinity keep their existing grouping and alignment instead.
+At root level, only columns containing that affinity's connected root component
+are protected; unrelated root columns and deployment regions still refine.
 
 Without containers or regional scope panels, resources use module bands and dependency ranks. Long edges
 participate in ordering through virtual intermediate vertices, which are not
