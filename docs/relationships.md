@@ -17,8 +17,11 @@ Colors and directed arrowheads describe the Terraform change. Every edge retains
 blue dashed gutter routes and visible cross-state legend.
 
 Visible paths with Terraform resource provenance carry compact `[N]` markers and
-a matching **Relationship resources** index in the annotation area above the
-architecture diagram. Full Terraform-native addresses are wrapped without truncation;
+a matching **Relationship resources** numbered list above the architecture diagram.
+Each card contains up to 10 complete entries: 1–10, 11–20, and so on. Cards continue
+to the right, wrapping only when the available width requires it. A multi-source
+entry stays in one card regardless of its wrapped line count. Full Terraform-native
+addresses are wrapped without truncation;
 multiple provenance resources and deposed keys remain visible. Reference-only
 inferred relationships receive no resource number. Numbering sorts by source
 identity, then endpoints and relationship kind, independent of edge-vector order.
@@ -36,8 +39,11 @@ and arrowhead. Other paths, including bundled relationships, avoid this space.
 Card and container spacing expands with the number of digits in the index.
 Each badge uses the relationship's action color, stroke width and line pattern (solid for dependency,
 dashed for association, dotted for connection). The corresponding number badge
-in the relationship index uses the same border color and pattern. Index height follows the
-number of entries and wrapped lines, accounting for wide Unicode characters.
+in the index uses the same border color and pattern. Card heights follow actual
+wrapped lines and source counts, accounting for wide Unicode characters; each row
+reserves its tallest card's height. An empty index adds no cards or height. The
+[21-entry example](../examples/relationship-index.svg) is a synthetic rendering
+fixture demonstrating 10/10/1 grouping, not a deployable Terraform configuration.
 Cross-state routes avoid number badges. Existing edge titles and provenance
 metadata remain available, and attribute values are excluded.
 

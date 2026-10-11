@@ -78,14 +78,7 @@ fn annotation_area(
     layout: &Layout<'_>,
     index: &relationship_index::Index<'_>,
 ) -> annotations::Area {
-    let mut cards = Vec::new();
-    if index.height() > 0 {
-        cards.push(annotations::Card {
-            width: index.width,
-            height: index.height(),
-            content: index.render(0),
-        });
-    }
+    let mut cards = index.cards();
     if components::height(graph) > 0 {
         cards.push(annotations::Card {
             width: layout.width,
