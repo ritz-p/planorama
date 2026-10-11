@@ -63,7 +63,7 @@ fn dimensions_with_index(
     layout: &Layout<'_>,
     index: &relationship_index::Index<'_>,
 ) -> (usize, usize) {
-    let annotations = annotation_area(graph, layout, index);
+    let annotations = annotation_area(graph, index);
     (
         annotations.width,
         layout.height
@@ -73,19 +73,9 @@ fn dimensions_with_index(
     )
 }
 
-fn annotation_area(
-    graph: &Graph,
-    layout: &Layout<'_>,
-    index: &relationship_index::Index<'_>,
-) -> annotations::Area {
+fn annotation_area(graph: &Graph, index: &relationship_index::Index<'_>) -> annotations::Area {
     let mut cards = index.cards();
-    if components::height(graph) > 0 {
-        cards.push(annotations::Card {
-            width: layout.width,
-            height: components::height(graph),
-            content: components::render(graph, layout.width),
-        });
-    }
+    cards.extend(components::cards(graph));
     annotations::Area::new(cards, index.width)
 }
 
@@ -184,7 +174,7 @@ fn render_with_index(
         svg.push_str(&checks::render(&graph.checks));
         svg.push_str("<g transform=\"translate(0 24)\">\n");
     }
-    let annotations = annotation_area(graph, layout, relationship_index);
+    let annotations = annotation_area(graph, relationship_index);
     svg.push_str(&annotations.render());
     writeln!(
         svg,
