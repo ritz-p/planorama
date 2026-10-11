@@ -98,6 +98,29 @@ fn logical_projection_retains_graph_identity_references_and_operations() {
         Some("aws_ecs_cluster.old")
     );
     assert_eq!(cluster.attribute("data-import"), Some("true"));
+    assert_eq!(cluster.attribute("data-role"), Some("controller"));
+    assert!(cluster.children().any(|n| {
+        n.has_tag_name("title")
+            && n.text()
+                .unwrap()
+                .starts_with("module.root.aws_ecs_cluster.app")
+    }));
+    assert!(
+        cluster
+            .children()
+            .any(|n| n.has_tag_name("text") && n.text() == Some("controller"))
+    );
+    let terraform = svg::render_with_format(&graph, &layout, svg::AddressFormat::Terraform);
+    let terraform_doc = roxmltree::Document::parse(&terraform).unwrap();
+    let role = terraform_doc
+        .descendants()
+        .find(|n| n.attribute("data-terraform-address") == Some("aws_iam_role.app"))
+        .unwrap();
+    assert_eq!(role.attribute("data-role"), Some("policy"));
+    assert!(
+        role.children()
+            .any(|n| n.has_tag_name("title") && n.text().unwrap().starts_with("aws_iam_role.app"))
+    );
     assert!(!output.contains("PRIVATE_"));
     assert!(output.contains("3 spatial cards, 5 logical cards"));
     assert_eq!(graph, original);
@@ -254,6 +277,8 @@ fn named_states_keep_logical_ids_separate_and_cross_state_provenance_without_rou
     assert_eq!(ids.len(), 2);
     assert_ne!(ids[0], ids[1]);
     assert!(output.contains("cross-state-relationships"));
+    assert!(!output.contains("independent states"));
+    assert!(output.contains("1 logical"));
     assert!(
         !doc.descendants()
             .any(|n| n.has_tag_name("path") && n.attribute("data-cross-state").is_some())
@@ -469,4 +494,38 @@ fn incomplete_mixed_references_never_link_a_candidate_as_verified_usage() {
         .unwrap();
     assert!(!reference.complete);
     assert!(!reference.targets.is_empty());
+}
+
+#[test]
+fn variable_backed_logical_usage_is_unresolved_but_constants_are_omitted() {
+    let mut value = input();
+    value["configuration"]["root_module"]["variables"] = serde_json::json!({"cluster":{}});
+    for (expression, expected) in [
+        (serde_json::json!({"references":["var.cluster"]}), true),
+        (
+            serde_json::json!({"constant_value":"external-cluster"}),
+            false,
+        ),
+    ] {
+        value["configuration"]["root_module"]["resources"][0]["expressions"]["cluster"] =
+            expression;
+        let graph = semantic::transform(&plan::parse(&value.to_string()).unwrap());
+        let output = svg::render(&graph, &Layout::new(&graph));
+        let doc = roxmltree::Document::parse(&output).unwrap();
+        let service = doc
+            .descendants()
+            .find(|n| n.attribute("data-terraform-address") == Some("aws_ecs_service.app"))
+            .unwrap();
+        assert_eq!(
+            service
+                .descendants()
+                .any(|n| n.has_tag_name("text") && n.text() == Some("Cluster: unresolved")),
+            expected
+        );
+        assert!(
+            !service
+                .descendants()
+                .any(|n| n.attribute("data-reference-attribute") == Some("cluster"))
+        );
+    }
 }
