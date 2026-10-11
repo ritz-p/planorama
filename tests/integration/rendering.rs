@@ -571,6 +571,40 @@ fn additional_dense_and_provider_snapshots_match_the_renderer() {
 }
 
 #[test]
+fn relationship_index_example_keeps_twenty_one_entries_in_three_top_cards() {
+    let svg = render(include_bytes!("../fixtures/relationship-index-plan.json"));
+    assert_eq!(
+        svg,
+        include_str!("../../examples/relationship-index.svg").replace("\r\n", "\n")
+    );
+    let document = roxmltree::Document::parse(&svg).unwrap();
+    let cards: Vec<_> = document
+        .descendants()
+        .filter(|n| n.attribute("data-relationship-index").is_some())
+        .collect();
+    assert_eq!(cards.len(), 3);
+    for (card, expected) in cards.iter().zip([10, 10, 1]) {
+        assert_eq!(
+            card.descendants()
+                .filter(|n| n.attribute("data-relationship-entry").is_some())
+                .count(),
+            expected
+        );
+        assert!(
+            card.ancestors()
+                .any(|n| n.attribute("data-annotation-area").is_some())
+        );
+    }
+    assert_eq!(
+        document
+            .descendants()
+            .filter(|n| n.attribute("data-relationship-marker").is_some())
+            .count(),
+        42
+    );
+}
+
+#[test]
 fn cli_emits_containment_metadata_without_dropping_resources_or_dependencies() {
     let svg = render(include_bytes!("../fixtures/containment-plan.json"));
     assert_eq!(

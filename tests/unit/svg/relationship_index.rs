@@ -181,41 +181,74 @@ fn hundreds_of_numbered_relationships_keep_clear_terminal_corridors() {
 }
 
 #[test]
-fn each_relationship_entry_has_one_top_card_even_with_two_endpoint_badges() {
-    let mut graph = dense_graph(5, EdgeKind::Association);
-    let snapshot = |graph: &Graph| {
-        let layout = Layout::new(graph);
-        let index = Index::new(graph, &layout);
-        let cards = index.cards();
-        assert_eq!(cards.len(), 5);
-        assert_eq!(index.markers.len(), 10);
-        let area = crate::svg::annotations::Area::new(cards, 900);
-        let svg = area.render();
-        let document = roxmltree::Document::parse(&svg).unwrap();
-        let entries: Vec<_> = document
-            .descendants()
-            .filter_map(|n| n.attribute("data-relationship-entry"))
-            .collect();
-        assert_eq!(entries, vec!["1", "2", "3", "4", "5"]);
-        let rows: std::collections::BTreeSet<_> = document
-            .descendants()
-            .filter(|n| n.attribute("data-annotation-card").is_some())
-            .map(|n| {
-                n.attribute("transform")
-                    .unwrap()
-                    .split_whitespace()
-                    .last()
-                    .unwrap()
-            })
-            .collect();
-        assert!(rows.len() > 1);
-        assert!(!svg.contains("data-relationship-index="));
-        svg
-    };
-    let expected = snapshot(&graph);
-    graph.edges.reverse();
-    graph.relationships.reverse();
-    assert_eq!(snapshot(&graph), expected);
+fn relationship_index_chunks_complete_entries_and_wraps_cards_deterministically() {
+    for count in [0usize, 1, 10, 11, 20, 21] {
+        let mut graph = dense_graph(count, EdgeKind::Association);
+        let snapshot = |graph: &Graph| {
+            let layout = Layout::new(graph);
+            let index = Index::new(graph, &layout);
+            let cards = index.cards();
+            assert_eq!(cards.len(), count.div_ceil(10));
+            assert_eq!(index.markers.len(), count * 2);
+            for (i, card) in cards.iter().enumerate() {
+                let doc = roxmltree::Document::parse(&card.content).unwrap();
+                let numbers: Vec<_> = doc
+                    .descendants()
+                    .filter_map(|n| n.attribute("data-relationship-entry"))
+                    .map(|n| n.parse::<usize>().unwrap())
+                    .collect();
+                assert_eq!(
+                    numbers,
+                    (i * 10 + 1..=(count.min((i + 1) * 10))).collect::<Vec<_>>()
+                );
+                assert!(card.content.contains("Relationship resources"));
+                assert!(!card.content.contains("Association</text>"));
+            }
+            let width = cards.first().map_or(360, |card| card.width);
+            let area = crate::svg::annotations::Area::new(cards, 2 * width + 100);
+            let svg = area.render();
+            if count == 0 {
+                assert_eq!(area.height, 0);
+                assert!(svg.is_empty());
+                return svg;
+            }
+            let document = roxmltree::Document::parse(&svg).unwrap();
+            let entries: Vec<_> = document
+                .descendants()
+                .filter_map(|n| n.attribute("data-relationship-entry"))
+                .collect();
+            assert_eq!(
+                entries,
+                (1..=count).map(|i| i.to_string()).collect::<Vec<_>>()
+            );
+            let rows: std::collections::BTreeSet<_> = document
+                .descendants()
+                .filter(|n| n.attribute("data-annotation-card").is_some())
+                .map(|n| {
+                    n.attribute("transform")
+                        .unwrap()
+                        .split_whitespace()
+                        .last()
+                        .unwrap()
+                })
+                .collect();
+            assert_eq!(rows.len(), count.div_ceil(20));
+            let positions: Vec<_> = document
+                .descendants()
+                .filter(|n| n.attribute("data-annotation-card").is_some())
+                .map(|n| n.attribute("transform").unwrap())
+                .collect();
+            assert_eq!(positions[0], "translate(40 160)");
+            if count > 10 {
+                assert_eq!(positions[1], format!("translate({} 160)", width + 60));
+            }
+            svg
+        };
+        let expected = snapshot(&graph);
+        graph.edges.reverse();
+        graph.relationships.reverse();
+        assert_eq!(snapshot(&graph), expected);
+    }
 }
 
 #[test]
@@ -253,10 +286,74 @@ fn wide_addresses_wrap_within_the_canvas_and_reserved_height() {
             .chars()
             .map(|c| if c.is_ascii() { 8 } else { 16 })
             .sum();
-        assert!(16 + width <= cards[0].width - 16);
+        assert!(
+            line.attribute("x").unwrap().parse::<usize>().unwrap() + width <= cards[0].width - 16
+        );
         assert!(line.attribute("y").unwrap().parse::<usize>().unwrap() + 4 < cards[0].height);
     }
-    assert_eq!(cards[0].height, 56 + lines.len() * 20);
+    assert_eq!(cards[0].height, 72 + lines.len() * 20);
+}
+
+#[test]
+fn a_long_multisource_tenth_entry_stays_in_the_first_card() {
+    let mut graph = dense_graph(11, EdgeKind::Association);
+    let relationship = &mut graph.relationships[8];
+    let RelationshipProvenance::Resource { change, .. } = relationship.provenance[0].clone() else {
+        panic!()
+    };
+    let address = format!("z.{}.extra", "long_module.".repeat(100));
+    relationship
+        .provenance
+        .push(RelationshipProvenance::Resource {
+            source: TerraformEntityId {
+                address: address.clone(),
+                deposed_key: Some("old-key".into()),
+            },
+            change,
+        });
+    let layout = Layout::new(&graph);
+    let index = Index::new(&graph, &layout);
+    let cards = index.cards();
+    assert_eq!(cards.len(), 2);
+    let first = roxmltree::Document::parse(&cards[0].content).unwrap();
+    let tenth = first
+        .descendants()
+        .find(|n| n.attribute("data-relationship-entry") == Some("10"))
+        .unwrap();
+    let sources: Vec<_> = tenth
+        .descendants()
+        .filter(|n| n.attribute("data-source-address").is_some())
+        .collect();
+    assert_eq!(sources.len(), 2);
+    let visible: String = sources[1]
+        .children()
+        .filter(|n| n.has_tag_name("tspan"))
+        .filter_map(|n| n.text())
+        .collect();
+    assert_eq!(visible, format!("{address} (deposed: old-key)"));
+    assert!(
+        sources[1]
+            .children()
+            .filter(|n| n.has_tag_name("tspan"))
+            .count()
+            > 10
+    );
+    assert!(cards[0].height > cards[1].height);
+    assert_eq!(
+        first
+            .descendants()
+            .filter(|n| n.attribute("data-relationship-entry").is_some())
+            .count(),
+        10
+    );
+    let second = roxmltree::Document::parse(&cards[1].content).unwrap();
+    assert_eq!(
+        second
+            .descendants()
+            .filter_map(|n| n.attribute("data-relationship-entry"))
+            .collect::<Vec<_>>(),
+        vec!["11"]
+    );
 }
 
 #[test]
@@ -480,8 +577,8 @@ fn resource_provenance_is_indexed_and_reference_provenance_is_not() {
     assert_eq!(index.entries.len(), 1);
     assert_eq!(index.markers.len(), 2);
     let svg = svg::render(&graph, &layout);
-    assert!(!svg.contains("data-relationship-index="));
-    assert!(svg.contains("Association</text>"));
+    assert!(svg.contains("data-relationship-index="));
+    assert!(svg.contains("Relationship resources</text>"));
     assert!(svg.contains("data-relationship-marker=\"1\""));
     assert!(svg.contains("data-relationship-entry=\"1\""));
     assert!(svg.contains(&format!(
