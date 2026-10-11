@@ -11,7 +11,16 @@ fn large_fixture_limits_each_edges_bends_and_valid_route_stretch() {
     .unwrap();
     let mut graph = semantic::transform(&raw).0;
     let snapshot = |graph: &Graph| {
+        let started = std::time::Instant::now();
         let layout = Layout::new(graph);
+        let parallel = crate::layout::routing_shared::spacing::measure(graph, &layout.paths);
+        assert!(parallel.close_length <= 671 && parallel.minimum.is_none_or(|gap| gap >= 6));
+        assert!(layout.width <= 4262 && layout.height <= 2391);
+        eprintln!(
+            "parallel: {:?}; layout_ms={}",
+            crate::layout::routing_shared::spacing::measure(graph, &layout.paths),
+            started.elapsed().as_millis()
+        );
         let distances: Vec<_> = affinity::groups(graph, &layout.containment.parents)
             .iter()
             .map(|group| {

@@ -253,6 +253,29 @@ reduce weighted readability cost and reduce bends or length without increasing e
 Numbered routes retain badge-sized terminal lengths and protect their badge corridors;
 their middle segments can be shortened. Bundles retain their shared geometry.
 
+The final spacing pass indexes horizontal and vertical segments by their line
+coordinate. Independent runs with at least 64px of overlapping projection target
+16px centerline separation; the first/last 32px at real endpoints may converge.
+Perpendicular crossings and disjoint projections do not contribute. Coincident
+prefixes/suffixes connected to a common same-role terminal are shared trunks,
+but branches beyond their divergence are measured independently.
+
+Local candidates move an interior segment and reconnect its adjacent segments,
+then simplify and validate the final path. Ports, marker corridors, protected
+cards/headers, bundle trunks and junctions remain fixed. Candidates must reduce
+the length-weighted spacing deficit without increasing too-close projected
+length or exact overlap. They add no bends and at most 64px to a path.
+If those lanes cannot fit, the pass can insert the missing width/height into a
+gap crossed by no resource card, header or marker corridor. Cards beyond the gap
+move together; enclosing containers, scope panels and bands grow, and paths are
+remapped through the gap before another local routing iteration. This preserves
+containment, port offsets and crossing topology instead of scaling cards.
+Each final routing pass has at most 16 iterations, examines at most 32 congested
+pairs per iteration and adds at most 64px per axis. Gap growth plus rerouting may
+add at most 128px per path. Embedded Route reconstruction receives its own final
+pass. Infeasible or budget-limited runs retain their valid routes; regression
+metrics report residual close length and minimum clearance within the 16px target.
+
 SVG rendering consumes the final geometry and rounds corners without changing
 relationship identity. Nested containment edges receive no redundant path.
 Paths use shared, containment-specific luminance masks to hide foreign container

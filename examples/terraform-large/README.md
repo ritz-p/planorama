@@ -105,6 +105,34 @@ area, while reducing total route length from 39,914 to 34,189 pixels, bends from
 two-leaf regression also records card gaps (1,484/1,284 → 40/176 pixels), path
 length (5,675 → 1,457), bends (10 → 8), and unchanged area (3,135,600 pixels).
 
+## Parallel route clearance
+
+The final lane-spacing pass reduces sustained independent runs below 16px from
+5,678 to 671 projected pixels (88.2%). Minimum effective clearance among those
+runs improves from 1 to 6px; constrained residual runs remain rather than causing
+unbounded packing growth. The metric ignores the first/last 32px at real endpoints,
+runs shorter than 64px, perpendicular crossings and intentional shared trunks.
+Instance Profile is now logical and its worker references are linked text, so
+dedicated horizontal/vertical fixtures retain that independent-routing regression.
+
+| Metric | Before | After |
+| --- | ---: | ---: |
+| Layout width × height | 4196 × 2391 | 4262 × 2391 |
+| Total path length | 34189 | 35016 |
+| Bends | 79 | 79 |
+| Crossings | 62 | 65 |
+| Exact overlap length | 737 | 745 |
+| Too-close projected length | 5678 | 671 |
+| Minimum effective parallel clearance | 1 | 6 |
+| Docker test-profile layout time, two runs | 5.631 / 5.614 s | 5.634 / 5.735 s |
+
+Layout dimensions exclude SVG annotation sections. Measurements used the same
+container and compiler; times are observations, not CI thresholds. Final geometry,
+per-edge detour bounds and residual clearance are checked after input reordering.
+The focused congested fixture widens only its shared gap by 11px to reach 16px
+separation, preserving port offsets and bends. Its unobstructed counterpart needs
+no diagram growth. Both cover mixed numbered/ordinary edges and both axes.
+
 ## Terraform validation
 
 The source was validated with Terraform 1.9.8 and AWS provider 5.100.0; the lock

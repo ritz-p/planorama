@@ -185,10 +185,10 @@ fn dense_graph_quality_metrics_are_deterministic() {
     assert_eq!(
         metrics,
         metrics::LayoutMetrics {
-            overlap_distance: 195,
+            overlap_distance: 152,
             crossing_count: 373,
             bend_count: 88,
-            total_path_length: 71553,
+            total_path_length: 73057,
         }
     );
     assert_eq!(metrics, metrics::measure(&Layout::new(&graph).paths));
