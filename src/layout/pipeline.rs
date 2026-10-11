@@ -63,9 +63,11 @@ fn place_sized(graph: &Graph, tree: ContainmentTree, heights: Option<Vec<usize>>
             .iter()
             .copied()
             .zip(&header_heights)
-            .map(|(origin, &height)| Bounds {
+            .zip(&graph.nodes)
+            .map(|((origin, &height), node)| Bounds {
+                origin,
                 height,
-                ..Bounds::card(origin)
+                width: crate::view::references::width(node),
             })
             .collect::<Vec<_>>();
         let width = bounds

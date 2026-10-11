@@ -118,7 +118,10 @@ fn large_fixture_limits_each_edges_bends_and_valid_route_stretch() {
                         })
                         .sum();
                     eprintln!("gateway hidden length={hidden}");
-                    assert!(own.total_path_length <= 1000 && own.bend_count <= 3);
+                    assert!(
+                        own.total_path_length <= metrics.shortest_valid_length + 128
+                            && own.bend_count <= 3
+                    );
                     assert!(hidden as u128 * 3 < own.total_path_length);
                     let foreign = graph
                         .nodes

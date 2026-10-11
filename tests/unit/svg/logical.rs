@@ -434,7 +434,7 @@ fn consumer_uses_only_direct_references_and_keeps_content_inside_cards() {
 }
 
 #[test]
-fn shared_profiles_and_overflow_keep_complete_accessible_references() {
+fn shared_profiles_and_long_reference_lists_are_fully_visible() {
     let mut value = input();
     let mut worker = value["configuration"]["root_module"]["resources"][2].clone();
     worker["address"] = serde_json::json!("aws_instance.second");
@@ -480,7 +480,7 @@ fn shared_profiles_and_overflow_keep_complete_accessible_references() {
             .descendants()
             .filter(|n| n.has_tag_name("a"))
             .count(),
-        4
+        10
     );
     let summary = service
         .descendants()
@@ -493,11 +493,22 @@ fn shared_profiles_and_overflow_keep_complete_accessible_references() {
         .text()
         .unwrap();
     assert!(addresses.iter().all(|a| title.contains(a)));
-    assert!(
-        summary
-            .descendants()
-            .any(|n| n.has_tag_name("text") && n.text().unwrap().contains("+6 more"))
-    );
+    assert!(!output.contains("more (see full title)"));
+    for address in &addresses {
+        assert!(
+            summary
+                .descendants()
+                .filter(|n| n.has_tag_name("a"))
+                .any(|link| {
+                    let visible = link
+                        .children()
+                        .filter(|n| n.has_tag_name("text"))
+                        .filter_map(|n| n.text())
+                        .collect::<String>();
+                    visible == format!("References: {address}")
+                })
+        );
+    }
 }
 
 #[test]

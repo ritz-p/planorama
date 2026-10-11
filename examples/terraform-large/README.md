@@ -70,8 +70,14 @@ this fixture does not supply matching planned dimension/identifier values. It
 therefore shows Monitors: unresolved, emits UnverifiedMonitoring with
 `--diagnostics`, and does not claim Monitored by on RDS.
 Moving these two CloudWatch cards reduced routed paths from 39 to 37 (5.1%).
-The spatial card envelope remains 3416 × 2062 (7,043,792 square pixels), and the
-canvas remains 3556 × 3392: other resources determine the outer bounds.
+At that step the spatial card envelope stayed 3416 × 2062 (7,043,792 square pixels),
+and the canvas stayed 3556 × 3392: other resources determined the outer bounds.
+
+Full Uses/Dependencies labels subsequently expanded the canvas from 3556 × 3392
+to 4196 × 3481. ECS Service is 640 × 210 pixels and visibly includes
+`Task definition: module.application.aws_ecs_task_definition.app` and
+`Cluster: module.application.aws_ecs_cluster.app` without truncation. Reference
+rows have no count limit; long addresses wrap. Routed paths remain 37.
 
 SG cards remain Policies, but their attachments stay dependencies because this
 synthetic fixture has no SG collection ID evidence. The dedicated

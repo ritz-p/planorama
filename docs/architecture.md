@@ -43,11 +43,15 @@ the complete child height. Final routing uses the child's bounds and ports for i
 next-hop Association. Layout ancestry supports exiting the parent without adding
 a semantic Containment edge. See [routes](routes.md).
 
-Consumer cards show compact Uses rows from the same evidence, with provider labels
-supplied during projection. Shared row selection determines both content height
-and rendering. Logical cards also show their own references; UI links never add
-routing edges. Full lists remain in accessible titles when the four-row limit
-is exceeded.
+Consumer cards show every Uses/Dependencies row from the same evidence, with
+provider labels supplied during projection. Shared label and wrapping metrics
+determine intrinsic width and height before flat/nested packing, scope placement
+and routing. Reference-driven widths grow from 320 to 640 pixels; longer labels
+wrap at 11px monospace with 18px line spacing and no row limit. Measurements
+reserve the Unavailable prefix so filtering and spatial projection cannot
+underestimate content. Logical annotation cards use the same reference metrics.
+Full Terraform addresses include module/instance keys, remote state and deposed
+identity. UI links never add routing edges.
 
 Ingestion does not import provider rules, layout or SVG. Layout, view and SVG use
 the `model::architecture` facade, which excludes Terraform ingestion contracts.
