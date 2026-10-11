@@ -30,8 +30,19 @@ pub(super) fn pack(
     }
     if !groups.keys().flatten().any(|scope| scope.region.is_some()) {
         let columns = placement::columns(graph, None, &tree.roots, &tree.parents);
-        let (_, height) = placement::pack(&columns, sizes, offsets, spacing);
         let relationships = placement::relationships(graph, &tree.roots, &tree.parents);
+        let preserve_affinity = tree.roots.iter().any(|root| protected.contains(root));
+        let (_, height) = placement::pack(
+            &columns,
+            if preserve_affinity {
+                &[]
+            } else {
+                &relationships
+            },
+            sizes,
+            offsets,
+            spacing,
+        );
         let movable = movable_roots(&tree.roots, &protected, offsets);
         placement::refine(&movable, &relationships, sizes, offsets, height, spacing);
         return (height, Vec::new());
@@ -44,8 +55,19 @@ pub(super) fn pack(
         .chain(groups.iter().filter(|(scope, _)| scope.is_none()))
     {
         let columns = placement::columns(graph, None, roots, &tree.parents);
-        let (width, height) = placement::pack(&columns, sizes, offsets, spacing);
         let relationships = placement::relationships(graph, roots, &tree.parents);
+        let preserve_affinity = roots.iter().any(|root| protected.contains(root));
+        let (width, height) = placement::pack(
+            &columns,
+            if preserve_affinity {
+                &[]
+            } else {
+                &relationships
+            },
+            sizes,
+            offsets,
+            spacing,
+        );
         let movable = movable_roots(roots, &protected, offsets);
         placement::refine(&movable, &relationships, sizes, offsets, height, spacing);
         let padding = if scope.is_some() { 40 } else { 0 };
