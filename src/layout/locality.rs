@@ -6,12 +6,51 @@ use std::collections::BTreeSet;
 #[path = "../../tests/unit/layout/locality.rs"]
 mod tests;
 
+fn leaves(graph: &Graph) -> Vec<(usize, usize)> {
+    let mut neighbors = vec![BTreeSet::new(); graph.nodes.len()];
+    for edge in &graph.edges {
+        if edge.kind != EdgeKind::Containment && edge.from != edge.to {
+            neighbors[edge.from].insert(edge.to);
+            neighbors[edge.to].insert(edge.from);
+        }
+    }
+    neighbors
+        .iter()
+        .enumerate()
+        .filter_map(|(node, peers)| {
+            if peers.len() != 1 || graph.nodes[node].role == ResourceRole::Container {
+                return None;
+            }
+            let peer = *peers.first()?;
+            if neighbors[peer].len() == 1
+                && graph.nodes[node].entity.id < graph.nodes[peer].entity.id
+                && graph.nodes[peer].role != ResourceRole::Container
+            {
+                return None;
+            }
+            Some((node, peer))
+        })
+        .collect()
+}
+
 pub(super) fn refine(graph: &Graph, layout: &mut Layout<'_>) {
     let mut preferences = crate::provider::aws::owner_affinities(graph);
     preferences.sort_by_key(|&(node, owner)| {
         (&graph.nodes[owner].entity.id, &graph.nodes[node].entity.id)
     });
     let owners: BTreeSet<_> = preferences.iter().map(|&(_, owner)| owner).collect();
+    let explicit: BTreeSet<_> = preferences
+        .iter()
+        .flat_map(|&(node, owner)| [node, owner])
+        .collect();
+    let mut leaf_preferences = leaves(graph);
+    leaf_preferences
+        .sort_by_key(|&(node, peer)| (&graph.nodes[peer].entity.id, &graph.nodes[node].entity.id));
+    preferences.extend(
+        leaf_preferences
+            .into_iter()
+            .filter(|(node, _)| !explicit.contains(node)),
+    );
     let protected: BTreeSet<_> =
         super::containers::affinity::groups(graph, &layout.containment.parents)
             .into_iter()
@@ -20,11 +59,9 @@ pub(super) fn refine(graph: &Graph, layout: &mut Layout<'_>) {
     let padding = super::relationship_markers::padding(graph);
     let mut peers = vec![Vec::new(); graph.nodes.len()];
     for edge in &graph.edges {
-        if edge.kind != EdgeKind::Containment {
+        if edge.kind != EdgeKind::Containment && edge.from != edge.to {
             peers[edge.from].push(edge.to);
-            if edge.to != edge.from {
-                peers[edge.to].push(edge.from);
-            }
+            peers[edge.to].push(edge.from);
         }
     }
     for (node, owner) in preferences {
@@ -74,7 +111,11 @@ pub(super) fn refine(graph: &Graph, layout: &mut Layout<'_>) {
             values.truncate(32);
             values
         };
-        let xs = axes(xs, min_x, max_x, target.origin.x);
+        let xs = if !explicit.contains(&node) && !layout.bands.is_empty() {
+            vec![original.origin.x]
+        } else {
+            axes(xs, min_x, max_x, target.origin.x)
+        };
         let ys = axes(ys, min_y, max_y, target.origin.y);
         let score = |candidate: Bounds| {
             let relationship: u128 = peers[node]
@@ -84,13 +125,15 @@ pub(super) fn refine(graph: &Graph, layout: &mut Layout<'_>) {
             let owner_distance = distance(candidate, target);
             let intrusion = owners
                 .iter()
-                .filter(|&&other| other != owner)
+                .filter(|&&other| explicit.contains(&node) && other != owner)
                 .map(|&other| {
                     owner_distance.saturating_sub(distance(candidate, layout.bounds[other]))
                 })
                 .max()
                 .unwrap_or(0);
-            owner_distance * 4 + intrusion * 4 + relationship
+            owner_distance * if explicit.contains(&node) { 4 } else { 1 }
+                + intrusion * 4
+                + relationship
         };
         let mut best = (score(original), original.origin.x, original.origin.y);
         for x in xs {
