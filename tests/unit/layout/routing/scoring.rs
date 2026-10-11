@@ -250,13 +250,13 @@ fn branch_soft_cost_uses_its_own_endpoint_exclusions() {
     };
     let clear = scorer.readability_cost(&path);
     assert_eq!(
-        scorer.readability_cost_with_soft(&path, &[card]),
+        scorer.readability_cost_with_soft(&path, &[card.into()]),
         clear + 80
     );
     scorer.set_soft(vec![card]);
     assert_eq!(scorer.readability_cost_with_soft(&path, &[]), clear);
     assert_eq!(
-        scorer.readability_cost_with_soft(&path, &[card]),
+        scorer.readability_cost_with_soft(&path, &[card.into()]),
         clear + 80
     );
 }

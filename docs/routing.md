@@ -132,16 +132,21 @@ Ordinary nested edges select from their assigned ports directly, avoiding an
 eager legacy-route search that side selection would repeat. The legacy route is
 computed only if no valid side candidate exists.
 Outward stubs and distinct endpoint slots protect labels and high-degree
-ports. Unrelated container interiors and all container headers are hard obstacles;
-strict endpoint ancestors permit traversal outside their headers. An endpoint
+ports. Endpoint and ancestor headers remain hard obstacles; unrelated containers,
+including their headers, are visual occluders hidden by their per-edge SVG mask.
+Strict endpoint ancestors permit traversal outside their headers. An endpoint
 container is a full obstacle when its peer is outside it, protecting its interior
 through side selection, independent routing, bundles and final shortcuts. A
 container-to-descendant relationship keeps its header-only barrier and may attach
 from inside. This applies symmetrically to incoming and outgoing routes and does
 not rely on crossing penalties to discourage re-entry. The containment tree
-determines these scopes. In nested routing, ordinary peer cards are soft occluders:
-each pixel hidden behind a card adds two pixels of routing cost. Short detours can
-avoid them, but long detours can pass behind the opaque cards. Search, candidate
+determines these scopes. In nested routing, ordinary peer cards and unrelated
+containers are soft occluders: each hidden pixel adds two pixels of cost for cards
+and one per two-pixel interval for containers. Container intervals use absolute
+coordinate division, making costs additive across grid subdivisions. Containers can cover long stretches; the lower weight
+allows substantial bend/distance savings while still preferring short clear detours.
+Nested occluders and their cards are counted only once, using the outermost foreign
+container. Short detours can avoid them, but long detours can pass behind them. Search, candidate
 comparison and shortcutting use this same policy. Endpoint cards remain protected. Connections
 between a container and its descendants can attach from inside to its boundary
 or the underside of its header, without visiting a child as an endpoint.
@@ -172,7 +177,8 @@ reverse traversal. These caches borrow the fixed scorer, use memory proportional
 to the search grid, and are discarded after that search.
 
 Hard obstacle violations are rejected. Readability cost is path length plus 96 per
-bend, one per crossing, eight per overlapping pixel and two per occluded card pixel.
+bend, one per crossing, eight per overlapping pixel, two per occluded card pixel
+and one per two-pixel occluded container interval.
 A single perpendicular crossing cannot pay for an extra bend or even a two-pixel
 orthogonal detour. Equal-length, equal-bend alternatives prefer fewer crossings;
 collinear overlap remains a separate, stronger penalty. Search segment and junction
@@ -198,6 +204,12 @@ their middle segments can be shortened. Bundles retain their shared geometry.
 
 SVG rendering consumes the final geometry and rounds corners without changing
 relationship identity. Nested containment edges receive no redundant path.
+Paths use shared, containment-specific luminance masks to hide foreign container
+fills, rounded borders and descendants, with two pixels of stroke clearance.
+An endpoint's ancestor containers are excluded from its mask, preserving internal
+relationships. Junction dots use their participating route's mask; endpoint circles
+and numbered badges retain their foreground layer and reserved corridors.
+Mask IDs and groups sort by resource identity and are namespaced in named states.
 
 ## Verification
 
@@ -208,7 +220,7 @@ self-crossings are excluded. Run the [Docker checks](../README.md#開発・検�
 The large fixture also checks every visible edge: at most 14 bends and a length
 at most twice its shortest valid reference plus 128 pixels.
 The reference keeps the rendered ports and terminal clearance, protects container
-boundaries, headers and numbered corridors, and ignores soft-card and edge-conflict
+endpoint boundaries, ancestor headers and numbered corridors, and ignores occlusion and edge-conflict
 costs. Its rectilinear search includes exact obstacle boundaries, so necessary
 container detours are included in the baseline. Failures name both endpoint
 addresses and report bends, length, reference length, excess distance and stretch.
@@ -230,6 +242,13 @@ With crossing rebalancing and explicit external-endpoint protection its points a
 Adding the hard endpoint rule alone leaves these improved metrics and points
 unchanged; the regression also rejects an explicit inward candidate and verifies
 both relationship directions, internal descendants and edge reordering.
+With foreign-container occlusion, the IGW → NAT edge shortens from 1,124 to 972
+pixels with three bends, zero crossings and zero overlap. It passes behind public-b
+on x=791 instead of detouring to x=708. Its final points are
+`(791,2109) → (791,1213) → (784,1213) → (784,1160) → (800,1160)`.
+The regression requires this edge to cross public-b, remain within 1,000 pixels
+and three bends, and hide less than a third of its length. Total fixture length
+falls from 48,529 to 46,601 and bends from 98 to 92.
 Performance measurements are documented in [benchmarks](benchmarks.md).
 Thread-local test counters verify that unobstructed horizontal/vertical side
 selection evaluates one pair without grid search, while blocked ports expand the

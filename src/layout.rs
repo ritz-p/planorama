@@ -80,6 +80,24 @@ pub struct ScopePanel {
 }
 
 impl<'a> Layout<'a> {
+    pub(crate) fn occludes(&self, node: usize, edge: &crate::model::Edge) -> bool {
+        self.containers.contains(&node)
+            && !self.containment.is_ancestor(node, edge.from)
+            && !self.containment.is_ancestor(node, edge.to)
+    }
+
+    pub(crate) fn occluders(&self, edge: &crate::model::Edge) -> Vec<usize> {
+        self.containers
+            .iter()
+            .copied()
+            .filter(|&node| {
+                self.occludes(node, edge)
+                    && !self.containment.parents[node]
+                        .is_some_and(|parent| self.occludes(parent, edge))
+            })
+            .collect()
+    }
+
     pub fn new(graph: &'a Graph) -> Self {
         if graph
             .nodes

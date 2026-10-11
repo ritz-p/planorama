@@ -13,7 +13,7 @@ pub(in crate::layout) fn simplify_routes_with_soft(
     paths: &mut [Vec<Point>],
     order: impl IntoIterator<Item = usize>,
     obstacles: impl Fn(usize) -> Vec<Bounds>,
-    soft: impl Fn(usize) -> Vec<Bounds>,
+    soft: impl Fn(usize) -> Vec<super::scoring::Occluder>,
 ) {
     simplify_routes_with_clearances(paths, order, obstacles, soft, |_| [16; 2]);
 }
@@ -22,7 +22,7 @@ pub(in crate::layout) fn simplify_routes_with_clearances(
     paths: &mut [Vec<Point>],
     order: impl IntoIterator<Item = usize>,
     obstacles: impl Fn(usize) -> Vec<Bounds>,
-    soft: impl Fn(usize) -> Vec<Bounds>,
+    soft: impl Fn(usize) -> Vec<super::scoring::Occluder>,
     clearances: impl Fn(usize) -> [usize; 2],
 ) {
     let mut scorer = Scorer::default();
