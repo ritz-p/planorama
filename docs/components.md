@@ -6,4 +6,14 @@ The supported grouping rule recognizes a managed AWS `aws_lb` with one or more `
 
 Target groups remain independent because they can be shared; broad ALB/NLB, API Gateway and other provider grouping rules are not inferred. The label is intentionally “Load balancer” because no subtype is inferred from values. These are logical memberships, not network containment relationships, so a component can span network boundaries without changing resource placement.
 
-SVG diagrams place logical-component summaries in the annotation area above the architecture, listing each member's action and Terraform address. Member links navigate to the original cards, whose metadata retains imports, drift, replacement reasons and move provenance. `data-entity-kind="synthetic"` marks component panels; `data-component-id` associates original cards with their logical entity. Synthetic entities do not increase resource/action counts or create execution/dependency edges. Ungrouped graphs render as before. See [the component example](../examples/components.svg).
+Each logical component has its own card in the shared annotation area above the
+architecture. Cards follow relationship annotations, ordered by synthetic identity,
+and wrap into rows. Headings and member addresses wrap without truncation; members
+are sorted by address and retain their operation labels and links to the original
+resource cards. These annotations do not affect architecture placement or routing.
+
+`data-entity-kind="synthetic"`, architecture identity/provenance and component kind
+remain on each summary; `data-component-id` associates original resource cards with
+their logical entity. Original cards retain imports, drift, replacement reasons
+and move provenance. Synthetic entities do not increase resource/action counts or
+create dependency edges. See [the component example](../examples/components.svg).
