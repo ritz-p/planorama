@@ -2,7 +2,7 @@ use super::annotations::{Card, card_width, wrap};
 use crate::model::architecture::Graph;
 use std::fmt::Write;
 
-pub(super) fn cards(graph: &Graph) -> Vec<Card> {
+pub(super) fn cards(graph: &Graph, address_format: super::AddressFormat) -> Vec<Card> {
     let mut nodes: Vec<_> = graph
         .nodes
         .iter()
@@ -12,12 +12,22 @@ pub(super) fn cards(graph: &Graph) -> Vec<Card> {
     nodes.into_iter().map(|node| {
         let mode = match node.mode { crate::model::EntityMode::Data => "data / external", crate::model::EntityMode::Managed => "managed" };
         let operation = super::operations::label(node.action, &node.metadata);
-        let mut lines = vec!["Logical resource".to_string(), node.address.clone(), format!("{} · {mode}", node.resource_type), operation.clone()];
+        let address = match address_format {
+            super::AddressFormat::Qualified => node.resource_address().qualified().into_owned(),
+            super::AddressFormat::Terraform => node.address.clone(),
+        };
+        let mut lines = vec!["Logical resource".to_string(), address.clone(), format!("{} · {mode}", node.resource_type), operation.clone()];
+        match node.role {
+            crate::model::ResourceRole::Policy => lines.push("policy".into()),
+            crate::model::ResourceRole::Controller => lines.push("controller".into()),
+            _ => {}
+        }
         if let Some(previous) = &node.previous_address { lines.push(format!("Moved from: {previous}")); }
         if let Some(key) = &node.deposed_key { lines.push(format!("Deposed: {key}")); }
         let width = card_width(lines.iter());
         let mut svg = format!(r#"<g id="{}" data-architecture-id="{}" data-entity-kind="terraform" data-placement="logical" data-terraform-address="{}" data-qualified-address="{}"{}><title>{} — {}{}</title>"#,
-            super::identity::resource(node), super::escape(node.entity.id.as_str()), super::escape(&node.address), super::escape(&node.resource_address().qualified()), super::operations::attributes(&node.metadata), super::escape(&node.address), super::escape(&operation), super::escape(&super::operations::details(&node.metadata)));
+            super::identity::resource(node), super::escape(node.entity.id.as_str()), super::escape(&node.address), super::escape(&node.resource_address().qualified()), super::operations::attributes(&node.metadata), super::escape(&address), super::escape(&operation), super::escape(&super::operations::details(&node.metadata)));
+        svg.insert_str(svg.find('>').unwrap(), super::roles::attributes(node.role));
         for (name, value) in [("previous-address", &node.previous_address), ("deposed-key", &node.deposed_key)] {
             if let Some(value) = value {
                 let close = svg.find('>').unwrap();

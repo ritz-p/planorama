@@ -62,12 +62,12 @@ pub fn render_states(
     for (id, graph) in graphs {
         let layout = Layout::new(graph);
         let index = super::relationship_index::Index::new(graph, &layout);
-        let (state_width, height) = super::dimensions_with_index(graph, &layout, &index);
+        let (state_width, height) = super::dimensions_with_index(graph, &layout, &index, format);
         width = width.max(state_width);
         let prefix = prefix(id);
         let check_offset = if graph.checks.is_empty() { 0 } else { 24 }
             + super::legend::height(graph)
-            + super::annotation_area(graph, &index).height;
+            + super::annotation_area(graph, &index, format).height;
         obstacles.insert(
             id.clone(),
             StateObstacles {
@@ -178,7 +178,14 @@ pub fn render_states(
         sections.push_str(&links);
         sections.push_str("<text x=\"350\" y=\"35\" font-family=\"ui-monospace, Consolas, monospace\" font-size=\"12\" fill=\"#2563eb\">Dashed blue: cross-state dependency</text>\n");
     }
-    let description = if link_count == 0 {
+    let description = if architecture.relationships().len() > link_count {
+        format!(
+            "{} named states with {} cross-state dependencies, including {} logical references without routed paths.",
+            graphs.len(),
+            architecture.relationships().len(),
+            architecture.relationships().len() - link_count
+        )
+    } else if link_count == 0 {
         format!(
             "{} independent states. Resource identities and relationships are scoped to each state.",
             graphs.len()
@@ -273,8 +280,9 @@ fn cross_state_paths_avoid_intervening_cards_and_describe_dependencies() {
     assert!(local.bounds[0].right() < local.bounds[1].right());
     let (_, height) = super::dimensions(&graph, &local);
     let index = super::relationship_index::Index::new(&graph, &local);
-    let offset =
-        100 + super::legend::height(&graph) + super::annotation_area(&graph, &index).height;
+    let offset = 100
+        + super::legend::height(&graph)
+        + super::annotation_area(&graph, &index, super::AddressFormat::Qualified).height;
     let obstacles: Vec<_> = [offset, offset + height + 60]
         .into_iter()
         .flat_map(|offset| {

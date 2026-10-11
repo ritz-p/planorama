@@ -59,9 +59,9 @@ No AWS endorsement is implied. Consult the AWS terms for other uses.
 </g>
 <g transform="translate(0 72)">
 <g data-annotation-area="true">
-<g data-annotation-card="true" transform="translate(40 160)"><rect width="360" height="108" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g id="resource-646174612e6177735f616d692e6c6174657374-current" data-architecture-id="terraform:646174612e6177735f616d692e6c6174657374-current" data-entity-kind="terraform" data-placement="logical" data-terraform-address="data.aws_ami.latest" data-qualified-address="module.root.data.aws_ami.latest" data-external="true"><title>data.aws_ami.latest — unchanged</title><rect width="360" height="108" rx="12" fill="#f8fafc" stroke="#64748b" data-mode="data" stroke-dasharray="6 4"/>
+<g data-annotation-card="true" transform="translate(40 160)"><rect width="360" height="108" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g id="resource-646174612e6177735f616d692e6c6174657374-current" data-architecture-id="terraform:646174612e6177735f616d692e6c6174657374-current" data-entity-kind="terraform" data-placement="logical" data-terraform-address="data.aws_ami.latest" data-qualified-address="module.root.data.aws_ami.latest" data-external="true"><title>module.root.data.aws_ami.latest — unchanged</title><rect width="360" height="108" rx="12" fill="#f8fafc" stroke="#64748b" data-mode="data" stroke-dasharray="6 4"/>
 <use href="#planorama-icon-aws-ec2" x="320" y="8" width="24" height="24" aria-hidden="true"/><text x="16" y="28" font-size="12" fill="#5b21b6" font-weight="700">Logical resource</text>
-<text x="16" y="48" font-size="12" fill="#334155">data.aws_ami.latest</text>
+<text x="16" y="48" font-size="12" fill="#334155">module.root.data.aws_ami.latest</text>
 <text x="16" y="68" font-size="12" fill="#334155">aws_ami · data / external</text>
 <text x="16" y="88" font-size="12" fill="#334155">unchanged</text>
 </g>
