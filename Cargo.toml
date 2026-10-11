@@ -5,6 +5,11 @@ edition = "2024"
 rust-version = "1.85"
 autotests = false
 
+[profile.test]
+opt-level = 1
+debug-assertions = true
+overflow-checks = true
+
 [[test]]
 name = "cli"
 path = "tests/integration/cli.rs"
