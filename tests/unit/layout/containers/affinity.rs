@@ -9,7 +9,7 @@ fn dense() -> Graph {
 }
 
 #[test]
-fn affinity_protects_only_its_connected_root_component() {
+fn affinity_protects_only_its_own_root() {
     let mut graph = dense();
     let tree = crate::layout::ContainmentTree::new(&graph);
     let owner = tree.roots[0];
@@ -20,8 +20,35 @@ fn affinity_protects_only_its_connected_root_component() {
     let tree = crate::layout::ContainmentTree::new(&graph);
     assert_eq!(
         affinity::protected_roots(&graph, &tree.parents),
-        BTreeSet::from([owner, linked])
+        BTreeSet::from([owner])
     );
+}
+
+#[test]
+fn unrelated_columns_refine_inside_an_affinity_scope() {
+    let groups = vec![affinity::Group {
+        reverse: false,
+        target: 2,
+        sources: vec![0, 1],
+        edges: vec![],
+    }];
+    let sizes = vec![(100, 80); 7];
+    let mut offsets = vec![
+        Point { x: 0, y: 0 },
+        Point { x: 0, y: 120 },
+        Point { x: 140, y: 60 },
+        Point { x: 280, y: 0 },
+        Point { x: 280, y: 120 },
+        Point { x: 420, y: 0 },
+        Point { x: 420, y: 120 },
+    ];
+    let original = offsets.clone();
+    let movable = affinity::movable(&(0..7).collect::<Vec<_>>(), &groups, &offsets);
+    assert_eq!(movable, vec![3, 4, 5, 6]);
+    placement::refine(&movable, &[(3, 6), (4, 5)], &sizes, &mut offsets, 200, 40);
+    assert_eq!(&offsets[..3], &original[..3]);
+    assert_eq!(offsets[3].y, offsets[6].y);
+    assert_eq!(offsets[4].y, offsets[5].y);
 }
 
 #[test]
