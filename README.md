@@ -43,7 +43,7 @@ docker compose exec -T dev cargo run --locked -- - -o - < plan.json > diagram.sv
 - 依存辺は参照されるリソースから参照するリソースへ向きます。包含は入れ子の枠、関連付けは破線、接続は太い点線です。
 - AWS の VPC・Subnet が空間的なコンテナです。間接参照から導いた配置には `inferred placement` を表示します。
 - data リソースは破線と `external` 表示で区別します。一部の AWS メタデータ data は省略します。
-- 上部は Logical Resources（シアン）、Logical Components（紫）、Relationship Resources の順です。ECS Cluster・Task Definition・IAM 定義・AMI は最初のセクションにまとめ、空間配置と経路計算から分離します。内側のリソースとコンポーネントのメンバーカードは各リソースの変更色を使い、参照情報・変更数を保持します。
+- 上部は Logical Resources（シアン）、Logical Components（紫）、Relationship Resources の順です。ECS Cluster・Task Definition・IAM 定義・AMI・CloudWatch Log Group・Metric Alarm は最初のセクションにまとめ、空間配置と経路計算から分離します。内側のリソースとコンポーネントのメンバーカードは各リソースの変更色を使い、参照情報・変更数を保持します。
 - 利用側の `Uses` 行から論理カードへ移動できます。依存指定・未解決・表示対象外は区別し、長いアドレスと5件目以降の参照はタイトルで確認できます。
 - 既定のアドレス表示は Planorama 修飾形式です。`--address-format terraform` で Terraform 本来の表記に切り替えられます。省略されたラベルの全文はカードのタイトルで確認できます。
 - Route は所有先を確認できた Route Table 内に子カードとして表示します。表示可能な接続先へは子カードのポートから矢印付きの破線を引き、接続先を描けない場合は状態を文字で表示します。宛先は安全性を検証した設定定数（CIDR・prefix list ID）だけを表示し、その他の属性値は描画しません。plan JSON 自体には機密値が含まれ得るため、実環境の plan/state はコミットしないでください。
