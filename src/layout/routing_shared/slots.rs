@@ -304,7 +304,7 @@ fn overfull_horizontal_ports_move_to_sides_before_allocation_clamps() {
         Bounds::card(crate::layout::Point { x: 600, y: 400 }),
     ];
     let mut sides = vec![[Side::Top; 2]; 24];
-    fit_sides(&graph, &bounds, &mut sides, &[true; 24]);
+    fit_sides(&graph, &bounds, &mut sides, &[true; 24], None);
     assert!(
         sides
             .iter()
@@ -314,20 +314,99 @@ fn overfull_horizontal_ports_move_to_sides_before_allocation_clamps() {
     assert_eq!(required_heights(&graph, &sides, &[true; 24]), vec![425; 2]);
 }
 
+#[test]
+fn shared_horizontal_bundle_terminals_do_not_overflow() {
+    use crate::layout::Point;
+    use crate::model::Edge;
+    let resources: Vec<_> = (0..19)
+        .map(|i| serde_json::json!({"address":format!("test.n{i:02}"),"type":"test"}))
+        .collect();
+    let raw = crate::plan::parse(
+        &serde_json::json!({"format_version":"1.2","resource_changes":resources}).to_string(),
+    )
+    .unwrap();
+    let mut graph = crate::semantic::transform(&raw).0;
+    let bounds: Vec<_> = (0..19)
+        .map(|i| {
+            Bounds::card(Point {
+                x: 100 + i * 600,
+                y: 400,
+            })
+        })
+        .collect();
+    for source in [false, true] {
+        graph.edges = (1..19)
+            .map(|i| Edge::from(if source { (0, i) } else { (i, 0) }))
+            .collect();
+        for side in [Side::Top, Side::Bottom] {
+            let paths: Vec<_> = graph
+                .edges
+                .iter()
+                .map(|edge| {
+                    [edge.from, edge.to]
+                        .into_iter()
+                        .map(|node| Point {
+                            x: bounds[node].origin.x + bounds[node].width / 2,
+                            y: bounds[node].origin.y
+                                + if side == Side::Bottom {
+                                    bounds[node].height
+                                } else {
+                                    0
+                                },
+                        })
+                        .collect()
+                })
+                .collect();
+            let mut sides = vec![[side; 2]; 18];
+            assert!(!crowded(&graph, &paths, &sides));
+            fit_sides(&graph, &bounds, &mut sides, &[true; 18], Some(&paths));
+            assert_eq!(sides, vec![[side; 2]; 18]);
+            fit_sides(&graph, &bounds, &mut sides, &[true; 18], None);
+            assert!(
+                sides
+                    .iter()
+                    .all(|ends| matches!(ends[usize::from(!source)], Side::Left | Side::Right))
+            );
+        }
+    }
+}
+
 pub(in crate::layout) fn fit_sides(
     graph: &Graph,
     bounds: &[Bounds],
     sides: &mut [[Side; 2]],
     visible: &[bool],
+    paths: Option<&[Vec<crate::layout::Point>]>,
 ) {
     let numbered = crate::layout::relationship_markers::ends(graph);
     let mut demand = vec![[0; 2]; graph.nodes.len()];
+    let mut occupied = std::collections::BTreeSet::new();
     let width = crate::layout::relationship_markers::clearance(graph)
         .saturating_sub(crate::layout::relationship_markers::GAP + 8)
         + 6;
     for (index, edge) in graph.edges.iter().enumerate().filter(|(i, _)| visible[*i]) {
         for (end, node) in [edge.from, edge.to].into_iter().enumerate() {
             if matches!(sides[index][end], Side::Top | Side::Bottom) {
+                if !numbered[index][end] {
+                    if let Some(paths) = paths {
+                        let point = if end == 0 {
+                            paths[index].first()
+                        } else {
+                            paths[index].last()
+                        };
+                        if let Some(point) = point {
+                            if !occupied.insert((
+                                node,
+                                sides[index][end] as usize,
+                                end,
+                                point.x,
+                                point.y,
+                            )) {
+                                continue;
+                            }
+                        }
+                    }
+                }
                 demand[node][usize::from(sides[index][end] == Side::Bottom)] +=
                     if numbered[index][end] {
                         width

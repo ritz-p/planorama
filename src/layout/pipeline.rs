@@ -194,9 +194,15 @@ pub(super) fn route<'a>(graph: &'a Graph, placed: &mut Placed<'a>) {
         })
         .collect();
     let visible: Vec<_> = placed.layout.paths.iter().map(|p| p.len() >= 2).collect();
-    super::routing_shared::slots::fit_sides(graph, &placed.layout.bounds, &mut sides, &visible);
+    super::routing_shared::slots::fit_sides(
+        graph,
+        &placed.layout.bounds,
+        &mut sides,
+        &visible,
+        Some(&placed.layout.paths),
+    );
     let demand = super::routing_shared::slots::required_heights(graph, &sides, &visible);
-    let heights: Vec<_> = demand
+    let mut heights: Vec<_> = demand
         .iter()
         .enumerate()
         .map(|(node, &height)| {
@@ -212,6 +218,18 @@ pub(super) fn route<'a>(graph: &'a Graph, placed: &mut Placed<'a>) {
     if heights != placed.layout.header_heights
         || super::routing_shared::slots::crowded(graph, &placed.layout.paths, &sides)
     {
+        super::routing_shared::slots::fit_sides(
+            graph,
+            &placed.layout.bounds,
+            &mut sides,
+            &visible,
+            None,
+        );
+        let independent_demand =
+            super::routing_shared::slots::required_heights(graph, &sides, &visible);
+        for (height, demand) in heights.iter_mut().zip(independent_demand) {
+            *height = (*height).max(demand);
+        }
         *placed = place_sized(graph, ContainmentTree::new(graph), Some(heights));
         match &placed.strategy {
             Strategy::Flat { ranks, channels } => {

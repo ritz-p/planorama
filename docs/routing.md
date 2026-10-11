@@ -69,6 +69,10 @@ choices remain fixed during this refinement; card width does not expand for
 top/bottom demand. If the requested top/bottom slots cannot fit, those endpoints
 move to a facing left/right side before the single refinement and its height
 calculation. All refined sides reserve marker-aware minimum spacing.
+The initial top/bottom capacity check counts coincident ordinary terminals once
+per node, side and endpoint role, preserving valid fan-in/fan-out bundles.
+If another constraint requires refinement, capacity is recalculated for
+independent branches before repacking, since nested refinement removes bundling.
 Rank-lane bundles retain their alignment; refined nested
 routes use independent paths to keep the selected per-side demand fixed.
 Ancestor/descendant routes also retain their allocated sides during refinement;
