@@ -273,7 +273,7 @@ fn route_selected_impl(
     Routed { paths, junctions }
 }
 
-pub(super) fn obstacles(layout: &Layout<'_>, edge: &Edge) -> Vec<Bounds> {
+pub(in crate::layout) fn obstacles(layout: &Layout<'_>, edge: &Edge) -> Vec<Bounds> {
     layout
         .bounds
         .iter()
