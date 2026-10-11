@@ -19,6 +19,11 @@ their own completeness checks. Module inputs/outputs and serialized local defini
 are followed with cycle detection; absent local definitions cannot be reconstructed.
 Nested block fields retain dotted paths, and repeated blocks require complete
 provenance in every entry. Literal values are not traversed as expressions.
+Attribute evidence also records whether every referenced instance key was explicit
+through alias resolution. Target-group component ownership requires this proof;
+it does not narrow existing dependency edges or change other semantic rules.
+Target-group ownership also consumes a value-free ARN equality proof for every
+hop, calculated from known planned strings and complete nested action values.
 
 `semantic::transform` consumes this domain model. Its private `Input` projection
 classifies provider/resource roles at the boundary, then applies containment,

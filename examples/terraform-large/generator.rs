@@ -54,6 +54,8 @@ fn module(path: &Path, scope: &str, changes: &mut Vec<Value>) -> Result<Value, S
                             ("aws_ecs_service", "network_configuration") => {
                                 network_configuration(value)?
                             }
+                            ("aws_lb_listener", "default_action")
+                            | ("aws_lb_listener_rule", "action") => action_blocks(value)?,
                             _ => expression(value)?,
                         };
                         expressions.insert(key.clone(), generated);
@@ -72,7 +74,32 @@ fn module(path: &Path, scope: &str, changes: &mut Vec<Value>) -> Result<Value, S
                         Some(_) => format!("[{index}]"),
                         None => String::new(),
                     };
-                    changes.push(json!({"address":format!("{scope}{address}{suffix}"),"mode":mode,"type":resource_type,"name":name,"change":{"actions":[action]}}));
+                    let full_address = format!("{scope}{address}{suffix}");
+                    let mut change = json!({"address":full_address,"mode":mode,"type":resource_type,"name":name,"change":{"actions":[action]}});
+                    if matches!(
+                        resource_type.as_str(),
+                        "aws_lb"
+                            | "aws_lb_listener"
+                            | "aws_lb_listener_rule"
+                            | "aws_lb_target_group"
+                    ) {
+                        let mut values = Map::from_iter([(
+                            "arn".into(),
+                            Value::String(fixture_arn(&full_address)),
+                        )]);
+                        for key in [
+                            "load_balancer_arn",
+                            "listener_arn",
+                            "default_action",
+                            "action",
+                        ] {
+                            if let Some(value) = attributes.get(key) {
+                                values.insert(key.into(), component_value(value, scope)?);
+                            }
+                        }
+                        change["change"]["after"] = Value::Object(values);
+                    }
+                    changes.push(change);
                 }
             }
         }
@@ -126,6 +153,34 @@ fn network_configuration(value: &Value) -> Result<Value, String> {
     Ok(Value::Array(generated))
 }
 
+fn fixture_arn(address: &str) -> String {
+    format!("arn:aws:elasticloadbalancing:us-east-1:000000000000:fixture/{address}")
+}
+
+fn component_value(value: &Value, scope: &str) -> Result<Value, String> {
+    match value {
+        Value::String(text) if text.contains("${") => {
+            let address = text
+                .strip_prefix("${")
+                .and_then(|s| s.strip_suffix(".arn}"))
+                .filter(|s| !s.contains(['$', '{', '}']))
+                .ok_or("fixture component values require an exact ARN traversal")?;
+            Ok(Value::String(fixture_arn(&format!("{scope}{address}"))))
+        }
+        Value::Array(values) => values
+            .iter()
+            .map(|v| component_value(v, scope))
+            .collect::<Result<Vec<_>, _>>()
+            .map(Value::Array),
+        Value::Object(fields) => fields
+            .iter()
+            .map(|(key, value)| Ok((key.clone(), component_value(value, scope)?)))
+            .collect::<Result<Map<_, _>, String>>()
+            .map(Value::Object),
+        _ => Ok(value.clone()),
+    }
+}
+
 fn expression(value: &Value) -> Result<Value, String> {
     let mut references = BTreeSet::new();
     collect(value, &mut references)?;
@@ -133,6 +188,33 @@ fn expression(value: &Value) -> Result<Value, String> {
         true => json!({"constant_value":value}),
         false => json!({"references":references}),
     })
+}
+
+fn action_blocks(value: &Value) -> Result<Value, String> {
+    let blocks = value
+        .as_array()
+        .ok_or("fixture action blocks must be an array")?;
+    blocks
+        .iter()
+        .map(|block| {
+            let fields = block
+                .as_object()
+                .ok_or("fixture action block must be an object")?;
+            fields
+                .iter()
+                .map(|(key, value)| {
+                    let value = if matches!(key.as_str(), "forward" | "target_group") {
+                        action_blocks(value)?
+                    } else {
+                        expression(value)?
+                    };
+                    Ok((key.clone(), value))
+                })
+                .collect::<Result<Map<_, _>, String>>()
+                .map(Value::Object)
+        })
+        .collect::<Result<Vec<_>, _>>()
+        .map(Value::Array)
 }
 
 fn collect(value: &Value, references: &mut BTreeSet<String>) -> Result<(), String> {
