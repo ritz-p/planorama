@@ -133,7 +133,7 @@ impl Terminals {
                     let corridors =
                         ports::terminal_corridors(pair[0], pair[1], result.clearances[index]);
                     let mut protected = barriers.clone();
-                    protected.extend(soft_obstacles(layout, edge));
+                    protected.extend(soft_obstacles(layout, edge).into_iter().map(|o| o.bounds));
                     if corridors
                         .iter()
                         .any(|&a| protected.iter().any(|&b| overlaps(a, b)))

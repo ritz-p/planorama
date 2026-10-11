@@ -9,6 +9,30 @@ mod tests;
 pub(in crate::layout) const CROSSING_COST: u128 = 1;
 pub(in crate::layout) const BEND_COST: u128 = 96;
 
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub(in crate::layout) struct Occluder {
+    pub bounds: Bounds,
+    pub cost: u128,
+    pub step: usize,
+}
+
+impl From<Bounds> for Occluder {
+    fn from(bounds: Bounds) -> Self {
+        Self {
+            bounds,
+            cost: 2,
+            step: 1,
+        }
+    }
+}
+
+impl std::ops::Deref for Occluder {
+    type Target = Bounds;
+    fn deref(&self) -> &Bounds {
+        &self.bounds
+    }
+}
+
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub(in crate::layout) struct Score {
     node_crossings: usize,
@@ -28,7 +52,7 @@ pub(in crate::layout) struct Scorer {
     vertical_paths: BTreeMap<usize, Vec<(usize, usize, usize)>>,
     paths: Vec<Vec<Point>>,
     peers: Vec<Bounds>,
-    soft: Vec<Bounds>,
+    soft: Vec<Occluder>,
 }
 
 impl Scorer {
@@ -61,11 +85,11 @@ impl Scorer {
             .min_by(|(_, a), (_, b)| a.cmp(b))
             .map(|(index, _)| index)
     }
-    pub(in crate::layout) fn set_soft(&mut self, soft: Vec<Bounds>) {
-        self.soft = soft;
+    pub(in crate::layout) fn set_soft(&mut self, soft: Vec<impl Into<Occluder>>) {
+        self.soft = soft.into_iter().map(Into::into).collect();
     }
 
-    pub(in crate::layout) fn soft(&self) -> &[Bounds] {
+    pub(in crate::layout) fn soft(&self) -> &[Occluder] {
         &self.soft
     }
 
@@ -73,24 +97,21 @@ impl Scorer {
         Self::occlusion_in(&self.soft, a, b)
     }
 
-    fn occlusion_in(soft: &[Bounds], a: Point, b: Point) -> u128 {
+    fn occlusion_in(soft: &[Occluder], a: Point, b: Point) -> u128 {
         soft.iter()
-            .filter(|&&bounds| super::crosses(a, b, bounds))
+            .filter(|bounds| super::crosses(a, b, bounds.bounds))
             .map(|bounds| {
-                if a.y == b.y {
-                    a.x.max(b.x)
-                        .min(bounds.right())
-                        .saturating_sub(a.x.min(b.x).max(bounds.origin.x))
+                (if a.y == b.y {
+                    (a.x.max(b.x).min(bounds.right()) / bounds.step)
+                        .saturating_sub(a.x.min(b.x).max(bounds.origin.x) / bounds.step)
                         as u128
                 } else {
-                    a.y.max(b.y)
-                        .min(bounds.origin.y + bounds.height)
-                        .saturating_sub(a.y.min(b.y).max(bounds.origin.y))
+                    (a.y.max(b.y).min(bounds.origin.y + bounds.height) / bounds.step)
+                        .saturating_sub(a.y.min(b.y).max(bounds.origin.y) / bounds.step)
                         as u128
-                }
+                }) * bounds.cost
             })
             .sum::<u128>()
-            * 2
     }
     pub(in crate::layout) fn len(&self) -> usize {
         self.paths.len()
@@ -184,7 +205,7 @@ impl Scorer {
     pub(in crate::layout) fn readability_cost_with_soft(
         &self,
         points: &[Point],
-        soft: &[Bounds],
+        soft: &[Occluder],
     ) -> u128 {
         self.readability_cost(points)
             - points

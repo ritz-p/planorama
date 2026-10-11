@@ -1,4 +1,5 @@
 use super::*;
+use crate::layout::Bounds;
 
 #[test]
 fn indexed_cost_matches_scanned_cost_in_both_directions() {
@@ -7,21 +8,27 @@ fn indexed_cost_matches_scanned_cost_in_both_directions() {
     let ys = [0, 4, 8, 16, 25, 40, 60];
     let mut scorer = Scorer::default();
     scorer.set_soft(vec![
-        Bounds {
-            origin: Point { x: 5, y: 8 },
-            width: 25,
-            height: 17,
+        Occluder {
+            bounds: Bounds {
+                origin: Point { x: 5, y: 8 },
+                width: 25,
+                height: 17,
+            },
+            cost: 1,
+            step: 2,
         },
         Bounds {
             origin: Point { x: 18, y: 16 },
             width: 27,
             height: 24,
-        },
+        }
+        .into(),
         Bounds {
             origin: Point { x: 1, y: 1 },
             width: 2,
             height: 2,
-        },
+        }
+        .into(),
     ]);
     let grid = Grid::new(&xs, &ys, scorer.soft());
     let point = |i: usize| Point {

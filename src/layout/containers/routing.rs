@@ -277,7 +277,9 @@ pub(super) fn obstacles(layout: &Layout<'_>, edge: &Edge) -> Vec<Bounds> {
         .iter()
         .enumerate()
         .filter(|&(node, _)| {
-            layout.containers.contains(&node) || node == edge.from || node == edge.to
+            (layout.containers.contains(&node) && !layout.occludes(node, edge))
+                || node == edge.from
+                || node == edge.to
         })
         .map(|(node, &bounds)| {
             if layout.containers.contains(&node)
@@ -293,14 +295,28 @@ pub(super) fn obstacles(layout: &Layout<'_>, edge: &Edge) -> Vec<Bounds> {
         .collect()
 }
 
-pub(super) fn soft_obstacles(layout: &Layout<'_>, edge: &Edge) -> Vec<Bounds> {
+pub(super) fn soft_obstacles(
+    layout: &Layout<'_>,
+    edge: &Edge,
+) -> Vec<crate::layout::routing_shared::scoring::Occluder> {
+    let occluders = layout.occluders(edge);
     layout
         .bounds
         .iter()
         .enumerate()
         .filter_map(|(node, &bounds)| {
-            (!layout.containers.contains(&node) && node != edge.from && node != edge.to)
-                .then_some(bounds)
+            (occluders.contains(&node)
+                || (!layout.containers.contains(&node)
+                    && node != edge.from
+                    && node != edge.to
+                    && !occluders
+                        .iter()
+                        .any(|&parent| layout.containment.is_ancestor(parent, node))))
+            .then_some(crate::layout::routing_shared::scoring::Occluder {
+                bounds,
+                cost: if occluders.contains(&node) { 1 } else { 2 },
+                step: if occluders.contains(&node) { 2 } else { 1 },
+            })
         })
         .collect()
 }

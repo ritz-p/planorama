@@ -1,6 +1,80 @@
 use super::*;
 
 #[test]
+fn foreign_container_shortcut_uses_soft_cost_and_keeps_endpoints_hard() {
+    use crate::layout::routing_shared::{crosses, ports};
+    let raw = crate::plan::parse(r#"{"format_version":"1.2","resource_changes":[{"address":"test.a","type":"test"},{"address":"test.b","type":"test"},{"address":"test.c","type":"test"},{"address":"test.d","type":"test"}]}"#).unwrap();
+    let mut graph = crate::semantic::transform(&raw).0;
+    graph.nodes[1].role = crate::model::ResourceRole::Container;
+    graph.edges = vec![
+        Edge {
+            kind: EdgeKind::Containment,
+            ..Edge::from((1, 2))
+        },
+        Edge::from((0, 3)),
+    ];
+    let mut layout = Layout::new(&graph);
+    layout.bounds[1] = Bounds {
+        origin: Point { x: 400, y: 100 },
+        width: 400,
+        height: 600,
+    };
+    layout.header_heights[1] = 40;
+    layout.bounds[2] = Bounds {
+        origin: Point { x: 450, y: 300 },
+        width: 300,
+        height: 100,
+    };
+    layout.bounds[0] = Bounds {
+        origin: Point { x: 100, y: 300 },
+        width: 100,
+        height: 100,
+    };
+    layout.bounds[3] = Bounds {
+        origin: Point { x: 1000, y: 300 },
+        width: 100,
+        height: 100,
+    };
+    let edge = &graph.edges[1];
+    let barriers = obstacles(&layout, edge);
+    assert!(!barriers.contains(&layout.bounds[1].header(40)));
+    assert!(barriers.contains(&layout.bounds[0]) && barriers.contains(&layout.bounds[3]));
+    let mut scorer = Scorer::default();
+    scorer.set_soft(soft_obstacles(&layout, edge));
+    assert_eq!(scorer.soft()[0].bounds, layout.bounds[1]);
+    assert_eq!(scorer.soft().len(), 1);
+    assert_eq!(scorer.soft()[0].cost, 1);
+    let start = layout.bounds[0].port(Side::Right, 50);
+    let end = layout.bounds[3].port(Side::Left, 50);
+    let path = ports::connect(start, end, &barriers, Some(&scorer)).unwrap();
+    let mut old_barriers = barriers.clone();
+    old_barriers.push(layout.bounds[1]);
+    let old = ports::connect(start, end, &old_barriers, Some(&scorer)).unwrap();
+    let length = |p: Vec<Point>| crate::layout::metrics::measure(&[p]).total_path_length;
+    assert!(length(path.clone()) < length(old));
+    assert!(
+        path.windows(2)
+            .any(|p| crosses(p[0], p[1], layout.bounds[1]))
+    );
+    assert!(
+        path.windows(2)
+            .all(|p| barriers.iter().all(|&b| !crosses(p[0], p[1], b)))
+    );
+    layout.bounds[1].height = 260;
+    layout.bounds[1].width = 1000;
+    layout.bounds[3].origin.x = 2000;
+    let end = layout.bounds[3].port(Side::Left, 50);
+    let mut scorer = Scorer::default();
+    scorer.set_soft(soft_obstacles(&layout, edge));
+    let detour = ports::connect(start, end, &obstacles(&layout, edge), Some(&scorer)).unwrap();
+    assert!(
+        detour
+            .windows(2)
+            .all(|p| !crosses(p[0], p[1], layout.bounds[1]))
+    );
+}
+
+#[test]
 fn external_container_endpoints_are_protected_but_descendants_remain_reachable() {
     use crate::layout::routing_shared::{crosses, ports};
     let raw = crate::plan::parse(r#"{"format_version":"1.2","resource_changes":[{"address":"test.parent","type":"test"},{"address":"test.child","type":"test"},{"address":"test.external","type":"test"}]}"#).unwrap();

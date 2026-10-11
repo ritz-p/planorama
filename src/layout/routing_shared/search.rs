@@ -69,7 +69,7 @@ fn search_grid(
     let mut ys = vec![start.y, end.y];
     for bounds in obstacles
         .iter()
-        .chain(scorer.into_iter().flat_map(|s| s.soft()))
+        .chain(scorer.into_iter().flat_map(|s| s.soft()).map(|o| &o.bounds))
     {
         if exact {
             xs.extend([bounds.origin.x, bounds.right()]);
