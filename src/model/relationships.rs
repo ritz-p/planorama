@@ -26,6 +26,9 @@ pub struct ArchitectureRelationship {
 
 impl ArchitectureRelationship {
     pub fn directionality(&self) -> super::Directionality {
+        if self.kind == EdgeKind::Connection {
+            return super::Directionality::Undirected;
+        }
         if self.kind != EdgeKind::Association {
             return super::Directionality::Directed;
         }

@@ -122,6 +122,8 @@ impl Edge {
             self.change
                 .as_ref()
                 .map_or(Directionality::Undirected, |c| c.directionality)
+        } else if self.kind == EdgeKind::Connection {
+            Directionality::Undirected
         } else {
             Directionality::Directed
         }

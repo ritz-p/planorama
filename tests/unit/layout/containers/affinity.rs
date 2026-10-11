@@ -128,7 +128,7 @@ fn three_subnet_alb_stays_in_vpc_and_moves_to_the_source_median() {
                 || path[0].y == source.origin.y + source.height
         );
         assert!(output.contains(&format!(
-            "{} → {} (connection)",
+            "{} ↔ {} (connection)",
             graph.nodes[edge.from].address, graph.nodes[edge.to].address
         )));
         for pair in path.windows(2) {
