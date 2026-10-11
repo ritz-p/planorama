@@ -10,8 +10,10 @@ Known static provider regions group explicitly supported regional resources into
 visual panels (see [regions.svg](../examples/regions.svg)). Panels are deployment
 scopes, not resource containers or Terraform modules. VPC/Subnet containment stays
 intact inside each panel, and cross-region relationships remain routed paths.
-IAM, CloudFront and supported Route 53 zone/record/health-check/traffic-policy
-resources share an `AWS Global` panel when regional panels are present. AWS scope
+Spatial IAM resources, CloudFront and supported Route 53 resources share an
+`AWS Global` panel when regional panels are present. IAM Role, Policy, Role Policy
+and Instance Profile retain global scope metadata but render as logical cards
+above the spatial diagram, outside deployment-scope panels. AWS scope
 classification lives in `provider/aws/scope.rs`; layout and SVG consume generic
 deployment scopes. Unsupported resource types, cross-region peering resources and
 unknown regions stay outside panels. No aliases, names, tags, ARNs or IDs supply
