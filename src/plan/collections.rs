@@ -167,10 +167,12 @@ pub(super) fn annotate(
                         .as_object()
                         .is_none_or(|d| d.values().all(|v| v == &Value::Bool(false)))
                     && known_strings(value, unknown, &["metric_name"]).is_some()
-                    && matches!(
+                    && (matches!(
                         unknown.get("metric_query"),
                         None | Some(Value::Null) | Some(Value::Bool(false))
-                    )
+                    ) || unknown["metric_query"]
+                        .as_array()
+                        .is_some_and(Vec::is_empty))
                     && value
                         .get("metric_query")
                         .is_none_or(|q| q.is_null() || q.as_array().is_some_and(Vec::is_empty));

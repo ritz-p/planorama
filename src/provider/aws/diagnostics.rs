@@ -9,6 +9,7 @@ pub fn collect(plan: &crate::model::TerraformPlan) -> Vec<Diagnostic> {
     for (index, node) in raw.nodes.iter().enumerate() {
         if node.provider.is_aws()
             && node.resource_type == "aws_cloudwatch_metric_alarm"
+            && node.deposed_key.is_none()
             && !raw
                 .attributes
                 .iter()

@@ -7,7 +7,10 @@ mod tests;
 
 pub(super) fn present(raw: &Input, graph: &mut Graph) {
     for (index, alarm) in raw.nodes.iter().enumerate() {
-        if !alarm.provider.is_aws() || alarm.resource_type != "aws_cloudwatch_metric_alarm" {
+        if !alarm.provider.is_aws()
+            || alarm.resource_type != "aws_cloudwatch_metric_alarm"
+            || alarm.deposed_key.is_some()
+        {
             continue;
         }
         let verified: Vec<_> = raw
