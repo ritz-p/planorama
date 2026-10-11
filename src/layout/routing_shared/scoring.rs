@@ -53,9 +53,80 @@ pub(in crate::layout) struct Scorer {
     paths: Vec<Vec<Point>>,
     peers: Vec<Bounds>,
     soft: Vec<Occluder>,
+    borders: Vec<Bounds>,
+    horizontal_borders: BTreeMap<usize, Vec<Bounds>>,
+    vertical_borders: BTreeMap<usize, Vec<Bounds>>,
 }
 
 impl Scorer {
+    pub(in crate::layout) fn set_borders(&mut self, borders: &[Bounds]) {
+        self.borders = borders.to_vec();
+        self.horizontal_borders.clear();
+        self.vertical_borders.clear();
+        for &frame in borders {
+            if frame.width > 24 {
+                for y in [frame.origin.y, frame.origin.y + frame.height] {
+                    self.horizontal_borders.entry(y).or_default().push(frame);
+                }
+            }
+            if frame.height > 24 {
+                for x in [frame.origin.x, frame.right()] {
+                    self.vertical_borders.entry(x).or_default().push(frame);
+                }
+            }
+        }
+    }
+
+    pub(in crate::layout) fn borders(&self) -> impl Iterator<Item = &Bounds> {
+        self.borders
+            .iter()
+            .filter(|frame| Self::border_visible(frame, &self.soft))
+    }
+
+    fn border_visible(frame: &Bounds, soft: &[Occluder]) -> bool {
+        !soft.iter().any(|o| {
+            o.step == 2
+                && o.origin.x <= frame.origin.x
+                && o.origin.y <= frame.origin.y
+                && o.right() >= frame.right()
+                && o.origin.y + o.height >= frame.origin.y + frame.height
+        })
+    }
+
+    fn border_cost(&self, a: Point, b: Point, soft: &[Occluder]) -> u128 {
+        let frames = if a.y == b.y {
+            self.horizontal_borders.get(&a.y)
+        } else {
+            self.vertical_borders.get(&a.x)
+        };
+        frames
+            .into_iter()
+            .flatten()
+            .filter(|frame| Self::border_visible(frame, soft))
+            .map(|frame| {
+                let (from, to, low, high) = if a.y == b.y
+                    && (a.y == frame.origin.y || a.y == frame.origin.y + frame.height)
+                    && frame.width > 24
+                {
+                    (a.x, b.x, frame.origin.x + 12, frame.right() - 12)
+                } else if a.x == b.x
+                    && (a.x == frame.origin.x || a.x == frame.right())
+                    && frame.height > 24
+                {
+                    (
+                        a.y,
+                        b.y,
+                        frame.origin.y + 12,
+                        frame.origin.y + frame.height - 12,
+                    )
+                } else {
+                    return 0;
+                };
+                to.max(from).min(high).saturating_sub(to.min(from).max(low)) as u128 * 8
+            })
+            .sum()
+    }
+
     pub(in crate::layout) fn choose(
         &self,
         mut candidates: Vec<Vec<Point>>,
@@ -210,11 +281,11 @@ impl Scorer {
         self.readability_cost(points)
             - points
                 .windows(2)
-                .map(|p| self.occlusion(p[0], p[1]))
+                .map(|p| self.occlusion(p[0], p[1]) + self.border_cost(p[0], p[1], &self.soft))
                 .sum::<u128>()
             + points
                 .windows(2)
-                .map(|p| Self::occlusion_in(soft, p[0], p[1]))
+                .map(|p| Self::occlusion_in(soft, p[0], p[1]) + self.border_cost(p[0], p[1], soft))
                 .sum::<u128>()
     }
 
@@ -248,7 +319,7 @@ impl Scorer {
             };
             score.overlap += index.get(&coordinate).map_or(0, |c| c.overlap(from, to));
             score.length += a.x.abs_diff(b.x) as u128 + a.y.abs_diff(b.y) as u128;
-            score.cost += self.occlusion(a, b);
+            score.cost += self.occlusion(a, b) + self.border_cost(a, b, &self.soft);
             score.node_crossings += nodes
                 .iter()
                 .filter(|&&node| super::crosses(a, b, node))
@@ -377,6 +448,6 @@ impl Scorer {
                     .len()
             })
             .sum::<usize>();
-        overlap * 8 + crossings as u128 * CROSSING_COST
+        overlap * 8 + crossings as u128 * CROSSING_COST + self.border_cost(a, b, &self.soft)
     }
 }

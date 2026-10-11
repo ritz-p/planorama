@@ -1,6 +1,51 @@
 use super::*;
 
 #[test]
+fn final_shortcuts_keep_a_clear_offset_from_nested_frames() {
+    let frame = Bounds {
+        origin: Point { x: 100, y: 100 },
+        width: 300,
+        height: 200,
+    };
+    let parent = Bounds {
+        origin: Point { x: 50, y: 50 },
+        width: 400,
+        height: 300,
+    };
+    let path = vec![
+        Point { x: 80, y: 100 },
+        Point { x: 90, y: 100 },
+        Point { x: 90, y: 84 },
+        Point { x: 410, y: 84 },
+        Point { x: 410, y: 100 },
+        Point { x: 430, y: 100 },
+    ];
+    let mut scorer = Scorer::default();
+    scorer.set_borders(&[parent, frame]);
+    let shortened = simplify_path(path.clone(), &[], &scorer);
+    assert_eq!(shortened.first(), path.first());
+    assert_eq!(shortened.last(), path.last());
+    assert_eq!(
+        crate::layout::metrics::border_overlap(&shortened, &[parent, frame]),
+        0
+    );
+    assert!(shortened.len() > 2);
+    let start = Port {
+        point: path[0],
+        side: Side::Right,
+    };
+    let end = Port {
+        point: *path.last().unwrap(),
+        side: Side::Left,
+    };
+    let routed = ports::connect(start, end, &[], Some(&scorer)).unwrap();
+    assert_eq!(
+        crate::layout::metrics::border_overlap(&routed, &[parent, frame]),
+        0
+    );
+}
+
+#[test]
 fn numbered_shortcuts_remove_middle_doglegs_and_preserve_badge_space() {
     let path: Vec<_> = [
         (100, 100),
