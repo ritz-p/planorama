@@ -124,6 +124,97 @@ fn narrow(graph: &Graph, transpose: bool) -> Layout<'_> {
 }
 
 #[test]
+fn later_rerouting_cannot_transfer_overlap_onto_an_earlier_route() {
+    let mut graph = corridor_graph(3);
+    graph.relationships.clear();
+    graph.edges[0].kind = crate::model::EdgeKind::Dependency;
+    let mut layout = narrow(&graph, false);
+    for (i, y) in [100, 800, 300, 700, 200, 750].into_iter().enumerate() {
+        layout.bounds[i].origin.y = y - 20;
+        layout.bounds[i].height = 40;
+    }
+    layout.bounds[6] = Bounds {
+        origin: Point { x: 501, y: 350 },
+        width: 30,
+        height: 200,
+    };
+    layout.bounds[7] = Bounds {
+        origin: Point { x: 950, y: 1000 },
+        width: 20,
+        height: 20,
+    };
+    let point = |x, y| Point { x, y };
+    layout.paths = vec![
+        vec![
+            point(200, 100),
+            point(500, 100),
+            point(500, 800),
+            point(800, 800),
+        ],
+        vec![
+            point(200, 300),
+            point(700, 300),
+            point(700, 600),
+            point(600, 600),
+            point(600, 700),
+            point(800, 700),
+        ],
+        vec![
+            point(200, 200),
+            point(700, 200),
+            point(700, 600),
+            point(600, 600),
+            point(600, 750),
+            point(800, 750),
+        ],
+    ];
+    let before = expansion::Snapshot::capture(&layout);
+    let baseline: Vec<_> = before.paths.iter().map(|p| Shape::measure(p)).collect();
+    let planned = plan::Corridor {
+        horizontal: false,
+        low: 100,
+        high: 800,
+        lanes: vec![
+            plan::Lane {
+                edge: 0,
+                original: 500,
+                coordinate: 500,
+            },
+            plan::Lane {
+                edge: 1,
+                original: 700,
+                coordinate: 516,
+            },
+        ],
+    };
+    let overlap = |paths: &[Vec<Point>], i: usize| {
+        paths
+            .iter()
+            .enumerate()
+            .filter(|(j, _)| *j != i)
+            .map(|(_, p)| super::super::refinement::overlap(&paths[i], p))
+            .sum::<usize>()
+    };
+    assert_eq!(overlap(&before.paths, 0), 0);
+    assert_eq!(overlap(&before.paths, 1), 500);
+    assert!(!reroute::apply(
+        &graph,
+        &mut layout,
+        &planned,
+        &before,
+        &baseline,
+        false
+    ));
+    assert_eq!(layout.paths[0], before.paths[0]);
+    assert_eq!(Shape::measure(&layout.paths[1]).bends, 2);
+    assert_eq!(overlap(&layout.paths, 0), 400);
+    assert_eq!(overlap(&layout.paths, 1), 400);
+    let expected = before.paths.clone();
+    before.restore(&mut layout);
+    assert_eq!(layout.paths, expected);
+}
+
+#[test]
 fn expansion_cannot_hide_increased_overlap_with_a_protected_path() {
     let mut graph = corridor_graph(2);
     graph.relationships.clear();

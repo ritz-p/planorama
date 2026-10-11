@@ -106,7 +106,7 @@ pub(super) fn apply(
     let numbered = crate::layout::relationship_markers::ends(graph);
     let clearance = crate::layout::relationship_markers::clearance(graph);
     let mut routed = 0;
-    for i in order {
+    for &i in &order {
         let overlap_before: usize = before
             .paths
             .iter()
@@ -247,6 +247,17 @@ pub(super) fn apply(
         return false;
     }
     !super::super::slots::opposite_roles_collide(graph, &layout.paths)
+        && order.iter().all(|&i| {
+            let overlap = |paths: &[Vec<Point>]| {
+                paths
+                    .iter()
+                    .enumerate()
+                    .filter(|(j, _)| *j != i)
+                    .map(|(_, p)| super::super::refinement::overlap(&paths[i], p))
+                    .sum::<usize>()
+            };
+            overlap(&layout.paths) <= overlap(&before.paths)
+        })
         && layout
             .paths
             .iter()
