@@ -39,8 +39,9 @@ jobs:
         run: rustc --version --verbose
       - uses: Swatinem/rust-cache@v2.9.2
         with:
+          prefix-key: v1-rust-dependencies
           key: ${{ hashFiles('build.rs', 'assets/**') }}
-          cache-workspace-crates: 'true'
+          cache-workspace-crates: 'false'
       - name: Compile tests
         run: cargo test --locked --all-targets --all-features --no-run
       - name: Run tests
