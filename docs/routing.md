@@ -253,6 +253,46 @@ reduce weighted readability cost and reduce bends or length without increasing e
 Numbered routes retain badge-sized terminal lengths and protect their badge corridors;
 their middle segments can be shortened. Bundles retain their shared geometry.
 
+The final spacing pass indexes horizontal and vertical segments by their line
+coordinate. Independent runs with at least 64px of overlapping projection target
+16px centerline separation; the first/last 32px at real endpoints may converge.
+Perpendicular crossings and disjoint projections do not contribute. Coincident
+prefixes/suffixes connected to a common same-role terminal are shared trunks,
+but branches beyond their divergence are measured independently.
+
+Connected groups of overlapping runs receive ordered lanes over their combined
+corridor before any route is changed. Geometric order and resource identity break
+ties. Demand is the lane span plus 16px clearance on each side. If capacity is
+insufficient, a legal inter-card gap can grow by the missing amount. Cards beyond
+the cut move together; enclosing containers, scope panels and bands grow without
+scaling resource cards. Cuts cannot split cards or headers. Terminal locations
+move with their card boundaries, retaining side and order.
+
+Translated paths are only seeds. Impacted independent edges are routed again
+against the new card/header obstacles, terminal reservations and lane preferences.
+Whole straight, L-shaped and corridor routes compete; expansion can also invoke
+grid search with explicit lane coordinates. Completed candidates are shortcut and
+validated. Intentional bundles and junctions retain their shared geometry under
+the same monotone gap transformation. A failed or non-improving transaction rolls
+back bounds, paths, junctions, scopes and bands together.
+
+Acceptance compares each final edge's bends, short perpendicular offsets, axis
+reversals, backtracking and offset/re-entry S-jogs against its original shape.
+None may increase; path length may grow by at most 128px. A short offset is measured
+relative to its neighboring legs, not treated as universally invalid near a port.
+Exact overlap cannot increase on rerouted edges. Whole-route clarity takes priority
+over the length-weighted spacing deficit, with route length and expansion cost
+breaking otherwise equal shape comparisons. The 16px target is soft: a clean
+residual near-parallel run beats new bends or an excessive detour.
+
+This pass runs once on the final graph, after embedded Route reconstruction,
+same-side port refinement, bundling and ordinary shortcutting. It permits at most
+two sweeps, six distinct corridor attempts, 16 lanes per corridor, 32 independently
+rerouted edges per attempt and 64px cumulative growth per axis. Unchanged geometry
+uses bounded whole-path candidates without grid search. Regression metrics disclose
+residual close length and minimum clearance; deterministic fallback preserves valid
+routes when capacity, obstacles or budgets prevent improvement.
+
 SVG rendering consumes the final geometry and rounds corners without changing
 relationship identity. Nested containment edges receive no redundant path.
 Paths use shared, containment-specific luminance masks to hide foreign container
@@ -277,6 +317,11 @@ container detours are included in the baseline. Failures name both endpoint
 addresses and report bends, length, reference length, excess distance and stretch.
 The test counts extreme routes and verifies identical metrics after edge reordering;
 aggregate quality checks remain in place.
+The large fixture records every edge's shape and compares the subnet-to-private
+Route Table, VPC Endpoint and ECS routes with a reference that also protects foreign
+cards and containers. This distinguishes required marker/header detours from
+avoidable steps. The [per-edge comparison](../examples/terraform-large/routing-comparison.md)
+records initial-PR and revised results, including residual violations and runtime.
 The crossing policy replaces older tests that demanded crossing-free detours:
 they now require short crossing routes, including at stub/grid junctions and after
 shortcutting. Hard obstacles, overlap avoidance and terminal reservations remain tested.

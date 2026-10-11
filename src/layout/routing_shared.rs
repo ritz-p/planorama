@@ -7,6 +7,7 @@ pub(super) mod search;
 pub(super) mod shortcuts;
 mod simple;
 pub(super) mod slots;
+pub(super) mod spacing;
 use scoring::Scorer;
 
 pub(super) enum Simplification {

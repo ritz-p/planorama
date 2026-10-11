@@ -51,7 +51,7 @@ fn crossings(a: &[Point], b: &[Point]) -> usize {
         .sum()
 }
 
-fn overlap(a: &[Point], b: &[Point]) -> usize {
+pub(super) fn overlap(a: &[Point], b: &[Point]) -> usize {
     a.windows(2)
         .map(|a| {
             b.windows(2)

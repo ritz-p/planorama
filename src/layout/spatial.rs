@@ -3,7 +3,7 @@ use crate::model::architecture::Graph;
 
 pub(super) fn layout(graph: &Graph) -> Layout<'_> {
     let projected = crate::view::spatial::project(graph);
-    let spatial = Layout::new(&projected.graph);
+    let spatial = Layout::unspaced(&projected.graph);
     let empty = Bounds {
         origin: Point { x: 0, y: 0 },
         width: 0,
