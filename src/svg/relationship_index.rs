@@ -143,7 +143,6 @@ impl<'a> Index<'a> {
         let width = self
             .entries
             .iter()
-            .filter(|entry| !entry.embedded)
             .flat_map(|entry| &entry.sources)
             .map(|source| {
                 display(source)
@@ -156,12 +155,7 @@ impl<'a> Index<'a> {
             .max()
             .unwrap_or(360)
             .clamp(360, 640);
-        let entries: Vec<_> = self
-            .entries
-            .iter()
-            .enumerate()
-            .filter(|(_, e)| !e.embedded)
-            .collect();
+        let entries: Vec<_> = self.entries.iter().enumerate().collect();
         entries.chunks(ENTRIES_PER_CARD).map(|entries| {
             let mut svg = String::from("<g data-relationship-index=\"true\">\n");
             let mut y = 28;

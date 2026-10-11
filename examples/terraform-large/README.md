@@ -58,8 +58,8 @@ section. Empty sections are omitted in smaller examples.
 The 74 relationships remain queryable; 39 paths are spatially routed.
 Internet and NAT Routes appear inside the public and private Route Tables with
 destination constants and directed lines from their own ports to the Internet
-Gateway and NAT Gateway. Matching numbers appear on the children and near the
-targets; routable children omit the `Target:` row. Canvas dimensions follow the current
+Gateway and NAT Gateway. Matching numbers appear on the children, near the targets
+and in the Relationship Resources index; routable children omit the `Target:` row. Canvas dimensions follow the current
 routing geometry.
 ECS Service lists its Cluster and Task definition; each EC2 worker links its AMI and Instance profile. Connections retain their endpoints and undirected dotted presentation.
 

@@ -77,6 +77,11 @@ fn large_fixture_is_reproducible_from_terraform_sources_and_renders_deterministi
     assert!(!svg.contains("data.aws_region.current"));
     assert!(!svg.contains("stroke-dasharray=\"5 4\""));
     let document = roxmltree::Document::parse(&svg).unwrap();
+    let entries: Vec<_> = document
+        .descendants()
+        .filter_map(|n| n.attribute("data-relationship-entry"))
+        .collect();
+    assert_eq!(entries, ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"]);
     for (route, table, target) in [
         ("internet", "public", "aws_internet_gateway.main"),
         ("nat", "private", "aws_nat_gateway.main"),

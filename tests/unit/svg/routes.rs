@@ -227,7 +227,11 @@ fn route_children_keep_identity_palette_metadata_and_reference_edges() {
             }
         }
         assert!(!svg.contains("TOP_SECRET"));
-        assert!(!svg.contains("data-source-address=\"aws_route.default\""));
+        assert_eq!(
+            svg.matches("data-source-address=\"aws_route.default\"")
+                .count(),
+            1
+        );
         assert!(
             !child
                 .descendants()
@@ -501,6 +505,31 @@ fn named_states_namespace_child_links_and_attach_cross_state_paths_to_parent_bor
     let svg = svg::render_states(&selected, Default::default());
     verify_cards(&svg);
     let doc = roxmltree::Document::parse(&svg).unwrap();
+    let boundaries: Vec<_> = doc
+        .descendants()
+        .filter(|n| n.attribute("data-route-table").is_some())
+        .collect();
+    assert_eq!(boundaries.len(), 2);
+    let mut boundary_ids = BTreeSet::new();
+    for boundary in boundaries {
+        let id = boundary.attribute("data-route-table").unwrap();
+        assert!(boundary_ids.insert(id));
+        let card = doc
+            .descendants()
+            .find(|n| n.attribute("id") == Some(id))
+            .unwrap();
+        let state = |n: roxmltree::Node<'_, '_>| {
+            n.ancestors()
+                .find_map(|a| a.attribute("data-state-id"))
+                .unwrap()
+                .to_owned()
+        };
+        assert_eq!(state(boundary), state(card));
+        assert_eq!(
+            card.attribute("data-terraform-address"),
+            Some("aws_route_table.public")
+        );
+    }
     assert_eq!(
         doc.descendants()
             .filter(|n| n.attribute("data-embedded-route").is_some())

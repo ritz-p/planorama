@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="3556" height="3336" viewBox="0 0 3556 3336" role="img" aria-labelledby="title description">
+<svg xmlns="http://www.w3.org/2000/svg" width="3556" height="3392" viewBox="0 0 3556 3392" role="img" aria-labelledby="title description">
 <title id="title">Terraform plan</title>
 <desc id="description">46 resources (30 spatial cards, 6 logical cards, 2 embedded route cards) · 74 relationships Thin solid: dependency. Dashed: association. Thick dotted: connection. Nested boxes: containment. Edge color preserves the Terraform action when available.</desc>
 <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/></marker><marker id="arrow-create" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#047857"/></marker><metadata id="planorama-icons-license">AWS Architecture Icons, release 07312026.
@@ -254,7 +254,7 @@ No AWS endorsement is implied. Consult the AWS terms for other uses.
 </g>
 </g>
 </g></g>
-<g data-annotation-card="true" transform="translate(40 774)"><rect width="3476" height="324" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-annotation-section="Relationship Resources"><rect width="3476" height="324" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><text x="16" y="28" font-size="15" font-weight="700" fill="#475569">Relationship Resources</text><g data-annotation-card="true" transform="translate(16 48)"><rect width="492" height="260" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-relationship-index="true">
+<g data-annotation-card="true" transform="translate(40 774)"><rect width="3476" height="380" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-annotation-section="Relationship Resources"><rect width="3476" height="380" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><text x="16" y="28" font-size="15" font-weight="700" fill="#475569">Relationship Resources</text><g data-annotation-card="true" transform="translate(16 48)"><rect width="492" height="316" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-relationship-index="true">
 <g data-relationship-entry="1">
 <rect x="16" y="15" width="24" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="28" y="28" text-anchor="middle" font-size="11" fill="#334155">[1]</text>
 <text data-source-address="module.application.aws_lb_target_group_attachment.a0" font-size="12" fill="#334155"><title>module.application.aws_lb_target_group_attachment.a0</title>
@@ -279,35 +279,47 @@ No AWS endorsement is implied. Consult the AWS terms for other uses.
 <tspan x="60" y="112" xml:space="preserve">module.application.aws_lb_target_group_attachment.b1</tspan>
 </text>
 </g>
+<g data-relationship-entry="5">
+<rect x="16" y="127" width="24" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="28" y="140" text-anchor="middle" font-size="11" fill="#334155">[5]</text>
+<text data-source-address="module.network.aws_route.internet" font-size="12" fill="#334155"><title>module.network.aws_route.internet</title>
+<tspan x="60" y="140" xml:space="preserve">module.network.aws_route.internet</tspan>
+</text>
+</g>
+<g data-relationship-entry="6">
+<rect x="16" y="155" width="24" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="28" y="168" text-anchor="middle" font-size="11" fill="#334155">[6]</text>
+<text data-source-address="module.network.aws_route.nat" font-size="12" fill="#334155"><title>module.network.aws_route.nat</title>
+<tspan x="60" y="168" xml:space="preserve">module.network.aws_route.nat</tspan>
+</text>
+</g>
 <g data-relationship-entry="7">
-<rect x="16" y="127" width="24" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="28" y="140" text-anchor="middle" font-size="11" fill="#334155">[7]</text>
+<rect x="16" y="183" width="24" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="28" y="196" text-anchor="middle" font-size="11" fill="#334155">[7]</text>
 <text data-source-address="module.network.aws_route_table_association.private_a" font-size="12" fill="#334155"><title>module.network.aws_route_table_association.private_a</title>
-<tspan x="60" y="140" xml:space="preserve">module.network.aws_route_table_association.private_a</tspan>
+<tspan x="60" y="196" xml:space="preserve">module.network.aws_route_table_association.private_a</tspan>
 </text>
 </g>
 <g data-relationship-entry="8">
-<rect x="16" y="155" width="24" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="28" y="168" text-anchor="middle" font-size="11" fill="#334155">[8]</text>
+<rect x="16" y="211" width="24" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="28" y="224" text-anchor="middle" font-size="11" fill="#334155">[8]</text>
 <text data-source-address="module.network.aws_route_table_association.private_b" font-size="12" fill="#334155"><title>module.network.aws_route_table_association.private_b</title>
-<tspan x="60" y="168" xml:space="preserve">module.network.aws_route_table_association.private_b</tspan>
+<tspan x="60" y="224" xml:space="preserve">module.network.aws_route_table_association.private_b</tspan>
 </text>
 </g>
 <g data-relationship-entry="9">
-<rect x="16" y="183" width="24" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="28" y="196" text-anchor="middle" font-size="11" fill="#334155">[9]</text>
+<rect x="16" y="239" width="24" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="28" y="252" text-anchor="middle" font-size="11" fill="#334155">[9]</text>
 <text data-source-address="module.network.aws_route_table_association.public_a" font-size="12" fill="#334155"><title>module.network.aws_route_table_association.public_a</title>
-<tspan x="60" y="196" xml:space="preserve">module.network.aws_route_table_association.public_a</tspan>
+<tspan x="60" y="252" xml:space="preserve">module.network.aws_route_table_association.public_a</tspan>
 </text>
 </g>
 <g data-relationship-entry="10">
-<rect x="16" y="211" width="32" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="32" y="224" text-anchor="middle" font-size="11" fill="#334155">[10]</text>
+<rect x="16" y="267" width="32" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="32" y="280" text-anchor="middle" font-size="11" fill="#334155">[10]</text>
 <text data-source-address="module.network.aws_route_table_association.public_b" font-size="12" fill="#334155"><title>module.network.aws_route_table_association.public_b</title>
-<tspan x="60" y="224" xml:space="preserve">module.network.aws_route_table_association.public_b</tspan>
+<tspan x="60" y="280" xml:space="preserve">module.network.aws_route_table_association.public_b</tspan>
 </text>
 </g>
 </g>
 </g>
 </g></g>
 </g>
-<g data-architecture="true" transform="translate(0 962)">
+<g data-architecture="true" transform="translate(0 1018)">
 <g data-container="resource-6d6f64756c652e6e6574776f726b2e6177735f7670632e6d61696e-current"><title>module.network.aws_vpc.main</title><rect x="632" y="160" width="2440" height="1865" rx="12" fill="#ecfdf5" stroke="#047857" stroke-width="2" data-mode="managed"/></g>
 <g data-container="resource-6d6f64756c652e6e6574776f726b2e6177735f7375626e65742e707269766174655f61-current"><title>module.network.aws_subnet.private_a</title><rect x="1692" y="520" width="488" height="677" rx="12" fill="#d1fae5" stroke="#047857" stroke-width="2" data-mode="managed"/></g>
 <g data-container="resource-6d6f64756c652e6e6574776f726b2e6177735f7375626e65742e707269766174655f62-current"><title>module.network.aws_subnet.private_b</title><rect x="1692" y="1281" width="488" height="660" rx="12" fill="#d1fae5" stroke="#047857" stroke-width="2" data-mode="managed"/></g>

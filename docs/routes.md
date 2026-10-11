@@ -9,7 +9,8 @@ Unverified and deposed routes remain visible standalone cards with diagnostics.
 
 Embedding is presentation metadata, not Terraform Containment. Each Route retains
 its graph node, native address, stable ID, action, import/move/deposed information
-and provenance. It is counted once and does not also enter the relationship index.
+and provenance. It is counted once; its numbered relationship also appears in the
+Relationship Resources index without creating another resource identity.
 The table keeps its VPC containment and Subnet associations. Filtering a Route
 retains its table even at focus depth zero or when the table is unchanged.
 
@@ -24,8 +25,8 @@ unsupported targets display a fallback and retain diagnostics.
 When the verified next hop has a visible spatial card, a directed Association runs
 from the Route child's own port to the target port. It retains the Route's action,
 lifecycle metadata and resource provenance. The child shows `Next hop [N]`, matching
-the destination marker, and omits the `Target:` row. It has no duplicate resource
-entry in the relationship index, parent-to-target line or parent-to-child line.
+the destination marker and the Relationship Resources index, and omits the `Target:`
+row. There is no duplicate parent-to-target line or parent-to-child line.
 Other incident references remain in metadata and child reference rows. Unknown
 reference candidates are labeled References, not asserted next-hop targets.
 Filtered, nonspatial and unresolved targets retain a target/status fallback without

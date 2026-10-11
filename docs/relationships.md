@@ -36,8 +36,8 @@ blue dashed gutter routes and visible cross-state legend.
 
 Visible paths with Terraform resource provenance carry compact `[N]` markers and
 a matching **Relationship resources** numbered list above the architecture diagram.
-Embedded Routes show their matching number on the child card instead of adding a
-duplicate entry to that list.
+Embedded Routes appear in that list and show the matching number on their child
+cards. Index entries do not add resource identities or increase resource counts.
 Each card contains up to 10 complete entries: 1–10, 11–20, and so on. Cards continue
 to the right, wrapping only when the available width requires it. A multi-source
 entry stays in one card regardless of its wrapped line count. Full Terraform-native
