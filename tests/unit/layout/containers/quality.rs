@@ -39,6 +39,7 @@ fn large_fixture_limits_each_edges_bends_and_valid_route_stretch() {
         assert_no_retraced_stubs(graph, &layout);
         let mut failures = Vec::new();
         let mut result = BTreeMap::new();
+        let mut border_total = 0;
         for (index, edge) in graph.edges.iter().enumerate() {
             let path = &layout.paths[index];
             if path.is_empty() {
@@ -48,6 +49,24 @@ fn large_fixture_limits_each_edges_bends_and_valid_route_stretch() {
             let metrics = measure_edge(path, &reference);
             let from = graph.nodes[edge.from].address.clone();
             let to = graph.nodes[edge.to].address.clone();
+            let hidden = layout.occluders(edge);
+            let frames: Vec<_> = layout
+                .bounds
+                .iter()
+                .enumerate()
+                .filter(|(node, _)| {
+                    !hidden
+                        .iter()
+                        .any(|&parent| layout.containment.is_ancestor(parent, *node))
+                })
+                .map(|(_, &b)| b)
+                .collect();
+            let border = crate::layout::metrics::border_overlap(path, &frames);
+            assert_eq!(border, 0, "{from} -> {to}: border overlap={border}");
+            border_total += border;
+            if border > 0 {
+                eprintln!("border {from} -> {to}: {border}");
+            }
             if (from.contains("aws_subnet.private_") && to.contains("aws_ecs_service"))
                 || (from.contains("aws_internet_gateway") && to.contains("aws_nat_gateway"))
             {
@@ -130,6 +149,7 @@ fn large_fixture_limits_each_edges_bends_and_valid_route_stretch() {
                 metrics,
             );
         }
+        eprintln!("total border overlap={border_total}");
         eprintln!(
             "per-edge: count={}, max_bends={}, max_excess={}, max_stretch={:.3}, extreme_routes={}",
             result.len(),

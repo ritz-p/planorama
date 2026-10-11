@@ -1,21 +1,13 @@
 use super::{Bounds, Point, Scorer, Simplification, ports, simple, simplify};
 use crate::layout::{Port, Side};
 
+#[cfg(test)]
 pub(in crate::layout) fn simplify_routes(
     paths: &mut [Vec<Point>],
     order: impl IntoIterator<Item = usize>,
     obstacles: impl Fn(usize) -> Vec<Bounds>,
 ) {
-    simplify_routes_with_soft(paths, order, obstacles, |_| Vec::new());
-}
-
-pub(in crate::layout) fn simplify_routes_with_soft(
-    paths: &mut [Vec<Point>],
-    order: impl IntoIterator<Item = usize>,
-    obstacles: impl Fn(usize) -> Vec<Bounds>,
-    soft: impl Fn(usize) -> Vec<super::scoring::Occluder>,
-) {
-    simplify_routes_with_clearances(paths, order, obstacles, soft, |_| [16; 2]);
+    simplify_routes_with_clearances(paths, order, obstacles, |_| Vec::new(), |_| [16; 2], &[]);
 }
 
 pub(in crate::layout) fn simplify_routes_with_clearances(
@@ -24,8 +16,10 @@ pub(in crate::layout) fn simplify_routes_with_clearances(
     obstacles: impl Fn(usize) -> Vec<Bounds>,
     soft: impl Fn(usize) -> Vec<super::scoring::Occluder>,
     clearances: impl Fn(usize) -> [usize; 2],
+    borders: &[Bounds],
 ) {
     let mut scorer = Scorer::default();
+    scorer.set_borders(borders);
     for path in paths.iter() {
         scorer.insert(path.clone());
     }

@@ -70,6 +70,7 @@ fn search_grid(
     for bounds in obstacles
         .iter()
         .chain(scorer.into_iter().flat_map(|s| s.soft()).map(|o| &o.bounds))
+        .chain(scorer.into_iter().flat_map(|s| s.borders()))
     {
         if exact {
             xs.extend([bounds.origin.x, bounds.right()]);
