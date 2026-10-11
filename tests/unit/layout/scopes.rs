@@ -3,6 +3,34 @@ use crate::{
     plan, semantic,
 };
 
+#[test]
+fn unrelated_root_columns_and_regions_refine_beside_affinity() {
+    use crate::layout::{Point, containers::placement};
+    use std::collections::BTreeSet;
+    let sizes = vec![(100, 80); 5];
+    let original = vec![
+        Point { x: 0, y: 0 },
+        Point { x: 140, y: 0 },
+        Point { x: 140, y: 120 },
+        Point { x: 280, y: 0 },
+        Point { x: 280, y: 120 },
+    ];
+    for roots in [vec![0, 1, 2, 3, 4], vec![1, 2, 3, 4]] {
+        let mut offsets = original.clone();
+        if !roots.contains(&0) {
+            for &root in &roots {
+                offsets[root].x -= 140;
+            }
+        }
+        let movable = super::movable_roots(&roots, &BTreeSet::from([0]), &offsets);
+        assert_eq!(movable, vec![1, 2, 3, 4]);
+        placement::refine(&movable, &[(1, 4), (2, 3)], &sizes, &mut offsets, 200, 40);
+        assert_eq!(offsets[0], original[0]);
+        assert_eq!(offsets[1].y, offsets[4].y);
+        assert_eq!(offsets[2].y, offsets[3].y);
+    }
+}
+
 fn inside(inner: Bounds, outer: Bounds) -> bool {
     inner.origin.x >= outer.origin.x
         && inner.origin.y >= outer.origin.y

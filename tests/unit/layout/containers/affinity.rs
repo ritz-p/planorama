@@ -9,6 +9,22 @@ fn dense() -> Graph {
 }
 
 #[test]
+fn affinity_protects_only_its_connected_root_component() {
+    let mut graph = dense();
+    let tree = crate::layout::ContainmentTree::new(&graph);
+    let owner = tree.roots[0];
+    let linked = graph.nodes.len();
+    graph.nodes.push(graph.nodes[0].clone());
+    graph.nodes.push(graph.nodes[0].clone());
+    graph.edges.push(Edge::from((owner, linked)));
+    let tree = crate::layout::ContainmentTree::new(&graph);
+    assert_eq!(
+        affinity::protected_roots(&graph, &tree.parents),
+        BTreeSet::from([owner, linked])
+    );
+}
+
+#[test]
 fn different_spanning_targets_do_not_share_bundle_segments() {
     let raw = plan::parse(include_str!("../../../fixtures/multi-container-plan.json")).unwrap();
     let graph = semantic::transform(&raw).0;

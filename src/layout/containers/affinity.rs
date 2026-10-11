@@ -2,14 +2,47 @@ use super::Point;
 use crate::model::architecture::{EdgeKind, Graph, ResourceRole};
 use std::collections::{BTreeMap, BTreeSet};
 
-pub(super) struct Group {
+pub(in crate::layout) struct Group {
     pub reverse: bool,
     pub target: usize,
     pub sources: Vec<usize>,
     pub edges: Vec<usize>,
 }
 
-pub(super) fn groups(graph: &Graph, parents: &[Option<usize>]) -> Vec<Group> {
+pub(in crate::layout) fn protected_roots(
+    graph: &Graph,
+    parents: &[Option<usize>],
+) -> BTreeSet<usize> {
+    let owners: Vec<_> = (0..graph.nodes.len())
+        .map(|mut node| {
+            while let Some(parent) = parents[node] {
+                node = parent;
+            }
+            node
+        })
+        .collect();
+    let mut neighbors = vec![Vec::new(); graph.nodes.len()];
+    for edge in &graph.edges {
+        let (a, b) = (owners[edge.from], owners[edge.to]);
+        if a != b {
+            neighbors[a].push(b);
+            neighbors[b].push(a);
+        }
+    }
+    let mut pending: Vec<_> = groups(graph, parents)
+        .iter()
+        .map(|group| owners[group.target])
+        .collect();
+    let mut protected = BTreeSet::new();
+    while let Some(node) = pending.pop() {
+        if protected.insert(node) {
+            pending.extend(neighbors[node].iter().copied());
+        }
+    }
+    protected
+}
+
+pub(in crate::layout) fn groups(graph: &Graph, parents: &[Option<usize>]) -> Vec<Group> {
     let mut groups: BTreeMap<usize, Vec<usize>> = BTreeMap::new();
     for (index, edge) in graph.edges.iter().enumerate() {
         if edge.kind == EdgeKind::Connection

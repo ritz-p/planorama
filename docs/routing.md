@@ -19,6 +19,16 @@ column. Dense ranks wrap into adjacent columns, and containers grow around their
 children. Related subnet containers can be kept adjacent to shorten connections.
 Module membership does not control containment or create module bands.
 
+After packing, up to four forward/backward sweep pairs order each physical
+column by neighbor barycenters and align its stack with the median peer offset.
+Only a strict reduction in total vertical peer distance is accepted; ties retain
+the deterministic initial order. Columns, sizes and parents stay fixed. Descendant
+edges project to their direct sibling owners, including external peers at their
+common enclosing scope. Repeated relationships retain their weight. Scopes with
+special connection affinity keep their existing grouping and alignment instead.
+At root level, only columns containing that affinity's connected root component
+are protected; unrelated root columns and deployment regions still refine.
+
 Without containers or regional scope panels, resources use module bands and dependency ranks. Long edges
 participate in ordering through virtual intermediate vertices, which are not
 rendered as cards. Numbered relationships retain these bands; rows accommodate
