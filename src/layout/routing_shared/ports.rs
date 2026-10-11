@@ -41,6 +41,31 @@ pub(in crate::layout) fn candidate_pairs(source: Bounds, target: Bounds) -> Vec<
     pairs
 }
 
+pub(in crate::layout) fn pair_batches(
+    source: Bounds,
+    target: Bounds,
+) -> impl Iterator<Item = Vec<(usize, (Side, Side))>> {
+    std::iter::once_with(move || {
+        facing_pairs(source, target)
+            .into_iter()
+            .enumerate()
+            .collect()
+    })
+    .chain(std::iter::once_with(move || {
+        let primary = facing_pairs(source, target).len();
+        candidate_pairs(source, target)
+            .into_iter()
+            .enumerate()
+            .skip(primary)
+            .collect()
+    }))
+}
+
+#[cfg(test)]
+std::thread_local! {
+    static CANDIDATE_COUNT: std::cell::Cell<usize> = const { std::cell::Cell::new(0) };
+}
+
 pub(in crate::layout) fn distance_bound(source: Bounds, target: Bounds) -> u128 {
     (source.origin.x.saturating_sub(target.right())
         + target.origin.x.saturating_sub(source.right())
@@ -78,7 +103,35 @@ pub(in crate::layout) fn select_with_slots(
     scorer: &Scorer,
     slots: Option<(&[usize; 4], &[usize; 4])>,
 ) -> Vec<Point> {
-    let pairs = candidate_pairs(source, target);
+    select_candidates(source, target, &baseline, obstacles, scorer, slots).unwrap_or(baseline)
+}
+
+pub(in crate::layout) fn select_from_ports(
+    source: Bounds,
+    target: Bounds,
+    ports: [Port; 2],
+    obstacles: &[Bounds],
+    scorer: &Scorer,
+    slots: (&[usize; 4], &[usize; 4]),
+) -> Option<Vec<Point>> {
+    select_candidates(
+        source,
+        target,
+        &ports.map(|p| p.point),
+        obstacles,
+        scorer,
+        Some(slots),
+    )
+}
+
+fn select_candidates(
+    source: Bounds,
+    target: Bounds,
+    baseline: &[Point],
+    obstacles: &[Bounds],
+    scorer: &Scorer,
+    slots: Option<(&[usize; 4], &[usize; 4])>,
+) -> Option<Vec<Point>> {
     let offset = |bounds: Bounds, point: Point, side| {
         let horizontal = point.x > bounds.origin.x
             && point.x < bounds.right()
@@ -95,65 +148,66 @@ pub(in crate::layout) fn select_with_slots(
         position.min(extent) * size / extent.max(1)
     };
     let (Some(&first), Some(&last)) = (baseline.first(), baseline.last()) else {
-        return baseline;
+        return None;
     };
-    let mut pairs: Vec<_> = pairs
-        .into_iter()
-        .enumerate()
-        .map(|(rank, (a, b))| {
-            let start = source.port(
-                a,
-                if on_side(source, first, a) {
-                    offset(source, first, a)
-                } else {
-                    slots.map_or_else(|| offset(source, first, a), |s| s.0[a as usize])
-                },
-            );
-            let end = target.port(
-                b,
-                if on_side(target, last, b) {
-                    offset(target, last, b)
-                } else {
-                    slots.map_or_else(|| offset(target, last, b), |s| s.1[b as usize])
-                },
-            );
-            (cost_bound(start, end, [16; 2]), rank, start, end)
-        })
-        .collect();
-    pairs.sort_by_key(|&(bound, rank, _, _)| (bound, rank));
     let mut candidates = Vec::new();
     let mut limit = u128::MAX;
-    for (bound, rank, start, end) in pairs {
-        if bound > limit {
-            break;
-        }
-        if (start.point != first && scorer.uses_endpoint(start.point))
-            || (end.point != last && scorer.uses_endpoint(end.point))
-        {
-            continue;
-        }
-        if start.point == first
-            && end.point == last
-            && valid_with_clearances(&baseline, start, end, obstacles, [16; 2])
-        {
-            candidates.push((rank, baseline.clone()));
-        }
-        for candidate in candidates_with_clearances(start, end, obstacles, Some(scorer), [16; 2]) {
-            if scorer.readability_cost(&candidate) == distance_bound(source, target) {
-                return candidate;
+    for batch in pair_batches(source, target) {
+        let mut pairs: Vec<_> = batch
+            .into_iter()
+            .map(|(rank, (a, b))| {
+                let start = source.port(
+                    a,
+                    if on_side(source, first, a) {
+                        offset(source, first, a)
+                    } else {
+                        slots.map_or_else(|| offset(source, first, a), |s| s.0[a as usize])
+                    },
+                );
+                let end = target.port(
+                    b,
+                    if on_side(target, last, b) {
+                        offset(target, last, b)
+                    } else {
+                        slots.map_or_else(|| offset(target, last, b), |s| s.1[b as usize])
+                    },
+                );
+                (cost_bound(start, end, [16; 2]), rank, start, end)
+            })
+            .collect();
+        pairs.sort_by_key(|&(bound, rank, _, _)| (bound, rank));
+        for (bound, rank, start, end) in pairs {
+            if bound > limit {
+                break;
             }
-            candidates.push((rank, candidate));
-        }
-        if let Some(best) =
-            scorer.best_index(candidates.iter().map(|(_, p)| p.as_slice()), obstacles)
-        {
-            limit = scorer.readability_cost(&candidates[best].1);
+            if (start.point != first && scorer.uses_endpoint(start.point))
+                || (end.point != last && scorer.uses_endpoint(end.point))
+            {
+                continue;
+            }
+            if start.point == first
+                && end.point == last
+                && valid_with_clearances(baseline, start, end, obstacles, [16; 2])
+            {
+                candidates.push((rank, baseline.to_vec()));
+            }
+            for candidate in
+                candidates_with_clearances(start, end, obstacles, Some(scorer), [16; 2])
+            {
+                if scorer.readability_cost(&candidate) == distance_bound(source, target) {
+                    return Some(candidate);
+                }
+                candidates.push((rank, candidate));
+            }
+            if let Some(best) =
+                scorer.best_index(candidates.iter().map(|(_, p)| p.as_slice()), obstacles)
+            {
+                limit = scorer.readability_cost(&candidates[best].1);
+            }
         }
     }
     candidates.sort_by_key(|(rank, _)| *rank);
-    scorer
-        .choose(candidates.into_iter().map(|(_, p)| p).collect(), obstacles)
-        .unwrap_or(baseline)
+    scorer.choose(candidates.into_iter().map(|(_, p)| p).collect(), obstacles)
 }
 
 fn on_side(bounds: Bounds, point: Point, side: Side) -> bool {
@@ -191,6 +245,96 @@ fn target_side_change_preserves_source_offset() {
     );
     assert_eq!(path.first(), Some(&start.point));
     assert_eq!(path.last(), Some(&target.port(Side::Left, 100).point));
+}
+
+#[test]
+fn unobstructed_facing_pairs_need_one_candidate_and_no_grid_search() {
+    let source = Bounds {
+        origin: Point { x: 100, y: 100 },
+        width: 100,
+        height: 100,
+    };
+    for target in [
+        Bounds {
+            origin: Point { x: 500, y: 100 },
+            ..source
+        },
+        Bounds {
+            origin: Point { x: 100, y: 500 },
+            ..source
+        },
+    ] {
+        let obstacles = [source, target];
+        let baseline = connect(
+            source.port(Side::Right, 50),
+            target.port(Side::Right, 50),
+            &obstacles,
+            None,
+        )
+        .unwrap();
+        CANDIDATE_COUNT.set(0);
+        search::GRID_SEARCH_COUNT.set(0);
+        let selected = select(source, target, baseline, &obstacles, &Scorer::default());
+        assert_eq!(CANDIDATE_COUNT.get(), 1);
+        assert_eq!(search::GRID_SEARCH_COUNT.get(), 0);
+        assert_eq!(
+            Scorer::default().readability_cost(&selected),
+            distance_bound(source, target)
+        );
+        CANDIDATE_COUNT.set(0);
+        search::GRID_SEARCH_COUNT.set(0);
+        let slots = [50; 4];
+        assert_eq!(
+            select_from_ports(
+                source,
+                target,
+                [source.port(Side::Right, 50), target.port(Side::Right, 50)],
+                &obstacles,
+                &Scorer::default(),
+                (&slots, &slots),
+            ),
+            Some(selected)
+        );
+        assert_eq!(CANDIDATE_COUNT.get(), 1);
+        assert_eq!(search::GRID_SEARCH_COUNT.get(), 0);
+    }
+}
+
+#[test]
+fn geometry_batches_use_rectangle_projections_before_expanding() {
+    let source = Bounds {
+        origin: Point { x: 100, y: 100 },
+        width: 300,
+        height: 300,
+    };
+    for (x, y, expected) in [
+        (500, 350, vec![(Side::Right, Side::Left)]),
+        (350, 500, vec![(Side::Bottom, Side::Top)]),
+        (
+            500,
+            500,
+            vec![(Side::Right, Side::Left), (Side::Bottom, Side::Top)],
+        ),
+        (200, 200, vec![]),
+    ] {
+        let target = Bounds {
+            origin: Point { x, y },
+            width: 80,
+            height: 80,
+        };
+        let mut batches = pair_batches(source, target);
+        assert_eq!(
+            batches
+                .next()
+                .unwrap()
+                .into_iter()
+                .map(|(_, p)| p)
+                .collect::<Vec<_>>(),
+            expected
+        );
+        assert_eq!(batches.next().unwrap().len(), 16 - expected.len());
+        assert!(batches.next().is_none());
+    }
 }
 
 #[test]
@@ -262,7 +406,11 @@ fn blocked_facing_ports_choose_a_shorter_valid_alternative() {
     )
     .unwrap();
     let scorer = Scorer::default();
+    CANDIDATE_COUNT.set(0);
+    search::GRID_SEARCH_COUNT.set(0);
     let selected = select(source, target, baseline.clone(), &obstacles, &scorer);
+    assert!(CANDIDATE_COUNT.get() > 1);
+    assert!(search::GRID_SEARCH_COUNT.get() > 0);
     assert!(scorer.readability_cost(&selected) < scorer.readability_cost(&baseline));
     assert!(
         selected
@@ -309,7 +457,7 @@ fn bounded_selection_matches_exhaustive_candidate_cost() {
         for (a, b) in candidate_pairs(source, target) {
             let start = source.port(a, 50);
             let end = target.port(b, 50);
-            for path in candidates_with_clearances(start, end, &obstacles, Some(&scorer), [16; 2]) {
+            for path in candidates_impl::<false>(start, end, &obstacles, Some(&scorer), [16; 2]) {
                 assert!(
                     cost_bound(start, end, [16; 2]) <= Scorer::default().readability_cost(&path)
                 );
@@ -321,6 +469,62 @@ fn bounded_selection_matches_exhaustive_candidate_cost() {
             scorer.score(&selected, &obstacles),
             scorer.score(&exhaustive, &obstacles)
         );
+    }
+}
+
+#[test]
+fn grid_pruning_preserves_exhaustive_quality_and_marker_clearance() {
+    let start = Port {
+        point: Point { x: 200, y: 200 },
+        side: Side::Right,
+    };
+    for end in [
+        Port {
+            point: Point { x: 600, y: 200 },
+            side: Side::Left,
+        },
+        Port {
+            point: Point { x: 600, y: 400 },
+            side: Side::Left,
+        },
+        Port {
+            point: Point { x: 600, y: 400 },
+            side: Side::Top,
+        },
+    ] {
+        for clearances in [[16, 16], [16, 60], [60, 60]] {
+            for occupied in [false, true] {
+                let mut scorer = Scorer::default();
+                if occupied {
+                    scorer.insert(vec![Point { x: 400, y: 100 }, Point { x: 400, y: 300 }]);
+                    scorer.set_soft(vec![Bounds {
+                        origin: Point { x: 480, y: 180 },
+                        width: 40,
+                        height: 60,
+                    }]);
+                }
+                let selected = scorer
+                    .choose(
+                        candidates_impl::<true>(start, end, &[], Some(&scorer), clearances),
+                        &[],
+                    )
+                    .unwrap();
+                let exhaustive = scorer
+                    .choose(
+                        candidates_impl::<false>(start, end, &[], Some(&scorer), clearances),
+                        &[],
+                    )
+                    .unwrap();
+                assert!(valid_with_clearances(
+                    &selected,
+                    start,
+                    end,
+                    &[],
+                    clearances
+                ));
+                assert_eq!(scorer.score(&selected, &[]), scorer.score(&exhaustive, &[]));
+            }
+        }
     }
 }
 
@@ -354,6 +558,18 @@ pub(in crate::layout) fn candidates_with_clearances(
     scorer: Option<&Scorer>,
     clearances: [usize; 2],
 ) -> Vec<Vec<Point>> {
+    candidates_impl::<true>(start, end, obstacles, scorer, clearances)
+}
+
+fn candidates_impl<const PRUNE: bool>(
+    start: Port,
+    end: Port,
+    obstacles: &[Bounds],
+    scorer: Option<&Scorer>,
+    clearances: [usize; 2],
+) -> Vec<Vec<Point>> {
+    #[cfg(test)]
+    CANDIDATE_COUNT.set(CANDIDATE_COUNT.get() + 1);
     let first = start.outward(clearances[0]);
     let last = end.outward(clearances[1]);
     if first == start.point
@@ -393,12 +609,28 @@ pub(in crate::layout) fn candidates_with_clearances(
             }
         }
     }
+    let bound = cost_bound(start, end, clearances);
+    if PRUNE
+        && candidates
+            .iter()
+            .any(|path| quality.attains_bound(path, bound))
+    {
+        return candidates;
+    }
     let mut barriers = obstacles.to_vec();
     barriers.extend(terminal_corridors(start, end, clearances));
     for occupancy in [None, scorer]
         .into_iter()
         .take(if scorer.is_some() { 2 } else { 1 })
     {
+        if PRUNE
+            && occupancy.is_some()
+            && candidates
+                .iter()
+                .any(|path| quality.attains_bound(path, bound))
+        {
+            break;
+        }
         if let Some(middle) = search::search(
             first,
             last,
