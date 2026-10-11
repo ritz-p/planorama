@@ -281,8 +281,8 @@ pub(super) fn obstacles(layout: &Layout<'_>, edge: &Edge) -> Vec<Bounds> {
         })
         .map(|(node, &bounds)| {
             if layout.containers.contains(&node)
-                && (layout.containment.is_ancestor(node, edge.from)
-                    || layout.containment.is_ancestor(node, edge.to))
+                && ((node != edge.from && layout.containment.is_ancestor(node, edge.from))
+                    || (node != edge.to && layout.containment.is_ancestor(node, edge.to)))
             {
                 bounds.header(layout.header_heights[node])
             } else {

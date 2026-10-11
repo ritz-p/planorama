@@ -68,6 +68,12 @@ fn large_fixture_limits_each_edges_bends_and_valid_route_stretch() {
                 if from.contains("aws_subnet.private_") {
                     assert!(own.total_path_length <= 600 && own.bend_count <= 3);
                     assert_eq!(overlap, 0);
+                    let source = layout.bounds[edge.from];
+                    assert!(
+                        path.windows(2)
+                            .all(|p| !crate::layout::routing_shared::crosses(p[0], p[1], source)),
+                        "source re-entry: {path:?}"
+                    );
                 }
             }
             if let Some(failure) = metrics.violation(&from, &to, 14, 2, 128) {
