@@ -1,6 +1,9 @@
 use super::*;
 use crate::{plan, semantic};
 
+#[path = "locality_leaves.rs"]
+mod leaf_tests;
+
 fn fixture() -> Graph {
     semantic::transform(
         &plan::parse(include_str!("../../../examples/terraform-large/plan.json")).unwrap(),
