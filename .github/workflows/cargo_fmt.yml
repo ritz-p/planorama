@@ -4,6 +4,7 @@ on:
   pull_request:
     paths:
       - '**.rs'
+      - rust-toolchain.toml
       - .github/workflows/cargo_fmt.yml
   workflow_dispatch:
 
@@ -16,4 +17,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7.0.1
-      - run: docker compose run --build --rm -T dev cargo fmt --all --check
+      - name: Install pinned toolchain
+        run: rustc --version --verbose
+      - run: cargo fmt --all --check
