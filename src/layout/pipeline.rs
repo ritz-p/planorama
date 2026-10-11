@@ -23,7 +23,7 @@ pub(super) fn place(graph: &Graph, tree: ContainmentTree) -> Placed<'_> {
 }
 
 fn place_sized(graph: &Graph, tree: ContainmentTree, heights: Option<Vec<usize>>) -> Placed<'_> {
-    if graph.nodes.iter().any(|node| {
+    let mut placed = if graph.nodes.iter().any(|node| {
         node.role == ResourceRole::Container
             || node
                 .entity
@@ -90,7 +90,7 @@ fn place_sized(graph: &Graph, tree: ContainmentTree, heights: Option<Vec<usize>>
                 paths: Vec::new(),
                 junctions: Vec::new(),
             },
-            strategy: if indexed {
+            strategy: if indexed || !crate::provider::aws::owner_affinities(graph).is_empty() {
                 Strategy::Nested
             } else {
                 Strategy::Flat {
@@ -99,7 +99,9 @@ fn place_sized(graph: &Graph, tree: ContainmentTree, heights: Option<Vec<usize>>
                 }
             },
         }
-    }
+    };
+    super::locality::refine(graph, &mut placed.layout);
+    placed
 }
 
 pub(super) fn route<'a>(graph: &'a Graph, placed: &mut Placed<'a>) {
