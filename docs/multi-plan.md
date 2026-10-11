@@ -6,6 +6,9 @@ can connect resources across states using `TerraformRemoteState` provenance.
 Cross-state relationships also remain in `cross-state-relationships` metadata.
 Edges incident on top logical-resource cards are excluded from spatial routing;
 their state-qualified provenance remains available.
+Their consumer cards show links to the actual state-qualified source cards.
+Remote-output evidence remains distinct from a directly configured attribute;
+equal addresses in separate states never share a DOM target.
 
 Output references must be complete; bare collections and ambiguous selectors do
 not establish cross-state relationships. See [output resolution](outputs.md).

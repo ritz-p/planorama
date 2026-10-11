@@ -60,6 +60,53 @@ pub fn render_states(
     let mut top = 60;
     let mut width = 1120;
     for (id, graph) in graphs {
+        let mut graph = graph.clone();
+        for edge in &relationships {
+            if &edge.to.state != id {
+                continue;
+            }
+            let Some(source) = graphs.get(&edge.from.state).and_then(|g| {
+                g.nodes
+                    .iter()
+                    .find(|n| n.address == edge.from.address && n.deposed_key.is_none())
+            }) else {
+                continue;
+            };
+            let Some(consumer) = graph
+                .0
+                .nodes
+                .iter_mut()
+                .find(|n| n.address == edge.to.address && n.deposed_key.is_none())
+            else {
+                continue;
+            };
+            if source.placement != crate::model::Placement::Logical
+                && consumer.placement != crate::model::Placement::Logical
+            {
+                continue;
+            }
+            let crate::model::architecture::CrossStateProvenance::TerraformRemoteState {
+                remote,
+                output,
+                ..
+            } = &edge.provenance;
+            consumer.references.push(crate::model::ResourceReference {
+                label: "References",
+                attribute: format!("{remote}.outputs.{output}"),
+                targets: vec![crate::model::ReferenceTarget {
+                    state: Some(edge.from.state.clone()),
+                    id: crate::model::TerraformEntityId {
+                        address: source.address.clone(),
+                        deposed_key: None,
+                    },
+                    placement: source.placement,
+                }],
+                complete: true,
+                dependency: false,
+                issues: Default::default(),
+            });
+        }
+        let graph = &graph;
         let layout = Layout::new(graph);
         let index = super::relationship_index::Index::new(graph, &layout);
         let (state_width, height) = super::dimensions_with_index(graph, &layout, &index);
@@ -178,7 +225,13 @@ pub fn render_states(
         sections.push_str(&links);
         sections.push_str("<text x=\"350\" y=\"35\" font-family=\"ui-monospace, Consolas, monospace\" font-size=\"12\" fill=\"#2563eb\">Dashed blue: cross-state dependency</text>\n");
     }
-    let description = if link_count == 0 {
+    let description = if architecture.relationships().len() > link_count {
+        format!(
+            "{} named states with {link_count} routed cross-state dependencies and {} logical cross-state references. Logical references link resource cards without routed paths.",
+            graphs.len(),
+            architecture.relationships().len() - link_count
+        )
+    } else if link_count == 0 {
         format!(
             "{} independent states. Resource identities and relationships are scoped to each state.",
             graphs.len()
@@ -198,7 +251,7 @@ pub fn render_states(
     )
 }
 
-fn prefix(id: &StateId) -> String {
+pub(super) fn prefix(id: &StateId) -> String {
     let mut prefix = String::from("state-");
     for byte in id.as_str().bytes() {
         write!(prefix, "{byte:02x}").unwrap();
@@ -233,7 +286,7 @@ fn namespace(svg: &str, prefix: &str) -> String {
             &format!(" {attribute}=\"url(#{prefix}"),
         );
     }
-    scoped
+    scoped.replace(" data-global-href=", " href=")
 }
 
 #[cfg(test)]

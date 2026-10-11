@@ -44,13 +44,22 @@ pub(crate) fn base_graph(plan: &TerraformPlan) -> Graph {
                     .iter()
                     .map(|r| (r, false))
                     .chain(plan.graph_references.iter().map(|r| (r, true)))
-                    .filter(|(r, _)| r.target == index && (!r.sources.is_empty() || !r.complete))
+                    .filter(|(r, _)| {
+                        r.target == index && (!r.sources.is_empty() || !r.issues.is_empty())
+                    })
                     .map(|(r, dependency)| crate::model::ResourceReference {
+                        label: crate::provider::reference_label(
+                            &fact.provider,
+                            &fact.resource_type,
+                            &r.attribute,
+                            dependency,
+                        ),
                         attribute: r.attribute.clone(),
                         targets: r
                             .sources
                             .iter()
                             .map(|&i| crate::model::ReferenceTarget {
+                                state: None,
                                 id: (&plan.nodes[i]).into(),
                                 placement: crate::provider::placement(
                                     &plan.nodes[i].provider,

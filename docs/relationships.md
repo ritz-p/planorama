@@ -1,5 +1,15 @@
 # Relationship styles
 
+Spatial cards show a Uses section for verified references to top logical-resource
+cards. Known attributes use Cluster, Task definition, Instance profile or AMI;
+other verified references use References. Graph-only references such as
+`depends_on` use Dependency, not an attribute-specific usage label. Logical cards
+show their own direct references, including references to spatial resources.
+Incomplete references show unresolved without asserting candidate targets.
+Filtered targets show Unavailable without a dangling link. Up to four rows are
+visible; an overflow count and accessible title retain the complete list and
+full addresses. Card heights reserve space above the footer and placement note.
+
 Dependency lines are thin and solid. Ordinary associations are undirected and
 dashed (7/4), with no arrowheads. Lowered routes retain directional arrowheads.
 Inferred connections are undirected, without arrowheads, and thicker and dotted

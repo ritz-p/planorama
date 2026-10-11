@@ -14,7 +14,8 @@ fn input() -> serde_json::Value {
         {"address":"aws_ecs_service.app", "expressions":{"cluster":{"references":["aws_ecs_cluster.app.id"]},"task_definition":{"references":["aws_ecs_task_definition.app.arn"]}}},
         {"address":"aws_iam_instance_profile.app", "expressions":{"role":{"references":["aws_iam_role.app.name"]}}},
         {"address":"aws_instance.app", "depends_on":["aws_ecs_cluster.app"], "expressions":{"iam_instance_profile":{"references":["aws_iam_instance_profile.app.name"]},"ami":{"references":["data.aws_ami.app.id"]},"unknown":{"references":["aws_iam_role.missing.arn"]}}},
-        {"address":"aws_ecs_task_definition.app", "expressions":{"configuration":{"references":["aws_instance.app.id"]}}}
+        {"address":"aws_ecs_task_definition.app", "expressions":{"configuration":{"references":["aws_instance.app.id"]}}},
+        {"address":"aws_ecs_cluster.app", "expressions":{"name":{"constant_value":"example-cluster"}}}
     ]}}})
 }
 
@@ -25,6 +26,15 @@ fn logical_projection_retains_graph_identity_references_and_operations() {
     let original = graph.clone();
     let layout = Layout::new(&graph);
     assert_eq!(graph.nodes.len(), 8);
+    assert!(
+        graph
+            .nodes
+            .iter()
+            .find(|n| n.address == "aws_ecs_cluster.app")
+            .unwrap()
+            .references
+            .is_empty()
+    );
     assert_eq!(
         graph
             .nodes
@@ -249,4 +259,214 @@ fn named_states_keep_logical_ids_separate_and_cross_state_provenance_without_rou
             .any(|n| n.has_tag_name("path") && n.attribute("data-cross-state").is_some())
     );
     assert_eq!(all.relationships, view.relationships());
+    for link in doc.descendants().filter_map(|n| n.attribute("href")) {
+        let id = link.strip_prefix('#').unwrap();
+        assert!(
+            doc.descendants().any(|n| n.attribute("id") == Some(id)),
+            "broken link {link}"
+        );
+    }
+    let remote = doc
+        .descendants()
+        .find(|n| {
+            n.attribute("data-reference-attribute")
+                == Some("data.terraform_remote_state.app.outputs.cluster")
+        })
+        .unwrap();
+    assert_eq!(
+        remote.attribute("href"),
+        Some(format!("#{}", ids[0]).as_str())
+    );
+}
+
+#[test]
+fn consumer_uses_only_direct_references_and_keeps_content_inside_cards() {
+    let graph = semantic::transform(&plan::parse(&input().to_string()).unwrap());
+    let layout = Layout::new(&graph);
+    let output = svg::render(&graph, &layout);
+    let doc = roxmltree::Document::parse(&output).unwrap();
+    let card = |address| {
+        doc.descendants()
+            .find(|n| n.attribute("data-terraform-address") == Some(address))
+            .unwrap()
+    };
+    let service = card("aws_ecs_service.app");
+    for (attribute, text) in [
+        ("cluster", "Cluster:"),
+        ("task_definition", "Task definition:"),
+    ] {
+        let link = service
+            .descendants()
+            .find(|n| n.attribute("data-reference-attribute") == Some(attribute))
+            .unwrap();
+        assert!(
+            link.descendants()
+                .any(|n| n.has_tag_name("text") && n.text().unwrap().starts_with(text))
+        );
+    }
+    let worker = card("aws_instance.app");
+    assert!(
+        worker
+            .descendants()
+            .any(|n| n.attribute("data-reference-attribute") == Some("iam_instance_profile"))
+    );
+    assert!(
+        worker
+            .descendants()
+            .any(|n| n.attribute("data-reference-attribute") == Some("ami"))
+    );
+    assert!(
+        !worker
+            .descendants()
+            .any(|n| n.attribute("data-reference-attribute") == Some("role"))
+    );
+    let dependency = worker
+        .descendants()
+        .find(|n| n.attribute("data-reference-attribute") == Some("depends_on"))
+        .unwrap();
+    assert!(
+        dependency
+            .descendants()
+            .any(|n| n.has_tag_name("text") && n.text().unwrap().starts_with("Dependency:"))
+    );
+    assert!(
+        card("aws_iam_instance_profile.app")
+            .descendants()
+            .any(|n| n.attribute("data-reference-attribute") == Some("role"))
+    );
+    assert!(
+        card("aws_ecs_task_definition.app")
+            .descendants()
+            .any(|n| n.attribute("data-reference-attribute") == Some("configuration"))
+    );
+    for (index, node) in graph
+        .nodes
+        .iter()
+        .enumerate()
+        .filter(|(_, n)| n.placement != Placement::Logical)
+    {
+        let card = card(&node.address);
+        for text in card.descendants().filter(|n| n.has_tag_name("text")) {
+            let y: usize = text.attribute("y").unwrap().parse().unwrap();
+            assert!(y + 4 < layout.bounds[index].origin.y + layout.header_heights[index]);
+        }
+    }
+    let focused = view::single(
+        &graph,
+        &view::Options {
+            focus: Some("aws_ecs_service.app".into()),
+            depth: Some(0),
+            ..Default::default()
+        },
+    )
+    .unwrap();
+    let output = svg::render(&focused, &Layout::new(&focused));
+    assert!(output.contains("Unavailable"));
+    let doc = roxmltree::Document::parse(&output).unwrap();
+    assert!(
+        !doc.descendants()
+            .any(|n| n.attribute("data-reference-attribute").is_some())
+    );
+}
+
+#[test]
+fn shared_profiles_and_overflow_keep_complete_accessible_references() {
+    let mut value = input();
+    let mut worker = value["configuration"]["root_module"]["resources"][2].clone();
+    worker["address"] = serde_json::json!("aws_instance.second");
+    value["configuration"]["root_module"]["resources"]
+        .as_array_mut()
+        .unwrap()
+        .push(worker);
+    value["resource_changes"]
+        .as_array_mut()
+        .unwrap()
+        .push(serde_json::json!({"address":"aws_instance.second", "type":"aws_instance"}));
+    let mut addresses = Vec::new();
+    for index in 0..8 {
+        let address = format!("aws_iam_policy.long_{}_{}", index, "name".repeat(30));
+        value["resource_changes"]
+            .as_array_mut()
+            .unwrap()
+            .push(serde_json::json!({"address":address,"type":"aws_iam_policy"}));
+        addresses.push(address);
+    }
+    value["configuration"]["root_module"]["resources"][0]["expressions"]["policies"] = serde_json::json!({"references":addresses.iter().map(|a| format!("{a}.arn")).collect::<Vec<_>>()});
+    let graph = semantic::transform(&plan::parse(&value.to_string()).unwrap());
+    let output = svg::render(&graph, &Layout::new(&graph));
+    let doc = roxmltree::Document::parse(&output).unwrap();
+    let profile = doc
+        .descendants()
+        .find(|n| n.attribute("data-terraform-address") == Some("aws_iam_instance_profile.app"))
+        .unwrap()
+        .attribute("id")
+        .unwrap();
+    assert_eq!(
+        doc.descendants()
+            .filter(|n| n.attribute("href") == Some(format!("#{profile}").as_str()))
+            .count(),
+        2
+    );
+    let service = doc
+        .descendants()
+        .find(|n| n.attribute("data-terraform-address") == Some("aws_ecs_service.app"))
+        .unwrap();
+    assert_eq!(
+        service
+            .descendants()
+            .filter(|n| n.has_tag_name("a"))
+            .count(),
+        4
+    );
+    let summary = service
+        .descendants()
+        .find(|n| n.attribute("data-resource-references").is_some())
+        .unwrap();
+    let title = summary
+        .children()
+        .find(|n| n.has_tag_name("title"))
+        .unwrap()
+        .text()
+        .unwrap();
+    assert!(addresses.iter().all(|a| title.contains(a)));
+    assert!(
+        summary
+            .descendants()
+            .any(|n| n.has_tag_name("text") && n.text().unwrap().contains("+6 more"))
+    );
+}
+
+#[test]
+fn incomplete_mixed_references_never_link_a_candidate_as_verified_usage() {
+    let mut value = input();
+    value["configuration"]["root_module"]["resources"][2]["expressions"]["iam_instance_profile"] = serde_json::json!({"references":["aws_iam_instance_profile.app.name", "aws_iam_instance_profile.missing.name"]});
+    let graph = semantic::transform(&plan::parse(&value.to_string()).unwrap());
+    let output = svg::render(&graph, &Layout::new(&graph));
+    let doc = roxmltree::Document::parse(&output).unwrap();
+    let worker = doc
+        .descendants()
+        .find(|n| n.attribute("data-terraform-address") == Some("aws_instance.app"))
+        .unwrap();
+    assert!(
+        !worker
+            .descendants()
+            .any(|n| n.attribute("data-reference-attribute") == Some("iam_instance_profile"))
+    );
+    assert!(
+        worker
+            .descendants()
+            .any(|n| n.has_tag_name("text") && n.text() == Some("Instance profile: unresolved"))
+    );
+    let node = graph
+        .nodes
+        .iter()
+        .find(|n| n.address == "aws_instance.app")
+        .unwrap();
+    let reference = node
+        .references
+        .iter()
+        .find(|r| r.attribute == "iam_instance_profile")
+        .unwrap();
+    assert!(!reference.complete);
+    assert!(!reference.targets.is_empty());
 }

@@ -11,6 +11,7 @@ mod logical;
 mod operations;
 mod paths;
 mod provenance;
+mod references;
 mod relationship_index;
 mod relationships;
 mod roles;
@@ -338,6 +339,13 @@ fn render_with_index(
             )
             .unwrap();
         }
+        svg.push_str(&references::render(
+            graph,
+            node,
+            x + 12,
+            y + 86,
+            card_width - 24,
+        ));
         let role = roles::annotation(node.role, &node.module);
         let footer = match role.is_empty() {
             false => role,
