@@ -74,6 +74,47 @@ fn large_fixture_limits_each_edges_bends_and_valid_route_stretch() {
                             .all(|p| !crate::layout::routing_shared::crosses(p[0], p[1], source)),
                         "source re-entry: {path:?}"
                     );
+                } else {
+                    let hidden: usize = layout
+                        .occluders(edge)
+                        .iter()
+                        .map(|&node| {
+                            let b = layout.bounds[node];
+                            path.windows(2)
+                                .filter(|p| crate::layout::routing_shared::crosses(p[0], p[1], b))
+                                .map(|p| {
+                                    if p[0].x == p[1].x {
+                                        p[0].y
+                                            .max(p[1].y)
+                                            .min(b.origin.y + b.height)
+                                            .saturating_sub(p[0].y.min(p[1].y).max(b.origin.y))
+                                    } else {
+                                        p[0].x
+                                            .max(p[1].x)
+                                            .min(b.right())
+                                            .saturating_sub(p[0].x.min(p[1].x).max(b.origin.x))
+                                    }
+                                })
+                                .sum::<usize>()
+                        })
+                        .sum();
+                    eprintln!("gateway hidden length={hidden}");
+                    assert!(own.total_path_length <= 1000 && own.bend_count <= 3);
+                    assert!(hidden > 0 && hidden as u128 * 3 < own.total_path_length);
+                    let foreign = graph
+                        .nodes
+                        .iter()
+                        .position(|n| n.address == "module.network.aws_subnet.public_b")
+                        .unwrap();
+                    assert!(layout.occludes(foreign, edge));
+                    assert!(
+                        path.windows(2)
+                            .any(|p| crate::layout::routing_shared::crosses(
+                                p[0],
+                                p[1],
+                                layout.bounds[foreign]
+                            ))
+                    );
                 }
             }
             if let Some(failure) = metrics.violation(&from, &to, 14, 2, 128) {

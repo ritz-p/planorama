@@ -81,7 +81,7 @@ docker run --rm --mount type=bind,source=.,target=/workspace --env CARGO_TARGET_
 
 ローカル開発ではソースをコンテナにバインドマウントし、Cargo のキャッシュとビルド成果物を named volume に保存します。`docker compose stop dev` / `start dev` で停止・再開、Dockerfile の変更後は `up -d --build dev` で再作成します。
 
-通常の CI は Ubuntu runner 上で `rust-toolchain.toml` の固定ツールチェーンを使い、Formatting・Tests・Clippy を実行します。開発イメージが追加するのは Rust と rustfmt・Clippy のため、CI では直接実行してイメージ構築を省きます。Tests はコンパイルと実行を別ステップで計測し、毎回 `cargo test --locked --all-targets --all-features` を実行します。
+通常の CI は Ubuntu runner 上で `rust-toolchain.toml` の固定ツールチェーンを使い、Formatting・Tests・Clippy を直接実行します。開発イメージには SVG の描画確認用に `rsvg-convert` と DejaVu フォントも含みます。Tests はコンパイルと実行を別ステップで計測し、毎回 `cargo test --locked --all-targets --all-features` を実行します。
 
 Tests・Clippy は `Swatinem/rust-cache` で Cargo registry/git と `target` 内の依存クレートの成果物を保存します。workspace crate は毎回ビルドし、ソース変更後に更新できない同一キーのキャッシュへ成果物を保存しません。キーには runner 環境・ジョブ・Rust compiler・Cargo.toml/Cargo.lock・ツールチェーン・Cargo 設定・ビルド関連環境変数に加え、`build.rs` と `assets/**` のハッシュを含めます。`v1-rust-dependencies` prefix で旧 workspace 成果物を含むキャッシュと区別します。復元後の再ビルド判定は Cargo が行い、キャッシュの有無によらず全対象を検証します。Tests と Clippy はプロファイルと成果物が異なるためジョブ別のキャッシュを使います。
 両 workflow は関連入力が変わる `main` への push でも実行し、後続 PR が復元できる既定ブランチのキャッシュを作ります。

@@ -8,6 +8,7 @@ mod icons;
 mod identity;
 mod legend;
 mod logical;
+mod occlusion;
 mod operations;
 mod paths;
 mod provenance;
@@ -108,6 +109,8 @@ fn render_with_index(
     let (description, summary) = relationships::captions(graph);
     let markers = relationships::markers(graph);
     let icon_definitions = icons::definitions(&graph.nodes);
+    let occlusion = occlusion::Masks::new(graph, layout);
+    let occlusion_definitions = occlusion.definitions(layout);
     let semantic_edges = graph
         .edges
         .iter()
@@ -116,7 +119,7 @@ fn render_with_index(
         r##"<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}" role="img" aria-labelledby="title description">
 <title id="title">Terraform plan</title>
 <desc id="description">{description} Thin solid: dependency. Dashed: association. Thick dotted: connection. Nested boxes: containment. Edge color preserves the Terraform action when available.</desc>
-<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/></marker>{markers}{icon_definitions}</defs>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/></marker>{markers}{icon_definitions}{occlusion_definitions}</defs>
 <rect width="100%" height="100%" fill="#ffffff"/>
 <g font-family="ui-monospace, SFMono-Regular, Consolas, monospace">
 <text x="40" y="45" font-size="25" font-weight="700" fill="#0f172a">Terraform plan</text>
@@ -196,7 +199,7 @@ fn render_with_index(
     }
     svg.push_str(&scopes::render(layout));
     svg.push_str(&containers::boundaries(graph, layout));
-    for (edge, points) in graph.edges.iter().zip(&layout.paths) {
+    for (index, (edge, points)) in graph.edges.iter().zip(&layout.paths).enumerate() {
         let relation = match edge.kind {
             EdgeKind::Dependency => " data-edge-kind=\"dependency\"",
             EdgeKind::Association => " data-edge-kind=\"association\"",
@@ -234,12 +237,19 @@ fn render_with_index(
         } else {
             String::new()
         };
-        writeln!(svg, r##"<path d="{path}"{relation}{previous}{operation} data-directionality="{direction}" data-source="{source}" data-target="{target}" fill="none" stroke="{stroke}" {style} stroke-linejoin="round"{arrow}><title>{title}</title></path>"##).unwrap();
+        let mask = occlusion.attribute(index);
+        writeln!(svg, r##"<path d="{path}"{relation}{previous}{operation} data-directionality="{direction}" data-source="{source}" data-target="{target}" fill="none" stroke="{stroke}" {style} stroke-linejoin="round"{arrow}{mask}><title>{title}</title></path>"##).unwrap();
     }
     for point in &layout.junctions {
+        let mask = layout
+            .paths
+            .iter()
+            .position(|path| path.contains(point))
+            .map(|index| occlusion.attribute(index))
+            .unwrap_or_default();
         writeln!(
             svg,
-            r##"<circle cx="{}" cy="{}" r="3" fill="#94a3b8"/>"##,
+            r##"<circle cx="{}" cy="{}" r="3" fill="#94a3b8"{mask}/>"##,
             point.x, point.y
         )
         .unwrap();
