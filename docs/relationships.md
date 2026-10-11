@@ -1,7 +1,8 @@
 # Relationship styles
 
 Spatial cards show a Uses section for verified references to top logical-resource
-cards. Known attributes use Cluster, Task definition, Instance profile or AMI;
+cards. Known attributes use Cluster, Task definition, Instance profile, AMI,
+Role, Execution role or Task role;
 other verified references use References. Graph-only references such as
 `depends_on` use Dependency, not an attribute-specific usage label. Logical cards
 show their own direct references, including references to spatial resources.

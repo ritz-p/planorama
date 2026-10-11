@@ -1,5 +1,14 @@
 use crate::model::architecture::{ArchitectureEntityKind, Graph, RelationshipProvenance};
 
+fn reference_target(target: &crate::model::ReferenceTarget) -> serde_json::Value {
+    let mut value =
+        serde_json::json!({"address":target.id.address,"deposed_key":target.id.deposed_key});
+    if let Some(state) = &target.state {
+        value["state"] = state.as_str().into();
+    }
+    value
+}
+
 pub(super) fn metadata(graph: &Graph) -> String {
     let entities: Vec<_> = graph.entities().map(|entity| {
         let sources: Vec<_> = entity.provenance.iter().map(|source| serde_json::json!({"address":source.address,"deposed_key":source.deposed_key})).collect();
@@ -13,7 +22,7 @@ pub(super) fn metadata(graph: &Graph) -> String {
         serde_json::json!({"from":relationship.from.as_str(), "to":relationship.to.as_str(), "kind":format!("{:?}",relationship.kind).to_lowercase(), "directionality":relationship.directionality().as_str(), "inferred":relationship.inferred, "provenance":provenance})
     }).collect();
     let references: Vec<_> = graph.nodes.iter().flat_map(|node| node.references.iter().map(move |reference| {
-        serde_json::json!({"consumer":node.entity.id.as_str(), "attribute":reference.attribute, "dependency":reference.dependency, "complete":reference.complete, "targets":reference.targets.iter().map(|target| serde_json::json!({"address":target.id.address,"deposed_key":target.id.deposed_key})).collect::<Vec<_>>(), "issues":reference.issues.iter().map(|issue| format!("{issue:?}")).collect::<Vec<_>>()})
+        serde_json::json!({"consumer":node.entity.id.as_str(), "attribute":reference.attribute, "dependency":reference.dependency, "complete":reference.complete, "targets":reference.targets.iter().map(|target| reference_target(target)).collect::<Vec<_>>(), "issues":reference.issues.iter().map(|issue| format!("{issue:?}")).collect::<Vec<_>>()})
     })).collect();
     let reference_metadata = if references.is_empty() {
         String::new()

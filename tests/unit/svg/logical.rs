@@ -279,6 +279,30 @@ fn named_states_keep_logical_ids_separate_and_cross_state_provenance_without_rou
     assert!(output.contains("cross-state-relationships"));
     assert!(!output.contains("independent states"));
     assert!(output.contains("1 logical"));
+    let references: Vec<serde_json::Value> = doc
+        .descendants()
+        .filter(|n| {
+            n.has_tag_name("metadata")
+                && n.attribute("id")
+                    .is_some_and(|id| id.ends_with("resource-references"))
+        })
+        .flat_map(|n| serde_json::from_str::<Vec<serde_json::Value>>(n.text().unwrap()).unwrap())
+        .collect();
+    let remote_metadata = references
+        .iter()
+        .find(|r| r["attribute"] == "data.terraform_remote_state.app.outputs.cluster")
+        .unwrap();
+    assert_eq!(remote_metadata["targets"][0]["state"], "first");
+    assert_eq!(
+        remote_metadata["targets"][0]["address"],
+        "aws_ecs_cluster.app"
+    );
+    assert!(
+        references
+            .iter()
+            .filter(|r| r["attribute"] == "cluster")
+            .all(|r| r["targets"][0].get("state").is_none())
+    );
     assert!(
         !doc.descendants()
             .any(|n| n.has_tag_name("path") && n.attribute("data-cross-state").is_some())
