@@ -2,6 +2,7 @@ mod annotations;
 mod checks;
 mod components;
 mod containers;
+mod endpoints;
 mod entities;
 mod icons;
 mod identity;
@@ -366,6 +367,7 @@ fn render_with_index(
     if graph.nodes.is_empty() {
         svg.push_str("<text x=\"40\" y=\"185\" font-size=\"16\" fill=\"#64748b\">No resources to display.</text>\n");
     }
+    svg.push_str(&endpoints::render(graph, layout));
     svg.push_str(&relationship_index.markers());
     svg.push_str("</g>\n");
     if check_offset != 0 {

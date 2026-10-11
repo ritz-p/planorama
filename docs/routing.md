@@ -24,10 +24,11 @@ column by neighbor barycenters and align its stack with the median peer offset.
 Only a strict reduction in total vertical peer distance is accepted; ties retain
 the deterministic initial order. Columns, sizes and parents stay fixed. Descendant
 edges project to their direct sibling owners, including external peers at their
-common enclosing scope. Repeated relationships retain their weight. Scopes with
-special connection affinity keep their existing grouping and alignment instead.
-At root level, only columns containing that affinity's connected root component
-are protected; unrelated root columns and deployment regions still refine.
+common enclosing scope. Repeated relationships retain their weight. Connection
+affinity protects only physical columns containing its sources or targets; other
+columns in the same container still refine. Root protection includes the affinity
+owners and resources directly attached to affinity members, not their entire
+connected component.
 
 Packing evaluates at most 65 height limits. The compactness baseline minimizes
 `max(10 × width, 17 × height)`, then area. Candidates may exceed that baseline's
@@ -40,8 +41,11 @@ The hub regressions cover useful shape changes and the shape bounds under heavy
 relationship weights; variable-height cases use actual card centers.
 Crossing estimates sample at most 256 distinct segments in geometric order,
 keeping evaluation bounded and independent of input order. Full routing runs
-only after placement. Special affinity scopes retain compact-only selection
-because straight-line estimates do not model their shared connection routes.
+only after placement. Affinity scopes use the same relationship objective, adding
+target distance from the source median. Each candidate aligns targets into free
+space before scoring. Coherent source runs cannot split across physical columns;
+overlapping groups share that constraint. Compactness bounds use the constrained
+baseline. Alignment preserves padding and containment without provider-specific rules.
 
 Without containers or regional scope panels, resources use module bands and dependency ranks. Long edges
 participate in ordering through virtual intermediate vertices, which are not

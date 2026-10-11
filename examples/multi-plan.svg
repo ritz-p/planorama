@@ -73,6 +73,8 @@ No AWS endorsement is implied. Consult the AWS terms for other uses.
 <text x="104" y="273" font-size="13" fill="#0f172a">p</text>
 <text x="72" y="292" font-size="10" fill="#64748b" data-role="policy"><title>root</title>policy · root</text>
 </g>
+<g data-endpoints="true" data-source="state-6170706c69636174696f6e-resource-6177735f73656375726974795f67726f75702e617070-current" data-target="state-6170706c69636174696f6e-resource-6177735f696e7374616e63652e617070-current" aria-hidden="true">
+<circle data-endpoint="source" cx="380" cy="256" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
 </g>
 </g>
 </g>
@@ -157,6 +159,8 @@ No AWS endorsement is implied. Consult the AWS terms for other uses.
 <text x="104" y="417" font-size="13" fill="#0f172a">p</text>
 <text x="72" y="436" font-size="10" fill="#64748b" data-role="policy"><title>root</title>policy · root</text>
 </g>
+<g data-endpoints="true" data-source="state-6e6574776f726b-resource-6177735f73656375726974795f67726f75702e617070-current" data-target="state-6e6574776f726b-resource-6177735f696e7374616e63652e617070-current" aria-hidden="true">
+<circle data-endpoint="source" cx="380" cy="256" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
 </g>
 </g>
 </g>
