@@ -37,6 +37,7 @@ pub enum Placement {
 
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub struct ResourceReference {
+    pub label: &'static str,
     pub attribute: String,
     pub targets: Vec<ReferenceTarget>,
     pub complete: bool,
@@ -46,6 +47,7 @@ pub struct ResourceReference {
 
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub struct ReferenceTarget {
+    pub state: Option<StateId>,
     pub id: TerraformEntityId,
     pub placement: Placement,
 }

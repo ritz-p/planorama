@@ -1,5 +1,20 @@
 pub(crate) mod aws;
 
+pub(crate) fn reference_label(
+    provider: &crate::model::ProviderIdentity,
+    resource_type: &str,
+    attribute: &str,
+    dependency: bool,
+) -> &'static str {
+    if dependency {
+        "Dependency"
+    } else if provider.is_aws() {
+        aws::reference_label(resource_type, attribute)
+    } else {
+        "References"
+    }
+}
+
 pub(crate) fn placement(
     provider: &crate::model::ProviderIdentity,
     resource_type: &str,

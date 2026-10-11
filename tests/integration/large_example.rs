@@ -76,6 +76,33 @@ fn large_fixture_is_reproducible_from_terraform_sources_and_renders_deterministi
     assert!(svg.contains("data-role=\"controller\""));
     assert!(!svg.contains("data.aws_region.current"));
     assert!(!svg.contains("stroke-dasharray=\"5 4\""));
+    let document = roxmltree::Document::parse(&svg).unwrap();
+    for card in document
+        .descendants()
+        .filter(|n| n.attribute("data-terraform-address").is_some())
+    {
+        let address = card.attribute("data-terraform-address").unwrap();
+        let attributes: &[&str] = if address.contains("aws_ecs_service.") {
+            &["cluster", "task_definition"]
+        } else if address.contains("aws_instance.workers_") {
+            &["iam_instance_profile", "ami"]
+        } else {
+            &[]
+        };
+        for &attribute in attributes {
+            let link = card
+                .descendants()
+                .find(|n| n.attribute("data-reference-attribute") == Some(attribute))
+                .unwrap_or_else(|| panic!("{address} missing {attribute}"));
+            let target = link.attribute("href").unwrap().strip_prefix('#').unwrap();
+            assert!(
+                document
+                    .descendants()
+                    .any(|n| n.attribute("id") == Some(target)
+                        && n.attribute("data-placement") == Some("logical"))
+            );
+        }
+    }
     assert_eq!(output_svg(generated.as_bytes()), svg);
 }
 

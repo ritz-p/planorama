@@ -107,7 +107,11 @@ fn place_sized(graph: &Graph, tree: ContainmentTree, heights: Option<Vec<usize>>
             if indexed {
                 containers::header_heights(graph, &tree)
             } else {
-                vec![NODE_HEIGHT; graph.nodes.len()]
+                graph
+                    .nodes
+                    .iter()
+                    .map(|n| NODE_HEIGHT + crate::view::references::height(n))
+                    .collect()
             }
         });
         let placement = placement::place_with_heights(graph, &ranks, &header_heights);
@@ -197,7 +201,11 @@ pub(super) fn route<'a>(graph: &'a Graph, placed: &mut Placed<'a>) {
         .map(|(node, &height)| {
             let inferred = placed.layout.containment.parents[node]
                 .is_some_and(|parent| graph.derived_containment(parent, node));
-            height.max(NODE_HEIGHT + if inferred { 18 } else { 0 })
+            height.max(
+                NODE_HEIGHT
+                    + crate::view::references::height(&graph.nodes[node])
+                    + if inferred { 18 } else { 0 },
+            )
         })
         .collect();
     if heights != placed.layout.header_heights

@@ -40,7 +40,8 @@ pub(super) fn cards(graph: &Graph, address_format: super::AddressFormat) -> Vec<
         let mut y = 28;
         let (background, border) = super::color(node.action);
         let mode_attributes = super::entities::border(node.mode);
-        let height = lines.iter().map(|line| wrap(line, (width - 32) / 8).len()).sum::<usize>() * 20 + 28;
+        let reference_height = crate::view::references::height(node);
+        let height = lines.iter().map(|line| wrap(line, (width - 32) / 8).len()).sum::<usize>() * 20 + 28 + reference_height;
         writeln!(svg, r#"<rect width="{width}" height="{height}" rx="12" fill="{background}" stroke="{border}"{mode_attributes}/>"#).unwrap();
         if let Some(icon) = super::icons::for_node(node) {
             svg.push_str(&super::icons::render(icon, width - 40, 8));
@@ -51,6 +52,8 @@ pub(super) fn cards(graph: &Graph, address_format: super::AddressFormat) -> Vec<
                 y += 20;
             }
         }
+        svg.push_str(&super::references::render(graph, node, 16, y + 8, width - 32));
+        y += reference_height;
         svg.push_str("</g>\n");
         Card { width, height: y, content: svg }
     }).collect()

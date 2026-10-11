@@ -14,6 +14,7 @@ pub struct StateOutput {
 pub struct AttributeReference {
     pub target: usize,
     pub attribute: String,
+    pub has_references: bool,
     pub sources: Vec<usize>,
     pub complete: bool,
     pub collection_ids_complete: bool,
