@@ -73,6 +73,12 @@ included when still present in configuration. See [data.svg](../examples/data.sv
 
 ## Containment
 
+Listener cards prefer nearby positions to their uniquely referenced managed LB.
+This uses complete, unambiguous `load_balancer_arn` reference evidence and visible,
+current AWS identities; missing, dynamic, foreign-provider or duplicate candidates
+receive no preference. It creates no containment. Target Group/Rule relationships
+and the independent Logical Component summary are retained. See [placement](routing.md).
+
 Direct containment requires a complete, static reference to one endpoint of the
 expected AWS type. Managed children can use data-source parents. Tags, names,
 literal IDs, dynamic selection and ambiguous references do not establish a parent;

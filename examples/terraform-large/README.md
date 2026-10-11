@@ -91,6 +91,14 @@ Per-edge regression guards allow up to 14 bends and twice the shortest valid
 route length plus 128 pixels. The reference uses the same hard boundaries,
 ports and marker clearance. Failures identify the offending endpoint addresses.
 
+Listener owner affinity reduces the architecture-local Manhattan center distance
+to its LB from 3,608 to 1,060 pixels without changing the 10,032,636-pixel layout
+area or the 37 routed relationships. Total path length changes from 44,380 to
+39,914 pixels, bends from 89 to 87 and crossings from 119 to 99; measured overlap
+stays 737 pixels. Docker test-profile layout runs measured 6.28 versus 6.68 seconds
+on the same machine (one sample, not a timing assertion). The Listener remains
+outside the VPC because ownership is a placement preference, not containment.
+
 ## Terraform validation
 
 The source was validated with Terraform 1.9.8 and AWS provider 5.100.0; the lock

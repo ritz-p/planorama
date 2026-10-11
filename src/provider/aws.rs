@@ -6,6 +6,8 @@ mod data;
 pub(super) mod diagnostics;
 mod icons;
 mod monitoring;
+mod placement;
+pub(crate) use placement::owner_affinities;
 mod routes;
 mod scope;
 mod security_groups;

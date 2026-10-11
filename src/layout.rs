@@ -1,4 +1,5 @@
 mod geometry;
+mod locality;
 pub(crate) use geometry::{Bounds, Point, Port, Side};
 mod containers;
 mod containment;
