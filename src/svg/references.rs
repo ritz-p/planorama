@@ -20,7 +20,7 @@ fn description(row: &Row<'_>) -> String {
         reference.attribute,
         if reference.dependency {
             "graph dependency"
-        } else if !reference.complete {
+        } else if row.target.is_none() {
             "unresolved attribute reference"
         } else if row.target.is_some_and(|t| t.state.is_some()) {
             "resolved remote output reference"

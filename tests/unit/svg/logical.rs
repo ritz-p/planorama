@@ -553,3 +553,58 @@ fn variable_backed_logical_usage_is_unresolved_but_constants_are_omitted() {
         );
     }
 }
+
+#[test]
+fn dynamic_logical_candidates_are_unresolved_while_exact_targets_link() {
+    let mut value = input();
+    value["resource_changes"].as_array_mut().unwrap().extend((0..2).map(|i| serde_json::json!({"address":format!("aws_iam_instance_profile.profile[{i}]"),"type":"aws_iam_instance_profile"})));
+    for (traversal, links) in [
+        ("aws_iam_instance_profile.profile[count.index].name", 0),
+        ("aws_iam_instance_profile.profile[0].name", 1),
+        ("aws_iam_instance_profile.profile[1].name", 1),
+    ] {
+        value["configuration"]["root_module"]["resources"][2]["expressions"]["iam_instance_profile"] =
+            serde_json::json!({"references":[traversal]});
+        let graph = semantic::transform(&plan::parse(&value.to_string()).unwrap());
+        let output = svg::render(&graph, &Layout::new(&graph));
+        let doc = roxmltree::Document::parse(&output).unwrap();
+        let worker = doc
+            .descendants()
+            .find(|n| n.attribute("data-terraform-address") == Some("aws_instance.app"))
+            .unwrap();
+        assert_eq!(
+            worker
+                .descendants()
+                .filter(|n| n.attribute("data-reference-attribute") == Some("iam_instance_profile"))
+                .count(),
+            links,
+            "{traversal}"
+        );
+        if links == 0 {
+            assert!(
+                worker
+                    .descendants()
+                    .any(|n| n.text() == Some("Instance profile: unresolved"))
+            );
+            assert!(worker.descendants().any(|n| n.has_tag_name("title")
+                && n.text().is_some_and(|t| {
+                    t.contains("iam_instance_profile; unresolved attribute reference")
+                })));
+            let reference = graph
+                .nodes
+                .iter()
+                .find(|n| n.address == "aws_instance.app")
+                .unwrap()
+                .references
+                .iter()
+                .find(|r| r.attribute == "iam_instance_profile")
+                .unwrap();
+            assert_eq!(reference.targets.len(), 2);
+            assert!(
+                reference
+                    .issues
+                    .contains(&crate::model::DiagnosticReason::DynamicInstanceSelection)
+            );
+        }
+    }
+}
