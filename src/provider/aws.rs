@@ -46,7 +46,8 @@ pub(crate) fn icon_for(resource_type: &str) -> Option<crate::icons::ResourceIcon
     icons::icon_for(resource_type)
 }
 pub(super) fn transform(raw: crate::semantic::Input) -> crate::model::Graph {
-    let graph = security_groups::infer(&raw, containment::infer(&raw));
+    let mut graph = security_groups::infer(&raw, containment::infer(&raw));
+    routes::present(&raw, &mut graph);
     let contained = crate::semantic::Input { graph, ..raw };
     let mut graph = data::visible(associations::lower(&contained));
     graph.components = components::infer(&contained, &graph);

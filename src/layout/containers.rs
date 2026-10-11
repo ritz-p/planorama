@@ -160,6 +160,7 @@ pub(super) fn header_heights(graph: &Graph, tree: &super::ContainmentTree) -> Ve
                 tree.parents[node].is_some_and(|parent| graph.derived_containment(parent, node));
             (NODE_HEIGHT
                 + crate::view::references::height(&graph.nodes[node])
+                + graph.nodes[node].routes.reserved_height
                 + if inferred { 18 } else { 0 })
             .max(40 + super::relationship_markers::port_span(edges, &numbered))
         })

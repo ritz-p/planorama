@@ -19,11 +19,15 @@ pub enum DiagnosticReason {
     NonIdReference,
     UnprovenEndpointValue,
     DeposedEndpoint,
+    UnresolvedRouteInformation,
 }
 
 impl DiagnosticReason {
     pub fn description(self) -> &'static str {
         match self {
+            Self::UnresolvedRouteInformation => {
+                "route information is unavailable or not safe to display"
+            }
             Self::UnsupportedRouteTarget => "unsupported route target",
             Self::AmbiguousRouteTarget => "multiple route target attributes",
             Self::NonIdReference => "endpoint reference does not select resource IDs exclusively",

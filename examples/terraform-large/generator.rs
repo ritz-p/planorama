@@ -99,6 +99,31 @@ fn module(path: &Path, scope: &str, changes: &mut Vec<Value>) -> Result<Value, S
                         }
                         change["change"]["after"] = Value::Object(values);
                     }
+                    if matches!(
+                        resource_type.as_str(),
+                        "aws_route_table" | "aws_internet_gateway" | "aws_nat_gateway"
+                    ) {
+                        change["change"]["after"] =
+                            json!({"id":format!("fixture-id:{full_address}")});
+                    }
+                    if resource_type == "aws_route" {
+                        let mut values = Map::new();
+                        for key in ["route_table_id", "gateway_id", "nat_gateway_id"] {
+                            if let Some(value) = attributes.get(key) {
+                                let address = value
+                                    .as_str()
+                                    .and_then(|v| v.strip_prefix("${"))
+                                    .and_then(|v| v.strip_suffix(".id}"))
+                                    .filter(|v| !v.contains(['$', '{', '}']))
+                                    .ok_or("fixture route values require an exact ID traversal")?;
+                                values.insert(
+                                    key.into(),
+                                    format!("fixture-id:{scope}{address}").into(),
+                                );
+                            }
+                        }
+                        change["change"]["after"] = Value::Object(values);
+                    }
                     changes.push(change);
                 }
             }

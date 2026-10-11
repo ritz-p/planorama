@@ -6,7 +6,7 @@ fn numbered_parallel_and_mixed_slots_are_spaced_and_stable() {
     for fixture in [
         include_str!(concat!(
             env!("CARGO_MANIFEST_DIR"),
-            "/tests/fixtures/routes-plan.json"
+            "/tests/fixtures/aws-relationships-plan.json"
         )),
         include_str!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -14,7 +14,12 @@ fn numbered_parallel_and_mixed_slots_are_spaced_and_stable() {
         )),
     ] {
         let mut graph = crate::semantic::transform(&crate::plan::parse(fixture).unwrap()).0;
-        let edge = graph.edges[0].clone();
+        let edge = graph
+            .edges
+            .iter()
+            .find(|e| e.change.is_some())
+            .unwrap()
+            .clone();
         if graph.edges.len() == 1 {
             let mut parallel = edge.clone();
             parallel
@@ -104,7 +109,12 @@ fn horizontal_demand_uses_the_denser_side_and_marker_widths() {
         .unwrap(),
     )
     .0;
-    let edge = graph.edges[0].clone();
+    let edge = graph
+        .edges
+        .iter()
+        .find(|e| e.change.is_some())
+        .unwrap()
+        .clone();
     graph.edges = vec![edge.clone(); 4];
     let heights = required_heights(&graph, &[[Side::Right; 2]; 4], &[true; 4]);
     assert_eq!(heights[edge.from], 137);

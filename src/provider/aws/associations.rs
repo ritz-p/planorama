@@ -34,28 +34,23 @@ pub(super) fn lower(raw: &Input) -> Graph {
     }
     let mut replacements = BTreeMap::new();
     for (index, node) in raw.nodes.iter().enumerate() {
-        if (node.role != ResourceRole::Association && node.resource_type != "aws_route")
+        if node.role != ResourceRole::Association
             || !node.provider.is_aws()
             || node.mode != EntityMode::Managed
             || node.deposed_key.is_some()
         {
             continue;
         }
-        let endpoints = if node.resource_type == "aws_route" {
-            // Invalid routes stay visible; --diagnostics exposes the same failure.
-            super::routes::endpoints(raw, index).ok()
-        } else {
-            rule(&node.resource_type).and_then(
-                |[(from_attribute, from_type), (to_attribute, to_type)]| {
-                    endpoint(raw, index, from_attribute, from_type).zip(endpoint(
-                        raw,
-                        index,
-                        to_attribute,
-                        to_type,
-                    ))
-                },
-            )
-        };
+        let endpoints = rule(&node.resource_type).and_then(
+            |[(from_attribute, from_type), (to_attribute, to_type)]| {
+                endpoint(raw, index, from_attribute, from_type).zip(endpoint(
+                    raw,
+                    index,
+                    to_attribute,
+                    to_type,
+                ))
+            },
+        );
         if let Some((from, to)) = endpoints {
             let incident = &incident_edges[index];
             if can_lower(index, from, to, incident) {
@@ -66,11 +61,7 @@ pub(super) fn lower(raw: &Input) -> Graph {
                         to,
                         kind: EdgeKind::Association,
                         change: Some(EdgeChange {
-                            directionality: if node.resource_type == "aws_route" {
-                                crate::model::Directionality::Directed
-                            } else {
-                                crate::model::Directionality::Undirected
-                            },
+                            directionality: crate::model::Directionality::Undirected,
                             address: node.address.clone(),
                             previous_address: node.previous_address.clone(),
                             metadata: node.metadata.clone(),

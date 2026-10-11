@@ -38,6 +38,10 @@ pub(crate) fn base_graph(plan: &TerraformPlan) -> Graph {
             .iter()
             .enumerate()
             .map(|(index, fact)| Node {
+                routes: crate::model::RoutePresentation {
+                    entries: fact.route_entries.clone(),
+                    ..Default::default()
+                },
                 placement: crate::provider::placement(&fact.provider, &fact.resource_type),
                 references: plan
                     .attributes

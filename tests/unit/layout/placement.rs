@@ -53,6 +53,7 @@ fn long_edges_order_through_three_ranks_deterministically() {
         status: Default::default(),
         nodes: (0..4)
             .map(|i| Node {
+                routes: Default::default(),
                 placement: Default::default(),
                 references: Vec::new(),
                 entity: crate::model::ArchitectureEntity::terraform(

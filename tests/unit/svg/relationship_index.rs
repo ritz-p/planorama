@@ -40,10 +40,10 @@ fn dense_graph(count: usize, kind: EdgeKind) -> Graph {
 }
 
 #[test]
-fn associations_are_undirected_but_routes_and_dependencies_keep_arrows() {
+fn associations_are_undirected_but_dependencies_keep_arrows() {
     for fixture in [
+        include_str!("../../fixtures/association-plan.json"),
         include_str!("../../fixtures/aws-relationships-plan.json"),
-        include_str!("../../fixtures/routes-plan.json"),
     ] {
         let graph = semantic::transform(&plan::parse(fixture).unwrap()).0;
         let layout = Layout::new(&graph);
@@ -486,7 +486,6 @@ fn routed_badges_fit_terminal_segments_and_avoid_other_paths() {
     for fixture in [
         include_str!("../../fixtures/association-plan.json"),
         include_str!("../../fixtures/aws-relationships-plan.json"),
-        include_str!("../../fixtures/routes-plan.json"),
     ] {
         let graph = semantic::transform(&plan::parse(fixture).unwrap());
         let layout = Layout::new(&graph);
@@ -656,7 +655,7 @@ fn multiple_sources_long_addresses_and_xml_are_preserved_without_values() {
 
 #[test]
 fn numbering_comes_from_sources_and_survives_reordered_edges_and_provenance() {
-    let raw = plan::parse(include_str!("../../fixtures/routes-plan.json")).unwrap();
+    let raw = plan::parse(include_str!("../../fixtures/aws-relationships-plan.json")).unwrap();
     let mut graph = semantic::transform(&raw).0;
     let keys = |graph: &Graph| {
         let layout = Layout::new(graph);

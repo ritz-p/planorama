@@ -32,8 +32,20 @@ pub(super) fn metadata(graph: &Graph) -> String {
             super::escape(&serde_json::Value::Array(references).to_string())
         )
     };
+    let routes: Vec<_> = graph.nodes.iter().filter(|n| !n.routes.entries.is_empty() || n.routes.owner.is_some()).map(|node| {
+        serde_json::json!({"source":node.entity.id.as_str(), "owner":node.routes.owner.as_ref().map(|id| &id.address), "inline":node.routes.inline,
+            "entries":node.routes.entries.iter().map(|entry| serde_json::json!({"destination":entry.destination,"target":entry.target.as_ref().map(|id| &id.address),"target_kind":entry.target_kind})).collect::<Vec<_>>()})
+    }).collect();
+    let route_metadata = if routes.is_empty() {
+        String::new()
+    } else {
+        format!(
+            "<metadata id=\"route-presentations\">{}</metadata>\n",
+            super::escape(&serde_json::Value::Array(routes).to_string())
+        )
+    };
     format!(
-        "<metadata id=\"architecture-entities\">{}</metadata>\n<metadata id=\"architecture-relationships\">{}</metadata>\n{reference_metadata}",
+        "<metadata id=\"architecture-entities\">{}</metadata>\n<metadata id=\"architecture-relationships\">{}</metadata>\n{reference_metadata}{route_metadata}",
         super::escape(&serde_json::Value::Array(entities).to_string()),
         super::escape(&serde_json::Value::Array(relationships).to_string())
     )

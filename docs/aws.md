@@ -130,6 +130,6 @@ dependencies. Extra consumers/dependencies, data helpers and unsupported target
 types leave the card visible. Every lowered edge retains its source address,
 action and lifecycle metadata. Parallel associations remain distinct.
 
-`aws_route` has additional planned-value requirements described in [routes](routes.md).
+`aws_route` remains a graph node and uses verified [Route Table child-card ownership](routes.md).
 Other Association-role resources remain cards. Examples:
 [association.svg](../examples/association.svg), [aws-relationships.svg](../examples/aws-relationships.svg).

@@ -45,6 +45,9 @@ pub fn apply(all: &Architecture, options: &Options) -> Result<Architecture, Stri
             .as_deref()
             .map(|s| s.strip_prefix(&format!("{}:", state.as_str())).unwrap_or(s));
         for (i, node) in graph.nodes.iter().enumerate() {
+            if let Some(parent) = crate::view::routes::owner(graph, node) {
+                parents.push(((state.clone(), parent), (state.clone(), i)));
+            }
             let key = (state.clone(), i);
             keys.insert(key.clone());
             if node.action != Action::Unchanged
@@ -72,6 +75,9 @@ pub fn apply(all: &Architecture, options: &Options) -> Result<Architecture, Stri
                 parents.push((from.clone(), to.clone()));
             }
             if let Some(change) = &edge.change {
+                if graph.nodes[edge.from].address == change.address {
+                    continue;
+                }
                 if change.action != Action::Unchanged
                     || change.metadata != ChangeMetadata::default()
                     || change.previous_address.is_some()
