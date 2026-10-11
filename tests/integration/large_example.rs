@@ -68,7 +68,7 @@ fn large_fixture_is_reproducible_from_terraform_sources_and_renders_deterministi
         svg,
         include_str!("../../examples/terraform-large/diagram.svg").replace("\r\n", "\n")
     );
-    assert_eq!(svg.matches("data-edge-kind=\"association\"").count(), 8);
+    assert_eq!(svg.matches("data-edge-kind=\"association\"").count(), 10);
     assert_eq!(svg.matches("data-container=").count(), 6);
     assert_eq!(svg.matches("data-external=\"true\"").count(), 3);
     assert!(svg.contains("module.application.aws_instance.workers_a[0]"));
@@ -77,6 +77,64 @@ fn large_fixture_is_reproducible_from_terraform_sources_and_renders_deterministi
     assert!(!svg.contains("data.aws_region.current"));
     assert!(!svg.contains("stroke-dasharray=\"5 4\""));
     let document = roxmltree::Document::parse(&svg).unwrap();
+    let entries: Vec<_> = document
+        .descendants()
+        .filter_map(|n| n.attribute("data-relationship-entry"))
+        .collect();
+    assert_eq!(entries, ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"]);
+    for (route, table, target) in [
+        ("internet", "public", "aws_internet_gateway.main"),
+        ("nat", "private", "aws_nat_gateway.main"),
+    ] {
+        let address = format!("module.network.aws_route.{route}");
+        let owner = format!("module.network.aws_route_table.{table}");
+        let cards: Vec<_> = document
+            .descendants()
+            .filter(|n| n.attribute("data-terraform-address") == Some(address.as_str()))
+            .collect();
+        assert_eq!(cards.len(), 1);
+        assert_eq!(cards[0].attribute("data-embedded-route"), Some("true"));
+        assert!(
+            cards[0]
+                .ancestors()
+                .any(|n| n.attribute("data-terraform-address") == Some(owner.as_str()))
+        );
+        let title = cards[0]
+            .children()
+            .find(|n| n.has_tag_name("title"))
+            .unwrap()
+            .text()
+            .unwrap();
+        assert!(title.contains("0.0.0.0/0") && !title.contains("Target"));
+        let target_address = format!("module.network.{target}");
+        let target_card = document
+            .descendants()
+            .find(|n| n.attribute("data-terraform-address") == Some(target_address.as_str()))
+            .unwrap();
+        let paths: Vec<_> = document
+            .descendants()
+            .filter(|n| {
+                n.has_tag_name("path")
+                    && n.attribute("data-edge-kind") == Some("association")
+                    && n.attribute("data-source") == cards[0].attribute("id")
+            })
+            .collect();
+        assert_eq!(paths.len(), 1);
+        assert_eq!(
+            paths[0].attribute("data-target"),
+            target_card.attribute("id")
+        );
+        assert_eq!(paths[0].attribute("data-directionality"), Some("directed"));
+        let table = cards[0]
+            .ancestors()
+            .skip(1)
+            .find(|n| n.attribute("data-terraform-address") == Some(owner.as_str()))
+            .unwrap();
+        assert!(!document.descendants().any(|n| n.has_tag_name("path")
+            && n.attribute("data-edge-kind") == Some("association")
+            && n.attribute("data-source") == table.attribute("id")
+            && n.attribute("data-target") == target_card.attribute("id")));
+    }
     let component = document
         .descendants()
         .find(|n| n.attribute("data-entity-kind") == Some("synthetic"))

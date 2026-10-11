@@ -51,7 +51,9 @@ fn place_sized(graph: &Graph, tree: ContainmentTree, heights: Option<Vec<usize>>
                 graph
                     .nodes
                     .iter()
-                    .map(|n| NODE_HEIGHT + crate::view::references::height(n))
+                    .map(|n| {
+                        NODE_HEIGHT + crate::view::references::height(n) + n.routes.reserved_height
+                    })
                     .collect()
             }
         });
@@ -156,6 +158,7 @@ fn refine<'a>(graph: &'a Graph, placed: &mut Placed<'a>) {
             height.max(
                 NODE_HEIGHT
                     + crate::view::references::height(&graph.nodes[node])
+                    + graph.nodes[node].routes.reserved_height
                     + if inferred { 18 } else { 0 },
             )
         })

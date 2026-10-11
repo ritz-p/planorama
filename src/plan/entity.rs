@@ -30,6 +30,7 @@ pub(super) fn parse(resource: &Value, address: &str, action: Action) -> Terrafor
         .map(ProviderIdentity::from_source)
         .unwrap_or_else(|| ProviderIdentity::inferred(resource_type));
     TerraformEntity {
+        route_entries: Vec::new(),
         address: address.into(),
         deposed_key: resource["deposed"].as_str().map(str::to_owned),
         previous_address: resource["previous_address"].as_str().map(str::to_owned),

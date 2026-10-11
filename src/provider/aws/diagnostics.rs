@@ -26,7 +26,8 @@ pub fn collect(plan: &crate::model::TerraformPlan) -> Vec<Diagnostic> {
             },
         });
     }
-    let contained = super::containment::infer(raw);
+    let mut contained = super::containment::infer(raw);
+    super::routes::present(raw, &mut contained);
     for (reference, dependency_metadata) in raw
         .attributes
         .iter()
@@ -65,6 +66,32 @@ pub fn collect(plan: &crate::model::TerraformPlan) -> Vec<Diagnostic> {
         }
     }
     for (target, node) in raw.nodes.iter().enumerate() {
+        if node.provider.is_aws() && node.mode == EntityMode::Managed {
+            if node.resource_type == "aws_route" {
+                if let Err(diagnostic) = super::routes::owner(raw, target) {
+                    found.insert(diagnostic);
+                }
+                if let Err(diagnostic) = super::routes::target(raw, target) {
+                    found.insert(diagnostic);
+                }
+            }
+            for entry in &contained.nodes[target].routes.entries {
+                if entry.destination.is_none() {
+                    found.insert(Diagnostic {
+                        address: node.address.clone(),
+                        attribute: "route_destination".into(),
+                        reason: Reason::UnresolvedRouteInformation,
+                    });
+                }
+                if node.resource_type == "aws_route_table" && entry.target.is_none() {
+                    found.insert(Diagnostic {
+                        address: node.address.clone(),
+                        attribute: "route_target".into(),
+                        reason: Reason::UnresolvedRouteInformation,
+                    });
+                }
+            }
+        }
         if node.mode != EntityMode::Managed || !node.provider.is_aws() || node.deposed_key.is_some()
         {
             continue;
@@ -78,27 +105,6 @@ pub fn collect(plan: &crate::model::TerraformPlan) -> Vec<Diagnostic> {
                         .any(|r| r.target == target && r.attribute == *attribute)
             })
             .map(|(attribute, parent)| [(attribute, parent, false, true)]);
-        if node.resource_type == "aws_route" {
-            match super::routes::endpoints(raw, target) {
-                Err(diagnostic) => {
-                    found.insert(diagnostic);
-                }
-                Ok((from, to)) => {
-                    let incident: Vec<_> = raw
-                        .edges
-                        .iter()
-                        .filter(|e| e.from == target || e.to == target)
-                        .collect();
-                    if !super::associations::can_lower(target, from, to, &incident) {
-                        found.insert(Diagnostic {
-                            address: node.address.clone(),
-                            attribute: "route_table_id,route_target".into(),
-                            reason: Reason::AdditionalRelationships,
-                        });
-                    }
-                }
-            }
-        }
         if let Some(attribute) = super::security_groups::attribute(&node.resource_type) {
             if let Some(reference) = raw
                 .attributes

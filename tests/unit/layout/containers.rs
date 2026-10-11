@@ -157,6 +157,7 @@ fn ranked_fixture() -> Graph {
     let template = fixture().nodes.remove(0);
     let nodes = (0..7)
         .map(|i| Node {
+            routes: Default::default(),
             placement: Default::default(),
             references: Vec::new(),
             entity: crate::model::ArchitectureEntity::terraform(crate::model::TerraformEntityId {
@@ -282,6 +283,7 @@ fn expanded_container_ports_and_obstacles_use_the_rendered_bounds() {
         .unwrap();
     let external = graph.nodes.len();
     graph.nodes.push(Node {
+        routes: Default::default(),
         placement: Default::default(),
         references: Vec::new(),
         entity: crate::model::ArchitectureEntity::terraform(crate::model::TerraformEntityId {
@@ -672,7 +674,7 @@ fn large_aws_example_keeps_cross_module_containment_and_multi_subnet_relationshi
             .iter()
             .filter(|edge| edge.kind == EdgeKind::Association)
             .count(),
-        8
+        10
     );
     for role in [
         ResourceRole::Container,
@@ -705,6 +707,7 @@ fn duplicate_local_names_use_topology_after_module_renames_and_node_reordering()
         for (module, target) in [("a", "a"), ("b", "b")] {
             let worker = graph.nodes.len();
             graph.nodes.push(Node {
+                routes: Default::default(),
                 placement: Default::default(),
                 references: Vec::new(),
                 entity: crate::model::ArchitectureEntity::terraform(
@@ -721,6 +724,7 @@ fn duplicate_local_names_use_topology_after_module_renames_and_node_reordering()
                 ..template.clone()
             });
             graph.nodes.push(Node {
+                routes: Default::default(),
                 placement: Default::default(),
                 references: Vec::new(),
                 entity: crate::model::ArchitectureEntity::terraform(
@@ -1079,16 +1083,22 @@ fn verify_layout(graph: &Graph, layout: &Layout<'_>) {
                 continue;
             }
             let child_bounds = layout.bounds[child];
-            assert!(child_bounds.origin.x >= bounds.origin.x + PADDING);
+            let padding = if crate::view::routes::owner(graph, &graph.nodes[child]) == Some(parent)
+            {
+                12
+            } else {
+                PADDING
+            };
+            assert!(child_bounds.origin.x >= bounds.origin.x + padding);
             assert!(
-                child_bounds.origin.y >= bounds.origin.y + layout.header_heights[parent] + PADDING
+                child_bounds.origin.y >= bounds.origin.y + layout.header_heights[parent] + padding
             );
             assert!(
-                child_bounds.origin.x + child_bounds.width + PADDING
+                child_bounds.origin.x + child_bounds.width + padding
                     <= bounds.origin.x + bounds.width
             );
             assert!(
-                child_bounds.origin.y + child_bounds.height + PADDING
+                child_bounds.origin.y + child_bounds.height + padding
                     <= bounds.origin.y + bounds.height
             );
         }
@@ -1183,6 +1193,7 @@ fn peer_containers_and_cross_module_children_remain_separate_and_identifiable() 
         }
     }
     graph.nodes.push(Node {
+        routes: Default::default(),
         placement: Default::default(),
         references: Vec::new(),
         entity: crate::model::ArchitectureEntity::terraform(crate::model::TerraformEntityId {

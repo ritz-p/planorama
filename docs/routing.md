@@ -18,6 +18,14 @@ relationships and evidence remain in the semantic/view graph and SVG metadata.
 The projection also normalizes node identity order before placement, mapping
 results back to the caller's indices so reordered flat inputs keep the same ports.
 
+Embedded Route cards share their owning table's placement footprint. The table
+reserves the measured child content before placement, and next-hop cards reserve
+capacity for the additional ports. Final routing uses each child's bounds and a
+layout-only parent relation, protects the table header and sibling entries, and
+draws separate numbered Associations to visible next hops. The background is drawn
+before the paths so the segment inside the table remains visible. Cross-state Route endpoints use the table's
+border while retaining the child identity and explicit attachment metadata.
+
 ## Placement
 
 With containers, direct children occupy columns based on non-containment
@@ -236,31 +244,10 @@ aggregate quality checks remain in place.
 The crossing policy replaces older tests that demanded crossing-free detours:
 they now require short crossing routes, including at stub/grid junctions and after
 shortcutting. Hard obstacles, overlap avoidance and terminal reservations remain tested.
-On the large fixture, changing the crossing weight from 512 to 1 reduced total
-length 54,445 → 48,529, bends 186 → 98 and pairwise overlap 395 → 16; crossings
-increased 29 → 160. The private-a → ECS edge changed from length/bends/crossings/overlap
-405/3/2/25 to 296/2/7/0, and private-b → ECS from 598/6/0/17 to 508/2/0/0.
-The existing per-edge test reports these metrics and route points and checks both
-private edges stay within 600 pixels, three bends and zero relationship overlap.
-The original private-b path re-entered its source on the segment
-`(2196,1437) → (2172,1437)` after leaving at `(2180,1753)`.
-With crossing rebalancing and explicit external-endpoint protection its points are
-`(2180,1716) → (2222,1716) → (2222,1292) → (2264,1292)`.
-Adding the hard endpoint rule alone leaves these improved metrics and points
-unchanged; the regression also rejects an explicit inward candidate and verifies
-both relationship directions, internal descendants and edge reordering.
-With foreign-container occlusion, the IGW → NAT edge shortens from 1,124 to 972
-pixels with three bends, zero crossings and zero overlap. It passes behind public-b
-on x=791 instead of detouring to x=708. Its final points are
-`(791,2109) → (791,1213) → (784,1213) → (784,1160) → (800,1160)`.
-The regression requires this edge to cross public-b, remain within 1,000 pixels
-and three bends, and hide less than a third of its length. Total fixture length
-falls from 48,529 to 46,601 and bends from 98 to 92.
-Frame scoring removes 608 pixels of visible border coincidence: SG → ECS 149,
-SG → worker-b[0] 270 and RDS → alarm 189 all become zero. Total route length and
-bends remain 46,601 and 92; relationship overlap changes 16 → 23 and crossings
-164 → 158. The per-edge large-fixture regression requires zero straight-frame
-overlap after shortcutting and repeats the check with reversed edges.
+The large-fixture regression checks short subnet-to-ECS paths, a short IGW-to-NAT
+path with limited hidden length, and zero visible straight-frame overlap. These
+checks use the current card geometry and repeat after edge reordering; they do
+not require a path to pass behind a particular container.
 Performance measurements are documented in [benchmarks](benchmarks.md).
 Thread-local test counters verify that unobstructed horizontal/vertical side
 selection evaluates one pair without grid search, while blocked ports expand the

@@ -1488,7 +1488,10 @@
       "change": {
         "actions": [
           "create"
-        ]
+        ],
+        "after": {
+          "id": "fixture-id:module.network.aws_internet_gateway.main"
+        }
       },
       "mode": "managed",
       "name": "main",
@@ -1499,7 +1502,10 @@
       "change": {
         "actions": [
           "create"
-        ]
+        ],
+        "after": {
+          "id": "fixture-id:module.network.aws_nat_gateway.main"
+        }
       },
       "mode": "managed",
       "name": "main",
@@ -1510,7 +1516,11 @@
       "change": {
         "actions": [
           "create"
-        ]
+        ],
+        "after": {
+          "gateway_id": "fixture-id:module.network.aws_internet_gateway.main",
+          "route_table_id": "fixture-id:module.network.aws_route_table.public"
+        }
       },
       "mode": "managed",
       "name": "internet",
@@ -1521,7 +1531,11 @@
       "change": {
         "actions": [
           "create"
-        ]
+        ],
+        "after": {
+          "nat_gateway_id": "fixture-id:module.network.aws_nat_gateway.main",
+          "route_table_id": "fixture-id:module.network.aws_route_table.private"
+        }
       },
       "mode": "managed",
       "name": "nat",
@@ -1532,7 +1546,10 @@
       "change": {
         "actions": [
           "create"
-        ]
+        ],
+        "after": {
+          "id": "fixture-id:module.network.aws_route_table.private"
+        }
       },
       "mode": "managed",
       "name": "private",
@@ -1543,7 +1560,10 @@
       "change": {
         "actions": [
           "create"
-        ]
+        ],
+        "after": {
+          "id": "fixture-id:module.network.aws_route_table.public"
+        }
       },
       "mode": "managed",
       "name": "public",

@@ -214,7 +214,7 @@ fn referenced_ids_with_different_planned_values_keep_route_cards() {
     let stderr = String::from_utf8(output.stderr).unwrap();
     assert!(!svg.contains("association; replace: aws_route.default"));
     assert!(svg.contains("data-terraform-address=\"aws_route.default\""));
-    assert!(svg.contains("association; create: aws_route.second"));
+    assert!(svg.contains("data-terraform-address=\"aws_route.second\""));
     assert!(stderr.contains("planned endpoint value is not proven"));
     assert!(!format!("{svg}{stderr}").contains("TOP_SECRET"));
 }
@@ -225,7 +225,6 @@ fn route_fallback_diagnostics_explain_rejections_without_exposing_values() {
         (0, "attribute has no resolvable resource reference"),
         (1, "unsupported route target"),
         (2, "missing expected attribute"),
-        (3, "additional relationships prevent association lowering"),
         (4, "multiple route target attributes"),
     ] {
         let mut input: serde_json::Value =
@@ -275,17 +274,17 @@ fn route_fallback_diagnostics_explain_rejections_without_exposing_values() {
 }
 
 #[test]
-fn routes_render_as_individually_inspectable_relationships() {
+fn routes_render_as_individually_inspectable_child_cards() {
     let input = include_bytes!("../fixtures/routes-plan.json");
     let svg = render(input);
     assert_eq!(
         svg,
         include_str!("../../examples/routes.svg").replace("\r\n", "\n")
     );
-    assert!(svg.contains("association; replace: aws_route.default"));
-    assert!(svg.contains("association; create: aws_route.second"));
+    assert!(svg.contains("data-terraform-address=\"aws_route.default\""));
+    assert!(svg.contains("data-terraform-address=\"aws_route.second\""));
     assert!(svg.contains("aws_route.literal"));
-    assert_eq!(svg.matches("data-edge-kind=\"association\"").count(), 2);
+    assert_eq!(svg.matches("data-embedded-route=\"true\"").count(), 2);
     assert!(svg.contains("data-action-reason=\"replace_because_cannot_update\""));
     assert!(!svg.contains("TOP_SECRET"));
 }

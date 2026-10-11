@@ -20,8 +20,12 @@ fn parallel_directed_numbered_edges_keep_distinct_endpoints() {
                 continue;
             }
             if edge.change.is_some() {
-                assert_eq!(path[0].x, layout.bounds[edge.from].right());
-                assert_eq!(path.last().unwrap().x, layout.bounds[edge.to].origin.x);
+                let from = layout.bounds[edge.from];
+                let to = layout.bounds[edge.to];
+                assert!(path[0].x == from.origin.x || path[0].x == from.right());
+                assert!(
+                    path.last().unwrap().x == to.origin.x || path.last().unwrap().x == to.right()
+                );
             }
             for (node, point) in [(edge.from, path[0]), (edge.to, *path.last().unwrap())] {
                 assert!(

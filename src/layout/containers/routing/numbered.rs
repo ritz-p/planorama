@@ -49,7 +49,14 @@ impl Terminals {
             .collect();
         let clearances: Vec<_> = ends
             .iter()
-            .map(|ends| ends.map(|numbered| if numbered { clearance } else { 16 }))
+            .enumerate()
+            .map(|(i, ends)| {
+                let mut result = ends.map(|numbered| if numbered { clearance } else { 16 });
+                if crate::view::routes::owner(graph, &graph.nodes[graph.edges[i].from]).is_some() {
+                    result[0] = 20;
+                }
+                result
+            })
             .collect();
         let reservations = ports
             .iter()
@@ -117,6 +124,25 @@ impl Terminals {
                 for (bound, rank, pair) in options {
                     if bound > limit {
                         break;
+                    }
+                    if pair
+                        .into_iter()
+                        .zip([edge.from, edge.to])
+                        .any(|(port, node)| {
+                            let bounds = layout.bounds[node];
+                            match port.side {
+                                Side::Left | Side::Right => {
+                                    port.point.y <= bounds.origin.y
+                                        || port.point.y >= bounds.origin.y + bounds.height
+                                }
+                                Side::Top | Side::Bottom => {
+                                    port.point.x <= bounds.origin.x
+                                        || port.point.x >= bounds.right()
+                                }
+                            }
+                        })
+                    {
+                        continue;
                     }
                     if pair.iter().zip(old).any(|(candidate, previous)| {
                         candidate.point != previous.point
@@ -197,6 +223,34 @@ impl Terminals {
 
     pub fn barriers(&self, layout: &Layout<'_>, graph: &Graph, index: usize) -> Vec<Bounds> {
         let mut barriers = obstacles(layout, &graph.edges[index]);
+        if let Some(parent) =
+            crate::view::routes::owner(graph, &graph.nodes[graph.edges[index].from])
+        {
+            barriers.extend(
+                layout.containment.children[parent]
+                    .iter()
+                    .filter(|&&child| child != graph.edges[index].from)
+                    .map(|&child| layout.bounds[child]),
+            );
+            let mut y = layout.bounds[parent].origin.y
+                + 106
+                + crate::view::references::height(&graph.nodes[parent]);
+            for card in crate::view::routes::cards(graph, parent) {
+                if card.node.is_some() {
+                    break;
+                }
+                let height = card.height();
+                barriers.push(Bounds {
+                    origin: crate::layout::Point {
+                        x: layout.bounds[parent].origin.x + 12,
+                        y,
+                    },
+                    width: crate::view::routes::WIDTH,
+                    height,
+                });
+                y += height + 12;
+            }
+        }
         let reserved = self
             .reservations
             .iter()

@@ -28,7 +28,7 @@ pub(super) fn layout(graph: &Graph) -> Layout<'_> {
     for (new, &old) in projected.edges.iter().enumerate() {
         paths[old] = spatial.paths[new].clone();
     }
-    Layout {
+    let mut layout = Layout {
         scopes: spatial.scopes,
         positions: bounds.iter().map(|b| b.origin).collect(),
         bounds,
@@ -68,5 +68,71 @@ pub(super) fn layout(graph: &Graph) -> Layout<'_> {
             .collect(),
         paths,
         junctions: spatial.junctions,
+    };
+    let mut embedded = false;
+    for &parent in &projected.nodes {
+        let mut y = layout.bounds[parent].origin.y
+            + 106
+            + crate::view::references::height(&graph.nodes[parent]);
+        for card in crate::view::routes::cards(graph, parent) {
+            let height = card.height();
+            if let Some(node) = card.node {
+                embedded = true;
+                let child = graph
+                    .nodes
+                    .iter()
+                    .position(|n| n.entity.id == node.entity.id)
+                    .unwrap();
+                layout.bounds[child] = Bounds {
+                    origin: Point {
+                        x: layout.bounds[parent].origin.x + 12,
+                        y,
+                    },
+                    width: crate::view::routes::WIDTH,
+                    height,
+                };
+                layout.positions[child] = layout.bounds[child].origin;
+                layout.header_heights[child] = height;
+                layout.containment.parents[child] = Some(parent);
+                layout.containment.children[parent].push(child);
+                layout.containment.keys[child] = graph
+                    .nodes
+                    .iter()
+                    .filter(|n| n.entity.id < node.entity.id)
+                    .count();
+                if !layout.containers.contains(&parent) {
+                    layout.containers.push(parent);
+                }
+                layout.header_heights[parent] =
+                    94 + crate::view::references::height(&graph.nodes[parent]);
+            }
+            y += height + 12;
+        }
     }
+    if embedded {
+        let mut routing = graph.clone();
+        let mut indices = Vec::new();
+        routing.edges = graph
+            .edges
+            .iter()
+            .enumerate()
+            .filter_map(|(i, e)| {
+                let visible = layout.bounds[e.from].width > 0 && layout.bounds[e.to].width > 0;
+                let child = crate::view::routes::owner(graph, &graph.nodes[e.from]).is_some()
+                    || crate::view::routes::owner(graph, &graph.nodes[e.to]).is_some();
+                if visible && (!child || e.kind == crate::model::EdgeKind::Association) {
+                    indices.push(i);
+                    Some(e.clone())
+                } else {
+                    None
+                }
+            })
+            .collect();
+        super::containers::route(&routing, &mut layout, true);
+        let routed = std::mem::replace(&mut layout.paths, vec![Vec::new(); graph.edges.len()]);
+        for (index, path) in indices.into_iter().zip(routed) {
+            layout.paths[index] = path;
+        }
+    }
+    layout
 }
