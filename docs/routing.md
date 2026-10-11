@@ -28,6 +28,17 @@ border while retaining the child identity and explicit attachment metadata.
 
 ## Placement
 
+Before routing, verified AWS Listener ownership adds a soft preference toward its
+LB. The provider resolves a complete, unique `load_balancer_arn` reference;
+logical-component membership does not drive geometry. A bounded search moves only
+the Listener card inside its existing parent, deployment panel or module band.
+It scores owner distance and proximity to competing owners at four times ordinary incident-peer distance, retaining
+Target Group connections. Existing connection-affinity members remain protected.
+Candidate positions reserve marker-aware padding and keep the packed envelope;
+when no improving legal position exists, the original position remains. Cards are
+processed by owner and resource identity, and any height refinement repeats placement
+before rerouting. Ownership never creates containment or moves the owning subtree.
+
 With containers, direct children occupy columns based on non-containment
 relationships; descendant relationships influence sibling ranks. Cycles share a
 column. Dense ranks wrap into adjacent columns, and containers grow around their
