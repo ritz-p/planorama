@@ -9,6 +9,45 @@ pub(in crate::layout) struct Group {
     pub edges: Vec<usize>,
 }
 
+pub(super) fn movable(children: &[usize], groups: &[Group], offsets: &[Point]) -> Vec<usize> {
+    let columns: BTreeSet<_> = groups
+        .iter()
+        .filter(|group| children.contains(&group.target))
+        .flat_map(|group| group.sources.iter().chain(std::iter::once(&group.target)))
+        .map(|&node| offsets[node].x)
+        .collect();
+    children
+        .iter()
+        .copied()
+        .filter(|&node| !columns.contains(&offsets[node].x))
+        .collect()
+}
+
+pub(super) fn deviation(
+    children: &[usize],
+    groups: &[Group],
+    sizes: &[(usize, usize)],
+    offsets: &[Point],
+) -> u128 {
+    groups
+        .iter()
+        .filter(|group| {
+            children.contains(&group.target)
+                && group.sources.iter().all(|source| children.contains(source))
+        })
+        .map(|group| {
+            let mut centers: Vec<_> = group
+                .sources
+                .iter()
+                .map(|&node| offsets[node].y + sizes[node].1 / 2)
+                .collect();
+            centers.sort_unstable();
+            let median = (centers[(centers.len() - 1) / 2] + centers[centers.len() / 2]) / 2;
+            (offsets[group.target].y + sizes[group.target].1 / 2).abs_diff(median) as u128
+        })
+        .sum()
+}
+
 pub(in crate::layout) fn protected_roots(
     graph: &Graph,
     parents: &[Option<usize>],
@@ -21,22 +60,22 @@ pub(in crate::layout) fn protected_roots(
             node
         })
         .collect();
-    let mut neighbors = vec![Vec::new(); graph.nodes.len()];
-    for edge in &graph.edges {
-        let (a, b) = (owners[edge.from], owners[edge.to]);
-        if a != b {
-            neighbors[a].push(b);
-            neighbors[b].push(a);
-        }
-    }
-    let mut pending: Vec<_> = groups(graph, parents)
+    let groups = groups(graph, parents);
+    let members: BTreeSet<_> = groups
         .iter()
-        .map(|group| owners[group.target])
+        .flat_map(|group| {
+            group
+                .sources
+                .iter()
+                .copied()
+                .chain(std::iter::once(group.target))
+        })
         .collect();
-    let mut protected = BTreeSet::new();
-    while let Some(node) = pending.pop() {
-        if protected.insert(node) {
-            pending.extend(neighbors[node].iter().copied());
+    let mut protected: BTreeSet<_> = members.iter().map(|&node| owners[node]).collect();
+    for edge in &graph.edges {
+        if members.contains(&edge.from) || members.contains(&edge.to) {
+            protected.insert(owners[edge.from]);
+            protected.insert(owners[edge.to]);
         }
     }
     protected

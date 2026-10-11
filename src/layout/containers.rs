@@ -64,33 +64,22 @@ pub(super) fn place_with_heights(
             let mut columns = placement::columns(graph, Some(node), &children[node], parents);
             affinity::cohere(&mut columns, affinities);
             let relationships = placement::relationships(graph, &children[node], parents);
-            let preserve_affinity = special
-                .iter()
-                .any(|group| children[node].contains(&group.target));
-            let (width, height) = placement::pack(
+            let legacy = !enabled
+                && special
+                    .iter()
+                    .any(|group| children[node].contains(&group.target));
+            let (width, height) = placement::pack_with_affinity(
                 &columns,
-                if preserve_affinity {
-                    &[]
-                } else {
-                    &relationships
-                },
+                if legacy { &[] } else { &relationships },
+                affinities,
                 &sizes,
                 &mut offsets,
                 padding,
             );
-            if !preserve_affinity {
-                placement::refine(
-                    &children[node],
-                    &relationships,
-                    &sizes,
-                    &mut offsets,
-                    height,
-                    padding,
-                );
-            }
-            affinity::align(
-                &children[node],
-                affinities,
+            let movable = affinity::movable(&children[node], &special, &offsets);
+            placement::refine(
+                &movable,
+                &relationships,
                 &sizes,
                 &mut offsets,
                 height,
