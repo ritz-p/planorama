@@ -178,7 +178,7 @@ pub(super) fn route<'a>(graph: &'a Graph, placed: &mut Placed<'a>) {
         std::cmp::Ordering::Greater => super::Side::Left,
         std::cmp::Ordering::Less => super::Side::Right,
     };
-    let sides: Vec<_> = placed
+    let mut sides: Vec<_> = placed
         .layout
         .paths
         .iter()
@@ -194,6 +194,7 @@ pub(super) fn route<'a>(graph: &'a Graph, placed: &mut Placed<'a>) {
         })
         .collect();
     let visible: Vec<_> = placed.layout.paths.iter().map(|p| p.len() >= 2).collect();
+    super::routing_shared::slots::fit_sides(graph, &placed.layout.bounds, &mut sides, &visible);
     let demand = super::routing_shared::slots::required_heights(graph, &sides, &visible);
     let heights: Vec<_> = demand
         .iter()
@@ -239,4 +240,8 @@ pub(super) fn route<'a>(graph: &'a Graph, placed: &mut Placed<'a>) {
         .iter()
         .map(|bounds| bounds.origin)
         .collect();
+    debug_assert!(!super::routing_shared::slots::opposite_roles_collide(
+        graph,
+        &placed.layout.paths
+    ));
 }

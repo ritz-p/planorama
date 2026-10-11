@@ -22,6 +22,9 @@ ends of Association/Connection paths. Containment has no endpoint circles.
 Their solid outlines use the relationship action color. Circles render above
 cards, with directed target arrowheads above the circle and numbered badges above
 both. Internal filled junction dots remain distinct from endpoint circles.
+Opposite-role endpoints on the same card retain distinct final coordinates,
+including mixed line kinds and bundle/refinement paths. Intentional same-role
+bundle terminals may still share a circle position.
 
 Colors and directed arrowheads describe the Terraform change. Every edge retains
 `data-edge-kind`, stable source/target IDs and a descriptive title. Cross-state dependencies use

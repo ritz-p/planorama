@@ -81,9 +81,16 @@ pub(super) fn route_selected(
             |s| s[index][1],
         ) as usize];
     }
-    let bundles = Bundles::new(graph, ranks);
+    let mut bundles = Bundles::new(graph, ranks);
     let containment = super::ContainmentTree::new(graph);
-    bundles.align_ports(graph, bounds, &mut source_ports, &mut target_ports);
+    bundles.align_ports(
+        graph,
+        bounds,
+        &mut source_ports,
+        &mut target_ports,
+        sides,
+        ranks,
+    );
     let columns = ranks.iter().max().copied().unwrap_or(0) + 1;
     let mut column_widths = vec![0; columns];
     for (node, bound) in bounds.iter().enumerate() {
