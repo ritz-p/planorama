@@ -67,6 +67,13 @@ fn search_grid(
 ) -> Option<Vec<Point>> {
     let mut xs = vec![start.x, end.x];
     let mut ys = vec![start.y, end.y];
+    for &(horizontal, coordinate) in scorer.into_iter().flat_map(|s| &s.routing_axes) {
+        if horizontal {
+            ys.push(coordinate);
+        } else {
+            xs.push(coordinate);
+        }
+    }
     for bounds in obstacles
         .iter()
         .chain(scorer.into_iter().flat_map(|s| s.soft()).map(|o| &o.bounds))

@@ -46,6 +46,7 @@ pub(in crate::layout) struct Score {
 
 #[derive(Default)]
 pub(in crate::layout) struct Scorer {
+    pub(in crate::layout) routing_axes: Vec<(bool, usize)>,
     horizontal: BTreeMap<usize, Coverage>,
     vertical: BTreeMap<usize, Coverage>,
     horizontal_paths: BTreeMap<usize, Vec<(usize, usize, usize)>>,
