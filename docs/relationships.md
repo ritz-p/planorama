@@ -17,8 +17,8 @@ Colors and directed arrowheads describe the Terraform change. Every edge retains
 blue dashed gutter routes and visible cross-state legend.
 
 Visible paths with Terraform resource provenance carry compact `[N]` markers and
-a matching **Relationship resources** index below the diagram and component
-summaries. Full Terraform-native addresses are wrapped without truncation;
+a matching **Relationship resources** index in the annotation area above the
+architecture diagram. Full Terraform-native addresses are wrapped without truncation;
 multiple provenance resources and deposed keys remain visible. Reference-only
 inferred relationships receive no resource number. Numbering sorts by source
 identity, then endpoints and relationship kind, independent of edge-vector order.

@@ -73,8 +73,8 @@ Identity is scoped by the containing state. Cross-state identity is the pair of
 `StateId` and architecture/source ID. Existing Terraform card fields and component
 member labels remain display projections; their native entity metadata is the
 identity/provenance boundary. Layout uses structural ordering with identity
-tie-breakers, and logical
-panel bounds are keyed by those IDs independently of source addresses. Positional
+tie-breakers. SVG composition positions logical annotation panels independently
+of architecture geometry, retaining those IDs. Positional
 edge indices remain an internal graph representation.
 
 SVGs expose `data-architecture-id` and an `architecture-entities` JSON metadata
