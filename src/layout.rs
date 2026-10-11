@@ -79,26 +79,6 @@ pub struct ScopePanel {
 }
 
 impl<'a> Layout<'a> {
-    pub fn component_bounds<'b>(
-        &self,
-        graph: &'b Graph,
-    ) -> Vec<(&'b crate::model::architecture::ArchitectureId, Bounds)> {
-        let mut top = self.height + if graph.checks.is_empty() { 0 } else { 24 };
-        graph
-            .components
-            .iter()
-            .map(|component| {
-                let height = 56 + component.entity.provenance.len() * 24;
-                let bounds = Bounds {
-                    origin: Point { x: 35, y: top },
-                    width: self.width - 70,
-                    height,
-                };
-                top += height + 20;
-                (&component.entity.id, bounds)
-            })
-            .collect()
-    }
     pub fn new(graph: &'a Graph) -> Self {
         let containment = ContainmentTree::new(graph);
         let mut placed = pipeline::place(graph, containment);

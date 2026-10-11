@@ -23,8 +23,7 @@ pub(super) fn membership(graph: &Graph) -> BTreeMap<&str, &str> {
         .collect()
 }
 
-pub(super) fn render(graph: &Graph, layout: &crate::layout::Layout<'_>) -> String {
-    let width = layout.width;
+pub(super) fn render(graph: &Graph, width: usize) -> String {
     let nodes: BTreeMap<_, _> = graph
         .nodes
         .iter()
@@ -32,9 +31,10 @@ pub(super) fn render(graph: &Graph, layout: &crate::layout::Layout<'_>) -> Strin
         .map(|(i, n)| (n.address.as_str(), (i, n)))
         .collect();
     let mut svg = String::new();
-    for (component, (id, bounds)) in graph.components.iter().zip(layout.component_bounds(graph)) {
-        let height = bounds.height;
-        let top = bounds.origin.y;
+    let mut top = 0;
+    for component in &graph.components {
+        let id = &component.entity.id;
+        let height = 56 + component.entity.provenance.len() * 24;
         let dom_id = super::identity::architecture(id);
         let architecture_id = super::escape(id.as_str());
         let label = super::escape(&component.label);
@@ -60,6 +60,7 @@ pub(super) fn render(graph: &Graph, layout: &crate::layout::Layout<'_>) -> Strin
             }
         }
         svg.push_str("</g>\n");
+        top += height + 20;
     }
     svg
 }

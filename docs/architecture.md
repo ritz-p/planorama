@@ -14,6 +14,13 @@ same boundaries and carry explicit cross-state relationships.
 | `layout` | Containment hierarchy, placement, bounds, ports and routes |
 | `svg` | Drawing, text, legends and metadata |
 
+SVG composition places non-spatial annotations after the header, legend and checks,
+above the architecture. `svg/annotations.rs` packs rounded cards in deterministic
+rows, wrapping at the available width and growing the canvas for oversized cards.
+Empty areas reserve no height. One enclosing translation shifts all architecture
+cards, paths and relationship badges together; annotation panels never enter
+`Layout` or routing obstacles. Named-state endpoint coordinates include this shift.
+
 Ingestion does not import provider rules, layout or SVG. Layout, view and SVG use
 the `model::architecture` facade, which excludes Terraform ingestion contracts.
 AWS resource-type and attribute rules belong in `provider/aws`; rendering and

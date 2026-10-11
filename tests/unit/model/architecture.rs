@@ -76,7 +76,7 @@ fn deposed_identity_is_distinct_and_change_metadata_is_not_identity() {
 }
 
 #[test]
-fn layout_uses_native_identity_and_can_position_an_address_free_aggregate() {
+fn layout_uses_native_identity_and_svg_can_render_an_address_free_aggregate() {
     let raw = plan::parse(include_str!("../../fixtures/components-plan.json")).unwrap();
     let graph = semantic::transform(&raw);
     let component = graph.components[0].clone();
@@ -89,10 +89,14 @@ fn layout_uses_native_identity_and_can_position_an_address_free_aggregate() {
         status: Default::default(),
     };
     let layout = Layout::new(&only_aggregate);
-    let panels = layout.component_bounds(&only_aggregate);
-    assert_eq!(panels.len(), 1);
-    assert_eq!(*panels[0].0, component.entity.id);
-    assert!(panels[0].1.height > 0);
+    assert!(layout.bounds.is_empty());
+    let svg = crate::svg::render(&only_aggregate, &layout);
+    let document = roxmltree::Document::parse(&svg).unwrap();
+    assert!(
+        document
+            .descendants()
+            .any(|n| n.attribute("data-architecture-id") == Some(component.entity.id.as_str()))
+    );
     let mut graph = semantic::transform(
         &plan::parse(include_str!("../../fixtures/containment-plan.json")).unwrap(),
     );

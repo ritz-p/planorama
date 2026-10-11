@@ -1,3 +1,4 @@
+mod annotations;
 mod checks;
 mod components;
 mod containers;
@@ -61,14 +62,37 @@ fn dimensions_with_index(
     layout: &Layout<'_>,
     index: &relationship_index::Index<'_>,
 ) -> (usize, usize) {
+    let annotations = annotation_area(graph, layout, index);
     (
-        index.width,
+        annotations.width,
         layout.height
             + if graph.checks.is_empty() { 0 } else { 24 }
-            + components::height(graph)
             + legend::height(graph)
-            + index.height(),
+            + annotations.height,
     )
+}
+
+fn annotation_area(
+    graph: &Graph,
+    layout: &Layout<'_>,
+    index: &relationship_index::Index<'_>,
+) -> annotations::Area {
+    let mut cards = Vec::new();
+    if index.height() > 0 {
+        cards.push(annotations::Card {
+            width: index.width,
+            height: index.height(),
+            content: index.render(0),
+        });
+    }
+    if components::height(graph) > 0 {
+        cards.push(annotations::Card {
+            width: layout.width,
+            height: components::height(graph),
+            content: components::render(graph, layout.width),
+        });
+    }
+    annotations::Area::new(cards, index.width)
 }
 
 pub(crate) fn render_with_format(
@@ -166,9 +190,17 @@ fn render_with_index(
         svg.push_str(&checks::render(&graph.checks));
         svg.push_str("<g transform=\"translate(0 24)\">\n");
     }
+    let annotations = annotation_area(graph, layout, relationship_index);
+    svg.push_str(&annotations.render());
+    writeln!(
+        svg,
+        "<g data-architecture=\"true\" transform=\"translate(0 {})\">",
+        annotations.height
+    )
+    .unwrap();
     for band in &layout.bands {
         let (module, y, h) = (band.label, band.top, band.height);
-        writeln!(svg, r##"<rect x="35" y="{y}" width="{}" height="{h}" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-dasharray="5 4"/><text x="52" y="{}" font-size="13" font-weight="700" fill="#475569"><title>{}</title>{}</text>"##, width - 70, y + 25, escape(module), escape(&shorten(module, 110))).unwrap();
+        writeln!(svg, r##"<rect x="35" y="{y}" width="{}" height="{h}" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-dasharray="5 4"/><text x="52" y="{}" font-size="13" font-weight="700" fill="#475569"><title>{}</title>{}</text>"##, relationship_index.width - 70, y + 25, escape(module), escape(&shorten(module, 110))).unwrap();
     }
     svg.push_str(&scopes::render(layout));
     svg.push_str(&containers::boundaries(graph, layout));
@@ -335,13 +367,10 @@ fn render_with_index(
         svg.push_str("<text x=\"40\" y=\"185\" font-size=\"16\" fill=\"#64748b\">No resources to display.</text>\n");
     }
     svg.push_str(&relationship_index.markers());
+    svg.push_str("</g>\n");
     if check_offset != 0 {
         svg.push_str("</g>\n");
     }
-    svg.push_str(&components::render(graph, layout));
-    svg.push_str(
-        &relationship_index.render(layout.height + check_offset + components::height(graph)),
-    );
     if legend_height != 0 {
         svg.push_str("</g>\n");
     }

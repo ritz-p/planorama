@@ -51,8 +51,9 @@ pub fn render_states(
         let (state_width, height) = super::dimensions_with_index(graph, &layout, &index);
         width = width.max(state_width);
         let prefix = prefix(id);
-        let check_offset =
-            if graph.checks.is_empty() { 0 } else { 24 } + super::legend::height(graph);
+        let check_offset = if graph.checks.is_empty() { 0 } else { 24 }
+            + super::legend::height(graph)
+            + super::annotation_area(graph, &layout, &index).height;
         obstacles.insert(
             id.clone(),
             StateObstacles {
@@ -240,13 +241,30 @@ fn namespacing_only_rewrites_fragment_reference_attributes() {
 #[test]
 fn cross_state_paths_avoid_intervening_cards_and_describe_dependencies() {
     let raw = crate::plan::parse(r#"{"format_version":"1.2","resource_changes":[{"address":"test.a","type":"test"},{"address":"test.b","type":"test"}],"configuration":{"root_module":{"resources":[{"address":"test.b","expressions":{"input":{"references":["test.a.id"]}}}]}}}"#).unwrap();
-    let graph = crate::semantic::transform(&raw);
+    let mut graph = crate::semantic::transform(&raw);
+    graph.0.components.push(crate::model::SyntheticComponent {
+        entity: crate::model::ArchitectureEntity::synthetic(
+            "test",
+            "group",
+            graph
+                .nodes
+                .iter()
+                .flat_map(|n| n.entity.provenance.clone())
+                .collect(),
+        ),
+        id: "test-group".into(),
+        kind: "test".into(),
+        label: "Test group".into(),
+        members: vec!["test.a".into(), "test.b".into()],
+    });
     let first = StateId::new("first").unwrap();
     let second = StateId::new("second").unwrap();
     let local = Layout::new(&graph);
     assert!(local.bounds[0].right() < local.bounds[1].right());
     let (_, height) = super::dimensions(&graph, &local);
-    let offset = 100 + super::legend::height(&graph);
+    let index = super::relationship_index::Index::new(&graph, &local);
+    let offset =
+        100 + super::legend::height(&graph) + super::annotation_area(&graph, &local, &index).height;
     let obstacles: Vec<_> = [offset, offset + height + 60]
         .into_iter()
         .flat_map(|offset| {
@@ -257,6 +275,7 @@ fn cross_state_paths_avoid_intervening_cards_and_describe_dependencies() {
             })
         })
         .collect();
+    let endpoint_y = offset + local.bounds[0].origin.y + local.header_heights[0] / 2;
     let mut architecture = crate::model::architecture::Architecture {
         states: BTreeMap::from([(first.clone(), graph.clone()), (second.clone(), graph)]),
         relationships: vec![crate::model::architecture::CrossStateEdge {
@@ -300,6 +319,8 @@ fn cross_state_paths_avoid_intervening_cards_and_describe_dependencies() {
         })
         .collect();
     assert!(points.len() > 4);
+    assert_eq!(points[0].y, endpoint_y);
+    assert_eq!(points.last().unwrap().y, endpoint_y + height + 60);
     for segment in points.windows(2) {
         let (a, b) = (segment[0], segment[1]);
         for obstacle in &obstacles {

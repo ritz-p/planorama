@@ -458,7 +458,7 @@ fn resource_provenance_is_indexed_and_reference_provenance_is_not() {
     assert!(!svg::render(&inferred, &layout).contains("Relationship resources"));
     assert_eq!(
         svg::dimensions(&graph, &layout).1 - svg::dimensions(&inferred, &layout).1,
-        index.height()
+        index.height() + 24
     );
 }
 
