@@ -304,11 +304,18 @@
               {
                 "address": "aws_lb_listener.http",
                 "expressions": {
-                  "default_action": {
-                    "references": [
-                      "aws_lb_target_group.app.arn"
-                    ]
-                  },
+                  "default_action": [
+                    {
+                      "target_group_arn": {
+                        "references": [
+                          "aws_lb_target_group.app.arn"
+                        ]
+                      },
+                      "type": {
+                        "constant_value": "forward"
+                      }
+                    }
+                  ],
                   "load_balancer_arn": {
                     "references": [
                       "aws_lb.app.arn"

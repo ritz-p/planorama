@@ -17,6 +17,7 @@ pub struct AttributeReference {
     pub has_references: bool,
     pub sources: Vec<usize>,
     pub complete: bool,
+    pub instances_explicit: bool,
     pub collection_ids_complete: bool,
     pub scalar_id_matches: bool,
     pub ids_only: bool,

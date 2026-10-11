@@ -44,6 +44,7 @@ pub(super) fn collect(
                     has_references: !refs.is_empty(),
                     sources: resolution.sources,
                     complete: resolution.complete && *structurally_complete,
+                    instances_explicit: resolution.instances_explicit,
                     collection_ids_complete: false,
                     scalar_id_matches: false,
                     ids_only: resolution.ids_only,

@@ -54,6 +54,8 @@ fn module(path: &Path, scope: &str, changes: &mut Vec<Value>) -> Result<Value, S
                             ("aws_ecs_service", "network_configuration") => {
                                 network_configuration(value)?
                             }
+                            ("aws_lb_listener", "default_action")
+                            | ("aws_lb_listener_rule", "action") => action_blocks(value)?,
                             _ => expression(value)?,
                         };
                         expressions.insert(key.clone(), generated);
@@ -133,6 +135,33 @@ fn expression(value: &Value) -> Result<Value, String> {
         true => json!({"constant_value":value}),
         false => json!({"references":references}),
     })
+}
+
+fn action_blocks(value: &Value) -> Result<Value, String> {
+    let blocks = value
+        .as_array()
+        .ok_or("fixture action blocks must be an array")?;
+    blocks
+        .iter()
+        .map(|block| {
+            let fields = block
+                .as_object()
+                .ok_or("fixture action block must be an object")?;
+            fields
+                .iter()
+                .map(|(key, value)| {
+                    let value = if matches!(key.as_str(), "forward" | "target_group") {
+                        action_blocks(value)?
+                    } else {
+                        expression(value)?
+                    };
+                    Ok((key.clone(), value))
+                })
+                .collect::<Result<Map<_, _>, String>>()
+                .map(Value::Object)
+        })
+        .collect::<Result<Vec<_>, _>>()
+        .map(Value::Array)
 }
 
 fn collect(value: &Value, references: &mut BTreeSet<String>) -> Result<(), String> {
