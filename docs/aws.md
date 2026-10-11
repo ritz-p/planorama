@@ -10,8 +10,10 @@ Known static provider regions group explicitly supported regional resources into
 visual panels (see [regions.svg](../examples/regions.svg)). Panels are deployment
 scopes, not resource containers or Terraform modules. VPC/Subnet containment stays
 intact inside each panel, and cross-region relationships remain routed paths.
-IAM, CloudFront and supported Route 53 zone/record/health-check/traffic-policy
-resources share an `AWS Global` panel when regional panels are present. AWS scope
+Spatial IAM resources, CloudFront and supported Route 53 resources share an
+`AWS Global` panel when regional panels are present. IAM Role, Policy, Role Policy
+and Instance Profile retain global scope metadata but render as logical cards
+above the spatial diagram, outside deployment-scope panels. AWS scope
 classification lives in `provider/aws/scope.rs`; layout and SVG consume generic
 deployment scopes. Unsupported resource types, cross-region peering resources and
 unknown regions stay outside panels. No aliases, names, tags, ARNs or IDs supply
@@ -33,10 +35,21 @@ classified as nodes, connectors, associations, policies or controllers by
 from managed/data mode; Security Groups remain Policy cards and target groups
 remain Controller cards even when placed inside a VPC.
 
+Placement is independent of role. ECS Cluster, ECS Task Definition, IAM Role,
+Policy, Role Policy, Instance Profile and AMI definitions are explicit logical
+resources, rendered as Terraform cards in the top annotation area. AMI describes
+an image definition used by workloads, not a deployed compute instance. These
+provider-aware rules apply to managed and data resources; custom providers do
+not inherit them. Unknown types retain unresolved placement and stay visible in
+the spatial diagram. Missing VPC/subnet references never imply logical placement.
+S3, DynamoDB, CloudFront, ECS Service and load balancers remain spatial.
+
 Infrastructure data sources retain their roles and use an external badge and
 dashed border. AWS metadata data sources `aws_region`, `aws_partition`,
 `aws_caller_identity`, `aws_availability_zones`, and `aws_iam_policy_document`
-and their incident edges are omitted. Cached data resources in prior state are
+and their incident edges are omitted. References from retained resources keep
+the omitted source identities as provenance, without creating cards or paths.
+Cached data resources in prior state are
 included when still present in configuration. See [data.svg](../examples/data.svg).
 
 ## Containment

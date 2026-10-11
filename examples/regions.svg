@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="2168" viewBox="0 0 1100 2168" role="img" aria-labelledby="title description">
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="2184" viewBox="0 0 1100 2184" role="img" aria-labelledby="title description">
 <title id="title">Terraform plan</title>
-<desc id="description">12 resources (12 cards), 5 relationships. Lines show architectural relationships. Edge titles identify the relationship kind and Terraform change. Thin solid: dependency. Dashed: association. Thick dotted: connection. Nested boxes: containment. Edge color preserves the Terraform action when available.</desc>
+<desc id="description">12 resources (11 spatial cards, 1 logical cards) · 5 relationships Thin solid: dependency. Dashed: association. Thick dotted: connection. Nested boxes: containment. Edge color preserves the Terraform action when available.</desc>
 <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/></marker><metadata id="planorama-icons-license">AWS Architecture Icons, release 07312026.
 Copyright Amazon Web Services, Inc. or its affiliates. All rights reserved.
 AWS service names and artwork are trademarks or other proprietary assets of AWS.
@@ -45,9 +45,10 @@ No AWS endorsement is implied. Consult the AWS terms for other uses.
 <rect width="100%" height="100%" fill="#ffffff"/>
 <g font-family="ui-monospace, SFMono-Regular, Consolas, monospace">
 <text x="40" y="45" font-size="25" font-weight="700" fill="#0f172a">Terraform plan</text>
-<text x="40" y="73" font-size="13" fill="#475569">12 resources (12 cards) · 5 relationships</text>
+<text x="40" y="73" font-size="13" fill="#475569">12 resources (11 spatial cards, 1 logical cards) · 5 relationships</text>
 <metadata id="architecture-entities">[{&quot;id&quot;:&quot;terraform:6177735f636c6f756466726f6e745f646973747269627574696f6e2e617070-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_cloudfront_distribution.app&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:6177735f69616d5f726f6c652e617070-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_iam_role.app&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:6177735f696e7374616e63652e746f6b796f-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_instance.tokyo&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:6177735f696e7374616e63652e756e6b6e6f776e-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_instance.unknown&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:6177735f696e7374616e63652e76697267696e6961-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_instance.virginia&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:6177735f726f75746535335f7a6f6e652e617070-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_route53_zone.app&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:6177735f7375626e65742e746f6b796f-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_subnet.tokyo&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:6177735f7375626e65742e76697267696e6961-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_subnet.virginia&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:6177735f756e636c61737369666965642e617070-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_unclassified.app&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:6177735f7670632e746f6b796f-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_vpc.tokyo&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:6177735f7670632e746f6b796f5f7365636f6e64-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_vpc.tokyo_second&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:6177735f7670632e76697267696e6961-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_vpc.virginia&quot;,&quot;deposed_key&quot;:null}]}]</metadata>
 <metadata id="architecture-relationships">[{&quot;directionality&quot;:&quot;directed&quot;,&quot;from&quot;:&quot;terraform:6177735f696e7374616e63652e746f6b796f-current&quot;,&quot;inferred&quot;:false,&quot;kind&quot;:&quot;dependency&quot;,&quot;provenance&quot;:[{&quot;from&quot;:&quot;aws_instance.tokyo&quot;,&quot;from_deposed_key&quot;:null,&quot;kind&quot;:&quot;reference&quot;,&quot;to&quot;:&quot;aws_instance.virginia&quot;,&quot;to_deposed_key&quot;:null}],&quot;to&quot;:&quot;terraform:6177735f696e7374616e63652e76697267696e6961-current&quot;},{&quot;directionality&quot;:&quot;directed&quot;,&quot;from&quot;:&quot;terraform:6177735f7375626e65742e746f6b796f-current&quot;,&quot;inferred&quot;:true,&quot;kind&quot;:&quot;containment&quot;,&quot;provenance&quot;:[{&quot;from&quot;:&quot;aws_subnet.tokyo&quot;,&quot;from_deposed_key&quot;:null,&quot;kind&quot;:&quot;reference&quot;,&quot;to&quot;:&quot;aws_instance.tokyo&quot;,&quot;to_deposed_key&quot;:null}],&quot;to&quot;:&quot;terraform:6177735f696e7374616e63652e746f6b796f-current&quot;},{&quot;directionality&quot;:&quot;directed&quot;,&quot;from&quot;:&quot;terraform:6177735f7375626e65742e76697267696e6961-current&quot;,&quot;inferred&quot;:true,&quot;kind&quot;:&quot;containment&quot;,&quot;provenance&quot;:[{&quot;from&quot;:&quot;aws_subnet.virginia&quot;,&quot;from_deposed_key&quot;:null,&quot;kind&quot;:&quot;reference&quot;,&quot;to&quot;:&quot;aws_instance.virginia&quot;,&quot;to_deposed_key&quot;:null}],&quot;to&quot;:&quot;terraform:6177735f696e7374616e63652e76697267696e6961-current&quot;},{&quot;directionality&quot;:&quot;directed&quot;,&quot;from&quot;:&quot;terraform:6177735f7670632e746f6b796f-current&quot;,&quot;inferred&quot;:true,&quot;kind&quot;:&quot;containment&quot;,&quot;provenance&quot;:[{&quot;from&quot;:&quot;aws_vpc.tokyo&quot;,&quot;from_deposed_key&quot;:null,&quot;kind&quot;:&quot;reference&quot;,&quot;to&quot;:&quot;aws_subnet.tokyo&quot;,&quot;to_deposed_key&quot;:null}],&quot;to&quot;:&quot;terraform:6177735f7375626e65742e746f6b796f-current&quot;},{&quot;directionality&quot;:&quot;directed&quot;,&quot;from&quot;:&quot;terraform:6177735f7670632e76697267696e6961-current&quot;,&quot;inferred&quot;:true,&quot;kind&quot;:&quot;containment&quot;,&quot;provenance&quot;:[{&quot;from&quot;:&quot;aws_vpc.virginia&quot;,&quot;from_deposed_key&quot;:null,&quot;kind&quot;:&quot;reference&quot;,&quot;to&quot;:&quot;aws_subnet.virginia&quot;,&quot;to_deposed_key&quot;:null}],&quot;to&quot;:&quot;terraform:6177735f7375626e65742e76697267696e6961-current&quot;}]</metadata>
+<metadata id="resource-references">[{&quot;attribute&quot;:&quot;subnet_id&quot;,&quot;complete&quot;:true,&quot;consumer&quot;:&quot;terraform:6177735f696e7374616e63652e746f6b796f-current&quot;,&quot;dependency&quot;:false,&quot;issues&quot;:[],&quot;targets&quot;:[{&quot;address&quot;:&quot;aws_subnet.tokyo&quot;,&quot;deposed_key&quot;:null}]},{&quot;attribute&quot;:&quot;subnet_id&quot;,&quot;complete&quot;:true,&quot;consumer&quot;:&quot;terraform:6177735f696e7374616e63652e76697267696e6961-current&quot;,&quot;dependency&quot;:false,&quot;issues&quot;:[],&quot;targets&quot;:[{&quot;address&quot;:&quot;aws_subnet.virginia&quot;,&quot;deposed_key&quot;:null}]},{&quot;attribute&quot;:&quot;user_data&quot;,&quot;complete&quot;:true,&quot;consumer&quot;:&quot;terraform:6177735f696e7374616e63652e76697267696e6961-current&quot;,&quot;dependency&quot;:false,&quot;issues&quot;:[],&quot;targets&quot;:[{&quot;address&quot;:&quot;aws_instance.tokyo&quot;,&quot;deposed_key&quot;:null}]},{&quot;attribute&quot;:&quot;vpc_id&quot;,&quot;complete&quot;:true,&quot;consumer&quot;:&quot;terraform:6177735f7375626e65742e746f6b796f-current&quot;,&quot;dependency&quot;:false,&quot;issues&quot;:[],&quot;targets&quot;:[{&quot;address&quot;:&quot;aws_vpc.tokyo&quot;,&quot;deposed_key&quot;:null}]},{&quot;attribute&quot;:&quot;vpc_id&quot;,&quot;complete&quot;:true,&quot;consumer&quot;:&quot;terraform:6177735f7375626e65742e76697267696e6961-current&quot;,&quot;dependency&quot;:false,&quot;issues&quot;:[],&quot;targets&quot;:[{&quot;address&quot;:&quot;aws_vpc.virginia&quot;,&quot;deposed_key&quot;:null}]}]</metadata>
 <rect x="40" y="100" width="12" height="12" fill="#ecfdf5" stroke="#047857"/><text x="59" y="111" font-size="12" fill="#047857">create (0)</text>
 <rect x="180" y="100" width="12" height="12" fill="#eff6ff" stroke="#1d4ed8"/><text x="199" y="111" font-size="12" fill="#1d4ed8">update (0)</text>
 <rect x="320" y="100" width="12" height="12" fill="#fef2f2" stroke="#b91c1c"/><text x="339" y="111" font-size="12" fill="#b91c1c">delete (0)</text>
@@ -63,16 +64,26 @@ No AWS endorsement is implied. Consult the AWS terms for other uses.
 <path d="M 540 201 H 570" stroke="#64748b" stroke-width="2.5" stroke-dasharray="2 4" stroke-linecap="round"/><text x="578" y="205">connection</text>
 </g>
 <g transform="translate(0 72)">
-<g data-architecture="true" transform="translate(0 0)">
-<g data-deployment-scope="true" data-scope-provider="AWS" data-global="true"><rect x="40" y="160" width="360" height="428" rx="14" fill="#f8fafc" stroke="#94a3b8" stroke-dasharray="9 5"/><text x="56" y="185" font-size="15" font-weight="700" fill="#334155">AWS Global</text></g>
-<g data-deployment-scope="true" data-scope-provider="AWS" data-region="ap-northeast-1"><rect x="40" y="628" width="960" height="508" rx="14" fill="#f8fafc" stroke="#94a3b8" stroke-dasharray="9 5"/><text x="56" y="653" font-size="15" font-weight="700" fill="#334155">AWS ap-northeast-1</text></g>
-<g data-deployment-scope="true" data-scope-provider="AWS" data-region="us-east-1"><rect x="40" y="1176" width="520" height="508" rx="14" fill="#f8fafc" stroke="#94a3b8" stroke-dasharray="9 5"/><text x="56" y="1201" font-size="15" font-weight="700" fill="#334155">AWS us-east-1</text></g>
-<g data-container="resource-6177735f7670632e746f6b796f-current"><title>aws_vpc.tokyo</title><rect x="60" y="668" width="480" height="448" rx="12" fill="#fefce8" stroke="#854d0e" stroke-width="2" data-mode="managed"/></g>
-<g data-container="resource-6177735f7375626e65742e746f6b796f-current"><title>aws_subnet.tokyo</title><rect x="100" y="804" width="400" height="272" rx="12" fill="#fef9c3" stroke="#854d0e" stroke-width="2" data-mode="managed"/></g>
-<g data-container="resource-6177735f7670632e76697267696e6961-current"><title>aws_vpc.virginia</title><rect x="60" y="1216" width="480" height="448" rx="12" fill="#fefce8" stroke="#854d0e" stroke-width="2" data-mode="managed"/></g>
-<g data-container="resource-6177735f7375626e65742e76697267696e6961-current"><title>aws_subnet.virginia</title><rect x="100" y="1352" width="400" height="272" rx="12" fill="#fef9c3" stroke="#854d0e" stroke-width="2" data-mode="managed"/></g>
-<g data-container="resource-6177735f7670632e746f6b796f5f7365636f6e64-current"><title>aws_vpc.tokyo_second</title><rect x="580" y="668" width="400" height="136" rx="12" fill="#fefce8" stroke="#854d0e" stroke-width="2" data-mode="managed"/></g>
-<path d="M 140 988 L 44 988 Q 36 988 36 996 L 36 1528 Q 36 1536 44 1536 L 140 1536 " data-edge-kind="dependency" data-directionality="directed" data-source="resource-6177735f696e7374616e63652e746f6b796f-current" data-target="resource-6177735f696e7374616e63652e76697267696e6961-current" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>aws_instance.tokyo → aws_instance.virginia (dependency)</title></path>
+<g data-annotation-area="true">
+<g data-annotation-card="true" transform="translate(40 160)"><rect width="360" height="128" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g id="resource-6177735f69616d5f726f6c652e617070-current" data-architecture-id="terraform:6177735f69616d5f726f6c652e617070-current" data-entity-kind="terraform" data-placement="logical" data-terraform-address="aws_iam_role.app" data-qualified-address="module.root.aws_iam_role.app" data-role="policy"><title>module.root.aws_iam_role.app — other</title><rect width="360" height="128" rx="12" fill="#fefce8" stroke="#854d0e" data-mode="managed"/>
+<use href="#planorama-icon-aws-iam" x="320" y="8" width="24" height="24" aria-hidden="true"/><text x="16" y="28" font-size="12" fill="#5b21b6" font-weight="700">Logical resource</text>
+<text x="16" y="48" font-size="12" fill="#334155">module.root.aws_iam_role.app</text>
+<text x="16" y="68" font-size="12" fill="#334155">aws_iam_role · managed</text>
+<text x="16" y="88" font-size="12" fill="#334155">other</text>
+<text x="16" y="108" font-size="12" fill="#334155">policy</text>
+</g>
+</g>
+</g>
+<g data-architecture="true" transform="translate(0 152)">
+<g data-deployment-scope="true" data-scope-provider="AWS" data-global="true"><rect x="40" y="160" width="360" height="292" rx="14" fill="#f8fafc" stroke="#94a3b8" stroke-dasharray="9 5"/><text x="56" y="185" font-size="15" font-weight="700" fill="#334155">AWS Global</text></g>
+<g data-deployment-scope="true" data-scope-provider="AWS" data-region="ap-northeast-1"><rect x="40" y="492" width="960" height="508" rx="14" fill="#f8fafc" stroke="#94a3b8" stroke-dasharray="9 5"/><text x="56" y="517" font-size="15" font-weight="700" fill="#334155">AWS ap-northeast-1</text></g>
+<g data-deployment-scope="true" data-scope-provider="AWS" data-region="us-east-1"><rect x="40" y="1040" width="520" height="508" rx="14" fill="#f8fafc" stroke="#94a3b8" stroke-dasharray="9 5"/><text x="56" y="1065" font-size="15" font-weight="700" fill="#334155">AWS us-east-1</text></g>
+<g data-container="resource-6177735f7670632e746f6b796f-current"><title>aws_vpc.tokyo</title><rect x="60" y="532" width="480" height="448" rx="12" fill="#fefce8" stroke="#854d0e" stroke-width="2" data-mode="managed"/></g>
+<g data-container="resource-6177735f7375626e65742e746f6b796f-current"><title>aws_subnet.tokyo</title><rect x="100" y="668" width="400" height="272" rx="12" fill="#fef9c3" stroke="#854d0e" stroke-width="2" data-mode="managed"/></g>
+<g data-container="resource-6177735f7670632e76697267696e6961-current"><title>aws_vpc.virginia</title><rect x="60" y="1080" width="480" height="448" rx="12" fill="#fefce8" stroke="#854d0e" stroke-width="2" data-mode="managed"/></g>
+<g data-container="resource-6177735f7375626e65742e76697267696e6961-current"><title>aws_subnet.virginia</title><rect x="100" y="1216" width="400" height="272" rx="12" fill="#fef9c3" stroke="#854d0e" stroke-width="2" data-mode="managed"/></g>
+<g data-container="resource-6177735f7670632e746f6b796f5f7365636f6e64-current"><title>aws_vpc.tokyo_second</title><rect x="580" y="532" width="400" height="136" rx="12" fill="#fefce8" stroke="#854d0e" stroke-width="2" data-mode="managed"/></g>
+<path d="M 140 852 L 44 852 Q 36 852 36 860 L 36 1392 Q 36 1400 44 1400 L 140 1400 " data-edge-kind="dependency" data-directionality="directed" data-source="resource-6177735f696e7374616e63652e746f6b796f-current" data-target="resource-6177735f696e7374616e63652e76697267696e6961-current" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>aws_instance.tokyo → aws_instance.virginia (dependency)</title></path>
 <g data-edge-kind="containment" data-source="resource-6177735f7375626e65742e746f6b796f-current" data-target="resource-6177735f696e7374616e63652e746f6b796f-current"><title>aws_subnet.tokyo → aws_instance.tokyo (containment)</title></g>
 <g data-edge-kind="containment" data-source="resource-6177735f7375626e65742e76697267696e6961-current" data-target="resource-6177735f696e7374616e63652e76697267696e6961-current"><title>aws_subnet.virginia → aws_instance.virginia (containment)</title></g>
 <g data-edge-kind="containment" data-source="resource-6177735f7670632e746f6b796f-current" data-target="resource-6177735f7375626e65742e746f6b796f-current"><title>aws_vpc.tokyo → aws_subnet.tokyo (containment)</title></g>
@@ -84,69 +95,63 @@ No AWS endorsement is implied. Consult the AWS terms for other uses.
 <text x="104" y="265" font-size="13" fill="#0f172a">bution.app</text>
 <text x="72" y="284" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
-<g id="resource-6177735f69616d5f726f6c652e617070-current" data-architecture-id="terraform:6177735f69616d5f726f6c652e617070-current" data-qualified-address="module.root.aws_iam_role.app" data-terraform-address="aws_iam_role.app"><title>module.root.aws_iam_role.app — other</title>
-<rect x="60" y="336" width="320" height="96" rx="8" fill="#fefce8" stroke="#854d0e" stroke-width="1.5" data-mode="managed"/>
-<text x="72" y="356" font-size="11" fill="#854d0e">aws_iam_role · other</text>
-<use href="#planorama-icon-aws-iam" x="72" y="364" width="24" height="24" aria-hidden="true"/><text x="104" y="381" font-size="13" fill="#0f172a">module.root.aws_iam_role.app</text>
-<text x="72" y="420" font-size="10" fill="#64748b" data-role="policy"><title>root</title>policy · root</text>
-</g>
 <g id="resource-6177735f696e7374616e63652e746f6b796f-current" data-architecture-id="terraform:6177735f696e7374616e63652e746f6b796f-current" data-qualified-address="module.root.aws_instance.tokyo" data-terraform-address="aws_instance.tokyo"><title>module.root.aws_instance.tokyo — other</title>
-<rect x="140" y="940" width="320" height="96" rx="8" fill="#fefce8" stroke="#854d0e" stroke-width="1.5" data-mode="managed"/>
-<text x="152" y="960" font-size="11" fill="#854d0e">aws_instance · other</text>
-<use href="#planorama-icon-aws-ec2" x="152" y="968" width="24" height="24" aria-hidden="true"/><text x="184" y="985" font-size="13" fill="#0f172a">module.root.aws_instance.tokyo</text>
-<text x="152" y="1024" font-size="10" fill="#64748b"><title>root</title>root</text>
+<rect x="140" y="804" width="320" height="96" rx="8" fill="#fefce8" stroke="#854d0e" stroke-width="1.5" data-mode="managed"/>
+<text x="152" y="824" font-size="11" fill="#854d0e">aws_instance · other</text>
+<use href="#planorama-icon-aws-ec2" x="152" y="832" width="24" height="24" aria-hidden="true"/><text x="184" y="849" font-size="13" fill="#0f172a">module.root.aws_instance.tokyo</text>
+<text x="152" y="888" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
 <g id="resource-6177735f696e7374616e63652e756e6b6e6f776e-current" data-architecture-id="terraform:6177735f696e7374616e63652e756e6b6e6f776e-current" data-qualified-address="module.root.aws_instance.unknown" data-terraform-address="aws_instance.unknown"><title>module.root.aws_instance.unknown — other</title>
-<rect x="60" y="1724" width="320" height="96" rx="8" fill="#fefce8" stroke="#854d0e" stroke-width="1.5" data-mode="managed"/>
-<text x="72" y="1744" font-size="11" fill="#854d0e">aws_instance · other</text>
-<use href="#planorama-icon-aws-ec2" x="72" y="1752" width="24" height="24" aria-hidden="true"/><text x="104" y="1769" font-size="13" fill="#0f172a">module.root.aws_instance.unknown</text>
-<text x="72" y="1808" font-size="10" fill="#64748b"><title>root</title>root</text>
+<rect x="60" y="1588" width="320" height="96" rx="8" fill="#fefce8" stroke="#854d0e" stroke-width="1.5" data-mode="managed"/>
+<text x="72" y="1608" font-size="11" fill="#854d0e">aws_instance · other</text>
+<use href="#planorama-icon-aws-ec2" x="72" y="1616" width="24" height="24" aria-hidden="true"/><text x="104" y="1633" font-size="13" fill="#0f172a">module.root.aws_instance.unknown</text>
+<text x="72" y="1672" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
 <g id="resource-6177735f696e7374616e63652e76697267696e6961-current" data-architecture-id="terraform:6177735f696e7374616e63652e76697267696e6961-current" data-qualified-address="module.root.aws_instance.virginia" data-terraform-address="aws_instance.virginia"><title>module.root.aws_instance.virginia — other</title>
-<rect x="140" y="1488" width="320" height="96" rx="8" fill="#fefce8" stroke="#854d0e" stroke-width="1.5" data-mode="managed"/>
-<text x="152" y="1508" font-size="11" fill="#854d0e">aws_instance · other</text>
-<use href="#planorama-icon-aws-ec2" x="152" y="1516" width="24" height="24" aria-hidden="true"/><text x="184" y="1533" font-size="13" fill="#0f172a">module.root.aws_instance.virginia</text>
-<text x="152" y="1572" font-size="10" fill="#64748b"><title>root</title>root</text>
+<rect x="140" y="1352" width="320" height="96" rx="8" fill="#fefce8" stroke="#854d0e" stroke-width="1.5" data-mode="managed"/>
+<text x="152" y="1372" font-size="11" fill="#854d0e">aws_instance · other</text>
+<use href="#planorama-icon-aws-ec2" x="152" y="1380" width="24" height="24" aria-hidden="true"/><text x="184" y="1397" font-size="13" fill="#0f172a">module.root.aws_instance.virginia</text>
+<text x="152" y="1436" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
 <g id="resource-6177735f726f75746535335f7a6f6e652e617070-current" data-architecture-id="terraform:6177735f726f75746535335f7a6f6e652e617070-current" data-qualified-address="module.root.aws_route53_zone.app" data-terraform-address="aws_route53_zone.app"><title>module.root.aws_route53_zone.app — other</title>
-<rect x="60" y="472" width="320" height="96" rx="8" fill="#fefce8" stroke="#854d0e" stroke-width="1.5" data-mode="managed"/>
-<text x="72" y="492" font-size="11" fill="#854d0e">aws_route53_zone · other</text>
-<text x="72" y="517" font-size="13" fill="#0f172a">module.root.aws_route53_zone.app</text>
-<text x="72" y="556" font-size="10" fill="#64748b"><title>root</title>root</text>
+<rect x="60" y="336" width="320" height="96" rx="8" fill="#fefce8" stroke="#854d0e" stroke-width="1.5" data-mode="managed"/>
+<text x="72" y="356" font-size="11" fill="#854d0e">aws_route53_zone · other</text>
+<text x="72" y="381" font-size="13" fill="#0f172a">module.root.aws_route53_zone.app</text>
+<text x="72" y="420" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
 <g id="resource-6177735f7375626e65742e746f6b796f-current" data-architecture-id="terraform:6177735f7375626e65742e746f6b796f-current" data-qualified-address="module.root.aws_subnet.tokyo" data-terraform-address="aws_subnet.tokyo"><title>module.root.aws_subnet.tokyo — other</title>
-<text x="112" y="824" font-size="11" fill="#854d0e">aws_subnet · other</text>
-<use href="#planorama-icon-aws-vpc" x="112" y="832" width="24" height="24" aria-hidden="true"/><text x="144" y="849" font-size="13" fill="#0f172a">module.root.aws_subnet.tokyo</text>
-<text x="112" y="888" font-size="10" fill="#64748b"><title>root</title>root</text>
+<text x="112" y="688" font-size="11" fill="#854d0e">aws_subnet · other</text>
+<use href="#planorama-icon-aws-vpc" x="112" y="696" width="24" height="24" aria-hidden="true"/><text x="144" y="713" font-size="13" fill="#0f172a">module.root.aws_subnet.tokyo</text>
+<text x="112" y="752" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
 <g id="resource-6177735f7375626e65742e76697267696e6961-current" data-architecture-id="terraform:6177735f7375626e65742e76697267696e6961-current" data-qualified-address="module.root.aws_subnet.virginia" data-terraform-address="aws_subnet.virginia"><title>module.root.aws_subnet.virginia — other</title>
-<text x="112" y="1372" font-size="11" fill="#854d0e">aws_subnet · other</text>
-<use href="#planorama-icon-aws-vpc" x="112" y="1380" width="24" height="24" aria-hidden="true"/><text x="144" y="1397" font-size="13" fill="#0f172a">module.root.aws_subnet.virginia</text>
-<text x="112" y="1436" font-size="10" fill="#64748b"><title>root</title>root</text>
+<text x="112" y="1236" font-size="11" fill="#854d0e">aws_subnet · other</text>
+<use href="#planorama-icon-aws-vpc" x="112" y="1244" width="24" height="24" aria-hidden="true"/><text x="144" y="1261" font-size="13" fill="#0f172a">module.root.aws_subnet.virginia</text>
+<text x="112" y="1300" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
 <g id="resource-6177735f756e636c61737369666965642e617070-current" data-architecture-id="terraform:6177735f756e636c61737369666965642e617070-current" data-qualified-address="module.root.aws_unclassified.app" data-terraform-address="aws_unclassified.app"><title>module.root.aws_unclassified.app — other</title>
-<rect x="60" y="1860" width="320" height="96" rx="8" fill="#fefce8" stroke="#854d0e" stroke-width="1.5" data-mode="managed"/>
-<text x="72" y="1880" font-size="11" fill="#854d0e">aws_unclassified · other</text>
-<text x="72" y="1905" font-size="13" fill="#0f172a">module.root.aws_unclassified.app</text>
-<text x="72" y="1944" font-size="10" fill="#64748b"><title>root</title>root</text>
+<rect x="60" y="1724" width="320" height="96" rx="8" fill="#fefce8" stroke="#854d0e" stroke-width="1.5" data-mode="managed"/>
+<text x="72" y="1744" font-size="11" fill="#854d0e">aws_unclassified · other</text>
+<text x="72" y="1769" font-size="13" fill="#0f172a">module.root.aws_unclassified.app</text>
+<text x="72" y="1808" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
 <g id="resource-6177735f7670632e746f6b796f-current" data-architecture-id="terraform:6177735f7670632e746f6b796f-current" data-qualified-address="module.root.aws_vpc.tokyo" data-terraform-address="aws_vpc.tokyo"><title>module.root.aws_vpc.tokyo — other</title>
-<text x="72" y="688" font-size="11" fill="#854d0e">aws_vpc · other</text>
-<use href="#planorama-icon-aws-vpc" x="72" y="696" width="24" height="24" aria-hidden="true"/><text x="104" y="713" font-size="13" fill="#0f172a">module.root.aws_vpc.tokyo</text>
-<text x="72" y="752" font-size="10" fill="#64748b"><title>root</title>root</text>
+<text x="72" y="552" font-size="11" fill="#854d0e">aws_vpc · other</text>
+<use href="#planorama-icon-aws-vpc" x="72" y="560" width="24" height="24" aria-hidden="true"/><text x="104" y="577" font-size="13" fill="#0f172a">module.root.aws_vpc.tokyo</text>
+<text x="72" y="616" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
 <g id="resource-6177735f7670632e746f6b796f5f7365636f6e64-current" data-architecture-id="terraform:6177735f7670632e746f6b796f5f7365636f6e64-current" data-qualified-address="module.root.aws_vpc.tokyo_second" data-terraform-address="aws_vpc.tokyo_second"><title>module.root.aws_vpc.tokyo_second — other</title>
-<text x="592" y="688" font-size="11" fill="#854d0e">aws_vpc · other</text>
-<use href="#planorama-icon-aws-vpc" x="592" y="696" width="24" height="24" aria-hidden="true"/><text x="624" y="713" font-size="13" fill="#0f172a">module.root.aws_vpc.tokyo_second</text>
-<text x="592" y="752" font-size="10" fill="#64748b"><title>root</title>root</text>
+<text x="592" y="552" font-size="11" fill="#854d0e">aws_vpc · other</text>
+<use href="#planorama-icon-aws-vpc" x="592" y="560" width="24" height="24" aria-hidden="true"/><text x="624" y="577" font-size="13" fill="#0f172a">module.root.aws_vpc.tokyo_second</text>
+<text x="592" y="616" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
 <g id="resource-6177735f7670632e76697267696e6961-current" data-architecture-id="terraform:6177735f7670632e76697267696e6961-current" data-qualified-address="module.root.aws_vpc.virginia" data-terraform-address="aws_vpc.virginia"><title>module.root.aws_vpc.virginia — other</title>
-<text x="72" y="1236" font-size="11" fill="#854d0e">aws_vpc · other</text>
-<use href="#planorama-icon-aws-vpc" x="72" y="1244" width="24" height="24" aria-hidden="true"/><text x="104" y="1261" font-size="13" fill="#0f172a">module.root.aws_vpc.virginia</text>
-<text x="72" y="1300" font-size="10" fill="#64748b"><title>root</title>root</text>
+<text x="72" y="1100" font-size="11" fill="#854d0e">aws_vpc · other</text>
+<use href="#planorama-icon-aws-vpc" x="72" y="1108" width="24" height="24" aria-hidden="true"/><text x="104" y="1125" font-size="13" fill="#0f172a">module.root.aws_vpc.virginia</text>
+<text x="72" y="1164" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
 <g data-endpoints="true" data-source="resource-6177735f696e7374616e63652e746f6b796f-current" data-target="resource-6177735f696e7374616e63652e76697267696e6961-current" aria-hidden="true">
-<circle data-endpoint="source" cx="140" cy="988" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+<circle data-endpoint="source" cx="140" cy="852" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
 </g>
 </g>
 </g>

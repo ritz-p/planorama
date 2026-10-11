@@ -24,6 +24,15 @@ Relationship index cards group up to 10 complete numbered entries per card,
 continuing to the right before wrapping. Logical components use one card per
 component.
 
+Terraform-backed Logical Resources precede the relationship index and synthetic
+components. They use their original resource DOM IDs and retain mode, action,
+move/import/deposed information. `view::spatial` projects only geometry inputs;
+the semantic and filtered graphs keep logical nodes and all selected relationships.
+Layout maps spatial results back to graph indices: logical nodes have zero-size
+bounds and incident edges have empty paths. They create no routing obstacles.
+The SVG summary distinguishes spatial and logical cards while retaining totals.
+Value-free reference evidence is available in `resource-references` metadata.
+
 Ingestion does not import provider rules, layout or SVG. Layout, view and SVG use
 the `model::architecture` facade, which excludes Terraform ingestion contracts.
 AWS resource-type and attribute rules belong in `provider/aws`; rendering and

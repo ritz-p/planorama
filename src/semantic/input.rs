@@ -36,7 +36,33 @@ pub(crate) fn base_graph(plan: &TerraformPlan) -> Graph {
         nodes: plan
             .nodes
             .iter()
-            .map(|fact| Node {
+            .enumerate()
+            .map(|(index, fact)| Node {
+                placement: crate::provider::placement(&fact.provider, &fact.resource_type),
+                references: plan
+                    .attributes
+                    .iter()
+                    .map(|r| (r, false))
+                    .chain(plan.graph_references.iter().map(|r| (r, true)))
+                    .filter(|(r, _)| r.target == index && (!r.sources.is_empty() || !r.complete))
+                    .map(|(r, dependency)| crate::model::ResourceReference {
+                        attribute: r.attribute.clone(),
+                        targets: r
+                            .sources
+                            .iter()
+                            .map(|&i| crate::model::ReferenceTarget {
+                                id: (&plan.nodes[i]).into(),
+                                placement: crate::provider::placement(
+                                    &plan.nodes[i].provider,
+                                    &plan.nodes[i].resource_type,
+                                ),
+                            })
+                            .collect(),
+                        complete: r.complete,
+                        dependency,
+                        issues: r.issues.clone(),
+                    })
+                    .collect(),
                 entity: {
                     let mut entity = crate::model::ArchitectureEntity::terraform(fact.into());
                     entity.scope = crate::provider::scope(fact);

@@ -19,6 +19,10 @@ Plan checks/status remain visible. Logical components are shown only when all
 their members remain. Empty state panels remain identifiable. Filters create a
 new architecture graph without changing parsed plans or the original graph.
 
+Logical Terraform resources participate in the same selection and neighbor rules.
+Their references retain stable source identities even if a target is filtered out;
+rendering must check target availability before emitting a fragment link.
+
 ```sh
 planorama plan.json --changed-only -o changes.svg
 planorama plan.json --focus module.app.aws_instance.web --focus-depth 2

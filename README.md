@@ -43,6 +43,7 @@ docker compose exec -T dev cargo run --locked -- - -o - < plan.json > diagram.sv
 - 依存辺は参照されるリソースから参照するリソースへ向きます。包含は入れ子の枠、関連付けは破線、接続は太い点線です。
 - AWS の VPC・Subnet が空間的なコンテナです。間接参照から導いた配置には `inferred placement` を表示します。
 - data リソースは破線と `external` 表示で区別します。一部の AWS メタデータ data は省略します。
+- ECS Cluster・Task Definition・IAM 定義・AMI は上部の Logical resource カードに表示し、空間配置と経路計算から分離します。元のリソース・参照情報・変更数は保持します。
 - 既定のアドレス表示は Planorama 修飾形式です。`--address-format terraform` で Terraform 本来の表記に切り替えられます。省略されたラベルの全文はカードのタイトルで確認できます。
 - 属性値は描画しません。plan JSON 自体には機密値が含まれ得るため、実環境の plan/state はコミットしないでください。
 

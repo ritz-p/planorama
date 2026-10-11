@@ -13,6 +13,7 @@ pub(crate) mod relationship_markers;
 mod routing;
 mod routing_shared;
 mod scopes;
+mod spatial;
 #[cfg(test)]
 #[path = "../tests/unit/layout.rs"]
 mod tests;
@@ -80,6 +81,13 @@ pub struct ScopePanel {
 
 impl<'a> Layout<'a> {
     pub fn new(graph: &'a Graph) -> Self {
+        if graph
+            .nodes
+            .iter()
+            .any(|n| n.placement == crate::model::Placement::Logical)
+        {
+            return spatial::layout(graph);
+        }
         let containment = ContainmentTree::new(graph);
         let mut placed = pipeline::place(graph, containment);
         pipeline::route(graph, &mut placed);

@@ -28,7 +28,8 @@ committed counterparts.
 
 ## Expected display
 
-The fixture has 48 resource instances. The renderer produces 38 cards and 74
+The fixture has 48 resource instances. The renderer produces 32 spatial cards,
+6 top logical-resource cards and 74
 relationships: four route-table associations and four target-group attachments
 become edges, and two AWS metadata data sources are omitted.
 
@@ -36,7 +37,12 @@ The managed VPC contains four subnet boxes, network policy/route resources, the
 target group, ALB, ECS Service, DB subnet group and RDS workload. EC2 workers sit
 inside their referenced subnets. ALB/ECS keep individual subnet connections; the
 DB subnet group and RDS retain their dependency chain and inferred-placement notes.
-Shared VPC, Security Group and AMI data sources remain external cards.
+Shared VPC and Security Group data sources remain external spatial cards. ECS
+Cluster/Task Definition, IAM definitions and the external AMI are logical cards.
+The original 74 relationships remain queryable; 41 paths are spatially routed.
+Compared with the pre-separation example, spatial cards decrease from 38 to 32,
+routed paths from 53 to 41, and total SVG size from 3960×2414 to 3556×2413.
+Connections retain their endpoints and undirected dotted presentation.
 
 SG cards remain Policies, but their attachments stay dependencies because this
 synthetic fixture has no planned ID values or unknown masks. The dedicated
