@@ -1,6 +1,57 @@
 use super::*;
 
 #[test]
+fn affinity_packing_keeps_sources_together_while_optimizing_hubs() {
+    use crate::layout::containers::{affinity, placement};
+    let mut improvements = 0;
+    for count in [11, 19, 27] {
+        let sizes: Vec<_> = (0..count)
+            .map(|node| (100 + node % 3 * 40, 80 + node % 5 * 30))
+            .collect();
+        let columns = vec![(0..count - 1).collect(), vec![count - 1]];
+        let groups = vec![affinity::Group {
+            reverse: false,
+            target: count - 1,
+            sources: vec![0, 1],
+            edges: vec![],
+        }];
+        let children: Vec<_> = (0..count).collect();
+        let relationships: Vec<_> = (1..count).map(|node| (0, node)).collect();
+        let mut baseline = vec![Point { x: 0, y: 0 }; count];
+        placement::pack_with_affinity(&columns, &[], &groups, &sizes, &mut baseline, 40);
+        let mut positions = baseline.clone();
+        let size = placement::pack_with_affinity(
+            &columns,
+            &relationships,
+            &groups,
+            &sizes,
+            &mut positions,
+            40,
+        );
+        let score = |points: &[Point]| {
+            estimate(&relationships, &sizes, points)
+                + affinity::deviation(&children, &groups, &sizes, points)
+        };
+        assert!(score(&positions) <= score(&baseline));
+        improvements += usize::from(score(&positions) < score(&baseline));
+        assert_eq!(positions[0].x, positions[1].x);
+        assert_eq!(positions[1].y, positions[0].y + sizes[0].1 + 40);
+        for a in 0..count {
+            assert!(positions[a].x + sizes[a].0 <= size.0 && positions[a].y + sizes[a].1 <= size.1);
+            for b in a + 1..count {
+                assert!(
+                    positions[a].x + sizes[a].0 + 40 <= positions[b].x
+                        || positions[b].x + sizes[b].0 + 40 <= positions[a].x
+                        || positions[a].y + sizes[a].1 + 40 <= positions[b].y
+                        || positions[b].y + sizes[b].1 + 40 <= positions[a].y
+                );
+            }
+        }
+    }
+    assert!(improvements > 0);
+}
+
+#[test]
 fn equal_size_packings_prefer_nearby_peers_and_hubs() {
     let sizes = vec![(100, 80); 4];
     let near = vec![

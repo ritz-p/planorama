@@ -181,11 +181,61 @@ pub(in crate::layout) fn pack(
     offsets: &mut [Point],
     padding: usize,
 ) -> (usize, usize) {
+    pack_with_affinity(columns, relationships, &[], sizes, offsets, padding)
+}
+
+pub(in crate::layout) fn pack_with_affinity(
+    columns: &[Vec<usize>],
+    relationships: &[(usize, usize)],
+    affinities: &[super::affinity::Group],
+    sizes: &[(usize, usize)],
+    offsets: &mut [Point],
+    padding: usize,
+) -> (usize, usize) {
     let nodes: Vec<_> = columns.iter().flatten().copied().collect();
     if nodes.is_empty() {
         return (0, 0);
     }
-    let minimum = nodes.iter().map(|&node| sizes[node].1).max().unwrap();
+    let mut minimum = nodes.iter().map(|&node| sizes[node].1).max().unwrap();
+    let mut joined = BTreeSet::new();
+    for column in columns {
+        for group in affinities {
+            let indices: Vec<_> = column
+                .iter()
+                .enumerate()
+                .filter(|(_, node)| group.sources.contains(node))
+                .map(|(i, _)| i)
+                .collect();
+            if let (Some(&first), Some(&last)) = (indices.first(), indices.last()) {
+                for &node in &column[first..last] {
+                    joined.insert(node);
+                }
+            }
+        }
+        let mut span = 0;
+        for &node in column {
+            span += sizes[node].1;
+            minimum = minimum.max(span);
+            if joined.contains(&node) {
+                span += padding;
+            } else {
+                span = 0;
+            }
+        }
+    }
+    let mut spans = vec![0; sizes.len()];
+    for column in columns {
+        let mut span = 0;
+        for &node in column.iter().rev() {
+            span = sizes[node].1
+                + if joined.contains(&node) {
+                    padding + span
+                } else {
+                    0
+                };
+            spans[node] = span;
+        }
+    }
     let total: usize = nodes.iter().map(|&node| sizes[node].1 + padding).sum();
     let heights: BTreeSet<_> = (1..=nodes.len().min(64))
         .map(|count| (total / count).max(minimum))
@@ -197,9 +247,10 @@ pub(in crate::layout) fn pack(
         let mut positions = Vec::with_capacity(nodes.len());
         for column in columns {
             let (mut y, mut width) = (0, 0);
-            for &node in column {
+            for (index, &node) in column.iter().enumerate() {
                 let (w, h) = sizes[node];
-                if y > 0 && y + h > limit {
+                let continuation = index > 0 && joined.contains(&column[index - 1]);
+                if y > 0 && !continuation && y + spans[node] > limit {
                     x += width + padding;
                     y = 0;
                     width = 0;
@@ -217,6 +268,14 @@ pub(in crate::layout) fn pack(
             width as u128 * height as u128,
             width,
         );
+        let mut trial = offsets.to_vec();
+        for &(node, point) in &positions {
+            trial[node] = point;
+        }
+        super::affinity::align(&nodes, affinities, sizes, &mut trial, height, padding);
+        for (node, point) in &mut positions {
+            *point = trial[*node];
+        }
         candidates.push((score, (width, height), positions));
     }
     let compact = candidates.iter().map(|(score, _, _)| *score).min().unwrap();
@@ -228,7 +287,11 @@ pub(in crate::layout) fn pack(
             for &(node, point) in positions {
                 trial[node] = point;
             }
-            (cost::estimate(relationships, sizes, &trial), *score)
+            (
+                cost::estimate(relationships, sizes, &trial)
+                    + super::affinity::deviation(&nodes, affinities, sizes, &trial),
+                *score,
+            )
         })
         .unwrap();
     for (node, position) in positions {
