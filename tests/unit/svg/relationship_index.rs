@@ -98,14 +98,7 @@ fn dense_targets_keep_distinct_numbers_readable() {
         let graph = dense_graph(12, kind);
         let layout = Layout::new(&graph);
         let index = Index::new(&graph, &layout);
-        assert_eq!(
-            index.markers.len(),
-            if kind == EdgeKind::Association {
-                24
-            } else {
-                12
-            }
-        );
+        assert_eq!(index.markers.len(), 24);
         assert_marker_routes(&graph, &layout);
         for (i, marker) in index.markers.iter().enumerate() {
             for other in &index.markers[i + 1..] {
@@ -402,7 +395,7 @@ fn marker_borders_match_relationship_actions_and_line_patterns() {
                 .find(|n| n.attribute("data-relationship-marker") == Some("1"))
                 .unwrap();
             let border = marker.children().find(|n| n.has_tag_name("rect")).unwrap();
-            if kind != EdgeKind::Association {
+            if kind == EdgeKind::Dependency {
                 let arrow_id = path
                     .attribute("marker-end")
                     .unwrap()

@@ -15,7 +15,7 @@ fn workload_security_groups_keep_policy_cards_and_individual_connections() {
     ] {
         for group in ["a", "b"] {
             assert!(svg.contains(&format!(
-                "aws_security_group.{group} → {kind}.main (connection)"
+                "aws_security_group.{group} ↔ {kind}.main (connection)"
             )));
         }
     }
@@ -472,7 +472,7 @@ fn security_groups_fixture_preserves_policy_cards_and_inspectable_connections() 
         ("shared", "aws_ecs_service.app"),
     ] {
         assert!(svg.contains(&format!(
-            "aws_security_group.{group} → {target} (connection)"
+            "aws_security_group.{group} ↔ {target} (connection)"
         )));
         assert!(svg.contains(&format!(
             "data-terraform-address=\"aws_security_group.{group}\""
