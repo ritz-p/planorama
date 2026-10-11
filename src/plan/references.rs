@@ -274,6 +274,7 @@ fn resolve_with_policy(
     let mut sources = BTreeSet::new();
     let mut complete = !pending.is_empty();
     let mut ids_only = true;
+    let mut instances_explicit = true;
     let mut issues = BTreeSet::new();
     while let Some((reference, exiting, inherited_ambiguity)) = pending.pop() {
         if exiting {
@@ -372,6 +373,9 @@ fn resolve_with_policy(
                         .collect::<BTreeSet<_>>()
                         .len()
                         > 1);
+            instances_explicit &= matching.iter().all(|(address, _)| {
+                super::address::explicitly_selects_instance(reference, address)
+            });
             if matching.is_empty() {
                 complete = false;
                 issues.insert(DiagnosticReason::UnresolvedReference);
@@ -412,12 +416,13 @@ fn resolve_with_policy(
                     complete = false;
                     issues.insert(DiagnosticReason::DynamicInstanceSelection);
                 }
-                let narrowed = exact_sources
-                    && (normalized != *key
-                        || (!module_object
-                            && super::address::parts(reference)
-                                .get(key_parts.len() - 1)
-                                .is_some_and(|part| part.contains('['))));
+                let selection_narrowed = normalized != *key
+                    || (!module_object
+                        && super::address::parts(reference)
+                            .get(key_parts.len() - 1)
+                            .is_some_and(|part| part.contains('[')));
+                instances_explicit &= !selection_narrowed;
+                let narrowed = exact_sources && selection_narrowed;
                 if narrowed {
                     complete = false;
                     issues.insert(DiagnosticReason::PartialResourceProvenance);
@@ -435,6 +440,7 @@ fn resolve_with_policy(
                 complete = false;
             }
             None if normalized.starts_with("module.") => {
+                instances_explicit = false;
                 if exact_sources {
                     complete = false;
                     issues.insert(DiagnosticReason::UnresolvedReference);
@@ -465,6 +471,7 @@ fn resolve_with_policy(
         sources: sources.into_iter().collect(),
         complete,
         ids_only,
+        instances_explicit: complete && instances_explicit && issues.is_empty(),
         issues,
     }
 }

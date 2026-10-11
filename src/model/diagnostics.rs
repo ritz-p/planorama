@@ -65,5 +65,6 @@ pub(crate) struct Resolution {
     pub sources: Vec<usize>,
     pub complete: bool,
     pub ids_only: bool,
+    pub instances_explicit: bool,
     pub issues: BTreeSet<DiagnosticReason>,
 }

@@ -19,6 +19,13 @@ The committed `plan.json` is synthetic, not captured Terraform output. The Rust
 generator reads the adjacent `main.tf.json` files and derives references, module
 input/output aliases and native addresses. Managed instances use `create`; data
 instances use `no-op`. It needs no AWS credentials, Terraform or provider download.
+Listener/Rule action blocks retain nested field references so component inference
+can verify target-group paths instead of using flattened action dependencies.
+For LB, Listener, Rule and Target Group resources, the generator supplies fabricated
+known ARN values in `change.after` and evaluates only exact local ARN traversals
+in ownership/action fields. These `000000000000:fixture/` values prove equality
+in this offline fixture; they are not captured AWS identifiers or predictions of
+real create-plan values. Real plans with unknown ARNs retain ungrouped targets.
 
 The generator supports single-instance local modules, resource-level literal
 `count`, constants and traversal interpolations. It rejects resource `for_each`,
@@ -39,8 +46,9 @@ inside their referenced subnets. ALB/ECS keep individual subnet connections; the
 DB subnet group and RDS retain their dependency chain and inferred-placement notes.
 Shared VPC and Security Group data sources remain external spatial cards. ECS
 Cluster/Task Definition, IAM definitions and the external AMI are logical cards.
-A purple Logical Components section contains the load balancer component and its
-action-colored member links. Relationship Resources follow in a separate neutral
+A purple Logical Components section contains the load balancer, its Listener and
+its uniquely referenced Target Group as action-colored member links. The Target
+Group link points to the original spatial card. Relationship Resources follow in a separate neutral
 section. Empty sections are omitted in smaller examples.
 The original 74 relationships remain queryable; 41 paths are spatially routed.
 Compared with the pre-separation example, spatial cards decrease from 38 to 32,

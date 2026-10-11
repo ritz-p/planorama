@@ -77,6 +77,40 @@ fn large_fixture_is_reproducible_from_terraform_sources_and_renders_deterministi
     assert!(!svg.contains("data.aws_region.current"));
     assert!(!svg.contains("stroke-dasharray=\"5 4\""));
     let document = roxmltree::Document::parse(&svg).unwrap();
+    let component = document
+        .descendants()
+        .find(|n| n.attribute("data-entity-kind") == Some("synthetic"))
+        .unwrap();
+    let target_address = "module.application.aws_lb_target_group.app";
+    let members: Vec<_> = component
+        .descendants()
+        .filter(|n| n.attribute("data-source-address") == Some(target_address))
+        .collect();
+    assert_eq!(members.len(), 1);
+    let target = members[0]
+        .attribute("href")
+        .unwrap()
+        .strip_prefix('#')
+        .unwrap();
+    let original: Vec<_> = document
+        .descendants()
+        .filter(|n| n.attribute("data-terraform-address") == Some(target_address))
+        .collect();
+    assert_eq!(original.len(), 1);
+    assert_eq!(original[0].attribute("id"), Some(target));
+    assert!(
+        original[0]
+            .ancestors()
+            .any(|n| n.attribute("data-architecture").is_some())
+    );
+    assert_eq!(
+        members[0]
+            .children()
+            .find(|n| n.has_tag_name("rect"))
+            .unwrap()
+            .attribute("fill"),
+        Some("#ecfdf5")
+    );
     for card in document
         .descendants()
         .filter(|n| n.attribute("data-terraform-address").is_some())

@@ -119,6 +119,15 @@ pub(super) fn matches_instance(reference: &str, instance: &str) -> bool {
         })
 }
 
+pub(super) fn explicitly_selects_instance(reference: &str, instance: &str) -> bool {
+    parts(reference)
+        .iter()
+        .zip(parts(instance))
+        .all(|(reference, instance)| {
+            known_key(instance).is_none_or(|key| known_key(reference) == Some(key))
+        })
+}
+
 pub(super) fn contextualize(reference: &str, context: &str) -> String {
     if let Some(reference) = reference.strip_prefix(MODULE_REFERENCE) {
         return format!("{MODULE_REFERENCE}{}", contextualize(reference, context));
