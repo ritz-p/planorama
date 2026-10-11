@@ -181,6 +181,44 @@ fn hundreds_of_numbered_relationships_keep_clear_terminal_corridors() {
 }
 
 #[test]
+fn each_relationship_entry_has_one_top_card_even_with_two_endpoint_badges() {
+    let mut graph = dense_graph(5, EdgeKind::Association);
+    let snapshot = |graph: &Graph| {
+        let layout = Layout::new(graph);
+        let index = Index::new(graph, &layout);
+        let cards = index.cards();
+        assert_eq!(cards.len(), 5);
+        assert_eq!(index.markers.len(), 10);
+        let area = crate::svg::annotations::Area::new(cards, 900);
+        let svg = area.render();
+        let document = roxmltree::Document::parse(&svg).unwrap();
+        let entries: Vec<_> = document
+            .descendants()
+            .filter_map(|n| n.attribute("data-relationship-entry"))
+            .collect();
+        assert_eq!(entries, vec!["1", "2", "3", "4", "5"]);
+        let rows: std::collections::BTreeSet<_> = document
+            .descendants()
+            .filter(|n| n.attribute("data-annotation-card").is_some())
+            .map(|n| {
+                n.attribute("transform")
+                    .unwrap()
+                    .split_whitespace()
+                    .last()
+                    .unwrap()
+            })
+            .collect();
+        assert!(rows.len() > 1);
+        assert!(!svg.contains("data-relationship-index="));
+        svg
+    };
+    let expected = snapshot(&graph);
+    graph.edges.reverse();
+    graph.relationships.reverse();
+    assert_eq!(snapshot(&graph), expected);
+}
+
+#[test]
 fn wide_addresses_wrap_within_the_canvas_and_reserved_height() {
     let mut graph = graph();
     let address = format!(
@@ -196,7 +234,9 @@ fn wide_addresses_wrap_within_the_canvas_and_reserved_height() {
     }
     let layout = Layout::new(&graph);
     let index = Index::new(&graph, &layout);
-    let svg = index.render(0);
+    let cards = index.cards();
+    assert_eq!(cards.len(), 1);
+    let svg = &cards[0].content;
     let document = roxmltree::Document::parse(&svg).unwrap();
     let lines: Vec<_> = document
         .descendants()
@@ -213,10 +253,10 @@ fn wide_addresses_wrap_within_the_canvas_and_reserved_height() {
             .chars()
             .map(|c| if c.is_ascii() { 8 } else { 16 })
             .sum();
-        assert!(100 + width <= index.width);
-        assert!(line.attribute("y").unwrap().parse::<usize>().unwrap() + 4 < index.height());
+        assert!(16 + width <= cards[0].width - 16);
+        assert!(line.attribute("y").unwrap().parse::<usize>().unwrap() + 4 < cards[0].height);
     }
-    assert_eq!(index.height(), 60 + lines.len() * 20 + 8);
+    assert_eq!(cards[0].height, 56 + lines.len() * 20);
 }
 
 #[test]
@@ -440,7 +480,8 @@ fn resource_provenance_is_indexed_and_reference_provenance_is_not() {
     assert_eq!(index.entries.len(), 1);
     assert_eq!(index.markers.len(), 2);
     let svg = svg::render(&graph, &layout);
-    assert!(svg.contains("Relationship resources"));
+    assert!(!svg.contains("data-relationship-index="));
+    assert!(svg.contains("Association</text>"));
     assert!(svg.contains("data-relationship-marker=\"1\""));
     assert!(svg.contains("data-relationship-entry=\"1\""));
     assert!(svg.contains(&format!(
@@ -454,11 +495,11 @@ fn resource_provenance_is_indexed_and_reference_provenance_is_not() {
     });
     let empty = Index::new(&inferred, &layout);
     assert!(empty.entries.is_empty());
-    assert_eq!(empty.height(), 0);
+    assert!(empty.cards().is_empty());
     assert!(!svg::render(&inferred, &layout).contains("Relationship resources"));
     assert_eq!(
         svg::dimensions(&graph, &layout).1 - svg::dimensions(&inferred, &layout).1,
-        index.height() + 24
+        index.cards()[0].height + 24
     );
 }
 
