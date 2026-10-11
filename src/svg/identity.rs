@@ -10,11 +10,19 @@ pub(super) fn architecture(id: &crate::model::architecture::ArchitectureId) -> S
 }
 
 pub(super) fn resource(node: &Node) -> String {
+    resource_parts(&node.address, node.deposed_key.as_deref())
+}
+
+pub(super) fn source(source: &crate::model::TerraformEntityId) -> String {
+    resource_parts(&source.address, source.deposed_key.as_deref())
+}
+
+fn resource_parts(address: &str, deposed_key: Option<&str>) -> String {
     let mut id = String::from("resource-");
-    for byte in node.address.bytes() {
+    for byte in address.bytes() {
         write!(id, "{byte:02x}").unwrap();
     }
-    match &node.deposed_key {
+    match deposed_key {
         None => id.push_str("-current"),
         Some(key) => {
             id.push_str("-deposed-");

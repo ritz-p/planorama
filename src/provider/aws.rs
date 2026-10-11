@@ -10,6 +10,19 @@ mod scope;
 mod security_groups;
 pub(super) use scope::scope;
 
+pub(super) fn reference_label(resource_type: &str, attribute: &str) -> &'static str {
+    match (resource_type, attribute) {
+        ("aws_ecs_service", "cluster") => "Cluster",
+        ("aws_ecs_service", "task_definition") => "Task definition",
+        ("aws_instance", "iam_instance_profile") => "Instance profile",
+        ("aws_instance", "ami") => "AMI",
+        ("aws_iam_instance_profile", "role") => "Role",
+        ("aws_ecs_task_definition", "execution_role_arn") => "Execution role",
+        ("aws_ecs_task_definition", "task_role_arn") => "Task role",
+        _ => "References",
+    }
+}
+
 pub(super) fn placement(resource_type: &str) -> crate::model::Placement {
     match resource_type {
         "aws_ecs_cluster"

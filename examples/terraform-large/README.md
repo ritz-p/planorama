@@ -41,8 +41,8 @@ Shared VPC and Security Group data sources remain external spatial cards. ECS
 Cluster/Task Definition, IAM definitions and the external AMI are logical cards.
 The original 74 relationships remain queryable; 41 paths are spatially routed.
 Compared with the pre-separation example, spatial cards decrease from 38 to 32,
-routed paths from 53 to 41, and total SVG size from 3960×2414 to 3556×2413.
-Connections retain their endpoints and undirected dotted presentation.
+routed paths from 53 to 41. With visible consumer references, the SVG measures 3556×2653.
+ECS Service lists its Cluster and Task definition; each EC2 worker links its AMI and Instance profile. Connections retain their endpoints and undirected dotted presentation.
 
 SG cards remain Policies, but their attachments stay dependencies because this
 synthetic fixture has no planned ID values or unknown masks. The dedicated

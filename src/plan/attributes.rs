@@ -41,6 +41,7 @@ pub(super) fn collect(
                 result.push(AttributeReference {
                     target,
                     attribute: attribute.clone(),
+                    has_references: !refs.is_empty(),
                     sources: resolution.sources,
                     complete: resolution.complete && *structurally_complete,
                     collection_ids_complete: false,

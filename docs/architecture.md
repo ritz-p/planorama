@@ -33,6 +33,12 @@ bounds and incident edges have empty paths. They create no routing obstacles.
 The SVG summary distinguishes spatial and logical cards while retaining totals.
 Value-free reference evidence is available in `resource-references` metadata.
 
+Consumer cards show compact Uses rows from the same evidence, with provider labels
+supplied during projection. Shared row selection determines both content height
+and rendering. Logical cards also show their own references; UI links never add
+routing edges. Full lists remain in accessible titles when the four-row limit
+is exceeded.
+
 Ingestion does not import provider rules, layout or SVG. Layout, view and SVG use
 the `model::architecture` facade, which excludes Terraform ingestion contracts.
 AWS resource-type and attribute rules belong in `provider/aws`; rendering and
