@@ -115,6 +115,7 @@ pub(super) fn route<'a>(graph: &'a Graph, placed: &mut Placed<'a>) {
         Strategy::Nested => containers::route(graph, &mut placed.layout, true),
     }
     refine(graph, placed);
+    super::routing_shared::refinement::refine(graph, &mut placed.layout);
 }
 
 fn refine<'a>(graph: &'a Graph, placed: &mut Placed<'a>) {
