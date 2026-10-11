@@ -39,6 +39,19 @@ when no improving legal position exists, the original position remains. Cards ar
 processed by owner and resource identity, and any height refinement repeats placement
 before rerouting. Ownership never creates containment or moves the owning subtree.
 
+The same bounded search gives ordinary noncontainer leaf cards a weaker preference
+toward their one distinct visible spatial neighbor. Dependency, Connection and
+Association edges count; parallel edges to one peer count once, while containment,
+self-loops, logical cards and relationships removed by projection do not count.
+Zero-neighbor and multi-neighbor cards keep their packed positions. A two-card
+component anchors the lower stable identity; longer chains move only degree-one
+ends. Multiple leaves move in peer/resource identity order without moving their hub.
+Explicit owner cards and connection-affinity members remain protected.
+Cross-container leaves stay within their existing parent and can move toward its
+peer-facing boundary. Flat module bands retain rank columns and bundle routing,
+adjusting only vertical positions. No legal improvement means no movement; this
+pass adds no whitespace or containment and does not promise global optimality.
+
 With containers, direct children occupy columns based on non-containment
 relationships; descendant relationships influence sibling ranks. Cycles share a
 column. Dense ranks wrap into adjacent columns, and containers grow around their

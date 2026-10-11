@@ -99,6 +99,12 @@ stays 737 pixels. Docker test-profile layout runs measured 6.28 versus 6.68 seco
 on the same machine (one sample, not a timing assertion). The Listener remains
 outside the VPC because ownership is a placement preference, not containment.
 
+The subsequent single-neighbor preference keeps that owner distance and layout
+area, while reducing total route length from 39,914 to 34,189 pixels, bends from
+87 to 79 and crossings from 99 to 62. Overlap remains 737 pixels. The controlled
+two-leaf regression also records card gaps (1,484/1,284 → 40/176 pixels), path
+length (5,675 → 1,457), bends (10 → 8), and unchanged area (3,135,600 pixels).
+
 ## Terraform validation
 
 The source was validated with Terraform 1.9.8 and AWS provider 5.100.0; the lock
