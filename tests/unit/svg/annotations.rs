@@ -42,6 +42,37 @@ fn empty_single_and_wrapped_cards_have_deterministic_bounds() {
 }
 
 #[test]
+fn card_rows_use_the_tallest_content_and_wrap_only_when_width_requires_it() {
+    let make_cards = || {
+        [120, 400, 80]
+            .into_iter()
+            .map(|height| Card {
+                width: 360,
+                height,
+                content: String::new(),
+            })
+            .collect()
+    };
+    let wide = Area::new(make_cards(), 1200);
+    assert_eq!(
+        wide.cards.iter().map(|(_, b)| b.origin).collect::<Vec<_>>(),
+        vec![
+            Point { x: 40, y: 160 },
+            Point { x: 420, y: 160 },
+            Point { x: 800, y: 160 },
+        ]
+    );
+    assert_eq!(wide.height, 424);
+    let narrow = Area::new(make_cards(), 820);
+    assert_eq!(narrow.cards[1].1.origin, Point { x: 420, y: 160 });
+    assert_eq!(narrow.cards[2].1.origin, Point { x: 40, y: 580 });
+    assert_eq!(narrow.height, 524);
+    let one_per_row = Area::new(make_cards(), 819);
+    assert_eq!(one_per_row.cards[1].1.origin, Point { x: 40, y: 300 });
+    assert_eq!(one_per_row.cards[2].1.origin, Point { x: 40, y: 720 });
+}
+
+#[test]
 fn annotations_precede_architecture_without_mutating_routing() {
     for fixture in [
         include_str!("../../fixtures/association-plan.json"),
