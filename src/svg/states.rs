@@ -109,12 +109,12 @@ pub fn render_states(
         let graph = &graph;
         let layout = Layout::new(graph);
         let index = super::relationship_index::Index::new(graph, &layout);
-        let (state_width, height) = super::dimensions_with_index(graph, &layout, &index);
+        let (state_width, height) = super::dimensions_with_index(graph, &layout, &index, format);
         width = width.max(state_width);
         let prefix = prefix(id);
         let check_offset = if graph.checks.is_empty() { 0 } else { 24 }
             + super::legend::height(graph)
-            + super::annotation_area(graph, &index).height;
+            + super::annotation_area(graph, &index, format).height;
         obstacles.insert(
             id.clone(),
             StateObstacles {
@@ -326,8 +326,9 @@ fn cross_state_paths_avoid_intervening_cards_and_describe_dependencies() {
     assert!(local.bounds[0].right() < local.bounds[1].right());
     let (_, height) = super::dimensions(&graph, &local);
     let index = super::relationship_index::Index::new(&graph, &local);
-    let offset =
-        100 + super::legend::height(&graph) + super::annotation_area(&graph, &index).height;
+    let offset = 100
+        + super::legend::height(&graph)
+        + super::annotation_area(&graph, &index, super::AddressFormat::Qualified).height;
     let obstacles: Vec<_> = [offset, offset + height + 60]
         .into_iter()
         .flat_map(|offset| {

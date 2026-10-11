@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="2164" viewBox="0 0 1100 2164" role="img" aria-labelledby="title description">
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="2184" viewBox="0 0 1100 2184" role="img" aria-labelledby="title description">
 <title id="title">Terraform plan</title>
 <desc id="description">12 resources (11 spatial cards, 1 logical cards) · 5 relationships Thin solid: dependency. Dashed: association. Thick dotted: connection. Nested boxes: containment. Edge color preserves the Terraform action when available.</desc>
 <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/></marker><metadata id="planorama-icons-license">AWS Architecture Icons, release 07312026.
@@ -65,15 +65,16 @@ No AWS endorsement is implied. Consult the AWS terms for other uses.
 </g>
 <g transform="translate(0 72)">
 <g data-annotation-area="true">
-<g data-annotation-card="true" transform="translate(40 160)"><rect width="360" height="108" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g id="resource-6177735f69616d5f726f6c652e617070-current" data-architecture-id="terraform:6177735f69616d5f726f6c652e617070-current" data-entity-kind="terraform" data-placement="logical" data-terraform-address="aws_iam_role.app" data-qualified-address="module.root.aws_iam_role.app"><title>aws_iam_role.app — other</title><rect width="360" height="108" rx="12" fill="#fefce8" stroke="#854d0e" data-mode="managed"/>
+<g data-annotation-card="true" transform="translate(40 160)"><rect width="360" height="128" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g id="resource-6177735f69616d5f726f6c652e617070-current" data-architecture-id="terraform:6177735f69616d5f726f6c652e617070-current" data-entity-kind="terraform" data-placement="logical" data-terraform-address="aws_iam_role.app" data-qualified-address="module.root.aws_iam_role.app" data-role="policy"><title>module.root.aws_iam_role.app — other</title><rect width="360" height="128" rx="12" fill="#fefce8" stroke="#854d0e" data-mode="managed"/>
 <use href="#planorama-icon-aws-iam" x="320" y="8" width="24" height="24" aria-hidden="true"/><text x="16" y="28" font-size="12" fill="#5b21b6" font-weight="700">Logical resource</text>
-<text x="16" y="48" font-size="12" fill="#334155">aws_iam_role.app</text>
+<text x="16" y="48" font-size="12" fill="#334155">module.root.aws_iam_role.app</text>
 <text x="16" y="68" font-size="12" fill="#334155">aws_iam_role · managed</text>
 <text x="16" y="88" font-size="12" fill="#334155">other</text>
+<text x="16" y="108" font-size="12" fill="#334155">policy</text>
 </g>
 </g>
 </g>
-<g data-architecture="true" transform="translate(0 132)">
+<g data-architecture="true" transform="translate(0 152)">
 <g data-deployment-scope="true" data-scope-provider="AWS" data-global="true"><rect x="40" y="160" width="360" height="292" rx="14" fill="#f8fafc" stroke="#94a3b8" stroke-dasharray="9 5"/><text x="56" y="185" font-size="15" font-weight="700" fill="#334155">AWS Global</text></g>
 <g data-deployment-scope="true" data-scope-provider="AWS" data-region="ap-northeast-1"><rect x="40" y="492" width="960" height="508" rx="14" fill="#f8fafc" stroke="#94a3b8" stroke-dasharray="9 5"/><text x="56" y="517" font-size="15" font-weight="700" fill="#334155">AWS ap-northeast-1</text></g>
 <g data-deployment-scope="true" data-scope-provider="AWS" data-region="us-east-1"><rect x="40" y="1040" width="520" height="508" rx="14" fill="#f8fafc" stroke="#94a3b8" stroke-dasharray="9 5"/><text x="56" y="1065" font-size="15" font-weight="700" fill="#334155">AWS us-east-1</text></g>
