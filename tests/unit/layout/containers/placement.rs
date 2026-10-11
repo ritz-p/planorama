@@ -1,6 +1,70 @@
 use super::*;
 
 #[test]
+fn dense_hub_packing_reduces_final_routing_cost() {
+    let mut graph = ranked_fixture();
+    let template = graph.nodes[1].clone();
+    graph.nodes.truncate(1);
+    for node in 1..=27 {
+        let mut item = template.clone();
+        item.address = format!("test.node{node:02}");
+        item.entity =
+            crate::model::ArchitectureEntity::terraform(crate::model::TerraformEntityId {
+                address: item.address.clone(),
+                deposed_key: None,
+            });
+        graph.nodes.push(item);
+    }
+    graph.edges = (1..=27)
+        .map(|node| Edge {
+            kind: EdgeKind::Containment,
+            ..Edge::from((0, node))
+        })
+        .collect();
+    graph
+        .edges
+        .extend((2..=27).flat_map(|node| [Edge::from((1, node)), Edge::from((node, 1))]));
+    let tree = crate::layout::ContainmentTree::new(&graph);
+    let heights: Vec<_> = (0..28).map(|node| 100 + node % 5 * 30).collect();
+    let mut improved = place_with_heights(&graph, tree.clone(), true, heights.clone());
+    let mut baseline = place_with_heights(&graph, tree.clone(), true, heights);
+    let columns = placement::columns(&graph, Some(0), &tree.children[0], &tree.parents);
+    let sizes: Vec<_> = baseline
+        .bounds
+        .iter()
+        .map(|b| (b.width, b.height))
+        .collect();
+    let mut offsets = vec![Point { x: 0, y: 0 }; graph.nodes.len()];
+    let (width, height) = placement::pack(&columns, &[], &sizes, &mut offsets, PADDING);
+    let relationships = placement::relationships(&graph, &tree.children[0], &tree.parents);
+    placement::refine(
+        &tree.children[0],
+        &relationships,
+        &sizes,
+        &mut offsets,
+        height,
+        PADDING,
+    );
+    baseline.bounds[0].width = width + PADDING * 2;
+    baseline.bounds[0].height = height + baseline.header_heights[0] + PADDING * 2;
+    for &node in &tree.children[0] {
+        baseline.positions[node] = Point {
+            x: baseline.positions[0].x + PADDING + offsets[node].x,
+            y: baseline.positions[0].y + baseline.header_heights[0] + PADDING + offsets[node].y,
+        };
+        baseline.bounds[node].origin = baseline.positions[node];
+    }
+    route(&graph, &mut baseline, false);
+    route(&graph, &mut improved, false);
+    let old = crate::layout::metrics::measure(&baseline.paths);
+    let new = crate::layout::metrics::measure(&improved.paths);
+    eprintln!("compact {old:?}; relationship {new:?}");
+    assert!(new.total_path_length < old.total_path_length);
+    assert!(new.crossing_count < old.crossing_count);
+    verify_layout(&graph, &improved);
+}
+
+#[test]
 fn nested_routing_improves_over_lexical_packing() {
     let mut graph = ranked_fixture();
     graph
@@ -18,7 +82,7 @@ fn nested_routing_improves_over_lexical_packing() {
         .map(|b| (b.width, b.height))
         .collect();
     let mut offsets = vec![Point { x: 0, y: 0 }; graph.nodes.len()];
-    placement::pack(&columns, &sizes, &mut offsets, PADDING);
+    placement::pack(&columns, &[], &sizes, &mut offsets, PADDING);
     for &node in &tree.children[0] {
         baseline.positions[node] = Point {
             x: baseline.positions[0].x + PADDING + offsets[node].x,

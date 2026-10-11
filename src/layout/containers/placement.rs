@@ -3,6 +3,8 @@ use crate::layout::rank;
 use crate::model::architecture::{EdgeKind, Graph};
 use std::collections::{BTreeMap, BTreeSet};
 
+mod cost;
+
 pub(in crate::layout) fn relationships(
     graph: &Graph,
     children: &[usize],
@@ -174,6 +176,7 @@ pub(in crate::layout) fn columns(
 
 pub(in crate::layout) fn pack(
     columns: &[Vec<usize>],
+    relationships: &[(usize, usize)],
     sizes: &[(usize, usize)],
     offsets: &mut [Point],
     padding: usize,
@@ -188,7 +191,7 @@ pub(in crate::layout) fn pack(
         .map(|count| (total / count).max(minimum))
         .chain([minimum])
         .collect();
-    let mut best = None;
+    let mut candidates = Vec::new();
     for limit in heights {
         let (mut x, mut height) = (0, 0);
         let mut positions = Vec::with_capacity(nodes.len());
@@ -214,11 +217,20 @@ pub(in crate::layout) fn pack(
             width as u128 * height as u128,
             width,
         );
-        if best.as_ref().is_none_or(|(old, _, _)| score < *old) {
-            best = Some((score, (width, height), positions));
-        }
+        candidates.push((score, (width, height), positions));
     }
-    let (_, size, positions) = best.unwrap();
+    let compact = candidates.iter().map(|(score, _, _)| *score).min().unwrap();
+    let mut trial = offsets.to_vec();
+    let (_, size, positions) = candidates
+        .into_iter()
+        .filter(|(score, _, _)| score.0 * 10 <= compact.0 * 11 && score.1 * 4 <= compact.1 * 5)
+        .min_by_key(|(score, _, positions)| {
+            for &(node, point) in positions {
+                trial[node] = point;
+            }
+            (cost::estimate(relationships, sizes, &trial), *score)
+        })
+        .unwrap();
     for (node, position) in positions {
         offsets[node] = position;
     }

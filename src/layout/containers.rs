@@ -63,12 +63,22 @@ pub(super) fn place_with_heights(
         if graph.nodes[node].role == ResourceRole::Container {
             let mut columns = placement::columns(graph, Some(node), &children[node], parents);
             affinity::cohere(&mut columns, affinities);
-            let (width, height) = placement::pack(&columns, &sizes, &mut offsets, padding);
             let relationships = placement::relationships(graph, &children[node], parents);
-            if !special
+            let preserve_affinity = special
                 .iter()
-                .any(|group| children[node].contains(&group.target))
-            {
+                .any(|group| children[node].contains(&group.target));
+            let (width, height) = placement::pack(
+                &columns,
+                if preserve_affinity {
+                    &[]
+                } else {
+                    &relationships
+                },
+                &sizes,
+                &mut offsets,
+                padding,
+            );
+            if !preserve_affinity {
                 placement::refine(
                     &children[node],
                     &relationships,
