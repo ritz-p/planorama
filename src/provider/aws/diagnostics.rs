@@ -6,6 +6,21 @@ pub fn collect(plan: &crate::model::TerraformPlan) -> Vec<Diagnostic> {
     let input = Input::new(plan);
     let raw = &input;
     let mut found = BTreeSet::new();
+    for (index, node) in raw.nodes.iter().enumerate() {
+        if node.provider.is_aws()
+            && node.resource_type == "aws_cloudwatch_metric_alarm"
+            && !raw
+                .attributes
+                .iter()
+                .any(|r| r.target == index && r.monitoring_verified)
+        {
+            found.insert(Diagnostic {
+                address: node.address.clone(),
+                attribute: "dimensions".into(),
+                reason: Reason::UnverifiedMonitoring,
+            });
+        }
+    }
     for output in &raw.outputs {
         for &reason in &output.issues {
             found.insert(Diagnostic {

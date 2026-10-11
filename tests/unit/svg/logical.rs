@@ -151,7 +151,9 @@ fn logical_classification_is_explicit_and_provider_aware() {
         ("aws_lb", Placement::Spatial),
         ("aws_ecs_service", Placement::Spatial),
         ("aws_future_resource", Placement::Unresolved),
-        ("aws_cloudwatch_log_group", Placement::Spatial),
+        ("aws_cloudwatch_log_group", Placement::Logical),
+        ("aws_cloudwatch_metric_alarm", Placement::Logical),
+        ("aws_cloudwatch_dashboard", Placement::Unresolved),
         ("aws_lb_listener_rule", Placement::Spatial),
     ] {
         assert_eq!(

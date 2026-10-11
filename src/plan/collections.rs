@@ -132,6 +132,50 @@ pub(super) fn annotate(
         })
         .collect();
     for reference in references {
+        let alarm = &nodes[reference.target];
+        if alarm.provider.is_aws()
+            && alarm.resource_type == "aws_cloudwatch_metric_alarm"
+            && matches!(
+                reference.attribute.as_str(),
+                "dimensions" | "dimensions.DBInstanceIdentifier"
+            )
+            && reference.complete
+            && reference.instances_explicit
+            && !reference
+                .issues
+                .contains(&crate::model::DiagnosticReason::DynamicInstanceSelection)
+        {
+            if let [source] = reference.sources.as_slice() {
+                let resource = &nodes[*source];
+                let (value, unknown) = evidence[reference.target];
+                let (target, target_unknown) = evidence[*source];
+                let namespace = known_strings(value, unknown, &["namespace"]);
+                let dimension =
+                    known_strings(value, unknown, &["dimensions", "DBInstanceIdentifier"]);
+                let identifier = known_strings(target, target_unknown, &["identifier"]);
+                reference.monitoring_verified = resource.provider.is_aws()
+                    && resource.resource_type == "aws_db_instance"
+                    && resource.provider_configuration == alarm.provider_configuration
+                    && resource.deposed_key.is_none()
+                    && namespace == Some(vec!["AWS/RDS"])
+                    && value["dimensions"]
+                        .as_object()
+                        .is_some_and(|d| d.len() == 1)
+                    && dimension.is_some()
+                    && dimension == identifier
+                    && unknown["dimensions"]
+                        .as_object()
+                        .is_none_or(|d| d.values().all(|v| v == &Value::Bool(false)))
+                    && known_strings(value, unknown, &["metric_name"]).is_some()
+                    && matches!(
+                        unknown.get("metric_query"),
+                        None | Some(Value::Null) | Some(Value::Bool(false))
+                    )
+                    && value
+                        .get("metric_query")
+                        .is_none_or(|q| q.is_null() || q.as_array().is_some_and(Vec::is_empty));
+            }
+        }
         if reference.complete && reference.instances_explicit && !reference.sources.is_empty() {
             let expected = reference
                 .sources

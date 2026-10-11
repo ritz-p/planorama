@@ -36,13 +36,32 @@ from managed/data mode; Security Groups remain Policy cards and target groups
 remain Controller cards even when placed inside a VPC.
 
 Placement is independent of role. ECS Cluster, ECS Task Definition, IAM Role,
-Policy, Role Policy, Instance Profile and AMI definitions are explicit logical
+Policy, Role Policy, Instance Profile, AMI, CloudWatch Log Group and Metric Alarm definitions are explicit logical
 resources, rendered as Terraform cards in the top annotation area. AMI describes
 an image definition used by workloads, not a deployed compute instance. These
 provider-aware rules apply to managed and data resources; custom providers do
 not inherit them. Unknown types retain unresolved placement and stay visible in
 the spatial diagram. Missing VPC/subnet references never imply logical placement.
 S3, DynamoDB, CloudFront, ECS Service and load balancers remain spatial.
+
+Only `aws_cloudwatch_log_group` and `aws_cloudwatch_metric_alarm` receive this
+CloudWatch policy; unsupported CloudWatch types retain unresolved spatial cards.
+Logical placement does not suppress architectural significance: full Terraform
+cards retain actions, identities, operation metadata, scope and focus/filter
+participation. A focused observability view can emphasize them; no spatial-view
+override is currently implemented.
+
+Configured Log Group references remain linked on their consumers. A tag reference
+is labeled References and does not claim configured logging. Alarm monitoring is
+separate from a dependency: the initial supported proof requires AWS/RDS, a known
+metric name, exactly one DBInstanceIdentifier dimension, complete explicit
+provenance to one current AWS DB Instance, matching provider configuration and a
+known planned identifier equal to the dimension. Metric queries, unknown values,
+ambiguous references and other dimension/namespace combinations stay unresolved
+with an UnverifiedMonitoring diagnostic. Values are discarded after comparison.
+Verified alarms show Monitors; the target shows Monitored by. These inverse
+reference rows create no graph edges. Generic depends_on never proves monitoring,
+and no monitoring relationship is inferred across states.
 
 Infrastructure data sources retain their roles and use an external badge and
 dashed border. AWS metadata data sources `aws_region`, `aws_partition`,

@@ -48,6 +48,7 @@ pub(super) fn collect(
                     collection_ids_complete: false,
                     scalar_id_matches: false,
                     arn_values_match: false,
+                    monitoring_verified: false,
                     ids_only: resolution.ids_only,
                     issues: resolution.issues,
                 });

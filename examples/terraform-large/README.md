@@ -40,8 +40,8 @@ committed counterparts.
 
 ## Expected display
 
-The fixture has 48 resource instances. The renderer produces 30 spatial cards, 2 embedded Route cards,
-6 logical-resource cards within one cyan Logical Resources section and 74
+The fixture has 48 resource instances. The renderer produces 28 spatial cards, 2 embedded Route cards,
+8 logical-resource cards within one cyan Logical Resources section and 74
 relationships: four route-table associations and four target-group attachments
 become edges, and two AWS metadata data sources are omitted.
 
@@ -50,18 +50,28 @@ target group, ALB, ECS Service, DB subnet group and RDS workload. EC2 workers si
 inside their referenced subnets. ALB/ECS keep individual subnet connections; the
 DB subnet group and RDS retain their dependency chain and inferred-placement notes.
 Shared VPC and Security Group data sources remain external spatial cards. ECS
-Cluster/Task Definition, IAM definitions and the external AMI are logical cards.
+Cluster/Task Definition, IAM definitions, the external AMI, CloudWatch Log Group
+and Metric Alarm are logical cards.
 A purple Logical Components section contains the load balancer, its Listener and
 its uniquely referenced Target Group as action-colored member links. The Target
 Group link points to the original spatial card. Relationship Resources follow in a separate neutral
 section. Empty sections are omitted in smaller examples.
-The 74 relationships remain queryable; 39 paths are spatially routed.
+The 74 relationships remain queryable; 37 paths are spatially routed.
 Internet and NAT Routes appear inside the public and private Route Tables with
 destination constants and directed lines from their own ports to the Internet
 Gateway and NAT Gateway. Matching numbers appear on the children, near the targets
 and in the Relationship Resources index; routable children omit the `Target:` row. Canvas dimensions follow the current
 routing geometry.
 ECS Service lists its Cluster and Task definition; each EC2 worker links its AMI and Instance profile. Connections retain their endpoints and undirected dotted presentation.
+
+The ECS Log Group reference comes from `tags.logs`, not a logging configuration,
+so it is labeled References. The alarm's dimensions reference the database, but
+this fixture does not supply matching planned dimension/identifier values. It
+therefore shows Monitors: unresolved, emits UnverifiedMonitoring with
+`--diagnostics`, and does not claim Monitored by on RDS.
+Moving these two CloudWatch cards reduced routed paths from 39 to 37 (5.1%).
+The spatial card envelope remains 3416 × 2062 (7,043,792 square pixels), and the
+canvas remains 3556 × 3392: other resources determine the outer bounds.
 
 SG cards remain Policies, but their attachments stay dependencies because this
 synthetic fixture has no SG collection ID evidence. The dedicated
