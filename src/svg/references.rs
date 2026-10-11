@@ -20,6 +20,10 @@ fn description(row: &Row<'_>) -> String {
         reference.attribute,
         if reference.dependency {
             "graph dependency"
+        } else if reference.label == "Monitored by" {
+            "verified inverse monitoring reference"
+        } else if reference.label == "Monitors" && row.target.is_some() {
+            "verified monitoring reference"
         } else if row.target.is_none() {
             "unresolved attribute reference"
         } else if row.target.is_some_and(|t| t.state.is_some()) {

@@ -28,6 +28,8 @@ through alias resolution. Target-group component ownership requires this proof;
 it does not narrow existing dependency edges or change other semantic rules.
 Target-group ownership also consumes a value-free ARN equality proof for every
 hop, calculated from known planned strings and complete nested action values.
+Alarm monitoring retains a boolean dimension/identifier equality proof; namespace,
+metric and dimension values are checked transiently and never stored or rendered.
 
 `semantic::transform` consumes this domain model. Its private `Input` projection
 classifies provider/resource roles at the boundary, then applies containment,
@@ -39,7 +41,7 @@ Terraform models under explicit `StateId`s.
 
 `Node.placement` classifies spatial, logical and unresolved presentation separately
 from role. Logical nodes retain their native identity, action and provenance.
-`Node.references` retains direct attribute and graph-level reference evidence,
+`Node.references` retains direct attribute, verified inverse monitoring and graph-level reference evidence,
 resolved source identities, completeness and diagnostics; it never expands a
 resource dependency transitively. Module/input/output resolution follows the
 parser's existing evidence. Graph-level references such as `depends_on` are

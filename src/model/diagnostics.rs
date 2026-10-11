@@ -3,6 +3,7 @@ use std::collections::BTreeSet;
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub enum DiagnosticReason {
     UnresolvedReference,
+    UnverifiedMonitoring,
     MultipleMatchingInstances,
     DynamicInstanceSelection,
     AliasCycle,
@@ -25,6 +26,9 @@ pub enum DiagnosticReason {
 impl DiagnosticReason {
     pub fn description(self) -> &'static str {
         match self {
+            Self::UnverifiedMonitoring => {
+                "alarm monitoring target is not verified by supported dimensions and planned values"
+            }
             Self::UnresolvedRouteInformation => {
                 "route information is unavailable or not safe to display"
             }

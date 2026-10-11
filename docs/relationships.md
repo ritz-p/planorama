@@ -11,6 +11,10 @@ Filtered targets show Unavailable without a dangling link. Up to four rows are
 visible; an overflow count and accessible title retain the complete list and
 full addresses. Card heights reserve space above the footer and placement note.
 
+CloudWatch alarms use Monitors and inverse Monitored by rows only with the
+[verified monitoring evidence](aws.md) required by the AWS projection. These
+rows never create network connections or additional dependency edges.
+
 Dependency lines are thin and solid. Ordinary associations are undirected and
 dashed (7/4), with no arrowheads. Route next hops use directed Associations from
 [child-card ports](routes.md).
