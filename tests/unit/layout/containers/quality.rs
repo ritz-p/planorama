@@ -12,6 +12,7 @@ fn large_fixture_limits_each_edges_bends_and_valid_route_stretch() {
     let mut graph = semantic::transform(&raw).0;
     let snapshot = |graph: &Graph| {
         let layout = Layout::new(graph);
+        assert_no_retraced_stubs(graph, &layout);
         let mut failures = Vec::new();
         let mut result = BTreeMap::new();
         for (index, edge) in graph.edges.iter().enumerate() {
@@ -61,12 +62,13 @@ fn large_fixture_limits_each_edges_bends_and_valid_route_stretch() {
 
 #[test]
 fn container_port_stubs_are_not_immediately_retraced() {
-    let raw = plan::parse(include_str!(
-        "../../../../examples/terraform-large/plan.json"
-    ))
-    .unwrap();
+    let raw = plan::parse(include_str!("../../../fixtures/spanning-dense-plan.json")).unwrap();
     let graph = semantic::transform(&raw).0;
     let layout = Layout::new(&graph);
+    assert_no_retraced_stubs(&graph, &layout);
+}
+
+fn assert_no_retraced_stubs(graph: &Graph, layout: &Layout<'_>) {
     for (edge, path) in graph.edges.iter().zip(&layout.paths) {
         for points in path.windows(3) {
             let [a, b, c] = [points[0], points[1], points[2]];

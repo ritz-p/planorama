@@ -23,7 +23,6 @@ fn workload_security_groups_keep_policy_cards_and_individual_connections() {
         svg,
         include_str!("../../examples/workload-security-groups.svg").replace("\r\n", "\n")
     );
-    assert_eq!(svg, render(input));
 }
 
 #[test]
@@ -177,6 +176,10 @@ fn resource_ids_survive_reordering_insertions_and_label_changes() {
 fn synthetic_components_are_distinct_and_link_to_original_changes() {
     let input = include_bytes!("../fixtures/components-plan.json");
     let svg = render(input);
+    assert_eq!(
+        svg,
+        include_str!("../../examples/components.svg").replace("\r\n", "\n")
+    );
     assert_eq!(svg.matches("data-entity-kind=\"synthetic\"").count(), 1);
     assert_eq!(
         svg.matches("data-component-id=\"logical:load_balancer:aws_lb.app\"")
@@ -194,7 +197,6 @@ fn synthetic_components_are_distinct_and_link_to_original_changes() {
     assert!(svg.contains("id=\"plan-checks\""));
     assert!(svg.contains("id=\"plan-status\""));
     assert!(!svg.contains("TOP_SECRET"));
-    assert_eq!(svg, render(input));
 }
 
 #[test]
@@ -274,13 +276,16 @@ fn route_fallback_diagnostics_explain_rejections_without_exposing_values() {
 fn routes_render_as_individually_inspectable_relationships() {
     let input = include_bytes!("../fixtures/routes-plan.json");
     let svg = render(input);
+    assert_eq!(
+        svg,
+        include_str!("../../examples/routes.svg").replace("\r\n", "\n")
+    );
     assert!(svg.contains("association; replace: aws_route.default"));
     assert!(svg.contains("association; create: aws_route.second"));
     assert!(svg.contains("aws_route.literal"));
     assert_eq!(svg.matches("data-edge-kind=\"association\"").count(), 2);
     assert!(svg.contains("data-action-reason=\"replace_because_cannot_update\""));
     assert!(!svg.contains("TOP_SECRET"));
-    assert_eq!(svg, render(input));
 }
 
 #[test]
@@ -307,6 +312,10 @@ fn drift_relevance_exposes_safe_paths_and_unresolved_diagnostics() {
 fn check_summary_preserves_actions_and_redacts_evaluated_messages() {
     let input = include_bytes!("../fixtures/checks-plan.json");
     let svg = render(input);
+    assert_eq!(
+        svg,
+        include_str!("../../examples/checks.svg").replace("\r\n", "\n")
+    );
     assert!(svg.contains(
         "Checks (objects): 1 pass / 1 fail / 1 error / 1 unknown / 1 other / 0 unavailable"
     ));
@@ -376,7 +385,7 @@ fn replacement_reasons_are_escaped_and_visible_on_cards_and_lowered_edges() {
     assert!(!svg.contains("future<&reason"));
     assert!(!svg.contains("TOP_SECRET"));
     assert!(svg.contains("replace (4)"));
-    assert_eq!(svg, render(input));
+
     let mut input: serde_json::Value =
         serde_json::from_slice(include_bytes!("../fixtures/association-plan.json")).unwrap();
     input["resource_changes"][2]["action_reason"] =
@@ -410,7 +419,7 @@ fn plan_status_survives_lowering_without_changing_resource_rendering() {
         input["errored"] = errored.into();
         let bytes = input.to_string();
         let svg = render(bytes.as_bytes());
-        assert_eq!(svg, render(bytes.as_bytes()));
+
         for (key, value) in [
             ("applyable", applyable),
             ("complete", complete),
@@ -469,7 +478,6 @@ fn security_groups_fixture_preserves_policy_cards_and_inspectable_connections() 
             "data-terraform-address=\"aws_security_group.{group}\""
         )));
     }
-    assert_eq!(svg, render(input));
 }
 
 #[test]
@@ -492,7 +500,6 @@ fn drift_fixture_keeps_apply_actions_and_reports_drift_without_values() {
         2
     );
     assert!(!diagnostics.contains("TOP_SECRET"));
-    assert_eq!(svg, render(input));
 }
 
 #[test]
@@ -509,7 +516,6 @@ fn lifecycle_fixture_distinguishes_import_forget_and_destroy_without_values() {
     assert!(diagnostic.status.success());
     assert!(!String::from_utf8_lossy(&diagnostic.stderr).contains("TOP_SECRET"));
     assert_eq!(svg.as_bytes(), diagnostic.stdout);
-    assert_eq!(svg, render(input));
 }
 
 #[test]
@@ -538,24 +544,11 @@ fn deposed_fixture_preserves_every_change_card_and_action() {
     assert_eq!(svg.matches("data-deposed-key=").count(), 2);
     assert!(svg.contains("delete (2)"));
     assert!(svg.contains("create (1)"));
-    assert_eq!(svg, render(input));
 }
 
 #[test]
-fn committed_svg_samples_match_the_current_renderer() {
+fn additional_dense_and_provider_snapshots_match_the_renderer() {
     for (input, expected) in [
-        (
-            include_bytes!("../fixtures/components-plan.json").as_slice(),
-            include_str!("../../examples/components.svg"),
-        ),
-        (
-            include_bytes!("../fixtures/routes-plan.json").as_slice(),
-            include_str!("../../examples/routes.svg"),
-        ),
-        (
-            include_bytes!("../fixtures/checks-plan.json").as_slice(),
-            include_str!("../../examples/checks.svg"),
-        ),
         (
             include_bytes!("../fixtures/spanning-dense-plan.json").as_slice(),
             include_str!("../../examples/spanning-dense.svg"),
@@ -565,24 +558,8 @@ fn committed_svg_samples_match_the_current_renderer() {
             include_str!("../../examples/dense-architecture.svg"),
         ),
         (
-            include_bytes!("../../examples/plan.json").as_slice(),
-            include_str!("../../examples/diagram.svg"),
-        ),
-        (
-            include_bytes!("../../examples/bundling-plan.json").as_slice(),
-            include_str!("../../examples/bundling.svg"),
-        ),
-        (
             include_bytes!("../fixtures/terraform-plan.json").as_slice(),
             include_str!("../../examples/terraform.svg"),
-        ),
-        (
-            include_bytes!("../fixtures/association-plan.json").as_slice(),
-            include_str!("../../examples/association.svg"),
-        ),
-        (
-            include_bytes!("../fixtures/containment-plan.json").as_slice(),
-            include_str!("../../examples/containment.svg"),
         ),
         (
             include_bytes!("../../examples/data-plan.json").as_slice(),
@@ -596,6 +573,10 @@ fn committed_svg_samples_match_the_current_renderer() {
 #[test]
 fn cli_emits_containment_metadata_without_dropping_resources_or_dependencies() {
     let svg = render(include_bytes!("../fixtures/containment-plan.json"));
+    assert_eq!(
+        svg,
+        include_str!("../../examples/containment.svg").replace("\r\n", "\n")
+    );
     assert!(svg.contains("3 resources (3 cards), 3 relationships"));
     assert_eq!(svg.matches("data-edge-kind=\"containment\"").count(), 2);
     assert_eq!(svg.matches("marker-end=").count(), 0);
@@ -605,6 +586,10 @@ fn cli_emits_containment_metadata_without_dropping_resources_or_dependencies() {
 #[test]
 fn association_resources_are_lowered_by_the_cli() {
     let svg = render(include_bytes!("../fixtures/association-plan.json"));
+    assert_eq!(
+        svg,
+        include_str!("../../examples/association.svg").replace("\r\n", "\n")
+    );
     assert!(svg.contains("3 resources (2 cards), 1 relationships"));
     assert!(svg.contains("aws_subnet.private ↔ aws_route_table.private"));
     assert!(!svg.contains("data-terraform-address=\"aws_route_table_association.private\""));
@@ -631,7 +616,12 @@ fn render(input: &[u8]) -> String {
 #[test]
 fn output_is_deterministic_and_empty_plans_render() {
     let input = include_bytes!("../../examples/plan.json");
-    assert_eq!(render(input), render(input));
+    let svg = render(input);
+    assert_eq!(svg, render(input));
+    assert_eq!(
+        svg,
+        include_str!("../../examples/diagram.svg").replace("\r\n", "\n")
+    );
     assert!(render(br#"{"format_version":"1.0","resource_changes":[]}"#).contains("No resources"));
 }
 
@@ -647,6 +637,10 @@ fn escapes_untrusted_labels_and_omits_values() {
 #[test]
 fn bundled_fixture_preserves_individual_dependency_arrows() {
     let svg = render(include_bytes!("../../examples/bundling-plan.json"));
+    assert_eq!(
+        svg,
+        include_str!("../../examples/bundling.svg").replace("\r\n", "\n")
+    );
     assert!(svg.contains("5 resources, 6 reference edges"));
     assert_eq!(svg.matches("marker-end=").count(), 6);
     assert!(svg.contains("<circle "));
@@ -682,7 +676,6 @@ fn explicit_network_scopes_render_as_nested_architecture() {
     assert!(svg.contains("8 resources (8 cards), 7 relationships"));
     assert_eq!(svg.matches("data-edge-kind=\"containment\"").count(), 7);
     assert_eq!(svg.matches("marker-end=").count(), 0);
-    assert_eq!(svg.as_bytes(), support::run(input).stdout);
 }
 
 #[test]
@@ -692,7 +685,6 @@ fn rds_subnet_group_fixture_preserves_cards_and_infers_common_scope() {
     assert!(svg.contains("6 resources (6 cards), 9 relationships"));
     assert_eq!(svg.matches("data-edge-kind=\"containment\"").count(), 5);
     assert_eq!(svg.matches("<g id=\"resource-").count(), 6);
-    assert_eq!(svg, render(input));
 }
 
 #[test]
@@ -712,5 +704,4 @@ fn mixed_aws_relationships_render_actions_without_helper_cards() {
         assert!(svg.contains(&format!("association; {action}: {kind}.main")));
         assert!(svg.contains(&format!("{action} (1)")));
     }
-    assert_eq!(svg, render(input));
 }

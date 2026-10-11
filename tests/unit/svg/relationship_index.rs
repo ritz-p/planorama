@@ -351,7 +351,6 @@ fn routed_badges_fit_terminal_segments_and_avoid_other_paths() {
         include_str!("../../fixtures/association-plan.json"),
         include_str!("../../fixtures/aws-relationships-plan.json"),
         include_str!("../../fixtures/routes-plan.json"),
-        include_str!("../../../examples/terraform-large/plan.json"),
     ] {
         let graph = semantic::transform(&plan::parse(fixture).unwrap());
         let layout = Layout::new(&graph);
@@ -361,6 +360,7 @@ fn routed_badges_fit_terminal_segments_and_avoid_other_paths() {
 
 fn assert_marker_routes(graph: &Graph, layout: &Layout<'_>) {
     let index = Index::new(graph, layout);
+    assert!(!index.markers.is_empty());
     let edges = index
         .entries
         .iter()

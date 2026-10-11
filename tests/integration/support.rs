@@ -1,4 +1,4 @@
-use std::io::Write;
+use std::io::{ErrorKind, Write};
 use std::process::{Command, Output, Stdio};
 
 pub fn run(input: &[u8]) -> Output {
@@ -14,6 +14,9 @@ pub fn run_with_args(input: &[u8], args: &[&str]) -> Output {
         .stderr(Stdio::piped())
         .spawn()
         .unwrap();
-    child.stdin.take().unwrap().write_all(input).unwrap();
+    if let Err(error) = child.stdin.take().unwrap().write_all(input) {
+        // Invalid arguments can close stdin early; callers still check the exit status and output.
+        assert_eq!(error.kind(), ErrorKind::BrokenPipe, "{error}");
+    }
     child.wait_with_output().unwrap()
 }

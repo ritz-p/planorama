@@ -11,6 +11,10 @@ pub(crate) mod relationships;
 #[path = "../tests/unit/semantic.rs"]
 mod tests;
 
+#[cfg(test)]
+#[path = "../tests/unit/semantic/resolution.rs"]
+mod resolution_tests;
+
 pub(crate) fn transform(plan: &TerraformPlan) -> ArchitectureGraph {
     let raw = Input::new(plan);
     let mut graph = crate::provider::transform(raw);

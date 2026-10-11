@@ -77,13 +77,14 @@ fn changed_only_keeps_lowered_changes_and_focus_depth_is_effective() {
 
 #[test]
 fn invalid_focus_and_depth_fail_without_output() {
+    let mut input = include_bytes!("../fixtures/containment-plan.json").to_vec();
+    input.resize(input.len() + 256 * 1024, b' ');
     for args in [
         vec!["--focus", "missing.resource"],
         vec!["--focus-depth", "2"],
         vec!["--focus", "aws_vpc.main", "--focus-depth", "-1"],
     ] {
-        let output =
-            support::run_with_args(include_bytes!("../fixtures/containment-plan.json"), &args);
+        let output = support::run_with_args(&input, &args);
         assert!(!output.status.success());
         assert!(output.stdout.is_empty());
         assert!(String::from_utf8(output.stderr).unwrap().contains("focus"));
