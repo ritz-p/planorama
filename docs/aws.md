@@ -33,6 +33,15 @@ classified as nodes, connectors, associations, policies or controllers by
 from managed/data mode; Security Groups remain Policy cards and target groups
 remain Controller cards even when placed inside a VPC.
 
+Placement is independent of role. ECS Cluster, ECS Task Definition, IAM Role,
+Policy, Role Policy, Instance Profile and AMI definitions are explicit logical
+resources, rendered as Terraform cards in the top annotation area. AMI describes
+an image definition used by workloads, not a deployed compute instance. These
+provider-aware rules apply to managed and data resources; custom providers do
+not inherit them. Unknown types retain unresolved placement and stay visible in
+the spatial diagram. Missing VPC/subnet references never imply logical placement.
+S3, DynamoDB, CloudFront, ECS Service and load balancers remain spatial.
+
 Infrastructure data sources retain their roles and use an external badge and
 dashed border. AWS metadata data sources `aws_region`, `aws_partition`,
 `aws_caller_identity`, `aws_availability_zones`, and `aws_iam_policy_document`

@@ -28,6 +28,14 @@ the current card projection copies the safe metadata required for existing SVGs.
 Layout/rendering consume architecture graphs only. Named plans keep separate
 Terraform models under explicit `StateId`s.
 
+`Node.placement` classifies spatial, logical and unresolved presentation separately
+from role. Logical nodes retain their native identity, action and provenance.
+`Node.references` retains direct attribute and graph-level reference evidence,
+resolved source identities, completeness and diagnostics; it never expands a
+resource dependency transitively. Module/input/output resolution follows the
+parser's existing evidence. Graph-level references such as `depends_on` are
+distinct from configured attribute usage. No attribute values are retained.
+
 Provider source (`ProviderIdentity`, such as `registry.terraform.io/hashicorp/aws`)
 is separate from `provider_configuration`. The latter preserves Terraform's opaque
 `provider_config_key` and the alias explicitly supplied in configuration metadata.

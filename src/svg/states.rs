@@ -43,6 +43,20 @@ pub fn render_states(
     let mut endpoints = BTreeMap::new();
     let mut obstacles = BTreeMap::new();
     let mut sections = String::new();
+    let mut relationships: Vec<_> = architecture.relationships().iter().collect();
+    relationships.sort();
+    if !architecture.relationships().is_empty() {
+        let metadata: Vec<_> = relationships.iter().map(|edge| {
+            let crate::model::architecture::CrossStateProvenance::TerraformRemoteState { remote, output, output_action } = &edge.provenance;
+            serde_json::json!({"from_state":edge.from.state.as_str(), "from":edge.from.address, "to_state":edge.to.state.as_str(), "to":edge.to.address, "remote":remote, "output":output, "output_action":output_action.map(super::label)})
+        }).collect();
+        writeln!(
+            sections,
+            "<metadata id=\"cross-state-relationships\">{}</metadata>",
+            super::escape(&serde_json::Value::Array(metadata).to_string())
+        )
+        .unwrap();
+    }
     let mut top = 60;
     let mut width = 1120;
     for (id, graph) in graphs {
@@ -86,12 +100,9 @@ pub fn render_states(
                 parents: layout.containment.parents.clone(),
             },
         );
-        for (index, node) in graph
-            .nodes
-            .iter()
-            .enumerate()
-            .filter(|(_, n)| n.deposed_key.is_none())
-        {
+        for (index, node) in graph.nodes.iter().enumerate().filter(|(_, n)| {
+            n.deposed_key.is_none() && n.placement != crate::model::Placement::Logical
+        }) {
             let bounds = layout.bounds[index];
             endpoints.insert(
                 Endpoint {
@@ -117,8 +128,6 @@ pub fn render_states(
     }
     let mut links = String::new();
     let mut link_count = 0;
-    let mut relationships: Vec<_> = architecture.relationships().iter().collect();
-    relationships.sort();
     for edge in relationships {
         let crate::model::architecture::CrossStateProvenance::TerraformRemoteState {
             remote,

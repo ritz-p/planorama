@@ -23,6 +23,22 @@ pub(super) fn visible(mut graph: Graph) -> Graph {
             next += 1;
         }
     }
+    let omitted: std::collections::BTreeSet<_> = graph
+        .nodes
+        .iter()
+        .enumerate()
+        .filter(|(index, _)| indices[*index].is_none())
+        .flat_map(|(_, node)| node.entity.provenance.iter().cloned())
+        .collect();
+    for node in &mut graph.nodes {
+        for reference in &mut node.references {
+            reference
+                .targets
+                .retain(|target| !omitted.contains(&target.id));
+        }
+        node.references
+            .retain(|r| !r.targets.is_empty() || !r.complete);
+    }
     graph.nodes = graph
         .nodes
         .into_iter()

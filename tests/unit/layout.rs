@@ -9,6 +9,8 @@ fn graph(count: usize, edges: Vec<(usize, usize)>) -> Graph {
         status: Default::default(),
         nodes: (0..count)
             .map(|i| Node {
+                placement: Default::default(),
+                references: Vec::new(),
                 entity: crate::model::ArchitectureEntity::terraform(
                     crate::model::TerraformEntityId {
                         address: format!("test.n{i}"),

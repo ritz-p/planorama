@@ -7,6 +7,7 @@ mod entities;
 mod icons;
 mod identity;
 mod legend;
+mod logical;
 mod operations;
 mod paths;
 mod provenance;
@@ -74,7 +75,8 @@ fn dimensions_with_index(
 }
 
 fn annotation_area(graph: &Graph, index: &relationship_index::Index<'_>) -> annotations::Area {
-    let mut cards = index.cards();
+    let mut cards = logical::cards(graph);
+    cards.extend(index.cards());
     cards.extend(components::cards(graph));
     annotations::Area::new(cards, index.width)
 }
@@ -237,6 +239,9 @@ fn render_with_index(
         .unwrap();
     }
     for (i, node) in graph.nodes.iter().enumerate() {
+        if node.placement == crate::model::Placement::Logical {
+            continue;
+        }
         let resource_id = identity::resource(node);
         let architecture_id = escape(node.entity.id.as_str());
         let bounds = layout.bounds[i];

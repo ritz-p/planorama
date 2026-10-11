@@ -1,5 +1,16 @@
 pub(crate) mod aws;
 
+pub(crate) fn placement(
+    provider: &crate::model::ProviderIdentity,
+    resource_type: &str,
+) -> crate::model::Placement {
+    if provider.is_aws() {
+        aws::placement(resource_type)
+    } else {
+        crate::model::Placement::Unresolved
+    }
+}
+
 pub(crate) fn scope(
     entity: &crate::model::TerraformEntity,
 ) -> Option<crate::model::architecture::DeploymentScope> {
