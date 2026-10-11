@@ -1,7 +1,7 @@
 use super::{Bounds, Layout, NODE_HEIGHT, NODE_WIDTH, Point};
 use crate::model::architecture::{Graph, ResourceRole};
 
-mod affinity;
+pub(super) mod affinity;
 pub(super) mod ordering;
 pub(super) mod placement;
 pub(super) mod routing;
@@ -43,11 +43,8 @@ pub(super) fn place_with_heights(
 ) -> Layout<'_> {
     let parents = &tree.parents;
     let padding = super::relationship_markers::padding(graph);
-    let affinities = if enabled {
-        affinity::groups(graph, parents)
-    } else {
-        Vec::new()
-    };
+    let special = affinity::groups(graph, parents);
+    let affinities = if enabled { special.as_slice() } else { &[] };
     let children = &tree.children;
 
     let roots = &tree.roots;
@@ -65,11 +62,25 @@ pub(super) fn place_with_heights(
     for &node in order.iter().rev() {
         if graph.nodes[node].role == ResourceRole::Container {
             let mut columns = placement::columns(graph, Some(node), &children[node], parents);
-            affinity::cohere(&mut columns, &affinities);
+            affinity::cohere(&mut columns, affinities);
             let (width, height) = placement::pack(&columns, &sizes, &mut offsets, padding);
+            let relationships = placement::relationships(graph, &children[node], parents);
+            if !special
+                .iter()
+                .any(|group| children[node].contains(&group.target))
+            {
+                placement::refine(
+                    &children[node],
+                    &relationships,
+                    &sizes,
+                    &mut offsets,
+                    height,
+                    padding,
+                );
+            }
             affinity::align(
                 &children[node],
-                &affinities,
+                affinities,
                 &sizes,
                 &mut offsets,
                 height,

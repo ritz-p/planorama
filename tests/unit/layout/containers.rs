@@ -15,6 +15,9 @@ mod quality;
 #[path = "containers/affinity.rs"]
 mod affinity_tests;
 
+#[path = "containers/placement.rs"]
+mod placement_tests;
+
 fn fixture() -> Graph {
     let raw = plan::parse(include_str!("../../fixtures/containment-plan.json")).unwrap();
     semantic::transform(&raw).0
