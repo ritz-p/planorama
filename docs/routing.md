@@ -11,6 +11,13 @@
 an edge rather than nesting. Both placement strategies share the tree and actual
 card/container bounds.
 
+Logical resource cards do not enter this pipeline. A spatial view projection
+removes only their geometry participation, retaining graph-index alignment with
+zero bounds and empty incident paths in the final layout. Their Terraform nodes,
+relationships and evidence remain in the semantic/view graph and SVG metadata.
+The projection also normalizes node identity order before placement, mapping
+results back to the caller's indices so reordered flat inputs keep the same ports.
+
 ## Placement
 
 With containers, direct children occupy columns based on non-containment
@@ -35,7 +42,7 @@ Packing evaluates at most 65 height limits. The compactness baseline minimizes
 span by at most 10% and area by at most 25%; these bounds allow nearby shapes
 without exchanging a compact container for a long strip. Within those bounds,
 the objective is Manhattan distance between projected peer centers plus the
-router's 512-pixel crossing penalty for intersecting straight-line estimates.
+router's one-pixel crossing penalty for intersecting straight-line estimates.
 Repeated relationships weight both signals. Compactness breaks routing-cost ties.
 The hub regressions cover useful shape changes and the shape bounds under heavy
 relationship weights; variable-height cases use actual card centers.
@@ -59,7 +66,14 @@ plus edge padding and the minimum content height. Opposite sides share the same
 vertical span. One deterministic refinement repacks containers and flat rows,
 then assigns geometry-ordered slots on the selected sides and reroutes. Side
 choices remain fixed during this refinement; card width does not expand for
-top/bottom demand. Rank-lane bundles retain their alignment; refined nested
+top/bottom demand. If the requested top/bottom slots cannot fit, those endpoints
+move to a facing left/right side before the single refinement and its height
+calculation. All refined sides reserve marker-aware minimum spacing.
+The initial top/bottom capacity check counts coincident ordinary terminals once
+per node, side and endpoint role, preserving valid fan-in/fan-out bundles.
+If another constraint requires refinement, capacity is recalculated for
+independent branches before repacking, since nested refinement removes bundling.
+Rank-lane bundles retain their alignment; refined nested
 routes use independent paths to keep the selected per-side demand fixed.
 Ancestor/descendant routes also retain their allocated sides during refinement;
 the container-boundary shortcut does not reselect their endpoints afterward.
@@ -92,6 +106,17 @@ index without copying previously routed paths. Later edges still undergo normal
 routing and final shortcutting; bundle selection remains a local decision.
 See [bundling](../examples/bundling.svg) and [spanning connections](../examples/spanning-dense.svg).
 
+Final attachment occupancy is checked by node and exact point across both endpoint
+roles. Exact source/target coincidences trigger refinement even when ordinary
+spacing checks would ignore a shared terminal. Same-role bundle sharing remains
+allowed. Flat bundle alignment checks other incident endpoints before choosing a
+shared offset, prefers a free allocated slot when the center is occupied, and
+falls back to independent paths if no candidate has sufficient spacing.
+The [mixed-port regression](../examples/port-collisions.svg) reproduces a refined
+fan-out bundle whose old central source coincided with an independent target.
+Regenerate it with `UPDATE_PORT_SNAPSHOT=1` when running
+`refined_flat_bundle_keeps_opposite_role_port`.
+
 Independent paths compare route quality on actual bounds, preferring facing
 side pairs when quality is equal. Rectangle projections first select one facing
 pair for horizontal/vertical separation or two for diagonal separation, ordered
@@ -107,11 +132,21 @@ Ordinary nested edges select from their assigned ports directly, avoiding an
 eager legacy-route search that side selection would repeat. The legacy route is
 computed only if no valid side candidate exists.
 Outward stubs and distinct endpoint slots protect labels and high-degree
-ports. Unrelated container interiors and all container headers are hard obstacles;
-endpoint ancestors permit traversal outside their headers. The containment tree
-determines these scopes. In nested routing, ordinary peer cards are soft occluders:
-each pixel hidden behind a card adds two pixels of routing cost. Short detours can
-avoid them, but long detours can pass behind the opaque cards. Search, candidate
+ports. Endpoint and ancestor headers remain hard obstacles; unrelated containers,
+including their headers, are visual occluders hidden by their per-edge SVG mask.
+Strict endpoint ancestors permit traversal outside their headers. An endpoint
+container is a full obstacle when its peer is outside it, protecting its interior
+through side selection, independent routing, bundles and final shortcuts. A
+container-to-descendant relationship keeps its header-only barrier and may attach
+from inside. This applies symmetrically to incoming and outgoing routes and does
+not rely on crossing penalties to discourage re-entry. The containment tree
+determines these scopes. In nested routing, ordinary peer cards and unrelated
+containers are soft occluders: each hidden pixel adds two pixels of cost for cards
+and one per two-pixel interval for containers. Container intervals use absolute
+coordinate division, making costs additive across grid subdivisions. Containers can cover long stretches; the lower weight
+allows substantial bend/distance savings while still preferring short clear detours.
+Nested occluders and their cards are counted only once, using the outermost foreign
+container. Short detours can avoid them, but long detours can pass behind them. Search, candidate
 comparison and shortcutting use this same policy. Endpoint cards remain protected. Connections
 between a container and its descendants can attach from inside to its boundary
 or the underside of its header, without visiting a child as an endpoint.
@@ -130,7 +165,7 @@ badge corridors. Candidates are rejected when badges overlap cards, protected
 headers or other reserved terminals. Parallel relationships can choose the same
 side pair while retaining distinct slots.
 
-Numbered ports at both ends of undirected associations, or the destination of
+Numbered ports at both ends of undirected relationships, or the destination of
 directed relationships, reserve badge-sized slots; other incident ports retain
 normal spacing. Adjacent terminal corridors are merged before routing. Orthogonal
 search indexes blocked grid edges and soft-card occlusion costs once per search,
@@ -142,8 +177,19 @@ reverse traversal. These caches borrow the fixed scorer, use memory proportional
 to the search grid, and are discarded after that search.
 
 Hard obstacle violations are rejected. Readability cost is path length plus 96 per
-bend, 512 per crossing, eight per overlapping pixel and two per occluded card pixel.
-Thus a minor crossing improvement cannot justify an unlimited detour. Search,
+bend, one per crossing, eight per overlapping pixel, two per occluded card pixel
+and one per two-pixel occluded container interval.
+Collinear frame overlap adds eight per pixel, indexed by horizontal/vertical
+frame coordinates. Twelve pixels at each corner are excluded to approximate
+rounded frames and tolerate localized contacts. A four-pixel contact costs less
+than one bend; perpendicular crossings and one-pixel offsets cost zero.
+Frames entirely hidden by a foreign-container mask do not contribute. Search,
+bundle comparison and final shortcutting share the frame cost; search includes
+nearby frame-offset coordinates so a small clearance can replace a long coincidence.
+A single perpendicular crossing cannot pay for an extra bend or even a two-pixel
+orthogonal detour. Equal-length, equal-bend alternatives prefer fewer crossings;
+collinear overlap remains a separate, stronger penalty. Search segment and junction
+costs use the same crossing weight as final scoring and shortcutting. Search,
 candidate comparison and shortcutting share these weights. Straight, one-bend and two-bend candidates compete with grid-search
 paths under the same safety and endpoint-direction checks. Occupancy-aware alternatives
 are limited to six additional bends and twice the reference length plus 512 pixels
@@ -165,6 +211,12 @@ their middle segments can be shortened. Bundles retain their shared geometry.
 
 SVG rendering consumes the final geometry and rounds corners without changing
 relationship identity. Nested containment edges receive no redundant path.
+Paths use shared, containment-specific luminance masks to hide foreign container
+fills, rounded borders and descendants, with two pixels of stroke clearance.
+An endpoint's ancestor containers are excluded from its mask, preserving internal
+relationships. Junction dots use their participating route's mask; endpoint circles
+and numbered badges retain their foreground layer and reserved corridors.
+Mask IDs and groups sort by resource identity and are namespaced in named states.
 
 ## Verification
 
@@ -175,12 +227,40 @@ self-crossings are excluded. Run the [Docker checks](../README.md#開発・検�
 The large fixture also checks every visible edge: at most 14 bends and a length
 at most twice its shortest valid reference plus 128 pixels.
 The reference keeps the rendered ports and terminal clearance, protects container
-boundaries, headers and numbered corridors, and ignores soft-card and edge-conflict
+endpoint boundaries, ancestor headers and numbered corridors, and ignores occlusion and edge-conflict
 costs. Its rectilinear search includes exact obstacle boundaries, so necessary
 container detours are included in the baseline. Failures name both endpoint
 addresses and report bends, length, reference length, excess distance and stretch.
 The test counts extreme routes and verifies identical metrics after edge reordering;
 aggregate quality checks remain in place.
+The crossing policy replaces older tests that demanded crossing-free detours:
+they now require short crossing routes, including at stub/grid junctions and after
+shortcutting. Hard obstacles, overlap avoidance and terminal reservations remain tested.
+On the large fixture, changing the crossing weight from 512 to 1 reduced total
+length 54,445 → 48,529, bends 186 → 98 and pairwise overlap 395 → 16; crossings
+increased 29 → 160. The private-a → ECS edge changed from length/bends/crossings/overlap
+405/3/2/25 to 296/2/7/0, and private-b → ECS from 598/6/0/17 to 508/2/0/0.
+The existing per-edge test reports these metrics and route points and checks both
+private edges stay within 600 pixels, three bends and zero relationship overlap.
+The original private-b path re-entered its source on the segment
+`(2196,1437) → (2172,1437)` after leaving at `(2180,1753)`.
+With crossing rebalancing and explicit external-endpoint protection its points are
+`(2180,1716) → (2222,1716) → (2222,1292) → (2264,1292)`.
+Adding the hard endpoint rule alone leaves these improved metrics and points
+unchanged; the regression also rejects an explicit inward candidate and verifies
+both relationship directions, internal descendants and edge reordering.
+With foreign-container occlusion, the IGW → NAT edge shortens from 1,124 to 972
+pixels with three bends, zero crossings and zero overlap. It passes behind public-b
+on x=791 instead of detouring to x=708. Its final points are
+`(791,2109) → (791,1213) → (784,1213) → (784,1160) → (800,1160)`.
+The regression requires this edge to cross public-b, remain within 1,000 pixels
+and three bends, and hide less than a third of its length. Total fixture length
+falls from 48,529 to 46,601 and bends from 98 to 92.
+Frame scoring removes 608 pixels of visible border coincidence: SG → ECS 149,
+SG → worker-b[0] 270 and RDS → alarm 189 all become zero. Total route length and
+bends remain 46,601 and 92; relationship overlap changes 16 → 23 and crossings
+164 → 158. The per-edge large-fixture regression requires zero straight-frame
+overlap after shortcutting and repeats the check with reversed edges.
 Performance measurements are documented in [benchmarks](benchmarks.md).
 Thread-local test counters verify that unobstructed horizontal/vertical side
 selection evaluates one pair without grid search, while blocked ports expand the

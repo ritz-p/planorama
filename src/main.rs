@@ -1,4 +1,5 @@
 #[cfg(test)]
+#[path = "../tests/benchmarks.rs"]
 mod benchmarks;
 mod classification;
 mod cli;

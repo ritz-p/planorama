@@ -9,69 +9,10 @@ enum Strategy {
     Nested,
 }
 
-#[test]
-fn dense_horizontal_ports_expand_flat_rows_and_nested_containers() {
-    use crate::model::{Action, Directionality, Edge, EdgeChange, EdgeKind};
-    let raw = crate::plan::parse(r#"{"format_version":"1.2","resource_changes":[{"address":"test.a","type":"test"},{"address":"test.b","type":"test"},{"address":"test.c","type":"test"}]}"#).unwrap();
-    for nested in [false, true] {
-        let mut graph = crate::semantic::transform(&raw).0;
-        graph.edges = (0..8)
-            .map(|i| Edge {
-                kind: EdgeKind::Association,
-                change: Some(EdgeChange {
-                    directionality: Directionality::Directed,
-                    previous_address: None,
-                    metadata: Default::default(),
-                    address: format!("test.link{i}"),
-                    action: Action::Create,
-                }),
-                ..Edge::from(if i < 4 { (0, 1) } else { (1, 2) })
-            })
-            .collect();
-        if nested {
-            let mut parent = graph.nodes[0].clone();
-            parent.role = ResourceRole::Container;
-            parent.address = "test.parent".into();
-            graph.nodes.push(parent);
-            graph.edges.extend((0..3).map(|child| Edge {
-                kind: EdgeKind::Containment,
-                ..Edge::from((3, child))
-            }));
-        }
-        let layout = Layout::new(&graph);
-        assert_eq!(layout.bounds[1].height, 105, "nested={nested}");
-        for indices in [0..4, 4..8] {
-            let mut ys: Vec<_> = indices
-                .map(|i| {
-                    if i < 4 {
-                        layout.paths[i].last().unwrap().y
-                    } else {
-                        layout.paths[i][0].y
-                    }
-                })
-                .collect();
-            ys.sort();
-            assert!(ys.windows(2).all(|p| p[1] - p[0] >= 16));
-        }
-        if nested {
-            for child in &layout.bounds[..3] {
-                assert!(
-                    child.origin.y + child.height
-                        < layout.bounds[3].origin.y + layout.bounds[3].height
-                );
-            }
-        }
-        let expected = layout.bounds;
-        let expected_paths = layout.paths;
-        graph.edges.reverse();
-        let reversed = Layout::new(&graph);
-        assert_eq!(expected, reversed.bounds);
-        assert_eq!(
-            expected_paths,
-            reversed.paths.into_iter().rev().collect::<Vec<_>>()
-        );
-    }
-}
+#[cfg(test)]
+#[path = "../../tests/unit/layout/pipeline.rs"]
+mod tests;
+
 pub(super) struct Placed<'a> {
     pub layout: Layout<'a>,
     strategy: Strategy,
@@ -107,7 +48,11 @@ fn place_sized(graph: &Graph, tree: ContainmentTree, heights: Option<Vec<usize>>
             if indexed {
                 containers::header_heights(graph, &tree)
             } else {
-                vec![NODE_HEIGHT; graph.nodes.len()]
+                graph
+                    .nodes
+                    .iter()
+                    .map(|n| NODE_HEIGHT + crate::view::references::height(n))
+                    .collect()
             }
         });
         let placement = placement::place_with_heights(graph, &ranks, &header_heights);
@@ -163,6 +108,10 @@ pub(super) fn route<'a>(graph: &'a Graph, placed: &mut Placed<'a>) {
         }
         Strategy::Nested => containers::route(graph, &mut placed.layout, true),
     }
+    refine(graph, placed);
+}
+
+fn refine<'a>(graph: &'a Graph, placed: &mut Placed<'a>) {
     let side = |a: super::Point, b: super::Point| match a.x.cmp(&b.x) {
         std::cmp::Ordering::Equal => {
             if a.y > b.y {
@@ -174,7 +123,7 @@ pub(super) fn route<'a>(graph: &'a Graph, placed: &mut Placed<'a>) {
         std::cmp::Ordering::Greater => super::Side::Left,
         std::cmp::Ordering::Less => super::Side::Right,
     };
-    let sides: Vec<_> = placed
+    let mut sides: Vec<_> = placed
         .layout
         .paths
         .iter()
@@ -190,19 +139,43 @@ pub(super) fn route<'a>(graph: &'a Graph, placed: &mut Placed<'a>) {
         })
         .collect();
     let visible: Vec<_> = placed.layout.paths.iter().map(|p| p.len() >= 2).collect();
+    let sides_changed = super::routing_shared::slots::fit_sides(
+        graph,
+        &placed.layout.bounds,
+        &mut sides,
+        &visible,
+        Some(&placed.layout.paths),
+    );
     let demand = super::routing_shared::slots::required_heights(graph, &sides, &visible);
-    let heights: Vec<_> = demand
+    let mut heights: Vec<_> = demand
         .iter()
         .enumerate()
         .map(|(node, &height)| {
             let inferred = placed.layout.containment.parents[node]
                 .is_some_and(|parent| graph.derived_containment(parent, node));
-            height.max(NODE_HEIGHT + if inferred { 18 } else { 0 })
+            height.max(
+                NODE_HEIGHT
+                    + crate::view::references::height(&graph.nodes[node])
+                    + if inferred { 18 } else { 0 },
+            )
         })
         .collect();
-    if heights != placed.layout.header_heights
+    if sides_changed
+        || heights != placed.layout.header_heights
         || super::routing_shared::slots::crowded(graph, &placed.layout.paths, &sides)
     {
+        super::routing_shared::slots::fit_sides(
+            graph,
+            &placed.layout.bounds,
+            &mut sides,
+            &visible,
+            None,
+        );
+        let independent_demand =
+            super::routing_shared::slots::required_heights(graph, &sides, &visible);
+        for (height, demand) in heights.iter_mut().zip(independent_demand) {
+            *height = (*height).max(demand);
+        }
         *placed = place_sized(graph, ContainmentTree::new(graph), Some(heights));
         match &placed.strategy {
             Strategy::Flat { ranks, channels } => {
@@ -231,4 +204,8 @@ pub(super) fn route<'a>(graph: &'a Graph, placed: &mut Placed<'a>) {
         .iter()
         .map(|bounds| bounds.origin)
         .collect();
+    debug_assert!(!super::routing_shared::slots::opposite_roles_collide(
+        graph,
+        &placed.layout.paths
+    ));
 }

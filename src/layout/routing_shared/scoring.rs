@@ -6,8 +6,32 @@ use std::collections::{BTreeMap, BTreeSet};
 #[path = "../../../tests/unit/layout/routing/scoring.rs"]
 mod tests;
 
-pub(in crate::layout) const CROSSING_COST: u128 = 512;
+pub(in crate::layout) const CROSSING_COST: u128 = 1;
 pub(in crate::layout) const BEND_COST: u128 = 96;
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub(in crate::layout) struct Occluder {
+    pub bounds: Bounds,
+    pub cost: u128,
+    pub step: usize,
+}
+
+impl From<Bounds> for Occluder {
+    fn from(bounds: Bounds) -> Self {
+        Self {
+            bounds,
+            cost: 2,
+            step: 1,
+        }
+    }
+}
+
+impl std::ops::Deref for Occluder {
+    type Target = Bounds;
+    fn deref(&self) -> &Bounds {
+        &self.bounds
+    }
+}
 
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub(in crate::layout) struct Score {
@@ -28,10 +52,81 @@ pub(in crate::layout) struct Scorer {
     vertical_paths: BTreeMap<usize, Vec<(usize, usize, usize)>>,
     paths: Vec<Vec<Point>>,
     peers: Vec<Bounds>,
-    soft: Vec<Bounds>,
+    soft: Vec<Occluder>,
+    borders: Vec<Bounds>,
+    horizontal_borders: BTreeMap<usize, Vec<Bounds>>,
+    vertical_borders: BTreeMap<usize, Vec<Bounds>>,
 }
 
 impl Scorer {
+    pub(in crate::layout) fn set_borders(&mut self, borders: &[Bounds]) {
+        self.borders = borders.to_vec();
+        self.horizontal_borders.clear();
+        self.vertical_borders.clear();
+        for &frame in borders {
+            if frame.width > 24 {
+                for y in [frame.origin.y, frame.origin.y + frame.height] {
+                    self.horizontal_borders.entry(y).or_default().push(frame);
+                }
+            }
+            if frame.height > 24 {
+                for x in [frame.origin.x, frame.right()] {
+                    self.vertical_borders.entry(x).or_default().push(frame);
+                }
+            }
+        }
+    }
+
+    pub(in crate::layout) fn borders(&self) -> impl Iterator<Item = &Bounds> {
+        self.borders
+            .iter()
+            .filter(|frame| Self::border_visible(frame, &self.soft))
+    }
+
+    fn border_visible(frame: &Bounds, soft: &[Occluder]) -> bool {
+        !soft.iter().any(|o| {
+            o.step == 2
+                && o.origin.x <= frame.origin.x
+                && o.origin.y <= frame.origin.y
+                && o.right() >= frame.right()
+                && o.origin.y + o.height >= frame.origin.y + frame.height
+        })
+    }
+
+    fn border_cost(&self, a: Point, b: Point, soft: &[Occluder]) -> u128 {
+        let frames = if a.y == b.y {
+            self.horizontal_borders.get(&a.y)
+        } else {
+            self.vertical_borders.get(&a.x)
+        };
+        frames
+            .into_iter()
+            .flatten()
+            .filter(|frame| Self::border_visible(frame, soft))
+            .map(|frame| {
+                let (from, to, low, high) = if a.y == b.y
+                    && (a.y == frame.origin.y || a.y == frame.origin.y + frame.height)
+                    && frame.width > 24
+                {
+                    (a.x, b.x, frame.origin.x + 12, frame.right() - 12)
+                } else if a.x == b.x
+                    && (a.x == frame.origin.x || a.x == frame.right())
+                    && frame.height > 24
+                {
+                    (
+                        a.y,
+                        b.y,
+                        frame.origin.y + 12,
+                        frame.origin.y + frame.height - 12,
+                    )
+                } else {
+                    return 0;
+                };
+                to.max(from).min(high).saturating_sub(to.min(from).max(low)) as u128 * 8
+            })
+            .sum()
+    }
+
     pub(in crate::layout) fn choose(
         &self,
         mut candidates: Vec<Vec<Point>>,
@@ -61,11 +156,11 @@ impl Scorer {
             .min_by(|(_, a), (_, b)| a.cmp(b))
             .map(|(index, _)| index)
     }
-    pub(in crate::layout) fn set_soft(&mut self, soft: Vec<Bounds>) {
-        self.soft = soft;
+    pub(in crate::layout) fn set_soft(&mut self, soft: Vec<impl Into<Occluder>>) {
+        self.soft = soft.into_iter().map(Into::into).collect();
     }
 
-    pub(in crate::layout) fn soft(&self) -> &[Bounds] {
+    pub(in crate::layout) fn soft(&self) -> &[Occluder] {
         &self.soft
     }
 
@@ -73,24 +168,21 @@ impl Scorer {
         Self::occlusion_in(&self.soft, a, b)
     }
 
-    fn occlusion_in(soft: &[Bounds], a: Point, b: Point) -> u128 {
+    fn occlusion_in(soft: &[Occluder], a: Point, b: Point) -> u128 {
         soft.iter()
-            .filter(|&&bounds| super::crosses(a, b, bounds))
+            .filter(|bounds| super::crosses(a, b, bounds.bounds))
             .map(|bounds| {
-                if a.y == b.y {
-                    a.x.max(b.x)
-                        .min(bounds.right())
-                        .saturating_sub(a.x.min(b.x).max(bounds.origin.x))
+                (if a.y == b.y {
+                    (a.x.max(b.x).min(bounds.right()) / bounds.step)
+                        .saturating_sub(a.x.min(b.x).max(bounds.origin.x) / bounds.step)
                         as u128
                 } else {
-                    a.y.max(b.y)
-                        .min(bounds.origin.y + bounds.height)
-                        .saturating_sub(a.y.min(b.y).max(bounds.origin.y))
+                    (a.y.max(b.y).min(bounds.origin.y + bounds.height) / bounds.step)
+                        .saturating_sub(a.y.min(b.y).max(bounds.origin.y) / bounds.step)
                         as u128
-                }
+                }) * bounds.cost
             })
             .sum::<u128>()
-            * 2
     }
     pub(in crate::layout) fn len(&self) -> usize {
         self.paths.len()
@@ -184,16 +276,16 @@ impl Scorer {
     pub(in crate::layout) fn readability_cost_with_soft(
         &self,
         points: &[Point],
-        soft: &[Bounds],
+        soft: &[Occluder],
     ) -> u128 {
         self.readability_cost(points)
             - points
                 .windows(2)
-                .map(|p| self.occlusion(p[0], p[1]))
+                .map(|p| self.occlusion(p[0], p[1]) + self.border_cost(p[0], p[1], &self.soft))
                 .sum::<u128>()
             + points
                 .windows(2)
-                .map(|p| Self::occlusion_in(soft, p[0], p[1]))
+                .map(|p| Self::occlusion_in(soft, p[0], p[1]) + self.border_cost(p[0], p[1], soft))
                 .sum::<u128>()
     }
 
@@ -227,7 +319,7 @@ impl Scorer {
             };
             score.overlap += index.get(&coordinate).map_or(0, |c| c.overlap(from, to));
             score.length += a.x.abs_diff(b.x) as u128 + a.y.abs_diff(b.y) as u128;
-            score.cost += self.occlusion(a, b);
+            score.cost += self.occlusion(a, b) + self.border_cost(a, b, &self.soft);
             score.node_crossings += nodes
                 .iter()
                 .filter(|&&node| super::crosses(a, b, node))
@@ -356,24 +448,6 @@ impl Scorer {
                     .len()
             })
             .sum::<usize>();
-        overlap * 8 + crossings as u128 * CROSSING_COST
-    }
-}
-
-#[cfg(test)]
-fn crossing(first: &[Point], second: &[Point]) -> Option<(usize, usize)> {
-    let (h, v) = match (first[0].y == first[1].y, second[0].y == second[1].y) {
-        (true, false) => (first, second),
-        (false, true) => (second, first),
-        _ => return None,
-    };
-    let (x, y) = (v[0].x, h[0].y);
-    match x > h[0].x.min(h[1].x)
-        && x < h[0].x.max(h[1].x)
-        && y > v[0].y.min(v[1].y)
-        && y < v[0].y.max(v[1].y)
-    {
-        true => Some((x, y)),
-        false => None,
+        overlap * 8 + crossings as u128 * CROSSING_COST + self.border_cost(a, b, &self.soft)
     }
 }

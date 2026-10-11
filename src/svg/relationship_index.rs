@@ -142,9 +142,8 @@ impl<'a> Index<'a> {
             .unwrap_or(360)
             .clamp(360, 640);
         self.entries.chunks(ENTRIES_PER_CARD).enumerate().map(|(chunk, entries)| {
-            let mut svg = String::from(r##"<g data-relationship-index="true"><text x="16" y="28" font-size="16" font-weight="700" fill="#334155">Relationship resources</text>
-"##);
-            let mut y = 56;
+            let mut svg = String::from("<g data-relationship-index=\"true\">\n");
+            let mut y = 28;
             for (offset, entry) in entries.iter().enumerate() {
                 let number = chunk * ENTRIES_PER_CARD + offset + 1;
                 writeln!(svg, r#"<g data-relationship-entry="{number}">"#).unwrap();

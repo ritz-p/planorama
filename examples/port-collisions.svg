@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1760" height="948" viewBox="0 0 1760 948" role="img" aria-labelledby="title description">
+<title id="title">Terraform plan</title>
+<desc id="description">6 resources (6 cards), 6 relationships. Lines show architectural relationships. Edge titles identify the relationship kind and Terraform change. Thin solid: dependency. Dashed: association. Thick dotted: connection. Nested boxes: containment. Edge color preserves the Terraform action when available.</desc>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/></marker></defs>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<g font-family="ui-monospace, SFMono-Regular, Consolas, monospace">
+<text x="40" y="45" font-size="25" font-weight="700" fill="#0f172a">Terraform plan</text>
+<text x="40" y="73" font-size="13" fill="#475569">6 resources (6 cards) · 6 relationships</text>
+<metadata id="architecture-entities">[{&quot;id&quot;:&quot;terraform:746573742e6e30-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;test.n0&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:746573742e6e31-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;test.n1&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:746573742e6e32-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;test.n2&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:746573742e6e33-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;test.n3&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:746573742e6e34-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;test.n4&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:746573742e6e35-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;test.n5&quot;,&quot;deposed_key&quot;:null}]}]</metadata>
+<metadata id="architecture-relationships">[]</metadata>
+<rect x="40" y="100" width="12" height="12" fill="#ecfdf5" stroke="#047857"/><text x="59" y="111" font-size="12" fill="#047857">create (6)</text>
+<rect x="180" y="100" width="12" height="12" fill="#eff6ff" stroke="#1d4ed8"/><text x="199" y="111" font-size="12" fill="#1d4ed8">update (0)</text>
+<rect x="320" y="100" width="12" height="12" fill="#fef2f2" stroke="#b91c1c"/><text x="339" y="111" font-size="12" fill="#b91c1c">delete (0)</text>
+<rect x="460" y="100" width="12" height="12" fill="#fff7ed" stroke="#c2410c"/><text x="479" y="111" font-size="12" fill="#c2410c">replace (0)</text>
+<rect x="600" y="100" width="12" height="12" fill="#faf5ff" stroke="#7e22ce"/><text x="619" y="111" font-size="12" fill="#7e22ce">read (0)</text>
+<rect x="740" y="100" width="12" height="12" fill="#f8fafc" stroke="#64748b"/><text x="759" y="111" font-size="12" fill="#64748b">unchanged (0)</text>
+<rect x="880" y="100" width="12" height="12" fill="#fefce8" stroke="#854d0e"/><text x="899" y="111" font-size="12" fill="#854d0e">other (0)</text>
+<g id="relationship-legend" font-size="12" fill="#475569">
+<text x="40" y="157">Relationship lines: color = relationship action (not endpoint actions)</text>
+<path d="M 40 177 H 66" stroke="#94a3b8" stroke-width="2"/><text x="73" y="181">no independent change</text>
+<text x="40" y="205">Line style:</text><path d="M 140 201 H 170" stroke="#64748b" stroke-width="1.5"/><text x="178" y="205">dependency</text>
+<path d="M 340 201 H 370" stroke="#64748b" stroke-width="2" stroke-dasharray="7 4"/><text x="378" y="205">association</text>
+<path d="M 540 201 H 570" stroke="#64748b" stroke-width="2.5" stroke-dasharray="2 4" stroke-linecap="round"/><text x="578" y="205">connection</text>
+</g>
+<g transform="translate(0 72)">
+<g data-architecture="true" transform="translate(0 0)">
+<path d="M 380 459 L 884 459 Q 892 459 892 451 L 892 400 Q 892 392 900 392 L 1228 392 Q 1236 392 1236 400 L 1236 452 Q 1236 460 1228 460 L 1220 460 " data-edge-kind="connection" data-directionality="undirected" data-source="resource-746573742e6e30-current" data-target="resource-746573742e6e31-current" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-dasharray="2 4" stroke-linecap="round" stroke-linejoin="round"><title>test.n0 ↔ test.n1 (connection)</title></path>
+<path d="M 800 159 L 1288 159 Q 1296 159 1296 167 L 1296 420 Q 1296 428 1288 428 L 1220 428 " data-edge-kind="association" data-directionality="undirected" data-source="resource-746573742e6e34-current" data-target="resource-746573742e6e31-current" fill="none" stroke="#94a3b8" stroke-width="2" stroke-dasharray="7 4" stroke-linejoin="round"><title>test.n4 ↔ test.n1 (association)</title></path>
+<path d="M 380 747 L 1228 747 Q 1236 747 1236 739 L 1236 500 Q 1236 492 1228 492 L 1220 492 " data-edge-kind="dependency" data-directionality="directed" data-source="resource-746573742e6e35-current" data-target="resource-746573742e6e31-current" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>test.n5 → test.n1 (dependency)</title></path>
+<path d="M 1220 444 L 1236 444 Q 1244 444 1244 436 L 1244 255 Q 1244 247 1252 247 L 1320 247 " data-edge-kind="dependency" data-directionality="directed" data-source="resource-746573742e6e31-current" data-target="resource-746573742e6e32-current" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>test.n1 → test.n2 (dependency)</title></path>
+<path d="M 1220 444 L 1236 444 Q 1244 444 1244 452 L 1244 639 Q 1244 647 1252 647 L 1320 647 " data-edge-kind="dependency" data-directionality="directed" data-source="resource-746573742e6e31-current" data-target="resource-746573742e6e33-current" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>test.n1 → test.n3 (dependency)</title></path>
+<path d="M 380 435 L 808 435 Q 816 435 816 427 L 816 143 Q 816 135 808 135 L 800 135 " data-edge-kind="dependency" data-directionality="directed" data-source="resource-746573742e6e30-current" data-target="resource-746573742e6e34-current" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>test.n0 → test.n4 (dependency)</title></path>
+<circle cx="1244" cy="444" r="3" fill="#94a3b8"/>
+<g id="resource-746573742e6e30-current" data-architecture-id="terraform:746573742e6e30-current" data-qualified-address="module.root.test.n0" data-terraform-address="test.n0"><title>module.root.test.n0 — create</title>
+<rect x="60" y="400" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
+<text x="72" y="420" font-size="11" fill="#047857">test · create</text>
+<text x="72" y="445" font-size="13" fill="#0f172a">module.root.test.n0</text>
+</g>
+<g id="resource-746573742e6e31-current" data-architecture-id="terraform:746573742e6e31-current" data-qualified-address="module.root.test.n1" data-terraform-address="test.n1"><title>module.root.test.n1 — create</title>
+<rect x="900" y="400" width="320" height="121" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
+<text x="912" y="420" font-size="11" fill="#047857">test · create</text>
+<text x="912" y="445" font-size="13" fill="#0f172a">module.root.test.n1</text>
+</g>
+<g id="resource-746573742e6e32-current" data-architecture-id="terraform:746573742e6e32-current" data-qualified-address="module.root.test.n2" data-terraform-address="test.n2"><title>module.root.test.n2 — create</title>
+<rect x="1320" y="200" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
+<text x="1332" y="220" font-size="11" fill="#047857">test · create</text>
+<text x="1332" y="245" font-size="13" fill="#0f172a">module.root.test.n2</text>
+</g>
+<g id="resource-746573742e6e33-current" data-architecture-id="terraform:746573742e6e33-current" data-qualified-address="module.root.test.n3" data-terraform-address="test.n3"><title>module.root.test.n3 — create</title>
+<rect x="1320" y="600" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
+<text x="1332" y="620" font-size="11" fill="#047857">test · create</text>
+<text x="1332" y="645" font-size="13" fill="#0f172a">module.root.test.n3</text>
+</g>
+<g id="resource-746573742e6e34-current" data-architecture-id="terraform:746573742e6e34-current" data-qualified-address="module.root.test.n4" data-terraform-address="test.n4"><title>module.root.test.n4 — create</title>
+<rect x="480" y="100" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
+<text x="492" y="120" font-size="11" fill="#047857">test · create</text>
+<text x="492" y="145" font-size="13" fill="#0f172a">module.root.test.n4</text>
+</g>
+<g id="resource-746573742e6e35-current" data-architecture-id="terraform:746573742e6e35-current" data-qualified-address="module.root.test.n5" data-terraform-address="test.n5"><title>module.root.test.n5 — create</title>
+<rect x="60" y="700" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
+<text x="72" y="720" font-size="11" fill="#047857">test · create</text>
+<text x="72" y="745" font-size="13" fill="#0f172a">module.root.test.n5</text>
+</g>
+<g data-endpoints="true" data-source="resource-746573742e6e30-current" data-target="resource-746573742e6e31-current" aria-hidden="true">
+<circle data-endpoint="source" cx="380" cy="459" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/><circle data-endpoint="target" cx="1220" cy="460" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+<g data-endpoints="true" data-source="resource-746573742e6e34-current" data-target="resource-746573742e6e31-current" aria-hidden="true">
+<circle data-endpoint="source" cx="800" cy="159" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/><circle data-endpoint="target" cx="1220" cy="428" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+<g data-endpoints="true" data-source="resource-746573742e6e35-current" data-target="resource-746573742e6e31-current" aria-hidden="true">
+<circle data-endpoint="source" cx="380" cy="747" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+<g data-endpoints="true" data-source="resource-746573742e6e31-current" data-target="resource-746573742e6e32-current" aria-hidden="true">
+<circle data-endpoint="source" cx="1220" cy="444" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+<g data-endpoints="true" data-source="resource-746573742e6e31-current" data-target="resource-746573742e6e33-current" aria-hidden="true">
+<circle data-endpoint="source" cx="1220" cy="444" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+<g data-endpoints="true" data-source="resource-746573742e6e30-current" data-target="resource-746573742e6e34-current" aria-hidden="true">
+<circle data-endpoint="source" cx="380" cy="435" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+</g>
+</g>
+</g>
+</svg>

@@ -13,6 +13,7 @@ pub(crate) mod relationship_markers;
 mod routing;
 mod routing_shared;
 mod scopes;
+mod spatial;
 #[cfg(test)]
 #[path = "../tests/unit/layout.rs"]
 mod tests;
@@ -79,7 +80,35 @@ pub struct ScopePanel {
 }
 
 impl<'a> Layout<'a> {
+    pub(crate) fn occludes(&self, node: usize, edge: &crate::model::Edge) -> bool {
+        self.containers.contains(&node)
+            && !self.containment.is_ancestor(node, edge.from)
+            && !self.containment.is_ancestor(node, edge.to)
+    }
+
+    pub(crate) fn occluders(&self, edge: &crate::model::Edge) -> Vec<usize> {
+        self.containers
+            .iter()
+            .copied()
+            .filter(|&node| {
+                self.occludes(node, edge)
+                    && !self.containment.parents[node]
+                        .is_some_and(|parent| self.occludes(parent, edge))
+            })
+            .collect()
+    }
+
     pub fn new(graph: &'a Graph) -> Self {
+        if graph
+            .nodes
+            .iter()
+            .any(|n| n.placement == crate::model::Placement::Logical)
+            || graph.nodes.windows(2).any(|nodes| {
+                (&nodes[0].entity.id, &nodes[0].address) > (&nodes[1].entity.id, &nodes[1].address)
+            })
+        {
+            return spatial::layout(graph);
+        }
         let containment = ContainmentTree::new(graph);
         let mut placed = pipeline::place(graph, containment);
         pipeline::route(graph, &mut placed);

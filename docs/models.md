@@ -19,6 +19,11 @@ their own completeness checks. Module inputs/outputs and serialized local defini
 are followed with cycle detection; absent local definitions cannot be reconstructed.
 Nested block fields retain dotted paths, and repeated blocks require complete
 provenance in every entry. Literal values are not traversed as expressions.
+Attribute evidence also records whether every referenced instance key was explicit
+through alias resolution. Target-group component ownership requires this proof;
+it does not narrow existing dependency edges or change other semantic rules.
+Target-group ownership also consumes a value-free ARN equality proof for every
+hop, calculated from known planned strings and complete nested action values.
 
 `semantic::transform` consumes this domain model. Its private `Input` projection
 classifies provider/resource roles at the boundary, then applies containment,
@@ -27,6 +32,17 @@ projection. Lifecycle metadata can evolve in the Terraform model independently;
 the current card projection copies the safe metadata required for existing SVGs.
 Layout/rendering consume architecture graphs only. Named plans keep separate
 Terraform models under explicit `StateId`s.
+
+`Node.placement` classifies spatial, logical and unresolved presentation separately
+from role. Logical nodes retain their native identity, action and provenance.
+`Node.references` retains direct attribute and graph-level reference evidence,
+resolved source identities, completeness and diagnostics; it never expands a
+resource dependency transitively. Module/input/output resolution follows the
+parser's existing evidence. Graph-level references such as `depends_on` are
+distinct from configured attribute usage. No attribute values are retained.
+In SVG `resource-references` metadata, remote targets include `state` alongside
+their address and deposed key. Targets without `state` belong to the enclosing
+state section, or the single input in unnamed diagrams.
 
 Provider source (`ProviderIdentity`, such as `registry.terraform.io/hashicorp/aws`)
 is separate from `provider_configuration`. The latter preserves Terraform's opaque

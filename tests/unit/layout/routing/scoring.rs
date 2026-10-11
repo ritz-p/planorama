@@ -5,6 +5,92 @@ fn points(values: &[(usize, usize)]) -> Vec<Point> {
 }
 
 #[test]
+fn frame_cost_measures_collinearity_and_matches_subdivided_search() {
+    let frame = Bounds {
+        origin: Point { x: 100, y: 100 },
+        width: 200,
+        height: 200,
+    };
+    let mut scorer = Scorer::default();
+    scorer.set_borders(&[frame]);
+    for (path, length) in [
+        (points(&[(120, 100), (280, 100)]), 160),
+        (points(&[(100, 120), (100, 280)]), 160),
+        (points(&[(50, 100), (150, 100)]), 38),
+        (points(&[(120, 100), (124, 100)]), 4),
+        (points(&[(120, 90), (120, 110)]), 0),
+        (points(&[(120, 99), (280, 99)]), 0),
+        (points(&[(100, 100), (110, 100)]), 0),
+    ] {
+        let a = path[0];
+        let b = path[1];
+        let m = Point {
+            x: (a.x + b.x) / 2,
+            y: (a.y + b.y) / 2,
+        };
+        assert_eq!(scorer.segment_cost(a, b), length * 8);
+        assert_eq!(
+            scorer.segment_cost(a, m) + scorer.segment_cost(m, b),
+            length * 8
+        );
+        assert_eq!(scorer.segment_cost(b, a), length * 8);
+        assert_eq!(
+            scorer.readability_cost(&path),
+            Scorer::default().readability_cost(&path) + length * 8
+        );
+    }
+    let along = points(&[(120, 100), (280, 100)]);
+    let offset = points(&[(120, 100), (120, 92), (280, 92), (280, 100)]);
+    assert_eq!(
+        scorer.choose(vec![along.clone(), offset.clone()], &[]),
+        Some(offset.clone())
+    );
+    assert!(!scorer.safe_shortcut(&offset, &along, &[]));
+    let brief = points(&[(120, 100), (124, 100)]);
+    let detour = points(&[(120, 100), (120, 92), (124, 92), (124, 100)]);
+    assert_eq!(scorer.choose(vec![detour, brief.clone()], &[]), Some(brief));
+    scorer.set_soft(vec![Occluder {
+        bounds: frame,
+        cost: 1,
+        step: 2,
+    }]);
+    assert_eq!(scorer.segment_cost(along[0], along[1]), 0);
+}
+
+#[test]
+fn equal_geometry_uses_crossings_as_a_stable_tie_breaker() {
+    let clear = points(&[(10, 50), (10, 90), (110, 90), (110, 50)]);
+    let crossing = points(&[(10, 50), (10, 10), (110, 10), (110, 50)]);
+    for reverse in [false, true] {
+        let mut occupied = [points(&[(50, 0), (50, 30)]), points(&[(70, 0), (70, 30)])];
+        if reverse {
+            occupied.reverse();
+        }
+        let mut scorer = Scorer::default();
+        for path in occupied {
+            scorer.insert(path);
+        }
+        assert!(scorer.score(&clear, &[]) < scorer.score(&crossing, &[]));
+        for candidates in [
+            vec![clear.clone(), crossing.clone()],
+            vec![crossing.clone(), clear.clone()],
+        ] {
+            assert_eq!(scorer.choose(candidates, &[]), Some(clear.clone()));
+        }
+        let score = scorer.score(&crossing, &[]);
+        let conflicts: u128 = crossing
+            .windows(2)
+            .map(|p| scorer.segment_cost(p[0], p[1]))
+            .sum();
+        assert_eq!(
+            score.cost,
+            score.length + score.bends as u128 * BEND_COST + conflicts
+        );
+        assert_eq!(conflicts, 2 * CROSSING_COST);
+    }
+}
+
+#[test]
 fn candidate_budget_limits_stretch_even_under_heavy_congestion() {
     let short = points(&[(100, 500), (600, 500)]);
     let long = points(&[
@@ -16,7 +102,7 @@ fn candidate_budget_limits_stretch_even_under_heavy_congestion() {
         (600, 500),
     ]);
     let mut scorer = Scorer::default();
-    for _ in 0..100 {
+    for _ in 0..10000 {
         scorer.insert(points(&[(350, 400), (350, 600)]));
     }
     assert!(scorer.score(&long, &[]) < scorer.score(&short, &[]));
@@ -24,7 +110,7 @@ fn candidate_budget_limits_stretch_even_under_heavy_congestion() {
 }
 
 #[test]
-fn crossing_avoidance_has_a_finite_length_and_bend_budget() {
+fn ordinary_crossings_do_not_pay_for_extra_bends_or_detours() {
     let direct = points(&[(100, 500), (600, 500)]);
     let modest = points(&[
         (100, 500),
@@ -45,13 +131,13 @@ fn crossing_avoidance_has_a_finite_length_and_bend_budget() {
     let mut scorer = Scorer::default();
     scorer.insert(points(&[(350, 480), (350, 520)]));
     assert!(scorer.score(&direct, &[]) < scorer.score(&extreme, &[]));
-    assert!(scorer.score(&modest, &[]) < scorer.score(&direct, &[]));
+    assert!(scorer.score(&direct, &[]) < scorer.score(&modest, &[]));
     assert!(scorer.safe_shortcut(&extreme, &direct, &[]));
-    assert!(!scorer.safe_shortcut(&modest, &direct, &[]));
+    assert!(scorer.safe_shortcut(&modest, &direct, &[]));
     for _ in 0..7 {
         scorer.insert(points(&[(350, 480), (350, 520)]));
     }
-    assert!(scorer.score(&extreme, &[]) < scorer.score(&direct, &[]));
+    assert!(scorer.score(&direct, &[]) < scorer.score(&extreme, &[]));
     let zigzag: Vec<_> = (0..24)
         .map(|i| Point {
             x: 100 + (i / 2) * 40,
@@ -122,7 +208,7 @@ fn grid_crossings_preserve_path_multiplicity_but_not_repeated_segments() {
     let a = Point { x: 10, y: 50 };
     let b = Point { x: 90, y: 50 };
     assert_eq!(scorer.score(&[a, b], &[]).crossings, 3);
-    assert_eq!(scorer.segment_cost(a, b), 3 * 512);
+    assert_eq!(scorer.segment_cost(a, b), 3 * CROSSING_COST);
     assert_eq!(
         scorer.segment_cost(Point { x: 10, y: 10 }, Point { x: 90, y: 10 }),
         0
@@ -160,13 +246,13 @@ fn longer_clear_route_beats_shorter_overlapping_route() {
 }
 
 #[test]
-fn crossings_are_more_expensive_than_bends_and_length() {
+fn crossings_are_less_expensive_than_bends_and_length() {
     let mut scorer = Scorer::default();
     scorer.insert(points(&[(50, 20), (50, 80)]));
     let crossing = points(&[(0, 50), (100, 50)]);
     let clear = points(&[(0, 50), (0, 100), (100, 100), (100, 50)]);
     assert_eq!(scorer.score(&crossing, &[]).crossings, 1);
-    assert!(scorer.score(&clear, &[]) < scorer.score(&crossing, &[]));
+    assert!(scorer.score(&crossing, &[]) < scorer.score(&clear, &[]));
 }
 
 #[test]
@@ -217,13 +303,13 @@ fn branch_soft_cost_uses_its_own_endpoint_exclusions() {
     };
     let clear = scorer.readability_cost(&path);
     assert_eq!(
-        scorer.readability_cost_with_soft(&path, &[card]),
+        scorer.readability_cost_with_soft(&path, &[card.into()]),
         clear + 80
     );
     scorer.set_soft(vec![card]);
     assert_eq!(scorer.readability_cost_with_soft(&path, &[]), clear);
     assert_eq!(
-        scorer.readability_cost_with_soft(&path, &[card]),
+        scorer.readability_cost_with_soft(&path, &[card.into()]),
         clear + 80
     );
 }
@@ -247,7 +333,62 @@ fn bend_contacts_have_no_crossing_cost_in_either_direction_or_axis() {
             let score = scorer.score(&path, &[]);
             assert_eq!(score.crossings, 0);
             assert_eq!(approach + departure, score.overlap * 8);
-            assert_eq!(scorer.junction_cost(point(50, 50), horizontal), 512);
+            assert_eq!(
+                scorer.junction_cost(point(50, 50), horizontal),
+                CROSSING_COST
+            );
         }
     }
+}
+
+fn crossing(first: &[Point], second: &[Point]) -> Option<(usize, usize)> {
+    let (h, v) = match (first[0].y == first[1].y, second[0].y == second[1].y) {
+        (true, false) => (first, second),
+        (false, true) => (second, first),
+        _ => return None,
+    };
+    let (x, y) = (v[0].x, h[0].y);
+    match x > h[0].x.min(h[1].x)
+        && x < h[0].x.max(h[1].x)
+        && y > v[0].y.min(v[1].y)
+        && y < v[0].y.max(v[1].y)
+    {
+        true => Some((x, y)),
+        false => None,
+    }
+}
+#[test]
+fn search_borders_follow_current_container_masks() {
+    let outer = Bounds {
+        origin: Point { x: 100, y: 100 },
+        width: 10000,
+        height: 10000,
+    };
+    let partial = Bounds {
+        origin: Point { x: 80, y: 80 },
+        width: 100,
+        height: 100,
+    };
+    let mut frames = vec![outer, partial];
+    frames.extend((0..1000).map(|i| Bounds {
+        origin: Point {
+            x: 120 + i * 8,
+            y: 120 + i * 8,
+        },
+        width: 40,
+        height: 40,
+    }));
+    let mut scorer = Scorer::default();
+    scorer.set_borders(&frames);
+    assert_eq!(scorer.borders().count(), frames.len());
+    scorer.set_soft(vec![Occluder {
+        bounds: outer,
+        cost: 1,
+        step: 2,
+    }]);
+    assert_eq!(scorer.borders().copied().collect::<Vec<_>>(), vec![partial]);
+    scorer.set_soft(vec![outer]);
+    assert_eq!(scorer.borders().count(), frames.len());
+    scorer.set_soft(Vec::<Occluder>::new());
+    assert_eq!(scorer.borders().count(), frames.len());
 }

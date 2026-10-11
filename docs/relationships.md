@@ -1,8 +1,20 @@
 # Relationship styles
 
+Spatial cards show a Uses section for verified references to top logical-resource
+cards. Known attributes use Cluster, Task definition, Instance profile, AMI,
+Role, Execution role or Task role;
+other verified references use References. Graph-only references such as
+`depends_on` use Dependency, not an attribute-specific usage label. Logical cards
+show their own direct references, including references to spatial resources.
+Incomplete references show unresolved without asserting candidate targets.
+Filtered targets show Unavailable without a dangling link. Up to four rows are
+visible; an overflow count and accessible title retain the complete list and
+full addresses. Card heights reserve space above the footer and placement note.
+
 Dependency lines are thin and solid. Ordinary associations are undirected and
 dashed (7/4), with no arrowheads. Lowered routes retain directional arrowheads.
-Inferred connections are thicker and dotted (2/4 with round caps). These
+Inferred connections are undirected, without arrowheads, and thicker and dotted
+(2/4 with round caps). Connection titles use `↔`. These
 patterns remain distinct in grayscale. Containment uses nested boundaries;
 an edge represented by nesting does not receive a redundant line.
 
@@ -11,6 +23,9 @@ ends of Association/Connection paths. Containment has no endpoint circles.
 Their solid outlines use the relationship action color. Circles render above
 cards, with directed target arrowheads above the circle and numbered badges above
 both. Internal filled junction dots remain distinct from endpoint circles.
+Opposite-role endpoints on the same card retain distinct final coordinates,
+including mixed line kinds and bundle/refinement paths. Intentional same-role
+bundle terminals may still share a circle position.
 
 Colors and directed arrowheads describe the Terraform change. Every edge retains
 `data-edge-kind`, stable source/target IDs and a descriptive title. Cross-state dependencies use
@@ -27,7 +42,7 @@ inferred relationships receive no resource number. Numbering sorts by source
 identity, then endpoints and relationship kind, independent of edge-vector order.
 Filtering can renumber the visible subset; named states have separate indexes.
 
-Undirected associations display the same number near both endpoints, with one
+Undirected relationships display the same number near both endpoints, with one
 relationship-index entry. Directed relationships display it before the destination.
 Markers align with the terminal segment, 10 pixels from the endpoint to leave
 room for directed arrowheads. Endpoints with

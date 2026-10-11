@@ -15,7 +15,7 @@ fn workload_security_groups_keep_policy_cards_and_individual_connections() {
     ] {
         for group in ["a", "b"] {
             assert!(svg.contains(&format!(
-                "aws_security_group.{group} → {kind}.main (connection)"
+                "aws_security_group.{group} ↔ {kind}.main (connection)"
             )));
         }
     }
@@ -76,7 +76,7 @@ fn inferred_placement_notes_use_provenance_and_fit_below_long_addresses() {
 fn relationship_patterns_are_distinct_and_nesting_stays_line_free() {
     for (input, kind, width, dash) in [
         (
-            include_bytes!("../../examples/plan.json").as_slice(),
+            include_bytes!("../../examples/bundling-plan.json").as_slice(),
             "dependency",
             "1.5",
             None,
@@ -186,7 +186,9 @@ fn synthetic_components_are_distinct_and_link_to_original_changes() {
             .count(),
         4
     );
-    assert!(svg.contains("Logical component: Load balancer: aws_lb.app"));
+    assert!(svg.contains(">Load balancer: aws_lb.app</text>"));
+    assert!(!svg.contains("Logical component:"));
+    assert!(!svg.contains(">Members</text>"));
     assert!(svg.contains("update: aws_lb_listener.https"));
     assert!(svg.contains("replace: aws_lb_listener_rule.api"));
     assert!(svg.contains("data-previous-address=\"aws_lb_listener_rule.old\""));
@@ -472,7 +474,7 @@ fn security_groups_fixture_preserves_policy_cards_and_inspectable_connections() 
         ("shared", "aws_ecs_service.app"),
     ] {
         assert!(svg.contains(&format!(
-            "aws_security_group.{group} → {target} (connection)"
+            "aws_security_group.{group} ↔ {target} (connection)"
         )));
         assert!(svg.contains(&format!(
             "data-terraform-address=\"aws_security_group.{group}\""

@@ -41,8 +41,11 @@ fn external_routes_respect_ancestor_scopes_and_unrelated_containers() {
         let layout = Layout::new(&case);
         let edge = case.edges.last().unwrap();
         let barriers = routing::obstacles(&layout, edge);
-        assert!(barriers.contains(&layout.bounds[2]));
-        assert!(barriers.contains(&layout.bounds[4]));
+        for node in [2, 4] {
+            assert!(layout.occludes(node, edge));
+            assert!(!barriers.contains(&layout.bounds[node].header(layout.header_heights[node])));
+            assert!(!barriers.contains(&layout.bounds[node]));
+        }
         let path = layout.paths.last().unwrap();
         assert!(!path.is_empty());
         assert!(path.windows(2).all(|p| {
@@ -91,9 +94,11 @@ fn hierarchy_obstacles_and_direct_container_endpoints() {
         let obstacles = routing::obstacles(&layout, edge);
         for (node, &bounds) in layout.bounds.iter().enumerate() {
             let scope = layout.containers.contains(&node)
-                && (layout.containment.is_ancestor(node, from)
-                    || layout.containment.is_ancestor(node, to));
-            let hard = layout.containers.contains(&node) || node == from || node == to;
+                && ((node != from && layout.containment.is_ancestor(node, from))
+                    || (node != to && layout.containment.is_ancestor(node, to)));
+            let hard = (layout.containers.contains(&node) && !layout.occludes(node, edge))
+                || node == from
+                || node == to;
             assert_eq!(
                 obstacles.contains(&if scope {
                     bounds.header(layout.header_heights[node])
@@ -152,6 +157,8 @@ fn ranked_fixture() -> Graph {
     let template = fixture().nodes.remove(0);
     let nodes = (0..7)
         .map(|i| Node {
+            placement: Default::default(),
+            references: Vec::new(),
             entity: crate::model::ArchitectureEntity::terraform(crate::model::TerraformEntityId {
                 address: format!("test.node{i}"),
                 deposed_key: None,
@@ -275,6 +282,8 @@ fn expanded_container_ports_and_obstacles_use_the_rendered_bounds() {
         .unwrap();
     let external = graph.nodes.len();
     graph.nodes.push(Node {
+        placement: Default::default(),
+        references: Vec::new(),
         entity: crate::model::ArchitectureEntity::terraform(crate::model::TerraformEntityId {
             address: "aws_s3_bucket.external".into(),
             deposed_key: None,
@@ -696,6 +705,8 @@ fn duplicate_local_names_use_topology_after_module_renames_and_node_reordering()
         for (module, target) in [("a", "a"), ("b", "b")] {
             let worker = graph.nodes.len();
             graph.nodes.push(Node {
+                placement: Default::default(),
+                references: Vec::new(),
                 entity: crate::model::ArchitectureEntity::terraform(
                     crate::model::TerraformEntityId {
                         address: format!("module.{module}.aws_instance.main"),
@@ -710,6 +721,8 @@ fn duplicate_local_names_use_topology_after_module_renames_and_node_reordering()
                 ..template.clone()
             });
             graph.nodes.push(Node {
+                placement: Default::default(),
+                references: Vec::new(),
                 entity: crate::model::ArchitectureEntity::terraform(
                     crate::model::TerraformEntityId {
                         address: format!("aws_s3_bucket.{target}"),
@@ -1096,10 +1109,10 @@ fn verify_layout(graph: &Graph, layout: &Layout<'_>) {
                 }
             ));
         }
-        for path in &layout.paths {
+        for (edge, path) in graph.edges.iter().zip(&layout.paths) {
             for pair in path.windows(2) {
                 assert!(pair[0].x == pair[1].x || pair[0].y == pair[1].y);
-                if layout.containers.contains(&i) {
+                if layout.containers.contains(&i) && !layout.occludes(i, edge) {
                     assert!(!crate::layout::routing_shared::crosses(pair[0], pair[1], a));
                 }
             }
@@ -1170,6 +1183,8 @@ fn peer_containers_and_cross_module_children_remain_separate_and_identifiable() 
         }
     }
     graph.nodes.push(Node {
+        placement: Default::default(),
+        references: Vec::new(),
         entity: crate::model::ArchitectureEntity::terraform(crate::model::TerraformEntityId {
             address: "aws_vpc.peer".into(),
             deposed_key: None,

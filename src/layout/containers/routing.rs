@@ -8,40 +8,6 @@ use search::find_path;
 
 use crate::layout::routing_shared::{Simplification, simplify};
 
-#[test]
-fn shortcut_pass_preserves_nested_ports_and_bundles() {
-    let raw = crate::plan::parse(include_str!(
-        "../../../tests/fixtures/spanning-dense-plan.json"
-    ))
-    .unwrap();
-    let graph = crate::semantic::transform(&raw).0;
-    let tree = crate::layout::ContainmentTree::new(&graph);
-    let keys = tree.keys.clone();
-    let layout = super::place_geometry(&graph, tree, true);
-    let before = route_impl(&graph, &layout, &keys, true, true, false);
-    let after = route_impl(&graph, &layout, &keys, true, true, true);
-    for (a, b) in before.paths.iter().zip(&after.paths) {
-        assert_eq!(a.first(), b.first());
-        assert_eq!(a.last(), b.last());
-        assert!(b.len() <= a.len());
-    }
-    assert_eq!(before.junctions, after.junctions);
-    for (edge, (a, b)) in graph
-        .edges
-        .iter()
-        .zip(before.paths.iter().zip(&after.paths))
-    {
-        if edge.kind == EdgeKind::Connection {
-            assert_eq!(a, b);
-        }
-    }
-    let a = crate::layout::metrics::measure(&before.paths);
-    let b = crate::layout::metrics::measure(&after.paths);
-    assert!(b.total_path_length <= a.total_path_length);
-    assert!(b.overlap_distance <= a.overlap_distance);
-    assert!(b.crossing_count <= a.crossing_count);
-}
-
 fn represented_by_nesting(edge: &Edge, tree: &crate::layout::ContainmentTree) -> bool {
     matches!(edge.kind, EdgeKind::Dependency | EdgeKind::Containment)
         && edge.from != edge.to
@@ -85,48 +51,6 @@ pub(in crate::layout) fn route_selected(
         true,
         Some(sides),
     )
-}
-
-#[test]
-fn refined_ancestor_edges_keep_allocated_sides_and_distinct_ports() {
-    let raw = crate::plan::parse(r#"{"format_version":"1.2","resource_changes":[{"address":"test.parent","type":"test"},{"address":"test.child","type":"test"}]}"#).unwrap();
-    let mut graph = crate::semantic::transform(&raw).0;
-    graph.nodes[0].role = crate::model::ResourceRole::Container;
-    graph.edges = vec![Edge {
-        kind: EdgeKind::Containment,
-        ..Edge::from((0, 1))
-    }];
-    graph.edges.extend((0..3).map(|i| Edge {
-        kind: EdgeKind::Association,
-        change: Some(crate::model::EdgeChange {
-            address: format!("test.link{i}"),
-            directionality: crate::model::Directionality::Directed,
-            action: crate::model::Action::Create,
-            previous_address: None,
-            metadata: Default::default(),
-        }),
-        ..Edge::from((0, 1))
-    }));
-    let layout = super::place_geometry(&graph, crate::layout::ContainmentTree::new(&graph), true);
-    let routed = route_selected(&graph, &layout, &[[Side::Right; 2]; 4]);
-    let mut sources = Vec::new();
-    let mut targets = Vec::new();
-    for path in &routed.paths[1..] {
-        let start = path[0];
-        let end = *path.last().unwrap();
-        assert_eq!(start.x, layout.bounds[0].right());
-        assert_eq!(end.x, layout.bounds[1].right());
-        sources.push(start.y);
-        targets.push(end.y);
-    }
-    for mut offsets in [sources, targets] {
-        offsets.sort_unstable();
-        assert!(
-            offsets
-                .windows(2)
-                .all(|p| p[1] - p[0] >= crate::layout::routing_shared::slots::MIN_SPACING)
-        );
-    }
 }
 
 #[cfg(test)]
@@ -240,6 +164,7 @@ fn route_selected_impl(
     );
     let reservations = terminals.all();
     let mut scorer = Scorer::default();
+    scorer.set_borders(&layout.bounds);
     let mut paths = vec![Vec::new(); graph.edges.len()];
     let mut groups = super::affinity::groups(graph, &layout.containment.parents);
     groups.extend(bundles::dependencies(graph, layout));
@@ -340,6 +265,7 @@ fn route_selected_impl(
             |index| terminals.barriers(layout, graph, index),
             |index| soft_obstacles(layout, &graph.edges[index]),
             |index| terminals.clearances[index],
+            &layout.bounds,
         );
     }
     junctions.sort_by_key(|point| (point.x, point.y));
@@ -353,12 +279,14 @@ pub(super) fn obstacles(layout: &Layout<'_>, edge: &Edge) -> Vec<Bounds> {
         .iter()
         .enumerate()
         .filter(|&(node, _)| {
-            layout.containers.contains(&node) || node == edge.from || node == edge.to
+            (layout.containers.contains(&node) && !layout.occludes(node, edge))
+                || node == edge.from
+                || node == edge.to
         })
         .map(|(node, &bounds)| {
             if layout.containers.contains(&node)
-                && (layout.containment.is_ancestor(node, edge.from)
-                    || layout.containment.is_ancestor(node, edge.to))
+                && ((node != edge.from && layout.containment.is_ancestor(node, edge.from))
+                    || (node != edge.to && layout.containment.is_ancestor(node, edge.to)))
             {
                 bounds.header(layout.header_heights[node])
             } else {
@@ -369,14 +297,28 @@ pub(super) fn obstacles(layout: &Layout<'_>, edge: &Edge) -> Vec<Bounds> {
         .collect()
 }
 
-pub(super) fn soft_obstacles(layout: &Layout<'_>, edge: &Edge) -> Vec<Bounds> {
+pub(super) fn soft_obstacles(
+    layout: &Layout<'_>,
+    edge: &Edge,
+) -> Vec<crate::layout::routing_shared::scoring::Occluder> {
+    let occluders = layout.occluders(edge);
     layout
         .bounds
         .iter()
         .enumerate()
         .filter_map(|(node, &bounds)| {
-            (!layout.containers.contains(&node) && node != edge.from && node != edge.to)
-                .then_some(bounds)
+            (occluders.contains(&node)
+                || (!layout.containers.contains(&node)
+                    && node != edge.from
+                    && node != edge.to
+                    && !occluders
+                        .iter()
+                        .any(|&parent| layout.containment.is_ancestor(parent, node))))
+            .then_some(crate::layout::routing_shared::scoring::Occluder {
+                bounds,
+                cost: if occluders.contains(&node) { 1 } else { 2 },
+                step: if occluders.contains(&node) { 2 } else { 1 },
+            })
         })
         .collect()
 }
@@ -570,3 +512,7 @@ fn path_with_clearance(
         None => shortest,
     }
 }
+
+#[cfg(test)]
+#[path = "../../../tests/unit/layout/containers/routing.rs"]
+mod tests;

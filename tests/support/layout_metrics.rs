@@ -200,3 +200,31 @@ pub(crate) fn measure(paths: &[Vec<Point>]) -> LayoutMetrics {
         total_path_length: total_path_length(&paths),
     }
 }
+
+pub(crate) fn border_overlap(path: &[Point], frames: &[crate::layout::Bounds]) -> usize {
+    path.windows(2)
+        .map(|p| {
+            frames
+                .iter()
+                .map(|b| {
+                    let overlap = |a: usize, z: usize, lo: usize, hi: usize| {
+                        a.max(z).min(hi).saturating_sub(a.min(z).max(lo))
+                    };
+                    if p[0].y == p[1].y
+                        && (p[0].y == b.origin.y || p[0].y == b.origin.y + b.height)
+                        && b.width > 24
+                    {
+                        overlap(p[0].x, p[1].x, b.origin.x + 12, b.right() - 12)
+                    } else if p[0].x == p[1].x
+                        && (p[0].x == b.origin.x || p[0].x == b.right())
+                        && b.height > 24
+                    {
+                        overlap(p[0].y, p[1].y, b.origin.y + 12, b.origin.y + b.height - 12)
+                    } else {
+                        0
+                    }
+                })
+                .sum::<usize>()
+        })
+        .sum()
+}

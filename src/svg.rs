@@ -7,9 +7,12 @@ mod entities;
 mod icons;
 mod identity;
 mod legend;
+mod logical;
+mod occlusion;
 mod operations;
 mod paths;
 mod provenance;
+mod references;
 mod relationship_index;
 mod relationships;
 mod roles;
@@ -55,15 +58,16 @@ pub(crate) fn render(graph: &Graph, layout: &Layout<'_>) -> String {
 #[cfg(test)]
 fn dimensions(graph: &Graph, layout: &Layout<'_>) -> (usize, usize) {
     let index = relationship_index::Index::new(graph, layout);
-    dimensions_with_index(graph, layout, &index)
+    dimensions_with_index(graph, layout, &index, AddressFormat::Qualified)
 }
 
 fn dimensions_with_index(
     graph: &Graph,
     layout: &Layout<'_>,
     index: &relationship_index::Index<'_>,
+    address_format: AddressFormat,
 ) -> (usize, usize) {
-    let annotations = annotation_area(graph, index);
+    let annotations = annotation_area(graph, index, address_format);
     (
         annotations.width,
         layout.height
@@ -73,10 +77,31 @@ fn dimensions_with_index(
     )
 }
 
-fn annotation_area(graph: &Graph, index: &relationship_index::Index<'_>) -> annotations::Area {
-    let mut cards = index.cards();
-    cards.extend(components::cards(graph));
-    annotations::Area::new(cards, index.width)
+fn annotation_area(
+    graph: &Graph,
+    index: &relationship_index::Index<'_>,
+    address_format: AddressFormat,
+) -> annotations::Area {
+    annotations::Area::sections(
+        vec![
+            (
+                "Logical Resources",
+                style::LOGICAL_RESOURCES,
+                logical::cards(graph, address_format),
+            ),
+            (
+                "Logical Components",
+                style::LOGICAL_COMPONENTS,
+                components::cards(graph),
+            ),
+            (
+                "Relationship Resources",
+                style::RELATIONSHIP_RESOURCES,
+                index.cards(),
+            ),
+        ],
+        index.width,
+    )
 }
 
 pub(crate) fn render_with_format(
@@ -95,11 +120,13 @@ fn render_with_index(
     relationship_index: &relationship_index::Index<'_>,
 ) -> String {
     let check_offset = if graph.checks.is_empty() { 0 } else { 24 };
-    let (width, height) = dimensions_with_index(graph, layout, relationship_index);
+    let (width, height) = dimensions_with_index(graph, layout, relationship_index, address_format);
     let membership = components::membership(graph);
     let (description, summary) = relationships::captions(graph);
     let markers = relationships::markers(graph);
     let icon_definitions = icons::definitions(&graph.nodes);
+    let occlusion = occlusion::Masks::new(graph, layout);
+    let occlusion_definitions = occlusion.definitions(layout);
     let semantic_edges = graph
         .edges
         .iter()
@@ -108,7 +135,7 @@ fn render_with_index(
         r##"<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}" role="img" aria-labelledby="title description">
 <title id="title">Terraform plan</title>
 <desc id="description">{description} Thin solid: dependency. Dashed: association. Thick dotted: connection. Nested boxes: containment. Edge color preserves the Terraform action when available.</desc>
-<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/></marker>{markers}{icon_definitions}</defs>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/></marker>{markers}{icon_definitions}{occlusion_definitions}</defs>
 <rect width="100%" height="100%" fill="#ffffff"/>
 <g font-family="ui-monospace, SFMono-Regular, Consolas, monospace">
 <text x="40" y="45" font-size="25" font-weight="700" fill="#0f172a">Terraform plan</text>
@@ -174,7 +201,7 @@ fn render_with_index(
         svg.push_str(&checks::render(&graph.checks));
         svg.push_str("<g transform=\"translate(0 24)\">\n");
     }
-    let annotations = annotation_area(graph, relationship_index);
+    let annotations = annotation_area(graph, relationship_index, address_format);
     svg.push_str(&annotations.render());
     writeln!(
         svg,
@@ -188,7 +215,7 @@ fn render_with_index(
     }
     svg.push_str(&scopes::render(layout));
     svg.push_str(&containers::boundaries(graph, layout));
-    for (edge, points) in graph.edges.iter().zip(&layout.paths) {
+    for (index, (edge, points)) in graph.edges.iter().zip(&layout.paths).enumerate() {
         let relation = match edge.kind {
             EdgeKind::Dependency => " data-edge-kind=\"dependency\"",
             EdgeKind::Association => " data-edge-kind=\"association\"",
@@ -226,17 +253,27 @@ fn render_with_index(
         } else {
             String::new()
         };
-        writeln!(svg, r##"<path d="{path}"{relation}{previous}{operation} data-directionality="{direction}" data-source="{source}" data-target="{target}" fill="none" stroke="{stroke}" {style} stroke-linejoin="round"{arrow}><title>{title}</title></path>"##).unwrap();
+        let mask = occlusion.attribute(index);
+        writeln!(svg, r##"<path d="{path}"{relation}{previous}{operation} data-directionality="{direction}" data-source="{source}" data-target="{target}" fill="none" stroke="{stroke}" {style} stroke-linejoin="round"{arrow}{mask}><title>{title}</title></path>"##).unwrap();
     }
     for point in &layout.junctions {
+        let mask = layout
+            .paths
+            .iter()
+            .position(|path| path.contains(point))
+            .map(|index| occlusion.attribute(index))
+            .unwrap_or_default();
         writeln!(
             svg,
-            r##"<circle cx="{}" cy="{}" r="3" fill="#94a3b8"/>"##,
+            r##"<circle cx="{}" cy="{}" r="3" fill="#94a3b8"{mask}/>"##,
             point.x, point.y
         )
         .unwrap();
     }
     for (i, node) in graph.nodes.iter().enumerate() {
+        if node.placement == crate::model::Placement::Logical {
+            continue;
+        }
         let resource_id = identity::resource(node);
         let architecture_id = escape(node.entity.id.as_str());
         let bounds = layout.bounds[i];
@@ -333,6 +370,13 @@ fn render_with_index(
             )
             .unwrap();
         }
+        svg.push_str(&references::render(
+            graph,
+            node,
+            x + 12,
+            y + 86,
+            card_width - 24,
+        ));
         let role = roles::annotation(node.role, &node.module);
         let footer = match role.is_empty() {
             false => role,

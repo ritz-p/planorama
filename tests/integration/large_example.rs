@@ -76,6 +76,67 @@ fn large_fixture_is_reproducible_from_terraform_sources_and_renders_deterministi
     assert!(svg.contains("data-role=\"controller\""));
     assert!(!svg.contains("data.aws_region.current"));
     assert!(!svg.contains("stroke-dasharray=\"5 4\""));
+    let document = roxmltree::Document::parse(&svg).unwrap();
+    let component = document
+        .descendants()
+        .find(|n| n.attribute("data-entity-kind") == Some("synthetic"))
+        .unwrap();
+    let target_address = "module.application.aws_lb_target_group.app";
+    let members: Vec<_> = component
+        .descendants()
+        .filter(|n| n.attribute("data-source-address") == Some(target_address))
+        .collect();
+    assert_eq!(members.len(), 1);
+    let target = members[0]
+        .attribute("href")
+        .unwrap()
+        .strip_prefix('#')
+        .unwrap();
+    let original: Vec<_> = document
+        .descendants()
+        .filter(|n| n.attribute("data-terraform-address") == Some(target_address))
+        .collect();
+    assert_eq!(original.len(), 1);
+    assert_eq!(original[0].attribute("id"), Some(target));
+    assert!(
+        original[0]
+            .ancestors()
+            .any(|n| n.attribute("data-architecture").is_some())
+    );
+    assert_eq!(
+        members[0]
+            .children()
+            .find(|n| n.has_tag_name("rect"))
+            .unwrap()
+            .attribute("fill"),
+        Some("#ecfdf5")
+    );
+    for card in document
+        .descendants()
+        .filter(|n| n.attribute("data-terraform-address").is_some())
+    {
+        let address = card.attribute("data-terraform-address").unwrap();
+        let attributes: &[&str] = if address.contains("aws_ecs_service.") {
+            &["cluster", "task_definition"]
+        } else if address.contains("aws_instance.workers_") {
+            &["iam_instance_profile", "ami"]
+        } else {
+            &[]
+        };
+        for &attribute in attributes {
+            let link = card
+                .descendants()
+                .find(|n| n.attribute("data-reference-attribute") == Some(attribute))
+                .unwrap_or_else(|| panic!("{address} missing {attribute}"));
+            let target = link.attribute("href").unwrap().strip_prefix('#').unwrap();
+            assert!(
+                document
+                    .descendants()
+                    .any(|n| n.attribute("id") == Some(target)
+                        && n.attribute("data-placement") == Some("logical"))
+            );
+        }
+    }
     assert_eq!(output_svg(generated.as_bytes()), svg);
 }
 

@@ -43,6 +43,8 @@ docker compose exec -T dev cargo run --locked -- - -o - < plan.json > diagram.sv
 - 依存辺は参照されるリソースから参照するリソースへ向きます。包含は入れ子の枠、関連付けは破線、接続は太い点線です。
 - AWS の VPC・Subnet が空間的なコンテナです。間接参照から導いた配置には `inferred placement` を表示します。
 - data リソースは破線と `external` 表示で区別します。一部の AWS メタデータ data は省略します。
+- 上部は Logical Resources（シアン）、Logical Components（紫）、Relationship Resources の順です。ECS Cluster・Task Definition・IAM 定義・AMI は最初のセクションにまとめ、空間配置と経路計算から分離します。内側のリソースとコンポーネントのメンバーカードは各リソースの変更色を使い、参照情報・変更数を保持します。
+- 利用側の `Uses` 行から論理カードへ移動できます。依存指定・未解決・表示対象外は区別し、長いアドレスと5件目以降の参照はタイトルで確認できます。
 - 既定のアドレス表示は Planorama 修飾形式です。`--address-format terraform` で Terraform 本来の表記に切り替えられます。省略されたラベルの全文はカードのタイトルで確認できます。
 - 属性値は描画しません。plan JSON 自体には機密値が含まれ得るため、実環境の plan/state はコミットしないでください。
 
@@ -79,7 +81,7 @@ docker run --rm --mount type=bind,source=.,target=/workspace --env CARGO_TARGET_
 
 ローカル開発ではソースをコンテナにバインドマウントし、Cargo のキャッシュとビルド成果物を named volume に保存します。`docker compose stop dev` / `start dev` で停止・再開、Dockerfile の変更後は `up -d --build dev` で再作成します。
 
-通常の CI は Ubuntu runner 上で `rust-toolchain.toml` の固定ツールチェーンを使い、Formatting・Tests・Clippy を実行します。開発イメージが追加するのは Rust と rustfmt・Clippy のため、CI では直接実行してイメージ構築を省きます。Tests はコンパイルと実行を別ステップで計測し、毎回 `cargo test --locked --all-targets --all-features` を実行します。
+通常の CI は Ubuntu runner 上で `rust-toolchain.toml` の固定ツールチェーンを使い、Formatting・Tests・Clippy を直接実行します。開発イメージには SVG の描画確認用に `rsvg-convert` と DejaVu フォントも含みます。Tests はコンパイルと実行を別ステップで計測し、毎回 `cargo test --locked --all-targets --all-features` を実行します。
 
 Tests・Clippy は `Swatinem/rust-cache` で Cargo registry/git と `target` 内の依存クレートの成果物を保存します。workspace crate は毎回ビルドし、ソース変更後に更新できない同一キーのキャッシュへ成果物を保存しません。キーには runner 環境・ジョブ・Rust compiler・Cargo.toml/Cargo.lock・ツールチェーン・Cargo 設定・ビルド関連環境変数に加え、`build.rs` と `assets/**` のハッシュを含めます。`v1-rust-dependencies` prefix で旧 workspace 成果物を含むキャッシュと区別します。復元後の再ビルド判定は Cargo が行い、キャッシュの有無によらず全対象を検証します。Tests と Clippy はプロファイルと成果物が異なるためジョブ別のキャッシュを使います。
 両 workflow は関連入力が変わる `main` への push でも実行し、後続 PR が復元できる既定ブランチのキャッシュを作ります。

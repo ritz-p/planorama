@@ -158,8 +158,10 @@ pub(super) fn header_heights(graph: &Graph, tree: &super::ContainmentTree) -> Ve
         .map(|(node, edges)| {
             let inferred =
                 tree.parents[node].is_some_and(|parent| graph.derived_containment(parent, node));
-            (NODE_HEIGHT + if inferred { 18 } else { 0 })
-                .max(40 + super::relationship_markers::port_span(edges, &numbered))
+            (NODE_HEIGHT
+                + crate::view::references::height(&graph.nodes[node])
+                + if inferred { 18 } else { 0 })
+            .max(40 + super::relationship_markers::port_span(edges, &numbered))
         })
         .collect()
 }

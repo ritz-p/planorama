@@ -98,14 +98,7 @@ fn dense_targets_keep_distinct_numbers_readable() {
         let graph = dense_graph(12, kind);
         let layout = Layout::new(&graph);
         let index = Index::new(&graph, &layout);
-        assert_eq!(
-            index.markers.len(),
-            if kind == EdgeKind::Association {
-                24
-            } else {
-                12
-            }
-        );
+        assert_eq!(index.markers.len(), 24);
         assert_marker_routes(&graph, &layout);
         for (i, marker) in index.markers.iter().enumerate() {
             for other in &index.markers[i + 1..] {
@@ -190,6 +183,12 @@ fn relationship_index_chunks_complete_entries_and_wraps_cards_deterministically(
             let cards = index.cards();
             assert_eq!(cards.len(), count.div_ceil(10));
             assert_eq!(index.markers.len(), count * 2);
+            let full = svg::render(graph, &layout);
+            assert_eq!(
+                full.matches(">Relationship Resources</text>").count(),
+                usize::from(count > 0)
+            );
+            assert!(!full.contains(">Relationship resources</text>"));
             for (i, card) in cards.iter().enumerate() {
                 let doc = roxmltree::Document::parse(&card.content).unwrap();
                 let numbers: Vec<_> = doc
@@ -201,7 +200,7 @@ fn relationship_index_chunks_complete_entries_and_wraps_cards_deterministically(
                     numbers,
                     (i * 10 + 1..=(count.min((i + 1) * 10))).collect::<Vec<_>>()
                 );
-                assert!(card.content.contains("Relationship resources"));
+                assert!(!card.content.contains("Relationship resources"));
                 assert!(!card.content.contains("Association</text>"));
             }
             let width = cards.first().map_or(360, |card| card.width);
@@ -291,7 +290,7 @@ fn wide_addresses_wrap_within_the_canvas_and_reserved_height() {
         );
         assert!(line.attribute("y").unwrap().parse::<usize>().unwrap() + 4 < cards[0].height);
     }
-    assert_eq!(cards[0].height, 72 + lines.len() * 20);
+    assert_eq!(cards[0].height, 44 + lines.len() * 20);
 }
 
 #[test]
@@ -402,7 +401,7 @@ fn marker_borders_match_relationship_actions_and_line_patterns() {
                 .find(|n| n.attribute("data-relationship-marker") == Some("1"))
                 .unwrap();
             let border = marker.children().find(|n| n.has_tag_name("rect")).unwrap();
-            if kind != EdgeKind::Association {
+            if kind == EdgeKind::Dependency {
                 let arrow_id = path
                     .attribute("marker-end")
                     .unwrap()
@@ -578,7 +577,7 @@ fn resource_provenance_is_indexed_and_reference_provenance_is_not() {
     assert_eq!(index.markers.len(), 2);
     let svg = svg::render(&graph, &layout);
     assert!(svg.contains("data-relationship-index="));
-    assert!(svg.contains("Relationship resources</text>"));
+    assert_eq!(svg.matches(">Relationship Resources</text>").count(), 1);
     assert!(svg.contains("data-relationship-marker=\"1\""));
     assert!(svg.contains("data-relationship-entry=\"1\""));
     assert!(svg.contains(&format!(
@@ -593,10 +592,10 @@ fn resource_provenance_is_indexed_and_reference_provenance_is_not() {
     let empty = Index::new(&inferred, &layout);
     assert!(empty.entries.is_empty());
     assert!(empty.cards().is_empty());
-    assert!(!svg::render(&inferred, &layout).contains("Relationship resources"));
+    assert!(!svg::render(&inferred, &layout).contains("Relationship Resources"));
     assert_eq!(
         svg::dimensions(&graph, &layout).1 - svg::dimensions(&inferred, &layout).1,
-        index.cards()[0].height + 24
+        index.cards()[0].height + 48 + 16 + 24
     );
 }
 

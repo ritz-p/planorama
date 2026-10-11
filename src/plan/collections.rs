@@ -73,6 +73,23 @@ fn collection<'a>(value: &'a Value, unknown: &'a Value, path: &[&str]) -> Option
     collection(&value[path[0]], &unknown[path[0]], &path[1..])
 }
 
+fn known_strings<'a>(value: &'a Value, unknown: &'a Value, path: &[&str]) -> Option<Vec<&'a str>> {
+    if unknown.as_bool() == Some(true) {
+        return None;
+    }
+    if path.is_empty() {
+        return value.as_str().filter(|s| !s.is_empty()).map(|s| vec![s]);
+    }
+    if value.is_array() || unknown.is_array() {
+        return elements(value, unknown)?
+            .into_iter()
+            .map(|(v, u)| known_strings(v, u, path))
+            .collect::<Option<Vec<_>>>()
+            .map(|parts| parts.into_iter().flatten().collect());
+    }
+    known_strings(&value[path[0]], &unknown[path[0]], &path[1..])
+}
+
 pub(super) fn annotate(
     plan: &Value,
     nodes: &[TerraformEntity],
@@ -115,6 +132,30 @@ pub(super) fn annotate(
         })
         .collect();
     for reference in references {
+        if reference.complete && reference.instances_explicit && !reference.sources.is_empty() {
+            let expected = reference
+                .sources
+                .iter()
+                .map(|&source| {
+                    let (value, unknown) = evidence[source];
+                    known_strings(value, unknown, &["arn"])
+                })
+                .collect::<Option<Vec<_>>>()
+                .map(|parts| parts.into_iter().flatten().collect::<Vec<_>>());
+            let (value, unknown) = evidence[reference.target];
+            let observed = known_strings(
+                value,
+                unknown,
+                &reference.attribute.split('.').collect::<Vec<_>>(),
+            );
+            if let (Some(mut expected), Some(mut observed)) = (expected, observed) {
+                expected.sort_unstable();
+                expected.dedup();
+                observed.sort_unstable();
+                observed.dedup();
+                reference.arn_values_match = !expected.is_empty() && expected == observed;
+            }
+        }
         if !reference.complete || !reference.ids_only || reference.sources.is_empty() {
             continue;
         }

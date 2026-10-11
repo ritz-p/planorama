@@ -1,5 +1,27 @@
 use crate::model::architecture::Action;
 
+pub(super) struct SectionPalette {
+    pub background: &'static str,
+    pub border: &'static str,
+    pub heading: &'static str,
+}
+
+pub(super) const LOGICAL_RESOURCES: SectionPalette = SectionPalette {
+    background: "#ecfeff",
+    border: "#0891b2",
+    heading: "#0e7490",
+};
+pub(super) const LOGICAL_COMPONENTS: SectionPalette = SectionPalette {
+    background: "#f5f3ff",
+    border: "#a78bfa",
+    heading: "#6d28d9",
+};
+pub(super) const RELATIONSHIP_RESOURCES: SectionPalette = SectionPalette {
+    background: "#f8fafc",
+    border: "#cbd5e1",
+    heading: "#475569",
+};
+
 pub(super) fn label(action: Action) -> &'static str {
     match action {
         Action::Unchanged => "unchanged",

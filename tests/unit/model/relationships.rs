@@ -1,6 +1,36 @@
 use crate::model::*;
 
 #[test]
+fn connection_directionality_is_undirected_in_both_models() {
+    for kind in [
+        EdgeKind::Dependency,
+        EdgeKind::Association,
+        EdgeKind::Connection,
+    ] {
+        let expected = if kind == EdgeKind::Dependency {
+            Directionality::Directed
+        } else {
+            Directionality::Undirected
+        };
+        let edge = Edge {
+            from: 0,
+            to: 1,
+            kind,
+            change: None,
+        };
+        let relationship = ArchitectureRelationship::new(
+            ArchitectureId::synthetic("test", "a"),
+            ArchitectureId::synthetic("test", "b"),
+            kind,
+            false,
+            vec![],
+        );
+        assert_eq!(edge.directionality(), expected);
+        assert_eq!(relationship.directionality(), expected);
+    }
+}
+
+#[test]
 fn derived_containment_depends_on_reference_evidence_not_resource_types() {
     let raw =
         crate::plan::parse(include_str!("../../fixtures/rds-subnet-group-plan.json")).unwrap();

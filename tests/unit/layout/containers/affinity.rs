@@ -128,7 +128,7 @@ fn three_subnet_alb_stays_in_vpc_and_moves_to_the_source_median() {
                 || path[0].y == source.origin.y + source.height
         );
         assert!(output.contains(&format!(
-            "{} → {} (connection)",
+            "{} ↔ {} (connection)",
             graph.nodes[edge.from].address, graph.nodes[edge.to].address
         )));
         for pair in path.windows(2) {
@@ -221,6 +221,8 @@ fn wrapping_keeps_related_containers_consecutive_and_uses_safe_fallbacks() {
     for name in ["aa", "bb", "cc"] {
         let index = graph.nodes.len();
         graph.nodes.push(Node {
+            placement: Default::default(),
+            references: Vec::new(),
             entity: crate::model::ArchitectureEntity::terraform(crate::model::TerraformEntityId {
                 address: format!("aws_subnet.{name}"),
                 deposed_key: None,

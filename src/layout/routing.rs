@@ -81,9 +81,16 @@ pub(super) fn route_selected(
             |s| s[index][1],
         ) as usize];
     }
-    let bundles = Bundles::new(graph, ranks);
+    let mut bundles = Bundles::new(graph, ranks);
     let containment = super::ContainmentTree::new(graph);
-    bundles.align_ports(graph, bounds, &mut source_ports, &mut target_ports);
+    bundles.align_ports(
+        graph,
+        bounds,
+        &mut source_ports,
+        &mut target_ports,
+        sides,
+        ranks,
+    );
     let columns = ranks.iter().max().copied().unwrap_or(0) + 1;
     let mut column_widths = vec![0; columns];
     for (node, bound) in bounds.iter().enumerate() {
@@ -106,6 +113,7 @@ pub(super) fn route_selected(
             .map(|(x, width)| x + width)
             .collect();
         let mut scorer = Scorer::default();
+        scorer.set_borders(bounds);
         let incident: Vec<_> = sources
             .iter()
             .zip(&targets)
@@ -239,12 +247,15 @@ pub(super) fn route_selected(
             true => continue,
             false => {
                 if shortcuts {
-                    super::routing_shared::shortcuts::simplify_routes(
+                    super::routing_shared::shortcuts::simplify_routes_with_clearances(
                         &mut paths,
                         order
                             .into_iter()
                             .filter(|&edge| bundles.group(edge).is_none()),
                         |_| bounds.to_vec(),
+                        |_| Vec::new(),
+                        |_| [16; 2],
+                        bounds,
                     );
                 }
                 return Routed {

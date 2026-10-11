@@ -39,6 +39,7 @@ fn large_fixture_limits_each_edges_bends_and_valid_route_stretch() {
         assert_no_retraced_stubs(graph, &layout);
         let mut failures = Vec::new();
         let mut result = BTreeMap::new();
+        let mut border_total = 0;
         for (index, edge) in graph.edges.iter().enumerate() {
             let path = &layout.paths[index];
             if path.is_empty() {
@@ -48,6 +49,93 @@ fn large_fixture_limits_each_edges_bends_and_valid_route_stretch() {
             let metrics = measure_edge(path, &reference);
             let from = graph.nodes[edge.from].address.clone();
             let to = graph.nodes[edge.to].address.clone();
+            let hidden = layout.occluders(edge);
+            let frames: Vec<_> = layout
+                .bounds
+                .iter()
+                .enumerate()
+                .filter(|(node, _)| {
+                    !hidden
+                        .iter()
+                        .any(|&parent| layout.containment.is_ancestor(parent, *node))
+                })
+                .map(|(_, &b)| b)
+                .collect();
+            let border = crate::layout::metrics::border_overlap(path, &frames);
+            assert_eq!(border, 0, "{from} -> {to}: border overlap={border}");
+            border_total += border;
+            if border > 0 {
+                eprintln!("border {from} -> {to}: {border}");
+            }
+            if (from.contains("aws_subnet.private_") && to.contains("aws_ecs_service"))
+                || (from.contains("aws_internet_gateway") && to.contains("aws_nat_gateway"))
+            {
+                let own = measure(&[path.clone()]);
+                let mut crossings = 0;
+                let mut overlap = 0;
+                for (other_index, other) in layout.paths.iter().enumerate() {
+                    if other_index != index {
+                        let pair = measure(&[path.clone(), other.clone()]);
+                        crossings += pair.crossing_count;
+                        overlap += pair.overlap_distance;
+                    }
+                }
+                eprintln!(
+                    "route {from} -> {to}: length={} bends={} crossings={crossings} overlap={overlap} points={path:?}",
+                    own.total_path_length, own.bend_count
+                );
+                if from.contains("aws_subnet.private_") {
+                    assert!(own.total_path_length <= 600 && own.bend_count <= 3);
+                    assert_eq!(overlap, 0);
+                    let source = layout.bounds[edge.from];
+                    assert!(
+                        path.windows(2)
+                            .all(|p| !crate::layout::routing_shared::crosses(p[0], p[1], source)),
+                        "source re-entry: {path:?}"
+                    );
+                } else {
+                    let hidden: usize = layout
+                        .occluders(edge)
+                        .iter()
+                        .map(|&node| {
+                            let b = layout.bounds[node];
+                            path.windows(2)
+                                .filter(|p| crate::layout::routing_shared::crosses(p[0], p[1], b))
+                                .map(|p| {
+                                    if p[0].x == p[1].x {
+                                        p[0].y
+                                            .max(p[1].y)
+                                            .min(b.origin.y + b.height)
+                                            .saturating_sub(p[0].y.min(p[1].y).max(b.origin.y))
+                                    } else {
+                                        p[0].x
+                                            .max(p[1].x)
+                                            .min(b.right())
+                                            .saturating_sub(p[0].x.min(p[1].x).max(b.origin.x))
+                                    }
+                                })
+                                .sum::<usize>()
+                        })
+                        .sum();
+                    eprintln!("gateway hidden length={hidden}");
+                    assert!(own.total_path_length <= 1000 && own.bend_count <= 3);
+                    assert!(hidden > 0 && hidden as u128 * 3 < own.total_path_length);
+                    let foreign = graph
+                        .nodes
+                        .iter()
+                        .position(|n| n.address == "module.network.aws_subnet.public_b")
+                        .unwrap();
+                    assert!(layout.occludes(foreign, edge));
+                    assert!(
+                        path.windows(2)
+                            .any(|p| crate::layout::routing_shared::crosses(
+                                p[0],
+                                p[1],
+                                layout.bounds[foreign]
+                            ))
+                    );
+                }
+            }
             if let Some(failure) = metrics.violation(&from, &to, 14, 2, 128) {
                 failures.push(failure);
             }
@@ -61,6 +149,7 @@ fn large_fixture_limits_each_edges_bends_and_valid_route_stretch() {
                 metrics,
             );
         }
+        eprintln!("total border overlap={border_total}");
         eprintln!(
             "per-edge: count={}, max_bends={}, max_excess={}, max_stretch={:.3}, extreme_routes={}",
             result.len(),
@@ -174,7 +263,7 @@ fn symmetric_peers_keep_ports_and_routes_when_edges_are_reordered() {
 }
 
 #[test]
-fn coincident_crossings_make_a_long_clear_detour_worthwhile() {
+fn coincident_crossings_do_not_justify_a_long_detour() {
     use crate::layout::routing_shared::scoring::Scorer;
     let start = Point { x: 100, y: 2000 };
     let end = Point { x: 500, y: 2000 };
@@ -198,7 +287,7 @@ fn coincident_crossings_make_a_long_clear_detour_worthwhile() {
     let direct = routing::path_between(start, end, &obstacles, None);
     let detour = routing::path_between(start, end, &obstacles, Some(&scorer));
     assert_eq!(measure(&[occupied.clone(), direct]).crossing_count, 1);
-    assert_eq!(measure(&[occupied, detour]).crossing_count, 0);
+    assert_eq!(measure(&[occupied, detour]).crossing_count, 1);
 }
 
 #[test]
@@ -219,7 +308,7 @@ fn congested_container_routes_improve_over_shortest_paths() {
     assert!(new.overlap_distance < old.overlap_distance / 3);
     let cost = |m: &crate::layout::metrics::LayoutMetrics| {
         m.overlap_distance * 8
-            + m.crossing_count as u128 * 512
+            + m.crossing_count as u128 * crate::layout::routing_shared::scoring::CROSSING_COST
             + m.bend_count as u128 * 96
             + m.total_path_length
     };
@@ -237,7 +326,7 @@ fn congested_container_routes_improve_over_shortest_paths() {
 }
 
 #[test]
-fn crossing_penalty_selects_a_clear_detour_when_available() {
+fn crossings_do_not_force_clear_detours() {
     use crate::layout::routing_shared::scoring::Scorer;
     let start = Point { x: 100, y: 100 };
     let end = Point { x: 500, y: 100 };
@@ -259,7 +348,7 @@ fn crossing_penalty_selects_a_clear_detour_when_available() {
     scorer.insert(occupied.clone());
     let detour = routing::path_between(start, end, &obstacles, Some(&scorer));
     assert_eq!(measure(&[occupied.clone(), shortest]).crossing_count, 1);
-    assert_eq!(measure(&[occupied, detour]).crossing_count, 0);
+    assert_eq!(measure(&[occupied, detour]).crossing_count, 1);
 }
 
 #[test]
@@ -305,13 +394,16 @@ fn completed_paths_compact_stubs_before_scoring_and_occupancy() {
                     y: split.y + 10,
                 },
             ];
-            assert_eq!(scorer.readability_cost(&crossing), 20 + 512);
+            assert_eq!(
+                scorer.readability_cost(&crossing),
+                20 + crate::layout::routing_shared::scoring::CROSSING_COST
+            );
         }
     }
 }
 
 #[test]
-fn stub_junction_crossings_select_a_turn_away_detour() {
+fn stub_junction_crossings_preserve_short_routes() {
     use crate::layout::routing_shared::scoring::Scorer;
     for (start, end, junction) in [
         (
@@ -344,7 +436,7 @@ fn stub_junction_crossings_select_a_turn_away_detour() {
         let direct = routing::path_between(start, end, &obstacles, Some(&Scorer::default()));
         let detour = routing::path_between(start, end, &obstacles, Some(&scorer));
         assert!(
-            scorer.readability_cost(&detour) < scorer.readability_cost(&direct),
+            scorer.readability_cost(&detour) <= scorer.readability_cost(&direct),
             "start={start:?} direct={direct:?} detour={detour:?}"
         );
         assert!(

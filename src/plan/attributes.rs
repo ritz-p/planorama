@@ -41,10 +41,13 @@ pub(super) fn collect(
                 result.push(AttributeReference {
                     target,
                     attribute: attribute.clone(),
+                    has_references: !refs.is_empty(),
                     sources: resolution.sources,
                     complete: resolution.complete && *structurally_complete,
+                    instances_explicit: resolution.instances_explicit,
                     collection_ids_complete: false,
                     scalar_id_matches: false,
+                    arn_values_match: false,
                     ids_only: resolution.ids_only,
                     issues: resolution.issues,
                 });

@@ -43,17 +43,78 @@ pub fn render_states(
     let mut endpoints = BTreeMap::new();
     let mut obstacles = BTreeMap::new();
     let mut sections = String::new();
+    let mut relationships: Vec<_> = architecture.relationships().iter().collect();
+    relationships.sort();
+    if !architecture.relationships().is_empty() {
+        let metadata: Vec<_> = relationships.iter().map(|edge| {
+            let crate::model::architecture::CrossStateProvenance::TerraformRemoteState { remote, output, output_action } = &edge.provenance;
+            serde_json::json!({"from_state":edge.from.state.as_str(), "from":edge.from.address, "to_state":edge.to.state.as_str(), "to":edge.to.address, "remote":remote, "output":output, "output_action":output_action.map(super::label)})
+        }).collect();
+        writeln!(
+            sections,
+            "<metadata id=\"cross-state-relationships\">{}</metadata>",
+            super::escape(&serde_json::Value::Array(metadata).to_string())
+        )
+        .unwrap();
+    }
     let mut top = 60;
     let mut width = 1120;
     for (id, graph) in graphs {
+        let mut graph = graph.clone();
+        for edge in &relationships {
+            if &edge.to.state != id {
+                continue;
+            }
+            let Some(source) = graphs.get(&edge.from.state).and_then(|g| {
+                g.nodes
+                    .iter()
+                    .find(|n| n.address == edge.from.address && n.deposed_key.is_none())
+            }) else {
+                continue;
+            };
+            let Some(consumer) = graph
+                .0
+                .nodes
+                .iter_mut()
+                .find(|n| n.address == edge.to.address && n.deposed_key.is_none())
+            else {
+                continue;
+            };
+            if source.placement != crate::model::Placement::Logical
+                && consumer.placement != crate::model::Placement::Logical
+            {
+                continue;
+            }
+            let crate::model::architecture::CrossStateProvenance::TerraformRemoteState {
+                remote,
+                output,
+                ..
+            } = &edge.provenance;
+            consumer.references.push(crate::model::ResourceReference {
+                label: "References",
+                attribute: format!("{remote}.outputs.{output}"),
+                targets: vec![crate::model::ReferenceTarget {
+                    state: Some(edge.from.state.clone()),
+                    id: crate::model::TerraformEntityId {
+                        address: source.address.clone(),
+                        deposed_key: None,
+                    },
+                    placement: source.placement,
+                }],
+                complete: true,
+                dependency: false,
+                issues: Default::default(),
+            });
+        }
+        let graph = &graph;
         let layout = Layout::new(graph);
         let index = super::relationship_index::Index::new(graph, &layout);
-        let (state_width, height) = super::dimensions_with_index(graph, &layout, &index);
+        let (state_width, height) = super::dimensions_with_index(graph, &layout, &index, format);
         width = width.max(state_width);
         let prefix = prefix(id);
         let check_offset = if graph.checks.is_empty() { 0 } else { 24 }
             + super::legend::height(graph)
-            + super::annotation_area(graph, &index).height;
+            + super::annotation_area(graph, &index, format).height;
         obstacles.insert(
             id.clone(),
             StateObstacles {
@@ -86,12 +147,9 @@ pub fn render_states(
                 parents: layout.containment.parents.clone(),
             },
         );
-        for (index, node) in graph
-            .nodes
-            .iter()
-            .enumerate()
-            .filter(|(_, n)| n.deposed_key.is_none())
-        {
+        for (index, node) in graph.nodes.iter().enumerate().filter(|(_, n)| {
+            n.deposed_key.is_none() && n.placement != crate::model::Placement::Logical
+        }) {
             let bounds = layout.bounds[index];
             endpoints.insert(
                 Endpoint {
@@ -117,8 +175,6 @@ pub fn render_states(
     }
     let mut links = String::new();
     let mut link_count = 0;
-    let mut relationships: Vec<_> = architecture.relationships().iter().collect();
-    relationships.sort();
     for edge in relationships {
         let crate::model::architecture::CrossStateProvenance::TerraformRemoteState {
             remote,
@@ -169,7 +225,13 @@ pub fn render_states(
         sections.push_str(&links);
         sections.push_str("<text x=\"350\" y=\"35\" font-family=\"ui-monospace, Consolas, monospace\" font-size=\"12\" fill=\"#2563eb\">Dashed blue: cross-state dependency</text>\n");
     }
-    let description = if link_count == 0 {
+    let description = if architecture.relationships().len() > link_count {
+        format!(
+            "{} named states with {link_count} routed cross-state dependencies and {} logical cross-state references. Logical references link resource cards without routed paths.",
+            graphs.len(),
+            architecture.relationships().len() - link_count
+        )
+    } else if link_count == 0 {
         format!(
             "{} independent states. Resource identities and relationships are scoped to each state.",
             graphs.len()
@@ -189,7 +251,7 @@ pub fn render_states(
     )
 }
 
-fn prefix(id: &StateId) -> String {
+pub(super) fn prefix(id: &StateId) -> String {
     let mut prefix = String::from("state-");
     for byte in id.as_str().bytes() {
         write!(prefix, "{byte:02x}").unwrap();
@@ -224,198 +286,9 @@ fn namespace(svg: &str, prefix: &str) -> String {
             &format!(" {attribute}=\"url(#{prefix}"),
         );
     }
-    scoped
+    scoped.replace(" data-global-href=", " href=")
 }
 
 #[cfg(test)]
-#[test]
-fn namespacing_only_rewrites_fragment_reference_attributes() {
-    let input = r##"<svg><g id="paint" data-action-reason="url(#ticket)"><title>url(#ticket)</title></g><path fill="url(#paint)" stroke="url(#paint)" clip-path="url(#paint)" mask="url(#paint)" marker-end="url(#paint)"/><use href="#paint"/></svg>"##;
-    let scoped = namespace(input, "state-x-");
-    assert!(scoped.contains("data-action-reason=\"url(#ticket)\""));
-    assert!(scoped.contains("<title>url(#ticket)</title>"));
-    assert_eq!(scoped.matches("url(#state-x-paint)").count(), 5);
-    assert!(scoped.contains("href=\"#state-x-paint\""));
-}
-
-#[cfg(test)]
-#[test]
-fn cross_state_paths_avoid_intervening_cards_and_describe_dependencies() {
-    let raw = crate::plan::parse(r#"{"format_version":"1.2","resource_changes":[{"address":"test.a","type":"test"},{"address":"test.b","type":"test"}],"configuration":{"root_module":{"resources":[{"address":"test.b","expressions":{"input":{"references":["test.a.id"]}}}]}}}"#).unwrap();
-    let mut graph = crate::semantic::transform(&raw);
-    graph.0.components.push(crate::model::SyntheticComponent {
-        entity: crate::model::ArchitectureEntity::synthetic(
-            "test",
-            "group",
-            graph
-                .nodes
-                .iter()
-                .flat_map(|n| n.entity.provenance.clone())
-                .collect(),
-        ),
-        id: "test-group".into(),
-        kind: "test".into(),
-        label: "Test group".into(),
-        members: vec!["test.a".into(), "test.b".into()],
-    });
-    let first = StateId::new("first").unwrap();
-    let second = StateId::new("second").unwrap();
-    let local = Layout::new(&graph);
-    assert!(local.bounds[0].right() < local.bounds[1].right());
-    let (_, height) = super::dimensions(&graph, &local);
-    let index = super::relationship_index::Index::new(&graph, &local);
-    let offset =
-        100 + super::legend::height(&graph) + super::annotation_area(&graph, &index).height;
-    let obstacles: Vec<_> = [offset, offset + height + 60]
-        .into_iter()
-        .flat_map(|offset| {
-            local.bounds.iter().map(move |b| {
-                let mut b = *b;
-                b.origin.y += offset;
-                b
-            })
-        })
-        .collect();
-    let endpoint_y = offset + local.bounds[0].origin.y + local.header_heights[0] / 2;
-    let mut architecture = crate::model::architecture::Architecture {
-        states: BTreeMap::from([(first.clone(), graph.clone()), (second.clone(), graph)]),
-        relationships: vec![crate::model::architecture::CrossStateEdge {
-            from: Endpoint {
-                state: first,
-                address: "test.a".into(),
-            },
-            to: Endpoint {
-                state: second,
-                address: "test.a".into(),
-            },
-            provenance: crate::model::architecture::CrossStateProvenance::TerraformRemoteState {
-                remote: "data.terraform_remote_state.x".into(),
-                output: "value".into(),
-                output_action: None,
-            },
-        }],
-    };
-    let svg = render_states(
-        &crate::view::apply(&architecture, &Default::default()).unwrap(),
-        super::AddressFormat::Qualified,
-    );
-    assert!(svg.contains("2 named states with 1 cross-state dependencies"));
-    let line = svg
-        .lines()
-        .find(|l| l.contains("data-cross-state=\"true\""))
-        .unwrap();
-    let path = line
-        .split(" d=\"")
-        .nth(1)
-        .unwrap()
-        .split('"')
-        .next()
-        .unwrap();
-    let tokens: Vec<_> = path.split_whitespace().collect();
-    let points: Vec<Point> = tokens
-        .chunks_exact(3)
-        .map(|p| Point {
-            x: p[1].parse().unwrap(),
-            y: p[2].parse().unwrap(),
-        })
-        .collect();
-    assert!(points.len() > 4);
-    assert_eq!(points[0].y, endpoint_y);
-    assert_eq!(points.last().unwrap().y, endpoint_y + height + 60);
-    for segment in points.windows(2) {
-        let (a, b) = (segment[0], segment[1]);
-        for obstacle in &obstacles {
-            let crosses = if a.x == b.x {
-                a.x > obstacle.origin.x
-                    && a.x < obstacle.right()
-                    && a.y.max(b.y) > obstacle.origin.y
-                    && a.y.min(b.y) < obstacle.origin.y + obstacle.height
-            } else {
-                a.y > obstacle.origin.y
-                    && a.y < obstacle.origin.y + obstacle.height
-                    && a.x.max(b.x) > obstacle.origin.x
-                    && a.x.min(b.x) < obstacle.right()
-            };
-            assert!(!crosses, "{segment:?} crosses {obstacle:?}");
-        }
-    }
-    let mut parallel = architecture.relationships[0].clone();
-    let crate::model::architecture::CrossStateProvenance::TerraformRemoteState { output, .. } =
-        &mut parallel.provenance;
-    *output = "second_value".into();
-    architecture.relationships.push(parallel);
-    let svg = render_states(
-        &crate::view::apply(&architecture, &Default::default()).unwrap(),
-        super::AddressFormat::Qualified,
-    );
-    let paths: std::collections::BTreeSet<_> = svg
-        .lines()
-        .filter(|line| line.contains("data-cross-state=\"true\""))
-        .map(|line| {
-            line.split(" d=\"")
-                .nth(1)
-                .unwrap()
-                .split('"')
-                .next()
-                .unwrap()
-        })
-        .collect();
-    assert_eq!(paths.len(), 2);
-    assert!(svg.contains("outputs.second_value"));
-    assert!(svg.contains("outputs.value"));
-    architecture.relationships.reverse();
-    assert_eq!(
-        svg,
-        render_states(
-            &crate::view::apply(&architecture, &Default::default()).unwrap(),
-            super::AddressFormat::Qualified
-        )
-    );
-}
-
-#[cfg(test)]
-#[test]
-fn cross_state_obstacles_only_relax_the_endpoint_and_its_ancestors() {
-    let rectangle = |x, y, width, height| Bounds {
-        origin: Point { x, y },
-        width,
-        height,
-    };
-    let state = StateObstacles {
-        scopes: Vec::new(),
-        markers: vec![rectangle(270, 219, 24, 18)],
-        bounds: vec![
-            rectangle(50, 100, 400, 300),
-            rectangle(80, 180, 150, 96),
-            rectangle(500, 120, 300, 300),
-        ],
-        headers: vec![60, 96, 60],
-        parents: vec![None, Some(0), None],
-    };
-    let obstacles = state.for_endpoint(1);
-    assert_eq!(obstacles[0], state.bounds[0].header(60));
-    assert_eq!(obstacles[2], state.bounds[2]);
-    assert_eq!(obstacles[3], state.markers[0]);
-    let route = crate::layout::route_to_margin(
-        Point { x: 230, y: 228 },
-        Point { x: 900, y: 228 },
-        &obstacles,
-    );
-    for unrelated in [state.bounds[2], state.markers[0]] {
-        for segment in route.windows(2) {
-            let (a, b) = (segment[0], segment[1]);
-            let crosses = if a.x == b.x {
-                a.x > unrelated.origin.x
-                    && a.x < unrelated.right()
-                    && a.y.max(b.y) > unrelated.origin.y
-                    && a.y.min(b.y) < unrelated.origin.y + unrelated.height
-            } else {
-                a.y > unrelated.origin.y
-                    && a.y < unrelated.origin.y + unrelated.height
-                    && a.x.max(b.x) > unrelated.origin.x
-                    && a.x.min(b.x) < unrelated.right()
-            };
-            assert!(!crosses, "{segment:?}");
-        }
-    }
-}
+#[path = "../../tests/unit/svg/states.rs"]
+mod tests;

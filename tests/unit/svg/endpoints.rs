@@ -17,6 +17,22 @@ fn endpoint_policy_tracks_kind_direction_color_and_final_ports() {
             layout.paths[0] = vec![Point { x: 100, y: 200 }, Point { x: 300, y: 200 }];
             let output = crate::svg::render(&graph, &layout);
             let doc = roxmltree::Document::parse(&output).unwrap();
+            if kind == EdgeKind::Connection {
+                let path = doc
+                    .descendants()
+                    .find(|n| {
+                        n.has_tag_name("path")
+                            && n.attribute("data-edge-kind") == Some("connection")
+                    })
+                    .unwrap();
+                assert_eq!(path.attribute("data-directionality"), Some("undirected"));
+                assert_eq!(path.attribute("marker-end"), None);
+                assert!(
+                    path.descendants()
+                        .any(|n| n.has_tag_name("title")
+                            && n.text().is_some_and(|t| t.contains('↔')))
+                );
+            }
             let circles: Vec<_> = doc
                 .descendants()
                 .filter(|n| n.attribute("data-endpoint").is_some())

@@ -17,7 +17,10 @@ No AWS endorsement is implied. Consult the AWS terms for other uses.
         </g>
         <path d="M22,41 L41,41 L41,23 L22,23 L22,41 Z M43,23 L46,23 L46,25 L43,25 L43,27 L46,27 L46,29 L43,29 L43,31 L46,31 L46,33 L43,33 L43,36 L46,36 L46,38 L43,38 L43,40 L46,40 L46,42 L42.863,42 C42.608,42.587 42.023,43 41.344,43 L41,43 L41,46 L39,46 L39,43 L37,43 L37,46 L35,46 L35,43 L33,43 L33,46 L31,46 L31,43 L29,43 L29,46 L27,46 L27,43 L24,43 L24,46 L22,46 L22,43 L21.656,43 C20.977,43 20.392,42.587 20.137,42 L18,42 L18,40 L20,40 L20,38 L18,38 L18,36 L20,36 L20,33 L18,33 L18,31 L20,31 L20,29 L18,29 L18,27 L20,27 L20,25 L18,25 L18,23 L20,23 L20,22.656 C20,21.743 20.743,21 21.656,21 L22,21 L22,18 L24,18 L24,21 L27,21 L27,18 L29,18 L29,21 L31,21 L31,18 L33,18 L33,21 L35,21 L35,18 L37,18 L37,21 L39,21 L39,18 L41,18 L41,21 L41.344,21 C42.257,21 43,21.743 43,22.656 L43,23 Z M32,52 L12,52 L12,32 L16,32 L16,30 L11.843,30 C10.826,30 10,30.827 10,31.843 L10,52.157 C10,53.173 10.826,54 11.843,54 L32.157,54 C33.174,54 34,53.173 34,52.157 L34,48 L32,48 L32,52 Z M54,11.843 L54,32.157 C54,33.173 53.174,34 52.157,34 L48,34 L48,32 L52,32 L52,12 L32,12 L32,16 L30,16 L30,11.843 C30,10.827 30.826,10 31.843,10 L52.157,10 C53.174,10 54,10.827 54,11.843 L54,11.843 Z" id="planorama-icon-aws-ec2-local-416d617a6f6e2d4543325f49636f6e5f34385f5371756964" fill="#FFFFFF"></path>
     </g>
-</g></symbol></defs>
+</g></symbol><mask id="container-occlusion-0" maskUnits="userSpaceOnUse" maskContentUnits="userSpaceOnUse" x="0" y="0" width="1100" height="824" style="mask-type:luminance"><rect width="1100" height="824" fill="white"/>
+<rect x="538" y="294" width="404" height="412" rx="14" fill="black"/>
+</mask>
+</defs>
 <rect width="100%" height="100%" fill="#ffffff"/>
 <g font-family="ui-monospace, SFMono-Regular, Consolas, monospace">
 <text x="40" y="45" font-size="25" font-weight="700" fill="#0f172a">Terraform plan</text>
@@ -49,7 +52,7 @@ No AWS endorsement is implied. Consult the AWS terms for other uses.
 <g data-edge-kind="containment" data-source="resource-746573742e6e6f646531-current" data-target="resource-746573742e6e6f646535-current"><title>test.node1 → test.node5 (containment)</title></g>
 <g data-edge-kind="containment" data-source="resource-746573742e6e6f646532-current" data-target="resource-746573742e6e6f646534-current"><title>test.node2 → test.node4 (containment)</title></g>
 <g data-edge-kind="containment" data-source="resource-746573742e6e6f646532-current" data-target="resource-746573742e6e6f646536-current"><title>test.node2 → test.node6 (containment)</title></g>
-<path d="M 140 480 L 60 480 " data-edge-kind="connection" data-directionality="directed" data-source="resource-746573742e6e6f646533-current" data-target="resource-746573742e6e6f646530-current" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-dasharray="2 4" stroke-linecap="round" stroke-linejoin="round" marker-end="url(#arrow)"><title>test.node3 → test.node0 (connection)</title></path>
+<path d="M 140 480 L 60 480 " data-edge-kind="connection" data-directionality="undirected" data-source="resource-746573742e6e6f646533-current" data-target="resource-746573742e6e6f646530-current" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-dasharray="2 4" stroke-linecap="round" stroke-linejoin="round" mask="url(#container-occlusion-0)"><title>test.node3 ↔ test.node0 (connection)</title></path>
 <g id="resource-746573742e6e6f646530-current" data-architecture-id="terraform:746573742e6e6f646530-current" data-qualified-address="module.root.test.node0" data-terraform-address="test.node0"><title>module.root.test.node0 — create</title>
 <text x="72" y="180" font-size="11" fill="#047857">aws_instance · create</text>
 <use href="#planorama-icon-aws-ec2" x="72" y="188" width="24" height="24" aria-hidden="true"/><text x="104" y="205" font-size="13" fill="#0f172a">module.root.test.node0</text>
@@ -90,8 +93,7 @@ No AWS endorsement is implied. Consult the AWS terms for other uses.
 <text x="592" y="652" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
 <g data-endpoints="true" data-source="resource-746573742e6e6f646533-current" data-target="resource-746573742e6e6f646530-current" aria-hidden="true">
-<circle data-endpoint="source" cx="140" cy="480" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/><circle data-endpoint="target" cx="60" cy="480" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/><path data-endpoint-arrow="true" d="M 66.3 483.5 L 59.3 480 L 66.3 476.5 Z" fill="#94a3b8"/>
-</g>
+<circle data-endpoint="source" cx="140" cy="480" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/><circle data-endpoint="target" cx="60" cy="480" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
 </g>
 </g>
 </g>
