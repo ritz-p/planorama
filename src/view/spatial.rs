@@ -7,13 +7,14 @@ pub(crate) struct Projection {
 }
 
 pub(crate) fn project(source: &Graph) -> Projection {
-    let nodes: Vec<_> = source
+    let mut nodes: Vec<_> = source
         .nodes
         .iter()
         .enumerate()
         .filter(|(_, node)| node.placement != crate::model::Placement::Logical)
         .map(|(index, _)| index)
         .collect();
+    nodes.sort_by_key(|&i| (&source.nodes[i].entity.id, &source.nodes[i].address));
     let mut remap = vec![None; source.nodes.len()];
     for (new, &old) in nodes.iter().enumerate() {
         remap[old] = Some(new);

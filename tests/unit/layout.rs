@@ -1,6 +1,9 @@
 use super::*;
 use crate::model::{Action, Node};
 
+#[path = "layout/ports.rs"]
+mod ports;
+
 fn graph(count: usize, edges: Vec<(usize, usize)>) -> Graph {
     Graph {
         relationships: Vec::new(),
@@ -181,10 +184,10 @@ fn dense_graph_quality_metrics_are_deterministic() {
     assert_eq!(
         metrics,
         metrics::LayoutMetrics {
-            overlap_distance: 5545,
+            overlap_distance: 5542,
             crossing_count: 312,
             bend_count: 165,
-            total_path_length: 75089,
+            total_path_length: 75072,
         }
     );
     assert_eq!(metrics, metrics::measure(&Layout::new(&graph).paths));

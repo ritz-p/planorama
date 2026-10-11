@@ -74,17 +74,79 @@ impl Bundles {
     }
 
     pub(super) fn align_ports(
-        &self,
+        &mut self,
         graph: &Graph,
         bounds: &[Bounds],
         sources: &mut [usize],
         targets: &mut [usize],
+        sides: Option<&[[crate::layout::Side; 2]]>,
+        ranks: &[usize],
     ) {
-        for group in &self.groups {
+        use crate::layout::Side;
+        let numbered = crate::layout::relationship_markers::ends(graph);
+        for index in 0..self.groups.len() {
+            let group = &self.groups[index];
+            let first = graph.edges[group.edges[0]].endpoints();
+            let (node, side) = match group.shared {
+                Shared::Source => (first.0, Side::Right),
+                Shared::Target => (first.1, Side::Left),
+            };
+            let center = bounds[node].height / 2;
+            let mut candidates: Vec<_> = group
+                .edges
+                .iter()
+                .map(|&edge| match group.shared {
+                    Shared::Source => sources[edge],
+                    Shared::Target => targets[edge],
+                })
+                .collect();
+            candidates.push(center);
+            candidates.sort_by_key(|&offset| (offset.abs_diff(center), offset));
+            candidates.dedup();
+            let chosen = candidates.into_iter().find(|&offset| {
+                graph.edges.iter().enumerate().all(|(edge, link)| {
+                    if self.membership[edge] == Some(index) {
+                        return true;
+                    }
+                    [(0, link.from, sources[edge]), (1, link.to, targets[edge])]
+                        .into_iter()
+                        .all(|(end, endpoint, other)| {
+                            let actual_side = if self.membership[edge].is_some() {
+                                if end == 0 { Side::Right } else { Side::Left }
+                            } else {
+                                sides.map_or(
+                                    if end == 0 || ranks[link.to] <= ranks[link.from] {
+                                        Side::Right
+                                    } else {
+                                        Side::Left
+                                    },
+                                    |s| s[edge][end],
+                                )
+                            };
+                            let spacing = if numbered[edge][end] {
+                                (crate::layout::relationship_markers::PORT_SPACING
+                                    + super::super::routing_shared::slots::MIN_SPACING)
+                                    .div_ceil(2)
+                            } else {
+                                super::super::routing_shared::slots::MIN_SPACING
+                            };
+                            endpoint != node
+                                || actual_side != side
+                                || offset.abs_diff(other) >= spacing
+                        })
+                })
+            });
+            let Some(offset) = chosen else {
+                for &edge in &group.edges {
+                    self.membership[edge] = None;
+                }
+                self.groups[index].edges.clear();
+                continue;
+            };
             for &edge in &group.edges {
                 match group.shared {
-                    Shared::Source => sources[edge] = bounds[graph.edges[edge].from].height / 2,
-                    Shared::Target => targets[edge] = bounds[graph.edges[edge].to].height / 2,
+                    Shared::Source => sources[edge] = offset,
+                    Shared::Target => targets[edge] = offset,
                 }
             }
         }

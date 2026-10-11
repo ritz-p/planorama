@@ -9,6 +9,10 @@ enum Strategy {
     Nested,
 }
 
+#[cfg(test)]
+#[path = "../../tests/unit/layout/pipeline.rs"]
+mod tests;
+
 #[test]
 fn dense_horizontal_ports_expand_flat_rows_and_nested_containers() {
     use crate::model::{Action, Directionality, Edge, EdgeChange, EdgeKind};
@@ -167,6 +171,10 @@ pub(super) fn route<'a>(graph: &'a Graph, placed: &mut Placed<'a>) {
         }
         Strategy::Nested => containers::route(graph, &mut placed.layout, true),
     }
+    refine(graph, placed);
+}
+
+fn refine<'a>(graph: &'a Graph, placed: &mut Placed<'a>) {
     let side = |a: super::Point, b: super::Point| match a.x.cmp(&b.x) {
         std::cmp::Ordering::Equal => {
             if a.y > b.y {
@@ -178,7 +186,7 @@ pub(super) fn route<'a>(graph: &'a Graph, placed: &mut Placed<'a>) {
         std::cmp::Ordering::Greater => super::Side::Left,
         std::cmp::Ordering::Less => super::Side::Right,
     };
-    let sides: Vec<_> = placed
+    let mut sides: Vec<_> = placed
         .layout
         .paths
         .iter()
@@ -194,8 +202,15 @@ pub(super) fn route<'a>(graph: &'a Graph, placed: &mut Placed<'a>) {
         })
         .collect();
     let visible: Vec<_> = placed.layout.paths.iter().map(|p| p.len() >= 2).collect();
+    let sides_changed = super::routing_shared::slots::fit_sides(
+        graph,
+        &placed.layout.bounds,
+        &mut sides,
+        &visible,
+        Some(&placed.layout.paths),
+    );
     let demand = super::routing_shared::slots::required_heights(graph, &sides, &visible);
-    let heights: Vec<_> = demand
+    let mut heights: Vec<_> = demand
         .iter()
         .enumerate()
         .map(|(node, &height)| {
@@ -208,9 +223,22 @@ pub(super) fn route<'a>(graph: &'a Graph, placed: &mut Placed<'a>) {
             )
         })
         .collect();
-    if heights != placed.layout.header_heights
+    if sides_changed
+        || heights != placed.layout.header_heights
         || super::routing_shared::slots::crowded(graph, &placed.layout.paths, &sides)
     {
+        super::routing_shared::slots::fit_sides(
+            graph,
+            &placed.layout.bounds,
+            &mut sides,
+            &visible,
+            None,
+        );
+        let independent_demand =
+            super::routing_shared::slots::required_heights(graph, &sides, &visible);
+        for (height, demand) in heights.iter_mut().zip(independent_demand) {
+            *height = (*height).max(demand);
+        }
         *placed = place_sized(graph, ContainmentTree::new(graph), Some(heights));
         match &placed.strategy {
             Strategy::Flat { ranks, channels } => {
@@ -239,4 +267,8 @@ pub(super) fn route<'a>(graph: &'a Graph, placed: &mut Placed<'a>) {
         .iter()
         .map(|bounds| bounds.origin)
         .collect();
+    debug_assert!(!super::routing_shared::slots::opposite_roles_collide(
+        graph,
+        &placed.layout.paths
+    ));
 }
