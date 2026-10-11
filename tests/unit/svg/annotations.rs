@@ -1,6 +1,104 @@
 use super::*;
 
 #[test]
+fn ordered_sections_wrap_children_and_omit_empty_sections_without_gaps() {
+    for width in [400, 2200] {
+        for mask in 0..8 {
+            let sections = [
+                ("Logical Resources", crate::svg::style::LOGICAL_RESOURCES),
+                ("Logical Components", crate::svg::style::LOGICAL_COMPONENTS),
+                (
+                    "Relationship Resources",
+                    crate::svg::style::RELATIONSHIP_RESOURCES,
+                ),
+            ]
+            .into_iter()
+            .enumerate()
+            .map(|(i, (name, palette))| {
+                let cards = (0..if mask & (1 << i) == 0 { 0 } else { 7 })
+                    .map(|n| Card {
+                        width: 360 + n * 20,
+                        height: 80 + n * 30,
+                        content: String::new(),
+                    })
+                    .collect();
+                (name, palette, cards)
+            })
+            .collect();
+            let area = Area::sections(sections, width);
+            if mask == 0 {
+                assert_eq!(area.height, 0);
+                assert!(area.render().is_empty());
+                continue;
+            }
+            let rendered = area.render();
+            let doc = roxmltree::Document::parse(&rendered).unwrap();
+            let sections: Vec<_> = doc
+                .descendants()
+                .filter(|n| n.attribute("data-annotation-section").is_some())
+                .collect();
+            let expected: Vec<_> = [
+                "Logical Resources",
+                "Logical Components",
+                "Relationship Resources",
+            ]
+            .into_iter()
+            .enumerate()
+            .filter(|(i, _)| mask & (1 << i) != 0)
+            .map(|(_, name)| name)
+            .collect();
+            assert_eq!(
+                sections
+                    .iter()
+                    .map(|n| n.attribute("data-annotation-section").unwrap())
+                    .collect::<Vec<_>>(),
+                expected
+            );
+            let number = |node: roxmltree::Node, attribute| {
+                node.attribute(attribute).unwrap().parse::<usize>().unwrap()
+            };
+            let position = |node: roxmltree::Node| {
+                let values: Vec<usize> = node
+                    .attribute("transform")
+                    .unwrap()
+                    .trim_start_matches("translate(")
+                    .trim_end_matches(')')
+                    .split_whitespace()
+                    .map(|v| v.parse().unwrap())
+                    .collect();
+                (values[0], values[1])
+            };
+            let mut bottom = 140;
+            for section in sections {
+                let parent = section.parent().unwrap();
+                let (x, y) = position(parent);
+                assert_eq!(x, 40);
+                assert_eq!(y, bottom + 20);
+                let rect = section.children().find(|n| n.has_tag_name("rect")).unwrap();
+                let (w, h) = (number(rect, "width"), number(rect, "height"));
+                bottom = y + h;
+                let mut bounds = Vec::<(usize, usize, usize, usize)>::new();
+                for child in section
+                    .children()
+                    .filter(|n| n.attribute("data-annotation-card").is_some())
+                {
+                    let (cx, cy) = position(child);
+                    let rect = child.children().find(|n| n.has_tag_name("rect")).unwrap();
+                    let (cw, ch) = (number(rect, "width"), number(rect, "height"));
+                    assert!(cx >= 16 && cy >= 48 && cx + cw <= w - 16 && cy + ch <= h - 16);
+                    for &(px, py, pw, ph) in &bounds {
+                        assert!(cx >= px + pw || px >= cx + cw || cy >= py + ph || py >= cy + ch);
+                    }
+                    bounds.push((cx, cy, cw, ch));
+                }
+                assert_eq!(bounds.len(), 7);
+            }
+            assert_eq!(area.height, bottom + 24 - 160);
+        }
+    }
+}
+
+#[test]
 fn empty_single_and_wrapped_cards_have_deterministic_bounds() {
     for count in [0, 1, 7] {
         let cards = (0..count)

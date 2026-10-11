@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="3556" height="2669" viewBox="0 0 3556 2669" role="img" aria-labelledby="title description">
+<svg xmlns="http://www.w3.org/2000/svg" width="3556" height="3235" viewBox="0 0 3556 3235" role="img" aria-labelledby="title description">
 <title id="title">Terraform plan</title>
 <desc id="description">46 resources (32 spatial cards, 6 logical cards) · 74 relationships Thin solid: dependency. Dashed: association. Thick dotted: connection. Nested boxes: containment. Edge color preserves the Terraform action when available.</desc>
 <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/></marker><marker id="arrow-create" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#047857"/></marker><metadata id="planorama-icons-license">AWS Architecture Icons, release 07312026.
@@ -136,17 +136,17 @@ No AWS endorsement is implied. Consult the AWS terms for other uses.
 </g>
 <g transform="translate(0 72)">
 <g data-annotation-area="true">
-<g data-annotation-card="true" transform="translate(40 160)"><rect width="360" height="128" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g id="resource-6d6f64756c652e6170706c69636174696f6e2e6177735f6563735f636c75737465722e617070-current" data-architecture-id="terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6563735f636c75737465722e617070-current" data-entity-kind="terraform" data-placement="logical" data-terraform-address="module.application.aws_ecs_cluster.app" data-qualified-address="module.application.aws_ecs_cluster.app" data-role="controller"><title>module.application.aws_ecs_cluster.app — create</title><rect width="360" height="128" rx="12" fill="#ecfdf5" stroke="#047857" data-mode="managed"/>
-<use href="#planorama-icon-aws-ecs" x="320" y="8" width="24" height="24" aria-hidden="true"/><text x="16" y="28" font-size="12" fill="#5b21b6" font-weight="700">Logical resource</text>
-<text x="16" y="48" font-size="12" fill="#334155">module.application.aws_ecs_cluster.app</text>
+<g data-annotation-card="true" transform="translate(40 160)"><rect width="3476" height="234" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-annotation-section="Logical Resources"><rect width="3476" height="234" rx="12" fill="#ecfeff" stroke="#0891b2"/><text x="16" y="28" font-size="15" font-weight="700" fill="#0e7490">Logical Resources</text><g data-annotation-card="true" transform="translate(16 48)"><rect width="360" height="128" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g id="resource-6d6f64756c652e6170706c69636174696f6e2e6177735f6563735f636c75737465722e617070-current" data-architecture-id="terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6563735f636c75737465722e617070-current" data-entity-kind="terraform" data-placement="logical" data-terraform-address="module.application.aws_ecs_cluster.app" data-qualified-address="module.application.aws_ecs_cluster.app" data-role="controller"><title>module.application.aws_ecs_cluster.app — create</title><rect width="360" height="128" rx="12" fill="#ecfdf5" stroke="#047857" data-mode="managed"/>
+<use href="#planorama-icon-aws-ecs" x="320" y="8" width="24" height="24" aria-hidden="true"/><text x="16" y="28" font-size="12" fill="#334155" font-weight="700">module.application.aws_ecs_cluster.ap</text>
+<text x="16" y="48" font-size="12" fill="#334155" font-weight="700">p</text>
 <text x="16" y="68" font-size="12" fill="#334155">aws_ecs_cluster · managed</text>
 <text x="16" y="88" font-size="12" fill="#334155">create</text>
 <text x="16" y="108" font-size="12" fill="#334155">controller</text>
 </g>
 </g>
-<g data-annotation-card="true" transform="translate(420 160)"><rect width="400" height="170" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g id="resource-6d6f64756c652e6170706c69636174696f6e2e6177735f6563735f7461736b5f646566696e6974696f6e2e617070-current" data-architecture-id="terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6563735f7461736b5f646566696e6974696f6e2e617070-current" data-entity-kind="terraform" data-placement="logical" data-terraform-address="module.application.aws_ecs_task_definition.app" data-qualified-address="module.application.aws_ecs_task_definition.app" data-role="controller"><title>module.application.aws_ecs_task_definition.app — create</title><rect width="400" height="170" rx="12" fill="#ecfdf5" stroke="#047857" data-mode="managed"/>
-<use href="#planorama-icon-aws-ecs" x="360" y="8" width="24" height="24" aria-hidden="true"/><text x="16" y="28" font-size="12" fill="#5b21b6" font-weight="700">Logical resource</text>
-<text x="16" y="48" font-size="12" fill="#334155">module.application.aws_ecs_task_definition.app</text>
+<g data-annotation-card="true" transform="translate(396 48)"><rect width="400" height="170" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g id="resource-6d6f64756c652e6170706c69636174696f6e2e6177735f6563735f7461736b5f646566696e6974696f6e2e617070-current" data-architecture-id="terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6563735f7461736b5f646566696e6974696f6e2e617070-current" data-entity-kind="terraform" data-placement="logical" data-terraform-address="module.application.aws_ecs_task_definition.app" data-qualified-address="module.application.aws_ecs_task_definition.app" data-role="controller"><title>module.application.aws_ecs_task_definition.app — create</title><rect width="400" height="170" rx="12" fill="#ecfdf5" stroke="#047857" data-mode="managed"/>
+<use href="#planorama-icon-aws-ecs" x="360" y="8" width="24" height="24" aria-hidden="true"/><text x="16" y="28" font-size="12" fill="#334155" font-weight="700">module.application.aws_ecs_task_definition</text>
+<text x="16" y="48" font-size="12" fill="#334155" font-weight="700">.app</text>
 <text x="16" y="68" font-size="12" fill="#334155">aws_ecs_task_definition · managed</text>
 <text x="16" y="88" font-size="12" fill="#334155">create</text>
 <text x="16" y="108" font-size="12" fill="#334155">controller</text>
@@ -154,9 +154,9 @@ No AWS endorsement is implied. Consult the AWS terms for other uses.
 </g>
 </g>
 </g>
-<g data-annotation-card="true" transform="translate(840 160)"><rect width="408" height="170" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g id="resource-6d6f64756c652e6170706c69636174696f6e2e6177735f69616d5f696e7374616e63655f70726f66696c652e617070-current" data-architecture-id="terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f69616d5f696e7374616e63655f70726f66696c652e617070-current" data-entity-kind="terraform" data-placement="logical" data-terraform-address="module.application.aws_iam_instance_profile.app" data-qualified-address="module.application.aws_iam_instance_profile.app" data-role="policy"><title>module.application.aws_iam_instance_profile.app — create</title><rect width="408" height="170" rx="12" fill="#ecfdf5" stroke="#047857" data-mode="managed"/>
-<use href="#planorama-icon-aws-iam" x="368" y="8" width="24" height="24" aria-hidden="true"/><text x="16" y="28" font-size="12" fill="#5b21b6" font-weight="700">Logical resource</text>
-<text x="16" y="48" font-size="12" fill="#334155">module.application.aws_iam_instance_profile.app</text>
+<g data-annotation-card="true" transform="translate(816 48)"><rect width="408" height="170" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g id="resource-6d6f64756c652e6170706c69636174696f6e2e6177735f69616d5f696e7374616e63655f70726f66696c652e617070-current" data-architecture-id="terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f69616d5f696e7374616e63655f70726f66696c652e617070-current" data-entity-kind="terraform" data-placement="logical" data-terraform-address="module.application.aws_iam_instance_profile.app" data-qualified-address="module.application.aws_iam_instance_profile.app" data-role="policy"><title>module.application.aws_iam_instance_profile.app — create</title><rect width="408" height="170" rx="12" fill="#ecfdf5" stroke="#047857" data-mode="managed"/>
+<use href="#planorama-icon-aws-iam" x="368" y="8" width="24" height="24" aria-hidden="true"/><text x="16" y="28" font-size="12" fill="#334155" font-weight="700">module.application.aws_iam_instance_profile</text>
+<text x="16" y="48" font-size="12" fill="#334155" font-weight="700">.app</text>
 <text x="16" y="68" font-size="12" fill="#334155">aws_iam_instance_profile · managed</text>
 <text x="16" y="88" font-size="12" fill="#334155">create</text>
 <text x="16" y="108" font-size="12" fill="#334155">policy</text>
@@ -164,92 +164,95 @@ No AWS endorsement is implied. Consult the AWS terms for other uses.
 </g>
 </g>
 </g>
-<g data-annotation-card="true" transform="translate(1268 160)"><rect width="360" height="128" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g id="resource-6d6f64756c652e6170706c69636174696f6e2e6177735f69616d5f726f6c652e696e7374616e6365-current" data-architecture-id="terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f69616d5f726f6c652e696e7374616e6365-current" data-entity-kind="terraform" data-placement="logical" data-terraform-address="module.application.aws_iam_role.instance" data-qualified-address="module.application.aws_iam_role.instance" data-role="policy"><title>module.application.aws_iam_role.instance — create</title><rect width="360" height="128" rx="12" fill="#ecfdf5" stroke="#047857" data-mode="managed"/>
-<use href="#planorama-icon-aws-iam" x="320" y="8" width="24" height="24" aria-hidden="true"/><text x="16" y="28" font-size="12" fill="#5b21b6" font-weight="700">Logical resource</text>
-<text x="16" y="48" font-size="12" fill="#334155">module.application.aws_iam_role.instance</text>
+<g data-annotation-card="true" transform="translate(1244 48)"><rect width="360" height="128" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g id="resource-6d6f64756c652e6170706c69636174696f6e2e6177735f69616d5f726f6c652e696e7374616e6365-current" data-architecture-id="terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f69616d5f726f6c652e696e7374616e6365-current" data-entity-kind="terraform" data-placement="logical" data-terraform-address="module.application.aws_iam_role.instance" data-qualified-address="module.application.aws_iam_role.instance" data-role="policy"><title>module.application.aws_iam_role.instance — create</title><rect width="360" height="128" rx="12" fill="#ecfdf5" stroke="#047857" data-mode="managed"/>
+<use href="#planorama-icon-aws-iam" x="320" y="8" width="24" height="24" aria-hidden="true"/><text x="16" y="28" font-size="12" fill="#334155" font-weight="700">module.application.aws_iam_role.insta</text>
+<text x="16" y="48" font-size="12" fill="#334155" font-weight="700">nce</text>
 <text x="16" y="68" font-size="12" fill="#334155">aws_iam_role · managed</text>
 <text x="16" y="88" font-size="12" fill="#334155">create</text>
 <text x="16" y="108" font-size="12" fill="#334155">policy</text>
 </g>
 </g>
-<g data-annotation-card="true" transform="translate(1648 160)"><rect width="360" height="128" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g id="resource-6d6f64756c652e6170706c69636174696f6e2e6177735f69616d5f726f6c652e7461736b-current" data-architecture-id="terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f69616d5f726f6c652e7461736b-current" data-entity-kind="terraform" data-placement="logical" data-terraform-address="module.application.aws_iam_role.task" data-qualified-address="module.application.aws_iam_role.task" data-role="policy"><title>module.application.aws_iam_role.task — create</title><rect width="360" height="128" rx="12" fill="#ecfdf5" stroke="#047857" data-mode="managed"/>
-<use href="#planorama-icon-aws-iam" x="320" y="8" width="24" height="24" aria-hidden="true"/><text x="16" y="28" font-size="12" fill="#5b21b6" font-weight="700">Logical resource</text>
-<text x="16" y="48" font-size="12" fill="#334155">module.application.aws_iam_role.task</text>
-<text x="16" y="68" font-size="12" fill="#334155">aws_iam_role · managed</text>
-<text x="16" y="88" font-size="12" fill="#334155">create</text>
-<text x="16" y="108" font-size="12" fill="#334155">policy</text>
+<g data-annotation-card="true" transform="translate(1624 48)"><rect width="360" height="108" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g id="resource-6d6f64756c652e6170706c69636174696f6e2e6177735f69616d5f726f6c652e7461736b-current" data-architecture-id="terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f69616d5f726f6c652e7461736b-current" data-entity-kind="terraform" data-placement="logical" data-terraform-address="module.application.aws_iam_role.task" data-qualified-address="module.application.aws_iam_role.task" data-role="policy"><title>module.application.aws_iam_role.task — create</title><rect width="360" height="108" rx="12" fill="#ecfdf5" stroke="#047857" data-mode="managed"/>
+<use href="#planorama-icon-aws-iam" x="320" y="8" width="24" height="24" aria-hidden="true"/><text x="16" y="28" font-size="12" fill="#334155" font-weight="700">module.application.aws_iam_role.task</text>
+<text x="16" y="48" font-size="12" fill="#334155">aws_iam_role · managed</text>
+<text x="16" y="68" font-size="12" fill="#334155">create</text>
+<text x="16" y="88" font-size="12" fill="#334155">policy</text>
 </g>
 </g>
-<g data-annotation-card="true" transform="translate(2028 160)"><rect width="360" height="108" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g id="resource-6d6f64756c652e7368617265642e646174612e6177735f616d692e617070-current" data-architecture-id="terraform:6d6f64756c652e7368617265642e646174612e6177735f616d692e617070-current" data-entity-kind="terraform" data-placement="logical" data-terraform-address="module.shared.data.aws_ami.app" data-qualified-address="module.shared.data.aws_ami.app" data-external="true"><title>module.shared.data.aws_ami.app — unchanged</title><rect width="360" height="108" rx="12" fill="#f8fafc" stroke="#64748b" data-mode="data" stroke-dasharray="6 4"/>
-<use href="#planorama-icon-aws-ec2" x="320" y="8" width="24" height="24" aria-hidden="true"/><text x="16" y="28" font-size="12" fill="#5b21b6" font-weight="700">Logical resource</text>
-<text x="16" y="48" font-size="12" fill="#334155">module.shared.data.aws_ami.app</text>
-<text x="16" y="68" font-size="12" fill="#334155">aws_ami · data / external</text>
-<text x="16" y="88" font-size="12" fill="#334155">unchanged</text>
+<g data-annotation-card="true" transform="translate(2004 48)"><rect width="360" height="88" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g id="resource-6d6f64756c652e7368617265642e646174612e6177735f616d692e617070-current" data-architecture-id="terraform:6d6f64756c652e7368617265642e646174612e6177735f616d692e617070-current" data-entity-kind="terraform" data-placement="logical" data-terraform-address="module.shared.data.aws_ami.app" data-qualified-address="module.shared.data.aws_ami.app" data-external="true"><title>module.shared.data.aws_ami.app — unchanged</title><rect width="360" height="88" rx="12" fill="#f8fafc" stroke="#64748b" data-mode="data" stroke-dasharray="6 4"/>
+<use href="#planorama-icon-aws-ec2" x="320" y="8" width="24" height="24" aria-hidden="true"/><text x="16" y="28" font-size="12" fill="#334155" font-weight="700">module.shared.data.aws_ami.app</text>
+<text x="16" y="48" font-size="12" fill="#334155">aws_ami · data / external</text>
+<text x="16" y="68" font-size="12" fill="#334155">unchanged</text>
 </g>
 </g>
-<g data-annotation-card="true" transform="translate(2408 160)"><rect width="484" height="288" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-relationship-index="true"><text x="16" y="28" font-size="16" font-weight="700" fill="#334155">Relationship resources</text>
+</g></g>
+<g data-annotation-card="true" transform="translate(40 414)"><rect width="3476" height="256" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-annotation-section="Logical Components"><rect width="3476" height="256" rx="12" fill="#f5f3ff" stroke="#a78bfa"/><text x="16" y="28" font-size="15" font-weight="700" fill="#6d28d9">Logical Components</text><g data-annotation-card="true" transform="translate(16 48)"><rect width="408" height="192" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g id="architecture-73796e7468657469633a36633666363136343566363236313663363136653633363537322d36643666363437353663363532653631373037303663363936333631373436393666366532653631373737333566366336323265363137303730" data-architecture-id="synthetic:6c6f61645f62616c616e636572-6d6f64756c652e6170706c69636174696f6e2e6177735f6c622e617070" data-entity-kind="synthetic" data-component-id="logical:load_balancer:module.application.aws_lb.app" data-component-kind="load_balancer"><title>Load balancer: module.application.aws_lb.app</title><text x="16" y="28" font-size="13" font-weight="700" fill="#5b21b6">Load balancer: module.application.aws_lb.app</text>
+<g data-annotation-card="true" transform="translate(16 48)"><rect width="360" height="44" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><a href="#resource-6d6f64756c652e6170706c69636174696f6e2e6177735f6c622e617070-current" data-source-address="module.application.aws_lb.app"><title>module.application.aws_lb.app; create</title><rect width="360" height="44" rx="8" fill="#ecfdf5" stroke="#047857"/><text font-size="12" fill="#334155">
+<tspan x="16" y="28" xml:space="preserve">create: module.application.aws_lb.app</tspan>
+</text></a>
+</g>
+<g data-annotation-card="true" transform="translate(16 112)"><rect width="376" height="64" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><a href="#resource-6d6f64756c652e6170706c69636174696f6e2e6177735f6c625f6c697374656e65722e68747470-current" data-source-address="module.application.aws_lb_listener.http"><title>module.application.aws_lb_listener.http; create</title><rect width="376" height="64" rx="8" fill="#ecfdf5" stroke="#047857"/><text font-size="12" fill="#334155">
+<tspan x="16" y="28" xml:space="preserve">create: module.application.aws_lb_listener.</tspan>
+<tspan x="16" y="48" xml:space="preserve">http</tspan>
+</text></a>
+</g>
+</g>
+</g>
+</g></g>
+<g data-annotation-card="true" transform="translate(40 690)"><rect width="3476" height="324" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-annotation-section="Relationship Resources"><rect width="3476" height="324" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><text x="16" y="28" font-size="15" font-weight="700" fill="#475569">Relationship Resources</text><g data-annotation-card="true" transform="translate(16 48)"><rect width="484" height="260" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-relationship-index="true">
 <g data-relationship-entry="1">
-<rect x="16" y="43" width="24" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="28" y="56" text-anchor="middle" font-size="11" fill="#334155">[1]</text>
+<rect x="16" y="15" width="24" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="28" y="28" text-anchor="middle" font-size="11" fill="#334155">[1]</text>
 <text data-source-address="module.application.aws_lb_target_group_attachment.a0" font-size="12" fill="#334155"><title>module.application.aws_lb_target_group_attachment.a0</title>
-<tspan x="52" y="56" xml:space="preserve">module.application.aws_lb_target_group_attachment.a0</tspan>
+<tspan x="52" y="28" xml:space="preserve">module.application.aws_lb_target_group_attachment.a0</tspan>
 </text>
 </g>
 <g data-relationship-entry="2">
-<rect x="16" y="71" width="24" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="28" y="84" text-anchor="middle" font-size="11" fill="#334155">[2]</text>
+<rect x="16" y="43" width="24" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="28" y="56" text-anchor="middle" font-size="11" fill="#334155">[2]</text>
 <text data-source-address="module.application.aws_lb_target_group_attachment.a1" font-size="12" fill="#334155"><title>module.application.aws_lb_target_group_attachment.a1</title>
-<tspan x="52" y="84" xml:space="preserve">module.application.aws_lb_target_group_attachment.a1</tspan>
+<tspan x="52" y="56" xml:space="preserve">module.application.aws_lb_target_group_attachment.a1</tspan>
 </text>
 </g>
 <g data-relationship-entry="3">
-<rect x="16" y="99" width="24" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="28" y="112" text-anchor="middle" font-size="11" fill="#334155">[3]</text>
+<rect x="16" y="71" width="24" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="28" y="84" text-anchor="middle" font-size="11" fill="#334155">[3]</text>
 <text data-source-address="module.application.aws_lb_target_group_attachment.b0" font-size="12" fill="#334155"><title>module.application.aws_lb_target_group_attachment.b0</title>
-<tspan x="52" y="112" xml:space="preserve">module.application.aws_lb_target_group_attachment.b0</tspan>
+<tspan x="52" y="84" xml:space="preserve">module.application.aws_lb_target_group_attachment.b0</tspan>
 </text>
 </g>
 <g data-relationship-entry="4">
-<rect x="16" y="127" width="24" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="28" y="140" text-anchor="middle" font-size="11" fill="#334155">[4]</text>
+<rect x="16" y="99" width="24" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="28" y="112" text-anchor="middle" font-size="11" fill="#334155">[4]</text>
 <text data-source-address="module.application.aws_lb_target_group_attachment.b1" font-size="12" fill="#334155"><title>module.application.aws_lb_target_group_attachment.b1</title>
-<tspan x="52" y="140" xml:space="preserve">module.application.aws_lb_target_group_attachment.b1</tspan>
+<tspan x="52" y="112" xml:space="preserve">module.application.aws_lb_target_group_attachment.b1</tspan>
 </text>
 </g>
 <g data-relationship-entry="5">
-<rect x="16" y="155" width="24" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="28" y="168" text-anchor="middle" font-size="11" fill="#334155">[5]</text>
+<rect x="16" y="127" width="24" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="28" y="140" text-anchor="middle" font-size="11" fill="#334155">[5]</text>
 <text data-source-address="module.network.aws_route_table_association.private_a" font-size="12" fill="#334155"><title>module.network.aws_route_table_association.private_a</title>
-<tspan x="52" y="168" xml:space="preserve">module.network.aws_route_table_association.private_a</tspan>
+<tspan x="52" y="140" xml:space="preserve">module.network.aws_route_table_association.private_a</tspan>
 </text>
 </g>
 <g data-relationship-entry="6">
-<rect x="16" y="183" width="24" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="28" y="196" text-anchor="middle" font-size="11" fill="#334155">[6]</text>
+<rect x="16" y="155" width="24" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="28" y="168" text-anchor="middle" font-size="11" fill="#334155">[6]</text>
 <text data-source-address="module.network.aws_route_table_association.private_b" font-size="12" fill="#334155"><title>module.network.aws_route_table_association.private_b</title>
-<tspan x="52" y="196" xml:space="preserve">module.network.aws_route_table_association.private_b</tspan>
+<tspan x="52" y="168" xml:space="preserve">module.network.aws_route_table_association.private_b</tspan>
 </text>
 </g>
 <g data-relationship-entry="7">
-<rect x="16" y="211" width="24" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="28" y="224" text-anchor="middle" font-size="11" fill="#334155">[7]</text>
+<rect x="16" y="183" width="24" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="28" y="196" text-anchor="middle" font-size="11" fill="#334155">[7]</text>
 <text data-source-address="module.network.aws_route_table_association.public_a" font-size="12" fill="#334155"><title>module.network.aws_route_table_association.public_a</title>
-<tspan x="52" y="224" xml:space="preserve">module.network.aws_route_table_association.public_a</tspan>
+<tspan x="52" y="196" xml:space="preserve">module.network.aws_route_table_association.public_a</tspan>
 </text>
 </g>
 <g data-relationship-entry="8">
-<rect x="16" y="239" width="24" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="28" y="252" text-anchor="middle" font-size="11" fill="#334155">[8]</text>
+<rect x="16" y="211" width="24" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="28" y="224" text-anchor="middle" font-size="11" fill="#334155">[8]</text>
 <text data-source-address="module.network.aws_route_table_association.public_b" font-size="12" fill="#334155"><title>module.network.aws_route_table_association.public_b</title>
-<tspan x="52" y="252" xml:space="preserve">module.network.aws_route_table_association.public_b</tspan>
+<tspan x="52" y="224" xml:space="preserve">module.network.aws_route_table_association.public_b</tspan>
 </text>
 </g>
 </g>
 </g>
-<g data-annotation-card="true" transform="translate(2912 160)"><rect width="536" height="120" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g id="architecture-73796e7468657469633a36633666363136343566363236313663363136653633363537322d36643666363437353663363532653631373037303663363936333631373436393666366532653631373737333566366336323265363137303730" data-architecture-id="synthetic:6c6f61645f62616c616e636572-6d6f64756c652e6170706c69636174696f6e2e6177735f6c622e617070" data-entity-kind="synthetic" data-component-id="logical:load_balancer:module.application.aws_lb.app" data-component-kind="load_balancer"><title>Load balancer: module.application.aws_lb.app</title><text x="16" y="28" font-size="13" font-weight="700" fill="#5b21b6">Logical component: Load balancer: module.application.aws_lb.app</text>
-<text x="16" y="48" font-size="12" font-weight="700" fill="#475569">Members</text>
-<a href="#resource-6d6f64756c652e6170706c69636174696f6e2e6177735f6c622e617070-current" data-source-address="module.application.aws_lb.app"><title>module.application.aws_lb.app; create</title><text font-size="12" fill="#334155">
-<tspan x="16" y="72" xml:space="preserve">create: module.application.aws_lb.app</tspan>
-</text></a>
-<a href="#resource-6d6f64756c652e6170706c69636174696f6e2e6177735f6c625f6c697374656e65722e68747470-current" data-source-address="module.application.aws_lb_listener.http"><title>module.application.aws_lb_listener.http; create</title><text font-size="12" fill="#334155">
-<tspan x="16" y="96" xml:space="preserve">create: module.application.aws_lb_listener.http</tspan>
-</text></a>
+</g></g>
 </g>
-</g>
-</g>
-<g data-architecture="true" transform="translate(0 312)">
+<g data-architecture="true" transform="translate(0 878)">
 <g data-container="resource-6d6f64756c652e6e6574776f726b2e6177735f7670632e6d61696e-current"><title>module.network.aws_vpc.main</title><rect x="632" y="160" width="2440" height="1865" rx="12" fill="#ecfdf5" stroke="#047857" stroke-width="2" data-mode="managed"/></g>
 <g data-container="resource-6d6f64756c652e6e6574776f726b2e6177735f7375626e65742e707269766174655f61-current"><title>module.network.aws_subnet.private_a</title><rect x="1692" y="520" width="488" height="677" rx="12" fill="#d1fae5" stroke="#047857" stroke-width="2" data-mode="managed"/></g>
 <g data-container="resource-6d6f64756c652e6e6574776f726b2e6177735f7375626e65742e707269766174655f62-current"><title>module.network.aws_subnet.private_b</title><rect x="1692" y="1281" width="488" height="660" rx="12" fill="#d1fae5" stroke="#047857" stroke-width="2" data-mode="managed"/></g>

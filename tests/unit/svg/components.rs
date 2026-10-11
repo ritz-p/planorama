@@ -8,6 +8,144 @@ fn graph() -> Graph {
 }
 
 #[test]
+fn themed_members_preserve_actions_unique_targets_and_state_identity() {
+    use crate::model::{Action, Placement, StateId};
+    let mut input: serde_json::Value =
+        serde_json::from_str(include_str!("../../fixtures/components-plan.json")).unwrap();
+    input["resource_changes"].as_array_mut().unwrap().extend([
+        serde_json::json!({"address":"aws_iam_role.app", "type":"aws_iam_role", "previous_address":"aws_iam_role.old", "change":{"actions":["update"], "importing":{"id":"SECRET"}}}),
+        serde_json::json!({"address":"data.aws_ami.app", "type":"aws_ami", "mode":"data", "deposed":"old"}),
+    ]);
+    let mut graph = crate::semantic::transform(&crate::plan::parse(&input.to_string()).unwrap()).0;
+    for (node, action) in graph.nodes.iter_mut().zip([
+        Action::Create,
+        Action::Update,
+        Action::Delete,
+        Action::Replace,
+        Action::Read,
+        Action::Unchanged,
+        Action::Other,
+    ]) {
+        node.action = action;
+    }
+    graph.components[0].members = graph.nodes.iter().map(|n| n.address.clone()).collect();
+    graph.components[0].members.push("aws_lb.missing".into());
+    let svg = crate::svg::render(&graph, &crate::layout::Layout::new(&graph));
+    let doc = roxmltree::Document::parse(&svg).unwrap();
+    for (name, background, border) in [
+        ("Logical Resources", "#ecfeff", "#0891b2"),
+        ("Logical Components", "#f5f3ff", "#a78bfa"),
+    ] {
+        let section = doc
+            .descendants()
+            .find(|n| n.attribute("data-annotation-section") == Some(name))
+            .unwrap();
+        let rect = section.children().find(|n| n.has_tag_name("rect")).unwrap();
+        assert_eq!(rect.attribute("fill"), Some(background));
+        assert_eq!(rect.attribute("stroke"), Some(border));
+    }
+    for node in &graph.nodes {
+        let member = doc
+            .descendants()
+            .find(|n| {
+                n.attribute("data-source-address") == Some(node.address.as_str())
+                    && n.has_tag_name("a")
+            })
+            .unwrap();
+        let rect = member.children().find(|n| n.has_tag_name("rect")).unwrap();
+        let (fill, stroke) = crate::svg::color(node.action);
+        assert_eq!(rect.attribute("fill"), Some(fill));
+        assert_eq!(rect.attribute("stroke"), Some(stroke));
+        let target = member.attribute("href").unwrap().strip_prefix('#').unwrap();
+        let targets: Vec<_> = doc
+            .descendants()
+            .filter(|n| n.attribute("id") == Some(target))
+            .collect();
+        assert_eq!(targets.len(), 1);
+        if node.placement == Placement::Logical {
+            assert!(
+                targets[0]
+                    .ancestors()
+                    .any(|n| n.attribute("data-annotation-section") == Some("Logical Resources"))
+            );
+        }
+        let title = member
+            .children()
+            .find(|n| n.has_tag_name("title"))
+            .unwrap()
+            .text()
+            .unwrap();
+        if let Some(previous) = &node.previous_address {
+            assert!(title.contains(previous));
+        }
+        if let Some(key) = &node.deposed_key {
+            assert!(title.contains(&format!("deposed: {key}")));
+        }
+    }
+    assert!(!svg.contains("SECRET"));
+    let missing = doc
+        .descendants()
+        .find(|n| n.attribute("data-source-address") == Some("aws_lb.missing"))
+        .unwrap();
+    assert!(missing.attribute("href").is_none());
+    assert_eq!(
+        missing
+            .children()
+            .find(|n| n.has_tag_name("rect"))
+            .unwrap()
+            .attribute("fill"),
+        Some("#f8fafc")
+    );
+    assert_eq!(
+        doc.descendants()
+            .filter(|n| n.attribute("data-terraform-address").is_some())
+            .count(),
+        graph.nodes.len()
+    );
+    graph.components[0]
+        .members
+        .retain(|a| a != "aws_lb.missing");
+    let architecture = crate::model::architecture::Architecture {
+        states: BTreeMap::from([
+            (
+                StateId::new("first").unwrap(),
+                crate::model::ArchitectureGraph(graph.clone()),
+            ),
+            (
+                StateId::new("second").unwrap(),
+                crate::model::ArchitectureGraph(graph),
+            ),
+        ]),
+        relationships: vec![],
+    };
+    let selected = crate::view::apply(&architecture, &Default::default()).unwrap();
+    let svg = crate::svg::render_states(&selected, crate::svg::AddressFormat::Qualified);
+    let doc = roxmltree::Document::parse(&svg).unwrap();
+    let mut ids = std::collections::BTreeSet::new();
+    for id in doc.descendants().filter_map(|n| n.attribute("id")) {
+        assert!(ids.insert(id));
+    }
+    for link in doc
+        .descendants()
+        .filter(|n| n.has_tag_name("a") && n.attribute("data-source-address").is_some())
+    {
+        let target = doc
+            .descendants()
+            .find(|n| n.attribute("id") == link.attribute("href").and_then(|v| v.strip_prefix('#')))
+            .unwrap();
+        let state = |n: roxmltree::Node| {
+            n.ancestors()
+                .find(|n| n.attribute("data-state-id").is_some())
+                .unwrap()
+                .attribute("data-state-id")
+                .unwrap()
+                .to_string()
+        };
+        assert_eq!(state(link), state(target));
+    }
+}
+
+#[test]
 fn component_cards_keep_identity_members_operations_and_links() {
     let graph = graph();
     let layout = crate::layout::Layout::new(&graph);
@@ -56,6 +194,32 @@ fn component_cards_keep_identity_members_operations_and_links() {
     let plain_layout = crate::layout::Layout::new(&plain);
     assert_eq!(layout.bounds, plain_layout.bounds);
     assert_eq!(layout.paths, plain_layout.paths);
+}
+
+#[test]
+fn empty_components_and_ambiguous_member_addresses_do_not_invent_links() {
+    let mut graph = graph();
+    let duplicate = graph
+        .nodes
+        .iter()
+        .find(|n| n.address == "aws_lb.app")
+        .unwrap()
+        .clone();
+    graph.nodes.push(duplicate);
+    let output = cards(&graph).remove(0);
+    let doc = roxmltree::Document::parse(&output.content).unwrap();
+    let member = doc
+        .descendants()
+        .find(|n| n.attribute("data-source-address") == Some("aws_lb.app"))
+        .unwrap();
+    assert!(member.attribute("href").is_none());
+    assert_eq!(member.attribute("data-member-status"), Some("unavailable"));
+    graph.components[0].members.clear();
+    let empty = cards(&graph).remove(0);
+    assert!(empty.height > 28);
+    assert!(empty.height < output.height);
+    assert!(!empty.content.contains(">Members</text>"));
+    assert!(!empty.content.contains("data-source-address"));
 }
 
 #[test]

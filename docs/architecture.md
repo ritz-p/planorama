@@ -16,16 +16,19 @@ same boundaries and carry explicit cross-state relationships.
 
 SVG composition places non-spatial annotations after the header, legend and checks,
 above the architecture. `svg/annotations.rs` packs rounded cards in deterministic
-rows, wrapping at the available width and growing the canvas for oversized cards.
+rows inside ordered sections, reusing the same wrapping and measurement for nested
+cards and growing the canvas for oversized cards.
 Empty areas reserve no height. One enclosing translation shifts all architecture
 cards, paths and relationship badges together; annotation cards never enter
 `Layout` or routing obstacles. Named-state endpoint coordinates include this shift.
 Relationship index cards group up to 10 complete numbered entries per card,
-continuing to the right before wrapping. Logical components use one card per
-component.
+continuing to the right before wrapping within their own neutral section. Logical
+components share a purple parent, with a card per component and action-colored
+member reference cards inside it.
 
-Terraform-backed Logical Resources precede the relationship index and synthetic
-components. They use their original resource DOM IDs and retain mode, action,
+Terraform-backed Logical Resources share a cyan parent above Logical Components;
+the relationship index follows both parents. Logical cards use their original
+resource DOM IDs and retain mode, action,
 move/import/deposed information. `view::spatial` projects only geometry inputs;
 the semantic and filtered graphs keep logical nodes and all selected relationships.
 Layout maps spatial results back to graph indices: logical nodes have zero-size
