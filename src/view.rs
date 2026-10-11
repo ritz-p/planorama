@@ -1,4 +1,5 @@
 mod filter;
+pub(crate) mod spatial;
 use crate::model::architecture::{Architecture, ArchitectureGraph, Graph};
 pub use filter::Options;
 use std::ops::Deref;

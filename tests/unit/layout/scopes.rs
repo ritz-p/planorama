@@ -77,13 +77,10 @@ fn regions_preserve_containment_global_unknown_and_cross_region_routes() {
         .iter()
         .find(|p| p.scope.region.is_none())
         .unwrap();
-    for address in [
-        "aws_iam_role.app",
-        "aws_cloudfront_distribution.app",
-        "aws_route53_zone.app",
-    ] {
+    for address in ["aws_cloudfront_distribution.app", "aws_route53_zone.app"] {
         assert!(inside(layout.bounds[node(address)], global.bounds));
     }
+    assert_eq!(layout.bounds[node("aws_iam_role.app")].width, 0);
     for address in ["aws_instance.unknown", "aws_unclassified.app"] {
         assert!(
             layout

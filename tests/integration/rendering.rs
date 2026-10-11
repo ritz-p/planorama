@@ -76,7 +76,7 @@ fn inferred_placement_notes_use_provenance_and_fit_below_long_addresses() {
 fn relationship_patterns_are_distinct_and_nesting_stays_line_free() {
     for (input, kind, width, dash) in [
         (
-            include_bytes!("../../examples/plan.json").as_slice(),
+            include_bytes!("../../examples/bundling-plan.json").as_slice(),
             "dependency",
             "1.5",
             None,

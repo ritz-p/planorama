@@ -7,6 +7,7 @@ mod entities;
 mod icons;
 mod identity;
 mod legend;
+mod logical;
 mod operations;
 mod paths;
 mod provenance;
@@ -55,15 +56,16 @@ pub(crate) fn render(graph: &Graph, layout: &Layout<'_>) -> String {
 #[cfg(test)]
 fn dimensions(graph: &Graph, layout: &Layout<'_>) -> (usize, usize) {
     let index = relationship_index::Index::new(graph, layout);
-    dimensions_with_index(graph, layout, &index)
+    dimensions_with_index(graph, layout, &index, AddressFormat::Qualified)
 }
 
 fn dimensions_with_index(
     graph: &Graph,
     layout: &Layout<'_>,
     index: &relationship_index::Index<'_>,
+    address_format: AddressFormat,
 ) -> (usize, usize) {
-    let annotations = annotation_area(graph, index);
+    let annotations = annotation_area(graph, index, address_format);
     (
         annotations.width,
         layout.height
@@ -73,8 +75,13 @@ fn dimensions_with_index(
     )
 }
 
-fn annotation_area(graph: &Graph, index: &relationship_index::Index<'_>) -> annotations::Area {
-    let mut cards = index.cards();
+fn annotation_area(
+    graph: &Graph,
+    index: &relationship_index::Index<'_>,
+    address_format: AddressFormat,
+) -> annotations::Area {
+    let mut cards = logical::cards(graph, address_format);
+    cards.extend(index.cards());
     cards.extend(components::cards(graph));
     annotations::Area::new(cards, index.width)
 }
@@ -95,7 +102,7 @@ fn render_with_index(
     relationship_index: &relationship_index::Index<'_>,
 ) -> String {
     let check_offset = if graph.checks.is_empty() { 0 } else { 24 };
-    let (width, height) = dimensions_with_index(graph, layout, relationship_index);
+    let (width, height) = dimensions_with_index(graph, layout, relationship_index, address_format);
     let membership = components::membership(graph);
     let (description, summary) = relationships::captions(graph);
     let markers = relationships::markers(graph);
@@ -174,7 +181,7 @@ fn render_with_index(
         svg.push_str(&checks::render(&graph.checks));
         svg.push_str("<g transform=\"translate(0 24)\">\n");
     }
-    let annotations = annotation_area(graph, relationship_index);
+    let annotations = annotation_area(graph, relationship_index, address_format);
     svg.push_str(&annotations.render());
     writeln!(
         svg,
@@ -237,6 +244,9 @@ fn render_with_index(
         .unwrap();
     }
     for (i, node) in graph.nodes.iter().enumerate() {
+        if node.placement == crate::model::Placement::Logical {
+            continue;
+        }
         let resource_id = identity::resource(node);
         let architecture_id = escape(node.entity.id.as_str());
         let bounds = layout.bounds[i];

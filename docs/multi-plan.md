@@ -3,12 +3,16 @@
 Named states keep their own Terraform identities. Explicit remote-state mappings
 can connect resources across states using `TerraformRemoteState` provenance.
 
+Cross-state relationships also remain in `cross-state-relationships` metadata.
+Edges incident on top logical-resource cards are excluded from spatial routing;
+their state-qualified provenance remains available.
+
 Output references must be complete; bare collections and ambiguous selectors do
 not establish cross-state relationships. See [output resolution](outputs.md).
 
 Root `output_changes` actions are matched to configured outputs by name within each state and retained separately from provenance. Resolved cross-state paths expose the producer output action through `data-output-action` (including create, update and delete), without changing resource colors or provenance resolution. Missing changes omit the attribute; unrecognized actions use `other`, and unmatched entries create no output or relationship. Output values, including `before`, `after` and sensitive values, are never retained or rendered.
 
-Resolved mappings appear as dashed cross-state dependency lines connecting actual resource cards. `data-source-state`, `data-target-state`, `data-remote-state` and `data-output` retain the full chain; source/target DOM references point into their own state sections. These relationships live separately from state-local graphs and never introduce containment. Source nodes removed by semantic lowering are not replaced with a guessed endpoint. Unmapped inputs retain independent-state output.
+Resolved mappings between spatial cards appear as dashed cross-state dependency lines. These paths expose `data-source-state`, `data-target-state`, `data-remote-state` and `data-output`; source/target DOM references point into their own state sections. Mappings with a logical endpoint retain the chain in `cross-state-relationships` metadata without a path or path DOM-reference attributes. These relationships live separately from state-local graphs and never introduce containment. Source nodes removed by semantic lowering are not replaced with a guessed endpoint. Unmapped inputs retain independent-state output.
 
 Use `--remote-state CONSUMER:DATA_ADDRESS=PRODUCER` to explicitly connect an exact `data.terraform_remote_state.NAME.outputs.OUTPUT` traversal to a loaded producer state. Repeat mappings as needed; conflicting producers remain ambiguous and emit no relationship. Root output provenance must be complete and nonempty. `--diagnostics` reports successful chains and unmapped, missing or incomplete sources without backend configuration or output values. The resolver handles direct exact traversals, including statically identified module instances; it does not guess backend identity or resolve dynamic output selections.
 

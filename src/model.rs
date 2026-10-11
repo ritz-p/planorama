@@ -11,6 +11,8 @@ pub enum Action {
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Node {
+    pub placement: Placement,
+    pub references: Vec<ResourceReference>,
     pub entity: ArchitectureEntity,
     pub address: String,
     pub deposed_key: Option<String>,
@@ -23,6 +25,29 @@ pub struct Node {
     pub action: Action,
     pub mode: EntityMode,
     pub role: ResourceRole,
+}
+
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, PartialOrd, Ord)]
+pub enum Placement {
+    Spatial,
+    Logical,
+    #[default]
+    Unresolved,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
+pub struct ResourceReference {
+    pub attribute: String,
+    pub targets: Vec<ReferenceTarget>,
+    pub complete: bool,
+    pub dependency: bool,
+    pub issues: std::collections::BTreeSet<DiagnosticReason>,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
+pub struct ReferenceTarget {
+    pub id: TerraformEntityId,
+    pub placement: Placement,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]

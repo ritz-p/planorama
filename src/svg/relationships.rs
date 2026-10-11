@@ -22,6 +22,19 @@ pub(super) fn style(kind: EdgeKind) -> &'static str {
 pub(super) fn captions(graph: &Graph) -> (String, String) {
     let nodes = graph.nodes.len();
     let edges = graph.edges.len();
+    let logical = graph
+        .nodes
+        .iter()
+        .filter(|n| n.placement == crate::model::Placement::Logical)
+        .count();
+    if logical > 0 {
+        let resources = nodes + graph.edges.iter().filter(|e| e.change.is_some()).count();
+        let spatial = nodes - logical;
+        let summary = format!(
+            "{resources} resources ({spatial} spatial cards, {logical} logical cards) · {edges} relationships"
+        );
+        return (summary.clone(), summary);
+    }
     match graph
         .edges
         .iter()

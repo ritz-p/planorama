@@ -11,6 +11,11 @@
 an edge rather than nesting. Both placement strategies share the tree and actual
 card/container bounds.
 
+Logical resource cards do not enter this pipeline. A spatial view projection
+removes only their geometry participation, retaining graph-index alignment with
+zero bounds and empty incident paths in the final layout. Their Terraform nodes,
+relationships and evidence remain in the semantic/view graph and SVG metadata.
+
 ## Placement
 
 With containers, direct children occupy columns based on non-containment
