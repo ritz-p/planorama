@@ -137,11 +137,7 @@ pub(in crate::layout) fn assign_selected(
                     &numbered,
                     size,
                     spacing,
-                    if sides.is_some() && matches!(side, Side::Left | Side::Right) {
-                        MIN_SPACING
-                    } else {
-                        1
-                    },
+                    if sides.is_some() { MIN_SPACING } else { 1 },
                 )
             } else {
                 (0..ordered.len())
@@ -209,7 +205,10 @@ pub(in crate::layout) fn crowded(
     sides: &[[Side; 2]],
 ) -> bool {
     let numbered = crate::layout::relationship_markers::ends(graph);
-    let mut ports = vec![[Vec::new(), Vec::new()]; graph.nodes.len()];
+    if opposite_roles_collide(graph, paths) {
+        return true;
+    }
+    let mut ports = vec![[Vec::new(), Vec::new(), Vec::new(), Vec::new()]; graph.nodes.len()];
     for (index, edge) in graph.edges.iter().enumerate() {
         let path = &paths[index];
         if path.len() < 2 {
@@ -217,11 +216,21 @@ pub(in crate::layout) fn crowded(
         }
         for (end, node, point) in [(0, edge.from, path[0]), (1, edge.to, *path.last().unwrap())] {
             let side = sides[index][end];
-            if matches!(side, Side::Left | Side::Right) {
+            {
                 ports[node][side as usize].push((
-                    point.y,
+                    if matches!(side, Side::Left | Side::Right) {
+                        point.y
+                    } else {
+                        point.x
+                    },
                     if numbered[index][end] {
-                        crate::layout::relationship_markers::PORT_SPACING
+                        if matches!(side, Side::Left | Side::Right) {
+                            crate::layout::relationship_markers::PORT_SPACING
+                        } else {
+                            crate::layout::relationship_markers::clearance(graph)
+                                .saturating_sub(crate::layout::relationship_markers::GAP + 8)
+                                + 6
+                        }
                     } else {
                         MIN_SPACING
                     },
@@ -235,6 +244,197 @@ pub(in crate::layout) fn crowded(
             .windows(2)
             .any(|p| p[0].0 != p[1].0 && p[1].0 - p[0].0 < (p[0].1 + p[1].1).div_ceil(2))
     })
+}
+
+pub(in crate::layout) fn opposite_roles_collide(
+    graph: &Graph,
+    paths: &[Vec<crate::layout::Point>],
+) -> bool {
+    let mut occupied = std::collections::BTreeMap::new();
+    for (index, (edge, path)) in graph.edges.iter().zip(paths).enumerate() {
+        if path.len() < 2 {
+            continue;
+        }
+        for (end, node, point) in [(0, edge.from, path[0]), (1, edge.to, *path.last().unwrap())] {
+            let roles = occupied
+                .entry((node, point.x, point.y))
+                .or_insert([None; 2]);
+            if roles[1 - end].is_some_and(|other| other != index) {
+                return true;
+            }
+            roles[end] = Some(index);
+        }
+    }
+    false
+}
+
+#[test]
+fn coincident_ports_are_scoped_to_nodes_and_distinct_opposite_roles() {
+    use crate::layout::Point;
+    use crate::model::Edge;
+    let raw = crate::plan::parse(r#"{"format_version":"1.2","resource_changes":[{"address":"test.a","type":"test"},{"address":"test.b","type":"test"},{"address":"test.c","type":"test"}]}"#).unwrap();
+    let mut graph = crate::semantic::transform(&raw).0;
+    let point = Point { x: 100, y: 100 };
+    let paths = vec![
+        vec![point, Point { x: 200, y: 100 }],
+        vec![Point { x: 50, y: 100 }, point],
+    ];
+    graph.edges = vec![Edge::from((0, 1)), Edge::from((2, 0))];
+    assert!(opposite_roles_collide(&graph, &paths));
+    for side in [Side::Left, Side::Right, Side::Top, Side::Bottom] {
+        assert!(crowded(&graph, &paths, &[[side; 2]; 2]));
+    }
+    graph.edges[1].to = 1;
+    assert!(!opposite_roles_collide(&graph, &paths));
+    graph.edges[1] = Edge::from((0, 2));
+    let shared = vec![paths[0].clone(), vec![point, Point { x: 200, y: 200 }]];
+    assert!(!opposite_roles_collide(&graph, &shared));
+}
+
+#[test]
+fn overfull_horizontal_ports_move_to_sides_before_allocation_clamps() {
+    use crate::model::Edge;
+    let raw = crate::plan::parse(r#"{"format_version":"1.2","resource_changes":[{"address":"test.a","type":"test"},{"address":"test.b","type":"test"}]}"#).unwrap();
+    let mut graph = crate::semantic::transform(&raw).0;
+    graph.edges = (0..24)
+        .map(|i| Edge::from(if i % 2 == 0 { (0, 1) } else { (1, 0) }))
+        .collect();
+    let bounds = vec![
+        Bounds::card(crate::layout::Point { x: 100, y: 100 }),
+        Bounds::card(crate::layout::Point { x: 600, y: 400 }),
+    ];
+    let mut sides = vec![[Side::Top; 2]; 24];
+    fit_sides(&graph, &bounds, &mut sides, &[true; 24], None);
+    assert!(
+        sides
+            .iter()
+            .flatten()
+            .all(|s| matches!(s, Side::Left | Side::Right))
+    );
+    assert_eq!(required_heights(&graph, &sides, &[true; 24]), vec![425; 2]);
+}
+
+#[test]
+fn shared_horizontal_bundle_terminals_do_not_overflow() {
+    use crate::layout::Point;
+    use crate::model::Edge;
+    let resources: Vec<_> = (0..19)
+        .map(|i| serde_json::json!({"address":format!("test.n{i:02}"),"type":"test"}))
+        .collect();
+    let raw = crate::plan::parse(
+        &serde_json::json!({"format_version":"1.2","resource_changes":resources}).to_string(),
+    )
+    .unwrap();
+    let mut graph = crate::semantic::transform(&raw).0;
+    let bounds: Vec<_> = (0..19)
+        .map(|i| {
+            Bounds::card(Point {
+                x: 100 + i * 600,
+                y: 400,
+            })
+        })
+        .collect();
+    for source in [false, true] {
+        graph.edges = (1..19)
+            .map(|i| Edge::from(if source { (0, i) } else { (i, 0) }))
+            .collect();
+        for side in [Side::Top, Side::Bottom] {
+            let paths: Vec<_> = graph
+                .edges
+                .iter()
+                .map(|edge| {
+                    [edge.from, edge.to]
+                        .into_iter()
+                        .map(|node| Point {
+                            x: bounds[node].origin.x + bounds[node].width / 2,
+                            y: bounds[node].origin.y
+                                + if side == Side::Bottom {
+                                    bounds[node].height
+                                } else {
+                                    0
+                                },
+                        })
+                        .collect()
+                })
+                .collect();
+            let mut sides = vec![[side; 2]; 18];
+            assert!(!crowded(&graph, &paths, &sides));
+            fit_sides(&graph, &bounds, &mut sides, &[true; 18], Some(&paths));
+            assert_eq!(sides, vec![[side; 2]; 18]);
+            fit_sides(&graph, &bounds, &mut sides, &[true; 18], None);
+            assert!(
+                sides
+                    .iter()
+                    .all(|ends| matches!(ends[usize::from(!source)], Side::Left | Side::Right))
+            );
+        }
+    }
+}
+
+pub(in crate::layout) fn fit_sides(
+    graph: &Graph,
+    bounds: &[Bounds],
+    sides: &mut [[Side; 2]],
+    visible: &[bool],
+    paths: Option<&[Vec<crate::layout::Point>]>,
+) -> bool {
+    let numbered = crate::layout::relationship_markers::ends(graph);
+    let mut demand = vec![[0; 2]; graph.nodes.len()];
+    let mut occupied = std::collections::BTreeSet::new();
+    let width = crate::layout::relationship_markers::clearance(graph)
+        .saturating_sub(crate::layout::relationship_markers::GAP + 8)
+        + 6;
+    let mut changed = false;
+    for (index, edge) in graph.edges.iter().enumerate().filter(|(i, _)| visible[*i]) {
+        for (end, node) in [edge.from, edge.to].into_iter().enumerate() {
+            if matches!(sides[index][end], Side::Top | Side::Bottom) {
+                if !numbered[index][end] {
+                    if let Some(paths) = paths {
+                        let point = if end == 0 {
+                            paths[index].first()
+                        } else {
+                            paths[index].last()
+                        };
+                        if let Some(point) = point {
+                            if !occupied.insert((
+                                node,
+                                sides[index][end] as usize,
+                                end,
+                                point.x,
+                                point.y,
+                            )) {
+                                continue;
+                            }
+                        }
+                    }
+                }
+                demand[node][usize::from(sides[index][end] == Side::Bottom)] +=
+                    if numbered[index][end] {
+                        width
+                    } else {
+                        MIN_SPACING
+                    };
+            }
+        }
+    }
+    for (index, edge) in graph.edges.iter().enumerate().filter(|(i, _)| visible[*i]) {
+        for (end, node, peer) in [(0, edge.from, edge.to), (1, edge.to, edge.from)] {
+            if matches!(sides[index][end], Side::Top | Side::Bottom)
+                && 41 + demand[node][usize::from(sides[index][end] == Side::Bottom)]
+                    > bounds[node].width
+            {
+                sides[index][end] = if bounds[peer].origin.x * 2 + bounds[peer].width
+                    < bounds[node].origin.x * 2 + bounds[node].width
+                {
+                    Side::Left
+                } else {
+                    Side::Right
+                };
+                changed = true;
+            }
+        }
+    }
+    changed
 }
 
 pub(in crate::layout) fn required_heights(

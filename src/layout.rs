@@ -85,6 +85,9 @@ impl<'a> Layout<'a> {
             .nodes
             .iter()
             .any(|n| n.placement == crate::model::Placement::Logical)
+            || graph.nodes.windows(2).any(|nodes| {
+                (&nodes[0].entity.id, &nodes[0].address) > (&nodes[1].entity.id, &nodes[1].address)
+            })
         {
             return spatial::layout(graph);
         }

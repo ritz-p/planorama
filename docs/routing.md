@@ -15,6 +15,8 @@ Logical resource cards do not enter this pipeline. A spatial view projection
 removes only their geometry participation, retaining graph-index alignment with
 zero bounds and empty incident paths in the final layout. Their Terraform nodes,
 relationships and evidence remain in the semantic/view graph and SVG metadata.
+The projection also normalizes node identity order before placement, mapping
+results back to the caller's indices so reordered flat inputs keep the same ports.
 
 ## Placement
 
@@ -64,7 +66,14 @@ plus edge padding and the minimum content height. Opposite sides share the same
 vertical span. One deterministic refinement repacks containers and flat rows,
 then assigns geometry-ordered slots on the selected sides and reroutes. Side
 choices remain fixed during this refinement; card width does not expand for
-top/bottom demand. Rank-lane bundles retain their alignment; refined nested
+top/bottom demand. If the requested top/bottom slots cannot fit, those endpoints
+move to a facing left/right side before the single refinement and its height
+calculation. All refined sides reserve marker-aware minimum spacing.
+The initial top/bottom capacity check counts coincident ordinary terminals once
+per node, side and endpoint role, preserving valid fan-in/fan-out bundles.
+If another constraint requires refinement, capacity is recalculated for
+independent branches before repacking, since nested refinement removes bundling.
+Rank-lane bundles retain their alignment; refined nested
 routes use independent paths to keep the selected per-side demand fixed.
 Ancestor/descendant routes also retain their allocated sides during refinement;
 the container-boundary shortcut does not reselect their endpoints afterward.
@@ -96,6 +105,17 @@ the group against paths available at the decision point, then restores the routi
 index without copying previously routed paths. Later edges still undergo normal
 routing and final shortcutting; bundle selection remains a local decision.
 See [bundling](../examples/bundling.svg) and [spanning connections](../examples/spanning-dense.svg).
+
+Final attachment occupancy is checked by node and exact point across both endpoint
+roles. Exact source/target coincidences trigger refinement even when ordinary
+spacing checks would ignore a shared terminal. Same-role bundle sharing remains
+allowed. Flat bundle alignment checks other incident endpoints before choosing a
+shared offset, prefers a free allocated slot when the center is occupied, and
+falls back to independent paths if no candidate has sufficient spacing.
+The [mixed-port regression](../examples/port-collisions.svg) reproduces a refined
+fan-out bundle whose old central source coincided with an independent target.
+Regenerate it with `UPDATE_PORT_SNAPSHOT=1` when running
+`refined_flat_bundle_keeps_opposite_role_port`.
 
 Independent paths compare route quality on actual bounds, preferring facing
 side pairs when quality is equal. Rectangle projections first select one facing
