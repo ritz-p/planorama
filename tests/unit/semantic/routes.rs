@@ -57,7 +57,20 @@ fn supported_route_families_embed_and_keep_individual_change_metadata() {
                 .unwrap();
             assert_eq!(route.metadata, original.metadata);
             assert_eq!(route.action, original.action);
-            assert!(graph.edges.iter().all(|e| e.kind != EdgeKind::Association));
+            let edge = graph
+                .edges
+                .iter()
+                .find(|e| {
+                    e.kind == EdgeKind::Association
+                        && graph.nodes[e.from].entity.id == route.entity.id
+                })
+                .unwrap();
+            assert_eq!(graph.nodes[edge.to].address, address);
+            assert_eq!(
+                edge.directionality(),
+                crate::model::Directionality::Directed
+            );
+            assert_eq!(edge.change.as_ref().unwrap().action, route.action);
         }
         assert!(graph.nodes.iter().any(|n| n.address == "aws_route.literal"));
     }

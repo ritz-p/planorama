@@ -22,6 +22,7 @@ pub(super) struct Entry<'a> {
     edges: Vec<usize>,
     stroke: &'static str,
     style: &'static str,
+    embedded: bool,
 }
 
 pub(super) struct Index<'a> {
@@ -86,6 +87,7 @@ impl<'a> Index<'a> {
                 edges.dedup();
                 let edge = &graph.edges[edges[0]];
                 Entry {
+                    embedded: crate::view::routes::owner(graph, &graph.nodes[edge.from]).is_some(),
                     sources,
                     edges,
                     stroke: super::relationships::stroke(edge),
@@ -118,6 +120,18 @@ impl<'a> Index<'a> {
         svg
     }
 
+    pub fn number(&self, node: &crate::model::Node) -> Option<usize> {
+        self.entries
+            .iter()
+            .position(|e| {
+                e.embedded
+                    && e.sources
+                        .iter()
+                        .any(|id| node.entity.provenance.contains(id))
+            })
+            .map(|i| i + 1)
+    }
+
     pub fn marker_bounds(&self) -> impl Iterator<Item = Bounds> + '_ {
         self.markers.iter().map(|marker| marker.bounds)
     }
@@ -129,6 +143,7 @@ impl<'a> Index<'a> {
         let width = self
             .entries
             .iter()
+            .filter(|entry| !entry.embedded)
             .flat_map(|entry| &entry.sources)
             .map(|source| {
                 display(source)
@@ -141,11 +156,17 @@ impl<'a> Index<'a> {
             .max()
             .unwrap_or(360)
             .clamp(360, 640);
-        self.entries.chunks(ENTRIES_PER_CARD).enumerate().map(|(chunk, entries)| {
+        let entries: Vec<_> = self
+            .entries
+            .iter()
+            .enumerate()
+            .filter(|(_, e)| !e.embedded)
+            .collect();
+        entries.chunks(ENTRIES_PER_CARD).map(|entries| {
             let mut svg = String::from("<g data-relationship-index=\"true\">\n");
             let mut y = 28;
-            for (offset, entry) in entries.iter().enumerate() {
-                let number = chunk * ENTRIES_PER_CARD + offset + 1;
+            for &(offset, entry) in entries {
+                let number = offset + 1;
                 writeln!(svg, r#"<g data-relationship-entry="{number}">"#).unwrap();
                 let bounds = Bounds {
                     origin: crate::layout::Point { x: 16, y: y - 13 },

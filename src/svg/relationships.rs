@@ -33,7 +33,7 @@ pub(super) fn captions(graph: &Graph) -> (String, String) {
         .filter(|n| crate::view::routes::owner(graph, n).is_some())
         .count();
     if embedded > 0 {
-        let resources = nodes + graph.edges.iter().filter(|e| e.change.is_some()).count();
+        let resources = nodes + additional_resources(graph);
         let spatial = nodes - logical - embedded;
         let summary = format!(
             "{resources} resources ({spatial} spatial cards, {logical} logical cards, {embedded} embedded route cards) · {edges} relationships"
@@ -41,7 +41,7 @@ pub(super) fn captions(graph: &Graph) -> (String, String) {
         return (summary.clone(), summary);
     }
     if logical > 0 {
-        let resources = nodes + graph.edges.iter().filter(|e| e.change.is_some()).count();
+        let resources = nodes + additional_resources(graph);
         let spatial = nodes - logical;
         let summary = format!(
             "{resources} resources ({spatial} spatial cards, {logical} logical cards) · {edges} relationships"
@@ -60,12 +60,7 @@ pub(super) fn captions(graph: &Graph) -> (String, String) {
             format!("{nodes} resources · {edges} reference edges · dependency → dependent"),
         ),
         true => {
-            let resources = nodes
-                + graph
-                    .edges
-                    .iter()
-                    .filter(|edge| edge.change.is_some())
-                    .count();
+            let resources = nodes + additional_resources(graph);
             (
                 format!(
                     "{resources} resources ({nodes} cards), {edges} relationships. Lines show architectural relationships. Edge titles identify the relationship kind and Terraform change."
@@ -74,6 +69,18 @@ pub(super) fn captions(graph: &Graph) -> (String, String) {
             )
         }
     }
+}
+
+fn additional_resources(graph: &Graph) -> usize {
+    graph
+        .edges
+        .iter()
+        .filter(|e| {
+            e.change
+                .as_ref()
+                .is_some_and(|c| graph.nodes[e.from].address != c.address)
+        })
+        .count()
 }
 
 pub(super) fn title(graph: &Graph, edge: &Edge, semantic_edges: bool) -> String {

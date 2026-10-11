@@ -75,6 +75,9 @@ pub fn apply(all: &Architecture, options: &Options) -> Result<Architecture, Stri
                 parents.push((from.clone(), to.clone()));
             }
             if let Some(change) = &edge.change {
+                if graph.nodes[edge.from].address == change.address {
+                    continue;
+                }
                 if change.action != Action::Unchanged
                     || change.metadata != ChangeMetadata::default()
                     || change.previous_address.is_some()

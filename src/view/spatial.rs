@@ -29,6 +29,22 @@ pub(crate) fn project(source: &Graph) -> Projection {
             let mut node = source.nodes[i].clone();
             node.routes.owner = None;
             node.routes.reserved_height = super::routes::height(source, i);
+            let incoming = source
+                .edges
+                .iter()
+                .filter(|e| e.to == i && super::routes::routed(source, e.from))
+                .count();
+            if incoming > 0 {
+                let incident = source
+                    .edges
+                    .iter()
+                    .filter(|e| e.from == i || e.to == i)
+                    .count();
+                node.routes.reserved_height = node.routes.reserved_height.max(
+                    (41 + incident * crate::layout::relationship_markers::PORT_SPACING)
+                        .saturating_sub(crate::layout::NODE_HEIGHT),
+                );
+            }
             node
         })
         .collect();

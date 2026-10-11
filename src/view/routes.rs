@@ -36,6 +36,15 @@ pub(crate) fn owner(graph: &Graph, node: &Node) -> Option<usize> {
         .position(|n| n.entity.provenance.contains(owner))
 }
 
+pub(crate) fn routed(graph: &Graph, index: usize) -> bool {
+    owner(graph, &graph.nodes[index]).is_some()
+        && graph.edges.iter().any(|e| {
+            e.from == index
+                && e.kind == crate::model::EdgeKind::Association
+                && graph.nodes[e.to].placement != crate::model::Placement::Logical
+        })
+}
+
 fn details(entry: &RouteEntry) -> Vec<Row> {
     vec![
         Row {
@@ -98,7 +107,15 @@ pub(crate) fn cards(graph: &Graph, parent: usize) -> Vec<Card<'_>> {
             target: None,
         }];
         for entry in &child.routes.entries {
-            rows.extend(details(entry));
+            let mut detail = details(entry);
+            if routed(graph, index) {
+                detail.truncate(1);
+                detail.push(Row {
+                    text: "Next hop".into(),
+                    target: None,
+                });
+            }
+            rows.extend(detail);
         }
         let mut related: Vec<_> = graph
             .edges
@@ -139,12 +156,18 @@ pub(crate) fn cards(graph: &Graph, parent: usize) -> Vec<Card<'_>> {
     }
     for card in &mut cards {
         for row in &mut card.rows {
-            if row
-                .target
-                .as_ref()
-                .is_some_and(|id| !graph.nodes.iter().any(|n| n.entity.provenance.contains(id)))
-            {
-                row.text.push_str(" (unavailable)");
+            if let Some(id) = &row.target {
+                match graph
+                    .nodes
+                    .iter()
+                    .find(|n| n.entity.provenance.contains(id))
+                {
+                    None => row.text.push_str(" (unavailable)"),
+                    Some(n) if n.placement == crate::model::Placement::Logical => {
+                        row.text.push_str(" (nonspatial)")
+                    }
+                    _ => {}
+                }
             }
         }
     }

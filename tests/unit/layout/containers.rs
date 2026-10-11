@@ -674,7 +674,7 @@ fn large_aws_example_keeps_cross_module_containment_and_multi_subnet_relationshi
             .iter()
             .filter(|edge| edge.kind == EdgeKind::Association)
             .count(),
-        8
+        10
     );
     for role in [
         ResourceRole::Container,
@@ -1083,16 +1083,22 @@ fn verify_layout(graph: &Graph, layout: &Layout<'_>) {
                 continue;
             }
             let child_bounds = layout.bounds[child];
-            assert!(child_bounds.origin.x >= bounds.origin.x + PADDING);
+            let padding = if crate::view::routes::owner(graph, &graph.nodes[child]) == Some(parent)
+            {
+                12
+            } else {
+                PADDING
+            };
+            assert!(child_bounds.origin.x >= bounds.origin.x + padding);
             assert!(
-                child_bounds.origin.y >= bounds.origin.y + layout.header_heights[parent] + PADDING
+                child_bounds.origin.y >= bounds.origin.y + layout.header_heights[parent] + padding
             );
             assert!(
-                child_bounds.origin.x + child_bounds.width + PADDING
+                child_bounds.origin.x + child_bounds.width + padding
                     <= bounds.origin.x + bounds.width
             );
             assert!(
-                child_bounds.origin.y + child_bounds.height + PADDING
+                child_bounds.origin.y + child_bounds.height + padding
                     <= bounds.origin.y + bounds.height
             );
         }

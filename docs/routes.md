@@ -21,11 +21,15 @@ are `gateway_id` (Internet/VPN Gateway), `nat_gateway_id`, `transit_gateway_id`,
 VPC Endpoint subtype semantics remain unsupported. Missing, ambiguous, dynamic or
 unsupported targets display a fallback and retain diagnostics.
 
-The child links to its verified next hop and lists other incident references.
-Original edge kinds, endpoints and provenance remain in the graph and SVG metadata;
-state-local incident edges use references instead of spatial paths. Unknown
+When the verified next hop has a visible spatial card, a directed Association runs
+from the Route child's own port to the target port. It retains the Route's action,
+lifecycle metadata and resource provenance. The child shows `Next hop [N]`, matching
+the destination marker, and omits the `Target:` row. It has no duplicate resource
+entry in the relationship index, parent-to-target line or parent-to-child line.
+Other incident references remain in metadata and child reference rows. Unknown
 reference candidates are labeled References, not asserted next-hop targets.
-Filtered targets display unavailable without a dangling link. Cross-state paths
+Filtered, nonspatial and unresolved targets retain a target/status fallback without
+a dangling spatial path. Cross-state paths
 attach to the owning table border, retain the actual Route endpoint ID and expose
 the attachment ID in `data-source-port` / `data-target-port`.
 
@@ -43,6 +47,8 @@ remain separate; inline entries sort deterministically. An unknown route collect
 has an unresolved entry, while an empty table needs no Routes section.
 
 Shared row measurement wraps complete child addresses and reserves their height
-inside the table footprint before placement and routing. Existing side-port and
-marker clearance applies to the expanded table. See [routes.svg](../examples/routes.svg)
+inside the table footprint before placement and routing. The final router uses
+child bounds, protects the parent header and sibling entries, and reserves target
+ports and marker corridors. Routes to the same next hop remain individual paths.
+See [routes.svg](../examples/routes.svg)
 and the [large example](../examples/terraform-large/diagram.svg).

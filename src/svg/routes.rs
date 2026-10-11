@@ -6,7 +6,13 @@ use std::fmt::Write;
 #[path = "../../tests/unit/svg/routes.rs"]
 mod tests;
 
-pub(super) fn render(graph: &Graph, parent: usize, x: usize, mut y: usize) -> String {
+pub(super) fn render(
+    graph: &Graph,
+    parent: usize,
+    x: usize,
+    mut y: usize,
+    index: &super::relationship_index::Index<'_>,
+) -> String {
     let cards = cards(graph, parent);
     if cards.is_empty() {
         return String::new();
@@ -56,6 +62,14 @@ pub(super) fn render(graph: &Graph, parent: usize, x: usize, mut y: usize) -> St
             node.deposed_key.as_ref().map(|a| format!("; deposed: {}", super::escape(a))).unwrap_or_default()).unwrap();
         let mut line_y = y + 24;
         for row in card.rows {
+            let text = if row.text == "Next hop" {
+                index
+                    .number(node)
+                    .map(|n| format!("Next hop [{n}]"))
+                    .unwrap_or(row.text)
+            } else {
+                row.text
+            };
             let available = row.target.as_ref().and_then(|id| {
                 graph
                     .nodes
@@ -65,7 +79,7 @@ pub(super) fn render(graph: &Graph, parent: usize, x: usize, mut y: usize) -> St
             if let Some(target) = available {
                 write!(svg, "<a href=\"#{}\">", super::identity::resource(target)).unwrap();
             }
-            for line in lines(&row.text) {
+            for line in lines(&text) {
                 writeln!(svg, r##"<text x="{}" y="{line_y}" font-size="11" fill="#334155" xml:space="preserve">{}</text>"##, x + 12, super::escape(line)).unwrap();
                 line_y += 18;
             }

@@ -12,13 +12,14 @@ visible; an overflow count and accessible title retain the complete list and
 full addresses. Card heights reserve space above the footer and placement note.
 
 Dependency lines are thin and solid. Ordinary associations are undirected and
-dashed (7/4), with no arrowheads. Route next hops use [child-card references](routes.md).
+dashed (7/4), with no arrowheads. Route next hops use directed Associations from
+[child-card ports](routes.md).
 Inferred connections are undirected, without arrowheads, and thicker and dotted
 (2/4 with round caps). Connection titles use `↔`. These
 patterns remain distinct in grayscale. Containment uses nested boundaries;
 an edge represented by nesting does not receive a redundant line.
-Route child cards use presentation nesting and retain their original reference
-edges in metadata. Their ownership and safe entry details are in `route-presentations`.
+Route child cards use presentation nesting; their safe ownership and entry details
+are in `route-presentations`, and original reference evidence remains in metadata.
 
 Small white circles mark final card ports: the source of a Dependency and both
 ends of Association/Connection paths. Containment has no endpoint circles.
@@ -35,6 +36,8 @@ blue dashed gutter routes and visible cross-state legend.
 
 Visible paths with Terraform resource provenance carry compact `[N]` markers and
 a matching **Relationship resources** numbered list above the architecture diagram.
+Embedded Routes show their matching number on the child card instead of adding a
+duplicate entry to that list.
 Each card contains up to 10 complete entries: 1–10, 11–20, and so on. Cards continue
 to the right, wrapping only when the available width requires it. A multi-source
 entry stays in one card regardless of its wrapped line count. Full Terraform-native

@@ -68,7 +68,7 @@ fn large_fixture_is_reproducible_from_terraform_sources_and_renders_deterministi
         svg,
         include_str!("../../examples/terraform-large/diagram.svg").replace("\r\n", "\n")
     );
-    assert_eq!(svg.matches("data-edge-kind=\"association\"").count(), 8);
+    assert_eq!(svg.matches("data-edge-kind=\"association\"").count(), 10);
     assert_eq!(svg.matches("data-container=").count(), 6);
     assert_eq!(svg.matches("data-external=\"true\"").count(), 3);
     assert!(svg.contains("module.application.aws_instance.workers_a[0]"));
@@ -100,7 +100,35 @@ fn large_fixture_is_reproducible_from_terraform_sources_and_renders_deterministi
             .unwrap()
             .text()
             .unwrap();
-        assert!(title.contains("0.0.0.0/0") && title.contains(target));
+        assert!(title.contains("0.0.0.0/0") && !title.contains("Target"));
+        let target_address = format!("module.network.{target}");
+        let target_card = document
+            .descendants()
+            .find(|n| n.attribute("data-terraform-address") == Some(target_address.as_str()))
+            .unwrap();
+        let paths: Vec<_> = document
+            .descendants()
+            .filter(|n| {
+                n.has_tag_name("path")
+                    && n.attribute("data-edge-kind") == Some("association")
+                    && n.attribute("data-source") == cards[0].attribute("id")
+            })
+            .collect();
+        assert_eq!(paths.len(), 1);
+        assert_eq!(
+            paths[0].attribute("data-target"),
+            target_card.attribute("id")
+        );
+        assert_eq!(paths[0].attribute("data-directionality"), Some("directed"));
+        let table = cards[0]
+            .ancestors()
+            .skip(1)
+            .find(|n| n.attribute("data-terraform-address") == Some(owner.as_str()))
+            .unwrap();
+        assert!(!document.descendants().any(|n| n.has_tag_name("path")
+            && n.attribute("data-edge-kind") == Some("association")
+            && n.attribute("data-source") == table.attribute("id")
+            && n.attribute("data-target") == target_card.attribute("id")));
     }
     let component = document
         .descendants()

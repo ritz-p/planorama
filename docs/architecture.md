@@ -39,8 +39,9 @@ Value-free reference evidence is available in `resource-references` metadata.
 Verified Route ownership uses the same projection boundary: the Route node remains
 in the graph, while its card is embedded in the owning table. `view/routes.rs`
 measures the shared rows before spatial placement; the expanded table reserves
-the complete child height and retains its normal ports. This is presentation
-ownership, not a fabricated Containment edge. See [routes](routes.md).
+the complete child height. Final routing uses the child's bounds and ports for its
+next-hop Association. Layout ancestry supports exiting the parent without adding
+a semantic Containment edge. See [routes](routes.md).
 
 Consumer cards show compact Uses rows from the same evidence, with provider labels
 supplied during projection. Shared row selection determines both content height

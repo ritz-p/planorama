@@ -156,6 +156,25 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
         if let Ok(target) = target(raw, index) {
             presentation.entries[0].target = raw.nodes[target].entity.provenance.first().cloned();
             presentation.entries[0].target_kind = Some(raw.nodes[target].resource_type.clone());
+            if presentation.owner.is_some() {
+                graph.edges.retain(|e| {
+                    !(e.from == target
+                        && e.to == index
+                        && e.kind == crate::model::EdgeKind::Dependency)
+                });
+                graph.edges.push(crate::model::Edge {
+                    from: index,
+                    to: target,
+                    kind: crate::model::EdgeKind::Association,
+                    change: Some(crate::model::EdgeChange {
+                        directionality: crate::model::Directionality::Directed,
+                        address: node.address.clone(),
+                        previous_address: node.previous_address.clone(),
+                        metadata: node.metadata.clone(),
+                        action: node.action,
+                    }),
+                });
+            }
         }
     }
 }

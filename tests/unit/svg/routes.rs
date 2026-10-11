@@ -8,7 +8,123 @@ fn input() -> Value {
 
 fn output(value: &Value) -> String {
     let graph = semantic::transform(&plan::parse(&value.to_string()).unwrap());
-    svg::render(&graph, &Layout::new(&graph))
+    let layout = Layout::new(&graph);
+    verify_route_paths(&graph, &layout);
+    svg::render(&graph, &layout)
+}
+
+fn verify_route_paths(graph: &crate::model::Graph, layout: &Layout<'_>) {
+    let mut ports = std::collections::BTreeMap::<_, Vec<_>>::new();
+    for (edge, path) in graph.edges.iter().zip(&layout.paths) {
+        let Some(parent) = view::routes::owner(graph, &graph.nodes[edge.from]) else {
+            continue;
+        };
+        if edge.kind != crate::model::EdgeKind::Association || path.is_empty() {
+            continue;
+        }
+        let child = layout.bounds[edge.from];
+        let target = layout.bounds[edge.to];
+        let boundary = |b: crate::layout::Bounds, p: crate::layout::Point| {
+            ((p.x == b.origin.x || p.x == b.right())
+                && p.y > b.origin.y
+                && p.y < b.origin.y + b.height)
+                || ((p.y == b.origin.y || p.y == b.origin.y + b.height)
+                    && p.x > b.origin.x
+                    && p.x < b.right())
+        };
+        assert!(boundary(child, path[0]));
+        assert!(
+            boundary(target, *path.last().unwrap()),
+            "target={target:?}, path={path:?}"
+        );
+        ports
+            .entry(edge.to)
+            .or_default()
+            .push(*path.last().unwrap());
+        let obstacles = layout.containment.children[parent]
+            .iter()
+            .map(|&i| layout.bounds[i])
+            .chain([layout.bounds[parent].header(layout.header_heights[parent])]);
+        for bounds in obstacles {
+            for p in path.windows(2) {
+                let horizontal = p[0].y == p[1].y;
+                let intersects = if horizontal {
+                    p[0].y > bounds.origin.y
+                        && p[0].y < bounds.origin.y + bounds.height
+                        && p[0].x.min(p[1].x) < bounds.right()
+                        && p[0].x.max(p[1].x) > bounds.origin.x
+                } else {
+                    p[0].x > bounds.origin.x
+                        && p[0].x < bounds.right()
+                        && p[0].y.min(p[1].y) < bounds.origin.y + bounds.height
+                        && p[0].y.max(p[1].y) > bounds.origin.y
+                };
+                assert!(
+                    !intersects,
+                    "route intersects card/header: {p:?}, {bounds:?}"
+                );
+            }
+        }
+        assert!(
+            path.windows(2)
+                .all(|p| p[0].x == p[1].x || p[0].y == p[1].y)
+        );
+    }
+    for points in ports.values() {
+        for (i, a) in points.iter().enumerate() {
+            for b in &points[i + 1..] {
+                assert!(a.x.abs_diff(b.x) + a.y.abs_diff(b.y) >= 24);
+            }
+        }
+    }
+    let index = svg::relationship_index::Index::new(graph, layout);
+    let markers: Vec<_> = index.marker_bounds().collect();
+    let overlaps = |a: crate::layout::Bounds, b: crate::layout::Bounds| {
+        a.origin.x < b.right()
+            && b.origin.x < a.right()
+            && a.origin.y < b.origin.y + b.height
+            && b.origin.y < a.origin.y + a.height
+    };
+    for (i, &marker) in markers.iter().enumerate() {
+        assert!(
+            markers[i + 1..]
+                .iter()
+                .all(|&other| !overlaps(marker, other))
+        );
+        for (node, &bounds) in layout.bounds.iter().enumerate() {
+            let bounds = if layout.containers.contains(&node) {
+                bounds.header(layout.header_heights[node])
+            } else {
+                bounds
+            };
+            assert!(
+                !overlaps(marker, bounds),
+                "marker covers card/header: {marker:?}, {bounds:?}"
+            );
+        }
+    }
+}
+
+#[test]
+fn nonspatial_next_hop_keeps_status_without_a_spatial_path() {
+    let mut graph = semantic::transform(&plan::parse(&input().to_string()).unwrap());
+    let target = graph
+        .0
+        .nodes
+        .iter_mut()
+        .find(|n| n.resource_type == "aws_internet_gateway")
+        .unwrap();
+    target.placement = crate::model::Placement::Logical;
+    let layout = Layout::new(&graph);
+    for (edge, path) in graph.edges.iter().zip(&layout.paths) {
+        if edge.kind == crate::model::EdgeKind::Association {
+            assert!(path.is_empty());
+        }
+    }
+    let svg = svg::render(&graph, &layout);
+    verify_cards(&svg);
+    assert!(svg.contains("(nonspatial)"));
+    assert!(!svg.contains("Next hop ["));
 }
 
 fn verify_cards(svg: &str) {
@@ -70,6 +186,7 @@ fn route_children_keep_identity_palette_metadata_and_reference_edges() {
         assert_eq!(graph.nodes.len(), raw.nodes.len());
         let layout = Layout::new(&graph);
         let svg = svg::render(&graph, &layout);
+        assert!(svg.contains(&format!("{} resources (", raw.nodes.len())));
         verify_cards(&svg);
         let doc = roxmltree::Document::parse(&svg).unwrap();
         let child = doc
@@ -93,11 +210,36 @@ fn route_children_keep_identity_palette_metadata_and_reference_edges() {
             if graph.nodes[edge.from].routes.owner.is_some()
                 || graph.nodes[edge.to].routes.owner.is_some()
             {
-                assert!(path.is_empty());
+                if edge.kind == crate::model::EdgeKind::Association {
+                    assert!(path.len() >= 2);
+                    let child = layout.bounds[edge.from];
+                    assert!(path[0].x == child.origin.x || path[0].x == child.right());
+                    assert!(
+                        path[0].y > child.origin.y && path[0].y < child.origin.y + child.height
+                    );
+                    assert_eq!(
+                        edge.change.as_ref().unwrap().action,
+                        graph.nodes[edge.from].action
+                    );
+                } else {
+                    assert!(path.is_empty());
+                }
             }
         }
         assert!(!svg.contains("TOP_SECRET"));
         assert!(!svg.contains("data-source-address=\"aws_route.default\""));
+        assert!(
+            !child
+                .descendants()
+                .filter_map(|n| n.text())
+                .any(|t| t.starts_with("Target"))
+        );
+        assert!(
+            child
+                .descendants()
+                .filter_map(|n| n.text())
+                .any(|t| t.starts_with("Next hop ["))
+        );
     }
 }
 

@@ -163,9 +163,9 @@ fn render_with_index(
                 .edges
                 .iter()
                 .filter(|edge| {
-                    edge.change
-                        .as_ref()
-                        .is_some_and(|change| change.action == *action)
+                    edge.change.as_ref().is_some_and(|change| {
+                        change.action == *action && graph.nodes[edge.from].address != change.address
+                    })
                 })
                 .count();
         writeln!(svg, r#"<rect x="{x}" y="100" width="12" height="12" fill="{background}" stroke="{border}"/><text x="{}" y="111" font-size="12" fill="{border}">{} ({count})</text>"#, x + 19, label(*action)).unwrap();
@@ -282,10 +282,22 @@ fn render_with_index(
         let bounds = layout.bounds[i];
         let (x, y) = (bounds.origin.x, bounds.origin.y);
         let card_width = bounds.width;
-        let header_height = layout.header_heights[i];
+        let header_height = if node.role != crate::model::ResourceRole::Container
+            && layout.containers.contains(&i)
+        {
+            bounds.height
+        } else {
+            layout.header_heights[i]
+        };
         let inferred = layout.containment.parents[i]
             .is_some_and(|parent| graph.derived_containment(parent, i));
-        let background = containers::background(graph, layout, i);
+        let background = if node.role != crate::model::ResourceRole::Container
+            && layout.containers.contains(&i)
+        {
+            "none"
+        } else {
+            containers::background(graph, layout, i)
+        };
         let border = color(node.action).1;
         let resource_address = node.resource_address();
         let address = escape(resource_address.terraform());
@@ -385,6 +397,7 @@ fn render_with_index(
             i,
             x + 12,
             y + 94 + crate::view::references::height(node),
+            relationship_index,
         ));
         let role = roles::annotation(node.role, &node.module);
         let footer = match role.is_empty() {

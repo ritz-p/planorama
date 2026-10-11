@@ -55,9 +55,11 @@ A purple Logical Components section contains the load balancer, its Listener and
 its uniquely referenced Target Group as action-colored member links. The Target
 Group link points to the original spatial card. Relationship Resources follow in a separate neutral
 section. Empty sections are omitted in smaller examples.
-The original 74 relationships remain queryable; 37 paths are spatially routed.
+The 74 relationships remain queryable; 39 paths are spatially routed.
 Internet and NAT Routes appear inside the public and private Route Tables with
-destination constants and next-hop links. Canvas dimensions follow the current
+destination constants and directed lines from their own ports to the Internet
+Gateway and NAT Gateway. Matching numbers appear on the children and near the
+targets; routable children omit the `Target:` row. Canvas dimensions follow the current
 routing geometry.
 ECS Service lists its Cluster and Task definition; each EC2 worker links its AMI and Instance profile. Connections retain their endpoints and undirected dotted presentation.
 
