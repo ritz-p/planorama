@@ -82,10 +82,26 @@ fn annotation_area(
     index: &relationship_index::Index<'_>,
     address_format: AddressFormat,
 ) -> annotations::Area {
-    let mut cards = logical::cards(graph, address_format);
-    cards.extend(index.cards());
-    cards.extend(components::cards(graph));
-    annotations::Area::new(cards, index.width)
+    annotations::Area::sections(
+        vec![
+            (
+                "Logical Resources",
+                style::LOGICAL_RESOURCES,
+                logical::cards(graph, address_format),
+            ),
+            (
+                "Logical Components",
+                style::LOGICAL_COMPONENTS,
+                components::cards(graph),
+            ),
+            (
+                "Relationship Resources",
+                style::RELATIONSHIP_RESOURCES,
+                index.cards(),
+            ),
+        ],
+        index.width,
+    )
 }
 
 pub(crate) fn render_with_format(

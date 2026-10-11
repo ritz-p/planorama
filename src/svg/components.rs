@@ -17,11 +17,10 @@ pub(super) fn membership(graph: &Graph) -> BTreeMap<&str, &str> {
 }
 
 pub(super) fn cards(graph: &Graph) -> Vec<Card> {
-    let nodes: BTreeMap<_, _> = graph
-        .nodes
-        .iter()
-        .map(|node| (node.address.as_str(), node))
-        .collect();
+    let mut nodes = BTreeMap::<_, Vec<_>>::new();
+    for node in &graph.nodes {
+        nodes.entry(node.address.as_str()).or_default().push(node);
+    }
     let mut components: Vec<_> = graph.components.iter().collect();
     components.sort_by_key(|component| &component.entity.id);
     components.into_iter().map(|component| {
@@ -33,7 +32,10 @@ pub(super) fn cards(graph: &Graph) -> Vec<Card> {
         members.sort();
         members.dedup();
         let rows: Vec<_> = members.iter().map(|address| {
-            let node = nodes.get(address.as_str()).copied();
+            let node = nodes.get(address.as_str()).and_then(|nodes| match nodes.as_slice() {
+                [node] => Some(*node),
+                _ => None,
+            });
             let text = node.map_or_else(|| (*address).clone(), |node| format!("{}: {address}", super::operations::label(node.action, &node.metadata)));
             (address, node, text)
         }).collect();
@@ -46,25 +48,33 @@ pub(super) fn cards(graph: &Graph) -> Vec<Card> {
             y += 20;
         }
         writeln!(svg, r##"<text x="16" y="{y}" font-size="12" font-weight="700" fill="#475569">Members</text>"##).unwrap();
-        y += 24;
+        y += 16;
+        let mut member_cards = Vec::new();
         for (address, node, text) in rows {
             let title = match node {
-                Some(node) => format!("{address}; {}{}", super::operations::label(node.action, &node.metadata), super::operations::details(&node.metadata)),
+                Some(node) => format!("{}; {}{}{}{}", node.resource_address().qualified(), super::operations::label(node.action, &node.metadata), super::operations::details(&node.metadata), node.previous_address.as_ref().map(|address| format!("; moved from: {address}")).unwrap_or_default(), node.deposed_key.as_ref().map(|key| format!("; deposed: {key}")).unwrap_or_default()),
                 None => (*address).clone(),
             };
+            let member_width = card_width(std::iter::once(&text)).min(width - 32);
+            let lines = wrap(&text, (member_width - 32) / 8);
+            let height = lines.len() * 20 + 24;
+            let (background, border) = super::color(node.map_or(crate::model::Action::Unchanged, |node| node.action));
+            let mut member = String::new();
             if let Some(node) = node {
-                write!(svg, "<a href=\"#{}\" data-source-address=\"{}\">", super::identity::resource(node), super::escape(address)).unwrap();
+                write!(member, "<a href=\"#{}\" data-source-address=\"{}\"{}>", super::identity::resource(node), super::escape(address), super::operations::attributes(&node.metadata)).unwrap();
             } else {
-                write!(svg, "<g data-source-address=\"{}\">", super::escape(address)).unwrap();
+                write!(member, "<g data-source-address=\"{}\" data-member-status=\"unavailable\">", super::escape(address)).unwrap();
             }
-            writeln!(svg, r##"<title>{}</title><text font-size="12" fill="#334155">"##, super::escape(&title)).unwrap();
-            for line in wrap(&text, limit) {
-                writeln!(svg, "<tspan x=\"16\" y=\"{y}\" xml:space=\"preserve\">{}</tspan>", super::escape(line)).unwrap();
-                y += 20;
+            writeln!(member, r##"<title>{}</title><rect width="{member_width}" height="{height}" rx="8" fill="{background}" stroke="{border}"/><text font-size="12" fill="#334155">"##, super::escape(&title)).unwrap();
+            for (index, line) in lines.into_iter().enumerate() {
+                writeln!(member, "<tspan x=\"16\" y=\"{}\" xml:space=\"preserve\">{}</tspan>", 28 + index * 20, super::escape(line)).unwrap();
             }
-            svg.push_str(if node.is_some() { "</text></a>\n" } else { "</text></g>\n" });
-            y += 4;
+            member.push_str(if node.is_some() { "</text></a>\n" } else { "</text></g>\n" });
+            member_cards.push(Card { width: member_width, height, content: member });
         }
+        let members = super::annotations::Area::flow(member_cards, width, crate::layout::Point { x: 16, y }, 16, 16);
+        svg.push_str(&members.content());
+        y += members.height;
         svg.push_str("</g>\n");
         Card { width, height: y, content: svg }
     }).collect()
