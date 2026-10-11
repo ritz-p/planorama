@@ -22,7 +22,6 @@ pub(super) struct Entry<'a> {
     edges: Vec<usize>,
     stroke: &'static str,
     style: &'static str,
-    kind: EdgeKind,
 }
 
 pub(super) struct Index<'a> {
@@ -91,7 +90,6 @@ impl<'a> Index<'a> {
                     edges,
                     stroke: super::relationships::stroke(edge),
                     style: super::relationships::style(edge.kind),
-                    kind: edge.kind,
                 }
             })
             .collect();
@@ -125,52 +123,56 @@ impl<'a> Index<'a> {
     }
 
     pub fn cards(&self) -> Vec<super::annotations::Card> {
-        let mut cards = Vec::new();
-        for (i, entry) in self.entries.iter().enumerate() {
-            let number = i + 1;
-            let width =
-                super::annotations::card_width(entry.sources.iter().map(|source| display(source)));
-            let mut svg = format!(r##"<g data-relationship-entry="{number}">"##);
-            let bounds = Bounds {
-                origin: crate::layout::Point { x: 16, y: 14 },
-                width: crate::layout::relationship_markers::width(number),
-                height: crate::layout::relationship_markers::HEIGHT,
-            };
-            svg.push_str(&badge(number, bounds, entry.stroke, entry.style));
-            let kind = match entry.kind {
-                EdgeKind::Dependency => "Dependency",
-                EdgeKind::Association => "Association",
-                EdgeKind::Connection => "Connection",
-                EdgeKind::Containment => "Containment",
-            };
-            writeln!(svg, r##"<text x="{}" y="28" font-size="13" font-weight="700" fill="#334155">{kind}</text>"##, bounds.right() + 12).unwrap();
+        const ENTRIES_PER_CARD: usize = 10;
+        let badge_width = crate::layout::relationship_markers::width(self.entries.len());
+        let text_x = 16 + badge_width + 12;
+        let width = self
+            .entries
+            .iter()
+            .flat_map(|entry| &entry.sources)
+            .map(|source| {
+                display(source)
+                    .chars()
+                    .map(|c| if c.is_ascii() { 8 } else { 16 })
+                    .sum::<usize>()
+                    + text_x
+                    + 16
+            })
+            .max()
+            .unwrap_or(360)
+            .clamp(360, 640);
+        self.entries.chunks(ENTRIES_PER_CARD).enumerate().map(|(chunk, entries)| {
+            let mut svg = String::from(r##"<g data-relationship-index="true"><text x="16" y="28" font-size="16" font-weight="700" fill="#334155">Relationship resources</text>
+"##);
             let mut y = 56;
-            if entry.sources.len() > 1 {
-                writeln!(svg, r##"<text x="16" y="{y}" font-size="12" fill="#334155">{} Terraform resources</text>"##, entry.sources.len()).unwrap();
-                y += 20;
-            }
-            for source in &entry.sources {
-                let text = display(source);
-                writeln!(svg, r##"<text data-source-address="{}" font-size="12" fill="#334155"><title>{}</title>"##, super::escape(&source.address), super::escape(&text)).unwrap();
-                for line in wrap(&text, (width - 32) / 8) {
-                    writeln!(
-                        svg,
-                        "<tspan x=\"16\" y=\"{y}\" xml:space=\"preserve\">{}</tspan>",
-                        super::escape(line)
-                    )
-                    .unwrap();
+            for (offset, entry) in entries.iter().enumerate() {
+                let number = chunk * ENTRIES_PER_CARD + offset + 1;
+                writeln!(svg, r#"<g data-relationship-entry="{number}">"#).unwrap();
+                let bounds = Bounds {
+                    origin: crate::layout::Point { x: 16, y: y - 13 },
+                    width: crate::layout::relationship_markers::width(number),
+                    height: crate::layout::relationship_markers::HEIGHT,
+                };
+                svg.push_str(&badge(number, bounds, entry.stroke, entry.style));
+                if entry.sources.len() > 1 {
+                    writeln!(svg, r##"<text x="{text_x}" y="{y}" font-size="12" fill="#334155">{} Terraform resources</text>"##, entry.sources.len()).unwrap();
                     y += 20;
                 }
-                svg.push_str("</text>\n");
+                for source in &entry.sources {
+                    let text = display(source);
+                    writeln!(svg, r##"<text data-source-address="{}" font-size="12" fill="#334155"><title>{}</title>"##, super::escape(&source.address), super::escape(&text)).unwrap();
+                    for line in wrap(&text, (width - text_x - 16) / 8) {
+                        writeln!(svg, "<tspan x=\"{text_x}\" y=\"{y}\" xml:space=\"preserve\">{}</tspan>", super::escape(line)).unwrap();
+                        y += 20;
+                    }
+                    svg.push_str("</text>\n");
+                }
+                svg.push_str("</g>\n");
+                y += 8;
             }
             svg.push_str("</g>\n");
-            cards.push(super::annotations::Card {
-                width,
-                height: y,
-                content: svg,
-            });
-        }
-        cards
+            super::annotations::Card { width, height: y + 8, content: svg }
+        }).collect()
     }
 }
 

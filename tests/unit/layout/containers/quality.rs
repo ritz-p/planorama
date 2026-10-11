@@ -12,6 +12,30 @@ fn large_fixture_limits_each_edges_bends_and_valid_route_stretch() {
     let mut graph = semantic::transform(&raw).0;
     let snapshot = |graph: &Graph| {
         let layout = Layout::new(graph);
+        let distances: Vec<_> = affinity::groups(graph, &layout.containment.parents)
+            .iter()
+            .map(|group| {
+                let mut centers: Vec<_> = group
+                    .sources
+                    .iter()
+                    .map(|&node| layout.bounds[node].origin.y + layout.bounds[node].height / 2)
+                    .collect();
+                centers.sort_unstable();
+                let median = (centers[(centers.len() - 1) / 2] + centers[centers.len() / 2]) / 2;
+                (
+                    graph.nodes[group.target].address.as_str(),
+                    (layout.bounds[group.target].origin.y + layout.bounds[group.target].height / 2)
+                        .abs_diff(median),
+                )
+            })
+            .collect();
+        eprintln!(
+            "large: {:?}; canvas={}x{} area={}; affinity={distances:?}",
+            measure(&layout.paths),
+            layout.width,
+            layout.height,
+            layout.width * layout.height
+        );
         assert_no_retraced_stubs(graph, &layout);
         let mut failures = Vec::new();
         let mut result = BTreeMap::new();

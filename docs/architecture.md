@@ -20,6 +20,9 @@ rows, wrapping at the available width and growing the canvas for oversized cards
 Empty areas reserve no height. One enclosing translation shifts all architecture
 cards, paths and relationship badges together; annotation cards never enter
 `Layout` or routing obstacles. Named-state endpoint coordinates include this shift.
+Relationship index cards group up to 10 complete numbered entries per card,
+continuing to the right before wrapping. Logical components use one card per
+component.
 
 Ingestion does not import provider rules, layout or SVG. Layout, view and SVG use
 the `model::architecture` facade, which excludes Terraform ingestion contracts.
