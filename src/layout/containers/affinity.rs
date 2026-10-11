@@ -2,14 +2,14 @@ use super::Point;
 use crate::model::architecture::{EdgeKind, Graph, ResourceRole};
 use std::collections::{BTreeMap, BTreeSet};
 
-pub(super) struct Group {
+pub(in crate::layout) struct Group {
     pub reverse: bool,
     pub target: usize,
     pub sources: Vec<usize>,
     pub edges: Vec<usize>,
 }
 
-pub(super) fn groups(graph: &Graph, parents: &[Option<usize>]) -> Vec<Group> {
+pub(in crate::layout) fn groups(graph: &Graph, parents: &[Option<usize>]) -> Vec<Group> {
     let mut groups: BTreeMap<usize, Vec<usize>> = BTreeMap::new();
     for (index, edge) in graph.edges.iter().enumerate() {
         if edge.kind == EdgeKind::Connection

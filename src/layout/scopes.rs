@@ -29,10 +29,12 @@ pub(super) fn pack(
     }
     if !groups.keys().flatten().any(|scope| scope.region.is_some()) {
         let columns = placement::columns(graph, None, &tree.roots, &tree.parents);
-        return (
-            placement::pack(&columns, sizes, offsets, spacing).1,
-            Vec::new(),
-        );
+        let (_, height) = placement::pack(&columns, sizes, offsets, spacing);
+        let relationships = placement::relationships(graph, &tree.roots, &tree.parents);
+        if super::containers::affinity::groups(graph, &tree.parents).is_empty() {
+            placement::refine(&tree.roots, &relationships, sizes, offsets, height, spacing);
+        }
+        return (height, Vec::new());
     }
     let mut top = 0;
     let mut panels = Vec::new();
@@ -43,6 +45,10 @@ pub(super) fn pack(
     {
         let columns = placement::columns(graph, None, roots, &tree.parents);
         let (width, height) = placement::pack(&columns, sizes, offsets, spacing);
+        let relationships = placement::relationships(graph, roots, &tree.parents);
+        if super::containers::affinity::groups(graph, &tree.parents).is_empty() {
+            placement::refine(roots, &relationships, sizes, offsets, height, spacing);
+        }
         let padding = if scope.is_some() { 40 } else { 0 };
         for &root in roots {
             offsets[root].y += top + padding;
