@@ -45,6 +45,9 @@ pub fn apply(all: &Architecture, options: &Options) -> Result<Architecture, Stri
             .as_deref()
             .map(|s| s.strip_prefix(&format!("{}:", state.as_str())).unwrap_or(s));
         for (i, node) in graph.nodes.iter().enumerate() {
+            if let Some(parent) = crate::view::routes::owner(graph, node) {
+                parents.push(((state.clone(), parent), (state.clone(), i)));
+            }
             let key = (state.clone(), i);
             keys.insert(key.clone());
             if node.action != Action::Unchanged

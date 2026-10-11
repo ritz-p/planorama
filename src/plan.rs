@@ -10,6 +10,7 @@ mod providers;
 mod references;
 mod relevance;
 mod remote;
+mod routes;
 mod states;
 pub use states::parse_inputs;
 #[cfg(test)]
@@ -84,6 +85,7 @@ pub(crate) fn parse(json: &str) -> Result<TerraformPlan, String> {
     }
     let mut nodes: Vec<_> = nodes.into_values().collect();
     providers::enrich(&plan["configuration"], &mut nodes);
+    routes::enrich(&plan, &mut nodes);
     let mut drift = drift::collect(&plan, &mut nodes)?;
     let relevant_attributes = relevance::collect(&plan, &mut nodes, &mut drift);
     let edges = resolve(&nodes, &symbols);

@@ -12,11 +12,13 @@ visible; an overflow count and accessible title retain the complete list and
 full addresses. Card heights reserve space above the footer and placement note.
 
 Dependency lines are thin and solid. Ordinary associations are undirected and
-dashed (7/4), with no arrowheads. Lowered routes retain directional arrowheads.
+dashed (7/4), with no arrowheads. Route next hops use [child-card references](routes.md).
 Inferred connections are undirected, without arrowheads, and thicker and dotted
 (2/4 with round caps). Connection titles use `↔`. These
 patterns remain distinct in grayscale. Containment uses nested boundaries;
 an edge represented by nesting does not receive a redundant line.
+Route child cards use presentation nesting and retain their original reference
+edges in metadata. Their ownership and safe entry details are in `route-presentations`.
 
 Small white circles mark final card ports: the source of a Dependency and both
 ends of Association/Connection paths. Containment has no endpoint circles.

@@ -11,7 +11,7 @@ An address shared by current and deposed objects is ambiguous.
 removal, drift or other change metadata, including endpoints of changed lowered
 relationships and resolved cross-state relationships whose producer output has a
 non-no-op action. Combined with focus it intersects these selections first.
-Containment ancestors are then retained automatically. Cross-state relationships
+Containment ancestors and verified owning Route Tables are then retained automatically. Cross-state relationships
 retain both endpoints transitively, even at depth zero, to preserve provenance.
 Context nodes can therefore be unchanged or outside the requested depth.
 

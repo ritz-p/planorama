@@ -27,6 +27,19 @@ pub(super) fn captions(graph: &Graph) -> (String, String) {
         .iter()
         .filter(|n| n.placement == crate::model::Placement::Logical)
         .count();
+    let embedded = graph
+        .nodes
+        .iter()
+        .filter(|n| crate::view::routes::owner(graph, n).is_some())
+        .count();
+    if embedded > 0 {
+        let resources = nodes + graph.edges.iter().filter(|e| e.change.is_some()).count();
+        let spatial = nodes - logical - embedded;
+        let summary = format!(
+            "{resources} resources ({spatial} spatial cards, {logical} logical cards, {embedded} embedded route cards) · {edges} relationships"
+        );
+        return (summary.clone(), summary);
+    }
     if logical > 0 {
         let resources = nodes + graph.edges.iter().filter(|e| e.change.is_some()).count();
         let spatial = nodes - logical;

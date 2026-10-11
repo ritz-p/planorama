@@ -2,7 +2,7 @@
 
 [Logical architecture components](components.md) retain original resource cards and their complete change information.
 
-Supported route resources retain their operation metadata when lowered to [route relationships](routes.md).
+Route resources retain their own operation metadata in [embedded child cards](routes.md).
 
 Plan-level checks, including resource preconditions and postconditions, are documented in [Terraform check results](checks.md).
 

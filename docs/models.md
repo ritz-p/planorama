@@ -1,12 +1,16 @@
 # Terraform facts and architecture projection
 
-`plan::parse` returns `TerraformPlan`: a deterministic, value-free collection of
+`plan::parse` returns `TerraformPlan`: a deterministic collection of
 `TerraformEntity` facts, resolved `TerraformReference` source/consumer pairs,
 attribute provenance, outputs, remote references, checks, status and diagnostics.
 Entities retain native address, deposed key, previous address, provider, module,
 mode, action and safe lifecycle metadata. Current and deposed objects at one
 address remain distinct. Before/after values and sensitive import identities are
 not stored. Collection/scalar identity proofs are boolean facts, not raw values.
+
+Route entries retain validated, nonsensitive configuration destination constants
+and safe target identities. `Node.routes` holds presentation ownership, inline
+entries and projected content height; it does not create semantic Containment.
 
 The parser has no dependency on architecture `Graph`, `Node`, `EdgeKind` or role
 classification. Its `nodes`/`edges` fields are Terraform entities/references, not
@@ -39,7 +43,7 @@ from role. Logical nodes retain their native identity, action and provenance.
 resolved source identities, completeness and diagnostics; it never expands a
 resource dependency transitively. Module/input/output resolution follows the
 parser's existing evidence. Graph-level references such as `depends_on` are
-distinct from configured attribute usage. No attribute values are retained.
+distinct from configured attribute usage. Evaluated attribute values are not retained.
 In SVG `resource-references` metadata, remote targets include `state` alongside
 their address and deposed key. Targets without `state` belong to the enclosing
 state section, or the single input in unnamed diagrams.

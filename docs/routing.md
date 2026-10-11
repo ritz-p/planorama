@@ -18,6 +18,11 @@ relationships and evidence remain in the semantic/view graph and SVG metadata.
 The projection also normalizes node identity order before placement, mapping
 results back to the caller's indices so reordered flat inputs keep the same ports.
 
+Embedded Route cards also have no independent spatial footprint or local routed
+paths. Their owning table reserves the measured child-card content height before
+placement and side-port refinement. Cross-state Route endpoints use the table's
+border while retaining the child identity and explicit attachment metadata.
+
 ## Placement
 
 With containers, direct children occupy columns based on non-containment

@@ -77,6 +77,31 @@ fn large_fixture_is_reproducible_from_terraform_sources_and_renders_deterministi
     assert!(!svg.contains("data.aws_region.current"));
     assert!(!svg.contains("stroke-dasharray=\"5 4\""));
     let document = roxmltree::Document::parse(&svg).unwrap();
+    for (route, table, target) in [
+        ("internet", "public", "aws_internet_gateway.main"),
+        ("nat", "private", "aws_nat_gateway.main"),
+    ] {
+        let address = format!("module.network.aws_route.{route}");
+        let owner = format!("module.network.aws_route_table.{table}");
+        let cards: Vec<_> = document
+            .descendants()
+            .filter(|n| n.attribute("data-terraform-address") == Some(address.as_str()))
+            .collect();
+        assert_eq!(cards.len(), 1);
+        assert_eq!(cards[0].attribute("data-embedded-route"), Some("true"));
+        assert!(
+            cards[0]
+                .ancestors()
+                .any(|n| n.attribute("data-terraform-address") == Some(owner.as_str()))
+        );
+        let title = cards[0]
+            .children()
+            .find(|n| n.has_tag_name("title"))
+            .unwrap()
+            .text()
+            .unwrap();
+        assert!(title.contains("0.0.0.0/0") && title.contains(target));
+    }
     let component = document
         .descendants()
         .find(|n| n.attribute("data-entity-kind") == Some("synthetic"))

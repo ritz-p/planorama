@@ -46,7 +46,7 @@ docker compose exec -T dev cargo run --locked -- - -o - < plan.json > diagram.sv
 - 上部は Logical Resources（シアン）、Logical Components（紫）、Relationship Resources の順です。ECS Cluster・Task Definition・IAM 定義・AMI は最初のセクションにまとめ、空間配置と経路計算から分離します。内側のリソースとコンポーネントのメンバーカードは各リソースの変更色を使い、参照情報・変更数を保持します。
 - 利用側の `Uses` 行から論理カードへ移動できます。依存指定・未解決・表示対象外は区別し、長いアドレスと5件目以降の参照はタイトルで確認できます。
 - 既定のアドレス表示は Planorama 修飾形式です。`--address-format terraform` で Terraform 本来の表記に切り替えられます。省略されたラベルの全文はカードのタイトルで確認できます。
-- 属性値は描画しません。plan JSON 自体には機密値が含まれ得るため、実環境の plan/state はコミットしないでください。
+- Route は所有先を確認できた Route Table 内に子カードとして表示し、宛先は安全性を検証した設定定数（CIDR・prefix list ID）だけを表示します。その他の属性値は描画しません。plan JSON 自体には機密値が含まれ得るため、実環境の plan/state はコミットしないでください。
 
 図は構成から解決した関係を表し、Terraform の厳密な実行グラフではありません。式の評価、provider 内部の依存、削除専用リソースの過去の参照は復元しません。未解決・動的・曖昧な参照は保守的に扱い、`--diagnostics` で理由を stderr に出力します。診断は SVG や終了条件を変更しません。経路は決定的に生成しますが、交差や重なりのない最適配置は保証しません。
 
@@ -56,7 +56,7 @@ docker compose exec -T dev cargo run --locked -- - -o - < plan.json > diagram.sv
 | --- | --- |
 | AWS の分類・包含・SG 接続・関連付け | [AWS relationships](docs/aws.md) |
 | 線種・推論注記 | [Relationship styles](docs/relationships.md) |
-| Route の辺への変換 | [Routes](docs/routes.md) |
+| Route Table 内の子カード | [Routes](docs/routes.md) |
 | 論理コンポーネント | [Components](docs/components.md) |
 | 複数 plan・state 間参照 | [Multi-plan](docs/multi-plan.md)、[Outputs](docs/outputs.md) |
 | 表示対象の絞り込み | [Filtering](docs/filtering.md) |

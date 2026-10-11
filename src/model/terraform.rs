@@ -2,6 +2,7 @@ use super::{Action, ChangeMetadata, EntityMode, ProviderConfiguration, ProviderI
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct TerraformEntity {
+    pub route_entries: Vec<super::RouteEntry>,
     pub address: String,
     pub deposed_key: Option<String>,
     pub previous_address: Option<String>,

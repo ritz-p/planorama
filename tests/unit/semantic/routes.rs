@@ -6,12 +6,15 @@ fn input() -> Value {
 }
 
 #[test]
-fn supported_route_families_lower_and_keep_individual_change_metadata() {
+fn supported_route_families_embed_and_keep_individual_change_metadata() {
     for (field, kind) in [
         ("gateway_id", "aws_internet_gateway"),
         ("nat_gateway_id", "aws_nat_gateway"),
         ("transit_gateway_id", "aws_ec2_transit_gateway"),
         ("vpc_peering_connection_id", "aws_vpc_peering_connection"),
+        ("network_interface_id", "aws_network_interface"),
+        ("egress_only_gateway_id", "aws_egress_only_internet_gateway"),
+        ("gateway_id", "aws_vpn_gateway"),
     ] {
         let mut input = input();
         let address = format!("{kind}.main");
@@ -32,20 +35,29 @@ fn supported_route_families_lower_and_keep_individual_change_metadata() {
         }
         let raw = plan::parse(&input.to_string()).unwrap();
         let graph = semantic::transform(&raw);
-        let routes: Vec<_> = graph.edges.iter().filter(|e| e.change.is_some()).collect();
+        let routes: Vec<_> = graph
+            .nodes
+            .iter()
+            .filter(|n| n.routes.owner.is_some())
+            .collect();
         assert_eq!(routes.len(), 2);
-        for edge in &routes {
-            assert_eq!(edge.kind, EdgeKind::Association);
-            assert_eq!(graph.nodes[edge.from].address, "aws_route_table.public");
-            assert_eq!(graph.nodes[edge.to].address, address);
-            let change = edge.change.as_ref().unwrap();
+        for route in routes {
+            assert_eq!(
+                route.routes.owner.as_ref().unwrap().address,
+                "aws_route_table.public"
+            );
+            assert_eq!(
+                route.routes.entries[0].target.as_ref().unwrap().address,
+                address
+            );
             let original = raw
                 .nodes
                 .iter()
-                .find(|n| n.address == change.address)
+                .find(|n| n.address == route.address)
                 .unwrap();
-            assert_eq!(change.metadata, original.metadata);
-            assert_eq!(change.action, original.action);
+            assert_eq!(route.metadata, original.metadata);
+            assert_eq!(route.action, original.action);
+            assert!(graph.edges.iter().all(|e| e.kind != EdgeKind::Association));
         }
         assert!(graph.nodes.iter().any(|n| n.address == "aws_route.literal"));
     }
@@ -121,6 +133,16 @@ fn ambiguous_unsupported_and_consumed_routes_keep_cards() {
         let graph = semantic::transform(&raw);
         assert!(
             graph.nodes.iter().any(|n| n.address == "aws_route.default"),
+            "case {case}"
+        );
+        let route = graph
+            .nodes
+            .iter()
+            .find(|n| n.address == "aws_route.default")
+            .unwrap();
+        assert_eq!(
+            route.routes.owner.is_some(),
+            !matches!(case, 3 | 5 | 6),
             "case {case}"
         );
     }

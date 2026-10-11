@@ -1,9 +1,48 @@
-# Route relationships
+# Route cards
 
-Traversal provenance alone is insufficient: both scalar planned endpoint values must be known, nonempty, and equal to their referenced resource IDs. Comparisons are transient and only a boolean proof is retained. Unknown values, missing planned evidence, and expressions returning different IDs retain route cards with an explanatory diagnostic. In particular, comparing a resource ID inside a conditional does not establish that the expression returns that ID. Delete-only routes without planned endpoint values remain cards.
+Managed AWS `aws_route` resources render as action-colored child cards inside their
+verified `aws_route_table`. Ownership requires a complete, unique `route_table_id`
+ID reference and a known, nonempty planned value equal to the referenced table ID.
+The comparison retains only a boolean proof. Names, module proximity, unknown
+values, literal table IDs and dynamic selectors cannot establish ownership.
+Unverified and deposed routes remain visible standalone cards with diagnostics.
 
-Statically resolved managed AWS `aws_route` resources become individual directed `Association` edges from their Route Table to their target. They retain arrowheads, unlike ordinary undirected associations. The supported pairs are `gateway_id` → `aws_internet_gateway`, `nat_gateway_id` → `aws_nat_gateway`, `transit_gateway_id` → `aws_ec2_transit_gateway`, and `vpc_peering_connection_id` → `aws_vpc_peering_connection`.
+Embedding is presentation metadata, not Terraform Containment. Each Route retains
+its graph node, native address, stable ID, action, import/move/deposed information
+and provenance. It is counted once and does not also enter the relationship index.
+The table keeps its VPC containment and Subnet associations. Filtering a Route
+retains its table even at focus depth zero or when the table is unchanged.
 
-Both endpoints must resolve uniquely through complete ID references to the expected AWS resource types. Exactly one target attribute may be present. Additional target ID/ARN attributes, literal IDs, dynamic selections, unresolved references, deposed objects, unsupported target families, or extra incident relationships keep the route card. VPC Endpoint routes remain cards until endpoint subtype semantics can be established safely. CIDRs and other attribute values are not retained or used to infer endpoints.
+Next-hop resolution is independent of ownership. Complete unique ID references
+also require known planned values matching the target ID. Supported attributes
+are `gateway_id` (Internet/VPN Gateway), `nat_gateway_id`, `transit_gateway_id`,
+`vpc_peering_connection_id`, `network_interface_id`, `egress_only_gateway_id`,
+`carrier_gateway_id` and `local_gateway_id`, each checked against its AWS type.
+VPC Endpoint subtype semantics remain unsupported. Missing, ambiguous, dynamic or
+unsupported targets display a fallback and retain diagnostics.
 
-Each edge retains the route's own Terraform address, action, previous address and operation metadata. Parallel routes between identical endpoints remain distinct. Route destinations are intentionally not displayed; inspect the original plan for routing configuration. See [the routing regression example](../examples/routes.svg) and the [AWS Provider route reference](https://github.com/hashicorp/terraform-provider-aws/blob/main/website/docs/r/route.html.markdown).
+The child links to its verified next hop and lists other incident references.
+Original edge kinds, endpoints and provenance remain in the graph and SVG metadata;
+state-local incident edges use references instead of spatial paths. Unknown
+reference candidates are labeled References, not asserted next-hop targets.
+Filtered targets display unavailable without a dangling link. Cross-state paths
+attach to the owning table border, retain the actual Route endpoint ID and expose
+the attachment ID in `data-source-port` / `data-target-port`.
+
+Destinations come only from validated configuration constants: IPv4/IPv6 CIDRs
+or prefix-list IDs. Evaluated values are never displayed. Sensitive masks, unknown
+values, invalid/ambiguous constants and historical delete/deposed configurations
+use an unresolved fallback. No variable or expression evaluation is attempted.
+
+Inline `aws_route_table.route` constants and structured entries render as separately
+labeled entries using the table's action. They create no Terraform identities or
+extra resource counts. Literal next-hop IDs can resolve to a unique known planned
+resource ID of the supported AWS type; only the resource identity is retained.
+Unproven inline expressions keep a fallback and diagnostics. Duplicate destinations
+remain separate; inline entries sort deterministically. An unknown route collection
+has an unresolved entry, while an empty table needs no Routes section.
+
+Shared row measurement wraps complete child addresses and reserves their height
+inside the table footprint before placement and routing. Existing side-port and
+marker clearance applies to the expanded table. See [routes.svg](../examples/routes.svg)
+and the [large example](../examples/terraform-large/diagram.svg).

@@ -157,6 +157,7 @@ fn ranked_fixture() -> Graph {
     let template = fixture().nodes.remove(0);
     let nodes = (0..7)
         .map(|i| Node {
+            routes: Default::default(),
             placement: Default::default(),
             references: Vec::new(),
             entity: crate::model::ArchitectureEntity::terraform(crate::model::TerraformEntityId {
@@ -282,6 +283,7 @@ fn expanded_container_ports_and_obstacles_use_the_rendered_bounds() {
         .unwrap();
     let external = graph.nodes.len();
     graph.nodes.push(Node {
+        routes: Default::default(),
         placement: Default::default(),
         references: Vec::new(),
         entity: crate::model::ArchitectureEntity::terraform(crate::model::TerraformEntityId {
@@ -705,6 +707,7 @@ fn duplicate_local_names_use_topology_after_module_renames_and_node_reordering()
         for (module, target) in [("a", "a"), ("b", "b")] {
             let worker = graph.nodes.len();
             graph.nodes.push(Node {
+                routes: Default::default(),
                 placement: Default::default(),
                 references: Vec::new(),
                 entity: crate::model::ArchitectureEntity::terraform(
@@ -721,6 +724,7 @@ fn duplicate_local_names_use_topology_after_module_renames_and_node_reordering()
                 ..template.clone()
             });
             graph.nodes.push(Node {
+                routes: Default::default(),
                 placement: Default::default(),
                 references: Vec::new(),
                 entity: crate::model::ArchitectureEntity::terraform(
@@ -1183,6 +1187,7 @@ fn peer_containers_and_cross_module_children_remain_separate_and_identifiable() 
         }
     }
     graph.nodes.push(Node {
+        routes: Default::default(),
         placement: Default::default(),
         references: Vec::new(),
         entity: crate::model::ArchitectureEntity::terraform(crate::model::TerraformEntityId {

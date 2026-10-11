@@ -221,6 +221,7 @@ fn wrapping_keeps_related_containers_consecutive_and_uses_safe_fallbacks() {
     for name in ["aa", "bb", "cc"] {
         let index = graph.nodes.len();
         graph.nodes.push(Node {
+            routes: Default::default(),
             placement: Default::default(),
             references: Vec::new(),
             entity: crate::model::ArchitectureEntity::terraform(crate::model::TerraformEntityId {

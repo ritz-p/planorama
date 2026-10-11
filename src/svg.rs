@@ -16,6 +16,7 @@ mod references;
 mod relationship_index;
 mod relationships;
 mod roles;
+mod routes;
 mod scopes;
 mod states;
 mod style;
@@ -271,7 +272,9 @@ fn render_with_index(
         .unwrap();
     }
     for (i, node) in graph.nodes.iter().enumerate() {
-        if node.placement == crate::model::Placement::Logical {
+        if node.placement == crate::model::Placement::Logical
+            || crate::view::routes::owner(graph, node).is_some()
+        {
             continue;
         }
         let resource_id = identity::resource(node);
@@ -376,6 +379,12 @@ fn render_with_index(
             x + 12,
             y + 86,
             card_width - 24,
+        ));
+        svg.push_str(&routes::render(
+            graph,
+            i,
+            x + 12,
+            y + 94 + crate::view::references::height(node),
         ));
         let role = roles::annotation(node.role, &node.module);
         let footer = match role.is_empty() {

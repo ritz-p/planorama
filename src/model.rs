@@ -11,6 +11,7 @@ pub enum Action {
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Node {
+    pub routes: RoutePresentation,
     pub placement: Placement,
     pub references: Vec<ResourceReference>,
     pub entity: ArchitectureEntity,
@@ -25,6 +26,22 @@ pub struct Node {
     pub action: Action,
     pub mode: EntityMode,
     pub role: ResourceRole,
+}
+
+#[derive(Clone, Debug, Default, PartialEq, Eq)]
+pub struct RoutePresentation {
+    pub inline: bool,
+    pub owner: Option<TerraformEntityId>,
+    pub entries: Vec<RouteEntry>,
+    pub reserved_height: usize,
+}
+
+#[derive(Clone, Debug, Default, PartialEq, Eq, PartialOrd, Ord)]
+pub struct RouteEntry {
+    pub destination: Option<String>,
+    pub target: Option<TerraformEntityId>,
+    pub target_kind: Option<String>,
+    pub target_attribute: Option<String>,
 }
 
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, PartialOrd, Ord)]
