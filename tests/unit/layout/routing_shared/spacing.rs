@@ -124,6 +124,65 @@ fn narrow(graph: &Graph, transpose: bool) -> Layout<'_> {
 }
 
 #[test]
+fn expansion_cannot_hide_increased_overlap_with_a_protected_path() {
+    let mut graph = corridor_graph(2);
+    graph.relationships.clear();
+    graph.edges[0].kind = crate::model::EdgeKind::Dependency;
+    let mut layout = narrow(&graph, false);
+    for (i, y) in [370, 370, 170, 570].into_iter().enumerate() {
+        layout.bounds[i].origin.y = y;
+    }
+    layout.paths = vec![
+        vec![Point { x: 200, y: 400 }, Point { x: 800, y: 400 }],
+        vec![
+            Point { x: 200, y: 200 },
+            Point { x: 300, y: 200 },
+            Point { x: 300, y: 400 },
+            Point { x: 600, y: 400 },
+            Point { x: 600, y: 600 },
+            Point { x: 800, y: 600 },
+        ],
+    ];
+    layout.junctions = vec![Point { x: 600, y: 500 }];
+    let before = expansion::Snapshot::capture(&layout);
+    let baseline: Vec<_> = before.paths.iter().map(|p| Shape::measure(p)).collect();
+    let planned = plan::Corridor {
+        horizontal: false,
+        low: 200,
+        high: 600,
+        lanes: vec![plan::Lane {
+            edge: 0,
+            original: 500,
+            coordinate: 516,
+        }],
+    };
+    assert_eq!(
+        super::super::refinement::overlap(&before.paths[0], &before.paths[1]),
+        300
+    );
+    assert!(expansion::allocate(&mut layout, false, 500, 44));
+    assert_eq!(
+        super::super::refinement::overlap(&layout.paths[0], &layout.paths[1]),
+        344
+    );
+    assert!(!reroute::apply(
+        &graph,
+        &mut layout,
+        &planned,
+        &before,
+        &baseline,
+        true
+    ));
+    let expected = (
+        before.bounds.clone(),
+        before.paths.clone(),
+        before.junctions.clone(),
+    );
+    before.restore(&mut layout);
+    assert_eq!((layout.bounds, layout.paths, layout.junctions), expected);
+}
+
+#[test]
 fn corridor_capacity_expands_then_reroutes_mixed_edges_into_whole_lanes() {
     for transpose in [false, true] {
         let mut graph = corridor_graph(3);

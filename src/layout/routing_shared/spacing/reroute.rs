@@ -107,6 +107,13 @@ pub(super) fn apply(
     let clearance = crate::layout::relationship_markers::clearance(graph);
     let mut routed = 0;
     for i in order {
+        let overlap_before: usize = before
+            .paths
+            .iter()
+            .enumerate()
+            .filter(|(j, _)| *j != i)
+            .map(|(_, p)| super::super::refinement::overlap(&before.paths[i], p))
+            .sum();
         let seed = &layout.paths[i];
         let start = terminal(seed, 0);
         let end = terminal(seed, 1);
@@ -179,13 +186,7 @@ pub(super) fn apply(
                         .filter(|(j, _)| *j != i)
                         .map(|(_, other)| super::super::refinement::overlap(p, other))
                         .sum::<usize>()
-                        <= layout
-                            .paths
-                            .iter()
-                            .enumerate()
-                            .filter(|(j, _)| *j != i)
-                            .map(|(_, other)| super::super::refinement::overlap(seed, other))
-                            .sum::<usize>()
+                        <= overlap_before
             })
         {
             candidates.extend(ports::candidates_with_clearances(
@@ -212,13 +213,6 @@ pub(super) fn apply(
             {
                 continue;
             }
-            let overlap_before: usize = layout
-                .paths
-                .iter()
-                .enumerate()
-                .filter(|(j, _)| *j != i)
-                .map(|(_, p)| super::super::refinement::overlap(seed, p))
-                .sum();
             let overlap_after: usize = layout
                 .paths
                 .iter()
