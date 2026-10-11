@@ -133,7 +133,12 @@ eager legacy-route search that side selection would repeat. The legacy route is
 computed only if no valid side candidate exists.
 Outward stubs and distinct endpoint slots protect labels and high-degree
 ports. Unrelated container interiors and all container headers are hard obstacles;
-endpoint ancestors permit traversal outside their headers. The containment tree
+strict endpoint ancestors permit traversal outside their headers. An endpoint
+container is a full obstacle when its peer is outside it, protecting its interior
+through side selection, independent routing, bundles and final shortcuts. A
+container-to-descendant relationship keeps its header-only barrier and may attach
+from inside. This applies symmetrically to incoming and outgoing routes and does
+not rely on crossing penalties to discourage re-entry. The containment tree
 determines these scopes. In nested routing, ordinary peer cards are soft occluders:
 each pixel hidden behind a card adds two pixels of routing cost. Short detours can
 avoid them, but long detours can pass behind the opaque cards. Search, candidate
@@ -218,6 +223,13 @@ increased 29 → 160. The private-a → ECS edge changed from length/bends/cross
 405/3/2/25 to 296/2/7/0, and private-b → ECS from 598/6/0/17 to 508/2/0/0.
 The existing per-edge test reports these metrics and route points and checks both
 private edges stay within 600 pixels, three bends and zero relationship overlap.
+The original private-b path re-entered its source on the segment
+`(2196,1437) → (2172,1437)` after leaving at `(2180,1753)`.
+With crossing rebalancing and explicit external-endpoint protection its points are
+`(2180,1716) → (2222,1716) → (2222,1292) → (2264,1292)`.
+Adding the hard endpoint rule alone leaves these improved metrics and points
+unchanged; the regression also rejects an explicit inward candidate and verifies
+both relationship directions, internal descendants and edge reordering.
 Performance measurements are documented in [benchmarks](benchmarks.md).
 Thread-local test counters verify that unobstructed horizontal/vertical side
 selection evaluates one pair without grid search, while blocked ports expand the
