@@ -10,6 +10,9 @@ Above the architecture, three independent vertical sections appear in order:
 Logical Resources (cyan), Logical Components (purple), then Relationship Resources
 (neutral). Empty sections reserve no space. Section colors identify their type;
 Terraform cards and component member references retain the canonical action colors.
+Section titles appear once. Inner resource cards start with their address;
+component cards use their actual label without a classification prefix or Members
+heading, and relationship index cards start with numbered entries.
 Each component has an inner card ordered by synthetic identity. Headings and member
 addresses wrap without truncation. Members are sorted by address and link to the
 original spatial or logical card; missing or ambiguous targets use neutral,

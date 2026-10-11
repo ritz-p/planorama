@@ -216,9 +216,9 @@ fn empty_components_and_ambiguous_member_addresses_do_not_invent_links() {
     assert_eq!(member.attribute("data-member-status"), Some("unavailable"));
     graph.components[0].members.clear();
     let empty = cards(&graph).remove(0);
-    assert!(empty.height > 60);
+    assert!(empty.height > 28);
     assert!(empty.height < output.height);
-    assert!(empty.content.contains(">Members</text>"));
+    assert!(!empty.content.contains(">Members</text>"));
     assert!(!empty.content.contains("data-source-address"));
 }
 
