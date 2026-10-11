@@ -32,27 +32,6 @@ pub fn single(graph: &ArchitectureGraph, options: &Options) -> Result<Architectu
 
 type Key = (StateId, usize);
 
-#[cfg(test)]
-#[test]
-fn filtering_does_not_mutate_source_graph_or_plan() {
-    let raw =
-        crate::plan::parse(include_str!("../../tests/fixtures/containment-plan.json")).unwrap();
-    let original = raw.clone();
-    let graph = crate::semantic::transform(&raw);
-    let before = graph.clone();
-    single(
-        &graph,
-        &Options {
-            focus: Some("aws_instance.app".into()),
-            depth: Some(0),
-            ..Default::default()
-        },
-    )
-    .unwrap();
-    assert_eq!(graph, before);
-    assert_eq!(raw, original);
-}
-
 pub fn apply(all: &Architecture, options: &Options) -> Result<Architecture, String> {
     options.validate()?;
     let mut keys = BTreeSet::new();
@@ -247,3 +226,7 @@ pub fn apply(all: &Architecture, options: &Options) -> Result<Architecture, Stri
         relationships,
     })
 }
+
+#[cfg(test)]
+#[path = "../../tests/unit/view/filter.rs"]
+mod tests;

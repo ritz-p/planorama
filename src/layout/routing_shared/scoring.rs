@@ -359,21 +359,3 @@ impl Scorer {
         overlap * 8 + crossings as u128 * CROSSING_COST
     }
 }
-
-#[cfg(test)]
-fn crossing(first: &[Point], second: &[Point]) -> Option<(usize, usize)> {
-    let (h, v) = match (first[0].y == first[1].y, second[0].y == second[1].y) {
-        (true, false) => (first, second),
-        (false, true) => (second, first),
-        _ => return None,
-    };
-    let (x, y) = (v[0].x, h[0].y);
-    match x > h[0].x.min(h[1].x)
-        && x < h[0].x.max(h[1].x)
-        && y > v[0].y.min(v[1].y)
-        && y < v[0].y.max(v[1].y)
-    {
-        true => Some((x, y)),
-        false => None,
-    }
-}
