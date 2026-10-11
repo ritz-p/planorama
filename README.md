@@ -77,7 +77,14 @@ docker build --build-arg RUST_VERSION=1.85.0 -t planorama-msrv .
 docker run --rm --mount type=bind,source=.,target=/workspace --env CARGO_TARGET_DIR=/tmp/planorama-target planorama-msrv cargo +1.85.0 test --locked --all-targets --all-features
 ```
 
-CI も Formatting・Tests・Clippy を実行し、Cargo.toml・ツールチェーン・Dockerfile・MSRV workflow の変更時には MSRV を検証します。コンテナにはソースをバインドマウントし、Cargo のキャッシュとビルド成果物を named volume に保存します。`docker compose stop dev` / `start dev` で停止・再開、Dockerfile の変更後は `up -d --build dev` で再作成します。
+ローカル開発ではソースをコンテナにバインドマウントし、Cargo のキャッシュとビルド成果物を named volume に保存します。`docker compose stop dev` / `start dev` で停止・再開、Dockerfile の変更後は `up -d --build dev` で再作成します。
+
+通常の CI は Ubuntu runner 上で `rust-toolchain.toml` の固定ツールチェーンを使い、Formatting・Tests・Clippy を実行します。開発イメージが追加するのは Rust と rustfmt・Clippy のため、CI では直接実行してイメージ構築を省きます。Tests はコンパイルと実行を別ステップで計測し、毎回 `cargo test --locked --all-targets --all-features` を実行します。
+
+Tests・Clippy は `Swatinem/rust-cache` で Cargo registry/git と `target`（workspace crate を含む）を保存します。キーには runner 環境・ジョブ・Rust compiler・Cargo.toml/Cargo.lock・ツールチェーン・Cargo 設定・ビルド関連環境変数に加え、`build.rs` と `assets/**` のハッシュを含めます。復元後の再ビルド判定は Cargo が行い、キャッシュの有無によらず全対象を検証します。Tests と Clippy はプロファイルと成果物が異なるためジョブ別のキャッシュを使います。
+両 workflow は関連入力が変わる `main` への push でも実行し、後続 PR が復元できる既定ブランチのキャッシュを作ります。
+
+テストプロファイルは `opt-level = 1` で経路計算を高速化し、debug assertion と overflow check を明示的に有効にしています。MSRV は Docker で Rust 1.85.0 の全テストを実行し、Cargo.toml/Cargo.lock・ツールチェーン・Docker 関連設定・MSRV workflow の変更で起動します。
 
 `tests/unit` は実装モジュール内に読み込む単体テスト、`tests/integration` は CLI 経由の結合テストです。Cargo.toml に4つの結合テスト対象を登録しています。`--bin planorama` で単体テスト、`--test rendering` などで結合テストを選択できます。
 

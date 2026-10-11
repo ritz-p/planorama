@@ -4,13 +4,16 @@ on:
   pull_request:
     paths:
       - Cargo.toml
+      - Cargo.lock
       - rust-toolchain.toml
       - Dockerfile
+      - .dockerignore
+      - compose.yaml
       - .github/workflows/cargo_msrv.yml
   workflow_dispatch:
 
 env:
-  RUST_VERSION: 1.85
+  RUST_VERSION: 1.85.0
 
 permissions:
   contents: read

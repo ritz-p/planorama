@@ -1,9 +1,28 @@
 name: Cargo test
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - '**.rs'
+      - Cargo.toml
+      - Cargo.lock
+      - rust-toolchain.toml
+      - .cargo/**
+      - assets/**
+      - tests/fixtures/**
+      - examples/**
+      - .github/workflows/cargo_test.yml
   pull_request:
     paths:
       - '**.rs'
+      - Cargo.toml
+      - Cargo.lock
+      - rust-toolchain.toml
+      - .cargo/**
+      - assets/**
+      - tests/fixtures/**
+      - examples/**
       - .github/workflows/cargo_test.yml
   workflow_dispatch:
 
@@ -16,4 +35,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7.0.1
-      - run: docker compose run --build --rm -T dev cargo test --locked --all-targets --all-features
+      - name: Install pinned toolchain
+        run: rustc --version --verbose
+      - uses: Swatinem/rust-cache@v2.9.2
+        with:
+          key: ${{ hashFiles('build.rs', 'assets/**') }}
+          cache-workspace-crates: 'true'
+      - name: Compile tests
+        run: cargo test --locked --all-targets --all-features --no-run
+      - name: Run tests
+        run: cargo test --locked --all-targets --all-features
