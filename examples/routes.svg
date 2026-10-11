@@ -62,6 +62,14 @@ No AWS endorsement is implied. Consult the AWS terms for other uses.
 <use href="#planorama-icon-aws-vpc" x="72" y="236" width="24" height="24" aria-hidden="true"/><text x="104" y="253" font-size="13" fill="#0f172a">module.root.aws_route_table.publi</text>
 <text x="104" y="273" font-size="13" fill="#0f172a">c</text>
 </g>
+<g data-endpoints="true" data-source="resource-6177735f726f7574655f7461626c652e7075626c6963-current" data-target="resource-6177735f696e7465726e65745f676174657761792e6d61696e-current" aria-hidden="true">
+<circle data-endpoint="source" cx="380" cy="237" r="3.5" fill="#ffffff" stroke="#c2410c" stroke-width="1.5"/><circle data-endpoint="target" cx="480" cy="242" r="3.5" fill="#ffffff" stroke="#c2410c" stroke-width="1.5"/><path data-endpoint-arrow="true" d="M 473.7 238.5 L 480.7 242 L 473.7 245.5 Z" fill="#c2410c"/>
+</g>
+<g data-endpoints="true" data-source="resource-6177735f726f7574655f7461626c652e7075626c6963-current" data-target="resource-6177735f696e7465726e65745f676174657761792e6d61696e-current" aria-hidden="true">
+<circle data-endpoint="source" cx="380" cy="255" r="3.5" fill="#ffffff" stroke="#047857" stroke-width="1.5"/><circle data-endpoint="target" cx="480" cy="268" r="3.5" fill="#ffffff" stroke="#047857" stroke-width="1.5"/><path data-endpoint-arrow="true" d="M 473.7 264.5 L 480.7 268 L 473.7 271.5 Z" fill="#047857"/>
+</g>
+<g data-endpoints="true" data-source="resource-6177735f726f7574655f7461626c652e7075626c6963-current" data-target="resource-6177735f726f7574652e6c69746572616c-current" aria-hidden="true">
+<circle data-endpoint="source" cx="380" cy="273" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
 <g data-relationship-marker="1"><title>Relationship resource [1]</title>
 <rect x="446" y="233" width="24" height="18" rx="4" fill="#ffffff" stroke="#c2410c" stroke-width="2" stroke-dasharray="7 4"/><text x="458" y="246" text-anchor="middle" font-size="11" fill="#334155">[1]</text>
 </g>

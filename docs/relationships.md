@@ -6,6 +6,12 @@ Inferred connections are thicker and dotted (2/4 with round caps). These
 patterns remain distinct in grayscale. Containment uses nested boundaries;
 an edge represented by nesting does not receive a redundant line.
 
+Small white circles mark final card ports: the source of a Dependency and both
+ends of Association/Connection paths. Containment has no endpoint circles.
+Their solid outlines use the relationship action color. Circles render above
+cards, with directed target arrowheads above the circle and numbered badges above
+both. Internal filled junction dots remain distinct from endpoint circles.
+
 Colors and directed arrowheads describe the Terraform change. Every edge retains
 `data-edge-kind`, stable source/target IDs and a descriptive title. Cross-state dependencies use
 blue dashed gutter routes and visible cross-state legend.

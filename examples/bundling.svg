@@ -60,6 +60,18 @@
 <text x="72" y="228" font-size="11" fill="#047857">terraform_data · create</text>
 <text x="72" y="253" font-size="13" fill="#0f172a">module.root.terraform_data.seed</text>
 </g>
+<g data-endpoints="true" data-source="resource-7465727261666f726d5f646174612e61-current" data-target="resource-7465727261666f726d5f646174612e616767726567617465-current" aria-hidden="true">
+<circle data-endpoint="source" cx="800" cy="246" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+<g data-endpoints="true" data-source="resource-7465727261666f726d5f646174612e62-current" data-target="resource-7465727261666f726d5f646174612e616767726567617465-current" aria-hidden="true">
+<circle data-endpoint="source" cx="800" cy="390" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+<g data-endpoints="true" data-source="resource-7465727261666f726d5f646174612e63-current" data-target="resource-7465727261666f726d5f646174612e616767726567617465-current" aria-hidden="true">
+<circle data-endpoint="source" cx="800" cy="534" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+<g data-endpoints="true" data-source="resource-7465727261666f726d5f646174612e73656564-current" data-target="resource-7465727261666f726d5f646174612e61-current" aria-hidden="true">
+<circle data-endpoint="source" cx="380" cy="256" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+<g data-endpoints="true" data-source="resource-7465727261666f726d5f646174612e73656564-current" data-target="resource-7465727261666f726d5f646174612e62-current" aria-hidden="true">
+<circle data-endpoint="source" cx="380" cy="256" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+<g data-endpoints="true" data-source="resource-7465727261666f726d5f646174612e73656564-current" data-target="resource-7465727261666f726d5f646174612e63-current" aria-hidden="true">
+<circle data-endpoint="source" cx="380" cy="256" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
 </g>
 </g>
 </svg>

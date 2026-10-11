@@ -80,6 +80,12 @@ No AWS endorsement is implied. Consult the AWS terms for other uses.
 <text x="104" y="417" font-size="13" fill="#0f172a">hared</text>
 <text x="72" y="436" font-size="10" fill="#64748b" data-role="controller"><title>root</title>controller · root</text>
 </g>
+<g data-endpoints="true" data-source="resource-6177735f6c622e617070-current" data-target="resource-6177735f6c625f6c697374656e65722e6874747073-current" aria-hidden="true">
+<circle data-endpoint="source" cx="380" cy="256" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+<g data-endpoints="true" data-source="resource-6177735f6c625f6c697374656e65722e6874747073-current" data-target="resource-6177735f6c625f6c697374656e65725f72756c652e617069-current" aria-hidden="true">
+<circle data-endpoint="source" cx="800" cy="256" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+<g data-endpoints="true" data-source="resource-6177735f6c625f7461726765745f67726f75702e736861726564-current" data-target="resource-6177735f6c625f6c697374656e65722e6874747073-current" aria-hidden="true">
+<circle data-endpoint="source" cx="380" cy="400" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
 </g>
 <g id="architecture-73796e7468657469633a36633666363136343566363236313663363136653633363537322d3631373737333566366336323265363137303730" data-architecture-id="synthetic:6c6f61645f62616c616e636572-6177735f6c622e617070" data-entity-kind="synthetic" data-component-id="logical:load_balancer:aws_lb.app" data-component-kind="load_balancer"><title>Load balancer: aws_lb.app</title><rect x="35" y="736" width="1270" height="128" rx="12" fill="#f5f3ff" stroke="#8b5cf6" stroke-dasharray="6 3"/><text x="52" y="760" font-size="13" font-weight="700" fill="#5b21b6">Logical component: Load balancer: aws_lb.app</text>
 <a href="#resource-6177735f6c622e617070-current" data-source-address="aws_lb.app"><title>aws_lb.app; unchanged</title><text x="52" y="784" font-size="12" fill="#334155">unchanged: aws_lb.app</text></a>

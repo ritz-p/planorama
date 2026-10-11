@@ -90,6 +90,14 @@ No AWS endorsement is implied. Consult the AWS terms for other uses.
 <use href="#planorama-icon-aws-vpc" x="72" y="188" width="24" height="24" aria-hidden="true"/><text x="104" y="205" font-size="13" fill="#0f172a">module.root.aws_vpc.main</text>
 <text x="72" y="244" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
+<g data-endpoints="true" data-source="resource-6177735f7375626e65742e61-current" data-target="resource-6177735f64625f7375626e65745f67726f75702e6d61696e-current" aria-hidden="true">
+<circle data-endpoint="source" cx="500" cy="348" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+<g data-endpoints="true" data-source="resource-6177735f7375626e65742e61-current" data-target="resource-6177735f656c6173746963616368655f7375626e65745f67726f75702e6d61696e-current" aria-hidden="true">
+<circle data-endpoint="source" cx="360" cy="432" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+<g data-endpoints="true" data-source="resource-6177735f7375626e65742e62-current" data-target="resource-6177735f64625f7375626e65745f67726f75702e6d61696e-current" aria-hidden="true">
+<circle data-endpoint="source" cx="500" cy="524" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+<g data-endpoints="true" data-source="resource-6177735f7375626e65742e62-current" data-target="resource-6177735f656c6173746963616368655f7375626e65745f67726f75702e6d61696e-current" aria-hidden="true">
+<circle data-endpoint="source" cx="500" cy="556" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
 </g>
 </g>
 </svg>

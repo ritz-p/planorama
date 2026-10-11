@@ -103,6 +103,21 @@ No AWS endorsement is implied. Consult the AWS terms for other uses.
 <use href="#planorama-icon-aws-vpc" x="432" y="188" width="24" height="24" aria-hidden="true"/><text x="464" y="205" font-size="13" fill="#0f172a">module.root.aws_vpc.main</text>
 <text x="432" y="244" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
+<g data-endpoints="true" data-source="resource-6177735f73656375726974795f67726f75702e617070-current" data-target="resource-6177735f6563735f736572766963652e617070-current" aria-hidden="true">
+<circle data-endpoint="source" cx="380" cy="208" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/><circle data-endpoint="target" cx="990" cy="296" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/><path data-endpoint-arrow="true" d="M 993.5 289.7 L 990 296.7 L 986.5 289.7 Z" fill="#94a3b8"/>
+</g>
+<g data-endpoints="true" data-source="resource-6177735f7375626e65742e61-current" data-target="resource-6177735f6563735f736572766963652e617070-current" aria-hidden="true">
+<circle data-endpoint="source" cx="860" cy="334" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/><circle data-endpoint="target" cx="900" cy="353" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/><path data-endpoint-arrow="true" d="M 893.7 349.5 L 900.7 353 L 893.7 356.5 Z" fill="#94a3b8"/>
+</g>
+<g data-endpoints="true" data-source="resource-6177735f7375626e65742e61-current" data-target="resource-6177735f6c622e617070-current" aria-hidden="true">
+<circle data-endpoint="source" cx="860" cy="353" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/><circle data-endpoint="target" cx="900" cy="494" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/><path data-endpoint-arrow="true" d="M 893.7 490.5 L 900.7 494 L 893.7 497.5 Z" fill="#94a3b8"/>
+</g>
+<g data-endpoints="true" data-source="resource-6177735f7375626e65742e62-current" data-target="resource-6177735f6563735f736572766963652e617070-current" aria-hidden="true">
+<circle data-endpoint="source" cx="860" cy="510" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/><circle data-endpoint="target" cx="900" cy="371" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/><path data-endpoint-arrow="true" d="M 893.7 367.5 L 900.7 371 L 893.7 374.5 Z" fill="#94a3b8"/>
+</g>
+<g data-endpoints="true" data-source="resource-6177735f7375626e65742e62-current" data-target="resource-6177735f6c622e617070-current" aria-hidden="true">
+<circle data-endpoint="source" cx="860" cy="529" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/><circle data-endpoint="target" cx="900" cy="519" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/><path data-endpoint-arrow="true" d="M 893.7 515.5 L 900.7 519 L 893.7 522.5 Z" fill="#94a3b8"/>
+</g>
 </g>
 </g>
 </svg>
