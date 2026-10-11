@@ -21,7 +21,8 @@ fn metadata_is_hidden_only_for_data_and_surviving_edges_are_remapped() {
                 {"address": format!("data.{resource_type}.meta"), "type": resource_type, "mode": "data"},
                 {"address": format!("{resource_type}.managed"), "type": resource_type, "mode": "managed"},
                 {"address": "aws_instance.app", "type": "aws_instance"}
-            ]
+            ],
+            "configuration":{"root_module":{"resources":[{"address":"aws_instance.app","expressions":{"metadata":{"references":[format!("data.{resource_type}.meta.id")]}}}]}}
         }).to_string()).unwrap();
         let mut graph = crate::semantic::base_graph(&raw).clone();
         let hidden = graph
@@ -49,6 +50,26 @@ fn metadata_is_hidden_only_for_data_and_surviving_edges_are_remapped() {
         let result = visible(graph);
         assert_eq!(result.nodes.len(), 2);
         assert_eq!(result.edges.len(), 1);
+        let reference = &result
+            .nodes
+            .iter()
+            .find(|n| n.address == "aws_instance.app")
+            .unwrap()
+            .references[0];
+        assert!(reference.complete);
+        assert_eq!(
+            reference.targets[0].id.address,
+            format!("data.{resource_type}.meta")
+        );
+        let output = svg::render(&result, &Layout::new(&result));
+        let document = roxmltree::Document::parse(&output).unwrap();
+        let metadata = document
+            .descendants()
+            .find(|n| n.attribute("id") == Some("resource-references"))
+            .unwrap()
+            .text()
+            .unwrap();
+        assert!(metadata.contains(&format!("data.{resource_type}.meta")));
         let edge = &result.edges[0];
         assert_eq!(result.nodes[edge.from].resource_type, resource_type);
         assert_eq!(result.nodes[edge.to].resource_type, "aws_instance");
@@ -97,7 +118,12 @@ fn infrastructure_data_keeps_roles_actions_and_external_container_styling() {
     assert!(output.contains("data-mode=\"managed\""));
     assert!(output.contains("data-role=\"policy\""));
     assert!(output.contains("data-role=\"controller\""));
-    assert!(!output.contains("data.aws_region.current"));
+    let document = roxmltree::Document::parse(&output).unwrap();
+    assert!(
+        !document
+            .descendants()
+            .any(|n| n.attribute("data-terraform-address") == Some("data.aws_region.current"))
+    );
     assert_eq!(
         output,
         svg::render(&architecture, &Layout::new(&architecture))

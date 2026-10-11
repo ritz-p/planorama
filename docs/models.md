@@ -35,6 +35,9 @@ resolved source identities, completeness and diagnostics; it never expands a
 resource dependency transitively. Module/input/output resolution follows the
 parser's existing evidence. Graph-level references such as `depends_on` are
 distinct from configured attribute usage. No attribute values are retained.
+In SVG `resource-references` metadata, remote targets include `state` alongside
+their address and deposed key. Targets without `state` belong to the enclosing
+state section, or the single input in unnamed diagrams.
 
 Provider source (`ProviderIdentity`, such as `registry.terraform.io/hashicorp/aws`)
 is separate from `provider_configuration`. The latter preserves Terraform's opaque
