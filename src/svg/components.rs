@@ -27,7 +27,7 @@ pub(super) fn cards(graph: &Graph) -> Vec<Card> {
         let dom_id = super::identity::architecture(&component.entity.id);
         let architecture_id = super::escape(component.entity.id.as_str());
         let label = super::escape(&component.label);
-        let heading = format!("Logical component: {}", component.label);
+        let heading = &component.label;
         let mut members: Vec<_> = component.members.iter().collect();
         members.sort();
         members.dedup();
@@ -43,12 +43,10 @@ pub(super) fn cards(graph: &Graph) -> Vec<Card> {
         let limit = (width - 32) / 8;
         let mut svg = format!(r#"<g id="{dom_id}" data-architecture-id="{architecture_id}" data-entity-kind="synthetic" data-component-id="{}" data-component-kind="{}"><title>{label}</title>"#, super::escape(&component.id), super::escape(&component.kind));
         let mut y = 28;
-        for line in wrap(&heading, limit) {
+        for line in wrap(heading, limit) {
             writeln!(svg, r##"<text x="16" y="{y}" font-size="13" font-weight="700" fill="#5b21b6">{}</text>"##, super::escape(line)).unwrap();
             y += 20;
         }
-        writeln!(svg, r##"<text x="16" y="{y}" font-size="12" font-weight="700" fill="#475569">Members</text>"##).unwrap();
-        y += 16;
         let mut member_cards = Vec::new();
         for (address, node, text) in rows {
             let title = match node {

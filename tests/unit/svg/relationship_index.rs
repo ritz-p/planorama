@@ -183,6 +183,12 @@ fn relationship_index_chunks_complete_entries_and_wraps_cards_deterministically(
             let cards = index.cards();
             assert_eq!(cards.len(), count.div_ceil(10));
             assert_eq!(index.markers.len(), count * 2);
+            let full = svg::render(graph, &layout);
+            assert_eq!(
+                full.matches(">Relationship Resources</text>").count(),
+                usize::from(count > 0)
+            );
+            assert!(!full.contains(">Relationship resources</text>"));
             for (i, card) in cards.iter().enumerate() {
                 let doc = roxmltree::Document::parse(&card.content).unwrap();
                 let numbers: Vec<_> = doc
@@ -194,7 +200,7 @@ fn relationship_index_chunks_complete_entries_and_wraps_cards_deterministically(
                     numbers,
                     (i * 10 + 1..=(count.min((i + 1) * 10))).collect::<Vec<_>>()
                 );
-                assert!(card.content.contains("Relationship resources"));
+                assert!(!card.content.contains("Relationship resources"));
                 assert!(!card.content.contains("Association</text>"));
             }
             let width = cards.first().map_or(360, |card| card.width);
@@ -284,7 +290,7 @@ fn wide_addresses_wrap_within_the_canvas_and_reserved_height() {
         );
         assert!(line.attribute("y").unwrap().parse::<usize>().unwrap() + 4 < cards[0].height);
     }
-    assert_eq!(cards[0].height, 72 + lines.len() * 20);
+    assert_eq!(cards[0].height, 44 + lines.len() * 20);
 }
 
 #[test]
@@ -571,7 +577,7 @@ fn resource_provenance_is_indexed_and_reference_provenance_is_not() {
     assert_eq!(index.markers.len(), 2);
     let svg = svg::render(&graph, &layout);
     assert!(svg.contains("data-relationship-index="));
-    assert!(svg.contains("Relationship resources</text>"));
+    assert_eq!(svg.matches(">Relationship Resources</text>").count(), 1);
     assert!(svg.contains("data-relationship-marker=\"1\""));
     assert!(svg.contains("data-relationship-entry=\"1\""));
     assert!(svg.contains(&format!(
@@ -586,7 +592,7 @@ fn resource_provenance_is_indexed_and_reference_provenance_is_not() {
     let empty = Index::new(&inferred, &layout);
     assert!(empty.entries.is_empty());
     assert!(empty.cards().is_empty());
-    assert!(!svg::render(&inferred, &layout).contains("Relationship resources"));
+    assert!(!svg::render(&inferred, &layout).contains("Relationship Resources"));
     assert_eq!(
         svg::dimensions(&graph, &layout).1 - svg::dimensions(&inferred, &layout).1,
         index.cards()[0].height + 48 + 16 + 24
