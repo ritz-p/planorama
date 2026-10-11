@@ -65,11 +65,20 @@ routing and final shortcutting; bundle selection remains a local decision.
 See [bundling](../examples/bundling.svg) and [spanning connections](../examples/spanning-dense.svg).
 
 Independent paths compare route quality on actual bounds, preferring facing
-side pairs when quality is equal. All sixteen side pairs compete using valid
-orthogonal paths, with the same hard boundaries, soft-card cost, occupancy cost
-and detour budget. The old endpoint pair has no cost preference. Candidates are
-searched by a direction-aware lower cost bound; remaining pairs are skipped only
-when their bounds exceed the best eligible route's cost. Outward stubs and distinct endpoint slots protect labels and high-degree
+side pairs when quality is equal. Rectangle projections first select one facing
+pair for horizontal/vertical separation or two for diagonal separation, ordered
+by port-distance and bend lower bounds. Remaining side pairs are generated only
+if the primary routes fail to attain the rectangle-distance lower bound; overlapping
+bounds use the broader search immediately. Both numbered and ordinary endpoints
+use this progression, with the same hard boundaries, soft-card cost, occupancy
+cost and detour budget. The old endpoint pair has no cost preference. Pairs whose
+bounds exceed the best eligible route's cost are skipped. Simple paths that attain
+the direction-aware cost lower bound without an upper-peer detour need no grid
+search; the same check after shortest-path search can skip occupancy-aware search.
+Ordinary nested edges select from their assigned ports directly, avoiding an
+eager legacy-route search that side selection would repeat. The legacy route is
+computed only if no valid side candidate exists.
+Outward stubs and distinct endpoint slots protect labels and high-degree
 ports. Unrelated container interiors and all container headers are hard obstacles;
 endpoint ancestors permit traversal outside their headers. The containment tree
 determines these scopes. In nested routing, ordinary peer cards are soft occluders:
@@ -99,6 +108,10 @@ normal spacing. Adjacent terminal corridors are merged before routing. Orthogona
 search indexes blocked grid edges and soft-card occlusion costs once per search,
 then looks them up in constant time for each candidate segment. Bundle branches
 use their own endpoint exclusions when evaluating soft-card occlusion.
+Occupancy-aware search also memoizes each grid segment's conflict cost and each
+grid point's directional junction cost, shared by repeated search states and
+reverse traversal. These caches borrow the fixed scorer, use memory proportional
+to the search grid, and are discarded after that search.
 
 Hard obstacle violations are rejected. Readability cost is path length plus 96 per
 bend, 512 per crossing, eight per overlapping pixel and two per occluded card pixel.
@@ -141,3 +154,6 @@ addresses and report bends, length, reference length, excess distance and stretc
 The test counts extreme routes and verifies identical metrics after edge reordering;
 aggregate quality checks remain in place.
 Performance measurements are documented in [benchmarks](benchmarks.md).
+Thread-local test counters verify that unobstructed horizontal/vertical side
+selection evaluates one pair without grid search, while blocked ports expand the
+search. Focused cases compare selected quality with exhaustive side evaluation.

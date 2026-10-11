@@ -250,7 +250,19 @@ fn route_selected_impl(
         let edge = &graph.edges[index];
         let [start, end] = terminals.ports[index];
         let obstacles = terminals.barriers(layout, graph, index);
-        let path = if resource_edges[index] || sides.is_some() {
+        let path = if sides.is_none() && quality && !resource_edges[index] {
+            crate::layout::routing_shared::ports::select_from_ports(
+                layout.bounds[edge.from],
+                layout.bounds[edge.to],
+                [start, end],
+                &obstacles,
+                scorer,
+                (&source_slots[index], &target_slots[index]),
+            )
+            .unwrap_or_else(|| {
+                path_with_clearance(start.point, end.point, &obstacles, Some(scorer), [16; 2])
+            })
+        } else if resource_edges[index] || sides.is_some() {
             crate::layout::routing_shared::ports::connect_with_clearances(
                 start,
                 end,
@@ -267,18 +279,6 @@ fn route_selected_impl(
                 quality.then_some(scorer),
                 [16; 2],
             )
-        };
-        let path = if sides.is_none() && quality && !resource_edges[index] {
-            crate::layout::routing_shared::ports::select_with_slots(
-                layout.bounds[edge.from],
-                layout.bounds[edge.to],
-                path,
-                &obstacles,
-                scorer,
-                Some((&source_slots[index], &target_slots[index])),
-            )
-        } else {
-            path
         };
         if sides.is_none() && !resource_edges[index] {
             container_endpoint_path(layout, edge, path, &obstacles, scorer)

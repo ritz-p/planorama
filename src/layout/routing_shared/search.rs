@@ -1,9 +1,15 @@
 use super::{Bounds, Point, Scorer};
+mod costs;
 mod obstacles;
 mod occlusion;
 use crate::layout::Side;
 use std::cmp::Reverse;
 use std::collections::BinaryHeap;
+
+#[cfg(test)]
+std::thread_local! {
+    pub(in crate::layout) static GRID_SEARCH_COUNT: std::cell::Cell<usize> = const { std::cell::Cell::new(0) };
+}
 
 #[cfg(test)]
 #[path = "../../../tests/unit/layout/containers/search.rs"]
@@ -36,6 +42,8 @@ pub(super) fn search(
     scorer: Option<&Scorer>,
     ports: Option<(Side, Side)>,
 ) -> Option<Vec<Point>> {
+    #[cfg(test)]
+    GRID_SEARCH_COUNT.set(GRID_SEARCH_COUNT.get() + 1);
     search_grid(start, end, obstacles, scorer, ports, false)
 }
 
@@ -87,7 +95,7 @@ fn search_grid(
     ys.sort_unstable();
     ys.dedup();
     let blocked = obstacles::Grid::new(&xs, &ys, obstacles);
-    let occlusion = scorer.map(|s| occlusion::Grid::new(&xs, &ys, s.soft()));
+    let mut costs = scorer.map(|s| costs::Grid::new(&xs, &ys, s));
     let index =
         |p: Point| ys.binary_search(&p.y).unwrap() * xs.len() + xs.binary_search(&p.x).unwrap();
     let point = |i: usize| Point {
@@ -135,18 +143,15 @@ fn search_grid(
                 continue;
             }
             let next_direction = if a.y == b.y { 1 } else { 2 };
-            let penalty = scorer.map_or(0, |s| {
-                s.conflict_cost(a, b)
-                    + occlusion
-                        .as_ref()
-                        .map_or(0, |grid| grid.cost(current, next))
+            let penalty = costs.as_mut().map_or(0, |costs| {
+                costs.segment(current, next, a, b)
                     + if direction == next_direction {
-                        s.junction_cost(a, next_direction == 1)
+                        costs.junction(current, a, next_direction == 1)
                     } else {
                         0
                     }
                     + if next == last && next_direction == final_direction {
-                        s.junction_cost(b, final_direction == 1)
+                        costs.junction(next, b, final_direction == 1)
                     } else {
                         0
                     }
