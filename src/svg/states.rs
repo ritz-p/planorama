@@ -161,6 +161,7 @@ pub fn render_states(
             output
         ));
         writeln!(links, r##"<path data-edge-kind="dependency" data-cross-state="true"{action_metadata} data-source="{source}" data-target="{target}" data-source-state="{}" data-target-state="{}" data-remote-state="{}" data-output="{}" d="{}" fill="none" stroke="#2563eb" stroke-width="1.5" stroke-dasharray="7 4" marker-end="url(#cross-state-arrow)"><title>{title}</title></path>"##, super::escape(edge.from.state.as_str()),super::escape(edge.to.state.as_str()),super::escape(remote),super::escape(output),path.trim()).unwrap();
+        links.push_str(&super::endpoints::circle(points[0], "source", "#2563eb"));
     }
     if !links.is_empty() {
         width += 80 + (link_count - 1) * 12;
