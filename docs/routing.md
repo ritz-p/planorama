@@ -179,6 +179,13 @@ to the search grid, and are discarded after that search.
 Hard obstacle violations are rejected. Readability cost is path length plus 96 per
 bend, one per crossing, eight per overlapping pixel, two per occluded card pixel
 and one per two-pixel occluded container interval.
+Collinear frame overlap adds eight per pixel, indexed by horizontal/vertical
+frame coordinates. Twelve pixels at each corner are excluded to approximate
+rounded frames and tolerate localized contacts. A four-pixel contact costs less
+than one bend; perpendicular crossings and one-pixel offsets cost zero.
+Frames entirely hidden by a foreign-container mask do not contribute. Search,
+bundle comparison and final shortcutting share the frame cost; search includes
+nearby frame-offset coordinates so a small clearance can replace a long coincidence.
 A single perpendicular crossing cannot pay for an extra bend or even a two-pixel
 orthogonal detour. Equal-length, equal-bend alternatives prefer fewer crossings;
 collinear overlap remains a separate, stronger penalty. Search segment and junction
@@ -249,6 +256,11 @@ on x=791 instead of detouring to x=708. Its final points are
 The regression requires this edge to cross public-b, remain within 1,000 pixels
 and three bends, and hide less than a third of its length. Total fixture length
 falls from 48,529 to 46,601 and bends from 98 to 92.
+Frame scoring removes 608 pixels of visible border coincidence: SG → ECS 149,
+SG → worker-b[0] 270 and RDS → alarm 189 all become zero. Total route length and
+bends remain 46,601 and 92; relationship overlap changes 16 → 23 and crossings
+164 → 158. The per-edge large-fixture regression requires zero straight-frame
+overlap after shortcutting and repeats the check with reversed edges.
 Performance measurements are documented in [benchmarks](benchmarks.md).
 Thread-local test counters verify that unobstructed horizontal/vertical side
 selection evaluates one pair without grid search, while blocked ports expand the

@@ -5,6 +5,59 @@ fn points(values: &[(usize, usize)]) -> Vec<Point> {
 }
 
 #[test]
+fn frame_cost_measures_collinearity_and_matches_subdivided_search() {
+    let frame = Bounds {
+        origin: Point { x: 100, y: 100 },
+        width: 200,
+        height: 200,
+    };
+    let mut scorer = Scorer::default();
+    scorer.set_borders(&[frame]);
+    for (path, length) in [
+        (points(&[(120, 100), (280, 100)]), 160),
+        (points(&[(100, 120), (100, 280)]), 160),
+        (points(&[(50, 100), (150, 100)]), 38),
+        (points(&[(120, 100), (124, 100)]), 4),
+        (points(&[(120, 90), (120, 110)]), 0),
+        (points(&[(120, 99), (280, 99)]), 0),
+        (points(&[(100, 100), (110, 100)]), 0),
+    ] {
+        let a = path[0];
+        let b = path[1];
+        let m = Point {
+            x: (a.x + b.x) / 2,
+            y: (a.y + b.y) / 2,
+        };
+        assert_eq!(scorer.segment_cost(a, b), length * 8);
+        assert_eq!(
+            scorer.segment_cost(a, m) + scorer.segment_cost(m, b),
+            length * 8
+        );
+        assert_eq!(scorer.segment_cost(b, a), length * 8);
+        assert_eq!(
+            scorer.readability_cost(&path),
+            Scorer::default().readability_cost(&path) + length * 8
+        );
+    }
+    let along = points(&[(120, 100), (280, 100)]);
+    let offset = points(&[(120, 100), (120, 92), (280, 92), (280, 100)]);
+    assert_eq!(
+        scorer.choose(vec![along.clone(), offset.clone()], &[]),
+        Some(offset.clone())
+    );
+    assert!(!scorer.safe_shortcut(&offset, &along, &[]));
+    let brief = points(&[(120, 100), (124, 100)]);
+    let detour = points(&[(120, 100), (120, 92), (124, 92), (124, 100)]);
+    assert_eq!(scorer.choose(vec![detour, brief.clone()], &[]), Some(brief));
+    scorer.set_soft(vec![Occluder {
+        bounds: frame,
+        cost: 1,
+        step: 2,
+    }]);
+    assert_eq!(scorer.segment_cost(along[0], along[1]), 0);
+}
+
+#[test]
 fn equal_geometry_uses_crossings_as_a_stable_tie_breaker() {
     let clear = points(&[(10, 50), (10, 90), (110, 90), (110, 50)]);
     let crossing = points(&[(10, 50), (10, 10), (110, 10), (110, 50)]);

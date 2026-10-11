@@ -71,6 +71,7 @@ impl Terminals {
             return result;
         }
         let mut scorer = Scorer::default();
+        scorer.set_borders(&layout.bounds);
         for &index in order {
             let edge = &graph.edges[index];
             if !ends[index][1] || represented_by_nesting(edge, &layout.containment) {
