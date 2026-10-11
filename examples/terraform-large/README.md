@@ -21,6 +21,11 @@ input/output aliases and native addresses. Managed instances use `create`; data
 instances use `no-op`. It needs no AWS credentials, Terraform or provider download.
 Listener/Rule action blocks retain nested field references so component inference
 can verify target-group paths instead of using flattened action dependencies.
+For LB, Listener, Rule and Target Group resources, the generator supplies fabricated
+known ARN values in `change.after` and evaluates only exact local ARN traversals
+in ownership/action fields. These `000000000000:fixture/` values prove equality
+in this offline fixture; they are not captured AWS identifiers or predictions of
+real create-plan values. Real plans with unknown ARNs retain ungrouped targets.
 
 The generator supports single-instance local modules, resource-level literal
 `count`, constants and traversal interpolations. It rejects resource `for_each`,

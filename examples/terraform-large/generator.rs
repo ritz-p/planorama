@@ -74,7 +74,32 @@ fn module(path: &Path, scope: &str, changes: &mut Vec<Value>) -> Result<Value, S
                         Some(_) => format!("[{index}]"),
                         None => String::new(),
                     };
-                    changes.push(json!({"address":format!("{scope}{address}{suffix}"),"mode":mode,"type":resource_type,"name":name,"change":{"actions":[action]}}));
+                    let full_address = format!("{scope}{address}{suffix}");
+                    let mut change = json!({"address":full_address,"mode":mode,"type":resource_type,"name":name,"change":{"actions":[action]}});
+                    if matches!(
+                        resource_type.as_str(),
+                        "aws_lb"
+                            | "aws_lb_listener"
+                            | "aws_lb_listener_rule"
+                            | "aws_lb_target_group"
+                    ) {
+                        let mut values = Map::from_iter([(
+                            "arn".into(),
+                            Value::String(fixture_arn(&full_address)),
+                        )]);
+                        for key in [
+                            "load_balancer_arn",
+                            "listener_arn",
+                            "default_action",
+                            "action",
+                        ] {
+                            if let Some(value) = attributes.get(key) {
+                                values.insert(key.into(), component_value(value, scope)?);
+                            }
+                        }
+                        change["change"]["after"] = Value::Object(values);
+                    }
+                    changes.push(change);
                 }
             }
         }
@@ -126,6 +151,34 @@ fn network_configuration(value: &Value) -> Result<Value, String> {
         generated.push(Value::Object(expressions));
     }
     Ok(Value::Array(generated))
+}
+
+fn fixture_arn(address: &str) -> String {
+    format!("arn:aws:elasticloadbalancing:us-east-1:000000000000:fixture/{address}")
+}
+
+fn component_value(value: &Value, scope: &str) -> Result<Value, String> {
+    match value {
+        Value::String(text) if text.contains("${") => {
+            let address = text
+                .strip_prefix("${")
+                .and_then(|s| s.strip_suffix(".arn}"))
+                .filter(|s| !s.contains(['$', '{', '}']))
+                .ok_or("fixture component values require an exact ARN traversal")?;
+            Ok(Value::String(fixture_arn(&format!("{scope}{address}"))))
+        }
+        Value::Array(values) => values
+            .iter()
+            .map(|v| component_value(v, scope))
+            .collect::<Result<Vec<_>, _>>()
+            .map(Value::Array),
+        Value::Object(fields) => fields
+            .iter()
+            .map(|(key, value)| Ok((key.clone(), component_value(value, scope)?)))
+            .collect::<Result<Map<_, _>, String>>()
+            .map(Value::Object),
+        _ => Ok(value.clone()),
+    }
 }
 
 fn expression(value: &Value) -> Result<Value, String> {

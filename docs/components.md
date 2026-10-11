@@ -11,6 +11,12 @@ paths through its Listener. Multiple listeners/rules for one LB add one member;
 different LBs or an unresolved parent leave that target ungrouped. Explicit count
 and for_each keys are supported; bare collections, dynamic selectors, deposed,
 missing, foreign-provider or ambiguous resources do not establish ownership.
+Every ownership hop also requires known, nonempty planned ARN values matching the
+referenced resources: Listener → LB, Rule → Listener and action → Target Group.
+All repeated action/forward target values must match the referenced ARN set.
+Syntactic references alone cannot prove the result of a compound expression;
+unknown, absent or different values leave targets ungrouped. Values are compared
+transiently during ingestion; only the boolean proof is retained.
 
 The proof is deliberately conservative within each input state. Every managed AWS
 Listener/Rule must expose complete nested target paths and complete action-level

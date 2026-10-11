@@ -10,6 +10,11 @@ fn forwarding_input() -> Value {
     input["configuration"]["root_module"]["resources"][1]["expressions"]["action"] = json!([
         {"forward":[{"target_group":[{"arn":{"references":["aws_lb_target_group.shared.arn"]}}]}]}
     ]);
+    input["resource_changes"][0]["change"]["after"] = json!({"arn":"PRIVATE_LB"});
+    input["resource_changes"][1]["change"]["after"] = json!({"arn":"PRIVATE_LISTENER", "load_balancer_arn":"PRIVATE_LB", "default_action":[{"target_group_arn":"PRIVATE_TARGET"}]});
+    input["resource_changes"][2]["change"]["after"] = json!({"listener_arn":"PRIVATE_LISTENER", "action":[{"forward":[{"target_group":[{"arn":"PRIVATE_TARGET"}]}]}]});
+    input["resource_changes"][3]["change"]["after"] = json!({"arn":"PRIVATE_TARGET"});
+    input["resource_changes"][4]["change"]["after"] = json!({"arn":"PRIVATE_OTHER_LB"});
     input
 }
 
@@ -21,12 +26,42 @@ fn contains_target(graph: &crate::model::Graph, address: &str) -> bool {
 }
 
 #[test]
+fn reference_candidates_need_known_matching_arn_values_on_every_ownership_hop() {
+    for case in 0..12 {
+        let mut input = forwarding_input();
+        match case {
+            0 => input["resource_changes"][1]["change"]["after"]["default_action"][0]["target_group_arn"] = "PRIVATE_EXTERNAL".into(),
+            1 => input["resource_changes"][2]["change"]["after"]["action"][0]["forward"][0]["target_group"][0]["arn"] = "PRIVATE_EXTERNAL".into(),
+            2 => input["resource_changes"][1]["change"]["after"]["load_balancer_arn"] = "PRIVATE_EXTERNAL".into(),
+            3 => input["resource_changes"][2]["change"]["after"]["listener_arn"] = "PRIVATE_EXTERNAL".into(),
+            4 => input["resource_changes"][1]["change"]["after_unknown"] = json!({"default_action":[{"target_group_arn":true}]}),
+            5 => input["resource_changes"][3]["change"]["after_unknown"] = json!({"arn":true}),
+            6 => input["resource_changes"][1]["change"]["after_unknown"] = json!({"default_action":true}),
+            7 => { input["resource_changes"][1]["change"].as_object_mut().unwrap().remove("after"); },
+            8 => input["resource_changes"][3]["change"]["after"]["arn"] = "".into(),
+            9 => input["resource_changes"][2]["change"]["after"]["action"][0]["forward"][0]["target_group"].as_array_mut().unwrap().push(json!({"arn":"PRIVATE_EXTERNAL"})),
+            10 => input["resource_changes"][0]["change"]["after_unknown"] = json!(true),
+            _ => input["resource_changes"][1]["change"]["after"] = Value::Null,
+        }
+        let raw = plan::parse(&input.to_string()).unwrap();
+        let graph = semantic::transform(&raw);
+        assert!(
+            !contains_target(&graph, "aws_lb_target_group.shared"),
+            "case {case}"
+        );
+        assert_eq!(graph.components[0].members.len(), 3);
+        assert_eq!(graph.edges, crate::semantic::base_graph(&raw).edges);
+        assert!(!format!("{raw:?}{graph:?}").contains("PRIVATE_"));
+    }
+}
+
+#[test]
 fn complete_forwarding_paths_add_one_target_member_without_changing_graph_semantics() {
     let mut input = forwarding_input();
     input["resource_changes"]
         .as_array_mut()
         .unwrap()
-        .push(json!({"address":"aws_lb_listener.second", "type":"aws_lb_listener"}));
+        .push(json!({"address":"aws_lb_listener.second", "type":"aws_lb_listener", "change":{"after":{"load_balancer_arn":"PRIVATE_LB", "default_action":[{"forward":[{"target_group":[{"arn":"PRIVATE_TARGET"}]}]}]}}}));
     input["configuration"]["root_module"]["resources"].as_array_mut().unwrap().push(json!({
         "address":"aws_lb_listener.second", "expressions":{
             "load_balancer_arn":{"references":["aws_lb.app.arn"]},
@@ -39,6 +74,7 @@ fn complete_forwarding_paths_add_one_target_member_without_changing_graph_semant
     assert_eq!(graph.nodes, base.nodes);
     assert_eq!(graph.edges, base.edges);
     assert_eq!(graph.relationships, base.relationships);
+    assert!(!format!("{raw:?}{graph:?}").contains("PRIVATE_"));
     let component = &graph.components[0];
     assert_eq!(
         component
@@ -78,7 +114,7 @@ fn shared_or_unresolved_owners_never_report_a_unique_target_owner() {
         input["resource_changes"]
             .as_array_mut()
             .unwrap()
-            .push(json!({"address":"aws_lb_listener.second", "type":"aws_lb_listener"}));
+            .push(json!({"address":"aws_lb_listener.second", "type":"aws_lb_listener", "change":{"after":{"load_balancer_arn":"PRIVATE_OTHER_LB", "default_action":[{"target_group_arn":"PRIVATE_TARGET"}]}}}));
         input["configuration"]["root_module"]["resources"].as_array_mut().unwrap().push(json!({"address":"aws_lb_listener.second", "expressions":{
             "load_balancer_arn": parent,
             "default_action":[{"target_group_arn":{"references":["aws_lb_target_group.shared.arn"]}}]
@@ -278,12 +314,16 @@ fn rule_forwarding_can_add_distinct_targets_and_filtering_does_not_reinfer_owner
     input["resource_changes"]
         .as_array_mut()
         .unwrap()
-        .push(json!({"address":"aws_lb_target_group.rule", "type":"aws_lb_target_group"}));
+        .push(json!({"address":"aws_lb_target_group.rule", "type":"aws_lb_target_group", "change":{"after":{"arn":"PRIVATE_RULE_TARGET"}}}));
     input["configuration"]["root_module"]["resources"][1]["expressions"]["action"][0]["forward"][0]
         ["target_group"]
         .as_array_mut()
         .unwrap()
         .push(json!({"arn":{"references":["aws_lb_target_group.rule.arn"]}}));
+    input["resource_changes"][2]["change"]["after"]["action"][0]["forward"][0]["target_group"]
+        .as_array_mut()
+        .unwrap()
+        .push(json!({"arn":"PRIVATE_RULE_TARGET"}));
     let plan = plan::parse(&input.to_string()).unwrap();
     let graph = semantic::transform(&plan);
     assert!(contains_target(&graph, "aws_lb_target_group.rule"));

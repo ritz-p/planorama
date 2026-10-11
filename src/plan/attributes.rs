@@ -47,6 +47,7 @@ pub(super) fn collect(
                     instances_explicit: resolution.instances_explicit,
                     collection_ids_complete: false,
                     scalar_id_matches: false,
+                    arn_values_match: false,
                     ids_only: resolution.ids_only,
                     issues: resolution.issues,
                 });

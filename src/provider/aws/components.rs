@@ -54,7 +54,7 @@ pub(super) fn infer(raw: &Input, graph: &Graph) -> Vec<SyntheticComponent> {
             listeners.insert(index, anchor);
             if references
                 .get(&(index, "load_balancer_arn"))
-                .is_some_and(|entries| entries.iter().all(|r| verified(r)))
+                .is_some_and(|entries| entries.iter().all(|r| verified(r) && r.arn_values_match))
             {
                 owners.insert(index, anchor);
             }
@@ -74,7 +74,9 @@ pub(super) fn infer(raw: &Input, graph: &Graph) -> Vec<SyntheticComponent> {
                 .is_some_and(|listener| owners.contains_key(&listener))
                 && references
                     .get(&(index, "listener_arn"))
-                    .is_some_and(|entries| entries.iter().all(|r| verified(r)))
+                    .is_some_and(|entries| {
+                        entries.iter().all(|r| verified(r) && r.arn_values_match)
+                    })
             {
                 owners.insert(index, *anchor);
             }
@@ -148,7 +150,11 @@ fn target_group_owners(
             .iter()
             .filter(|r| r.target == index && (r.attribute == direct || r.attribute == forward))
             .collect();
-        if references.is_empty() || references.iter().any(|r| !verified(r)) {
+        if references.is_empty()
+            || references
+                .iter()
+                .any(|r| !verified(r) || !r.arn_values_match)
+        {
             return BTreeMap::new();
         }
         let action_reference = raw

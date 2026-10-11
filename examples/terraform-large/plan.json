@@ -1318,7 +1318,10 @@
       "change": {
         "actions": [
           "create"
-        ]
+        ],
+        "after": {
+          "arn": "arn:aws:elasticloadbalancing:us-east-1:000000000000:fixture/module.application.aws_lb.app"
+        }
       },
       "mode": "managed",
       "name": "app",
@@ -1329,7 +1332,17 @@
       "change": {
         "actions": [
           "create"
-        ]
+        ],
+        "after": {
+          "arn": "arn:aws:elasticloadbalancing:us-east-1:000000000000:fixture/module.application.aws_lb_listener.http",
+          "default_action": [
+            {
+              "target_group_arn": "arn:aws:elasticloadbalancing:us-east-1:000000000000:fixture/module.application.aws_lb_target_group.app",
+              "type": "forward"
+            }
+          ],
+          "load_balancer_arn": "arn:aws:elasticloadbalancing:us-east-1:000000000000:fixture/module.application.aws_lb.app"
+        }
       },
       "mode": "managed",
       "name": "http",
@@ -1340,7 +1353,10 @@
       "change": {
         "actions": [
           "create"
-        ]
+        ],
+        "after": {
+          "arn": "arn:aws:elasticloadbalancing:us-east-1:000000000000:fixture/module.application.aws_lb_target_group.app"
+        }
       },
       "mode": "managed",
       "name": "app",

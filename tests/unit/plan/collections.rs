@@ -2,6 +2,35 @@ use crate::{plan, semantic};
 use serde_json::json;
 
 #[test]
+fn arn_proof_uses_planned_nested_values_but_never_overrides_explicit_unknown_or_null_changes() {
+    let base = json!({"format_version":"1.2", "planned_values":{"root_module":{"child_modules":[{"resources":[
+        {"address":"module.app.aws_lb_target_group.main", "type":"aws_lb_target_group", "values":{"arn":"PRIVATE_TARGET"}},
+        {"address":"module.app.aws_lb_listener.main", "type":"aws_lb_listener", "values":{"default_action":[{"forward":[{"target_group":[{"arn":"PRIVATE_TARGET"}, {"arn":"PRIVATE_TARGET"}]}]}]}}
+    ]}]}}, "configuration":{"root_module":{"module_calls":{"app":{"module":{"resources":[
+        {"address":"aws_lb_listener.main", "expressions":{"default_action":[{"forward":[{"target_group":[{"arn":{"references":["aws_lb_target_group.main.arn"]}}, {"arn":{"references":["aws_lb_target_group.main.arn"]}}]}]}]}}
+    ]}}}}}});
+    for case in 0..4 {
+        let mut input = base.clone();
+        if case > 0 {
+            let change = match case {
+                1 => json!({"after":null}),
+                2 => json!({"after_unknown":{"default_action":true}}),
+                _ => json!({"after_unknown":{"default_action":[false, false]}}),
+            };
+            input["resource_changes"] = json!([{"address":"module.app.aws_lb_listener.main", "type":"aws_lb_listener", "change":change}]);
+        }
+        let raw = plan::parse(&input.to_string()).unwrap();
+        let reference = raw
+            .attributes
+            .iter()
+            .find(|r| r.attribute == "default_action.forward.target_group.arn")
+            .unwrap();
+        assert_eq!(reference.arn_values_match, case == 0, "case {case}");
+        assert!(!format!("{raw:?}").contains("PRIVATE_"));
+    }
+}
+
+#[test]
 fn module_output_id_provenance_and_current_deposed_evidence_stay_distinct() {
     for field in ["id", "vpc_id"] {
         let mut input = json!({"format_version":"1.2","resource_changes":[
