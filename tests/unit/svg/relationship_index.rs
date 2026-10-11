@@ -237,7 +237,7 @@ fn wide_addresses_wrap_within_the_canvas_and_reserved_height() {
     let cards = index.cards();
     assert_eq!(cards.len(), 1);
     let svg = &cards[0].content;
-    let document = roxmltree::Document::parse(&svg).unwrap();
+    let document = roxmltree::Document::parse(svg).unwrap();
     let lines: Vec<_> = document
         .descendants()
         .filter(|n| n.has_tag_name("tspan"))
