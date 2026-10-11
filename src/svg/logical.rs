@@ -16,7 +16,7 @@ pub(super) fn cards(graph: &Graph, address_format: super::AddressFormat) -> Vec<
             super::AddressFormat::Qualified => node.resource_address().qualified().into_owned(),
             super::AddressFormat::Terraform => node.address.clone(),
         };
-        let mut lines = vec!["Logical resource".to_string(), address.clone(), format!("{} · {mode}", node.resource_type), operation.clone()];
+        let mut lines = vec![address.clone(), format!("{} · {mode}", node.resource_type), operation.clone()];
         match node.role {
             crate::model::ResourceRole::Policy => lines.push("policy".into()),
             crate::model::ResourceRole::Controller => lines.push("controller".into()),
@@ -41,14 +41,15 @@ pub(super) fn cards(graph: &Graph, address_format: super::AddressFormat) -> Vec<
         let (background, border) = super::color(node.action);
         let mode_attributes = super::entities::border(node.mode);
         let reference_height = crate::view::references::height(node);
-        let height = lines.iter().map(|line| wrap(line, (width - 32) / 8).len()).sum::<usize>() * 20 + 28 + reference_height;
+        let line_limit = |index| (width - if index == 0 { 64 } else { 32 }) / 8;
+        let height = lines.iter().enumerate().map(|(index, line)| wrap(line, line_limit(index)).len()).sum::<usize>() * 20 + 28 + reference_height;
         writeln!(svg, r#"<rect width="{width}" height="{height}" rx="12" fill="{background}" stroke="{border}"{mode_attributes}/>"#).unwrap();
         if let Some(icon) = super::icons::for_node(node) {
             svg.push_str(&super::icons::render(icon, width - 40, 8));
         }
         for (index, text) in lines.iter().enumerate() {
-            for line in wrap(text, (width - 32) / 8) {
-                writeln!(svg, r##"<text x="16" y="{y}" font-size="12" fill="{}"{}>{}</text>"##, if index == 0 { "#5b21b6" } else { "#334155" }, if index == 0 { " font-weight=\"700\"" } else { "" }, super::escape(line)).unwrap();
+            for line in wrap(text, line_limit(index)) {
+                writeln!(svg, r##"<text x="16" y="{y}" font-size="12" fill="#334155"{}>{}</text>"##, if index == 0 { " font-weight=\"700\"" } else { "" }, super::escape(line)).unwrap();
                 y += 20;
             }
         }

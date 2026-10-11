@@ -29,7 +29,7 @@ committed counterparts.
 ## Expected display
 
 The fixture has 48 resource instances. The renderer produces 32 spatial cards,
-6 top logical-resource cards and 74
+6 logical-resource cards within one cyan Logical Resources section and 74
 relationships: four route-table associations and four target-group attachments
 become edges, and two AWS metadata data sources are omitted.
 
@@ -39,6 +39,9 @@ inside their referenced subnets. ALB/ECS keep individual subnet connections; the
 DB subnet group and RDS retain their dependency chain and inferred-placement notes.
 Shared VPC and Security Group data sources remain external spatial cards. ECS
 Cluster/Task Definition, IAM definitions and the external AMI are logical cards.
+A purple Logical Components section contains the load balancer component and its
+action-colored member links. Relationship Resources follow in a separate neutral
+section. Empty sections are omitted in smaller examples.
 The original 74 relationships remain queryable; 41 paths are spatially routed.
 Compared with the pre-separation example, spatial cards decrease from 38 to 32,
 routed paths from 53 to 41. Canvas dimensions follow the current routing geometry.

@@ -77,6 +77,19 @@ fn logical_projection_retains_graph_identity_references_and_operations() {
     );
     let output = svg::render(&graph, &layout);
     let doc = roxmltree::Document::parse(&output).unwrap();
+    assert_eq!(output.matches(">Logical Resources</text>").count(), 1);
+    assert!(!output.contains(">Logical resource</text>"));
+    for card in doc
+        .descendants()
+        .filter(|n| n.attribute("data-placement") == Some("logical"))
+    {
+        let heading = card.children().find(|n| n.has_tag_name("text")).unwrap();
+        assert!(
+            card.attribute("data-qualified-address")
+                .unwrap()
+                .starts_with(heading.text().unwrap())
+        );
+    }
     assert_eq!(
         doc.descendants()
             .filter(|n| n.attribute("data-placement") == Some("logical"))
