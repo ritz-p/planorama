@@ -176,6 +176,11 @@ impl Scorer {
         self.score(points, &[]).cost
     }
 
+    pub(in crate::layout) fn attains_bound(&self, points: &[Point], bound: u128) -> bool {
+        let score = self.score(points, &[]);
+        score.cost == bound && score.upper_detours == 0
+    }
+
     pub(in crate::layout) fn readability_cost_with_soft(
         &self,
         points: &[Point],

@@ -86,10 +86,12 @@ impl Terminals {
             let old = result.ports[index];
             let mut candidates = Vec::new();
             let mut pairs = Vec::new();
-            let mut options: Vec<_> =
-                ports::candidate_pairs(layout.bounds[edge.from], layout.bounds[edge.to])
+            let mut limit = u128::MAX;
+            'batches: for batch in
+                ports::pair_batches(layout.bounds[edge.from], layout.bounds[edge.to])
+            {
+                let mut options: Vec<_> = batch
                     .into_iter()
-                    .enumerate()
                     .map(|(rank, (a, b))| {
                         let pair = [
                             if a == old[0].side {
@@ -110,55 +112,61 @@ impl Terminals {
                         )
                     })
                     .collect();
-            options.sort_by_key(|&(bound, rank, _)| (bound, rank));
-            let mut limit = u128::MAX;
-            for (bound, rank, pair) in options {
-                if bound > limit {
-                    break;
-                }
-                if pair.iter().zip(old).any(|(candidate, previous)| {
-                    candidate.point != previous.point
-                        && result.ports.iter().enumerate().any(|(other, ports)| {
-                            other != index
-                                && !represented_by_nesting(&graph.edges[other], &layout.containment)
-                                && ports.iter().any(|port| port.point == candidate.point)
-                        })
-                }) {
-                    continue;
-                }
-                let corridors =
-                    ports::terminal_corridors(pair[0], pair[1], result.clearances[index]);
-                let mut protected = barriers.clone();
-                protected.extend(soft_obstacles(layout, edge));
-                if corridors
-                    .iter()
-                    .any(|&a| protected.iter().any(|&b| overlaps(a, b)))
-                {
-                    continue;
-                }
-                let mut optimal = false;
-                for path in ports::candidates_with_clearances(
-                    pair[0],
-                    pair[1],
-                    &barriers,
-                    Some(&scorer),
-                    result.clearances[index],
-                ) {
-                    optimal = scorer.readability_cost(&path)
-                        == ports::distance_bound(layout.bounds[edge.from], layout.bounds[edge.to]);
-                    candidates.push((rank, path));
-                    pairs.push(pair);
-                    if optimal {
+                options.sort_by_key(|&(bound, rank, _)| (bound, rank));
+                for (bound, rank, pair) in options {
+                    if bound > limit {
                         break;
                     }
-                }
-                if optimal {
-                    break;
-                }
-                if let Some(best) =
-                    scorer.best_index(candidates.iter().map(|(_, p)| p.as_slice()), &barriers)
-                {
-                    limit = scorer.readability_cost(&candidates[best].1);
+                    if pair.iter().zip(old).any(|(candidate, previous)| {
+                        candidate.point != previous.point
+                            && result.ports.iter().enumerate().any(|(other, ports)| {
+                                other != index
+                                    && !represented_by_nesting(
+                                        &graph.edges[other],
+                                        &layout.containment,
+                                    )
+                                    && ports.iter().any(|port| port.point == candidate.point)
+                            })
+                    }) {
+                        continue;
+                    }
+                    let corridors =
+                        ports::terminal_corridors(pair[0], pair[1], result.clearances[index]);
+                    let mut protected = barriers.clone();
+                    protected.extend(soft_obstacles(layout, edge));
+                    if corridors
+                        .iter()
+                        .any(|&a| protected.iter().any(|&b| overlaps(a, b)))
+                    {
+                        continue;
+                    }
+                    let mut optimal = false;
+                    for path in ports::candidates_with_clearances(
+                        pair[0],
+                        pair[1],
+                        &barriers,
+                        Some(&scorer),
+                        result.clearances[index],
+                    ) {
+                        optimal = scorer.readability_cost(&path)
+                            == ports::distance_bound(
+                                layout.bounds[edge.from],
+                                layout.bounds[edge.to],
+                            );
+                        candidates.push((rank, path));
+                        pairs.push(pair);
+                        if optimal {
+                            break;
+                        }
+                    }
+                    if optimal {
+                        break 'batches;
+                    }
+                    if let Some(best) =
+                        scorer.best_index(candidates.iter().map(|(_, p)| p.as_slice()), &barriers)
+                    {
+                        limit = scorer.readability_cost(&candidates[best].1);
+                    }
                 }
             }
             candidates.sort_by_key(|(rank, _)| *rank);
@@ -342,6 +350,7 @@ fn numbered_relationships_choose_facing_source_and_target_sides() {
             .into();
         layout.bounds[graph.edges[0].from] = bounds[0];
         layout.bounds[graph.edges[0].to] = bounds[1];
+        crate::layout::routing_shared::search::GRID_SEARCH_COUNT.set(0);
         let terminals = Terminals::new(
             &graph,
             &layout,
@@ -351,6 +360,10 @@ fn numbered_relationships_choose_facing_source_and_target_sides() {
             true,
         );
         assert_eq!(terminals.ports[0].map(|p| p.side), sides);
+        assert_eq!(
+            crate::layout::routing_shared::search::GRID_SEARCH_COUNT.get(),
+            0
+        );
         let [start, end] = terminals.ports[0];
         let barriers = terminals.barriers(&layout, &graph, 0);
         let path =
