@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="4040" height="2346" viewBox="0 0 4040 2346" role="img" aria-labelledby="title description">
+<svg xmlns="http://www.w3.org/2000/svg" width="3960" height="2342" viewBox="0 0 3960 2342" role="img" aria-labelledby="title description">
 <title id="title">Terraform plan</title>
 <desc id="description">46 resources (38 cards), 74 relationships. Lines show architectural relationships. Edge titles identify the relationship kind and Terraform change. Thin solid: dependency. Dashed: association. Thick dotted: connection. Nested boxes: containment. Edge color preserves the Terraform action when available.</desc>
 <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/></marker><marker id="arrow-create" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#047857"/></marker><metadata id="planorama-icons-license">AWS Architecture Icons, release 07312026.
@@ -153,13 +153,18 @@ No AWS endorsement is implied. Consult the AWS terms for other uses.
 </text>
 </g>
 </g>
-<g data-annotation-card="true" transform="translate(40 256)"><rect width="3960" height="124" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g id="architecture-73796e7468657469633a36633666363136343566363236313663363136653633363537322d36643666363437353663363532653631373037303663363936333631373436393666366532653631373737333566366336323265363137303730" data-architecture-id="synthetic:6c6f61645f62616c616e636572-6d6f64756c652e6170706c69636174696f6e2e6177735f6c622e617070" data-entity-kind="synthetic" data-component-id="logical:load_balancer:module.application.aws_lb.app" data-component-kind="load_balancer"><title>Load balancer: module.application.aws_lb.app</title><rect x="35" y="0" width="3890" height="104" rx="12" fill="#f5f3ff" stroke="#8b5cf6" stroke-dasharray="6 3"/><text x="52" y="24" font-size="13" font-weight="700" fill="#5b21b6">Logical component: Load balancer: module.application.aws_lb.app</text>
-<a href="#resource-6d6f64756c652e6170706c69636174696f6e2e6177735f6c622e617070-current" data-source-address="module.application.aws_lb.app"><title>module.application.aws_lb.app; create</title><text x="52" y="48" font-size="12" fill="#334155">create: module.application.aws_lb.app</text></a>
-<a href="#resource-6d6f64756c652e6170706c69636174696f6e2e6177735f6c625f6c697374656e65722e68747470-current" data-source-address="module.application.aws_lb_listener.http"><title>module.application.aws_lb_listener.http; create</title><text x="52" y="72" font-size="12" fill="#334155">create: module.application.aws_lb_listener.http</text></a>
+<g data-annotation-card="true" transform="translate(40 256)"><rect width="536" height="120" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g id="architecture-73796e7468657469633a36633666363136343566363236313663363136653633363537322d36643666363437353663363532653631373037303663363936333631373436393666366532653631373737333566366336323265363137303730" data-architecture-id="synthetic:6c6f61645f62616c616e636572-6d6f64756c652e6170706c69636174696f6e2e6177735f6c622e617070" data-entity-kind="synthetic" data-component-id="logical:load_balancer:module.application.aws_lb.app" data-component-kind="load_balancer"><title>Load balancer: module.application.aws_lb.app</title><text x="16" y="28" font-size="13" font-weight="700" fill="#5b21b6">Logical component: Load balancer: module.application.aws_lb.app</text>
+<text x="16" y="48" font-size="12" font-weight="700" fill="#475569">Members</text>
+<a href="#resource-6d6f64756c652e6170706c69636174696f6e2e6177735f6c622e617070-current" data-source-address="module.application.aws_lb.app"><title>module.application.aws_lb.app; create</title><text font-size="12" fill="#334155">
+<tspan x="16" y="72" xml:space="preserve">create: module.application.aws_lb.app</tspan>
+</text></a>
+<a href="#resource-6d6f64756c652e6170706c69636174696f6e2e6177735f6c625f6c697374656e65722e68747470-current" data-source-address="module.application.aws_lb_listener.http"><title>module.application.aws_lb_listener.http; create</title><text font-size="12" fill="#334155">
+<tspan x="16" y="96" xml:space="preserve">create: module.application.aws_lb_listener.http</tspan>
+</text></a>
 </g>
 </g>
 </g>
-<g data-architecture="true" transform="translate(0 244)">
+<g data-architecture="true" transform="translate(0 240)">
 <g data-container="resource-6d6f64756c652e6e6574776f726b2e6177735f7670632e6d61696e-current"><title>module.network.aws_vpc.main</title><rect x="1036" y="160" width="2440" height="1610" rx="12" fill="#ecfdf5" stroke="#047857" stroke-width="2" data-mode="managed"/></g>
 <g data-container="resource-6d6f64756c652e6e6574776f726b2e6177735f7375626e65742e707269766174655f61-current"><title>module.network.aws_subnet.private_a</title><rect x="2096" y="520" width="488" height="541" rx="12" fill="#d1fae5" stroke="#047857" stroke-width="2" data-mode="managed"/></g>
 <g data-container="resource-6d6f64756c652e6e6574776f726b2e6177735f7375626e65742e707269766174655f62-current"><title>module.network.aws_subnet.private_b</title><rect x="2096" y="1145" width="488" height="541" rx="12" fill="#d1fae5" stroke="#047857" stroke-width="2" data-mode="managed"/></g>

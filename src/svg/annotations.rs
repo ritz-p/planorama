@@ -7,6 +7,37 @@ pub(super) struct Card {
     pub content: String,
 }
 
+pub(super) fn wrap(text: &str, limit: usize) -> Vec<&str> {
+    let mut lines = Vec::new();
+    let mut start = 0;
+    let mut width = 0;
+    for (offset, character) in text.char_indices() {
+        let advance = if character.is_ascii() { 1 } else { 2 };
+        if width > 0 && width + advance > limit {
+            lines.push(&text[start..offset]);
+            start = offset;
+            width = 0;
+        }
+        width += advance;
+    }
+    lines.push(&text[start..]);
+    lines
+}
+
+pub(super) fn card_width<T: AsRef<str>>(texts: impl Iterator<Item = T>) -> usize {
+    texts
+        .map(|text| {
+            text.as_ref()
+                .chars()
+                .map(|c| if c.is_ascii() { 8 } else { 16 })
+                .sum::<usize>()
+                + 32
+        })
+        .max()
+        .unwrap_or(360)
+        .clamp(360, 640)
+}
+
 pub(super) struct Area {
     cards: Vec<(Card, Bounds)>,
     pub width: usize,
