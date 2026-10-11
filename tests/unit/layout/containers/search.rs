@@ -37,7 +37,7 @@ fn terminal_stub_bend_is_charged_before_selecting_the_destination() {
 }
 
 #[test]
-fn horizontal_stub_junction_crossings_are_priced_during_search() {
+fn horizontal_stub_crossings_do_not_add_an_avoidable_bend() {
     for (start, end, junction, source) in [
         (
             Point { x: 116, y: 100 },
@@ -75,8 +75,8 @@ fn horizontal_stub_junction_crossings_are_priced_during_search() {
             &path[path.len() - 2..]
         };
         assert_eq!(
-            segment[0].x, segment[1].x,
-            "turn at the stub instead of crossing: {path:?}"
+            segment[0].y, segment[1].y,
+            "continue through the crossing: {path:?}"
         );
     }
 }

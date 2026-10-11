@@ -42,7 +42,7 @@ Packing evaluates at most 65 height limits. The compactness baseline minimizes
 span by at most 10% and area by at most 25%; these bounds allow nearby shapes
 without exchanging a compact container for a long strip. Within those bounds,
 the objective is Manhattan distance between projected peer centers plus the
-router's 512-pixel crossing penalty for intersecting straight-line estimates.
+router's one-pixel crossing penalty for intersecting straight-line estimates.
 Repeated relationships weight both signals. Compactness breaks routing-cost ties.
 The hub regressions cover useful shape changes and the shape bounds under heavy
 relationship weights; variable-height cases use actual card centers.
@@ -167,8 +167,11 @@ reverse traversal. These caches borrow the fixed scorer, use memory proportional
 to the search grid, and are discarded after that search.
 
 Hard obstacle violations are rejected. Readability cost is path length plus 96 per
-bend, 512 per crossing, eight per overlapping pixel and two per occluded card pixel.
-Thus a minor crossing improvement cannot justify an unlimited detour. Search,
+bend, one per crossing, eight per overlapping pixel and two per occluded card pixel.
+A single perpendicular crossing cannot pay for an extra bend or even a two-pixel
+orthogonal detour. Equal-length, equal-bend alternatives prefer fewer crossings;
+collinear overlap remains a separate, stronger penalty. Search segment and junction
+costs use the same crossing weight as final scoring and shortcutting. Search,
 candidate comparison and shortcutting share these weights. Straight, one-bend and two-bend candidates compete with grid-search
 paths under the same safety and endpoint-direction checks. Occupancy-aware alternatives
 are limited to six additional bends and twice the reference length plus 512 pixels
@@ -206,6 +209,15 @@ container detours are included in the baseline. Failures name both endpoint
 addresses and report bends, length, reference length, excess distance and stretch.
 The test counts extreme routes and verifies identical metrics after edge reordering;
 aggregate quality checks remain in place.
+The crossing policy replaces older tests that demanded crossing-free detours:
+they now require short crossing routes, including at stub/grid junctions and after
+shortcutting. Hard obstacles, overlap avoidance and terminal reservations remain tested.
+On the large fixture, changing the crossing weight from 512 to 1 reduced total
+length 54,445 → 48,529, bends 186 → 98 and pairwise overlap 395 → 16; crossings
+increased 29 → 160. The private-a → ECS edge changed from length/bends/crossings/overlap
+405/3/2/25 to 296/2/7/0, and private-b → ECS from 598/6/0/17 to 508/2/0/0.
+The existing per-edge test reports these metrics and route points and checks both
+private edges stay within 600 pixels, three bends and zero relationship overlap.
 Performance measurements are documented in [benchmarks](benchmarks.md).
 Thread-local test counters verify that unobstructed horizontal/vertical side
 selection evaluates one pair without grid search, while blocked ports expand the

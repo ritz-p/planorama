@@ -52,7 +52,7 @@ fn numbered_shortcuts_remove_middle_doglegs_and_preserve_badge_space() {
 }
 
 #[test]
-fn completed_later_paths_block_shortcuts_and_excluded_paths_are_unchanged() {
+fn ordinary_crossings_allow_shortcuts_and_excluded_paths_are_unchanged() {
     let dogleg = vec![
         Point { x: 100, y: 100 },
         Point { x: 140, y: 100 },
@@ -67,9 +67,9 @@ fn completed_later_paths_block_shortcuts_and_excluded_paths_are_unchanged() {
     ];
     let protected = paths[1].clone();
     simplify_routes(&mut paths, [0], |_| Vec::new());
-    assert!(paths[0].len() > 2);
+    assert_eq!(paths[0].len(), 2);
     assert_eq!(paths[1], protected);
-    assert_eq!(crate::layout::metrics::measure(&paths).crossing_count, 0);
+    assert_eq!(crate::layout::metrics::measure(&paths).crossing_count, 1);
 }
 
 #[test]
@@ -99,7 +99,7 @@ fn shortcuts_preserve_ports_and_reject_obstacles_and_conflicts() {
     let mut occupied = Scorer::default();
     occupied.insert(vec![Point { x: 200, y: 80 }, Point { x: 200, y: 120 }]);
     let clear = simplify_path(path.clone(), &[], &occupied);
-    assert!(clear.len() > 2);
+    assert_eq!(clear.len(), 2);
     assert_eq!(clear, simplify_path(clear.clone(), &[], &occupied));
     let reversed = vec![
         Point { x: 100, y: 100 },

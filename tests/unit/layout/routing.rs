@@ -27,7 +27,7 @@ fn shortcut_pass_preserves_all_flat_ports_and_never_lengthens_later_routes() {
     let b = crate::layout::metrics::measure(&after.paths);
     let cost = |m: &crate::layout::metrics::LayoutMetrics| {
         m.overlap_distance * 8
-            + m.crossing_count as u128 * 512
+            + m.crossing_count as u128 * crate::layout::routing_shared::scoring::CROSSING_COST
             + m.bend_count as u128 * 96
             + m.total_path_length
     };
