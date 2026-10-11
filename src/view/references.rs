@@ -7,10 +7,17 @@ pub(crate) struct Row<'a> {
     pub target: Option<&'a ReferenceTarget>,
 }
 
+fn verified(reference: &ResourceReference) -> bool {
+    reference.complete
+        && !reference
+            .issues
+            .contains(&crate::model::DiagnosticReason::DynamicInstanceSelection)
+}
+
 pub(crate) fn rows(node: &Node) -> Vec<Row<'_>> {
     let mut rows = Vec::new();
     for reference in &node.references {
-        if !reference.complete {
+        if !verified(reference) {
             if node.placement == Placement::Logical
                 || reference
                     .targets
@@ -31,7 +38,7 @@ pub(crate) fn rows(node: &Node) -> Vec<Row<'_>> {
             }
             if node.references.iter().any(|other| {
                 !other.dependency
-                    && other.complete
+                    && verified(other)
                     && other
                         .attribute
                         .strip_prefix(&reference.attribute)
