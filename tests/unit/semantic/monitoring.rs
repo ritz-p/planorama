@@ -15,7 +15,7 @@ fn input() -> Value {
 
 #[test]
 fn monitoring_requires_verified_values_and_preserves_native_edges() {
-    for case in 0..10 {
+    for case in 0..12 {
         let mut value = input();
         match case {
             1 => {
@@ -42,6 +42,14 @@ fn monitoring_requires_verified_values_and_preserves_native_edges() {
                     json!([{"id":"PRIVATE_QUERY"}])
             }
             9 => value["resource_changes"][0]["provider_name"] = json!("example.com/foreign/aws"),
+            10 => {
+                value["resource_changes"][1]["change"]["after"]["metric_query"] = json!([]);
+                value["resource_changes"][1]["change"]["after_unknown"]["metric_query"] = json!([]);
+            }
+            11 => {
+                value["resource_changes"][1]["change"]["after_unknown"]["metric_query"] =
+                    json!([true])
+            }
             _ => {}
         }
         let parsed = plan::parse(&value.to_string()).unwrap();
@@ -57,14 +65,14 @@ fn monitoring_requires_verified_values_and_preserves_native_edges() {
                 .references
                 .iter()
                 .any(|r| r.label == "Monitored by"),
-            case == 0,
+            matches!(case, 0 | 10),
             "case {case}"
         );
         assert_eq!(
             semantic::diagnostics::collect(&parsed)
                 .iter()
                 .any(|d| d.reason == crate::model::DiagnosticReason::UnverifiedMonitoring),
-            case != 0
+            !matches!(case, 0 | 10)
         );
         let layout = Layout::new(&graph);
         assert!(layout.paths.iter().all(Vec::is_empty));
@@ -78,7 +86,10 @@ fn monitoring_requires_verified_values_and_preserves_native_edges() {
         );
         let output = svg::render(&graph, &layout);
         assert!(!output.contains("PRIVATE_"));
-        assert_eq!(output.contains("Monitors: unresolved"), case != 0);
+        assert_eq!(
+            output.contains("Monitors: unresolved"),
+            !matches!(case, 0 | 10)
+        );
         let doc = roxmltree::Document::parse(&output).unwrap();
         for href in doc.descendants().filter_map(|n| n.attribute("href")) {
             assert!(
@@ -96,8 +107,52 @@ fn monitoring_requires_verified_values_and_preserves_native_edges() {
         )
         .unwrap();
         let output = svg::render(&focused, &Layout::new(&focused));
-        assert_eq!(output.contains("Unavailable"), case == 0);
+        assert_eq!(output.contains("Unavailable"), matches!(case, 0 | 10));
     }
+}
+
+#[test]
+fn deposed_alarms_keep_identity_without_synthesized_monitoring() {
+    let mut value = input();
+    let mut alarm = value["resource_changes"][1].clone();
+    alarm["deposed"] = json!("old");
+    alarm["change"]["actions"] = json!(["delete"]);
+    alarm["change"]["after"] = Value::Null;
+    value["resource_changes"]
+        .as_array_mut()
+        .unwrap()
+        .push(alarm);
+    let parsed = plan::parse(&value.to_string()).unwrap();
+    let graph = semantic::transform(&parsed);
+    let old = graph
+        .nodes
+        .iter()
+        .find(|n| n.deposed_key.is_some())
+        .unwrap();
+    assert_eq!(old.placement, Placement::Logical);
+    assert!(old.references.is_empty());
+    assert!(
+        !semantic::diagnostics::collect(&parsed)
+            .iter()
+            .any(|d| d.reason == crate::model::DiagnosticReason::UnverifiedMonitoring)
+    );
+    let database = graph
+        .nodes
+        .iter()
+        .find(|n| n.address == "aws_db_instance.database")
+        .unwrap();
+    assert_eq!(database.references.len(), 1);
+    assert!(database.references[0].targets[0].id.deposed_key.is_none());
+    let output = svg::render(&graph, &Layout::new(&graph));
+    let doc = roxmltree::Document::parse(&output).unwrap();
+    let old = doc
+        .descendants()
+        .find(|n| n.attribute("data-deposed-key") == Some("old"))
+        .unwrap();
+    assert!(
+        !old.descendants()
+            .any(|n| n.attribute("data-resource-references").is_some())
+    );
 }
 
 #[test]
