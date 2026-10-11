@@ -99,6 +99,10 @@ No AWS endorsement is implied. Consult the AWS terms for other uses.
 <use href="#planorama-icon-aws-vpc" x="472" y="324" width="24" height="24" aria-hidden="true"/><text x="504" y="341" font-size="13" fill="#0f172a">module.app.aws_subnet.main</text>
 <text x="472" y="380" font-size="10" fill="#64748b"><title>module.app</title>module.app</text>
 </g>
+<g data-endpoints="true" data-source="resource-646174612e6177735f616d692e6c6174657374-current" data-target="resource-6d6f64756c652e6170702e6177735f696e7374616e63652e7765625b305d-current" aria-hidden="true">
+<circle data-endpoint="source" cx="380" cy="442" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+<g data-endpoints="true" data-source="resource-646174612e6177735f616d692e6c6174657374-current" data-target="resource-6d6f64756c652e6170702e6177735f696e7374616e63652e7765625b315d-current" aria-hidden="true">
+<circle data-endpoint="source" cx="380" cy="442" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
 </g>
 </g>
 </svg>

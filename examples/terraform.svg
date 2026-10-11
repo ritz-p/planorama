@@ -153,6 +153,62 @@
 <text x="72" y="541" font-size="11" fill="#047857">terraform_data · create</text>
 <text x="72" y="566" font-size="13" fill="#0f172a">module.root.terraform_data.ready</text>
 </g>
+<g data-endpoints="true" data-source="resource-646174612e7465727261666f726d5f72656d6f74655f73746174652e61667465725f7265616479-current" data-target="resource-7465727261666f726d5f646174612e66726f6d5f7374617465-current" aria-hidden="true">
+<circle data-endpoint="source" cx="718" cy="377" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+<g data-endpoints="true" data-source="resource-646174612e7465727261666f726d5f72656d6f74655f73746174652e6578697374696e67-current" data-target="resource-7465727261666f726d5f646174612e66726f6d5f7374617465-current" aria-hidden="true">
+<circle data-endpoint="source" cx="380" cy="255" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+<g data-endpoints="true" data-source="resource-6d6f64756c652e736572766963655b22617069225d2e6d6f64756c652e6e65737465642e7465727261666f726d5f646174612e6c656166-current" data-target="resource-7465727261666f726d5f646174612e636f6e73756d6572-current" aria-hidden="true">
+<circle data-endpoint="source" cx="1298" cy="2193" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+<g data-endpoints="true" data-source="resource-6d6f64756c652e736572766963655b22617069225d2e7465727261666f726d5f646174612e776f726b65725b305d-current" data-target="resource-6d6f64756c652e736572766963655b22617069225d2e6d6f64756c652e6e65737465642e7465727261666f726d5f646174612e6c656166-current" aria-hidden="true">
+<circle data-endpoint="source" cx="878" cy="1981" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+<g data-endpoints="true" data-source="resource-6d6f64756c652e736572766963655b22617069225d2e7465727261666f726d5f646174612e776f726b65725b305d-current" data-target="resource-7465727261666f726d5f646174612e636f6e73756d6572-current" aria-hidden="true">
+<circle data-endpoint="source" cx="878" cy="1957" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+<g data-endpoints="true" data-source="resource-6d6f64756c652e736572766963655b22617069225d2e7465727261666f726d5f646174612e776f726b65725b315d-current" data-target="resource-7465727261666f726d5f646174612e636f6e73756d6572-current" aria-hidden="true">
+<circle data-endpoint="source" cx="878" cy="1825" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+<g data-endpoints="true" data-source="resource-6d6f64756c652e736572766963655b22776562225d2e6d6f64756c652e6e65737465642e7465727261666f726d5f646174612e6c656166-current" data-target="resource-7465727261666f726d5f646174612e636f6e73756d6572-current" aria-hidden="true">
+<circle data-endpoint="source" cx="1298" cy="2785" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+<g data-endpoints="true" data-source="resource-6d6f64756c652e736572766963655b22776562225d2e7465727261666f726d5f646174612e776f726b65725b305d-current" data-target="resource-6d6f64756c652e736572766963655b22776562225d2e6d6f64756c652e6e65737465642e7465727261666f726d5f646174612e6c656166-current" aria-hidden="true">
+<circle data-endpoint="source" cx="878" cy="2573" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+<g data-endpoints="true" data-source="resource-6d6f64756c652e736572766963655b22776562225d2e7465727261666f726d5f646174612e776f726b65725b305d-current" data-target="resource-7465727261666f726d5f646174612e636f6e73756d6572-current" aria-hidden="true">
+<circle data-endpoint="source" cx="878" cy="2549" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+<g data-endpoints="true" data-source="resource-6d6f64756c652e736572766963655b22776562225d2e7465727261666f726d5f646174612e776f726b65725b315d-current" data-target="resource-7465727261666f726d5f646174612e636f6e73756d6572-current" aria-hidden="true">
+<circle data-endpoint="source" cx="878" cy="2417" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+<g data-endpoints="true" data-source="resource-7465727261666f726d5f646174612e696e646570656e64656e74-current" data-target="resource-7465727261666f726d5f646174612e6578706c69636974-current" aria-hidden="true">
+<circle data-endpoint="source" cx="380" cy="424" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+<g data-endpoints="true" data-source="resource-7465727261666f726d5f646174612e6e6574776f726b-current" data-target="resource-6d6f64756c652e7265706c6963615b305d2e7465727261666f726d5f646174612e6c656166-current" aria-hidden="true">
+<circle data-endpoint="source" cx="380" cy="693" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+<g data-endpoints="true" data-source="resource-7465727261666f726d5f646174612e6e6574776f726b-current" data-target="resource-6d6f64756c652e7265706c6963615b315d2e7465727261666f726d5f646174612e6c656166-current" aria-hidden="true">
+<circle data-endpoint="source" cx="380" cy="709" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+<g data-endpoints="true" data-source="resource-7465727261666f726d5f646174612e6e6574776f726b-current" data-target="resource-6d6f64756c652e736572766963655b22617069225d2e6d6f64756c652e6e65737465642e7465727261666f726d5f646174612e6c656166-current" aria-hidden="true">
+<circle data-endpoint="source" cx="290" cy="770" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+<g data-endpoints="true" data-source="resource-7465727261666f726d5f646174612e6e6574776f726b-current" data-target="resource-6d6f64756c652e736572766963655b22617069225d2e7465727261666f726d5f646174612e776f726b65725b305d-current" aria-hidden="true">
+<circle data-endpoint="source" cx="380" cy="741" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+<g data-endpoints="true" data-source="resource-7465727261666f726d5f646174612e6e6574776f726b-current" data-target="resource-6d6f64756c652e736572766963655b22617069225d2e7465727261666f726d5f646174612e776f726b65725b315d-current" aria-hidden="true">
+<circle data-endpoint="source" cx="380" cy="725" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+<g data-endpoints="true" data-source="resource-7465727261666f726d5f646174612e6e6574776f726b-current" data-target="resource-6d6f64756c652e736572766963655b22776562225d2e6d6f64756c652e6e65737465642e7465727261666f726d5f646174612e6c656166-current" aria-hidden="true">
+<circle data-endpoint="source" cx="60" cy="717" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+<g data-endpoints="true" data-source="resource-7465727261666f726d5f646174612e6e6574776f726b-current" data-target="resource-6d6f64756c652e736572766963655b22776562225d2e7465727261666f726d5f646174612e776f726b65725b305d-current" aria-hidden="true">
+<circle data-endpoint="source" cx="150" cy="770" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+<g data-endpoints="true" data-source="resource-7465727261666f726d5f646174612e6e6574776f726b-current" data-target="resource-6d6f64756c652e736572766963655b22776562225d2e7465727261666f726d5f646174612e776f726b65725b315d-current" aria-hidden="true">
+<circle data-endpoint="source" cx="220" cy="770" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+<g data-endpoints="true" data-source="resource-7465727261666f726d5f646174612e7265616479-current" data-target="resource-646174612e7465727261666f726d5f72656d6f74655f73746174652e61667465725f7265616479-current" aria-hidden="true">
+<circle data-endpoint="source" cx="380" cy="550" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+<g data-endpoints="true" data-source="resource-7465727261666f726d5f646174612e7265616479-current" data-target="resource-6d6f64756c652e7265706c6963615b305d2e7465727261666f726d5f646174612e6c656166-current" aria-hidden="true">
+<circle data-endpoint="source" cx="380" cy="568" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+<g data-endpoints="true" data-source="resource-7465727261666f726d5f646174612e7265616479-current" data-target="resource-6d6f64756c652e7265706c6963615b315d2e7465727261666f726d5f646174612e6c656166-current" aria-hidden="true">
+<circle data-endpoint="source" cx="136" cy="617" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+<g data-endpoints="true" data-source="resource-7465727261666f726d5f646174612e7265616479-current" data-target="resource-6d6f64756c652e736572766963655b22617069225d2e6d6f64756c652e6e65737465642e7465727261666f726d5f646174612e6c656166-current" aria-hidden="true">
+<circle data-endpoint="source" cx="304" cy="617" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+<g data-endpoints="true" data-source="resource-7465727261666f726d5f646174612e7265616479-current" data-target="resource-6d6f64756c652e736572766963655b22617069225d2e7465727261666f726d5f646174612e776f726b65725b305d-current" aria-hidden="true">
+<circle data-endpoint="source" cx="380" cy="586" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+<g data-endpoints="true" data-source="resource-7465727261666f726d5f646174612e7265616479-current" data-target="resource-6d6f64756c652e736572766963655b22617069225d2e7465727261666f726d5f646174612e776f726b65725b315d-current" aria-hidden="true">
+<circle data-endpoint="source" cx="60" cy="556" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+<g data-endpoints="true" data-source="resource-7465727261666f726d5f646174612e7265616479-current" data-target="resource-6d6f64756c652e736572766963655b22776562225d2e6d6f64756c652e6e65737465642e7465727261666f726d5f646174612e6c656166-current" aria-hidden="true">
+<circle data-endpoint="source" cx="60" cy="580" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+<g data-endpoints="true" data-source="resource-7465727261666f726d5f646174612e7265616479-current" data-target="resource-6d6f64756c652e736572766963655b22776562225d2e7465727261666f726d5f646174612e776f726b65725b305d-current" aria-hidden="true">
+<circle data-endpoint="source" cx="192" cy="617" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+<g data-endpoints="true" data-source="resource-7465727261666f726d5f646174612e7265616479-current" data-target="resource-6d6f64756c652e736572766963655b22776562225d2e7465727261666f726d5f646174612e776f726b65725b315d-current" aria-hidden="true">
+<circle data-endpoint="source" cx="248" cy="617" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
 </g>
 </g>
 </svg>

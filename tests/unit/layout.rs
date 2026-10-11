@@ -87,7 +87,8 @@ fn bundled_stars_avoid_cards_and_keep_individual_svg_relationships() {
         let svg = crate::svg::render(&graph, &layout);
         assert_eq!(svg.matches("marker-end=").count(), 3);
         assert!(!layout.junctions.is_empty());
-        assert_eq!(svg.matches("<circle ").count(), layout.junctions.len());
+        assert_eq!(svg.matches("<circle cx=").count(), layout.junctions.len());
+        assert_eq!(svg.matches("data-endpoint=\"source\"").count(), 3);
         for edge in &graph.edges {
             let (a, b) = edge.endpoints();
             assert!(svg.contains(&format!("<title>test.n{a} → test.n{b}</title>")));

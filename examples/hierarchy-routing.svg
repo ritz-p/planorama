@@ -88,6 +88,9 @@ No AWS endorsement is implied. Consult the AWS terms for other uses.
 <use href="#planorama-icon-aws-ec2" x="592" y="596" width="24" height="24" aria-hidden="true"/><text x="624" y="613" font-size="13" fill="#0f172a">module.root.test.node6</text>
 <text x="592" y="652" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
+<g data-endpoints="true" data-source="resource-746573742e6e6f646533-current" data-target="resource-746573742e6e6f646530-current" aria-hidden="true">
+<circle data-endpoint="source" cx="140" cy="480" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/><circle data-endpoint="target" cx="60" cy="480" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/><path data-endpoint-arrow="true" d="M 66.3 483.5 L 59.3 480 L 66.3 476.5 Z" fill="#94a3b8"/>
+</g>
 </g>
 </g>
 </svg>

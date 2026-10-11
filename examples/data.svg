@@ -118,6 +118,15 @@ No AWS endorsement is implied. Consult the AWS terms for other uses.
 <use href="#planorama-icon-aws-vpc" x="512" y="188" width="24" height="24" aria-hidden="true"/><text x="544" y="205" font-size="13" fill="#0f172a">module.root.data.aws_vpc.shared</text>
 <text x="512" y="244" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
+<g data-endpoints="true" data-source="resource-646174612e6177735f6c622e736861726564-current" data-target="resource-6177735f6563735f736572766963652e617070-current" aria-hidden="true">
+<circle data-endpoint="source" cx="380" cy="208" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+<g data-endpoints="true" data-source="resource-646174612e6177735f73656375726974795f67726f75702e736861726564-current" data-target="resource-6177735f696e7374616e63652e617070-current" aria-hidden="true">
+<circle data-endpoint="source" cx="380" cy="520" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/><circle data-endpoint="target" cx="580" cy="480" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/><path data-endpoint-arrow="true" d="M 573.7 476.5 L 580.7 480 L 573.7 483.5 Z" fill="#94a3b8"/>
+</g>
+<g data-endpoints="true" data-source="resource-646174612e6177735f7375626e65742e736861726564-current" data-target="resource-6177735f6563735f736572766963652e617070-current" aria-hidden="true">
+<circle data-endpoint="source" cx="1420" cy="212" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+<g data-endpoints="true" data-source="resource-646174612e6177735f7670632e736861726564-current" data-target="resource-646174612e6177735f7375626e65742e736861726564-current" aria-hidden="true">
+<circle data-endpoint="source" cx="980" cy="384" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
 </g>
 </g>
 </svg>
