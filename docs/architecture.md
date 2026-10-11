@@ -34,4 +34,12 @@ Even unfiltered CLI output passes through projection.
 
 Implementation submodules remain private; entry points are crate-visible.
 Unit tests can access private code through child modules loaded from `tests/unit`.
-Integration tests invoke the CLI. Run the Docker checks in the [README](../README.md).
+Reference-resolution matrices in `tests/unit/semantic/resolution.rs` call the parser,
+semantic transformation and diagnostic collector directly. Integration tests invoke
+the CLI for I/O, options, diagnostics, redaction, filtering and named-state contracts.
+Renderer feature tests reuse their SVG for snapshot assertions; dedicated tests
+cover repeated rendering and input reordering. Generic marker/stub checks use
+focused fixtures. Large-fixture geometry checks reuse their layout, while per-edge
+quality/reordering and CLI reproducibility retain scale coverage. Fixtures are
+local to each test, with no shared mutable state or test-order dependency.
+Run the Docker checks in the [README](../README.md).
