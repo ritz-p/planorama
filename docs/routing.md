@@ -195,6 +195,15 @@ Baseline and side-aware candidates share this ordering and marker-aware allocato
 Keeping a side preserves the existing offset; changing a side uses its projected
 slot. Top/bottom slots account for marker width, and left/right slots for height.
 Intentional bundle alignment and numbered terminal spacing remain constraints.
+After final height refinement and shortcuts, a bounded pass tries at most 32
+adjacent same-side port exchanges on independent resource cards whose actual
+paths cross. It reroutes both edges with their roles and opposite endpoints fixed,
+protecting cards, container boundaries, headers, endpoint occupancy and numbered
+corridors. Only fewer final crossings with no increase in overlap, total length
+or bends is accepted. Marker spacing is revalidated after each exchange. Shared
+terminals and paths through bundle junctions are excluded; container attachments
+are not permuted. Peer-center ordering remains the initial allocation, while
+this final pass handles approaches that disagree with that projection.
 Numbered relationships select their lowest-cost valid sides before routing and reserve their final
 badge corridors. Candidates are rejected when badges overlap cards, protected
 headers or other reserved terminals. Parallel relationships can choose the same

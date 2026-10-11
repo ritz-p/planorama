@@ -1,6 +1,7 @@
 use super::{Bounds, Point};
 mod coverage;
 pub(super) mod ports;
+pub(super) mod refinement;
 pub(super) mod scoring;
 pub(super) mod search;
 pub(super) mod shortcuts;
