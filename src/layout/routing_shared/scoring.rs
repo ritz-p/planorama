@@ -6,7 +6,7 @@ use std::collections::{BTreeMap, BTreeSet};
 #[path = "../../../tests/unit/layout/routing/scoring.rs"]
 mod tests;
 
-pub(in crate::layout) const CROSSING_COST: u128 = 512;
+pub(in crate::layout) const CROSSING_COST: u128 = 1;
 pub(in crate::layout) const BEND_COST: u128 = 96;
 
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord)]

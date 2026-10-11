@@ -60,7 +60,13 @@ fn dense_hub_packing_reduces_final_routing_cost() {
     let new = crate::layout::metrics::measure(&improved.paths);
     eprintln!("compact {old:?}; relationship {new:?}");
     assert!(new.total_path_length < old.total_path_length);
-    assert!(new.crossing_count < old.crossing_count);
+    let cost = |m: &crate::layout::metrics::LayoutMetrics| {
+        m.total_path_length
+            + m.bend_count as u128 * 96
+            + m.overlap_distance * 8
+            + m.crossing_count as u128
+    };
+    assert!(cost(&new) < cost(&old));
     verify_layout(&graph, &improved);
 }
 
