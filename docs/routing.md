@@ -52,6 +52,9 @@ without exchanging a compact container for a long strip. Within those bounds,
 the objective is Manhattan distance between projected peer centers plus the
 router's one-pixel crossing penalty for intersecting straight-line estimates.
 Repeated relationships weight both signals. Compactness breaks routing-cost ties.
+Reference content expands card width and height before packing; containers and
+scope panels enclose those actual bounds. Flat rank columns reserve the widest
+card in each rank, and routing ports use the expanded borders.
 The hub regressions cover useful shape changes and the shape bounds under heavy
 relationship weights; variable-height cases use actual card centers.
 Crossing estimates sample at most 256 distinct segments in geometric order,
@@ -245,7 +248,9 @@ The crossing policy replaces older tests that demanded crossing-free detours:
 they now require short crossing routes, including at stub/grid junctions and after
 shortcutting. Hard obstacles, overlap avoidance and terminal reservations remain tested.
 The large-fixture regression checks short subnet-to-ECS paths, a short IGW-to-NAT
-path with limited hidden length, and zero visible straight-frame overlap. These
+path with limited hidden length, and zero visible straight-frame overlap. The
+gateway limit is its shortest valid route plus 128 pixels and at most three bends,
+so larger content-driven cards do not fail an obsolete absolute-distance cap. These
 checks use the current card geometry and repeat after edge reordering; they do
 not require a path to pass behind a particular container.
 Performance measurements are documented in [benchmarks](benchmarks.md).

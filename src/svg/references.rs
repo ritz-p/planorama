@@ -1,6 +1,10 @@
 use crate::model::architecture::{Graph, Node};
-use crate::view::references::{Row, VISIBLE_LIMIT, rows};
+use crate::view::references::{LINE_HEIGHT, Row, rows, text_width};
 use std::fmt::Write;
+
+#[cfg(test)]
+#[path = "../../tests/unit/svg/references.rs"]
+mod tests;
 
 fn description(row: &Row<'_>) -> String {
     let reference = row.reference;
@@ -51,7 +55,9 @@ pub(super) fn render(graph: &Graph, node: &Node, x: usize, y: usize, width: usiz
         r##"<g data-resource-references="true"><title>{}</title><text x="{x}" y="{y}" font-size="11" font-weight="700" fill="#475569">{heading}</text>"##,
         super::escape(&complete)
     );
-    for (index, row) in rows.iter().take(VISIBLE_LIMIT).enumerate() {
+    let mut row_y = y + LINE_HEIGHT;
+    let text_width = text_width(node).min(width);
+    for row in &rows {
         let available = row.target.and_then(|target| {
             if target.state.is_some() {
                 return None;
@@ -73,24 +79,7 @@ pub(super) fn render(graph: &Graph, node: &Node, x: usize, y: usize, width: usiz
                 )
             })
             .or_else(|| available.map(super::identity::resource));
-        let label = match (row.target, available) {
-            (Some(target), _) if remote.is_some() => format!(
-                "{}: {}:{}",
-                row.reference.label,
-                target.state.as_ref().unwrap().as_str(),
-                target.id.address
-            ),
-            (_, Some(target)) => format!(
-                "{}: {}",
-                row.reference.label,
-                target.resource_address().local()
-            ),
-            (Some(target), None) => format!(
-                "Unavailable — {}: {}",
-                row.reference.label, target.id.address
-            ),
-            (None, _) => format!("{}: unresolved", row.reference.label),
-        };
+        let label = row.label(href.is_some());
         if let Some(href) = &href {
             write!(
                 svg,
@@ -116,18 +105,21 @@ pub(super) fn render(graph: &Graph, node: &Node, x: usize, y: usize, width: usiz
             )
             .unwrap();
         }
-        writeln!(
-            svg,
-            r##"<title>{}</title><text x="{x}" y="{}" font-size="11" fill="#334155">{}</text>{}"##,
-            super::escape(&description(row)),
-            y + 18 * (index + 1),
-            super::escape(&super::shorten(&label, (width / 8).max(1))),
-            if href.is_some() { "</a>" } else { "</g>" }
-        )
-        .unwrap();
-    }
-    if rows.len() > VISIBLE_LIMIT {
-        writeln!(svg, r##"<text x="{x}" y="{}" font-size="11" fill="#64748b">+{} more (see full title)</text>"##, y + 18 * (VISIBLE_LIMIT + 1), rows.len() - VISIBLE_LIMIT).unwrap();
+        write!(svg, "<title>{}</title>", super::escape(&description(row))).unwrap();
+        for (line, text) in crate::view::text::wrap(&label, text_width / 8)
+            .iter()
+            .enumerate()
+        {
+            writeln!(
+                svg,
+                r##"<text x="{x}" y="{}" font-family="monospace" font-size="11" fill="#334155">{}</text>"##,
+                row_y + line * LINE_HEIGHT,
+                super::escape(text)
+            )
+            .unwrap();
+        }
+        svg.push_str(if href.is_some() { "</a>" } else { "</g>" });
+        row_y += row.line_count(text_width) * LINE_HEIGHT;
     }
     svg.push_str("</g>\n");
     svg

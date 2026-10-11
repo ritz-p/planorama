@@ -24,7 +24,7 @@ pub(super) fn cards(graph: &Graph, address_format: super::AddressFormat) -> Vec<
         }
         if let Some(previous) = &node.previous_address { lines.push(format!("Moved from: {previous}")); }
         if let Some(key) = &node.deposed_key { lines.push(format!("Deposed: {key}")); }
-        let width = card_width(lines.iter());
+        let width = card_width(lines.iter()).max(crate::view::references::width(node));
         let mut svg = format!(r#"<g id="{}" data-architecture-id="{}" data-entity-kind="terraform" data-placement="logical" data-terraform-address="{}" data-qualified-address="{}"{}><title>{} — {}{}</title>"#,
             super::identity::resource(node), super::escape(node.entity.id.as_str()), super::escape(&node.address), super::escape(&node.resource_address().qualified()), super::operations::attributes(&node.metadata), super::escape(&address), super::escape(&operation), super::escape(&super::operations::details(&node.metadata)));
         svg.insert_str(svg.find('>').unwrap(), super::roles::attributes(node.role));

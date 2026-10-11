@@ -1,4 +1,5 @@
 use super::*;
+use crate::layout::NODE_WIDTH;
 use crate::model::EdgeKind;
 use crate::{
     model::{Action, Edge, EntityMode, Node},

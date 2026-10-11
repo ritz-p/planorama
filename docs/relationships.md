@@ -7,9 +7,11 @@ other verified references use References. Graph-only references such as
 `depends_on` use Dependency, not an attribute-specific usage label. Logical cards
 show their own direct references, including references to spatial resources.
 Incomplete references show unresolved without asserting candidate targets.
-Filtered targets show Unavailable without a dangling link. Up to four rows are
-visible; an overflow count and accessible title retain the complete list and
-full addresses. Card heights reserve space above the footer and placement note.
+Filtered targets show Unavailable without a dangling link. All rows and full
+Terraform addresses are visible, including module/instance keys and remote state
+qualifiers. Long labels wrap without ellipsis; card widths and heights grow before
+packing and routing. The same metrics apply to logical cards and reserve space
+above the footer and placement note. Accessible titles supplement the visible text.
 
 CloudWatch alarms use Monitors and inverse Monitored by rows only with the
 [verified monitoring evidence](aws.md) required by the AWS projection. These
