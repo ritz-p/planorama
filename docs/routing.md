@@ -130,7 +130,7 @@ badge corridors. Candidates are rejected when badges overlap cards, protected
 headers or other reserved terminals. Parallel relationships can choose the same
 side pair while retaining distinct slots.
 
-Numbered ports at both ends of undirected associations, or the destination of
+Numbered ports at both ends of undirected relationships, or the destination of
 directed relationships, reserve badge-sized slots; other incident ports retain
 normal spacing. Adjacent terminal corridors are merged before routing. Orthogonal
 search indexes blocked grid edges and soft-card occlusion costs once per search,

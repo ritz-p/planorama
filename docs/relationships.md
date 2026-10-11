@@ -2,7 +2,8 @@
 
 Dependency lines are thin and solid. Ordinary associations are undirected and
 dashed (7/4), with no arrowheads. Lowered routes retain directional arrowheads.
-Inferred connections are thicker and dotted (2/4 with round caps). These
+Inferred connections are undirected, without arrowheads, and thicker and dotted
+(2/4 with round caps). Connection titles use `↔`. These
 patterns remain distinct in grayscale. Containment uses nested boundaries;
 an edge represented by nesting does not receive a redundant line.
 
@@ -27,7 +28,7 @@ inferred relationships receive no resource number. Numbering sorts by source
 identity, then endpoints and relationship kind, independent of edge-vector order.
 Filtering can renumber the visible subset; named states have separate indexes.
 
-Undirected associations display the same number near both endpoints, with one
+Undirected relationships display the same number near both endpoints, with one
 relationship-index entry. Directed relationships display it before the destination.
 Markers align with the terminal segment, 10 pixels from the endpoint to leave
 room for directed arrowheads. Endpoints with
