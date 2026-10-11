@@ -357,3 +357,38 @@ fn crossing(first: &[Point], second: &[Point]) -> Option<(usize, usize)> {
         false => None,
     }
 }
+#[test]
+fn search_borders_follow_current_container_masks() {
+    let outer = Bounds {
+        origin: Point { x: 100, y: 100 },
+        width: 10000,
+        height: 10000,
+    };
+    let partial = Bounds {
+        origin: Point { x: 80, y: 80 },
+        width: 100,
+        height: 100,
+    };
+    let mut frames = vec![outer, partial];
+    frames.extend((0..1000).map(|i| Bounds {
+        origin: Point {
+            x: 120 + i * 8,
+            y: 120 + i * 8,
+        },
+        width: 40,
+        height: 40,
+    }));
+    let mut scorer = Scorer::default();
+    scorer.set_borders(&frames);
+    assert_eq!(scorer.borders().count(), frames.len());
+    scorer.set_soft(vec![Occluder {
+        bounds: outer,
+        cost: 1,
+        step: 2,
+    }]);
+    assert_eq!(scorer.borders().copied().collect::<Vec<_>>(), vec![partial]);
+    scorer.set_soft(vec![outer]);
+    assert_eq!(scorer.borders().count(), frames.len());
+    scorer.set_soft(Vec::<Occluder>::new());
+    assert_eq!(scorer.borders().count(), frames.len());
+}

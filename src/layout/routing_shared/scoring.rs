@@ -77,8 +77,20 @@ impl Scorer {
         }
     }
 
-    pub(in crate::layout) fn borders(&self) -> &[Bounds] {
-        &self.borders
+    pub(in crate::layout) fn borders(&self) -> impl Iterator<Item = &Bounds> {
+        self.borders
+            .iter()
+            .filter(|frame| Self::border_visible(frame, &self.soft))
+    }
+
+    fn border_visible(frame: &Bounds, soft: &[Occluder]) -> bool {
+        !soft.iter().any(|o| {
+            o.step == 2
+                && o.origin.x <= frame.origin.x
+                && o.origin.y <= frame.origin.y
+                && o.right() >= frame.right()
+                && o.origin.y + o.height >= frame.origin.y + frame.height
+        })
     }
 
     fn border_cost(&self, a: Point, b: Point, soft: &[Occluder]) -> u128 {
@@ -90,15 +102,7 @@ impl Scorer {
         frames
             .into_iter()
             .flatten()
-            .filter(|frame| {
-                !soft.iter().any(|o| {
-                    o.step == 2
-                        && o.origin.x <= frame.origin.x
-                        && o.origin.y <= frame.origin.y
-                        && o.right() >= frame.right()
-                        && o.origin.y + o.height >= frame.origin.y + frame.height
-                })
-            })
+            .filter(|frame| Self::border_visible(frame, soft))
             .map(|frame| {
                 let (from, to, low, high) = if a.y == b.y
                     && (a.y == frame.origin.y || a.y == frame.origin.y + frame.height)
