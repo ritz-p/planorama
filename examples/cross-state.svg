@@ -3,7 +3,7 @@
 <rect width="100%" height="100%" fill="#ffffff"/><text x="40" y="35" font-family="ui-monospace, Consolas, monospace" font-size="25" fill="#0f172a">Terraform plans</text>
 <metadata id="cross-state-relationships">[{&quot;from&quot;:&quot;aws_subnet.app&quot;,&quot;from_state&quot;:&quot;producer&quot;,&quot;output&quot;:&quot;subnet&quot;,&quot;output_action&quot;:null,&quot;remote&quot;:&quot;data.terraform_remote_state.network&quot;,&quot;to&quot;:&quot;aws_instance.app&quot;,&quot;to_state&quot;:&quot;consumer&quot;},{&quot;from&quot;:&quot;aws_subnet.app&quot;,&quot;from_state&quot;:&quot;producer&quot;,&quot;output&quot;:&quot;both&quot;,&quot;output_action&quot;:null,&quot;remote&quot;:&quot;data.terraform_remote_state.network&quot;,&quot;to&quot;:&quot;aws_instance.other&quot;,&quot;to_state&quot;:&quot;consumer&quot;},{&quot;from&quot;:&quot;aws_subnet.other&quot;,&quot;from_state&quot;:&quot;producer&quot;,&quot;output&quot;:&quot;both&quot;,&quot;output_action&quot;:null,&quot;remote&quot;:&quot;data.terraform_remote_state.network&quot;,&quot;to&quot;:&quot;aws_instance.other&quot;,&quot;to_state&quot;:&quot;consumer&quot;}]</metadata>
 <g id="state-636f6e73756d6572-state" data-state-id="consumer"><text x="40" y="85" font-family="ui-monospace, Consolas, monospace" font-size="20" font-weight="700" fill="#0f172a">State: consumer</text>
-<svg y="100" xmlns="http://www.w3.org/2000/svg" width="1040" height="1120" viewBox="0 0 1040 1120" role="img" aria-labelledby="state-636f6e73756d6572-title state-636f6e73756d6572-description">
+<svg y="100" xmlns="http://www.w3.org/2000/svg" width="1120" height="1120" viewBox="0 0 1120 1120" role="img" aria-labelledby="state-636f6e73756d6572-title state-636f6e73756d6572-description">
 <title id="state-636f6e73756d6572-title">Terraform plan</title>
 <desc id="state-636f6e73756d6572-description">3 resources, 2 reference edges. Arrows point from dependencies to dependent resources. References are conservative, not Terraform execution order. Thin solid: dependency. Dashed: association. Thick dotted: connection. Nested boxes: containment. Edge color preserves the Terraform action when available.</desc>
 <defs><marker id="state-636f6e73756d6572-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/></marker><metadata id="state-636f6e73756d6572-planorama-icons-license">AWS Architecture Icons, release 07312026.
@@ -72,7 +72,7 @@ SOFTWARE.
 <rect x="600" y="100" width="12" height="12" fill="#faf5ff" stroke="#7e22ce"/><text x="619" y="111" font-size="12" fill="#7e22ce">read (0)</text>
 <rect x="740" y="100" width="12" height="12" fill="#f8fafc" stroke="#64748b"/><text x="759" y="111" font-size="12" fill="#64748b">unchanged (0)</text>
 <rect x="880" y="100" width="12" height="12" fill="#fefce8" stroke="#854d0e"/><text x="899" y="111" font-size="12" fill="#854d0e">other (3)</text>
-<g id="state-636f6e73756d6572-relationship-legend" font-size="12" fill="#475569" transform="translate(40 148)"><rect width="960" height="540" rx="12" fill="#f8fafc" stroke="#cbd5e1"/>
+<g id="state-636f6e73756d6572-relationship-legend" font-size="12" fill="#475569" transform="translate(40 148)"><rect width="1040" height="540" rx="12" fill="#f8fafc" stroke="#cbd5e1"/>
 <text x="16" y="29" font-size="15" font-weight="700" fill="#334155">Relationship lines</text>
 <text x="16" y="56">Line color shows the relationship&apos;s own Terraform action, independently of endpoint-card actions.</text>
 <path data-legend-action="none" d="M 16 77 H 42" fill="none" stroke="#94a3b8" stroke-width="1.5"/><text x="50" y="82">no independent change</text>
@@ -83,8 +83,8 @@ SOFTWARE.
 <path data-legend-kind="dependency" data-directionality="directed" d="M 21 143 H 153" fill="none" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#state-636f6e73756d6572-arrow)"/>
 <circle data-legend-endpoint="source" cx="21" cy="143" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
 <text x="174" y="144" font-weight="700">Dependency</text>
-<text x="174" y="162">Thin solid arrow from the referenced resource to the dependent resource; not exact Terraform</text>
-<text x="174" y="180">execution order.</text>
+<text x="174" y="162">Thin solid arrow from the referenced resource to the dependent resource; not exact Terraform execution</text>
+<text x="174" y="180">order.</text>
 </g>
 <g data-legend-entry="association">
 <g data-legend-sample="association">
@@ -97,8 +97,8 @@ SOFTWARE.
 </g>
 </g>
 <text x="174" y="210" font-weight="700">Association</text>
-<text x="174" y="228">Dashed, undirected relationship. Matching badges identify the same Terraform-backed relationship</text>
-<text x="174" y="246">at both attachment points.</text>
+<text x="174" y="228">Dashed, undirected relationship. Matching badges identify the same Terraform-backed relationship at both</text>
+<text x="174" y="246">attachment points.</text>
 </g>
 <g data-legend-entry="directed-association">
 <g data-legend-sample="directed-association">
@@ -112,16 +112,16 @@ SOFTWARE.
 </g>
 </g>
 <text x="174" y="276" font-weight="700">Directed Association</text>
-<text x="174" y="294">Dashed line from a Route to its next hop. The destination arrow expresses direction; matching</text>
-<text x="174" y="312">badges identify the same relationship.</text>
+<text x="174" y="294">Dashed line from a Route to its next hop. The destination arrow expresses direction; matching badges</text>
+<text x="174" y="312">identify the same relationship.</text>
 </g>
 <g data-legend-entry="connection">
 <g data-legend-sample="connection">
 <path data-legend-kind="connection" data-directionality="undirected" d="M 21 341 H 153" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-dasharray="0 3.5" stroke-linecap="round"/>
 <circle data-legend-endpoint="source" cx="21" cy="341" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/><circle data-legend-endpoint="target" cx="153" cy="341" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
 <text x="174" y="342" font-weight="700">Connection</text>
-<text x="174" y="360">Thicker dotted line shows an inferred, undirected connection; this does not guarantee actual</text>
-<text x="174" y="378">network reachability.</text>
+<text x="174" y="360">Thicker dotted line shows an inferred, undirected connection; this does not guarantee actual network</text>
+<text x="174" y="378">reachability.</text>
 </g>
 <g data-legend-entry="containment">
 <g data-legend-sample="containment">
@@ -130,10 +130,10 @@ SOFTWARE.
 <text x="174" y="408" font-weight="700">Containment</text>
 <text x="174" y="426">Nested boxes show containment; nesting replaces a redundant relationship line.</text>
 </g>
-<text x="16" y="456">Hollow circles mark resource/card attachment points; neither end of an undirected line is a directional start.</text>
-<text x="16" y="474">Filled internal dots mark bundle junctions.</text>
-<text x="16" y="500">Matching [N] badges identify the same Terraform-backed relationship and its Relationship Resources entry. They do</text>
-<text x="16" y="518">not express direction or count connections. Reference-only Connections and Dependencies have no number.</text>
+<text x="16" y="456">Hollow circles mark resource/card attachment points; neither end of an undirected line is a directional start. Filled internal</text>
+<text x="16" y="474">dots mark bundle junctions.</text>
+<text x="16" y="500">Matching [N] badges identify the same Terraform-backed relationship and its Relationship Resources entry. They do not express</text>
+<text x="16" y="518">direction or count connections. Reference-only Connections and Dependencies have no number.</text>
 </g>
 <g transform="translate(0 552)">
 <g data-architecture="true" transform="translate(0 0)">
@@ -167,7 +167,7 @@ SOFTWARE.
 </svg>
 </g>
 <g id="state-70726f6475636572-state" data-state-id="producer"><text x="40" y="1265" font-family="ui-monospace, Consolas, monospace" font-size="20" font-weight="700" fill="#0f172a">State: producer</text>
-<svg y="1280" xmlns="http://www.w3.org/2000/svg" width="1100" height="552" viewBox="0 0 1100 552" role="img" aria-labelledby="state-70726f6475636572-title state-70726f6475636572-description">
+<svg y="1280" xmlns="http://www.w3.org/2000/svg" width="1120" height="552" viewBox="0 0 1120 552" role="img" aria-labelledby="state-70726f6475636572-title state-70726f6475636572-description">
 <title id="state-70726f6475636572-title">Terraform plan</title>
 <desc id="state-70726f6475636572-description">2 resources, 0 reference edges. Arrows point from dependencies to dependent resources. References are conservative, not Terraform execution order. Thin solid: dependency. Dashed: association. Thick dotted: connection. Nested boxes: containment. Edge color preserves the Terraform action when available.</desc>
 <defs><marker id="state-70726f6475636572-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/></marker><metadata id="state-70726f6475636572-planorama-icons-license">AWS Architecture Icons, release 07312026.

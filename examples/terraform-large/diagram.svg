@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="4306" height="3997" viewBox="0 0 4306 3997" role="img" aria-labelledby="title description">
+<svg xmlns="http://www.w3.org/2000/svg" width="4306" height="4013" viewBox="0 0 4306 4013" role="img" aria-labelledby="title description">
 <title id="title">Terraform plan</title>
 <desc id="description">46 resources (28 spatial cards, 8 logical resources in 7 group cards, 2 embedded route cards) · 74 relationships Thin solid: dependency. Dashed: association. Thick dotted: connection. Nested boxes: containment. Edge color preserves the Terraform action when available.</desc>
 <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/></marker><marker id="arrow-create" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#047857"/></marker><metadata id="planorama-icons-license">AWS Architecture Icons, release 07312026.
@@ -392,7 +392,7 @@ No AWS endorsement is implied. Consult the AWS terms for other uses.
 </g>
 </g></g>
 </g>
-<g data-architecture="true" transform="translate(0 1054)">
+<g data-architecture="true" transform="translate(0 1070)">
 <g data-container="resource-6d6f64756c652e6e6574776f726b2e6177735f7670632e6d61696e-current"><title>module.network.aws_vpc.main</title><rect x="632" y="160" width="3190" height="1954" rx="12" fill="#ecfdf5" stroke="#047857" stroke-width="2" data-mode="managed"/></g>
 <g data-container="resource-6d6f64756c652e6e6574776f726b2e6177735f7375626e65742e707269766174655f61-current"><title>module.network.aws_subnet.private_a</title><rect x="1802" y="520" width="808" height="713" rx="12" fill="#d1fae5" stroke="#047857" stroke-width="2" data-mode="managed"/></g>
 <g data-container="resource-6d6f64756c652e6e6574776f726b2e6177735f7375626e65742e707269766174655f62-current"><title>module.network.aws_subnet.private_b</title><rect x="1802" y="1317" width="808" height="713" rx="12" fill="#d1fae5" stroke="#047857" stroke-width="2" data-mode="managed"/></g>
