@@ -24,17 +24,38 @@ cards, paths and relationship badges together; annotation cards never enter
 `Layout` or routing obstacles. Named-state endpoint coordinates include this shift.
 Relationship index cards group up to 10 complete numbered entries per card,
 continuing to the right before wrapping within their own neutral section. Logical
-components share a purple parent, with a card per component and action-colored
-member reference cards inside it.
+components share a purple parent, with a card per component and a purple heading.
+Members use neutral text rows without individual backgrounds, borders or card
+wrappers. Each complete wrapped item has one underline in its canonical resource
+action color. Row measurements reserve the wrapped text, import badge, underline
+and spacing before the next member.
 
 Terraform-backed Logical Resources share a cyan parent above Logical Components;
-the relationship index follows both parents. Logical cards use their original
-resource DOM IDs and retain mode, action,
-move/import/deposed information. `view::spatial` projects only geometry inputs;
-the semantic and filtered graphs keep logical nodes and all selected relationships.
+the relationship index follows both parents. Within each state, `svg/logical.rs`
+groups selected logical nodes by canonical provider source, resource type and mode.
+The provider key uses `provider.source()`, so explicit and inferred AWS identities
+with the same source share a group. Different provider sources or managed/data
+modes stay separate. Provider aliases, modules, instances and current/deposed
+variants do not add grouping keys; their individual identities and provenance
+remain intact. Grouping does not change which resources have logical placement.
+
+Each group has one neutral card with a wrapped resource-type/mode heading and
+canonical provider-source line. Its resources appear directly as rows without
+nested cards or a combined group action. Each row retains the full selected
+address, action label, role, Uses/Dependencies, service icon and import/move/deposed
+information, with one action-colored underline below its complete content.
+Data rows use a dashed underline. Groups sort by their keys and rows by stable
+architecture identity. Every row remains visible; height grows with all wrapped
+content, badges, underlines and inter-row spacing without a row or height cap.
+
+Logical rows retain their original resource DOM IDs and metadata; resource links
+target the specific row. Group cards do not introduce architecture identities.
+`view::spatial` projects only geometry inputs; the semantic and filtered graphs
+keep logical nodes and all selected relationships.
 Layout maps spatial results back to graph indices: logical nodes have zero-size
 bounds and incident edges have empty paths. They create no routing obstacles.
-The SVG summary distinguishes spatial and logical cards while retaining totals.
+The SVG summary distinguishes spatial cards, logical resources and logical group
+cards while retaining total resource and action counts.
 Value-free reference evidence is available in `resource-references` metadata.
 
 Verified Route ownership uses the same projection boundary: the Route node remains
@@ -50,7 +71,8 @@ determine intrinsic width and height before flat/nested packing, scope placement
 and routing. Reference-driven widths grow from 320 to 640 pixels; longer labels
 wrap at 11px monospace with 18px line spacing and no row limit. Measurements
 reserve the Unavailable prefix so filtering and spatial projection cannot
-underestimate content. Logical annotation cards use the same reference metrics.
+underestimate content. Logical-resource rows use the same reference metrics, and
+group dimensions include every row's measured content.
 Full Terraform addresses include module/instance keys, remote state and deposed
 identity. UI links never add routing edges.
 

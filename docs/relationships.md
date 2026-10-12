@@ -1,17 +1,20 @@
 # Relationship styles
 
 Spatial cards show a Uses section for verified references to top logical-resource
-cards. Known attributes use Cluster, Task definition, Instance profile, AMI,
+rows. Links target the individual resource, not its group card. Known attributes
+use Cluster, Task definition, Instance profile, AMI,
 Role, Execution role or Task role;
 other verified references use References. Graph-only references such as
-`depends_on` use Dependency, not an attribute-specific usage label. Logical cards
-show their own direct references, including references to spatial resources.
+`depends_on` use Dependency, not an attribute-specific usage label. Logical-resource
+rows show their own direct references, including references to spatial resources.
 Incomplete references show unresolved without asserting candidate targets.
 Filtered targets show Unavailable without a dangling link. All rows and full
 Terraform addresses are visible, including module/instance keys and remote state
 qualifiers. Long labels wrap without ellipsis; card widths and heights grow before
-packing and routing. The same metrics apply to logical cards and reserve space
-above the footer and placement note. Accessible titles supplement the visible text.
+packing and routing. The same metrics apply to logical-resource rows, whose group
+cards reserve their complete reference content before each action underline and
+the next resource. Spatial cards reserve space above the footer and placement
+note. Accessible titles supplement the visible text.
 
 CloudWatch alarms use Monitors and inverse Monitored by rows only with the
 [verified monitoring evidence](aws.md) required by the AWS projection. These
