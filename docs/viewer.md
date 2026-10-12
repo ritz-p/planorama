@@ -1,0 +1,69 @@
+# Local HTML viewer
+
+Use `--format html` to generate one file containing the SVG, resource index,
+styles and JavaScript. Open it directly in a browser with JavaScript enabled;
+no server, network, remote assets or runtime installation is required.
+
+```sh
+planorama plan.json --format html -o diagram.html
+planorama plan.json --changed-only --format html -o changes.html
+planorama --state app=app.json --state network=network.json --format html -o architecture.html
+planorama plan.json --format html -o - > diagram.html
+```
+
+The default remains SVG and `diagram.svg`. HTML defaults to `diagram.html`;
+`-o` sets the destination, not the format. Existing address formatting, focus,
+changed-only selection, remote-state mappings and diagnostics work in both modes.
+
+Search matches the complete native and qualified address, architecture identity,
+module, state, resource type, managed/data mode and deposed key. Space-separated
+terms must all match. Results retain full addresses and state/mode distinctions.
+Selecting a result or diagram resource reveals its individual stable target,
+including nested logical-resource rows and embedded Route cards.
+Lowered association resources use their visible Relationship Resources entry;
+their selection identifies the original relationship endpoints and paths.
+
+Selection details separate incoming and outgoing rendered edges, undirected
+relationships, Uses/reference targets, inverse references and Logical Component
+membership. Links navigate only to targets present in the generated diagram.
+Unavailable and unresolved reference rows remain explanatory text. References
+and membership never become routed edges. Selection outlines resources and
+emphasizes existing paths without changing direction, action color, markers,
+line patterns, bundles or routing. Clear selection restores their normal styling.
+
+| Operation | Controls |
+| --- | --- |
+| Search | Type in the search field; Enter selects the first result |
+| Results | Arrow Down enters results; Up/Down and Home/End navigate; Enter selects |
+| Resource links | Tab to a resource or link, then Enter; clicking also selects |
+| Clear selection | Escape or Clear selection |
+| Pan | Drag or scroll; arrow keys while the diagram has focus |
+| Zoom | +/− buttons, +/− keys in the diagram, or Ctrl/Command+scroll |
+| Fit entire view | Fit to view or F while the diagram has focus |
+
+The viewer consumes only selected view identities and rendered metadata. It does
+not embed or reparse the input plan. The index explicitly lists identity fields;
+attribute values are not added to it or to scripts. HTML also omits Route
+destination constants from diagram text, titles and metadata; standalone SVG
+retains its existing destination display. Graph selection and routed geometry
+remain unchanged.
+JSON escapes HTML delimiters, and dynamic UI text uses DOM text nodes rather than
+executable markup. CLI-filtered resources do not become searchable. Existing
+unavailable-reference descriptions can still identify a target outside the view.
+The viewer provides no editing, persistence or additional graph filtering.
+
+The [representative example](../examples/viewer.html) includes logical resources,
+Uses references, unresolved references, managed/data resources and component
+membership. Regenerate it from the committed fixture:
+
+```sh
+docker compose exec -T dev cargo run --locked -- tests/fixtures/viewer-plan.json --format html -o examples/viewer.html
+```
+
+HTML is maintained with this command, separately from the SVG writeback manifest;
+the representative HTML snapshot is checked by the CLI integration tests.
+Rust CLI tests check safe serialization, target IDs, selection and unchanged SVG
+content. `docker compose exec -T dev python3 tests/browser/viewer.py` runs Chromium
+against local files with networking disabled, checking search, keyboard controls,
+navigation, references, membership and preservation of edge geometry and styles.
+Build the CLI with `cargo build --locked` in the same container first.

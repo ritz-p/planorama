@@ -1,0 +1,28 @@
+{
+  "format_version": "1.2",
+  "resource_changes": [
+    {"address": "aws_lb.app", "type": "aws_lb", "change": {"actions": ["create"]}},
+    {"address": "aws_lb_listener.http", "type": "aws_lb_listener", "change": {"actions": ["update"]}},
+    {"address": "aws_ecs_cluster.app", "type": "aws_ecs_cluster", "change": {"actions": ["no-op"]}},
+    {"address": "aws_ecs_task_definition.app", "type": "aws_ecs_task_definition", "change": {"actions": ["create"]}},
+    {"address": "aws_ecs_service.app", "type": "aws_ecs_service", "change": {"actions": ["update"]}},
+    {"address": "aws_iam_role.app", "type": "aws_iam_role", "change": {"actions": ["create"]}},
+    {"address": "module.worker.aws_iam_role.app", "module_address": "module.worker", "type": "aws_iam_role", "change": {"actions": ["no-op"]}},
+    {"address": "data.aws_iam_role.app", "mode": "data", "type": "aws_iam_role", "change": {"actions": ["read"]}}
+  ],
+  "configuration": {
+    "root_module": {
+      "resources": [
+        {"address": "aws_lb_listener.http", "expressions": {"load_balancer_arn": {"references": ["aws_lb.app.arn"]}}},
+        {"address": "aws_ecs_service.app", "expressions": {
+          "cluster": {"references": ["aws_ecs_cluster.app.id"]},
+          "task_definition": {"references": ["aws_ecs_task_definition.app.arn"]}
+        }},
+        {"address": "aws_ecs_task_definition.app", "expressions": {
+          "execution_role_arn": {"references": ["aws_iam_role.app.arn"]},
+          "task_role_arn": {"references": ["aws_iam_role.missing.arn"]}
+        }}
+      ]
+    }
+  }
+}

@@ -29,6 +29,10 @@ Name each input explicitly with repeatable `--state ID=PATH` arguments:
 planorama --state network=network/plan.json --state application=application/plan.json -o architecture.svg
 ```
 
+Add `--format html -o architecture.html` for a [local searchable viewer](viewer.md).
+Search results include state identity, and selection follows the existing
+state-qualified target IDs and cross-state path directions.
+
 IDs are case-sensitive, unique within an invocation, and contain 1–64 ASCII letters, digits, periods, underscores or hyphens. The first `=` separates the ID from the path, so paths can contain spaces or further `=` characters (quote the entire argument when necessary). Planorama does not infer a persistent backend identity from filenames, directories, Terraform workspaces or remote services. Choose consistent IDs across runs.
 
 One named input may use `-` for stdin. Multiple stdin inputs and mixing named inputs with the existing positional input are errors. The existing `planorama plan.json` and `planorama -` forms keep their rendering and diagnostic behavior. `--address-format`, `--diagnostics`, and `-o` also work with named inputs. Every input is validated before output is written, and the output cannot overwrite any input file.

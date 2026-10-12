@@ -40,6 +40,8 @@ Destinations come only from validated configuration constants: IPv4/IPv6 CIDRs
 or prefix-list IDs. Evaluated values are never displayed. Sensitive masks, unknown
 values, invalid/ambiguous constants and historical delete/deposed configurations
 use an unresolved fallback. No variable or expression evaluation is attempted.
+The optional [HTML viewer](viewer.md) omits even validated destination constants
+from text, titles and metadata, while retaining Route identities and path geometry.
 
 Inline `aws_route_table.route` constants and structured entries render as separately
 labeled entries using the table's action. They create no Terraform identities or
