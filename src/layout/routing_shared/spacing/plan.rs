@@ -18,6 +18,7 @@ pub(super) struct Corridor {
     pub(super) minimum_margin: usize,
     pub(super) preferred_margin: usize,
     pub(super) urgent: bool,
+    pub(super) deficit_cost: u128,
     pub(super) hidden: BTreeSet<usize>,
 }
 
@@ -53,10 +54,11 @@ fn join(groups: &mut Vec<Vec<Segment>>, mut joined: Vec<Segment>) {
 pub(super) fn corridors(graph: &Graph, layout: &Layout<'_>) -> Vec<Corridor> {
     let pairs = pairs(graph, &layout.paths, PREFERRED - 1);
     let mut groups: Vec<Vec<Segment>> = Vec::new();
-    for (a, b, _) in pairs {
+    for &(a, b, _) in &pairs {
         join(&mut groups, vec![a, b]);
     }
     let mut border_demand = BTreeMap::<_, (usize, usize, bool)>::new();
+    let mut border_cost = vec![0; layout.paths.len()];
     let mut contact_frames = BTreeMap::<_, BTreeSet<usize>>::new();
     let masks: Vec<_> = graph
         .edges
@@ -74,7 +76,9 @@ pub(super) fn corridors(graph: &Graph, layout: &Layout<'_>) -> Vec<Corridor> {
             layout,
             &graph.edges[edge],
         ));
-        let urgent = scorer.border_metrics(path).minimum_deficit > 0;
+        let metrics = scorer.border_metrics(path);
+        let urgent = metrics.minimum_deficit > 0;
+        border_cost[edge] = metrics.cost();
         for contact in scorer.border_contacts(path) {
             if let Some(node) = contact.frame.node {
                 contact_frames
@@ -156,6 +160,23 @@ pub(super) fn corridors(graph: &Graph, layout: &Layout<'_>) -> Vec<Corridor> {
         } else {
             BTreeSet::new()
         };
+        let line_deficit: usize = pairs
+            .iter()
+            .filter(|(a, b, _)| {
+                [a, b].iter().all(|pair| {
+                    group
+                        .iter()
+                        .any(|s| s.edge == pair.edge && s.index == pair.index)
+                })
+            })
+            .map(|(a, b, length)| length * (PREFERRED - a.coordinate.abs_diff(b.coordinate)))
+            .sum();
+        let deficit_cost = (line_deficit / 4) as u128
+            + lanes
+                .iter()
+                .filter(|lane| reroute::movable(layout, lane.edge))
+                .map(|lane| border_cost[lane.edge])
+                .sum::<u128>();
         result.push(Corridor {
             horizontal: group[0].horizontal,
             low: group.iter().map(|s| s.low).min().unwrap(),
@@ -165,11 +186,13 @@ pub(super) fn corridors(graph: &Graph, layout: &Layout<'_>) -> Vec<Corridor> {
             minimum_margin: line_margin.max(demand.0),
             preferred_margin: line_margin.max(demand.1),
             urgent: demand.2,
+            deficit_cost,
             hidden,
         });
     }
     result.sort_by_key(|c| {
         (
+            std::cmp::Reverse(c.deficit_cost),
             !c.urgent,
             !c.border,
             c.horizontal,

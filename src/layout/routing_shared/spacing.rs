@@ -283,6 +283,13 @@ pub(in crate::layout) fn refine(graph: &Graph, layout: &mut Layout<'_>) {
         let corridors = plan::corridors(graph, layout);
         let mut changed = false;
         for corridor in corridors {
+            if !corridor
+                .lanes
+                .iter()
+                .any(|lane| reroute::movable(layout, lane.edge))
+            {
+                continue;
+            }
             if !attempted.insert((
                 corridor.horizontal,
                 corridor

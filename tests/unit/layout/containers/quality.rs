@@ -14,8 +14,6 @@ fn large_fixture_limits_each_edges_bends_and_valid_route_stretch() {
         let started = std::time::Instant::now();
         let layout = Layout::new(graph);
         let parallel = crate::layout::routing_shared::spacing::measure(graph, &layout.paths);
-        assert!(parallel.close_length <= 4000);
-        assert!(layout.width <= 4260 && layout.height <= 2391);
         eprintln!(
             "parallel: {:?}; layout_ms={}",
             crate::layout::routing_shared::spacing::measure(graph, &layout.paths),
@@ -47,6 +45,15 @@ fn large_fixture_limits_each_edges_bends_and_valid_route_stretch() {
         );
         assert_no_retraced_stubs(graph, &layout);
         let mut failures = Vec::new();
+        if parallel.close_length > 4000 {
+            failures.push(format!("parallel close length exceeds 4000: {parallel:?}"));
+        }
+        if layout.width > 4260 || layout.height > 2391 {
+            failures.push(format!(
+                "canvas exceeds 4260x2391: {}x{}",
+                layout.width, layout.height
+            ));
+        }
         let mut result = BTreeMap::new();
         let mut shapes = BTreeMap::new();
         let clearance = crate::layout::routing_shared::spacing::border_metrics(graph, &layout);

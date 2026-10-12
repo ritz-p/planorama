@@ -21,6 +21,10 @@ fn bundled(layout: &Layout<'_>, index: usize) -> bool {
     })
 }
 
+pub(super) fn movable(layout: &Layout<'_>, index: usize) -> bool {
+    layout.paths[index].len() >= 2 && !bundled(layout, index)
+}
+
 fn lane_candidates(
     path: &[Point],
     corridor: &plan::Corridor,
@@ -89,6 +93,24 @@ fn lane_candidates(
     candidates
 }
 
+pub(super) fn preserves_overlap(
+    before: &[Vec<Point>],
+    after: &[Vec<Point>],
+    order: &[usize],
+) -> bool {
+    order.iter().all(|&i| {
+        let overlap = |paths: &[Vec<Point>]| {
+            paths
+                .iter()
+                .enumerate()
+                .filter(|(j, _)| *j != i)
+                .map(|(_, p)| super::super::refinement::overlap(&paths[i], p))
+                .sum::<usize>()
+        };
+        overlap(after) <= overlap(before)
+    })
+}
+
 pub(super) fn apply(
     graph: &Graph,
     layout: &mut Layout<'_>,
@@ -102,10 +124,9 @@ pub(super) fn apply(
         .iter()
         .enumerate()
         .filter(|(i, p)| {
-            p.len() >= 2
+            movable(layout, *i)
                 && (plan.lanes.iter().any(|l| l.edge == *i)
                     || (expanded && length(p) != length(&before.paths[*i])))
-                && !bundled(layout, *i)
         })
         .map(|(i, _)| i)
         .collect();
@@ -271,17 +292,7 @@ pub(super) fn apply(
         return false;
     }
     !super::super::slots::opposite_roles_collide(graph, &layout.paths)
-        && order.iter().all(|&i| {
-            let overlap = |paths: &[Vec<Point>]| {
-                paths
-                    .iter()
-                    .enumerate()
-                    .filter(|(j, _)| *j != i)
-                    .map(|(_, p)| super::super::refinement::overlap(&paths[i], p))
-                    .sum::<usize>()
-            };
-            overlap(&layout.paths) <= overlap(&before.paths)
-        })
+        && preserves_overlap(&before.paths, &layout.paths, &order)
         && layout
             .paths
             .iter()

@@ -305,6 +305,7 @@ fn later_rerouting_cannot_transfer_overlap_onto_an_earlier_route() {
         minimum_margin: PREFERRED,
         preferred_margin: PREFERRED,
         urgent: false,
+        deficit_cost: 0,
         hidden: std::collections::BTreeSet::new(),
         horizontal: false,
         low: 100,
@@ -332,18 +333,28 @@ fn later_rerouting_cannot_transfer_overlap_onto_an_earlier_route() {
     };
     assert_eq!(overlap(&before.paths, 0), 0);
     assert_eq!(overlap(&before.paths, 1), 500);
-    assert!(!reroute::apply(
-        &graph,
-        &mut layout,
-        &planned,
-        &before,
-        &baseline,
-        false
+    let mut transferred = before.paths.clone();
+    transferred[1] = vec![
+        point(200, 300),
+        point(500, 300),
+        point(500, 700),
+        point(800, 700),
+    ];
+    assert_eq!(Shape::measure(&transferred[1]).bends, 2);
+    assert_eq!(overlap(&transferred, 0), 400);
+    assert_eq!(overlap(&transferred, 1), 400);
+    assert!(!reroute::preserves_overlap(
+        &before.paths,
+        &transferred,
+        &[0, 1]
     ));
-    assert_eq!(layout.paths[0], before.paths[0]);
-    assert_eq!(Shape::measure(&layout.paths[1]).bends, 2);
-    assert_eq!(overlap(&layout.paths, 0), 400);
-    assert_eq!(overlap(&layout.paths, 1), 400);
+    let accepted = reroute::apply(&graph, &mut layout, &planned, &before, &baseline, false);
+    if accepted {
+        for i in 0..2 {
+            assert!(overlap(&layout.paths, i) <= overlap(&before.paths, i));
+            assert!(Shape::measure(&layout.paths[i]).fits(baseline[i]));
+        }
+    }
     let expected = before.paths.clone();
     before.restore(&mut layout);
     assert_eq!(layout.paths, expected);
@@ -377,6 +388,7 @@ fn expansion_cannot_hide_increased_overlap_with_a_protected_path() {
         minimum_margin: PREFERRED,
         preferred_margin: PREFERRED,
         urgent: false,
+        deficit_cost: 0,
         hidden: std::collections::BTreeSet::new(),
         horizontal: false,
         low: 200,

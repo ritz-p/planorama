@@ -15,7 +15,12 @@ fn route_shortcuts_preserve_configured_frames_and_per_edge_masks() {
         Point { x: 414, y: 100 },
         Point { x: 430, y: 100 },
     ];
-    for masked in [false, true] {
+    let enclosing = Bounds {
+        origin: Point { x: 90, y: 90 },
+        width: frame.width + 20,
+        height: frame.height + 20,
+    };
+    for (mask, direct) in [(None, false), (Some(frame), false), (Some(enclosing), true)] {
         let mut scorer = Scorer::default();
         scorer.set_borders(&[frame]);
         scorer.insert(vec![Point { x: 0, y: 0 }, Point { x: 500, y: 0 }]);
@@ -25,27 +30,37 @@ fn route_shortcuts_preserve_configured_frames_and_per_edge_masks() {
             [0],
             |_| Vec::new(),
             |_| {
-                if masked {
-                    vec![super::super::scoring::Occluder {
-                        bounds: frame,
+                mask.into_iter()
+                    .map(|bounds| super::super::scoring::Occluder {
+                        bounds,
                         cost: 1,
                         step: 2,
-                    }]
-                } else {
-                    Vec::new()
-                }
+                    })
+                    .collect()
             },
             |_| [Terminal::plain(16); 2],
             |_| EdgeKind::Connection,
             scorer,
         );
-        assert_eq!(paths[0].len() == 2, masked, "{masked}: {:?}", paths[0]);
-        if !masked {
-            let mut scorer = Scorer::default();
-            scorer.set_borders(&[frame]);
-            scorer.set_kind(EdgeKind::Connection);
-            assert_eq!(scorer.border_metrics(&paths[0]).minimum_deficit, 0);
-        }
+        assert_eq!(paths[0].len() == 2, direct, "{mask:?}: {:?}", paths[0]);
+        let mut scorer = Scorer::default();
+        scorer.set_borders(&[frame]);
+        scorer.set_kind(EdgeKind::Connection);
+        scorer.set_soft(
+            mask.into_iter()
+                .map(|bounds| super::super::scoring::Occluder {
+                    bounds,
+                    cost: 1,
+                    step: 2,
+                })
+                .collect::<Vec<_>>(),
+        );
+        assert_eq!(scorer.border_metrics(&paths[0]).minimum_deficit, 0);
+        let straight = [path[0], *path.last().unwrap()];
+        assert_eq!(
+            scorer.border_metrics(&straight).minimum_deficit == 0,
+            direct
+        );
         assert_eq!(paths[0].first(), path.first());
         assert_eq!(paths[0].last(), path.last());
     }

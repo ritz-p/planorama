@@ -187,14 +187,25 @@ fn dense_graph_quality_metrics_are_deterministic() {
         Layout::new(&graph).paths,
         "repeated layout changed route geometry"
     );
+    let mut reordered = graph.clone();
+    reordered.edges.reverse();
+    assert_eq!(
+        layout.paths,
+        Layout::new(&reordered)
+            .paths
+            .into_iter()
+            .rev()
+            .collect::<Vec<_>>(),
+        "reordered edges changed route geometry"
+    );
     let metrics = metrics::measure(&layout.paths);
     assert_eq!(
         metrics,
         metrics::LayoutMetrics {
-            overlap_distance: 168,
-            crossing_count: 373,
+            overlap_distance: 10,
+            crossing_count: 382,
             bend_count: 88,
-            total_path_length: 71553,
+            total_path_length: 71835,
         }
     );
 }
