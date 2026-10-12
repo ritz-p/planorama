@@ -5,6 +5,7 @@ examples/checks.svg
 examples/components.svg
 examples/containment.svg
 examples/cross-state.svg
+examples/data-icons.svg
 examples/data.svg
 examples/dense-architecture.svg
 examples/diagram.svg
