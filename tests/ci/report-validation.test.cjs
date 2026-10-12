@@ -85,6 +85,16 @@ function setup(file = 'cargo_test.yml') {
   return environment;
 }
 
+function setupSplitTests() {
+  const environment = setup();
+  environment.suites = Object.fromEntries(['standard', 'large'].map((suite, index) => [suite, {
+    ...structuredClone(environment.job), id: 202 + index, name: `Dispatched Test suite (${suite})`,
+  }]));
+  environment.job.steps = [{name: 'Check test suites', status: 'completed', conclusion: 'success'}];
+  environment.jobs.set('101/1', [...Object.values(environment.suites), environment.job]);
+  return environment;
+}
+
 for (const [file, , status] of DEFINITIONS) {
   test(`${status} publishes a successful merge validation on the exact generated SHA`, async () => {
     const environment = setup(file);
@@ -95,6 +105,112 @@ for (const [file, , status] of DEFINITIONS) {
       description: `${status} passed (attempt 1).`,
       target_url: 'https://github.com/ritz-p/planorama/actions/runs/101/attempts/1',
     }]);
+  });
+}
+
+test('both dispatched suites and their aggregate publish the stable Tests status', async () => {
+  const environment = setupSplitTests();
+  environment.jobs.get('101/1').push(...['standard', 'large'].map(suite => ({
+    name: `Test suite (${suite})`, status: 'completed', conclusion: 'skipped', steps: [],
+  })), {name: 'Tests', status: 'completed', conclusion: 'skipped', steps: []});
+  const result = await environment.invoke();
+  assert.equal(result.state, 'success');
+  assert.equal(result.context, 'Tests');
+  assert.equal(environment.writes[0].sha, SHA);
+});
+
+for (const suite of ['standard', 'large']) {
+  for (const [description, change, state] of [
+    ['missing', environment => {
+      environment.jobs.set('101/1', environment.jobs.get('101/1').filter(job => job !== environment.suites[suite]));
+    }, 'error'],
+    ['duplicate', environment => {
+      environment.jobs.get('101/1').push(structuredClone(environment.suites[suite]));
+    }, 'error'],
+    ['failed', environment => { environment.suites[suite].conclusion = 'failure'; }, 'failure'],
+    ['skipped', environment => { environment.suites[suite].conclusion = 'skipped'; }, 'error'],
+    ['incomplete', environment => { environment.suites[suite].status = 'in_progress'; }, 'error'],
+  ]) {
+    test(`${description} ${suite} suite cannot pass through a successful aggregate`, async () => {
+      const environment = setupSplitTests();
+      change(environment);
+      assert.equal((await environment.invoke()).state, state);
+    });
+  }
+
+  for (const command of ['Checkout dispatched PR merge', 'Compile tests', 'Run tests']) {
+    for (const [description, change, state] of [
+      ['failed', (steps, step) => { step.conclusion = 'failure'; }, 'failure'],
+      ['skipped', (steps, step) => { step.conclusion = 'skipped'; }, 'error'],
+      ['missing', (steps, step) => { steps.splice(steps.indexOf(step), 1); }, 'error'],
+      ['duplicate', (steps, step) => { steps.push(structuredClone(step)); }, 'error'],
+    ]) {
+      test(`${description} ${command} in ${suite} cannot pass through a successful aggregate`, async () => {
+        const environment = setupSplitTests();
+        const steps = environment.suites[suite].steps;
+        change(steps, steps.find(step => step.name === command));
+        assert.equal((await environment.invoke()).state, state);
+      });
+    }
+  }
+}
+
+for (const [description, change, state] of [
+  ['missing aggregate', environment => {
+    environment.jobs.set('101/1', Object.values(environment.suites));
+  }, 'error'],
+  ['duplicate aggregate', environment => {
+    environment.jobs.get('101/1').push(structuredClone(environment.job));
+  }, 'error'],
+  ['failed aggregate', environment => { environment.job.conclusion = 'failure'; }, 'failure'],
+  ['skipped aggregate', environment => { environment.job.conclusion = 'skipped'; }, 'error'],
+  ['incomplete aggregate', environment => { environment.job.status = 'in_progress'; }, 'error'],
+  ['failed gate', environment => { environment.job.steps[0].conclusion = 'failure'; }, 'failure'],
+  ['skipped gate', environment => { environment.job.steps[0].conclusion = 'skipped'; }, 'error'],
+  ['missing gate', environment => { environment.job.steps = []; }, 'error'],
+  ['duplicate gate', environment => { environment.job.steps.push(structuredClone(environment.job.steps[0])); }, 'error'],
+  ['incomplete gate', environment => { environment.job.steps[0].status = 'in_progress'; }, 'error'],
+]) {
+  test(`${description} prevents successful split Tests reporting`, async () => {
+    const environment = setupSplitTests();
+    change(environment);
+    assert.equal((await environment.invoke()).state, state);
+  });
+}
+
+test('an aggregate gate requires both suites even when all suite jobs are missing', async () => {
+  const environment = setupSplitTests();
+  environment.jobs.set('101/1', [environment.job]);
+  assert.equal((await environment.invoke()).state, 'error');
+});
+
+for (const name of [
+  'Test suite (standard)', 'Test suite (large)',
+  'Dispatched Test suite (standard)', 'Dispatched Test suite (large)', 'Dispatched Test suite (unexpected)',
+]) {
+  test(`${name} prevents falling back to serial validation in an incomplete split run`, async () => {
+    const environment = setup();
+    environment.jobs.get('101/1').push({name, status: 'completed', conclusion: 'skipped', steps: []});
+    assert.equal((await environment.invoke()).state, 'error');
+  });
+}
+
+test('the ordinary aggregate gate also identifies incomplete split test runs', async () => {
+  const environment = setup();
+  environment.jobs.get('101/1').push({
+    name: 'Tests', status: 'completed', conclusion: 'skipped',
+    steps: [{name: 'Check test suites', status: 'completed', conclusion: 'skipped'}],
+  });
+  assert.equal((await environment.invoke()).state, 'error');
+});
+
+for (const [file, , status] of DEFINITIONS.filter(([file]) => file !== 'cargo_test.yml')) {
+  test(`${status} keeps its existing requirements when unrelated suite jobs exist`, async () => {
+    const environment = setup(file);
+    environment.jobs.get('101/1').push({
+      name: 'Dispatched Test suite (large)', status: 'completed', conclusion: 'failure', steps: [],
+    });
+    assert.equal((await environment.invoke()).state, 'success');
   });
 }
 
