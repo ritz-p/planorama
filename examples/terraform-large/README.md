@@ -134,8 +134,9 @@ preserve horizontal/vertical independent-routing coverage.
 | Docker test-profile layout time, two runs | 5.631 / 5.614 s | 5.898 / 5.707 s | 7.219 / 7.036 s |
 
 These are historical #291 measurements. Layout dimensions exclude SVG annotations;
-the SVG at that revision was 4208 × 3481 pixels. Later annotation changes can
-alter canvas height.
+the SVG at that revision was 4208 × 3481 pixels. Later annotation changes,
+including logical-resource grouping and the measured Relationship lines card,
+can alter the canvas independently of the spatial layout.
 The revision accepts more residual proximity than the initial PR in exchange for
 shorter, simpler paths and less growth. It still removes 34.7% of the original
 close projected length. Runtime adds about 1.3 seconds over the initial PR on this
@@ -184,11 +185,13 @@ This comparison uses the [#322 baseline SVG at e4d50682](https://github.com/ritz
 and the [#317 SVG at fc87e583](https://github.com/ritz-p/planorama/blob/fc87e583bc726db56aebf74673c3f3929e5b3f9d/examples/terraform-large/diagram.svg),
 generated from [source 3f920401](https://github.com/ritz-p/planorama/commit/3f920401c5fd287b0aeabe39d5b22029853827b4)
 by [CI run 38225323594](https://github.com/ritz-p/planorama/actions/runs/38225323594).
-Both have 37 rendered paths, a 4196 × 2391 layout and a 4196 × 3481 SVG canvas.
-These are historical measurements before the review fixes. The regenerated SVG
-at review-fix commit `91159e7` was 4246 × 3481; the additional 50px width remains within the
-64px expansion budget. The existing large-fixture clearance, shape, canvas and
-reordered-edge regressions still apply.
+Both compared revisions had 37 rendered paths, a 4196 × 2391 layout and a
+4196 × 3481 SVG canvas. These measurements predate the review fixes. At
+review-fix commit `91159e7`, the SVG measured 4246 × 3481; the additional 50px
+width was within the 64px expansion budget. These historical canvas dimensions
+do not include the measured Relationship lines card introduced by #316.
+The existing large-fixture clearance, shape, canvas and reordered-edge
+regressions still apply.
 
 The read-only SVG audit recovers orthogonal corners from `M`/`L`/`Q` commands and
 applies the same new border metric to both revisions: actual stroke widths,
@@ -213,7 +216,7 @@ length; a negative gap denotes intersecting stroke envelopes.
 | Preferred border deficit, quarter-pixel × px | 54115 | 182 |
 
 Border clearance improves with five additional bends and six additional crossings.
-Total length falls by 17px and canvas size stays fixed. Offsets remain two and
+Across those two revisions, total length fell by 17px and canvas size stayed fixed. Offsets remain two and
 S-jogs remain zero; reversals rise from two to three and backtracking from 204px
 to 227px. These compare complete layouts; the final spacing guard constrains each
 candidate against that run's pre-spacing routes. Only four routes change these

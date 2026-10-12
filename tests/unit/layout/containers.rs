@@ -930,7 +930,12 @@ fn reciprocal_relationships_and_self_loops_use_distinct_incoming_and_outgoing_po
         let output = svg::render(&graph, &layout);
         for (index, action) in ["create", "update", "delete"].iter().enumerate() {
             assert!(output.contains(&format!("association; {action}: test.relationship{index}")));
-            assert!(!output.contains("marker-end="));
+            assert!(
+                output
+                    .lines()
+                    .filter(|line| line.contains("data-edge-kind="))
+                    .all(|line| !line.contains("marker-end="))
+            );
         }
         verify(&graph);
     }

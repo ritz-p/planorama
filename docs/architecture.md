@@ -16,7 +16,11 @@ same boundaries and carry explicit cross-state relationships.
 | `html` | Local viewer, explicit value-free resource index from the selected view, and navigation over rendered SVG metadata |
 
 SVG composition places non-spatial annotations after the header, legend and checks,
-above the architecture. `svg/annotations.rs` packs rounded cards in deterministic
+above the architecture. The neutral relationship legend measures wrapped action
+samples and explanatory rows at the diagram's available width. The same measured
+height controls the canvas, following content and named-state endpoint offsets.
+It remains separate from the numbered Relationship Resources section.
+`svg/annotations.rs` packs rounded cards in deterministic
 rows inside ordered sections, reusing the same wrapping and measurement for nested
 cards and growing the canvas for oversized cards.
 Empty areas reserve no height. One enclosing translation shifts all architecture

@@ -9,12 +9,22 @@ fn cli() -> Command {
 #[test]
 fn relationship_indexes_fit_inside_each_named_state_and_outer_canvas() {
     let path = fixture("aws-relationships-plan.json");
+    let single = cli()
+        .args([path.as_str(), "--address-format", "terraform", "-o", "-"])
+        .output()
+        .unwrap();
+    assert!(single.status.success());
+    let single = String::from_utf8(single.stdout).unwrap();
+    let single_document = roxmltree::Document::parse(&single).unwrap();
+    let single_root = single_document.root_element();
     let output = cli()
         .args([
             "--state",
             &format!("first={path}"),
             "--state",
             &format!("second={path}"),
+            "--address-format",
+            "terraform",
             "-o",
             "-",
         ])
@@ -29,6 +39,13 @@ fn relationship_indexes_fit_inside_each_named_state_and_outer_canvas() {
         .unwrap()
         .parse()
         .unwrap();
+    let outer_height: usize = document
+        .root_element()
+        .attribute("height")
+        .unwrap()
+        .parse()
+        .unwrap();
+    let mut previous_bottom = 0;
     for state in document
         .descendants()
         .filter(|n| n.attribute("data-state-id").is_some())
@@ -36,7 +53,29 @@ fn relationship_indexes_fit_inside_each_named_state_and_outer_canvas() {
         let nested = state.children().find(|n| n.has_tag_name("svg")).unwrap();
         let width: usize = nested.attribute("width").unwrap().parse().unwrap();
         let height: usize = nested.attribute("height").unwrap().parse().unwrap();
+        let top: usize = nested.attribute("y").unwrap().parse().unwrap();
         assert!(width <= outer_width);
+        assert!(top >= previous_bottom);
+        assert!(top + height <= outer_height);
+        previous_bottom = top + height;
+        for attribute in ["width", "height", "viewBox"] {
+            assert_eq!(
+                nested.attribute(attribute),
+                single_root.attribute(attribute)
+            );
+        }
+        let legend = nested
+            .descendants()
+            .find(|n| {
+                n.attribute("id")
+                    .is_some_and(|id| id.ends_with("relationship-legend"))
+            })
+            .unwrap();
+        let legend_rect = legend.children().find(|n| n.has_tag_name("rect")).unwrap();
+        let legend_width: usize = legend_rect.attribute("width").unwrap().parse().unwrap();
+        let legend_height: usize = legend_rect.attribute("height").unwrap().parse().unwrap();
+        assert!(40 + legend_width <= width);
+        assert!(148 + legend_height < height);
         assert_eq!(
             nested
                 .descendants()
