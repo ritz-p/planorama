@@ -303,11 +303,12 @@ fn corridor_capacity_expands_then_reroutes_mixed_edges_into_whole_lanes() {
                 terminal(path, 0),
                 terminal(path, 1),
                 &barriers(&graph, &layout, i),
-                crate::layout::relationship_markers::ends(&graph)[i].map(|n| if n {
-                    crate::layout::relationship_markers::clearance(&graph)
-                } else {
-                    16
-                })
+                crate::layout::relationship_markers::terminals(
+                    &graph,
+                    i,
+                    crate::layout::relationship_markers::numbers(&graph)[i],
+                    [terminal(path, 0).side, terminal(path, 1).side],
+                )
             ));
         }
         let expected = (layout.bounds.clone(), layout.paths.clone());

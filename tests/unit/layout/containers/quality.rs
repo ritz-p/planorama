@@ -79,13 +79,12 @@ fn large_fixture_limits_each_edges_bends_and_valid_route_stretch() {
                     terminal(path, 1),
                     &spacing::barriers(graph, &layout, index),
                     None,
-                    crate::layout::relationship_markers::ends(graph)[index].map(|n| {
-                        if n {
-                            crate::layout::relationship_markers::clearance(graph)
-                        } else {
-                            16
-                        }
-                    }),
+                    crate::layout::relationship_markers::terminals(
+                        graph,
+                        index,
+                        crate::layout::relationship_markers::numbers(graph)[index],
+                        [terminal(path, 0).side, terminal(path, 1).side],
+                    ),
                 )
                 .unwrap();
                 let necessary = spacing::Shape::measure(&protected);

@@ -14,6 +14,13 @@ fn numbered_cycles_reserve_both_terminal_clearances_between_flat_rows() {
             node.role = ResourceRole::Node;
         }
         graph.edges[0].change.as_mut().unwrap().directionality = direction;
+        for relationship in &mut graph.relationships {
+            for provenance in &mut relationship.provenance {
+                if let crate::model::RelationshipProvenance::Resource { change, .. } = provenance {
+                    change.directionality = direction;
+                }
+            }
+        }
         let (from, to) = graph.edges[0].endpoints();
         graph.edges.push(Edge::from((to, from)));
         let ranks = crate::layout::rank::compute(&graph);

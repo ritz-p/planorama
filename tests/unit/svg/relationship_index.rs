@@ -1,4 +1,5 @@
 use super::*;
+use crate::model::{EdgeKind, RelationshipProvenance};
 use crate::{plan, semantic, svg};
 
 fn graph() -> Graph {
@@ -494,7 +495,18 @@ fn routed_badges_fit_terminal_segments_and_avoid_other_paths() {
 }
 
 fn assert_marker_routes(graph: &Graph, layout: &Layout<'_>) {
+    use crate::layout::{Port, Side, relationship_markers};
     let index = Index::new(graph, layout);
+    let shared = relationship_markers::entries(graph);
+    for entry in &index.entries {
+        assert_eq!(entry.sources, shared[entry.number - 1].sources);
+        assert!(
+            entry
+                .edges
+                .iter()
+                .all(|edge| shared[entry.number - 1].edges.contains(edge))
+        );
+    }
     assert!(!index.markers.is_empty());
     let edges = index
         .entries
@@ -523,6 +535,28 @@ fn assert_marker_routes(graph: &Graph, layout: &Layout<'_>) {
         } else {
             (terminal[0], terminal[1])
         };
+        let side = if before.x < target.x {
+            Side::Left
+        } else if before.x > target.x {
+            Side::Right
+        } else if before.y < target.y {
+            Side::Top
+        } else {
+            Side::Bottom
+        };
+        let port = Port {
+            point: target,
+            side,
+        };
+        assert_eq!(bounds, relationship_markers::bounds(marker.number, port));
+        let reservation = relationship_markers::Terminal::marker(marker.number, side)
+            .corridor(port)
+            .unwrap();
+        assert!(bounds.origin.x >= reservation.origin.x && bounds.right() <= reservation.right());
+        assert!(
+            bounds.origin.y >= reservation.origin.y
+                && bounds.origin.y + bounds.height <= reservation.origin.y + reservation.height
+        );
         if before.y == target.y {
             assert_eq!(bounds.origin.y + bounds.height / 2, target.y);
             assert!(
@@ -567,6 +601,55 @@ fn assert_marker_routes(graph: &Graph, layout: &Layout<'_>) {
         }
     }
 }
+
+#[test]
+fn missing_paths_keep_the_shared_number_and_its_actual_badge_width() {
+    let graph = dense_graph(10, EdgeKind::Association);
+    let mut layout = Layout::new(&graph);
+    let shared = crate::layout::relationship_markers::entries(&graph);
+    for entry in &shared[..9] {
+        for &edge in &entry.edges {
+            layout.paths[edge].clear();
+        }
+    }
+    let index = Index::new(&graph, &layout);
+    assert_eq!(index.entries.len(), 1);
+    assert_eq!(index.entries[0].number, 10);
+    assert!(
+        index
+            .markers
+            .iter()
+            .all(|marker| marker.number == 10 && marker.bounds.width == 32)
+    );
+    assert!(
+        index.cards()[0]
+            .content
+            .contains("data-relationship-entry=\"10\"")
+    );
+    assert_marker_routes(&graph, &layout);
+}
+
+#[test]
+fn embedded_next_hops_share_the_routed_numbering_and_marker_geometry() {
+    let graph =
+        semantic::transform(&plan::parse(include_str!("../../fixtures/routes-plan.json")).unwrap())
+            .0;
+    let layout = Layout::new(&graph);
+    let index = Index::new(&graph, &layout);
+    assert!(index.entries.iter().any(|entry| entry.embedded));
+    for entry in index.entries.iter().filter(|entry| entry.embedded) {
+        assert_eq!(
+            index
+                .markers
+                .iter()
+                .filter(|marker| marker.number == entry.number)
+                .count(),
+            entry.edges.len()
+        );
+    }
+    assert_marker_routes(&graph, &layout);
+}
+
 #[test]
 fn resource_provenance_is_indexed_and_reference_provenance_is_not() {
     let graph = graph();

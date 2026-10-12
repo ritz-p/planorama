@@ -1,4 +1,5 @@
 use super::{crosses, ports, scoring::Scorer, shortcuts, slots};
+use crate::layout::relationship_markers::{self, Terminal};
 use crate::layout::{Bounds, Layout, Point, Port, Side};
 use crate::model::Graph;
 use std::collections::BTreeMap;
@@ -74,11 +75,19 @@ pub(super) fn overlap(a: &[Point], b: &[Point]) -> usize {
 }
 
 pub(in crate::layout) fn refine(graph: &Graph, layout: &mut Layout<'_>) {
-    let numbered = crate::layout::relationship_markers::ends(graph);
-    let clearance = crate::layout::relationship_markers::clearance(graph);
-    let clearances: Vec<_> = numbered
+    let numbers = relationship_markers::numbers(graph);
+    let clearances: Vec<_> = layout
+        .paths
         .iter()
-        .map(|n| n.map(|n| if n { clearance } else { 16 }))
+        .enumerate()
+        .map(|(i, path)| {
+            let sides = if path.len() >= 2 {
+                [terminal(path, 0).side, terminal(path, 1).side]
+            } else {
+                [Side::Right; 2]
+            };
+            relationship_markers::terminals(graph, i, numbers[i], sides)
+        })
         .collect();
     let mut groups = BTreeMap::<_, Vec<_>>::new();
     for (i, (edge, path)) in graph.edges.iter().zip(&layout.paths).enumerate() {
@@ -279,7 +288,7 @@ pub(in crate::layout) fn refine(graph: &Graph, layout: &mut Layout<'_>) {
 fn marker_collision(
     paths: &[Vec<Point>],
     terminals: &[Option<[Port; 2]>],
-    clearances: &[[usize; 2]],
+    clearances: &[[Terminal; 2]],
 ) -> bool {
     terminals.iter().enumerate().any(|(i, p)| {
         p.is_some_and(|p| {

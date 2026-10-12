@@ -340,21 +340,26 @@ pub(super) fn shortest_valid_route(graph: &Graph, layout: &Layout<'_>, index: us
             std::cmp::Ordering::Less => Side::Right,
         },
     };
-    let numbered = crate::layout::relationship_markers::ends(graph);
-    let clearance = crate::layout::relationship_markers::clearance(graph);
+    let numbers = crate::layout::relationship_markers::numbers(graph);
     let path = &layout.paths[index];
     if path.len() < 2 {
         return path.clone();
     }
     let start = port(path[0], path[1]);
     let end = port(path[path.len() - 1], path[path.len() - 2]);
+    let clearances = crate::layout::relationship_markers::terminals(
+        graph,
+        index,
+        numbers[index],
+        [start.side, end.side],
+    );
     let stubs = [path[1], path[path.len() - 2]]
         .into_iter()
         .zip([start, end])
         .enumerate()
         .map(|(i, (adjacent, p))| {
-            if numbered[index][i] {
-                clearance
+            if numbers[index][i].is_some() {
+                clearances[i].clearance
             } else {
                 16.min(p.point.x.abs_diff(adjacent.x) + p.point.y.abs_diff(adjacent.y))
             }
@@ -370,7 +375,7 @@ pub(super) fn shortest_valid_route(graph: &Graph, layout: &Layout<'_>, index: us
         barriers.extend(ports::terminal_corridors(
             a,
             b,
-            numbered[i].map(|n| if n { clearance } else { 16 }),
+            crate::layout::relationship_markers::terminals(graph, i, numbers[i], [a.side, b.side]),
         ));
     }
     let middle = search::shortest(

@@ -59,8 +59,12 @@ fn numbered_shortcuts_remove_middle_doglegs_and_preserve_badge_space() {
     .map(|(x, y)| Point { x, y })
     .collect();
     let scorer = Scorer::default();
+    let terminals = [
+        Terminal::marker(10, Side::Right),
+        Terminal::marker(10, Side::Left),
+    ];
     assert_eq!(
-        simplify_path_with_clearances(path.clone(), &[], &scorer, [50; 2]),
+        simplify_path_with_clearances(path.clone(), &[], &scorer, terminals),
         vec![path[0], path[5]]
     );
     let start = Port {
@@ -83,17 +87,83 @@ fn numbered_shortcuts_remove_middle_doglegs_and_preserve_badge_space() {
         start,
         end,
         &[],
-        [50; 2]
+        terminals
     ));
-    let routed = ports::connect_with_clearances(start, end, &[], None, [50; 2]).unwrap();
-    let simplified = simplify_path_with_clearances(routed, &[], &scorer, [50; 2]);
+    let routed = ports::connect_with_clearances(start, end, &[], None, terminals).unwrap();
+    let simplified = simplify_path_with_clearances(routed, &[], &scorer, terminals);
     assert!(ports::valid_with_clearances(
         &simplified,
         start,
         end,
         &[],
-        [50; 2]
+        terminals
     ));
+}
+
+#[test]
+fn shortcuts_cannot_cut_across_a_vertical_marker_footprint() {
+    let start = Port {
+        point: Point { x: 200, y: 220 },
+        side: Side::Bottom,
+    };
+    let scorer = Scorer::default();
+    for number in [10, 100] {
+        let marker = Terminal::marker(number, start.side);
+        let end = Port {
+            point: Point {
+                x: start.point.x + crate::layout::relationship_markers::width(number) - 2,
+                y: 230,
+            },
+            side: Side::Left,
+        };
+        let lane = start.point.x + marker.span / 2 + 1;
+        let path = vec![
+            start.point,
+            Point { x: 200, y: 280 },
+            Point { x: 300, y: 280 },
+            Point { x: 300, y: 200 },
+            Point { x: lane, y: 200 },
+            Point { x: lane, y: 230 },
+            end.point,
+        ];
+        let terminals = [marker, Terminal::plain(8)];
+        assert!(ports::valid_with_clearances(
+            &path,
+            start,
+            end,
+            &[],
+            terminals
+        ));
+        let unprotected = simplify_path_with_clearances(
+            path.clone(),
+            &[],
+            &scorer,
+            [Terminal::plain(marker.clearance), terminals[1]],
+        );
+        assert!(!ports::valid_with_clearances(
+            &unprotected,
+            start,
+            end,
+            &[],
+            terminals,
+        ));
+        let shortened = simplify_path_with_clearances(path.clone(), &[], &scorer, terminals);
+        assert!(shortened.len() < path.len());
+        assert!(ports::valid_with_clearances(
+            &shortened,
+            start,
+            end,
+            &[],
+            terminals,
+        ));
+        let corridor = marker.corridor(start).unwrap();
+        assert!(
+            shortened
+                .windows(2)
+                .skip(1)
+                .all(|points| { !super::super::crosses(points[0], points[1], corridor) })
+        );
+    }
 }
 
 #[test]

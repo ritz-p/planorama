@@ -101,7 +101,8 @@ height: the larger side wins, with 16px ordinary slots and 24px numbered slots,
 plus edge padding and the minimum content height. Opposite sides share the same
 vertical span. One deterministic refinement repacks containers and flat rows,
 then assigns geometry-ordered slots on the selected sides and reroutes. Side
-choices remain fixed during this refinement; card width does not expand for
+choices remain fixed for ordinary endpoints; numbered endpoints can reconsider
+legal alternatives against the updated bounds and occupied slots. Card width does not expand for
 top/bottom demand. If the requested top/bottom slots cannot fit, those endpoints
 move to a facing left/right side before the single refinement and its height
 calculation. All refined sides reserve marker-aware minimum spacing.
@@ -110,7 +111,8 @@ per node, side and endpoint role, preserving valid fan-in/fan-out bundles.
 If another constraint requires refinement, capacity is recalculated for
 independent branches before repacking, since nested refinement removes bundling.
 Rank-lane bundles retain their alignment; refined nested
-routes use independent paths to keep the selected per-side demand fixed.
+routes use independent paths and reject numbered alternatives that exceed the
+available side capacity.
 Ancestor/descendant routes also retain their allocated sides during refinement;
 the container-boundary shortcut does not reselect their endpoints afterward.
 
@@ -195,8 +197,11 @@ update flag, alongside the mixed-port fixture and all JSON-backed samples listed
 Incident slots use peer center coordinates: vertical order on left/right sides,
 horizontal order on top/bottom sides. Stable identities break geometric ties.
 Baseline and side-aware candidates share this ordering and marker-aware allocator.
-Keeping a side preserves the existing offset; changing a side uses its projected
-slot. Top/bottom slots account for marker width, and left/right slots for height.
+The assigned offset is the initial candidate; changing a side uses its projected
+slot. Numbered endpoints also compare alignment with either opposite endpoint or
+their midpoint, bounded to four offset pairs per side pair. Every alternative
+must preserve corner margins and separation from other attachments. Top/bottom
+slots account for each marker's width, and left/right slots for its height.
 Intentional bundle alignment and numbered terminal spacing remain constraints.
 After final height refinement and shortcuts, a bounded pass tries at most 32
 adjacent same-side port exchanges on independent resource cards whose actual
@@ -207,10 +212,24 @@ or bends is accepted. Marker spacing is revalidated after each exchange. Shared
 terminals and paths through bundle junctions are excluded; container attachments
 are not permuted. Peer-center ordering remains the initial allocation, while
 this final pass handles approaches that disagree with that projection.
-Numbered relationships select their lowest-cost valid sides before routing and reserve their final
-badge corridors. Candidates are rejected when badges overlap cards, protected
-headers or other reserved terminals. Parallel relationships can choose the same
-side pair while retaining distinct slots.
+Numbered relationships share their provenance grouping, stable numbers and badge
+geometry with SVG rendering. A badge is 18px high and `8 × digits + 16` pixels
+wide. Each terminal reserves a straight approach of `10 + width + 8` pixels on
+left/right sides and `10 + 18 + 8 = 36` pixels on top/bottom sides. The 10px gap
+keeps directed arrowheads clear; the lateral reservation is the actual badge
+dimension plus 6px. A single-digit terminal therefore keeps its own dimensions
+even when other relationships have two or three digits. Plain embedded Route
+sources retain a 20px escape without a fictitious source badge. Packing padding
+still uses the largest displayed number conservatively; terminal validation does not.
+
+Numbered relationships compare their lowest-cost valid sides, port alignments and
+badge corridors together. Candidates are rejected when badges overlap cards,
+protected headers or other reserved terminals. Parallel relationships can choose
+the same side pair while retaining distinct slots. After the initial selection,
+one additional sweep reconsiders at most 32 non-straight numbered relationships
+against the settled reservations. The same bounded alternatives are available
+after height refinement, including previously selected sides. Candidate lower
+bounds and the existing detour budget limit search; initial sides have no priority.
 
 Numbered ports at both ends of undirected relationships, or the destination of
 directed relationships, reserve badge-sized slots; other incident ports retain
@@ -254,7 +273,11 @@ does not feed back into endpoint selection or routing. Each shortcut is checked
 against all other completed paths, must avoid obstacles,
 reduce weighted readability cost and reduce bends or length without increasing either.
 Numbered routes retain badge-sized terminal lengths and protect their badge corridors;
-their middle segments can be shortened. Bundles retain their shared geometry.
+their middle segments can be shortened. Longitudinal clearance and lateral badge
+protection remain separate through refinement, shortcuts and final spacing.
+Only the legitimate terminal approach may traverse its own reservation; the
+opposite terminal leg and middle segments cannot enter sideways or re-enter it.
+Bundles retain their shared geometry.
 
 The final spacing pass indexes horizontal and vertical segments by their line
 coordinate. Independent runs with at least 64px of overlapping projection target

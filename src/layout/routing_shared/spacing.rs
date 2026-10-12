@@ -200,8 +200,7 @@ pub(in crate::layout) fn barriers(graph: &Graph, layout: &Layout<'_>, edge: usiz
             .into_iter()
             .map(|n| layout.bounds[n]),
     );
-    let numbered = crate::layout::relationship_markers::ends(graph);
-    let clearance = crate::layout::relationship_markers::clearance(graph);
+    let numbers = crate::layout::relationship_markers::numbers(graph);
     for (i, path) in layout.paths.iter().enumerate() {
         if i == edge || path.len() < 2 {
             continue;
@@ -210,7 +209,7 @@ pub(in crate::layout) fn barriers(graph: &Graph, layout: &Layout<'_>, edge: usiz
         result.extend(ports::terminal_corridors(
             p[0],
             p[1],
-            numbered[i].map(|n| if n { clearance } else { 16 }),
+            crate::layout::relationship_markers::terminals(graph, i, numbers[i], p.map(|p| p.side)),
         ));
         result.extend(p.iter().map(|p| Bounds {
             origin: Point {

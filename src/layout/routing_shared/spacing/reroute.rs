@@ -1,4 +1,5 @@
 use super::*;
+use crate::layout::relationship_markers::{self, Terminal};
 use crate::layout::routing_shared::{
     scoring::{Occluder, Scorer},
     shortcuts,
@@ -24,12 +25,12 @@ fn lane_candidates(
     path: &[Point],
     corridor: &plan::Corridor,
     coordinate: usize,
-    clearances: [usize; 2],
+    clearances: [Terminal; 2],
 ) -> Vec<Vec<Point>> {
     let start = terminal(path, 0);
     let end = terminal(path, 1);
-    let first = start.outward(clearances[0]);
-    let last = end.outward(clearances[1]);
+    let first = start.outward(clearances[0].clearance);
+    let last = end.outward(clearances[1].clearance);
     let on_lane = |p: Point| {
         if corridor.horizontal {
             Point {
@@ -103,8 +104,7 @@ pub(super) fn apply(
             e.change.as_ref().map(|c| (&c.address, c.action)),
         )
     });
-    let numbered = crate::layout::relationship_markers::ends(graph);
-    let clearance = crate::layout::relationship_markers::clearance(graph);
+    let numbers = relationship_markers::numbers(graph);
     let mut routed = 0;
     for &i in &order {
         let overlap_before: usize = before
@@ -117,7 +117,8 @@ pub(super) fn apply(
         let seed = &layout.paths[i];
         let start = terminal(seed, 0);
         let end = terminal(seed, 1);
-        let clearances = numbered[i].map(|n| if n { clearance } else { 16 });
+        let clearances =
+            relationship_markers::terminals(graph, i, numbers[i], [start.side, end.side]);
         let obstacles = barriers(graph, layout, i);
         let mut scorer = Scorer::default();
         scorer.set_borders(&layout.bounds);
