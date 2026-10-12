@@ -24,8 +24,11 @@ cards, paths and relationship badges together; annotation cards never enter
 `Layout` or routing obstacles. Named-state endpoint coordinates include this shift.
 Relationship index cards group up to 10 complete numbered entries per card,
 continuing to the right before wrapping within their own neutral section. Logical
-components share a purple parent, with a card per component and action-colored
-member reference cards inside it.
+components share a purple parent, with a card per component and a purple heading.
+Members use neutral text rows without individual backgrounds, borders or card
+wrappers. Each complete wrapped item has one underline in its canonical resource
+action color. Row measurements reserve the wrapped text, import badge, underline
+and spacing before the next member.
 
 Terraform-backed Logical Resources share a cyan parent above Logical Components;
 the relationship index follows both parents. Logical cards use their original

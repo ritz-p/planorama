@@ -38,22 +38,28 @@ to the LB when targets join or leave.
 Above the architecture, three independent vertical sections appear in order:
 Logical Resources (cyan), Logical Components (purple), then Relationship Resources
 (neutral). Empty sections reserve no space. Section colors identify their type;
-Terraform cards and component member references retain the canonical action colors.
+Terraform cards retain the canonical action colors, and component headings stay
+purple.
 Section titles appear once. Inner resource cards use their addresses as headings;
 component cards use their actual label without a classification prefix or Members
 heading, and relationship index cards start with numbered entries.
 Each component has an inner card ordered by synthetic identity. Headings and member
-addresses wrap without truncation. Members are sorted by address and link to the
-original spatial or logical card; missing or ambiguous targets use neutral,
-non-clickable cards. Accessible titles preserve full addresses and operation/move/
-deposed context. These annotations do not affect architecture placement or routing.
+addresses wrap without truncation. Members are sorted by address and appear as
+neutral text rows without individual backgrounds, borders or card wrappers. One
+underline below each complete wrapped item uses the original resource's canonical
+action color. Members link to the original spatial or logical card; missing or
+ambiguous targets use neutral underlines and non-clickable rows. Row measurements
+include wrapping, badge height, the underline and spacing before the next member.
+Accessible titles preserve full qualified addresses and operation/move/deposed
+context. These annotations do not affect architecture placement or routing.
 Imported members also show their own `import` badge in a reserved row. The badge
 follows the original member's metadata; the synthetic component and other members
-do not acquire an import operation. Visible action text keeps the operation order,
-while accessible titles retain the composed `import / ...` label.
+do not acquire an import operation. Visible member text and accessible titles keep
+the full composed operation label, including `import / ...` and state-removal order.
 
 `data-entity-kind="synthetic"`, architecture identity/provenance and component kind
 remain on each summary; `data-component-id` associates original resource cards with
-their logical entity. Original cards retain imports, drift, replacement reasons
+their logical entity. Member links retain `data-source-address` and operation
+attributes. Original cards retain imports, drift, replacement reasons
 and move provenance. Synthetic entities do not increase resource/action counts or
 create dependency edges. See [the component example](../examples/components.svg).
