@@ -25,9 +25,9 @@ require at least 398px per cell with 24px gaps; cells stop widening at 640px.
 Narrow single-column cells place the sample above the text. Each grid row reserves
 its tallest complete cell, including wrapped text and symbols. The same measured
 height controls the canvas, following content and named-state endpoint offsets.
-Named states measure against their allocated panel width, excluding cross-state
-gutters. Legend layout affects annotation offsets without changing architecture
-placement or routing. It remains separate from the numbered Relationship Resources
+Named states measure their legends at the shared content width, excluding
+cross-state gutters. Legend layout affects annotation offsets without changing
+architecture placement or routing. It remains separate from the numbered Relationship Resources
 section.
 `svg/annotations.rs` packs rounded cards in deterministic
 rows inside ordered sections, reusing the same wrapping and measurement for nested
@@ -35,8 +35,18 @@ cards and growing the canvas for oversized cards.
 Empty areas reserve no height. One enclosing translation shifts all architecture
 cards, paths and relationship badges together; annotation cards never enter
 `Layout` or routing obstacles. Named-state endpoint coordinates include this shift.
+Composition also measures the topmost final card, path and relationship badge.
+Geometry that would enter the header or preceding annotation area receives extra
+top clearance through a shared downward translation and matching canvas height.
+This preserves relative card positions and path shapes, including manually placed
+layout fixtures. Named-state heights, endpoint coordinates and routing obstacles
+include the same clearance.
 Relationship index cards group up to 10 complete numbered entries per card,
-continuing to the right before wrapping within their own neutral section. Logical
+continuing to the right without a column cap before wrapping within their own
+neutral section. Packing uses the final content width after other annotations can
+expand it. Named-state composition reflows each state's annotations at the shared
+content width and recalculates heights and endpoint offsets, with the cross-state
+routing gutter reserved outside that width. Logical
 components share a purple parent, with a card per component and a purple heading.
 Members use neutral text rows without individual backgrounds, borders or card
 wrappers. Each complete wrapped item has one underline in its canonical resource

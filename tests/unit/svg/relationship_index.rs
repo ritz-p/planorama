@@ -1,4 +1,5 @@
 use super::*;
+use crate::layout::Point;
 use crate::model::{EdgeKind, RelationshipProvenance};
 use crate::{plan, semantic, svg};
 
@@ -38,6 +39,34 @@ fn dense_graph(count: usize, kind: EdgeKind) -> Graph {
         graph.relationships.push(relationship);
     }
     graph
+}
+
+fn attribute_number(node: roxmltree::Node, name: &str) -> usize {
+    node.attribute(name).unwrap().parse().unwrap()
+}
+
+fn annotation_card_bounds(card: roxmltree::Node) -> Bounds {
+    let mut position = card
+        .attribute("transform")
+        .unwrap()
+        .strip_prefix("translate(")
+        .unwrap()
+        .strip_suffix(')')
+        .unwrap()
+        .split_whitespace()
+        .map(|value| value.parse().unwrap());
+    let rect = card
+        .children()
+        .find(|node| node.has_tag_name("rect"))
+        .unwrap();
+    Bounds {
+        origin: Point {
+            x: position.next().unwrap(),
+            y: position.next().unwrap(),
+        },
+        width: attribute_number(rect, "width"),
+        height: attribute_number(rect, "height"),
+    }
 }
 
 #[test]
@@ -98,6 +127,120 @@ fn association_numbering_preserves_relationship_directions_and_arrows() {
             );
         }
         assert_marker_routes(&graph, &layout);
+    }
+}
+
+#[test]
+fn upward_routes_and_numbered_badges_clear_the_annotation_sections() {
+    let graph = graph();
+    for horizontal_terminals in [false, true] {
+        let mut layout = Layout::new(&graph);
+        let edge = graph
+            .edges
+            .iter()
+            .position(|edge| edge.change.is_some())
+            .unwrap();
+        let first = layout.paths[edge][0];
+        let last = *layout.paths[edge].last().unwrap();
+        layout.paths[edge] = if horizontal_terminals {
+            vec![Point { x: first.x, y: 100 }, Point { x: last.x, y: 100 }]
+        } else {
+            vec![
+                first,
+                Point {
+                    x: first.x + 48,
+                    y: first.y,
+                },
+                Point {
+                    x: first.x + 48,
+                    y: 100,
+                },
+                Point {
+                    x: last.x + 48,
+                    y: 100,
+                },
+                Point {
+                    x: last.x + 48,
+                    y: last.y,
+                },
+                last,
+            ]
+        };
+        let index = Index::new(&graph, &layout);
+        if horizontal_terminals {
+            assert!(index.marker_bounds().any(|bounds| bounds.origin.y < 100));
+        }
+        let bounds = layout.bounds.clone();
+        let paths = layout.paths.clone();
+        let rendered = svg::render(&graph, &layout);
+        let document = roxmltree::Document::parse(&rendered).unwrap();
+        let number = |node: roxmltree::Node, name| {
+            node.attribute(name).unwrap_or("0").parse::<f64>().unwrap()
+        };
+        let translated_y = |node: roxmltree::Node| {
+            node.ancestors()
+                .filter_map(|parent| parent.attribute("transform"))
+                .map(|value| {
+                    value
+                        .trim_start_matches("translate(")
+                        .trim_end_matches(')')
+                        .split_whitespace()
+                        .nth(1)
+                        .unwrap()
+                        .parse::<f64>()
+                        .unwrap()
+                })
+                .sum::<f64>()
+        };
+        let section_bottom = document
+            .descendants()
+            .filter(|node| {
+                node.attribute("id") == Some("relationship-legend")
+                    || node.attribute("data-annotation-section").is_some()
+            })
+            .map(|section| {
+                let rectangle = section
+                    .children()
+                    .find(|node| node.has_tag_name("rect"))
+                    .unwrap();
+                translated_y(rectangle) + number(rectangle, "y") + number(rectangle, "height")
+            })
+            .reduce(f64::max)
+            .unwrap();
+        assert!(document.descendants().any(|node| {
+            node.attribute("data-annotation-section") == Some("Relationship Resources")
+        }));
+        let architecture = document
+            .descendants()
+            .find(|node| node.attribute("data-architecture") == Some("true"))
+            .unwrap();
+        let offset = translated_y(architecture);
+        for shape in architecture
+            .descendants()
+            .filter(|node| node.has_tag_name("rect") || node.has_tag_name("circle"))
+        {
+            let top = translated_y(shape)
+                + if shape.has_tag_name("circle") {
+                    number(shape, "cy") - number(shape, "r")
+                } else {
+                    number(shape, "y")
+                };
+            let stroke = shape
+                .attribute("stroke-width")
+                .unwrap_or("1")
+                .parse::<f64>()
+                .unwrap();
+            assert!(top - stroke / 2.0 >= section_bottom + 16.0, "{shape:?}");
+        }
+        for point in layout.paths.iter().flatten() {
+            assert!(offset + point.y as f64 - 7.0 >= section_bottom + 16.0);
+        }
+        assert_eq!(
+            number(document.root_element(), "height"),
+            layout.height as f64 + offset
+        );
+        assert_eq!(layout.bounds, bounds);
+        assert_eq!(layout.paths, paths);
     }
 }
 
@@ -202,79 +345,162 @@ fn hundreds_of_numbered_relationships_keep_clear_terminal_corridors() {
 }
 
 #[test]
-fn relationship_index_chunks_complete_entries_and_wraps_cards_deterministically() {
-    for count in [0usize, 1, 10, 11, 20, 21] {
+fn relationship_cards_fill_the_svg_width_at_exact_and_one_pixel_short_boundaries() {
+    let base = dense_graph(1, EdgeKind::Association);
+    let mut layout = Layout::new(&base);
+    let path = layout.paths[0].clone();
+    let bounds = layout.bounds.clone();
+    for count in [0usize, 1, 10, 11, 20, 21, 30, 31, 40, 41] {
         let mut graph = dense_graph(count, EdgeKind::Association);
-        let snapshot = |graph: &Graph| {
-            let layout = Layout::new(graph);
-            let index = Index::new(graph, &layout);
-            let cards = index.cards();
-            assert_eq!(cards.len(), count.div_ceil(10));
-            assert_eq!(index.markers.len(), count * 2);
-            let full = svg::render(graph, &layout);
-            assert_eq!(
-                full.matches(">Relationship Resources</text>").count(),
-                usize::from(count > 0)
-            );
-            assert!(!full.contains(">Relationship resources</text>"));
-            for (i, card) in cards.iter().enumerate() {
-                let doc = roxmltree::Document::parse(&card.content).unwrap();
-                let numbers: Vec<_> = doc
-                    .descendants()
-                    .filter_map(|n| n.attribute("data-relationship-entry"))
-                    .map(|n| n.parse::<usize>().unwrap())
-                    .collect();
+        for (edge, relationship) in graph.edges.iter_mut().zip(&mut graph.relationships) {
+            let change = edge.change.as_mut().unwrap();
+            change.address = format!("module.{}.{}", "long_module.".repeat(8), change.address);
+            for provenance in &mut relationship.provenance {
+                if let RelationshipProvenance::Resource {
+                    source,
+                    change: source_change,
+                } = provenance
+                {
+                    source.address = change.address.clone();
+                    *source_change = change.clone();
+                }
+            }
+        }
+        let mut addresses: Vec<_> = graph
+            .edges
+            .iter()
+            .map(|edge| edge.change.as_ref().unwrap().address.as_str())
+            .collect();
+        addresses.sort();
+        layout.paths = vec![path.clone(); count];
+        let mut architecture_content = None;
+        let mut expected_section = String::new();
+        for capacity in [2usize, 3, 4] {
+            for shortfall in [0, 1] {
+                let columns = capacity - shortfall;
+                layout.width = 112 + capacity * 640 + (capacity - 1) * 20 - shortfall;
+                let index = Index::new(&graph, &layout);
+                assert_eq!(index.width, layout.width);
+                assert_eq!(index.markers.len(), count * 2);
+                assert!(index.cards().iter().all(|card| card.width == 640));
+                let rendered = svg::render(&graph, &layout);
+                let document = roxmltree::Document::parse(&rendered).unwrap();
                 assert_eq!(
-                    numbers,
-                    (i * 10 + 1..=(count.min((i + 1) * 10))).collect::<Vec<_>>()
+                    attribute_number(document.root_element(), "width"),
+                    layout.width
                 );
-                assert!(!card.content.contains("Relationship resources"));
-                assert!(!card.content.contains("Association</text>"));
-            }
-            let width = cards.first().map_or(360, |card| card.width);
-            let area = crate::svg::annotations::Area::new(cards, 2 * width + 100);
-            let svg = area.render();
-            if count == 0 {
-                assert_eq!(area.height, 0);
-                assert!(svg.is_empty());
-                return svg;
-            }
-            let document = roxmltree::Document::parse(&svg).unwrap();
-            let entries: Vec<_> = document
-                .descendants()
-                .filter_map(|n| n.attribute("data-relationship-entry"))
-                .collect();
-            assert_eq!(
-                entries,
-                (1..=count).map(|i| i.to_string()).collect::<Vec<_>>()
-            );
-            let rows: std::collections::BTreeSet<_> = document
-                .descendants()
-                .filter(|n| n.attribute("data-annotation-card").is_some())
-                .map(|n| {
-                    n.attribute("transform")
+                assert_eq!(
+                    rendered.matches(">Relationship Resources</text>").count(),
+                    usize::from(count > 0)
+                );
+                let section = document.descendants().find(|node| {
+                    node.attribute("data-annotation-section") == Some("Relationship Resources")
+                });
+                if count == 0 {
+                    assert!(section.is_none());
+                    assert!(!rendered.contains("data-relationship-entry="));
+                    continue;
+                }
+                let section = section.unwrap();
+                let section_rect = section
+                    .children()
+                    .find(|node| node.has_tag_name("rect"))
+                    .unwrap();
+                assert_eq!(attribute_number(section_rect, "width"), layout.width - 80);
+                let cards: Vec<_> = section
+                    .children()
+                    .filter(|node| node.attribute("data-annotation-card").is_some())
+                    .collect();
+                assert_eq!(cards.len(), count.div_ceil(10));
+                let mut y = 48;
+                for row in cards.chunks(columns) {
+                    for (column, card) in row.iter().enumerate() {
+                        let bounds = annotation_card_bounds(*card);
+                        assert_eq!(
+                            bounds.origin,
+                            Point {
+                                x: 16 + column * 660,
+                                y
+                            }
+                        );
+                        assert_eq!(bounds.width, 640);
+                        assert!(bounds.right() <= layout.width - 96);
+                    }
+                    y += row
+                        .iter()
+                        .map(|card| annotation_card_bounds(*card).height)
+                        .max()
                         .unwrap()
-                        .split_whitespace()
-                        .last()
-                        .unwrap()
-                })
-                .collect();
-            assert_eq!(rows.len(), count.div_ceil(20));
-            let positions: Vec<_> = document
-                .descendants()
-                .filter(|n| n.attribute("data-annotation-card").is_some())
-                .map(|n| n.attribute("transform").unwrap())
-                .collect();
-            assert_eq!(positions[0], "translate(40 160)");
-            if count > 10 {
-                assert_eq!(positions[1], format!("translate({} 160)", width + 60));
+                        + 20;
+                }
+                assert_eq!(attribute_number(section_rect, "height"), y - 20 + 16);
+                for (card_index, card) in cards.iter().enumerate() {
+                    let entries: Vec<_> = card
+                        .descendants()
+                        .filter(|node| node.attribute("data-relationship-entry").is_some())
+                        .collect();
+                    assert_eq!(
+                        entries
+                            .iter()
+                            .map(|node| attribute_number(*node, "data-relationship-entry"))
+                            .collect::<Vec<_>>(),
+                        (card_index * 10 + 1..=count.min((card_index + 1) * 10))
+                            .collect::<Vec<_>>()
+                    );
+                    for entry in entries {
+                        let source = entry
+                            .descendants()
+                            .find(|node| node.attribute("data-source-address").is_some())
+                            .unwrap();
+                        let visible: String = source
+                            .children()
+                            .filter(|node| node.has_tag_name("tspan"))
+                            .filter_map(|node| node.text())
+                            .collect();
+                        let address =
+                            addresses[attribute_number(entry, "data-relationship-entry") - 1];
+                        assert_eq!(source.attribute("data-source-address"), Some(address));
+                        assert_eq!(visible, address);
+                    }
+                }
+                let architecture = document
+                    .descendants()
+                    .find(|node| node.attribute("data-architecture").is_some())
+                    .unwrap();
+                let content: Vec<_> = architecture
+                    .children()
+                    .filter(|node| {
+                        node.attribute("data-terraform-address").is_some()
+                            || node.attribute("data-edge-kind").is_some()
+                            || node.attribute("data-relationship-marker").is_some()
+                    })
+                    .map(|node| rendered[node.range()].to_owned())
+                    .collect();
+                assert!(!content.is_empty());
+                if let Some(expected) = &architecture_content {
+                    assert_eq!(&content, expected);
+                } else {
+                    architecture_content = Some(content);
+                }
+                expected_section = rendered[section.range()].to_owned();
             }
-            svg
-        };
-        let expected = snapshot(&graph);
+        }
+        assert_eq!(layout.bounds, bounds);
+        assert!(layout.paths.iter().all(|points| points == &path));
+        if count == 0 {
+            continue;
+        }
         graph.edges.reverse();
         graph.relationships.reverse();
-        assert_eq!(snapshot(&graph), expected);
+        let rendered = svg::render(&graph, &layout);
+        let document = roxmltree::Document::parse(&rendered).unwrap();
+        let section = document
+            .descendants()
+            .find(|node| {
+                node.attribute("data-annotation-section") == Some("Relationship Resources")
+            })
+            .unwrap();
+        assert_eq!(rendered[section.range()], expected_section);
     }
 }
 
@@ -323,8 +549,19 @@ fn wide_addresses_wrap_within_the_canvas_and_reserved_height() {
 
 #[test]
 fn a_long_multisource_tenth_entry_stays_in_the_first_card() {
-    let mut graph = dense_graph(11, EdgeKind::Association);
-    let relationship = &mut graph.relationships[8];
+    let mut graph = dense_graph(21, EdgeKind::Association);
+    let tenth_address = crate::layout::relationship_markers::entries(&graph)[9].sources[0]
+        .address
+        .clone();
+    let relationship = graph
+        .relationships
+        .iter_mut()
+        .find(|relationship| {
+            relationship.provenance.iter().any(|provenance| {
+                matches!(provenance, RelationshipProvenance::Resource { source, .. } if source.address == tenth_address)
+            })
+        })
+        .unwrap();
     let RelationshipProvenance::Resource { change, .. } = relationship.provenance[0].clone() else {
         panic!()
     };
@@ -338,10 +575,10 @@ fn a_long_multisource_tenth_entry_stays_in_the_first_card() {
             },
             change,
         });
-    let layout = Layout::new(&graph);
+    let mut layout = Layout::new(&graph);
     let index = Index::new(&graph, &layout);
     let cards = index.cards();
-    assert_eq!(cards.len(), 2);
+    assert_eq!(cards.len(), 3);
     let first = roxmltree::Document::parse(&cards[0].content).unwrap();
     let tenth = first
         .descendants()
@@ -379,8 +616,38 @@ fn a_long_multisource_tenth_entry_stays_in_the_first_card() {
             .descendants()
             .filter_map(|n| n.attribute("data-relationship-entry"))
             .collect::<Vec<_>>(),
-        vec!["11"]
+        (11..=20)
+            .map(|number| number.to_string())
+            .collect::<Vec<_>>()
     );
+    layout.width = cards[0].width * 2 + 20 + 112;
+    let rendered = svg::render(&graph, &layout);
+    let document = roxmltree::Document::parse(&rendered).unwrap();
+    let section = document
+        .descendants()
+        .find(|node| node.attribute("data-annotation-section") == Some("Relationship Resources"))
+        .unwrap();
+    let placed: Vec<_> = section
+        .children()
+        .filter(|node| node.attribute("data-annotation-card").is_some())
+        .map(annotation_card_bounds)
+        .collect();
+    assert_eq!(placed.len(), 3);
+    assert_eq!(placed[0].origin.y, placed[1].origin.y);
+    assert_eq!(
+        placed[2].origin.y,
+        placed[0].origin.y + cards[0].height.max(cards[1].height) + 20
+    );
+    for (placed, card) in placed.iter().zip(&cards) {
+        assert_eq!(placed.height, card.height);
+        let document = roxmltree::Document::parse(&card.content).unwrap();
+        for line in document
+            .descendants()
+            .filter(|node| node.has_tag_name("tspan"))
+        {
+            assert!(attribute_number(line, "y") + 4 < placed.height);
+        }
+    }
 }
 
 #[test]

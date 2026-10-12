@@ -153,6 +153,10 @@ shared offset, prefers a free allocated slot when the center is occupied, and
 falls back to independent paths if no candidate has sufficient spacing.
 The [mixed-port regression](../examples/port-collisions.svg) reproduces a refined
 fan-out bundle whose old central source coincided with an independent target.
+Its manually positioned cards exercise geometry near the diagram's top edge.
+SVG composition measures the final cards, paths and number badges and reserves
+top clearance so they remain below the preceding legend and annotation sections,
+without changing relative routing geometry.
 The [shared SVG update command](../README.md#svg-の更新) regenerates it by selecting
 `refined_flat_bundle_keeps_opposite_role_port` and reusing its exact fixture.
 

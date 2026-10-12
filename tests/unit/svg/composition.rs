@@ -10,7 +10,7 @@ fn legend_reflow_changes_section_offsets_without_moving_cards_or_routing_paths()
     for width in [1100, 2166] {
         layout.width = width;
         let index = relationship_index::Index::new(&graph, &layout);
-        let sections = Sections::new(&graph, &index, AddressFormat::Qualified);
+        let sections = Sections::new(&graph, &layout, &index, AddressFormat::Qualified);
         let svg = render(&graph, &layout);
         let document = roxmltree::Document::parse(&svg).unwrap();
         let root = document.root_element();
