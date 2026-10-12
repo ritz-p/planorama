@@ -303,11 +303,12 @@ fn corridor_capacity_expands_then_reroutes_mixed_edges_into_whole_lanes() {
                 terminal(path, 0),
                 terminal(path, 1),
                 &barriers(&graph, &layout, i),
-                crate::layout::relationship_markers::ends(&graph)[i].map(|n| if n {
-                    crate::layout::relationship_markers::clearance(&graph)
-                } else {
-                    16
-                })
+                crate::layout::relationship_markers::terminals(
+                    &graph,
+                    i,
+                    crate::layout::relationship_markers::numbers(&graph)[i],
+                    [terminal(path, 0).side, terminal(path, 1).side],
+                )
             ));
         }
         let expected = (layout.bounds.clone(), layout.paths.clone());
@@ -320,6 +321,96 @@ fn corridor_capacity_expands_then_reroutes_mixed_edges_into_whole_lanes() {
             expected,
             (layout.bounds, layout.paths.into_iter().rev().collect())
         );
+    }
+}
+
+#[test]
+fn numbered_turns_keep_distinct_perpendicular_runs_when_spacing_a_corridor() {
+    let mut graph = corridor_graph(2);
+    let mut relationship = graph.relationships[0].clone();
+    relationship.from = graph.nodes[2].entity.id.clone();
+    relationship.to = graph.nodes[3].entity.id.clone();
+    graph.edges[1].kind = relationship.kind;
+    graph.relationships.push(relationship);
+    let point = |x, y| Point { x, y };
+    for transpose in [false, true] {
+        let mut layout = narrow(&graph, false);
+        for (index, (x, y)) in [
+            (100, 100),
+            (800, 450),
+            (300, 100),
+            (800, 750),
+            (50, 1000),
+            (50, 1200),
+        ]
+        .into_iter()
+        .enumerate()
+        {
+            layout.bounds[index] = Bounds {
+                origin: point(x, y),
+                width: 100,
+                height: 100,
+            };
+        }
+        layout.bounds[4] = Bounds {
+            origin: point(100, 350),
+            width: 400,
+            height: 50,
+        };
+        layout.paths = vec![
+            vec![
+                point(150, 200),
+                point(150, 260),
+                point(700, 260),
+                point(700, 500),
+                point(800, 500),
+            ],
+            vec![
+                point(350, 200),
+                point(350, 262),
+                point(720, 262),
+                point(720, 800),
+                point(800, 800),
+            ],
+        ];
+        if transpose {
+            for bounds in &mut layout.bounds {
+                std::mem::swap(&mut bounds.origin.x, &mut bounds.origin.y);
+                std::mem::swap(&mut bounds.width, &mut bounds.height);
+            }
+            for p in layout.paths.iter_mut().flatten() {
+                std::mem::swap(&mut p.x, &mut p.y);
+            }
+            std::mem::swap(&mut layout.width, &mut layout.height);
+        }
+        let before = expansion::Snapshot::capture(&layout);
+        assert!(measure(&graph, &layout.paths).close_length >= 300);
+        refine(&graph, &mut layout);
+        assert_eq!(measure(&graph, &layout.paths).close_length, 0);
+        assert_eq!(layout.bounds, before.bounds);
+        assert_eq!(
+            super::super::refinement::overlap(&layout.paths[0], &layout.paths[1]),
+            0
+        );
+        let numbers = crate::layout::relationship_markers::numbers(&graph);
+        for (i, path) in layout.paths.iter().enumerate() {
+            assert_eq!(path.first(), before.paths[i].first());
+            assert_eq!(path.last(), before.paths[i].last());
+            assert_eq!(Shape::measure(path).bends, 3);
+            assert_eq!(Shape::measure(path).reversals, 0);
+            assert!(ports::valid_with_clearances(
+                path,
+                terminal(path, 0),
+                terminal(path, 1),
+                &barriers(&graph, &layout, i),
+                crate::layout::relationship_markers::terminals(
+                    &graph,
+                    i,
+                    numbers[i],
+                    [terminal(path, 0).side, terminal(path, 1).side],
+                ),
+            ));
+        }
     }
 }
 

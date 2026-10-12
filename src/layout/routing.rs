@@ -254,7 +254,7 @@ pub(super) fn route_selected(
                             .filter(|&edge| bundles.group(edge).is_none()),
                         |_| bounds.to_vec(),
                         |_| Vec::new(),
-                        |_| [16; 2],
+                        |_| [super::relationship_markers::Terminal::plain(16); 2],
                         bounds,
                     );
                 }

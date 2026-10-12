@@ -1,3 +1,4 @@
+use crate::layout::relationship_markers::{self, Terminal};
 use crate::layout::{Bounds, Side};
 use crate::model::architecture::Graph;
 
@@ -17,7 +18,7 @@ pub(in crate::layout) fn assign_selected(
 ) -> (Vec<[usize; 4]>, Vec<[usize; 4]>) {
     let mut sources = vec![[0; 4]; graph.edges.len()];
     let mut targets = sources.clone();
-    let numbered = crate::layout::relationship_markers::ends(graph);
+    let numbers = relationship_markers::numbers(graph);
     for (node, edges) in incident.iter().enumerate() {
         for side in [Side::Left, Side::Right, Side::Top, Side::Bottom] {
             let mut ordered = edges.clone();
@@ -50,21 +51,13 @@ pub(in crate::layout) fn assign_selected(
             let offsets = if sides.is_some()
                 || ordered
                     .iter()
-                    .any(|&(e, source)| numbered[e][usize::from(!source)])
+                    .any(|&(e, source)| numbers[e][usize::from(!source)].is_some())
             {
-                let spacing = match side {
-                    Side::Left | Side::Right => crate::layout::relationship_markers::PORT_SPACING,
-                    Side::Top | Side::Bottom => {
-                        crate::layout::relationship_markers::clearance(graph)
-                            .saturating_sub(crate::layout::relationship_markers::GAP + 8)
-                            + 6
-                    }
-                };
                 crate::layout::relationship_markers::ports_with_minimum(
                     &ordered,
-                    &numbered,
+                    &numbers,
                     size,
-                    spacing,
+                    side,
                     if sides.is_some() { MIN_SPACING } else { 1 },
                 )
             } else {
@@ -94,7 +87,7 @@ pub(in crate::layout) fn crowded(
     paths: &[Vec<crate::layout::Point>],
     sides: &[[Side; 2]],
 ) -> bool {
-    let numbered = crate::layout::relationship_markers::ends(graph);
+    let numbers = relationship_markers::numbers(graph);
     if opposite_roles_collide(graph, paths) {
         return true;
     }
@@ -113,17 +106,7 @@ pub(in crate::layout) fn crowded(
                     } else {
                         point.x
                     },
-                    if numbered[index][end] {
-                        if matches!(side, Side::Left | Side::Right) {
-                            crate::layout::relationship_markers::PORT_SPACING
-                        } else {
-                            crate::layout::relationship_markers::clearance(graph)
-                                .saturating_sub(crate::layout::relationship_markers::GAP + 8)
-                                + 6
-                        }
-                    } else {
-                        MIN_SPACING
-                    },
+                    numbers[index][end].map_or(MIN_SPACING, |n| Terminal::marker(n, side).span),
                 ));
             }
         }
@@ -165,17 +148,14 @@ pub(in crate::layout) fn fit_sides(
     visible: &[bool],
     paths: Option<&[Vec<crate::layout::Point>]>,
 ) -> bool {
-    let numbered = crate::layout::relationship_markers::ends(graph);
+    let numbers = relationship_markers::numbers(graph);
     let mut demand = vec![[0; 2]; graph.nodes.len()];
     let mut occupied = std::collections::BTreeSet::new();
-    let width = crate::layout::relationship_markers::clearance(graph)
-        .saturating_sub(crate::layout::relationship_markers::GAP + 8)
-        + 6;
     let mut changed = false;
     for (index, edge) in graph.edges.iter().enumerate().filter(|(i, _)| visible[*i]) {
         for (end, node) in [edge.from, edge.to].into_iter().enumerate() {
             if matches!(sides[index][end], Side::Top | Side::Bottom) {
-                if !numbered[index][end] {
+                if numbers[index][end].is_none() {
                     if let Some(paths) = paths {
                         let point = if end == 0 {
                             paths[index].first()
@@ -195,12 +175,8 @@ pub(in crate::layout) fn fit_sides(
                         }
                     }
                 }
-                demand[node][usize::from(sides[index][end] == Side::Bottom)] +=
-                    if numbered[index][end] {
-                        width
-                    } else {
-                        MIN_SPACING
-                    };
+                demand[node][usize::from(sides[index][end] == Side::Bottom)] += numbers[index][end]
+                    .map_or(MIN_SPACING, |n| Terminal::marker(n, sides[index][end]).span);
             }
         }
     }
