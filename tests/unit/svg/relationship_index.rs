@@ -143,10 +143,7 @@ fn upward_routes_and_numbered_badges_clear_the_annotation_sections() {
         let first = layout.paths[edge][0];
         let last = *layout.paths[edge].last().unwrap();
         layout.paths[edge] = if horizontal_terminals {
-            vec![
-                Point { x: first.x, y: 100 },
-                Point { x: last.x, y: 100 },
-            ]
+            vec![Point { x: first.x, y: 100 }, Point { x: last.x, y: 100 }]
         } else {
             vec![
                 first,
