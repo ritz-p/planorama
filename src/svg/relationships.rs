@@ -21,6 +21,7 @@ pub(super) fn captions(graph: &Graph) -> (String, String) {
         .iter()
         .filter(|n| n.placement == crate::model::Placement::Logical)
         .count();
+    let logical_groups = super::logical::group_count(graph);
     let embedded = graph
         .nodes
         .iter()
@@ -30,7 +31,7 @@ pub(super) fn captions(graph: &Graph) -> (String, String) {
         let resources = nodes + additional_resources(graph);
         let spatial = nodes - logical - embedded;
         let summary = format!(
-            "{resources} resources ({spatial} spatial cards, {logical} logical cards, {embedded} embedded route cards) · {edges} relationships"
+            "{resources} resources ({spatial} spatial cards, {logical} logical resources in {logical_groups} group cards, {embedded} embedded route cards) · {edges} relationships"
         );
         return (summary.clone(), summary);
     }
@@ -38,7 +39,7 @@ pub(super) fn captions(graph: &Graph) -> (String, String) {
         let resources = nodes + additional_resources(graph);
         let spatial = nodes - logical;
         let summary = format!(
-            "{resources} resources ({spatial} spatial cards, {logical} logical cards) · {edges} relationships"
+            "{resources} resources ({spatial} spatial cards, {logical} logical resources in {logical_groups} group cards) · {edges} relationships"
         );
         return (summary.clone(), summary);
     }
