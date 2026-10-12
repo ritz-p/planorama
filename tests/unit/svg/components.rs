@@ -7,8 +7,56 @@ fn graph() -> Graph {
     .0
 }
 
+fn number(node: roxmltree::Node, attribute: &str) -> usize {
+    node.attribute(attribute).unwrap().parse().unwrap()
+}
+
+fn member_underline<'a, 'input>(
+    member: roxmltree::Node<'a, 'input>,
+    action: crate::model::Action,
+) -> roxmltree::Node<'a, 'input> {
+    let row = member.parent().unwrap();
+    assert!(row.has_tag_name("g"));
+    assert_eq!(row.attribute("data-component-member"), Some("true"));
+    assert!(
+        row.descendants()
+            .all(|n| n.attribute("data-annotation-card").is_none())
+    );
+    assert!(
+        row.descendants()
+            .filter(|n| n.has_tag_name("rect"))
+            .all(|n| {
+                n.ancestors()
+                    .any(|n| n.attribute("data-import-badge") == Some("true"))
+            })
+    );
+    let lines: Vec<_> = row
+        .descendants()
+        .filter(|n| n.has_tag_name("line"))
+        .collect();
+    assert_eq!(lines.len(), 1);
+    let underline = lines[0];
+    assert_eq!(underline.attribute("data-member-underline"), Some("true"));
+    assert_eq!(
+        underline.attribute("stroke"),
+        Some(crate::svg::color(action).1)
+    );
+    assert_eq!(underline.attribute("stroke-width"), Some("2"));
+    assert_eq!(underline.attribute("x1"), Some("0"));
+    assert_eq!(underline.attribute("y1"), underline.attribute("y2"));
+    let text = member.children().find(|n| n.has_tag_name("text")).unwrap();
+    assert_eq!(text.attribute("fill"), Some("#334155"));
+    assert!(text.range().end <= underline.range().start);
+    assert!(
+        text.children()
+            .filter(|n| n.has_tag_name("tspan"))
+            .all(|n| number(n, "y") + 4 < number(underline, "y1"))
+    );
+    underline
+}
+
 #[test]
-fn themed_members_preserve_actions_unique_targets_and_state_identity() {
+fn underlined_members_preserve_actions_unique_targets_and_state_identity() {
     use crate::model::{Action, Placement, StateId};
     let mut input: serde_json::Value =
         serde_json::from_str(include_str!("../../fixtures/components-plan.json")).unwrap();
@@ -52,34 +100,19 @@ fn themed_members_preserve_actions_unique_targets_and_state_identity() {
                     && n.has_tag_name("a")
             })
             .unwrap();
-        let rect = member.children().find(|n| n.has_tag_name("rect")).unwrap();
-        let (fill, stroke) = crate::svg::color(node.action);
-        assert_eq!(rect.attribute("fill"), Some(fill));
-        assert_eq!(rect.attribute("stroke"), Some(stroke));
+        member_underline(member, node.action);
         let badge = member
             .children()
             .find(|n| n.attribute("data-import-badge").is_some());
         assert_eq!(badge.is_some(), node.metadata.import.is_some());
         if let Some(badge) = badge {
             let badge_rect = badge.children().find(|n| n.has_tag_name("rect")).unwrap();
-            let bottom = badge_rect.attribute("y").unwrap().parse::<usize>().unwrap()
-                + badge_rect
-                    .attribute("height")
-                    .unwrap()
-                    .parse::<usize>()
-                    .unwrap();
+            let bottom = number(badge_rect, "y") + number(badge_rect, "height");
             let first = member
                 .descendants()
                 .find(|n| n.has_tag_name("tspan"))
                 .unwrap();
-            assert!(bottom + 10 < first.attribute("y").unwrap().parse::<usize>().unwrap());
-            let height = rect.attribute("height").unwrap().parse::<usize>().unwrap();
-            assert!(
-                member
-                    .descendants()
-                    .filter(|n| n.has_tag_name("tspan"))
-                    .all(|n| n.attribute("y").unwrap().parse::<usize>().unwrap() + 4 < height)
-            );
+            assert!(bottom + 10 < number(first, "y"));
         }
         let target = member.attribute("href").unwrap().strip_prefix('#').unwrap();
         let targets: Vec<_> = doc
@@ -134,14 +167,7 @@ fn themed_members_preserve_actions_unique_targets_and_state_identity() {
                     .children()
                     .any(|c| c.attribute("data-import-badge").is_some()))
     );
-    assert_eq!(
-        missing
-            .children()
-            .find(|n| n.has_tag_name("rect"))
-            .unwrap()
-            .attribute("fill"),
-        Some("#f8fafc")
-    );
+    member_underline(missing, Action::Unchanged);
     assert_eq!(
         doc.descendants()
             .filter(|n| n.attribute("data-terraform-address").is_some())
@@ -230,7 +256,7 @@ fn component_cards_keep_identity_members_operations_and_links() {
                 text,
                 format!(
                     "{}: {address}",
-                    crate::svg::operations::action_label(node.action, &node.metadata)
+                    crate::svg::operations::label(node.action, &node.metadata)
                 )
             );
         }
@@ -248,7 +274,7 @@ fn empty_components_and_ambiguous_member_addresses_do_not_invent_links() {
     let duplicate = graph
         .nodes
         .iter()
-        .find(|n| n.address == "aws_lb.app")
+        .find(|n| n.address == "aws_lb_listener.https")
         .unwrap()
         .clone();
     graph.nodes.push(duplicate);
@@ -256,10 +282,25 @@ fn empty_components_and_ambiguous_member_addresses_do_not_invent_links() {
     let doc = roxmltree::Document::parse(&output.content).unwrap();
     let member = doc
         .descendants()
-        .find(|n| n.attribute("data-source-address") == Some("aws_lb.app"))
+        .find(|n| n.attribute("data-source-address") == Some("aws_lb_listener.https"))
         .unwrap();
     assert!(member.attribute("href").is_none());
     assert_eq!(member.attribute("data-member-status"), Some("unavailable"));
+    assert!(member.attribute("data-import").is_none());
+    assert_eq!(
+        member
+            .descendants()
+            .filter(|n| n.has_tag_name("tspan"))
+            .filter_map(|n| n.text())
+            .collect::<String>(),
+        "aws_lb_listener.https"
+    );
+    member_underline(member, crate::model::Action::Unchanged);
+    assert!(
+        member
+            .descendants()
+            .all(|n| n.attribute("data-import-badge").is_none())
+    );
     graph.components[0].members.clear();
     let empty = cards(&graph).remove(0);
     assert!(empty.height > 28);
@@ -271,7 +312,19 @@ fn empty_components_and_ambiguous_member_addresses_do_not_invent_links() {
 #[test]
 fn long_member_lists_and_multiple_components_wrap_without_losing_text() {
     let mut graph = graph();
-    let template = graph.components[0].clone();
+    let mut template = graph.components[0].clone();
+    let mut imported = graph
+        .nodes
+        .iter()
+        .find(|n| n.metadata.import.is_some())
+        .unwrap()
+        .clone();
+    imported.address = format!(
+        r#"module.{}.aws_lb_listener.named["  支払い & \"blue\" <edge>  "]"#,
+        "長いモジュール".repeat(24)
+    );
+    template.members.push(imported.address.clone());
+    graph.nodes.push(imported);
     graph.components.clear();
     for i in 0..5 {
         let mut component = template.clone();
@@ -288,6 +341,7 @@ fn long_member_lists_and_multiple_components_wrap_without_losing_text() {
                 "長いモジュール.".repeat(20)
             )
         }));
+        component.members.push(component.members[0].clone());
         graph.components.push(component);
     }
     let cards = cards(&graph);
@@ -295,31 +349,100 @@ fn long_member_lists_and_multiple_components_wrap_without_losing_text() {
     for card in &cards {
         assert!(card.width <= 640);
         let doc = roxmltree::Document::parse(&card.content).unwrap();
+        let panel = doc.root_element();
+        let component = graph
+            .components
+            .iter()
+            .find(|c| panel.attribute("data-component-id") == Some(c.id.as_str()))
+            .unwrap();
+        let expected_members: std::collections::BTreeSet<_> =
+            component.members.iter().map(String::as_str).collect();
         let members: Vec<_> = doc
             .descendants()
             .filter(|n| n.attribute("data-source-address").is_some())
             .collect();
+        assert_eq!(
+            members
+                .iter()
+                .map(|n| n.attribute("data-source-address").unwrap())
+                .collect::<Vec<_>>(),
+            expected_members.into_iter().collect::<Vec<_>>()
+        );
+        let headings: Vec<_> = panel
+            .children()
+            .filter(|n| n.has_tag_name("text"))
+            .collect();
+        assert!(headings.len() > 1);
+        assert_eq!(
+            headings.iter().filter_map(|n| n.text()).collect::<String>(),
+            component.label
+        );
+        let mut bottom = number(*headings.last().unwrap(), "y");
         for member in members {
-            let visible: String = member
+            let address = member.attribute("data-source-address").unwrap();
+            let node = graph.nodes.iter().find(|n| n.address == address);
+            let underline = member_underline(
+                member,
+                node.map_or(crate::model::Action::Unchanged, |node| node.action),
+            );
+            let position: Vec<usize> = member
+                .parent()
+                .unwrap()
+                .attribute("transform")
+                .unwrap()
+                .strip_prefix("translate(")
+                .unwrap()
+                .strip_suffix(')')
+                .unwrap()
+                .split_whitespace()
+                .map(|n| n.parse().unwrap())
+                .collect();
+            assert_eq!(position.len(), 2);
+            assert_eq!(position[0], 16);
+            assert!(position[1] > bottom);
+            assert_eq!(number(underline, "x2"), card.width - 32);
+            bottom = position[1] + number(underline, "y1");
+            assert!(bottom < card.height - 16);
+            let lines: Vec<_> = member
                 .descendants()
                 .filter(|n| n.has_tag_name("tspan"))
-                .filter_map(|n| n.text())
                 .collect();
-            assert!(visible.ends_with(member.attribute("data-source-address").unwrap()));
-        }
-        for row in doc.descendants().filter(|n| n.has_tag_name("tspan")) {
-            assert!(row.attribute("y").unwrap().parse::<usize>().unwrap() + 4 < card.height);
-            let width: usize = row
-                .text()
-                .unwrap()
-                .chars()
-                .map(|c| if c.is_ascii() { 8 } else { 16 })
-                .sum();
-            assert!(width + 32 <= card.width);
+            let visible: String = lines.iter().filter_map(|n| n.text()).collect();
+            let expected = node.map_or_else(
+                || address.to_string(),
+                |node| {
+                    format!(
+                        "{}: {address}",
+                        crate::svg::operations::label(node.action, &node.metadata)
+                    )
+                },
+            );
+            assert_eq!(visible, expected);
+            if address.contains("長いモジュール") {
+                assert!(lines.len() > 1);
+            }
+            for pair in lines.windows(2) {
+                assert_eq!(number(pair[1], "y") - number(pair[0], "y"), 20);
+            }
+            for line in lines {
+                assert_eq!(number(line, "x"), 0);
+                assert_eq!(
+                    line.attribute(("http://www.w3.org/XML/1998/namespace", "space")),
+                    Some("preserve")
+                );
+                let width: usize = line
+                    .text()
+                    .unwrap()
+                    .chars()
+                    .map(|c| if c.is_ascii() { 8 } else { 16 })
+                    .sum();
+                assert!(position[0] + width <= card.width - 16);
+            }
         }
     }
     let expected = crate::svg::annotations::Area::new(cards, 1500).render();
     graph.components.reverse();
+    graph.nodes.reverse();
     for component in &mut graph.components {
         component.members.reverse();
     }

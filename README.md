@@ -50,7 +50,8 @@ docker compose exec -T dev cargo run --locked -- - -o - < plan.json > diagram.sv
 - AWS の VPC・Subnet が空間的なコンテナです。間接参照から導いた配置には `inferred placement` を表示します。
 - data リソースは破線と `external` 表示で区別します。一部の AWS メタデータ data は省略します。
 - import を含むリソースには専用の `import` バッジを表示します。作成・更新・置換・変更なしの色や action は保持し、import ID や identity の値は表示しません。
-- 上部は Logical Resources（シアン）、Logical Components（紫）、Relationship Resources の順です。ECS Cluster・Task Definition・IAM 定義・AMI・CloudWatch Log Group・Metric Alarm は最初のセクションにまとめ、空間配置と経路計算から分離します。内側のリソースとコンポーネントのメンバーカードは各リソースの変更色を使い、参照情報・変更数を保持します。
+- 上部は Logical Resources（シアン）、Logical Components（紫）、Relationship Resources の順です。ECS Cluster・Task Definition・IAM 定義・AMI・CloudWatch Log Group・Metric Alarm は最初のセクションにまとめ、空間配置と経路計算から分離します。
+- Logical Resources のカードは各リソースの変更色を使います。Logical Components のメンバーは中立色のテキスト行で並べ、各項目の折り返し後に変更色の下線を 1 本表示します。紫の見出し、元リソースへのリンク、操作情報・変更数を保持します。
 - 利用側の `Uses` 行は参照を全件表示し、論理カードへ移動できます。依存指定・未解決・表示対象外を区別し、module・instance・state を含む完全な参照アドレスを折り返して表示します。カードと配置領域は内容に合わせて拡張します。
 - 既定のアドレス表示は Planorama 修飾形式です。`--address-format terraform` で Terraform 本来の表記に切り替えられます。長いアドレスは要素の区切りを優先して折り返し、全文を表示します。引用符付きの instance key 内のドットは区切りとして扱いません。
 - 移動したリソースには `Moved from:` と移動元の完全なアドレスを表示します。空間カード、論理カード、Route 子カード、関係一覧の各リソースで確認でき、長い移動元も折り返して表示します。

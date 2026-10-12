@@ -53,8 +53,9 @@ Shared VPC and Security Group data sources remain external spatial cards. ECS
 Cluster/Task Definition, IAM definitions, the external AMI, CloudWatch Log Group
 and Metric Alarm are logical cards.
 A purple Logical Components section contains the load balancer, its Listener and
-its uniquely referenced Target Group as action-colored member links. The Target
-Group link points to the original spatial card. Relationship Resources follow in a separate neutral
+its uniquely referenced Target Group as neutral member links, each with one
+action-colored underline below its wrapped text. The Target Group link points to
+the original spatial card. Relationship Resources follow in a separate neutral
 section. Empty sections are omitted in smaller examples.
 The 74 relationships remain queryable; 37 paths are spatially routed.
 Internet and NAT Routes appear inside the public and private Route Tables with
