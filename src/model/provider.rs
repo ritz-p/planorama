@@ -12,6 +12,7 @@ pub struct RegionScope(pub String);
 pub enum ProviderIdentity {
     Explicit(String),
     InferredAws,
+    InferredTerraform,
     Unknown,
 }
 
@@ -29,6 +30,8 @@ impl ProviderIdentity {
     pub fn inferred(resource_type: &str) -> Self {
         if resource_type.starts_with("aws_") {
             Self::InferredAws
+        } else if matches!(resource_type, "terraform_data" | "terraform_remote_state") {
+            Self::InferredTerraform
         } else {
             Self::Unknown
         }
@@ -38,12 +41,17 @@ impl ProviderIdentity {
         match self {
             Self::Explicit(source) => Some(source),
             Self::InferredAws => Some("registry.terraform.io/hashicorp/aws"),
+            Self::InferredTerraform => Some("terraform.io/builtin/terraform"),
             Self::Unknown => None,
         }
     }
 
     pub fn is_aws(&self) -> bool {
         self.source() == Some("registry.terraform.io/hashicorp/aws")
+    }
+
+    pub fn is_terraform(&self) -> bool {
+        self.source() == Some("terraform.io/builtin/terraform")
     }
 
     pub fn is_explicit(&self) -> bool {
