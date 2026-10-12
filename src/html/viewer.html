@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data:; base-uri 'none'; form-action 'none'">
+<title>Planorama viewer</title>
+<style>/* VIEWER_CSS */</style>
+</head>
+<body>
+<header><strong>Planorama</strong><button id="clear" type="button">Clear selection</button><button id="zoom-out" type="button" aria-label="Zoom out">−</button><button id="zoom-in" type="button" aria-label="Zoom in">+</button><button id="fit" type="button">Fit to view</button><output id="zoom-level" aria-live="polite"></output></header>
+<main>
+<aside aria-label="Resources and relationships">
+<label for="search">Search resources</label>
+<input id="search" type="search" placeholder="Address, module, state, type or mode" autocomplete="off" aria-controls="results" aria-describedby="search-help">
+<p id="search-help">Arrow Down moves to results. Enter selects. Escape clears selection. Drag or scroll to pan. In the diagram, arrow keys pan, +/− zoom and F fits the view. Ctrl+scroll zooms.</p>
+<p id="result-count" role="status"></p>
+<div id="results" aria-label="Search results"></div>
+<section id="selection" aria-label="Selection details" aria-live="polite"></section>
+</aside>
+<section id="viewport" tabindex="0" aria-label="Diagram. Arrow keys pan; plus and minus zoom; F fits the view; Escape clears selection.">
+<!-- DIAGRAM -->
+</section>
+</main>
+<noscript>Enable JavaScript for search and navigation. The diagram is included below.</noscript>
+<script id="viewer-data" type="application/json"><!-- VIEWER_DATA --></script>
+<script>/* VIEWER_JS */</script>
+</body>
+</html>

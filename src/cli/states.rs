@@ -8,6 +8,7 @@ pub(super) fn run(
     inputs: BTreeMap<StateId, String>,
     output: &Path,
     format: svg::AddressFormat,
+    output_format: super::OutputFormat,
     diagnostics: bool,
     mappings: &[crate::model::cross_state::Mapping],
     filter: &crate::view::Options,
@@ -106,7 +107,10 @@ pub(super) fn run(
         relationships: cross.edges,
     };
     let architecture = crate::view::apply(&architecture, filter)?;
-    let image = svg::render_states(&architecture, format);
+    let image = match output_format {
+        super::OutputFormat::Svg => svg::render_states(&architecture, format),
+        super::OutputFormat::Html => crate::html::render_states(&architecture, format),
+    };
     if output == Path::new("-") {
         io::stdout()
             .write_all(image.as_bytes())

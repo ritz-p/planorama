@@ -12,6 +12,7 @@ pub(super) fn render(
     x: usize,
     mut y: usize,
     index: &super::relationship_index::Index<'_>,
+    content: super::Content,
 ) -> String {
     let cards = cards(graph, parent);
     if cards.is_empty() {
@@ -21,8 +22,15 @@ pub(super) fn render(
         r##"<g data-routes="true"><text x="{x}" y="{y}" font-size="12" font-weight="700" fill="#475569">Routes</text>"##
     );
     y += 12;
-    for card in cards {
+    for mut card in cards {
         let height = card.height();
+        if matches!(content, super::Content::ValueFree) {
+            for row in &mut card.rows {
+                if row.destination {
+                    row.text = "Destination: omitted".into();
+                }
+            }
+        }
         let node = card.node.unwrap_or(&graph.nodes[parent]);
         let (background, border) = super::color(node.action);
         if let Some(node) = card.node {

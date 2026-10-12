@@ -23,6 +23,10 @@ Logical Terraform resources participate in the same selection and neighbor rules
 Their references retain stable source identities even if a target is filtered out;
 rendering must check target availability before emitting a fragment link.
 
+These filters also apply to `--format html`. Viewer search operates within the
+generated view; it cannot restore resources excluded by CLI selection. See
+[the local viewer](viewer.md).
+
 ```sh
 planorama plan.json --changed-only -o changes.svg
 planorama plan.json --focus module.app.aws_instance.web --focus-depth 2

@@ -5,19 +5,39 @@ use std::path::{Path, PathBuf};
 mod files;
 mod states;
 
-const HELP: &str = "planorama — Terraform plan JSON → SVG (pure Rust)\n\nUsage: planorama <plan.json | -> [-o <diagram.svg | ->] [--address-format qualified|terraform] [--diagnostics]\n\n  -o, --output PATH   Output file (default: diagram.svg); '-' for stdout\n  --address-format FORMAT  Resource labels: qualified (default) or terraform\n  --changed-only     Retain changes and required context\n  --focus ADDRESS    Select a resource (STATE:ADDRESS for named states)\n  --focus-depth N    Neighbor depth (default: 1; requires --focus)\n  --remote-state CONSUMER:ADDRESS=PRODUCER  Map a named remote-state data source\n  --diagnostics      Explain unresolved references and semantic fallbacks on stderr\n  -h, --help          Show help\n  -V, --version       Show version\n\nInput: terraform show -json <saved-plan> (not terraform plan -json).\nLines show reference or architectural relationships; containment uses nested boxes.\nAttribute values are never included in the diagram.\n";
+#[derive(Clone, Copy, Default)]
+pub(super) enum OutputFormat {
+    #[default]
+    Svg,
+    Html,
+}
+
+const HELP: &str = "planorama — Terraform plan JSON → SVG / HTML (pure Rust)\n\nUsage: planorama <plan.json | -> [--format svg|html] [-o <path | ->] [--address-format qualified|terraform] [--diagnostics]\n\n  -o, --output PATH   Output file (default: diagram.svg or diagram.html); '-' for stdout\n  --format FORMAT    Output format: svg (default) or self-contained html\n  --address-format FORMAT  Resource labels: qualified (default) or terraform\n  --changed-only     Retain changes and required context\n  --focus ADDRESS    Select a resource (STATE:ADDRESS for named states)\n  --focus-depth N    Neighbor depth (default: 1; requires --focus)\n  --remote-state CONSUMER:ADDRESS=PRODUCER  Map a named remote-state data source\n  --diagnostics      Explain unresolved references and semantic fallbacks on stderr\n  -h, --help          Show help\n  -V, --version       Show version\n\nInput: terraform show -json <saved-plan> (not terraform plan -json).\nLines show reference or architectural relationships; containment uses nested boxes.\nAttribute values are never included in the diagram.\n";
 
 pub(crate) fn run() -> Result<(), String> {
     let mut input = None;
     let mut state_inputs = std::collections::BTreeMap::new();
     let mut mappings = Vec::new();
-    let mut output = PathBuf::from("diagram.svg");
+    let mut output = None;
+    let mut output_format = OutputFormat::default();
     let mut address_format = svg::AddressFormat::default();
     let mut diagnostics = false;
     let mut filter = crate::view::Options::default();
     let mut args = std::env::args().skip(1);
     while let Some(arg) = args.next() {
         match arg.as_str() {
+            "--format" => {
+                output_format = match args.next().as_deref() {
+                    Some("svg") => OutputFormat::Svg,
+                    Some("html") => OutputFormat::Html,
+                    Some(value) => {
+                        return Err(format!(
+                            "invalid output format: {value}; expected svg or html"
+                        ));
+                    }
+                    None => return Err("--format requires svg or html".into()),
+                };
+            }
             "--changed-only" => filter.changed_only = true,
             "--focus" => filter.focus = Some(args.next().ok_or("--focus requires an address")?),
             "--focus-depth" => {
@@ -56,7 +76,11 @@ pub(crate) fn run() -> Result<(), String> {
                 println!("planorama {}", env!("CARGO_PKG_VERSION"));
                 return Ok(());
             }
-            "-o" | "--output" => output = args.next().ok_or("--output requires a path")?.into(),
+            "-o" | "--output" => {
+                output = Some(PathBuf::from(
+                    args.next().ok_or("--output requires a path")?,
+                ))
+            }
             "--address-format" => {
                 address_format = match args.next().as_deref() {
                     Some("qualified") => svg::AddressFormat::Qualified,
@@ -78,6 +102,12 @@ pub(crate) fn run() -> Result<(), String> {
             },
         }
     }
+    let output = output.unwrap_or_else(|| {
+        PathBuf::from(match output_format {
+            OutputFormat::Svg => "diagram.svg",
+            OutputFormat::Html => "diagram.html",
+        })
+    });
     filter.validate()?;
     if !state_inputs.is_empty() {
         if input.is_some() {
@@ -87,6 +117,7 @@ pub(crate) fn run() -> Result<(), String> {
             state_inputs,
             &output,
             address_format,
+            output_format,
             diagnostics,
             &mappings,
             &filter,
@@ -151,9 +182,12 @@ pub(crate) fn run() -> Result<(), String> {
     }
     let graph = crate::view::single(&semantic::transform(&raw), &filter)?;
     let layout = Layout::new(&graph);
-    let image = match address_format {
-        svg::AddressFormat::Qualified => svg::render(&graph, &layout),
-        svg::AddressFormat::Terraform => svg::render_with_format(&graph, &layout, address_format),
+    let image = match (output_format, address_format) {
+        (OutputFormat::Html, _) => crate::html::render(&graph, &layout, address_format),
+        (OutputFormat::Svg, svg::AddressFormat::Qualified) => svg::render(&graph, &layout),
+        (OutputFormat::Svg, svg::AddressFormat::Terraform) => {
+            svg::render_with_format(&graph, &layout, address_format)
+        }
     };
     match output.as_path() {
         path if path == Path::new("-") => io::stdout()
