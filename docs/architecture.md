@@ -64,6 +64,10 @@ space, and for wrapped move annotations before packing. Uses rows and embedded
 Route cards start below that complete header; rendering, child bounds and routing
 obstacles use the same offsets. Address formatting never changes resource identity,
 metadata or links.
+Imported resources reserve a separate badge row in spatial, logical, embedded
+Route and component-member presentations. Shared measurements include this height
+when placing subsequent text and child bounds. Badges stay separate from service
+icons and external-mode indicators, preserving space for complete addresses.
 
 Ingestion does not import provider rules, layout or SVG. Layout, view and SVG use
 the `model::architecture` facade, which excludes Terraform ingestion contracts.

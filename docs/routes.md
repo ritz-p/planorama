@@ -11,6 +11,8 @@ Embedding is presentation metadata, not Terraform Containment. Each Route retain
 its graph node, native address, stable ID, action, import/move/deposed information
 and provenance. It is counted once; its numbered relationship also appears in the
 Relationship Resources index without creating another resource identity.
+An imported Route displays its own `import` badge and ordinary action. The parent
+table's import is not copied to standalone child resources or inline entries.
 The table keeps its VPC containment and Subnet associations. Filtering a Route
 retains its table even at focus depth zero or when the table is unchanged.
 
@@ -48,8 +50,8 @@ remain separate; inline entries sort deterministically. An unknown route collect
 has an unresolved entry, while an empty table needs no Routes section.
 
 Shared row measurement wraps complete child addresses and visible `Moved from:`
-annotations, reserving their height inside the table footprint before placement
-and routing. The final router uses
+annotations and reserves each imported child's badge row inside the table footprint
+before placement and routing. The final router uses
 child bounds, protects the parent header and sibling entries, and reserves target
 ports and marker corridors. Routes to the same next hop remain individual paths.
 See [routes.svg](../examples/routes.svg)
