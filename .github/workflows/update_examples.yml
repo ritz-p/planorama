@@ -402,6 +402,7 @@ jobs:
       contents: write
       actions: write
       pull-requests: read
+      statuses: write
     steps:
       - name: Download this run's generated output
         uses: actions/download-artifact@v8.0.2
@@ -511,7 +512,7 @@ jobs:
             }
 
             async function validationWorkflows() {
-              const workflows = ['cargo_fmt.yml', 'cargo_clippy.yml', 'cargo_test.yml'];
+              const workflows = new Set(['cargo_fmt.yml', 'cargo_clippy.yml', 'cargo_test.yml']);
               const msrvPaths = new Set([
                 'Cargo.toml', 'Cargo.lock', 'rust-toolchain.toml', 'Dockerfile', '.dockerignore',
                 'compose.yaml', '.github/workflows/cargo_msrv.yml', '.github/scripts/checkout-validation.sh',
@@ -519,12 +520,15 @@ jobs:
               for (let page = 1; page <= 30; page++) {
                 const files = await request('GET', `pulls/${number}/files`, {per_page: 100, page});
                 if (!Array.isArray(files)) throw new Error('Could not inspect the whole PR diff for MSRV validation.');
-                if (files.some(file => msrvPaths.has(file.filename) || msrvPaths.has(file.previous_filename))) {
-                  return [...workflows, 'cargo_msrv.yml'];
+                const names = files.flatMap(file => [file.filename, file.previous_filename])
+                  .filter(name => typeof name === 'string');
+                if (names.some(name => msrvPaths.has(name))) workflows.add('cargo_msrv.yml');
+                if (names.some(name => name.startsWith('.github/') || name.startsWith('tests/ci/'))) {
+                  workflows.add('workflow_tests.yml');
                 }
-                if (files.length < 100) return workflows;
+                if (files.length < 100) return [...workflows];
               }
-              return [...workflows, 'cargo_msrv.yml'];
+              return [...new Set([...workflows, 'cargo_msrv.yml', 'workflow_tests.yml'])];
             }
 
             async function waitForHead(generatedSha, branch) {
@@ -540,44 +544,73 @@ jobs:
               throw new Error('GitHub has not exposed the generated PR head yet. Retry Update SVG examples for this PR.');
             }
 
-            async function dispatchChecks(sha, branch) {
-              const errors = [];
-              for (const workflow of await validationWorkflows()) {
-                const pr = await getPull();
-                if (!current(pr, sha) || pr.head.ref !== branch) {
-                  await report('The PR advanced before validation dispatch completed; newer source runs take precedence.');
-                  break;
-                }
-                try {
-                  const response = await request('POST', `actions/workflows/${workflow}/dispatches`, {
-                    ref: branch, inputs: {pull_request: String(number), expected_head_sha: sha},
-                  });
-                  const runId = response?.workflow_run_id;
-                  if (!Number.isSafeInteger(runId) || runId <= 0) {
-                    throw new Error('dispatch did not return a workflow run ID');
-                  }
-                  let run;
-                  for (let attempt = 0; attempt < 3; attempt++) {
-                    try {
-                      run = await request('GET', `actions/runs/${runId}`);
-                      break;
-                    } catch (error) {
-                      if (error.status !== 404 || attempt === 2) throw error;
-                      await delay((attempt + 1) * 1000);
-                    }
-                  }
-                  if (run.head_sha !== sha || run.event !== 'workflow_dispatch' || run.head_branch !== branch
-                      || run.path?.split('@', 1)[0] !== `.github/workflows/${workflow}`) {
-                    throw new Error('dispatched run does not match the expected PR commit');
-                  }
-                  const url = `https://github.com/${repository}/actions/runs/${runId}`;
-                  await report(`Requested [${workflow}](${url}) for \`${sha}\`; see the run for its validation result.`);
-                } catch (error) {
-                  errors.push(`${workflow}: ${error.message}`);
-                }
+            async function dispatchStatus(sha, state, description) {
+              await request('POST', `statuses/${sha}`, {
+                state, description, context: 'SVG validation dispatch',
+                target_url: `https://github.com/${repository}/actions/runs/${context.runId}`,
+              });
+            }
+
+            async function initializeValidationStatuses(sha, workflows) {
+              const contexts = {
+                'cargo_fmt.yml': 'Formatting', 'cargo_clippy.yml': 'Clippy', 'cargo_test.yml': 'Tests',
+                'cargo_msrv.yml': 'MSRV', 'workflow_tests.yml': 'Workflow tests',
+              };
+              for (const workflow of workflows) {
+                await request('POST', `statuses/${sha}`, {
+                  state: 'pending', context: contexts[workflow], description: 'Waiting for validation to start',
+                  target_url: `https://github.com/${repository}/actions/runs/${context.runId}`,
+                });
               }
-              if (errors.length) {
-                throw new Error(`Some validation runs could not be verified. Retry Update SVG examples for this PR. ${errors.join('; ')}`);
+            }
+
+            async function dispatchChecks(sha, branch, workflows) {
+              await dispatchStatus(sha, 'pending', 'Requesting validation for this generated commit');
+              try {
+                const errors = [];
+                for (const workflow of workflows ?? await validationWorkflows()) {
+                  const pr = await getPull();
+                  if (!current(pr, sha) || pr.head.ref !== branch) {
+                    await dispatchStatus(sha, 'error', 'PR changed before all validation requests completed');
+                    await report('The PR advanced before validation dispatch completed; newer source runs take precedence.');
+                    return;
+                  }
+                  try {
+                    const response = await request('POST', `actions/workflows/${workflow}/dispatches`, {
+                      ref: branch, inputs: {pull_request: String(number), expected_head_sha: sha},
+                    });
+                    const runId = response?.workflow_run_id;
+                    if (!Number.isSafeInteger(runId) || runId <= 0) {
+                      throw new Error('dispatch did not return a workflow run ID');
+                    }
+                    let run;
+                    for (let attempt = 0; attempt < 3; attempt++) {
+                      try {
+                        run = await request('GET', `actions/runs/${runId}`);
+                        break;
+                      } catch (error) {
+                        if (error.status !== 404 || attempt === 2) throw error;
+                        await delay((attempt + 1) * 1000);
+                      }
+                    }
+                    if (run.head_sha !== sha || run.event !== 'workflow_dispatch' || run.head_branch !== branch
+                        || run.path?.split('@', 1)[0] !== `.github/workflows/${workflow}`
+                        || run.display_title !== `Validate PR #${number} at ${sha}`) {
+                      throw new Error('dispatched run does not match the expected PR validation');
+                    }
+                    const url = `https://github.com/${repository}/actions/runs/${runId}`;
+                    await report(`Requested [${workflow}](${url}) for \`${sha}\`; see the run for its validation result.`);
+                  } catch (error) {
+                    errors.push(`${workflow}: ${error.message}`);
+                  }
+                }
+                if (errors.length) {
+                  throw new Error(`Some validation runs could not be verified. Retry Update SVG examples for this PR. ${errors.join('; ')}`);
+                }
+                await dispatchStatus(sha, 'success', 'Validation requested; check the individual results');
+              } catch (error) {
+                await dispatchStatus(sha, 'error', 'Could not request all validation; retry SVG workflow');
+                throw error;
               }
             }
 
@@ -609,6 +642,7 @@ jobs:
             const commit = await request('GET', `git/commits/${sourceSha}`);
             let updatedSha = sourceSha;
             let changed = false;
+            let workflows;
             if (files.length) {
               const tree = await request('POST', 'git/trees', {
                 base_tree: commit.tree.sha,
@@ -621,6 +655,9 @@ jobs:
                   author: {name: 'github-actions[bot]', email: '41898282+github-actions[bot]@users.noreply.github.com'},
                 });
                 if (!/^[0-9a-f]{40}$/.test(generated.sha ?? '')) throw new Error('GitHub did not return a generated commit SHA.');
+                workflows = await validationWorkflows();
+                await dispatchStatus(generated.sha, 'pending', 'Waiting to request validation for this generated commit');
+                await initializeValidationStatuses(generated.sha, workflows);
                 const fresh = await getPull();
                 if (!current(fresh, sourceSha) || fresh.head.ref !== branch) {
                   await report('The PR advanced during generation; discarded stale SVG output without updating its branch.');
@@ -661,4 +698,4 @@ jobs:
             const title = commit.message.split('\n', 1)[0];
             const repair = [commitTitle, oldCommitTitle].includes(title)
               && commit.message.split('\n').some(line => /^Planorama-SVG-Source: [0-9a-f]{40}$/.test(line));
-            if (changed || repair) await dispatchChecks(updatedSha, branch);
+            if (changed || repair) await dispatchChecks(updatedSha, branch, workflows);

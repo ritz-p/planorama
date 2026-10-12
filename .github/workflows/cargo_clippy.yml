@@ -1,4 +1,8 @@
 name: Cargo clippy
+run-name: >-
+  ${{ github.event_name == 'workflow_dispatch' && inputs.pull_request && inputs.expected_head_sha
+      && format('Validate PR #{0} at {1}', inputs.pull_request, inputs.expected_head_sha)
+      || github.event.pull_request.title || github.workflow }}
 
 on:
   pull_request_target:
@@ -44,7 +48,7 @@ permissions:
 
 jobs:
   clippy:
-    name: Clippy
+    name: ${{ github.event_name == 'workflow_dispatch' && 'Dispatched Clippy' || 'Clippy' }}
     if: github.event_name != 'pull_request_target' || github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
@@ -65,4 +69,5 @@ jobs:
           prefix-key: v1-rust-dependencies
           key: ${{ hashFiles('build.rs', 'assets/**') }}
           cache-workspace-crates: 'false'
-      - run: cargo clippy --locked --all-targets --all-features -- -D warnings
+      - name: Run Clippy
+        run: cargo clippy --locked --all-targets --all-features -- -D warnings
