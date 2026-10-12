@@ -44,7 +44,7 @@ fn lane_candidates(
             }
         }
     };
-    vec![
+    let mut candidates = vec![
         simplify(
             [
                 start.point,
@@ -65,7 +65,28 @@ fn lane_candidates(
             ],
             Simplification::PreserveReversals,
         ),
-    ]
+    ];
+    for index in 1..path.len().saturating_sub(2) {
+        let (a, b) = (path[index], path[index + 1]);
+        let (horizontal, low, high) = if a.y == b.y {
+            (true, a.x.min(b.x), a.x.max(b.x))
+        } else {
+            (false, a.y.min(b.y), a.y.max(b.y))
+        };
+        if horizontal != corridor.horizontal
+            || high
+                .min(corridor.high)
+                .saturating_sub(low.max(corridor.low))
+                < RUN
+        {
+            continue;
+        }
+        let mut candidate = path.to_vec();
+        candidate[index] = on_lane(a);
+        candidate[index + 1] = on_lane(b);
+        candidates.push(simplify(candidate, Simplification::PreserveReversals));
+    }
+    candidates
 }
 
 pub(super) fn apply(
