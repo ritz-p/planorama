@@ -84,9 +84,11 @@ handlers, CSS, images, external references, duplicate IDs and unresolved local
 references at build time. Rust's `include_str!` embeds the validated symbols, so
 no XML parser or asset files are needed at runtime.
 
-Repeated resources share their icon symbol. Cards and container headers display
-icons at 24px beside the selected full address, preserving the existing icon gap
-and heading measurements. Notices are selected by the artwork actually used;
+Repeated resources share their icon symbol. Spatial cards and container headers
+display icons at 24px beside the selected full address, preserving the existing
+icon gap and heading measurements. Logical cards place the same 24px symbol in
+their upper-right corner and reserve heading space for it.
+Notices are selected by the artwork actually used;
 Terraform-only output does not receive an AWS ownership notice, and mixed output
 retains both. Named-state panels namespace IDs and local fragment references.
 Action colors, external markers, metadata and resource identity remain separate
