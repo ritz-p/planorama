@@ -1,4 +1,8 @@
 name: Cargo fmt
+run-name: >-
+  ${{ github.event_name == 'workflow_dispatch' && inputs.pull_request && inputs.expected_head_sha
+      && format('Validate PR #{0} at {1}', inputs.pull_request, inputs.expected_head_sha)
+      || github.event.pull_request.title || github.workflow }}
 
 on:
   pull_request:
@@ -24,7 +28,7 @@ permissions:
 
 jobs:
   formatting:
-    name: Formatting
+    name: ${{ github.event_name == 'workflow_dispatch' && 'Dispatched Formatting' || 'Formatting' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7.0.1
@@ -39,4 +43,5 @@ jobs:
         run: bash .github/scripts/checkout-validation.sh
       - name: Install pinned toolchain
         run: rustc --version --verbose
-      - run: cargo fmt --all --check
+      - name: Check formatting
+        run: cargo fmt --all --check

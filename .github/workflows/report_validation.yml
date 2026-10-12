@@ -1,0 +1,40 @@
+name: Report PR validation
+
+on:
+  workflow_run:
+    workflows: [Cargo fmt, Cargo clippy, Cargo test, Cargo msrv, Workflow tests]
+    types: [requested, in_progress, completed]
+
+permissions:
+  contents: read
+  actions: read
+  pull-requests: read
+  statuses: write
+
+concurrency:
+  group: pr-validation-${{ github.event.workflow_run.workflow_id }}-${{ github.event.workflow_run.head_sha }}
+  cancel-in-progress: false
+
+jobs:
+  report:
+    name: Report validation status
+    if: >-
+      github.event.workflow_run.event == 'workflow_dispatch'
+      && github.event.workflow_run.head_repository.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check out trusted reporter
+        uses: actions/checkout@v7.0.1
+        with:
+          ref: ${{ github.workflow_sha }}
+          sparse-checkout: .github/scripts/report-validation.cjs
+          sparse-checkout-cone-mode: false
+          persist-credentials: false
+      - name: Report actual validation result
+        uses: actions/github-script@v9.0.0
+        with:
+          retries: 3
+          script: |
+            const reportValidation = require('./.github/scripts/report-validation.cjs');
+            await reportValidation({github, context, core});
