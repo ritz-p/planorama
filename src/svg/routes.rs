@@ -61,7 +61,10 @@ pub(super) fn render(
             super::escape(&details), super::operations::label(node.action, &node.metadata), super::escape(&super::operations::details(&node.metadata)),
             node.previous_address.as_ref().map(|a| format!("; moved from: {}", super::escape(a))).unwrap_or_default(),
             node.deposed_key.as_ref().map(|a| format!("; deposed: {}", super::escape(a))).unwrap_or_default()).unwrap();
-        let mut line_y = y + 24;
+        if let Some(node) = card.node {
+            svg.push_str(&super::entities::import_badge(node, x + 12, y + 10));
+        }
+        let mut line_y = y + 24 + card.badge_height();
         for row in card.rows {
             let next_hop = if row.text == "Next hop" {
                 index.number(node).map(|n| format!("Next hop [{n}]"))

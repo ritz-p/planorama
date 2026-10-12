@@ -1,11 +1,15 @@
 use crate::model::architecture::{Action, AttributePathStep, ChangeMetadata};
 use std::fmt::Write;
 
-pub(super) fn label(action: Action, metadata: &ChangeMetadata) -> String {
-    let operation = metadata
+pub(super) fn action_label(action: Action, metadata: &ChangeMetadata) -> &'static str {
+    metadata
         .state_removal
         .map(|removal| removal.label())
-        .unwrap_or(super::style::label(action));
+        .unwrap_or(super::style::label(action))
+}
+
+pub(super) fn label(action: Action, metadata: &ChangeMetadata) -> String {
+    let operation = action_label(action, metadata);
     if metadata.import.is_some() {
         format!("import / {operation}")
     } else {
