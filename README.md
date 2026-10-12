@@ -66,7 +66,7 @@ docker compose exec -T dev cargo run --locked -- - -o - < plan.json > diagram.sv
 | Terraform check 結果 | [Checks](docs/checks.md) |
 | モデル・provider 設定識別子 | [Models](docs/models.md) |
 | レイヤー構成・レイアウト | [Architecture](docs/architecture.md)、[Routing](docs/routing.md) |
-| AWS アイコンの出典・権利 | [Icons](docs/icons.md) |
+| AWS・Terraform アイコンの出典・権利・同梱許諾の確認状況 | [Icons](docs/icons.md) |
 | 性能計測 | [Benchmarks](docs/benchmarks.md) |
 | CI による SVG 生成・自動コミット・PR 検証結果 | [SVG automation](docs/ci.md) |
 

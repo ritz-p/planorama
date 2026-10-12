@@ -1,0 +1,35 @@
+{
+  "source": "HashiCorp Flight Icons",
+  "repository": "https://github.com/hashicorp/design-system",
+  "package": "@hashicorp/flight-icons",
+  "version": "5.3.0",
+  "tag": "@hashicorp/flight-icons@5.3.0",
+  "commit": "97eefa54e00c4e2a3d63417589a8151c4bf17368",
+  "downloaded": "2026-10-12",
+  "upstream_package_license": "MPL-2.0",
+  "copyright": "Copyright (c) 2021 HashiCorp, Inc",
+  "permission_status": "unconfirmed",
+  "permission_checked": "2026-10-12",
+  "permission_scope": "Bundling and redistribution of the Terraform logo in Planorama binaries and generated SVGs",
+  "permission_evidence": null,
+  "trademark_policy_url": "https://www.hashicorp.com/en/trademark-policy",
+  "brand_guidelines_url": "https://www.hashicorp.com/en/brand/hcp-product-logos",
+  "files": [
+    {
+      "file": "terraform-color-24.svg",
+      "source": "packages/flight-icons/svg/terraform-color-24.svg",
+      "url": "https://raw.githubusercontent.com/hashicorp/design-system/97eefa54e00c4e2a3d63417589a8151c4bf17368/packages/flight-icons/svg/terraform-color-24.svg",
+      "sha256": "e2137e44c44942f52252a396cf42fcdd3fe1799fa65fb3ae8ccf73742a088dc5",
+      "git_blob_sha": "feda50e82bc71009d0190ee70ab5a6d4ad14424a",
+      "modified": false
+    },
+    {
+      "file": "LICENSE.txt",
+      "source": "packages/flight-icons/LICENSE.md",
+      "url": "https://raw.githubusercontent.com/hashicorp/design-system/97eefa54e00c4e2a3d63417589a8151c4bf17368/packages/flight-icons/LICENSE.md",
+      "sha256": "038cbd9a7b3a2ff644d2d9a1d4a86b8f02a6cb8c31d1259fea00aae026c1c6dd",
+      "git_blob_sha": "a9c323c701aa4b75f547813193924d653526ec44",
+      "modified": false
+    }
+  ]
+}

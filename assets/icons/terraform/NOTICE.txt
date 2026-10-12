@@ -1,0 +1,17 @@
+Terraform product logo from HashiCorp Flight Icons 5.3.0.
+Copyright (c) 2021 HashiCorp, Inc
+Source: https://github.com/hashicorp/design-system
+Revision: 97eefa54e00c4e2a3d63417589a8151c4bf17368
+Original SVG: https://raw.githubusercontent.com/hashicorp/design-system/97eefa54e00c4e2a3d63417589a8151c4bf17368/packages/flight-icons/svg/terraform-color-24.svg
+Upstream package license: Mozilla Public License 2.0 (MPL-2.0).
+The unchanged upstream license is included as LICENSE.txt.
+The package license does not grant trademark or product-logo rights.
+
+Terraform and the Terraform logo are trademarks of HashiCorp.
+Trademark policy: https://www.hashicorp.com/en/trademark-policy
+Brand guidelines: https://www.hashicorp.com/en/brand/hcp-product-logos
+Permission status: unconfirmed (reviewed 2026-10-12).
+Permission to bundle and redistribute this logo in Planorama binaries and
+generated SVGs has not been confirmed. This asset is a draft-review candidate,
+not cleared for a Planorama release. Consult the trademark policy separately;
+this notice does not grant permission. No HashiCorp endorsement is implied.

@@ -10,6 +10,8 @@ same boundaries and carry explicit cross-state relationships.
 | `model` | Shared domain contracts, architecture identity and value-free provenance |
 | `semantic` | Architecture transformation and final relationship evidence |
 | `provider/aws` | AWS classification, containment, connections, lowering, components, diagnostics and icons |
+| `provider/terraform` | Exact built-in Terraform resource icon mapping |
+| `icons` | Provider dispatch, shared artwork IDs and presentation measurements |
 | `view` | Immutable selection, neighbor expansion, required context and shared presentation measurements |
 | `layout` | Containment hierarchy, placement, bounds, ports and routes |
 | `svg` | Drawing, text, legends and metadata |
@@ -73,6 +75,11 @@ Ingestion does not import provider rules, layout or SVG. Layout, view and SVG us
 the `model::architecture` facade, which excludes Terraform ingestion contracts.
 AWS resource-type and attribute rules belong in `provider/aws`; rendering and
 layout do not infer semantic relationships.
+Terraform built-in icon rules belong in `provider/terraform` and use the provider
+identity resolved during ingestion. They add no resource classification,
+containment or layout semantics. AWS and Terraform artwork share the validated
+build-time SVG parser, symbol reuse and state namespacing; source notices follow
+the icon families actually used. See [icon sources and permission status](icons.md).
 
 The semantic input projects Terraform facts into classified cards without mutating
 the plan. AWS transformation applies containment, SG connections, association
