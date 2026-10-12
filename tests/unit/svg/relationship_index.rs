@@ -684,6 +684,12 @@ fn resource_provenance_is_indexed_and_reference_provenance_is_not() {
 #[test]
 fn multiple_sources_long_addresses_and_xml_are_preserved_without_values() {
     let mut graph = graph();
+    let first_previous = "aws_route_table_association.old[0]";
+    for edge in &mut graph.edges {
+        if let Some(change) = &mut edge.change {
+            change.previous_address = Some(first_previous.into());
+        }
+    }
     let relationship = graph
         .relationships
         .iter_mut()
@@ -693,13 +699,24 @@ fn multiple_sources_long_addresses_and_xml_are_preserved_without_values() {
                 .any(|p| matches!(p, RelationshipProvenance::Resource { .. }))
         })
         .unwrap();
-    let RelationshipProvenance::Resource { change, .. } = relationship.provenance[0].clone() else {
+    for provenance in &mut relationship.provenance {
+        if let RelationshipProvenance::Resource { change, .. } = provenance {
+            change.previous_address = Some(first_previous.into());
+        }
+    }
+    let RelationshipProvenance::Resource { mut change, .. } = relationship.provenance[0].clone()
+    else {
         panic!()
     };
     let address = format!(
         "module.{}.aws_route_table_association.extra[\"<&>\"]",
         "nested.".repeat(70)
     );
+    let previous = format!(
+        "module.{}.aws_route_table_association.old[\"<&>\"]",
+        "以前の名前.".repeat(50)
+    );
+    change.previous_address = Some(previous.clone());
     relationship
         .provenance
         .push(RelationshipProvenance::Resource {
@@ -734,6 +751,64 @@ fn multiple_sources_long_addresses_and_xml_are_preserved_without_values() {
     for node in source.children().filter(|n| n.has_tag_name("tspan")) {
         assert!(node.attribute("y").unwrap().parse::<usize>().unwrap() < height);
     }
+    let card = &index.cards()[0];
+    let doc = roxmltree::Document::parse(&card.content).unwrap();
+    let entry = doc
+        .descendants()
+        .find(|n| n.attribute("data-relationship-entry") == Some("1"))
+        .unwrap();
+    let texts: Vec<_> = entry
+        .children()
+        .filter(|n| n.has_tag_name("text"))
+        .collect();
+    for source in texts
+        .iter()
+        .filter(|n| n.attribute("data-source-address").is_some())
+    {
+        let position = texts.iter().position(|n| n == source).unwrap();
+        let annotation = texts[position + 1];
+        assert_eq!(annotation.attribute("data-move-annotation"), Some("true"));
+        let expected = if source.attribute("data-source-address") == Some(address.as_str()) {
+            &previous
+        } else {
+            first_previous
+        };
+        let lines: Vec<_> = annotation
+            .children()
+            .filter(|n| n.has_tag_name("tspan"))
+            .collect();
+        assert_eq!(
+            lines.iter().filter_map(|n| n.text()).collect::<String>(),
+            format!("Moved from: {expected}")
+        );
+        assert_eq!(
+            annotation
+                .children()
+                .find(|n| n.has_tag_name("title"))
+                .unwrap()
+                .text(),
+            Some(format!("Moved from: {expected}").as_str())
+        );
+        for line in lines {
+            let width = crate::view::text::width(line.text().unwrap()) * 8;
+            assert!(
+                line.attribute("x").unwrap().parse::<usize>().unwrap() + width <= card.width - 16
+            );
+            assert!(line.attribute("y").unwrap().parse::<usize>().unwrap() + 4 < card.height);
+        }
+    }
+    let expected = card.content.clone();
+    for relationship in &mut graph.relationships {
+        relationship
+            .provenance
+            .extend(relationship.provenance.clone());
+        relationship.provenance.reverse();
+    }
+    graph.relationships.reverse();
+    assert_eq!(
+        Index::new(&graph, &Layout::new(&graph)).cards()[0].content,
+        expected
+    );
 }
 
 #[test]

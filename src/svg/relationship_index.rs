@@ -1,6 +1,7 @@
 use crate::layout::{Bounds, Layout};
 use crate::model::{Graph, TerraformEntityId};
 use crate::view::text::wrap_address;
+use std::collections::{BTreeMap, BTreeSet};
 use std::fmt::Write;
 
 mod markers;
@@ -12,6 +13,7 @@ mod tests;
 pub(super) struct Entry<'a> {
     number: usize,
     sources: Vec<&'a TerraformEntityId>,
+    previous_addresses: BTreeMap<&'a TerraformEntityId, BTreeSet<&'a str>>,
     edges: Vec<usize>,
     stroke: &'static str,
     style: &'static str,
@@ -50,6 +52,7 @@ impl<'a> Index<'a> {
                     number: index + 1,
                     embedded: crate::view::routes::owner(graph, &graph.nodes[edge.from]).is_some(),
                     sources: entry.sources,
+                    previous_addresses: entry.previous_addresses,
                     edges,
                     stroke: super::relationships::stroke(edge),
                     style: super::relationships::style(edge.kind),
@@ -106,10 +109,20 @@ impl<'a> Index<'a> {
         let width = self
             .entries
             .iter()
-            .flat_map(|entry| &entry.sources)
-            .map(|source| {
-                display(source)
-                    .chars()
+            .flat_map(|entry| {
+                entry.sources.iter().flat_map(move |source| {
+                    std::iter::once(display(source)).chain(
+                        entry
+                            .previous_addresses
+                            .get(source)
+                            .into_iter()
+                            .flatten()
+                            .map(|previous| crate::view::text::moved_from(previous)),
+                    )
+                })
+            })
+            .map(|text| {
+                text.chars()
                     .map(|c| if c.is_ascii() { 8 } else { 16 })
                     .sum::<usize>()
                     + text_x
@@ -142,6 +155,15 @@ impl<'a> Index<'a> {
                         y += 20;
                     }
                     svg.push_str("</text>\n");
+                    if let Some(previous_addresses) = entry.previous_addresses.get(source) {
+                        for previous in previous_addresses {
+                            let (annotation, height) = super::operations::moved_from(
+                                previous, text_x, y, (width - text_x - 16) / 8,
+                            );
+                            svg.push_str(&annotation);
+                            y += height;
+                        }
+                    }
                 }
                 svg.push_str("</g>\n");
                 y += 8;

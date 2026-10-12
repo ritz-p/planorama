@@ -9,7 +9,14 @@ Plan-level checks, including resource preconditions and postconditions, are docu
 ## Resource moves and deposed objects
 
 `previous_address` retains Terraform-reported move provenance without becoming a
-reference alias. Cards and lowered edges expose it as `data-previous-address`.
+reference alias. Spatial and logical resource cards, embedded Route cards, and
+each source in the relationship index display `Moved from: ...`. Complete previous
+addresses wrap without truncation, with every line included in the measured height.
+Component member links retain move context in their accessible titles and point
+to the original resource's visible annotation.
+
+Cards and lowered edges retain `data-previous-address`, and titles preserve the
+complete previous address. Long provenance stays in the index rather than on paths.
 The current address and optional deposed key identify separate objects; old objects
 retain their own actions and `data-deposed-key`. Current configuration and planned
 values apply only to current objects.
@@ -32,7 +39,16 @@ When at least one flag is supplied, the SVG header displays all three flags (usi
 
 ## Import and state removal
 
-For `resource_changes[*].change.importing`, Planorama retains the presence of an import object, whether an ID or identity was supplied, and the boolean `unknown` flag. Empty import objects are valid. IDs, identity values, generated configuration, and before/after attributes are deliberately discarded. Import may coexist with an update, replacement, or no-op action.
+For `resource_changes[*].change.importing`, Planorama retains the presence of an import object, whether an ID or identity was supplied, and the boolean `unknown` flag. Empty import objects are valid. IDs, identity values, generated configuration, and before/after attributes are deliberately discarded. Import may coexist with a create, update, replacement, or no-op action.
+
+Every retained import object adds a purple `import` badge to the individual spatial
+or logical resource, embedded Route, and component member presentation. Empty and
+unknown imports receive the same indicator. The synthetic component does not inherit
+an import operation, and inline Route entries do not duplicate the table's badge.
+The badge has its own measured row, separate from addresses, service icons and the
+gray `external` indicator. Ordinary action labels omit the redundant `import /`
+prefix; accessible titles preserve the full composed operation and its order.
+Existing `data-import` and the value-free presence/unknown flags remain unchanged.
 
 Exact action arrays `['forget']`, `['create','forget']`, and `['forget','create']` are represented by distinct `StateRemoval` variants. Forgetting removes Terraform's state binding without destroying the old remote object; a combined create/forget operation also creates a new object. These sequences retain the existing `Action::Other` palette/legend category, while card labels and edge titles explicitly show the operation and order. Ordinary delete remains delete. SVG exposes `data-import`, redacted import flags, and `data-state-removal` on cards and lowered relationships.
 

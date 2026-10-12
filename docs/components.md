@@ -39,7 +39,7 @@ Above the architecture, three independent vertical sections appear in order:
 Logical Resources (cyan), Logical Components (purple), then Relationship Resources
 (neutral). Empty sections reserve no space. Section colors identify their type;
 Terraform cards and component member references retain the canonical action colors.
-Section titles appear once. Inner resource cards start with their address;
+Section titles appear once. Inner resource cards use their addresses as headings;
 component cards use their actual label without a classification prefix or Members
 heading, and relationship index cards start with numbered entries.
 Each component has an inner card ordered by synthetic identity. Headings and member
@@ -47,6 +47,10 @@ addresses wrap without truncation. Members are sorted by address and link to the
 original spatial or logical card; missing or ambiguous targets use neutral,
 non-clickable cards. Accessible titles preserve full addresses and operation/move/
 deposed context. These annotations do not affect architecture placement or routing.
+Imported members also show their own `import` badge in a reserved row. The badge
+follows the original member's metadata; the synthetic component and other members
+do not acquire an import operation. Visible action text keeps the operation order,
+while accessible titles retain the composed `import / ...` label.
 
 `data-entity-kind="synthetic"`, architecture identity/provenance and component kind
 remain on each summary; `data-component-id` associates original resource cards with

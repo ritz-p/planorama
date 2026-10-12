@@ -50,8 +50,10 @@ cards. Index entries do not add resource identities or increase resource counts.
 Each card contains up to 10 complete entries: 1–10, 11–20, and so on. Cards continue
 to the right, wrapping only when the available width requires it. A multi-source
 entry stays in one card regardless of its wrapped line count. Full Terraform-native
-addresses are wrapped without truncation;
-multiple provenance resources and deposed keys remain visible. Reference-only
+addresses are wrapped without truncation. Each moved provenance source shows its
+own `Moved from: ...` annotation alongside its current address and optional deposed
+key. Multi-source entries keep each previous address associated with its source,
+and their measured height includes every wrapped line. Reference-only
 inferred relationships receive no resource number. Numbering sorts by source
 identity, then endpoints and relationship kind, independent of edge-vector order.
 Graph filtering can renumber the visible subset; named states have separate indexes.

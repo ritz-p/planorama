@@ -5,7 +5,7 @@
   "errored":false,
   "resource_changes":[
     {"address":"aws_lb.app","type":"aws_lb","change":{"actions":["no-op"]}},
-    {"address":"aws_lb_listener.https","type":"aws_lb_listener","change":{"actions":["update"]}},
+    {"address":"aws_lb_listener.https","type":"aws_lb_listener","change":{"actions":["update"],"importing":{}}},
     {"address":"aws_lb_listener_rule.api","type":"aws_lb_listener_rule","previous_address":"aws_lb_listener_rule.old","action_reason":"replace_because_cannot_update","change":{"actions":["delete","create"],"replace_paths":[["listener_arn"]]}},
     {"address":"aws_lb_target_group.shared","type":"aws_lb_target_group","change":{"actions":["create"]}},
     {"address":"aws_lb.other","type":"aws_lb","change":{"actions":["create"]}}

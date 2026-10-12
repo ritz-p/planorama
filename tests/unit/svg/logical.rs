@@ -111,6 +111,38 @@ fn logical_projection_retains_graph_identity_references_and_operations() {
         Some("aws_ecs_cluster.old")
     );
     assert_eq!(cluster.attribute("data-import"), Some("true"));
+    let badges: Vec<_> = cluster
+        .children()
+        .filter(|n| n.attribute("data-import-badge") == Some("true"))
+        .collect();
+    assert_eq!(badges.len(), 1);
+    let badge_rect = badges[0]
+        .children()
+        .find(|n| n.has_tag_name("rect"))
+        .unwrap();
+    let badge_bottom = badge_rect.attribute("y").unwrap().parse::<usize>().unwrap()
+        + badge_rect
+            .attribute("height")
+            .unwrap()
+            .parse::<usize>()
+            .unwrap();
+    let heading = cluster.children().find(|n| n.has_tag_name("text")).unwrap();
+    assert!(badge_bottom + 10 < heading.attribute("y").unwrap().parse::<usize>().unwrap());
+    assert!(
+        cluster
+            .children()
+            .any(|n| n.has_tag_name("text") && n.text() == Some("update"))
+    );
+    for card in doc
+        .descendants()
+        .filter(|n| n.attribute("data-placement") == Some("logical"))
+    {
+        assert_eq!(
+            card.children()
+                .any(|n| n.attribute("data-import-badge").is_some()),
+            card.attribute("data-import") == Some("true")
+        );
+    }
     assert_eq!(cluster.attribute("data-role"), Some("controller"));
     assert!(cluster.children().any(|n| {
         n.has_tag_name("title")
@@ -291,6 +323,28 @@ fn named_states_keep_logical_ids_separate_and_cross_state_provenance_without_rou
         .collect();
     assert_eq!(ids.len(), 2);
     assert_ne!(ids[0], ids[1]);
+    for card in doc
+        .descendants()
+        .filter(|n| n.attribute("data-terraform-address") == Some("aws_ecs_cluster.app"))
+    {
+        assert_eq!(
+            card.attribute("data-previous-address"),
+            Some("aws_ecs_cluster.old")
+        );
+        assert!(
+            card.children()
+                .any(|n| n.has_tag_name("text")
+                    && n.text() == Some("Moved from: aws_ecs_cluster.old"))
+        );
+        assert!(
+            card.children()
+                .find(|n| n.has_tag_name("title"))
+                .unwrap()
+                .text()
+                .unwrap()
+                .contains("moved from: aws_ecs_cluster.old")
+        );
+    }
     assert!(output.contains("cross-state-relationships"));
     assert!(!output.contains("independent states"));
     assert!(output.contains("1 logical"));
