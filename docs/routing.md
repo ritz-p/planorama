@@ -409,6 +409,9 @@ Route Table, VPC Endpoint and ECS routes with a reference that also protects for
 cards and containers. This distinguishes required marker/header detours from
 avoidable steps. The [per-edge comparison](../examples/terraform-large/routing-comparison.md)
 records initial-PR and revised results, including residual violations and runtime.
+The [#317 calibration](../examples/terraform-large/README.md#317-calibration)
+compares the #322 baseline and final SVGs using the same border metric, including
+the resulting changes in bends and crossings.
 The crossing policy replaces older tests that demanded crossing-free detours:
 they now require short crossing routes, including at stub/grid junctions and after
 shortcutting. Hard obstacles, overlap avoidance and terminal reservations remain tested.

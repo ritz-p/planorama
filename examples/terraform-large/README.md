@@ -174,6 +174,80 @@ exercise both axes and short contacts. A protected junction prevents rerouting
 and leaves the original geometry and measurable residual deficit intact. These
 checks are separate from the historical #291 measurements above.
 
+## #317 calibration
+
+This comparison uses the [#322 baseline SVG at e4d50682](https://github.com/ritz-p/planorama/blob/e4d506821aaebd41abb42fa2380ef841733604d3/examples/terraform-large/diagram.svg)
+and the [#317 SVG at fc87e583](https://github.com/ritz-p/planorama/blob/fc87e583bc726db56aebf74673c3f3929e5b3f9d/examples/terraform-large/diagram.svg),
+generated from [source 3f920401](https://github.com/ritz-p/planorama/commit/3f920401c5fd287b0aeabe39d5b22029853827b4)
+by [CI run 38225323594](https://github.com/ritz-p/planorama/actions/runs/38225323594).
+Both have 37 rendered paths, a 4196 × 2391 layout and a 4196 × 3481 SVG canvas.
+
+The read-only SVG audit recovers orthogonal corners from `M`/`L`/`Q` commands and
+applies the same new border metric to both revisions: actual stroke widths,
+rounded frames, masks, card covers and conservative quarter-pixel gaps with bounded
+curve sampling. Line spacing retains its 32px endpoint allowance, 64px sustained
+projection and shared-trunk exclusions. Raw overlap includes intentional bundles.
+Border deficits below are quarter-pixel gap deficits multiplied by pixel path
+length; a negative gap denotes intersecting stroke envelopes.
+
+| Large-fixture metric | #322 baseline | #317 |
+| --- | ---: | ---: |
+| Total path length, px | 34072 | 34055 |
+| Bends | 72 | 77 |
+| Internal orthogonal crossings | 70 | 76 |
+| Raw overlap length, px | 745 | 737 |
+| Too-close line projection, px | 3766 | 3234 |
+| Line-spacing deficit, px² | 25736 | 24190 |
+| Minimum sustained line separation, px | 4 | 4 |
+| Minimum visible border gap, px | -2 | 4.5 |
+| Too-close border projection, px | 5247 | 28 |
+| Minimum border deficit, quarter-pixel × px | 7242 | 0 |
+| Preferred border deficit, quarter-pixel × px | 54115 | 182 |
+
+Border clearance improves with five additional bends and six additional crossings.
+Total length falls by 17px and canvas size stays fixed. Offsets remain two and
+S-jogs remain zero; reversals rise from two to three and backtracking from 204px
+to 227px. These compare complete layouts; the final spacing guard constrains each
+candidate against that run's pre-spacing routes. Only four routes change these
+shape measurements:
+
+| Route | Baseline length / bends | #317 length / bends | Border change |
+| --- | ---: | ---: | --- |
+| LB → Listener | 757px / 2 | 772px / 4 | Minimum deficit 120 → 0 |
+| IGW → NAT | 1126px / 1 | 1126px / 3 | Minimum deficit 4443 → 0 |
+| Public-a subnet → Public Route Table | 522px / 1 | 474px / 2 | Minimum deficit 104 → 0 |
+| Shared VPC → Peering | 4007px / 3 | 4023px / 3 | Preferred close projection 3520px → 1px |
+
+The Listener route adds one reversal and 15px of backtracking; Shared VPC's
+backtracking rises from 188px to 196px. The private-b subnet → private Route Table
+path retains 709px and two bends without offsets, reversals or backtracking.
+The four target attachments retain their lengths and two/three-bend shapes.
+The largest remaining preferred border deficit is ALB SG → application SG beside
+the public-a corner: 16px of projection at a 4.5px gap, contributing 135 of 182.
+The remaining 12px of close border projection comes from short rounded contacts;
+every measured border gap meets 4px. All 18 numbered badges retain their identities,
+with no badge overlap or foreign-stroke intrusion found in the audit.
+
+The separate dense unit fixture also exposes a tradeoff. Its
+[#322 baseline](https://github.com/ritz-p/planorama/blob/e4d506821aaebd41abb42fa2380ef841733604d3/tests/unit/layout.rs)
+and final measurements are:
+
+| Dense-fixture metric | #322 baseline | #317 |
+| --- | ---: | ---: |
+| Overlap length, px | 168 | 1 |
+| Crossings | 373 | 392 |
+| Bends | 88 | 87 |
+| Total path length, px | 71553 | 71184 |
+
+Exact repeated-layout and reversed-edge path comparisons passed in the source
+[Tests run](https://github.com/ritz-p/planorama/actions/runs/38225323455) and
+[MSRV run](https://github.com/ritz-p/planorama/actions/runs/38225323640).
+Those runs stopped at the obsolete 364-crossing golden after measuring 392;
+the recalibrated expectation preserves the exact geometry assertions. The large
+per-edge quality regression passed in both runs. These results document clearance,
+overlap and length gains alongside increased crossings and some more complex
+routes; the finite routing policy does not minimize every metric simultaneously.
+
 ## Terraform validation
 
 The source was validated with Terraform 1.9.8 and AWS provider 5.100.0; the lock
