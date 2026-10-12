@@ -62,7 +62,13 @@ fn svg_rounding_keeps_layout_points_and_arrow_markers_intact() {
     let original = layout.paths.clone();
     let output = crate::svg::render(&graph, &layout);
     assert!(output.contains(" Q "));
-    assert_eq!(output.matches("marker-end=").count(), graph.edges.len());
+    assert_eq!(
+        output
+            .lines()
+            .filter(|line| line.contains("data-edge-kind=") && line.contains("marker-end="))
+            .count(),
+        graph.edges.len()
+    );
     assert_eq!(layout.paths, original);
     assert_eq!(output, crate::svg::render(&graph, &layout));
 }

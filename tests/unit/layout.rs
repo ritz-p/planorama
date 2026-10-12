@@ -91,7 +91,12 @@ fn bundled_stars_avoid_cards_and_keep_individual_svg_relationships() {
         check_geometry(&graph);
         let layout = Layout::new(&graph);
         let svg = crate::svg::render(&graph, &layout);
-        assert_eq!(svg.matches("marker-end=").count(), 3);
+        assert_eq!(
+            svg.lines()
+                .filter(|line| line.contains("data-edge-kind=") && line.contains("marker-end="))
+                .count(),
+            3
+        );
         assert!(!layout.junctions.is_empty());
         assert_eq!(svg.matches("<circle cx=").count(), layout.junctions.len());
         assert_eq!(svg.matches("data-endpoint=\"source\"").count(), 3);
@@ -129,7 +134,12 @@ fn virtual_nodes_do_not_become_resources_or_visible_edges() {
     assert_eq!(layout.paths.len(), graph.edges.len());
     let svg = crate::svg::render(&graph, &layout);
     assert!(svg.contains("4 resources, 4 reference edges"));
-    assert_eq!(svg.matches("marker-end=").count(), 4);
+    assert_eq!(
+        svg.lines()
+            .filter(|line| line.contains("data-edge-kind=") && line.contains("marker-end="))
+            .count(),
+        4
+    );
     assert_eq!(
         original_addresses,
         graph

@@ -58,7 +58,12 @@ fn dependency_bundle_candidates_keep_safe_nested_corridors() {
         layout.junctions = routed.junctions;
         let svg = crate::svg::render(&graph, &layout);
         assert_eq!(svg.matches("data-edge-kind=\"dependency\"").count(), 2);
-        assert_eq!(svg.matches("marker-end=").count(), 2);
+        assert_eq!(
+            svg.lines()
+                .filter(|line| line.contains("data-edge-kind=") && line.contains("marker-end="))
+                .count(),
+            2
+        );
         for (index, path) in &bundle.paths {
             let edge = &graph.edges[*index];
             let from = layout.bounds[edge.from];
