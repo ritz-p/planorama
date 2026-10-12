@@ -1,0 +1,25 @@
+{
+  "format_version": "1.2",
+  "resource_changes": [
+    {"address":"data.aws_subnets.shared","mode":"data","type":"aws_subnets","provider_name":"registry.terraform.io/hashicorp/aws","change":{"actions":["read"]}},
+    {"address":"data.aws_ami_ids.available","mode":"data","type":"aws_ami_ids","provider_name":"registry.terraform.io/hashicorp/aws","change":{"actions":["read"]}},
+    {"address":"data.aws_instances.shared","mode":"data","type":"aws_instances","provider_name":"registry.terraform.io/hashicorp/aws","change":{"actions":["no-op"]}},
+    {"address":"data.aws_lbs.shared","mode":"data","type":"aws_lbs","provider_name":"registry.terraform.io/hashicorp/aws","change":{"actions":["no-op"]}},
+    {"address":"data.aws_iam_roles.shared","mode":"data","type":"aws_iam_roles","provider_name":"registry.terraform.io/hashicorp/aws","change":{"actions":["read"]}},
+    {"address":"data.aws_security_groups.shared","mode":"data","type":"aws_security_groups","provider_name":"registry.terraform.io/hashicorp/aws","change":{"actions":["no-op"]}},
+    {"address":"data.aws_s3_objects.assets","mode":"data","type":"aws_s3_objects","provider_name":"registry.terraform.io/hashicorp/aws","change":{"actions":["read"]}},
+    {"address":"data.aws_lambda_alias.live","mode":"data","type":"aws_lambda_alias","provider_name":"registry.terraform.io/hashicorp/aws","change":{"actions":["no-op"]}},
+    {"address":"data.aws_eks_clusters.shared","mode":"data","type":"aws_eks_clusters","provider_name":"registry.terraform.io/hashicorp/aws","change":{"actions":["read"]}},
+    {"address":"data.aws_db_snapshot.backup","mode":"data","type":"aws_db_snapshot","provider_name":"registry.terraform.io/hashicorp/aws","change":{"actions":["no-op"]}},
+    {"address":"data.aws_elasticache_replication_group.shared","mode":"data","type":"aws_elasticache_replication_group","provider_name":"registry.terraform.io/hashicorp/aws","change":{"actions":["no-op"]}},
+    {"address":"data.aws_cloudfront_origin_access_control.shared","mode":"data","type":"aws_cloudfront_origin_access_control","provider_name":"registry.terraform.io/hashicorp/aws","change":{"actions":["no-op"]}},
+    {"address":"data.aws_apigatewayv2_apis.shared","mode":"data","type":"aws_apigatewayv2_apis","provider_name":"registry.terraform.io/hashicorp/aws","change":{"actions":["read"]}},
+    {"address":"aws_lambda_alias.app","mode":"managed","type":"aws_lambda_alias","provider_name":"registry.terraform.io/hashicorp/aws","change":{"actions":["create"]}},
+    {"address":"aws_s3_bucket.assets","mode":"managed","type":"aws_s3_bucket","provider_name":"registry.terraform.io/hashicorp/aws","change":{"actions":["update"]}},
+    {"address":"data.aws_subnets.foreign","mode":"data","type":"aws_subnets","provider_name":"registry.terraform.io/example/aws","change":{"actions":["read"]}},
+    {"address":"data.aws_future_widget.unknown","mode":"data","type":"aws_future_widget","provider_name":"registry.terraform.io/hashicorp/aws","change":{"actions":["read"]}},
+    {"address":"data.aws_region.current","mode":"data","type":"aws_region","provider_name":"registry.terraform.io/hashicorp/aws","change":{"actions":["no-op"]}},
+    {"address":"data.aws_caller_identity.current","mode":"data","type":"aws_caller_identity","provider_name":"registry.terraform.io/hashicorp/aws","change":{"actions":["no-op"]}},
+    {"address":"data.aws_iam_policy_document.app","mode":"data","type":"aws_iam_policy_document","provider_name":"registry.terraform.io/hashicorp/aws","change":{"actions":["no-op"]}}
+  ]
+}
