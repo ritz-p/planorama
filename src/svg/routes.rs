@@ -53,6 +53,7 @@ pub(super) fn render(
         let details = card
             .rows
             .iter()
+            .filter(|row| !row.moved)
             .map(|r| r.text.as_str())
             .collect::<Vec<_>>()
             .join("; ");
