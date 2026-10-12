@@ -8,20 +8,20 @@ head, and **Report PR validation** publishes its results to the PR.
 ## Cancelling superseded validation
 
 **Cargo fmt**, **Cargo clippy** and **Cargo test** use workflow-level concurrency.
-A new run cancels pending or running validation for the same workflow and PR.
-Workflow names separate Formatting, Clippy and Tests, and PR numbers separate
+A new `pull_request` run cancels pending or running PR-event validation for the
+same workflow and PR. Fixed `cargo-fmt`, `cargo-clippy` and `cargo-test` prefixes
+separate the workflows even if their display names change. PR numbers separate
 unrelated PRs, including forks whose source branches have the same name.
 Completed runs and their check results remain visible in the run history.
 
-Ordinary `pull_request` runs and `workflow_dispatch` runs providing both
-`pull_request` and `expected_head_sha` share a `pr-<number>` key. Validation of an
-automatically generated SVG commit can therefore replace validation of its source
-commit. The dispatched checkout and reporter still verify the exact expected head.
-
-All other runs use a unique `run-<run_id>` key. Ordinary manual dispatches, including
-repeated dispatches on the same branch, and post-merge `pull_request_target` runs
-remain independent of each other and of PR validation. The existing non-cancelling
-SVG generation/writeback and status-reporting groups retain their own policies.
+Only `pull_request` events share a `pr-<number>` key. Every `workflow_dispatch` and
+post-merge `pull_request_target` run uses a unique `run-<run_id>` key. This includes
+PR-bound dispatches after automatic SVG commits: a dispatch request can arrive
+after the PR has advanced, and must not cancel a newer PR check before its own
+checkout rejects the stale SHA. The dispatched checkout and reporter still verify
+the exact expected head. Repeated manual runs on the same branch also remain
+independent. The existing non-cancelling SVG generation/writeback and
+status-reporting groups retain their own policies.
 
 See GitHub's [workflow concurrency documentation](https://docs.github.com/en/actions/how-tos/write-workflows/choose-when-workflows-run/control-workflow-concurrency).
 
@@ -67,6 +67,39 @@ plus the aggregate job, including checkout, toolchain/cache work and compilation
 Separate queue time from active job time, and record cache hits, per-step timings,
 source/base SHAs and test counts. Compare identical Rust sources and fixtures;
 runner elapsed seconds measure compute use, not an account's billed price.
+
+### Observed timing and runner cost
+
+On 2026-10-12, the [serial baseline](https://github.com/ritz-p/planorama/actions/runs/38224372411)
+at `754ffd2` and [parallel run](https://github.com/ritz-p/planorama/actions/runs/38225451104)
+at `e365bd2` used identical Rust sources, fixtures, Rust 1.85.1 and Ubuntu runner
+image `20261004.327.1`. Both parallel jobs restored the exact same 17,658,308-byte
+dependency cache as the serial job. Each arrangement was measured once; these are
+observations rather than a latency guarantee or a billed-cost estimate.
+
+| Measurement | Serial | Parallel | Change |
+| --- | ---: | ---: | ---: |
+| First job start to final job completion | 170 s | 141 s | -29 s (-17.1%) |
+| Sum of all test-workflow job durations | 170 s | 201 s | +31 s (+18.2%) |
+| Workflow creation to final update | 204 s | 184 s | -20 s (-9.8%) |
+| Queue/provisioning before the first job | 33 s | 42 s | +9 s |
+| Passed / ignored / failed tests | 506 / 1 / 0 | 506 / 1 / 0 | Unchanged |
+
+| Parallel job | Total job time | Compile tests | Run tests |
+| --- | ---: | ---: | ---: |
+| [standard](https://github.com/ritz-p/planorama/actions/runs/38225451104/job/114731950802) | 137 s | 77 s | 48 s |
+| [large](https://github.com/ritz-p/planorama/actions/runs/38225451104/job/114731950398) | 62 s | 29 s | 19 s |
+| [Tests aggregate](https://github.com/ritz-p/planorama/actions/runs/38225451104/job/114732772522) | 2 s | — | — |
+| Total runner time | 201 s | 106 s | 67 s |
+
+Both suites started together and overlapped for 62 seconds. The large suite
+finished while the standard suite was still compiling; their test-execution steps
+did not overlap in this run. The serial compile/test steps took 82/70 seconds.
+Its ordinary integration targets accounted for only 1.40 seconds, supporting the
+choice to keep those targets with unit tests instead of adding a third runner.
+Parallelism saves waiting time at the documented cost of additional workspace
+compilation and runner setup. Workflow, Clippy and formatting validation outside
+**Cargo test** are excluded from both sides of this comparison.
 
 ## When generation runs
 
@@ -176,9 +209,8 @@ The standard `GITHUB_TOKEN` is used for both writeback and explicit
 duplicate push/PR-event runs, including the token-generated PR runs that would
 otherwise require approval. Explicit dispatch is unaffected by that directive and
 starts validation on the generated head without an additional approval in the
-ordinary same-repository flow. The directive itself does not cancel existing runs;
-the validation workflows' shared PR concurrency group cancels superseded runs
-when the new validation starts.
+ordinary same-repository flow. The directive does not cancel runs already created
+for an earlier commit; dispatches remain independent of PR-event concurrency.
 
 Formatting, Clippy and Tests are dispatched after an SVG commit. MSRV is included
 when the full PR file list touches its existing toolchain/Cargo/Docker inputs,
@@ -286,6 +318,12 @@ become active only after their definitions are merged there. Workflow tests runs
 on `pull_request` during its implementation PR. Those checks cannot demonstrate
 the complete writeback/reporting cycle before that merge. PR branches created before the
 change must incorporate the updated generation tools and validation definitions.
+
+The parallel-test reporter must likewise reach the default branch before
+PR-bound dispatches of split test jobs can publish success. Until then, ordinary
+PR checks and the reporter's CI regression tests validate this change; an older
+reporter expects the serial job shape. The updated reporter accepts both shapes
+after merging, preserving validation for older branches.
 
 The separate [Workflow tests](../.github/workflows/workflow_tests.yml) workflow
 runs the `Lint workflows` step with pinned actionlint and the
