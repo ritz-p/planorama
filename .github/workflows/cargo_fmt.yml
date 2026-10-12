@@ -26,6 +26,15 @@ permissions:
   contents: read
   pull-requests: read
 
+concurrency:
+  group: >-
+    ${{ github.workflow }}-${{
+      github.event_name == 'pull_request' && format('pr-{0}', github.event.pull_request.number)
+      || github.event_name == 'workflow_dispatch' && inputs.pull_request && inputs.expected_head_sha
+        && format('pr-{0}', inputs.pull_request)
+      || format('run-{0}', github.run_id) }}
+  cancel-in-progress: true
+
 jobs:
   formatting:
     name: ${{ github.event_name == 'workflow_dispatch' && 'Dispatched Formatting' || 'Formatting' }}
