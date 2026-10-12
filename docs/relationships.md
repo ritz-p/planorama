@@ -5,10 +5,18 @@
 The neutral **Relationship lines** card explains relationship colors, line
 patterns, attachment circles, directions and numbered markers separately from the
 resource action legend and the numbered **Relationship Resources** index.
-Action samples and explanatory text
-wrap within the available diagram width. The measured card height reserves space
-before checks, annotation sections and the architecture in both single-plan and
-named-state output; cross-state endpoints include the same vertical offset.
+Action colors and their explanation appear above a grid of relationship kinds.
+The grid uses one to five columns according to the available width, reading left
+to right before continuing on the next row: Dependency, Association, Directed
+Association, Connection, Containment. Each cell keeps its complete sample and
+wrapped explanation. On narrow diagrams, a single column puts the sample above
+the text; each row reserves the height of its tallest cell.
+
+The measured legend height reserves space before checks, annotation sections and
+the architecture in both single-plan and named-state output. Named-state diagrams
+give each legend the shared content width required by the widest state or
+annotation, excluding cross-state gutters.
+Cross-state endpoints include the same vertical offset as the following content.
 
 Line color describes the relationship's own Terraform action, independently of
 its endpoint resources. A relationship without an independent change

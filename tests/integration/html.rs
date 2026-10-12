@@ -180,8 +180,23 @@ fn html_omits_route_constants_without_changing_paths_or_identities() {
 
 #[test]
 fn representative_html_matches_the_renderer() {
-    assert_eq!(
-        html(include_bytes!("../fixtures/viewer-plan.json"), &[]),
-        include_str!("../../examples/viewer.html")
-    );
+    let output = html(include_bytes!("../fixtures/viewer-plan.json"), &[]);
+    assert_eq!(output, include_str!("../../examples/viewer.html"));
+    let svg = roxmltree::Document::parse(diagram(&output)).unwrap();
+    let entries: Vec<_> = svg
+        .descendants()
+        .filter(|node| node.attribute("data-legend-entry").is_some())
+        .collect();
+    assert_eq!(entries.len(), 5);
+    let columns: std::collections::BTreeSet<_> = entries
+        .iter()
+        .map(|node| {
+            node.attribute("transform")
+                .unwrap()
+                .split_whitespace()
+                .next()
+                .unwrap()
+        })
+        .collect();
+    assert!(columns.len() >= 2);
 }
