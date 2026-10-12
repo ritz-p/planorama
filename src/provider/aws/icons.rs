@@ -104,9 +104,9 @@ pub(super) fn icon_for(resource_type: &str) -> Option<ResourceIcon> {
         "aws_security_group" | "aws_security_groups" | "aws_network_acl" | "aws_network_acls" => {
             ResourceIcon::Security
         }
-        "aws_cloudwatch_log_group" | "aws_cloudwatch_log_groups" | "aws_cloudwatch_metric_alarm" => {
-            ResourceIcon::Monitoring
-        }
+        "aws_cloudwatch_log_group"
+        | "aws_cloudwatch_log_groups"
+        | "aws_cloudwatch_metric_alarm" => ResourceIcon::Monitoring,
         "aws_autoscaling_group" | "aws_autoscaling_groups" | "aws_launch_configuration" => {
             ResourceIcon::Scaling
         }

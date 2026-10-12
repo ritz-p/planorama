@@ -14,23 +14,14 @@ fn data_icon_fixture_preserves_external_styling_and_matches_deterministic_exampl
             "data.aws_ami_ids.available",
             Some("#planorama-icon-aws-ec2"),
         ),
-        (
-            "data.aws_instances.shared",
-            Some("#planorama-icon-aws-ec2"),
-        ),
+        ("data.aws_instances.shared", Some("#planorama-icon-aws-ec2")),
         ("data.aws_lbs.shared", Some("#planorama-icon-aws-elb")),
-        (
-            "data.aws_iam_roles.shared",
-            Some("#planorama-icon-aws-iam"),
-        ),
+        ("data.aws_iam_roles.shared", Some("#planorama-icon-aws-iam")),
         (
             "data.aws_security_groups.shared",
             Some("#planorama-icon-aws-vpc"),
         ),
-        (
-            "data.aws_s3_objects.assets",
-            Some("#planorama-icon-aws-s3"),
-        ),
+        ("data.aws_s3_objects.assets", Some("#planorama-icon-aws-s3")),
         (
             "data.aws_lambda_alias.live",
             Some("#planorama-icon-aws-lambda"),
@@ -72,8 +63,15 @@ fn data_icon_fixture_preserves_external_styling_and_matches_deterministic_exampl
         .filter_map(|(_, icon)| icon.map(|href| href.strip_prefix('#').unwrap()))
         .collect();
     assert_eq!(symbols.len(), expected_symbols.len());
-    assert_eq!(symbols.into_iter().collect::<BTreeSet<_>>(), expected_symbols);
-    assert!(!document.descendants().any(|node| node.has_tag_name("image")));
+    assert_eq!(
+        symbols.into_iter().collect::<BTreeSet<_>>(),
+        expected_symbols
+    );
+    assert!(
+        !document
+            .descendants()
+            .any(|node| node.has_tag_name("image"))
+    );
     for (address, icon) in expected {
         let card = document
             .descendants()
@@ -120,10 +118,15 @@ fn data_icon_fixture_preserves_external_styling_and_matches_deterministic_exampl
     let snapshot = concat!(env!("CARGO_MANIFEST_DIR"), "/examples/data-icons.svg");
     assert_eq!(
         output,
-        std::fs::read_to_string(snapshot).unwrap().replace("\r\n", "\n")
+        std::fs::read_to_string(snapshot)
+            .unwrap()
+            .replace("\r\n", "\n")
     );
     let mut reordered: serde_json::Value = serde_json::from_str(input).unwrap();
-    reordered["resource_changes"].as_array_mut().unwrap().reverse();
+    reordered["resource_changes"]
+        .as_array_mut()
+        .unwrap()
+        .reverse();
     let raw = plan::parse(&reordered.to_string()).unwrap();
     let graph = view::single(&semantic::transform(&raw), &Default::default()).unwrap();
     assert_eq!(output, svg::render(&graph, &Layout::new(&graph)));

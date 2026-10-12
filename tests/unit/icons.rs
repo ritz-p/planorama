@@ -80,7 +80,10 @@ fn visible_data_source_types_share_their_managed_service_icon() {
         ("aws_db_snapshot", "aws_db_instance"),
         ("aws_db_cluster_snapshot", "aws_rds_cluster"),
         ("aws_dynamodb_tables", "aws_dynamodb_table"),
-        ("aws_elasticache_replication_group", "aws_elasticache_cluster"),
+        (
+            "aws_elasticache_replication_group",
+            "aws_elasticache_cluster",
+        ),
         ("aws_s3_objects", "aws_s3_bucket"),
         ("aws_s3_bucket_objects", "aws_s3_bucket"),
         ("aws_cloudfront_cache_policy", "aws_cloudfront_distribution"),
