@@ -60,7 +60,8 @@ select the built-in provider icon. See [provider identity](models.md).
 
 Both types use the symbol ID `planorama-icon-terraform`. Module paths and instance
 keys do not alter selection. The icon is independent of managed/data mode,
-ResourceRole and action; data cards keep their external marker and dashed border.
+ResourceRole and action; spatial data cards keep their external marker and dashed
+border, while logical data rows retain external metadata and a dashed underline.
 Unsupported resource types keep their existing icon-free rendering. This mapping
 adds no AWS classification, containment or connection rules.
 
@@ -76,8 +77,9 @@ no XML parser or asset files are needed at runtime.
 
 Repeated resources share their icon symbol. Spatial cards and container headers
 display icons at 24px beside the selected full address, preserving the existing
-icon gap and heading measurements. Logical cards place the same 24px symbol in
-their upper-right corner and reserve heading space for it.
+icon gap and heading measurements. Logical-resource groups place the same 24px
+symbol in the upper-right corner of each resource row and reserve address-heading
+space for it.
 Notices are selected by the artwork actually used;
 Terraform-only output does not receive an AWS ownership notice, and mixed output
 retains both. Named-state panels namespace IDs and local fragment references.

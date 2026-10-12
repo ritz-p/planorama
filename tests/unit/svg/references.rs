@@ -24,6 +24,7 @@ fn fixture(nested: bool, regional: bool) -> (Value, Vec<String>) {
         json!({"address":CONSUMER,"type":"aws_instance","change":{"actions":["update"],"after":{"secret":"PRIVATE_VALUE"}}}),
         json!({"address":"aws_instance.peer","type":"aws_instance"}),
         json!({"address":"aws_iam_role.annotation","type":"aws_iam_role"}),
+        json!({"address":"aws_iam_role.z_peer","type":"aws_iam_role"}),
     ]);
     let expressions = json!({
         "policies":{"references":addresses.iter().map(|a| format!("{a}.arn")).collect::<Vec<_>>()},
@@ -160,7 +161,27 @@ fn full_reference_rows_fit_flat_nested_and_regional_geometry() {
                 } else {
                     "References: unresolved"
                 })));
-            let rect = card.children().find(|n| n.has_tag_name("rect")).unwrap();
+            let (rect, row_y) = if card.attribute("data-placement") == Some("logical") {
+                let group = card.parent().unwrap();
+                assert_eq!(group.attribute("data-logical-group"), Some("true"));
+                let outer = group.parent().unwrap();
+                assert_eq!(outer.attribute("data-annotation-card"), Some("true"));
+                let row_y: usize = card
+                    .attribute("transform")
+                    .unwrap()
+                    .strip_prefix("translate(0 ")
+                    .unwrap()
+                    .strip_suffix(')')
+                    .unwrap()
+                    .parse()
+                    .unwrap();
+                (
+                    outer.children().find(|n| n.has_tag_name("rect")).unwrap(),
+                    row_y,
+                )
+            } else {
+                (card.children().find(|n| n.has_tag_name("rect")).unwrap(), 0)
+            };
             let x: usize = rect.attribute("x").unwrap_or("0").parse().unwrap();
             let y: usize = rect.attribute("y").unwrap_or("0").parse().unwrap();
             let width: usize = rect.attribute("width").unwrap().parse().unwrap();
@@ -176,8 +197,38 @@ fn full_reference_rows_fit_flat_nested_and_regional_geometry() {
                     .map(|c| if c.is_ascii() { 8 } else { 16 })
                     .sum();
                 assert!(tx + advance < x + width);
-                assert!(ty + 4 < y + height);
+                assert!(row_y + ty + 4 < y + height);
                 assert!(!text.text().unwrap().contains('…'));
+            }
+            if card.attribute("data-placement") == Some("logical") {
+                let underline = card
+                    .children()
+                    .find(|n| n.attribute("data-resource-underline") == Some("true"))
+                    .unwrap();
+                let underline_y: usize = underline.attribute("y1").unwrap().parse().unwrap();
+                assert!(
+                    references
+                        .descendants()
+                        .filter(|n| n.has_tag_name("text"))
+                        .all(|n| n.attribute("y").unwrap().parse::<usize>().unwrap() + 4
+                            < underline_y)
+                );
+                let peer = card
+                    .parent()
+                    .unwrap()
+                    .children()
+                    .find(|n| n.attribute("data-terraform-address") == Some("aws_iam_role.z_peer"))
+                    .unwrap();
+                let peer_y: usize = peer
+                    .attribute("transform")
+                    .unwrap()
+                    .strip_prefix("translate(0 ")
+                    .unwrap()
+                    .strip_suffix(')')
+                    .unwrap()
+                    .parse()
+                    .unwrap();
+                assert!(row_y + underline_y < peer_y);
             }
         }
         let consumer = doc

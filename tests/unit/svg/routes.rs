@@ -125,6 +125,11 @@ fn nonspatial_next_hop_keeps_status_without_a_spatial_path() {
     verify_cards(&svg);
     assert!(svg.contains("(nonspatial)"));
     assert!(!svg.contains("Next hop ["));
+    assert!(
+        svg.contains(
+            "2 spatial cards, 1 logical resources in 1 group cards, 2 embedded route cards"
+        )
+    );
 }
 
 fn verify_cards(svg: &str) {

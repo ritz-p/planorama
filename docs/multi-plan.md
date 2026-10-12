@@ -4,11 +4,13 @@ Named states keep their own Terraform identities. Explicit remote-state mappings
 can connect resources across states using `TerraformRemoteState` provenance.
 
 Cross-state relationships also remain in `cross-state-relationships` metadata.
-Edges incident on top logical-resource cards are excluded from spatial routing;
+Edges incident on top logical-resource rows are excluded from spatial routing;
 their state-qualified provenance remains available.
-Their consumer cards show links to the actual state-qualified source cards.
+Their consumer cards show links to the actual state-qualified source rows.
 Remote-output evidence remains distinct from a directly configured attribute;
 equal addresses in separate states never share a DOM target.
+Logical-resource grouping is local to each state. Equal provider/type/mode keys
+in different states do not merge their groups or member identities.
 
 Output references must be complete; bare collections and ambiguous selectors do
 not establish cross-state relationships. See [output resolution](outputs.md).

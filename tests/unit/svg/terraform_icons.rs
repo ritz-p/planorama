@@ -106,29 +106,33 @@ fn builtin_and_aws_icons_preserve_provider_boundaries_and_external_styling() {
                 .collect();
             assert_eq!(uses, icon.into_iter().collect::<Vec<_>>(), "{address}");
             let is_data = address.starts_with("data.");
-            let border = card
-                .children()
-                .find(|n| n.has_tag_name("rect") && n.attribute("data-mode").is_some())
-                .unwrap();
-            assert_eq!(
-                border.attribute("data-mode"),
-                Some(if is_data { "data" } else { "managed" })
-            );
-            assert_eq!(
-                border.attribute("stroke-dasharray"),
-                is_data.then_some("6 4")
-            );
-            if card.attribute("data-placement") == Some("logical") {
+            let mode = Some(if is_data { "data" } else { "managed" });
+            let stroke = if card.attribute("data-placement") == Some("logical") {
+                assert_eq!(card.attribute("data-mode"), mode);
                 assert_eq!(card.attribute("data-external"), is_data.then_some("true"));
+                let group = card.parent_element().unwrap();
+                assert_eq!(group.attribute("data-logical-group"), Some("true"));
+                assert_eq!(group.attribute("data-mode"), mode);
                 assert_eq!(
-                    card.children().any(|n| {
+                    group.children().any(|n| {
                         n.has_tag_name("text")
                             && n.text()
                                 .is_some_and(|text| text.contains("data / external"))
                     }),
                     is_data
                 );
+                card.children()
+                    .find(|n| {
+                        n.has_tag_name("line")
+                            && n.attribute("data-resource-underline") == Some("true")
+                    })
+                    .unwrap()
             } else {
+                let border = card
+                    .children()
+                    .find(|n| n.has_tag_name("rect") && n.attribute("data-mode").is_some())
+                    .unwrap();
+                assert_eq!(border.attribute("data-mode"), mode);
                 let external = card
                     .children()
                     .find(|n| n.attribute("data-external") == Some("true"));
@@ -140,7 +144,12 @@ fn builtin_and_aws_icons_preserve_provider_boundaries_and_external_styling() {
                             .any(|n| n.has_tag_name("text") && n.text() == Some("external"))
                     );
                 }
-            }
+                border
+            };
+            assert_eq!(
+                stroke.attribute("stroke-dasharray"),
+                is_data.then_some("6 4")
+            );
         }
         let notices: Vec<_> = document
             .descendants()

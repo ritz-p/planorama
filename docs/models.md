@@ -93,11 +93,13 @@ containment; it does not classify global AWS resources as regional.
 
 ## Architecture identity and provenance
 
-Cards and logical components contain `ArchitectureEntity`, with an opaque
+Resource nodes and logical components contain `ArchitectureEntity`, with an opaque
 `ArchitectureId`, explicit Terraform/synthetic kind, and ordered, deduplicated
 `TerraformEntityId` provenance. Terraform source identity includes the deposed
-key. Synthetic identity uses a component kind and stable inference anchor, so
-membership and display-label changes do not become identity changes. Both kinds
+key. Logical-resource display groups do not create architecture entities or combine
+their members' identities, actions or relationships. Synthetic identity uses a
+component kind and stable inference anchor, so membership and display-label
+changes do not become identity changes. Both kinds
 are available through `Graph::entities()`; synthetic components have no required
 Terraform address of their own and do not acquire a spatial container role.
 

@@ -1,6 +1,6 @@
 # Terraform operation metadata
 
-[Logical architecture components](components.md) retain original resource cards and their complete change information.
+[Logical architecture components](components.md) retain original resource identities and their complete change information.
 
 Route resources retain their own operation metadata in [embedded child cards](routes.md).
 
@@ -9,14 +9,14 @@ Plan-level checks, including resource preconditions and postconditions, are docu
 ## Resource moves and deposed objects
 
 `previous_address` retains Terraform-reported move provenance without becoming a
-reference alias. Spatial and logical resource cards, embedded Route cards, and
+reference alias. Spatial cards, logical-resource rows, embedded Route cards, and
 each source in the relationship index display `Moved from: ...`. Complete previous
 addresses wrap without truncation, with every line included in the measured height.
 Component member links retain move context in their accessible titles and point
 to the original resource's visible annotation.
 
-Cards and lowered edges retain `data-previous-address`, and titles preserve the
-complete previous address. Long provenance stays in the index rather than on paths.
+Resource elements and lowered edges retain `data-previous-address`, and titles
+preserve the complete previous address. Long provenance stays in the index rather than on paths.
 The current address and optional deposed key identify separate objects; old objects
 retain their own actions and `data-deposed-key`. Current configuration and planned
 values apply only to current objects.
@@ -25,7 +25,7 @@ values apply only to current objects.
 
 Replacement path strings can also be collection keys or set elements. Before retaining paths, both `before_sensitive` and `after_sensitive` are checked. Paths entering a sensitive subtree are omitted in full (including when only a descendant is marked sensitive), so secret keys never reach the model, SVG titles, or data attributes. Other paths remain available; omitted paths are not replaced with misleading truncated paths.
 
-Resource-level `action_reason` is retained verbatim, including unknown future reason strings. `change.replace_paths` stores paths as typed string keys and unsigned integer indices, independently of the planned action. SVG titles and `data-action-reason` / `data-replace-paths` expose these details on cards and lowered relationships, with XML escaping. Paths use JSON-array notation so dotted keys, quoted map keys and numeric indices remain unambiguous. They identify attributes without storing their before/after values.
+Resource-level `action_reason` is retained verbatim, including unknown future reason strings. `change.replace_paths` stores paths as typed string keys and unsigned integer indices, independently of the planned action. SVG titles and `data-action-reason` / `data-replace-paths` expose these details on resource elements and lowered relationships, with XML escaping. Paths use JSON-array notation so dotted keys, quoted map keys and numeric indices remain unambiguous. They identify attributes without storing their before/after values.
 
 Missing metadata does not alter replacement behavior or ordinary rendering. Explicit empty path lists and empty root paths are preserved. Malformed path entries (non-arrays or steps other than strings/nonnegative integer indices) are ignored as whole paths, never truncated into misleading valid paths. See [replacement-reasons-plan.json](../tests/fixtures/replacement-reasons-plan.json).
 
@@ -46,11 +46,13 @@ or logical resource, embedded Route, and component member presentation. Empty an
 unknown imports receive the same indicator. The synthetic component does not inherit
 an import operation, and inline Route entries do not duplicate the table's badge.
 The badge has its own measured row, separate from addresses, service icons and the
-gray `external` indicator. Ordinary action labels omit the redundant `import /`
-prefix; accessible titles preserve the full composed operation and its order.
+gray `external` indicator. Spatial, logical-resource and embedded Route action
+labels omit the redundant `import /` prefix. Component member rows retain the full
+composed label; accessible titles preserve the full operation and its order in
+every presentation.
 Existing `data-import` and the value-free presence/unknown flags remain unchanged.
 
-Exact action arrays `['forget']`, `['create','forget']`, and `['forget','create']` are represented by distinct `StateRemoval` variants. Forgetting removes Terraform's state binding without destroying the old remote object; a combined create/forget operation also creates a new object. These sequences retain the existing `Action::Other` palette/legend category, while card labels and edge titles explicitly show the operation and order. Ordinary delete remains delete. SVG exposes `data-import`, redacted import flags, and `data-state-removal` on cards and lowered relationships.
+Exact action arrays `['forget']`, `['create','forget']`, and `['forget','create']` are represented by distinct `StateRemoval` variants. Forgetting removes Terraform's state binding without destroying the old remote object; a combined create/forget operation also creates a new object. These sequences retain the existing `Action::Other` palette/legend category, while resource labels and edge titles explicitly show the operation and order. Ordinary delete remains delete. SVG exposes `data-import`, redacted import flags, and `data-state-removal` on resource elements and lowered relationships.
 
 Only operations explicitly reported in the resource-change list are interpreted. Standalone CLI import/state-rm history, inferred imports based on values, `removed` configuration without a reported forget action, deferred-change lists, action-invocation lists, and unfamiliar action combinations are not interpreted. Unsupported combinations keep the generic action fallback. A non-object `importing` value is ignored.
 
@@ -64,6 +66,6 @@ Paths use typed string/index steps. Sensitivity is checked against changes, drif
 
 `resource_drift` is collected separately in `TerraformPlan.drift`. Each record retains its address, optional deposed key, drift-specific previous address, action category and matching status. Matching uses the exact current address/deposed pair and compatible resource type, mode and provider; previous addresses never become aliases. Conflicting records remain available and produce an unmatched-drift diagnostic rather than changing an unrelated resource.
 
-Matching nodes carry drift action categories in `metadata.drift`, independently of their planned `Action`. Drift-only objects receive a card with no planned change (`Unchanged`); drift deletion is not planned destruction. Consistent duplicate drift records are retained, with deterministic category sets on cards. Contradictory drift-only identities are not arbitrarily assigned a card. Relationship lowering preserves matched drift metadata too.
+Matching nodes carry drift action categories in `metadata.drift`, independently of their planned `Action`. Drift-only objects remain visible with no planned change (`Unchanged`); drift deletion is not planned destruction. Consistent duplicate drift records are retained, with deterministic category sets on resources. Contradictory drift-only identities are not arbitrarily assigned a visible resource. Relationship lowering preserves matched drift metadata too.
 
 Default colors and visible action labels still describe the apply plan. SVG exposes `data-drift` categories, and `--diagnostics` reports Terraform-reported drift, including unmatched records. No raw before/after values or identities are stored. This feature consumes reported drift only; it does not query providers or compute drift from state. Unknown action sequences use the existing `Other` category. See [drift-plan.json](../tests/fixtures/drift-plan.json).
