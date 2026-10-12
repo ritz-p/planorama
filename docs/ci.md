@@ -8,20 +8,20 @@ head, and **Report PR validation** publishes its results to the PR.
 ## Cancelling superseded validation
 
 **Cargo fmt**, **Cargo clippy** and **Cargo test** use workflow-level concurrency.
-A new run cancels pending or running validation for the same workflow and PR.
-Workflow names separate Formatting, Clippy and Tests, and PR numbers separate
+A new `pull_request` run cancels pending or running PR-event validation for the
+same workflow and PR. Fixed `cargo-fmt`, `cargo-clippy` and `cargo-test` prefixes
+separate the workflows even if their display names change. PR numbers separate
 unrelated PRs, including forks whose source branches have the same name.
 Completed runs and their check results remain visible in the run history.
 
-Ordinary `pull_request` runs and `workflow_dispatch` runs providing both
-`pull_request` and `expected_head_sha` share a `pr-<number>` key. Validation of an
-automatically generated SVG commit can therefore replace validation of its source
-commit. The dispatched checkout and reporter still verify the exact expected head.
-
-All other runs use a unique `run-<run_id>` key. Ordinary manual dispatches, including
-repeated dispatches on the same branch, and post-merge `pull_request_target` runs
-remain independent of each other and of PR validation. The existing non-cancelling
-SVG generation/writeback and status-reporting groups retain their own policies.
+Only `pull_request` events share a `pr-<number>` key. Every `workflow_dispatch` and
+post-merge `pull_request_target` run uses a unique `run-<run_id>` key. This includes
+PR-bound dispatches after automatic SVG commits: a dispatch request can arrive
+after the PR has advanced, and must not cancel a newer PR check before its own
+checkout rejects the stale SHA. The dispatched checkout and reporter still verify
+the exact expected head. Repeated manual runs on the same branch also remain
+independent. The existing non-cancelling SVG generation/writeback and
+status-reporting groups retain their own policies.
 
 See GitHub's [workflow concurrency documentation](https://docs.github.com/en/actions/how-tos/write-workflows/choose-when-workflows-run/control-workflow-concurrency).
 
@@ -133,9 +133,8 @@ The standard `GITHUB_TOKEN` is used for both writeback and explicit
 duplicate push/PR-event runs, including the token-generated PR runs that would
 otherwise require approval. Explicit dispatch is unaffected by that directive and
 starts validation on the generated head without an additional approval in the
-ordinary same-repository flow. The directive itself does not cancel existing runs;
-the validation workflows' shared PR concurrency group cancels superseded runs
-when the new validation starts.
+ordinary same-repository flow. The directive does not cancel runs already created
+for an earlier commit; dispatches remain independent of PR-event concurrency.
 
 Formatting, Clippy and Tests are dispatched after an SVG commit. MSRV is included
 when the full PR file list touches its existing toolchain/Cargo/Docker inputs,
