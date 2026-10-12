@@ -65,8 +65,7 @@ pub(crate) fn render_content(
         )
         .unwrap();
     }
-    let mut top = 60;
-    let mut width = 1120;
+    let mut prepared_graphs = Vec::with_capacity(graphs.len());
     for (id, graph) in graphs {
         let mut graph = graph.clone();
         for edge in &relationships {
@@ -114,12 +113,23 @@ pub(crate) fn render_content(
                 issues: Default::default(),
             });
         }
-        let graph = &graph;
+        prepared_graphs.push((id, graph));
+    }
+    let mut width = 1120;
+    let mut states = Vec::with_capacity(prepared_graphs.len());
+    for (id, graph) in &prepared_graphs {
         let layout = Layout::new(graph);
         let index = super::relationship_index::Index::new(graph, &layout);
         let measured_sections = super::Sections::new(graph, &index, format);
-        let (state_width, height) = measured_sections.dimensions(&layout);
-        width = width.max(state_width);
+        width = width.max(measured_sections.dimensions(&layout).0);
+        states.push((*id, graph, layout, index, measured_sections));
+    }
+    let mut top = 60;
+    for (id, graph, layout, index, mut measured_sections) in states {
+        if measured_sections.dimensions(&layout).0 < width {
+            measured_sections = super::Sections::with_width(graph, &index, format, width);
+        }
+        let (_, height) = measured_sections.dimensions(&layout);
         let prefix = prefix(id);
         let check_offset = measured_sections.height();
         obstacles.insert(

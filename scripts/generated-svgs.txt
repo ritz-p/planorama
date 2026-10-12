@@ -15,6 +15,7 @@ examples/network-scope.svg
 examples/port-collisions.svg
 examples/rds-subnet-group.svg
 examples/regions.svg
+examples/relationship-index-wide.svg
 examples/relationship-index.svg
 examples/routes.svg
 examples/security-groups.svg

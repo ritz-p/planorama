@@ -82,8 +82,27 @@ impl Sections {
         index: &relationship_index::Index<'_>,
         address_format: AddressFormat,
     ) -> Self {
-        let annotations = annotation_area(graph, index, address_format);
+        Self::with_width(graph, index, address_format, index.width)
+    }
+
+    fn with_width(
+        graph: &Graph,
+        index: &relationship_index::Index<'_>,
+        address_format: AddressFormat,
+        available_width: usize,
+    ) -> Self {
+        let annotations = annotation_area(
+            graph,
+            index,
+            address_format,
+            available_width.max(index.width),
+        );
         let legend = legend::Legend::new(graph, annotations.width);
+        let annotations = if legend.width > annotations.width {
+            annotation_area(graph, index, address_format, legend.width)
+        } else {
+            annotations
+        };
         Self {
             legend,
             annotations,
@@ -107,6 +126,7 @@ fn annotation_area(
     graph: &Graph,
     index: &relationship_index::Index<'_>,
     address_format: AddressFormat,
+    available_width: usize,
 ) -> annotations::Area {
     annotations::Area::sections(
         vec![
@@ -126,7 +146,7 @@ fn annotation_area(
                 index.cards(),
             ),
         ],
-        index.width,
+        available_width,
     )
 }
 

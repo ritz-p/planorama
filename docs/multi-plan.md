@@ -44,4 +44,11 @@ One named input may use `-` for stdin. Multiple stdin inputs and mixing named in
 
 SVG output places states in ID order. Each section has a visible state label and `data-state-id`; all descendants inherit that provenance. Terraform addresses and deposed metadata retain their original values. DOM IDs and fragment references (resource links, markers, icons and accessibility labels) receive an injective state-derived prefix, independent of input paths or order. Synthetic component IDs are local identities qualified by the enclosing state. Plan status and check summaries remain separate, rather than combining flags or results from different plans.
 
+State sections share the final content width required by the widest architecture
+or annotation. Each state's annotations reflow within that width, so Relationship
+Resources can use additional horizontal space before wrapping. State heights and
+cross-state endpoint offsets follow the reflowed annotations. The cross-state
+routing gutter is reserved outside the shared content width and is not available
+for index cards.
+
 With `--diagnostics`, every diagnostic line carries `state="ID"`. Parse/read errors name their state. Evaluated attribute values and check messages remain excluded; safe Route destination constants follow the same rules as single-plan input. See [the multi-plan example](../examples/multi-plan.svg), generated from the two [regression fixtures](../tests/fixtures/multi).
