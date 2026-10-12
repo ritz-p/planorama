@@ -290,15 +290,28 @@ fn marker_collision(
     terminals: &[Option<[Port; 2]>],
     clearances: &[[Terminal; 2]],
 ) -> bool {
-    terminals.iter().enumerate().any(|(i, p)| {
-        p.is_some_and(|p| {
-            let reservations = ports::terminal_corridors(p[0], p[1], clearances[i]);
-            paths.iter().enumerate().any(|(other, path)| {
-                other != i
-                    && path
-                        .windows(2)
-                        .any(|p| reservations.iter().any(|&b| crosses(p[0], p[1], b)))
+    let reservations: Vec<_> = terminals
+        .iter()
+        .enumerate()
+        .map(|(i, p)| {
+            p.map_or_else(Vec::new, |p| {
+                ports::terminal_corridors(p[0], p[1], clearances[i])
             })
+        })
+        .collect();
+    reservations.iter().enumerate().any(|(i, own)| {
+        own.iter().any(|a| {
+            reservations.iter().skip(i + 1).flatten().any(|b| {
+                a.origin.x < b.right()
+                    && b.origin.x < a.right()
+                    && a.origin.y < b.origin.y + b.height
+                    && b.origin.y < a.origin.y + a.height
+            })
+        }) || paths.iter().enumerate().any(|(other, path)| {
+            other != i
+                && path
+                    .windows(2)
+                    .any(|p| own.iter().any(|&b| crosses(p[0], p[1], b)))
         })
     })
 }

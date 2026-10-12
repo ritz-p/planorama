@@ -139,6 +139,7 @@ fn route_selected_impl(
     order.sort_by_key(|&index| {
         let edge = &graph.edges[index];
         (
+            !numbered[index][1],
             keys[edge.from],
             keys[edge.to],
             edge.kind,

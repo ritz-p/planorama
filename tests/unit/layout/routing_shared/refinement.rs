@@ -3,6 +3,104 @@ use crate::layout::ContainmentTree;
 use crate::model::Edge;
 
 #[test]
+fn port_exchanges_reject_marker_corner_overlap_without_centerline_collisions() {
+    let raw = crate::plan::parse(r#"{"format_version":"1.2","resource_changes":[{"address":"test.hub","type":"test"},{"address":"test.lower","type":"test"},{"address":"test.upper","type":"test"},{"address":"test.marker","type":"test"},{"address":"test.peer","type":"test"}]}"#).unwrap();
+    let mut graph = crate::semantic::transform(&raw).0;
+    graph.edges = vec![Edge::from((0, 1)), Edge::from((0, 2)), Edge::from((3, 4))];
+    let numbered = crate::semantic::transform(
+        &crate::plan::parse(include_str!("../../../fixtures/association-plan.json")).unwrap(),
+    )
+    .0;
+    let relationship = numbered
+        .relationships
+        .iter()
+        .find(|r| r.kind == crate::model::EdgeKind::Association)
+        .unwrap();
+    for index in [0, 2] {
+        let edge = &mut graph.edges[index];
+        edge.kind = relationship.kind;
+        let mut relationship = relationship.clone();
+        relationship.from = graph.nodes[edge.from].entity.id.clone();
+        relationship.to = graph.nodes[edge.to].entity.id.clone();
+        graph.relationships.push(relationship);
+    }
+    let bounds: Vec<_> = [
+        (0, 0, 100, 300),
+        (600, 750, 100, 100),
+        (800, 0, 100, 100),
+        (164, 205, 80, 100),
+        (300, 1050, 100, 100),
+    ]
+    .into_iter()
+    .map(|(x, y, width, height)| Bounds {
+        origin: Point { x, y },
+        width,
+        height,
+    })
+    .collect();
+    let paths: Vec<Vec<_>> = [
+        vec![(100, 100), (500, 100), (500, 800), (600, 800)],
+        vec![(100, 200), (400, 200), (400, 50), (800, 50)],
+        vec![(164, 217), (122, 217), (122, 1100), (300, 1100)],
+    ]
+    .into_iter()
+    .map(|path| path.into_iter().map(|(x, y)| Point { x, y }).collect())
+    .collect();
+    let mut layout = Layout {
+        scopes: vec![],
+        header_heights: bounds.iter().map(|b| b.height).collect(),
+        positions: bounds.iter().map(|b| b.origin).collect(),
+        bounds,
+        containers: vec![],
+        containment: ContainmentTree::new(&graph),
+        width: 1200,
+        height: 1300,
+        bands: vec![],
+        paths: paths.clone(),
+        junctions: vec![],
+    };
+    let mut plain = graph.clone();
+    plain.relationships.remove(0);
+    refine(&plain, &mut layout);
+    assert_eq!(layout.paths[0][0], paths[1][0]);
+    assert_eq!(crossings(&layout.paths[0], &layout.paths[1]), 0);
+    let numbers = relationship_markers::numbers(&graph);
+    let reservations: Vec<_> = layout
+        .paths
+        .iter()
+        .enumerate()
+        .map(|(index, path)| {
+            let pair = [terminal(path, 0), terminal(path, 1)];
+            ports::terminal_corridors(
+                pair[0],
+                pair[1],
+                relationship_markers::terminals(
+                    &graph,
+                    index,
+                    numbers[index],
+                    pair.map(|p| p.side),
+                ),
+            )
+        })
+        .collect();
+    assert!(reservations.iter().enumerate().all(|(index, own)| {
+        layout.paths.iter().enumerate().all(|(other, path)| {
+            index == other
+                || path
+                    .windows(2)
+                    .all(|p| own.iter().all(|&b| !crosses(p[0], p[1], b)))
+        })
+    }));
+    let a = relationship_markers::bounds(numbers[0][0].unwrap(), terminal(&layout.paths[0], 0));
+    let b = relationship_markers::bounds(numbers[2][0].unwrap(), terminal(&layout.paths[2], 0));
+    assert!(a.origin.x < b.right() && b.origin.x < a.right());
+    assert!(a.origin.y < b.origin.y + b.height && b.origin.y < a.origin.y + a.height);
+    layout.paths = paths.clone();
+    refine(&graph, &mut layout);
+    assert_eq!(layout.paths, paths);
+}
+
+#[test]
 fn crossed_ports_are_exchanged_for_every_side_and_role() {
     let raw = crate::plan::parse(r#"{"format_version":"1.2","resource_changes":[{"address":"test.hub","type":"test"},{"address":"test.lower","type":"test"},{"address":"test.upper","type":"test"}]}"#).unwrap();
     for rotation in 0..4 {
