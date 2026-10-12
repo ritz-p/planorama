@@ -1,24 +1,41 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1848" height="3135" viewBox="0 0 1848 3135" role="img" aria-labelledby="title description">
 <title id="title">Terraform plan</title>
 <desc id="description">16 resources, 28 reference edges. Arrows point from dependencies to dependent resources. References are conservative, not Terraform execution order. Thin solid: dependency. Dashed: association. Thick dotted: connection. Nested boxes: containment. Edge color preserves the Terraform action when available.</desc>
-<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/></marker><metadata id="planorama-icons-license">Terraform product logo from HashiCorp Flight Icons 5.3.0.
-Copyright (c) 2021 HashiCorp, Inc
-Source: https://github.com/hashicorp/design-system
-Revision: 97eefa54e00c4e2a3d63417589a8151c4bf17368
-Original SVG: https://raw.githubusercontent.com/hashicorp/design-system/97eefa54e00c4e2a3d63417589a8151c4bf17368/packages/flight-icons/svg/terraform-color-24.svg
-Upstream package license: Mozilla Public License 2.0 (MPL-2.0).
-The unchanged upstream license is included as LICENSE.txt.
-The package license does not grant trademark or product-logo rights.
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/></marker><metadata id="planorama-icons-license">Planorama built-in provider icon, version 1.0.0.
+Original neutral state-file artwork created for Planorama.
+Source: https://github.com/ritz-p/planorama/tree/main/assets/icons/terraform
+File: terraform-builtin-24.svg
+License: MIT (applies only to this icon and its embedded copies).
+This is a Planorama diagram symbol, not the HashiCorp Terraform product logo.
+Terraform is a trademark of HashiCorp. No HashiCorp endorsement is implied.
 
-Terraform and the Terraform logo are trademarks of HashiCorp.
-Trademark policy: https://www.hashicorp.com/en/trademark-policy
-Brand guidelines: https://www.hashicorp.com/en/brand/hcp-product-logos
-Permission status: unconfirmed (reviewed 2026-10-12).
-Permission to bundle and redistribute this logo in Planorama binaries and
-generated SVGs has not been confirmed. This asset is a draft-review candidate,
-not cleared for a Planorama release. Consult the trademark policy separately;
-this notice does not grant permission. No HashiCorp endorsement is implied.
-</metadata><symbol id="planorama-icon-terraform" viewBox="0 0 24 24"><g fill="none"><g fill="#7b42bc" fill-rule="evenodd" clip-rule="evenodd"><path d="m8.893 4.618 6.214 3.597v7.2l-6.214-3.6zM15.788 8.215v7.2l6.212-3.6V4.618zM2 .6v7.197l6.212 3.6V4.199zM8.893 19.8l6.212 3.6v-7.197l-6.212-3.6z"></path></g></g></symbol></defs>
+MIT License
+
+Copyright (c) 2026 Planorama contributors
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the &quot;Software&quot;), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+</metadata><symbol id="planorama-icon-terraform" viewBox="0 0 24 24"><g>
+  <g fill="none" stroke="#475569" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M5 2.8h9l5 5V21H5z"></path>
+    <path d="M14 2.8v5h5M8 12h1m4 0h3M8 16h1m4 0h3"></path>
+  </g>
+</g></symbol></defs>
 <rect width="100%" height="100%" fill="#ffffff"/>
 <g font-family="ui-monospace, SFMono-Regular, Consolas, monospace">
 <text x="40" y="45" font-size="25" font-weight="700" fill="#0f172a">Terraform plan</text>
