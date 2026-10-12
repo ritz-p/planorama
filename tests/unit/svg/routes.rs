@@ -23,13 +23,21 @@ fn output(value: &Value) -> String {
                     && card.attribute("data-architecture-id") == Some(node.entity.id.as_str())
             })
             .unwrap();
-        let rect = card.children().find(|rect| rect.has_tag_name("rect")).unwrap();
+        let rect = card
+            .children()
+            .find(|rect| rect.has_tag_name("rect"))
+            .unwrap();
         let actual = ["x", "y", "width", "height"]
             .map(|key| rect.attribute(key).unwrap().parse::<usize>().unwrap());
         let bounds = layout.bounds[index];
         assert_eq!(
             actual,
-            [bounds.origin.x, bounds.origin.y, bounds.width, bounds.height],
+            [
+                bounds.origin.x,
+                bounds.origin.y,
+                bounds.width,
+                bounds.height
+            ],
             "embedded card and final routing bounds differ for {}",
             node.address
         );

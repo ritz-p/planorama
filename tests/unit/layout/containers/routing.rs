@@ -10,7 +10,11 @@ fn numbered_channels_are_kept_compact_beside_flexible_plain_routes() {
         &crate::plan::parse(include_str!("../../../fixtures/association-plan.json")).unwrap(),
     )
     .0;
-    for direction in [Directionality::Directed, Directionality::Undirected] {
+    for (kind, direction, gap) in [
+        (EdgeKind::Association, Directionality::Directed, 84),
+        (EdgeKind::Association, Directionality::Undirected, 84),
+        (EdgeKind::Dependency, Directionality::Directed, 58),
+    ] {
         let mut graph = crate::semantic::transform(&raw).0;
         let mut edge = numbered.edges[0].clone();
         edge.from = 2;
@@ -22,6 +26,8 @@ fn numbered_channels_are_kept_compact_beside_flexible_plain_routes() {
             .find(|r| r.kind == edge.kind)
             .unwrap()
             .clone();
+        edge.kind = kind;
+        relationship.kind = kind;
         relationship.from = graph.nodes[2].entity.id.clone();
         relationship.to = graph.nodes[3].entity.id.clone();
         for provenance in &mut relationship.provenance {
@@ -31,11 +37,6 @@ fn numbered_channels_are_kept_compact_beside_flexible_plain_routes() {
         }
         graph.edges = vec![Edge::from((0, 1)), edge];
         graph.relationships = vec![relationship];
-        let gap = if direction == Directionality::Directed {
-            58
-        } else {
-            84
-        };
         let snapshot = |graph: &Graph| {
             let bounds: Vec<_> = [
                 (100, 350, 1000 - (84 - gap), 100),

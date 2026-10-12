@@ -209,10 +209,7 @@ pub(in crate::layout) fn numbers(graph: &Graph) -> Vec<[Option<usize>; 2]> {
     let mut numbers = vec![[None; 2]; graph.edges.len()];
     for (i, entry) in entries(graph).into_iter().enumerate() {
         for edge in entry.edges {
-            numbers[edge] = [
-                both_ends(&graph.edges[edge]).then_some(i + 1),
-                Some(i + 1),
-            ];
+            numbers[edge] = [both_ends(&graph.edges[edge]).then_some(i + 1), Some(i + 1)];
         }
     }
     numbers

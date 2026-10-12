@@ -96,7 +96,10 @@ fn cross_state_paths_avoid_intervening_cards_and_describe_dependencies() {
         .descendants()
         .filter(|node| node.attribute("data-state-id").is_some())
     {
-        let nested = state.children().find(|node| node.has_tag_name("svg")).unwrap();
+        let nested = state
+            .children()
+            .find(|node| node.has_tag_name("svg"))
+            .unwrap();
         let legend = nested
             .descendants()
             .find(|node| {
@@ -104,12 +107,14 @@ fn cross_state_paths_avoid_intervening_cards_and_describe_dependencies() {
                     .is_some_and(|id| id.ends_with("relationship-legend"))
             })
             .unwrap();
-        let rectangle = legend.children().find(|node| node.has_tag_name("rect")).unwrap();
+        let rectangle = legend
+            .children()
+            .find(|node| node.has_tag_name("rect"))
+            .unwrap();
         let legend_bottom = translated_y(rectangle) + number(rectangle, "height");
         assert!(40 + number(rectangle, "width") <= number(nested, "width"));
         for sample in legend.descendants().filter(|node| {
-            node.attribute("data-legend-kind").is_some()
-                && node.attribute("marker-end").is_some()
+            node.attribute("data-legend-kind").is_some() && node.attribute("marker-end").is_some()
         }) {
             let marker = sample
                 .attribute("marker-end")
@@ -117,7 +122,11 @@ fn cross_state_paths_avoid_intervening_cards_and_describe_dependencies() {
                 .strip_prefix("url(#")
                 .unwrap()
                 .trim_end_matches(')');
-            assert!(nested.descendants().any(|node| node.attribute("id") == Some(marker)));
+            assert!(
+                nested
+                    .descendants()
+                    .any(|node| node.attribute("id") == Some(marker))
+            );
         }
         for card in nested
             .descendants()

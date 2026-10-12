@@ -79,7 +79,8 @@ fn association_numbering_preserves_relationship_directions_and_arrows() {
                 .iter()
                 .map(|&e| {
                     if graph.edges[e].kind == EdgeKind::Association
-                        || graph.edges[e].directionality() == crate::model::Directionality::Undirected
+                        || graph.edges[e].directionality()
+                            == crate::model::Directionality::Undirected
                     {
                         2
                     } else {
@@ -88,7 +89,11 @@ fn association_numbering_preserves_relationship_directions_and_arrows() {
                 })
                 .sum();
             assert_eq!(
-                index.markers.iter().filter(|m| m.number == entry.number).count(),
+                index
+                    .markers
+                    .iter()
+                    .filter(|m| m.number == entry.number)
+                    .count(),
                 expected
             );
         }
@@ -107,7 +112,8 @@ fn dense_targets_keep_distinct_numbers_readable() {
         let mut graph = dense_graph(12, kind);
         if directed {
             for edge in &mut graph.edges {
-                edge.change.as_mut().unwrap().directionality = crate::model::Directionality::Directed;
+                edge.change.as_mut().unwrap().directionality =
+                    crate::model::Directionality::Directed;
             }
             for relationship in &mut graph.relationships {
                 for provenance in &mut relationship.provenance {
@@ -713,7 +719,10 @@ fn embedded_next_hops_share_the_routed_numbering_and_marker_geometry() {
                 })
                 .unwrap();
             let label = format!("Next hop [{}]", entry.number);
-            assert!(card.descendants().any(|node| node.text() == Some(label.as_str())));
+            assert!(
+                card.descendants()
+                    .any(|node| node.text() == Some(label.as_str()))
+            );
             assert_eq!(entry.sources.len(), 1);
             assert!(route.entity.provenance.contains(entry.sources[0]));
         }

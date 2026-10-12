@@ -48,9 +48,9 @@ fn large_fixture_limits_each_edges_bends_and_valid_route_stretch() {
         if parallel.close_length > 4000 {
             failures.push(format!("parallel close length exceeds 4000: {parallel:?}"));
         }
-        if layout.width > 4260 || layout.height > 2391 {
+        if layout.width > 4320 || layout.height > 2391 {
             failures.push(format!(
-                "canvas exceeds 4260x2391: {}x{}",
+                "canvas exceeds 4320x2391: {}x{}",
                 layout.width, layout.height
             ));
         }

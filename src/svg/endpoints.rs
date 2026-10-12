@@ -45,7 +45,11 @@ pub(super) fn render(graph: &Graph, layout: &Layout<'_>) -> String {
             if edge.directionality() == Directionality::Directed {
                 if let Some(previous) = path.iter().rev().find(|&&point| point != end) {
                     let path = arrow_path(*previous, end);
-                    writeln!(svg, r#"<path data-endpoint-arrow="true" d="{path}" fill="{stroke}"/>"#).unwrap();
+                    writeln!(
+                        svg,
+                        r#"<path data-endpoint-arrow="true" d="{path}" fill="{stroke}"/>"#
+                    )
+                    .unwrap();
                 }
             }
         }

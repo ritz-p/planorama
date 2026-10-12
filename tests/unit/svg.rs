@@ -228,9 +228,8 @@ fn relationship_legend_wraps_actions_and_text_inside_its_measured_bounds() {
             );
             assert!(y > 12 && y + 4 < height);
         }
-        let coordinate = |node: roxmltree::Node, name| {
-            node.attribute(name).unwrap().parse::<f64>().unwrap()
-        };
+        let coordinate =
+            |node: roxmltree::Node, name| node.attribute(name).unwrap().parse::<f64>().unwrap();
         let mut preceding_bottom = 0.0_f64;
         for entry in root
             .children()
