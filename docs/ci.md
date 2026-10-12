@@ -25,6 +25,82 @@ status-reporting groups retain their own policies.
 
 See GitHub's [workflow concurrency documentation](https://docs.github.com/en/actions/how-tos/write-workflows/choose-when-workflows-run/control-workflow-concurrency).
 
+## Parallel Rust test suites
+
+**Cargo test** starts two independent jobs with `fail-fast: false`, so a failing
+suite does not cancel the other suite's coverage:
+
+| Suite job | Targets |
+| --- | --- |
+| `Test suite (standard)` | Unit tests, ordinary integration tests, libraries, binaries, examples and benchmarks other than the large integration target. |
+| `Test suite (large)` | The `planorama` package's `large_example` integration target. |
+| `Tests` | A small aggregate job that succeeds only after both suites succeed. |
+
+Both suites keep separate **Compile tests** and **Run tests** steps. The
+[suite selector](../.github/scripts/test-suites.cjs) reads
+`cargo metadata --locked --all-features --no-deps --format-version 1`, selects
+Cargo's default workspace packages and builds explicit target arguments. The
+compile step adds `--no-run` to the same `cargo test --locked --all-features`
+commands used by the run step. Build scripts remain Cargo-managed prerequisites.
+No existing test, ignored-test policy or snapshot comparison is removed.
+
+New integration targets automatically join `standard`; no ordinary target list is
+duplicated in the workflow. New library, binary, example and benchmark targets are
+also selected. CI deliberately selects every discovered non-build target even
+when its manifest has `test = false`, preserving targets such as examples that the
+previous `--all-targets` command covered. An explicitly disabled integration or
+benchmark target added later can therefore receive extra coverage. Unknown target
+kinds, incomplete metadata, or a renamed/missing/ambiguous `large_example` target
+fail explicitly and require updating the selection policy.
+
+The two jobs share the existing dependency cache through a `shared-key` containing
+the `build.rs`/`assets/**` hash followed by `-tests`, matching the former serial
+job's key. Clippy retains its separate cache. The pinned compiler, Cargo configuration,
+manifest/lockfiles and build inputs still determine compatibility. Workspace
+crates are rebuilt in each job and are not cached. Thus parallel execution can
+shorten waiting time while increasing total runner time. Normal integration tests
+stay with unit tests to avoid paying another runner startup and compilation for a
+small amount of test execution. There is no serial artifact-upload prerequisite.
+
+For comparisons, record both workflow wall time and the sum of the two suite jobs
+plus the aggregate job, including checkout, toolchain/cache work and compilation.
+Separate queue time from active job time, and record cache hits, per-step timings,
+source/base SHAs and test counts. Compare identical Rust sources and fixtures;
+runner elapsed seconds measure compute use, not an account's billed price.
+
+### Observed timing and runner cost
+
+On 2026-10-12, the [serial baseline](https://github.com/ritz-p/planorama/actions/runs/38224372411)
+at `754ffd2` and [parallel run](https://github.com/ritz-p/planorama/actions/runs/38225451104)
+at `e365bd2` used identical Rust sources, fixtures, Rust 1.85.1 and Ubuntu runner
+image `20261004.327.1`. Both parallel jobs restored the exact same 17,658,308-byte
+dependency cache as the serial job. Each arrangement was measured once; these are
+observations rather than a latency guarantee or a billed-cost estimate.
+
+| Measurement | Serial | Parallel | Change |
+| --- | ---: | ---: | ---: |
+| First job start to final job completion | 170 s | 141 s | -29 s (-17.1%) |
+| Sum of all test-workflow job durations | 170 s | 201 s | +31 s (+18.2%) |
+| Workflow creation to final update | 204 s | 184 s | -20 s (-9.8%) |
+| Queue/provisioning before the first job | 33 s | 42 s | +9 s |
+| Passed / ignored / failed tests | 506 / 1 / 0 | 506 / 1 / 0 | Unchanged |
+
+| Parallel job | Total job time | Compile tests | Run tests |
+| --- | ---: | ---: | ---: |
+| [standard](https://github.com/ritz-p/planorama/actions/runs/38225451104/job/114731950802) | 137 s | 77 s | 48 s |
+| [large](https://github.com/ritz-p/planorama/actions/runs/38225451104/job/114731950398) | 62 s | 29 s | 19 s |
+| [Tests aggregate](https://github.com/ritz-p/planorama/actions/runs/38225451104/job/114732772522) | 2 s | — | — |
+| Total runner time | 201 s | 106 s | 67 s |
+
+Both suites started together and overlapped for 62 seconds. The large suite
+finished while the standard suite was still compiling; their test-execution steps
+did not overlap in this run. The serial compile/test steps took 82/70 seconds.
+Its ordinary integration targets accounted for only 1.40 seconds, supporting the
+choice to keep those targets with unit tests instead of adding a third runner.
+Parallelism saves waiting time at the documented cost of additional workspace
+compilation and runner setup. Workflow, Clippy and formatting validation outside
+**Cargo test** are excluded from both sides of this comparison.
+
 ## When generation runs
 
 Automatic generation watches these inputs:
@@ -170,6 +246,15 @@ workflow approval are needed in the ordinary same-repository flow.
 | MSRV, when applicable | `MSRV` | `Dispatched MSRV` | `MSRV` |
 | Workflow tests, when applicable | `Workflow tests` | `Dispatched Workflow tests` | `Workflow tests` |
 
+The Tests row names the aggregate check. Parallel suite jobs use
+`Test suite (standard)` / `Test suite (large)` for PR events and
+`Dispatched Test suite (standard)` / `Dispatched Test suite (large)` for dispatch.
+The reporter requires both dispatched suites' merge-checkout, compilation and test
+steps to succeed, together with the aggregate's **Check test suites** step. A
+failed, cancelled, skipped, missing or duplicated suite cannot publish success.
+The pre-split serial `Dispatched Tests` shape remains supported for older branches
+and runs; a partially present split execution cannot fall back to that shape.
+
 The different dispatched job names avoid a same-name job check and commit status
 on the generated head. Writeback initializes the applicable validation contexts
 as pending before publishing a new SVG commit on the PR branch. The workflow list
@@ -187,8 +272,8 @@ The reporter listens for `workflow_run` requests, starts and completions. It
 executes reporting code from its trusted `github.workflow_sha`, without checking
 out or executing PR code. Its repository write access is limited to
 `statuses: write`. It reads GitHub's run/job and PR metadata, verifies the
-allowed workflow path and ID, the PR number and expected SHA, and the dispatched
-job's merge-checkout and validation steps. Only the latest eligible run/attempt
+allowed workflow path and ID, the PR number and expected SHA, and every expected
+dispatched job's required steps. Only the latest eligible run/attempt
 for the exact current generated PR head can update its status. Earlier heads,
 old attempts and delayed events cannot supply a successful result for newer code.
 Queued or running validation is reported as pending; success requires its expected
@@ -234,11 +319,17 @@ on `pull_request` during its implementation PR. Those checks cannot demonstrate
 the complete writeback/reporting cycle before that merge. PR branches created before the
 change must incorporate the updated generation tools and validation definitions.
 
+The parallel-test reporter must likewise reach the default branch before
+PR-bound dispatches of split test jobs can publish success. Until then, ordinary
+PR checks and the reporter's CI regression tests validate this change; an older
+reporter expects the serial job shape. The updated reporter accepts both shapes
+after merging, preserving validation for older branches.
+
 The separate [Workflow tests](../.github/workflows/workflow_tests.yml) workflow
 runs the `Lint workflows` step with pinned actionlint and the
 `Test validation reporting` step with Node's built-in test runner for
-`tests/ci/**`. Rust builds, tests and SVG generation remain in their existing
-CI workflows.
+`tests/ci/**`, including suite-selection and multi-job reporting regressions. Rust
+builds, tests and SVG generation remain in their existing CI workflows.
 After the reporter is on the default branch, verify on a real PR that the
 SVG-only bot commit receives the expected commit statuses, each linked to the
 matching SHA's validation run. Check failure and retry reporting as well as

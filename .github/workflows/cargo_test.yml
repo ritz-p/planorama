@@ -19,6 +19,7 @@ on:
       - examples/**
       - .github/workflows/cargo_test.yml
       - .github/scripts/checkout-validation.sh
+      - .github/scripts/test-suites.cjs
   pull_request:
     paths:
       - '**.rs'
@@ -31,6 +32,7 @@ on:
       - examples/**
       - .github/workflows/cargo_test.yml
       - .github/scripts/checkout-validation.sh
+      - .github/scripts/test-suites.cjs
   workflow_dispatch:
     inputs:
       pull_request:
@@ -54,10 +56,16 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  tests:
-    name: ${{ github.event_name == 'workflow_dispatch' && 'Dispatched Tests' || 'Tests' }}
+  test-suites:
+    name: ${{ github.event_name == 'workflow_dispatch' && 'Dispatched Test suite' || 'Test suite' }} (${{ matrix.suite }})
     if: github.event_name != 'pull_request_target' || github.event.pull_request.merged == true
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        suite: [standard, large]
+    env:
+      TEST_SUITE: ${{ matrix.suite }}
     steps:
       - uses: actions/checkout@v7.0.1
         with:
@@ -74,9 +82,22 @@ jobs:
       - uses: Swatinem/rust-cache@v2.9.2
         with:
           prefix-key: v1-rust-dependencies
-          key: ${{ hashFiles('build.rs', 'assets/**') }}
+          shared-key: ${{ hashFiles('build.rs', 'assets/**') }}-tests
           cache-workspace-crates: 'false'
       - name: Compile tests
-        run: cargo test --locked --all-targets --all-features --no-run
+        run: node .github/scripts/test-suites.cjs "$TEST_SUITE" compile
       - name: Run tests
-        run: cargo test --locked --all-targets --all-features
+        run: node .github/scripts/test-suites.cjs "$TEST_SUITE" run
+
+  tests:
+    name: ${{ github.event_name == 'workflow_dispatch' && 'Dispatched Tests' || 'Tests' }}
+    needs: [test-suites]
+    if: >-
+      ${{ !cancelled()
+          && (github.event_name != 'pull_request_target' || github.event.pull_request.merged == true) }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check test suites
+        env:
+          SUITES_RESULT: ${{ needs.test-suites.result }}
+        run: test "$SUITES_RESULT" = success
