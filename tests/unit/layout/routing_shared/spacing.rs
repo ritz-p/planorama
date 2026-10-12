@@ -2,6 +2,65 @@ use super::*;
 use crate::layout::ContainmentTree;
 use crate::model::Edge;
 
+fn traced(graph: &Graph) -> bool {
+    graph
+        .nodes
+        .iter()
+        .any(|node| node.address == "module.network.aws_vpc.main")
+}
+
+pub(super) fn trace_plan(graph: &Graph, layout: &Layout<'_>, corridors: &[plan::Corridor]) {
+    if !traced(graph) {
+        return;
+    }
+    eprintln!("spacing trace plan: {:?}", measure(graph, &layout.paths));
+    for corridor in corridors {
+        eprintln!(
+            "spacing corridor: {corridor:?}, demand={:?}",
+            corridor.demand(layout)
+        );
+    }
+}
+
+pub(super) fn trace_attempt(
+    graph: &Graph,
+    layout: &Layout<'_>,
+    corridor: &plan::Corridor,
+    before: &expansion::Snapshot,
+    before_borders: &[super::super::borders::Metrics],
+    outcome: (Option<(usize, usize)>, bool, bool, bool),
+) {
+    if !traced(graph) {
+        return;
+    }
+    let after_borders = border_metrics(graph, layout);
+    eprintln!(
+        "spacing attempt: {corridor:?}, outcome={outcome:?}, before={:?}, after={:?}, size={}x{}->{}x{}",
+        measure(graph, &before.paths),
+        measure(graph, &layout.paths),
+        before.width,
+        before.height,
+        layout.width,
+        layout.height,
+    );
+    for (edge, path) in layout.paths.iter().enumerate() {
+        if *path == before.paths[edge] && !corridor.lanes.iter().any(|lane| lane.edge == edge) {
+            continue;
+        }
+        let e = &graph.edges[edge];
+        eprintln!(
+            "spacing edge {edge} {} -> {}: {:?} -> {path:?}; shape {:?} -> {:?}; border {:?} -> {:?}",
+            graph.nodes[e.from].address,
+            graph.nodes[e.to].address,
+            before.paths[edge],
+            Shape::measure(&before.paths[edge]),
+            Shape::measure(path),
+            before_borders[edge],
+            after_borders[edge],
+        );
+    }
+}
+
 fn graph() -> Graph {
     let raw = crate::plan::parse(r#"{"format_version":"1.2","resource_changes":[{"address":"test.a","type":"test"},{"address":"test.b","type":"test"},{"address":"test.c","type":"test"},{"address":"test.d","type":"test"},{"address":"test.e","type":"test"},{"address":"test.f","type":"test"}]}"#).unwrap();
     let mut graph = crate::semantic::transform(&raw).0;

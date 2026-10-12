@@ -281,6 +281,8 @@ pub(in crate::layout) fn refine(graph: &Graph, layout: &mut Layout<'_>) {
     let mut attempted = std::collections::BTreeSet::new();
     for _ in 0..2 {
         let corridors = plan::corridors(graph, layout);
+        #[cfg(test)]
+        tests::trace_plan(graph, layout, &corridors);
         let mut changed = false;
         for corridor in corridors {
             if !corridor
@@ -308,7 +310,8 @@ pub(in crate::layout) fn refine(graph: &Graph, layout: &mut Layout<'_>) {
             let before_borders = border_metrics(graph, layout);
             let mut planned = corridor.clone();
             let mut expanded = false;
-            if let Some((cut, amount)) = planned.demand(layout) {
+            let demand = planned.demand(layout);
+            if let Some((cut, amount)) = demand {
                 let current = if planned.horizontal {
                     layout.height - original.1
                 } else {
@@ -322,7 +325,8 @@ pub(in crate::layout) fn refine(graph: &Graph, layout: &mut Layout<'_>) {
                 }
             }
             planned.allocate(layout);
-            if reroute::apply(graph, layout, &planned, &before, &baseline, expanded)
+            let routed = reroute::apply(graph, layout, &planned, &before, &baseline, expanded);
+            let improved = routed
                 && quality::improves(
                     graph,
                     &before.paths,
@@ -330,8 +334,17 @@ pub(in crate::layout) fn refine(graph: &Graph, layout: &mut Layout<'_>) {
                     &before_borders,
                     &border_metrics(graph, layout),
                     expanded,
-                )
-            {
+                );
+            #[cfg(test)]
+            tests::trace_attempt(
+                graph,
+                layout,
+                &planned,
+                &before,
+                &before_borders,
+                (demand, expanded, routed, improved),
+            );
+            if improved {
                 changed = true;
                 continue;
             }
@@ -340,7 +353,8 @@ pub(in crate::layout) fn refine(graph: &Graph, layout: &mut Layout<'_>) {
                 let fallback = expansion::Snapshot::capture(layout);
                 let mut planned = corridor;
                 planned.allocate(layout);
-                if reroute::apply(graph, layout, &planned, &fallback, &baseline, false)
+                let routed = reroute::apply(graph, layout, &planned, &fallback, &baseline, false);
+                let improved = routed
                     && quality::improves(
                         graph,
                         &fallback.paths,
@@ -348,8 +362,17 @@ pub(in crate::layout) fn refine(graph: &Graph, layout: &mut Layout<'_>) {
                         &before_borders,
                         &border_metrics(graph, layout),
                         false,
-                    )
-                {
+                    );
+                #[cfg(test)]
+                tests::trace_attempt(
+                    graph,
+                    layout,
+                    &planned,
+                    &fallback,
+                    &before_borders,
+                    (None, false, routed, improved),
+                );
+                if improved {
                     changed = true;
                 } else {
                     fallback.restore(layout);

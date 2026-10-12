@@ -321,14 +321,18 @@ the cut move together; enclosing containers, scope panels and bands grow without
 scaling resource cards. Cuts cannot split cards or headers. Terminal locations
 move with their card boundaries, retaining side and order.
 
-Translated paths are only seeds. Impacted independent edges are routed again
-against the new card/header obstacles, terminal reservations and lane preferences.
-Whole straight, L-shaped and corridor routes compete. Moving an existing run moves
-its two corners together while retaining the other runs. Expansion and border-only
-repairs can also invoke bounded search with explicit lane and frame coordinates.
+Impacted independent edges compare new routes and translated seeds against the
+updated card/header obstacles, terminal reservations and lane preferences.
+Whole straight, L-shaped and corridor routes compete. Corridor alternatives use
+the assigned lane, the midpoint between outward terminal stub coordinates and up
+to 32 nearby minimum/preferred frame tracks in the same orientation. Moving an
+existing run moves its two corners together while retaining the other runs.
+Expansion and border-only repairs can also invoke bounded search with explicit
+lane and frame coordinates.
 Visible ordinary cards remain protected during final spacing; supported foreign
-container masks retain their routing role. Completed candidates are shortcut and
-validated. Intentional bundles and junctions retain their shared geometry under
+container masks retain their routing role. Completed candidates, including
+translated seeds, pass the same shortcut, validation and final quality checks.
+Intentional bundles and junctions retain their shared geometry under
 the same monotone gap transformation. A failed or non-improving transaction rolls
 back bounds, paths, junctions, scopes and bands together.
 
@@ -352,8 +356,8 @@ same-side port refinement, bundling and ordinary shortcutting. It permits at mos
 two sweeps, six distinct corridor attempts, 16 lanes per corridor, 32 independently
 rerouted edges per attempt and 64px cumulative growth per axis, shared by border
 and line-to-line repairs. Corridors with no independently movable lane are skipped
-before consuming an attempt. Unchanged line-only geometry uses whole-path candidates;
-border repairs may use the bounded frame tracks. Regression metrics disclose
+before consuming an attempt. Unchanged line-only geometry uses whole-path candidates
+with the same bounded frame tracks. Regression metrics disclose
 residual close length, visible minimum gap and both minimum/preferred deficits;
 deterministic fallback preserves valid
 routes when capacity, obstacles or budgets prevent improvement.
