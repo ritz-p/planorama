@@ -1,4 +1,8 @@
 name: Cargo msrv
+run-name: >-
+  ${{ github.event_name == 'workflow_dispatch' && inputs.pull_request && inputs.expected_head_sha
+      && format('Validate PR #{0} at {1}', inputs.pull_request, inputs.expected_head_sha)
+      || github.event.pull_request.title || github.workflow }}
 
 on:
   pull_request:
@@ -31,7 +35,7 @@ permissions:
 
 jobs:
   msrv:
-    name: MSRV
+    name: ${{ github.event_name == 'workflow_dispatch' && 'Dispatched MSRV' || 'MSRV' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7.0.1
@@ -44,5 +48,7 @@ jobs:
           PULL_REQUEST: ${{ inputs.pull_request }}
           EXPECTED_HEAD_SHA: ${{ inputs.expected_head_sha }}
         run: bash .github/scripts/checkout-validation.sh
-      - run: docker build --build-arg RUST_VERSION=${{ env.RUST_VERSION }} --tag planorama-msrv .
-      - run: docker run --rm --volume "$PWD:/workspace" --env CARGO_TARGET_DIR=/tmp/planorama-target planorama-msrv cargo +${{ env.RUST_VERSION }}  test --locked --all-targets --all-features
+      - name: Build MSRV image
+        run: docker build --build-arg RUST_VERSION=${{ env.RUST_VERSION }} --tag planorama-msrv .
+      - name: Run MSRV tests
+        run: docker run --rm --volume "$PWD:/workspace" --env CARGO_TARGET_DIR=/tmp/planorama-target planorama-msrv cargo +${{ env.RUST_VERSION }}  test --locked --all-targets --all-features

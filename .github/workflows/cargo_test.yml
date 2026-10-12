@@ -1,4 +1,8 @@
 name: Cargo test
+run-name: >-
+  ${{ github.event_name == 'workflow_dispatch' && inputs.pull_request && inputs.expected_head_sha
+      && format('Validate PR #{0} at {1}', inputs.pull_request, inputs.expected_head_sha)
+      || github.event.pull_request.title || github.workflow }}
 
 on:
   pull_request_target:
@@ -44,7 +48,7 @@ permissions:
 
 jobs:
   tests:
-    name: Tests
+    name: ${{ github.event_name == 'workflow_dispatch' && 'Dispatched Tests' || 'Tests' }}
     if: github.event_name != 'pull_request_target' || github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:

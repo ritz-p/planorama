@@ -68,7 +68,7 @@ docker compose exec -T dev cargo run --locked -- - -o - < plan.json > diagram.sv
 | レイヤー構成・レイアウト | [Architecture](docs/architecture.md)、[Routing](docs/routing.md) |
 | AWS アイコンの出典・権利 | [Icons](docs/icons.md) |
 | 性能計測 | [Benchmarks](docs/benchmarks.md) |
-| CI による SVG 生成・PR への自動コミット | [SVG automation](docs/ci.md) |
+| CI による SVG 生成・自動コミット・PR 検証結果 | [SVG automation](docs/ci.md) |
 
 ## 開発・検証
 
@@ -95,7 +95,11 @@ Tests・Clippy は `Swatinem/rust-cache` で Cargo registry/git と `target` 内
 
 ### SVG の更新
 
-同一リポジトリ内の PR は、レンダラー・生成入力の変更を push すると CI がサンプル SVG を生成し、差分がある場合は同じ PR ブランチへ自動コミットします。通常の更新では最新の push 差分と前のコミットの生成完了を確認し、画像が更新済みならドキュメントや無関係なテストだけの更新では生成を繰り返しません。生成中の追加 push や前回の生成失敗では、必要な再生成を続けます。自動コミットには `[skip ci]` を付けて承認待ちになる重複の PR イベント実行を抑え、更新後のコミットに Formatting・Clippy・Tests と必要な MSRV 検証を明示的に起動します。この通常の同一リポジトリ内の処理に追加の承認や個人トークンは不要です。生成対象、結果の確認、手動再実行、fork PR の差分取得は [SVG automation](docs/ci.md) を参照してください。
+同一リポジトリ内の PR は、レンダラー・生成入力の変更を push すると CI がサンプル SVG を生成し、差分がある場合は同じ PR ブランチへ自動コミットします。通常の更新では最新の push 差分と前のコミットの生成完了を確認し、画像が更新済みならドキュメントや無関係なテストだけの更新では生成を繰り返しません。生成中の追加 push や前回の生成失敗では、必要な再生成を続けます。
+
+自動コミットには `[skip ci]` を付けて承認待ちになる重複の PR イベント実行を抑えます。新しいコミットを PR ブランチへ反映する前に、Formatting・Clippy・Tests と変更内容に応じた MSRV・Workflow tests を Pending で登録し、反映後にこれらの検証を明示的に起動します。**Report PR validation** が実際の検証結果を確認し、同じコミットの PR チェックへ同名の commit status として反映します。**SVG validation dispatch** の成功は起動要求の確認を表し、検証の成功は各チェックで確認します。
+
+この通常の同一リポジトリ内の処理に追加の承認や個人トークンは不要です。結果の報告は reporter が既定ブランチへマージされてから有効になります。生成対象、チェック名と必須設定、手動再実行、fork PR の差分取得は [SVG automation](docs/ci.md) を参照してください。
 
 ```sh
 docker compose exec -T dev sh scripts/update-examples.sh
