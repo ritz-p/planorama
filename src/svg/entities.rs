@@ -1,4 +1,4 @@
-use crate::model::architecture::EntityMode;
+use crate::model::architecture::{EntityMode, Node};
 
 pub(super) fn border(mode: EntityMode) -> &'static str {
     match mode {
@@ -18,6 +18,17 @@ pub(super) fn badge(mode: EntityMode, x: usize, y: usize) -> String {
         ),
         EntityMode::Managed => String::new(),
     }
+}
+
+pub(super) fn import_badge(node: &Node, x: usize, y: usize) -> String {
+    if node.metadata.import.is_none() {
+        return String::new();
+    }
+    format!(
+        r##"<g data-import-badge="true"><title>Imported resource</title><rect x="{x}" y="{y}" width="52" height="18" rx="4" fill="#ede9fe" stroke="#8b5cf6"/><text x="{}" y="{}" font-size="10" fill="#5b21b6">import</text></g>"##,
+        x + 6,
+        y + 13
+    )
 }
 
 pub(super) fn type_limit(mode: EntityMode) -> usize {

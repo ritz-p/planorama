@@ -27,12 +27,17 @@ pub(crate) struct Card<'a> {
 }
 
 impl Card<'_> {
+    pub fn badge_height(&self) -> usize {
+        self.node.map_or(0, super::card::import_height)
+    }
+
     pub fn height(&self) -> usize {
-        24 + self
-            .rows
-            .iter()
-            .map(|r| r.lines(&r.text).len() * 18)
-            .sum::<usize>()
+        24 + self.badge_height()
+            + self
+                .rows
+                .iter()
+                .map(|r| r.lines(&r.text).len() * 18)
+                .sum::<usize>()
     }
 }
 
@@ -114,12 +119,12 @@ pub(crate) fn cards(graph: &Graph, parent: usize) -> Vec<Card<'_>> {
         .collect();
     children.sort_by_key(|(_, n)| &n.entity.id);
     for (index, child) in children {
+        let operation = child.metadata.state_removal.map_or_else(
+            || format!("{:?}", child.action).to_lowercase(),
+            |removal| removal.label().into(),
+        );
         let mut rows = vec![Row {
-            text: format!(
-                "{} [{}]",
-                child.address,
-                format!("{:?}", child.action).to_lowercase()
-            ),
+            text: format!("{} [{operation}]", child.address),
             target: None,
             moved: false,
             address: true,

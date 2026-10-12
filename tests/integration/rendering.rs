@@ -545,11 +545,46 @@ fn lifecycle_fixture_distinguishes_import_forget_and_destroy_without_values() {
     let input = include_bytes!("../fixtures/lifecycle-plan.json");
     let svg = render(input);
     assert_eq!(svg.matches("data-import=\"true\"").count(), 2);
+    assert_eq!(svg.matches("data-import-badge=\"true\"").count(), 2);
     assert!(svg.contains("data-state-removal=\"forget\""));
     assert!(svg.contains("data-state-removal=\"create then forget\""));
     assert!(svg.contains("import / update"));
     assert!(svg.contains("delete (1)"));
     assert!(!svg.contains("TOP_SECRET"));
+    let doc = roxmltree::Document::parse(&svg).unwrap();
+    for (address, operation, imported) in [
+        ("terraform_data.imported", "update", true),
+        ("terraform_data.identity", "unchanged", true),
+        ("terraform_data.forgotten", "forget", false),
+        ("terraform_data.replaced", "create then forget", false),
+        ("terraform_data.destroyed", "delete", false),
+    ] {
+        let card = doc
+            .descendants()
+            .find(|n| n.attribute("data-terraform-address") == Some(address))
+            .unwrap();
+        assert_eq!(
+            card.children()
+                .any(|n| n.attribute("data-import-badge").is_some()),
+            imported
+        );
+        let label = card
+            .children()
+            .find(|n| n.has_tag_name("text") && n.attribute("font-size") == Some("11"))
+            .unwrap();
+        assert!(label.text().unwrap().ends_with(&format!(" · {operation}")));
+        assert!(!label.text().unwrap().contains("import /"));
+        if imported {
+            assert!(
+                card.children()
+                    .find(|n| n.has_tag_name("title"))
+                    .unwrap()
+                    .text()
+                    .unwrap()
+                    .contains(&format!("import / {operation}"))
+            );
+        }
+    }
     let diagnostic = support::run_with_args(input, &["--diagnostics"]);
     assert!(diagnostic.status.success());
     assert!(!String::from_utf8_lossy(&diagnostic.stderr).contains("TOP_SECRET"));

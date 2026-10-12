@@ -39,7 +39,16 @@ When at least one flag is supplied, the SVG header displays all three flags (usi
 
 ## Import and state removal
 
-For `resource_changes[*].change.importing`, Planorama retains the presence of an import object, whether an ID or identity was supplied, and the boolean `unknown` flag. Empty import objects are valid. IDs, identity values, generated configuration, and before/after attributes are deliberately discarded. Import may coexist with an update, replacement, or no-op action.
+For `resource_changes[*].change.importing`, Planorama retains the presence of an import object, whether an ID or identity was supplied, and the boolean `unknown` flag. Empty import objects are valid. IDs, identity values, generated configuration, and before/after attributes are deliberately discarded. Import may coexist with a create, update, replacement, or no-op action.
+
+Every retained import object adds a purple `import` badge to the individual spatial
+or logical resource, embedded Route, and component member presentation. Empty and
+unknown imports receive the same indicator. The synthetic component does not inherit
+an import operation, and inline Route entries do not duplicate the table's badge.
+The badge has its own measured row, separate from addresses, service icons and the
+gray `external` indicator. Ordinary action labels omit the redundant `import /`
+prefix; accessible titles preserve the full composed operation and its order.
+Existing `data-import` and the value-free presence/unknown flags remain unchanged.
 
 Exact action arrays `['forget']`, `['create','forget']`, and `['forget','create']` are represented by distinct `StateRemoval` variants. Forgetting removes Terraform's state binding without destroying the old remote object; a combined create/forget operation also creates a new object. These sequences retain the existing `Action::Other` palette/legend category, while card labels and edge titles explicitly show the operation and order. Ordinary delete remains delete. SVG exposes `data-import`, redacted import flags, and `data-state-removal` on cards and lowered relationships.
 
