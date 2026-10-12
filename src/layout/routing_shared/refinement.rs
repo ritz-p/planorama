@@ -185,6 +185,16 @@ pub(in crate::layout) fn refine(graph: &Graph, layout: &mut Layout<'_>) {
                 );
                 obstacles.extend(layout.occluders(edge).into_iter().map(|n| layout.bounds[n]));
                 let [start, end] = terminals[i].unwrap();
+                if ![edge.from, edge.to]
+                    .into_iter()
+                    .zip([start, end])
+                    .enumerate()
+                    .all(|(end, (node, port))| {
+                        ports::embedded_marker_fits(graph, layout, node, numbers[i][end], port)
+                    })
+                {
+                    break;
+                }
                 if ports::terminal_corridors(start, end, clearances[i])
                     .iter()
                     .any(|a| {

@@ -174,7 +174,7 @@ fn logical_relationships_do_not_shift_visible_numbers() {
 }
 
 #[test]
-fn embedded_directed_routes_reserve_plain_source_escape_and_numbered_target() {
+fn embedded_directed_routes_reserve_numbered_source_and_target() {
     let graph = crate::semantic::transform(
         &crate::plan::parse(include_str!("../../fixtures/routes-plan.json")).unwrap(),
     )
@@ -188,9 +188,12 @@ fn embedded_directed_routes_reserve_plain_source_escape_and_numbered_target() {
             continue;
         }
         assert_eq!(edge.directionality(), Directionality::Directed);
-        assert_eq!(numbers[index][0], None);
+        assert_eq!(numbers[index][0], numbers[index][1]);
         let terminals = terminals(&graph, index, numbers[index], [Side::Right, Side::Top]);
-        assert_eq!(terminals[0], Terminal::plain(20));
+        assert_eq!(
+            terminals[0],
+            Terminal::marker(numbers[index][0].unwrap(), Side::Right)
+        );
         assert_eq!(terminals[1].clearance, 36);
         assert!(terminals[1].span > 0);
         seen += 1;

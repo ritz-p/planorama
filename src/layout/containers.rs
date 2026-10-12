@@ -57,7 +57,7 @@ pub(super) fn place_with_heights(
     let mut sizes: Vec<_> = header_heights
         .iter()
         .zip(&graph.nodes)
-        .map(|(&height, node)| (crate::view::references::width(node), height))
+        .map(|(&height, node)| (crate::view::card::width(node), height))
         .collect();
     let mut offsets = vec![Point { x: 0, y: 0 }; graph.nodes.len()];
     for &node in order.iter().rev() {
@@ -91,7 +91,7 @@ pub(super) fn place_with_heights(
                 offsets[child].y += header_heights[node] + padding;
             }
             sizes[node] = (
-                width.max(crate::view::references::width(&graph.nodes[node])) + padding * 2,
+                width.max(crate::view::card::width(&graph.nodes[node])) + padding * 2,
                 header_heights[node]
                     + padding
                     + height

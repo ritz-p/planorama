@@ -7,6 +7,7 @@ pub(crate) struct Projection {
 }
 
 pub(crate) fn project(source: &Graph) -> Projection {
+    let route_insets = super::routes::insets(source);
     let mut nodes: Vec<_> = source
         .nodes
         .iter()
@@ -29,6 +30,9 @@ pub(crate) fn project(source: &Graph) -> Projection {
             let mut node = source.nodes[i].clone();
             node.routes.owner = None;
             node.routes.reserved_height = super::routes::height(source, i);
+            if route_insets[i] > 12 {
+                node.routes.reserved_width = super::routes::WIDTH + route_insets[i] * 2;
+            }
             let incoming = source
                 .edges
                 .iter()

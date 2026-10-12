@@ -430,6 +430,7 @@ fn render_with_index(
         ));
         svg.push_str(&routes::render(
             graph,
+            layout,
             i,
             x + 12,
             y + metrics.routes_y,

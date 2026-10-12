@@ -12,8 +12,7 @@ pub(super) fn place(graph: &Graph, layout: &Layout<'_>, entries: &[Entry<'_>]) -
                 .rev()
                 .find(|s| s[0] != s[1])
                 .map(|s| (s[0], s[1]));
-            let source_segment = (graph.edges[edge].directionality()
-                == crate::model::Directionality::Undirected)
+            let source_segment = relationship_markers::both_ends(&graph.edges[edge])
                 .then(|| path.windows(2).find(|s| s[0] != s[1]).map(|s| (s[1], s[0])))
                 .flatten();
             for segment in [target_segment, source_segment] {

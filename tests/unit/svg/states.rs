@@ -72,6 +72,63 @@ fn cross_state_paths_avoid_intervening_cards_and_describe_dependencies() {
         super::super::AddressFormat::Qualified,
     );
     assert!(svg.contains("2 named states with 1 cross-state dependencies"));
+    let document = roxmltree::Document::parse(&svg).unwrap();
+    let number = |node: roxmltree::Node, attribute| {
+        node.attribute(attribute).unwrap().parse::<usize>().unwrap()
+    };
+    let translated_y = |node: roxmltree::Node| {
+        node.ancestors()
+            .filter_map(|parent| parent.attribute("transform"))
+            .map(|value| {
+                value
+                    .strip_prefix("translate(")
+                    .unwrap()
+                    .trim_end_matches(')')
+                    .split_whitespace()
+                    .nth(1)
+                    .unwrap()
+                    .parse::<usize>()
+                    .unwrap()
+            })
+            .sum::<usize>()
+    };
+    for state in document
+        .descendants()
+        .filter(|node| node.attribute("data-state-id").is_some())
+    {
+        let nested = state.children().find(|node| node.has_tag_name("svg")).unwrap();
+        let legend = nested
+            .descendants()
+            .find(|node| {
+                node.attribute("id")
+                    .is_some_and(|id| id.ends_with("relationship-legend"))
+            })
+            .unwrap();
+        let rectangle = legend.children().find(|node| node.has_tag_name("rect")).unwrap();
+        let legend_bottom = translated_y(rectangle) + number(rectangle, "height");
+        assert!(40 + number(rectangle, "width") <= number(nested, "width"));
+        for sample in legend.descendants().filter(|node| {
+            node.attribute("data-legend-kind").is_some()
+                && node.attribute("marker-end").is_some()
+        }) {
+            let marker = sample
+                .attribute("marker-end")
+                .unwrap()
+                .strip_prefix("url(#")
+                .unwrap()
+                .trim_end_matches(')');
+            assert!(nested.descendants().any(|node| node.attribute("id") == Some(marker)));
+        }
+        for card in nested
+            .descendants()
+            .filter(|node| node.attribute("data-terraform-address").is_some())
+            .flat_map(|node| node.children().filter(|node| node.has_tag_name("rect")))
+        {
+            let top = translated_y(card) + number(card, "y");
+            assert!(top > legend_bottom);
+            assert!(top + number(card, "height") <= number(nested, "height"));
+        }
+    }
     let line = svg
         .lines()
         .find(|l| l.contains("data-cross-state=\"true\""))

@@ -34,6 +34,7 @@ pub struct RoutePresentation {
     pub owner: Option<TerraformEntityId>,
     pub entries: Vec<RouteEntry>,
     pub reserved_height: usize,
+    pub reserved_width: usize,
 }
 
 #[derive(Clone, Debug, Default, PartialEq, Eq, PartialOrd, Ord)]
