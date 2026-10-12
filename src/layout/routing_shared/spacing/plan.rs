@@ -204,7 +204,26 @@ pub(super) fn corridors(graph: &Graph, layout: &Layout<'_>) -> Vec<Corridor> {
     result
 }
 
+pub(super) fn reserve_urgent(corridors: &mut Vec<Corridor>, remaining: usize) {
+    if remaining == 0 {
+        return;
+    }
+    if let Some(index) = corridors.iter().position(|c| c.border && c.urgent) {
+        if index >= remaining {
+            let urgent = corridors.remove(index);
+            corridors.insert(remaining - 1, urgent);
+        }
+    }
+}
+
 impl Corridor {
+    pub fn key(&self) -> (bool, Vec<(usize, usize)>) {
+        (
+            self.horizontal,
+            self.lanes.iter().map(|l| (l.edge, l.original)).collect(),
+        )
+    }
+
     fn gap(&self, layout: &Layout<'_>) -> Option<(usize, usize)> {
         let first = self.lanes.iter().map(|l| l.original).min()?;
         let last = self.lanes.iter().map(|l| l.original).max()?;

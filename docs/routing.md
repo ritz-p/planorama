@@ -308,8 +308,14 @@ line-spacing deficit divided by four, plus each movable edge's current border
 cost counted once. The border term covers the whole edge, so the estimate can
 include contacts outside that corridor. Sub-4px gaps retain their stronger shared
 penalty. Equal estimates prefer minimum-gap violations, then border contacts,
-then stable geometric and resource order. Every accepted change must still satisfy
-the minimum-gap guards below.
+then stable geometric and resource order. Groups with no independently movable
+lane, repeated groups and previously attempted groups are filtered before the
+remaining attempt budget is applied. Until an urgent corridor has been attempted,
+the highest-ranked urgent border group moves into the final available slot if it
+would otherwise fall outside that budget. This reserves at most one of the six
+attempts, preserving the higher-ranked prefix; an urgent attempt consumes the
+reservation even if its change is rejected. Every accepted change must still
+satisfy the minimum-gap guards below.
 
 Connected groups of overlapping runs receive ordered lanes over their combined
 corridor before any route is changed. Geometric order and resource identity break
@@ -324,11 +330,23 @@ move with their card boundaries, retaining side and order.
 Impacted independent edges compare new routes and translated seeds against the
 updated card/header obstacles, terminal reservations and lane preferences.
 Whole straight, L-shaped and corridor routes compete. Corridor alternatives use
-the assigned lane, the midpoint between outward terminal stub coordinates and up
-to 32 nearby minimum/preferred frame tracks in the same orientation. Moving an
-existing run moves its two corners together while retaining the other runs.
-Expansion and border-only repairs can also invoke bounded search with explicit
-lane and frame coordinates.
+the assigned lane and the midpoint between outward terminal stub coordinates,
+plus nearby minimum/preferred frame tracks and tracks 16px to either side of
+actual parallel peers. Peer tracks require at least 64px of overlapping corridor
+projection and stay within the endpoint coordinate interval plus 128px on either
+side. Optional tracks rank by projected deficit against actual peer runs, then
+distance to the assigned lane or midpoint, then coordinate. The assigned lane
+and midpoint lead the list when inside the canvas; the combined list is
+deduplicated and capped at 32 coordinates. Moving an existing run moves its two
+corners together while retaining the other runs. Expansion and border-only
+repairs can also invoke bounded search with these selected coordinates.
+
+A fresh peer index for each sequential reroute uses the other paths' actual
+positions, including protected routes that retain their original tracks. Each
+completed candidate adds its incident line-spacing deficit divided by four to
+readability cost after the existing shape comparison. This deficit uses the same
+64px projection threshold, 32px endpoint allowance and shared-trunk exclusions as
+the final spacing metric. Grid search retains its additive segment costs.
 Visible ordinary cards remain protected during final spacing; supported foreign
 container masks retain their routing role. Completed candidates, including
 translated seeds, pass the same shortcut, validation and final quality checks.
@@ -357,7 +375,7 @@ two sweeps, six distinct corridor attempts, 16 lanes per corridor, 32 independen
 rerouted edges per attempt and 64px cumulative growth per axis, shared by border
 and line-to-line repairs. Corridors with no independently movable lane are skipped
 before consuming an attempt. Unchanged line-only geometry uses whole-path candidates
-with the same bounded frame tracks. Regression metrics disclose
+with the same bounded frame and peer tracks. Regression metrics disclose
 residual close length, visible minimum gap and both minimum/preferred deficits;
 deterministic fallback preserves valid
 routes when capacity, obstacles or budgets prevent improvement.
@@ -407,6 +425,10 @@ two-bend reroute into the resulting 20px corridor. A protected-junction variant
 keeps its original bounds, paths, scopes and bands with measurable residual
 proximity. Border tests cover 0/1/2/4/8px offsets, rounded corners, masked path
 pieces and additive search subdivision.
+Protected-peer fixtures verify that both routing orientations use the peer's
+actual position while preserving its path and junction. Bounded-track fixtures
+retain useful alternatives across the endpoint interval and keep the same
+32-coordinate selection after peer reordering or adding distant paths.
 Thread-local test counters verify that unobstructed horizontal/vertical side
 selection evaluates one pair without grid search, while blocked ports expand the
 search. Focused cases compare selected quality with exhaustive side evaluation.

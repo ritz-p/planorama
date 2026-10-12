@@ -6,6 +6,7 @@ use std::collections::BTreeMap;
 pub(in crate::layout) const PREFERRED: usize = 16;
 const RUN: usize = 64;
 const CONVERGENCE: usize = 32;
+const ATTEMPTS: usize = 6;
 
 #[derive(Clone, Copy, Debug)]
 struct Segment {
@@ -68,7 +69,7 @@ fn shared_prefix(
 
 fn shared(
     graph: &Graph,
-    paths: &[Vec<Point>],
+    paths: [&[Point]; 2],
     a: Segment,
     b: Segment,
     low: usize,
@@ -79,21 +80,14 @@ fn shared(
     }
     let (ea, eb) = (&graph.edges[a.edge], &graph.edges[b.edge]);
     if ea.from == eb.from
-        && shared_prefix(
-            &paths[a.edge],
-            &paths[b.edge],
-            a.horizontal,
-            a.coordinate,
-            low,
-            high,
-        )
+        && shared_prefix(paths[0], paths[1], a.horizontal, a.coordinate, low, high)
     {
         return true;
     }
     ea.to == eb.to
         && shared_prefix(
-            &paths[a.edge].iter().copied().rev().collect::<Vec<_>>(),
-            &paths[b.edge].iter().copied().rev().collect::<Vec<_>>(),
+            &paths[0].iter().copied().rev().collect::<Vec<_>>(),
+            &paths[1].iter().copied().rev().collect::<Vec<_>>(),
             a.horizontal,
             a.coordinate,
             low,
@@ -101,42 +95,56 @@ fn shared(
         )
 }
 
+fn path_segments(edge: usize, path: &[Point]) -> impl Iterator<Item = Segment> + '_ {
+    path.windows(2).enumerate().filter_map(move |(index, p)| {
+        let horizontal = p[0].y == p[1].y;
+        let (from, to, coordinate) = if horizontal {
+            (p[0].x, p[1].x, p[0].y)
+        } else {
+            (p[0].y, p[1].y, p[0].x)
+        };
+        let (mut low, mut high) = (from.min(to), from.max(to));
+        for (endpoint, trim) in [(from, index == 0), (to, index + 2 == path.len())] {
+            if trim {
+                if endpoint == from.min(to) {
+                    low = low.saturating_add(CONVERGENCE);
+                } else {
+                    high = high.saturating_sub(CONVERGENCE);
+                }
+            }
+        }
+        (high.saturating_sub(low) >= RUN).then_some(Segment {
+            edge,
+            index,
+            horizontal,
+            coordinate,
+            low,
+            high,
+        })
+    })
+}
+
 fn segments(paths: &[Vec<Point>]) -> BTreeMap<(bool, usize), Vec<Segment>> {
     let mut result = BTreeMap::<_, Vec<_>>::new();
     for (edge, path) in paths.iter().enumerate() {
-        for (index, p) in path.windows(2).enumerate() {
-            let horizontal = p[0].y == p[1].y;
-            let (from, to, coordinate) = if horizontal {
-                (p[0].x, p[1].x, p[0].y)
-            } else {
-                (p[0].y, p[1].y, p[0].x)
-            };
-            let (mut low, mut high) = (from.min(to), from.max(to));
-            for (endpoint, trim) in [(from, index == 0), (to, index + 2 == path.len())] {
-                if trim {
-                    if endpoint == from.min(to) {
-                        low = low.saturating_add(CONVERGENCE);
-                    } else {
-                        high = high.saturating_sub(CONVERGENCE);
-                    }
-                }
-            }
-            if high.saturating_sub(low) >= RUN {
-                result
-                    .entry((horizontal, coordinate))
-                    .or_default()
-                    .push(Segment {
-                        edge,
-                        index,
-                        horizontal,
-                        coordinate,
-                        low,
-                        high,
-                    });
-            }
+        for segment in path_segments(edge, path) {
+            result
+                .entry((segment.horizontal, segment.coordinate))
+                .or_default()
+                .push(segment);
         }
     }
     result
+}
+
+fn pair_length(graph: &Graph, paths: [&[Point]; 2], a: Segment, b: Segment) -> usize {
+    let (low, high) = (a.low.max(b.low), a.high.min(b.high));
+    let length = high.saturating_sub(low);
+    if a.edge == b.edge || length < RUN || shared(graph, paths, a, b, low, high) {
+        0
+    } else {
+        length
+    }
 }
 
 fn pairs(graph: &Graph, paths: &[Vec<Point>], distance: usize) -> Vec<(Segment, Segment, usize)> {
@@ -153,11 +161,10 @@ fn pairs(graph: &Graph, paths: &[Vec<Point>], distance: usize) -> Vec<(Segment, 
                     {
                         continue;
                     }
-                    let (low, high) = (a.low.max(b.low), a.high.min(b.high));
-                    if high.saturating_sub(low) < RUN || shared(graph, paths, *a, *b, low, high) {
-                        continue;
+                    let length = pair_length(graph, [&paths[a.edge], &paths[b.edge]], *a, *b);
+                    if length > 0 {
+                        result.push((*a, *b, length));
                     }
-                    result.push((*a, *b, high - low));
                 }
             }
         }
@@ -269,6 +276,7 @@ pub(in crate::layout) fn border_metrics(
 }
 
 mod expansion;
+mod parallel;
 mod plan;
 mod quality;
 mod reroute;
@@ -278,40 +286,37 @@ pub(in crate::layout) fn refine(graph: &Graph, layout: &mut Layout<'_>) {
     let original = (layout.width, layout.height);
     let baseline: Vec<_> = layout.paths.iter().map(|p| Shape::measure(p)).collect();
     let mut attempts = 0;
+    let mut urgent_attempted = false;
     let mut attempted = std::collections::BTreeSet::new();
     for _ in 0..2 {
-        let corridors = plan::corridors(graph, layout);
-        #[cfg(test)]
-        tests::trace_plan(graph, layout, &corridors);
-        let mut changed = false;
-        for corridor in corridors {
-            if !corridor
+        if attempts == ATTEMPTS {
+            return;
+        }
+        let mut corridors = plan::corridors(graph, layout);
+        let mut queued = attempted.clone();
+        corridors.retain(|corridor| {
+            corridor
                 .lanes
                 .iter()
                 .any(|lane| reroute::movable(layout, lane.edge))
-            {
-                continue;
-            }
-            if !attempted.insert((
-                corridor.horizontal,
-                corridor
-                    .lanes
-                    .iter()
-                    .map(|l| (l.edge, l.original))
-                    .collect::<Vec<_>>(),
-            )) {
-                continue;
-            }
-            if attempts >= 6 {
+                && queued.insert(corridor.key())
+        });
+        if !urgent_attempted {
+            plan::reserve_urgent(&mut corridors, ATTEMPTS - attempts);
+        }
+        let mut changed = false;
+        for corridor in corridors {
+            if attempts >= ATTEMPTS {
                 return;
             }
+            attempted.insert(corridor.key());
             attempts += 1;
+            urgent_attempted |= corridor.urgent;
             let before = expansion::Snapshot::capture(layout);
             let before_borders = border_metrics(graph, layout);
             let mut planned = corridor.clone();
             let mut expanded = false;
-            let demand = planned.demand(layout);
-            if let Some((cut, amount)) = demand {
+            if let Some((cut, amount)) = planned.demand(layout) {
                 let current = if planned.horizontal {
                     layout.height - original.1
                 } else {
@@ -325,8 +330,7 @@ pub(in crate::layout) fn refine(graph: &Graph, layout: &mut Layout<'_>) {
                 }
             }
             planned.allocate(layout);
-            let routed = reroute::apply(graph, layout, &planned, &before, &baseline, expanded);
-            let improved = routed
+            if reroute::apply(graph, layout, &planned, &before, &baseline, expanded)
                 && quality::improves(
                     graph,
                     &before.paths,
@@ -334,17 +338,8 @@ pub(in crate::layout) fn refine(graph: &Graph, layout: &mut Layout<'_>) {
                     &before_borders,
                     &border_metrics(graph, layout),
                     expanded,
-                );
-            #[cfg(test)]
-            tests::trace_attempt(
-                graph,
-                layout,
-                &planned,
-                &before,
-                &before_borders,
-                (demand, expanded, routed, improved),
-            );
-            if improved {
+                )
+            {
                 changed = true;
                 continue;
             }
@@ -353,8 +348,7 @@ pub(in crate::layout) fn refine(graph: &Graph, layout: &mut Layout<'_>) {
                 let fallback = expansion::Snapshot::capture(layout);
                 let mut planned = corridor;
                 planned.allocate(layout);
-                let routed = reroute::apply(graph, layout, &planned, &fallback, &baseline, false);
-                let improved = routed
+                if reroute::apply(graph, layout, &planned, &fallback, &baseline, false)
                     && quality::improves(
                         graph,
                         &fallback.paths,
@@ -362,17 +356,8 @@ pub(in crate::layout) fn refine(graph: &Graph, layout: &mut Layout<'_>) {
                         &before_borders,
                         &border_metrics(graph, layout),
                         false,
-                    );
-                #[cfg(test)]
-                tests::trace_attempt(
-                    graph,
-                    layout,
-                    &planned,
-                    &fallback,
-                    &before_borders,
-                    (None, false, routed, improved),
-                );
-                if improved {
+                    )
+                {
                     changed = true;
                 } else {
                     fallback.restore(layout);

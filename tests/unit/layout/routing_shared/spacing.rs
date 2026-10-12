@@ -2,65 +2,6 @@ use super::*;
 use crate::layout::ContainmentTree;
 use crate::model::Edge;
 
-fn traced(graph: &Graph) -> bool {
-    graph
-        .nodes
-        .iter()
-        .any(|node| node.address == "module.network.aws_vpc.main")
-}
-
-pub(super) fn trace_plan(graph: &Graph, layout: &Layout<'_>, corridors: &[plan::Corridor]) {
-    if !traced(graph) {
-        return;
-    }
-    eprintln!("spacing trace plan: {:?}", measure(graph, &layout.paths));
-    for corridor in corridors {
-        eprintln!(
-            "spacing corridor: {corridor:?}, demand={:?}",
-            corridor.demand(layout)
-        );
-    }
-}
-
-pub(super) fn trace_attempt(
-    graph: &Graph,
-    layout: &Layout<'_>,
-    corridor: &plan::Corridor,
-    before: &expansion::Snapshot,
-    before_borders: &[super::super::borders::Metrics],
-    outcome: (Option<(usize, usize)>, bool, bool, bool),
-) {
-    if !traced(graph) {
-        return;
-    }
-    let after_borders = border_metrics(graph, layout);
-    eprintln!(
-        "spacing attempt: {corridor:?}, outcome={outcome:?}, before={:?}, after={:?}, size={}x{}->{}x{}",
-        measure(graph, &before.paths),
-        measure(graph, &layout.paths),
-        before.width,
-        before.height,
-        layout.width,
-        layout.height,
-    );
-    for (edge, path) in layout.paths.iter().enumerate() {
-        if *path == before.paths[edge] && !corridor.lanes.iter().any(|lane| lane.edge == edge) {
-            continue;
-        }
-        let e = &graph.edges[edge];
-        eprintln!(
-            "spacing edge {edge} {} -> {}: {:?} -> {path:?}; shape {:?} -> {:?}; border {:?} -> {:?}",
-            graph.nodes[e.from].address,
-            graph.nodes[e.to].address,
-            before.paths[edge],
-            Shape::measure(&before.paths[edge]),
-            Shape::measure(path),
-            before_borders[edge],
-            after_borders[edge],
-        );
-    }
-}
-
 fn graph() -> Graph {
     let raw = crate::plan::parse(r#"{"format_version":"1.2","resource_changes":[{"address":"test.a","type":"test"},{"address":"test.b","type":"test"},{"address":"test.c","type":"test"},{"address":"test.d","type":"test"},{"address":"test.e","type":"test"},{"address":"test.f","type":"test"}]}"#).unwrap();
     let mut graph = crate::semantic::transform(&raw).0;
@@ -536,6 +477,157 @@ fn corridor_capacity_expands_then_reroutes_mixed_edges_into_whole_lanes() {
 }
 
 #[test]
+fn corridor_candidates_follow_actual_peers_when_a_protected_lane_stays_in_place() {
+    let mut graph = corridor_graph(2);
+    graph.relationships.clear();
+    graph.edges[0].kind = crate::model::EdgeKind::Dependency;
+    let point = |x, y| Point { x, y };
+    for transpose in [false, true] {
+        let mut layout = narrow(&graph, false);
+        layout.bounds[2].origin.y = 0;
+        layout.bounds[3].origin.y = 1400;
+        layout.bounds[4].width = 300;
+        layout.bounds[5].origin.x = 600;
+        layout.bounds[5].width = 300;
+        layout.paths = vec![
+            vec![
+                point(200, 130),
+                point(500, 130),
+                point(500, 1230),
+                point(800, 1230),
+            ],
+            vec![
+                point(200, 30),
+                point(502, 30),
+                point(502, 1430),
+                point(800, 1430),
+            ],
+        ];
+        layout.junctions = vec![point(502, 700)];
+        if transpose {
+            for bounds in &mut layout.bounds {
+                std::mem::swap(&mut bounds.origin.x, &mut bounds.origin.y);
+                std::mem::swap(&mut bounds.width, &mut bounds.height);
+            }
+            for p in layout
+                .paths
+                .iter_mut()
+                .flatten()
+                .chain(&mut layout.junctions)
+            {
+                std::mem::swap(&mut p.x, &mut p.y);
+            }
+            std::mem::swap(&mut layout.width, &mut layout.height);
+        }
+        layout.positions = layout.bounds.iter().map(|b| b.origin).collect();
+        let before = expansion::Snapshot::capture(&layout);
+        let before_borders = border_metrics(&graph, &layout);
+        let baseline: Vec<_> = before.paths.iter().map(|p| Shape::measure(p)).collect();
+        let planned = plan::Corridor {
+            border: false,
+            minimum_margin: PREFERRED,
+            preferred_margin: PREFERRED,
+            urgent: false,
+            deficit_cost: 0,
+            hidden: std::collections::BTreeSet::new(),
+            horizontal: transpose,
+            low: 130,
+            high: 1230,
+            lanes: vec![
+                plan::Lane {
+                    edge: 0,
+                    original: 500,
+                    coordinate: 500,
+                },
+                plan::Lane {
+                    edge: 1,
+                    original: 502,
+                    coordinate: 516,
+                },
+            ],
+        };
+        assert_eq!(measure(&graph, &layout.paths).deficit, 1100 * 14);
+        assert!(reroute::apply(
+            &graph,
+            &mut layout,
+            &planned,
+            &before,
+            &baseline,
+            false
+        ));
+        assert_eq!(measure(&graph, &layout.paths).close_length, 0);
+        assert_eq!(layout.paths[1], before.paths[1]);
+        assert_eq!(layout.junctions, before.junctions);
+        assert_eq!(layout.bounds, before.bounds);
+        let axis = |point: Point| if transpose { point.y } else { point.x };
+        assert_eq!(axis(layout.paths[0][1]), 486);
+        assert_eq!(axis(layout.paths[0][2]), 486);
+        assert_eq!(Shape::measure(&layout.paths[0]), baseline[0]);
+        assert!(quality::improves(
+            &graph,
+            &before.paths,
+            &layout.paths,
+            &before_borders,
+            &border_metrics(&graph, &layout),
+            false,
+        ));
+    }
+}
+
+#[test]
+fn bounded_peer_axes_keep_clear_alternatives_across_the_endpoint_region() {
+    let point = |x, y| Point { x, y };
+    let corridor = plan::Corridor {
+        border: false,
+        minimum_margin: PREFERRED,
+        preferred_margin: PREFERRED,
+        urgent: false,
+        deficit_cost: 0,
+        hidden: std::collections::BTreeSet::new(),
+        horizontal: false,
+        low: 400,
+        high: 1800,
+        lanes: vec![plan::Lane {
+            edge: 0,
+            original: 1234,
+            coordinate: 1234,
+        }],
+    };
+    for peer in [1632, 1650] {
+        let mut paths = vec![vec![
+            point(861, 400),
+            point(1234, 400),
+            point(1234, 1800),
+            point(2419, 1800),
+        ]];
+        paths.extend(
+            [1214, 1220, 1226, 1234, 1238, 1242, 1246, peer]
+                .into_iter()
+                .map(|x| vec![point(x, 400), point(x, 1800)]),
+        );
+        let axes = |paths: &[Vec<Point>]| {
+            parallel::Index::new(paths, 0).axes(
+                &corridor,
+                [point(861, 400), point(2419, 1800)],
+                [1234, peer + 8],
+                1200..1264,
+                4196,
+            )
+        };
+        let expected = axes(&paths);
+        assert_eq!(&expected[..2], &[1234, peer + 8]);
+        assert_eq!(expected.len(), 32);
+        assert!(expected.contains(&(peer + PREFERRED)));
+        paths[1..].reverse();
+        assert_eq!(axes(&paths), expected);
+        paths.extend(
+            (0..256).map(|i| vec![point(10000 + i * 16, 400), point(10000 + i * 16, 1800)]),
+        );
+        assert_eq!(axes(&paths), expected);
+    }
+}
+
+#[test]
 fn numbered_turns_keep_distinct_perpendicular_runs_when_spacing_a_corridor() {
     let mut graph = corridor_graph(2);
     let mut relationship = graph.relationships[0].clone();
@@ -744,6 +836,10 @@ fn proximity_ignores_perpendicular_disjoint_and_short_endpoint_runs() {
         ],
     ] {
         assert_eq!(measure(&graph, &paths), Metrics::default());
+        assert_eq!(
+            parallel::Index::new(&paths, 0).deficit(&graph, &paths[0]),
+            0
+        );
     }
 }
 
@@ -768,4 +864,55 @@ fn shared_trunk_is_exempt_but_close_independent_branches_are_counted() {
     let result = measure(&graph, &paths);
     assert_eq!(result.minimum, Some(5));
     assert_eq!(result.close_length, 368);
+    assert_eq!(
+        parallel::Index::new(&paths, 0).deficit(&graph, &paths[0]),
+        result.deficit
+    );
+}
+
+#[test]
+fn minimum_border_deficit_gets_one_attempt_without_reordering_the_cost_prefix() {
+    let original: Vec<_> = (0..9)
+        .map(|edge| plan::Corridor {
+            horizontal: false,
+            low: 100,
+            high: 500,
+            lanes: vec![plan::Lane {
+                edge,
+                original: 400,
+                coordinate: 400,
+            }],
+            border: edge == 8,
+            minimum_margin: 6,
+            preferred_margin: 10,
+            urgent: edge == 8,
+            deficit_cost: (900 - edge * 100) as u128,
+            hidden: std::collections::BTreeSet::new(),
+        })
+        .collect();
+    let order = |corridors: &[plan::Corridor]| {
+        corridors
+            .iter()
+            .map(|c| c.lanes[0].edge)
+            .collect::<Vec<_>>()
+    };
+    for remaining in [1, 3, ATTEMPTS] {
+        let mut corridors = original.clone();
+        plan::reserve_urgent(&mut corridors, remaining);
+        assert_eq!(
+            order(&corridors[..remaining - 1]),
+            (0..remaining - 1).collect::<Vec<_>>()
+        );
+        assert_eq!(corridors[remaining - 1].lanes[0].edge, 8);
+        assert_eq!(corridors.len(), original.len());
+        let scheduled = order(&corridors);
+        plan::reserve_urgent(&mut corridors, remaining);
+        assert_eq!(order(&corridors), scheduled);
+    }
+    let mut corridors = original.clone();
+    plan::reserve_urgent(&mut corridors, 0);
+    assert_eq!(order(&corridors), order(&original));
+    corridors[8].urgent = false;
+    plan::reserve_urgent(&mut corridors, ATTEMPTS);
+    assert_eq!(order(&corridors), order(&original));
 }

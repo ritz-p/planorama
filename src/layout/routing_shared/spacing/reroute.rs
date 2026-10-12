@@ -157,6 +157,7 @@ pub(super) fn apply(
             .map(|(_, p)| super::super::refinement::overlap(&before.paths[i], p))
             .sum();
         let seed = &layout.paths[i];
+        let parallel = parallel::Index::new(&layout.paths, i);
         let start = terminal(seed, 0);
         let end = terminal(seed, 1);
         let clearances =
@@ -214,20 +215,26 @@ pub(super) fn apply(
             let axis = |point: Point| if plan.horizontal { point.y } else { point.x };
             let first = axis(start.outward(clearances[0].clearance));
             let last = axis(end.outward(clearances[1].clearance));
-            let mut coordinates = vec![lane.coordinate, (first + last) / 2];
-            coordinates.extend(
+            let middle = (first + last) / 2;
+            let coordinates = parallel.axes(
+                plan,
+                [start.point, end.point],
+                [lane.coordinate, middle],
                 scorer
                     .border_axes(start.point, end.point)
                     .into_iter()
                     .filter_map(|(horizontal, coordinate)| {
                         (horizontal == plan.horizontal).then_some(coordinate)
                     }),
+                if plan.horizontal {
+                    layout.height
+                } else {
+                    layout.width
+                },
             );
-            let mut seen = std::collections::BTreeSet::new();
             for coordinate in coordinates {
-                if seen.insert(coordinate) {
-                    candidates.extend(lane_candidates(seed, plan, coordinate, clearances));
-                }
+                scorer.routing_axes.push((plan.horizontal, coordinate));
+                candidates.extend(lane_candidates(seed, plan, coordinate, clearances));
             }
         }
         candidates.push(seed.clone());
@@ -237,6 +244,7 @@ pub(super) fn apply(
                 let s = Shape::measure(p);
                 s.fits(baseline[i])
                     && scorer.attains_bound(p, bound)
+                    && parallel.deficit(graph, p) == 0
                     && ports::valid_with_clearances(p, start, end, &obstacles, clearances)
                     && layout
                         .paths
@@ -288,7 +296,8 @@ pub(super) fn apply(
                 shape.offsets,
                 shape.reversals,
                 shape.bends,
-                scorer.readability_cost(&candidate),
+                scorer.readability_cost(&candidate)
+                    + (parallel.deficit(graph, &candidate) / 4) as u128,
             );
             if best.as_ref().is_none_or(|(score, _)| key < *score) {
                 best = Some((key, candidate));

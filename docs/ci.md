@@ -125,10 +125,17 @@ of the narrower generation inputs above.
 
 Dispatch specifies the PR branch, PR number and exact expected head SHA. Its run
 name is `Validate PR #<number> at <full head SHA>`, and the returned run ID is checked
-against that SHA, event and workflow. When these PR inputs are provided, each
-validation workflow also checks its own run/checkout SHA, fetches the PR merge
+against that SHA, event and workflow. Six bounded reads allow the run identity to
+appear; persistent mismatches fail with the differing fields in the log.
+When these PR inputs are provided, each validation workflow also checks its own
+run/checkout SHA, fetches the PR merge
 ref, verifies its parents against the expected head and current base, and checks
-the PR metadata again. This tests the PR/base merge while binding the run to the
+the PR metadata again. A stacked PR may use its predecessor's generated merge
+as the first parent. This is accepted only when exactly one open same-repository
+predecessor PR identifies that merge and its head equals the advertised base.
+The generated merge's parents must match the predecessor's current base and head,
+and its tree must equal the advertised base tree. Both PRs' metadata must remain current throughout these
+checks. This tests the PR/base merge while binding the run to the
 generated head. Short, bounded retries allow GitHub's PR metadata and merge ref to
 catch up after the bot commit. A stale dispatch, a conflicting PR or a merge ref
 that has not caught up fails explicitly instead of testing a different revision.
@@ -204,6 +211,11 @@ processes a new attempt, avoiding a race between dispatch initialization and
 reporting. A manual validation run without both PR inputs remains an
 ordinary branch validation; use **Update SVG examples** with the PR number to repair the
 validation flow for the generated head.
+
+If dispatched runs exist but no reporter run appears, inspect the reporter trigger
+on the default branch. Editing its definition only in a PR cannot activate that
+change. Ordinary PR-event checks on a subsequent commit remain separate validation
+of that commit; earlier pending statuses do not represent its result.
 
 ### Rollout and verification
 
