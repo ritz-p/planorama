@@ -84,8 +84,7 @@ jobs:
       - uses: Swatinem/rust-cache@v2.9.2
         with:
           prefix-key: v1-rust-dependencies
-          shared-key: tests
-          key: ${{ hashFiles('build.rs', 'assets/**') }}
+          shared-key: ${{ hashFiles('build.rs', 'assets/**') }}-tests
           cache-workspace-crates: 'false'
       - name: Compile tests
         run: node .github/scripts/test-suites.cjs "$TEST_SUITE" compile

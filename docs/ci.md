@@ -53,8 +53,9 @@ benchmark target added later can therefore receive extra coverage. Unknown targe
 kinds, incomplete metadata, or a renamed/missing/ambiguous `large_example` target
 fail explicitly and require updating the selection policy.
 
-The two jobs share the existing dependency cache through `shared-key: tests`;
-Clippy retains its separate cache. The pinned compiler, Cargo configuration,
+The two jobs share the existing dependency cache through a `shared-key` containing
+the `build.rs`/`assets/**` hash followed by `-tests`, matching the former serial
+job's key. Clippy retains its separate cache. The pinned compiler, Cargo configuration,
 manifest/lockfiles and build inputs still determine compatibility. Workspace
 crates are rebuilt in each job and are not cached. Thus parallel execution can
 shorten waiting time while increasing total runner time. Normal integration tests
