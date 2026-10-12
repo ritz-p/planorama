@@ -233,8 +233,8 @@ impl Terminals {
                     .map(|&child| layout.bounds[child]),
             );
             let mut y = layout.bounds[parent].origin.y
-                + 106
-                + crate::view::references::height(&graph.nodes[parent]);
+                + crate::view::card::measure(&graph.nodes[parent]).routes_y
+                + 12;
             for card in crate::view::routes::cards(graph, parent) {
                 if card.node.is_some() {
                     break;

@@ -10,7 +10,7 @@ same boundaries and carry explicit cross-state relationships.
 | `model` | Shared domain contracts, architecture identity and value-free provenance |
 | `semantic` | Architecture transformation and final relationship evidence |
 | `provider/aws` | AWS classification, containment, connections, lowering, components, diagnostics and icons |
-| `view` | Immutable selection, neighbor expansion and required context |
+| `view` | Immutable selection, neighbor expansion, required context and shared presentation measurements |
 | `layout` | Containment hierarchy, placement, bounds, ports and routes |
 | `svg` | Drawing, text, legends and metadata |
 
@@ -52,6 +52,17 @@ reserve the Unavailable prefix so filtering and spatial projection cannot
 underestimate content. Logical annotation cards use the same reference metrics.
 Full Terraform addresses include module/instance keys, remote state and deposed
 identity. UI links never add routing edges.
+
+Address wrapping prefers separators between address elements. Dots inside quoted
+instance keys stay part of the key, including after an escaped quote or a forced
+line break. An individual token wider than the available space falls back to
+UTF-8 character boundaries; every delimiter and space is preserved. Ordinary
+explanatory text keeps its separate wrapping behavior.
+Resource headings display the complete selected address. Shared measurements
+reserve enough height for both native and qualified headings, including icon
+space, before packing. Uses rows and embedded Route cards start below that
+reserved heading; rendering, child bounds and routing obstacles use the same
+offsets. Address formatting never changes resource identity, metadata or links.
 
 Ingestion does not import provider rules, layout or SVG. Layout, view and SVG use
 the `model::architecture` facade, which excludes Terraform ingestion contracts.

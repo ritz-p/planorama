@@ -71,9 +71,8 @@ pub(super) fn layout(graph: &Graph) -> Layout<'_> {
     };
     let mut embedded = false;
     for &parent in &projected.nodes {
-        let mut y = layout.bounds[parent].origin.y
-            + 106
-            + crate::view::references::height(&graph.nodes[parent]);
+        let metrics = crate::view::card::measure(&graph.nodes[parent]);
+        let mut y = layout.bounds[parent].origin.y + metrics.routes_y + 12;
         for card in crate::view::routes::cards(graph, parent) {
             let height = card.height();
             if let Some(node) = card.node {
@@ -103,8 +102,7 @@ pub(super) fn layout(graph: &Graph) -> Layout<'_> {
                 if !layout.containers.contains(&parent) {
                     layout.containers.push(parent);
                 }
-                layout.header_heights[parent] =
-                    94 + crate::view::references::height(&graph.nodes[parent]);
+                layout.header_heights[parent] = metrics.routes_y;
             }
             y += height + 12;
         }

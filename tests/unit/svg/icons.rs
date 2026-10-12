@@ -4,15 +4,17 @@ mod icon_import;
 
 #[test]
 fn symbols_are_deduplicated_and_used_locally_on_cards_and_containers() {
-    let raw = crate::plan::parse(
-        r#"{"format_version":"1.2","resource_changes":[
+    let address = format!(
+        r#"data.aws_instance.b["{}"]"#,
+        "日本語.key  with spaces ".repeat(5)
+    );
+    let input = serde_json::json!({"format_version":"1.2","resource_changes":[
         {"address":"aws_vpc.main","type":"aws_vpc"},
         {"address":"aws_instance.a","type":"aws_instance"},
-        {"address":"data.aws_instance.b","type":"aws_instance","mode":"data"},
+        {"address":address,"type":"aws_instance","mode":"data"},
         {"address":"other_widget.main","type":"other_widget"}
-    ]}"#,
-    )
-    .unwrap();
+    ]});
+    let raw = crate::plan::parse(&input.to_string()).unwrap();
     let graph = crate::semantic::transform(&raw);
     let layout = crate::layout::Layout::new(&graph);
     for format in [
@@ -30,26 +32,54 @@ fn symbols_are_deduplicated_and_used_locally_on_cards_and_containers() {
         assert!(!svg.contains("<image "));
         assert!(!svg.contains("data:image/svg+xml,"));
         assert!(svg.contains("viewBox=\"0 0 64 64\"><g"));
-        for (node, position) in graph.nodes.iter().zip(&layout.positions) {
+        let doc = roxmltree::Document::parse(&svg).unwrap();
+        for (index, (node, position)) in graph.nodes.iter().zip(&layout.positions).enumerate() {
             let x = position.x;
             let y = position.y;
-            let (inset, width) = match for_node(node) {
+            let inset = match for_node(node) {
                 Some(icon) => {
                     assert!(svg.contains(&render(icon, x + 12, y + 28)));
-                    (44, 33)
+                    44
                 }
-                None => (12, 35),
+                None => 12,
             };
             let selected = match format {
                 crate::svg::AddressFormat::Qualified => node.resource_address().qualified(),
                 crate::svg::AddressFormat::Terraform => node.address.as_str().into(),
             };
-            let first: String = selected.chars().take(width).collect();
-            assert!(svg.contains(&format!(
-                "<text x=\"{}\" y=\"{}\" font-size=\"13\" fill=\"#0f172a\">{first}</text>",
-                x + inset,
-                y + 45
-            )));
+            let card = doc
+                .descendants()
+                .find(|n| n.attribute("data-terraform-address") == Some(node.address.as_str()))
+                .unwrap();
+            let lines: Vec<_> = card
+                .children()
+                .filter(|n| n.has_tag_name("text") && n.attribute("font-size") == Some("13"))
+                .collect();
+            assert_eq!(
+                lines.iter().filter_map(|n| n.text()).collect::<String>(),
+                selected.as_ref()
+            );
+            if node.address == address {
+                assert!(lines.len() > 2);
+            }
+            for (line, text) in lines.iter().enumerate() {
+                let tx: usize = text.attribute("x").unwrap().parse().unwrap();
+                let ty: usize = text.attribute("y").unwrap().parse().unwrap();
+                let advance: usize = text
+                    .text()
+                    .unwrap()
+                    .chars()
+                    .map(|c| if c.is_ascii() { 8 } else { 16 })
+                    .sum();
+                assert_eq!(tx, x + inset);
+                assert_eq!(ty, y + 45 + line * 20);
+                assert!(tx + advance <= layout.bounds[index].right() - 12);
+                assert!(ty + 4 < y + layout.header_heights[index]);
+                assert!(text.ancestors().any(|n| {
+                    n.attribute(("http://www.w3.org/XML/1998/namespace", "space"))
+                        == Some("preserve")
+                }));
+            }
         }
         assert_eq!(svg, crate::svg::render_with_format(&graph, &layout, format));
     }

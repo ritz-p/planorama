@@ -55,41 +55,41 @@ No AWS endorsement is implied. Consult the AWS terms for other uses.
 <path d="M 140 480 L 60 480 " data-edge-kind="connection" data-directionality="undirected" data-source="resource-746573742e6e6f646533-current" data-target="resource-746573742e6e6f646530-current" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-dasharray="0 3.5" stroke-linecap="round" stroke-linejoin="round" mask="url(#container-occlusion-0)"><title>test.node3 ↔ test.node0 (connection)</title></path>
 <g id="resource-746573742e6e6f646530-current" data-architecture-id="terraform:746573742e6e6f646530-current" data-qualified-address="module.root.test.node0" data-terraform-address="test.node0"><title>module.root.test.node0 — create</title>
 <text x="72" y="180" font-size="11" fill="#047857">aws_instance · create</text>
-<use href="#planorama-icon-aws-ec2" x="72" y="188" width="24" height="24" aria-hidden="true"/><text x="104" y="205" font-size="13" fill="#0f172a">module.root.test.node0</text>
+<use href="#planorama-icon-aws-ec2" x="72" y="188" width="24" height="24" aria-hidden="true"/><text x="104" y="205" font-size="13" fill="#0f172a" xml:space="preserve">module.root.test.node0</text>
 <text x="72" y="244" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
 <g id="resource-746573742e6e6f646531-current" data-architecture-id="terraform:746573742e6e6f646531-current" data-qualified-address="module.root.test.node1" data-terraform-address="test.node1"><title>module.root.test.node1 — create</title>
 <text x="112" y="316" font-size="11" fill="#047857">aws_instance · create</text>
-<use href="#planorama-icon-aws-ec2" x="112" y="324" width="24" height="24" aria-hidden="true"/><text x="144" y="341" font-size="13" fill="#0f172a">module.root.test.node1</text>
+<use href="#planorama-icon-aws-ec2" x="112" y="324" width="24" height="24" aria-hidden="true"/><text x="144" y="341" font-size="13" fill="#0f172a" xml:space="preserve">module.root.test.node1</text>
 <text x="112" y="380" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
 <g id="resource-746573742e6e6f646532-current" data-architecture-id="terraform:746573742e6e6f646532-current" data-qualified-address="module.root.test.node2" data-terraform-address="test.node2"><title>module.root.test.node2 — create</title>
 <text x="552" y="316" font-size="11" fill="#047857">aws_instance · create</text>
-<use href="#planorama-icon-aws-ec2" x="552" y="324" width="24" height="24" aria-hidden="true"/><text x="584" y="341" font-size="13" fill="#0f172a">module.root.test.node2</text>
+<use href="#planorama-icon-aws-ec2" x="552" y="324" width="24" height="24" aria-hidden="true"/><text x="584" y="341" font-size="13" fill="#0f172a" xml:space="preserve">module.root.test.node2</text>
 <text x="552" y="380" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
 <g id="resource-746573742e6e6f646533-current" data-architecture-id="terraform:746573742e6e6f646533-current" data-qualified-address="module.root.test.node3" data-terraform-address="test.node3"><title>module.root.test.node3 — create</title>
 <rect x="140" y="432" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text x="152" y="452" font-size="11" fill="#047857">aws_instance · create</text>
-<use href="#planorama-icon-aws-ec2" x="152" y="460" width="24" height="24" aria-hidden="true"/><text x="184" y="477" font-size="13" fill="#0f172a">module.root.test.node3</text>
+<use href="#planorama-icon-aws-ec2" x="152" y="460" width="24" height="24" aria-hidden="true"/><text x="184" y="477" font-size="13" fill="#0f172a" xml:space="preserve">module.root.test.node3</text>
 <text x="152" y="516" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
 <g id="resource-746573742e6e6f646534-current" data-architecture-id="terraform:746573742e6e6f646534-current" data-qualified-address="module.root.test.node4" data-terraform-address="test.node4"><title>module.root.test.node4 — create</title>
 <rect x="580" y="432" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text x="592" y="452" font-size="11" fill="#047857">aws_instance · create</text>
-<use href="#planorama-icon-aws-ec2" x="592" y="460" width="24" height="24" aria-hidden="true"/><text x="624" y="477" font-size="13" fill="#0f172a">module.root.test.node4</text>
+<use href="#planorama-icon-aws-ec2" x="592" y="460" width="24" height="24" aria-hidden="true"/><text x="624" y="477" font-size="13" fill="#0f172a" xml:space="preserve">module.root.test.node4</text>
 <text x="592" y="516" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
 <g id="resource-746573742e6e6f646535-current" data-architecture-id="terraform:746573742e6e6f646535-current" data-qualified-address="module.root.test.node5" data-terraform-address="test.node5"><title>module.root.test.node5 — create</title>
 <rect x="140" y="568" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text x="152" y="588" font-size="11" fill="#047857">aws_instance · create</text>
-<use href="#planorama-icon-aws-ec2" x="152" y="596" width="24" height="24" aria-hidden="true"/><text x="184" y="613" font-size="13" fill="#0f172a">module.root.test.node5</text>
+<use href="#planorama-icon-aws-ec2" x="152" y="596" width="24" height="24" aria-hidden="true"/><text x="184" y="613" font-size="13" fill="#0f172a" xml:space="preserve">module.root.test.node5</text>
 <text x="152" y="652" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
 <g id="resource-746573742e6e6f646536-current" data-architecture-id="terraform:746573742e6e6f646536-current" data-qualified-address="module.root.test.node6" data-terraform-address="test.node6"><title>module.root.test.node6 — create</title>
 <rect x="580" y="568" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text x="592" y="588" font-size="11" fill="#047857">aws_instance · create</text>
-<use href="#planorama-icon-aws-ec2" x="592" y="596" width="24" height="24" aria-hidden="true"/><text x="624" y="613" font-size="13" fill="#0f172a">module.root.test.node6</text>
+<use href="#planorama-icon-aws-ec2" x="592" y="596" width="24" height="24" aria-hidden="true"/><text x="624" y="613" font-size="13" fill="#0f172a" xml:space="preserve">module.root.test.node6</text>
 <text x="592" y="652" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
 <g data-endpoints="true" data-source="resource-746573742e6e6f646533-current" data-target="resource-746573742e6e6f646530-current" aria-hidden="true">
