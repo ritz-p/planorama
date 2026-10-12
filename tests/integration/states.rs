@@ -54,16 +54,18 @@ fn relationship_indexes_fit_inside_each_named_state_and_outer_canvas() {
         let width: usize = nested.attribute("width").unwrap().parse().unwrap();
         let height: usize = nested.attribute("height").unwrap().parse().unwrap();
         let top: usize = nested.attribute("y").unwrap().parse().unwrap();
-        assert!(width <= outer_width);
+        assert_eq!(width, outer_width);
         assert!(top >= previous_bottom);
         assert!(top + height <= outer_height);
         previous_bottom = top + height;
-        for attribute in ["width", "height", "viewBox"] {
-            assert_eq!(
-                nested.attribute(attribute),
-                single_root.attribute(attribute)
-            );
-        }
+        let single_width: usize = single_root.attribute("width").unwrap().parse().unwrap();
+        let single_height: usize = single_root.attribute("height").unwrap().parse().unwrap();
+        assert_eq!(width, single_width.max(1120));
+        assert!(height <= single_height);
+        assert_eq!(
+            nested.attribute("viewBox").unwrap(),
+            format!("0 0 {width} {height}")
+        );
         let legend = nested
             .descendants()
             .find(|n| {
