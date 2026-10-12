@@ -1,4 +1,5 @@
 pub(crate) mod aws;
+pub(crate) mod terraform;
 
 pub(crate) fn reference_label(
     provider: &crate::model::ProviderIdentity,

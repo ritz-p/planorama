@@ -61,10 +61,20 @@ Current configuration enriches only current objects. Deposed predecessors retain
 their resource-level provider source or legacy fallback, with no configuration key
 or alias inferred from the current resource at the same address.
 
-Source resolution prefers `provider_name`, then configuration `full_name` for
+Source resolution prefers `resource_changes.provider_name`, then
+`planned_values` resource `provider_name`, then configuration `full_name` for
 current objects. Two-part source names receive the `registry.terraform.io/` prefix.
-Only legacy inputs without explicit provider information infer AWS from `aws_`
-types; an explicit foreign or unresolved binding does not imply HashiCorp AWS.
+Terraform's built-in provider is recognized only by the canonical source
+`terraform.io/builtin/terraform`. `hashicorp/terraform`, `builtin/terraform` and
+sources on other hosts do not identify that provider.
+
+Only legacy inputs with no provider source or configuration binding infer AWS
+from `aws_` types, or `InferredTerraform` from the exact types `terraform_data`
+and `terraform_remote_state`. No other `terraform_` type is inferred. An explicit
+foreign or empty source, or an unresolved configuration binding, blocks this fallback;
+resource type spelling cannot override it. The fallback records its inferred
+identity separately from an explicit source. Icon selection consumes this
+identity without changing roles, relationships or lifecycle metadata.
 
 Configuration keys are state-local: cross-state identity requires `(StateId, key)`.
 Matching aliases in two states do not imply a shared account or region. Both the

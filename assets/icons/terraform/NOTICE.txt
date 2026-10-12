@@ -1,0 +1,7 @@
+Planorama built-in provider icon, version 1.0.0.
+Original neutral state-file artwork created for Planorama.
+Source: https://github.com/ritz-p/planorama/tree/main/assets/icons/terraform
+File: terraform-builtin-24.svg
+License: MIT (applies only to this icon and its embedded copies).
+This is a Planorama diagram symbol, not the HashiCorp Terraform product logo.
+Terraform is a trademark of HashiCorp. No HashiCorp endorsement is implied.
