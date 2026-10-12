@@ -1,5 +1,49 @@
 # Relationship styles
 
+## Legend and meaning
+
+The neutral **Relationship lines** card explains relationship colors, line
+patterns and directions separately from the resource action legend and the
+numbered **Relationship Resources** index. Action samples and explanatory text
+wrap within the available diagram width. The measured card height reserves space
+before checks, annotation sections and the architecture in both single-plan and
+named-state output; cross-state endpoints include the same vertical offset.
+
+Line color describes the relationship's own Terraform action, independently of
+its endpoint resources. A relationship without an independent change
+(`Edge.change == None`) uses neutral gray (`#94a3b8`) and the label
+`no independent change`. This is distinct from an explicitly unchanged
+relationship (`EdgeChange` carrying `Action::Unchanged`), which uses
+the unchanged action color. Creating, updating or deleting an endpoint does not
+transfer its action color to a relationship without its own change.
+
+Line patterns and arrowheads describe relationship kind and direction:
+
+| Kind | Sample | Meaning |
+| --- | --- | --- |
+| Dependency | Thin solid line with an arrow | Referenced resource → dependent resource; a resolved reference, not Terraform's exact execution order. |
+| Association | Dashed line, ordinarily without arrowheads | An explicit association between resources. Route next hops are directed Associations from the Route child to its next hop. |
+| Connection | Thicker circular dots, without arrowheads | An inferred architectural connection; it does not guarantee network reachability. |
+| Containment | Nested boxes | Parent/child membership. An edge represented by nesting receives no redundant line. |
+
+Dependency paths use `stroke-width="1.5"`; Association paths use
+`stroke-width="2"` and `stroke-dasharray="7 4"`.
+Connection paths use `stroke-width="2.5"`, `stroke-dasharray="0 3.5"` and round
+caps. The dots repeat every 3.5 SVG units, leaving a 1-unit gap between their
+painted edges. Paths, legend samples and relationship-number badge outlines share
+these patterns, which remain distinct in grayscale. Connection titles use `↔`.
+Route child cards use presentation nesting; their safe ownership and entry details
+are in `route-presentations`, and original reference evidence remains in metadata.
+See [Route cards](routes.md) for next-hop evidence and direction.
+
+Cross-state dependencies retain blue dashed gutter routes and their own visible
+cross-state legend. Blue identifies the cross-state relationship, independently
+of state-local relationship action colors and producer output-action metadata.
+State-local edges retain `data-edge-kind`, stable source/target IDs and a
+descriptive title.
+
+## Reference rows and endpoints
+
 Spatial cards show a Uses section for verified references to top logical-resource
 cards. Known attributes use Cluster, Task definition, Instance profile, AMI,
 Role, Execution role or Task role;
@@ -17,19 +61,6 @@ CloudWatch alarms use Monitors and inverse Monitored by rows only with the
 [verified monitoring evidence](aws.md) required by the AWS projection. These
 rows never create network connections or additional dependency edges.
 
-Dependency lines are thin and solid. Ordinary associations are undirected and
-dashed (7/4), with no arrowheads. Route next hops use directed Associations from
-[child-card ports](routes.md).
-Inferred connections are undirected, without arrowheads, and use circular dots
-(`stroke-width="2.5"`, `stroke-dasharray="0 3.5"`, round caps). Dots repeat every
-3.5 SVG units, leaving a 1-unit gap between their painted edges. The same pattern
-is used for paths, legend samples, and relationship-number badge outlines.
-Connection titles use `↔`. These
-patterns remain distinct in grayscale. Containment uses nested boundaries;
-an edge represented by nesting does not receive a redundant line.
-Route child cards use presentation nesting; their safe ownership and entry details
-are in `route-presentations`, and original reference evidence remains in metadata.
-
 Small white circles mark final card ports: the source of a Dependency and both
 ends of Association/Connection paths. Containment has no endpoint circles.
 Their solid outlines use the relationship action color. Circles render above
@@ -39,12 +70,10 @@ Opposite-role endpoints on the same card retain distinct final coordinates,
 including mixed line kinds and bundle/refinement paths. Intentional same-role
 bundle terminals may still share a circle position.
 
-Colors and directed arrowheads describe the Terraform change. Every edge retains
-`data-edge-kind`, stable source/target IDs and a descriptive title. Cross-state dependencies use
-blue dashed gutter routes and visible cross-state legend.
+## Relationship resource index
 
 Visible paths with Terraform resource provenance carry compact `[N]` markers and
-a matching **Relationship resources** numbered list above the architecture diagram.
+a matching **Relationship Resources** numbered list above the architecture diagram.
 Embedded Routes appear in that list and show the matching number on their child
 cards. Index entries do not add resource identities or increase resource counts.
 Each card contains up to 10 complete entries: 1–10, 11–20, and so on. Cards continue

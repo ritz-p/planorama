@@ -130,7 +130,10 @@ preserve horizontal/vertical independent-routing coverage.
 | Minimum effective parallel clearance | 1 | 6 | 6 |
 | Docker test-profile layout time, two runs | 5.631 / 5.614 s | 5.898 / 5.707 s | 7.219 / 7.036 s |
 
-Layout dimensions exclude SVG annotations. The final SVG is 4208 × 3481 pixels.
+Layout dimensions exclude SVG annotations. At the #291 revision, the final SVG
+was 4208 × 3481 pixels; later annotation changes, including the measured
+Relationship lines card, can change the canvas without changing these layout
+measurements.
 The revision accepts more residual proximity than the initial PR in exchange for
 shorter, simpler paths and less growth. It still removes 34.7% of the original
 close projected length. Runtime adds about 1.3 seconds over the initial PR on this

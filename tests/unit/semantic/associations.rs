@@ -68,7 +68,12 @@ fn lowering_preserves_every_action_in_relationship_and_legend() {
                 .any(|line| line.contains("data-edge-kind=\"association\"")
                     && line.contains(&format!("fill=\"none\" stroke=\"{color}\"")))
         );
-        assert!(!image.contains("marker-end="));
+        assert!(
+            image
+                .lines()
+                .filter(|line| line.contains("data-edge-kind="))
+                .all(|line| !line.contains("marker-end="))
+        );
     }
 }
 

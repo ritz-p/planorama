@@ -109,12 +109,11 @@ pub fn render_states(
         let graph = &graph;
         let layout = Layout::new(graph);
         let index = super::relationship_index::Index::new(graph, &layout);
-        let (state_width, height) = super::dimensions_with_index(graph, &layout, &index, format);
+        let measured_sections = super::Sections::new(graph, &index, format);
+        let (state_width, height) = measured_sections.dimensions(&layout);
         width = width.max(state_width);
         let prefix = prefix(id);
-        let check_offset = if graph.checks.is_empty() { 0 } else { 24 }
-            + super::legend::height(graph)
-            + super::annotation_area(graph, &index, format).height;
+        let check_offset = measured_sections.height();
         obstacles.insert(
             id.clone(),
             StateObstacles {
@@ -173,7 +172,7 @@ pub fn render_states(
             );
         }
         let document = namespace(
-            &super::render_with_index(graph, &layout, format, &index),
+            &super::render_with_index(graph, &layout, format, &index, &measured_sections),
             &prefix,
         );
         writeln!(sections, r##"<g id="{prefix}state" data-state-id="{}"><text x="40" y="{}" font-family="ui-monospace, Consolas, monospace" font-size="20" font-weight="700" fill="#0f172a">State: {}</text>"##, super::escape(id.as_str()), top + 25, super::escape(id.as_str())).unwrap();
