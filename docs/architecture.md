@@ -18,10 +18,17 @@ same boundaries and carry explicit cross-state relationships.
 | `html` | Local viewer, explicit value-free resource index from the selected view, and navigation over rendered SVG metadata |
 
 SVG composition places non-spatial annotations after the header, legend and checks,
-above the architecture. The neutral relationship legend measures wrapped action
-samples and explanatory rows at the diagram's available width. The same measured
+above the architecture. The neutral relationship legend uses its full allocated
+width inside the margins. Its five relationship kinds form a deterministic
+one-to-five-column grid below the action/color explanation. Multiple columns
+require at least 398px per cell with 24px gaps; cells stop widening at 640px.
+Narrow single-column cells place the sample above the text. Each grid row reserves
+its tallest complete cell, including wrapped text and symbols. The same measured
 height controls the canvas, following content and named-state endpoint offsets.
-It remains separate from the numbered Relationship Resources section.
+Named states measure their legends at the shared content width, excluding
+cross-state gutters. Legend layout affects annotation offsets without changing
+architecture placement or routing. It remains separate from the numbered Relationship Resources
+section.
 `svg/annotations.rs` packs rounded cards in deterministic
 rows inside ordered sections, reusing the same wrapping and measurement for nested
 cards and growing the canvas for oversized cards.

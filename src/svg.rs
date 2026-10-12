@@ -24,6 +24,9 @@ pub(crate) use identity::resource as resource_id;
 pub use states::render_states;
 pub(crate) use states::{prefix as state_prefix, render_content as render_states_content};
 #[cfg(test)]
+#[path = "../tests/unit/svg/composition.rs"]
+mod composition_tests;
+#[cfg(test)]
 #[path = "../tests/unit/svg.rs"]
 mod tests;
 

@@ -77,6 +77,46 @@ fn large_fixture_is_reproducible_from_terraform_sources_and_renders_deterministi
     assert!(!svg.contains("data.aws_region.current"));
     assert!(!svg.contains("stroke-dasharray=\"5 4\""));
     let document = roxmltree::Document::parse(&svg).unwrap();
+    let legend = document
+        .descendants()
+        .find(|node| node.attribute("id") == Some("relationship-legend"))
+        .unwrap();
+    let legend_entries: Vec<_> = legend
+        .children()
+        .filter_map(|node| {
+            node.attribute("data-legend-entry").map(|_| {
+                node.attribute("transform")
+                    .unwrap()
+                    .strip_prefix("translate(")
+                    .unwrap()
+                    .trim_end_matches(')')
+                    .split_whitespace()
+                    .map(|value| value.parse::<usize>().unwrap())
+                    .collect::<Vec<_>>()
+            })
+        })
+        .collect();
+    assert_eq!(legend_entries.len(), 5);
+    assert!(
+        legend_entries
+            .windows(2)
+            .all(|pair| pair[0][0] < pair[1][0] && pair[0][1] == pair[1][1])
+    );
+    let legend_width: usize = legend
+        .children()
+        .find(|node| node.has_tag_name("rect"))
+        .unwrap()
+        .attribute("width")
+        .unwrap()
+        .parse()
+        .unwrap();
+    let canvas_width: usize = document
+        .root_element()
+        .attribute("width")
+        .unwrap()
+        .parse()
+        .unwrap();
+    assert_eq!(legend_width + 80, canvas_width);
     let entries: Vec<_> = document
         .descendants()
         .filter_map(|n| n.attribute("data-relationship-entry"))

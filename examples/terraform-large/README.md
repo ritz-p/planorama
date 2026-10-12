@@ -40,6 +40,12 @@ committed counterparts.
 
 ## Expected display
 
+The Relationship lines legend uses the wide canvas to place its five relationship
+kinds on one row below the action/color explanation. Samples retain their circles,
+arrows and numbered badges, with the complete explanation beside each sample.
+Legend height shifts the annotations and architecture together; it does not
+change the routed geometry.
+
 The fixture has 48 resource instances. The renderer produces 28 spatial cards, 2 embedded Route cards,
 8 logical resources in 7 group cards within one cyan Logical Resources section and 74
 relationships: four route-table associations and four target-group attachments
