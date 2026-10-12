@@ -55,7 +55,7 @@ No AWS endorsement is implied. Consult the AWS terms for other uses.
 <path d="M 40 177 H 66" stroke="#94a3b8" stroke-width="2"/><text x="73" y="181">no independent change</text>
 <text x="40" y="205">Line style:</text><path d="M 140 201 H 170" stroke="#64748b" stroke-width="1.5"/><text x="178" y="205">dependency</text>
 <path d="M 340 201 H 370" stroke="#64748b" stroke-width="2" stroke-dasharray="7 4"/><text x="378" y="205">association</text>
-<path d="M 540 201 H 570" stroke="#64748b" stroke-width="2.5" stroke-dasharray="2 4" stroke-linecap="round"/><text x="578" y="205">connection</text>
+<path d="M 540 201 H 570" stroke="#64748b" stroke-width="2.5" stroke-dasharray="0 3.5" stroke-linecap="round"/><text x="578" y="205">connection</text>
 </g>
 <g transform="translate(0 72)">
 <g data-annotation-area="true">
