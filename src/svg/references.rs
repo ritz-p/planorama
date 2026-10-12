@@ -112,7 +112,7 @@ pub(super) fn render(graph: &Graph, node: &Node, x: usize, y: usize, width: usiz
         {
             writeln!(
                 svg,
-                r##"<text x="{x}" y="{}" font-family="monospace" font-size="11" fill="#334155">{}</text>"##,
+                r##"<text x="{x}" y="{}" font-size="11" fill="#334155">{}</text>"##,
                 row_y + line * LINE_HEIGHT,
                 super::escape(text)
             )
