@@ -163,12 +163,15 @@ fn large_fixture_is_reproducible_from_terraform_sources_and_renders_deterministi
     );
     assert_eq!(
         members[0]
-            .children()
-            .find(|n| n.has_tag_name("rect"))
+            .parent()
             .unwrap()
-            .attribute("fill"),
-        Some("#ecfdf5")
+            .descendants()
+            .find(|n| n.attribute("data-member-underline") == Some("true"))
+            .unwrap()
+            .attribute("stroke"),
+        Some("#047857")
     );
+    assert!(members[0].children().all(|n| !n.has_tag_name("rect")));
     for card in document
         .descendants()
         .filter(|n| n.attribute("data-terraform-address").is_some())

@@ -46,8 +46,10 @@ or logical resource, embedded Route, and component member presentation. Empty an
 unknown imports receive the same indicator. The synthetic component does not inherit
 an import operation, and inline Route entries do not duplicate the table's badge.
 The badge has its own measured row, separate from addresses, service icons and the
-gray `external` indicator. Ordinary action labels omit the redundant `import /`
-prefix; accessible titles preserve the full composed operation and its order.
+gray `external` indicator. Spatial, logical-resource and embedded Route action
+labels omit the redundant `import /` prefix. Component member rows retain the full
+composed label; accessible titles preserve the full operation and its order in
+every presentation.
 Existing `data-import` and the value-free presence/unknown flags remain unchanged.
 
 Exact action arrays `['forget']`, `['create','forget']`, and `['forget','create']` are represented by distinct `StateRemoval` variants. Forgetting removes Terraform's state binding without destroying the old remote object; a combined create/forget operation also creates a new object. These sequences retain the existing `Action::Other` palette/legend category, while card labels and edge titles explicitly show the operation and order. Ordinary delete remains delete. SVG exposes `data-import`, redacted import flags, and `data-state-removal` on cards and lowered relationships.
