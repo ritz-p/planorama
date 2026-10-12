@@ -46,6 +46,13 @@ permissions:
   contents: read
   pull-requests: read
 
+concurrency:
+  group: >-
+    cargo-clippy-${{
+      github.event_name == 'pull_request' && format('pr-{0}', github.event.pull_request.number)
+      || format('run-{0}', github.run_id) }}
+  cancel-in-progress: true
+
 jobs:
   clippy:
     name: ${{ github.event_name == 'workflow_dispatch' && 'Dispatched Clippy' || 'Clippy' }}
