@@ -133,10 +133,10 @@ preserve horizontal/vertical independent-routing coverage.
 | Minimum effective parallel clearance | 1 | 6 | 6 |
 | Docker test-profile layout time, two runs | 5.631 / 5.614 s | 5.898 / 5.707 s | 7.219 / 7.036 s |
 
-Layout dimensions exclude SVG annotations. At the #291 revision, the final SVG
-was 4208 × 3481 pixels; later annotation changes, including logical-resource
-grouping and the measured Relationship lines card, can alter the canvas without
-changing these layout measurements.
+These are historical #291 measurements. Layout dimensions exclude SVG annotations;
+the SVG at that revision was 4208 × 3481 pixels. Later annotation changes,
+including logical-resource grouping and the measured Relationship lines card,
+can alter the canvas independently of the spatial layout.
 The revision accepts more residual proximity than the initial PR in exchange for
 shorter, simpler paths and less growth. It still removes 34.7% of the original
 close projected length. Runtime adds about 1.3 seconds over the initial PR on this
@@ -148,9 +148,11 @@ The [37-edge comparison](routing-comparison.md) records lengths, bends, short
 offsets, reversals/backtracking, S-jogs and stretch before/after the refinement.
 Private-b subnet → DB subnet group drops from four bends to two. ECS and VPC
 endpoint subnet connectors retain simple two-bend paths. Private Route Table
-associations retain only the turns required by fixed ports, numbered-marker
-clearance and the neighboring subnet container. Full and enlarged SVG inspection
-covers these corridors. Geometry, shape and metrics agree after edge reordering.
+associations were compared with the fixed ports, former graph-wide marker
+clearance and neighboring subnet container at that revision. #322 changes the
+terminal geometry and side selection; these historical numbers are not current
+SVG measurements. Full and enlarged SVG inspection covered these corridors, and
+geometry, shape and metrics agreed after edge reordering.
 
 The focused narrow corridor carries Dependency, numbered Association and
 Connection edges. Three lanes require a 44px gap expansion; final rerouting
@@ -159,6 +161,100 @@ paths. The transposed fixture covers horizontal routing. Seven lanes exceed the
 growth budget and keep clean two-bend paths with residual proximity. Separate
 checks protect shared trunks and verify rollback of paths, junctions, scopes and
 bands when expanded routing cannot be accepted.
+
+## Visible border clearance
+
+#317 adds a separate 4px minimum and 8px preferred empty gap between visible
+relationship and frame strokes. The final pass shares its six-attempt and 64px
+per-axis budgets with parallel-line spacing. It can act on one path and short
+contacts, using actual card/container/Route border widths and rounded geometry.
+Covered path pieces remain masked; visible exterior paths retain their border
+cost. Minimum-gap regressions, extra bends, S-jogs and excessive detours reject a
+spacing change, with complete geometry rollback when necessary.
+
+The focused single-path fixture uses a 12px gap between cards. An 8px expansion
+creates a 20px corridor and preserves a simple two-bend path for Dependency,
+Association and Connection strokes. Transposition and 32px/300px frame spans
+exercise both axes and short contacts. A protected junction prevents rerouting
+and leaves the original geometry and measurable residual deficit intact. These
+checks are separate from the historical #291 measurements above.
+
+## #317 calibration
+
+This comparison uses the [#322 baseline SVG at e4d50682](https://github.com/ritz-p/planorama/blob/e4d506821aaebd41abb42fa2380ef841733604d3/examples/terraform-large/diagram.svg)
+and the [#317 SVG at fc87e583](https://github.com/ritz-p/planorama/blob/fc87e583bc726db56aebf74673c3f3929e5b3f9d/examples/terraform-large/diagram.svg),
+generated from [source 3f920401](https://github.com/ritz-p/planorama/commit/3f920401c5fd287b0aeabe39d5b22029853827b4)
+by [CI run 38225323594](https://github.com/ritz-p/planorama/actions/runs/38225323594).
+Both compared revisions had 37 rendered paths, a 4196 × 2391 layout and a
+4196 × 3481 SVG canvas. These measurements predate the review fixes. At
+review-fix commit `91159e7`, the SVG measured 4246 × 3481; the additional 50px
+width was within the 64px expansion budget. These historical canvas dimensions
+do not include the measured Relationship lines card introduced by #316.
+The existing large-fixture clearance, shape, canvas and reordered-edge
+regressions still apply.
+
+The read-only SVG audit recovers orthogonal corners from `M`/`L`/`Q` commands and
+applies the same new border metric to both revisions: actual stroke widths,
+rounded frames, masks, card covers and conservative quarter-pixel gaps with bounded
+curve sampling. Line spacing retains its 32px endpoint allowance, 64px sustained
+projection and shared-trunk exclusions. Raw overlap includes intentional bundles.
+Border deficits below are quarter-pixel gap deficits multiplied by pixel path
+length; a negative gap denotes intersecting stroke envelopes.
+
+| Large-fixture metric | #322 baseline | #317 |
+| --- | ---: | ---: |
+| Total path length, px | 34072 | 34055 |
+| Bends | 72 | 77 |
+| Internal orthogonal crossings | 70 | 76 |
+| Raw overlap length, px | 745 | 737 |
+| Too-close line projection, px | 3766 | 3234 |
+| Line-spacing deficit, px² | 25736 | 24190 |
+| Minimum sustained line separation, px | 4 | 4 |
+| Minimum visible border gap, px | -2 | 4.5 |
+| Too-close border projection, px | 5247 | 28 |
+| Minimum border deficit, quarter-pixel × px | 7242 | 0 |
+| Preferred border deficit, quarter-pixel × px | 54115 | 182 |
+
+Border clearance improves with five additional bends and six additional crossings.
+Across those two revisions, total length fell by 17px and canvas size stayed fixed. Offsets remain two and
+S-jogs remain zero; reversals rise from two to three and backtracking from 204px
+to 227px. These compare complete layouts; the final spacing guard constrains each
+candidate against that run's pre-spacing routes. Only four routes change these
+shape measurements:
+
+| Route | Baseline length / bends | #317 length / bends | Border change |
+| --- | ---: | ---: | --- |
+| LB → Listener | 757px / 2 | 772px / 4 | Minimum deficit 120 → 0 |
+| IGW → NAT | 1126px / 1 | 1126px / 3 | Minimum deficit 4443 → 0 |
+| Public-a subnet → Public Route Table | 522px / 1 | 474px / 2 | Minimum deficit 104 → 0 |
+| Shared VPC → Peering | 4007px / 3 | 4023px / 3 | Preferred close projection 3520px → 1px |
+
+The Listener route adds one reversal and 15px of backtracking; Shared VPC's
+backtracking rises from 188px to 196px. The private-b subnet → private Route Table
+path retains 709px and two bends without offsets, reversals or backtracking.
+The four target attachments retain their lengths and two/three-bend shapes.
+The largest remaining preferred border deficit is ALB SG → application SG beside
+the public-a corner: 16px of projection at a 4.5px gap, contributing 135 of 182.
+The remaining 12px of close border projection comes from short rounded contacts;
+every measured border gap meets 4px. All 18 numbered badges retain their identities,
+with no badge overlap or foreign-stroke intrusion found in the audit.
+
+The separate dense unit fixture also exposes a tradeoff. Its
+[#322 baseline](https://github.com/ritz-p/planorama/blob/e4d506821aaebd41abb42fa2380ef841733604d3/tests/unit/layout.rs)
+and measurements after the review fixes are:
+
+| Dense-fixture metric | #322 baseline | #317 |
+| --- | ---: | ---: |
+| Overlap length, px | 168 | 1 |
+| Crossings | 373 | 394 |
+| Bends | 88 | 87 |
+| Total path length, px | 71553 | 71184 |
+
+The review fixes raise crossings from 392 to 394 while retaining overlap, bends
+and length. Docker tests preserve exact repeated-layout and reversed-edge geometry
+assertions alongside the updated metric expectation. These results document clearance,
+overlap and length gains alongside increased crossings and some more complex
+routes; the finite routing policy does not minimize every metric simultaneously.
 
 ## Terraform validation
 

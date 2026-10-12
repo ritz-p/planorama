@@ -150,6 +150,15 @@ fn verify_cards(svg: &str) {
         n.attribute("data-embedded-route").is_some() || n.attribute("data-route-entry").is_some()
     }) {
         let rect = card.children().find(|n| n.has_tag_name("rect")).unwrap();
+        assert_eq!(number(rect, "rx"), view::geometry::ROUTE_RADIUS);
+        assert_eq!(
+            rect.attribute("stroke-width")
+                .unwrap()
+                .parse::<f64>()
+                .unwrap()
+                * 4.0,
+            view::geometry::ROUTE_STROKE as f64
+        );
         let (x, y, width, height) = (
             number(rect, "x"),
             number(rect, "y"),
@@ -161,7 +170,34 @@ fn verify_cards(svg: &str) {
             .skip(1)
             .find(|n| n.attribute("data-terraform-address").is_some())
             .unwrap();
-        let outer = parent.children().find(|n| n.has_tag_name("rect")).unwrap();
+        let outer = parent
+            .children()
+            .find(|n| n.has_tag_name("rect"))
+            .unwrap_or_else(|| {
+                let boundary = doc
+                    .descendants()
+                    .find(|n| {
+                        n.attribute("data-route-table").is_some()
+                            && n.attribute("data-route-table") == parent.attribute("id")
+                    })
+                    .unwrap();
+                let rects: Vec<_> = boundary
+                    .children()
+                    .filter(|n| n.has_tag_name("rect"))
+                    .collect();
+                assert_eq!(rects.len(), 1);
+                assert_eq!(number(rects[0], "rx"), view::geometry::CONTAINER_RADIUS);
+                assert_eq!(
+                    rects[0]
+                        .attribute("stroke-width")
+                        .unwrap()
+                        .parse::<f64>()
+                        .unwrap()
+                        * 4.0,
+                    view::geometry::CONTAINER_STROKE as f64
+                );
+                rects[0]
+            });
         assert!(x > number(outer, "x") && x + width < number(outer, "x") + number(outer, "width"));
         assert!(
             y > number(outer, "y") && y + height < number(outer, "y") + number(outer, "height")

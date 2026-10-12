@@ -1,6 +1,245 @@
 use super::*;
 
 #[test]
+fn border_tracks_move_a_whole_corridor_clear_of_both_frame_axes() {
+    use crate::model::EdgeKind;
+    for horizontal in [true, false] {
+        let point = |x, y| {
+            if horizontal {
+                Point { x, y }
+            } else {
+                Point { x: y, y: x }
+            }
+        };
+        let start = Port {
+            point: point(60, 200),
+            side: if horizontal {
+                Side::Right
+            } else {
+                Side::Bottom
+            },
+        };
+        let end = Port {
+            point: point(540, 200),
+            side: if horizontal { Side::Left } else { Side::Top },
+        };
+        let frame = Bounds {
+            origin: point(100, 200),
+            width: if horizontal { 400 } else { 300 },
+            height: if horizontal { 300 } else { 400 },
+        };
+        for kind in [
+            EdgeKind::Dependency,
+            EdgeKind::Association,
+            EdgeKind::Connection,
+        ] {
+            let mut scorer = Scorer::default();
+            scorer.set_borders(&[frame]);
+            scorer.set_kind(kind);
+            let candidates = candidates_with_clearances(
+                start,
+                end,
+                &[frame],
+                Some(&scorer),
+                [Terminal::plain(16); 2],
+            );
+            let preferred = vec![
+                start.point,
+                point(76, 200),
+                point(76, 190),
+                point(524, 190),
+                point(524, 200),
+                end.point,
+            ];
+            assert!(candidates.contains(&preferred));
+            let path = scorer.choose(candidates, &[frame]).unwrap();
+            assert!(valid(&path, start, end, &[frame]));
+            assert!(path.len() > 2 && path.len() <= 6, "{kind:?}: {path:?}");
+            assert!(path.windows(2).any(|p| {
+                if horizontal {
+                    p[0].y == p[1].y && p[0].y <= 194 && p[0].x.abs_diff(p[1].x) >= 400
+                } else {
+                    p[0].x == p[1].x && p[0].x <= 194 && p[0].y.abs_diff(p[1].y) >= 400
+                }
+            }));
+            assert_eq!(scorer.border_metrics(&path).minimum_deficit, 0);
+            assert!(
+                scorer.readability_cost(&path) < scorer.readability_cost(&[start.point, end.point])
+            );
+            assert!(crate::layout::metrics::measure(&[path]).total_path_length <= 512);
+        }
+    }
+}
+
+#[test]
+fn distant_frames_do_not_expand_the_routing_grid() {
+    let start = Point { x: 60, y: 200 };
+    let end = Point { x: 540, y: 200 };
+    let frame = Bounds {
+        origin: Point { x: 100, y: 200 },
+        width: 400,
+        height: 300,
+    };
+    let mut scorer = Scorer::default();
+    scorer.set_borders(&[frame]);
+    let baseline = search::search(start, end, &[], Some(&scorer), None).unwrap();
+    let points = search::GRID_POINT_COUNT.get();
+    let mut frames = vec![frame];
+    frames.extend((0..256).map(|index| Bounds {
+        origin: Point {
+            x: 10_000 + index * 1_000,
+            y: 10_000 + index * 800,
+        },
+        ..frame
+    }));
+    scorer.set_borders(&frames);
+    assert_eq!(
+        search::search(start, end, &[], Some(&scorer), None),
+        Some(baseline)
+    );
+    assert_eq!(search::GRID_POINT_COUNT.get(), points);
+}
+
+#[test]
+fn actual_marker_extent_keeps_short_facing_connections_straight() {
+    for (start, end, old_clearance, length) in [
+        (
+            Port {
+                point: Point { x: 200, y: 220 },
+                side: Side::Bottom,
+            },
+            Port {
+                point: Point { x: 200, y: 292 },
+                side: Side::Top,
+            },
+            42,
+            72,
+        ),
+        (
+            Port {
+                point: Point { x: 200, y: 220 },
+                side: Side::Right,
+            },
+            Port {
+                point: Point { x: 284, y: 220 },
+                side: Side::Left,
+            },
+            50,
+            84,
+        ),
+    ] {
+        let terminals = [start, end].map(|port| Terminal::marker(1, port.side));
+        let oversized = terminals.map(|terminal| Terminal {
+            clearance: old_clearance,
+            ..terminal
+        });
+        let direct = vec![start.point, end.point];
+        assert!(!valid_with_clearances(&direct, start, end, &[], oversized));
+        search::GRID_SEARCH_COUNT.set(0);
+        assert_eq!(
+            connect_with_clearances(start, end, &[], None, terminals),
+            Some(direct)
+        );
+        assert_eq!(cost_bound(start, end, terminals), length);
+        assert!(cost_bound(start, end, oversized) > length);
+        assert_eq!(search::GRID_SEARCH_COUNT.get(), 0);
+    }
+}
+
+#[test]
+fn vertical_markers_protect_their_full_width_and_preserve_obstacle_detours() {
+    let start = Port {
+        point: Point { x: 200, y: 220 },
+        side: Side::Bottom,
+    };
+    for number in [10, 100] {
+        let terminal = Terminal::marker(number, start.side);
+        let lateral = start.point.x + crate::layout::relationship_markers::width(number) / 2 - 1;
+        let end = Port {
+            point: Point { x: 500, y: 300 },
+            side: Side::Left,
+        };
+        let reentry = [
+            start.point,
+            Point { x: 200, y: 280 },
+            Point { x: lateral, y: 280 },
+            Point { x: lateral, y: 230 },
+            Point { x: 440, y: 230 },
+            Point { x: 440, y: 300 },
+            end.point,
+        ];
+        assert!(valid_with_clearance(&reentry, start, end, &[], 50));
+        assert!(!valid_with_clearances(
+            &reentry,
+            start,
+            end,
+            &[],
+            [terminal, Terminal::plain(50)],
+        ));
+
+        let end = Port {
+            point: Point { x: 200, y: 400 },
+            side: Side::Top,
+        };
+        let blocker = Bounds {
+            origin: Point { x: 190, y: 290 },
+            width: 20,
+            height: 30,
+        };
+        let terminals = [terminal, Terminal::marker(number, end.side)];
+        let path = connect_with_clearances(start, end, &[blocker], None, terminals).unwrap();
+        assert!(path.len() > 2);
+        assert!(valid_with_clearances(
+            &path,
+            start,
+            end,
+            &[blocker],
+            terminals
+        ));
+        assert!(
+            path.windows(2)
+                .all(|points| !crosses(points[0], points[1], blocker))
+        );
+        assert!(
+            path[1..path.len() - 1]
+                .iter()
+                .any(|point| { point.x.abs_diff(start.point.x) >= terminal.span / 2 })
+        );
+    }
+    assert!(terminal_corridors(start, start, [Terminal::plain(50); 2]).is_empty());
+}
+
+#[test]
+fn terminal_approaches_cannot_cross_the_other_end_marker() {
+    let start = Port {
+        point: Point { x: 250, y: 100 },
+        side: Side::Bottom,
+    };
+    let end = Port {
+        point: Point { x: 260, y: 240 },
+        side: Side::Left,
+    };
+    let path = vec![
+        start.point,
+        Point { x: 250, y: 300 },
+        Point { x: 180, y: 300 },
+        Point { x: 180, y: 240 },
+        end.point,
+    ];
+    let terminals = [Terminal::plain(16), Terminal::marker(100, end.side)];
+    assert!(valid(&path, start, end, &[]));
+    assert!(!valid_with_clearances(&path, start, end, &[], terminals));
+    let reversed = path.into_iter().rev().collect::<Vec<_>>();
+    assert!(!valid_with_clearances(
+        &reversed,
+        end,
+        start,
+        &[],
+        [terminals[1], terminals[0]],
+    ));
+}
+
+#[test]
 fn target_side_change_preserves_source_offset() {
     let source = Bounds {
         origin: Point { x: 100, y: 100 },
@@ -238,9 +477,16 @@ fn bounded_selection_matches_exhaustive_candidate_cost() {
         for (a, b) in candidate_pairs(source, target) {
             let start = source.port(a, 50);
             let end = target.port(b, 50);
-            for path in candidates_impl::<false>(start, end, &obstacles, Some(&scorer), [16; 2]) {
+            for path in candidates_impl::<false>(
+                start,
+                end,
+                &obstacles,
+                Some(&scorer),
+                [Terminal::plain(16); 2],
+            ) {
                 assert!(
-                    cost_bound(start, end, [16; 2]) <= Scorer::default().readability_cost(&path)
+                    cost_bound(start, end, [Terminal::plain(16); 2])
+                        <= Scorer::default().readability_cost(&path)
                 );
                 all.push(path);
             }
@@ -273,7 +519,14 @@ fn grid_pruning_preserves_exhaustive_quality_and_marker_clearance() {
             side: Side::Top,
         },
     ] {
-        for clearances in [[16, 16], [16, 60], [60, 60]] {
+        for terminals in [
+            [Terminal::plain(16); 2],
+            [Terminal::plain(16), Terminal::marker(100, end.side)],
+            [
+                Terminal::marker(100, start.side),
+                Terminal::marker(100, end.side),
+            ],
+        ] {
             for occupied in [false, true] {
                 let mut scorer = Scorer::default();
                 if occupied {
@@ -286,23 +539,17 @@ fn grid_pruning_preserves_exhaustive_quality_and_marker_clearance() {
                 }
                 let selected = scorer
                     .choose(
-                        candidates_impl::<true>(start, end, &[], Some(&scorer), clearances),
+                        candidates_impl::<true>(start, end, &[], Some(&scorer), terminals),
                         &[],
                     )
                     .unwrap();
                 let exhaustive = scorer
                     .choose(
-                        candidates_impl::<false>(start, end, &[], Some(&scorer), clearances),
+                        candidates_impl::<false>(start, end, &[], Some(&scorer), terminals),
                         &[],
                     )
                     .unwrap();
-                assert!(valid_with_clearances(
-                    &selected,
-                    start,
-                    end,
-                    &[],
-                    clearances
-                ));
+                assert!(valid_with_clearances(&selected, start, end, &[], terminals));
                 assert_eq!(scorer.score(&selected, &[]), scorer.score(&exhaustive, &[]));
             }
         }

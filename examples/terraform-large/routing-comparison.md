@@ -25,8 +25,10 @@ aggregate counts alone therefore did not identify the visual regression.
 The private-b subnet → DB subnet group route loses two unnecessary bends.
 The two remaining offset-shaped routes (DB subnet group → DB instance and shared
 SG → ECS) are already shortest-length, two-bend routes for their fixed ports.
-Private-a subnet → private Route Table retains a 29px reversal because its
-numbered top port needs 50px of straight approach. Private-b's three-bend Route
+At #291, private-a subnet → private Route Table retained a 29px reversal because
+the previous graph-wide reservation imposed a 50px approach on its numbered top
+port. #322 uses the actual badge height and a 36px top/bottom approach; the table
+below records the historical #291 geometry. Private-b's three-bend Route
 Table route avoids the private-a container; the occlusion-blind one-bend reference
 passes behind that container. The NAT Route's backtracking increases by 2px with
 the changed geometry while total length falls by 50px; it retains five bends and

@@ -18,6 +18,8 @@ pub(super) fn render(
     if cards.is_empty() {
         return String::new();
     }
+    let radius = crate::view::geometry::ROUTE_RADIUS;
+    let stroke = crate::view::geometry::ROUTE_STROKE as f64 / 4.0;
     let mut svg = format!(
         r##"<g data-routes="true"><text x="{x}" y="{y}" font-size="12" font-weight="700" fill="#475569">Routes</text>"##
     );
@@ -65,7 +67,7 @@ pub(super) fn render(
             .map(|r| r.text.as_str())
             .collect::<Vec<_>>()
             .join("; ");
-        writeln!(svg, r#"<title>{}; {}{}{}{} </title><rect x="{x}" y="{y}" width="{WIDTH}" height="{height}" rx="6" fill="{background}" stroke="{border}"/>"#,
+        writeln!(svg, r#"<title>{}; {}{}{}{} </title><rect x="{x}" y="{y}" width="{WIDTH}" height="{height}" rx="{radius}" fill="{background}" stroke="{border}" stroke-width="{stroke}"/>"#,
             super::escape(&details), super::operations::label(node.action, &node.metadata), super::escape(&super::operations::details(&node.metadata)),
             node.previous_address.as_ref().map(|a| format!("; moved from: {}", super::escape(a))).unwrap_or_default(),
             node.deposed_key.as_ref().map(|a| format!("; deposed: {}", super::escape(a))).unwrap_or_default()).unwrap();

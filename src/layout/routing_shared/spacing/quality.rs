@@ -82,8 +82,19 @@ pub(super) fn improves(
     graph: &Graph,
     before: &[Vec<Point>],
     after: &[Vec<Point>],
+    before_borders: &[super::super::borders::Metrics],
+    after_borders: &[super::super::borders::Metrics],
     expanded: bool,
 ) -> bool {
+    if before_borders.iter().zip(after_borders).any(|(a, b)| {
+        b.minimum_deficit > a.minimum_deficit
+            || b.minimum.unwrap_or(i64::MAX)
+                < a.minimum
+                    .unwrap_or(i64::MAX)
+                    .min((super::super::borders::MINIMUM * 4) as i64)
+    }) {
+        return false;
+    }
     let clarity = |paths: &[Vec<Point>]| {
         paths.iter().fold((0, 0, 0, 0), |a, p| {
             let s = Shape::measure(p);
@@ -101,8 +112,13 @@ pub(super) fn improves(
     let length_after: usize = after.iter().map(|p| length(p)).sum();
     let proximity_before = measure(graph, before);
     let proximity_after = measure(graph, after);
+    let cost = |proximity: &Metrics, length: usize, borders: &[super::super::borders::Metrics]| {
+        (proximity.deficit / 4) as u128
+            + length as u128
+            + borders.iter().map(|m| m.cost()).sum::<u128>()
+    };
     b < a
         || (b == a
-            && proximity_after.deficit / 4 + length_after + usize::from(expanded) * 32
-                < proximity_before.deficit / 4 + length_before)
+            && cost(&proximity_after, length_after, after_borders) + u128::from(expanded) * 32
+                < cost(&proximity_before, length_before, before_borders))
 }
