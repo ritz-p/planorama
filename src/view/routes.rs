@@ -6,6 +6,17 @@ pub(crate) const LINE_LIMIT: usize = (WIDTH - 24) / 8;
 pub(crate) struct Row {
     pub text: String,
     pub target: Option<TerraformEntityId>,
+    address: bool,
+}
+
+impl Row {
+    pub(crate) fn lines<'a>(&self, text: &'a str) -> Vec<&'a str> {
+        if self.address {
+            super::text::wrap_address(text, LINE_LIMIT)
+        } else {
+            super::text::wrap(text, LINE_LIMIT)
+        }
+    }
 }
 
 pub(crate) struct Card<'a> {
@@ -19,13 +30,9 @@ impl Card<'_> {
         24 + self
             .rows
             .iter()
-            .map(|r| lines(&r.text).len() * 18)
+            .map(|r| r.lines(&r.text).len() * 18)
             .sum::<usize>()
     }
-}
-
-pub(crate) fn lines(text: &str) -> Vec<&str> {
-    super::text::wrap(text, LINE_LIMIT)
 }
 
 pub(crate) fn owner(graph: &Graph, node: &Node) -> Option<usize> {
@@ -53,6 +60,7 @@ fn details(entry: &RouteEntry) -> Vec<Row> {
                 entry.destination.as_deref().unwrap_or("unresolved")
             ),
             target: None,
+            address: false,
         },
         Row {
             text: match (&entry.target_kind, &entry.target) {
@@ -60,6 +68,7 @@ fn details(entry: &RouteEntry) -> Vec<Row> {
                 _ => "Target: unresolved / unsupported".into(),
             },
             target: entry.target.clone(),
+            address: entry.target_kind.is_some() && entry.target.is_some(),
         },
     ]
 }
@@ -76,12 +85,14 @@ pub(crate) fn cards(graph: &Graph, parent: usize) -> Vec<Card<'_>> {
                 "Route details".into()
             },
             target: None,
+            address: false,
         }];
         rows.extend(details(entry));
         if !inline && node.routes.owner.is_none() {
             rows.push(Row {
                 text: "Route Table: unresolved".into(),
                 target: None,
+                address: false,
             });
         }
         cards.push(Card {
@@ -105,6 +116,7 @@ pub(crate) fn cards(graph: &Graph, parent: usize) -> Vec<Card<'_>> {
                 format!("{:?}", child.action).to_lowercase()
             ),
             target: None,
+            address: true,
         }];
         for entry in &child.routes.entries {
             let mut detail = details(entry);
@@ -113,6 +125,7 @@ pub(crate) fn cards(graph: &Graph, parent: usize) -> Vec<Card<'_>> {
                 detail.push(Row {
                     text: "Next hop".into(),
                     target: None,
+                    address: false,
                 });
             }
             rows.extend(detail);
@@ -146,6 +159,7 @@ pub(crate) fn cards(graph: &Graph, parent: usize) -> Vec<Card<'_>> {
             rows.push(Row {
                 text: format!("{label}: {}", other.address),
                 target: other.entity.provenance.first().cloned(),
+                address: true,
             });
         }
         cards.push(Card {

@@ -1,5 +1,6 @@
+pub(super) use crate::icons::for_node;
 use crate::{
-    icons::{Provider, ResourceIcon, icon_for},
+    icons::{ResourceIcon, SIZE},
     model::Node,
 };
 use std::collections::BTreeMap;
@@ -9,13 +10,7 @@ use std::fmt::Write;
 #[path = "../../tests/unit/svg/icons.rs"]
 mod tests;
 
-pub(super) const SIZE: usize = 24;
-pub(super) const GAP: usize = 8;
 const NOTICE: &str = include_str!("../../assets/icons/aws/NOTICE.txt");
-
-pub(super) fn for_node(node: &Node) -> Option<ResourceIcon> {
-    icon_for(Provider::from_identity(&node.provider), &node.resource_type)
-}
 
 pub(super) fn definitions(nodes: &[Node]) -> String {
     let used: BTreeMap<_, _> = nodes

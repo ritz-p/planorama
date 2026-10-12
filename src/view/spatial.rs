@@ -42,7 +42,7 @@ pub(crate) fn project(source: &Graph) -> Projection {
                     .count();
                 node.routes.reserved_height = node.routes.reserved_height.max(
                     (41 + incident * crate::layout::relationship_markers::PORT_SPACING)
-                        .saturating_sub(crate::layout::NODE_HEIGHT),
+                        .saturating_sub(super::card::measure(&node).header_height),
                 );
             }
             node

@@ -1,6 +1,6 @@
-use super::annotations::wrap;
 use crate::layout::{Bounds, Layout};
 use crate::model::{ArchitectureId, EdgeKind, Graph, RelationshipProvenance, TerraformEntityId};
+use crate::view::text::wrap_address;
 use std::collections::BTreeMap;
 use std::fmt::Write;
 
@@ -175,7 +175,7 @@ impl<'a> Index<'a> {
                 for source in &entry.sources {
                     let text = display(source);
                     writeln!(svg, r##"<text data-source-address="{}" font-size="12" fill="#334155"><title>{}</title>"##, super::escape(&source.address), super::escape(&text)).unwrap();
-                    for line in wrap(&text, (width - text_x - 16) / 8) {
+                    for line in wrap_address(&text, (width - text_x - 16) / 8) {
                         writeln!(svg, "<tspan x=\"{text_x}\" y=\"{y}\" xml:space=\"preserve\">{}</tspan>", super::escape(line)).unwrap();
                         y += 20;
                     }

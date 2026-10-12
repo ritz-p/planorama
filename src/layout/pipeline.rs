@@ -1,4 +1,4 @@
-use super::{Bounds, ContainmentTree, Layout, NODE_HEIGHT, containers, placement, rank, routing};
+use super::{Bounds, ContainmentTree, Layout, containers, placement, rank, routing};
 use crate::model::architecture::{Graph, ResourceRole};
 
 enum Strategy {
@@ -51,9 +51,7 @@ fn place_sized(graph: &Graph, tree: ContainmentTree, heights: Option<Vec<usize>>
                 graph
                     .nodes
                     .iter()
-                    .map(|n| {
-                        NODE_HEIGHT + crate::view::references::height(n) + n.routes.reserved_height
-                    })
+                    .map(|n| crate::view::card::measure(n).height)
                     .collect()
             }
         });
@@ -161,9 +159,7 @@ fn refine<'a>(graph: &'a Graph, placed: &mut Placed<'a>) {
             let inferred = placed.layout.containment.parents[node]
                 .is_some_and(|parent| graph.derived_containment(parent, node));
             height.max(
-                NODE_HEIGHT
-                    + crate::view::references::height(&graph.nodes[node])
-                    + graph.nodes[node].routes.reserved_height
+                crate::view::card::measure(&graph.nodes[node]).height
                     + if inferred { 18 } else { 0 },
             )
         })

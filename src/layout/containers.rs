@@ -1,4 +1,4 @@
-use super::{Bounds, Layout, NODE_HEIGHT, Point};
+use super::{Bounds, Layout, Point};
 use crate::model::architecture::{Graph, ResourceRole};
 
 pub(super) mod affinity;
@@ -159,11 +159,8 @@ pub(super) fn header_heights(graph: &Graph, tree: &super::ContainmentTree) -> Ve
         .map(|(node, edges)| {
             let inferred =
                 tree.parents[node].is_some_and(|parent| graph.derived_containment(parent, node));
-            (NODE_HEIGHT
-                + crate::view::references::height(&graph.nodes[node])
-                + graph.nodes[node].routes.reserved_height
-                + if inferred { 18 } else { 0 })
-            .max(40 + super::relationship_markers::port_span(edges, &numbered))
+            (crate::view::card::measure(&graph.nodes[node]).height + if inferred { 18 } else { 0 })
+                .max(40 + super::relationship_markers::port_span(edges, &numbered))
         })
         .collect()
 }

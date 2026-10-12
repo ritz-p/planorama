@@ -106,13 +106,10 @@ pub(super) fn render(graph: &Graph, node: &Node, x: usize, y: usize, width: usiz
             .unwrap();
         }
         write!(svg, "<title>{}</title>", super::escape(&description(row))).unwrap();
-        for (line, text) in crate::view::text::wrap(&label, text_width / 8)
-            .iter()
-            .enumerate()
-        {
+        for (line, text) in row.lines(&label, text_width).iter().enumerate() {
             writeln!(
                 svg,
-                r##"<text x="{x}" y="{}" font-size="11" fill="#334155">{}</text>"##,
+                r##"<text x="{x}" y="{}" font-size="11" fill="#334155" xml:space="preserve">{}</text>"##,
                 row_y + line * LINE_HEIGHT,
                 super::escape(text)
             )

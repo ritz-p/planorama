@@ -73,11 +73,12 @@ Moving these two CloudWatch cards reduced routed paths from 39 to 37 (5.1%).
 At that step the spatial card envelope stayed 3416 × 2062 (7,043,792 square pixels),
 and the canvas stayed 3556 × 3392: other resources determined the outer bounds.
 
-Full Uses/Dependencies labels subsequently expanded the canvas from 3556 × 3392
-to 4196 × 3481. ECS Service is 640 × 210 pixels and visibly includes
+Full Uses/Dependencies labels visibly include
 `Task definition: module.application.aws_ecs_task_definition.app` and
 `Cluster: module.application.aws_ecs_cluster.app` without truncation. Reference
-rows have no count limit; long addresses wrap. Routed paths remain 37.
+rows have no count limit. Long headings and references wrap at address-element
+boundaries where possible, and their cards reserve the resulting height before
+packing and routing.
 
 SG cards remain Policies, but their attachments stay dependencies because this
 synthetic fixture has no SG collection ID evidence. The dedicated
