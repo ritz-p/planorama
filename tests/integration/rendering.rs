@@ -770,37 +770,79 @@ fn additional_dense_and_provider_snapshots_match_the_renderer() {
 }
 
 #[test]
-fn relationship_index_example_keeps_twenty_one_entries_in_three_top_cards() {
-    let svg = render(include_bytes!("../fixtures/relationship-index-plan.json"));
-    assert_eq!(
-        svg,
-        include_str!("../../examples/relationship-index.svg").replace("\r\n", "\n")
-    );
-    let document = roxmltree::Document::parse(&svg).unwrap();
-    let cards: Vec<_> = document
-        .descendants()
-        .filter(|n| n.attribute("data-relationship-index").is_some())
-        .collect();
-    assert_eq!(cards.len(), 3);
-    for (card, expected) in cards.iter().zip([10, 10, 1]) {
+fn relationship_index_examples_use_available_width_for_complete_entry_cards() {
+    for (input, name, count, columns) in [
+        (
+            include_bytes!("../fixtures/relationship-index-plan.json").as_slice(),
+            "relationship-index",
+            21usize,
+            2,
+        ),
+        (
+            include_bytes!("../fixtures/relationship-index-wide-plan.json").as_slice(),
+            "relationship-index-wide",
+            40,
+            4,
+        ),
+    ] {
+        let svg = render(input);
+        let snapshot =
+            std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join(format!("examples/{name}.svg"));
         assert_eq!(
-            card.descendants()
-                .filter(|n| n.attribute("data-relationship-entry").is_some())
-                .count(),
-            expected
+            svg,
+            std::fs::read_to_string(snapshot)
+                .unwrap()
+                .replace("\r\n", "\n")
         );
-        assert!(
-            card.ancestors()
-                .any(|n| n.attribute("data-annotation-area").is_some())
+        let document = roxmltree::Document::parse(&svg).unwrap();
+        let cards: Vec<_> = document
+            .descendants()
+            .filter(|n| n.attribute("data-relationship-index").is_some())
+            .collect();
+        assert_eq!(cards.len(), count.div_ceil(10));
+        let mut rows = Vec::new();
+        for (i, card) in cards.iter().enumerate() {
+            let numbers: Vec<_> = card
+                .descendants()
+                .filter_map(|n| n.attribute("data-relationship-entry"))
+                .map(|number| number.parse::<usize>().unwrap())
+                .collect();
+            assert_eq!(
+                numbers,
+                (i * 10 + 1..=count.min((i + 1) * 10)).collect::<Vec<_>>()
+            );
+            assert!(card.ancestors().any(|n| {
+                n.attribute("data-annotation-section") == Some("Relationship Resources")
+            }));
+            let position: Vec<usize> = card
+                .parent()
+                .unwrap()
+                .attribute("transform")
+                .unwrap()
+                .trim_start_matches("translate(")
+                .trim_end_matches(')')
+                .split_whitespace()
+                .map(|value| value.parse().unwrap())
+                .collect();
+            if i % columns == 0 {
+                assert_eq!(position[0], 16);
+                if let Some(previous) = rows.last() {
+                    assert!(position[1] > *previous);
+                }
+                rows.push(position[1]);
+            } else {
+                assert_eq!(Some(&position[1]), rows.last());
+            }
+        }
+        assert_eq!(rows.len(), count.div_ceil(10 * columns));
+        assert_eq!(
+            document
+                .descendants()
+                .filter(|n| n.attribute("data-relationship-marker").is_some())
+                .count(),
+            count * 2
         );
     }
-    assert_eq!(
-        document
-            .descendants()
-            .filter(|n| n.attribute("data-relationship-marker").is_some())
-            .count(),
-        42
-    );
 }
 
 #[test]
