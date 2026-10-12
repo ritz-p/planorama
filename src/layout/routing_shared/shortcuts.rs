@@ -1,5 +1,6 @@
 use super::{Bounds, Point, Scorer, Simplification, ports, simple, simplify};
 use crate::layout::{Port, Side, relationship_markers::Terminal};
+use crate::model::EdgeKind;
 
 #[cfg(test)]
 pub(in crate::layout) fn simplify_routes(
@@ -13,7 +14,8 @@ pub(in crate::layout) fn simplify_routes(
         obstacles,
         |_| Vec::new(),
         |_| [Terminal::plain(16); 2],
-        &[],
+        |_| EdgeKind::Dependency,
+        Scorer::default(),
     );
 }
 
@@ -23,10 +25,10 @@ pub(in crate::layout) fn simplify_routes_with_clearances(
     obstacles: impl Fn(usize) -> Vec<Bounds>,
     soft: impl Fn(usize) -> Vec<super::scoring::Occluder>,
     terminals: impl Fn(usize) -> [Terminal; 2],
-    borders: &[Bounds],
+    kinds: impl Fn(usize) -> EdgeKind,
+    mut scorer: Scorer,
 ) {
-    let mut scorer = Scorer::default();
-    scorer.set_borders(borders);
+    scorer.truncate(0);
     for path in paths.iter() {
         scorer.insert(path.clone());
     }
@@ -35,6 +37,7 @@ pub(in crate::layout) fn simplify_routes_with_clearances(
             continue;
         }
         scorer.remove(index);
+        scorer.set_kind(kinds(index));
         scorer.set_soft(soft(index));
         paths[index] = simplify_path_with_clearances(
             std::mem::take(&mut paths[index]),

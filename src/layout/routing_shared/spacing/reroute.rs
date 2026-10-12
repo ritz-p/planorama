@@ -77,7 +77,7 @@ fn lane_candidates(
             || high
                 .min(corridor.high)
                 .saturating_sub(low.max(corridor.low))
-                < RUN
+                < if corridor.border { 1 } else { RUN }
         {
             continue;
         }
@@ -140,9 +140,14 @@ pub(super) fn apply(
         let end = terminal(seed, 1);
         let clearances =
             relationship_markers::terminals(graph, i, numbers[i], [start.side, end.side]);
-        let obstacles = barriers(graph, layout, i);
+        let obstacles = if plan.border {
+            border_barriers(graph, layout, i)
+        } else {
+            barriers(graph, layout, i)
+        };
         let mut scorer = Scorer::default();
-        scorer.set_borders(&layout.bounds);
+        scorer.set_layout(graph, layout);
+        scorer.set_kind(graph.edges[i].kind);
         for (other, path) in layout.paths.iter().enumerate() {
             if other != i {
                 scorer.insert(path.clone());
@@ -153,38 +158,35 @@ pub(super) fn apply(
             .iter()
             .map(|l| (plan.horizontal, l.coordinate))
             .collect();
-        let reservations: Vec<_> = plan
-            .lanes
-            .iter()
-            .filter(|l| l.edge != i)
-            .map(|l| {
-                let low = l.coordinate.saturating_sub(PREFERRED - 1);
-                let bounds = if plan.horizontal {
-                    Bounds {
-                        origin: Point {
-                            x: plan.low,
-                            y: low,
-                        },
-                        width: plan.high - plan.low,
-                        height: 2 * (PREFERRED - 1),
-                    }
-                } else {
-                    Bounds {
-                        origin: Point {
-                            x: low,
-                            y: plan.low,
-                        },
-                        width: 2 * (PREFERRED - 1),
-                        height: plan.high - plan.low,
-                    }
-                };
-                Occluder {
-                    bounds,
-                    cost: 1,
-                    step: 1,
+        let mut reservations =
+            crate::layout::containers::routing::soft_obstacles(layout, &graph.edges[i]);
+        reservations.extend(plan.lanes.iter().filter(|l| l.edge != i).map(|l| {
+            let low = l.coordinate.saturating_sub(PREFERRED - 1);
+            let bounds = if plan.horizontal {
+                Bounds {
+                    origin: Point {
+                        x: plan.low,
+                        y: low,
+                    },
+                    width: plan.high - plan.low,
+                    height: 2 * (PREFERRED - 1),
                 }
-            })
-            .collect();
+            } else {
+                Bounds {
+                    origin: Point {
+                        x: low,
+                        y: plan.low,
+                    },
+                    width: 2 * (PREFERRED - 1),
+                    height: plan.high - plan.low,
+                }
+            };
+            Occluder {
+                bounds,
+                cost: 1,
+                step: 1,
+            }
+        }));
         scorer.set_soft(reservations);
         let mut candidates = super::super::simple::candidates(start.point, end.point);
         if let Some(lane) = plan.lanes.iter().find(|l| l.edge == i) {
@@ -194,12 +196,11 @@ pub(super) fn apply(
             candidates.push(seed.clone());
         }
         let bound = ports::cost_bound(start, end, clearances);
-        if expanded
+        if (expanded || plan.border)
             && !candidates.iter().any(|p| {
                 let s = Shape::measure(p);
                 s.fits(baseline[i])
-                    && s.length as u128 + s.bends as u128 * super::super::scoring::BEND_COST
-                        == bound
+                    && scorer.attains_bound(p, bound)
                     && ports::valid_with_clearances(p, start, end, &obstacles, clearances)
                     && layout
                         .paths
@@ -229,6 +230,7 @@ pub(super) fn apply(
             );
             let shape = Shape::measure(&candidate);
             if !shape.fits(baseline[i])
+                || !scorer.safe_border_change(seed, &candidate)
                 || candidate
                     .iter()
                     .any(|p| p.x >= layout.width || p.y >= layout.height)

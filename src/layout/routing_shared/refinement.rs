@@ -161,7 +161,7 @@ pub(in crate::layout) fn refine(graph: &Graph, layout: &mut Layout<'_>) {
             terminals[a].as_mut().unwrap()[ae] = bp;
             terminals[b].as_mut().unwrap()[be] = ap;
             let mut scorer = Scorer::default();
-            scorer.set_borders(&layout.bounds);
+            scorer.set_layout(graph, layout);
             for (i, path) in layout.paths.iter().enumerate() {
                 if i != a && i != b {
                     scorer.insert(path.clone());
@@ -170,6 +170,10 @@ pub(in crate::layout) fn refine(graph: &Graph, layout: &mut Layout<'_>) {
             let mut replacements = Vec::new();
             for i in [a, b] {
                 let edge = &graph.edges[i];
+                scorer.set_kind(edge.kind);
+                scorer.set_soft(crate::layout::containers::routing::soft_obstacles(
+                    layout, edge,
+                ));
                 let mut obstacles = crate::layout::containers::routing::obstacles(layout, edge);
                 obstacles.extend(
                     layout
@@ -225,9 +229,10 @@ pub(in crate::layout) fn refine(graph: &Graph, layout: &mut Layout<'_>) {
                     &scorer,
                     clearances[i],
                 );
-                if path
-                    .iter()
-                    .any(|p| p.x >= layout.width || p.y >= layout.height)
+                if !scorer.safe_border_change(&layout.paths[i], &path)
+                    || path
+                        .iter()
+                        .any(|p| p.x >= layout.width || p.y >= layout.height)
                 {
                     break;
                 }

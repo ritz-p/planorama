@@ -157,6 +157,23 @@ growth budget and keep clean two-bend paths with residual proximity. Separate
 checks protect shared trunks and verify rollback of paths, junctions, scopes and
 bands when expanded routing cannot be accepted.
 
+## Visible border clearance
+
+#317 adds a separate 4px minimum and 8px preferred empty gap between visible
+relationship and frame strokes. The final pass shares its six-attempt and 64px
+per-axis budgets with parallel-line spacing. It can act on one path and short
+contacts, using actual card/container/Route border widths and rounded geometry.
+Covered path pieces remain masked; visible exterior paths retain their border
+cost. Minimum-gap regressions, extra bends, S-jogs and excessive detours reject a
+spacing change, with complete geometry rollback when necessary.
+
+The focused single-path fixture uses a 12px gap between cards. An 8px expansion
+creates a 20px corridor and preserves a simple two-bend path for Dependency,
+Association and Connection strokes. Transposition and 32px/300px frame spans
+exercise both axes and short contacts. A protected junction prevents rerouting
+and leaves the original geometry and measurable residual deficit intact. These
+checks are separate from the historical #291 measurements above.
+
 ## Terraform validation
 
 The source was validated with Terraform 1.9.8 and AWS provider 5.100.0; the lock

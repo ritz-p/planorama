@@ -333,8 +333,12 @@ fn render_with_index(
             r#"<g id="{resource_id}" data-architecture-id="{architecture_id}" data-qualified-address="{qualified}" data-terraform-address="{address}"{deposed}{previous}{operation}{component}><title>{selected_title} — {operation_label}{operation_details}</title>"#,
         )
         .unwrap();
-        if node.role != crate::model::architecture::ResourceRole::Container {
-            writeln!(svg, r#"<rect x="{x}" y="{y}" width="{card_width}" height="{header_height}" rx="8" fill="{background}" stroke="{border}" stroke-width="1.5"{mode}/>"#).unwrap();
+        if node.role != crate::model::architecture::ResourceRole::Container
+            && !layout.containers.contains(&i)
+        {
+            let radius = crate::view::geometry::CARD_RADIUS;
+            let stroke = crate::view::geometry::CARD_STROKE as f64 / 4.0;
+            writeln!(svg, r#"<rect x="{x}" y="{y}" width="{card_width}" height="{header_height}" rx="{radius}" fill="{background}" stroke="{border}" stroke-width="{stroke}"{mode}/>"#).unwrap();
         }
         svg.push_str(&entities::badge(node.mode, x, y));
         writeln!(

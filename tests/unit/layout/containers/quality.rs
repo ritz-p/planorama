@@ -49,6 +49,8 @@ fn large_fixture_limits_each_edges_bends_and_valid_route_stretch() {
         let mut failures = Vec::new();
         let mut result = BTreeMap::new();
         let mut shapes = BTreeMap::new();
+        let clearance = crate::layout::routing_shared::spacing::border_metrics(graph, &layout);
+        let mut clearances = BTreeMap::new();
         let mut border_total = 0;
         for (index, edge) in graph.edges.iter().enumerate() {
             let path = &layout.paths[index];
@@ -66,6 +68,18 @@ fn large_fixture_limits_each_edges_bends_and_valid_route_stretch() {
             );
             let from = graph.nodes[edge.from].address.clone();
             let to = graph.nodes[edge.to].address.clone();
+            clearances.insert(
+                (
+                    from.clone(),
+                    to.clone(),
+                    edge.kind,
+                    edge.change.as_ref().map(|c| c.address.clone()),
+                ),
+                clearance[index],
+            );
+            if clearance[index].preferred_deficit > 0 {
+                eprintln!("border clearance {from} -> {to}: {:?}", clearance[index]);
+            }
             let shape = crate::layout::routing_shared::spacing::Shape::measure(path);
             assert_eq!(shape.s_jogs, 0, "{from} -> {to}: {shape:?}");
             if from.contains("aws_subnet.private_")
@@ -209,6 +223,13 @@ fn large_fixture_limits_each_edges_bends_and_valid_route_stretch() {
         }
         eprintln!("total border overlap={border_total}");
         eprintln!(
+            "visible border clearance: minimum_quarter_px={:?}; close_length={}; minimum_deficit={}; preferred_deficit={}",
+            clearance.iter().filter_map(|m| m.minimum).min(),
+            clearance.iter().map(|m| m.close_length).sum::<usize>(),
+            clearance.iter().map(|m| m.minimum_deficit).sum::<u128>(),
+            clearance.iter().map(|m| m.preferred_deficit).sum::<u128>(),
+        );
+        eprintln!(
             "per-edge: count={}, max_bends={}, max_excess={}, max_stretch={:.3}, extreme_routes={}",
             result.len(),
             result.values().map(|m| m.bends).max().unwrap_or(0),
@@ -224,7 +245,7 @@ fn large_fixture_limits_each_edges_bends_and_valid_route_stretch() {
             failures.len()
         );
         assert!(failures.is_empty(), "{}", failures.join("\n"));
-        (result, shapes)
+        (result, shapes, clearances)
     };
     let original = snapshot(&graph);
     graph.edges.reverse();

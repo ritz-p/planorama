@@ -50,17 +50,19 @@ impl Masks {
 
     pub fn definitions(&self, layout: &Layout<'_>) -> String {
         let mut svg = String::new();
+        let padding = crate::view::geometry::MASK_PADDING;
+        let radius = crate::view::geometry::CONTAINER_RADIUS + padding;
         for (index, nodes) in self.groups.iter().enumerate() {
             writeln!(svg, r#"<mask id="container-occlusion-{index}" maskUnits="userSpaceOnUse" maskContentUnits="userSpaceOnUse" x="0" y="0" width="{}" height="{}" style="mask-type:luminance"><rect width="{}" height="{}" fill="white"/>"#, layout.width, layout.height, layout.width, layout.height).unwrap();
             for &node in nodes {
                 let bounds = layout.bounds[node];
                 writeln!(
                     svg,
-                    r#"<rect x="{}" y="{}" width="{}" height="{}" rx="14" fill="black"/>"#,
-                    bounds.origin.x.saturating_sub(2),
-                    bounds.origin.y.saturating_sub(2),
-                    bounds.width + 4,
-                    bounds.height + 4
+                    r#"<rect x="{}" y="{}" width="{}" height="{}" rx="{radius}" fill="black"/>"#,
+                    bounds.origin.x.saturating_sub(padding),
+                    bounds.origin.y.saturating_sub(padding),
+                    bounds.width + padding * 2,
+                    bounds.height + padding * 2
                 )
                 .unwrap();
             }

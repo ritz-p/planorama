@@ -14,29 +14,90 @@ pub(super) struct Corridor {
     pub low: usize,
     pub high: usize,
     pub lanes: Vec<Lane>,
+    pub border: bool,
+    pub(super) minimum_margin: usize,
+    pub(super) preferred_margin: usize,
+    pub(super) urgent: bool,
+    pub(super) hidden: BTreeSet<usize>,
+}
+
+fn join(groups: &mut Vec<Vec<Segment>>, mut joined: Vec<Segment>) {
+    let mut i = 0;
+    while i < groups.len() {
+        if groups[i].iter().any(|s| {
+            joined
+                .iter()
+                .any(|t| s.edge == t.edge && s.index == t.index)
+        }) {
+            joined.extend(groups.remove(i));
+            i = 0;
+        } else {
+            i += 1;
+        }
+    }
+    joined.sort_by_key(|s| (s.edge, s.index));
+    let mut merged: Vec<Segment> = Vec::new();
+    for segment in joined {
+        if let Some(last) = merged.last_mut() {
+            if last.edge == segment.edge && last.index == segment.index {
+                last.low = last.low.min(segment.low);
+                last.high = last.high.max(segment.high);
+                continue;
+            }
+        }
+        merged.push(segment);
+    }
+    groups.push(merged);
 }
 
 pub(super) fn corridors(graph: &Graph, layout: &Layout<'_>) -> Vec<Corridor> {
     let pairs = pairs(graph, &layout.paths, PREFERRED - 1);
     let mut groups: Vec<Vec<Segment>> = Vec::new();
     for (a, b, _) in pairs {
-        let mut joined = vec![a, b];
-        let mut i = 0;
-        while i < groups.len() {
-            if groups[i].iter().any(|s| {
-                joined
-                    .iter()
-                    .any(|t| s.edge == t.edge && s.index == t.index)
-            }) {
-                joined.extend(groups.remove(i));
-                i = 0;
-            } else {
-                i += 1;
-            }
+        join(&mut groups, vec![a, b]);
+    }
+    let mut border_demand = BTreeMap::<_, (usize, usize, bool)>::new();
+    let mut contact_frames = BTreeMap::<_, BTreeSet<usize>>::new();
+    let masks: Vec<_> = graph
+        .edges
+        .iter()
+        .map(|edge| layout.occluders(edge))
+        .collect();
+    let mut scorer = super::super::scoring::Scorer::default();
+    scorer.set_layout(graph, layout);
+    for (edge, path) in layout.paths.iter().enumerate() {
+        if path.len() < 2 {
+            continue;
         }
-        joined.sort_by_key(|s| (s.edge, s.index));
-        joined.dedup_by_key(|s| (s.edge, s.index));
-        groups.push(joined);
+        scorer.set_kind(graph.edges[edge].kind);
+        scorer.set_soft(crate::layout::containers::routing::soft_obstacles(
+            layout,
+            &graph.edges[edge],
+        ));
+        let urgent = scorer.border_metrics(path).minimum_deficit > 0;
+        for contact in scorer.border_contacts(path) {
+            if let Some(node) = contact.frame.node {
+                contact_frames
+                    .entry((edge, contact.segment))
+                    .or_default()
+                    .insert(node);
+            }
+            let demand = border_demand.entry((edge, contact.segment)).or_default();
+            demand.0 = demand.0.max(contact.minimum);
+            demand.1 = demand.1.max(contact.preferred);
+            demand.2 |= urgent;
+            join(
+                &mut groups,
+                vec![Segment {
+                    edge,
+                    index: contact.segment,
+                    horizontal: contact.horizontal,
+                    coordinate: contact.coordinate,
+                    low: contact.low,
+                    high: contact.high,
+                }],
+            );
+        }
     }
     let identity = |edge: usize| {
         let e = &graph.edges[edge];
@@ -62,18 +123,55 @@ pub(super) fn corridors(graph: &Graph, layout: &Layout<'_>) -> Vec<Corridor> {
                 });
             }
         }
-        if lanes.len() < 2 || lanes.len() > 16 {
+        let border = group
+            .iter()
+            .any(|s| border_demand.contains_key(&(s.edge, s.index)));
+        if (lanes.len() < 2 && !border) || lanes.len() > 16 {
             continue;
         }
+        let demand = group
+            .iter()
+            .filter_map(|s| border_demand.get(&(s.edge, s.index)))
+            .fold((0, 0, false), |a, b| {
+                (a.0.max(b.0), a.1.max(b.1), a.2 || b.2)
+            });
+        let line_margin = if lanes.len() > 1 { PREFERRED } else { 0 };
+        let visible_frames: BTreeSet<_> = group
+            .iter()
+            .filter_map(|s| contact_frames.get(&(s.edge, s.index)))
+            .flatten()
+            .copied()
+            .collect();
+        let hidden = if border {
+            (0..layout.bounds.len())
+                .filter(|node| {
+                    !visible_frames.contains(node)
+                        && lanes.iter().all(|lane| {
+                            masks[lane.edge]
+                                .iter()
+                                .any(|&parent| layout.containment.is_ancestor(parent, *node))
+                        })
+                })
+                .collect()
+        } else {
+            BTreeSet::new()
+        };
         result.push(Corridor {
             horizontal: group[0].horizontal,
             low: group.iter().map(|s| s.low).min().unwrap(),
             high: group.iter().map(|s| s.high).max().unwrap(),
             lanes,
+            border,
+            minimum_margin: line_margin.max(demand.0),
+            preferred_margin: line_margin.max(demand.1),
+            urgent: demand.2,
+            hidden,
         });
     }
     result.sort_by_key(|c| {
         (
+            !c.urgent,
+            !c.border,
             c.horizontal,
             c.lanes[0].original,
             c.low,
@@ -95,34 +193,50 @@ impl Corridor {
                 layout.width
             },
         );
-        for (n, b) in layout.bounds.iter().enumerate() {
-            let b = if layout.containers.contains(&n) {
-                b.header(layout.header_heights[n])
-            } else {
-                *b
-            };
-            let (from, to, near, far) = if self.horizontal {
-                (b.origin.x, b.right(), b.origin.y, b.origin.y + b.height)
-            } else {
-                (b.origin.y, b.origin.y + b.height, b.origin.x, b.right())
-            };
-            if to.min(self.high).saturating_sub(from.max(self.low)) < RUN {
+        for (n, frame) in layout.bounds.iter().enumerate() {
+            if frame.width == 0 || frame.height == 0 || self.hidden.contains(&n) {
                 continue;
             }
-            if far <= first {
-                low = low.max(far);
-            } else if near >= last {
-                high = high.min(near);
+            let container = layout.containers.contains(&n);
+            let bounds = if container && self.border {
+                vec![*frame, frame.header(layout.header_heights[n])]
+            } else if container {
+                vec![frame.header(layout.header_heights[n])]
             } else {
-                return None;
+                vec![*frame]
+            };
+            for b in bounds {
+                let (from, to, near, far) = if self.horizontal {
+                    (b.origin.x, b.right(), b.origin.y, b.origin.y + b.height)
+                } else {
+                    (b.origin.y, b.origin.y + b.height, b.origin.x, b.right())
+                };
+                if to.min(self.high).saturating_sub(from.max(self.low))
+                    < if self.border { 1 } else { RUN }
+                {
+                    continue;
+                }
+                let inside = container && self.border && b == *frame && near < first && last < far;
+                if inside {
+                    low = low.max(near);
+                    high = high.min(far);
+                    continue;
+                }
+                if far <= first {
+                    low = low.max(far);
+                } else if near >= last {
+                    high = high.min(near);
+                } else {
+                    return None;
+                }
             }
         }
-        Some((low, high))
+        (low <= high).then_some((low, high))
     }
 
     pub fn demand(&self, layout: &Layout<'_>) -> Option<(usize, usize)> {
         let (low, high) = self.gap(layout)?;
-        let required = (self.lanes.len() + 1) * PREFERRED;
+        let required = (self.lanes.len() - 1) * PREFERRED + 2 * self.preferred_margin;
         (high - low < required)
             .then_some((low + (high - low) / 2, required.saturating_sub(high - low)))
     }
@@ -133,8 +247,13 @@ impl Corridor {
         let span = (self.lanes.len() - 1) * PREFERRED;
         let mut start = (first + last).saturating_sub(span) / 2;
         if let Some((low, high)) = self.gap(layout) {
-            if high - low >= span + 2 * PREFERRED {
-                start = start.max(low + PREFERRED).min(high - PREFERRED - span);
+            let margin = if high - low >= span + 2 * self.preferred_margin {
+                self.preferred_margin
+            } else {
+                self.minimum_margin
+            };
+            if high - low >= span + 2 * margin {
+                start = start.max(low + margin).min(high - margin - span);
             }
         }
         for (i, lane) in self.lanes.iter_mut().enumerate() {

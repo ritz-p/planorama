@@ -245,13 +245,25 @@ to the search grid, and are discarded after that search.
 Hard obstacle violations are rejected. Readability cost is path length plus 96 per
 bend, one per crossing, eight per overlapping pixel, two per occluded card pixel
 and one per two-pixel occluded container interval.
-Collinear frame overlap adds eight per pixel, indexed by horizontal/vertical
-frame coordinates. Twelve pixels at each corner are excluded to approximate
-rounded frames and tolerate localized contacts. A four-pixel contact costs less
-than one bend; perpendicular crossings and one-pixel offsets cost zero.
-Frames entirely hidden by a foreign-container mask do not contribute. Search,
-bundle comparison and final shortcutting share the frame cost; search includes
-nearby frame-offset coordinates so a small clearance can replace a long coincidence.
+Visible frame proximity uses a 4px minimum empty gap and an 8px preferred gap,
+separate from line-to-line spacing. Empty gap subtracts half of both stroke widths
+from the centerline distance. Dependency/Containment, Association and Connection
+strokes are 1.5px, 2px and 2.5px; ordinary cards, containers and embedded Route
+cards use 1.5px, 2px and 1px borders. Routing and SVG rendering share these widths
+and their corner radii. Distance is measured in quarter pixels, including rounded
+frame ends and a conservative bounded evaluation of final quadratic path corners.
+Short parallel contacts count without a 64px cutoff. Legitimate perpendicular
+crossings and endpoint approaches remain allowed.
+
+Each visible projected pixel adds its minimum-gap deficit in quarter pixels,
+plus its preferred-gap deficit divided by 16 and rounded up. The finite preference
+above 4px is deliberately weaker than an extra bend. Absolute projection intervals
+keep straight-segment costs additive when search subdivides them. Card fills and
+foreign-container masks exclude only covered path pieces; a visible line just
+outside a masked container still has a measurable gap to its border. Search,
+bundle comparison, shortcutting and final spacing use this same policy. Candidate
+tracks lie inside or outside nearby frames at the minimum and preferred distances;
+at most 32 coordinates per axis are added within 128px of the endpoint rectangle.
 A single perpendicular crossing cannot pay for an extra bend or even a two-pixel
 orthogonal detour. Equal-length, equal-bend alternatives prefer fewer crossings;
 collinear overlap remains a separate, stronger penalty. Search segment and junction
@@ -275,6 +287,8 @@ reduce weighted readability cost and reduce bends or length without increasing e
 Numbered routes retain badge-sized terminal lengths and protect their badge corridors;
 their middle segments can be shortened. Longitudinal clearance and lateral badge
 protection remain separate through refinement, shortcuts and final spacing.
+Shortcuts cannot introduce a gap below 4px or worsen an existing sub-4px minimum,
+and cannot increase the length-weighted minimum-gap deficit.
 Only the legitimate terminal approach may traverse its own reservation; the
 opposite terminal leg and middle segments cannot enter sideways or re-enter it.
 Bundles retain their shared geometry.
@@ -285,10 +299,16 @@ coordinate. Independent runs with at least 64px of overlapping projection target
 Perpendicular crossings and disjoint projections do not contribute. Coincident
 prefixes/suffixes connected to a common same-role terminal are shared trunks,
 but branches beyond their divergence are measured independently.
+The same pass also creates corridors from a single path's visible frame contacts,
+including contacts shorter than 64px. Minimum-gap violations take priority over
+preferred-gap adjustments. Fully masked frame constraints do not reserve extra
+capacity; visible exterior contacts still do.
 
 Connected groups of overlapping runs receive ordered lanes over their combined
 corridor before any route is changed. Geometric order and resource identity break
-ties. Demand is the lane span plus 16px clearance on each side. If capacity is
+ties. A line-to-line corridor reserves the lane span plus 16px on each side.
+A border-only corridor instead reserves its actual stroke-dependent preferred
+margin, usually 10px or 11px between centerlines. If capacity is
 insufficient, a legal inter-card gap can grow by the missing amount. Cards beyond
 the cut move together; enclosing containers, scope panels and bands grow without
 scaling resource cards. Cuts cannot split cards or headers. Terminal locations
@@ -296,8 +316,11 @@ move with their card boundaries, retaining side and order.
 
 Translated paths are only seeds. Impacted independent edges are routed again
 against the new card/header obstacles, terminal reservations and lane preferences.
-Whole straight, L-shaped and corridor routes compete; expansion can also invoke
-grid search with explicit lane coordinates. Completed candidates are shortcut and
+Whole straight, L-shaped and corridor routes compete. Moving an existing run moves
+its two corners together while retaining the other runs. Expansion and border-only
+repairs can also invoke bounded search with explicit lane and frame coordinates.
+Visible ordinary cards remain protected during final spacing; supported foreign
+container masks retain their routing role. Completed candidates are shortcut and
 validated. Intentional bundles and junctions retain their shared geometry under
 the same monotone gap transformation. A failed or non-improving transaction rolls
 back bounds, paths, junctions, scopes and bands together.
@@ -307,16 +330,22 @@ reversals, backtracking and offset/re-entry S-jogs against its original shape.
 None may increase; path length may grow by at most 128px. A short offset is measured
 relative to its neighboring legs, not treated as universally invalid near a port.
 Exact overlap cannot increase on rerouted edges. Whole-route clarity takes priority
-over the length-weighted spacing deficit, with route length and expansion cost
-breaking otherwise equal shape comparisons. The 16px target is soft: a clean
-residual near-parallel run beats new bends or an excessive detour.
+over the combined line-spacing and border-clearance cost, with route length and
+expansion cost breaking otherwise equal shape comparisons. Each edge's minimum
+border gap and minimum-gap deficit are compared with the original bounds, before
+any expansion; geometry growth cannot hide a regression in another route.
+Preferred gaps are soft: a clean residual near-parallel run beats new bends or an
+excessive detour. When preferred capacity cannot be obtained, the pass tries the
+minimum stroke-aware margin within the existing geometry.
 
 This pass runs once on the final graph, after embedded Route reconstruction,
 same-side port refinement, bundling and ordinary shortcutting. It permits at most
 two sweeps, six distinct corridor attempts, 16 lanes per corridor, 32 independently
-rerouted edges per attempt and 64px cumulative growth per axis. Unchanged geometry
-uses bounded whole-path candidates without grid search. Regression metrics disclose
-residual close length and minimum clearance; deterministic fallback preserves valid
+rerouted edges per attempt and 64px cumulative growth per axis, shared by border
+and line-to-line repairs. Unchanged line-only geometry uses whole-path candidates;
+border repairs may use the bounded frame tracks. Regression metrics disclose
+residual close length, visible minimum gap and both minimum/preferred deficits;
+deterministic fallback preserves valid
 routes when capacity, obstacles or budgets prevent improvement.
 
 SVG rendering consumes the final geometry and rounds corners without changing
@@ -358,6 +387,12 @@ so larger content-driven cards do not fail an obsolete absolute-distance cap. Th
 checks use the current card geometry and repeat after edge reordering; they do
 not require a path to pass behind a particular container.
 Performance measurements are documented in [benchmarks](benchmarks.md).
+The single-path border fixture covers all three relationship widths, both axes,
+and 32px/300px frame spans. A 12px card gap grows by 8px, followed by a coherent
+two-bend reroute into the resulting 20px corridor. A protected-junction variant
+retains measurable residual proximity and rolls back bounds, paths, scopes and
+bands together. Border tests cover 0/1/2/4/8px offsets, rounded corners, masked path
+pieces and additive search subdivision.
 Thread-local test counters verify that unobstructed horizontal/vertical side
 selection evaluates one pair without grid search, while blocked ports expand the
 search. Focused cases compare selected quality with exhaustive side evaluation.

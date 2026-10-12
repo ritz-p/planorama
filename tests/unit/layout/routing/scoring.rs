@@ -5,7 +5,7 @@ fn points(values: &[(usize, usize)]) -> Vec<Point> {
 }
 
 #[test]
-fn frame_cost_measures_collinearity_and_matches_subdivided_search() {
+fn frame_cost_penalizes_visible_near_misses_and_keeps_detours_bounded() {
     let frame = Bounds {
         origin: Point { x: 100, y: 100 },
         width: 200,
@@ -13,14 +13,13 @@ fn frame_cost_measures_collinearity_and_matches_subdivided_search() {
     };
     let mut scorer = Scorer::default();
     scorer.set_borders(&[frame]);
-    for (path, length) in [
-        (points(&[(120, 100), (280, 100)]), 160),
-        (points(&[(100, 120), (100, 280)]), 160),
-        (points(&[(50, 100), (150, 100)]), 38),
-        (points(&[(120, 100), (124, 100)]), 4),
-        (points(&[(120, 90), (120, 110)]), 0),
-        (points(&[(120, 99), (280, 99)]), 0),
-        (points(&[(100, 100), (110, 100)]), 0),
+    for path in [
+        points(&[(120, 100), (280, 100)]),
+        points(&[(100, 120), (100, 280)]),
+        points(&[(50, 100), (150, 100)]),
+        points(&[(120, 100), (124, 100)]),
+        points(&[(120, 99), (280, 99)]),
+        points(&[(100, 100), (108, 100)]),
     ] {
         let a = path[0];
         let b = path[1];
@@ -28,26 +27,29 @@ fn frame_cost_measures_collinearity_and_matches_subdivided_search() {
             x: (a.x + b.x) / 2,
             y: (a.y + b.y) / 2,
         };
-        assert_eq!(scorer.segment_cost(a, b), length * 8);
-        assert_eq!(
-            scorer.segment_cost(a, m) + scorer.segment_cost(m, b),
-            length * 8
-        );
-        assert_eq!(scorer.segment_cost(b, a), length * 8);
+        let cost = scorer.border_metrics(&path).cost();
+        assert!(cost > 0);
+        assert_eq!(scorer.segment_cost(a, b), cost);
+        assert_eq!(scorer.segment_cost(a, m) + scorer.segment_cost(m, b), cost);
+        assert_eq!(scorer.segment_cost(b, a), cost);
         assert_eq!(
             scorer.readability_cost(&path),
-            Scorer::default().readability_cost(&path) + length * 8
+            Scorer::default().readability_cost(&path) + cost
         );
     }
+    assert_eq!(
+        scorer.segment_cost(Point { x: 120, y: 90 }, Point { x: 120, y: 110 }),
+        0
+    );
     let along = points(&[(120, 100), (280, 100)]);
-    let offset = points(&[(120, 100), (120, 92), (280, 92), (280, 100)]);
+    let offset = points(&[(120, 100), (120, 90), (280, 90), (280, 100)]);
     assert_eq!(
         scorer.choose(vec![along.clone(), offset.clone()], &[]),
         Some(offset.clone())
     );
     assert!(!scorer.safe_shortcut(&offset, &along, &[]));
     let brief = points(&[(120, 100), (124, 100)]);
-    let detour = points(&[(120, 100), (120, 92), (124, 92), (124, 100)]);
+    let detour = points(&[(120, 100), (120, 90), (124, 90), (124, 100)]);
     assert_eq!(scorer.choose(vec![detour, brief.clone()], &[]), Some(brief));
     scorer.set_soft(vec![Occluder {
         bounds: frame,
@@ -55,6 +57,31 @@ fn frame_cost_measures_collinearity_and_matches_subdivided_search() {
         step: 2,
     }]);
     assert_eq!(scorer.segment_cost(along[0], along[1]), 0);
+}
+
+#[test]
+fn shortcut_guard_and_readonly_kind_scoring_use_visible_stroke_gaps() {
+    let frame = Bounds {
+        origin: Point { x: 100, y: 100 },
+        width: 200,
+        height: 200,
+    };
+    let mut scorer = Scorer::default();
+    scorer.set_borders(&[frame]);
+    let clear = points(&[(120, 94), (280, 94)]);
+    let close = points(&[(120, 96), (280, 96)]);
+    assert!(!scorer.safe_border_change(&clear, &close));
+    assert!(scorer.safe_border_change(&close, &clear));
+    assert!(
+        scorer.readability_cost_for(&close, &[], EdgeKind::Connection)
+            > scorer.readability_cost_for(&close, &[], EdgeKind::Dependency)
+    );
+    scorer.set_kind(EdgeKind::Connection);
+    assert_eq!(
+        scorer.readability_cost(&close),
+        scorer.readability_cost_for(&close, &[], EdgeKind::Connection)
+    );
+    assert_eq!(scorer.border_metrics(&clear).minimum_deficit, 0);
 }
 
 #[test]

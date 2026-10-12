@@ -200,6 +200,31 @@ pub(in crate::layout) fn barriers(graph: &Graph, layout: &Layout<'_>, edge: usiz
             .into_iter()
             .map(|n| layout.bounds[n]),
     );
+    reserve_terminals(graph, layout, edge, &mut result);
+    result
+}
+
+fn border_barriers(graph: &Graph, layout: &Layout<'_>, edge: usize) -> Vec<Bounds> {
+    let mut result = crate::layout::containers::routing::obstacles(layout, &graph.edges[edge]);
+    let hidden = layout.occluders(&graph.edges[edge]);
+    result.extend(
+        layout
+            .bounds
+            .iter()
+            .enumerate()
+            .filter(|(node, _)| {
+                !layout.containers.contains(node)
+                    && !hidden
+                        .iter()
+                        .any(|&parent| layout.containment.is_ancestor(parent, *node))
+            })
+            .map(|(_, &bounds)| bounds),
+    );
+    reserve_terminals(graph, layout, edge, &mut result);
+    result
+}
+
+fn reserve_terminals(graph: &Graph, layout: &Layout<'_>, edge: usize, result: &mut Vec<Bounds>) {
     let numbers = crate::layout::relationship_markers::numbers(graph);
     for (i, path) in layout.paths.iter().enumerate() {
         if i == edge || path.len() < 2 {
@@ -220,7 +245,27 @@ pub(in crate::layout) fn barriers(graph: &Graph, layout: &Layout<'_>, edge: usiz
             height: 2,
         }));
     }
-    result
+}
+
+pub(in crate::layout) fn border_metrics(
+    graph: &Graph,
+    layout: &Layout<'_>,
+) -> Vec<super::borders::Metrics> {
+    let mut scorer = super::scoring::Scorer::default();
+    scorer.set_layout(graph, layout);
+    layout
+        .paths
+        .iter()
+        .enumerate()
+        .map(|(edge, path)| {
+            scorer.set_kind(graph.edges[edge].kind);
+            scorer.set_soft(crate::layout::containers::routing::soft_obstacles(
+                layout,
+                &graph.edges[edge],
+            ));
+            scorer.border_metrics(path)
+        })
+        .collect()
 }
 
 mod expansion;
@@ -253,6 +298,7 @@ pub(in crate::layout) fn refine(graph: &Graph, layout: &mut Layout<'_>) {
             }
             attempts += 1;
             let before = expansion::Snapshot::capture(layout);
+            let before_borders = border_metrics(graph, layout);
             let mut planned = corridor.clone();
             let mut expanded = false;
             if let Some((cut, amount)) = planned.demand(layout) {
@@ -270,7 +316,14 @@ pub(in crate::layout) fn refine(graph: &Graph, layout: &mut Layout<'_>) {
             }
             planned.allocate(layout);
             if reroute::apply(graph, layout, &planned, &before, &baseline, expanded)
-                && quality::improves(graph, &before.paths, &layout.paths, expanded)
+                && quality::improves(
+                    graph,
+                    &before.paths,
+                    &layout.paths,
+                    &before_borders,
+                    &border_metrics(graph, layout),
+                    expanded,
+                )
             {
                 changed = true;
                 continue;
@@ -281,7 +334,14 @@ pub(in crate::layout) fn refine(graph: &Graph, layout: &mut Layout<'_>) {
                 let mut planned = corridor;
                 planned.allocate(layout);
                 if reroute::apply(graph, layout, &planned, &fallback, &baseline, false)
-                    && quality::improves(graph, &fallback.paths, &layout.paths, false)
+                    && quality::improves(
+                        graph,
+                        &fallback.paths,
+                        &layout.paths,
+                        &before_borders,
+                        &border_metrics(graph, layout),
+                        false,
+                    )
                 {
                     changed = true;
                 } else {

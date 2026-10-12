@@ -83,7 +83,7 @@ impl Terminals {
             .as_ref()
             .map_or(slots, |s| (s.0.as_slice(), s.1.as_slice()));
         let mut scorer = Scorer::default();
-        scorer.set_borders(&layout.bounds);
+        scorer.set_layout(graph, layout);
         let mut selected = vec![Vec::new(); graph.edges.len()];
         for _ in &graph.edges {
             scorer.insert(Vec::new());
@@ -107,6 +107,7 @@ impl Terminals {
                 }
                 scorer.remove(index);
                 let barriers = result.barriers(layout, graph, index);
+                scorer.set_kind(edge.kind);
                 scorer.set_soft(soft_obstacles(layout, edge));
                 scorer.set_peers(layout.containment.routing_peers(
                     edge.from,

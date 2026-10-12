@@ -123,6 +123,136 @@ fn narrow(graph: &Graph, transpose: bool) -> Layout<'_> {
     }
 }
 
+fn single_border_corridor(graph: &Graph, transpose: bool, run: usize) -> Layout<'_> {
+    let mut layout = narrow(graph, false);
+    layout.bounds[2].height = run;
+    layout.bounds[3].origin.x = 502;
+    layout.bounds[3].height = run;
+    if transpose {
+        for bounds in &mut layout.bounds {
+            std::mem::swap(&mut bounds.origin.x, &mut bounds.origin.y);
+            std::mem::swap(&mut bounds.width, &mut bounds.height);
+        }
+        for point in layout.paths.iter_mut().flatten() {
+            std::mem::swap(&mut point.x, &mut point.y);
+        }
+        std::mem::swap(&mut layout.width, &mut layout.height);
+    }
+    layout.positions = layout.bounds.iter().map(|b| b.origin).collect();
+    layout
+}
+
+#[test]
+fn a_single_path_reserves_visible_border_clearance_in_both_axes() {
+    for kind in [
+        crate::model::EdgeKind::Dependency,
+        crate::model::EdgeKind::Association,
+        crate::model::EdgeKind::Connection,
+    ] {
+        let mut graph = corridor_graph(1);
+        graph.edges[0].kind = kind;
+        if kind != crate::model::EdgeKind::Association {
+            graph.relationships.clear();
+        }
+        for transpose in [false, true] {
+            for run in [32, 300] {
+                let mut layout = single_border_corridor(&graph, transpose, run);
+                let before = expansion::Snapshot::capture(&layout);
+                let initial = border_metrics(&graph, &layout)[0];
+                assert_eq!(measure(&graph, &layout.paths), Metrics::default());
+                assert!(initial.minimum_deficit > 0);
+                let corridors = plan::corridors(&graph, &layout);
+                assert!(corridors.iter().any(|c| c.border && c.lanes.len() == 1));
+                refine(&graph, &mut layout);
+                let after = border_metrics(&graph, &layout)[0];
+                assert_eq!(after.minimum_deficit, 0, "{kind:?}, {transpose}, {run}");
+                assert!(after.preferred_deficit < initial.preferred_deficit);
+                let straight_gap = 10 * 4
+                    - (crate::view::geometry::relationship_stroke(kind)
+                        + crate::view::geometry::CARD_STROKE)
+                        / 2;
+                assert!(straight_gap >= super::super::borders::PREFERRED * 4);
+                assert!(after.cost() < initial.cost());
+                assert_eq!(
+                    (layout.width - before.width, layout.height - before.height),
+                    if transpose { (0, 8) } else { (8, 0) },
+                );
+                let gap = if transpose {
+                    layout.bounds[3].origin.y - layout.bounds[2].origin.y - layout.bounds[2].height
+                } else {
+                    layout.bounds[3].origin.x - layout.bounds[2].right()
+                };
+                assert_eq!(gap, 20);
+                let path = &layout.paths[0];
+                assert_eq!(Shape::measure(path).bends, 2);
+                assert!(Shape::measure(path).fits(Shape::measure(&before.paths[0])));
+                assert!(ports::valid_with_clearances(
+                    path,
+                    terminal(path, 0),
+                    terminal(path, 1),
+                    &barriers(&graph, &layout, 0),
+                    crate::layout::relationship_markers::terminals(
+                        &graph,
+                        0,
+                        crate::layout::relationship_markers::numbers(&graph)[0],
+                        [terminal(path, 0).side, terminal(path, 1).side],
+                    ),
+                ));
+                let expected = (layout.bounds.clone(), layout.paths.clone());
+                let mut repeat = single_border_corridor(&graph, transpose, run);
+                refine(&graph, &mut repeat);
+                assert_eq!(expected, (repeat.bounds, repeat.paths));
+            }
+        }
+    }
+}
+
+#[test]
+fn rejected_border_growth_restores_geometry_and_keeps_the_residual_measurable() {
+    let graph = corridor_graph(1);
+    let mut layout = single_border_corridor(&graph, false, 300);
+    layout.junctions = vec![Point { x: 493, y: 600 }];
+    layout.scopes.push(crate::layout::ScopePanel {
+        scope: crate::model::architecture::DeploymentScope {
+            provider: "test".into(),
+            region: None,
+        },
+        bounds: Bounds {
+            origin: Point { x: 0, y: 0 },
+            width: layout.width,
+            height: layout.height,
+        },
+    });
+    layout.bands.push(crate::layout::Band {
+        label: "test",
+        top: 40,
+        height: layout.height - 40,
+    });
+    let before = expansion::Snapshot::capture(&layout);
+    let initial = border_metrics(&graph, &layout);
+    assert!(initial[0].minimum_deficit > 0);
+    assert!(
+        plan::corridors(&graph, &layout)
+            .iter()
+            .any(|c| c.demand(&layout).is_some())
+    );
+    refine(&graph, &mut layout);
+    assert_eq!(layout.bounds, before.bounds);
+    assert_eq!(layout.paths, before.paths);
+    assert_eq!(layout.junctions, before.junctions);
+    assert_eq!((layout.width, layout.height), (before.width, before.height));
+    assert_eq!(layout.scopes[0].bounds.width, before.width);
+    assert_eq!(
+        (layout.bands[0].top, layout.bands[0].height),
+        (40, before.height - 40)
+    );
+    assert_eq!(
+        layout.positions,
+        layout.bounds.iter().map(|b| b.origin).collect::<Vec<_>>()
+    );
+    assert_eq!(border_metrics(&graph, &layout), initial);
+}
+
 #[test]
 fn later_rerouting_cannot_transfer_overlap_onto_an_earlier_route() {
     let mut graph = corridor_graph(3);
@@ -171,6 +301,11 @@ fn later_rerouting_cannot_transfer_overlap_onto_an_earlier_route() {
     let before = expansion::Snapshot::capture(&layout);
     let baseline: Vec<_> = before.paths.iter().map(|p| Shape::measure(p)).collect();
     let planned = plan::Corridor {
+        border: false,
+        minimum_margin: PREFERRED,
+        preferred_margin: PREFERRED,
+        urgent: false,
+        hidden: std::collections::BTreeSet::new(),
         horizontal: false,
         low: 100,
         high: 800,
@@ -238,6 +373,11 @@ fn expansion_cannot_hide_increased_overlap_with_a_protected_path() {
     let before = expansion::Snapshot::capture(&layout);
     let baseline: Vec<_> = before.paths.iter().map(|p| Shape::measure(p)).collect();
     let planned = plan::Corridor {
+        border: false,
+        minimum_margin: PREFERRED,
+        preferred_margin: PREFERRED,
+        urgent: false,
+        hidden: std::collections::BTreeSet::new(),
         horizontal: false,
         low: 200,
         high: 600,

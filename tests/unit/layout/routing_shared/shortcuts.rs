@@ -1,6 +1,57 @@
 use super::*;
 
 #[test]
+fn route_shortcuts_preserve_configured_frames_and_per_edge_masks() {
+    let frame = Bounds {
+        origin: Point { x: 100, y: 100 },
+        width: 300,
+        height: 200,
+    };
+    let path = vec![
+        Point { x: 80, y: 100 },
+        Point { x: 96, y: 100 },
+        Point { x: 96, y: 84 },
+        Point { x: 414, y: 84 },
+        Point { x: 414, y: 100 },
+        Point { x: 430, y: 100 },
+    ];
+    for masked in [false, true] {
+        let mut scorer = Scorer::default();
+        scorer.set_borders(&[frame]);
+        scorer.insert(vec![Point { x: 0, y: 0 }, Point { x: 500, y: 0 }]);
+        let mut paths = vec![path.clone()];
+        simplify_routes_with_clearances(
+            &mut paths,
+            [0],
+            |_| Vec::new(),
+            |_| {
+                if masked {
+                    vec![super::super::scoring::Occluder {
+                        bounds: frame,
+                        cost: 1,
+                        step: 2,
+                    }]
+                } else {
+                    Vec::new()
+                }
+            },
+            |_| [Terminal::plain(16); 2],
+            |_| EdgeKind::Connection,
+            scorer,
+        );
+        assert_eq!(paths[0].len() == 2, masked, "{masked}: {:?}", paths[0]);
+        if !masked {
+            let mut scorer = Scorer::default();
+            scorer.set_borders(&[frame]);
+            scorer.set_kind(EdgeKind::Connection);
+            assert_eq!(scorer.border_metrics(&paths[0]).minimum_deficit, 0);
+        }
+        assert_eq!(paths[0].first(), path.first());
+        assert_eq!(paths[0].last(), path.last());
+    }
+}
+
+#[test]
 fn final_shortcuts_keep_a_clear_offset_from_nested_frames() {
     let frame = Bounds {
         origin: Point { x: 100, y: 100 },
