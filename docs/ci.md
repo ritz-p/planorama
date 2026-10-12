@@ -5,6 +5,26 @@ changes their inputs. Contributors can push source changes and let Actions appen
 the generated SVG changes to the same PR branch. Validation then runs on the new
 head, and **Report PR validation** publishes its results to the PR.
 
+## Cancelling superseded validation
+
+**Cargo fmt**, **Cargo clippy** and **Cargo test** use workflow-level concurrency.
+A new run cancels pending or running validation for the same workflow and PR.
+Workflow names separate Formatting, Clippy and Tests, and PR numbers separate
+unrelated PRs, including forks whose source branches have the same name.
+Completed runs and their check results remain visible in the run history.
+
+Ordinary `pull_request` runs and `workflow_dispatch` runs providing both
+`pull_request` and `expected_head_sha` share a `pr-<number>` key. Validation of an
+automatically generated SVG commit can therefore replace validation of its source
+commit. The dispatched checkout and reporter still verify the exact expected head.
+
+All other runs use a unique `run-<run_id>` key. Ordinary manual dispatches, including
+repeated dispatches on the same branch, and post-merge `pull_request_target` runs
+remain independent of each other and of PR validation. The existing non-cancelling
+SVG generation/writeback and status-reporting groups retain their own policies.
+
+See GitHub's [workflow concurrency documentation](https://docs.github.com/en/actions/how-tos/write-workflows/choose-when-workflows-run/control-workflow-concurrency).
+
 ## When generation runs
 
 Automatic generation watches these inputs:
@@ -98,8 +118,8 @@ GitHub creates a tree and commit containing the declared SVG changes. The branch
 update uses GraphQL `updateRefs` with the captured `beforeOid` and `force: false`.
 If the head changes before this atomic update, including a branch rewind, the
 update is rejected. The old result is discarded and the newer PR update receives
-its own generation run. Per-PR concurrency does not cancel a running writeback
-between its commit and validation dispatch.
+its own generation run. The SVG workflow's per-PR concurrency does not cancel a
+running writeback between its commit and validation dispatch.
 
 Fork PRs keep the patch/artifact flow and do not enter the write-enabled job.
 Protected branches, read-only tokens and repository policy restrictions also fall
@@ -113,8 +133,9 @@ The standard `GITHUB_TOKEN` is used for both writeback and explicit
 duplicate push/PR-event runs, including the token-generated PR runs that would
 otherwise require approval. Explicit dispatch is unaffected by that directive and
 starts validation on the generated head without an additional approval in the
-ordinary same-repository flow. The directive does not cancel runs already created
-for an earlier commit.
+ordinary same-repository flow. The directive itself does not cancel existing runs;
+the validation workflows' shared PR concurrency group cancels superseded runs
+when the new validation starts.
 
 Formatting, Clippy and Tests are dispatched after an SVG commit. MSRV is included
 when the full PR file list touches its existing toolchain/Cargo/Docker inputs,
