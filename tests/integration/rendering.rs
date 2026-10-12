@@ -52,7 +52,18 @@ fn inferred_placement_notes_use_provenance_and_fit_below_long_addresses() {
     let long_input = String::from_utf8(input.to_vec())
         .unwrap()
         .replace("aws_db_subnet_group.main", &address);
-    let svg = render(long_input.as_bytes());
+    let mut long_input: serde_json::Value = serde_json::from_str(&long_input).unwrap();
+    let previous = format!(
+        "module.{}.aws_db_subnet_group.old[\"<&>\"]",
+        "長い移動元.".repeat(14)
+    );
+    long_input["resource_changes"]
+        .as_array_mut()
+        .unwrap()
+        .iter_mut()
+        .find(|change| change["address"] == address)
+        .unwrap()["previous_address"] = previous.clone().into();
+    let svg = render(long_input.to_string().as_bytes());
     assert_eq!(svg.matches("data-placement=\"inferred\"").count(), 2);
     let doc = roxmltree::Document::parse(&svg).unwrap();
     for note in doc
@@ -76,6 +87,21 @@ fn inferred_placement_notes_use_provenance_and_fit_below_long_addresses() {
                 heading.iter().filter_map(|n| n.text()).collect::<String>(),
                 card.attribute("data-qualified-address").unwrap()
             );
+            let annotation = card
+                .children()
+                .find(|n| n.attribute("data-move-annotation").is_some())
+                .unwrap();
+            let lines: Vec<_> = annotation
+                .children()
+                .filter(|n| n.has_tag_name("tspan"))
+                .collect();
+            assert!(lines.len() > 2);
+            assert_eq!(
+                lines.iter().filter_map(|n| n.text()).collect::<String>(),
+                format!("Moved from: {previous}")
+            );
+            assert!(y(*heading.last().unwrap()) + 10 < y(lines[0]));
+            assert!(y(*lines.last().unwrap()) + 4 < y(note));
         }
     }
 }
@@ -546,16 +572,106 @@ fn moved_metadata_survives_cards_and_lowered_relationships_and_is_escaped() {
     assert_eq!(svg.matches("data-previous-address=").count(), 2);
     assert!(svg.contains("data-terraform-address=\"aws_subnet.private\""));
     assert!(!svg.contains("<a>"));
+    let document = roxmltree::Document::parse(&svg).unwrap();
+    let annotations: Vec<_> = document
+        .descendants()
+        .filter(|n| n.attribute("data-move-annotation") == Some("true"))
+        .collect();
+    assert_eq!(annotations.len(), 2);
+    for (address, previous, spatial) in [
+        ("aws_subnet.private", "aws_subnet.old[\"<a>&\"]", true),
+        (
+            "aws_route_table_association.private",
+            "module.old.aws_route_table_association.private",
+            false,
+        ),
+    ] {
+        let annotation = annotations
+            .iter()
+            .find(|n| {
+                n.children()
+                    .find(|c| c.has_tag_name("title"))
+                    .and_then(|c| c.text())
+                    == Some(format!("Moved from: {previous}").as_str())
+            })
+            .unwrap();
+        let visible = annotation
+            .children()
+            .filter(|n| n.has_tag_name("tspan"))
+            .filter_map(|n| n.text())
+            .collect::<String>();
+        assert_eq!(visible, format!("Moved from: {previous}"));
+        if spatial {
+            let card = annotation.parent().unwrap();
+            assert_eq!(card.attribute("data-terraform-address"), Some(address));
+            assert!(
+                card.children()
+                    .find(|n| n.has_tag_name("title"))
+                    .unwrap()
+                    .text()
+                    .unwrap()
+                    .contains(previous)
+            );
+            let rect = card
+                .children()
+                .find(|n| n.has_tag_name("rect"))
+                .or_else(|| {
+                    document
+                        .descendants()
+                        .find(|n| n.attribute("data-container") == card.attribute("id"))
+                        .and_then(|container| container.children().find(|n| n.has_tag_name("rect")))
+                })
+                .unwrap();
+            let bottom = rect.attribute("y").unwrap().parse::<usize>().unwrap()
+                + rect.attribute("height").unwrap().parse::<usize>().unwrap();
+            assert!(
+                annotation
+                    .children()
+                    .filter(|n| n.has_tag_name("tspan"))
+                    .all(|n| n.attribute("y").unwrap().parse::<usize>().unwrap() + 4 < bottom)
+            );
+        } else {
+            assert!(
+                annotation
+                    .parent()
+                    .unwrap()
+                    .children()
+                    .any(|n| n.attribute("data-source-address") == Some(address))
+            );
+        }
+    }
 }
 
 #[test]
 fn deposed_fixture_preserves_every_change_card_and_action() {
-    let input = include_bytes!("../fixtures/deposed-plan.json");
-    let svg = render(input);
+    let mut input: serde_json::Value =
+        serde_json::from_slice(include_bytes!("../fixtures/deposed-plan.json")).unwrap();
+    let previous = "module.old.terraform_data.source[\"primary\"]";
+    input["resource_changes"][0]["previous_address"] = previous.into();
+    input["resource_changes"][1]["previous_address"] = "terraform_data.previous".into();
+    let svg = render(input.to_string().as_bytes());
     assert_eq!(svg.matches("<g id=\"resource-").count(), 4);
     assert_eq!(svg.matches("data-deposed-key=").count(), 2);
     assert!(svg.contains("delete (2)"));
     assert!(svg.contains("create (1)"));
+    let document = roxmltree::Document::parse(&svg).unwrap();
+    for card in document
+        .descendants()
+        .filter(|n| n.attribute("data-terraform-address") == Some("terraform_data.source"))
+    {
+        let expected = match card.attribute("data-deposed-key") {
+            None => Some(previous),
+            Some("old-b") => Some("terraform_data.previous"),
+            Some("old-a") => None,
+            _ => panic!("unexpected deposed key"),
+        };
+        assert_eq!(card.attribute("data-previous-address"), expected);
+        assert_eq!(
+            card.children()
+                .any(|n| n.attribute("data-move-annotation").is_some()),
+            expected.is_some()
+        );
+    }
 }
 
 #[test]

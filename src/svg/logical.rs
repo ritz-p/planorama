@@ -23,11 +23,11 @@ pub(super) fn cards(graph: &Graph, address_format: super::AddressFormat) -> Vec<
             crate::model::ResourceRole::Controller => lines.push(("controller".into(), false)),
             _ => {}
         }
-        if let Some(previous) = &node.previous_address { lines.push((format!("Moved from: {previous}"), true)); }
+        if let Some(previous) = &node.previous_address { lines.push((crate::view::text::moved_from(previous), true)); }
         if let Some(key) = &node.deposed_key { lines.push((format!("Deposed: {key}"), false)); }
         let width = card_width(lines.iter().map(|(text, _)| text)).max(crate::view::references::width(node));
-        let mut svg = format!(r#"<g id="{}" data-architecture-id="{}" data-entity-kind="terraform" data-placement="logical" data-terraform-address="{}" data-qualified-address="{}"{}><title>{} — {}{}</title>"#,
-            super::identity::resource(node), super::escape(node.entity.id.as_str()), super::escape(&node.address), super::escape(&node.resource_address().qualified()), super::operations::attributes(&node.metadata), super::escape(&address), super::escape(&operation), super::escape(&super::operations::details(&node.metadata)));
+        let mut svg = format!(r#"<g id="{}" data-architecture-id="{}" data-entity-kind="terraform" data-placement="logical" data-terraform-address="{}" data-qualified-address="{}"{}><title>{} — {}{}{}</title>"#,
+            super::identity::resource(node), super::escape(node.entity.id.as_str()), super::escape(&node.address), super::escape(&node.resource_address().qualified()), super::operations::attributes(&node.metadata), super::escape(&address), super::escape(&operation), super::escape(&super::operations::details(&node.metadata)), super::escape(&super::operations::move_details(node.previous_address.as_deref())));
         svg.insert_str(svg.find('>').unwrap(), super::roles::attributes(node.role));
         for (name, value) in [("previous-address", &node.previous_address), ("deposed-key", &node.deposed_key)] {
             if let Some(value) = value {

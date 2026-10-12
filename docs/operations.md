@@ -9,7 +9,14 @@ Plan-level checks, including resource preconditions and postconditions, are docu
 ## Resource moves and deposed objects
 
 `previous_address` retains Terraform-reported move provenance without becoming a
-reference alias. Cards and lowered edges expose it as `data-previous-address`.
+reference alias. Spatial and logical resource cards, embedded Route cards, and
+each source in the relationship index display `Moved from: ...`. Complete previous
+addresses wrap without truncation, with every line included in the measured height.
+Component member links retain move context in their accessible titles and point
+to the original resource's visible annotation.
+
+Cards and lowered edges retain `data-previous-address`, and titles preserve the
+complete previous address. Long provenance stays in the index rather than on paths.
 The current address and optional deposed key identify separate objects; old objects
 retain their own actions and `data-deposed-key`. Current configuration and planned
 values apply only to current objects.
