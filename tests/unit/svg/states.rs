@@ -11,6 +11,128 @@ fn namespacing_only_rewrites_fragment_reference_attributes() {
 }
 
 #[test]
+fn mixed_width_state_legends_keep_their_own_columns_outside_cross_state_gutters() {
+    let graphs: BTreeMap<_, _> = [
+        ("compact", include_str!("../../fixtures/association-plan.json")),
+        ("wide", include_str!("../../fixtures/terraform-plan.json")),
+    ]
+    .into_iter()
+    .map(|(name, input)| {
+        let graph = crate::semantic::transform(&crate::plan::parse(input).unwrap());
+        (StateId::new(name).unwrap(), graph)
+    })
+    .collect();
+    let endpoint = |name: &str| {
+        let state = StateId::new(name).unwrap();
+        let address = graphs[&state]
+            .nodes
+            .iter()
+            .find(|node| node.placement != crate::model::Placement::Logical)
+            .unwrap()
+            .address
+            .clone();
+        Endpoint { state, address }
+    };
+    let relationship = crate::model::architecture::CrossStateEdge {
+        from: endpoint("compact"),
+        to: endpoint("wide"),
+        provenance: crate::model::architecture::CrossStateProvenance::TerraformRemoteState {
+            remote: "data.terraform_remote_state.compact".into(),
+            output: "value".into(),
+            output_action: None,
+        },
+    };
+    let architecture = crate::model::architecture::Architecture {
+        states: graphs,
+        relationships: vec![relationship],
+    };
+    let viewed = crate::view::apply(&architecture, &Default::default()).unwrap();
+    let rendered = render_states(&viewed, super::super::AddressFormat::Qualified);
+    let document = roxmltree::Document::parse(&rendered).unwrap();
+    let number = |node: roxmltree::Node, name| {
+        node.attribute(name).unwrap().parse::<usize>().unwrap()
+    };
+    let mut maximum_width = 0;
+    for (id, graph) in &viewed.states {
+        let local = super::super::render(graph, &Layout::new(graph));
+        let independent = roxmltree::Document::parse(&local).unwrap();
+        let state_width = number(independent.root_element(), "width");
+        maximum_width = maximum_width.max(state_width);
+        let state = document
+            .descendants()
+            .find(|node| node.attribute("data-state-id") == Some(id.as_str()))
+            .unwrap();
+        let nested = state
+            .children()
+            .find(|node| node.has_tag_name("svg"))
+            .unwrap();
+        assert_eq!(number(nested, "width"), state_width);
+        let actual = legend_shape(nested);
+        assert_eq!(actual, legend_shape(independent.root_element()));
+        assert_eq!(actual.0, state_width - 80);
+        let columns: std::collections::BTreeSet<_> = actual
+            .2
+            .iter()
+            .map(|(_, translation)| translation.split_whitespace().next().unwrap())
+            .collect();
+        assert_eq!(columns.len(), if id.as_str() == "compact" { 2 } else { 4 });
+        for sample in nested.descendants().filter(|node| {
+            node.attribute("data-legend-kind").is_some() && node.attribute("marker-end").is_some()
+        }) {
+            let marker = sample
+                .attribute("marker-end")
+                .unwrap()
+                .strip_prefix("url(#")
+                .unwrap()
+                .trim_end_matches(')');
+            assert!(
+                nested
+                    .descendants()
+                    .any(|node| node.attribute("id") == Some(marker))
+            );
+        }
+    }
+    assert_eq!(number(document.root_element(), "width"), maximum_width + 80);
+    assert_eq!(
+        document
+            .descendants()
+            .filter(|node| node.attribute("data-cross-state") == Some("true"))
+            .count(),
+        1
+    );
+}
+
+fn legend_shape(root: roxmltree::Node<'_, '_>) -> (usize, usize, Vec<(String, String)>) {
+    let legend = root
+        .descendants()
+        .find(|node| {
+            node.attribute("id")
+                .is_some_and(|id| id.ends_with("relationship-legend"))
+        })
+        .unwrap();
+    let rectangle = legend
+        .children()
+        .find(|node| node.has_tag_name("rect"))
+        .unwrap();
+    let entries = legend
+        .descendants()
+        .filter_map(|node| {
+            node.attribute("data-legend-entry").map(|name| {
+                (
+                    name.to_owned(),
+                    node.attribute("transform").unwrap().to_owned(),
+                )
+            })
+        })
+        .collect();
+    (
+        rectangle.attribute("width").unwrap().parse().unwrap(),
+        rectangle.attribute("height").unwrap().parse().unwrap(),
+        entries,
+    )
+}
+
+#[test]
 fn cross_state_paths_avoid_intervening_cards_and_describe_dependencies() {
     let raw = crate::plan::parse(r#"{"format_version":"1.2","resource_changes":[{"address":"test.a","type":"test"},{"address":"test.b","type":"test"}],"configuration":{"root_module":{"resources":[{"address":"test.b","expressions":{"input":{"references":["test.a.id"]}}}]}}}"#).unwrap();
     let mut graph = crate::semantic::transform(&raw);
