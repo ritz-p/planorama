@@ -43,9 +43,11 @@ docker compose exec -T dev cargo run --locked -- - -o - < plan.json > diagram.sv
 - 依存辺は参照されるリソースから参照するリソースへ向きます。包含は入れ子の枠、関連付けは破線、接続は太い点線です。
 - AWS の VPC・Subnet が空間的なコンテナです。間接参照から導いた配置には `inferred placement` を表示します。
 - data リソースは破線と `external` 表示で区別します。一部の AWS メタデータ data は省略します。
+- import を含むリソースには専用の `import` バッジを表示します。作成・更新・置換・変更なしの色や action は保持し、import ID や identity の値は表示しません。
 - 上部は Logical Resources（シアン）、Logical Components（紫）、Relationship Resources の順です。ECS Cluster・Task Definition・IAM 定義・AMI・CloudWatch Log Group・Metric Alarm は最初のセクションにまとめ、空間配置と経路計算から分離します。内側のリソースとコンポーネントのメンバーカードは各リソースの変更色を使い、参照情報・変更数を保持します。
 - 利用側の `Uses` 行は参照を全件表示し、論理カードへ移動できます。依存指定・未解決・表示対象外を区別し、module・instance・state を含む完全な参照アドレスを折り返して表示します。カードと配置領域は内容に合わせて拡張します。
 - 既定のアドレス表示は Planorama 修飾形式です。`--address-format terraform` で Terraform 本来の表記に切り替えられます。長いアドレスは要素の区切りを優先して折り返し、全文を表示します。引用符付きの instance key 内のドットは区切りとして扱いません。
+- 移動したリソースには `Moved from:` と移動元の完全なアドレスを表示します。空間カード、論理カード、Route 子カード、関係一覧の各リソースで確認でき、長い移動元も折り返して表示します。
 - Route は所有先を確認できた Route Table 内に子カードとして表示します。表示可能な接続先へは子カードのポートから矢印付きの破線を引き、接続先を描けない場合は状態を文字で表示します。宛先は安全性を検証した設定定数（CIDR・prefix list ID）だけを表示し、その他の属性値は描画しません。plan JSON 自体には機密値が含まれ得るため、実環境の plan/state はコミットしないでください。
 
 図は構成から解決した関係を表し、Terraform の厳密な実行グラフではありません。式の評価、provider 内部の依存、削除専用リソースの過去の参照は復元しません。未解決・動的・曖昧な参照は保守的に扱い、`--diagnostics` で理由を stderr に出力します。診断は SVG や終了条件を変更しません。経路は決定的に生成しますが、交差や重なりのない最適配置は保証しません。
@@ -60,7 +62,7 @@ docker compose exec -T dev cargo run --locked -- - -o - < plan.json > diagram.sv
 | 論理コンポーネント | [Components](docs/components.md) |
 | 複数 plan・state 間参照 | [Multi-plan](docs/multi-plan.md)、[Outputs](docs/outputs.md) |
 | 表示対象の絞り込み | [Filtering](docs/filtering.md) |
-| import・削除・置換・drift | [Operations](docs/operations.md) |
+| import・移動・削除・置換・drift | [Operations](docs/operations.md) |
 | Terraform check 結果 | [Checks](docs/checks.md) |
 | モデル・provider 設定識別子 | [Models](docs/models.md) |
 | レイヤー構成・レイアウト | [Architecture](docs/architecture.md)、[Routing](docs/routing.md) |

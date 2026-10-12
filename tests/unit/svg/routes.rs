@@ -169,13 +169,24 @@ fn verify_cards(svg: &str) {
 
 #[test]
 fn route_children_keep_identity_palette_metadata_and_reference_edges() {
-    for (actions, action) in [
-        (json!(["create"]), Action::Create),
-        (json!(["no-op"]), Action::Unchanged),
-        (json!(["update"]), Action::Update),
-        (json!(["delete", "create"]), Action::Replace),
-        (json!(["delete"]), Action::Delete),
-        (json!(["read"]), Action::Read),
+    for (actions, action, visible_operation) in [
+        (json!(["create"]), Action::Create, "create"),
+        (json!(["no-op"]), Action::Unchanged, "unchanged"),
+        (json!(["update"]), Action::Update, "update"),
+        (json!(["delete", "create"]), Action::Replace, "replace"),
+        (json!(["delete"]), Action::Delete, "delete"),
+        (json!(["read"]), Action::Read, "read"),
+        (json!(["forget"]), Action::Other, "forget"),
+        (
+            json!(["create", "forget"]),
+            Action::Other,
+            "create then forget",
+        ),
+        (
+            json!(["forget", "create"]),
+            Action::Other,
+            "forget then create",
+        ),
     ] {
         let mut value = input();
         value["resource_changes"][2]["change"]["actions"] = actions;
@@ -194,10 +205,48 @@ fn route_children_keep_identity_palette_metadata_and_reference_edges() {
             .find(|n| n.attribute("data-terraform-address") == Some("aws_route.default"))
             .unwrap();
         assert_eq!(child.attribute("data-embedded-route"), Some("true"));
+        let badge = child
+            .children()
+            .find(|n| n.attribute("data-import-badge") == Some("true"))
+            .unwrap();
+        let badge_rect = badge.children().find(|n| n.has_tag_name("rect")).unwrap();
+        let badge_bottom = badge_rect.attribute("y").unwrap().parse::<usize>().unwrap()
+            + badge_rect
+                .attribute("height")
+                .unwrap()
+                .parse::<usize>()
+                .unwrap();
+        let heading = child.children().find(|n| n.has_tag_name("text")).unwrap();
+        assert!(badge_bottom + 10 < heading.attribute("y").unwrap().parse::<usize>().unwrap());
+        let visible: String = child
+            .children()
+            .filter(|n| n.has_tag_name("text"))
+            .filter_map(|n| n.text())
+            .collect();
+        assert!(visible.starts_with(&format!("aws_route.default [{visible_operation}]")));
+        assert_eq!(child.attribute("data-import-id-present"), Some("true"));
+        assert_eq!(
+            child.attribute("data-import-identity-present"),
+            Some("false")
+        );
+        assert_eq!(child.attribute("data-import-unknown"), Some("false"));
         assert_eq!(
             child.attribute("data-previous-address"),
             Some("aws_route.old")
         );
+        let moved = child
+            .children()
+            .filter(|n| n.attribute("data-move-annotation") == Some("true"))
+            .filter_map(|n| n.text())
+            .collect::<String>();
+        assert_eq!(moved, "Moved from: aws_route.old");
+        let title = child
+            .children()
+            .find(|n| n.has_tag_name("title"))
+            .and_then(|n| n.text())
+            .unwrap();
+        assert!(title.contains("moved from: aws_route.old"));
+        assert_eq!(title.matches("aws_route.old").count(), 1);
         let rect = child.children().find(|n| n.has_tag_name("rect")).unwrap();
         assert_eq!(rect.attribute("fill"), Some(svg::color(action).0));
         assert_eq!(rect.attribute("stroke"), Some(svg::color(action).1));
@@ -274,6 +323,7 @@ fn unknown_owner_stays_spatial_but_unknown_target_can_still_embed() {
 #[test]
 fn inline_entries_are_distinct_sorted_and_do_not_add_resource_identities() {
     let mut value = input();
+    value["resource_changes"][0]["change"]["importing"] = json!({"unknown":true});
     let entries = json!([
         {"cidr_block":"0.0.0.0/0", "gateway_id":"TOP_SECRET_TARGET"},
         {"cidr_block":"0.0.0.0/0", "nat_gateway_id":"TOP_SECRET_OTHER"},
@@ -289,6 +339,28 @@ fn inline_entries_are_distinct_sorted_and_do_not_add_resource_identities() {
     verify_cards(&svg);
     assert_eq!(svg.matches("data-route-entry=\"inline\"").count(), 4);
     assert_eq!(svg.matches("data-terraform-address=").count(), 5);
+    let doc = roxmltree::Document::parse(&svg).unwrap();
+    let parent = doc
+        .descendants()
+        .find(|n| n.attribute("data-terraform-address") == Some("aws_route_table.public"))
+        .unwrap();
+    assert_eq!(
+        parent
+            .children()
+            .filter(|n| n.attribute("data-import-badge") == Some("true"))
+            .count(),
+        1
+    );
+    for inline in parent
+        .descendants()
+        .filter(|n| n.attribute("data-route-entry").is_some())
+    {
+        assert!(
+            !inline
+                .descendants()
+                .any(|n| n.attribute("data-import-badge").is_some())
+        );
+    }
     assert!(
         svg.contains("IPv4: 0.0.0.0/0")
             && svg.contains("IPv6: ::/0")
@@ -391,6 +463,19 @@ fn many_long_routes_expand_parent_and_keep_deterministic_geometry() {
             .replace("aws_route_table.public", &parent_address),
     )
     .unwrap();
+    let previous = format!(
+        "module.{}.aws_route_table.old[\"<&>\"]",
+        "長い名前.".repeat(18)
+    );
+    let parent_change = value["resource_changes"]
+        .as_array_mut()
+        .unwrap()
+        .iter_mut()
+        .find(|change| change["address"] == parent_address)
+        .unwrap();
+    parent_change["previous_address"] = previous.clone().into();
+    let route_previous = format!("module.{}.aws_route.old[0]", "nested.".repeat(14));
+    value["resource_changes"][2]["previous_address"] = route_previous.clone().into();
     value["resource_changes"]
         .as_array_mut()
         .unwrap()
@@ -432,6 +517,23 @@ fn many_long_routes_expand_parent_and_keep_deterministic_geometry() {
         heading.iter().filter_map(|n| n.text()).collect::<String>(),
         parent.attribute("data-qualified-address").unwrap()
     );
+    let moved = parent
+        .children()
+        .find(|n| n.attribute("data-move-annotation") == Some("true"))
+        .unwrap();
+    let moved_lines: Vec<_> = moved
+        .children()
+        .filter(|n| n.has_tag_name("tspan"))
+        .collect();
+    assert!(moved_lines.len() > 2);
+    assert_eq!(
+        moved_lines
+            .iter()
+            .filter_map(|n| n.text())
+            .collect::<String>(),
+        format!("Moved from: {previous}")
+    );
+    assert!(y(*heading.last().unwrap()) + 10 < y(moved_lines[0]));
     let references = parent
         .children()
         .find(|n| n.attribute("data-resource-references").is_some())
@@ -440,7 +542,21 @@ fn many_long_routes_expand_parent_and_keep_deterministic_geometry() {
         .children()
         .find(|n| n.has_tag_name("text"))
         .unwrap();
-    assert!(y(*heading.last().unwrap()) + 10 < y(uses));
+    assert!(y(*moved_lines.last().unwrap()) + 4 < y(uses));
+    for child in doc.descendants().filter(|n| {
+        n.attribute("data-embedded-route") == Some("true")
+            && n.attribute("data-previous-address").is_some()
+    }) {
+        let lines: Vec<_> = child
+            .children()
+            .filter(|n| n.attribute("data-move-annotation") == Some("true"))
+            .collect();
+        assert!(lines.len() > 2);
+        assert_eq!(
+            lines.iter().filter_map(|n| n.text()).collect::<String>(),
+            format!("Moved from: {route_previous}")
+        );
+    }
     let reference_bottom = references
         .descendants()
         .filter(|n| n.has_tag_name("text"))

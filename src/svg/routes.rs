@@ -53,6 +53,7 @@ pub(super) fn render(
         let details = card
             .rows
             .iter()
+            .filter(|row| !row.moved)
             .map(|r| r.text.as_str())
             .collect::<Vec<_>>()
             .join("; ");
@@ -60,7 +61,10 @@ pub(super) fn render(
             super::escape(&details), super::operations::label(node.action, &node.metadata), super::escape(&super::operations::details(&node.metadata)),
             node.previous_address.as_ref().map(|a| format!("; moved from: {}", super::escape(a))).unwrap_or_default(),
             node.deposed_key.as_ref().map(|a| format!("; deposed: {}", super::escape(a))).unwrap_or_default()).unwrap();
-        let mut line_y = y + 24;
+        if let Some(node) = card.node {
+            svg.push_str(&super::entities::import_badge(node, x + 12, y + 10));
+        }
+        let mut line_y = y + 24 + card.badge_height();
         for row in card.rows {
             let next_hop = if row.text == "Next hop" {
                 index.number(node).map(|n| format!("Next hop [{n}]"))
@@ -78,7 +82,12 @@ pub(super) fn render(
                 write!(svg, "<a href=\"#{}\">", super::identity::resource(target)).unwrap();
             }
             for line in row.lines(text) {
-                writeln!(svg, r##"<text x="{}" y="{line_y}" font-size="11" fill="#334155" xml:space="preserve">{}</text>"##, x + 12, super::escape(line)).unwrap();
+                let (fill, annotation) = if row.moved {
+                    ("#64748b", " data-move-annotation=\"true\"")
+                } else {
+                    ("#334155", "")
+                };
+                writeln!(svg, r##"<text x="{}" y="{line_y}" font-size="11" fill="{fill}" xml:space="preserve"{annotation}>{}</text>"##, x + 12, super::escape(line)).unwrap();
                 line_y += 18;
             }
             if available.is_some() {

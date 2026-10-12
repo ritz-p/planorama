@@ -3,7 +3,7 @@ use crate::model::{
     ArchitectureId, Directionality, EdgeKind, Graph, Placement, RelationshipProvenance,
     TerraformEntityId,
 };
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, BTreeSet};
 
 pub(crate) const HEIGHT: usize = 18;
 pub(crate) const GAP: usize = 10;
@@ -93,6 +93,13 @@ type Key<'a> = (
 pub(crate) struct Entry<'a> {
     pub sources: Vec<&'a TerraformEntityId>,
     pub edges: Vec<usize>,
+    pub previous_addresses: BTreeMap<&'a TerraformEntityId, BTreeSet<&'a str>>,
+}
+
+#[derive(Default)]
+struct Group<'a> {
+    edges: Vec<usize>,
+    previous_addresses: BTreeMap<&'a TerraformEntityId, BTreeSet<&'a str>>,
 }
 
 pub(crate) fn entries(graph: &Graph) -> Vec<Entry<'_>> {
@@ -118,7 +125,7 @@ pub(crate) fn entries(graph: &Graph) -> Vec<Entry<'_>> {
             .or_insert_with(Vec::new)
             .push(relationship);
     }
-    let mut grouped: BTreeMap<Key<'_>, Vec<usize>> = BTreeMap::new();
+    let mut grouped: BTreeMap<Key<'_>, Group<'_>> = BTreeMap::new();
     let mut containment = None;
     for (index, edge) in graph.edges.iter().enumerate() {
         if !visible[edge.from]
@@ -160,19 +167,36 @@ pub(crate) fn entries(graph: &Graph) -> Vec<Entry<'_>> {
             sources.sort();
             sources.dedup();
             if !sources.is_empty() {
-                grouped
-                    .entry((sources, from, to, edge.kind))
-                    .or_default()
-                    .push(index);
+                let group = grouped.entry((sources, from, to, edge.kind)).or_default();
+                group.edges.push(index);
+                for provenance in &relationship.provenance {
+                    if let RelationshipProvenance::Resource { source, change } = provenance {
+                        if let Some(previous) = change.previous_address.as_deref() {
+                            group
+                                .previous_addresses
+                                .entry(source)
+                                .or_default()
+                                .insert(previous);
+                        }
+                    }
+                }
             }
         }
     }
     grouped
         .into_iter()
-        .map(|((sources, ..), mut edges)| {
+        .map(|((sources, ..), group)| {
+            let Group {
+                mut edges,
+                previous_addresses,
+            } = group;
             edges.sort_unstable();
             edges.dedup();
-            Entry { sources, edges }
+            Entry {
+                sources,
+                edges,
+                previous_addresses,
+            }
         })
         .collect()
 }

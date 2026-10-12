@@ -318,6 +318,7 @@ fn render_with_index(
             .unwrap_or_default();
         let operation_label = operations::label(node.action, &node.metadata);
         let operation_details = escape(&operations::details(&node.metadata));
+        let move_details = escape(&operations::move_details(node.previous_address.as_deref()));
         let previous = node
             .previous_address
             .as_ref()
@@ -330,13 +331,15 @@ fn render_with_index(
             .unwrap_or_default();
         writeln!(
             svg,
-            r#"<g id="{resource_id}" data-architecture-id="{architecture_id}" data-qualified-address="{qualified}" data-terraform-address="{address}"{deposed}{previous}{operation}{component}><title>{selected_title} — {operation_label}{operation_details}</title>"#,
+            r#"<g id="{resource_id}" data-architecture-id="{architecture_id}" data-qualified-address="{qualified}" data-terraform-address="{address}"{deposed}{previous}{operation}{component}><title>{selected_title} — {operation_label}{operation_details}{move_details}</title>"#,
         )
         .unwrap();
         if node.role != crate::model::architecture::ResourceRole::Container {
             writeln!(svg, r#"<rect x="{x}" y="{y}" width="{card_width}" height="{header_height}" rx="8" fill="{background}" stroke="{border}" stroke-width="1.5"{mode}/>"#).unwrap();
         }
         svg.push_str(&entities::badge(node.mode, x, y));
+        svg.push_str(&entities::import_badge(node, x + 12, y + 28));
+        let visible_operation = operations::action_label(node.action, &node.metadata);
         writeln!(
             svg,
             r#"<text x="{}" y="{}" font-size="11" fill="{border}">{} · {}</text>"#,
@@ -345,26 +348,35 @@ fn render_with_index(
             escape(&shorten(
                 &node.resource_type,
                 entities::type_limit(node.mode).saturating_sub(
-                    operation_label
+                    visible_operation
                         .len()
                         .saturating_sub(label(node.action).len())
                 )
             )),
-            operation_label
+            visible_operation
         )
         .unwrap();
         if let Some(icon) = icon {
-            svg.push_str(&icons::render(icon, x + 12, y + 28));
+            svg.push_str(&icons::render(icon, x + 12, y + 28 + metrics.import_height));
         }
         for (line, text) in lines.iter().enumerate() {
             writeln!(
                 svg,
                 r##"<text x="{}" y="{}" font-size="13" fill="#0f172a" xml:space="preserve">{}</text>"##,
                 x + metrics.inset,
-                y + 45 + line * 20,
+                y + 45 + metrics.import_height + line * 20,
                 escape(text)
             )
             .unwrap();
+        }
+        if let Some(previous) = &node.previous_address {
+            let (annotation, _) = operations::moved_from(
+                previous,
+                x + 12,
+                y + metrics.previous_y,
+                metrics.previous_line_limit,
+            );
+            svg.push_str(&annotation);
         }
         svg.push_str(&references::render(
             graph,
