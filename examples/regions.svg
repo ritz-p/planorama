@@ -64,15 +64,15 @@ No AWS endorsement is implied. Consult the AWS terms for other uses.
 <path d="M 40 177 H 66" stroke="#94a3b8" stroke-width="2"/><text x="73" y="181">no independent change</text>
 <text x="40" y="205">Line style:</text><path d="M 140 201 H 170" stroke="#64748b" stroke-width="1.5"/><text x="178" y="205">dependency</text>
 <path d="M 340 201 H 370" stroke="#64748b" stroke-width="2" stroke-dasharray="7 4"/><text x="378" y="205">association</text>
-<path d="M 540 201 H 570" stroke="#64748b" stroke-width="2.5" stroke-dasharray="2 4" stroke-linecap="round"/><text x="578" y="205">connection</text>
+<path d="M 540 201 H 570" stroke="#64748b" stroke-width="2.5" stroke-dasharray="0 3.5" stroke-linecap="round"/><text x="578" y="205">connection</text>
 </g>
 <g transform="translate(0 72)">
 <g data-annotation-area="true">
 <g data-annotation-card="true" transform="translate(40 160)"><rect width="1020" height="172" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-annotation-section="Logical Resources"><rect width="1020" height="172" rx="12" fill="#ecfeff" stroke="#0891b2"/><text x="16" y="28" font-size="15" font-weight="700" fill="#0e7490">Logical Resources</text><g data-annotation-card="true" transform="translate(16 48)"><rect width="360" height="108" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g id="resource-6177735f69616d5f726f6c652e617070-current" data-architecture-id="terraform:6177735f69616d5f726f6c652e617070-current" data-entity-kind="terraform" data-placement="logical" data-terraform-address="aws_iam_role.app" data-qualified-address="module.root.aws_iam_role.app" data-role="policy"><title>module.root.aws_iam_role.app — other</title><rect width="360" height="108" rx="12" fill="#fefce8" stroke="#854d0e" data-mode="managed"/>
-<use href="#planorama-icon-aws-iam" x="320" y="8" width="24" height="24" aria-hidden="true"/><text x="16" y="28" font-size="12" fill="#334155" font-weight="700">module.root.aws_iam_role.app</text>
-<text x="16" y="48" font-size="12" fill="#334155">aws_iam_role · managed</text>
-<text x="16" y="68" font-size="12" fill="#334155">other</text>
-<text x="16" y="88" font-size="12" fill="#334155">policy</text>
+<use href="#planorama-icon-aws-iam" x="320" y="8" width="24" height="24" aria-hidden="true"/><text x="16" y="28" font-size="12" fill="#334155" xml:space="preserve" font-weight="700">module.root.aws_iam_role.app</text>
+<text x="16" y="48" font-size="12" fill="#334155" xml:space="preserve">aws_iam_role · managed</text>
+<text x="16" y="68" font-size="12" fill="#334155" xml:space="preserve">other</text>
+<text x="16" y="88" font-size="12" fill="#334155" xml:space="preserve">policy</text>
 </g>
 </g>
 </g></g>
@@ -94,63 +94,63 @@ No AWS endorsement is implied. Consult the AWS terms for other uses.
 <g id="resource-6177735f636c6f756466726f6e745f646973747269627574696f6e2e617070-current" data-architecture-id="terraform:6177735f636c6f756466726f6e745f646973747269627574696f6e2e617070-current" data-qualified-address="module.root.aws_cloudfront_distribution.app" data-terraform-address="aws_cloudfront_distribution.app"><title>module.root.aws_cloudfront_distribution.app — other</title>
 <rect x="60" y="200" width="320" height="96" rx="8" fill="#fefce8" stroke="#854d0e" stroke-width="1.5" data-mode="managed"/>
 <text x="72" y="220" font-size="11" fill="#854d0e">aws_cloudfront_distribut… · other</text>
-<use href="#planorama-icon-aws-cloudfront" x="72" y="228" width="24" height="24" aria-hidden="true"/><text x="104" y="245" font-size="13" fill="#0f172a">module.root.aws_cloudfront_distri</text>
-<text x="104" y="265" font-size="13" fill="#0f172a">bution.app</text>
+<use href="#planorama-icon-aws-cloudfront" x="72" y="228" width="24" height="24" aria-hidden="true"/><text x="104" y="245" font-size="13" fill="#0f172a" xml:space="preserve">module.root.</text>
+<text x="104" y="265" font-size="13" fill="#0f172a" xml:space="preserve">aws_cloudfront_distribution.app</text>
 <text x="72" y="284" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
 <g id="resource-6177735f696e7374616e63652e746f6b796f-current" data-architecture-id="terraform:6177735f696e7374616e63652e746f6b796f-current" data-qualified-address="module.root.aws_instance.tokyo" data-terraform-address="aws_instance.tokyo"><title>module.root.aws_instance.tokyo — other</title>
 <rect x="140" y="804" width="320" height="96" rx="8" fill="#fefce8" stroke="#854d0e" stroke-width="1.5" data-mode="managed"/>
 <text x="152" y="824" font-size="11" fill="#854d0e">aws_instance · other</text>
-<use href="#planorama-icon-aws-ec2" x="152" y="832" width="24" height="24" aria-hidden="true"/><text x="184" y="849" font-size="13" fill="#0f172a">module.root.aws_instance.tokyo</text>
+<use href="#planorama-icon-aws-ec2" x="152" y="832" width="24" height="24" aria-hidden="true"/><text x="184" y="849" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_instance.tokyo</text>
 <text x="152" y="888" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
 <g id="resource-6177735f696e7374616e63652e756e6b6e6f776e-current" data-architecture-id="terraform:6177735f696e7374616e63652e756e6b6e6f776e-current" data-qualified-address="module.root.aws_instance.unknown" data-terraform-address="aws_instance.unknown"><title>module.root.aws_instance.unknown — other</title>
 <rect x="60" y="1588" width="320" height="96" rx="8" fill="#fefce8" stroke="#854d0e" stroke-width="1.5" data-mode="managed"/>
 <text x="72" y="1608" font-size="11" fill="#854d0e">aws_instance · other</text>
-<use href="#planorama-icon-aws-ec2" x="72" y="1616" width="24" height="24" aria-hidden="true"/><text x="104" y="1633" font-size="13" fill="#0f172a">module.root.aws_instance.unknown</text>
+<use href="#planorama-icon-aws-ec2" x="72" y="1616" width="24" height="24" aria-hidden="true"/><text x="104" y="1633" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_instance.unknown</text>
 <text x="72" y="1672" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
 <g id="resource-6177735f696e7374616e63652e76697267696e6961-current" data-architecture-id="terraform:6177735f696e7374616e63652e76697267696e6961-current" data-qualified-address="module.root.aws_instance.virginia" data-terraform-address="aws_instance.virginia"><title>module.root.aws_instance.virginia — other</title>
 <rect x="140" y="1352" width="320" height="96" rx="8" fill="#fefce8" stroke="#854d0e" stroke-width="1.5" data-mode="managed"/>
 <text x="152" y="1372" font-size="11" fill="#854d0e">aws_instance · other</text>
-<use href="#planorama-icon-aws-ec2" x="152" y="1380" width="24" height="24" aria-hidden="true"/><text x="184" y="1397" font-size="13" fill="#0f172a">module.root.aws_instance.virginia</text>
+<use href="#planorama-icon-aws-ec2" x="152" y="1380" width="24" height="24" aria-hidden="true"/><text x="184" y="1397" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_instance.virginia</text>
 <text x="152" y="1436" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
 <g id="resource-6177735f726f75746535335f7a6f6e652e617070-current" data-architecture-id="terraform:6177735f726f75746535335f7a6f6e652e617070-current" data-qualified-address="module.root.aws_route53_zone.app" data-terraform-address="aws_route53_zone.app"><title>module.root.aws_route53_zone.app — other</title>
 <rect x="60" y="336" width="320" height="96" rx="8" fill="#fefce8" stroke="#854d0e" stroke-width="1.5" data-mode="managed"/>
 <text x="72" y="356" font-size="11" fill="#854d0e">aws_route53_zone · other</text>
-<text x="72" y="381" font-size="13" fill="#0f172a">module.root.aws_route53_zone.app</text>
+<text x="72" y="381" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_route53_zone.app</text>
 <text x="72" y="420" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
 <g id="resource-6177735f7375626e65742e746f6b796f-current" data-architecture-id="terraform:6177735f7375626e65742e746f6b796f-current" data-qualified-address="module.root.aws_subnet.tokyo" data-terraform-address="aws_subnet.tokyo"><title>module.root.aws_subnet.tokyo — other</title>
 <text x="112" y="688" font-size="11" fill="#854d0e">aws_subnet · other</text>
-<use href="#planorama-icon-aws-vpc" x="112" y="696" width="24" height="24" aria-hidden="true"/><text x="144" y="713" font-size="13" fill="#0f172a">module.root.aws_subnet.tokyo</text>
+<use href="#planorama-icon-aws-vpc" x="112" y="696" width="24" height="24" aria-hidden="true"/><text x="144" y="713" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_subnet.tokyo</text>
 <text x="112" y="752" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
 <g id="resource-6177735f7375626e65742e76697267696e6961-current" data-architecture-id="terraform:6177735f7375626e65742e76697267696e6961-current" data-qualified-address="module.root.aws_subnet.virginia" data-terraform-address="aws_subnet.virginia"><title>module.root.aws_subnet.virginia — other</title>
 <text x="112" y="1236" font-size="11" fill="#854d0e">aws_subnet · other</text>
-<use href="#planorama-icon-aws-vpc" x="112" y="1244" width="24" height="24" aria-hidden="true"/><text x="144" y="1261" font-size="13" fill="#0f172a">module.root.aws_subnet.virginia</text>
+<use href="#planorama-icon-aws-vpc" x="112" y="1244" width="24" height="24" aria-hidden="true"/><text x="144" y="1261" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_subnet.virginia</text>
 <text x="112" y="1300" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
 <g id="resource-6177735f756e636c61737369666965642e617070-current" data-architecture-id="terraform:6177735f756e636c61737369666965642e617070-current" data-qualified-address="module.root.aws_unclassified.app" data-terraform-address="aws_unclassified.app"><title>module.root.aws_unclassified.app — other</title>
 <rect x="60" y="1724" width="320" height="96" rx="8" fill="#fefce8" stroke="#854d0e" stroke-width="1.5" data-mode="managed"/>
 <text x="72" y="1744" font-size="11" fill="#854d0e">aws_unclassified · other</text>
-<text x="72" y="1769" font-size="13" fill="#0f172a">module.root.aws_unclassified.app</text>
+<text x="72" y="1769" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_unclassified.app</text>
 <text x="72" y="1808" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
 <g id="resource-6177735f7670632e746f6b796f-current" data-architecture-id="terraform:6177735f7670632e746f6b796f-current" data-qualified-address="module.root.aws_vpc.tokyo" data-terraform-address="aws_vpc.tokyo"><title>module.root.aws_vpc.tokyo — other</title>
 <text x="72" y="552" font-size="11" fill="#854d0e">aws_vpc · other</text>
-<use href="#planorama-icon-aws-vpc" x="72" y="560" width="24" height="24" aria-hidden="true"/><text x="104" y="577" font-size="13" fill="#0f172a">module.root.aws_vpc.tokyo</text>
+<use href="#planorama-icon-aws-vpc" x="72" y="560" width="24" height="24" aria-hidden="true"/><text x="104" y="577" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_vpc.tokyo</text>
 <text x="72" y="616" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
 <g id="resource-6177735f7670632e746f6b796f5f7365636f6e64-current" data-architecture-id="terraform:6177735f7670632e746f6b796f5f7365636f6e64-current" data-qualified-address="module.root.aws_vpc.tokyo_second" data-terraform-address="aws_vpc.tokyo_second"><title>module.root.aws_vpc.tokyo_second — other</title>
 <text x="592" y="552" font-size="11" fill="#854d0e">aws_vpc · other</text>
-<use href="#planorama-icon-aws-vpc" x="592" y="560" width="24" height="24" aria-hidden="true"/><text x="624" y="577" font-size="13" fill="#0f172a">module.root.aws_vpc.tokyo_second</text>
+<use href="#planorama-icon-aws-vpc" x="592" y="560" width="24" height="24" aria-hidden="true"/><text x="624" y="577" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_vpc.tokyo_second</text>
 <text x="592" y="616" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
 <g id="resource-6177735f7670632e76697267696e6961-current" data-architecture-id="terraform:6177735f7670632e76697267696e6961-current" data-qualified-address="module.root.aws_vpc.virginia" data-terraform-address="aws_vpc.virginia"><title>module.root.aws_vpc.virginia — other</title>
 <text x="72" y="1100" font-size="11" fill="#854d0e">aws_vpc · other</text>
-<use href="#planorama-icon-aws-vpc" x="72" y="1108" width="24" height="24" aria-hidden="true"/><text x="104" y="1125" font-size="13" fill="#0f172a">module.root.aws_vpc.virginia</text>
+<use href="#planorama-icon-aws-vpc" x="72" y="1108" width="24" height="24" aria-hidden="true"/><text x="104" y="1125" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_vpc.virginia</text>
 <text x="72" y="1164" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
 <g data-endpoints="true" data-source="resource-6177735f696e7374616e63652e746f6b796f-current" data-target="resource-6177735f696e7374616e63652e76697267696e6961-current" aria-hidden="true">

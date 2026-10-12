@@ -1,4 +1,4 @@
-use super::{Bounds, Layout, NODE_HEIGHT, NODE_WIDTH, Point};
+use super::{Bounds, Layout, Point};
 use crate::model::architecture::{Graph, ResourceRole};
 
 pub(super) mod affinity;
@@ -56,7 +56,8 @@ pub(super) fn place_with_heights(
     }
     let mut sizes: Vec<_> = header_heights
         .iter()
-        .map(|&height| (NODE_WIDTH, height))
+        .zip(&graph.nodes)
+        .map(|(&height, node)| (crate::view::references::width(node), height))
         .collect();
     let mut offsets = vec![Point { x: 0, y: 0 }; graph.nodes.len()];
     for &node in order.iter().rev() {
@@ -90,7 +91,7 @@ pub(super) fn place_with_heights(
                 offsets[child].y += header_heights[node] + padding;
             }
             sizes[node] = (
-                width.max(NODE_WIDTH) + padding * 2,
+                width.max(crate::view::references::width(&graph.nodes[node])) + padding * 2,
                 header_heights[node]
                     + padding
                     + height
@@ -158,10 +159,8 @@ pub(super) fn header_heights(graph: &Graph, tree: &super::ContainmentTree) -> Ve
         .map(|(node, edges)| {
             let inferred =
                 tree.parents[node].is_some_and(|parent| graph.derived_containment(parent, node));
-            (NODE_HEIGHT
-                + crate::view::references::height(&graph.nodes[node])
-                + if inferred { 18 } else { 0 })
-            .max(40 + super::relationship_markers::port_span(edges, &numbered))
+            (crate::view::card::measure(&graph.nodes[node]).height + if inferred { 18 } else { 0 })
+                .max(40 + super::relationship_markers::port_span(edges, &numbered))
         })
         .collect()
 }

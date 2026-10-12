@@ -11,7 +11,10 @@ pub(crate) fn project(source: &Graph) -> Projection {
         .nodes
         .iter()
         .enumerate()
-        .filter(|(_, node)| node.placement != crate::model::Placement::Logical)
+        .filter(|(_, node)| {
+            node.placement != crate::model::Placement::Logical
+                && super::routes::owner(source, node).is_none()
+        })
         .map(|(index, _)| index)
         .collect();
     nodes.sort_by_key(|&i| (&source.nodes[i].entity.id, &source.nodes[i].address));
@@ -20,7 +23,31 @@ pub(crate) fn project(source: &Graph) -> Projection {
         remap[old] = Some(new);
     }
     let mut graph = source.clone();
-    graph.nodes = nodes.iter().map(|&i| source.nodes[i].clone()).collect();
+    graph.nodes = nodes
+        .iter()
+        .map(|&i| {
+            let mut node = source.nodes[i].clone();
+            node.routes.owner = None;
+            node.routes.reserved_height = super::routes::height(source, i);
+            let incoming = source
+                .edges
+                .iter()
+                .filter(|e| e.to == i && super::routes::routed(source, e.from))
+                .count();
+            if incoming > 0 {
+                let incident = source
+                    .edges
+                    .iter()
+                    .filter(|e| e.from == i || e.to == i)
+                    .count();
+                node.routes.reserved_height = node.routes.reserved_height.max(
+                    (41 + incident * crate::layout::relationship_markers::PORT_SPACING)
+                        .saturating_sub(super::card::measure(&node).header_height),
+                );
+            }
+            node
+        })
+        .collect();
     let mut edges = Vec::new();
     graph.edges = source
         .edges

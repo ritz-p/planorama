@@ -1,14 +1,60 @@
 #!/bin/sh
 set -eu
 cd "$(dirname "$0")/.."
-cargo build --locked
-binary=target/debug/planorama
-for name in association aws-relationships checks components containment dense-architecture multi-container network-scope rds-subnet-group regions relationship-index routes security-groups spanning-dense subnet-groups terraform vpc-workloads workload-security-groups; do
-    "$binary" "tests/fixtures/$name-plan.json" -o "examples/$name.svg"
-done
-"$binary" examples/plan.json -o examples/diagram.svg
-"$binary" examples/data-plan.json -o examples/data.svg
-"$binary" examples/bundling-plan.json -o examples/bundling.svg
-"$binary" examples/terraform-large/plan.json -o examples/terraform-large/diagram.svg
-"$binary" --state network=tests/fixtures/multi/network.json --state application=tests/fixtures/multi/application.json -o examples/multi-plan.svg
-"$binary" --state producer=tests/fixtures/multi/producer.json --state consumer=tests/fixtures/multi/consumer.json --remote-state consumer:data.terraform_remote_state.network=producer -o examples/cross-state.svg
+cargo build --locked --bin planorama
+binary=${CARGO_TARGET_DIR:-target}/debug/planorama
+
+update_snapshot() {
+    snapshot_test=$1
+    snapshot_flag=$2
+    listing=$(cargo test --locked --bin planorama "$snapshot_test" -- --exact --list)
+    if ! printf '%s\n' "$listing" | grep -F -x "$snapshot_test: test" > /dev/null; then
+        printf 'Snapshot test not found: %s\n' "$snapshot_test" >&2
+        exit 1
+    fi
+    env "$snapshot_flag=1" cargo test --locked --bin planorama "$snapshot_test" -- --exact
+}
+
+while IFS= read -r output || [ -n "$output" ]; do
+    case "$output" in
+        examples/diagram.svg)
+            "$binary" examples/plan.json -o "$output"
+            ;;
+        examples/data.svg)
+            "$binary" examples/data-plan.json -o "$output"
+            ;;
+        examples/bundling.svg)
+            "$binary" examples/bundling-plan.json -o "$output"
+            ;;
+        examples/terraform-large/diagram.svg)
+            "$binary" examples/terraform-large/plan.json -o "$output"
+            ;;
+        examples/multi-plan.svg)
+            "$binary" --state network=tests/fixtures/multi/network.json --state application=tests/fixtures/multi/application.json -o "$output"
+            ;;
+        examples/cross-state.svg)
+            "$binary" --state producer=tests/fixtures/multi/producer.json --state consumer=tests/fixtures/multi/consumer.json --remote-state consumer:data.terraform_remote_state.network=producer -o "$output"
+            ;;
+        examples/hierarchy-routing.svg)
+            update_snapshot layout::containers::tests::hierarchy_obstacles_and_direct_container_endpoints UPDATE_ROUTING_SNAPSHOT
+            ;;
+        examples/port-collisions.svg)
+            update_snapshot layout::tests::ports::refined_flat_bundle_keeps_opposite_role_port UPDATE_PORT_SNAPSHOT
+            ;;
+        examples/*.svg)
+            name=${output#examples/}
+            name=${name%.svg}
+            case "$name" in
+                ''|*[!a-z0-9-]*)
+                    printf 'Unsupported generated SVG path: %s\n' "$output" >&2
+                    exit 1
+                    ;;
+            esac
+            "$binary" "tests/fixtures/$name-plan.json" -o "$output"
+            ;;
+        *)
+            printf 'Unsupported generated SVG path: %s\n' "$output" >&2
+            exit 1
+            ;;
+    esac
+done < scripts/generated-svgs.txt

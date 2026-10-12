@@ -1,16 +1,44 @@
 use crate::model::architecture::{Action, AttributePathStep, ChangeMetadata};
 use std::fmt::Write;
 
-pub(super) fn label(action: Action, metadata: &ChangeMetadata) -> String {
-    let operation = metadata
+pub(super) fn action_label(action: Action, metadata: &ChangeMetadata) -> &'static str {
+    metadata
         .state_removal
         .map(|removal| removal.label())
-        .unwrap_or(super::style::label(action));
+        .unwrap_or(super::style::label(action))
+}
+
+pub(super) fn label(action: Action, metadata: &ChangeMetadata) -> String {
+    let operation = action_label(action, metadata);
     if metadata.import.is_some() {
         format!("import / {operation}")
     } else {
         operation.into()
     }
+}
+
+pub(super) fn moved_from(previous: &str, x: usize, y: usize, limit: usize) -> (String, usize) {
+    let text = crate::view::text::moved_from(previous);
+    let lines = crate::view::text::wrap_address(&text, limit);
+    let mut svg = format!(
+        r##"<text data-move-annotation="true" font-size="11" fill="#64748b"><title>{}</title>"##,
+        super::escape(&text)
+    );
+    for (index, line) in lines.iter().enumerate() {
+        writeln!(
+            svg,
+            r#"<tspan x="{x}" y="{}" xml:space="preserve">{}</tspan>"#,
+            y + index * 18,
+            super::escape(line)
+        )
+        .unwrap();
+    }
+    svg.push_str("</text>\n");
+    (svg, lines.len() * 18)
+}
+
+pub(super) fn move_details(previous: Option<&str>) -> String {
+    previous.map_or_else(String::new, |previous| format!("; moved from: {previous}"))
 }
 
 pub(super) fn attributes(metadata: &ChangeMetadata) -> String {

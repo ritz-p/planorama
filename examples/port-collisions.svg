@@ -20,11 +20,11 @@
 <path d="M 40 177 H 66" stroke="#94a3b8" stroke-width="2"/><text x="73" y="181">no independent change</text>
 <text x="40" y="205">Line style:</text><path d="M 140 201 H 170" stroke="#64748b" stroke-width="1.5"/><text x="178" y="205">dependency</text>
 <path d="M 340 201 H 370" stroke="#64748b" stroke-width="2" stroke-dasharray="7 4"/><text x="378" y="205">association</text>
-<path d="M 540 201 H 570" stroke="#64748b" stroke-width="2.5" stroke-dasharray="2 4" stroke-linecap="round"/><text x="578" y="205">connection</text>
+<path d="M 540 201 H 570" stroke="#64748b" stroke-width="2.5" stroke-dasharray="0 3.5" stroke-linecap="round"/><text x="578" y="205">connection</text>
 </g>
 <g transform="translate(0 72)">
 <g data-architecture="true" transform="translate(0 0)">
-<path d="M 380 459 L 884 459 Q 892 459 892 451 L 892 400 Q 892 392 900 392 L 1228 392 Q 1236 392 1236 400 L 1236 452 Q 1236 460 1228 460 L 1220 460 " data-edge-kind="connection" data-directionality="undirected" data-source="resource-746573742e6e30-current" data-target="resource-746573742e6e31-current" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-dasharray="2 4" stroke-linecap="round" stroke-linejoin="round"><title>test.n0 ↔ test.n1 (connection)</title></path>
+<path d="M 380 459 L 884 459 Q 892 459 892 451 L 892 400 Q 892 392 900 392 L 1228 392 Q 1236 392 1236 400 L 1236 452 Q 1236 460 1228 460 L 1220 460 " data-edge-kind="connection" data-directionality="undirected" data-source="resource-746573742e6e30-current" data-target="resource-746573742e6e31-current" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-dasharray="0 3.5" stroke-linecap="round" stroke-linejoin="round"><title>test.n0 ↔ test.n1 (connection)</title></path>
 <path d="M 800 159 L 1288 159 Q 1296 159 1296 167 L 1296 420 Q 1296 428 1288 428 L 1220 428 " data-edge-kind="association" data-directionality="undirected" data-source="resource-746573742e6e34-current" data-target="resource-746573742e6e31-current" fill="none" stroke="#94a3b8" stroke-width="2" stroke-dasharray="7 4" stroke-linejoin="round"><title>test.n4 ↔ test.n1 (association)</title></path>
 <path d="M 380 747 L 1228 747 Q 1236 747 1236 739 L 1236 500 Q 1236 492 1228 492 L 1220 492 " data-edge-kind="dependency" data-directionality="directed" data-source="resource-746573742e6e35-current" data-target="resource-746573742e6e31-current" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>test.n5 → test.n1 (dependency)</title></path>
 <path d="M 1220 444 L 1236 444 Q 1244 444 1244 436 L 1244 255 Q 1244 247 1252 247 L 1320 247 " data-edge-kind="dependency" data-directionality="directed" data-source="resource-746573742e6e31-current" data-target="resource-746573742e6e32-current" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>test.n1 → test.n2 (dependency)</title></path>
@@ -34,32 +34,32 @@
 <g id="resource-746573742e6e30-current" data-architecture-id="terraform:746573742e6e30-current" data-qualified-address="module.root.test.n0" data-terraform-address="test.n0"><title>module.root.test.n0 — create</title>
 <rect x="60" y="400" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text x="72" y="420" font-size="11" fill="#047857">test · create</text>
-<text x="72" y="445" font-size="13" fill="#0f172a">module.root.test.n0</text>
+<text x="72" y="445" font-size="13" fill="#0f172a" xml:space="preserve">module.root.test.n0</text>
 </g>
 <g id="resource-746573742e6e31-current" data-architecture-id="terraform:746573742e6e31-current" data-qualified-address="module.root.test.n1" data-terraform-address="test.n1"><title>module.root.test.n1 — create</title>
 <rect x="900" y="400" width="320" height="121" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text x="912" y="420" font-size="11" fill="#047857">test · create</text>
-<text x="912" y="445" font-size="13" fill="#0f172a">module.root.test.n1</text>
+<text x="912" y="445" font-size="13" fill="#0f172a" xml:space="preserve">module.root.test.n1</text>
 </g>
 <g id="resource-746573742e6e32-current" data-architecture-id="terraform:746573742e6e32-current" data-qualified-address="module.root.test.n2" data-terraform-address="test.n2"><title>module.root.test.n2 — create</title>
 <rect x="1320" y="200" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text x="1332" y="220" font-size="11" fill="#047857">test · create</text>
-<text x="1332" y="245" font-size="13" fill="#0f172a">module.root.test.n2</text>
+<text x="1332" y="245" font-size="13" fill="#0f172a" xml:space="preserve">module.root.test.n2</text>
 </g>
 <g id="resource-746573742e6e33-current" data-architecture-id="terraform:746573742e6e33-current" data-qualified-address="module.root.test.n3" data-terraform-address="test.n3"><title>module.root.test.n3 — create</title>
 <rect x="1320" y="600" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text x="1332" y="620" font-size="11" fill="#047857">test · create</text>
-<text x="1332" y="645" font-size="13" fill="#0f172a">module.root.test.n3</text>
+<text x="1332" y="645" font-size="13" fill="#0f172a" xml:space="preserve">module.root.test.n3</text>
 </g>
 <g id="resource-746573742e6e34-current" data-architecture-id="terraform:746573742e6e34-current" data-qualified-address="module.root.test.n4" data-terraform-address="test.n4"><title>module.root.test.n4 — create</title>
 <rect x="480" y="100" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text x="492" y="120" font-size="11" fill="#047857">test · create</text>
-<text x="492" y="145" font-size="13" fill="#0f172a">module.root.test.n4</text>
+<text x="492" y="145" font-size="13" fill="#0f172a" xml:space="preserve">module.root.test.n4</text>
 </g>
 <g id="resource-746573742e6e35-current" data-architecture-id="terraform:746573742e6e35-current" data-qualified-address="module.root.test.n5" data-terraform-address="test.n5"><title>module.root.test.n5 — create</title>
 <rect x="60" y="700" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text x="72" y="720" font-size="11" fill="#047857">test · create</text>
-<text x="72" y="745" font-size="13" fill="#0f172a">module.root.test.n5</text>
+<text x="72" y="745" font-size="13" fill="#0f172a" xml:space="preserve">module.root.test.n5</text>
 </g>
 <g data-endpoints="true" data-source="resource-746573742e6e30-current" data-target="resource-746573742e6e31-current" aria-hidden="true">
 <circle data-endpoint="source" cx="380" cy="459" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/><circle data-endpoint="target" cx="1220" cy="460" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>

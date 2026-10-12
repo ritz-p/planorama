@@ -1,0 +1,701 @@
+name: Update SVG examples
+
+on:
+  pull_request:
+    paths:
+      - src/**
+      - build.rs
+      - Cargo.toml
+      - Cargo.lock
+      - rust-toolchain.toml
+      - .cargo/**
+      - assets/**
+      - tests/fixtures/**/*.json
+      - examples/**/*.json
+      - examples/**/*.svg
+      - tests/unit/layout.rs
+      - tests/unit/layout/containers.rs
+      - tests/unit/layout/ports.rs
+      - scripts/update-examples.sh
+      - scripts/generated-svgs.txt
+      - .github/workflows/update_examples.yml
+  workflow_dispatch:
+    inputs:
+      pull_request:
+        description: Pull request number to regenerate (latest head)
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: svg-examples-${{ github.event.pull_request.number || inputs.pull_request }}
+  cancel-in-progress: false
+
+jobs:
+  generate:
+    name: Generate SVG examples
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      pull-requests: read
+      actions: read
+    outputs:
+      active: ${{ steps.prepare.outputs.active }}
+      head_sha: ${{ steps.prepare.outputs.head_sha }}
+      pull_request: ${{ steps.prepare.outputs.pull_request }}
+      same_repository: ${{ steps.prepare.outputs.same_repository }}
+      artifact_id: ${{ steps.artifact.outputs.artifact-id }}
+    steps:
+      - name: Capture current PR head and inspect changed files
+        id: prepare
+        uses: actions/github-script@v9.0.0
+        env:
+          SVG_PULL_REQUEST: ${{ inputs.pull_request }}
+        with:
+          script: |
+            const { TextDecoder } = require('node:util');
+            const manifestPath = 'scripts/generated-svgs.txt';
+            const workflowPath = '.github/workflows/update_examples.yml';
+            const certificateStep = 'Confirm SVGs are current';
+            const fixedInputs = new Set([
+              'build.rs', 'Cargo.toml', 'Cargo.lock', 'rust-toolchain.toml',
+              'tests/unit/layout.rs', 'tests/unit/layout/containers.rs',
+              'tests/unit/layout/ports.rs', 'scripts/update-examples.sh',
+              manifestPath, '.github/workflows/update_examples.yml',
+            ]);
+            const sourceInput = name => fixedInputs.has(name)
+              || name.startsWith('src/') || name.startsWith('.cargo/')
+              || name.startsWith('assets/')
+              || /^(tests\/fixtures|examples)\/.*\.json$/.test(name);
+            const svgInput = name => /^examples\/.*\.svg$/.test(name);
+            const manifestPaths = text => {
+              const paths = text.split(/\r\n|\n|\r/);
+              if (paths.at(-1) === '') paths.pop();
+              if (!paths.length || paths.length > 200 || new Set(paths).size !== paths.length
+                  || paths.some(name => !/^examples\/[A-Za-z0-9_./-]+\.svg$/.test(name)
+                    || name.split('/').some(part => ['', '.', '..'].includes(part)))) {
+                throw new Error('Invalid generated SVG manifest');
+              }
+              return new Set(paths);
+            };
+            const manifests = new Map();
+            const maintainedPaths = async (pr, ref) => {
+              if (!manifests.has(ref)) {
+                const { data: manifest } = await github.rest.repos.getContent({
+                  owner: pr.head.repo.owner.login, repo: pr.head.repo.name,
+                  path: manifestPath, ref,
+                });
+                if (Array.isArray(manifest) || manifest.encoding !== 'base64'
+                    || typeof manifest.content !== 'string') {
+                  throw new Error('Cannot read the generated SVG manifest at the source SHA');
+                }
+                const text = new TextDecoder('utf-8', { fatal: true, ignoreBOM: true })
+                  .decode(Buffer.from(manifest.content, 'base64'));
+                manifests.set(ref, manifestPaths(text));
+              }
+              return manifests.get(ref);
+            };
+            const fullPullFiles = async number => {
+              const files = [];
+              try {
+                for (let page = 1; page <= 30; page++) {
+                  const response = await github.rest.pulls.listFiles({
+                    ...context.repo, pull_number: number, per_page: 100, page,
+                  });
+                  files.push(...response.data);
+                  if (response.data.length < 100) return { files, complete: true };
+                }
+              } catch (error) {
+                core.info(`PR file list unavailable (${error.status || 'request error'}); generating conservatively.`);
+              }
+              return { files, complete: false };
+            };
+            const relevantFiles = async (change, pr, sha) => {
+              if (!change.complete) return true;
+              const names = change.files.flatMap(file => [file.filename, file.previous_filename])
+                .filter(name => typeof name === 'string');
+              if (names.some(sourceInput)) return true;
+              if (!names.some(svgInput)) return false;
+              try {
+                const maintained = await maintainedPaths(pr, sha);
+                return names.some(name => maintained.has(name));
+              } catch (error) {
+                core.info(`SVG allowlist unavailable (${error.status || 'invalid manifest'}); generating conservatively.`);
+                return true;
+              }
+            };
+            const generatedCommit = async (pr, before) => {
+              try {
+                const repository = { owner: pr.head.repo.owner.login, repo: pr.head.repo.name };
+                const { data: commit } = await github.rest.repos.getCommit({
+                  ...repository, ref: before, per_page: 1, page: 1,
+                });
+                if (commit.sha !== before || commit.parents.length !== 1
+                    || commit.author?.login !== 'github-actions[bot]'
+                    || commit.committer?.login !== 'github-actions[bot]') return false;
+                const source = commit.parents[0].sha;
+                if (!/^[0-9a-f]{40}$/.test(source)) return false;
+                const titles = ['chore: regenerate SVG examples [skip ci]', 'chore: regenerate SVG examples'];
+                if (!titles.some(title => commit.commit.message.trimEnd()
+                    === `${title}\n\nPlanorama-SVG-Source: ${source}`)) return false;
+                const { data: comparison } = await github.rest.repos.compareCommitsWithBasehead({
+                  ...repository, basehead: `${source}...${before}`, per_page: 100, page: 1,
+                });
+                if (comparison.status !== 'ahead' || comparison.total_commits !== 1
+                    || comparison.merge_base_commit?.sha !== source
+                    || !Array.isArray(comparison.files) || !comparison.files.length
+                    || comparison.files.length >= 300) return false;
+                const maintained = await maintainedPaths(pr, before);
+                return comparison.files.length <= maintained.size && comparison.files.every(file =>
+                  maintained.has(file.filename) && ['added', 'modified'].includes(file.status)
+                  && !file.previous_filename);
+              } catch (error) {
+                core.info(`Generated-commit proof unavailable (${error.status || 'invalid proof'}).`);
+                return false;
+              }
+            };
+            const successfulCertificate = async (pr, before) => {
+              try {
+                for (let page = 1; page <= 3; page++) {
+                  const { data } = await github.rest.actions.listWorkflowRunsForRepo({
+                    ...context.repo, head_sha: before, status: 'completed', event: 'pull_request',
+                    per_page: 100, page,
+                  });
+                  for (const run of data.workflow_runs) {
+                    if (run.head_sha !== before || run.head_branch !== pr.head.ref
+                        || run.head_repository?.full_name !== pr.head.repo.full_name
+                        || run.event !== 'pull_request' || run.conclusion !== 'success'
+                        || run.path?.split('@', 1)[0] !== workflowPath) continue;
+                    for (let jobsPage = 1; jobsPage <= 3; jobsPage++) {
+                      const { data: result } = await github.rest.actions.listJobsForWorkflowRun({
+                        ...context.repo, run_id: run.id, filter: 'latest', per_page: 100, page: jobsPage,
+                      });
+                      if (result.jobs.some(job => job.name === 'Generate SVG examples'
+                          && job.status === 'completed' && job.conclusion === 'success'
+                          && job.steps?.some(step => step.name === certificateStep
+                            && step.status === 'completed' && step.conclusion === 'success'))) return true;
+                      if (result.jobs.length < 100) break;
+                    }
+                  }
+                  if (data.workflow_runs.length < 100) break;
+                }
+              } catch (error) {
+                core.info(`SVG-current certificate unavailable (${error.status || 'request error'}).`);
+              }
+              return false;
+            };
+            const changedFiles = async (number, sha) => {
+              const before = context.payload.before;
+              if (context.payload.action === 'synchronize' && /^[0-9a-f]{40}$/.test(before || '')) {
+                try {
+                  const { data } = await github.rest.repos.compareCommitsWithBasehead({
+                    ...context.repo, basehead: `${before}...${sha}`, per_page: 100, page: 1,
+                  });
+                  if (data.status === 'identical' && before === sha) {
+                    return { files: [], complete: true, before };
+                  }
+                  if (data.status === 'ahead' && data.merge_base_commit?.sha === before
+                      && Array.isArray(data.files) && data.files.length < 300) {
+                    return { files: data.files, complete: true, before };
+                  }
+                  core.info('Push comparison is non-linear or incomplete; inspecting the complete PR diff.');
+                } catch (error) {
+                  core.info(`Push comparison unavailable (${error.status || 'request error'}); inspecting the PR diff.`);
+                }
+              }
+              return fullPullFiles(number);
+            };
+            core.setOutput('active', false);
+            core.setOutput('current', false);
+            const rawNumber = context.eventName === 'pull_request'
+              ? context.payload.number : process.env.SVG_PULL_REQUEST;
+            if (!/^[1-9][0-9]*$/.test(String(rawNumber))) throw new Error('Invalid pull request number');
+            const number = Number(rawNumber);
+            if (!Number.isSafeInteger(number)) throw new Error('Invalid pull request number');
+            const { data: pr } = await github.rest.pulls.get({ ...context.repo, pull_number: number });
+            if (pr.state !== 'open' || !pr.head.repo
+                || (context.eventName === 'pull_request'
+                  && pr.head.sha !== context.payload.pull_request.head.sha)) {
+              await core.summary.addRaw('PR is closed or this source revision was superseded; nothing to generate.').write();
+              return;
+            }
+            const sha = pr.head.sha;
+            if (!/^[0-9a-f]{40}$/.test(sha)) throw new Error('Expected a complete source commit SHA');
+            if (context.eventName === 'pull_request') {
+              let change = await changedFiles(number, sha);
+              let relevant = await relevantFiles(change, pr, sha);
+              if (!relevant && change.before) {
+                if (await generatedCommit(pr, change.before) || await successfulCertificate(pr, change.before)) {
+                  core.setOutput('current', true);
+                  await core.summary.addRaw(`SVGs were confirmed current at \`${change.before}\`; this push changes no generation inputs or maintained SVGs. Build and generation skipped.`).write();
+                  return;
+                }
+                core.info('The previous head has no SVG-current proof; inspecting the complete PR diff.');
+                change = await fullPullFiles(number);
+                relevant = await relevantFiles(change, pr, sha);
+              }
+              if (!relevant) {
+                await core.summary.addRaw(`No generation inputs or maintained SVGs changed in the complete PR #${number} diff; build and generation skipped.`).write();
+                return;
+              }
+              if (!change.complete) core.info('The PR file list is incomplete; generating conservatively.');
+            }
+            const sameRepository = pr.head.repo.full_name === `${context.repo.owner}/${context.repo.repo}`;
+            for (const [key, value] of Object.entries({
+              active: true, head_sha: sha, pull_request: number,
+              head_repo: pr.head.repo.full_name, same_repository: sameRepository,
+            })) core.setOutput(key, value);
+            core.summary.addHeading(`SVG generation for PR #${number}`, 2)
+              .addRaw(`Source: \`${sha}\`\n\n`);
+            if (!sameRepository) core.summary.addRaw('Fork PR: download the generated SVG artifact and apply `updates.patch` on the source branch.\n');
+            await core.summary.write();
+      - name: Check out source revision
+        if: steps.prepare.outputs.active == 'true'
+        uses: actions/checkout@v7.0.1
+        with:
+          repository: ${{ steps.prepare.outputs.head_repo }}
+          ref: ${{ steps.prepare.outputs.head_sha }}
+          path: source
+          persist-credentials: false
+      - name: Install pinned toolchain
+        if: steps.prepare.outputs.active == 'true'
+        working-directory: source
+        run: rustc --version --verbose
+      - uses: Swatinem/rust-cache@v2.9.2
+        if: steps.prepare.outputs.active == 'true'
+        with:
+          prefix-key: v1-rust-dependencies
+          key: ${{ hashFiles('source/build.rs', 'source/assets/**') }}
+          workspaces: source -> target
+          cache-workspace-crates: 'false'
+      - name: Generate all maintained SVGs
+        if: steps.prepare.outputs.active == 'true'
+        working-directory: source
+        run: sh scripts/update-examples.sh
+      - name: Package complete output and patch
+        if: steps.prepare.outputs.active == 'true'
+        id: package
+        uses: actions/github-script@v9.0.0
+        env:
+          SVG_SOURCE_SHA: ${{ steps.prepare.outputs.head_sha }}
+          SVG_PULL_REQUEST: ${{ steps.prepare.outputs.pull_request }}
+        with:
+          script: |
+            const fs = require('node:fs');
+            const path = require('node:path');
+            const { execFileSync } = require('node:child_process');
+            const { createHash } = require('node:crypto');
+            const { TextDecoder } = require('node:util');
+            const maxFileBytes = 10 * 1024 * 1024;
+            const maxBundleBytes = 50 * 1024 * 1024;
+            const root = path.join(process.env.GITHUB_WORKSPACE, 'source');
+            const destination = path.join(process.env.GITHUB_WORKSPACE, 'svg-artifact');
+            const sha = process.env.SVG_SOURCE_SHA;
+            const number = Number(process.env.SVG_PULL_REQUEST);
+            if (!/^[0-9a-f]{40}$/.test(sha || '') || !/^[1-9][0-9]*$/.test(process.env.SVG_PULL_REQUEST || '')
+                || !Number.isSafeInteger(number)) throw new Error('Invalid artifact source identity');
+            const decode = bytes => new TextDecoder('utf-8', { fatal: true, ignoreBOM: true }).decode(bytes);
+            const git = args => execFileSync('git', ['-C', root, ...args], { maxBuffer: maxFileBytes + 1 });
+            if (decode(git(['rev-parse', 'HEAD'])).trim() !== sha) {
+              throw new Error('Generation checkout no longer matches the captured source SHA');
+            }
+            const paths = decode(fs.readFileSync(path.join(root, 'scripts/generated-svgs.txt'))).split(/\r\n|\n|\r/);
+            if (paths.at(-1) === '') paths.pop();
+            if (!paths.length || paths.length > 200 || new Set(paths).size !== paths.length
+                || paths.some(name => !/^examples\/[A-Za-z0-9_./-]+\.svg$/.test(name)
+                  || name.split('/').some(part => ['', '.', '..'].includes(part)))) {
+              throw new Error('Invalid generated SVG manifest');
+            }
+            const readOutput = relative => {
+              let current = root;
+              const parts = relative.split('/');
+              for (const [index, part] of parts.entries()) {
+                current = path.join(current, part);
+                const stat = fs.lstatSync(current);
+                if (stat.isSymbolicLink() || (index < parts.length - 1 && !stat.isDirectory())) {
+                  throw new Error(`Generated output must not traverse a symlink or non-directory: ${relative}`);
+                }
+                if (index === parts.length - 1 && (!stat.isFile() || stat.size > maxFileBytes)) {
+                  throw new Error(`Missing, non-regular or oversized generated output: ${relative}`);
+                }
+              }
+              const bytes = fs.readFileSync(current);
+              if (bytes.length > maxFileBytes) throw new Error(`Oversized generated output: ${relative}`);
+              return decode(bytes);
+            };
+            const previousOutput = relative => {
+              const listing = decode(git(['ls-tree', '-z', sha, '--', relative]));
+              if (listing === '') return null;
+              const entry = /^(100644|100755) blob ([0-9a-f]{40})\t([^\0]+)\0$/.exec(listing);
+              if (!entry || entry[3] !== relative) throw new Error(`Invalid committed SVG entry: ${relative}`);
+              const bytes = git(['cat-file', 'blob', entry[2]]);
+              if (bytes.length > maxFileBytes) throw new Error(`Oversized committed SVG: ${relative}`);
+              return decode(bytes);
+            };
+            const blobId = text => {
+              const bytes = Buffer.from(text, 'utf8');
+              return createHash('sha1').update(`blob ${bytes.length}\0`).update(bytes).digest('hex');
+            };
+            const lines = text => text.match(/[^\n]*\n|[^\n]+$/g) || [];
+            const marked = (items, mark) => items.map(line => `${mark}${line}${line.endsWith('\n') ? '' : '\n\\ No newline at end of file\n'}`).join('');
+            const filePatch = (relative, before, after) => {
+              const oldLines = lines(before === null ? '' : before);
+              const newLines = lines(after);
+              let patch = `diff --git a/${relative} b/${relative}\n`;
+              if (before === null) patch += 'new file mode 100644\n';
+              patch += `index ${before === null ? '0'.repeat(40) : blobId(before)}..${blobId(after)}${before === null ? '' : ' 100644'}\n`;
+              if (before === null && after === '') return patch;
+              const range = count => count ? `1,${count}` : '0,0';
+              patch += `--- ${before === null ? '/dev/null' : `a/${relative}`}\n+++ b/${relative}\n`;
+              patch += `@@ -${range(oldLines.length)} +${range(newLines.length)} @@\n`;
+              return patch + marked(oldLines, '-') + marked(newLines, '+');
+            };
+            const files = [];
+            const patches = [];
+            const generated = [];
+            for (const relative of paths) {
+              const content = readOutput(relative);
+              generated.push({ path: relative, content });
+              const before = previousOutput(relative);
+              if (before !== content) {
+                files.push({ path: relative, content });
+                patches.push(filePatch(relative, before, content));
+              }
+            }
+            const bundle = { schema: 1, source_sha: sha, pull_request: number, files };
+            const encoded = Buffer.from(JSON.stringify(bundle), 'utf8');
+            if (encoded.length > maxBundleBytes) throw new Error('Generated SVG bundle is too large');
+            fs.mkdirSync(destination, { recursive: true });
+            fs.writeFileSync(path.join(destination, 'updates.json'), encoded);
+            fs.writeFileSync(path.join(destination, 'updates.patch'), patches.join(''), 'utf8');
+            for (const entry of generated) {
+              const target = path.join(destination, 'svgs', entry.path);
+              fs.mkdirSync(path.dirname(target), { recursive: true });
+              fs.writeFileSync(target, entry.content, 'utf8');
+            }
+            await core.summary.addRaw(`Generated ${paths.length} SVGs; ${files.length} changed.\n\n`)
+              .addRaw(files.map(entry => `- \`${entry.path}\``).join('\n')).write();
+            core.setOutput('changed', files.length);
+      - name: Upload generated SVGs
+        if: steps.prepare.outputs.active == 'true'
+        id: artifact
+        uses: actions/upload-artifact@v7.0.2
+        with:
+          name: svg-examples-pr-${{ steps.prepare.outputs.pull_request }}-${{ steps.prepare.outputs.head_sha }}-${{ github.run_attempt }}
+          path: svg-artifact
+          if-no-files-found: error
+          retention-days: 14
+      - name: Confirm SVGs are current
+        if: steps.prepare.outputs.current == 'true' || steps.package.outputs.changed == '0'
+        run: echo 'All maintained SVGs are current at this source revision.'
+
+  writeback:
+    name: Commit SVG updates and start validation
+    needs: generate
+    if: needs.generate.outputs.active == 'true' && needs.generate.outputs.same_repository == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+      actions: write
+      pull-requests: read
+      statuses: write
+    steps:
+      - name: Download this run's generated output
+        uses: actions/download-artifact@v8.0.2
+        with:
+          artifact-ids: ${{ needs.generate.outputs.artifact_id }}
+          path: svg-artifact
+          merge-multiple: true
+          digest-mismatch: error
+      - name: Commit SVG-only changes and dispatch checks
+        uses: actions/github-script@v9.0.0
+        env:
+          SVG_SOURCE_SHA: ${{ needs.generate.outputs.head_sha }}
+          SVG_PULL_REQUEST: ${{ needs.generate.outputs.pull_request }}
+          SVG_ARTIFACT_ID: ${{ needs.generate.outputs.artifact_id }}
+        with:
+          retries: 0
+          script: |
+            const fs = require('node:fs/promises');
+            const {TextDecoder} = require('node:util');
+            const {owner, repo} = context.repo;
+            const repository = `${owner}/${repo}`;
+            const sourceSha = process.env.SVG_SOURCE_SHA;
+            const numberText = process.env.SVG_PULL_REQUEST;
+            const artifactText = process.env.SVG_ARTIFACT_ID;
+            const number = Number(numberText);
+            const artifactId = Number(artifactText);
+            const maxFileBytes = 10 * 1024 * 1024;
+            const maxBundleBytes = 50 * 1024 * 1024;
+            const manifestPath = 'scripts/generated-svgs.txt';
+            const commitTitle = 'chore: regenerate SVG examples [skip ci]';
+            const oldCommitTitle = 'chore: regenerate SVG examples';
+            const sourceTrailer = 'Planorama-SVG-Source: ';
+            const decode = bytes => new TextDecoder('utf-8', {fatal: true, ignoreBOM: true}).decode(bytes);
+            const delay = milliseconds => new Promise(resolve => setTimeout(resolve, milliseconds));
+            const record = value => value !== null && typeof value === 'object' && !Array.isArray(value);
+            const headers = {'X-GitHub-Api-Version': '2026-03-10'};
+
+            if (!/^[0-9a-f]{40}$/.test(sourceSha ?? '') || !/^[1-9][0-9]*$/.test(numberText ?? '')
+                || !Number.isSafeInteger(number) || !/^[1-9][0-9]*$/.test(artifactText ?? '')
+                || !Number.isSafeInteger(artifactId)) {
+              throw new Error('Invalid source SHA, PR number or generated artifact ID.');
+            }
+
+            async function request(method, resource, parameters = {}) {
+              const response = await github.request(`${method} /repos/{owner}/{repo}/${resource}`, {
+                owner, repo, ...parameters, headers, request: {timeout: 60000},
+              });
+              return response.data;
+            }
+
+            async function report(text) {
+              core.info(text);
+              await core.summary.addRaw(`${text}\n\n`).write();
+            }
+
+            const getPull = () => request('GET', `pulls/${number}`);
+            const current = (pr, sha) => pr.state === 'open' && pr.head?.sha === sha
+              && pr.head?.repo?.full_name === repository && pr.base?.repo?.full_name === repository;
+
+            function manifestPaths(text) {
+              const paths = text.split(/\r\n|\n|\r/);
+              if (paths.at(-1) === '') paths.pop();
+              if (!paths.length || paths.length > 200 || new Set(paths).size !== paths.length) {
+                throw new Error('Generated SVG manifest is empty, oversized or duplicated.');
+              }
+              for (const path of paths) {
+                if (!/^examples\/[A-Za-z0-9_./-]+\.svg$/.test(path)
+                    || path.split('/').some(part => ['', '.', '..'].includes(part))) {
+                  throw new Error('Generated SVG manifest contains an invalid path.');
+                }
+              }
+              return new Set(paths);
+            }
+
+            async function readBundle() {
+              const directory = await fs.lstat('svg-artifact');
+              const stat = await fs.lstat('svg-artifact/updates.json');
+              if (!directory.isDirectory() || directory.isSymbolicLink() || !stat.isFile()
+                  || stat.isSymbolicLink() || stat.size > maxBundleBytes) {
+                throw new Error('Generated SVG bundle is missing, oversized or not a regular file.');
+              }
+              const bytes = await fs.readFile('svg-artifact/updates.json');
+              if (bytes.length > maxBundleBytes) throw new Error('Generated SVG bundle is too large.');
+              const bundle = JSON.parse(decode(bytes));
+              if (!record(bundle) || bundle.schema !== 1 || bundle.source_sha !== sourceSha
+                  || bundle.pull_request !== number || !Array.isArray(bundle.files)) {
+                throw new Error('Artifact does not match this PR source revision.');
+              }
+              return bundle;
+            }
+
+            function validateFiles(bundle, allowed) {
+              if (bundle.files.length > allowed.size) throw new Error('Artifact has too many output files.');
+              const seen = new Set();
+              for (const entry of bundle.files) {
+                if (!record(entry) || typeof entry.path !== 'string' || !allowed.has(entry.path)
+                    || seen.has(entry.path) || typeof entry.content !== 'string') {
+                  throw new Error('Artifact contains an undeclared, duplicated or invalid output.');
+                }
+                const bytes = Buffer.from(entry.content, 'utf8');
+                if (bytes.length > maxFileBytes || decode(bytes) !== entry.content) {
+                  throw new Error('Artifact contains oversized or invalid UTF-8 SVG content.');
+                }
+                seen.add(entry.path);
+              }
+              return bundle.files;
+            }
+
+            async function validationWorkflows() {
+              const workflows = new Set(['cargo_fmt.yml', 'cargo_clippy.yml', 'cargo_test.yml']);
+              const msrvPaths = new Set([
+                'Cargo.toml', 'Cargo.lock', 'rust-toolchain.toml', 'Dockerfile', '.dockerignore',
+                'compose.yaml', '.github/workflows/cargo_msrv.yml', '.github/scripts/checkout-validation.sh',
+              ]);
+              for (let page = 1; page <= 30; page++) {
+                const files = await request('GET', `pulls/${number}/files`, {per_page: 100, page});
+                if (!Array.isArray(files)) throw new Error('Could not inspect the whole PR diff for MSRV validation.');
+                const names = files.flatMap(file => [file.filename, file.previous_filename])
+                  .filter(name => typeof name === 'string');
+                if (names.some(name => msrvPaths.has(name))) workflows.add('cargo_msrv.yml');
+                if (names.some(name => name.startsWith('.github/') || name.startsWith('tests/ci/'))) {
+                  workflows.add('workflow_tests.yml');
+                }
+                if (files.length < 100) return [...workflows];
+              }
+              return [...new Set([...workflows, 'cargo_msrv.yml', 'workflow_tests.yml'])];
+            }
+
+            async function waitForHead(generatedSha, branch) {
+              for (let attempt = 0; attempt < 6; attempt++) {
+                const pr = await getPull();
+                if (current(pr, generatedSha) && pr.head.ref === branch) return true;
+                if (!current(pr, sourceSha) || pr.head.ref !== branch) {
+                  await report('The generated commit was superseded; newer source runs take precedence.');
+                  return false;
+                }
+                if (attempt < 5) await delay(2000);
+              }
+              throw new Error('GitHub has not exposed the generated PR head yet. Retry Update SVG examples for this PR.');
+            }
+
+            async function dispatchStatus(sha, state, description) {
+              await request('POST', `statuses/${sha}`, {
+                state, description, context: 'SVG validation dispatch',
+                target_url: `https://github.com/${repository}/actions/runs/${context.runId}`,
+              });
+            }
+
+            async function initializeValidationStatuses(sha, workflows) {
+              const contexts = {
+                'cargo_fmt.yml': 'Formatting', 'cargo_clippy.yml': 'Clippy', 'cargo_test.yml': 'Tests',
+                'cargo_msrv.yml': 'MSRV', 'workflow_tests.yml': 'Workflow tests',
+              };
+              for (const workflow of workflows) {
+                await request('POST', `statuses/${sha}`, {
+                  state: 'pending', context: contexts[workflow], description: 'Waiting for validation to start',
+                  target_url: `https://github.com/${repository}/actions/runs/${context.runId}`,
+                });
+              }
+            }
+
+            async function dispatchChecks(sha, branch, workflows) {
+              await dispatchStatus(sha, 'pending', 'Requesting validation for this generated commit');
+              try {
+                const errors = [];
+                for (const workflow of workflows ?? await validationWorkflows()) {
+                  const pr = await getPull();
+                  if (!current(pr, sha) || pr.head.ref !== branch) {
+                    await dispatchStatus(sha, 'error', 'PR changed before all validation requests completed');
+                    await report('The PR advanced before validation dispatch completed; newer source runs take precedence.');
+                    return;
+                  }
+                  try {
+                    const response = await request('POST', `actions/workflows/${workflow}/dispatches`, {
+                      ref: branch, inputs: {pull_request: String(number), expected_head_sha: sha},
+                    });
+                    const runId = response?.workflow_run_id;
+                    if (!Number.isSafeInteger(runId) || runId <= 0) {
+                      throw new Error('dispatch did not return a workflow run ID');
+                    }
+                    let run;
+                    for (let attempt = 0; attempt < 3; attempt++) {
+                      try {
+                        run = await request('GET', `actions/runs/${runId}`);
+                        break;
+                      } catch (error) {
+                        if (error.status !== 404 || attempt === 2) throw error;
+                        await delay((attempt + 1) * 1000);
+                      }
+                    }
+                    if (run.head_sha !== sha || run.event !== 'workflow_dispatch' || run.head_branch !== branch
+                        || run.path?.split('@', 1)[0] !== `.github/workflows/${workflow}`
+                        || run.display_title !== `Validate PR #${number} at ${sha}`) {
+                      throw new Error('dispatched run does not match the expected PR validation');
+                    }
+                    const url = `https://github.com/${repository}/actions/runs/${runId}`;
+                    await report(`Requested [${workflow}](${url}) for \`${sha}\`; see the run for its validation result.`);
+                  } catch (error) {
+                    errors.push(`${workflow}: ${error.message}`);
+                  }
+                }
+                if (errors.length) {
+                  throw new Error(`Some validation runs could not be verified. Retry Update SVG examples for this PR. ${errors.join('; ')}`);
+                }
+                await dispatchStatus(sha, 'success', 'Validation requested; check the individual results');
+              } catch (error) {
+                await dispatchStatus(sha, 'error', 'Could not request all validation; retry SVG workflow');
+                throw error;
+              }
+            }
+
+            const artifact = await request('GET', `actions/artifacts/${artifactId}`);
+            if (artifact.expired || artifact.workflow_run?.id !== context.runId) {
+              throw new Error('The generated artifact does not belong to this workflow run or has expired.');
+            }
+            const pr = await getPull();
+            if (!current(pr, sourceSha)) {
+              await report('PR is read-only, closed or superseded; no automatic commit. The SVG patch remains in the artifact.');
+              return;
+            }
+            const branch = pr.head.ref;
+            const repositoryId = pr.base.repo.node_id;
+            if (typeof branch !== 'string' || !branch || typeof repositoryId !== 'string' || !repositoryId) {
+              throw new Error('PR metadata does not identify the source branch and repository.');
+            }
+            const bundle = await readBundle();
+            const manifest = await request('GET', `contents/${manifestPath}`, {ref: sourceSha});
+            if (manifest.type !== 'file' || manifest.encoding !== 'base64' || typeof manifest.content !== 'string') {
+              throw new Error('Cannot read the generated SVG manifest at the captured source SHA.');
+            }
+            const encoded = manifest.content.replace(/[\r\n]/g, '');
+            const manifestBytes = Buffer.from(encoded, 'base64');
+            if (manifestBytes.length > maxFileBytes || manifestBytes.toString('base64') !== encoded) {
+              throw new Error('The source manifest is oversized or has invalid encoding.');
+            }
+            const files = validateFiles(bundle, manifestPaths(decode(manifestBytes)));
+            const commit = await request('GET', `git/commits/${sourceSha}`);
+            let updatedSha = sourceSha;
+            let changed = false;
+            let workflows;
+            if (files.length) {
+              const tree = await request('POST', 'git/trees', {
+                base_tree: commit.tree.sha,
+                tree: files.map(entry => ({path: entry.path, mode: '100644', type: 'blob', content: entry.content})),
+              });
+              if (tree.sha !== commit.tree.sha) {
+                const generated = await request('POST', 'git/commits', {
+                  message: `${commitTitle}\n\n${sourceTrailer}${sourceSha}`,
+                  tree: tree.sha, parents: [sourceSha],
+                  author: {name: 'github-actions[bot]', email: '41898282+github-actions[bot]@users.noreply.github.com'},
+                });
+                if (!/^[0-9a-f]{40}$/.test(generated.sha ?? '')) throw new Error('GitHub did not return a generated commit SHA.');
+                workflows = await validationWorkflows();
+                await dispatchStatus(generated.sha, 'pending', 'Waiting to request validation for this generated commit');
+                await initializeValidationStatuses(generated.sha, workflows);
+                const fresh = await getPull();
+                if (!current(fresh, sourceSha) || fresh.head.ref !== branch) {
+                  await report('The PR advanced during generation; discarded stale SVG output without updating its branch.');
+                  return;
+                }
+                try {
+                  const result = await github.graphql(
+                    'mutation($input: UpdateRefsInput!) { updateRefs(input: $input) { clientMutationId } }',
+                    {input: {
+                      repositoryId,
+                      refUpdates: [{name: `refs/heads/${branch}`, beforeOid: sourceSha, afterOid: generated.sha, force: false}],
+                    }},
+                  );
+                  if (!result?.updateRefs) throw new Error('Branch update was not confirmed by GitHub.');
+                } catch (error) {
+                  const latest = await getPull();
+                  if (current(latest, generated.sha) && latest.head.ref === branch) {
+                    core.warning('The update response failed, but the PR head matches this generated commit; continuing with validation dispatch.');
+                  } else if (!current(latest, sourceSha) || latest.head.ref !== branch) {
+                    await report('The branch changed while writeback was attempted; no forced update was made. The SVG patch remains in the artifact.');
+                    return;
+                  } else {
+                    throw new Error(`Automatic writeback was rejected. The SVG patch remains in the artifact; retry Update SVG examples. ${error.message}`);
+                  }
+                }
+                updatedSha = generated.sha;
+                changed = true;
+              }
+            }
+            if (changed) {
+              const url = `https://github.com/${repository}/commit/${updatedSha}`;
+              await report(`## SVG updates committed\n\nSource: \`${sourceSha}\`\n\nGenerated commit: [${updatedSha}](${url})\n\n`
+                + files.map(entry => `- \`${entry.path}\``).join('\n'));
+              if (!await waitForHead(updatedSha, branch)) return;
+            } else {
+              await report(`SVGs are up to date at \`${sourceSha}\`; no commit created.`);
+            }
+            const title = commit.message.split('\n', 1)[0];
+            const repair = [commitTitle, oldCommitTitle].includes(title)
+              && commit.message.split('\n').some(line => /^Planorama-SVG-Source: [0-9a-f]{40}$/.test(line));
+            if (changed || repair) await dispatchChecks(updatedSha, branch, workflows);

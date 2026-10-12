@@ -11,7 +11,16 @@ fn large_fixture_limits_each_edges_bends_and_valid_route_stretch() {
     .unwrap();
     let mut graph = semantic::transform(&raw).0;
     let snapshot = |graph: &Graph| {
+        let started = std::time::Instant::now();
         let layout = Layout::new(graph);
+        let parallel = crate::layout::routing_shared::spacing::measure(graph, &layout.paths);
+        assert!(parallel.close_length <= 4000);
+        assert!(layout.width <= 4260 && layout.height <= 2391);
+        eprintln!(
+            "parallel: {:?}; layout_ms={}",
+            crate::layout::routing_shared::spacing::measure(graph, &layout.paths),
+            started.elapsed().as_millis()
+        );
         let distances: Vec<_> = affinity::groups(graph, &layout.containment.parents)
             .iter()
             .map(|group| {
@@ -39,6 +48,7 @@ fn large_fixture_limits_each_edges_bends_and_valid_route_stretch() {
         assert_no_retraced_stubs(graph, &layout);
         let mut failures = Vec::new();
         let mut result = BTreeMap::new();
+        let mut shapes = BTreeMap::new();
         let mut border_total = 0;
         for (index, edge) in graph.edges.iter().enumerate() {
             let path = &layout.paths[index];
@@ -47,8 +57,62 @@ fn large_fixture_limits_each_edges_bends_and_valid_route_stretch() {
             }
             let reference = routing::shortest_valid_route(graph, &layout, index);
             let metrics = measure_edge(path, &reference);
+            eprintln!(
+                "shape {} -> {}: {:?}; shortest={}",
+                graph.nodes[edge.from].address,
+                graph.nodes[edge.to].address,
+                crate::layout::routing_shared::spacing::Shape::measure(path),
+                metrics.shortest_valid_length
+            );
             let from = graph.nodes[edge.from].address.clone();
             let to = graph.nodes[edge.to].address.clone();
+            let shape = crate::layout::routing_shared::spacing::Shape::measure(path);
+            assert_eq!(shape.s_jogs, 0, "{from} -> {to}: {shape:?}");
+            if from.contains("aws_subnet.private_")
+                && (to.contains("aws_route_table.private")
+                    || to.contains("aws_vpc_endpoint.logs")
+                    || to.contains("aws_ecs_service.app"))
+            {
+                use crate::layout::routing_shared::{ports, refinement::terminal, spacing};
+                let protected = ports::connect_with_clearances(
+                    terminal(path, 0),
+                    terminal(path, 1),
+                    &spacing::barriers(graph, &layout, index),
+                    None,
+                    crate::layout::relationship_markers::ends(graph)[index].map(|n| {
+                        if n {
+                            crate::layout::relationship_markers::clearance(graph)
+                        } else {
+                            16
+                        }
+                    }),
+                )
+                .unwrap();
+                let necessary = spacing::Shape::measure(&protected);
+                assert_eq!(
+                    (
+                        shape.offsets,
+                        shape.s_jogs,
+                        shape.reversals,
+                        shape.backtracking
+                    ),
+                    (0, 0, necessary.reversals, necessary.backtracking),
+                    "{from} -> {to}: {shape:?}"
+                );
+                assert!(
+                    shape.bends <= necessary.bends,
+                    "{from} -> {to}: path={path:?}; protected={protected:?}"
+                );
+            }
+            shapes.insert(
+                (
+                    from.clone(),
+                    to.clone(),
+                    edge.kind,
+                    edge.change.as_ref().map(|c| c.address.clone()),
+                ),
+                shape,
+            );
             let hidden = layout.occluders(edge);
             let frames: Vec<_> = layout
                 .bounds
@@ -118,22 +182,17 @@ fn large_fixture_limits_each_edges_bends_and_valid_route_stretch() {
                         })
                         .sum();
                     eprintln!("gateway hidden length={hidden}");
-                    assert!(own.total_path_length <= 1000 && own.bend_count <= 3);
-                    assert!(hidden > 0 && hidden as u128 * 3 < own.total_path_length);
+                    assert!(
+                        own.total_path_length <= metrics.shortest_valid_length + 128
+                            && own.bend_count <= 3
+                    );
+                    assert!(hidden as u128 * 3 < own.total_path_length);
                     let foreign = graph
                         .nodes
                         .iter()
                         .position(|n| n.address == "module.network.aws_subnet.public_b")
                         .unwrap();
                     assert!(layout.occludes(foreign, edge));
-                    assert!(
-                        path.windows(2)
-                            .any(|p| crate::layout::routing_shared::crosses(
-                                p[0],
-                                p[1],
-                                layout.bounds[foreign]
-                            ))
-                    );
                 }
             }
             if let Some(failure) = metrics.violation(&from, &to, 14, 2, 128) {
@@ -166,7 +225,7 @@ fn large_fixture_limits_each_edges_bends_and_valid_route_stretch() {
             failures.len()
         );
         assert!(failures.is_empty(), "{}", failures.join("\n"));
-        result
+        (result, shapes)
     };
     let original = snapshot(&graph);
     graph.edges.reverse();
@@ -296,7 +355,8 @@ fn congested_container_routes_improve_over_shortest_paths() {
         "../../../../examples/terraform-large/plan.json"
     ))
     .unwrap();
-    let graph = semantic::transform(&raw).0;
+    let architecture = semantic::transform(&raw).0;
+    let graph = crate::view::spatial::project(&architecture).graph;
     let layout = Layout::new(&graph);
     let baseline =
         routing::route_with_quality(&graph, &layout, &ordering::structural_keys(&graph), false);

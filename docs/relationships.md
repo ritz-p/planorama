@@ -7,16 +7,28 @@ other verified references use References. Graph-only references such as
 `depends_on` use Dependency, not an attribute-specific usage label. Logical cards
 show their own direct references, including references to spatial resources.
 Incomplete references show unresolved without asserting candidate targets.
-Filtered targets show Unavailable without a dangling link. Up to four rows are
-visible; an overflow count and accessible title retain the complete list and
-full addresses. Card heights reserve space above the footer and placement note.
+Filtered targets show Unavailable without a dangling link. All rows and full
+Terraform addresses are visible, including module/instance keys and remote state
+qualifiers. Long labels wrap without ellipsis; card widths and heights grow before
+packing and routing. The same metrics apply to logical cards and reserve space
+above the footer and placement note. Accessible titles supplement the visible text.
+
+CloudWatch alarms use Monitors and inverse Monitored by rows only with the
+[verified monitoring evidence](aws.md) required by the AWS projection. These
+rows never create network connections or additional dependency edges.
 
 Dependency lines are thin and solid. Ordinary associations are undirected and
-dashed (7/4), with no arrowheads. Lowered routes retain directional arrowheads.
-Inferred connections are undirected, without arrowheads, and thicker and dotted
-(2/4 with round caps). Connection titles use `↔`. These
+dashed (7/4), with no arrowheads. Route next hops use directed Associations from
+[child-card ports](routes.md).
+Inferred connections are undirected, without arrowheads, and use circular dots
+(`stroke-width="2.5"`, `stroke-dasharray="0 3.5"`, round caps). Dots repeat every
+3.5 SVG units, leaving a 1-unit gap between their painted edges. The same pattern
+is used for paths, legend samples, and relationship-number badge outlines.
+Connection titles use `↔`. These
 patterns remain distinct in grayscale. Containment uses nested boundaries;
 an edge represented by nesting does not receive a redundant line.
+Route child cards use presentation nesting; their safe ownership and entry details
+are in `route-presentations`, and original reference evidence remains in metadata.
 
 Small white circles mark final card ports: the source of a Dependency and both
 ends of Association/Connection paths. Containment has no endpoint circles.
@@ -33,11 +45,15 @@ blue dashed gutter routes and visible cross-state legend.
 
 Visible paths with Terraform resource provenance carry compact `[N]` markers and
 a matching **Relationship resources** numbered list above the architecture diagram.
+Embedded Routes appear in that list and show the matching number on their child
+cards. Index entries do not add resource identities or increase resource counts.
 Each card contains up to 10 complete entries: 1–10, 11–20, and so on. Cards continue
 to the right, wrapping only when the available width requires it. A multi-source
 entry stays in one card regardless of its wrapped line count. Full Terraform-native
-addresses are wrapped without truncation;
-multiple provenance resources and deposed keys remain visible. Reference-only
+addresses are wrapped without truncation. Each moved provenance source shows its
+own `Moved from: ...` annotation alongside its current address and optional deposed
+key. Multi-source entries keep each previous address associated with its source,
+and their measured height includes every wrapped line. Reference-only
 inferred relationships receive no resource number. Numbering sorts by source
 identity, then endpoints and relationship kind, independent of edge-vector order.
 Filtering can renumber the visible subset; named states have separate indexes.

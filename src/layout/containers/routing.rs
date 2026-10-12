@@ -195,7 +195,7 @@ fn route_selected_impl(
                 quality.then_some(scorer),
                 terminals.clearances[index],
             )
-            .unwrap_or_else(|| panic!("reserved ports have no corridor: edge={index}, start={start:?}, end={end:?}, selected={}", sides.is_some()))
+            .unwrap_or_else(|| panic!("reserved ports have no corridor: {} -> {}, edge={index}, start={start:?}, end={end:?}, selected={}", graph.nodes[edge.from].address, graph.nodes[edge.to].address, sides.is_some()))
         } else {
             path_with_clearance(
                 start.point,
@@ -273,7 +273,7 @@ fn route_selected_impl(
     Routed { paths, junctions }
 }
 
-pub(super) fn obstacles(layout: &Layout<'_>, edge: &Edge) -> Vec<Bounds> {
+pub(in crate::layout) fn obstacles(layout: &Layout<'_>, edge: &Edge) -> Vec<Bounds> {
     layout
         .bounds
         .iter()

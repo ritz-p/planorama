@@ -10,7 +10,7 @@ same boundaries and carry explicit cross-state relationships.
 | `model` | Shared domain contracts, architecture identity and value-free provenance |
 | `semantic` | Architecture transformation and final relationship evidence |
 | `provider/aws` | AWS classification, containment, connections, lowering, components, diagnostics and icons |
-| `view` | Immutable selection, neighbor expansion and required context |
+| `view` | Immutable selection, neighbor expansion, required context and shared presentation measurements |
 | `layout` | Containment hierarchy, placement, bounds, ports and routes |
 | `svg` | Drawing, text, legends and metadata |
 
@@ -36,11 +36,38 @@ bounds and incident edges have empty paths. They create no routing obstacles.
 The SVG summary distinguishes spatial and logical cards while retaining totals.
 Value-free reference evidence is available in `resource-references` metadata.
 
-Consumer cards show compact Uses rows from the same evidence, with provider labels
-supplied during projection. Shared row selection determines both content height
-and rendering. Logical cards also show their own references; UI links never add
-routing edges. Full lists remain in accessible titles when the four-row limit
-is exceeded.
+Verified Route ownership uses the same projection boundary: the Route node remains
+in the graph, while its card is embedded in the owning table. `view/routes.rs`
+measures the shared rows before spatial placement; the expanded table reserves
+the complete child height. Final routing uses the child's bounds and ports for its
+next-hop Association. Layout ancestry supports exiting the parent without adding
+a semantic Containment edge. See [routes](routes.md).
+
+Consumer cards show every Uses/Dependencies row from the same evidence, with
+provider labels supplied during projection. Shared label and wrapping metrics
+determine intrinsic width and height before flat/nested packing, scope placement
+and routing. Reference-driven widths grow from 320 to 640 pixels; longer labels
+wrap at 11px monospace with 18px line spacing and no row limit. Measurements
+reserve the Unavailable prefix so filtering and spatial projection cannot
+underestimate content. Logical annotation cards use the same reference metrics.
+Full Terraform addresses include module/instance keys, remote state and deposed
+identity. UI links never add routing edges.
+
+Address wrapping prefers separators between address elements. Dots inside quoted
+instance keys stay part of the key, including after an escaped quote or a forced
+line break. An individual token wider than the available space falls back to
+UTF-8 character boundaries; every delimiter and space is preserved. Ordinary
+explanatory text keeps its separate wrapping behavior.
+Resource headings display the complete selected address. Shared measurements
+reserve enough height for both native and qualified headings, including icon
+space, and for wrapped move annotations before packing. Uses rows and embedded
+Route cards start below that complete header; rendering, child bounds and routing
+obstacles use the same offsets. Address formatting never changes resource identity,
+metadata or links.
+Imported resources reserve a separate badge row in spatial, logical, embedded
+Route and component-member presentations. Shared measurements include this height
+when placing subsequent text and child bounds. Badges stay separate from service
+icons and external-mode indicators, preserving space for complete addresses.
 
 Ingestion does not import provider rules, layout or SVG. Layout, view and SVG use
 the `model::architecture` facade, which excludes Terraform ingestion contracts.

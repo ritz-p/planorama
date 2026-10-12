@@ -111,6 +111,38 @@ fn logical_projection_retains_graph_identity_references_and_operations() {
         Some("aws_ecs_cluster.old")
     );
     assert_eq!(cluster.attribute("data-import"), Some("true"));
+    let badges: Vec<_> = cluster
+        .children()
+        .filter(|n| n.attribute("data-import-badge") == Some("true"))
+        .collect();
+    assert_eq!(badges.len(), 1);
+    let badge_rect = badges[0]
+        .children()
+        .find(|n| n.has_tag_name("rect"))
+        .unwrap();
+    let badge_bottom = badge_rect.attribute("y").unwrap().parse::<usize>().unwrap()
+        + badge_rect
+            .attribute("height")
+            .unwrap()
+            .parse::<usize>()
+            .unwrap();
+    let heading = cluster.children().find(|n| n.has_tag_name("text")).unwrap();
+    assert!(badge_bottom + 10 < heading.attribute("y").unwrap().parse::<usize>().unwrap());
+    assert!(
+        cluster
+            .children()
+            .any(|n| n.has_tag_name("text") && n.text() == Some("update"))
+    );
+    for card in doc
+        .descendants()
+        .filter(|n| n.attribute("data-placement") == Some("logical"))
+    {
+        assert_eq!(
+            card.children()
+                .any(|n| n.attribute("data-import-badge").is_some()),
+            card.attribute("data-import") == Some("true")
+        );
+    }
     assert_eq!(cluster.attribute("data-role"), Some("controller"));
     assert!(cluster.children().any(|n| {
         n.has_tag_name("title")
@@ -151,7 +183,9 @@ fn logical_classification_is_explicit_and_provider_aware() {
         ("aws_lb", Placement::Spatial),
         ("aws_ecs_service", Placement::Spatial),
         ("aws_future_resource", Placement::Unresolved),
-        ("aws_cloudwatch_log_group", Placement::Spatial),
+        ("aws_cloudwatch_log_group", Placement::Logical),
+        ("aws_cloudwatch_metric_alarm", Placement::Logical),
+        ("aws_cloudwatch_dashboard", Placement::Unresolved),
         ("aws_lb_listener_rule", Placement::Spatial),
     ] {
         assert_eq!(
@@ -289,6 +323,28 @@ fn named_states_keep_logical_ids_separate_and_cross_state_provenance_without_rou
         .collect();
     assert_eq!(ids.len(), 2);
     assert_ne!(ids[0], ids[1]);
+    for card in doc
+        .descendants()
+        .filter(|n| n.attribute("data-terraform-address") == Some("aws_ecs_cluster.app"))
+    {
+        assert_eq!(
+            card.attribute("data-previous-address"),
+            Some("aws_ecs_cluster.old")
+        );
+        assert!(
+            card.children()
+                .any(|n| n.has_tag_name("text")
+                    && n.text() == Some("Moved from: aws_ecs_cluster.old"))
+        );
+        assert!(
+            card.children()
+                .find(|n| n.has_tag_name("title"))
+                .unwrap()
+                .text()
+                .unwrap()
+                .contains("moved from: aws_ecs_cluster.old")
+        );
+    }
     assert!(output.contains("cross-state-relationships"));
     assert!(!output.contains("independent states"));
     assert!(output.contains("1 logical"));
@@ -432,7 +488,7 @@ fn consumer_uses_only_direct_references_and_keeps_content_inside_cards() {
 }
 
 #[test]
-fn shared_profiles_and_overflow_keep_complete_accessible_references() {
+fn shared_profiles_and_long_reference_lists_are_fully_visible() {
     let mut value = input();
     let mut worker = value["configuration"]["root_module"]["resources"][2].clone();
     worker["address"] = serde_json::json!("aws_instance.second");
@@ -478,7 +534,7 @@ fn shared_profiles_and_overflow_keep_complete_accessible_references() {
             .descendants()
             .filter(|n| n.has_tag_name("a"))
             .count(),
-        4
+        10
     );
     let summary = service
         .descendants()
@@ -491,11 +547,22 @@ fn shared_profiles_and_overflow_keep_complete_accessible_references() {
         .text()
         .unwrap();
     assert!(addresses.iter().all(|a| title.contains(a)));
-    assert!(
-        summary
-            .descendants()
-            .any(|n| n.has_tag_name("text") && n.text().unwrap().contains("+6 more"))
-    );
+    assert!(!output.contains("more (see full title)"));
+    for address in &addresses {
+        assert!(
+            summary
+                .descendants()
+                .filter(|n| n.has_tag_name("a"))
+                .any(|link| {
+                    let visible = link
+                        .children()
+                        .filter(|n| n.has_tag_name("text"))
+                        .filter_map(|n| n.text())
+                        .collect::<String>();
+                    visible == format!("References: {address}")
+                })
+        );
+    }
 }
 
 #[test]

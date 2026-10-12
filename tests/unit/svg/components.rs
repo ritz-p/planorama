@@ -56,6 +56,31 @@ fn themed_members_preserve_actions_unique_targets_and_state_identity() {
         let (fill, stroke) = crate::svg::color(node.action);
         assert_eq!(rect.attribute("fill"), Some(fill));
         assert_eq!(rect.attribute("stroke"), Some(stroke));
+        let badge = member
+            .children()
+            .find(|n| n.attribute("data-import-badge").is_some());
+        assert_eq!(badge.is_some(), node.metadata.import.is_some());
+        if let Some(badge) = badge {
+            let badge_rect = badge.children().find(|n| n.has_tag_name("rect")).unwrap();
+            let bottom = badge_rect.attribute("y").unwrap().parse::<usize>().unwrap()
+                + badge_rect
+                    .attribute("height")
+                    .unwrap()
+                    .parse::<usize>()
+                    .unwrap();
+            let first = member
+                .descendants()
+                .find(|n| n.has_tag_name("tspan"))
+                .unwrap();
+            assert!(bottom + 10 < first.attribute("y").unwrap().parse::<usize>().unwrap());
+            let height = rect.attribute("height").unwrap().parse::<usize>().unwrap();
+            assert!(
+                member
+                    .descendants()
+                    .filter(|n| n.has_tag_name("tspan"))
+                    .all(|n| n.attribute("y").unwrap().parse::<usize>().unwrap() + 4 < height)
+            );
+        }
         let target = member.attribute("href").unwrap().strip_prefix('#').unwrap();
         let targets: Vec<_> = doc
             .descendants()
@@ -78,6 +103,14 @@ fn themed_members_preserve_actions_unique_targets_and_state_identity() {
         if let Some(previous) = &node.previous_address {
             assert!(title.contains(previous));
         }
+        if node.metadata.import.is_some() {
+            assert!(title.contains("import / "));
+            assert!(
+                targets[0]
+                    .children()
+                    .any(|n| n.attribute("data-import-badge").is_some())
+            );
+        }
         if let Some(key) = &node.deposed_key {
             assert!(title.contains(&format!("deposed: {key}")));
         }
@@ -88,6 +121,19 @@ fn themed_members_preserve_actions_unique_targets_and_state_identity() {
         .find(|n| n.attribute("data-source-address") == Some("aws_lb.missing"))
         .unwrap();
     assert!(missing.attribute("href").is_none());
+    assert!(
+        !missing
+            .children()
+            .any(|n| n.attribute("data-import-badge").is_some())
+    );
+    assert!(
+        doc.descendants()
+            .filter(|n| n.attribute("data-entity-kind") == Some("synthetic"))
+            .all(|n| n.attribute("data-import").is_none()
+                && !n
+                    .children()
+                    .any(|c| c.attribute("data-import-badge").is_some()))
+    );
     assert_eq!(
         missing
             .children()
@@ -184,7 +230,7 @@ fn component_cards_keep_identity_members_operations_and_links() {
                 text,
                 format!(
                     "{}: {address}",
-                    crate::svg::operations::label(node.action, &node.metadata)
+                    crate::svg::operations::action_label(node.action, &node.metadata)
                 )
             );
         }

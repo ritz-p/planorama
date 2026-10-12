@@ -1,6 +1,9 @@
+pub(crate) mod card;
 mod filter;
 pub(crate) mod references;
+pub(crate) mod routes;
 pub(crate) mod spatial;
+pub(crate) mod text;
 use crate::model::architecture::{Architecture, ArchitectureGraph, Graph};
 pub use filter::Options;
 use std::ops::Deref;

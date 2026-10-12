@@ -1,11 +1,13 @@
 use super::{Bounds, Point};
 mod coverage;
 pub(super) mod ports;
+pub(super) mod refinement;
 pub(super) mod scoring;
 pub(super) mod search;
 pub(super) mod shortcuts;
 mod simple;
 pub(super) mod slots;
+pub(super) mod spacing;
 use scoring::Scorer;
 
 pub(super) enum Simplification {

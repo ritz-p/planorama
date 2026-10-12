@@ -43,10 +43,12 @@ docker compose exec -T dev cargo run --locked -- - -o - < plan.json > diagram.sv
 - 依存辺は参照されるリソースから参照するリソースへ向きます。包含は入れ子の枠、関連付けは破線、接続は太い点線です。
 - AWS の VPC・Subnet が空間的なコンテナです。間接参照から導いた配置には `inferred placement` を表示します。
 - data リソースは破線と `external` 表示で区別します。一部の AWS メタデータ data は省略します。
-- 上部は Logical Resources（シアン）、Logical Components（紫）、Relationship Resources の順です。ECS Cluster・Task Definition・IAM 定義・AMI は最初のセクションにまとめ、空間配置と経路計算から分離します。内側のリソースとコンポーネントのメンバーカードは各リソースの変更色を使い、参照情報・変更数を保持します。
-- 利用側の `Uses` 行から論理カードへ移動できます。依存指定・未解決・表示対象外は区別し、長いアドレスと5件目以降の参照はタイトルで確認できます。
-- 既定のアドレス表示は Planorama 修飾形式です。`--address-format terraform` で Terraform 本来の表記に切り替えられます。省略されたラベルの全文はカードのタイトルで確認できます。
-- 属性値は描画しません。plan JSON 自体には機密値が含まれ得るため、実環境の plan/state はコミットしないでください。
+- import を含むリソースには専用の `import` バッジを表示します。作成・更新・置換・変更なしの色や action は保持し、import ID や identity の値は表示しません。
+- 上部は Logical Resources（シアン）、Logical Components（紫）、Relationship Resources の順です。ECS Cluster・Task Definition・IAM 定義・AMI・CloudWatch Log Group・Metric Alarm は最初のセクションにまとめ、空間配置と経路計算から分離します。内側のリソースとコンポーネントのメンバーカードは各リソースの変更色を使い、参照情報・変更数を保持します。
+- 利用側の `Uses` 行は参照を全件表示し、論理カードへ移動できます。依存指定・未解決・表示対象外を区別し、module・instance・state を含む完全な参照アドレスを折り返して表示します。カードと配置領域は内容に合わせて拡張します。
+- 既定のアドレス表示は Planorama 修飾形式です。`--address-format terraform` で Terraform 本来の表記に切り替えられます。長いアドレスは要素の区切りを優先して折り返し、全文を表示します。引用符付きの instance key 内のドットは区切りとして扱いません。
+- 移動したリソースには `Moved from:` と移動元の完全なアドレスを表示します。空間カード、論理カード、Route 子カード、関係一覧の各リソースで確認でき、長い移動元も折り返して表示します。
+- Route は所有先を確認できた Route Table 内に子カードとして表示します。表示可能な接続先へは子カードのポートから矢印付きの破線を引き、接続先を描けない場合は状態を文字で表示します。宛先は安全性を検証した設定定数（CIDR・prefix list ID）だけを表示し、その他の属性値は描画しません。plan JSON 自体には機密値が含まれ得るため、実環境の plan/state はコミットしないでください。
 
 図は構成から解決した関係を表し、Terraform の厳密な実行グラフではありません。式の評価、provider 内部の依存、削除専用リソースの過去の参照は復元しません。未解決・動的・曖昧な参照は保守的に扱い、`--diagnostics` で理由を stderr に出力します。診断は SVG や終了条件を変更しません。経路は決定的に生成しますが、交差や重なりのない最適配置は保証しません。
 
@@ -56,16 +58,17 @@ docker compose exec -T dev cargo run --locked -- - -o - < plan.json > diagram.sv
 | --- | --- |
 | AWS の分類・包含・SG 接続・関連付け | [AWS relationships](docs/aws.md) |
 | 線種・推論注記 | [Relationship styles](docs/relationships.md) |
-| Route の辺への変換 | [Routes](docs/routes.md) |
+| Route Table 内の子カード | [Routes](docs/routes.md) |
 | 論理コンポーネント | [Components](docs/components.md) |
 | 複数 plan・state 間参照 | [Multi-plan](docs/multi-plan.md)、[Outputs](docs/outputs.md) |
 | 表示対象の絞り込み | [Filtering](docs/filtering.md) |
-| import・削除・置換・drift | [Operations](docs/operations.md) |
+| import・移動・削除・置換・drift | [Operations](docs/operations.md) |
 | Terraform check 結果 | [Checks](docs/checks.md) |
 | モデル・provider 設定識別子 | [Models](docs/models.md) |
 | レイヤー構成・レイアウト | [Architecture](docs/architecture.md)、[Routing](docs/routing.md) |
 | AWS アイコンの出典・権利 | [Icons](docs/icons.md) |
 | 性能計測 | [Benchmarks](docs/benchmarks.md) |
+| CI による SVG 生成・自動コミット・PR 検証結果 | [SVG automation](docs/ci.md) |
 
 ## 開発・検証
 
@@ -84,7 +87,7 @@ docker run --rm --mount type=bind,source=.,target=/workspace --env CARGO_TARGET_
 通常の CI は Ubuntu runner 上で `rust-toolchain.toml` の固定ツールチェーンを使い、Formatting・Tests・Clippy を直接実行します。開発イメージには SVG の描画確認用に `rsvg-convert` と DejaVu フォントも含みます。Tests はコンパイルと実行を別ステップで計測し、毎回 `cargo test --locked --all-targets --all-features` を実行します。
 
 Tests・Clippy は `Swatinem/rust-cache` で Cargo registry/git と `target` 内の依存クレートの成果物を保存します。workspace crate は毎回ビルドし、ソース変更後に更新できない同一キーのキャッシュへ成果物を保存しません。キーには runner 環境・ジョブ・Rust compiler・Cargo.toml/Cargo.lock・ツールチェーン・Cargo 設定・ビルド関連環境変数に加え、`build.rs` と `assets/**` のハッシュを含めます。`v1-rust-dependencies` prefix で旧 workspace 成果物を含むキャッシュと区別します。復元後の再ビルド判定は Cargo が行い、キャッシュの有無によらず全対象を検証します。Tests と Clippy はプロファイルと成果物が異なるためジョブ別のキャッシュを使います。
-両 workflow は関連入力が変わる `main` への push でも実行し、後続 PR が復元できる既定ブランチのキャッシュを作ります。
+両 workflow は関連入力が変わる PR の `main` へのマージ後にも実行し、後続 PR が復元できる既定ブランチのキャッシュを作ります。`pull_request_target` の `closed` イベントでマージ済みの場合だけ起動し、読み取り権限でイベント時点の `main` を検証します。SVG の自動コミットに付く `[skip ci]` が squash merge のメッセージに残っても、マージ後の検証を実行できます。`main` へ直接 push した場合は Actions から手動実行してください。
 
 テストプロファイルは `opt-level = 1` で経路計算を高速化し、debug assertion と overflow check を明示的に有効にしています。MSRV は Docker で Rust 1.85.0 の全テストを実行し、Cargo.toml/Cargo.lock・ツールチェーン・Docker 関連設定・MSRV workflow の変更で起動します。
 
@@ -92,11 +95,17 @@ Tests・Clippy は `Swatinem/rust-cache` で Cargo registry/git と `target` 内
 
 ### SVG の更新
 
+同一リポジトリ内の PR は、レンダラー・生成入力の変更を push すると CI がサンプル SVG を生成し、差分がある場合は同じ PR ブランチへ自動コミットします。通常の更新では最新の push 差分と前のコミットの生成完了を確認し、画像が更新済みならドキュメントや無関係なテストだけの更新では生成を繰り返しません。生成中の追加 push や前回の生成失敗では、必要な再生成を続けます。
+
+自動コミットには `[skip ci]` を付けて承認待ちになる重複の PR イベント実行を抑えます。新しいコミットを PR ブランチへ反映する前に、Formatting・Clippy・Tests と変更内容に応じた MSRV・Workflow tests を Pending で登録し、反映後にこれらの検証を明示的に起動します。**Report PR validation** が実際の検証結果を確認し、同じコミットの PR チェックへ同名の commit status として反映します。**SVG validation dispatch** の成功は起動要求の確認を表し、検証の成功は各チェックで確認します。
+
+この通常の同一リポジトリ内の処理に追加の承認や個人トークンは不要です。結果の報告は reporter が既定ブランチへマージされてから有効になります。生成対象、チェック名と必須設定、手動再実行、fork PR の差分取得は [SVG automation](docs/ci.md) を参照してください。
+
 ```sh
 docker compose exec -T dev sh scripts/update-examples.sh
 ```
 
-PowerShell では `./scripts/update-examples.ps1` が開発コンテナの起動と同じ更新処理を行います。`examples` 配下の全 SVG を、コミット済み JSON と現在のレンダラーから再生成します。公式アイコン原本は変更しません。
+PowerShell では `./scripts/update-examples.ps1` が開発コンテナの起動と同じ更新処理を行います。[生成対象一覧](scripts/generated-svgs.txt) にある全サンプル SVG を、現在のレンダラーから再生成します。JSON 由来のサンプルに加え、`hierarchy-routing.svg` と `port-collisions.svg` は既存の fixture を構築する単体テストをそれぞれ完全一致で選択して更新します。この処理では全テストを実行しません。公式アイコン原本は生成対象に含めません。
 
 ### Terraform fixture
 

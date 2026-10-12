@@ -13,6 +13,10 @@ equal addresses in separate states never share a DOM target.
 Output references must be complete; bare collections and ambiguous selectors do
 not establish cross-state relationships. See [output resolution](outputs.md).
 
+Embedded Route cards keep state-qualified identities and reference links.
+Cross-state paths involving them attach to their owning Route Table border;
+`data-source-port` and `data-target-port` identify the spatial attachment cards.
+
 Root `output_changes` actions are matched to configured outputs by name within each state and retained separately from provenance. Resolved cross-state paths expose the producer output action through `data-output-action` (including create, update and delete), without changing resource colors or provenance resolution. Missing changes omit the attribute; unrecognized actions use `other`, and unmatched entries create no output or relationship. Output values, including `before`, `after` and sensitive values, are never retained or rendered.
 
 Resolved mappings between spatial cards appear as dashed cross-state dependency lines. These paths expose `data-source-state`, `data-target-state`, `data-remote-state` and `data-output`; source/target DOM references point into their own state sections. Mappings with a logical endpoint retain the chain in `cross-state-relationships` metadata without a path or path DOM-reference attributes. These relationships live separately from state-local graphs and never introduce containment. Source nodes removed by semantic lowering are not replaced with a guessed endpoint. Unmapped inputs retain independent-state output.
@@ -33,4 +37,4 @@ One named input may use `-` for stdin. Multiple stdin inputs and mixing named in
 
 SVG output places states in ID order. Each section has a visible state label and `data-state-id`; all descendants inherit that provenance. Terraform addresses and deposed metadata retain their original values. DOM IDs and fragment references (resource links, markers, icons and accessibility labels) receive an injective state-derived prefix, independent of input paths or order. Synthetic component IDs are local identities qualified by the enclosing state. Plan status and check summaries remain separate, rather than combining flags or results from different plans.
 
-With `--diagnostics`, every diagnostic line carries `state="ID"`. Parse/read errors name their state. Attribute values and check messages remain excluded from SVG and diagnostics under the same rules as single-plan input. See [the multi-plan example](../examples/multi-plan.svg), generated from the two [regression fixtures](../tests/fixtures/multi).
+With `--diagnostics`, every diagnostic line carries `state="ID"`. Parse/read errors name their state. Evaluated attribute values and check messages remain excluded; safe Route destination constants follow the same rules as single-plan input. See [the multi-plan example](../examples/multi-plan.svg), generated from the two [regression fixtures](../tests/fixtures/multi).

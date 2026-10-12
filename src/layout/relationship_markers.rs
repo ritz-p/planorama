@@ -2,7 +2,7 @@ use crate::model::{Graph, RelationshipProvenance};
 
 pub(crate) const HEIGHT: usize = 18;
 pub(crate) const GAP: usize = 10;
-pub(super) const PORT_SPACING: usize = HEIGHT + 6;
+pub(crate) const PORT_SPACING: usize = HEIGHT + 6;
 
 pub(in crate::layout) fn corridor(port: super::Port, clearance: usize) -> super::Bounds {
     use super::{Bounds, Point, Side};

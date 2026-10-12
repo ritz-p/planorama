@@ -1,5 +1,6 @@
 use super::annotations::{Card, card_width, wrap};
 use crate::model::architecture::Graph;
+use crate::view::text::wrap_address;
 use std::collections::BTreeMap;
 use std::fmt::Write;
 
@@ -36,7 +37,7 @@ pub(super) fn cards(graph: &Graph) -> Vec<Card> {
                 [node] => Some(*node),
                 _ => None,
             });
-            let text = node.map_or_else(|| (*address).clone(), |node| format!("{}: {address}", super::operations::label(node.action, &node.metadata)));
+            let text = node.map_or_else(|| (*address).clone(), |node| format!("{}: {address}", super::operations::action_label(node.action, &node.metadata)));
             (address, node, text)
         }).collect();
         let width = card_width(std::iter::once(heading.as_str()).chain(rows.iter().map(|(_, _, text)| text.as_str())));
@@ -54,8 +55,9 @@ pub(super) fn cards(graph: &Graph) -> Vec<Card> {
                 None => (*address).clone(),
             };
             let member_width = card_width(std::iter::once(&text)).min(width - 32);
-            let lines = wrap(&text, (member_width - 32) / 8);
-            let height = lines.len() * 20 + 24;
+            let lines = wrap_address(&text, (member_width - 32) / 8);
+            let badge_height = node.map_or(0, crate::view::card::import_height);
+            let height = lines.len() * 20 + 24 + badge_height;
             let (background, border) = super::color(node.map_or(crate::model::Action::Unchanged, |node| node.action));
             let mut member = String::new();
             if let Some(node) = node {
@@ -63,9 +65,13 @@ pub(super) fn cards(graph: &Graph) -> Vec<Card> {
             } else {
                 write!(member, "<g data-source-address=\"{}\" data-member-status=\"unavailable\">", super::escape(address)).unwrap();
             }
-            writeln!(member, r##"<title>{}</title><rect width="{member_width}" height="{height}" rx="8" fill="{background}" stroke="{border}"/><text font-size="12" fill="#334155">"##, super::escape(&title)).unwrap();
+            write!(member, r##"<title>{}</title><rect width="{member_width}" height="{height}" rx="8" fill="{background}" stroke="{border}"/>"##, super::escape(&title)).unwrap();
+            if let Some(node) = node {
+                member.push_str(&super::entities::import_badge(node, 16, 12));
+            }
+            member.push_str("<text font-size=\"12\" fill=\"#334155\">\n");
             for (index, line) in lines.into_iter().enumerate() {
-                writeln!(member, "<tspan x=\"16\" y=\"{}\" xml:space=\"preserve\">{}</tspan>", 28 + index * 20, super::escape(line)).unwrap();
+                writeln!(member, "<tspan x=\"16\" y=\"{}\" xml:space=\"preserve\">{}</tspan>", 28 + badge_height + index * 20, super::escape(line)).unwrap();
             }
             member.push_str(if node.is_some() { "</text></a>\n" } else { "</text></g>\n" });
             member_cards.push(Card { width: member_width, height, content: member });

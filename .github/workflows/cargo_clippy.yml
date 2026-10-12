@@ -1,7 +1,12 @@
 name: Cargo clippy
+run-name: >-
+  ${{ github.event_name == 'workflow_dispatch' && inputs.pull_request && inputs.expected_head_sha
+      && format('Validate PR #{0} at {1}', inputs.pull_request, inputs.expected_head_sha)
+      || github.event.pull_request.title || github.workflow }}
 
 on:
-  push:
+  pull_request_target:
+    types: [closed]
     branches: [main]
     paths:
       - '**.rs'
@@ -13,6 +18,7 @@ on:
       - tests/fixtures/**
       - examples/**
       - .github/workflows/cargo_clippy.yml
+      - .github/scripts/checkout-validation.sh
   pull_request:
     paths:
       - '**.rs'
@@ -24,17 +30,38 @@ on:
       - tests/fixtures/**
       - examples/**
       - .github/workflows/cargo_clippy.yml
+      - .github/scripts/checkout-validation.sh
   workflow_dispatch:
+    inputs:
+      pull_request:
+        description: 'PR number to validate with its base (requires expected_head_sha)'
+        type: string
+        required: false
+      expected_head_sha:
+        description: 'Exact PR head SHA that must match this workflow run'
+        type: string
+        required: false
 
 permissions:
   contents: read
+  pull-requests: read
 
 jobs:
   clippy:
-    name: Clippy
+    name: ${{ github.event_name == 'workflow_dispatch' && 'Dispatched Clippy' || 'Clippy' }}
+    if: github.event_name != 'pull_request_target' || github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+      - name: Checkout dispatched PR merge
+        if: github.event_name == 'workflow_dispatch'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PULL_REQUEST: ${{ inputs.pull_request }}
+          EXPECTED_HEAD_SHA: ${{ inputs.expected_head_sha }}
+        run: bash .github/scripts/checkout-validation.sh
       - name: Install pinned toolchain
         run: rustc --version --verbose
       - uses: Swatinem/rust-cache@v2.9.2
@@ -42,4 +69,5 @@ jobs:
           prefix-key: v1-rust-dependencies
           key: ${{ hashFiles('build.rs', 'assets/**') }}
           cache-workspace-crates: 'false'
-      - run: cargo clippy --locked --all-targets --all-features -- -D warnings
+      - name: Run Clippy
+        run: cargo clippy --locked --all-targets --all-features -- -D warnings

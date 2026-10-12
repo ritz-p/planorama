@@ -5,6 +5,9 @@ mod containment;
 mod data;
 pub(super) mod diagnostics;
 mod icons;
+mod monitoring;
+mod placement;
+pub(crate) use placement::owner_affinities;
 mod routes;
 mod scope;
 mod security_groups;
@@ -19,6 +22,9 @@ pub(super) fn reference_label(resource_type: &str, attribute: &str) -> &'static 
         ("aws_iam_instance_profile", "role") => "Role",
         ("aws_ecs_task_definition", "execution_role_arn") => "Execution role",
         ("aws_ecs_task_definition", "task_role_arn") => "Task role",
+        ("aws_cloudwatch_metric_alarm", "dimensions" | "dimensions.DBInstanceIdentifier") => {
+            "Monitors"
+        }
         _ => "References",
     }
 }
@@ -31,6 +37,8 @@ pub(super) fn placement(resource_type: &str) -> crate::model::Placement {
         | "aws_iam_policy"
         | "aws_iam_role_policy"
         | "aws_iam_instance_profile"
+        | "aws_cloudwatch_log_group"
+        | "aws_cloudwatch_metric_alarm"
         | "aws_ami" => crate::model::Placement::Logical,
         _ if classify(resource_type) != crate::model::ResourceRole::Unknown => {
             crate::model::Placement::Spatial
@@ -46,7 +54,9 @@ pub(crate) fn icon_for(resource_type: &str) -> Option<crate::icons::ResourceIcon
     icons::icon_for(resource_type)
 }
 pub(super) fn transform(raw: crate::semantic::Input) -> crate::model::Graph {
-    let graph = security_groups::infer(&raw, containment::infer(&raw));
+    let mut graph = security_groups::infer(&raw, containment::infer(&raw));
+    routes::present(&raw, &mut graph);
+    monitoring::present(&raw, &mut graph);
     let contained = crate::semantic::Input { graph, ..raw };
     let mut graph = data::visible(associations::lower(&contained));
     graph.components = components::infer(&contained, &graph);

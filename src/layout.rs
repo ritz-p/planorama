@@ -1,4 +1,5 @@
 mod geometry;
+mod locality;
 pub(crate) use geometry::{Bounds, Point, Port, Side};
 mod containers;
 mod containment;
@@ -99,14 +100,19 @@ impl<'a> Layout<'a> {
     }
 
     pub fn new(graph: &'a Graph) -> Self {
-        if graph
-            .nodes
-            .iter()
-            .any(|n| n.placement == crate::model::Placement::Logical)
-            || graph.nodes.windows(2).any(|nodes| {
-                (&nodes[0].entity.id, &nodes[0].address) > (&nodes[1].entity.id, &nodes[1].address)
-            })
-        {
+        let mut layout = Self::unspaced(graph);
+        routing_shared::spacing::refine(graph, &mut layout);
+        layout
+    }
+
+    fn unspaced(graph: &'a Graph) -> Self {
+        if graph.nodes.iter().any(|n| {
+            n.placement == crate::model::Placement::Logical
+                || crate::view::routes::owner(graph, n).is_some()
+                || (!n.routes.entries.is_empty() && n.routes.reserved_height == 0)
+        }) || graph.nodes.windows(2).any(|nodes| {
+            (&nodes[0].entity.id, &nodes[0].address) > (&nodes[1].entity.id, &nodes[1].address)
+        }) {
             return spatial::layout(graph);
         }
         let containment = ContainmentTree::new(graph);

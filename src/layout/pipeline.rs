@@ -1,4 +1,4 @@
-use super::{Bounds, ContainmentTree, Layout, NODE_HEIGHT, containers, placement, rank, routing};
+use super::{Bounds, ContainmentTree, Layout, containers, placement, rank, routing};
 use crate::model::architecture::{Graph, ResourceRole};
 
 enum Strategy {
@@ -23,7 +23,7 @@ pub(super) fn place(graph: &Graph, tree: ContainmentTree) -> Placed<'_> {
 }
 
 fn place_sized(graph: &Graph, tree: ContainmentTree, heights: Option<Vec<usize>>) -> Placed<'_> {
-    if graph.nodes.iter().any(|node| {
+    let mut placed = if graph.nodes.iter().any(|node| {
         node.role == ResourceRole::Container
             || node
                 .entity
@@ -51,7 +51,7 @@ fn place_sized(graph: &Graph, tree: ContainmentTree, heights: Option<Vec<usize>>
                 graph
                     .nodes
                     .iter()
-                    .map(|n| NODE_HEIGHT + crate::view::references::height(n))
+                    .map(|n| crate::view::card::measure(n).height)
                     .collect()
             }
         });
@@ -61,9 +61,11 @@ fn place_sized(graph: &Graph, tree: ContainmentTree, heights: Option<Vec<usize>>
             .iter()
             .copied()
             .zip(&header_heights)
-            .map(|(origin, &height)| Bounds {
+            .zip(&graph.nodes)
+            .map(|((origin, &height), node)| Bounds {
+                origin,
                 height,
-                ..Bounds::card(origin)
+                width: crate::view::references::width(node),
             })
             .collect::<Vec<_>>();
         let width = bounds
@@ -86,7 +88,7 @@ fn place_sized(graph: &Graph, tree: ContainmentTree, heights: Option<Vec<usize>>
                 paths: Vec::new(),
                 junctions: Vec::new(),
             },
-            strategy: if indexed {
+            strategy: if indexed || !crate::provider::aws::owner_affinities(graph).is_empty() {
                 Strategy::Nested
             } else {
                 Strategy::Flat {
@@ -95,7 +97,9 @@ fn place_sized(graph: &Graph, tree: ContainmentTree, heights: Option<Vec<usize>>
                 }
             },
         }
-    }
+    };
+    super::locality::refine(graph, &mut placed.layout);
+    placed
 }
 
 pub(super) fn route<'a>(graph: &'a Graph, placed: &mut Placed<'a>) {
@@ -109,6 +113,7 @@ pub(super) fn route<'a>(graph: &'a Graph, placed: &mut Placed<'a>) {
         Strategy::Nested => containers::route(graph, &mut placed.layout, true),
     }
     refine(graph, placed);
+    super::routing_shared::refinement::refine(graph, &mut placed.layout);
 }
 
 fn refine<'a>(graph: &'a Graph, placed: &mut Placed<'a>) {
@@ -154,8 +159,7 @@ fn refine<'a>(graph: &'a Graph, placed: &mut Placed<'a>) {
             let inferred = placed.layout.containment.parents[node]
                 .is_some_and(|parent| graph.derived_containment(parent, node));
             height.max(
-                NODE_HEIGHT
-                    + crate::view::references::height(&graph.nodes[node])
+                crate::view::card::measure(&graph.nodes[node]).height
                     + if inferred { 18 } else { 0 },
             )
         })

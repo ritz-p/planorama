@@ -53,7 +53,9 @@ pub(super) fn collect(graph: &Graph) -> Vec<ArchitectureRelationship> {
                 vec![RelationshipProvenance::Resource {
                     source: TerraformEntityId {
                         address: change.address.clone(),
-                        deposed_key: None,
+                        deposed_key: (graph.nodes[edge.from].address == change.address)
+                            .then(|| graph.nodes[edge.from].deposed_key.clone())
+                            .flatten(),
                     },
                     change: change.clone(),
                 }]

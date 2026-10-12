@@ -79,8 +79,15 @@ pub(super) fn place_with_heights<'a>(
         })
         .collect();
     let row_gap = (ROW_STEP - super::NODE_HEIGHT).max(super::relationship_markers::padding(graph));
-    let column_step =
-        COLUMN_STEP.max(super::NODE_WIDTH + super::relationship_markers::padding(graph));
+    let column_step = COLUMN_STEP.max(
+        graph
+            .nodes
+            .iter()
+            .map(crate::view::references::width)
+            .max()
+            .unwrap_or(super::NODE_WIDTH)
+            + super::relationship_markers::padding(graph),
+    );
     let columns = ranks.iter().max().copied().unwrap_or(0) + 1;
     let mut modules = BTreeMap::new();
     for (node, vertex) in expanded.vertices.iter().enumerate() {

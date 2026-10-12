@@ -36,13 +36,32 @@ from managed/data mode; Security Groups remain Policy cards and target groups
 remain Controller cards even when placed inside a VPC.
 
 Placement is independent of role. ECS Cluster, ECS Task Definition, IAM Role,
-Policy, Role Policy, Instance Profile and AMI definitions are explicit logical
+Policy, Role Policy, Instance Profile, AMI, CloudWatch Log Group and Metric Alarm definitions are explicit logical
 resources, rendered as Terraform cards in the top annotation area. AMI describes
 an image definition used by workloads, not a deployed compute instance. These
 provider-aware rules apply to managed and data resources; custom providers do
 not inherit them. Unknown types retain unresolved placement and stay visible in
 the spatial diagram. Missing VPC/subnet references never imply logical placement.
 S3, DynamoDB, CloudFront, ECS Service and load balancers remain spatial.
+
+Only `aws_cloudwatch_log_group` and `aws_cloudwatch_metric_alarm` receive this
+CloudWatch policy; unsupported CloudWatch types retain unresolved spatial cards.
+Logical placement does not suppress architectural significance: full Terraform
+cards retain actions, identities, operation metadata, scope and focus/filter
+participation. A focused observability view can emphasize them; no spatial-view
+override is currently implemented.
+
+Configured Log Group references remain linked on their consumers. A tag reference
+is labeled References and does not claim configured logging. Alarm monitoring is
+separate from a dependency: the initial supported proof requires AWS/RDS, a known
+metric name, exactly one DBInstanceIdentifier dimension, complete explicit
+provenance to one current AWS DB Instance, matching provider configuration and a
+known planned identifier equal to the dimension. Metric queries, unknown values,
+ambiguous references and other dimension/namespace combinations stay unresolved
+with an UnverifiedMonitoring diagnostic. Values are discarded after comparison.
+Verified alarms show Monitors; the target shows Monitored by. These inverse
+reference rows create no graph edges. Generic depends_on never proves monitoring,
+and no monitoring relationship is inferred across states.
 
 Infrastructure data sources retain their roles and use an external badge and
 dashed border. AWS metadata data sources `aws_region`, `aws_partition`,
@@ -53,6 +72,12 @@ Cached data resources in prior state are
 included when still present in configuration. See [data.svg](../examples/data.svg).
 
 ## Containment
+
+Listener cards prefer nearby positions to their uniquely referenced managed LB.
+This uses complete, unambiguous `load_balancer_arn` reference evidence and visible,
+current AWS identities; missing, dynamic, foreign-provider or duplicate candidates
+receive no preference. It creates no containment. Target Group/Rule relationships
+and the independent Logical Component summary are retained. See [placement](routing.md).
 
 Direct containment requires a complete, static reference to one endpoint of the
 expected AWS type. Managed children can use data-source parents. Tags, names,
@@ -130,6 +155,6 @@ dependencies. Extra consumers/dependencies, data helpers and unsupported target
 types leave the card visible. Every lowered edge retains its source address,
 action and lifecycle metadata. Parallel associations remain distinct.
 
-`aws_route` has additional planned-value requirements described in [routes](routes.md).
+`aws_route` remains a graph node and uses verified [Route Table child-card ownership](routes.md).
 Other Association-role resources remain cards. Examples:
 [association.svg](../examples/association.svg), [aws-relationships.svg](../examples/aws-relationships.svg).

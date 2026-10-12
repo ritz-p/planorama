@@ -150,7 +150,8 @@ pub fn render_states(
         for (index, node) in graph.nodes.iter().enumerate().filter(|(_, n)| {
             n.deposed_key.is_none() && n.placement != crate::model::Placement::Logical
         }) {
-            let bounds = layout.bounds[index];
+            let port_index = crate::view::routes::owner(graph, node).unwrap_or(index);
+            let bounds = layout.bounds[port_index];
             endpoints.insert(
                 Endpoint {
                     state: id.clone(),
@@ -158,9 +159,16 @@ pub fn render_states(
                 },
                 (
                     bounds.right(),
-                    top + 40 + check_offset + bounds.origin.y + layout.header_heights[index] / 2,
+                    top + 40
+                        + check_offset
+                        + bounds.origin.y
+                        + layout.header_heights[port_index] / 2,
                     format!("{prefix}{}", super::identity::resource(node)),
-                    index,
+                    port_index,
+                    format!(
+                        "{prefix}{}",
+                        super::identity::resource(&graph.nodes[port_index])
+                    ),
                 ),
             );
         }
@@ -181,8 +189,10 @@ pub fn render_states(
             output,
             output_action,
         } = &edge.provenance;
-        let (Some((sx, sy, source, source_index)), Some((tx, ty, target, target_index))) =
-            (endpoints.get(&edge.from), endpoints.get(&edge.to))
+        let (
+            Some((sx, sy, source, source_index, source_port)),
+            Some((tx, ty, target, target_index, target_port)),
+        ) = (endpoints.get(&edge.from), endpoints.get(&edge.to))
         else {
             continue;
         };
@@ -216,7 +226,7 @@ pub fn render_states(
             remote,
             output
         ));
-        writeln!(links, r##"<path data-edge-kind="dependency" data-cross-state="true"{action_metadata} data-source="{source}" data-target="{target}" data-source-state="{}" data-target-state="{}" data-remote-state="{}" data-output="{}" d="{}" fill="none" stroke="#2563eb" stroke-width="1.5" stroke-dasharray="7 4" marker-end="url(#cross-state-arrow)"><title>{title}</title></path>"##, super::escape(edge.from.state.as_str()),super::escape(edge.to.state.as_str()),super::escape(remote),super::escape(output),path.trim()).unwrap();
+        writeln!(links, r##"<path data-edge-kind="dependency" data-cross-state="true"{action_metadata} data-source="{source}" data-target="{target}" data-source-port="{source_port}" data-target-port="{target_port}" data-source-state="{}" data-target-state="{}" data-remote-state="{}" data-output="{}" d="{}" fill="none" stroke="#2563eb" stroke-width="1.5" stroke-dasharray="7 4" marker-end="url(#cross-state-arrow)"><title>{title}</title></path>"##, super::escape(edge.from.state.as_str()),super::escape(edge.to.state.as_str()),super::escape(remote),super::escape(output),path.trim()).unwrap();
         links.push_str(&super::endpoints::circle(points[0], "source", "#2563eb"));
     }
     if !links.is_empty() {
@@ -266,6 +276,10 @@ fn namespace(svg: &str, prefix: &str) -> String {
         .replace(
             "data-container=\"resource-",
             &format!("data-container=\"{prefix}resource-"),
+        )
+        .replace(
+            "data-route-table=\"resource-",
+            &format!("data-route-table=\"{prefix}resource-"),
         )
         .replace(" href=\"#", &format!(" href=\"#{prefix}"))
         .replace(

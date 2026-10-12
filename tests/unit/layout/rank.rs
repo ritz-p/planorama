@@ -4,6 +4,7 @@ use crate::model::{Action, Node};
 fn cycle_is_condensed_and_dependents_follow() {
     let nodes = (0..4)
         .map(|i| Node {
+            routes: Default::default(),
             placement: Default::default(),
             references: Vec::new(),
             entity: crate::model::ArchitectureEntity::terraform(crate::model::TerraformEntityId {

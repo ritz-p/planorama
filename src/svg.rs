@@ -16,6 +16,7 @@ mod references;
 mod relationship_index;
 mod relationships;
 mod roles;
+mod routes;
 mod scopes;
 mod states;
 mod style;
@@ -162,9 +163,9 @@ fn render_with_index(
                 .edges
                 .iter()
                 .filter(|edge| {
-                    edge.change
-                        .as_ref()
-                        .is_some_and(|change| change.action == *action)
+                    edge.change.as_ref().is_some_and(|change| {
+                        change.action == *action && graph.nodes[edge.from].address != change.address
+                    })
                 })
                 .count();
         writeln!(svg, r#"<rect x="{x}" y="100" width="12" height="12" fill="{background}" stroke="{border}"/><text x="{}" y="111" font-size="12" fill="{border}">{} ({count})</text>"#, x + 19, label(*action)).unwrap();
@@ -271,7 +272,9 @@ fn render_with_index(
         .unwrap();
     }
     for (i, node) in graph.nodes.iter().enumerate() {
-        if node.placement == crate::model::Placement::Logical {
+        if node.placement == crate::model::Placement::Logical
+            || crate::view::routes::owner(graph, node).is_some()
+        {
             continue;
         }
         let resource_id = identity::resource(node);
@@ -279,10 +282,22 @@ fn render_with_index(
         let bounds = layout.bounds[i];
         let (x, y) = (bounds.origin.x, bounds.origin.y);
         let card_width = bounds.width;
-        let header_height = layout.header_heights[i];
+        let header_height = if node.role != crate::model::ResourceRole::Container
+            && layout.containers.contains(&i)
+        {
+            bounds.height
+        } else {
+            layout.header_heights[i]
+        };
         let inferred = layout.containment.parents[i]
             .is_some_and(|parent| graph.derived_containment(parent, i));
-        let background = containers::background(graph, layout, i);
+        let background = if node.role != crate::model::ResourceRole::Container
+            && layout.containers.contains(&i)
+        {
+            "none"
+        } else {
+            containers::background(graph, layout, i)
+        };
         let border = color(node.action).1;
         let resource_address = node.resource_address();
         let address = escape(resource_address.terraform());
@@ -293,18 +308,8 @@ fn render_with_index(
         };
         let selected_title = escape(&selected);
         let icon = icons::for_node(node);
-        let inset = match icon {
-            Some(_) => 12 + icons::SIZE + icons::GAP,
-            None => 12,
-        };
-        let line_length = (card_width.saturating_sub(inset + 12) / 8).clamp(1, 35);
-        let lines: Vec<_> = selected
-            .chars()
-            .collect::<Vec<_>>()
-            .chunks(line_length)
-            .take(2)
-            .map(|c| c.iter().collect::<String>())
-            .collect();
+        let metrics = crate::view::card::measure(node);
+        let lines = crate::view::text::wrap_address(&selected, metrics.line_limit);
         let mode = entities::border(node.mode);
         let operation = operations::attributes(&node.metadata);
         let component = membership
@@ -313,6 +318,7 @@ fn render_with_index(
             .unwrap_or_default();
         let operation_label = operations::label(node.action, &node.metadata);
         let operation_details = escape(&operations::details(&node.metadata));
+        let move_details = escape(&operations::move_details(node.previous_address.as_deref()));
         let previous = node
             .previous_address
             .as_ref()
@@ -325,13 +331,15 @@ fn render_with_index(
             .unwrap_or_default();
         writeln!(
             svg,
-            r#"<g id="{resource_id}" data-architecture-id="{architecture_id}" data-qualified-address="{qualified}" data-terraform-address="{address}"{deposed}{previous}{operation}{component}><title>{selected_title} — {operation_label}{operation_details}</title>"#,
+            r#"<g id="{resource_id}" data-architecture-id="{architecture_id}" data-qualified-address="{qualified}" data-terraform-address="{address}"{deposed}{previous}{operation}{component}><title>{selected_title} — {operation_label}{operation_details}{move_details}</title>"#,
         )
         .unwrap();
         if node.role != crate::model::architecture::ResourceRole::Container {
             writeln!(svg, r#"<rect x="{x}" y="{y}" width="{card_width}" height="{header_height}" rx="8" fill="{background}" stroke="{border}" stroke-width="1.5"{mode}/>"#).unwrap();
         }
         svg.push_str(&entities::badge(node.mode, x, y));
+        svg.push_str(&entities::import_badge(node, x + 12, y + 28));
+        let visible_operation = operations::action_label(node.action, &node.metadata);
         writeln!(
             svg,
             r#"<text x="{}" y="{}" font-size="11" fill="{border}">{} · {}</text>"#,
@@ -340,42 +348,49 @@ fn render_with_index(
             escape(&shorten(
                 &node.resource_type,
                 entities::type_limit(node.mode).saturating_sub(
-                    operation_label
+                    visible_operation
                         .len()
                         .saturating_sub(label(node.action).len())
                 )
             )),
-            operation_label
+            visible_operation
         )
         .unwrap();
         if let Some(icon) = icon {
-            svg.push_str(&icons::render(icon, x + 12, y + 28));
+            svg.push_str(&icons::render(icon, x + 12, y + 28 + metrics.import_height));
         }
         for (line, text) in lines.iter().enumerate() {
-            let text = match line {
-                1 if selected.chars().count() > line_length * 2 => {
-                    format!(
-                        "{}…",
-                        text.chars().take(line_length - 1).collect::<String>()
-                    )
-                }
-                _ => text.clone(),
-            };
             writeln!(
                 svg,
-                r##"<text x="{}" y="{}" font-size="13" fill="#0f172a">{}</text>"##,
-                x + inset,
-                y + 45 + line * 20,
-                escape(&text)
+                r##"<text x="{}" y="{}" font-size="13" fill="#0f172a" xml:space="preserve">{}</text>"##,
+                x + metrics.inset,
+                y + 45 + metrics.import_height + line * 20,
+                escape(text)
             )
             .unwrap();
+        }
+        if let Some(previous) = &node.previous_address {
+            let (annotation, _) = operations::moved_from(
+                previous,
+                x + 12,
+                y + metrics.previous_y,
+                metrics.previous_line_limit,
+            );
+            svg.push_str(&annotation);
         }
         svg.push_str(&references::render(
             graph,
             node,
             x + 12,
-            y + 86,
+            y + metrics.references_y,
             card_width - 24,
+        ));
+        svg.push_str(&routes::render(
+            graph,
+            i,
+            x + 12,
+            y + metrics.routes_y,
+            relationship_index,
         ));
         let role = roles::annotation(node.role, &node.module);
         let footer = match role.is_empty() {
