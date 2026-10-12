@@ -15,9 +15,10 @@ const DEFINITIONS = [
 
 function setup(file = 'cargo_test.yml') {
   const [, name, status, commands] = DEFINITIONS.find(definition => definition[0] === file);
+  const runTitle = `Validate PR #330 at ${SHA}`;
   const run = {
-    id: 101, workflow_id: 22, name, path: `.github/workflows/${file}`,
-    event: 'workflow_dispatch', display_title: `Validate PR #330 at ${SHA}`,
+    id: 101, workflow_id: 22, name: runTitle, path: `.github/workflows/${file}`,
+    event: 'workflow_dispatch', display_title: runTitle,
     head_sha: SHA, head_branch: 'feature/issue-330', run_number: 1, run_attempt: 1,
     repository: {...REPOSITORY}, head_repository: {...REPOSITORY}, status: 'completed', conclusion: 'success',
   };
@@ -97,6 +98,13 @@ for (const [file, , status] of DEFINITIONS) {
   });
 }
 
+test('binds dynamic run names through the registered workflow identity', async () => {
+  const environment = setup();
+  assert.equal(environment.run.name, environment.run.display_title);
+  assert.notEqual(environment.run.name, environment.workflow.name);
+  assert.equal((await environment.invoke()).state, 'success');
+});
+
 test('reports an actual assertion failure instead of trusting the old success event', async () => {
   const environment = setup();
   environment.run.conclusion = 'failure';
@@ -152,6 +160,7 @@ for (const [description, change] of [
   ['unsafe PR number', environment => { environment.run.display_title = `Validate PR #9007199254740992 at ${SHA}`; }],
   ['unknown workflow path', environment => { environment.run.path = '.github/workflows/unrelated.yml'; }],
   ['different registered workflow ID', environment => { environment.workflow.id = 23; }],
+  ['different registered workflow name', environment => { environment.workflow.name = 'Unrelated workflow'; }],
   ['fork run', environment => { environment.run.head_repository = {id: 99, full_name: 'someone/planorama'}; }],
   ['different origin repository', environment => { environment.run.repository.id = 99; }],
   ['ordinary PR workflow event', environment => { environment.context.payload.workflow_run.event = 'pull_request'; }],

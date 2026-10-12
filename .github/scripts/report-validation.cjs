@@ -66,7 +66,7 @@ module.exports = async function reportValidation({github, context, core}) {
   const eligible = run => {
     const identity = binding(run);
     return positiveInteger(run.id) && positiveInteger(run.run_number) && positiveInteger(run.run_attempt)
-      && run.workflow_id === workflow.id && workflowPath(run) === path && run.name === configuration.name
+      && run.workflow_id === workflow.id && workflowPath(run) === path
       && run.event === 'workflow_dispatch' && run.head_sha === expected.sha
       && run.head_branch === initial.head_branch && sameRepository(run.repository) && sameRepository(run.head_repository)
       && identity?.number === expected.number && identity.sha === expected.sha;
