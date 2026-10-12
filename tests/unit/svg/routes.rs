@@ -198,6 +198,12 @@ fn route_children_keep_identity_palette_metadata_and_reference_edges() {
             child.attribute("data-previous-address"),
             Some("aws_route.old")
         );
+        let moved = child
+            .children()
+            .filter(|n| n.attribute("data-move-annotation") == Some("true"))
+            .filter_map(|n| n.text())
+            .collect::<String>();
+        assert_eq!(moved, "Moved from: aws_route.old");
         let rect = child.children().find(|n| n.has_tag_name("rect")).unwrap();
         assert_eq!(rect.attribute("fill"), Some(svg::color(action).0));
         assert_eq!(rect.attribute("stroke"), Some(svg::color(action).1));
@@ -391,6 +397,19 @@ fn many_long_routes_expand_parent_and_keep_deterministic_geometry() {
             .replace("aws_route_table.public", &parent_address),
     )
     .unwrap();
+    let previous = format!(
+        "module.{}.aws_route_table.old[\"<&>\"]",
+        "長い名前.".repeat(18)
+    );
+    let parent_change = value["resource_changes"]
+        .as_array_mut()
+        .unwrap()
+        .iter_mut()
+        .find(|change| change["address"] == parent_address)
+        .unwrap();
+    parent_change["previous_address"] = previous.clone().into();
+    let route_previous = format!("module.{}.aws_route.old[0]", "nested.".repeat(14));
+    value["resource_changes"][2]["previous_address"] = route_previous.clone().into();
     value["resource_changes"]
         .as_array_mut()
         .unwrap()
@@ -432,6 +451,23 @@ fn many_long_routes_expand_parent_and_keep_deterministic_geometry() {
         heading.iter().filter_map(|n| n.text()).collect::<String>(),
         parent.attribute("data-qualified-address").unwrap()
     );
+    let moved = parent
+        .children()
+        .find(|n| n.attribute("data-move-annotation") == Some("true"))
+        .unwrap();
+    let moved_lines: Vec<_> = moved
+        .children()
+        .filter(|n| n.has_tag_name("tspan"))
+        .collect();
+    assert!(moved_lines.len() > 2);
+    assert_eq!(
+        moved_lines
+            .iter()
+            .filter_map(|n| n.text())
+            .collect::<String>(),
+        format!("Moved from: {previous}")
+    );
+    assert!(y(*heading.last().unwrap()) + 10 < y(moved_lines[0]));
     let references = parent
         .children()
         .find(|n| n.attribute("data-resource-references").is_some())
@@ -440,7 +476,21 @@ fn many_long_routes_expand_parent_and_keep_deterministic_geometry() {
         .children()
         .find(|n| n.has_tag_name("text"))
         .unwrap();
-    assert!(y(*heading.last().unwrap()) + 10 < y(uses));
+    assert!(y(*moved_lines.last().unwrap()) + 4 < y(uses));
+    for child in doc.descendants().filter(|n| {
+        n.attribute("data-embedded-route") == Some("true")
+            && n.attribute("data-previous-address").is_some()
+    }) {
+        let lines: Vec<_> = child
+            .children()
+            .filter(|n| n.attribute("data-move-annotation") == Some("true"))
+            .collect();
+        assert!(lines.len() > 2);
+        assert_eq!(
+            lines.iter().filter_map(|n| n.text()).collect::<String>(),
+            format!("Moved from: {route_previous}")
+        );
+    }
     let reference_bottom = references
         .descendants()
         .filter(|n| n.has_tag_name("text"))

@@ -47,8 +47,9 @@ Unproven inline expressions keep a fallback and diagnostics. Duplicate destinati
 remain separate; inline entries sort deterministically. An unknown route collection
 has an unresolved entry, while an empty table needs no Routes section.
 
-Shared row measurement wraps complete child addresses and reserves their height
-inside the table footprint before placement and routing. The final router uses
+Shared row measurement wraps complete child addresses and visible `Moved from:`
+annotations, reserving their height inside the table footprint before placement
+and routing. The final router uses
 child bounds, protects the parent header and sibling entries, and reserves target
 ports and marker corridors. Routes to the same next hop remain individual paths.
 See [routes.svg](../examples/routes.svg)

@@ -78,7 +78,12 @@ pub(super) fn render(
                 write!(svg, "<a href=\"#{}\">", super::identity::resource(target)).unwrap();
             }
             for line in row.lines(text) {
-                writeln!(svg, r##"<text x="{}" y="{line_y}" font-size="11" fill="#334155" xml:space="preserve">{}</text>"##, x + 12, super::escape(line)).unwrap();
+                let (fill, annotation) = if row.moved {
+                    ("#64748b", " data-move-annotation=\"true\"")
+                } else {
+                    ("#334155", "")
+                };
+                writeln!(svg, r##"<text x="{}" y="{line_y}" font-size="11" fill="{fill}" xml:space="preserve"{annotation}>{}</text>"##, x + 12, super::escape(line)).unwrap();
                 line_y += 18;
             }
             if available.is_some() {

@@ -318,6 +318,7 @@ fn render_with_index(
             .unwrap_or_default();
         let operation_label = operations::label(node.action, &node.metadata);
         let operation_details = escape(&operations::details(&node.metadata));
+        let move_details = escape(&operations::move_details(node.previous_address.as_deref()));
         let previous = node
             .previous_address
             .as_ref()
@@ -330,7 +331,7 @@ fn render_with_index(
             .unwrap_or_default();
         writeln!(
             svg,
-            r#"<g id="{resource_id}" data-architecture-id="{architecture_id}" data-qualified-address="{qualified}" data-terraform-address="{address}"{deposed}{previous}{operation}{component}><title>{selected_title} — {operation_label}{operation_details}</title>"#,
+            r#"<g id="{resource_id}" data-architecture-id="{architecture_id}" data-qualified-address="{qualified}" data-terraform-address="{address}"{deposed}{previous}{operation}{component}><title>{selected_title} — {operation_label}{operation_details}{move_details}</title>"#,
         )
         .unwrap();
         if node.role != crate::model::architecture::ResourceRole::Container {
@@ -365,6 +366,15 @@ fn render_with_index(
                 escape(text)
             )
             .unwrap();
+        }
+        if let Some(previous) = &node.previous_address {
+            let (annotation, _) = operations::moved_from(
+                previous,
+                x + 12,
+                y + metrics.previous_y,
+                metrics.previous_line_limit,
+            );
+            svg.push_str(&annotation);
         }
         svg.push_str(&references::render(
             graph,
