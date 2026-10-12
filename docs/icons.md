@@ -34,40 +34,51 @@ a dashed action underline.
 
 The fixture audit for this expansion found six visible AWS data-source types:
 `aws_ami`, `aws_iam_role`, `aws_lb`, `aws_security_group`, `aws_subnet` and `aws_vpc`.
-Each already had a service icon. The review also checked data-source registrations
-in the [AWS provider's service packages at `cc1ce533`](https://github.com/hashicorp/terraform-provider-aws/tree/cc1ce533996e43a79e87e0abf3f65fd8aaeb3b64/internal/service).
-The 61 additional exact mappings below cover infrastructure lookups in the
-existing service families. They reuse the bundled official artwork; no icon asset
-is added or modified.
+Each already had a service icon. The provider audit then checked the
+[service-package registrations at `cc1ce533`](https://github.com/hashicorp/terraform-provider-aws/tree/cc1ce533996e43a79e87e0abf3f65fd8aaeb3b64/internal/service)
+for the bundled service families: `ec2`, `elb`, `elbv2`, `lambda`, `ecs`,
+`eks`, `rds`, `dynamodb`, `elasticache`, `opensearch`, `elasticsearch`,
+`s3`, `s3control`, `cloudfront`, `apigateway`, `apigatewayv2`, `iam`,
+`cloudwatch`, `logs` and `autoscaling`.
+The 133 additional exact mappings below cover the reviewed direct infrastructure
+objects and collection lookups. They reuse the 17 bundled official service icons;
+no icon asset is added or modified.
 
 | Service icon | Additional resource types |
 | --- | --- |
-| Amazon VPC | `aws_vpcs`, `aws_vpc_peering_connections`, `aws_subnets`, `aws_nat_gateways`, `aws_route_tables`, `aws_ec2_transit_gateway_route_tables`, `aws_security_groups`, `aws_network_acls` |
-| Amazon EC2 | `aws_instances`, `aws_ami_ids`, `aws_eips`, `aws_launch_template` |
-| AWS PrivateLink | `aws_vpc_endpoint_service` |
+| Amazon VPC | `aws_customer_gateway`, `aws_ec2_managed_prefix_list`, `aws_ec2_managed_prefix_lists`, `aws_ec2_network_insights_path`, `aws_ec2_transit_gateway_attachment`, `aws_ec2_transit_gateway_attachments`, `aws_ec2_transit_gateway_connect`, `aws_ec2_transit_gateway_connect_peer`, `aws_ec2_transit_gateway_dx_gateway_attachment`, `aws_ec2_transit_gateway_multicast_domain`, `aws_ec2_transit_gateway_peering_attachments`, `aws_ec2_transit_gateway_route_table_associations`, `aws_ec2_transit_gateway_route_table_propagations`, `aws_ec2_transit_gateway_route_table_routes`, `aws_ec2_transit_gateway_route_tables`, `aws_ec2_transit_gateway_vpc_attachments`, `aws_ec2_transit_gateway_vpn_attachment`, `aws_nat_gateways`, `aws_network_acls`, `aws_network_interface`, `aws_network_interfaces`, `aws_prefix_list`, `aws_route_tables`, `aws_security_groups`, `aws_subnets`, `aws_vpc_dhcp_options`, `aws_vpc_ipam`, `aws_vpc_ipam_pool`, `aws_vpc_ipam_pool_cidrs`, `aws_vpc_ipam_pools`, `aws_vpc_ipams`, `aws_vpc_peering_connections`, `aws_vpc_security_group_rule`, `aws_vpc_security_group_rules`, `aws_vpcs`, `aws_vpn_connection`, `aws_vpn_gateway` |
+| Amazon EC2 | `aws_ami_ids`, `aws_ec2_capacity_block_reservation`, `aws_ec2_host`, `aws_ec2_hosts`, `aws_ec2_public_ipv4_pool`, `aws_ec2_public_ipv4_pools`, `aws_eips`, `aws_instances`, `aws_key_pair`, `aws_launch_template`, `aws_spot_datafeed_subscription` |
+| AWS PrivateLink | `aws_vpc_endpoint_associations`, `aws_vpc_endpoint_service` |
 | Elastic Load Balancing | `aws_alb`, `aws_alb_listener`, `aws_alb_target_group`, `aws_elb`, `aws_lbs`, `aws_lb_trust_store` |
-| AWS Lambda | `aws_lambda_alias`, `aws_lambda_function_url`, `aws_lambda_functions`, `aws_lambda_layer_version` |
-| Amazon ECS | `aws_ecs_clusters` |
-| Amazon EKS | `aws_eks_clusters`, `aws_eks_node_groups`, `aws_eks_addon` |
-| Amazon RDS | `aws_db_instances`, `aws_rds_clusters`, `aws_db_snapshot`, `aws_db_cluster_snapshot` |
-| Amazon DynamoDB | `aws_dynamodb_tables` |
-| Amazon ElastiCache | `aws_elasticache_replication_group`, `aws_elasticache_subnet_group` |
-| Amazon S3 | `aws_s3_buckets`, `aws_s3_object`, `aws_s3_objects`, `aws_s3_bucket_object`, `aws_s3_bucket_objects` |
-| Amazon CloudFront | `aws_cloudfront_function`, `aws_cloudfront_origin_access_identity`, `aws_cloudfront_origin_access_identities`, `aws_cloudfront_origin_access_control`, `aws_cloudfront_cache_policy`, `aws_cloudfront_origin_request_policy`, `aws_cloudfront_response_headers_policy` |
-| Amazon API Gateway | `aws_api_gateway_domain_name`, `aws_api_gateway_resource`, `aws_api_gateway_vpc_link`, `aws_apigatewayv2_apis`, `aws_apigatewayv2_vpc_link` |
-| AWS Identity and Access Management | `aws_iam_roles`, `aws_iam_instance_profiles`, `aws_iam_user`, `aws_iam_users`, `aws_iam_group`, `aws_iam_openid_connect_provider`, `aws_iam_saml_provider` |
+| AWS Lambda | `aws_lambda_alias`, `aws_lambda_code_signing_config`, `aws_lambda_function_url`, `aws_lambda_functions`, `aws_lambda_layer_version` |
+| Amazon ECS | `aws_ecs_clusters`, `aws_ecs_container_definition` |
+| Amazon EKS | `aws_eks_access_entry`, `aws_eks_addon`, `aws_eks_clusters`, `aws_eks_node_groups` |
+| Amazon RDS | `aws_db_cluster_snapshot`, `aws_db_instances`, `aws_db_parameter_group`, `aws_db_proxy`, `aws_db_snapshot`, `aws_rds_cluster_parameter_group`, `aws_rds_clusters`, `aws_rds_global_cluster`, `aws_rds_snapshots` |
+| Amazon DynamoDB | `aws_dynamodb_backups`, `aws_dynamodb_table_item`, `aws_dynamodb_tables` |
+| Amazon ElastiCache | `aws_elasticache_replication_group`, `aws_elasticache_serverless_cache`, `aws_elasticache_subnet_group`, `aws_elasticache_user` |
+| Amazon OpenSearch Service | `aws_elasticsearch_domain` |
+| Amazon S3 | `aws_s3_access_point`, `aws_s3_account_public_access_block`, `aws_s3_bucket_notification`, `aws_s3_bucket_object`, `aws_s3_bucket_object_lock_configuration`, `aws_s3_bucket_objects`, `aws_s3_bucket_policy`, `aws_s3_bucket_replication_configuration`, `aws_s3_buckets`, `aws_s3_directory_buckets`, `aws_s3_object`, `aws_s3_objects`, `aws_s3control_access_points`, `aws_s3control_multi_region_access_point`, `aws_s3control_multi_region_access_points` |
+| Amazon CloudFront | `aws_cloudfront_cache_policy`, `aws_cloudfront_connection_group`, `aws_cloudfront_distribution_tenant`, `aws_cloudfront_function`, `aws_cloudfront_origin_access_control`, `aws_cloudfront_origin_access_identities`, `aws_cloudfront_origin_access_identity`, `aws_cloudfront_origin_request_policy`, `aws_cloudfront_realtime_log_config`, `aws_cloudfront_response_headers_policy` |
+| Amazon API Gateway | `aws_api_gateway_api_key`, `aws_api_gateway_api_keys`, `aws_api_gateway_authorizer`, `aws_api_gateway_authorizers`, `aws_api_gateway_domain_name`, `aws_api_gateway_resource`, `aws_api_gateway_vpc_link`, `aws_apigatewayv2_apis`, `aws_apigatewayv2_vpc_link` |
+| AWS Identity and Access Management | `aws_iam_access_keys`, `aws_iam_group`, `aws_iam_instance_profiles`, `aws_iam_openid_connect_provider`, `aws_iam_role_policies`, `aws_iam_role_policy_attachments`, `aws_iam_roles`, `aws_iam_saml_provider`, `aws_iam_server_certificate`, `aws_iam_user`, `aws_iam_user_ssh_key`, `aws_iam_users` |
 | Amazon CloudWatch | `aws_cloudwatch_log_groups` |
 | Amazon EC2 Auto Scaling | `aws_autoscaling_groups`, `aws_launch_configuration` |
 
+The legacy `aws_elasticsearch_domain` lookup shares the OpenSearch Service icon;
+[Amazon OpenSearch Service supports these Elasticsearch domains](https://docs.aws.amazon.com/opensearch-service/latest/developerguide/what-is.html).
+
 Unsupported exact types still render without an icon; service prefixes do not
-select a fallback symbol. This is a bounded set of infrastructure lookups, not
-coverage of every AWS provider data source. Authentication/session helpers such
-as `aws_eks_cluster_auth` and `aws_iam_session_context`, execution helpers such as
-`aws_lambda_invocation`, and version queries such as `aws_eks_addon_version` and
-`aws_rds_engine_version` remain unmapped. The existing visibility rules still
-omit `aws_region`, `aws_partition`, `aws_caller_identity`,
-`aws_availability_zones` and `aws_iam_policy_document` data sources and their
-incident edges. See [AWS data visibility](aws.md#resource-roles-and-data).
+select a fallback symbol. Coverage follows the audited service-family registrations
+at the pinned revision. Other service families, including EBS, Outposts and Client
+VPN, and later provider additions require their own reviewed mappings.
+Catalog, instance-type, available-version and pricing queries remain excluded,
+as do token/session, execution, generated-document and general metadata helpers.
+Examples are `aws_eks_cluster_auth`, `aws_iam_session_context`,
+`aws_lambda_invocation`, `aws_eks_addon_version` and `aws_rds_engine_version`.
+The existing visibility rules still omit `aws_region`, `aws_partition`,
+`aws_caller_identity`, `aws_availability_zones` and `aws_iam_policy_document`
+data sources and their incident edges.
+See [AWS data visibility](aws.md#resource-roles-and-data).
 
 The [data icon fixture](../tests/fixtures/data-icons-plan.json) and its
 [CI-generated example](../examples/data-icons.svg) exercise visible data lookups
