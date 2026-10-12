@@ -133,8 +133,9 @@ preserve horizontal/vertical independent-routing coverage.
 | Minimum effective parallel clearance | 1 | 6 | 6 |
 | Docker test-profile layout time, two runs | 5.631 / 5.614 s | 5.898 / 5.707 s | 7.219 / 7.036 s |
 
-Layout dimensions exclude SVG annotations. At that routing revision, the final
-SVG measured 4208 × 3481 pixels; later annotation changes can alter canvas height.
+These are historical #291 measurements. Layout dimensions exclude SVG annotations;
+the SVG at that revision was 4208 × 3481 pixels. Later annotation changes can
+alter canvas height.
 The revision accepts more residual proximity than the initial PR in exchange for
 shorter, simpler paths and less growth. It still removes 34.7% of the original
 close projected length. Runtime adds about 1.3 seconds over the initial PR on this
@@ -146,9 +147,11 @@ The [37-edge comparison](routing-comparison.md) records lengths, bends, short
 offsets, reversals/backtracking, S-jogs and stretch before/after the refinement.
 Private-b subnet → DB subnet group drops from four bends to two. ECS and VPC
 endpoint subnet connectors retain simple two-bend paths. Private Route Table
-associations retain only the turns required by fixed ports, numbered-marker
-clearance and the neighboring subnet container. Full and enlarged SVG inspection
-covers these corridors. Geometry, shape and metrics agree after edge reordering.
+associations were compared with the fixed ports, former graph-wide marker
+clearance and neighboring subnet container at that revision. #322 changes the
+terminal geometry and side selection; these historical numbers are not current
+SVG measurements. Full and enlarged SVG inspection covered these corridors, and
+geometry, shape and metrics agreed after edge reordering.
 
 The focused narrow corridor carries Dependency, numbered Association and
 Connection edges. Three lanes require a 44px gap expansion; final rerouting

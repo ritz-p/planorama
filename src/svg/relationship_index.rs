@@ -1,5 +1,5 @@
 use crate::layout::{Bounds, Layout};
-use crate::model::{ArchitectureId, EdgeKind, Graph, RelationshipProvenance, TerraformEntityId};
+use crate::model::{Graph, TerraformEntityId};
 use crate::view::text::wrap_address;
 use std::collections::{BTreeMap, BTreeSet};
 use std::fmt::Write;
@@ -10,20 +10,8 @@ mod markers;
 #[path = "../../tests/unit/svg/relationship_index.rs"]
 mod tests;
 
-type Key<'a> = (
-    Vec<&'a TerraformEntityId>,
-    &'a ArchitectureId,
-    &'a ArchitectureId,
-    EdgeKind,
-);
-
-#[derive(Default)]
-struct Group<'a> {
-    edges: Vec<usize>,
-    previous_addresses: BTreeMap<&'a TerraformEntityId, BTreeSet<&'a str>>,
-}
-
 pub(super) struct Entry<'a> {
+    number: usize,
     sources: Vec<&'a TerraformEntityId>,
     previous_addresses: BTreeMap<&'a TerraformEntityId, BTreeSet<&'a str>>,
     edges: Vec<usize>,
@@ -47,73 +35,28 @@ struct Marker {
 
 impl<'a> Index<'a> {
     pub fn new(graph: &'a Graph, layout: &Layout<'_>) -> Self {
-        let mut relationships = BTreeMap::new();
-        for relationship in &graph.relationships {
-            relationships
-                .entry((&relationship.from, &relationship.to, relationship.kind))
-                .or_insert_with(Vec::new)
-                .push(relationship);
-        }
-        let mut grouped: BTreeMap<Key<'_>, Group<'_>> = BTreeMap::new();
-        for (index, edge) in graph.edges.iter().enumerate() {
-            if layout.paths.get(index).is_none_or(|path| path.len() < 2) {
-                continue;
-            }
-            let from = &graph.nodes[edge.from].entity.id;
-            let to = &graph.nodes[edge.to].entity.id;
-            let Some(matching) = relationships.get(&(from, to, edge.kind)) else {
-                continue;
-            };
-            for relationship in matching {
-                let matches_change = edge.change.as_ref().map_or(matching.len() == 1, |change| relationship.provenance.iter().any(|p| matches!(p, RelationshipProvenance::Resource { change: source, .. } if source == change)));
-                if !matches_change {
-                    continue;
-                }
-                let mut sources: Vec<_> = relationship
-                    .provenance
-                    .iter()
-                    .filter_map(|p| match p {
-                        RelationshipProvenance::Resource { source, .. } => Some(source),
-                        RelationshipProvenance::Reference { .. } => None,
-                    })
-                    .collect();
-                sources.sort();
-                sources.dedup();
-                if !sources.is_empty() {
-                    let group = grouped.entry((sources, from, to, edge.kind)).or_default();
-                    group.edges.push(index);
-                    for provenance in &relationship.provenance {
-                        if let RelationshipProvenance::Resource { source, change } = provenance {
-                            if let Some(previous) = change.previous_address.as_deref() {
-                                group
-                                    .previous_addresses
-                                    .entry(source)
-                                    .or_default()
-                                    .insert(previous);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        let entries: Vec<_> = grouped
+        let entries: Vec<_> = crate::layout::relationship_markers::entries(graph)
             .into_iter()
-            .map(|((sources, ..), group)| {
-                let Group {
-                    mut edges,
-                    previous_addresses,
-                } = group;
-                edges.sort_unstable();
-                edges.dedup();
+            .enumerate()
+            .filter_map(|(index, entry)| {
+                let edges: Vec<_> = entry
+                    .edges
+                    .into_iter()
+                    .filter(|&edge| layout.paths.get(edge).is_some_and(|path| path.len() >= 2))
+                    .collect();
+                if edges.is_empty() {
+                    return None;
+                }
                 let edge = &graph.edges[edges[0]];
-                Entry {
+                Some(Entry {
+                    number: index + 1,
                     embedded: crate::view::routes::owner(graph, &graph.nodes[edge.from]).is_some(),
-                    sources,
-                    previous_addresses,
+                    sources: entry.sources,
+                    previous_addresses: entry.previous_addresses,
                     edges,
                     stroke: super::relationships::stroke(edge),
                     style: super::relationships::style(edge.kind),
-                }
+                })
             })
             .collect();
         let markers = markers::place(graph, layout, &entries);
@@ -144,13 +87,13 @@ impl<'a> Index<'a> {
     pub fn number(&self, node: &crate::model::Node) -> Option<usize> {
         self.entries
             .iter()
-            .position(|e| {
+            .find(|e| {
                 e.embedded
                     && e.sources
                         .iter()
                         .any(|id| node.entity.provenance.contains(id))
             })
-            .map(|i| i + 1)
+            .map(|entry| entry.number)
     }
 
     pub fn marker_bounds(&self) -> impl Iterator<Item = Bounds> + '_ {
@@ -159,7 +102,9 @@ impl<'a> Index<'a> {
 
     pub fn cards(&self) -> Vec<super::annotations::Card> {
         const ENTRIES_PER_CARD: usize = 10;
-        let badge_width = crate::layout::relationship_markers::width(self.entries.len());
+        let badge_width = crate::layout::relationship_markers::width(
+            self.entries.last().map_or(0, |entry| entry.number),
+        );
         let text_x = 16 + badge_width + 12;
         let width = self
             .entries
@@ -186,12 +131,11 @@ impl<'a> Index<'a> {
             .max()
             .unwrap_or(360)
             .clamp(360, 640);
-        let entries: Vec<_> = self.entries.iter().enumerate().collect();
-        entries.chunks(ENTRIES_PER_CARD).map(|entries| {
+        self.entries.chunks(ENTRIES_PER_CARD).map(|entries| {
             let mut svg = String::from("<g data-relationship-index=\"true\">\n");
             let mut y = 28;
-            for &(offset, entry) in entries {
-                let number = offset + 1;
+            for entry in entries {
+                let number = entry.number;
                 writeln!(svg, r#"<g data-relationship-entry="{number}">"#).unwrap();
                 let bounds = Bounds {
                     origin: crate::layout::Point { x: 16, y: y - 13 },

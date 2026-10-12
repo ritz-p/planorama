@@ -59,7 +59,9 @@ key. Multi-source entries keep each previous address associated with its source,
 and their measured height includes every wrapped line. Reference-only
 inferred relationships receive no resource number. Numbering sorts by source
 identity, then endpoints and relationship kind, independent of edge-vector order.
-Filtering can renumber the visible subset; named states have separate indexes.
+Graph filtering can renumber the visible subset; named states have separate indexes.
+Routing and rendering share these entries. An absent path in an existing layout
+does not renumber the remaining entries or change their marker dimensions.
 
 Undirected relationships display the same number near both endpoints, with one
 relationship-index entry. Directed relationships display it before the destination.
@@ -67,10 +69,13 @@ Markers align with the terminal segment, 10 pixels from the endpoint to leave
 room for directed arrowheads. Endpoints with
 numbered relationships reserve extra space only around their numbered ports.
 Ordinary left/right ports reserve at least 16 pixels; numbered ports reserve
-24 pixels. Card height follows the denser side rather than the combined count.
-Routing reserves a straight terminal segment long enough for the complete badge
-and arrowhead. Other paths, including bundled relationships, avoid this space.
-Card and container spacing expands with the number of digits in the index.
+24 pixels on left/right sides (18px badge height plus 6px). Top/bottom slots use
+each badge's actual width plus 6px. Card height follows the denser side rather than
+the combined count. Straight approaches reserve the 10px gap, the badge's width
+on left/right or 18px height on top/bottom, and 8px of turning clearance. Other
+paths, including bundled relationships, avoid this space. Packing retains
+conservative spacing for the largest number; individual terminals do not inherit
+unrelated labels' widths.
 Each badge uses the relationship's action color, stroke width and line pattern (solid for dependency,
 dashed for association, dotted for connection). The corresponding number badge
 in the index uses the same border color and pattern. Card heights follow actual
