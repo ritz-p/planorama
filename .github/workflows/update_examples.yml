@@ -1,0 +1,133 @@
+name: Update SVG examples
+
+on:
+  pull_request:
+    paths:
+      - '**.rs'
+      - Cargo.toml
+      - Cargo.lock
+      - rust-toolchain.toml
+      - .cargo/**
+      - assets/**
+      - tests/fixtures/**
+      - tests/ci/**
+      - examples/**
+      - scripts/**
+      - .github/scripts/**
+      - .github/workflows/**
+  workflow_dispatch:
+    inputs:
+      pull_request:
+        description: Pull request number to regenerate (latest head)
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: svg-examples-${{ github.event.pull_request.number || inputs.pull_request }}
+  cancel-in-progress: false
+
+jobs:
+  generate:
+    name: Generate SVG examples
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      pull-requests: read
+    outputs:
+      active: ${{ steps.prepare.outputs.active }}
+      head_sha: ${{ steps.prepare.outputs.head_sha }}
+      pull_request: ${{ steps.prepare.outputs.pull_request }}
+      same_repository: ${{ steps.prepare.outputs.same_repository }}
+      artifact_id: ${{ steps.artifact.outputs.artifact-id }}
+    steps:
+      - name: Check out workflow tools
+        uses: actions/checkout@v7.0.1
+        with:
+          ref: ${{ github.workflow_sha }}
+          path: automation
+          persist-credentials: false
+          sparse-checkout: |
+            .github/scripts
+            tests/ci
+      - name: Check automation contracts
+        run: python3 -m unittest discover -s automation/tests/ci -p 'test_*.py'
+      - name: Capture current PR head
+        id: prepare
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SVG_PULL_REQUEST: ${{ inputs.pull_request }}
+        run: python3 automation/.github/scripts/svg_ci.py prepare
+      - name: Check out source revision
+        if: steps.prepare.outputs.active == 'true'
+        uses: actions/checkout@v7.0.1
+        with:
+          repository: ${{ steps.prepare.outputs.head_repo }}
+          ref: ${{ steps.prepare.outputs.head_sha }}
+          path: source
+          persist-credentials: false
+      - name: Install pinned toolchain
+        if: steps.prepare.outputs.active == 'true'
+        working-directory: source
+        run: rustc --version --verbose
+      - uses: Swatinem/rust-cache@v2.9.2
+        if: steps.prepare.outputs.active == 'true'
+        with:
+          prefix-key: v1-rust-dependencies
+          key: ${{ hashFiles('source/build.rs', 'source/assets/**') }}
+          workspaces: source -> target
+          cache-workspace-crates: 'false'
+      - name: Generate all maintained SVGs
+        if: steps.prepare.outputs.active == 'true'
+        working-directory: source
+        run: sh scripts/update-examples.sh
+      - name: Package complete output and patch
+        if: steps.prepare.outputs.active == 'true'
+        env:
+          SVG_SOURCE_SHA: ${{ steps.prepare.outputs.head_sha }}
+          SVG_PULL_REQUEST: ${{ steps.prepare.outputs.pull_request }}
+        run: python3 automation/.github/scripts/svg_ci.py package source svg-artifact
+      - name: Upload generated SVGs
+        if: steps.prepare.outputs.active == 'true'
+        id: artifact
+        uses: actions/upload-artifact@v7.0.2
+        with:
+          name: svg-examples-pr-${{ steps.prepare.outputs.pull_request }}-${{ steps.prepare.outputs.head_sha }}-${{ github.run_attempt }}
+          path: svg-artifact
+          if-no-files-found: error
+          retention-days: 14
+
+  writeback:
+    name: Commit SVG updates and start validation
+    needs: generate
+    if: needs.generate.outputs.active == 'true' && needs.generate.outputs.same_repository == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+      actions: write
+      pull-requests: read
+    steps:
+      - name: Check out workflow tools
+        uses: actions/checkout@v7.0.1
+        with:
+          ref: ${{ github.workflow_sha }}
+          path: automation
+          persist-credentials: false
+          sparse-checkout: .github/scripts
+      - name: Download this run's generated output
+        uses: actions/download-artifact@v8.0.2
+        with:
+          artifact-ids: ${{ needs.generate.outputs.artifact_id }}
+          path: svg-artifact
+          merge-multiple: true
+          digest-mismatch: error
+      - name: Commit SVG-only changes and dispatch checks
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SVG_SOURCE_SHA: ${{ needs.generate.outputs.head_sha }}
+          SVG_PULL_REQUEST: ${{ needs.generate.outputs.pull_request }}
+        run: python3 automation/.github/scripts/svg_ci.py publish svg-artifact/updates.json

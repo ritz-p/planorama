@@ -66,6 +66,7 @@ docker compose exec -T dev cargo run --locked -- - -o - < plan.json > diagram.sv
 | レイヤー構成・レイアウト | [Architecture](docs/architecture.md)、[Routing](docs/routing.md) |
 | AWS アイコンの出典・権利 | [Icons](docs/icons.md) |
 | 性能計測 | [Benchmarks](docs/benchmarks.md) |
+| CI による SVG 生成・PR への自動コミット | [SVG automation](docs/ci.md) |
 
 ## 開発・検証
 
@@ -92,11 +93,13 @@ Tests・Clippy は `Swatinem/rust-cache` で Cargo registry/git と `target` 内
 
 ### SVG の更新
 
+同一リポジトリ内の PR は、ソース変更を push すると CI がサンプル SVG を生成し、差分がある場合は同じ PR ブランチへ自動コミットします。更新後のコミットに Formatting・Clippy・Tests と必要な MSRV 検証を起動します。生成結果の確認、手動再実行、fork PR の差分取得は [SVG automation](docs/ci.md) を参照してください。
+
 ```sh
 docker compose exec -T dev sh scripts/update-examples.sh
 ```
 
-PowerShell では `./scripts/update-examples.ps1` が開発コンテナの起動と同じ更新処理を行います。コミット済み JSON を使うサンプル SVG を、現在のレンダラーから再生成します。単体テストで構築する `hierarchy-routing.svg` と `port-collisions.svg` の更新方法は [経路計算のドキュメント](docs/routing.md) を参照してください。公式アイコン原本は変更しません。
+PowerShell では `./scripts/update-examples.ps1` が開発コンテナの起動と同じ更新処理を行います。[生成対象一覧](scripts/generated-svgs.txt) にある全サンプル SVG を、現在のレンダラーから再生成します。JSON 由来のサンプルに加え、`hierarchy-routing.svg` と `port-collisions.svg` は既存の fixture を構築する単体テストをそれぞれ完全一致で選択して更新します。この処理では全テストを実行しません。公式アイコン原本は生成対象に含めません。
 
 ### Terraform fixture
 
