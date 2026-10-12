@@ -19,12 +19,19 @@ Automatic generation watches these inputs:
   checked against the current renderer.
 
 For an ordinary PR update, the workflow inspects the latest push's changes before
-building. An earlier renderer change elsewhere in the PR does not make a later
-documentation-only or unrelated-test update regenerate every SVG. Opening or
-reopening a PR uses its complete diff; a non-linear or incomplete push comparison
-also falls back to that diff. An incomplete PR file list causes generation
-conservatively. A manual dispatch with the PR number regenerates its latest head
-regardless of the changed files.
+building. A documentation-only or unrelated-test update can skip generation when
+the preceding revision is known to have current SVGs, either from an SVG-only bot
+commit or a successful workflow that confirmed its output was current. If that
+cannot be confirmed, including when earlier generation is pending, failed or
+superseded, the workflow checks the full PR diff and regenerates as needed. This
+keeps an additional documentation push from discarding a pending renderer update.
+Opening or reopening a PR uses its complete diff; a non-linear or incomplete push
+comparison also falls back to that diff. An incomplete PR file list causes
+generation conservatively. A manual dispatch with the PR number regenerates its
+latest head regardless of the changed files.
+
+When introducing another snapshot fixture builder or a non-JSON generation input,
+add its path to both the workflow's trigger paths and its input matcher.
 
 ## Generation and review
 

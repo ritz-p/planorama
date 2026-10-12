@@ -93,7 +93,7 @@ Tests・Clippy は `Swatinem/rust-cache` で Cargo registry/git と `target` 内
 
 ### SVG の更新
 
-同一リポジトリ内の PR は、レンダラー・生成入力の変更を push すると CI がサンプル SVG を生成し、差分がある場合は同じ PR ブランチへ自動コミットします。通常の更新では最新の push 差分を確認し、ドキュメントや無関係なテストだけの更新では生成を繰り返しません。自動コミットには `[skip ci]` を付けて承認待ちになる重複の PR イベント実行を抑え、更新後のコミットに Formatting・Clippy・Tests と必要な MSRV 検証を明示的に起動します。この通常の同一リポジトリ内の処理に追加の承認や個人トークンは不要です。生成対象、結果の確認、手動再実行、fork PR の差分取得は [SVG automation](docs/ci.md) を参照してください。
+同一リポジトリ内の PR は、レンダラー・生成入力の変更を push すると CI がサンプル SVG を生成し、差分がある場合は同じ PR ブランチへ自動コミットします。通常の更新では最新の push 差分と前のコミットの生成完了を確認し、画像が更新済みならドキュメントや無関係なテストだけの更新では生成を繰り返しません。生成中の追加 push や前回の生成失敗では、必要な再生成を続けます。自動コミットには `[skip ci]` を付けて承認待ちになる重複の PR イベント実行を抑え、更新後のコミットに Formatting・Clippy・Tests と必要な MSRV 検証を明示的に起動します。この通常の同一リポジトリ内の処理に追加の承認や個人トークンは不要です。生成対象、結果の確認、手動再実行、fork PR の差分取得は [SVG automation](docs/ci.md) を参照してください。
 
 ```sh
 docker compose exec -T dev sh scripts/update-examples.sh
