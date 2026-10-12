@@ -20,8 +20,11 @@ rows never create network connections or additional dependency edges.
 Dependency lines are thin and solid. Ordinary associations are undirected and
 dashed (7/4), with no arrowheads. Route next hops use directed Associations from
 [child-card ports](routes.md).
-Inferred connections are undirected, without arrowheads, and thicker and dotted
-(2/4 with round caps). Connection titles use `↔`. These
+Inferred connections are undirected, without arrowheads, and use circular dots
+(`stroke-width="2.5"`, `stroke-dasharray="0 3.5"`, round caps). Dots repeat every
+3.5 SVG units, leaving a 1-unit gap between their painted edges. The same pattern
+is used for paths, legend samples, and relationship-number badge outlines.
+Connection titles use `↔`. These
 patterns remain distinct in grayscale. Containment uses nested boundaries;
 an edge represented by nesting does not receive a redundant line.
 Route child cards use presentation nesting; their safe ownership and entry details

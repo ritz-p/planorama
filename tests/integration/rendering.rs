@@ -91,7 +91,7 @@ fn relationship_patterns_are_distinct_and_nesting_stays_line_free() {
             include_bytes!("../fixtures/security-groups-plan.json").as_slice(),
             "connection",
             "2.5",
-            Some("2 4"),
+            Some("0 3.5"),
         ),
     ] {
         let svg = render(input);
@@ -104,6 +104,9 @@ fn relationship_patterns_are_distinct_and_nesting_stays_line_free() {
         assert!(!paths.is_empty());
         for path in paths {
             assert!(path.contains(&format!("stroke-width=\"{width}\"")));
+            if kind == "connection" {
+                assert!(path.contains("stroke-linecap=\"round\""));
+            }
             match dash {
                 Some(dash) => assert!(path.contains(&format!("stroke-dasharray=\"{dash}\""))),
                 None => assert!(!path.contains("stroke-dasharray")),
