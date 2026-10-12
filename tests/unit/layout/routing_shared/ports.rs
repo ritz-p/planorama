@@ -1,6 +1,106 @@
 use super::*;
 
 #[test]
+fn border_tracks_move_a_whole_corridor_clear_of_both_frame_axes() {
+    use crate::model::EdgeKind;
+    for horizontal in [true, false] {
+        let point = |x, y| {
+            if horizontal {
+                Point { x, y }
+            } else {
+                Point { x: y, y: x }
+            }
+        };
+        let start = Port {
+            point: point(60, 200),
+            side: if horizontal {
+                Side::Right
+            } else {
+                Side::Bottom
+            },
+        };
+        let end = Port {
+            point: point(540, 200),
+            side: if horizontal { Side::Left } else { Side::Top },
+        };
+        let frame = Bounds {
+            origin: point(100, 200),
+            width: if horizontal { 400 } else { 300 },
+            height: if horizontal { 300 } else { 400 },
+        };
+        for kind in [
+            EdgeKind::Dependency,
+            EdgeKind::Association,
+            EdgeKind::Connection,
+        ] {
+            let mut scorer = Scorer::default();
+            scorer.set_borders(&[frame]);
+            scorer.set_kind(kind);
+            let candidates = candidates_with_clearances(
+                start,
+                end,
+                &[frame],
+                Some(&scorer),
+                [Terminal::plain(16); 2],
+            );
+            let preferred = vec![
+                start.point,
+                point(76, 200),
+                point(76, 190),
+                point(524, 190),
+                point(524, 200),
+                end.point,
+            ];
+            assert!(candidates.contains(&preferred));
+            let path = scorer.choose(candidates, &[frame]).unwrap();
+            assert!(valid(&path, start, end, &[frame]));
+            assert!(path.len() > 2 && path.len() <= 6, "{kind:?}: {path:?}");
+            assert!(path.windows(2).any(|p| {
+                if horizontal {
+                    p[0].y == p[1].y && p[0].y <= 194 && p[0].x.abs_diff(p[1].x) >= 400
+                } else {
+                    p[0].x == p[1].x && p[0].x <= 194 && p[0].y.abs_diff(p[1].y) >= 400
+                }
+            }));
+            assert_eq!(scorer.border_metrics(&path).minimum_deficit, 0);
+            assert!(
+                scorer.readability_cost(&path) < scorer.readability_cost(&[start.point, end.point])
+            );
+            assert!(crate::layout::metrics::measure(&[path]).total_path_length <= 512);
+        }
+    }
+}
+
+#[test]
+fn distant_frames_do_not_expand_the_routing_grid() {
+    let start = Point { x: 60, y: 200 };
+    let end = Point { x: 540, y: 200 };
+    let frame = Bounds {
+        origin: Point { x: 100, y: 200 },
+        width: 400,
+        height: 300,
+    };
+    let mut scorer = Scorer::default();
+    scorer.set_borders(&[frame]);
+    let baseline = search::search(start, end, &[], Some(&scorer), None).unwrap();
+    let points = search::GRID_POINT_COUNT.get();
+    let mut frames = vec![frame];
+    frames.extend((0..256).map(|index| Bounds {
+        origin: Point {
+            x: 10_000 + index * 1_000,
+            y: 10_000 + index * 800,
+        },
+        ..frame
+    }));
+    scorer.set_borders(&frames);
+    assert_eq!(
+        search::search(start, end, &[], Some(&scorer), None),
+        Some(baseline)
+    );
+    assert_eq!(search::GRID_POINT_COUNT.get(), points);
+}
+
+#[test]
 fn actual_marker_extent_keeps_short_facing_connections_straight() {
     for (start, end, old_clearance, length) in [
         (

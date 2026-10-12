@@ -28,9 +28,17 @@ impl<'a> Expanded<'a> {
                 resource: Some(index),
             })
             .collect();
+        let mut ordered: Vec<_> = graph.edges.iter().map(|edge| edge.endpoints()).collect();
+        ordered.sort_by_key(|&(source, target)| {
+            (
+                &graph.nodes[source].entity.id,
+                &graph.nodes[source].address,
+                &graph.nodes[target].entity.id,
+                &graph.nodes[target].address,
+            )
+        });
         let mut edges = Vec::new();
-        for edge in &graph.edges {
-            let (source, target) = edge.endpoints();
+        for (source, target) in ordered {
             let mut previous = source;
             for rank in ranks[source] + 1..ranks[target] {
                 let dummy = vertices.len();

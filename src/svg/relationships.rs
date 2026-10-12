@@ -10,13 +10,7 @@ pub(super) fn stroke(edge: &Edge) -> &'static str {
 }
 
 pub(super) fn style(kind: EdgeKind) -> &'static str {
-    match kind {
-        EdgeKind::Dependency | EdgeKind::Containment => r#"stroke-width="1.5""#,
-        EdgeKind::Association => r#"stroke-width="2" stroke-dasharray="7 4""#,
-        EdgeKind::Connection => {
-            r#"stroke-width="2.5" stroke-dasharray="0 3.5" stroke-linecap="round""#
-        }
-    }
+    crate::view::geometry::relationship_style(kind)
 }
 
 pub(super) fn captions(graph: &Graph) -> (String, String) {

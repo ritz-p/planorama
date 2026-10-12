@@ -61,12 +61,43 @@ fn port_exchanges_reject_marker_corner_overlap_without_centerline_collisions() {
     };
     let mut plain = graph.clone();
     plain.relationships.remove(0);
-    refine(&plain, &mut layout);
-    assert_eq!(layout.paths[0][0], paths[1][0]);
-    assert_eq!(crossings(&layout.paths[0], &layout.paths[1]), 0);
+    let mut exchanged = paths.clone();
+    for (edge, other) in [(0, 1), (1, 0)] {
+        exchanged[edge][0] = paths[other][0];
+        exchanged[edge][1].y = paths[other][0].y;
+    }
+    assert_eq!(crossings(&exchanged[0], &exchanged[1]), 0);
+    let terminals: Vec<_> = exchanged
+        .iter()
+        .map(|path| Some([terminal(path, 0), terminal(path, 1)]))
+        .collect();
+    let clearances = |graph: &Graph| {
+        let numbers = relationship_markers::numbers(graph);
+        terminals
+            .iter()
+            .enumerate()
+            .map(|(index, pair)| {
+                relationship_markers::terminals(
+                    graph,
+                    index,
+                    numbers[index],
+                    pair.unwrap().map(|p| p.side),
+                )
+            })
+            .collect::<Vec<_>>()
+    };
+    assert!(!marker_collision(
+        &exchanged,
+        &terminals,
+        &clearances(&plain)
+    ));
+    assert!(marker_collision(
+        &exchanged,
+        &terminals,
+        &clearances(&graph)
+    ));
     let numbers = relationship_markers::numbers(&graph);
-    let reservations: Vec<_> = layout
-        .paths
+    let reservations: Vec<_> = exchanged
         .iter()
         .enumerate()
         .map(|(index, path)| {
@@ -84,18 +115,17 @@ fn port_exchanges_reject_marker_corner_overlap_without_centerline_collisions() {
         })
         .collect();
     assert!(reservations.iter().enumerate().all(|(index, own)| {
-        layout.paths.iter().enumerate().all(|(other, path)| {
+        exchanged.iter().enumerate().all(|(other, path)| {
             index == other
                 || path
                     .windows(2)
                     .all(|p| own.iter().all(|&b| !crosses(p[0], p[1], b)))
         })
     }));
-    let a = relationship_markers::bounds(numbers[0][0].unwrap(), terminal(&layout.paths[0], 0));
-    let b = relationship_markers::bounds(numbers[2][0].unwrap(), terminal(&layout.paths[2], 0));
+    let a = relationship_markers::bounds(numbers[0][0].unwrap(), terminal(&exchanged[0], 0));
+    let b = relationship_markers::bounds(numbers[2][0].unwrap(), terminal(&exchanged[2], 0));
     assert!(a.origin.x < b.right() && b.origin.x < a.right());
     assert!(a.origin.y < b.origin.y + b.height && b.origin.y < a.origin.y + a.height);
-    layout.paths = paths.clone();
     refine(&graph, &mut layout);
     assert_eq!(layout.paths, paths);
 }

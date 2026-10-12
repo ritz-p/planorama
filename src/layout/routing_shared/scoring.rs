@@ -1,5 +1,7 @@
-use super::coverage::Coverage;
-use crate::layout::{Bounds, Point};
+use super::{borders, coverage::Coverage};
+use crate::layout::{Bounds, Layout, Point};
+use crate::model::{EdgeKind, Graph};
+use crate::view::geometry;
 use std::collections::{BTreeMap, BTreeSet};
 
 #[cfg(test)]
@@ -54,78 +56,65 @@ pub(in crate::layout) struct Scorer {
     paths: Vec<Vec<Point>>,
     peers: Vec<Bounds>,
     soft: Vec<Occluder>,
-    borders: Vec<Bounds>,
-    horizontal_borders: BTreeMap<usize, Vec<Bounds>>,
-    vertical_borders: BTreeMap<usize, Vec<Bounds>>,
+    borders: borders::Index,
+    kind: Option<EdgeKind>,
 }
 
 impl Scorer {
     pub(in crate::layout) fn set_borders(&mut self, borders: &[Bounds]) {
-        self.borders = borders.to_vec();
-        self.horizontal_borders.clear();
-        self.vertical_borders.clear();
-        for &frame in borders {
-            if frame.width > 24 {
-                for y in [frame.origin.y, frame.origin.y + frame.height] {
-                    self.horizontal_borders.entry(y).or_default().push(frame);
-                }
-            }
-            if frame.height > 24 {
-                for x in [frame.origin.x, frame.right()] {
-                    self.vertical_borders.entry(x).or_default().push(frame);
-                }
-            }
+        self.borders =
+            borders::Index::new(borders.iter().copied().map(borders::Frame::card).collect());
+    }
+
+    pub(in crate::layout) fn set_layout(&mut self, graph: &Graph, layout: &Layout<'_>) {
+        self.borders = borders::Index::new(borders::frames(graph, layout));
+    }
+
+    pub(in crate::layout) fn set_kind(&mut self, kind: EdgeKind) {
+        self.kind = Some(kind);
+    }
+
+    pub(in crate::layout) fn kind(&self) -> EdgeKind {
+        self.kind.unwrap_or(EdgeKind::Dependency)
+    }
+
+    pub(in crate::layout) fn border_frames(&self) -> &[borders::Frame] {
+        self.borders.frames()
+    }
+
+    pub(in crate::layout) fn border_axes(&self, start: Point, end: Point) -> Vec<(bool, usize)> {
+        if self.border_frames().is_empty() {
+            return Vec::new();
         }
-    }
-
-    pub(in crate::layout) fn borders(&self) -> impl Iterator<Item = &Bounds> {
         self.borders
-            .iter()
-            .filter(|frame| Self::border_visible(frame, &self.soft))
+            .axes(start, end, geometry::relationship_stroke(self.kind()))
     }
 
-    fn border_visible(frame: &Bounds, soft: &[Occluder]) -> bool {
-        !soft.iter().any(|o| {
-            o.step == 2
-                && o.origin.x <= frame.origin.x
-                && o.origin.y <= frame.origin.y
-                && o.right() >= frame.right()
-                && o.origin.y + o.height >= frame.origin.y + frame.height
-        })
+    pub(in crate::layout) fn border_metrics(&self, path: &[Point]) -> borders::Metrics {
+        self.borders
+            .path(path, geometry::relationship_stroke(self.kind()), &self.soft)
+    }
+
+    pub(in crate::layout) fn border_contacts(&self, path: &[Point]) -> Vec<borders::Contact> {
+        self.borders
+            .contacts(path, geometry::relationship_stroke(self.kind()), &self.soft)
+    }
+
+    pub(in crate::layout) fn safe_border_change(&self, old: &[Point], new: &[Point]) -> bool {
+        let before = self.border_metrics(old);
+        let after = self.border_metrics(new);
+        after.minimum_deficit <= before.minimum_deficit
+            && after.minimum.unwrap_or(i64::MAX)
+                >= before
+                    .minimum
+                    .unwrap_or(i64::MAX)
+                    .min((borders::MINIMUM * 4) as i64)
     }
 
     fn border_cost(&self, a: Point, b: Point, soft: &[Occluder]) -> u128 {
-        let frames = if a.y == b.y {
-            self.horizontal_borders.get(&a.y)
-        } else {
-            self.vertical_borders.get(&a.x)
-        };
-        frames
-            .into_iter()
-            .flatten()
-            .filter(|frame| Self::border_visible(frame, soft))
-            .map(|frame| {
-                let (from, to, low, high) = if a.y == b.y
-                    && (a.y == frame.origin.y || a.y == frame.origin.y + frame.height)
-                    && frame.width > 24
-                {
-                    (a.x, b.x, frame.origin.x + 12, frame.right() - 12)
-                } else if a.x == b.x
-                    && (a.x == frame.origin.x || a.x == frame.right())
-                    && frame.height > 24
-                {
-                    (
-                        a.y,
-                        b.y,
-                        frame.origin.y + 12,
-                        frame.origin.y + frame.height - 12,
-                    )
-                } else {
-                    return 0;
-                };
-                to.max(from).min(high).saturating_sub(to.min(from).max(low)) as u128 * 8
-            })
-            .sum()
+        self.borders
+            .segment(a, b, geometry::relationship_stroke(self.kind()), soft)
+            .cost()
     }
 
     pub(in crate::layout) fn choose(
@@ -163,10 +152,6 @@ impl Scorer {
 
     pub(in crate::layout) fn soft(&self) -> &[Occluder] {
         &self.soft
-    }
-
-    fn occlusion(&self, a: Point, b: Point) -> u128 {
-        Self::occlusion_in(&self.soft, a, b)
     }
 
     fn occlusion_in(soft: &[Occluder], a: Point, b: Point) -> u128 {
@@ -216,6 +201,7 @@ impl Scorer {
         let a = self.score(old, obstacles);
         let b = self.score(new, obstacles);
         b.node_crossings == 0
+            && self.safe_border_change(old, new)
             && b.cost < a.cost
             && b.bends <= a.bends
             && b.length <= a.length
@@ -279,18 +265,33 @@ impl Scorer {
         points: &[Point],
         soft: &[Occluder],
     ) -> u128 {
-        self.readability_cost(points)
-            - points
-                .windows(2)
-                .map(|p| self.occlusion(p[0], p[1]) + self.border_cost(p[0], p[1], &self.soft))
-                .sum::<u128>()
-            + points
-                .windows(2)
-                .map(|p| Self::occlusion_in(soft, p[0], p[1]) + self.border_cost(p[0], p[1], soft))
-                .sum::<u128>()
+        self.score_in(points, &[], soft, self.kind()).cost
+    }
+
+    pub(in crate::layout) fn readability_cost_for(
+        &self,
+        points: &[Point],
+        soft: &[Occluder],
+        kind: EdgeKind,
+    ) -> u128 {
+        if kind == self.kind() {
+            self.readability_cost_with_soft(points, soft)
+        } else {
+            self.score_in(points, &[], soft, kind).cost
+        }
     }
 
     pub(in crate::layout) fn score(&self, points: &[Point], nodes: &[Bounds]) -> Score {
+        self.score_in(points, nodes, &self.soft, self.kind())
+    }
+
+    fn score_in(
+        &self,
+        points: &[Point],
+        nodes: &[Bounds],
+        soft: &[Occluder],
+        kind: EdgeKind,
+    ) -> Score {
         let mut score = Score {
             node_crossings: 0,
             cost: 0,
@@ -320,7 +321,7 @@ impl Scorer {
             };
             score.overlap += index.get(&coordinate).map_or(0, |c| c.overlap(from, to));
             score.length += a.x.abs_diff(b.x) as u128 + a.y.abs_diff(b.y) as u128;
-            score.cost += self.occlusion(a, b) + self.border_cost(a, b, &self.soft);
+            score.cost += Self::occlusion_in(soft, a, b);
             score.node_crossings += nodes
                 .iter()
                 .filter(|&&node| super::crosses(a, b, node))
@@ -358,7 +359,11 @@ impl Scorer {
         score.cost += score.overlap * 8
             + score.crossings as u128 * CROSSING_COST
             + score.bends as u128 * BEND_COST
-            + score.length;
+            + score.length
+            + self
+                .borders
+                .path(points, geometry::relationship_stroke(kind), soft)
+                .cost();
         score
     }
 
@@ -424,7 +429,7 @@ impl Scorer {
 
     #[cfg(test)]
     pub(in crate::layout) fn segment_cost(&self, a: Point, b: Point) -> u128 {
-        self.conflict_cost(a, b) + self.occlusion(a, b)
+        self.conflict_cost(a, b) + Self::occlusion_in(&self.soft, a, b)
     }
 
     pub(in crate::layout) fn conflict_cost(&self, a: Point, b: Point) -> u128 {

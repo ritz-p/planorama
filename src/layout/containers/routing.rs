@@ -165,7 +165,7 @@ fn route_selected_impl(
     );
     let reservations = terminals.all();
     let mut scorer = Scorer::default();
-    scorer.set_borders(&layout.bounds);
+    scorer.set_layout(graph, layout);
     let mut paths = vec![Vec::new(); graph.edges.len()];
     let mut groups = super::affinity::groups(graph, &layout.containment.parents);
     groups.extend(bundles::dependencies(graph, layout));
@@ -214,6 +214,7 @@ fn route_selected_impl(
     };
     for &index in &order {
         let edge = &graph.edges[index];
+        scorer.set_kind(edge.kind);
         scorer.set_soft(soft_obstacles(layout, edge));
         scorer.set_peers(
             layout
@@ -266,7 +267,8 @@ fn route_selected_impl(
             |index| terminals.barriers(layout, graph, index),
             |index| soft_obstacles(layout, &graph.edges[index]),
             |index| terminals.clearances[index],
-            &layout.bounds,
+            |index| graph.edges[index].kind,
+            scorer,
         );
     }
     junctions.sort_by_key(|point| (point.x, point.y));
@@ -298,7 +300,7 @@ pub(in crate::layout) fn obstacles(layout: &Layout<'_>, edge: &Edge) -> Vec<Boun
         .collect()
 }
 
-pub(super) fn soft_obstacles(
+pub(in crate::layout) fn soft_obstacles(
     layout: &Layout<'_>,
     edge: &Edge,
 ) -> Vec<crate::layout::routing_shared::scoring::Occluder> {

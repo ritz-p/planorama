@@ -98,4 +98,23 @@ fn long_edges_order_through_three_ranks_deterministically() {
         assert_eq!(placement.positions, place(&graph, &ranks).positions);
     }
     assert_eq!(placement.positions[2].x, 60 + 3 * COLUMN_STEP);
+
+    let mut symmetric = graph.clone();
+    symmetric
+        .edges
+        .extend([(0, 2), (1, 3)].into_iter().map(crate::model::Edge::from));
+    let placement = place(&symmetric, &ranks);
+    let mut reordered = symmetric.clone();
+    reordered.edges.reverse();
+    assert_eq!(
+        placement.positions,
+        place(&reordered, &ranks).positions,
+        "reversing long edges changed tied barycentric row order"
+    );
+    reordered.edges.rotate_left(1);
+    assert_eq!(
+        placement.positions,
+        place(&reordered, &ranks).positions,
+        "rotating long edges changed tied barycentric row order"
+    );
 }

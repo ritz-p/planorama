@@ -21,6 +21,10 @@ fn bundled(layout: &Layout<'_>, index: usize) -> bool {
     })
 }
 
+pub(super) fn movable(layout: &Layout<'_>, index: usize) -> bool {
+    layout.paths[index].len() >= 2 && !bundled(layout, index)
+}
+
 fn lane_candidates(
     path: &[Point],
     corridor: &plan::Corridor,
@@ -77,7 +81,7 @@ fn lane_candidates(
             || high
                 .min(corridor.high)
                 .saturating_sub(low.max(corridor.low))
-                < RUN
+                < if corridor.border { 1 } else { RUN }
         {
             continue;
         }
@@ -87,6 +91,24 @@ fn lane_candidates(
         candidates.push(simplify(candidate, Simplification::PreserveReversals));
     }
     candidates
+}
+
+pub(super) fn preserves_overlap(
+    before: &[Vec<Point>],
+    after: &[Vec<Point>],
+    order: &[usize],
+) -> bool {
+    order.iter().all(|&i| {
+        let overlap = |paths: &[Vec<Point>]| {
+            paths
+                .iter()
+                .enumerate()
+                .filter(|(j, _)| *j != i)
+                .map(|(_, p)| super::super::refinement::overlap(&paths[i], p))
+                .sum::<usize>()
+        };
+        overlap(after) <= overlap(before)
+    })
 }
 
 pub(super) fn apply(
@@ -102,10 +124,9 @@ pub(super) fn apply(
         .iter()
         .enumerate()
         .filter(|(i, p)| {
-            p.len() >= 2
+            movable(layout, *i)
                 && (plan.lanes.iter().any(|l| l.edge == *i)
                     || (expanded && length(p) != length(&before.paths[*i])))
-                && !bundled(layout, *i)
         })
         .map(|(i, _)| i)
         .collect();
@@ -136,13 +157,19 @@ pub(super) fn apply(
             .map(|(_, p)| super::super::refinement::overlap(&before.paths[i], p))
             .sum();
         let seed = &layout.paths[i];
+        let parallel = parallel::Index::new(&layout.paths, i);
         let start = terminal(seed, 0);
         let end = terminal(seed, 1);
         let clearances =
             relationship_markers::terminals(graph, i, numbers[i], [start.side, end.side]);
-        let obstacles = barriers(graph, layout, i);
+        let obstacles = if plan.border {
+            border_barriers(graph, layout, i)
+        } else {
+            barriers(graph, layout, i)
+        };
         let mut scorer = Scorer::default();
-        scorer.set_borders(&layout.bounds);
+        scorer.set_layout(graph, layout);
+        scorer.set_kind(graph.edges[i].kind);
         for (other, path) in layout.paths.iter().enumerate() {
             if other != i {
                 scorer.insert(path.clone());
@@ -153,53 +180,71 @@ pub(super) fn apply(
             .iter()
             .map(|l| (plan.horizontal, l.coordinate))
             .collect();
-        let reservations: Vec<_> = plan
-            .lanes
-            .iter()
-            .filter(|l| l.edge != i)
-            .map(|l| {
-                let low = l.coordinate.saturating_sub(PREFERRED - 1);
-                let bounds = if plan.horizontal {
-                    Bounds {
-                        origin: Point {
-                            x: plan.low,
-                            y: low,
-                        },
-                        width: plan.high - plan.low,
-                        height: 2 * (PREFERRED - 1),
-                    }
-                } else {
-                    Bounds {
-                        origin: Point {
-                            x: low,
-                            y: plan.low,
-                        },
-                        width: 2 * (PREFERRED - 1),
-                        height: plan.high - plan.low,
-                    }
-                };
-                Occluder {
-                    bounds,
-                    cost: 1,
-                    step: 1,
+        let mut reservations =
+            crate::layout::containers::routing::soft_obstacles(layout, &graph.edges[i]);
+        reservations.extend(plan.lanes.iter().filter(|l| l.edge != i).map(|l| {
+            let low = l.coordinate.saturating_sub(PREFERRED - 1);
+            let bounds = if plan.horizontal {
+                Bounds {
+                    origin: Point {
+                        x: plan.low,
+                        y: low,
+                    },
+                    width: plan.high - plan.low,
+                    height: 2 * (PREFERRED - 1),
                 }
-            })
-            .collect();
+            } else {
+                Bounds {
+                    origin: Point {
+                        x: low,
+                        y: plan.low,
+                    },
+                    width: 2 * (PREFERRED - 1),
+                    height: plan.high - plan.low,
+                }
+            };
+            Occluder {
+                bounds,
+                cost: 1,
+                step: 1,
+            }
+        }));
         scorer.set_soft(reservations);
         let mut candidates = super::super::simple::candidates(start.point, end.point);
         if let Some(lane) = plan.lanes.iter().find(|l| l.edge == i) {
-            candidates.extend(lane_candidates(seed, plan, lane.coordinate, clearances));
+            let axis = |point: Point| if plan.horizontal { point.y } else { point.x };
+            let first = axis(start.outward(clearances[0].clearance));
+            let last = axis(end.outward(clearances[1].clearance));
+            let middle = (first + last) / 2;
+            let coordinates = parallel.axes(
+                plan,
+                [start.point, end.point],
+                [lane.coordinate, middle],
+                scorer
+                    .border_axes(start.point, end.point)
+                    .into_iter()
+                    .filter_map(|(horizontal, coordinate)| {
+                        (horizontal == plan.horizontal).then_some(coordinate)
+                    }),
+                if plan.horizontal {
+                    layout.height
+                } else {
+                    layout.width
+                },
+            );
+            for coordinate in coordinates {
+                scorer.routing_axes.push((plan.horizontal, coordinate));
+                candidates.extend(lane_candidates(seed, plan, coordinate, clearances));
+            }
         }
-        if !expanded {
-            candidates.push(seed.clone());
-        }
+        candidates.push(seed.clone());
         let bound = ports::cost_bound(start, end, clearances);
-        if expanded
+        if (expanded || plan.border)
             && !candidates.iter().any(|p| {
                 let s = Shape::measure(p);
                 s.fits(baseline[i])
-                    && s.length as u128 + s.bends as u128 * super::super::scoring::BEND_COST
-                        == bound
+                    && scorer.attains_bound(p, bound)
+                    && parallel.deficit(graph, p) == 0
                     && ports::valid_with_clearances(p, start, end, &obstacles, clearances)
                     && layout
                         .paths
@@ -229,6 +274,7 @@ pub(super) fn apply(
             );
             let shape = Shape::measure(&candidate);
             if !shape.fits(baseline[i])
+                || !scorer.safe_border_change(seed, &candidate)
                 || candidate
                     .iter()
                     .any(|p| p.x >= layout.width || p.y >= layout.height)
@@ -250,7 +296,8 @@ pub(super) fn apply(
                 shape.offsets,
                 shape.reversals,
                 shape.bends,
-                scorer.readability_cost(&candidate),
+                scorer.readability_cost(&candidate)
+                    + (parallel.deficit(graph, &candidate) / 4) as u128,
             );
             if best.as_ref().is_none_or(|(score, _)| key < *score) {
                 best = Some((key, candidate));
@@ -269,17 +316,7 @@ pub(super) fn apply(
         return false;
     }
     !super::super::slots::opposite_roles_collide(graph, &layout.paths)
-        && order.iter().all(|&i| {
-            let overlap = |paths: &[Vec<Point>]| {
-                paths
-                    .iter()
-                    .enumerate()
-                    .filter(|(j, _)| *j != i)
-                    .map(|(_, p)| super::super::refinement::overlap(&paths[i], p))
-                    .sum::<usize>()
-            };
-            overlap(&layout.paths) <= overlap(&before.paths)
-        })
+        && preserves_overlap(&before.paths, &layout.paths, &order)
         && layout
             .paths
             .iter()
