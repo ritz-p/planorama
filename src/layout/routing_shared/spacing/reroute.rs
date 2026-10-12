@@ -317,6 +317,21 @@ pub(super) fn apply(
     }
     !super::super::slots::opposite_roles_collide(graph, &layout.paths)
         && preserves_overlap(&before.paths, &layout.paths, &order)
+        && layout.paths.iter().enumerate().all(|(i, path)| {
+            path.len() < 2
+                || [graph.edges[i].from, graph.edges[i].to]
+                    .into_iter()
+                    .enumerate()
+                    .all(|(end, node)| {
+                        ports::embedded_marker_fits(
+                            graph,
+                            layout,
+                            node,
+                            numbers[i][end],
+                            terminal(path, end),
+                        )
+                    })
+        })
         && layout
             .paths
             .iter()

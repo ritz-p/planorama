@@ -26,9 +26,11 @@ unsupported targets display a fallback and retain diagnostics.
 
 When the verified next hop has a visible spatial card, a directed Association runs
 from the Route child's own port to the target port. It retains the Route's action,
-lifecycle metadata and resource provenance. The child shows `Next hop [N]`, matching
-the destination marker and the Relationship Resources index, and omits the `Target:`
-row. There is no duplicate parent-to-target line or parent-to-child line.
+lifecycle metadata and resource provenance. Standalone `[N]` badges appear near
+both the Route child's source port and the next-hop target port. The child also
+shows `Next hop [N]` and omits the `Target:` row. Both badges and the inline text
+match one Relationship Resources entry; the target arrow alone gives direction.
+There is no duplicate parent-to-target line or parent-to-child line.
 Other incident references remain in metadata and child reference rows. Unknown
 reference candidates are labeled References, not asserted next-hop targets.
 Filtered, nonspatial and unresolved targets retain a target/status fallback without
@@ -54,7 +56,8 @@ has an unresolved entry, while an empty table needs no Routes section.
 Shared row measurement wraps complete child addresses and visible `Moved from:`
 annotations and reserves each imported child's badge row inside the table footprint
 before placement and routing. The final router uses
-child bounds, protects the parent header and sibling entries, and reserves target
-ports and marker corridors. Routes to the same next hop remain individual paths.
+child bounds, protects the parent header and sibling entries, and reserves ports
+and numbered marker corridors at both ends. Routes to the same next hop remain
+individual paths with distinct relationship numbers.
 See [routes.svg](../examples/routes.svg)
 and the [large example](../examples/terraform-large/diagram.svg).

@@ -120,25 +120,25 @@ pub(crate) fn render_content(
     for (id, graph) in &prepared_graphs {
         let layout = Layout::new(graph);
         let index = super::relationship_index::Index::new(graph, &layout);
-        let measured_sections = super::Sections::new(graph, &index, format);
+        let measured_sections = super::Sections::new(graph, &layout, &index, format);
         width = width.max(measured_sections.dimensions(&layout).0);
         states.push((*id, graph, layout, index, measured_sections));
     }
     let mut top = 60;
     for (id, graph, layout, index, mut measured_sections) in states {
         if measured_sections.dimensions(&layout).0 < width {
-            measured_sections = super::Sections::with_width(graph, &index, format, width);
+            measured_sections = super::Sections::with_width(graph, &layout, &index, format, width);
         }
         let (_, height) = measured_sections.dimensions(&layout);
         let prefix = prefix(id);
-        let check_offset = measured_sections.height();
+        let architecture_offset = measured_sections.height();
         obstacles.insert(
             id.clone(),
             StateObstacles {
                 markers: index
                     .marker_bounds()
                     .map(|mut bounds| {
-                        bounds.origin.y += top + 40 + check_offset;
+                        bounds.origin.y += top + 40 + architecture_offset;
                         bounds
                     })
                     .collect(),
@@ -147,7 +147,7 @@ pub(crate) fn render_content(
                     .iter()
                     .map(|panel| {
                         let mut header = panel.bounds.header(36);
-                        header.origin.y += top + 40 + check_offset;
+                        header.origin.y += top + 40 + architecture_offset;
                         header
                     })
                     .collect(),
@@ -156,7 +156,7 @@ pub(crate) fn render_content(
                     .iter()
                     .map(|b| {
                         let mut bounds = *b;
-                        bounds.origin.y += top + 40 + check_offset;
+                        bounds.origin.y += top + 40 + architecture_offset;
                         bounds
                     })
                     .collect::<Vec<_>>(),
@@ -177,7 +177,7 @@ pub(crate) fn render_content(
                 (
                     bounds.right(),
                     top + 40
-                        + check_offset
+                        + architecture_offset
                         + bounds.origin.y
                         + layout.header_heights[port_index] / 2,
                     format!("{prefix}{}", super::identity::resource(node)),

@@ -12,6 +12,10 @@ pub(crate) struct Metrics {
     pub height: usize,
 }
 
+pub(crate) fn width(node: &Node) -> usize {
+    super::references::width(node).max(node.routes.reserved_width)
+}
+
 pub(crate) fn import_height(node: &Node) -> usize {
     if node.metadata.import.is_some() {
         24

@@ -174,7 +174,7 @@ impl<'a> Index<'a> {
     }
 }
 
-fn badge(number: usize, bounds: Bounds, stroke: &str, style: &str) -> String {
+pub(super) fn badge(number: usize, bounds: Bounds, stroke: &str, style: &str) -> String {
     format!(
         r##"<rect x="{}" y="{}" width="{}" height="{}" rx="4" fill="#ffffff" stroke="{stroke}" {style}/><text x="{}" y="{}" text-anchor="middle" font-size="11" fill="#334155">[{number}]</text>
 "##,

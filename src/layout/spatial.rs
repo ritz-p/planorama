@@ -3,6 +3,7 @@ use crate::model::architecture::Graph;
 
 pub(super) fn layout(graph: &Graph) -> Layout<'_> {
     let projected = crate::view::spatial::project(graph);
+    let route_insets = crate::view::routes::insets(graph);
     let spatial = Layout::unspaced(&projected.graph);
     let empty = Bounds {
         origin: Point { x: 0, y: 0 },
@@ -84,7 +85,7 @@ pub(super) fn layout(graph: &Graph) -> Layout<'_> {
                     .unwrap();
                 layout.bounds[child] = Bounds {
                     origin: Point {
-                        x: layout.bounds[parent].origin.x + 12,
+                        x: layout.bounds[parent].origin.x + route_insets[parent],
                         y,
                     },
                     width: crate::view::routes::WIDTH,

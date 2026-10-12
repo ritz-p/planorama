@@ -412,6 +412,27 @@ pub(in crate::layout) fn terminal_corridors(
         .collect()
 }
 
+pub(in crate::layout) fn embedded_marker_fits(
+    graph: &crate::model::Graph,
+    layout: &crate::layout::Layout<'_>,
+    node: usize,
+    number: Option<usize>,
+    port: Port,
+) -> bool {
+    let Some(number) = number else {
+        return true;
+    };
+    let Some(parent) = crate::view::routes::owner(graph, &graph.nodes[node]) else {
+        return true;
+    };
+    let marker = crate::layout::relationship_markers::bounds(number, port);
+    let bounds = layout.bounds[parent];
+    marker.origin.x >= bounds.origin.x + 4
+        && marker.right() + 4 <= bounds.right()
+        && marker.origin.y >= bounds.origin.y + layout.header_heights[parent] + 4
+        && marker.origin.y + marker.height + 28 <= bounds.origin.y + bounds.height
+}
+
 pub(in crate::layout) fn valid_with_clearances(
     path: &[Point],
     start: Port,

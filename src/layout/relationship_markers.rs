@@ -1,6 +1,6 @@
 use super::{Bounds, Point, Port, Side};
 use crate::model::{
-    ArchitectureId, Directionality, EdgeKind, Graph, Placement, RelationshipProvenance,
+    ArchitectureId, Directionality, Edge, EdgeKind, Graph, Placement, RelationshipProvenance,
     TerraformEntityId,
 };
 use std::collections::{BTreeMap, BTreeSet};
@@ -201,14 +201,15 @@ pub(crate) fn entries(graph: &Graph) -> Vec<Entry<'_>> {
         .collect()
 }
 
+pub(crate) fn both_ends(edge: &Edge) -> bool {
+    edge.kind == EdgeKind::Association || edge.directionality() == Directionality::Undirected
+}
+
 pub(in crate::layout) fn numbers(graph: &Graph) -> Vec<[Option<usize>; 2]> {
     let mut numbers = vec![[None; 2]; graph.edges.len()];
     for (i, entry) in entries(graph).into_iter().enumerate() {
         for edge in entry.edges {
-            numbers[edge] = [
-                (graph.edges[edge].directionality() == Directionality::Undirected).then_some(i + 1),
-                Some(i + 1),
-            ];
+            numbers[edge] = [both_ends(&graph.edges[edge]).then_some(i + 1), Some(i + 1)];
         }
     }
     numbers

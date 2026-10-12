@@ -22,7 +22,8 @@ Embedded Route cards share their owning table's placement footprint. The table
 reserves the measured child content before placement, and next-hop cards reserve
 capacity for the additional ports. Final routing uses each child's bounds and a
 layout-only parent relation, protects the table header and sibling entries, and
-draws separate numbered Associations to visible next hops. The background is drawn
+draws separate directed Associations to visible next hops, reserving numbered
+badges at both child and target ports. The background is drawn
 before the paths so the segment inside the table remains visible. Cross-state Route endpoints use the table's
 border while retaining the child identity and explicit attachment metadata.
 
@@ -152,6 +153,10 @@ shared offset, prefers a free allocated slot when the center is occupied, and
 falls back to independent paths if no candidate has sufficient spacing.
 The [mixed-port regression](../examples/port-collisions.svg) reproduces a refined
 fan-out bundle whose old central source coincided with an independent target.
+Its manually positioned cards exercise geometry near the diagram's top edge.
+SVG composition measures the final cards, paths and number badges and reserves
+top clearance so they remain below the preceding legend and annotation sections,
+without changing relative routing geometry.
 The [shared SVG update command](../README.md#svg-の更新) regenerates it by selecting
 `refined_flat_bundle_keeps_opposite_role_port` and reusing its exact fixture.
 
@@ -218,8 +223,9 @@ wide. Each terminal reserves a straight approach of `10 + width + 8` pixels on
 left/right sides and `10 + 18 + 8 = 36` pixels on top/bottom sides. The 10px gap
 keeps directed arrowheads clear; the lateral reservation is the actual badge
 dimension plus 6px. A single-digit terminal therefore keeps its own dimensions
-even when other relationships have two or three digits. Plain embedded Route
-sources retain a 20px escape without a fictitious source badge. Packing padding
+even when other relationships have two or three digits. Numbered embedded Route
+sources reserve the same badge-sized approach as other numbered Association
+endpoints; unnumbered Route sources retain a 20px escape. Packing padding
 still uses the largest displayed number conservatively; terminal validation does not.
 
 Numbered relationships compare their lowest-cost valid sides, port alignments and
@@ -231,9 +237,10 @@ against the settled reservations. The same bounded alternatives are available
 after height refinement, including previously selected sides. Candidate lower
 bounds and the existing detour budget limit search; initial sides have no priority.
 
-Numbered ports at both ends of undirected relationships, or the destination of
-directed relationships, reserve badge-sized slots; other incident ports retain
-normal spacing. Adjacent terminal corridors are merged before routing. Orthogonal
+Numbered ports at both ends of Associations and other undirected relationships,
+or the destination of directed Dependencies, reserve badge-sized slots; other
+incident ports retain normal spacing. Adjacent terminal corridors are merged
+before routing. Orthogonal
 search indexes blocked grid edges and soft-card occlusion costs once per search,
 then looks them up in constant time for each candidate segment. Bundle branches
 use their own endpoint exclusions when evaluating soft-card occlusion.

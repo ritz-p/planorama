@@ -8,6 +8,7 @@ mod tests;
 
 pub(super) fn render(
     graph: &Graph,
+    layout: &crate::layout::Layout<'_>,
     parent: usize,
     x: usize,
     mut y: usize,
@@ -26,6 +27,28 @@ pub(super) fn render(
     y += 12;
     for mut card in cards {
         let height = card.height();
+        let bounds = card.node.map_or(
+            crate::layout::Bounds {
+                origin: crate::layout::Point { x, y },
+                width: WIDTH,
+                height,
+            },
+            |node| {
+                let child = graph
+                    .nodes
+                    .iter()
+                    .position(|n| n.entity.id == node.entity.id)
+                    .unwrap();
+                layout.bounds[child]
+            },
+        );
+        y += height + 12;
+        let (x, y, width, height) = (
+            bounds.origin.x,
+            bounds.origin.y,
+            bounds.width,
+            bounds.height,
+        );
         if matches!(content, super::Content::ValueFree) {
             for row in &mut card.rows {
                 if row.destination {
@@ -67,7 +90,7 @@ pub(super) fn render(
             .map(|r| r.text.as_str())
             .collect::<Vec<_>>()
             .join("; ");
-        writeln!(svg, r#"<title>{}; {}{}{}{} </title><rect x="{x}" y="{y}" width="{WIDTH}" height="{height}" rx="{radius}" fill="{background}" stroke="{border}" stroke-width="{stroke}"/>"#,
+        writeln!(svg, r#"<title>{}; {}{}{}{} </title><rect x="{x}" y="{y}" width="{width}" height="{height}" rx="{radius}" fill="{background}" stroke="{border}" stroke-width="{stroke}"/>"#,
             super::escape(&details), super::operations::label(node.action, &node.metadata), super::escape(&super::operations::details(&node.metadata)),
             node.previous_address.as_ref().map(|a| format!("; moved from: {}", super::escape(a))).unwrap_or_default(),
             node.deposed_key.as_ref().map(|a| format!("; deposed: {}", super::escape(a))).unwrap_or_default()).unwrap();
@@ -105,7 +128,6 @@ pub(super) fn render(
             }
         }
         svg.push_str("</g>\n");
-        y += height + 12;
     }
     svg.push_str("</g>\n");
     svg
