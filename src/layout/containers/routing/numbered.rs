@@ -117,7 +117,14 @@ impl Terminals {
                 let old = result.ports[index];
                 let mut candidates = Vec::new();
                 let mut limit = u128::MAX;
-                if ports::valid_with_clearances(
+                if result.fits(
+                    graph,
+                    layout,
+                    index,
+                    old,
+                    result.clearances[index],
+                    numbers[index],
+                ) && ports::valid_with_clearances(
                     &selected[index],
                     old[0],
                     old[1],
@@ -173,7 +180,7 @@ impl Terminals {
                         if bound > limit {
                             break;
                         }
-                        if !result.fits(graph, layout, index, pair, clearances) {
+                        if !result.fits(graph, layout, index, pair, clearances, numbers[index]) {
                             continue;
                         }
                         if pair.iter().zip(old).any(|(candidate, previous)| {
@@ -253,6 +260,7 @@ impl Terminals {
         index: usize,
         pair: [Port; 2],
         clearances: [Terminal; 2],
+        numbers: [Option<usize>; 2],
     ) -> bool {
         let edge = &graph.edges[index];
         pair.into_iter()
@@ -273,6 +281,7 @@ impl Terminals {
                 let margin = 12.max(clearances[end].span.div_ceil(2));
                 position >= low + margin
                     && position + margin <= high
+                    && ports::embedded_marker_fits(graph, layout, node, numbers[end], port)
                     && self.ports.iter().enumerate().all(|(other, ports)| {
                         if other == index
                             || represented_by_nesting(&graph.edges[other], &layout.containment)

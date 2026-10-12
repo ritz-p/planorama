@@ -17,6 +17,10 @@ fn endpoint_policy_tracks_kind_direction_color_and_final_ports() {
             layout.paths[0] = vec![Point { x: 100, y: 200 }, Point { x: 300, y: 200 }];
             let output = crate::svg::render(&graph, &layout);
             let doc = roxmltree::Document::parse(&output).unwrap();
+            let architecture = doc
+                .descendants()
+                .find(|node| node.attribute("data-architecture").is_some())
+                .unwrap();
             if kind == EdgeKind::Connection {
                 let path = doc
                     .descendants()
@@ -33,7 +37,7 @@ fn endpoint_policy_tracks_kind_direction_color_and_final_ports() {
                             && n.text().is_some_and(|t| t.contains('↔')))
                 );
             }
-            let circles: Vec<_> = doc
+            let circles: Vec<_> = architecture
                 .descendants()
                 .filter(|n| n.attribute("data-endpoint").is_some())
                 .collect();
@@ -54,7 +58,7 @@ fn endpoint_policy_tracks_kind_direction_color_and_final_ports() {
                     Some(crate::svg::relationships::stroke(&graph.edges[0]))
                 );
             }
-            let arrow = doc
+            let arrow = architecture
                 .descendants()
                 .find(|n| n.attribute("data-endpoint-arrow").is_some());
             assert_eq!(
@@ -86,7 +90,11 @@ fn parallel_numbered_and_bundled_paths_keep_each_endpoint_and_junction() {
         let layout = Layout::new(&graph);
         let output = crate::svg::render(&graph, &layout);
         let doc = roxmltree::Document::parse(&output).unwrap();
-        let groups: Vec<_> = doc
+        let architecture = doc
+            .descendants()
+            .find(|node| node.attribute("data-architecture").is_some())
+            .unwrap();
+        let groups: Vec<_> = architecture
             .descendants()
             .filter(|n| n.attribute("data-endpoints").is_some())
             .collect();
@@ -118,7 +126,8 @@ fn parallel_numbered_and_bundled_paths_keep_each_endpoint_and_junction() {
             }
         }
         assert_eq!(
-            doc.descendants()
+            architecture
+                .descendants()
                 .filter(|n| n.has_tag_name("circle") && n.attribute("data-endpoint").is_none())
                 .count(),
             layout.junctions.len()

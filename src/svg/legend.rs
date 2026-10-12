@@ -1,11 +1,14 @@
+use crate::layout::{Point, Port, Side, relationship_markers};
 use crate::model::Directionality;
 use crate::model::architecture::{Action, EdgeKind, Graph};
 use std::collections::BTreeSet;
 use std::fmt::Write;
 
 const PADDING: usize = 16;
-const SAMPLE_TEXT_X: usize = 80;
 const LINE_HEIGHT: usize = 18;
+const SAMPLE_NUMBER: usize = 12;
+const SAMPLE_INSET: usize = 5;
+const MIN_TEXT_WIDTH: usize = 208;
 
 pub(super) struct Legend {
     pub width: usize,
@@ -58,43 +61,39 @@ impl Legend {
             (
                 EdgeKind::Association,
                 "Association",
-                "Dashed and usually undirected. A route next-hop association is directed from the route to its target.",
+                "Dashed, undirected relationship. Matching badges identify the same Terraform-backed relationship at both attachment points.",
                 Directionality::Undirected,
+            ),
+            (
+                EdgeKind::Association,
+                "Directed Association",
+                "Dashed line from a Route to its next hop. The destination arrow expresses direction; matching badges identify the same relationship.",
+                Directionality::Directed,
             ),
             (
                 EdgeKind::Connection,
                 "Connection",
-                "Thicker dots show an inferred, undirected connection; this does not guarantee actual network reachability.",
+                "Thicker dotted line shows an inferred, undirected connection; this does not guarantee actual network reachability.",
+                Directionality::Undirected,
+            ),
+            (
+                EdgeKind::Containment,
+                "Containment",
+                "Nested boxes show containment; nesting replaces a redundant relationship line.",
                 Directionality::Undirected,
             ),
         ] {
-            let stroke = super::relationships::action_stroke(None);
-            let style = super::relationships::style(kind);
-            let arrow = super::relationships::arrow(directionality, None);
-            writeln!(
-                content.svg,
-                r#"<path data-legend-kind="{}" data-directionality="{}" d="M 16 {} H 60" fill="none" stroke="{stroke}" {style}{arrow}/>"#,
-                name.to_ascii_lowercase(),
-                directionality.as_str(),
-                content.y + 7,
-            )
-            .unwrap();
-            content.text(name, SAMPLE_TEXT_X, true);
-            content.text(explanation, SAMPLE_TEXT_X, false);
-            content.y += 12;
+            content.entry(kind, name, explanation, directionality);
         }
-        let stroke = super::relationships::action_stroke(None);
-        writeln!(
-            content.svg,
-            r#"<g data-legend-kind="containment" fill="none" stroke="{stroke}"><rect x="16" y="{}" width="44" height="28" rx="4"/><rect x="25" y="{}" width="26" height="12" rx="2"/></g>"#,
-            content.y + 2,
-            content.y + 12,
-        )
-        .unwrap();
-        content.text("Containment", SAMPLE_TEXT_X, true);
         content.text(
-            "Nested boxes show containment; nesting replaces a redundant relationship line.",
-            SAMPLE_TEXT_X,
+            "Hollow circles mark resource/card attachment points; neither end of an undirected line is a directional start. Filled internal dots mark bundle junctions.",
+            PADDING,
+            false,
+        );
+        content.y += 8;
+        content.text(
+            "Matching [N] badges identify the same Terraform-backed relationship and its Relationship Resources entry. They do not express direction or count connections. Reference-only Connections and Dependencies have no number.",
+            PADDING,
             false,
         );
         let card_height = content.y + PADDING;
@@ -123,6 +122,102 @@ struct Content {
 }
 
 impl Content {
+    fn entry(
+        &mut self,
+        kind: EdgeKind,
+        name: &str,
+        explanation: &str,
+        directionality: Directionality,
+    ) {
+        let key = name.to_ascii_lowercase().replace(' ', "-");
+        writeln!(self.svg, r#"<g data-legend-entry="{key}">"#).unwrap();
+        let sample_bottom = self.y + self.sample(kind, &key, directionality);
+        let text_x = PADDING + sample_width() + PADDING;
+        let text_x = if self.width.saturating_sub(text_x + PADDING) < MIN_TEXT_WIDTH {
+            self.y = sample_bottom + 8;
+            PADDING
+        } else {
+            text_x
+        };
+        self.text(name, text_x, true);
+        self.text(explanation, text_x, false);
+        self.y = self.y.max(sample_bottom) + 12;
+        self.svg.push_str("</g>\n");
+    }
+
+    fn sample(&mut self, kind: EdgeKind, key: &str, directionality: Directionality) -> usize {
+        let stroke = super::relationships::action_stroke(None);
+        let style = super::relationships::style(kind);
+        writeln!(self.svg, r#"<g data-legend-sample="{key}">"#).unwrap();
+        if kind == EdgeKind::Containment {
+            let x = PADDING + (sample_width() - 44) / 2;
+            writeln!(
+                self.svg,
+                r#"<g data-legend-kind="containment" fill="none" stroke="{stroke}"><rect x="{x}" y="{}" width="44" height="28" rx="4"/><rect x="{}" y="{}" width="26" height="12" rx="2"/></g>"#,
+                self.y + 2,
+                x + 9,
+                self.y + 12,
+            )
+            .unwrap();
+            self.svg.push_str("</g>\n");
+            return 32;
+        }
+        let start = Point {
+            x: PADDING + SAMPLE_INSET,
+            y: self.y + 2 + relationship_markers::HEIGHT / 2,
+        };
+        let end = Point {
+            x: PADDING + sample_width() - SAMPLE_INSET,
+            y: start.y,
+        };
+        let arrow = super::relationships::arrow(directionality, None);
+        writeln!(
+            self.svg,
+            r#"<path data-legend-kind="{key}" data-directionality="{}" d="M {} {} H {}" fill="none" stroke="{stroke}" {style}{arrow}/>"#,
+            directionality.as_str(),
+            start.x,
+            start.y,
+            end.x,
+        )
+        .unwrap();
+        self.svg.push_str(&super::endpoints::attachment_circle(
+            start,
+            r#"data-legend-endpoint="source""#,
+            stroke,
+        ));
+        if matches!(kind, EdgeKind::Association | EdgeKind::Connection) {
+            self.svg.push_str(&super::endpoints::attachment_circle(
+                end,
+                r#"data-legend-endpoint="target""#,
+                stroke,
+            ));
+            if directionality == Directionality::Directed {
+                let path = super::endpoints::arrow_path(start, end);
+                writeln!(
+                    self.svg,
+                    r#"<path data-legend-arrow="true" d="{path}" fill="{stroke}"/>"#,
+                )
+                .unwrap();
+            }
+        }
+        if kind == EdgeKind::Association {
+            for (point, side, terminal) in
+                [(start, Side::Right, "source"), (end, Side::Left, "target")]
+            {
+                writeln!(self.svg, r#"<g data-legend-badge="{terminal}">"#).unwrap();
+                self.svg.push_str(&super::relationship_index::badge(
+                    SAMPLE_NUMBER,
+                    relationship_markers::bounds(SAMPLE_NUMBER, Port { point, side }),
+                    stroke,
+                    style,
+                ));
+                self.svg.push_str("</g>\n");
+            }
+        }
+        self.svg.push_str("</g>\n");
+        relationship_markers::HEIGHT + 4
+    }
+
     fn text(&mut self, text: &str, x: usize, bold: bool) {
         let weight = if bold { " font-weight=\"700\"" } else { "" };
         let limit = (self.width - x - PADDING) / 8;
@@ -173,6 +268,10 @@ impl Content {
         }
         self.y += 28;
     }
+}
+
+fn sample_width() -> usize {
+    2 * (SAMPLE_INSET + relationship_markers::GAP + relationship_markers::width(SAMPLE_NUMBER)) + 48
 }
 
 fn wrap_words(text: &str, limit: usize) -> Vec<String> {

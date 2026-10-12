@@ -70,10 +70,11 @@ fn annotation_card_bounds(card: roxmltree::Node) -> Bounds {
 }
 
 #[test]
-fn associations_are_undirected_but_dependencies_keep_arrows() {
+fn association_numbering_preserves_relationship_directions_and_arrows() {
     for fixture in [
         include_str!("../../fixtures/association-plan.json"),
         include_str!("../../fixtures/aws-relationships-plan.json"),
+        include_str!("../../fixtures/routes-plan.json"),
     ] {
         let graph = semantic::transform(&plan::parse(fixture).unwrap()).0;
         let layout = Layout::new(&graph);
@@ -101,12 +102,15 @@ fn associations_are_undirected_but_dependencies_keep_arrows() {
             }
         }
         let index = Index::new(&graph, &layout);
-        for (i, entry) in index.entries.iter().enumerate() {
+        for entry in &index.entries {
             let expected: usize = entry
                 .edges
                 .iter()
                 .map(|&e| {
-                    if graph.edges[e].directionality() == crate::model::Directionality::Undirected {
+                    if graph.edges[e].kind == EdgeKind::Association
+                        || graph.edges[e].directionality()
+                            == crate::model::Directionality::Undirected
+                    {
                         2
                     } else {
                         1
@@ -114,7 +118,11 @@ fn associations_are_undirected_but_dependencies_keep_arrows() {
                 })
                 .sum();
             assert_eq!(
-                index.markers.iter().filter(|m| m.number == i + 1).count(),
+                index
+                    .markers
+                    .iter()
+                    .filter(|m| m.number == entry.number)
+                    .count(),
                 expected
             );
         }
@@ -123,12 +131,145 @@ fn associations_are_undirected_but_dependencies_keep_arrows() {
 }
 
 #[test]
+fn upward_routes_and_numbered_badges_clear_the_annotation_sections() {
+    let graph = graph();
+    for horizontal_terminals in [false, true] {
+        let mut layout = Layout::new(&graph);
+        let edge = graph
+            .edges
+            .iter()
+            .position(|edge| edge.change.is_some())
+            .unwrap();
+        let first = layout.paths[edge][0];
+        let last = *layout.paths[edge].last().unwrap();
+        layout.paths[edge] = if horizontal_terminals {
+            vec![Point { x: first.x, y: 100 }, Point { x: last.x, y: 100 }]
+        } else {
+            vec![
+                first,
+                Point {
+                    x: first.x + 48,
+                    y: first.y,
+                },
+                Point {
+                    x: first.x + 48,
+                    y: 100,
+                },
+                Point {
+                    x: last.x + 48,
+                    y: 100,
+                },
+                Point {
+                    x: last.x + 48,
+                    y: last.y,
+                },
+                last,
+            ]
+        };
+        let index = Index::new(&graph, &layout);
+        if horizontal_terminals {
+            assert!(index.marker_bounds().any(|bounds| bounds.origin.y < 100));
+        }
+        let bounds = layout.bounds.clone();
+        let paths = layout.paths.clone();
+        let rendered = svg::render(&graph, &layout);
+        let document = roxmltree::Document::parse(&rendered).unwrap();
+        let number = |node: roxmltree::Node, name| {
+            node.attribute(name).unwrap_or("0").parse::<f64>().unwrap()
+        };
+        let translated_y = |node: roxmltree::Node| {
+            node.ancestors()
+                .filter_map(|parent| parent.attribute("transform"))
+                .map(|value| {
+                    value
+                        .trim_start_matches("translate(")
+                        .trim_end_matches(')')
+                        .split_whitespace()
+                        .nth(1)
+                        .unwrap()
+                        .parse::<f64>()
+                        .unwrap()
+                })
+                .sum::<f64>()
+        };
+        let section_bottom = document
+            .descendants()
+            .filter(|node| {
+                node.attribute("id") == Some("relationship-legend")
+                    || node.attribute("data-annotation-section").is_some()
+            })
+            .map(|section| {
+                let rectangle = section
+                    .children()
+                    .find(|node| node.has_tag_name("rect"))
+                    .unwrap();
+                translated_y(rectangle) + number(rectangle, "y") + number(rectangle, "height")
+            })
+            .reduce(f64::max)
+            .unwrap();
+        assert!(document.descendants().any(|node| {
+            node.attribute("data-annotation-section") == Some("Relationship Resources")
+        }));
+        let architecture = document
+            .descendants()
+            .find(|node| node.attribute("data-architecture") == Some("true"))
+            .unwrap();
+        let offset = translated_y(architecture);
+        for shape in architecture
+            .descendants()
+            .filter(|node| node.has_tag_name("rect") || node.has_tag_name("circle"))
+        {
+            let top = translated_y(shape)
+                + if shape.has_tag_name("circle") {
+                    number(shape, "cy") - number(shape, "r")
+                } else {
+                    number(shape, "y")
+                };
+            let stroke = shape
+                .attribute("stroke-width")
+                .unwrap_or("1")
+                .parse::<f64>()
+                .unwrap();
+            assert!(top - stroke / 2.0 >= section_bottom + 16.0, "{shape:?}");
+        }
+        for point in layout.paths.iter().flatten() {
+            assert!(offset + point.y as f64 - 7.0 >= section_bottom + 16.0);
+        }
+        assert_eq!(
+            number(document.root_element(), "height"),
+            layout.height as f64 + offset
+        );
+        assert_eq!(layout.bounds, bounds);
+        assert_eq!(layout.paths, paths);
+    }
+}
+
+#[test]
 fn dense_targets_keep_distinct_numbers_readable() {
-    for kind in [EdgeKind::Association, EdgeKind::Connection] {
-        let graph = dense_graph(12, kind);
+    for (kind, directed, count) in [
+        (EdgeKind::Association, false, 24),
+        (EdgeKind::Association, true, 24),
+        (EdgeKind::Connection, false, 24),
+        (EdgeKind::Dependency, true, 12),
+    ] {
+        let mut graph = dense_graph(12, kind);
+        if directed {
+            for edge in &mut graph.edges {
+                edge.change.as_mut().unwrap().directionality =
+                    crate::model::Directionality::Directed;
+            }
+            for relationship in &mut graph.relationships {
+                for provenance in &mut relationship.provenance {
+                    if let RelationshipProvenance::Resource { change, .. } = provenance {
+                        change.directionality = crate::model::Directionality::Directed;
+                    }
+                }
+            }
+        }
         let layout = Layout::new(&graph);
         let index = Index::new(&graph, &layout);
-        assert_eq!(index.markers.len(), 24);
+        assert_eq!(index.markers.len(), count);
+        assert_eq!(index.entries.len(), 12);
         assert_marker_routes(&graph, &layout);
         for (i, marker) in index.markers.iter().enumerate() {
             for other in &index.markers[i + 1..] {
@@ -601,9 +742,19 @@ fn marker_borders_match_relationship_actions_and_line_patterns() {
 }
 
 #[test]
-fn markers_stay_on_the_line_near_the_destination_in_each_direction() {
+fn markers_stay_on_the_line_near_numbered_ends_in_each_direction() {
     use crate::layout::Point;
-    let graph = graph();
+    let mut graph = dense_graph(10, EdgeKind::Association);
+    for edge in &mut graph.edges {
+        edge.change.as_mut().unwrap().directionality = crate::model::Directionality::Directed;
+    }
+    for relationship in &mut graph.relationships {
+        for provenance in &mut relationship.provenance {
+            if let RelationshipProvenance::Resource { change, .. } = provenance {
+                change.directionality = crate::model::Directionality::Directed;
+            }
+        }
+    }
     for (start, end) in [
         (Point { x: 2000, y: 2000 }, Point { x: 2300, y: 2000 }),
         (Point { x: 2300, y: 2000 }, Point { x: 2000, y: 2000 }),
@@ -611,26 +762,33 @@ fn markers_stay_on_the_line_near_the_destination_in_each_direction() {
         (Point { x: 2000, y: 2300 }, Point { x: 2000, y: 2000 }),
     ] {
         let mut layout = Layout::new(&graph);
-        layout.paths[0] = vec![start, end];
+        layout.paths.iter_mut().for_each(Vec::clear);
+        layout.paths[9] = vec![start, end];
         layout.width = 2600;
         layout.height = 2600;
         let index = Index::new(&graph, &layout);
-        let bounds = index.markers[0].bounds;
-        let center = Point {
-            x: bounds.origin.x + bounds.width / 2,
-            y: bounds.origin.y + bounds.height / 2,
-        };
-        assert_eq!(center.x == end.x, start.x == end.x);
-        assert_eq!(center.y == end.y, start.y == end.y);
-        let distance = center.x.abs_diff(end.x) + center.y.abs_diff(end.y);
-        assert_eq!(
-            distance,
-            if start.x == end.x {
-                bounds.height / 2 + 10
-            } else {
-                bounds.width / 2 + 10
-            }
-        );
+        assert_eq!(index.entries.len(), 1);
+        assert_eq!(index.markers.len(), 2);
+        for (marker, port) in index.markers.iter().zip([end, start]) {
+            assert_eq!(marker.number, 10);
+            let bounds = marker.bounds;
+            assert_eq!(bounds.width, 32);
+            let center = Point {
+                x: bounds.origin.x + bounds.width / 2,
+                y: bounds.origin.y + bounds.height / 2,
+            };
+            assert_eq!(center.x == port.x, start.x == end.x);
+            assert_eq!(center.y == port.y, start.y == end.y);
+            let distance = center.x.abs_diff(port.x) + center.y.abs_diff(port.y);
+            assert_eq!(
+                distance,
+                if start.x == end.x {
+                    bounds.height / 2 + 10
+                } else {
+                    bounds.width / 2 + 10
+                }
+            );
+        }
         assert_eq!(index.width, layout.width);
     }
 }
@@ -667,7 +825,9 @@ fn assert_marker_routes(graph: &Graph, layout: &Layout<'_>) {
         .flat_map(|entry| entry.edges.iter())
         .flat_map(|&edge| {
             let mut ends = vec![(edge, false)];
-            if graph.edges[edge].directionality() == crate::model::Directionality::Undirected {
+            if graph.edges[edge].kind == EdgeKind::Association
+                || graph.edges[edge].directionality() == crate::model::Directionality::Undirected
+            {
                 ends.push((edge, true));
             }
             ends
@@ -789,6 +949,8 @@ fn embedded_next_hops_share_the_routed_numbering_and_marker_geometry() {
             .0;
     let layout = Layout::new(&graph);
     let index = Index::new(&graph, &layout);
+    let svg = svg::render(&graph, &layout);
+    let document = roxmltree::Document::parse(&svg).unwrap();
     assert!(index.entries.iter().any(|entry| entry.embedded));
     for entry in index.entries.iter().filter(|entry| entry.embedded) {
         assert_eq!(
@@ -797,8 +959,40 @@ fn embedded_next_hops_share_the_routed_numbering_and_marker_geometry() {
                 .iter()
                 .filter(|marker| marker.number == entry.number)
                 .count(),
-            entry.edges.len()
+            entry.edges.len() * 2
         );
+        let number = entry.number.to_string();
+        assert_eq!(
+            document
+                .descendants()
+                .filter(|node| node.attribute("data-relationship-entry") == Some(number.as_str()))
+                .count(),
+            1
+        );
+        assert_eq!(
+            document
+                .descendants()
+                .filter(|node| node.attribute("data-relationship-marker") == Some(number.as_str()))
+                .count(),
+            entry.edges.len() * 2
+        );
+        for &edge in &entry.edges {
+            let route = &graph.nodes[graph.edges[edge].from];
+            let card = document
+                .descendants()
+                .find(|node| {
+                    node.attribute("data-embedded-route") == Some("true")
+                        && node.attribute("data-terraform-address") == Some(route.address.as_str())
+                })
+                .unwrap();
+            let label = format!("Next hop [{}]", entry.number);
+            assert!(
+                card.descendants()
+                    .any(|node| node.text() == Some(label.as_str()))
+            );
+            assert_eq!(entry.sources.len(), 1);
+            assert!(route.entity.provenance.contains(entry.sources[0]));
+        }
     }
     assert_marker_routes(&graph, &layout);
 }
@@ -827,7 +1021,7 @@ fn resource_provenance_is_indexed_and_reference_provenance_is_not() {
     let empty = Index::new(&inferred, &layout);
     assert!(empty.entries.is_empty());
     assert!(empty.cards().is_empty());
-    assert!(!svg::render(&inferred, &layout).contains("Relationship Resources"));
+    assert!(!svg::render(&inferred, &layout).contains("data-relationship-index="));
     assert_eq!(
         svg::dimensions(&graph, &layout).1 - svg::dimensions(&inferred, &layout).1,
         index.cards()[0].height + 48 + 16 + 24

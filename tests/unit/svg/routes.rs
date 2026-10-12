@@ -10,11 +10,44 @@ fn output(value: &Value) -> String {
     let graph = semantic::transform(&plan::parse(&value.to_string()).unwrap());
     let layout = Layout::new(&graph);
     verify_route_paths(&graph, &layout);
-    svg::render(&graph, &layout)
+    let svg = svg::render(&graph, &layout);
+    let document = roxmltree::Document::parse(&svg).unwrap();
+    for (index, node) in graph.nodes.iter().enumerate() {
+        if view::routes::owner(&graph, node).is_none() || layout.bounds[index].width == 0 {
+            continue;
+        }
+        let card = document
+            .descendants()
+            .find(|card| {
+                card.attribute("data-embedded-route") == Some("true")
+                    && card.attribute("data-architecture-id") == Some(node.entity.id.as_str())
+            })
+            .unwrap();
+        let rect = card
+            .children()
+            .find(|rect| rect.has_tag_name("rect"))
+            .unwrap();
+        let actual = ["x", "y", "width", "height"]
+            .map(|key| rect.attribute(key).unwrap().parse::<usize>().unwrap());
+        let bounds = layout.bounds[index];
+        assert_eq!(
+            actual,
+            [
+                bounds.origin.x,
+                bounds.origin.y,
+                bounds.width,
+                bounds.height
+            ],
+            "embedded card and final routing bounds differ for {}",
+            node.address
+        );
+    }
+    svg
 }
 
 fn verify_route_paths(graph: &crate::model::Graph, layout: &Layout<'_>) {
     let mut ports = std::collections::BTreeMap::<_, Vec<_>>::new();
+    let index = svg::relationship_index::Index::new(graph, layout);
     for (edge, path) in graph.edges.iter().zip(&layout.paths) {
         let Some(parent) = view::routes::owner(graph, &graph.nodes[edge.from]) else {
             continue;
@@ -69,6 +102,35 @@ fn verify_route_paths(graph: &crate::model::Graph, layout: &Layout<'_>) {
             path.windows(2)
                 .all(|p| p[0].x == p[1].x || p[0].y == p[1].y)
         );
+        if let Some(number) = index.number(&graph.nodes[edge.from]) {
+            use crate::layout::{Port, Side, relationship_markers};
+            let source = path.windows(2).find(|p| p[0] != p[1]).unwrap();
+            let side = if source[1].x < source[0].x {
+                Side::Left
+            } else if source[1].x > source[0].x {
+                Side::Right
+            } else if source[1].y < source[0].y {
+                Side::Top
+            } else {
+                Side::Bottom
+            };
+            let marker = relationship_markers::bounds(
+                number,
+                Port {
+                    point: source[0],
+                    side,
+                },
+            );
+            assert!(index.marker_bounds().any(|actual| actual == marker));
+            let table = layout.bounds[parent];
+            assert!(marker.origin.x >= table.origin.x + 4);
+            assert!(marker.right() + 4 <= table.right());
+            assert!(marker.origin.y >= table.origin.y + layout.header_heights[parent] + 4);
+            assert!(
+                marker.origin.y + marker.height + 28 <= table.origin.y + table.height,
+                "source marker covers the parent footer: {marker:?}, {table:?}"
+            );
+        }
     }
     for points in ports.values() {
         for (i, a) in points.iter().enumerate() {
@@ -77,7 +139,6 @@ fn verify_route_paths(graph: &crate::model::Graph, layout: &Layout<'_>) {
             }
         }
     }
-    let index = svg::relationship_index::Index::new(graph, layout);
     let markers: Vec<_> = index.marker_bounds().collect();
     let overlaps = |a: crate::layout::Bounds, b: crate::layout::Bounds| {
         a.origin.x < b.right()

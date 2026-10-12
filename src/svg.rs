@@ -67,26 +67,29 @@ pub(crate) fn render(graph: &Graph, layout: &Layout<'_>) -> String {
 #[cfg(test)]
 fn dimensions(graph: &Graph, layout: &Layout<'_>) -> (usize, usize) {
     let index = relationship_index::Index::new(graph, layout);
-    Sections::new(graph, &index, AddressFormat::Qualified).dimensions(layout)
+    Sections::new(graph, layout, &index, AddressFormat::Qualified).dimensions(layout)
 }
 
 struct Sections {
     legend: legend::Legend,
     annotations: annotations::Area,
     check_height: usize,
+    architecture_top_padding: usize,
 }
 
 impl Sections {
     fn new(
         graph: &Graph,
+        layout: &Layout<'_>,
         index: &relationship_index::Index<'_>,
         address_format: AddressFormat,
     ) -> Self {
-        Self::with_width(graph, index, address_format, index.width)
+        Self::with_width(graph, layout, index, address_format, index.width)
     }
 
     fn with_width(
         graph: &Graph,
+        layout: &Layout<'_>,
         index: &relationship_index::Index<'_>,
         address_format: AddressFormat,
         available_width: usize,
@@ -107,11 +110,15 @@ impl Sections {
             legend,
             annotations,
             check_height: if graph.checks.is_empty() { 0 } else { 24 },
+            architecture_top_padding: architecture_top_padding(graph, layout, index),
         }
     }
 
     fn height(&self) -> usize {
-        self.check_height + self.legend.height + self.annotations.height
+        self.check_height
+            + self.legend.height
+            + self.annotations.height
+            + self.architecture_top_padding
     }
 
     fn dimensions(&self, layout: &Layout<'_>) -> (usize, usize) {
@@ -120,6 +127,39 @@ impl Sections {
             layout.height + self.height(),
         )
     }
+}
+
+fn architecture_top_padding(
+    graph: &Graph,
+    layout: &Layout<'_>,
+    index: &relationship_index::Index<'_>,
+) -> usize {
+    const TOP: usize = 160;
+    layout
+        .bounds
+        .iter()
+        .zip(&graph.nodes)
+        .filter(|(bounds, node)| {
+            bounds.width > 0
+                && bounds.height > 0
+                && node.placement != crate::model::Placement::Logical
+        })
+        .map(|(bounds, _)| bounds.origin.y)
+        .chain(layout.bands.iter().map(|band| band.top))
+        .chain(layout.scopes.iter().map(|scope| scope.bounds.origin.y))
+        .chain(
+            layout
+                .paths
+                .iter()
+                .filter(|path| path.len() >= 2)
+                .flatten()
+                .map(|point| point.y),
+        )
+        .chain(layout.junctions.iter().map(|point| point.y))
+        .chain(index.marker_bounds().map(|bounds| bounds.origin.y))
+        .map(|y| TOP.saturating_sub(y))
+        .max()
+        .unwrap_or(0)
 }
 
 fn annotation_area(
@@ -165,7 +205,7 @@ pub(crate) fn render_content(
     content: Content,
 ) -> String {
     let relationship_index = relationship_index::Index::new(graph, layout);
-    let sections = Sections::new(graph, &relationship_index, address_format);
+    let sections = Sections::new(graph, layout, &relationship_index, address_format);
     render_with_index(
         graph,
         layout,
@@ -271,7 +311,7 @@ fn render_with_index(
     writeln!(
         svg,
         "<g data-architecture=\"true\" transform=\"translate(0 {})\">",
-        annotations.height
+        annotations.height + sections.architecture_top_padding
     )
     .unwrap();
     for band in &layout.bands {
@@ -450,6 +490,7 @@ fn render_with_index(
         ));
         svg.push_str(&routes::render(
             graph,
+            layout,
             i,
             x + 12,
             y + metrics.routes_y,

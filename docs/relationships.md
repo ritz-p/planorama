@@ -3,8 +3,9 @@
 ## Legend and meaning
 
 The neutral **Relationship lines** card explains relationship colors, line
-patterns and directions separately from the resource action legend and the
-numbered **Relationship Resources** index. Action samples and explanatory text
+patterns, attachment circles, directions and numbered markers separately from the
+resource action legend and the numbered **Relationship Resources** index.
+Action samples and explanatory text
 wrap within the available diagram width. The measured card height reserves space
 before checks, annotation sections and the architecture in both single-plan and
 named-state output; cross-state endpoints include the same vertical offset.
@@ -21,10 +22,18 @@ Line patterns and arrowheads describe relationship kind and direction:
 
 | Kind | Sample | Meaning |
 | --- | --- | --- |
-| Dependency | Thin solid line with an arrow | Referenced resource → dependent resource; a resolved reference, not Terraform's exact execution order. |
-| Association | Dashed line, ordinarily without arrowheads | An explicit association between resources. Route next hops are directed Associations from the Route child to its next hop. |
-| Connection | Thicker circular dots, without arrowheads | An inferred architectural connection; it does not guarantee network reachability. |
+| Dependency | Thin solid line, hollow source circle and target arrow | Referenced resource → dependent resource; a resolved reference, not Terraform's exact execution order. |
+| Association | Dashed line, hollow circles and matching `[N]` badges at both ends, without arrowheads | An explicit association between resources; the sample's number identifies its Terraform resource provenance. |
+| Directed Association | Dashed line, hollow circles and matching `[N]` badges at both ends, with a target arrow | A directed association, including a Route child → next hop; the arrow gives direction and the two badges identify one relationship. |
+| Connection | Thicker circular dots and hollow endpoint circles, without arrowheads | An inferred architectural connection; it does not guarantee network reachability. |
 | Containment | Nested boxes | Parent/child membership. An edge represented by nesting receives no redundant line. |
+
+Hollow circles identify card attachment points; filled dots within a path identify
+bundle junctions. Arrowheads identify direction. A `[N]` marker points to one
+Relationship Resources entry and its Terraform provenance; it is not a direction,
+resource count or separate relationship at each end. Reference-only relationships
+remain unnumbered, so the numbered Association samples do not imply every path
+receives a number.
 
 Dependency paths use `stroke-width="1.5"`; Association paths use
 `stroke-width="2"` and `stroke-dasharray="7 4"`.
@@ -97,8 +106,12 @@ Graph filtering can renumber the visible subset; named states have separate inde
 Routing and rendering share these entries. An absent path in an existing layout
 does not renumber the remaining entries or change their marker dimensions.
 
-Undirected relationships display the same number near both endpoints, with one
-relationship-index entry. Directed relationships display it before the destination.
+Numbered Associations display the same standalone number near both endpoints,
+including directed Associations from embedded Route cards, with one
+relationship-index entry. Other undirected numbered relationships use the same
+two-end rule. Directed Dependencies display their number before the destination
+only. A Route child's inline `Next hop [N]` text supplements its standalone source
+badge; both badges and the child text refer to the same index entry.
 Markers align with the terminal segment, 10 pixels from the endpoint to leave
 room for directed arrowheads. Endpoints with
 numbered relationships reserve extra space only around their numbered ports.
