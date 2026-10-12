@@ -36,9 +36,8 @@ fn cross_state_paths_avoid_intervening_cards_and_describe_dependencies() {
     let (_, height) = super::super::dimensions(&graph, &local);
     let index = super::super::relationship_index::Index::new(&graph, &local);
     let offset = 100
-        + super::super::legend::height(&graph)
-        + super::super::annotation_area(&graph, &index, super::super::AddressFormat::Qualified)
-            .height;
+        + super::super::Sections::new(&graph, &index, super::super::AddressFormat::Qualified)
+            .height();
     let obstacles: Vec<_> = [offset, offset + height + 60]
         .into_iter()
         .flat_map(|offset| {

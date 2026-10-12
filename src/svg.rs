@@ -67,23 +67,40 @@ pub(crate) fn render(graph: &Graph, layout: &Layout<'_>) -> String {
 #[cfg(test)]
 fn dimensions(graph: &Graph, layout: &Layout<'_>) -> (usize, usize) {
     let index = relationship_index::Index::new(graph, layout);
-    dimensions_with_index(graph, layout, &index, AddressFormat::Qualified)
+    Sections::new(graph, &index, AddressFormat::Qualified).dimensions(layout)
 }
 
-fn dimensions_with_index(
-    graph: &Graph,
-    layout: &Layout<'_>,
-    index: &relationship_index::Index<'_>,
-    address_format: AddressFormat,
-) -> (usize, usize) {
-    let annotations = annotation_area(graph, index, address_format);
-    (
-        annotations.width,
-        layout.height
-            + if graph.checks.is_empty() { 0 } else { 24 }
-            + legend::height(graph)
-            + annotations.height,
-    )
+struct Sections {
+    legend: legend::Legend,
+    annotations: annotations::Area,
+    check_height: usize,
+}
+
+impl Sections {
+    fn new(
+        graph: &Graph,
+        index: &relationship_index::Index<'_>,
+        address_format: AddressFormat,
+    ) -> Self {
+        let annotations = annotation_area(graph, index, address_format);
+        let legend = legend::Legend::new(graph, annotations.width);
+        Self {
+            legend,
+            annotations,
+            check_height: if graph.checks.is_empty() { 0 } else { 24 },
+        }
+    }
+
+    fn height(&self) -> usize {
+        self.check_height + self.legend.height + self.annotations.height
+    }
+
+    fn dimensions(&self, layout: &Layout<'_>) -> (usize, usize) {
+        (
+            self.annotations.width.max(self.legend.width),
+            layout.height + self.height(),
+        )
+    }
 }
 
 fn annotation_area(
@@ -128,7 +145,15 @@ pub(crate) fn render_content(
     content: Content,
 ) -> String {
     let relationship_index = relationship_index::Index::new(graph, layout);
-    render_with_index(graph, layout, address_format, &relationship_index, content)
+    let sections = Sections::new(graph, &relationship_index, address_format);
+    render_with_index(
+        graph,
+        layout,
+        address_format,
+        &relationship_index,
+        &sections,
+        content,
+    )
 }
 
 fn render_with_index(
@@ -136,10 +161,11 @@ fn render_with_index(
     layout: &Layout<'_>,
     address_format: AddressFormat,
     relationship_index: &relationship_index::Index<'_>,
+    sections: &Sections,
     content: Content,
 ) -> String {
-    let check_offset = if graph.checks.is_empty() { 0 } else { 24 };
-    let (width, height) = dimensions_with_index(graph, layout, relationship_index, address_format);
+    let check_offset = sections.check_height;
+    let (width, height) = sections.dimensions(layout);
     let membership = components::membership(graph);
     let (description, summary) = relationships::captions(graph);
     let markers = relationships::markers(graph);
@@ -154,7 +180,7 @@ fn render_with_index(
         r##"<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}" role="img" aria-labelledby="title description">
 <title id="title">Terraform plan</title>
 <desc id="description">{description} Thin solid: dependency. Dashed: association. Thick dotted: connection. Nested boxes: containment. Edge color preserves the Terraform action when available.</desc>
-<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/></marker>{markers}{icon_definitions}{occlusion_definitions}</defs>
+<defs>{markers}{icon_definitions}{occlusion_definitions}</defs>
 <rect width="100%" height="100%" fill="#ffffff"/>
 <g font-family="ui-monospace, SFMono-Regular, Consolas, monospace">
 <text x="40" y="45" font-size="25" font-weight="700" fill="#0f172a">Terraform plan</text>
@@ -211,16 +237,16 @@ fn render_with_index(
         }
         svg.push_str("</text>\n</g>\n");
     }
-    let legend_height = legend::height(graph);
+    let legend_height = sections.legend.height;
     if legend_height != 0 {
-        svg.push_str(&legend::render(graph));
+        svg.push_str(sections.legend.render());
         writeln!(svg, "<g transform=\"translate(0 {legend_height})\">").unwrap();
     }
     if check_offset != 0 {
         svg.push_str(&checks::render(&graph.checks));
         svg.push_str("<g transform=\"translate(0 24)\">\n");
     }
-    let annotations = annotation_area(graph, relationship_index, address_format);
+    let annotations = &sections.annotations;
     svg.push_str(&annotations.render());
     writeln!(
         svg,
@@ -260,18 +286,13 @@ fn render_with_index(
             continue;
         }
         let stroke = relationships::stroke(edge);
-        let marker = match &edge.change {
-            Some(change) => format!("arrow-{}", label(change.action)),
-            None => "arrow".into(),
-        };
         let path = paths::rounded(points);
         let style = relationships::style(edge.kind);
         let direction = edge.directionality().as_str();
-        let arrow = if edge.directionality() == crate::model::Directionality::Directed {
-            format!(r#" marker-end="url(#{marker})""#)
-        } else {
-            String::new()
-        };
+        let arrow = relationships::arrow(
+            edge.directionality(),
+            edge.change.as_ref().map(|change| change.action),
+        );
         let mask = occlusion.attribute(index);
         writeln!(svg, r##"<path d="{path}"{relation}{previous}{operation} data-directionality="{direction}" data-source="{source}" data-target="{target}" fill="none" stroke="{stroke}" {style} stroke-linejoin="round"{arrow}{mask}><title>{title}</title></path>"##).unwrap();
     }

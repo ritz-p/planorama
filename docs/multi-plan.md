@@ -6,7 +6,8 @@ can connect resources across states using `TerraformRemoteState` provenance.
 Cross-state relationships also remain in `cross-state-relationships` metadata.
 Edges incident on top logical-resource rows are excluded from spatial routing;
 their state-qualified provenance remains available.
-Their consumer cards show links to the actual state-qualified source rows.
+Consumer cards and logical-resource rows link to the actual state-qualified
+source cards or rows.
 Remote-output evidence remains distinct from a directly configured attribute;
 equal addresses in separate states never share a DOM target.
 Logical-resource grouping is local to each state. Equal provider/type/mode keys
@@ -21,7 +22,7 @@ Cross-state paths involving them attach to their owning Route Table border;
 
 Root `output_changes` actions are matched to configured outputs by name within each state and retained separately from provenance. Resolved cross-state paths expose the producer output action through `data-output-action` (including create, update and delete), without changing resource colors or provenance resolution. Missing changes omit the attribute; unrecognized actions use `other`, and unmatched entries create no output or relationship. Output values, including `before`, `after` and sensitive values, are never retained or rendered.
 
-Resolved mappings between spatial cards appear as dashed cross-state dependency lines. These paths expose `data-source-state`, `data-target-state`, `data-remote-state` and `data-output`; source/target DOM references point into their own state sections. Mappings with a logical endpoint retain the chain in `cross-state-relationships` metadata without a path or path DOM-reference attributes. These relationships live separately from state-local graphs and never introduce containment. Source nodes removed by semantic lowering are not replaced with a guessed endpoint. Unmapped inputs retain independent-state output.
+Resolved mappings between spatial cards appear as blue dashed cross-state dependency lines with their own legend, separate from the state-local Relationship lines cards. Their blue color identifies cross-state provenance and does not follow endpoint or producer output actions. These paths expose `data-source-state`, `data-target-state`, `data-remote-state` and `data-output`; source/target DOM references point into their own state sections. Mappings with a logical endpoint retain the chain in `cross-state-relationships` metadata without a path or path DOM-reference attributes. These relationships live separately from state-local graphs and never introduce containment. Source nodes removed by semantic lowering are not replaced with a guessed endpoint. Unmapped inputs retain independent-state output.
 
 Use `--remote-state CONSUMER:DATA_ADDRESS=PRODUCER` to explicitly connect an exact `data.terraform_remote_state.NAME.outputs.OUTPUT` traversal to a loaded producer state. Repeat mappings as needed; conflicting producers remain ambiguous and emit no relationship. Root output provenance must be complete and nonempty. `--diagnostics` reports successful chains and unmapped, missing or incomplete sources without backend configuration or output values. The resolver handles direct exact traversals, including statically identified module instances; it does not guess backend identity or resolve dynamic output selections.
 
