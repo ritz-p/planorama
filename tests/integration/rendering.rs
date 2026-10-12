@@ -612,7 +612,16 @@ fn moved_metadata_survives_cards_and_lowered_relationships_and_is_escaped() {
                     .unwrap()
                     .contains(previous)
             );
-            let rect = card.children().find(|n| n.has_tag_name("rect")).unwrap();
+            let rect = card
+                .children()
+                .find(|n| n.has_tag_name("rect"))
+                .or_else(|| {
+                    document
+                        .descendants()
+                        .find(|n| n.attribute("data-container") == card.attribute("id"))
+                        .and_then(|container| container.children().find(|n| n.has_tag_name("rect")))
+                })
+                .unwrap();
             let bottom = rect.attribute("y").unwrap().parse::<usize>().unwrap()
                 + rect.attribute("height").unwrap().parse::<usize>().unwrap();
             assert!(
