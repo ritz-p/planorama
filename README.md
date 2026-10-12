@@ -96,7 +96,7 @@ Tests・Clippy は `Swatinem/rust-cache` で Cargo registry/git と `target` 内
 docker compose exec -T dev sh scripts/update-examples.sh
 ```
 
-PowerShell では `./scripts/update-examples.ps1` が開発コンテナの起動と同じ更新処理を行います。`examples` 配下の全 SVG を、コミット済み JSON と現在のレンダラーから再生成します。公式アイコン原本は変更しません。
+PowerShell では `./scripts/update-examples.ps1` が開発コンテナの起動と同じ更新処理を行います。コミット済み JSON を使うサンプル SVG を、現在のレンダラーから再生成します。単体テストで構築する `hierarchy-routing.svg` と `port-collisions.svg` の更新方法は [経路計算のドキュメント](docs/routing.md) を参照してください。公式アイコン原本は変更しません。
 
 ### Terraform fixture
 
