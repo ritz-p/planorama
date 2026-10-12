@@ -22,6 +22,9 @@ new architecture graph without changing parsed plans or the original graph.
 Logical Terraform resources participate in the same selection and neighbor rules.
 Their references retain stable source identities even if a target is filtered out;
 rendering must check target availability before emitting a fragment link.
+Logical-resource grouping runs after selection and does not expand it: only
+selected rows appear, and groups with no remaining resources are omitted. Links
+still identify an individual resource within its group.
 
 These filters also apply to `--format html`. Viewer search operates within the
 generated view; it cannot restore resources excluded by CLI selection. See
