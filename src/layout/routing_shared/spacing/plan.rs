@@ -77,7 +77,6 @@ pub(super) fn corridors(graph: &Graph, layout: &Layout<'_>) -> Vec<Corridor> {
             &graph.edges[edge],
         ));
         let metrics = scorer.border_metrics(path);
-        let urgent = metrics.minimum_deficit > 0;
         border_cost[edge] = metrics.cost();
         for contact in scorer.border_contacts(path) {
             if let Some(node) = contact.frame.node {
@@ -89,7 +88,7 @@ pub(super) fn corridors(graph: &Graph, layout: &Layout<'_>) -> Vec<Corridor> {
             let demand = border_demand.entry((edge, contact.segment)).or_default();
             demand.0 = demand.0.max(contact.minimum);
             demand.1 = demand.1.max(contact.preferred);
-            demand.2 |= urgent;
+            demand.2 |= contact.urgent;
             join(
                 &mut groups,
                 vec![Segment {
@@ -217,9 +216,11 @@ pub(super) fn reserve_urgent(corridors: &mut Vec<Corridor>, remaining: usize) {
 }
 
 impl Corridor {
-    pub fn key(&self) -> (bool, Vec<(usize, usize)>) {
+    pub fn key(&self) -> (bool, usize, usize, Vec<(usize, usize)>) {
         (
             self.horizontal,
+            self.low,
+            self.high,
             self.lanes.iter().map(|l| (l.edge, l.original)).collect(),
         )
     }

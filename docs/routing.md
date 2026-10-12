@@ -249,7 +249,9 @@ Visible frame proximity uses a 4px minimum empty gap and an 8px preferred gap,
 separate from line-to-line spacing. Empty gap subtracts half of both stroke widths
 from the centerline distance. Dependency/Containment, Association and Connection
 strokes are 1.5px, 2px and 2.5px; ordinary cards, containers and embedded Route
-cards use 1.5px, 2px and 1px borders. Routing and SVG rendering share these widths
+cards use 1.5px, 2px and 1px borders. Inline Route entries inside table containers
+are indexed at their rendered bounds even without separate graph nodes.
+Routing and SVG rendering share these widths
 and their corner radii. Distance is measured in quarter pixels, including rounded
 frame ends and a conservative bounded evaluation of final quadratic path corners.
 Short parallel contacts count without a 64px cutoff. Legitimate perpendicular
@@ -300,7 +302,10 @@ Perpendicular crossings and disjoint projections do not contribute. Coincident
 prefixes/suffixes connected to a common same-role terminal are shared trunks,
 but branches beyond their divergence are measured independently.
 The same pass also creates corridors from a single path's visible frame contacts,
-including contacts shorter than 64px. Fully masked frame constraints do not
+including contacts shorter than 64px and quadratic corners with only a preferred-gap
+deficit. Urgency comes from each contact's measured minimum gap, not the whole path.
+Attempt identities include projection ranges so disjoint runs on the same track
+remain separate. Fully masked frame constraints do not
 reserve extra capacity; visible exterior contacts still do.
 
 Corridors rank by their estimated finite deficit cost: the group's pairwise

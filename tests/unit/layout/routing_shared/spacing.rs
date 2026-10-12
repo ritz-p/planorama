@@ -916,3 +916,42 @@ fn minimum_border_deficit_gets_one_attempt_without_reordering_the_cost_prefix() 
     plan::reserve_urgent(&mut corridors, ATTEMPTS);
     assert_eq!(order(&corridors), order(&original));
 }
+
+#[test]
+fn separate_runs_on_one_track_keep_their_urgency_and_attempt_identity() {
+    let graph = corridor_graph(1);
+    let mut layout = narrow(&graph, false);
+    layout.bounds[2] = Bounds {
+        origin: Point { x: 200, y: 207 },
+        width: 100,
+        height: 80,
+    };
+    layout.bounds[3] = Bounds {
+        origin: Point { x: 500, y: 202 },
+        width: 100,
+        height: 80,
+    };
+    layout.paths[0] = vec![
+        Point { x: 150, y: 200 },
+        Point { x: 350, y: 200 },
+        Point { x: 350, y: 150 },
+        Point { x: 450, y: 150 },
+        Point { x: 450, y: 200 },
+        Point { x: 650, y: 200 },
+    ];
+    let corridors = plan::corridors(&graph, &layout);
+    let first = corridors
+        .iter()
+        .find(|c| c.horizontal && c.low < 300 && c.high > 200)
+        .unwrap();
+    let second = corridors
+        .iter()
+        .find(|c| c.horizontal && c.low < 600 && c.high > 500)
+        .unwrap();
+    assert!(!first.urgent);
+    assert!(second.urgent);
+    assert_ne!(first.key(), second.key());
+    let mut reserved = vec![first.clone(), second.clone()];
+    plan::reserve_urgent(&mut reserved, 1);
+    assert_eq!(reserved[0].key(), second.key());
+}

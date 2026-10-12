@@ -31,7 +31,7 @@ impl Frame {
 }
 
 pub(in crate::layout) fn frames(graph: &Graph, layout: &Layout<'_>) -> Vec<Frame> {
-    graph
+    let mut result: Vec<_> = graph
         .nodes
         .iter()
         .zip(&layout.bounds)
@@ -56,7 +56,32 @@ pub(in crate::layout) fn frames(graph: &Graph, layout: &Layout<'_>) -> Vec<Frame
                 node: Some(node),
             }
         })
-        .collect()
+        .collect();
+    for &parent in &layout.containers {
+        let bounds = layout.bounds[parent];
+        let mut y =
+            bounds.origin.y + crate::view::card::measure(&graph.nodes[parent]).routes_y + 12;
+        for card in crate::view::routes::cards(graph, parent) {
+            let height = card.height();
+            if card.node.is_none() {
+                result.push(Frame {
+                    bounds: Bounds {
+                        origin: Point {
+                            x: bounds.origin.x + 12,
+                            y,
+                        },
+                        width: crate::view::routes::WIDTH,
+                        height,
+                    },
+                    radius: geometry::ROUTE_RADIUS,
+                    stroke: geometry::ROUTE_STROKE,
+                    node: None,
+                });
+            }
+            y += height + 12;
+        }
+    }
+    result
 }
 
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
@@ -108,6 +133,7 @@ pub(in crate::layout) struct Contact {
     pub side: Side,
     pub minimum: usize,
     pub preferred: usize,
+    pub urgent: bool,
 }
 
 #[derive(Default)]
@@ -425,6 +451,7 @@ impl Index {
                             && previous.high == low
                         {
                             previous.high = high;
+                            previous.urgent |= gap < (MINIMUM * 4) as i64;
                             return;
                         }
                     }
@@ -438,6 +465,7 @@ impl Index {
                         side,
                         minimum: frame.clearance(stroke, MINIMUM),
                         preferred: frame.clearance(stroke, PREFERRED),
+                        urgent: gap < (MINIMUM * 4) as i64,
                     });
                 },
             );
@@ -460,7 +488,7 @@ impl Index {
                 stroke,
                 soft,
                 |frame, point, gap| {
-                    if gap >= (MINIMUM * 4) as i64 {
+                    if gap >= (PREFERRED * 4) as i64 {
                         return;
                     }
                     for (segment, other) in [(segment, p[0]), (segment + 1, p[2])] {
@@ -525,6 +553,7 @@ impl Index {
                             side,
                             minimum: frame.clearance(stroke, MINIMUM) + extra,
                             preferred: frame.clearance(stroke, PREFERRED) + extra,
+                            urgent: gap < (MINIMUM * 4) as i64,
                         });
                     }
                 },
@@ -551,6 +580,7 @@ impl Index {
                     previous.high = previous.high.max(contact.high);
                     previous.minimum = previous.minimum.max(contact.minimum);
                     previous.preferred = previous.preferred.max(contact.preferred);
+                    previous.urgent |= contact.urgent;
                     continue;
                 }
             }

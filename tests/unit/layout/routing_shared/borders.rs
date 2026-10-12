@@ -376,3 +376,84 @@ fn curve_only_deficits_request_room_for_the_adjoining_leg_and_corner() {
     let moved = [path[0], Point { x: 220, y: 119 }, Point { x: 250, y: 119 }];
     assert_eq!(index.path(&moved, stroke, &[]).minimum_deficit, 0);
 }
+
+#[test]
+fn preferred_only_curve_contacts_are_not_urgent() {
+    let index = Index::new(vec![frame(
+        geometry::CONTAINER_RADIUS,
+        geometry::CONTAINER_STROKE,
+    )]);
+    let path = [
+        Point { x: 220, y: 80 },
+        Point { x: 220, y: 116 },
+        Point { x: 250, y: 116 },
+    ];
+    let stroke = geometry::CONNECTION_STROKE;
+    assert!(
+        path.windows(2)
+            .all(|p| index.segment(p[0], p[1], stroke, &[]).preferred_deficit == 0)
+    );
+    let metrics = index.path(&path, stroke, &[]);
+    assert_eq!(metrics.minimum_deficit, 0);
+    assert!(metrics.preferred_deficit > 0);
+    let contacts = index.contacts(&path, stroke, &[]);
+    assert!(!contacts.is_empty());
+    assert!(contacts.iter().all(|c| !c.urgent));
+    assert!(
+        contacts
+            .iter()
+            .any(|c| c.segment == 1 && c.side == Side::Top)
+    );
+}
+
+#[test]
+fn inline_route_frames_match_rendered_cards_and_charge_nearby_paths() {
+    let mut value: serde_json::Value =
+        serde_json::from_str(include_str!("../../../fixtures/routes-plan.json")).unwrap();
+    value["configuration"]["root_module"]["resources"]
+        .as_array_mut()
+        .unwrap()
+        .push(serde_json::json!({
+            "address": "aws_route_table.public",
+            "expressions": {"route": {"constant_value": [{"cidr_block": "0.0.0.0/0"}]}}
+        }));
+    let graph = crate::semantic::transform(&crate::plan::parse(&value.to_string()).unwrap()).0;
+    let layout = Layout::new(&graph);
+    let frames = frames(&graph, &layout);
+    let svg = crate::svg::render(&graph, &layout);
+    let doc = roxmltree::Document::parse(&svg).unwrap();
+    let rect = doc
+        .descendants()
+        .find(|n| n.attribute("data-route-entry") == Some("inline"))
+        .unwrap()
+        .children()
+        .find(|n| n.has_tag_name("rect"))
+        .unwrap();
+    let number = |name| rect.attribute(name).unwrap().parse::<usize>().unwrap();
+    let bounds = Bounds {
+        origin: Point {
+            x: number("x"),
+            y: number("y"),
+        },
+        width: number("width"),
+        height: number("height"),
+    };
+    let frame = frames.iter().find(|f| f.bounds == bounds).unwrap();
+    assert_eq!(
+        (frame.radius, frame.stroke, frame.node),
+        (geometry::ROUTE_RADIUS, geometry::ROUTE_STROKE, None)
+    );
+    let index = Index::new(vec![*frame]);
+    let path = parallel(
+        true,
+        bounds.origin.y - 2,
+        bounds.origin.x + 20,
+        bounds.right() - 20,
+    );
+    assert!(
+        index
+            .path(&path, geometry::CONNECTION_STROKE, &[])
+            .minimum_deficit
+            > 0
+    );
+}

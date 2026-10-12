@@ -181,6 +181,10 @@ and the [#317 SVG at fc87e583](https://github.com/ritz-p/planorama/blob/fc87e583
 generated from [source 3f920401](https://github.com/ritz-p/planorama/commit/3f920401c5fd287b0aeabe39d5b22029853827b4)
 by [CI run 38225323594](https://github.com/ritz-p/planorama/actions/runs/38225323594).
 Both have 37 rendered paths, a 4196 × 2391 layout and a 4196 × 3481 SVG canvas.
+These are historical measurements before the review fixes. The regenerated SVG
+after those fixes is 4246 × 3481; the additional 50px width remains within the
+64px expansion budget. The existing large-fixture clearance, shape, canvas and
+reordered-edge regressions still apply.
 
 The read-only SVG audit recovers orthogonal corners from `M`/`L`/`Q` commands and
 applies the same new border metric to both revisions: actual stroke widths,
@@ -230,21 +234,18 @@ with no badge overlap or foreign-stroke intrusion found in the audit.
 
 The separate dense unit fixture also exposes a tradeoff. Its
 [#322 baseline](https://github.com/ritz-p/planorama/blob/e4d506821aaebd41abb42fa2380ef841733604d3/tests/unit/layout.rs)
-and final measurements are:
+and measurements after the review fixes are:
 
 | Dense-fixture metric | #322 baseline | #317 |
 | --- | ---: | ---: |
 | Overlap length, px | 168 | 1 |
-| Crossings | 373 | 392 |
+| Crossings | 373 | 394 |
 | Bends | 88 | 87 |
 | Total path length, px | 71553 | 71184 |
 
-Exact repeated-layout and reversed-edge path comparisons passed in the source
-[Tests run](https://github.com/ritz-p/planorama/actions/runs/38225323455) and
-[MSRV run](https://github.com/ritz-p/planorama/actions/runs/38225323640).
-Those runs stopped at the obsolete 364-crossing golden after measuring 392;
-the recalibrated expectation preserves the exact geometry assertions. The large
-per-edge quality regression passed in both runs. These results document clearance,
+The review fixes raise crossings from 392 to 394 while retaining overlap, bends
+and length. Docker tests preserve exact repeated-layout and reversed-edge geometry
+assertions alongside the updated metric expectation. These results document clearance,
 overlap and length gains alongside increased crossings and some more complex
 routes; the finite routing policy does not minimize every metric simultaneously.
 
