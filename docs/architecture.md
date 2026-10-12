@@ -60,9 +60,10 @@ UTF-8 character boundaries; every delimiter and space is preserved. Ordinary
 explanatory text keeps its separate wrapping behavior.
 Resource headings display the complete selected address. Shared measurements
 reserve enough height for both native and qualified headings, including icon
-space, before packing. Uses rows and embedded Route cards start below that
-reserved heading; rendering, child bounds and routing obstacles use the same
-offsets. Address formatting never changes resource identity, metadata or links.
+space, and for wrapped move annotations before packing. Uses rows and embedded
+Route cards start below that complete header; rendering, child bounds and routing
+obstacles use the same offsets. Address formatting never changes resource identity,
+metadata or links.
 
 Ingestion does not import provider rules, layout or SVG. Layout, view and SVG use
 the `model::architecture` facade, which excludes Terraform ingestion contracts.

@@ -6,6 +6,10 @@ pub(crate) fn wrap_address(text: &str, limit: usize) -> Vec<&str> {
     wrap_with_boundaries(text, limit, true)
 }
 
+pub(crate) fn moved_from(previous: &str) -> String {
+    format!("Moved from: {previous}")
+}
+
 pub(crate) fn width(text: &str) -> usize {
     text.chars().map(advance).sum()
 }
