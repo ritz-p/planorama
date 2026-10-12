@@ -39,6 +39,14 @@ pub fn render_states(
     architecture: &crate::view::ViewArchitecture,
     format: super::AddressFormat,
 ) -> String {
+    render_content(architecture, format, super::Content::Standard)
+}
+
+pub(crate) fn render_content(
+    architecture: &crate::view::ViewArchitecture,
+    format: super::AddressFormat,
+    content: super::Content,
+) -> String {
     let graphs = &architecture.states;
     let mut endpoints = BTreeMap::new();
     let mut obstacles = BTreeMap::new();
@@ -173,7 +181,7 @@ pub fn render_states(
             );
         }
         let document = namespace(
-            &super::render_with_index(graph, &layout, format, &index),
+            &super::render_with_index(graph, &layout, format, &index, content),
             &prefix,
         );
         writeln!(sections, r##"<g id="{prefix}state" data-state-id="{}"><text x="40" y="{}" font-family="ui-monospace, Consolas, monospace" font-size="20" font-weight="700" fill="#0f172a">State: {}</text>"##, super::escape(id.as_str()), top + 25, super::escape(id.as_str())).unwrap();
@@ -261,7 +269,7 @@ pub fn render_states(
     )
 }
 
-pub(super) fn prefix(id: &StateId) -> String {
+pub(crate) fn prefix(id: &StateId) -> String {
     let mut prefix = String::from("state-");
     for byte in id.as_str().bytes() {
         write!(prefix, "{byte:02x}").unwrap();

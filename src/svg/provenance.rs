@@ -9,7 +9,7 @@ fn reference_target(target: &crate::model::ReferenceTarget) -> serde_json::Value
     value
 }
 
-pub(super) fn metadata(graph: &Graph) -> String {
+pub(super) fn metadata(graph: &Graph, content: super::Content) -> String {
     let entities: Vec<_> = graph.entities().map(|entity| {
         let sources: Vec<_> = entity.provenance.iter().map(|source| serde_json::json!({"address":source.address,"deposed_key":source.deposed_key})).collect();
         serde_json::json!({"id":entity.id.as_str(), "kind":match entity.kind { ArchitectureEntityKind::Terraform => "terraform", ArchitectureEntityKind::Synthetic => "synthetic" }, "sources": sources})
@@ -34,7 +34,7 @@ pub(super) fn metadata(graph: &Graph) -> String {
     };
     let routes: Vec<_> = graph.nodes.iter().filter(|n| !n.routes.entries.is_empty() || n.routes.owner.is_some()).map(|node| {
         serde_json::json!({"source":node.entity.id.as_str(), "owner":node.routes.owner.as_ref().map(|id| &id.address), "inline":node.routes.inline,
-            "entries":node.routes.entries.iter().map(|entry| serde_json::json!({"destination":entry.destination,"target":entry.target.as_ref().map(|id| &id.address),"target_kind":entry.target_kind})).collect::<Vec<_>>()})
+            "entries":node.routes.entries.iter().map(|entry| serde_json::json!({"destination":match content { super::Content::Standard => entry.destination.as_deref(), super::Content::ValueFree => None },"target":entry.target.as_ref().map(|id| &id.address),"target_kind":entry.target_kind})).collect::<Vec<_>>()})
     }).collect();
     let route_metadata = if routes.is_empty() {
         String::new()
