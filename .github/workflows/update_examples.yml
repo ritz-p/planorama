@@ -41,6 +41,7 @@ jobs:
     permissions:
       contents: read
       pull-requests: read
+      actions: read
     outputs:
       active: ${{ steps.prepare.outputs.active }}
       head_sha: ${{ steps.prepare.outputs.head_sha }}
@@ -57,6 +58,8 @@ jobs:
           script: |
             const { TextDecoder } = require('node:util');
             const manifestPath = 'scripts/generated-svgs.txt';
+            const workflowPath = '.github/workflows/update_examples.yml';
+            const certificateStep = 'Confirm SVGs are current';
             const fixedInputs = new Set([
               'build.rs', 'Cargo.toml', 'Cargo.lock', 'rust-toolchain.toml',
               'tests/unit/layout.rs', 'tests/unit/layout/containers.rs',
@@ -78,16 +81,111 @@ jobs:
               }
               return new Set(paths);
             };
+            const manifests = new Map();
+            const maintainedPaths = async (pr, ref) => {
+              if (!manifests.has(ref)) {
+                const { data: manifest } = await github.rest.repos.getContent({
+                  owner: pr.head.repo.owner.login, repo: pr.head.repo.name,
+                  path: manifestPath, ref,
+                });
+                if (Array.isArray(manifest) || manifest.encoding !== 'base64'
+                    || typeof manifest.content !== 'string') {
+                  throw new Error('Cannot read the generated SVG manifest at the source SHA');
+                }
+                const text = new TextDecoder('utf-8', { fatal: true, ignoreBOM: true })
+                  .decode(Buffer.from(manifest.content, 'base64'));
+                manifests.set(ref, manifestPaths(text));
+              }
+              return manifests.get(ref);
+            };
             const fullPullFiles = async number => {
               const files = [];
-              for (let page = 1; page <= 30; page++) {
-                const response = await github.rest.pulls.listFiles({
-                  ...context.repo, pull_number: number, per_page: 100, page,
-                });
-                files.push(...response.data);
-                if (response.data.length < 100) return { files, complete: true };
+              try {
+                for (let page = 1; page <= 30; page++) {
+                  const response = await github.rest.pulls.listFiles({
+                    ...context.repo, pull_number: number, per_page: 100, page,
+                  });
+                  files.push(...response.data);
+                  if (response.data.length < 100) return { files, complete: true };
+                }
+              } catch (error) {
+                core.info(`PR file list unavailable (${error.status || 'request error'}); generating conservatively.`);
               }
               return { files, complete: false };
+            };
+            const relevantFiles = async (change, pr, sha) => {
+              if (!change.complete) return true;
+              const names = change.files.flatMap(file => [file.filename, file.previous_filename])
+                .filter(name => typeof name === 'string');
+              if (names.some(sourceInput)) return true;
+              if (!names.some(svgInput)) return false;
+              try {
+                const maintained = await maintainedPaths(pr, sha);
+                return names.some(name => maintained.has(name));
+              } catch (error) {
+                core.info(`SVG allowlist unavailable (${error.status || 'invalid manifest'}); generating conservatively.`);
+                return true;
+              }
+            };
+            const generatedCommit = async (pr, before) => {
+              try {
+                const repository = { owner: pr.head.repo.owner.login, repo: pr.head.repo.name };
+                const { data: commit } = await github.rest.repos.getCommit({
+                  ...repository, ref: before, per_page: 1, page: 1,
+                });
+                if (commit.sha !== before || commit.parents.length !== 1
+                    || commit.author?.login !== 'github-actions[bot]'
+                    || commit.committer?.login !== 'github-actions[bot]') return false;
+                const source = commit.parents[0].sha;
+                if (!/^[0-9a-f]{40}$/.test(source)) return false;
+                const titles = ['chore: regenerate SVG examples [skip ci]', 'chore: regenerate SVG examples'];
+                if (!titles.some(title => commit.commit.message.trimEnd()
+                    === `${title}\n\nPlanorama-SVG-Source: ${source}`)) return false;
+                const { data: comparison } = await github.rest.repos.compareCommitsWithBasehead({
+                  ...repository, basehead: `${source}...${before}`, per_page: 100, page: 1,
+                });
+                if (comparison.status !== 'ahead' || comparison.total_commits !== 1
+                    || comparison.merge_base_commit?.sha !== source
+                    || !Array.isArray(comparison.files) || !comparison.files.length
+                    || comparison.files.length >= 300) return false;
+                const maintained = await maintainedPaths(pr, before);
+                return comparison.files.length <= maintained.size && comparison.files.every(file =>
+                  maintained.has(file.filename) && ['added', 'modified'].includes(file.status)
+                  && !file.previous_filename);
+              } catch (error) {
+                core.info(`Generated-commit proof unavailable (${error.status || 'invalid proof'}).`);
+                return false;
+              }
+            };
+            const successfulCertificate = async (pr, before) => {
+              try {
+                for (let page = 1; page <= 3; page++) {
+                  const { data } = await github.rest.actions.listWorkflowRunsForRepo({
+                    ...context.repo, head_sha: before, status: 'completed', event: 'pull_request',
+                    per_page: 100, page,
+                  });
+                  for (const run of data.workflow_runs) {
+                    if (run.head_sha !== before || run.head_branch !== pr.head.ref
+                        || run.head_repository?.full_name !== pr.head.repo.full_name
+                        || run.event !== 'pull_request' || run.conclusion !== 'success'
+                        || run.path?.split('@', 1)[0] !== workflowPath) continue;
+                    for (let jobsPage = 1; jobsPage <= 3; jobsPage++) {
+                      const { data: result } = await github.rest.actions.listJobsForWorkflowRun({
+                        ...context.repo, run_id: run.id, filter: 'latest', per_page: 100, page: jobsPage,
+                      });
+                      if (result.jobs.some(job => job.name === 'Generate SVG examples'
+                          && job.status === 'completed' && job.conclusion === 'success'
+                          && job.steps?.some(step => step.name === certificateStep
+                            && step.status === 'completed' && step.conclusion === 'success'))) return true;
+                      if (result.jobs.length < 100) break;
+                    }
+                  }
+                  if (data.workflow_runs.length < 100) break;
+                }
+              } catch (error) {
+                core.info(`SVG-current certificate unavailable (${error.status || 'request error'}).`);
+              }
+              return false;
             };
             const changedFiles = async (number, sha) => {
               const before = context.payload.before;
@@ -97,11 +195,11 @@ jobs:
                     ...context.repo, basehead: `${before}...${sha}`, per_page: 100, page: 1,
                   });
                   if (data.status === 'identical' && before === sha) {
-                    return { files: [], complete: true };
+                    return { files: [], complete: true, before };
                   }
                   if (data.status === 'ahead' && data.merge_base_commit?.sha === before
                       && Array.isArray(data.files) && data.files.length < 300) {
-                    return { files: data.files, complete: true };
+                    return { files: data.files, complete: true, before };
                   }
                   core.info('Push comparison is non-linear or incomplete; inspecting the complete PR diff.');
                 } catch (error) {
@@ -111,6 +209,7 @@ jobs:
               return fullPullFiles(number);
             };
             core.setOutput('active', false);
+            core.setOutput('current', false);
             const rawNumber = context.eventName === 'pull_request'
               ? context.payload.number : process.env.SVG_PULL_REQUEST;
             if (!/^[1-9][0-9]*$/.test(String(rawNumber))) throw new Error('Invalid pull request number');
@@ -126,29 +225,23 @@ jobs:
             const sha = pr.head.sha;
             if (!/^[0-9a-f]{40}$/.test(sha)) throw new Error('Expected a complete source commit SHA');
             if (context.eventName === 'pull_request') {
-              const { files, complete } = await changedFiles(number, sha);
-              const names = files.flatMap(file => [file.filename, file.previous_filename])
-                .filter(name => typeof name === 'string');
-              let relevant = !complete || names.some(sourceInput);
-              if (!relevant && names.some(svgInput)) {
-                const { data: manifest } = await github.rest.repos.getContent({
-                  owner: pr.head.repo.owner.login, repo: pr.head.repo.name,
-                  path: manifestPath, ref: sha,
-                });
-                if (Array.isArray(manifest) || manifest.encoding !== 'base64'
-                    || typeof manifest.content !== 'string') {
-                  throw new Error('Cannot read the generated SVG manifest at the captured source SHA');
+              let change = await changedFiles(number, sha);
+              let relevant = await relevantFiles(change, pr, sha);
+              if (!relevant && change.before) {
+                if (await generatedCommit(pr, change.before) || await successfulCertificate(pr, change.before)) {
+                  core.setOutput('current', true);
+                  await core.summary.addRaw(`SVGs were confirmed current at \`${change.before}\`; this push changes no generation inputs or maintained SVGs. Build and generation skipped.`).write();
+                  return;
                 }
-                const text = new TextDecoder('utf-8', { fatal: true, ignoreBOM: true })
-                  .decode(Buffer.from(manifest.content, 'base64'));
-                const maintained = manifestPaths(text);
-                relevant = names.some(name => maintained.has(name));
+                core.info('The previous head has no SVG-current proof; inspecting the complete PR diff.');
+                change = await fullPullFiles(number);
+                relevant = await relevantFiles(change, pr, sha);
               }
               if (!relevant) {
-                await core.summary.addRaw(`No generation inputs or maintained SVGs changed for PR #${number}; build and generation skipped.`).write();
+                await core.summary.addRaw(`No generation inputs or maintained SVGs changed in the complete PR #${number} diff; build and generation skipped.`).write();
                 return;
               }
-              if (!complete) core.info('The PR file list reached the API limit; generating conservatively.');
+              if (!change.complete) core.info('The PR file list is incomplete; generating conservatively.');
             }
             const sameRepository = pr.head.repo.full_name === `${context.repo.owner}/${context.repo.repo}`;
             for (const [key, value] of Object.entries({
@@ -184,6 +277,7 @@ jobs:
         run: sh scripts/update-examples.sh
       - name: Package complete output and patch
         if: steps.prepare.outputs.active == 'true'
+        id: package
         uses: actions/github-script@v9.0.0
         env:
           SVG_SOURCE_SHA: ${{ steps.prepare.outputs.head_sha }}
@@ -284,6 +378,7 @@ jobs:
             }
             await core.summary.addRaw(`Generated ${paths.length} SVGs; ${files.length} changed.\n\n`)
               .addRaw(files.map(entry => `- \`${entry.path}\``).join('\n')).write();
+            core.setOutput('changed', files.length);
       - name: Upload generated SVGs
         if: steps.prepare.outputs.active == 'true'
         id: artifact
@@ -293,6 +388,9 @@ jobs:
           path: svg-artifact
           if-no-files-found: error
           retention-days: 14
+      - name: Confirm SVGs are current
+        if: steps.prepare.outputs.current == 'true' || steps.package.outputs.changed == '0'
+        run: echo 'All maintained SVGs are current at this source revision.'
 
   writeback:
     name: Commit SVG updates and start validation
