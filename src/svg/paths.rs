@@ -6,8 +6,6 @@ use std::fmt::Write;
 #[path = "../../tests/unit/svg/paths.rs"]
 mod tests;
 
-const CORNER_RADIUS: f64 = 8.0;
-
 pub(super) fn rounded(points: &[Point]) -> String {
     let mut points = points.to_vec();
     points.dedup();
@@ -25,9 +23,7 @@ pub(super) fn rounded(points: &[Point]) -> String {
             true => {
                 let incoming = before.x.abs_diff(corner.x) + before.y.abs_diff(corner.y);
                 let outgoing = after.x.abs_diff(corner.x) + after.y.abs_diff(corner.y);
-                let radius = CORNER_RADIUS
-                    .min(incoming as f64 / 2.0)
-                    .min(outgoing as f64 / 2.0);
+                let radius = crate::view::geometry::relationship_radius(incoming, outgoing);
                 let (enter_x, enter_y) = toward(corner, before, radius);
                 let (exit_x, exit_y) = toward(corner, after, radius);
                 write!(

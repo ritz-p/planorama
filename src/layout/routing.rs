@@ -142,6 +142,7 @@ pub(super) fn route_selected(
         for &edge in &order {
             let link = &graph.edges[edge];
             let (a, b) = link.endpoints();
+            scorer.set_kind(link.kind);
             scorer.set_peers(containment.routing_peers(a, b, bounds));
             let start = bounds[a].port(Side::Right, source_ports[edge]).point;
             let end = bounds[b]
@@ -254,8 +255,9 @@ pub(super) fn route_selected(
                             .filter(|&edge| bundles.group(edge).is_none()),
                         |_| bounds.to_vec(),
                         |_| Vec::new(),
-                        |_| [16; 2],
-                        bounds,
+                        |_| [super::relationship_markers::Terminal::plain(16); 2],
+                        |edge| graph.edges[edge].kind,
+                        scorer,
                     );
                 }
                 return Routed {

@@ -113,7 +113,12 @@ fn packed_siblings_leave_room_for_both_numbered_terminals() {
                         start,
                         end,
                         &obstacles(&layout, edge),
-                        [relationship_markers::clearance(&graph); 2],
+                        relationship_markers::terminals(
+                            &graph,
+                            0,
+                            relationship_markers::numbers(&graph)[0],
+                            [a, b],
+                        ),
                     )
             }),
             "nested={nested}, bounds={from:?}, {to:?}, path={path:?}"
@@ -173,5 +178,122 @@ fn numbered_relationships_choose_facing_source_and_target_sides() {
             &barriers,
             terminals.clearances[0]
         ));
+    }
+}
+
+fn independent_associations(count: usize) -> Graph {
+    let mut changes = Vec::new();
+    let mut resources = Vec::new();
+    for i in 0..count {
+        let subnet = format!("aws_subnet.n{i:03}");
+        let table = format!("aws_route_table.n{i:03}");
+        let association = format!("aws_route_table_association.n{i:03}");
+        for (address, kind) in [
+            (&subnet, "aws_subnet"),
+            (&table, "aws_route_table"),
+            (&association, "aws_route_table_association"),
+        ] {
+            changes.push(serde_json::json!({"address": address, "type": kind, "change": {"actions": ["create"]}}));
+        }
+        resources.extend([
+            serde_json::json!({"address": subnet}),
+            serde_json::json!({"address": table}),
+            serde_json::json!({"address": association, "expressions": {
+                "subnet_id": {"references": [format!("{subnet}.id")]},
+                "route_table_id": {"references": [format!("{table}.id")]}
+            }}),
+        ]);
+    }
+    crate::semantic::transform(
+        &crate::plan::parse(
+            &serde_json::json!({
+                "format_version": "1.2", "resource_changes": changes,
+                "configuration": {"root_module": {"resources": resources}}
+            })
+            .to_string(),
+        )
+        .unwrap(),
+    )
+    .0
+}
+
+#[test]
+fn compact_single_digit_terminals_survive_selected_sides_and_final_passes() {
+    use crate::layout::Point;
+    use crate::layout::routing_shared::{refinement, spacing};
+    let mut graph = independent_associations(12);
+    let snapshot = |graph: &Graph, vertical: bool| {
+        let mut layout = Layout::new(graph);
+        let numbers = relationship_markers::numbers(graph);
+        assert!(numbers.iter().any(|n| n[1] == Some(12)));
+        for (index, edge) in graph.edges.iter().enumerate() {
+            let number = numbers[index][1].unwrap();
+            let from = Point {
+                x: 100 + if vertical { (number - 1) * 600 } else { 0 },
+                y: 100 + if vertical { 0 } else { (number - 1) * 400 },
+            };
+            let to = Point {
+                x: from.x + if vertical { 0 } else { 284 },
+                y: from.y + if vertical { 192 } else { 0 },
+            };
+            for (node, origin) in [(edge.from, from), (edge.to, to)] {
+                layout.bounds[node] = Bounds {
+                    origin,
+                    width: 200,
+                    height: 120,
+                };
+                layout.positions[node] = origin;
+                layout.header_heights[node] = 120;
+            }
+        }
+        layout.width = layout.bounds.iter().map(|b| b.right()).max().unwrap() + 160;
+        layout.height = layout
+            .bounds
+            .iter()
+            .map(|b| b.origin.y + b.height)
+            .max()
+            .unwrap()
+            + 160;
+        let routed = crate::layout::containers::routing::route_selected(
+            graph,
+            &layout,
+            &vec![[Side::Right; 2]; graph.edges.len()],
+        );
+        layout.paths = routed.paths;
+        layout.junctions = routed.junctions;
+        refinement::refine(graph, &mut layout);
+        spacing::refine(graph, &mut layout);
+        let index = numbers.iter().position(|n| n[1] == Some(1)).unwrap();
+        let path = &layout.paths[index];
+        let shape = spacing::Shape::measure(path);
+        assert_eq!(
+            (shape.length, shape.bends, shape.reversals),
+            (if vertical { 72 } else { 84 }, 0, 0),
+            "{path:?}"
+        );
+        let pair = [refinement::terminal(path, 0), refinement::terminal(path, 1)];
+        let clearances =
+            relationship_markers::terminals(graph, index, numbers[index], pair.map(|p| p.side));
+        assert!(ports::valid_with_clearances(
+            path,
+            pair[0],
+            pair[1],
+            &spacing::barriers(graph, &layout, index),
+            clearances
+        ));
+        let mut result = std::collections::BTreeMap::new();
+        for (index, edge) in graph.edges.iter().enumerate() {
+            result.insert(
+                edge.change.as_ref().unwrap().address.clone(),
+                layout.paths[index].clone(),
+            );
+        }
+        result
+    };
+    for vertical in [false, true] {
+        let original = snapshot(&graph, vertical);
+        graph.edges.reverse();
+        graph.relationships.reverse();
+        assert_eq!(original, snapshot(&graph, vertical));
     }
 }

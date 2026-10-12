@@ -9,6 +9,7 @@ use std::collections::BinaryHeap;
 #[cfg(test)]
 std::thread_local! {
     pub(in crate::layout) static GRID_SEARCH_COUNT: std::cell::Cell<usize> = const { std::cell::Cell::new(0) };
+    pub(in crate::layout) static GRID_POINT_COUNT: std::cell::Cell<usize> = const { std::cell::Cell::new(0) };
 }
 
 #[cfg(test)]
@@ -74,10 +75,16 @@ fn search_grid(
             xs.push(coordinate);
         }
     }
+    for (horizontal, coordinate) in scorer.into_iter().flat_map(|s| s.border_axes(start, end)) {
+        if horizontal {
+            ys.push(coordinate);
+        } else {
+            xs.push(coordinate);
+        }
+    }
     for bounds in obstacles
         .iter()
         .chain(scorer.into_iter().flat_map(|s| s.soft()).map(|o| &o.bounds))
-        .chain(scorer.into_iter().flat_map(|s| s.borders()))
     {
         if exact {
             xs.extend([bounds.origin.x, bounds.right()]);
@@ -102,6 +109,8 @@ fn search_grid(
     xs.dedup();
     ys.sort_unstable();
     ys.dedup();
+    #[cfg(test)]
+    GRID_POINT_COUNT.set(xs.len() * ys.len());
     let blocked = obstacles::Grid::new(&xs, &ys, obstacles);
     let mut costs = scorer.map(|s| costs::Grid::new(&xs, &ys, s));
     let index =
