@@ -14,6 +14,24 @@ Terms: https://aws.amazon.com/terms/
 These assets are used to illustrate AWS architecture. They are not licensed
 under Planorama&apos;s original glyph MIT notice or any repository code license.
 No AWS endorsement is implied. Consult the AWS terms for other uses.
+
+Terraform product logo from HashiCorp Flight Icons 5.3.0.
+Copyright (c) 2021 HashiCorp, Inc
+Source: https://github.com/hashicorp/design-system
+Revision: 97eefa54e00c4e2a3d63417589a8151c4bf17368
+Original SVG: https://raw.githubusercontent.com/hashicorp/design-system/97eefa54e00c4e2a3d63417589a8151c4bf17368/packages/flight-icons/svg/terraform-color-24.svg
+Upstream package license: Mozilla Public License 2.0 (MPL-2.0).
+The unchanged upstream license is included as LICENSE.txt.
+The package license does not grant trademark or product-logo rights.
+
+Terraform and the Terraform logo are trademarks of HashiCorp.
+Trademark policy: https://www.hashicorp.com/en/trademark-policy
+Brand guidelines: https://www.hashicorp.com/en/brand/hcp-product-logos
+Permission status: unconfirmed (reviewed 2026-10-12).
+Permission to bundle and redistribute this logo in Planorama binaries and
+generated SVGs has not been confirmed. This asset is a draft-review candidate,
+not cleared for a Planorama release. Consult the trademark policy separately;
+this notice does not grant permission. No HashiCorp endorsement is implied.
 </metadata><symbol id="state-636f6e73756d6572-planorama-icon-aws-ec2" viewBox="0 0 64 64"><g>
     <title>Icon-Architecture/48/Arch_Amazon-EC2_48</title>
     <g id="state-636f6e73756d6572-planorama-icon-aws-ec2-local-49636f6e2d4172636869746563747572652f34382f417263685f416d617a6f6e2d4543325f3438" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
@@ -22,7 +40,7 @@ No AWS endorsement is implied. Consult the AWS terms for other uses.
         </g>
         <path d="M22,41 L41,41 L41,23 L22,23 L22,41 Z M43,23 L46,23 L46,25 L43,25 L43,27 L46,27 L46,29 L43,29 L43,31 L46,31 L46,33 L43,33 L43,36 L46,36 L46,38 L43,38 L43,40 L46,40 L46,42 L42.863,42 C42.608,42.587 42.023,43 41.344,43 L41,43 L41,46 L39,46 L39,43 L37,43 L37,46 L35,46 L35,43 L33,43 L33,46 L31,46 L31,43 L29,43 L29,46 L27,46 L27,43 L24,43 L24,46 L22,46 L22,43 L21.656,43 C20.977,43 20.392,42.587 20.137,42 L18,42 L18,40 L20,40 L20,38 L18,38 L18,36 L20,36 L20,33 L18,33 L18,31 L20,31 L20,29 L18,29 L18,27 L20,27 L20,25 L18,25 L18,23 L20,23 L20,22.656 C20,21.743 20.743,21 21.656,21 L22,21 L22,18 L24,18 L24,21 L27,21 L27,18 L29,18 L29,21 L31,21 L31,18 L33,18 L33,21 L35,21 L35,18 L37,18 L37,21 L39,21 L39,18 L41,18 L41,21 L41.344,21 C42.257,21 43,21.743 43,22.656 L43,23 Z M32,52 L12,52 L12,32 L16,32 L16,30 L11.843,30 C10.826,30 10,30.827 10,31.843 L10,52.157 C10,53.173 10.826,54 11.843,54 L32.157,54 C33.174,54 34,53.173 34,52.157 L34,48 L32,48 L32,52 Z M54,11.843 L54,32.157 C54,33.173 53.174,34 52.157,34 L48,34 L48,32 L52,32 L52,12 L32,12 L32,16 L30,16 L30,11.843 C30,10.827 30.826,10 31.843,10 L52.157,10 C53.174,10 54,10.827 54,11.843 L54,11.843 Z" id="state-636f6e73756d6572-planorama-icon-aws-ec2-local-416d617a6f6e2d4543325f49636f6e5f34385f5371756964" fill="#FFFFFF"></path>
     </g>
-</g></symbol></defs>
+</g></symbol><symbol id="state-636f6e73756d6572-planorama-icon-terraform" viewBox="0 0 24 24"><g fill="none"><g fill="#7b42bc" fill-rule="evenodd" clip-rule="evenodd"><path d="m8.893 4.618 6.214 3.597v7.2l-6.214-3.6zM15.788 8.215v7.2l6.212-3.6V4.618zM2 .6v7.197l6.212 3.6V4.199zM8.893 19.8l6.212 3.6v-7.197l-6.212-3.6z"></path></g></g></symbol></defs>
 <rect width="100%" height="100%" fill="#ffffff"/>
 <g font-family="ui-monospace, SFMono-Regular, Consolas, monospace">
 <text x="40" y="45" font-size="25" font-weight="700" fill="#0f172a">Terraform plan</text>
@@ -63,8 +81,8 @@ No AWS endorsement is implied. Consult the AWS terms for other uses.
 <g id="state-636f6e73756d6572-resource-646174612e7465727261666f726d5f72656d6f74655f73746174652e6e6574776f726b-current" data-architecture-id="terraform:646174612e7465727261666f726d5f72656d6f74655f73746174652e6e6574776f726b-current" data-qualified-address="module.root.data.terraform_remote_state.network" data-terraform-address="data.terraform_remote_state.network"><title>module.root.data.terraform_remote_state.network — other</title>
 <rect x="60" y="208" width="320" height="96" rx="8" fill="#fefce8" stroke="#854d0e" stroke-width="1.5" data-mode="data" stroke-dasharray="6 4"/>
 <g data-external="true"><title>External resource: read by Terraform, not managed by this configuration</title><rect x="302" y="215" width="68" height="18" rx="4" fill="#e2e8f0"/><text x="308" y="228" font-size="10" fill="#334155">external</text></g><text x="72" y="228" font-size="11" fill="#854d0e">terraform_remote_… · other</text>
-<text x="72" y="253" font-size="13" fill="#0f172a" xml:space="preserve">module.root.data.</text>
-<text x="72" y="273" font-size="13" fill="#0f172a" xml:space="preserve">terraform_remote_state.network</text>
+<use href="#state-636f6e73756d6572-planorama-icon-terraform" x="72" y="236" width="24" height="24" aria-hidden="true"/><text x="104" y="253" font-size="13" fill="#0f172a" xml:space="preserve">module.root.data.</text>
+<text x="104" y="273" font-size="13" fill="#0f172a" xml:space="preserve">terraform_remote_state.network</text>
 </g>
 <g data-endpoints="true" data-source="state-636f6e73756d6572-resource-646174612e7465727261666f726d5f72656d6f74655f73746174652e6e6574776f726b-current" data-target="state-636f6e73756d6572-resource-6177735f696e7374616e63652e617070-current" aria-hidden="true">
 <circle data-endpoint="source" cx="380" cy="256" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
