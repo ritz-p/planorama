@@ -85,7 +85,7 @@ docker run --rm --mount type=bind,source=.,target=/workspace --env CARGO_TARGET_
 通常の CI は Ubuntu runner 上で `rust-toolchain.toml` の固定ツールチェーンを使い、Formatting・Tests・Clippy を直接実行します。開発イメージには SVG の描画確認用に `rsvg-convert` と DejaVu フォントも含みます。Tests はコンパイルと実行を別ステップで計測し、毎回 `cargo test --locked --all-targets --all-features` を実行します。
 
 Tests・Clippy は `Swatinem/rust-cache` で Cargo registry/git と `target` 内の依存クレートの成果物を保存します。workspace crate は毎回ビルドし、ソース変更後に更新できない同一キーのキャッシュへ成果物を保存しません。キーには runner 環境・ジョブ・Rust compiler・Cargo.toml/Cargo.lock・ツールチェーン・Cargo 設定・ビルド関連環境変数に加え、`build.rs` と `assets/**` のハッシュを含めます。`v1-rust-dependencies` prefix で旧 workspace 成果物を含むキャッシュと区別します。復元後の再ビルド判定は Cargo が行い、キャッシュの有無によらず全対象を検証します。Tests と Clippy はプロファイルと成果物が異なるためジョブ別のキャッシュを使います。
-両 workflow は関連入力が変わる `main` への push でも実行し、後続 PR が復元できる既定ブランチのキャッシュを作ります。
+両 workflow は関連入力が変わる PR の `main` へのマージ後にも実行し、後続 PR が復元できる既定ブランチのキャッシュを作ります。`pull_request_target` の `closed` イベントでマージ済みの場合だけ起動し、読み取り権限でイベント時点の `main` を検証します。SVG の自動コミットに付く `[skip ci]` が squash merge のメッセージに残っても、マージ後の検証を実行できます。`main` へ直接 push した場合は Actions から手動実行してください。
 
 テストプロファイルは `opt-level = 1` で経路計算を高速化し、debug assertion と overflow check を明示的に有効にしています。MSRV は Docker で Rust 1.85.0 の全テストを実行し、Cargo.toml/Cargo.lock・ツールチェーン・Docker 関連設定・MSRV workflow の変更で起動します。
 
@@ -93,7 +93,7 @@ Tests・Clippy は `Swatinem/rust-cache` で Cargo registry/git と `target` 内
 
 ### SVG の更新
 
-同一リポジトリ内の PR は、ソース変更を push すると CI がサンプル SVG を生成し、差分がある場合は同じ PR ブランチへ自動コミットします。更新後のコミットに Formatting・Clippy・Tests と必要な MSRV 検証を起動します。生成結果の確認、手動再実行、fork PR の差分取得は [SVG automation](docs/ci.md) を参照してください。
+同一リポジトリ内の PR は、レンダラー・生成入力の変更を push すると CI がサンプル SVG を生成し、差分がある場合は同じ PR ブランチへ自動コミットします。通常の更新では最新の push 差分を確認し、ドキュメントや無関係なテストだけの更新では生成を繰り返しません。自動コミットには `[skip ci]` を付けて承認待ちになる重複の PR イベント実行を抑え、更新後のコミットに Formatting・Clippy・Tests と必要な MSRV 検証を明示的に起動します。この通常の同一リポジトリ内の処理に追加の承認や個人トークンは不要です。生成対象、結果の確認、手動再実行、fork PR の差分取得は [SVG automation](docs/ci.md) を参照してください。
 
 ```sh
 docker compose exec -T dev sh scripts/update-examples.sh

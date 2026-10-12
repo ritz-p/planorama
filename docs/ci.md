@@ -1,9 +1,30 @@
 # SVG generation in pull requests
 
 The **Update SVG examples** workflow regenerates the maintained diagrams when a PR
-changes the renderer, build inputs, committed fixtures, examples or generation/CI
-tools. Contributors can push source changes and let Actions append the generated
-SVG changes to the same PR branch.
+changes their inputs. Contributors can push source changes and let Actions append
+the generated SVG changes to the same PR branch.
+
+## When generation runs
+
+Automatic generation watches these inputs:
+
+- Renderer and build inputs: `src/**`, `build.rs`, `assets/**`, `Cargo.toml`,
+  `Cargo.lock`, `rust-toolchain.toml` and `.cargo/**`.
+- Committed JSON inputs: `tests/fixtures/**/*.json` and `examples/**/*.json`.
+- Snapshot fixture builders: `tests/unit/layout.rs`,
+  `tests/unit/layout/containers.rs` and `tests/unit/layout/ports.rs`.
+- Generation configuration: `scripts/generated-svgs.txt`,
+  `scripts/update-examples.sh` and `.github/workflows/update_examples.yml`.
+- Maintained SVGs listed in the manifest, so manual edits to generated output are
+  checked against the current renderer.
+
+For an ordinary PR update, the workflow inspects the latest push's changes before
+building. An earlier renderer change elsewhere in the PR does not make a later
+documentation-only or unrelated-test update regenerate every SVG. Opening or
+reopening a PR uses its complete diff; a non-linear or incomplete push comparison
+also falls back to that diff. An incomplete PR file list causes generation
+conservatively. A manual dispatch with the PR number regenerates its latest head
+regardless of the changed files.
 
 ## Generation and review
 
@@ -14,7 +35,7 @@ SVG changes to the same PR branch.
 3. Upload an artifact containing the complete SVG output under `svgs/examples/`,
    an `updates.patch` file, and revision-bound `updates.json` metadata.
 4. For a writable branch in this repository, append one
-   `chore: regenerate SVG examples` commit containing only changed SVGs.
+   `chore: regenerate SVG examples [skip ci]` commit containing only changed SVGs.
 5. Explicitly start the applicable validation workflows for the resulting PR head.
    The workflow summary links each run; a dispatch confirmation is not a passing
    validation result.
@@ -53,10 +74,11 @@ other edits. Local regeneration remains available through the
 
 Generation runs with read-only repository permissions. A separate fresh runner
 performs writeback, with `contents: write`, `actions: write` and
-`pull-requests: read`. It loads the tools from the workflow's own revision, reads
-the output allowlist again from the captured source commit through the GitHub API,
-and handles the artifact as data. It does not build the PR source, run downloaded
-scripts or apply an artifact patch in the write-enabled job.
+`pull-requests: read`. The workflow uses inline JavaScript through
+`actions/github-script` for preparation, packaging and writeback. The write-enabled
+job reads the output allowlist again from the captured source commit through the
+GitHub API and handles the artifact as data. It does not check out or build the PR
+source, run downloaded scripts or apply an artifact patch.
 
 GitHub creates a tree and commit containing the declared SVG changes. The branch
 update uses GraphQL `updateRefs` with the captured `beforeOid` and `force: false`.
@@ -67,20 +89,24 @@ between its commit and validation dispatch.
 
 Fork PRs keep the patch/artifact flow and do not enter the write-enabled job.
 Protected branches, read-only tokens and repository policy restrictions also fall
-back to the artifact. The workflow does not use `pull_request_target` or require a
-personal token for the ordinary same-repository case.
+back to the artifact. Generation and writeback do not use `pull_request_target` or
+require a personal token for the ordinary same-repository case.
 
 ## Validation and recovery
 
 The standard `GITHUB_TOKEN` is used for both writeback and explicit
-`workflow_dispatch` requests. A token-generated push does not automatically start
-ordinary push workflows, and its PR-triggered workflows can require approval.
-Explicit dispatch avoids relying on those event-triggered runs.
+`workflow_dispatch` requests. The bot commit's `[skip ci]` directive suppresses
+duplicate push/PR-event runs, including the token-generated PR runs that would
+otherwise require approval. Explicit dispatch is unaffected by that directive and
+starts validation on the generated head without an additional approval in the
+ordinary same-repository flow. The directive does not cancel runs already created
+for an earlier commit.
 
 Formatting, Clippy and Tests are dispatched after an SVG commit. MSRV is included
-when the full PR file list touches its existing toolchain/Cargo/Docker inputs or
-the shared validation checkout helper. The selection examines the whole PR,
-including changes before the generated commit.
+when the full PR file list touches its existing toolchain/Cargo/Docker inputs,
+MSRV workflow or shared validation checkout helper. This validation selection
+examines the whole PR, including changes before the generated commit, independently
+of the narrower generation inputs above.
 
 Dispatch specifies the PR branch, PR number and exact expected head SHA. The
 returned run ID is checked against that SHA, event and workflow. When these PR
@@ -94,10 +120,11 @@ ref that still has not caught up fails explicitly instead of testing a different
 revision.
 
 If validation dispatch fails after a commit, run **Update SVG examples** manually
-with the PR number. An unchanged head carrying the generated-commit marker
-restarts validation without making another commit. If the code itself fails a
-check, fix it on the PR branch and push normally. A merge-ref timing failure can
-be retried from its validation run once GitHub updates the merge ref.
+with the PR number. An unchanged head carrying the generated-commit marker, with
+or without the newer `[skip ci]` suffix, restarts validation without making another
+commit. If the code itself fails a check, fix it on the PR branch and push
+normally. A merge-ref timing failure can be retried from its validation run once
+GitHub updates the merge ref.
 
 Manual workflow dispatch is available after the workflow exists on the default
 branch. During this workflow's initial implementation PR, generation runs through
@@ -108,16 +135,36 @@ its new head and that the checks complete. PR branches created before this workf
 was introduced must first incorporate the updated generation tools and validation
 workflow definitions from the base branch.
 
+## Validation after merging
+
+Tests and Clippy also run when a PR with relevant changes is merged into `main`.
+Their `pull_request_target` trigger accepts only the `closed` activity for `main`,
+and the jobs require `merged == true`. They keep read-only repository permissions
+and the default checkout of the event's default-branch commit. They do not check
+out the PR head in this post-merge path. These runs populate the default-branch
+dependency caches for later PRs.
+
+GitHub's skip directives apply to `push` and `pull_request`, so a bot commit's
+`[skip ci]` can also suppress a push workflow if retained in a squash-merge
+message. The merged-PR trigger is unaffected and replaces the previous `main`
+push trigger, avoiding duplicate post-merge runs. A direct push to `main` requires
+manually dispatching Tests and Clippy on `main`, leaving the optional PR inputs
+empty. Formatting and MSRV retain their existing PR and manual-dispatch triggers.
+
+## Alternative credentials
+
 If repository rules require event-based checks that explicit dispatch cannot
 satisfy, a repository administrator can configure a GitHub App installation token
 with narrowly scoped repository Contents and Actions write access and Pull requests
 read access for writeback/dispatch. This requires modifying the writeback job to
-mint an installation token and pass it as `GH_TOKEN`; setting secrets alone does
-not change the standard-token implementation. Its App ID/private key must be
-configured in Actions; a developer's ChatGPT GitHub connection is not an Actions
-credential. The same output allowlist, atomic head check and fork restrictions
-should remain.
+mint an installation token and supply it to `actions/github-script`; setting
+secrets alone does not change the standard-token implementation. Its App ID/private
+key must be configured in Actions; a developer's ChatGPT GitHub connection is not
+an Actions credential. The same output allowlist, atomic head check and fork
+restrictions should remain.
 
 References: [workflow triggers and GITHUB_TOKEN](https://docs.github.com/en/actions/how-tos/write-workflows/choose-when-workflows-run/trigger-a-workflow),
+[skip directives](https://docs.github.com/en/actions/how-tos/manage-workflow-runs/skip-workflow-runs),
+[merged-PR events](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#running-your-pull_request_target-workflow-when-a-pull-request-merges),
 [workflow dispatch API](https://docs.github.com/en/rest/actions/workflows#create-a-workflow-dispatch-event),
 [atomic Git ref updates](https://docs.github.com/en/graphql/reference/git#updaterefs).
