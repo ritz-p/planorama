@@ -86,6 +86,8 @@ docker run --rm --mount type=bind,source=.,target=/workspace --env CARGO_TARGET_
 
 通常の CI は Ubuntu runner 上で `rust-toolchain.toml` の固定ツールチェーンを使い、Formatting・Tests・Clippy を直接実行します。開発イメージには SVG の描画確認用に `rsvg-convert` と DejaVu フォントも含みます。Tests はコンパイルと実行を別ステップで計測し、毎回 `cargo test --locked --all-targets --all-features` を実行します。
 
+Formatting・Tests・Clippy は同じ PR の新しい `pull_request` 実行が始まると、同じ workflow の古い実行をキャンセルします。workflow ごとの固定キーと PR 番号で分離するため、別の PR・別の workflow は干渉しません。手動実行（SVG 自動更新後の PR 指定 dispatch を含む）とマージ後の検証は実行 ID ごとに独立し、完了済みのチェック結果も残ります。詳細は [CI のキャンセル制御](docs/ci.md#cancelling-superseded-validation) を参照してください。
+
 Tests・Clippy は `Swatinem/rust-cache` で Cargo registry/git と `target` 内の依存クレートの成果物を保存します。workspace crate は毎回ビルドし、ソース変更後に更新できない同一キーのキャッシュへ成果物を保存しません。キーには runner 環境・ジョブ・Rust compiler・Cargo.toml/Cargo.lock・ツールチェーン・Cargo 設定・ビルド関連環境変数に加え、`build.rs` と `assets/**` のハッシュを含めます。`v1-rust-dependencies` prefix で旧 workspace 成果物を含むキャッシュと区別します。復元後の再ビルド判定は Cargo が行い、キャッシュの有無によらず全対象を検証します。Tests と Clippy はプロファイルと成果物が異なるためジョブ別のキャッシュを使います。
 両 workflow は関連入力が変わる PR の `main` へのマージ後にも実行し、後続 PR が復元できる既定ブランチのキャッシュを作ります。`pull_request_target` の `closed` イベントでマージ済みの場合だけ起動し、読み取り権限でイベント時点の `main` を検証します。SVG の自動コミットに付く `[skip ci]` が squash merge のメッセージに残っても、マージ後の検証を実行できます。`main` へ直接 push した場合は Actions から手動実行してください。
 
