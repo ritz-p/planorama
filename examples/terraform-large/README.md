@@ -41,7 +41,7 @@ committed counterparts.
 ## Expected display
 
 The fixture has 48 resource instances. The renderer produces 28 spatial cards, 2 embedded Route cards,
-8 logical-resource cards within one cyan Logical Resources section and 74
+8 logical resources in 7 group cards within one cyan Logical Resources section and 74
 relationships: four route-table associations and four target-group attachments
 become edges, and two AWS metadata data sources are omitted.
 
@@ -51,7 +51,9 @@ inside their referenced subnets. ALB/ECS keep individual subnet connections; the
 DB subnet group and RDS retain their dependency chain and inferred-placement notes.
 Shared VPC and Security Group data sources remain external spatial cards. ECS
 Cluster/Task Definition, IAM definitions, the external AMI, CloudWatch Log Group
-and Metric Alarm are logical cards.
+and Metric Alarm are logical-resource rows. The two managed IAM Roles share one
+provider/type/mode group; each resource retains its own identity, action underline
+and references. Groups use neutral frames rather than a combined action color.
 A purple Logical Components section contains the load balancer, its Listener and
 its uniquely referenced Target Group as neutral member links, each with one
 action-colored underline below its wrapped text. The Target Group link points to
@@ -131,7 +133,8 @@ preserve horizontal/vertical independent-routing coverage.
 | Minimum effective parallel clearance | 1 | 6 | 6 |
 | Docker test-profile layout time, two runs | 5.631 / 5.614 s | 5.898 / 5.707 s | 7.219 / 7.036 s |
 
-Layout dimensions exclude SVG annotations. The final SVG is 4208 × 3481 pixels.
+Layout dimensions exclude SVG annotations. At that routing revision, the final
+SVG measured 4208 × 3481 pixels; later annotation changes can alter canvas height.
 The revision accepts more residual proximity than the initial PR in exchange for
 shorter, simpler paths and less growth. It still removes 34.7% of the original
 close projected length. Runtime adds about 1.3 seconds over the initial PR on this

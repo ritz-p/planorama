@@ -12,8 +12,8 @@ scopes, not resource containers or Terraform modules. VPC/Subnet containment sta
 intact inside each panel, and cross-region relationships remain routed paths.
 Spatial IAM resources, CloudFront and supported Route 53 resources share an
 `AWS Global` panel when regional panels are present. IAM Role, Policy, Role Policy
-and Instance Profile retain global scope metadata but render as logical cards
-above the spatial diagram, outside deployment-scope panels. AWS scope
+and Instance Profile retain global scope metadata but render as logical-resource
+rows above the spatial diagram, outside deployment-scope panels. AWS scope
 classification lives in `provider/aws/scope.rs`; layout and SVG consume generic
 deployment scopes. Unsupported resource types, cross-region peering resources and
 unknown regions stay outside panels. No aliases, names, tags, ARNs or IDs supply
@@ -37,7 +37,8 @@ remain Controller cards even when placed inside a VPC.
 
 Placement is independent of role. ECS Cluster, ECS Task Definition, IAM Role,
 Policy, Role Policy, Instance Profile, AMI, CloudWatch Log Group and Metric Alarm definitions are explicit logical
-resources, rendered as Terraform cards in the top annotation area. AMI describes
+resources, rendered as rows grouped by provider source, resource type and mode in
+the top annotation area. AMI describes
 an image definition used by workloads, not a deployed compute instance. These
 provider-aware rules apply to managed and data resources; custom providers do
 not inherit them. Unknown types retain unresolved placement and stay visible in
@@ -46,8 +47,8 @@ S3, DynamoDB, CloudFront, ECS Service and load balancers remain spatial.
 
 Only `aws_cloudwatch_log_group` and `aws_cloudwatch_metric_alarm` receive this
 CloudWatch policy; unsupported CloudWatch types retain unresolved spatial cards.
-Logical placement does not suppress architectural significance: full Terraform
-cards retain actions, identities, operation metadata, scope and focus/filter
+Logical placement does not suppress architectural significance: individual resource
+rows retain actions, identities, operation metadata, scope and focus/filter
 participation. A focused observability view can emphasize them; no spatial-view
 override is currently implemented.
 
@@ -63,8 +64,10 @@ Verified alarms show Monitors; the target shows Monitored by. These inverse
 reference rows create no graph edges. Generic depends_on never proves monitoring,
 and no monitoring relationship is inferred across states.
 
-Infrastructure data sources retain their roles and use an external badge and
-dashed border. AWS metadata data sources `aws_region`, `aws_partition`,
+Infrastructure data sources retain their roles and external identity. Spatial
+cards use an external badge and dashed border; logical resources use separate
+`data / external` groups and dashed action underlines. AWS metadata data sources
+`aws_region`, `aws_partition`,
 `aws_caller_identity`, `aws_availability_zones`, and `aws_iam_policy_document`
 and their incident edges are omitted. References from retained resources keep
 the omitted source identities as provenance, without creating cards or paths.

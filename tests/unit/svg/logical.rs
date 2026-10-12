@@ -19,6 +19,69 @@ fn input() -> serde_json::Value {
     ]}}})
 }
 
+fn number(node: roxmltree::Node, attribute: &str) -> usize {
+    node.attribute(attribute).unwrap().parse().unwrap()
+}
+
+fn row_y(row: roxmltree::Node) -> usize {
+    row.attribute("transform")
+        .unwrap()
+        .strip_prefix("translate(0 ")
+        .unwrap()
+        .strip_suffix(')')
+        .unwrap()
+        .parse()
+        .unwrap()
+}
+
+fn underline<'a, 'input>(row: roxmltree::Node<'a, 'input>) -> roxmltree::Node<'a, 'input> {
+    let lines: Vec<_> = row.children().filter(|n| n.has_tag_name("line")).collect();
+    assert_eq!(lines.len(), 1);
+    assert_eq!(lines[0].attribute("data-resource-underline"), Some("true"));
+    lines[0]
+}
+
+fn assert_logical_row(row: roxmltree::Node, action: crate::model::Action) {
+    let group = row.parent().unwrap();
+    assert_eq!(group.attribute("data-logical-group"), Some("true"));
+    let card = group.parent().unwrap();
+    assert_eq!(card.attribute("data-annotation-card"), Some("true"));
+    let rect = card.children().find(|n| n.has_tag_name("rect")).unwrap();
+    assert_eq!(rect.attribute("fill"), Some("#f8fafc"));
+    assert_eq!(rect.attribute("stroke"), Some("#cbd5e1"));
+    assert!(row.children().all(|n| !n.has_tag_name("rect")));
+    assert!(
+        row.descendants()
+            .all(|n| n.attribute("data-annotation-card").is_none())
+    );
+    let line = underline(row);
+    assert_eq!(line.attribute("stroke"), Some(svg::color(action).1));
+    assert_eq!(line.attribute("stroke-width"), Some("2"));
+    assert_eq!(number(line, "x1"), 16);
+    assert_eq!(number(line, "x2") + 16, number(rect, "width"));
+    assert_eq!(line.attribute("y1"), line.attribute("y2"));
+    assert!(row_y(row) + number(line, "y1") < number(rect, "height"));
+    for text in row.descendants().filter(|n| n.has_tag_name("text")) {
+        assert!(text.range().end <= line.range().start);
+        assert!(number(text, "y") + 4 < number(line, "y1"));
+    }
+    for text in row.children().filter(|n| n.has_tag_name("text")) {
+        assert_eq!(text.attribute("fill"), Some("#334155"));
+        assert_eq!(number(text, "x"), 16);
+        let width: usize = text
+            .text()
+            .unwrap()
+            .chars()
+            .map(|c| if c.is_ascii() { 8 } else { 16 })
+            .sum();
+        assert!(width + 32 <= number(rect, "width"));
+        assert_eq!(
+            text.attribute(("http://www.w3.org/XML/1998/namespace", "space")),
+            Some("preserve")
+        );
+    }
+}
+
 #[test]
 fn logical_projection_retains_graph_identity_references_and_operations() {
     let raw = plan::parse(&input().to_string()).unwrap();
@@ -83,6 +146,12 @@ fn logical_projection_retains_graph_identity_references_and_operations() {
         .descendants()
         .filter(|n| n.attribute("data-placement") == Some("logical"))
     {
+        let node = graph
+            .nodes
+            .iter()
+            .find(|n| card.attribute("data-terraform-address") == Some(n.address.as_str()))
+            .unwrap();
+        assert_logical_row(card, node.action);
         let heading = card.children().find(|n| n.has_tag_name("text")).unwrap();
         assert!(
             card.attribute("data-qualified-address")
@@ -93,6 +162,12 @@ fn logical_projection_retains_graph_identity_references_and_operations() {
     assert_eq!(
         doc.descendants()
             .filter(|n| n.attribute("data-placement") == Some("logical"))
+            .count(),
+        5
+    );
+    assert_eq!(
+        doc.descendants()
+            .filter(|n| n.attribute("data-logical-group") == Some("true"))
             .count(),
         5
     );
@@ -167,7 +242,7 @@ fn logical_projection_retains_graph_identity_references_and_operations() {
             .any(|n| n.has_tag_name("title") && n.text().unwrap().starts_with("aws_iam_role.app"))
     );
     assert!(!output.contains("PRIVATE_"));
-    assert!(output.contains("3 spatial cards, 5 logical cards"));
+    assert!(output.contains("3 spatial cards, 5 logical resources in 5 group cards"));
     assert_eq!(graph, original);
     assert_eq!(output, svg::render(&graph, &Layout::new(&graph)));
 }
@@ -208,6 +283,185 @@ fn logical_classification_is_explicit_and_provider_aware() {
 }
 
 #[test]
+fn logical_groups_use_canonical_provider_type_and_mode_without_combining_actions() {
+    use crate::model::ProviderIdentity;
+    use serde_json::json;
+    use std::collections::BTreeSet;
+
+    let value = json!({"format_version":"1.2", "resource_changes":[
+        {"address":"aws_iam_role.inferred", "type":"aws_iam_role", "change":{"actions":["create"]}},
+        {"address":"aws_iam_role.explicit", "type":"aws_iam_role", "provider_name":" HASHICORP/AWS ", "change":{"actions":["update"]}},
+        {"address":"module.other.aws_iam_role.aliased", "type":"aws_iam_role", "change":{"actions":["delete"]}},
+        {"address":"data.aws_iam_role.shared", "type":"aws_iam_role", "mode":"data", "change":{"actions":["read"]}},
+        {"address":"aws_iam_policy.other", "type":"aws_iam_policy"},
+        {"address":"aws_iam_role.foreign", "type":"aws_iam_role", "provider_name":"example.com/acme/aws", "change":{"actions":["delete","create"]}},
+        {"address":"aws_iam_role.unknown", "type":"aws_iam_role"}
+    ], "configuration":{
+        "provider_config":{
+            "aws.primary":{"full_name":"hashicorp/aws", "alias":"primary"},
+            "aws.secondary":{"full_name":"REGISTRY.TERRAFORM.IO/HASHICORP/AWS", "alias":"secondary"}
+        },
+        "root_module":{
+            "resources":[{"address":"aws_iam_role.explicit", "provider_config_key":"aws.primary"}],
+            "module_calls":{"other":{"module":{"resources":[{"address":"aws_iam_role.aliased", "provider_config_key":"aws.secondary"}]}}}
+        }
+    }});
+    let mut graph = semantic::transform(&plan::parse(&value.to_string()).unwrap());
+    for node in &mut graph.0.nodes {
+        node.placement = Placement::Logical;
+        if node.address == "aws_iam_role.unknown" {
+            node.provider = ProviderIdentity::Unknown;
+        }
+    }
+    assert!(
+        graph
+            .nodes
+            .iter()
+            .any(|n| n.provider == ProviderIdentity::InferredAws)
+    );
+    for (address, alias) in [
+        ("aws_iam_role.explicit", "primary"),
+        ("module.other.aws_iam_role.aliased", "secondary"),
+    ] {
+        let node = graph.nodes.iter().find(|n| n.address == address).unwrap();
+        assert_eq!(
+            node.provider,
+            ProviderIdentity::from_source("hashicorp/aws")
+        );
+        assert_eq!(
+            node.provider_configuration
+                .as_ref()
+                .unwrap()
+                .alias
+                .as_deref(),
+            Some(alias)
+        );
+    }
+    let output = svg::render(&graph, &Layout::new(&graph));
+    let doc = roxmltree::Document::parse(&output).unwrap();
+    let groups: Vec<_> = doc
+        .descendants()
+        .filter(|n| n.attribute("data-logical-group") == Some("true"))
+        .collect();
+    assert_eq!(groups.len(), 5);
+    for (source, resource_type, mode, addresses) in [
+        (
+            "registry.terraform.io/hashicorp/aws",
+            "aws_iam_role",
+            "managed",
+            vec![
+                "aws_iam_role.inferred",
+                "aws_iam_role.explicit",
+                "module.other.aws_iam_role.aliased",
+            ],
+        ),
+        (
+            "registry.terraform.io/hashicorp/aws",
+            "aws_iam_role",
+            "data",
+            vec!["data.aws_iam_role.shared"],
+        ),
+        (
+            "registry.terraform.io/hashicorp/aws",
+            "aws_iam_policy",
+            "managed",
+            vec!["aws_iam_policy.other"],
+        ),
+        (
+            "example.com/acme/aws",
+            "aws_iam_role",
+            "managed",
+            vec!["aws_iam_role.foreign"],
+        ),
+        (
+            "unknown",
+            "aws_iam_role",
+            "managed",
+            vec!["aws_iam_role.unknown"],
+        ),
+    ] {
+        let group = groups
+            .iter()
+            .find(|n| {
+                n.attribute("data-provider-source") == Some(source)
+                    && n.attribute("data-resource-type") == Some(resource_type)
+                    && n.attribute("data-mode") == Some(mode)
+            })
+            .unwrap();
+        let heading: String = group
+            .children()
+            .filter(|n| n.has_tag_name("text"))
+            .filter_map(|n| n.text())
+            .collect();
+        assert!(heading.contains(if source == "unknown" {
+            "Provider unavailable"
+        } else {
+            source
+        }));
+        assert!(heading.contains(resource_type));
+        assert!(heading.contains(mode));
+        let rows: Vec<_> = group
+            .children()
+            .filter(|n| n.attribute("data-placement") == Some("logical"))
+            .collect();
+        assert_eq!(
+            rows.iter()
+                .map(|n| n.attribute("data-terraform-address").unwrap())
+                .collect::<BTreeSet<_>>(),
+            addresses.into_iter().collect::<BTreeSet<_>>()
+        );
+        let mut bottom = 0;
+        for row in rows {
+            let node = graph
+                .nodes
+                .iter()
+                .find(|n| row.attribute("data-terraform-address") == Some(n.address.as_str()))
+                .unwrap();
+            assert_eq!(
+                row.attribute("id"),
+                Some(svg::identity::resource(node).as_str())
+            );
+            assert_eq!(row.attribute("data-mode"), Some(mode));
+            assert_eq!(
+                row.attribute("data-external"),
+                (mode == "data").then_some("true")
+            );
+            assert_logical_row(row, node.action);
+            assert_eq!(
+                underline(row).attribute("stroke-dasharray"),
+                (mode == "data").then_some("6 4")
+            );
+            assert!(row_y(row) > bottom);
+            bottom = row_y(row) + number(underline(row), "y1");
+            assert!(row.children().any(|n| n.has_tag_name("text")
+                && n.text() == Some(svg::operations::action_label(node.action, &node.metadata))));
+        }
+    }
+    assert_eq!(output.matches("data-placement=\"logical\"").count(), 7);
+    assert!(output.contains("0 spatial cards, 7 logical resources in 5 group cards"));
+    for (action, count) in [
+        ("create", 1),
+        ("update", 1),
+        ("delete", 1),
+        ("replace", 1),
+        ("read", 1),
+        ("unchanged", 2),
+        ("other", 0),
+    ] {
+        assert!(output.contains(&format!(">{action} ({count})</text>")));
+    }
+    let grouped = |graph: &crate::model::Graph| {
+        super::cards(graph, svg::AddressFormat::Qualified)
+            .into_iter()
+            .map(|card| (card.width, card.height, card.content))
+            .collect::<Vec<_>>()
+    };
+    let expected = grouped(&graph);
+    graph.0.nodes.reverse();
+    assert_eq!(expected, grouped(&graph));
+}
+
+#[test]
 fn logical_focus_and_changes_preserve_selected_resources_and_reference_evidence() {
     let graph = semantic::transform(&plan::parse(&input().to_string()).unwrap());
     for (focus, count) in [("aws_instance.app", 0), ("aws_ecs_cluster.app", 1)] {
@@ -223,6 +477,7 @@ fn logical_focus_and_changes_preserve_selected_resources_and_reference_evidence(
         assert_eq!(selected.nodes.len(), 1);
         let output = svg::render(&selected, &Layout::new(&selected));
         assert_eq!(output.matches("data-placement=\"logical\"").count(), count);
+        assert_eq!(output.matches("data-logical-group=\"true\"").count(), count);
         if count == 0 {
             assert!(output.contains("aws_iam_instance_profile.app"));
         }
@@ -241,14 +496,40 @@ fn logical_focus_and_changes_preserve_selected_resources_and_reference_evidence(
             .iter()
             .any(|n| n.address == "aws_ecs_cluster.app")
     );
+    let output = svg::render(&changed, &Layout::new(&changed));
+    let doc = roxmltree::Document::parse(&output).unwrap();
+    let selected: std::collections::BTreeSet<_> = changed
+        .nodes
+        .iter()
+        .filter(|n| n.placement == Placement::Logical)
+        .map(|n| n.address.as_str())
+        .collect();
+    assert_eq!(
+        doc.descendants()
+            .filter(|n| n.attribute("data-placement") == Some("logical"))
+            .map(|n| n.attribute("data-terraform-address").unwrap())
+            .collect::<std::collections::BTreeSet<_>>(),
+        selected
+    );
+    assert!(
+        doc.descendants()
+            .filter(|n| n.attribute("data-logical-group") == Some("true"))
+            .all(|n| n
+                .children()
+                .any(|n| n.attribute("data-placement") == Some("logical")))
+    );
 }
 
 #[test]
-fn logical_cards_wrap_long_addresses_and_keep_deposed_identity_and_input_order() {
+fn logical_group_rows_wrap_long_addresses_and_keep_deposed_identity_and_input_order() {
     let mut value = input();
     let address = format!("aws_iam_policy.{}", "long_name".repeat(30));
+    let previous = format!(
+        r#"module.{}.aws_iam_policy.old["  支払い & \"blue\" <edge>  "]"#,
+        "長いモジュール".repeat(24)
+    );
     value["resource_changes"].as_array_mut().unwrap().extend([
-        serde_json::json!({"address":address, "type":"aws_iam_policy"}),
+        serde_json::json!({"address":address, "type":"aws_iam_policy", "previous_address":previous}),
         serde_json::json!({"address":address, "type":"aws_iam_policy", "deposed":"old", "change":{"actions":["delete"]}}),
     ]);
     let render = |value: &serde_json::Value| {
@@ -263,12 +544,33 @@ fn logical_cards_wrap_long_addresses_and_keep_deposed_identity_and_input_order()
         .collect();
     assert_eq!(cards.len(), 2);
     assert_ne!(cards[0].attribute("id"), cards[1].attribute("id"));
+    assert_eq!(cards[0].parent(), cards[1].parent());
     assert!(
         cards
             .iter()
             .any(|n| n.attribute("data-deposed-key") == Some("old"))
     );
+    let mut bottom = 0;
     for card in cards {
+        assert_logical_row(
+            card,
+            if card.attribute("data-deposed-key").is_some() {
+                crate::model::Action::Delete
+            } else {
+                crate::model::Action::Unchanged
+            },
+        );
+        assert!(row_y(card) > bottom);
+        bottom = row_y(card) + number(underline(card), "y1");
+        let text: String = card
+            .children()
+            .filter(|n| n.has_tag_name("text"))
+            .filter_map(|n| n.text())
+            .collect();
+        assert!(text.starts_with(card.attribute("data-qualified-address").unwrap()));
+        if card.attribute("data-deposed-key").is_none() {
+            assert!(text.contains(&format!("Moved from: {previous}")));
+        }
         assert!(
             card.descendants()
                 .filter(|n| n.has_tag_name("text"))
@@ -316,6 +618,23 @@ fn named_states_keep_logical_ids_separate_and_cross_state_provenance_without_rou
     let view = view::apply(&all, &Default::default()).unwrap();
     let output = svg::render_states(&view, Default::default());
     let doc = roxmltree::Document::parse(&output).unwrap();
+    for state in ["first", "second"] {
+        let groups: Vec<_> = doc
+            .descendants()
+            .filter(|n| {
+                n.attribute("data-logical-group") == Some("true")
+                    && n.ancestors()
+                        .any(|n| n.attribute("data-state-id") == Some(state))
+            })
+            .collect();
+        assert_eq!(groups.len(), 5);
+        assert!(groups.iter().all(|n| {
+            n.children()
+                .filter(|n| n.attribute("data-placement") == Some("logical"))
+                .count()
+                == 1
+        }));
+    }
     let ids: Vec<_> = doc
         .descendants()
         .filter(|n| n.attribute("data-terraform-address") == Some("aws_ecs_cluster.app"))
@@ -548,6 +867,24 @@ fn shared_profiles_and_long_reference_lists_are_fully_visible() {
         .unwrap();
     assert!(addresses.iter().all(|a| title.contains(a)));
     assert!(!output.contains("more (see full title)"));
+    let group = doc
+        .descendants()
+        .find(|n| {
+            n.attribute("data-logical-group") == Some("true")
+                && n.attribute("data-resource-type") == Some("aws_iam_policy")
+        })
+        .unwrap();
+    let rows: Vec<_> = group
+        .children()
+        .filter(|n| n.attribute("data-placement") == Some("logical"))
+        .collect();
+    assert_eq!(rows.len(), addresses.len());
+    let mut bottom = 0;
+    for row in rows {
+        assert_logical_row(row, crate::model::Action::Unchanged);
+        assert!(row_y(row) > bottom);
+        bottom = row_y(row) + number(underline(row), "y1");
+    }
     for address in &addresses {
         assert!(
             summary
