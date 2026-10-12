@@ -1,7 +1,9 @@
 const WORKFLOWS = new Map([
   ['cargo_fmt.yml', {name: 'Cargo fmt', status: 'Formatting', steps: ['Check formatting']}],
   ['cargo_clippy.yml', {name: 'Cargo clippy', status: 'Clippy', steps: ['Run Clippy']}],
-  ['cargo_test.yml', {name: 'Cargo test', status: 'Tests', steps: ['Compile tests', 'Run tests']}],
+  ['cargo_test.yml', {
+    name: 'Cargo test', status: 'Tests', steps: ['Compile tests', 'Run tests'], suites: ['standard', 'large'],
+  }],
   ['cargo_msrv.yml', {name: 'Cargo msrv', status: 'MSRV', steps: ['Build MSRV image', 'Run MSRV tests']}],
   ['workflow_tests.yml', {
     name: 'Workflow tests', status: 'Workflow tests', steps: ['Lint workflows', 'Test validation reporting'],
@@ -25,6 +27,20 @@ function version(run) {
     run.workflow_id, run.path, run.head_branch, run.head_sha, run.display_title,
     run.repository?.id, run.repository?.full_name, run.head_repository?.id, run.head_repository?.full_name,
   ]);
+}
+
+function expectedJobs(configuration, jobs) {
+  const aggregate = `Dispatched ${configuration.status}`;
+  const commands = ['Checkout dispatched PR merge', ...configuration.steps];
+  const gate = 'Check test suites';
+  const split = configuration.suites && jobs.some(job => /^(?:Dispatched )?Test suite \(/.test(job.name)
+    || ([configuration.status, aggregate].includes(job.name)
+      && Array.isArray(job.steps) && job.steps.some(step => step.name === gate)));
+  if (!split) return [{name: aggregate, steps: commands}];
+  return [
+    ...configuration.suites.map(suite => ({name: `Dispatched Test suite (${suite})`, steps: commands})),
+    {name: aggregate, steps: [gate]},
+  ];
 }
 
 module.exports = async function reportValidation({github, context, core}) {
@@ -119,21 +135,25 @@ module.exports = async function reportValidation({github, context, core}) {
     if (!['success', 'failure'].includes(run.conclusion)) {
       return {state: 'error', description: `${configuration.status}: ${run.conclusion || 'no conclusion'} (${attempt}); retry validation.`};
     }
-    const jobs = (await jobsForAttempt(run)).filter(job => job.name === `Dispatched ${configuration.status}`);
-    if (jobs.length !== 1) {
-      return {state: 'error', description: `${configuration.status}: expected validation job is missing or ambiguous; retry validation.`};
+    const availableJobs = await jobsForAttempt(run);
+    const validations = [];
+    for (const expectedJob of expectedJobs(configuration, availableJobs)) {
+      const matches = availableJobs.filter(job => job.name === expectedJob.name);
+      if (matches.length !== 1) {
+        return {state: 'error', description: `${configuration.status}: expected validation job is missing or ambiguous; retry validation.`};
+      }
+      const job = matches[0];
+      validations.push({job, required: expectedJob.steps, steps: Array.isArray(job.steps) ? job.steps : []});
     }
-    const job = jobs[0];
-    const required = ['Checkout dispatched PR merge', ...configuration.steps];
-    const steps = Array.isArray(job.steps) ? job.steps : [];
-    if (job.conclusion === 'failure' || steps.some(step => required.includes(step.name) && step.conclusion === 'failure')) {
+    if (validations.some(({job, required, steps}) => job.conclusion === 'failure'
+        || steps.some(step => required.includes(step.name) && step.conclusion === 'failure'))) {
       return {state: 'failure', description: `${configuration.status} failed (${attempt}); see validation logs.`};
     }
-    if (run.conclusion !== 'success' || job.status !== 'completed' || job.conclusion !== 'success'
-        || required.some(name => {
+    if (run.conclusion !== 'success' || validations.some(({job, required, steps}) => job.status !== 'completed'
+        || job.conclusion !== 'success' || required.some(name => {
           const matches = steps.filter(step => step.name === name);
           return matches.length !== 1 || matches[0].status !== 'completed' || matches[0].conclusion !== 'success';
-        })) {
+        }))) {
       return {state: 'error', description: `${configuration.status}: required validation did not complete (${attempt}); retry validation.`};
     }
     return {state: 'success', description: `${configuration.status} passed (${attempt}).`};

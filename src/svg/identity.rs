@@ -9,7 +9,7 @@ pub(super) fn architecture(id: &crate::model::architecture::ArchitectureId) -> S
     encoded
 }
 
-pub(super) fn resource(node: &Node) -> String {
+pub(crate) fn resource(node: &Node) -> String {
     resource_parts(&node.address, node.deposed_key.as_deref())
 }
 
