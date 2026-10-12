@@ -74,13 +74,17 @@ impl ResourceIcon {
             }
             Self::Monitoring => include_str!(concat!(env!("OUT_DIR"), "/Amazon-CloudWatch.svg")),
             Self::Scaling => include_str!(concat!(env!("OUT_DIR"), "/Amazon-EC2-Auto-Scaling.svg")),
-            Self::Terraform => include_str!(concat!(env!("OUT_DIR"), "/terraform-color-24.svg")),
+            Self::Terraform => include_str!(concat!(env!("OUT_DIR"), "/terraform-builtin-24.svg")),
         }
     }
 
     pub fn notice(self) -> &'static str {
         match self {
-            Self::Terraform => include_str!("../../assets/icons/terraform/NOTICE.txt"),
+            Self::Terraform => concat!(
+                include_str!("../../assets/icons/terraform/NOTICE.txt"),
+                "\n",
+                include_str!("../../assets/icons/terraform/LICENSE.txt")
+            ),
             _ => include_str!("../../assets/icons/aws/NOTICE.txt"),
         }
     }

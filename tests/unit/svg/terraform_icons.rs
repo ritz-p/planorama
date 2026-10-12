@@ -37,6 +37,24 @@ fn assert_self_contained(document: &roxmltree::Document<'_>) {
     }
 }
 
+fn assert_builtin_notice(output: &str, notice: &str) {
+    assert!(notice.contains("Planorama built-in provider icon, version 1.0.0."));
+    assert!(notice.contains("MIT License"));
+    assert!(notice.contains("Copyright (c) 2026 Planorama contributors"));
+    assert!(notice.contains(include_str!("../../../assets/icons/terraform/LICENSE.txt")));
+    for removed in [
+        "HashiCorp Flight Icons",
+        "MPL-2.0",
+        "Mozilla Public License",
+        "unconfirmed",
+    ] {
+        assert!(
+            !output.contains(removed),
+            "unexpected bundled notice: {removed}"
+        );
+    }
+}
+
 #[test]
 fn builtin_and_aws_icons_preserve_provider_boundaries_and_external_styling() {
     let mut input = terraform_plan();
@@ -132,8 +150,10 @@ fn builtin_and_aws_icons_preserve_provider_boundaries_and_external_styling() {
             })
             .filter_map(|n| n.text())
             .collect();
-        for provider in ["Terraform", "AWS Architecture Icons"] {
-            assert_eq!(notices.iter().filter(|n| n.contains(provider)).count(), 1);
+        assert_eq!(notices.len(), 1);
+        assert_builtin_notice(&output, notices[0]);
+        for provider in ["Planorama built-in provider icon", "AWS Architecture Icons"] {
+            assert_eq!(notices[0].matches(provider).count(), 1);
         }
     }
 }
@@ -153,7 +173,7 @@ fn terraform_only_diagrams_embed_only_the_terraform_notice() {
         .filter_map(|n| n.text())
         .collect();
     assert_eq!(notices.len(), 1);
-    assert!(notices[0].contains("Terraform"));
+    assert_builtin_notice(&output, notices[0]);
     assert!(!notices[0].contains("AWS Architecture Icons"));
     assert!(!output.contains("planorama-icon-aws-"));
 }

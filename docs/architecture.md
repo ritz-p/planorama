@@ -78,9 +78,10 @@ AWS resource-type and attribute rules belong in `provider/aws`; rendering and
 layout do not infer semantic relationships.
 Terraform built-in icon rules belong in `provider/terraform` and use the provider
 identity resolved during ingestion. They add no resource classification,
-containment or layout semantics. AWS and Terraform artwork share the validated
-build-time SVG parser, symbol reuse and state namespacing; source notices follow
-the icon families actually used. See [icon sources and permission status](icons.md).
+containment or layout semantics. AWS artwork and Planorama's original built-in
+provider icon share the validated build-time SVG parser, symbol reuse and state
+namespacing; source notices follow the icon families actually used. See
+[icon sources and licenses](icons.md).
 
 The semantic input projects Terraform facts into classified cards without mutating
 the plan. AWS transformation applies containment, SG connections, association

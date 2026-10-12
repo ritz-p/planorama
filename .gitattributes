@@ -1,3 +1,2 @@
 * text=auto eol=lf
 /assets/icons/aws/*.svg -text
-/assets/icons/terraform/*.svg -text

@@ -16,44 +16,34 @@ AWS owns these assets. They are **not MIT-licensed**. The official page permits 
 
 AWS selection uses provider identity and exact resource types, independently of ResourceRole. Managed/data entities share the same service icon. Related resources intentionally use service-level icons: subnet, gateway, routing, peering, and network security resources use Amazon VPC; listeners and target groups use Elastic Load Balancing. No public/private subnet status is inferred from the resource type. Unsupported types render without an icon.
 
-## Terraform product logo
+## Planorama icon for Terraform built-in resources
 
-The draft implementation uses `terraform-color-24.svg` from the official
-[HashiCorp Flight Icons](https://github.com/hashicorp/design-system/tree/97eefa54e00c4e2a3d63417589a8151c4bf17368/packages/flight-icons)
-package **5.3.0**, tagged `@hashicorp/flight-icons@5.3.0` at commit
-`97eefa54e00c4e2a3d63417589a8151c4bf17368`, retrieved on 2026-10-12.
-The original SVG is stored unchanged under `assets/icons/terraform/`, with its
-24px view box and original `#7b42bc` color. The adjacent `manifest.json` records
-the pinned source paths and URLs, SHA-256 and Git blob hashes, package version,
-retrieval date and permission status. Runtime rendering makes no network request.
+Planorama uses an original neutral state-file symbol for its Terraform built-in
+provider category. Version **1.0.0**, created on 2026-10-12, is stored at
+`assets/icons/terraform/terraform-builtin-24.svg` with a 24px view box. The adjacent
+`manifest.json` records the Planorama source, version, date, file hash and license
+scope. This independent artwork is not the HashiCorp Terraform product logo and
+does not reproduce its stylized T or brand design.
 
-### License and permission status
-
-The upstream package declares **MPL-2.0**. Its unchanged license text and copyright
-notice are included as `assets/icons/terraform/LICENSE.txt`; this records the
-package license separately from the rights to use the Terraform brand.
-MPL-2.0 section 2.3 does not grant rights in contributor trademarks or logos.
-Sections 3.1–3.4 govern source availability, executable distribution and retention
-of notices for covered material. The manifest and `NOTICE.txt` identify the
-original source.
-
-**Permission to bundle and redistribute the Terraform logo in Planorama binaries
-and generated SVGs is unconfirmed.** As reviewed on 2026-10-12, the
+The Flight Icons logo candidate was removed because permission for bundling it
+had not been established. The
 [HashiCorp Trademark Policy](https://www.hashicorp.com/en/trademark-policy)
-allows current project logos on one's own website to identify and link to official
-project pages; other logo uses require written approval from HashiCorp marketing.
-It also states that product logos are not licensed to the public under the
-software license. The [brand guidelines](https://www.hashicorp.com/en/brand/hcp-product-logos)
-describe presentation requirements and do not establish permission for this
-bundling use.
+distinguishes graphic-logo permission from the software license; this replacement
+does not claim permission to redistribute HashiCorp logos or imply endorsement.
 
-The asset is included as a draft implementation candidate. Its manifest retains
-`permission_status: unconfirmed` and no permission evidence; the scope must be
-resolved before merging or releasing the asset. Copying the package license or
-adding attribution does not establish that permission. The Terraform `NOTICE.txt`
-accompanies SVGs using this icon and retains that status. Terraform and the
-Terraform logo are trademarks of HashiCorp; Planorama implies no HashiCorp
-endorsement or unrestricted redistribution rights.
+### License and scope
+
+The original Planorama icon is licensed under **MIT**. The complete license and
+`Copyright (c) 2026 Planorama contributors` notice are in
+`assets/icons/terraform/LICENSE.txt`. The license applies to
+`terraform-builtin-24.svg` and its embedded copies, not to the repository as a
+whole or to AWS assets. Its terms permit copying, modification and redistribution
+with the copyright and permission notices retained.
+
+`NOTICE.txt` records the artwork's source and independent identity. SVGs using
+this icon embed that notice together with the complete MIT license, so the
+permission notice accompanies distributed diagrams. Runtime rendering makes no
+network request.
 
 ### Mapping
 
@@ -61,7 +51,7 @@ Selection requires the canonical built-in source `terraform.io/builtin/terraform
 or the narrowly defined `InferredTerraform` fallback when provider information is
 entirely absent. Explicit provider information takes precedence; unresolved
 bindings, `hashicorp/terraform`, `builtin/terraform`, and foreign hosts do not
-select the Terraform icon. See [provider identity](models.md).
+select the built-in provider icon. See [provider identity](models.md).
 
 | Resource type | Example address | Shared icon |
 | --- | --- | --- |
@@ -97,13 +87,15 @@ from the artwork.
 ## Updating sources
 
 For AWS, download a release directly from AWS and select the original service
-SVGs. For Terraform, use the official Flight Icons repository and pin a release
-tag to its commit. Update original files, manifests, notices and source dates
-together; retain the complete upstream license when applicable. Review changed
-license, trademark and brand conditions, and record evidence before changing a
-permission status from `unconfirmed`.
+SVGs. Preserve their original colors and paths, and update the manifest, notice
+and source dates together. Review changed license, trademark and brand conditions.
+
+For Planorama's built-in provider icon, update the original SVG and its version,
+hash and source date in the manifest together. Retain the asset's MIT license and
+notice, and keep the artwork independent of HashiCorp's product logos. Introducing
+third-party artwork requires a separate source and rights review before bundling.
 
 Verify source hashes and inspect SVGs for external dependencies or executable
-content. Preserve the original files without recoloring or editing their paths.
+content.
 Let the [CI SVG and validation workflows](ci.md) regenerate examples and run
 formatting, tests and Clippy. Original icon assets are not generated outputs.

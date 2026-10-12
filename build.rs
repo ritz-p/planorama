@@ -30,9 +30,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             .map_err(|e| format!("invalid bundled icon {file}: {e}"))?;
         std::fs::write(out.join(format!("{file}.svg")), symbol)?;
     }
-    let source = std::fs::read_to_string("assets/icons/terraform/terraform-color-24.svg")?;
+    let source = std::fs::read_to_string("assets/icons/terraform/terraform-builtin-24.svg")?;
     let symbol = icon::symbol(&source, "planorama-icon-terraform")
         .map_err(|e| format!("invalid bundled Terraform icon: {e}"))?;
-    std::fs::write(out.join("terraform-color-24.svg"), symbol)?;
+    std::fs::write(out.join("terraform-builtin-24.svg"), symbol)?;
     Ok(())
 }
