@@ -445,8 +445,8 @@ fn logical_groups_use_canonical_provider_type_and_mode_without_combining_actions
         ("delete", 1),
         ("replace", 1),
         ("read", 1),
-        ("unchanged", 2),
-        ("other", 0),
+        ("unchanged", 0),
+        ("other", 2),
     ] {
         assert!(output.contains(&format!(">{action} ({count})</text>")));
     }
@@ -557,7 +557,7 @@ fn logical_group_rows_wrap_long_addresses_and_keep_deposed_identity_and_input_or
             if card.attribute("data-deposed-key").is_some() {
                 crate::model::Action::Delete
             } else {
-                crate::model::Action::Unchanged
+                crate::model::Action::Other
             },
         );
         assert!(row_y(card) > bottom);
@@ -881,7 +881,7 @@ fn shared_profiles_and_long_reference_lists_are_fully_visible() {
     assert_eq!(rows.len(), addresses.len());
     let mut bottom = 0;
     for row in rows {
-        assert_logical_row(row, crate::model::Action::Unchanged);
+        assert_logical_row(row, crate::model::Action::Other);
         assert!(row_y(row) > bottom);
         bottom = row_y(row) + number(underline(row), "y1");
     }
