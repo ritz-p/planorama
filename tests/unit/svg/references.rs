@@ -1,6 +1,12 @@
 use crate::{layout::Layout, plan, semantic, svg, view};
 use serde_json::{Value, json};
 
+const CONSUMER: &str = concat!(
+    "aws_instance.consumer_with_a_very_long_name_that_exercises_more_than_two_address_lines_",
+    "even_on_content_sized_cards_and_keeps_its_uses_dependencies_and_footer_clear_",
+    "while_preserving_every_character"
+);
+
 fn fixture(nested: bool, regional: bool) -> (Value, Vec<String>) {
     let addresses = vec![
         format!(
@@ -9,13 +15,13 @@ fn fixture(nested: bool, regional: bool) -> (Value, Vec<String>) {
         ),
         "module.first.aws_iam_policy.shared".into(),
         "module.second.aws_iam_policy.shared".into(),
-        "module.third[\"日本語&<>\"].aws_iam_policy.shared".into(),
+        "module.third[\"日本語.with  spaces&<>\"].aws_iam_policy.shared".into(),
         "aws_iam_policy.fourth".into(),
         "aws_iam_policy.fifth".into(),
     ];
     let mut resources: Vec<_> = addresses.iter().map(|address| json!({"address":address,"type":"aws_iam_policy","change":{"actions":["create"]}})).collect();
     resources.extend([
-        json!({"address":"aws_instance.consumer","type":"aws_instance","change":{"actions":["update"],"after":{"secret":"PRIVATE_VALUE"}}}),
+        json!({"address":CONSUMER,"type":"aws_instance","change":{"actions":["update"],"after":{"secret":"PRIVATE_VALUE"}}}),
         json!({"address":"aws_instance.peer","type":"aws_instance"}),
         json!({"address":"aws_iam_role.annotation","type":"aws_iam_role"}),
     ]);
@@ -24,8 +30,8 @@ fn fixture(nested: bool, regional: bool) -> (Value, Vec<String>) {
         "iam_instance_profile":{"references":["aws_iam_instance_profile.missing.name"]}
     });
     let mut config = vec![
-        json!({"address":"aws_instance.consumer","provider_config_key":"aws","depends_on":[addresses[1]],"expressions":expressions}),
-        json!({"address":"aws_instance.peer","provider_config_key":"aws","expressions":{"user_data":{"references":["aws_instance.consumer.id"]}}}),
+        json!({"address":CONSUMER,"provider_config_key":"aws","depends_on":[addresses[1]],"expressions":expressions}),
+        json!({"address":"aws_instance.peer","provider_config_key":"aws","expressions":{"user_data":{"references":[format!("{CONSUMER}.id")]}}}),
         json!({"address":"aws_iam_role.annotation","expressions":expressions}),
     ];
     if nested {
@@ -78,7 +84,7 @@ fn every_remote_reference_keeps_its_full_state_qualified_label_and_link() {
                 },
                 to: Endpoint {
                     state: consumer.clone(),
-                    address: "aws_instance.consumer".into(),
+                    address: CONSUMER.into(),
                 },
                 provenance: CrossStateProvenance::TerraformRemoteState {
                     remote: "data.terraform_remote_state.policies".into(),
@@ -132,7 +138,7 @@ fn full_reference_rows_fit_flat_nested_and_regional_geometry() {
         assert!(!output.contains("PRIVATE_VALUE"));
         assert!(!output.contains("more (see full title)"));
         let doc = roxmltree::Document::parse(&output).unwrap();
-        for address in ["aws_instance.consumer", "aws_iam_role.annotation"] {
+        for address in [CONSUMER, "aws_iam_role.annotation"] {
             let card = doc
                 .descendants()
                 .find(|n| n.attribute("data-terraform-address") == Some(address))
@@ -149,7 +155,7 @@ fn full_reference_rows_fit_flat_nested_and_regional_geometry() {
                 );
             }
             assert!(references.descendants().any(|n| n.text()
-                == Some(if address == "aws_instance.consumer" {
+                == Some(if address == CONSUMER {
                     "Instance profile: unresolved"
                 } else {
                     "References: unresolved"
@@ -176,8 +182,39 @@ fn full_reference_rows_fit_flat_nested_and_regional_geometry() {
         }
         let consumer = doc
             .descendants()
-            .find(|n| n.attribute("data-terraform-address") == Some("aws_instance.consumer"))
+            .find(|n| n.attribute("data-terraform-address") == Some(CONSUMER))
             .unwrap();
+        let heading: Vec<_> = consumer
+            .children()
+            .filter(|n| n.has_tag_name("text") && n.attribute("font-size") == Some("13"))
+            .collect();
+        assert!(heading.len() > 2);
+        assert_eq!(
+            heading.iter().filter_map(|n| n.text()).collect::<String>(),
+            consumer.attribute("data-qualified-address").unwrap()
+        );
+        let references = consumer
+            .children()
+            .find(|n| n.attribute("data-resource-references").is_some())
+            .unwrap();
+        let uses = references
+            .children()
+            .find(|n| n.has_tag_name("text"))
+            .unwrap();
+        let y = |n: roxmltree::Node<'_, '_>| n.attribute("y").unwrap().parse::<usize>().unwrap();
+        assert!(y(*heading.last().unwrap()) + 10 < y(uses));
+        let reference_bottom = references
+            .descendants()
+            .filter(|n| n.has_tag_name("text"))
+            .map(y)
+            .max()
+            .unwrap();
+        for footer in consumer
+            .children()
+            .filter(|n| n.has_tag_name("text") && n.attribute("font-size") == Some("10"))
+        {
+            assert!(reference_bottom + 4 < y(footer));
+        }
         assert!(
             consumer
                 .descendants()
@@ -228,7 +265,7 @@ fn full_reference_rows_fit_flat_nested_and_regional_geometry() {
         let focused = view::single(
             &graph,
             &view::Options {
-                focus: Some("aws_instance.consumer".into()),
+                focus: Some(CONSUMER.into()),
                 depth: Some(0),
                 ..Default::default()
             },

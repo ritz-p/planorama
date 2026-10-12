@@ -76,8 +76,9 @@ without exchanging a compact container for a long strip. Within those bounds,
 the objective is Manhattan distance between projected peer centers plus the
 router's one-pixel crossing penalty for intersecting straight-line estimates.
 Repeated relationships weight both signals. Compactness breaks routing-cost ties.
-Reference content expands card width and height before packing; containers and
-scope panels enclose those actual bounds. Flat rank columns reserve the widest
+Wrapped headings and reference content expand card height before packing;
+reference content can also expand card width. Containers and scope panels enclose
+those actual bounds. Flat rank columns reserve the widest
 card in each rank, and routing ports use the expanded borders.
 The hub regressions cover useful shape changes and the shape bounds under heavy
 relationship weights; variable-height cases use actual card centers.

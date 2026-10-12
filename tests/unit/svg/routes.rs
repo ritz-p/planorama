@@ -384,7 +384,21 @@ fn destinations_never_copy_sensitive_or_evaluated_values() {
 
 #[test]
 fn many_long_routes_expand_parent_and_keep_deterministic_geometry() {
-    let mut value = input();
+    let parent_address = format!("aws_route_table.{}", "long_parent_name_".repeat(16));
+    let mut value: Value = serde_json::from_str(
+        &input()
+            .to_string()
+            .replace("aws_route_table.public", &parent_address),
+    )
+    .unwrap();
+    value["resource_changes"]
+        .as_array_mut()
+        .unwrap()
+        .push(json!({"address":"aws_iam_policy.context","type":"aws_iam_policy"}));
+    value["configuration"]["root_module"]["resources"]
+        .as_array_mut()
+        .unwrap()
+        .push(json!({"address":parent_address,"expressions":{"tags":{"references":["aws_iam_policy.context.arn"]}}}));
     for index in 0..24 {
         let address = format!("aws_route.long_{index}_{}", "長い名前".repeat(16));
         let mut change = value["resource_changes"][2].clone();
@@ -403,6 +417,59 @@ fn many_long_routes_expand_parent_and_keep_deterministic_geometry() {
     let svg = output(&value);
     verify_cards(&svg);
     assert_eq!(svg.matches("data-embedded-route=\"true\"").count(), 26);
+    let doc = roxmltree::Document::parse(&svg).unwrap();
+    let parent = doc
+        .descendants()
+        .find(|n| n.attribute("data-terraform-address") == Some(parent_address.as_str()))
+        .unwrap();
+    let y = |n: roxmltree::Node<'_, '_>| n.attribute("y").unwrap().parse::<usize>().unwrap();
+    let heading: Vec<_> = parent
+        .children()
+        .filter(|n| n.has_tag_name("text") && n.attribute("font-size") == Some("13"))
+        .collect();
+    assert!(heading.len() > 2);
+    assert_eq!(
+        heading.iter().filter_map(|n| n.text()).collect::<String>(),
+        parent.attribute("data-qualified-address").unwrap()
+    );
+    let references = parent
+        .children()
+        .find(|n| n.attribute("data-resource-references").is_some())
+        .unwrap();
+    let uses = references
+        .children()
+        .find(|n| n.has_tag_name("text"))
+        .unwrap();
+    assert!(y(*heading.last().unwrap()) + 10 < y(uses));
+    let reference_bottom = references
+        .descendants()
+        .filter(|n| n.has_tag_name("text"))
+        .map(y)
+        .max()
+        .unwrap();
+    let routes = parent
+        .children()
+        .find(|n| n.attribute("data-routes").is_some())
+        .unwrap();
+    let route_heading = routes.children().find(|n| n.has_tag_name("text")).unwrap();
+    assert!(reference_bottom + 4 < y(route_heading));
+    let route_rects: Vec<_> = routes
+        .descendants()
+        .filter(|n| n.has_tag_name("rect"))
+        .collect();
+    let first_route_y = route_rects.iter().map(|n| y(*n)).min().unwrap();
+    assert!(y(route_heading) + 4 < first_route_y);
+    let route_bottom = route_rects
+        .iter()
+        .map(|n| y(*n) + n.attribute("height").unwrap().parse::<usize>().unwrap())
+        .max()
+        .unwrap();
+    for footer in parent
+        .children()
+        .filter(|n| n.has_tag_name("text") && n.attribute("font-size") == Some("10"))
+    {
+        assert!(route_bottom + 4 < y(footer));
+    }
     value["resource_changes"].as_array_mut().unwrap().reverse();
     value["configuration"]["root_module"]["resources"]
         .as_array_mut()

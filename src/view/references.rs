@@ -28,20 +28,24 @@ impl Row<'_> {
     }
 
     pub(crate) fn line_count(&self, width: usize) -> usize {
-        super::text::wrap(&self.label(false), width / 8).len()
+        self.lines(&self.label(false), width)
+            .len()
+            .max(self.lines(&self.label(true), width).len())
+    }
+
+    pub(crate) fn lines<'a>(&self, text: &'a str, width: usize) -> Vec<&'a str> {
+        if self.target.is_some() {
+            super::text::wrap_address(text, width / 8)
+        } else {
+            super::text::wrap(text, width / 8)
+        }
     }
 }
 
 pub(crate) fn width(node: &Node) -> usize {
     rows(node)
         .iter()
-        .map(|row| {
-            row.label(false)
-                .chars()
-                .map(|c| if c.is_ascii() { 8 } else { 16 })
-                .sum::<usize>()
-                + TEXT_INSET
-        })
+        .map(|row| super::text::width(&row.label(false)) * 8 + TEXT_INSET)
         .max()
         .unwrap_or(crate::layout::NODE_WIDTH)
         .clamp(crate::layout::NODE_WIDTH, 640)

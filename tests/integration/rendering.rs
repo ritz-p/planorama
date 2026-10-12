@@ -48,11 +48,12 @@ fn inferred_placement_notes_use_provenance_and_fit_below_long_addresses() {
     );
     let direct = render(include_bytes!("../fixtures/network-scope-plan.json"));
     assert!(!direct.contains("inferred placement"));
-    let long_input = String::from_utf8(input.to_vec()).unwrap().replace(
-        "aws_db_subnet_group.main",
-        "aws_db_subnet_group.very_long_resource_address_that_requires_two_lines_and_truncation",
-    );
+    let address = format!("aws_db_subnet_group.{}", "long_resource_name_".repeat(20));
+    let long_input = String::from_utf8(input.to_vec())
+        .unwrap()
+        .replace("aws_db_subnet_group.main", &address);
     let svg = render(long_input.as_bytes());
+    assert_eq!(svg.matches("data-placement=\"inferred\"").count(), 2);
     let doc = roxmltree::Document::parse(&svg).unwrap();
     for note in doc
         .descendants()
@@ -64,11 +65,18 @@ fn inferred_placement_notes_use_provenance_and_fit_below_long_addresses() {
         let height = rect.attribute("height").unwrap().parse::<usize>().unwrap();
         assert!(y(note) >= y(rect) + 80);
         assert!(y(note) < y(rect) + height - 12);
-        assert!(
-            card.children()
-                .filter(|n| n.has_tag_name("text") && n.attribute("font-size") == Some("13"))
-                .all(|n| y(n) + 10 < y(note))
-        );
+        let heading: Vec<_> = card
+            .children()
+            .filter(|n| n.has_tag_name("text") && n.attribute("font-size") == Some("13"))
+            .collect();
+        assert!(heading.iter().all(|n| y(*n) + 10 < y(note)));
+        if card.attribute("data-terraform-address") == Some(address.as_str()) {
+            assert!(heading.len() > 2);
+            assert_eq!(
+                heading.iter().filter_map(|n| n.text()).collect::<String>(),
+                card.attribute("data-qualified-address").unwrap()
+            );
+        }
     }
 }
 

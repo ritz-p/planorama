@@ -1,5 +1,6 @@
 use super::annotations::{Card, card_width, wrap};
 use crate::model::architecture::Graph;
+use crate::view::text::wrap_address;
 use std::collections::BTreeMap;
 use std::fmt::Write;
 
@@ -54,7 +55,7 @@ pub(super) fn cards(graph: &Graph) -> Vec<Card> {
                 None => (*address).clone(),
             };
             let member_width = card_width(std::iter::once(&text)).min(width - 32);
-            let lines = wrap(&text, (member_width - 32) / 8);
+            let lines = wrap_address(&text, (member_width - 32) / 8);
             let height = lines.len() * 20 + 24;
             let (background, border) = super::color(node.map_or(crate::model::Action::Unchanged, |node| node.action));
             let mut member = String::new();

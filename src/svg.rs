@@ -308,18 +308,8 @@ fn render_with_index(
         };
         let selected_title = escape(&selected);
         let icon = icons::for_node(node);
-        let inset = match icon {
-            Some(_) => 12 + icons::SIZE + icons::GAP,
-            None => 12,
-        };
-        let line_length = (card_width.saturating_sub(inset + 12) / 8).clamp(1, 35);
-        let lines: Vec<_> = selected
-            .chars()
-            .collect::<Vec<_>>()
-            .chunks(line_length)
-            .take(2)
-            .map(|c| c.iter().collect::<String>())
-            .collect();
+        let metrics = crate::view::card::measure(node);
+        let lines = crate::view::text::wrap_address(&selected, metrics.line_limit);
         let mode = entities::border(node.mode);
         let operation = operations::attributes(&node.metadata);
         let component = membership
@@ -367,21 +357,12 @@ fn render_with_index(
             svg.push_str(&icons::render(icon, x + 12, y + 28));
         }
         for (line, text) in lines.iter().enumerate() {
-            let text = match line {
-                1 if selected.chars().count() > line_length * 2 => {
-                    format!(
-                        "{}…",
-                        text.chars().take(line_length - 1).collect::<String>()
-                    )
-                }
-                _ => text.clone(),
-            };
             writeln!(
                 svg,
-                r##"<text x="{}" y="{}" font-size="13" fill="#0f172a">{}</text>"##,
-                x + inset,
+                r##"<text x="{}" y="{}" font-size="13" fill="#0f172a" xml:space="preserve">{}</text>"##,
+                x + metrics.inset,
                 y + 45 + line * 20,
-                escape(&text)
+                escape(text)
             )
             .unwrap();
         }
@@ -389,14 +370,14 @@ fn render_with_index(
             graph,
             node,
             x + 12,
-            y + 86,
+            y + metrics.references_y,
             card_width - 24,
         ));
         svg.push_str(&routes::render(
             graph,
             i,
             x + 12,
-            y + 94 + crate::view::references::height(node),
+            y + metrics.routes_y,
             relationship_index,
         ));
         let role = roles::annotation(node.role, &node.module);
