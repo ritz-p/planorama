@@ -385,7 +385,7 @@ fn crossing(first: &[Point], second: &[Point]) -> Option<(usize, usize)> {
     }
 }
 #[test]
-fn search_borders_follow_current_container_masks() {
+fn changing_masks_filter_visible_contacts_without_discarding_frames() {
     let outer = Bounds {
         origin: Point { x: 100, y: 100 },
         width: 10000,
@@ -407,15 +407,36 @@ fn search_borders_follow_current_container_masks() {
     }));
     let mut scorer = Scorer::default();
     scorer.set_borders(&frames);
-    assert_eq!(scorer.borders().count(), frames.len());
+    let boundary = points(&[(220, 100), (300, 100)]);
+    let inside = points(&[(128, 120), (140, 120)]);
+    let outside = points(&[(220, 96), (300, 96)]);
+    let visible_partial = points(&[(100, 80), (160, 80)]);
+    assert_eq!(scorer.border_frames().len(), frames.len());
+    assert!(scorer.border_metrics(&boundary).cost() > 0);
+    assert!(scorer.border_metrics(&inside).cost() > 0);
     scorer.set_soft(vec![Occluder {
         bounds: outer,
         cost: 1,
         step: 2,
     }]);
-    assert_eq!(scorer.borders().copied().collect::<Vec<_>>(), vec![partial]);
+    assert_eq!(scorer.border_frames().len(), frames.len());
+    assert_eq!(scorer.border_metrics(&boundary).cost(), 0);
+    assert_eq!(scorer.border_metrics(&inside).cost(), 0);
+    assert!(scorer.border_contacts(&boundary).is_empty());
+    assert!(scorer.border_contacts(&inside).is_empty());
+    assert!(scorer.border_metrics(&outside).cost() > 0);
+    assert!(
+        scorer
+            .border_contacts(&visible_partial)
+            .iter()
+            .any(|contact| contact.frame.bounds == partial)
+    );
     scorer.set_soft(vec![outer]);
-    assert_eq!(scorer.borders().count(), frames.len());
+    assert_eq!(scorer.border_frames().len(), frames.len());
+    assert!(scorer.border_metrics(&boundary).cost() > 0);
+    assert_eq!(scorer.border_metrics(&inside).cost(), 0);
     scorer.set_soft(Vec::<Occluder>::new());
-    assert_eq!(scorer.borders().count(), frames.len());
+    assert_eq!(scorer.border_frames().len(), frames.len());
+    assert!(scorer.border_metrics(&boundary).cost() > 0);
+    assert!(scorer.border_metrics(&inside).cost() > 0);
 }
