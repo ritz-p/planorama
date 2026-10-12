@@ -204,6 +204,13 @@ fn route_children_keep_identity_palette_metadata_and_reference_edges() {
             .filter_map(|n| n.text())
             .collect::<String>();
         assert_eq!(moved, "Moved from: aws_route.old");
+        let title = child
+            .children()
+            .find(|n| n.has_tag_name("title"))
+            .and_then(|n| n.text())
+            .unwrap();
+        assert!(title.contains("moved from: aws_route.old"));
+        assert_eq!(title.matches("aws_route.old").count(), 1);
         let rect = child.children().find(|n| n.has_tag_name("rect")).unwrap();
         assert_eq!(rect.attribute("fill"), Some(svg::color(action).0));
         assert_eq!(rect.attribute("stroke"), Some(svg::color(action).1));
