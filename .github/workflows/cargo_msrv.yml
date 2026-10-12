@@ -10,13 +10,24 @@ on:
       - .dockerignore
       - compose.yaml
       - .github/workflows/cargo_msrv.yml
+      - .github/scripts/checkout-validation.sh
   workflow_dispatch:
+    inputs:
+      pull_request:
+        description: 'PR number to validate with its base (requires expected_head_sha)'
+        type: string
+        required: false
+      expected_head_sha:
+        description: 'Exact PR head SHA that must match this workflow run'
+        type: string
+        required: false
 
 env:
   RUST_VERSION: 1.85.0
 
 permissions:
   contents: read
+  pull-requests: read
 
 jobs:
   msrv:
@@ -24,5 +35,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+      - name: Checkout dispatched PR merge
+        if: github.event_name == 'workflow_dispatch'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PULL_REQUEST: ${{ inputs.pull_request }}
+          EXPECTED_HEAD_SHA: ${{ inputs.expected_head_sha }}
+        run: bash .github/scripts/checkout-validation.sh
       - run: docker build --build-arg RUST_VERSION=${{ env.RUST_VERSION }} --tag planorama-msrv .
       - run: docker run --rm --volume "$PWD:/workspace" --env CARGO_TARGET_DIR=/tmp/planorama-target planorama-msrv cargo +${{ env.RUST_VERSION }}  test --locked --all-targets --all-features
