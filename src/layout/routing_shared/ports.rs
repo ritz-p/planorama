@@ -291,27 +291,50 @@ fn candidates_impl<const PRUNE: bool>(
         .into_iter()
         .filter(|path| valid_with_clearances(path, start, end, obstacles, terminals))
         .collect::<Vec<_>>();
-    for peer in quality.peers() {
-        for y in [8, 16, 24].into_iter().flat_map(|gap| {
+    let tracks =
+        quality
+            .border_axes(first, last)
+            .into_iter()
+            .chain(quality.peers().iter().flat_map(|peer| {
+                [8, 16, 24].into_iter().flat_map(move |gap| {
+                    [
+                        (true, peer.origin.y.saturating_sub(gap)),
+                        (true, peer.origin.y + peer.height + gap),
+                    ]
+                })
+            }));
+    for (horizontal, coordinate) in tracks {
+        let bends = if horizontal {
             [
-                peer.origin.y.saturating_sub(gap),
-                peer.origin.y + peer.height + gap,
+                Point {
+                    x: first.x,
+                    y: coordinate,
+                },
+                Point {
+                    x: last.x,
+                    y: coordinate,
+                },
             ]
-        }) {
-            let path = simplify(
-                [
-                    start.point,
-                    first,
-                    Point { x: first.x, y },
-                    Point { x: last.x, y },
-                    last,
-                    end.point,
-                ],
-                Simplification::PreserveReversals,
-            );
-            if valid_with_clearances(&path, start, end, obstacles, terminals) {
-                candidates.push(path);
-            }
+        } else {
+            [
+                Point {
+                    x: coordinate,
+                    y: first.y,
+                },
+                Point {
+                    x: coordinate,
+                    y: last.y,
+                },
+            ]
+        };
+        let path = simplify(
+            [start.point, first, bends[0], bends[1], last, end.point],
+            Simplification::PreserveReversals,
+        );
+        if valid_with_clearances(&path, start, end, obstacles, terminals)
+            && !candidates.contains(&path)
+        {
+            candidates.push(path);
         }
     }
     let bound = cost_bound(start, end, terminals);

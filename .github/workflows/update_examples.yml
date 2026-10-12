@@ -564,6 +564,29 @@ jobs:
               }
             }
 
+            async function verifyDispatch(runId, workflow, sha, branch) {
+              const expected = {
+                id: runId, head_sha: sha, event: 'workflow_dispatch', head_branch: branch,
+                path: `.github/workflows/${workflow}`, display_title: `Validate PR #${number} at ${sha}`,
+              };
+              let differences = [];
+              for (let attempt = 0; attempt < 6; attempt++) {
+                try {
+                  const run = await request('GET', `actions/runs/${runId}`);
+                  const actual = {...run, path: run?.path?.split('@', 1)[0]};
+                  differences = Object.entries(expected).flatMap(([field, value]) => actual[field] === value
+                    ? [] : [`${field}=${JSON.stringify(actual[field])} (expected ${JSON.stringify(value)})`]);
+                  if (!differences.length) return;
+                } catch (error) {
+                  if (error.status !== 404) throw error;
+                  differences = ['run metadata returned HTTP 404'];
+                }
+                core.info(`${workflow} verification pending (${attempt + 1}/6): ${differences.join('; ')}`);
+                if (attempt < 5) await delay(2000);
+              }
+              throw new Error(`dispatched run does not match the expected PR validation: ${differences.join('; ')}`);
+            }
+
             async function dispatchChecks(sha, branch, workflows) {
               await dispatchStatus(sha, 'pending', 'Requesting validation for this generated commit');
               try {
@@ -583,21 +606,7 @@ jobs:
                     if (!Number.isSafeInteger(runId) || runId <= 0) {
                       throw new Error('dispatch did not return a workflow run ID');
                     }
-                    let run;
-                    for (let attempt = 0; attempt < 3; attempt++) {
-                      try {
-                        run = await request('GET', `actions/runs/${runId}`);
-                        break;
-                      } catch (error) {
-                        if (error.status !== 404 || attempt === 2) throw error;
-                        await delay((attempt + 1) * 1000);
-                      }
-                    }
-                    if (run.head_sha !== sha || run.event !== 'workflow_dispatch' || run.head_branch !== branch
-                        || run.path?.split('@', 1)[0] !== `.github/workflows/${workflow}`
-                        || run.display_title !== `Validate PR #${number} at ${sha}`) {
-                      throw new Error('dispatched run does not match the expected PR validation');
-                    }
+                    await verifyDispatch(runId, workflow, sha, branch);
                     const url = `https://github.com/${repository}/actions/runs/${runId}`;
                     await report(`Requested [${workflow}](${url}) for \`${sha}\`; see the run for its validation result.`);
                   } catch (error) {
