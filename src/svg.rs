@@ -20,7 +20,9 @@ mod routes;
 mod scopes;
 mod states;
 mod style;
+pub(crate) use identity::resource as resource_id;
 pub use states::render_states;
+pub(crate) use states::{prefix as state_prefix, render_content as render_states_content};
 #[cfg(test)]
 #[path = "../tests/unit/svg.rs"]
 mod tests;
@@ -35,6 +37,12 @@ pub enum AddressFormat {
     #[default]
     Qualified,
     Terraform,
+}
+
+#[derive(Clone, Copy)]
+pub(crate) enum Content {
+    Standard,
+    ValueFree,
 }
 
 fn escape(value: &str) -> String {
@@ -127,6 +135,15 @@ pub(crate) fn render_with_format(
     layout: &Layout<'_>,
     address_format: AddressFormat,
 ) -> String {
+    render_content(graph, layout, address_format, Content::Standard)
+}
+
+pub(crate) fn render_content(
+    graph: &Graph,
+    layout: &Layout<'_>,
+    address_format: AddressFormat,
+    content: Content,
+) -> String {
     let relationship_index = relationship_index::Index::new(graph, layout);
     let sections = Sections::new(graph, &relationship_index, address_format);
     render_with_index(
@@ -135,6 +152,7 @@ pub(crate) fn render_with_format(
         address_format,
         &relationship_index,
         &sections,
+        content,
     )
 }
 
@@ -144,6 +162,7 @@ fn render_with_index(
     address_format: AddressFormat,
     relationship_index: &relationship_index::Index<'_>,
     sections: &Sections,
+    content: Content,
 ) -> String {
     let check_offset = sections.check_height;
     let (width, height) = sections.dimensions(layout);
@@ -168,7 +187,7 @@ fn render_with_index(
 <text x="40" y="73" font-size="13" fill="#475569">{summary}</text>
 "##,
     );
-    svg.push_str(&provenance::metadata(graph));
+    svg.push_str(&provenance::metadata(graph, content));
     for (i, action) in [
         Action::Create,
         Action::Update,
@@ -411,6 +430,7 @@ fn render_with_index(
             x + 12,
             y + metrics.routes_y,
             relationship_index,
+            content,
         ));
         let role = roles::annotation(node.role, &node.module);
         let footer = match role.is_empty() {

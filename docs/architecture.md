@@ -1,6 +1,6 @@
 # Architecture and dependency contracts
 
-The processing pipeline is `CLI → TerraformPlan → ArchitectureGraph → ViewGraph → Layout → SVG`.
+The processing pipeline is `CLI → TerraformPlan → ArchitectureGraph → ViewGraph → Layout → SVG`, with an optional self-contained HTML viewer around the SVG.
 The CLI owns file I/O and coordinates each stage. Named-state inputs preserve the
 same boundaries and carry explicit cross-state relationships.
 
@@ -13,6 +13,7 @@ same boundaries and carry explicit cross-state relationships.
 | `view` | Immutable selection, neighbor expansion, required context and shared presentation measurements |
 | `layout` | Containment hierarchy, placement, bounds, ports and routes |
 | `svg` | Drawing, text, legends and metadata |
+| `html` | Local viewer, explicit value-free resource index from the selected view, and navigation over rendered SVG metadata |
 
 SVG composition places non-spatial annotations after the header, legend and checks,
 above the architecture. The neutral relationship legend measures wrapped action

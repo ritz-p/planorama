@@ -7,6 +7,7 @@ pub(crate) struct Row {
     pub text: String,
     pub target: Option<TerraformEntityId>,
     pub moved: bool,
+    pub destination: bool,
     address: bool,
 }
 
@@ -67,6 +68,7 @@ fn details(entry: &RouteEntry) -> Vec<Row> {
             ),
             target: None,
             moved: false,
+            destination: true,
             address: false,
         },
         Row {
@@ -76,6 +78,7 @@ fn details(entry: &RouteEntry) -> Vec<Row> {
             },
             target: entry.target.clone(),
             moved: false,
+            destination: false,
             address: entry.target_kind.is_some() && entry.target.is_some(),
         },
     ]
@@ -94,6 +97,7 @@ pub(crate) fn cards(graph: &Graph, parent: usize) -> Vec<Card<'_>> {
             },
             target: None,
             moved: false,
+            destination: false,
             address: false,
         }];
         rows.extend(details(entry));
@@ -102,6 +106,7 @@ pub(crate) fn cards(graph: &Graph, parent: usize) -> Vec<Card<'_>> {
                 text: "Route Table: unresolved".into(),
                 target: None,
                 moved: false,
+                destination: false,
                 address: false,
             });
         }
@@ -127,6 +132,7 @@ pub(crate) fn cards(graph: &Graph, parent: usize) -> Vec<Card<'_>> {
             text: format!("{} [{operation}]", child.address),
             target: None,
             moved: false,
+            destination: false,
             address: true,
         }];
         if let Some(previous) = &child.previous_address {
@@ -134,6 +140,7 @@ pub(crate) fn cards(graph: &Graph, parent: usize) -> Vec<Card<'_>> {
                 text: super::text::moved_from(previous),
                 target: None,
                 moved: true,
+                destination: false,
                 address: true,
             });
         }
@@ -145,6 +152,7 @@ pub(crate) fn cards(graph: &Graph, parent: usize) -> Vec<Card<'_>> {
                     text: "Next hop".into(),
                     target: None,
                     moved: false,
+                    destination: false,
                     address: false,
                 });
             }
@@ -180,6 +188,7 @@ pub(crate) fn cards(graph: &Graph, parent: usize) -> Vec<Card<'_>> {
                 text: format!("{label}: {}", other.address),
                 target: other.entity.provenance.first().cloned(),
                 moved: false,
+                destination: false,
                 address: true,
             });
         }
