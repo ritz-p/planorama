@@ -13,7 +13,10 @@ fn namespacing_only_rewrites_fragment_reference_attributes() {
 #[test]
 fn mixed_width_state_legends_keep_their_own_columns_outside_cross_state_gutters() {
     let graphs: BTreeMap<_, _> = [
-        ("compact", include_str!("../../fixtures/association-plan.json")),
+        (
+            "compact",
+            include_str!("../../fixtures/association-plan.json"),
+        ),
         ("wide", include_str!("../../fixtures/terraform-plan.json")),
     ]
     .into_iter()
@@ -49,9 +52,8 @@ fn mixed_width_state_legends_keep_their_own_columns_outside_cross_state_gutters(
     let viewed = crate::view::apply(&architecture, &Default::default()).unwrap();
     let rendered = render_states(&viewed, super::super::AddressFormat::Qualified);
     let document = roxmltree::Document::parse(&rendered).unwrap();
-    let number = |node: roxmltree::Node, name| {
-        node.attribute(name).unwrap().parse::<usize>().unwrap()
-    };
+    let number =
+        |node: roxmltree::Node, name| node.attribute(name).unwrap().parse::<usize>().unwrap();
     let mut maximum_width = 0;
     for (id, graph) in &viewed.states {
         let local = super::super::render(graph, &Layout::new(graph));

@@ -48,9 +48,21 @@ fn legend_reflow_changes_section_offsets_without_moving_cards_or_routing_paths()
             .descendants()
             .filter(|node| node.attribute("data-terraform-address").is_some())
             .map(|node| {
+                let id = node.attribute("id").unwrap();
                 let rectangle = node
                     .children()
                     .find(|child| child.has_tag_name("rect"))
+                    .or_else(|| {
+                        architecture
+                            .descendants()
+                            .find(|outline| {
+                                outline.attribute("data-container") == Some(id)
+                                    || outline.attribute("data-route-table") == Some(id)
+                            })
+                            .and_then(|outline| {
+                                outline.children().find(|child| child.has_tag_name("rect"))
+                            })
+                    })
                     .unwrap();
                 (
                     node.attribute("data-terraform-address").unwrap().to_owned(),

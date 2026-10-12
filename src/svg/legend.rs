@@ -161,8 +161,7 @@ impl Content {
         let columns = ((self.width + COLUMN_GAP) / (minimum + COLUMN_GAP))
             .max(1)
             .min(entries.len());
-        let cell_width =
-            ((self.width - (columns - 1) * COLUMN_GAP) / columns).min(MAX_ENTRY_WIDTH);
+        let cell_width = ((self.width - (columns - 1) * COLUMN_GAP) / columns).min(MAX_ENTRY_WIDTH);
         for row in entries.chunks(columns) {
             let cells: Vec<_> = row.iter().map(|entry| entry.measure(cell_width)).collect();
             let row_height = cells.iter().map(|cell| cell.y).max().unwrap_or(0);

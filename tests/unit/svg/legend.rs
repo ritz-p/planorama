@@ -322,7 +322,11 @@ fn relationship_legend_wraps_actions_and_text_inside_its_measured_bounds() {
             .iter()
             .map(|bounds| bounds[3])
             .fold(0.0, f64::max);
-        assert!(actions.iter().all(|action| drawing_bounds(*action)[3] < entry_top));
+        assert!(
+            actions
+                .iter()
+                .all(|action| drawing_bounds(*action)[3] < entry_top)
+        );
         for text in root.children().filter(|node| node.has_tag_name("text")) {
             let bounds = drawing_bounds(text);
             assert!(bounds[2] <= (width.min(MAX_PROSE_WIDTH) - PADDING) as f64);
@@ -417,18 +421,10 @@ fn grid_rows_measure_long_explanations_and_use_the_tallest_entry() {
             y: second_row,
         }
     );
-    let third_row = second_row
-        + last_baseline(cells[2]).max(last_baseline(cells[3]))
-        + LINE_HEIGHT
+    let third_row = second_row + last_baseline(cells[2]).max(last_baseline(cells[3])) + LINE_HEIGHT
         - 12
         + ROW_GAP;
-    assert_eq!(
-        position(cells[4]),
-        Point {
-            x: 0,
-            y: third_row,
-        }
-    );
+    assert_eq!(position(cells[4]), Point { x: 0, y: third_row });
     assert_eq!(
         grid.y,
         third_row + last_baseline(cells[4]) + LINE_HEIGHT - 12 + ROW_GAP
@@ -442,7 +438,9 @@ fn grid_rows_measure_long_explanations_and_use_the_tallest_entry() {
         .collect();
     assert_eq!(
         rendered,
-        long.chars().filter(|c| !c.is_whitespace()).collect::<String>()
+        long.chars()
+            .filter(|c| !c.is_whitespace())
+            .collect::<String>()
     );
     for text in cells[1].children().filter(|node| node.has_tag_name("text")) {
         let bounds = drawing_bounds(text);
