@@ -208,7 +208,7 @@ fn a_single_path_reserves_visible_border_clearance_in_both_axes() {
 }
 
 #[test]
-fn rejected_border_growth_restores_geometry_and_keeps_the_residual_measurable() {
+fn protected_border_paths_keep_geometry_and_the_residual_measurable() {
     let graph = corridor_graph(1);
     let mut layout = single_border_corridor(&graph, false, 300);
     layout.junctions = vec![Point { x: 493, y: 600 }];
@@ -350,9 +350,9 @@ fn later_rerouting_cannot_transfer_overlap_onto_an_earlier_route() {
     ));
     let accepted = reroute::apply(&graph, &mut layout, &planned, &before, &baseline, false);
     if accepted {
-        for i in 0..2 {
+        for (i, &shape) in baseline.iter().enumerate().take(2) {
             assert!(overlap(&layout.paths, i) <= overlap(&before.paths, i));
-            assert!(Shape::measure(&layout.paths[i]).fits(baseline[i]));
+            assert!(Shape::measure(&layout.paths[i]).fits(shape));
         }
     }
     let expected = before.paths.clone();

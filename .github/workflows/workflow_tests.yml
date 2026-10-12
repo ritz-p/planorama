@@ -1,0 +1,54 @@
+name: Workflow tests
+run-name: >-
+  ${{ github.event_name == 'workflow_dispatch' && inputs.pull_request && inputs.expected_head_sha
+      && format('Validate PR #{0} at {1}', inputs.pull_request, inputs.expected_head_sha)
+      || github.event.pull_request.title || github.workflow }}
+
+on:
+  pull_request:
+    paths:
+      - .github/**
+      - tests/ci/**
+  workflow_dispatch:
+    inputs:
+      pull_request:
+        description: 'PR number to validate with its base (requires expected_head_sha)'
+        type: string
+        required: false
+      expected_head_sha:
+        description: 'Exact PR head SHA that must match this workflow run'
+        type: string
+        required: false
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  workflow-tests:
+    name: ${{ github.event_name == 'workflow_dispatch' && 'Dispatched Workflow tests' || 'Workflow tests' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+      - name: Checkout dispatched PR merge
+        if: github.event_name == 'workflow_dispatch'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PULL_REQUEST: ${{ inputs.pull_request }}
+          EXPECTED_HEAD_SHA: ${{ inputs.expected_head_sha }}
+        run: bash .github/scripts/checkout-validation.sh
+      - name: Lint workflows
+        run: docker run --rm --volume "$PWD:/work:ro" --workdir /work rhysd/actionlint:1.7.12 -color
+      - name: Test validation reporting
+        uses: actions/github-script@v9.0.0
+        with:
+          script: |
+            const {readdirSync} = require('node:fs');
+            const files = readdirSync('tests/ci')
+              .filter(name => name.endsWith('.test.cjs'))
+              .map(name => `tests/ci/${name}`);
+            if (!files.length) throw new Error('No CI regression tests found');
+            await exec.exec(process.execPath, ['--test', ...files]);

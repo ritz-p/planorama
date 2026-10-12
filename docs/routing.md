@@ -300,9 +300,16 @@ Perpendicular crossings and disjoint projections do not contribute. Coincident
 prefixes/suffixes connected to a common same-role terminal are shared trunks,
 but branches beyond their divergence are measured independently.
 The same pass also creates corridors from a single path's visible frame contacts,
-including contacts shorter than 64px. Minimum-gap violations take priority over
-preferred-gap adjustments. Fully masked frame constraints do not reserve extra
-capacity; visible exterior contacts still do.
+including contacts shorter than 64px. Fully masked frame constraints do not
+reserve extra capacity; visible exterior contacts still do.
+
+Corridors rank by their estimated finite deficit cost: the group's pairwise
+line-spacing deficit divided by four, plus each movable edge's current border
+cost counted once. The border term covers the whole edge, so the estimate can
+include contacts outside that corridor. Sub-4px gaps retain their stronger shared
+penalty. Equal estimates prefer minimum-gap violations, then border contacts,
+then stable geometric and resource order. Every accepted change must still satisfy
+the minimum-gap guards below.
 
 Connected groups of overlapping runs receive ordered lanes over their combined
 corridor before any route is changed. Geometric order and resource identity break
@@ -331,9 +338,11 @@ None may increase; path length may grow by at most 128px. A short offset is meas
 relative to its neighboring legs, not treated as universally invalid near a port.
 Exact overlap cannot increase on rerouted edges. Whole-route clarity takes priority
 over the combined line-spacing and border-clearance cost, with route length and
-expansion cost breaking otherwise equal shape comparisons. Each edge's minimum
-border gap and minimum-gap deficit are compared with the original bounds, before
-any expansion; geometry growth cannot hide a regression in another route.
+expansion cost breaking otherwise equal shape comparisons. An accepted change
+cannot introduce a sub-4px gap or worsen an existing sub-4px minimum on any edge.
+Each edge's length-weighted minimum-gap deficit must also remain unchanged or
+decrease. These comparisons use the bounds and paths captured before the
+transaction; geometry growth cannot hide a regression in another route.
 Preferred gaps are soft: a clean residual near-parallel run beats new bends or an
 excessive detour. When preferred capacity cannot be obtained, the pass tries the
 minimum stroke-aware margin within the existing geometry.
@@ -342,7 +351,8 @@ This pass runs once on the final graph, after embedded Route reconstruction,
 same-side port refinement, bundling and ordinary shortcutting. It permits at most
 two sweeps, six distinct corridor attempts, 16 lanes per corridor, 32 independently
 rerouted edges per attempt and 64px cumulative growth per axis, shared by border
-and line-to-line repairs. Unchanged line-only geometry uses whole-path candidates;
+and line-to-line repairs. Corridors with no independently movable lane are skipped
+before consuming an attempt. Unchanged line-only geometry uses whole-path candidates;
 border repairs may use the bounded frame tracks. Regression metrics disclose
 residual close length, visible minimum gap and both minimum/preferred deficits;
 deterministic fallback preserves valid
@@ -390,8 +400,8 @@ Performance measurements are documented in [benchmarks](benchmarks.md).
 The single-path border fixture covers all three relationship widths, both axes,
 and 32px/300px frame spans. A 12px card gap grows by 8px, followed by a coherent
 two-bend reroute into the resulting 20px corridor. A protected-junction variant
-retains measurable residual proximity and rolls back bounds, paths, scopes and
-bands together. Border tests cover 0/1/2/4/8px offsets, rounded corners, masked path
+keeps its original bounds, paths, scopes and bands with measurable residual
+proximity. Border tests cover 0/1/2/4/8px offsets, rounded corners, masked path
 pieces and additive search subdivision.
 Thread-local test counters verify that unobstructed horizontal/vertical side
 selection evaluates one pair without grid search, while blocked ports expand the

@@ -211,11 +211,26 @@ pub(super) fn apply(
         scorer.set_soft(reservations);
         let mut candidates = super::super::simple::candidates(start.point, end.point);
         if let Some(lane) = plan.lanes.iter().find(|l| l.edge == i) {
-            candidates.extend(lane_candidates(seed, plan, lane.coordinate, clearances));
+            let axis = |point: Point| if plan.horizontal { point.y } else { point.x };
+            let first = axis(start.outward(clearances[0].clearance));
+            let last = axis(end.outward(clearances[1].clearance));
+            let mut coordinates = vec![lane.coordinate, (first + last) / 2];
+            coordinates.extend(
+                scorer
+                    .border_axes(start.point, end.point)
+                    .into_iter()
+                    .filter_map(|(horizontal, coordinate)| {
+                        (horizontal == plan.horizontal).then_some(coordinate)
+                    }),
+            );
+            let mut seen = std::collections::BTreeSet::new();
+            for coordinate in coordinates {
+                if seen.insert(coordinate) {
+                    candidates.extend(lane_candidates(seed, plan, coordinate, clearances));
+                }
+            }
         }
-        if !expanded {
-            candidates.push(seed.clone());
-        }
+        candidates.push(seed.clone());
         let bound = ports::cost_bound(start, end, clearances);
         if (expanded || plan.border)
             && !candidates.iter().any(|p| {
