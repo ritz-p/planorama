@@ -11,8 +11,8 @@
 an edge rather than nesting. Both placement strategies share the tree and actual
 card/container bounds.
 
-Logical resource cards do not enter this pipeline. A spatial view projection
-removes only their geometry participation, retaining graph-index alignment with
+Logical resources and their group cards do not enter this pipeline. A spatial view
+projection removes only their geometry participation, retaining graph-index alignment with
 zero bounds and empty incident paths in the final layout. Their Terraform nodes,
 relationships and evidence remain in the semantic/view graph and SVG metadata.
 The projection also normalizes node identity order before placement, mapping
@@ -42,7 +42,7 @@ before rerouting. Ownership never creates containment or moves the owning subtre
 The same bounded search gives ordinary noncontainer leaf cards a weaker preference
 toward their one distinct visible spatial neighbor. Dependency, Connection and
 Association edges count; parallel edges to one peer count once, while containment,
-self-loops, logical cards and relationships removed by projection do not count.
+self-loops, logical resources and relationships removed by projection do not count.
 Zero-neighbor and multi-neighbor cards keep their packed positions. A two-card
 component anchors the lower stable identity; longer chains move only degree-one
 ends. Multiple leaves move in peer/resource identity order without moving their hub.
