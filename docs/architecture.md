@@ -28,8 +28,18 @@ cards and growing the canvas for oversized cards.
 Empty areas reserve no height. One enclosing translation shifts all architecture
 cards, paths and relationship badges together; annotation cards never enter
 `Layout` or routing obstacles. Named-state endpoint coordinates include this shift.
+Composition also measures the topmost final card, path and relationship badge.
+Geometry that would enter the header or preceding annotation area receives extra
+top clearance through a shared downward translation and matching canvas height.
+This preserves relative card positions and path shapes, including manually placed
+layout fixtures. Named-state heights, endpoint coordinates and routing obstacles
+include the same clearance.
 Relationship index cards group up to 10 complete numbered entries per card,
-continuing to the right before wrapping within their own neutral section. Logical
+continuing to the right without a column cap before wrapping within their own
+neutral section. Packing uses the final content width after other annotations can
+expand it. Named-state composition reflows each state's annotations at the shared
+content width and recalculates heights and endpoint offsets, with the cross-state
+routing gutter reserved outside that width. Logical
 components share a purple parent, with a card per component and a purple heading.
 Members use neutral text rows without individual backgrounds, borders or card
 wrappers. Each complete wrapped item has one underline in its canonical resource

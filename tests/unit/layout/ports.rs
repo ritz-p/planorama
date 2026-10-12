@@ -81,6 +81,63 @@ fn refined_flat_bundle_keeps_opposite_role_port() {
         &layout.paths
     ));
     let rendered = crate::svg::render(&graph, &layout);
+    let document = roxmltree::Document::parse(&rendered).unwrap();
+    let translated_y = |node: roxmltree::Node| {
+        node.ancestors()
+            .filter_map(|parent| parent.attribute("transform"))
+            .map(|value| {
+                value
+                    .trim_start_matches("translate(")
+                    .trim_end_matches(')')
+                    .split_whitespace()
+                    .nth(1)
+                    .unwrap()
+                    .parse::<usize>()
+                    .unwrap()
+            })
+            .sum::<usize>()
+    };
+    let legend = document
+        .descendants()
+        .find(|node| node.attribute("id") == Some("relationship-legend"))
+        .unwrap();
+    let legend_rect = legend
+        .children()
+        .find(|node| node.has_tag_name("rect"))
+        .unwrap();
+    let legend_bottom = translated_y(legend_rect)
+        + legend_rect
+            .attribute("height")
+            .unwrap()
+            .parse::<usize>()
+            .unwrap();
+    let architecture = document
+        .descendants()
+        .find(|node| node.attribute("data-architecture") == Some("true"))
+        .unwrap();
+    let offset = translated_y(architecture);
+    assert!(
+        layout
+            .bounds
+            .iter()
+            .all(|bounds| offset + bounds.origin.y >= legend_bottom + 16)
+    );
+    assert!(
+        layout
+            .paths
+            .iter()
+            .flatten()
+            .all(|point| offset + point.y >= legend_bottom + 16)
+    );
+    assert_eq!(
+        document
+            .root_element()
+            .attribute("height")
+            .unwrap()
+            .parse::<usize>()
+            .unwrap(),
+        layout.height + offset
+    );
     let snapshot = "examples/port-collisions.svg";
     if std::env::var_os("UPDATE_PORT_SNAPSHOT").is_some() {
         std::fs::write(snapshot, &rendered).unwrap();

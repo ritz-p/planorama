@@ -1,4 +1,6 @@
 use super::*;
+#[path = "data_icons.rs"]
+mod data_icons;
 #[path = "icon_import.rs"]
 mod icon_import;
 #[path = "terraform_icons.rs"]

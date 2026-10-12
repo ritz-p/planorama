@@ -89,7 +89,12 @@ a matching **Relationship Resources** numbered list above the architecture diagr
 Embedded Routes appear in that list and show the matching number on their child
 cards. Index entries do not add resource identities or increase resource counts.
 Each card contains up to 10 complete entries: 1–10, 11–20, and so on. Cards continue
-to the right, wrapping only when the available width requires it. A multi-source
+to the right with a 20px gap, wrapping only when the next complete card would exceed
+the final available width. There is no 20-entry break or maximum column count;
+an exact fit stays on the current row. Card space excludes the 40px outer margin
+and 16px section padding on each side, totaling 112px. Named-state diagrams use
+the final shared content width, including any width required by a wider state or
+annotation, while reserving the cross-state routing gutter separately. A multi-source
 entry stays in one card regardless of its wrapped line count. Full Terraform-native
 addresses are wrapped without truncation. Each moved provenance source shows its
 own `Moved from: ...` annotation alongside its current address and optional deposed
@@ -123,8 +128,15 @@ dashed for association, dotted for connection). The corresponding number badge
 in the index uses the same border color and pattern. Card heights follow actual
 wrapped lines and source counts, accounting for wide Unicode characters; each row
 reserves its tallest card's height. An empty index adds no cards or height. The
-[21-entry example](../examples/relationship-index.svg) is a synthetic rendering
-fixture demonstrating 10/10/1 grouping, not a deployable Terraform configuration.
+[21-entry example](../examples/relationship-index.svg) demonstrates 10/10/1 grouping
+in three cards: its 1100px canvas fits two 364px cards per row after margins and
+padding, so the final card correctly wraps. The
+[40-entry wide example](../examples/relationship-index-wide.svg) uses five linked
+`terraform_data` stages to create a wider architecture and fits all four index
+cards on one row. Both are synthetic rendering fixtures with repeated associations,
+not deployable Terraform configurations. Their SVGs are maintained by
+[CI generation](ci.md) from the [21-entry](../tests/fixtures/relationship-index-plan.json)
+and [40-entry](../tests/fixtures/relationship-index-wide-plan.json) inputs.
 Cross-state routes avoid number badges. Existing edge titles and provenance
 metadata remain available, and attribute values are excluded.
 

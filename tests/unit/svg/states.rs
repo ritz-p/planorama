@@ -33,11 +33,16 @@ fn cross_state_paths_avoid_intervening_cards_and_describe_dependencies() {
     let second = StateId::new("second").unwrap();
     let local = Layout::new(&graph);
     assert!(local.bounds[0].right() < local.bounds[1].right());
-    let (_, height) = super::super::dimensions(&graph, &local);
     let index = super::super::relationship_index::Index::new(&graph, &local);
-    let offset = 100
-        + super::super::Sections::new(&graph, &index, super::super::AddressFormat::Qualified)
-            .height();
+    let sections = super::super::Sections::with_width(
+        &graph,
+        &local,
+        &index,
+        super::super::AddressFormat::Qualified,
+        1120,
+    );
+    let (_, height) = sections.dimensions(&local);
+    let offset = 100 + sections.height();
     let obstacles: Vec<_> = [offset, offset + height + 60]
         .into_iter()
         .flat_map(|offset| {
@@ -209,6 +214,254 @@ fn cross_state_paths_avoid_intervening_cards_and_describe_dependencies() {
             super::super::AddressFormat::Qualified
         )
     );
+}
+
+#[test]
+fn named_states_reflow_indexes_at_shared_width_and_keep_cross_state_offsets() {
+    use crate::model::architecture::{Architecture, CrossStateEdge, CrossStateProvenance};
+    use crate::svg::AddressFormat;
+
+    let mut narrow_input: serde_json::Value =
+        serde_json::from_str(include_str!("../../fixtures/relationship-index-plan.json")).unwrap();
+    let mut wide_input: serde_json::Value =
+        serde_json::from_str(include_str!("../../fixtures/association-plan.json")).unwrap();
+    let mut previous = String::from("aws_route_table.private");
+    for i in 0..3 {
+        let address = format!("test.wide_{i}");
+        wide_input["resource_changes"]
+            .as_array_mut()
+            .unwrap()
+            .push(serde_json::json!({"address": address, "type": "test"}));
+        wide_input["configuration"]["root_module"]["resources"]
+            .as_array_mut()
+            .unwrap()
+            .push(serde_json::json!({"address": address, "expressions": {
+                "input": {"references": [format!("{previous}.id")]}
+            }}));
+        previous = address;
+    }
+    let graph = |input: &serde_json::Value| {
+        crate::semantic::transform(&crate::plan::parse(&input.to_string()).unwrap())
+    };
+    let narrow = graph(&narrow_input);
+    let standalone = crate::svg::render(&narrow, &Layout::new(&narrow));
+    let standalone_document = roxmltree::Document::parse(&standalone).unwrap();
+    let standalone_root = standalone_document.root_element();
+    let first = StateId::new("first").unwrap();
+    let second = StateId::new("second").unwrap();
+    let mut architecture = Architecture {
+        states: BTreeMap::from([
+            (first.clone(), narrow),
+            (second.clone(), graph(&wide_input)),
+        ]),
+        relationships: ["primary", "secondary"]
+            .into_iter()
+            .map(|output| CrossStateEdge {
+                from: Endpoint {
+                    state: first.clone(),
+                    address: "aws_route_table.private".into(),
+                },
+                to: Endpoint {
+                    state: second.clone(),
+                    address: "aws_route_table.private".into(),
+                },
+                provenance: CrossStateProvenance::TerraformRemoteState {
+                    remote: "data.terraform_remote_state.first".into(),
+                    output: output.into(),
+                    output_action: None,
+                },
+            })
+            .collect(),
+    };
+    let render = |architecture: &Architecture| {
+        render_states(
+            &crate::view::apply(architecture, &Default::default()).unwrap(),
+            AddressFormat::Qualified,
+        )
+    };
+    let svg = render(&architecture);
+    let document = roxmltree::Document::parse(&svg).unwrap();
+    let number =
+        |node: roxmltree::Node, key| node.attribute(key).unwrap().parse::<usize>().unwrap();
+    let position = |node: roxmltree::Node| {
+        let values: Vec<usize> = node
+            .attribute("transform")
+            .unwrap()
+            .trim_start_matches("translate(")
+            .trim_end_matches(')')
+            .split_whitespace()
+            .map(|value| value.parse().unwrap())
+            .collect();
+        (values[0], values[1])
+    };
+    let offset_y = |node: roxmltree::Node| {
+        node.ancestors()
+            .map(|ancestor| {
+                ancestor
+                    .attribute("transform")
+                    .map_or(0, |_| position(ancestor).1)
+                    + if ancestor.has_tag_name("svg") {
+                        ancestor.attribute("y").map_or(0, |_| number(ancestor, "y"))
+                    } else {
+                        0
+                    }
+            })
+            .sum::<usize>()
+    };
+    let states: Vec<_> = document
+        .descendants()
+        .filter(|node| node.attribute("data-state-id").is_some())
+        .map(|state| {
+            state
+                .children()
+                .find(|node| node.has_tag_name("svg"))
+                .unwrap()
+        })
+        .collect();
+    assert_eq!(states.len(), 2);
+    let (narrow, wide) = (states[0], states[1]);
+    let width = number(wide, "width");
+    assert!(width > number(standalone_root, "width"));
+    assert_eq!(number(narrow, "width"), width);
+    assert_eq!(number(document.root_element(), "width"), width + 80 + 12);
+    assert_eq!(number(narrow, "y"), 100);
+    assert!(number(narrow, "height") < number(standalone_root, "height"));
+    assert_eq!(
+        number(wide, "y"),
+        number(narrow, "y") + number(narrow, "height") + 60
+    );
+    assert_eq!(
+        number(document.root_element(), "height"),
+        number(wide, "y") + number(wide, "height") + 20
+    );
+    let cards = |root: roxmltree::Node| {
+        root.descendants()
+            .filter(|node| node.attribute("data-relationship-index").is_some())
+            .map(|index| {
+                let card = index.parent().unwrap();
+                let rectangle = card
+                    .children()
+                    .find(|node| node.has_tag_name("rect"))
+                    .unwrap();
+                (
+                    position(card),
+                    number(rectangle, "width"),
+                    number(rectangle, "height"),
+                )
+            })
+            .collect::<Vec<_>>()
+    };
+    let original_cards = cards(standalone_root);
+    let reflowed_cards = cards(narrow);
+    assert_eq!(original_cards.len(), 3);
+    assert_eq!(reflowed_cards.len(), 3);
+    assert!(original_cards[2].0.1 > original_cards[0].0.1);
+    for (i, &(position, card_width, card_height)) in reflowed_cards.iter().enumerate() {
+        assert_eq!(
+            (card_width, card_height),
+            (original_cards[i].1, original_cards[i].2)
+        );
+        assert_eq!(position, (16 + i * (card_width + 20), 48));
+        assert!(40 + position.0 + card_width <= width - 56);
+    }
+    let section = narrow
+        .descendants()
+        .find(|node| node.attribute("data-annotation-section") == Some("Relationship Resources"))
+        .unwrap();
+    let rectangle = section
+        .children()
+        .find(|node| node.has_tag_name("rect"))
+        .unwrap();
+    assert_eq!(
+        number(rectangle, "height"),
+        48 + reflowed_cards.iter().map(|card| card.2).max().unwrap() + 16
+    );
+    for (state, count) in [(narrow, 21), (wide, 1)] {
+        let entries: Vec<_> = state
+            .descendants()
+            .filter_map(|node| node.attribute("data-relationship-entry"))
+            .map(|value| value.parse::<usize>().unwrap())
+            .collect();
+        assert_eq!(entries, (1..=count).collect::<Vec<_>>());
+        let markers: std::collections::BTreeSet<_> = state
+            .descendants()
+            .filter_map(|node| node.attribute("data-relationship-marker"))
+            .map(|value| value.parse::<usize>().unwrap())
+            .collect();
+        assert_eq!(markers, entries.into_iter().collect());
+    }
+    let geometry = |root: roxmltree::Node| {
+        root.descendants()
+            .find(|node| node.attribute("data-architecture").is_some())
+            .unwrap()
+            .descendants()
+            .filter(|node| matches!(node.tag_name().name(), "rect" | "path" | "circle"))
+            .map(|node| {
+                ["d", "x", "y", "width", "height", "cx", "cy", "r"]
+                    .map(|key| node.attribute(key).map(str::to_owned))
+            })
+            .collect::<Vec<_>>()
+    };
+    assert_eq!(geometry(narrow), geometry(standalone_root));
+    let architecture_y = |root: roxmltree::Node| {
+        let group = root
+            .descendants()
+            .find(|node| node.attribute("data-architecture").is_some())
+            .unwrap();
+        offset_y(group) - root.attribute("y").map_or(0, |_| number(root, "y"))
+    };
+    assert_eq!(
+        number(narrow, "height") - architecture_y(narrow),
+        number(standalone_root, "height") - architecture_y(standalone_root)
+    );
+    let lines: Vec<_> = document
+        .descendants()
+        .filter(|node| node.attribute("data-cross-state") == Some("true"))
+        .collect();
+    assert_eq!(lines.len(), 2);
+    for (i, line) in lines.into_iter().enumerate() {
+        let tokens: Vec<_> = line.attribute("d").unwrap().split_whitespace().collect();
+        let points: Vec<_> = tokens
+            .chunks_exact(3)
+            .map(|point| Point {
+                x: point[1].parse().unwrap(),
+                y: point[2].parse().unwrap(),
+            })
+            .collect();
+        assert_eq!(
+            points.iter().map(|point| point.x).max(),
+            Some(width + 30 + i * 12)
+        );
+        for (attribute, point) in [
+            ("data-source-port", points[0]),
+            ("data-target-port", *points.last().unwrap()),
+        ] {
+            let card = document
+                .descendants()
+                .find(|node| node.attribute("id") == line.attribute(attribute))
+                .unwrap();
+            let rectangle = card
+                .children()
+                .find(|node| node.has_tag_name("rect"))
+                .unwrap();
+            assert_eq!(point.x, number(rectangle, "x") + number(rectangle, "width"));
+            assert_eq!(
+                point.y,
+                offset_y(card) + number(rectangle, "y") + number(rectangle, "height") / 2
+            );
+        }
+    }
+    for input in [&mut narrow_input, &mut wide_input] {
+        input["resource_changes"].as_array_mut().unwrap().reverse();
+        input["configuration"]["root_module"]["resources"]
+            .as_array_mut()
+            .unwrap()
+            .reverse();
+    }
+    architecture.states =
+        BTreeMap::from([(second, graph(&wide_input)), (first, graph(&narrow_input))]);
+    architecture.relationships.reverse();
+    assert_eq!(render(&architecture), svg);
 }
 
 #[test]

@@ -65,8 +65,7 @@ pub(crate) fn render_content(
         )
         .unwrap();
     }
-    let mut top = 60;
-    let mut width = 1120;
+    let mut prepared_graphs = Vec::with_capacity(graphs.len());
     for (id, graph) in graphs {
         let mut graph = graph.clone();
         for edge in &relationships {
@@ -114,21 +113,32 @@ pub(crate) fn render_content(
                 issues: Default::default(),
             });
         }
-        let graph = &graph;
+        prepared_graphs.push((id, graph));
+    }
+    let mut width = 1120;
+    let mut states = Vec::with_capacity(prepared_graphs.len());
+    for (id, graph) in &prepared_graphs {
         let layout = Layout::new(graph);
         let index = super::relationship_index::Index::new(graph, &layout);
-        let measured_sections = super::Sections::new(graph, &index, format);
-        let (state_width, height) = measured_sections.dimensions(&layout);
-        width = width.max(state_width);
+        let measured_sections = super::Sections::new(graph, &layout, &index, format);
+        width = width.max(measured_sections.dimensions(&layout).0);
+        states.push((*id, graph, layout, index, measured_sections));
+    }
+    let mut top = 60;
+    for (id, graph, layout, index, mut measured_sections) in states {
+        if measured_sections.dimensions(&layout).0 < width {
+            measured_sections = super::Sections::with_width(graph, &layout, &index, format, width);
+        }
+        let (_, height) = measured_sections.dimensions(&layout);
         let prefix = prefix(id);
-        let check_offset = measured_sections.height();
+        let architecture_offset = measured_sections.height();
         obstacles.insert(
             id.clone(),
             StateObstacles {
                 markers: index
                     .marker_bounds()
                     .map(|mut bounds| {
-                        bounds.origin.y += top + 40 + check_offset;
+                        bounds.origin.y += top + 40 + architecture_offset;
                         bounds
                     })
                     .collect(),
@@ -137,7 +147,7 @@ pub(crate) fn render_content(
                     .iter()
                     .map(|panel| {
                         let mut header = panel.bounds.header(36);
-                        header.origin.y += top + 40 + check_offset;
+                        header.origin.y += top + 40 + architecture_offset;
                         header
                     })
                     .collect(),
@@ -146,7 +156,7 @@ pub(crate) fn render_content(
                     .iter()
                     .map(|b| {
                         let mut bounds = *b;
-                        bounds.origin.y += top + 40 + check_offset;
+                        bounds.origin.y += top + 40 + architecture_offset;
                         bounds
                     })
                     .collect::<Vec<_>>(),
@@ -167,7 +177,7 @@ pub(crate) fn render_content(
                 (
                     bounds.right(),
                     top + 40
-                        + check_offset
+                        + architecture_offset
                         + bounds.origin.y
                         + layout.header_heights[port_index] / 2,
                     format!("{prefix}{}", super::identity::resource(node)),
