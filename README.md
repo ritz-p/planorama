@@ -45,15 +45,17 @@ docker compose exec -T dev cargo run --locked -- - -o - < plan.json > diagram.sv
 
 ## 図の見方と制限
 
-- カードの色・ラベルは作成、更新、削除、置換、読み取り、変更なしを表します。関係線の色は関係自身の変更を表し、接続先カードの変更色は引き継ぎません。独立した変更を持たない関係の `no independent change` は、明示的な「変更なし」と区別します。
+- リソースの変更色・ラベルは作成、更新、削除、置換、読み取り、変更なしを表します。関係線の色は関係自身の変更を表し、接続先カードの変更色は引き継ぎません。独立した変更を持たない関係の `no independent change` は、明示的な「変更なし」と区別します。
 - 中立色の `Relationship lines` カードで線種・色・矢印の意味を確認できます。依存辺は参照されるリソースから参照するリソースへ向き、包含は入れ子の枠です。関連付けは通常は矢印のない破線ですが、Route の next hop は矢印付きです。接続は矢印のない太い点線で、構成から推論した関係を表し、ネットワーク到達性は保証しません。
 - AWS の VPC・Subnet が空間的なコンテナです。間接参照から導いた配置には `inferred placement` を表示します。
 - data リソースは破線と `external` 表示で区別します。一部の AWS メタデータ data は省略します。
 - import を含むリソースには専用の `import` バッジを表示します。作成・更新・置換・変更なしの色や action は保持し、import ID や identity の値は表示しません。
-- 上部は Logical Resources（シアン）、Logical Components（紫）、Relationship Resources の順です。ECS Cluster・Task Definition・IAM 定義・AMI・CloudWatch Log Group・Metric Alarm は最初のセクションにまとめ、空間配置と経路計算から分離します。内側のリソースとコンポーネントのメンバーカードは各リソースの変更色を使い、参照情報・変更数を保持します。
-- 利用側の `Uses` 行は参照を全件表示し、論理カードへ移動できます。依存指定・未解決・表示対象外を区別し、module・instance・state を含む完全な参照アドレスを折り返して表示します。カードと配置領域は内容に合わせて拡張します。
+- 上部は Logical Resources（シアン）、Logical Components（紫）、Relationship Resources の順です。ECS Cluster・Task Definition・IAM 定義・AMI・CloudWatch Log Group・Metric Alarm は最初のセクションにまとめ、空間配置と経路計算から分離します。
+- Logical Resources は state 内で provider source・resource type・managed/data ごとに中立色のカードへまとめ、個々のリソースを行として表示します。各行の情報と変更数を保持し、リソース数とグループカード数は別に表示します。
+- Logical Resources のリソース行と Logical Components のメンバー行は、中立色のテキストと項目全体の下に引く変更色の下線で表示します。長い項目は全文を折り返し、各リソースの識別子と操作情報を保持します。メンバー行から元リソースへ移動できます。Logical Components の見出しは紫です。
+- 利用側の `Uses` 行は参照を全件表示し、対応する論理リソース行へ移動できます。依存指定・未解決・表示対象外を区別し、module・instance・state を含む完全な参照アドレスを折り返して表示します。カードと配置領域は内容に合わせて拡張します。
 - 既定のアドレス表示は Planorama 修飾形式です。`--address-format terraform` で Terraform 本来の表記に切り替えられます。長いアドレスは要素の区切りを優先して折り返し、全文を表示します。引用符付きの instance key 内のドットは区切りとして扱いません。
-- 移動したリソースには `Moved from:` と移動元の完全なアドレスを表示します。空間カード、論理カード、Route 子カード、関係一覧の各リソースで確認でき、長い移動元も折り返して表示します。
+- 移動したリソースには `Moved from:` と移動元の完全なアドレスを表示します。空間カード、論理リソース行、Route 子カード、関係一覧の各リソースで確認でき、長い移動元も折り返して表示します。
 - Route は所有先を確認できた Route Table 内に子カードとして表示します。表示可能な接続先へは子カードのポートから矢印付きの破線を引き、接続先を描けない場合は状態を文字で表示します。SVG の宛先は安全性を検証した設定定数（CIDR・prefix list ID）だけを表示します。HTML では宛先定数も省略し、その他の属性値はどちらにも描画しません。plan JSON 自体には機密値が含まれ得るため、実環境の plan/state はコミットしないでください。
 
 図は構成から解決した関係を表し、Terraform の厳密な実行グラフではありません。式の評価、provider 内部の依存、削除専用リソースの過去の参照は復元しません。未解決・動的・曖昧な参照は保守的に扱い、`--diagnostics` で理由を stderr に出力します。診断は SVG や終了条件を変更しません。経路は決定的に生成しますが、交差や重なりのない最適配置は保証しません。
