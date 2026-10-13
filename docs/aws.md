@@ -36,7 +36,7 @@ from managed/data mode; Security Groups remain Policy cards and target groups
 remain Controller cards even when placed inside a VPC.
 
 Placement is independent of role. ECS Cluster, ECS Task Definition, IAM Role,
-Policy, Role Policy, Instance Profile, AMI, CloudWatch Log Group and Metric Alarm definitions are explicit logical
+Policy, Role Policy, Instance Profile, AMI, CloudWatch Log Group, Metric Alarm and Auto Scaling Policy definitions are explicit logical
 resources, rendered as rows grouped by provider source, resource type and mode in
 the top annotation area. AMI describes
 an image definition used by workloads, not a deployed compute instance. These
@@ -63,6 +63,19 @@ with an UnverifiedMonitoring diagnostic. Values are discarded after comparison.
 Verified alarms show Monitors; the target shows Monitored by. These inverse
 reference rows create no graph edges. Generic depends_on never proves monitoring,
 and no monitoring relationship is inferred across states.
+
+Auto Scaling Policies are logical Policy resources rather than spatial cards. A
+complete explicit `autoscaling_group_name` reference to exactly one current AWS
+`aws_autoscaling_group` with the same provider configuration is labeled
+`Auto Scaling group` on the policy and adds a `Scaling policy` inverse reference
+to that ASG. This is reference metadata only: it creates no spatial path,
+containment or generic inverse-reference rule. Dynamic, partial, missing,
+ambiguous, foreign-provider, wrong-type and cross-provider-configuration targets
+do not gain the inverse row; literal name equality, module proximity and policy
+names are never used as ownership evidence. Multiple verified policies remain
+separate and sort by Terraform identity. Filtering can leave either endpoint
+unavailable without emitting a dangling link. See
+[autoscaling-policy.svg](../examples/autoscaling-policy.svg).
 
 Infrastructure data sources retain their roles and external identity. Spatial
 cards use an external badge and dashed border; logical resources use separate
