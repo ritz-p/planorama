@@ -1,0 +1,29 @@
+{
+  "format_version": "1.2",
+  "resource_changes": [
+    {"address":"aws_cloudwatch_log_group.tokyo","type":"aws_cloudwatch_log_group","previous_address":"aws_cloudwatch_log_group.old","change":{"actions":["update"],"importing":{"id":"PRIVATE_IMPORT"}}},
+    {"address":"aws_cloudwatch_log_group.virginia","type":"aws_cloudwatch_log_group","change":{"actions":["create"]}},
+    {"address":"aws_cloudwatch_log_group.unknown","type":"aws_cloudwatch_log_group"},
+    {"address":"aws_cloudwatch_log_group.override","type":"aws_cloudwatch_log_group"},
+    {"address":"aws_cloudwatch_log_group.tokyo","type":"aws_cloudwatch_log_group","deposed":"old","change":{"actions":["delete"]}},
+    {"address":"data.aws_cloudwatch_log_group.lookup","type":"aws_cloudwatch_log_group","mode":"data","change":{"actions":["read"]}},
+    {"address":"aws_iam_policy.access","type":"aws_iam_policy","change":{"actions":["create"],"after":{"policy":"PRIVATE_POLICY aws:RequestedRegion eu-west-3"}}}
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws.tokyo":{"full_name":"hashicorp/aws","alias":"tokyo","expressions":{"region":{"constant_value":"ap-northeast-1"},"access_key":{"constant_value":"PRIVATE_CREDENTIAL"}}},
+      "aws.virginia":{"full_name":"hashicorp/aws","alias":"virginia","expressions":{"region":{"constant_value":"us-east-1"}}},
+      "aws.dynamic":{"full_name":"hashicorp/aws","alias":"eu-west-3","expressions":{"region":{"references":["var.region"]}}}
+    },
+    "root_module": {
+      "resources": [
+        {"address":"aws_cloudwatch_log_group.tokyo","provider_config_key":"aws.tokyo"},
+        {"address":"aws_cloudwatch_log_group.virginia","provider_config_key":"aws.virginia"},
+        {"address":"aws_cloudwatch_log_group.unknown","provider_config_key":"aws.dynamic"},
+        {"address":"aws_cloudwatch_log_group.override","provider_config_key":"aws.tokyo","expressions":{"region":{"constant_value":"eu-west-3"}}},
+        {"address":"data.aws_cloudwatch_log_group.lookup","provider_config_key":"aws.virginia"},
+        {"address":"aws_iam_policy.access","provider_config_key":"aws.tokyo"}
+      ]
+    }
+  }
+}

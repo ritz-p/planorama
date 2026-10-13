@@ -3,6 +3,7 @@ mod filter;
 pub(crate) mod geometry;
 pub(crate) mod references;
 pub(crate) mod routes;
+pub(crate) mod scope;
 pub(crate) mod spatial;
 pub(crate) mod text;
 use crate::model::architecture::{Architecture, ArchitectureGraph, Graph};

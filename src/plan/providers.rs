@@ -17,7 +17,10 @@ pub(super) fn enrich(configuration: &Value, nodes: &mut [TerraformEntity]) {
         &mut resources,
     );
     for node in nodes.iter_mut().filter(|node| node.deposed_key.is_none()) {
-        if let Some((provider, configuration)) = resources.get(&static_address(&node.address)) {
+        if let Some((provider, configuration, has_region_override)) =
+            resources.get(&static_address(&node.address))
+        {
+            node.has_region_override = *has_region_override;
             if !node.provider.is_explicit() {
                 node.provider = provider.clone();
             }
@@ -34,7 +37,7 @@ fn collect(
     module: &Value,
     scope: &str,
     providers: &Value,
-    found: &mut BTreeMap<String, (ProviderIdentity, ProviderConfiguration)>,
+    found: &mut BTreeMap<String, (ProviderIdentity, ProviderConfiguration, bool)>,
 ) {
     for resource in module["resources"].as_array().into_iter().flatten() {
         if let (Some(address), Some(key)) = (
@@ -50,7 +53,14 @@ fn collect(
                 alias: providers[key]["alias"].as_str().map(str::to_owned),
                 region: static_region(&provider, &providers[key]["expressions"]["region"]),
             };
-            found.insert(qualify(scope, address), (provider, configuration));
+            found.insert(
+                qualify(scope, address),
+                (
+                    provider,
+                    configuration,
+                    resource["expressions"].get("region").is_some(),
+                ),
+            );
         }
     }
     if let Some(calls) = module["module_calls"].as_object() {
