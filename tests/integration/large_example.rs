@@ -221,6 +221,8 @@ fn large_fixture_is_reproducible_from_terraform_sources_and_renders_deterministi
             &["cluster", "task_definition"]
         } else if address.contains("aws_instance.workers_") {
             &["iam_instance_profile", "ami"]
+        } else if address.contains("aws_autoscaling_group.") {
+            &["launch_template.id"]
         } else {
             &[]
         };

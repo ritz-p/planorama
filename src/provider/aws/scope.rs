@@ -31,6 +31,7 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
             | "aws_opensearch_domain"
             | "aws_s3_bucket"
             | "aws_cloudwatch_log_group"
+            | "aws_launch_template"
             | "aws_internet_gateway"
             | "aws_nat_gateway"
             | "aws_route_table"
