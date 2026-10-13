@@ -16,7 +16,11 @@ pub(super) fn pack(
     let protected = super::containers::affinity::protected_roots(graph, &tree.parents);
     let mut groups: BTreeMap<Option<DeploymentScope>, Vec<usize>> = BTreeMap::new();
     for &root in &tree.roots {
-        let scope = graph.nodes[root].entity.scope.as_ref();
+        let scope = graph.nodes[root]
+            .entity
+            .scope
+            .as_ref()
+            .filter(|scope| scope.global || scope.region.is_some() || scope.account.is_some());
         let mut pending = vec![root];
         let mut consistent = true;
         while let Some(node) = pending.pop() {
@@ -28,7 +32,11 @@ pub(super) fn pack(
             .or_default()
             .push(root);
     }
-    if !groups.keys().flatten().any(|scope| scope.region.is_some()) {
+    if !groups
+        .keys()
+        .flatten()
+        .any(|scope| scope.region.is_some() || scope.account.is_some())
+    {
         let columns = placement::columns(graph, None, &tree.roots, &tree.parents);
         let relationships = placement::relationships(graph, &tree.roots, &tree.parents);
         let (_, height) = placement::pack(&columns, &relationships, sizes, offsets, spacing);
@@ -60,7 +68,11 @@ pub(super) fn pack(
                         x: 40,
                         y: 160 + top,
                     },
-                    width: width + spacing.max(40),
+                    width: (width + spacing.max(40)).max(if scope.account.is_some() {
+                        crate::view::scope::panel_label(scope).chars().count() * 15 + 32
+                    } else {
+                        0
+                    }),
                     height: height + 60,
                 },
             });

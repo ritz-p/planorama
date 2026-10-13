@@ -3,6 +3,21 @@ pub struct ProviderConfiguration {
     pub key: String,
     pub alias: Option<String>,
     pub region: Option<RegionScope>,
+    pub account: Option<AwsAccountScope>,
+    pub account_conflict: bool,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
+pub struct AwsAccountScope(String);
+
+impl AwsAccountScope {
+    pub fn new(id: &str) -> Option<Self> {
+        (id.len() == 12 && id.bytes().all(|b| b.is_ascii_digit())).then(|| Self(id.to_owned()))
+    }
+
+    pub fn as_str(&self) -> &str {
+        &self.0
+    }
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
