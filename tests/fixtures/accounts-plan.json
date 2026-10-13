@@ -1,0 +1,36 @@
+{
+  "format_version": "1.2",
+  "resource_changes": [
+    {"address":"aws_s3_bucket.east","type":"aws_s3_bucket","change":{"actions":["create"]}},
+    {"address":"aws_s3_bucket.west","type":"aws_s3_bucket","change":{"actions":["no-op"]}},
+    {"address":"aws_s3_bucket.other","type":"aws_s3_bucket","change":{"actions":["no-op"]}},
+    {"address":"aws_s3_bucket.alias","type":"aws_s3_bucket","change":{"actions":["no-op"]}},
+    {"address":"aws_s3_bucket.unknown_region","type":"aws_s3_bucket","change":{"actions":["no-op"]}},
+    {"address":"aws_s3_bucket.unknown_account","type":"aws_s3_bucket","change":{"actions":["no-op"]}},
+    {"address":"aws_cloudfront_distribution.global","type":"aws_cloudfront_distribution","change":{"actions":["no-op"]}},
+    {"address":"aws_iam_role.logical","type":"aws_iam_role","change":{"actions":["no-op"]}},
+    {"address":"aws_s3_bucket.unknown","type":"aws_s3_bucket","change":{"actions":["no-op"]}}
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws.east":{"full_name":"hashicorp/aws","alias":"east","expressions":{"region":{"constant_value":"us-east-1"},"assume_role":[{"role_arn":{"constant_value":"arn:aws:iam::123456789012:role/Fixture"}}]}},
+      "aws.west":{"full_name":"hashicorp/aws","alias":"west","expressions":{"region":{"constant_value":"us-west-2"},"assume_role":[{"role_arn":{"constant_value":"arn:aws:iam::123456789012:role/Fixture"}}]}},
+      "aws.other":{"full_name":"hashicorp/aws","alias":"other","expressions":{"region":{"constant_value":"us-east-1"},"assume_role":[{"role_arn":{"constant_value":"arn:aws:iam::210987654321:role/Fixture"}}]}},
+      "aws.alias":{"full_name":"hashicorp/aws","alias":"alias","expressions":{"region":{"constant_value":"us-east-1"},"assume_role":[{"role_arn":{"constant_value":"arn:aws:iam::123456789012:role/Fixture"}}]}},
+      "aws.unknown_region":{"full_name":"hashicorp/aws","expressions":{"assume_role":[{"role_arn":{"constant_value":"arn:aws:iam::123456789012:role/Fixture"}}]}},
+      "aws.unknown_account":{"full_name":"hashicorp/aws","expressions":{"region":{"constant_value":"us-east-1"}}},
+      "aws.unknown":{"full_name":"hashicorp/aws"}
+    },
+    "root_module":{"resources":[
+      {"address":"aws_s3_bucket.east","provider_config_key":"aws.east","expressions":{"tags":{"references":["aws_s3_bucket.other.id","aws_s3_bucket.west.id"]}}},
+      {"address":"aws_s3_bucket.west","provider_config_key":"aws.west"},
+      {"address":"aws_s3_bucket.other","provider_config_key":"aws.other"},
+      {"address":"aws_s3_bucket.alias","provider_config_key":"aws.alias"},
+      {"address":"aws_s3_bucket.unknown_region","provider_config_key":"aws.unknown_region"},
+      {"address":"aws_s3_bucket.unknown_account","provider_config_key":"aws.unknown_account"},
+      {"address":"aws_cloudfront_distribution.global","provider_config_key":"aws.east"},
+      {"address":"aws_iam_role.logical","provider_config_key":"aws.east"},
+      {"address":"aws_s3_bucket.unknown","provider_config_key":"aws.unknown"}
+    ]}
+  }
+}

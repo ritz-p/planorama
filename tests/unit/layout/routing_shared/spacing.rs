@@ -213,6 +213,7 @@ fn protected_border_paths_keep_geometry_and_the_residual_measurable() {
     let mut layout = single_border_corridor(&graph, false, 300);
     layout.junctions = vec![Point { x: 493, y: 600 }];
     layout.scopes.push(crate::layout::ScopePanel {
+        account_panel: false,
         scope: crate::model::architecture::DeploymentScope {
             provider: "test".into(),
             region: None,
@@ -779,6 +780,7 @@ fn failed_reroute_rolls_back_geometry_scopes_bands_and_protected_junctions() {
     }
     layout.junctions = vec![Point { x: 400, y: 130 }];
     layout.scopes.push(crate::layout::ScopePanel {
+        account_panel: false,
         scope: crate::model::architecture::DeploymentScope {
             provider: "test".into(),
             region: None,

@@ -8,9 +8,21 @@ semantics. Provider source and configuration identity are described in [models](
 
 AWS account scope is resolved independently from region using literal provider
 role evidence; see [the exact evidence policy](models.md). State IDs and provider
-aliases are not accounts. Logical-resource labels and spatial scope panels include
-known account IDs; generated SVG/HTML therefore expose that deployment
+aliases are not accounts. Logical-resource scope labels include a known
+`AWS Account: <12-digit ID>`; generated SVG/HTML therefore expose that deployment
 identifier. Role ARNs and credential-related provider values are not retained.
+
+Known accounts form `AWS Account: <ID>` backgrounds above Region and AWS Global,
+as shown in [accounts.svg](../examples/accounts.svg). One displayed spatial
+resource is enough for either level. Multiple bindings with equal proven accounts
+share a panel, while the same region under different accounts stays separate.
+Known account/unknown region resources remain directly inside Account; unknown
+account/known region resources retain their Region panel. Unknown accounts never
+receive guessed wrappers. Logical rows remain in the annotation area.
+Account backgrounds are drawn before their child backgrounds, and both headers
+are routing obstacles. Their final geometry participates in state sizing and
+cross-state routing. `data-account-panel` identifies the account frame;
+`data-account` on child frames records its parent identity within the state.
 
 Known static provider regions automatically group explicitly supported regional
 resources into background panels (see [regions.svg](../examples/regions.svg)).
@@ -22,16 +34,13 @@ create panels. Panels are deployment scopes, not Terraform resources or semantic
 containers. VPC/Subnet containment stays intact inside each panel, and
 cross-region relationships remain routed paths above the background.
 Spatial IAM resources, CloudFront and supported Route 53 resources share an
-`AWS Global` panel when regional panels are present or a groupable account is known.
-IAM Role, Policy, Role Policy
+`AWS Global` panel when regional panels are present or their account is known. IAM Role, Policy, Role Policy
 and Instance Profile retain global scope metadata but render as logical-resource
 rows above the spatial diagram, outside deployment-scope panels. AWS scope
 classification lives in `provider/aws/scope.rs`; layout and SVG consume generic
 deployment scopes. Unsupported resource types, cross-region peering resources and
-unknown regions stay outside regional panels. A proven account still supplies an
-account-only scope, labeled `Region: unknown` without a region or Global claim.
-Account evidence does not establish either endpoint's region for cross-region
-peering. No aliases, names, tags, ARNs or IDs supply region information.
+unknown regions stay outside regional panels (but inside a proven account). No aliases, names, tags, ARNs or IDs supply
+region information.
 
 Each Logical Resources row displays its own `Region: <region>`, `AWS Global`,
 or `Region: unknown` label in SVG and HTML. Equal type/mode resources from different
@@ -50,7 +59,7 @@ Conflicting or unknown members leave the whole subtree outside panels, preservin
 containment without suggesting a guessed account or region. Plans without a groupable account or regional
 subtree keep their existing layout. Synthetic component summaries remain separate.
 Named-state sections retain independent panels even for equal region names;
-`data-deployment-scope`, `data-scope-provider`, `data-account`, `data-region` or `data-global`
+`data-deployment-scope`, `data-scope-provider`, `data-region` or `data-global`
 identify panel metadata within their enclosing `data-state-id`.
 The [regional-state example](../examples/regional-states.svg) shows independent
 `ap-northeast-1` bases for application, network and a single-resource state.

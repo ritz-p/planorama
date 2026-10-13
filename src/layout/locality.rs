@@ -190,10 +190,9 @@ fn region(graph: &Graph, layout: &Layout<'_>, node: usize, padding: usize) -> Op
     }
     let current = layout.bounds[node];
     if !layout.scopes.is_empty() {
-        let panel = layout
-            .scopes
-            .iter()
-            .find(|panel| graph.nodes[node].entity.scope.as_ref() == Some(&panel.scope))?;
+        let panel = layout.scopes.iter().find(|panel| {
+            !panel.account_panel && graph.nodes[node].entity.scope.as_ref() == Some(&panel.scope)
+        })?;
         if current.origin.y < panel.bounds.origin.y
             || current.origin.y + current.height > panel.bounds.origin.y + panel.bounds.height
         {

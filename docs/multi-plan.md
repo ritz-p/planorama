@@ -58,8 +58,13 @@ cross-state endpoint offsets follow the reflowed annotations. The cross-state
 routing gutter is reserved outside the shared content width and is not available
 for index cards.
 
-Resolved regional groups form background bases within each state's architecture
-area: State → Region → VPC/Subnet containers and resource cards. A single spatial
+Resolved deployment groups form background bases within each state's architecture
+area: State → AWS Account → Region → VPC/Subnet containers and resource cards.
+Account is optional and independent of State: one state can manage multiple
+accounts, and equal account IDs in separate states never merge panels or resource
+identities. Global resources share their proven account parent without a region;
+unknown accounts preserve known Region backgrounds. Generated SVG/HTML explicitly
+display known account IDs. A single spatial
 resource qualifies, even in a single-region state. Filtering resizes the panel;
 removing its final spatial resource also removes its title and padding. Logical
 annotations stay above the architecture and do not qualify a regional group.
