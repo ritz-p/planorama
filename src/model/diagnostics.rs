@@ -12,6 +12,7 @@ pub enum DiagnosticReason {
     PartialResourceProvenance,
     EndpointTypeMismatch,
     ProviderConfigurationMismatch,
+    ConflictingAwsAccount,
     AmbiguousContainmentParent,
     AdditionalRelationships,
     DriftDetected,
@@ -27,6 +28,9 @@ pub enum DiagnosticReason {
 impl DiagnosticReason {
     pub fn description(self) -> &'static str {
         match self {
+            Self::ConflictingAwsAccount => {
+                "conflicting AWS account evidence in provider configuration"
+            }
             Self::UnverifiedMonitoring => {
                 "alarm monitoring target is not verified by supported dimensions and planned values"
             }

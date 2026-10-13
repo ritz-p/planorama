@@ -100,7 +100,9 @@ fn scope_presentation_distinguishes_inapplicable_unknown_and_generic_global() {
         label(
             Some(&DeploymentScope {
                 provider: "Example".into(),
-                region: None
+                region: None,
+                account: None,
+                global: true,
             }),
             &foreign
         ),

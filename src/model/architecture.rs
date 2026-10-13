@@ -72,6 +72,8 @@ pub struct ArchitectureEntity {
 pub struct DeploymentScope {
     pub provider: String,
     pub region: Option<super::RegionScope>,
+    pub account: Option<super::AwsAccountScope>,
+    pub global: bool,
 }
 
 impl ArchitectureEntity {
