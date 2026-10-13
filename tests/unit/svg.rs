@@ -1,6 +1,64 @@
 use super::*;
 
 #[test]
+fn spatial_scopes_expose_distinct_account_identity() {
+    let mut input = serde_json::json!({
+        "format_version": "1.2",
+        "resource_changes": [],
+        "configuration": {"provider_config": {}, "root_module": {"resources": []}}
+    });
+    for (alias, account) in [
+        ("first", Some("123456789012")),
+        ("second", Some("210987654321")),
+        ("unknown", None),
+    ] {
+        let provider = format!("aws.{alias}");
+        let mut expressions = serde_json::json!({"region": {"constant_value": "us-east-1"}});
+        if let Some(account) = account {
+            expressions["assume_role"] = serde_json::json!([{"role_arn": {"constant_value": format!("arn:aws:iam::{account}:role/deploy")}}]);
+        }
+        input["configuration"]["provider_config"][&provider] = serde_json::json!({"full_name": "hashicorp/aws", "alias": alias, "expressions": expressions});
+        for resource_type in ["aws_s3_bucket", "aws_cloudfront_distribution"] {
+            let address = format!("{resource_type}.{alias}");
+            input["resource_changes"].as_array_mut().unwrap().push(serde_json::json!({"address": address, "type": resource_type, "change": {"actions": ["create"]}}));
+            input["configuration"]["root_module"]["resources"]
+                .as_array_mut()
+                .unwrap()
+                .push(serde_json::json!({"address": address, "provider_config_key": provider}));
+        }
+    }
+    let graph = crate::semantic::transform(&crate::plan::parse(&input.to_string()).unwrap());
+    let output = render(&graph, &Layout::new(&graph));
+    let document = roxmltree::Document::parse(&output).unwrap();
+    for account in [Some("123456789012"), Some("210987654321"), None] {
+        for (attribute, value) in [("data-region", "us-east-1"), ("data-global", "true")] {
+            let panel = document
+                .descendants()
+                .find(|n| {
+                    n.attribute(attribute) == Some(value) && n.attribute("data-account") == account
+                })
+                .unwrap();
+            if let Some(account) = account {
+                assert!(
+                    document
+                        .descendants()
+                        .any(|n| n.attribute("data-account") == Some(account)
+                            && n.children().any(|c| c.has_tag_name("text")
+                                && c.text().is_some_and(|label| label.contains(account))))
+                );
+            } else {
+                assert!(
+                    !panel
+                        .children()
+                        .filter_map(|n| n.text())
+                        .any(|text| text.contains("Account:"))
+                );
+            }
+        }
+    }
+}
+
+#[test]
 fn policy_and_controller_fallbacks_keep_resources_actions_and_dependencies() {
     let raw = crate::plan::parse(r#"{"format_version":"1.2","resource_changes":[
         {"address":"aws_security_group.app","type":"aws_security_group","change":{"actions":["update"]}},
