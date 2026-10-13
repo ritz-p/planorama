@@ -40,7 +40,7 @@ fn expanded_roles_cover_managed_and_equivalent_data_entities() {
     for (expected, types) in [
         (
             ResourceRole::Node,
-            "aws_ami aws_eip aws_db_subnet_group aws_lambda_function aws_rds_cluster aws_dynamodb_table aws_elasticache_cluster aws_opensearch_domain aws_s3_bucket aws_cloudwatch_log_group",
+            "aws_ami aws_eip aws_db_subnet_group aws_lambda_function aws_rds_cluster aws_dynamodb_table aws_elasticache_cluster aws_opensearch_domain aws_s3_bucket aws_cloudwatch_log_group aws_launch_template",
         ),
         (
             ResourceRole::Connector,
