@@ -11,6 +11,7 @@ examples/data.svg
 examples/dense-architecture.svg
 examples/diagram.svg
 examples/accounts.svg
+examples/multi-account/diagram.svg
 examples/hierarchy-routing.svg
 examples/multi-container.svg
 examples/multi-plan.svg

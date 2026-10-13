@@ -23,6 +23,8 @@ Account backgrounds are drawn before their child backgrounds, and both headers
 are routing obstacles. Their final geometry participates in state sizing and
 cross-state routing. `data-account-panel` identifies the account frame;
 `data-account` on child frames records its parent identity within the state.
+The [combined large example](../examples/multi-account/README.md) exercises these
+scopes with VPC/Subnet containment, logical annotations and cross-state routing.
 
 Known static provider regions automatically group explicitly supported regional
 resources into background panels (see [regions.svg](../examples/regions.svg)).
