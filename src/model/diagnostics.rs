@@ -11,6 +11,7 @@ pub enum DiagnosticReason {
     NoResourceReference,
     PartialResourceProvenance,
     EndpointTypeMismatch,
+    ProviderConfigurationMismatch,
     AmbiguousContainmentParent,
     AdditionalRelationships,
     DriftDetected,
@@ -53,6 +54,7 @@ impl DiagnosticReason {
                 "only part of the attribute resolves to resource references"
             }
             Self::EndpointTypeMismatch => "semantic endpoint type mismatch",
+            Self::ProviderConfigurationMismatch => "provider configuration does not match the referenced endpoint",
             Self::AmbiguousContainmentParent => "ambiguous containment parent",
             Self::AdditionalRelationships => {
                 "additional relationships prevent association lowering"
