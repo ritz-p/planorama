@@ -148,6 +148,32 @@ class ViewerTests(unittest.TestCase):
         paths = self.driver.find_elements(By.CSS_SELECTOR, 'path[data-viewer-edge]')
         self.assertEqual(len(paths), 1)
         self.assertIn(second, paths[0].find_element(By.TAG_NAME, 'title').get_attribute('textContent'))
+        before = self.driver.execute_script("return Array.from(document.querySelectorAll('path[data-edge-kind]')).map(e=>[e.getAttribute('d'),e.getAttribute('stroke'),e.getAttribute('stroke-dasharray'),e.getAttribute('marker-end')])")
+        entry = self.find('[data-relationship-entry="2"]')
+        number = entry.find_element(By.CSS_SELECTOR, '[data-relationship-select]')
+        self.driver.execute_script('arguments[0].focus()', number)
+        number.send_keys(Keys.ENTER)
+        self.assertEqual(self.find('[data-viewer-selected]').get_attribute('id'), entry.get_attribute('id'))
+        self.assertEqual(len(self.driver.find_elements(By.CSS_SELECTOR, 'path[data-viewer-edge]')), 1)
+        self.assertEqual(len(self.driver.find_elements(By.CSS_SELECTOR, '[data-relationship-marker] [data-viewer-related]')), 2)
+        self.assertEqual(len(self.driver.find_elements(By.CSS_SELECTOR, '#selection button')), 2)
+        self.find('#selection button').click()
+        self.assertTrue(self.find('[data-viewer-selected]').get_attribute('data-terraform-address'))
+        self.find('#clear').click()
+        self.assertEqual(len(self.driver.find_elements(By.CSS_SELECTOR, 'path[data-viewer-edge]')), 0)
+        after = self.driver.execute_script("return Array.from(document.querySelectorAll('path[data-edge-kind]')).map(e=>[e.getAttribute('d'),e.getAttribute('stroke'),e.getAttribute('stroke-dasharray'),e.getAttribute('marker-end')])")
+        self.assertEqual(before, after)
+
+    def test_number_selection_stays_within_its_state(self):
+        self.load('--state', 'one=tests/fixtures/association-plan.json', '--state', 'two=tests/fixtures/association-plan.json')
+        for state in ['one', 'two']:
+            marker = self.find(f'[data-state-id="{state}"] [data-relationship-marker] a')
+            self.driver.execute_script('arguments[0].focus()', marker)
+            marker.send_keys(Keys.SPACE)
+            self.assertEqual(self.driver.execute_script("return document.querySelector('[data-viewer-selected]').closest('[data-state-id]').dataset.stateId"), state)
+            selected_states = self.driver.execute_script("return Array.from(document.querySelectorAll('[data-viewer-related], [data-viewer-edge]')).map(e=>e.closest('[data-state-id]').dataset.stateId)")
+            self.assertTrue(selected_states)
+            self.assertEqual(set(selected_states), {state})
 
     def test_escaped_long_addresses_modes_and_individual_logical_targets(self):
         address = 'module.app["a.b"].aws_iam_role.item["</script><script>window.pwned=1</script>&\\\"' + 'x' * 100 + '"]'
@@ -188,6 +214,15 @@ class ViewerTests(unittest.TestCase):
         route = self.find('[data-embedded-route]')
         self.assertEqual(route.get_attribute('id'), self.choose(route.get_attribute('data-terraform-address')))
         self.assertIn('Outgoing rendered edges', self.find('#selection').text)
+        next_hop = self.find('[data-embedded-route] [data-relationship-select]')
+        entry_id = self.driver.execute_script("return arguments[0].getAttribute('href').slice(1)", next_hop)
+        self.driver.execute_script("arguments[0].dispatchEvent(new MouseEvent('click', {bubbles:true,cancelable:true}))", next_hop)
+        self.assertEqual(self.find('[data-viewer-selected]').get_attribute('id'), entry_id)
+        paths = self.driver.find_elements(By.CSS_SELECTOR, 'path[data-viewer-edge]')
+        self.assertEqual(len(paths), 1)
+        self.assertEqual(paths[0].get_attribute('data-directionality'), 'directed')
+        self.assertTrue(paths[0].get_attribute('marker-end'))
+        self.assertEqual(len(self.driver.find_elements(By.CSS_SELECTOR, '[data-relationship-marker] [data-viewer-related]')), 2)
 
 
 if __name__ == '__main__':

@@ -46,6 +46,12 @@ arrows and numbered badges, with the complete explanation beside each sample.
 Legend height shifts the annotations and architecture together; it does not
 change the routed geometry.
 
+Either `[6]` badge links to the Relationship Resources entry for
+`module.network.aws_route.nat`. Its directed endpoint list links that Route card
+to `module.network.aws_nat_gateway.main`. The index uses five complete entries
+per card, with full addresses wrapped before horizontal packing. In HTML, number
+selection emphasizes the entry, both badges, endpoints and corresponding path.
+
 The generated plan has 50 resource changes. After omitting two AWS metadata data
 sources, the renderer retains 48 resources and produces 29 spatial cards, 2 embedded
 Route cards, 9 logical resources in 8 group cards within one cyan Logical Resources

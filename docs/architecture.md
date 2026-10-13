@@ -42,7 +42,7 @@ top clearance through a shared downward translation and matching canvas height.
 This preserves relative card positions and path shapes, including manually placed
 layout fixtures. Named-state heights, endpoint coordinates and routing obstacles
 include the same clearance.
-Relationship index cards group up to 10 complete numbered entries per card,
+Relationship index cards group up to 5 complete numbered entries per card,
 continuing to the right without a column cap before wrapping within their own
 neutral section. Packing uses the final content width after other annotations can
 expand it. Named-state composition reflows each state's annotations at the shared
