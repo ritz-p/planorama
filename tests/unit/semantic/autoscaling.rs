@@ -161,12 +161,16 @@ fn multiple_policies_remain_distinct_and_deterministic_when_input_reorders() {
 fn dynamic_instance_selection_does_not_create_verified_inverse_context() {
     let parsed = plan::parse(&input().to_string()).unwrap();
     let mut raw = crate::semantic::Input::new(&parsed);
+    let policy = raw
+        .nodes
+        .iter()
+        .position(|node| node.address == "aws_autoscaling_policy.cpu")
+        .unwrap();
     let reference = raw
         .attributes
         .iter_mut()
         .find(|reference| {
-            raw.nodes[reference.target].address == "aws_autoscaling_policy.cpu"
-                && reference.attribute == "autoscaling_group_name"
+            reference.target == policy && reference.attribute == "autoscaling_group_name"
         })
         .unwrap();
     reference.complete = true;
