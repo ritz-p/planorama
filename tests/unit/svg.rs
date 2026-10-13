@@ -1,6 +1,34 @@
 use super::*;
 
 #[test]
+fn account_only_spatial_scopes_remain_visible_without_becoming_global() {
+    for resource_type in ["aws_vpc", "aws_s3_bucket"] {
+        let address = format!("{resource_type}.example");
+        let input = serde_json::json!({
+            "format_version": "1.2",
+            "resource_changes": [{"address": address, "type": resource_type, "change": {"actions": ["create"]}}],
+            "configuration": {
+                "provider_config": {"aws": {"full_name": "hashicorp/aws", "expressions": {
+                    "assume_role": [{"role_arn": {"constant_value": "arn:aws:iam::123456789012:role/deploy"}}]
+                }}},
+                "root_module": {"resources": [{"address": address, "provider_config_key": "aws"}]}
+            }
+        });
+        let graph = crate::semantic::transform(&crate::plan::parse(&input.to_string()).unwrap());
+        let output = render(&graph, &Layout::new(&graph));
+        let document = roxmltree::Document::parse(&output).unwrap();
+        let panel = document
+            .descendants()
+            .find(|n| n.attribute("data-account") == Some("123456789012"))
+            .unwrap();
+        assert_eq!(panel.attribute("data-global"), None);
+        assert_eq!(panel.attribute("data-region"), None);
+        assert!(panel.children().any(|n| n.has_tag_name("text")
+            && n.text().is_some_and(|text| text.contains("123456789012"))));
+    }
+}
+
+#[test]
 fn spatial_scopes_expose_distinct_account_identity() {
     let mut input = serde_json::json!({
         "format_version": "1.2",
