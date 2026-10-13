@@ -12,11 +12,13 @@ Association, Connection, Containment. Each cell keeps its complete sample and
 wrapped explanation. On narrow diagrams, a single column puts the sample above
 the text; each row reserves the height of its tallest cell.
 
-The measured legend height reserves space before checks, annotation sections and
-the architecture in both single-plan and named-state output. Named-state diagrams
-give each legend the shared content width required by the widest state or
-annotation, excluding cross-state gutters.
-Cross-state endpoints include the same vertical offset as the following content.
+Single-plan output reserves the measured legend height before checks and annotations.
+Named-state SVG and HTML show one shared legend above all state sections, using
+the widest state's content width and excluding the cross-state routing gutter.
+Its action colors come from all displayed states; if none has a non-containment
+relationship, no legend or legend height is added. State-local checks, annotations
+and Relationship Resources indexes retain their own identities and numbering.
+State positions and cross-state endpoints include the shared legend height once.
 
 Line color describes the relationship's own Terraform action, independently of
 its endpoint resources. A relationship without an independent change

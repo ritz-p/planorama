@@ -83,16 +83,30 @@ pub(super) struct Legend {
 
 impl Legend {
     pub fn new(graph: &Graph, available_width: usize) -> Self {
-        if !graph
-            .edges
-            .iter()
-            .any(|edge| edge.kind != EdgeKind::Containment)
-        {
-            return Self {
-                width: available_width,
-                height: 0,
-                svg: String::new(),
-            };
+        Self::from_graphs([graph], available_width, 148)
+    }
+
+    pub fn empty(width: usize) -> Self {
+        Self {
+            width,
+            height: 0,
+            svg: String::new(),
+        }
+    }
+
+    pub fn from_graphs<'a>(
+        graphs: impl IntoIterator<Item = &'a Graph>,
+        available_width: usize,
+        top: usize,
+    ) -> Self {
+        let actions: BTreeSet<Option<Action>> = graphs
+            .into_iter()
+            .flat_map(|graph| &graph.edges)
+            .filter(|edge| edge.kind != EdgeKind::Containment)
+            .map(|edge| edge.change.as_ref().map(|change| change.action))
+            .collect();
+        if actions.is_empty() {
+            return Self::empty(available_width);
         }
         let width = available_width.max(360);
         let card_width = width - 80;
@@ -109,7 +123,7 @@ impl Legend {
             false,
         );
         content.y += 8;
-        content.actions(graph);
+        content.actions(actions);
         content.text(
             "no independent change: no separate Terraform action is identified. unchanged: an explicit no-op action.",
             PADDING,
@@ -130,7 +144,7 @@ impl Legend {
         );
         let card_height = content.y + PADDING;
         let svg = format!(
-            r##"<g id="relationship-legend" font-size="12" fill="#475569" transform="translate(40 148)"><rect width="{card_width}" height="{card_height}" rx="12" fill="#f8fafc" stroke="#cbd5e1"/>
+            r##"<g id="relationship-legend" font-size="12" fill="#475569" transform="translate(40 {top})"><rect width="{card_width}" height="{card_height}" rx="12" fill="#f8fafc" stroke="#cbd5e1"/>
 {}</g>
 "##,
             content.svg,
@@ -283,16 +297,10 @@ impl Content {
         }
     }
 
-    fn actions(&mut self, graph: &Graph) {
+    fn actions(&mut self, actions: BTreeSet<Option<Action>>) {
         let actions: BTreeSet<Option<Action>> = [None, Some(Action::Unchanged)]
             .into_iter()
-            .chain(
-                graph
-                    .edges
-                    .iter()
-                    .filter(|edge| edge.kind != EdgeKind::Containment)
-                    .map(|edge| edge.change.as_ref().map(|change| change.action)),
-            )
+            .chain(actions)
             .collect();
         let mut x = PADDING;
         for action in actions {
