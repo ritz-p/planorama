@@ -37,7 +37,7 @@ impl DiagnosticReason {
             Self::AmbiguousRouteTarget => "multiple route target attributes",
             Self::NonIdReference => "endpoint reference does not select resource IDs exclusively",
             Self::UnprovenEndpointValue => {
-                "planned endpoint value is not proven to equal the referenced resource ID"
+                "planned endpoint value is not proven to equal the referenced resource identity"
             }
             Self::DeposedEndpoint => "deposed resource cannot be a route endpoint",
             Self::DriftDetected => {
