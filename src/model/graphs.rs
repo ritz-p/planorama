@@ -20,6 +20,7 @@ pub struct AttributeReference {
     pub instances_explicit: bool,
     pub collection_ids_complete: bool,
     pub scalar_id_matches: bool,
+    pub scalar_name_matches: bool,
     pub arn_values_match: bool,
     pub monitoring_verified: bool,
     pub ids_only: bool,

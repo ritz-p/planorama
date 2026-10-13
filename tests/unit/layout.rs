@@ -91,7 +91,12 @@ fn bundled_stars_avoid_cards_and_keep_individual_svg_relationships() {
         check_geometry(&graph);
         let layout = Layout::new(&graph);
         let svg = crate::svg::render(&graph, &layout);
-        assert_eq!(svg.matches("marker-end=").count(), 3);
+        assert_eq!(
+            svg.lines()
+                .filter(|line| line.contains("data-edge-kind=") && line.contains("marker-end="))
+                .count(),
+            3
+        );
         assert!(!layout.junctions.is_empty());
         assert_eq!(svg.matches("<circle cx=").count(), layout.junctions.len());
         assert_eq!(svg.matches("data-endpoint=\"source\"").count(), 3);
@@ -129,7 +134,12 @@ fn virtual_nodes_do_not_become_resources_or_visible_edges() {
     assert_eq!(layout.paths.len(), graph.edges.len());
     let svg = crate::svg::render(&graph, &layout);
     assert!(svg.contains("4 resources, 4 reference edges"));
-    assert_eq!(svg.matches("marker-end=").count(), 4);
+    assert_eq!(
+        svg.lines()
+            .filter(|line| line.contains("data-edge-kind=") && line.contains("marker-end="))
+            .count(),
+        4
+    );
     assert_eq!(
         original_addresses,
         graph
@@ -181,17 +191,33 @@ fn dense_graph_quality_metrics_are_deterministic() {
         .collect();
     let graph = graph(12, edges);
     check_geometry(&graph);
-    let metrics = metrics::measure(&Layout::new(&graph).paths);
+    let layout = Layout::new(&graph);
+    assert_eq!(
+        layout.paths,
+        Layout::new(&graph).paths,
+        "repeated layout changed route geometry"
+    );
+    let mut reordered = graph.clone();
+    reordered.edges.reverse();
+    assert_eq!(
+        layout.paths,
+        Layout::new(&reordered)
+            .paths
+            .into_iter()
+            .rev()
+            .collect::<Vec<_>>(),
+        "reordered edges changed route geometry"
+    );
+    let metrics = metrics::measure(&layout.paths);
     assert_eq!(
         metrics,
         metrics::LayoutMetrics {
-            overlap_distance: 168,
-            crossing_count: 375,
-            bend_count: 88,
-            total_path_length: 71553,
+            overlap_distance: 1,
+            crossing_count: 394,
+            bend_count: 87,
+            total_path_length: 71184,
         }
     );
-    assert_eq!(metrics, metrics::measure(&Layout::new(&graph).paths));
 }
 
 #[test]

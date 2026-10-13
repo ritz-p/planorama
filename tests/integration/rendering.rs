@@ -129,26 +129,62 @@ fn relationship_patterns_are_distinct_and_nesting_stays_line_free() {
         ),
     ] {
         let svg = render(input);
-        let paths: Vec<_> = svg
-            .lines()
-            .filter(|line| {
-                line.starts_with("<path ") && line.contains(&format!("data-edge-kind=\"{kind}\""))
+        let document = roxmltree::Document::parse(&svg).unwrap();
+        let paths: Vec<_> = document
+            .descendants()
+            .filter(|node| {
+                node.has_tag_name("path") && node.attribute("data-edge-kind") == Some(kind)
             })
             .collect();
+        let sample = document
+            .descendants()
+            .find(|node| node.attribute("data-legend-kind") == Some(kind))
+            .unwrap();
         assert!(!paths.is_empty());
         for path in paths {
-            assert!(path.contains(&format!("stroke-width=\"{width}\"")));
+            assert_eq!(path.attribute("stroke-width"), Some(width));
+            assert_eq!(path.attribute("stroke-dasharray"), dash);
             if kind == "connection" {
-                assert!(path.contains("stroke-linecap=\"round\""));
+                assert_eq!(path.attribute("stroke-linecap"), Some("round"));
             }
-            match dash {
-                Some(dash) => assert!(path.contains(&format!("stroke-dasharray=\"{dash}\""))),
-                None => assert!(!path.contains("stroke-dasharray")),
+            for attribute in ["stroke-width", "stroke-dasharray", "stroke-linecap"] {
+                assert_eq!(sample.attribute(attribute), path.attribute(attribute));
             }
         }
-        assert!(
-            svg.contains("Thin solid: dependency. Dashed: association. Thick dotted: connection.")
+        assert_eq!(
+            sample.attribute("data-directionality"),
+            Some(if kind == "dependency" {
+                "directed"
+            } else {
+                "undirected"
+            })
         );
+        assert_eq!(sample.attribute("marker-start"), None);
+        if kind == "dependency" {
+            assert_eq!(sample.attribute("stroke"), Some("#94a3b8"));
+            let marker_id = sample
+                .attribute("marker-end")
+                .unwrap()
+                .strip_prefix("url(#")
+                .unwrap()
+                .strip_suffix(')')
+                .unwrap();
+            let marker = document
+                .descendants()
+                .find(|node| node.has_tag_name("marker") && node.attribute("id") == Some(marker_id))
+                .unwrap();
+            assert_eq!(marker.attribute("orient"), Some("auto-start-reverse"));
+            assert_eq!(
+                marker
+                    .children()
+                    .find(|node| node.has_tag_name("path"))
+                    .unwrap()
+                    .attribute("fill"),
+                sample.attribute("stroke")
+            );
+        } else {
+            assert_eq!(sample.attribute("marker-end"), None);
+        }
     }
     let svg = render(include_bytes!("../fixtures/containment-plan.json"));
     assert!(svg.contains("<g data-edge-kind=\"containment\""));
@@ -734,37 +770,79 @@ fn additional_dense_and_provider_snapshots_match_the_renderer() {
 }
 
 #[test]
-fn relationship_index_example_keeps_twenty_one_entries_in_three_top_cards() {
-    let svg = render(include_bytes!("../fixtures/relationship-index-plan.json"));
-    assert_eq!(
-        svg,
-        include_str!("../../examples/relationship-index.svg").replace("\r\n", "\n")
-    );
-    let document = roxmltree::Document::parse(&svg).unwrap();
-    let cards: Vec<_> = document
-        .descendants()
-        .filter(|n| n.attribute("data-relationship-index").is_some())
-        .collect();
-    assert_eq!(cards.len(), 3);
-    for (card, expected) in cards.iter().zip([10, 10, 1]) {
+fn relationship_index_examples_use_available_width_for_complete_entry_cards() {
+    for (input, name, count, columns) in [
+        (
+            include_bytes!("../fixtures/relationship-index-plan.json").as_slice(),
+            "relationship-index",
+            21usize,
+            2,
+        ),
+        (
+            include_bytes!("../fixtures/relationship-index-wide-plan.json").as_slice(),
+            "relationship-index-wide",
+            40,
+            4,
+        ),
+    ] {
+        let svg = render(input);
+        let snapshot =
+            std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join(format!("examples/{name}.svg"));
         assert_eq!(
-            card.descendants()
-                .filter(|n| n.attribute("data-relationship-entry").is_some())
-                .count(),
-            expected
+            svg,
+            std::fs::read_to_string(snapshot)
+                .unwrap()
+                .replace("\r\n", "\n")
         );
-        assert!(
-            card.ancestors()
-                .any(|n| n.attribute("data-annotation-area").is_some())
+        let document = roxmltree::Document::parse(&svg).unwrap();
+        let cards: Vec<_> = document
+            .descendants()
+            .filter(|n| n.attribute("data-relationship-index").is_some())
+            .collect();
+        assert_eq!(cards.len(), count.div_ceil(10));
+        let mut rows = Vec::new();
+        for (i, card) in cards.iter().enumerate() {
+            let numbers: Vec<_> = card
+                .descendants()
+                .filter_map(|n| n.attribute("data-relationship-entry"))
+                .map(|number| number.parse::<usize>().unwrap())
+                .collect();
+            assert_eq!(
+                numbers,
+                (i * 10 + 1..=count.min((i + 1) * 10)).collect::<Vec<_>>()
+            );
+            assert!(card.ancestors().any(|n| {
+                n.attribute("data-annotation-section") == Some("Relationship Resources")
+            }));
+            let position: Vec<usize> = card
+                .parent()
+                .unwrap()
+                .attribute("transform")
+                .unwrap()
+                .trim_start_matches("translate(")
+                .trim_end_matches(')')
+                .split_whitespace()
+                .map(|value| value.parse().unwrap())
+                .collect();
+            if i % columns == 0 {
+                assert_eq!(position[0], 16);
+                if let Some(previous) = rows.last() {
+                    assert!(position[1] > *previous);
+                }
+                rows.push(position[1]);
+            } else {
+                assert_eq!(Some(&position[1]), rows.last());
+            }
+        }
+        assert_eq!(rows.len(), count.div_ceil(10 * columns));
+        assert_eq!(
+            document
+                .descendants()
+                .filter(|n| n.attribute("data-relationship-marker").is_some())
+                .count(),
+            count * 2
         );
     }
-    assert_eq!(
-        document
-            .descendants()
-            .filter(|n| n.attribute("data-relationship-marker").is_some())
-            .count(),
-        42
-    );
 }
 
 #[test]
@@ -776,7 +854,11 @@ fn cli_emits_containment_metadata_without_dropping_resources_or_dependencies() {
     );
     assert!(svg.contains("3 resources (3 cards), 3 relationships"));
     assert_eq!(svg.matches("data-edge-kind=\"containment\"").count(), 2);
-    assert_eq!(svg.matches("marker-end=").count(), 0);
+    assert!(
+        svg.lines()
+            .filter(|line| line.contains("data-edge-kind="))
+            .all(|line| !line.contains("marker-end="))
+    );
     assert_eq!(svg.matches("data-container=").count(), 2);
 }
 
@@ -839,7 +921,12 @@ fn bundled_fixture_preserves_individual_dependency_arrows() {
         include_str!("../../examples/bundling.svg").replace("\r\n", "\n")
     );
     assert!(svg.contains("5 resources, 6 reference edges"));
-    assert_eq!(svg.matches("marker-end=").count(), 6);
+    assert_eq!(
+        svg.lines()
+            .filter(|line| line.contains("data-edge-kind=") && line.contains("marker-end="))
+            .count(),
+        6
+    );
     assert!(svg.contains("<circle "));
     for name in ["a", "b", "c"] {
         assert!(svg.contains(&format!(

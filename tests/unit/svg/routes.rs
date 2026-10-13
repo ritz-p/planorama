@@ -10,11 +10,44 @@ fn output(value: &Value) -> String {
     let graph = semantic::transform(&plan::parse(&value.to_string()).unwrap());
     let layout = Layout::new(&graph);
     verify_route_paths(&graph, &layout);
-    svg::render(&graph, &layout)
+    let svg = svg::render(&graph, &layout);
+    let document = roxmltree::Document::parse(&svg).unwrap();
+    for (index, node) in graph.nodes.iter().enumerate() {
+        if view::routes::owner(&graph, node).is_none() || layout.bounds[index].width == 0 {
+            continue;
+        }
+        let card = document
+            .descendants()
+            .find(|card| {
+                card.attribute("data-embedded-route") == Some("true")
+                    && card.attribute("data-architecture-id") == Some(node.entity.id.as_str())
+            })
+            .unwrap();
+        let rect = card
+            .children()
+            .find(|rect| rect.has_tag_name("rect"))
+            .unwrap();
+        let actual = ["x", "y", "width", "height"]
+            .map(|key| rect.attribute(key).unwrap().parse::<usize>().unwrap());
+        let bounds = layout.bounds[index];
+        assert_eq!(
+            actual,
+            [
+                bounds.origin.x,
+                bounds.origin.y,
+                bounds.width,
+                bounds.height
+            ],
+            "embedded card and final routing bounds differ for {}",
+            node.address
+        );
+    }
+    svg
 }
 
 fn verify_route_paths(graph: &crate::model::Graph, layout: &Layout<'_>) {
     let mut ports = std::collections::BTreeMap::<_, Vec<_>>::new();
+    let index = svg::relationship_index::Index::new(graph, layout);
     for (edge, path) in graph.edges.iter().zip(&layout.paths) {
         let Some(parent) = view::routes::owner(graph, &graph.nodes[edge.from]) else {
             continue;
@@ -69,6 +102,35 @@ fn verify_route_paths(graph: &crate::model::Graph, layout: &Layout<'_>) {
             path.windows(2)
                 .all(|p| p[0].x == p[1].x || p[0].y == p[1].y)
         );
+        if let Some(number) = index.number(&graph.nodes[edge.from]) {
+            use crate::layout::{Port, Side, relationship_markers};
+            let source = path.windows(2).find(|p| p[0] != p[1]).unwrap();
+            let side = if source[1].x < source[0].x {
+                Side::Left
+            } else if source[1].x > source[0].x {
+                Side::Right
+            } else if source[1].y < source[0].y {
+                Side::Top
+            } else {
+                Side::Bottom
+            };
+            let marker = relationship_markers::bounds(
+                number,
+                Port {
+                    point: source[0],
+                    side,
+                },
+            );
+            assert!(index.marker_bounds().any(|actual| actual == marker));
+            let table = layout.bounds[parent];
+            assert!(marker.origin.x >= table.origin.x + 4);
+            assert!(marker.right() + 4 <= table.right());
+            assert!(marker.origin.y >= table.origin.y + layout.header_heights[parent] + 4);
+            assert!(
+                marker.origin.y + marker.height + 28 <= table.origin.y + table.height,
+                "source marker covers the parent footer: {marker:?}, {table:?}"
+            );
+        }
     }
     for points in ports.values() {
         for (i, a) in points.iter().enumerate() {
@@ -77,7 +139,6 @@ fn verify_route_paths(graph: &crate::model::Graph, layout: &Layout<'_>) {
             }
         }
     }
-    let index = svg::relationship_index::Index::new(graph, layout);
     let markers: Vec<_> = index.marker_bounds().collect();
     let overlaps = |a: crate::layout::Bounds, b: crate::layout::Bounds| {
         a.origin.x < b.right()
@@ -125,6 +186,11 @@ fn nonspatial_next_hop_keeps_status_without_a_spatial_path() {
     verify_cards(&svg);
     assert!(svg.contains("(nonspatial)"));
     assert!(!svg.contains("Next hop ["));
+    assert!(
+        svg.contains(
+            "2 spatial cards, 1 logical resources in 1 group cards, 2 embedded route cards"
+        )
+    );
 }
 
 fn verify_cards(svg: &str) {
@@ -145,6 +211,15 @@ fn verify_cards(svg: &str) {
         n.attribute("data-embedded-route").is_some() || n.attribute("data-route-entry").is_some()
     }) {
         let rect = card.children().find(|n| n.has_tag_name("rect")).unwrap();
+        assert_eq!(number(rect, "rx"), view::geometry::ROUTE_RADIUS);
+        assert_eq!(
+            rect.attribute("stroke-width")
+                .unwrap()
+                .parse::<f64>()
+                .unwrap()
+                * 4.0,
+            view::geometry::ROUTE_STROKE as f64
+        );
         let (x, y, width, height) = (
             number(rect, "x"),
             number(rect, "y"),
@@ -156,7 +231,34 @@ fn verify_cards(svg: &str) {
             .skip(1)
             .find(|n| n.attribute("data-terraform-address").is_some())
             .unwrap();
-        let outer = parent.children().find(|n| n.has_tag_name("rect")).unwrap();
+        let outer = parent
+            .children()
+            .find(|n| n.has_tag_name("rect"))
+            .unwrap_or_else(|| {
+                let boundary = doc
+                    .descendants()
+                    .find(|n| {
+                        n.attribute("data-route-table").is_some()
+                            && n.attribute("data-route-table") == parent.attribute("id")
+                    })
+                    .unwrap();
+                let rects: Vec<_> = boundary
+                    .children()
+                    .filter(|n| n.has_tag_name("rect"))
+                    .collect();
+                assert_eq!(rects.len(), 1);
+                assert_eq!(number(rects[0], "rx"), view::geometry::CONTAINER_RADIUS);
+                assert_eq!(
+                    rects[0]
+                        .attribute("stroke-width")
+                        .unwrap()
+                        .parse::<f64>()
+                        .unwrap()
+                        * 4.0,
+                    view::geometry::CONTAINER_STROKE as f64
+                );
+                rects[0]
+            });
         assert!(x > number(outer, "x") && x + width < number(outer, "x") + number(outer, "width"));
         assert!(
             y > number(outer, "y") && y + height < number(outer, "y") + number(outer, "height")

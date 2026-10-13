@@ -1,0 +1,25 @@
+{
+  "source": "Planorama original artwork",
+  "repository": "https://github.com/ritz-p/planorama",
+  "version": "1.0.0",
+  "created": "2026-10-12",
+  "license": "MIT",
+  "license_scope": "terraform-builtin-24.svg and its embedded copies",
+  "copyright": "Copyright (c) 2026 Planorama contributors",
+  "third_party_artwork": false,
+  "description": "Original neutral state-file symbol for Terraform built-in provider entities; not the HashiCorp Terraform product logo",
+  "files": [
+    {
+      "file": "terraform-builtin-24.svg",
+      "source": "assets/icons/terraform/terraform-builtin-24.svg",
+      "sha256": "5418d9e55a889e4558ee64d8c34a983a28355c87e56416adab36110320eb2210",
+      "git_blob_sha": "c05a19ce9d467db9e0067d193aaa6a484b3d2a9d"
+    },
+    {
+      "file": "LICENSE.txt",
+      "source": "assets/icons/terraform/LICENSE.txt",
+      "sha256": "5ba74edac9afb2a564c1e824647459464fae107007fc234f9b89651c8eae58f3",
+      "git_blob_sha": "824c7f833e540de0494357cdf968983159a67c88"
+    }
+  ]
+}

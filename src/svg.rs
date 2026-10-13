@@ -20,7 +20,12 @@ mod routes;
 mod scopes;
 mod states;
 mod style;
+pub(crate) use identity::resource as resource_id;
 pub use states::render_states;
+pub(crate) use states::{prefix as state_prefix, render_content as render_states_content};
+#[cfg(test)]
+#[path = "../tests/unit/svg/composition.rs"]
+mod composition_tests;
 #[cfg(test)]
 #[path = "../tests/unit/svg.rs"]
 mod tests;
@@ -35,6 +40,12 @@ pub enum AddressFormat {
     #[default]
     Qualified,
     Terraform,
+}
+
+#[derive(Clone, Copy)]
+pub(crate) enum Content {
+    Standard,
+    ValueFree,
 }
 
 fn escape(value: &str) -> String {
@@ -59,29 +70,106 @@ pub(crate) fn render(graph: &Graph, layout: &Layout<'_>) -> String {
 #[cfg(test)]
 fn dimensions(graph: &Graph, layout: &Layout<'_>) -> (usize, usize) {
     let index = relationship_index::Index::new(graph, layout);
-    dimensions_with_index(graph, layout, &index, AddressFormat::Qualified)
+    Sections::new(graph, layout, &index, AddressFormat::Qualified).dimensions(layout)
 }
 
-fn dimensions_with_index(
+struct Sections {
+    legend: legend::Legend,
+    annotations: annotations::Area,
+    check_height: usize,
+    architecture_top_padding: usize,
+}
+
+impl Sections {
+    fn new(
+        graph: &Graph,
+        layout: &Layout<'_>,
+        index: &relationship_index::Index<'_>,
+        address_format: AddressFormat,
+    ) -> Self {
+        Self::with_width(graph, layout, index, address_format, index.width)
+    }
+
+    fn with_width(
+        graph: &Graph,
+        layout: &Layout<'_>,
+        index: &relationship_index::Index<'_>,
+        address_format: AddressFormat,
+        available_width: usize,
+    ) -> Self {
+        let annotations = annotation_area(
+            graph,
+            index,
+            address_format,
+            available_width.max(index.width),
+        );
+        let legend = legend::Legend::new(graph, annotations.width);
+        let annotations = if legend.width > annotations.width {
+            annotation_area(graph, index, address_format, legend.width)
+        } else {
+            annotations
+        };
+        Self {
+            legend,
+            annotations,
+            check_height: if graph.checks.is_empty() { 0 } else { 24 },
+            architecture_top_padding: architecture_top_padding(graph, layout, index),
+        }
+    }
+
+    fn height(&self) -> usize {
+        self.check_height
+            + self.legend.height
+            + self.annotations.height
+            + self.architecture_top_padding
+    }
+
+    fn dimensions(&self, layout: &Layout<'_>) -> (usize, usize) {
+        (
+            self.annotations.width.max(self.legend.width),
+            layout.height + self.height(),
+        )
+    }
+}
+
+fn architecture_top_padding(
     graph: &Graph,
     layout: &Layout<'_>,
     index: &relationship_index::Index<'_>,
-    address_format: AddressFormat,
-) -> (usize, usize) {
-    let annotations = annotation_area(graph, index, address_format);
-    (
-        annotations.width,
-        layout.height
-            + if graph.checks.is_empty() { 0 } else { 24 }
-            + legend::height(graph)
-            + annotations.height,
-    )
+) -> usize {
+    const TOP: usize = 160;
+    layout
+        .bounds
+        .iter()
+        .zip(&graph.nodes)
+        .filter(|(bounds, node)| {
+            bounds.width > 0
+                && bounds.height > 0
+                && node.placement != crate::model::Placement::Logical
+        })
+        .map(|(bounds, _)| bounds.origin.y)
+        .chain(layout.bands.iter().map(|band| band.top))
+        .chain(layout.scopes.iter().map(|scope| scope.bounds.origin.y))
+        .chain(
+            layout
+                .paths
+                .iter()
+                .filter(|path| path.len() >= 2)
+                .flatten()
+                .map(|point| point.y),
+        )
+        .chain(layout.junctions.iter().map(|point| point.y))
+        .chain(index.marker_bounds().map(|bounds| bounds.origin.y))
+        .map(|y| TOP.saturating_sub(y))
+        .max()
+        .unwrap_or(0)
 }
 
 fn annotation_area(
     graph: &Graph,
     index: &relationship_index::Index<'_>,
     address_format: AddressFormat,
+    available_width: usize,
 ) -> annotations::Area {
     annotations::Area::sections(
         vec![
@@ -101,7 +189,7 @@ fn annotation_area(
                 index.cards(),
             ),
         ],
-        index.width,
+        available_width,
     )
 }
 
@@ -110,8 +198,25 @@ pub(crate) fn render_with_format(
     layout: &Layout<'_>,
     address_format: AddressFormat,
 ) -> String {
+    render_content(graph, layout, address_format, Content::Standard)
+}
+
+pub(crate) fn render_content(
+    graph: &Graph,
+    layout: &Layout<'_>,
+    address_format: AddressFormat,
+    content: Content,
+) -> String {
     let relationship_index = relationship_index::Index::new(graph, layout);
-    render_with_index(graph, layout, address_format, &relationship_index)
+    let sections = Sections::new(graph, layout, &relationship_index, address_format);
+    render_with_index(
+        graph,
+        layout,
+        address_format,
+        &relationship_index,
+        &sections,
+        content,
+    )
 }
 
 fn render_with_index(
@@ -119,9 +224,11 @@ fn render_with_index(
     layout: &Layout<'_>,
     address_format: AddressFormat,
     relationship_index: &relationship_index::Index<'_>,
+    sections: &Sections,
+    content: Content,
 ) -> String {
-    let check_offset = if graph.checks.is_empty() { 0 } else { 24 };
-    let (width, height) = dimensions_with_index(graph, layout, relationship_index, address_format);
+    let check_offset = sections.check_height;
+    let (width, height) = sections.dimensions(layout);
     let membership = components::membership(graph);
     let (description, summary) = relationships::captions(graph);
     let markers = relationships::markers(graph);
@@ -136,14 +243,14 @@ fn render_with_index(
         r##"<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}" role="img" aria-labelledby="title description">
 <title id="title">Terraform plan</title>
 <desc id="description">{description} Thin solid: dependency. Dashed: association. Thick dotted: connection. Nested boxes: containment. Edge color preserves the Terraform action when available.</desc>
-<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/></marker>{markers}{icon_definitions}{occlusion_definitions}</defs>
+<defs>{markers}{icon_definitions}{occlusion_definitions}</defs>
 <rect width="100%" height="100%" fill="#ffffff"/>
 <g font-family="ui-monospace, SFMono-Regular, Consolas, monospace">
 <text x="40" y="45" font-size="25" font-weight="700" fill="#0f172a">Terraform plan</text>
 <text x="40" y="73" font-size="13" fill="#475569">{summary}</text>
 "##,
     );
-    svg.push_str(&provenance::metadata(graph));
+    svg.push_str(&provenance::metadata(graph, content));
     for (i, action) in [
         Action::Create,
         Action::Update,
@@ -193,21 +300,21 @@ fn render_with_index(
         }
         svg.push_str("</text>\n</g>\n");
     }
-    let legend_height = legend::height(graph);
+    let legend_height = sections.legend.height;
     if legend_height != 0 {
-        svg.push_str(&legend::render(graph));
+        svg.push_str(sections.legend.render());
         writeln!(svg, "<g transform=\"translate(0 {legend_height})\">").unwrap();
     }
     if check_offset != 0 {
         svg.push_str(&checks::render(&graph.checks));
         svg.push_str("<g transform=\"translate(0 24)\">\n");
     }
-    let annotations = annotation_area(graph, relationship_index, address_format);
+    let annotations = &sections.annotations;
     svg.push_str(&annotations.render());
     writeln!(
         svg,
         "<g data-architecture=\"true\" transform=\"translate(0 {})\">",
-        annotations.height
+        annotations.height + sections.architecture_top_padding
     )
     .unwrap();
     for band in &layout.bands {
@@ -242,18 +349,13 @@ fn render_with_index(
             continue;
         }
         let stroke = relationships::stroke(edge);
-        let marker = match &edge.change {
-            Some(change) => format!("arrow-{}", label(change.action)),
-            None => "arrow".into(),
-        };
         let path = paths::rounded(points);
         let style = relationships::style(edge.kind);
         let direction = edge.directionality().as_str();
-        let arrow = if edge.directionality() == crate::model::Directionality::Directed {
-            format!(r#" marker-end="url(#{marker})""#)
-        } else {
-            String::new()
-        };
+        let arrow = relationships::arrow(
+            edge.directionality(),
+            edge.change.as_ref().map(|change| change.action),
+        );
         let mask = occlusion.attribute(index);
         writeln!(svg, r##"<path d="{path}"{relation}{previous}{operation} data-directionality="{direction}" data-source="{source}" data-target="{target}" fill="none" stroke="{stroke}" {style} stroke-linejoin="round"{arrow}{mask}><title>{title}</title></path>"##).unwrap();
     }
@@ -334,8 +436,12 @@ fn render_with_index(
             r#"<g id="{resource_id}" data-architecture-id="{architecture_id}" data-qualified-address="{qualified}" data-terraform-address="{address}"{deposed}{previous}{operation}{component}><title>{selected_title} — {operation_label}{operation_details}{move_details}</title>"#,
         )
         .unwrap();
-        if node.role != crate::model::architecture::ResourceRole::Container {
-            writeln!(svg, r#"<rect x="{x}" y="{y}" width="{card_width}" height="{header_height}" rx="8" fill="{background}" stroke="{border}" stroke-width="1.5"{mode}/>"#).unwrap();
+        if node.role != crate::model::architecture::ResourceRole::Container
+            && !layout.containers.contains(&i)
+        {
+            let radius = crate::view::geometry::CARD_RADIUS;
+            let stroke = crate::view::geometry::CARD_STROKE as f64 / 4.0;
+            writeln!(svg, r#"<rect x="{x}" y="{y}" width="{card_width}" height="{header_height}" rx="{radius}" fill="{background}" stroke="{border}" stroke-width="{stroke}"{mode}/>"#).unwrap();
         }
         svg.push_str(&entities::badge(node.mode, x, y));
         svg.push_str(&entities::import_badge(node, x + 12, y + 28));
@@ -387,10 +493,12 @@ fn render_with_index(
         ));
         svg.push_str(&routes::render(
             graph,
+            layout,
             i,
             x + 12,
             y + metrics.routes_y,
             relationship_index,
+            content,
         ));
         let role = roles::annotation(node.role, &node.module);
         let footer = match role.is_empty() {

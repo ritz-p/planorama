@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="2228" viewBox="0 0 1100 2228" role="img" aria-labelledby="title description">
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="2762" viewBox="0 0 1100 2762" role="img" aria-labelledby="title description">
 <title id="title">Terraform plan</title>
-<desc id="description">12 resources (11 spatial cards, 1 logical cards) · 5 relationships Thin solid: dependency. Dashed: association. Thick dotted: connection. Nested boxes: containment. Edge color preserves the Terraform action when available.</desc>
+<desc id="description">12 resources (11 spatial cards, 1 logical resources in 1 group cards) · 5 relationships Thin solid: dependency. Dashed: association. Thick dotted: connection. Nested boxes: containment. Edge color preserves the Terraform action when available.</desc>
 <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/></marker><metadata id="planorama-icons-license">AWS Architecture Icons, release 07312026.
 Copyright Amazon Web Services, Inc. or its affiliates. All rights reserved.
 AWS service names and artwork are trademarks or other proprietary assets of AWS.
@@ -48,7 +48,7 @@ No AWS endorsement is implied. Consult the AWS terms for other uses.
 <rect width="100%" height="100%" fill="#ffffff"/>
 <g font-family="ui-monospace, SFMono-Regular, Consolas, monospace">
 <text x="40" y="45" font-size="25" font-weight="700" fill="#0f172a">Terraform plan</text>
-<text x="40" y="73" font-size="13" fill="#475569">12 resources (11 spatial cards, 1 logical cards) · 5 relationships</text>
+<text x="40" y="73" font-size="13" fill="#475569">12 resources (11 spatial cards, 1 logical resources in 1 group cards) · 5 relationships</text>
 <metadata id="architecture-entities">[{&quot;id&quot;:&quot;terraform:6177735f636c6f756466726f6e745f646973747269627574696f6e2e617070-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_cloudfront_distribution.app&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:6177735f69616d5f726f6c652e617070-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_iam_role.app&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:6177735f696e7374616e63652e746f6b796f-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_instance.tokyo&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:6177735f696e7374616e63652e756e6b6e6f776e-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_instance.unknown&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:6177735f696e7374616e63652e76697267696e6961-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_instance.virginia&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:6177735f726f75746535335f7a6f6e652e617070-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_route53_zone.app&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:6177735f7375626e65742e746f6b796f-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_subnet.tokyo&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:6177735f7375626e65742e76697267696e6961-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_subnet.virginia&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:6177735f756e636c61737369666965642e617070-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_unclassified.app&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:6177735f7670632e746f6b796f-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_vpc.tokyo&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:6177735f7670632e746f6b796f5f7365636f6e64-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_vpc.tokyo_second&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:6177735f7670632e76697267696e6961-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_vpc.virginia&quot;,&quot;deposed_key&quot;:null}]}]</metadata>
 <metadata id="architecture-relationships">[{&quot;directionality&quot;:&quot;directed&quot;,&quot;from&quot;:&quot;terraform:6177735f696e7374616e63652e746f6b796f-current&quot;,&quot;inferred&quot;:false,&quot;kind&quot;:&quot;dependency&quot;,&quot;provenance&quot;:[{&quot;from&quot;:&quot;aws_instance.tokyo&quot;,&quot;from_deposed_key&quot;:null,&quot;kind&quot;:&quot;reference&quot;,&quot;to&quot;:&quot;aws_instance.virginia&quot;,&quot;to_deposed_key&quot;:null}],&quot;to&quot;:&quot;terraform:6177735f696e7374616e63652e76697267696e6961-current&quot;},{&quot;directionality&quot;:&quot;directed&quot;,&quot;from&quot;:&quot;terraform:6177735f7375626e65742e746f6b796f-current&quot;,&quot;inferred&quot;:true,&quot;kind&quot;:&quot;containment&quot;,&quot;provenance&quot;:[{&quot;from&quot;:&quot;aws_subnet.tokyo&quot;,&quot;from_deposed_key&quot;:null,&quot;kind&quot;:&quot;reference&quot;,&quot;to&quot;:&quot;aws_instance.tokyo&quot;,&quot;to_deposed_key&quot;:null}],&quot;to&quot;:&quot;terraform:6177735f696e7374616e63652e746f6b796f-current&quot;},{&quot;directionality&quot;:&quot;directed&quot;,&quot;from&quot;:&quot;terraform:6177735f7375626e65742e76697267696e6961-current&quot;,&quot;inferred&quot;:true,&quot;kind&quot;:&quot;containment&quot;,&quot;provenance&quot;:[{&quot;from&quot;:&quot;aws_subnet.virginia&quot;,&quot;from_deposed_key&quot;:null,&quot;kind&quot;:&quot;reference&quot;,&quot;to&quot;:&quot;aws_instance.virginia&quot;,&quot;to_deposed_key&quot;:null}],&quot;to&quot;:&quot;terraform:6177735f696e7374616e63652e76697267696e6961-current&quot;},{&quot;directionality&quot;:&quot;directed&quot;,&quot;from&quot;:&quot;terraform:6177735f7670632e746f6b796f-current&quot;,&quot;inferred&quot;:true,&quot;kind&quot;:&quot;containment&quot;,&quot;provenance&quot;:[{&quot;from&quot;:&quot;aws_vpc.tokyo&quot;,&quot;from_deposed_key&quot;:null,&quot;kind&quot;:&quot;reference&quot;,&quot;to&quot;:&quot;aws_subnet.tokyo&quot;,&quot;to_deposed_key&quot;:null}],&quot;to&quot;:&quot;terraform:6177735f7375626e65742e746f6b796f-current&quot;},{&quot;directionality&quot;:&quot;directed&quot;,&quot;from&quot;:&quot;terraform:6177735f7670632e76697267696e6961-current&quot;,&quot;inferred&quot;:true,&quot;kind&quot;:&quot;containment&quot;,&quot;provenance&quot;:[{&quot;from&quot;:&quot;aws_vpc.virginia&quot;,&quot;from_deposed_key&quot;:null,&quot;kind&quot;:&quot;reference&quot;,&quot;to&quot;:&quot;aws_subnet.virginia&quot;,&quot;to_deposed_key&quot;:null}],&quot;to&quot;:&quot;terraform:6177735f7375626e65742e76697267696e6961-current&quot;}]</metadata>
 <metadata id="resource-references">[{&quot;attribute&quot;:&quot;subnet_id&quot;,&quot;complete&quot;:true,&quot;consumer&quot;:&quot;terraform:6177735f696e7374616e63652e746f6b796f-current&quot;,&quot;dependency&quot;:false,&quot;issues&quot;:[],&quot;targets&quot;:[{&quot;address&quot;:&quot;aws_subnet.tokyo&quot;,&quot;deposed_key&quot;:null}]},{&quot;attribute&quot;:&quot;subnet_id&quot;,&quot;complete&quot;:true,&quot;consumer&quot;:&quot;terraform:6177735f696e7374616e63652e76697267696e6961-current&quot;,&quot;dependency&quot;:false,&quot;issues&quot;:[],&quot;targets&quot;:[{&quot;address&quot;:&quot;aws_subnet.virginia&quot;,&quot;deposed_key&quot;:null}]},{&quot;attribute&quot;:&quot;user_data&quot;,&quot;complete&quot;:true,&quot;consumer&quot;:&quot;terraform:6177735f696e7374616e63652e76697267696e6961-current&quot;,&quot;dependency&quot;:false,&quot;issues&quot;:[],&quot;targets&quot;:[{&quot;address&quot;:&quot;aws_instance.tokyo&quot;,&quot;deposed_key&quot;:null}]},{&quot;attribute&quot;:&quot;vpc_id&quot;,&quot;complete&quot;:true,&quot;consumer&quot;:&quot;terraform:6177735f7375626e65742e746f6b796f-current&quot;,&quot;dependency&quot;:false,&quot;issues&quot;:[],&quot;targets&quot;:[{&quot;address&quot;:&quot;aws_vpc.tokyo&quot;,&quot;deposed_key&quot;:null}]},{&quot;attribute&quot;:&quot;vpc_id&quot;,&quot;complete&quot;:true,&quot;consumer&quot;:&quot;terraform:6177735f7375626e65742e76697267696e6961-current&quot;,&quot;dependency&quot;:false,&quot;issues&quot;:[],&quot;targets&quot;:[{&quot;address&quot;:&quot;aws_vpc.virginia&quot;,&quot;deposed_key&quot;:null}]}]</metadata>
@@ -59,25 +59,90 @@ No AWS endorsement is implied. Consult the AWS terms for other uses.
 <rect x="600" y="100" width="12" height="12" fill="#faf5ff" stroke="#7e22ce"/><text x="619" y="111" font-size="12" fill="#7e22ce">read (0)</text>
 <rect x="740" y="100" width="12" height="12" fill="#f8fafc" stroke="#64748b"/><text x="759" y="111" font-size="12" fill="#64748b">unchanged (0)</text>
 <rect x="880" y="100" width="12" height="12" fill="#fefce8" stroke="#854d0e"/><text x="899" y="111" font-size="12" fill="#854d0e">other (12)</text>
-<g id="relationship-legend" font-size="12" fill="#475569">
-<text x="40" y="157">Relationship lines: color = relationship action (not endpoint actions)</text>
-<path d="M 40 177 H 66" stroke="#94a3b8" stroke-width="2"/><text x="73" y="181">no independent change</text>
-<text x="40" y="205">Line style:</text><path d="M 140 201 H 170" stroke="#64748b" stroke-width="1.5"/><text x="178" y="205">dependency</text>
-<path d="M 340 201 H 370" stroke="#64748b" stroke-width="2" stroke-dasharray="7 4"/><text x="378" y="205">association</text>
-<path d="M 540 201 H 570" stroke="#64748b" stroke-width="2.5" stroke-dasharray="0 3.5" stroke-linecap="round"/><text x="578" y="205">connection</text>
+<g id="relationship-legend" font-size="12" fill="#475569" transform="translate(40 148)"><rect width="1020" height="528" rx="12" fill="#f8fafc" stroke="#cbd5e1"/>
+<text x="16" y="29" font-size="15" font-weight="700" fill="#334155">Relationship lines</text>
+<text x="16" y="56">Line color shows the relationship&apos;s own Terraform action, independently of endpoint-card actions.</text>
+<path data-legend-action="none" d="M 16 77 H 42" fill="none" stroke="#94a3b8" stroke-width="1.5"/><text x="50" y="82">no independent change</text>
+<path data-legend-action="unchanged" d="M 234 77 H 260" fill="none" stroke="#64748b" stroke-width="1.5"/><text x="268" y="82">unchanged</text>
+<text x="16" y="110">no independent change: no separate Terraform action is identified. unchanged: an explicit no-op action.</text>
+<g data-legend-entry="dependency" transform="translate(0 132)">
+<g data-legend-sample="dependency">
+<path data-legend-kind="dependency" data-directionality="directed" d="M 21 11 H 153" fill="none" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+<circle data-legend-endpoint="source" cx="21" cy="11" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+<text x="174" y="12" font-weight="700">Dependency</text>
+<text x="174" y="30">Thin solid arrow from the referenced</text>
+<text x="174" y="48">resource to the dependent resource;</text>
+<text x="174" y="66">not exact Terraform execution order.</text>
 </g>
-<g transform="translate(0 72)">
+<g data-legend-entry="association" transform="translate(522 132)">
+<g data-legend-sample="association">
+<path data-legend-kind="association" data-directionality="undirected" d="M 21 11 H 153" fill="none" stroke="#94a3b8" stroke-width="2" stroke-dasharray="7 4"/>
+<circle data-legend-endpoint="source" cx="21" cy="11" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/><circle data-legend-endpoint="target" cx="153" cy="11" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/><g data-legend-badge="source">
+<rect x="31" y="2" width="32" height="18" rx="4" fill="#ffffff" stroke="#94a3b8" stroke-width="2" stroke-dasharray="7 4"/><text x="47" y="15" text-anchor="middle" font-size="11" fill="#334155">[12]</text>
+</g>
+<g data-legend-badge="target">
+<rect x="111" y="2" width="32" height="18" rx="4" fill="#ffffff" stroke="#94a3b8" stroke-width="2" stroke-dasharray="7 4"/><text x="127" y="15" text-anchor="middle" font-size="11" fill="#334155">[12]</text>
+</g>
+</g>
+<text x="174" y="12" font-weight="700">Association</text>
+<text x="174" y="30">Dashed, undirected relationship.</text>
+<text x="174" y="48">Matching badges identify the same</text>
+<text x="174" y="66">Terraform-backed relationship at both</text>
+<text x="174" y="84">attachment points.</text>
+</g>
+<g data-legend-entry="directed-association" transform="translate(0 238)">
+<g data-legend-sample="directed-association">
+<path data-legend-kind="directed-association" data-directionality="directed" d="M 21 11 H 153" fill="none" stroke="#94a3b8" stroke-width="2" stroke-dasharray="7 4" marker-end="url(#arrow)"/>
+<circle data-legend-endpoint="source" cx="21" cy="11" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/><circle data-legend-endpoint="target" cx="153" cy="11" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/><path data-legend-arrow="true" d="M 146.7 7.5 L 153.7 11 L 146.7 14.5 Z" fill="#94a3b8"/>
+<g data-legend-badge="source">
+<rect x="31" y="2" width="32" height="18" rx="4" fill="#ffffff" stroke="#94a3b8" stroke-width="2" stroke-dasharray="7 4"/><text x="47" y="15" text-anchor="middle" font-size="11" fill="#334155">[12]</text>
+</g>
+<g data-legend-badge="target">
+<rect x="111" y="2" width="32" height="18" rx="4" fill="#ffffff" stroke="#94a3b8" stroke-width="2" stroke-dasharray="7 4"/><text x="127" y="15" text-anchor="middle" font-size="11" fill="#334155">[12]</text>
+</g>
+</g>
+<text x="174" y="12" font-weight="700">Directed Association</text>
+<text x="174" y="30">Dashed line from a Route to its next</text>
+<text x="174" y="48">hop. The destination arrow expresses</text>
+<text x="174" y="66">direction; matching badges identify</text>
+<text x="174" y="84">the same relationship.</text>
+</g>
+<g data-legend-entry="connection" transform="translate(522 238)">
+<g data-legend-sample="connection">
+<path data-legend-kind="connection" data-directionality="undirected" d="M 21 11 H 153" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-dasharray="0 3.5" stroke-linecap="round"/>
+<circle data-legend-endpoint="source" cx="21" cy="11" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/><circle data-legend-endpoint="target" cx="153" cy="11" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+<text x="174" y="12" font-weight="700">Connection</text>
+<text x="174" y="30">Thicker dotted line shows an inferred,</text>
+<text x="174" y="48">undirected connection; this does not</text>
+<text x="174" y="66">guarantee actual network reachability.</text>
+</g>
+<g data-legend-entry="containment" transform="translate(0 344)">
+<g data-legend-sample="containment">
+<g data-legend-kind="containment" fill="none" stroke="#94a3b8"><rect x="65" y="2" width="44" height="28" rx="4"/><rect x="74" y="12" width="26" height="12" rx="2"/></g>
+</g>
+<text x="174" y="12" font-weight="700">Containment</text>
+<text x="174" y="30">Nested boxes show containment; nesting</text>
+<text x="174" y="48">replaces a redundant relationship</text>
+<text x="174" y="66">line.</text>
+</g>
+<text x="16" y="444">Hollow circles mark resource/card attachment points; neither end of an undirected line is a directional start. Filled</text>
+<text x="16" y="462">internal dots mark bundle junctions.</text>
+<text x="16" y="488">Matching [N] badges identify the same Terraform-backed relationship and its Relationship Resources entry. They do not</text>
+<text x="16" y="506">express direction or count connections. Reference-only Connections and Dependencies have no number.</text>
+</g>
+<g transform="translate(0 540)">
 <g data-annotation-area="true">
-<g data-annotation-card="true" transform="translate(40 160)"><rect width="1020" height="172" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-annotation-section="Logical Resources"><rect width="1020" height="172" rx="12" fill="#ecfeff" stroke="#0891b2"/><text x="16" y="28" font-size="15" font-weight="700" fill="#0e7490">Logical Resources</text><g data-annotation-card="true" transform="translate(16 48)"><rect width="360" height="108" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g id="resource-6177735f69616d5f726f6c652e617070-current" data-architecture-id="terraform:6177735f69616d5f726f6c652e617070-current" data-entity-kind="terraform" data-placement="logical" data-terraform-address="aws_iam_role.app" data-qualified-address="module.root.aws_iam_role.app" data-role="policy"><title>module.root.aws_iam_role.app — other</title><rect width="360" height="108" rx="12" fill="#fefce8" stroke="#854d0e" data-mode="managed"/>
-<use href="#planorama-icon-aws-iam" x="320" y="8" width="24" height="24" aria-hidden="true"/><text x="16" y="28" font-size="12" fill="#334155" xml:space="preserve" font-weight="700">module.root.aws_iam_role.app</text>
-<text x="16" y="48" font-size="12" fill="#334155" xml:space="preserve">aws_iam_role · managed</text>
-<text x="16" y="68" font-size="12" fill="#334155" xml:space="preserve">other</text>
-<text x="16" y="88" font-size="12" fill="#334155" xml:space="preserve">policy</text>
+<g data-annotation-card="true" transform="translate(40 160)"><rect width="1020" height="238" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-annotation-section="Logical Resources"><rect width="1020" height="238" rx="12" fill="#ecfeff" stroke="#0891b2"/><text x="16" y="28" font-size="15" font-weight="700" fill="#0e7490">Logical Resources</text><g data-annotation-card="true" transform="translate(16 48)"><rect width="360" height="174" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-logical-group="true" data-provider-source="registry.terraform.io/hashicorp/aws" data-resource-type="aws_iam_role" data-mode="managed"><title>aws_iam_role · managed — registry.terraform.io/hashicorp/aws</title><text x="16" y="28" font-size="13" font-weight="700" fill="#0e7490">aws_iam_role · managed</text>
+<text x="16" y="48" font-size="11" fill="#64748b">registry.terraform.io/hashicorp/aws</text>
+<g id="resource-6177735f69616d5f726f6c652e617070-current" data-architecture-id="terraform:6177735f69616d5f726f6c652e617070-current" data-entity-kind="terraform" data-placement="logical" data-terraform-address="aws_iam_role.app" data-qualified-address="module.root.aws_iam_role.app" data-mode="managed" transform="translate(0 66)" data-role="policy"><title>module.root.aws_iam_role.app — other</title><use href="#planorama-icon-aws-iam" x="320" y="8" width="24" height="24" aria-hidden="true"/><text x="16" y="28" font-size="12" fill="#334155" xml:space="preserve" font-weight="700">module.root.aws_iam_role.app</text>
+<text x="16" y="48" font-size="12" fill="#334155" xml:space="preserve">other</text>
+<text x="16" y="68" font-size="12" fill="#334155" xml:space="preserve">policy</text>
+<line data-resource-underline="true" x1="16" y1="76" x2="344" y2="76" stroke="#854d0e" stroke-width="2"/></g>
 </g>
 </g>
 </g></g>
 </g>
-<g data-architecture="true" transform="translate(0 196)">
+<g data-architecture="true" transform="translate(0 262)">
 <g data-deployment-scope="true" data-scope-provider="AWS" data-global="true"><rect x="40" y="160" width="360" height="292" rx="14" fill="#f8fafc" stroke="#94a3b8" stroke-dasharray="9 5"/><text x="56" y="185" font-size="15" font-weight="700" fill="#334155">AWS Global</text></g>
 <g data-deployment-scope="true" data-scope-provider="AWS" data-region="ap-northeast-1"><rect x="40" y="492" width="960" height="508" rx="14" fill="#f8fafc" stroke="#94a3b8" stroke-dasharray="9 5"/><text x="56" y="517" font-size="15" font-weight="700" fill="#334155">AWS ap-northeast-1</text></g>
 <g data-deployment-scope="true" data-scope-provider="AWS" data-region="us-east-1"><rect x="40" y="1040" width="520" height="508" rx="14" fill="#f8fafc" stroke="#94a3b8" stroke-dasharray="9 5"/><text x="56" y="1065" font-size="15" font-weight="700" fill="#334155">AWS us-east-1</text></g>

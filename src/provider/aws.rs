@@ -1,4 +1,5 @@
 mod associations;
+mod autoscaling;
 mod classification;
 mod components;
 mod containment;
@@ -19,12 +20,20 @@ pub(super) fn reference_label(resource_type: &str, attribute: &str) -> &'static 
         ("aws_ecs_service", "task_definition") => "Task definition",
         ("aws_instance", "iam_instance_profile") => "Instance profile",
         ("aws_instance", "ami") => "AMI",
+        (
+            "aws_autoscaling_group",
+            "launch_template.id"
+            | "launch_template.name"
+            | "mixed_instances_policy.launch_template.launch_template_specification.launch_template_id"
+            | "mixed_instances_policy.launch_template.launch_template_specification.launch_template_name",
+        ) => "Launch template",
         ("aws_iam_instance_profile", "role") => "Role",
         ("aws_ecs_task_definition", "execution_role_arn") => "Execution role",
         ("aws_ecs_task_definition", "task_role_arn") => "Task role",
         ("aws_cloudwatch_metric_alarm", "dimensions" | "dimensions.DBInstanceIdentifier") => {
             "Monitors"
         }
+        ("aws_autoscaling_policy", "autoscaling_group_name") => "Auto Scaling group",
         _ => "References",
     }
 }
@@ -39,7 +48,9 @@ pub(super) fn placement(resource_type: &str) -> crate::model::Placement {
         | "aws_iam_instance_profile"
         | "aws_cloudwatch_log_group"
         | "aws_cloudwatch_metric_alarm"
-        | "aws_ami" => crate::model::Placement::Logical,
+        | "aws_autoscaling_policy"
+        | "aws_ami"
+        | "aws_launch_template" => crate::model::Placement::Logical,
         _ if classify(resource_type) != crate::model::ResourceRole::Unknown => {
             crate::model::Placement::Spatial
         }
@@ -57,6 +68,7 @@ pub(super) fn transform(raw: crate::semantic::Input) -> crate::model::Graph {
     let mut graph = security_groups::infer(&raw, containment::infer(&raw));
     routes::present(&raw, &mut graph);
     monitoring::present(&raw, &mut graph);
+    autoscaling::present(&raw, &mut graph);
     let contained = crate::semantic::Input { graph, ..raw };
     let mut graph = data::visible(associations::lower(&contained));
     graph.components = components::infer(&contained, &graph);

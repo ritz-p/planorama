@@ -18,7 +18,8 @@ pub(super) fn classify(resource_type: &str) -> ResourceRole {
         | "aws_elasticache_cluster"
         | "aws_opensearch_domain"
         | "aws_s3_bucket"
-        | "aws_cloudwatch_log_group" => ResourceRole::Node,
+        | "aws_cloudwatch_log_group"
+        | "aws_launch_template" => ResourceRole::Node,
         "aws_vpc_peering_connection"
         | "aws_internet_gateway"
         | "aws_nat_gateway"
@@ -48,7 +49,8 @@ pub(super) fn classify(resource_type: &str) -> ResourceRole {
         | "aws_iam_policy"
         | "aws_iam_role_policy"
         | "aws_iam_instance_profile"
-        | "aws_lb_listener_rule" => ResourceRole::Policy,
+        | "aws_lb_listener_rule"
+        | "aws_autoscaling_policy" => ResourceRole::Policy,
         "aws_autoscaling_group"
         | "aws_ecs_service"
         | "aws_ecs_cluster"

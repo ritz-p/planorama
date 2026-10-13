@@ -11,6 +11,7 @@ pub enum DiagnosticReason {
     NoResourceReference,
     PartialResourceProvenance,
     EndpointTypeMismatch,
+    ProviderConfigurationMismatch,
     AmbiguousContainmentParent,
     AdditionalRelationships,
     DriftDetected,
@@ -36,7 +37,7 @@ impl DiagnosticReason {
             Self::AmbiguousRouteTarget => "multiple route target attributes",
             Self::NonIdReference => "endpoint reference does not select resource IDs exclusively",
             Self::UnprovenEndpointValue => {
-                "planned endpoint value is not proven to equal the referenced resource ID"
+                "planned endpoint value is not proven to equal the referenced resource identity"
             }
             Self::DeposedEndpoint => "deposed resource cannot be a route endpoint",
             Self::DriftDetected => {
@@ -53,6 +54,9 @@ impl DiagnosticReason {
                 "only part of the attribute resolves to resource references"
             }
             Self::EndpointTypeMismatch => "semantic endpoint type mismatch",
+            Self::ProviderConfigurationMismatch => {
+                "provider configuration does not match the referenced endpoint"
+            }
             Self::AmbiguousContainmentParent => "ambiguous containment parent",
             Self::AdditionalRelationships => {
                 "additional relationships prevent association lowering"

@@ -1,4 +1,5 @@
 use super::{Bounds, Point};
+pub(super) mod borders;
 mod coverage;
 pub(super) mod ports;
 pub(super) mod refinement;

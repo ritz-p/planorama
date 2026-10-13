@@ -1,4 +1,5 @@
 use super::{crosses, ports, scoring::Scorer, shortcuts, slots};
+use crate::layout::relationship_markers::{self, Terminal};
 use crate::layout::{Bounds, Layout, Point, Port, Side};
 use crate::model::Graph;
 use std::collections::BTreeMap;
@@ -74,11 +75,19 @@ pub(super) fn overlap(a: &[Point], b: &[Point]) -> usize {
 }
 
 pub(in crate::layout) fn refine(graph: &Graph, layout: &mut Layout<'_>) {
-    let numbered = crate::layout::relationship_markers::ends(graph);
-    let clearance = crate::layout::relationship_markers::clearance(graph);
-    let clearances: Vec<_> = numbered
+    let numbers = relationship_markers::numbers(graph);
+    let clearances: Vec<_> = layout
+        .paths
         .iter()
-        .map(|n| n.map(|n| if n { clearance } else { 16 }))
+        .enumerate()
+        .map(|(i, path)| {
+            let sides = if path.len() >= 2 {
+                [terminal(path, 0).side, terminal(path, 1).side]
+            } else {
+                [Side::Right; 2]
+            };
+            relationship_markers::terminals(graph, i, numbers[i], sides)
+        })
         .collect();
     let mut groups = BTreeMap::<_, Vec<_>>::new();
     for (i, (edge, path)) in graph.edges.iter().zip(&layout.paths).enumerate() {
@@ -152,7 +161,7 @@ pub(in crate::layout) fn refine(graph: &Graph, layout: &mut Layout<'_>) {
             terminals[a].as_mut().unwrap()[ae] = bp;
             terminals[b].as_mut().unwrap()[be] = ap;
             let mut scorer = Scorer::default();
-            scorer.set_borders(&layout.bounds);
+            scorer.set_layout(graph, layout);
             for (i, path) in layout.paths.iter().enumerate() {
                 if i != a && i != b {
                     scorer.insert(path.clone());
@@ -161,6 +170,10 @@ pub(in crate::layout) fn refine(graph: &Graph, layout: &mut Layout<'_>) {
             let mut replacements = Vec::new();
             for i in [a, b] {
                 let edge = &graph.edges[i];
+                scorer.set_kind(edge.kind);
+                scorer.set_soft(crate::layout::containers::routing::soft_obstacles(
+                    layout, edge,
+                ));
                 let mut obstacles = crate::layout::containers::routing::obstacles(layout, edge);
                 obstacles.extend(
                     layout
@@ -172,6 +185,16 @@ pub(in crate::layout) fn refine(graph: &Graph, layout: &mut Layout<'_>) {
                 );
                 obstacles.extend(layout.occluders(edge).into_iter().map(|n| layout.bounds[n]));
                 let [start, end] = terminals[i].unwrap();
+                if ![edge.from, edge.to]
+                    .into_iter()
+                    .zip([start, end])
+                    .enumerate()
+                    .all(|(end, (node, port))| {
+                        ports::embedded_marker_fits(graph, layout, node, numbers[i][end], port)
+                    })
+                {
+                    break;
+                }
                 if ports::terminal_corridors(start, end, clearances[i])
                     .iter()
                     .any(|a| {
@@ -216,9 +239,10 @@ pub(in crate::layout) fn refine(graph: &Graph, layout: &mut Layout<'_>) {
                     &scorer,
                     clearances[i],
                 );
-                if path
-                    .iter()
-                    .any(|p| p.x >= layout.width || p.y >= layout.height)
+                if !scorer.safe_border_change(&layout.paths[i], &path)
+                    || path
+                        .iter()
+                        .any(|p| p.x >= layout.width || p.y >= layout.height)
                 {
                     break;
                 }
@@ -279,17 +303,30 @@ pub(in crate::layout) fn refine(graph: &Graph, layout: &mut Layout<'_>) {
 fn marker_collision(
     paths: &[Vec<Point>],
     terminals: &[Option<[Port; 2]>],
-    clearances: &[[usize; 2]],
+    clearances: &[[Terminal; 2]],
 ) -> bool {
-    terminals.iter().enumerate().any(|(i, p)| {
-        p.is_some_and(|p| {
-            let reservations = ports::terminal_corridors(p[0], p[1], clearances[i]);
-            paths.iter().enumerate().any(|(other, path)| {
-                other != i
-                    && path
-                        .windows(2)
-                        .any(|p| reservations.iter().any(|&b| crosses(p[0], p[1], b)))
+    let reservations: Vec<_> = terminals
+        .iter()
+        .enumerate()
+        .map(|(i, p)| {
+            p.map_or_else(Vec::new, |p| {
+                ports::terminal_corridors(p[0], p[1], clearances[i])
             })
+        })
+        .collect();
+    reservations.iter().enumerate().any(|(i, own)| {
+        own.iter().any(|a| {
+            reservations.iter().skip(i + 1).flatten().any(|b| {
+                a.origin.x < b.right()
+                    && b.origin.x < a.right()
+                    && a.origin.y < b.origin.y + b.height
+                    && b.origin.y < a.origin.y + a.height
+            })
+        }) || paths.iter().enumerate().any(|(other, path)| {
+            other != i
+                && path
+                    .windows(2)
+                    .any(|p| own.iter().any(|&b| crosses(p[0], p[1], b)))
         })
     })
 }

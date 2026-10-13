@@ -3,6 +3,7 @@ mod icon;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!("cargo:rerun-if-changed=assets/icons/aws");
+    println!("cargo:rerun-if-changed=assets/icons/terraform");
     println!("cargo:rerun-if-changed=build/icon.rs");
     let out = std::path::PathBuf::from(std::env::var("OUT_DIR")?);
     for (file, id) in [
@@ -29,5 +30,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             .map_err(|e| format!("invalid bundled icon {file}: {e}"))?;
         std::fs::write(out.join(format!("{file}.svg")), symbol)?;
     }
+    let source = std::fs::read_to_string("assets/icons/terraform/terraform-builtin-24.svg")?;
+    let symbol = icon::symbol(&source, "planorama-icon-terraform")
+        .map_err(|e| format!("invalid bundled Terraform icon: {e}"))?;
+    std::fs::write(out.join("terraform-builtin-24.svg"), symbol)?;
     Ok(())
 }

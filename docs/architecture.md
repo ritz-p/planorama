@@ -1,6 +1,6 @@
 # Architecture and dependency contracts
 
-The processing pipeline is `CLI → TerraformPlan → ArchitectureGraph → ViewGraph → Layout → SVG`.
+The processing pipeline is `CLI → TerraformPlan → ArchitectureGraph → ViewGraph → Layout → SVG`, with an optional self-contained HTML viewer around the SVG.
 The CLI owns file I/O and coordinates each stage. Named-state inputs preserve the
 same boundaries and carry explicit cross-state relationships.
 
@@ -10,30 +10,75 @@ same boundaries and carry explicit cross-state relationships.
 | `model` | Shared domain contracts, architecture identity and value-free provenance |
 | `semantic` | Architecture transformation and final relationship evidence |
 | `provider/aws` | AWS classification, containment, connections, lowering, components, diagnostics and icons |
+| `provider/terraform` | Exact built-in Terraform resource icon mapping |
+| `icons` | Provider dispatch, shared artwork IDs and presentation measurements |
 | `view` | Immutable selection, neighbor expansion, required context and shared presentation measurements |
 | `layout` | Containment hierarchy, placement, bounds, ports and routes |
 | `svg` | Drawing, text, legends and metadata |
+| `html` | Local viewer, explicit value-free resource index from the selected view, and navigation over rendered SVG metadata |
 
 SVG composition places non-spatial annotations after the header, legend and checks,
-above the architecture. `svg/annotations.rs` packs rounded cards in deterministic
+above the architecture. The neutral relationship legend uses its full allocated
+width inside the margins. Its five relationship kinds form a deterministic
+one-to-five-column grid below the action/color explanation. Multiple columns
+require at least 398px per cell with 24px gaps; cells stop widening at 640px.
+Narrow single-column cells place the sample above the text. Each grid row reserves
+its tallest complete cell, including wrapped text and symbols. The same measured
+height controls the canvas, following content and named-state endpoint offsets.
+Named states measure their legends at the shared content width, excluding
+cross-state gutters. Legend layout affects annotation offsets without changing
+architecture placement or routing. It remains separate from the numbered Relationship Resources
+section.
+`svg/annotations.rs` packs rounded cards in deterministic
 rows inside ordered sections, reusing the same wrapping and measurement for nested
 cards and growing the canvas for oversized cards.
 Empty areas reserve no height. One enclosing translation shifts all architecture
 cards, paths and relationship badges together; annotation cards never enter
 `Layout` or routing obstacles. Named-state endpoint coordinates include this shift.
+Composition also measures the topmost final card, path and relationship badge.
+Geometry that would enter the header or preceding annotation area receives extra
+top clearance through a shared downward translation and matching canvas height.
+This preserves relative card positions and path shapes, including manually placed
+layout fixtures. Named-state heights, endpoint coordinates and routing obstacles
+include the same clearance.
 Relationship index cards group up to 10 complete numbered entries per card,
-continuing to the right before wrapping within their own neutral section. Logical
-components share a purple parent, with a card per component and action-colored
-member reference cards inside it.
+continuing to the right without a column cap before wrapping within their own
+neutral section. Packing uses the final content width after other annotations can
+expand it. Named-state composition reflows each state's annotations at the shared
+content width and recalculates heights and endpoint offsets, with the cross-state
+routing gutter reserved outside that width. Logical
+components share a purple parent, with a card per component and a purple heading.
+Members use neutral text rows without individual backgrounds, borders or card
+wrappers. Each complete wrapped item has one underline in its canonical resource
+action color. Row measurements reserve the wrapped text, import badge, underline
+and spacing before the next member.
 
 Terraform-backed Logical Resources share a cyan parent above Logical Components;
-the relationship index follows both parents. Logical cards use their original
-resource DOM IDs and retain mode, action,
-move/import/deposed information. `view::spatial` projects only geometry inputs;
-the semantic and filtered graphs keep logical nodes and all selected relationships.
+the relationship index follows both parents. Within each state, `svg/logical.rs`
+groups selected logical nodes by canonical provider source, resource type and mode.
+The provider key uses `provider.source()`, so explicit and inferred AWS identities
+with the same source share a group. Different provider sources or managed/data
+modes stay separate. Provider aliases, modules, instances and current/deposed
+variants do not add grouping keys; their individual identities and provenance
+remain intact. Grouping does not change which resources have logical placement.
+
+Each group has one neutral card with a wrapped resource-type/mode heading and
+canonical provider-source line. Its resources appear directly as rows without
+nested cards or a combined group action. Each row retains the full selected
+address, action label, role, Uses/Dependencies, service icon and import/move/deposed
+information, with one action-colored underline below its complete content.
+Data rows use a dashed underline. Groups sort by their keys and rows by stable
+architecture identity. Every row remains visible; height grows with all wrapped
+content, badges, underlines and inter-row spacing without a row or height cap.
+
+Logical rows retain their original resource DOM IDs and metadata; resource links
+target the specific row. Group cards do not introduce architecture identities.
+`view::spatial` projects only geometry inputs; the semantic and filtered graphs
+keep logical nodes and all selected relationships.
 Layout maps spatial results back to graph indices: logical nodes have zero-size
 bounds and incident edges have empty paths. They create no routing obstacles.
-The SVG summary distinguishes spatial and logical cards while retaining totals.
+The SVG summary distinguishes spatial cards, logical resources and logical group
+cards while retaining total resource and action counts.
 Value-free reference evidence is available in `resource-references` metadata.
 
 Verified Route ownership uses the same projection boundary: the Route node remains
@@ -49,7 +94,8 @@ determine intrinsic width and height before flat/nested packing, scope placement
 and routing. Reference-driven widths grow from 320 to 640 pixels; longer labels
 wrap at 11px monospace with 18px line spacing and no row limit. Measurements
 reserve the Unavailable prefix so filtering and spatial projection cannot
-underestimate content. Logical annotation cards use the same reference metrics.
+underestimate content. Logical-resource rows use the same reference metrics, and
+group dimensions include every row's measured content.
 Full Terraform addresses include module/instance keys, remote state and deposed
 identity. UI links never add routing edges.
 
@@ -73,6 +119,12 @@ Ingestion does not import provider rules, layout or SVG. Layout, view and SVG us
 the `model::architecture` facade, which excludes Terraform ingestion contracts.
 AWS resource-type and attribute rules belong in `provider/aws`; rendering and
 layout do not infer semantic relationships.
+Terraform built-in icon rules belong in `provider/terraform` and use the provider
+identity resolved during ingestion. They add no resource classification,
+containment or layout semantics. AWS artwork and Planorama's original built-in
+provider icon share the validated build-time SVG parser, symbol reuse and state
+namespacing; source notices follow the icon families actually used. See
+[icon sources and licenses](icons.md).
 
 The semantic input projects Terraform facts into classified cards without mutating
 the plan. AWS transformation applies containment, SG connections, association

@@ -1,6 +1,111 @@
 use super::*;
 
 #[test]
+fn numbered_channels_are_kept_compact_beside_flexible_plain_routes() {
+    use crate::layout::relationship_markers;
+    use crate::layout::routing_shared::{ports, refinement, spacing};
+    use crate::model::{Directionality, RelationshipProvenance};
+    let raw = crate::plan::parse(r#"{"format_version":"1.2","resource_changes":[{"address":"test.a","type":"test"},{"address":"test.b","type":"test"},{"address":"test.y","type":"test"},{"address":"test.z","type":"test"}]}"#).unwrap();
+    let numbered = crate::semantic::transform(
+        &crate::plan::parse(include_str!("../../../fixtures/association-plan.json")).unwrap(),
+    )
+    .0;
+    for (kind, direction, gap) in [
+        (EdgeKind::Association, Directionality::Directed, 84),
+        (EdgeKind::Association, Directionality::Undirected, 84),
+        (EdgeKind::Dependency, Directionality::Directed, 58),
+    ] {
+        let mut graph = crate::semantic::transform(&raw).0;
+        let mut edge = numbered.edges[0].clone();
+        edge.from = 2;
+        edge.to = 3;
+        edge.change.as_mut().unwrap().directionality = direction;
+        let mut relationship = numbered
+            .relationships
+            .iter()
+            .find(|r| r.kind == edge.kind)
+            .unwrap()
+            .clone();
+        edge.kind = kind;
+        relationship.kind = kind;
+        relationship.from = graph.nodes[2].entity.id.clone();
+        relationship.to = graph.nodes[3].entity.id.clone();
+        for provenance in &mut relationship.provenance {
+            if let RelationshipProvenance::Resource { change, .. } = provenance {
+                change.directionality = direction;
+            }
+        }
+        graph.edges = vec![Edge::from((0, 1)), edge];
+        graph.relationships = vec![relationship];
+        let snapshot = |graph: &Graph| {
+            let bounds: Vec<_> = [
+                (100, 350, 1000 - (84 - gap), 100),
+                (1100 + gap, 400, 1000, 100),
+                (100, 600, 1000, 200),
+                (1100 + gap, 100, 1000, 200),
+            ]
+            .into_iter()
+            .map(|(x, y, width, height)| Bounds {
+                origin: Point { x, y },
+                width,
+                height,
+            })
+            .collect();
+            let mut layout = Layout {
+                scopes: vec![],
+                header_heights: bounds.iter().map(|b| b.height).collect(),
+                positions: bounds.iter().map(|b| b.origin).collect(),
+                bounds,
+                containers: vec![],
+                containment: crate::layout::ContainmentTree::new(graph),
+                width: 2400,
+                height: 1000,
+                bands: vec![],
+                paths: vec![],
+                junctions: vec![],
+            };
+            let routed = route_selected(graph, &layout, &[[Side::Right, Side::Left]; 2]);
+            layout.paths = routed.paths;
+            layout.junctions = routed.junctions;
+            refinement::refine(graph, &mut layout);
+            spacing::refine(graph, &mut layout);
+            assert_eq!(
+                crate::layout::metrics::measure(&layout.paths).overlap_distance,
+                0
+            );
+            let numbers = relationship_markers::numbers(graph);
+            let mut result = std::collections::BTreeMap::new();
+            for (index, edge) in graph.edges.iter().enumerate() {
+                let path = &layout.paths[index];
+                let shape = spacing::Shape::measure(path);
+                assert_eq!((shape.reversals, shape.backtracking), (0, 0), "{path:?}");
+                assert!(shape.bends <= 2, "{path:?}");
+                let pair = [refinement::terminal(path, 0), refinement::terminal(path, 1)];
+                let terminals = relationship_markers::terminals(
+                    graph,
+                    index,
+                    numbers[index],
+                    pair.map(|p| p.side),
+                );
+                assert!(ports::valid_with_clearances(
+                    path,
+                    pair[0],
+                    pair[1],
+                    &spacing::barriers(graph, &layout, index),
+                    terminals,
+                ));
+                result.insert((edge.from, edge.to), path.clone());
+            }
+            result
+        };
+        let original = snapshot(&graph);
+        graph.edges.reverse();
+        graph.relationships.reverse();
+        assert_eq!(original, snapshot(&graph));
+    }
+}
+
+#[test]
 fn foreign_container_shortcut_uses_soft_cost_and_keeps_endpoints_hard() {
     use crate::layout::routing_shared::{crosses, ports};
     let raw = crate::plan::parse(r#"{"format_version":"1.2","resource_changes":[{"address":"test.a","type":"test"},{"address":"test.b","type":"test"},{"address":"test.c","type":"test"},{"address":"test.d","type":"test"}]}"#).unwrap();

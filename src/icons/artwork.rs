@@ -22,6 +22,7 @@ impl ResourceIcon {
             Self::Iam => "planorama-icon-aws-iam",
             Self::Monitoring => "planorama-icon-aws-monitoring",
             Self::Scaling => "planorama-icon-aws-scaling",
+            Self::Terraform => "planorama-icon-terraform",
         }
     }
 
@@ -73,6 +74,18 @@ impl ResourceIcon {
             }
             Self::Monitoring => include_str!(concat!(env!("OUT_DIR"), "/Amazon-CloudWatch.svg")),
             Self::Scaling => include_str!(concat!(env!("OUT_DIR"), "/Amazon-EC2-Auto-Scaling.svg")),
+            Self::Terraform => include_str!(concat!(env!("OUT_DIR"), "/terraform-builtin-24.svg")),
+        }
+    }
+
+    pub fn notice(self) -> &'static str {
+        match self {
+            Self::Terraform => concat!(
+                include_str!("../../assets/icons/terraform/NOTICE.txt"),
+                "\n",
+                include_str!("../../assets/icons/terraform/LICENSE.txt")
+            ),
+            _ => include_str!("../../assets/icons/aws/NOTICE.txt"),
         }
     }
 }

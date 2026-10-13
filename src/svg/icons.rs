@@ -3,14 +3,12 @@ use crate::{
     icons::{ResourceIcon, SIZE},
     model::Node,
 };
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, BTreeSet};
 use std::fmt::Write;
 
 #[cfg(test)]
 #[path = "../../tests/unit/svg/icons.rs"]
 mod tests;
-
-const NOTICE: &str = include_str!("../../assets/icons/aws/NOTICE.txt");
 
 pub(super) fn definitions(nodes: &[Node]) -> String {
     let used: BTreeMap<_, _> = nodes
@@ -20,10 +18,17 @@ pub(super) fn definitions(nodes: &[Node]) -> String {
         .collect();
     let mut svg = String::new();
     if !used.is_empty() {
+        let notices = used
+            .values()
+            .map(|icon| icon.notice())
+            .collect::<BTreeSet<_>>()
+            .into_iter()
+            .collect::<Vec<_>>()
+            .join("\n");
         write!(
             svg,
             "<metadata id=\"planorama-icons-license\">{}</metadata>",
-            super::escape(&NOTICE.replace("\r\n", "\n"))
+            super::escape(&notices.replace("\r\n", "\n"))
         )
         .unwrap();
     }

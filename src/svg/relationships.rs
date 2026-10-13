@@ -1,22 +1,34 @@
 use super::{color, escape, label};
-use crate::model::architecture::{Edge, EdgeKind, Graph};
+use crate::model::Directionality;
+use crate::model::architecture::{Action, Edge, EdgeKind, Graph};
 use std::collections::BTreeSet;
 use std::fmt::Write;
 
 pub(super) fn stroke(edge: &Edge) -> &'static str {
-    edge.change
-        .as_ref()
-        .map_or("#94a3b8", |change| color(change.action).1)
+    action_stroke(edge.change.as_ref().map(|change| change.action))
+}
+
+pub(super) fn action_stroke(action: Option<Action>) -> &'static str {
+    action.map_or("#94a3b8", |action| color(action).1)
+}
+
+fn marker_id(action: Option<Action>) -> String {
+    action.map_or_else(
+        || "arrow".into(),
+        |action| format!("arrow-{}", label(action)),
+    )
+}
+
+pub(super) fn arrow(directionality: Directionality, action: Option<Action>) -> String {
+    if directionality == Directionality::Directed {
+        format!(r#" marker-end="url(#{})""#, marker_id(action))
+    } else {
+        String::new()
+    }
 }
 
 pub(super) fn style(kind: EdgeKind) -> &'static str {
-    match kind {
-        EdgeKind::Dependency | EdgeKind::Containment => r#"stroke-width="1.5""#,
-        EdgeKind::Association => r#"stroke-width="2" stroke-dasharray="7 4""#,
-        EdgeKind::Connection => {
-            r#"stroke-width="2.5" stroke-dasharray="0 3.5" stroke-linecap="round""#
-        }
-    }
+    crate::view::geometry::relationship_style(kind)
 }
 
 pub(super) fn captions(graph: &Graph) -> (String, String) {
@@ -27,6 +39,7 @@ pub(super) fn captions(graph: &Graph) -> (String, String) {
         .iter()
         .filter(|n| n.placement == crate::model::Placement::Logical)
         .count();
+    let logical_groups = super::logical::group_count(graph);
     let embedded = graph
         .nodes
         .iter()
@@ -36,7 +49,7 @@ pub(super) fn captions(graph: &Graph) -> (String, String) {
         let resources = nodes + additional_resources(graph);
         let spatial = nodes - logical - embedded;
         let summary = format!(
-            "{resources} resources ({spatial} spatial cards, {logical} logical cards, {embedded} embedded route cards) · {edges} relationships"
+            "{resources} resources ({spatial} spatial cards, {logical} logical resources in {logical_groups} group cards, {embedded} embedded route cards) · {edges} relationships"
         );
         return (summary.clone(), summary);
     }
@@ -44,7 +57,7 @@ pub(super) fn captions(graph: &Graph) -> (String, String) {
         let resources = nodes + additional_resources(graph);
         let spatial = nodes - logical;
         let summary = format!(
-            "{resources} resources ({spatial} spatial cards, {logical} logical cards) · {edges} relationships"
+            "{resources} resources ({spatial} spatial cards, {logical} logical resources in {logical_groups} group cards) · {edges} relationships"
         );
         return (summary.clone(), summary);
     }
@@ -119,15 +132,18 @@ pub(super) fn title(graph: &Graph, edge: &Edge, semantic_edges: bool) -> String 
 
 pub(super) fn markers(graph: &Graph) -> String {
     let mut markers = String::new();
-    let actions: BTreeSet<_> = graph
-        .edges
-        .iter()
-        .filter_map(|edge| edge.change.as_ref().map(|change| change.action))
+    let actions: BTreeSet<_> = std::iter::once(None)
+        .chain(
+            graph
+                .edges
+                .iter()
+                .map(|edge| edge.change.as_ref().map(|change| change.action)),
+        )
         .collect();
     for action in actions {
-        let name = label(action);
-        let border = color(action).1;
-        write!(markers, r##"<marker id="arrow-{name}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="{border}"/></marker>"##).unwrap();
+        let name = marker_id(action);
+        let border = action_stroke(action);
+        write!(markers, r##"<marker id="{name}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="{border}"/></marker>"##).unwrap();
     }
     markers
 }

@@ -1,14 +1,10 @@
-use super::{Bounds, Entry, Graph, Layout, Marker};
-use crate::layout::Point;
-use crate::layout::relationship_markers::{GAP, HEIGHT, width};
-use std::cmp::Ordering;
+use super::{Entry, Graph, Layout, Marker};
+use crate::layout::{Port, Side, relationship_markers};
 
 pub(super) fn place(graph: &Graph, layout: &Layout<'_>, entries: &[Entry<'_>]) -> Vec<Marker> {
     let mut markers = Vec::new();
-    for (i, entry) in entries.iter().enumerate() {
-        let number = i + 1;
-        let width = width(number);
-        let height = HEIGHT;
+    for entry in entries {
+        let number = entry.number;
         for &edge in &entry.edges {
             let path = &layout.paths[edge];
             let target_segment = path
@@ -16,43 +12,33 @@ pub(super) fn place(graph: &Graph, layout: &Layout<'_>, entries: &[Entry<'_>]) -
                 .rev()
                 .find(|s| s[0] != s[1])
                 .map(|s| (s[0], s[1]));
-            let source_segment = (graph.edges[edge].directionality()
-                == crate::model::Directionality::Undirected)
+            let source_segment = relationship_markers::both_ends(&graph.edges[edge])
                 .then(|| path.windows(2).find(|s| s[0] != s[1]).map(|s| (s[1], s[0])))
                 .flatten();
             for segment in [target_segment, source_segment] {
                 let Some((before, target)) = segment else {
                     continue;
                 };
-                let offset = if before.x == target.x {
-                    height / 2 + GAP
+                let side = if before.x < target.x {
+                    Side::Left
+                } else if before.x > target.x {
+                    Side::Right
+                } else if before.y < target.y {
+                    Side::Top
                 } else {
-                    width / 2 + GAP
-                };
-                let center = Point {
-                    x: match before.x.cmp(&target.x) {
-                        Ordering::Equal => target.x,
-                        Ordering::Less => target.x.saturating_sub(offset),
-                        Ordering::Greater => target.x + offset,
-                    },
-                    y: match before.y.cmp(&target.y) {
-                        Ordering::Equal => target.y,
-                        Ordering::Less => target.y.saturating_sub(offset),
-                        Ordering::Greater => target.y + offset,
-                    },
+                    Side::Bottom
                 };
                 markers.push(Marker {
                     number,
                     stroke: super::super::relationships::stroke(&graph.edges[edge]),
                     style: super::super::relationships::style(graph.edges[edge].kind),
-                    bounds: Bounds {
-                        origin: Point {
-                            x: center.x.saturating_sub(width / 2),
-                            y: center.y.saturating_sub(height / 2),
+                    bounds: relationship_markers::bounds(
+                        number,
+                        Port {
+                            point: target,
+                            side,
                         },
-                        width,
-                        height,
-                    },
+                    ),
                 });
             }
         }

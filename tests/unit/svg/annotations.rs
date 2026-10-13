@@ -190,6 +190,76 @@ fn annotations_precede_architecture_without_mutating_routing() {
             .descendants()
             .find(|n| n.attribute("data-architecture").is_some())
             .unwrap();
+        let legend = doc
+            .descendants()
+            .find(|n| n.attribute("id") == Some("relationship-legend"))
+            .unwrap();
+        let number = |node: roxmltree::Node, name| {
+            node.attribute(name)
+                .unwrap_or("0")
+                .parse::<usize>()
+                .unwrap()
+        };
+        let translated_y = |node: roxmltree::Node| {
+            node.ancestors()
+                .filter_map(|parent| parent.attribute("transform"))
+                .map(|value| {
+                    value
+                        .strip_prefix("translate(")
+                        .unwrap()
+                        .strip_suffix(')')
+                        .unwrap()
+                        .split_whitespace()
+                        .nth(1)
+                        .unwrap()
+                        .parse::<usize>()
+                        .unwrap()
+                })
+                .sum::<usize>()
+        };
+        let legend_rect = legend.children().find(|n| n.has_tag_name("rect")).unwrap();
+        let legend_bottom = translated_y(legend_rect) + number(legend_rect, "height");
+        let sections: Vec<_> = area
+            .descendants()
+            .filter(|n| n.attribute("data-annotation-section").is_some())
+            .map(|section| section.children().find(|n| n.has_tag_name("rect")).unwrap())
+            .collect();
+        let area_top = sections.iter().map(|n| translated_y(*n)).min().unwrap();
+        let area_bottom = sections
+            .iter()
+            .map(|n| translated_y(*n) + number(*n, "height"))
+            .max()
+            .unwrap();
+        assert!(legend_bottom < area_top);
+        let checks = doc
+            .descendants()
+            .find(|n| n.attribute("id") == Some("plan-checks"));
+        assert_eq!(checks.is_some(), !graph.checks.is_empty());
+        if let Some(checks) = checks {
+            let text = checks.children().find(|n| n.has_tag_name("text")).unwrap();
+            let baseline = translated_y(text) + number(text, "y");
+            assert!(baseline - number(text, "font-size") > legend_bottom);
+            assert!(baseline < area_top);
+        }
+        let status = doc
+            .descendants()
+            .find(|n| n.attribute("id") == Some("plan-status"));
+        assert_eq!(status.is_some(), graph.status != Default::default());
+        if let Some(status) = status {
+            let text = status.children().find(|n| n.has_tag_name("text")).unwrap();
+            assert!(number(text, "y") < translated_y(legend_rect));
+        }
+        let cards: Vec<_> = architecture
+            .descendants()
+            .filter(|n| n.attribute("data-terraform-address").is_some())
+            .flat_map(|node| node.children().filter(|n| n.has_tag_name("rect")))
+            .collect();
+        assert!(!cards.is_empty());
+        for card in cards {
+            let top = translated_y(card) + number(card, "y");
+            assert!(top > area_bottom);
+            assert!(top + number(card, "height") <= number(doc.root_element(), "height"));
+        }
         assert!(area.range().end < architecture.range().start);
         assert!(
             area.descendants()

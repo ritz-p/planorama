@@ -1,4 +1,5 @@
 use crate::{
+    icons::{self, ResourceIcon},
     model::{PlanInput, ProviderIdentity, ResourceRole, StateId},
     plan, semantic,
 };
@@ -319,5 +320,113 @@ fn current_provider_binding_is_not_applied_to_deposed_predecessors() {
                 );
             }
         }
+    }
+}
+
+#[test]
+fn terraform_provider_metadata_precedence_controls_icon_selection() {
+    const BUILTIN: &str = "terraform.io/builtin/terraform";
+    const FOREIGN: &str = "example.com/acme/terraform";
+
+    for (change_source, planned_source, config_source, expected_source) in [
+        (Some(BUILTIN), Some(FOREIGN), Some(FOREIGN), Some(BUILTIN)),
+        (Some(FOREIGN), Some(BUILTIN), Some(BUILTIN), Some(FOREIGN)),
+        (None, Some(BUILTIN), Some(FOREIGN), Some(BUILTIN)),
+        (None, Some(FOREIGN), Some(BUILTIN), Some(FOREIGN)),
+        (None, None, Some(BUILTIN), Some(BUILTIN)),
+        (None, None, Some(FOREIGN), Some(FOREIGN)),
+        (None, None, None, None),
+    ] {
+        for (mode, resource_type, address) in [
+            ("managed", "terraform_data", "terraform_data.main"),
+            (
+                "data",
+                "terraform_remote_state",
+                "data.terraform_remote_state.main",
+            ),
+        ] {
+            let mut resource = json!({"address":address,"type":resource_type,"mode":mode});
+            if let Some(source) = change_source {
+                resource["provider_name"] = json!(source);
+            }
+            let mut input = json!({"format_version":"1.2","resource_changes":[resource]});
+            if let Some(source) = planned_source {
+                input["planned_values"] = json!({"root_module":{"resources":[{
+                    "address":address,"type":resource_type,"mode":mode,"provider_name":source
+                }]}});
+            }
+            if let Some(source) = config_source {
+                input["configuration"] = json!({
+                    "provider_config":{"selected":{"full_name":source}},
+                    "root_module":{"resources":[{"address":address,"provider_config_key":"selected"}]}
+                });
+            }
+            let raw = plan::parse(&input.to_string()).unwrap();
+            let expected = expected_source
+                .map(ProviderIdentity::from_source)
+                .unwrap_or(ProviderIdentity::InferredTerraform);
+            assert_eq!(raw.nodes[0].provider, expected);
+            assert_eq!(
+                raw.nodes[0].provider.is_explicit(),
+                expected_source.is_some()
+            );
+            let graph = semantic::transform(&raw);
+            assert_eq!(graph.nodes.len(), 1);
+            assert_eq!(graph.nodes[0].provider, expected);
+            assert_eq!(graph.nodes[0].role, ResourceRole::Unknown);
+            assert_eq!(
+                icons::for_node(&graph.nodes[0]),
+                (expected.source() == Some(BUILTIN)).then_some(ResourceIcon::Terraform)
+            );
+        }
+    }
+}
+
+#[test]
+fn unresolved_terraform_bindings_do_not_use_type_fallback() {
+    for providers in [json!({}), json!({"selected":{}})] {
+        let input = json!({
+            "format_version":"1.2",
+            "resource_changes":[
+                {"address":"terraform_data.main","type":"terraform_data"},
+                {"address":"data.terraform_remote_state.main","type":"terraform_remote_state","mode":"data"}
+            ],
+            "configuration":{
+                "provider_config":providers,
+                "root_module":{"resources":[
+                    {"address":"terraform_data.main","provider_config_key":"selected"},
+                    {"address":"data.terraform_remote_state.main","provider_config_key":"selected"}
+                ]}
+            }
+        });
+        let raw = plan::parse(&input.to_string()).unwrap();
+        assert_eq!(raw.nodes.len(), 2);
+        for node in &raw.nodes {
+            assert_eq!(node.provider, ProviderIdentity::from_source("unknown"));
+        }
+        for node in &semantic::transform(&raw).nodes {
+            assert_eq!(icons::for_node(node), None);
+        }
+    }
+}
+
+#[test]
+fn captured_terraform_entities_keep_builtin_identity_after_projection() {
+    let raw = plan::parse(include_str!("../../fixtures/terraform-plan.json")).unwrap();
+    let graph = semantic::transform(&raw);
+    assert_eq!(raw.nodes.len(), 16);
+    assert_eq!(graph.nodes.len(), raw.nodes.len());
+    for node in &raw.nodes {
+        assert_eq!(
+            node.provider,
+            ProviderIdentity::from_source("terraform.io/builtin/terraform")
+        );
+        let projected = graph
+            .nodes
+            .iter()
+            .find(|n| n.address == node.address)
+            .unwrap();
+        assert_eq!(projected.provider, node.provider);
+        assert_eq!(icons::for_node(projected), Some(ResourceIcon::Terraform));
     }
 }

@@ -28,8 +28,7 @@ through alias resolution. Target-group component ownership requires this proof;
 it does not narrow existing dependency edges or change other semantic rules.
 Target-group ownership also consumes a value-free ARN equality proof for every
 hop, calculated from known planned strings and complete nested action values.
-Alarm monitoring retains a boolean dimension/identifier equality proof; namespace,
-metric and dimension values are checked transiently and never stored or rendered.
+Alarm monitoring retains a boolean dimension/identifier equality proof; Auto Scaling policy ownership retains a boolean scalar-name equality proof. Namespace, metric, dimension and resource-name values are checked transiently and never stored or rendered.
 
 `semantic::transform` consumes this domain model. Its private `Input` projection
 classifies provider/resource roles at the boundary, then applies containment,
@@ -61,10 +60,20 @@ Current configuration enriches only current objects. Deposed predecessors retain
 their resource-level provider source or legacy fallback, with no configuration key
 or alias inferred from the current resource at the same address.
 
-Source resolution prefers `provider_name`, then configuration `full_name` for
+Source resolution prefers `resource_changes.provider_name`, then
+`planned_values` resource `provider_name`, then configuration `full_name` for
 current objects. Two-part source names receive the `registry.terraform.io/` prefix.
-Only legacy inputs without explicit provider information infer AWS from `aws_`
-types; an explicit foreign or unresolved binding does not imply HashiCorp AWS.
+Terraform's built-in provider is recognized only by the canonical source
+`terraform.io/builtin/terraform`. `hashicorp/terraform`, `builtin/terraform` and
+sources on other hosts do not identify that provider.
+
+Only legacy inputs with no provider source or configuration binding infer AWS
+from `aws_` types, or `InferredTerraform` from the exact types `terraform_data`
+and `terraform_remote_state`. No other `terraform_` type is inferred. An explicit
+foreign or empty source, or an unresolved configuration binding, blocks this fallback;
+resource type spelling cannot override it. The fallback records its inferred
+identity separately from an explicit source. Icon selection consumes this
+identity without changing roles, relationships or lifecycle metadata.
 
 Configuration keys are state-local: cross-state identity requires `(StateId, key)`.
 Matching aliases in two states do not imply a shared account or region. Both the
@@ -83,11 +92,13 @@ containment; it does not classify global AWS resources as regional.
 
 ## Architecture identity and provenance
 
-Cards and logical components contain `ArchitectureEntity`, with an opaque
+Resource nodes and logical components contain `ArchitectureEntity`, with an opaque
 `ArchitectureId`, explicit Terraform/synthetic kind, and ordered, deduplicated
 `TerraformEntityId` provenance. Terraform source identity includes the deposed
-key. Synthetic identity uses a component kind and stable inference anchor, so
-membership and display-label changes do not become identity changes. Both kinds
+key. Logical-resource display groups do not create architecture entities or combine
+their members' identities, actions or relationships. Synthetic identity uses a
+component kind and stable inference anchor, so membership and display-label
+changes do not become identity changes. Both kinds
 are available through `Graph::entities()`; synthetic components have no required
 Terraform address of their own and do not acquire a spatial container role.
 

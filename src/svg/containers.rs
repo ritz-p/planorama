@@ -34,6 +34,8 @@ pub(super) fn background(graph: &Graph, layout: &Layout<'_>, node: usize) -> &'s
 
 pub(super) fn boundaries(graph: &Graph, layout: &Layout<'_>) -> String {
     let mut svg = String::new();
+    let radius = crate::view::geometry::CONTAINER_RADIUS;
+    let stroke = crate::view::geometry::CONTAINER_STROKE as f64 / 4.0;
     for &node in &layout.containers {
         let bounds = layout.bounds[node];
         let (x, y, width, height) = (
@@ -51,7 +53,7 @@ pub(super) fn boundaries(graph: &Graph, layout: &Layout<'_>) -> String {
         } else {
             "data-route-table"
         };
-        writeln!(svg, r##"<g {attribute}="{id}"><title>{}</title><rect x="{x}" y="{y}" width="{width}" height="{height}" rx="12" fill="{background}" stroke="{border}" stroke-width="2"{mode}/></g>"##, escape(&graph.nodes[node].address)).unwrap();
+        writeln!(svg, r##"<g {attribute}="{id}"><title>{}</title><rect x="{x}" y="{y}" width="{width}" height="{height}" rx="{radius}" fill="{background}" stroke="{border}" stroke-width="{stroke}"{mode}/></g>"##, escape(&graph.nodes[node].address)).unwrap();
     }
     svg
 }

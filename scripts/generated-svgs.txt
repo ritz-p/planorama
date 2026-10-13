@@ -1,10 +1,12 @@
 examples/association.svg
 examples/aws-relationships.svg
+examples/autoscaling-policy.svg
 examples/bundling.svg
 examples/checks.svg
 examples/components.svg
 examples/containment.svg
 examples/cross-state.svg
+examples/data-icons.svg
 examples/data.svg
 examples/dense-architecture.svg
 examples/diagram.svg
@@ -15,6 +17,7 @@ examples/network-scope.svg
 examples/port-collisions.svg
 examples/rds-subnet-group.svg
 examples/regions.svg
+examples/relationship-index-wide.svg
 examples/relationship-index.svg
 examples/routes.svg
 examples/security-groups.svg

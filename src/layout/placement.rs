@@ -83,7 +83,7 @@ pub(super) fn place_with_heights<'a>(
         graph
             .nodes
             .iter()
-            .map(crate::view::references::width)
+            .map(crate::view::card::width)
             .max()
             .unwrap_or(super::NODE_WIDTH)
             + super::relationship_markers::padding(graph),

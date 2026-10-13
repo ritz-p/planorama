@@ -39,6 +39,14 @@ pub fn render_states(
     architecture: &crate::view::ViewArchitecture,
     format: super::AddressFormat,
 ) -> String {
+    render_content(architecture, format, super::Content::Standard)
+}
+
+pub(crate) fn render_content(
+    architecture: &crate::view::ViewArchitecture,
+    format: super::AddressFormat,
+    content: super::Content,
+) -> String {
     let graphs = &architecture.states;
     let mut endpoints = BTreeMap::new();
     let mut obstacles = BTreeMap::new();
@@ -57,8 +65,7 @@ pub fn render_states(
         )
         .unwrap();
     }
-    let mut top = 60;
-    let mut width = 1120;
+    let mut prepared_graphs = Vec::with_capacity(graphs.len());
     for (id, graph) in graphs {
         let mut graph = graph.clone();
         for edge in &relationships {
@@ -106,22 +113,32 @@ pub fn render_states(
                 issues: Default::default(),
             });
         }
-        let graph = &graph;
+        prepared_graphs.push((id, graph));
+    }
+    let mut width = 1120;
+    let mut states = Vec::with_capacity(prepared_graphs.len());
+    for (id, graph) in &prepared_graphs {
         let layout = Layout::new(graph);
         let index = super::relationship_index::Index::new(graph, &layout);
-        let (state_width, height) = super::dimensions_with_index(graph, &layout, &index, format);
-        width = width.max(state_width);
+        let measured_sections = super::Sections::new(graph, &layout, &index, format);
+        width = width.max(measured_sections.dimensions(&layout).0);
+        states.push((*id, graph, layout, index, measured_sections));
+    }
+    let mut top = 60;
+    for (id, graph, layout, index, mut measured_sections) in states {
+        if measured_sections.dimensions(&layout).0 < width {
+            measured_sections = super::Sections::with_width(graph, &layout, &index, format, width);
+        }
+        let (_, height) = measured_sections.dimensions(&layout);
         let prefix = prefix(id);
-        let check_offset = if graph.checks.is_empty() { 0 } else { 24 }
-            + super::legend::height(graph)
-            + super::annotation_area(graph, &index, format).height;
+        let architecture_offset = measured_sections.height();
         obstacles.insert(
             id.clone(),
             StateObstacles {
                 markers: index
                     .marker_bounds()
                     .map(|mut bounds| {
-                        bounds.origin.y += top + 40 + check_offset;
+                        bounds.origin.y += top + 40 + architecture_offset;
                         bounds
                     })
                     .collect(),
@@ -130,7 +147,7 @@ pub fn render_states(
                     .iter()
                     .map(|panel| {
                         let mut header = panel.bounds.header(36);
-                        header.origin.y += top + 40 + check_offset;
+                        header.origin.y += top + 40 + architecture_offset;
                         header
                     })
                     .collect(),
@@ -139,7 +156,7 @@ pub fn render_states(
                     .iter()
                     .map(|b| {
                         let mut bounds = *b;
-                        bounds.origin.y += top + 40 + check_offset;
+                        bounds.origin.y += top + 40 + architecture_offset;
                         bounds
                     })
                     .collect::<Vec<_>>(),
@@ -160,7 +177,7 @@ pub fn render_states(
                 (
                     bounds.right(),
                     top + 40
-                        + check_offset
+                        + architecture_offset
                         + bounds.origin.y
                         + layout.header_heights[port_index] / 2,
                     format!("{prefix}{}", super::identity::resource(node)),
@@ -173,7 +190,7 @@ pub fn render_states(
             );
         }
         let document = namespace(
-            &super::render_with_index(graph, &layout, format, &index),
+            &super::render_with_index(graph, &layout, format, &index, &measured_sections, content),
             &prefix,
         );
         writeln!(sections, r##"<g id="{prefix}state" data-state-id="{}"><text x="40" y="{}" font-family="ui-monospace, Consolas, monospace" font-size="20" font-weight="700" fill="#0f172a">State: {}</text>"##, super::escape(id.as_str()), top + 25, super::escape(id.as_str())).unwrap();
@@ -261,7 +278,7 @@ pub fn render_states(
     )
 }
 
-pub(super) fn prefix(id: &StateId) -> String {
+pub(crate) fn prefix(id: &StateId) -> String {
     let mut prefix = String::from("state-");
     for byte in id.as_str().bytes() {
         write!(prefix, "{byte:02x}").unwrap();

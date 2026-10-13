@@ -8,21 +8,54 @@ mod tests;
 
 pub(super) fn render(
     graph: &Graph,
+    layout: &crate::layout::Layout<'_>,
     parent: usize,
     x: usize,
     mut y: usize,
     index: &super::relationship_index::Index<'_>,
+    content: super::Content,
 ) -> String {
     let cards = cards(graph, parent);
     if cards.is_empty() {
         return String::new();
     }
+    let radius = crate::view::geometry::ROUTE_RADIUS;
+    let stroke = crate::view::geometry::ROUTE_STROKE as f64 / 4.0;
     let mut svg = format!(
         r##"<g data-routes="true"><text x="{x}" y="{y}" font-size="12" font-weight="700" fill="#475569">Routes</text>"##
     );
     y += 12;
-    for card in cards {
+    for mut card in cards {
         let height = card.height();
+        let bounds = card.node.map_or(
+            crate::layout::Bounds {
+                origin: crate::layout::Point { x, y },
+                width: WIDTH,
+                height,
+            },
+            |node| {
+                let child = graph
+                    .nodes
+                    .iter()
+                    .position(|n| n.entity.id == node.entity.id)
+                    .unwrap();
+                layout.bounds[child]
+            },
+        );
+        y += height + 12;
+        let (x, y, width, height) = (
+            bounds.origin.x,
+            bounds.origin.y,
+            bounds.width,
+            bounds.height,
+        );
+        if matches!(content, super::Content::ValueFree) {
+            for row in &mut card.rows {
+                if row.destination {
+                    row.text = "Destination: omitted".into();
+                }
+            }
+        }
         let node = card.node.unwrap_or(&graph.nodes[parent]);
         let (background, border) = super::color(node.action);
         if let Some(node) = card.node {
@@ -57,7 +90,7 @@ pub(super) fn render(
             .map(|r| r.text.as_str())
             .collect::<Vec<_>>()
             .join("; ");
-        writeln!(svg, r#"<title>{}; {}{}{}{} </title><rect x="{x}" y="{y}" width="{WIDTH}" height="{height}" rx="6" fill="{background}" stroke="{border}"/>"#,
+        writeln!(svg, r#"<title>{}; {}{}{}{} </title><rect x="{x}" y="{y}" width="{width}" height="{height}" rx="{radius}" fill="{background}" stroke="{border}" stroke-width="{stroke}"/>"#,
             super::escape(&details), super::operations::label(node.action, &node.metadata), super::escape(&super::operations::details(&node.metadata)),
             node.previous_address.as_ref().map(|a| format!("; moved from: {}", super::escape(a))).unwrap_or_default(),
             node.deposed_key.as_ref().map(|a| format!("; deposed: {}", super::escape(a))).unwrap_or_default()).unwrap();
@@ -95,7 +128,6 @@ pub(super) fn render(
             }
         }
         svg.push_str("</g>\n");
-        y += height + 12;
     }
     svg.push_str("</g>\n");
     svg

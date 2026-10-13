@@ -7,6 +7,7 @@ pub(crate) struct Row {
     pub text: String,
     pub target: Option<TerraformEntityId>,
     pub moved: bool,
+    pub destination: bool,
     address: bool,
 }
 
@@ -58,6 +59,32 @@ pub(crate) fn routed(graph: &Graph, index: usize) -> bool {
         })
 }
 
+pub(crate) fn insets(graph: &Graph) -> Vec<usize> {
+    let mut insets = vec![12; graph.nodes.len()];
+    for (index, entry) in crate::layout::relationship_markers::entries(graph)
+        .into_iter()
+        .enumerate()
+    {
+        let inset = crate::layout::relationship_markers::Terminal::marker(
+            index + 1,
+            crate::layout::Side::Right,
+        )
+        .clearance;
+        for edge in entry.edges {
+            let edge = &graph.edges[edge];
+            for (end, node) in [edge.from, edge.to].into_iter().enumerate() {
+                if end == 0 && !crate::layout::relationship_markers::both_ends(edge) {
+                    continue;
+                }
+                if let Some(parent) = owner(graph, &graph.nodes[node]) {
+                    insets[parent] = insets[parent].max(inset);
+                }
+            }
+        }
+    }
+    insets
+}
+
 fn details(entry: &RouteEntry) -> Vec<Row> {
     vec![
         Row {
@@ -67,6 +94,7 @@ fn details(entry: &RouteEntry) -> Vec<Row> {
             ),
             target: None,
             moved: false,
+            destination: true,
             address: false,
         },
         Row {
@@ -76,6 +104,7 @@ fn details(entry: &RouteEntry) -> Vec<Row> {
             },
             target: entry.target.clone(),
             moved: false,
+            destination: false,
             address: entry.target_kind.is_some() && entry.target.is_some(),
         },
     ]
@@ -94,6 +123,7 @@ pub(crate) fn cards(graph: &Graph, parent: usize) -> Vec<Card<'_>> {
             },
             target: None,
             moved: false,
+            destination: false,
             address: false,
         }];
         rows.extend(details(entry));
@@ -102,6 +132,7 @@ pub(crate) fn cards(graph: &Graph, parent: usize) -> Vec<Card<'_>> {
                 text: "Route Table: unresolved".into(),
                 target: None,
                 moved: false,
+                destination: false,
                 address: false,
             });
         }
@@ -127,6 +158,7 @@ pub(crate) fn cards(graph: &Graph, parent: usize) -> Vec<Card<'_>> {
             text: format!("{} [{operation}]", child.address),
             target: None,
             moved: false,
+            destination: false,
             address: true,
         }];
         if let Some(previous) = &child.previous_address {
@@ -134,6 +166,7 @@ pub(crate) fn cards(graph: &Graph, parent: usize) -> Vec<Card<'_>> {
                 text: super::text::moved_from(previous),
                 target: None,
                 moved: true,
+                destination: false,
                 address: true,
             });
         }
@@ -145,6 +178,7 @@ pub(crate) fn cards(graph: &Graph, parent: usize) -> Vec<Card<'_>> {
                     text: "Next hop".into(),
                     target: None,
                     moved: false,
+                    destination: false,
                     address: false,
                 });
             }
@@ -180,6 +214,7 @@ pub(crate) fn cards(graph: &Graph, parent: usize) -> Vec<Card<'_>> {
                 text: format!("{label}: {}", other.address),
                 target: other.entity.provenance.first().cloned(),
                 moved: false,
+                destination: false,
                 address: true,
             });
         }

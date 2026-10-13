@@ -1,6 +1,10 @@
 use super::*;
+#[path = "data_icons.rs"]
+mod data_icons;
 #[path = "icon_import.rs"]
 mod icon_import;
+#[path = "terraform_icons.rs"]
+mod terraform_icons;
 
 #[test]
 fn symbols_are_deduplicated_and_used_locally_on_cards_and_containers() {
@@ -144,6 +148,7 @@ fn unknown_only_diagrams_do_not_embed_unused_artwork() {
     let svg = crate::svg::render(&graph, &crate::layout::Layout::new(&graph));
     assert!(!svg.contains("<use"));
     assert!(!svg.contains("<symbol"));
+    assert!(!svg.contains("planorama-icons-license"));
 }
 
 #[test]

@@ -11,6 +11,7 @@ fn representative_aws_types_cover_each_architectural_role() {
         ("aws_route_table_association", ResourceRole::Association),
         ("aws_security_group", ResourceRole::Policy),
         ("aws_network_acl", ResourceRole::Policy),
+        ("aws_autoscaling_policy", ResourceRole::Policy),
         ("aws_autoscaling_group", ResourceRole::Controller),
         ("aws_ecs_service", ResourceRole::Controller),
     ] {
@@ -40,7 +41,7 @@ fn expanded_roles_cover_managed_and_equivalent_data_entities() {
     for (expected, types) in [
         (
             ResourceRole::Node,
-            "aws_ami aws_eip aws_db_subnet_group aws_lambda_function aws_rds_cluster aws_dynamodb_table aws_elasticache_cluster aws_opensearch_domain aws_s3_bucket aws_cloudwatch_log_group",
+            "aws_ami aws_eip aws_db_subnet_group aws_lambda_function aws_rds_cluster aws_dynamodb_table aws_elasticache_cluster aws_opensearch_domain aws_s3_bucket aws_cloudwatch_log_group aws_launch_template",
         ),
         (
             ResourceRole::Connector,
@@ -52,7 +53,7 @@ fn expanded_roles_cover_managed_and_equivalent_data_entities() {
         ),
         (
             ResourceRole::Policy,
-            "aws_iam_role aws_iam_policy aws_iam_role_policy aws_iam_instance_profile aws_lb_listener_rule",
+            "aws_iam_role aws_iam_policy aws_iam_role_policy aws_iam_instance_profile aws_lb_listener_rule aws_autoscaling_policy",
         ),
         (
             ResourceRole::Controller,
@@ -85,8 +86,8 @@ fn large_example_has_classified_architecture_resources_and_only_spatial_containe
     let raw =
         crate::plan::parse(include_str!("../../../examples/terraform-large/plan.json")).unwrap();
     let graph = crate::semantic::transform(&raw);
-    assert_eq!(graph.nodes.len(), 38);
-    assert_eq!(graph.edges.len(), 74);
+    assert_eq!(graph.nodes.len(), 40);
+    assert_eq!(graph.edges.len(), 79);
     for node in &graph.nodes {
         assert_ne!(node.role, ResourceRole::Unknown, "{}", node.resource_type);
         assert_eq!(
