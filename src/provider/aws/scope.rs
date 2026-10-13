@@ -54,6 +54,7 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
             | "aws_network_acl"
             | "aws_lb_listener_rule"
             | "aws_autoscaling_group"
+            | "aws_autoscaling_policy"
             | "aws_ecs_service"
             | "aws_ecs_cluster"
             | "aws_ecs_task_definition"
