@@ -17,10 +17,7 @@ pub(super) fn target(raw: &Input, index: usize) -> Result<usize, Reason> {
         .find(|reference| reference.target == index && reference.attribute == ATTRIBUTE)
         .ok_or(Reason::MissingAttribute)?;
 
-    if reference
-        .issues
-        .contains(&Reason::DynamicInstanceSelection)
-    {
+    if reference.issues.contains(&Reason::DynamicInstanceSelection) {
         return Err(Reason::DynamicInstanceSelection);
     }
     if !reference.complete {
