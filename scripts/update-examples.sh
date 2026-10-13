@@ -29,6 +29,11 @@ while IFS= read -r output || [ -n "$output" ]; do
         examples/terraform-large/diagram.svg)
             "$binary" examples/terraform-large/plan.json -o "$output"
             ;;
+        examples/multi-account/diagram.svg)
+            cargo run --locked --example generate_multi_fixture
+            cargo build --locked --release --bin planorama
+            sh scripts/render-multi-account.sh "${CARGO_TARGET_DIR:-target}/release/planorama" svg "$output"
+            ;;
         examples/multi-plan.svg)
             "$binary" --state network=tests/fixtures/multi/network.json --state application=tests/fixtures/multi/application.json -o "$output"
             ;;

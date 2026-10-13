@@ -1,5 +1,7 @@
 #[path = "../../examples/terraform-large/generator.rs"]
 mod generator;
+#[path = "multi_account.rs"]
+mod multi_account;
 mod support;
 
 #[test]

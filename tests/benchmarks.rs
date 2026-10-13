@@ -1,5 +1,7 @@
 use serde_json::json;
 use std::time::Instant;
+#[path = "benchmarks/multi_account.rs"]
+mod multi_account;
 
 fn generate(count: usize, dense: bool) -> String {
     let mut changes = Vec::new();

@@ -1,5 +1,9 @@
 # Large AWS architecture fixture
 
+For the combined multi-state/account/region baseline, see
+[the maintained 250-input example](../multi-account/README.md). This smaller
+fixture remains its reusable source and a focused single-state reference.
+
 The JSON-formatted Terraform source is split across `network`, `application`,
 `database`, and `shared` modules. Module membership differs from containment:
 application EC2 instances belong to subnets in the network module. This is a

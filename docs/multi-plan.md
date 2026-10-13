@@ -81,3 +81,8 @@ planorama --state network=tests/fixtures/multi/network.json --state application=
 ```
 
 With `--diagnostics`, every diagnostic line carries `state="ID"`. Parse/read errors name their state. Evaluated attribute values and check messages remain excluded; safe Route destination constants follow the same rules as single-plan input. See [the multi-plan example](../examples/multi-plan.svg), generated from the two [regression fixtures](../tests/fixtures/multi).
+
+The maintained [combined AWS example](../examples/multi-account/README.md) provides
+250 inputs across three states and two accounts, 15 resolved cross-state
+references, singleton regions, Global/unknown scope and substantial relationship
+indexes. Its SVG and offline HTML share the same inputs and mappings.

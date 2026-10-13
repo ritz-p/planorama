@@ -17,6 +17,11 @@ changed-only selection, remote-state mappings and diagnostics work in both modes
 Logical Resources rows show the same per-resource deployment-scope labels in both
 formats; see [scope evidence and limitations](aws.md#deployment-scopes).
 
+The maintained [combined AWS viewer](../examples/multi-account/diagram.html)
+exercises 250 input instances, repeated addresses in three states, account/region
+backgrounds and remote logical/spatial references. Its [generation and review
+commands](../examples/multi-account/README.md) use the same inputs as its SVG.
+
 Search matches the complete native and qualified address, architecture identity,
 module, state, resource type, managed/data mode and deposed key. Space-separated
 terms must all match. Results retain full addresses and state/mode distinctions.
