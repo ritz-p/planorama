@@ -54,9 +54,10 @@ fn module(path: &Path, scope: &str, changes: &mut Vec<Value>) -> Result<Value, S
                             ("aws_ecs_service", "network_configuration") => {
                                 network_configuration(value)?
                             }
-                            ("aws_autoscaling_group", "launch_template" | "mixed_instances_policy") => {
-                                nested_blocks(value)?
-                            }
+                            (
+                                "aws_autoscaling_group",
+                                "launch_template" | "mixed_instances_policy",
+                            ) => nested_blocks(value)?,
                             ("aws_lb_listener", "default_action")
                             | ("aws_lb_listener_rule", "action") => action_blocks(value)?,
                             _ => expression(value)?,
