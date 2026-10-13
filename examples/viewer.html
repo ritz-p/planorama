@@ -307,8 +307,7 @@ Task definition: aws_ecs_task_definition.app [task_definition; direct attribute 
         const suffix = hex(source.address) + (source.deposed_key === null ? '-current' : '-deposed-' + hex(source.deposed_key));
         const id = `${prefix}resource-${suffix}`;
         if (resourceIds.has(id)) continue;
-        const display = source.address + (source.deposed_key === null ? '' : ` (deposed: ${source.deposed_key})`);
-        const row = rows.find(row => row.dataset.sourceAddress === source.address && row.querySelector('title')?.textContent === display);
+        const row = rows.find(row => row.dataset.sourceIdentity === 'terraform:' + suffix);
         if (!row) continue;
         row.id = id;
         resourceIds.add(id);
@@ -323,6 +322,8 @@ Task definition: aws_ecs_task_definition.app [task_definition; direct attribute 
   const edges = Array.from(svg.querySelectorAll('path[data-edge-kind][data-source][data-target]'));
   const links = Array.from(svg.querySelectorAll('a[href^="#"]')).map(el => ({ el, target: el.getAttribute('href').slice(1) })).filter(link => byId(link.target));
   const components = Array.from(svg.querySelectorAll('[data-entity-kind="synthetic"][data-component-id]'));
+  const relationshipEntries = new Map(Array.from(svg.querySelectorAll('[data-relationship-entry][id]')).map(el => [el.id, el]));
+  const relationshipEdges = id => edges.filter(edge => (edge.dataset.relationshipIds || '').split(' ').includes(id));
   let selected = null;
   let box = [svg.viewBox.baseVal.x, svg.viewBox.baseVal.y, svg.viewBox.baseVal.width, svg.viewBox.baseVal.height];
   const original = box.slice();
@@ -386,6 +387,13 @@ Task definition: aws_ecs_task_definition.app [task_definition; direct attribute 
     const r = targets.get(id);
     const heading = document.createElement('h2'); heading.textContent = r ? label(r) : title(el);
     details.append(heading);
+    if (relationshipEntries.has(id)) {
+      for (const edge of relationshipEdges(id)) edge.setAttribute('data-viewer-edge', 'relationship');
+      for (const link of links.filter(link => link.target === id && link.el.hasAttribute('data-relationship-select'))) link.el.setAttribute('data-viewer-related', 'true');
+      section('Relationship endpoints', Array.from(el.querySelectorAll('[data-relationship-endpoint]')).map(link => ({ target: link.getAttribute('href').slice(1), text: link.textContent })));
+      reveal(el);
+      return;
+    }
     if (r) {
       const identity = document.createElement('p');
       identity.textContent = `${r.qualified}\nModule: ${r.module} · State: ${r.state || '(unnamed)'} · ${r.type}\n${title(el)}`;
@@ -405,19 +413,11 @@ Task definition: aws_ecs_task_definition.app [task_definition; direct attribute 
     section('Outgoing rendered edges', outgoing);
     section('Undirected rendered relationships', undirected);
     if (r?.relationship) {
-      const scope = el.closest('[data-state-id]') || svg;
-      const metadata = scope.querySelector('metadata[id$="architecture-relationships"]');
-      for (const relation of JSON.parse(metadata.textContent)) {
-        if (!relation.provenance.some(p => p.kind === 'resource' && p.address === r.address && p.deposed_key === r.deposed)) continue;
-        const from = resources.find(other => other.state === r.state && other.identity === relation.from);
-        const to = resources.find(other => other.state === r.state && other.identity === relation.to);
-        const source = relation.provenance.find(p => p.kind === 'resource' && p.address === r.address && p.deposed_key === r.deposed);
-        const expectedTitle = `${from?.address} ${relation.directionality === 'directed' ? '→' : '↔'} ${to?.address} (${relation.kind}; ${source.operation}: ${r.address})`;
-        for (const edge of edges.filter(edge => edge.dataset.source === from?.id && edge.dataset.target === to?.id && edge.dataset.edgeKind === relation.kind && title(edge).startsWith(expectedTitle))) {
-          edge.setAttribute('data-viewer-edge', 'provenance');
-        }
-        if (from) provenance.push({ target: from.id, text: `${relation.kind} ${relation.directionality}: ${label(from)} ${relation.directionality === 'directed' ? '→' : '↔'} ${to ? label(to) : relation.to}` });
-        if (to) provenance.push({ target: to.id, text: `Endpoint: ${label(to)}` });
+      for (const entry of relationshipEntries.values()) {
+        const state = entry.closest('[data-state-id]')?.dataset.stateId || '';
+        if (state !== r.state || !Array.from(entry.querySelectorAll('[data-source-address]')).some(row => row.dataset.sourceIdentity === r.identity)) continue;
+        for (const edge of relationshipEdges(entry.id)) edge.setAttribute('data-viewer-edge', 'provenance');
+        for (const link of entry.querySelectorAll('[data-relationship-endpoint]')) provenance.push({ target: link.getAttribute('href').slice(1), text: link.textContent });
       }
     }
     section('Rendered relationships from this resource', provenance);

@@ -200,3 +200,74 @@ fn representative_html_matches_the_renderer() {
         .collect();
     assert!(columns.len() >= 2);
 }
+
+#[test]
+fn relationship_navigation_is_scoped_to_each_state_and_only_existing_targets() {
+    let output = std::process::Command::new(env!("CARGO_BIN_EXE_planorama"))
+        .args([
+            "--format",
+            "html",
+            "-o",
+            "-",
+            "--state",
+            "left=tests/fixtures/association-plan.json",
+            "--state",
+            "right=tests/fixtures/association-plan.json",
+        ])
+        .output()
+        .unwrap();
+    assert!(
+        output.status.success(),
+        "{}",
+        String::from_utf8_lossy(&output.stderr)
+    );
+    let output = String::from_utf8(output.stdout).unwrap();
+    let document = roxmltree::Document::parse(diagram(&output)).unwrap();
+    let ids: Vec<_> = document
+        .descendants()
+        .filter_map(|node| node.attribute("id"))
+        .collect();
+    assert_eq!(
+        ids.len(),
+        ids.iter().collect::<std::collections::BTreeSet<_>>().len()
+    );
+    let entries: Vec<_> = document
+        .descendants()
+        .filter(|node| node.attribute("data-relationship-entry") == Some("1"))
+        .collect();
+    assert_eq!(entries.len(), 2);
+    assert_ne!(entries[0].attribute("id"), entries[1].attribute("id"));
+    for state in document
+        .descendants()
+        .filter(|node| node.attribute("data-state-id").is_some())
+    {
+        let local_ids: Vec<_> = state
+            .descendants()
+            .filter_map(|node| node.attribute("id"))
+            .collect();
+        for node in state.descendants() {
+            if let Some(ids) = node.attribute("data-relationship-ids") {
+                for id in ids.split_whitespace() {
+                    assert!(local_ids.contains(&id));
+                }
+            }
+            if node.attribute("data-relationship-select").is_some()
+                || node.attribute("data-relationship-endpoint").is_some()
+            {
+                assert!(
+                    local_ids.contains(&node.attribute("href").unwrap().strip_prefix('#').unwrap())
+                );
+            }
+        }
+    }
+    let filtered = html(
+        include_bytes!("../fixtures/association-plan.json"),
+        &["--focus", "aws_subnet.private", "--focus-depth", "0"],
+    );
+    let document = roxmltree::Document::parse(diagram(&filtered)).unwrap();
+    assert!(
+        !document
+            .descendants()
+            .any(|node| node.attribute("data-relationship-select").is_some())
+    );
+}

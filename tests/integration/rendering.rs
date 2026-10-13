@@ -782,7 +782,7 @@ fn relationship_index_examples_use_available_width_for_complete_entry_cards() {
             include_bytes!("../fixtures/relationship-index-wide-plan.json").as_slice(),
             "relationship-index-wide",
             40,
-            4,
+            5,
         ),
     ] {
         let svg = render(input);
@@ -799,7 +799,7 @@ fn relationship_index_examples_use_available_width_for_complete_entry_cards() {
             .descendants()
             .filter(|n| n.attribute("data-relationship-index").is_some())
             .collect();
-        assert_eq!(cards.len(), count.div_ceil(10));
+        assert_eq!(cards.len(), count.div_ceil(5));
         let mut rows = Vec::new();
         for (i, card) in cards.iter().enumerate() {
             let numbers: Vec<_> = card
@@ -809,7 +809,7 @@ fn relationship_index_examples_use_available_width_for_complete_entry_cards() {
                 .collect();
             assert_eq!(
                 numbers,
-                (i * 10 + 1..=count.min((i + 1) * 10)).collect::<Vec<_>>()
+                (i * 5 + 1..=count.min((i + 1) * 5)).collect::<Vec<_>>()
             );
             assert!(card.ancestors().any(|n| {
                 n.attribute("data-annotation-section") == Some("Relationship Resources")
@@ -834,7 +834,7 @@ fn relationship_index_examples_use_available_width_for_complete_entry_cards() {
                 assert_eq!(Some(&position[1]), rows.last());
             }
         }
-        assert_eq!(rows.len(), count.div_ceil(10 * columns));
+        assert_eq!(rows.len(), count.div_ceil(5 * columns));
         assert_eq!(
             document
                 .descendants()

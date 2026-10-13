@@ -25,6 +25,13 @@ including nested logical-resource rows and embedded Route cards.
 Lowered association resources use their visible Relationship Resources entry;
 their selection identifies the original relationship endpoints and paths.
 
+Click a relationship number in the diagram or index, or focus it with Tab and
+press Enter or Space, to select that exact relationship. Its paths, both endpoint
+resources, matching badges and index entry are emphasized together. The selection
+panel provides buttons to navigate to each endpoint. Selection uses the indexed
+relationship identity, preserving parallel relationships, deposed identities and
+equal numbers in different states. Address search continues to select resources.
+
 Selection details separate incoming and outgoing rendered edges, undirected
 relationships, Uses/reference targets, inverse references and Logical Component
 membership. Links navigate only to targets present in the generated diagram.
@@ -38,6 +45,7 @@ line patterns, bundles or routing. Clear selection restores their normal styling
 | Search | Type in the search field; Enter selects the first result |
 | Results | Arrow Down enters results; Up/Down and Home/End navigate; Enter selects |
 | Resource links | Tab to a resource or link, then Enter; clicking also selects |
+| Relationship numbers | Click, or Tab then Enter/Space; endpoint buttons navigate to resources |
 | Clear selection | Escape or Clear selection |
 | Pan | Drag or scroll; arrow keys while the diagram has focus |
 | Zoom | +/− buttons, +/− keys in the diagram, or Ctrl/Command+scroll |
