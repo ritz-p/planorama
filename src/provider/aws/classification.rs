@@ -18,7 +18,8 @@ pub(super) fn classify(resource_type: &str) -> ResourceRole {
         | "aws_elasticache_cluster"
         | "aws_opensearch_domain"
         | "aws_s3_bucket"
-        | "aws_cloudwatch_log_group" => ResourceRole::Node,
+        | "aws_cloudwatch_log_group"
+        | "aws_launch_template" => ResourceRole::Node,
         "aws_vpc_peering_connection"
         | "aws_internet_gateway"
         | "aws_nat_gateway"
