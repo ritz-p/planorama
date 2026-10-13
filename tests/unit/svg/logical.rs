@@ -47,14 +47,14 @@ fn scope_labels_preserve_rows_measurements_and_html_metadata() {
                 .find(|n| n.attribute("id") == Some(svg::identity::resource(node).as_str()))
                 .unwrap();
             let expected = if node.deposed_key.is_some() {
-                "Region unknown"
+                "Region: unknown"
             } else {
                 match node.address.as_str() {
                     "aws_cloudwatch_log_group.tokyo" => "Region: ap-northeast-1",
                     "aws_cloudwatch_log_group.virginia"
                     | "data.aws_cloudwatch_log_group.lookup" => "Region: us-east-1",
                     "aws_iam_policy.access" => "AWS Global",
-                    _ => "Region unknown",
+                    _ => "Region: unknown",
                 }
             };
             assert_eq!(
@@ -92,7 +92,7 @@ fn scope_presentation_distinguishes_inapplicable_unknown_and_generic_global() {
         ProviderIdentity::from_source("unknown"),
         ProviderIdentity::from_source(""),
     ] {
-        assert_eq!(label(None, &provider), "Region unknown");
+        assert_eq!(label(None, &provider), "Region: unknown");
     }
     let foreign = ProviderIdentity::from_source("example.com/custom/aws");
     assert_eq!(label(None, &foreign), "Region: not applicable");

@@ -25,7 +25,7 @@ unknown regions stay outside panels. No aliases, names, tags, ARNs or IDs supply
 region information.
 
 Each Logical Resources row displays its own `Region: <region>`, `AWS Global`,
-or `Region unknown` label in SVG and HTML. Equal type/mode resources from different
+or `Region: unknown` label in SVG and HTML. Equal type/mode resources from different
 regions stay in one group without a shared region claim. See the maintained
 [logical-region example](../examples/logical-regions.svg), generated from
 [this fixture](../tests/fixtures/logical-regions-plan.json).

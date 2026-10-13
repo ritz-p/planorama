@@ -11,7 +11,7 @@ pub(crate) fn label(scope: Option<&DeploymentScope>, provider: &ProviderIdentity
             region: None,
         }) => format!("{provider} Global"),
         None if provider.is_aws() || matches!(provider.source(), None | Some("" | "unknown")) => {
-            "Region unknown".into()
+            "Region: unknown".into()
         }
         None => "Region: not applicable".into(),
     }

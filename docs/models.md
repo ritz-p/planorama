@@ -97,7 +97,7 @@ the expression's value. `ArchitectureEntity.scope` remains independent of logica
 placement: `None` means unresolved, while a present scope with no region is an
 explicit provider-classified Global scope. The shared `view::scope` label helper
 consumes this evidence; known non-AWS providers without scope use `Region: not
-applicable`, and unknown provider identities use `Region unknown`. Labels never
+applicable`, and unknown provider identities use `Region: unknown`. Labels never
 participate in architecture, provider-configuration or state identity.
 
 ## Architecture identity and provenance
