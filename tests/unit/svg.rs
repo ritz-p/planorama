@@ -1,8 +1,14 @@
 use super::*;
 
 #[test]
-fn account_only_spatial_scopes_remain_visible_without_becoming_global() {
-    for resource_type in ["aws_vpc", "aws_s3_bucket"] {
+fn spatial_account_evidence_does_not_infer_region_or_global_classification() {
+    for resource_type in [
+        "aws_vpc",
+        "aws_s3_bucket",
+        "aws_vpc_peering_connection",
+        "aws_unclassified_example",
+        "aws_cloudfront_distribution",
+    ] {
         let address = format!("{resource_type}.example");
         let input = serde_json::json!({
             "format_version": "1.2",
@@ -21,8 +27,17 @@ fn account_only_spatial_scopes_remain_visible_without_becoming_global() {
             .descendants()
             .find(|n| n.attribute("data-account") == Some("123456789012"))
             .unwrap();
-        assert_eq!(panel.attribute("data-global"), None);
-        assert_eq!(panel.attribute("data-region"), None);
+        assert!(
+            !document
+                .descendants()
+                .any(|n| n.attribute("data-region").is_some())
+        );
+        assert_eq!(
+            document
+                .descendants()
+                .any(|n| n.attribute("data-global") == Some("true")),
+            resource_type == "aws_cloudfront_distribution"
+        );
         assert!(panel.children().any(|n| n.has_tag_name("text")
             && n.text().is_some_and(|text| text.contains("123456789012"))));
     }
