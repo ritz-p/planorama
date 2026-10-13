@@ -9,10 +9,10 @@ fn input() -> Value {
     json!({
         "format_version":"1.2",
         "resource_changes":[
-            {"address":"aws_autoscaling_group.app","type":"aws_autoscaling_group","change":{"actions":["create"]}},
-            {"address":"aws_autoscaling_group.other","type":"aws_autoscaling_group","change":{"actions":["create"]}},
-            {"address":"aws_autoscaling_policy.cpu","type":"aws_autoscaling_policy","change":{"actions":["create"]}},
-            {"address":"aws_autoscaling_policy.memory","type":"aws_autoscaling_policy","change":{"actions":["update"]}}
+            {"address":"aws_autoscaling_group.app","type":"aws_autoscaling_group","change":{"actions":["create"],"after":{"name":"app"}}},
+            {"address":"aws_autoscaling_group.other","type":"aws_autoscaling_group","change":{"actions":["create"],"after":{"name":"other"}}},
+            {"address":"aws_autoscaling_policy.cpu","type":"aws_autoscaling_policy","change":{"actions":["create"],"after":{"autoscaling_group_name":"app"}}},
+            {"address":"aws_autoscaling_policy.memory","type":"aws_autoscaling_policy","change":{"actions":["update"],"after":{"autoscaling_group_name":"app"}}}
         ],
         "configuration":{"root_module":{"resources":[
             {"address":"aws_autoscaling_policy.cpu","expressions":{"autoscaling_group_name":{"references":["aws_autoscaling_group.app.name"]}}},
@@ -65,7 +65,7 @@ fn policies_are_logical_and_add_verified_asg_context_without_spatial_paths() {
 
 #[test]
 fn ambiguous_wrong_type_missing_and_cross_provider_targets_stay_conservative() {
-    for case in 0..4 {
+    for case in 0..5 {
         let mut value = input();
         match case {
             0 => {
@@ -100,6 +100,10 @@ fn ambiguous_wrong_type_missing_and_cross_provider_targets_stay_conservative() {
                     }));
                 value["configuration"]["root_module"]["resources"][0]["provider_config_key"] =
                     json!("aws");
+            }
+            4 => {
+                value["resource_changes"][2]["change"]["after"]["autoscaling_group_name"] =
+                    json!("prefix-app");
             }
             _ => unreachable!(),
         }
@@ -201,4 +205,30 @@ fn dynamic_instance_selection_does_not_create_verified_inverse_context() {
     assert!(policy.references.iter().any(|reference| {
         reference.attribute == "autoscaling_group_name" && !reference.complete
     }));
+}
+
+
+#[test]
+fn rejected_targets_are_reported_by_diagnostics() {
+    for (case, expected) in [
+        (0, crate::model::DiagnosticReason::UnprovenEndpointValue),
+        (1, crate::model::DiagnosticReason::EndpointTypeMismatch),
+    ] {
+        let mut value = input();
+        match case {
+            0 => {
+                value["resource_changes"][2]["change"]["after"]["autoscaling_group_name"] =
+                    json!("prefix-app");
+            }
+            1 => value["resource_changes"][0]["type"] = json!("aws_instance"),
+            _ => unreachable!(),
+        }
+        let parsed = plan::parse(&value.to_string()).unwrap();
+        let diagnostics = semantic::diagnostics::collect(&parsed);
+        assert!(diagnostics.iter().any(|diagnostic| {
+            diagnostic.address == "aws_autoscaling_policy.cpu"
+                && diagnostic.attribute == "autoscaling_group_name"
+                && diagnostic.reason == expected
+        }));
+    }
 }
