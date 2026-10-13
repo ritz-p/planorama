@@ -1025,3 +1025,145 @@ fn dynamic_logical_candidates_are_unresolved_while_exact_targets_link() {
         }
     }
 }
+
+#[test]
+fn launch_templates_are_logical_and_asg_usage_requires_complete_nested_references() {
+    let input = serde_json::json!({
+        "format_version":"1.2",
+        "resource_changes":[
+            {"address":"aws_launch_template.direct","type":"aws_launch_template","provider_name":"registry.terraform.io/hashicorp/aws","change":{"actions":["create"]}},
+            {"address":"aws_launch_template.mixed","type":"aws_launch_template","provider_name":"registry.terraform.io/hashicorp/aws","change":{"actions":["update"]}},
+            {"address":"aws_launch_template.dynamic[0]","type":"aws_launch_template","provider_name":"registry.terraform.io/hashicorp/aws","change":{"actions":["no-op"]}},
+            {"address":"aws_launch_template.dynamic[1]","type":"aws_launch_template","provider_name":"registry.terraform.io/hashicorp/aws","change":{"actions":["no-op"]}},
+            {"address":"data.aws_launch_template.lookup","type":"aws_launch_template","mode":"data","provider_name":"registry.terraform.io/hashicorp/aws","change":{"actions":["read"]}},
+            {"address":"aws_autoscaling_group.direct","type":"aws_autoscaling_group","provider_name":"registry.terraform.io/hashicorp/aws"},
+            {"address":"aws_autoscaling_group.mixed","type":"aws_autoscaling_group","provider_name":"registry.terraform.io/hashicorp/aws"},
+            {"address":"aws_autoscaling_group.dynamic","type":"aws_autoscaling_group","provider_name":"registry.terraform.io/hashicorp/aws"}
+        ],
+        "configuration":{
+            "provider_config":{
+                "aws":{"full_name":"registry.terraform.io/hashicorp/aws","expressions":{"region":{"constant_value":"us-east-1"}}}
+            },
+            "root_module":{"resources":[
+                {"address":"aws_launch_template.direct","provider_config_key":"aws","expressions":{}},
+                {"address":"aws_launch_template.mixed","provider_config_key":"aws","expressions":{}},
+                {"address":"data.aws_launch_template.lookup","provider_config_key":"aws","expressions":{}},
+                {"address":"aws_autoscaling_group.direct","provider_config_key":"aws","expressions":{
+                    "launch_template":[{"id":{"references":["aws_launch_template.direct.id"]}}]
+                }},
+                {"address":"aws_autoscaling_group.mixed","provider_config_key":"aws","expressions":{
+                    "mixed_instances_policy":[{"launch_template":[{"launch_template_specification":[
+                        {"launch_template_name":{"references":["aws_launch_template.mixed.name"]}}
+                    ]}]}]
+                }},
+                {"address":"aws_autoscaling_group.dynamic","provider_config_key":"aws","expressions":{
+                    "launch_template":[{"id":{"references":["aws_launch_template.dynamic[count.index].id"]}}]
+                }}
+            ]}
+        }
+    });
+    let graph = semantic::transform(&plan::parse(&input.to_string()).unwrap());
+
+    for address in [
+        "aws_launch_template.direct",
+        "aws_launch_template.mixed",
+        "aws_launch_template.dynamic[0]",
+        "aws_launch_template.dynamic[1]",
+        "data.aws_launch_template.lookup",
+    ] {
+        let node = graph
+            .nodes
+            .iter()
+            .find(|node| node.address == address)
+            .unwrap();
+        assert_eq!(node.placement, Placement::Logical, "{address}");
+        assert_eq!(node.role, crate::model::ResourceRole::Node, "{address}");
+    }
+    for address in [
+        "aws_launch_template.direct",
+        "aws_launch_template.mixed",
+        "data.aws_launch_template.lookup",
+    ] {
+        let node = graph
+            .nodes
+            .iter()
+            .find(|node| node.address == address)
+            .unwrap();
+        assert_eq!(
+            node.entity
+                .scope
+                .as_ref()
+                .unwrap()
+                .region
+                .as_ref()
+                .unwrap()
+                .0
+                .as_str(),
+            "us-east-1"
+        );
+    }
+
+    let output = svg::render(&graph, &Layout::new(&graph));
+    let doc = roxmltree::Document::parse(&output).unwrap();
+    for (address, attribute) in [
+        ("aws_autoscaling_group.direct", "launch_template.id"),
+        (
+            "aws_autoscaling_group.mixed",
+            "mixed_instances_policy.launch_template.launch_template_specification.launch_template_name",
+        ),
+    ] {
+        let card = doc
+            .descendants()
+            .find(|node| node.attribute("data-terraform-address") == Some(address))
+            .unwrap();
+        let link = card
+            .descendants()
+            .find(|node| node.attribute("data-reference-attribute") == Some(attribute))
+            .unwrap();
+        assert!(
+            link.descendants().any(|node| {
+                node.has_tag_name("text")
+                    && node
+                        .text()
+                        .is_some_and(|text| text.starts_with("Launch template:"))
+            }),
+            "{address}"
+        );
+        let target = link.attribute("href").unwrap().strip_prefix('#').unwrap();
+        assert!(doc.descendants().any(|node| {
+            node.attribute("id") == Some(target)
+                && node.attribute("data-placement") == Some("logical")
+        }));
+    }
+
+    let dynamic = graph
+        .nodes
+        .iter()
+        .find(|node| node.address == "aws_autoscaling_group.dynamic")
+        .unwrap();
+    let reference = dynamic
+        .references
+        .iter()
+        .find(|reference| reference.attribute == "launch_template.id")
+        .unwrap();
+    assert_eq!(reference.label, "Launch template");
+    assert!(
+        reference
+            .issues
+            .contains(&crate::model::DiagnosticReason::DynamicInstanceSelection)
+    );
+    let card = doc
+        .descendants()
+        .find(|node| {
+            node.attribute("data-terraform-address") == Some("aws_autoscaling_group.dynamic")
+        })
+        .unwrap();
+    assert!(
+        !card
+            .descendants()
+            .any(|node| node.attribute("data-reference-attribute") == Some("launch_template.id"))
+    );
+    assert!(card.descendants().any(|node| {
+        node.has_tag_name("text") && node.text() == Some("Launch template: unresolved")
+    }));
+}

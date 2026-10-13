@@ -61,6 +61,44 @@
             },
             "resources": [
               {
+                "address": "aws_autoscaling_group.app",
+                "expressions": {
+                  "desired_capacity": {
+                    "constant_value": 0
+                  },
+                  "launch_template": [
+                    {
+                      "id": {
+                        "references": [
+                          "aws_launch_template.app.id"
+                        ]
+                      },
+                      "version": {
+                        "constant_value": "$Latest"
+                      }
+                    }
+                  ],
+                  "max_size": {
+                    "constant_value": 2
+                  },
+                  "min_size": {
+                    "constant_value": 0
+                  },
+                  "name": {
+                    "constant_value": "planorama-app"
+                  },
+                  "vpc_zone_identifier": {
+                    "references": [
+                      "var.private_a",
+                      "var.private_b"
+                    ]
+                  }
+                },
+                "mode": "managed",
+                "name": "app",
+                "type": "aws_autoscaling_group"
+              },
+              {
                 "address": "aws_ecs_cluster.app",
                 "expressions": {
                   "name": {
@@ -273,6 +311,30 @@
                 "mode": "managed",
                 "name": "workers_b",
                 "type": "aws_instance"
+              },
+              {
+                "address": "aws_launch_template.app",
+                "expressions": {
+                  "image_id": {
+                    "references": [
+                      "var.ami_id"
+                    ]
+                  },
+                  "instance_type": {
+                    "constant_value": "t3.micro"
+                  },
+                  "name": {
+                    "constant_value": "planorama-app"
+                  },
+                  "vpc_security_group_ids": {
+                    "references": [
+                      "aws_security_group.app.id"
+                    ]
+                  }
+                },
+                "mode": "managed",
+                "name": "app",
+                "type": "aws_launch_template"
               },
               {
                 "address": "aws_lb.app",
@@ -1204,6 +1266,17 @@
       "type": "aws_cloudwatch_log_group"
     },
     {
+      "address": "module.application.aws_autoscaling_group.app",
+      "change": {
+        "actions": [
+          "create"
+        ]
+      },
+      "mode": "managed",
+      "name": "app",
+      "type": "aws_autoscaling_group"
+    },
+    {
       "address": "module.application.aws_ecs_cluster.app",
       "change": {
         "actions": [
@@ -1312,6 +1385,17 @@
       "mode": "managed",
       "name": "workers_b",
       "type": "aws_instance"
+    },
+    {
+      "address": "module.application.aws_launch_template.app",
+      "change": {
+        "actions": [
+          "create"
+        ]
+      },
+      "mode": "managed",
+      "name": "app",
+      "type": "aws_launch_template"
     },
     {
       "address": "module.application.aws_lb.app",
