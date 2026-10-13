@@ -63,7 +63,7 @@ descriptive title.
 
 Spatial cards show a Uses section for verified references to top logical-resource
 rows. Links target the individual resource, not its group card. Known attributes
-use Cluster, Task definition, Instance profile, AMI,
+use Cluster, Task definition, Instance profile, AMI, Launch template,
 Role, Execution role or Task role;
 other verified references use References. Graph-only references such as
 `depends_on` use Dependency, not an attribute-specific usage label. Logical-resource
@@ -83,9 +83,10 @@ rows never create network connections or additional dependency edges.
 
 Auto Scaling Policies use `Auto Scaling group` and inverse `Scaling policy` rows
 only for a complete, unique explicit `autoscaling_group_name` reference to a
-current AWS Auto Scaling Group using the same provider configuration. The inverse
-is provider-specific presentation, not a generic reverse-reference facility, and
-it creates no additional graph edge.
+current AWS Auto Scaling Group using the same provider configuration and with
+matching known planned target/name values. The inverse is provider-specific
+presentation, not a generic reverse-reference facility, and it creates no
+additional graph edge.
 
 Small white circles mark final card ports: the source of a Dependency and both
 ends of Association/Connection paths. Containment has no endpoint circles.
