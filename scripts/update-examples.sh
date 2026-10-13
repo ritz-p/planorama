@@ -35,6 +35,9 @@ while IFS= read -r output || [ -n "$output" ]; do
         examples/cross-state.svg)
             "$binary" --state producer=tests/fixtures/multi/producer.json --state consumer=tests/fixtures/multi/consumer.json --remote-state consumer:data.terraform_remote_state.network=producer -o "$output"
             ;;
+        examples/regional-states.svg)
+            "$binary" --state network=tests/fixtures/multi/network.json --state application=tests/fixtures/multi/application.json --state singleton=tests/fixtures/multi/single-region.json -o "$output"
+            ;;
         examples/hierarchy-routing.svg)
             update_snapshot layout::containers::tests::hierarchy_obstacles_and_direct_container_endpoints UPDATE_ROUTING_SNAPSHOT
             ;;
