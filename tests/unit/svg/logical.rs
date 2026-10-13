@@ -1084,7 +1084,11 @@ fn launch_templates_are_logical_and_asg_usage_requires_complete_nested_reference
         "aws_launch_template.mixed",
         "data.aws_launch_template.lookup",
     ] {
-        let node = graph.nodes.iter().find(|node| node.address == address).unwrap();
+        let node = graph
+            .nodes
+            .iter()
+            .find(|node| node.address == address)
+            .unwrap();
         assert_eq!(
             node.entity
                 .scope
