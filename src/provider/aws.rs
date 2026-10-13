@@ -20,6 +20,13 @@ pub(super) fn reference_label(resource_type: &str, attribute: &str) -> &'static 
         ("aws_ecs_service", "task_definition") => "Task definition",
         ("aws_instance", "iam_instance_profile") => "Instance profile",
         ("aws_instance", "ami") => "AMI",
+        (
+            "aws_autoscaling_group",
+            "launch_template.id"
+            | "launch_template.name"
+            | "mixed_instances_policy.launch_template.launch_template_specification.launch_template_id"
+            | "mixed_instances_policy.launch_template.launch_template_specification.launch_template_name",
+        ) => "Launch template",
         ("aws_iam_instance_profile", "role") => "Role",
         ("aws_ecs_task_definition", "execution_role_arn") => "Execution role",
         ("aws_ecs_task_definition", "task_role_arn") => "Task role",
@@ -42,7 +49,8 @@ pub(super) fn placement(resource_type: &str) -> crate::model::Placement {
         | "aws_cloudwatch_log_group"
         | "aws_cloudwatch_metric_alarm"
         | "aws_autoscaling_policy"
-        | "aws_ami" => crate::model::Placement::Logical,
+        | "aws_ami"
+        | "aws_launch_template" => crate::model::Placement::Logical,
         _ if classify(resource_type) != crate::model::ResourceRole::Unknown => {
             crate::model::Placement::Spatial
         }
