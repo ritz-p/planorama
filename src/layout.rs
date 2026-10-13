@@ -76,6 +76,7 @@ pub struct Layout<'a> {
 }
 
 pub struct ScopePanel {
+    pub account_panel: bool,
     pub scope: crate::model::architecture::DeploymentScope,
     pub bounds: Bounds,
 }

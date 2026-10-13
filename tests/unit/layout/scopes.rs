@@ -31,7 +31,7 @@ fn unrelated_root_columns_and_regions_refine_beside_affinity() {
     }
 }
 
-fn inside(inner: Bounds, outer: Bounds) -> bool {
+pub(super) fn inside(inner: Bounds, outer: Bounds) -> bool {
     inner.origin.x >= outer.origin.x
         && inner.origin.y >= outer.origin.y
         && inner.right() <= outer.right()

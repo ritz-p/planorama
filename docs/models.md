@@ -126,6 +126,12 @@ caller-identity data are not account evidence. Role ARNs, session names, externa
 IDs and credentials are discarded. Known account IDs are deployment metadata
 intended for display in generated SVG/HTML, so those artifacts can expose them.
 
+Layout groups matching account scopes within each state, then region or explicit
+Global scope within that account. These frames are deployment backgrounds, not
+architecture entities or containment edges; filtering removes empty frames.
+Unknown account retains known region presentation. A subtree with conflicting
+member scopes remains outside frames without changing its containment.
+
 ## Architecture identity and provenance
 
 Resource nodes and logical components contain `ArchitectureEntity`, with an opaque

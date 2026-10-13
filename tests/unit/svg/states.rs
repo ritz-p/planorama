@@ -1,6 +1,88 @@
 use super::*;
 
 #[test]
+fn account_panels_remain_state_local_and_identical_in_html() {
+    let input = include_str!("../../fixtures/accounts-plan.json");
+    let graph = crate::semantic::transform(&crate::plan::parse(input).unwrap());
+    let architecture = crate::model::architecture::Architecture {
+        states: BTreeMap::from([
+            (StateId::new("first").unwrap(), graph.clone()),
+            (StateId::new("second").unwrap(), graph),
+        ]),
+        relationships: vec![crate::model::architecture::CrossStateEdge {
+            from: Endpoint {
+                state: StateId::new("first").unwrap(),
+                address: "aws_s3_bucket.east".into(),
+            },
+            to: Endpoint {
+                state: StateId::new("second").unwrap(),
+                address: "aws_s3_bucket.other".into(),
+            },
+            provenance: crate::model::architecture::CrossStateProvenance::TerraformRemoteState {
+                remote: "data.terraform_remote_state.first".into(),
+                output: "bucket".into(),
+                output_action: Some(crate::model::Action::Create),
+            },
+        }],
+    };
+    let viewed = crate::view::apply(&architecture, &Default::default()).unwrap();
+    let svg = render_states(&viewed, super::super::AddressFormat::Qualified);
+    let html = crate::html::render_states(&viewed, super::super::AddressFormat::Qualified);
+    assert!(html.contains(&svg));
+    let document = roxmltree::Document::parse(&svg).unwrap();
+    assert_eq!(
+        document
+            .descendants()
+            .filter(|n| n.has_tag_name("path") && n.attribute("data-cross-state") == Some("true"))
+            .count(),
+        1
+    );
+    let mut ids = std::collections::BTreeSet::new();
+    for node in document.descendants() {
+        if let Some(id) = node.attribute("id") {
+            assert!(ids.insert(id));
+        }
+    }
+    for state in ["first", "second"] {
+        let section = document
+            .descendants()
+            .find(|n| n.attribute("data-state-id") == Some(state))
+            .unwrap();
+        assert_eq!(
+            section
+                .descendants()
+                .filter(|n| n.attribute("data-account-panel") == Some("true"))
+                .count(),
+            2
+        );
+        assert_eq!(
+            section
+                .descendants()
+                .filter(|n| n.attribute("data-region") == Some("us-east-1"))
+                .count(),
+            3
+        );
+        assert!(
+            section
+                .descendants()
+                .any(|n| n.attribute("data-global") == Some("true")
+                    && n.attribute("data-account") == Some("123456789012"))
+        );
+    }
+    let mut reordered: serde_json::Value = serde_json::from_str(input).unwrap();
+    reordered["resource_changes"]
+        .as_array_mut()
+        .unwrap()
+        .reverse();
+    reordered["configuration"]["root_module"]["resources"]
+        .as_array_mut()
+        .unwrap()
+        .reverse();
+    let reversed = crate::semantic::transform(&crate::plan::parse(&reordered.to_string()).unwrap());
+    assert_eq!(architecture.states.values().next().unwrap(), &reversed);
+}
+
+#[test]
 fn namespacing_only_rewrites_fragment_reference_attributes() {
     let input = r##"<svg><g id="paint" data-action-reason="url(#ticket)"><title>url(#ticket)</title></g><path fill="url(#paint)" stroke="url(#paint)" clip-path="url(#paint)" mask="url(#paint)" marker-end="url(#paint)"/><use href="#paint"/></svg>"##;
     let scoped = namespace(input, "state-x-");
