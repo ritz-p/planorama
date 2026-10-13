@@ -1,4 +1,6 @@
-use crate::model::{EntityMode, Graph, ReferenceTarget, ResourceReference};
+use crate::model::{
+    DiagnosticReason, EntityMode, Graph, ReferenceTarget, ResourceReference,
+};
 use crate::semantic::Input;
 
 #[cfg(test)]
@@ -22,7 +24,12 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             .iter()
             .find(|reference| reference.target == index && reference.attribute == ATTRIBUTE)
             .and_then(|reference| {
-                if !reference.complete || reference.sources.len() != 1 {
+                if !reference.complete
+                    || reference.sources.len() != 1
+                    || reference
+                        .issues
+                        .contains(&DiagnosticReason::DynamicInstanceSelection)
+                {
                     return None;
                 }
                 let source = reference.sources[0];
