@@ -48,7 +48,8 @@ pub(super) fn classify(resource_type: &str) -> ResourceRole {
         | "aws_iam_policy"
         | "aws_iam_role_policy"
         | "aws_iam_instance_profile"
-        | "aws_lb_listener_rule" => ResourceRole::Policy,
+        | "aws_lb_listener_rule"
+        | "aws_autoscaling_policy" => ResourceRole::Policy,
         "aws_autoscaling_group"
         | "aws_ecs_service"
         | "aws_ecs_cluster"
