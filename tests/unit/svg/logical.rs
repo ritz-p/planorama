@@ -1071,7 +1071,11 @@ fn launch_templates_are_logical_and_asg_usage_requires_complete_nested_reference
         "aws_launch_template.dynamic[1]",
         "data.aws_launch_template.lookup",
     ] {
-        let node = graph.nodes.iter().find(|node| node.address == address).unwrap();
+        let node = graph
+            .nodes
+            .iter()
+            .find(|node| node.address == address)
+            .unwrap();
         assert_eq!(node.placement, Placement::Logical, "{address}");
         assert_eq!(node.role, crate::model::ResourceRole::Node, "{address}");
     }
@@ -1082,7 +1086,15 @@ fn launch_templates_are_logical_and_asg_usage_requires_complete_nested_reference
     ] {
         let node = graph.nodes.iter().find(|node| node.address == address).unwrap();
         assert_eq!(
-            node.entity.scope.as_ref().unwrap().region.as_ref().unwrap().0.as_str(),
+            node.entity
+                .scope
+                .as_ref()
+                .unwrap()
+                .region
+                .as_ref()
+                .unwrap()
+                .0
+                .as_str(),
             "us-east-1"
         );
     }
@@ -1107,7 +1119,9 @@ fn launch_templates_are_logical_and_asg_usage_requires_complete_nested_reference
         assert!(
             link.descendants().any(|node| {
                 node.has_tag_name("text")
-                    && node.text().is_some_and(|text| text.starts_with("Launch template:"))
+                    && node
+                        .text()
+                        .is_some_and(|text| text.starts_with("Launch template:"))
             }),
             "{address}"
         );
@@ -1130,18 +1144,23 @@ fn launch_templates_are_logical_and_asg_usage_requires_complete_nested_reference
         .unwrap();
     assert_eq!(reference.label, "Launch template");
     assert!(!reference.complete);
-    assert!(reference
-        .issues
-        .contains(&crate::model::DiagnosticReason::DynamicInstanceSelection));
+    assert!(
+        reference
+            .issues
+            .contains(&crate::model::DiagnosticReason::DynamicInstanceSelection)
+    );
     let card = doc
         .descendants()
-        .find(|node| node.attribute("data-terraform-address") == Some("aws_autoscaling_group.dynamic"))
+        .find(|node| {
+            node.attribute("data-terraform-address") == Some("aws_autoscaling_group.dynamic")
+        })
         .unwrap();
-    assert!(!card
-        .descendants()
-        .any(|node| node.attribute("data-reference-attribute") == Some("launch_template.id")));
+    assert!(
+        !card
+            .descendants()
+            .any(|node| node.attribute("data-reference-attribute") == Some("launch_template.id"))
+    );
     assert!(card.descendants().any(|node| {
         node.has_tag_name("text") && node.text() == Some("Launch template: unresolved")
     }));
 }
-
