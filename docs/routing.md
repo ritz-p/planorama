@@ -91,7 +91,7 @@ space before scoring. Coherent source runs cannot split across physical columns;
 overlapping groups share that constraint. Compactness bounds use the constrained
 baseline. Alignment preserves padding and containment without provider-specific rules.
 
-Without containers or regional scope panels, resources use module bands and dependency ranks. Long edges
+Without containers or account/region scope panels, resources use module bands and dependency ranks. Long edges
 participate in ordering through virtual intermediate vertices, which are not
 rendered as cards. Numbered relationships retain these bands; rows accommodate
 the actual card heights. Address labels, action metadata and provider roles do not change
