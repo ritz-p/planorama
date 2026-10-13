@@ -513,8 +513,8 @@ fn named_states_reflow_indexes_at_shared_width_and_keep_cross_state_offsets() {
     };
     let original_cards = cards(standalone_root);
     let reflowed_cards = cards(narrow);
-    assert_eq!(original_cards.len(), 3);
-    assert_eq!(reflowed_cards.len(), 3);
+    assert_eq!(original_cards.len(), 5);
+    assert_eq!(reflowed_cards.len(), 5);
     assert!(original_cards[2].0.1 > original_cards[0].0.1);
     for (i, &(position, card_width, card_height)) in reflowed_cards.iter().enumerate() {
         assert_eq!(

@@ -111,7 +111,17 @@ pub(super) fn render(
                     .iter()
                     .find(|n| n.entity.provenance.contains(id))
             });
-            if let Some(target) = available {
+            let relationship_target = next_hop
+                .as_ref()
+                .and_then(|_| index.number(node))
+                .map(|number| index.target(number));
+            if let Some(target) = relationship_target {
+                write!(
+                    svg,
+                    "<a href=\"#{target}\" data-relationship-select=\"true\">"
+                )
+                .unwrap();
+            } else if let Some(target) = available {
                 write!(svg, "<a href=\"#{}\">", super::identity::resource(target)).unwrap();
             }
             for line in row.lines(text) {
@@ -123,7 +133,7 @@ pub(super) fn render(
                 writeln!(svg, r##"<text x="{}" y="{line_y}" font-size="11" fill="{fill}" xml:space="preserve"{annotation}>{}</text>"##, x + 12, super::escape(line)).unwrap();
                 line_y += 18;
             }
-            if available.is_some() {
+            if relationship_target.is_some() || available.is_some() {
                 svg.push_str("</a>");
             }
         }

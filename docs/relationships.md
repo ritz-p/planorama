@@ -105,7 +105,17 @@ Visible paths with Terraform resource provenance carry compact `[N]` markers and
 a matching **Relationship Resources** numbered list above the architecture diagram.
 Embedded Routes appear in that list and show the matching number on their child
 cards. Index entries do not add resource identities or increase resource counts.
-Each card contains up to 10 complete entries: 1–10, 11–20, and so on. Cards continue
+Each number is a native SVG fragment link to its entry, including both endpoint
+badges and Route `Next hop [N]` labels. The entry heading preserves every provenance
+resource's complete address, action, move annotation and deposed identity. An
+indented list shows the verified endpoint pair with kind and direction: `Connects`
+for undirected associations and `From → To` for directed relationships. Endpoints
+link to their rendered cards or rows. These labels remain visible in image embeds;
+navigation requires an interactive SVG surface. No Terraform values are added.
+Entry targets derive from provenance and endpoint identities, independently of
+the visible number, and named states namespace all links and path memberships.
+The hierarchy and all wrapped lines are measured before packing cards.
+Each card contains up to 5 complete entries: 1–5, 6–10, and so on. Cards continue
 to the right with a 20px gap, wrapping only when the next complete card would exceed
 the final available width. There is no 20-entry break or maximum column count;
 an exact fit stays on the current row. Card space excludes the 40px outer margin
@@ -145,12 +155,11 @@ dashed for association, dotted for connection). The corresponding number badge
 in the index uses the same border color and pattern. Card heights follow actual
 wrapped lines and source counts, accounting for wide Unicode characters; each row
 reserves its tallest card's height. An empty index adds no cards or height. The
-[21-entry example](../examples/relationship-index.svg) demonstrates 10/10/1 grouping
-in three cards: its 1100px canvas fits two 364px cards per row after margins and
-padding, so the final card correctly wraps. The
-[40-entry wide example](../examples/relationship-index-wide.svg) uses five linked
-`terraform_data` stages to create a wider architecture and fits all four index
-cards on one row. Both are synthetic rendering fixtures with repeated associations,
+[21-entry example](../examples/relationship-index.svg) demonstrates 5/5/5/5/1 grouping.
+The [40-entry wide example](../examples/relationship-index-wide.svg) uses five linked
+`terraform_data` stages to create a wider architecture and eight index cards.
+Cards wrap according to their measured content and the available width.
+Both are synthetic rendering fixtures with repeated associations,
 not deployable Terraform configurations. Their SVGs are maintained by
 [CI generation](ci.md) from the [21-entry](../tests/fixtures/relationship-index-plan.json)
 and [40-entry](../tests/fixtures/relationship-index-wide-plan.json) inputs.

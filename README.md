@@ -52,7 +52,7 @@ docker compose exec -T dev cargo run --locked -- - -o - < plan.json > diagram.sv
 - data リソースは破線と `external` 表示で区別します。一部の AWS メタデータ data は省略します。
 - import を含むリソースには専用の `import` バッジを表示します。作成・更新・置換・変更なしの色や action は保持し、import ID や identity の値は表示しません。
 - 上部は Logical Resources（シアン）、Logical Components（紫）、Relationship Resources の順です。ECS Cluster・Task Definition・IAM 定義・AMI・EC2 Launch Template・CloudWatch Log Group・Metric Alarm・Auto Scaling Policy は最初のセクションにまとめ、空間配置と経路計算から分離します。
-- Relationship Resources は1枚に最大10件をまとめ、最終的な本文の横幅に収まる限り右へ並べます。20件ごとの改行や列数の上限はありません。複数 state では共通の本文幅を使い、state 間の配線領域は含めません。[21件の狭い例](examples/relationship-index.svg) は2枚＋1枚に折り返し、[40件の広い例](examples/relationship-index-wide.svg) は4枚を横に並べます。
+- Relationship Resources は1枚に最大5件をまとめ、最終的な本文の横幅に収まる限り右へ並べます。列数の上限はありません。番号から索引へ、索引の端点から各リソースへ移動できます。複数 state では共通の本文幅を使い、state 間の配線領域は含めません。[21件の例](examples/relationship-index.svg) と [40件の例](examples/relationship-index-wide.svg) を参照してください。
 - Logical Resources は state 内で provider source・resource type・managed/data ごとに中立色のカードへまとめ、個々のリソースを行として表示します。各行の情報と変更数を保持し、リソース数とグループカード数は別に表示します。
 - Logical Resources の各行には `Region: ap-northeast-1`、`AWS Global`、`Region: unknown` などの配置スコープを表示します。同じ種類のリソースでもリージョンは行ごとに区別します。[表示例](examples/logical-regions.svg)と[判定条件](docs/aws.md#deployment-scopes)を参照してください。
 - Logical Resources のリソース行と Logical Components のメンバー行は、中立色のテキストと項目全体の下に引く変更色の下線で表示します。長い項目は全文を折り返し、各リソースの識別子と操作情報を保持します。メンバー行から元リソースへ移動できます。Logical Components の見出しは紫です。
