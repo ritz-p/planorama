@@ -46,18 +46,19 @@ arrows and numbered badges, with the complete explanation beside each sample.
 Legend height shifts the annotations and architecture together; it does not
 change the routed geometry.
 
-The fixture has 48 resource instances. The renderer produces 28 spatial cards, 2 embedded Route cards,
-8 logical resources in 7 group cards within one cyan Logical Resources section and 74
-relationships: four route-table associations and four target-group attachments
-become edges, and two AWS metadata data sources are omitted.
+The generated plan has 50 resource changes. After omitting two AWS metadata data
+sources, the renderer retains 48 resources and produces 29 spatial cards, 2 embedded
+Route cards, 9 logical resources in 8 group cards within one cyan Logical Resources
+section and 79 relationships. Four route-table associations and four target-group
+attachments become edges.
 
 The managed VPC contains four subnet boxes, network policy/route resources, the
 target group, ALB, ECS Service, DB subnet group and RDS workload. EC2 workers sit
 inside their referenced subnets. ALB/ECS keep individual subnet connections; the
 DB subnet group and RDS retain their dependency chain and inferred-placement notes.
 Shared VPC and Security Group data sources remain external spatial cards. ECS
-Cluster/Task Definition, IAM definitions, the external AMI, CloudWatch Log Group
-and Metric Alarm are logical-resource rows. The two managed IAM Roles share one
+Cluster/Task Definition, IAM definitions, the external AMI, EC2 Launch Template,
+CloudWatch Log Group and Metric Alarm are logical-resource rows. The two managed IAM Roles share one
 provider/type/mode group; each resource retains its own identity, action underline
 and references. Groups use neutral frames rather than a combined action color.
 A purple Logical Components section contains the load balancer, its Listener and
@@ -65,7 +66,7 @@ its uniquely referenced Target Group as neutral member links, each with one
 action-colored underline below its wrapped text. The Target Group link points to
 the original spatial card. Relationship Resources follow in a separate neutral
 section. Empty sections are omitted in smaller examples.
-The 74 relationships remain queryable; 37 paths are spatially routed.
+The 79 relationships remain queryable; 39 paths are spatially routed.
 Internet and NAT Routes appear inside the public and private Route Tables with
 destination constants and directed lines from their own ports to the Internet
 Gateway and NAT Gateway. Matching standalone numbers appear near both child and
