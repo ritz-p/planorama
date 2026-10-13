@@ -80,12 +80,26 @@ fn ambiguous_wrong_type_missing_and_cross_provider_targets_stay_conservative() {
                     json!(["aws_autoscaling_group.missing.name"]);
             }
             3 => {
-                value["resource_changes"][0]["provider_name"] =
-                    json!("registry.terraform.io/hashicorp/aws");
-                value["resource_changes"][2]["provider_name"] =
-                    json!("registry.terraform.io/hashicorp/aws");
-                value["resource_changes"][0]["provider_config_key"] = json!("aws.other");
-                value["resource_changes"][2]["provider_config_key"] = json!("aws");
+                value["configuration"]["provider_config"] = json!({
+                    "aws": {
+                        "full_name":"registry.terraform.io/hashicorp/aws",
+                        "expressions":{"region":{"constant_value":"us-east-1"}}
+                    },
+                    "aws.other": {
+                        "full_name":"registry.terraform.io/hashicorp/aws",
+                        "alias":"other",
+                        "expressions":{"region":{"constant_value":"us-west-2"}}
+                    }
+                });
+                value["configuration"]["root_module"]["resources"]
+                    .as_array_mut()
+                    .unwrap()
+                    .push(json!({
+                        "address":"aws_autoscaling_group.app",
+                        "provider_config_key":"aws.other"
+                    }));
+                value["configuration"]["root_module"]["resources"][0]["provider_config_key"] =
+                    json!("aws");
             }
             _ => unreachable!(),
         }
@@ -140,4 +154,47 @@ fn multiple_policies_remain_distinct_and_deterministic_when_input_reorders() {
         .reverse();
     let (_, second) = render(&reversed);
     assert_eq!(first, second);
+}
+
+
+#[test]
+fn dynamic_instance_selection_does_not_create_verified_inverse_context() {
+    let parsed = plan::parse(&input().to_string()).unwrap();
+    let mut raw = crate::semantic::Input::new(&parsed);
+    let reference = raw
+        .attributes
+        .iter_mut()
+        .find(|reference| {
+            raw.nodes[reference.target].address == "aws_autoscaling_policy.cpu"
+                && reference.attribute == "autoscaling_group_name"
+        })
+        .unwrap();
+    reference.complete = true;
+    reference
+        .issues
+        .insert(crate::model::DiagnosticReason::DynamicInstanceSelection);
+
+    let mut graph = crate::semantic::base_graph(&parsed);
+    super::present(&raw, &mut graph);
+
+    let group = graph
+        .nodes
+        .iter()
+        .find(|node| node.address == "aws_autoscaling_group.app")
+        .unwrap();
+    assert!(!group.references.iter().any(|reference| {
+        reference.label == "Scaling policy"
+            && reference
+                .targets
+                .iter()
+                .any(|target| target.id.address == "aws_autoscaling_policy.cpu")
+    }));
+    let policy = graph
+        .nodes
+        .iter()
+        .find(|node| node.address == "aws_autoscaling_policy.cpu")
+        .unwrap();
+    assert!(policy.references.iter().any(|reference| {
+        reference.attribute == "autoscaling_group_name" && !reference.complete
+    }));
 }
