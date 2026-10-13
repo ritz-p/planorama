@@ -258,7 +258,7 @@ No AWS endorsement is implied. Consult the AWS terms for other uses.
 <text x="16" y="48" font-size="11" fill="#64748b">registry.terraform.io/hashicorp/aws</text>
 <g id="resource-6d6f64756c652e7368617265642e646174612e6177735f616d692e617070-current" data-architecture-id="terraform:6d6f64756c652e7368617265642e646174612e6177735f616d692e617070-current" data-entity-kind="terraform" data-placement="logical" data-terraform-address="module.shared.data.aws_ami.app" data-qualified-address="module.shared.data.aws_ami.app" data-mode="data" transform="translate(0 66)" data-external="true"><title>module.shared.data.aws_ami.app — unchanged</title><use href="#planorama-icon-aws-ec2" x="320" y="8" width="24" height="24" aria-hidden="true"/><text x="16" y="28" font-size="12" fill="#334155" xml:space="preserve" font-weight="700">module.shared.data.aws_ami.app</text>
 <text x="16" y="48" font-size="12" fill="#334155" xml:space="preserve">unchanged</text>
-<text x="16" y="68" font-size="12" fill="#334155" xml:space="preserve">Region unknown</text>
+<text x="16" y="68" font-size="12" fill="#334155" xml:space="preserve">Region: unknown</text>
 <line data-resource-underline="true" x1="16" y1="76" x2="344" y2="76" stroke="#64748b" stroke-width="2" stroke-dasharray="6 4"/></g>
 </g>
 </g>
@@ -267,7 +267,7 @@ No AWS endorsement is implied. Consult the AWS terms for other uses.
 <g id="resource-6177735f636c6f756477617463685f6c6f675f67726f75702e617070-current" data-architecture-id="terraform:6177735f636c6f756477617463685f6c6f675f67726f75702e617070-current" data-entity-kind="terraform" data-placement="logical" data-terraform-address="aws_cloudwatch_log_group.app" data-qualified-address="module.root.aws_cloudwatch_log_group.app" data-mode="managed" transform="translate(0 66)"><title>module.root.aws_cloudwatch_log_group.app — create</title><use href="#planorama-icon-aws-monitoring" x="320" y="8" width="24" height="24" aria-hidden="true"/><text x="16" y="28" font-size="12" fill="#334155" xml:space="preserve" font-weight="700">module.root.aws_cloudwatch_log_group.</text>
 <text x="16" y="48" font-size="12" fill="#334155" xml:space="preserve" font-weight="700">app</text>
 <text x="16" y="68" font-size="12" fill="#334155" xml:space="preserve">create</text>
-<text x="16" y="88" font-size="12" fill="#334155" xml:space="preserve">Region unknown</text>
+<text x="16" y="88" font-size="12" fill="#334155" xml:space="preserve">Region: unknown</text>
 <line data-resource-underline="true" x1="16" y1="96" x2="344" y2="96" stroke="#047857" stroke-width="2"/></g>
 </g>
 </g>
@@ -276,7 +276,7 @@ No AWS endorsement is implied. Consult the AWS terms for other uses.
 <g id="resource-6d6f64756c652e64617461626173652e6177735f636c6f756477617463685f6d65747269635f616c61726d2e64617461626173655f637075-current" data-architecture-id="terraform:6d6f64756c652e64617461626173652e6177735f636c6f756477617463685f6d65747269635f616c61726d2e64617461626173655f637075-current" data-entity-kind="terraform" data-placement="logical" data-terraform-address="module.database.aws_cloudwatch_metric_alarm.database_cpu" data-qualified-address="module.database.aws_cloudwatch_metric_alarm.database_cpu" data-mode="managed" transform="translate(0 66)" data-role="controller"><title>module.database.aws_cloudwatch_metric_alarm.database_cpu — create</title><use href="#planorama-icon-aws-monitoring" x="440" y="8" width="24" height="24" aria-hidden="true"/><text x="16" y="28" font-size="12" fill="#334155" xml:space="preserve" font-weight="700">module.database.aws_cloudwatch_metric_alarm.</text>
 <text x="16" y="48" font-size="12" fill="#334155" xml:space="preserve" font-weight="700">database_cpu</text>
 <text x="16" y="68" font-size="12" fill="#334155" xml:space="preserve">create</text>
-<text x="16" y="88" font-size="12" fill="#334155" xml:space="preserve">Region unknown</text>
+<text x="16" y="88" font-size="12" fill="#334155" xml:space="preserve">Region: unknown</text>
 <text x="16" y="108" font-size="12" fill="#334155" xml:space="preserve">controller</text>
 <g data-resource-references="true"><title>Monitors: unresolved [dimensions; unresolved attribute reference]</title><text x="16" y="136" font-size="11" font-weight="700" fill="#475569">Uses</text><g data-reference-status="unresolved"><title>Monitors: unresolved [dimensions; unresolved attribute reference]</title><text x="16" y="154" font-size="11" fill="#334155" xml:space="preserve">Monitors: unresolved</text>
 </g></g>
@@ -288,7 +288,7 @@ No AWS endorsement is implied. Consult the AWS terms for other uses.
 <g id="resource-6d6f64756c652e6170706c69636174696f6e2e6177735f6563735f636c75737465722e617070-current" data-architecture-id="terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6563735f636c75737465722e617070-current" data-entity-kind="terraform" data-placement="logical" data-terraform-address="module.application.aws_ecs_cluster.app" data-qualified-address="module.application.aws_ecs_cluster.app" data-mode="managed" transform="translate(0 66)" data-role="controller"><title>module.application.aws_ecs_cluster.app — create</title><use href="#planorama-icon-aws-ecs" x="320" y="8" width="24" height="24" aria-hidden="true"/><text x="16" y="28" font-size="12" fill="#334155" xml:space="preserve" font-weight="700">module.application.aws_ecs_cluster.</text>
 <text x="16" y="48" font-size="12" fill="#334155" xml:space="preserve" font-weight="700">app</text>
 <text x="16" y="68" font-size="12" fill="#334155" xml:space="preserve">create</text>
-<text x="16" y="88" font-size="12" fill="#334155" xml:space="preserve">Region unknown</text>
+<text x="16" y="88" font-size="12" fill="#334155" xml:space="preserve">Region: unknown</text>
 <text x="16" y="108" font-size="12" fill="#334155" xml:space="preserve">controller</text>
 <line data-resource-underline="true" x1="16" y1="116" x2="344" y2="116" stroke="#047857" stroke-width="2"/></g>
 </g>
@@ -297,7 +297,7 @@ No AWS endorsement is implied. Consult the AWS terms for other uses.
 <text x="16" y="48" font-size="11" fill="#64748b">registry.terraform.io/hashicorp/aws</text>
 <g id="resource-6d6f64756c652e6170706c69636174696f6e2e6177735f6563735f7461736b5f646566696e6974696f6e2e617070-current" data-architecture-id="terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6563735f7461736b5f646566696e6974696f6e2e617070-current" data-entity-kind="terraform" data-placement="logical" data-terraform-address="module.application.aws_ecs_task_definition.app" data-qualified-address="module.application.aws_ecs_task_definition.app" data-mode="managed" transform="translate(0 66)" data-role="controller"><title>module.application.aws_ecs_task_definition.app — create</title><use href="#planorama-icon-aws-ecs" x="528" y="8" width="24" height="24" aria-hidden="true"/><text x="16" y="28" font-size="12" fill="#334155" xml:space="preserve" font-weight="700">module.application.aws_ecs_task_definition.app</text>
 <text x="16" y="48" font-size="12" fill="#334155" xml:space="preserve">create</text>
-<text x="16" y="68" font-size="12" fill="#334155" xml:space="preserve">Region unknown</text>
+<text x="16" y="68" font-size="12" fill="#334155" xml:space="preserve">Region: unknown</text>
 <text x="16" y="88" font-size="12" fill="#334155" xml:space="preserve">controller</text>
 <g data-resource-references="true"><title>Execution role: module.application.aws_iam_role.task [execution_role_arn; direct attribute reference]</title><text x="16" y="116" font-size="11" font-weight="700" fill="#475569">Uses</text><a href="#resource-6d6f64756c652e6170706c69636174696f6e2e6177735f69616d5f726f6c652e7461736b-current" data-reference-attribute="execution_role_arn"><title>Execution role: module.application.aws_iam_role.task [execution_role_arn; direct attribute reference]</title><text x="16" y="134" font-size="11" fill="#334155" xml:space="preserve">Execution role: module.application.aws_iam_role.task</text>
 </a></g>
@@ -334,7 +334,7 @@ No AWS endorsement is implied. Consult the AWS terms for other uses.
 <text x="16" y="48" font-size="11" fill="#64748b">registry.terraform.io/hashicorp/aws</text>
 <g id="resource-6d6f64756c652e6170706c69636174696f6e2e6177735f6c61756e63685f74656d706c6174652e617070-current" data-architecture-id="terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6c61756e63685f74656d706c6174652e617070-current" data-entity-kind="terraform" data-placement="logical" data-terraform-address="module.application.aws_launch_template.app" data-qualified-address="module.application.aws_launch_template.app" data-mode="managed" transform="translate(0 66)"><title>module.application.aws_launch_template.app — create</title><use href="#planorama-icon-aws-ec2" x="536" y="8" width="24" height="24" aria-hidden="true"/><text x="16" y="28" font-size="12" fill="#334155" xml:space="preserve" font-weight="700">module.application.aws_launch_template.app</text>
 <text x="16" y="48" font-size="12" fill="#334155" xml:space="preserve">create</text>
-<text x="16" y="68" font-size="12" fill="#334155" xml:space="preserve">Region unknown</text>
+<text x="16" y="68" font-size="12" fill="#334155" xml:space="preserve">Region: unknown</text>
 <g data-resource-references="true"><title>References: module.shared.data.aws_ami.app [image_id; direct attribute reference]
 References: module.application.aws_security_group.app [vpc_security_group_ids; direct attribute reference]</title><text x="16" y="96" font-size="11" font-weight="700" fill="#475569">Uses</text><a href="#resource-6d6f64756c652e7368617265642e646174612e6177735f616d692e617070-current" data-reference-attribute="image_id"><title>References: module.shared.data.aws_ami.app [image_id; direct attribute reference]</title><text x="16" y="114" font-size="11" fill="#334155" xml:space="preserve">References: module.shared.data.aws_ami.app</text>
 </a><a href="#resource-6d6f64756c652e6170706c69636174696f6e2e6177735f73656375726974795f67726f75702e617070-current" data-reference-attribute="vpc_security_group_ids"><title>References: module.application.aws_security_group.app [vpc_security_group_ids; direct attribute reference]</title><text x="16" y="132" font-size="11" fill="#334155" xml:space="preserve">References: module.application.aws_security_group.app</text>

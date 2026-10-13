@@ -127,7 +127,7 @@ No AWS endorsement is implied. Consult the AWS terms for other uses.
 <text x="16" y="48" font-size="11" fill="#64748b">registry.terraform.io/hashicorp/aws</text>
 <g id="resource-646174612e6177735f616d692e6c6174657374-current" data-architecture-id="terraform:646174612e6177735f616d692e6c6174657374-current" data-entity-kind="terraform" data-placement="logical" data-terraform-address="data.aws_ami.latest" data-qualified-address="module.root.data.aws_ami.latest" data-mode="data" transform="translate(0 66)" data-external="true"><title>module.root.data.aws_ami.latest — unchanged</title><use href="#planorama-icon-aws-ec2" x="320" y="8" width="24" height="24" aria-hidden="true"/><text x="16" y="28" font-size="12" fill="#334155" xml:space="preserve" font-weight="700">module.root.data.aws_ami.latest</text>
 <text x="16" y="48" font-size="12" fill="#334155" xml:space="preserve">unchanged</text>
-<text x="16" y="68" font-size="12" fill="#334155" xml:space="preserve">Region unknown</text>
+<text x="16" y="68" font-size="12" fill="#334155" xml:space="preserve">Region: unknown</text>
 <line data-resource-underline="true" x1="16" y1="76" x2="344" y2="76" stroke="#64748b" stroke-width="2" stroke-dasharray="6 4"/></g>
 </g>
 </g>
