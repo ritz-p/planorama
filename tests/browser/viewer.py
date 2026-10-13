@@ -72,6 +72,23 @@ class ViewerTests(unittest.TestCase):
         matches[0].click()
         return self.find('#viewport [data-viewer-selected]').get_attribute('id')
 
+    def test_maintained_multi_account_example_search_selection_and_fit(self):
+        self.driver.get((ROOT / 'examples/multi-account/diagram.html').as_uri())
+        before = self.view_box()
+        matches = self.search('module.network.aws_vpc.main')
+        self.assertEqual(len(matches), 3)
+        selected = set()
+        for state in ['application-a', 'application-b', 'shared-services']:
+            selected.add(self.choose(state + ':module.network.aws_vpc.main'))
+            self.assertEqual(self.driver.execute_script("return document.querySelector('[data-viewer-selected]').closest('[data-state-id]').dataset.stateId"), state)
+        self.assertEqual(len(selected), 3)
+        self.choose('application-a:aws_s3_bucket.regional_archive')
+        self.find('#zoom-in').click()
+        self.assertNotEqual(before, self.view_box())
+        self.find('#fit').click()
+        self.assertEqual(before, self.view_box())
+        self.assertEqual(len(self.driver.find_elements(By.CSS_SELECTOR, '[data-account-panel]')), 4)
+
     def test_offline_keyboard_search_zoom_pan_clear_and_fit(self):
         self.load('examples/plan.json')
         before = self.view_box()

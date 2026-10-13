@@ -103,6 +103,13 @@ compilation and runner setup. Workflow, Clippy and formatting validation outside
 
 ## When generation runs
 
+The [combined multi-account example](../examples/multi-account/README.md) keeps
+its fast input/topology regression inside `large_example`. Full SVG/HTML snapshot
+rendering and layout measurements are opt-in ignored tests run with `--release`;
+the ordinary suite does not acquire their substantial routing cost. Maintained
+SVG regeneration builds the release binary for this example. HTML remains an
+explicitly regenerated snapshot outside automatic SVG-only writeback.
+
 Automatic generation watches these inputs:
 
 - Renderer and build inputs: `src/**`, `build.rs`, `assets/**`, `Cargo.toml`,
@@ -112,6 +119,9 @@ Automatic generation watches these inputs:
   `tests/unit/layout/containers.rs` and `tests/unit/layout/ports.rs`.
 - Generation configuration: `scripts/generated-svgs.txt`,
   `scripts/update-examples.sh` and `.github/workflows/update_examples.yml`.
+- Combined-example sources: `examples/generate_multi_fixture.rs`,
+  `examples/multi-account/generator.rs`, `examples/terraform-large/generator.rs`
+  and `scripts/render-multi-account.sh`.
 - Maintained SVGs listed in the manifest, so manual edits to generated output are
   checked against the current renderer.
 

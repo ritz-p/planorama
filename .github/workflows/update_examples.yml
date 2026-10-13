@@ -12,11 +12,15 @@ on:
       - assets/**
       - tests/fixtures/**/*.json
       - examples/**/*.json
+      - examples/generate_multi_fixture.rs
+      - examples/multi-account/generator.rs
+      - examples/terraform-large/generator.rs
       - examples/**/*.svg
       - tests/unit/layout.rs
       - tests/unit/layout/containers.rs
       - tests/unit/layout/ports.rs
       - scripts/update-examples.sh
+      - scripts/render-multi-account.sh
       - scripts/generated-svgs.txt
       - .github/workflows/update_examples.yml
   workflow_dispatch:
@@ -64,6 +68,8 @@ jobs:
               'build.rs', 'Cargo.toml', 'Cargo.lock', 'rust-toolchain.toml',
               'tests/unit/layout.rs', 'tests/unit/layout/containers.rs',
               'tests/unit/layout/ports.rs', 'scripts/update-examples.sh',
+              'examples/generate_multi_fixture.rs', 'examples/multi-account/generator.rs',
+              'examples/terraform-large/generator.rs', 'scripts/render-multi-account.sh',
               manifestPath, '.github/workflows/update_examples.yml',
             ]);
             const sourceInput = name => fixedInputs.has(name)
