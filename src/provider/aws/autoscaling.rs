@@ -40,9 +40,11 @@ pub(super) fn target(raw: &Input, index: usize) -> Result<usize, Reason> {
         || !group.provider.is_aws()
         || group.resource_type != "aws_autoscaling_group"
         || group.mode != EntityMode::Managed
-        || group.provider_configuration != policy.provider_configuration
     {
         return Err(Reason::EndpointTypeMismatch);
+    }
+    if group.provider_configuration != policy.provider_configuration {
+        return Err(Reason::ProviderConfigurationMismatch);
     }
     if group.deposed_key.is_some() {
         return Err(Reason::DeposedEndpoint);
