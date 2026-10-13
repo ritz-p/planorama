@@ -182,7 +182,10 @@ pub(super) fn icon_for(resource_type: &str) -> Option<ResourceIcon> {
         "aws_cloudwatch_log_group"
         | "aws_cloudwatch_log_groups"
         | "aws_cloudwatch_metric_alarm" => ResourceIcon::Monitoring,
-        "aws_autoscaling_group" | "aws_autoscaling_groups" | "aws_launch_configuration" => {
+        "aws_autoscaling_group"
+        | "aws_autoscaling_groups"
+        | "aws_autoscaling_policy"
+        | "aws_launch_configuration" => {
             ResourceIcon::Scaling
         }
         _ => return None,
