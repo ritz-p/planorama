@@ -64,6 +64,9 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
             | "aws_lb_target_group"
             | "aws_cloudwatch_metric_alarm"
     ) {
+        if entity.has_region_override {
+            return None;
+        }
         Some(entity.provider_configuration.as_ref()?.region.clone()?)
     } else {
         return None;

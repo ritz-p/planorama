@@ -90,6 +90,16 @@ a region. Credentials and unrelated provider expressions are not retained.
 Region is provider deployment metadata, independent of state identity and resource
 containment; it does not classify global AWS resources as regional.
 
+`TerraformEntity.has_region_override` records only the presence of a resource's
+configured `region` expression. AWS regional scope resolution treats that unsupported
+override as unknown without changing `provider_configuration.region` or retaining
+the expression's value. `ArchitectureEntity.scope` remains independent of logical
+placement: `None` means unresolved, while a present scope with no region is an
+explicit provider-classified Global scope. The shared `view::scope` label helper
+consumes this evidence; known non-AWS providers without scope use `Region: not
+applicable`, and unknown provider identities use `Region: unknown`. Labels never
+participate in architecture, provider-configuration or state identity.
+
 ## Architecture identity and provenance
 
 Resource nodes and logical components contain `ArchitectureEntity`, with an opaque
