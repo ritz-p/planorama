@@ -1,0 +1,16 @@
+{
+  "format_version": "1.2",
+  "resource_changes": [
+    {"address":"aws_s3_bucket.singleton","type":"aws_s3_bucket","change":{"actions":["create"]}}
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws.archive":{"full_name":"hashicorp/aws","alias":"archive","expressions":{"region":{"constant_value":"ap-northeast-1"}}}
+    },
+    "root_module": {
+      "resources": [
+        {"address":"aws_s3_bucket.singleton","provider_config_key":"aws.archive"}
+      ]
+    }
+  }
+}

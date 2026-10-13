@@ -58,4 +58,21 @@ cross-state endpoint offsets follow the reflowed annotations. The cross-state
 routing gutter is reserved outside the shared content width and is not available
 for index cards.
 
+Resolved regional groups form background bases within each state's architecture
+area: State → Region → VPC/Subnet containers and resource cards. A single spatial
+resource qualifies, even in a single-region state. Filtering resizes the panel;
+removing its final spatial resource also removes its title and padding. Logical
+annotations stay above the architecture and do not qualify a regional group.
+Equal region names in different states retain separate panels and resource
+identities. See [deployment scopes](aws.md#deployment-scopes) for Global,
+unresolved and conflicting metadata.
+
+The [regional-state example](../examples/regional-states.svg) uses explicit
+provider-region bindings and includes a singleton state in the same region as
+the other two states. Generate it with:
+
+```sh
+planorama --state network=tests/fixtures/multi/network.json --state application=tests/fixtures/multi/application.json --state singleton=tests/fixtures/multi/single-region.json -o regional-states.svg
+```
+
 With `--diagnostics`, every diagnostic line carries `state="ID"`. Parse/read errors name their state. Evaluated attribute values and check messages remain excluded; safe Route destination constants follow the same rules as single-plan input. See [the multi-plan example](../examples/multi-plan.svg), generated from the two [regression fixtures](../tests/fixtures/multi).
