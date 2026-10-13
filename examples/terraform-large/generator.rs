@@ -54,6 +54,9 @@ fn module(path: &Path, scope: &str, changes: &mut Vec<Value>) -> Result<Value, S
                             ("aws_ecs_service", "network_configuration") => {
                                 network_configuration(value)?
                             }
+                            ("aws_autoscaling_group", "launch_template" | "mixed_instances_policy") => {
+                                nested_blocks(value)?
+                            }
                             ("aws_lb_listener", "default_action")
                             | ("aws_lb_listener_rule", "action") => action_blocks(value)?,
                             _ => expression(value)?,
@@ -176,6 +179,35 @@ fn network_configuration(value: &Value) -> Result<Value, String> {
         generated.push(Value::Object(expressions));
     }
     Ok(Value::Array(generated))
+}
+
+fn nested_blocks(value: &Value) -> Result<Value, String> {
+    let blocks = value
+        .as_array()
+        .ok_or("fixture nested block must be an array")?;
+    blocks
+        .iter()
+        .map(|block| {
+            block
+                .as_object()
+                .ok_or("fixture nested block entry must be an object")?
+                .iter()
+                .map(|(key, value)| {
+                    let generated = if value
+                        .as_array()
+                        .is_some_and(|values| values.iter().all(Value::is_object))
+                    {
+                        nested_blocks(value)?
+                    } else {
+                        expression(value)?
+                    };
+                    Ok((key.clone(), generated))
+                })
+                .collect::<Result<Map<_, _>, String>>()
+                .map(Value::Object)
+        })
+        .collect::<Result<Vec<_>, _>>()
+        .map(Value::Array)
 }
 
 fn fixture_arn(address: &str) -> String {
