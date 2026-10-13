@@ -202,6 +202,25 @@ pub(super) fn annotate(
                 reference.arn_values_match = !expected.is_empty() && expected == observed;
             }
         }
+        if reference.complete
+            && reference.instances_explicit
+            && reference.sources.len() == 1
+            && !reference
+                .issues
+                .contains(&crate::model::DiagnosticReason::DynamicInstanceSelection)
+            && !reference.attribute.contains('.')
+        {
+            let source = reference.sources[0];
+            let (value, unknown) = evidence[reference.target];
+            let (source_value, source_unknown) = evidence[source];
+            if let (Some(actual), Some(expected)) = (
+                known_strings(value, unknown, &[reference.attribute.as_str()]),
+                known_strings(source_value, source_unknown, &["name"]),
+            ) {
+                reference.scalar_name_matches =
+                    actual.len() == 1 && expected.len() == 1 && actual == expected;
+            }
+        }
         if !reference.complete || !reference.ids_only || reference.sources.is_empty() {
             continue;
         }
