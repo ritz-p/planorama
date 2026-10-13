@@ -11,6 +11,53 @@ fn namespacing_only_rewrites_fragment_reference_attributes() {
 }
 
 #[test]
+fn shared_legend_collects_later_state_actions_and_omits_empty_height() {
+    use crate::model::architecture::Architecture;
+    let empty = crate::semantic::transform(
+        &crate::plan::parse(r#"{"format_version":"1.2","resource_changes":[]}"#).unwrap(),
+    );
+    let mut input: serde_json::Value =
+        serde_json::from_str(include_str!("../../fixtures/association-plan.json")).unwrap();
+    for resource in input["resource_changes"].as_array_mut().unwrap() {
+        resource["change"]["actions"] = serde_json::json!(["delete"]);
+    }
+    let later = crate::semantic::transform(&crate::plan::parse(&input.to_string()).unwrap());
+    let first_id = StateId::new("a").unwrap();
+    let later_id = StateId::new("z").unwrap();
+    for first in [empty.clone(), crate::semantic::transform(&crate::plan::parse(r#"{"format_version":"1.2","resource_changes":[{"address":"test.single","type":"test"}]}"#).unwrap())] {
+        let architecture = Architecture {
+            states: BTreeMap::from([(first_id.clone(), first), (later_id.clone(), later.clone())]),
+            relationships: Vec::new(),
+        };
+        let viewed = crate::view::apply(&architecture, &Default::default()).unwrap();
+        let svg = render_states(&viewed, super::super::AddressFormat::Qualified);
+        let html = crate::html::render_states(&viewed, super::super::AddressFormat::Qualified);
+        assert!(html.contains(&svg));
+        let document = roxmltree::Document::parse(&svg).unwrap();
+        let legends: Vec<_> = document.descendants().filter(|node| node.attribute("id") == Some("relationship-legend")).collect();
+        assert_eq!(legends.len(), 1);
+        let legend = legends[0];
+        assert_eq!(legend.parent(), Some(document.root_element()));
+        let actions: std::collections::BTreeSet<_> = legend.descendants().filter_map(|node| node.attribute("data-legend-action")).collect();
+        assert_eq!(actions, ["none", "unchanged", "delete"].into_iter().collect());
+        assert_eq!(legend.descendants().filter(|node| node.attribute("data-legend-entry").is_some()).count(), 5);
+    }
+    let architecture = Architecture {
+        states: BTreeMap::from([(first_id, empty.clone()), (later_id, empty)]),
+        relationships: Vec::new(),
+    };
+    let viewed = crate::view::apply(&architecture, &Default::default()).unwrap();
+    let svg = render_states(&viewed, super::super::AddressFormat::Qualified);
+    assert!(!svg.contains("relationship-legend"));
+    let document = roxmltree::Document::parse(&svg).unwrap();
+    let first = document
+        .descendants()
+        .find(|node| node.has_tag_name("svg") && node.attribute("y").is_some())
+        .unwrap();
+    assert_eq!(first.attribute("y"), Some("100"));
+}
+
+#[test]
 fn mixed_width_state_legends_use_shared_content_width_outside_cross_state_gutters() {
     let graphs: BTreeMap<_, _> = [
         (
@@ -57,7 +104,7 @@ fn mixed_width_state_legends_use_shared_content_width_outside_cross_state_gutter
     let allocated_width = number(document.root_element(), "width") - 80;
     let mut maximum_width = 1120;
     for (id, graph) in &viewed.states {
-        let mut local_layout = Layout::new(graph);
+        let local_layout = Layout::new(graph);
         let local = super::super::render(graph, &local_layout);
         let independent = roxmltree::Document::parse(&local).unwrap();
         let state_width = number(independent.root_element(), "width");
@@ -71,41 +118,35 @@ fn mixed_width_state_legends_use_shared_content_width_outside_cross_state_gutter
             .find(|node| node.has_tag_name("svg"))
             .unwrap();
         assert_eq!(number(nested, "width"), allocated_width);
-        let actual = legend_shape(nested);
-        let original = legend_shape(independent.root_element());
-        if id.as_str() == "compact" {
-            assert!(state_width < allocated_width);
-            assert!(actual.1 < original.1);
-        } else {
-            assert_eq!(state_width, allocated_width);
-            assert_eq!(actual, original);
-        }
-        local_layout.width = allocated_width;
-        let allocated = super::super::render(graph, &local_layout);
-        let allocated_document = roxmltree::Document::parse(&allocated).unwrap();
-        assert_eq!(actual, legend_shape(allocated_document.root_element()));
-        assert_eq!(actual.0, allocated_width - 80);
-        let columns: std::collections::BTreeSet<_> = actual
-            .2
-            .iter()
-            .map(|(_, translation)| translation.split_whitespace().next().unwrap())
-            .collect();
-        assert_eq!(columns.len(), 4);
-        for sample in nested.descendants().filter(|node| {
-            node.attribute("data-legend-kind").is_some() && node.attribute("marker-end").is_some()
-        }) {
-            let marker = sample
-                .attribute("marker-end")
-                .unwrap()
-                .strip_prefix("url(#")
-                .unwrap()
-                .trim_end_matches(')');
-            assert!(
-                nested
-                    .descendants()
-                    .any(|node| node.attribute("id") == Some(marker))
-            );
-        }
+        assert!(!nested.descendants().any(|node| {
+            node.attribute("id")
+                .is_some_and(|id| id.ends_with("relationship-legend"))
+        }));
+        assert!(number(nested, "height") < number(independent.root_element(), "height"));
+    }
+    let actual = legend_shape(document.root_element());
+    assert_eq!(actual.0, allocated_width - 80);
+    assert_eq!(
+        document
+            .descendants()
+            .filter(|node| node.attribute("id") == Some("relationship-legend"))
+            .count(),
+        1
+    );
+    for sample in document.descendants().filter(|node| {
+        node.attribute("data-legend-kind").is_some() && node.attribute("marker-end").is_some()
+    }) {
+        let marker = sample
+            .attribute("marker-end")
+            .unwrap()
+            .strip_prefix("url(#")
+            .unwrap()
+            .trim_end_matches(')');
+        assert!(
+            document
+                .descendants()
+                .any(|node| node.attribute("id") == Some(marker))
+        );
     }
     assert_eq!(number(document.root_element(), "width"), maximum_width + 80);
     assert_eq!(
@@ -149,7 +190,7 @@ fn legend_shape(root: roxmltree::Node<'_, '_>) -> (usize, usize, Vec<(String, St
 
 #[test]
 fn cross_state_paths_avoid_intervening_cards_and_describe_dependencies() {
-    let raw = crate::plan::parse(r#"{"format_version":"1.2","resource_changes":[{"address":"test.a","type":"test"},{"address":"test.b","type":"test"}],"configuration":{"root_module":{"resources":[{"address":"test.b","expressions":{"input":{"references":["test.a.id"]}}}]}}}"#).unwrap();
+    let raw = crate::plan::parse(r#"{"format_version":"1.2","resource_changes":[{"address":"aws_instance.a","type":"aws_instance"},{"address":"aws_instance.b","type":"aws_instance"}],"configuration":{"provider_config":{"aws":{"full_name":"hashicorp/aws","expressions":{"region":{"constant_value":"ap-northeast-1"}}}},"root_module":{"resources":[{"address":"aws_instance.a","provider_config_key":"aws"},{"address":"aws_instance.b","provider_config_key":"aws","expressions":{"input":{"references":["aws_instance.a.id"]}}}]}}}"#).unwrap();
     let mut graph = crate::semantic::transform(&raw);
     graph.0.components.push(crate::model::SyntheticComponent {
         entity: crate::model::ArchitectureEntity::synthetic(
@@ -164,14 +205,15 @@ fn cross_state_paths_avoid_intervening_cards_and_describe_dependencies() {
         id: "test-group".into(),
         kind: "test".into(),
         label: "Test group".into(),
-        members: vec!["test.a".into(), "test.b".into()],
+        members: vec!["aws_instance.a".into(), "aws_instance.b".into()],
     });
     let first = StateId::new("first").unwrap();
     let second = StateId::new("second").unwrap();
     let local = Layout::new(&graph);
+    assert_eq!(local.scopes.len(), 1);
     assert!(local.bounds[0].right() < local.bounds[1].right());
     let index = super::super::relationship_index::Index::new(&graph, &local);
-    let sections = super::super::Sections::with_width(
+    let sections = super::super::Sections::without_legend(
         &graph,
         &local,
         &index,
@@ -179,15 +221,21 @@ fn cross_state_paths_avoid_intervening_cards_and_describe_dependencies() {
         1120,
     );
     let (_, height) = sections.dimensions(&local);
-    let offset = 100 + sections.height();
+    let legend_height = super::super::legend::Legend::new(&graph, 1120).height;
+    let offset = 100 + legend_height + sections.height();
     let obstacles: Vec<_> = [offset, offset + height + 60]
         .into_iter()
         .flat_map(|offset| {
-            local.bounds.iter().map(move |b| {
-                let mut b = *b;
-                b.origin.y += offset;
-                b
-            })
+            local
+                .bounds
+                .iter()
+                .copied()
+                .chain(local.scopes.iter().map(|panel| panel.bounds.header(36)))
+                .map(move |b| {
+                    let mut b = b;
+                    b.origin.y += offset;
+                    b
+                })
         })
         .collect();
     let endpoint_y = offset + local.bounds[0].origin.y + local.header_heights[0] / 2;
@@ -196,11 +244,11 @@ fn cross_state_paths_avoid_intervening_cards_and_describe_dependencies() {
         relationships: vec![crate::model::architecture::CrossStateEdge {
             from: Endpoint {
                 state: first,
-                address: "test.a".into(),
+                address: "aws_instance.a".into(),
             },
             to: Endpoint {
                 state: second,
-                address: "test.a".into(),
+                address: "aws_instance.a".into(),
             },
             provenance: crate::model::architecture::CrossStateProvenance::TerraformRemoteState {
                 remote: "data.terraform_remote_state.x".into(),
@@ -242,41 +290,13 @@ fn cross_state_paths_avoid_intervening_cards_and_describe_dependencies() {
             .children()
             .find(|node| node.has_tag_name("svg"))
             .unwrap();
-        let legend = nested
-            .descendants()
-            .find(|node| {
-                node.attribute("id")
-                    .is_some_and(|id| id.ends_with("relationship-legend"))
-            })
-            .unwrap();
-        let rectangle = legend
-            .children()
-            .find(|node| node.has_tag_name("rect"))
-            .unwrap();
-        let legend_bottom = translated_y(rectangle) + number(rectangle, "height");
-        assert!(40 + number(rectangle, "width") <= number(nested, "width"));
-        for sample in legend.descendants().filter(|node| {
-            node.attribute("data-legend-kind").is_some() && node.attribute("marker-end").is_some()
-        }) {
-            let marker = sample
-                .attribute("marker-end")
-                .unwrap()
-                .strip_prefix("url(#")
-                .unwrap()
-                .trim_end_matches(')');
-            assert!(
-                nested
-                    .descendants()
-                    .any(|node| node.attribute("id") == Some(marker))
-            );
-        }
         for card in nested
             .descendants()
             .filter(|node| node.attribute("data-terraform-address").is_some())
             .flat_map(|node| node.children().filter(|node| node.has_tag_name("rect")))
         {
             let top = translated_y(card) + number(card, "y");
-            assert!(top > legend_bottom);
+            assert!(top >= 148);
             assert!(top + number(card, "height") <= number(nested, "height"));
         }
     }
@@ -461,7 +481,10 @@ fn named_states_reflow_indexes_at_shared_width_and_keep_cross_state_offsets() {
     assert!(width > number(standalone_root, "width"));
     assert_eq!(number(narrow, "width"), width);
     assert_eq!(number(document.root_element(), "width"), width + 80 + 12);
-    assert_eq!(number(narrow, "y"), 100);
+    assert_eq!(
+        number(narrow, "y"),
+        100 + legend_shape(document.root_element()).1 + 12
+    );
     assert!(number(narrow, "height") < number(standalone_root, "height"));
     assert_eq!(
         number(wide, "y"),

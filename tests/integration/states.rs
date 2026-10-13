@@ -66,7 +66,11 @@ fn relationship_indexes_fit_inside_each_named_state_and_outer_canvas() {
             nested.attribute("viewBox").unwrap(),
             format!("0 0 {width} {height}")
         );
-        let legend = nested
+        assert!(!nested.descendants().any(|n| {
+            n.attribute("id")
+                .is_some_and(|id| id.ends_with("relationship-legend"))
+        }));
+        let legend = document
             .descendants()
             .find(|n| {
                 n.attribute("id")
@@ -77,7 +81,8 @@ fn relationship_indexes_fit_inside_each_named_state_and_outer_canvas() {
         let legend_width: usize = legend_rect.attribute("width").unwrap().parse().unwrap();
         let legend_height: usize = legend_rect.attribute("height").unwrap().parse().unwrap();
         assert!(40 + legend_width <= width);
-        assert!(148 + legend_height < height);
+        assert!(60 + legend_height < top);
+        assert_eq!(legend.parent(), Some(document.root_element()));
         assert_eq!(
             nested
                 .descendants()

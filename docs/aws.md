@@ -6,10 +6,15 @@ semantics. Provider source and configuration identity are described in [models](
 
 ## Deployment scopes
 
-Known static provider regions group explicitly supported regional resources into
-visual panels (see [regions.svg](../examples/regions.svg)). Panels are deployment
-scopes, not resource containers or Terraform modules. VPC/Subnet containment stays
-intact inside each panel, and cross-region relationships remain routed paths.
+Known static provider regions automatically group explicitly supported regional
+resources into background panels (see [regions.svg](../examples/regions.svg)).
+One displayed spatial resource is sufficient, including when the state has only
+one known region. Eligibility is evaluated per state and region after filtering;
+removing the last spatial resource removes the panel and its title/padding.
+Logical-resource rows, synthetic summaries and relationship-index entries do not
+create panels. Panels are deployment scopes, not Terraform resources or semantic
+containers. VPC/Subnet containment stays intact inside each panel, and
+cross-region relationships remain routed paths above the background.
 Spatial IAM resources, CloudFront and supported Route 53 resources share an
 `AWS Global` panel when regional panels are present. IAM Role, Policy, Role Policy
 and Instance Profile retain global scope metadata but render as logical-resource
@@ -26,6 +31,11 @@ subtree keep their existing layout. Synthetic component summaries remain separat
 Named-state sections retain independent panels even for equal region names;
 `data-deployment-scope`, `data-scope-provider`, `data-region` or `data-global`
 identify panel metadata within their enclosing `data-state-id`.
+The [regional-state example](../examples/regional-states.svg) shows independent
+`ap-northeast-1` bases for application, network and a single-resource state.
+Its inputs explicitly bind resources to provider configurations with literal
+regions. A provider alias such as `archive` is not the region label; missing or
+dynamic provider-region metadata cannot produce a guessed panel.
 
 ## Resource roles and data
 
