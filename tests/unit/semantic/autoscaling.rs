@@ -228,6 +228,10 @@ fn rejected_targets_are_reported_by_diagnostics() {
     for (case, expected) in [
         (0, crate::model::DiagnosticReason::UnprovenEndpointValue),
         (1, crate::model::DiagnosticReason::EndpointTypeMismatch),
+        (
+            2,
+            crate::model::DiagnosticReason::ProviderConfigurationMismatch,
+        ),
     ] {
         let mut value = input();
         match case {
@@ -236,6 +240,28 @@ fn rejected_targets_are_reported_by_diagnostics() {
                     json!("prefix-app");
             }
             1 => value["resource_changes"][0]["type"] = json!("aws_instance"),
+            2 => {
+                value["configuration"]["provider_config"] = json!({
+                    "aws": {
+                        "full_name":"registry.terraform.io/hashicorp/aws",
+                        "expressions":{"region":{"constant_value":"us-east-1"}}
+                    },
+                    "aws.other": {
+                        "full_name":"registry.terraform.io/hashicorp/aws",
+                        "alias":"other",
+                        "expressions":{"region":{"constant_value":"us-west-2"}}
+                    }
+                });
+                value["configuration"]["root_module"]["resources"]
+                    .as_array_mut()
+                    .unwrap()
+                    .push(json!({
+                        "address":"aws_autoscaling_group.app",
+                        "provider_config_key":"aws.other"
+                    }));
+                value["configuration"]["root_module"]["resources"][0]["provider_config_key"] =
+                    json!("aws");
+            }
             _ => unreachable!(),
         }
         let parsed = plan::parse(&value.to_string()).unwrap();
