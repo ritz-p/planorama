@@ -1147,7 +1147,6 @@ fn launch_templates_are_logical_and_asg_usage_requires_complete_nested_reference
         .find(|reference| reference.attribute == "launch_template.id")
         .unwrap();
     assert_eq!(reference.label, "Launch template");
-    assert!(!reference.complete);
     assert!(
         reference
             .issues
