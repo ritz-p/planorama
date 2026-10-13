@@ -120,14 +120,32 @@ pub(crate) fn render_content(
     for (id, graph) in &prepared_graphs {
         let layout = Layout::new(graph);
         let index = super::relationship_index::Index::new(graph, &layout);
-        let measured_sections = super::Sections::new(graph, &layout, &index, format);
+        let measured_sections =
+            super::Sections::without_legend(graph, &layout, &index, format, index.width);
         width = width.max(measured_sections.dimensions(&layout).0);
         states.push((*id, graph, layout, index, measured_sections));
     }
-    let mut top = 60;
+    let legend = super::legend::Legend::from_graphs(
+        prepared_graphs.iter().map(|(_, graph)| &graph.0),
+        width,
+        60,
+    );
+    if legend.height > 0 {
+        if let Some((_, graph)) = prepared_graphs.first() {
+            writeln!(
+                sections,
+                "<defs>{}</defs>",
+                super::relationships::markers(graph)
+            )
+            .unwrap();
+        }
+    }
+    sections.push_str(legend.render());
+    let mut top = 60 + legend.height;
     for (id, graph, layout, index, mut measured_sections) in states {
         if measured_sections.dimensions(&layout).0 < width {
-            measured_sections = super::Sections::with_width(graph, &layout, &index, format, width);
+            measured_sections =
+                super::Sections::without_legend(graph, &layout, &index, format, width);
         }
         let (_, height) = measured_sections.dimensions(&layout);
         let prefix = prefix(id);
@@ -270,7 +288,7 @@ pub(crate) fn render_content(
         )
     };
     format!(
-        r##"<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{top}" viewBox="0 0 {width} {top}" role="img" aria-labelledby="multi-title multi-description">
+        r##"<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{top}" viewBox="0 0 {width} {top}" font-family="ui-monospace, Consolas, monospace" role="img" aria-labelledby="multi-title multi-description">
 <title id="multi-title">Terraform plans</title><desc id="multi-description">{description}</desc>
 <rect width="100%" height="100%" fill="#ffffff"/><text x="40" y="35" font-family="ui-monospace, Consolas, monospace" font-size="25" fill="#0f172a">Terraform plans</text>
 {sections}</svg>

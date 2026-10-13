@@ -25,8 +25,9 @@ require at least 398px per cell with 24px gaps; cells stop widening at 640px.
 Narrow single-column cells place the sample above the text. Each grid row reserves
 its tallest complete cell, including wrapped text and symbols. The same measured
 height controls the canvas, following content and named-state endpoint offsets.
-Named states measure their legends at the shared content width, excluding
-cross-state gutters. Legend layout affects annotation offsets without changing
+Named states measure one document-level legend from all displayed states at the
+shared content width, excluding cross-state gutters. State sections reserve no
+local legend height. Legend layout affects section offsets without changing
 architecture placement or routing. It remains separate from the numbered Relationship Resources
 section.
 `svg/annotations.rs` packs rounded cards in deterministic

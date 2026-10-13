@@ -97,13 +97,38 @@ impl Sections {
         address_format: AddressFormat,
         available_width: usize,
     ) -> Self {
+        Self::measure(graph, layout, index, address_format, available_width, true)
+    }
+
+    fn without_legend(
+        graph: &Graph,
+        layout: &Layout<'_>,
+        index: &relationship_index::Index<'_>,
+        address_format: AddressFormat,
+        available_width: usize,
+    ) -> Self {
+        Self::measure(graph, layout, index, address_format, available_width, false)
+    }
+
+    fn measure(
+        graph: &Graph,
+        layout: &Layout<'_>,
+        index: &relationship_index::Index<'_>,
+        address_format: AddressFormat,
+        available_width: usize,
+        include_legend: bool,
+    ) -> Self {
         let annotations = annotation_area(
             graph,
             index,
             address_format,
             available_width.max(index.width),
         );
-        let legend = legend::Legend::new(graph, annotations.width);
+        let legend = if include_legend {
+            legend::Legend::new(graph, annotations.width)
+        } else {
+            legend::Legend::empty(annotations.width)
+        };
         let annotations = if legend.width > annotations.width {
             annotation_area(graph, index, address_format, legend.width)
         } else {
