@@ -28,8 +28,7 @@ through alias resolution. Target-group component ownership requires this proof;
 it does not narrow existing dependency edges or change other semantic rules.
 Target-group ownership also consumes a value-free ARN equality proof for every
 hop, calculated from known planned strings and complete nested action values.
-Alarm monitoring retains a boolean dimension/identifier equality proof; namespace,
-metric and dimension values are checked transiently and never stored or rendered.
+Alarm monitoring retains a boolean dimension/identifier equality proof; Auto Scaling policy ownership retains a boolean scalar-name equality proof. Namespace, metric, dimension and resource-name values are checked transiently and never stored or rendered.
 
 `semantic::transform` consumes this domain model. Its private `Input` projection
 classifies provider/resource roles at the boundary, then applies containment,

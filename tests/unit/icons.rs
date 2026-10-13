@@ -23,6 +23,7 @@ fn provider_lookup_shares_service_icons_and_handles_unknown_types() {
         ("aws_security_group", ResourceIcon::Security),
         ("aws_cloudwatch_log_group", ResourceIcon::Monitoring),
         ("aws_autoscaling_group", ResourceIcon::Scaling),
+        ("aws_autoscaling_policy", ResourceIcon::Scaling),
         ("aws_nat_gateway", ResourceIcon::Gateway),
         ("aws_route", ResourceIcon::Route),
         ("aws_vpc_endpoint", ResourceIcon::Endpoint),

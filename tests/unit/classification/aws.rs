@@ -11,6 +11,7 @@ fn representative_aws_types_cover_each_architectural_role() {
         ("aws_route_table_association", ResourceRole::Association),
         ("aws_security_group", ResourceRole::Policy),
         ("aws_network_acl", ResourceRole::Policy),
+        ("aws_autoscaling_policy", ResourceRole::Policy),
         ("aws_autoscaling_group", ResourceRole::Controller),
         ("aws_ecs_service", ResourceRole::Controller),
     ] {
@@ -52,7 +53,7 @@ fn expanded_roles_cover_managed_and_equivalent_data_entities() {
         ),
         (
             ResourceRole::Policy,
-            "aws_iam_role aws_iam_policy aws_iam_role_policy aws_iam_instance_profile aws_lb_listener_rule",
+            "aws_iam_role aws_iam_policy aws_iam_role_policy aws_iam_instance_profile aws_lb_listener_rule aws_autoscaling_policy",
         ),
         (
             ResourceRole::Controller,
