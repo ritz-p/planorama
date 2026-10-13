@@ -1,5 +1,14 @@
 use crate::model::{ProviderIdentity, architecture::DeploymentScope};
 
+pub(crate) fn panel_label(scope: &DeploymentScope) -> String {
+    let region = scope.region.as_ref().map_or("Global", |r| r.0.as_str());
+    let label = format!("{} {region}", scope.provider);
+    match &scope.account {
+        Some(account) => format!("{label} / Account: {}", account.as_str()),
+        None => label,
+    }
+}
+
 pub(crate) fn label(scope: Option<&DeploymentScope>, provider: &ProviderIdentity) -> String {
     let region_label = match scope {
         Some(DeploymentScope {

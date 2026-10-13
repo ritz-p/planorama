@@ -64,7 +64,11 @@ pub(super) fn pack(
                         x: 40,
                         y: 160 + top,
                     },
-                    width: width + spacing.max(40),
+                    width: (width + spacing.max(40)).max(if scope.account.is_some() {
+                        crate::view::scope::panel_label(scope).chars().count() * 15 + 32
+                    } else {
+                        0
+                    }),
                     height: height + 60,
                 },
             });
