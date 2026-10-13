@@ -178,6 +178,55 @@ fn current_and_deposed_provenance_and_long_endpoints_keep_their_targets() {
     }
 }
 
+#[test]
+fn overlapping_provenance_sets_do_not_mix_parallel_relationship_actions() {
+    let mut graph = dense_graph(2, EdgeKind::Association);
+    let address = graph.edges[0].change.as_ref().unwrap().address.clone();
+    let change = graph.edges[1].change.as_mut().unwrap();
+    change.address = address.clone();
+    change.action = crate::model::Action::Delete;
+    let extra = graph.relationships[1].provenance[0].clone();
+    for provenance in &mut graph.relationships[1].provenance {
+        if let RelationshipProvenance::Resource {
+            source,
+            change: source_change,
+        } = provenance
+        {
+            source.address = address.clone();
+            *source_change = change.clone();
+        }
+    }
+    graph.relationships[1].provenance.push(extra);
+    let layout = Layout::new(&graph);
+    let index = Index::new(&graph, &layout);
+    assert_eq!(index.entries.len(), 2);
+    let single = index
+        .entries
+        .iter()
+        .find(|entry| entry.sources.len() == 1)
+        .unwrap();
+    let multiple = index
+        .entries
+        .iter()
+        .find(|entry| entry.sources.len() == 2)
+        .unwrap();
+    assert_eq!(single.edges, [0]);
+    assert_eq!(multiple.edges, [1]);
+    assert_eq!(
+        single.actions[single.sources[0]],
+        BTreeSet::from(["create".to_owned()])
+    );
+    let shared = multiple
+        .sources
+        .iter()
+        .find(|source| source.address == address)
+        .unwrap();
+    assert_eq!(
+        multiple.actions[shared],
+        BTreeSet::from(["delete".to_owned()])
+    );
+}
+
 fn dense_graph(count: usize, kind: EdgeKind) -> Graph {
     let mut graph = graph();
     let edge = graph.edges[0].clone();

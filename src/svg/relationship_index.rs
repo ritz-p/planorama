@@ -143,23 +143,35 @@ impl<'a> Index<'a> {
                 context.sort_by(|a, b| (&a.heading, &a.endpoints).cmp(&(&b.heading, &b.endpoints)));
                 let mut actions: BTreeMap<_, BTreeSet<_>> = BTreeMap::new();
                 for relationship in &graph.relationships {
-                    if !edges.iter().any(|&i| {
+                    if !entry.edges.iter().any(|&i| {
                         let edge = &graph.edges[i];
                         relationship.from == graph.nodes[edge.from].entity.id
                             && relationship.to == graph.nodes[edge.to].entity.id
                             && relationship.kind == edge.kind
+                            && edge.change.as_ref().is_none_or(|change| {
+                                relationship.provenance.iter().any(|provenance| {
+                                    matches!(provenance, crate::model::RelationshipProvenance::Resource { change: source_change, .. } if source_change == change)
+                                })
+                            })
                     }) {
                         continue;
                     }
+                    let mut sources: Vec<_> = relationship.provenance.iter().filter_map(|provenance| {
+                        match provenance {
+                            crate::model::RelationshipProvenance::Resource { source, .. } => Some(source),
+                            crate::model::RelationshipProvenance::Reference { .. } => None,
+                        }
+                    }).collect();
+                    sources.sort();
+                    sources.dedup();
+                    if sources != entry.sources { continue; }
                     for provenance in &relationship.provenance {
                         if let crate::model::RelationshipProvenance::Resource { source, change } =
                             provenance
                         {
-                            if entry.sources.contains(&source) {
-                                actions.entry(source).or_default().insert(
-                                    super::operations::label(change.action, &change.metadata),
-                                );
-                            }
+                            actions.entry(source).or_default().insert(
+                                super::operations::label(change.action, &change.metadata),
+                            );
                         }
                     }
                 }
