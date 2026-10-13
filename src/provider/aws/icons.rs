@@ -185,9 +185,7 @@ pub(super) fn icon_for(resource_type: &str) -> Option<ResourceIcon> {
         "aws_autoscaling_group"
         | "aws_autoscaling_groups"
         | "aws_autoscaling_policy"
-        | "aws_launch_configuration" => {
-            ResourceIcon::Scaling
-        }
+        | "aws_launch_configuration" => ResourceIcon::Scaling,
         _ => return None,
     })
 }
