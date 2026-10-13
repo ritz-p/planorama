@@ -337,6 +337,33 @@
                 "type": "aws_launch_template"
               },
               {
+                "address": "aws_lb.app",
+                "expressions": {
+                  "internal": {
+                    "constant_value": true
+                  },
+                  "load_balancer_type": {
+                    "constant_value": "application"
+                  },
+                  "name": {
+                    "constant_value": "planorama-example"
+                  },
+                  "security_groups": {
+                    "references": [
+                      "aws_security_group.alb.id"
+                    ]
+                  },
+                  "subnets": {
+                    "references": [
+                      "var.public_subnets"
+                    ]
+                  }
+                },
+                "mode": "managed",
+                "name": "app",
+                "type": "aws_lb"
+              },
+              {
                 "address": "aws_lb_listener.http",
                 "expressions": {
                   "default_action": [
@@ -366,6 +393,31 @@
                 "mode": "managed",
                 "name": "http",
                 "type": "aws_lb_listener"
+              },
+              {
+                "address": "aws_lb_target_group.app",
+                "expressions": {
+                  "name": {
+                    "constant_value": "planorama-example"
+                  },
+                  "port": {
+                    "constant_value": 8080
+                  },
+                  "protocol": {
+                    "constant_value": "HTTP"
+                  },
+                  "target_type": {
+                    "constant_value": "instance"
+                  },
+                  "vpc_id": {
+                    "references": [
+                      "var.vpc_id"
+                    ]
+                  }
+                },
+                "mode": "managed",
+                "name": "app",
+                "type": "aws_lb_target_group"
               },
               {
                 "address": "aws_lb_target_group_attachment.a0",
@@ -450,58 +502,6 @@
                 "mode": "managed",
                 "name": "b1",
                 "type": "aws_lb_target_group_attachment"
-              },
-              {
-                "address": "aws_lb_target_group.app",
-                "expressions": {
-                  "name": {
-                    "constant_value": "planorama-example"
-                  },
-                  "port": {
-                    "constant_value": 8080
-                  },
-                  "protocol": {
-                    "constant_value": "HTTP"
-                  },
-                  "target_type": {
-                    "constant_value": "instance"
-                  },
-                  "vpc_id": {
-                    "references": [
-                      "var.vpc_id"
-                    ]
-                  }
-                },
-                "mode": "managed",
-                "name": "app",
-                "type": "aws_lb_target_group"
-              },
-              {
-                "address": "aws_lb.app",
-                "expressions": {
-                  "internal": {
-                    "constant_value": true
-                  },
-                  "load_balancer_type": {
-                    "constant_value": "application"
-                  },
-                  "name": {
-                    "constant_value": "planorama-example"
-                  },
-                  "security_groups": {
-                    "references": [
-                      "aws_security_group.alb.id"
-                    ]
-                  },
-                  "subnets": {
-                    "references": [
-                      "var.public_subnets"
-                    ]
-                  }
-                },
-                "mode": "managed",
-                "name": "app",
-                "type": "aws_lb"
               },
               {
                 "address": "aws_security_group.alb",
@@ -1398,6 +1398,20 @@
       "type": "aws_launch_template"
     },
     {
+      "address": "module.application.aws_lb.app",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:elasticloadbalancing:us-east-1:000000000000:fixture/module.application.aws_lb.app"
+        }
+      },
+      "mode": "managed",
+      "name": "app",
+      "type": "aws_lb"
+    },
+    {
       "address": "module.application.aws_lb_listener.http",
       "change": {
         "actions": [
@@ -1417,6 +1431,20 @@
       "mode": "managed",
       "name": "http",
       "type": "aws_lb_listener"
+    },
+    {
+      "address": "module.application.aws_lb_target_group.app",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:elasticloadbalancing:us-east-1:000000000000:fixture/module.application.aws_lb_target_group.app"
+        }
+      },
+      "mode": "managed",
+      "name": "app",
+      "type": "aws_lb_target_group"
     },
     {
       "address": "module.application.aws_lb_target_group_attachment.a0",
@@ -1461,34 +1489,6 @@
       "mode": "managed",
       "name": "b1",
       "type": "aws_lb_target_group_attachment"
-    },
-    {
-      "address": "module.application.aws_lb_target_group.app",
-      "change": {
-        "actions": [
-          "create"
-        ],
-        "after": {
-          "arn": "arn:aws:elasticloadbalancing:us-east-1:000000000000:fixture/module.application.aws_lb_target_group.app"
-        }
-      },
-      "mode": "managed",
-      "name": "app",
-      "type": "aws_lb_target_group"
-    },
-    {
-      "address": "module.application.aws_lb.app",
-      "change": {
-        "actions": [
-          "create"
-        ],
-        "after": {
-          "arn": "arn:aws:elasticloadbalancing:us-east-1:000000000000:fixture/module.application.aws_lb.app"
-        }
-      },
-      "mode": "managed",
-      "name": "app",
-      "type": "aws_lb"
     },
     {
       "address": "module.application.aws_security_group.alb",
@@ -1596,6 +1596,64 @@
       "type": "aws_nat_gateway"
     },
     {
+      "address": "module.network.aws_route.internet",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "gateway_id": "fixture-id:module.network.aws_internet_gateway.main",
+          "route_table_id": "fixture-id:module.network.aws_route_table.public"
+        }
+      },
+      "mode": "managed",
+      "name": "internet",
+      "type": "aws_route"
+    },
+    {
+      "address": "module.network.aws_route.nat",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "nat_gateway_id": "fixture-id:module.network.aws_nat_gateway.main",
+          "route_table_id": "fixture-id:module.network.aws_route_table.private"
+        }
+      },
+      "mode": "managed",
+      "name": "nat",
+      "type": "aws_route"
+    },
+    {
+      "address": "module.network.aws_route_table.private",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "fixture-id:module.network.aws_route_table.private"
+        }
+      },
+      "mode": "managed",
+      "name": "private",
+      "type": "aws_route_table"
+    },
+    {
+      "address": "module.network.aws_route_table.public",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "fixture-id:module.network.aws_route_table.public"
+        }
+      },
+      "mode": "managed",
+      "name": "public",
+      "type": "aws_route_table"
+    },
+    {
       "address": "module.network.aws_route_table_association.private_a",
       "change": {
         "actions": [
@@ -1638,64 +1696,6 @@
       "mode": "managed",
       "name": "public_b",
       "type": "aws_route_table_association"
-    },
-    {
-      "address": "module.network.aws_route_table.private",
-      "change": {
-        "actions": [
-          "create"
-        ],
-        "after": {
-          "id": "fixture-id:module.network.aws_route_table.private"
-        }
-      },
-      "mode": "managed",
-      "name": "private",
-      "type": "aws_route_table"
-    },
-    {
-      "address": "module.network.aws_route_table.public",
-      "change": {
-        "actions": [
-          "create"
-        ],
-        "after": {
-          "id": "fixture-id:module.network.aws_route_table.public"
-        }
-      },
-      "mode": "managed",
-      "name": "public",
-      "type": "aws_route_table"
-    },
-    {
-      "address": "module.network.aws_route.internet",
-      "change": {
-        "actions": [
-          "create"
-        ],
-        "after": {
-          "gateway_id": "fixture-id:module.network.aws_internet_gateway.main",
-          "route_table_id": "fixture-id:module.network.aws_route_table.public"
-        }
-      },
-      "mode": "managed",
-      "name": "internet",
-      "type": "aws_route"
-    },
-    {
-      "address": "module.network.aws_route.nat",
-      "change": {
-        "actions": [
-          "create"
-        ],
-        "after": {
-          "nat_gateway_id": "fixture-id:module.network.aws_nat_gateway.main",
-          "route_table_id": "fixture-id:module.network.aws_route_table.private"
-        }
-      },
-      "mode": "managed",
-      "name": "nat",
-      "type": "aws_route"
     },
     {
       "address": "module.network.aws_security_group.endpoints",
@@ -1753,6 +1753,17 @@
       "type": "aws_subnet"
     },
     {
+      "address": "module.network.aws_vpc.main",
+      "change": {
+        "actions": [
+          "create"
+        ]
+      },
+      "mode": "managed",
+      "name": "main",
+      "type": "aws_vpc"
+    },
+    {
       "address": "module.network.aws_vpc_endpoint.logs",
       "change": {
         "actions": [
@@ -1773,17 +1784,6 @@
       "mode": "managed",
       "name": "shared",
       "type": "aws_vpc_peering_connection"
-    },
-    {
-      "address": "module.network.aws_vpc.main",
-      "change": {
-        "actions": [
-          "create"
-        ]
-      },
-      "mode": "managed",
-      "name": "main",
-      "type": "aws_vpc"
     },
     {
       "address": "module.shared.data.aws_ami.app",
