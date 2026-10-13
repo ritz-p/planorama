@@ -63,7 +63,7 @@ descriptive title.
 
 Spatial cards show a Uses section for verified references to top logical-resource
 rows. Links target the individual resource, not its group card. Known attributes
-use Cluster, Task definition, Instance profile, AMI,
+use Cluster, Task definition, Instance profile, AMI, Launch template,
 Role, Execution role or Task role;
 other verified references use References. Graph-only references such as
 `depends_on` use Dependency, not an attribute-specific usage label. Logical-resource
