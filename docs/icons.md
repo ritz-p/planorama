@@ -40,7 +40,7 @@ for the bundled service families: `ec2`, `elb`, `elbv2`, `lambda`, `ecs`,
 `eks`, `rds`, `dynamodb`, `elasticache`, `opensearch`, `elasticsearch`,
 `s3`, `s3control`, `cloudfront`, `apigateway`, `apigatewayv2`, `iam`,
 `cloudwatch`, `logs` and `autoscaling`.
-The 133 additional exact mappings below cover the reviewed direct infrastructure
+The 134 additional exact mappings below cover the reviewed direct infrastructure
 objects and collection lookups. They reuse the 17 bundled official service icons;
 no icon asset is added or modified.
 
@@ -62,7 +62,7 @@ no icon asset is added or modified.
 | Amazon API Gateway | `aws_api_gateway_api_key`, `aws_api_gateway_api_keys`, `aws_api_gateway_authorizer`, `aws_api_gateway_authorizers`, `aws_api_gateway_domain_name`, `aws_api_gateway_resource`, `aws_api_gateway_vpc_link`, `aws_apigatewayv2_apis`, `aws_apigatewayv2_vpc_link` |
 | AWS Identity and Access Management | `aws_iam_access_keys`, `aws_iam_group`, `aws_iam_instance_profiles`, `aws_iam_openid_connect_provider`, `aws_iam_role_policies`, `aws_iam_role_policy_attachments`, `aws_iam_roles`, `aws_iam_saml_provider`, `aws_iam_server_certificate`, `aws_iam_user`, `aws_iam_user_ssh_key`, `aws_iam_users` |
 | Amazon CloudWatch | `aws_cloudwatch_log_groups` |
-| Amazon EC2 Auto Scaling | `aws_autoscaling_groups`, `aws_launch_configuration` |
+| Amazon EC2 Auto Scaling | `aws_autoscaling_groups`, `aws_autoscaling_policy`, `aws_launch_configuration` |
 
 The legacy `aws_elasticsearch_domain` lookup shares the OpenSearch Service icon;
 [Amazon OpenSearch Service supports these Elasticsearch domains](https://docs.aws.amazon.com/opensearch-service/latest/developerguide/what-is.html).
