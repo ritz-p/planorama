@@ -81,6 +81,12 @@ CloudWatch alarms use Monitors and inverse Monitored by rows only with the
 [verified monitoring evidence](aws.md) required by the AWS projection. These
 rows never create network connections or additional dependency edges.
 
+Auto Scaling Policies use `Auto Scaling group` and inverse `Scaling policy` rows
+only for a complete, unique explicit `autoscaling_group_name` reference to a
+current AWS Auto Scaling Group using the same provider configuration. The inverse
+is provider-specific presentation, not a generic reverse-reference facility, and
+it creates no additional graph edge.
+
 Small white circles mark final card ports: the source of a Dependency and both
 ends of Association/Connection paths. Containment has no endpoint circles.
 Their solid outlines use the relationship action color. Circles render above
