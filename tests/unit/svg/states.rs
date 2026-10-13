@@ -190,7 +190,7 @@ fn legend_shape(root: roxmltree::Node<'_, '_>) -> (usize, usize, Vec<(String, St
 
 #[test]
 fn cross_state_paths_avoid_intervening_cards_and_describe_dependencies() {
-    let raw = crate::plan::parse(r#"{"format_version":"1.2","resource_changes":[{"address":"test.a","type":"test"},{"address":"test.b","type":"test"}],"configuration":{"root_module":{"resources":[{"address":"test.b","expressions":{"input":{"references":["test.a.id"]}}}]}}}"#).unwrap();
+    let raw = crate::plan::parse(r#"{"format_version":"1.2","resource_changes":[{"address":"aws_instance.a","type":"aws_instance"},{"address":"aws_instance.b","type":"aws_instance"}],"configuration":{"provider_config":{"aws":{"full_name":"hashicorp/aws","expressions":{"region":{"constant_value":"ap-northeast-1"}}}},"root_module":{"resources":[{"address":"aws_instance.a","provider_config_key":"aws"},{"address":"aws_instance.b","provider_config_key":"aws","expressions":{"input":{"references":["aws_instance.a.id"]}}}]}}}"#).unwrap();
     let mut graph = crate::semantic::transform(&raw);
     graph.0.components.push(crate::model::SyntheticComponent {
         entity: crate::model::ArchitectureEntity::synthetic(
@@ -205,11 +205,12 @@ fn cross_state_paths_avoid_intervening_cards_and_describe_dependencies() {
         id: "test-group".into(),
         kind: "test".into(),
         label: "Test group".into(),
-        members: vec!["test.a".into(), "test.b".into()],
+        members: vec!["aws_instance.a".into(), "aws_instance.b".into()],
     });
     let first = StateId::new("first").unwrap();
     let second = StateId::new("second").unwrap();
     let local = Layout::new(&graph);
+    assert_eq!(local.scopes.len(), 1);
     assert!(local.bounds[0].right() < local.bounds[1].right());
     let index = super::super::relationship_index::Index::new(&graph, &local);
     let sections = super::super::Sections::without_legend(
@@ -225,11 +226,16 @@ fn cross_state_paths_avoid_intervening_cards_and_describe_dependencies() {
     let obstacles: Vec<_> = [offset, offset + height + 60]
         .into_iter()
         .flat_map(|offset| {
-            local.bounds.iter().map(move |b| {
-                let mut b = *b;
-                b.origin.y += offset;
-                b
-            })
+            local
+                .bounds
+                .iter()
+                .copied()
+                .chain(local.scopes.iter().map(|panel| panel.bounds.header(36)))
+                .map(move |b| {
+                    let mut b = b;
+                    b.origin.y += offset;
+                    b
+                })
         })
         .collect();
     let endpoint_y = offset + local.bounds[0].origin.y + local.header_heights[0] / 2;
@@ -238,11 +244,11 @@ fn cross_state_paths_avoid_intervening_cards_and_describe_dependencies() {
         relationships: vec![crate::model::architecture::CrossStateEdge {
             from: Endpoint {
                 state: first,
-                address: "test.a".into(),
+                address: "aws_instance.a".into(),
             },
             to: Endpoint {
                 state: second,
-                address: "test.a".into(),
+                address: "aws_instance.a".into(),
             },
             provenance: crate::model::architecture::CrossStateProvenance::TerraformRemoteState {
                 remote: "data.terraform_remote_state.x".into(),

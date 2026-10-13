@@ -39,6 +39,143 @@ fn inside(inner: Bounds, outer: Bounds) -> bool {
 }
 
 #[test]
+fn singleton_regions_follow_displayed_spatial_resources_after_filtering() {
+    let mut input: serde_json::Value =
+        serde_json::from_str(include_str!("../../fixtures/multi/single-region.json")).unwrap();
+    input["configuration"]["provider_config"]["aws.other"] = serde_json::json!({
+        "full_name":"hashicorp/aws", "alias":"other", "expressions":{"region":{"constant_value":"us-east-1"}}
+    });
+    for (address, resource_type, provider, action) in [
+        (
+            "aws_s3_bucket.second",
+            "aws_s3_bucket",
+            "aws.archive",
+            "no-op",
+        ),
+        ("aws_s3_bucket.other", "aws_s3_bucket", "aws.other", "no-op"),
+        (
+            "aws_cloudwatch_log_group.other",
+            "aws_cloudwatch_log_group",
+            "aws.other",
+            "update",
+        ),
+    ] {
+        input["resource_changes"].as_array_mut().unwrap().push(serde_json::json!({"address":address,"type":resource_type,"change":{"actions":[action]}}));
+        input["configuration"]["root_module"]["resources"]
+            .as_array_mut()
+            .unwrap()
+            .push(serde_json::json!({"address":address,"provider_config_key":provider}));
+    }
+    let graph = semantic::transform(&plan::parse(&input.to_string()).unwrap());
+    let full = crate::view::single(&graph, &Default::default()).unwrap();
+    let full_layout = Layout::new(&full);
+    assert_eq!(full_layout.scopes.len(), 2);
+    for (region, count) in [("ap-northeast-1", 2), ("us-east-1", 1)] {
+        let panel = full_layout
+            .scopes
+            .iter()
+            .find(|panel| panel.scope.region.as_ref().unwrap().0 == region)
+            .unwrap();
+        assert_eq!(
+            full_layout
+                .bounds
+                .iter()
+                .filter(|bounds| bounds.width > 0 && inside(**bounds, panel.bounds))
+                .count(),
+            count
+        );
+    }
+    let filtered = crate::view::single(
+        &graph,
+        &crate::view::Options {
+            changed_only: true,
+            ..Default::default()
+        },
+    )
+    .unwrap();
+    let layout = Layout::new(&filtered);
+    assert_eq!(filtered.nodes.len(), 2);
+    assert_eq!(layout.scopes.len(), 1);
+    let panel = &layout.scopes[0];
+    assert_eq!(panel.scope.region.as_ref().unwrap().0, "ap-northeast-1");
+    assert_eq!(
+        layout
+            .bounds
+            .iter()
+            .filter(|bounds| bounds.width > 0 && inside(**bounds, panel.bounds))
+            .count(),
+        1
+    );
+    let original = full_layout
+        .scopes
+        .iter()
+        .find(|p| p.scope == panel.scope)
+        .unwrap();
+    assert!(
+        panel.bounds.width * panel.bounds.height < original.bounds.width * original.bounds.height
+    );
+
+    input["resource_changes"][0]["change"]["actions"] = serde_json::json!(["no-op"]);
+    let graph = semantic::transform(&plan::parse(&input.to_string()).unwrap());
+    let filtered = crate::view::single(
+        &graph,
+        &crate::view::Options {
+            changed_only: true,
+            ..Default::default()
+        },
+    )
+    .unwrap();
+    let layout = Layout::new(&filtered);
+    assert_eq!(filtered.nodes.len(), 1);
+    assert_eq!(
+        filtered.nodes[0].placement,
+        crate::model::Placement::Logical
+    );
+    assert!(layout.scopes.is_empty());
+    let mut unscoped = (*filtered).clone();
+    for node in &mut unscoped.nodes {
+        node.entity.scope = None;
+    }
+    let unscoped_layout = Layout::new(&unscoped);
+    assert_eq!(
+        (layout.width, layout.height),
+        (unscoped_layout.width, unscoped_layout.height)
+    );
+}
+
+#[test]
+fn a_single_region_encloses_one_resource_or_a_complete_nested_subtree() {
+    let raw = plan::parse(include_str!("../../fixtures/regions-plan.json")).unwrap();
+    let graph = semantic::transform(&raw);
+    for (focus, count) in [("aws_vpc.tokyo_second", 1), ("aws_instance.tokyo", 3)] {
+        let viewed = crate::view::single(
+            &graph,
+            &crate::view::Options {
+                focus: Some(focus.into()),
+                depth: Some(0),
+                ..Default::default()
+            },
+        )
+        .unwrap();
+        let layout = Layout::new(&viewed);
+        assert_eq!(viewed.nodes.len(), count);
+        assert_eq!(layout.scopes.len(), 1);
+        let panel = &layout.scopes[0];
+        assert_eq!(panel.scope.region.as_ref().unwrap().0, "ap-northeast-1");
+        assert!(
+            layout
+                .bounds
+                .iter()
+                .all(|bounds| inside(*bounds, panel.bounds))
+        );
+        assert_eq!(
+            layout.containment.parents.iter().flatten().count(),
+            count - 1
+        );
+    }
+}
+
+#[test]
 fn regions_preserve_containment_global_unknown_and_cross_region_routes() {
     let raw = plan::parse(include_str!("../../fixtures/regions-plan.json")).unwrap();
     let graph = semantic::transform(&raw);
