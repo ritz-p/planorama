@@ -1,4 +1,5 @@
 mod associations;
+mod autoscaling;
 mod classification;
 mod components;
 mod containment;
@@ -25,6 +26,7 @@ pub(super) fn reference_label(resource_type: &str, attribute: &str) -> &'static 
         ("aws_cloudwatch_metric_alarm", "dimensions" | "dimensions.DBInstanceIdentifier") => {
             "Monitors"
         }
+        ("aws_autoscaling_policy", "autoscaling_group_name") => "Auto Scaling group",
         _ => "References",
     }
 }
@@ -39,6 +41,7 @@ pub(super) fn placement(resource_type: &str) -> crate::model::Placement {
         | "aws_iam_instance_profile"
         | "aws_cloudwatch_log_group"
         | "aws_cloudwatch_metric_alarm"
+        | "aws_autoscaling_policy"
         | "aws_ami" => crate::model::Placement::Logical,
         _ if classify(resource_type) != crate::model::ResourceRole::Unknown => {
             crate::model::Placement::Spatial
@@ -57,6 +60,7 @@ pub(super) fn transform(raw: crate::semantic::Input) -> crate::model::Graph {
     let mut graph = security_groups::infer(&raw, containment::infer(&raw));
     routes::present(&raw, &mut graph);
     monitoring::present(&raw, &mut graph);
+    autoscaling::present(&raw, &mut graph);
     let contained = crate::semantic::Input { graph, ..raw };
     let mut graph = data::visible(associations::lower(&contained));
     graph.components = components::infer(&contained, &graph);
