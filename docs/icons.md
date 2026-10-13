@@ -40,7 +40,7 @@ for the bundled service families: `ec2`, `elb`, `elbv2`, `lambda`, `ecs`,
 `eks`, `rds`, `dynamodb`, `elasticache`, `opensearch`, `elasticsearch`,
 `s3`, `s3control`, `cloudfront`, `apigateway`, `apigatewayv2`, `iam`,
 `cloudwatch`, `logs` and `autoscaling`.
-The 133 additional exact mappings below cover the reviewed direct infrastructure
+The 134 additional exact mappings below cover the reviewed direct infrastructure
 objects and collection lookups. They reuse the 17 bundled official service icons;
 no icon asset is added or modified.
 
