@@ -72,7 +72,7 @@ Gateway and NAT Gateway. Matching standalone numbers appear near both child and
 target ports, alongside each child's `Next hop [N]` text and one Relationship
 Resources entry; routable children omit the `Target:` row. Canvas dimensions follow
 the current routing geometry.
-ECS Service lists its Cluster and Task definition; each EC2 worker links its AMI and Instance profile. Connections retain their endpoints and undirected dotted presentation.
+ECS Service lists its Cluster and Task definition; each EC2 worker links its AMI and Instance profile. The Auto Scaling Group links its verified Launch template logical resource. Connections retain their endpoints and undirected dotted presentation.
 
 The ECS Log Group reference comes from `tags.logs`, not a logging configuration,
 so it is labeled References. The alarm's dimensions reference the database, but
