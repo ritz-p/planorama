@@ -36,14 +36,26 @@ fn policies_are_logical_and_add_verified_asg_context_without_spatial_paths() {
         .filter(|node| node.resource_type == "aws_autoscaling_policy")
         .collect();
     assert_eq!(policies.len(), 2);
-    assert!(policies.iter().all(|node| node.placement == Placement::Logical));
-    assert!(policies.iter().all(|node| node.role == ResourceRole::Policy));
-    assert!(policies.iter().all(|node| node.references.iter().any(|reference| {
-        reference.label == "Auto Scaling group"
-            && reference.complete
-            && reference.targets.len() == 1
-            && reference.targets[0].id.address == "aws_autoscaling_group.app"
-    })));
+    assert!(
+        policies
+            .iter()
+            .all(|node| node.placement == Placement::Logical)
+    );
+    assert!(
+        policies
+            .iter()
+            .all(|node| node.role == ResourceRole::Policy)
+    );
+    assert!(
+        policies
+            .iter()
+            .all(|node| node.references.iter().any(|reference| {
+                reference.label == "Auto Scaling group"
+                    && reference.complete
+                    && reference.targets.len() == 1
+                    && reference.targets[0].id.address == "aws_autoscaling_group.app"
+            }))
+    );
 
     let group = graph
         .nodes
@@ -69,15 +81,16 @@ fn ambiguous_wrong_type_missing_and_cross_provider_targets_stay_conservative() {
         let mut value = input();
         match case {
             0 => {
-                value["configuration"]["root_module"]["resources"][0]["expressions"]
-                    ["autoscaling_group_name"]["references"] =
-                    json!(["aws_autoscaling_group.app.name", "aws_autoscaling_group.other.name"]);
+                value["configuration"]["root_module"]["resources"][0]["expressions"]["autoscaling_group_name"]
+                    ["references"] = json!([
+                    "aws_autoscaling_group.app.name",
+                    "aws_autoscaling_group.other.name"
+                ]);
             }
             1 => value["resource_changes"][0]["type"] = json!("aws_instance"),
             2 => {
-                value["configuration"]["root_module"]["resources"][0]["expressions"]
-                    ["autoscaling_group_name"]["references"] =
-                    json!(["aws_autoscaling_group.missing.name"]);
+                value["configuration"]["root_module"]["resources"][0]["expressions"]["autoscaling_group_name"]
+                    ["references"] = json!(["aws_autoscaling_group.missing.name"]);
             }
             3 => {
                 value["configuration"]["provider_config"] = json!({
@@ -139,9 +152,10 @@ fn filtering_keeps_unavailable_context_without_dangling_links() {
         assert!(output.contains("Unavailable"));
         let doc = roxmltree::Document::parse(&output).unwrap();
         for href in doc.descendants().filter_map(|node| node.attribute("href")) {
-            assert!(doc
-                .descendants()
-                .any(|node| node.attribute("id") == href.strip_prefix('#')));
+            assert!(
+                doc.descendants()
+                    .any(|node| node.attribute("id") == href.strip_prefix('#'))
+            );
         }
     }
 }
@@ -151,7 +165,10 @@ fn multiple_policies_remain_distinct_and_deterministic_when_input_reorders() {
     let value = input();
     let (_, first) = render(&value);
     let mut reversed = value;
-    reversed["resource_changes"].as_array_mut().unwrap().reverse();
+    reversed["resource_changes"]
+        .as_array_mut()
+        .unwrap()
+        .reverse();
     reversed["configuration"]["root_module"]["resources"]
         .as_array_mut()
         .unwrap()
@@ -159,7 +176,6 @@ fn multiple_policies_remain_distinct_and_deterministic_when_input_reorders() {
     let (_, second) = render(&reversed);
     assert_eq!(first, second);
 }
-
 
 #[test]
 fn dynamic_instance_selection_does_not_create_verified_inverse_context() {
@@ -206,7 +222,6 @@ fn dynamic_instance_selection_does_not_create_verified_inverse_context() {
         reference.attribute == "autoscaling_group_name" && !reference.complete
     }));
 }
-
 
 #[test]
 fn rejected_targets_are_reported_by_diagnostics() {
