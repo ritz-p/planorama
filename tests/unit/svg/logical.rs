@@ -1082,7 +1082,7 @@ fn launch_templates_are_logical_and_asg_usage_requires_complete_nested_reference
     ] {
         let node = graph.nodes.iter().find(|node| node.address == address).unwrap();
         assert_eq!(
-            node.entity.scope.as_ref().unwrap().region.as_ref().unwrap().as_str(),
+            node.entity.scope.as_ref().unwrap().region.as_ref().unwrap().0.as_str(),
             "us-east-1"
         );
     }
