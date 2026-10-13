@@ -6,6 +6,12 @@ semantics. Provider source and configuration identity are described in [models](
 
 ## Deployment scopes
 
+AWS account scope is resolved independently from region using literal provider
+role evidence; see [the exact evidence policy](models.md). State IDs and provider
+aliases are not accounts. Logical-resource scope labels include a known
+`AWS Account: <12-digit ID>`; generated SVG/HTML therefore expose that deployment
+identifier. Role ARNs and credential-related provider values are not retained.
+
 Known static provider regions automatically group explicitly supported regional
 resources into background panels (see [regions.svg](../examples/regions.svg)).
 One displayed spatial resource is sufficient, including when the state has only

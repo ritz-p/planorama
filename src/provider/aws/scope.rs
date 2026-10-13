@@ -13,6 +13,10 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
                 | "aws_route53_traffic_policy"
                 | "aws_route53_traffic_policy_instance"
         );
+    let account = entity
+        .provider_configuration
+        .as_ref()
+        .and_then(|c| c.account.clone());
     let region = if global {
         None
     } else if matches!(
@@ -65,14 +69,23 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
             | "aws_cloudwatch_metric_alarm"
     ) {
         if entity.has_region_override {
-            return None;
+            None
+        } else {
+            entity
+                .provider_configuration
+                .as_ref()
+                .and_then(|c| c.region.clone())
         }
-        Some(entity.provider_configuration.as_ref()?.region.clone()?)
     } else {
-        return None;
+        None
     };
+    if !global && region.is_none() && account.is_none() {
+        return None;
+    }
     Some(DeploymentScope {
         provider: "AWS".into(),
         region,
+        account,
+        global,
     })
 }

@@ -16,7 +16,11 @@ pub(super) fn pack(
     let protected = super::containers::affinity::protected_roots(graph, &tree.parents);
     let mut groups: BTreeMap<Option<DeploymentScope>, Vec<usize>> = BTreeMap::new();
     for &root in &tree.roots {
-        let scope = graph.nodes[root].entity.scope.as_ref();
+        let scope = graph.nodes[root]
+            .entity
+            .scope
+            .as_ref()
+            .filter(|scope| scope.global || scope.region.is_some());
         let mut pending = vec![root];
         let mut consistent = true;
         while let Some(node) = pending.pop() {

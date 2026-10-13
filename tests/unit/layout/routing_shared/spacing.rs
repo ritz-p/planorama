@@ -216,6 +216,8 @@ fn protected_border_paths_keep_geometry_and_the_residual_measurable() {
         scope: crate::model::architecture::DeploymentScope {
             provider: "test".into(),
             region: None,
+            account: None,
+            global: true,
         },
         bounds: Bounds {
             origin: Point { x: 0, y: 0 },
@@ -780,6 +782,8 @@ fn failed_reroute_rolls_back_geometry_scopes_bands_and_protected_junctions() {
         scope: crate::model::architecture::DeploymentScope {
             provider: "test".into(),
             region: None,
+            account: None,
+            global: true,
         },
         bounds: Bounds {
             origin: Point { x: 0, y: 0 },
