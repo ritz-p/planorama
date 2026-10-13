@@ -7,6 +7,9 @@ pub fn collect(plan: &crate::model::TerraformPlan) -> Vec<Diagnostic> {
     let raw = &input;
     let mut found = BTreeSet::new();
     for (index, node) in raw.nodes.iter().enumerate() {
+        if let Some(diagnostic) = super::autoscaling::diagnostic(raw, index) {
+            found.insert(diagnostic);
+        }
         if node.provider.is_aws()
             && node.resource_type == "aws_cloudwatch_metric_alarm"
             && node.deposed_key.is_none()
