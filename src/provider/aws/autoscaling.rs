@@ -1,5 +1,5 @@
 use crate::model::{
-    DiagnosticReason, EntityMode, Graph, ReferenceTarget, ResourceReference,
+    Diagnostic, DiagnosticReason as Reason, EntityMode, Graph, ReferenceTarget, ResourceReference,
 };
 use crate::semantic::Input;
 
@@ -7,7 +7,67 @@ use crate::semantic::Input;
 #[path = "../../../tests/unit/semantic/autoscaling.rs"]
 mod tests;
 
-const ATTRIBUTE: &str = "autoscaling_group_name";
+pub(super) const ATTRIBUTE: &str = "autoscaling_group_name";
+
+pub(super) fn target(raw: &Input, index: usize) -> Result<usize, Reason> {
+    let policy = &raw.nodes[index];
+    let reference = raw
+        .attributes
+        .iter()
+        .find(|reference| reference.target == index && reference.attribute == ATTRIBUTE)
+        .ok_or(Reason::MissingAttribute)?;
+
+    if reference
+        .issues
+        .contains(&Reason::DynamicInstanceSelection)
+    {
+        return Err(Reason::DynamicInstanceSelection);
+    }
+    if !reference.complete {
+        return Err(if reference.sources.is_empty() {
+            Reason::NoResourceReference
+        } else {
+            Reason::PartialResourceProvenance
+        });
+    }
+    if reference.sources.len() != 1 {
+        return Err(Reason::MultipleMatchingInstances);
+    }
+    if !reference.scalar_name_matches {
+        return Err(Reason::UnprovenEndpointValue);
+    }
+
+    let source = reference.sources[0];
+    let group = &raw.nodes[source];
+    if source == index
+        || !group.provider.is_aws()
+        || group.resource_type != "aws_autoscaling_group"
+        || group.mode != EntityMode::Managed
+        || group.provider_configuration != policy.provider_configuration
+    {
+        return Err(Reason::EndpointTypeMismatch);
+    }
+    if group.deposed_key.is_some() {
+        return Err(Reason::DeposedEndpoint);
+    }
+    Ok(source)
+}
+
+pub(super) fn diagnostic(raw: &Input, index: usize) -> Option<Diagnostic> {
+    let policy = &raw.nodes[index];
+    if !policy.provider.is_aws()
+        || policy.resource_type != "aws_autoscaling_policy"
+        || policy.mode != EntityMode::Managed
+        || policy.deposed_key.is_some()
+    {
+        return None;
+    }
+    target(raw, index).err().map(|reason| Diagnostic {
+        address: policy.address.clone(),
+        attribute: ATTRIBUTE.into(),
+        reason,
+    })
+}
 
 pub(super) fn present(raw: &Input, graph: &mut Graph) {
     for (index, policy) in raw.nodes.iter().enumerate() {
@@ -19,30 +79,7 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             continue;
         }
 
-        let source = raw
-            .attributes
-            .iter()
-            .find(|reference| reference.target == index && reference.attribute == ATTRIBUTE)
-            .and_then(|reference| {
-                if !reference.complete
-                    || reference.sources.len() != 1
-                    || reference
-                        .issues
-                        .contains(&DiagnosticReason::DynamicInstanceSelection)
-                {
-                    return None;
-                }
-                let source = reference.sources[0];
-                let group = &raw.nodes[source];
-                (source != index
-                    && group.provider.is_aws()
-                    && group.resource_type == "aws_autoscaling_group"
-                    && group.mode == EntityMode::Managed
-                    && group.deposed_key.is_none()
-                    && group.provider_configuration == policy.provider_configuration)
-                    .then_some(source)
-            });
-
+        let source = target(raw, index).ok();
         for reference in graph.nodes[index]
             .references
             .iter_mut()
