@@ -19,6 +19,102 @@ fn input() -> serde_json::Value {
     ]}}})
 }
 
+#[test]
+fn scope_labels_preserve_rows_measurements_and_html_metadata() {
+    let input = include_str!("../../fixtures/logical-regions-plan.json");
+    let graph = semantic::transform(&plan::parse(input).unwrap());
+    let original = graph.clone();
+    for options in [
+        view::Options::default(),
+        view::Options {
+            changed_only: true,
+            ..Default::default()
+        },
+        view::Options {
+            focus: Some("aws_cloudwatch_log_group.virginia".into()),
+            depth: Some(0),
+            ..Default::default()
+        },
+    ] {
+        let selected = view::single(&graph, &options).unwrap();
+        let layout = Layout::new(&selected);
+        let svg = svg::render(&selected, &layout);
+        let html = crate::html::render(&selected, &layout, svg::AddressFormat::Qualified);
+        let doc = roxmltree::Document::parse(&svg).unwrap();
+        for node in &selected.nodes {
+            let row = doc
+                .descendants()
+                .find(|n| n.attribute("id") == Some(svg::identity::resource(node).as_str()))
+                .unwrap();
+            let expected = if node.deposed_key.is_some() {
+                "Region unknown"
+            } else {
+                match node.address.as_str() {
+                    "aws_cloudwatch_log_group.tokyo" => "Region: ap-northeast-1",
+                    "aws_cloudwatch_log_group.virginia"
+                    | "data.aws_cloudwatch_log_group.lookup" => "Region: us-east-1",
+                    "aws_iam_policy.access" => "AWS Global",
+                    _ => "Region unknown",
+                }
+            };
+            assert_eq!(
+                row.children()
+                    .filter(|n| n.has_tag_name("text") && n.text() == Some(expected))
+                    .count(),
+                1
+            );
+            assert_logical_row(row, node.action);
+            assert!(html.contains(expected));
+            assert!(html.contains(&format!("id=\"{}\"", svg::identity::resource(node))));
+            let next = row.next_sibling_element();
+            if let Some(next) = next {
+                assert!(row_y(row) + number(underline(row), "y1") < row_y(next));
+            }
+        }
+        assert!(!svg.contains("PRIVATE_") && !html.contains("PRIVATE_"));
+        assert!(!svg.contains("eu-west-3") && !html.contains("eu-west-3"));
+        assert!(layout.paths.is_empty());
+        if !options.changed_only && options.focus.is_none() {
+            assert_eq!(super::group_count(&selected), 3);
+            assert_eq!(selected.nodes.len(), 7);
+        }
+    }
+    assert_eq!(graph, original);
+}
+
+#[test]
+fn scope_presentation_distinguishes_inapplicable_unknown_and_generic_global() {
+    use crate::model::{ProviderIdentity, architecture::DeploymentScope};
+    use crate::view::scope::label;
+    for provider in [
+        ProviderIdentity::InferredAws,
+        ProviderIdentity::Unknown,
+        ProviderIdentity::from_source("unknown"),
+        ProviderIdentity::from_source(""),
+    ] {
+        assert_eq!(label(None, &provider), "Region unknown");
+    }
+    let foreign = ProviderIdentity::from_source("example.com/custom/aws");
+    assert_eq!(label(None, &foreign), "Region: not applicable");
+    assert_eq!(
+        label(
+            Some(&DeploymentScope {
+                provider: "Example".into(),
+                region: None
+            }),
+            &foreign
+        ),
+        "Example Global"
+    );
+    let mut graph = semantic::transform(&plan::parse(&input().to_string()).unwrap());
+    let node = &mut graph.0.nodes[0];
+    node.placement = Placement::Logical;
+    node.provider = foreign;
+    node.entity.scope = None;
+    let output = svg::render(&graph, &Layout::new(&graph));
+    assert!(output.contains(">Region: not applicable</text>"));
+}
+
 fn number(node: roxmltree::Node, attribute: &str) -> usize {
     node.attribute(attribute).unwrap().parse().unwrap()
 }

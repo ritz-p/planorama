@@ -24,6 +24,18 @@ deployment scopes. Unsupported resource types, cross-region peering resources an
 unknown regions stay outside panels. No aliases, names, tags, ARNs or IDs supply
 region information.
 
+Each Logical Resources row displays its own `Region: <region>`, `AWS Global`,
+or `Region unknown` label in SVG and HTML. Equal type/mode resources from different
+regions stay in one group without a shared region claim. See the maintained
+[logical-region example](../examples/logical-regions.svg), generated from
+[this fixture](../tests/fixtures/logical-regions-plan.json).
+An explicit resource-level `region` expression currently makes regional scope
+unknown, even when literal: overrides are not yet resolved. The provider's region
+and binding remain intact. Missing/dynamic bindings, unsupported types and deposed
+objects without regional evidence also remain unknown. Global classification is
+explicit and independent of provider region; policy conditions such as
+`aws:RequestedRegion` never determine deployment scope.
+
 A containment subtree is grouped only when all members have the same known scope.
 Conflicting or unknown members leave the whole subtree outside panels, preserving
 containment without suggesting a guessed region. Plans without a groupable regional

@@ -1,6 +1,64 @@
 use super::render;
 
 #[test]
+fn logical_regions_keep_separate_state_ids_in_svg_and_html() {
+    let path = format!(
+        "{}/tests/fixtures/logical-regions-plan.json",
+        env!("CARGO_MANIFEST_DIR")
+    );
+    for format in ["svg", "html"] {
+        let output = std::process::Command::new(env!("CARGO_BIN_EXE_planorama"))
+            .args([
+                "--state",
+                &format!("first={path}"),
+                "--state",
+                &format!("second={path}"),
+                "--format",
+                format,
+                "-o",
+                "-",
+            ])
+            .output()
+            .unwrap();
+        assert!(output.status.success());
+        let text = String::from_utf8(output.stdout).unwrap();
+        let start = text.find("<svg").unwrap();
+        let end = text.rfind("</svg>").unwrap() + 6;
+        let doc = roxmltree::Document::parse(&text[start..end]).unwrap();
+        let mut ids = std::collections::BTreeSet::new();
+        for state in ["first", "second"] {
+            let section = doc
+                .descendants()
+                .find(|n| n.attribute("data-state-id") == Some(state))
+                .unwrap();
+            let rows: Vec<_> = section
+                .descendants()
+                .filter(|n| n.attribute("data-placement") == Some("logical"))
+                .collect();
+            assert_eq!(rows.len(), 7);
+            assert_eq!(
+                section
+                    .descendants()
+                    .filter(|n| n.attribute("data-logical-group").is_some())
+                    .count(),
+                3
+            );
+            for row in rows {
+                assert!(ids.insert(row.attribute("id").unwrap()));
+                assert!(row.children().any(|n| {
+                    n.has_tag_name("text")
+                        && n.text()
+                            .is_some_and(|t| t.starts_with("Region") || t == "AWS Global")
+                }));
+            }
+            assert_eq!(section.descendants().filter(|n| n.has_tag_name("text") && n.text() == Some("Region: ap-northeast-1")).count(), 1);
+        }
+        assert_eq!(ids.len(), 14);
+        assert!(!text.contains("PRIVATE_") && !text.contains("eu-west-3"));
+    }
+}
+
+#[test]
 fn region_panels_are_deterministic_and_resources_are_not_duplicated() {
     let mut input: serde_json::Value =
         serde_json::from_str(include_str!("../fixtures/regions-plan.json")).unwrap();

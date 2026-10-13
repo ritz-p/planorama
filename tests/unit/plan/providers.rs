@@ -27,6 +27,40 @@ fn fixture() -> Value {
 }
 
 #[test]
+fn resource_region_overrides_do_not_inherit_provider_scope_or_change_binding() {
+    for expression in [
+        json!({"constant_value":"eu-west-3"}),
+        json!({"references":["var.region"]}),
+        Value::Null,
+    ] {
+        let mut value = fixture();
+        value["configuration"]["root_module"]["resources"][1]["expressions"]["region"] = expression;
+        let raw = plan::parse(&value.to_string()).unwrap();
+        let graph = semantic::transform(&raw);
+        let node = raw
+            .nodes
+            .iter()
+            .find(|n| n.address == "aws_vpc.tokyo")
+            .unwrap();
+        assert!(node.has_region_override);
+        let binding = node.provider_configuration.as_ref().unwrap();
+        assert_eq!(binding.key, "aws.tokyo");
+        assert_eq!(binding.region.as_ref().unwrap().0, "ap-northeast-1");
+        assert!(
+            graph
+                .nodes
+                .iter()
+                .find(|n| n.address == node.address)
+                .unwrap()
+                .entity
+                .scope
+                .is_none()
+        );
+        assert!(!format!("{raw:?}{graph:?}").contains("eu-west-3"));
+    }
+}
+
+#[test]
 fn static_regions_follow_exact_bindings_and_survive_projection() {
     let mut value = fixture();
     for (key, region) in [

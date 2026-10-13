@@ -14,6 +14,8 @@ planorama plan.json --format html -o - > diagram.html
 The default remains SVG and `diagram.svg`. HTML defaults to `diagram.html`;
 `-o` sets the destination, not the format. Existing address formatting, focus,
 changed-only selection, remote-state mappings and diagnostics work in both modes.
+Logical Resources rows show the same per-resource deployment-scope labels in both
+formats; see [scope evidence and limitations](aws.md#deployment-scopes).
 
 Search matches the complete native and qualified address, architecture identity,
 module, state, resource type, managed/data mode and deposed key. Space-separated
