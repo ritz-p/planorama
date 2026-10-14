@@ -17,13 +17,18 @@ pub(super) fn enrich(configuration: &Value, nodes: &mut [TerraformEntity]) {
         &mut resources,
     );
     for node in nodes.iter_mut().filter(|node| node.deposed_key.is_none()) {
-        if let Some((provider, configuration)) = resources.get(&static_address(&node.address)) {
+        if let Some((provider, configuration, has_region_override)) =
+            resources.get(&static_address(&node.address))
+        {
+            node.has_region_override = *has_region_override;
             if !node.provider.is_explicit() {
                 node.provider = provider.clone();
             }
             let mut configuration = configuration.clone();
             if !node.provider.is_aws() {
                 configuration.region = None;
+                configuration.account = None;
+                configuration.account_conflict = false;
             }
             node.provider_configuration = Some(configuration);
         }
@@ -34,7 +39,7 @@ fn collect(
     module: &Value,
     scope: &str,
     providers: &Value,
-    found: &mut BTreeMap<String, (ProviderIdentity, ProviderConfiguration)>,
+    found: &mut BTreeMap<String, (ProviderIdentity, ProviderConfiguration, bool)>,
 ) {
     for resource in module["resources"].as_array().into_iter().flatten() {
         if let (Some(address), Some(key)) = (
@@ -45,12 +50,23 @@ fn collect(
                 .as_str()
                 .map(ProviderIdentity::from_source)
                 .unwrap_or_else(|| ProviderIdentity::from_source("unknown"));
+            let (account, account_conflict) =
+                static_account(&provider, &providers[key]["expressions"]);
             let configuration = ProviderConfiguration {
                 key: key.into(),
                 alias: providers[key]["alias"].as_str().map(str::to_owned),
                 region: static_region(&provider, &providers[key]["expressions"]["region"]),
+                account,
+                account_conflict,
             };
-            found.insert(qualify(scope, address), (provider, configuration));
+            found.insert(
+                qualify(scope, address),
+                (
+                    provider,
+                    configuration,
+                    resource["expressions"].get("region").is_some(),
+                ),
+            );
         }
     }
     if let Some(calls) = module["module_calls"].as_object() {
@@ -63,6 +79,68 @@ fn collect(
             );
         }
     }
+}
+
+fn static_account(
+    provider: &ProviderIdentity,
+    expressions: &Value,
+) -> (Option<crate::model::AwsAccountScope>, bool) {
+    if !provider.is_aws() {
+        return (None, false);
+    }
+    let mut accounts = std::collections::BTreeSet::new();
+    let mut incomplete = false;
+    for name in ["assume_role", "assume_role_with_web_identity"] {
+        let Some(value) = expressions.get(name) else {
+            continue;
+        };
+        let Some(blocks) = value.as_array() else {
+            return (None, false);
+        };
+        for block in blocks {
+            let expression = &block["role_arn"];
+            let account = expression
+                .get("references")
+                .is_none()
+                .then(|| expression["constant_value"].as_str().and_then(role_account))
+                .flatten();
+            if let Some(account) = account {
+                accounts.insert(account);
+            } else {
+                incomplete = true;
+            }
+        }
+    }
+    let conflict = accounts.len() > 1;
+    if incomplete || conflict {
+        (None, conflict)
+    } else {
+        (accounts.pop_first(), false)
+    }
+}
+
+fn role_account(arn: &str) -> Option<crate::model::AwsAccountScope> {
+    let parts: Vec<_> = arn.splitn(6, ':').collect();
+    if parts.len() != 6
+        || parts[0] != "arn"
+        || parts[1] != "aws"
+        || parts[2] != "iam"
+        || !parts[3].is_empty()
+    {
+        return None;
+    }
+    let role = parts[5].strip_prefix("role/")?;
+    let name = role.rsplit('/').next()?;
+    if name.is_empty()
+        || name.len() > 64
+        || !name
+            .bytes()
+            .all(|b| b.is_ascii_alphanumeric() || b"_+=,.@-".contains(&b))
+        || !role.bytes().all(|b| (0x21..=0x7e).contains(&b))
+    {
+        return None;
+    }
+    crate::model::AwsAccountScope::new(parts[4])
 }
 
 fn static_region(provider: &ProviderIdentity, expression: &Value) -> Option<RegionScope> {

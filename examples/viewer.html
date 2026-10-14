@@ -48,7 +48,7 @@ p { line-height: 1.5; }
 <section id="selection" aria-label="Selection details" aria-live="polite"></section>
 </aside>
 <section id="viewport" tabindex="0" aria-label="Diagram. Arrow keys pan; plus and minus zoom; F fits the view; Escape clears selection.">
-<svg xmlns="http://www.w3.org/2000/svg" width="1040" height="2042" viewBox="0 0 1040 2042" role="img" aria-labelledby="title description">
+<svg xmlns="http://www.w3.org/2000/svg" width="1040" height="2102" viewBox="0 0 1040 2102" role="img" aria-labelledby="title description">
 <title id="title">Terraform plan</title>
 <desc id="description">8 resources (3 spatial cards, 5 logical resources in 4 group cards) · 4 relationships Thin solid: dependency. Dashed: association. Thick dotted: connection. Nested boxes: containment. Edge color preserves the Terraform action when available.</desc>
 <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/></marker><metadata id="planorama-icons-license">AWS Architecture Icons, release 07312026.
@@ -174,48 +174,53 @@ No AWS endorsement is implied. Consult the AWS terms for other uses.
 </g>
 <g transform="translate(0 558)">
 <g data-annotation-area="true">
-<g data-annotation-card="true" transform="translate(40 160)"><rect width="960" height="596" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-annotation-section="Logical Resources"><rect width="960" height="596" rx="12" fill="#ecfeff" stroke="#0891b2"/><text x="16" y="28" font-size="15" font-weight="700" fill="#0e7490">Logical Resources</text><g data-annotation-card="true" transform="translate(16 48)"><rect width="360" height="174" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-logical-group="true" data-provider-source="registry.terraform.io/hashicorp/aws" data-resource-type="aws_ecs_cluster" data-mode="managed"><title>aws_ecs_cluster · managed — registry.terraform.io/hashicorp/aws</title><text x="16" y="28" font-size="13" font-weight="700" fill="#0e7490">aws_ecs_cluster · managed</text>
+<g data-annotation-card="true" transform="translate(40 160)"><rect width="960" height="656" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-annotation-section="Logical Resources"><rect width="960" height="656" rx="12" fill="#ecfeff" stroke="#0891b2"/><text x="16" y="28" font-size="15" font-weight="700" fill="#0e7490">Logical Resources</text><g data-annotation-card="true" transform="translate(16 48)"><rect width="360" height="194" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-logical-group="true" data-provider-source="registry.terraform.io/hashicorp/aws" data-resource-type="aws_ecs_cluster" data-mode="managed"><title>aws_ecs_cluster · managed — registry.terraform.io/hashicorp/aws</title><text x="16" y="28" font-size="13" font-weight="700" fill="#0e7490">aws_ecs_cluster · managed</text>
 <text x="16" y="48" font-size="11" fill="#64748b">registry.terraform.io/hashicorp/aws</text>
 <g id="resource-6177735f6563735f636c75737465722e617070-current" data-architecture-id="terraform:6177735f6563735f636c75737465722e617070-current" data-entity-kind="terraform" data-placement="logical" data-terraform-address="aws_ecs_cluster.app" data-qualified-address="module.root.aws_ecs_cluster.app" data-mode="managed" transform="translate(0 66)" data-role="controller"><title>module.root.aws_ecs_cluster.app — unchanged</title><use href="#planorama-icon-aws-ecs" x="320" y="8" width="24" height="24" aria-hidden="true"/><text x="16" y="28" font-size="12" fill="#334155" xml:space="preserve" font-weight="700">module.root.aws_ecs_cluster.app</text>
 <text x="16" y="48" font-size="12" fill="#334155" xml:space="preserve">unchanged</text>
-<text x="16" y="68" font-size="12" fill="#334155" xml:space="preserve">controller</text>
-<line data-resource-underline="true" x1="16" y1="76" x2="344" y2="76" stroke="#64748b" stroke-width="2"/></g>
+<text x="16" y="68" font-size="12" fill="#334155" xml:space="preserve">Region: unknown</text>
+<text x="16" y="88" font-size="12" fill="#334155" xml:space="preserve">controller</text>
+<line data-resource-underline="true" x1="16" y1="96" x2="344" y2="96" stroke="#64748b" stroke-width="2"/></g>
 </g>
 </g>
-<g data-annotation-card="true" transform="translate(396 48)"><rect width="408" height="246" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-logical-group="true" data-provider-source="registry.terraform.io/hashicorp/aws" data-resource-type="aws_ecs_task_definition" data-mode="managed"><title>aws_ecs_task_definition · managed — registry.terraform.io/hashicorp/aws</title><text x="16" y="28" font-size="13" font-weight="700" fill="#0e7490">aws_ecs_task_definition · managed</text>
+<g data-annotation-card="true" transform="translate(396 48)"><rect width="408" height="266" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-logical-group="true" data-provider-source="registry.terraform.io/hashicorp/aws" data-resource-type="aws_ecs_task_definition" data-mode="managed"><title>aws_ecs_task_definition · managed — registry.terraform.io/hashicorp/aws</title><text x="16" y="28" font-size="13" font-weight="700" fill="#0e7490">aws_ecs_task_definition · managed</text>
 <text x="16" y="48" font-size="11" fill="#64748b">registry.terraform.io/hashicorp/aws</text>
 <g id="resource-6177735f6563735f7461736b5f646566696e6974696f6e2e617070-current" data-architecture-id="terraform:6177735f6563735f7461736b5f646566696e6974696f6e2e617070-current" data-entity-kind="terraform" data-placement="logical" data-terraform-address="aws_ecs_task_definition.app" data-qualified-address="module.root.aws_ecs_task_definition.app" data-mode="managed" transform="translate(0 66)" data-role="controller"><title>module.root.aws_ecs_task_definition.app — create</title><use href="#planorama-icon-aws-ecs" x="368" y="8" width="24" height="24" aria-hidden="true"/><text x="16" y="28" font-size="12" fill="#334155" xml:space="preserve" font-weight="700">module.root.aws_ecs_task_definition.app</text>
 <text x="16" y="48" font-size="12" fill="#334155" xml:space="preserve">create</text>
-<text x="16" y="68" font-size="12" fill="#334155" xml:space="preserve">controller</text>
+<text x="16" y="68" font-size="12" fill="#334155" xml:space="preserve">Region: unknown</text>
+<text x="16" y="88" font-size="12" fill="#334155" xml:space="preserve">controller</text>
 <g data-resource-references="true"><title>Execution role: aws_iam_role.app [execution_role_arn; direct attribute reference]
-Task role: unresolved [task_role_arn; unresolved attribute reference]</title><text x="16" y="96" font-size="11" font-weight="700" fill="#475569">Uses</text><a href="#resource-6177735f69616d5f726f6c652e617070-current" data-reference-attribute="execution_role_arn"><title>Execution role: aws_iam_role.app [execution_role_arn; direct attribute reference]</title><text x="16" y="114" font-size="11" fill="#334155" xml:space="preserve">Execution role: aws_iam_role.app</text>
-</a><g data-reference-status="unresolved"><title>Task role: unresolved [task_role_arn; unresolved attribute reference]</title><text x="16" y="132" font-size="11" fill="#334155" xml:space="preserve">Task role: unresolved</text>
+Task role: unresolved [task_role_arn; unresolved attribute reference]</title><text x="16" y="116" font-size="11" font-weight="700" fill="#475569">Uses</text><a href="#resource-6177735f69616d5f726f6c652e617070-current" data-reference-attribute="execution_role_arn"><title>Execution role: aws_iam_role.app [execution_role_arn; direct attribute reference]</title><text x="16" y="134" font-size="11" fill="#334155" xml:space="preserve">Execution role: aws_iam_role.app</text>
+</a><g data-reference-status="unresolved"><title>Task role: unresolved [task_role_arn; unresolved attribute reference]</title><text x="16" y="152" font-size="11" fill="#334155" xml:space="preserve">Task role: unresolved</text>
 </g></g>
-<line data-resource-underline="true" x1="16" y1="148" x2="392" y2="148" stroke="#047857" stroke-width="2"/></g>
+<line data-resource-underline="true" x1="16" y1="168" x2="392" y2="168" stroke="#047857" stroke-width="2"/></g>
 </g>
 </g>
-<g data-annotation-card="true" transform="translate(16 314)"><rect width="360" height="174" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-logical-group="true" data-provider-source="registry.terraform.io/hashicorp/aws" data-resource-type="aws_iam_role" data-mode="data"><title>aws_iam_role · data / external — registry.terraform.io/hashicorp/aws</title><text x="16" y="28" font-size="13" font-weight="700" fill="#0e7490">aws_iam_role · data / external</text>
+<g data-annotation-card="true" transform="translate(16 334)"><rect width="360" height="194" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-logical-group="true" data-provider-source="registry.terraform.io/hashicorp/aws" data-resource-type="aws_iam_role" data-mode="data"><title>aws_iam_role · data / external — registry.terraform.io/hashicorp/aws</title><text x="16" y="28" font-size="13" font-weight="700" fill="#0e7490">aws_iam_role · data / external</text>
 <text x="16" y="48" font-size="11" fill="#64748b">registry.terraform.io/hashicorp/aws</text>
 <g id="resource-646174612e6177735f69616d5f726f6c652e617070-current" data-architecture-id="terraform:646174612e6177735f69616d5f726f6c652e617070-current" data-entity-kind="terraform" data-placement="logical" data-terraform-address="data.aws_iam_role.app" data-qualified-address="module.root.data.aws_iam_role.app" data-mode="data" transform="translate(0 66)" data-role="policy" data-external="true"><title>module.root.data.aws_iam_role.app — read</title><use href="#planorama-icon-aws-iam" x="320" y="8" width="24" height="24" aria-hidden="true"/><text x="16" y="28" font-size="12" fill="#334155" xml:space="preserve" font-weight="700">module.root.data.aws_iam_role.app</text>
 <text x="16" y="48" font-size="12" fill="#334155" xml:space="preserve">read</text>
-<text x="16" y="68" font-size="12" fill="#334155" xml:space="preserve">policy</text>
-<line data-resource-underline="true" x1="16" y1="76" x2="344" y2="76" stroke="#7e22ce" stroke-width="2" stroke-dasharray="6 4"/></g>
+<text x="16" y="68" font-size="12" fill="#334155" xml:space="preserve">AWS Global</text>
+<text x="16" y="88" font-size="12" fill="#334155" xml:space="preserve">policy</text>
+<line data-resource-underline="true" x1="16" y1="96" x2="344" y2="96" stroke="#7e22ce" stroke-width="2" stroke-dasharray="6 4"/></g>
 </g>
 </g>
-<g data-annotation-card="true" transform="translate(396 314)"><rect width="360" height="266" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-logical-group="true" data-provider-source="registry.terraform.io/hashicorp/aws" data-resource-type="aws_iam_role" data-mode="managed"><title>aws_iam_role · managed — registry.terraform.io/hashicorp/aws</title><text x="16" y="28" font-size="13" font-weight="700" fill="#0e7490">aws_iam_role · managed</text>
+<g data-annotation-card="true" transform="translate(396 334)"><rect width="360" height="306" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-logical-group="true" data-provider-source="registry.terraform.io/hashicorp/aws" data-resource-type="aws_iam_role" data-mode="managed"><title>aws_iam_role · managed — registry.terraform.io/hashicorp/aws</title><text x="16" y="28" font-size="13" font-weight="700" fill="#0e7490">aws_iam_role · managed</text>
 <text x="16" y="48" font-size="11" fill="#64748b">registry.terraform.io/hashicorp/aws</text>
 <g id="resource-6177735f69616d5f726f6c652e617070-current" data-architecture-id="terraform:6177735f69616d5f726f6c652e617070-current" data-entity-kind="terraform" data-placement="logical" data-terraform-address="aws_iam_role.app" data-qualified-address="module.root.aws_iam_role.app" data-mode="managed" transform="translate(0 66)" data-role="policy"><title>module.root.aws_iam_role.app — create</title><use href="#planorama-icon-aws-iam" x="320" y="8" width="24" height="24" aria-hidden="true"/><text x="16" y="28" font-size="12" fill="#334155" xml:space="preserve" font-weight="700">module.root.aws_iam_role.app</text>
 <text x="16" y="48" font-size="12" fill="#334155" xml:space="preserve">create</text>
-<text x="16" y="68" font-size="12" fill="#334155" xml:space="preserve">policy</text>
-<line data-resource-underline="true" x1="16" y1="76" x2="344" y2="76" stroke="#047857" stroke-width="2"/></g>
-<g id="resource-6d6f64756c652e776f726b65722e6177735f69616d5f726f6c652e617070-current" data-architecture-id="terraform:6d6f64756c652e776f726b65722e6177735f69616d5f726f6c652e617070-current" data-entity-kind="terraform" data-placement="logical" data-terraform-address="module.worker.aws_iam_role.app" data-qualified-address="module.worker.aws_iam_role.app" data-mode="managed" transform="translate(0 158)" data-role="policy"><title>module.worker.aws_iam_role.app — unchanged</title><use href="#planorama-icon-aws-iam" x="320" y="8" width="24" height="24" aria-hidden="true"/><text x="16" y="28" font-size="12" fill="#334155" xml:space="preserve" font-weight="700">module.worker.aws_iam_role.app</text>
+<text x="16" y="68" font-size="12" fill="#334155" xml:space="preserve">AWS Global</text>
+<text x="16" y="88" font-size="12" fill="#334155" xml:space="preserve">policy</text>
+<line data-resource-underline="true" x1="16" y1="96" x2="344" y2="96" stroke="#047857" stroke-width="2"/></g>
+<g id="resource-6d6f64756c652e776f726b65722e6177735f69616d5f726f6c652e617070-current" data-architecture-id="terraform:6d6f64756c652e776f726b65722e6177735f69616d5f726f6c652e617070-current" data-entity-kind="terraform" data-placement="logical" data-terraform-address="module.worker.aws_iam_role.app" data-qualified-address="module.worker.aws_iam_role.app" data-mode="managed" transform="translate(0 178)" data-role="policy"><title>module.worker.aws_iam_role.app — unchanged</title><use href="#planorama-icon-aws-iam" x="320" y="8" width="24" height="24" aria-hidden="true"/><text x="16" y="28" font-size="12" fill="#334155" xml:space="preserve" font-weight="700">module.worker.aws_iam_role.app</text>
 <text x="16" y="48" font-size="12" fill="#334155" xml:space="preserve">unchanged</text>
-<text x="16" y="68" font-size="12" fill="#334155" xml:space="preserve">policy</text>
-<line data-resource-underline="true" x1="16" y1="76" x2="344" y2="76" stroke="#64748b" stroke-width="2"/></g>
+<text x="16" y="68" font-size="12" fill="#334155" xml:space="preserve">AWS Global</text>
+<text x="16" y="88" font-size="12" fill="#334155" xml:space="preserve">policy</text>
+<line data-resource-underline="true" x1="16" y1="96" x2="344" y2="96" stroke="#64748b" stroke-width="2"/></g>
 </g>
 </g>
 </g></g>
-<g data-annotation-card="true" transform="translate(40 776)"><rect width="960" height="216" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-annotation-section="Logical Components"><rect width="960" height="216" rx="12" fill="#f5f3ff" stroke="#a78bfa"/><text x="16" y="28" font-size="15" font-weight="700" fill="#6d28d9">Logical Components</text><g data-annotation-card="true" transform="translate(16 48)"><rect width="360" height="152" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g id="architecture-73796e7468657469633a36633666363136343566363236313663363136653633363537322d3631373737333566366336323265363137303730" data-architecture-id="synthetic:6c6f61645f62616c616e636572-6177735f6c622e617070" data-entity-kind="synthetic" data-component-id="logical:load_balancer:aws_lb.app" data-component-kind="load_balancer"><title>Load balancer: aws_lb.app</title><text x="16" y="28" font-size="13" font-weight="700" fill="#5b21b6">Load balancer: aws_lb.app</text>
+<g data-annotation-card="true" transform="translate(40 836)"><rect width="960" height="216" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-annotation-section="Logical Components"><rect width="960" height="216" rx="12" fill="#f5f3ff" stroke="#a78bfa"/><text x="16" y="28" font-size="15" font-weight="700" fill="#6d28d9">Logical Components</text><g data-annotation-card="true" transform="translate(16 48)"><rect width="360" height="152" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g id="architecture-73796e7468657469633a36633666363136343566363236313663363136653633363537322d3631373737333566366336323265363137303730" data-architecture-id="synthetic:6c6f61645f62616c616e636572-6177735f6c622e617070" data-entity-kind="synthetic" data-component-id="logical:load_balancer:aws_lb.app" data-component-kind="load_balancer"><title>Load balancer: aws_lb.app</title><text x="16" y="28" font-size="13" font-weight="700" fill="#5b21b6">Load balancer: aws_lb.app</text>
 <g data-component-member="true" transform="translate(16 48)"><a href="#resource-6177735f6c622e617070-current" data-source-address="aws_lb.app"><title>module.root.aws_lb.app; create</title><text font-size="12" fill="#334155">
 <tspan x="0" y="20" xml:space="preserve">create: aws_lb.app</tspan>
 </text><line data-member-underline="true" x1="0" y1="28" x2="328" y2="28" stroke="#047857" stroke-width="2"/>
@@ -228,7 +233,7 @@ Task role: unresolved [task_role_arn; unresolved attribute reference]</title><te
 </g>
 </g></g>
 </g>
-<g data-architecture="true" transform="translate(0 856)">
+<g data-architecture="true" transform="translate(0 916)">
 <rect x="35" y="160" width="970" height="404" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-dasharray="5 4"/><text x="52" y="185" font-size="13" font-weight="700" fill="#475569"><title>root</title>root</text>
 <g data-edge-kind="dependency" data-source="resource-6177735f6563735f636c75737465722e617070-current" data-target="resource-6177735f6563735f736572766963652e617070-current"><title>aws_ecs_cluster.app → aws_ecs_service.app</title></g>
 <g data-edge-kind="dependency" data-source="resource-6177735f6563735f7461736b5f646566696e6974696f6e2e617070-current" data-target="resource-6177735f6563735f736572766963652e617070-current"><title>aws_ecs_task_definition.app → aws_ecs_service.app</title></g>
@@ -302,8 +307,7 @@ Task definition: aws_ecs_task_definition.app [task_definition; direct attribute 
         const suffix = hex(source.address) + (source.deposed_key === null ? '-current' : '-deposed-' + hex(source.deposed_key));
         const id = `${prefix}resource-${suffix}`;
         if (resourceIds.has(id)) continue;
-        const display = source.address + (source.deposed_key === null ? '' : ` (deposed: ${source.deposed_key})`);
-        const row = rows.find(row => row.dataset.sourceAddress === source.address && row.querySelector('title')?.textContent === display);
+        const row = rows.find(row => row.dataset.sourceIdentity === 'terraform:' + suffix);
         if (!row) continue;
         row.id = id;
         resourceIds.add(id);
@@ -318,6 +322,8 @@ Task definition: aws_ecs_task_definition.app [task_definition; direct attribute 
   const edges = Array.from(svg.querySelectorAll('path[data-edge-kind][data-source][data-target]'));
   const links = Array.from(svg.querySelectorAll('a[href^="#"]')).map(el => ({ el, target: el.getAttribute('href').slice(1) })).filter(link => byId(link.target));
   const components = Array.from(svg.querySelectorAll('[data-entity-kind="synthetic"][data-component-id]'));
+  const relationshipEntries = new Map(Array.from(svg.querySelectorAll('[data-relationship-entry][id]')).map(el => [el.id, el]));
+  const relationshipEdges = id => edges.filter(edge => (edge.dataset.relationshipIds || '').split(' ').includes(id));
   let selected = null;
   let box = [svg.viewBox.baseVal.x, svg.viewBox.baseVal.y, svg.viewBox.baseVal.width, svg.viewBox.baseVal.height];
   const original = box.slice();
@@ -381,6 +387,13 @@ Task definition: aws_ecs_task_definition.app [task_definition; direct attribute 
     const r = targets.get(id);
     const heading = document.createElement('h2'); heading.textContent = r ? label(r) : title(el);
     details.append(heading);
+    if (relationshipEntries.has(id)) {
+      for (const edge of relationshipEdges(id)) edge.setAttribute('data-viewer-edge', 'relationship');
+      for (const link of links.filter(link => link.target === id && link.el.hasAttribute('data-relationship-select'))) link.el.setAttribute('data-viewer-related', 'true');
+      section('Relationship endpoints', Array.from(el.querySelectorAll('[data-relationship-endpoint]')).map(link => ({ target: link.getAttribute('href').slice(1), text: link.textContent })));
+      reveal(el);
+      return;
+    }
     if (r) {
       const identity = document.createElement('p');
       identity.textContent = `${r.qualified}\nModule: ${r.module} · State: ${r.state || '(unnamed)'} · ${r.type}\n${title(el)}`;
@@ -400,19 +413,11 @@ Task definition: aws_ecs_task_definition.app [task_definition; direct attribute 
     section('Outgoing rendered edges', outgoing);
     section('Undirected rendered relationships', undirected);
     if (r?.relationship) {
-      const scope = el.closest('[data-state-id]') || svg;
-      const metadata = scope.querySelector('metadata[id$="architecture-relationships"]');
-      for (const relation of JSON.parse(metadata.textContent)) {
-        if (!relation.provenance.some(p => p.kind === 'resource' && p.address === r.address && p.deposed_key === r.deposed)) continue;
-        const from = resources.find(other => other.state === r.state && other.identity === relation.from);
-        const to = resources.find(other => other.state === r.state && other.identity === relation.to);
-        const source = relation.provenance.find(p => p.kind === 'resource' && p.address === r.address && p.deposed_key === r.deposed);
-        const expectedTitle = `${from?.address} ${relation.directionality === 'directed' ? '→' : '↔'} ${to?.address} (${relation.kind}; ${source.operation}: ${r.address})`;
-        for (const edge of edges.filter(edge => edge.dataset.source === from?.id && edge.dataset.target === to?.id && edge.dataset.edgeKind === relation.kind && title(edge).startsWith(expectedTitle))) {
-          edge.setAttribute('data-viewer-edge', 'provenance');
-        }
-        if (from) provenance.push({ target: from.id, text: `${relation.kind} ${relation.directionality}: ${label(from)} ${relation.directionality === 'directed' ? '→' : '↔'} ${to ? label(to) : relation.to}` });
-        if (to) provenance.push({ target: to.id, text: `Endpoint: ${label(to)}` });
+      for (const entry of relationshipEntries.values()) {
+        const state = entry.closest('[data-state-id]')?.dataset.stateId || '';
+        if (state !== r.state || !Array.from(entry.querySelectorAll('[data-source-address]')).some(row => row.dataset.sourceIdentity === r.identity)) continue;
+        for (const edge of relationshipEdges(entry.id)) edge.setAttribute('data-viewer-edge', 'provenance');
+        for (const link of entry.querySelectorAll('[data-relationship-endpoint]')) provenance.push({ target: link.getAttribute('href').slice(1), text: link.textContent });
       }
     }
     section('Rendered relationships from this resource', provenance);

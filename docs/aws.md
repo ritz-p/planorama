@@ -6,6 +6,26 @@ semantics. Provider source and configuration identity are described in [models](
 
 ## Deployment scopes
 
+AWS account scope is resolved independently from region using literal provider
+role evidence; see [the exact evidence policy](models.md). State IDs and provider
+aliases are not accounts. Logical-resource scope labels include a known
+`AWS Account: <12-digit ID>`; generated SVG/HTML therefore expose that deployment
+identifier. Role ARNs and credential-related provider values are not retained.
+
+Known accounts form `AWS Account: <ID>` backgrounds above Region and AWS Global,
+as shown in [accounts.svg](../examples/accounts.svg). One displayed spatial
+resource is enough for either level. Multiple bindings with equal proven accounts
+share a panel, while the same region under different accounts stays separate.
+Known account/unknown region resources remain directly inside Account; unknown
+account/known region resources retain their Region panel. Unknown accounts never
+receive guessed wrappers. Logical rows remain in the annotation area.
+Account backgrounds are drawn before their child backgrounds, and both headers
+are routing obstacles. Their final geometry participates in state sizing and
+cross-state routing. `data-account-panel` identifies the account frame;
+`data-account` on child frames records its parent identity within the state.
+The [combined large example](../examples/multi-account/README.md) exercises these
+scopes with VPC/Subnet containment, logical annotations and cross-state routing.
+
 Known static provider regions automatically group explicitly supported regional
 resources into background panels (see [regions.svg](../examples/regions.svg)).
 One displayed spatial resource is sufficient, including when the state has only
@@ -16,17 +36,29 @@ create panels. Panels are deployment scopes, not Terraform resources or semantic
 containers. VPC/Subnet containment stays intact inside each panel, and
 cross-region relationships remain routed paths above the background.
 Spatial IAM resources, CloudFront and supported Route 53 resources share an
-`AWS Global` panel when regional panels are present. IAM Role, Policy, Role Policy
+`AWS Global` panel when regional panels are present or their account is known. IAM Role, Policy, Role Policy
 and Instance Profile retain global scope metadata but render as logical-resource
 rows above the spatial diagram, outside deployment-scope panels. AWS scope
 classification lives in `provider/aws/scope.rs`; layout and SVG consume generic
 deployment scopes. Unsupported resource types, cross-region peering resources and
-unknown regions stay outside panels. No aliases, names, tags, ARNs or IDs supply
+unknown regions stay outside regional panels (but inside a proven account). No aliases, names, tags, ARNs or IDs supply
 region information.
+
+Each Logical Resources row displays its own `Region: <region>`, `AWS Global`,
+or `Region: unknown` label in SVG and HTML. Equal type/mode resources from different
+regions stay in one group without a shared region claim. See the maintained
+[logical-region example](../examples/logical-regions.svg), generated from
+[this fixture](../tests/fixtures/logical-regions-plan.json).
+An explicit resource-level `region` expression currently makes regional scope
+unknown, even when literal: overrides are not yet resolved. The provider's region
+and binding remain intact. Missing/dynamic bindings, unsupported types and deposed
+objects without regional evidence also remain unknown. Global classification is
+explicit and independent of provider region; policy conditions such as
+`aws:RequestedRegion` never determine deployment scope.
 
 A containment subtree is grouped only when all members have the same known scope.
 Conflicting or unknown members leave the whole subtree outside panels, preserving
-containment without suggesting a guessed region. Plans without a groupable regional
+containment without suggesting a guessed account or region. Plans without a groupable account or regional
 subtree keep their existing layout. Synthetic component summaries remain separate.
 Named-state sections retain independent panels even for equal region names;
 `data-deployment-scope`, `data-scope-provider`, `data-region` or `data-global`

@@ -90,6 +90,48 @@ a region. Credentials and unrelated provider expressions are not retained.
 Region is provider deployment metadata, independent of state identity and resource
 containment; it does not classify global AWS resources as regional.
 
+`TerraformEntity.has_region_override` records only the presence of a resource's
+configured `region` expression. AWS regional scope resolution treats that unsupported
+override as unknown without changing `provider_configuration.region` or retaining
+the expression's value. `ArchitectureEntity.scope` remains independent of logical
+placement: account and region are independent optional dimensions, and `global`
+explicitly distinguishes AWS Global from an unknown region. The shared `view::scope` label helper
+consumes this evidence; known non-AWS providers without scope use `Region: not
+applicable`, and unknown provider identities use `Region: unknown`. Labels never
+participate in architecture, provider-configuration or state identity.
+
+`provider_configuration.account` retains only a validated `AwsAccountScope`:
+exactly 12 ASCII digits from literal IAM role ARNs in the exact AWS provider's
+`expressions.assume_role[].role_arn.constant_value` or
+`expressions.assume_role_with_web_identity[].role_arn.constant_value`.
+Only the commercial `aws` partition is currently supported. Dynamic, malformed,
+missing or conflicting evidence remains unknown; conflicts produce a
+`ConflictingAwsAccount` diagnostic without exposing the role or provider values.
+All supplied role blocks must resolve and agree, so cross-account role chains
+are deliberately unresolved. This is conservative even when the final role in
+a chain would select a target account.
+
+The JSON shape is verified against Terraform 1.9.8's
+[provider serializer](https://github.com/hashicorp/terraform/blob/v1.9.8/internal/command/jsonconfig/config.go)
+and [nested-expression serializer](https://github.com/hashicorp/terraform/blob/v1.9.8/internal/command/jsonconfig/expression.go),
+with AWS 5.100.0's [list-block schema](https://github.com/hashicorp/terraform-provider-aws/blob/v5.100.0/internal/provider/provider.go).
+Unsupported JSON representations remain unknown rather than being interpreted
+as evaluated provider values.
+
+State, provider binding, AWS account and region are separate identities. One state
+can manage several accounts; several bindings can target one account; equal
+account IDs across states never merge resource identities. Aliases, profiles,
+allowed/forbidden account lists, credentials, environment, resource ARNs/IDs and
+caller-identity data are not account evidence. Role ARNs, session names, external
+IDs and credentials are discarded. Known account IDs are deployment metadata
+intended for display in generated SVG/HTML, so those artifacts can expose them.
+
+Layout groups matching account scopes within each state, then region or explicit
+Global scope within that account. These frames are deployment backgrounds, not
+architecture entities or containment edges; filtering removes empty frames.
+Unknown account retains known region presentation. A subtree with conflicting
+member scopes remains outside frames without changing its containment.
+
 ## Architecture identity and provenance
 
 Resource nodes and logical components contain `ArchitectureEntity`, with an opaque

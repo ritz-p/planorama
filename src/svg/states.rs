@@ -329,6 +329,18 @@ fn namespace(svg: &str, prefix: &str) -> String {
             "aria-labelledby=\"title description\"",
             &format!("aria-labelledby=\"{prefix}title {prefix}description\""),
         );
+    for tail in svg.split("data-relationship-ids=\"").skip(1) {
+        let ids = tail.split('"').next().unwrap();
+        let namespaced = ids
+            .split_whitespace()
+            .map(|id| format!("{prefix}{id}"))
+            .collect::<Vec<_>>()
+            .join(" ");
+        scoped = scoped.replace(
+            &format!("data-relationship-ids=\"{ids}\""),
+            &format!("data-relationship-ids=\"{namespaced}\""),
+        );
+    }
     for attribute in ["marker-end", "fill", "stroke", "clip-path", "mask"] {
         scoped = scoped.replace(
             &format!(" {attribute}=\"url(#"),

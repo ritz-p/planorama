@@ -14,6 +14,13 @@ planorama plan.json --format html -o - > diagram.html
 The default remains SVG and `diagram.svg`. HTML defaults to `diagram.html`;
 `-o` sets the destination, not the format. Existing address formatting, focus,
 changed-only selection, remote-state mappings and diagnostics work in both modes.
+Logical Resources rows show the same per-resource deployment-scope labels in both
+formats; see [scope evidence and limitations](aws.md#deployment-scopes).
+
+The maintained [combined AWS viewer](../examples/multi-account/diagram.html)
+exercises 250 input instances, repeated addresses in three states, account/region
+backgrounds and remote logical/spatial references. Its [generation and review
+commands](../examples/multi-account/README.md) use the same inputs as its SVG.
 
 Search matches the complete native and qualified address, architecture identity,
 module, state, resource type, managed/data mode and deposed key. Space-separated
@@ -22,6 +29,13 @@ Selecting a result or diagram resource reveals its individual stable target,
 including nested logical-resource rows and embedded Route cards.
 Lowered association resources use their visible Relationship Resources entry;
 their selection identifies the original relationship endpoints and paths.
+
+Click a relationship number in the diagram or index, or focus it with Tab and
+press Enter or Space, to select that exact relationship. Its paths, both endpoint
+resources, matching badges and index entry are emphasized together. The selection
+panel provides buttons to navigate to each endpoint. Selection uses the indexed
+relationship identity, preserving parallel relationships, deposed identities and
+equal numbers in different states. Address search continues to select resources.
 
 Selection details separate incoming and outgoing rendered edges, undirected
 relationships, Uses/reference targets, inverse references and Logical Component
@@ -36,6 +50,7 @@ line patterns, bundles or routing. Clear selection restores their normal styling
 | Search | Type in the search field; Enter selects the first result |
 | Results | Arrow Down enters results; Up/Down and Home/End navigate; Enter selects |
 | Resource links | Tab to a resource or link, then Enter; clicking also selects |
+| Relationship numbers | Click, or Tab then Enter/Space; endpoint buttons navigate to resources |
 | Clear selection | Escape or Clear selection |
 | Pan | Drag or scroll; arrow keys while the diagram has focus |
 | Zoom | +/− buttons, +/− keys in the diagram, or Ctrl/Command+scroll |

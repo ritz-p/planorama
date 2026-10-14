@@ -3,6 +3,9 @@ use crate::model::architecture::{DeploymentScope, Graph};
 use std::collections::{BTreeMap, BTreeSet};
 
 #[cfg(test)]
+#[path = "../../tests/unit/layout/accounts.rs"]
+mod account_tests;
+#[cfg(test)]
 #[path = "../../tests/unit/layout/scopes.rs"]
 mod tests;
 
@@ -28,7 +31,11 @@ pub(super) fn pack(
             .or_default()
             .push(root);
     }
-    if !groups.keys().flatten().any(|scope| scope.region.is_some()) {
+    if !groups
+        .keys()
+        .flatten()
+        .any(|scope| scope.region.is_some() || scope.account.is_some())
+    {
         let columns = placement::columns(graph, None, &tree.roots, &tree.parents);
         let relationships = placement::relationships(graph, &tree.roots, &tree.parents);
         let (_, height) = placement::pack(&columns, &relationships, sizes, offsets, spacing);
@@ -38,34 +45,82 @@ pub(super) fn pack(
     }
     let mut top = 0;
     let mut panels = Vec::new();
-    for (scope, roots) in groups
-        .iter()
-        .filter(|(scope, _)| scope.is_some())
-        .chain(groups.iter().filter(|(scope, _)| scope.is_none()))
-    {
-        let columns = placement::columns(graph, None, roots, &tree.parents);
-        let relationships = placement::relationships(graph, roots, &tree.parents);
-        let (width, height) = placement::pack(&columns, &relationships, sizes, offsets, spacing);
-        let movable = movable_roots(roots, &protected, offsets);
-        placement::refine(&movable, &relationships, sizes, offsets, height, spacing);
-        let padding = if scope.is_some() { 40 } else { 0 };
-        for &root in roots {
-            offsets[root].y += top + padding;
-        }
-        if let Some(scope) = scope {
+    let accounts: BTreeSet<_> = groups
+        .keys()
+        .flatten()
+        .filter_map(|s| s.account.clone())
+        .collect();
+    for account in accounts.iter().map(Some).chain(std::iter::once(None)) {
+        let account_top = top;
+        let account_index = panels.len();
+        let mut account_width = 320;
+        if let Some(account) = account {
             panels.push(ScopePanel {
-                scope: scope.clone(),
+                account_panel: true,
+                scope: DeploymentScope {
+                    provider: "AWS".into(),
+                    region: None,
+                    account: Some(account.clone()),
+                    global: false,
+                },
                 bounds: Bounds {
                     origin: Point {
                         x: 40,
                         y: 160 + top,
                     },
-                    width: width + spacing.max(40),
-                    height: height + 60,
+                    width: 0,
+                    height: 0,
                 },
             });
+            top += 40;
         }
-        top += height + padding + 60;
+        for (scope, roots) in groups
+            .iter()
+            .filter(|(scope, _)| scope.as_ref().and_then(|s| s.account.as_ref()) == account)
+            .filter(|(scope, _)| scope.is_some())
+            .chain(
+                groups
+                    .iter()
+                    .filter(|(scope, _)| account.is_none() && scope.is_none()),
+            )
+        {
+            let columns = placement::columns(graph, None, roots, &tree.parents);
+            let relationships = placement::relationships(graph, roots, &tree.parents);
+            let (width, height) =
+                placement::pack(&columns, &relationships, sizes, offsets, spacing);
+            let movable = movable_roots(roots, &protected, offsets);
+            placement::refine(&movable, &relationships, sizes, offsets, height, spacing);
+            let framed = scope
+                .as_ref()
+                .is_some_and(|s| s.global || s.region.is_some());
+            let padding = if framed { 40 } else { 0 };
+            let inset = if account.is_some() { 20 } else { 0 };
+            account_width = account_width.max(width + spacing.max(40) + 40);
+            for &root in roots {
+                offsets[root].x += inset;
+                offsets[root].y += top + padding;
+            }
+            if let Some(scope) = scope.as_ref().filter(|_| framed) {
+                panels.push(ScopePanel {
+                    account_panel: false,
+                    scope: scope.clone(),
+                    bounds: Bounds {
+                        origin: Point {
+                            x: 40 + inset,
+                            y: 160 + top,
+                        },
+                        width: width + spacing.max(40),
+                        height: height + 60,
+                    },
+                });
+            }
+            top += height + padding + 60;
+        }
+        if account.is_some() {
+            panels[account_index].bounds.width = account_width;
+            panels[account_index].bounds.height = top - account_top;
+            top += 40;
+        }
     }
     (top, panels)
 }

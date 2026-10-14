@@ -1,5 +1,9 @@
 # Large AWS architecture fixture
 
+For the combined multi-state/account/region baseline, see
+[the maintained 250-input example](../multi-account/README.md). This smaller
+fixture remains its reusable source and a focused single-state reference.
+
 The JSON-formatted Terraform source is split across `network`, `application`,
 `database`, and `shared` modules. Module membership differs from containment:
 application EC2 instances belong to subnets in the network module. This is a
@@ -45,6 +49,12 @@ kinds on one row below the action/color explanation. Samples retain their circle
 arrows and numbered badges, with the complete explanation beside each sample.
 Legend height shifts the annotations and architecture together; it does not
 change the routed geometry.
+
+Either `[6]` badge links to the Relationship Resources entry for
+`module.network.aws_route.nat`. Its directed endpoint list links that Route card
+to `module.network.aws_nat_gateway.main`. The index uses five complete entries
+per card, with full addresses wrapped before horizontal packing. In HTML, number
+selection emphasizes the entry, both badges, endpoints and corresponding path.
 
 The generated plan has 50 resource changes. After omitting two AWS metadata data
 sources, the renderer retains 48 resources and produces 29 spatial cards, 2 embedded

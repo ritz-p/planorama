@@ -94,7 +94,10 @@ fn relationship_indexes_fit_inside_each_named_state_and_outer_canvas() {
             .descendants()
             .filter(|n| n.attribute("data-relationship-marker").is_some())
         {
-            let rectangle = marker.children().find(|n| n.has_tag_name("rect")).unwrap();
+            let rectangle = marker
+                .descendants()
+                .find(|n| n.has_tag_name("rect"))
+                .unwrap();
             let number = |key| rectangle.attribute(key).unwrap().parse::<usize>().unwrap();
             assert!(number("x") + number("width") <= width);
             assert!(number("y") + number("height") <= height);

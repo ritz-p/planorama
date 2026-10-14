@@ -8,6 +8,225 @@ fn graph() -> Graph {
         .0
 }
 
+#[test]
+fn native_navigation_keeps_parallel_relationships_and_endpoint_identities_distinct() {
+    let graph = dense_graph(12, EdgeKind::Association);
+    let layout = Layout::new(&graph);
+    let index = Index::new(&graph, &layout);
+    assert_eq!(
+        index
+            .cards()
+            .iter()
+            .map(|card| card.content.matches("data-relationship-entry=").count())
+            .collect::<Vec<_>>(),
+        [5, 5, 2]
+    );
+    let rendered = svg::render(&graph, &layout);
+    let document = roxmltree::Document::parse(&rendered).unwrap();
+    let ids: Vec<_> = document
+        .descendants()
+        .filter_map(|node| node.attribute("id"))
+        .collect();
+    assert_eq!(ids.len(), ids.iter().collect::<BTreeSet<_>>().len());
+    for entry in &index.entries {
+        let node = document
+            .descendants()
+            .find(|node| node.attribute("id") == Some(entry.id.as_str()))
+            .unwrap();
+        assert_eq!(
+            node.attribute("data-relationship-entry"),
+            Some(entry.number.to_string().as_str())
+        );
+        let endpoints: Vec<_> = node
+            .descendants()
+            .filter(|node| node.attribute("data-relationship-endpoint").is_some())
+            .collect();
+        assert_eq!(endpoints.len(), 2);
+        for endpoint in endpoints {
+            assert!(
+                ids.contains(
+                    &endpoint
+                        .attribute("href")
+                        .unwrap()
+                        .strip_prefix('#')
+                        .unwrap()
+                )
+            );
+        }
+        assert_eq!(
+            document
+                .descendants()
+                .filter(|node| node.attribute("data-relationship-ids") == Some(entry.id.as_str()))
+                .count(),
+            1
+        );
+        assert_eq!(
+            document
+                .descendants()
+                .filter(|node| node.attribute("href") == Some(format!("#{}", entry.id).as_str()))
+                .count(),
+            3
+        );
+        assert!(entry.title().contains("Connects (association, undirected)"));
+    }
+    let mut reordered = graph.clone();
+    reordered.edges.reverse();
+    reordered.relationships.reverse();
+    let reordered_index = Index::new(&reordered, &Layout::new(&reordered));
+    assert_eq!(
+        index
+            .entries
+            .iter()
+            .map(|entry| &entry.id)
+            .collect::<Vec<_>>(),
+        reordered_index
+            .entries
+            .iter()
+            .map(|entry| &entry.id)
+            .collect::<Vec<_>>()
+    );
+}
+
+#[test]
+fn directed_index_context_links_embedded_routes_without_attribute_values() {
+    let graph =
+        semantic::transform(&plan::parse(include_str!("../../fixtures/routes-plan.json")).unwrap())
+            .0;
+    let layout = Layout::new(&graph);
+    let index = Index::new(&graph, &layout);
+    let rendered = svg::render(&graph, &layout);
+    let document = roxmltree::Document::parse(&rendered).unwrap();
+    for entry in index.entries.iter().filter(|entry| entry.embedded) {
+        assert!(entry.title().contains("From → To (association, directed)"));
+        let node = document
+            .descendants()
+            .find(|node| node.attribute("id") == Some(entry.id.as_str()))
+            .unwrap();
+        for endpoint in node
+            .descendants()
+            .filter(|node| node.attribute("data-relationship-endpoint").is_some())
+        {
+            let id = endpoint
+                .attribute("href")
+                .unwrap()
+                .strip_prefix('#')
+                .unwrap();
+            assert!(
+                document
+                    .descendants()
+                    .any(|node| node.attribute("id") == Some(id))
+            );
+        }
+    }
+}
+
+#[test]
+fn current_and_deposed_provenance_and_long_endpoints_keep_their_targets() {
+    let mut graph = dense_graph(2, EdgeKind::Association);
+    let address = graph.edges[0].change.as_ref().unwrap().address.clone();
+    let change = graph.edges[1].change.as_mut().unwrap();
+    change.address = address.clone();
+    change.action = crate::model::Action::Delete;
+    for provenance in &mut graph.relationships[1].provenance {
+        if let RelationshipProvenance::Resource {
+            source,
+            change: provenance_change,
+        } = provenance
+        {
+            source.address = address.clone();
+            source.deposed_key = Some("old<&>".into());
+            *provenance_change = change.clone();
+        }
+    }
+    let target = graph.edges[0].to;
+    graph.nodes[target].address = format!(
+        "module.{}.aws_route_table.private",
+        "long_endpoint.".repeat(30)
+    );
+    graph.nodes[target].deposed_key = Some("old-target".into());
+    let layout = Layout::new(&graph);
+    let index = Index::new(&graph, &layout);
+    assert_eq!(index.entries.len(), 2);
+    assert_ne!(index.entries[0].id, index.entries[1].id);
+    let rendered = svg::render(&graph, &layout);
+    let document = roxmltree::Document::parse(&rendered).unwrap();
+    for node in document
+        .descendants()
+        .filter(|node| node.attribute("data-relationship-endpoint").is_some())
+    {
+        let target = node.attribute("href").unwrap().strip_prefix('#').unwrap();
+        assert!(
+            document
+                .descendants()
+                .any(|node| node.attribute("id") == Some(target))
+        );
+    }
+    for card in index.cards() {
+        let document = roxmltree::Document::parse(&card.content).unwrap();
+        for line in document
+            .descendants()
+            .filter(|node| node.has_tag_name("tspan"))
+        {
+            assert!(
+                attribute_number(line, "x") + crate::view::text::width(line.text().unwrap()) * 8
+                    <= card.width - 16
+            );
+            assert!(attribute_number(line, "y") + 4 < card.height);
+        }
+        assert!(card.content.contains("deposed: old&lt;&amp;&gt;"));
+        assert!(card.content.contains("Action: delete"));
+    }
+}
+
+#[test]
+fn overlapping_provenance_sets_do_not_mix_parallel_relationship_actions() {
+    let mut graph = dense_graph(2, EdgeKind::Association);
+    let address = graph.edges[0].change.as_ref().unwrap().address.clone();
+    let change = graph.edges[1].change.as_mut().unwrap();
+    change.address = address.clone();
+    change.action = crate::model::Action::Delete;
+    let extra = graph.relationships[1].provenance[0].clone();
+    for provenance in &mut graph.relationships[1].provenance {
+        if let RelationshipProvenance::Resource {
+            source,
+            change: source_change,
+        } = provenance
+        {
+            source.address = address.clone();
+            *source_change = change.clone();
+        }
+    }
+    graph.relationships[1].provenance.push(extra);
+    let layout = Layout::new(&graph);
+    let index = Index::new(&graph, &layout);
+    assert_eq!(index.entries.len(), 2);
+    let single = index
+        .entries
+        .iter()
+        .find(|entry| entry.sources.len() == 1)
+        .unwrap();
+    let multiple = index
+        .entries
+        .iter()
+        .find(|entry| entry.sources.len() == 2)
+        .unwrap();
+    assert_eq!(single.edges, [0]);
+    assert_eq!(multiple.edges, [1]);
+    assert_eq!(
+        single.actions[single.sources[0]],
+        BTreeSet::from(["create".to_owned()])
+    );
+    let shared = multiple
+        .sources
+        .iter()
+        .find(|source| source.address == address)
+        .unwrap();
+    assert_eq!(
+        multiple.actions[shared],
+        BTreeSet::from(["delete".to_owned()])
+    );
+}
+
 fn dense_graph(count: usize, kind: EdgeKind) -> Graph {
     let mut graph = graph();
     let edge = graph.edges[0].clone();
@@ -350,7 +569,7 @@ fn relationship_cards_fill_the_svg_width_at_exact_and_one_pixel_short_boundaries
     let mut layout = Layout::new(&base);
     let path = layout.paths[0].clone();
     let bounds = layout.bounds.clone();
-    for count in [0usize, 1, 10, 11, 20, 21, 30, 31, 40, 41] {
+    for count in [0usize, 1, 5, 6, 10, 11, 12, 20, 21, 30, 31, 40, 41] {
         let mut graph = dense_graph(count, EdgeKind::Association);
         for (edge, relationship) in graph.edges.iter_mut().zip(&mut graph.relationships) {
             let change = edge.change.as_mut().unwrap();
@@ -375,7 +594,7 @@ fn relationship_cards_fill_the_svg_width_at_exact_and_one_pixel_short_boundaries
         layout.paths = vec![path.clone(); count];
         let mut architecture_content = None;
         let mut expected_section = String::new();
-        for capacity in [2usize, 3, 4] {
+        for capacity in [2usize, 3, 4, 6] {
             for shortfall in [0, 1] {
                 let columns = capacity - shortfall;
                 layout.width = 112 + capacity * 640 + (capacity - 1) * 20 - shortfall;
@@ -411,7 +630,7 @@ fn relationship_cards_fill_the_svg_width_at_exact_and_one_pixel_short_boundaries
                     .children()
                     .filter(|node| node.attribute("data-annotation-card").is_some())
                     .collect();
-                assert_eq!(cards.len(), count.div_ceil(10));
+                assert_eq!(cards.len(), count.div_ceil(5));
                 let mut y = 48;
                 for row in cards.chunks(columns) {
                     for (column, card) in row.iter().enumerate() {
@@ -444,8 +663,7 @@ fn relationship_cards_fill_the_svg_width_at_exact_and_one_pixel_short_boundaries
                             .iter()
                             .map(|node| attribute_number(*node, "data-relationship-entry"))
                             .collect::<Vec<_>>(),
-                        (card_index * 10 + 1..=count.min((card_index + 1) * 10))
-                            .collect::<Vec<_>>()
+                        (card_index * 5 + 1..=count.min((card_index + 1) * 5)).collect::<Vec<_>>()
                     );
                     for entry in entries {
                         let source = entry
@@ -526,7 +744,13 @@ fn wide_addresses_wrap_within_the_canvas_and_reserved_height() {
     let document = roxmltree::Document::parse(svg).unwrap();
     let lines: Vec<_> = document
         .descendants()
-        .filter(|n| n.has_tag_name("tspan"))
+        .filter(|n| {
+            n.has_tag_name("tspan")
+                && n.parent()
+                    .unwrap()
+                    .attribute("data-source-address")
+                    .is_some()
+        })
         .collect();
     assert_eq!(
         lines.iter().filter_map(|n| n.text()).collect::<String>(),
@@ -544,13 +768,13 @@ fn wide_addresses_wrap_within_the_canvas_and_reserved_height() {
         );
         assert!(line.attribute("y").unwrap().parse::<usize>().unwrap() + 4 < cards[0].height);
     }
-    assert_eq!(cards[0].height, 44 + lines.len() * 20);
+    assert!(cards[0].height > 44 + lines.len() * 20);
 }
 
 #[test]
-fn a_long_multisource_tenth_entry_stays_in_the_first_card() {
-    let mut graph = dense_graph(21, EdgeKind::Association);
-    let tenth_address = crate::layout::relationship_markers::entries(&graph)[9].sources[0]
+fn a_long_multisource_fifth_entry_stays_in_the_first_card() {
+    let mut graph = dense_graph(12, EdgeKind::Association);
+    let fifth_address = crate::layout::relationship_markers::entries(&graph)[4].sources[0]
         .address
         .clone();
     let relationship = graph
@@ -558,7 +782,7 @@ fn a_long_multisource_tenth_entry_stays_in_the_first_card() {
         .iter_mut()
         .find(|relationship| {
             relationship.provenance.iter().any(|provenance| {
-                matches!(provenance, RelationshipProvenance::Resource { source, .. } if source.address == tenth_address)
+                matches!(provenance, RelationshipProvenance::Resource { source, .. } if source.address == fifth_address)
             })
         })
         .unwrap();
@@ -580,11 +804,11 @@ fn a_long_multisource_tenth_entry_stays_in_the_first_card() {
     let cards = index.cards();
     assert_eq!(cards.len(), 3);
     let first = roxmltree::Document::parse(&cards[0].content).unwrap();
-    let tenth = first
+    let fifth = first
         .descendants()
-        .find(|n| n.attribute("data-relationship-entry") == Some("10"))
+        .find(|n| n.attribute("data-relationship-entry") == Some("5"))
         .unwrap();
-    let sources: Vec<_> = tenth
+    let sources: Vec<_> = fifth
         .descendants()
         .filter(|n| n.attribute("data-source-address").is_some())
         .collect();
@@ -608,7 +832,7 @@ fn a_long_multisource_tenth_entry_stays_in_the_first_card() {
             .descendants()
             .filter(|n| n.attribute("data-relationship-entry").is_some())
             .count(),
-        10
+        5
     );
     let second = roxmltree::Document::parse(&cards[1].content).unwrap();
     assert_eq!(
@@ -616,7 +840,7 @@ fn a_long_multisource_tenth_entry_stays_in_the_first_card() {
             .descendants()
             .filter_map(|n| n.attribute("data-relationship-entry"))
             .collect::<Vec<_>>(),
-        (11..=20)
+        (6..=10)
             .map(|number| number.to_string())
             .collect::<Vec<_>>()
     );
@@ -695,7 +919,10 @@ fn marker_borders_match_relationship_actions_and_line_patterns() {
                 .descendants()
                 .find(|n| n.attribute("data-relationship-marker") == Some("1"))
                 .unwrap();
-            let border = marker.children().find(|n| n.has_tag_name("rect")).unwrap();
+            let border = marker
+                .descendants()
+                .find(|n| n.has_tag_name("rect"))
+                .unwrap();
             if kind == EdgeKind::Dependency {
                 let arrow_id = path
                     .attribute("marker-end")
@@ -719,7 +946,10 @@ fn marker_borders_match_relationship_actions_and_line_patterns() {
                 .descendants()
                 .find(|n| n.attribute("data-relationship-entry") == Some("1"))
                 .unwrap();
-            let index_border = entry.children().find(|n| n.has_tag_name("rect")).unwrap();
+            let index_border = entry
+                .descendants()
+                .find(|n| n.has_tag_name("rect"))
+                .unwrap();
             for attribute in [
                 "stroke",
                 "stroke-width",

@@ -382,7 +382,8 @@ fn render_with_index(
             edge.change.as_ref().map(|change| change.action),
         );
         let mask = occlusion.attribute(index);
-        writeln!(svg, r##"<path d="{path}"{relation}{previous}{operation} data-directionality="{direction}" data-source="{source}" data-target="{target}" fill="none" stroke="{stroke}" {style} stroke-linejoin="round"{arrow}{mask}><title>{title}</title></path>"##).unwrap();
+        let indexed = relationship_index.edge_attributes(index);
+        writeln!(svg, r##"<path d="{path}"{relation}{previous}{operation}{indexed} data-directionality="{direction}" data-source="{source}" data-target="{target}" fill="none" stroke="{stroke}" {style} stroke-linejoin="round"{arrow}{mask}><title>{title}</title></path>"##).unwrap();
     }
     for point in &layout.junctions {
         let mask = layout

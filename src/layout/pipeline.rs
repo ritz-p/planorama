@@ -29,7 +29,7 @@ fn place_sized(graph: &Graph, tree: ContainmentTree, heights: Option<Vec<usize>>
                 .entity
                 .scope
                 .as_ref()
-                .is_some_and(|s| s.region.is_some())
+                .is_some_and(|s| s.region.is_some() || s.account.is_some())
     }) {
         Placed {
             layout: if let Some(heights) = heights {

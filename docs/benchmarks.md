@@ -22,6 +22,13 @@ destruction. A small untimed warmup precedes measurements. There are no timing
 assertions in CI; machine-dependent thresholds would be flaky. The baseline below
 is observational and does not promise absolute performance.
 
+The separate [combined multi-account example](../examples/multi-account/README.md)
+measures 250 inputs across three states, with cross-account/region/state paths and
+large annotation indexes. Run its opt-in `benchmarks::multi_account::baseline`
+test in release mode for per-state layout time, dimensions, crossings, shared
+path lengths, bends and visible-border overlap. It complements the bounded-degree
+scale generator above; ordinary CI does not run its expensive measurements.
+
 ## Initial baseline (2026-10-09)
 
 Revision `4389b6092a1f0290a9f4ee48ed77a929ba368e90` plus this benchmark-only

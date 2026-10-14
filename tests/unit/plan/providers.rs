@@ -26,6 +26,204 @@ fn fixture() -> Value {
     })
 }
 
+fn role(id: &str) -> Value {
+    json!({"role_arn":{"constant_value":format!("arn:aws:iam::{id}:role/path/Planorama")},"external_id":{"constant_value":"PRIVATE_EXTERNAL"}})
+}
+
+#[test]
+fn account_is_independent_of_global_region_and_module_overrides() {
+    let mut value = fixture();
+    value["configuration"]["provider_config"]["aws.tokyo"]["expressions"]["assume_role_with_web_identity"] =
+        json!([role("123456789012")]);
+    value["configuration"]["root_module"]["resources"][1]["expressions"]["region"] =
+        json!({"references":["var.region"]});
+    value["resource_changes"].as_array_mut().unwrap().push(json!({"address":"module.child[0].aws_cloudfront_distribution.main","type":"aws_cloudfront_distribution"}));
+    value["configuration"]["root_module"]["module_calls"]["child"] = json!({"module":{"resources":[{"address":"aws_cloudfront_distribution.main","provider_config_key":"aws.tokyo"}]}});
+    let graph = semantic::transform(&plan::parse(&value.to_string()).unwrap());
+    for (address, global) in [
+        ("aws_vpc.tokyo", false),
+        ("module.child[0].aws_cloudfront_distribution.main", true),
+    ] {
+        let scope = graph
+            .nodes
+            .iter()
+            .find(|n| n.address == address)
+            .unwrap()
+            .entity
+            .scope
+            .as_ref()
+            .unwrap();
+        assert_eq!(scope.account.as_ref().unwrap().as_str(), "123456789012");
+        assert_eq!(scope.global, global);
+        assert!(scope.region.is_none());
+    }
+}
+
+#[test]
+fn account_evidence_is_bound_to_provider_and_state_without_retaining_secrets() {
+    let mut value = fixture();
+    for (key, id) in [
+        ("aws", "123456789012"),
+        ("aws.tokyo", "210987654321"),
+        ("aws.virginia", "123456789012"),
+    ] {
+        value["configuration"]["provider_config"][key]["expressions"]["assume_role"] =
+            json!([role(id)]);
+    }
+    let raw = plan::parse(&value.to_string()).unwrap();
+    let graph = semantic::transform(&raw);
+    for (address, id) in [
+        ("aws_vpc.default", "123456789012"),
+        ("aws_vpc.tokyo", "210987654321"),
+        ("aws_vpc.virginia", "123456789012"),
+    ] {
+        let node = raw.nodes.iter().find(|n| n.address == address).unwrap();
+        assert_eq!(
+            node.provider_configuration
+                .as_ref()
+                .unwrap()
+                .account
+                .as_ref()
+                .unwrap()
+                .as_str(),
+            id
+        );
+        let scope = graph
+            .nodes
+            .iter()
+            .find(|n| n.address == address)
+            .unwrap()
+            .entity
+            .scope
+            .as_ref()
+            .unwrap();
+        assert_eq!(scope.account.as_ref().unwrap().as_str(), id);
+        assert!(!scope.global);
+        assert_eq!(scope.region.is_some(), address == "aws_vpc.tokyo");
+    }
+    let debug = format!("{raw:?}{graph:?}");
+    for secret in ["PRIVATE_EXTERNAL", "TOP_SECRET", "Planorama", "arn:aws:iam"] {
+        assert!(!debug.contains(secret));
+    }
+    let input = |id| PlanInput {
+        state_id: StateId::new(id).unwrap(),
+        plan_json: value.to_string(),
+    };
+    let plans = plan::parse_inputs(vec![input("a"), input("b")]).unwrap();
+    assert_eq!(plans.states.len(), 2);
+    assert_eq!(
+        plans,
+        plan::parse_inputs(vec![input("b"), input("a")]).unwrap()
+    );
+    value["resource_changes"].as_array_mut().unwrap().reverse();
+    value["configuration"]["root_module"]["resources"]
+        .as_array_mut()
+        .unwrap()
+        .reverse();
+    assert_eq!(raw, plan::parse(&value.to_string()).unwrap());
+}
+
+#[test]
+fn account_resolution_rejects_dynamic_invalid_conflicting_and_unbound_evidence() {
+    for blocks in [
+        json!([{"role_arn":{"references":["var.role"]}}]),
+        json!([{"role_arn":{"constant_value":"arn:aws:iam::123456789012:role/Test","references":["var.role"]}}]),
+        json!([role("prod")]),
+        json!([role("12345678901")]),
+        json!([role("123456789012"), role("210987654321")]),
+        json!([role("123456789012"), {}]),
+        json!({"constant_value":[{"role_arn":"arn:aws:iam::123456789012:role/Test"}]}),
+    ] {
+        let mut value = fixture();
+        value["configuration"]["provider_config"]["aws"]["expressions"]["assume_role"] = blocks;
+        let raw = plan::parse(&value.to_string()).unwrap();
+        let config = raw
+            .nodes
+            .iter()
+            .find(|n| n.address == "aws_vpc.default")
+            .unwrap()
+            .provider_configuration
+            .as_ref()
+            .unwrap();
+        assert!(config.account.is_none());
+        assert_eq!(
+            semantic::diagnostics::collect(&raw)
+                .iter()
+                .any(|d| d.reason == crate::model::DiagnosticReason::ConflictingAwsAccount),
+            config.account_conflict
+        );
+    }
+    for scenario in 0..5 {
+        let mut value = fixture();
+        value["configuration"]["provider_config"]["aws"]["expressions"] = json!({"region":{"constant_value":"us-east-1"},"profile":{"constant_value":"123456789012"},"allowed_account_ids":{"constant_value":["123456789012"]}});
+        if scenario > 0 {
+            value["configuration"]["provider_config"]["aws"]["expressions"]["assume_role"] =
+                json!([role("123456789012")]);
+        }
+        match scenario {
+            1 => value["resource_changes"][0]["provider_name"] = json!("acme/custom"),
+            2 => {
+                value["configuration"]["provider_config"]["aws"]["full_name"] = json!("acme/custom")
+            }
+            3 => value["resource_changes"][0]["deposed"] = json!("old"),
+            4 => {
+                value["configuration"]["root_module"]["resources"][0]["provider_config_key"] =
+                    json!("aws.missing")
+            }
+            _ => {}
+        }
+        let raw = plan::parse(&value.to_string()).unwrap();
+        assert!(raw.nodes.iter().all(|n| {
+            n.provider_configuration
+                .as_ref()
+                .is_none_or(|c| c.account.is_none())
+        }));
+    }
+    for arn in [
+        "arn:aws-cn:iam::123456789012:role/Test",
+        "arn:aws:sts::123456789012:assumed-role/Test/session",
+        "arn:aws:iam:us-east-1:123456789012:role/Test",
+        "arn:aws:iam::123456789012:role/",
+        "arn:aws:iam::123456789012:user/Test",
+    ] {
+        assert!(super::role_account(arn).is_none());
+    }
+}
+
+#[test]
+fn resource_region_overrides_do_not_inherit_provider_scope_or_change_binding() {
+    for expression in [
+        json!({"constant_value":"eu-west-3"}),
+        json!({"references":["var.region"]}),
+        Value::Null,
+    ] {
+        let mut value = fixture();
+        value["configuration"]["root_module"]["resources"][1]["expressions"]["region"] = expression;
+        let raw = plan::parse(&value.to_string()).unwrap();
+        let graph = semantic::transform(&raw);
+        let node = raw
+            .nodes
+            .iter()
+            .find(|n| n.address == "aws_vpc.tokyo")
+            .unwrap();
+        assert!(node.has_region_override);
+        let binding = node.provider_configuration.as_ref().unwrap();
+        assert_eq!(binding.key, "aws.tokyo");
+        assert_eq!(binding.region.as_ref().unwrap().0, "ap-northeast-1");
+        assert!(
+            graph
+                .nodes
+                .iter()
+                .find(|n| n.address == node.address)
+                .unwrap()
+                .entity
+                .scope
+                .is_none()
+        );
+        assert!(!format!("{raw:?}{graph:?}").contains("eu-west-3"));
+    }
+}
+
 #[test]
 fn static_regions_follow_exact_bindings_and_survive_projection() {
     let mut value = fixture();

@@ -49,6 +49,10 @@ fn resource_lines(node: &Node, address_format: super::AddressFormat) -> Vec<(Str
             false,
         ),
     ];
+    lines.push((
+        crate::view::scope::label(node.entity.scope.as_ref(), &node.provider),
+        false,
+    ));
     match node.role {
         crate::model::ResourceRole::Policy => lines.push(("policy".into(), false)),
         crate::model::ResourceRole::Controller => lines.push(("controller".into(), false)),

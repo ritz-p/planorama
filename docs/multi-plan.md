@@ -58,8 +58,13 @@ cross-state endpoint offsets follow the reflowed annotations. The cross-state
 routing gutter is reserved outside the shared content width and is not available
 for index cards.
 
-Resolved regional groups form background bases within each state's architecture
-area: State → Region → VPC/Subnet containers and resource cards. A single spatial
+Resolved deployment groups form background bases within each state's architecture
+area: State → AWS Account → Region → VPC/Subnet containers and resource cards.
+Account is optional and independent of State: one state can manage multiple
+accounts, and equal account IDs in separate states never merge panels or resource
+identities. Global resources share their proven account parent without a region;
+unknown accounts preserve known Region backgrounds. Generated SVG/HTML explicitly
+display known account IDs. A single spatial
 resource qualifies, even in a single-region state. Filtering resizes the panel;
 removing its final spatial resource also removes its title and padding. Logical
 annotations stay above the architecture and do not qualify a regional group.
@@ -76,3 +81,8 @@ planorama --state network=tests/fixtures/multi/network.json --state application=
 ```
 
 With `--diagnostics`, every diagnostic line carries `state="ID"`. Parse/read errors name their state. Evaluated attribute values and check messages remain excluded; safe Route destination constants follow the same rules as single-plan input. See [the multi-plan example](../examples/multi-plan.svg), generated from the two [regression fixtures](../tests/fixtures/multi).
+
+The maintained [combined AWS example](../examples/multi-account/README.md) provides
+250 inputs across three states and two accounts, 15 resolved cross-state
+references, singleton regions, Global/unknown scope and substantial relationship
+indexes. Its SVG and offline HTML share the same inputs and mappings.
