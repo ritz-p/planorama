@@ -168,7 +168,9 @@ fn self_intersections_are_excluded_from_edge_pair_metrics() {
 }
 
 #[test]
-#[should_panic(expected = "orthogonal paths")]
-fn diagonal_segments_are_rejected() {
-    measure(&[path(&[(0, 0), (10, 10)])]);
+fn unsupported_diagonal_segments_do_not_panic_or_invent_orthogonal_length() {
+    assert_eq!(
+        measure(&[path(&[(0, 0), (10, 10)])]),
+        LayoutMetrics::default()
+    );
 }

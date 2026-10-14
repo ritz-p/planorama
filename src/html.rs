@@ -27,6 +27,34 @@ pub(crate) fn render_states(
     )
 }
 
+pub(crate) fn render_report(
+    graph: &view::ViewGraph,
+    layout: &Layout<'_>,
+    format: svg::AddressFormat,
+    report: &mut Value,
+) -> String {
+    document(
+        svg::render_report(graph, layout, format, svg::Content::ValueFree, Some(report)),
+        resources(graph, "", ""),
+    )
+}
+
+pub(crate) fn render_states_report(
+    architecture: &view::ViewArchitecture,
+    format: svg::AddressFormat,
+    report: &mut Value,
+) -> String {
+    let resources = architecture
+        .states
+        .iter()
+        .flat_map(|(state, graph)| resources(graph, state.as_str(), &svg::state_prefix(state)))
+        .collect();
+    document(
+        svg::render_states_report(architecture, format, svg::Content::ValueFree, Some(report)),
+        resources,
+    )
+}
+
 fn resources(graph: &Graph, state: &str, prefix: &str) -> Vec<Value> {
     graph.nodes.iter().map(|node| json!({
         "id": format!("{prefix}{}", svg::resource_id(node)),

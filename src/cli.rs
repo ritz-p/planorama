@@ -3,6 +3,7 @@ use crate::{plan, semantic, svg};
 use std::io::{self, Read, Write};
 use std::path::{Path, PathBuf};
 mod files;
+mod layout_diagnostics;
 mod states;
 
 #[derive(Clone, Copy, Default)]
@@ -22,6 +23,7 @@ pub(crate) fn run() -> Result<(), String> {
     let mut output_format = OutputFormat::default();
     let mut address_format = svg::AddressFormat::default();
     let mut diagnostics = false;
+    let mut layout_diagnostics = layout_diagnostics::Options::default();
     let mut filter = crate::view::Options::default();
     let mut args = std::env::args().skip(1);
     while let Some(arg) = args.next() {
@@ -66,7 +68,18 @@ pub(crate) fn run() -> Result<(), String> {
                 state_inputs.insert(id, path.to_owned());
             }
             "--diagnostics" => diagnostics = true,
+            "--layout-diagnostics" => layout_diagnostics.text = true,
+            "--layout-diagnostics-json" => {
+                layout_diagnostics.json = Some(
+                    args.next()
+                        .ok_or("--layout-diagnostics-json requires a path")?
+                        .into(),
+                )
+            }
             "-h" | "--help" => {
+                println!(
+                    "  --layout-diagnostics  Report final layout quality on stderr\n  --layout-diagnostics-json PATH  Write a versioned layout report to a separate JSON file\n"
+                );
                 print!(
                     "{HELP}\nMultiple plans: planorama --state ID=PATH [--state ID=PATH ...] [-o diagram.svg]\nState IDs are explicit and unique (1-64 ASCII letters, digits, '.', '_' or '-').\nOne named input may use '-' for stdin; do not mix --state with a positional input.\n"
                 );
@@ -109,6 +122,7 @@ pub(crate) fn run() -> Result<(), String> {
         })
     });
     filter.validate()?;
+    layout_diagnostics.validate(input.iter().chain(state_inputs.values()), &output)?;
     if !state_inputs.is_empty() {
         if input.is_some() {
             return Err("do not mix --state with a positional input".into());
@@ -118,7 +132,7 @@ pub(crate) fn run() -> Result<(), String> {
             &output,
             address_format,
             output_format,
-            diagnostics,
+            (diagnostics, &layout_diagnostics),
             &mappings,
             &filter,
         );
@@ -182,13 +196,25 @@ pub(crate) fn run() -> Result<(), String> {
     }
     let graph = crate::view::single(&semantic::transform(&raw), &filter)?;
     let layout = Layout::new(&graph);
+    let mut report = serde_json::Value::Null;
     let image = match (output_format, address_format) {
+        (OutputFormat::Html, _) if layout_diagnostics.enabled() => {
+            crate::html::render_report(&graph, &layout, address_format, &mut report)
+        }
+        (OutputFormat::Svg, _) if layout_diagnostics.enabled() => svg::render_report(
+            &graph,
+            &layout,
+            address_format,
+            svg::Content::Standard,
+            Some(&mut report),
+        ),
         (OutputFormat::Html, _) => crate::html::render(&graph, &layout, address_format),
         (OutputFormat::Svg, svg::AddressFormat::Qualified) => svg::render(&graph, &layout),
         (OutputFormat::Svg, svg::AddressFormat::Terraform) => {
             svg::render_with_format(&graph, &layout, address_format)
         }
     };
+    layout_diagnostics.write(&report)?;
     match output.as_path() {
         path if path == Path::new("-") => io::stdout()
             .write_all(image.as_bytes())

@@ -4,6 +4,10 @@ The processing pipeline is `CLI → TerraformPlan → ArchitectureGraph → View
 The CLI owns file I/O and coordinates each stage. Named-state inputs preserve the
 same boundaries and carry explicit cross-state relationships.
 
+Optional [layout diagnostics](layout-diagnostics.md) collect final geometry during
+SVG composition, including annotation offsets and cross-state routing, and reuse
+runtime layout measurements. The CLI owns the separate report destination.
+
 | Module | Responsibility |
 | --- | --- |
 | `plan` | Terraform JSON ingestion, native identity, changes, reference/output facts |

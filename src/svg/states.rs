@@ -47,6 +47,18 @@ pub(crate) fn render_content(
     format: super::AddressFormat,
     content: super::Content,
 ) -> String {
+    render_report(architecture, format, content, None)
+}
+
+pub(crate) fn render_report(
+    architecture: &crate::view::ViewArchitecture,
+    format: super::AddressFormat,
+    content: super::Content,
+    report: Option<&mut serde_json::Value>,
+) -> String {
+    let mut scene = report
+        .as_ref()
+        .map(|_| crate::layout::diagnostics::Scene::default());
     let graphs = &architecture.states;
     let mut endpoints = BTreeMap::new();
     let mut obstacles = BTreeMap::new();
@@ -150,6 +162,15 @@ pub(crate) fn render_content(
         let (_, height) = measured_sections.dimensions(&layout);
         let prefix = prefix(id);
         let architecture_offset = measured_sections.height();
+        if let Some(scene) = &mut scene {
+            scene.add_state(
+                graph,
+                &layout,
+                Some(id.as_str()),
+                top + 40 + architecture_offset,
+                super::diagnostic_cards(graph, &layout),
+            );
+        }
         obstacles.insert(
             id.clone(),
             StateObstacles {
@@ -244,6 +265,9 @@ pub(crate) fn render_content(
         );
         arrival.reverse();
         points.extend(arrival);
+        if let Some(scene) = &mut scene {
+            scene.add_cross_state(edge, &points);
+        }
         let mut path = String::new();
         for (i, p) in points.iter().enumerate() {
             write!(path, "{} {} {} ", if i == 0 { "M" } else { "L" }, p.x, p.y).unwrap();
@@ -287,6 +311,9 @@ pub(crate) fn render_content(
             graphs.len()
         )
     };
+    if let (Some(scene), Some(report)) = (scene, report) {
+        *report = scene.finish(width, top);
+    }
     format!(
         r##"<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{top}" viewBox="0 0 {width} {top}" font-family="ui-monospace, Consolas, monospace" role="img" aria-labelledby="multi-title multi-description">
 <title id="multi-title">Terraform plans</title><desc id="multi-description">{description}</desc>

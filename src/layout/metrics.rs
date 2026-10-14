@@ -2,7 +2,7 @@ use crate::layout::Point;
 use std::collections::BTreeSet;
 
 #[cfg(test)]
-#[path = "../unit/layout/metrics.rs"]
+#[path = "../../tests/unit/layout/metrics.rs"]
 mod tests;
 
 #[derive(Debug, Default, PartialEq, Eq)]
@@ -13,6 +13,7 @@ pub(crate) struct LayoutMetrics {
     pub total_path_length: u128,
 }
 
+#[cfg(test)]
 #[derive(Debug, PartialEq, Eq)]
 pub(crate) struct EdgeMetrics {
     pub bends: usize,
@@ -21,6 +22,7 @@ pub(crate) struct EdgeMetrics {
     pub excess_distance: u128,
 }
 
+#[cfg(test)]
 impl EdgeMetrics {
     pub fn violation(
         &self,
@@ -44,6 +46,7 @@ impl EdgeMetrics {
     }
 }
 
+#[cfg(test)]
 pub(crate) fn measure_edge(path: &[Point], shortest_valid: &[Point]) -> EdgeMetrics {
     assert_eq!(path.first(), shortest_valid.first());
     assert_eq!(path.last(), shortest_valid.last());
@@ -77,7 +80,7 @@ impl Segment {
             (true, true) => return None,
             (false, true) => Axis::Horizontal,
             (true, false) => Axis::Vertical,
-            (false, false) => panic!("layout metrics require orthogonal paths"),
+            (false, false) => return None,
         };
         Some(Self { from, to, axis })
     }
@@ -201,6 +204,7 @@ pub(crate) fn measure(paths: &[Vec<Point>]) -> LayoutMetrics {
     }
 }
 
+#[cfg(test)]
 pub(crate) fn border_overlap(path: &[Point], frames: &[crate::layout::Bounds]) -> usize {
     path.windows(2)
         .map(|p| {

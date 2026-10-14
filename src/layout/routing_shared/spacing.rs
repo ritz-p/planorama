@@ -25,7 +25,7 @@ pub(in crate::layout) struct Metrics {
     pub deficit: usize,
 }
 
-fn shared_prefix(
+pub(in crate::layout) fn shared_prefix(
     a: &[Point],
     b: &[Point],
     horizontal: bool,
