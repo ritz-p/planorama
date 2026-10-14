@@ -127,6 +127,11 @@ class ViewerTests(unittest.TestCase):
 
     def test_component_membership_and_reference_navigation_are_separate(self):
         self.load('tests/fixtures/components-plan.json')
+        scope = ''.join(n.get_attribute('textContent') for n in self.driver.find_elements(By.CSS_SELECTOR, '[data-component-scope]'))
+        self.assertIn('Multi-region', scope)
+        for label in ['ap-northeast-1', 'us-east-1', 'Region: unknown']:
+            self.assertIn(label, scope)
+        self.assertEqual(len(self.driver.find_elements(By.CSS_SELECTOR, '[data-component-member]')), 3)
         self.choose('aws_lb.app')
         self.assertIn('Logical Component membership', self.find('#selection').text)
         self.find('#selection h3:last-of-type + ul button').click()
