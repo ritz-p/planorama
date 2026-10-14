@@ -122,7 +122,7 @@ pub(super) fn run(
         super::OutputFormat::Svg => svg::render_states(&architecture, format),
         super::OutputFormat::Html => crate::html::render_states(&architecture, format),
     };
-    layout_diagnostics.write(&report)?;
+    layout_diagnostics.write(&report, output)?;
     if output == Path::new("-") {
         io::stdout()
             .write_all(image.as_bytes())

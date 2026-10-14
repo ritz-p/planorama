@@ -74,11 +74,21 @@ impl Options {
         Ok(())
     }
 
-    pub fn write(&self, report: &serde_json::Value) -> Result<(), String> {
+    pub fn write(&self, report: &serde_json::Value, output: &Path) -> Result<(), String> {
         if let Some(path) = &self.json {
             let mut json = serde_json::to_string_pretty(report).map_err(|e| e.to_string())?;
             json.push('\n');
-            std::fs::write(path, json)
+            let mut file = std::fs::OpenOptions::new()
+                .write(true)
+                .create(true)
+                .truncate(false)
+                .open(path)
+                .map_err(|e| format!("cannot write layout diagnostics {}: {e}", path.display()))?;
+            if output != Path::new("-") {
+                super::files::reject_same_file(path, output)?;
+            }
+            file.set_len(0)
+                .and_then(|()| file.write_all(json.as_bytes()))
                 .map_err(|e| format!("cannot write layout diagnostics {}: {e}", path.display()))?;
         }
         if self.text {

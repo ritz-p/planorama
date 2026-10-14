@@ -19,6 +19,37 @@ fn report(edges: Vec<Route>) -> Value {
 }
 
 #[test]
+fn retraced_sections_count_visible_pair_geometry_once() {
+    for transpose in [false, true] {
+        for (peer_y, shared_source, metric, expected, findings) in [
+            (100, false, "independent_overlap_length", 400, 1),
+            (110, false, "parallel_deficit", 2016, 1),
+            (100, true, "shared_trunk_length", 400, 0),
+        ] {
+            let mut a = route("a", &[(0, 100), (400, 100), (100, 100)]);
+            let mut b = route(
+                if shared_source { "a" } else { "b" },
+                &[(0, peer_y), (400, peer_y)],
+            );
+            b.identity["target"] = json!("peer-target");
+            if transpose {
+                for p in a.path.iter_mut().chain(&mut b.path) {
+                    std::mem::swap(&mut p.x, &mut p.y);
+                }
+            }
+            let value = report(vec![a, b]);
+            assert_eq!(
+                value["summary"]["visible_straight_sections"][metric],
+                expected
+            );
+            assert_eq!(value["findings"].as_array().unwrap().len(), findings);
+            assert_eq!(value["summary"]["raw_polyline"]["length"], 1100);
+            assert_eq!(value["summary"]["raw_polyline"]["bends"], 1);
+        }
+    }
+}
+
+#[test]
 fn separates_crossings_parallel_and_independent_overlap() {
     let value = report(vec![
         route("a", &[(0, 100), (400, 100)]),

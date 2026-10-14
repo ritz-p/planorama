@@ -327,7 +327,22 @@ fn visible_segments(edge: &Route, index: &borders::Index) -> Vec<Segment> {
             });
         }
     }
-    result
+    result.sort_by_key(|s| (s.horizontal, s.axis, s.low, s.high, s.index));
+    let mut merged: Vec<Segment> = Vec::new();
+    for segment in result {
+        if let Some(previous) = merged.last_mut() {
+            if previous.horizontal == segment.horizontal
+                && previous.axis == segment.axis
+                && segment.low <= previous.high
+            {
+                previous.high = previous.high.max(segment.high);
+                previous.index = previous.index.min(segment.index);
+                continue;
+            }
+        }
+        merged.push(segment);
+    }
+    merged
 }
 
 fn shared(a: &Route, b: &Route, segment: Segment, low: usize, high: usize) -> bool {

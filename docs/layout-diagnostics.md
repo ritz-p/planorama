@@ -6,6 +6,9 @@ file. Both can be combined with semantic `--diagnostics`, SVG stdout, HTML,
 filters and named states. JSON never uses stdout or stderr. Input, diagram and
 report files must differ. Findings do not change exit status; I/O failures do.
 Dangling output symlinks are rejected before either output is written.
+The JSON file is opened without truncation, then its filesystem identity is
+checked against the diagram before writing either payload. Case-only aliases on
+case-insensitive filesystems are rejected; a newly reserved empty file may remain.
 Without either option, no report or pair analysis is collected.
 
 ```sh
@@ -44,11 +47,14 @@ Consumers should check the version before comparing reports.
   final spacing have already run. Logical cross-state references have no path.
 - `raw_polyline` length and bends describe orthogonal centerlines before SVG
   corner rounding. Length uses px. Consecutive collinear segments are merged;
-zero-length segments do not contribute. Direction reversals count as bends.
-Unsupported diagonal segments are
+  zero-length segments do not contribute. Direction reversals count as bends.
+  Unsupported diagonal segments are
   excluded and explicitly counted in `limits`.
 - Pair findings include both stable IDs, zero-based segment positions within
   their reported polylines, and crossing coordinates or parallel intervals.
+  Retraced collinear visible intervals are unioned for pair metrics; their segment
+  position identifies the earliest contributing segment, and the location gives
+  the measured interval. Raw length still counts every traversal.
   Border findings include a frame identity/bounds, segment, interval and whether
   the minimum gap is violated. Segment positions locate geometry, not identity.
 

@@ -214,7 +214,7 @@ pub(crate) fn run() -> Result<(), String> {
             svg::render_with_format(&graph, &layout, address_format)
         }
     };
-    layout_diagnostics.write(&report)?;
+    layout_diagnostics.write(&report, &output)?;
     match output.as_path() {
         path if path == Path::new("-") => io::stdout()
             .write_all(image.as_bytes())

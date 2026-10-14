@@ -107,6 +107,49 @@ fn dangling_output_symlinks_are_rejected_before_either_file_is_written() {
 }
 
 #[test]
+fn case_only_output_names_follow_filesystem_identity() {
+    let root = std::env::temp_dir().join(format!("planorama-layout-case-{}", std::process::id()));
+    std::fs::create_dir_all(&root).unwrap();
+    let diagram = root.join("Diagram.svg");
+    let report = root.join("diagram.svg");
+    std::fs::write(&report, b"probe").unwrap();
+    let aliases = diagram.exists();
+    std::fs::remove_file(&report).unwrap();
+    for named in [false, true] {
+        let mut command = cli();
+        if named {
+            command.args(["--state", "example=examples/plan.json"]);
+        } else {
+            command.arg("examples/plan.json");
+        }
+        let output = command
+            .arg("-o")
+            .arg(&diagram)
+            .arg("--layout-diagnostics-json")
+            .arg(&report)
+            .output()
+            .unwrap();
+        if aliases {
+            assert!(!output.status.success());
+            assert!(String::from_utf8_lossy(&output.stderr).contains("different files"));
+            assert!(std::fs::read(&report).unwrap().is_empty());
+        } else {
+            assert!(
+                output.status.success(),
+                "{}",
+                String::from_utf8_lossy(&output.stderr)
+            );
+            serde_json::from_slice::<Value>(&std::fs::read(&report).unwrap()).unwrap();
+            let svg = std::fs::read_to_string(&diagram).unwrap();
+            roxmltree::Document::parse(&svg).unwrap();
+            std::fs::remove_file(&diagram).unwrap();
+        }
+        std::fs::remove_file(&report).unwrap();
+    }
+    std::fs::remove_dir_all(root).unwrap();
+}
+
+#[test]
 fn cross_state_report_uses_final_gutter_coordinates() {
     let report = std::env::temp_dir().join(format!(
         "planorama-cross-layout-{}.json",
