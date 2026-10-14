@@ -1,5 +1,80 @@
 use super::*;
 
+#[test]
+fn member_scope_summaries_preserve_mixed_evidence_and_measure_annotations() {
+    use crate::model::{
+        AwsAccountScope, ProviderIdentity, RegionScope, architecture::DeploymentScope,
+    };
+    let mut graph = graph();
+    for node in &mut graph.nodes {
+        node.entity.scope = Some(DeploymentScope {
+            provider: "AWS".into(),
+            region: Some(RegionScope("ap-northeast-1".into())),
+            account: AwsAccountScope::new("111111111111"),
+            global: false,
+        });
+    }
+    let summary = |graph: &Graph| {
+        let card = cards(graph).remove(0);
+        let doc = roxmltree::Document::parse(&card.content).unwrap();
+        for member in doc
+            .descendants()
+            .filter(|n| n.attribute("data-component-member").is_some())
+        {
+            let underline = member
+                .descendants()
+                .find(|n| n.attribute("data-member-underline").is_some())
+                .unwrap();
+            for scope in member
+                .descendants()
+                .filter(|n| n.attribute("data-member-scope").is_some())
+            {
+                assert!(number(scope, "y") + 4 < number(underline, "y1"));
+            }
+        }
+        doc.descendants()
+            .filter(|n| n.attribute("data-component-scope").is_some())
+            .filter_map(|n| n.text())
+            .collect::<Vec<_>>()
+            .join("")
+    };
+    assert_eq!(
+        summary(&graph),
+        "Member scope: AWS Account: 111111111111 · Region: ap-northeast-1"
+    );
+    let address = graph.components[0].members[0].clone();
+    let index = graph
+        .nodes
+        .iter()
+        .position(|n| n.address == address)
+        .unwrap();
+    let scope = graph.nodes[index].entity.scope.as_mut().unwrap();
+    scope.region = Some(RegionScope("us-east-1".into()));
+    scope.account = AwsAccountScope::new("222222222222");
+    let mixed = summary(&graph);
+    assert!(mixed.contains("Multi-region · Multi-account · Mixed member scope"));
+    assert!(mixed.find("ap-northeast-1").unwrap() < mixed.find("us-east-1").unwrap());
+    graph.nodes[index].entity.scope = None;
+    assert!(summary(&graph).contains("Account partially unknown"));
+    assert!(summary(&graph).contains("Region: unknown"));
+    graph.nodes[index].provider = ProviderIdentity::InferredTerraform;
+    assert!(summary(&graph).contains("Region: not applicable"));
+    graph.nodes[index].entity.scope = Some(DeploymentScope {
+        provider: "AWS".into(),
+        region: None,
+        account: None,
+        global: true,
+    });
+    assert!(summary(&graph).contains("AWS Global"));
+    graph.nodes.remove(index);
+    assert!(summary(&graph).contains("Member unavailable in this view"));
+    let before = cards(&graph).remove(0).content;
+    graph.nodes.reverse();
+    graph.components[0].members.reverse();
+    assert_eq!(before, cards(&graph).remove(0).content);
+    assert!(graph.components[0].entity.scope.is_none());
+}
+
 fn graph() -> Graph {
     crate::semantic::transform(
         &crate::plan::parse(include_str!("../../fixtures/components-plan.json")).unwrap(),
@@ -370,7 +445,7 @@ fn long_member_lists_and_multiple_components_wrap_without_losing_text() {
         );
         let headings: Vec<_> = panel
             .children()
-            .filter(|n| n.has_tag_name("text"))
+            .filter(|n| n.has_tag_name("text") && n.attribute("data-component-scope").is_none())
             .collect();
         assert!(headings.len() > 1);
         assert_eq!(
