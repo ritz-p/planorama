@@ -8,11 +8,19 @@ pub enum RelationshipProvenance {
     Resource {
         source: TerraformEntityId,
         change: EdgeChange,
+        deployment: Option<Box<ResourceDeployment>>,
     },
     Reference {
         from: TerraformEntityId,
         to: TerraformEntityId,
     },
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
+pub struct ResourceDeployment {
+    pub scope: Option<super::architecture::DeploymentScope>,
+    pub provider: super::ProviderIdentity,
+    pub configuration: Option<super::ProviderConfiguration>,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]

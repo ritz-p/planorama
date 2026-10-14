@@ -50,7 +50,7 @@ neutral text rows without individual backgrounds, borders or card wrappers. One
 underline below each complete wrapped item uses the original resource's canonical
 action color. Members link to the original spatial card or logical-resource row;
 missing or ambiguous targets use neutral underlines and non-clickable rows. Row measurements
-include wrapping, badge height, the underline and spacing before the next member.
+include wrapping, scope labels, badge height, the underline and spacing before the next member.
 Accessible titles preserve full qualified addresses and operation/move/deposed
 context. These annotations do not affect architecture placement or routing.
 Imported members also show their own `import` badge in a reserved row. The badge
@@ -64,3 +64,14 @@ with their logical entity. Member links retain `data-source-address` and operati
 attributes. Original resources retain imports, drift, replacement reasons
 and move provenance. Synthetic entities do not increase resource/action counts or
 create dependency edges. See [the component example](../examples/components.svg).
+
+Component cards summarize the established deployment scopes of their visible,
+unambiguous members and display each member's scope beside its address. A common
+region is shown only when every member supports it. Multi-region and multi-account
+summaries retain all distinct scope labels in sorted order; partial account evidence,
+Global, unknown, not applicable and unavailable members remain explicit. Missing
+region evidence never means Global. Provider configuration identities remain on
+the original resources, even when their displayed scopes match. The summary does
+not assign a deployment scope to the synthetic entity or create account/region
+containment. CLI filtering shows a component only when all its members remain;
+unavailable or ambiguous member identities never supply guessed scope or links.

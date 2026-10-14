@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1300" height="1554" viewBox="0 0 1300 1554" role="img" aria-labelledby="title description">
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="2074" viewBox="0 0 1100 2074" role="img" aria-labelledby="title description">
 <title id="title">Terraform plan</title>
 <desc id="description">5 resources, 3 reference edges. Arrows point from dependencies to dependent resources. References are conservative, not Terraform execution order. Thin solid: dependency. Dashed: association. Thick dotted: connection. Nested boxes: containment. Edge color preserves the Terraform action when available.</desc>
 <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/></marker><metadata id="planorama-icons-license">AWS Architecture Icons, release 07312026.
@@ -35,7 +35,7 @@ No AWS endorsement is implied. Consult the AWS terms for other uses.
 <g id="plan-status" data-plan-applyable="true" data-plan-complete="true" data-plan-errored="false">
 <text x="40" y="137" font-size="12" fill="#475569">Plan status: applyable: true complete: true errored: false</text>
 </g>
-<g id="relationship-legend" font-size="12" fill="#475569" transform="translate(40 148)"><rect width="1220" height="474" rx="12" fill="#f8fafc" stroke="#cbd5e1"/>
+<g id="relationship-legend" font-size="12" fill="#475569" transform="translate(40 148)"><rect width="1020" height="528" rx="12" fill="#f8fafc" stroke="#cbd5e1"/>
 <text x="16" y="29" font-size="15" font-weight="700" fill="#334155">Relationship lines</text>
 <text x="16" y="56">Line color shows the relationship&apos;s own Terraform action, independently of endpoint-card actions.</text>
 <path data-legend-action="none" d="M 16 77 H 42" fill="none" stroke="#94a3b8" stroke-width="1.5"/><text x="50" y="82">no independent change</text>
@@ -46,11 +46,11 @@ No AWS endorsement is implied. Consult the AWS terms for other uses.
 <path data-legend-kind="dependency" data-directionality="directed" d="M 21 11 H 153" fill="none" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
 <circle data-legend-endpoint="source" cx="21" cy="11" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
 <text x="174" y="12" font-weight="700">Dependency</text>
-<text x="174" y="30">Thin solid arrow from the referenced resource to</text>
-<text x="174" y="48">the dependent resource; not exact Terraform</text>
-<text x="174" y="66">execution order.</text>
+<text x="174" y="30">Thin solid arrow from the referenced</text>
+<text x="174" y="48">resource to the dependent resource;</text>
+<text x="174" y="66">not exact Terraform execution order.</text>
 </g>
-<g data-legend-entry="association" transform="translate(622 132)">
+<g data-legend-entry="association" transform="translate(522 132)">
 <g data-legend-sample="association">
 <path data-legend-kind="association" data-directionality="undirected" d="M 21 11 H 153" fill="none" stroke="#94a3b8" stroke-width="2" stroke-dasharray="7 4"/>
 <circle data-legend-endpoint="source" cx="21" cy="11" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/><circle data-legend-endpoint="target" cx="153" cy="11" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/><g data-legend-badge="source">
@@ -61,11 +61,12 @@ No AWS endorsement is implied. Consult the AWS terms for other uses.
 </g>
 </g>
 <text x="174" y="12" font-weight="700">Association</text>
-<text x="174" y="30">Dashed, undirected relationship. Matching badges</text>
-<text x="174" y="48">identify the same Terraform-backed relationship at</text>
-<text x="174" y="66">both attachment points.</text>
+<text x="174" y="30">Dashed, undirected relationship.</text>
+<text x="174" y="48">Matching badges identify the same</text>
+<text x="174" y="66">Terraform-backed relationship at both</text>
+<text x="174" y="84">attachment points.</text>
 </g>
-<g data-legend-entry="directed-association" transform="translate(0 220)">
+<g data-legend-entry="directed-association" transform="translate(0 238)">
 <g data-legend-sample="directed-association">
 <path data-legend-kind="directed-association" data-directionality="directed" d="M 21 11 H 153" fill="none" stroke="#94a3b8" stroke-width="2" stroke-dasharray="7 4" marker-end="url(#arrow)"/>
 <circle data-legend-endpoint="source" cx="21" cy="11" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/><circle data-legend-endpoint="target" cx="153" cy="11" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/><path data-legend-arrow="true" d="M 146.7 7.5 L 153.7 11 L 146.7 14.5 Z" fill="#94a3b8"/>
@@ -77,98 +78,105 @@ No AWS endorsement is implied. Consult the AWS terms for other uses.
 </g>
 </g>
 <text x="174" y="12" font-weight="700">Directed Association</text>
-<text x="174" y="30">Dashed line from a Route to its next hop. The</text>
-<text x="174" y="48">destination arrow expresses direction; matching</text>
-<text x="174" y="66">badges identify the same relationship.</text>
+<text x="174" y="30">Dashed line from a Route to its next</text>
+<text x="174" y="48">hop. The destination arrow expresses</text>
+<text x="174" y="66">direction; matching badges identify</text>
+<text x="174" y="84">the same relationship.</text>
 </g>
-<g data-legend-entry="connection" transform="translate(622 220)">
+<g data-legend-entry="connection" transform="translate(522 238)">
 <g data-legend-sample="connection">
 <path data-legend-kind="connection" data-directionality="undirected" d="M 21 11 H 153" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-dasharray="0 3.5" stroke-linecap="round"/>
 <circle data-legend-endpoint="source" cx="21" cy="11" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/><circle data-legend-endpoint="target" cx="153" cy="11" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
 <text x="174" y="12" font-weight="700">Connection</text>
-<text x="174" y="30">Thicker dotted line shows an inferred, undirected</text>
-<text x="174" y="48">connection; this does not guarantee actual network</text>
-<text x="174" y="66">reachability.</text>
+<text x="174" y="30">Thicker dotted line shows an inferred,</text>
+<text x="174" y="48">undirected connection; this does not</text>
+<text x="174" y="66">guarantee actual network reachability.</text>
 </g>
-<g data-legend-entry="containment" transform="translate(0 308)">
+<g data-legend-entry="containment" transform="translate(0 344)">
 <g data-legend-sample="containment">
 <g data-legend-kind="containment" fill="none" stroke="#94a3b8"><rect x="65" y="2" width="44" height="28" rx="4"/><rect x="74" y="12" width="26" height="12" rx="2"/></g>
 </g>
 <text x="174" y="12" font-weight="700">Containment</text>
-<text x="174" y="30">Nested boxes show containment; nesting replaces a</text>
-<text x="174" y="48">redundant relationship line.</text>
+<text x="174" y="30">Nested boxes show containment; nesting</text>
+<text x="174" y="48">replaces a redundant relationship</text>
+<text x="174" y="66">line.</text>
 </g>
-<text x="16" y="390">Hollow circles mark resource/card attachment points; neither end of an undirected line is a directional start. Filled internal</text>
-<text x="16" y="408">dots mark bundle junctions.</text>
-<text x="16" y="434">Matching [N] badges identify the same Terraform-backed relationship and its Relationship Resources entry. They do not express</text>
-<text x="16" y="452">direction or count connections. Reference-only Connections and Dependencies have no number.</text>
+<text x="16" y="444">Hollow circles mark resource/card attachment points; neither end of an undirected line is a directional start. Filled</text>
+<text x="16" y="462">internal dots mark bundle junctions.</text>
+<text x="16" y="488">Matching [N] badges identify the same Terraform-backed relationship and its Relationship Resources entry. They do not</text>
+<text x="16" y="506">express direction or count connections. Reference-only Connections and Dependencies have no number.</text>
 </g>
-<g transform="translate(0 486)">
+<g transform="translate(0 540)">
 <g id="plan-checks"><title>Object: unknown
   aws_lb.app: unknown
 </title><text x="40" y="161" font-size="12" fill="#475569">Checks (objects): 0 pass / 0 fail / 0 error / 1 unknown / 0 other / 0 unavailable</text></g>
 <g transform="translate(0 24)">
 <g data-annotation-area="true">
-<g data-annotation-card="true" transform="translate(40 160)"><rect width="1220" height="284" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-annotation-section="Logical Components"><rect width="1220" height="284" rx="12" fill="#f5f3ff" stroke="#a78bfa"/><text x="16" y="28" font-size="15" font-weight="700" fill="#6d28d9">Logical Components</text><g data-annotation-card="true" transform="translate(16 48)"><rect width="360" height="220" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g id="architecture-73796e7468657469633a36633666363136343566363236313663363136653633363537322d3631373737333566366336323265363137303730" data-architecture-id="synthetic:6c6f61645f62616c616e636572-6177735f6c622e617070" data-entity-kind="synthetic" data-component-id="logical:load_balancer:aws_lb.app" data-component-kind="load_balancer"><title>Load balancer: aws_lb.app</title><text x="16" y="28" font-size="13" font-weight="700" fill="#5b21b6">Load balancer: aws_lb.app</text>
-<g data-component-member="true" transform="translate(16 48)"><a href="#resource-6177735f6c622e617070-current" data-source-address="aws_lb.app"><title>module.root.aws_lb.app; unchanged</title><text font-size="12" fill="#334155">
+<g data-annotation-card="true" transform="translate(40 160)"><rect width="1020" height="384" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-annotation-section="Logical Components"><rect width="1020" height="384" rx="12" fill="#f5f3ff" stroke="#a78bfa"/><text x="16" y="28" font-size="15" font-weight="700" fill="#6d28d9">Logical Components</text><g data-annotation-card="true" transform="translate(16 48)"><rect width="640" height="320" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g id="architecture-73796e7468657469633a36633666363136343566363236313663363136653633363537322d3631373737333566366336323265363137303730" data-architecture-id="synthetic:6c6f61645f62616c616e636572-6177735f6c622e617070" data-entity-kind="synthetic" data-component-id="logical:load_balancer:aws_lb.app" data-component-kind="load_balancer"><title>Load balancer: aws_lb.app</title><text x="16" y="28" font-size="13" font-weight="700" fill="#5b21b6">Load balancer: aws_lb.app</text>
+<text data-component-scope="true" x="16" y="48" font-size="12" fill="#64748b">Multi-region · Mixed member scope: Region: ap-northeast-1; Region: unknown;</text>
+<text data-component-scope="true" x="16" y="68" font-size="12" fill="#64748b"> Region: us-east-1</text>
+<g data-component-member="true" transform="translate(16 88)"><a href="#resource-6177735f6c622e617070-current" data-source-address="aws_lb.app"><title>module.root.aws_lb.app; unchanged</title><text font-size="12" fill="#334155">
 <tspan x="0" y="20" xml:space="preserve">unchanged: aws_lb.app</tspan>
-</text><line data-member-underline="true" x1="0" y1="28" x2="328" y2="28" stroke="#64748b" stroke-width="2"/>
+</text><text data-member-scope="true" x="0" y="40" font-size="12" fill="#64748b">Region: ap-northeast-1</text>
+<line data-member-underline="true" x1="0" y1="48" x2="608" y2="48" stroke="#64748b" stroke-width="2"/>
 </a></g>
-<g data-component-member="true" transform="translate(16 92)"><a href="#resource-6177735f6c625f6c697374656e65722e6874747073-current" data-source-address="aws_lb_listener.https" data-import="true" data-import-id-present="false" data-import-identity-present="false" data-import-unknown="false"><title>module.root.aws_lb_listener.https; import / update</title><g data-import-badge="true"><title>Imported resource</title><rect x="0" y="0" width="52" height="18" rx="4" fill="#ede9fe" stroke="#8b5cf6"/><text x="6" y="13" font-size="10" fill="#5b21b6">import</text></g><text font-size="12" fill="#334155">
+<g data-component-member="true" transform="translate(16 152)"><a href="#resource-6177735f6c625f6c697374656e65722e6874747073-current" data-source-address="aws_lb_listener.https" data-import="true" data-import-id-present="false" data-import-identity-present="false" data-import-unknown="false"><title>module.root.aws_lb_listener.https; import / update</title><g data-import-badge="true"><title>Imported resource</title><rect x="0" y="0" width="52" height="18" rx="4" fill="#ede9fe" stroke="#8b5cf6"/><text x="6" y="13" font-size="10" fill="#5b21b6">import</text></g><text font-size="12" fill="#334155">
 <tspan x="0" y="44" xml:space="preserve">import / update: aws_lb_listener.https</tspan>
-</text><line data-member-underline="true" x1="0" y1="52" x2="328" y2="52" stroke="#1d4ed8" stroke-width="2"/>
+</text><text data-member-scope="true" x="0" y="64" font-size="12" fill="#64748b">Region: us-east-1</text>
+<line data-member-underline="true" x1="0" y1="72" x2="608" y2="72" stroke="#1d4ed8" stroke-width="2"/>
 </a></g>
-<g data-component-member="true" transform="translate(16 160)"><a href="#resource-6177735f6c625f6c697374656e65725f72756c652e617069-current" data-source-address="aws_lb_listener_rule.api" data-action-reason="replace_because_cannot_update" data-replace-paths="[[&quot;listener_arn&quot;]]"><title>module.root.aws_lb_listener_rule.api; replace; reason: replace_because_cannot_update; replacement paths: [[&quot;listener_arn&quot;]]; moved from: aws_lb_listener_rule.old</title><text font-size="12" fill="#334155">
+<g data-component-member="true" transform="translate(16 240)"><a href="#resource-6177735f6c625f6c697374656e65725f72756c652e617069-current" data-source-address="aws_lb_listener_rule.api" data-action-reason="replace_because_cannot_update" data-replace-paths="[[&quot;listener_arn&quot;]]"><title>module.root.aws_lb_listener_rule.api; replace; reason: replace_because_cannot_update; replacement paths: [[&quot;listener_arn&quot;]]; moved from: aws_lb_listener_rule.old</title><text font-size="12" fill="#334155">
 <tspan x="0" y="20" xml:space="preserve">replace: aws_lb_listener_rule.api</tspan>
-</text><line data-member-underline="true" x1="0" y1="28" x2="328" y2="28" stroke="#c2410c" stroke-width="2"/>
+</text><text data-member-scope="true" x="0" y="40" font-size="12" fill="#64748b">Region: unknown</text>
+<line data-member-underline="true" x1="0" y1="48" x2="608" y2="48" stroke="#c2410c" stroke-width="2"/>
 </a></g>
 </g>
 </g>
 </g></g>
 </g>
-<g data-architecture="true" transform="translate(0 308)">
-<rect x="35" y="160" width="1230" height="512" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-dasharray="5 4"/><text x="52" y="185" font-size="13" font-weight="700" fill="#475569"><title>root</title>root</text>
-<path d="M 380 256 L 392 256 Q 396 256 396 252 L 396 252 Q 396 248 400 248 L 420 248 " data-edge-kind="dependency" data-directionality="directed" data-source="resource-6177735f6c622e617070-current" data-target="resource-6177735f6c625f6c697374656e65722e6874747073-current" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>aws_lb.app → aws_lb_listener.https</title></path>
-<path d="M 740 268 L 900 268 " data-edge-kind="dependency" data-directionality="directed" data-source="resource-6177735f6c625f6c697374656e65722e6874747073-current" data-target="resource-6177735f6c625f6c697374656e65725f72756c652e617069-current" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>aws_lb_listener.https → aws_lb_listener_rule.api</title></path>
-<path d="M 380 392 L 388 392 Q 396 392 396 384 L 396 256 Q 396 248 404 248 L 420 248 " data-edge-kind="dependency" data-directionality="directed" data-source="resource-6177735f6c625f7461726765745f67726f75702e736861726564-current" data-target="resource-6177735f6c625f6c697374656e65722e6874747073-current" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>aws_lb_target_group.shared → aws_lb_listener.https</title></path>
-<circle cx="396" cy="256" r="3" fill="#94a3b8"/>
+<g data-architecture="true" transform="translate(0 408)">
+<g data-deployment-scope="true" data-scope-provider="AWS" data-region="ap-northeast-1"><rect x="40" y="160" width="360" height="156" rx="14" fill="#f8fafc" stroke="#94a3b8" stroke-dasharray="9 5"/><text x="56" y="185" font-size="15" font-weight="700" fill="#334155">AWS ap-northeast-1</text></g>
+<g data-deployment-scope="true" data-scope-provider="AWS" data-region="us-east-1"><rect x="40" y="356" width="360" height="180" rx="14" fill="#f8fafc" stroke="#94a3b8" stroke-dasharray="9 5"/><text x="56" y="381" font-size="15" font-weight="700" fill="#334155">AWS us-east-1</text></g>
+<path d="M 60 248 L 44 248 Q 36 248 36 256 L 36 428 Q 36 436 44 436 L 60 436 " data-edge-kind="dependency" data-directionality="directed" data-source="resource-6177735f6c622e617070-current" data-target="resource-6177735f6c625f6c697374656e65722e6874747073-current" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>aws_lb.app → aws_lb_listener.https</title></path>
+<path d="M 220 516 L 220 576 " data-edge-kind="dependency" data-directionality="directed" data-source="resource-6177735f6c625f6c697374656e65722e6874747073-current" data-target="resource-6177735f6c625f6c697374656e65725f72756c652e617069-current" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>aws_lb_listener.https → aws_lb_listener_rule.api</title></path>
+<path d="M 60 778 L 52 778 Q 44 778 44 770 L 44 484 Q 44 476 52 476 L 60 476 " data-edge-kind="dependency" data-directionality="directed" data-source="resource-6177735f6c625f7461726765745f67726f75702e736861726564-current" data-target="resource-6177735f6c625f6c697374656e65722e6874747073-current" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>aws_lb_target_group.shared → aws_lb_listener.https</title></path>
 <g id="resource-6177735f6c622e617070-current" data-architecture-id="terraform:6177735f6c622e617070-current" data-qualified-address="module.root.aws_lb.app" data-terraform-address="aws_lb.app" data-component-id="logical:load_balancer:aws_lb.app"><title>module.root.aws_lb.app — unchanged</title>
-<rect x="60" y="208" width="320" height="96" rx="8" fill="#f8fafc" stroke="#64748b" stroke-width="1.5" data-mode="managed"/>
-<text x="72" y="228" font-size="11" fill="#64748b">aws_lb · unchanged</text>
-<use href="#planorama-icon-aws-elb" x="72" y="236" width="24" height="24" aria-hidden="true"/><text x="104" y="253" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_lb.app</text>
+<rect x="60" y="200" width="320" height="96" rx="8" fill="#f8fafc" stroke="#64748b" stroke-width="1.5" data-mode="managed"/>
+<text x="72" y="220" font-size="11" fill="#64748b">aws_lb · unchanged</text>
+<use href="#planorama-icon-aws-elb" x="72" y="228" width="24" height="24" aria-hidden="true"/><text x="104" y="245" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_lb.app</text>
 </g>
 <g id="resource-6177735f6c622e6f74686572-current" data-architecture-id="terraform:6177735f6c622e6f74686572-current" data-qualified-address="module.root.aws_lb.other" data-terraform-address="aws_lb.other"><title>module.root.aws_lb.other — create</title>
-<rect x="60" y="520" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
-<text x="72" y="540" font-size="11" fill="#047857">aws_lb · create</text>
-<use href="#planorama-icon-aws-elb" x="72" y="548" width="24" height="24" aria-hidden="true"/><text x="104" y="565" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_lb.other</text>
+<rect x="60" y="866" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
+<text x="72" y="886" font-size="11" fill="#047857">aws_lb · create</text>
+<use href="#planorama-icon-aws-elb" x="72" y="894" width="24" height="24" aria-hidden="true"/><text x="104" y="911" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_lb.other</text>
 </g>
 <g id="resource-6177735f6c625f6c697374656e65722e6874747073-current" data-architecture-id="terraform:6177735f6c625f6c697374656e65722e6874747073-current" data-qualified-address="module.root.aws_lb_listener.https" data-terraform-address="aws_lb_listener.https" data-import="true" data-import-id-present="false" data-import-identity-present="false" data-import-unknown="false" data-component-id="logical:load_balancer:aws_lb.app"><title>module.root.aws_lb_listener.https — import / update</title>
-<rect x="420" y="208" width="320" height="120" rx="8" fill="#eff6ff" stroke="#1d4ed8" stroke-width="1.5" data-mode="managed"/>
-<g data-import-badge="true"><title>Imported resource</title><rect x="432" y="236" width="52" height="18" rx="4" fill="#ede9fe" stroke="#8b5cf6"/><text x="438" y="249" font-size="10" fill="#5b21b6">import</text></g><text x="432" y="228" font-size="11" fill="#1d4ed8">aws_lb_listener · update</text>
-<use href="#planorama-icon-aws-elb" x="432" y="260" width="24" height="24" aria-hidden="true"/><text x="464" y="277" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_lb_listener.https</text>
+<rect x="60" y="396" width="320" height="120" rx="8" fill="#eff6ff" stroke="#1d4ed8" stroke-width="1.5" data-mode="managed"/>
+<g data-import-badge="true"><title>Imported resource</title><rect x="72" y="424" width="52" height="18" rx="4" fill="#ede9fe" stroke="#8b5cf6"/><text x="78" y="437" font-size="10" fill="#5b21b6">import</text></g><text x="72" y="416" font-size="11" fill="#1d4ed8">aws_lb_listener · update</text>
+<use href="#planorama-icon-aws-elb" x="72" y="448" width="24" height="24" aria-hidden="true"/><text x="104" y="465" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_lb_listener.https</text>
 </g>
 <g id="resource-6177735f6c625f6c697374656e65725f72756c652e617069-current" data-architecture-id="terraform:6177735f6c625f6c697374656e65725f72756c652e617069-current" data-qualified-address="module.root.aws_lb_listener_rule.api" data-terraform-address="aws_lb_listener_rule.api" data-previous-address="aws_lb_listener_rule.old" data-action-reason="replace_because_cannot_update" data-replace-paths="[[&quot;listener_arn&quot;]]" data-component-id="logical:load_balancer:aws_lb.app"><title>module.root.aws_lb_listener_rule.api — replace; reason: replace_because_cannot_update; replacement paths: [[&quot;listener_arn&quot;]]; moved from: aws_lb_listener_rule.old</title>
-<rect x="900" y="211" width="320" height="114" rx="8" fill="#fff7ed" stroke="#c2410c" stroke-width="1.5" data-mode="managed"/>
-<text x="912" y="231" font-size="11" fill="#c2410c">aws_lb_listener_rule · replace</text>
-<use href="#planorama-icon-aws-elb" x="912" y="239" width="24" height="24" aria-hidden="true"/><text x="944" y="256" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_lb_listener_rule.</text>
-<text x="944" y="276" font-size="13" fill="#0f172a" xml:space="preserve">api</text>
-<text data-move-annotation="true" font-size="11" fill="#64748b"><title>Moved from: aws_lb_listener_rule.old</title><tspan x="912" y="297" xml:space="preserve">Moved from: aws_lb_listener_rule.old</tspan>
+<rect x="60" y="576" width="320" height="114" rx="8" fill="#fff7ed" stroke="#c2410c" stroke-width="1.5" data-mode="managed"/>
+<text x="72" y="596" font-size="11" fill="#c2410c">aws_lb_listener_rule · replace</text>
+<use href="#planorama-icon-aws-elb" x="72" y="604" width="24" height="24" aria-hidden="true"/><text x="104" y="621" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_lb_listener_rule.</text>
+<text x="104" y="641" font-size="13" fill="#0f172a" xml:space="preserve">api</text>
+<text data-move-annotation="true" font-size="11" fill="#64748b"><title>Moved from: aws_lb_listener_rule.old</title><tspan x="72" y="662" xml:space="preserve">Moved from: aws_lb_listener_rule.old</tspan>
 </text>
-<text x="912" y="313" font-size="10" fill="#64748b" data-role="policy"><title>root</title>policy · root</text>
+<text x="72" y="678" font-size="10" fill="#64748b" data-role="policy"><title>root</title>policy · root</text>
 </g>
 <g id="resource-6177735f6c625f7461726765745f67726f75702e736861726564-current" data-architecture-id="terraform:6177735f6c625f7461726765745f67726f75702e736861726564-current" data-qualified-address="module.root.aws_lb_target_group.shared" data-terraform-address="aws_lb_target_group.shared"><title>module.root.aws_lb_target_group.shared — create</title>
-<rect x="60" y="344" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
-<text x="72" y="364" font-size="11" fill="#047857">aws_lb_target_group · create</text>
-<use href="#planorama-icon-aws-elb" x="72" y="372" width="24" height="24" aria-hidden="true"/><text x="104" y="389" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_lb_target_group.</text>
-<text x="104" y="409" font-size="13" fill="#0f172a" xml:space="preserve">shared</text>
-<text x="72" y="428" font-size="10" fill="#64748b" data-role="controller"><title>root</title>controller · root</text>
+<rect x="60" y="730" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
+<text x="72" y="750" font-size="11" fill="#047857">aws_lb_target_group · create</text>
+<use href="#planorama-icon-aws-elb" x="72" y="758" width="24" height="24" aria-hidden="true"/><text x="104" y="775" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_lb_target_group.</text>
+<text x="104" y="795" font-size="13" fill="#0f172a" xml:space="preserve">shared</text>
+<text x="72" y="814" font-size="10" fill="#64748b" data-role="controller"><title>root</title>controller · root</text>
 </g>
 <g data-endpoints="true" data-source="resource-6177735f6c622e617070-current" data-target="resource-6177735f6c625f6c697374656e65722e6874747073-current" aria-hidden="true">
-<circle data-endpoint="source" cx="380" cy="256" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+<circle data-endpoint="source" cx="60" cy="248" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
 <g data-endpoints="true" data-source="resource-6177735f6c625f6c697374656e65722e6874747073-current" data-target="resource-6177735f6c625f6c697374656e65725f72756c652e617069-current" aria-hidden="true">
-<circle data-endpoint="source" cx="740" cy="268" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+<circle data-endpoint="source" cx="220" cy="516" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
 <g data-endpoints="true" data-source="resource-6177735f6c625f7461726765745f67726f75702e736861726564-current" data-target="resource-6177735f6c625f6c697374656e65722e6874747073-current" aria-hidden="true">
-<circle data-endpoint="source" cx="380" cy="392" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+<circle data-endpoint="source" cx="60" cy="778" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
 </g>
 </g>
 </g>

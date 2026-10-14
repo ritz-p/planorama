@@ -771,18 +771,16 @@ fn additional_dense_and_provider_snapshots_match_the_renderer() {
 
 #[test]
 fn relationship_index_examples_use_available_width_for_complete_entry_cards() {
-    for (input, name, count, columns) in [
+    for (input, name, count) in [
         (
             include_bytes!("../fixtures/relationship-index-plan.json").as_slice(),
             "relationship-index",
             21usize,
-            2,
         ),
         (
             include_bytes!("../fixtures/relationship-index-wide-plan.json").as_slice(),
             "relationship-index-wide",
             40,
-            5,
         ),
     ] {
         let svg = render(input);
@@ -800,6 +798,21 @@ fn relationship_index_examples_use_available_width_for_complete_entry_cards() {
             .filter(|n| n.attribute("data-relationship-index").is_some())
             .collect();
         assert_eq!(cards.len(), count.div_ceil(5));
+        let number = |node: roxmltree::Node, attribute| {
+            node.attribute(attribute).unwrap().parse::<usize>().unwrap()
+        };
+        let card_width = number(
+            cards[0]
+                .parent()
+                .unwrap()
+                .children()
+                .find(|n| n.has_tag_name("rect"))
+                .unwrap(),
+            "width",
+        );
+        let content_width = number(document.root_element(), "width") - 112;
+        let columns = (content_width + 20) / (card_width + 20);
+        assert!(columns > 0);
         let mut rows = Vec::new();
         for (i, card) in cards.iter().enumerate() {
             let numbers: Vec<_> = card
@@ -824,6 +837,8 @@ fn relationship_index_examples_use_available_width_for_complete_entry_cards() {
                 .split_whitespace()
                 .map(|value| value.parse().unwrap())
                 .collect();
+            assert_eq!(position[0], 16 + (i % columns) * (card_width + 20));
+            assert!(position[0] + card_width <= content_width + 16);
             if i % columns == 0 {
                 assert_eq!(position[0], 16);
                 if let Some(previous) = rows.last() {

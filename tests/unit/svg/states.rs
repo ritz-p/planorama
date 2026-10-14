@@ -465,7 +465,7 @@ fn named_states_reflow_indexes_at_shared_width_and_keep_cross_state_offsets() {
     let mut wide_input: serde_json::Value =
         serde_json::from_str(include_str!("../../fixtures/association-plan.json")).unwrap();
     let mut previous = String::from("aws_route_table.private");
-    for i in 0..3 {
+    for i in 0..6 {
         let address = format!("test.wide_{i}");
         wide_input["resource_changes"]
             .as_array_mut()

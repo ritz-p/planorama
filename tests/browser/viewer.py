@@ -127,6 +127,11 @@ class ViewerTests(unittest.TestCase):
 
     def test_component_membership_and_reference_navigation_are_separate(self):
         self.load('tests/fixtures/components-plan.json')
+        scope = ''.join(n.get_attribute('textContent') for n in self.driver.find_elements(By.CSS_SELECTOR, '[data-component-scope]'))
+        self.assertIn('Multi-region', scope)
+        for label in ['ap-northeast-1', 'us-east-1', 'Region: unknown']:
+            self.assertIn(label, scope)
+        self.assertEqual(len(self.driver.find_elements(By.CSS_SELECTOR, '[data-component-member]')), 3)
         self.choose('aws_lb.app')
         self.assertIn('Logical Component membership', self.find('#selection').text)
         self.find('#selection h3:last-of-type + ul button').click()
@@ -154,7 +159,7 @@ class ViewerTests(unittest.TestCase):
         self.assertTrue(all('producer:' in b.text for b in self.search('producer')))
 
     def test_lowered_resource_search_highlights_only_its_parallel_relationship(self):
-        plan = json.loads((ROOT / 'tests/fixtures/association-plan.json').read_text())
+        plan = json.loads((ROOT / 'tests/fixtures/relationship-scopes-plan.json').read_text())
         second = 'aws_route_table_association.second'
         plan['resource_changes'].append({'address': second, 'type': 'aws_route_table_association', 'change': {'actions': ['delete']}})
         config = dict(plan['configuration']['root_module']['resources'][-1], address=second)
@@ -167,6 +172,9 @@ class ViewerTests(unittest.TestCase):
         self.assertIn(second, paths[0].find_element(By.TAG_NAME, 'title').get_attribute('textContent'))
         before = self.driver.execute_script("return Array.from(document.querySelectorAll('path[data-edge-kind]')).map(e=>[e.getAttribute('d'),e.getAttribute('stroke'),e.getAttribute('stroke-dasharray'),e.getAttribute('marker-end')])")
         entry = self.find('[data-relationship-entry="2"]')
+        text = ''.join(n.get_attribute('textContent') for n in entry.find_elements(By.TAG_NAME, 'tspan'))
+        self.assertIn('Resource scope: AWS Account: 111111111111 · Region: ap-northeast-1', text)
+        self.assertIn('aws_route_table.private · AWS Account: 222222222222 · Region: us-east-1', text)
         number = entry.find_element(By.CSS_SELECTOR, '[data-relationship-select]')
         self.driver.execute_script('arguments[0].focus()', number)
         number.send_keys(Keys.ENTER)
@@ -182,7 +190,7 @@ class ViewerTests(unittest.TestCase):
         self.assertEqual(before, after)
 
     def test_number_selection_stays_within_its_state(self):
-        self.load('--state', 'one=tests/fixtures/association-plan.json', '--state', 'two=tests/fixtures/association-plan.json')
+        self.load('--state', 'one=tests/fixtures/relationship-scopes-plan.json', '--state', 'two=tests/fixtures/relationship-scopes-plan.json')
         for state in ['one', 'two']:
             marker = self.find(f'[data-state-id="{state}"] [data-relationship-marker] a')
             self.driver.execute_script('arguments[0].focus()', marker)

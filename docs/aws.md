@@ -56,6 +56,10 @@ objects without regional evidence also remain unknown. Global classification is
 explicit and independent of provider region; policy conditions such as
 `aws:RequestedRegion` never determine deployment scope.
 
+Logical Components display an aggregate of established member scopes plus each
+member's label. Mixed regions/accounts and incomplete evidence remain explicit;
+see [component summaries](components.md). Synthetic entities acquire no scope panel.
+
 A containment subtree is grouped only when all members have the same known scope.
 Conflicting or unknown members leave the whole subtree outside panels, preserving
 containment without suggesting a guessed account or region. Plans without a groupable account or regional

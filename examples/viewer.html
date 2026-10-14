@@ -48,7 +48,7 @@ p { line-height: 1.5; }
 <section id="selection" aria-label="Selection details" aria-live="polite"></section>
 </aside>
 <section id="viewport" tabindex="0" aria-label="Diagram. Arrow keys pan; plus and minus zoom; F fits the view; Escape clears selection.">
-<svg xmlns="http://www.w3.org/2000/svg" width="1040" height="2354" viewBox="0 0 1040 2354" role="img" aria-labelledby="title description">
+<svg xmlns="http://www.w3.org/2000/svg" width="1040" height="2414" viewBox="0 0 1040 2414" role="img" aria-labelledby="title description">
 <title id="title">Terraform plan</title>
 <desc id="description">8 resources (3 spatial cards, 5 logical resources in 4 group cards) · 4 relationships Thin solid: dependency. Dashed: association. Thick dotted: connection. Nested boxes: containment. Edge color preserves the Terraform action when available.</desc>
 <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/></marker><metadata id="planorama-icons-license">AWS Architecture Icons, release 07312026.
@@ -238,20 +238,23 @@ Task role: unresolved [task_role_arn; unresolved attribute reference]</title><te
 </g>
 </g>
 </g></g>
-<g data-annotation-card="true" transform="translate(40 1088)"><rect width="960" height="216" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-annotation-section="Logical Components"><rect width="960" height="216" rx="12" fill="#f5f3ff" stroke="#a78bfa"/><text x="16" y="28" font-size="15" font-weight="700" fill="#6d28d9">Logical Components</text><g data-annotation-card="true" transform="translate(16 48)"><rect width="360" height="152" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g id="architecture-73796e7468657469633a36633666363136343566363236313663363136653633363537322d3631373737333566366336323265363137303730" data-architecture-id="synthetic:6c6f61645f62616c616e636572-6177735f6c622e617070" data-entity-kind="synthetic" data-component-id="logical:load_balancer:aws_lb.app" data-component-kind="load_balancer"><title>Load balancer: aws_lb.app</title><text x="16" y="28" font-size="13" font-weight="700" fill="#5b21b6">Load balancer: aws_lb.app</text>
-<g data-component-member="true" transform="translate(16 48)"><a href="#resource-6177735f6c622e617070-current" data-source-address="aws_lb.app"><title>module.root.aws_lb.app; create</title><text font-size="12" fill="#334155">
+<g data-annotation-card="true" transform="translate(40 1088)"><rect width="960" height="276" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-annotation-section="Logical Components"><rect width="960" height="276" rx="12" fill="#f5f3ff" stroke="#a78bfa"/><text x="16" y="28" font-size="15" font-weight="700" fill="#6d28d9">Logical Components</text><g data-annotation-card="true" transform="translate(16 48)"><rect width="360" height="212" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g id="architecture-73796e7468657469633a36633666363136343566363236313663363136653633363537322d3631373737333566366336323265363137303730" data-architecture-id="synthetic:6c6f61645f62616c616e636572-6177735f6c622e617070" data-entity-kind="synthetic" data-component-id="logical:load_balancer:aws_lb.app" data-component-kind="load_balancer"><title>Load balancer: aws_lb.app</title><text x="16" y="28" font-size="13" font-weight="700" fill="#5b21b6">Load balancer: aws_lb.app</text>
+<text data-component-scope="true" x="16" y="48" font-size="12" fill="#64748b">Member scope: Region: unknown</text>
+<g data-component-member="true" transform="translate(16 68)"><a href="#resource-6177735f6c622e617070-current" data-source-address="aws_lb.app"><title>module.root.aws_lb.app; create</title><text font-size="12" fill="#334155">
 <tspan x="0" y="20" xml:space="preserve">create: aws_lb.app</tspan>
-</text><line data-member-underline="true" x1="0" y1="28" x2="328" y2="28" stroke="#047857" stroke-width="2"/>
+</text><text data-member-scope="true" x="0" y="40" font-size="12" fill="#64748b">Region: unknown</text>
+<line data-member-underline="true" x1="0" y1="48" x2="328" y2="48" stroke="#047857" stroke-width="2"/>
 </a></g>
-<g data-component-member="true" transform="translate(16 92)"><a href="#resource-6177735f6c625f6c697374656e65722e68747470-current" data-source-address="aws_lb_listener.http"><title>module.root.aws_lb_listener.http; update</title><text font-size="12" fill="#334155">
+<g data-component-member="true" transform="translate(16 132)"><a href="#resource-6177735f6c625f6c697374656e65722e68747470-current" data-source-address="aws_lb_listener.http"><title>module.root.aws_lb_listener.http; update</title><text font-size="12" fill="#334155">
 <tspan x="0" y="20" xml:space="preserve">update: aws_lb_listener.http</tspan>
-</text><line data-member-underline="true" x1="0" y1="28" x2="328" y2="28" stroke="#1d4ed8" stroke-width="2"/>
+</text><text data-member-scope="true" x="0" y="40" font-size="12" fill="#64748b">Region: unknown</text>
+<line data-member-underline="true" x1="0" y1="48" x2="328" y2="48" stroke="#1d4ed8" stroke-width="2"/>
 </a></g>
 </g>
 </g>
 </g></g>
 </g>
-<g data-architecture="true" transform="translate(0 1168)">
+<g data-architecture="true" transform="translate(0 1228)">
 <rect x="35" y="160" width="970" height="404" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-dasharray="5 4"/><text x="52" y="185" font-size="13" font-weight="700" fill="#475569"><title>root</title>root</text>
 <g data-edge-kind="dependency" data-source="resource-6177735f6563735f636c75737465722e617070-current" data-target="resource-6177735f6563735f736572766963652e617070-current"><title>aws_ecs_cluster.app → aws_ecs_service.app</title></g>
 <g data-edge-kind="dependency" data-source="resource-6177735f6563735f7461736b5f646566696e6974696f6e2e617070-current" data-target="resource-6177735f6563735f736572766963652e617070-current"><title>aws_ecs_task_definition.app → aws_ecs_service.app</title></g>

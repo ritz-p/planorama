@@ -1,4 +1,5 @@
 examples/association.svg
+examples/relationship-scopes.svg
 examples/aws-relationships.svg
 examples/autoscaling-policy.svg
 examples/bundling.svg
