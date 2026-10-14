@@ -24,10 +24,6 @@ pub(super) struct Area {
 }
 
 impl Area {
-    pub fn new(cards: Vec<Card>, available_width: usize) -> Self {
-        Self::flow(cards, available_width, Point { x: 40, y: 160 }, 40, 24)
-    }
-
     pub fn flow(
         cards: Vec<Card>,
         available_width: usize,
@@ -93,14 +89,52 @@ impl Area {
             .iter()
             .flat_map(|(_, _, cards)| cards)
             .fold(available_width, |width, card| width.max(card.width + 112));
-        let cards = sections.into_iter().filter_map(|(heading, palette, cards)| {
-            if cards.is_empty() { return None; }
-            let children = Self::flow(cards, width - 80, Point { x: 16, y: 48 }, 16, 16);
+        let mut y = 160;
+        let mut cards = Vec::new();
+        for (heading, palette, children) in sections {
+            if children.is_empty() {
+                continue;
+            }
+            let children = Self::flow(children, width - 80, Point { x: 16, y: 48 }, 16, 16);
+            let content_width = children
+                .cards
+                .iter()
+                .map(|(_, bounds)| bounds.right() + 16)
+                .max()
+                .unwrap_or(0)
+                .max(crate::view::text::width(heading) * 9 + 32);
             let height = children.height + 48;
-            let content = format!(r#"<g data-annotation-section="{heading}"><rect width="{}" height="{height}" rx="12" fill="{}" stroke="{}"/><text x="16" y="28" font-size="15" font-weight="700" fill="{}">{heading}</text>{}</g>"#, children.width, palette.background, palette.border, palette.heading, children.content());
-            Some(Card { width: children.width, height, content })
-        }).collect();
-        Self::new(cards, width)
+            let content = format!(
+                r#"<g data-annotation-section="{heading}"><rect width="{content_width}" height="{height}" rx="12" fill="{}" stroke="{}"/><text x="16" y="28" font-size="15" font-weight="700" fill="{}">{heading}</text>{}</g>"#,
+                palette.background,
+                palette.border,
+                palette.heading,
+                children.content()
+            );
+            let bounds = Bounds {
+                origin: Point { x: 40, y },
+                width: content_width,
+                height,
+            };
+            y += height + 20;
+            cards.push((
+                Card {
+                    width: content_width,
+                    height,
+                    content,
+                },
+                bounds,
+            ));
+        }
+        Self {
+            height: if cards.is_empty() {
+                0
+            } else {
+                y - 160 - 20 + 24
+            },
+            width,
+            cards,
+        }
     }
 }
 

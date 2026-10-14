@@ -2,7 +2,10 @@ use super::*;
 
 #[test]
 fn ordered_sections_wrap_children_and_omit_empty_sections_without_gaps() {
-    for width in [400, 2200] {
+    for (width, count) in [400, 2200, 12000]
+        .into_iter()
+        .flat_map(|width| [1, 2, 7].map(|count| (width, count)))
+    {
         for mask in 0..8 {
             let sections = [
                 ("Logical Resources", crate::svg::style::LOGICAL_RESOURCES),
@@ -15,7 +18,7 @@ fn ordered_sections_wrap_children_and_omit_empty_sections_without_gaps() {
             .into_iter()
             .enumerate()
             .map(|(i, (name, palette))| {
-                let cards = (0..if mask & (1 << i) == 0 { 0 } else { 7 })
+                let cards = (0..if mask & (1 << i) == 0 { 0 } else { count })
                     .map(|n| Card {
                         width: 360 + n * 20,
                         height: 80 + n * 30,
@@ -26,6 +29,14 @@ fn ordered_sections_wrap_children_and_omit_empty_sections_without_gaps() {
             })
             .collect();
             let area = Area::sections(sections, width);
+            assert_eq!(
+                area.width,
+                if mask == 0 {
+                    width
+                } else {
+                    width.max(360 + (count - 1) * 20 + 112)
+                }
+            );
             if mask == 0 {
                 assert_eq!(area.height, 0);
                 assert!(area.render().is_empty());
@@ -91,7 +102,19 @@ fn ordered_sections_wrap_children_and_omit_empty_sections_without_gaps() {
                     }
                     bounds.push((cx, cy, cw, ch));
                 }
-                assert_eq!(bounds.len(), 7);
+                assert_eq!(bounds.len(), count);
+                assert_eq!(
+                    w,
+                    bounds.iter().map(|(x, _, w, _)| x + w).max().unwrap() + 16
+                );
+                assert_eq!(
+                    h,
+                    bounds.iter().map(|(_, y, _, h)| y + h).max().unwrap() + 16
+                );
+                if width == 12000 {
+                    assert!(bounds.iter().all(|(_, y, _, _)| *y == 48));
+                    assert!(w < width - 80);
+                }
             }
             assert_eq!(area.height, bottom + 24 - 160);
         }
@@ -108,7 +131,7 @@ fn empty_single_and_wrapped_cards_have_deterministic_bounds() {
                 content: format!("<text>{i}</text>"),
             })
             .collect();
-        let area = Area::new(cards, 720);
+        let area = Area::flow(cards, 720, Point { x: 40, y: 160 }, 40, 24);
         assert_eq!(area.width, 720);
         if count == 0 {
             assert_eq!(area.height, 0);
@@ -127,13 +150,16 @@ fn empty_single_and_wrapped_cards_have_deterministic_bounds() {
         }
         assert_eq!(area.render(), area.render());
     }
-    let area = Area::new(
+    let area = Area::flow(
         vec![Card {
             width: 800,
             height: 80,
             content: String::new(),
         }],
         400,
+        Point { x: 40, y: 160 },
+        40,
+        24,
     );
     assert_eq!(area.width, 880);
     assert_eq!(area.height, 104);
@@ -151,7 +177,7 @@ fn card_rows_use_the_tallest_content_and_wrap_only_when_width_requires_it() {
             })
             .collect()
     };
-    let wide = Area::new(make_cards(), 1200);
+    let wide = Area::flow(make_cards(), 1200, Point { x: 40, y: 160 }, 40, 24);
     assert_eq!(
         wide.cards.iter().map(|(_, b)| b.origin).collect::<Vec<_>>(),
         vec![
@@ -161,11 +187,11 @@ fn card_rows_use_the_tallest_content_and_wrap_only_when_width_requires_it() {
         ]
     );
     assert_eq!(wide.height, 424);
-    let narrow = Area::new(make_cards(), 820);
+    let narrow = Area::flow(make_cards(), 820, Point { x: 40, y: 160 }, 40, 24);
     assert_eq!(narrow.cards[1].1.origin, Point { x: 420, y: 160 });
     assert_eq!(narrow.cards[2].1.origin, Point { x: 40, y: 580 });
     assert_eq!(narrow.height, 524);
-    let one_per_row = Area::new(make_cards(), 819);
+    let one_per_row = Area::flow(make_cards(), 819, Point { x: 40, y: 160 }, 40, 24);
     assert_eq!(one_per_row.cards[1].1.origin, Point { x: 40, y: 300 });
     assert_eq!(one_per_row.cards[2].1.origin, Point { x: 40, y: 720 });
 }

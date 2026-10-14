@@ -746,12 +746,16 @@ fn relationship_cards_fill_the_svg_width_at_exact_and_one_pixel_short_boundaries
                     .children()
                     .find(|node| node.has_tag_name("rect"))
                     .unwrap();
-                assert_eq!(attribute_number(section_rect, "width"), layout.width - 80);
                 let cards: Vec<_> = section
                     .children()
                     .filter(|node| node.attribute("data-annotation-card").is_some())
                     .collect();
                 assert_eq!(cards.len(), count.div_ceil(5));
+                let occupied_columns = columns.min(cards.len());
+                assert_eq!(
+                    attribute_number(section_rect, "width"),
+                    32 + occupied_columns * 640 + (occupied_columns - 1) * 20
+                );
                 let mut y = 48;
                 for row in cards.chunks(columns) {
                     for (column, card) in row.iter().enumerate() {
