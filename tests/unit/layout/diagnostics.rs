@@ -19,6 +19,54 @@ fn report(edges: Vec<Route>) -> Value {
 }
 
 #[test]
+fn retraced_continuations_preserve_shared_prefix_and_suffix_boundaries() {
+    for transpose in [false, true] {
+        for suffix in [false, true] {
+            let mut a = route(
+                "shared",
+                &[
+                    (0, 100),
+                    (100, 100),
+                    (100, 200),
+                    (50, 200),
+                    (50, 100),
+                    (200, 100),
+                ],
+            );
+            let mut b = route("shared", &[(0, 100), (200, 100)]);
+            b.identity["target"] = json!("other");
+            a.rounded = false;
+            b.rounded = false;
+            for edge in [&mut a, &mut b] {
+                if suffix {
+                    edge.path.reverse();
+                    let source = edge.identity["source"].take();
+                    edge.identity["source"] = edge.identity["target"].take();
+                    edge.identity["target"] = source;
+                }
+                if transpose {
+                    for p in &mut edge.path {
+                        std::mem::swap(&mut p.x, &mut p.y);
+                    }
+                }
+            }
+            let value = report(vec![a, b]);
+            let metrics = &value["summary"]["visible_straight_sections"];
+            assert_eq!(metrics["shared_trunk_length"], 100);
+            assert_eq!(metrics["independent_overlap_length"], 100);
+            let overlaps: Vec<_> = value["findings"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .filter(|f| f["category"] == "independent_overlap")
+                .collect();
+            assert_eq!(overlaps.len(), 1);
+            assert_eq!(overlaps[0]["location"]["interval"], json!([100, 200]));
+        }
+    }
+}
+
+#[test]
 fn retraced_sections_count_visible_pair_geometry_once() {
     for transpose in [false, true] {
         for (peer_y, shared_source, metric, expected, findings) in [

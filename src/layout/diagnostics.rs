@@ -235,8 +235,23 @@ impl Scene {
                             let distance = sa.axis.abs_diff(sb.axis);
                             let ea = &self.edges[a];
                             let eb = &self.edges[b];
-                            if distance == 0 && shared(ea, eb, *sa, low, high) {
-                                shared_length += high - low;
+                            if distance == 0 {
+                                for (low, high, is_shared) in
+                                    shared_sections(ea, eb, *sa, low, high)
+                                {
+                                    if is_shared {
+                                        shared_length += high - low;
+                                    } else {
+                                        overlap += high - low;
+                                        if findings.len() < FINDING_LIMIT {
+                                            findings.push(json!({"category": "independent_overlap",
+                                                "edge": ea.identity.to_string(), "peer": eb.identity.to_string(),
+                                                "segment": sa.index, "peer_segment": sb.index,
+                                                "location": {"horizontal": sa.horizontal, "coordinates": [sa.axis, sb.axis],
+                                                    "interval": [low, high], "visible_gap": -(ea.stroke as f64 + eb.stroke as f64) / 8.0}}));
+                                        }
+                                    }
+                                }
                                 continue;
                             }
                             let gap = distance as f64 - (ea.stroke + eb.stroke) as f64 / 8.0;
@@ -343,6 +358,45 @@ fn visible_segments(edge: &Route, index: &borders::Index) -> Vec<Segment> {
         merged.push(segment);
     }
     merged
+}
+
+fn shared_sections(
+    a: &Route,
+    b: &Route,
+    segment: Segment,
+    low: usize,
+    high: usize,
+) -> Vec<(usize, usize, bool)> {
+    if a.identity["source"] != b.identity["source"] && a.identity["target"] != b.identity["target"]
+    {
+        return vec![(low, high, false)];
+    }
+    let mut boundaries = vec![low, high];
+    for p in a.path.iter().chain(&b.path) {
+        let (axis, along) = if segment.horizontal {
+            (p.y, p.x)
+        } else {
+            (p.x, p.y)
+        };
+        if axis == segment.axis && low < along && along < high {
+            boundaries.push(along);
+        }
+    }
+    boundaries.sort_unstable();
+    boundaries.dedup();
+    let mut sections: Vec<(usize, usize, bool)> = Vec::new();
+    for interval in boundaries.windows(2) {
+        let (low, high) = (interval[0], interval[1]);
+        let is_shared = shared(a, b, segment, low, high);
+        if let Some(previous) = sections.last_mut() {
+            if previous.2 == is_shared {
+                previous.1 = high;
+                continue;
+            }
+        }
+        sections.push((low, high, is_shared));
+    }
+    sections
 }
 
 fn shared(a: &Route, b: &Route, segment: Segment, low: usize, high: usize) -> bool {

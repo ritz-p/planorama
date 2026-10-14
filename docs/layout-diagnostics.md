@@ -55,6 +55,8 @@ Consumers should check the version before comparing reports.
   Retraced collinear visible intervals are unioned for pair metrics; their segment
   position identifies the earliest contributing segment, and the location gives
   the measured interval. Raw length still counts every traversal.
+  Merged overlaps are split at shared-prefix/suffix boundaries before classifying
+  shared trunks and independent overlap; each visible interval contributes once.
   Border findings include a frame identity/bounds, segment, interval and whether
   the minimum gap is violated. Segment positions locate geometry, not identity.
 
