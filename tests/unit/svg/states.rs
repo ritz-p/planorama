@@ -210,7 +210,8 @@ fn mixed_width_state_legends_use_shared_content_width_outside_cross_state_gutter
         assert!(number(nested, "height") < number(independent.root_element(), "height"));
     }
     let actual = legend_shape(document.root_element());
-    assert_eq!(actual.0, allocated_width - 80);
+    assert_eq!(actual.0, 960);
+    assert!(actual.0 < allocated_width - 80);
     assert_eq!(
         document
             .descendants()

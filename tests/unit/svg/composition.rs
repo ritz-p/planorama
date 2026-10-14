@@ -1,7 +1,7 @@
 use super::*;
 
 #[test]
-fn legend_reflow_changes_section_offsets_without_moving_cards_or_routing_paths() {
+fn capped_legend_keeps_offsets_cards_and_routing_paths_on_wider_canvases() {
     let raw = crate::plan::parse(include_str!("../../fixtures/association-plan.json")).unwrap();
     let graph = crate::semantic::transform(&raw);
     let mut layout = Layout::new(&graph);
@@ -30,7 +30,7 @@ fn legend_reflow_changes_section_offsets_without_moving_cards_or_routing_paths()
             .children()
             .find(|node| node.has_tag_name("rect"))
             .unwrap();
-        assert_eq!(number(rectangle, "width"), width - 80);
+        assert_eq!(number(rectangle, "width"), 960);
         let legend_bottom = translated_y(rectangle) + number(rectangle, "height");
         let annotation = document
             .descendants()
@@ -77,10 +77,9 @@ fn legend_reflow_changes_section_offsets_without_moving_cards_or_routing_paths()
             .collect();
         assert!(!cards.is_empty() && !paths.is_empty());
         if let Some((height, annotation_y, architecture_y, old_cards, old_paths)) = previous {
-            let reduction = height - sections.legend.height;
-            assert!(reduction > 0);
-            assert_eq!(annotation_y - annotation_top, reduction);
-            assert_eq!(architecture_y - architecture_offset, reduction);
+            assert_eq!(height, sections.legend.height);
+            assert_eq!(annotation_y, annotation_top);
+            assert_eq!(architecture_y, architecture_offset);
             assert_eq!(old_cards, cards);
             assert_eq!(old_paths, paths);
         }
