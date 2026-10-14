@@ -42,6 +42,9 @@ section.
 `svg/annotations.rs` packs rounded cards in deterministic
 rows inside ordered sections, reusing the same wrapping and measurement for nested
 cards and growing the canvas for oversized cards.
+Each section frame ends at its widest occupied row plus padding; the available
+canvas width controls child packing independently. Sections remain vertically
+stacked, with heights measured from the last occupied row.
 Empty areas reserve no height. One enclosing translation shifts all architecture
 cards, paths and relationship badges together; annotation cards never enter
 `Layout` or routing obstacles. Named-state endpoint coordinates include this shift.

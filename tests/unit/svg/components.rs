@@ -515,14 +515,28 @@ fn long_member_lists_and_multiple_components_wrap_without_losing_text() {
             }
         }
     }
-    let expected = crate::svg::annotations::Area::new(cards, 1500).render();
+    let expected = crate::svg::annotations::Area::flow(
+        cards,
+        1500,
+        crate::layout::Point { x: 40, y: 160 },
+        40,
+        24,
+    )
+    .render();
     graph.components.reverse();
     graph.nodes.reverse();
     for component in &mut graph.components {
         component.members.reverse();
     }
     assert_eq!(
-        crate::svg::annotations::Area::new(super::cards(&graph), 1500).render(),
+        crate::svg::annotations::Area::flow(
+            super::cards(&graph),
+            1500,
+            crate::layout::Point { x: 40, y: 160 },
+            40,
+            24
+        )
+        .render(),
         expected
     );
     let doc = roxmltree::Document::parse(&expected).unwrap();

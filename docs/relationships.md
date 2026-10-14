@@ -128,7 +128,9 @@ The hierarchy and all wrapped lines are measured before packing cards.
 Each card contains up to 5 complete entries: 1–5, 6–10, and so on. Cards continue
 to the right with a 20px gap, wrapping only when the next complete card would exceed
 the final available width. There is no 20-entry break or maximum column count;
-an exact fit stays on the current row. Card space excludes the 40px outer margin
+an exact fit stays on the current row. The surrounding section frame ends after
+the widest occupied row plus padding, without changing packing or canvas width.
+Card space excludes the 40px outer margin
 and 16px section padding on each side, totaling 112px. Named-state diagrams use
 the final shared content width, including any width required by a wider state or
 annotation, while reserving the cross-state routing gutter separately. A multi-source
