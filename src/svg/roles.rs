@@ -1,6 +1,18 @@
 use super::{escape, shorten};
 use crate::model::architecture::ResourceRole;
 
+pub(super) fn explanation(role: ResourceRole) -> Option<&'static str> {
+    match role {
+        ResourceRole::Policy => Some(
+            "Role: Policy — access/control rules or policy-like configuration; not necessarily IAM or policy enforcement.",
+        ),
+        ResourceRole::Controller => Some(
+            "Role: Controller — manages or configures services, workloads or related resources; does not prove runtime control, traffic or relationships.",
+        ),
+        _ => None,
+    }
+}
+
 pub(super) fn annotation(role: ResourceRole, module: &str) -> String {
     let name = match role {
         ResourceRole::Policy => "policy",

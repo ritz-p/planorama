@@ -67,6 +67,18 @@ executable markup. CLI-filtered resources do not become searchable. Existing
 unavailable-reference descriptions can still identify a target outside the view.
 The viewer provides no editing, persistence or additional graph filtering.
 
+Logical-resource type cards show all nonempty action sections with colored borders
+and explicit counts, equally in offline SVG and HTML. Policy and Controller have
+visible explanations in the card heading. See the synthetic
+[all-action example](../examples/logical-actions.svg).
+
+The interactive per-type action filter from #373 is an explicit follow-up. It
+requires coordinated annotation/state/canvas reflow and selection/reference target
+availability, including visible counts and keyboard-accessible controls. The current
+viewer has no runtime layout engine: hiding rows alone would leave stale geometry
+and links. That follow-up must distinguish filtered targets from absent resources
+and must never restore resources excluded by CLI focus or changed-only selection.
+
 The [representative example](../examples/viewer.html) includes logical resources,
 Uses references, unresolved references, managed/data resources and component
 membership. Regenerate it from the committed fixture:

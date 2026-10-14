@@ -21,6 +21,7 @@ examples/port-collisions.svg
 examples/rds-subnet-group.svg
 examples/regions.svg
 examples/logical-regions.svg
+examples/logical-actions.svg
 examples/regional-states.svg
 examples/relationship-index-wide.svg
 examples/relationship-index.svg

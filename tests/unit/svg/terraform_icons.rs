@@ -110,7 +110,10 @@ fn builtin_and_aws_icons_preserve_provider_boundaries_and_external_styling() {
             let stroke = if card.attribute("data-placement") == Some("logical") {
                 assert_eq!(card.attribute("data-mode"), mode);
                 assert_eq!(card.attribute("data-external"), is_data.then_some("true"));
-                let group = card.parent_element().unwrap();
+                let group = card
+                    .ancestors()
+                    .find(|n| n.attribute("data-logical-group").is_some())
+                    .unwrap();
                 assert_eq!(group.attribute("data-logical-group"), Some("true"));
                 assert_eq!(group.attribute("data-mode"), mode);
                 assert_eq!(

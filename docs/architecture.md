@@ -68,15 +68,19 @@ variants do not add grouping keys; their individual identities and provenance
 remain intact. Grouping does not change which resources have logical placement.
 
 Each group has one neutral card with a wrapped resource-type/mode heading and
-canonical provider-source line. Its resources appear directly as rows without
-nested cards or a combined group action. Each row retains the full selected
+canonical provider-source line. Nonempty action subsections appear inside the card
+in Create, Update, Delete, Replace, Read, Unchanged, Other order, with counts and
+canonical action-colored borders. Rows sort by architecture identity within each
+subsection; wrappers introduce no resource or DOM identity. Each row retains the full selected
 address, action label, deployment-scope label, role, Uses/Dependencies, service icon
 and import/move/deposed information, with one action-colored underline below its
 complete content. `view::scope` supplies the reusable label from resolved scope
 and provider identity. Its wrapped height is reserved before group-card packing.
-Data rows use a dashed underline. Groups sort by their keys and rows by stable
-architecture identity. Every row remains visible; height grows with all wrapped
-content, badges, underlines and inter-row spacing without a row or height cap.
+Data rows use a dashed underline. Groups sort by their keys. Every selected row
+remains visible; height grows with action headings, borders, wrapped role
+explanations, content, badges, underlines and spacing without a row or height cap.
+The provider-neutral `svg::roles` mapping explains Policy and Controller once per
+role in the group heading, while individual rows retain their role metadata.
 
 Logical rows retain their original resource DOM IDs and metadata; resource links
 target the specific row. Group cards do not introduce architecture identities.

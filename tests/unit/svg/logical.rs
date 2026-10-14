@@ -1,5 +1,109 @@
 use crate::{layout::Layout, model::Placement, plan, semantic, svg, view};
 
+#[test]
+fn action_sections_keep_one_type_card_canonical_colors_counts_and_stable_rows() {
+    use crate::model::Action;
+    let input = include_str!("../../fixtures/logical-actions-plan.json");
+    let graph = semantic::transform(&plan::parse(input).unwrap());
+    let render = |graph: &crate::model::Graph| svg::render(graph, &Layout::new(graph));
+    let output = render(&graph);
+    let doc = roxmltree::Document::parse(&output).unwrap();
+    let groups: Vec<_> = doc
+        .descendants()
+        .filter(|n| n.attribute("data-logical-group").is_some())
+        .collect();
+    assert_eq!(groups.len(), 2);
+    let group = groups
+        .iter()
+        .find(|n| n.attribute("data-resource-type") == Some("aws_iam_policy"))
+        .unwrap();
+    let sections: Vec<_> = group
+        .children()
+        .filter(|n| n.attribute("data-action-section").is_some())
+        .collect();
+    let expected = [
+        (Action::Create, "Create", 2),
+        (Action::Update, "Update", 1),
+        (Action::Delete, "Delete", 1),
+        (Action::Replace, "Replace", 1),
+        (Action::Read, "Read", 1),
+        (Action::Unchanged, "Unchanged", 1),
+        (Action::Other, "Other", 1),
+    ];
+    assert_eq!(sections.len(), expected.len());
+    let mut bottom = 0;
+    for (section, (action, label, count)) in sections.iter().zip(expected) {
+        assert_eq!(
+            section.attribute("data-action-section"),
+            Some(svg::label(action))
+        );
+        let rect = section.children().find(|n| n.has_tag_name("rect")).unwrap();
+        assert_eq!(rect.attribute("stroke"), Some(svg::color(action).1));
+        assert!(number(rect, "y") > bottom);
+        bottom = number(rect, "y") + number(rect, "height");
+        let heading = section.children().find(|n| n.has_tag_name("text")).unwrap();
+        assert_eq!(heading.text(), Some(format!("{label} ({count})").as_str()));
+        let rows: Vec<_> = section
+            .children()
+            .filter(|n| n.attribute("data-placement").is_some())
+            .collect();
+        assert_eq!(rows.len(), count);
+        let ids: Vec<_> = rows
+            .iter()
+            .map(|n| n.attribute("data-architecture-id").unwrap())
+            .collect();
+        assert!(ids.windows(2).all(|pair| pair[0] < pair[1]));
+        for row in rows {
+            assert_logical_row(row, action);
+            assert!(row_y(row) > number(heading, "y"));
+            assert!(row_y(row) + number(underline(row), "y1") < bottom);
+        }
+        assert!(section.attribute("id").is_none());
+        assert!(section.attribute("data-architecture-id").is_none());
+    }
+    assert_eq!(
+        doc.descendants()
+            .filter(|n| n.attribute("data-terraform-address").is_some())
+            .count(),
+        graph.nodes.len()
+    );
+    for group in groups {
+        let explanation: String = group
+            .children()
+            .filter(|n| n.attribute("data-role-explanation").is_some())
+            .filter_map(|n| n.text())
+            .collect();
+        assert!(explanation.contains(
+            if group.attribute("data-resource-type") == Some("aws_iam_policy") {
+                "Role: Policy — access/control rules"
+            } else {
+                "Role: Controller — manages or configures"
+            }
+        ));
+    }
+    let mut reversed: serde_json::Value = serde_json::from_str(input).unwrap();
+    reversed["resource_changes"]
+        .as_array_mut()
+        .unwrap()
+        .reverse();
+    assert_eq!(
+        output,
+        render(&semantic::transform(
+            &plan::parse(&reversed.to_string()).unwrap()
+        ))
+    );
+    let selected = view::single(
+        &graph,
+        &view::Options {
+            changed_only: true,
+            ..Default::default()
+        },
+    )
+    .unwrap();
+    assert!(!render(&selected).contains("data-action-section=\"unchanged\""));
+    assert!(graph.nodes.iter().any(|n| n.action == Action::Unchanged));
+}
+
 fn input() -> serde_json::Value {
     serde_json::json!({"format_version":"1.2", "resource_changes":[
         {"address":"aws_ecs_cluster.app", "type":"aws_ecs_cluster", "previous_address":"aws_ecs_cluster.old", "change":{"actions":["update"],"importing":{"id":"PRIVATE_IMPORT"},"after":{"secret":"PRIVATE_VALUE"}}},
@@ -140,7 +244,12 @@ fn underline<'a, 'input>(row: roxmltree::Node<'a, 'input>) -> roxmltree::Node<'a
 }
 
 fn assert_logical_row(row: roxmltree::Node, action: crate::model::Action) {
-    let group = row.parent().unwrap();
+    let section = row.parent().unwrap();
+    assert_eq!(
+        section.attribute("data-action-section"),
+        Some(svg::label(action))
+    );
+    let group = section.parent().unwrap();
     assert_eq!(group.attribute("data-logical-group"), Some("true"));
     let card = group.parent().unwrap();
     assert_eq!(card.attribute("data-annotation-card"), Some("true"));
@@ -499,7 +608,7 @@ fn logical_groups_use_canonical_provider_type_and_mode_without_combining_actions
         assert!(heading.contains(resource_type));
         assert!(heading.contains(mode));
         let rows: Vec<_> = group
-            .children()
+            .descendants()
             .filter(|n| n.attribute("data-placement") == Some("logical"))
             .collect();
         assert_eq!(
@@ -613,7 +722,7 @@ fn logical_focus_and_changes_preserve_selected_resources_and_reference_evidence(
         doc.descendants()
             .filter(|n| n.attribute("data-logical-group") == Some("true"))
             .all(|n| n
-                .children()
+                .descendants()
                 .any(|n| n.attribute("data-placement") == Some("logical")))
     );
 }
@@ -642,7 +751,11 @@ fn logical_group_rows_wrap_long_addresses_and_keep_deposed_identity_and_input_or
         .collect();
     assert_eq!(cards.len(), 2);
     assert_ne!(cards[0].attribute("id"), cards[1].attribute("id"));
-    assert_eq!(cards[0].parent(), cards[1].parent());
+    assert_eq!(
+        cards[0].parent().unwrap().parent(),
+        cards[1].parent().unwrap().parent()
+    );
+    assert_ne!(cards[0].parent(), cards[1].parent());
     assert!(
         cards
             .iter()
@@ -727,7 +840,7 @@ fn named_states_keep_logical_ids_separate_and_cross_state_provenance_without_rou
             .collect();
         assert_eq!(groups.len(), 5);
         assert!(groups.iter().all(|n| {
-            n.children()
+            n.descendants()
                 .filter(|n| n.attribute("data-placement") == Some("logical"))
                 .count()
                 == 1
@@ -973,7 +1086,7 @@ fn shared_profiles_and_long_reference_lists_are_fully_visible() {
         })
         .unwrap();
     let rows: Vec<_> = group
-        .children()
+        .descendants()
         .filter(|n| n.attribute("data-placement") == Some("logical"))
         .collect();
     assert_eq!(rows.len(), addresses.len());
