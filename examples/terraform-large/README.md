@@ -4,6 +4,10 @@ For the combined multi-state/account/region baseline, see
 [the maintained 250-input example](../multi-account/README.md). This smaller
 fixture remains its reusable source and a focused single-state reference.
 
+Current spacing budgets and their CI comparison are documented in
+[spacing calibration](spacing-calibration.md). Earlier measurements below retain
+their original revision labels.
+
 The JSON-formatted Terraform source is split across `network`, `application`,
 `database`, and `shared` modules. Module membership differs from containment:
 application EC2 instances belong to subnets in the network module. This is a
@@ -131,8 +135,9 @@ length (5,675 → 1,457), bends (10 → 8), and unchanged area (3,135,600 pixels
 
 The revised spacing pass plans complete lanes before changing routes. It reserves
 missing corridor capacity, reroutes impacted independent edges, then compares
-final per-edge shape and proximity. Six corridor attempts and 64px growth per
-axis bound the work. Whole-route clarity takes priority over the soft 16px target.
+final per-edge shape and proximity. The current defaults allow 20 sweeps,
+60–240 attempts and 640–4096px cumulative growth per axis, scaled to the diagram.
+Whole-route clarity takes priority over the soft 16px target.
 Failed expansion and routing restore geometry and paths together.
 
 The metric ignores the first/last 32px at real endpoints, runs shorter than 64px,
@@ -175,15 +180,16 @@ geometry, shape and metrics agreed after edge reordering.
 The focused narrow corridor carries Dependency, numbered Association and
 Connection edges. Three lanes require a 44px gap expansion; final rerouting
 produces ordered two-bend routes at 16px separation, distinct from translated old
-paths. The transposed fixture covers horizontal routing. Seven lanes exceed the
-growth budget and keep clean two-bend paths with residual proximity. Separate
+paths. The transposed fixture covers horizontal routing. Seven lanes now receive
+108px of growth and clean two-bend paths; seven separate gaps share 756px of
+cumulative expansion in the larger fixture. Separate
 checks protect shared trunks and verify rollback of paths, junctions, scopes and
 bands when expanded routing cannot be accepted.
 
 ## Visible border clearance
 
 #317 adds a separate 4px minimum and 8px preferred empty gap between visible
-relationship and frame strokes. The final pass shares its six-attempt and 64px
+relationship and frame strokes. The final pass shares its expanded search and
 per-axis budgets with parallel-line spacing. It can act on one path and short
 contacts, using actual card/container/Route border widths and rounded geometry.
 Covered path pieces remain masked; visible exterior paths retain their border

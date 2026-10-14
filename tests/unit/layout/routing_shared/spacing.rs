@@ -2,6 +2,9 @@ use super::*;
 use crate::layout::ContainmentTree;
 use crate::model::Edge;
 
+#[path = "spacing_calibration.rs"]
+mod calibration;
+
 fn graph() -> Graph {
     let raw = crate::plan::parse(r#"{"format_version":"1.2","resource_changes":[{"address":"test.a","type":"test"},{"address":"test.b","type":"test"},{"address":"test.c","type":"test"},{"address":"test.d","type":"test"},{"address":"test.e","type":"test"},{"address":"test.f","type":"test"}]}"#).unwrap();
     let mut graph = crate::semantic::transform(&raw).0;
@@ -721,13 +724,13 @@ fn numbered_turns_keep_distinct_perpendicular_runs_when_spacing_a_corridor() {
 }
 
 #[test]
-fn soft_spacing_keeps_clean_routes_when_capacity_needs_excessive_growth() {
+fn seven_lanes_use_more_than_the_previous_axis_growth_budget() {
     let graph = corridor_graph(7);
     let mut layout = narrow(&graph, false);
     let before = expansion::Snapshot::capture(&layout);
     refine(&graph, &mut layout);
-    assert_eq!((layout.width, layout.height), (before.width, before.height));
-    assert!(measure(&graph, &layout.paths).close_length > 0);
+    assert!(layout.width > before.width + 64);
+    assert_eq!(measure(&graph, &layout.paths).close_length, 0);
     assert!(
         layout
             .paths
@@ -902,7 +905,7 @@ fn minimum_border_deficit_gets_one_attempt_without_reordering_the_cost_prefix() 
             .map(|c| c.lanes[0].edge)
             .collect::<Vec<_>>()
     };
-    for remaining in [1, 3, ATTEMPTS] {
+    for remaining in [1, 3, 6] {
         let mut corridors = original.clone();
         plan::reserve_urgent(&mut corridors, remaining);
         assert_eq!(

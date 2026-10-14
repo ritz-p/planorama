@@ -93,9 +93,7 @@ pub(super) fn allocate(
         }
     };
     let mut paths = layout.paths.clone();
-    for p in paths.iter_mut().flatten() {
-        move_point(p);
-    }
+    translate_paths(&mut paths, horizontal, cut, amount);
     for b in &mut layout.bounds {
         move_bounds(b);
     }
@@ -122,4 +120,22 @@ pub(super) fn allocate(
     }
     layout.positions = layout.bounds.iter().map(|b| b.origin).collect();
     true
+}
+
+pub(super) fn translate_paths(
+    paths: &mut [Vec<Point>],
+    horizontal: bool,
+    cut: usize,
+    amount: usize,
+) {
+    for point in paths.iter_mut().flatten() {
+        let coordinate = if horizontal {
+            &mut point.y
+        } else {
+            &mut point.x
+        };
+        if *coordinate >= cut {
+            *coordinate += amount;
+        }
+    }
 }
