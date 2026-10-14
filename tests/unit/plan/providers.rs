@@ -39,7 +39,9 @@ fn account_is_independent_of_global_region_and_module_overrides() {
         json!({"references":["var.region"]});
     value["resource_changes"].as_array_mut().unwrap().push(json!({"address":"module.child[0].aws_cloudfront_distribution.main","type":"aws_cloudfront_distribution"}));
     value["configuration"]["root_module"]["module_calls"]["child"] = json!({"module":{"resources":[{"address":"aws_cloudfront_distribution.main","provider_config_key":"aws.tokyo"}]}});
-    let graph = semantic::transform(&plan::parse(&value.to_string()).unwrap());
+    let graph = semantic::transform(
+        &crate::plan::evidence::tests::parse_fixture(&value.to_string()).unwrap(),
+    );
     for (address, global) in [
         ("aws_vpc.tokyo", false),
         ("module.child[0].aws_cloudfront_distribution.main", true),
@@ -70,7 +72,7 @@ fn account_evidence_is_bound_to_provider_and_state_without_retaining_secrets() {
         value["configuration"]["provider_config"][key]["expressions"]["assume_role"] =
             json!([role(id)]);
     }
-    let raw = plan::parse(&value.to_string()).unwrap();
+    let raw = crate::plan::evidence::tests::parse_fixture(&value.to_string()).unwrap();
     let graph = semantic::transform(&raw);
     for (address, id) in [
         ("aws_vpc.default", "123456789012"),
@@ -120,7 +122,10 @@ fn account_evidence_is_bound_to_provider_and_state_without_retaining_secrets() {
         .as_array_mut()
         .unwrap()
         .reverse();
-    assert_eq!(raw, plan::parse(&value.to_string()).unwrap());
+    assert_eq!(
+        raw,
+        crate::plan::evidence::tests::parse_fixture(&value.to_string()).unwrap()
+    );
 }
 
 #[test]

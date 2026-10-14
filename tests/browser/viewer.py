@@ -87,7 +87,7 @@ class ViewerTests(unittest.TestCase):
         self.assertNotEqual(before, self.view_box())
         self.find('#fit').click()
         self.assertEqual(before, self.view_box())
-        self.assertEqual(len(self.driver.find_elements(By.CSS_SELECTOR, '[data-account-panel]')), 4)
+        self.assertEqual(len(self.driver.find_elements(By.CSS_SELECTOR, '[data-account-panel]')), 0)
 
     def test_offline_keyboard_search_zoom_pan_clear_and_fit(self):
         self.load('examples/plan.json')
@@ -173,8 +173,8 @@ class ViewerTests(unittest.TestCase):
         before = self.driver.execute_script("return Array.from(document.querySelectorAll('path[data-edge-kind]')).map(e=>[e.getAttribute('d'),e.getAttribute('stroke'),e.getAttribute('stroke-dasharray'),e.getAttribute('marker-end')])")
         entry = self.find('[data-relationship-entry="2"]')
         text = ''.join(n.get_attribute('textContent') for n in entry.find_elements(By.TAG_NAME, 'tspan'))
-        self.assertIn('Resource scope: AWS Account: 111111111111 · Region: ap-northeast-1', text)
-        self.assertIn('aws_route_table.private · AWS Account: 222222222222 · Region: us-east-1', text)
+        self.assertIn('Resource scope: Region: ap-northeast-1', text)
+        self.assertIn('aws_route_table.private · Region: us-east-1', text)
         number = entry.find_element(By.CSS_SELECTOR, '[data-relationship-select]')
         self.driver.execute_script('arguments[0].focus()', number)
         number.send_keys(Keys.ENTER)

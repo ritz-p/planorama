@@ -4,6 +4,11 @@ The processing pipeline is `CLI → TerraformPlan → ArchitectureGraph → View
 The CLI owns file I/O and coordinates each stage. Named-state inputs preserve the
 same boundaries and carry explicit cross-state relationships.
 
+Optional saved-plan [provider evidence](provider-evidence.md) is read and matched
+by the CLI using Terraform show. The plan layer validates the embedded snapshot
+and dependency lock, then attaches only account IDs to existing provider bindings
+before semantic projection. JSON-only ingestion leaves accounts unknown.
+
 Optional [layout diagnostics](layout-diagnostics.md) collect final geometry during
 SVG composition, including annotation offsets and cross-state routing, and reuse
 runtime layout measurements. The CLI owns the separate report destination.

@@ -118,7 +118,8 @@ applicable use the common scope labels; known accounts are included. The
 relationship itself never inherits an endpoint's scope. Missing endpoints remain
 unavailable text without a scope claim or link. Multiple provenance sources keep
 their own scope evidence and measured lines. See the synthetic
-[cross-region/account example](../examples/relationship-scopes.svg); it illustrates
+[cross-region example](../examples/relationship-scopes.svg); its JSON-only input
+leaves accounts unknown. It illustrates
 scope presentation, not deployability or network reachability.
 Entry targets derive from provenance and endpoint identities, independently of
 the visible number, and named states namespace all links and path memberships.

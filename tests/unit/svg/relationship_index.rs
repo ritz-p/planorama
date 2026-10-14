@@ -11,7 +11,8 @@ fn graph() -> Graph {
 #[test]
 fn provenance_scope_survives_lowering_and_stays_separate_from_endpoint_scopes() {
     let input = include_str!("../../fixtures/relationship-scopes-plan.json");
-    let mut graph = semantic::transform(&plan::parse(input).unwrap()).0;
+    let mut graph =
+        semantic::transform(&crate::plan::evidence::tests::parse_fixture(input).unwrap()).0;
     assert_eq!(graph.nodes.len(), 2);
     let RelationshipProvenance::Resource { deployment, .. } = &graph.relationships[0].provenance[0]
     else {
@@ -117,8 +118,11 @@ fn provenance_scope_survives_lowering_and_stays_separate_from_endpoint_scopes() 
         .as_array_mut()
         .unwrap()
         .reverse();
-    let original = semantic::transform(&plan::parse(input).unwrap());
-    let reordered = semantic::transform(&plan::parse(&reordered.to_string()).unwrap());
+    let original =
+        semantic::transform(&crate::plan::evidence::tests::parse_fixture(input).unwrap());
+    let reordered = semantic::transform(
+        &crate::plan::evidence::tests::parse_fixture(&reordered.to_string()).unwrap(),
+    );
     assert_eq!(original, reordered);
 }
 

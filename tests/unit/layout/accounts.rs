@@ -1,4 +1,4 @@
-use crate::{layout::Layout, plan, semantic};
+use crate::{layout::Layout, semantic};
 
 #[test]
 fn conflicting_account_containment_is_not_grouped_under_either_account() {
@@ -12,7 +12,9 @@ fn conflicting_account_containment_is_not_grouped_under_either_account() {
     }
     input["configuration"]["root_module"]["resources"][3]["provider_config_key"] =
         serde_json::json!("aws.virginia");
-    let graph = semantic::transform(&plan::parse(&input.to_string()).unwrap());
+    let graph = semantic::transform(
+        &crate::plan::evidence::tests::parse_fixture(&input.to_string()).unwrap(),
+    );
     let layout = Layout::new(&graph);
     let vpc = graph
         .nodes
@@ -31,7 +33,8 @@ fn conflicting_account_containment_is_not_grouped_under_either_account() {
 #[test]
 fn nested_accounts_preserve_partial_scopes_filtering_and_routes() {
     let input = include_str!("../../fixtures/accounts-plan.json");
-    let architecture = semantic::transform(&plan::parse(input).unwrap());
+    let architecture =
+        semantic::transform(&crate::plan::evidence::tests::parse_fixture(input).unwrap());
     let graph = crate::view::single(&architecture, &Default::default()).unwrap();
     let layout = Layout::new(&graph);
     let accounts: Vec<_> = layout.scopes.iter().filter(|s| s.account_panel).collect();
@@ -104,7 +107,9 @@ fn nested_accounts_preserve_partial_scopes_filtering_and_routes() {
     assert!(filtered_layout.scopes[1].scope.region.is_some());
     let mut value: serde_json::Value = serde_json::from_str(input).unwrap();
     value["resource_changes"][0]["change"]["actions"] = serde_json::json!(["no-op"]);
-    let unchanged = semantic::transform(&plan::parse(&value.to_string()).unwrap());
+    let unchanged = semantic::transform(
+        &crate::plan::evidence::tests::parse_fixture(&value.to_string()).unwrap(),
+    );
     let empty = crate::view::single(
         &unchanged,
         &crate::view::Options {
@@ -130,7 +135,9 @@ fn account_only_and_global_only_still_receive_panels() {
             .as_array_mut()
             .unwrap()
             .retain(|n| n["address"] == address);
-        let graph = semantic::transform(&plan::parse(&input.to_string()).unwrap());
+        let graph = semantic::transform(
+            &crate::plan::evidence::tests::parse_fixture(&input.to_string()).unwrap(),
+        );
         let viewed = crate::view::single(&graph, &Default::default()).unwrap();
         assert_eq!(Layout::new(&viewed).scopes.len(), panels);
     }
