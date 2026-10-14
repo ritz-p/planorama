@@ -117,7 +117,7 @@ pub mod cross_state;
 mod diagnostics;
 mod graphs;
 mod relationships;
-pub use relationships::{ArchitectureRelationship, RelationshipProvenance};
+pub use relationships::{ArchitectureRelationship, RelationshipProvenance, ResourceDeployment};
 mod operations;
 mod provider;
 mod states;

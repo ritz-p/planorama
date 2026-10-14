@@ -1,0 +1,22 @@
+{
+  "format_version": "1.2",
+  "resource_changes": [
+    {"address": "aws_subnet.private", "type": "aws_subnet", "change": {"actions": ["create"]}},
+    {"address": "aws_route_table.private", "type": "aws_route_table", "change": {"actions": ["create"]}},
+    {"address": "aws_route_table_association.private", "type": "aws_route_table_association", "change": {"actions": ["create"]}}
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws.tokyo": {"full_name": "registry.terraform.io/hashicorp/aws", "expressions": {"region": {"constant_value": "ap-northeast-1"}, "assume_role": [{"role_arn": {"constant_value": "arn:aws:iam::111111111111:role/fixture"}}]}},
+      "aws.virginia": {"full_name": "registry.terraform.io/hashicorp/aws", "expressions": {"region": {"constant_value": "us-east-1"}, "assume_role": [{"role_arn": {"constant_value": "arn:aws:iam::222222222222:role/fixture"}}]}}
+    },
+    "root_module": {"resources": [
+      {"address": "aws_subnet.private", "provider_config_key": "aws.tokyo"},
+      {"address": "aws_route_table.private", "provider_config_key": "aws.virginia"},
+      {"address": "aws_route_table_association.private", "provider_config_key": "aws.tokyo", "expressions": {
+        "subnet_id": {"references": ["aws_subnet.private.id"]},
+        "route_table_id": {"references": ["aws_route_table.private.id"]}
+      }}
+    ]}
+  }
+}
