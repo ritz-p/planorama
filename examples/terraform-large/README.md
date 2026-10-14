@@ -1,6 +1,6 @@
 # Large AWS architecture fixture
 
-For the combined multi-state/account/region baseline, see
+For the combined multi-state/region fixture and account evidence limits, see
 [the maintained 250-input example](../multi-account/README.md). This smaller
 fixture remains its reusable source and a focused single-state reference.
 

@@ -4,6 +4,7 @@ use std::io::{self, Read, Write};
 use std::path::{Path, PathBuf};
 mod files;
 mod layout_diagnostics;
+mod provider_plan;
 mod states;
 
 #[derive(Clone, Copy, Default)]
@@ -13,12 +14,13 @@ pub(super) enum OutputFormat {
     Html,
 }
 
-const HELP: &str = "planorama — Terraform plan JSON → SVG / HTML (pure Rust)\n\nUsage: planorama <plan.json | -> [--format svg|html] [-o <path | ->] [--address-format qualified|terraform] [--diagnostics]\n\n  -o, --output PATH   Output file (default: diagram.svg or diagram.html); '-' for stdout\n  --format FORMAT    Output format: svg (default) or self-contained html\n  --address-format FORMAT  Resource labels: qualified (default) or terraform\n  --changed-only     Retain changes and required context\n  --focus ADDRESS    Select a resource (STATE:ADDRESS for named states)\n  --focus-depth N    Neighbor depth (default: 1; requires --focus)\n  --remote-state CONSUMER:ADDRESS=PRODUCER  Map a named remote-state data source\n  --diagnostics      Explain unresolved references and semantic fallbacks on stderr\n  --layout-diagnostics  Report final layout quality on stderr\n  --layout-diagnostics-json PATH  Write a versioned layout report to a separate JSON file\n  -h, --help          Show help\n  -V, --version       Show version\n\nInput: terraform show -json <saved-plan> (not terraform plan -json).\nLines show reference or architectural relationships; containment uses nested boxes.\nAttribute values are never included in the diagram.\n";
+const HELP: &str = "planorama — Terraform plan JSON → SVG / HTML (pure Rust)\n\nUsage: planorama <plan.json | -> [--format svg|html] [-o <path | ->] [--address-format qualified|terraform] [--diagnostics]\n\n  -o, --output PATH   Output file (default: diagram.svg or diagram.html); '-' for stdout\n  --format FORMAT    Output format: svg (default) or self-contained html\n  --address-format FORMAT  Resource labels: qualified (default) or terraform\n  --provider-plan PATH  Verify accounts against a saved Terraform 1.9.8 / AWS 5.100.0 plan\n  --state-provider-plan ID=PATH  Saved plan evidence for one named state\n  --changed-only     Retain changes and required context\n  --focus ADDRESS    Select a resource (STATE:ADDRESS for named states)\n  --focus-depth N    Neighbor depth (default: 1; requires --focus)\n  --remote-state CONSUMER:ADDRESS=PRODUCER  Map a named remote-state data source\n  --diagnostics      Explain unresolved references and semantic fallbacks on stderr\n  --layout-diagnostics  Report final layout quality on stderr\n  --layout-diagnostics-json PATH  Write a versioned layout report to a separate JSON file\n  -h, --help          Show help\n  -V, --version       Show version\n\nInput: terraform show -json <saved-plan> (not terraform plan -json).\nJSON-only inputs leave AWS accounts unknown. Provider evidence requires Terraform and initialized schemas.\nLines show reference or architectural relationships; containment uses nested boxes.\nAttribute values are never included in the diagram.\n";
 
 pub(crate) fn run() -> Result<(), String> {
     let mut input = None;
     let mut state_inputs = std::collections::BTreeMap::new();
     let mut mappings = Vec::new();
+    let mut provider_plan = provider_plan::Options::default();
     let mut output = None;
     let mut output_format = OutputFormat::default();
     let mut address_format = svg::AddressFormat::default();
@@ -28,6 +30,14 @@ pub(crate) fn run() -> Result<(), String> {
     let mut args = std::env::args().skip(1);
     while let Some(arg) = args.next() {
         match arg.as_str() {
+            "--provider-plan" => {
+                provider_plan.single(args.next().ok_or("--provider-plan requires PATH")?)?
+            }
+            "--state-provider-plan" => provider_plan.state(
+                &args
+                    .next()
+                    .ok_or("--state-provider-plan requires ID=PATH")?,
+            )?,
             "--format" => {
                 output_format = match args.next().as_deref() {
                     Some("svg") => OutputFormat::Svg,
@@ -119,13 +129,14 @@ pub(crate) fn run() -> Result<(), String> {
         })
     });
     filter.validate()?;
+    provider_plan.validate(&state_inputs, &output, layout_diagnostics.json.as_deref())?;
     layout_diagnostics.validate(input.iter().chain(state_inputs.values()), &output)?;
     if !state_inputs.is_empty() {
         if input.is_some() {
             return Err("do not mix --state with a positional input".into());
         }
         return states::run(
-            state_inputs,
+            (state_inputs, &provider_plan),
             &output,
             address_format,
             output_format,
@@ -169,7 +180,10 @@ pub(crate) fn run() -> Result<(), String> {
         }
         path => std::fs::read_to_string(path).map_err(|e| format!("cannot read {path}: {e}"))?,
     };
-    let raw = plan::parse(&json)?;
+    let mut raw = plan::parse(&json)?;
+    if let Some(evidence) = provider_plan.load(None, &json)? {
+        evidence.apply(&mut raw);
+    }
     if diagnostics {
         let mut stderr = io::stderr().lock();
         for relevant in &raw.relevant_attributes {

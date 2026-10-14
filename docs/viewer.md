@@ -18,7 +18,7 @@ Logical Resources rows show the same per-resource deployment-scope labels in bot
 formats; see [scope evidence and limitations](aws.md#deployment-scopes).
 
 The maintained [combined AWS viewer](../examples/multi-account/diagram.html)
-exercises 250 input instances, repeated addresses in three states, account/region
+exercises 250 input instances, repeated addresses in three states, region
 backgrounds and remote logical/spatial references. Its [generation and review
 commands](../examples/multi-account/README.md) use the same inputs as its SVG.
 

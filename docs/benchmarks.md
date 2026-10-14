@@ -23,7 +23,7 @@ assertions in CI; machine-dependent thresholds would be flaky. The baseline belo
 is observational and does not promise absolute performance.
 
 The separate [combined multi-account example](../examples/multi-account/README.md)
-measures 250 inputs across three states, with cross-account/region/state paths and
+measures 250 inputs across three states, with cross-region/state paths and
 large annotation indexes. Run its opt-in `benchmarks::multi_account::baseline`
 test in release mode for per-state layout time, dimensions, crossings, shared
 path lengths, bends and visible-border overlap. It complements the bounded-degree

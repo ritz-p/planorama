@@ -36,7 +36,7 @@ fn multi_account_inputs_and_committed_topology_are_current() {
         main.descendants()
             .filter(|n| n.attribute("data-account-panel").is_some())
             .count(),
-        2
+        0
     );
 }
 
@@ -116,7 +116,7 @@ fn multi_account_example_reproduces_inputs_svg_and_html_with_state_scoped_identi
             .find(|n| n.attribute("data-state-id") == Some(state))
             .unwrap();
         assert!(
-            section
+            !section
                 .descendants()
                 .any(|n| n.attribute("data-account-panel") == Some("true"))
         );

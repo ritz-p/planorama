@@ -6,14 +6,15 @@ semantics. Provider source and configuration identity are described in [models](
 
 ## Deployment scopes
 
-AWS account scope is resolved independently from region using literal provider
-role evidence; see [the exact evidence policy](models.md). State IDs and provider
+AWS account scope is resolved independently from region using verified saved-plan
+provider evidence; JSON alone leaves accounts unknown. See [the input contract](provider-evidence.md). State IDs and provider
 aliases are not accounts. Logical-resource scope labels include a known
 `AWS Account: <12-digit ID>`; generated SVG/HTML therefore expose that deployment
 identifier. Role ARNs and credential-related provider values are not retained.
 
 Known accounts form `AWS Account: <ID>` backgrounds above Region and AWS Global,
-as shown in [accounts.svg](../examples/accounts.svg). One displayed spatial
+when evidence is available. The JSON-only [accounts.svg](../examples/accounts.svg)
+demonstrates unknown accounts retaining known regions. One displayed spatial
 resource is enough for either level. Multiple bindings with equal proven accounts
 share a panel, while the same region under different accounts stays separate.
 Known account/unknown region resources remain directly inside Account; unknown
@@ -23,8 +24,9 @@ Account backgrounds are drawn before their child backgrounds, and both headers
 are routing obstacles. Their final geometry participates in state sizing and
 cross-state routing. `data-account-panel` identifies the account frame;
 `data-account` on child frames records its parent identity within the state.
-The [combined large example](../examples/multi-account/README.md) exercises these
-scopes with VPC/Subnet containment, logical annotations and cross-state routing.
+The [combined large example](../examples/multi-account/README.md) exercises
+JSON-only region/global scopes with VPC/Subnet containment, logical annotations
+and cross-state routing; its accounts remain unknown.
 
 Known static provider regions automatically group explicitly supported regional
 resources into background panels (see [regions.svg](../examples/regions.svg)).
