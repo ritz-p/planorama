@@ -9,10 +9,11 @@ pub(super) fn run(
     output: &Path,
     format: svg::AddressFormat,
     output_format: super::OutputFormat,
-    diagnostics: bool,
+    diagnostics: (bool, &super::layout_diagnostics::Options),
     mappings: &[crate::model::cross_state::Mapping],
     filter: &crate::view::Options,
 ) -> Result<(), String> {
+    let (diagnostics, layout_diagnostics) = diagnostics;
     if inputs.values().filter(|path| path.as_str() == "-").count() > 1 {
         return Err("stdin may be used by only one state".into());
     }
@@ -107,10 +108,21 @@ pub(super) fn run(
         relationships: cross.edges,
     };
     let architecture = crate::view::apply(&architecture, filter)?;
+    let mut report = serde_json::Value::Null;
     let image = match output_format {
+        super::OutputFormat::Svg if layout_diagnostics.enabled() => svg::render_states_report(
+            &architecture,
+            format,
+            svg::Content::Standard,
+            Some(&mut report),
+        ),
+        super::OutputFormat::Html if layout_diagnostics.enabled() => {
+            crate::html::render_states_report(&architecture, format, &mut report)
+        }
         super::OutputFormat::Svg => svg::render_states(&architecture, format),
         super::OutputFormat::Html => crate::html::render_states(&architecture, format),
     };
+    layout_diagnostics.write(&report, output)?;
     if output == Path::new("-") {
         io::stdout()
             .write_all(image.as_bytes())
@@ -127,7 +139,7 @@ pub(super) fn run(
     Ok(())
 }
 
-fn protect_input(input: &str, output: &Path) -> Result<(), String> {
+pub(super) fn protect_input(input: &str, output: &Path) -> Result<(), String> {
     if input == "-" {
         return Ok(());
     }

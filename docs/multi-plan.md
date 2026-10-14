@@ -3,6 +3,9 @@
 Named states keep their own Terraform identities. Explicit remote-state mappings
 can connect resources across states using `TerraformRemoteState` provenance.
 
+[Layout diagnostics](layout-diagnostics.md) distinguish per-state layout sizes
+from the full canvas and include final cross-state paths in whole-diagram metrics.
+
 Cross-state relationships also remain in `cross-state-relationships` metadata.
 Edges incident on top logical-resource rows are excluded from spatial routing;
 their state-qualified provenance remains available.
