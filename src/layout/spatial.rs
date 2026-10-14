@@ -1,6 +1,10 @@
 use super::{Band, Bounds, ContainmentTree, Layout, Point};
 use crate::model::architecture::Graph;
 
+#[cfg(test)]
+#[path = "../../tests/unit/layout/spatial.rs"]
+mod tests;
+
 pub(super) fn layout(graph: &Graph) -> Layout<'_> {
     let projected = crate::view::spatial::project(graph);
     let route_insets = crate::view::routes::insets(graph);
@@ -127,7 +131,20 @@ pub(super) fn layout(graph: &Graph) -> Layout<'_> {
                 }
             })
             .collect();
-        super::containers::route(&routing, &mut layout, true);
+        let sides: Vec<_> = indices
+            .iter()
+            .map(|&index| {
+                let path = &layout.paths[index];
+                if path.len() < 2 {
+                    [super::Side::Right; 2]
+                } else {
+                    [0, 1].map(|end| super::routing_shared::refinement::terminal(path, end).side)
+                }
+            })
+            .collect();
+        let routed = super::containers::routing::route_selected(&routing, &layout, &sides);
+        layout.paths = routed.paths;
+        layout.junctions = routed.junctions;
         super::routing_shared::refinement::refine(&routing, &mut layout);
         let routed = std::mem::replace(&mut layout.paths, vec![Vec::new(); graph.edges.len()]);
         for (index, path) in indices.into_iter().zip(routed) {

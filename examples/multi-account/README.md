@@ -79,9 +79,9 @@ include lowered relationship resources, so they do not equal the sum of visible
 spatial/embedded/logical cards. There are 328 local semantic relationships, 15
 resolved cross-state references, five routed cross-state paths and ten logical
 cross-state links. Account/Region/Global panels number 4/6/3. The canvas is
-8,932 × 17,134; SVG size is 1,567,071 bytes.
-The self-contained HTML is 1,677,211 bytes after the #349 spacing update;
-the canvas dimensions are unchanged. Routing budgets and their controlled
+8,932 × 18,586; SVG size is 1,606,954 bytes.
+The self-contained HTML is 1,717,094 bytes after the #378 port-side preservation
+fix. Routing budgets and their controlled
 comparison are documented in [spacing calibration](../terraform-large/spacing-calibration.md).
 
 The initial 150–250 instance target is met at its upper end. The primary index has
@@ -125,8 +125,10 @@ and cross-state paths and crowded corridors remain visible; this is a reproducib
 baseline, not a promise of crossing-free or globally optimal paths.
 
 A more concentrated candidate with 20 extra Routes and ten target attachments
-exposed a reserved-port routing panic. Its preserved synthetic input is
+exposed the reserved-port routing panic fixed in
+[#378](https://github.com/ritz-p/planorama/issues/378). Its preserved synthetic input is
 [account-high-fanin.json](../../tests/fixtures/routing-stress/account-high-fanin.json),
-tracked in [#378](https://github.com/ritz-p/planorama/issues/378). It is excluded from
-normal rendering/regeneration. Broader stress testing remains coordinated with
+excluded from normal rendering/regeneration because of its routing cost. A small
+regression covers embedded-Route rerouting with concentrated target attachments.
+Broader stress testing remains coordinated with
 #253 and routing-budget work with #349.

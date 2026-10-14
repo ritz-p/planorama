@@ -26,6 +26,11 @@ draws separate directed Associations to visible next hops, reserving numbered
 badges at both child and target ports. The background is drawn
 before the paths so the segment inside the table remains visible. Cross-state Route endpoints use the table's
 border while retaining the child identity and explicit attachment metadata.
+When embedded Routes are restored, rerouting initializes existing edges from their
+previously selected sides and assigns slots on those sides. This preserves the
+port capacity used during height refinement; resetting every port to the right
+can overlap numbered reservations on compact cards. Newly visible edges start
+on the right and participate in the same numbered-port selection.
 
 ## Placement
 
