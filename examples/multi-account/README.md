@@ -79,7 +79,7 @@ include lowered relationship resources, so they do not equal the sum of visible
 spatial/embedded/logical cards. There are 328 local semantic relationships, 15
 resolved cross-state references, five routed cross-state paths and ten logical
 cross-state links. Account/Region/Global panels number 4/6/3. The canvas is
-8,932 × 17,134; SVG size is 1,567,103 bytes.
+8,932 × 17,134; SVG size is 1,567,071 bytes.
 The self-contained HTML is 1,677,211 bytes after the #349 spacing update;
 the canvas dimensions are unchanged. Routing budgets and their controlled
 comparison are documented in [spacing calibration](../terraform-large/spacing-calibration.md).
