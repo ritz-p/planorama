@@ -100,6 +100,7 @@ pub(crate) fn base_graph(plan: &TerraformPlan) -> Graph {
             .map(|edge| edge.endpoints().into())
             .collect(),
     };
-    graph.relationships = super::relationships::collect(&graph);
+    graph.relationships =
+        super::relationships::collect(&graph, &super::relationships::deployments(&graph.nodes));
     graph
 }

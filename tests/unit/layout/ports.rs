@@ -257,6 +257,7 @@ fn mixed_numbered_relationships_keep_final_port_spacing_flat_and_nested() {
                     edge.kind,
                     false,
                     vec![crate::model::RelationshipProvenance::Resource {
+                        deployment: None,
                         source: crate::model::TerraformEntityId {
                             address: change.address.clone(),
                             deposed_key: None,

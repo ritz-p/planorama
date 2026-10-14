@@ -14,6 +14,7 @@ pub(super) struct Entry<'a> {
     id: String,
     context: Vec<Context>,
     actions: BTreeMap<&'a TerraformEntityId, BTreeSet<String>>,
+    scopes: BTreeMap<&'a TerraformEntityId, BTreeSet<String>>,
     number: usize,
     sources: Vec<&'a TerraformEntityId>,
     previous_addresses: BTreeMap<&'a TerraformEntityId, BTreeSet<&'a str>>,
@@ -27,6 +28,7 @@ struct Context {
     heading: String,
     directed: bool,
     endpoints: [(String, Option<String>); 2],
+    scopes: [String; 2],
 }
 
 impl Context {
@@ -42,7 +44,12 @@ impl Context {
         } else {
             ""
         };
-        format!("- {direction}{text}{status}")
+        let scope = if target.is_some() {
+            format!(" · {}", self.scopes[index])
+        } else {
+            String::new()
+        };
+        format!("- {direction}{text}{status}{scope}")
     }
 }
 
@@ -114,6 +121,7 @@ impl<'a> Index<'a> {
                         let directed = direction == crate::model::Directionality::Directed;
                         Context {
                             directed,
+                            scopes: [from, to].map(|i| crate::view::scope::label(graph.nodes[i].entity.scope.as_ref(), &graph.nodes[i].provider)),
                             heading: format!(
                                 "- {} ({}, {})",
                                 if directed {
@@ -142,6 +150,7 @@ impl<'a> Index<'a> {
                     .collect();
                 context.sort_by(|a, b| (&a.heading, &a.endpoints).cmp(&(&b.heading, &b.endpoints)));
                 let mut actions: BTreeMap<_, BTreeSet<_>> = BTreeMap::new();
+                let mut scopes: BTreeMap<_, BTreeSet<_>> = BTreeMap::new();
                 for relationship in &graph.relationships {
                     if !entry.edges.iter().any(|&i| {
                         let edge = &graph.edges[i];
@@ -166,9 +175,13 @@ impl<'a> Index<'a> {
                     sources.dedup();
                     if sources != entry.sources { continue; }
                     for provenance in &relationship.provenance {
-                        if let crate::model::RelationshipProvenance::Resource { source, change } =
+                        if let crate::model::RelationshipProvenance::Resource { source, change, deployment } =
                             provenance
                         {
+                            scopes.entry(source).or_default().insert(deployment.as_ref().map_or_else(
+                                || "Scope unavailable".into(),
+                                |deployment| crate::view::scope::label(deployment.scope.as_ref(), &deployment.provider),
+                            ));
                             actions.entry(source).or_default().insert(
                                 super::operations::label(change.action, &change.metadata),
                             );
@@ -179,6 +192,7 @@ impl<'a> Index<'a> {
                     id,
                     context,
                     actions,
+                    scopes,
                     number: index + 1,
                     embedded: crate::view::routes::owner(graph, &graph.nodes[edge.from]).is_some(),
                     sources: entry.sources,
@@ -290,6 +304,17 @@ impl<'a> Index<'a> {
             .chain(
                 self.entries
                     .iter()
+                    .flat_map(|entry| entry.scopes.values())
+                    .flatten()
+                    .map(|scope| {
+                        crate::view::text::width(&format!("Resource scope: {scope}")) * 8
+                            + text_x
+                            + 16
+                    }),
+            )
+            .chain(
+                self.entries
+                    .iter()
                     .flat_map(|entry| entry.context.iter())
                     .flat_map(|context| {
                         std::iter::once(
@@ -339,6 +364,11 @@ impl<'a> Index<'a> {
                     }
                     if let Some(actions) = entry.actions.get(source) {
                         text_row(&mut svg, &format!("Action: {}", actions.iter().cloned().collect::<Vec<_>>().join(", ")), text_x, &mut y, width, None);
+                    }
+                    if let Some(scopes) = entry.scopes.get(source) {
+                        for scope in scopes {
+                            text_row(&mut svg, &format!("Resource scope: {scope}"), text_x, &mut y, width, None);
+                        }
                     }
                 }
                 for context in &entry.context {

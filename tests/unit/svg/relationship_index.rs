@@ -9,6 +9,120 @@ fn graph() -> Graph {
 }
 
 #[test]
+fn provenance_scope_survives_lowering_and_stays_separate_from_endpoint_scopes() {
+    let input = include_str!("../../fixtures/relationship-scopes-plan.json");
+    let mut graph = semantic::transform(&plan::parse(input).unwrap()).0;
+    assert_eq!(graph.nodes.len(), 2);
+    let RelationshipProvenance::Resource { deployment, .. } = &graph.relationships[0].provenance[0]
+    else {
+        panic!()
+    };
+    let deployment = deployment.as_ref().unwrap();
+    assert_eq!(deployment.configuration.as_ref().unwrap().key, "aws.tokyo");
+    assert_eq!(
+        deployment
+            .scope
+            .as_ref()
+            .unwrap()
+            .region
+            .as_ref()
+            .unwrap()
+            .0,
+        "ap-northeast-1"
+    );
+    let layout = Layout::new(&graph);
+    let index = Index::new(&graph, &layout);
+    let id = index.entries[0].id.clone();
+    assert_eq!(
+        index.entries[0]
+            .scopes
+            .values()
+            .next()
+            .unwrap()
+            .iter()
+            .next()
+            .unwrap(),
+        "AWS Account: 111111111111 · Region: ap-northeast-1"
+    );
+    let labels: Vec<_> = (0..2)
+        .map(|i| index.entries[0].context[0].endpoint_label(i))
+        .collect();
+    assert!(labels.iter().any(|text| {
+        text.contains("aws_subnet.private · AWS Account: 111111111111 · Region: ap-northeast-1")
+    }));
+    assert!(labels.iter().any(|text| {
+        text.contains("aws_route_table.private · AWS Account: 222222222222 · Region: us-east-1")
+    }));
+    for (global, provider, expected) in [
+        (
+            true,
+            crate::model::ProviderIdentity::InferredAws,
+            "AWS Global",
+        ),
+        (
+            false,
+            crate::model::ProviderIdentity::InferredAws,
+            "Region: unknown",
+        ),
+        (
+            false,
+            crate::model::ProviderIdentity::InferredTerraform,
+            "Region: not applicable",
+        ),
+    ] {
+        graph.nodes[0].provider = provider;
+        graph.nodes[0].entity.scope = global.then(|| crate::model::architecture::DeploymentScope {
+            provider: "AWS".into(),
+            region: None,
+            account: None,
+            global: true,
+        });
+        let RelationshipProvenance::Resource { deployment, .. } =
+            &mut graph.relationships[0].provenance[0]
+        else {
+            panic!()
+        };
+        let deployment = deployment.as_mut().unwrap();
+        deployment.scope = graph.nodes[0].entity.scope.clone();
+        deployment.provider = graph.nodes[0].provider.clone();
+        let layout = Layout::new(&graph);
+        let mut index = Index::new(&graph, &layout);
+        assert_eq!(index.entries[0].id, id);
+        assert!(
+            index.entries[0]
+                .scopes
+                .values()
+                .any(|labels| labels.contains(expected))
+        );
+        assert!(
+            index.entries[0].context[0]
+                .scopes
+                .iter()
+                .any(|label| label == expected)
+        );
+        let card = index.cards().remove(0);
+        let doc = roxmltree::Document::parse(&card.content).unwrap();
+        assert!(
+            doc.descendants()
+                .filter(|n| n.has_tag_name("tspan"))
+                .all(|n| n.attribute("y").unwrap().parse::<usize>().unwrap() + 4 < card.height)
+        );
+        index.entries[0].context[0].endpoints[0].1 = None;
+        let unavailable = index.entries[0].context[0].endpoint_label(0);
+        assert!(unavailable.contains("unavailable in this view"));
+        assert!(!unavailable.contains("Region:") && !unavailable.contains("Global"));
+    }
+    let mut reordered: serde_json::Value = serde_json::from_str(input).unwrap();
+    reordered["resource_changes"]
+        .as_array_mut()
+        .unwrap()
+        .reverse();
+    let original = semantic::transform(&plan::parse(input).unwrap());
+    let reordered = semantic::transform(&plan::parse(&reordered.to_string()).unwrap());
+    assert_eq!(original, reordered);
+}
+
+#[test]
 fn native_navigation_keeps_parallel_relationships_and_endpoint_identities_distinct() {
     let graph = dense_graph(12, EdgeKind::Association);
     let layout = Layout::new(&graph);
@@ -131,6 +245,7 @@ fn current_and_deposed_provenance_and_long_endpoints_keep_their_targets() {
         if let RelationshipProvenance::Resource {
             source,
             change: provenance_change,
+            ..
         } = provenance
         {
             source.address = address.clone();
@@ -190,6 +305,7 @@ fn overlapping_provenance_sets_do_not_mix_parallel_relationship_actions() {
         if let RelationshipProvenance::Resource {
             source,
             change: source_change,
+            ..
         } = provenance
         {
             source.address = address.clone();
@@ -249,7 +365,7 @@ fn dense_graph(count: usize, kind: EdgeKind) -> Graph {
         let mut relationship = relationship.clone();
         relationship.kind = kind;
         for provenance in &mut relationship.provenance {
-            if let RelationshipProvenance::Resource { source, change } = provenance {
+            if let RelationshipProvenance::Resource { source, change, .. } = provenance {
                 source.address = edge.change.as_ref().unwrap().address.clone();
                 *change = edge.change.as_ref().unwrap().clone();
             }
@@ -578,6 +694,7 @@ fn relationship_cards_fill_the_svg_width_at_exact_and_one_pixel_short_boundaries
                 if let RelationshipProvenance::Resource {
                     source,
                     change: source_change,
+                    ..
                 } = provenance
                 {
                     source.address = change.address.clone();
@@ -793,6 +910,7 @@ fn a_long_multisource_fifth_entry_stays_in_the_first_card() {
     relationship
         .provenance
         .push(RelationshipProvenance::Resource {
+            deployment: None,
             source: TerraformEntityId {
                 address: address.clone(),
                 deposed_key: Some("old-key".into()),
@@ -1297,6 +1415,7 @@ fn multiple_sources_long_addresses_and_xml_are_preserved_without_values() {
     relationship
         .provenance
         .push(RelationshipProvenance::Resource {
+            deployment: None,
             source: TerraformEntityId {
                 address: address.clone(),
                 deposed_key: Some("old<&>".into()),

@@ -24,7 +24,7 @@ fn indexed_graph(count: usize) -> Graph {
         edge.change.as_mut().unwrap().address = format!("association.test_{number:03}");
         let mut relationship = relationship.clone();
         for p in &mut relationship.provenance {
-            if let RelationshipProvenance::Resource { source, change } = p {
+            if let RelationshipProvenance::Resource { source, change, .. } = p {
                 source.address = edge.change.as_ref().unwrap().address.clone();
                 *change = edge.change.as_ref().unwrap().clone();
             }
@@ -113,7 +113,7 @@ fn unrelated_wide_labels_do_not_expand_a_small_terminal_or_slot() {
 #[test]
 fn numbering_matches_changes_and_groups_sorted_resource_provenance() {
     let mut graph = indexed_graph(2);
-    let RelationshipProvenance::Resource { source, change } =
+    let RelationshipProvenance::Resource { source, change, .. } =
         graph.relationships[0].provenance[0].clone()
     else {
         panic!()
@@ -121,6 +121,7 @@ fn numbering_matches_changes_and_groups_sorted_resource_provenance() {
     graph.relationships[0]
         .provenance
         .push(RelationshipProvenance::Resource {
+            deployment: None,
             source: TerraformEntityId {
                 address: "association.extra".into(),
                 ..source
