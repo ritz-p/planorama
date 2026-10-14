@@ -69,3 +69,24 @@ to 93,492px through necessary endpoint separation, with 98 bends and no offsets,
 reversals or S-jogs in all candidates. Constrained geometry stays identical.
 The full and enlarged large/dense SVG comparisons were inspected locally;
 residual crowded runs remain in the large diagram and are recorded as deficits.
+
+## CI calibration
+
+[GitHub Actions run 38539978228](https://github.com/ritz-p/planorama/actions/runs/38539978228)
+measured the same candidates on 2026-10-14 with the pinned Rust 1.85.1 toolchain
+on `ubuntu-latest`. All sweeps, attempts, accepted changes, expansions, dimensions,
+deficits and per-edge shape/length measurements match the local results above.
+The run's `spacing-calibration` artifact contains the full JSON and nine SVGs.
+
+| Fixture | Old-limit refinement ms | Default refinement ms | Doubled refinement ms |
+| --- | ---: | ---: | ---: |
+| terraform-large | 7798.1 | 20109.5 | 20098.2 |
+| dense corridors | 2411.9 | 7941.0 | 7949.1 |
+| constrained | 0.110 | 0.097 | 0.094 |
+
+The selected defaults cost about 2.6 times the large-fixture refinement time and
+3.3 times the dense-fixture time relative to the small-limit control in this CI
+observation. They retain the measured clearance improvements without consuming
+all available work. Doubling the limits adds no improvement on these fixtures,
+confirming the smaller candidate as the default; constrained input still exits
+immediately. Timings are single observations, not performance guarantees.
