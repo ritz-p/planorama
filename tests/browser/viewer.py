@@ -200,6 +200,36 @@ class ViewerTests(unittest.TestCase):
             self.assertTrue(selected_states)
             self.assertEqual(set(selected_states), {state})
 
+    def test_logical_action_sections_preserve_selection_and_cli_filtering(self):
+        fixture = 'tests/fixtures/logical-actions-plan.json'
+        self.load(fixture)
+        sections = self.driver.find_elements(By.CSS_SELECTOR, '[data-resource-type="aws_iam_policy"] [data-action-section]')
+        self.assertEqual([n.get_attribute('data-action-section') for n in sections],
+                         ['create', 'update', 'delete', 'replace', 'read', 'unchanged', 'other'])
+        self.assertIn('Create (2)', sections[0].get_attribute('textContent'))
+        self.assertTrue(self.driver.execute_script("""
+            return Array.from(document.querySelectorAll('[data-action-section]')).every(section => {
+                const border = section.querySelector(':scope > rect').getBoundingClientRect();
+                return Array.from(section.querySelectorAll('[data-placement="logical"]')).every(row => {
+                    const bounds = row.getBoundingClientRect();
+                    return bounds.left >= border.left && bounds.right <= border.right + 0.1 &&
+                           bounds.top >= border.top && bounds.bottom <= border.bottom + 0.1;
+                });
+            });
+        """))
+        explanation = ''.join(n.get_attribute('textContent') for n in self.driver.find_elements(By.CSS_SELECTOR, '[data-role-explanation]'))
+        self.assertIn('Role: Policy', explanation)
+        self.assertIn('Role: Controller', explanation)
+        self.choose('aws_iam_policy.update')
+        self.assertEqual(self.driver.execute_script("return document.querySelector('[data-viewer-selected]').closest('[data-action-section]').dataset.actionSection"), 'update')
+        self.load(fixture, '--changed-only')
+        self.assertFalse(self.driver.find_elements(By.CSS_SELECTOR, '[data-action-section="unchanged"]'))
+        self.assertFalse(self.search('aws_iam_policy.unchanged'))
+        self.load(fixture, '--focus', 'aws_iam_policy.create_a', '--focus-depth', '0')
+        self.assertEqual(len(self.driver.find_elements(By.CSS_SELECTOR, '[data-action-section]')), 1)
+        self.assertIn('Create (1)', self.find('[data-action-section]').get_attribute('textContent'))
+        self.assertFalse(self.search('aws_iam_policy.create_b'))
+
     def test_escaped_long_addresses_modes_and_individual_logical_targets(self):
         address = 'module.app["a.b"].aws_iam_role.item["</script><script>window.pwned=1</script>&\\\"' + 'x' * 100 + '"]'
         plan = {'format_version': '1.2', 'resource_changes': [

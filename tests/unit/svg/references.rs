@@ -162,7 +162,10 @@ fn full_reference_rows_fit_flat_nested_and_regional_geometry() {
                     "References: unresolved"
                 })));
             let (rect, row_y) = if card.attribute("data-placement") == Some("logical") {
-                let group = card.parent().unwrap();
+                let group = card
+                    .ancestors()
+                    .find(|n| n.attribute("data-logical-group").is_some())
+                    .unwrap();
                 assert_eq!(group.attribute("data-logical-group"), Some("true"));
                 let outer = group.parent().unwrap();
                 assert_eq!(outer.attribute("data-annotation-card"), Some("true"));

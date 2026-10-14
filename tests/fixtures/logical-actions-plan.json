@@ -1,0 +1,15 @@
+{
+  "format_version": "1.2",
+  "resource_changes": [
+    {"address":"aws_iam_policy.create_a","type":"aws_iam_policy","change":{"actions":["create"]}},
+    {"address":"aws_iam_policy.create_b","type":"aws_iam_policy","change":{"actions":["create"]}},
+    {"address":"aws_iam_policy.update","type":"aws_iam_policy","previous_address":"aws_iam_policy.old","change":{"actions":["update"],"importing":{}}},
+    {"address":"aws_iam_policy.delete","type":"aws_iam_policy","deposed":"old","change":{"actions":["delete"]}},
+    {"address":"aws_iam_policy.replace","type":"aws_iam_policy","change":{"actions":["delete","create"]}},
+    {"address":"aws_iam_policy.read","type":"aws_iam_policy","change":{"actions":["read"]}},
+    {"address":"aws_iam_policy.unchanged","type":"aws_iam_policy","change":{"actions":["no-op"]}},
+    {"address":"aws_iam_policy.other","type":"aws_iam_policy"},
+    {"address":"aws_ecs_cluster.new","type":"aws_ecs_cluster","change":{"actions":["create"]}},
+    {"address":"aws_ecs_cluster.old","type":"aws_ecs_cluster","change":{"actions":["delete"]}}
+  ]
+}
