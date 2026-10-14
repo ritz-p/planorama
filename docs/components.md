@@ -38,6 +38,8 @@ to the LB when targets join or leave.
 Above the architecture, three independent vertical sections appear in order:
 Logical Resources (cyan), Logical Components (purple), then Relationship Resources
 (neutral). Empty sections reserve no space. Section colors identify their type.
+Frames fit their child-card bounds plus header and padding. Cards use all available
+horizontal space before wrapping, while the overall canvas retains its architecture width.
 Logical Resources use neutral group cards with action-colored inner sections and row underlines;
 component headings stay purple.
 Section titles appear once. Logical-resource group headings identify their provider

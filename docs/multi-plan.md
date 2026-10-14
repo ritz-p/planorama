@@ -56,7 +56,9 @@ SVG output places states in ID order. Each section has a visible state label and
 
 State sections share the final content width required by the widest architecture
 or annotation. Each state's annotations reflow within that width, so Relationship
-Resources can use additional horizontal space before wrapping. State heights and
+Resources can use additional horizontal space before wrapping. Annotation
+section frames follow occupied child-card bounds with their existing padding;
+unused horizontal space does not widen the annotation frames. State heights and
 cross-state endpoint offsets follow the reflowed annotations. The cross-state
 routing gutter is reserved outside the shared content width and is not available
 for index cards.
