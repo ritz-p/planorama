@@ -13,7 +13,7 @@ pub(super) enum OutputFormat {
     Html,
 }
 
-const HELP: &str = "planorama — Terraform plan JSON → SVG / HTML (pure Rust)\n\nUsage: planorama <plan.json | -> [--format svg|html] [-o <path | ->] [--address-format qualified|terraform] [--diagnostics]\n\n  -o, --output PATH   Output file (default: diagram.svg or diagram.html); '-' for stdout\n  --format FORMAT    Output format: svg (default) or self-contained html\n  --address-format FORMAT  Resource labels: qualified (default) or terraform\n  --changed-only     Retain changes and required context\n  --focus ADDRESS    Select a resource (STATE:ADDRESS for named states)\n  --focus-depth N    Neighbor depth (default: 1; requires --focus)\n  --remote-state CONSUMER:ADDRESS=PRODUCER  Map a named remote-state data source\n  --diagnostics      Explain unresolved references and semantic fallbacks on stderr\n  -h, --help          Show help\n  -V, --version       Show version\n\nInput: terraform show -json <saved-plan> (not terraform plan -json).\nLines show reference or architectural relationships; containment uses nested boxes.\nAttribute values are never included in the diagram.\n";
+const HELP: &str = "planorama — Terraform plan JSON → SVG / HTML (pure Rust)\n\nUsage: planorama <plan.json | -> [--format svg|html] [-o <path | ->] [--address-format qualified|terraform] [--diagnostics]\n\n  -o, --output PATH   Output file (default: diagram.svg or diagram.html); '-' for stdout\n  --format FORMAT    Output format: svg (default) or self-contained html\n  --address-format FORMAT  Resource labels: qualified (default) or terraform\n  --changed-only     Retain changes and required context\n  --focus ADDRESS    Select a resource (STATE:ADDRESS for named states)\n  --focus-depth N    Neighbor depth (default: 1; requires --focus)\n  --remote-state CONSUMER:ADDRESS=PRODUCER  Map a named remote-state data source\n  --diagnostics      Explain unresolved references and semantic fallbacks on stderr\n  --layout-diagnostics  Report final layout quality on stderr\n  --layout-diagnostics-json PATH  Write a versioned layout report to a separate JSON file\n  -h, --help          Show help\n  -V, --version       Show version\n\nInput: terraform show -json <saved-plan> (not terraform plan -json).\nLines show reference or architectural relationships; containment uses nested boxes.\nAttribute values are never included in the diagram.\n";
 
 pub(crate) fn run() -> Result<(), String> {
     let mut input = None;
@@ -77,9 +77,6 @@ pub(crate) fn run() -> Result<(), String> {
                 )
             }
             "-h" | "--help" => {
-                println!(
-                    "  --layout-diagnostics  Report final layout quality on stderr\n  --layout-diagnostics-json PATH  Write a versioned layout report to a separate JSON file\n"
-                );
                 print!(
                     "{HELP}\nMultiple plans: planorama --state ID=PATH [--state ID=PATH ...] [-o diagram.svg]\nState IDs are explicit and unique (1-64 ASCII letters, digits, '.', '_' or '-').\nOne named input may use '-' for stdin; do not mix --state with a positional input.\n"
                 );

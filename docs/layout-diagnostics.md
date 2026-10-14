@@ -89,6 +89,8 @@ the rounded-border approximation, disclosed in the report's policy.
 Collection stops pair comparisons at 2,000,000 and retains at most 20,000 findings.
 `limits` discloses incomplete pair metrics or findings; truncated totals must
 not be treated as complete. Per-edge raw and border totals remain available.
+Reaching a cap exactly is complete unless another comparison or finding is
+omitted. Stopping pair analysis also makes the findings incomplete.
 No threshold-based CI failure is enabled.
 
 The shared raw helpers are in `src/layout/metrics.rs`; the renderer's report

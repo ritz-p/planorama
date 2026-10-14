@@ -13,11 +13,12 @@ fn cli() -> Command {
 fn help_documents_remote_state_mapping_syntax() {
     let output = cli().arg("--help").output().unwrap();
     assert!(output.status.success());
-    assert!(
-        String::from_utf8(output.stdout)
-            .unwrap()
-            .contains("--remote-state CONSUMER:ADDRESS=PRODUCER")
-    );
+    let text = String::from_utf8(output.stdout).unwrap();
+    assert!(text.starts_with("planorama —"));
+    assert!(text.contains("--remote-state CONSUMER:ADDRESS=PRODUCER"));
+    let options = text.split("\n\n").nth(2).unwrap();
+    assert!(options.contains("--layout-diagnostics  "));
+    assert!(options.contains("--layout-diagnostics-json PATH"));
 }
 
 #[test]

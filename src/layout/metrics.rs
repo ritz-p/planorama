@@ -72,6 +72,7 @@ struct Segment {
     from: Point,
     to: Point,
     axis: Axis,
+    run: usize,
 }
 
 impl Segment {
@@ -82,7 +83,12 @@ impl Segment {
             (true, false) => Axis::Vertical,
             (false, false) => return None,
         };
-        Some(Self { from, to, axis })
+        Some(Self {
+            from,
+            to,
+            axis,
+            run: 0,
+        })
     }
 
     fn range(self) -> (usize, usize) {
@@ -99,6 +105,7 @@ impl Segment {
 
     fn continues(self, next: Self) -> bool {
         self.axis == next.axis
+            && self.run == next.run
             && self.to == next.from
             && self.to.x.cmp(&self.from.x) == next.to.x.cmp(&next.from.x)
             && self.to.y.cmp(&self.from.y) == next.to.y.cmp(&next.from.y)
@@ -135,10 +142,15 @@ fn segments(paths: &[Vec<Point>]) -> Vec<Vec<Segment>> {
         .iter()
         .map(|path| {
             let mut segments: Vec<Segment> = Vec::new();
-            for segment in path
-                .windows(2)
-                .filter_map(|pair| Segment::new(pair[0], pair[1]))
-            {
+            let mut run = 0;
+            for pair in path.windows(2) {
+                let Some(mut segment) = Segment::new(pair[0], pair[1]) else {
+                    if pair[0] != pair[1] {
+                        run += 1;
+                    }
+                    continue;
+                };
+                segment.run = run;
                 match segments.last_mut() {
                     Some(last) if last.continues(segment) => last.to = segment.to,
                     _ => segments.push(segment),
@@ -184,7 +196,7 @@ fn bend_count(paths: &[Vec<Segment>]) -> usize {
         .iter()
         .map(|path| {
             path.windows(2)
-                .filter(|pair| !pair[0].continues(pair[1]))
+                .filter(|pair| pair[0].run == pair[1].run && !pair[0].continues(pair[1]))
                 .count()
         })
         .sum()

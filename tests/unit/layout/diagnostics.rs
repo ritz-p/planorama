@@ -19,6 +19,62 @@ fn report(edges: Vec<Route>) -> Value {
 }
 
 #[test]
+fn collection_completeness_tracks_omissions_not_exact_caps() {
+    for (pair_limit, finding_limit, pair_complete, findings_complete, count) in [
+        (3, 3, true, true, 3),
+        (2, 3, false, false, 2),
+        (3, 2, true, false, 2),
+        (0, 3, false, false, 0),
+        (3, 0, true, false, 0),
+    ] {
+        let scene = Scene {
+            edges: ["a", "b", "c"]
+                .into_iter()
+                .map(|id| route(id, &[(0, 100), (200, 100)]))
+                .collect(),
+            ..Scene::default()
+        };
+        let value = scene.finish_with_limits(1000, 1000, pair_limit, finding_limit);
+        assert_eq!(value["limits"]["pair_metrics_complete"], pair_complete);
+        assert_eq!(value["limits"]["findings_complete"], findings_complete);
+        assert_eq!(value["findings"].as_array().unwrap().len(), count);
+    }
+    let empty = Scene::default().finish_with_limits(0, 0, 0, 0);
+    assert_eq!(empty["limits"]["pair_metrics_complete"], true);
+    assert_eq!(empty["limits"]["findings_complete"], true);
+    for border in [false, true] {
+        for limit in [0, 1] {
+            let scene = if border {
+                Scene {
+                    edges: vec![route("a", &[(100, 45), (300, 45)])],
+                    frames: vec![(
+                        json!("card"),
+                        borders::Frame::card(Bounds {
+                            origin: Point { x: 100, y: 50 },
+                            width: 200,
+                            height: 200,
+                        }),
+                    )],
+                    ..Scene::default()
+                }
+            } else {
+                Scene {
+                    edges: vec![
+                        route("a", &[(0, 100), (200, 100)]),
+                        route("b", &[(100, 0), (100, 200)]),
+                    ],
+                    ..Scene::default()
+                }
+            };
+            let value = scene.finish_with_limits(1000, 1000, 1, limit);
+            assert_eq!(value["limits"]["pair_metrics_complete"], true);
+            assert_eq!(value["limits"]["findings_complete"], limit == 1);
+            assert_eq!(value["findings"].as_array().unwrap().len(), limit);
+        }
+    }
+}
+
+#[test]
 fn retraced_continuations_preserve_shared_prefix_and_suffix_boundaries() {
     for transpose in [false, true] {
         for suffix in [false, true] {

@@ -151,7 +151,17 @@ impl Scene {
         });
     }
 
-    pub(crate) fn finish(mut self, width: usize, height: usize) -> Value {
+    pub(crate) fn finish(self, width: usize, height: usize) -> Value {
+        self.finish_with_limits(width, height, PAIR_LIMIT, FINDING_LIMIT)
+    }
+
+    fn finish_with_limits(
+        mut self,
+        width: usize,
+        height: usize,
+        pair_limit: usize,
+        finding_limit: usize,
+    ) -> Value {
         self.edges.sort_by_key(|e| {
             (
                 e.identity.to_string(),
@@ -161,6 +171,8 @@ impl Scene {
         self.frames.sort_by_key(|(id, _)| id.to_string());
         let index = borders::Index::new(self.frames.iter().map(|(_, f)| *f).collect());
         let mut findings = Vec::new();
+        let mut findings_complete = true;
+        let mut pair_metrics_complete = true;
         let mut routes = Vec::new();
         let mut segments = Vec::new();
         let mut raw_length = 0u128;
@@ -180,7 +192,8 @@ impl Scene {
             border_deficit += border.minimum_deficit;
             let id = edge.identity.to_string();
             for contact in index.contacts(&edge.path, edge.stroke, &edge.soft) {
-                if findings.len() == FINDING_LIMIT {
+                if findings.len() == finding_limit {
+                    findings_complete = false;
                     break;
                 }
                 let frame = self
@@ -209,7 +222,9 @@ impl Scene {
                 let mut crossings = BTreeSet::new();
                 for sa in &segments[a] {
                     for sb in &segments[b] {
-                        if comparisons == PAIR_LIMIT {
+                        if comparisons == pair_limit {
+                            pair_metrics_complete = false;
+                            findings_complete = false;
                             break 'pairs;
                         }
                         comparisons += 1;
@@ -243,12 +258,14 @@ impl Scene {
                                         shared_length += high - low;
                                     } else {
                                         overlap += high - low;
-                                        if findings.len() < FINDING_LIMIT {
+                                        if findings.len() < finding_limit {
                                             findings.push(json!({"category": "independent_overlap",
                                                 "edge": ea.identity.to_string(), "peer": eb.identity.to_string(),
                                                 "segment": sa.index, "peer_segment": sb.index,
                                                 "location": {"horizontal": sa.horizontal, "coordinates": [sa.axis, sb.axis],
                                                     "interval": [low, high], "visible_gap": -(ea.stroke as f64 + eb.stroke as f64) / 8.0}}));
+                                        } else {
+                                            findings_complete = false;
                                         }
                                     }
                                 }
@@ -274,9 +291,11 @@ impl Scene {
                                 json!({"horizontal": sa.horizontal, "coordinates": [sa.axis, sb.axis], "interval": [low, high], "visible_gap": gap}),
                             )
                         };
-                        if findings.len() < FINDING_LIMIT {
+                        if findings.len() < finding_limit {
                             findings.push(json!({"category": category, "edge": self.edges[a].identity.to_string(),
                                 "peer": self.edges[b].identity.to_string(), "segment": sa.index, "peer_segment": sb.index, "location": location}));
+                        } else {
+                            findings_complete = false;
                         }
                     }
                 }
@@ -289,8 +308,8 @@ impl Scene {
                 "visible_straight_sections": {"crossings": crossing_count, "independent_overlap_length": overlap,
                     "shared_trunk_length": shared_length, "parallel_deficit": parallel_deficit},
                 "visible_border_minimum_deficit": border_deficit as f64 / 4.0},
-            "limits": {"pair_comparisons": comparisons, "pair_limit": PAIR_LIMIT, "finding_limit": FINDING_LIMIT,
-                "pair_metrics_complete": comparisons < PAIR_LIMIT, "findings_complete": findings.len() < FINDING_LIMIT, "unsupported_diagonal_segments": unsupported},
+            "limits": {"pair_comparisons": comparisons, "pair_limit": pair_limit, "finding_limit": finding_limit,
+                "pair_metrics_complete": pair_metrics_complete, "findings_complete": findings_complete, "unsupported_diagonal_segments": unsupported},
             "policy": {"parallel_centerline_preference": 16, "parallel_minimum_run": 64, "endpoint_convergence": 32,
                 "border_minimum_gap": 4, "border_preferred_gap": 8,
                 "approximations": ["Pair metrics use rounded straight sections with conservative integer mask clipping; curve-to-curve and curve-to-line pair metrics unavailable.",

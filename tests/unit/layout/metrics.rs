@@ -173,6 +173,15 @@ fn unsupported_diagonal_segments_do_not_panic_or_invent_orthogonal_length() {
         measure(&[path(&[(0, 0), (10, 10)])]),
         LayoutMetrics::default()
     );
+    for points in [
+        vec![(0, 0), (10, 0), (20, 10), (30, 10)],
+        vec![(0, 0), (10, 0), (20, 10), (10, 0), (20, 0)],
+        vec![(0, 0), (10, 0), (20, 10), (10, 0), (10, 10)],
+    ] {
+        let actual = measure(&[path(&points)]);
+        assert_eq!(actual.bend_count, 0);
+        assert_eq!(actual.total_path_length, 20);
+    }
 }
 
 #[test]
