@@ -44,6 +44,12 @@ compile step adds `--no-run` to the same `cargo test --locked --all-features`
 commands used by the run step. Build scripts remain Cargo-managed prerequisites.
 No existing test, ignored-test policy or snapshot comparison is removed.
 
+The standard job also explicitly runs the ignored spacing-budget calibration
+and uploads its JSON and SVG comparisons as `spacing-calibration`. This compares
+previous numerical budgets, defaults and doubled candidates on large,
+dense-corridor and constrained fixtures. See
+[calibration](../examples/terraform-large/spacing-calibration.md).
+
 New integration targets automatically join `standard`; no ordinary target list is
 duplicated in the workflow. New library, binary, example and benchmark targets are
 also selected. CI deliberately selects every discovered non-build target even

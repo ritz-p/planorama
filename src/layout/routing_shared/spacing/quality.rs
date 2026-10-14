@@ -108,8 +108,15 @@ pub(super) fn improves(
     };
     let a = clarity(before);
     let b = clarity(after);
-    let length_before: usize = before.iter().map(|p| length(p)).sum();
-    let length_after: usize = after.iter().map(|p| length(p)).sum();
+    let excess = |path: &Vec<Point>| {
+        let direct = path
+            .first()
+            .zip(path.last())
+            .map_or(0, |(a, b)| a.x.abs_diff(b.x) + a.y.abs_diff(b.y));
+        length(path).saturating_sub(direct)
+    };
+    let length_before: usize = before.iter().map(excess).sum();
+    let length_after: usize = after.iter().map(excess).sum();
     let proximity_before = measure(graph, before);
     let proximity_after = measure(graph, after);
     let cost = |proximity: &Metrics, length: usize, borders: &[super::super::borders::Metrics]| {
@@ -121,4 +128,19 @@ pub(super) fn improves(
         || (b == a
             && cost(&proximity_after, length_after, after_borders) + u128::from(expanded) * 32
                 < cost(&proximity_before, length_before, before_borders))
+}
+
+pub(super) fn translated_baseline(original: &[Shape], reference: &[Vec<Point>]) -> Vec<Shape> {
+    original
+        .iter()
+        .zip(reference)
+        .map(|(&original, path)| {
+            let geometry = Shape::measure(path);
+            Shape {
+                length: geometry.length,
+                backtracking: geometry.backtracking,
+                ..original
+            }
+        })
+        .collect()
 }

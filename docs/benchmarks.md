@@ -29,6 +29,10 @@ test in release mode for per-state layout time, dimensions, crossings, shared
 path lengths, bends and visible-border overlap. It complements the bounded-degree
 scale generator above; ordinary CI does not run its expensive measurements.
 
+The separate [spacing calibration](../examples/terraform-large/spacing-calibration.md)
+runs explicitly in CI and compares old/default/doubled refinement budgets.
+It records bounded-pass work and per-edge shape without shortest-route searches.
+
 ## Initial baseline (2026-10-09)
 
 Revision `4389b6092a1f0290a9f4ee48ed77a929ba368e90` plus this benchmark-only

@@ -367,11 +367,18 @@ the same monotone gap transformation. A failed or non-improving transaction roll
 back bounds, paths, junctions, scopes and bands together.
 
 Acceptance compares each final edge's bends, short perpendicular offsets, axis
-reversals, backtracking and offset/re-entry S-jogs against its original shape.
-None may increase; path length may grow by at most 128px. A short offset is measured
+reversals and offset/re-entry S-jogs against its original shape. None may increase.
+An immutable copy of the original paths receives only accepted right/down gap
+transformations, never replacement with a newly routed path. Its transformed
+length and backtracking bound candidates in the updated endpoint/obstacle
+geometry, with 128px of length slack for the entire pass. This linear reference
+update permits necessary endpoint separation and obstacle growth without an
+expensive shortest-path comparison or accumulating detour allowances.
+A short offset is measured
 relative to its neighboring legs, not treated as universally invalid near a port.
 Exact overlap cannot increase on rerouted edges. Whole-route clarity takes priority
-over the combined line-spacing and border-clearance cost, with route length and
+over the combined line-spacing and border-clearance cost, with excess length
+above current endpoint Manhattan distance and
 expansion cost breaking otherwise equal shape comparisons. An accepted change
 cannot introduce a sub-4px gap or worsen an existing sub-4px minimum on any edge.
 Each edge's length-weighted minimum-gap deficit must also remain unchanged or
@@ -383,14 +390,27 @@ minimum stroke-aware margin within the existing geometry.
 
 This pass runs once on the final graph, after embedded Route reconstruction,
 same-side port refinement, bundling and ordinary shortcutting. It permits at most
-two sweeps, six distinct corridor attempts, 16 lanes per corridor, 32 independently
-rerouted edges per attempt and 64px cumulative growth per axis, shared by border
-and line-to-line repairs. Corridors with no independently movable lane are skipped
-before consuming an attempt. Unchanged line-only geometry uses whole-path candidates
+20 sweeps and `clamp(path_count, 60, 240)` total corridor attempts. Cumulative
+growth on each axis is `clamp(initial_axis_size / 4, 640, 4096)` pixels, shared by
+border and line-to-line repairs. Allocation uses only actual lane and border
+demand. Limits of 16 lanes per corridor and 32 rerouted edges per attempt remain.
+Each accepted transaction ends its sweep and rebuilds demand from current bounds
+and paths. A failed key is excluded for that unchanged state, then becomes
+eligible after an accepted geometry or peer-routing change. Reconsiderations
+consume the total attempt budget. A sweep with no improvement stops early.
+Urgent border demand retains its reserved place within remaining attempts.
+Corridors with no independently movable lane are skipped before consuming an
+attempt. Translated non-corridor paths retain their shape when legal; changed
+paths are revalidated together for ports, protected headers, numbered terminals,
+overlap and border regressions. Invalid translated paths join rerouting, and a
+failed candidate restores the whole transaction. Unchanged line-only geometry uses whole-path candidates
 with the same bounded frame and peer tracks. Regression metrics disclose
 residual close length, visible minimum gap and both minimum/preferred deficits;
 deterministic fallback preserves valid
 routes when capacity, obstacles or budgets prevent improvement.
+
+See the [budget calibration](../examples/terraform-large/spacing-calibration.md)
+for previous-limit and doubled-candidate comparisons and CI artifacts.
 
 SVG rendering consumes the final geometry and rounds corners without changing
 relationship identity. Nested containment edges receive no redundant path.
