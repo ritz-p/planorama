@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="2074" viewBox="0 0 1100 2074" role="img" aria-labelledby="title description">
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="2092" viewBox="0 0 1100 2092" role="img" aria-labelledby="title description">
 <title id="title">Terraform plan</title>
 <desc id="description">5 resources, 3 reference edges. Arrows point from dependencies to dependent resources. References are conservative, not Terraform execution order. Thin solid: dependency. Dashed: association. Thick dotted: connection. Nested boxes: containment. Edge color preserves the Terraform action when available.</desc>
 <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/></marker><metadata id="planorama-icons-license">AWS Architecture Icons, release 07312026.
@@ -35,7 +35,7 @@ No AWS endorsement is implied. Consult the AWS terms for other uses.
 <g id="plan-status" data-plan-applyable="true" data-plan-complete="true" data-plan-errored="false">
 <text x="40" y="137" font-size="12" fill="#475569">Plan status: applyable: true complete: true errored: false</text>
 </g>
-<g id="relationship-legend" font-size="12" fill="#475569" transform="translate(40 148)"><rect width="1020" height="528" rx="12" fill="#f8fafc" stroke="#cbd5e1"/>
+<g id="relationship-legend" font-size="12" fill="#475569" transform="translate(40 148)"><rect width="960" height="546" rx="12" fill="#f8fafc" stroke="#cbd5e1"/>
 <text x="16" y="29" font-size="15" font-weight="700" fill="#334155">Relationship lines</text>
 <text x="16" y="56">Line color shows the relationship&apos;s own Terraform action, independently of endpoint-card actions.</text>
 <path data-legend-action="none" d="M 16 77 H 42" fill="none" stroke="#94a3b8" stroke-width="1.5"/><text x="50" y="82">no independent change</text>
@@ -46,11 +46,12 @@ No AWS endorsement is implied. Consult the AWS terms for other uses.
 <path data-legend-kind="dependency" data-directionality="directed" d="M 21 11 H 153" fill="none" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
 <circle data-legend-endpoint="source" cx="21" cy="11" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
 <text x="174" y="12" font-weight="700">Dependency</text>
-<text x="174" y="30">Thin solid arrow from the referenced</text>
-<text x="174" y="48">resource to the dependent resource;</text>
-<text x="174" y="66">not exact Terraform execution order.</text>
+<text x="174" y="30">Thin solid arrow from the</text>
+<text x="174" y="48">referenced resource to the</text>
+<text x="174" y="66">dependent resource; not exact</text>
+<text x="174" y="84">Terraform execution order.</text>
 </g>
-<g data-legend-entry="association" transform="translate(522 132)">
+<g data-legend-entry="association" transform="translate(492 132)">
 <g data-legend-sample="association">
 <path data-legend-kind="association" data-directionality="undirected" d="M 21 11 H 153" fill="none" stroke="#94a3b8" stroke-width="2" stroke-dasharray="7 4"/>
 <circle data-legend-endpoint="source" cx="21" cy="11" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/><circle data-legend-endpoint="target" cx="153" cy="11" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/><g data-legend-badge="source">
@@ -63,8 +64,8 @@ No AWS endorsement is implied. Consult the AWS terms for other uses.
 <text x="174" y="12" font-weight="700">Association</text>
 <text x="174" y="30">Dashed, undirected relationship.</text>
 <text x="174" y="48">Matching badges identify the same</text>
-<text x="174" y="66">Terraform-backed relationship at both</text>
-<text x="174" y="84">attachment points.</text>
+<text x="174" y="66">Terraform-backed relationship at</text>
+<text x="174" y="84">both attachment points.</text>
 </g>
 <g data-legend-entry="directed-association" transform="translate(0 238)">
 <g data-legend-sample="directed-association">
@@ -78,35 +79,37 @@ No AWS endorsement is implied. Consult the AWS terms for other uses.
 </g>
 </g>
 <text x="174" y="12" font-weight="700">Directed Association</text>
-<text x="174" y="30">Dashed line from a Route to its next</text>
-<text x="174" y="48">hop. The destination arrow expresses</text>
-<text x="174" y="66">direction; matching badges identify</text>
-<text x="174" y="84">the same relationship.</text>
+<text x="174" y="30">Dashed line from a Route to its</text>
+<text x="174" y="48">next hop. The destination arrow</text>
+<text x="174" y="66">expresses direction; matching</text>
+<text x="174" y="84">badges identify the same</text>
+<text x="174" y="102">relationship.</text>
 </g>
-<g data-legend-entry="connection" transform="translate(522 238)">
+<g data-legend-entry="connection" transform="translate(492 238)">
 <g data-legend-sample="connection">
 <path data-legend-kind="connection" data-directionality="undirected" d="M 21 11 H 153" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-dasharray="0 3.5" stroke-linecap="round"/>
 <circle data-legend-endpoint="source" cx="21" cy="11" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/><circle data-legend-endpoint="target" cx="153" cy="11" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
 <text x="174" y="12" font-weight="700">Connection</text>
-<text x="174" y="30">Thicker dotted line shows an inferred,</text>
-<text x="174" y="48">undirected connection; this does not</text>
-<text x="174" y="66">guarantee actual network reachability.</text>
+<text x="174" y="30">Thicker dotted line shows an</text>
+<text x="174" y="48">inferred, undirected connection;</text>
+<text x="174" y="66">this does not guarantee actual</text>
+<text x="174" y="84">network reachability.</text>
 </g>
-<g data-legend-entry="containment" transform="translate(0 344)">
+<g data-legend-entry="containment" transform="translate(0 362)">
 <g data-legend-sample="containment">
 <g data-legend-kind="containment" fill="none" stroke="#94a3b8"><rect x="65" y="2" width="44" height="28" rx="4"/><rect x="74" y="12" width="26" height="12" rx="2"/></g>
 </g>
 <text x="174" y="12" font-weight="700">Containment</text>
-<text x="174" y="30">Nested boxes show containment; nesting</text>
-<text x="174" y="48">replaces a redundant relationship</text>
-<text x="174" y="66">line.</text>
+<text x="174" y="30">Nested boxes show containment;</text>
+<text x="174" y="48">nesting replaces a redundant</text>
+<text x="174" y="66">relationship line.</text>
 </g>
-<text x="16" y="444">Hollow circles mark resource/card attachment points; neither end of an undirected line is a directional start. Filled</text>
-<text x="16" y="462">internal dots mark bundle junctions.</text>
-<text x="16" y="488">Matching [N] badges identify the same Terraform-backed relationship and its Relationship Resources entry. They do not</text>
-<text x="16" y="506">express direction or count connections. Reference-only Connections and Dependencies have no number.</text>
+<text x="16" y="462">Hollow circles mark resource/card attachment points; neither end of an undirected line is a directional start.</text>
+<text x="16" y="480">Filled internal dots mark bundle junctions.</text>
+<text x="16" y="506">Matching [N] badges identify the same Terraform-backed relationship and its Relationship Resources entry. They do</text>
+<text x="16" y="524">not express direction or count connections. Reference-only Connections and Dependencies have no number.</text>
 </g>
-<g transform="translate(0 540)">
+<g transform="translate(0 558)">
 <g id="plan-checks"><title>Object: unknown
   aws_lb.app: unknown
 </title><text x="40" y="161" font-size="12" fill="#475569">Checks (objects): 0 pass / 0 fail / 0 error / 1 unknown / 0 other / 0 unavailable</text></g>

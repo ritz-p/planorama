@@ -1,9 +1,9 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1224" height="1822" viewBox="0 0 1224 1822" font-family="ui-monospace, Consolas, monospace" role="img" aria-labelledby="multi-title multi-description">
+<svg xmlns="http://www.w3.org/2000/svg" width="1224" height="1858" viewBox="0 0 1224 1858" font-family="ui-monospace, Consolas, monospace" role="img" aria-labelledby="multi-title multi-description">
 <title id="multi-title">Terraform plans</title><desc id="multi-description">2 named states with 3 cross-state dependencies. Resource identities are scoped to each state; blue dashed paths connect output producers to consumers across states.</desc>
 <rect width="100%" height="100%" fill="#ffffff"/><text x="40" y="35" font-family="ui-monospace, Consolas, monospace" font-size="25" fill="#0f172a">Terraform plans</text>
 <metadata id="cross-state-relationships">[{&quot;from&quot;:&quot;aws_subnet.app&quot;,&quot;from_state&quot;:&quot;producer&quot;,&quot;output&quot;:&quot;subnet&quot;,&quot;output_action&quot;:null,&quot;remote&quot;:&quot;data.terraform_remote_state.network&quot;,&quot;to&quot;:&quot;aws_instance.app&quot;,&quot;to_state&quot;:&quot;consumer&quot;},{&quot;from&quot;:&quot;aws_subnet.app&quot;,&quot;from_state&quot;:&quot;producer&quot;,&quot;output&quot;:&quot;both&quot;,&quot;output_action&quot;:null,&quot;remote&quot;:&quot;data.terraform_remote_state.network&quot;,&quot;to&quot;:&quot;aws_instance.other&quot;,&quot;to_state&quot;:&quot;consumer&quot;},{&quot;from&quot;:&quot;aws_subnet.other&quot;,&quot;from_state&quot;:&quot;producer&quot;,&quot;output&quot;:&quot;both&quot;,&quot;output_action&quot;:null,&quot;remote&quot;:&quot;data.terraform_remote_state.network&quot;,&quot;to&quot;:&quot;aws_instance.other&quot;,&quot;to_state&quot;:&quot;consumer&quot;}]</metadata>
 <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/></marker></defs>
-<g id="relationship-legend" font-size="12" fill="#475569" transform="translate(40 60)"><rect width="1040" height="510" rx="12" fill="#f8fafc" stroke="#cbd5e1"/>
+<g id="relationship-legend" font-size="12" fill="#475569" transform="translate(40 60)"><rect width="960" height="546" rx="12" fill="#f8fafc" stroke="#cbd5e1"/>
 <text x="16" y="29" font-size="15" font-weight="700" fill="#334155">Relationship lines</text>
 <text x="16" y="56">Line color shows the relationship&apos;s own Terraform action, independently of endpoint-card actions.</text>
 <path data-legend-action="none" d="M 16 77 H 42" fill="none" stroke="#94a3b8" stroke-width="1.5"/><text x="50" y="82">no independent change</text>
@@ -14,11 +14,12 @@
 <path data-legend-kind="dependency" data-directionality="directed" d="M 21 11 H 153" fill="none" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
 <circle data-legend-endpoint="source" cx="21" cy="11" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
 <text x="174" y="12" font-weight="700">Dependency</text>
-<text x="174" y="30">Thin solid arrow from the referenced</text>
-<text x="174" y="48">resource to the dependent resource; not</text>
-<text x="174" y="66">exact Terraform execution order.</text>
+<text x="174" y="30">Thin solid arrow from the</text>
+<text x="174" y="48">referenced resource to the</text>
+<text x="174" y="66">dependent resource; not exact</text>
+<text x="174" y="84">Terraform execution order.</text>
 </g>
-<g data-legend-entry="association" transform="translate(532 132)">
+<g data-legend-entry="association" transform="translate(492 132)">
 <g data-legend-sample="association">
 <path data-legend-kind="association" data-directionality="undirected" d="M 21 11 H 153" fill="none" stroke="#94a3b8" stroke-width="2" stroke-dasharray="7 4"/>
 <circle data-legend-endpoint="source" cx="21" cy="11" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/><circle data-legend-endpoint="target" cx="153" cy="11" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/><g data-legend-badge="source">
@@ -31,8 +32,8 @@
 <text x="174" y="12" font-weight="700">Association</text>
 <text x="174" y="30">Dashed, undirected relationship.</text>
 <text x="174" y="48">Matching badges identify the same</text>
-<text x="174" y="66">Terraform-backed relationship at both</text>
-<text x="174" y="84">attachment points.</text>
+<text x="174" y="66">Terraform-backed relationship at</text>
+<text x="174" y="84">both attachment points.</text>
 </g>
 <g data-legend-entry="directed-association" transform="translate(0 238)">
 <g data-legend-sample="directed-association">
@@ -46,35 +47,38 @@
 </g>
 </g>
 <text x="174" y="12" font-weight="700">Directed Association</text>
-<text x="174" y="30">Dashed line from a Route to its next</text>
-<text x="174" y="48">hop. The destination arrow expresses</text>
-<text x="174" y="66">direction; matching badges identify the</text>
-<text x="174" y="84">same relationship.</text>
+<text x="174" y="30">Dashed line from a Route to its</text>
+<text x="174" y="48">next hop. The destination arrow</text>
+<text x="174" y="66">expresses direction; matching</text>
+<text x="174" y="84">badges identify the same</text>
+<text x="174" y="102">relationship.</text>
 </g>
-<g data-legend-entry="connection" transform="translate(532 238)">
+<g data-legend-entry="connection" transform="translate(492 238)">
 <g data-legend-sample="connection">
 <path data-legend-kind="connection" data-directionality="undirected" d="M 21 11 H 153" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-dasharray="0 3.5" stroke-linecap="round"/>
 <circle data-legend-endpoint="source" cx="21" cy="11" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/><circle data-legend-endpoint="target" cx="153" cy="11" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
 <text x="174" y="12" font-weight="700">Connection</text>
-<text x="174" y="30">Thicker dotted line shows an inferred,</text>
-<text x="174" y="48">undirected connection; this does not</text>
-<text x="174" y="66">guarantee actual network reachability.</text>
+<text x="174" y="30">Thicker dotted line shows an</text>
+<text x="174" y="48">inferred, undirected connection;</text>
+<text x="174" y="66">this does not guarantee actual</text>
+<text x="174" y="84">network reachability.</text>
 </g>
-<g data-legend-entry="containment" transform="translate(0 344)">
+<g data-legend-entry="containment" transform="translate(0 362)">
 <g data-legend-sample="containment">
 <g data-legend-kind="containment" fill="none" stroke="#94a3b8"><rect x="65" y="2" width="44" height="28" rx="4"/><rect x="74" y="12" width="26" height="12" rx="2"/></g>
 </g>
 <text x="174" y="12" font-weight="700">Containment</text>
-<text x="174" y="30">Nested boxes show containment; nesting</text>
-<text x="174" y="48">replaces a redundant relationship line.</text>
+<text x="174" y="30">Nested boxes show containment;</text>
+<text x="174" y="48">nesting replaces a redundant</text>
+<text x="174" y="66">relationship line.</text>
 </g>
-<text x="16" y="426">Hollow circles mark resource/card attachment points; neither end of an undirected line is a directional start. Filled internal</text>
-<text x="16" y="444">dots mark bundle junctions.</text>
-<text x="16" y="470">Matching [N] badges identify the same Terraform-backed relationship and its Relationship Resources entry. They do not express</text>
-<text x="16" y="488">direction or count connections. Reference-only Connections and Dependencies have no number.</text>
+<text x="16" y="462">Hollow circles mark resource/card attachment points; neither end of an undirected line is a directional start.</text>
+<text x="16" y="480">Filled internal dots mark bundle junctions.</text>
+<text x="16" y="506">Matching [N] badges identify the same Terraform-backed relationship and its Relationship Resources entry. They do</text>
+<text x="16" y="524">not express direction or count connections. Reference-only Connections and Dependencies have no number.</text>
 </g>
-<g id="state-636f6e73756d6572-state" data-state-id="consumer"><text x="40" y="607" font-family="ui-monospace, Consolas, monospace" font-size="20" font-weight="700" fill="#0f172a">State: consumer</text>
-<svg y="622" xmlns="http://www.w3.org/2000/svg" width="1120" height="568" viewBox="0 0 1120 568" role="img" aria-labelledby="state-636f6e73756d6572-title state-636f6e73756d6572-description">
+<g id="state-636f6e73756d6572-state" data-state-id="consumer"><text x="40" y="643" font-family="ui-monospace, Consolas, monospace" font-size="20" font-weight="700" fill="#0f172a">State: consumer</text>
+<svg y="658" xmlns="http://www.w3.org/2000/svg" width="1120" height="568" viewBox="0 0 1120 568" role="img" aria-labelledby="state-636f6e73756d6572-title state-636f6e73756d6572-description">
 <title id="state-636f6e73756d6572-title">Terraform plan</title>
 <desc id="state-636f6e73756d6572-description">3 resources, 2 reference edges. Arrows point from dependencies to dependent resources. References are conservative, not Terraform execution order. Thin solid: dependency. Dashed: association. Thick dotted: connection. Nested boxes: containment. Edge color preserves the Terraform action when available.</desc>
 <defs><marker id="state-636f6e73756d6572-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/></marker><metadata id="state-636f6e73756d6572-planorama-icons-license">AWS Architecture Icons, release 07312026.
@@ -172,8 +176,8 @@ SOFTWARE.
 </g>
 </svg>
 </g>
-<g id="state-70726f6475636572-state" data-state-id="producer"><text x="40" y="1235" font-family="ui-monospace, Consolas, monospace" font-size="20" font-weight="700" fill="#0f172a">State: producer</text>
-<svg y="1250" xmlns="http://www.w3.org/2000/svg" width="1120" height="552" viewBox="0 0 1120 552" role="img" aria-labelledby="state-70726f6475636572-title state-70726f6475636572-description">
+<g id="state-70726f6475636572-state" data-state-id="producer"><text x="40" y="1271" font-family="ui-monospace, Consolas, monospace" font-size="20" font-weight="700" fill="#0f172a">State: producer</text>
+<svg y="1286" xmlns="http://www.w3.org/2000/svg" width="1120" height="552" viewBox="0 0 1120 552" role="img" aria-labelledby="state-70726f6475636572-title state-70726f6475636572-description">
 <title id="state-70726f6475636572-title">Terraform plan</title>
 <desc id="state-70726f6475636572-description">2 resources, 0 reference edges. Arrows point from dependencies to dependent resources. References are conservative, not Terraform execution order. Thin solid: dependency. Dashed: association. Thick dotted: connection. Nested boxes: containment. Edge color preserves the Terraform action when available.</desc>
 <defs><marker id="state-70726f6475636572-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/></marker><metadata id="state-70726f6475636572-planorama-icons-license">AWS Architecture Icons, release 07312026.
@@ -224,8 +228,8 @@ No AWS endorsement is implied. Consult the AWS terms for other uses.
 </svg>
 </g>
 <defs><marker id="cross-state-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#2563eb"/></marker></defs>
-<path data-edge-kind="dependency" data-cross-state="true" data-source="state-70726f6475636572-resource-6177735f7375626e65742e617070-current" data-target="state-636f6e73756d6572-resource-6177735f696e7374616e63652e617070-current" data-source-port="state-70726f6475636572-resource-6177735f7375626e65742e617070-current" data-target-port="state-636f6e73756d6572-resource-6177735f696e7374616e63652e617070-current" data-source-state="producer" data-target-state="consumer" data-remote-state="data.terraform_remote_state.network" data-output="subnet" d="M 460 1458 L 1150 1458 L 1150 878 L 800 878" fill="none" stroke="#2563eb" stroke-width="1.5" stroke-dasharray="7 4" marker-end="url(#cross-state-arrow)"><title>producer:aws_subnet.app -&gt; consumer:aws_instance.app via data.terraform_remote_state.network.outputs.subnet (cross-state dependency)</title></path>
-<circle data-endpoint="source" cx="460" cy="1458" r="3.5" fill="#ffffff" stroke="#2563eb" stroke-width="1.5"/><path data-edge-kind="dependency" data-cross-state="true" data-source="state-70726f6475636572-resource-6177735f7375626e65742e617070-current" data-target="state-636f6e73756d6572-resource-6177735f696e7374616e63652e6f74686572-current" data-source-port="state-70726f6475636572-resource-6177735f7375626e65742e617070-current" data-target-port="state-636f6e73756d6572-resource-6177735f696e7374616e63652e6f74686572-current" data-source-state="producer" data-target-state="consumer" data-remote-state="data.terraform_remote_state.network" data-output="both" d="M 460 1458 L 1162 1458 L 1162 1014 L 800 1014" fill="none" stroke="#2563eb" stroke-width="1.5" stroke-dasharray="7 4" marker-end="url(#cross-state-arrow)"><title>producer:aws_subnet.app -&gt; consumer:aws_instance.other via data.terraform_remote_state.network.outputs.both (cross-state dependency)</title></path>
-<circle data-endpoint="source" cx="460" cy="1458" r="3.5" fill="#ffffff" stroke="#2563eb" stroke-width="1.5"/><path data-edge-kind="dependency" data-cross-state="true" data-source="state-70726f6475636572-resource-6177735f7375626e65742e6f74686572-current" data-target="state-636f6e73756d6572-resource-6177735f696e7374616e63652e6f74686572-current" data-source-port="state-70726f6475636572-resource-6177735f7375626e65742e6f74686572-current" data-target-port="state-636f6e73756d6572-resource-6177735f696e7374616e63652e6f74686572-current" data-source-state="producer" data-target-state="consumer" data-remote-state="data.terraform_remote_state.network" data-output="both" d="M 460 1634 L 1174 1634 L 1174 1014 L 800 1014" fill="none" stroke="#2563eb" stroke-width="1.5" stroke-dasharray="7 4" marker-end="url(#cross-state-arrow)"><title>producer:aws_subnet.other -&gt; consumer:aws_instance.other via data.terraform_remote_state.network.outputs.both (cross-state dependency)</title></path>
-<circle data-endpoint="source" cx="460" cy="1634" r="3.5" fill="#ffffff" stroke="#2563eb" stroke-width="1.5"/><text x="350" y="35" font-family="ui-monospace, Consolas, monospace" font-size="12" fill="#2563eb">Dashed blue: cross-state dependency</text>
+<path data-edge-kind="dependency" data-cross-state="true" data-source="state-70726f6475636572-resource-6177735f7375626e65742e617070-current" data-target="state-636f6e73756d6572-resource-6177735f696e7374616e63652e617070-current" data-source-port="state-70726f6475636572-resource-6177735f7375626e65742e617070-current" data-target-port="state-636f6e73756d6572-resource-6177735f696e7374616e63652e617070-current" data-source-state="producer" data-target-state="consumer" data-remote-state="data.terraform_remote_state.network" data-output="subnet" d="M 460 1494 L 1150 1494 L 1150 914 L 800 914" fill="none" stroke="#2563eb" stroke-width="1.5" stroke-dasharray="7 4" marker-end="url(#cross-state-arrow)"><title>producer:aws_subnet.app -&gt; consumer:aws_instance.app via data.terraform_remote_state.network.outputs.subnet (cross-state dependency)</title></path>
+<circle data-endpoint="source" cx="460" cy="1494" r="3.5" fill="#ffffff" stroke="#2563eb" stroke-width="1.5"/><path data-edge-kind="dependency" data-cross-state="true" data-source="state-70726f6475636572-resource-6177735f7375626e65742e617070-current" data-target="state-636f6e73756d6572-resource-6177735f696e7374616e63652e6f74686572-current" data-source-port="state-70726f6475636572-resource-6177735f7375626e65742e617070-current" data-target-port="state-636f6e73756d6572-resource-6177735f696e7374616e63652e6f74686572-current" data-source-state="producer" data-target-state="consumer" data-remote-state="data.terraform_remote_state.network" data-output="both" d="M 460 1494 L 1162 1494 L 1162 1050 L 800 1050" fill="none" stroke="#2563eb" stroke-width="1.5" stroke-dasharray="7 4" marker-end="url(#cross-state-arrow)"><title>producer:aws_subnet.app -&gt; consumer:aws_instance.other via data.terraform_remote_state.network.outputs.both (cross-state dependency)</title></path>
+<circle data-endpoint="source" cx="460" cy="1494" r="3.5" fill="#ffffff" stroke="#2563eb" stroke-width="1.5"/><path data-edge-kind="dependency" data-cross-state="true" data-source="state-70726f6475636572-resource-6177735f7375626e65742e6f74686572-current" data-target="state-636f6e73756d6572-resource-6177735f696e7374616e63652e6f74686572-current" data-source-port="state-70726f6475636572-resource-6177735f7375626e65742e6f74686572-current" data-target-port="state-636f6e73756d6572-resource-6177735f696e7374616e63652e6f74686572-current" data-source-state="producer" data-target-state="consumer" data-remote-state="data.terraform_remote_state.network" data-output="both" d="M 460 1670 L 1174 1670 L 1174 1050 L 800 1050" fill="none" stroke="#2563eb" stroke-width="1.5" stroke-dasharray="7 4" marker-end="url(#cross-state-arrow)"><title>producer:aws_subnet.other -&gt; consumer:aws_instance.other via data.terraform_remote_state.network.outputs.both (cross-state dependency)</title></path>
+<circle data-endpoint="source" cx="460" cy="1670" r="3.5" fill="#ffffff" stroke="#2563eb" stroke-width="1.5"/><text x="350" y="35" font-family="ui-monospace, Consolas, monospace" font-size="12" fill="#2563eb">Dashed blue: cross-state dependency</text>
 </svg>

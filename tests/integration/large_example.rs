@@ -99,11 +99,15 @@ fn large_fixture_is_reproducible_from_terraform_sources_and_renders_deterministi
         })
         .collect();
     assert_eq!(legend_entries.len(), 5);
-    assert!(
-        legend_entries
-            .windows(2)
-            .all(|pair| pair[0][0] < pair[1][0] && pair[0][1] == pair[1][1])
-    );
+    for row in legend_entries.chunks(2) {
+        assert_eq!(row[0][0], 0);
+        if row.len() == 2 {
+            assert!(row[1][0] > row[0][0]);
+            assert_eq!(row[0][1], row[1][1]);
+        }
+    }
+    assert!(legend_entries[0][1] < legend_entries[2][1]);
+    assert!(legend_entries[2][1] < legend_entries[4][1]);
     let legend_width: usize = legend
         .children()
         .find(|node| node.has_tag_name("rect"))
@@ -118,7 +122,8 @@ fn large_fixture_is_reproducible_from_terraform_sources_and_renders_deterministi
         .unwrap()
         .parse()
         .unwrap();
-    assert_eq!(legend_width + 80, canvas_width);
+    assert_eq!(legend_width, 960);
+    assert!(legend_width + 80 < canvas_width);
     let entries: Vec<_> = document
         .descendants()
         .filter_map(|n| n.attribute("data-relationship-entry"))

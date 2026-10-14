@@ -48,8 +48,8 @@ committed counterparts.
 
 ## Expected display
 
-The Relationship lines legend uses the wide canvas to place its five relationship
-kinds on one row below the action/color explanation. Samples retain their circles,
+The Relationship lines legend caps its card width at 960px and places its five
+relationship kinds in 2 / 2 / 1 rows below the action/color explanation. Samples retain their circles,
 arrows and numbered badges, with the complete explanation beside each sample.
 Legend height shifts the annotations and architecture together; it does not
 change the routed geometry.
