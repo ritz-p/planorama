@@ -17,7 +17,8 @@ mod resolution_tests;
 
 pub(crate) fn transform(plan: &TerraformPlan) -> ArchitectureGraph {
     let raw = Input::new(plan);
+    let deployments = relationships::deployments(&raw.nodes);
     let mut graph = crate::provider::transform(raw);
-    graph.relationships = relationships::collect(&graph);
+    graph.relationships = relationships::collect(&graph, &deployments);
     ArchitectureGraph(graph)
 }

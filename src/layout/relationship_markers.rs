@@ -170,7 +170,7 @@ pub(crate) fn entries(graph: &Graph) -> Vec<Entry<'_>> {
                 let group = grouped.entry((sources, from, to, edge.kind)).or_default();
                 group.edges.push(index);
                 for provenance in &relationship.provenance {
-                    if let RelationshipProvenance::Resource { source, change } = provenance {
+                    if let RelationshipProvenance::Resource { source, change, .. } = provenance {
                         if let Some(previous) = change.previous_address.as_deref() {
                             group
                                 .previous_addresses

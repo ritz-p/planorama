@@ -152,6 +152,12 @@ tie-breakers. SVG composition positions logical annotation panels independently
 of architecture geometry, retaining those IDs. Positional
 edge indices remain an internal graph representation.
 
+Relationship resource provenance retains `ResourceDeployment`: the original
+resolved architecture scope, provider source and provider configuration identity,
+captured before association lowering removes helper nodes. Lookup uses the exact
+Terraform address and deposed key within a state. Rendering reads this evidence
+separately from endpoint scopes; it does not resolve scope from addresses or types.
+
 SVGs expose `data-architecture-id` and an `architecture-entities` JSON metadata
 element containing the source addresses/deposed keys for every entity. Existing
 Terraform address metadata and stable resource DOM IDs remain available. Synthetic

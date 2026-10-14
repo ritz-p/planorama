@@ -112,6 +112,14 @@ indented list shows the verified endpoint pair with kind and direction: `Connect
 for undirected associations and `From → To` for directed relationships. Endpoints
 link to their rendered cards or rows. These labels remain visible in image embeds;
 navigation requires an interactive SVG surface. No Terraform values are added.
+Each provenance resource has its own `Resource scope` line, independently of the
+scope appended to each linked endpoint. Region, AWS Global, unknown and not
+applicable use the common scope labels; known accounts are included. The
+relationship itself never inherits an endpoint's scope. Missing endpoints remain
+unavailable text without a scope claim or link. Multiple provenance sources keep
+their own scope evidence and measured lines. See the synthetic
+[cross-region/account example](../examples/relationship-scopes.svg); it illustrates
+scope presentation, not deployability or network reachability.
 Entry targets derive from provenance and endpoint identities, independently of
 the visible number, and named states namespace all links and path memberships.
 The hierarchy and all wrapped lines are measured before packing cards.

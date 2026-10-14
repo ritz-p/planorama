@@ -35,7 +35,31 @@ pub(crate) fn record_reference(graph: &mut Graph, from: usize, to: usize, kind: 
     record(graph, from, to, kind, evidence);
 }
 
-pub(super) fn collect(graph: &Graph) -> Vec<ArchitectureRelationship> {
+pub(super) fn deployments(
+    nodes: &[crate::model::Node],
+) -> BTreeMap<TerraformEntityId, crate::model::ResourceDeployment> {
+    nodes
+        .iter()
+        .map(|node| {
+            (
+                TerraformEntityId {
+                    address: node.address.clone(),
+                    deposed_key: node.deposed_key.clone(),
+                },
+                crate::model::ResourceDeployment {
+                    scope: node.entity.scope.clone(),
+                    provider: node.provider.clone(),
+                    configuration: node.provider_configuration.clone(),
+                },
+            )
+        })
+        .collect()
+}
+
+pub(super) fn collect(
+    graph: &Graph,
+    deployments: &BTreeMap<TerraformEntityId, crate::model::ResourceDeployment>,
+) -> Vec<ArchitectureRelationship> {
     let mut evidence = BTreeMap::<_, Vec<_>>::new();
     for relationship in graph.relationships.iter().filter(|r| r.inferred) {
         evidence
@@ -50,13 +74,15 @@ pub(super) fn collect(graph: &Graph) -> Vec<ArchitectureRelationship> {
             let from = &graph.nodes[edge.from].entity.id;
             let to = &graph.nodes[edge.to].entity.id;
             let provenance = if let Some(change) = &edge.change {
+                let source = TerraformEntityId {
+                    address: change.address.clone(),
+                    deposed_key: (graph.nodes[edge.from].address == change.address)
+                        .then(|| graph.nodes[edge.from].deposed_key.clone())
+                        .flatten(),
+                };
                 vec![RelationshipProvenance::Resource {
-                    source: TerraformEntityId {
-                        address: change.address.clone(),
-                        deposed_key: (graph.nodes[edge.from].address == change.address)
-                            .then(|| graph.nodes[edge.from].deposed_key.clone())
-                            .flatten(),
-                    },
+                    deployment: deployments.get(&source).cloned().map(Box::new),
+                    source,
                     change: change.clone(),
                 }]
             } else if edge.kind == EdgeKind::Dependency {
