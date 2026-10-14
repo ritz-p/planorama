@@ -101,22 +101,18 @@ applicable`, and unknown provider identities use `Region: unknown`. Labels never
 participate in architecture, provider-configuration or state identity.
 
 `provider_configuration.account` retains only a validated `AwsAccountScope`:
-exactly 12 ASCII digits from literal IAM role ARNs in the exact AWS provider's
-`expressions.assume_role[].role_arn.constant_value` or
-`expressions.assume_role_with_web_identity[].role_arn.constant_value`.
-Only the commercial `aws` partition is currently supported. Dynamic, malformed,
-missing or conflicting evidence remains unknown; conflicts produce a
-`ConflictingAwsAccount` diagnostic without exposing the role or provider values.
-All supplied role blocks must resolve and agree, so cross-account role chains
-are deliberately unresolved. This is conservative even when the final role in
-a chain would select a target account.
+exactly 12 ASCII digits from commercial-partition IAM role ARNs. JSON-only parsing
+always leaves it unknown: Terraform's
+[nested-expression serializer](https://github.com/hashicorp/terraform/blob/v1.9.8/internal/command/jsonconfig/expression.go)
+omits dynamic blocks, so visible role expressions cannot establish completeness.
 
-The JSON shape is verified against Terraform 1.9.8's
-[provider serializer](https://github.com/hashicorp/terraform/blob/v1.9.8/internal/command/jsonconfig/config.go)
-and [nested-expression serializer](https://github.com/hashicorp/terraform/blob/v1.9.8/internal/command/jsonconfig/expression.go),
-with AWS 5.100.0's [list-block schema](https://github.com/hashicorp/terraform-provider-aws/blob/v5.100.0/internal/provider/provider.go).
-Unsupported JSON representations remain unknown rather than being interpreted
-as evaluated provider values.
+The optional saved-plan input described in [provider evidence](provider-evidence.md)
+checks the plan against its embedded configuration snapshot. Every role in a
+supported static provider declaration must be literal and agree on the account.
+Dynamic blocks, unresolved expressions and cross-account chains remain unknown.
+Validated conflicting static roles produce `ConflictingAwsAccount` without
+exposing role or provider values. Evidence is applied before semantic projection,
+using the exact state-local provider key and the plan's module/resource bindings.
 
 State, provider binding, AWS account and region are separate identities. One state
 can manage several accounts; several bindings can target one account; equal

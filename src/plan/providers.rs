@@ -50,14 +50,12 @@ fn collect(
                 .as_str()
                 .map(ProviderIdentity::from_source)
                 .unwrap_or_else(|| ProviderIdentity::from_source("unknown"));
-            let (account, account_conflict) =
-                static_account(&provider, &providers[key]["expressions"]);
             let configuration = ProviderConfiguration {
                 key: key.into(),
                 alias: providers[key]["alias"].as_str().map(str::to_owned),
                 region: static_region(&provider, &providers[key]["expressions"]["region"]),
-                account,
-                account_conflict,
+                account: None,
+                account_conflict: false,
             };
             found.insert(
                 qualify(scope, address),
@@ -81,7 +79,7 @@ fn collect(
     }
 }
 
-fn static_account(
+pub(super) fn static_account(
     provider: &ProviderIdentity,
     expressions: &Value,
 ) -> (Option<crate::model::AwsAccountScope>, bool) {

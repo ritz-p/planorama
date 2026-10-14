@@ -4,6 +4,7 @@ mod checks;
 mod collections;
 mod drift;
 mod entity;
+pub(crate) mod evidence;
 mod operations;
 mod outputs;
 mod providers;

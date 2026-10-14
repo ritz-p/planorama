@@ -1,6 +1,7 @@
 mod filtering;
 mod html;
 mod layout_diagnostics;
+mod provider_plan;
 mod states;
 mod support;
 use std::process::Command;

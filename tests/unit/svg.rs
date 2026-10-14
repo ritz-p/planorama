@@ -20,7 +20,9 @@ fn spatial_account_evidence_does_not_infer_region_or_global_classification() {
                 "root_module": {"resources": [{"address": address, "provider_config_key": "aws"}]}
             }
         });
-        let graph = crate::semantic::transform(&crate::plan::parse(&input.to_string()).unwrap());
+        let graph = crate::semantic::transform(
+            &crate::plan::evidence::tests::parse_fixture(&input.to_string()).unwrap(),
+        );
         let output = render(&graph, &Layout::new(&graph));
         let document = roxmltree::Document::parse(&output).unwrap();
         let panel = document
@@ -70,7 +72,9 @@ fn spatial_scopes_expose_distinct_account_identity() {
                 .push(serde_json::json!({"address": address, "provider_config_key": provider}));
         }
     }
-    let graph = crate::semantic::transform(&crate::plan::parse(&input.to_string()).unwrap());
+    let graph = crate::semantic::transform(
+        &crate::plan::evidence::tests::parse_fixture(&input.to_string()).unwrap(),
+    );
     let output = render(&graph, &Layout::new(&graph));
     let document = roxmltree::Document::parse(&output).unwrap();
     for account in [Some("123456789012"), Some("210987654321"), None] {

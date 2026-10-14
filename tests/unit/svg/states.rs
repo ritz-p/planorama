@@ -3,7 +3,8 @@ use super::*;
 #[test]
 fn account_panels_remain_state_local_and_identical_in_html() {
     let input = include_str!("../../fixtures/accounts-plan.json");
-    let graph = crate::semantic::transform(&crate::plan::parse(input).unwrap());
+    let graph =
+        crate::semantic::transform(&crate::plan::evidence::tests::parse_fixture(input).unwrap());
     let architecture = crate::model::architecture::Architecture {
         states: BTreeMap::from([
             (StateId::new("first").unwrap(), graph.clone()),
@@ -78,7 +79,9 @@ fn account_panels_remain_state_local_and_identical_in_html() {
         .as_array_mut()
         .unwrap()
         .reverse();
-    let reversed = crate::semantic::transform(&crate::plan::parse(&reordered.to_string()).unwrap());
+    let reversed = crate::semantic::transform(
+        &crate::plan::evidence::tests::parse_fixture(&reordered.to_string()).unwrap(),
+    );
     assert_eq!(architecture.states.values().next().unwrap(), &reversed);
 }
 

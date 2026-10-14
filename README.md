@@ -29,6 +29,12 @@ docker compose exec -T dev cargo run --locked -- plan.json -o diagram.svg
 
 入力は `terraform show -json` の保存済み plan 形式です。`terraform plan -json` のイベントストリームや state JSON は対象外です。PowerShell 5.1 のリダイレクトは UTF-16 になるため、JSON は UTF-8 で保存してください。
 
+JSON 単独では AWS account は unknown です。Terraform 1.9.8 の保存済み plan を
+`--provider-plan tfplan` で併せて渡すと、JSON との一致と plan 内の構成を検証し、
+対応する static ロールからアカウントを解決します。現時点の対応 provider は hashicorp/aws 5.100.0 です。Terraform と初期化済み provider
+スキーマが必要です。複数 state では `--state-provider-plan ID=PATH` を使います。
+dynamic ロールや未解決式は unknown のままです。[入力・機密情報の扱い](docs/provider-evidence.md)を参照してください。
+
 ```sh
 docker compose exec -T dev cargo run --locked -- --help
 docker compose exec -T dev cargo run --locked -- plan.json --changed-only -o changes.svg
@@ -82,7 +88,7 @@ docker compose exec -T dev cargo run --locked -- - -o - < plan.json > diagram.sv
 | AWS・Terraform 組み込みリソース用アイコンの出典・ライセンス | [Icons](docs/icons.md) |
 | 性能計測 | [Benchmarks](docs/benchmarks.md) |
 | 最終レイアウトの text / JSON 診断 | [Layout diagnostics](docs/layout-diagnostics.md) |
-| 複数 state・AWS account・region を組み合わせた大型例 | [生成方法・計測](examples/multi-account/README.md)、[SVG](examples/multi-account/diagram.svg)、[HTML](examples/multi-account/diagram.html) |
+| 複数 state・region と account 証拠不足を示す大型例 | [生成方法・計測](examples/multi-account/README.md)、[SVG](examples/multi-account/diagram.svg)、[HTML](examples/multi-account/diagram.html) |
 | CI による SVG 生成・自動コミット・PR 検証結果 | [SVG automation](docs/ci.md) |
 
 ## 開発・検証

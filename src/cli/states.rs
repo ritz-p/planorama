@@ -5,7 +5,7 @@ use std::io::{self, Read, Write};
 use std::path::Path;
 
 pub(super) fn run(
-    inputs: BTreeMap<StateId, String>,
+    inputs: (BTreeMap<StateId, String>, &super::provider_plan::Options),
     output: &Path,
     format: svg::AddressFormat,
     output_format: super::OutputFormat,
@@ -13,6 +13,7 @@ pub(super) fn run(
     mappings: &[crate::model::cross_state::Mapping],
     filter: &crate::view::Options,
 ) -> Result<(), String> {
+    let (inputs, provider_plan) = inputs;
     let (diagnostics, layout_diagnostics) = diagnostics;
     if inputs.values().filter(|path| path.as_str() == "-").count() > 1 {
         return Err("stdin may be used by only one state".into());
@@ -39,7 +40,21 @@ pub(super) fn run(
             })
         })
         .collect::<Result<Vec<_>, String>>()?;
-    let plans = plan::parse_inputs(inputs)?;
+    let evidence = inputs
+        .iter()
+        .map(|input| {
+            provider_plan
+                .load(Some(&input.state_id), &input.plan_json)
+                .map(|evidence| (input.state_id.clone(), evidence))
+                .map_err(|error| format!("state {:?}: {error}", input.state_id.as_str()))
+        })
+        .collect::<Result<BTreeMap<_, _>, _>>()?;
+    let mut plans = plan::parse_inputs(inputs)?;
+    for (id, raw) in &mut plans.states {
+        if let Some(Some(evidence)) = evidence.get(id) {
+            evidence.apply(raw);
+        }
+    }
     let cross = semantic::cross_state::resolve(&plans, mappings);
     if diagnostics {
         let mut stderr = io::stderr().lock();
