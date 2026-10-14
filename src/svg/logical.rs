@@ -154,7 +154,7 @@ pub(super) fn cards(graph: &Graph, address_format: super::AddressFormat) -> Vec<
         let provider_label = provider.unwrap_or("Provider unavailable");
         let explanations: std::collections::BTreeSet<_> = nodes.iter().filter_map(|node| super::roles::explanation(node.role)).collect();
         let rows: Vec<_> = nodes.into_iter().map(|node| (node, resource_lines(node, address_format))).collect();
-        let heading_width = card_width([heading.as_str(), provider_label].into_iter()).max(card_width(explanations.iter().copied()).min(480));
+        let heading_width = card_width([heading.as_str(), provider_label].into_iter());
         let width = rows.iter().fold(heading_width, |width, (node, lines)| {
             width.max(card_width(lines.iter().map(|(text, _)| text))).max(crate::view::references::width(node))
         });
