@@ -61,3 +61,11 @@ accepted growth; the dense fixture demonstrates the additional cumulative room.
 Doubling the candidate budget produced identical geometry and residual deficits,
 so the smaller candidate was selected. This is calibration on representative
 fixtures, not a claim of globally optimal budgets.
+
+Large-fixture total route length changes from 40,106 to 39,178px, bends from 83
+to 81, reversals from 6 to 4 and backtracking from 609 to 145px. Both candidates
+retain two offset-shaped routes and zero S-jogs. Dense routes grow from 88,200
+to 93,492px through necessary endpoint separation, with 98 bends and no offsets,
+reversals or S-jogs in all candidates. Constrained geometry stays identical.
+The full and enlarged large/dense SVG comparisons were inspected locally;
+residual crowded runs remain in the large diagram and are recorded as deficits.
