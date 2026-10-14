@@ -1,6 +1,6 @@
 use super::annotations::{Card, card_width, wrap};
 use crate::model::architecture::{Graph, Node};
-use crate::model::{EntityMode, Placement};
+use crate::model::{Action, EntityMode, Placement};
 use crate::view::text::wrap_address;
 use std::collections::BTreeMap;
 use std::fmt::Write;
@@ -152,8 +152,10 @@ pub(super) fn cards(graph: &Graph, address_format: super::AddressFormat) -> Vec<
         nodes.sort_by_key(|node| &node.entity.id);
         let heading = format!("{resource_type} · {}", if mode == "data" { "data / external" } else { mode });
         let provider_label = provider.unwrap_or("Provider unavailable");
+        let explanations: std::collections::BTreeSet<_> = nodes.iter().filter_map(|node| super::roles::explanation(node.role)).collect();
         let rows: Vec<_> = nodes.into_iter().map(|node| (node, resource_lines(node, address_format))).collect();
-        let width = rows.iter().fold(card_width([heading.as_str(), provider_label].into_iter()), |width, (node, lines)| {
+        let heading_width = card_width([heading.as_str(), provider_label].into_iter()).max(card_width(explanations.iter().copied()).min(480));
+        let width = rows.iter().fold(heading_width, |width, (node, lines)| {
             width.max(card_width(lines.iter().map(|(text, _)| text))).max(crate::view::references::width(node))
         });
         let mut svg = format!(r#"<g data-logical-group="true" data-provider-source="{}" data-resource-type="{}" data-mode="{mode}"><title>{} — {}</title>"#, super::escape(provider.unwrap_or("unknown")), super::escape(resource_type), super::escape(&heading), super::escape(provider_label));
@@ -166,10 +168,31 @@ pub(super) fn cards(graph: &Graph, address_format: super::AddressFormat) -> Vec<
             writeln!(svg, r##"<text x="16" y="{y}" font-size="11" fill="#64748b">{}</text>"##, super::escape(line)).unwrap();
             y += 18;
         }
-        for (node, lines) in rows {
-            let (content, height) = resource_row(graph, node, &lines, width, y);
-            svg.push_str(&content);
-            y += height;
+        for explanation in explanations {
+            for line in wrap(explanation, (width - 32) / 8) {
+                writeln!(svg, r##"<text data-role-explanation="true" x="16" y="{y}" font-size="12" fill="#475569" xml:space="preserve">{}</text>"##, super::escape(line)).unwrap();
+                y += 20;
+            }
+        }
+        for (action, label) in [
+            (Action::Create, "Create"), (Action::Update, "Update"),
+            (Action::Delete, "Delete"), (Action::Replace, "Replace"),
+            (Action::Read, "Read"), (Action::Unchanged, "Unchanged"), (Action::Other, "Other"),
+        ] {
+            let members: Vec<_> = rows.iter().filter(|(node, _)| node.action == action).collect();
+            if members.is_empty() { continue; }
+            let start = y;
+            let heading = format!("{label} ({})", members.len());
+            let (_, stroke) = super::color(action);
+            let mut content = format!(r##"<title>{heading}</title><text x="16" y="{}" font-size="13" font-weight="700" fill="{stroke}">{heading}</text>"##, start + 24);
+            y += 32;
+            for (node, lines) in members {
+                let (row, height) = resource_row(graph, node, lines, width, y);
+                content.push_str(&row);
+                y += height;
+            }
+            writeln!(svg, r#"<g data-action-section="{}"><rect x="8" y="{start}" width="{}" height="{}" rx="8" fill="none" stroke="{stroke}" stroke-width="2"/>{content}</g>"#, super::label(action), width - 16, y - start).unwrap();
+            y += 12;
         }
         svg.push_str("</g>\n");
         Card { width, height: y + 16, content: svg }

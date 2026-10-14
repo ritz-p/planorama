@@ -77,6 +77,13 @@ classified as nodes, connectors, associations, policies or controllers by
 from managed/data mode; Security Groups remain Policy cards and target groups
 remain Controller cards even when placed inside a VPC.
 
+Policy describes access/control rules or policy-like configuration; it does not
+necessarily mean IAM or policy enforcement. Controller describes resources that
+manage or configure services, workloads or related resources; the role alone does
+not establish runtime control, traffic or relationships. Logical type cards show
+these explanations once per role, separately from Terraform action and managed/data
+mode. Their action subsections change presentation only, not role or placement.
+
 Placement is independent of role. ECS Cluster, ECS Task Definition, IAM Role,
 Policy, Role Policy, Instance Profile, AMI, EC2 Launch Template, CloudWatch Log Group,
 Metric Alarm and Auto Scaling Policy definitions are explicit logical resources, rendered as rows grouped

@@ -38,7 +38,7 @@ to the LB when targets join or leave.
 Above the architecture, three independent vertical sections appear in order:
 Logical Resources (cyan), Logical Components (purple), then Relationship Resources
 (neutral). Empty sections reserve no space. Section colors identify their type.
-Logical Resources use neutral group cards with action-colored row underlines;
+Logical Resources use neutral group cards with action-colored inner sections and row underlines;
 component headings stay purple.
 Section titles appear once. Logical-resource group headings identify their provider
 source, resource type and mode. Component cards use their actual label without a
