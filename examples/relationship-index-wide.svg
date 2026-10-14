@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="2340" height="3161" viewBox="0 0 2340 3161" role="img" aria-labelledby="title description">
+<svg xmlns="http://www.w3.org/2000/svg" width="2340" height="3361" viewBox="0 0 2340 3361" role="img" aria-labelledby="title description">
 <title id="title">Terraform plan</title>
 <desc id="description">47 resources (7 cards), 44 relationships. Lines show architectural relationships. Edge titles identify the relationship kind and Terraform change. Thin solid: dependency. Dashed: association. Thick dotted: connection. Nested boxes: containment. Edge color preserves the Terraform action when available.</desc>
 <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/></marker><marker id="arrow-create" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#047857"/></marker><metadata id="planorama-icons-license">AWS Architecture Icons, release 07312026.
@@ -149,7 +149,7 @@ SOFTWARE.
 </g>
 <g transform="translate(0 364)">
 <g data-annotation-area="true">
-<g data-annotation-card="true" transform="translate(40 160)"><rect width="2260" height="1236" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-annotation-section="Relationship Resources"><rect width="2260" height="1236" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><text x="16" y="28" font-size="15" font-weight="700" fill="#475569">Relationship Resources</text><g data-annotation-card="true" transform="translate(16 48)"><rect width="380" height="576" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-relationship-index="true">
+<g data-annotation-card="true" transform="translate(40 160)"><rect width="2260" height="1436" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-annotation-section="Relationship Resources"><rect width="2260" height="1436" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><text x="16" y="28" font-size="15" font-weight="700" fill="#475569">Relationship Resources</text><g data-annotation-card="true" transform="translate(16 48)"><rect width="460" height="676" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-relationship-index="true">
 <g data-relationship-entry="1" id="relationship-5b5b5b226177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3031222c6e756c6c5d5d2c5b5b227465727261666f726d3a3631373737333566373337353632366536353734326537303732363937363631373436352d63757272656e74222c227465727261666f726d3a363137373733356637323666373537343635356637343631363236633635326537303732363937363631373436352d63757272656e74222c226173736f63696174696f6e222c22756e6469726563746564225d5d5d"><title>Relationship [1]: Connects (association, undirected): aws_subnet.private / aws_route_table.private</title><a href="#relationship-5b5b5b226177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3031222c6e756c6c5d5d2c5b5b227465727261666f726d3a3631373737333566373337353632366536353734326537303732363937363631373436352d63757272656e74222c227465727261666f726d3a363137373733356637323666373537343635356637343631363236633635326537303732363937363631373436352d63757272656e74222c226173736f63696174696f6e222c22756e6469726563746564225d5d5d" data-relationship-select="true" aria-label="Relationship [1]: Connects (association, undirected): aws_subnet.private / aws_route_table.private">
 <rect x="16" y="15" width="24" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="28" y="28" text-anchor="middle" font-size="11" fill="#334155">[1]</text>
 </a>
@@ -157,67 +157,72 @@ SOFTWARE.
 <tspan x="60" y="28" xml:space="preserve">aws_route_table_association.entry_01</tspan>
 </text>
 <text font-size="12" fill="#334155"><tspan x="60" y="48" xml:space="preserve">Action: create</tspan></text>
-<text font-size="12" fill="#334155"><tspan x="76" y="68" xml:space="preserve">- Connects (association, undirected)</tspan></text>
-<a href="#resource-6177735f7375626e65742e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_subnet.private"><text font-size="12" fill="#334155"><tspan x="92" y="88" xml:space="preserve">- aws_subnet.private</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="60" y="68" xml:space="preserve">Resource scope: Region: unknown</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="76" y="88" xml:space="preserve">- Connects (association, undirected)</tspan></text>
+<a href="#resource-6177735f7375626e65742e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_subnet.private · Region: unknown"><text font-size="12" fill="#334155"><tspan x="92" y="108" xml:space="preserve">- aws_subnet.private · Region: unknown</tspan></text>
 </a>
-<a href="#resource-6177735f726f7574655f7461626c652e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_route_table.private"><text font-size="12" fill="#334155"><tspan x="92" y="108" xml:space="preserve">- aws_route_table.private</tspan></text>
+<a href="#resource-6177735f726f7574655f7461626c652e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_route_table.private · Region: unknown"><text font-size="12" fill="#334155"><tspan x="92" y="128" xml:space="preserve">- aws_route_table.private · Region: unknown</tspan></text>
 </a>
 </g>
 <g data-relationship-entry="2" id="relationship-5b5b5b226177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3032222c6e756c6c5d5d2c5b5b227465727261666f726d3a3631373737333566373337353632366536353734326537303732363937363631373436352d63757272656e74222c227465727261666f726d3a363137373733356637323666373537343635356637343631363236633635326537303732363937363631373436352d63757272656e74222c226173736f63696174696f6e222c22756e6469726563746564225d5d5d"><title>Relationship [2]: Connects (association, undirected): aws_subnet.private / aws_route_table.private</title><a href="#relationship-5b5b5b226177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3032222c6e756c6c5d5d2c5b5b227465727261666f726d3a3631373737333566373337353632366536353734326537303732363937363631373436352d63757272656e74222c227465727261666f726d3a363137373733356637323666373537343635356637343631363236633635326537303732363937363631373436352d63757272656e74222c226173736f63696174696f6e222c22756e6469726563746564225d5d5d" data-relationship-select="true" aria-label="Relationship [2]: Connects (association, undirected): aws_subnet.private / aws_route_table.private">
-<rect x="16" y="123" width="24" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="28" y="136" text-anchor="middle" font-size="11" fill="#334155">[2]</text>
+<rect x="16" y="143" width="24" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="28" y="156" text-anchor="middle" font-size="11" fill="#334155">[2]</text>
 </a>
 <text data-source-address="aws_route_table_association.entry_02" data-source-identity="terraform:6177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3032-current" font-size="12" font-weight="600" fill="#334155"><title>aws_route_table_association.entry_02</title>
-<tspan x="60" y="136" xml:space="preserve">aws_route_table_association.entry_02</tspan>
+<tspan x="60" y="156" xml:space="preserve">aws_route_table_association.entry_02</tspan>
 </text>
-<text font-size="12" fill="#334155"><tspan x="60" y="156" xml:space="preserve">Action: create</tspan></text>
-<text font-size="12" fill="#334155"><tspan x="76" y="176" xml:space="preserve">- Connects (association, undirected)</tspan></text>
-<a href="#resource-6177735f7375626e65742e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_subnet.private"><text font-size="12" fill="#334155"><tspan x="92" y="196" xml:space="preserve">- aws_subnet.private</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="60" y="176" xml:space="preserve">Action: create</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="60" y="196" xml:space="preserve">Resource scope: Region: unknown</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="76" y="216" xml:space="preserve">- Connects (association, undirected)</tspan></text>
+<a href="#resource-6177735f7375626e65742e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_subnet.private · Region: unknown"><text font-size="12" fill="#334155"><tspan x="92" y="236" xml:space="preserve">- aws_subnet.private · Region: unknown</tspan></text>
 </a>
-<a href="#resource-6177735f726f7574655f7461626c652e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_route_table.private"><text font-size="12" fill="#334155"><tspan x="92" y="216" xml:space="preserve">- aws_route_table.private</tspan></text>
+<a href="#resource-6177735f726f7574655f7461626c652e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_route_table.private · Region: unknown"><text font-size="12" fill="#334155"><tspan x="92" y="256" xml:space="preserve">- aws_route_table.private · Region: unknown</tspan></text>
 </a>
 </g>
 <g data-relationship-entry="3" id="relationship-5b5b5b226177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3033222c6e756c6c5d5d2c5b5b227465727261666f726d3a3631373737333566373337353632366536353734326537303732363937363631373436352d63757272656e74222c227465727261666f726d3a363137373733356637323666373537343635356637343631363236633635326537303732363937363631373436352d63757272656e74222c226173736f63696174696f6e222c22756e6469726563746564225d5d5d"><title>Relationship [3]: Connects (association, undirected): aws_subnet.private / aws_route_table.private</title><a href="#relationship-5b5b5b226177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3033222c6e756c6c5d5d2c5b5b227465727261666f726d3a3631373737333566373337353632366536353734326537303732363937363631373436352d63757272656e74222c227465727261666f726d3a363137373733356637323666373537343635356637343631363236633635326537303732363937363631373436352d63757272656e74222c226173736f63696174696f6e222c22756e6469726563746564225d5d5d" data-relationship-select="true" aria-label="Relationship [3]: Connects (association, undirected): aws_subnet.private / aws_route_table.private">
-<rect x="16" y="231" width="24" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="28" y="244" text-anchor="middle" font-size="11" fill="#334155">[3]</text>
+<rect x="16" y="271" width="24" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="28" y="284" text-anchor="middle" font-size="11" fill="#334155">[3]</text>
 </a>
 <text data-source-address="aws_route_table_association.entry_03" data-source-identity="terraform:6177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3033-current" font-size="12" font-weight="600" fill="#334155"><title>aws_route_table_association.entry_03</title>
-<tspan x="60" y="244" xml:space="preserve">aws_route_table_association.entry_03</tspan>
+<tspan x="60" y="284" xml:space="preserve">aws_route_table_association.entry_03</tspan>
 </text>
-<text font-size="12" fill="#334155"><tspan x="60" y="264" xml:space="preserve">Action: create</tspan></text>
-<text font-size="12" fill="#334155"><tspan x="76" y="284" xml:space="preserve">- Connects (association, undirected)</tspan></text>
-<a href="#resource-6177735f7375626e65742e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_subnet.private"><text font-size="12" fill="#334155"><tspan x="92" y="304" xml:space="preserve">- aws_subnet.private</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="60" y="304" xml:space="preserve">Action: create</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="60" y="324" xml:space="preserve">Resource scope: Region: unknown</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="76" y="344" xml:space="preserve">- Connects (association, undirected)</tspan></text>
+<a href="#resource-6177735f7375626e65742e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_subnet.private · Region: unknown"><text font-size="12" fill="#334155"><tspan x="92" y="364" xml:space="preserve">- aws_subnet.private · Region: unknown</tspan></text>
 </a>
-<a href="#resource-6177735f726f7574655f7461626c652e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_route_table.private"><text font-size="12" fill="#334155"><tspan x="92" y="324" xml:space="preserve">- aws_route_table.private</tspan></text>
+<a href="#resource-6177735f726f7574655f7461626c652e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_route_table.private · Region: unknown"><text font-size="12" fill="#334155"><tspan x="92" y="384" xml:space="preserve">- aws_route_table.private · Region: unknown</tspan></text>
 </a>
 </g>
 <g data-relationship-entry="4" id="relationship-5b5b5b226177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3034222c6e756c6c5d5d2c5b5b227465727261666f726d3a3631373737333566373337353632366536353734326537303732363937363631373436352d63757272656e74222c227465727261666f726d3a363137373733356637323666373537343635356637343631363236633635326537303732363937363631373436352d63757272656e74222c226173736f63696174696f6e222c22756e6469726563746564225d5d5d"><title>Relationship [4]: Connects (association, undirected): aws_subnet.private / aws_route_table.private</title><a href="#relationship-5b5b5b226177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3034222c6e756c6c5d5d2c5b5b227465727261666f726d3a3631373737333566373337353632366536353734326537303732363937363631373436352d63757272656e74222c227465727261666f726d3a363137373733356637323666373537343635356637343631363236633635326537303732363937363631373436352d63757272656e74222c226173736f63696174696f6e222c22756e6469726563746564225d5d5d" data-relationship-select="true" aria-label="Relationship [4]: Connects (association, undirected): aws_subnet.private / aws_route_table.private">
-<rect x="16" y="339" width="24" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="28" y="352" text-anchor="middle" font-size="11" fill="#334155">[4]</text>
+<rect x="16" y="399" width="24" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="28" y="412" text-anchor="middle" font-size="11" fill="#334155">[4]</text>
 </a>
 <text data-source-address="aws_route_table_association.entry_04" data-source-identity="terraform:6177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3034-current" font-size="12" font-weight="600" fill="#334155"><title>aws_route_table_association.entry_04</title>
-<tspan x="60" y="352" xml:space="preserve">aws_route_table_association.entry_04</tspan>
+<tspan x="60" y="412" xml:space="preserve">aws_route_table_association.entry_04</tspan>
 </text>
-<text font-size="12" fill="#334155"><tspan x="60" y="372" xml:space="preserve">Action: create</tspan></text>
-<text font-size="12" fill="#334155"><tspan x="76" y="392" xml:space="preserve">- Connects (association, undirected)</tspan></text>
-<a href="#resource-6177735f7375626e65742e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_subnet.private"><text font-size="12" fill="#334155"><tspan x="92" y="412" xml:space="preserve">- aws_subnet.private</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="60" y="432" xml:space="preserve">Action: create</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="60" y="452" xml:space="preserve">Resource scope: Region: unknown</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="76" y="472" xml:space="preserve">- Connects (association, undirected)</tspan></text>
+<a href="#resource-6177735f7375626e65742e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_subnet.private · Region: unknown"><text font-size="12" fill="#334155"><tspan x="92" y="492" xml:space="preserve">- aws_subnet.private · Region: unknown</tspan></text>
 </a>
-<a href="#resource-6177735f726f7574655f7461626c652e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_route_table.private"><text font-size="12" fill="#334155"><tspan x="92" y="432" xml:space="preserve">- aws_route_table.private</tspan></text>
+<a href="#resource-6177735f726f7574655f7461626c652e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_route_table.private · Region: unknown"><text font-size="12" fill="#334155"><tspan x="92" y="512" xml:space="preserve">- aws_route_table.private · Region: unknown</tspan></text>
 </a>
 </g>
 <g data-relationship-entry="5" id="relationship-5b5b5b226177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3035222c6e756c6c5d5d2c5b5b227465727261666f726d3a3631373737333566373337353632366536353734326537303732363937363631373436352d63757272656e74222c227465727261666f726d3a363137373733356637323666373537343635356637343631363236633635326537303732363937363631373436352d63757272656e74222c226173736f63696174696f6e222c22756e6469726563746564225d5d5d"><title>Relationship [5]: Connects (association, undirected): aws_subnet.private / aws_route_table.private</title><a href="#relationship-5b5b5b226177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3035222c6e756c6c5d5d2c5b5b227465727261666f726d3a3631373737333566373337353632366536353734326537303732363937363631373436352d63757272656e74222c227465727261666f726d3a363137373733356637323666373537343635356637343631363236633635326537303732363937363631373436352d63757272656e74222c226173736f63696174696f6e222c22756e6469726563746564225d5d5d" data-relationship-select="true" aria-label="Relationship [5]: Connects (association, undirected): aws_subnet.private / aws_route_table.private">
-<rect x="16" y="447" width="24" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="28" y="460" text-anchor="middle" font-size="11" fill="#334155">[5]</text>
+<rect x="16" y="527" width="24" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="28" y="540" text-anchor="middle" font-size="11" fill="#334155">[5]</text>
 </a>
 <text data-source-address="aws_route_table_association.entry_05" data-source-identity="terraform:6177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3035-current" font-size="12" font-weight="600" fill="#334155"><title>aws_route_table_association.entry_05</title>
-<tspan x="60" y="460" xml:space="preserve">aws_route_table_association.entry_05</tspan>
+<tspan x="60" y="540" xml:space="preserve">aws_route_table_association.entry_05</tspan>
 </text>
-<text font-size="12" fill="#334155"><tspan x="60" y="480" xml:space="preserve">Action: create</tspan></text>
-<text font-size="12" fill="#334155"><tspan x="76" y="500" xml:space="preserve">- Connects (association, undirected)</tspan></text>
-<a href="#resource-6177735f7375626e65742e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_subnet.private"><text font-size="12" fill="#334155"><tspan x="92" y="520" xml:space="preserve">- aws_subnet.private</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="60" y="560" xml:space="preserve">Action: create</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="60" y="580" xml:space="preserve">Resource scope: Region: unknown</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="76" y="600" xml:space="preserve">- Connects (association, undirected)</tspan></text>
+<a href="#resource-6177735f7375626e65742e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_subnet.private · Region: unknown"><text font-size="12" fill="#334155"><tspan x="92" y="620" xml:space="preserve">- aws_subnet.private · Region: unknown</tspan></text>
 </a>
-<a href="#resource-6177735f726f7574655f7461626c652e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_route_table.private"><text font-size="12" fill="#334155"><tspan x="92" y="540" xml:space="preserve">- aws_route_table.private</tspan></text>
+<a href="#resource-6177735f726f7574655f7461626c652e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_route_table.private · Region: unknown"><text font-size="12" fill="#334155"><tspan x="92" y="640" xml:space="preserve">- aws_route_table.private · Region: unknown</tspan></text>
 </a>
 </g>
 </g>
 </g>
-<g data-annotation-card="true" transform="translate(416 48)"><rect width="380" height="576" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-relationship-index="true">
+<g data-annotation-card="true" transform="translate(496 48)"><rect width="460" height="676" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-relationship-index="true">
 <g data-relationship-entry="6" id="relationship-5b5b5b226177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3036222c6e756c6c5d5d2c5b5b227465727261666f726d3a3631373737333566373337353632366536353734326537303732363937363631373436352d63757272656e74222c227465727261666f726d3a363137373733356637323666373537343635356637343631363236633635326537303732363937363631373436352d63757272656e74222c226173736f63696174696f6e222c22756e6469726563746564225d5d5d"><title>Relationship [6]: Connects (association, undirected): aws_subnet.private / aws_route_table.private</title><a href="#relationship-5b5b5b226177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3036222c6e756c6c5d5d2c5b5b227465727261666f726d3a3631373737333566373337353632366536353734326537303732363937363631373436352d63757272656e74222c227465727261666f726d3a363137373733356637323666373537343635356637343631363236633635326537303732363937363631373436352d63757272656e74222c226173736f63696174696f6e222c22756e6469726563746564225d5d5d" data-relationship-select="true" aria-label="Relationship [6]: Connects (association, undirected): aws_subnet.private / aws_route_table.private">
 <rect x="16" y="15" width="24" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="28" y="28" text-anchor="middle" font-size="11" fill="#334155">[6]</text>
 </a>
@@ -225,67 +230,72 @@ SOFTWARE.
 <tspan x="60" y="28" xml:space="preserve">aws_route_table_association.entry_06</tspan>
 </text>
 <text font-size="12" fill="#334155"><tspan x="60" y="48" xml:space="preserve">Action: create</tspan></text>
-<text font-size="12" fill="#334155"><tspan x="76" y="68" xml:space="preserve">- Connects (association, undirected)</tspan></text>
-<a href="#resource-6177735f7375626e65742e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_subnet.private"><text font-size="12" fill="#334155"><tspan x="92" y="88" xml:space="preserve">- aws_subnet.private</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="60" y="68" xml:space="preserve">Resource scope: Region: unknown</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="76" y="88" xml:space="preserve">- Connects (association, undirected)</tspan></text>
+<a href="#resource-6177735f7375626e65742e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_subnet.private · Region: unknown"><text font-size="12" fill="#334155"><tspan x="92" y="108" xml:space="preserve">- aws_subnet.private · Region: unknown</tspan></text>
 </a>
-<a href="#resource-6177735f726f7574655f7461626c652e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_route_table.private"><text font-size="12" fill="#334155"><tspan x="92" y="108" xml:space="preserve">- aws_route_table.private</tspan></text>
+<a href="#resource-6177735f726f7574655f7461626c652e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_route_table.private · Region: unknown"><text font-size="12" fill="#334155"><tspan x="92" y="128" xml:space="preserve">- aws_route_table.private · Region: unknown</tspan></text>
 </a>
 </g>
 <g data-relationship-entry="7" id="relationship-5b5b5b226177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3037222c6e756c6c5d5d2c5b5b227465727261666f726d3a3631373737333566373337353632366536353734326537303732363937363631373436352d63757272656e74222c227465727261666f726d3a363137373733356637323666373537343635356637343631363236633635326537303732363937363631373436352d63757272656e74222c226173736f63696174696f6e222c22756e6469726563746564225d5d5d"><title>Relationship [7]: Connects (association, undirected): aws_subnet.private / aws_route_table.private</title><a href="#relationship-5b5b5b226177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3037222c6e756c6c5d5d2c5b5b227465727261666f726d3a3631373737333566373337353632366536353734326537303732363937363631373436352d63757272656e74222c227465727261666f726d3a363137373733356637323666373537343635356637343631363236633635326537303732363937363631373436352d63757272656e74222c226173736f63696174696f6e222c22756e6469726563746564225d5d5d" data-relationship-select="true" aria-label="Relationship [7]: Connects (association, undirected): aws_subnet.private / aws_route_table.private">
-<rect x="16" y="123" width="24" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="28" y="136" text-anchor="middle" font-size="11" fill="#334155">[7]</text>
+<rect x="16" y="143" width="24" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="28" y="156" text-anchor="middle" font-size="11" fill="#334155">[7]</text>
 </a>
 <text data-source-address="aws_route_table_association.entry_07" data-source-identity="terraform:6177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3037-current" font-size="12" font-weight="600" fill="#334155"><title>aws_route_table_association.entry_07</title>
-<tspan x="60" y="136" xml:space="preserve">aws_route_table_association.entry_07</tspan>
+<tspan x="60" y="156" xml:space="preserve">aws_route_table_association.entry_07</tspan>
 </text>
-<text font-size="12" fill="#334155"><tspan x="60" y="156" xml:space="preserve">Action: create</tspan></text>
-<text font-size="12" fill="#334155"><tspan x="76" y="176" xml:space="preserve">- Connects (association, undirected)</tspan></text>
-<a href="#resource-6177735f7375626e65742e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_subnet.private"><text font-size="12" fill="#334155"><tspan x="92" y="196" xml:space="preserve">- aws_subnet.private</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="60" y="176" xml:space="preserve">Action: create</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="60" y="196" xml:space="preserve">Resource scope: Region: unknown</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="76" y="216" xml:space="preserve">- Connects (association, undirected)</tspan></text>
+<a href="#resource-6177735f7375626e65742e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_subnet.private · Region: unknown"><text font-size="12" fill="#334155"><tspan x="92" y="236" xml:space="preserve">- aws_subnet.private · Region: unknown</tspan></text>
 </a>
-<a href="#resource-6177735f726f7574655f7461626c652e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_route_table.private"><text font-size="12" fill="#334155"><tspan x="92" y="216" xml:space="preserve">- aws_route_table.private</tspan></text>
+<a href="#resource-6177735f726f7574655f7461626c652e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_route_table.private · Region: unknown"><text font-size="12" fill="#334155"><tspan x="92" y="256" xml:space="preserve">- aws_route_table.private · Region: unknown</tspan></text>
 </a>
 </g>
 <g data-relationship-entry="8" id="relationship-5b5b5b226177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3038222c6e756c6c5d5d2c5b5b227465727261666f726d3a3631373737333566373337353632366536353734326537303732363937363631373436352d63757272656e74222c227465727261666f726d3a363137373733356637323666373537343635356637343631363236633635326537303732363937363631373436352d63757272656e74222c226173736f63696174696f6e222c22756e6469726563746564225d5d5d"><title>Relationship [8]: Connects (association, undirected): aws_subnet.private / aws_route_table.private</title><a href="#relationship-5b5b5b226177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3038222c6e756c6c5d5d2c5b5b227465727261666f726d3a3631373737333566373337353632366536353734326537303732363937363631373436352d63757272656e74222c227465727261666f726d3a363137373733356637323666373537343635356637343631363236633635326537303732363937363631373436352d63757272656e74222c226173736f63696174696f6e222c22756e6469726563746564225d5d5d" data-relationship-select="true" aria-label="Relationship [8]: Connects (association, undirected): aws_subnet.private / aws_route_table.private">
-<rect x="16" y="231" width="24" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="28" y="244" text-anchor="middle" font-size="11" fill="#334155">[8]</text>
+<rect x="16" y="271" width="24" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="28" y="284" text-anchor="middle" font-size="11" fill="#334155">[8]</text>
 </a>
 <text data-source-address="aws_route_table_association.entry_08" data-source-identity="terraform:6177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3038-current" font-size="12" font-weight="600" fill="#334155"><title>aws_route_table_association.entry_08</title>
-<tspan x="60" y="244" xml:space="preserve">aws_route_table_association.entry_08</tspan>
+<tspan x="60" y="284" xml:space="preserve">aws_route_table_association.entry_08</tspan>
 </text>
-<text font-size="12" fill="#334155"><tspan x="60" y="264" xml:space="preserve">Action: create</tspan></text>
-<text font-size="12" fill="#334155"><tspan x="76" y="284" xml:space="preserve">- Connects (association, undirected)</tspan></text>
-<a href="#resource-6177735f7375626e65742e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_subnet.private"><text font-size="12" fill="#334155"><tspan x="92" y="304" xml:space="preserve">- aws_subnet.private</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="60" y="304" xml:space="preserve">Action: create</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="60" y="324" xml:space="preserve">Resource scope: Region: unknown</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="76" y="344" xml:space="preserve">- Connects (association, undirected)</tspan></text>
+<a href="#resource-6177735f7375626e65742e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_subnet.private · Region: unknown"><text font-size="12" fill="#334155"><tspan x="92" y="364" xml:space="preserve">- aws_subnet.private · Region: unknown</tspan></text>
 </a>
-<a href="#resource-6177735f726f7574655f7461626c652e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_route_table.private"><text font-size="12" fill="#334155"><tspan x="92" y="324" xml:space="preserve">- aws_route_table.private</tspan></text>
+<a href="#resource-6177735f726f7574655f7461626c652e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_route_table.private · Region: unknown"><text font-size="12" fill="#334155"><tspan x="92" y="384" xml:space="preserve">- aws_route_table.private · Region: unknown</tspan></text>
 </a>
 </g>
 <g data-relationship-entry="9" id="relationship-5b5b5b226177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3039222c6e756c6c5d5d2c5b5b227465727261666f726d3a3631373737333566373337353632366536353734326537303732363937363631373436352d63757272656e74222c227465727261666f726d3a363137373733356637323666373537343635356637343631363236633635326537303732363937363631373436352d63757272656e74222c226173736f63696174696f6e222c22756e6469726563746564225d5d5d"><title>Relationship [9]: Connects (association, undirected): aws_subnet.private / aws_route_table.private</title><a href="#relationship-5b5b5b226177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3039222c6e756c6c5d5d2c5b5b227465727261666f726d3a3631373737333566373337353632366536353734326537303732363937363631373436352d63757272656e74222c227465727261666f726d3a363137373733356637323666373537343635356637343631363236633635326537303732363937363631373436352d63757272656e74222c226173736f63696174696f6e222c22756e6469726563746564225d5d5d" data-relationship-select="true" aria-label="Relationship [9]: Connects (association, undirected): aws_subnet.private / aws_route_table.private">
-<rect x="16" y="339" width="24" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="28" y="352" text-anchor="middle" font-size="11" fill="#334155">[9]</text>
+<rect x="16" y="399" width="24" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="28" y="412" text-anchor="middle" font-size="11" fill="#334155">[9]</text>
 </a>
 <text data-source-address="aws_route_table_association.entry_09" data-source-identity="terraform:6177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3039-current" font-size="12" font-weight="600" fill="#334155"><title>aws_route_table_association.entry_09</title>
-<tspan x="60" y="352" xml:space="preserve">aws_route_table_association.entry_09</tspan>
+<tspan x="60" y="412" xml:space="preserve">aws_route_table_association.entry_09</tspan>
 </text>
-<text font-size="12" fill="#334155"><tspan x="60" y="372" xml:space="preserve">Action: create</tspan></text>
-<text font-size="12" fill="#334155"><tspan x="76" y="392" xml:space="preserve">- Connects (association, undirected)</tspan></text>
-<a href="#resource-6177735f7375626e65742e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_subnet.private"><text font-size="12" fill="#334155"><tspan x="92" y="412" xml:space="preserve">- aws_subnet.private</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="60" y="432" xml:space="preserve">Action: create</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="60" y="452" xml:space="preserve">Resource scope: Region: unknown</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="76" y="472" xml:space="preserve">- Connects (association, undirected)</tspan></text>
+<a href="#resource-6177735f7375626e65742e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_subnet.private · Region: unknown"><text font-size="12" fill="#334155"><tspan x="92" y="492" xml:space="preserve">- aws_subnet.private · Region: unknown</tspan></text>
 </a>
-<a href="#resource-6177735f726f7574655f7461626c652e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_route_table.private"><text font-size="12" fill="#334155"><tspan x="92" y="432" xml:space="preserve">- aws_route_table.private</tspan></text>
+<a href="#resource-6177735f726f7574655f7461626c652e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_route_table.private · Region: unknown"><text font-size="12" fill="#334155"><tspan x="92" y="512" xml:space="preserve">- aws_route_table.private · Region: unknown</tspan></text>
 </a>
 </g>
 <g data-relationship-entry="10" id="relationship-5b5b5b226177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3130222c6e756c6c5d5d2c5b5b227465727261666f726d3a3631373737333566373337353632366536353734326537303732363937363631373436352d63757272656e74222c227465727261666f726d3a363137373733356637323666373537343635356637343631363236633635326537303732363937363631373436352d63757272656e74222c226173736f63696174696f6e222c22756e6469726563746564225d5d5d"><title>Relationship [10]: Connects (association, undirected): aws_subnet.private / aws_route_table.private</title><a href="#relationship-5b5b5b226177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3130222c6e756c6c5d5d2c5b5b227465727261666f726d3a3631373737333566373337353632366536353734326537303732363937363631373436352d63757272656e74222c227465727261666f726d3a363137373733356637323666373537343635356637343631363236633635326537303732363937363631373436352d63757272656e74222c226173736f63696174696f6e222c22756e6469726563746564225d5d5d" data-relationship-select="true" aria-label="Relationship [10]: Connects (association, undirected): aws_subnet.private / aws_route_table.private">
-<rect x="16" y="447" width="32" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="32" y="460" text-anchor="middle" font-size="11" fill="#334155">[10]</text>
+<rect x="16" y="527" width="32" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="32" y="540" text-anchor="middle" font-size="11" fill="#334155">[10]</text>
 </a>
 <text data-source-address="aws_route_table_association.entry_10" data-source-identity="terraform:6177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3130-current" font-size="12" font-weight="600" fill="#334155"><title>aws_route_table_association.entry_10</title>
-<tspan x="60" y="460" xml:space="preserve">aws_route_table_association.entry_10</tspan>
+<tspan x="60" y="540" xml:space="preserve">aws_route_table_association.entry_10</tspan>
 </text>
-<text font-size="12" fill="#334155"><tspan x="60" y="480" xml:space="preserve">Action: create</tspan></text>
-<text font-size="12" fill="#334155"><tspan x="76" y="500" xml:space="preserve">- Connects (association, undirected)</tspan></text>
-<a href="#resource-6177735f7375626e65742e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_subnet.private"><text font-size="12" fill="#334155"><tspan x="92" y="520" xml:space="preserve">- aws_subnet.private</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="60" y="560" xml:space="preserve">Action: create</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="60" y="580" xml:space="preserve">Resource scope: Region: unknown</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="76" y="600" xml:space="preserve">- Connects (association, undirected)</tspan></text>
+<a href="#resource-6177735f7375626e65742e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_subnet.private · Region: unknown"><text font-size="12" fill="#334155"><tspan x="92" y="620" xml:space="preserve">- aws_subnet.private · Region: unknown</tspan></text>
 </a>
-<a href="#resource-6177735f726f7574655f7461626c652e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_route_table.private"><text font-size="12" fill="#334155"><tspan x="92" y="540" xml:space="preserve">- aws_route_table.private</tspan></text>
+<a href="#resource-6177735f726f7574655f7461626c652e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_route_table.private · Region: unknown"><text font-size="12" fill="#334155"><tspan x="92" y="640" xml:space="preserve">- aws_route_table.private · Region: unknown</tspan></text>
 </a>
 </g>
 </g>
 </g>
-<g data-annotation-card="true" transform="translate(816 48)"><rect width="380" height="576" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-relationship-index="true">
+<g data-annotation-card="true" transform="translate(976 48)"><rect width="460" height="676" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-relationship-index="true">
 <g data-relationship-entry="11" id="relationship-5b5b5b226177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3131222c6e756c6c5d5d2c5b5b227465727261666f726d3a3631373737333566373337353632366536353734326537303732363937363631373436352d63757272656e74222c227465727261666f726d3a363137373733356637323666373537343635356637343631363236633635326537303732363937363631373436352d63757272656e74222c226173736f63696174696f6e222c22756e6469726563746564225d5d5d"><title>Relationship [11]: Connects (association, undirected): aws_subnet.private / aws_route_table.private</title><a href="#relationship-5b5b5b226177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3131222c6e756c6c5d5d2c5b5b227465727261666f726d3a3631373737333566373337353632366536353734326537303732363937363631373436352d63757272656e74222c227465727261666f726d3a363137373733356637323666373537343635356637343631363236633635326537303732363937363631373436352d63757272656e74222c226173736f63696174696f6e222c22756e6469726563746564225d5d5d" data-relationship-select="true" aria-label="Relationship [11]: Connects (association, undirected): aws_subnet.private / aws_route_table.private">
 <rect x="16" y="15" width="32" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="32" y="28" text-anchor="middle" font-size="11" fill="#334155">[11]</text>
 </a>
@@ -293,67 +303,72 @@ SOFTWARE.
 <tspan x="60" y="28" xml:space="preserve">aws_route_table_association.entry_11</tspan>
 </text>
 <text font-size="12" fill="#334155"><tspan x="60" y="48" xml:space="preserve">Action: create</tspan></text>
-<text font-size="12" fill="#334155"><tspan x="76" y="68" xml:space="preserve">- Connects (association, undirected)</tspan></text>
-<a href="#resource-6177735f7375626e65742e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_subnet.private"><text font-size="12" fill="#334155"><tspan x="92" y="88" xml:space="preserve">- aws_subnet.private</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="60" y="68" xml:space="preserve">Resource scope: Region: unknown</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="76" y="88" xml:space="preserve">- Connects (association, undirected)</tspan></text>
+<a href="#resource-6177735f7375626e65742e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_subnet.private · Region: unknown"><text font-size="12" fill="#334155"><tspan x="92" y="108" xml:space="preserve">- aws_subnet.private · Region: unknown</tspan></text>
 </a>
-<a href="#resource-6177735f726f7574655f7461626c652e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_route_table.private"><text font-size="12" fill="#334155"><tspan x="92" y="108" xml:space="preserve">- aws_route_table.private</tspan></text>
+<a href="#resource-6177735f726f7574655f7461626c652e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_route_table.private · Region: unknown"><text font-size="12" fill="#334155"><tspan x="92" y="128" xml:space="preserve">- aws_route_table.private · Region: unknown</tspan></text>
 </a>
 </g>
 <g data-relationship-entry="12" id="relationship-5b5b5b226177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3132222c6e756c6c5d5d2c5b5b227465727261666f726d3a3631373737333566373337353632366536353734326537303732363937363631373436352d63757272656e74222c227465727261666f726d3a363137373733356637323666373537343635356637343631363236633635326537303732363937363631373436352d63757272656e74222c226173736f63696174696f6e222c22756e6469726563746564225d5d5d"><title>Relationship [12]: Connects (association, undirected): aws_subnet.private / aws_route_table.private</title><a href="#relationship-5b5b5b226177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3132222c6e756c6c5d5d2c5b5b227465727261666f726d3a3631373737333566373337353632366536353734326537303732363937363631373436352d63757272656e74222c227465727261666f726d3a363137373733356637323666373537343635356637343631363236633635326537303732363937363631373436352d63757272656e74222c226173736f63696174696f6e222c22756e6469726563746564225d5d5d" data-relationship-select="true" aria-label="Relationship [12]: Connects (association, undirected): aws_subnet.private / aws_route_table.private">
-<rect x="16" y="123" width="32" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="32" y="136" text-anchor="middle" font-size="11" fill="#334155">[12]</text>
+<rect x="16" y="143" width="32" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="32" y="156" text-anchor="middle" font-size="11" fill="#334155">[12]</text>
 </a>
 <text data-source-address="aws_route_table_association.entry_12" data-source-identity="terraform:6177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3132-current" font-size="12" font-weight="600" fill="#334155"><title>aws_route_table_association.entry_12</title>
-<tspan x="60" y="136" xml:space="preserve">aws_route_table_association.entry_12</tspan>
+<tspan x="60" y="156" xml:space="preserve">aws_route_table_association.entry_12</tspan>
 </text>
-<text font-size="12" fill="#334155"><tspan x="60" y="156" xml:space="preserve">Action: create</tspan></text>
-<text font-size="12" fill="#334155"><tspan x="76" y="176" xml:space="preserve">- Connects (association, undirected)</tspan></text>
-<a href="#resource-6177735f7375626e65742e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_subnet.private"><text font-size="12" fill="#334155"><tspan x="92" y="196" xml:space="preserve">- aws_subnet.private</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="60" y="176" xml:space="preserve">Action: create</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="60" y="196" xml:space="preserve">Resource scope: Region: unknown</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="76" y="216" xml:space="preserve">- Connects (association, undirected)</tspan></text>
+<a href="#resource-6177735f7375626e65742e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_subnet.private · Region: unknown"><text font-size="12" fill="#334155"><tspan x="92" y="236" xml:space="preserve">- aws_subnet.private · Region: unknown</tspan></text>
 </a>
-<a href="#resource-6177735f726f7574655f7461626c652e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_route_table.private"><text font-size="12" fill="#334155"><tspan x="92" y="216" xml:space="preserve">- aws_route_table.private</tspan></text>
+<a href="#resource-6177735f726f7574655f7461626c652e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_route_table.private · Region: unknown"><text font-size="12" fill="#334155"><tspan x="92" y="256" xml:space="preserve">- aws_route_table.private · Region: unknown</tspan></text>
 </a>
 </g>
 <g data-relationship-entry="13" id="relationship-5b5b5b226177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3133222c6e756c6c5d5d2c5b5b227465727261666f726d3a3631373737333566373337353632366536353734326537303732363937363631373436352d63757272656e74222c227465727261666f726d3a363137373733356637323666373537343635356637343631363236633635326537303732363937363631373436352d63757272656e74222c226173736f63696174696f6e222c22756e6469726563746564225d5d5d"><title>Relationship [13]: Connects (association, undirected): aws_subnet.private / aws_route_table.private</title><a href="#relationship-5b5b5b226177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3133222c6e756c6c5d5d2c5b5b227465727261666f726d3a3631373737333566373337353632366536353734326537303732363937363631373436352d63757272656e74222c227465727261666f726d3a363137373733356637323666373537343635356637343631363236633635326537303732363937363631373436352d63757272656e74222c226173736f63696174696f6e222c22756e6469726563746564225d5d5d" data-relationship-select="true" aria-label="Relationship [13]: Connects (association, undirected): aws_subnet.private / aws_route_table.private">
-<rect x="16" y="231" width="32" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="32" y="244" text-anchor="middle" font-size="11" fill="#334155">[13]</text>
+<rect x="16" y="271" width="32" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="32" y="284" text-anchor="middle" font-size="11" fill="#334155">[13]</text>
 </a>
 <text data-source-address="aws_route_table_association.entry_13" data-source-identity="terraform:6177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3133-current" font-size="12" font-weight="600" fill="#334155"><title>aws_route_table_association.entry_13</title>
-<tspan x="60" y="244" xml:space="preserve">aws_route_table_association.entry_13</tspan>
+<tspan x="60" y="284" xml:space="preserve">aws_route_table_association.entry_13</tspan>
 </text>
-<text font-size="12" fill="#334155"><tspan x="60" y="264" xml:space="preserve">Action: create</tspan></text>
-<text font-size="12" fill="#334155"><tspan x="76" y="284" xml:space="preserve">- Connects (association, undirected)</tspan></text>
-<a href="#resource-6177735f7375626e65742e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_subnet.private"><text font-size="12" fill="#334155"><tspan x="92" y="304" xml:space="preserve">- aws_subnet.private</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="60" y="304" xml:space="preserve">Action: create</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="60" y="324" xml:space="preserve">Resource scope: Region: unknown</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="76" y="344" xml:space="preserve">- Connects (association, undirected)</tspan></text>
+<a href="#resource-6177735f7375626e65742e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_subnet.private · Region: unknown"><text font-size="12" fill="#334155"><tspan x="92" y="364" xml:space="preserve">- aws_subnet.private · Region: unknown</tspan></text>
 </a>
-<a href="#resource-6177735f726f7574655f7461626c652e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_route_table.private"><text font-size="12" fill="#334155"><tspan x="92" y="324" xml:space="preserve">- aws_route_table.private</tspan></text>
+<a href="#resource-6177735f726f7574655f7461626c652e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_route_table.private · Region: unknown"><text font-size="12" fill="#334155"><tspan x="92" y="384" xml:space="preserve">- aws_route_table.private · Region: unknown</tspan></text>
 </a>
 </g>
 <g data-relationship-entry="14" id="relationship-5b5b5b226177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3134222c6e756c6c5d5d2c5b5b227465727261666f726d3a3631373737333566373337353632366536353734326537303732363937363631373436352d63757272656e74222c227465727261666f726d3a363137373733356637323666373537343635356637343631363236633635326537303732363937363631373436352d63757272656e74222c226173736f63696174696f6e222c22756e6469726563746564225d5d5d"><title>Relationship [14]: Connects (association, undirected): aws_subnet.private / aws_route_table.private</title><a href="#relationship-5b5b5b226177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3134222c6e756c6c5d5d2c5b5b227465727261666f726d3a3631373737333566373337353632366536353734326537303732363937363631373436352d63757272656e74222c227465727261666f726d3a363137373733356637323666373537343635356637343631363236633635326537303732363937363631373436352d63757272656e74222c226173736f63696174696f6e222c22756e6469726563746564225d5d5d" data-relationship-select="true" aria-label="Relationship [14]: Connects (association, undirected): aws_subnet.private / aws_route_table.private">
-<rect x="16" y="339" width="32" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="32" y="352" text-anchor="middle" font-size="11" fill="#334155">[14]</text>
+<rect x="16" y="399" width="32" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="32" y="412" text-anchor="middle" font-size="11" fill="#334155">[14]</text>
 </a>
 <text data-source-address="aws_route_table_association.entry_14" data-source-identity="terraform:6177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3134-current" font-size="12" font-weight="600" fill="#334155"><title>aws_route_table_association.entry_14</title>
-<tspan x="60" y="352" xml:space="preserve">aws_route_table_association.entry_14</tspan>
+<tspan x="60" y="412" xml:space="preserve">aws_route_table_association.entry_14</tspan>
 </text>
-<text font-size="12" fill="#334155"><tspan x="60" y="372" xml:space="preserve">Action: create</tspan></text>
-<text font-size="12" fill="#334155"><tspan x="76" y="392" xml:space="preserve">- Connects (association, undirected)</tspan></text>
-<a href="#resource-6177735f7375626e65742e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_subnet.private"><text font-size="12" fill="#334155"><tspan x="92" y="412" xml:space="preserve">- aws_subnet.private</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="60" y="432" xml:space="preserve">Action: create</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="60" y="452" xml:space="preserve">Resource scope: Region: unknown</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="76" y="472" xml:space="preserve">- Connects (association, undirected)</tspan></text>
+<a href="#resource-6177735f7375626e65742e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_subnet.private · Region: unknown"><text font-size="12" fill="#334155"><tspan x="92" y="492" xml:space="preserve">- aws_subnet.private · Region: unknown</tspan></text>
 </a>
-<a href="#resource-6177735f726f7574655f7461626c652e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_route_table.private"><text font-size="12" fill="#334155"><tspan x="92" y="432" xml:space="preserve">- aws_route_table.private</tspan></text>
+<a href="#resource-6177735f726f7574655f7461626c652e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_route_table.private · Region: unknown"><text font-size="12" fill="#334155"><tspan x="92" y="512" xml:space="preserve">- aws_route_table.private · Region: unknown</tspan></text>
 </a>
 </g>
 <g data-relationship-entry="15" id="relationship-5b5b5b226177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3135222c6e756c6c5d5d2c5b5b227465727261666f726d3a3631373737333566373337353632366536353734326537303732363937363631373436352d63757272656e74222c227465727261666f726d3a363137373733356637323666373537343635356637343631363236633635326537303732363937363631373436352d63757272656e74222c226173736f63696174696f6e222c22756e6469726563746564225d5d5d"><title>Relationship [15]: Connects (association, undirected): aws_subnet.private / aws_route_table.private</title><a href="#relationship-5b5b5b226177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3135222c6e756c6c5d5d2c5b5b227465727261666f726d3a3631373737333566373337353632366536353734326537303732363937363631373436352d63757272656e74222c227465727261666f726d3a363137373733356637323666373537343635356637343631363236633635326537303732363937363631373436352d63757272656e74222c226173736f63696174696f6e222c22756e6469726563746564225d5d5d" data-relationship-select="true" aria-label="Relationship [15]: Connects (association, undirected): aws_subnet.private / aws_route_table.private">
-<rect x="16" y="447" width="32" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="32" y="460" text-anchor="middle" font-size="11" fill="#334155">[15]</text>
+<rect x="16" y="527" width="32" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="32" y="540" text-anchor="middle" font-size="11" fill="#334155">[15]</text>
 </a>
 <text data-source-address="aws_route_table_association.entry_15" data-source-identity="terraform:6177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3135-current" font-size="12" font-weight="600" fill="#334155"><title>aws_route_table_association.entry_15</title>
-<tspan x="60" y="460" xml:space="preserve">aws_route_table_association.entry_15</tspan>
+<tspan x="60" y="540" xml:space="preserve">aws_route_table_association.entry_15</tspan>
 </text>
-<text font-size="12" fill="#334155"><tspan x="60" y="480" xml:space="preserve">Action: create</tspan></text>
-<text font-size="12" fill="#334155"><tspan x="76" y="500" xml:space="preserve">- Connects (association, undirected)</tspan></text>
-<a href="#resource-6177735f7375626e65742e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_subnet.private"><text font-size="12" fill="#334155"><tspan x="92" y="520" xml:space="preserve">- aws_subnet.private</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="60" y="560" xml:space="preserve">Action: create</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="60" y="580" xml:space="preserve">Resource scope: Region: unknown</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="76" y="600" xml:space="preserve">- Connects (association, undirected)</tspan></text>
+<a href="#resource-6177735f7375626e65742e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_subnet.private · Region: unknown"><text font-size="12" fill="#334155"><tspan x="92" y="620" xml:space="preserve">- aws_subnet.private · Region: unknown</tspan></text>
 </a>
-<a href="#resource-6177735f726f7574655f7461626c652e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_route_table.private"><text font-size="12" fill="#334155"><tspan x="92" y="540" xml:space="preserve">- aws_route_table.private</tspan></text>
+<a href="#resource-6177735f726f7574655f7461626c652e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_route_table.private · Region: unknown"><text font-size="12" fill="#334155"><tspan x="92" y="640" xml:space="preserve">- aws_route_table.private · Region: unknown</tspan></text>
 </a>
 </g>
 </g>
 </g>
-<g data-annotation-card="true" transform="translate(1216 48)"><rect width="380" height="576" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-relationship-index="true">
+<g data-annotation-card="true" transform="translate(1456 48)"><rect width="460" height="676" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-relationship-index="true">
 <g data-relationship-entry="16" id="relationship-5b5b5b226177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3136222c6e756c6c5d5d2c5b5b227465727261666f726d3a3631373737333566373337353632366536353734326537303732363937363631373436352d63757272656e74222c227465727261666f726d3a363137373733356637323666373537343635356637343631363236633635326537303732363937363631373436352d63757272656e74222c226173736f63696174696f6e222c22756e6469726563746564225d5d5d"><title>Relationship [16]: Connects (association, undirected): aws_subnet.private / aws_route_table.private</title><a href="#relationship-5b5b5b226177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3136222c6e756c6c5d5d2c5b5b227465727261666f726d3a3631373737333566373337353632366536353734326537303732363937363631373436352d63757272656e74222c227465727261666f726d3a363137373733356637323666373537343635356637343631363236633635326537303732363937363631373436352d63757272656e74222c226173736f63696174696f6e222c22756e6469726563746564225d5d5d" data-relationship-select="true" aria-label="Relationship [16]: Connects (association, undirected): aws_subnet.private / aws_route_table.private">
 <rect x="16" y="15" width="32" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="32" y="28" text-anchor="middle" font-size="11" fill="#334155">[16]</text>
 </a>
@@ -361,67 +376,72 @@ SOFTWARE.
 <tspan x="60" y="28" xml:space="preserve">aws_route_table_association.entry_16</tspan>
 </text>
 <text font-size="12" fill="#334155"><tspan x="60" y="48" xml:space="preserve">Action: create</tspan></text>
-<text font-size="12" fill="#334155"><tspan x="76" y="68" xml:space="preserve">- Connects (association, undirected)</tspan></text>
-<a href="#resource-6177735f7375626e65742e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_subnet.private"><text font-size="12" fill="#334155"><tspan x="92" y="88" xml:space="preserve">- aws_subnet.private</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="60" y="68" xml:space="preserve">Resource scope: Region: unknown</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="76" y="88" xml:space="preserve">- Connects (association, undirected)</tspan></text>
+<a href="#resource-6177735f7375626e65742e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_subnet.private · Region: unknown"><text font-size="12" fill="#334155"><tspan x="92" y="108" xml:space="preserve">- aws_subnet.private · Region: unknown</tspan></text>
 </a>
-<a href="#resource-6177735f726f7574655f7461626c652e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_route_table.private"><text font-size="12" fill="#334155"><tspan x="92" y="108" xml:space="preserve">- aws_route_table.private</tspan></text>
+<a href="#resource-6177735f726f7574655f7461626c652e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_route_table.private · Region: unknown"><text font-size="12" fill="#334155"><tspan x="92" y="128" xml:space="preserve">- aws_route_table.private · Region: unknown</tspan></text>
 </a>
 </g>
 <g data-relationship-entry="17" id="relationship-5b5b5b226177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3137222c6e756c6c5d5d2c5b5b227465727261666f726d3a3631373737333566373337353632366536353734326537303732363937363631373436352d63757272656e74222c227465727261666f726d3a363137373733356637323666373537343635356637343631363236633635326537303732363937363631373436352d63757272656e74222c226173736f63696174696f6e222c22756e6469726563746564225d5d5d"><title>Relationship [17]: Connects (association, undirected): aws_subnet.private / aws_route_table.private</title><a href="#relationship-5b5b5b226177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3137222c6e756c6c5d5d2c5b5b227465727261666f726d3a3631373737333566373337353632366536353734326537303732363937363631373436352d63757272656e74222c227465727261666f726d3a363137373733356637323666373537343635356637343631363236633635326537303732363937363631373436352d63757272656e74222c226173736f63696174696f6e222c22756e6469726563746564225d5d5d" data-relationship-select="true" aria-label="Relationship [17]: Connects (association, undirected): aws_subnet.private / aws_route_table.private">
-<rect x="16" y="123" width="32" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="32" y="136" text-anchor="middle" font-size="11" fill="#334155">[17]</text>
+<rect x="16" y="143" width="32" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="32" y="156" text-anchor="middle" font-size="11" fill="#334155">[17]</text>
 </a>
 <text data-source-address="aws_route_table_association.entry_17" data-source-identity="terraform:6177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3137-current" font-size="12" font-weight="600" fill="#334155"><title>aws_route_table_association.entry_17</title>
-<tspan x="60" y="136" xml:space="preserve">aws_route_table_association.entry_17</tspan>
+<tspan x="60" y="156" xml:space="preserve">aws_route_table_association.entry_17</tspan>
 </text>
-<text font-size="12" fill="#334155"><tspan x="60" y="156" xml:space="preserve">Action: create</tspan></text>
-<text font-size="12" fill="#334155"><tspan x="76" y="176" xml:space="preserve">- Connects (association, undirected)</tspan></text>
-<a href="#resource-6177735f7375626e65742e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_subnet.private"><text font-size="12" fill="#334155"><tspan x="92" y="196" xml:space="preserve">- aws_subnet.private</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="60" y="176" xml:space="preserve">Action: create</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="60" y="196" xml:space="preserve">Resource scope: Region: unknown</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="76" y="216" xml:space="preserve">- Connects (association, undirected)</tspan></text>
+<a href="#resource-6177735f7375626e65742e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_subnet.private · Region: unknown"><text font-size="12" fill="#334155"><tspan x="92" y="236" xml:space="preserve">- aws_subnet.private · Region: unknown</tspan></text>
 </a>
-<a href="#resource-6177735f726f7574655f7461626c652e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_route_table.private"><text font-size="12" fill="#334155"><tspan x="92" y="216" xml:space="preserve">- aws_route_table.private</tspan></text>
+<a href="#resource-6177735f726f7574655f7461626c652e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_route_table.private · Region: unknown"><text font-size="12" fill="#334155"><tspan x="92" y="256" xml:space="preserve">- aws_route_table.private · Region: unknown</tspan></text>
 </a>
 </g>
 <g data-relationship-entry="18" id="relationship-5b5b5b226177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3138222c6e756c6c5d5d2c5b5b227465727261666f726d3a3631373737333566373337353632366536353734326537303732363937363631373436352d63757272656e74222c227465727261666f726d3a363137373733356637323666373537343635356637343631363236633635326537303732363937363631373436352d63757272656e74222c226173736f63696174696f6e222c22756e6469726563746564225d5d5d"><title>Relationship [18]: Connects (association, undirected): aws_subnet.private / aws_route_table.private</title><a href="#relationship-5b5b5b226177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3138222c6e756c6c5d5d2c5b5b227465727261666f726d3a3631373737333566373337353632366536353734326537303732363937363631373436352d63757272656e74222c227465727261666f726d3a363137373733356637323666373537343635356637343631363236633635326537303732363937363631373436352d63757272656e74222c226173736f63696174696f6e222c22756e6469726563746564225d5d5d" data-relationship-select="true" aria-label="Relationship [18]: Connects (association, undirected): aws_subnet.private / aws_route_table.private">
-<rect x="16" y="231" width="32" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="32" y="244" text-anchor="middle" font-size="11" fill="#334155">[18]</text>
+<rect x="16" y="271" width="32" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="32" y="284" text-anchor="middle" font-size="11" fill="#334155">[18]</text>
 </a>
 <text data-source-address="aws_route_table_association.entry_18" data-source-identity="terraform:6177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3138-current" font-size="12" font-weight="600" fill="#334155"><title>aws_route_table_association.entry_18</title>
-<tspan x="60" y="244" xml:space="preserve">aws_route_table_association.entry_18</tspan>
+<tspan x="60" y="284" xml:space="preserve">aws_route_table_association.entry_18</tspan>
 </text>
-<text font-size="12" fill="#334155"><tspan x="60" y="264" xml:space="preserve">Action: create</tspan></text>
-<text font-size="12" fill="#334155"><tspan x="76" y="284" xml:space="preserve">- Connects (association, undirected)</tspan></text>
-<a href="#resource-6177735f7375626e65742e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_subnet.private"><text font-size="12" fill="#334155"><tspan x="92" y="304" xml:space="preserve">- aws_subnet.private</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="60" y="304" xml:space="preserve">Action: create</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="60" y="324" xml:space="preserve">Resource scope: Region: unknown</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="76" y="344" xml:space="preserve">- Connects (association, undirected)</tspan></text>
+<a href="#resource-6177735f7375626e65742e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_subnet.private · Region: unknown"><text font-size="12" fill="#334155"><tspan x="92" y="364" xml:space="preserve">- aws_subnet.private · Region: unknown</tspan></text>
 </a>
-<a href="#resource-6177735f726f7574655f7461626c652e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_route_table.private"><text font-size="12" fill="#334155"><tspan x="92" y="324" xml:space="preserve">- aws_route_table.private</tspan></text>
+<a href="#resource-6177735f726f7574655f7461626c652e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_route_table.private · Region: unknown"><text font-size="12" fill="#334155"><tspan x="92" y="384" xml:space="preserve">- aws_route_table.private · Region: unknown</tspan></text>
 </a>
 </g>
 <g data-relationship-entry="19" id="relationship-5b5b5b226177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3139222c6e756c6c5d5d2c5b5b227465727261666f726d3a3631373737333566373337353632366536353734326537303732363937363631373436352d63757272656e74222c227465727261666f726d3a363137373733356637323666373537343635356637343631363236633635326537303732363937363631373436352d63757272656e74222c226173736f63696174696f6e222c22756e6469726563746564225d5d5d"><title>Relationship [19]: Connects (association, undirected): aws_subnet.private / aws_route_table.private</title><a href="#relationship-5b5b5b226177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3139222c6e756c6c5d5d2c5b5b227465727261666f726d3a3631373737333566373337353632366536353734326537303732363937363631373436352d63757272656e74222c227465727261666f726d3a363137373733356637323666373537343635356637343631363236633635326537303732363937363631373436352d63757272656e74222c226173736f63696174696f6e222c22756e6469726563746564225d5d5d" data-relationship-select="true" aria-label="Relationship [19]: Connects (association, undirected): aws_subnet.private / aws_route_table.private">
-<rect x="16" y="339" width="32" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="32" y="352" text-anchor="middle" font-size="11" fill="#334155">[19]</text>
+<rect x="16" y="399" width="32" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="32" y="412" text-anchor="middle" font-size="11" fill="#334155">[19]</text>
 </a>
 <text data-source-address="aws_route_table_association.entry_19" data-source-identity="terraform:6177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3139-current" font-size="12" font-weight="600" fill="#334155"><title>aws_route_table_association.entry_19</title>
-<tspan x="60" y="352" xml:space="preserve">aws_route_table_association.entry_19</tspan>
+<tspan x="60" y="412" xml:space="preserve">aws_route_table_association.entry_19</tspan>
 </text>
-<text font-size="12" fill="#334155"><tspan x="60" y="372" xml:space="preserve">Action: create</tspan></text>
-<text font-size="12" fill="#334155"><tspan x="76" y="392" xml:space="preserve">- Connects (association, undirected)</tspan></text>
-<a href="#resource-6177735f7375626e65742e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_subnet.private"><text font-size="12" fill="#334155"><tspan x="92" y="412" xml:space="preserve">- aws_subnet.private</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="60" y="432" xml:space="preserve">Action: create</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="60" y="452" xml:space="preserve">Resource scope: Region: unknown</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="76" y="472" xml:space="preserve">- Connects (association, undirected)</tspan></text>
+<a href="#resource-6177735f7375626e65742e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_subnet.private · Region: unknown"><text font-size="12" fill="#334155"><tspan x="92" y="492" xml:space="preserve">- aws_subnet.private · Region: unknown</tspan></text>
 </a>
-<a href="#resource-6177735f726f7574655f7461626c652e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_route_table.private"><text font-size="12" fill="#334155"><tspan x="92" y="432" xml:space="preserve">- aws_route_table.private</tspan></text>
+<a href="#resource-6177735f726f7574655f7461626c652e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_route_table.private · Region: unknown"><text font-size="12" fill="#334155"><tspan x="92" y="512" xml:space="preserve">- aws_route_table.private · Region: unknown</tspan></text>
 </a>
 </g>
 <g data-relationship-entry="20" id="relationship-5b5b5b226177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3230222c6e756c6c5d5d2c5b5b227465727261666f726d3a3631373737333566373337353632366536353734326537303732363937363631373436352d63757272656e74222c227465727261666f726d3a363137373733356637323666373537343635356637343631363236633635326537303732363937363631373436352d63757272656e74222c226173736f63696174696f6e222c22756e6469726563746564225d5d5d"><title>Relationship [20]: Connects (association, undirected): aws_subnet.private / aws_route_table.private</title><a href="#relationship-5b5b5b226177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3230222c6e756c6c5d5d2c5b5b227465727261666f726d3a3631373737333566373337353632366536353734326537303732363937363631373436352d63757272656e74222c227465727261666f726d3a363137373733356637323666373537343635356637343631363236633635326537303732363937363631373436352d63757272656e74222c226173736f63696174696f6e222c22756e6469726563746564225d5d5d" data-relationship-select="true" aria-label="Relationship [20]: Connects (association, undirected): aws_subnet.private / aws_route_table.private">
-<rect x="16" y="447" width="32" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="32" y="460" text-anchor="middle" font-size="11" fill="#334155">[20]</text>
+<rect x="16" y="527" width="32" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="32" y="540" text-anchor="middle" font-size="11" fill="#334155">[20]</text>
 </a>
 <text data-source-address="aws_route_table_association.entry_20" data-source-identity="terraform:6177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3230-current" font-size="12" font-weight="600" fill="#334155"><title>aws_route_table_association.entry_20</title>
-<tspan x="60" y="460" xml:space="preserve">aws_route_table_association.entry_20</tspan>
+<tspan x="60" y="540" xml:space="preserve">aws_route_table_association.entry_20</tspan>
 </text>
-<text font-size="12" fill="#334155"><tspan x="60" y="480" xml:space="preserve">Action: create</tspan></text>
-<text font-size="12" fill="#334155"><tspan x="76" y="500" xml:space="preserve">- Connects (association, undirected)</tspan></text>
-<a href="#resource-6177735f7375626e65742e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_subnet.private"><text font-size="12" fill="#334155"><tspan x="92" y="520" xml:space="preserve">- aws_subnet.private</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="60" y="560" xml:space="preserve">Action: create</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="60" y="580" xml:space="preserve">Resource scope: Region: unknown</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="76" y="600" xml:space="preserve">- Connects (association, undirected)</tspan></text>
+<a href="#resource-6177735f7375626e65742e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_subnet.private · Region: unknown"><text font-size="12" fill="#334155"><tspan x="92" y="620" xml:space="preserve">- aws_subnet.private · Region: unknown</tspan></text>
 </a>
-<a href="#resource-6177735f726f7574655f7461626c652e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_route_table.private"><text font-size="12" fill="#334155"><tspan x="92" y="540" xml:space="preserve">- aws_route_table.private</tspan></text>
+<a href="#resource-6177735f726f7574655f7461626c652e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_route_table.private · Region: unknown"><text font-size="12" fill="#334155"><tspan x="92" y="640" xml:space="preserve">- aws_route_table.private · Region: unknown</tspan></text>
 </a>
 </g>
 </g>
 </g>
-<g data-annotation-card="true" transform="translate(1616 48)"><rect width="380" height="576" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-relationship-index="true">
+<g data-annotation-card="true" transform="translate(16 744)"><rect width="460" height="676" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-relationship-index="true">
 <g data-relationship-entry="21" id="relationship-5b5b5b226177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3231222c6e756c6c5d5d2c5b5b227465727261666f726d3a3631373737333566373337353632366536353734326537303732363937363631373436352d63757272656e74222c227465727261666f726d3a363137373733356637323666373537343635356637343631363236633635326537303732363937363631373436352d63757272656e74222c226173736f63696174696f6e222c22756e6469726563746564225d5d5d"><title>Relationship [21]: Connects (association, undirected): aws_subnet.private / aws_route_table.private</title><a href="#relationship-5b5b5b226177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3231222c6e756c6c5d5d2c5b5b227465727261666f726d3a3631373737333566373337353632366536353734326537303732363937363631373436352d63757272656e74222c227465727261666f726d3a363137373733356637323666373537343635356637343631363236633635326537303732363937363631373436352d63757272656e74222c226173736f63696174696f6e222c22756e6469726563746564225d5d5d" data-relationship-select="true" aria-label="Relationship [21]: Connects (association, undirected): aws_subnet.private / aws_route_table.private">
 <rect x="16" y="15" width="32" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="32" y="28" text-anchor="middle" font-size="11" fill="#334155">[21]</text>
 </a>
@@ -429,67 +449,72 @@ SOFTWARE.
 <tspan x="60" y="28" xml:space="preserve">aws_route_table_association.entry_21</tspan>
 </text>
 <text font-size="12" fill="#334155"><tspan x="60" y="48" xml:space="preserve">Action: create</tspan></text>
-<text font-size="12" fill="#334155"><tspan x="76" y="68" xml:space="preserve">- Connects (association, undirected)</tspan></text>
-<a href="#resource-6177735f7375626e65742e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_subnet.private"><text font-size="12" fill="#334155"><tspan x="92" y="88" xml:space="preserve">- aws_subnet.private</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="60" y="68" xml:space="preserve">Resource scope: Region: unknown</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="76" y="88" xml:space="preserve">- Connects (association, undirected)</tspan></text>
+<a href="#resource-6177735f7375626e65742e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_subnet.private · Region: unknown"><text font-size="12" fill="#334155"><tspan x="92" y="108" xml:space="preserve">- aws_subnet.private · Region: unknown</tspan></text>
 </a>
-<a href="#resource-6177735f726f7574655f7461626c652e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_route_table.private"><text font-size="12" fill="#334155"><tspan x="92" y="108" xml:space="preserve">- aws_route_table.private</tspan></text>
+<a href="#resource-6177735f726f7574655f7461626c652e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_route_table.private · Region: unknown"><text font-size="12" fill="#334155"><tspan x="92" y="128" xml:space="preserve">- aws_route_table.private · Region: unknown</tspan></text>
 </a>
 </g>
 <g data-relationship-entry="22" id="relationship-5b5b5b226177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3232222c6e756c6c5d5d2c5b5b227465727261666f726d3a3631373737333566373337353632366536353734326537303732363937363631373436352d63757272656e74222c227465727261666f726d3a363137373733356637323666373537343635356637343631363236633635326537303732363937363631373436352d63757272656e74222c226173736f63696174696f6e222c22756e6469726563746564225d5d5d"><title>Relationship [22]: Connects (association, undirected): aws_subnet.private / aws_route_table.private</title><a href="#relationship-5b5b5b226177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3232222c6e756c6c5d5d2c5b5b227465727261666f726d3a3631373737333566373337353632366536353734326537303732363937363631373436352d63757272656e74222c227465727261666f726d3a363137373733356637323666373537343635356637343631363236633635326537303732363937363631373436352d63757272656e74222c226173736f63696174696f6e222c22756e6469726563746564225d5d5d" data-relationship-select="true" aria-label="Relationship [22]: Connects (association, undirected): aws_subnet.private / aws_route_table.private">
-<rect x="16" y="123" width="32" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="32" y="136" text-anchor="middle" font-size="11" fill="#334155">[22]</text>
+<rect x="16" y="143" width="32" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="32" y="156" text-anchor="middle" font-size="11" fill="#334155">[22]</text>
 </a>
 <text data-source-address="aws_route_table_association.entry_22" data-source-identity="terraform:6177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3232-current" font-size="12" font-weight="600" fill="#334155"><title>aws_route_table_association.entry_22</title>
-<tspan x="60" y="136" xml:space="preserve">aws_route_table_association.entry_22</tspan>
+<tspan x="60" y="156" xml:space="preserve">aws_route_table_association.entry_22</tspan>
 </text>
-<text font-size="12" fill="#334155"><tspan x="60" y="156" xml:space="preserve">Action: create</tspan></text>
-<text font-size="12" fill="#334155"><tspan x="76" y="176" xml:space="preserve">- Connects (association, undirected)</tspan></text>
-<a href="#resource-6177735f7375626e65742e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_subnet.private"><text font-size="12" fill="#334155"><tspan x="92" y="196" xml:space="preserve">- aws_subnet.private</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="60" y="176" xml:space="preserve">Action: create</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="60" y="196" xml:space="preserve">Resource scope: Region: unknown</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="76" y="216" xml:space="preserve">- Connects (association, undirected)</tspan></text>
+<a href="#resource-6177735f7375626e65742e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_subnet.private · Region: unknown"><text font-size="12" fill="#334155"><tspan x="92" y="236" xml:space="preserve">- aws_subnet.private · Region: unknown</tspan></text>
 </a>
-<a href="#resource-6177735f726f7574655f7461626c652e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_route_table.private"><text font-size="12" fill="#334155"><tspan x="92" y="216" xml:space="preserve">- aws_route_table.private</tspan></text>
+<a href="#resource-6177735f726f7574655f7461626c652e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_route_table.private · Region: unknown"><text font-size="12" fill="#334155"><tspan x="92" y="256" xml:space="preserve">- aws_route_table.private · Region: unknown</tspan></text>
 </a>
 </g>
 <g data-relationship-entry="23" id="relationship-5b5b5b226177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3233222c6e756c6c5d5d2c5b5b227465727261666f726d3a3631373737333566373337353632366536353734326537303732363937363631373436352d63757272656e74222c227465727261666f726d3a363137373733356637323666373537343635356637343631363236633635326537303732363937363631373436352d63757272656e74222c226173736f63696174696f6e222c22756e6469726563746564225d5d5d"><title>Relationship [23]: Connects (association, undirected): aws_subnet.private / aws_route_table.private</title><a href="#relationship-5b5b5b226177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3233222c6e756c6c5d5d2c5b5b227465727261666f726d3a3631373737333566373337353632366536353734326537303732363937363631373436352d63757272656e74222c227465727261666f726d3a363137373733356637323666373537343635356637343631363236633635326537303732363937363631373436352d63757272656e74222c226173736f63696174696f6e222c22756e6469726563746564225d5d5d" data-relationship-select="true" aria-label="Relationship [23]: Connects (association, undirected): aws_subnet.private / aws_route_table.private">
-<rect x="16" y="231" width="32" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="32" y="244" text-anchor="middle" font-size="11" fill="#334155">[23]</text>
+<rect x="16" y="271" width="32" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="32" y="284" text-anchor="middle" font-size="11" fill="#334155">[23]</text>
 </a>
 <text data-source-address="aws_route_table_association.entry_23" data-source-identity="terraform:6177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3233-current" font-size="12" font-weight="600" fill="#334155"><title>aws_route_table_association.entry_23</title>
-<tspan x="60" y="244" xml:space="preserve">aws_route_table_association.entry_23</tspan>
+<tspan x="60" y="284" xml:space="preserve">aws_route_table_association.entry_23</tspan>
 </text>
-<text font-size="12" fill="#334155"><tspan x="60" y="264" xml:space="preserve">Action: create</tspan></text>
-<text font-size="12" fill="#334155"><tspan x="76" y="284" xml:space="preserve">- Connects (association, undirected)</tspan></text>
-<a href="#resource-6177735f7375626e65742e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_subnet.private"><text font-size="12" fill="#334155"><tspan x="92" y="304" xml:space="preserve">- aws_subnet.private</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="60" y="304" xml:space="preserve">Action: create</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="60" y="324" xml:space="preserve">Resource scope: Region: unknown</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="76" y="344" xml:space="preserve">- Connects (association, undirected)</tspan></text>
+<a href="#resource-6177735f7375626e65742e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_subnet.private · Region: unknown"><text font-size="12" fill="#334155"><tspan x="92" y="364" xml:space="preserve">- aws_subnet.private · Region: unknown</tspan></text>
 </a>
-<a href="#resource-6177735f726f7574655f7461626c652e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_route_table.private"><text font-size="12" fill="#334155"><tspan x="92" y="324" xml:space="preserve">- aws_route_table.private</tspan></text>
+<a href="#resource-6177735f726f7574655f7461626c652e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_route_table.private · Region: unknown"><text font-size="12" fill="#334155"><tspan x="92" y="384" xml:space="preserve">- aws_route_table.private · Region: unknown</tspan></text>
 </a>
 </g>
 <g data-relationship-entry="24" id="relationship-5b5b5b226177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3234222c6e756c6c5d5d2c5b5b227465727261666f726d3a3631373737333566373337353632366536353734326537303732363937363631373436352d63757272656e74222c227465727261666f726d3a363137373733356637323666373537343635356637343631363236633635326537303732363937363631373436352d63757272656e74222c226173736f63696174696f6e222c22756e6469726563746564225d5d5d"><title>Relationship [24]: Connects (association, undirected): aws_subnet.private / aws_route_table.private</title><a href="#relationship-5b5b5b226177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3234222c6e756c6c5d5d2c5b5b227465727261666f726d3a3631373737333566373337353632366536353734326537303732363937363631373436352d63757272656e74222c227465727261666f726d3a363137373733356637323666373537343635356637343631363236633635326537303732363937363631373436352d63757272656e74222c226173736f63696174696f6e222c22756e6469726563746564225d5d5d" data-relationship-select="true" aria-label="Relationship [24]: Connects (association, undirected): aws_subnet.private / aws_route_table.private">
-<rect x="16" y="339" width="32" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="32" y="352" text-anchor="middle" font-size="11" fill="#334155">[24]</text>
+<rect x="16" y="399" width="32" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="32" y="412" text-anchor="middle" font-size="11" fill="#334155">[24]</text>
 </a>
 <text data-source-address="aws_route_table_association.entry_24" data-source-identity="terraform:6177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3234-current" font-size="12" font-weight="600" fill="#334155"><title>aws_route_table_association.entry_24</title>
-<tspan x="60" y="352" xml:space="preserve">aws_route_table_association.entry_24</tspan>
+<tspan x="60" y="412" xml:space="preserve">aws_route_table_association.entry_24</tspan>
 </text>
-<text font-size="12" fill="#334155"><tspan x="60" y="372" xml:space="preserve">Action: create</tspan></text>
-<text font-size="12" fill="#334155"><tspan x="76" y="392" xml:space="preserve">- Connects (association, undirected)</tspan></text>
-<a href="#resource-6177735f7375626e65742e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_subnet.private"><text font-size="12" fill="#334155"><tspan x="92" y="412" xml:space="preserve">- aws_subnet.private</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="60" y="432" xml:space="preserve">Action: create</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="60" y="452" xml:space="preserve">Resource scope: Region: unknown</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="76" y="472" xml:space="preserve">- Connects (association, undirected)</tspan></text>
+<a href="#resource-6177735f7375626e65742e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_subnet.private · Region: unknown"><text font-size="12" fill="#334155"><tspan x="92" y="492" xml:space="preserve">- aws_subnet.private · Region: unknown</tspan></text>
 </a>
-<a href="#resource-6177735f726f7574655f7461626c652e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_route_table.private"><text font-size="12" fill="#334155"><tspan x="92" y="432" xml:space="preserve">- aws_route_table.private</tspan></text>
+<a href="#resource-6177735f726f7574655f7461626c652e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_route_table.private · Region: unknown"><text font-size="12" fill="#334155"><tspan x="92" y="512" xml:space="preserve">- aws_route_table.private · Region: unknown</tspan></text>
 </a>
 </g>
 <g data-relationship-entry="25" id="relationship-5b5b5b226177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3235222c6e756c6c5d5d2c5b5b227465727261666f726d3a3631373737333566373337353632366536353734326537303732363937363631373436352d63757272656e74222c227465727261666f726d3a363137373733356637323666373537343635356637343631363236633635326537303732363937363631373436352d63757272656e74222c226173736f63696174696f6e222c22756e6469726563746564225d5d5d"><title>Relationship [25]: Connects (association, undirected): aws_subnet.private / aws_route_table.private</title><a href="#relationship-5b5b5b226177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3235222c6e756c6c5d5d2c5b5b227465727261666f726d3a3631373737333566373337353632366536353734326537303732363937363631373436352d63757272656e74222c227465727261666f726d3a363137373733356637323666373537343635356637343631363236633635326537303732363937363631373436352d63757272656e74222c226173736f63696174696f6e222c22756e6469726563746564225d5d5d" data-relationship-select="true" aria-label="Relationship [25]: Connects (association, undirected): aws_subnet.private / aws_route_table.private">
-<rect x="16" y="447" width="32" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="32" y="460" text-anchor="middle" font-size="11" fill="#334155">[25]</text>
+<rect x="16" y="527" width="32" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="32" y="540" text-anchor="middle" font-size="11" fill="#334155">[25]</text>
 </a>
 <text data-source-address="aws_route_table_association.entry_25" data-source-identity="terraform:6177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3235-current" font-size="12" font-weight="600" fill="#334155"><title>aws_route_table_association.entry_25</title>
-<tspan x="60" y="460" xml:space="preserve">aws_route_table_association.entry_25</tspan>
+<tspan x="60" y="540" xml:space="preserve">aws_route_table_association.entry_25</tspan>
 </text>
-<text font-size="12" fill="#334155"><tspan x="60" y="480" xml:space="preserve">Action: create</tspan></text>
-<text font-size="12" fill="#334155"><tspan x="76" y="500" xml:space="preserve">- Connects (association, undirected)</tspan></text>
-<a href="#resource-6177735f7375626e65742e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_subnet.private"><text font-size="12" fill="#334155"><tspan x="92" y="520" xml:space="preserve">- aws_subnet.private</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="60" y="560" xml:space="preserve">Action: create</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="60" y="580" xml:space="preserve">Resource scope: Region: unknown</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="76" y="600" xml:space="preserve">- Connects (association, undirected)</tspan></text>
+<a href="#resource-6177735f7375626e65742e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_subnet.private · Region: unknown"><text font-size="12" fill="#334155"><tspan x="92" y="620" xml:space="preserve">- aws_subnet.private · Region: unknown</tspan></text>
 </a>
-<a href="#resource-6177735f726f7574655f7461626c652e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_route_table.private"><text font-size="12" fill="#334155"><tspan x="92" y="540" xml:space="preserve">- aws_route_table.private</tspan></text>
+<a href="#resource-6177735f726f7574655f7461626c652e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_route_table.private · Region: unknown"><text font-size="12" fill="#334155"><tspan x="92" y="640" xml:space="preserve">- aws_route_table.private · Region: unknown</tspan></text>
 </a>
 </g>
 </g>
 </g>
-<g data-annotation-card="true" transform="translate(16 644)"><rect width="380" height="576" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-relationship-index="true">
+<g data-annotation-card="true" transform="translate(496 744)"><rect width="460" height="676" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-relationship-index="true">
 <g data-relationship-entry="26" id="relationship-5b5b5b226177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3236222c6e756c6c5d5d2c5b5b227465727261666f726d3a3631373737333566373337353632366536353734326537303732363937363631373436352d63757272656e74222c227465727261666f726d3a363137373733356637323666373537343635356637343631363236633635326537303732363937363631373436352d63757272656e74222c226173736f63696174696f6e222c22756e6469726563746564225d5d5d"><title>Relationship [26]: Connects (association, undirected): aws_subnet.private / aws_route_table.private</title><a href="#relationship-5b5b5b226177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3236222c6e756c6c5d5d2c5b5b227465727261666f726d3a3631373737333566373337353632366536353734326537303732363937363631373436352d63757272656e74222c227465727261666f726d3a363137373733356637323666373537343635356637343631363236633635326537303732363937363631373436352d63757272656e74222c226173736f63696174696f6e222c22756e6469726563746564225d5d5d" data-relationship-select="true" aria-label="Relationship [26]: Connects (association, undirected): aws_subnet.private / aws_route_table.private">
 <rect x="16" y="15" width="32" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="32" y="28" text-anchor="middle" font-size="11" fill="#334155">[26]</text>
 </a>
@@ -497,67 +522,72 @@ SOFTWARE.
 <tspan x="60" y="28" xml:space="preserve">aws_route_table_association.entry_26</tspan>
 </text>
 <text font-size="12" fill="#334155"><tspan x="60" y="48" xml:space="preserve">Action: create</tspan></text>
-<text font-size="12" fill="#334155"><tspan x="76" y="68" xml:space="preserve">- Connects (association, undirected)</tspan></text>
-<a href="#resource-6177735f7375626e65742e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_subnet.private"><text font-size="12" fill="#334155"><tspan x="92" y="88" xml:space="preserve">- aws_subnet.private</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="60" y="68" xml:space="preserve">Resource scope: Region: unknown</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="76" y="88" xml:space="preserve">- Connects (association, undirected)</tspan></text>
+<a href="#resource-6177735f7375626e65742e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_subnet.private · Region: unknown"><text font-size="12" fill="#334155"><tspan x="92" y="108" xml:space="preserve">- aws_subnet.private · Region: unknown</tspan></text>
 </a>
-<a href="#resource-6177735f726f7574655f7461626c652e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_route_table.private"><text font-size="12" fill="#334155"><tspan x="92" y="108" xml:space="preserve">- aws_route_table.private</tspan></text>
+<a href="#resource-6177735f726f7574655f7461626c652e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_route_table.private · Region: unknown"><text font-size="12" fill="#334155"><tspan x="92" y="128" xml:space="preserve">- aws_route_table.private · Region: unknown</tspan></text>
 </a>
 </g>
 <g data-relationship-entry="27" id="relationship-5b5b5b226177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3237222c6e756c6c5d5d2c5b5b227465727261666f726d3a3631373737333566373337353632366536353734326537303732363937363631373436352d63757272656e74222c227465727261666f726d3a363137373733356637323666373537343635356637343631363236633635326537303732363937363631373436352d63757272656e74222c226173736f63696174696f6e222c22756e6469726563746564225d5d5d"><title>Relationship [27]: Connects (association, undirected): aws_subnet.private / aws_route_table.private</title><a href="#relationship-5b5b5b226177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3237222c6e756c6c5d5d2c5b5b227465727261666f726d3a3631373737333566373337353632366536353734326537303732363937363631373436352d63757272656e74222c227465727261666f726d3a363137373733356637323666373537343635356637343631363236633635326537303732363937363631373436352d63757272656e74222c226173736f63696174696f6e222c22756e6469726563746564225d5d5d" data-relationship-select="true" aria-label="Relationship [27]: Connects (association, undirected): aws_subnet.private / aws_route_table.private">
-<rect x="16" y="123" width="32" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="32" y="136" text-anchor="middle" font-size="11" fill="#334155">[27]</text>
+<rect x="16" y="143" width="32" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="32" y="156" text-anchor="middle" font-size="11" fill="#334155">[27]</text>
 </a>
 <text data-source-address="aws_route_table_association.entry_27" data-source-identity="terraform:6177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3237-current" font-size="12" font-weight="600" fill="#334155"><title>aws_route_table_association.entry_27</title>
-<tspan x="60" y="136" xml:space="preserve">aws_route_table_association.entry_27</tspan>
+<tspan x="60" y="156" xml:space="preserve">aws_route_table_association.entry_27</tspan>
 </text>
-<text font-size="12" fill="#334155"><tspan x="60" y="156" xml:space="preserve">Action: create</tspan></text>
-<text font-size="12" fill="#334155"><tspan x="76" y="176" xml:space="preserve">- Connects (association, undirected)</tspan></text>
-<a href="#resource-6177735f7375626e65742e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_subnet.private"><text font-size="12" fill="#334155"><tspan x="92" y="196" xml:space="preserve">- aws_subnet.private</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="60" y="176" xml:space="preserve">Action: create</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="60" y="196" xml:space="preserve">Resource scope: Region: unknown</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="76" y="216" xml:space="preserve">- Connects (association, undirected)</tspan></text>
+<a href="#resource-6177735f7375626e65742e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_subnet.private · Region: unknown"><text font-size="12" fill="#334155"><tspan x="92" y="236" xml:space="preserve">- aws_subnet.private · Region: unknown</tspan></text>
 </a>
-<a href="#resource-6177735f726f7574655f7461626c652e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_route_table.private"><text font-size="12" fill="#334155"><tspan x="92" y="216" xml:space="preserve">- aws_route_table.private</tspan></text>
+<a href="#resource-6177735f726f7574655f7461626c652e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_route_table.private · Region: unknown"><text font-size="12" fill="#334155"><tspan x="92" y="256" xml:space="preserve">- aws_route_table.private · Region: unknown</tspan></text>
 </a>
 </g>
 <g data-relationship-entry="28" id="relationship-5b5b5b226177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3238222c6e756c6c5d5d2c5b5b227465727261666f726d3a3631373737333566373337353632366536353734326537303732363937363631373436352d63757272656e74222c227465727261666f726d3a363137373733356637323666373537343635356637343631363236633635326537303732363937363631373436352d63757272656e74222c226173736f63696174696f6e222c22756e6469726563746564225d5d5d"><title>Relationship [28]: Connects (association, undirected): aws_subnet.private / aws_route_table.private</title><a href="#relationship-5b5b5b226177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3238222c6e756c6c5d5d2c5b5b227465727261666f726d3a3631373737333566373337353632366536353734326537303732363937363631373436352d63757272656e74222c227465727261666f726d3a363137373733356637323666373537343635356637343631363236633635326537303732363937363631373436352d63757272656e74222c226173736f63696174696f6e222c22756e6469726563746564225d5d5d" data-relationship-select="true" aria-label="Relationship [28]: Connects (association, undirected): aws_subnet.private / aws_route_table.private">
-<rect x="16" y="231" width="32" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="32" y="244" text-anchor="middle" font-size="11" fill="#334155">[28]</text>
+<rect x="16" y="271" width="32" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="32" y="284" text-anchor="middle" font-size="11" fill="#334155">[28]</text>
 </a>
 <text data-source-address="aws_route_table_association.entry_28" data-source-identity="terraform:6177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3238-current" font-size="12" font-weight="600" fill="#334155"><title>aws_route_table_association.entry_28</title>
-<tspan x="60" y="244" xml:space="preserve">aws_route_table_association.entry_28</tspan>
+<tspan x="60" y="284" xml:space="preserve">aws_route_table_association.entry_28</tspan>
 </text>
-<text font-size="12" fill="#334155"><tspan x="60" y="264" xml:space="preserve">Action: create</tspan></text>
-<text font-size="12" fill="#334155"><tspan x="76" y="284" xml:space="preserve">- Connects (association, undirected)</tspan></text>
-<a href="#resource-6177735f7375626e65742e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_subnet.private"><text font-size="12" fill="#334155"><tspan x="92" y="304" xml:space="preserve">- aws_subnet.private</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="60" y="304" xml:space="preserve">Action: create</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="60" y="324" xml:space="preserve">Resource scope: Region: unknown</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="76" y="344" xml:space="preserve">- Connects (association, undirected)</tspan></text>
+<a href="#resource-6177735f7375626e65742e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_subnet.private · Region: unknown"><text font-size="12" fill="#334155"><tspan x="92" y="364" xml:space="preserve">- aws_subnet.private · Region: unknown</tspan></text>
 </a>
-<a href="#resource-6177735f726f7574655f7461626c652e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_route_table.private"><text font-size="12" fill="#334155"><tspan x="92" y="324" xml:space="preserve">- aws_route_table.private</tspan></text>
+<a href="#resource-6177735f726f7574655f7461626c652e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_route_table.private · Region: unknown"><text font-size="12" fill="#334155"><tspan x="92" y="384" xml:space="preserve">- aws_route_table.private · Region: unknown</tspan></text>
 </a>
 </g>
 <g data-relationship-entry="29" id="relationship-5b5b5b226177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3239222c6e756c6c5d5d2c5b5b227465727261666f726d3a3631373737333566373337353632366536353734326537303732363937363631373436352d63757272656e74222c227465727261666f726d3a363137373733356637323666373537343635356637343631363236633635326537303732363937363631373436352d63757272656e74222c226173736f63696174696f6e222c22756e6469726563746564225d5d5d"><title>Relationship [29]: Connects (association, undirected): aws_subnet.private / aws_route_table.private</title><a href="#relationship-5b5b5b226177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3239222c6e756c6c5d5d2c5b5b227465727261666f726d3a3631373737333566373337353632366536353734326537303732363937363631373436352d63757272656e74222c227465727261666f726d3a363137373733356637323666373537343635356637343631363236633635326537303732363937363631373436352d63757272656e74222c226173736f63696174696f6e222c22756e6469726563746564225d5d5d" data-relationship-select="true" aria-label="Relationship [29]: Connects (association, undirected): aws_subnet.private / aws_route_table.private">
-<rect x="16" y="339" width="32" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="32" y="352" text-anchor="middle" font-size="11" fill="#334155">[29]</text>
+<rect x="16" y="399" width="32" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="32" y="412" text-anchor="middle" font-size="11" fill="#334155">[29]</text>
 </a>
 <text data-source-address="aws_route_table_association.entry_29" data-source-identity="terraform:6177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3239-current" font-size="12" font-weight="600" fill="#334155"><title>aws_route_table_association.entry_29</title>
-<tspan x="60" y="352" xml:space="preserve">aws_route_table_association.entry_29</tspan>
+<tspan x="60" y="412" xml:space="preserve">aws_route_table_association.entry_29</tspan>
 </text>
-<text font-size="12" fill="#334155"><tspan x="60" y="372" xml:space="preserve">Action: create</tspan></text>
-<text font-size="12" fill="#334155"><tspan x="76" y="392" xml:space="preserve">- Connects (association, undirected)</tspan></text>
-<a href="#resource-6177735f7375626e65742e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_subnet.private"><text font-size="12" fill="#334155"><tspan x="92" y="412" xml:space="preserve">- aws_subnet.private</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="60" y="432" xml:space="preserve">Action: create</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="60" y="452" xml:space="preserve">Resource scope: Region: unknown</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="76" y="472" xml:space="preserve">- Connects (association, undirected)</tspan></text>
+<a href="#resource-6177735f7375626e65742e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_subnet.private · Region: unknown"><text font-size="12" fill="#334155"><tspan x="92" y="492" xml:space="preserve">- aws_subnet.private · Region: unknown</tspan></text>
 </a>
-<a href="#resource-6177735f726f7574655f7461626c652e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_route_table.private"><text font-size="12" fill="#334155"><tspan x="92" y="432" xml:space="preserve">- aws_route_table.private</tspan></text>
+<a href="#resource-6177735f726f7574655f7461626c652e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_route_table.private · Region: unknown"><text font-size="12" fill="#334155"><tspan x="92" y="512" xml:space="preserve">- aws_route_table.private · Region: unknown</tspan></text>
 </a>
 </g>
 <g data-relationship-entry="30" id="relationship-5b5b5b226177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3330222c6e756c6c5d5d2c5b5b227465727261666f726d3a3631373737333566373337353632366536353734326537303732363937363631373436352d63757272656e74222c227465727261666f726d3a363137373733356637323666373537343635356637343631363236633635326537303732363937363631373436352d63757272656e74222c226173736f63696174696f6e222c22756e6469726563746564225d5d5d"><title>Relationship [30]: Connects (association, undirected): aws_subnet.private / aws_route_table.private</title><a href="#relationship-5b5b5b226177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3330222c6e756c6c5d5d2c5b5b227465727261666f726d3a3631373737333566373337353632366536353734326537303732363937363631373436352d63757272656e74222c227465727261666f726d3a363137373733356637323666373537343635356637343631363236633635326537303732363937363631373436352d63757272656e74222c226173736f63696174696f6e222c22756e6469726563746564225d5d5d" data-relationship-select="true" aria-label="Relationship [30]: Connects (association, undirected): aws_subnet.private / aws_route_table.private">
-<rect x="16" y="447" width="32" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="32" y="460" text-anchor="middle" font-size="11" fill="#334155">[30]</text>
+<rect x="16" y="527" width="32" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="32" y="540" text-anchor="middle" font-size="11" fill="#334155">[30]</text>
 </a>
 <text data-source-address="aws_route_table_association.entry_30" data-source-identity="terraform:6177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3330-current" font-size="12" font-weight="600" fill="#334155"><title>aws_route_table_association.entry_30</title>
-<tspan x="60" y="460" xml:space="preserve">aws_route_table_association.entry_30</tspan>
+<tspan x="60" y="540" xml:space="preserve">aws_route_table_association.entry_30</tspan>
 </text>
-<text font-size="12" fill="#334155"><tspan x="60" y="480" xml:space="preserve">Action: create</tspan></text>
-<text font-size="12" fill="#334155"><tspan x="76" y="500" xml:space="preserve">- Connects (association, undirected)</tspan></text>
-<a href="#resource-6177735f7375626e65742e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_subnet.private"><text font-size="12" fill="#334155"><tspan x="92" y="520" xml:space="preserve">- aws_subnet.private</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="60" y="560" xml:space="preserve">Action: create</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="60" y="580" xml:space="preserve">Resource scope: Region: unknown</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="76" y="600" xml:space="preserve">- Connects (association, undirected)</tspan></text>
+<a href="#resource-6177735f7375626e65742e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_subnet.private · Region: unknown"><text font-size="12" fill="#334155"><tspan x="92" y="620" xml:space="preserve">- aws_subnet.private · Region: unknown</tspan></text>
 </a>
-<a href="#resource-6177735f726f7574655f7461626c652e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_route_table.private"><text font-size="12" fill="#334155"><tspan x="92" y="540" xml:space="preserve">- aws_route_table.private</tspan></text>
+<a href="#resource-6177735f726f7574655f7461626c652e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_route_table.private · Region: unknown"><text font-size="12" fill="#334155"><tspan x="92" y="640" xml:space="preserve">- aws_route_table.private · Region: unknown</tspan></text>
 </a>
 </g>
 </g>
 </g>
-<g data-annotation-card="true" transform="translate(416 644)"><rect width="380" height="576" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-relationship-index="true">
+<g data-annotation-card="true" transform="translate(976 744)"><rect width="460" height="676" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-relationship-index="true">
 <g data-relationship-entry="31" id="relationship-5b5b5b226177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3331222c6e756c6c5d5d2c5b5b227465727261666f726d3a3631373737333566373337353632366536353734326537303732363937363631373436352d63757272656e74222c227465727261666f726d3a363137373733356637323666373537343635356637343631363236633635326537303732363937363631373436352d63757272656e74222c226173736f63696174696f6e222c22756e6469726563746564225d5d5d"><title>Relationship [31]: Connects (association, undirected): aws_subnet.private / aws_route_table.private</title><a href="#relationship-5b5b5b226177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3331222c6e756c6c5d5d2c5b5b227465727261666f726d3a3631373737333566373337353632366536353734326537303732363937363631373436352d63757272656e74222c227465727261666f726d3a363137373733356637323666373537343635356637343631363236633635326537303732363937363631373436352d63757272656e74222c226173736f63696174696f6e222c22756e6469726563746564225d5d5d" data-relationship-select="true" aria-label="Relationship [31]: Connects (association, undirected): aws_subnet.private / aws_route_table.private">
 <rect x="16" y="15" width="32" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="32" y="28" text-anchor="middle" font-size="11" fill="#334155">[31]</text>
 </a>
@@ -565,67 +595,72 @@ SOFTWARE.
 <tspan x="60" y="28" xml:space="preserve">aws_route_table_association.entry_31</tspan>
 </text>
 <text font-size="12" fill="#334155"><tspan x="60" y="48" xml:space="preserve">Action: create</tspan></text>
-<text font-size="12" fill="#334155"><tspan x="76" y="68" xml:space="preserve">- Connects (association, undirected)</tspan></text>
-<a href="#resource-6177735f7375626e65742e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_subnet.private"><text font-size="12" fill="#334155"><tspan x="92" y="88" xml:space="preserve">- aws_subnet.private</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="60" y="68" xml:space="preserve">Resource scope: Region: unknown</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="76" y="88" xml:space="preserve">- Connects (association, undirected)</tspan></text>
+<a href="#resource-6177735f7375626e65742e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_subnet.private · Region: unknown"><text font-size="12" fill="#334155"><tspan x="92" y="108" xml:space="preserve">- aws_subnet.private · Region: unknown</tspan></text>
 </a>
-<a href="#resource-6177735f726f7574655f7461626c652e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_route_table.private"><text font-size="12" fill="#334155"><tspan x="92" y="108" xml:space="preserve">- aws_route_table.private</tspan></text>
+<a href="#resource-6177735f726f7574655f7461626c652e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_route_table.private · Region: unknown"><text font-size="12" fill="#334155"><tspan x="92" y="128" xml:space="preserve">- aws_route_table.private · Region: unknown</tspan></text>
 </a>
 </g>
 <g data-relationship-entry="32" id="relationship-5b5b5b226177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3332222c6e756c6c5d5d2c5b5b227465727261666f726d3a3631373737333566373337353632366536353734326537303732363937363631373436352d63757272656e74222c227465727261666f726d3a363137373733356637323666373537343635356637343631363236633635326537303732363937363631373436352d63757272656e74222c226173736f63696174696f6e222c22756e6469726563746564225d5d5d"><title>Relationship [32]: Connects (association, undirected): aws_subnet.private / aws_route_table.private</title><a href="#relationship-5b5b5b226177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3332222c6e756c6c5d5d2c5b5b227465727261666f726d3a3631373737333566373337353632366536353734326537303732363937363631373436352d63757272656e74222c227465727261666f726d3a363137373733356637323666373537343635356637343631363236633635326537303732363937363631373436352d63757272656e74222c226173736f63696174696f6e222c22756e6469726563746564225d5d5d" data-relationship-select="true" aria-label="Relationship [32]: Connects (association, undirected): aws_subnet.private / aws_route_table.private">
-<rect x="16" y="123" width="32" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="32" y="136" text-anchor="middle" font-size="11" fill="#334155">[32]</text>
+<rect x="16" y="143" width="32" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="32" y="156" text-anchor="middle" font-size="11" fill="#334155">[32]</text>
 </a>
 <text data-source-address="aws_route_table_association.entry_32" data-source-identity="terraform:6177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3332-current" font-size="12" font-weight="600" fill="#334155"><title>aws_route_table_association.entry_32</title>
-<tspan x="60" y="136" xml:space="preserve">aws_route_table_association.entry_32</tspan>
+<tspan x="60" y="156" xml:space="preserve">aws_route_table_association.entry_32</tspan>
 </text>
-<text font-size="12" fill="#334155"><tspan x="60" y="156" xml:space="preserve">Action: create</tspan></text>
-<text font-size="12" fill="#334155"><tspan x="76" y="176" xml:space="preserve">- Connects (association, undirected)</tspan></text>
-<a href="#resource-6177735f7375626e65742e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_subnet.private"><text font-size="12" fill="#334155"><tspan x="92" y="196" xml:space="preserve">- aws_subnet.private</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="60" y="176" xml:space="preserve">Action: create</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="60" y="196" xml:space="preserve">Resource scope: Region: unknown</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="76" y="216" xml:space="preserve">- Connects (association, undirected)</tspan></text>
+<a href="#resource-6177735f7375626e65742e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_subnet.private · Region: unknown"><text font-size="12" fill="#334155"><tspan x="92" y="236" xml:space="preserve">- aws_subnet.private · Region: unknown</tspan></text>
 </a>
-<a href="#resource-6177735f726f7574655f7461626c652e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_route_table.private"><text font-size="12" fill="#334155"><tspan x="92" y="216" xml:space="preserve">- aws_route_table.private</tspan></text>
+<a href="#resource-6177735f726f7574655f7461626c652e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_route_table.private · Region: unknown"><text font-size="12" fill="#334155"><tspan x="92" y="256" xml:space="preserve">- aws_route_table.private · Region: unknown</tspan></text>
 </a>
 </g>
 <g data-relationship-entry="33" id="relationship-5b5b5b226177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3333222c6e756c6c5d5d2c5b5b227465727261666f726d3a3631373737333566373337353632366536353734326537303732363937363631373436352d63757272656e74222c227465727261666f726d3a363137373733356637323666373537343635356637343631363236633635326537303732363937363631373436352d63757272656e74222c226173736f63696174696f6e222c22756e6469726563746564225d5d5d"><title>Relationship [33]: Connects (association, undirected): aws_subnet.private / aws_route_table.private</title><a href="#relationship-5b5b5b226177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3333222c6e756c6c5d5d2c5b5b227465727261666f726d3a3631373737333566373337353632366536353734326537303732363937363631373436352d63757272656e74222c227465727261666f726d3a363137373733356637323666373537343635356637343631363236633635326537303732363937363631373436352d63757272656e74222c226173736f63696174696f6e222c22756e6469726563746564225d5d5d" data-relationship-select="true" aria-label="Relationship [33]: Connects (association, undirected): aws_subnet.private / aws_route_table.private">
-<rect x="16" y="231" width="32" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="32" y="244" text-anchor="middle" font-size="11" fill="#334155">[33]</text>
+<rect x="16" y="271" width="32" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="32" y="284" text-anchor="middle" font-size="11" fill="#334155">[33]</text>
 </a>
 <text data-source-address="aws_route_table_association.entry_33" data-source-identity="terraform:6177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3333-current" font-size="12" font-weight="600" fill="#334155"><title>aws_route_table_association.entry_33</title>
-<tspan x="60" y="244" xml:space="preserve">aws_route_table_association.entry_33</tspan>
+<tspan x="60" y="284" xml:space="preserve">aws_route_table_association.entry_33</tspan>
 </text>
-<text font-size="12" fill="#334155"><tspan x="60" y="264" xml:space="preserve">Action: create</tspan></text>
-<text font-size="12" fill="#334155"><tspan x="76" y="284" xml:space="preserve">- Connects (association, undirected)</tspan></text>
-<a href="#resource-6177735f7375626e65742e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_subnet.private"><text font-size="12" fill="#334155"><tspan x="92" y="304" xml:space="preserve">- aws_subnet.private</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="60" y="304" xml:space="preserve">Action: create</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="60" y="324" xml:space="preserve">Resource scope: Region: unknown</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="76" y="344" xml:space="preserve">- Connects (association, undirected)</tspan></text>
+<a href="#resource-6177735f7375626e65742e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_subnet.private · Region: unknown"><text font-size="12" fill="#334155"><tspan x="92" y="364" xml:space="preserve">- aws_subnet.private · Region: unknown</tspan></text>
 </a>
-<a href="#resource-6177735f726f7574655f7461626c652e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_route_table.private"><text font-size="12" fill="#334155"><tspan x="92" y="324" xml:space="preserve">- aws_route_table.private</tspan></text>
+<a href="#resource-6177735f726f7574655f7461626c652e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_route_table.private · Region: unknown"><text font-size="12" fill="#334155"><tspan x="92" y="384" xml:space="preserve">- aws_route_table.private · Region: unknown</tspan></text>
 </a>
 </g>
 <g data-relationship-entry="34" id="relationship-5b5b5b226177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3334222c6e756c6c5d5d2c5b5b227465727261666f726d3a3631373737333566373337353632366536353734326537303732363937363631373436352d63757272656e74222c227465727261666f726d3a363137373733356637323666373537343635356637343631363236633635326537303732363937363631373436352d63757272656e74222c226173736f63696174696f6e222c22756e6469726563746564225d5d5d"><title>Relationship [34]: Connects (association, undirected): aws_subnet.private / aws_route_table.private</title><a href="#relationship-5b5b5b226177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3334222c6e756c6c5d5d2c5b5b227465727261666f726d3a3631373737333566373337353632366536353734326537303732363937363631373436352d63757272656e74222c227465727261666f726d3a363137373733356637323666373537343635356637343631363236633635326537303732363937363631373436352d63757272656e74222c226173736f63696174696f6e222c22756e6469726563746564225d5d5d" data-relationship-select="true" aria-label="Relationship [34]: Connects (association, undirected): aws_subnet.private / aws_route_table.private">
-<rect x="16" y="339" width="32" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="32" y="352" text-anchor="middle" font-size="11" fill="#334155">[34]</text>
+<rect x="16" y="399" width="32" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="32" y="412" text-anchor="middle" font-size="11" fill="#334155">[34]</text>
 </a>
 <text data-source-address="aws_route_table_association.entry_34" data-source-identity="terraform:6177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3334-current" font-size="12" font-weight="600" fill="#334155"><title>aws_route_table_association.entry_34</title>
-<tspan x="60" y="352" xml:space="preserve">aws_route_table_association.entry_34</tspan>
+<tspan x="60" y="412" xml:space="preserve">aws_route_table_association.entry_34</tspan>
 </text>
-<text font-size="12" fill="#334155"><tspan x="60" y="372" xml:space="preserve">Action: create</tspan></text>
-<text font-size="12" fill="#334155"><tspan x="76" y="392" xml:space="preserve">- Connects (association, undirected)</tspan></text>
-<a href="#resource-6177735f7375626e65742e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_subnet.private"><text font-size="12" fill="#334155"><tspan x="92" y="412" xml:space="preserve">- aws_subnet.private</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="60" y="432" xml:space="preserve">Action: create</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="60" y="452" xml:space="preserve">Resource scope: Region: unknown</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="76" y="472" xml:space="preserve">- Connects (association, undirected)</tspan></text>
+<a href="#resource-6177735f7375626e65742e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_subnet.private · Region: unknown"><text font-size="12" fill="#334155"><tspan x="92" y="492" xml:space="preserve">- aws_subnet.private · Region: unknown</tspan></text>
 </a>
-<a href="#resource-6177735f726f7574655f7461626c652e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_route_table.private"><text font-size="12" fill="#334155"><tspan x="92" y="432" xml:space="preserve">- aws_route_table.private</tspan></text>
+<a href="#resource-6177735f726f7574655f7461626c652e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_route_table.private · Region: unknown"><text font-size="12" fill="#334155"><tspan x="92" y="512" xml:space="preserve">- aws_route_table.private · Region: unknown</tspan></text>
 </a>
 </g>
 <g data-relationship-entry="35" id="relationship-5b5b5b226177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3335222c6e756c6c5d5d2c5b5b227465727261666f726d3a3631373737333566373337353632366536353734326537303732363937363631373436352d63757272656e74222c227465727261666f726d3a363137373733356637323666373537343635356637343631363236633635326537303732363937363631373436352d63757272656e74222c226173736f63696174696f6e222c22756e6469726563746564225d5d5d"><title>Relationship [35]: Connects (association, undirected): aws_subnet.private / aws_route_table.private</title><a href="#relationship-5b5b5b226177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3335222c6e756c6c5d5d2c5b5b227465727261666f726d3a3631373737333566373337353632366536353734326537303732363937363631373436352d63757272656e74222c227465727261666f726d3a363137373733356637323666373537343635356637343631363236633635326537303732363937363631373436352d63757272656e74222c226173736f63696174696f6e222c22756e6469726563746564225d5d5d" data-relationship-select="true" aria-label="Relationship [35]: Connects (association, undirected): aws_subnet.private / aws_route_table.private">
-<rect x="16" y="447" width="32" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="32" y="460" text-anchor="middle" font-size="11" fill="#334155">[35]</text>
+<rect x="16" y="527" width="32" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="32" y="540" text-anchor="middle" font-size="11" fill="#334155">[35]</text>
 </a>
 <text data-source-address="aws_route_table_association.entry_35" data-source-identity="terraform:6177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3335-current" font-size="12" font-weight="600" fill="#334155"><title>aws_route_table_association.entry_35</title>
-<tspan x="60" y="460" xml:space="preserve">aws_route_table_association.entry_35</tspan>
+<tspan x="60" y="540" xml:space="preserve">aws_route_table_association.entry_35</tspan>
 </text>
-<text font-size="12" fill="#334155"><tspan x="60" y="480" xml:space="preserve">Action: create</tspan></text>
-<text font-size="12" fill="#334155"><tspan x="76" y="500" xml:space="preserve">- Connects (association, undirected)</tspan></text>
-<a href="#resource-6177735f7375626e65742e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_subnet.private"><text font-size="12" fill="#334155"><tspan x="92" y="520" xml:space="preserve">- aws_subnet.private</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="60" y="560" xml:space="preserve">Action: create</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="60" y="580" xml:space="preserve">Resource scope: Region: unknown</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="76" y="600" xml:space="preserve">- Connects (association, undirected)</tspan></text>
+<a href="#resource-6177735f7375626e65742e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_subnet.private · Region: unknown"><text font-size="12" fill="#334155"><tspan x="92" y="620" xml:space="preserve">- aws_subnet.private · Region: unknown</tspan></text>
 </a>
-<a href="#resource-6177735f726f7574655f7461626c652e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_route_table.private"><text font-size="12" fill="#334155"><tspan x="92" y="540" xml:space="preserve">- aws_route_table.private</tspan></text>
+<a href="#resource-6177735f726f7574655f7461626c652e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_route_table.private · Region: unknown"><text font-size="12" fill="#334155"><tspan x="92" y="640" xml:space="preserve">- aws_route_table.private · Region: unknown</tspan></text>
 </a>
 </g>
 </g>
 </g>
-<g data-annotation-card="true" transform="translate(816 644)"><rect width="380" height="576" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-relationship-index="true">
+<g data-annotation-card="true" transform="translate(1456 744)"><rect width="460" height="676" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-relationship-index="true">
 <g data-relationship-entry="36" id="relationship-5b5b5b226177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3336222c6e756c6c5d5d2c5b5b227465727261666f726d3a3631373737333566373337353632366536353734326537303732363937363631373436352d63757272656e74222c227465727261666f726d3a363137373733356637323666373537343635356637343631363236633635326537303732363937363631373436352d63757272656e74222c226173736f63696174696f6e222c22756e6469726563746564225d5d5d"><title>Relationship [36]: Connects (association, undirected): aws_subnet.private / aws_route_table.private</title><a href="#relationship-5b5b5b226177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3336222c6e756c6c5d5d2c5b5b227465727261666f726d3a3631373737333566373337353632366536353734326537303732363937363631373436352d63757272656e74222c227465727261666f726d3a363137373733356637323666373537343635356637343631363236633635326537303732363937363631373436352d63757272656e74222c226173736f63696174696f6e222c22756e6469726563746564225d5d5d" data-relationship-select="true" aria-label="Relationship [36]: Connects (association, undirected): aws_subnet.private / aws_route_table.private">
 <rect x="16" y="15" width="32" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="32" y="28" text-anchor="middle" font-size="11" fill="#334155">[36]</text>
 </a>
@@ -633,69 +668,74 @@ SOFTWARE.
 <tspan x="60" y="28" xml:space="preserve">aws_route_table_association.entry_36</tspan>
 </text>
 <text font-size="12" fill="#334155"><tspan x="60" y="48" xml:space="preserve">Action: create</tspan></text>
-<text font-size="12" fill="#334155"><tspan x="76" y="68" xml:space="preserve">- Connects (association, undirected)</tspan></text>
-<a href="#resource-6177735f7375626e65742e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_subnet.private"><text font-size="12" fill="#334155"><tspan x="92" y="88" xml:space="preserve">- aws_subnet.private</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="60" y="68" xml:space="preserve">Resource scope: Region: unknown</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="76" y="88" xml:space="preserve">- Connects (association, undirected)</tspan></text>
+<a href="#resource-6177735f7375626e65742e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_subnet.private · Region: unknown"><text font-size="12" fill="#334155"><tspan x="92" y="108" xml:space="preserve">- aws_subnet.private · Region: unknown</tspan></text>
 </a>
-<a href="#resource-6177735f726f7574655f7461626c652e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_route_table.private"><text font-size="12" fill="#334155"><tspan x="92" y="108" xml:space="preserve">- aws_route_table.private</tspan></text>
+<a href="#resource-6177735f726f7574655f7461626c652e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_route_table.private · Region: unknown"><text font-size="12" fill="#334155"><tspan x="92" y="128" xml:space="preserve">- aws_route_table.private · Region: unknown</tspan></text>
 </a>
 </g>
 <g data-relationship-entry="37" id="relationship-5b5b5b226177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3337222c6e756c6c5d5d2c5b5b227465727261666f726d3a3631373737333566373337353632366536353734326537303732363937363631373436352d63757272656e74222c227465727261666f726d3a363137373733356637323666373537343635356637343631363236633635326537303732363937363631373436352d63757272656e74222c226173736f63696174696f6e222c22756e6469726563746564225d5d5d"><title>Relationship [37]: Connects (association, undirected): aws_subnet.private / aws_route_table.private</title><a href="#relationship-5b5b5b226177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3337222c6e756c6c5d5d2c5b5b227465727261666f726d3a3631373737333566373337353632366536353734326537303732363937363631373436352d63757272656e74222c227465727261666f726d3a363137373733356637323666373537343635356637343631363236633635326537303732363937363631373436352d63757272656e74222c226173736f63696174696f6e222c22756e6469726563746564225d5d5d" data-relationship-select="true" aria-label="Relationship [37]: Connects (association, undirected): aws_subnet.private / aws_route_table.private">
-<rect x="16" y="123" width="32" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="32" y="136" text-anchor="middle" font-size="11" fill="#334155">[37]</text>
+<rect x="16" y="143" width="32" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="32" y="156" text-anchor="middle" font-size="11" fill="#334155">[37]</text>
 </a>
 <text data-source-address="aws_route_table_association.entry_37" data-source-identity="terraform:6177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3337-current" font-size="12" font-weight="600" fill="#334155"><title>aws_route_table_association.entry_37</title>
-<tspan x="60" y="136" xml:space="preserve">aws_route_table_association.entry_37</tspan>
+<tspan x="60" y="156" xml:space="preserve">aws_route_table_association.entry_37</tspan>
 </text>
-<text font-size="12" fill="#334155"><tspan x="60" y="156" xml:space="preserve">Action: create</tspan></text>
-<text font-size="12" fill="#334155"><tspan x="76" y="176" xml:space="preserve">- Connects (association, undirected)</tspan></text>
-<a href="#resource-6177735f7375626e65742e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_subnet.private"><text font-size="12" fill="#334155"><tspan x="92" y="196" xml:space="preserve">- aws_subnet.private</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="60" y="176" xml:space="preserve">Action: create</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="60" y="196" xml:space="preserve">Resource scope: Region: unknown</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="76" y="216" xml:space="preserve">- Connects (association, undirected)</tspan></text>
+<a href="#resource-6177735f7375626e65742e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_subnet.private · Region: unknown"><text font-size="12" fill="#334155"><tspan x="92" y="236" xml:space="preserve">- aws_subnet.private · Region: unknown</tspan></text>
 </a>
-<a href="#resource-6177735f726f7574655f7461626c652e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_route_table.private"><text font-size="12" fill="#334155"><tspan x="92" y="216" xml:space="preserve">- aws_route_table.private</tspan></text>
+<a href="#resource-6177735f726f7574655f7461626c652e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_route_table.private · Region: unknown"><text font-size="12" fill="#334155"><tspan x="92" y="256" xml:space="preserve">- aws_route_table.private · Region: unknown</tspan></text>
 </a>
 </g>
 <g data-relationship-entry="38" id="relationship-5b5b5b226177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3338222c6e756c6c5d5d2c5b5b227465727261666f726d3a3631373737333566373337353632366536353734326537303732363937363631373436352d63757272656e74222c227465727261666f726d3a363137373733356637323666373537343635356637343631363236633635326537303732363937363631373436352d63757272656e74222c226173736f63696174696f6e222c22756e6469726563746564225d5d5d"><title>Relationship [38]: Connects (association, undirected): aws_subnet.private / aws_route_table.private</title><a href="#relationship-5b5b5b226177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3338222c6e756c6c5d5d2c5b5b227465727261666f726d3a3631373737333566373337353632366536353734326537303732363937363631373436352d63757272656e74222c227465727261666f726d3a363137373733356637323666373537343635356637343631363236633635326537303732363937363631373436352d63757272656e74222c226173736f63696174696f6e222c22756e6469726563746564225d5d5d" data-relationship-select="true" aria-label="Relationship [38]: Connects (association, undirected): aws_subnet.private / aws_route_table.private">
-<rect x="16" y="231" width="32" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="32" y="244" text-anchor="middle" font-size="11" fill="#334155">[38]</text>
+<rect x="16" y="271" width="32" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="32" y="284" text-anchor="middle" font-size="11" fill="#334155">[38]</text>
 </a>
 <text data-source-address="aws_route_table_association.entry_38" data-source-identity="terraform:6177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3338-current" font-size="12" font-weight="600" fill="#334155"><title>aws_route_table_association.entry_38</title>
-<tspan x="60" y="244" xml:space="preserve">aws_route_table_association.entry_38</tspan>
+<tspan x="60" y="284" xml:space="preserve">aws_route_table_association.entry_38</tspan>
 </text>
-<text font-size="12" fill="#334155"><tspan x="60" y="264" xml:space="preserve">Action: create</tspan></text>
-<text font-size="12" fill="#334155"><tspan x="76" y="284" xml:space="preserve">- Connects (association, undirected)</tspan></text>
-<a href="#resource-6177735f7375626e65742e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_subnet.private"><text font-size="12" fill="#334155"><tspan x="92" y="304" xml:space="preserve">- aws_subnet.private</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="60" y="304" xml:space="preserve">Action: create</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="60" y="324" xml:space="preserve">Resource scope: Region: unknown</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="76" y="344" xml:space="preserve">- Connects (association, undirected)</tspan></text>
+<a href="#resource-6177735f7375626e65742e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_subnet.private · Region: unknown"><text font-size="12" fill="#334155"><tspan x="92" y="364" xml:space="preserve">- aws_subnet.private · Region: unknown</tspan></text>
 </a>
-<a href="#resource-6177735f726f7574655f7461626c652e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_route_table.private"><text font-size="12" fill="#334155"><tspan x="92" y="324" xml:space="preserve">- aws_route_table.private</tspan></text>
+<a href="#resource-6177735f726f7574655f7461626c652e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_route_table.private · Region: unknown"><text font-size="12" fill="#334155"><tspan x="92" y="384" xml:space="preserve">- aws_route_table.private · Region: unknown</tspan></text>
 </a>
 </g>
 <g data-relationship-entry="39" id="relationship-5b5b5b226177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3339222c6e756c6c5d5d2c5b5b227465727261666f726d3a3631373737333566373337353632366536353734326537303732363937363631373436352d63757272656e74222c227465727261666f726d3a363137373733356637323666373537343635356637343631363236633635326537303732363937363631373436352d63757272656e74222c226173736f63696174696f6e222c22756e6469726563746564225d5d5d"><title>Relationship [39]: Connects (association, undirected): aws_subnet.private / aws_route_table.private</title><a href="#relationship-5b5b5b226177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3339222c6e756c6c5d5d2c5b5b227465727261666f726d3a3631373737333566373337353632366536353734326537303732363937363631373436352d63757272656e74222c227465727261666f726d3a363137373733356637323666373537343635356637343631363236633635326537303732363937363631373436352d63757272656e74222c226173736f63696174696f6e222c22756e6469726563746564225d5d5d" data-relationship-select="true" aria-label="Relationship [39]: Connects (association, undirected): aws_subnet.private / aws_route_table.private">
-<rect x="16" y="339" width="32" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="32" y="352" text-anchor="middle" font-size="11" fill="#334155">[39]</text>
+<rect x="16" y="399" width="32" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="32" y="412" text-anchor="middle" font-size="11" fill="#334155">[39]</text>
 </a>
 <text data-source-address="aws_route_table_association.entry_39" data-source-identity="terraform:6177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3339-current" font-size="12" font-weight="600" fill="#334155"><title>aws_route_table_association.entry_39</title>
-<tspan x="60" y="352" xml:space="preserve">aws_route_table_association.entry_39</tspan>
+<tspan x="60" y="412" xml:space="preserve">aws_route_table_association.entry_39</tspan>
 </text>
-<text font-size="12" fill="#334155"><tspan x="60" y="372" xml:space="preserve">Action: create</tspan></text>
-<text font-size="12" fill="#334155"><tspan x="76" y="392" xml:space="preserve">- Connects (association, undirected)</tspan></text>
-<a href="#resource-6177735f7375626e65742e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_subnet.private"><text font-size="12" fill="#334155"><tspan x="92" y="412" xml:space="preserve">- aws_subnet.private</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="60" y="432" xml:space="preserve">Action: create</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="60" y="452" xml:space="preserve">Resource scope: Region: unknown</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="76" y="472" xml:space="preserve">- Connects (association, undirected)</tspan></text>
+<a href="#resource-6177735f7375626e65742e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_subnet.private · Region: unknown"><text font-size="12" fill="#334155"><tspan x="92" y="492" xml:space="preserve">- aws_subnet.private · Region: unknown</tspan></text>
 </a>
-<a href="#resource-6177735f726f7574655f7461626c652e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_route_table.private"><text font-size="12" fill="#334155"><tspan x="92" y="432" xml:space="preserve">- aws_route_table.private</tspan></text>
+<a href="#resource-6177735f726f7574655f7461626c652e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_route_table.private · Region: unknown"><text font-size="12" fill="#334155"><tspan x="92" y="512" xml:space="preserve">- aws_route_table.private · Region: unknown</tspan></text>
 </a>
 </g>
 <g data-relationship-entry="40" id="relationship-5b5b5b226177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3430222c6e756c6c5d5d2c5b5b227465727261666f726d3a3631373737333566373337353632366536353734326537303732363937363631373436352d63757272656e74222c227465727261666f726d3a363137373733356637323666373537343635356637343631363236633635326537303732363937363631373436352d63757272656e74222c226173736f63696174696f6e222c22756e6469726563746564225d5d5d"><title>Relationship [40]: Connects (association, undirected): aws_subnet.private / aws_route_table.private</title><a href="#relationship-5b5b5b226177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3430222c6e756c6c5d5d2c5b5b227465727261666f726d3a3631373737333566373337353632366536353734326537303732363937363631373436352d63757272656e74222c227465727261666f726d3a363137373733356637323666373537343635356637343631363236633635326537303732363937363631373436352d63757272656e74222c226173736f63696174696f6e222c22756e6469726563746564225d5d5d" data-relationship-select="true" aria-label="Relationship [40]: Connects (association, undirected): aws_subnet.private / aws_route_table.private">
-<rect x="16" y="447" width="32" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="32" y="460" text-anchor="middle" font-size="11" fill="#334155">[40]</text>
+<rect x="16" y="527" width="32" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="32" y="540" text-anchor="middle" font-size="11" fill="#334155">[40]</text>
 </a>
 <text data-source-address="aws_route_table_association.entry_40" data-source-identity="terraform:6177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3430-current" font-size="12" font-weight="600" fill="#334155"><title>aws_route_table_association.entry_40</title>
-<tspan x="60" y="460" xml:space="preserve">aws_route_table_association.entry_40</tspan>
+<tspan x="60" y="540" xml:space="preserve">aws_route_table_association.entry_40</tspan>
 </text>
-<text font-size="12" fill="#334155"><tspan x="60" y="480" xml:space="preserve">Action: create</tspan></text>
-<text font-size="12" fill="#334155"><tspan x="76" y="500" xml:space="preserve">- Connects (association, undirected)</tspan></text>
-<a href="#resource-6177735f7375626e65742e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_subnet.private"><text font-size="12" fill="#334155"><tspan x="92" y="520" xml:space="preserve">- aws_subnet.private</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="60" y="560" xml:space="preserve">Action: create</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="60" y="580" xml:space="preserve">Resource scope: Region: unknown</tspan></text>
+<text font-size="12" fill="#334155"><tspan x="76" y="600" xml:space="preserve">- Connects (association, undirected)</tspan></text>
+<a href="#resource-6177735f7375626e65742e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_subnet.private · Region: unknown"><text font-size="12" fill="#334155"><tspan x="92" y="620" xml:space="preserve">- aws_subnet.private · Region: unknown</tspan></text>
 </a>
-<a href="#resource-6177735f726f7574655f7461626c652e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_route_table.private"><text font-size="12" fill="#334155"><tspan x="92" y="540" xml:space="preserve">- aws_route_table.private</tspan></text>
+<a href="#resource-6177735f726f7574655f7461626c652e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_route_table.private · Region: unknown"><text font-size="12" fill="#334155"><tspan x="92" y="640" xml:space="preserve">- aws_route_table.private · Region: unknown</tspan></text>
 </a>
 </g>
 </g>
 </g>
 </g></g>
 </g>
-<g data-architecture="true" transform="translate(0 1260)">
+<g data-architecture="true" transform="translate(0 1460)">
 <g data-container="resource-6177735f7375626e65742e70726976617465-current"><title>aws_subnet.private</title><rect x="60" y="160" width="520" height="1101" rx="12" fill="#ecfdf5" stroke="#047857" stroke-width="2" data-mode="managed"/></g>
 <path d="M 580 194 L 622 194 Q 630 194 630 202 L 630 234 Q 630 242 638 242 L 680 242 " data-edge-kind="association" data-relationship-ids="relationship-5b5b5b226177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3031222c6e756c6c5d5d2c5b5b227465727261666f726d3a3631373737333566373337353632366536353734326537303732363937363631373436352d63757272656e74222c227465727261666f726d3a363137373733356637323666373537343635356637343631363236633635326537303732363937363631373436352d63757272656e74222c226173736f63696174696f6e222c22756e6469726563746564225d5d5d" data-directionality="undirected" data-source="resource-6177735f7375626e65742e70726976617465-current" data-target="resource-6177735f726f7574655f7461626c652e70726976617465-current" fill="none" stroke="#047857" stroke-width="2" stroke-dasharray="7 4" stroke-linejoin="round"><title>aws_subnet.private ↔ aws_route_table.private (association; create: aws_route_table_association.entry_01)</title></path>
 <path d="M 580 220 L 618 220 Q 626 220 626 228 L 626 282 Q 626 290 634 290 L 680 290 " data-edge-kind="association" data-relationship-ids="relationship-5b5b5b226177735f726f7574655f7461626c655f6173736f63696174696f6e2e656e7472795f3032222c6e756c6c5d5d2c5b5b227465727261666f726d3a3631373737333566373337353632366536353734326537303732363937363631373436352d63757272656e74222c227465727261666f726d3a363137373733356637323666373537343635356637343631363236633635326537303732363937363631373436352d63757272656e74222c226173736f63696174696f6e222c22756e6469726563746564225d5d5d" data-directionality="undirected" data-source="resource-6177735f7375626e65742e70726976617465-current" data-target="resource-6177735f726f7574655f7461626c652e70726976617465-current" fill="none" stroke="#047857" stroke-width="2" stroke-dasharray="7 4" stroke-linejoin="round"><title>aws_subnet.private ↔ aws_route_table.private (association; create: aws_route_table_association.entry_02)</title></path>
