@@ -79,6 +79,10 @@ viewer has no runtime layout engine: hiding rows alone would leave stale geometr
 and links. That follow-up must distinguish filtered targets from absent resources
 and must never restore resources excluded by CLI focus or changed-only selection.
 
+The Relationship lines card has a 960px width cap in both SVG and HTML. Its five
+entries use two columns (2 / 2 / 1), falling back to one when space is narrow.
+The architecture canvas retains its own width; named states share one legend.
+
 The [representative example](../examples/viewer.html) includes logical resources,
 Uses references, unresolved references, managed/data resources and component
 membership. Regenerate it from the committed fixture:

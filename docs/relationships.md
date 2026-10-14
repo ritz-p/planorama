@@ -6,7 +6,8 @@ The neutral **Relationship lines** card explains relationship colors, line
 patterns, attachment circles, directions and numbered markers separately from the
 resource action legend and the numbered **Relationship Resources** index.
 Action colors and their explanation appear above a grid of relationship kinds.
-The grid uses one to five columns according to the available width, reading left
+The card is capped at 960px, matching the maintained viewer example. The grid uses
+at most two columns according to the available width, reading left
 to right before continuing on the next row: Dependency, Association, Directed
 Association, Connection, Containment. Each cell keeps its complete sample and
 wrapped explanation. On narrow diagrams, a single column puts the sample above
@@ -14,7 +15,7 @@ the text; each row reserves the height of its tallest cell.
 
 Single-plan output reserves the measured legend height before checks and annotations.
 Named-state SVG and HTML show one shared legend above all state sections, using
-the widest state's content width and excluding the cross-state routing gutter.
+the widest state's content width up to the same cap, excluding the cross-state routing gutter.
 Its action colors come from all displayed states; if none has a non-containment
 relationship, no legend or legend height is added. State-local checks, annotations
 and Relationship Resources indexes retain their own identities and numbering.

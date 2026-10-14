@@ -187,16 +187,19 @@ fn relationship_legend_wraps_actions_and_text_inside_its_measured_bounds() {
         (720, 1),
         (899, 1),
         (900, 2),
+        (1039, 2),
+        (1040, 2),
+        (1041, 2),
         (1120, 2),
         (1321, 2),
-        (1322, 3),
-        (1743, 3),
-        (1744, 4),
-        (2165, 4),
-        (2166, 5),
-        (2200, 5),
-        (4306, 5),
-        (12000, 5),
+        (1322, 2),
+        (1743, 2),
+        (1744, 2),
+        (2165, 2),
+        (2166, 2),
+        (2200, 2),
+        (4306, 2),
+        (12000, 2),
     ] {
         let legend = Legend::new(&graph, available_width);
         let document = roxmltree::Document::parse(legend.render()).unwrap();
@@ -204,9 +207,12 @@ fn relationship_legend_wraps_actions_and_text_inside_its_measured_bounds() {
         let rectangle = root.children().find(|n| n.has_tag_name("rect")).unwrap();
         let width = number(rectangle, "width");
         let height = number(rectangle, "height");
-        assert_eq!(legend.width, available_width.max(360));
+        assert_eq!(legend.width, available_width.clamp(360, 1040));
         assert_eq!(width + 80, legend.width);
         assert_eq!(legend.height, height + 12);
+        if available_width >= 1040 {
+            assert_eq!(legend.render(), Legend::new(&graph, 1040).render());
+        }
         heights.insert(available_width, legend.height);
         let actions: Vec<_> = root
             .descendants()
@@ -361,7 +367,7 @@ fn relationship_legend_wraps_actions_and_text_inside_its_measured_bounds() {
     }
     assert!(heights[&720] > heights[&4306]);
     assert!(action_rows[&240] > action_rows[&1120]);
-    assert_eq!(heights[&4306], heights[&12000]);
+    assert_eq!(heights[&1120], heights[&12000]);
 }
 
 #[test]

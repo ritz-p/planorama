@@ -27,9 +27,9 @@ runtime layout measurements. The CLI owns the separate report destination.
 | `html` | Local viewer, explicit value-free resource index from the selected view, and navigation over rendered SVG metadata |
 
 SVG composition places non-spatial annotations after the header, legend and checks,
-above the architecture. The neutral relationship legend uses its full allocated
-width inside the margins. Its five relationship kinds form a deterministic
-one-to-five-column grid below the action/color explanation. Multiple columns
+above the architecture. The neutral relationship legend has a 960px card-width
+cap. Its five relationship kinds form a deterministic
+one- or two-column grid below the action/color explanation. Multiple columns
 require at least 398px per cell with 24px gaps; cells stop widening at 640px.
 Narrow single-column cells place the sample above the text. Each grid row reserves
 its tallest complete cell, including wrapped text and symbols. The same measured

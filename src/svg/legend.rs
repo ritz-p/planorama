@@ -10,6 +10,7 @@ const SAMPLE_NUMBER: usize = 12;
 const SAMPLE_INSET: usize = 5;
 const MIN_TEXT_WIDTH: usize = 208;
 const MAX_ENTRY_WIDTH: usize = 640;
+const MAX_CARD_WIDTH: usize = 960;
 const MAX_PROSE_WIDTH: usize = 1040;
 const COLUMN_GAP: usize = 24;
 const ROW_GAP: usize = 16;
@@ -108,7 +109,7 @@ impl Legend {
         if actions.is_empty() {
             return Self::empty(available_width);
         }
-        let width = available_width.max(360);
+        let width = available_width.clamp(360, MAX_CARD_WIDTH + 80);
         let card_width = width - 80;
         let mut content = Content {
             width: card_width,
@@ -173,7 +174,7 @@ impl Content {
             return;
         };
         let columns = ((self.width + COLUMN_GAP) / (minimum + COLUMN_GAP))
-            .max(1)
+            .clamp(1, 2)
             .min(entries.len());
         let cell_width = ((self.width - (columns - 1) * COLUMN_GAP) / columns).min(MAX_ENTRY_WIDTH);
         for row in entries.chunks(columns) {
