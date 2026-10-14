@@ -247,7 +247,7 @@ impl Index {
         result
     }
 
-    fn visible(
+    pub(in crate::layout) fn visible(
         &self,
         horizontal: bool,
         coordinate: f64,

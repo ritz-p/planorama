@@ -404,7 +404,7 @@ Mask IDs and groups sort by resource identity and are namespaced in named states
 ## Verification
 
 Tests cover hierarchy, variable-sized bounds, dense routing, bundles, input/module
-reordering and SVG regressions. `tests/support/layout_metrics.rs` measures pairwise
+reordering and SVG regressions. `src/layout/metrics.rs` measures pairwise
 overlap, internal orthogonal crossings, bends and length; endpoint contacts and
 self-crossings are excluded. Run the [Docker checks](../README.md#開発・検証).
 The large fixture also checks every visible edge: at most 14 bends and a length
@@ -434,6 +434,8 @@ so larger content-driven cards do not fail an obsolete absolute-distance cap. Th
 checks use the current card geometry and repeat after edge reordering; they do
 not require a path to pass behind a particular container.
 Performance measurements are documented in [benchmarks](benchmarks.md).
+Opt-in [layout diagnostics](layout-diagnostics.md) report the final selected
+diagram, visible spatial findings and explicitly labelled raw-polyline metrics.
 The single-path border fixture covers all three relationship widths, both axes,
 and 32px/300px frame spans. A 12px card gap grows by 8px, followed by a coherent
 two-bend reroute into the resulting 20px corridor. A protected-junction variant

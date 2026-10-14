@@ -168,7 +168,30 @@ fn self_intersections_are_excluded_from_edge_pair_metrics() {
 }
 
 #[test]
-#[should_panic(expected = "orthogonal paths")]
-fn diagonal_segments_are_rejected() {
-    measure(&[path(&[(0, 0), (10, 10)])]);
+fn unsupported_diagonal_segments_do_not_panic_or_invent_orthogonal_length() {
+    assert_eq!(
+        measure(&[path(&[(0, 0), (10, 10)])]),
+        LayoutMetrics::default()
+    );
+    for points in [
+        vec![(0, 0), (10, 0), (20, 10), (30, 10)],
+        vec![(0, 0), (10, 0), (20, 10), (10, 0), (20, 0)],
+        vec![(0, 0), (10, 0), (20, 10), (10, 0), (10, 10)],
+    ] {
+        let actual = measure(&[path(&points)]);
+        assert_eq!(actual.bend_count, 0);
+        assert_eq!(actual.total_path_length, 20);
+    }
+}
+
+#[test]
+fn direction_reversals_count_as_bends_but_forward_subdivisions_do_not() {
+    let paths = [path(&[(0, 10), (10, 10), (20, 10), (5, 10), (5, 20)])];
+    let actual = measure(&paths);
+    assert_eq!(actual.bend_count, 2);
+    assert_eq!(actual.total_path_length, 45);
+    assert_eq!(
+        measure(&[path(&[(0, 10), (10, 10), (20, 10)])]).bend_count,
+        0
+    );
 }

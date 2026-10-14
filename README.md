@@ -80,6 +80,7 @@ docker compose exec -T dev cargo run --locked -- - -o - < plan.json > diagram.sv
 | レイヤー構成・レイアウト | [Architecture](docs/architecture.md)、[Routing](docs/routing.md) |
 | AWS・Terraform 組み込みリソース用アイコンの出典・ライセンス | [Icons](docs/icons.md) |
 | 性能計測 | [Benchmarks](docs/benchmarks.md) |
+| 最終レイアウトの text / JSON 診断 | [Layout diagnostics](docs/layout-diagnostics.md) |
 | 複数 state・AWS account・region を組み合わせた大型例 | [生成方法・計測](examples/multi-account/README.md)、[SVG](examples/multi-account/diagram.svg)、[HTML](examples/multi-account/diagram.html) |
 | CI による SVG 生成・自動コミット・PR 検証結果 | [SVG automation](docs/ci.md) |
 

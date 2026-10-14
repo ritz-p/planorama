@@ -21,6 +21,7 @@ mod scopes;
 mod states;
 mod style;
 pub(crate) use identity::resource as resource_id;
+pub(crate) use states::render_report as render_states_report;
 pub use states::render_states;
 pub(crate) use states::{prefix as state_prefix, render_content as render_states_content};
 #[cfg(test)]
@@ -232,8 +233,30 @@ pub(crate) fn render_content(
     address_format: AddressFormat,
     content: Content,
 ) -> String {
+    render_report(graph, layout, address_format, content, None)
+}
+
+pub(crate) fn render_report(
+    graph: &Graph,
+    layout: &Layout<'_>,
+    address_format: AddressFormat,
+    content: Content,
+    report: Option<&mut serde_json::Value>,
+) -> String {
     let relationship_index = relationship_index::Index::new(graph, layout);
     let sections = Sections::new(graph, layout, &relationship_index, address_format);
+    if let Some(report) = report {
+        let mut scene = crate::layout::diagnostics::Scene::default();
+        scene.add_state(
+            graph,
+            layout,
+            None,
+            sections.height(),
+            diagnostic_cards(graph, layout),
+        );
+        let (width, height) = sections.dimensions(layout);
+        *report = scene.finish(width, height);
+    }
     render_with_index(
         graph,
         layout,
@@ -242,6 +265,17 @@ pub(crate) fn render_content(
         &sections,
         content,
     )
+}
+
+fn diagnostic_cards(graph: &Graph, layout: &Layout<'_>) -> serde_json::Value {
+    serde_json::json!({
+        "spatial": layout.bounds.iter().zip(&graph.nodes).filter(|(b, n)| b.width > 0 && b.height > 0 && n.placement != crate::model::Placement::Logical && crate::view::routes::owner(graph, n).is_none()).count(),
+        "logical_resources": graph.nodes.iter().filter(|n| n.placement == crate::model::Placement::Logical).count(),
+        "logical_groups": logical::group_count(graph),
+        "embedded_routes": graph.nodes.iter().enumerate().map(|(i, _)| crate::view::routes::cards(graph, i).len()).sum::<usize>(),
+        "logical_components": components::cards(graph).len(),
+        "relationship_groups": relationship_index::Index::new(graph, layout).cards().len(),
+    })
 }
 
 fn render_with_index(

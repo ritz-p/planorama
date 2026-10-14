@@ -4,8 +4,7 @@ pub(crate) use geometry::{Bounds, Point, Port, Side};
 mod containers;
 mod containment;
 pub(crate) use containment::ContainmentTree;
-#[cfg(test)]
-#[path = "../tests/support/layout_metrics.rs"]
+pub(crate) mod diagnostics;
 pub(crate) mod metrics;
 mod pipeline;
 mod placement;
