@@ -119,6 +119,24 @@ pub(super) fn apply(
     baseline: &[Shape],
     expanded: bool,
 ) -> bool {
+    let numbers = relationship_markers::numbers(graph);
+    let legal = |layout: &Layout<'_>, i: usize| {
+        let path = &layout.paths[i];
+        if path.len() < 2 {
+            return true;
+        }
+        let start = terminal(path, 0);
+        let end = terminal(path, 1);
+        let mut obstacles = crate::layout::containers::routing::obstacles(layout, &graph.edges[i]);
+        reserve_terminals(graph, layout, i, &mut obstacles);
+        ports::valid_with_clearances(
+            path,
+            start,
+            end,
+            &obstacles,
+            relationship_markers::terminals(graph, i, numbers[i], [start.side, end.side]),
+        )
+    };
     let mut order: Vec<_> = layout
         .paths
         .iter()
@@ -126,7 +144,9 @@ pub(super) fn apply(
         .filter(|(i, p)| {
             movable(layout, *i)
                 && (plan.lanes.iter().any(|l| l.edge == *i)
-                    || (expanded && length(p) != length(&before.paths[*i])))
+                    || (expanded
+                        && *p != &before.paths[*i]
+                        && (!Shape::measure(p).fits(baseline[*i]) || !legal(layout, *i))))
         })
         .map(|(i, _)| i)
         .collect();
@@ -146,7 +166,6 @@ pub(super) fn apply(
             e.change.as_ref().map(|c| (&c.address, c.action)),
         )
     });
-    let numbers = relationship_markers::numbers(graph);
     let mut routed = 0;
     for &i in &order {
         let overlap_before: usize = before
@@ -315,8 +334,20 @@ pub(super) fn apply(
     if expanded && routed == 0 {
         return false;
     }
+    let changed: Vec<_> = layout
+        .paths
+        .iter()
+        .enumerate()
+        .filter(|(i, path)| *path != &before.paths[*i] && !bundled(layout, *i))
+        .map(|(i, _)| i)
+        .collect();
     !super::super::slots::opposite_roles_collide(graph, &layout.paths)
-        && preserves_overlap(&before.paths, &layout.paths, &order)
+        && preserves_overlap(&before.paths, &layout.paths, &changed)
+        && layout
+            .paths
+            .iter()
+            .enumerate()
+            .all(|(i, path)| path == &before.paths[i] || legal(layout, i))
         && layout.paths.iter().enumerate().all(|(i, path)| {
             path.len() < 2
                 || [graph.edges[i].from, graph.edges[i].to]

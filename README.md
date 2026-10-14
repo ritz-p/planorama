@@ -93,6 +93,7 @@ docker compose exec -T dev cargo fmt --all --check
 docker compose exec -T dev cargo test --locked --all-targets --all-features
 docker compose exec -T dev cargo clippy --locked --all-targets --all-features -- -D warnings
 docker compose exec -T dev cargo build --locked
+docker compose exec -T dev sh -c 'node --test tests/ci/*.test.cjs'
 docker compose exec -T dev python3 tests/browser/viewer.py
 docker build --build-arg RUST_VERSION=1.85.0 -t planorama-msrv .
 docker run --rm --mount type=bind,source=.,target=/workspace --env CARGO_TARGET_DIR=/tmp/planorama-target planorama-msrv cargo +1.85.0 test --locked --all-targets --all-features

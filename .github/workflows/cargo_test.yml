@@ -88,6 +88,18 @@ jobs:
         run: node .github/scripts/test-suites.cjs "$TEST_SUITE" compile
       - name: Run tests
         run: node .github/scripts/test-suites.cjs "$TEST_SUITE" run
+      - name: Calibrate spacing budgets
+        if: matrix.suite == 'standard'
+        env:
+          PLANORAMA_SPACING_REPORT_DIR: output/spacing-calibration
+        run: cargo test --locked --bin planorama budget_calibration -- --ignored --nocapture
+      - name: Upload spacing comparison
+        if: matrix.suite == 'standard'
+        uses: actions/upload-artifact@v7.0.2
+        with:
+          name: spacing-calibration
+          path: output/spacing-calibration
+          if-no-files-found: error
 
   tests:
     name: ${{ github.event_name == 'workflow_dispatch' && 'Dispatched Tests' || 'Tests' }}
