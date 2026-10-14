@@ -184,7 +184,7 @@ fn bend_count(paths: &[Vec<Segment>]) -> usize {
         .iter()
         .map(|path| {
             path.windows(2)
-                .filter(|pair| pair[0].axis != pair[1].axis)
+                .filter(|pair| !pair[0].continues(pair[1]))
                 .count()
         })
         .sum()

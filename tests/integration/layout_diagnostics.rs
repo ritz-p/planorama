@@ -77,6 +77,35 @@ fn diagnostics_destinations_cannot_overwrite_inputs_or_diagrams() {
     }
 }
 
+#[cfg(unix)]
+#[test]
+fn dangling_output_symlinks_are_rejected_before_either_file_is_written() {
+    let root = std::env::temp_dir().join(format!("planorama-layout-alias-{}", std::process::id()));
+    std::fs::create_dir_all(&root).unwrap();
+    for report_is_link in [false, true] {
+        let diagram = root.join(format!("diagram-{report_is_link}.svg"));
+        let report = root.join(format!("report-{report_is_link}.json"));
+        let (link, target) = if report_is_link {
+            (&report, &diagram)
+        } else {
+            (&diagram, &report)
+        };
+        std::os::unix::fs::symlink(target.file_name().unwrap(), link).unwrap();
+        let output = cli()
+            .arg("examples/plan.json")
+            .arg("-o")
+            .arg(&diagram)
+            .arg("--layout-diagnostics-json")
+            .arg(&report)
+            .output()
+            .unwrap();
+        assert!(!output.status.success());
+        assert!(String::from_utf8_lossy(&output.stderr).contains("output symlink"));
+        assert!(!target.exists());
+    }
+    std::fs::remove_dir_all(root).unwrap();
+}
+
 #[test]
 fn cross_state_report_uses_final_gutter_coordinates() {
     let report = std::env::temp_dir().join(format!(

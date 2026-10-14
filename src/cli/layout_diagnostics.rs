@@ -23,6 +23,29 @@ impl Options {
         if path == Path::new("-") {
             return Err("--layout-diagnostics-json requires a separate file, not '-'".into());
         }
+        for destination in [path.as_path(), output] {
+            if destination == Path::new("-") {
+                continue;
+            }
+            match std::fs::symlink_metadata(destination) {
+                Ok(metadata) if metadata.is_symlink() => {
+                    destination.canonicalize().map_err(|e| {
+                        format!(
+                            "cannot resolve output symlink {}: {e}",
+                            destination.display()
+                        )
+                    })?;
+                }
+                Ok(_) => {}
+                Err(e) if e.kind() == std::io::ErrorKind::NotFound => {}
+                Err(e) => {
+                    return Err(format!(
+                        "cannot inspect output {}: {e}",
+                        destination.display()
+                    ));
+                }
+            }
+        }
         for input in inputs {
             super::states::protect_input(input.as_ref(), path)?;
         }

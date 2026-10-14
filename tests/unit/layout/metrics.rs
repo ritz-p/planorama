@@ -174,3 +174,15 @@ fn unsupported_diagonal_segments_do_not_panic_or_invent_orthogonal_length() {
         LayoutMetrics::default()
     );
 }
+
+#[test]
+fn direction_reversals_count_as_bends_but_forward_subdivisions_do_not() {
+    let paths = [path(&[(0, 10), (10, 10), (20, 10), (5, 10), (5, 20)])];
+    let actual = measure(&paths);
+    assert_eq!(actual.bend_count, 2);
+    assert_eq!(actual.total_path_length, 45);
+    assert_eq!(
+        measure(&[path(&[(0, 10), (10, 10), (20, 10)])]).bend_count,
+        0
+    );
+}
