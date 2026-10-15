@@ -23,6 +23,11 @@ docker compose exec -T dev cargo run --locked -- examples/terraform-large/plan.j
 docker compose exec -T dev cargo test --locked --test large_example
 ```
 
+The SVG integration test remains required on PRs. Three repeated-layout and
+quality unit regressions run after merge and nightly; run them locally with
+`docker compose exec -T dev cargo test --locked --all-features --bin planorama deferred_regression_ -- --ignored --test-threads=2 --nocapture`.
+See [coverage categories](../../docs/ci.md#deferred-routing-regressions-253).
+
 The committed `plan.json` is synthetic, not captured Terraform output. The Rust
 generator reads the adjacent `main.tf.json` files and derives references, module
 input/output aliases and native addresses. Managed instances use `create`; data
