@@ -1,0 +1,462 @@
+{
+  "contract": {
+    "version": 1,
+    "renderer": "planorama-final-layout-v1",
+    "fixture": "multi-state",
+    "args": [
+      "--state",
+      "producer=tests/fixtures/multi/producer.json",
+      "--state",
+      "consumer=tests/fixtures/multi/consumer.json",
+      "--remote-state",
+      "consumer:data.terraform_remote_state.network=producer"
+    ],
+    "inputs": [
+      {
+        "path": "tests/fixtures/multi/producer.json",
+        "sha256": "6373f26ca11a492e31444c0beecfeed2fd4aee92c76c6c7de9abc482c536fc81"
+      },
+      {
+        "path": "tests/fixtures/multi/consumer.json",
+        "sha256": "7645011e071d204cba0345c797304f6cc8913b6ed469fa9932443c8a9ae47c33"
+      }
+    ],
+    "budgets": {
+      "crossings": {
+        "mode": "gate",
+        "absolute": 0,
+        "relative": 0
+      },
+      "overlap": {
+        "mode": "gate",
+        "absolute": 0,
+        "relative": 0
+      },
+      "parallel": {
+        "mode": "gate",
+        "absolute": 0,
+        "relative": 0
+      },
+      "border": {
+        "mode": "gate",
+        "absolute": 0.25,
+        "relative": 0
+      },
+      "area": {
+        "mode": "info",
+        "absolute": 0,
+        "relative": 0
+      },
+      "bends": {
+        "mode": "gate",
+        "absolute": 2,
+        "relative": 0
+      },
+      "length": {
+        "mode": "info",
+        "absolute": 0,
+        "relative": 0
+      },
+      "edge_border": {
+        "mode": "gate",
+        "absolute": 0.25,
+        "relative": 0
+      }
+    }
+  },
+  "report": {
+    "canvas": {
+      "height": 1858,
+      "width": 1224
+    },
+    "category": "layout",
+    "edges": [
+      {
+        "id": "{\"cross_state\":true,\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":{\"output\":\"both\",\"remote\":\"data.terraform_remote_state.network\"},\"source\":{\"id\":\"aws_subnet.app\",\"state\":\"producer\"},\"target\":{\"id\":\"aws_instance.other\",\"state\":\"consumer\"}}",
+        "identity": {
+          "cross_state": true,
+          "directionality": "directed",
+          "kind": "dependency",
+          "provenance": {
+            "output": "both",
+            "remote": "data.terraform_remote_state.network"
+          },
+          "source": {
+            "id": "aws_subnet.app",
+            "state": "producer"
+          },
+          "target": {
+            "id": "aws_instance.other",
+            "state": "consumer"
+          }
+        },
+        "polyline": [
+          [
+            460,
+            1494
+          ],
+          [
+            1162,
+            1494
+          ],
+          [
+            1162,
+            1050
+          ],
+          [
+            800,
+            1050
+          ]
+        ],
+        "raw_polyline": {
+          "bends": 2,
+          "length": 1508
+        },
+        "visible_border": {
+          "close_length": 0,
+          "minimum_deficit": 0,
+          "minimum_gap_within_8px": null,
+          "preferred_deficit": 0
+        }
+      },
+      {
+        "id": "{\"cross_state\":true,\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":{\"output\":\"both\",\"remote\":\"data.terraform_remote_state.network\"},\"source\":{\"id\":\"aws_subnet.other\",\"state\":\"producer\"},\"target\":{\"id\":\"aws_instance.other\",\"state\":\"consumer\"}}",
+        "identity": {
+          "cross_state": true,
+          "directionality": "directed",
+          "kind": "dependency",
+          "provenance": {
+            "output": "both",
+            "remote": "data.terraform_remote_state.network"
+          },
+          "source": {
+            "id": "aws_subnet.other",
+            "state": "producer"
+          },
+          "target": {
+            "id": "aws_instance.other",
+            "state": "consumer"
+          }
+        },
+        "polyline": [
+          [
+            460,
+            1670
+          ],
+          [
+            1174,
+            1670
+          ],
+          [
+            1174,
+            1050
+          ],
+          [
+            800,
+            1050
+          ]
+        ],
+        "raw_polyline": {
+          "bends": 2,
+          "length": 1708
+        },
+        "visible_border": {
+          "close_length": 0,
+          "minimum_deficit": 0,
+          "minimum_gap_within_8px": null,
+          "preferred_deficit": 0
+        }
+      },
+      {
+        "id": "{\"cross_state\":true,\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":{\"output\":\"subnet\",\"remote\":\"data.terraform_remote_state.network\"},\"source\":{\"id\":\"aws_subnet.app\",\"state\":\"producer\"},\"target\":{\"id\":\"aws_instance.app\",\"state\":\"consumer\"}}",
+        "identity": {
+          "cross_state": true,
+          "directionality": "directed",
+          "kind": "dependency",
+          "provenance": {
+            "output": "subnet",
+            "remote": "data.terraform_remote_state.network"
+          },
+          "source": {
+            "id": "aws_subnet.app",
+            "state": "producer"
+          },
+          "target": {
+            "id": "aws_instance.app",
+            "state": "consumer"
+          }
+        },
+        "polyline": [
+          [
+            460,
+            1494
+          ],
+          [
+            1150,
+            1494
+          ],
+          [
+            1150,
+            914
+          ],
+          [
+            800,
+            914
+          ]
+        ],
+        "raw_polyline": {
+          "bends": 2,
+          "length": 1620
+        },
+        "visible_border": {
+          "close_length": 0,
+          "minimum_deficit": 0,
+          "minimum_gap_within_8px": null,
+          "preferred_deficit": 0
+        }
+      },
+      {
+        "id": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"data.terraform_remote_state.network\",\"from_deposed_key\":null,\"to\":\"aws_instance.app\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:646174612e7465727261666f726d5f72656d6f74655f73746174652e6e6574776f726b-current\",\"state\":\"consumer\"},\"target\":{\"id\":\"terraform:6177735f696e7374616e63652e617070-current\",\"state\":\"consumer\"}}",
+        "identity": {
+          "directionality": "directed",
+          "kind": "dependency",
+          "provenance": [
+            {
+              "from": "data.terraform_remote_state.network",
+              "from_deposed_key": null,
+              "to": "aws_instance.app",
+              "to_deposed_key": null
+            }
+          ],
+          "relationship_resource": null,
+          "source": {
+            "id": "terraform:646174612e7465727261666f726d5f72656d6f74655f73746174652e6e6574776f726b-current",
+            "state": "consumer"
+          },
+          "target": {
+            "id": "terraform:6177735f696e7374616e63652e617070-current",
+            "state": "consumer"
+          }
+        },
+        "polyline": [
+          [
+            380,
+            914
+          ],
+          [
+            480,
+            914
+          ]
+        ],
+        "raw_polyline": {
+          "bends": 0,
+          "length": 100
+        },
+        "visible_border": {
+          "close_length": 0,
+          "minimum_deficit": 0,
+          "minimum_gap_within_8px": null,
+          "preferred_deficit": 0
+        }
+      },
+      {
+        "id": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"data.terraform_remote_state.network\",\"from_deposed_key\":null,\"to\":\"aws_instance.other\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:646174612e7465727261666f726d5f72656d6f74655f73746174652e6e6574776f726b-current\",\"state\":\"consumer\"},\"target\":{\"id\":\"terraform:6177735f696e7374616e63652e6f74686572-current\",\"state\":\"consumer\"}}",
+        "identity": {
+          "directionality": "directed",
+          "kind": "dependency",
+          "provenance": [
+            {
+              "from": "data.terraform_remote_state.network",
+              "from_deposed_key": null,
+              "to": "aws_instance.other",
+              "to_deposed_key": null
+            }
+          ],
+          "relationship_resource": null,
+          "source": {
+            "id": "terraform:646174612e7465727261666f726d5f72656d6f74655f73746174652e6e6574776f726b-current",
+            "state": "consumer"
+          },
+          "target": {
+            "id": "terraform:6177735f696e7374616e63652e6f74686572-current",
+            "state": "consumer"
+          }
+        },
+        "polyline": [
+          [
+            380,
+            914
+          ],
+          [
+            404,
+            914
+          ],
+          [
+            404,
+            1050
+          ],
+          [
+            480,
+            1050
+          ]
+        ],
+        "raw_polyline": {
+          "bends": 2,
+          "length": 236
+        },
+        "visible_border": {
+          "close_length": 0,
+          "minimum_deficit": 0,
+          "minimum_gap_within_8px": null,
+          "preferred_deficit": 0
+        }
+      }
+    ],
+    "findings": [
+      {
+        "category": "crossing",
+        "edge": "{\"cross_state\":true,\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":{\"output\":\"both\",\"remote\":\"data.terraform_remote_state.network\"},\"source\":{\"id\":\"aws_subnet.app\",\"state\":\"producer\"},\"target\":{\"id\":\"aws_instance.other\",\"state\":\"consumer\"}}",
+        "location": {
+          "point": [
+            1150,
+            1050
+          ]
+        },
+        "peer": "{\"cross_state\":true,\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":{\"output\":\"subnet\",\"remote\":\"data.terraform_remote_state.network\"},\"source\":{\"id\":\"aws_subnet.app\",\"state\":\"producer\"},\"target\":{\"id\":\"aws_instance.app\",\"state\":\"consumer\"}}",
+        "peer_segment": 1,
+        "segment": 2
+      },
+      {
+        "category": "crossing",
+        "edge": "{\"cross_state\":true,\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":{\"output\":\"both\",\"remote\":\"data.terraform_remote_state.network\"},\"source\":{\"id\":\"aws_subnet.other\",\"state\":\"producer\"},\"target\":{\"id\":\"aws_instance.other\",\"state\":\"consumer\"}}",
+        "location": {
+          "point": [
+            1150,
+            1050
+          ]
+        },
+        "peer": "{\"cross_state\":true,\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":{\"output\":\"subnet\",\"remote\":\"data.terraform_remote_state.network\"},\"source\":{\"id\":\"aws_subnet.app\",\"state\":\"producer\"},\"target\":{\"id\":\"aws_instance.app\",\"state\":\"consumer\"}}",
+        "peer_segment": 1,
+        "segment": 2
+      },
+      {
+        "category": "parallel_proximity",
+        "edge": "{\"cross_state\":true,\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":{\"output\":\"both\",\"remote\":\"data.terraform_remote_state.network\"},\"source\":{\"id\":\"aws_subnet.app\",\"state\":\"producer\"},\"target\":{\"id\":\"aws_instance.other\",\"state\":\"consumer\"}}",
+        "location": {
+          "coordinates": [
+            1162,
+            1150
+          ],
+          "horizontal": false,
+          "interval": [
+            1050,
+            1494
+          ],
+          "visible_gap": 10.5
+        },
+        "peer": "{\"cross_state\":true,\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":{\"output\":\"subnet\",\"remote\":\"data.terraform_remote_state.network\"},\"source\":{\"id\":\"aws_subnet.app\",\"state\":\"producer\"},\"target\":{\"id\":\"aws_instance.app\",\"state\":\"consumer\"}}",
+        "peer_segment": 1,
+        "segment": 1
+      },
+      {
+        "category": "parallel_proximity",
+        "edge": "{\"cross_state\":true,\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":{\"output\":\"both\",\"remote\":\"data.terraform_remote_state.network\"},\"source\":{\"id\":\"aws_subnet.app\",\"state\":\"producer\"},\"target\":{\"id\":\"aws_instance.other\",\"state\":\"consumer\"}}",
+        "location": {
+          "coordinates": [
+            1162,
+            1174
+          ],
+          "horizontal": false,
+          "interval": [
+            1050,
+            1494
+          ],
+          "visible_gap": 10.5
+        },
+        "peer": "{\"cross_state\":true,\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":{\"output\":\"both\",\"remote\":\"data.terraform_remote_state.network\"},\"source\":{\"id\":\"aws_subnet.other\",\"state\":\"producer\"},\"target\":{\"id\":\"aws_instance.other\",\"state\":\"consumer\"}}",
+        "peer_segment": 1,
+        "segment": 1
+      }
+    ],
+    "limits": {
+      "finding_limit": 20000,
+      "findings_complete": true,
+      "pair_comparisons": 66,
+      "pair_limit": 2000000,
+      "pair_metrics_complete": true,
+      "unsupported_diagonal_segments": 0
+    },
+    "policy": {
+      "approximations": [
+        "Pair metrics use rounded straight sections with conservative integer mask clipping; curve-to-curve and curve-to-line pair metrics unavailable.",
+        "Border metrics share routing's quarter-pixel clearance and 32-sample quadratic corner approximation; cross-state paths have square corners, approximated as rounded for border measurement.",
+        "Strokes use continuous envelopes: dash gaps, markers, text, scope/band borders and annotation cards are excluded from spatial conflicts.",
+        "Border minimum is null when no eligible border is within 8px; deficits use px squared; shared prefix/suffix trunks are excluded from independent overlap."
+      ],
+      "border_minimum_gap": 4,
+      "border_preferred_gap": 8,
+      "endpoint_convergence": 32,
+      "parallel_centerline_preference": 16,
+      "parallel_minimum_run": 64
+    },
+    "schema_version": 1,
+    "scope": "whole_diagram",
+    "states": [
+      {
+        "cards": {
+          "embedded_routes": 0,
+          "logical_components": 0,
+          "logical_groups": 0,
+          "logical_resources": 0,
+          "relationship_groups": 0,
+          "spatial": 3
+        },
+        "origin": [
+          0,
+          658
+        ],
+        "resources": 3,
+        "spatial_layout": {
+          "height": 568,
+          "width": 1040
+        },
+        "state": "consumer"
+      },
+      {
+        "cards": {
+          "embedded_routes": 0,
+          "logical_components": 0,
+          "logical_groups": 0,
+          "logical_resources": 0,
+          "relationship_groups": 0,
+          "spatial": 2
+        },
+        "origin": [
+          0,
+          1286
+        ],
+        "resources": 2,
+        "spatial_layout": {
+          "height": 552,
+          "width": 1100
+        },
+        "state": "producer"
+      }
+    ],
+    "summary": {
+      "raw_polyline": {
+        "bends": 8,
+        "length": 5172
+      },
+      "routed_paths": 5,
+      "visible_border_minimum_deficit": 0,
+      "visible_straight_sections": {
+        "crossings": 2,
+        "independent_overlap_length": 0,
+        "parallel_deficit": 3552,
+        "shared_trunk_length": 1068
+      }
+    },
+    "units": "SVG user units (px)"
+  }
+}

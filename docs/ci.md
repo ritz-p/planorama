@@ -108,6 +108,151 @@ Parallelism saves waiting time at the documented cost of additional workspace
 compilation and runner setup. Workflow, Clippy and formatting validation outside
 **Cargo test** are excluded from both sides of this comparison.
 
+## Layout quality comparison (#390)
+
+**Layout quality** runs on manual dispatch or PRs carrying the `layout-quality`
+label (including subsequent pushes). It is opt-in and independent of **Tests**;
+do not make this conditionally absent job a repository-wide required check.
+Manual dispatch becomes available after the workflow reaches the default branch.
+Its read-only job builds the pinned release renderer once, then renders six
+existing inputs sequentially: small, large, three-way fan-in/bundling, cross-state,
+account configuration and regions. JSON-only account configuration retains unknown
+account evidence; it does not claim saved-plan account resolution coverage.
+The expensive concentrated account-high-fan-in stress input is excluded; deferred
+routing regressions retain their separate non-blocking lane below.
+
+The [manifest](../tests/layout-quality/manifest.json) is the ordered fixture and
+budget authority. Each checked-in baseline records exact CLI arguments, SHA-256
+input bytes, budgets, comparison format version, renderer contract
+`planorama-final-layout-v1`, and the complete schema-1 final-layout report.
+The renderer contract describes interpretation, not a source commit: ordinary
+renderer changes must remain comparable. Change it when interpretation changes;
+new diagnostic schemas require explicit comparator support before rebaselining.
+Changed bytes (including input reordering), options or budgets require an explicit
+update. A separate CLI test proves reversed resource/configuration ordering and
+named-state argument ordering give identical diagnostics. Stable edge IDs and their
+lexicographic UTF-8 byte order (matching Rust, including Unicode IDs) must match;
+each ID must parse as JSON equal to its edge's structured identity.
+Duplicate IDs, missing/non-array findings, incomplete findings/pair analysis, unsupported diagonals, policy or
+schema mismatches fail as non-comparable, never as improvements.
+
+Every fixture currently selects the following budgets independently. For each
+measurement, permitted increase is `absolute + baseline * relative`; all initial
+relative budgets are zero. A numerical tolerance of at most `0.000001` absorbs
+floating-point comparison noise; values in artifacts retain their original
+precision. Border diagnostics already round to quarter-pixel clearance units.
+
+| Measurement | Policy | Absolute increase |
+| --- | --- | ---: |
+| Visible crossings | Gate | 0 |
+| Independent overlap length (px) | Gate | 0 |
+| Sustained parallel deficit (px²) | Gate | 0 |
+| Minimum border deficit (px²), total and each stable edge | Gate | 0.25 |
+| Raw bends on each stable edge | Gate | 2 |
+| Canvas area (px²) | Informational | unrestricted |
+| Raw length on each stable edge (px) | Informational | unrestricted |
+
+Area can legitimately increase to improve readability. Raw length is not route
+stretch: diagnostics do not expose a valid shortest route, so this comparator
+does not invent one. Existing deferred stretch tests remain authoritative.
+Shared bundle trunks are excluded from independent overlap. No aggregate score
+offsets a bad fixture or edge with improvements elsewhere. Basic routing,
+containment, snapshots and ordinary correctness tests remain independent.
+Crossings, overlap and parallel deficits are checked both in total and for each
+unordered pair of stable edge IDs, using the same absolute/relative budget on
+each pair's baseline. Contributions come from the existing findings: crossing
+counts, overlap interval lengths, and parallel interval lengths multiplied by the
+reported centerline preference minus separation. Visible conflicts are not reanalyzed.
+Before comparison or baseline updates, these contributions must match each
+summary total within `0.000001`; missing or excess contributions make either
+report non-comparable even when it declares complete findings.
+All required summary measurements, including routed-path counts, raw length/bends
+and shared-trunk length, must be present as finite nonnegative numbers.
+Canvas width and height must themselves be finite nonnegative JSON numbers
+before area is calculated; coercible strings and null are rejected.
+Routed-path count must equal the number of edge entries. Aggregate raw length
+and bends must equal their per-edge sums within `0.000001` before comparison
+or baseline updates, so stale edge values cannot conceal an aggregate change.
+Raw measurements are also checked against the serialized polyline: zero-length
+segments are ignored, consecutive runs in the same direction add no bend, and
+direction reversals do. Diagonals are non-comparable even if the declared
+unsupported count is zero. This is a report-consistency check; visible conflict
+measurements continue to come from the renderer's existing diagnostics.
+The minimum-border-deficit summary must likewise equal the per-edge sum.
+Both completeness flags must be the JSON boolean `true`; truthy strings and
+other non-boolean values are rejected.
+Segment positions and finding order do not define pair identity. A newly affected
+pair starts at zero, so improvements on another pair cannot hide its regression.
+
+Run or update locally inside Docker:
+
+```sh
+docker compose exec -T dev cargo build --release --locked --bin planorama
+docker compose exec -T dev node scripts/layout-quality.cjs check target/release/planorama output/layout-quality
+docker compose exec -T -e LAYOUT_QUALITY_BINARY=target/release/planorama dev node --test tests/ci/layout-quality.test.cjs
+# Only after reviewing the changed inputs, geometry and intended budgets:
+docker compose exec -T dev node scripts/layout-quality.cjs update target/release/planorama output/layout-quality-update
+git diff -- tests/layout-quality
+```
+
+Maintainers reviewing routing/layout PRs own the budgets. Baseline changes require
+a PR explanation identifying intentional geometry/input/schema changes and why
+any increased budget is acceptable. Inspect the full JSON and rendered diagrams
+before accepting changes; do not refresh baselines simply to clear a regression.
+Updates write baselines only after every fixture renders with comparable complete
+diagnostics. Missing/stale baselines fail checks. CI never updates or commits them.
+Each render removes its prior report first and must produce a new regular file;
+a successful process exit without fresh diagnostics cannot pass or update a baseline.
+The same freshness and regular-file checks apply to the SVG preview. Fixture IDs
+must be unique lowercase alphanumeric/hyphen names before any output is written.
+The manifest filename and `results` are reserved. Empty fixture lists, malformed
+input/argument lists and missing or invalid budgets are rejected before rendering,
+including per-edge budgets for fixtures with no edges.
+Pair findings require nonnegative integer segment indices and category-specific
+location fields with finite JSON numbers; numeric strings are not accepted.
+All finding segment indices, including peer and border references, must be less
+than the referenced polyline's point count minus one.
+Each routed polyline requires at least two finite two-coordinate points. State
+geometry/card counts, policy fields, collection limits and informational border
+measurements are also validated, including border-finding geometry.
+Output and baseline directories must be separate: identical directories and either
+ancestor/descendant relationship are rejected before creating output or invoking
+the renderer. This check resolves directory symlinks, including existing parents
+of a new output directory, so aliases cannot overwrite checked-in baselines.
+Before any removal, all report, SVG, log, aggregate and baseline destinations are
+checked against every declared input and the manifest, including symlink and
+hardlink aliases. Baseline destinations must be regular files when present.
+Updates stage each baseline in its own directory before an atomic rename; they
+do not truncate existing files on serialization/write failure. All rendering must
+succeed before this phase. The set of baseline renames is not a filesystem
+transaction: interruption between renames can leave a partial update, which must
+be rerun and reviewed. Concurrent mutation of inputs/output directories by another
+process is outside this local workflow's guarantees.
+
+The job publishes a bounded Markdown summary with deltas and stable relationship
+identities, and retains full reports, comparison details, renderer logs and preview
+SVGs for 14 days. Preview SVGs live only in the output artifact.
+Markdown is capped at 60,000 characters, with at most 2,000 characters per error;
+fixture statuses are listed first and detail space is divided between fixtures,
+so a verbose early fixture cannot remove later failures.
+Renderer logs retain captured process output. Per-edge border changes show only
+border findings; raw bend/length changes do not attach unrelated spatial findings.
+Prior artifacts for all selected fixtures and aggregate results are removed before
+reading inputs, so input failures cannot retain an earlier preview. Log and aggregate writes
+replace old files without following pre-existing file symlinks.
+The maintained SVG generation script is not run. Failures keep a failing job status. The job has
+a 35-minute ceiling, with 5 minutes for compilation, 2 minutes for comparison
+tests and 20 minutes for the six-fixture comparison. Each render has a 3-minute
+timeout, so even six sequential timeouts leave 2 minutes to finalize reports
+within the comparison step and 8 minutes of job headroom for setup/publication.
+Compilation and six layouts
+are additional opt-in cost; performance timings are never quality gates.
+Comparator tests run in the existing Workflow tests suite, and the opt-in lane
+also runs the real CLI input-order test.
+On 2026-10-15, Docker Desktop Linux with Rust 1.85.1 took 31.30 seconds for
+the six-fixture check, excluding compilation and including container startup.
+This is one local observation, not a CI time threshold or hosted-runner estimate.
+
 ## Deferred routing regressions (#253)
 
 **Routing regressions** runs after every PR merge into `main`, nightly at 18:23 UTC
@@ -465,7 +610,8 @@ for an earlier commit; dispatches remain independent of PR-event concurrency.
 Formatting, Clippy and Tests are dispatched after an SVG commit. MSRV is included
 when the full PR file list touches its existing toolchain/Cargo/Docker inputs,
 MSRV workflow or shared validation checkout helper. **Workflow tests** is included
-for changes under `.github/**` or `tests/ci/**`. This validation selection
+for changes under `.github/**`, `tests/ci/**`, `tests/layout-quality/**`, or to
+`scripts/layout-quality.cjs`. This validation selection
 examines the whole PR, including changes before the generated commit, independently
 of local generation decisions.
 
