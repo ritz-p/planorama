@@ -17,9 +17,17 @@ pub(super) fn card_width<T: AsRef<str>>(texts: impl Iterator<Item = T>) -> usize
         .clamp(360, 640)
 }
 
+pub(super) struct MeasuredAnnotationSection {
+    heading: String,
+    palette: super::style::SectionPalette,
+    bounds: Bounds,
+    children: Area,
+}
+
 pub(super) struct Area {
     cards: Vec<(Card, Bounds)>,
-    pub width: usize,
+    sections: Vec<MeasuredAnnotationSection>,
+    pub packing_width: usize,
     pub height: usize,
 }
 
@@ -58,13 +66,14 @@ impl Area {
         };
         Self {
             cards: placed,
-            width,
+            sections: Vec::new(),
+            packing_width: width,
             height,
         }
     }
 
     pub fn render(&self) -> String {
-        if self.cards.is_empty() {
+        if self.cards.is_empty() && self.sections.is_empty() {
             return String::new();
         }
         let mut svg = String::from("<g data-annotation-area=\"true\">\n");
@@ -78,19 +87,31 @@ impl Area {
         for (card, bounds) in &self.cards {
             writeln!(svg, r##"<g data-annotation-card="true" transform="translate({} {})"><rect width="{}" height="{}" rx="12" fill="#f8fafc" stroke="#cbd5e1"/>{}</g>"##, bounds.origin.x, bounds.origin.y, bounds.width, bounds.height, card.content).unwrap();
         }
+        for section in &self.sections {
+            let bounds = &section.bounds;
+            let content = section.render();
+            writeln!(svg, r##"<g data-annotation-card="true" transform="translate({} {})"><rect width="{}" height="{}" rx="12" fill="#f8fafc" stroke="#cbd5e1"/>{content}</g>"##, bounds.origin.x, bounds.origin.y, bounds.width, bounds.height).unwrap();
+        }
         svg
+    }
+
+    pub fn required_width(
+        sections: &[(&str, super::style::SectionPalette, Vec<Card>)],
+        available_width: usize,
+    ) -> usize {
+        sections
+            .iter()
+            .flat_map(|(_, _, cards)| cards)
+            .fold(available_width, |width, card| width.max(card.width + 112))
     }
 
     pub fn sections(
         sections: Vec<(&str, super::style::SectionPalette, Vec<Card>)>,
         available_width: usize,
     ) -> Self {
-        let width = sections
-            .iter()
-            .flat_map(|(_, _, cards)| cards)
-            .fold(available_width, |width, card| width.max(card.width + 112));
+        let width = Self::required_width(&sections, available_width);
         let mut y = 160;
-        let mut cards = Vec::new();
+        let mut measured = Vec::new();
         for (heading, palette, children) in sections {
             if children.is_empty() {
                 continue;
@@ -104,37 +125,44 @@ impl Area {
                 .unwrap_or(0)
                 .max(crate::view::text::width(heading) * 9 + 32);
             let height = children.height + 48;
-            let content = format!(
-                r#"<g data-annotation-section="{heading}"><rect width="{content_width}" height="{height}" rx="12" fill="{}" stroke="{}"/><text x="16" y="28" font-size="15" font-weight="700" fill="{}">{heading}</text>{}</g>"#,
-                palette.background,
-                palette.border,
-                palette.heading,
-                children.content()
-            );
             let bounds = Bounds {
                 origin: Point { x: 40, y },
                 width: content_width,
                 height,
             };
             y += height + 20;
-            cards.push((
-                Card {
-                    width: content_width,
-                    height,
-                    content,
-                },
+            measured.push(MeasuredAnnotationSection {
+                heading: heading.into(),
+                palette,
                 bounds,
-            ));
+                children,
+            });
         }
         Self {
-            height: if cards.is_empty() {
+            height: if measured.is_empty() {
                 0
             } else {
                 y - 160 - 20 + 24
             },
-            width,
-            cards,
+            packing_width: width,
+            cards: Vec::new(),
+            sections: measured,
         }
+    }
+}
+
+impl MeasuredAnnotationSection {
+    fn render(&self) -> String {
+        let heading = &self.heading;
+        let content_width = self.bounds.width;
+        let height = self.bounds.height;
+        format!(
+            r#"<g data-annotation-section="{heading}"><rect width="{content_width}" height="{height}" rx="12" fill="{}" stroke="{}"/><text x="16" y="28" font-size="15" font-weight="700" fill="{}">{heading}</text>{}</g>"#,
+            self.palette.background,
+            self.palette.border,
+            self.palette.heading,
+            self.children.content()
+        )
     }
 }
 

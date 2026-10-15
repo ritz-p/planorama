@@ -3,6 +3,42 @@ use crate::layout::Layout;
 use crate::svg::{color, label, render};
 
 #[test]
+fn rendering_uses_final_lines_and_positions_without_measuring_again() {
+    fn discard_packing_inputs(content: &mut MeasuredContent) {
+        content.width = 0;
+        content.y = 0;
+        for item in &mut content.items {
+            if let MeasuredItem::Group { content, .. } = item {
+                discard_packing_inputs(content);
+            }
+        }
+    }
+    let raw = crate::plan::parse(include_str!("../../fixtures/association-plan.json")).unwrap();
+    let graph = crate::semantic::transform(&raw);
+    for width in [240, 720, 1120, 12000] {
+        let mut legend = MeasuredLegend::new(&graph, width);
+        let expected = legend.render();
+        discard_packing_inputs(legend.content.as_mut().unwrap());
+        assert_eq!(legend.render(), expected);
+        let content = legend.content.as_mut().unwrap();
+        let MeasuredItem::Text { position, line, .. } = &mut content.items[0] else {
+            panic!("expected measured prose");
+        };
+        *position = Point { x: 23, y: 47 };
+        *line = "already measured & preserved ".repeat(100);
+        let expected_line = line.clone();
+        let rendered = legend.render();
+        let doc = roxmltree::Document::parse(&rendered).unwrap();
+        let text = doc
+            .descendants()
+            .find(|n| n.attribute("x") == Some("23"))
+            .unwrap();
+        assert_eq!(text.attribute("y"), Some("47"));
+        assert_eq!(text.text(), Some(expected_line.as_str()));
+    }
+}
+
+#[test]
 fn relationship_legend_explains_colors_and_omits_line_free_graphs() {
     let raw = crate::plan::parse(include_str!("../../fixtures/association-plan.json")).unwrap();
     let mut graph = crate::semantic::transform(&raw);
@@ -16,8 +52,9 @@ fn relationship_legend_explains_colors_and_omits_line_free_graphs() {
         Action::Other,
     ] {
         graph.0.edges[0].change.as_mut().unwrap().action = action;
-        let legend = Legend::new(&graph, 1120);
-        let document = roxmltree::Document::parse(legend.render()).unwrap();
+        let legend = MeasuredLegend::new(&graph, 1120);
+        let rendered = legend.render();
+        let document = roxmltree::Document::parse(&rendered).unwrap();
         let swatch = document
             .descendants()
             .find(|node| node.attribute("data-legend-action") == Some(label(action)))
@@ -141,7 +178,7 @@ fn relationship_legend_explains_colors_and_omits_line_free_graphs() {
                 .unwrap();
             assert_eq!(swatch.attribute("stroke"), Some(stroke));
         }
-        assert_eq!(legend.render(), Legend::new(&graph, 1120).render());
+        assert_eq!(legend.render(), MeasuredLegend::new(&graph, 1120).render());
     }
     graph.0.edges[0].change = None;
     assert!(render(&graph, &Layout::new(&graph)).contains("no independent change"));
@@ -150,7 +187,7 @@ fn relationship_legend_explains_colors_and_omits_line_free_graphs() {
         if empty {
             graph.0.edges.clear();
         }
-        let legend = Legend::new(&graph, 400);
+        let legend = MeasuredLegend::new(&graph, 400);
         assert_eq!(legend.width, 400);
         assert_eq!(legend.height, 0);
         assert!(legend.render().is_empty());
@@ -201,8 +238,9 @@ fn relationship_legend_wraps_actions_and_text_inside_its_measured_bounds() {
         (4306, 2),
         (12000, 2),
     ] {
-        let legend = Legend::new(&graph, available_width);
-        let document = roxmltree::Document::parse(legend.render()).unwrap();
+        let legend = MeasuredLegend::new(&graph, available_width);
+        let rendered = legend.render();
+        let document = roxmltree::Document::parse(&rendered).unwrap();
         let root = document.root_element();
         let rectangle = root.children().find(|n| n.has_tag_name("rect")).unwrap();
         let width = number(rectangle, "width");
@@ -211,7 +249,7 @@ fn relationship_legend_wraps_actions_and_text_inside_its_measured_bounds() {
         assert_eq!(width + 80, legend.width);
         assert_eq!(legend.height, height + 12);
         if available_width >= 1040 {
-            assert_eq!(legend.render(), Legend::new(&graph, 1040).render());
+            assert_eq!(legend.render(), MeasuredLegend::new(&graph, 1040).render());
         }
         heights.insert(available_width, legend.height);
         let actions: Vec<_> = root
@@ -362,7 +400,7 @@ fn relationship_legend_wraps_actions_and_text_inside_its_measured_bounds() {
         graph.0.edges.reverse();
         assert_eq!(
             legend.render(),
-            Legend::new(&graph, available_width).render()
+            MeasuredLegend::new(&graph, available_width).render()
         );
     }
     assert!(heights[&720] > heights[&4306]);
@@ -390,13 +428,13 @@ fn grid_rows_measure_long_explanations_and_use_the_tallest_entry() {
         ENTRIES[3],
         ENTRIES[4],
     ];
-    let mut grid = Content {
+    let mut grid = MeasuredContent {
         width: 820,
         y: 0,
-        svg: String::new(),
+        items: Vec::new(),
     };
     grid.grid(&entries);
-    let svg = format!("<g>{}</g>", grid.svg);
+    let svg = format!("<g>{}</g>", grid.render());
     let document = roxmltree::Document::parse(&svg).unwrap();
     let cells: Vec<_> = document
         .descendants()
@@ -453,16 +491,16 @@ fn grid_rows_measure_long_explanations_and_use_the_tallest_entry() {
         assert!(bounds[2] <= 820.0 - PADDING as f64);
         assert!(bounds[3] < second_row as f64);
     }
-    let mut single = Content {
+    let mut single = MeasuredContent {
         width: MAX_ENTRY_WIDTH,
         y: 0,
-        svg: String::new(),
+        items: Vec::new(),
     };
     single.grid(&ENTRIES);
-    let mut wide = Content {
+    let mut wide = MeasuredContent {
         width: ENTRIES.len() * MAX_ENTRY_WIDTH + (ENTRIES.len() - 1) * COLUMN_GAP,
         y: 0,
-        svg: String::new(),
+        items: Vec::new(),
     };
     wide.grid(&ENTRIES);
     assert!(wide.y < single.y);

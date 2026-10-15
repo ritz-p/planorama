@@ -1,4 +1,4 @@
-use crate::layout::{Point, Port, Side, relationship_markers};
+use crate::layout::{Bounds, Point, Port, Side, relationship_markers};
 use crate::model::Directionality;
 use crate::model::architecture::{Action, EdgeKind, Graph};
 use std::collections::BTreeSet;
@@ -32,11 +32,11 @@ impl Entry<'_> {
         3 * PADDING + sample_width() + MIN_TEXT_WIDTH.max(crate::view::text::width(self.name) * 8)
     }
 
-    fn measure(&self, width: usize) -> Content {
-        let mut content = Content {
+    fn measure(&self, width: usize) -> MeasuredContent {
+        let mut content = MeasuredContent {
             width,
             y: 0,
-            svg: String::new(),
+            items: Vec::new(),
         };
         content.entry(self);
         content
@@ -76,13 +76,14 @@ const ENTRIES: [Entry<'static>; 5] = [
     },
 ];
 
-pub(super) struct Legend {
+pub(super) struct MeasuredLegend {
     pub width: usize,
     pub height: usize,
-    svg: String,
+    bounds: Bounds,
+    content: Option<MeasuredContent>,
 }
 
-impl Legend {
+impl MeasuredLegend {
     pub fn new(graph: &Graph, available_width: usize) -> Self {
         Self::from_graphs([graph], available_width, 148)
     }
@@ -91,7 +92,12 @@ impl Legend {
         Self {
             width,
             height: 0,
-            svg: String::new(),
+            bounds: Bounds {
+                origin: Point { x: 40, y: 0 },
+                width: 0,
+                height: 0,
+            },
+            content: None,
         }
     }
 
@@ -111,12 +117,10 @@ impl Legend {
         }
         let width = available_width.clamp(360, MAX_CARD_WIDTH + 80);
         let card_width = width - 80;
-        let mut content = Content {
+        let mut content = MeasuredContent {
             width: card_width,
             y: 44,
-            svg: String::from(
-                "<text x=\"16\" y=\"29\" font-size=\"15\" font-weight=\"700\" fill=\"#334155\">Relationship lines</text>\n",
-            ),
+            items: Vec::new(),
         };
         content.text(
             "Line color shows the relationship's own Terraform action, independently of endpoint-card actions.",
@@ -143,32 +147,43 @@ impl Legend {
             PADDING,
             false,
         );
-        let card_height = content.y + PADDING;
-        let svg = format!(
-            r##"<g id="relationship-legend" font-size="12" fill="#475569" transform="translate(40 {top})"><rect width="{card_width}" height="{card_height}" rx="12" fill="#f8fafc" stroke="#cbd5e1"/>
-{}</g>
-"##,
-            content.svg,
-        );
         Self {
             width,
-            height: card_height + 12,
-            svg,
+            height: content.y + PADDING + 12,
+            bounds: Bounds {
+                origin: Point { x: 40, y: top },
+                width: card_width,
+                height: content.y + PADDING,
+            },
+            content: Some(content),
         }
     }
 
-    pub fn render(&self) -> &str {
-        &self.svg
+    pub fn render(&self) -> String {
+        let Some(content) = &self.content else {
+            return String::new();
+        };
+        let card_width = self.bounds.width;
+        let card_height = self.bounds.height;
+        let left = self.bounds.origin.x;
+        let top = self.bounds.origin.y;
+        format!(
+            r##"<g id="relationship-legend" font-size="12" fill="#475569" transform="translate({left} {top})"><rect width="{card_width}" height="{card_height}" rx="12" fill="#f8fafc" stroke="#cbd5e1"/>
+<text x="16" y="29" font-size="15" font-weight="700" fill="#334155">Relationship lines</text>
+{}</g>
+"##,
+            content.render(),
+        )
     }
 }
 
-struct Content {
+struct MeasuredContent {
     width: usize,
     y: usize,
-    svg: String,
+    items: Vec<MeasuredItem>,
 }
 
-impl Content {
+impl MeasuredContent {
     fn grid(&mut self, entries: &[Entry<'_>]) {
         let Some(minimum) = entries.iter().map(Entry::minimum_width).max() else {
             return;
@@ -181,16 +196,18 @@ impl Content {
             let cells: Vec<_> = row.iter().map(|entry| entry.measure(cell_width)).collect();
             let row_height = cells.iter().map(|cell| cell.y).max().unwrap_or(0);
             for (column, (entry, cell)) in row.iter().zip(cells).enumerate() {
-                writeln!(
-                    self.svg,
-                    r#"<g data-legend-entry="{}" transform="translate({} {})">"#,
-                    entry.key(),
-                    column * (cell_width + COLUMN_GAP),
-                    self.y,
-                )
-                .unwrap();
-                self.svg.push_str(&cell.svg);
-                self.svg.push_str("</g>\n");
+                self.items.push(MeasuredItem::Group {
+                    key: entry.key(),
+                    bounds: Bounds {
+                        origin: Point {
+                            x: column * (cell_width + COLUMN_GAP),
+                            y: self.y,
+                        },
+                        width: cell_width,
+                        height: cell.y,
+                    },
+                    content: cell,
+                });
             }
             self.y += row_height + ROW_GAP;
         }
@@ -211,22 +228,6 @@ impl Content {
     }
 
     fn sample(&mut self, kind: EdgeKind, key: &str, directionality: Directionality) -> usize {
-        let stroke = super::relationships::action_stroke(None);
-        let style = super::relationships::style(kind);
-        writeln!(self.svg, r#"<g data-legend-sample="{key}">"#).unwrap();
-        if kind == EdgeKind::Containment {
-            let x = PADDING + (sample_width() - 44) / 2;
-            writeln!(
-                self.svg,
-                r#"<g data-legend-kind="containment" fill="none" stroke="{stroke}"><rect x="{x}" y="{}" width="44" height="28" rx="4"/><rect x="{}" y="{}" width="26" height="12" rx="2"/></g>"#,
-                self.y + 2,
-                x + 9,
-                self.y + 12,
-            )
-            .unwrap();
-            self.svg.push_str("</g>\n");
-            return 32;
-        }
         let start = Point {
             x: PADDING + SAMPLE_INSET,
             y: self.y + 2 + relationship_markers::HEIGHT / 2,
@@ -235,65 +236,59 @@ impl Content {
             x: PADDING + sample_width() - SAMPLE_INSET,
             y: start.y,
         };
-        let arrow = super::relationships::arrow(directionality, None);
-        writeln!(
-            self.svg,
-            r#"<path data-legend-kind="{key}" data-directionality="{}" d="M {} {} H {}" fill="none" stroke="{stroke}" {style}{arrow}/>"#,
-            directionality.as_str(),
-            start.x,
-            start.y,
-            end.x,
-        )
-        .unwrap();
-        self.svg.push_str(&super::endpoints::attachment_circle(
+        let x = PADDING + (sample_width() - 44) / 2;
+        self.items.push(MeasuredItem::Sample(MeasuredSample {
+            kind,
+            key: key.into(),
+            directionality,
             start,
-            r#"data-legend-endpoint="source""#,
-            stroke,
-        ));
-        if matches!(kind, EdgeKind::Association | EdgeKind::Connection) {
-            self.svg.push_str(&super::endpoints::attachment_circle(
-                end,
-                r#"data-legend-endpoint="target""#,
-                stroke,
-            ));
-            if directionality == Directionality::Directed {
-                let path = super::endpoints::arrow_path(start, end);
-                writeln!(
-                    self.svg,
-                    r#"<path data-legend-arrow="true" d="{path}" fill="{stroke}"/>"#,
-                )
-                .unwrap();
-            }
-        }
-        if kind == EdgeKind::Association {
-            for (point, side, terminal) in
-                [(start, Side::Right, "source"), (end, Side::Left, "target")]
-            {
-                writeln!(self.svg, r#"<g data-legend-badge="{terminal}">"#).unwrap();
-                self.svg.push_str(&super::relationship_index::badge(
+            end,
+            outer: Bounds {
+                origin: Point { x, y: self.y + 2 },
+                width: 44,
+                height: 28,
+            },
+            inner: Bounds {
+                origin: Point {
+                    x: x + 9,
+                    y: self.y + 12,
+                },
+                width: 26,
+                height: 12,
+            },
+            arrow_path: super::endpoints::arrow_path(start, end),
+            badges: [
+                relationship_markers::bounds(
                     SAMPLE_NUMBER,
-                    relationship_markers::bounds(SAMPLE_NUMBER, Port { point, side }),
-                    stroke,
-                    style,
-                ));
-                self.svg.push_str("</g>\n");
-            }
+                    Port {
+                        point: start,
+                        side: Side::Right,
+                    },
+                ),
+                relationship_markers::bounds(
+                    SAMPLE_NUMBER,
+                    Port {
+                        point: end,
+                        side: Side::Left,
+                    },
+                ),
+            ],
+        }));
+        if kind == EdgeKind::Containment {
+            32
+        } else {
+            relationship_markers::HEIGHT + 4
         }
-        self.svg.push_str("</g>\n");
-        relationship_markers::HEIGHT + 4
     }
 
     fn text(&mut self, text: &str, x: usize, bold: bool) {
-        let weight = if bold { " font-weight=\"700\"" } else { "" };
         let limit = (self.width.min(MAX_PROSE_WIDTH) - x - PADDING) / 8;
         for line in wrap_words(text, limit) {
-            writeln!(
-                self.svg,
-                "<text x=\"{x}\" y=\"{}\"{weight}>{}</text>",
-                self.y + 12,
-                super::escape(&line),
-            )
-            .unwrap();
+            self.items.push(MeasuredItem::Text {
+                position: Point { x, y: self.y + 12 },
+                bold,
+                line,
+            });
             self.y += LINE_HEIGHT;
         }
     }
@@ -305,27 +300,167 @@ impl Content {
             .collect();
         let mut x = PADDING;
         for action in actions {
-            let name = action.map_or("none", super::label);
             let label = action.map_or("no independent change", super::label);
-            let color = super::relationships::action_stroke(action);
-            let style = super::relationships::style(EdgeKind::Dependency);
             let width = 34 + crate::view::text::width(label) * 8;
             if x > PADDING && x + width > self.width - PADDING {
                 x = PADDING;
                 self.y += 24;
             }
-            writeln!(
-                self.svg,
-                r#"<path data-legend-action="{name}" d="M {x} {} H {}" fill="none" stroke="{color}" {style}/><text x="{}" y="{}">{label}</text>"#,
-                self.y + 7,
-                x + 26,
-                x + 34,
-                self.y + 12,
-            )
-            .unwrap();
+            self.items.push(MeasuredItem::Action {
+                action,
+                start: Point { x, y: self.y + 7 },
+                end_x: x + 26,
+                text: Point {
+                    x: x + 34,
+                    y: self.y + 12,
+                },
+            });
             x += width + 16;
         }
         self.y += 28;
+    }
+}
+
+enum MeasuredItem {
+    Text {
+        position: Point,
+        bold: bool,
+        line: String,
+    },
+    Group {
+        key: String,
+        bounds: Bounds,
+        content: MeasuredContent,
+    },
+    Action {
+        action: Option<Action>,
+        start: Point,
+        end_x: usize,
+        text: Point,
+    },
+    Sample(MeasuredSample),
+}
+
+struct MeasuredSample {
+    kind: EdgeKind,
+    key: String,
+    directionality: Directionality,
+    start: Point,
+    end: Point,
+    outer: Bounds,
+    inner: Bounds,
+    arrow_path: String,
+    badges: [Bounds; 2],
+}
+
+impl MeasuredContent {
+    fn render(&self) -> String {
+        let mut svg = String::new();
+        for item in &self.items {
+            match item {
+                MeasuredItem::Text {
+                    position,
+                    bold,
+                    line,
+                } => {
+                    let weight = if *bold { " font-weight=\"700\"" } else { "" };
+                    writeln!(
+                        svg,
+                        "<text x=\"{}\" y=\"{}\"{weight}>{}</text>",
+                        position.x,
+                        position.y,
+                        super::escape(line)
+                    )
+                    .unwrap();
+                }
+                MeasuredItem::Group {
+                    key,
+                    bounds,
+                    content,
+                } => {
+                    writeln!(
+                        svg,
+                        r#"<g data-legend-entry="{key}" transform="translate({} {})">"#,
+                        bounds.origin.x, bounds.origin.y
+                    )
+                    .unwrap();
+                    svg.push_str(&content.render());
+                    svg.push_str("</g>\n");
+                }
+                MeasuredItem::Action {
+                    action,
+                    start,
+                    end_x,
+                    text,
+                } => {
+                    let name = action.map_or("none", super::label);
+                    let label = action.map_or("no independent change", super::label);
+                    let color = super::relationships::action_stroke(*action);
+                    let style = super::relationships::style(EdgeKind::Dependency);
+                    writeln!(svg, r#"<path data-legend-action="{name}" d="M {} {} H {end_x}" fill="none" stroke="{color}" {style}/><text x="{}" y="{}">{label}</text>"#, start.x, start.y, text.x, text.y).unwrap();
+                }
+                MeasuredItem::Sample(sample) => sample.render(&mut svg),
+            }
+        }
+        svg
+    }
+}
+
+impl MeasuredSample {
+    fn render(&self, svg: &mut String) {
+        let Self {
+            kind,
+            key,
+            directionality,
+            start,
+            end,
+            outer,
+            inner,
+            arrow_path,
+            badges,
+        } = self;
+        let stroke = super::relationships::action_stroke(None);
+        let style = super::relationships::style(*kind);
+        writeln!(svg, r#"<g data-legend-sample="{key}">"#).unwrap();
+        if *kind == EdgeKind::Containment {
+            writeln!(svg, r#"<g data-legend-kind="containment" fill="none" stroke="{stroke}"><rect x="{}" y="{}" width="{}" height="{}" rx="4"/><rect x="{}" y="{}" width="{}" height="{}" rx="2"/></g>"#, outer.origin.x, outer.origin.y, outer.width, outer.height, inner.origin.x, inner.origin.y, inner.width, inner.height).unwrap();
+            svg.push_str("</g>\n");
+            return;
+        }
+        let arrow = super::relationships::arrow(*directionality, None);
+        writeln!(svg, r#"<path data-legend-kind="{key}" data-directionality="{}" d="M {} {} H {}" fill="none" stroke="{stroke}" {style}{arrow}/>"#, directionality.as_str(), start.x, start.y, end.x).unwrap();
+        svg.push_str(&super::endpoints::attachment_circle(
+            *start,
+            r#"data-legend-endpoint="source""#,
+            stroke,
+        ));
+        if matches!(kind, EdgeKind::Association | EdgeKind::Connection) {
+            svg.push_str(&super::endpoints::attachment_circle(
+                *end,
+                r#"data-legend-endpoint="target""#,
+                stroke,
+            ));
+            if *directionality == Directionality::Directed {
+                writeln!(
+                    svg,
+                    r#"<path data-legend-arrow="true" d="{arrow_path}" fill="{stroke}"/>"#
+                )
+                .unwrap();
+            }
+        }
+        if *kind == EdgeKind::Association {
+            for (bounds, terminal) in badges.iter().zip(["source", "target"]) {
+                writeln!(svg, r#"<g data-legend-badge="{terminal}">"#).unwrap();
+                svg.push_str(&super::relationship_index::badge(
+                    SAMPLE_NUMBER,
+                    *bounds,
+                    stroke,
+                    style,
+                ));
+                svg.push_str("</g>\n");
+            }
+        }
+        svg.push_str("</g>\n");
     }
 }
 
