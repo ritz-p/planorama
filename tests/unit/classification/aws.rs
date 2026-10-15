@@ -7,6 +7,8 @@ fn representative_aws_types_cover_each_architectural_role() {
         ("aws_subnet", ResourceRole::Container),
         ("aws_instance", ResourceRole::Node),
         ("aws_db_instance", ResourceRole::Node),
+        ("aws_sqs_queue", ResourceRole::Node),
+        ("aws_sns_topic", ResourceRole::Node),
         ("aws_vpc_peering_connection", ResourceRole::Connector),
         ("aws_route_table_association", ResourceRole::Association),
         ("aws_security_group", ResourceRole::Policy),
@@ -41,7 +43,7 @@ fn expanded_roles_cover_managed_and_equivalent_data_entities() {
     for (expected, types) in [
         (
             ResourceRole::Node,
-            "aws_ami aws_eip aws_db_subnet_group aws_lambda_function aws_rds_cluster aws_dynamodb_table aws_elasticache_cluster aws_opensearch_domain aws_s3_bucket aws_cloudwatch_log_group aws_launch_template",
+            "aws_ami aws_eip aws_db_subnet_group aws_lambda_function aws_sqs_queue aws_sns_topic aws_rds_cluster aws_dynamodb_table aws_elasticache_cluster aws_opensearch_domain aws_s3_bucket aws_cloudwatch_log_group aws_launch_template",
         ),
         (
             ResourceRole::Connector,

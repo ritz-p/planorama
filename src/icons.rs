@@ -36,6 +36,8 @@ pub enum ResourceIcon {
     Endpoint,
     LoadBalancer,
     Lambda,
+    Sqs,
+    Sns,
     Ecs,
     Eks,
     Database,

@@ -13,6 +13,8 @@ pub(super) fn classify(resource_type: &str) -> ResourceRole {
         | "aws_db_instance"
         | "aws_db_subnet_group"
         | "aws_lambda_function"
+        | "aws_sqs_queue"
+        | "aws_sns_topic"
         | "aws_rds_cluster"
         | "aws_dynamodb_table"
         | "aws_elasticache_cluster"
