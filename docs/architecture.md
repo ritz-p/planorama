@@ -27,7 +27,13 @@ runtime layout measurements. The CLI owns the separate report destination.
 | `html` | Local viewer, explicit value-free resource index from the selected view, and navigation over rendered SVG metadata |
 
 SVG composition places non-spatial annotations after the header, legend and checks,
-above the architecture. The neutral relationship legend has a 960px card-width
+above the architecture. Internal `MeasuredLegend` and `MeasuredAnnotationSection`
+values retain final bounds, child positions and, for the legend, wrapped lines,
+action swatches and sample geometry. Rendering serializes these measurements
+without wrapping text or packing rows again. Annotation leaf cards retain their
+existing measured content fragments; this contract does not change resource
+identity, provenance or links. Shared text metrics remain in `view::text`.
+The neutral relationship legend has a 960px card-width
 cap. Its five relationship kinds form a deterministic
 one- or two-column grid below the action/color explanation. Multiple columns
 require at least 398px per cell with 24px gaps; cells stop widening at 640px.
@@ -57,8 +63,9 @@ include the same clearance.
 Relationship index cards group up to 5 complete numbered entries per card,
 continuing to the right without a column cap before wrapping within their own
 neutral section. Packing uses the final content width after other annotations can
-expand it. Named-state composition reflows each state's annotations at the shared
-content width and recalculates heights and endpoint offsets, with the cross-state
+expand it. Named-state composition prepares each state's cards, resolves the shared
+content width, then packs each state's annotations once. Final measured heights
+control endpoint offsets, with the cross-state
 routing gutter reserved outside that width. Logical
 components share a purple parent, with a card per component and a purple heading.
 Members use neutral text rows without individual backgrounds, borders or card

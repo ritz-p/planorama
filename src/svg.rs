@@ -75,7 +75,7 @@ fn dimensions(graph: &Graph, layout: &Layout<'_>) -> (usize, usize) {
 }
 
 struct Sections {
-    legend: legend::Legend,
+    legend: legend::MeasuredLegend,
     annotations: annotations::Area,
     check_height: usize,
     architecture_top_padding: usize,
@@ -88,19 +88,17 @@ impl Sections {
         index: &relationship_index::Index<'_>,
         address_format: AddressFormat,
     ) -> Self {
-        Self::with_width(graph, layout, index, address_format, index.width)
+        Self::from_cards(
+            graph,
+            layout,
+            index,
+            annotation_cards(graph, index, address_format),
+            index.width,
+            true,
+        )
     }
 
-    fn with_width(
-        graph: &Graph,
-        layout: &Layout<'_>,
-        index: &relationship_index::Index<'_>,
-        address_format: AddressFormat,
-        available_width: usize,
-    ) -> Self {
-        Self::measure(graph, layout, index, address_format, available_width, true)
-    }
-
+    #[cfg(test)]
     fn without_legend(
         graph: &Graph,
         layout: &Layout<'_>,
@@ -108,33 +106,32 @@ impl Sections {
         address_format: AddressFormat,
         available_width: usize,
     ) -> Self {
-        Self::measure(graph, layout, index, address_format, available_width, false)
+        Self::from_cards(
+            graph,
+            layout,
+            index,
+            annotation_cards(graph, index, address_format),
+            available_width,
+            false,
+        )
     }
 
-    fn measure(
+    fn from_cards(
         graph: &Graph,
         layout: &Layout<'_>,
         index: &relationship_index::Index<'_>,
-        address_format: AddressFormat,
+        cards: Vec<(&str, style::SectionPalette, Vec<annotations::Card>)>,
         available_width: usize,
         include_legend: bool,
     ) -> Self {
-        let annotations = annotation_area(
-            graph,
-            index,
-            address_format,
-            available_width.max(index.width),
-        );
+        let packing_width =
+            annotations::Area::required_width(&cards, available_width.max(index.width));
         let legend = if include_legend {
-            legend::Legend::new(graph, annotations.width)
+            legend::MeasuredLegend::new(graph, packing_width)
         } else {
-            legend::Legend::empty(annotations.width)
+            legend::MeasuredLegend::empty(packing_width)
         };
-        let annotations = if legend.width > annotations.width {
-            annotation_area(graph, index, address_format, legend.width)
-        } else {
-            annotations
-        };
+        let annotations = annotations::Area::sections(cards, packing_width.max(legend.width));
         Self {
             legend,
             annotations,
@@ -152,7 +149,7 @@ impl Sections {
 
     fn dimensions(&self, layout: &Layout<'_>) -> (usize, usize) {
         (
-            self.annotations.width.max(self.legend.width),
+            self.annotations.packing_width.max(self.legend.width),
             layout.height + self.height(),
         )
     }
@@ -191,32 +188,28 @@ fn architecture_top_padding(
         .unwrap_or(0)
 }
 
-fn annotation_area(
+fn annotation_cards(
     graph: &Graph,
     index: &relationship_index::Index<'_>,
     address_format: AddressFormat,
-    available_width: usize,
-) -> annotations::Area {
-    annotations::Area::sections(
-        vec![
-            (
-                "Logical Resources",
-                style::LOGICAL_RESOURCES,
-                logical::cards(graph, address_format),
-            ),
-            (
-                "Logical Components",
-                style::LOGICAL_COMPONENTS,
-                components::cards(graph),
-            ),
-            (
-                "Relationship Resources",
-                style::RELATIONSHIP_RESOURCES,
-                index.cards(),
-            ),
-        ],
-        available_width,
-    )
+) -> Vec<(&'static str, style::SectionPalette, Vec<annotations::Card>)> {
+    vec![
+        (
+            "Logical Resources",
+            style::LOGICAL_RESOURCES,
+            logical::cards(graph, address_format),
+        ),
+        (
+            "Logical Components",
+            style::LOGICAL_COMPONENTS,
+            components::cards(graph),
+        ),
+        (
+            "Relationship Resources",
+            style::RELATIONSHIP_RESOURCES,
+            index.cards(),
+        ),
+    ]
 }
 
 pub(crate) fn render_with_format(
@@ -361,7 +354,7 @@ fn render_with_index(
     }
     let legend_height = sections.legend.height;
     if legend_height != 0 {
-        svg.push_str(sections.legend.render());
+        svg.push_str(&sections.legend.render());
         writeln!(svg, "<g transform=\"translate(0 {legend_height})\">").unwrap();
     }
     if check_offset != 0 {

@@ -132,12 +132,14 @@ pub(crate) fn render_report(
     for (id, graph) in &prepared_graphs {
         let layout = Layout::new(graph);
         let index = super::relationship_index::Index::new(graph, &layout);
-        let measured_sections =
-            super::Sections::without_legend(graph, &layout, &index, format, index.width);
-        width = width.max(measured_sections.dimensions(&layout).0);
-        states.push((*id, graph, layout, index, measured_sections));
+        let cards = super::annotation_cards(graph, &index, format);
+        width = width.max(super::annotations::Area::required_width(
+            &cards,
+            index.width,
+        ));
+        states.push((*id, graph, layout, index, cards));
     }
-    let legend = super::legend::Legend::from_graphs(
+    let legend = super::legend::MeasuredLegend::from_graphs(
         prepared_graphs.iter().map(|(_, graph)| &graph.0),
         width,
         60,
@@ -152,13 +154,11 @@ pub(crate) fn render_report(
             .unwrap();
         }
     }
-    sections.push_str(legend.render());
+    sections.push_str(&legend.render());
     let mut top = 60 + legend.height;
-    for (id, graph, layout, index, mut measured_sections) in states {
-        if measured_sections.dimensions(&layout).0 < width {
-            measured_sections =
-                super::Sections::without_legend(graph, &layout, &index, format, width);
-        }
+    for (id, graph, layout, index, cards) in states {
+        let measured_sections =
+            super::Sections::from_cards(graph, &layout, &index, cards, width, false);
         let (_, height) = measured_sections.dimensions(&layout);
         let prefix = prefix(id);
         let architecture_offset = measured_sections.height();
