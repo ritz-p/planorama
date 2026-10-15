@@ -91,6 +91,10 @@ provider/account/region, action and lifecycle identity. Complete unique explicit
 ARNs must be known and equal to the referenced resource ARNs; only boolean proofs
 are retained. The planned `protocol` must agree with the endpoint type (`sqs` or
 `lambda`). This conservatively rejects compound expressions with different values.
+For deletion actions, verification uses known `before` values (or prior state
+when a resource has no change entry) for both the subscription and its endpoints.
+Explicit configuration references are still required; planned values cannot prove
+a deleted relationship's historical endpoints.
 
 Missing/unknown values, literal-only endpoints, ambiguous/dynamic selectors,
 unsupported protocols, foreign providers and deposed resources keep logical rows

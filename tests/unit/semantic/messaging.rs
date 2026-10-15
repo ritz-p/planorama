@@ -18,6 +18,51 @@ fn subscriptions(graph: &Graph) -> Vec<&Edge> {
 }
 
 #[test]
+fn deleted_subscriptions_require_matching_before_values_and_explicit_references() {
+    let mut input = fixture();
+    for change in input["resource_changes"].as_array_mut().unwrap() {
+        change["change"]["before"] = change["change"]["after"].take();
+        change["change"]["actions"] = json!(["delete"]);
+    }
+    let result = graph(&input);
+    assert_eq!(subscriptions(&result).len(), 3);
+    assert!(
+        subscriptions(&result)
+            .iter()
+            .all(|e| e.change.as_ref().unwrap().action == Action::Delete)
+    );
+    for case in [
+        "missing-before",
+        "mismatch",
+        "missing-reference",
+        "new-target",
+    ] {
+        let mut invalid = input.clone();
+        match case {
+            "missing-before" => invalid["resource_changes"][1]["change"]["before"] = Value::Null,
+            "mismatch" => {
+                invalid["resource_changes"][4]["change"]["before"]["endpoint"] = json!("different")
+            }
+            "missing-reference" => {
+                invalid["configuration"]["root_module"]["resources"][4]["expressions"]["endpoint"] =
+                    json!({"constant_value":"queue-proof"})
+            }
+            _ => {
+                invalid["resource_changes"][1]["change"]["after"] =
+                    invalid["resource_changes"][1]["change"]["before"].take();
+                invalid["resource_changes"][1]["change"]["actions"] = json!(["create"]);
+            }
+        }
+        assert!(
+            !subscriptions(&graph(&invalid))
+                .iter()
+                .any(|e| e.change.as_ref().unwrap().address == "aws_sns_topic_subscription.jobs"),
+            "{case}"
+        );
+    }
+}
+
+#[test]
 fn subscriptions_preserve_direction_identity_actions_and_source_scope() {
     let input = fixture();
     let result = graph(&input);
