@@ -14,7 +14,7 @@ pub(super) enum OutputFormat {
     Html,
 }
 
-const HELP: &str = "planorama — Terraform plan JSON → SVG / HTML (pure Rust)\n\nUsage: planorama <plan.json | -> [--format svg|html] [-o <path | ->] [--address-format qualified|terraform] [--diagnostics]\n\n  -o, --output PATH   Output file (default: diagram.svg or diagram.html); '-' for stdout\n  --format FORMAT    Output format: svg (default) or self-contained html\n  --address-format FORMAT  Resource labels: qualified (default) or terraform\n  --provider-plan PATH  Verify accounts against a saved Terraform 1.9.8 / AWS 5.100.0 plan\n  --state-provider-plan ID=PATH  Saved plan evidence for one named state\n  --changed-only     Retain changes and required context\n  --focus ADDRESS    Select a resource (STATE:ADDRESS for named states)\n  --focus-depth N    Neighbor depth (default: 1; requires --focus)\n  --remote-state CONSUMER:ADDRESS=PRODUCER  Map a named remote-state data source\n  --diagnostics      Explain unresolved references and semantic fallbacks on stderr\n  --layout-diagnostics  Report final layout quality on stderr\n  --layout-diagnostics-json PATH  Write a versioned layout report to a separate JSON file\n  -h, --help          Show help\n  -V, --version       Show version\n\nInput: terraform show -json <saved-plan> (not terraform plan -json).\nJSON-only inputs leave AWS accounts unknown. Provider evidence requires Terraform and initialized schemas.\nLines show reference or architectural relationships; containment uses nested boxes.\nAttribute values are never included in the diagram.\n";
+const HELP: &str = "planorama — Terraform plan JSON → SVG / HTML (pure Rust)\n\nUsage: planorama <plan.json | -> [--format svg|html] [-o <path | ->] [--address-format qualified|terraform] [--diagnostics]\n\n  -o, --output PATH   Output file (default: diagram.svg or diagram.html); '-' for stdout\n  --format FORMAT    Output format: svg (default) or self-contained html\n  --address-format FORMAT  Resource labels: qualified (default) or terraform\n  --provider-plan PATH  Verify accounts against a saved Terraform 1.9.8 / AWS 5.100.0 plan\n  --state-provider-plan ID=PATH  Saved plan evidence for one named state\n  --changed-only     Retain changes and required context\n  --focus ADDRESS    Select a resource (STATE:ADDRESS for named states)\n  --focus-depth N    Neighbor depth (default: 1; requires --focus)\n  --remote-state CONSUMER:ADDRESS=PRODUCER  Map a named remote-state data source\n  --diagnostics      Explain unresolved references and semantic fallbacks on stderr\n  --html-diagnostics  Include bounded routing hotspots (requires --format html)\n  --layout-diagnostics  Report final layout quality on stderr\n  --layout-diagnostics-json PATH  Write a versioned layout report to a separate JSON file\n  -h, --help          Show help\n  -V, --version       Show version\n\nInput: terraform show -json <saved-plan> (not terraform plan -json).\nJSON-only inputs leave AWS accounts unknown. Provider evidence requires Terraform and initialized schemas.\nLines show reference or architectural relationships; containment uses nested boxes.\nAttribute values are never included in the diagram.\n";
 
 pub(crate) fn run() -> Result<(), String> {
     let mut input = None;
@@ -78,6 +78,7 @@ pub(crate) fn run() -> Result<(), String> {
                 state_inputs.insert(id, path.to_owned());
             }
             "--diagnostics" => diagnostics = true,
+            "--html-diagnostics" => layout_diagnostics.html = true,
             "--layout-diagnostics" => layout_diagnostics.text = true,
             "--layout-diagnostics-json" => {
                 layout_diagnostics.json = Some(
@@ -128,6 +129,9 @@ pub(crate) fn run() -> Result<(), String> {
             OutputFormat::Html => "diagram.html",
         })
     });
+    if layout_diagnostics.html && !matches!(output_format, OutputFormat::Html) {
+        return Err("--html-diagnostics requires --format html".into());
+    }
     filter.validate()?;
     provider_plan.validate(&state_inputs, &output, layout_diagnostics.json.as_deref())?;
     layout_diagnostics.validate(input.iter().chain(state_inputs.values()), &output)?;
@@ -209,9 +213,13 @@ pub(crate) fn run() -> Result<(), String> {
     let layout = Layout::new(&graph);
     let mut report = serde_json::Value::Null;
     let image = match (output_format, address_format) {
-        (OutputFormat::Html, _) if layout_diagnostics.enabled() => {
-            crate::html::render_report(&graph, &layout, address_format, &mut report)
-        }
+        (OutputFormat::Html, _) if layout_diagnostics.enabled() => crate::html::render_report(
+            &graph,
+            &layout,
+            address_format,
+            &mut report,
+            layout_diagnostics.html,
+        ),
         (OutputFormat::Svg, _) if layout_diagnostics.enabled() => svg::render_report(
             &graph,
             &layout,

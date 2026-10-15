@@ -89,6 +89,36 @@ class ViewerTests(unittest.TestCase):
         self.assertEqual(before, self.view_box())
         self.assertEqual(len(self.driver.find_elements(By.CSS_SELECTOR, '[data-account-panel]')), 0)
 
+    def test_diagnostics_overlay_uses_report_regions_and_resets(self):
+        self.load('--state', 'one=tests/fixtures/components-plan.json',
+                  '--state', 'two=tests/fixtures/components-plan.json', '--html-diagnostics')
+        data = self.driver.execute_script("return JSON.parse(document.getElementById('viewer-diagnostics').textContent)")
+        self.assertGreater(data['total'], 0)
+        self.assertLessEqual(len(data['hotspots']), 200)
+        before = self.driver.execute_script("return [...document.querySelectorAll('path[data-edge-kind]')].map(p=>p.outerHTML)")
+        toggle = self.find('#hotspot-toggle')
+        toggle.send_keys(Keys.ENTER)
+        rect = self.find('[data-hotspot-overlay] rect')
+        self.assertEqual(float(rect.get_attribute('x')), data['hotspots'][0]['bounds'][0] - 6)
+        self.assertEqual(float(rect.get_attribute('y')), data['hotspots'][0]['bounds'][1] - 6)
+        rects = self.driver.find_elements(By.CSS_SELECTOR, '[data-hotspot-overlay] rect')
+        self.assertEqual(len(rects), len(data['hotspots']))
+        for rect, hotspot in zip(rects, data['hotspots']):
+            self.assertEqual(float(rect.get_attribute('y')), hotspot['bounds'][1] - 6)
+        self.find('#hotspot-list button').click()
+        self.assertTrue(self.driver.find_elements(By.CSS_SELECTOR, '[data-hotspot-overlay]'))
+        self.assertEqual(self.driver.switch_to.active_element.tag_name, 'button')
+        self.find('#clear').click()
+        self.assertEqual(self.driver.find_elements(By.CSS_SELECTOR, '[data-hotspot-overlay]'), [])
+        self.assertEqual(before, self.driver.execute_script("return [...document.querySelectorAll('path[data-edge-kind]')].map(p=>p.outerHTML)"))
+        self.choose('one:')
+        self.assertEqual(toggle.get_attribute('aria-pressed'), 'false')
+        self.load('examples/plan.json', '--changed-only', '--html-diagnostics')
+        self.find('#hotspot-toggle').click()
+        self.load('examples/plan.json')
+        self.assertFalse(self.find('#hotspot-toggle').is_enabled())
+        self.assertIn('unavailable', self.find('#hotspot-status').text)
+
     def test_offline_keyboard_search_zoom_pan_clear_and_fit(self):
         self.load('examples/plan.json')
         before = self.view_box()

@@ -3,13 +3,14 @@ use std::path::{Path, PathBuf};
 
 #[derive(Default)]
 pub(super) struct Options {
+    pub html: bool,
     pub text: bool,
     pub json: Option<PathBuf>,
 }
 
 impl Options {
     pub fn enabled(&self) -> bool {
-        self.text || self.json.is_some()
+        self.html || self.text || self.json.is_some()
     }
 
     pub fn validate(
