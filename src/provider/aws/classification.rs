@@ -37,6 +37,7 @@ pub(super) fn classify(resource_type: &str) -> ResourceRole {
         | "aws_api_gateway_rest_api"
         | "aws_apigatewayv2_api" => ResourceRole::Connector,
         "aws_route_table_association"
+        | "aws_sns_topic_subscription"
         | "aws_lb_target_group_attachment"
         | "aws_ec2_transit_gateway_vpc_attachment"
         | "aws_ec2_transit_gateway_peering_attachment"

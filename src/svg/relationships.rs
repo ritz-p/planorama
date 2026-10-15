@@ -89,9 +89,12 @@ fn additional_resources(graph: &Graph) -> usize {
         .edges
         .iter()
         .filter(|e| {
-            e.change
-                .as_ref()
-                .is_some_and(|c| graph.nodes[e.from].address != c.address)
+            e.change.as_ref().is_some_and(|c| {
+                !graph
+                    .nodes
+                    .iter()
+                    .any(|n| n.address == c.address && n.deposed_key.is_none())
+            })
         })
         .count()
 }
@@ -110,6 +113,7 @@ pub(super) fn title(graph: &Graph, edge: &Edge, semantic_edges: bool) -> String 
     let kind = match edge.kind {
         EdgeKind::Dependency => "dependency",
         EdgeKind::Association => "association",
+        EdgeKind::Subscription => "subscription",
         EdgeKind::Connection => "connection",
         EdgeKind::Containment => "containment",
     };

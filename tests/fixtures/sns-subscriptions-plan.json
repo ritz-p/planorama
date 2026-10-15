@@ -1,0 +1,233 @@
+{
+  "format_version": "1.2",
+  "resource_changes": [
+    {
+      "address": "aws_sns_topic.events",
+      "type": "aws_sns_topic",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "topic-proof"
+        }
+      }
+    },
+    {
+      "address": "aws_sqs_queue.jobs",
+      "type": "aws_sqs_queue",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "update"
+        ],
+        "after": {
+          "arn": "queue-proof"
+        }
+      }
+    },
+    {
+      "address": "data.aws_sqs_queue.archive",
+      "type": "aws_sqs_queue",
+      "mode": "data",
+      "change": {
+        "actions": [
+          "read"
+        ],
+        "after": {
+          "arn": "archive-proof"
+        }
+      }
+    },
+    {
+      "address": "aws_lambda_function.worker",
+      "type": "aws_lambda_function",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "arn": "function-proof",
+          "function_name": "worker-proof"
+        }
+      }
+    },
+    {
+      "address": "aws_sns_topic_subscription.jobs",
+      "type": "aws_sns_topic_subscription",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "topic_arn": "topic-proof",
+          "protocol": "sqs",
+          "endpoint": "queue-proof"
+        }
+      }
+    },
+    {
+      "address": "aws_sns_topic_subscription.worker",
+      "type": "aws_sns_topic_subscription",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "update"
+        ],
+        "after": {
+          "topic_arn": "topic-proof",
+          "protocol": "lambda",
+          "endpoint": "function-proof"
+        }
+      }
+    },
+    {
+      "address": "aws_sns_topic_subscription.archive",
+      "type": "aws_sns_topic_subscription",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "topic_arn": "topic-proof",
+          "protocol": "sqs",
+          "endpoint": "archive-proof"
+        }
+      }
+    },
+    {
+      "address": "aws_sns_topic_subscription.email",
+      "type": "aws_sns_topic_subscription",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "topic_arn": "topic-proof",
+          "protocol": "email",
+          "endpoint": "fixture@example.invalid"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "full_name": "hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "ap-northeast-1"
+          }
+        }
+      },
+      "aws.archive": {
+        "full_name": "hashicorp/aws",
+        "alias": "archive",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_sns_topic.events",
+          "provider_config_key": "aws"
+        },
+        {
+          "address": "aws_sqs_queue.jobs",
+          "provider_config_key": "aws"
+        },
+        {
+          "address": "data.aws_sqs_queue.archive",
+          "provider_config_key": "aws.archive"
+        },
+        {
+          "address": "aws_lambda_function.worker",
+          "provider_config_key": "aws"
+        },
+        {
+          "address": "aws_sns_topic_subscription.jobs",
+          "provider_config_key": "aws",
+          "expressions": {
+            "topic_arn": {
+              "references": [
+                "aws_sns_topic.events.arn"
+              ]
+            },
+            "protocol": {
+              "constant_value": "sqs"
+            },
+            "endpoint": {
+              "references": [
+                "aws_sqs_queue.jobs.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_sns_topic_subscription.worker",
+          "provider_config_key": "aws",
+          "expressions": {
+            "topic_arn": {
+              "references": [
+                "aws_sns_topic.events.arn"
+              ]
+            },
+            "protocol": {
+              "constant_value": "lambda"
+            },
+            "endpoint": {
+              "references": [
+                "aws_lambda_function.worker.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_sns_topic_subscription.archive",
+          "provider_config_key": "aws",
+          "expressions": {
+            "topic_arn": {
+              "references": [
+                "aws_sns_topic.events.arn"
+              ]
+            },
+            "protocol": {
+              "constant_value": "sqs"
+            },
+            "endpoint": {
+              "references": [
+                "data.aws_sqs_queue.archive.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_sns_topic_subscription.email",
+          "provider_config_key": "aws",
+          "expressions": {
+            "topic_arn": {
+              "references": [
+                "aws_sns_topic.events.arn"
+              ]
+            },
+            "protocol": {
+              "constant_value": "email"
+            },
+            "endpoint": {
+              "constant_value": "fixture@example.invalid"
+            }
+          }
+        }
+      ]
+    }
+  }
+}

@@ -31,6 +31,7 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
             | "aws_lambda_function"
             | "aws_sqs_queue"
             | "aws_sns_topic"
+            | "aws_sns_topic_subscription"
             | "aws_rds_cluster"
             | "aws_dynamodb_table"
             | "aws_elasticache_cluster"

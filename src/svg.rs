@@ -323,7 +323,11 @@ fn render_with_index(
                 .iter()
                 .filter(|edge| {
                     edge.change.as_ref().is_some_and(|change| {
-                        change.action == *action && graph.nodes[edge.from].address != change.address
+                        change.action == *action
+                            && !graph
+                                .nodes
+                                .iter()
+                                .any(|n| n.address == change.address && n.deposed_key.is_none())
                     })
                 })
                 .count();
@@ -379,6 +383,7 @@ fn render_with_index(
         let relation = match edge.kind {
             EdgeKind::Dependency => " data-edge-kind=\"dependency\"",
             EdgeKind::Association => " data-edge-kind=\"association\"",
+            EdgeKind::Subscription => " data-edge-kind=\"subscription\"",
             EdgeKind::Connection => " data-edge-kind=\"connection\"",
             EdgeKind::Containment => " data-edge-kind=\"containment\"",
         };
