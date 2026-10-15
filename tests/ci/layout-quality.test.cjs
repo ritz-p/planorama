@@ -24,6 +24,8 @@ test('independent crossing, overlap and clearance degradations fail with stable 
     mutate(after);
     after.findings.push({category, edge: after.edges[0].id, peer: after.edges[1].id,
       segment: 0, peer_segment: 0, location: {point: [0, 0], interval: [0, 1], coordinates: [0, 0], horizontal: true, visible_gap: -1}});
+    if (category === 'visible_border_clearance') Object.assign(after.findings.at(-1),
+      {coordinate: 0, interval: [0, 1], horizontal: true, below_minimum: true, frame: null});
     const result = {fixture: 'degraded', ...compare(before, after, budgets)};
     assert.equal(result.status, 'failed');
     const text = markdown([result]);
@@ -249,6 +251,57 @@ test('pair findings reject missing locations and coerced numeric fields', () => 
       assert.throws(() => compare(after, before, budgets), /invalid pair finding/);
     }
   }
+});
+
+test('report structure rejects missing geometry and malformed informational fields', () => {
+  for (const mutate of [
+    r => { delete r.edges[0].polyline; }, r => { r.edges[0].polyline = []; },
+    r => { r.edges[0].polyline = [[0, 0]]; }, r => { r.edges[0].polyline[0] = ['0', 0]; },
+    r => { r.edges[0].polyline[0] = [0, Infinity]; },
+    r => { delete r.edges[0].visible_border.close_length; },
+    r => { delete r.edges[0].visible_border.minimum_gap_within_8px; },
+    r => { r.edges[0].visible_border.preferred_deficit = '0'; },
+    r => { delete r.units; }, r => { delete r.policy.approximations; },
+    r => { r.policy.parallel_centerline_preference = '16'; },
+    r => { delete r.limits.pair_limit; }, r => { r.limits.pair_comparisons = 0.5; },
+    r => { delete r.states[0].origin; }, r => { r.states[0].spatial_layout.width = null; },
+    r => { delete r.states[0].cards.spatial; }, r => { r.states.push(r.states[0]); },
+    r => { r.findings.push({category: 'unknown', edge: r.edges[0].id}); },
+  ]) {
+    const report = baseline();
+    mutate(report);
+    assert.throws(() => compare(baseline(), report, budgets));
+    assert.throws(() => compare(report, baseline(), budgets));
+  }
+});
+
+test('all generated paths are checked against inputs before destructive operations', () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'layout-input-alias-'));
+  try {
+    const baselineDir = path.join(dir, 'baselines');
+    const output = path.join(dir, 'out');
+    fs.mkdirSync(baselineDir);
+    fs.mkdirSync(output);
+    const manifestPath = path.join(baselineDir, 'manifest.json');
+    for (const name of ['small.json', 'small.svg', 'small.log', 'results.json', 'summary.md']) {
+      for (const kind of ['direct', 'symlink', 'hardlink']) {
+        const generated = path.join(output, name);
+        const input = kind === 'direct' ? generated : path.join(dir, 'source.json');
+        fs.writeFileSync(input, 'preserved input');
+        if (kind === 'symlink') fs.symlinkSync(input, generated);
+        if (kind === 'hardlink') fs.linkSync(input, generated);
+        const fixture = {...manifest.fixtures[0], inputs: [input]};
+        fs.writeFileSync(manifestPath, JSON.stringify({...manifest, fixtures: [fixture]}));
+        for (const update of [false, true]) {
+          assert.throws(() => run({manifestPath, binary: 'must-not-run', output, update}), /aliases protected input/);
+          assert.equal(fs.readFileSync(input, 'utf8'), 'preserved input');
+          assert.equal(fs.readFileSync(generated, 'utf8'), 'preserved input');
+        }
+        fs.unlinkSync(generated);
+        if (kind !== 'direct') fs.unlinkSync(input);
+      }
+    }
+  } finally { fs.rmSync(dir, {recursive: true, force: true}); }
 });
 
 test('summaries bound large errors and relationship identities', () => {

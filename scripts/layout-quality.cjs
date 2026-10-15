@@ -20,7 +20,17 @@ const categories = {crossings: 'crossing', overlap: 'independent_overlap',
   parallel: 'parallel_proximity', border: 'visible_border_clearance'};
 const stable = value => JSON.stringify(value, null, 2) + '\n';
 const read = file => JSON.parse(fs.readFileSync(file, 'utf8'));
-const write = (file, value) => fs.writeFileSync(file, stable(value));
+const write = (file, value) => {
+  const directory = fs.mkdtempSync(path.join(path.dirname(file), '.layout-baseline-'));
+  const temporary = path.join(directory, 'baseline.json');
+  try {
+    fs.writeFileSync(temporary, stable(value), {flag: 'wx'});
+    fs.renameSync(temporary, file);
+  } finally {
+    fs.rmSync(temporary, {force: true});
+    fs.rmdirSync(directory);
+  }
+};
 const artifact = (file, value) => {
   fs.rmSync(file, {force: true});
   fs.writeFileSync(file, value, {flag: 'wx'});
@@ -56,7 +66,72 @@ function containsDirectory(parent, child) {
   return relative === '' || (relative !== '..' && !relative.startsWith(`..${path.sep}`) && !path.isAbsolute(relative));
 }
 
+function sameFile(a, b) {
+  if (resolvedDirectory(a) === resolvedDirectory(b)) return true;
+  try {
+    const left = fs.statSync(a);
+    const right = fs.statSync(b);
+    return left.dev === right.dev && left.ino === right.ino;
+  } catch (error) {
+    if (error.code !== 'ENOENT') throw error;
+    return false;
+  }
+}
+
+const point = value => Array.isArray(value) && value.length === 2 && value.every(Number.isFinite);
+const nonnegative = value => Number.isFinite(value) && value >= 0;
+
+function validateStructure(report) {
+  if (report.units !== 'SVG user units (px)' || !Array.isArray(report.edges) || !Array.isArray(report.states))
+    throw new Error('non-comparable report structure');
+  for (const key of ['parallel_centerline_preference', 'parallel_minimum_run', 'endpoint_convergence', 'border_minimum_gap', 'border_preferred_gap'])
+    if (!nonnegative(report.policy?.[key])) throw new Error(`invalid policy: ${key}`);
+  if (!Array.isArray(report.policy.approximations) || !report.policy.approximations.every(v => typeof v === 'string'))
+    throw new Error('invalid policy approximations');
+  for (const key of ['finding_limit', 'pair_limit', 'pair_comparisons'])
+    if (!Number.isSafeInteger(report.limits?.[key]) || report.limits[key] < 0) throw new Error(`invalid limit: ${key}`);
+  const states = new Set();
+  for (const state of report.states) {
+    if (!(state.state === null || typeof state.state === 'string') || states.has(state.state) ||
+        !point(state.origin) || !nonnegative(state.resources) ||
+        !nonnegative(state.spatial_layout?.width) || !nonnegative(state.spatial_layout?.height))
+      throw new Error('invalid state geometry or identity');
+    states.add(state.state);
+    for (const key of ['embedded_routes', 'logical_components', 'logical_groups', 'logical_resources', 'relationship_groups', 'spatial'])
+      if (!Number.isSafeInteger(state.cards?.[key]) || state.cards[key] < 0) throw new Error(`invalid state cards: ${key}`);
+  }
+  for (const edge of report.edges) {
+    if (!Array.isArray(edge.polyline) || edge.polyline.length < 2 || !edge.polyline.every(point))
+      throw new Error('invalid routed polyline');
+    for (const key of ['close_length', 'preferred_deficit'])
+      if (!nonnegative(edge.visible_border?.[key])) throw new Error(`invalid visible border: ${key}`);
+    if (edge.visible_border.minimum_gap_within_8px !== null && !Number.isFinite(edge.visible_border.minimum_gap_within_8px))
+      throw new Error('invalid visible border minimum gap');
+  }
+  if (!Array.isArray(report.findings)) throw new Error('invalid findings');
+  const edges = new Map(report.edges.map(edge => [edge.id, edge]));
+  for (const finding of report.findings) {
+    if (!finding || ![...Object.values(categories)].includes(finding.category) || !edges.has(finding.edge))
+      throw new Error('invalid finding category or edge');
+    if (finding.category === 'visible_border_clearance') {
+      if (!Number.isSafeInteger(finding.segment) || finding.segment < 0 ||
+          !point(finding.interval) || finding.interval[0] >= finding.interval[1] ||
+          !Number.isFinite(finding.coordinate) || typeof finding.horizontal !== 'boolean' ||
+          typeof finding.below_minimum !== 'boolean' || !Object.hasOwn(finding, 'frame'))
+        throw new Error('invalid border finding');
+      if (finding.frame !== null) {
+        const frame = finding.frame;
+        if (!(frame.state === null || typeof frame.state === 'string') ||
+            !(frame.node === null || typeof frame.node === 'string') ||
+            !['x', 'y', 'width', 'height'].every(key => nonnegative(frame.bounds?.[key])))
+          throw new Error('invalid border frame');
+      }
+    }
+  }
+}
+
 function validate(report) {
+  validateStructure(report);
   if (!Array.isArray(report.findings)) throw new Error('non-comparable missing or invalid findings array');
   if (report.schema_version !== 1 || report.category !== 'layout' || report.scope !== 'whole_diagram')
     throw new Error('incompatible diagnostics schema/category/scope');
@@ -213,9 +288,26 @@ function run({binary, output, update = false, manifestPath = 'tests/layout-quali
   const outputDirectory = resolvedDirectory(output);
   if (containsDirectory(baselineDirectory, outputDirectory) || containsDirectory(outputDirectory, baselineDirectory))
     throw new Error('output directory must not overlap the baseline directory');
+  const protectedFiles = [manifestFile, ...manifest.fixtures.flatMap(f => f.inputs)];
+  const destinations = ['results.json', 'summary.md', ...ids.flatMap(id => [`${id}.json`, `${id}.svg`, `${id}.log`])]
+    .map(file => path.join(outputDirectory, file));
+  const baselineFiles = ids.map(id => path.join(baselineDirectory, `${id}.json`));
+  for (const destination of [...destinations, ...baselineFiles]) {
+    if (protectedFiles.some(input => sameFile(destination, input)))
+      throw new Error(`output or baseline aliases protected input: ${destination}`);
+  }
+  for (let i = 0; i < baselineFiles.length; i++) {
+    try {
+      if (!fs.lstatSync(baselineFiles[i]).isFile()) throw new Error('baseline must be a regular file, not a symlink');
+    } catch (error) {
+      if (error.code !== 'ENOENT') throw error;
+    }
+    if (baselineFiles.slice(i + 1).some(file => sameFile(file, baselineFiles[i])) ||
+        destinations.some(file => sameFile(file, baselineFiles[i])))
+      throw new Error('baseline aliases another generated file');
+  }
   fs.mkdirSync(output, {recursive: true});
-  for (const filename of ['results.json', 'summary.md'])
-    fs.rmSync(path.join(output, filename), {force: true});
+  for (const destination of destinations) fs.rmSync(destination, {force: true});
   const results = [];
   const pending = [];
   for (const fixture of manifest.fixtures) {

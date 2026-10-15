@@ -205,10 +205,22 @@ input/argument lists and missing or invalid budgets are rejected before renderin
 including per-edge budgets for fixtures with no edges.
 Pair findings require nonnegative integer segment indices and category-specific
 location fields with finite JSON numbers; numeric strings are not accepted.
+Each routed polyline requires at least two finite two-coordinate points. State
+geometry/card counts, policy fields, collection limits and informational border
+measurements are also validated, including border-finding geometry.
 Output and baseline directories must be separate: identical directories and either
 ancestor/descendant relationship are rejected before creating output or invoking
 the renderer. This check resolves directory symlinks, including existing parents
 of a new output directory, so aliases cannot overwrite checked-in baselines.
+Before any removal, all report, SVG, log, aggregate and baseline destinations are
+checked against every declared input and the manifest, including symlink and
+hardlink aliases. Baseline destinations must be regular files when present.
+Updates stage each baseline in its own directory before an atomic rename; they
+do not truncate existing files on serialization/write failure. All rendering must
+succeed before this phase. The set of baseline renames is not a filesystem
+transaction: interruption between renames can leave a partial update, which must
+be rerun and reviewed. Concurrent mutation of inputs/output directories by another
+process is outside this local workflow's guarantees.
 
 The job publishes a bounded Markdown summary with deltas and stable relationship
 identities, and retains full reports, comparison details, renderer logs and preview
@@ -216,7 +228,8 @@ SVGs for 14 days. Preview SVGs live only in the output artifact.
 Markdown is capped at 60,000 characters, with at most 2,000 characters per error;
 renderer logs retain captured process output. Per-edge border changes show only
 border findings; raw bend/length changes do not attach unrelated spatial findings.
-Prior aggregate artifacts are removed before rendering. Log and aggregate writes
+Prior artifacts for all selected fixtures and aggregate results are removed before
+reading inputs, so input failures cannot retain an earlier preview. Log and aggregate writes
 replace old files without following pre-existing file symlinks.
 The maintained SVG generation script is not run. Failures keep a failing job status. The job has
 a 35-minute ceiling, with 5 minutes for compilation, 2 minutes for comparison
