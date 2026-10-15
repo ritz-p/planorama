@@ -117,6 +117,8 @@ Tests・Clippy は `Swatinem/rust-cache` で Cargo registry/git と `target` 内
 
 大型 fixture を繰り返し描画・比較する3つの単体テストは通常実行で ignore し、**Routing regressions** が main へのマージ後と毎晩に実行します。小規模な正当性検証と大型 SVG の結合テストは PR に残します。[分類・再現コマンド・失敗時の確認方法](docs/ci.md#deferred-routing-regressions-253) を参照してください。
 
+cargo-nextest は並列度を変えて繰り返し比較しましたが、通常ジョブの短縮効果がなかったため導入せず、`cargo test` を継続します。[計測結果と再現手順](docs/ci.md#test-runner-evaluation-254) を参照してください。
+
 テストプロファイルは `opt-level = 1` で経路計算を高速化し、debug assertion と overflow check を明示的に有効にしています。MSRV は Docker で Rust 1.85.0 の通常テストを実行し、Cargo.toml/Cargo.lock・ツールチェーン・Docker 関連設定・MSRV workflow の変更で起動します。
 
 `tests/unit` は実装モジュール内に読み込む単体テスト、`tests/integration` は CLI 経由の結合テストです。Cargo.toml に4つの結合テスト対象を登録しています。`--bin planorama` で単体テスト、`--test rendering` などで結合テストを選択できます。
