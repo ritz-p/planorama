@@ -140,6 +140,7 @@ pub use terraform::{TerraformEntity, TerraformPlan, TerraformReference};
 pub enum EdgeKind {
     Dependency,
     Subscription,
+    EventSource,
     Association,
     Connection,
     Containment,

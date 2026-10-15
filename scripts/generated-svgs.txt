@@ -22,6 +22,7 @@ examples/rds-subnet-group.svg
 examples/regions.svg
 examples/messaging.svg
 examples/sns-subscriptions.svg
+examples/event-sources.svg
 examples/logical-regions.svg
 examples/logical-actions.svg
 examples/regional-states.svg

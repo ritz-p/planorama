@@ -41,7 +41,10 @@ pub(super) fn render(graph: &Graph, layout: &Layout<'_>) -> String {
         svg.push_str(&circle(path[0], "source", stroke));
         if matches!(
             edge.kind,
-            EdgeKind::Association | EdgeKind::Connection | EdgeKind::Subscription
+            EdgeKind::Association
+                | EdgeKind::Connection
+                | EdgeKind::Subscription
+                | EdgeKind::EventSource
         ) {
             let end = path[path.len() - 1];
             svg.push_str(&circle(end, "target", stroke));

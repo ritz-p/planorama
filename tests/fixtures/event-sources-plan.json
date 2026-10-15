@@ -1,0 +1,247 @@
+{
+  "format_version": "1.2",
+  "resource_changes": [
+    {
+      "address": "aws_sns_topic.events",
+      "type": "aws_sns_topic",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "topic-proof"
+        }
+      }
+    },
+    {
+      "address": "aws_sqs_queue.jobs",
+      "type": "aws_sqs_queue",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "update"
+        ],
+        "after": {
+          "arn": "queue-proof"
+        }
+      }
+    },
+    {
+      "address": "data.aws_sqs_queue.archive",
+      "type": "aws_sqs_queue",
+      "mode": "data",
+      "change": {
+        "actions": [
+          "read"
+        ],
+        "after": {
+          "arn": "archive-proof"
+        }
+      }
+    },
+    {
+      "address": "aws_lambda_function.worker",
+      "type": "aws_lambda_function",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "arn": "function-proof",
+          "function_name": "worker-proof"
+        }
+      }
+    },
+    {
+      "address": "aws_lambda_event_source_mapping.jobs",
+      "type": "aws_lambda_event_source_mapping",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "event_source_arn": "queue-proof",
+          "function_name": "worker-proof"
+        }
+      }
+    },
+    {
+      "address": "aws_lambda_event_source_mapping.archive",
+      "type": "aws_lambda_event_source_mapping",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "update"
+        ],
+        "after": {
+          "event_source_arn": "archive-proof",
+          "function_name": "function-proof"
+        }
+      }
+    },
+    {
+      "address": "aws_lambda_event_source_mapping.duplicate",
+      "type": "aws_lambda_event_source_mapping",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "event_source_arn": "queue-proof",
+          "function_name": "function-proof"
+        }
+      }
+    },
+    {
+      "address": "aws_lambda_event_source_mapping.unsupported",
+      "type": "aws_lambda_event_source_mapping",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "event_source_arn": "topic-proof",
+          "function_name": "worker-proof"
+        }
+      }
+    },
+    {
+      "address": "aws_lambda_event_source_mapping.literal",
+      "type": "aws_lambda_event_source_mapping",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "event_source_arn": "queue-proof",
+          "function_name": "worker-proof"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "full_name": "hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "ap-northeast-1"
+          }
+        }
+      },
+      "aws.archive": {
+        "full_name": "hashicorp/aws",
+        "alias": "archive",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_sns_topic.events",
+          "provider_config_key": "aws"
+        },
+        {
+          "address": "aws_sqs_queue.jobs",
+          "provider_config_key": "aws"
+        },
+        {
+          "address": "data.aws_sqs_queue.archive",
+          "provider_config_key": "aws.archive"
+        },
+        {
+          "address": "aws_lambda_function.worker",
+          "provider_config_key": "aws"
+        },
+        {
+          "address": "aws_lambda_event_source_mapping.jobs",
+          "provider_config_key": "aws",
+          "expressions": {
+            "event_source_arn": {
+              "references": [
+                "aws_sqs_queue.jobs.arn"
+              ]
+            },
+            "function_name": {
+              "references": [
+                "aws_lambda_function.worker.function_name"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_lambda_event_source_mapping.archive",
+          "provider_config_key": "aws",
+          "expressions": {
+            "event_source_arn": {
+              "references": [
+                "data.aws_sqs_queue.archive.arn"
+              ]
+            },
+            "function_name": {
+              "references": [
+                "aws_lambda_function.worker.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_lambda_event_source_mapping.duplicate",
+          "provider_config_key": "aws",
+          "expressions": {
+            "event_source_arn": {
+              "references": [
+                "aws_sqs_queue.jobs.arn"
+              ]
+            },
+            "function_name": {
+              "references": [
+                "aws_lambda_function.worker.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_lambda_event_source_mapping.unsupported",
+          "provider_config_key": "aws",
+          "expressions": {
+            "event_source_arn": {
+              "references": [
+                "aws_sns_topic.events.arn"
+              ]
+            },
+            "function_name": {
+              "references": [
+                "aws_lambda_function.worker.function_name"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_lambda_event_source_mapping.literal",
+          "provider_config_key": "aws",
+          "expressions": {
+            "event_source_arn": {
+              "constant_value": "queue-proof"
+            },
+            "function_name": {
+              "references": [
+                "aws_lambda_function.worker.function_name"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

@@ -3,7 +3,27 @@ use roxmltree::Document;
 
 #[test]
 fn subscription_svg_html_filters_and_named_states_keep_real_navigation() {
-    let fixture = include_bytes!("../fixtures/sns-subscriptions-plan.json");
+    verify(
+        "tests/fixtures/sns-subscriptions-plan.json",
+        "subscription",
+        "aws_sns_topic_subscription.jobs",
+        8,
+    );
+}
+
+#[test]
+fn event_source_svg_html_filters_and_named_states_keep_real_navigation() {
+    verify(
+        "tests/fixtures/event-sources-plan.json",
+        "eventsource",
+        "aws_lambda_event_source_mapping.jobs",
+        9,
+    );
+}
+
+fn verify(path: &str, kind: &str, address: &str, resources: usize) {
+    let bytes = std::fs::read(path).unwrap();
+    let fixture = bytes.as_slice();
     for format in ["svg", "html"] {
         let output = support::run_with_args(fixture, &["--format", format]);
         assert!(output.status.success());
@@ -13,7 +33,7 @@ fn subscription_svg_html_filters_and_named_states_keep_real_navigation() {
         let doc = Document::parse(&text[start..end]).unwrap();
         assert_eq!(
             doc.descendants()
-                .filter(|n| n.attribute("data-edge-kind") == Some("subscription"))
+                .filter(|n| n.attribute("data-edge-kind") == Some(kind))
                 .count(),
             3
         );
@@ -29,7 +49,7 @@ fn subscription_svg_html_filters_and_named_states_keep_real_navigation() {
                 .count(),
             6
         );
-        assert!(text.contains("8 resources"));
+        assert!(text.contains(&format!("{resources} resources")));
         for link in doc
             .descendants()
             .filter_map(|n| n.attribute("href"))
@@ -42,21 +62,18 @@ fn subscription_svg_html_filters_and_named_states_keep_real_navigation() {
         }
         let filtered = support::run_with_args(
             fixture,
-            &[
-                "--format",
-                format,
-                "--focus",
-                "aws_sns_topic_subscription.jobs",
-                "--focus-depth",
-                "0",
-            ],
+            &["--format", format, "--focus", address, "--focus-depth", "0"],
         );
         assert!(filtered.status.success());
         let text = String::from_utf8(filtered.stdout).unwrap();
-        assert!(!text.contains("data-edge-kind=\"subscription\""));
+        assert!(!text.contains(&format!("data-edge-kind=\"{kind}\"")));
         assert!(text.contains("Unavailable"));
+        let changed = support::run_with_args(fixture, &["--format", format, "--changed-only"]);
+        assert!(changed.status.success());
+        let text = String::from_utf8(changed.stdout).unwrap();
+        assert!(text.contains(&format!("data-edge-kind=\"{kind}\"")));
+        assert!(text.contains("aws_lambda_function.worker"));
     }
-    let path = "tests/fixtures/sns-subscriptions-plan.json";
     let first = format!("one={path}");
     let second = format!("two={path}");
     let render = |states: [&str; 2]| {
@@ -78,13 +95,13 @@ fn subscription_svg_html_filters_and_named_states_keep_real_navigation() {
         assert_eq!(
             panel
                 .descendants()
-                .filter(|n| n.attribute("data-edge-kind") == Some("subscription"))
+                .filter(|n| n.attribute("data-edge-kind") == Some(kind))
                 .count(),
             3
         );
         for edge in panel
             .descendants()
-            .filter(|n| n.attribute("data-edge-kind") == Some("subscription"))
+            .filter(|n| n.attribute("data-edge-kind") == Some(kind))
         {
             for attribute in ["data-source", "data-target"] {
                 let id = edge.attribute(attribute).unwrap();
@@ -121,6 +138,6 @@ fn subscription_svg_html_filters_and_named_states_keep_real_navigation() {
     assert!(
         !panel
             .descendants()
-            .any(|n| n.attribute("data-edge-kind") == Some("subscription"))
+            .any(|n| n.attribute("data-edge-kind") == Some(kind))
     );
 }

@@ -114,6 +114,7 @@ pub(super) fn title(graph: &Graph, edge: &Edge, semantic_edges: bool) -> String 
         EdgeKind::Dependency => "dependency",
         EdgeKind::Association => "association",
         EdgeKind::Subscription => "subscription",
+        EdgeKind::EventSource => "event source",
         EdgeKind::Connection => "connection",
         EdgeKind::Containment => "containment",
     };

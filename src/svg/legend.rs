@@ -144,6 +144,14 @@ impl MeasuredLegend {
                 directionality: Directionality::Directed,
             });
         }
+        if edges.iter().any(|e| e.kind == EdgeKind::EventSource) {
+            entries.push(Entry {
+                kind: EdgeKind::EventSource,
+                name: "Event source",
+                explanation: "Directed source-to-function mapping proven by Terraform references. Processing, permissions and active mapping state are not verified.",
+                directionality: Directionality::Directed,
+            });
+        }
         content.grid(&entries);
         content.text(
             "Hollow circles mark resource/card attachment points; neither end of an undirected line is a directional start. Filled internal dots mark bundle junctions.",
@@ -445,7 +453,10 @@ impl MeasuredSample {
         ));
         if matches!(
             kind,
-            EdgeKind::Association | EdgeKind::Connection | EdgeKind::Subscription
+            EdgeKind::Association
+                | EdgeKind::Connection
+                | EdgeKind::Subscription
+                | EdgeKind::EventSource
         ) {
             svg.push_str(&super::endpoints::attachment_circle(
                 *end,
@@ -460,7 +471,10 @@ impl MeasuredSample {
                 .unwrap();
             }
         }
-        if matches!(kind, EdgeKind::Association | EdgeKind::Subscription) {
+        if matches!(
+            kind,
+            EdgeKind::Association | EdgeKind::Subscription | EdgeKind::EventSource
+        ) {
             for (bounds, terminal) in badges.iter().zip(["source", "target"]) {
                 writeln!(svg, r#"<g data-legend-badge="{terminal}">"#).unwrap();
                 svg.push_str(&super::relationship_index::badge(

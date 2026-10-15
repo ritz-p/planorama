@@ -10,8 +10,7 @@ semantics. Provider source and configuration identity are described in [models](
 regional scope from provider evidence. Managed/data mode, actions and ordinary
 Terraform references remain visible. The [messaging example](../examples/messaging.svg)
 includes both services and a data lookup in a singleton region. Names, ARNs,
-policies and proximity do not establish message flow. Event-source resources do
-not yet lower into message-delivery relationships.
+policies and proximity do not establish message flow.
 
 AWS account scope is resolved independently from region using verified saved-plan
 provider evidence; JSON alone leaves accounts unknown. See [the input contract](provider-evidence.md). State IDs and provider
@@ -111,6 +110,35 @@ in another state. These edges describe configured subscriptions, not successful
 delivery, access-policy correctness or runtime reachability.
 See [the subscription example](../examples/sns-subscriptions.svg).
 
+## Lambda event source mappings
+
+Managed `aws_lambda_event_source_mapping` resources remain logical rows and add a
+directed `Event source` relationship from a verified SQS Queue to a verified Lambda
+Function. Both `event_source_arn` and `function_name` require complete, unique,
+explicit references. Known planned values must match the queue ARN and the function
+name or ARN, respectively. Values are compared transiently; only boolean evidence
+is retained. Literal names/ARNs, policies, environment variables and proximity do
+not identify endpoints. Unknown or mismatched values remain unresolved.
+Deletion actions use known `before` values (or prior state when a resource has no
+change entry) for the mapping and both endpoints, still requiring explicit
+configuration references, just as subscriptions do.
+
+Each mapping retains its own action, import/move metadata, scope, source identity
+and relationship number, including parallel mappings between identical endpoints.
+Deposed mappings stay separate logical rows without borrowing current references.
+Data queue/function endpoints are supported; data mappings do not establish edges.
+Unsupported sources, missing/filtered targets and incomplete or dynamic references
+keep the logical row and independently verified partial context. A missing endpoint
+never resolves against another state. Cross-account/region endpoints retain their
+own scope; the mapping's provider binding does not assign scope to either endpoint.
+
+The relationship describes configured event consumption, not active mapping state,
+processing success, access permissions, reachability or delivery guarantees.
+Kinesis, DynamoDB Streams, MSK, Kafka, MQ and DocumentDB require separate explicit
+type, endpoint and direction rules before they can produce event-source edges.
+See [the event-source example](../examples/event-sources.svg), including duplicate
+endpoints, a cross-region data queue, an unsupported source and a literal fallback.
+
 ## Resource roles and data
 
 VPC and Subnet are spatial `Container` resources. Other supported types are
@@ -128,7 +156,7 @@ mode. Their action subsections change presentation only, not role or placement.
 
 Placement is independent of role. ECS Cluster, ECS Task Definition, IAM Role,
 Policy, Role Policy, Instance Profile, AMI, EC2 Launch Template, CloudWatch Log Group,
-Metric Alarm, Auto Scaling Policy and SNS Topic Subscription definitions are explicit logical resources, rendered as rows grouped
+Metric Alarm, Auto Scaling Policy, SNS Topic Subscription and Lambda Event Source Mapping definitions are explicit logical resources, rendered as rows grouped
 by provider source, resource type and mode in
 the top annotation area. AMI describes
 an image definition used by workloads, not a deployed compute instance. These

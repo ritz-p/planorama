@@ -285,9 +285,15 @@ class ViewerTests(unittest.TestCase):
         self.assertEqual(before, after)
 
     def test_subscription_navigation_retains_provenance_and_endpoint_direction(self):
-        self.load('tests/fixtures/sns-subscriptions-plan.json')
-        self.choose('aws_sns_topic_subscription.jobs')
-        paths = self.driver.find_elements(By.CSS_SELECTOR, 'path[data-viewer-edge][data-edge-kind="subscription"]')
+        self.check_messaging_navigation('sns-subscriptions', 'aws_sns_topic_subscription.jobs', 'subscription')
+
+    def test_event_source_navigation_retains_provenance_and_endpoint_direction(self):
+        self.check_messaging_navigation('event-sources', 'aws_lambda_event_source_mapping.jobs', 'eventsource')
+
+    def check_messaging_navigation(self, fixture, address, kind):
+        self.load(f'tests/fixtures/{fixture}-plan.json')
+        self.choose(address)
+        paths = self.driver.find_elements(By.CSS_SELECTOR, f'path[data-viewer-edge][data-edge-kind="{kind}"]')
         self.assertEqual(len(paths), 1)
         self.assertEqual(paths[0].get_attribute('data-directionality'), 'directed')
         marker = self.find('[data-relationship-marker] a')
