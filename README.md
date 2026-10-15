@@ -15,6 +15,8 @@ docker compose exec -T dev cargo run --locked -- examples/plan.json -o diagram.s
 
 [SQS/SNS の例](examples/messaging.svg) と [SNS 購読の例](examples/sns-subscriptions.svg) では、サービスの配置と検証済みの購読関係を表示します。購読リソースは論理行として保持し、未解決の接続先も明示します。[判定条件](docs/aws.md#sns-subscriptions)を参照してください。
 
+[イベントソースの例](examples/event-sources.svg) は、明示参照と計画値で検証した SQS → Lambda のマッピングを表示します。非対応ソースや未解決のマッピングも論理行として保持します。
+
 検索・選択・ズーム付きの HTML は `--format html` で生成します。生成後はネットワークなしでローカルのブラウザから開けます。[HTML の例](examples/viewer.html) と [操作方法](docs/viewer.md) を参照してください。
 
 ```sh
