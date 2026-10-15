@@ -24,6 +24,20 @@ const write = (file, value) => fs.writeFileSync(file, stable(value));
 const hash = data => crypto.createHash('sha256').update(data).digest('hex');
 const utf8Order = (a, b) => Buffer.compare(Buffer.from(a, 'utf8'), Buffer.from(b, 'utf8'));
 
+function resolvedDirectory(directory) {
+  const absolute = path.resolve(directory);
+  try { return fs.realpathSync(absolute); }
+  catch (error) {
+    if (error.code !== 'ENOENT') throw error;
+    return path.join(resolvedDirectory(path.dirname(absolute)), path.basename(absolute));
+  }
+}
+
+function containsDirectory(parent, child) {
+  const relative = path.relative(parent, child);
+  return relative === '' || (relative !== '..' && !relative.startsWith(`..${path.sep}`) && !path.isAbsolute(relative));
+}
+
 function validate(report) {
   if (!Array.isArray(report.findings)) throw new Error('non-comparable missing or invalid findings array');
   if (report.schema_version !== 1 || report.category !== 'layout' || report.scope !== 'whole_diagram')
@@ -131,6 +145,10 @@ function run({binary, output, update = false, manifestPath = 'tests/layout-quali
   const manifest = read(manifestPath);
   if (manifest.version !== 1 || manifest.renderer_contract !== 'planorama-final-layout-v1')
     throw new Error('incompatible manifest/renderer contract');
+  const baselineDirectory = fs.realpathSync(path.dirname(manifestPath));
+  const outputDirectory = resolvedDirectory(output);
+  if (containsDirectory(baselineDirectory, outputDirectory) || containsDirectory(outputDirectory, baselineDirectory))
+    throw new Error('output directory must not overlap the baseline directory');
   fs.mkdirSync(output, {recursive: true});
   const results = [];
   const pending = [];

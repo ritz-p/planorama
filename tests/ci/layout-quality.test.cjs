@@ -160,18 +160,19 @@ test('successful renderer without fresh regular diagnostics cannot check or upda
   try {
     const fake = path.join(dir, 'fake.cjs');
     const fixture = {...manifest.fixtures[2], args: [fake]};
-    const manifestPath = path.join(dir, 'manifest.json');
+    fs.mkdirSync(path.join(dir, 'baselines'));
+    const manifestPath = path.join(dir, 'baselines', 'manifest.json');
     fs.writeFileSync(manifestPath, JSON.stringify({...manifest, fixtures: [fixture]}));
     const options = {manifestPath, binary: process.execPath, output: path.join(dir, 'out')};
     const source = path.join(__dirname, '../layout-quality/fan-in.json');
     fs.writeFileSync(fake, `const fs = require('node:fs'); fs.writeFileSync(process.argv.at(-1), JSON.stringify(JSON.parse(fs.readFileSync(${JSON.stringify(source)})).report));`);
     assert.equal(run({...options, update: true}), true);
-    const saved = fs.readFileSync(path.join(dir, 'fan-in.json'), 'utf8');
+    const saved = fs.readFileSync(path.join(dir, 'baselines', 'fan-in.json'), 'utf8');
     for (const update of [false, true]) {
       fs.writeFileSync(path.join(options.output, 'fan-in.json'), JSON.stringify(baseline()));
       fs.writeFileSync(fake, '');
       assert.equal(run({...options, update}), false);
-      assert.equal(fs.readFileSync(path.join(dir, 'fan-in.json'), 'utf8'), saved);
+      assert.equal(fs.readFileSync(path.join(dir, 'baselines', 'fan-in.json'), 'utf8'), saved);
     }
     fs.writeFileSync(fake, `require('node:fs').symlinkSync(${JSON.stringify(source)}, process.argv.at(-1));`);
     assert.equal(run({...options, update: true}), false);
@@ -190,13 +191,41 @@ test('one fixture failure remains visible next to improvements elsewhere', () =>
   assert.match(text, /good: passed/);
 });
 
+test('overlapping output directories are rejected before touching baselines or invoking the renderer', () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'layout-overlap-'));
+  try {
+    const baselineDir = path.join(dir, 'baselines');
+    fs.mkdirSync(baselineDir);
+    const baselinePath = path.join(baselineDir, 'fan-in.json');
+    const saved = fs.readFileSync(path.join(__dirname, '../layout-quality/fan-in.json'));
+    fs.writeFileSync(baselinePath, saved);
+    const marker = path.join(dir, 'invoked');
+    const fake = path.join(dir, 'fake.cjs');
+    fs.writeFileSync(fake, `require('node:fs').writeFileSync(${JSON.stringify(marker)}, 'invoked'); process.exit(1);`);
+    const manifestPath = path.join(baselineDir, 'manifest.json');
+    fs.writeFileSync(manifestPath, JSON.stringify({...manifest, fixtures: [{...manifest.fixtures[2], args: [fake]}]}));
+    const alias = path.join(dir, 'alias');
+    fs.symlinkSync(baselineDir, alias, 'dir');
+    for (const output of [baselineDir, path.join(baselineDir, '..', 'baselines'), dir,
+      path.join(baselineDir, 'new', 'output'), alias, path.join(alias, 'new', 'output')]) {
+      for (const update of [false, true]) {
+        assert.throws(() => run({manifestPath, binary: process.execPath, output, update}), /must not overlap/);
+        assert.deepEqual(fs.readFileSync(baselinePath), saved);
+        assert.equal(fs.existsSync(marker), false);
+        assert.equal(fs.existsSync(path.join(baselineDir, 'new')), false);
+      }
+    }
+  } finally { fs.rmSync(dir, {recursive: true, force: true}); }
+});
+
 test('runner identifies missing and stale baselines and preserves full artifacts', () => {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'layout-quality-'));
   try {
     const fake = path.join(dir, 'fake.cjs');
     fs.writeFileSync(fake, `const fs = require('node:fs'); const r = JSON.parse(fs.readFileSync(${JSON.stringify(path.join(__dirname, '../layout-quality/fan-in.json'))})); fs.writeFileSync(process.argv.at(-1), JSON.stringify(r.report));`);
     const fixture = {...manifest.fixtures[2], args: [fake]};
-    const manifestPath = path.join(dir, 'manifest.json');
+    fs.mkdirSync(path.join(dir, 'baselines'));
+    const manifestPath = path.join(dir, 'baselines', 'manifest.json');
     fs.writeFileSync(manifestPath, JSON.stringify({...manifest, fixtures: [fixture]}));
     const options = {manifestPath, binary: process.execPath, output: path.join(dir, 'out')};
     assert.equal(run(options), false);
@@ -206,11 +235,11 @@ test('runner identifies missing and stale baselines and preserves full artifacts
     fs.appendFileSync(fake, '\nconst report = JSON.parse(fs.readFileSync(process.argv.at(-1))); report.summary.visible_straight_sections.crossings++; report.findings.push({category: "crossing", edge: report.edges[0].id, peer: report.edges[1].id}); fs.writeFileSync(process.argv.at(-1), JSON.stringify(report));');
     assert.equal(run(options), false);
     assert.match(fs.readFileSync(path.join(options.output, 'summary.md'), 'utf8'), /FAIL: crossings/);
-    const originalBaseline = fs.readFileSync(path.join(dir, 'fan-in.json'), 'utf8');
+    const originalBaseline = fs.readFileSync(path.join(dir, 'baselines', 'fan-in.json'), 'utf8');
     fs.writeFileSync(manifestPath, JSON.stringify({...manifest, fixtures: [fixture,
       {...fixture, id: 'broken', inputs: [path.join(dir, 'missing.json')]}]}));
     assert.equal(run({...options, update: true}), false);
-    assert.equal(fs.readFileSync(path.join(dir, 'fan-in.json'), 'utf8'), originalBaseline);
+    assert.equal(fs.readFileSync(path.join(dir, 'baselines', 'fan-in.json'), 'utf8'), originalBaseline);
     fixture.budgets = {...budgets, bends: {mode: 'gate', absolute: 3, relative: 0}};
     fs.writeFileSync(manifestPath, JSON.stringify({...manifest, fixtures: [fixture]}));
     assert.equal(run(options), false);

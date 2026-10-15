@@ -189,6 +189,10 @@ Updates write baselines only after every fixture renders with comparable complet
 diagnostics. Missing/stale baselines fail checks. CI never updates or commits them.
 Each render removes its prior report first and must produce a new regular file;
 a successful process exit without fresh diagnostics cannot pass or update a baseline.
+Output and baseline directories must be separate: identical directories and either
+ancestor/descendant relationship are rejected before creating output or invoking
+the renderer. This check resolves directory symlinks, including existing parents
+of a new output directory, so aliases cannot overwrite checked-in baselines.
 
 The job publishes a bounded Markdown summary with deltas and stable relationship
 identities, and retains full reports, comparison details, renderer logs and preview
