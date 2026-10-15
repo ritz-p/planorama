@@ -49,6 +49,17 @@ function validate(report) {
   if (ids.some(id => typeof id !== 'string') ||
       !isDeepStrictEqual(ids, [...ids].sort(utf8Order)) || new Set(ids).size !== ids.length)
     throw new Error('non-comparable edge ordering or duplicate stable identities');
+  for (const edge of report.edges) {
+    let identity;
+    try { identity = JSON.parse(edge.id); }
+    catch { throw new Error('non-comparable edge ID is not JSON'); }
+    if (!isDeepStrictEqual(identity, edge.identity))
+      throw new Error('non-comparable edge ID does not match structured identity');
+  }
+  for (const dimension of [report.canvas?.width, report.canvas?.height]) {
+    if (!Number.isFinite(dimension) || dimension < 0)
+      throw new Error('invalid canvas dimension');
+  }
   for (const value of [report.summary?.routed_paths, report.summary?.raw_polyline?.length,
     report.summary?.raw_polyline?.bends, report.summary?.visible_straight_sections?.shared_trunk_length,
     ...Object.values(metrics).map(f => f(report)),

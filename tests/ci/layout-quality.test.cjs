@@ -144,7 +144,10 @@ test('Unicode stable IDs use Rust UTF-8 ordering instead of JavaScript UTF-16 or
   const report = baseline();
   const names = ['\uE000', '\u{10000}'];
   const mapping = new Map(report.edges.map((edge, i) => [edge.id, JSON.stringify({key: names[i] || `z${i}`})]));
-  for (const edge of report.edges) edge.id = mapping.get(edge.id);
+  for (const edge of report.edges) {
+    edge.id = mapping.get(edge.id);
+    edge.identity = JSON.parse(edge.id);
+  }
   report.edges.sort((a, b) => Buffer.compare(Buffer.from(a.id), Buffer.from(b.id)));
   for (const finding of report.findings) {
     finding.edge = mapping.get(finding.edge);
@@ -155,6 +158,31 @@ test('Unicode stable IDs use Rust UTF-8 ordering instead of JavaScript UTF-16 or
   wrong.edges.sort((a, b) => a.id < b.id ? -1 : a.id > b.id ? 1 : 0);
   assert.notDeepEqual(wrong.edges.map(e => e.id), report.edges.map(e => e.id));
   assert.throws(() => compare(report, wrong, budgets), /edge ordering/);
+});
+
+test('edge ID must encode the structured identity on both comparison sides', () => {
+  for (const mutate of [
+    edge => { edge.identity.source.id = 'different'; },
+    edge => { delete edge.identity; },
+    edge => { edge.identity = null; },
+    edge => { edge.id = '!invalid-json'; },
+  ]) {
+    const report = baseline();
+    mutate(report.edges[0]);
+    assert.throws(() => compare(baseline(), report, budgets), /non-comparable/);
+    assert.throws(() => compare(report, baseline(), budgets), /non-comparable/);
+  }
+});
+
+test('canvas dimensions reject coercible and invalid numbers on both comparison sides', () => {
+  for (const key of ['width', 'height']) {
+    for (const value of [undefined, null, '100', false, [], -1, Infinity, NaN]) {
+      const report = baseline();
+      report.canvas[key] = value;
+      assert.throws(() => compare(baseline(), report, budgets), /invalid canvas dimension/);
+      assert.throws(() => compare(report, baseline(), budgets), /invalid canvas dimension/);
+    }
+  }
 });
 
 test('pair regressions cannot be offset by another pair, and reversed pair order is equivalent', () => {

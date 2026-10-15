@@ -132,7 +132,8 @@ Changed bytes (including input reordering), options or budgets require an explic
 update. A separate CLI test proves reversed resource/configuration ordering and
 named-state argument ordering give identical diagnostics. Stable edge IDs and their
 lexicographic UTF-8 byte order (matching Rust, including Unicode IDs) must match;
-duplicate IDs, missing/non-array findings, incomplete findings/pair analysis, unsupported diagonals, policy or
+each ID must parse as JSON equal to its edge's structured identity.
+Duplicate IDs, missing/non-array findings, incomplete findings/pair analysis, unsupported diagonals, policy or
 schema mismatches fail as non-comparable, never as improvements.
 
 Every fixture currently selects the following budgets independently. For each
@@ -167,6 +168,8 @@ summary total within `0.000001`; missing or excess contributions make either
 report non-comparable even when it declares complete findings.
 All required summary measurements, including routed-path counts, raw length/bends
 and shared-trunk length, must be present as finite nonnegative numbers.
+Canvas width and height must themselves be finite nonnegative JSON numbers
+before area is calculated; coercible strings and null are rejected.
 Routed-path count must equal the number of edge entries. Aggregate raw length
 and bends must equal their per-edge sums within `0.000001` before comparison
 or baseline updates, so stale edge values cannot conceal an aggregate change.
