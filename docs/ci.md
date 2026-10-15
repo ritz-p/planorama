@@ -1,9 +1,10 @@
 # SVG generation and PR validation
 
-The **Update SVG examples** workflow regenerates the maintained diagrams when a PR
-changes their inputs. Contributors can push source changes and let Actions append
-the generated SVG changes to the same PR branch. Validation then runs on the new
-head, and **Report PR validation** publishes its results to the PR.
+Contributors and Codex regenerate maintained diagrams locally when rendering or
+generation inputs change, inspect the diff, and include the outputs in the PR.
+**Update SVG examples** is manual-only. When requested, it can append SVG changes
+to the same PR branch, dispatch validation on that head, and publish results
+through **Report PR validation**.
 
 ## Cancelling superseded validation
 
@@ -116,7 +117,7 @@ the ordinary suite does not acquire their substantial routing cost. Maintained
 SVG regeneration builds the release binary for this example. HTML remains an
 explicitly regenerated snapshot outside automatic SVG-only writeback.
 
-Automatic generation watches these inputs:
+Regenerate locally when changing these inputs:
 
 - Renderer and build inputs: `src/**`, `build.rs`, `assets/**`, `Cargo.toml`,
   `Cargo.lock`, `rust-toolchain.toml` and `.cargo/**`.
@@ -131,20 +132,49 @@ Automatic generation watches these inputs:
 - Maintained SVGs listed in the manifest, so manual edits to generated output are
   checked against the current renderer.
 
-For an ordinary PR update, the workflow inspects the latest push's changes before
-building. A documentation-only or unrelated-test update can skip generation when
-the preceding revision is known to have current SVGs, either from an SVG-only bot
-commit or a successful workflow that confirmed its output was current. If that
-cannot be confirmed, including when earlier generation is pending, failed or
-superseded, the workflow checks the full PR diff and regenerates as needed. This
-keeps an additional documentation push from discarding a pending renderer update.
-Opening or reopening a PR uses its complete diff; a non-linear or incomplete push
-comparison also falls back to that diff. An incomplete PR file list causes
-generation conservatively. A manual dispatch with the PR number regenerates its
-latest head regardless of the changed files.
+PR creation and synchronization never start full regeneration. There is no
+changed-file matcher or SVG-current certificate. Use the canonical manifest and
+script locally:
 
-When introducing another snapshot fixture builder or a non-JSON generation input,
-add its path to both the workflow's trigger paths and its input matcher.
+```sh
+docker compose exec -T dev sh scripts/update-examples.sh
+git diff --stat
+git diff -- examples
+```
+
+Inspect the affected diagrams and commit the necessary outputs with the source
+change. When adding generation inputs, update the script and manifest as needed.
+For recovery, choose **Actions → Update SVG examples → Run workflow**, select
+`main` for the workflow definition, and supply the open PR number, or run:
+
+```sh
+gh workflow run update_examples.yml --ref main -f pull_request=123
+```
+
+The workflow captures that PR's latest head, including for forks, and checks out
+the exact SHA regardless of changed paths. The selected workflow ref is not the
+generation source. Rerunning a job may capture a newer PR head; consult its summary.
+
+### Ordinary snapshot coverage
+
+Ordinary unit/integration tests compare 24 of the 35 maintained SVGs with current
+rendering: `association`, `bundling`, `checks`, `components`, `containment`,
+`data`, `data-icons`, `dense-architecture`, `diagram`, `hierarchy-routing`,
+`multi-container`, `multi-plan`, `port-collisions`, `regions`, `regional-states`,
+`relationship-index`, `relationship-index-wide`, `routes`, `spanning-dense`,
+`subnet-groups`, `terraform`, `terraform-large/diagram`, `vpc-workloads`, and
+`workload-security-groups` (paths under `examples/`, with `.svg`).
+
+The other 11 are `accounts`, `aws-relationships`, `autoscaling-policy`,
+`cross-state`, `logical-actions`, `logical-regions`, `multi-account/diagram`,
+`network-scope`, `rds-subnet-group`, `relationship-scopes`, and `security-groups`.
+Related behavior has focused tests, but ordinary tests do not reproduce these
+committed SVGs byte for byte. The multi-account input/topology test reads the
+committed SVG; its full rendering comparison is ignored and opt-in. These outputs
+can become stale while ordinary checks pass, so local generation and visual diff
+review remain necessary. Rust tests, formatting, Clippy, representative HTML
+snapshot tests and the existing Docker browser test remain unchanged; none claims
+to validate all 35 maintained SVGs on ordinary PRs.
 
 ## Generation and review
 
@@ -209,8 +239,8 @@ source, run downloaded scripts or apply an artifact patch.
 GitHub creates a tree and commit containing the declared SVG changes. The branch
 update uses GraphQL `updateRefs` with the captured `beforeOid` and `force: false`.
 If the head changes before this atomic update, including a branch rewind, the
-update is rejected. The old result is discarded and the newer PR update receives
-its own generation run. The SVG workflow's per-PR concurrency does not cancel a
+update is rejected. Discard the old result and regenerate locally or dispatch
+again for the newer head. The SVG workflow's per-PR concurrency does not cancel a
 running writeback between its commit and validation dispatch.
 
 Fork PRs keep the patch/artifact flow and do not enter the write-enabled job.
@@ -233,7 +263,7 @@ when the full PR file list touches its existing toolchain/Cargo/Docker inputs,
 MSRV workflow or shared validation checkout helper. **Workflow tests** is included
 for changes under `.github/**` or `tests/ci/**`. This validation selection
 examines the whole PR, including changes before the generated commit, independently
-of the narrower generation inputs above.
+of local generation decisions.
 
 Dispatch specifies the PR branch, PR number and exact expected head SHA. Its run
 name is `Validate PR #<number> at <full head SHA>`, and the returned run ID is checked
@@ -313,6 +343,12 @@ names, not `Dispatched ...`, the reporter job or **SVG validation dispatch**. Th
 mechanism supplies required status checks; it does not establish that a rule requiring a particular
 workflow execution has been satisfied.
 
+Do not require **Generate SVG examples** or **Commit SVG updates and start
+validation**: manual generation is optional and creates no pending status when
+not dispatched. Before rollout, remove any such requirement from repository or
+organization rules. The repository's main ruleset inspected for #405 contained no
+required status checks; no rule change was needed.
+
 See GitHub's [required-check rules and event restrictions](https://docs.github.com/en/pull-requests/how-tos/merge-and-close-pull-requests/troubleshooting-required-status-checks)
 and [Commit Status API](https://docs.github.com/en/rest/commits/statuses).
 
@@ -320,7 +356,7 @@ and [Commit Status API](https://docs.github.com/en/rest/commits/statuses).
 
 | Situation | Action |
 | --- | --- |
-| SVG generation fails | Fix the reported problem and push, or retry **Update SVG examples** for a transient failure. |
+| SVG generation fails or snapshots are missing/stale | Fix the problem, regenerate locally and commit the outputs, or dispatch **Update SVG examples** with the PR number after pushing the fix. A push alone does not regenerate. |
 | SVG commit exists but validation dispatch failed | Run **Update SVG examples** manually with the PR number. A no-diff result on the unchanged generated head repairs dispatch without another commit. |
 | A validation status fails | Open its linked validation workflow run. Fix code failures and push; retry that run for a transient or merge-ref timing failure. |
 | Validation stays pending or reporting failed | Inspect **Report PR validation** and retry its failed run. It rereads the current run and PR before reporting, so a reporting API failure does not require rebuilding or regenerating SVGs. |

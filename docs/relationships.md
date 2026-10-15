@@ -173,7 +173,7 @@ The [40-entry wide example](../examples/relationship-index-wide.svg) uses five l
 Cards wrap according to their measured content and the available width.
 Both are synthetic rendering fixtures with repeated associations,
 not deployable Terraform configurations. Their SVGs are maintained by
-[CI generation](ci.md) from the [21-entry](../tests/fixtures/relationship-index-plan.json)
+[local or manual CI generation](ci.md) from the [21-entry](../tests/fixtures/relationship-index-plan.json)
 and [40-entry](../tests/fixtures/relationship-index-wide-plan.json) inputs.
 Cross-state routes avoid number badges. Existing edge titles and provenance
 metadata remain available, and attribute values are excluded.

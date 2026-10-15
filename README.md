@@ -89,7 +89,7 @@ docker compose exec -T dev cargo run --locked -- - -o - < plan.json > diagram.sv
 | 性能計測 | [Benchmarks](docs/benchmarks.md) |
 | 最終レイアウトの text / JSON 診断 | [Layout diagnostics](docs/layout-diagnostics.md) |
 | 複数 state・region と account 証拠不足を示す大型例 | [生成方法・計測](examples/multi-account/README.md)、[SVG](examples/multi-account/diagram.svg)、[HTML](examples/multi-account/diagram.html) |
-| CI による SVG 生成・自動コミット・PR 検証結果 | [SVG automation](docs/ci.md) |
+| ローカル・手動 CI の SVG 生成と PR 検証結果 | [SVG automation](docs/ci.md) |
 
 ## 開発・検証
 
@@ -121,7 +121,7 @@ Tests・Clippy は `Swatinem/rust-cache` で Cargo registry/git と `target` 内
 
 ### SVG の更新
 
-同一リポジトリ内の PR は、レンダラー・生成入力の変更を push すると CI がサンプル SVG を生成し、差分がある場合は同じ PR ブランチへ自動コミットします。通常の更新では最新の push 差分と前のコミットの生成完了を確認し、画像が更新済みならドキュメントや無関係なテストだけの更新では生成を繰り返しません。生成中の追加 push や前回の生成失敗では、必要な再生成を続けます。
+レンダラー・生成入力を変更した場合は、Codex・コントリビューターが下記の共通コマンドで SVG を再生成し、差分と表示を確認して実装と同じ PR に含めます。通常の PR 作成・push では全 SVG を自動生成しません。復旧や補助には Actions の **Update SVG examples** を選び、`main` を実行元として open PR の番号を指定してください。指定 PR の最新 SHA を取得し、同一リポジトリ内で書き込み可能なら同じブランチへ SVG の差分をコミットします。
 
 自動コミットには `[skip ci]` を付けて承認待ちになる重複の PR イベント実行を抑えます。新しいコミットを PR ブランチへ反映する前に、Formatting・Clippy・Tests と変更内容に応じた MSRV・Workflow tests を Pending で登録し、反映後にこれらの検証を明示的に起動します。**Report PR validation** が実際の検証結果を確認し、同じコミットの PR チェックへ同名の commit status として反映します。**SVG validation dispatch** の成功は起動要求の確認を表し、検証の成功は各チェックで確認します。
 
