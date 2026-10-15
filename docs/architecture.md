@@ -173,6 +173,9 @@ the CLI for I/O, options, diagnostics, redaction, filtering and named-state cont
 Renderer feature tests reuse their SVG for snapshot assertions; dedicated tests
 cover repeated rendering and input reordering. Generic marker/stub checks use
 focused fixtures. Large-fixture geometry checks reuse their layout, while per-edge
-quality/reordering and CLI reproducibility retain scale coverage. Fixtures are
+quality/reordering and CLI reproducibility retain scale coverage. Three expensive
+large-fixture unit comparisons run after merge and nightly; focused correctness
+and full CLI snapshots remain in PR checks. See [test categories](ci.md#deferred-routing-regressions-253).
+Fixtures are
 local to each test, with no shared mutable state or test-order dependency.
 Run the Docker checks in the [README](../README.md).

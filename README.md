@@ -115,7 +115,9 @@ Formatting・Tests・Clippy は同じ PR の新しい `pull_request` 実行が�
 Tests・Clippy は `Swatinem/rust-cache` で Cargo registry/git と `target` 内の依存クレートの成果物を保存します。workspace crate は毎回ビルドし、ソース変更後に更新できない同一キーのキャッシュへ成果物を保存しません。キーには runner 環境・Rust compiler・Cargo.toml/Cargo.lock・ツールチェーン・Cargo 設定・ビルド関連環境変数に加え、`build.rs` と `assets/**` のハッシュを含めます。Tests の2ジョブは既存の `tests` キーを共有し、Clippy はプロファイルと成果物が異なるため別のジョブキーを使います。`v1-rust-dependencies` prefix で旧 workspace 成果物を含むキャッシュと区別します。復元後の再ビルド判定は Cargo が行い、キャッシュの有無によらず全対象を検証します。
 両 workflow は関連入力が変わる PR の `main` へのマージ後にも実行し、後続 PR が復元できる既定ブランチのキャッシュを作ります。`pull_request_target` の `closed` イベントでマージ済みの場合だけ起動し、読み取り権限でイベント時点の `main` を検証します。SVG の自動コミットに付く `[skip ci]` が squash merge のメッセージに残っても、マージ後の検証を実行できます。`main` へ直接 push した場合は Actions から手動実行してください。
 
-テストプロファイルは `opt-level = 1` で経路計算を高速化し、debug assertion と overflow check を明示的に有効にしています。MSRV は Docker で Rust 1.85.0 の全テストを実行し、Cargo.toml/Cargo.lock・ツールチェーン・Docker 関連設定・MSRV workflow の変更で起動します。
+大型 fixture を繰り返し描画・比較する3つの単体テストは通常実行で ignore し、**Routing regressions** が main へのマージ後と毎晩に実行します。小規模な正当性検証と大型 SVG の結合テストは PR に残します。[分類・再現コマンド・失敗時の確認方法](docs/ci.md#deferred-routing-regressions-253) を参照してください。
+
+テストプロファイルは `opt-level = 1` で経路計算を高速化し、debug assertion と overflow check を明示的に有効にしています。MSRV は Docker で Rust 1.85.0 の通常テストを実行し、Cargo.toml/Cargo.lock・ツールチェーン・Docker 関連設定・MSRV workflow の変更で起動します。
 
 `tests/unit` は実装モジュール内に読み込む単体テスト、`tests/integration` は CLI 経由の結合テストです。Cargo.toml に4つの結合テスト対象を登録しています。`--bin planorama` で単体テスト、`--test rendering` などで結合テストを選択できます。
 

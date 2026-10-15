@@ -27,7 +27,8 @@ exits after one sweep without attempts.
 The manual **Spacing budget calibration** workflow runs calibration and uploads
 `spacing-calibration.json` plus old-budget/default/doubled SVGs in the
 `spacing-calibration-<SHA>` artifact. It is excluded from the standard PR job;
-ordinary routing correctness and layout regression tests remain required.
+focused routing correctness and layout regressions remain required. Three
+large-fixture comparisons use separate [post-merge/nightly coverage](../../docs/ci.md#deferred-routing-regressions-253).
 See [dispatch and revision selection](../../docs/ci.md#on-demand-spacing-calibration).
 Runtime is observational, without timing assertions.
 
