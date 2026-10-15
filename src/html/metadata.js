@@ -33,7 +33,7 @@ function metadata(svg, byId) {
         row.id = id;
         resourceIds.add(id);
         const parts = addressParts(source.address);
-        resources.push({ id, address: source.address, qualified: parts.module === 'root' ? 'module.root.' + source.address : source.address, identity: 'terraform:' + suffix, ...parts, state, deposed: source.deposed_key, relationship: true });
+        resources.push({ id, address: source.address, qualified: parts.module === 'root' ? 'module.root.' + source.address : source.address, identity: 'terraform:' + suffix, ...parts, state, deposed: source.deposed_key, action: source.action, relationship: true });
       }
     }
   }
@@ -45,6 +45,7 @@ function metadata(svg, byId) {
   const components = Array.from(svg.querySelectorAll('[data-entity-kind="synthetic"][data-component-id]'));
   const relationshipEntries = new Map(Array.from(svg.querySelectorAll('[data-relationship-entry][id]')).map(el => [el.id, el]));
   const relationshipEdges = id => edges.filter(edge => (edge.dataset.relationshipIds || '').split(' ').includes(id));
+  const sourceIdentity = source => 'terraform:' + hex(source.address) + (source.deposed_key === null ? '-current' : '-deposed-' + hex(source.deposed_key));
 
-  return { resources, targets, title, label, edges, links, components, relationshipEntries, relationshipEdges };
+  return { resources, targets, title, label, edges, links, components, relationshipEntries, relationshipEdges, sourceIdentity };
 }

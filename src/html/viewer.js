@@ -27,6 +27,9 @@
   const { select, button } = selection(context, index, view, highlights, coordinator);
   const { renderResults } = searching(context, index, { select, button }, coordinator);
   adapters.register(diagnostics(context, index, view, { select, button }, coordinator));
+  const impactView = impact(context, index, { select, button }, coordinator);
+  adapters.register(impactView);
+  search.addEventListener('input', () => adapters.reset());
   const { fit, zoom, updateView } = view;
   for (const r of resources) {
     const el = byId(r.id); el.setAttribute('data-viewer-target', 'true');

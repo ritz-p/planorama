@@ -10,6 +10,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.support.ui import Select
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -187,6 +188,70 @@ class ViewerTests(unittest.TestCase):
             self.assertEqual(edge.get_attribute('data-viewer-edge'), direction)
         self.assertTrue(self.search('producer'))
         self.assertTrue(all('producer:' in b.text for b in self.search('producer')))
+
+    def test_impact_dependency_depth_direction_keyboard_and_reset(self):
+        plan = {'format_version': '1.2', 'resource_changes': [
+            {'address': 'aws_instance.' + name, 'type': 'aws_instance', 'change': {'actions': [action]}}
+            for name, action in [('a', 'create'), ('b', 'update'), ('c', 'delete')]],
+            'configuration': {'root_module': {'resources': [
+                {'address': 'aws_instance.' + name, 'expressions': {'input': {'references': ['aws_instance.' + dependency + '.id']}}}
+                for name, dependency in [('b', 'a'), ('c', 'b')]]}}}
+        self.load('-', input_plan=plan)
+        self.choose('aws_instance.a')
+        self.assertEqual(self.driver.find_elements(By.CSS_SELECTOR, '[data-impact-hop]'), [])
+        Select(self.find('#impact-depth')).select_by_value('1')
+        self.find('#impact-explore').send_keys(Keys.ENTER)
+        self.assertEqual(len(self.driver.find_elements(By.CSS_SELECTOR, '[data-impact-hop]')), 1)
+        self.assertIn('aws_instance.b', self.find('#impact-results').text)
+        Select(self.find('#impact-depth')).select_by_value('2')
+        self.find('#impact-explore').click()
+        self.assertEqual(len(self.driver.find_elements(By.CSS_SELECTOR, '[data-impact-hop="2"]')), 1)
+        self.assertIn('delete', self.find('#impact-results').text)
+        self.choose('aws_instance.c')
+        self.assertEqual(self.driver.find_elements(By.CSS_SELECTOR, '[data-impact-hop]'), [])
+        Select(self.find('#impact-direction')).select_by_value('upstream')
+        self.find('#impact-explore').click()
+        self.assertEqual(len(self.driver.find_elements(By.CSS_SELECTOR, '[data-impact-hop]')), 2)
+        self.assertIn('Potentially related resources', self.find('#impact-status').text)
+        self.search('aws_instance.b')
+        self.assertEqual(self.driver.find_elements(By.CSS_SELECTOR, '[data-impact-hop]'), [])
+        self.find('#impact-explore').click()
+        self.find('#impact-explore').send_keys(Keys.ESCAPE)
+        self.assertEqual(self.driver.find_elements(By.CSS_SELECTOR, '[data-impact-hop], [data-impact-edge]'), [])
+        self.load('-', '--focus', 'aws_instance.b', '--focus-depth', '0', input_plan=plan)
+        self.choose('aws_instance.b')
+        self.find('#impact-explore').click()
+        self.assertEqual(self.driver.find_elements(By.CSS_SELECTOR, '[data-impact-hop]'), [])
+        self.assertIn('filtered/unavailable', self.find('#impact-status').text)
+        plan_path = Path(self.temp.name) / 'chain.json'
+        plan_path.write_text(json.dumps(plan))
+        self.load('--state', 'one=' + str(plan_path), '--state', 'two=' + str(plan_path))
+        self.choose('one:aws_instance.a')
+        self.find('#impact-explore').click()
+        related = self.driver.find_elements(By.CSS_SELECTOR, '[data-impact-hop]')
+        self.assertEqual(len(related), 2)
+        for node in related:
+            self.assertEqual(self.driver.execute_script("return arguments[0].closest('[data-state-id]').dataset.stateId", node), 'one')
+
+    def test_impact_associations_and_cross_state_metadata(self):
+        self.load('tests/fixtures/relationship-scopes-plan.json')
+        edge = self.find('path[data-edge-kind="association"]')
+        self.driver.execute_script("document.getElementById(arguments[0]).dispatchEvent(new MouseEvent('click', {bubbles:true}))", edge.get_attribute('data-source'))
+        self.find('#impact-explore').click()
+        self.assertEqual(len(self.driver.find_elements(By.CSS_SELECTOR, '[data-impact-hop]')), 0)
+        self.find('#impact-associations').click()
+        self.find('#impact-explore').click()
+        self.assertGreater(len(self.driver.find_elements(By.CSS_SELECTOR, '[data-impact-hop]')), 0)
+        self.assertIn('non-causal', self.find('#impact').text)
+        self.load('--state', 'producer=tests/fixtures/multi/producer.json', '--state',
+                  'consumer=tests/fixtures/multi/consumer.json', '--remote-state',
+                  'consumer:data.terraform_remote_state.network=producer')
+        edge = self.find('path[data-cross-state]')
+        target = edge.get_attribute('data-target')
+        self.driver.execute_script("document.getElementById(arguments[0]).dispatchEvent(new MouseEvent('click', {bubbles:true}))", edge.get_attribute('data-source'))
+        self.find('#impact-explore').click()
+        self.assertTrue(self.driver.execute_script("return document.getElementById(arguments[0]).hasAttribute('data-impact-hop')", target))
+        self.assertIn('consumer:', self.find('#impact-results').text)
 
     def test_lowered_resource_search_highlights_only_its_parallel_relationship(self):
         plan = json.loads((ROOT / 'tests/fixtures/relationship-scopes-plan.json').read_text())
