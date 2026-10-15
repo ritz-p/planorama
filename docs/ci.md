@@ -130,7 +130,8 @@ renderer changes must remain comparable. Change it when interpretation changes;
 new diagnostic schemas require explicit comparator support before rebaselining.
 Changed bytes (including input reordering), options or budgets require an explicit
 update. A separate CLI test proves reversed resource/configuration ordering and
-named-state argument ordering give identical diagnostics. Stable edge IDs and their lexicographic order must match;
+named-state argument ordering give identical diagnostics. Stable edge IDs and their
+lexicographic UTF-8 byte order (matching Rust, including Unicode IDs) must match;
 duplicate IDs, missing/non-array findings, incomplete findings/pair analysis, unsupported diagonals, policy or
 schema mismatches fail as non-comparable, never as improvements.
 
@@ -164,6 +165,8 @@ reported centerline preference minus separation. No geometry is reanalyzed.
 Before comparison or baseline updates, these contributions must match each
 summary total within `0.000001`; missing or excess contributions make either
 report non-comparable even when it declares complete findings.
+All required summary measurements, including routed-path counts, raw length/bends
+and shared-trunk length, must be present as finite nonnegative numbers.
 Segment positions and finding order do not define pair identity. A newly affected
 pair starts at zero, so improvements on another pair cannot hide its regression.
 

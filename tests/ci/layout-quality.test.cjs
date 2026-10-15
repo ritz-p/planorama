@@ -67,6 +67,47 @@ test('schema, policy, identity, ordering, numeric and incomplete reports reject 
   }
 });
 
+test('every required summary measurement rejects missing or invalid values on either side', () => {
+  const paths = [
+    ['routed_paths'], ['raw_polyline', 'length'], ['raw_polyline', 'bends'],
+    ['visible_straight_sections', 'crossings'], ['visible_straight_sections', 'independent_overlap_length'],
+    ['visible_straight_sections', 'parallel_deficit'], ['visible_straight_sections', 'shared_trunk_length'],
+    ['visible_border_minimum_deficit'],
+  ];
+  for (const keys of paths) {
+    for (const value of [undefined, null, '0', -1, NaN, Infinity]) {
+      const report = baseline();
+      const parent = keys.slice(0, -1).reduce((object, key) => object[key], report.summary);
+      if (value === undefined) delete parent[keys.at(-1)];
+      else parent[keys.at(-1)] = value;
+      assert.throws(() => compare(baseline(), report, budgets));
+      assert.throws(() => compare(report, baseline(), budgets));
+    }
+  }
+  for (const key of ['raw_polyline', 'visible_straight_sections']) {
+    const report = baseline();
+    delete report.summary[key];
+    assert.throws(() => compare(baseline(), report, budgets));
+  }
+});
+
+test('Unicode stable IDs use Rust UTF-8 ordering instead of JavaScript UTF-16 ordering', () => {
+  const report = baseline();
+  const names = ['\uE000', '\u{10000}'];
+  const mapping = new Map(report.edges.map((edge, i) => [edge.id, JSON.stringify({key: names[i] || `z${i}`})]));
+  for (const edge of report.edges) edge.id = mapping.get(edge.id);
+  report.edges.sort((a, b) => Buffer.compare(Buffer.from(a.id), Buffer.from(b.id)));
+  for (const finding of report.findings) {
+    finding.edge = mapping.get(finding.edge);
+    if (finding.peer) finding.peer = mapping.get(finding.peer);
+  }
+  assert.deepEqual(compare(report, structuredClone(report), budgets), {status: 'passed', changes: []});
+  const wrong = structuredClone(report);
+  wrong.edges.sort((a, b) => a.id < b.id ? -1 : a.id > b.id ? 1 : 0);
+  assert.notDeepEqual(wrong.edges.map(e => e.id), report.edges.map(e => e.id));
+  assert.throws(() => compare(report, wrong, budgets), /edge ordering/);
+});
+
 test('pair regressions cannot be offset by another pair, and reversed pair order is equivalent', () => {
   for (const [metric, category, amount] of [
     ['crossings', 'crossing', 1], ['overlap', 'independent_overlap', 100],

@@ -22,6 +22,7 @@ const stable = value => JSON.stringify(value, null, 2) + '\n';
 const read = file => JSON.parse(fs.readFileSync(file, 'utf8'));
 const write = (file, value) => fs.writeFileSync(file, stable(value));
 const hash = data => crypto.createHash('sha256').update(data).digest('hex');
+const utf8Order = (a, b) => Buffer.compare(Buffer.from(a, 'utf8'), Buffer.from(b, 'utf8'));
 
 function validate(report) {
   if (!Array.isArray(report.findings)) throw new Error('non-comparable missing or invalid findings array');
@@ -31,9 +32,12 @@ function validate(report) {
       report.limits.unsupported_diagonal_segments !== 0)
     throw new Error('non-comparable incomplete or unsupported diagnostics');
   const ids = report.edges.map(e => e.id);
-  if (!isDeepStrictEqual(ids, [...ids].sort()) || new Set(ids).size !== ids.length)
+  if (ids.some(id => typeof id !== 'string') ||
+      !isDeepStrictEqual(ids, [...ids].sort(utf8Order)) || new Set(ids).size !== ids.length)
     throw new Error('non-comparable edge ordering or duplicate stable identities');
-  for (const value of [...Object.values(metrics).map(f => f(report)),
+  for (const value of [report.summary?.routed_paths, report.summary?.raw_polyline?.length,
+    report.summary?.raw_polyline?.bends, report.summary?.visible_straight_sections?.shared_trunk_length,
+    ...Object.values(metrics).map(f => f(report)),
     ...report.edges.flatMap(e => Object.values(edgeMetrics).map(f => f(e)))]) {
     if (!Number.isFinite(value) || value < 0) throw new Error('invalid numeric measurement');
   }
@@ -50,7 +54,7 @@ function pairs(report, category) {
   for (const finding of report.findings.filter(f => f.category === category)) {
     if (!ids.has(finding.edge) || !ids.has(finding.peer) || finding.edge === finding.peer)
       throw new Error('non-comparable finding relationship identities');
-    const key = JSON.stringify([finding.edge, finding.peer].sort());
+    const key = JSON.stringify([finding.edge, finding.peer].sort(utf8Order));
     let value = 1;
     if (category !== 'crossing') {
       const {interval, coordinates} = finding.location;
@@ -93,7 +97,7 @@ function compare(before, after, budgets) {
   for (const metric of ['crossings', 'overlap', 'parallel']) {
     const old = pairs(before, categories[metric]);
     const current = pairs(after, categories[metric]);
-    for (const key of [...new Set([...old.keys(), ...current.keys()])].sort())
+    for (const key of [...new Set([...old.keys(), ...current.keys()])].sort(utf8Order))
       check(metric, old.get(key) || 0, current.get(key) || 0, ...JSON.parse(key));
   }
   before.edges.forEach((edge, i) => {
