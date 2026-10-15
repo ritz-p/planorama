@@ -60,6 +60,13 @@ function validate(report) {
     if (!Number.isFinite(total) || Math.abs(total - metrics[metric](report)) > 1e-6)
       throw new Error(`non-comparable ${metric}: findings total ${total} differs from summary ${metrics[metric](report)}`);
   }
+  if (report.summary.routed_paths !== report.edges.length)
+    throw new Error('non-comparable routed_paths: edge count differs from summary');
+  for (const metric of ['length', 'bends']) {
+    const total = report.edges.reduce((sum, edge) => sum + edge.raw_polyline[metric], 0);
+    if (!Number.isFinite(total) || Math.abs(total - report.summary.raw_polyline[metric]) > 1e-6)
+      throw new Error(`non-comparable raw ${metric}: edge total ${total} differs from summary ${report.summary.raw_polyline[metric]}`);
+  }
 }
 
 function pairs(report, category) {

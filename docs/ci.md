@@ -167,6 +167,9 @@ summary total within `0.000001`; missing or excess contributions make either
 report non-comparable even when it declares complete findings.
 All required summary measurements, including routed-path counts, raw length/bends
 and shared-trunk length, must be present as finite nonnegative numbers.
+Routed-path count must equal the number of edge entries. Aggregate raw length
+and bends must equal their per-edge sums within `0.000001` before comparison
+or baseline updates, so stale edge values cannot conceal an aggregate change.
 Segment positions and finding order do not define pair identity. A newly affected
 pair starts at zero, so improvements on another pair cannot hide its regression.
 

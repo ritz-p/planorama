@@ -8,6 +8,10 @@ const {compare, markdown, run} = require('../../scripts/layout-quality.cjs');
 const manifest = require('../layout-quality/manifest.json');
 const baseline = () => JSON.parse(fs.readFileSync(path.join(__dirname, '../layout-quality/fan-in.json'))).report;
 const budgets = manifest.fixtures.find(f => f.id === 'fan-in').budgets;
+function updateRawSummary(report) {
+  for (const metric of ['length', 'bends'])
+    report.summary.raw_polyline[metric] = report.edges.reduce((sum, edge) => sum + edge.raw_polyline[metric], 0);
+}
 
 test('independent crossing, overlap and clearance degradations fail with stable relationships', () => {
   for (const [metric, mutate, category] of [
@@ -37,16 +41,35 @@ test('deterministic reports and explicitly budgeted changes pass; area and raw l
   after.summary.visible_border_minimum_deficit += 0.25;
   after.canvas.width *= 2;
   after.edges[0].raw_polyline.length *= 10;
+  updateRawSummary(after);
   assert.equal(compare(before, after, budgets).status, 'passed');
   after.edges[0].raw_polyline.bends++;
+  updateRawSummary(after);
   assert.equal(compare(before, after, budgets).status, 'failed');
   const relative = structuredClone(budgets);
   relative.length = {mode: 'gate', absolute: 0, relative: 0.1};
   const slight = baseline();
   slight.edges[0].raw_polyline.length *= 1.1;
+  updateRawSummary(slight);
   assert.equal(compare(before, slight, relative).status, 'passed');
   slight.edges[0].raw_polyline.length += 1;
+  updateRawSummary(slight);
   assert.equal(compare(before, slight, relative).status, 'failed');
+});
+
+test('route summary and edge totals must agree on both comparison sides', () => {
+  for (const mutate of [
+    r => r.summary.routed_paths++,
+    r => r.summary.raw_polyline.bends++,
+    r => r.summary.raw_polyline.length++,
+    r => r.edges[0].raw_polyline.bends++,
+    r => r.edges[0].raw_polyline.length++,
+  ]) {
+    const report = baseline();
+    mutate(report);
+    assert.throws(() => compare(baseline(), report, budgets), /differs from summary/);
+    assert.throws(() => compare(report, baseline(), budgets), /differs from summary/);
+  }
 });
 
 test('schema, policy, identity, ordering, numeric and incomplete reports reject comparison', () => {
