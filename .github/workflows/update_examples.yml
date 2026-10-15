@@ -325,7 +325,8 @@ jobs:
                 const names = files.flatMap(file => [file.filename, file.previous_filename])
                   .filter(name => typeof name === 'string');
                 if (names.some(name => msrvPaths.has(name))) workflows.add('cargo_msrv.yml');
-                if (names.some(name => name.startsWith('.github/') || name.startsWith('tests/ci/'))) {
+                if (names.some(name => name.startsWith('.github/') || name.startsWith('tests/ci/') ||
+                    name === 'scripts/layout-quality.cjs' || name.startsWith('tests/layout-quality/'))) {
                   workflows.add('workflow_tests.yml');
                 }
                 if (files.length < 100) return [...workflows];

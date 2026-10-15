@@ -1,0 +1,440 @@
+{
+  "contract": {
+    "version": 1,
+    "renderer": "planorama-final-layout-v1",
+    "fixture": "fan-in",
+    "args": [
+      "examples/bundling-plan.json"
+    ],
+    "inputs": [
+      {
+        "path": "examples/bundling-plan.json",
+        "sha256": "1fe4e4403bf2b174eded33c28c8aa2415663bee308dcd5a4c60e393cd90544dd"
+      }
+    ],
+    "budgets": {
+      "crossings": {
+        "mode": "gate",
+        "absolute": 0,
+        "relative": 0
+      },
+      "overlap": {
+        "mode": "gate",
+        "absolute": 0,
+        "relative": 0
+      },
+      "parallel": {
+        "mode": "gate",
+        "absolute": 0,
+        "relative": 0
+      },
+      "border": {
+        "mode": "gate",
+        "absolute": 0.25,
+        "relative": 0
+      },
+      "area": {
+        "mode": "info",
+        "absolute": 0,
+        "relative": 0
+      },
+      "bends": {
+        "mode": "gate",
+        "absolute": 2,
+        "relative": 0
+      },
+      "length": {
+        "mode": "info",
+        "absolute": 0,
+        "relative": 0
+      },
+      "edge_border": {
+        "mode": "gate",
+        "absolute": 0.25,
+        "relative": 0
+      }
+    }
+  },
+  "report": {
+    "canvas": {
+      "height": 1270,
+      "width": 1340
+    },
+    "category": "layout",
+    "edges": [
+      {
+        "id": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"terraform_data.a\",\"from_deposed_key\":null,\"to\":\"terraform_data.aggregate\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:7465727261666f726d5f646174612e61-current\",\"state\":null},\"target\":{\"id\":\"terraform:7465727261666f726d5f646174612e616767726567617465-current\",\"state\":null}}",
+        "identity": {
+          "directionality": "directed",
+          "kind": "dependency",
+          "provenance": [
+            {
+              "from": "terraform_data.a",
+              "from_deposed_key": null,
+              "to": "terraform_data.aggregate",
+              "to_deposed_key": null
+            }
+          ],
+          "relationship_resource": null,
+          "source": {
+            "id": "terraform:7465727261666f726d5f646174612e61-current",
+            "state": null
+          },
+          "target": {
+            "id": "terraform:7465727261666f726d5f646174612e616767726567617465-current",
+            "state": null
+          }
+        },
+        "polyline": [
+          [
+            800,
+            804
+          ],
+          [
+            824,
+            804
+          ],
+          [
+            824,
+            814
+          ],
+          [
+            900,
+            814
+          ]
+        ],
+        "raw_polyline": {
+          "bends": 2,
+          "length": 110
+        },
+        "visible_border": {
+          "close_length": 0,
+          "minimum_deficit": 0,
+          "minimum_gap_within_8px": null,
+          "preferred_deficit": 0
+        }
+      },
+      {
+        "id": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"terraform_data.b\",\"from_deposed_key\":null,\"to\":\"terraform_data.aggregate\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:7465727261666f726d5f646174612e62-current\",\"state\":null},\"target\":{\"id\":\"terraform:7465727261666f726d5f646174612e616767726567617465-current\",\"state\":null}}",
+        "identity": {
+          "directionality": "directed",
+          "kind": "dependency",
+          "provenance": [
+            {
+              "from": "terraform_data.b",
+              "from_deposed_key": null,
+              "to": "terraform_data.aggregate",
+              "to_deposed_key": null
+            }
+          ],
+          "relationship_resource": null,
+          "source": {
+            "id": "terraform:7465727261666f726d5f646174612e62-current",
+            "state": null
+          },
+          "target": {
+            "id": "terraform:7465727261666f726d5f646174612e616767726567617465-current",
+            "state": null
+          }
+        },
+        "polyline": [
+          [
+            800,
+            948
+          ],
+          [
+            824,
+            948
+          ],
+          [
+            824,
+            814
+          ],
+          [
+            900,
+            814
+          ]
+        ],
+        "raw_polyline": {
+          "bends": 2,
+          "length": 234
+        },
+        "visible_border": {
+          "close_length": 0,
+          "minimum_deficit": 0,
+          "minimum_gap_within_8px": null,
+          "preferred_deficit": 0
+        }
+      },
+      {
+        "id": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"terraform_data.c\",\"from_deposed_key\":null,\"to\":\"terraform_data.aggregate\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:7465727261666f726d5f646174612e63-current\",\"state\":null},\"target\":{\"id\":\"terraform:7465727261666f726d5f646174612e616767726567617465-current\",\"state\":null}}",
+        "identity": {
+          "directionality": "directed",
+          "kind": "dependency",
+          "provenance": [
+            {
+              "from": "terraform_data.c",
+              "from_deposed_key": null,
+              "to": "terraform_data.aggregate",
+              "to_deposed_key": null
+            }
+          ],
+          "relationship_resource": null,
+          "source": {
+            "id": "terraform:7465727261666f726d5f646174612e63-current",
+            "state": null
+          },
+          "target": {
+            "id": "terraform:7465727261666f726d5f646174612e616767726567617465-current",
+            "state": null
+          }
+        },
+        "polyline": [
+          [
+            800,
+            1092
+          ],
+          [
+            824,
+            1092
+          ],
+          [
+            824,
+            814
+          ],
+          [
+            900,
+            814
+          ]
+        ],
+        "raw_polyline": {
+          "bends": 2,
+          "length": 378
+        },
+        "visible_border": {
+          "close_length": 0,
+          "minimum_deficit": 0,
+          "minimum_gap_within_8px": null,
+          "preferred_deficit": 0
+        }
+      },
+      {
+        "id": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"terraform_data.seed\",\"from_deposed_key\":null,\"to\":\"terraform_data.a\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:7465727261666f726d5f646174612e73656564-current\",\"state\":null},\"target\":{\"id\":\"terraform:7465727261666f726d5f646174612e61-current\",\"state\":null}}",
+        "identity": {
+          "directionality": "directed",
+          "kind": "dependency",
+          "provenance": [
+            {
+              "from": "terraform_data.seed",
+              "from_deposed_key": null,
+              "to": "terraform_data.a",
+              "to_deposed_key": null
+            }
+          ],
+          "relationship_resource": null,
+          "source": {
+            "id": "terraform:7465727261666f726d5f646174612e73656564-current",
+            "state": null
+          },
+          "target": {
+            "id": "terraform:7465727261666f726d5f646174612e61-current",
+            "state": null
+          }
+        },
+        "polyline": [
+          [
+            380,
+            814
+          ],
+          [
+            404,
+            814
+          ],
+          [
+            404,
+            823
+          ],
+          [
+            480,
+            823
+          ]
+        ],
+        "raw_polyline": {
+          "bends": 2,
+          "length": 109
+        },
+        "visible_border": {
+          "close_length": 0,
+          "minimum_deficit": 0,
+          "minimum_gap_within_8px": null,
+          "preferred_deficit": 0
+        }
+      },
+      {
+        "id": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"terraform_data.seed\",\"from_deposed_key\":null,\"to\":\"terraform_data.b\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:7465727261666f726d5f646174612e73656564-current\",\"state\":null},\"target\":{\"id\":\"terraform:7465727261666f726d5f646174612e62-current\",\"state\":null}}",
+        "identity": {
+          "directionality": "directed",
+          "kind": "dependency",
+          "provenance": [
+            {
+              "from": "terraform_data.seed",
+              "from_deposed_key": null,
+              "to": "terraform_data.b",
+              "to_deposed_key": null
+            }
+          ],
+          "relationship_resource": null,
+          "source": {
+            "id": "terraform:7465727261666f726d5f646174612e73656564-current",
+            "state": null
+          },
+          "target": {
+            "id": "terraform:7465727261666f726d5f646174612e62-current",
+            "state": null
+          }
+        },
+        "polyline": [
+          [
+            380,
+            814
+          ],
+          [
+            404,
+            814
+          ],
+          [
+            404,
+            967
+          ],
+          [
+            480,
+            967
+          ]
+        ],
+        "raw_polyline": {
+          "bends": 2,
+          "length": 253
+        },
+        "visible_border": {
+          "close_length": 0,
+          "minimum_deficit": 0,
+          "minimum_gap_within_8px": null,
+          "preferred_deficit": 0
+        }
+      },
+      {
+        "id": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"terraform_data.seed\",\"from_deposed_key\":null,\"to\":\"terraform_data.c\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:7465727261666f726d5f646174612e73656564-current\",\"state\":null},\"target\":{\"id\":\"terraform:7465727261666f726d5f646174612e63-current\",\"state\":null}}",
+        "identity": {
+          "directionality": "directed",
+          "kind": "dependency",
+          "provenance": [
+            {
+              "from": "terraform_data.seed",
+              "from_deposed_key": null,
+              "to": "terraform_data.c",
+              "to_deposed_key": null
+            }
+          ],
+          "relationship_resource": null,
+          "source": {
+            "id": "terraform:7465727261666f726d5f646174612e73656564-current",
+            "state": null
+          },
+          "target": {
+            "id": "terraform:7465727261666f726d5f646174612e63-current",
+            "state": null
+          }
+        },
+        "polyline": [
+          [
+            380,
+            814
+          ],
+          [
+            404,
+            814
+          ],
+          [
+            404,
+            1111
+          ],
+          [
+            480,
+            1111
+          ]
+        ],
+        "raw_polyline": {
+          "bends": 2,
+          "length": 397
+        },
+        "visible_border": {
+          "close_length": 0,
+          "minimum_deficit": 0,
+          "minimum_gap_within_8px": null,
+          "preferred_deficit": 0
+        }
+      }
+    ],
+    "findings": [],
+    "limits": {
+      "finding_limit": 20000,
+      "findings_complete": true,
+      "pair_comparisons": 106,
+      "pair_limit": 2000000,
+      "pair_metrics_complete": true,
+      "unsupported_diagonal_segments": 0
+    },
+    "policy": {
+      "approximations": [
+        "Pair metrics use rounded straight sections with conservative integer mask clipping; curve-to-curve and curve-to-line pair metrics unavailable.",
+        "Border metrics share routing's quarter-pixel clearance and 32-sample quadratic corner approximation; cross-state paths have square corners, approximated as rounded for border measurement.",
+        "Strokes use continuous envelopes: dash gaps, markers, text, scope/band borders and annotation cards are excluded from spatial conflicts.",
+        "Border minimum is null when no eligible border is within 8px; deficits use px squared; shared prefix/suffix trunks are excluded from independent overlap."
+      ],
+      "border_minimum_gap": 4,
+      "border_preferred_gap": 8,
+      "endpoint_convergence": 32,
+      "parallel_centerline_preference": 16,
+      "parallel_minimum_run": 64
+    },
+    "schema_version": 1,
+    "scope": "whole_diagram",
+    "states": [
+      {
+        "cards": {
+          "embedded_routes": 0,
+          "logical_components": 0,
+          "logical_groups": 0,
+          "logical_resources": 0,
+          "relationship_groups": 0,
+          "spatial": 5
+        },
+        "origin": [
+          0,
+          558
+        ],
+        "resources": 5,
+        "spatial_layout": {
+          "height": 712,
+          "width": 1340
+        },
+        "state": null
+      }
+    ],
+    "summary": {
+      "raw_polyline": {
+        "bends": 12,
+        "length": 1481
+      },
+      "routed_paths": 6,
+      "visible_border_minimum_deficit": 0,
+      "visible_straight_sections": {
+        "crossings": 0,
+        "independent_overlap_length": 0,
+        "parallel_deficit": 0,
+        "shared_trunk_length": 507
+      }
+    },
+    "units": "SVG user units (px)"
+  }
+}

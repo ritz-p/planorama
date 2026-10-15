@@ -1,0 +1,180 @@
+{
+  "contract": {
+    "version": 1,
+    "renderer": "planorama-final-layout-v1",
+    "fixture": "regions",
+    "args": [
+      "tests/fixtures/regions-plan.json"
+    ],
+    "inputs": [
+      {
+        "path": "tests/fixtures/regions-plan.json",
+        "sha256": "575436d58d61a468fa4a79eeb4e579f39bd6165ebd966d48f7ece896eca26346"
+      }
+    ],
+    "budgets": {
+      "crossings": {
+        "mode": "gate",
+        "absolute": 0,
+        "relative": 0
+      },
+      "overlap": {
+        "mode": "gate",
+        "absolute": 0,
+        "relative": 0
+      },
+      "parallel": {
+        "mode": "gate",
+        "absolute": 0,
+        "relative": 0
+      },
+      "border": {
+        "mode": "gate",
+        "absolute": 0.25,
+        "relative": 0
+      },
+      "area": {
+        "mode": "info",
+        "absolute": 0,
+        "relative": 0
+      },
+      "bends": {
+        "mode": "gate",
+        "absolute": 2,
+        "relative": 0
+      },
+      "length": {
+        "mode": "info",
+        "absolute": 0,
+        "relative": 0
+      },
+      "edge_border": {
+        "mode": "gate",
+        "absolute": 0.25,
+        "relative": 0
+      }
+    }
+  },
+  "report": {
+    "canvas": {
+      "height": 2904,
+      "width": 1100
+    },
+    "category": "layout",
+    "edges": [
+      {
+        "id": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"aws_instance.tokyo\",\"from_deposed_key\":null,\"to\":\"aws_instance.virginia\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6177735f696e7374616e63652e746f6b796f-current\",\"state\":null},\"target\":{\"id\":\"terraform:6177735f696e7374616e63652e76697267696e6961-current\",\"state\":null}}",
+        "identity": {
+          "directionality": "directed",
+          "kind": "dependency",
+          "provenance": [
+            {
+              "from": "aws_instance.tokyo",
+              "from_deposed_key": null,
+              "to": "aws_instance.virginia",
+              "to_deposed_key": null
+            }
+          ],
+          "relationship_resource": null,
+          "source": {
+            "id": "terraform:6177735f696e7374616e63652e746f6b796f-current",
+            "state": null
+          },
+          "target": {
+            "id": "terraform:6177735f696e7374616e63652e76697267696e6961-current",
+            "state": null
+          }
+        },
+        "polyline": [
+          [
+            140,
+            1796
+          ],
+          [
+            36,
+            1796
+          ],
+          [
+            36,
+            2344
+          ],
+          [
+            140,
+            2344
+          ]
+        ],
+        "raw_polyline": {
+          "bends": 2,
+          "length": 756
+        },
+        "visible_border": {
+          "close_length": 0,
+          "minimum_deficit": 0,
+          "minimum_gap_within_8px": null,
+          "preferred_deficit": 0
+        }
+      }
+    ],
+    "findings": [],
+    "limits": {
+      "finding_limit": 20000,
+      "findings_complete": true,
+      "pair_comparisons": 0,
+      "pair_limit": 2000000,
+      "pair_metrics_complete": true,
+      "unsupported_diagonal_segments": 0
+    },
+    "policy": {
+      "approximations": [
+        "Pair metrics use rounded straight sections with conservative integer mask clipping; curve-to-curve and curve-to-line pair metrics unavailable.",
+        "Border metrics share routing's quarter-pixel clearance and 32-sample quadratic corner approximation; cross-state paths have square corners, approximated as rounded for border measurement.",
+        "Strokes use continuous envelopes: dash gaps, markers, text, scope/band borders and annotation cards are excluded from spatial conflicts.",
+        "Border minimum is null when no eligible border is within 8px; deficits use px squared; shared prefix/suffix trunks are excluded from independent overlap."
+      ],
+      "border_minimum_gap": 4,
+      "border_preferred_gap": 8,
+      "endpoint_convergence": 32,
+      "parallel_centerline_preference": 16,
+      "parallel_minimum_run": 64
+    },
+    "schema_version": 1,
+    "scope": "whole_diagram",
+    "states": [
+      {
+        "cards": {
+          "embedded_routes": 0,
+          "logical_components": 0,
+          "logical_groups": 1,
+          "logical_resources": 1,
+          "relationship_groups": 0,
+          "spatial": 11
+        },
+        "origin": [
+          0,
+          944
+        ],
+        "resources": 12,
+        "spatial_layout": {
+          "height": 1960,
+          "width": 1100
+        },
+        "state": null
+      }
+    ],
+    "summary": {
+      "raw_polyline": {
+        "bends": 2,
+        "length": 756
+      },
+      "routed_paths": 1,
+      "visible_border_minimum_deficit": 0,
+      "visible_straight_sections": {
+        "crossings": 0,
+        "independent_overlap_length": 0,
+        "parallel_deficit": 0,
+        "shared_trunk_length": 0
+      }
+    },
+    "units": "SVG user units (px)"
+  }
+}
