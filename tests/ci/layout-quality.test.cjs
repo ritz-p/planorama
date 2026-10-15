@@ -18,7 +18,8 @@ test('independent crossing, overlap and clearance degradations fail with stable 
     const before = baseline();
     const after = baseline();
     mutate(after);
-    after.findings.push({category, edge: after.edges[0].id});
+    after.findings.push({category, edge: after.edges[0].id, peer: after.edges[1].id,
+      location: {interval: [0, 1]}});
     const result = {fixture: 'degraded', ...compare(before, after, budgets)};
     assert.equal(result.status, 'failed');
     const text = markdown([result]);
@@ -56,11 +57,64 @@ test('schema, policy, identity, ordering, numeric and incomplete reports reject 
     r => { r.limits.findings_complete = false; },
     r => { r.limits.pair_metrics_complete = false; },
     r => r.limits.unsupported_diagonal_segments++,
+    r => { delete r.findings; },
+    r => { r.findings = null; },
+    r => { r.findings = {}; },
   ]) {
     const after = baseline();
     mutate(after);
     assert.throws(() => compare(baseline(), after, budgets));
   }
+});
+
+test('pair regressions cannot be offset by another pair, and reversed pair order is equivalent', () => {
+  for (const [metric, category, amount] of [
+    ['crossings', 'crossing', 1], ['overlap', 'independent_overlap', 100],
+    ['parallel', 'parallel_proximity', 800],
+  ]) {
+    const before = baseline();
+    const [a, b, c] = before.edges.map(e => e.id);
+    before.findings = [{category, edge: a, peer: b, location: {interval: [0, 100], coordinates: [0, 8]}}];
+    const after = structuredClone(before);
+    after.findings[0].peer = c;
+    const result = compare(before, after, budgets);
+    assert.equal(result.status, 'failed');
+    const failure = result.changes.find(change => change.failed);
+    assert.equal(failure.metric, metric);
+    assert.equal(failure.delta, amount);
+    assert.deepEqual(new Set([failure.edge, failure.peer]), new Set([a, c]));
+    assert.ok(markdown([{fixture: 'pair', ...result}]).includes(c));
+    const allowed = structuredClone(budgets);
+    allowed[metric].absolute = amount;
+    assert.equal(compare(before, after, allowed).status, 'passed');
+    after.findings[0].edge = b;
+    after.findings[0].peer = a;
+    assert.deepEqual(compare(before, after, budgets), {status: 'passed', changes: []});
+  }
+});
+
+test('successful renderer without fresh regular diagnostics cannot check or update a baseline', () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'layout-stale-'));
+  try {
+    const fake = path.join(dir, 'fake.cjs');
+    const fixture = {...manifest.fixtures[2], args: [fake]};
+    const manifestPath = path.join(dir, 'manifest.json');
+    fs.writeFileSync(manifestPath, JSON.stringify({...manifest, fixtures: [fixture]}));
+    const options = {manifestPath, binary: process.execPath, output: path.join(dir, 'out')};
+    const source = path.join(__dirname, '../layout-quality/fan-in.json');
+    fs.writeFileSync(fake, `const fs = require('node:fs'); fs.writeFileSync(process.argv.at(-1), JSON.stringify(JSON.parse(fs.readFileSync(${JSON.stringify(source)})).report));`);
+    assert.equal(run({...options, update: true}), true);
+    const saved = fs.readFileSync(path.join(dir, 'fan-in.json'), 'utf8');
+    for (const update of [false, true]) {
+      fs.writeFileSync(path.join(options.output, 'fan-in.json'), JSON.stringify(baseline()));
+      fs.writeFileSync(fake, '');
+      assert.equal(run({...options, update}), false);
+      assert.equal(fs.readFileSync(path.join(dir, 'fan-in.json'), 'utf8'), saved);
+    }
+    fs.writeFileSync(fake, `require('node:fs').symlinkSync(${JSON.stringify(source)}, process.argv.at(-1));`);
+    assert.equal(run({...options, update: true}), false);
+    assert.match(fs.readFileSync(path.join(options.output, 'summary.md'), 'utf8'), /regular diagnostics file/);
+  } finally { fs.rmSync(dir, {recursive: true, force: true}); }
 });
 
 test('one fixture failure remains visible next to improvements elsewhere', () => {

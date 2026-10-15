@@ -131,7 +131,7 @@ new diagnostic schemas require explicit comparator support before rebaselining.
 Changed bytes (including input reordering), options or budgets require an explicit
 update. A separate CLI test proves reversed resource/configuration ordering and
 named-state argument ordering give identical diagnostics. Stable edge IDs and their lexicographic order must match;
-duplicate IDs, incomplete findings/pair analysis, unsupported diagonals, policy or
+duplicate IDs, missing/non-array findings, incomplete findings/pair analysis, unsupported diagonals, policy or
 schema mismatches fail as non-comparable, never as improvements.
 
 Every fixture currently selects the following budgets independently. For each
@@ -156,6 +156,13 @@ does not invent one. Existing deferred stretch tests remain authoritative.
 Shared bundle trunks are excluded from independent overlap. No aggregate score
 offsets a bad fixture or edge with improvements elsewhere. Basic routing,
 containment, snapshots and ordinary correctness tests remain independent.
+Crossings, overlap and parallel deficits are checked both in total and for each
+unordered pair of stable edge IDs, using the same absolute/relative budget on
+each pair's baseline. Contributions come from the existing findings: crossing
+counts, overlap interval lengths, and parallel interval lengths multiplied by the
+reported centerline preference minus separation. No geometry is reanalyzed.
+Segment positions and finding order do not define pair identity. A newly affected
+pair starts at zero, so improvements on another pair cannot hide its regression.
 
 Run or update locally inside Docker:
 
@@ -174,6 +181,8 @@ any increased budget is acceptable. Inspect the full JSON and rendered diagrams
 before accepting changes; do not refresh baselines simply to clear a regression.
 Updates write baselines only after every fixture renders with comparable complete
 diagnostics. Missing/stale baselines fail checks. CI never updates or commits them.
+Each render removes its prior report first and must produce a new regular file;
+a successful process exit without fresh diagnostics cannot pass or update a baseline.
 
 The job publishes a bounded Markdown summary with deltas and stable relationship
 identities, and retains full reports, comparison details, renderer logs and preview

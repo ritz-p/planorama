@@ -24,6 +24,7 @@ const write = (file, value) => fs.writeFileSync(file, stable(value));
 const hash = data => crypto.createHash('sha256').update(data).digest('hex');
 
 function validate(report) {
+  if (!Array.isArray(report.findings)) throw new Error('non-comparable missing or invalid findings array');
   if (report.schema_version !== 1 || report.category !== 'layout' || report.scope !== 'whole_diagram')
     throw new Error('incompatible diagnostics schema/category/scope');
   if (!report.limits?.pair_metrics_complete || !report.limits?.findings_complete ||
@@ -38,6 +39,26 @@ function validate(report) {
   }
 }
 
+function pairs(report, category) {
+  const values = new Map();
+  const ids = new Set(report.edges.map(e => e.id));
+  for (const finding of report.findings.filter(f => f.category === category)) {
+    if (!ids.has(finding.edge) || !ids.has(finding.peer) || finding.edge === finding.peer)
+      throw new Error('non-comparable finding relationship identities');
+    const key = JSON.stringify([finding.edge, finding.peer].sort());
+    let value = 1;
+    if (category !== 'crossing') {
+      const {interval, coordinates} = finding.location;
+      value = interval[1] - interval[0];
+      if (category === 'parallel_proximity')
+        value *= report.policy.parallel_centerline_preference - Math.abs(coordinates[1] - coordinates[0]);
+    }
+    if (!Number.isFinite(value) || value <= 0) throw new Error('invalid pair finding measurement');
+    values.set(key, (values.get(key) || 0) + value);
+  }
+  return values;
+}
+
 function compare(before, after, budgets) {
   validate(before);
   validate(after);
@@ -48,7 +69,7 @@ function compare(before, after, budgets) {
       !isDeepStrictEqual(before.states.map(s => s.state), after.states.map(s => s.state)))
     throw new Error('stale baseline: stable edge/state identities changed');
   const changes = [];
-  const check = (metric, old, current, edge) => {
+  const check = (metric, old, current, edge, peer) => {
     const budget = budgets[metric];
     if (!budget || !['gate', 'info'].includes(budget.mode) ||
         !Number.isFinite(budget.absolute) || budget.absolute < 0 ||
@@ -57,11 +78,19 @@ function compare(before, after, budgets) {
     const delta = current - old;
     const allowance = budget.absolute + old * budget.relative;
     const failed = budget.mode === 'gate' && delta > allowance + 1e-6;
-    if (delta !== 0) changes.push({metric, edge, before: old, after: current, delta,
+    if (delta !== 0) changes.push({metric, edge, peer, before: old, after: current, delta,
       allowance, mode: budget.mode, failed,
-      findings: after.findings.filter(f => edge ? f.edge === edge || f.peer === edge : f.category === categories[metric])});
+      findings: after.findings.filter(f => peer ? f.category === categories[metric] &&
+        ((f.edge === edge && f.peer === peer) || (f.edge === peer && f.peer === edge)) :
+        edge ? f.edge === edge || f.peer === edge : f.category === categories[metric])});
   };
   for (const [name, measure] of Object.entries(metrics)) check(name, measure(before), measure(after));
+  for (const metric of ['crossings', 'overlap', 'parallel']) {
+    const old = pairs(before, categories[metric]);
+    const current = pairs(after, categories[metric]);
+    for (const key of [...new Set([...old.keys(), ...current.keys()])].sort())
+      check(metric, old.get(key) || 0, current.get(key) || 0, ...JSON.parse(key));
+  }
   before.edges.forEach((edge, i) => {
     for (const [name, measure] of Object.entries(edgeMetrics))
       check(name, measure(edge), measure(after.edges[i]), edge.id);
@@ -78,6 +107,7 @@ function markdown(results) {
     for (const c of changes.slice(0, 20)) {
       lines.push(`- ${c.failed ? 'FAIL' : c.mode}: ${c.metric}: ${c.before} → ${c.after} (delta ${c.delta}, allowance ${c.allowance})`);
       if (c.edge) lines.push(`  - Relationship: \`${c.edge}\``);
+      if (c.peer) lines.push(`  - Peer: \`${c.peer}\``);
       for (const f of c.findings.slice(0, 3))
         lines.push(`  - \`${f.edge}\`${f.peer ? ` / \`${f.peer}\`` : ''}`);
       if (c.findings.length > 3) lines.push(`  - ${c.findings.length - 3} more findings in results.json`);
@@ -102,10 +132,12 @@ function run({binary, output, update = false, manifestPath = 'tests/layout-quali
         fixture: fixture.id, args: fixture.args, inputs, budgets: fixture.budgets};
       const baselinePath = path.join(path.dirname(manifestPath), `${fixture.id}.json`);
       const reportPath = path.join(output, `${fixture.id}.json`);
+      fs.rmSync(reportPath, {force: true});
       const child = spawnSync(binary, [...fixture.args, '-o', path.join(output, `${fixture.id}.svg`),
         '--layout-diagnostics-json', reportPath], {encoding: 'utf8', timeout: 180000});
       fs.writeFileSync(path.join(output, `${fixture.id}.log`), (child.stdout || '') + (child.stderr || ''));
       if (child.error || child.status !== 0) throw new Error(`render failed: ${child.error || child.stderr}`);
+      if (!fs.lstatSync(reportPath).isFile()) throw new Error('renderer did not create a regular diagnostics file');
       const report = read(reportPath);
       validate(report);
       if (update) {
