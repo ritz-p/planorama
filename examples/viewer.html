@@ -293,12 +293,7 @@ Task definition: aws_ecs_task_definition.app [task_definition; direct attribute 
 <script id="viewer-data" type="application/json">[{"address":"aws_ecs_cluster.app","deposed":null,"id":"resource-6177735f6563735f636c75737465722e617070-current","identity":"terraform:6177735f6563735f636c75737465722e617070-current","mode":"managed","module":"root","qualified":"module.root.aws_ecs_cluster.app","state":"","type":"aws_ecs_cluster"},{"address":"aws_ecs_service.app","deposed":null,"id":"resource-6177735f6563735f736572766963652e617070-current","identity":"terraform:6177735f6563735f736572766963652e617070-current","mode":"managed","module":"root","qualified":"module.root.aws_ecs_service.app","state":"","type":"aws_ecs_service"},{"address":"aws_ecs_task_definition.app","deposed":null,"id":"resource-6177735f6563735f7461736b5f646566696e6974696f6e2e617070-current","identity":"terraform:6177735f6563735f7461736b5f646566696e6974696f6e2e617070-current","mode":"managed","module":"root","qualified":"module.root.aws_ecs_task_definition.app","state":"","type":"aws_ecs_task_definition"},{"address":"aws_iam_role.app","deposed":null,"id":"resource-6177735f69616d5f726f6c652e617070-current","identity":"terraform:6177735f69616d5f726f6c652e617070-current","mode":"managed","module":"root","qualified":"module.root.aws_iam_role.app","state":"","type":"aws_iam_role"},{"address":"aws_lb.app","deposed":null,"id":"resource-6177735f6c622e617070-current","identity":"terraform:6177735f6c622e617070-current","mode":"managed","module":"root","qualified":"module.root.aws_lb.app","state":"","type":"aws_lb"},{"address":"aws_lb_listener.http","deposed":null,"id":"resource-6177735f6c625f6c697374656e65722e68747470-current","identity":"terraform:6177735f6c625f6c697374656e65722e68747470-current","mode":"managed","module":"root","qualified":"module.root.aws_lb_listener.http","state":"","type":"aws_lb_listener"},{"address":"data.aws_iam_role.app","deposed":null,"id":"resource-646174612e6177735f69616d5f726f6c652e617070-current","identity":"terraform:646174612e6177735f69616d5f726f6c652e617070-current","mode":"data","module":"root","qualified":"module.root.data.aws_iam_role.app","state":"","type":"aws_iam_role"},{"address":"module.worker.aws_iam_role.app","deposed":null,"id":"resource-6d6f64756c652e776f726b65722e6177735f69616d5f726f6c652e617070-current","identity":"terraform:6d6f64756c652e776f726b65722e6177735f69616d5f726f6c652e617070-current","mode":"managed","module":"module.worker","qualified":"module.worker.aws_iam_role.app","state":"","type":"aws_iam_role"}]</script>
 <script>(() => {
   'use strict';
-  const byId = id => document.getElementById(id);
-  const viewport = byId('viewport');
-  const svg = viewport.querySelector('svg');
-  const search = byId('search');
-  const results = byId('results');
-  const details = byId('selection');
+function metadata(svg, byId) {
   const resources = JSON.parse(byId('viewer-data').textContent).filter(r => byId(r.id));
   const resourceIds = new Set(resources.map(r => r.id));
   const hex = text => Array.from(new TextEncoder().encode(text), byte => byte.toString(16).padStart(2, '0')).join('');
@@ -345,7 +340,11 @@ Task definition: aws_ecs_task_definition.app [task_definition; direct attribute 
   const components = Array.from(svg.querySelectorAll('[data-entity-kind="synthetic"][data-component-id]'));
   const relationshipEntries = new Map(Array.from(svg.querySelectorAll('[data-relationship-entry][id]')).map(el => [el.id, el]));
   const relationshipEdges = id => edges.filter(edge => (edge.dataset.relationshipIds || '').split(' ').includes(id));
-  let selected = null;
+
+  return { resources, targets, title, label, edges, links, components, relationshipEntries, relationshipEdges };
+}
+
+function navigation(svg, viewport, byId) {
   let box = [svg.viewBox.baseVal.x, svg.viewBox.baseVal.y, svg.viewBox.baseVal.width, svg.viewBox.baseVal.height];
   const original = box.slice();
   function updateView() {
@@ -371,15 +370,55 @@ Task definition: aws_ecs_task_definition.app [task_definition; direct attribute 
     box = [(points[0].x + points[1].x - w) / 2, (points[0].y + points[1].y - h) / 2, w, h];
     updateView();
   }
+  let drag = null;
+  let dragged = false;
+  viewport.addEventListener('pointerdown', event => {
+    if (event.button !== 0) return;
+    dragged = false;
+    drag = { x: event.clientX, y: event.clientY, box: box.slice(), matrix: svg.getScreenCTM().inverse(), id: event.pointerId };
+  });
+  viewport.addEventListener('pointermove', event => {
+    if (!drag || drag.id !== event.pointerId) return;
+    if (Math.hypot(event.clientX - drag.x, event.clientY - drag.y) < 4 && !dragged) return;
+    dragged = true; viewport.setPointerCapture(event.pointerId);
+    const start = new DOMPoint(drag.x, drag.y).matrixTransform(drag.matrix);
+    const end = new DOMPoint(event.clientX, event.clientY).matrixTransform(drag.matrix);
+    box = [drag.box[0] + start.x - end.x, drag.box[1] + start.y - end.y, drag.box[2], drag.box[3]]; updateView();
+  });
+  document.addEventListener('pointerup', () => { drag = null; });
+  viewport.addEventListener('pointercancel', () => { drag = null; });
+  viewport.addEventListener('wheel', event => {
+    event.preventDefault();
+    if (event.ctrlKey || event.metaKey) zoom(event.deltaY > 0 ? 1.1 : 1 / 1.1);
+    else { const scale = 1 / svg.getScreenCTM().a; box[0] += event.deltaX * scale; box[1] += event.deltaY * scale; updateView(); }
+  }, { passive: false });
+  function keydown(event) {
+    const shifts = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] };
+    if (shifts[event.key]) { event.preventDefault(); box[0] += shifts[event.key][0] * box[2] / 10; box[1] += shifts[event.key][1] * box[3] / 10; updateView(); }
+    if (event.key === '+' || event.key === '=') { event.preventDefault(); zoom(.8); }
+    if (event.key === '-') { event.preventDefault(); zoom(1.25); }
+    if (event.key.toLowerCase() === 'f') { event.preventDefault(); fit(); }
+  }
+
+  return { fit, zoom, reveal, updateView, keydown, wasDragged: () => dragged };
+}
+
+function highlighting(svg, viewport) {
   function clear() {
-    selected = null;
     for (const el of svg.querySelectorAll('[data-viewer-selected], [data-viewer-related], [data-viewer-edge]')) {
       for (const key of ['data-viewer-selected', 'data-viewer-related', 'data-viewer-edge']) el.removeAttribute(key);
     }
     viewport.removeAttribute('data-selection');
-    details.replaceChildren();
-    for (const button of results.querySelectorAll('button')) button.setAttribute('aria-pressed', 'false');
   }
+  function mark(el, kind, value = 'true') { el.setAttribute('data-viewer-' + kind, value); }
+
+  return { clear, mark };
+}
+
+function selection(context, index, navigation, highlights, coordinator) {
+  const { svg, viewport, byId, details, results } = context;
+  const { targets, label, title, relationshipEntries, relationshipEdges, links, edges, components } = index;
+  const { reveal } = navigation;
   function button(text, action) {
     const el = document.createElement('button');
     el.type = 'button'; el.textContent = text; el.addEventListener('click', action);
@@ -393,7 +432,7 @@ Task definition: aws_ecs_task_definition.app [task_definition; direct attribute 
       const li = document.createElement('li');
       if (entry.target && byId(entry.target)) {
         li.append(button(entry.text, () => select(entry.target)));
-        if (entry.target !== selected) byId(entry.target).setAttribute('data-viewer-related', 'true');
+        if (entry.target !== coordinator.selected) byId(entry.target).setAttribute('data-viewer-related', 'true');
       } else li.textContent = entry.text;
       list.append(li);
     }
@@ -402,8 +441,8 @@ Task definition: aws_ecs_task_definition.app [task_definition; direct attribute 
   function select(id) {
     const el = byId(id);
     if (!el || !svg.contains(el)) return;
-    clear(); selected = id;
-    el.setAttribute('data-viewer-selected', 'true');
+    coordinator.clear(); coordinator.selected = id;
+    highlights.mark(el, 'selected');
     viewport.setAttribute('data-selection', 'true');
     const r = targets.get(id);
     const heading = document.createElement('h2'); heading.textContent = r ? label(r) : title(el);
@@ -467,16 +506,74 @@ Task definition: aws_ecs_task_definition.app [task_definition; direct attribute 
     for (const b of results.querySelectorAll('button')) b.setAttribute('aria-pressed', String(b.dataset.target === id));
     reveal(el);
   }
+
+  return { select, button };
+}
+
+function searching(context, index, selection, coordinator) {
+  const { search, results, byId } = context;
+  const { resources, label } = index;
+  const { button, select } = selection;
   function renderResults() {
     const terms = search.value.toLocaleLowerCase().trim().split(/\s+/).filter(Boolean);
     const matched = resources.filter(r => terms.every(term => [label(r), r.qualified, r.state + ':' + r.qualified, r.identity, r.module, r.state, r.type, r.mode, r.deposed || ''].join(' ').toLocaleLowerCase().includes(term)));
     results.replaceChildren();
     for (const r of matched) {
       const b = button(label(r), () => select(r.id));
-      b.dataset.target = r.id; b.setAttribute('aria-pressed', String(selected === r.id)); results.append(b);
+      b.dataset.target = r.id; b.setAttribute('aria-pressed', String(coordinator.selected === r.id)); results.append(b);
     }
     byId('result-count').textContent = `${matched.length} of ${resources.length} resources`;
   }
+  search.addEventListener('input', renderResults);
+  search.addEventListener('keydown', event => {
+    if (event.key === 'ArrowDown') { event.preventDefault(); results.querySelector('button')?.focus(); }
+    if (event.key === 'Enter') { event.preventDefault(); results.querySelector('button')?.click(); }
+  });
+  results.addEventListener('keydown', event => {
+    if (event.key === 'ArrowDown') { event.preventDefault(); event.target.nextElementSibling?.focus(); }
+    if (event.key === 'ArrowUp') { event.preventDefault(); (event.target.previousElementSibling || search).focus(); }
+    if (event.key === 'Home') { event.preventDefault(); results.firstElementChild?.focus(); }
+    if (event.key === 'End') { event.preventDefault(); results.lastElementChild?.focus(); }
+  });
+
+  return { renderResults };
+}
+
+function lifecycle() {
+  const adapters = [];
+  return {
+    register(adapter) { adapters.push(adapter); },
+    reset() { for (const adapter of adapters) adapter.reset(); }
+  };
+
+}
+
+  const byId = id => document.getElementById(id);
+  const viewport = byId('viewport');
+  const svg = viewport.querySelector('svg');
+  const search = byId('search');
+  const results = byId('results');
+  const details = byId('selection');
+  const context = { byId, viewport, svg, search, results, details };
+  const index = metadata(svg, byId);
+  const { resources, label, title, components } = index;
+  const view = navigation(svg, viewport, byId);
+  const highlights = highlighting(svg, viewport);
+  const adapters = lifecycle();
+  const coordinator = {
+    selected: null,
+    clear() {
+      coordinator.selected = null;
+      adapters.reset();
+      highlights.clear();
+      details.replaceChildren();
+      for (const b of results.querySelectorAll('button')) b.setAttribute('aria-pressed', 'false');
+    }
+  };
+  const { clear } = coordinator;
+  const { select, button } = selection(context, index, view, highlights, coordinator);
+  const { renderResults } = searching(context, index, { select, button }, coordinator);
+  const { fit, zoom, updateView } = view;
   for (const r of resources) {
     const el = byId(r.id); el.setAttribute('data-viewer-target', 'true');
     el.setAttribute('tabindex', '0'); el.setAttribute('role', 'button'); el.setAttribute('aria-label', label(r));
@@ -489,9 +586,8 @@ Task definition: aws_ecs_task_definition.app [task_definition; direct attribute 
     if (anchor) return byId(anchor.getAttribute('href').slice(1));
     return target.closest('[data-viewer-target], [data-entity-kind="synthetic"][id]');
   };
-  let dragged = false;
   viewport.addEventListener('click', event => {
-    if (dragged) { event.preventDefault(); return; }
+    if (view.wasDragged()) { event.preventDefault(); return; }
     const el = selectionTarget(event.target);
     if (el) { event.preventDefault(); select(el.id); }
   });
@@ -500,45 +596,9 @@ Task definition: aws_ecs_task_definition.app [task_definition; direct attribute 
       const el = selectionTarget(event.target);
       if (el) { event.preventDefault(); select(el.id); return; }
     }
-    const shifts = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] };
-    if (shifts[event.key]) { event.preventDefault(); box[0] += shifts[event.key][0] * box[2] / 10; box[1] += shifts[event.key][1] * box[3] / 10; updateView(); }
-    if (event.key === '+' || event.key === '=') { event.preventDefault(); zoom(.8); }
-    if (event.key === '-') { event.preventDefault(); zoom(1.25); }
-    if (event.key.toLowerCase() === 'f') { event.preventDefault(); fit(); }
+    view.keydown(event);
   });
   document.addEventListener('keydown', event => { if (event.key === 'Escape') { event.preventDefault(); clear(); } });
-  search.addEventListener('input', renderResults);
-  search.addEventListener('keydown', event => {
-    if (event.key === 'ArrowDown') { event.preventDefault(); results.querySelector('button')?.focus(); }
-    if (event.key === 'Enter') { event.preventDefault(); results.querySelector('button')?.click(); }
-  });
-  results.addEventListener('keydown', event => {
-    if (event.key === 'ArrowDown') { event.preventDefault(); event.target.nextElementSibling?.focus(); }
-    if (event.key === 'ArrowUp') { event.preventDefault(); (event.target.previousElementSibling || search).focus(); }
-    if (event.key === 'Home') { event.preventDefault(); results.firstElementChild?.focus(); }
-    if (event.key === 'End') { event.preventDefault(); results.lastElementChild?.focus(); }
-  });
-  let drag = null;
-  viewport.addEventListener('pointerdown', event => {
-    if (event.button !== 0) return;
-    dragged = false;
-    drag = { x: event.clientX, y: event.clientY, box: box.slice(), matrix: svg.getScreenCTM().inverse(), id: event.pointerId };
-  });
-  viewport.addEventListener('pointermove', event => {
-    if (!drag || drag.id !== event.pointerId) return;
-    if (Math.hypot(event.clientX - drag.x, event.clientY - drag.y) < 4 && !dragged) return;
-    dragged = true; viewport.setPointerCapture(event.pointerId);
-    const start = new DOMPoint(drag.x, drag.y).matrixTransform(drag.matrix);
-    const end = new DOMPoint(event.clientX, event.clientY).matrixTransform(drag.matrix);
-    box = [drag.box[0] + start.x - end.x, drag.box[1] + start.y - end.y, drag.box[2], drag.box[3]]; updateView();
-  });
-  document.addEventListener('pointerup', () => { drag = null; });
-  viewport.addEventListener('pointercancel', () => { drag = null; });
-  viewport.addEventListener('wheel', event => {
-    event.preventDefault();
-    if (event.ctrlKey || event.metaKey) zoom(event.deltaY > 0 ? 1.1 : 1 / 1.1);
-    else { const scale = 1 / svg.getScreenCTM().a; box[0] += event.deltaX * scale; box[1] += event.deltaY * scale; updateView(); }
-  }, { passive: false });
   byId('clear').addEventListener('click', clear);
   byId('fit').addEventListener('click', fit);
   byId('zoom-in').addEventListener('click', () => zoom(.8));
