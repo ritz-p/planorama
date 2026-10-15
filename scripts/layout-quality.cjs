@@ -42,7 +42,7 @@ function validate(report) {
   if (!Array.isArray(report.findings)) throw new Error('non-comparable missing or invalid findings array');
   if (report.schema_version !== 1 || report.category !== 'layout' || report.scope !== 'whole_diagram')
     throw new Error('incompatible diagnostics schema/category/scope');
-  if (!report.limits?.pair_metrics_complete || !report.limits?.findings_complete ||
+  if (report.limits?.pair_metrics_complete !== true || report.limits?.findings_complete !== true ||
       report.limits.unsupported_diagonal_segments !== 0)
     throw new Error('non-comparable incomplete or unsupported diagnostics');
   const ids = report.edges.map(e => e.id);
@@ -62,6 +62,9 @@ function validate(report) {
   }
   if (report.summary.routed_paths !== report.edges.length)
     throw new Error('non-comparable routed_paths: edge count differs from summary');
+  const borderTotal = report.edges.reduce((sum, edge) => sum + edge.visible_border.minimum_deficit, 0);
+  if (!Number.isFinite(borderTotal) || Math.abs(borderTotal - metrics.border(report)) > 1e-6)
+    throw new Error(`non-comparable border: edge total ${borderTotal} differs from summary ${metrics.border(report)}`);
   for (const metric of ['length', 'bends']) {
     const total = report.edges.reduce((sum, edge) => sum + edge.raw_polyline[metric], 0);
     if (!Number.isFinite(total) || Math.abs(total - report.summary.raw_polyline[metric]) > 1e-6)

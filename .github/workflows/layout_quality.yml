@@ -13,7 +13,7 @@ jobs:
   quality:
     if: github.event_name == 'workflow_dispatch' || contains(github.event.pull_request.labels.*.name, 'layout-quality')
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 35
     steps:
       - uses: actions/checkout@v7.0.1
         with:
@@ -24,12 +24,15 @@ jobs:
           shared-key: ${{ hashFiles('build.rs', 'assets/**') }}-layout-quality
           cache-workspace-crates: 'false'
       - name: Build renderer
+        timeout-minutes: 5
         run: cargo build --release --locked --bin planorama
       - name: Test comparison and input ordering
+        timeout-minutes: 2
         env:
           LAYOUT_QUALITY_BINARY: target/release/planorama
         run: node --test tests/ci/layout-quality.test.cjs
       - name: Compare final layouts
+        timeout-minutes: 20
         run: node scripts/layout-quality.cjs check target/release/planorama output/layout-quality
       - name: Publish summary
         if: ${{ !cancelled() }}

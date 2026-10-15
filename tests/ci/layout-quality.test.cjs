@@ -17,7 +17,7 @@ test('independent crossing, overlap and clearance degradations fail with stable 
   for (const [metric, mutate, category] of [
     ['crossings', r => r.summary.visible_straight_sections.crossings++, 'crossing'],
     ['overlap', r => r.summary.visible_straight_sections.independent_overlap_length++, 'independent_overlap'],
-    ['border', r => r.summary.visible_border_minimum_deficit++, 'visible_border_clearance'],
+    ['border', r => { r.summary.visible_border_minimum_deficit++; r.edges[0].visible_border.minimum_deficit++; }, 'visible_border_clearance'],
   ]) {
     const before = baseline();
     const after = baseline();
@@ -39,6 +39,7 @@ test('deterministic reports and explicitly budgeted changes pass; area and raw l
   const after = baseline();
   after.edges[0].raw_polyline.bends += 2;
   after.summary.visible_border_minimum_deficit += 0.25;
+  after.edges[0].visible_border.minimum_deficit += 0.25;
   after.canvas.width *= 2;
   after.edges[0].raw_polyline.length *= 10;
   updateRawSummary(after);
@@ -64,12 +65,37 @@ test('route summary and edge totals must agree on both comparison sides', () => 
     r => r.summary.raw_polyline.length++,
     r => r.edges[0].raw_polyline.bends++,
     r => r.edges[0].raw_polyline.length++,
+    r => r.summary.visible_border_minimum_deficit++,
+    r => r.edges[0].visible_border.minimum_deficit++,
   ]) {
     const report = baseline();
     mutate(report);
     assert.throws(() => compare(baseline(), report, budgets), /differs from summary/);
     assert.throws(() => compare(report, baseline(), budgets), /differs from summary/);
   }
+});
+
+test('completeness flags require literal true on both comparison sides', () => {
+  for (const key of ['pair_metrics_complete', 'findings_complete']) {
+    for (const value of [undefined, null, false, 'false', 'true', 1, {}, []]) {
+      const report = baseline();
+      report.limits[key] = value;
+      assert.throws(() => compare(baseline(), report, budgets), /incomplete or unsupported/);
+      assert.throws(() => compare(report, baseline(), budgets), /incomplete or unsupported/);
+    }
+  }
+});
+
+test('border increases on multiple edges cannot hide behind an understated summary', () => {
+  const report = baseline();
+  report.edges[0].visible_border.minimum_deficit += 0.25;
+  report.edges[1].visible_border.minimum_deficit += 0.25;
+  report.summary.visible_border_minimum_deficit += 0.25;
+  assert.throws(() => compare(baseline(), report, budgets), /non-comparable border/);
+  report.summary.visible_border_minimum_deficit += 0.25;
+  const result = compare(baseline(), report, budgets);
+  assert.equal(result.status, 'failed');
+  assert.deepEqual(result.changes.filter(c => c.failed).map(c => c.metric), ['border']);
 });
 
 test('schema, policy, identity, ordering, numeric and incomplete reports reject comparison', () => {

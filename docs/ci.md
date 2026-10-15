@@ -170,6 +170,9 @@ and shared-trunk length, must be present as finite nonnegative numbers.
 Routed-path count must equal the number of edge entries. Aggregate raw length
 and bends must equal their per-edge sums within `0.000001` before comparison
 or baseline updates, so stale edge values cannot conceal an aggregate change.
+The minimum-border-deficit summary must likewise equal the per-edge sum.
+Both completeness flags must be the JSON boolean `true`; truthy strings and
+other non-boolean values are rejected.
 Segment positions and finding order do not define pair identity. A newly affected
 pair starts at zero, so improvements on another pair cannot hide its regression.
 
@@ -201,7 +204,11 @@ The job publishes a bounded Markdown summary with deltas and stable relationship
 identities, and retains full reports, comparison details, renderer logs and preview
 SVGs for 14 days. Preview SVGs live only in the output artifact; the maintained
 SVG generation script is not run. Failures keep a failing job status. The job has
-a 15-minute ceiling and each render a 3-minute timeout. Compilation and six layouts
+a 35-minute ceiling, with 5 minutes for compilation, 2 minutes for comparison
+tests and 20 minutes for the six-fixture comparison. Each render has a 3-minute
+timeout, so even six sequential timeouts leave 2 minutes to finalize reports
+within the comparison step and 8 minutes of job headroom for setup/publication.
+Compilation and six layouts
 are additional opt-in cost; performance timings are never quality gates.
 Comparator tests run in the existing Workflow tests suite, and the opt-in lane
 also runs the real CLI input-order test.
