@@ -75,6 +75,9 @@ test('pair regressions cannot be offset by another pair, and reversed pair order
     const before = baseline();
     const [a, b, c] = before.edges.map(e => e.id);
     before.findings = [{category, edge: a, peer: b, location: {interval: [0, 100], coordinates: [0, 8]}}];
+    Object.assign(before.summary.visible_straight_sections, {crossings: 0, independent_overlap_length: 0, parallel_deficit: 0,
+      [{crossings: 'crossings', overlap: 'independent_overlap_length', parallel: 'parallel_deficit'}[metric]]: amount});
+    assert.throws(() => compare(before, {...before, findings: []}, budgets), /findings total .* differs from summary/);
     const after = structuredClone(before);
     after.findings[0].peer = c;
     const result = compare(before, after, budgets);
@@ -90,6 +93,24 @@ test('pair regressions cannot be offset by another pair, and reversed pair order
     after.findings[0].edge = b;
     after.findings[0].peer = a;
     assert.deepEqual(compare(before, after, budgets), {status: 'passed', changes: []});
+  }
+});
+
+test('incomplete or excess pair findings reject reports even when summaries are unchanged', () => {
+  for (const name of ['large', 'multi-state']) {
+    const before = JSON.parse(fs.readFileSync(path.join(__dirname, `../layout-quality/${name}.json`))).report;
+    for (const category of ['crossing', 'independent_overlap', 'parallel_proximity']) {
+      const after = structuredClone(before);
+      const finding = after.findings.find(f => f.category === category);
+      if (!finding) continue;
+      after.findings.splice(after.findings.indexOf(finding), 1);
+      assert.throws(() => compare(before, after, budgets), /findings total .* differs from summary/);
+      assert.throws(() => compare(after, before, budgets), /findings total .* differs from summary/);
+      after.findings.push(finding, finding);
+      assert.throws(() => compare(before, after, budgets), /findings total .* differs from summary/);
+    }
+    const empty = {...before, findings: []};
+    assert.throws(() => compare(before, empty, budgets), /findings total .* differs from summary/);
   }
 });
 
@@ -121,6 +142,7 @@ test('one fixture failure remains visible next to improvements elsewhere', () =>
   const before = baseline();
   const after = baseline();
   after.summary.visible_straight_sections.crossings++;
+  after.findings.push({category: 'crossing', edge: after.edges[0].id, peer: after.edges[1].id});
   const text = markdown([{fixture: 'bad', ...compare(before, after, budgets)},
     {fixture: 'good', ...compare(after, before, budgets)}]);
   assert.match(text, /bad: failed/);
@@ -140,7 +162,7 @@ test('runner identifies missing and stale baselines and preserves full artifacts
     assert.match(fs.readFileSync(path.join(options.output, 'summary.md'), 'utf8'), /missing baseline/);
     assert.equal(run({...options, update: true}), true);
     assert.equal(run(options), true);
-    fs.appendFileSync(fake, '\nconst report = JSON.parse(fs.readFileSync(process.argv.at(-1))); report.summary.visible_straight_sections.crossings++; fs.writeFileSync(process.argv.at(-1), JSON.stringify(report));');
+    fs.appendFileSync(fake, '\nconst report = JSON.parse(fs.readFileSync(process.argv.at(-1))); report.summary.visible_straight_sections.crossings++; report.findings.push({category: "crossing", edge: report.edges[0].id, peer: report.edges[1].id}); fs.writeFileSync(process.argv.at(-1), JSON.stringify(report));');
     assert.equal(run(options), false);
     assert.match(fs.readFileSync(path.join(options.output, 'summary.md'), 'utf8'), /FAIL: crossings/);
     const originalBaseline = fs.readFileSync(path.join(dir, 'fan-in.json'), 'utf8');

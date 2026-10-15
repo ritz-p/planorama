@@ -161,6 +161,9 @@ unordered pair of stable edge IDs, using the same absolute/relative budget on
 each pair's baseline. Contributions come from the existing findings: crossing
 counts, overlap interval lengths, and parallel interval lengths multiplied by the
 reported centerline preference minus separation. No geometry is reanalyzed.
+Before comparison or baseline updates, these contributions must match each
+summary total within `0.000001`; missing or excess contributions make either
+report non-comparable even when it declares complete findings.
 Segment positions and finding order do not define pair identity. A newly affected
 pair starts at zero, so improvements on another pair cannot hide its regression.
 

@@ -37,6 +37,11 @@ function validate(report) {
     ...report.edges.flatMap(e => Object.values(edgeMetrics).map(f => f(e)))]) {
     if (!Number.isFinite(value) || value < 0) throw new Error('invalid numeric measurement');
   }
+  for (const metric of ['crossings', 'overlap', 'parallel']) {
+    const total = [...pairs(report, categories[metric]).values()].reduce((sum, value) => sum + value, 0);
+    if (!Number.isFinite(total) || Math.abs(total - metrics[metric](report)) > 1e-6)
+      throw new Error(`non-comparable ${metric}: findings total ${total} differs from summary ${metrics[metric](report)}`);
+  }
 }
 
 function pairs(report, category) {
