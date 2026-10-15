@@ -24,9 +24,12 @@ dimensions beyond 64px. Another fixture rejects a corridor, expands another gap,
 and accepts the unchanged old corridor key on reconsideration. Protected geometry
 exits after one sweep without attempts.
 
-CI explicitly runs calibration in the standard Cargo test job and uploads
+The manual **Spacing budget calibration** workflow runs calibration and uploads
 `spacing-calibration.json` plus old-budget/default/doubled SVGs in the
-`spacing-calibration` artifact. Runtime is observational, without timing assertions.
+`spacing-calibration-<SHA>` artifact. It is excluded from the standard PR job;
+ordinary routing correctness and layout regression tests remain required.
+See [dispatch and revision selection](../../docs/ci.md#on-demand-spacing-calibration).
+Runtime is observational, without timing assertions.
 
 ```sh
 docker compose exec -T -e PLANORAMA_SPACING_REPORT_DIR=output/spacing-calibration dev cargo test --locked --bin planorama budget_calibration -- --ignored --nocapture

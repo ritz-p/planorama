@@ -1,0 +1,49 @@
+name: Spacing budget calibration
+run-name: Spacing calibration at ${{ inputs.source_sha || github.sha }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      source_sha:
+        description: 'Optional full commit SHA; defaults to the selected branch/tag at dispatch'
+        type: string
+        required: false
+
+permissions:
+  contents: read
+
+jobs:
+  calibrate:
+    name: Calibrate spacing budgets
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      SOURCE_SHA: ${{ inputs.source_sha || github.sha }}
+      PLANORAMA_SPACING_REPORT_DIR: output/spacing-calibration
+    steps:
+      - name: Validate source SHA
+        run: '[[ "$SOURCE_SHA" =~ ^[0-9a-f]{40}$ ]]'
+      - uses: actions/checkout@v7.0.1
+        with:
+          ref: ${{ env.SOURCE_SHA }}
+          persist-credentials: false
+      - name: Verify source revision
+        run: test "$(git rev-parse HEAD)" = "$SOURCE_SHA"
+      - name: Install pinned toolchain
+        run: rustc --version --verbose
+      - uses: Swatinem/rust-cache@v2.9.2
+        with:
+          prefix-key: v1-rust-dependencies
+          shared-key: ${{ hashFiles('build.rs', 'assets/**') }}-tests
+          cache-workspace-crates: 'false'
+      - name: Compile calibration
+        run: cargo test --locked --bin planorama budget_calibration --no-run
+      - name: Run calibration
+        run: cargo test --locked --bin planorama budget_calibration -- --ignored --nocapture
+      - name: Upload spacing comparison
+        uses: actions/upload-artifact@v7.0.2
+        with:
+          name: spacing-calibration-${{ env.SOURCE_SHA }}
+          path: output/spacing-calibration
+          if-no-files-found: error
+          retention-days: 14
