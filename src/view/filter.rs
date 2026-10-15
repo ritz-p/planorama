@@ -85,7 +85,10 @@ pub fn apply(all: &Architecture, options: &Options) -> Result<Architecture, Stri
                     changed.extend([from.clone(), to.clone()]);
                 }
                 if focus == Some(change.address.as_str())
-                    && !graph.nodes.iter().any(|n| n.address == change.address)
+                    && !graph
+                        .nodes
+                        .iter()
+                        .any(|n| n.address == change.address && n.deposed_key.is_none())
                 {
                     matches.push(BTreeSet::from([from, to]));
                 }
