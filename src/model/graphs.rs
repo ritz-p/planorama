@@ -22,6 +22,7 @@ pub struct AttributeReference {
     pub scalar_id_matches: bool,
     pub scalar_name_matches: bool,
     pub arn_values_match: bool,
+    pub messaging_endpoint_verified: bool,
     pub monitoring_verified: bool,
     pub ids_only: bool,
     pub issues: std::collections::BTreeSet<super::DiagnosticReason>,

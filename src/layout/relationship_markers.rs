@@ -202,7 +202,8 @@ pub(crate) fn entries(graph: &Graph) -> Vec<Entry<'_>> {
 }
 
 pub(crate) fn both_ends(edge: &Edge) -> bool {
-    edge.kind == EdgeKind::Association || edge.directionality() == Directionality::Undirected
+    matches!(edge.kind, EdgeKind::Association | EdgeKind::Subscription)
+        || edge.directionality() == Directionality::Undirected
 }
 
 pub(in crate::layout) fn numbers(graph: &Graph) -> Vec<[Option<usize>; 2]> {

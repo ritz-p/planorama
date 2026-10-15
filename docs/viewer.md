@@ -144,7 +144,9 @@ and links. That follow-up must distinguish filtered targets from absent resource
 and must never restore resources excluded by CLI focus or changed-only selection.
 
 The Relationship lines card has a 960px width cap in both SVG and HTML. Its five
-entries use two columns (2 / 2 / 1), falling back to one when space is narrow.
+base entries use two columns (2 / 2 / 1). A Subscription entry is appended when
+present, producing three full rows (2 / 2 / 2). The card falls back to one column
+when space is narrow.
 The architecture canvas retains its own width; named states share one legend.
 
 The [representative example](../examples/viewer.html) includes logical resources,

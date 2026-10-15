@@ -139,6 +139,7 @@ pub use terraform::{TerraformEntity, TerraformPlan, TerraformReference};
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub enum EdgeKind {
     Dependency,
+    Subscription,
     Association,
     Connection,
     Containment,

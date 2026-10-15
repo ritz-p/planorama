@@ -106,9 +106,9 @@ impl MeasuredLegend {
         available_width: usize,
         top: usize,
     ) -> Self {
-        let actions: BTreeSet<Option<Action>> = graphs
-            .into_iter()
-            .flat_map(|graph| &graph.edges)
+        let edges: Vec<_> = graphs.into_iter().flat_map(|graph| &graph.edges).collect();
+        let actions: BTreeSet<Option<Action>> = edges
+            .iter()
             .filter(|edge| edge.kind != EdgeKind::Containment)
             .map(|edge| edge.change.as_ref().map(|change| change.action))
             .collect();
@@ -135,7 +135,16 @@ impl MeasuredLegend {
             false,
         );
         content.y += 16;
-        content.grid(&ENTRIES);
+        let mut entries = ENTRIES.to_vec();
+        if edges.iter().any(|e| e.kind == EdgeKind::Subscription) {
+            entries.push(Entry {
+                kind: EdgeKind::Subscription,
+                name: "Subscription",
+                explanation: "Directed topic-to-endpoint subscription proven by Terraform references. Delivery success and access policies are not verified.",
+                directionality: Directionality::Directed,
+            });
+        }
+        content.grid(&entries);
         content.text(
             "Hollow circles mark resource/card attachment points; neither end of an undirected line is a directional start. Filled internal dots mark bundle junctions.",
             PADDING,
@@ -434,7 +443,10 @@ impl MeasuredSample {
             r#"data-legend-endpoint="source""#,
             stroke,
         ));
-        if matches!(kind, EdgeKind::Association | EdgeKind::Connection) {
+        if matches!(
+            kind,
+            EdgeKind::Association | EdgeKind::Connection | EdgeKind::Subscription
+        ) {
             svg.push_str(&super::endpoints::attachment_circle(
                 *end,
                 r#"data-legend-endpoint="target""#,
@@ -448,7 +460,7 @@ impl MeasuredSample {
                 .unwrap();
             }
         }
-        if *kind == EdgeKind::Association {
+        if matches!(kind, EdgeKind::Association | EdgeKind::Subscription) {
             for (bounds, terminal) in badges.iter().zip(["source", "target"]) {
                 writeln!(svg, r#"<g data-legend-badge="{terminal}">"#).unwrap();
                 svg.push_str(&super::relationship_index::badge(

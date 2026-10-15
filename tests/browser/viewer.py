@@ -284,6 +284,20 @@ class ViewerTests(unittest.TestCase):
         after = self.driver.execute_script("return Array.from(document.querySelectorAll('path[data-edge-kind]')).map(e=>[e.getAttribute('d'),e.getAttribute('stroke'),e.getAttribute('stroke-dasharray'),e.getAttribute('marker-end')])")
         self.assertEqual(before, after)
 
+    def test_subscription_navigation_retains_provenance_and_endpoint_direction(self):
+        self.load('tests/fixtures/sns-subscriptions-plan.json')
+        self.choose('aws_sns_topic_subscription.jobs')
+        paths = self.driver.find_elements(By.CSS_SELECTOR, 'path[data-viewer-edge][data-edge-kind="subscription"]')
+        self.assertEqual(len(paths), 1)
+        self.assertEqual(paths[0].get_attribute('data-directionality'), 'directed')
+        marker = self.find('[data-relationship-marker] a')
+        self.driver.execute_script('arguments[0].dispatchEvent(new MouseEvent("click", {bubbles:true,cancelable:true}))', marker)
+        entry = self.find('[data-viewer-selected]')
+        self.assertTrue(entry.get_attribute('data-relationship-entry'))
+        link = entry.find_element(By.CSS_SELECTOR, '[data-relationship-endpoint]')
+        self.driver.execute_script('arguments[0].dispatchEvent(new MouseEvent("click", {bubbles:true,cancelable:true}))', link)
+        self.assertTrue(self.find('[data-viewer-selected]').get_attribute('data-terraform-address'))
+
     def test_number_selection_stays_within_its_state(self):
         self.load('--state', 'one=tests/fixtures/relationship-scopes-plan.json', '--state', 'two=tests/fixtures/relationship-scopes-plan.json')
         for state in ['one', 'two']:

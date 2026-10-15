@@ -39,7 +39,10 @@ pub(super) fn render(graph: &Graph, layout: &Layout<'_>) -> String {
         let target = super::identity::resource(&graph.nodes[edge.to]);
         writeln!(svg, r#"<g data-endpoints="true" data-source="{source}" data-target="{target}" aria-hidden="true">"#).unwrap();
         svg.push_str(&circle(path[0], "source", stroke));
-        if matches!(edge.kind, EdgeKind::Association | EdgeKind::Connection) {
+        if matches!(
+            edge.kind,
+            EdgeKind::Association | EdgeKind::Connection | EdgeKind::Subscription
+        ) {
             let end = path[path.len() - 1];
             svg.push_str(&circle(end, "target", stroke));
             if edge.directionality() == Directionality::Directed {

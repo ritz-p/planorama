@@ -131,7 +131,27 @@ pub(super) fn annotate(
             )
         })
         .collect();
+    let before_evidence: Vec<_> = nodes
+        .iter()
+        .map(|node| {
+            let value = changes
+                .get(&(node.address.as_str(), node.deposed_key.as_deref()))
+                .and_then(|c| c["change"].get("before"))
+                .or_else(|| prior.get(node.address.as_str()).copied())
+                .unwrap_or(&Value::Null);
+            (value, &Value::Null)
+        })
+        .collect();
     for reference in references {
+        let consumer = &nodes[reference.target];
+        let evidence = if consumer.provider.is_aws()
+            && consumer.resource_type == "aws_sns_topic_subscription"
+            && consumer.action == crate::model::Action::Delete
+        {
+            &before_evidence
+        } else {
+            &evidence
+        };
         let alarm = &nodes[reference.target];
         if alarm.provider.is_aws()
             && alarm.resource_type == "aws_cloudwatch_metric_alarm"
@@ -219,6 +239,22 @@ pub(super) fn annotate(
             ) {
                 reference.scalar_name_matches =
                     actual.len() == 1 && expected.len() == 1 && actual == expected;
+            }
+        }
+        if alarm.provider.is_aws()
+            && alarm.resource_type == "aws_sns_topic_subscription"
+            && reference.attribute == "endpoint"
+            && reference.arn_values_match
+        {
+            if let [source] = reference.sources.as_slice() {
+                let (value, unknown) = evidence[reference.target];
+                reference.messaging_endpoint_verified = matches!(
+                    (
+                        known_strings(value, unknown, &["protocol"]).as_deref(),
+                        nodes[*source].resource_type.as_str()
+                    ),
+                    (Some(["sqs"]), "aws_sqs_queue") | (Some(["lambda"]), "aws_lambda_function")
+                );
             }
         }
         if !reference.complete || !reference.ids_only || reference.sources.is_empty() {

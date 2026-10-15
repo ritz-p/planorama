@@ -49,6 +49,7 @@ pub(super) fn collect(
                     scalar_id_matches: false,
                     scalar_name_matches: false,
                     arn_values_match: false,
+                    messaging_endpoint_verified: false,
                     monitoring_verified: false,
                     ids_only: resolution.ids_only,
                     issues: resolution.issues,
