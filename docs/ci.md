@@ -175,6 +175,76 @@ The deferred command passed all three tests in 140.201 s (139.51 s in the
 harness), with its explicit two-thread limit; it is additional post-merge/nightly
 compute, not work that disappears.
 
+## Test runner evaluation (#254)
+
+Keep `cargo test` as the CI runner. Nextest did not improve the Standard suite
+at either tested concurrency, so adding installation and configuration is not
+justified by this experiment. Re-evaluate if the suite distribution changes.
+
+Measured on 2026-10-15. Each cell contains the first and second command wall times:
+
+| Suite | Test threads | Cargo test | Nextest |
+| --- | ---: | ---: | ---: |
+| Standard | 2 | 179.839 / 182.069 s | 188.001 / 186.936 s |
+| Standard | 8 | 89.290 / 89.395 s | 89.542 / 91.723 s |
+| Large | 2 | 77.464 / 76.551 s | 76.745 / 76.313 s |
+
+For Standard, nextest was 3.6% slower at two threads and 1.4% slower at eight
+threads on the two-run means. Mean child CPU time was 299.8 / 313.2 seconds
+(Cargo / nextest) at two threads and 306.3 / 320.6 seconds at eight. Higher
+concurrency reduced elapsed time while slightly increasing CPU work for both
+runners; nextest used more CPU without reducing wall time. Every Standard run
+passed the same 624 tests and skipped the same seven ignored tests.
+Every Large run passed three tests and skipped the same manual snapshot test.
+Its mean difference was only 0.479 seconds (0.6% in nextest's favor), with
+approximately one CPU core occupied throughout. A single large rendering test
+dominates that job, limiting scheduling gains. Keep the existing two independent
+jobs: combining them into one nextest command would measure a different CI
+architecture. These observations do not demonstrate a consistent reduction in
+the current parallel workflow's critical path.
+
+The comparison uses the post-#253 test selection at `efb7de9`, Rust 1.85.1,
+the optimized test profile and cargo-nextest 0.9.148 in Docker Desktop Linux
+on an AMD Ryzen 9 5950X with 32 visible logical CPUs and no container CPU quota.
+The experiment varies test concurrency, not the VM's CPU allocation. Rust sources and fixtures stay identical across
+runners. The [comparison script](../tests/support/compare_test_runners.py) reuses
+the CI suite selector, verifies names and ignored attributes against each
+libtest binary, and rejects unexpected nextest filters. It compiles before
+timing, then alternates runner order and reverses concurrency order on the second
+repeat. JSON records command wall time, child-process CPU time, revision,
+tool versions, inventories and per-run logs. Existing ignored benchmarks and
+deferred regressions are excluded from both runners.
+
+Reproduce inside the existing development container from the repository root:
+
+```sh
+docker compose exec -T dev sh -c 'mkdir -p /tmp/planorama-nextest && curl -LsSf https://get.nexte.st/0.9.148/linux -o /tmp/planorama-nextest/archive.tar.gz && tar xzf /tmp/planorama-nextest/archive.tar.gz -C /tmp/planorama-nextest'
+docker compose exec -T dev python3 tests/support/compare_test_runners.py --suite standard --threads 2 8 --repeats 2 --nextest-bin /tmp/planorama-nextest --output output/nextest-standard-runs
+docker compose exec -T dev python3 tests/support/compare_test_runners.py --suite large --threads 2 --repeats 2 --nextest-bin /tmp/planorama-nextest --output output/nextest-large-runs
+```
+
+Use a new output directory for each experiment; the script refuses to overwrite
+previous evidence. The downloaded binary is temporary and is not a Docker image
+or CI dependency. See nextest's [binary installation](https://nexte.st/docs/installation/pre-built-binaries/)
+and [test inventory format](https://nexte.st/docs/machine-readable/list/).
+
+Both runners reuse the same Cargo artifacts and dependency volumes; warm compile
+checks take approximately 0.7 seconds without rebuilding workspace code. This
+verifies local build-cache compatibility, not hosted cache restore/install cost.
+The existing Actions dependency cache can remain unchanged, but nextest would
+require a separately installed binary. Download, cold compilation, checkout,
+queueing and cache transfer are excluded from the timings. Host load is not
+controlled; no other Rust build or test runs alongside the measured commands.
+
+After timing, a temporary dependency-free crate containing one deliberate
+assertion failure and one ignored passing test checked failure handling. Both
+runners displayed the failed test name, assertion message, source file/line and
+captured stdout. Cargo exited 101 and nextest exited 100; both are failures.
+Both skipped the ignored test normally and passed it with `-- --ignored`,
+returning zero. The probe did not run repository benchmarks or alter fixtures.
+Nextest's failure output and ignored-test compatibility are adequate; measured
+performance, rather than compatibility, is the reason for retaining Cargo.
+
 ## On-demand spacing calibration
 
 Choose **Actions → Spacing budget calibration → Run workflow** and select a branch
