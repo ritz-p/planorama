@@ -79,6 +79,15 @@ function pairs(report, category) {
     if (!ids.has(finding.edge) || !ids.has(finding.peer) || finding.edge === finding.peer)
       throw new Error('non-comparable finding relationship identities');
     const key = JSON.stringify([finding.edge, finding.peer].sort(utf8Order));
+    const vector = value => Array.isArray(value) && value.length === 2 && value.every(Number.isFinite);
+    const location = finding.location;
+    if (!Number.isInteger(finding.segment) || finding.segment < 0 ||
+        !Number.isInteger(finding.peer_segment) || finding.peer_segment < 0 || !location ||
+        (category === 'crossing' ? !vector(location.point) :
+          !vector(location.interval) || location.interval[0] >= location.interval[1] ||
+          !vector(location.coordinates) || typeof location.horizontal !== 'boolean' ||
+          !Number.isFinite(location.visible_gap)))
+      throw new Error('non-comparable invalid pair finding location or segment');
     let value = 1;
     if (category !== 'crossing') {
       const {interval, coordinates} = finding.location;
@@ -155,6 +164,9 @@ function run({binary, output, update = false, manifestPath = 'tests/layout-quali
   const manifest = read(manifestPath);
   if (manifest.version !== 1 || manifest.renderer_contract !== 'planorama-final-layout-v1')
     throw new Error('incompatible manifest/renderer contract');
+  const ids = manifest.fixtures.map(fixture => fixture.id);
+  if (ids.some(id => typeof id !== 'string' || !/^[a-z0-9][a-z0-9-]*$/.test(id)) || new Set(ids).size !== ids.length)
+    throw new Error('invalid or duplicate fixture IDs');
   const baselineDirectory = fs.realpathSync(path.dirname(manifestPath));
   const outputDirectory = resolvedDirectory(output);
   if (containsDirectory(baselineDirectory, outputDirectory) || containsDirectory(outputDirectory, baselineDirectory))
@@ -169,12 +181,15 @@ function run({binary, output, update = false, manifestPath = 'tests/layout-quali
         fixture: fixture.id, args: fixture.args, inputs, budgets: fixture.budgets};
       const baselinePath = path.join(path.dirname(manifestPath), `${fixture.id}.json`);
       const reportPath = path.join(output, `${fixture.id}.json`);
+      const svgPath = path.join(output, `${fixture.id}.svg`);
       fs.rmSync(reportPath, {force: true});
-      const child = spawnSync(binary, [...fixture.args, '-o', path.join(output, `${fixture.id}.svg`),
+      fs.rmSync(svgPath, {force: true});
+      const child = spawnSync(binary, [...fixture.args, '-o', svgPath,
         '--layout-diagnostics-json', reportPath], {encoding: 'utf8', timeout: 180000});
       fs.writeFileSync(path.join(output, `${fixture.id}.log`), (child.stdout || '') + (child.stderr || ''));
       if (child.error || child.status !== 0) throw new Error(`render failed: ${child.error || child.stderr}`);
       if (!fs.lstatSync(reportPath).isFile()) throw new Error('renderer did not create a regular diagnostics file');
+      if (!fs.lstatSync(svgPath).isFile()) throw new Error('renderer did not create a regular SVG file');
       const report = read(reportPath);
       validate(report);
       if (update) {

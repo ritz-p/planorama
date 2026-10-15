@@ -23,7 +23,7 @@ test('independent crossing, overlap and clearance degradations fail with stable 
     const after = baseline();
     mutate(after);
     after.findings.push({category, edge: after.edges[0].id, peer: after.edges[1].id,
-      location: {interval: [0, 1]}});
+      segment: 0, peer_segment: 0, location: {point: [0, 0], interval: [0, 1], coordinates: [0, 0], horizontal: true, visible_gap: -1}});
     const result = {fixture: 'degraded', ...compare(before, after, budgets)};
     assert.equal(result.status, 'failed');
     const text = markdown([result]);
@@ -164,7 +164,7 @@ test('pair regressions cannot be offset by another pair, and reversed pair order
   ]) {
     const before = baseline();
     const [a, b, c] = before.edges.map(e => e.id);
-    before.findings = [{category, edge: a, peer: b, location: {interval: [0, 100], coordinates: [0, 8]}}];
+    before.findings = [{category, edge: a, peer: b, segment: 0, peer_segment: 0, location: {point: [0, 0], interval: [0, 100], coordinates: [0, 8], horizontal: true, visible_gap: 6}}];
     Object.assign(before.summary.visible_straight_sections, {crossings: 0, independent_overlap_length: 0, parallel_deficit: 0,
       [{crossings: 'crossings', overlap: 'independent_overlap_length', parallel: 'parallel_deficit'}[metric]]: amount});
     assert.throws(() => compare(before, {...before, findings: []}, budgets), /findings total .* differs from summary/);
@@ -204,6 +204,42 @@ test('incomplete or excess pair findings reject reports even when summaries are 
   }
 });
 
+test('pair findings reject missing locations and coerced numeric fields', () => {
+  const before = JSON.parse(fs.readFileSync(path.join(__dirname, '../layout-quality/large.json'))).report;
+  for (const category of ['crossing', 'parallel_proximity']) {
+    const mutations = [f => { delete f.location; }, f => { delete f.segment; },
+      f => { delete f.peer_segment; }, f => { f.segment = '0'; },
+      f => { f.peer_segment = -1; }];
+    for (const field of category === 'crossing' ? ['point'] : ['interval', 'coordinates']) {
+      mutations.push(f => { f.location[field] = f.location[field].map(String); });
+      mutations.push(f => { f.location[field] = [0]; });
+    }
+    for (const mutate of mutations) {
+      const after = structuredClone(before);
+      mutate(after.findings.find(f => f.category === category));
+      assert.throws(() => compare(before, after, budgets), /invalid pair finding/);
+      assert.throws(() => compare(after, before, budgets), /invalid pair finding/);
+    }
+  }
+});
+
+test('duplicate fixture IDs are rejected without output or baseline writes', () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'layout-duplicate-'));
+  try {
+    const manifestPath = path.join(dir, 'manifest.json');
+    const fixture = manifest.fixtures[0];
+    fs.writeFileSync(manifestPath, JSON.stringify({...manifest, fixtures: [fixture, {...fixture, args: ['different']}]}));
+    const baselinePath = path.join(dir, `${fixture.id}.json`);
+    fs.writeFileSync(baselinePath, 'preserved');
+    const output = path.join(dir, 'out');
+    for (const update of [false, true]) {
+      assert.throws(() => run({manifestPath, binary: 'must-not-run', output, update}), /duplicate fixture IDs/);
+      assert.equal(fs.readFileSync(baselinePath, 'utf8'), 'preserved');
+      assert.equal(fs.existsSync(output), false);
+    }
+  } finally { fs.rmSync(dir, {recursive: true, force: true}); }
+});
+
 test('successful renderer without fresh regular diagnostics cannot check or update a baseline', () => {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'layout-stale-'));
   try {
@@ -214,9 +250,16 @@ test('successful renderer without fresh regular diagnostics cannot check or upda
     fs.writeFileSync(manifestPath, JSON.stringify({...manifest, fixtures: [fixture]}));
     const options = {manifestPath, binary: process.execPath, output: path.join(dir, 'out')};
     const source = path.join(__dirname, '../layout-quality/fan-in.json');
-    fs.writeFileSync(fake, `const fs = require('node:fs'); fs.writeFileSync(process.argv.at(-1), JSON.stringify(JSON.parse(fs.readFileSync(${JSON.stringify(source)})).report));`);
+    fs.writeFileSync(fake, `const fs = require('node:fs'); fs.writeFileSync(process.argv[process.argv.indexOf('-o') + 1], '<svg/>'); fs.writeFileSync(process.argv.at(-1), JSON.stringify(JSON.parse(fs.readFileSync(${JSON.stringify(source)})).report));`);
     assert.equal(run({...options, update: true}), true);
     const saved = fs.readFileSync(path.join(dir, 'baselines', 'fan-in.json'), 'utf8');
+    for (const update of [false, true]) {
+      fs.writeFileSync(path.join(options.output, 'fan-in.svg'), '<svg>stale</svg>');
+      fs.writeFileSync(fake, `const fs = require('node:fs'); fs.writeFileSync(process.argv.at(-1), JSON.stringify(JSON.parse(fs.readFileSync(${JSON.stringify(source)})).report));`);
+      assert.equal(run({...options, update}), false);
+      assert.equal(fs.existsSync(path.join(options.output, 'fan-in.svg')), false);
+      assert.equal(fs.readFileSync(path.join(dir, 'baselines', 'fan-in.json'), 'utf8'), saved);
+    }
     for (const update of [false, true]) {
       fs.writeFileSync(path.join(options.output, 'fan-in.json'), JSON.stringify(baseline()));
       fs.writeFileSync(fake, '');
@@ -233,7 +276,7 @@ test('one fixture failure remains visible next to improvements elsewhere', () =>
   const before = baseline();
   const after = baseline();
   after.summary.visible_straight_sections.crossings++;
-  after.findings.push({category: 'crossing', edge: after.edges[0].id, peer: after.edges[1].id});
+  after.findings.push({category: 'crossing', edge: after.edges[0].id, peer: after.edges[1].id, segment: 0, peer_segment: 0, location: {point: [0, 0]}});
   const text = markdown([{fixture: 'bad', ...compare(before, after, budgets)},
     {fixture: 'good', ...compare(after, before, budgets)}]);
   assert.match(text, /bad: failed/);
@@ -271,7 +314,7 @@ test('runner identifies missing and stale baselines and preserves full artifacts
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'layout-quality-'));
   try {
     const fake = path.join(dir, 'fake.cjs');
-    fs.writeFileSync(fake, `const fs = require('node:fs'); const r = JSON.parse(fs.readFileSync(${JSON.stringify(path.join(__dirname, '../layout-quality/fan-in.json'))})); fs.writeFileSync(process.argv.at(-1), JSON.stringify(r.report));`);
+    fs.writeFileSync(fake, `const fs = require('node:fs'); fs.writeFileSync(process.argv[process.argv.indexOf('-o') + 1], '<svg/>'); const r = JSON.parse(fs.readFileSync(${JSON.stringify(path.join(__dirname, '../layout-quality/fan-in.json'))})); fs.writeFileSync(process.argv.at(-1), JSON.stringify(r.report));`);
     const fixture = {...manifest.fixtures[2], args: [fake]};
     fs.mkdirSync(path.join(dir, 'baselines'));
     const manifestPath = path.join(dir, 'baselines', 'manifest.json');
@@ -281,7 +324,7 @@ test('runner identifies missing and stale baselines and preserves full artifacts
     assert.match(fs.readFileSync(path.join(options.output, 'summary.md'), 'utf8'), /missing baseline/);
     assert.equal(run({...options, update: true}), true);
     assert.equal(run(options), true);
-    fs.appendFileSync(fake, '\nconst report = JSON.parse(fs.readFileSync(process.argv.at(-1))); report.summary.visible_straight_sections.crossings++; report.findings.push({category: "crossing", edge: report.edges[0].id, peer: report.edges[1].id}); fs.writeFileSync(process.argv.at(-1), JSON.stringify(report));');
+    fs.appendFileSync(fake, '\nconst report = JSON.parse(fs.readFileSync(process.argv.at(-1))); report.summary.visible_straight_sections.crossings++; report.findings.push({category: "crossing", edge: report.edges[0].id, peer: report.edges[1].id, segment: 0, peer_segment: 0, location: {point: [0, 0]}}); fs.writeFileSync(process.argv.at(-1), JSON.stringify(report));');
     assert.equal(run(options), false);
     assert.match(fs.readFileSync(path.join(options.output, 'summary.md'), 'utf8'), /FAIL: crossings/);
     const originalBaseline = fs.readFileSync(path.join(dir, 'baselines', 'fan-in.json'), 'utf8');
