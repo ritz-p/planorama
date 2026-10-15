@@ -98,3 +98,23 @@ content. `docker compose exec -T dev python3 tests/browser/viewer.py` runs Chrom
 against local files with networking disabled, checking search, keyboard controls,
 navigation, references, membership and preservation of edge geometry and styles.
 Build the CLI with `cargo build --locked` in the same container first.
+
+## Viewer source modules
+
+`src/html/viewer.js` initializes the viewer and coordinates selection/reset.
+`metadata.js` owns identity and DOM indexes; `selection.js` renders details and
+relationship navigation; `searching.js` owns search/results; `navigation.js` owns
+the view box and pan/zoom; `highlighting.js` owns selection highlighting cleanup.
+`lifecycle.js` registers optional feature adapters with a `reset()` method. New
+overlays register there so resource/relationship selection and Clear cannot leave
+stale feature state. Modules receive their dependencies explicitly and return
+small interfaces; their functions remain inside the viewer's private closure.
+
+`src/html.rs` concatenates the sources in a fixed order with `include_str!` and
+`concat!` at compile time, inside one inline script. Edit the source modules and
+rebuild Rust; no JavaScript package installation, bundler or runtime imports are
+needed. Keep initialization in the coordinator and add new sources to that list.
+Run `docker compose exec -T dev node --test tests/browser/modules.cjs` for module
+contracts, plus the browser and Rust CLI tests above. Regenerate both maintained
+HTML files after source changes; use `scripts/render-multi-account.sh` for the
+combined example. HTML snapshot comparisons verify deterministic bundling.
