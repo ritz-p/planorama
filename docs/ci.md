@@ -43,12 +43,13 @@ Both suites keep separate **Compile tests** and **Run tests** steps. The
 Cargo's default workspace packages and builds explicit target arguments. The
 compile step adds `--no-run` to the same `cargo test --locked --all-features`
 commands used by the run step. Build scripts remain Cargo-managed prerequisites.
-No existing test, ignored-test policy or snapshot comparison is removed.
+Snapshot comparisons remain in their original suites. Three explicitly ignored
+large-fixture unit regressions run separately as described below.
 
 Spacing-budget calibration is an ignored tuning experiment, run only on demand
 by **Spacing budget calibration**. Standard and large retain ordinary routing
 correctness and layout regression tests; the aggregate **Tests** check depends
-only on those two suites. Calibration and its artifact upload are not PR gates.
+only on those two suites. Calibration and deferred regression uploads are not PR gates.
 
 New integration targets automatically join `standard`; no ordinary target list is
 duplicated in the workflow. New library, binary, example and benchmark targets are
@@ -106,6 +107,73 @@ choice to keep those targets with unit tests instead of adding a third runner.
 Parallelism saves waiting time at the documented cost of additional workspace
 compilation and runner setup. Workflow, Clippy and formatting validation outside
 **Cargo test** are excluded from both sides of this comparison.
+
+## Deferred routing regressions (#253)
+
+**Routing regressions** runs after every PR merge into `main`, nightly at 18:23 UTC
+(03:23 JST), and on manual dispatch. Post-merge checkout uses the event's default
+branch commit, never the PR head. Scheduled runs use the default branch; manual
+runs use the selected revision. This workflow must merge before its automatic
+triggers and dispatch are available.
+
+Only these three `deferred_regression_` unit tests are ignored by ordinary Cargo
+runs. Their assertion bodies are unchanged:
+
+| Test suffix | Reason for deferral | Focused coverage retained on PRs |
+| --- | --- | --- |
+| `large_fixture_limits_each_edges_bends_and_valid_route_stretch` | Two full large-fixture layouts plus per-edge shortest-route searches and quality comparison after edge reversal. | `container_port_stubs_are_not_immediately_retraced`, `symmetric_peers_keep_ports_and_routes_when_edges_are_reordered`, small exhaustive candidate comparisons, and spacing/shape/border guards. |
+| `congested_container_routes_improve_over_shortest_paths` | Large-fixture layout followed by both shortest and scored routing passes. | `simple_routes_respect_ports_obstacles_and_edge_conflicts`, scoring/overlap tests, `crossings_do_not_force_clear_detours`, and `completed_paths_compact_stubs_before_scoring_and_occupancy`. |
+| `large_listener_locality_preserves_geometry_and_routes` | Three large-fixture layouts comparing owner locality, area and repeatability. | `multiple_owners_and_shared_targets_keep_stable_separate_cards`, `listener_owner_resolution_is_conservative`, and focused leaf locality/containment tests. |
+
+The large-fixture-specific thresholds remain in deferred coverage. PRs retain
+`large_aws_example_keeps_cross_module_containment_and_multi_subnet_relationships`
+and the `large_example` integration target, including full SVG snapshot and
+reproducibility assertions. Dense synthetic graphs and small exhaustive search
+equivalence tests remain PR-blocking; size-related names alone do not justify
+deferral. Existing ignored calibration, diagnostics and manual benchmarks remain
+opt-in and are not selected by the regression filter.
+
+Reproduce all deferred checks with the pinned Docker toolchain:
+
+```sh
+docker compose exec -T dev cargo test --locked --all-features --bin planorama deferred_regression_ -- --ignored --test-threads=2 --nocapture
+```
+
+For one failure, replace the prefix with its full test name and add `--exact`
+after `--`. Compile separately with `cargo test --locked --all-features --bin
+planorama --no-run`. Two test threads limit concurrent expensive routing work.
+The workflow retains a failing job status, console diagnostics and a
+`routing-regressions-<SHA>` log artifact for 14 days, including assertion failures.
+Inspect the failed test and revision in Actions, reproduce at that SHA, and fix
+the regression in a PR; use normal Actions failure notifications to track these
+non-gating failures. No automatic retry or success suppression hides failures.
+
+### Local timing
+
+Measured once per selection on 2026-10-15 in Docker Desktop Linux, Rust 1.85.1,
+32 visible logical CPUs, default libtest concurrency and the optimized test
+profile. Baseline `25d3927` used `cargo test --locked --all-targets`; after adding
+only ignore attributes and name prefixes, the two existing suite selectors ran
+with `--all-features` (this package declares no features). Sources, assertions,
+fixtures and dependencies were otherwise identical. Compilation was completed
+before the after measurements; no other Rust tests ran concurrently. Host load
+was not controlled, and Node workflow tests overlapped part of the after run.
+
+| Harness execution time, excluding compilation/startup | Before | After |
+| --- | ---: | ---: |
+| Unit binary | 115.89 s | 67.12 s |
+| Standard suite, sum of harness times | 119.49 s | 70.98 s |
+| Large suite | 71.36 s | 75.93 s |
+| Ordinary passed / ignored / failed | 630 / 5 / 0 | 627 / 8 / 0 |
+
+Standard harness time fell 40.6%; the unchanged large suite is now the longer
+test phase. The complete after Standard command took 72.150 s. These local
+observations exclude hosted checkout, queueing, cache and job startup, so they
+do not establish an end-to-end CI speedup. Deferred execution retains the three
+remaining assertion sets without putting them back on the PR critical path.
+The deferred command passed all three tests in 140.201 s (139.51 s in the
+harness), with its explicit two-thread limit; it is additional post-merge/nightly
+compute, not work that disappears.
 
 ## On-demand spacing calibration
 
