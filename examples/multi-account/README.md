@@ -25,7 +25,7 @@ docker compose exec -T dev python3 tests/browser/viewer.py
 ```
 
 [diagram.svg](diagram.svg) and [diagram.html](diagram.html) use identical inputs
-and three explicit remote-state mappings. Automatic generation updates SVG only;
+and three explicit remote-state mappings. The manual generation workflow updates SVG only;
 regenerate and commit HTML explicitly. The expensive complete rendering test is
 opt-in and checks both snapshots. The ordinary integration test verifies source
 generation and committed topology.
