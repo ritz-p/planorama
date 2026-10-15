@@ -79,7 +79,25 @@ fn document(svg: String, resources: Vec<Value>) -> String {
         .replace('\u{2029}', "\\u2029");
     include_str!("html/viewer.html")
         .replace("/* VIEWER_CSS */", include_str!("html/viewer.css"))
-        .replace("/* VIEWER_JS */", include_str!("html/viewer.js"))
+        .replace(
+            "/* VIEWER_JS */",
+            &include_str!("html/viewer.js").replace(
+                "/* VIEWER_MODULES */",
+                concat!(
+                    include_str!("html/metadata.js"),
+                    "\n",
+                    include_str!("html/navigation.js"),
+                    "\n",
+                    include_str!("html/highlighting.js"),
+                    "\n",
+                    include_str!("html/selection.js"),
+                    "\n",
+                    include_str!("html/searching.js"),
+                    "\n",
+                    include_str!("html/lifecycle.js"),
+                ),
+            ),
+        )
         .replace("<!-- VIEWER_DATA -->", &data)
         .replace("<!-- DIAGRAM -->", &svg)
 }
