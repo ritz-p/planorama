@@ -73,6 +73,7 @@ fn resources(graph: &Graph, state: &str, prefix: &str) -> Vec<Value> {
         "type": node.resource_type,
         "mode": match node.mode { crate::model::EntityMode::Data => "data", crate::model::EntityMode::Managed => "managed" },
         "deposed": node.deposed_key,
+        "action": format!("{:?}", node.action).to_lowercase(),
     })).collect()
 }
 
@@ -116,6 +117,10 @@ fn document(svg: String, resources: Vec<Value>, diagnostics: Option<Value>) -> S
                     include_str!("html/lifecycle.js"),
                     "\n",
                     include_str!("html/diagnostics.js"),
+                    "\n",
+                    include_str!("html/impact-graph.js"),
+                    "\n",
+                    include_str!("html/impact.js"),
                 ),
             ),
         )

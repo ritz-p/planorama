@@ -91,6 +91,46 @@ incomplete analysis are reported explicitly; a zero count is not proof of perfec
 routing. Without the flag, diagnostics are unavailable and the viewer still works.
 See [diagnostic approximations and limits](layout-diagnostics.md).
 
+## Conservative impact exploration
+
+Select a resource and use **Explore impact** to list *potentially related
+resources* within 1, 2 or 3 hops (default 2). Ordinary one-hop selection remains
+the default until that action is used. Resource rows and discovery paths show
+change actions, state-qualified identities, recorded relationship direction and
+provenance. Unchanged resources can be explored as context; changed resources
+retain their existing action colors. Purple dashed outlines mark direct results,
+and teal dotted outlines mark additional hops.
+
+Verified dependency arrows run from dependencies to dependents. **Upstream
+dependencies** follows incoming arrows; **Downstream dependents** follows outgoing
+arrows; **Both** follows either. The optional association checkbox includes only
+provenance-backed AWS associations. Directed associations follow their recorded
+arrow in the selected direction; undirected associations can be followed in either
+direction. These are labeled separately and never asserted to be deployment
+dependencies. Inferred connections, containment, unknown semantics, component
+membership and unresolved references do not propagate exploration. The panel gives
+up to 50 examples of excluded associations or inferred/unknown relationships.
+
+Traversal reads the selected view's structured relationship metadata, including
+cross-state relationships; it does not infer relationships from visual proximity,
+names, ARNs or attribute values. Equal addresses in different states and deposed
+objects retain separate identities. A relationship provenance resource is not
+silently converted into an endpoint: its selection details provide endpoint
+navigation to start exploration there.
+
+Deterministic breadth-first discovery preserves parallel relationship provenance,
+stops revisiting cycles, and shows one discovery path per resource plus a list of
+traversed relationships. The graph indexes at most 10,000 relationship records;
+each exploration visits at most 200 nodes including its origin, 400 relationships
+and 2,000 adjacency entries. Hitting a limit is disclosed. Missing targets are
+labeled unavailable and cannot extend a path; CLI-filtered nodes are not restored.
+The view cannot prove that an unlisted resource is absent from Terraform.
+
+Search edits, resource/relationship navigation, Clear/Escape and changing exploration
+controls reset the impact display. Pan and zoom retain it. All controls work with
+the keyboard. This is neither an apply-order prediction nor a runtime blast-radius,
+reachability or guaranteed-effect model; the static SVG is unchanged.
+
 Logical-resource type cards show all nonempty action sections with colored borders
 and explicit counts, equally in offline SVG and HTML. Policy and Controller have
 visible explanations in the card heading. See the synthetic
@@ -135,6 +175,8 @@ stale feature state. Modules receive their dependencies explicitly and return
 small interfaces; their functions remain inside the viewer's private closure.
 `diagnostics.rs` reduces the final report to the bounded HTML bridge;
 `diagnostics.js` consumes it and registers its reset adapter.
+`impact-graph.js` indexes verified graph metadata and performs bounded traversal;
+`impact.js` owns exploration controls, summaries and transient highlighting.
 
 `src/html.rs` concatenates the sources in a fixed order with `include_str!` and
 `concat!` at compile time, inside one inline script. Edit the source modules and
