@@ -132,7 +132,12 @@ pub(super) fn run(
             Some(&mut report),
         ),
         super::OutputFormat::Html if layout_diagnostics.enabled() => {
-            crate::html::render_states_report(&architecture, format, &mut report)
+            crate::html::render_states_report(
+                &architecture,
+                format,
+                &mut report,
+                layout_diagnostics.html,
+            )
         }
         super::OutputFormat::Svg => svg::render_states(&architecture, format),
         super::OutputFormat::Html => crate::html::render_states(&architecture, format),

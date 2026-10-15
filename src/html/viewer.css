@@ -19,6 +19,11 @@ p { line-height: 1.5; }
 #selection h3 { font-size: 14px; margin-bottom: 8px; }
 #selection ul { padding-left: 18px; }
 #selection li { margin-bottom: 8px; }
+#diagnostics { overflow-wrap: anywhere; }
+#diagnostics h2 { font-size: 16px; }
+#diagnostics button { text-align: left; width: 100%; }
+#hotspot-list { padding-left: 20px; }
+#hotspot-list li { margin-bottom: 12px; }
 #viewport { overflow: hidden; min-width: 0; position: relative; background: white; touch-action: none; cursor: grab; }
 #viewport > svg { width: 100%; height: 100%; display: block; }
 #viewport [data-viewer-target] { cursor: pointer; }

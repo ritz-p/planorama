@@ -17,6 +17,12 @@
 <p id="result-count" role="status"></p>
 <div id="results" aria-label="Search results"></div>
 <section id="selection" aria-label="Selection details" aria-live="polite"></section>
+<section id="diagnostics" aria-label="Routing diagnostics">
+<h2>Routing hotspots</h2>
+<button id="hotspot-toggle" type="button" aria-pressed="false" aria-controls="hotspot-list">Show routing hotspots</button>
+<p id="hotspot-status" role="status"></p>
+<ol id="hotspot-list" hidden></ol>
+</section>
 </aside>
 <section id="viewport" tabindex="0" aria-label="Diagram. Arrow keys pan; plus and minus zoom; F fits the view; Escape clears selection.">
 <!-- DIAGRAM -->
@@ -24,6 +30,7 @@
 </main>
 <noscript>Enable JavaScript for search and navigation. The diagram is included below.</noscript>
 <script id="viewer-data" type="application/json"><!-- VIEWER_DATA --></script>
+<!-- VIEWER_DIAGNOSTICS -->
 <script>/* VIEWER_JS */</script>
 </body>
 </html>
