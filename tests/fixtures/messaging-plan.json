@@ -1,0 +1,19 @@
+{
+  "format_version": "1.2",
+  "resource_changes": [
+    {"address":"aws_sns_topic.events","type":"aws_sns_topic","mode":"managed","change":{"actions":["create"]}},
+    {"address":"aws_sqs_queue.jobs","type":"aws_sqs_queue","mode":"managed","change":{"actions":["update"]}},
+    {"address":"data.aws_sqs_queue.archive","type":"aws_sqs_queue","mode":"data","change":{"actions":["read"]}}
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws":{"full_name":"hashicorp/aws","expressions":{"region":{"constant_value":"ap-northeast-1"}}},
+      "aws.archive":{"full_name":"hashicorp/aws","alias":"archive","expressions":{"region":{"constant_value":"us-east-1"}}}
+    },
+    "root_module": {"resources":[
+      {"address":"aws_sns_topic.events","provider_config_key":"aws"},
+      {"address":"aws_sqs_queue.jobs","provider_config_key":"aws","depends_on":["aws_sns_topic.events"]},
+      {"address":"data.aws_sqs_queue.archive","provider_config_key":"aws.archive"}
+    ]}
+  }
+}

@@ -12,6 +12,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         ("AWS-PrivateLink", "endpoint"),
         ("Elastic-Load-Balancing", "elb"),
         ("AWS-Lambda", "lambda"),
+        ("Amazon-Simple-Queue-Service", "sqs"),
+        ("Amazon-Simple-Notification-Service", "sns"),
         ("Amazon-Elastic-Container-Service", "ecs"),
         ("Amazon-Elastic-Kubernetes-Service", "eks"),
         ("Amazon-RDS", "rds"),

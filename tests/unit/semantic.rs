@@ -2,6 +2,49 @@ use super::*;
 use crate::{layout::Layout, plan, svg};
 
 #[test]
+fn messaging_resources_keep_scopes_data_actions_and_explicit_dependencies() {
+    use crate::model::{Action, EdgeKind, EntityMode, Placement, ResourceRole};
+    let raw = plan::parse(include_str!("../fixtures/messaging-plan.json")).unwrap();
+    let graph = transform(&raw);
+    assert_eq!(graph.nodes.len(), 3);
+    for node in &graph.nodes {
+        assert_eq!(node.role, ResourceRole::Node);
+        assert_eq!(node.placement, Placement::Spatial);
+        assert!(node.entity.scope.as_ref().unwrap().region.is_some());
+        assert_eq!(node.entity.provenance.len(), 1);
+    }
+    assert!(graph.nodes.iter().any(|n| n.mode == EntityMode::Data));
+    assert!(graph.nodes.iter().any(|n| n.action == Action::Update));
+    assert_eq!(graph.edges.len(), 1);
+    assert_eq!(graph.edges[0].kind, EdgeKind::Dependency);
+    let output = svg::render(&graph, &Layout::new(&graph));
+    assert!(output.contains("planorama-icon-aws-sqs"));
+    assert!(output.contains("planorama-icon-aws-sns"));
+    assert!(output.contains("us-east-1"));
+    assert_eq!(graph, transform(&raw));
+}
+
+#[test]
+fn messaging_singletons_keep_verified_account_and_region_panels() {
+    let mut input: serde_json::Value =
+        serde_json::from_str(include_str!("../fixtures/messaging-plan.json")).unwrap();
+    input["configuration"]["provider_config"]["aws"]["expressions"]["assume_role"] = serde_json::json!([{"role_arn":{"constant_value":"arn:aws:iam::123456789012:role/example"}}]);
+    input["configuration"]["provider_config"]["aws.archive"]["expressions"]["assume_role"] = serde_json::json!([{"role_arn":{"constant_value":"arn:aws:iam::210987654321:role/example"}}]);
+    let raw = crate::plan::evidence::tests::parse_fixture(&input.to_string()).unwrap();
+    let graph = transform(&raw);
+    assert!(
+        graph
+            .nodes
+            .iter()
+            .all(|n| n.entity.scope.as_ref().unwrap().account.is_some())
+    );
+    let output = svg::render(&graph, &Layout::new(&graph));
+    assert_eq!(output.matches("data-account-panel=").count(), 2);
+    assert!(output.contains("210987654321"));
+    assert!(output.contains("us-east-1"));
+}
+
+#[test]
 fn containment_and_associations_survive_node_remapping_together() {
     use crate::model::EdgeKind;
     use serde_json::json;

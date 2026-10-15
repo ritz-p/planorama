@@ -79,6 +79,8 @@ pub(super) fn icon_for(resource_type: &str) -> Option<ResourceIcon> {
         | "aws_alb_target_group"
         | "aws_lb_trust_store"
         | "aws_lb_target_group_attachment" => ResourceIcon::LoadBalancer,
+        "aws_sqs_queue" => ResourceIcon::Sqs,
+        "aws_sns_topic" => ResourceIcon::Sns,
         "aws_lambda_function"
         | "aws_lambda_functions"
         | "aws_lambda_alias"

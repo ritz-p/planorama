@@ -6,6 +6,13 @@ semantics. Provider source and configuration identity are described in [models](
 
 ## Deployment scopes
 
+`aws_sqs_queue` and `aws_sns_topic` are spatial nodes with AWS account and
+regional scope from provider evidence. Managed/data mode, actions and ordinary
+Terraform references remain visible. The [messaging example](../examples/messaging.svg)
+includes both services and a data lookup in a singleton region. Names, ARNs,
+policies and proximity do not establish message flow. Subscription and event-source
+resources do not yet lower into message-delivery relationships.
+
 AWS account scope is resolved independently from region using verified saved-plan
 provider evidence; JSON alone leaves accounts unknown. See [the input contract](provider-evidence.md). State IDs and provider
 aliases are not accounts. Logical-resource scope labels include a known
