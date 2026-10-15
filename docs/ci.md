@@ -205,6 +205,8 @@ input/argument lists and missing or invalid budgets are rejected before renderin
 including per-edge budgets for fixtures with no edges.
 Pair findings require nonnegative integer segment indices and category-specific
 location fields with finite JSON numbers; numeric strings are not accepted.
+All finding segment indices, including peer and border references, must be less
+than the referenced polyline's point count minus one.
 Each routed polyline requires at least two finite two-coordinate points. State
 geometry/card counts, policy fields, collection limits and informational border
 measurements are also validated, including border-finding geometry.

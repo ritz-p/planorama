@@ -253,6 +253,32 @@ test('pair findings reject missing locations and coerced numeric fields', () => 
   }
 });
 
+test('finding segment references stay within each referenced polyline', () => {
+  const before = JSON.parse(fs.readFileSync(path.join(__dirname, '../layout-quality/large.json'))).report;
+  const crossing = before.findings.find(f => f.category === 'crossing');
+  const overlap = {...structuredClone(crossing), category: 'independent_overlap',
+    location: {interval: [0, 1], coordinates: [0, 0], horizontal: true, visible_gap: -1}};
+  before.findings.push(overlap);
+  before.summary.visible_straight_sections.independent_overlap_length++;
+  for (const category of ['crossing', 'independent_overlap', 'parallel_proximity', 'visible_border_clearance']) {
+    const index = before.findings.findIndex(f => f.category === category);
+    assert.ok(index >= 0, category);
+    for (const field of category === 'visible_border_clearance' ? ['segment'] : ['segment', 'peer_segment']) {
+      const id = before.findings[index][field === 'segment' ? 'edge' : 'peer'];
+      const length = before.edges.find(e => e.id === id).polyline.length;
+      const boundary = structuredClone(before);
+      boundary.findings[index][field] = length - 2;
+      assert.equal(compare(boundary, boundary, budgets).status, 'passed');
+      for (const value of [length - 1, length, Number.MAX_SAFE_INTEGER]) {
+        const after = structuredClone(before);
+        after.findings[index][field] = value;
+        assert.throws(() => compare(before, after, budgets), /segment outside polyline/);
+        assert.throws(() => compare(after, before, budgets), /segment outside polyline/);
+      }
+    }
+  }
+});
+
 test('report structure rejects missing geometry and malformed informational fields', () => {
   for (const mutate of [
     r => { delete r.edges[0].polyline; }, r => { r.edges[0].polyline = []; },

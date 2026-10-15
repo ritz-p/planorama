@@ -113,6 +113,12 @@ function validateStructure(report) {
   for (const finding of report.findings) {
     if (!finding || ![...Object.values(categories)].includes(finding.category) || !edges.has(finding.edge))
       throw new Error('invalid finding category or edge');
+    const references = [[finding.edge, finding.segment]];
+    if (finding.category !== 'visible_border_clearance') references.push([finding.peer, finding.peer_segment]);
+    for (const [id, segment] of references) {
+      if (!edges.has(id) || !Number.isSafeInteger(segment) || segment < 0 || segment >= edges.get(id).polyline.length - 1)
+        throw new Error(`invalid ${finding.category === 'visible_border_clearance' ? 'border' : 'pair'} finding segment outside polyline`);
+    }
     if (finding.category === 'visible_border_clearance') {
       if (!Number.isSafeInteger(finding.segment) || finding.segment < 0 ||
           !point(finding.interval) || finding.interval[0] >= finding.interval[1] ||
