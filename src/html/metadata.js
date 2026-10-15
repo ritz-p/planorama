@@ -27,7 +27,10 @@ function metadata(svg, byId) {
       for (const source of relation.provenance.filter(p => p.kind === 'resource')) {
         const suffix = hex(source.address) + (source.deposed_key === null ? '-current' : '-deposed-' + hex(source.deposed_key));
         const id = `${prefix}resource-${suffix}`;
-        if (resourceIds.has(id)) continue;
+        if (resourceIds.has(id)) {
+          resources.find(resource => resource.id === id).relationship = true;
+          continue;
+        }
         const row = rows.find(row => row.dataset.sourceIdentity === 'terraform:' + suffix);
         if (!row) continue;
         row.id = id;

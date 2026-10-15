@@ -7,6 +7,11 @@ address selects its two endpoints. Unknown or ambiguous addresses are errors;
 for named states use `--focus STATE:ADDRESS` to disambiguate identical addresses.
 An address shared by current and deposed objects is ambiguous.
 
+SNS subscriptions retain a logical row, so focusing a subscription at depth zero
+selects that row. Its verified endpoint links become unavailable if the endpoints
+are excluded. Ordinary neighbor expansion includes its referenced endpoints;
+subscription paths require both displayed endpoints.
+
 `--changed-only` retains non-no-op actions and resources with move, import,
 removal, drift or other change metadata, including endpoints of changed lowered
 relationships and resolved cross-state relationships whose producer output has a

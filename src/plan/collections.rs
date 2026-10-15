@@ -221,6 +221,22 @@ pub(super) fn annotate(
                     actual.len() == 1 && expected.len() == 1 && actual == expected;
             }
         }
+        if alarm.provider.is_aws()
+            && alarm.resource_type == "aws_sns_topic_subscription"
+            && reference.attribute == "endpoint"
+            && reference.arn_values_match
+        {
+            if let [source] = reference.sources.as_slice() {
+                let (value, unknown) = evidence[reference.target];
+                reference.messaging_endpoint_verified = matches!(
+                    (
+                        known_strings(value, unknown, &["protocol"]).as_deref(),
+                        nodes[*source].resource_type.as_str()
+                    ),
+                    (Some(["sqs"]), "aws_sqs_queue") | (Some(["lambda"]), "aws_lambda_function")
+                );
+            }
+        }
         if !reference.complete || !reference.ids_only || reference.sources.is_empty() {
             continue;
         }

@@ -13,6 +13,8 @@ docker compose exec -T dev cargo run --locked -- examples/plan.json -o diagram.s
 
 `diagram.svg` をブラウザで開いて確認できます。生成済みの [基本例](examples/diagram.svg)、[大規模 AWS 例](examples/terraform-large/diagram.svg)、[data ソースのアイコン例](examples/data-icons.svg) もあります。
 
+[SQS/SNS の例](examples/messaging.svg) と [SNS 購読の例](examples/sns-subscriptions.svg) では、サービスの配置と検証済みの購読関係を表示します。購読リソースは論理行として保持し、未解決の接続先も明示します。[判定条件](docs/aws.md#sns-subscriptions)を参照してください。
+
 検索・選択・ズーム付きの HTML は `--format html` で生成します。生成後はネットワークなしでローカルのブラウザから開けます。[HTML の例](examples/viewer.html) と [操作方法](docs/viewer.md) を参照してください。
 
 ```sh

@@ -7,6 +7,8 @@ Entities retain native address, deposed key, previous address, provider, module,
 mode, action and safe lifecycle metadata. Current and deposed objects at one
 address remain distinct. Before/after values and sensitive import identities are
 not stored. Collection/scalar identity proofs are boolean facts, not raw values.
+Subscription endpoint evidence similarly retains only ARN equality and a boolean
+protocol/type compatibility proof. See [SNS subscriptions](aws.md#sns-subscriptions).
 
 Route entries retain validated, nonsensitive configuration destination constants
 and safe target identities. `Node.routes` holds presentation ownership, inline

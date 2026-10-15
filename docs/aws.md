@@ -10,8 +10,8 @@ semantics. Provider source and configuration identity are described in [models](
 regional scope from provider evidence. Managed/data mode, actions and ordinary
 Terraform references remain visible. The [messaging example](../examples/messaging.svg)
 includes both services and a data lookup in a singleton region. Names, ARNs,
-policies and proximity do not establish message flow. Subscription and event-source
-resources do not yet lower into message-delivery relationships.
+policies and proximity do not establish message flow. Event-source resources do
+not yet lower into message-delivery relationships.
 
 AWS account scope is resolved independently from region using verified saved-plan
 provider evidence; JSON alone leaves accounts unknown. See [the input contract](provider-evidence.md). State IDs and provider
@@ -82,6 +82,31 @@ Its inputs explicitly bind resources to provider configurations with literal
 regions. A provider alias such as `archive` is not the region label; missing or
 dynamic provider-region metadata cannot produce a guessed panel.
 
+## SNS subscriptions
+
+Managed `aws_sns_topic_subscription` resources remain logical rows, with their own
+provider/account/region, action and lifecycle identity. Complete unique explicit
+`topic_arn` and `endpoint` references can additionally produce a directed
+`Subscription` from SNS Topic to SQS Queue or Lambda Function. The planned endpoint
+ARNs must be known and equal to the referenced resource ARNs; only boolean proofs
+are retained. The planned `protocol` must agree with the endpoint type (`sqs` or
+`lambda`). This conservatively rejects compound expressions with different values.
+
+Missing/unknown values, literal-only endpoints, ambiguous/dynamic selectors,
+unsupported protocols, foreign providers and deposed resources keep logical rows
+with explicit unresolved fields and any independently verified endpoint. Data
+queues/topics/functions can be referenced; data subscriptions do not create edges.
+Current configuration is never applied to a deposed subscription.
+
+The source row and numbered relationship index share one Terraform identity and
+are counted once. Parallel subscriptions retain separate numbers and actions.
+Filtering checks availability of every link; removed endpoints produce no path.
+Source and endpoint scopes remain independent, including cross-region/account
+wiring. State-local references never resolve against an identically named object
+in another state. These edges describe configured subscriptions, not successful
+delivery, access-policy correctness or runtime reachability.
+See [the subscription example](../examples/sns-subscriptions.svg).
+
 ## Resource roles and data
 
 VPC and Subnet are spatial `Container` resources. Other supported types are
@@ -99,7 +124,7 @@ mode. Their action subsections change presentation only, not role or placement.
 
 Placement is independent of role. ECS Cluster, ECS Task Definition, IAM Role,
 Policy, Role Policy, Instance Profile, AMI, EC2 Launch Template, CloudWatch Log Group,
-Metric Alarm and Auto Scaling Policy definitions are explicit logical resources, rendered as rows grouped
+Metric Alarm, Auto Scaling Policy and SNS Topic Subscription definitions are explicit logical resources, rendered as rows grouped
 by provider source, resource type and mode in
 the top annotation area. AMI describes
 an image definition used by workloads, not a deployed compute instance. These

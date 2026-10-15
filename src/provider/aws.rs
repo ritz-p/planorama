@@ -6,6 +6,7 @@ mod containment;
 mod data;
 pub(super) mod diagnostics;
 mod icons;
+mod messaging;
 mod monitoring;
 mod placement;
 pub(crate) use placement::owner_affinities;
@@ -51,6 +52,7 @@ pub(super) fn placement(resource_type: &str) -> crate::model::Placement {
         | "aws_autoscaling_policy"
         | "aws_ami"
         | "aws_launch_template" => crate::model::Placement::Logical,
+        "aws_sns_topic_subscription" => crate::model::Placement::Logical,
         _ if classify(resource_type) != crate::model::ResourceRole::Unknown => {
             crate::model::Placement::Spatial
         }
@@ -69,6 +71,7 @@ pub(super) fn transform(raw: crate::semantic::Input) -> crate::model::Graph {
     routes::present(&raw, &mut graph);
     monitoring::present(&raw, &mut graph);
     autoscaling::present(&raw, &mut graph);
+    messaging::present(&raw, &mut graph);
     let contained = crate::semantic::Input { graph, ..raw };
     let mut graph = data::visible(associations::lower(&contained));
     graph.components = components::infer(&contained, &graph);

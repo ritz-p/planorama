@@ -33,7 +33,7 @@ pub(crate) const RELATIONSHIP_RADIUS: f64 = 8.0;
 pub(crate) fn relationship_stroke(kind: EdgeKind) -> usize {
     match kind {
         EdgeKind::Dependency | EdgeKind::Containment => DEPENDENCY_STROKE,
-        EdgeKind::Association => ASSOCIATION_STROKE,
+        EdgeKind::Association | EdgeKind::Subscription => ASSOCIATION_STROKE,
         EdgeKind::Connection => CONNECTION_STROKE,
     }
 }
@@ -41,7 +41,7 @@ pub(crate) fn relationship_stroke(kind: EdgeKind) -> usize {
 pub(crate) fn relationship_style(kind: EdgeKind) -> &'static str {
     match kind {
         EdgeKind::Dependency | EdgeKind::Containment => DEPENDENCY_STYLE,
-        EdgeKind::Association => ASSOCIATION_STYLE,
+        EdgeKind::Association | EdgeKind::Subscription => ASSOCIATION_STYLE,
         EdgeKind::Connection => CONNECTION_STYLE,
     }
 }

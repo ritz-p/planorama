@@ -34,7 +34,7 @@ without wrapping text or packing rows again. Annotation leaf cards retain their
 existing measured content fragments; this contract does not change resource
 identity, provenance or links. Shared text metrics remain in `view::text`.
 The neutral relationship legend has a 960px card-width
-cap. Its five relationship kinds form a deterministic
+cap. Its relationship kinds form a deterministic
 one- or two-column grid below the action/color explanation. Multiple columns
 require at least 398px per cell with 24px gaps; cells stop widening at 640px.
 Narrow single-column cells place the sample above the text. Each grid row reserves

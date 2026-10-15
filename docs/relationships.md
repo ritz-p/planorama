@@ -9,8 +9,9 @@ Action colors and their explanation appear above a grid of relationship kinds.
 The card is capped at 960px, matching the maintained viewer example. The grid uses
 at most two columns according to the available width, reading left
 to right before continuing on the next row: Dependency, Association, Directed
-Association, Connection, Containment. Each cell keeps its complete sample and
-wrapped explanation. On narrow diagrams, a single column puts the sample above
+Association, Connection, Containment. Subscription is appended when present in
+the view. Each cell keeps its complete sample and wrapped explanation.
+On narrow diagrams, a single column puts the sample above
 the text; each row reserves the height of its tallest cell.
 
 Single-plan output reserves the measured legend height before checks and annotations.
@@ -38,6 +39,7 @@ Line patterns and arrowheads describe relationship kind and direction:
 | Directed Association | Dashed line, hollow circles and matching `[N]` badges at both ends, with a target arrow | A directed association, including a Route child → next hop; the arrow gives direction and the two badges identify one relationship. |
 | Connection | Thicker circular dots and hollow endpoint circles, without arrowheads | An inferred architectural connection; it does not guarantee network reachability. |
 | Containment | Nested boxes | Parent/child membership. An edge represented by nesting receives no redundant line. |
+| Subscription | Dashed directed line with matching endpoint numbers | Terraform-proven Topic → endpoint subscription; delivery and access policies are not verified. |
 
 Hollow circles identify card attachment points; filled dots within a path identify
 bundle junctions. Arrowheads identify direction. A `[N]` marker points to one
@@ -145,7 +147,7 @@ Graph filtering can renumber the visible subset; named states have separate inde
 Routing and rendering share these entries. An absent path in an existing layout
 does not renumber the remaining entries or change their marker dimensions.
 
-Numbered Associations display the same standalone number near both endpoints,
+Numbered Associations and Subscriptions display the same standalone number near both endpoints,
 including directed Associations from embedded Route cards, with one
 relationship-index entry. Other undirected numbered relationships use the same
 two-end rule. Directed Dependencies display their number before the destination
