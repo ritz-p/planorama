@@ -169,5 +169,7 @@ third-party artwork requires a separate source and rights review before bundling
 
 Verify source hashes and inspect SVGs for external dependencies or executable
 content.
-Let the [CI SVG and validation workflows](ci.md) regenerate examples and run
-formatting, tests and Clippy. Original icon assets are not generated outputs.
+Regenerate examples locally with `scripts/update-examples.sh`, inspect the diff,
+and commit the affected outputs. The [manual SVG workflow](ci.md) can also recover
+snapshots; ordinary CI runs formatting, tests and Clippy. Original icon assets
+are not generated outputs.
