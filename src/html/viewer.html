@@ -17,6 +17,17 @@
 <p id="result-count" role="status"></p>
 <div id="results" aria-label="Search results"></div>
 <section id="selection" aria-label="Selection details" aria-live="polite"></section>
+<section id="impact" aria-label="Potentially related resources">
+<h2>Explore change relationships</h2>
+<label for="impact-depth">Maximum hops</label>
+<select id="impact-depth"><option value="1">1</option><option value="2" selected>2</option><option value="3">3</option></select>
+<label for="impact-direction">Direction</label>
+<select id="impact-direction"><option value="downstream">Downstream dependents</option><option value="upstream">Upstream dependencies</option><option value="both">Both</option></select>
+<label><input id="impact-associations" type="checkbox"> Include verified AWS associations (non-causal)</label>
+<button id="impact-explore" type="button">Explore impact</button>
+<p id="impact-status" role="status">Select a resource, then explore potentially related resources. This does not predict Terraform apply or runtime effects.</p>
+<div id="impact-results"></div>
+</section>
 <section id="diagnostics" aria-label="Routing diagnostics">
 <h2>Routing hotspots</h2>
 <button id="hotspot-toggle" type="button" aria-pressed="false" aria-controls="hotspot-list">Show routing hotspots</button>

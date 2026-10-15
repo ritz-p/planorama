@@ -31,6 +31,16 @@ p { line-height: 1.5; }
 #diagnostics button { text-align: left; width: 100%; }
 #hotspot-list { padding-left: 20px; }
 #hotspot-list li { margin-bottom: 12px; }
+#impact { overflow-wrap: anywhere; }
+#impact h2 { font-size: 16px; }
+#impact select { font: inherit; padding: 6px; margin-bottom: 8px; width: 100%; }
+#impact input[type="checkbox"] { width: auto; }
+#impact button { width: 100%; text-align: left; }
+#impact-results ol { padding-left: 20px; }
+#impact-results li { margin-bottom: 10px; }
+#viewport [data-impact-hop="1"] { outline: 3px dashed #7c3aed; outline-offset: 4px; }
+#viewport [data-impact-hop="2"], #viewport [data-impact-hop="3"] { outline: 3px dotted #0f766e; outline-offset: 4px; }
+#viewport[data-selection] path[data-impact-edge] { opacity: 1; filter: drop-shadow(0 0 2px #0f766e); }
 #viewport { overflow: hidden; min-width: 0; position: relative; background: white; touch-action: none; cursor: grab; }
 #viewport > svg { width: 100%; height: 100%; display: block; }
 #viewport [data-viewer-target] { cursor: pointer; }
@@ -51,6 +61,17 @@ p { line-height: 1.5; }
 <p id="result-count" role="status"></p>
 <div id="results" aria-label="Search results"></div>
 <section id="selection" aria-label="Selection details" aria-live="polite"></section>
+<section id="impact" aria-label="Potentially related resources">
+<h2>Explore change relationships</h2>
+<label for="impact-depth">Maximum hops</label>
+<select id="impact-depth"><option value="1">1</option><option value="2" selected>2</option><option value="3">3</option></select>
+<label for="impact-direction">Direction</label>
+<select id="impact-direction"><option value="downstream">Downstream dependents</option><option value="upstream">Upstream dependencies</option><option value="both">Both</option></select>
+<label><input id="impact-associations" type="checkbox"> Include verified AWS associations (non-causal)</label>
+<button id="impact-explore" type="button">Explore impact</button>
+<p id="impact-status" role="status">Select a resource, then explore potentially related resources. This does not predict Terraform apply or runtime effects.</p>
+<div id="impact-results"></div>
+</section>
 <section id="diagnostics" aria-label="Routing diagnostics">
 <h2>Routing hotspots</h2>
 <button id="hotspot-toggle" type="button" aria-pressed="false" aria-controls="hotspot-list">Show routing hotspots</button>
@@ -301,7 +322,7 @@ Task definition: aws_ecs_task_definition.app [task_definition; direct attribute 
 </section>
 </main>
 <noscript>Enable JavaScript for search and navigation. The diagram is included below.</noscript>
-<script id="viewer-data" type="application/json">[{"address":"aws_ecs_cluster.app","deposed":null,"id":"resource-6177735f6563735f636c75737465722e617070-current","identity":"terraform:6177735f6563735f636c75737465722e617070-current","mode":"managed","module":"root","qualified":"module.root.aws_ecs_cluster.app","state":"","type":"aws_ecs_cluster"},{"address":"aws_ecs_service.app","deposed":null,"id":"resource-6177735f6563735f736572766963652e617070-current","identity":"terraform:6177735f6563735f736572766963652e617070-current","mode":"managed","module":"root","qualified":"module.root.aws_ecs_service.app","state":"","type":"aws_ecs_service"},{"address":"aws_ecs_task_definition.app","deposed":null,"id":"resource-6177735f6563735f7461736b5f646566696e6974696f6e2e617070-current","identity":"terraform:6177735f6563735f7461736b5f646566696e6974696f6e2e617070-current","mode":"managed","module":"root","qualified":"module.root.aws_ecs_task_definition.app","state":"","type":"aws_ecs_task_definition"},{"address":"aws_iam_role.app","deposed":null,"id":"resource-6177735f69616d5f726f6c652e617070-current","identity":"terraform:6177735f69616d5f726f6c652e617070-current","mode":"managed","module":"root","qualified":"module.root.aws_iam_role.app","state":"","type":"aws_iam_role"},{"address":"aws_lb.app","deposed":null,"id":"resource-6177735f6c622e617070-current","identity":"terraform:6177735f6c622e617070-current","mode":"managed","module":"root","qualified":"module.root.aws_lb.app","state":"","type":"aws_lb"},{"address":"aws_lb_listener.http","deposed":null,"id":"resource-6177735f6c625f6c697374656e65722e68747470-current","identity":"terraform:6177735f6c625f6c697374656e65722e68747470-current","mode":"managed","module":"root","qualified":"module.root.aws_lb_listener.http","state":"","type":"aws_lb_listener"},{"address":"data.aws_iam_role.app","deposed":null,"id":"resource-646174612e6177735f69616d5f726f6c652e617070-current","identity":"terraform:646174612e6177735f69616d5f726f6c652e617070-current","mode":"data","module":"root","qualified":"module.root.data.aws_iam_role.app","state":"","type":"aws_iam_role"},{"address":"module.worker.aws_iam_role.app","deposed":null,"id":"resource-6d6f64756c652e776f726b65722e6177735f69616d5f726f6c652e617070-current","identity":"terraform:6d6f64756c652e776f726b65722e6177735f69616d5f726f6c652e617070-current","mode":"managed","module":"module.worker","qualified":"module.worker.aws_iam_role.app","state":"","type":"aws_iam_role"}]</script>
+<script id="viewer-data" type="application/json">[{"action":"unchanged","address":"aws_ecs_cluster.app","deposed":null,"id":"resource-6177735f6563735f636c75737465722e617070-current","identity":"terraform:6177735f6563735f636c75737465722e617070-current","mode":"managed","module":"root","qualified":"module.root.aws_ecs_cluster.app","state":"","type":"aws_ecs_cluster"},{"action":"update","address":"aws_ecs_service.app","deposed":null,"id":"resource-6177735f6563735f736572766963652e617070-current","identity":"terraform:6177735f6563735f736572766963652e617070-current","mode":"managed","module":"root","qualified":"module.root.aws_ecs_service.app","state":"","type":"aws_ecs_service"},{"action":"create","address":"aws_ecs_task_definition.app","deposed":null,"id":"resource-6177735f6563735f7461736b5f646566696e6974696f6e2e617070-current","identity":"terraform:6177735f6563735f7461736b5f646566696e6974696f6e2e617070-current","mode":"managed","module":"root","qualified":"module.root.aws_ecs_task_definition.app","state":"","type":"aws_ecs_task_definition"},{"action":"create","address":"aws_iam_role.app","deposed":null,"id":"resource-6177735f69616d5f726f6c652e617070-current","identity":"terraform:6177735f69616d5f726f6c652e617070-current","mode":"managed","module":"root","qualified":"module.root.aws_iam_role.app","state":"","type":"aws_iam_role"},{"action":"create","address":"aws_lb.app","deposed":null,"id":"resource-6177735f6c622e617070-current","identity":"terraform:6177735f6c622e617070-current","mode":"managed","module":"root","qualified":"module.root.aws_lb.app","state":"","type":"aws_lb"},{"action":"update","address":"aws_lb_listener.http","deposed":null,"id":"resource-6177735f6c625f6c697374656e65722e68747470-current","identity":"terraform:6177735f6c625f6c697374656e65722e68747470-current","mode":"managed","module":"root","qualified":"module.root.aws_lb_listener.http","state":"","type":"aws_lb_listener"},{"action":"read","address":"data.aws_iam_role.app","deposed":null,"id":"resource-646174612e6177735f69616d5f726f6c652e617070-current","identity":"terraform:646174612e6177735f69616d5f726f6c652e617070-current","mode":"data","module":"root","qualified":"module.root.data.aws_iam_role.app","state":"","type":"aws_iam_role"},{"action":"unchanged","address":"module.worker.aws_iam_role.app","deposed":null,"id":"resource-6d6f64756c652e776f726b65722e6177735f69616d5f726f6c652e617070-current","identity":"terraform:6d6f64756c652e776f726b65722e6177735f69616d5f726f6c652e617070-current","mode":"managed","module":"module.worker","qualified":"module.worker.aws_iam_role.app","state":"","type":"aws_iam_role"}]</script>
 
 <script>(() => {
   'use strict';
@@ -340,7 +361,7 @@ function metadata(svg, byId) {
         row.id = id;
         resourceIds.add(id);
         const parts = addressParts(source.address);
-        resources.push({ id, address: source.address, qualified: parts.module === 'root' ? 'module.root.' + source.address : source.address, identity: 'terraform:' + suffix, ...parts, state, deposed: source.deposed_key, relationship: true });
+        resources.push({ id, address: source.address, qualified: parts.module === 'root' ? 'module.root.' + source.address : source.address, identity: 'terraform:' + suffix, ...parts, state, deposed: source.deposed_key, action: source.action, relationship: true });
       }
     }
   }
@@ -352,8 +373,9 @@ function metadata(svg, byId) {
   const components = Array.from(svg.querySelectorAll('[data-entity-kind="synthetic"][data-component-id]'));
   const relationshipEntries = new Map(Array.from(svg.querySelectorAll('[data-relationship-entry][id]')).map(el => [el.id, el]));
   const relationshipEdges = id => edges.filter(edge => (edge.dataset.relationshipIds || '').split(' ').includes(id));
+  const sourceIdentity = source => 'terraform:' + hex(source.address) + (source.deposed_key === null ? '-current' : '-deposed-' + hex(source.deposed_key));
 
-  return { resources, targets, title, label, edges, links, components, relationshipEntries, relationshipEdges };
+  return { resources, targets, title, label, edges, links, components, relationshipEntries, relationshipEdges, sourceIdentity };
 }
 
 function navigation(svg, viewport, byId) {
@@ -628,6 +650,165 @@ function diagnostics(context, index, navigation, selection, coordinator) {
   return { reset };
 }
 
+function impactGraph(index, svg) {
+  const key = (state, identity) => JSON.stringify([state, identity]);
+  const nodes = new Map(index.resources.map(r => [key(r.state, r.identity), r]));
+  const domKeys = new Map(index.resources.map(r => [r.id, key(r.state, r.identity)]));
+  const addresses = new Map(index.resources.filter(r => !r.deposed).map(r => [key(r.state, r.address), key(r.state, r.identity)]));
+  const edges = new Map();
+  let scanned = 0, truncated = false;
+  function add(edge) {
+    if (++scanned > 10000) { truncated = true; return false; }
+    edge.id = JSON.stringify([edge.from, edge.to, edge.kind, edge.direction, edge.semantics, edge.provenance]);
+    edges.set(edge.id, edge);
+    return true;
+  }
+  for (const metadata of svg.querySelectorAll('metadata[id$="architecture-relationships"]')) {
+    const state = metadata.closest('[data-state-id]')?.dataset.stateId || '';
+    for (const relation of JSON.parse(metadata.textContent)) {
+      const proof = relation.provenance || [];
+      const semantics = relation.inferred ? 'inferred' :
+        relation.kind === 'dependency' && relation.directionality === 'directed' && proof.some(p => p.kind === 'reference') ? 'dependency' :
+        relation.kind === 'association' && ['directed', 'undirected'].includes(relation.directionality) && proof.some(p => p.kind === 'resource') ? 'association' : 'unknown';
+      if (!add({ from: key(state, relation.from), to: key(state, relation.to), kind: relation.kind,
+        direction: relation.directionality, semantics, provenance: proof })) break;
+    }
+    if (truncated) break;
+  }
+  const cross = svg.querySelector('metadata[id="cross-state-relationships"]');
+  if (cross && !truncated) {
+    for (const relation of JSON.parse(cross.textContent)) {
+      const resolve = (state, address) => addresses.get(key(state, address)) || key(state, 'unavailable:' + address);
+      if (!add({ from: resolve(relation.from_state, relation.from), to: resolve(relation.to_state, relation.to),
+        kind: 'dependency', direction: 'directed', semantics: 'dependency',
+        provenance: [{ kind: 'remote-state', remote: relation.remote, output: relation.output }] })) break;
+    }
+  }
+  const adjacent = new Map();
+  for (const edge of [...edges.values()].sort((a, b) => a.id < b.id ? -1 : a.id > b.id ? 1 : 0)) {
+    for (const endpoint of new Set([edge.from, edge.to])) {
+      if (!adjacent.has(endpoint)) adjacent.set(endpoint, []);
+      adjacent.get(endpoint).push(edge);
+    }
+  }
+  return { nodes, domKeys, adjacent, truncated };
+}
+
+function exploreImpact(graph, origin, depth, direction, associations) {
+  depth = Math.max(1, Math.min(3, Number(depth) || 1));
+  const found = new Map([[origin, { key: origin, depth: 0, path: [] }]]);
+  const traversed = new Map(), excluded = new Map();
+  let scanned = 0, truncated = graph.truncated;
+  const queue = [found.get(origin)];
+  outer: for (let cursor = 0; cursor < queue.length; cursor++) {
+    const current = queue[cursor];
+    if (current.depth === depth || !graph.nodes.has(current.key)) continue;
+    for (const edge of graph.adjacent.get(current.key) || []) {
+      if (++scanned > 2000) { truncated = true; break outer; }
+      const eligible = edge.semantics === 'dependency' || (associations && edge.semantics === 'association');
+      if (!eligible) { if (excluded.size < 50) excluded.set(edge.id, edge); continue; }
+      const outgoing = edge.from === current.key;
+      if (edge.direction !== 'undirected' && ((direction === 'upstream' && outgoing) || (direction === 'downstream' && !outgoing))) continue;
+      const next = outgoing ? edge.to : edge.from;
+      if ((!found.has(next) && found.size === 200) || (!traversed.has(edge.id) && traversed.size === 400)) {
+        truncated = true; break outer;
+      }
+      traversed.set(edge.id, edge);
+      if (found.has(next)) continue;
+      const entry = { key: next, depth: current.depth + 1, path: [...current.path, { edge, from: current.key, to: next }] };
+      found.set(next, entry);
+      queue.push(entry);
+    }
+  }
+  return { found, traversed, excluded, scanned, truncated };
+}
+
+function impact(context, index, selection, coordinator) {
+  const { svg, byId } = context;
+  const graph = impactGraph(index, svg);
+  const status = byId('impact-status'), results = byId('impact-results');
+  const depth = byId('impact-depth'), direction = byId('impact-direction'), associations = byId('impact-associations');
+  const initial = status.textContent;
+  function reset() {
+    for (const el of svg.querySelectorAll('[data-impact-hop], [data-impact-edge]')) {
+      el.removeAttribute('data-impact-hop'); el.removeAttribute('data-impact-edge');
+    }
+    results.replaceChildren(); status.textContent = initial;
+  }
+  const name = key => {
+    const r = graph.nodes.get(key);
+    return r ? `${index.label(r)} · ${r.action || 'action unknown'}` : `${key} · unavailable in this view`;
+  };
+  const edgeText = edge => `${name(edge.from)} ${edge.direction === 'undirected' ? '↔' : '→'} ${name(edge.to)} · ${edge.kind} / ${edge.semantics} / ${edge.direction || 'direction unknown'}`;
+  function explore() {
+    reset();
+    const origin = graph.domKeys.get(coordinator.selected);
+    if (!origin) { status.textContent = 'Select a resource to explore. Relationship index entries and component summaries are not traversal origins.'; return; }
+    const result = exploreImpact(graph, origin, depth.value, direction.value, associations.checked);
+    const selected = graph.nodes.get(origin);
+    if (selected.relationship && !graph.adjacent.has(origin)) {
+      status.textContent = 'This resource supplies relationship provenance. Select an endpoint in the selection details to explore its graph relationships; provenance is not a dependency edge.';
+      return;
+    }
+    status.textContent = `Potentially related resources from ${name(origin)}: ${result.found.size - 1} within ${depth.value} hops, ${direction.options[direction.selectedIndex].text}. ${selected.action === 'unchanged' ? 'Origin is unchanged context. ' : ''}${result.truncated ? 'Exploration truncated by graph, node, edge or scan limits. ' : ''}Only this effective view is searched; filtered/unavailable resources are not evidence of absence. Dependencies point to dependents. Associations follow their recorded direction (undirected in either direction) and do not establish causality. No apply or runtime effects are predicted.`;
+    const list = document.createElement('ol');
+    for (const entry of result.found.values()) {
+      if (!entry.depth) continue;
+      const row = document.createElement('li');
+      const resource = graph.nodes.get(entry.key);
+      const label = `${entry.depth === 1 ? 'Direct' : 'Additional'} · hop ${entry.depth} · ${name(entry.key)}`;
+      if (resource && byId(resource.id)) {
+        const el = byId(resource.id); el.setAttribute('data-impact-hop', entry.depth);
+        row.append(selection.button(label, () => selection.select(resource.id)));
+      } else row.textContent = label;
+      const path = document.createElement('details');
+      const summary = document.createElement('summary'); summary.textContent = 'Discovery path from origin';
+      path.append(summary);
+      for (const step of entry.path) {
+        const text = document.createElement('p');
+        text.textContent = `Traversal ${name(step.from)} → ${name(step.to)}; recorded ${edgeText(step.edge)}; provenance ${JSON.stringify(step.edge.provenance)}`;
+        path.append(text);
+      }
+      row.append(path); list.append(row);
+    }
+    results.append(list);
+    const visitedPairs = new Map();
+    for (const edge of result.traversed.values()) {
+      const pair = JSON.stringify([edge.from, edge.to, edge.kind, edge.direction]);
+      if (!visitedPairs.has(pair)) visitedPairs.set(pair, []);
+      visitedPairs.get(pair).push(edge);
+    }
+    for (const edge of index.edges) {
+      const from = graph.domKeys.get(edge.dataset.source), to = graph.domKeys.get(edge.dataset.target);
+      const direction = edge.dataset.crossState === 'true' ? 'directed' : edge.dataset.directionality;
+      const matches = visitedPairs.get(JSON.stringify([from, to, edge.dataset.edgeKind, direction])) || [];
+      const sources = new Set((edge.dataset.relationshipIds || '').split(' ').flatMap(id =>
+        Array.from(index.relationshipEntries.get(id)?.querySelectorAll('[data-source-identity]') || []).map(row => row.dataset.sourceIdentity)));
+      if (matches.some(match => match.semantics === 'dependency' || match.provenance.some(p => p.kind === 'resource' && sources.has(index.sourceIdentity(p))))) edge.setAttribute('data-impact-edge', 'true');
+    }
+    const details = document.createElement('details');
+    const heading = document.createElement('summary');
+    heading.textContent = `${result.traversed.size} traversed relationships (including parallel edges and cycles)`;
+    details.append(heading);
+    for (const edge of result.traversed.values()) {
+      const p = document.createElement('p'); p.textContent = `${edgeText(edge)}; provenance ${JSON.stringify(edge.provenance)}`; details.append(p);
+    }
+    results.append(details);
+    if (result.excluded.size) {
+      const details = document.createElement('details');
+      const summary = document.createElement('summary'); summary.textContent = 'Excluded associations / inferred / unknown semantics (up to 50 examples)';
+      details.append(summary);
+      for (const edge of result.excluded.values()) {
+        const p = document.createElement('p'); p.textContent = edgeText(edge); details.append(p);
+      }
+      results.append(details);
+    }
+  }
+  byId('impact-explore').addEventListener('click', explore);
+  for (const control of [depth, direction, associations]) control.addEventListener('change', reset);
+  return { reset };
+}
+
   const byId = id => document.getElementById(id);
   const viewport = byId('viewport');
   const svg = viewport.querySelector('svg');
@@ -654,6 +835,9 @@ function diagnostics(context, index, navigation, selection, coordinator) {
   const { select, button } = selection(context, index, view, highlights, coordinator);
   const { renderResults } = searching(context, index, { select, button }, coordinator);
   adapters.register(diagnostics(context, index, view, { select, button }, coordinator));
+  const impactView = impact(context, index, { select, button }, coordinator);
+  adapters.register(impactView);
+  search.addEventListener('input', () => adapters.reset());
   const { fit, zoom, updateView } = view;
   for (const r of resources) {
     const el = byId(r.id); el.setAttribute('data-viewer-target', 'true');
