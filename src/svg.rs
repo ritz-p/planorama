@@ -384,6 +384,7 @@ fn render_with_index(
             EdgeKind::Dependency => " data-edge-kind=\"dependency\"",
             EdgeKind::Association => " data-edge-kind=\"association\"",
             EdgeKind::Subscription => " data-edge-kind=\"subscription\"",
+            EdgeKind::EventSource => " data-edge-kind=\"eventsource\"",
             EdgeKind::Connection => " data-edge-kind=\"connection\"",
             EdgeKind::Containment => " data-edge-kind=\"containment\"",
         };

@@ -237,6 +237,21 @@ pub(super) fn annotate(
                 );
             }
         }
+        if alarm.provider.is_aws()
+            && alarm.resource_type == "aws_lambda_event_source_mapping"
+            && reference.attribute == "function_name"
+            && reference.complete
+            && reference.instances_explicit
+        {
+            if let [source] = reference.sources.as_slice() {
+                let (value, unknown) = evidence[reference.target];
+                let (function, function_unknown) = evidence[*source];
+                let actual = known_strings(value, unknown, &["function_name"]);
+                let expected = known_strings(function, function_unknown, &["function_name"]);
+                reference.messaging_endpoint_verified =
+                    reference.arn_values_match || (actual.is_some() && actual == expected);
+            }
+        }
         if !reference.complete || !reference.ids_only || reference.sources.is_empty() {
             continue;
         }
