@@ -145,7 +145,10 @@ pub(super) fn annotate(
     for reference in references {
         let consumer = &nodes[reference.target];
         let evidence = if consumer.provider.is_aws()
-            && consumer.resource_type == "aws_sns_topic_subscription"
+            && matches!(
+                consumer.resource_type.as_str(),
+                "aws_sns_topic_subscription" | "aws_lambda_event_source_mapping"
+            )
             && consumer.action == crate::model::Action::Delete
         {
             &before_evidence

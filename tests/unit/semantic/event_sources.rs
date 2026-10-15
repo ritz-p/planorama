@@ -18,6 +18,40 @@ fn mappings(graph: &Graph) -> Vec<&Edge> {
 }
 
 #[test]
+fn deleted_mappings_verify_before_names_and_arns_without_borrowing_after_values() {
+    let mut input = fixture();
+    for change in input["resource_changes"].as_array_mut().unwrap() {
+        change["change"]["before"] = change["change"]["after"].take();
+        change["change"]["actions"] = json!(["delete"]);
+    }
+    for delete_endpoints in [true, false] {
+        let mut plan = input.clone();
+        if !delete_endpoints {
+            for index in 0..4 {
+                plan["resource_changes"][index]["change"]["actions"] = json!(["update"]);
+                plan["resource_changes"][index]["change"]["after"] =
+                    json!({"arn":"new-arn","function_name":"new-name"});
+            }
+        }
+        let result = graph(&plan);
+        assert_eq!(mappings(&result).len(), 3);
+        assert!(
+            mappings(&result)
+                .iter()
+                .all(|e| e.change.as_ref().unwrap().action == Action::Delete)
+        );
+    }
+    for attribute in ["arn", "function_name"] {
+        let mut invalid = input.clone();
+        invalid["resource_changes"][3]["change"]["after"] =
+            invalid["resource_changes"][3]["change"]["before"].clone();
+        invalid["resource_changes"][3]["change"]["before"][attribute] = json!("different");
+        let expected = if attribute == "arn" { 1 } else { 2 };
+        assert_eq!(mappings(&graph(&invalid)).len(), expected, "{attribute}");
+    }
+}
+
+#[test]
 fn event_sources_keep_direction_parallel_identities_and_provenance() {
     let input = fixture();
     let result = graph(&input);

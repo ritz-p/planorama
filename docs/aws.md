@@ -119,6 +119,9 @@ explicit references. Known planned values must match the queue ARN and the funct
 name or ARN, respectively. Values are compared transiently; only boolean evidence
 is retained. Literal names/ARNs, policies, environment variables and proximity do
 not identify endpoints. Unknown or mismatched values remain unresolved.
+Deletion actions use known `before` values (or prior state when a resource has no
+change entry) for the mapping and both endpoints, still requiring explicit
+configuration references, just as subscriptions do.
 
 Each mapping retains its own action, import/move metadata, scope, source identity
 and relationship number, including parallel mappings between identical endpoints.
