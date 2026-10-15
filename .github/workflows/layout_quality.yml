@@ -1,0 +1,47 @@
+name: Layout quality
+run-name: Layout quality at ${{ github.sha }}
+
+on:
+  workflow_dispatch:
+  pull_request:
+    types: [opened, synchronize, reopened, labeled]
+
+permissions:
+  contents: read
+
+jobs:
+  quality:
+    if: github.event_name == 'workflow_dispatch' || contains(github.event.pull_request.labels.*.name, 'layout-quality')
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+      - uses: Swatinem/rust-cache@v2.9.2
+        with:
+          prefix-key: v1-rust-dependencies
+          shared-key: ${{ hashFiles('build.rs', 'assets/**') }}-layout-quality
+          cache-workspace-crates: 'false'
+      - name: Build renderer
+        run: cargo build --release --locked --bin planorama
+      - name: Test comparison and input ordering
+        env:
+          LAYOUT_QUALITY_BINARY: target/release/planorama
+        run: node --test tests/ci/layout-quality.test.cjs
+      - name: Compare final layouts
+        run: node scripts/layout-quality.cjs check target/release/planorama output/layout-quality
+      - name: Publish summary
+        if: ${{ !cancelled() }}
+        run: |
+          if [ -f output/layout-quality/summary.md ]; then
+            cat output/layout-quality/summary.md >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - name: Retain full diagnostics
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v7.0.2
+        with:
+          name: layout-quality-${{ github.sha }}
+          path: output/layout-quality
+          if-no-files-found: warn
+          retention-days: 14

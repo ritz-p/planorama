@@ -1,0 +1,228 @@
+{
+  "contract": {
+    "version": 1,
+    "renderer": "planorama-final-layout-v1",
+    "fixture": "accounts",
+    "args": [
+      "tests/fixtures/accounts-plan.json"
+    ],
+    "inputs": [
+      {
+        "path": "tests/fixtures/accounts-plan.json",
+        "sha256": "1b988143debaf9b14db2b17ec5fffbc1a3d9bf1f7b1d0fd8bf332b46f8b7436b"
+      }
+    ],
+    "budgets": {
+      "crossings": {
+        "mode": "gate",
+        "absolute": 0,
+        "relative": 0
+      },
+      "overlap": {
+        "mode": "gate",
+        "absolute": 0,
+        "relative": 0
+      },
+      "parallel": {
+        "mode": "gate",
+        "absolute": 0,
+        "relative": 0
+      },
+      "border": {
+        "mode": "gate",
+        "absolute": 0.25,
+        "relative": 0
+      },
+      "area": {
+        "mode": "info",
+        "absolute": 0,
+        "relative": 0
+      },
+      "bends": {
+        "mode": "gate",
+        "absolute": 2,
+        "relative": 0
+      },
+      "length": {
+        "mode": "info",
+        "absolute": 0,
+        "relative": 0
+      },
+      "edge_border": {
+        "mode": "gate",
+        "absolute": 0.25,
+        "relative": 0
+      }
+    }
+  },
+  "report": {
+    "canvas": {
+      "height": 2356,
+      "width": 1100
+    },
+    "category": "layout",
+    "edges": [
+      {
+        "id": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"aws_s3_bucket.other\",\"from_deposed_key\":null,\"to\":\"aws_s3_bucket.east\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6177735f73335f6275636b65742e6f74686572-current\",\"state\":null},\"target\":{\"id\":\"terraform:6177735f73335f6275636b65742e65617374-current\",\"state\":null}}",
+        "identity": {
+          "directionality": "directed",
+          "kind": "dependency",
+          "provenance": [
+            {
+              "from": "aws_s3_bucket.other",
+              "from_deposed_key": null,
+              "to": "aws_s3_bucket.east",
+              "to_deposed_key": null
+            }
+          ],
+          "relationship_resource": null,
+          "source": {
+            "id": "terraform:6177735f73335f6275636b65742e6f74686572-current",
+            "state": null
+          },
+          "target": {
+            "id": "terraform:6177735f73335f6275636b65742e65617374-current",
+            "state": null
+          }
+        },
+        "polyline": [
+          [
+            580,
+            1456
+          ],
+          [
+            580,
+            1476
+          ],
+          [
+            626,
+            1476
+          ],
+          [
+            626,
+            1496
+          ]
+        ],
+        "raw_polyline": {
+          "bends": 2,
+          "length": 86
+        },
+        "visible_border": {
+          "close_length": 0,
+          "minimum_deficit": 0,
+          "minimum_gap_within_8px": null,
+          "preferred_deficit": 0
+        }
+      },
+      {
+        "id": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"aws_s3_bucket.west\",\"from_deposed_key\":null,\"to\":\"aws_s3_bucket.east\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6177735f73335f6275636b65742e77657374-current\",\"state\":null},\"target\":{\"id\":\"terraform:6177735f73335f6275636b65742e65617374-current\",\"state\":null}}",
+        "identity": {
+          "directionality": "directed",
+          "kind": "dependency",
+          "provenance": [
+            {
+              "from": "aws_s3_bucket.west",
+              "from_deposed_key": null,
+              "to": "aws_s3_bucket.east",
+              "to_deposed_key": null
+            }
+          ],
+          "relationship_resource": null,
+          "source": {
+            "id": "terraform:6177735f73335f6275636b65742e77657374-current",
+            "state": null
+          },
+          "target": {
+            "id": "terraform:6177735f73335f6275636b65742e65617374-current",
+            "state": null
+          }
+        },
+        "polyline": [
+          [
+            380,
+            1876
+          ],
+          [
+            533,
+            1876
+          ],
+          [
+            533,
+            1592
+          ]
+        ],
+        "raw_polyline": {
+          "bends": 1,
+          "length": 437
+        },
+        "visible_border": {
+          "close_length": 0,
+          "minimum_deficit": 0,
+          "minimum_gap_within_8px": null,
+          "preferred_deficit": 0
+        }
+      }
+    ],
+    "findings": [],
+    "limits": {
+      "finding_limit": 20000,
+      "findings_complete": true,
+      "pair_comparisons": 6,
+      "pair_limit": 2000000,
+      "pair_metrics_complete": true,
+      "unsupported_diagonal_segments": 0
+    },
+    "policy": {
+      "approximations": [
+        "Pair metrics use rounded straight sections with conservative integer mask clipping; curve-to-curve and curve-to-line pair metrics unavailable.",
+        "Border metrics share routing's quarter-pixel clearance and 32-sample quadratic corner approximation; cross-state paths have square corners, approximated as rounded for border measurement.",
+        "Strokes use continuous envelopes: dash gaps, markers, text, scope/band borders and annotation cards are excluded from spatial conflicts.",
+        "Border minimum is null when no eligible border is within 8px; deficits use px squared; shared prefix/suffix trunks are excluded from independent overlap."
+      ],
+      "border_minimum_gap": 4,
+      "border_preferred_gap": 8,
+      "endpoint_convergence": 32,
+      "parallel_centerline_preference": 16,
+      "parallel_minimum_run": 64
+    },
+    "schema_version": 1,
+    "scope": "whole_diagram",
+    "states": [
+      {
+        "cards": {
+          "embedded_routes": 0,
+          "logical_components": 0,
+          "logical_groups": 1,
+          "logical_resources": 1,
+          "relationship_groups": 0,
+          "spatial": 8
+        },
+        "origin": [
+          0,
+          944
+        ],
+        "resources": 9,
+        "spatial_layout": {
+          "height": 1412,
+          "width": 1100
+        },
+        "state": null
+      }
+    ],
+    "summary": {
+      "raw_polyline": {
+        "bends": 3,
+        "length": 523
+      },
+      "routed_paths": 2,
+      "visible_border_minimum_deficit": 0,
+      "visible_straight_sections": {
+        "crossings": 0,
+        "independent_overlap_length": 0,
+        "parallel_deficit": 0,
+        "shared_trunk_length": 0
+      }
+    },
+    "units": "SVG user units (px)"
+  }
+}

@@ -9,6 +9,8 @@ on:
     paths:
       - .github/**
       - tests/ci/**
+      - scripts/layout-quality.cjs
+      - tests/layout-quality/**
   workflow_dispatch:
     inputs:
       pull_request:

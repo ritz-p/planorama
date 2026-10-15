@@ -1,0 +1,318 @@
+{
+  "version": 1,
+  "renderer_contract": "planorama-final-layout-v1",
+  "fixtures": [
+    {
+      "id": "small",
+      "inputs": [
+        "examples/plan.json"
+      ],
+      "args": [
+        "examples/plan.json"
+      ],
+      "budgets": {
+        "crossings": {
+          "mode": "gate",
+          "absolute": 0,
+          "relative": 0
+        },
+        "overlap": {
+          "mode": "gate",
+          "absolute": 0,
+          "relative": 0
+        },
+        "parallel": {
+          "mode": "gate",
+          "absolute": 0,
+          "relative": 0
+        },
+        "border": {
+          "mode": "gate",
+          "absolute": 0.25,
+          "relative": 0
+        },
+        "area": {
+          "mode": "info",
+          "absolute": 0,
+          "relative": 0
+        },
+        "bends": {
+          "mode": "gate",
+          "absolute": 2,
+          "relative": 0
+        },
+        "length": {
+          "mode": "info",
+          "absolute": 0,
+          "relative": 0
+        },
+        "edge_border": {
+          "mode": "gate",
+          "absolute": 0.25,
+          "relative": 0
+        }
+      }
+    },
+    {
+      "id": "large",
+      "inputs": [
+        "examples/terraform-large/plan.json"
+      ],
+      "args": [
+        "examples/terraform-large/plan.json"
+      ],
+      "budgets": {
+        "crossings": {
+          "mode": "gate",
+          "absolute": 0,
+          "relative": 0
+        },
+        "overlap": {
+          "mode": "gate",
+          "absolute": 0,
+          "relative": 0
+        },
+        "parallel": {
+          "mode": "gate",
+          "absolute": 0,
+          "relative": 0
+        },
+        "border": {
+          "mode": "gate",
+          "absolute": 0.25,
+          "relative": 0
+        },
+        "area": {
+          "mode": "info",
+          "absolute": 0,
+          "relative": 0
+        },
+        "bends": {
+          "mode": "gate",
+          "absolute": 2,
+          "relative": 0
+        },
+        "length": {
+          "mode": "info",
+          "absolute": 0,
+          "relative": 0
+        },
+        "edge_border": {
+          "mode": "gate",
+          "absolute": 0.25,
+          "relative": 0
+        }
+      }
+    },
+    {
+      "id": "fan-in",
+      "inputs": [
+        "examples/bundling-plan.json"
+      ],
+      "args": [
+        "examples/bundling-plan.json"
+      ],
+      "budgets": {
+        "crossings": {
+          "mode": "gate",
+          "absolute": 0,
+          "relative": 0
+        },
+        "overlap": {
+          "mode": "gate",
+          "absolute": 0,
+          "relative": 0
+        },
+        "parallel": {
+          "mode": "gate",
+          "absolute": 0,
+          "relative": 0
+        },
+        "border": {
+          "mode": "gate",
+          "absolute": 0.25,
+          "relative": 0
+        },
+        "area": {
+          "mode": "info",
+          "absolute": 0,
+          "relative": 0
+        },
+        "bends": {
+          "mode": "gate",
+          "absolute": 2,
+          "relative": 0
+        },
+        "length": {
+          "mode": "info",
+          "absolute": 0,
+          "relative": 0
+        },
+        "edge_border": {
+          "mode": "gate",
+          "absolute": 0.25,
+          "relative": 0
+        }
+      }
+    },
+    {
+      "id": "multi-state",
+      "inputs": [
+        "tests/fixtures/multi/producer.json",
+        "tests/fixtures/multi/consumer.json"
+      ],
+      "args": [
+        "--state",
+        "producer=tests/fixtures/multi/producer.json",
+        "--state",
+        "consumer=tests/fixtures/multi/consumer.json",
+        "--remote-state",
+        "consumer:data.terraform_remote_state.network=producer"
+      ],
+      "budgets": {
+        "crossings": {
+          "mode": "gate",
+          "absolute": 0,
+          "relative": 0
+        },
+        "overlap": {
+          "mode": "gate",
+          "absolute": 0,
+          "relative": 0
+        },
+        "parallel": {
+          "mode": "gate",
+          "absolute": 0,
+          "relative": 0
+        },
+        "border": {
+          "mode": "gate",
+          "absolute": 0.25,
+          "relative": 0
+        },
+        "area": {
+          "mode": "info",
+          "absolute": 0,
+          "relative": 0
+        },
+        "bends": {
+          "mode": "gate",
+          "absolute": 2,
+          "relative": 0
+        },
+        "length": {
+          "mode": "info",
+          "absolute": 0,
+          "relative": 0
+        },
+        "edge_border": {
+          "mode": "gate",
+          "absolute": 0.25,
+          "relative": 0
+        }
+      }
+    },
+    {
+      "id": "accounts",
+      "inputs": [
+        "tests/fixtures/accounts-plan.json"
+      ],
+      "args": [
+        "tests/fixtures/accounts-plan.json"
+      ],
+      "budgets": {
+        "crossings": {
+          "mode": "gate",
+          "absolute": 0,
+          "relative": 0
+        },
+        "overlap": {
+          "mode": "gate",
+          "absolute": 0,
+          "relative": 0
+        },
+        "parallel": {
+          "mode": "gate",
+          "absolute": 0,
+          "relative": 0
+        },
+        "border": {
+          "mode": "gate",
+          "absolute": 0.25,
+          "relative": 0
+        },
+        "area": {
+          "mode": "info",
+          "absolute": 0,
+          "relative": 0
+        },
+        "bends": {
+          "mode": "gate",
+          "absolute": 2,
+          "relative": 0
+        },
+        "length": {
+          "mode": "info",
+          "absolute": 0,
+          "relative": 0
+        },
+        "edge_border": {
+          "mode": "gate",
+          "absolute": 0.25,
+          "relative": 0
+        }
+      }
+    },
+    {
+      "id": "regions",
+      "inputs": [
+        "tests/fixtures/regions-plan.json"
+      ],
+      "args": [
+        "tests/fixtures/regions-plan.json"
+      ],
+      "budgets": {
+        "crossings": {
+          "mode": "gate",
+          "absolute": 0,
+          "relative": 0
+        },
+        "overlap": {
+          "mode": "gate",
+          "absolute": 0,
+          "relative": 0
+        },
+        "parallel": {
+          "mode": "gate",
+          "absolute": 0,
+          "relative": 0
+        },
+        "border": {
+          "mode": "gate",
+          "absolute": 0.25,
+          "relative": 0
+        },
+        "area": {
+          "mode": "info",
+          "absolute": 0,
+          "relative": 0
+        },
+        "bends": {
+          "mode": "gate",
+          "absolute": 2,
+          "relative": 0
+        },
+        "length": {
+          "mode": "info",
+          "absolute": 0,
+          "relative": 0
+        },
+        "edge_border": {
+          "mode": "gate",
+          "absolute": 0.25,
+          "relative": 0
+        }
+      }
+    }
+  ]
+}

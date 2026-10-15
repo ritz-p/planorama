@@ -1,0 +1,137 @@
+const {test} = require('node:test');
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const os = require('node:os');
+const path = require('node:path');
+const {spawnSync} = require('node:child_process');
+const {compare, markdown, run} = require('../../scripts/layout-quality.cjs');
+const manifest = require('../layout-quality/manifest.json');
+const baseline = () => JSON.parse(fs.readFileSync(path.join(__dirname, '../layout-quality/fan-in.json'))).report;
+const budgets = manifest.fixtures.find(f => f.id === 'fan-in').budgets;
+
+test('independent crossing, overlap and clearance degradations fail with stable relationships', () => {
+  for (const [metric, mutate, category] of [
+    ['crossings', r => r.summary.visible_straight_sections.crossings++, 'crossing'],
+    ['overlap', r => r.summary.visible_straight_sections.independent_overlap_length++, 'independent_overlap'],
+    ['border', r => r.summary.visible_border_minimum_deficit++, 'visible_border_clearance'],
+  ]) {
+    const before = baseline();
+    const after = baseline();
+    mutate(after);
+    after.findings.push({category, edge: after.edges[0].id});
+    const result = {fixture: 'degraded', ...compare(before, after, budgets)};
+    assert.equal(result.status, 'failed');
+    const text = markdown([result]);
+    assert.ok(text.includes(`FAIL: ${metric}`));
+    assert.ok(text.includes(after.edges[0].id));
+    assert.ok(text.includes('delta 1'));
+  }
+});
+
+test('deterministic reports and explicitly budgeted changes pass; area and raw length are informational', () => {
+  const before = baseline();
+  assert.deepEqual(compare(before, baseline(), budgets), {status: 'passed', changes: []});
+  const after = baseline();
+  after.edges[0].raw_polyline.bends += 2;
+  after.summary.visible_border_minimum_deficit += 0.25;
+  after.canvas.width *= 2;
+  after.edges[0].raw_polyline.length *= 10;
+  assert.equal(compare(before, after, budgets).status, 'passed');
+  after.edges[0].raw_polyline.bends++;
+  assert.equal(compare(before, after, budgets).status, 'failed');
+  const relative = structuredClone(budgets);
+  relative.length = {mode: 'gate', absolute: 0, relative: 0.1};
+  const slight = baseline();
+  slight.edges[0].raw_polyline.length *= 1.1;
+  assert.equal(compare(before, slight, relative).status, 'passed');
+  slight.edges[0].raw_polyline.length += 1;
+  assert.equal(compare(before, slight, relative).status, 'failed');
+});
+
+test('schema, policy, identity, ordering, numeric and incomplete reports reject comparison', () => {
+  for (const mutate of [
+    r => r.schema_version++, r => r.policy.border_minimum_gap++,
+    r => r.edges.reverse(), r => r.edges.pop(),
+    r => { r.summary.visible_straight_sections.crossings = NaN; },
+    r => { r.limits.findings_complete = false; },
+    r => { r.limits.pair_metrics_complete = false; },
+    r => r.limits.unsupported_diagonal_segments++,
+  ]) {
+    const after = baseline();
+    mutate(after);
+    assert.throws(() => compare(baseline(), after, budgets));
+  }
+});
+
+test('one fixture failure remains visible next to improvements elsewhere', () => {
+  const before = baseline();
+  const after = baseline();
+  after.summary.visible_straight_sections.crossings++;
+  const text = markdown([{fixture: 'bad', ...compare(before, after, budgets)},
+    {fixture: 'good', ...compare(after, before, budgets)}]);
+  assert.match(text, /bad: failed/);
+  assert.match(text, /good: passed/);
+});
+
+test('runner identifies missing and stale baselines and preserves full artifacts', () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'layout-quality-'));
+  try {
+    const fake = path.join(dir, 'fake.cjs');
+    fs.writeFileSync(fake, `const fs = require('node:fs'); const r = JSON.parse(fs.readFileSync(${JSON.stringify(path.join(__dirname, '../layout-quality/fan-in.json'))})); fs.writeFileSync(process.argv.at(-1), JSON.stringify(r.report));`);
+    const fixture = {...manifest.fixtures[2], args: [fake]};
+    const manifestPath = path.join(dir, 'manifest.json');
+    fs.writeFileSync(manifestPath, JSON.stringify({...manifest, fixtures: [fixture]}));
+    const options = {manifestPath, binary: process.execPath, output: path.join(dir, 'out')};
+    assert.equal(run(options), false);
+    assert.match(fs.readFileSync(path.join(options.output, 'summary.md'), 'utf8'), /missing baseline/);
+    assert.equal(run({...options, update: true}), true);
+    assert.equal(run(options), true);
+    fs.appendFileSync(fake, '\nconst report = JSON.parse(fs.readFileSync(process.argv.at(-1))); report.summary.visible_straight_sections.crossings++; fs.writeFileSync(process.argv.at(-1), JSON.stringify(report));');
+    assert.equal(run(options), false);
+    assert.match(fs.readFileSync(path.join(options.output, 'summary.md'), 'utf8'), /FAIL: crossings/);
+    const originalBaseline = fs.readFileSync(path.join(dir, 'fan-in.json'), 'utf8');
+    fs.writeFileSync(manifestPath, JSON.stringify({...manifest, fixtures: [fixture,
+      {...fixture, id: 'broken', inputs: [path.join(dir, 'missing.json')]}]}));
+    assert.equal(run({...options, update: true}), false);
+    assert.equal(fs.readFileSync(path.join(dir, 'fan-in.json'), 'utf8'), originalBaseline);
+    fixture.budgets = {...budgets, bends: {mode: 'gate', absolute: 3, relative: 0}};
+    fs.writeFileSync(manifestPath, JSON.stringify({...manifest, fixtures: [fixture]}));
+    assert.equal(run(options), false);
+    assert.match(fs.readFileSync(path.join(options.output, 'summary.md'), 'utf8'), /stale baseline/);
+    assert.ok(fs.existsSync(path.join(options.output, 'results.json')));
+  } finally { fs.rmSync(dir, {recursive: true, force: true}); }
+});
+
+test('reordered resource/configuration inputs retain identical final diagnostics',
+  {skip: !process.env.LAYOUT_QUALITY_BINARY}, () => {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'layout-order-'));
+    try {
+      const input = JSON.parse(fs.readFileSync('examples/bundling-plan.json'));
+      input.resource_changes.reverse();
+      input.configuration.root_module.resources.reverse();
+      const plan = path.join(dir, 'plan.json');
+      fs.writeFileSync(plan, JSON.stringify(input));
+      const reports = [];
+      for (const [i, file] of ['examples/bundling-plan.json', plan].entries()) {
+        const report = path.join(dir, `${i}.json`);
+        const child = spawnSync(process.env.LAYOUT_QUALITY_BINARY, [file, '-o', path.join(dir, `${i}.svg`),
+          '--layout-diagnostics-json', report], {encoding: 'utf8', timeout: 30000});
+        assert.equal(child.status, 0, child.stderr);
+        reports.push(JSON.parse(fs.readFileSync(report)));
+      }
+      assert.deepEqual(reports[0], reports[1]);
+      assert.equal(compare(reports[0], reports[1], budgets).status, 'passed');
+      const multi = manifest.fixtures.find(f => f.id === 'multi-state');
+      const reversed = [...multi.args.slice(2, 4), ...multi.args.slice(0, 2), ...multi.args.slice(4)];
+      const states = [];
+      for (const [i, args] of [multi.args, reversed].entries()) {
+        const report = path.join(dir, `multi-${i}.json`);
+        const child = spawnSync(process.env.LAYOUT_QUALITY_BINARY, [...args, '-o', path.join(dir, `multi-${i}.svg`),
+          '--layout-diagnostics-json', report], {encoding: 'utf8', timeout: 30000});
+        assert.equal(child.status, 0, child.stderr);
+        states.push(JSON.parse(fs.readFileSync(report)));
+      }
+      assert.deepEqual(states[0], states[1]);
+      assert.equal(compare(states[0], states[1], multi.budgets).status, 'passed');
+    } finally { fs.rmSync(dir, {recursive: true, force: true}); }
+  });

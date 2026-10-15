@@ -108,6 +108,85 @@ Parallelism saves waiting time at the documented cost of additional workspace
 compilation and runner setup. Workflow, Clippy and formatting validation outside
 **Cargo test** are excluded from both sides of this comparison.
 
+## Layout quality comparison (#390)
+
+**Layout quality** runs on manual dispatch or PRs carrying the `layout-quality`
+label (including subsequent pushes). It is opt-in and independent of **Tests**;
+do not make this conditionally absent job a repository-wide required check.
+Manual dispatch becomes available after the workflow reaches the default branch.
+Its read-only job builds the pinned release renderer once, then renders six
+existing inputs sequentially: small, large, three-way fan-in/bundling, cross-state,
+account configuration and regions. JSON-only account configuration retains unknown
+account evidence; it does not claim saved-plan account resolution coverage.
+The expensive concentrated account-high-fan-in stress input is excluded; deferred
+routing regressions retain their separate non-blocking lane below.
+
+The [manifest](../tests/layout-quality/manifest.json) is the ordered fixture and
+budget authority. Each checked-in baseline records exact CLI arguments, SHA-256
+input bytes, budgets, comparison format version, renderer contract
+`planorama-final-layout-v1`, and the complete schema-1 final-layout report.
+The renderer contract describes interpretation, not a source commit: ordinary
+renderer changes must remain comparable. Change it when interpretation changes;
+new diagnostic schemas require explicit comparator support before rebaselining.
+Changed bytes (including input reordering), options or budgets require an explicit
+update. A separate CLI test proves reversed resource/configuration ordering and
+named-state argument ordering give identical diagnostics. Stable edge IDs and their lexicographic order must match;
+duplicate IDs, incomplete findings/pair analysis, unsupported diagonals, policy or
+schema mismatches fail as non-comparable, never as improvements.
+
+Every fixture currently selects the following budgets independently. For each
+measurement, permitted increase is `absolute + baseline * relative`; all initial
+relative budgets are zero. A numerical tolerance of at most `0.000001` absorbs
+floating-point comparison noise; values in artifacts retain their original
+precision. Border diagnostics already round to quarter-pixel clearance units.
+
+| Measurement | Policy | Absolute increase |
+| --- | --- | ---: |
+| Visible crossings | Gate | 0 |
+| Independent overlap length (px) | Gate | 0 |
+| Sustained parallel deficit (px²) | Gate | 0 |
+| Minimum border deficit (px²), total and each stable edge | Gate | 0.25 |
+| Raw bends on each stable edge | Gate | 2 |
+| Canvas area (px²) | Informational | unrestricted |
+| Raw length on each stable edge (px) | Informational | unrestricted |
+
+Area can legitimately increase to improve readability. Raw length is not route
+stretch: diagnostics do not expose a valid shortest route, so this comparator
+does not invent one. Existing deferred stretch tests remain authoritative.
+Shared bundle trunks are excluded from independent overlap. No aggregate score
+offsets a bad fixture or edge with improvements elsewhere. Basic routing,
+containment, snapshots and ordinary correctness tests remain independent.
+
+Run or update locally inside Docker:
+
+```sh
+docker compose exec -T dev cargo build --release --locked --bin planorama
+docker compose exec -T dev node scripts/layout-quality.cjs check target/release/planorama output/layout-quality
+docker compose exec -T -e LAYOUT_QUALITY_BINARY=target/release/planorama dev node --test tests/ci/layout-quality.test.cjs
+# Only after reviewing the changed inputs, geometry and intended budgets:
+docker compose exec -T dev node scripts/layout-quality.cjs update target/release/planorama output/layout-quality-update
+git diff -- tests/layout-quality
+```
+
+Maintainers reviewing routing/layout PRs own the budgets. Baseline changes require
+a PR explanation identifying intentional geometry/input/schema changes and why
+any increased budget is acceptable. Inspect the full JSON and rendered diagrams
+before accepting changes; do not refresh baselines simply to clear a regression.
+Updates write baselines only after every fixture renders with comparable complete
+diagnostics. Missing/stale baselines fail checks. CI never updates or commits them.
+
+The job publishes a bounded Markdown summary with deltas and stable relationship
+identities, and retains full reports, comparison details, renderer logs and preview
+SVGs for 14 days. Preview SVGs live only in the output artifact; the maintained
+SVG generation script is not run. Failures keep a failing job status. The job has
+a 15-minute ceiling and each render a 3-minute timeout. Compilation and six layouts
+are additional opt-in cost; performance timings are never quality gates.
+Comparator tests run in the existing Workflow tests suite, and the opt-in lane
+also runs the real CLI input-order test.
+On 2026-10-15, Docker Desktop Linux with Rust 1.85.1 took 31.30 seconds for
+the six-fixture check, excluding compilation and including container startup.
+This is one local observation, not a CI time threshold or hosted-runner estimate.
+
 ## Deferred routing regressions (#253)
 
 **Routing regressions** runs after every PR merge into `main`, nightly at 18:23 UTC
@@ -465,7 +544,8 @@ for an earlier commit; dispatches remain independent of PR-event concurrency.
 Formatting, Clippy and Tests are dispatched after an SVG commit. MSRV is included
 when the full PR file list touches its existing toolchain/Cargo/Docker inputs,
 MSRV workflow or shared validation checkout helper. **Workflow tests** is included
-for changes under `.github/**` or `tests/ci/**`. This validation selection
+for changes under `.github/**`, `tests/ci/**`, `tests/layout-quality/**`, or to
+`scripts/layout-quality.cjs`. This validation selection
 examines the whole PR, including changes before the generated commit, independently
 of local generation decisions.
 

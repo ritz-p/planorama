@@ -91,7 +91,8 @@ Collection stops pair comparisons at 2,000,000 and retains at most 20,000 findin
 not be treated as complete. Per-edge raw and border totals remain available.
 Reaching a cap exactly is complete unless another comparison or finding is
 omitted. Stopping pair analysis also makes the findings incomplete.
-No threshold-based CI failure is enabled.
+The CLI remains informational. The opt-in [CI quality comparison](ci.md#layout-quality-comparison-390)
+applies fixture-specific budgets to these reports without changing CLI exit status.
 
 The shared raw helpers are in `src/layout/metrics.rs`; the renderer's report
 collector is `src/layout/diagnostics.rs`. Tests use these implementations, plus
