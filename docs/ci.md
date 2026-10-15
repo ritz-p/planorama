@@ -200,6 +200,9 @@ Each render removes its prior report first and must produce a new regular file;
 a successful process exit without fresh diagnostics cannot pass or update a baseline.
 The same freshness and regular-file checks apply to the SVG preview. Fixture IDs
 must be unique lowercase alphanumeric/hyphen names before any output is written.
+The manifest filename and `results` are reserved. Empty fixture lists, malformed
+input/argument lists and missing or invalid budgets are rejected before rendering,
+including per-edge budgets for fixtures with no edges.
 Pair findings require nonnegative integer segment indices and category-specific
 location fields with finite JSON numbers; numeric strings are not accepted.
 Output and baseline directories must be separate: identical directories and either
@@ -209,8 +212,13 @@ of a new output directory, so aliases cannot overwrite checked-in baselines.
 
 The job publishes a bounded Markdown summary with deltas and stable relationship
 identities, and retains full reports, comparison details, renderer logs and preview
-SVGs for 14 days. Preview SVGs live only in the output artifact; the maintained
-SVG generation script is not run. Failures keep a failing job status. The job has
+SVGs for 14 days. Preview SVGs live only in the output artifact.
+Markdown is capped at 60,000 characters, with at most 2,000 characters per error;
+renderer logs retain captured process output. Per-edge border changes show only
+border findings; raw bend/length changes do not attach unrelated spatial findings.
+Prior aggregate artifacts are removed before rendering. Log and aggregate writes
+replace old files without following pre-existing file symlinks.
+The maintained SVG generation script is not run. Failures keep a failing job status. The job has
 a 35-minute ceiling, with 5 minutes for compilation, 2 minutes for comparison
 tests and 20 minutes for the six-fixture comparison. Each render has a 3-minute
 timeout, so even six sequential timeouts leave 2 minutes to finalize reports

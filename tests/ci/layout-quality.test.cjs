@@ -251,6 +251,59 @@ test('pair findings reject missing locations and coerced numeric fields', () => 
   }
 });
 
+test('summaries bound large errors and relationship identities', () => {
+  const text = markdown([{fixture: 'failure', status: 'non-comparable', error: 'x'.repeat(1000000)}]);
+  assert.ok(text.length < 3000);
+  assert.match(text, /truncated/);
+  const changes = Array.from({length: 20}, () => ({metric: 'bends', edge: 'x'.repeat(100000),
+    findings: [], failed: true, before: 0, after: 3, delta: 3, allowance: 2}));
+  assert.ok(markdown([{fixture: 'large', status: 'failed', changes}]).length < 61000);
+});
+
+test('per-edge evidence is limited to the affected metric', () => {
+  const before = JSON.parse(fs.readFileSync(path.join(__dirname, '../layout-quality/large.json'))).report;
+  const after = structuredClone(before);
+  const id = after.findings.find(f => f.category === 'crossing').edge;
+  const edge = after.edges.find(e => e.id === id);
+  edge.raw_polyline.bends += 3;
+  edge.raw_polyline.length++;
+  updateRawSummary(after);
+  edge.visible_border.minimum_deficit++;
+  after.summary.visible_border_minimum_deficit++;
+  const result = compare(before, after, budgets);
+  for (const change of result.changes.filter(c => c.edge === id)) {
+    if (change.metric === 'edge_border')
+      assert.ok(change.findings.every(f => f.category === 'visible_border_clearance' && f.edge === id));
+    else assert.deepEqual(change.findings, []);
+  }
+});
+
+test('reserved output names and invalid manifests fail before any output is written', () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'layout-manifest-'));
+  try {
+    const manifestPath = path.join(dir, 'custom.json');
+    const output = path.join(dir, 'out');
+    const fixture = manifest.fixtures[0];
+    for (const fixtures of [[], [{...fixture, id: 'custom'}], [{...fixture, id: 'results'}],
+      [{...fixture, args: null}], [{...fixture, inputs: []}], [{...fixture, budgets: {...budgets, bends: null}}]]) {
+      const source = JSON.stringify({...manifest, fixtures});
+      fs.writeFileSync(manifestPath, source);
+      for (const update of [false, true]) {
+        assert.throws(() => run({manifestPath, binary: 'must-not-run', output, update}));
+        assert.equal(fs.readFileSync(manifestPath, 'utf8'), source);
+        assert.equal(fs.existsSync(output), false);
+      }
+    }
+    const empty = JSON.parse(fs.readFileSync(path.join(__dirname, '../layout-quality/accounts.json'))).report;
+    empty.edges = [];
+    empty.findings = [];
+    empty.summary = {routed_paths: 0, raw_polyline: {length: 0, bends: 0}, visible_border_minimum_deficit: 0,
+      visible_straight_sections: {crossings: 0, independent_overlap_length: 0, parallel_deficit: 0, shared_trunk_length: 0}};
+    assert.equal(compare(empty, empty, budgets).status, 'passed');
+    assert.throws(() => compare(empty, empty, {...budgets, bends: null}), /invalid budget: bends/);
+  } finally { fs.rmSync(dir, {recursive: true, force: true}); }
+});
+
 test('duplicate fixture IDs are rejected without output or baseline writes', () => {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'layout-duplicate-'));
   try {
@@ -365,6 +418,17 @@ test('runner identifies missing and stale baselines and preserves full artifacts
     assert.equal(run(options), false);
     assert.match(fs.readFileSync(path.join(options.output, 'summary.md'), 'utf8'), /stale baseline/);
     assert.ok(fs.existsSync(path.join(options.output, 'results.json')));
+    const protectedFile = path.join(dir, 'protected.txt');
+    fs.writeFileSync(protectedFile, 'preserved');
+    for (const filename of ['fan-in.log', 'results.json', 'summary.md']) {
+      fs.unlinkSync(path.join(options.output, filename));
+      fs.symlinkSync(protectedFile, path.join(options.output, filename));
+    }
+    fs.writeFileSync(fake, "require('node:fs').writeSync(2, 'x'.repeat(100000)); process.exit(1);");
+    assert.equal(run(options), false);
+    assert.ok(fs.readFileSync(path.join(options.output, 'summary.md'), 'utf8').length < 3000);
+    assert.equal(fs.readFileSync(path.join(options.output, 'fan-in.log'), 'utf8').length, 100000);
+    assert.equal(fs.readFileSync(protectedFile, 'utf8'), 'preserved');
   } finally { fs.rmSync(dir, {recursive: true, force: true}); }
 });
 
