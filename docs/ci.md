@@ -162,7 +162,7 @@ Crossings, overlap and parallel deficits are checked both in total and for each
 unordered pair of stable edge IDs, using the same absolute/relative budget on
 each pair's baseline. Contributions come from the existing findings: crossing
 counts, overlap interval lengths, and parallel interval lengths multiplied by the
-reported centerline preference minus separation. No geometry is reanalyzed.
+reported centerline preference minus separation. Visible conflicts are not reanalyzed.
 Before comparison or baseline updates, these contributions must match each
 summary total within `0.000001`; missing or excess contributions make either
 report non-comparable even when it declares complete findings.
@@ -173,6 +173,11 @@ before area is calculated; coercible strings and null are rejected.
 Routed-path count must equal the number of edge entries. Aggregate raw length
 and bends must equal their per-edge sums within `0.000001` before comparison
 or baseline updates, so stale edge values cannot conceal an aggregate change.
+Raw measurements are also checked against the serialized polyline: zero-length
+segments are ignored, consecutive runs in the same direction add no bend, and
+direction reversals do. Diagonals are non-comparable even if the declared
+unsupported count is zero. This is a report-consistency check; visible conflict
+measurements continue to come from the renderer's existing diagnostics.
 The minimum-border-deficit summary must likewise equal the per-edge sum.
 Both completeness flags must be the JSON boolean `true`; truthy strings and
 other non-boolean values are rejected.
@@ -228,7 +233,9 @@ The job publishes a bounded Markdown summary with deltas and stable relationship
 identities, and retains full reports, comparison details, renderer logs and preview
 SVGs for 14 days. Preview SVGs live only in the output artifact.
 Markdown is capped at 60,000 characters, with at most 2,000 characters per error;
-renderer logs retain captured process output. Per-edge border changes show only
+fixture statuses are listed first and detail space is divided between fixtures,
+so a verbose early fixture cannot remove later failures.
+Renderer logs retain captured process output. Per-edge border changes show only
 border findings; raw bend/length changes do not attach unrelated spatial findings.
 Prior artifacts for all selected fixtures and aggregate results are removed before
 reading inputs, so input failures cannot retain an earlier preview. Log and aggregate writes

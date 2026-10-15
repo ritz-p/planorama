@@ -180,6 +180,23 @@ function validate(report) {
     if (!Number.isFinite(total) || Math.abs(total - report.summary.raw_polyline[metric]) > 1e-6)
       throw new Error(`non-comparable raw ${metric}: edge total ${total} differs from summary ${report.summary.raw_polyline[metric]}`);
   }
+  for (const edge of report.edges) {
+    let length = 0;
+    let bends = 0;
+    let direction;
+    for (let i = 1; i < edge.polyline.length; i++) {
+      const dx = edge.polyline[i][0] - edge.polyline[i - 1][0];
+      const dy = edge.polyline[i][1] - edge.polyline[i - 1][1];
+      if (dx && dy) throw new Error('non-comparable unsupported diagonal in polyline');
+      if (!dx && !dy) continue;
+      const next = dx ? `x${Math.sign(dx)}` : `y${Math.sign(dy)}`;
+      if (direction !== undefined && direction !== next) bends++;
+      direction = next;
+      length += Math.abs(dx) + Math.abs(dy);
+    }
+    if (!Number.isFinite(length) || Math.abs(length - edge.raw_polyline.length) > 1e-6 || bends !== edge.raw_polyline.bends)
+      throw new Error('non-comparable raw measurements differ from polyline');
+  }
 }
 
 function pairs(report, category) {
@@ -251,7 +268,11 @@ function compare(before, after, budgets) {
 
 function markdown(results) {
   const lines = ['# Layout quality', ''];
+  for (const result of results) lines.push(`- ${result.fixture}: ${result.status}`);
+  lines.push('');
+  const sectionLimit = Math.max(0, Math.floor((60000 - lines.join('\n').length - results.length * 2) / Math.max(results.length, 1)));
   for (const result of results) {
+    const start = lines.length;
     lines.push(`## ${result.fixture}: ${result.status}`, '');
     if (result.error) lines.push(bounded(result.error), '');
     const changes = [...(result.changes || [])].sort((a, b) => Number(b.failed) - Number(a.failed));
@@ -265,6 +286,8 @@ function markdown(results) {
     }
     if (changes.length > 20) lines.push(`- ${changes.length - 20} more metric changes in results.json`);
     lines.push('');
+    const section = lines.splice(start).join('\n');
+    if (sectionLimit > 100) lines.push(bounded(section, sectionLimit));
   }
   return bounded(lines.join('\n'), 60000);
 }

@@ -9,6 +9,16 @@ const manifest = require('../layout-quality/manifest.json');
 const baseline = () => JSON.parse(fs.readFileSync(path.join(__dirname, '../layout-quality/fan-in.json'))).report;
 const budgets = manifest.fixtures.find(f => f.id === 'fan-in').budgets;
 function updateRawSummary(report) {
+  for (const edge of report.edges) {
+    const count = edge.raw_polyline.bends + 1;
+    const step = edge.raw_polyline.length / count;
+    edge.polyline = [[0, 0]];
+    for (let i = 0; i < count; i++) {
+      const next = [...edge.polyline.at(-1)];
+      next[i % 2] += step;
+      edge.polyline.push(next);
+    }
+  }
   for (const metric of ['length', 'bends'])
     report.summary.raw_polyline[metric] = report.edges.reduce((sum, edge) => sum + edge.raw_polyline[metric], 0);
 }
@@ -58,6 +68,28 @@ test('deterministic reports and explicitly budgeted changes pass; area and raw l
   slight.edges[0].raw_polyline.length += 1;
   updateRawSummary(slight);
   assert.equal(compare(before, slight, relative).status, 'failed');
+});
+
+test('raw measurements must agree with geometry, including zero runs and reversals', () => {
+  const original = baseline();
+  const report = baseline();
+  const edge = report.edges[0];
+  edge.polyline = [[0, 0], [0, 0], [2, 0], [4, 0], [2, 0], [2, 3], [4, 3], [4, 5]];
+  assert.throws(() => compare(original, report, budgets), /raw measurements differ from polyline/);
+  edge.raw_polyline = {length: 13, bends: 4};
+  for (const metric of ['length', 'bends'])
+    report.summary.raw_polyline[metric] = report.edges.reduce((sum, e) => sum + e.raw_polyline[metric], 0);
+  assert.equal(compare(report, report, budgets).status, 'passed');
+  const diagonal = structuredClone(report);
+  diagonal.edges[0].polyline[1] = [1, 1];
+  assert.throws(() => compare(report, diagonal, budgets), /unsupported diagonal/);
+  const worse = structuredClone(report);
+  worse.edges[0].polyline.push([6, 5], [6, 7], [8, 7]);
+  worse.edges[0].raw_polyline.bends += 3;
+  worse.edges[0].raw_polyline.length += 6;
+  worse.summary.raw_polyline.bends += 3;
+  worse.summary.raw_polyline.length += 6;
+  assert.equal(compare(report, worse, budgets).status, 'failed');
 });
 
 test('route summary and edge totals must agree on both comparison sides', () => {
@@ -337,6 +369,13 @@ test('summaries bound large errors and relationship identities', () => {
   const changes = Array.from({length: 20}, () => ({metric: 'bends', edge: 'x'.repeat(100000),
     findings: [], failed: true, before: 0, after: 3, delta: 3, allowance: 2}));
   assert.ok(markdown([{fixture: 'large', status: 'failed', changes}]).length < 61000);
+  const summary = markdown([{fixture: 'large', status: 'failed', changes},
+    {fixture: 'later', status: 'non-comparable', error: 'missing report'},
+    {fixture: 'last', status: 'failed', changes: []}]);
+  assert.ok(summary.length <= 60000);
+  assert.match(summary, /## later: non-comparable/);
+  assert.match(summary, /missing report/);
+  assert.match(summary, /## last: failed/);
 });
 
 test('per-edge evidence is limited to the affected metric', () => {
