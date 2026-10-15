@@ -45,11 +45,10 @@ compile step adds `--no-run` to the same `cargo test --locked --all-features`
 commands used by the run step. Build scripts remain Cargo-managed prerequisites.
 No existing test, ignored-test policy or snapshot comparison is removed.
 
-The standard job also explicitly runs the ignored spacing-budget calibration
-and uploads its JSON and SVG comparisons as `spacing-calibration`. This compares
-previous numerical budgets, defaults and doubled candidates on large,
-dense-corridor and constrained fixtures. See
-[calibration](../examples/terraform-large/spacing-calibration.md).
+Spacing-budget calibration is an ignored tuning experiment, run only on demand
+by **Spacing budget calibration**. Standard and large retain ordinary routing
+correctness and layout regression tests; the aggregate **Tests** check depends
+only on those two suites. Calibration and its artifact upload are not PR gates.
 
 New integration targets automatically join `standard`; no ordinary target list is
 duplicated in the workflow. New library, binary, example and benchmark targets are
@@ -107,6 +106,73 @@ choice to keep those targets with unit tests instead of adding a third runner.
 Parallelism saves waiting time at the documented cost of additional workspace
 compilation and runner setup. Workflow, Clippy and formatting validation outside
 **Cargo test** are excluded from both sides of this comparison.
+
+## On-demand spacing calibration
+
+Choose **Actions → Spacing budget calibration → Run workflow** and select a branch
+or tag. The default source is its immutable SHA captured at dispatch. To run a
+specific repository commit, supply the optional full, lowercase 40-character
+`source_sha`; short SHAs and branch names in that input are rejected.
+
+```sh
+gh workflow run spacing_calibration.yml --ref main
+gh workflow run spacing_calibration.yml --ref main -f source_sha="$(git rev-parse HEAD)"
+```
+
+The selected workflow definition must already exist on the default branch for
+dispatch to be available. Checkout verifies the intended SHA, disables persisted
+credentials and has only `contents: read`. The revision's `rust-toolchain.toml`
+pins Rust (currently 1.85.1); Cargo uses locked dependencies. Compilation and the
+unchanged ignored `budget_calibration` test run in separate steps. It writes only
+the requested report directory and does not regenerate maintained examples or
+update PR branches. The `spacing-calibration-<SHA>` artifact is retained for 14
+days and contains `spacing-calibration.json` and nine comparison SVGs; missing
+output fails the upload. This compares previous numerical budgets, defaults and
+doubled candidates on large, dense-corridor and constrained fixtures. See
+[the experiment](../examples/terraform-large/spacing-calibration.md).
+
+The workflow is independent of the required test aggregate and generated-head
+validation dispatch/reporter. A future schedule or post-merge trigger can use
+the same job and captured `github.sha` without adding a dependency to **Tests**.
+
+### Calibration split timing (#406)
+
+Measured on 2026-10-15 in the existing Docker Desktop Linux development container,
+Rust/Cargo 1.85.1, optimized test profile. Both observations used identical Rust,
+fixtures, assets, Cargo metadata/lockfile and toolchain from `c5e09b3`; #405/#406
+only change workflows, their Node tests and documentation. Before each observation,
+`cargo clean -p planorama` removed workspace build products while retaining the
+same warm dependency cache. Both compile logs rebuilt only `planorama`. No other
+Rust build or test ran concurrently; host/background load was not controlled.
+
+Each phase was timed with Python's monotonic clock around its complete process.
+The before sequence ran `node .github/scripts/test-suites.cjs standard compile`,
+then `standard run`, then the exact ignored calibration command above with
+`PLANORAMA_SPACING_REPORT_DIR=output/spacing-calibration`. The after sequence used
+the same first two commands without calibration. Each was measured once.
+
+| Local Standard measurement | Before | After |
+| --- | ---: | ---: |
+| Compile command wall time | 45.232 s | 44.969 s |
+| Ordinary test command wall time | 122.460 s | 121.468 s |
+| Additional calibration command | 74.663 s | Not run |
+| Sum of command wall times | 242.355 s | 166.437 s |
+| Ordinary tests passed / ignored / failed | 627 / 4 / 0 | 627 / 4 / 0 |
+
+Calibration itself reported 73.96 s of test execution and 0.63 s of cached Cargo
+build preparation; its remaining process overhead was about 0.07 s. It passed
+one test and wrote JSON plus nine SVG comparisons. The observed 75.918 s reduction
+includes 1.255 s of unrelated compile/ordinary-test variation; it is not a fixed
+speedup. The remaining ordinary tests dominate the after measurement.
+
+These totals measure local command execution, not end-to-end GitHub job time.
+Queue/provisioning, checkout, toolchain installation, cache restore/save, artifact
+upload, the Large job and the Tests aggregate are excluded. They were not measured
+as zero. Local single-container occupied time falls by the same command-time
+delta; billed runner savings cannot be inferred. An on-demand run incurs its own
+startup, compilation and artifact costs, unlike the measured calibration which
+reused Standard's compiled binary. Record those separately when comparing hosted
+runs; the large suite and aggregate remain unchanged.
 
 ## When generation runs
 
