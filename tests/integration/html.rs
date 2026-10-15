@@ -75,6 +75,10 @@ fn metadata_round_trips_hostile_long_indexed_addresses_without_values_or_markup(
     assert!(!document.contains("ATTRIBUTE_SECRET"));
     assert!(!document.contains("<script>alert"));
     assert_eq!(document.matches("</script>").count(), 2);
+    let diagnostics = html(input.to_string().as_bytes(), &["--html-diagnostics"]);
+    assert!(!diagnostics.contains("ATTRIBUTE_SECRET"));
+    assert!(!diagnostics.contains("<script>alert"));
+    assert_eq!(diagnostics.matches("</script>").count(), 3);
     let resources = data(&document);
     assert!(resources.iter().any(|r| r["address"] == address));
     assert!(resources.iter().any(|r| r["mode"] == "data"));
@@ -199,6 +203,37 @@ fn representative_html_matches_the_renderer() {
         })
         .collect();
     assert!(columns.len() >= 2);
+}
+
+#[test]
+fn html_diagnostics_are_explicit_bounded_and_do_not_change_svg() {
+    let input = include_bytes!("../fixtures/aws-relationships-plan.json");
+    let plain = html(input, &[]);
+    for flags in [
+        vec!["--html-diagnostics"],
+        vec!["--html-diagnostics", "--changed-only"],
+    ] {
+        let output = html(input, &flags);
+        let metadata = output
+            .split("<script id=\"viewer-diagnostics\" type=\"application/json\">")
+            .nth(1)
+            .unwrap()
+            .split("</script>")
+            .next()
+            .unwrap();
+        let data: Value = serde_json::from_str(metadata).unwrap();
+        assert_eq!(data["schema_version"], 1);
+        assert_eq!(data["available"], true);
+        assert!(data["hotspots"].as_array().unwrap().len() <= 200);
+        let baseline = html(input, &flags[1..]);
+        assert_eq!(diagram(&baseline), diagram(&output));
+    }
+    assert!(!plain.contains("id=\"viewer-diagnostics\""));
+    assert!(
+        !support::run_with_args(input, &["--html-diagnostics"])
+            .status
+            .success()
+    );
 }
 
 #[test]

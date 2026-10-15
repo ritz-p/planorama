@@ -9,7 +9,10 @@ Dangling output symlinks are rejected before either output is written.
 The JSON file is opened without truncation, then its filesystem identity is
 checked against the diagram before writing either payload. Case-only aliases on
 case-insensitive filesystems are rejected; a newly reserved empty file may remain.
-Without either option, no report or pair analysis is collected.
+`--html-diagnostics` also enables collection and embeds a bounded diagnostic
+bridge when used with `--format html`; see [routing hotspots](viewer.md#routing-hotspots).
+It does not write a separate report unless one of the report options is provided.
+Without these options, no report or pair analysis is collected.
 
 ```sh
 docker compose exec -T dev cargo run --release --locked -- examples/terraform-large/plan.json -o output/diagram.svg --layout-diagnostics --layout-diagnostics-json output/layout.json

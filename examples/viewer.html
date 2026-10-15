@@ -26,6 +26,11 @@ p { line-height: 1.5; }
 #selection h3 { font-size: 14px; margin-bottom: 8px; }
 #selection ul { padding-left: 18px; }
 #selection li { margin-bottom: 8px; }
+#diagnostics { overflow-wrap: anywhere; }
+#diagnostics h2 { font-size: 16px; }
+#diagnostics button { text-align: left; width: 100%; }
+#hotspot-list { padding-left: 20px; }
+#hotspot-list li { margin-bottom: 12px; }
 #viewport { overflow: hidden; min-width: 0; position: relative; background: white; touch-action: none; cursor: grab; }
 #viewport > svg { width: 100%; height: 100%; display: block; }
 #viewport [data-viewer-target] { cursor: pointer; }
@@ -46,6 +51,12 @@ p { line-height: 1.5; }
 <p id="result-count" role="status"></p>
 <div id="results" aria-label="Search results"></div>
 <section id="selection" aria-label="Selection details" aria-live="polite"></section>
+<section id="diagnostics" aria-label="Routing diagnostics">
+<h2>Routing hotspots</h2>
+<button id="hotspot-toggle" type="button" aria-pressed="false" aria-controls="hotspot-list">Show routing hotspots</button>
+<p id="hotspot-status" role="status"></p>
+<ol id="hotspot-list" hidden></ol>
+</section>
 </aside>
 <section id="viewport" tabindex="0" aria-label="Diagram. Arrow keys pan; plus and minus zoom; F fits the view; Escape clears selection.">
 <svg xmlns="http://www.w3.org/2000/svg" width="1040" height="2414" viewBox="0 0 1040 2414" role="img" aria-labelledby="title description">
@@ -291,6 +302,7 @@ Task definition: aws_ecs_task_definition.app [task_definition; direct attribute 
 </main>
 <noscript>Enable JavaScript for search and navigation. The diagram is included below.</noscript>
 <script id="viewer-data" type="application/json">[{"address":"aws_ecs_cluster.app","deposed":null,"id":"resource-6177735f6563735f636c75737465722e617070-current","identity":"terraform:6177735f6563735f636c75737465722e617070-current","mode":"managed","module":"root","qualified":"module.root.aws_ecs_cluster.app","state":"","type":"aws_ecs_cluster"},{"address":"aws_ecs_service.app","deposed":null,"id":"resource-6177735f6563735f736572766963652e617070-current","identity":"terraform:6177735f6563735f736572766963652e617070-current","mode":"managed","module":"root","qualified":"module.root.aws_ecs_service.app","state":"","type":"aws_ecs_service"},{"address":"aws_ecs_task_definition.app","deposed":null,"id":"resource-6177735f6563735f7461736b5f646566696e6974696f6e2e617070-current","identity":"terraform:6177735f6563735f7461736b5f646566696e6974696f6e2e617070-current","mode":"managed","module":"root","qualified":"module.root.aws_ecs_task_definition.app","state":"","type":"aws_ecs_task_definition"},{"address":"aws_iam_role.app","deposed":null,"id":"resource-6177735f69616d5f726f6c652e617070-current","identity":"terraform:6177735f69616d5f726f6c652e617070-current","mode":"managed","module":"root","qualified":"module.root.aws_iam_role.app","state":"","type":"aws_iam_role"},{"address":"aws_lb.app","deposed":null,"id":"resource-6177735f6c622e617070-current","identity":"terraform:6177735f6c622e617070-current","mode":"managed","module":"root","qualified":"module.root.aws_lb.app","state":"","type":"aws_lb"},{"address":"aws_lb_listener.http","deposed":null,"id":"resource-6177735f6c625f6c697374656e65722e68747470-current","identity":"terraform:6177735f6c625f6c697374656e65722e68747470-current","mode":"managed","module":"root","qualified":"module.root.aws_lb_listener.http","state":"","type":"aws_lb_listener"},{"address":"data.aws_iam_role.app","deposed":null,"id":"resource-646174612e6177735f69616d5f726f6c652e617070-current","identity":"terraform:646174612e6177735f69616d5f726f6c652e617070-current","mode":"data","module":"root","qualified":"module.root.data.aws_iam_role.app","state":"","type":"aws_iam_role"},{"address":"module.worker.aws_iam_role.app","deposed":null,"id":"resource-6d6f64756c652e776f726b65722e6177735f69616d5f726f6c652e617070-current","identity":"terraform:6d6f64756c652e776f726b65722e6177735f69616d5f726f6c652e617070-current","mode":"managed","module":"module.worker","qualified":"module.worker.aws_iam_role.app","state":"","type":"aws_iam_role"}]</script>
+
 <script>(() => {
   'use strict';
 function metadata(svg, byId) {
@@ -548,6 +560,74 @@ function lifecycle() {
 
 }
 
+function diagnostics(context, index, navigation, selection, coordinator) {
+  const { byId, svg } = context;
+  const toggle = byId('hotspot-toggle'), list = byId('hotspot-list'), status = byId('hotspot-status');
+  const source = byId('viewer-diagnostics');
+  const data = source ? JSON.parse(source.textContent) : null;
+  const available = data?.schema_version === 1 && data.available && data.scope === 'whole_diagram';
+  toggle.disabled = !available;
+  status.textContent = available
+    ? `${data.total} collected findings; ${data.hotspots.length} groups shown; ${data.omitted} omitted. ${data.complete ? '' : 'Analysis incomplete. '}Bounds use whole-diagram coordinates. Crossings/proximity are advisory; overlap/minimum clearance are violations.`
+    : 'Diagnostics unavailable. Generate with --format html --html-diagnostics.';
+  const layer = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+  layer.setAttribute('data-hotspot-overlay', 'true');
+  layer.setAttribute('aria-hidden', 'true');
+  layer.style.pointerEvents = 'none';
+  let active = false;
+  function reset() {
+    active = false;
+    layer.remove();
+    layer.replaceChildren();
+    list.replaceChildren();
+    list.hidden = true;
+    toggle.setAttribute('aria-pressed', 'false');
+    toggle.textContent = 'Show routing hotspots';
+  }
+  function endpoint(identity) {
+    return index.resources.find(r => r.state === (identity?.state || '') &&
+      (r.identity === identity?.id || r.address === identity?.id));
+  }
+  function show() {
+    reset(); active = true;
+    toggle.setAttribute('aria-pressed', 'true');
+    toggle.textContent = 'Hide routing hotspots';
+    list.hidden = false;
+    svg.append(layer);
+    for (const [i, hotspot] of data.hotspots.slice(0, 200).entries()) {
+      const [x, y, width, height] = hotspot.bounds;
+      const rect = document.createElementNS(svg.namespaceURI, 'rect');
+      for (const [key, value] of Object.entries({ x: x - 6, y: y - 6, width: width + 12, height: height + 12, fill: 'none', stroke: hotspot.severity === 'violation' ? '#b91c1c' : '#b45309', 'stroke-width': 3, 'stroke-dasharray': '6 4' })) rect.setAttribute(key, value);
+      layer.append(rect);
+      const row = document.createElement('li');
+      row.append(selection.button(`${hotspot.severity}: ${hotspot.kind} ×${hotspot.count} · (${x}, ${y}, ${width}, ${height})${hotspot.minimum_visible_gap === null ? '' : ' · minimum visible gap ' + hotspot.minimum_visible_gap + 'px'}`, () => {
+        coordinator.clear();
+        show();
+        const region = layer.children[i];
+        region.setAttribute('stroke-width', '6');
+        navigation.reveal(region);
+        list.children[i].querySelector('button').focus({ preventScroll: true });
+      }));
+      for (const path of hotspot.paths) {
+        const description = document.createElement('details');
+        const summary = document.createElement('summary');
+        summary.textContent = `Path identity · representative segment ${path.segment ?? 'unavailable'}`;
+        const text = document.createElement('p'); text.textContent = path.id;
+        description.append(summary, text);
+        for (const name of ['source', 'target']) {
+          const target = endpoint(path.identity?.[name]);
+          if (target && byId(target.id)) description.append(selection.button(`${name}: ${index.label(target)}`, () => selection.select(target.id)));
+          else { const missing = document.createElement('p'); missing.textContent = `${name}: unavailable in this view`; description.append(missing); }
+        }
+        row.append(description);
+      }
+      list.append(row);
+    }
+  }
+  toggle.addEventListener('click', () => { if (active) reset(); else if (available) show(); });
+  return { reset };
+}
+
   const byId = id => document.getElementById(id);
   const viewport = byId('viewport');
   const svg = viewport.querySelector('svg');
@@ -573,6 +653,7 @@ function lifecycle() {
   const { clear } = coordinator;
   const { select, button } = selection(context, index, view, highlights, coordinator);
   const { renderResults } = searching(context, index, { select, button }, coordinator);
+  adapters.register(diagnostics(context, index, view, { select, button }, coordinator));
   const { fit, zoom, updateView } = view;
   for (const r of resources) {
     const el = byId(r.id); el.setAttribute('data-viewer-target', 'true');

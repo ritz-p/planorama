@@ -67,6 +67,30 @@ executable markup. CLI-filtered resources do not become searchable. Existing
 unavailable-reference descriptions can still identify a target outside the view.
 The viewer provides no editing, persistence or additional graph filtering.
 
+## Routing hotspots
+
+Generate with `--format html --html-diagnostics` to include optional final-layout
+diagnostics for the effective view. **Show routing hotspots** displays a compact
+list and unfilled regions; selecting a finding reveals its region. Expand a path
+identity to inspect its state, provenance and representative segment, or navigate
+to an available endpoint. Clear/Escape and resource or relationship selection
+reset the overlay. The overlay ignores pointer events and leaves paths and
+numbered terminals clickable; static SVG output is unchanged.
+
+Independent overlaps and below-minimum border clearance are violations;
+crossings, sustained parallel proximity and preferred clearance are advisory.
+Regions use the report's whole-diagram coordinates, including named-state offsets
+and cross-state gutters. Region dimensions and available minimum visible gaps are
+shown without running a second geometry analysis in JavaScript.
+
+The version-1 HTML bridge retains at most 200 groups. Findings with the same kind,
+severity and complete path/provenance identities whose origins share a 32px cell
+are grouped, with counts, combined bounds and minimum visible gap preserved.
+Segments are representative samples within grouped regions. Omitted findings and
+incomplete analysis are reported explicitly; a zero count is not proof of perfect
+routing. Without the flag, diagnostics are unavailable and the viewer still works.
+See [diagnostic approximations and limits](layout-diagnostics.md).
+
 Logical-resource type cards show all nonempty action sections with colored borders
 and explicit counts, equally in offline SVG and HTML. Policy and Controller have
 visible explanations in the card heading. See the synthetic
@@ -109,6 +133,8 @@ the view box and pan/zoom; `highlighting.js` owns selection highlighting cleanup
 overlays register there so resource/relationship selection and Clear cannot leave
 stale feature state. Modules receive their dependencies explicitly and return
 small interfaces; their functions remain inside the viewer's private closure.
+`diagnostics.rs` reduces the final report to the bounded HTML bridge;
+`diagnostics.js` consumes it and registers its reset adapter.
 
 `src/html.rs` concatenates the sources in a fixed order with `include_str!` and
 `concat!` at compile time, inside one inline script. Edit the source modules and

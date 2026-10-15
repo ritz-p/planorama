@@ -1,5 +1,6 @@
 use crate::{layout::Layout, model::Graph, svg, view};
 use serde_json::{Value, json};
+mod diagnostics;
 
 pub(crate) fn render(
     graph: &view::ViewGraph,
@@ -9,6 +10,7 @@ pub(crate) fn render(
     document(
         svg::render_content(graph, layout, format, svg::Content::ValueFree),
         resources(graph, "", ""),
+        None,
     )
 }
 
@@ -24,6 +26,7 @@ pub(crate) fn render_states(
     document(
         svg::render_states_content(architecture, format, svg::Content::ValueFree),
         resources,
+        None,
     )
 }
 
@@ -32,10 +35,12 @@ pub(crate) fn render_report(
     layout: &Layout<'_>,
     format: svg::AddressFormat,
     report: &mut Value,
+    diagnostics: bool,
 ) -> String {
     document(
         svg::render_report(graph, layout, format, svg::Content::ValueFree, Some(report)),
         resources(graph, "", ""),
+        diagnostics.then(|| diagnostics::bridge(report)),
     )
 }
 
@@ -43,6 +48,7 @@ pub(crate) fn render_states_report(
     architecture: &view::ViewArchitecture,
     format: svg::AddressFormat,
     report: &mut Value,
+    diagnostics: bool,
 ) -> String {
     let resources = architecture
         .states
@@ -52,6 +58,7 @@ pub(crate) fn render_states_report(
     document(
         svg::render_states_report(architecture, format, svg::Content::ValueFree, Some(report)),
         resources,
+        diagnostics.then(|| diagnostics::bridge(report)),
     )
 }
 
@@ -69,14 +76,26 @@ fn resources(graph: &Graph, state: &str, prefix: &str) -> Vec<Value> {
     })).collect()
 }
 
-fn document(svg: String, resources: Vec<Value>) -> String {
-    let data = Value::Array(resources)
+fn safe_json(value: &Value) -> String {
+    value
         .to_string()
         .replace('&', "\\u0026")
         .replace('<', "\\u003c")
         .replace('>', "\\u003e")
         .replace('\u{2028}', "\\u2028")
-        .replace('\u{2029}', "\\u2029");
+        .replace('\u{2029}', "\\u2029")
+}
+
+fn document(svg: String, resources: Vec<Value>, diagnostics: Option<Value>) -> String {
+    let data = safe_json(&Value::Array(resources));
+    let diagnostics = diagnostics
+        .map(|value| {
+            format!(
+                "<script id=\"viewer-diagnostics\" type=\"application/json\">{}</script>",
+                safe_json(&value)
+            )
+        })
+        .unwrap_or_default();
     include_str!("html/viewer.html")
         .replace("/* VIEWER_CSS */", include_str!("html/viewer.css"))
         .replace(
@@ -95,9 +114,12 @@ fn document(svg: String, resources: Vec<Value>) -> String {
                     include_str!("html/searching.js"),
                     "\n",
                     include_str!("html/lifecycle.js"),
+                    "\n",
+                    include_str!("html/diagnostics.js"),
                 ),
             ),
         )
         .replace("<!-- VIEWER_DATA -->", &data)
+        .replace("<!-- VIEWER_DIAGNOSTICS -->", &diagnostics)
         .replace("<!-- DIAGRAM -->", &svg)
 }
