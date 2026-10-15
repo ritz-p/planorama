@@ -1,6 +1,38 @@
 use super::*;
 
 #[test]
+fn section_rendering_uses_occupied_bounds_without_repacking_cards() {
+    for width in [400, 1120, 12000] {
+        let cards = (0..7)
+            .map(|i| Card {
+                width: 360 + i * 20,
+                height: 80 + i * 30,
+                content: format!("<text>{i}</text>"),
+            })
+            .collect();
+        let mut area = Area::sections(
+            vec![(
+                "Logical Resources",
+                crate::svg::style::LOGICAL_RESOURCES,
+                cards,
+            )],
+            width,
+        );
+        let expected = area.render();
+        area.packing_width = 0;
+        for section in &mut area.sections {
+            section.children.packing_width = 0;
+            section.children.height = 0;
+            for (card, _) in &mut section.children.cards {
+                card.width = 0;
+                card.height = 0;
+            }
+        }
+        assert_eq!(area.render(), expected);
+    }
+}
+
+#[test]
 fn ordered_sections_wrap_children_and_omit_empty_sections_without_gaps() {
     for (width, count) in [400, 2200, 12000]
         .into_iter()
@@ -30,7 +62,7 @@ fn ordered_sections_wrap_children_and_omit_empty_sections_without_gaps() {
             .collect();
             let area = Area::sections(sections, width);
             assert_eq!(
-                area.width,
+                area.packing_width,
                 if mask == 0 {
                     width
                 } else {
@@ -132,7 +164,7 @@ fn empty_single_and_wrapped_cards_have_deterministic_bounds() {
             })
             .collect();
         let area = Area::flow(cards, 720, Point { x: 40, y: 160 }, 40, 24);
-        assert_eq!(area.width, 720);
+        assert_eq!(area.packing_width, 720);
         if count == 0 {
             assert_eq!(area.height, 0);
             assert!(area.render().is_empty());
@@ -140,7 +172,7 @@ fn empty_single_and_wrapped_cards_have_deterministic_bounds() {
         }
         for (i, (_, bounds)) in area.cards.iter().enumerate() {
             assert_eq!(bounds.origin.x, 40 + i % 2 * 320);
-            assert!(bounds.right() <= area.width - 40);
+            assert!(bounds.right() <= area.packing_width - 40);
             assert!(bounds.origin.y + bounds.height <= 160 + area.height - 24);
             if i >= 2 {
                 assert!(
@@ -161,7 +193,7 @@ fn empty_single_and_wrapped_cards_have_deterministic_bounds() {
         40,
         24,
     );
-    assert_eq!(area.width, 880);
+    assert_eq!(area.packing_width, 880);
     assert_eq!(area.height, 104);
 }
 

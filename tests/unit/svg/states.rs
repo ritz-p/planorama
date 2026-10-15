@@ -307,7 +307,7 @@ fn cross_state_paths_avoid_intervening_cards_and_describe_dependencies() {
         1120,
     );
     let (_, height) = sections.dimensions(&local);
-    let legend_height = super::super::legend::Legend::new(&graph, 1120).height;
+    let legend_height = super::super::legend::MeasuredLegend::new(&graph, 1120).height;
     let offset = 100 + legend_height + sections.height();
     let obstacles: Vec<_> = [offset, offset + height + 60]
         .into_iter()
