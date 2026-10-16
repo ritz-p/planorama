@@ -12,6 +12,7 @@ impl ResourceIcon {
             Self::Lambda => "planorama-icon-aws-lambda",
             Self::Sqs => "planorama-icon-aws-sqs",
             Self::Sns => "planorama-icon-aws-sns",
+            Self::EventBridge => "planorama-icon-aws-eventbridge",
             Self::Ecs => "planorama-icon-aws-ecs",
             Self::Eks => "planorama-icon-aws-eks",
             Self::Database => "planorama-icon-aws-rds",
@@ -43,6 +44,7 @@ impl ResourceIcon {
             }
             Self::Lambda => include_str!(concat!(env!("OUT_DIR"), "/AWS-Lambda.svg")),
             Self::Sqs => include_str!(concat!(env!("OUT_DIR"), "/Amazon-Simple-Queue-Service.svg")),
+            Self::EventBridge => include_str!(concat!(env!("OUT_DIR"), "/Amazon-EventBridge.svg")),
             Self::Sns => include_str!(concat!(
                 env!("OUT_DIR"),
                 "/Amazon-Simple-Notification-Service.svg"

@@ -1,0 +1,21 @@
+{
+  "format_version": "1.2",
+  "resource_changes": [
+    {"address":"aws_cloudwatch_event_bus.events","type":"aws_cloudwatch_event_bus","mode":"managed","change":{"actions":["create"],"after":{"name":"events"}}},
+    {"address":"aws_cloudwatch_event_rule.jobs","type":"aws_cloudwatch_event_rule","mode":"managed","change":{"actions":["update"],"after":{"name":"jobs","event_bus_name":"events"}}},
+    {"address":"aws_cloudwatch_event_rule.default","type":"aws_cloudwatch_event_rule","mode":"managed","change":{"actions":["no-op"],"after":{"name":"default-rule","event_bus_name":"default"}}},
+    {"address":"data.aws_cloudwatch_event_bus.archive","type":"aws_cloudwatch_event_bus","mode":"data","change":{"actions":["read"],"after":{"name":"archive"}}}
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws":{"full_name":"hashicorp/aws","expressions":{"region":{"constant_value":"ap-northeast-1"}}},
+      "aws.archive":{"full_name":"hashicorp/aws","alias":"archive","expressions":{"region":{"constant_value":"us-east-1"}}}
+    },
+    "root_module":{"resources":[
+      {"address":"aws_cloudwatch_event_bus.events","provider_config_key":"aws"},
+      {"address":"aws_cloudwatch_event_rule.jobs","provider_config_key":"aws","expressions":{"event_bus_name":{"references":["aws_cloudwatch_event_bus.events.name"]}}},
+      {"address":"aws_cloudwatch_event_rule.default","provider_config_key":"aws","expressions":{"event_bus_name":{"constant_value":"default"}}},
+      {"address":"data.aws_cloudwatch_event_bus.archive","provider_config_key":"aws.archive"}
+    ]}
+  }
+}
