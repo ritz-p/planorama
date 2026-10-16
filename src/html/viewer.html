@@ -13,6 +13,12 @@
 <aside aria-label="Resources and relationships">
 <label for="search">Search resources</label>
 <input id="search" type="search" placeholder="Address, module, state, type or mode" autocomplete="off" aria-controls="results" aria-describedby="search-help">
+<div id="search-filters">
+<label for="search-action">Action</label><select id="search-action"><option value="">All actions</option></select>
+<label for="search-state">State</label><select id="search-state"><option value="">All states</option></select>
+<label for="search-type">Resource type / provider source</label><select id="search-type"><option value="">All resource types</option></select>
+<button id="search-reset" type="button">Reset search and filters</button>
+</div>
 <p id="search-help">Arrow Down moves to results. Enter selects. Escape clears selection. Drag or scroll to pan. In the diagram, arrow keys pan, +/− zoom and F fits the view. Ctrl+scroll zooms.</p>
 <p id="result-count" role="status"></p>
 <div id="results" aria-label="Search results"></div>
@@ -53,6 +59,7 @@
 </main>
 <noscript>Enable JavaScript for search and navigation. The diagram is included below.</noscript>
 <script id="viewer-data" type="application/json"><!-- VIEWER_DATA --></script>
+<script id="viewer-provider-data" type="application/json"><!-- VIEWER_PROVIDER_DATA --></script>
 <!-- VIEWER_DIAGNOSTICS -->
 <!-- VIEWER_SEMANTIC_DIAGNOSTICS -->
 <script>/* VIEWER_JS */</script>
