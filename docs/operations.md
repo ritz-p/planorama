@@ -3,6 +3,8 @@
 [Logical architecture components](components.md) retain original resource identities and their complete change information.
 
 Route resources retain their own operation metadata in [embedded child cards](routes.md).
+RDS cluster member cards retain the same action, import badge, move annotation
+and lifecycle metadata; deposed instances remain separate ordinary cards.
 
 Plan-level checks, including resource preconditions and postconditions, are documented in [Terraform check results](checks.md).
 

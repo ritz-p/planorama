@@ -114,11 +114,14 @@ pub(crate) fn rows(node: &Node) -> Vec<Row<'_>> {
 }
 
 pub(crate) fn height(node: &Node) -> usize {
+    height_at_width(node, text_width(node))
+}
+
+pub(crate) fn height_at_width(node: &Node, width: usize) -> usize {
     let rows = rows(node);
     if rows.is_empty() {
         0
     } else {
-        let width = text_width(node);
         24 + LINE_HEIGHT * rows.iter().map(|row| row.line_count(width)).sum::<usize>()
     }
 }

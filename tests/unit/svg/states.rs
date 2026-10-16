@@ -1,6 +1,89 @@
 use super::*;
 
 #[test]
+fn embedded_members_keep_logical_remote_references_within_bounds() {
+    use crate::model::architecture::{Architecture, CrossStateEdge, CrossStateProvenance};
+    let consumer = crate::semantic::transform(
+        &crate::plan::parse(include_str!("../../fixtures/aurora-plan.json")).unwrap(),
+    );
+    let producer = crate::semantic::transform(
+        &crate::plan::parse(
+            r#"{"format_version":"1.2","resource_changes":[{"address":"aws_iam_policy.shared","type":"aws_iam_policy"}]}"#,
+        )
+        .unwrap(),
+    );
+    assert_eq!(
+        producer.nodes[0].placement,
+        crate::model::Placement::Logical
+    );
+    let source = StateId::new("shared").unwrap();
+    let target = StateId::new("database").unwrap();
+    let architecture = Architecture {
+        states: BTreeMap::from([(source.clone(), producer), (target.clone(), consumer)]),
+        relationships: vec![CrossStateEdge {
+            from: Endpoint {
+                state: source,
+                address: "aws_iam_policy.shared".into(),
+            },
+            to: Endpoint {
+                state: target,
+                address: "aws_rds_cluster_instance.member[0]".into(),
+            },
+            provenance: CrossStateProvenance::TerraformRemoteState {
+                remote: "data.terraform_remote_state.shared".into(),
+                output: "policy".into(),
+                output_action: None,
+            },
+        }],
+    };
+    let viewed = crate::view::apply(&architecture, &Default::default()).unwrap();
+    let svg = render_states(&viewed, super::super::AddressFormat::Qualified);
+    assert!(
+        crate::html::render_states(&viewed, super::super::AddressFormat::Qualified).contains(&svg)
+    );
+    let doc = roxmltree::Document::parse(&svg).unwrap();
+    let member = doc
+        .descendants()
+        .find(|node| {
+            node.attribute("data-embedded-member").is_some()
+                && node.attribute("data-terraform-address")
+                    == Some("aws_rds_cluster_instance.member[0]")
+        })
+        .unwrap();
+    let link = member
+        .descendants()
+        .find(|node| {
+            node.attribute("data-reference-attribute")
+                == Some("data.terraform_remote_state.shared.outputs.policy")
+        })
+        .unwrap();
+    let target = link.attribute("href").unwrap().strip_prefix('#').unwrap();
+    assert!(
+        doc.descendants()
+            .any(|node| node.attribute("id") == Some(target))
+    );
+    assert!(
+        link.descendants()
+            .filter_map(|node| node.text())
+            .collect::<String>()
+            .contains("shared:aws_iam_policy.shared")
+    );
+    let rect = member
+        .children()
+        .find(|node| node.has_tag_name("rect"))
+        .unwrap();
+    let y: usize = rect.attribute("y").unwrap().parse().unwrap();
+    let height: usize = rect.attribute("height").unwrap().parse().unwrap();
+    for text in member
+        .descendants()
+        .filter(|node| node.has_tag_name("text"))
+    {
+        let baseline: usize = text.attribute("y").unwrap().parse().unwrap();
+        assert!(baseline > y && baseline < y + height);
+    }
+}
+
+#[test]
 fn account_panels_remain_state_local_and_identical_in_html() {
     let input = include_str!("../../fixtures/accounts-plan.json");
     let graph =

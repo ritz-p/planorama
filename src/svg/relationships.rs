@@ -48,8 +48,23 @@ pub(super) fn captions(graph: &Graph) -> (String, String) {
     if embedded > 0 {
         let resources = nodes + additional_resources(graph);
         let spatial = nodes - logical - embedded;
+        let members = graph
+            .nodes
+            .iter()
+            .filter(|node| {
+                node.member_owner.is_some() && crate::view::routes::owner(graph, node).is_some()
+            })
+            .count();
+        let embedded_label = if members == 0 {
+            format!("{embedded} embedded route cards")
+        } else {
+            format!(
+                "{} embedded route cards, {members} member cards",
+                embedded - members
+            )
+        };
         let summary = format!(
-            "{resources} resources ({spatial} spatial cards, {logical} logical resources in {logical_groups} group cards, {embedded} embedded route cards) · {edges} relationships"
+            "{resources} resources ({spatial} spatial cards, {logical} logical resources in {logical_groups} group cards, {embedded_label}) · {edges} relationships"
         );
         return (summary.clone(), summary);
     }

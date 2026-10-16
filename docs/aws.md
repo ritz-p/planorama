@@ -6,6 +6,20 @@ semantics. Provider source and configuration identity are described in [models](
 
 ## Deployment scopes
 
+`aws_rds_cluster_instance` is a supported regional resource with the RDS icon.
+Managed instances with a complete, explicit, unique `cluster_identifier` reference
+to a managed AWS `aws_rds_cluster` appear as individual cards inside that cluster
+when the known `cluster_identifier` matches its referenced `id`.
+Deleting instances use both identifiers from before-state evidence.
+Unknown accounts require the same provider configuration; different configurations
+require equal verified accounts.
+The instance and cluster must have equal deployment scopes; unknown, incompatible,
+dynamic, ambiguous or filtered ownership falls back to an ordinary visible card.
+Each member retains its address, action, lifecycle metadata and account/region
+scope. Membership adds no semantic VPC/Subnet containment. Original references
+remain dependencies, and member cards show navigable cluster and other reference
+links. See the [Aurora example](../examples/aurora.svg).
+
 `aws_sqs_queue` and `aws_sns_topic` are spatial nodes with AWS account and
 regional scope from provider evidence. Managed/data mode, actions and ordinary
 Terraform references remain visible. The [messaging example](../examples/messaging.svg)

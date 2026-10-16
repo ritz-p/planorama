@@ -29,6 +29,7 @@ pub(crate) fn project(source: &Graph) -> Projection {
         .map(|&i| {
             let mut node = source.nodes[i].clone();
             node.routes.owner = None;
+            node.member_owner = None;
             node.routes.reserved_height = super::routes::height(source, i);
             if route_insets[i] > 12 {
                 node.routes.reserved_width = super::routes::WIDTH + route_insets[i] * 2;

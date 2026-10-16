@@ -159,6 +159,13 @@ Route and component-member presentations. Shared measurements include this heigh
 when placing subsequent text and child bounds. Badges stay separate from service
 icons and external-mode indicators, preserving space for complete addresses.
 
+RDS Cluster Instances reuse the embedded-card measurements and layout projection.
+Provider rules set `member_owner` from verified explicit references; this is
+presentation ownership and adds no semantic Containment edge. Each member keeps
+its Terraform identity and contributes once to resource/action counts. Missing
+owners after selection release members to ordinary cards. `member-presentations`
+metadata records displayed ownership separately from dependency provenance.
+
 Ingestion does not import provider rules, layout or SVG. Layout, view and SVG use
 the `model::architecture` facade, which excludes Terraform ingestion contracts.
 AWS resource-type and attribute rules belong in `provider/aws`; rendering and

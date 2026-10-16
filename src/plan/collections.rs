@@ -147,7 +147,9 @@ pub(super) fn annotate(
         let evidence = if consumer.provider.is_aws()
             && matches!(
                 consumer.resource_type.as_str(),
-                "aws_sns_topic_subscription" | "aws_lambda_event_source_mapping"
+                "aws_sns_topic_subscription"
+                    | "aws_lambda_event_source_mapping"
+                    | "aws_rds_cluster_instance"
             )
             && consumer.action == crate::model::Action::Delete
         {
