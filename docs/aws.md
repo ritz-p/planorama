@@ -249,11 +249,17 @@ do not invent a common container.
 | ECS Service | `network_configuration.subnets` | Single subnet or nearest common ancestor |
 | RDS Instance / Cluster | `db_subnet_group_name` → group's `subnet_ids` | Single subnet or nearest common ancestor |
 | DB / ElastiCache Subnet Group | `subnet_ids` | Common VPC, including a single-subnet group |
+| ElastiCache Replication Group | `subnet_group_name` → ElastiCache Subnet Group | Same verified VPC as the subnet group |
 | Lambda / EKS | `vpc_config.subnet_ids` | Common VPC |
 | OpenSearch | `vpc_options.subnet_ids` | Common VPC |
 
 LB/ECS subnet references outside the chosen parent become Connection edges.
 Subnet groups, RDS and the other workloads retain their original dependencies.
+ElastiCache subnet and replication groups are supported visible resources with
+AWS account/region scope and the ElastiCache icon. Replication placement requires
+a complete, static reference to exactly one AWS ElastiCache subnet group with
+verified VPC placement; unresolved, dynamic or incompatible references stay
+visible without inferred placement. See the [ElastiCache example](../examples/elasticache.svg).
 Nested fields are resolved separately: flattened block references or sibling SG
 fields cannot establish subnet membership. Derived containment retains the reference
 chain and receives the [inferred-placement annotation](relationships.md).

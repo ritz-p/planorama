@@ -172,6 +172,12 @@ pub fn collect(plan: &crate::model::TerraformPlan) -> Vec<Diagnostic> {
                 "aws_db_instance" | "aws_rds_cluster" => {
                     &[("db_subnet_group_name", "aws_db_subnet_group", false, true)]
                 }
+                "aws_elasticache_replication_group" => &[(
+                    "subnet_group_name",
+                    "aws_elasticache_subnet_group",
+                    false,
+                    true,
+                )],
                 "aws_ecs_service" => {
                     &[("network_configuration.subnets", "aws_subnet", true, false)]
                 }
@@ -235,7 +241,7 @@ pub fn collect(plan: &crate::model::TerraformPlan) -> Vec<Diagnostic> {
                 )
                 || (matches!(
                     node.resource_type.as_str(),
-                    "aws_db_instance" | "aws_rds_cluster"
+                    "aws_db_instance" | "aws_rds_cluster" | "aws_elasticache_replication_group"
                 ) && super::containment::resolved_subnets(raw, target).is_some()))
             && !contained
                 .edges

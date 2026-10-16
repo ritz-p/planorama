@@ -221,6 +221,35 @@ pub fn apply(all: &Architecture, options: &Options) -> Result<Architecture, Stri
                     Some(e)
                 })
                 .collect();
+            let unplaced_cache: BTreeSet<_> = graph
+                .nodes
+                .iter()
+                .enumerate()
+                .filter(|(_, node)| {
+                    node.resource_type == "aws_elasticache_replication_group"
+                        && graph.relationships.iter().any(|relationship| {
+                            relationship.to == node.entity.id
+                                && relationship.kind == EdgeKind::Containment
+                                && relationship.provenance.iter().any(|proof| {
+                                    matches!(proof, crate::model::RelationshipProvenance::Reference { from, to }
+                                        if node.entity.provenance.contains(to)
+                                            && !graph.nodes.iter().any(|source| source.entity.provenance.contains(from)))
+                                })
+                        })
+                })
+                .map(|(index, _)| index)
+                .collect();
+            graph.0.edges.retain(|edge| {
+                edge.kind != EdgeKind::Containment || !unplaced_cache.contains(&edge.to)
+            });
+            let unplaced_cache: BTreeSet<_> = unplaced_cache
+                .into_iter()
+                .map(|index| graph.nodes[index].entity.id.clone())
+                .collect();
+            graph.0.relationships.retain(|relationship| {
+                relationship.kind != EdgeKind::Containment
+                    || !unplaced_cache.contains(&relationship.to)
+            });
             let addresses: BTreeSet<_> = graph.0.nodes.iter().map(|n| n.address.as_str()).collect();
             graph
                 .0
