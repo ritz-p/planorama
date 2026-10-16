@@ -105,6 +105,7 @@ pub(crate) fn parse(json: &str) -> Result<TerraformPlan, String> {
         true,
     );
     Ok(TerraformPlan {
+        modules: crate::model::modules::Inventory::collect(&plan, &nodes)?,
         remote_references: remote::collect(&plan["configuration"]["root_module"], &nodes),
         outputs: outputs::collect(
             &plan["configuration"]["root_module"],

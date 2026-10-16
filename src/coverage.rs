@@ -33,6 +33,7 @@ pub struct Finding {
 
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
 pub struct Coverage {
+    pub modules: crate::model::modules::Inventory,
     pub embed_findings: bool,
     pub collected: bool,
     pub input_complete: Option<bool>,
@@ -115,6 +116,7 @@ impl Coverage {
             })
             .collect();
         let mut result = Self {
+            modules: plan.modules.clone(),
             collected: true,
             input_complete: plan.status.complete,
             input: Counts::collect(resources.values()),

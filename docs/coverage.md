@@ -13,7 +13,7 @@ the intersection of input identities and node or lowered relationship provenance
 Logical rows, embedded routes and RDS cluster members count once. Components and annotation/group
 cards add no resources. Input minus selected counts resources outside the effective
 view, including semantic metadata suppression and CLI selection. It does not mean
-the resource is absent from Terraform. Focus retains required context; changed-only
+the resource is absent from Terraform. Module and focus selection retain required context; changed-only
 may also retain unchanged context.
 
 Account denominators include managed AWS instances. Region denominators include

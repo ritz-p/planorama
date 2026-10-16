@@ -4,6 +4,7 @@ use std::collections::{BTreeMap, BTreeSet};
 
 #[derive(Default)]
 pub struct Options {
+    pub modules: Vec<String>,
     pub html_semantic_diagnostics: bool,
     pub icon_mode: crate::icons::IconMode,
     pub changed_only: bool,
@@ -66,6 +67,7 @@ fn placement_available(
 
 pub fn apply(all: &Architecture, options: &Options) -> Result<Architecture, String> {
     options.validate()?;
+    let modules = module_selections(all, &options.modules)?;
     let mut keys = BTreeSet::new();
     let mut changed = BTreeSet::new();
     let mut neighbors: BTreeMap<Key, BTreeSet<Key>> = BTreeMap::new();
@@ -201,6 +203,32 @@ pub fn apply(all: &Architecture, options: &Options) -> Result<Architecture, Stri
     if options.changed_only {
         selected.retain(|k| changed.contains(k));
     }
+    if !options.modules.is_empty() {
+        let lowered: BTreeSet<_> = all
+            .states
+            .iter()
+            .flat_map(|(state, graph)| {
+                let modules = &modules;
+                graph
+                    .edges
+                    .iter()
+                    .filter(move |edge| {
+                        edge.change
+                            .as_ref()
+                            .is_some_and(|change| module_matches(modules, state, &change.address))
+                    })
+                    .flat_map(move |edge| [(state.clone(), edge.from), (state.clone(), edge.to)])
+            })
+            .collect();
+        selected.retain(|(state, index)| {
+            lowered.contains(&(state.clone(), *index))
+                || all.states[state].nodes[*index]
+                    .entity
+                    .provenance
+                    .iter()
+                    .any(|id| module_matches(&modules, state, &id.address))
+        });
+    }
     loop {
         let count = selected.len();
         for (parent, child) in &parents {
@@ -254,6 +282,13 @@ pub fn apply(all: &Architecture, options: &Options) -> Result<Architecture, Stri
                 .edges
                 .iter()
                 .filter_map(|e| {
+                    if !options.modules.is_empty()
+                        && e.change
+                            .as_ref()
+                            .is_some_and(|change| !module_matches(&modules, state, &change.address))
+                    {
+                        return None;
+                    }
                     let mut e = e.clone();
                     e.from = *remap.get(&e.from)?;
                     e.to = *remap.get(&e.to)?;
@@ -284,10 +319,17 @@ pub fn apply(all: &Architecture, options: &Options) -> Result<Architecture, Stri
                 .components
                 .retain(|c| c.members.iter().all(|m| addresses.contains(m.as_str())));
             let ids: BTreeSet<_> = graph.entities().map(|e| e.id.clone()).collect();
-            graph
-                .0
-                .relationships
-                .retain(|r| ids.contains(&r.from) && ids.contains(&r.to));
+            graph.0.relationships.retain(|r| {
+                ids.contains(&r.from)
+                    && ids.contains(&r.to)
+                    && (options.modules.is_empty()
+                        || r.provenance.iter().all(|proof| match proof {
+                            crate::model::RelationshipProvenance::Resource { source, .. } => {
+                                module_matches(&modules, state, &source.address)
+                            }
+                            _ => true,
+                        }))
+            });
             let represented = crate::coverage::represented(&graph);
             graph.0.coverage.retain(&represented);
             graph.0.coverage.focused = options.focus.is_some();
@@ -311,6 +353,58 @@ pub fn apply(all: &Architecture, options: &Options) -> Result<Architecture, Stri
     })
 }
 
+fn module_selections(
+    all: &Architecture,
+    selectors: &[String],
+) -> Result<BTreeMap<StateId, Vec<crate::model::modules::Address>>, String> {
+    let mut result: BTreeMap<StateId, Vec<crate::model::modules::Address>> = BTreeMap::new();
+    for selector in selectors {
+        let (state, address) = crate::model::modules::selector(selector)?;
+        let matches: Vec<_> = all
+            .states
+            .iter()
+            .filter(|(id, graph)| {
+                state.as_ref().is_none_or(|state| state == *id)
+                    && graph
+                        .coverage
+                        .modules
+                        .0
+                        .keys()
+                        .any(|module| address.contains(module))
+            })
+            .map(|(id, _)| id)
+            .collect();
+        match matches.as_slice() {
+            [state] => result.entry((*state).clone()).or_default().push(address),
+            [] => return Err(format!("unknown module selector: {selector:?}")),
+            _ => {
+                return Err(format!(
+                    "ambiguous module selector: {selector:?}; use STATE:MODULE_ADDRESS"
+                ));
+            }
+        }
+    }
+    Ok(result)
+}
+
+fn module_matches(
+    modules: &BTreeMap<StateId, Vec<crate::model::modules::Address>>,
+    state: &StateId,
+    resource: &str,
+) -> bool {
+    crate::model::modules::Address::resource(resource).is_ok_and(|address| {
+        modules
+            .get(state)
+            .into_iter()
+            .flatten()
+            .any(|selector| selector.contains(&address))
+    })
+}
+
 #[cfg(test)]
 #[path = "../../tests/unit/view/filter.rs"]
 mod tests;
+
+#[cfg(test)]
+#[path = "../../tests/unit/view/modules.rs"]
+mod module_tests;

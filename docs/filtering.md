@@ -1,5 +1,42 @@
 # Focused diagrams
 
+`--modules ADDRESS...` selects the union of Terraform module subtrees. Repeat the
+option or pass several space-separated addresses; commas are part of keys, not
+separators. Put the input before this variable-length option. Selection is based
+on original Terraform identities, including logical rows, embedded Routes and
+lowered relationships, rather than the module of a display group.
+
+`module.app` includes its direct resources and descendants, across all count and
+for_each instances, but never `module.application`. An index constrains only its
+own path segment: `module.app.module.db[2]` selects db instance 2 under every app
+instance; `module.app[0].module.db` selects all db instances under app instance 0.
+String keys retain dots, commas, colons, quotes and escapes. Resource addresses,
+malformed syntax and unknown modules are errors. Known empty/configuration-only
+modules are valid empty selections; configuration does not prove any indexed
+instance exists. Validation precedes other filters.
+
+For named inputs use `STATE:MODULE_ADDRESS`. An unqualified selector matching
+multiple states is an error. Overlapping or repeated selectors do not duplicate
+resources, and argument order does not change the diagram. Root resources have
+no module selector; omit `--modules` to include them normally.
+
+Modules, focus and changed-only intersect before context closure. No general
+dependency expansion is added: focus depth affects only focus. Containment parents,
+verified Route Table owners and cross-state provenance can remain outside the
+selected modules. A selected lowered relationship uses its existing endpoint
+representation. Excluded logical targets remain unavailable without fragment
+links. Module selection creates no new module containers or interactive picker.
+
+```sh
+planorama plan.json --modules module.app module.database -o selected.svg
+planorama plan.json --modules 'module.app["blue,west:1"]' --modules module.database --format html -o selected.html
+planorama --state app=app.json --state network=network.json --modules app:module.api network:module.vpc -o selected.svg
+```
+
+The examples use POSIX shell quoting. Quote the entire selector and preserve its
+literal double quotes using your shell's native argument rules; Windows PowerShell
+versions can differ when forwarding quotes to native commands.
+
 `--focus ADDRESS` selects an exact native Terraform resource address and its
 undirected architecture neighbors, after semantic transformation. The default
 depth is 1; `--focus-depth 0` selects only the resource. A lowered association's

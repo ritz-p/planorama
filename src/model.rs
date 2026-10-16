@@ -110,6 +110,7 @@ pub struct PlanStatus {
 
 mod address;
 pub(crate) mod architecture;
+pub(crate) mod modules;
 pub use architecture::{ArchitectureEntity, ArchitectureId, TerraformEntityId};
 mod checks;
 mod components;
