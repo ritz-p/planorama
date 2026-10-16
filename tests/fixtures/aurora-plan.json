@@ -5,9 +5,9 @@
     {"address":"aws_subnet.a","type":"aws_subnet","change":{"actions":["no-op"]}},
     {"address":"aws_subnet.b","type":"aws_subnet","change":{"actions":["no-op"]}},
     {"address":"aws_db_subnet_group.main","type":"aws_db_subnet_group","change":{"actions":["no-op"]}},
-    {"address":"aws_rds_cluster.main","type":"aws_rds_cluster","change":{"actions":["no-op"]}},
-    {"address":"aws_rds_cluster_instance.member[0]","type":"aws_rds_cluster_instance","change":{"actions":["create"],"after":{"password":"TOP_SECRET"}}},
-    {"address":"aws_rds_cluster_instance.member[1]","type":"aws_rds_cluster_instance","change":{"actions":["update"]}},
+    {"address":"aws_rds_cluster.main","type":"aws_rds_cluster","change":{"actions":["no-op"],"after":{"id":"main-cluster"}}},
+    {"address":"aws_rds_cluster_instance.member[0]","type":"aws_rds_cluster_instance","change":{"actions":["create"],"after":{"password":"TOP_SECRET","cluster_identifier":"main-cluster"}}},
+    {"address":"aws_rds_cluster_instance.member[1]","type":"aws_rds_cluster_instance","change":{"actions":["update"],"after":{"cluster_identifier":"main-cluster"}}},
     {"address":"aws_instance.client","type":"aws_instance","change":{"actions":["no-op"]}}
   ],
   "configuration": {

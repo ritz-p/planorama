@@ -8,7 +8,8 @@ semantics. Provider source and configuration identity are described in [models](
 
 `aws_rds_cluster_instance` is a supported regional resource with the RDS icon.
 Managed instances with a complete, explicit, unique `cluster_identifier` reference
-to a managed AWS `aws_rds_cluster` appear as individual cards inside that cluster.
+to a managed AWS `aws_rds_cluster` appear as individual cards inside that cluster
+when the known `cluster_identifier` matches its referenced `id`.
 The instance and cluster must have equal deployment scopes; unknown, incompatible,
 dynamic, ambiguous or filtered ownership falls back to an ordinary visible card.
 Each member retains its address, action, lifecycle metadata and account/region

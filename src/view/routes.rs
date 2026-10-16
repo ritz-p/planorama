@@ -37,6 +37,12 @@ impl Card<'_> {
     pub fn height(&self) -> usize {
         24 + self.badge_height()
             + self
+                .node
+                .filter(|node| node.member_owner.is_some())
+                .map_or(0, |node| {
+                    super::references::height_at_width(node, WIDTH - 24)
+                })
+            + self
                 .rows
                 .iter()
                 .enumerate()

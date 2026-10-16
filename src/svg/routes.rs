@@ -178,6 +178,15 @@ pub(super) fn render(
                 svg.push_str("</a>");
             }
         }
+        if node.member_owner.is_some() {
+            svg.push_str(&super::references::render(
+                graph,
+                node,
+                x + 12,
+                line_y,
+                width - 24,
+            ));
+        }
         svg.push_str("</g>\n");
     }
     svg.push_str("</g>\n");

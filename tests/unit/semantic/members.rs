@@ -156,9 +156,26 @@ fn uncertain_cluster_ownership_falls_back_without_hiding_instances() {
         "unknown_scope",
         "dynamic_scope",
         "deposed",
+        "identifier_mismatch",
+        "identifier_unknown",
+        "other_attribute",
     ] {
         let mut value = input();
         match case {
+            "identifier_mismatch" | "identifier_unknown" => {
+                for index in [5, 6] {
+                    value["resource_changes"][index]["change"]["after"]["cluster_identifier"] =
+                        json!("main-cluster-other");
+                    if case == "identifier_unknown" {
+                        value["resource_changes"][index]["change"]["after_unknown"] =
+                            json!({"cluster_identifier":true});
+                    }
+                }
+            }
+            "other_attribute" => {
+                value["configuration"]["root_module"]["resources"][5]["expressions"]["cluster_identifier"] =
+                    json!({"references":["aws_rds_cluster.main.endpoint"]});
+            }
             "missing" => {
                 value["configuration"]["root_module"]["resources"][5]["expressions"] = json!({})
             }

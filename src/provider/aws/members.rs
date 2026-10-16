@@ -24,6 +24,8 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
         if references.next().is_some()
             || !reference.complete
             || !reference.instances_explicit
+            || !reference.ids_only
+            || !reference.scalar_id_matches
             || !reference.issues.is_empty()
         {
             continue;

@@ -143,6 +143,19 @@ fn aurora_long_members_lifecycle_html_and_named_states_remain_accessible() {
         .filter(|n| n.attribute("data-embedded-member").is_some())
         .collect();
     assert_eq!(members.len(), 4);
+    let clusters: Vec<_> = doc
+        .descendants()
+        .filter_map(|node| node.attribute("data-member-cluster"))
+        .collect();
+    assert_eq!(clusters.len(), 2);
+    assert_ne!(clusters[0], clusters[1]);
+    for cluster in clusters {
+        assert!(
+            doc.descendants()
+                .any(|node| node.attribute("id") == Some(cluster)
+                    && node.attribute("data-terraform-address") == Some("aws_rds_cluster.main"))
+        );
+    }
     assert_eq!(
         members
             .iter()
