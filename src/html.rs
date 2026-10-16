@@ -178,6 +178,8 @@ fn document(
                     "\n",
                     include_str!("html/selection.js"),
                     "\n",
+                    include_str!("html/selection-history.js"),
+                    "\n",
                     include_str!("html/searching.js"),
                     "\n",
                     include_str!("html/lifecycle.js"),

@@ -59,7 +59,7 @@ p { line-height: 1.5; }
 </style>
 </head>
 <body>
-<header><strong>Planorama</strong><button id="clear" type="button">Clear selection</button><button id="zoom-out" type="button" aria-label="Zoom out">−</button><button id="zoom-in" type="button" aria-label="Zoom in">+</button><button id="fit" type="button">Fit to view</button><output id="zoom-level" aria-live="polite"></output></header>
+<header><strong>Planorama</strong><button id="selection-back" type="button" aria-label="Back to previous selection" disabled>Back</button><button id="selection-forward" type="button" aria-label="Forward to next selection" disabled>Forward</button><button id="clear" type="button">Clear selection</button><button id="zoom-out" type="button" aria-label="Zoom out">−</button><button id="zoom-in" type="button" aria-label="Zoom in">+</button><button id="fit" type="button">Fit to view</button><output id="zoom-level" aria-live="polite"></output></header>
 <main>
 <aside aria-label="Resources and relationships">
 <label for="search">Search resources</label>
@@ -74,6 +74,7 @@ p { line-height: 1.5; }
 <p id="result-count" role="status"></p>
 <div id="results" aria-label="Search results"></div>
 <section id="selection" aria-label="Selection details" aria-live="polite"></section>
+<p id="history-status" role="status">No selection history</p>
 <section id="impact" aria-label="Potentially related resources">
 <h2>Explore change relationships</h2>
 <label for="impact-depth">Maximum hops</label>
@@ -458,6 +459,7 @@ function navigation(svg, viewport, byId) {
     else { const scale = 1 / svg.getScreenCTM().a; box[0] += event.deltaX * scale; box[1] += event.deltaY * scale; updateView(); }
   }, { passive: false });
   function keydown(event) {
+    if (event.altKey || event.ctrlKey || event.metaKey) return;
     const shifts = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] };
     if (shifts[event.key]) { event.preventDefault(); box[0] += shifts[event.key][0] * box[2] / 10; box[1] += shifts[event.key][1] * box[3] / 10; updateView(); }
     if (event.key === '+' || event.key === '=') { event.preventDefault(); zoom(.8); }
@@ -465,7 +467,10 @@ function navigation(svg, viewport, byId) {
     if (event.key.toLowerCase() === 'f') { event.preventDefault(); fit(); }
   }
 
-  return { fit, zoom, reveal, updateView, keydown, wasDragged: () => dragged };
+  function restore(saved) {
+    box = saved.slice(); updateView();
+  }
+  return { fit, zoom, reveal, updateView, keydown, snapshot: () => box.slice(), restore, wasDragged: () => dragged };
 }
 
 function highlighting(svg, viewport) {
@@ -484,6 +489,8 @@ function selection(context, index, navigation, highlights, coordinator) {
   const { svg, viewport, byId, details, results } = context;
   const { targets, label, title, relationshipEntries, relationshipEdges, links, edges, components } = index;
   const { reveal } = navigation;
+  const history = selectionHistory(context, index, navigation, coordinator, select);
+  coordinator.saveHistory = history.save;
   function button(text, action) {
     const el = document.createElement('button');
     el.type = 'button'; el.textContent = text; el.addEventListener('click', action);
@@ -526,9 +533,10 @@ function selection(context, index, navigation, highlights, coordinator) {
     copy.setAttribute('aria-label', `Copy Terraform address: ${resource.address} · ${caption.textContent}`);
     group.append(caption, field, copy, status); details.append(group);
   }
-  function select(id) {
+  function select(id, restoring = false) {
     const el = byId(id);
-    if (!el || !svg.contains(el)) return;
+    if (!el || !svg.contains(el)) return false;
+    if (!restoring) history.before(id);
     coordinator.clear(); coordinator.selected = id;
     highlights.mark(el, 'selected');
     viewport.setAttribute('data-selection', 'true');
@@ -549,7 +557,8 @@ function selection(context, index, navigation, highlights, coordinator) {
         if (targets.has(endpoint)) copyIdentity(targets.get(endpoint), 'Endpoint resource');
       }
       reveal(el);
-      return;
+      if (!restoring) history.after();
+      return true;
     }
     if (r) {
       const identity = document.createElement('p');
@@ -603,9 +612,65 @@ function selection(context, index, navigation, highlights, coordinator) {
     if (details.children.length <= (r ? 3 : 1)) section('Relationships', [{ text: 'No rendered edges, references or component memberships in this view.' }]);
     for (const b of results.querySelectorAll('button')) b.setAttribute('aria-pressed', String(b.dataset.target === id));
     reveal(el);
+    if (!restoring) history.after();
+    return true;
   }
 
-  return { select, button };
+  return { select, button, clearHistory: history.clear };
+}
+
+function selectionHistory(context, index, view, coordinator, select) {
+  const { byId, svg } = context;
+  const back = byId('selection-back'), forward = byId('selection-forward'), status = byId('history-status');
+  let entries = [], cursor = -1;
+  function identity(id) {
+    const el = byId(id);
+    if (!el || !svg.contains(el)) return null;
+    const resource = index.targets.get(id);
+    return JSON.stringify(resource ? ['resource', resource.state, resource.identity, id] :
+      [index.relationshipEntries.has(id) ? 'relationship' : 'diagram', el.closest('[data-state-id]')?.dataset.stateId || '', id]);
+  }
+  function destination(step) {
+    for (let i = cursor + step; i >= 0 && i < entries.length; i += step) {
+      if (identity(entries[i].id) === entries[i].identity) return i;
+    }
+    return -1;
+  }
+  function update(message) {
+    back.disabled = destination(-1) < 0; forward.disabled = destination(1) < 0;
+    status.textContent = message || (entries.length ? `Selection ${cursor + 1} of ${entries.length}` : 'No selection history');
+  }
+  function save() {
+    if (cursor >= 0 && entries[cursor].id === coordinator.selected) entries[cursor].box = view.snapshot();
+  }
+  function before(id) {
+    save();
+    const key = identity(id);
+    if (entries[cursor]?.identity === key) return;
+    entries.splice(cursor + 1);
+    entries.push({ id, identity: key, box: view.snapshot() });
+    if (entries.length > 100) entries.shift();
+    cursor = entries.length - 1;
+  }
+  function after() { save(); update(); }
+  function move(step) {
+    save();
+    const next = destination(step);
+    if (next < 0) { update('No available selection in that direction.'); return; }
+    const entry = entries[next];
+    if (!select(entry.id, true)) { update('Selection is no longer available.'); return; }
+    cursor = next;
+    view.restore(entry.box);
+    const el = byId(entry.id);
+    if (!el.hasAttribute('tabindex')) el.setAttribute('tabindex', '-1');
+    el.focus({ preventScroll: true });
+    update();
+  }
+  function clear() { entries = []; cursor = -1; update(); }
+  back.addEventListener('click', () => move(-1));
+  forward.addEventListener('click', () => move(1));
+  update();
+  return { before, after, clear, save };
 }
 
 function searching(context, index, selection, coordinator) {
@@ -980,6 +1045,7 @@ function impact(context, index, selection, coordinator) {
   const coordinator = {
     selected: null,
     clear() {
+      coordinator.saveHistory?.();
       coordinator.selected = null;
       adapters.reset();
       highlights.clear();
@@ -987,8 +1053,8 @@ function impact(context, index, selection, coordinator) {
       for (const b of results.querySelectorAll('button')) b.setAttribute('aria-pressed', 'false');
     }
   };
-  const { clear } = coordinator;
-  const { select, button } = selection(context, index, view, highlights, coordinator);
+  const { select, button, clearHistory } = selection(context, index, view, highlights, coordinator);
+  const clear = () => { clearHistory(); coordinator.clear(); };
   const { renderResults } = searching(context, index, { select, button }, coordinator);
   adapters.register(diagnostics(context, index, view, { select, button }, coordinator));
   adapters.register(semanticDiagnostics(context, index, { select, button }, coordinator));

@@ -16,6 +16,7 @@
   const coordinator = {
     selected: null,
     clear() {
+      coordinator.saveHistory?.();
       coordinator.selected = null;
       adapters.reset();
       highlights.clear();
@@ -23,8 +24,8 @@
       for (const b of results.querySelectorAll('button')) b.setAttribute('aria-pressed', 'false');
     }
   };
-  const { clear } = coordinator;
-  const { select, button } = selection(context, index, view, highlights, coordinator);
+  const { select, button, clearHistory } = selection(context, index, view, highlights, coordinator);
+  const clear = () => { clearHistory(); coordinator.clear(); };
   const { renderResults } = searching(context, index, { select, button }, coordinator);
   adapters.register(diagnostics(context, index, view, { select, button }, coordinator));
   adapters.register(semanticDiagnostics(context, index, { select, button }, coordinator));
