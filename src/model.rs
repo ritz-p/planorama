@@ -144,6 +144,7 @@ pub enum EdgeKind {
     Dependency,
     Subscription,
     EventSource,
+    EventTarget,
     Association,
     Connection,
     Containment,

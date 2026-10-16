@@ -6,7 +6,7 @@ Planorama embeds official AWS Architecture Icons from the **07312026 (July 31, 2
 
 The selected original SVG files are stored unchanged under `assets/icons/aws/`. `manifest.json` records the official download URL, ZIP SHA-256, original entry paths, and individual file hashes. Only 20 required service icons are bundled; the full ZIP is not committed. Git preserves asset bytes through `.gitattributes`.
 
-EventBridge Bus and Rule resources use the official Amazon EventBridge service
+EventBridge Bus, Rule and Target resources use the official Amazon EventBridge service
 icon from the same verified archive, added on 2026-10-17. The shared AWS notice
 and terms below apply. See the [EventBridge example](../examples/eventbridge.svg).
 
