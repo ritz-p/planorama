@@ -34,6 +34,18 @@
 <p id="hotspot-status" role="status"></p>
 <ol id="hotspot-list" hidden></ol>
 </section>
+<section id="semantic-diagnostics" aria-label="Semantic diagnostics">
+<h2>Semantic diagnostics</h2>
+<button id="semantic-toggle" type="button" aria-expanded="false" aria-controls="semantic-panel">Show semantic diagnostics</button>
+<p id="semantic-status" role="status"></p>
+<div id="semantic-panel" hidden>
+<label for="semantic-search">Search diagnostic identities and attributes</label>
+<input id="semantic-search" type="search" autocomplete="off" aria-controls="semantic-list">
+<label for="semantic-category">Reason category</label>
+<select id="semantic-category"><option value="">All categories</option><option value="unresolved">Unresolved references</option><option value="ambiguous">Ambiguous references</option><option value="dynamic">Dynamic selection</option><option value="unavailable_endpoint">Unavailable semantic endpoints</option><option value="classification">Unsupported classifications</option><option value="scope">Unknown deployment scope</option><option value="drift">Reported drift</option></select>
+<ol id="semantic-list"></ol>
+</div>
+</section>
 </aside>
 <section id="viewport" tabindex="0" aria-label="Diagram. Arrow keys pan; plus and minus zoom; F fits the view; Escape clears selection.">
 <!-- DIAGRAM -->
@@ -42,6 +54,7 @@
 <noscript>Enable JavaScript for search and navigation. The diagram is included below.</noscript>
 <script id="viewer-data" type="application/json"><!-- VIEWER_DATA --></script>
 <!-- VIEWER_DIAGNOSTICS -->
+<!-- VIEWER_SEMANTIC_DIAGNOSTICS -->
 <script>/* VIEWER_JS */</script>
 </body>
 </html>

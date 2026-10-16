@@ -26,7 +26,12 @@ p { line-height: 1.5; }
 #selection h3 { font-size: 14px; margin-bottom: 8px; }
 #selection ul { padding-left: 18px; }
 #selection li { margin-bottom: 8px; }
-#diagnostics { overflow-wrap: anywhere; }
+#diagnostics, #semantic-diagnostics { overflow-wrap: anywhere; }
+#semantic-diagnostics h2 { font-size: 16px; }
+#semantic-diagnostics button, #semantic-category { width: 100%; text-align: left; }
+#semantic-category { font: inherit; padding: 6px; }
+#semantic-list { padding-left: 20px; }
+#semantic-list li { margin-bottom: 12px; }
 #diagnostics h2 { font-size: 16px; }
 #diagnostics button { text-align: left; width: 100%; }
 #hotspot-list { padding-left: 20px; }
@@ -77,6 +82,18 @@ p { line-height: 1.5; }
 <button id="hotspot-toggle" type="button" aria-pressed="false" aria-controls="hotspot-list">Show routing hotspots</button>
 <p id="hotspot-status" role="status"></p>
 <ol id="hotspot-list" hidden></ol>
+</section>
+<section id="semantic-diagnostics" aria-label="Semantic diagnostics">
+<h2>Semantic diagnostics</h2>
+<button id="semantic-toggle" type="button" aria-expanded="false" aria-controls="semantic-panel">Show semantic diagnostics</button>
+<p id="semantic-status" role="status"></p>
+<div id="semantic-panel" hidden>
+<label for="semantic-search">Search diagnostic identities and attributes</label>
+<input id="semantic-search" type="search" autocomplete="off" aria-controls="semantic-list">
+<label for="semantic-category">Reason category</label>
+<select id="semantic-category"><option value="">All categories</option><option value="unresolved">Unresolved references</option><option value="ambiguous">Ambiguous references</option><option value="dynamic">Dynamic selection</option><option value="unavailable_endpoint">Unavailable semantic endpoints</option><option value="classification">Unsupported classifications</option><option value="scope">Unknown deployment scope</option><option value="drift">Reported drift</option></select>
+<ol id="semantic-list"></ol>
+</div>
 </section>
 </aside>
 <section id="viewport" tabindex="0" aria-label="Diagram. Arrow keys pan; plus and minus zoom; F fits the view; Escape clears selection.">
@@ -325,6 +342,7 @@ Task definition: aws_ecs_task_definition.app [task_definition; direct attribute 
 </main>
 <noscript>Enable JavaScript for search and navigation. The diagram is included below.</noscript>
 <script id="viewer-data" type="application/json">[{"action":"unchanged","address":"aws_ecs_cluster.app","deposed":null,"id":"resource-6177735f6563735f636c75737465722e617070-current","identity":"terraform:6177735f6563735f636c75737465722e617070-current","mode":"managed","module":"root","qualified":"module.root.aws_ecs_cluster.app","state":"","type":"aws_ecs_cluster"},{"action":"update","address":"aws_ecs_service.app","deposed":null,"id":"resource-6177735f6563735f736572766963652e617070-current","identity":"terraform:6177735f6563735f736572766963652e617070-current","mode":"managed","module":"root","qualified":"module.root.aws_ecs_service.app","state":"","type":"aws_ecs_service"},{"action":"create","address":"aws_ecs_task_definition.app","deposed":null,"id":"resource-6177735f6563735f7461736b5f646566696e6974696f6e2e617070-current","identity":"terraform:6177735f6563735f7461736b5f646566696e6974696f6e2e617070-current","mode":"managed","module":"root","qualified":"module.root.aws_ecs_task_definition.app","state":"","type":"aws_ecs_task_definition"},{"action":"create","address":"aws_iam_role.app","deposed":null,"id":"resource-6177735f69616d5f726f6c652e617070-current","identity":"terraform:6177735f69616d5f726f6c652e617070-current","mode":"managed","module":"root","qualified":"module.root.aws_iam_role.app","state":"","type":"aws_iam_role"},{"action":"create","address":"aws_lb.app","deposed":null,"id":"resource-6177735f6c622e617070-current","identity":"terraform:6177735f6c622e617070-current","mode":"managed","module":"root","qualified":"module.root.aws_lb.app","state":"","type":"aws_lb"},{"action":"update","address":"aws_lb_listener.http","deposed":null,"id":"resource-6177735f6c625f6c697374656e65722e68747470-current","identity":"terraform:6177735f6c625f6c697374656e65722e68747470-current","mode":"managed","module":"root","qualified":"module.root.aws_lb_listener.http","state":"","type":"aws_lb_listener"},{"action":"read","address":"data.aws_iam_role.app","deposed":null,"id":"resource-646174612e6177735f69616d5f726f6c652e617070-current","identity":"terraform:646174612e6177735f69616d5f726f6c652e617070-current","mode":"data","module":"root","qualified":"module.root.data.aws_iam_role.app","state":"","type":"aws_iam_role"},{"action":"unchanged","address":"module.worker.aws_iam_role.app","deposed":null,"id":"resource-6d6f64756c652e776f726b65722e6177735f69616d5f726f6c652e617070-current","identity":"terraform:6d6f64756c652e776f726b65722e6177735f69616d5f726f6c652e617070-current","mode":"managed","module":"module.worker","qualified":"module.worker.aws_iam_role.app","state":"","type":"aws_iam_role"}]</script>
+
 
 <script>(() => {
   'use strict';
@@ -655,6 +673,77 @@ function diagnostics(context, index, navigation, selection, coordinator) {
   return { reset };
 }
 
+function semanticDiagnostics(context, index, selection, coordinator) {
+  const { byId } = context;
+  const source = byId('viewer-semantic-diagnostics');
+  const data = source ? JSON.parse(source.textContent) : null;
+  const available = data?.schema_version === 1 && data.available;
+  const toggle = byId('semantic-toggle'), panel = byId('semantic-panel');
+  const status = byId('semantic-status'), list = byId('semantic-list');
+  const search = byId('semantic-search'), category = byId('semantic-category');
+  const key = r => JSON.stringify([r.state, r.address, r.deposed, r.mode]);
+  const targets = new Map(index.resources.map(r => [key(r), r]));
+  const limits = available
+    ? `${data.total} selected findings; ${data.records.length} embedded; ${data.omitted} omitted. Supported rules only; cross-state mapping diagnostics are not included. Input completeness: ${data.input_complete === null ? 'unknown' : data.input_complete ? 'complete' : 'incomplete'}. ${data.unassociated_input_findings} unassociated input findings are excluded. Categories overlap; unknowns are informational.`
+    : 'Semantic diagnostics unavailable. Generate with --format html --html-semantic-diagnostics.';
+  toggle.disabled = !available;
+  let active = false;
+  function reset() {
+    if (panel.contains(document.activeElement)) toggle.focus({ preventScroll: true });
+    active = false;
+    panel.hidden = true;
+    list.replaceChildren();
+    toggle.setAttribute('aria-expanded', 'false');
+    toggle.textContent = 'Show semantic diagnostics';
+    status.textContent = limits;
+  }
+  function render() {
+    list.replaceChildren();
+    const terms = search.value.toLowerCase().split(/\s+/).filter(Boolean);
+    const matches = data.records.filter(record => {
+      const text = [record.state, record.address, record.deposed, record.mode, record.attribute, record.reason, record.category, record.message].join(' ').toLowerCase();
+      return (!category.value || category.value === record.category) && terms.every(term => text.includes(term));
+    });
+    const shown = matches.slice(0, 100);
+    status.textContent = `${matches.length} matching embedded findings; ${shown.length} shown; ${matches.length - shown.length} hidden by list limit. ${limits}`;
+    for (const record of shown) {
+      const row = document.createElement('li');
+      const label = `${record.state || '(unnamed)'}:${record.address} · ${record.mode} · ${record.deposed === null ? 'current' : 'deposed: ' + record.deposed}`;
+      const target = targets.get(key(record));
+      if (target && byId(target.id)) {
+        row.append(selection.button(label, () => {
+          selection.select(target.id);
+          byId(target.id).focus({ preventScroll: true });
+        }));
+      } else {
+        const identity = document.createElement('p');
+        identity.textContent = `${label} · navigation unavailable in this view`;
+        row.append(identity);
+      }
+      const detail = document.createElement('p');
+      detail.textContent = `${record.category} / ${record.reason}: ${record.message}${record.attribute === null ? '' : ' · Attribute: ' + record.attribute}`;
+      row.append(detail);
+      list.append(row);
+    }
+  }
+  toggle.addEventListener('click', () => {
+    if (active) reset();
+    else if (available) {
+      coordinator.clear();
+      active = true;
+      panel.hidden = false;
+      toggle.setAttribute('aria-expanded', 'true');
+      toggle.textContent = 'Hide semantic diagnostics';
+      render();
+      search.focus();
+    }
+  });
+  search.addEventListener('input', render);
+  category.addEventListener('change', render);
+  reset();
+  return { reset };
+}
+
 function impactGraph(index, svg) {
   const key = (state, identity) => JSON.stringify([state, identity]);
   const nodes = new Map(index.resources.map(r => [key(r.state, r.identity), r]));
@@ -840,6 +929,7 @@ function impact(context, index, selection, coordinator) {
   const { select, button } = selection(context, index, view, highlights, coordinator);
   const { renderResults } = searching(context, index, { select, button }, coordinator);
   adapters.register(diagnostics(context, index, view, { select, button }, coordinator));
+  adapters.register(semanticDiagnostics(context, index, { select, button }, coordinator));
   const impactView = impact(context, index, { select, button }, coordinator);
   adapters.register(impactView);
   search.addEventListener('input', () => adapters.reset());

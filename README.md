@@ -99,6 +99,7 @@ docker compose exec -T dev cargo run --locked -- - -o - < plan.json > diagram.sv
 | `--timings` による工程別計測・ベンチマーク | [Benchmarks](docs/benchmarks.md) |
 | 最終レイアウトの text / JSON 診断 | [Layout diagnostics](docs/layout-diagnostics.md) |
 | 入力・選択・除外件数と不明スコープ | [Diagram coverage](docs/coverage.md) |
+| HTML 内の意味解析診断とリソースへの移動 | [Semantic diagnostics](docs/viewer.md#semantic-diagnostics) |
 | 任意実行のレイアウト品質比較・ベースライン更新 | [Layout quality CI](docs/ci.md#layout-quality-comparison-390) |
 | 複数 state・region と account 証拠不足を示す大型例 | [生成方法・計測](examples/multi-account/README.md)、[SVG](examples/multi-account/diagram.svg)、[HTML](examples/multi-account/diagram.html) |
 | ローカル・手動 CI の SVG 生成と PR 検証結果 | [SVG automation](docs/ci.md) |

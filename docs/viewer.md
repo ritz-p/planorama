@@ -73,6 +73,9 @@ The viewer provides no editing, persistence or additional graph filtering.
 
 ## Routing hotspots
 
+Routing hotspots describe final geometry. They are independent of the semantic
+findings described below and can be enabled alongside them.
+
 Generate with `--format html --html-diagnostics` to include optional final-layout
 diagnostics for the effective view. **Show routing hotspots** displays a compact
 list and unfilled regions; selecting a finding reveals its region. Expand a path
@@ -94,6 +97,42 @@ Segments are representative samples within grouped regions. Omitted findings and
 incomplete analysis are reported explicitly; a zero count is not proof of perfect
 routing. Without the flag, diagnostics are unavailable and the viewer still works.
 See [diagnostic approximations and limits](layout-diagnostics.md).
+
+## Semantic diagnostics
+
+Generate with `--format html --html-semantic-diagnostics` to embed selected-view
+semantic findings. Without the flag, no semantic record payload is included.
+`--diagnostics` continues to write its existing stderr output independently.
+
+```sh
+planorama plan.json --format html --html-semantic-diagnostics -o diagnostics.html
+planorama --state app=app.json --state network=network.json --format html --html-semantic-diagnostics -o diagnostics.html
+```
+
+**Show semantic diagnostics** opens an offline search and reason-category filter.
+Rows show the full state, address, managed/data mode, current/deposed identity,
+stable reason code, explanation and attribute path when available. Buttons select
+existing spatial cards, logical rows, embedded Routes or lowered relationship
+provenance. Missing navigation targets remain explanatory text. Selection never
+restores CLI-excluded resources or fabricates semantic relationships.
+
+Embedding retains at most 1,000 complete records within a 256 KiB escaped JSON
+budget, including envelope space. Oversized records are omitted whole, preserving
+full identifiers on retained records. Ordering is state, source identity,
+attribute and reason. The panel renders at most 100 matching embedded records;
+search/filter can narrow the result. Embedded omissions and list-limit omissions
+are reported separately. Counts refer to findings, not unique affected resources.
+
+Analysis covers supported state-local rules only; cross-state mapping diagnostics
+remain on stderr. Input completeness, unavailable collection, zero findings,
+unassociated input findings and truncation remain distinct. Unknown scope is
+informational. Only safe identifiers and explanations are embedded, never values,
+provider settings, raw expressions or the plan. See [coverage accounting](coverage.md).
+
+Controls support Tab, Enter and native select/search keyboard operation. Selecting
+a finding focuses its resource; Clear selection, Escape and resource search close
+the panel through the shared viewer lifecycle. Escaping the panel returns focus
+to its toggle. Routing hotspots and semantic diagnostics use separate panels.
 
 ## Conservative impact exploration
 
@@ -181,6 +220,9 @@ stale feature state. Modules receive their dependencies explicitly and return
 small interfaces; their functions remain inside the viewer's private closure.
 `diagnostics.rs` reduces the final report to the bounded HTML bridge;
 `diagnostics.js` consumes it and registers its reset adapter.
+`semantic_diagnostics.rs` bounds selected semantic records and escaped bytes;
+`semantic-diagnostics.js` handles their search, categories and source navigation
+through the same reset lifecycle.
 `impact-graph.js` indexes verified graph metadata and performs bounded traversal;
 `impact.js` owns exploration controls, summaries and transient highlighting.
 
