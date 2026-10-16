@@ -17,6 +17,7 @@ p { line-height: 1.5; }
 #selection { overflow-wrap: anywhere; }
 #selection h2 { font-size: 16px; }
 #selection h3 { font-size: 14px; margin-bottom: 8px; }
+.copy-identity textarea { width: 100%; font: inherit; resize: vertical; }
 #selection ul { padding-left: 18px; }
 #selection li { margin-bottom: 8px; }
 #diagnostics, #semantic-diagnostics { overflow-wrap: anywhere; }
