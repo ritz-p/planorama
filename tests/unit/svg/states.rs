@@ -1,23 +1,5 @@
 use super::*;
 
-fn overview_height(document: &roxmltree::Document<'_>) -> usize {
-    let metadata = document
-        .descendants()
-        .find(|node| node.attribute("data-view-coverage").is_some())
-        .unwrap();
-    metadata
-        .parent()
-        .unwrap()
-        .children()
-        .find(|node| node.has_tag_name("rect"))
-        .unwrap()
-        .attribute("height")
-        .unwrap()
-        .parse::<usize>()
-        .unwrap()
-        + 20
-}
-
 #[test]
 fn account_panels_remain_state_local_and_identical_in_html() {
     let input = include_str!("../../fixtures/accounts-plan.json");
@@ -157,10 +139,7 @@ fn shared_legend_collects_later_state_actions_and_omits_empty_height() {
         .descendants()
         .find(|node| node.has_tag_name("svg") && node.attribute("y").is_some())
         .unwrap();
-    assert_eq!(
-        first.attribute("y").unwrap().parse::<usize>().unwrap(),
-        100 + overview_height(&document)
-    );
+    assert_eq!(first.attribute("y").unwrap().parse::<usize>().unwrap(), 100);
 }
 
 #[test]
@@ -329,10 +308,7 @@ fn cross_state_paths_avoid_intervening_cards_and_describe_dependencies() {
     );
     let (_, height) = sections.dimensions(&local);
     let legend_height = super::super::legend::MeasuredLegend::new(&graph, 1120).height;
-    let overview = super::super::coverage::card(
-        [("first", &graph.coverage), ("second", &graph.coverage)].into_iter(),
-    );
-    let offset = 100 + legend_height + sections.height() + overview.height + 20;
+    let offset = 100 + legend_height + sections.height();
     let obstacles: Vec<_> = [offset, offset + height + 60]
         .into_iter()
         .flat_map(|offset| {
@@ -593,7 +569,7 @@ fn named_states_reflow_indexes_at_shared_width_and_keep_cross_state_offsets() {
     assert_eq!(number(document.root_element(), "width"), width + 80 + 12);
     assert_eq!(
         number(narrow, "y"),
-        100 + legend_shape(document.root_element()).1 + 12 + overview_height(&document)
+        100 + legend_shape(document.root_element()).1 + 12
     );
     assert!(number(narrow, "height") < number(standalone_root, "height"));
     assert_eq!(

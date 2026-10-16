@@ -9,12 +9,16 @@ pub(super) fn run(
     output: &Path,
     format: svg::AddressFormat,
     output_format: super::OutputFormat,
-    diagnostics: (bool, &super::layout_diagnostics::Options),
+    diagnostics: (
+        bool,
+        &super::layout_diagnostics::Options,
+        &super::coverage_report::Options,
+    ),
     mappings: &[crate::model::cross_state::Mapping],
     filter: &crate::view::Options,
 ) -> Result<(), String> {
     let (inputs, provider_plan) = inputs;
-    let (diagnostics, layout_diagnostics) = diagnostics;
+    let (diagnostics, layout_diagnostics, coverage_report) = diagnostics;
     if inputs.values().filter(|path| path.as_str() == "-").count() > 1 {
         return Err("stdin may be used by only one state".into());
     }
@@ -150,6 +154,13 @@ pub(super) fn run(
     drop(composition_timing);
     let _timing = crate::timing::span("output_io", &[("output_bytes", image.len())]);
     layout_diagnostics.write(&report, output)?;
+    coverage_report.write(
+        architecture
+            .states
+            .iter()
+            .map(|(id, graph)| (id.as_str(), &graph.coverage)),
+        filter,
+    )?;
     if output == Path::new("-") {
         io::stdout()
             .write_all(image.as_bytes())

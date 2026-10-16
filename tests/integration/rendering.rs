@@ -504,17 +504,7 @@ fn plan_status_survives_lowering_without_changing_resource_rendering() {
         }
         let start = svg.find("<g id=\"plan-status\"").unwrap();
         let end = start + svg[start..].find("</g>\n").unwrap() + "</g>\n".len();
-        let completeness = if complete { "complete" } else { "incomplete" };
-        assert!(svg.contains(&format!("Input completeness: {completeness};")));
-        let normalized = format!("{}{}", &svg[..start], &svg[end..])
-            .replace(
-                &format!("&quot;input_complete&quot;:{complete}"),
-                "&quot;input_complete&quot;:null",
-            )
-            .replace(
-                &format!("Input completeness: {completeness};"),
-                "Input completeness: unknown;",
-            );
+        let normalized = format!("{}{}", &svg[..start], &svg[end..]);
         assert_eq!(normalized, baseline);
     }
     let svg = render(br#"{"format_version":"1.2","resource_changes":[],"complete":false}"#);
