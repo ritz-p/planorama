@@ -29,8 +29,19 @@ backgrounds and remote logical/spatial references. Its [generation and review
 commands](../examples/multi-account/README.md) use the same inputs as its SVG.
 
 Search matches the complete native and qualified address, architecture identity,
-module, state, resource type, managed/data mode and deposed key. Space-separated
+module, state, resource type, provider source, managed/data mode and deposed key. Space-separated
 terms must all match. Results retain full addresses and state/mode distinctions.
+Action, State and Resource type / provider source each offer a single optional
+filter. All filters and text terms combine with AND; defaults include everything
+in the generated searchable index. Actions are Create, Update, Delete, Replace,
+Read, Unchanged and Other; import, moved and drift are separate metadata, not
+actions. Unknown provider sources are labeled explicitly. Search results have no
+display-count limit: the count reports all matches against the generated index.
+Filters only narrow the result list, leaving diagram geometry, coverage counts
+and existing selection intact. A missing result does not mean a resource was
+removed from Terraform or the diagram. **Reset search and filters** clears all
+text and facets and focuses search; Clear selection/Escape retains them. Facet
+changes reset transient impact and diagnostic overlays like text search does.
 Selecting a result or diagram resource reveals its individual stable target,
 including nested logical-resource rows, embedded Route cards and RDS cluster members.
 Lowered association resources use their visible Relationship Resources entry;
@@ -53,7 +64,8 @@ line patterns, bundles or routing. Clear selection restores their normal styling
 
 | Operation | Controls |
 | --- | --- |
-| Search | Type in the search field; Enter selects the first result |
+| Search | Type text and optionally select action/state/type filters; Enter in search selects the first result |
+| Reset search | Reset search and filters clears text and all three facets |
 | Results | Arrow Down enters results; Up/Down and Home/End navigate; Enter selects |
 | Resource links | Tab to a resource or link, then Enter; clicking also selects |
 | Relationship numbers | Click, or Tab then Enter/Space; endpoint buttons navigate to resources |
@@ -190,8 +202,8 @@ and explicit counts, equally in offline SVG and HTML. Policy and Controller have
 visible explanations in the card heading. See the synthetic
 [all-action example](../examples/logical-actions.svg).
 
-The interactive per-type action filter from #373 is an explicit follow-up. It
-requires coordinated annotation/state/canvas reflow and selection/reference target
+Diagram filtering/reflow from #431 is an explicit follow-up, separate from search
+result facets. It requires coordinated annotation/state/canvas reflow and selection/reference target
 availability, including visible counts and keyboard-accessible controls. The current
 viewer has no runtime layout engine: hiding rows alone would leave stale geometry
 and links. That follow-up must distinguish filtered targets from absent resources
