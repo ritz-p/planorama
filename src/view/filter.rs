@@ -407,7 +407,9 @@ fn selection_reasons(
     options: &Options,
 ) -> crate::coverage::Selection {
     let mut result = crate::coverage::Selection::default();
+    let mut node_indices = BTreeMap::new();
     for (index, node) in graph.nodes.iter().enumerate() {
+        node_indices.entry(&node.entity.id).or_insert(index);
         if let Some(reasons) = reasons.get(&(state.clone(), index)) {
             for id in &node.entity.provenance {
                 result
@@ -422,10 +424,9 @@ fn selection_reasons(
         let endpoints: Vec<_> = [&relationship.from, &relationship.to]
             .into_iter()
             .filter_map(|id| {
-                graph
-                    .nodes
-                    .iter()
-                    .position(|node| &node.entity.id == id)
+                node_indices
+                    .get(id)
+                    .copied()
                     .map(|index| (state.clone(), index))
             })
             .collect();
