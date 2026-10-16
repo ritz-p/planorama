@@ -5,6 +5,20 @@ use std::collections::{BTreeMap, BTreeSet};
 pub(crate) mod report;
 
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
+pub struct Selection {
+    pub reasons: BTreeMap<TerraformEntityId, BTreeSet<&'static str>>,
+}
+
+impl Selection {
+    pub fn direct(&self) -> usize {
+        self.reasons
+            .values()
+            .filter(|reasons| reasons.contains("direct selection"))
+            .count()
+    }
+}
+
+#[derive(Clone, Debug, Default, PartialEq, Eq)]
 pub struct Counts {
     pub resources: usize,
     pub account_applicable: usize,
@@ -33,6 +47,7 @@ pub struct Finding {
 
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
 pub struct Coverage {
+    pub selection: Option<Selection>,
     pub modules: crate::model::modules::Inventory,
     pub embed_findings: bool,
     pub collected: bool,
@@ -185,6 +200,11 @@ impl Coverage {
 
     pub fn retain(&mut self, selected: &BTreeSet<TerraformEntityId>) {
         self.resources.retain(|id, _| selected.contains(id));
+        if let Some(selection) = &mut self.selection {
+            selection
+                .reasons
+                .retain(|id, _| self.resources.contains_key(id));
+        }
         self.findings
             .retain(|finding| selected.contains(&finding.source));
         self.selected = Counts::collect(self.resources.values());

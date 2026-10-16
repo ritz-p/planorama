@@ -1,6 +1,34 @@
 use super::cli;
 
 #[test]
+fn selection_detail_limits_require_report_and_are_bounded() {
+    for args in [
+        vec!["--coverage-selection-details", "1"],
+        vec![
+            "--coverage-report",
+            "unused.md",
+            "--coverage-selection-details",
+            "1001",
+        ],
+        vec![
+            "--coverage-report",
+            "unused.md",
+            "--coverage-selection-details",
+            "-1",
+        ],
+    ] {
+        let output = cli()
+            .arg("tests/fixtures/containment-plan.json")
+            .args(args)
+            .output()
+            .unwrap();
+        assert!(!output.status.success());
+        assert!(output.stdout.is_empty());
+        assert!(String::from_utf8_lossy(&output.stderr).contains("--coverage-selection-details"));
+    }
+}
+
+#[test]
 fn coverage_report_is_opt_in_and_preserves_svg_html_and_diagnostics() {
     let dir = tempfile::tempdir().unwrap();
     let report = dir.path().join("coverage.md");
@@ -36,6 +64,7 @@ fn coverage_report_is_opt_in_and_preserves_svg_html_and_diagnostics() {
             let reported = command()
                 .arg("--coverage-report")
                 .arg(&report)
+                .args(["--coverage-selection-details", "2"])
                 .output()
                 .unwrap();
             assert!(
@@ -55,6 +84,8 @@ fn coverage_report_is_opt_in_and_preserves_svg_html_and_diagnostics() {
             assert!(markdown.starts_with("# Terraform coverage report\n"));
             assert!(markdown.contains("## Whole diagram"));
             assert!(markdown.contains("changed-only"));
+            assert!(markdown.contains("Direct selection:"));
+            assert!(markdown.contains("Omitted selected identities:"));
             if named {
                 assert!(markdown.contains("## State: two"));
             }

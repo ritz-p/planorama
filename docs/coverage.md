@@ -60,10 +60,38 @@ An unavailable collection reports unknown counts rather than zeros; aggregate
 completeness is incomplete if any state is incomplete, otherwise unknown if any
 state has no completeness flag.
 
-The report contains aggregate findings without enumerating resource identities
-or attribute paths. Counts are not truncated. Input-derived state/focus text is
-escaped for Markdown, and content has no timestamps or machine-specific paths.
-Individual selected findings remain available in the optional HTML panel.
+The report contains aggregate findings without attribute paths. Counts are not
+truncated. Input-derived identifiers are escaped for Markdown, and content has no
+timestamps or machine-specific paths. Individual selected findings remain
+available in the optional HTML panel.
+
+Selection reasons are collected only when a coverage report is requested, during
+selection and context closure before projection. Whole-diagram and per-state
+summaries distinguish direct selection (the represented source identities in the
+module/focus/changed-only intersection), additional context, and effective selected
+resources. Input minus effective selected remains excluded, including suppressed
+metadata; direct plus additional context equals effective selected. Logical rows,
+embedded Routes and lowered relationship sources keep their existing accounting.
+
+Reasons include direct selection, containment ancestors, verified Route Table
+ownership, cross-state provenance and lowered relationship representation. An
+already direct resource can also be needed as context, so its reasons overlap;
+reason totals must not be added together. A lowered relationship selected through
+its module can require endpoints outside that module. Focus on a lowered address
+still selects its endpoint representation under the existing focus rules.
+
+`--coverage-selection-details N` adds at most N selected identity rows (0-1000;
+default 0), ordered by state, address and deposed key, with omitted counts. The
+limit applies across all states, not independently to each state. Each row includes
+state, managed/data mode, current/deposed identity and all retention reasons. The
+report never lists excluded identities, invents fragment links, or includes plan
+values, provider settings or raw expressions. This option requires a report.
+
+The [small context example](../examples/selection-coverage.md) can be regenerated:
+
+```sh
+planorama tests/fixtures/containment-plan.json --focus aws_instance.app --focus-depth 0 --coverage-report examples/selection-coverage.md --coverage-selection-details 10 -o output/selection.svg
+```
 
 SVG and HTML diagrams have no coverage summary cards or reserved summary space.
 The report option does not change diagram bytes. Input files, provider evidence,

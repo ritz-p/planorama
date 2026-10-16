@@ -38,6 +38,15 @@ Excluded resource instances: 0.
 
 Unassociated input findings: 0 (included only in input categories).
 
+Direct selection: 6. Additional context: 0. Effective selected: 6.
+
+Direct selection is the represented source-instance intersection before context closure. Additional context is effective selected minus direct selection. Metadata suppressed by projection is excluded, not additional context. Lowered relationship endpoints can be context outside a selected module. Reasons are recorded during selection; one instance can have several reasons, so reason counts overlap.
+
+| Retention reason | Resource instances |
+| --- | ---: |
+| containment ancestor | 2 |
+| direct selection | 6 |
+
 ## State: (single input)
 
 Input completeness: unknown. Analysis: supported rules only.
@@ -64,3 +73,13 @@ Excluded resource instances: 0.
 
 Unassociated input findings: 0 (included only in input categories).
 
+Direct selection: 6. Additional context: 0. Effective selected: 6.
+
+Direct selection is the represented source-instance intersection before context closure. Additional context is effective selected minus direct selection. Metadata suppressed by projection is excluded, not additional context. Lowered relationship endpoints can be context outside a selected module. Reasons are recorded during selection; one instance can have several reasons, so reason counts overlap.
+
+| Retention reason | Resource instances |
+| --- | ---: |
+| containment ancestor | 2 |
+| direct selection | 6 |
+
+Selection identity details are disabled; use --coverage-selection-details N (1-1000) with --coverage-report to include a bounded list.
