@@ -70,3 +70,10 @@ This summary does not combine or change the state-local plan-status flags.
 The `data-view-coverage` metadata carries version 1 counters and per-state totals,
 including explicit named state IDs in local and aggregate summaries, with no
 resource identities. HTML uses the same SVG summary without DOM counting.
+
+The optional `viewer-semantic-diagnostics` JSON bridge has schema version 1 and
+contains only selected findings, each explicitly qualified by state and mode.
+`total`, `omitted` and `records_complete` describe record retention independently
+of `available`, `input_complete` and supported-rule analysis. Fixed explanations
+come from existing diagnostic reasons; [viewer limits](viewer.md#semantic-diagnostics)
+also bound serialized bytes and displayed rows.

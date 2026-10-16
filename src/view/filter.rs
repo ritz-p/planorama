@@ -4,6 +4,7 @@ use std::collections::{BTreeMap, BTreeSet};
 
 #[derive(Default)]
 pub struct Options {
+    pub html_semantic_diagnostics: bool,
     pub icon_mode: crate::icons::IconMode,
     pub changed_only: bool,
     pub focus: Option<String>,
@@ -234,6 +235,7 @@ pub fn apply(all: &Architecture, options: &Options) -> Result<Architecture, Stri
             graph.0.coverage.retain(&represented);
             graph.0.coverage.focused = options.focus.is_some();
             graph.0.coverage.changed_only = options.changed_only;
+            graph.0.coverage.embed_findings = options.html_semantic_diagnostics;
             (state.clone(), graph)
         })
         .collect();
