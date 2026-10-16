@@ -2,6 +2,43 @@ use super::{render, support};
 use serde_json::{Value, json};
 
 #[test]
+fn cache_provider_mismatch_reaches_cli_html_and_coverage_diagnostics() {
+    let mut value: Value =
+        serde_json::from_str(include_str!("../fixtures/elasticache-plan.json")).unwrap();
+    value["configuration"]["provider_config"]["aws.other"] =
+        value["configuration"]["provider_config"]["aws"].clone();
+    value["configuration"]["root_module"]["resources"][4]["provider_config_key"] =
+        json!("aws.other");
+    let directory = tempfile::tempdir().unwrap();
+    let report = directory.path().join("coverage.md");
+    let output = support::run_with_args(
+        value.to_string().as_bytes(),
+        &[
+            "--diagnostics",
+            "--format",
+            "html",
+            "--html-semantic-diagnostics",
+            "--coverage-report",
+            report.to_str().unwrap(),
+        ],
+    );
+    assert!(output.status.success());
+    assert!(
+        String::from_utf8(output.stderr)
+            .unwrap()
+            .contains("provider configuration does not match the referenced endpoint")
+    );
+    let html = String::from_utf8(output.stdout).unwrap();
+    assert!(html.contains("provider_configuration_mismatch"));
+    assert!(!html.contains("TOP_SECRET"));
+    let coverage = std::fs::read_to_string(report).unwrap();
+    assert!(
+        coverage.contains("| unavailable&#95;endpoint | 1 | 1 |"),
+        "{coverage}"
+    );
+}
+
+#[test]
 fn elasticache_named_states_keep_unique_resource_ids() {
     let path = concat!(
         env!("CARGO_MANIFEST_DIR"),

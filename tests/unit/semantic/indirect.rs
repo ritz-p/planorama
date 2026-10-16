@@ -290,6 +290,16 @@ fn elasticache_rejects_different_provider_bindings_and_deployment_scopes() {
                 json!({"constant_value":"us-west-2"});
         }
         let raw = crate::plan::evidence::tests::parse_fixture(&value.to_string()).unwrap();
+        let diagnostics = semantic::diagnostics::collect(&raw);
+        let mismatches: Vec<_> = diagnostics
+            .iter()
+            .filter(|finding| finding.reason == DiagnosticReason::ProviderConfigurationMismatch)
+            .collect();
+        assert_eq!(mismatches.len(), usize::from(case != "same"), "{case}");
+        for finding in mismatches {
+            assert_eq!(finding.address, "aws_elasticache_replication_group.main");
+            assert_eq!(finding.attribute, "subnet_group_name");
+        }
         let graph = semantic::transform(&raw);
         let target = graph
             .nodes

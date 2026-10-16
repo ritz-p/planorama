@@ -218,6 +218,16 @@ pub fn collect(plan: &crate::model::TerraformPlan) -> Vec<Diagnostic> {
                 } else {
                     Reason::MultipleMatchingInstances
                 }),
+                Some(r)
+                    if node.resource_type == "aws_elasticache_replication_group"
+                        && attribute == "subnet_group_name"
+                        && !super::containment::group_configuration_matches(
+                            node,
+                            &raw.nodes[r.sources[0]],
+                        ) =>
+                {
+                    Some(Reason::ProviderConfigurationMismatch)
+                }
                 _ => None,
             };
             if let Some(reason) = reason {

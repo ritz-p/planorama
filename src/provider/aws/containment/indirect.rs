@@ -35,8 +35,7 @@ pub(in crate::provider::aws) fn resolved_subnets(raw: &Input, target: usize) -> 
     if group_node.resource_type != group_type
         || !group_node.provider.is_aws()
         || (raw.nodes[target].resource_type == "aws_elasticache_replication_group"
-            && (group_node.provider_configuration != raw.nodes[target].provider_configuration
-                || group_node.entity.scope != raw.nodes[target].entity.scope))
+            && !group_configuration_matches(&raw.nodes[target], group_node))
     {
         return None;
     }
@@ -50,6 +49,14 @@ pub(in crate::provider::aws) fn resolved_subnets(raw: &Input, target: usize) -> 
                 && raw.nodes[source].role == ResourceRole::Container
         })
         .then_some(subnets.sources.as_slice())
+}
+
+pub(in crate::provider::aws) fn group_configuration_matches(
+    child: &crate::model::Node,
+    group: &crate::model::Node,
+) -> bool {
+    child.provider_configuration == group.provider_configuration
+        && child.entity.scope == group.entity.scope
 }
 
 fn group_rule(resource_type: &str) -> Option<(&'static str, &'static str)> {

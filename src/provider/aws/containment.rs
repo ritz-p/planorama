@@ -2,7 +2,7 @@ use crate::model::{EdgeKind, EntityMode, Graph, ResourceRole};
 use crate::semantic::Input;
 use std::collections::BTreeSet;
 mod indirect;
-pub(super) use indirect::resolved_subnets;
+pub(super) use indirect::{group_configuration_matches, resolved_subnets};
 mod spanning;
 mod vpc_scope;
 pub(super) use vpc_scope::attribute as vpc_scope_attribute;
