@@ -187,6 +187,98 @@ class ViewerTests(unittest.TestCase):
             Select(self.find('#search-action')).select_by_value('unchanged')
             self.assertIn('0 of 1', self.find('#result-count').text)
 
+    def test_selection_history_restores_resources_relationships_provenance_and_viewports(self):
+        self.load('tests/fixtures/association-plan.json', '--html-diagnostics', '--html-semantic-diagnostics')
+        self.assertFalse(self.find('#selection-back').is_enabled())
+        self.assertFalse(self.find('#selection-forward').is_enabled())
+        visits = []
+        for address in ['aws_subnet.private', 'aws_route_table.private']:
+            selected = self.choose(address)
+            self.find('#zoom-in').click()
+            self.find('[data-viewer-selected]').send_keys(Keys.ARROW_RIGHT)
+            visits.append((selected, self.view_box()))
+        self.find('[data-relationship-entry] [data-relationship-select]').send_keys(Keys.ENTER)
+        self.find('#zoom-out').click()
+        visits.append((self.find('[data-viewer-selected]').get_attribute('id'), self.view_box()))
+        self.find('#selection ul button').send_keys(Keys.ENTER)
+        visits.append((self.find('[data-viewer-selected]').get_attribute('id'), self.view_box()))
+        self.find('#impact-associations').click()
+        self.find('#impact-explore').click()
+        self.assertTrue(self.driver.find_elements(By.CSS_SELECTOR, '[data-impact-hop]'))
+        for selected, box in reversed(visits[:-1]):
+            self.find('#selection-back').send_keys(Keys.ENTER)
+            self.assertEqual(self.find('[data-viewer-selected]').get_attribute('id'), selected)
+            self.assertEqual(self.driver.switch_to.active_element.get_attribute('id'), selected)
+            self.assertEqual(self.view_box(), box)
+            self.assertFalse(self.driver.find_elements(By.CSS_SELECTOR, '[data-impact-hop], [data-impact-edge]'))
+        self.assertFalse(self.find('#selection-back').is_enabled())
+        for selected, box in visits[1:]:
+            self.find('#selection-forward').send_keys(Keys.ENTER)
+            self.assertEqual(self.find('[data-viewer-selected]').get_attribute('id'), selected)
+            self.assertEqual(self.view_box(), box)
+        self.assertFalse(self.find('#selection-forward').is_enabled())
+        self.choose('aws_route_table_association.private')
+        provenance = self.find('[data-viewer-selected]').get_attribute('id')
+        self.find('#selection-back').click()
+        self.find('#hotspot-toggle').click()
+        self.assertTrue(self.driver.find_elements(By.CSS_SELECTOR, '[data-hotspot-overlay]'))
+        self.find('#selection-forward').click()
+        self.assertEqual(self.find('[data-viewer-selected]').get_attribute('id'), provenance)
+        self.assertFalse(self.driver.find_elements(By.CSS_SELECTOR, '[data-hotspot-overlay]'))
+        self.find('#selection-back').click()
+        self.find('#semantic-toggle').click()
+        self.find('#selection-forward').click()
+        self.assertEqual(self.find('#semantic-toggle').get_attribute('aria-expanded'), 'false')
+        self.assertEqual(self.find('[data-viewer-selected]').get_attribute('id'), provenance)
+
+    def test_selection_history_branching_bounds_missing_targets_and_keyboard_reset(self):
+        self.load('--state', 'one=tests/fixtures/deposed-plan.json', '--state', 'two=tests/fixtures/deposed-plan.json')
+        resources = self.driver.execute_script("return JSON.parse(document.getElementById('viewer-data').textContent)")
+        old = next(r for r in resources if r['state'] == 'one' and r['deposed'])
+        current = next(r for r in resources if r['state'] == 'one' and not r['deposed'] and r['address'] == old['address'])
+        other = next(r for r in resources if r['state'] == 'two' and r['deposed'] == old['deposed'] and r['address'] == old['address'])
+        def click_id(identifier):
+            self.driver.execute_script("document.getElementById(arguments[0]).dispatchEvent(new MouseEvent('click', {bubbles:true}))", identifier)
+        for resource in [old, current, other]:
+            click_id(resource['id'])
+        self.assertIn('3 of 3', self.find('#history-status').text)
+        click_id(other['id'])
+        self.find('#zoom-in').click()
+        self.assertIn('3 of 3', self.find('#history-status').text)
+        self.find('#selection-back').click()
+        self.assertEqual(self.find('[data-viewer-selected]').get_attribute('id'), current['id'])
+        click_id(current['id'])
+        self.assertIn('2 of 3', self.find('#history-status').text)
+        self.assertTrue(self.find('#selection-forward').is_enabled())
+        self.find('#selection-back').click()
+        self.assertEqual(self.find('[data-viewer-selected]').get_attribute('id'), old['id'])
+        self.find('#search-reset').click()
+        self.find('#fit').click()
+        self.assertTrue(self.find('#selection-forward').is_enabled())
+        click_id(other['id'])
+        self.assertIn('2 of 2', self.find('#history-status').text)
+        self.assertFalse(self.find('#selection-forward').is_enabled())
+        prevented = self.driver.execute_script("""
+            const event = new KeyboardEvent('keydown', {key:'ArrowLeft', altKey:true, bubbles:true, cancelable:true});
+            document.querySelector('[data-viewer-selected]').dispatchEvent(event);
+            return event.defaultPrevented;
+        """)
+        self.assertFalse(prevented)
+        self.driver.execute_script("document.getElementById(arguments[0]).remove()", old['id'])
+        self.find('#selection-back').click()
+        self.assertEqual(self.find('[data-viewer-selected]').get_attribute('id'), other['id'])
+        self.assertFalse(self.find('#selection-back').is_enabled())
+        self.find('#clear').click()
+        self.assertEqual(self.find('#history-status').text, 'No selection history')
+        self.driver.execute_script("""
+            for (let i=0; i<105; i++) document.getElementById(arguments[i%2]).dispatchEvent(new MouseEvent('click', {bubbles:true}));
+        """, current['id'], other['id'])
+        self.assertEqual(self.find('#history-status').text, 'Selection 100 of 100')
+        self.find('#search').send_keys(Keys.ESCAPE)
+        self.assertFalse(self.find('#selection-back').is_enabled())
+        self.assertFalse(self.find('#selection-forward').is_enabled())
+        self.assertFalse(self.driver.find_elements(By.CSS_SELECTOR, '[data-viewer-selected]'))
+
     def test_service_names_have_space_in_named_state_resource_rows(self):
         self.load('--state', 'services=tests/fixtures/data-icons-plan.json',
                   '--state', 'builtin=tests/fixtures/terraform-plan.json',

@@ -47,6 +47,7 @@ function navigation(svg, viewport, byId) {
     else { const scale = 1 / svg.getScreenCTM().a; box[0] += event.deltaX * scale; box[1] += event.deltaY * scale; updateView(); }
   }, { passive: false });
   function keydown(event) {
+    if (event.altKey || event.ctrlKey || event.metaKey) return;
     const shifts = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] };
     if (shifts[event.key]) { event.preventDefault(); box[0] += shifts[event.key][0] * box[2] / 10; box[1] += shifts[event.key][1] * box[3] / 10; updateView(); }
     if (event.key === '+' || event.key === '=') { event.preventDefault(); zoom(.8); }
@@ -54,5 +55,8 @@ function navigation(svg, viewport, byId) {
     if (event.key.toLowerCase() === 'f') { event.preventDefault(); fit(); }
   }
 
-  return { fit, zoom, reveal, updateView, keydown, wasDragged: () => dragged };
+  function restore(saved) {
+    box = saved.slice(); updateView();
+  }
+  return { fit, zoom, reveal, updateView, keydown, snapshot: () => box.slice(), restore, wasDragged: () => dragged };
 }
