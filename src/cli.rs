@@ -7,16 +7,18 @@ mod files;
 mod layout_diagnostics;
 mod modules;
 mod provider_plan;
+mod settings;
 mod states;
 
-#[derive(Clone, Copy, Default)]
+#[derive(Clone, Copy, Default, serde::Deserialize)]
+#[serde(rename_all = "kebab-case")]
 pub(super) enum OutputFormat {
     #[default]
     Svg,
     Html,
 }
 
-const HELP: &str = "planorama — Terraform plan JSON → SVG / HTML (pure Rust)\n\nUsage: planorama <plan.json | -> [--format svg|html] [-o <path | ->] [--address-format qualified|terraform] [--diagnostics]\n\n  -o, --output PATH   Output file (default: diagram.svg or diagram.html); '-' for stdout\n  --format FORMAT    Output format: svg (default) or self-contained html\n  --hide-relationship-legend  Omit relationship explanations; keep action colors\n  --icon-mode MODE   Service display: icon (default) or service-name\n  --address-format FORMAT  Resource labels: qualified (default) or terraform\n  --provider-plan PATH  Verify accounts against a saved Terraform 1.9.8 / AWS 5.100.0 plan\n  --state-provider-plan ID=PATH  Saved plan evidence for one named state\n  --list-modules     List original module instances/counts; stdout by default; no diagram\n  --modules ADDRESS...  Select module subtrees (repeatable; STATE:ADDRESS for named states)\n  --changed-only     Retain changes and required context\n  --focus ADDRESS    Select a resource (STATE:ADDRESS for named states)\n  --focus-depth N    Neighbor depth (default: 1; requires --focus)\n  --remote-state CONSUMER:ADDRESS=PRODUCER  Map a named remote-state data source\n  --timings          Report generation stage timings on stderr\n  --diagnostics      Explain unresolved references and semantic fallbacks on stderr\n  --html-diagnostics  Include bounded routing hotspots (requires --format html)\n  --html-semantic-diagnostics  Include bounded semantic findings (requires --format html)\n  --coverage-report PATH  Write a separate Markdown coverage report\n  --coverage-selection-details N  Include up to N selected identities/reasons (0-1000; requires report)\n  --layout-diagnostics  Report final layout quality on stderr\n  --layout-diagnostics-json PATH  Write a versioned layout report to a separate JSON file\n  -h, --help          Show help\n  -V, --version       Show version\n\nInput: terraform show -json <saved-plan> (not terraform plan -json).\nJSON-only inputs leave AWS accounts unknown. Provider evidence requires Terraform and initialized schemas.\nLines show reference or architectural relationships; containment uses nested boxes.\nAttribute values are never included in the diagram.\n";
+const HELP: &str = "planorama — Terraform plan JSON → SVG / HTML (pure Rust)\n\nUsage: planorama <plan.json | -> [--format svg|html] [-o <path | ->] [--address-format qualified|terraform] [--diagnostics]\n\n  -o, --output PATH   Output file (default: diagram.svg or diagram.html); '-' for stdout\n  --config PATH      Load explicit TOML generation settings\n  --preset NAME      Select a named preset (requires --config)\n  --no-<BOOLEAN>     Disable a boolean generation option\n  --no-modules       Clear configured module selection\n  --no-focus         Clear configured focus and inherited depth\n  --format FORMAT    Output format: svg (default) or self-contained html\n  --hide-relationship-legend  Omit relationship explanations; keep action colors\n  --icon-mode MODE   Service display: icon (default) or service-name\n  --address-format FORMAT  Resource labels: qualified (default) or terraform\n  --provider-plan PATH  Verify accounts against a saved Terraform 1.9.8 / AWS 5.100.0 plan\n  --state-provider-plan ID=PATH  Saved plan evidence for one named state\n  --list-modules     List original module instances/counts; stdout by default; no diagram\n  --modules ADDRESS...  Select module subtrees (repeatable; STATE:ADDRESS for named states)\n  --changed-only     Retain changes and required context\n  --focus ADDRESS    Select a resource (STATE:ADDRESS for named states)\n  --focus-depth N    Neighbor depth (default: 1; requires --focus)\n  --remote-state CONSUMER:ADDRESS=PRODUCER  Map a named remote-state data source\n  --timings          Report generation stage timings on stderr\n  --diagnostics      Explain unresolved references and semantic fallbacks on stderr\n  --html-diagnostics  Include bounded routing hotspots (requires --format html)\n  --html-semantic-diagnostics  Include bounded semantic findings (requires --format html)\n  --coverage-report PATH  Write a separate Markdown coverage report\n  --coverage-selection-details N  Include up to N selected identities/reasons (0-1000; requires report)\n  --layout-diagnostics  Report final layout quality on stderr\n  --layout-diagnostics-json PATH  Write a versioned layout report to a separate JSON file\n  -h, --help          Show help\n  -V, --version       Show version\n\nInput: terraform show -json <saved-plan> (not terraform plan -json).\nJSON-only inputs leave AWS accounts unknown. Provider evidence requires Terraform and initialized schemas.\nLines show reference or architectural relationships; containment uses nested boxes.\nAttribute values are never included in the diagram.\n";
 
 pub(crate) fn run() -> Result<(), String> {
     let mut input = None;
@@ -33,15 +35,36 @@ pub(crate) fn run() -> Result<(), String> {
     let mut layout_diagnostics = layout_diagnostics::Options::default();
     let mut coverage_report = coverage_report::Options::default();
     let mut filter = crate::view::Options::default();
+    let mut config = None;
+    let mut preset = None;
+    let mut settings = settings::Generation::default();
     let mut args = std::env::args().skip(1).peekable();
     while let Some(arg) = args.next() {
         if arg != "-" && arg.starts_with('-') {
             specified.push(arg.clone());
         }
         match arg.as_str() {
+            "--config" => {
+                if config
+                    .replace(args.next().ok_or("--config requires PATH")?)
+                    .is_some()
+                {
+                    return Err("duplicate --config".into());
+                }
+            }
+            "--preset" => {
+                if preset
+                    .replace(args.next().ok_or("--preset requires NAME")?)
+                    .is_some()
+                {
+                    return Err("duplicate --preset".into());
+                }
+            }
+            "--no-modules" => settings.modules = Some(Vec::new()),
+            "--no-focus" => settings.focus = Some(Vec::new()),
             "--list-modules" => list_modules = true,
             "--icon-mode" => {
-                filter.icon_mode = match args.next().as_deref() {
+                settings.icon_mode = Some(match args.next().as_deref() {
                     Some("icon") => crate::icons::IconMode::Icon,
                     Some("service-name") => crate::icons::IconMode::ServiceName,
                     Some(value) => {
@@ -50,7 +73,7 @@ pub(crate) fn run() -> Result<(), String> {
                         ));
                     }
                     None => return Err("--icon-mode requires icon or service-name".into()),
-                };
+                });
             }
             "--provider-plan" => {
                 provider_plan.single(args.next().ok_or("--provider-plan requires PATH")?)?
@@ -61,7 +84,7 @@ pub(crate) fn run() -> Result<(), String> {
                     .ok_or("--state-provider-plan requires ID=PATH")?,
             )?,
             "--format" => {
-                output_format = match args.next().as_deref() {
+                settings.format = Some(match args.next().as_deref() {
                     Some("svg") => OutputFormat::Svg,
                     Some("html") => OutputFormat::Html,
                     Some(value) => {
@@ -70,22 +93,27 @@ pub(crate) fn run() -> Result<(), String> {
                         ));
                     }
                     None => return Err("--format requires svg or html".into()),
-                };
+                });
             }
-            "--hide-relationship-legend" => render_options.hide_relationship_legend = true,
-            "--changed-only" => filter.changed_only = true,
+            "--hide-relationship-legend" => settings.hide_relationship_legend = Some(true),
+            "--no-hide-relationship-legend" => settings.hide_relationship_legend = Some(false),
+            "--changed-only" => settings.changed_only = Some(true),
+            "--no-changed-only" => settings.changed_only = Some(false),
             "--modules" => {
-                let start = filter.modules.len();
+                let modules = settings.modules.get_or_insert_with(Vec::new);
+                let start = modules.len();
                 while args.peek().is_some_and(|value| !value.starts_with('-')) {
-                    filter.modules.push(args.next().unwrap());
+                    modules.push(args.next().unwrap());
                 }
-                if filter.modules.len() == start {
+                if modules.len() == start {
                     return Err("--modules requires one or more module addresses".into());
                 }
             }
-            "--focus" => filter.focus = Some(args.next().ok_or("--focus requires an address")?),
+            "--focus" => {
+                settings.focus = Some(vec![args.next().ok_or("--focus requires an address")?])
+            }
             "--focus-depth" => {
-                filter.depth = Some(
+                settings.focus_depth = Some(
                     args.next()
                         .ok_or("--focus-depth requires a nonnegative integer")?
                         .parse()
@@ -109,11 +137,16 @@ pub(crate) fn run() -> Result<(), String> {
                 }
                 state_inputs.insert(id, path.to_owned());
             }
-            "--diagnostics" => diagnostics = true,
-            "--timings" => timings = true,
-            "--html-diagnostics" => layout_diagnostics.html = true,
-            "--html-semantic-diagnostics" => filter.html_semantic_diagnostics = true,
-            "--layout-diagnostics" => layout_diagnostics.text = true,
+            "--diagnostics" => settings.diagnostics = Some(true),
+            "--no-diagnostics" => settings.diagnostics = Some(false),
+            "--timings" => settings.timings = Some(true),
+            "--no-timings" => settings.timings = Some(false),
+            "--html-diagnostics" => settings.html_diagnostics = Some(true),
+            "--no-html-diagnostics" => settings.html_diagnostics = Some(false),
+            "--html-semantic-diagnostics" => settings.html_semantic_diagnostics = Some(true),
+            "--no-html-semantic-diagnostics" => settings.html_semantic_diagnostics = Some(false),
+            "--layout-diagnostics" => settings.layout_diagnostics = Some(true),
+            "--no-layout-diagnostics" => settings.layout_diagnostics = Some(false),
             "--coverage-report" => {
                 if coverage_report
                     .path
@@ -156,7 +189,7 @@ pub(crate) fn run() -> Result<(), String> {
                 ))
             }
             "--address-format" => {
-                render_options.address_format = match args.next().as_deref() {
+                settings.address_format = Some(match args.next().as_deref() {
                     Some("qualified") => svg::AddressFormat::Qualified,
                     Some("terraform") => svg::AddressFormat::Terraform,
                     Some(value) => {
@@ -165,7 +198,7 @@ pub(crate) fn run() -> Result<(), String> {
                         ));
                     }
                     None => return Err("--address-format requires qualified or terraform".into()),
-                };
+                });
             }
             _ if arg != "-" && arg.starts_with('-') => {
                 return Err(format!("unknown option: {arg}"));
@@ -175,6 +208,46 @@ pub(crate) fn run() -> Result<(), String> {
                 None => continue,
             },
         }
+    }
+    let settings = settings::load(config.as_deref(), preset.as_deref())?.overlay(settings);
+    if let Some(value) = settings.format {
+        output_format = value;
+    }
+    if let Some(value) = settings.icon_mode {
+        filter.icon_mode = value;
+    }
+    if let Some(value) = settings.address_format {
+        render_options.address_format = value;
+    }
+    if let Some(value) = settings.hide_relationship_legend {
+        render_options.hide_relationship_legend = value;
+    }
+    if let Some(value) = settings.changed_only {
+        filter.changed_only = value;
+    }
+    if let Some(value) = settings.modules {
+        filter.modules = value;
+    }
+    if let Some(value) = settings.focus {
+        filter.focus = value.into_iter().next();
+    }
+    if let Some(value) = settings.focus_depth {
+        filter.depth = Some(value);
+    }
+    if let Some(value) = settings.diagnostics {
+        diagnostics = value;
+    }
+    if let Some(value) = settings.timings {
+        timings = value;
+    }
+    if let Some(value) = settings.html_diagnostics {
+        layout_diagnostics.html = value;
+    }
+    if let Some(value) = settings.html_semantic_diagnostics {
+        filter.html_semantic_diagnostics = value;
+    }
+    if let Some(value) = settings.layout_diagnostics {
+        layout_diagnostics.text = value;
     }
     let timing = crate::timing::Session::start(timings);
     filter.explain_selection = coverage_report.path.is_some();
@@ -189,7 +262,7 @@ pub(crate) fn run() -> Result<(), String> {
         for option in &specified {
             if !matches!(
                 option.as_str(),
-                "--list-modules" | "--state" | "-o" | "--output" | "--timings"
+                "--list-modules" | "--state" | "-o" | "--output" | "--timings" | "--no-timings"
             ) {
                 return Err(format!(
                     "--list-modules cannot be combined with {option}; it lists the original input"
@@ -205,6 +278,15 @@ pub(crate) fn run() -> Result<(), String> {
             OutputFormat::Html => "diagram.html",
         })
     });
+    if let Some(config) = &config {
+        for destination in std::iter::once(output.as_path())
+            .chain(layout_diagnostics.json.as_deref())
+            .chain(coverage_report.path.as_deref())
+            .filter(|path| *path != Path::new("-"))
+        {
+            files::reject_same_file(Path::new(config), destination)?;
+        }
+    }
     if layout_diagnostics.html && !matches!(output_format, OutputFormat::Html) {
         return Err("--html-diagnostics requires --format html".into());
     }

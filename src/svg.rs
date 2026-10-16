@@ -36,7 +36,8 @@ use crate::model::architecture::{Action, EdgeKind, Graph};
 use std::fmt::Write;
 use style::{color, label, shorten};
 
-#[derive(Clone, Copy, Default)]
+#[derive(Clone, Copy, Default, serde::Deserialize)]
+#[serde(rename_all = "kebab-case")]
 pub enum AddressFormat {
     #[default]
     Qualified,

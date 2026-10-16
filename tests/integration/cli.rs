@@ -1,3 +1,4 @@
+mod configuration;
 mod coverage_report;
 mod filtering;
 mod html;
