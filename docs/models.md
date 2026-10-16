@@ -9,7 +9,9 @@ address remain distinct. Before/after values and sensitive import identities are
 not stored. Collection/scalar identity proofs are boolean facts, not raw values.
 Subscription endpoint evidence similarly retains only ARN equality and a boolean
 protocol/type compatibility proof. Event-source mappings also retain a boolean
-function-name/ARN equality proof. See [messaging rules](aws.md#sns-subscriptions).
+function-name/ARN equality proof. EventBridge targets retain a boolean Rule-name
+and bus-context proof plus endpoint ARN equality; raw values are discarded.
+See [messaging rules](aws.md#sns-subscriptions) and [EventBridge targets](aws.md#eventbridge-targets).
 
 Route entries retain validated, nonsensitive configuration destination constants
 and safe target identities. `Node.routes` holds presentation ownership, inline

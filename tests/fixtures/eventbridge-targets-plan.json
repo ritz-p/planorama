@@ -1,0 +1,342 @@
+{
+  "format_version": "1.2",
+  "resource_changes": [
+    {
+      "address": "aws_cloudwatch_event_bus.events",
+      "type": "aws_cloudwatch_event_bus",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "events",
+          "arn": "arn:aws:events:ap-northeast-1:123456789012:event-bus/events"
+        }
+      }
+    },
+    {
+      "address": "aws_cloudwatch_event_rule.jobs",
+      "type": "aws_cloudwatch_event_rule",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "update"
+        ],
+        "after": {
+          "name": "jobs",
+          "event_bus_name": "events"
+        }
+      }
+    },
+    {
+      "address": "aws_cloudwatch_event_rule.default",
+      "type": "aws_cloudwatch_event_rule",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "name": "default-rule",
+          "event_bus_name": "default"
+        }
+      }
+    },
+    {
+      "address": "data.aws_cloudwatch_event_bus.archive",
+      "type": "aws_cloudwatch_event_bus",
+      "mode": "data",
+      "change": {
+        "actions": [
+          "read"
+        ],
+        "after": {
+          "name": "archive"
+        }
+      }
+    },
+    {
+      "address": "aws_sqs_queue.jobs",
+      "type": "aws_sqs_queue",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "update"
+        ],
+        "after": {
+          "arn": "queue-proof"
+        }
+      }
+    },
+    {
+      "address": "aws_lambda_function.worker",
+      "type": "aws_lambda_function",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "arn": "function-proof"
+        }
+      }
+    },
+    {
+      "address": "data.aws_sqs_queue.archive",
+      "type": "aws_sqs_queue",
+      "mode": "data",
+      "change": {
+        "actions": [
+          "read"
+        ],
+        "after": {
+          "arn": "archive-proof"
+        }
+      }
+    },
+    {
+      "address": "aws_cloudwatch_event_target.jobs",
+      "type": "aws_cloudwatch_event_target",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "rule": "jobs",
+          "event_bus_name": "events",
+          "arn": "queue-proof"
+        }
+      }
+    },
+    {
+      "address": "aws_cloudwatch_event_target.worker",
+      "type": "aws_cloudwatch_event_target",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "update"
+        ],
+        "after": {
+          "rule": "jobs",
+          "event_bus_name": "events",
+          "arn": "function-proof"
+        }
+      }
+    },
+    {
+      "address": "aws_cloudwatch_event_target.archive",
+      "type": "aws_cloudwatch_event_target",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "rule": "jobs",
+          "event_bus_name": "events",
+          "arn": "archive-proof"
+        }
+      }
+    },
+    {
+      "address": "aws_cloudwatch_event_target.unsupported",
+      "type": "aws_cloudwatch_event_target",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "rule": "jobs",
+          "event_bus_name": "events",
+          "arn": "arn:aws:events:ap-northeast-1:123456789012:event-bus/events"
+        }
+      }
+    },
+    {
+      "address": "aws_cloudwatch_event_target.literal",
+      "type": "aws_cloudwatch_event_target",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "rule": "jobs",
+          "event_bus_name": "events",
+          "arn": "queue-proof"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "full_name": "hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "ap-northeast-1"
+          }
+        }
+      },
+      "aws.archive": {
+        "full_name": "hashicorp/aws",
+        "alias": "archive",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_cloudwatch_event_bus.events",
+          "provider_config_key": "aws"
+        },
+        {
+          "address": "aws_cloudwatch_event_rule.jobs",
+          "provider_config_key": "aws",
+          "expressions": {
+            "event_bus_name": {
+              "references": [
+                "aws_cloudwatch_event_bus.events.name"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_cloudwatch_event_rule.default",
+          "provider_config_key": "aws",
+          "expressions": {
+            "event_bus_name": {
+              "constant_value": "default"
+            }
+          }
+        },
+        {
+          "address": "data.aws_cloudwatch_event_bus.archive",
+          "provider_config_key": "aws.archive"
+        },
+        {
+          "address": "aws_sqs_queue.jobs",
+          "provider_config_key": "aws"
+        },
+        {
+          "address": "aws_lambda_function.worker",
+          "provider_config_key": "aws"
+        },
+        {
+          "address": "data.aws_sqs_queue.archive",
+          "provider_config_key": "aws.archive"
+        },
+        {
+          "address": "aws_cloudwatch_event_target.jobs",
+          "provider_config_key": "aws",
+          "expressions": {
+            "rule": {
+              "references": [
+                "aws_cloudwatch_event_rule.jobs.name"
+              ]
+            },
+            "event_bus_name": {
+              "references": [
+                "aws_cloudwatch_event_bus.events.name"
+              ]
+            },
+            "arn": {
+              "references": [
+                "aws_sqs_queue.jobs.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_cloudwatch_event_target.worker",
+          "provider_config_key": "aws",
+          "expressions": {
+            "rule": {
+              "references": [
+                "aws_cloudwatch_event_rule.jobs.name"
+              ]
+            },
+            "event_bus_name": {
+              "references": [
+                "aws_cloudwatch_event_bus.events.name"
+              ]
+            },
+            "arn": {
+              "references": [
+                "aws_lambda_function.worker.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_cloudwatch_event_target.archive",
+          "provider_config_key": "aws",
+          "expressions": {
+            "rule": {
+              "references": [
+                "aws_cloudwatch_event_rule.jobs.name"
+              ]
+            },
+            "event_bus_name": {
+              "references": [
+                "aws_cloudwatch_event_bus.events.name"
+              ]
+            },
+            "arn": {
+              "references": [
+                "data.aws_sqs_queue.archive.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_cloudwatch_event_target.unsupported",
+          "provider_config_key": "aws",
+          "expressions": {
+            "rule": {
+              "references": [
+                "aws_cloudwatch_event_rule.jobs.name"
+              ]
+            },
+            "event_bus_name": {
+              "references": [
+                "aws_cloudwatch_event_bus.events.name"
+              ]
+            },
+            "arn": {
+              "references": [
+                "aws_cloudwatch_event_bus.events.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_cloudwatch_event_target.literal",
+          "provider_config_key": "aws",
+          "expressions": {
+            "rule": {
+              "references": [
+                "aws_cloudwatch_event_rule.jobs.name"
+              ]
+            },
+            "event_bus_name": {
+              "references": [
+                "aws_cloudwatch_event_bus.events.name"
+              ]
+            },
+            "arn": {
+              "constant_value": "queue-proof"
+            }
+          }
+        }
+      ]
+    }
+  }
+}

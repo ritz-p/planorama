@@ -2,6 +2,8 @@ use crate::model::{AttributeReference, TerraformEntity};
 use serde_json::Value;
 use std::collections::BTreeMap;
 
+mod eventbridge;
+
 #[cfg(test)]
 #[path = "../../tests/unit/plan/collections.rs"]
 mod tests;
@@ -142,12 +144,14 @@ pub(super) fn annotate(
             (value, &Value::Null)
         })
         .collect();
+    let buses = eventbridge::bus_references(references);
     for reference in references {
         let consumer = &nodes[reference.target];
         let evidence = if consumer.provider.is_aws()
             && matches!(
                 consumer.resource_type.as_str(),
                 "aws_sns_topic_subscription"
+                    | "aws_cloudwatch_event_target"
                     | "aws_lambda_event_source_mapping"
                     | "aws_rds_cluster_instance"
             )
@@ -158,6 +162,13 @@ pub(super) fn annotate(
             &evidence
         };
         let alarm = &nodes[reference.target];
+        if alarm.provider.is_aws()
+            && alarm.resource_type == "aws_cloudwatch_event_target"
+            && reference.attribute == "rule"
+        {
+            reference.messaging_endpoint_verified =
+                eventbridge::rule_verified(reference, nodes, evidence, &buses);
+        }
         if alarm.provider.is_aws()
             && alarm.resource_type == "aws_cloudwatch_metric_alarm"
             && matches!(

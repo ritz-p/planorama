@@ -53,9 +53,9 @@ pub(super) fn placement(resource_type: &str) -> crate::model::Placement {
         | "aws_autoscaling_policy"
         | "aws_ami"
         | "aws_launch_template" => crate::model::Placement::Logical,
-        "aws_sns_topic_subscription" | "aws_lambda_event_source_mapping" => {
-            crate::model::Placement::Logical
-        }
+        "aws_sns_topic_subscription"
+        | "aws_lambda_event_source_mapping"
+        | "aws_cloudwatch_event_target" => crate::model::Placement::Logical,
         _ if classify(resource_type) != crate::model::ResourceRole::Unknown => {
             crate::model::Placement::Spatial
         }

@@ -7,7 +7,7 @@ address selects its two endpoints. Unknown or ambiguous addresses are errors;
 for named states use `--focus STATE:ADDRESS` to disambiguate identical addresses.
 An address shared by current and deposed objects is ambiguous.
 
-SNS subscriptions and Lambda event-source mappings retain a logical row, so focusing either at depth zero
+SNS subscriptions, Lambda event-source mappings and EventBridge targets retain a logical row, so focusing one at depth zero
 selects that row. Its verified endpoint links become unavailable if the endpoints
 are excluded. Ordinary neighbor expansion includes its referenced endpoints;
 messaging paths require both displayed endpoints.

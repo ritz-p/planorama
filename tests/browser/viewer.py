@@ -435,6 +435,9 @@ class ViewerTests(unittest.TestCase):
     def test_event_source_navigation_retains_provenance_and_endpoint_direction(self):
         self.check_messaging_navigation('event-sources', 'aws_lambda_event_source_mapping.jobs', 'eventsource')
 
+    def test_event_target_navigation_retains_provenance_and_endpoint_direction(self):
+        self.check_messaging_navigation('eventbridge-targets', 'aws_cloudwatch_event_target.jobs', 'eventtarget')
+
     def check_messaging_navigation(self, fixture, address, kind):
         self.load(f'tests/fixtures/{fixture}-plan.json')
         self.choose(address)

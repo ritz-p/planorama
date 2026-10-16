@@ -130,6 +130,7 @@ pub(super) fn title(graph: &Graph, edge: &Edge, semantic_edges: bool) -> String 
         EdgeKind::Association => "association",
         EdgeKind::Subscription => "subscription",
         EdgeKind::EventSource => "event source",
+        EdgeKind::EventTarget => "event target",
         EdgeKind::Connection => "connection",
         EdgeKind::Containment => "containment",
     };

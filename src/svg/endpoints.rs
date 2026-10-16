@@ -45,6 +45,7 @@ pub(super) fn render(graph: &Graph, layout: &Layout<'_>) -> String {
                 | EdgeKind::Connection
                 | EdgeKind::Subscription
                 | EdgeKind::EventSource
+                | EdgeKind::EventTarget
         ) {
             let end = path[path.len() - 1];
             svg.push_str(&circle(end, "target", stroke));
