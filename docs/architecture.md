@@ -20,6 +20,8 @@ runtime layout measurements. The CLI owns the separate report destination.
 The optional [Markdown coverage report](coverage.md) consumes shared accounting
 after selection. Its output destination uses the same alias protection as layout
 reports; coverage reporting does not participate in SVG composition.
+Selection records optional retention reasons during filtering and context closure;
+the report reads them from shared coverage accounting, without altering geometry.
 
 Opt-in HTML semantic diagnostics consume selected coverage records through a
 bounded serialization bridge. Their viewer adapter reuses resource selection and

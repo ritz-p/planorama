@@ -74,7 +74,8 @@ pub(crate) fn render<'a>(
     }
     text.push_str("Input counts original Terraform resource instances. Selected counts distinct source instances represented after selection and projection, including logical rows, embedded Routes and lowered relationship provenance exactly once. Excluded = input - selected; excluded instances may be hidden by filters or projection. Group and component cards are not resources. Managed/data addresses and current/deposed instances remain distinct; states are counted separately.\n\nSupported means the provider has a semantic classification for the resource type; unsupported means no such classification. Logical presentation does not imply unsupported.\n\nUnknown account denominators include managed AWS instances. Unknown region denominators include classified, non-global managed AWS instances. Data sources and non-AWS resources are outside these scope denominators. Zero applicable instances means not applicable.\n\nFindings count diagnostic records, not unique resources. Categories can overlap and must not be summed into a resource total or coverage percentage. Input findings include unassociated findings; selected findings only belong to represented instances. Analysis covers supported rules only; zero findings does not prove complete resolution. Cross-state resolution findings are not included in this analysis.\n\nThis aggregate report does not enumerate resource findings or excluded identities. Aggregate counts are not truncated. Interactive selected finding details are available through --html-semantic-diagnostics, with its own disclosed limits.\n\n");
     section(&mut text, "Whole diagram", &total);
-    for (state, coverage) in states {
+    selection_summary(&mut text, states.iter().map(|(_, coverage)| *coverage));
+    for (state, coverage) in &states {
         section(
             &mut text,
             &format!(
@@ -87,8 +88,94 @@ pub(crate) fn render<'a>(
             ),
             coverage,
         );
+        selection_summary(&mut text, std::iter::once(*coverage));
     }
+    selection_details(&mut text, &states, options.selection_details);
     text
+}
+
+fn selection_summary<'a>(text: &mut String, coverages: impl Iterator<Item = &'a Coverage>) {
+    let mut direct = 0;
+    let mut effective = 0;
+    let mut reasons = std::collections::BTreeMap::new();
+    for coverage in coverages {
+        let Some(selection) = &coverage.selection else {
+            text.push_str("Selection reasons were not collected.\n\n");
+            return;
+        };
+        direct += selection.direct();
+        effective += coverage.selected.resources;
+        for entries in selection.reasons.values() {
+            for reason in entries {
+                *reasons.entry(*reason).or_insert(0usize) += 1;
+            }
+        }
+    }
+    writeln!(
+        text,
+        "Direct selection: {direct}. Additional context: {}. Effective selected: {effective}.\n",
+        effective.saturating_sub(direct)
+    )
+    .unwrap();
+    text.push_str("Direct selection is the represented source-instance intersection before context closure. Additional context is effective selected minus direct selection. Metadata suppressed by projection is excluded, not additional context. Lowered relationship endpoints can be context outside a selected module. Reasons are recorded during selection; one instance can have several reasons, so reason counts overlap.\n\n| Retention reason | Resource instances |\n| --- | ---: |\n");
+    for (reason, count) in reasons {
+        writeln!(text, "| {} | {count} |", escape(reason)).unwrap();
+    }
+    text.push('\n');
+}
+
+fn selection_details(text: &mut String, states: &[(&str, &Coverage)], limit: usize) {
+    if limit == 0 {
+        text.push_str("Selection identity details are disabled; use --coverage-selection-details N (1-1000) with --coverage-report to include a bounded list.\n");
+        return;
+    }
+    text.push_str("## Selected identity details\n\n| State | Terraform identity | Mode | Lifecycle | Selection | Reasons |\n| --- | --- | --- | --- | --- | --- |\n");
+    let mut shown = 0;
+    let mut total = 0;
+    for (state, coverage) in states {
+        let Some(selection) = &coverage.selection else {
+            continue;
+        };
+        total += selection.reasons.len();
+        for (id, reasons) in &selection.reasons {
+            if shown == limit {
+                break;
+            }
+            let resource = &coverage.resources[id];
+            let lifecycle = id
+                .deposed_key
+                .as_ref()
+                .map_or_else(|| "current".into(), |key| format!("deposed: {key}"));
+            writeln!(
+                text,
+                "| {} | {} | {} | {} | {} | {} |",
+                escape(if state.is_empty() {
+                    "(single input)"
+                } else {
+                    state
+                }),
+                escape(&id.address),
+                match resource.mode {
+                    crate::model::EntityMode::Managed => "managed",
+                    crate::model::EntityMode::Data => "data",
+                },
+                escape(&lifecycle),
+                if reasons.contains("direct selection") {
+                    "direct"
+                } else {
+                    "context"
+                },
+                reasons
+                    .iter()
+                    .map(|reason| escape(reason))
+                    .collect::<Vec<_>>()
+                    .join(", ")
+            )
+            .unwrap();
+            shown += 1;
+        }
+    }
+    writeln!(text, "\nShown: {shown}. Omitted selected identities: {}. Limit: {limit} across all states. No excluded identities or inferred fragment links are included.", total.saturating_sub(shown)).unwrap();
 }
 
 fn section(text: &mut String, title: &str, coverage: &Coverage) {

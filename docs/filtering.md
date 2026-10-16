@@ -101,6 +101,11 @@ Excluded includes metadata suppressed during projection and resources outside CL
 selection; it does not mean those resources are absent from Terraform. Required
 context is included in selected counts. See [coverage accounting](coverage.md).
 
+The report records direct-selection and additional-context counts plus overlapping
+retention reasons. Add `--coverage-selection-details 100` for a bounded list of
+selected identities and reasons, including context outside the requested modules
+or focus depth. No excluded identity list is included.
+
 Logical Terraform resources participate in the same selection and neighbor rules.
 Their references retain stable source identities even if a target is filtered out;
 rendering must check target availability before emitting a fragment link.
