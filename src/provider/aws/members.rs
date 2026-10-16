@@ -38,11 +38,17 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             && parent.provider.is_aws()
             && parent.mode == EntityMode::Managed
             && parent.deposed_key.is_none()
-            && parent
-                .entity
-                .scope
-                .as_ref()
-                .is_some_and(|scope| scope.region.is_some())
+            && parent.entity.scope.as_ref().is_some_and(|scope| {
+                scope.region.is_some()
+                    && (scope.account.is_some()
+                        || parent
+                            .provider_configuration
+                            .as_ref()
+                            .is_some_and(|configuration| {
+                                !configuration.account_conflict
+                                    && node.provider_configuration.as_ref() == Some(configuration)
+                            }))
+            })
             && parent.entity.scope == node.entity.scope
         {
             graph.nodes[index].member_owner = parent.entity.provenance.first().cloned();

@@ -6,6 +6,60 @@ fn input() -> Value {
 }
 
 #[test]
+fn member_accounts_require_shared_configuration_or_verified_account() {
+    for case in [
+        "same_configuration",
+        "unknown_accounts",
+        "same_account",
+        "different_accounts",
+    ] {
+        let mut value = input();
+        if case != "same_configuration" {
+            value["configuration"]["provider_config"]["aws.member"] =
+                value["configuration"]["provider_config"]["aws"].clone();
+            value["configuration"]["provider_config"]["aws.member"]["alias"] = json!("member");
+            value["configuration"]["root_module"]["resources"][5]["provider_config_key"] =
+                json!("aws.member");
+        }
+        if case == "different_accounts" {
+            value["configuration"]["provider_config"]["aws.member"]["expressions"]["assume_role"]
+                [0]["role_arn"]["constant_value"] = json!("arn:aws:iam::999999999999:role/Fixture");
+        }
+        let raw = if matches!(case, "same_account" | "different_accounts") {
+            crate::plan::evidence::tests::parse_fixture(&value.to_string()).unwrap()
+        } else {
+            plan::parse(&value.to_string()).unwrap()
+        };
+        let graph = semantic::transform(&raw);
+        let expected = matches!(case, "same_configuration" | "same_account");
+        assert_eq!(
+            graph
+                .nodes
+                .iter()
+                .filter(|node| node.member_owner.is_some())
+                .count(),
+            if expected { 2 } else { 0 },
+            "{case}"
+        );
+        let output = svg::render(&graph, &Layout::new(&graph));
+        let doc = roxmltree::Document::parse(&output).unwrap();
+        assert_eq!(
+            doc.descendants()
+                .filter(|node| node.attribute("data-embedded-member").is_some())
+                .count(),
+            if expected { 2 } else { 0 },
+            "{case}"
+        );
+        assert_eq!(
+            doc.descendants()
+                .filter(|node| node.attribute("data-terraform-address").is_some())
+                .count(),
+            graph.nodes.len()
+        );
+    }
+}
+
+#[test]
 fn deleting_members_use_before_identifiers() {
     for destroy_cluster in [false, true] {
         for matching in [false, true] {
