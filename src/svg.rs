@@ -524,12 +524,18 @@ fn render_with_index(
         if let Some(icon) = icon {
             svg.push_str(&icons::render(icon, x + 12, y + 28 + metrics.import_height));
         }
+        svg.push_str(&icons::service_name(
+            node,
+            x + 12,
+            y + 45 + metrics.import_height,
+            metrics.line_limit * 8,
+        ));
         for (line, text) in lines.iter().enumerate() {
             writeln!(
                 svg,
                 r##"<text x="{}" y="{}" font-size="13" fill="#0f172a" xml:space="preserve">{}</text>"##,
                 x + metrics.inset,
-                y + 45 + metrics.import_height + line * 20,
+                y + 45 + metrics.import_height + metrics.service_height + line * 20,
                 escape(text)
             )
             .unwrap();

@@ -4,6 +4,7 @@ use std::collections::{BTreeMap, BTreeSet};
 
 #[derive(Default)]
 pub struct Options {
+    pub icon_mode: crate::icons::IconMode,
     pub changed_only: bool,
     pub focus: Option<String>,
     pub depth: Option<usize>,
@@ -198,7 +199,16 @@ pub fn apply(all: &Architecture, options: &Options) -> Result<Architecture, Stri
                 .iter()
                 .enumerate()
                 .filter(|(i, _)| remap.contains_key(i))
-                .map(|(_, n)| n.clone())
+                .map(|(_, n)| {
+                    let mut node = n.clone();
+                    node.service_name = match options.icon_mode {
+                        crate::icons::IconMode::Icon => None,
+                        crate::icons::IconMode::ServiceName => {
+                            crate::icons::for_node(n).map(|icon| icon.service_name())
+                        }
+                    };
+                    node
+                })
                 .collect();
             graph.0.edges = graph
                 .edges

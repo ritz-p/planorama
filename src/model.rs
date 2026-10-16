@@ -11,6 +11,7 @@ pub enum Action {
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Node {
+    pub service_name: Option<&'static str>,
     pub routes: RoutePresentation,
     pub placement: Placement,
     pub references: Vec<ResourceReference>,

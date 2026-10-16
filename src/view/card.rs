@@ -4,6 +4,7 @@ pub(crate) struct Metrics {
     pub inset: usize,
     pub line_limit: usize,
     pub import_height: usize,
+    pub service_height: usize,
     pub previous_y: usize,
     pub previous_line_limit: usize,
     pub references_y: usize,
@@ -26,7 +27,7 @@ pub(crate) fn import_height(node: &Node) -> usize {
 
 pub(crate) fn measure(node: &Node) -> Metrics {
     let inset = 12
-        + if crate::icons::for_node(node).is_some() {
+        + if node.service_name.is_none() && crate::icons::for_node(node).is_some() {
             crate::icons::SIZE + crate::icons::GAP
         } else {
             0
@@ -38,7 +39,10 @@ pub(crate) fn measure(node: &Node) -> Metrics {
         .len()
         .max(super::text::wrap_address(&address.qualified(), line_limit).len());
     let import_height = import_height(node);
-    let extra = lines.saturating_sub(2) * 20 + import_height;
+    let service_height = node
+        .service_name
+        .map_or(0, |name| super::text::wrap(name, line_limit).len() * 20);
+    let extra = lines.saturating_sub(2) * 20 + import_height + service_height;
     let previous_line_limit = (width - 24) / 8;
     let previous_height = node.previous_address.as_deref().map_or(0, |previous| {
         super::text::wrap_address(&super::text::moved_from(previous), previous_line_limit).len()
@@ -50,6 +54,7 @@ pub(crate) fn measure(node: &Node) -> Metrics {
         inset,
         line_limit,
         import_height,
+        service_height,
         previous_y: 86 + extra,
         previous_line_limit,
         references_y: 86 + extra + previous_height,

@@ -506,24 +506,25 @@ generation source. Rerunning a job may capture a newer PR head; consult its summ
 
 ### Ordinary snapshot coverage
 
-Ordinary unit/integration tests compare 24 of the 35 maintained SVGs with current
+Ordinary unit/integration tests compare 25 of the 39 maintained SVGs with current
 rendering: `association`, `bundling`, `checks`, `components`, `containment`,
-`data`, `data-icons`, `dense-architecture`, `diagram`, `hierarchy-routing`,
+`data`, `data-icons`, `service-names`, `dense-architecture`, `diagram`, `hierarchy-routing`,
 `multi-container`, `multi-plan`, `port-collisions`, `regions`, `regional-states`,
 `relationship-index`, `relationship-index-wide`, `routes`, `spanning-dense`,
 `subnet-groups`, `terraform`, `terraform-large/diagram`, `vpc-workloads`, and
 `workload-security-groups` (paths under `examples/`, with `.svg`).
 
-The other 11 are `accounts`, `aws-relationships`, `autoscaling-policy`,
+The other 14 are `accounts`, `aws-relationships`, `autoscaling-policy`,
 `cross-state`, `logical-actions`, `logical-regions`, `multi-account/diagram`,
-`network-scope`, `rds-subnet-group`, `relationship-scopes`, and `security-groups`.
+`network-scope`, `rds-subnet-group`, `relationship-scopes`, `security-groups`,
+`messaging`, `sns-subscriptions`, and `event-sources`.
 Related behavior has focused tests, but ordinary tests do not reproduce these
 committed SVGs byte for byte. The multi-account input/topology test reads the
 committed SVG; its full rendering comparison is ignored and opt-in. These outputs
 can become stale while ordinary checks pass, so local generation and visual diff
 review remain necessary. Rust tests, formatting, Clippy, representative HTML
 snapshot tests and the existing Docker browser test remain unchanged; none claims
-to validate all 35 maintained SVGs on ordinary PRs.
+to validate all maintained SVGs on ordinary PRs.
 
 ## Generation and review
 

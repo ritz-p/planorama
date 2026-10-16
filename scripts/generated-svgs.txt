@@ -8,6 +8,7 @@ examples/components.svg
 examples/containment.svg
 examples/cross-state.svg
 examples/data-icons.svg
+examples/service-names.svg
 examples/data.svg
 examples/dense-architecture.svg
 examples/diagram.svg

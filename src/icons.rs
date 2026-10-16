@@ -1,5 +1,12 @@
 mod artwork;
 
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+pub enum IconMode {
+    #[default]
+    Icon,
+    ServiceName,
+}
+
 pub(crate) const SIZE: usize = 24;
 pub(crate) const GAP: usize = 8;
 
@@ -52,6 +59,33 @@ pub enum ResourceIcon {
     Monitoring,
     Scaling,
     Terraform,
+}
+
+impl ResourceIcon {
+    pub fn service_name(self) -> &'static str {
+        match self {
+            Self::Vpc | Self::Subnet | Self::Gateway | Self::Route | Self::Security => "Amazon VPC",
+            Self::Ec2 => "Amazon EC2",
+            Self::Endpoint => "AWS PrivateLink",
+            Self::LoadBalancer => "Elastic Load Balancing",
+            Self::Lambda => "AWS Lambda",
+            Self::Sqs => "Amazon Simple Queue Service",
+            Self::Sns => "Amazon Simple Notification Service",
+            Self::Ecs => "Amazon ECS",
+            Self::Eks => "Amazon EKS",
+            Self::Database => "Amazon RDS",
+            Self::DynamoDb => "Amazon DynamoDB",
+            Self::Cache => "Amazon ElastiCache",
+            Self::Search => "Amazon OpenSearch Service",
+            Self::Storage => "Amazon S3",
+            Self::CloudFront => "Amazon CloudFront",
+            Self::ApiGateway => "Amazon API Gateway",
+            Self::Iam => "AWS Identity and Access Management",
+            Self::Monitoring => "Amazon CloudWatch",
+            Self::Scaling => "Amazon EC2 Auto Scaling",
+            Self::Terraform => "Terraform built-in",
+        }
+    }
 }
 
 pub fn icon_for(provider: Provider, resource_type: &str) -> Option<ResourceIcon> {
