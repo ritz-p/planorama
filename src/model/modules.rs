@@ -66,6 +66,10 @@ impl Address {
             module => Self::parse(module),
         }
     }
+
+    pub fn depth(&self) -> usize {
+        self.0.len()
+    }
 }
 
 impl std::fmt::Display for Address {
