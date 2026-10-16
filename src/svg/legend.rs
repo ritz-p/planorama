@@ -81,11 +81,13 @@ pub(super) struct MeasuredLegend {
     pub height: usize,
     bounds: Bounds,
     content: Option<MeasuredContent>,
+    actions_only: bool,
 }
 
 impl MeasuredLegend {
+    #[cfg(test)]
     pub fn new(graph: &Graph, available_width: usize) -> Self {
-        Self::from_graphs([graph], available_width, 148)
+        Self::from_graphs([graph], available_width, 148, false)
     }
 
     pub fn empty(width: usize) -> Self {
@@ -98,6 +100,7 @@ impl MeasuredLegend {
                 height: 0,
             },
             content: None,
+            actions_only: false,
         }
     }
 
@@ -105,6 +108,7 @@ impl MeasuredLegend {
         graphs: impl IntoIterator<Item = &'a Graph>,
         available_width: usize,
         top: usize,
+        hide_relationship_legend: bool,
     ) -> Self {
         let edges: Vec<_> = graphs.into_iter().flat_map(|graph| &graph.edges).collect();
         let actions: BTreeSet<Option<Action>> = edges
@@ -134,36 +138,38 @@ impl MeasuredLegend {
             PADDING,
             false,
         );
-        content.y += 16;
-        let mut entries = ENTRIES.to_vec();
-        if edges.iter().any(|e| e.kind == EdgeKind::Subscription) {
-            entries.push(Entry {
+        if !hide_relationship_legend {
+            content.y += 16;
+            let mut entries = ENTRIES.to_vec();
+            if edges.iter().any(|e| e.kind == EdgeKind::Subscription) {
+                entries.push(Entry {
                 kind: EdgeKind::Subscription,
                 name: "Subscription",
                 explanation: "Directed topic-to-endpoint subscription proven by Terraform references. Delivery success and access policies are not verified.",
                 directionality: Directionality::Directed,
             });
-        }
-        if edges.iter().any(|e| e.kind == EdgeKind::EventSource) {
-            entries.push(Entry {
+            }
+            if edges.iter().any(|e| e.kind == EdgeKind::EventSource) {
+                entries.push(Entry {
                 kind: EdgeKind::EventSource,
                 name: "Event source",
                 explanation: "Directed source-to-function mapping proven by Terraform references. Processing, permissions and active mapping state are not verified.",
                 directionality: Directionality::Directed,
             });
-        }
-        content.grid(&entries);
-        content.text(
+            }
+            content.grid(&entries);
+            content.text(
             "Hollow circles mark resource/card attachment points; neither end of an undirected line is a directional start. Filled internal dots mark bundle junctions.",
             PADDING,
             false,
         );
-        content.y += 8;
-        content.text(
+            content.y += 8;
+            content.text(
             "Matching [N] badges identify the same Terraform-backed relationship and its Relationship Resources entry. They do not express direction or count connections. Reference-only Connections and Dependencies have no number.",
             PADDING,
             false,
         );
+        }
         Self {
             width,
             height: content.y + PADDING + 12,
@@ -173,6 +179,7 @@ impl MeasuredLegend {
                 height: content.y + PADDING,
             },
             content: Some(content),
+            actions_only: hide_relationship_legend,
         }
     }
 
@@ -184,9 +191,14 @@ impl MeasuredLegend {
         let card_height = self.bounds.height;
         let left = self.bounds.origin.x;
         let top = self.bounds.origin.y;
+        let (id, title) = if self.actions_only {
+            ("relationship-actions", "Relationship actions")
+        } else {
+            ("relationship-legend", "Relationship lines")
+        };
         format!(
-            r##"<g id="relationship-legend" font-size="12" fill="#475569" transform="translate({left} {top})"><rect width="{card_width}" height="{card_height}" rx="12" fill="#f8fafc" stroke="#cbd5e1"/>
-<text x="16" y="29" font-size="15" font-weight="700" fill="#334155">Relationship lines</text>
+            r##"<g id="{id}" font-size="12" fill="#475569" transform="translate({left} {top})"><rect width="{card_width}" height="{card_height}" rx="12" fill="#f8fafc" stroke="#cbd5e1"/>
+<text x="16" y="29" font-size="15" font-weight="700" fill="#334155">{title}</text>
 {}</g>
 "##,
             content.render(),

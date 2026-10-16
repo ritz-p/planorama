@@ -3,6 +3,10 @@
 The processing pipeline is `CLI → TerraformPlan → ArchitectureGraph → ViewGraph → Layout → SVG`, with an optional self-contained HTML viewer around the SVG.
 The CLI owns file I/O and coordinates each stage. Named-state inputs preserve the
 same boundaries and carry explicit cross-state relationships.
+`svg::Options` carries address formatting and relationship-legend visibility into
+shared measurement and rendering. Legend visibility never changes the graph or
+`Layout`; composition uses the measured compact action legend when explanations
+are omitted.
 
 Optional saved-plan [provider evidence](provider-evidence.md) is read and matched
 by the CLI using Terraform show. The plan layer validates the embedded snapshot

@@ -7,7 +7,7 @@ use std::path::Path;
 pub(super) fn run(
     inputs: (BTreeMap<StateId, String>, &super::provider_plan::Options),
     output: &Path,
-    format: svg::AddressFormat,
+    format: svg::Options,
     output_format: super::OutputFormat,
     diagnostics: (
         bool,

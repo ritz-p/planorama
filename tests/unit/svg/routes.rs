@@ -787,7 +787,7 @@ fn named_states_namespace_child_links_and_attach_cross_state_paths_to_parent_bor
         }],
     };
     let selected = view::apply(&all, &Default::default()).unwrap();
-    let svg = svg::render_states(&selected, Default::default());
+    let svg = svg::render_states(&selected, crate::svg::AddressFormat::default());
     verify_cards(&svg);
     let doc = roxmltree::Document::parse(&svg).unwrap();
     let boundaries: Vec<_> = doc

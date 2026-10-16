@@ -196,7 +196,7 @@ fn multiple_alarms_consumers_and_states_keep_distinct_identities() {
         };
         svg::render_states(
             &view::apply(&architecture, &Default::default()).unwrap(),
-            Default::default(),
+            crate::svg::AddressFormat::default(),
         )
     };
     let output = render(&value);

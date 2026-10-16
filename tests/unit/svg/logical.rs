@@ -827,7 +827,7 @@ fn named_states_keep_logical_ids_separate_and_cross_state_provenance_without_rou
         }],
     };
     let view = view::apply(&all, &Default::default()).unwrap();
-    let output = svg::render_states(&view, Default::default());
+    let output = svg::render_states(&view, crate::svg::AddressFormat::default());
     let doc = roxmltree::Document::parse(&output).unwrap();
     for state in ["first", "second"] {
         let groups: Vec<_> = doc

@@ -43,6 +43,21 @@ pub enum AddressFormat {
     Terraform,
 }
 
+#[derive(Clone, Copy, Default)]
+pub struct Options {
+    pub address_format: AddressFormat,
+    pub hide_relationship_legend: bool,
+}
+
+impl From<AddressFormat> for Options {
+    fn from(address_format: AddressFormat) -> Self {
+        Self {
+            address_format,
+            ..Default::default()
+        }
+    }
+}
+
 #[derive(Clone, Copy)]
 pub(crate) enum Content {
     Standard,
@@ -86,15 +101,16 @@ impl Sections {
         graph: &Graph,
         layout: &Layout<'_>,
         index: &relationship_index::Index<'_>,
-        address_format: AddressFormat,
+        options: impl Into<Options>,
     ) -> Self {
+        let options = options.into();
         Self::from_cards(
             graph,
             layout,
             index,
-            annotation_cards(graph, index, address_format),
+            annotation_cards(graph, index, options.address_format),
             index.width,
-            true,
+            Some(options.hide_relationship_legend),
         )
     }
 
@@ -112,7 +128,7 @@ impl Sections {
             index,
             annotation_cards(graph, index, address_format),
             available_width,
-            false,
+            None,
         )
     }
 
@@ -122,12 +138,12 @@ impl Sections {
         index: &relationship_index::Index<'_>,
         cards: Vec<(&str, style::SectionPalette, Vec<annotations::Card>)>,
         available_width: usize,
-        include_legend: bool,
+        hide_relationship_legend: Option<bool>,
     ) -> Self {
         let packing_width =
             annotations::Area::required_width(&cards, available_width.max(index.width));
-        let legend = if include_legend {
-            legend::MeasuredLegend::new(graph, packing_width)
+        let legend = if let Some(hide) = hide_relationship_legend {
+            legend::MeasuredLegend::from_graphs([graph], packing_width, 148, hide)
         } else {
             legend::MeasuredLegend::empty(packing_width)
         };
@@ -215,29 +231,30 @@ fn annotation_cards(
 pub(crate) fn render_with_format(
     graph: &Graph,
     layout: &Layout<'_>,
-    address_format: AddressFormat,
+    options: impl Into<Options>,
 ) -> String {
-    render_content(graph, layout, address_format, Content::Standard)
+    render_content(graph, layout, options, Content::Standard)
 }
 
 pub(crate) fn render_content(
     graph: &Graph,
     layout: &Layout<'_>,
-    address_format: AddressFormat,
+    options: impl Into<Options>,
     content: Content,
 ) -> String {
-    render_report(graph, layout, address_format, content, None)
+    render_report(graph, layout, options, content, None)
 }
 
 pub(crate) fn render_report(
     graph: &Graph,
     layout: &Layout<'_>,
-    address_format: AddressFormat,
+    options: impl Into<Options>,
     content: Content,
     report: Option<&mut serde_json::Value>,
 ) -> String {
+    let options = options.into();
     let relationship_index = relationship_index::Index::new(graph, layout);
-    let sections = Sections::new(graph, layout, &relationship_index, address_format);
+    let sections = Sections::new(graph, layout, &relationship_index, options);
     if let Some(report) = report {
         let mut scene = crate::layout::diagnostics::Scene::default();
         scene.add_state(
@@ -253,7 +270,7 @@ pub(crate) fn render_report(
     render_with_index(
         graph,
         layout,
-        address_format,
+        options.address_format,
         &relationship_index,
         &sections,
         content,

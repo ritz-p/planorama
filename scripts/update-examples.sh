@@ -17,6 +17,9 @@ update_snapshot() {
 
 while IFS= read -r output || [ -n "$output" ]; do
     case "$output" in
+        examples/relationship-legend-hidden.svg)
+            "$binary" tests/fixtures/routes-plan.json --hide-relationship-legend -o "$output"
+            ;;
         examples/service-names.svg)
             "$binary" --state services=tests/fixtures/data-icons-plan.json --state builtin=tests/fixtures/terraform-plan.json --icon-mode service-name -o "$output"
             ;;

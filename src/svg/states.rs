@@ -37,25 +37,27 @@ impl StateObstacles {
 
 pub fn render_states(
     architecture: &crate::view::ViewArchitecture,
-    format: super::AddressFormat,
+    options: impl Into<super::Options>,
 ) -> String {
-    render_content(architecture, format, super::Content::Standard)
+    render_content(architecture, options, super::Content::Standard)
 }
 
 pub(crate) fn render_content(
     architecture: &crate::view::ViewArchitecture,
-    format: super::AddressFormat,
+    options: impl Into<super::Options>,
     content: super::Content,
 ) -> String {
-    render_report(architecture, format, content, None)
+    render_report(architecture, options, content, None)
 }
 
 pub(crate) fn render_report(
     architecture: &crate::view::ViewArchitecture,
-    format: super::AddressFormat,
+    options: impl Into<super::Options>,
     content: super::Content,
     report: Option<&mut serde_json::Value>,
 ) -> String {
+    let options = options.into();
+    let format = options.address_format;
     let mut scene = report
         .as_ref()
         .map(|_| crate::layout::diagnostics::Scene::default());
@@ -143,6 +145,7 @@ pub(crate) fn render_report(
         prepared_graphs.iter().map(|(_, graph)| &graph.0),
         width,
         60,
+        options.hide_relationship_legend,
     );
     if legend.height > 0 {
         if let Some((_, graph)) = prepared_graphs.first() {
@@ -161,7 +164,7 @@ pub(crate) fn render_report(
         let heading_lines = crate::view::text::wrap(&heading, (width - 80) / 12);
         let header_height = heading_lines.len() * 26 + 14;
         let measured_sections =
-            super::Sections::from_cards(graph, &layout, &index, cards, width, false);
+            super::Sections::from_cards(graph, &layout, &index, cards, width, None);
         let (_, height) = measured_sections.dimensions(&layout);
         let prefix = prefix(id);
         let architecture_offset = measured_sections.height();
@@ -307,7 +310,9 @@ pub(crate) fn render_report(
         width += 80 + (link_count - 1) * 12;
         sections.push_str("<defs><marker id=\"cross-state-arrow\" viewBox=\"0 0 10 10\" refX=\"9\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto-start-reverse\"><path d=\"M 0 0 L 10 5 L 0 10 z\" fill=\"#2563eb\"/></marker></defs>\n");
         sections.push_str(&links);
-        sections.push_str("<text x=\"350\" y=\"35\" font-family=\"ui-monospace, Consolas, monospace\" font-size=\"12\" fill=\"#2563eb\">Dashed blue: cross-state dependency</text>\n");
+        if !options.hide_relationship_legend {
+            sections.push_str("<text x=\"350\" y=\"35\" font-family=\"ui-monospace, Consolas, monospace\" font-size=\"12\" fill=\"#2563eb\">Dashed blue: cross-state dependency</text>\n");
+        }
     }
     let description = if architecture.relationships().len() > link_count {
         format!(

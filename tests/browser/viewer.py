@@ -96,6 +96,31 @@ class ViewerTests(unittest.TestCase):
             self.assertFalse(self.driver.execute_script("return !!document.querySelector('[data-view-coverage]')"))
             self.assertNotIn('Diagram Coverage', self.find('svg').text)
 
+    def test_hidden_relationship_legend_reclaims_space_and_keeps_annotations_clear(self):
+        self.load('tests/fixtures/routes-plan.json')
+        full_height, full_legend = self.driver.execute_script("return [document.querySelector('svg').viewBox.baseVal.height, +document.querySelector('#relationship-legend rect').getAttribute('height')]")
+        self.load('tests/fixtures/routes-plan.json', '--hide-relationship-legend')
+        compact = self.driver.execute_script("""
+            const svg = document.querySelector('svg');
+            const actions = document.querySelector('#relationship-actions');
+            const bounds = actions.getBoundingClientRect();
+            const annotations = [...svg.querySelectorAll('[data-annotation-section]')];
+            const overlap = annotations.some(n => n.getBoundingClientRect().top < bounds.bottom);
+            const outside = [...actions.querySelectorAll('text')].some(n => {
+                const b = n.getBoundingClientRect();
+                return b.left < bounds.left || b.right > bounds.right || b.top < bounds.top || b.bottom > bounds.bottom;
+            });
+            return {height: svg.viewBox.baseVal.height, legend: +actions.querySelector('rect').getAttribute('height'),
+                    overlap, outside, entries: svg.querySelectorAll('[data-relationship-entry]').length,
+                    explanations: svg.querySelectorAll('[data-legend-entry]').length};
+        """)
+        self.assertEqual(full_height - compact['height'], full_legend - compact['legend'])
+        self.assertGreater(full_height, compact['height'])
+        self.assertFalse(compact['overlap'])
+        self.assertFalse(compact['outside'])
+        self.assertGreater(compact['entries'], 0)
+        self.assertEqual(compact['explanations'], 0)
+
     def test_semantic_diagnostics_navigate_all_resource_presentations_and_reset(self):
         for fixture, address in [('containment', 'aws_instance.app'),
                                  ('logical-regions', 'aws_iam_policy'),
