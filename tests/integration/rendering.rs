@@ -1,3 +1,4 @@
+mod elasticache;
 mod regions;
 mod support;
 
