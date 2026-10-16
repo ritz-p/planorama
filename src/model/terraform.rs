@@ -36,6 +36,7 @@ impl TerraformReference {
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct TerraformPlan {
+    pub modules: super::modules::Inventory,
     pub nodes: Vec<TerraformEntity>,
     pub edges: Vec<TerraformReference>,
     pub checks: Vec<super::CheckResult>,

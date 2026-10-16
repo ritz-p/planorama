@@ -55,9 +55,14 @@ pub(crate) fn render<'a>(
         (true, true) => "focus + changed-only + required context",
         (true, false) => "focus + required context",
         (false, true) => "changed-only + required context",
-        (false, false) => "no CLI filter",
+        (false, false) if options.modules.is_empty() => "no CLI filter",
+        (false, false) => "modules + required context",
     };
     writeln!(text, "Selection: {selection}.\n").unwrap();
+    if !options.modules.is_empty() {
+        let modules: std::collections::BTreeSet<_> = options.modules.iter().collect();
+        writeln!(text, "Modules (union, intersected with other filters): {}. Required containment, Route Table and cross-state context can be outside these modules.\n", modules.into_iter().map(|module| escape(module)).collect::<Vec<_>>().join(", ")).unwrap();
+    }
     if let Some(focus) = &options.focus {
         writeln!(
             text,
