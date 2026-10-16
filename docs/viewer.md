@@ -57,10 +57,19 @@ line patterns, bundles or routing. Clear selection restores their normal styling
 | Results | Arrow Down enters results; Up/Down and Home/End navigate; Enter selects |
 | Resource links | Tab to a resource or link, then Enter; clicking also selects |
 | Relationship numbers | Click, or Tab then Enter/Space; endpoint buttons navigate to resources |
+| Copy address | Copy Terraform address in selection details; Tab then Enter also works |
 | Clear selection | Escape or Clear selection |
 | Pan | Drag or scroll; arrow keys while the diagram has focus |
 | Zoom | +/− buttons, +/− keys in the diagram, or Ctrl/Command+scroll |
 | Fit entire view | Fit to view or F while the diagram has focus |
+
+Selection details offer the native Terraform address, independent of address-format
+settings, with managed/data, current/deposed and state shown separately. Relationship
+details distinguish verified provenance resources from endpoint resources. Copy runs
+only on request and prefers the secure-context Clipboard API. If unavailable or
+denied, the address is selected for manual Ctrl+C/Command+C copying; success is
+announced only after the clipboard write completes. No attributes or plan body are
+copied, and no clipboard reading, network access or storage is used.
 
 The viewer consumes only selected view identities and rendered metadata. It does
 not embed or reparse the input plan. The index explicitly lists identity fields;

@@ -21,6 +21,28 @@ function selection(context, index, navigation, highlights, coordinator) {
     }
     details.append(h, list);
   }
+  function copyIdentity(resource, heading) {
+    const group = document.createElement('div'); group.className = 'copy-identity';
+    const caption = document.createElement('p');
+    caption.textContent = `${heading} · ${resource.mode} · ${resource.deposed == null ? 'current' : 'deposed: ' + resource.deposed} · State: ${resource.state || '(unnamed)'}`;
+    const field = document.createElement('textarea');
+    field.readOnly = true; field.rows = 2; field.value = resource.address;
+    field.setAttribute('aria-label', `${heading}: native Terraform address`);
+    const status = document.createElement('p'); status.setAttribute('role', 'status');
+    const copy = button('Copy Terraform address', async () => {
+      status.textContent = '';
+      try {
+        if (!window.isSecureContext || !navigator.clipboard?.writeText) throw new Error('Clipboard unavailable');
+        await navigator.clipboard.writeText(resource.address);
+        if (group.isConnected) status.textContent = 'Terraform address copied.';
+      } catch {
+        if (!group.isConnected) return;
+        status.textContent = 'Automatic copy unavailable. Select the address and press Ctrl+C or Command+C to copy manually.';
+        field.focus(); field.select();
+      }
+    });
+    group.append(caption, field, copy, status); details.append(group);
+  }
   function select(id) {
     const el = byId(id);
     if (!el || !svg.contains(el)) return;
@@ -34,6 +56,15 @@ function selection(context, index, navigation, highlights, coordinator) {
       for (const edge of relationshipEdges(id)) edge.setAttribute('data-viewer-edge', 'relationship');
       for (const link of links.filter(link => link.target === id && link.el.hasAttribute('data-relationship-select'))) link.el.setAttribute('data-viewer-related', 'true');
       section('Relationship endpoints', Array.from(el.querySelectorAll('[data-relationship-endpoint]')).map(link => ({ target: link.getAttribute('href').slice(1), text: link.textContent })));
+      const state = el.closest('[data-state-id]')?.dataset.stateId || '';
+      const sources = new Set(Array.from(el.querySelectorAll('[data-source-identity]')).map(row => row.dataset.sourceIdentity));
+      for (const resource of targets.values()) {
+        if (resource.state === state && sources.has(resource.identity)) copyIdentity(resource, 'Provenance resource');
+      }
+      const endpointIds = new Set(Array.from(el.querySelectorAll('[data-relationship-endpoint]')).map(link => link.getAttribute('href').slice(1)));
+      for (const endpoint of endpointIds) {
+        if (targets.has(endpoint)) copyIdentity(targets.get(endpoint), 'Endpoint resource');
+      }
       reveal(el);
       return;
     }
@@ -41,6 +72,7 @@ function selection(context, index, navigation, highlights, coordinator) {
       const identity = document.createElement('p');
       identity.textContent = `${r.qualified}\nModule: ${r.module} · State: ${r.state || '(unnamed)'} · ${r.type}\n${title(el)}`;
       details.append(identity);
+      copyIdentity(r, 'Selected resource');
     }
     const incoming = [], outgoing = [], undirected = [], provenance = [];
     for (const edge of edges) {
@@ -85,7 +117,7 @@ function selection(context, index, navigation, highlights, coordinator) {
       if (component.id === id) section('Component members', members.map(link => ({ target: link.target, text: title(link.el) })));
     }
     section('Logical Component membership', memberships);
-    if (details.children.length <= (r ? 2 : 1)) section('Relationships', [{ text: 'No rendered edges, references or component memberships in this view.' }]);
+    if (details.children.length <= (r ? 3 : 1)) section('Relationships', [{ text: 'No rendered edges, references or component memberships in this view.' }]);
     for (const b of results.querySelectorAll('button')) b.setAttribute('aria-pressed', String(b.dataset.target === id));
     reveal(el);
   }

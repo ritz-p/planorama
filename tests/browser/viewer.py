@@ -61,6 +61,65 @@ class ViewerTests(unittest.TestCase):
     def view_box(self):
         return self.driver.execute_script("return document.querySelector('#viewport > svg').getAttribute('viewBox')")
 
+    def test_copy_native_address_success_rejection_and_unavailable(self):
+        address = 'module.demo["日本語"].test.item["a\\\"b"]'
+        plan = {'format_version': '1.2', 'resource_changes': [
+            {'address': address, 'type': 'test', 'deposed': 'old'}]}
+        self.load('-', input_plan=plan)
+        self.find('#results button').send_keys(Keys.ENTER)
+        self.assertEqual(self.find('.copy-identity textarea').get_attribute('value'), address)
+        self.assertIn('deposed: old', self.find('.copy-identity').text)
+        before = self.view_box()
+        for mode in ['success', 'rejected', 'unavailable']:
+            self.driver.execute_script("""
+                window.copied = null;
+                const mode = arguments[0];
+                Object.defineProperty(navigator, 'clipboard', {configurable: true, value:
+                    mode === 'unavailable' ? undefined : {writeText: async text => {
+                        if (mode === 'rejected') throw new Error('denied');
+                        window.copied = text;
+                    }}});
+            """, mode)
+            self.find('.copy-identity button').send_keys(Keys.ENTER)
+            if mode == 'success':
+                self.assertEqual(self.driver.execute_script('return window.copied'), address)
+                self.assertIn('address copied', self.find('.copy-identity [role=status]').text)
+            else:
+                self.assertIn('manually', self.find('.copy-identity [role=status]').text)
+                self.assertEqual(self.driver.execute_script('return document.activeElement.value'), address)
+                self.assertEqual(self.driver.execute_script('return document.activeElement.selectionEnd'), len(address))
+            self.assertEqual(before, self.view_box())
+        self.find('#clear').click()
+        self.assertEqual(self.driver.find_elements(By.CSS_SELECTOR, '.copy-identity'), [])
+        self.load('-', '--address-format', 'terraform', input_plan=plan)
+        self.find('#results button').send_keys(Keys.ENTER)
+        self.assertEqual(self.find('.copy-identity textarea').get_attribute('value'), address)
+        self.driver.execute_script("Object.defineProperty(navigator, 'clipboard', {configurable: true, value: {writeText: () => new Promise((resolve, reject) => {window.rejectCopy = reject;})}})")
+        self.find('.copy-identity button').click()
+        self.find('#clear').click()
+        self.driver.execute_script("window.rejectCopy(new Error('late rejection'))")
+        self.assertEqual(self.find('#selection').text, '')
+        self.assertEqual(self.driver.switch_to.active_element.get_attribute('id'), 'clear')
+
+    def test_copy_targets_cover_resource_presentations_and_relationship_roles(self):
+        for fixture in ['viewer', 'routes', 'association', 'deposed']:
+            self.load('--state', 'one=tests/fixtures/' + fixture + '-plan.json',
+                      '--state', 'two=tests/fixtures/' + fixture + '-plan.json')
+            buttons = self.driver.find_elements(By.CSS_SELECTOR, '#results button')
+            for result in buttons:
+                result.click()
+                selected = self.find('[data-viewer-selected]')
+                native = selected.get_attribute('data-terraform-address') or selected.get_attribute('data-source-address')
+                self.assertEqual(self.find('.copy-identity textarea').get_attribute('value'), native)
+                self.assertIn('State: ' + selected.find_element(By.XPATH, './ancestor::*[@data-state-id]').get_attribute('data-state-id'),
+                              self.find('.copy-identity').text)
+            relationships = self.driver.find_elements(By.CSS_SELECTOR, '[data-relationship-entry] [data-relationship-select]')
+            if relationships:
+                relationships[0].send_keys(Keys.ENTER)
+                groups = self.driver.find_elements(By.CSS_SELECTOR, '.copy-identity')
+                self.assertTrue(groups)
+                self.assertTrue(all('Endpoint resource' in group.text or 'Provenance resource' in group.text for group in groups))
+
     def test_service_names_have_space_in_named_state_resource_rows(self):
         self.load('--state', 'services=tests/fixtures/data-icons-plan.json',
                   '--state', 'builtin=tests/fixtures/terraform-plan.json',
@@ -421,7 +480,7 @@ class ViewerTests(unittest.TestCase):
         self.assertEqual(self.find('[data-viewer-selected]').get_attribute('id'), entry.get_attribute('id'))
         self.assertEqual(len(self.driver.find_elements(By.CSS_SELECTOR, 'path[data-viewer-edge]')), 1)
         self.assertEqual(len(self.driver.find_elements(By.CSS_SELECTOR, '[data-relationship-marker] [data-viewer-related]')), 2)
-        self.assertEqual(len(self.driver.find_elements(By.CSS_SELECTOR, '#selection button')), 2)
+        self.assertEqual(len(self.driver.find_elements(By.CSS_SELECTOR, '#selection ul button')), 2)
         self.find('#selection button').click()
         self.assertTrue(self.find('[data-viewer-selected]').get_attribute('data-terraform-address'))
         self.find('#clear').click()
