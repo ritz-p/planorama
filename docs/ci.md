@@ -352,7 +352,9 @@ The comparison uses the post-#253 test selection at `efb7de9`, Rust 1.85.1,
 the optimized test profile and cargo-nextest 0.9.148 in Docker Desktop Linux
 on an AMD Ryzen 9 5950X with 32 visible logical CPUs and no container CPU quota.
 The experiment varies test concurrency, not the VM's CPU allocation. Rust sources and fixtures stay identical across
-runners. The [comparison script](../tests/support/compare_test_runners.py) reuses
+runners. These historical observations used the former Python tool; they are not
+measurements from its JavaScript replacement. The
+[comparison script](../tests/support/compare_test_runners.cjs) reuses
 the CI suite selector, verifies names and ignored attributes against each
 libtest binary, and rejects unexpected nextest filters. It compiles before
 timing, then alternates runner order and reverses concurrency order on the second
@@ -360,12 +362,23 @@ repeat. JSON records command wall time, child-process CPU time, revision,
 tool versions, inventories and per-run logs. Existing ignored benchmarks and
 deferred regressions are excluded from both runners.
 
+The JavaScript tool uses Node's monotonic `performance.now()` for elapsed time
+and GNU `time` for the command's user plus system CPU time, including descendants
+(CPU precision: 0.01 seconds). Both stdout and stderr go to the per-run log;
+failed runs are recorded before the tool exits unsuccessfully. This development
+tool uses only Node built-ins and the Docker image's `time` package.
+After downloading nextest as below, run
+`docker compose exec -T -e NEXTEST_BIN=/tmp/planorama-nextest dev node --test tests/support/tooling.test.cjs`
+to exercise both runners against a temporary dependency-free crate, including
+ignored inventory, execution order and failed-run logs. These probes validate the
+tool and do not replace repository performance measurements.
+
 Reproduce inside the existing development container from the repository root:
 
 ```sh
 docker compose exec -T dev sh -c 'mkdir -p /tmp/planorama-nextest && curl -LsSf https://get.nexte.st/0.9.148/linux -o /tmp/planorama-nextest/archive.tar.gz && tar xzf /tmp/planorama-nextest/archive.tar.gz -C /tmp/planorama-nextest'
-docker compose exec -T dev python3 tests/support/compare_test_runners.py --suite standard --threads 2 8 --repeats 2 --nextest-bin /tmp/planorama-nextest --output output/nextest-standard-runs
-docker compose exec -T dev python3 tests/support/compare_test_runners.py --suite large --threads 2 --repeats 2 --nextest-bin /tmp/planorama-nextest --output output/nextest-large-runs
+docker compose exec -T dev node tests/support/compare_test_runners.cjs --suite standard --threads 2 8 --repeats 2 --nextest-bin /tmp/planorama-nextest --output output/nextest-standard-runs
+docker compose exec -T dev node tests/support/compare_test_runners.cjs --suite large --threads 2 --repeats 2 --nextest-bin /tmp/planorama-nextest --output output/nextest-large-runs
 ```
 
 Use a new output directory for each experiment; the script refuses to overwrite
