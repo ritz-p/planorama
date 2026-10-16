@@ -15,6 +15,10 @@ mod tests;
 #[path = "../tests/unit/semantic/resolution.rs"]
 mod resolution_tests;
 
+#[cfg(test)]
+#[path = "../tests/unit/semantic/eventbridge.rs"]
+mod eventbridge_tests;
+
 pub(crate) fn transform(plan: &TerraformPlan) -> ArchitectureGraph {
     let _timing = crate::timing::span(
         "semantic_transform",

@@ -24,6 +24,7 @@ examples/aurora.svg
 examples/elasticache.svg
 examples/regions.svg
 examples/messaging.svg
+examples/eventbridge.svg
 examples/sns-subscriptions.svg
 examples/event-sources.svg
 examples/logical-regions.svg

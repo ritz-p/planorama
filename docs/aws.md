@@ -6,6 +6,13 @@ semantics. Provider source and configuration identity are described in [models](
 
 ## Deployment scopes
 
+`aws_cloudwatch_event_bus` and `aws_cloudwatch_event_rule` are regional spatial
+nodes with the Amazon EventBridge icon. They preserve Terraform identities,
+managed/data mode, actions and lifecycle metadata. Explicit references remain
+ordinary dependencies; event patterns, names and policy text do not establish
+message flow or VPC/Subnet containment. Literal-only and implicit default buses
+do not create resources or ownership. See the [EventBridge example](../examples/eventbridge.svg).
+
 `aws_rds_cluster_instance` is a supported regional resource with the RDS icon.
 Managed instances with a complete, explicit, unique `cluster_identifier` reference
 to a managed AWS `aws_rds_cluster` appear as individual cards inside that cluster

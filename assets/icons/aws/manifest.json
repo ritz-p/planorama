@@ -98,6 +98,11 @@
             "file": "Amazon-Simple-Notification-Service.svg",
             "source": "Architecture-Service-Icons_07312026/Arch_Application-Integration/48/Arch_Amazon-Simple-Notification-Service_48.svg",
             "sha256": "f0fbc241cafdf4d6d06b0f46a7bba9325339480c61fd5f62195e3db63c7582b9"
+        },
+        {
+            "file": "Amazon-EventBridge.svg",
+            "source": "Architecture-Service-Icons_07312026/Arch_Application-Integration/48/Arch_Amazon-EventBridge_48.svg",
+            "sha256": "78f7fead59316ad6ac38cc262582bec81fc6649d0f6fdd5327708c08bede65e9"
         }
     ]
 }

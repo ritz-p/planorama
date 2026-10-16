@@ -14,6 +14,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         ("AWS-Lambda", "lambda"),
         ("Amazon-Simple-Queue-Service", "sqs"),
         ("Amazon-Simple-Notification-Service", "sns"),
+        ("Amazon-EventBridge", "eventbridge"),
         ("Amazon-Elastic-Container-Service", "ecs"),
         ("Amazon-Elastic-Kubernetes-Service", "eks"),
         ("Amazon-RDS", "rds"),
