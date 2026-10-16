@@ -13,6 +13,11 @@ Optional [layout diagnostics](layout-diagnostics.md) collect final geometry duri
 SVG composition, including annotation offsets and cross-state routing, and reuse
 runtime layout measurements. The CLI owns the separate report destination.
 
+Opt-in [stage timings](benchmarks.md#cli-stage-timings) use a thread-local collector
+for the synchronous generation pipeline. Disabled spans do not read the clock or
+allocate report rows. Nested spans subtract child durations for exclusive time;
+the collector never changes graph or layout data.
+
 | Module | Responsibility |
 | --- | --- |
 | `plan` | Terraform JSON ingestion, native identity, changes, reference/output facts |

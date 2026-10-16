@@ -21,6 +21,7 @@ mod tests;
 use crate::model::architecture::Graph;
 
 pub(crate) fn route_to_margin(start: Point, end: Point, obstacles: &[Bounds]) -> Vec<Point> {
+    let _timing = crate::timing::span("cross_state_routing", &[("obstacles", obstacles.len())]);
     routing_shared::search::to_margin(start, end, obstacles)
 }
 
@@ -100,6 +101,10 @@ impl<'a> Layout<'a> {
     }
 
     pub fn new(graph: &'a Graph) -> Self {
+        let _timing = crate::timing::span(
+            "layout_routing",
+            &[("nodes", graph.nodes.len()), ("edges", graph.edges.len())],
+        );
         let mut layout = Self::unspaced(graph);
         routing_shared::spacing::refine(graph, &mut layout);
         layout

@@ -25,6 +25,7 @@ use serde_json::Value;
 use std::collections::{BTreeMap, BTreeSet};
 
 pub(crate) fn parse(json: &str) -> Result<TerraformPlan, String> {
+    let _timing = crate::timing::span("terraform_parse_resolve", &[("input_bytes", json.len())]);
     let plan: Value = serde_json::from_str(json.trim_start_matches('\u{feff}'))
         .map_err(|e| format!("invalid JSON: {e}"))?;
     let version = plan["format_version"]

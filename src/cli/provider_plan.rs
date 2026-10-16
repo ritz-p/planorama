@@ -61,6 +61,7 @@ impl Options {
         state: Option<&StateId>,
         json: &str,
     ) -> Result<Option<Evidence>, String> {
+        let _timing = crate::timing::span("provider_evidence", &[]);
         let path = match state {
             Some(id) => self.states.get(id),
             None => self.single.as_ref(),

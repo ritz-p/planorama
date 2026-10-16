@@ -24,6 +24,7 @@ pub(super) fn run(
     let inputs = inputs
         .into_iter()
         .map(|(state_id, path)| {
+            let _timing = crate::timing::span("input_io", &[]);
             let mut plan_json = String::new();
             if path == "-" {
                 io::stdin().read_to_string(&mut plan_json).map_err(|e| {
@@ -124,6 +125,10 @@ pub(super) fn run(
     };
     let architecture = crate::view::apply(&architecture, filter)?;
     let mut report = serde_json::Value::Null;
+    let composition_timing = crate::timing::span(
+        "composition_serialization",
+        &[("states", architecture.states.len())],
+    );
     let image = match output_format {
         super::OutputFormat::Svg if layout_diagnostics.enabled() => svg::render_states_report(
             &architecture,
@@ -142,6 +147,8 @@ pub(super) fn run(
         super::OutputFormat::Svg => svg::render_states(&architecture, format),
         super::OutputFormat::Html => crate::html::render_states(&architecture, format),
     };
+    drop(composition_timing);
+    let _timing = crate::timing::span("output_io", &[("output_bytes", image.len())]);
     layout_diagnostics.write(&report, output)?;
     if output == Path::new("-") {
         io::stdout()

@@ -64,6 +64,8 @@ The previous account-panel layout and timing baseline used JSON-only account
 inference and no longer describes supported output. Use the measurement script
 above for current geometry, path and byte counts. For optional timings, run
 `benchmarks::multi_account::baseline` with `--release -- --ignored --nocapture`.
+For normal SVG/HTML generation, `--timings` reports per-stage and per-state costs
+without running a benchmark; see the [CLI measurement commands](../../docs/benchmarks.md#cli-stage-timings).
 Layout costs depend on the machine; no timing threshold is imposed. Long paths
 and crowded corridors remain possible.
 

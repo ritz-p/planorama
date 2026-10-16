@@ -16,6 +16,13 @@ mod tests;
 mod resolution_tests;
 
 pub(crate) fn transform(plan: &TerraformPlan) -> ArchitectureGraph {
+    let _timing = crate::timing::span(
+        "semantic_transform",
+        &[
+            ("resources", plan.nodes.len()),
+            ("references", plan.edges.len()),
+        ],
+    );
     let raw = Input::new(plan);
     let deployments = relationships::deployments(&raw.nodes);
     let mut graph = crate::provider::transform(raw);
