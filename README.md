@@ -55,6 +55,7 @@ dynamic ロールや未解決式は unknown のままです。[入力・機密�
 ```sh
 docker compose exec -T dev cargo run --locked -- --help
 docker compose exec -T dev cargo run --locked -- plan.json --changed-only -o changes.svg
+docker compose exec -T dev cargo run --locked -- plan.json --list-modules
 docker compose exec -T dev cargo run --locked -- plan.json --modules module.app module.database -o selected.svg
 docker compose exec -T dev cargo run --locked -- plan.json --focus module.app.aws_instance.web --focus-depth 2
 docker compose exec -T dev cargo run --locked -- plan.json --diagnostics

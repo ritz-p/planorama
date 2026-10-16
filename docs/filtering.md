@@ -1,5 +1,32 @@
 # Focused diagrams
 
+`--list-modules` lists original input modules without semantic projection, layout,
+routing or diagram output. It writes deterministic tab-separated text to stdout;
+`-o modules.txt` writes that text to a file. Inputs follow the normal positional,
+stdin and named `--state` rules. Only input options, `-o` and `--timings` can be
+combined with this mode; rendering, evidence, diagnostics and selection options
+are rejected explicitly.
+
+Each row gives a selector, evidence kind, direct resource-instance count and count
+including descendants. Managed and data instances both count; current and each
+deposed object count separately, with duplicate address/deposed records counted
+once. Group cards are never counted. Root rows are marked not selectable. Named
+states show `STATE:` prefixes. Rows backed by resource identities or values-module
+records are instances (including known empty instances); configuration rows are
+marked aggregates and may cover several backed instances. Zero means no backed
+resources in the input, not proof that a configuration-only call has no future
+instances. Unknown count/for_each instances are never invented. Ancestor/subtree
+and aggregate rows overlap, so their totals must not be added together.
+
+```sh
+planorama plan.json --list-modules
+planorama --state app=app.json --state network=network.json --list-modules -o modules.txt
+```
+
+Pass a non-root row's selector to `--modules`, with the shell quoting described
+below. The listing contains identities and counts, never resource attribute
+values or provider configuration.
+
 `--modules ADDRESS...` selects the union of Terraform module subtrees. Repeat the
 option or pass several space-separated addresses; commas are part of keys, not
 separators. Put the input before this variable-length option. Selection is based
