@@ -2,6 +2,30 @@ use crate::{plan, semantic, view};
 use serde_json::json;
 
 #[test]
+fn unassociated_output_and_drift_count_only_toward_input_categories() {
+    let raw = plan::parse(&json!({
+        "format_version": "1.2",
+        "resource_changes": [{"address": "aws_instance.main", "type": "aws_instance"}],
+        "resource_drift": [{"address": "aws_instance.main", "type": "aws_vpc", "change": {"actions": ["delete"]}}],
+        "configuration": {"root_module": {"outputs": {"missing": {"expression": {"references": ["aws_instance.missing.id"]}}}}}
+    }).to_string()).unwrap();
+    let graph = semantic::transform(&raw);
+    assert_eq!(graph.coverage.unassociated_findings, 2);
+    for category in ["unresolved", "drift"] {
+        assert_eq!(graph.coverage.input_findings.get(category), Some(&1));
+        assert!(!graph.coverage.selected_findings.contains_key(category));
+    }
+    assert!(
+        !graph
+            .coverage
+            .findings
+            .iter()
+            .any(|finding| finding.code == "drift_unmatched"
+                || finding.source.address.starts_with("output."))
+    );
+}
+
+#[test]
 fn counts_source_instances_across_lowering_routes_and_filtering() {
     for input in [
         include_str!("../fixtures/association-plan.json"),

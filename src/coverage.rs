@@ -134,6 +134,10 @@ impl Coverage {
                 });
             } else {
                 result.unassociated_findings += 1;
+                *result
+                    .input_findings
+                    .entry(diagnostic.reason.category())
+                    .or_default() += 1;
             }
         }
         for node in &plan.nodes {

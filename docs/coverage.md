@@ -38,7 +38,8 @@ these counters. `collected = false` means analysis is unavailable, not zero.
 unknown, false is incomplete, and true does not make semantic analysis exhaustive.
 `unassociated_findings` counts input findings such as outputs or unmatched drift
 that cannot safely be attributed to an input instance; their identities are not
-retained. No inference assigns them to a similarly named resource.
+retained. Their categories contribute to input counters, but never selected
+counters. No inference assigns them to a similarly named resource.
 
 Resources and states use ordered maps. Findings sort by source address, deposed
 key, optional attribute, code and category, then deduplicate. Consumers qualify
