@@ -6,6 +6,7 @@ mod provider_plan;
 mod service_names;
 mod states;
 mod support;
+mod timings;
 use std::process::Command;
 
 fn cli() -> Command {

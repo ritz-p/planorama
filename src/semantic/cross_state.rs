@@ -6,6 +6,7 @@ use std::collections::BTreeSet;
 mod tests;
 
 pub fn resolve(plans: &MultiPlan, mappings: &[Mapping]) -> Resolution {
+    let _timing = crate::timing::span("cross_state_resolution", &[("states", plans.states.len())]);
     let mut edges = BTreeSet::new();
     let mut diagnostics = BTreeSet::new();
     for (state, plan) in &plans.states {

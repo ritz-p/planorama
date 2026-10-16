@@ -32,9 +32,17 @@ impl Deref for ViewArchitecture {
 }
 
 pub fn single(graph: &ArchitectureGraph, options: &Options) -> Result<ViewGraph, String> {
+    let _timing = crate::timing::span(
+        "selection_projection",
+        &[("nodes", graph.nodes.len()), ("edges", graph.edges.len())],
+    );
     filter::single(graph, options).map(ViewGraph)
 }
 pub fn apply(architecture: &Architecture, options: &Options) -> Result<ViewArchitecture, String> {
+    let _timing = crate::timing::span(
+        "selection_projection",
+        &[("states", architecture.states.len())],
+    );
     filter::apply(architecture, options).map(ViewArchitecture)
 }
 

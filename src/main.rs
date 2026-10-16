@@ -11,6 +11,7 @@ mod plan;
 mod provider;
 mod semantic;
 mod svg;
+mod timing;
 mod view;
 
 use std::process::ExitCode;

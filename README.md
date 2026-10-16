@@ -96,7 +96,7 @@ docker compose exec -T dev cargo run --locked -- - -o - < plan.json > diagram.sv
 | モデル・provider 設定識別子 | [Models](docs/models.md) |
 | レイヤー構成・レイアウト | [Architecture](docs/architecture.md)、[Routing](docs/routing.md) |
 | AWS・Terraform 組み込みリソース用アイコンの出典・ライセンス | [Icons](docs/icons.md) |
-| 性能計測 | [Benchmarks](docs/benchmarks.md) |
+| `--timings` による工程別計測・ベンチマーク | [Benchmarks](docs/benchmarks.md) |
 | 最終レイアウトの text / JSON 診断 | [Layout diagnostics](docs/layout-diagnostics.md) |
 | 任意実行のレイアウト品質比較・ベースライン更新 | [Layout quality CI](docs/ci.md#layout-quality-comparison-390) |
 | 複数 state・region と account 証拠不足を示す大型例 | [生成方法・計測](examples/multi-account/README.md)、[SVG](examples/multi-account/diagram.svg)、[HTML](examples/multi-account/diagram.html) |
