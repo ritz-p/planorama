@@ -65,7 +65,7 @@ fn changed_only_keeps_output_only_changes_and_respects_focus() {
             .unwrap();
             let kept = !unrelated_focus && action.is_some_and(|action| action != "no-op");
             assert_eq!(!view.relationships().is_empty(), kept, "{action:?}");
-            let svg = crate::svg::render_states(&view, Default::default());
+            let svg = crate::svg::render_states(&view, crate::svg::AddressFormat::default());
             assert_eq!(svg.contains("data-output-action="), kept);
             assert_eq!(
                 svg.contains("data-terraform-address=\"aws_subnet.app\""),

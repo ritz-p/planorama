@@ -98,7 +98,7 @@ fn every_remote_reference_keeps_its_full_state_qualified_label_and_link() {
     let render = |architecture: &Architecture| {
         svg::render_states(
             &view::apply(architecture, &Default::default()).unwrap(),
-            Default::default(),
+            crate::svg::AddressFormat::default(),
         )
     };
     let output = render(&architecture);

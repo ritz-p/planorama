@@ -33,6 +33,9 @@ when the first state has no relationships. No qualifying relationships means no
 legend or reserved height. Resource/action summaries, checks, plan status,
 annotations and **Relationship Resources** indexes stay within their states;
 equal visible relationship numbers in different states refer to independent entries.
+`--hide-relationship-legend` omits the shared relationship explanations and the
+cross-state header explanation, retaining the compact relationship action colors.
+The reduced measured height is applied once to state sections and routed endpoints.
 The optional [Markdown coverage report](coverage.md) sums input/selected/excluded
 resource counts across states without merging resource identities. State headings
 wrap within the shared content width.

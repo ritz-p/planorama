@@ -509,7 +509,7 @@ generation source. Rerunning a job may capture a newer PR head; consult its summ
 
 ### Ordinary snapshot coverage
 
-Ordinary unit/integration tests compare 25 of the 39 maintained SVGs with current
+Ordinary unit/integration tests compare 25 of the 40 maintained SVGs with current
 rendering: `association`, `bundling`, `checks`, `components`, `containment`,
 `data`, `data-icons`, `service-names`, `dense-architecture`, `diagram`, `hierarchy-routing`,
 `multi-container`, `multi-plan`, `port-collisions`, `regions`, `regional-states`,
@@ -517,10 +517,10 @@ rendering: `association`, `bundling`, `checks`, `components`, `containment`,
 `subnet-groups`, `terraform`, `terraform-large/diagram`, `vpc-workloads`, and
 `workload-security-groups` (paths under `examples/`, with `.svg`).
 
-The other 14 are `accounts`, `aws-relationships`, `autoscaling-policy`,
+The other 15 are `accounts`, `aws-relationships`, `autoscaling-policy`,
 `cross-state`, `logical-actions`, `logical-regions`, `multi-account/diagram`,
 `network-scope`, `rds-subnet-group`, `relationship-scopes`, `security-groups`,
-`messaging`, `sns-subscriptions`, and `event-sources`.
+`messaging`, `sns-subscriptions`, `event-sources`, and `relationship-legend-hidden`.
 Related behavior has focused tests, but ordinary tests do not reproduce these
 committed SVGs byte for byte. The multi-account input/topology test reads the
 committed SVG; its full rendering comparison is ignored and opt-in. These outputs

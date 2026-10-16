@@ -5,6 +5,25 @@
 The neutral **Relationship lines** card explains relationship colors, line
 patterns, attachment circles, directions and numbered markers separately from the
 resource action legend and the numbered **Relationship Resources** index.
+Use `--hide-relationship-legend` to omit line-kind, direction, containment and
+endpoint/number explanations, together with the cross-state header explanation.
+It works for SVG and self-contained HTML, including named states. Resource action
+colors remain, and relationship action colors retain a smaller **Relationship
+actions** card. Measurement reserves only that card's actual height; subsequent
+annotations and state sections move up. Actual lines, arrows, attachment points,
+numbers, links and **Relationship Resources** entries remain unchanged.
+
+```sh
+planorama plan.json --hide-relationship-legend -o compact.svg
+planorama plan.json --format html --hide-relationship-legend --coverage-report coverage.md -o compact.html
+```
+
+Compare the maintained [compact example](../examples/relationship-legend-hidden.svg)
+with its [full legend version](../examples/routes.svg). Regenerate both using
+`docker compose exec -T dev sh scripts/update-examples.sh`. The option combines
+with either icon mode and does not change graph analysis or local path routing.
+
+By default, the full card remains visible.
 Action colors and their explanation appear above a grid of relationship kinds.
 The card is capped at 960px, matching the maintained viewer example. The grid uses
 at most two columns according to the available width, reading left
