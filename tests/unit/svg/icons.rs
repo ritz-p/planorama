@@ -3,6 +3,8 @@ use super::*;
 mod data_icons;
 #[path = "icon_import.rs"]
 mod icon_import;
+#[path = "service_names.rs"]
+mod service_names;
 #[path = "terraform_icons.rs"]
 mod terraform_icons;
 

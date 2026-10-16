@@ -50,6 +50,7 @@ fn nested_variable_size_groups_keep_final_bounds_and_rank_flow() {
     let template = graph.nodes[2].clone();
     for i in 7..19 {
         graph.nodes.push(Node {
+            service_name: None,
             routes: Default::default(),
             placement: Default::default(),
             references: Vec::new(),

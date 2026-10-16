@@ -115,8 +115,24 @@ fn resource_row(
     if let Some(icon) = super::icons::for_node(node) {
         svg.push_str(&super::icons::render(icon, width - 40, 8));
     }
+    if let Some(name) = node.service_name {
+        let service_width = (crate::view::text::width(name) * 8).min(width - 32);
+        svg.push_str(&super::icons::service_name(
+            node,
+            width - 16 - service_width,
+            y,
+            service_width,
+        ));
+        y += wrap(name, service_width / 8).len() * 20;
+    }
     for (index, (text, is_address)) in lines.iter().enumerate() {
-        let limit = (width - if index == 0 { 64 } else { 32 }) / 8;
+        let limit = (width
+            - if index == 0 && node.service_name.is_none() {
+                64
+            } else {
+                32
+            })
+            / 8;
         let wrapped = if *is_address {
             wrap_address(text, limit)
         } else {

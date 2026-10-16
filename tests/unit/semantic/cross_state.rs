@@ -59,6 +59,7 @@ fn changed_only_keeps_output_only_changes_and_respects_focus() {
                     changed_only: true,
                     focus: unrelated_focus.then(|| "producer:aws_subnet.unrelated".into()),
                     depth: unrelated_focus.then_some(0),
+                    ..Default::default()
                 },
             )
             .unwrap();

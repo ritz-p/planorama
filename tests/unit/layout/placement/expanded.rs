@@ -9,6 +9,7 @@ fn graph(edges: Vec<(usize, usize)>) -> Graph {
         status: Default::default(),
         nodes: (0..4)
             .map(|i| Node {
+                service_name: None,
                 routes: Default::default(),
                 placement: Default::default(),
                 references: Vec::new(),

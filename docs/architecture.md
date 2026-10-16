@@ -87,7 +87,7 @@ canonical provider-source line. Nonempty action subsections appear inside the ca
 in Create, Update, Delete, Replace, Read, Unchanged, Other order, with counts and
 canonical action-colored borders. Rows sort by architecture identity within each
 subsection; wrappers introduce no resource or DOM identity. Each row retains the full selected
-address, action label, deployment-scope label, role, Uses/Dependencies, service icon
+address, action label, deployment-scope label, role, Uses/Dependencies, service icon or name
 and import/move/deposed information, with one action-colored underline below its
 complete content. `view::scope` supplies the reusable label from resolved scope
 and provider identity. Its wrapped height is reserved before group-card packing.
@@ -164,6 +164,11 @@ model's derived-containment predicate to reserve annotation space.
 View projection retains relationships only when their required endpoints survive.
 `ViewGraph` and `ViewArchitecture` have private constructors and no mutable deref.
 Even unfiltered CLI output passes through projection.
+
+`view::Options::icon_mode` selects service artwork or service-name text before
+layout. Projection sets `Node.service_name` through the existing provider-aware
+icon lookup, leaving semantic graphs untouched. Card and logical-row measurements
+reserve wrapped label heights; SVG and HTML consume the same presentation.
 
 Implementation submodules remain private; entry points are crate-visible.
 Unit tests can access private code through child modules loaded from `tests/unit`.
