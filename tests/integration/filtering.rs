@@ -2,6 +2,60 @@ use super::{cli, support};
 use serde_json::json;
 
 #[test]
+fn modules_cli_union_is_deterministic_in_svg_and_html() {
+    let input = json!({"format_version":"1.2","resource_changes":[
+        {"address":"module.app[\"a,b:c.d\"].terraform_data.x","type":"terraform_data","change":{"actions":["create"]}},
+        {"address":"module.db.terraform_data.x","type":"terraform_data","change":{"actions":["no-op"]}},
+        {"address":"module.application.terraform_data.outside","type":"terraform_data","change":{"actions":["create"]}}
+    ]}).to_string();
+    for format in ["svg", "html"] {
+        let first = support::run_with_args(
+            input.as_bytes(),
+            &[
+                "--format",
+                format,
+                "--modules",
+                r#"module.app["a,b:c.d"]"#,
+                "module.db",
+            ],
+        );
+        assert!(
+            first.status.success(),
+            "{}",
+            String::from_utf8_lossy(&first.stderr)
+        );
+        let second = support::run_with_args(
+            input.as_bytes(),
+            &[
+                "--format",
+                format,
+                "--modules",
+                "module.db",
+                "--modules",
+                "module.app",
+                "module.app",
+            ],
+        );
+        assert!(second.status.success());
+        assert_eq!(first.stdout, second.stdout);
+        assert!(
+            !String::from_utf8(first.stdout)
+                .unwrap()
+                .contains("terraform_data.outside")
+        );
+    }
+    for args in [
+        vec!["--modules"],
+        vec!["--modules", "module.missing"],
+        vec!["--modules", "module.app.terraform_data.x"],
+    ] {
+        let result = support::run_with_args(input.as_bytes(), &args);
+        assert!(!result.status.success());
+        assert!(result.stdout.is_empty());
+    }
+}
+
+#[test]
 fn focus_preserves_ancestors_without_unrelated_nodes_and_is_deterministic() {
     let mut plan: serde_json::Value =
         serde_json::from_slice(include_bytes!("../fixtures/containment-plan.json")).unwrap();
