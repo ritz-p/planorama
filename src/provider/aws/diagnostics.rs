@@ -19,6 +19,7 @@ pub fn collect(plan: &crate::model::TerraformPlan) -> Vec<Diagnostic> {
                 .any(|r| r.target == index && r.monitoring_verified)
         {
             found.insert(Diagnostic {
+                deposed_key: node.deposed_key.clone(),
                 address: node.address.clone(),
                 attribute: "dimensions".into(),
                 reason: Reason::UnverifiedMonitoring,
@@ -28,6 +29,7 @@ pub fn collect(plan: &crate::model::TerraformPlan) -> Vec<Diagnostic> {
     for output in &raw.outputs {
         for &reason in &output.issues {
             found.insert(Diagnostic {
+                deposed_key: None,
                 address: format!("output.{}", output.name),
                 attribute: "value".into(),
                 reason,
@@ -36,6 +38,7 @@ pub fn collect(plan: &crate::model::TerraformPlan) -> Vec<Diagnostic> {
     }
     for drift in &raw.drift {
         found.insert(Diagnostic {
+            deposed_key: drift.deposed_key.clone(),
             address: drift.address.clone(),
             attribute: "resource_drift".into(),
             reason: if drift.matched {
@@ -78,6 +81,7 @@ pub fn collect(plan: &crate::model::TerraformPlan) -> Vec<Diagnostic> {
                 continue;
             }
             found.insert(Diagnostic {
+                deposed_key: node.deposed_key.clone(),
                 address: node.address.clone(),
                 attribute: reference.attribute.clone(),
                 reason,
@@ -97,6 +101,7 @@ pub fn collect(plan: &crate::model::TerraformPlan) -> Vec<Diagnostic> {
             for entry in &contained.nodes[target].routes.entries {
                 if entry.destination.is_none() {
                     found.insert(Diagnostic {
+                        deposed_key: node.deposed_key.clone(),
                         address: node.address.clone(),
                         attribute: "route_destination".into(),
                         reason: Reason::UnresolvedRouteInformation,
@@ -104,6 +109,7 @@ pub fn collect(plan: &crate::model::TerraformPlan) -> Vec<Diagnostic> {
                 }
                 if node.resource_type == "aws_route_table" && entry.target.is_none() {
                     found.insert(Diagnostic {
+                        deposed_key: node.deposed_key.clone(),
                         address: node.address.clone(),
                         attribute: "route_target".into(),
                         reason: Reason::UnresolvedRouteInformation,
@@ -133,6 +139,7 @@ pub fn collect(plan: &crate::model::TerraformPlan) -> Vec<Diagnostic> {
                 if let Some(reason) = super::security_groups::failure(raw, reference) {
                     if reference.issues.is_empty() || reason == Reason::EndpointTypeMismatch {
                         found.insert(Diagnostic {
+                            deposed_key: node.deposed_key.clone(),
                             address: node.address.clone(),
                             attribute: attribute.into(),
                             reason,
@@ -210,6 +217,7 @@ pub fn collect(plan: &crate::model::TerraformPlan) -> Vec<Diagnostic> {
             if let Some(reason) = reason {
                 endpoints_valid = false;
                 found.insert(Diagnostic {
+                    deposed_key: node.deposed_key.clone(),
                     address: node.address.clone(),
                     attribute: attribute.into(),
                     reason,
@@ -235,6 +243,7 @@ pub fn collect(plan: &crate::model::TerraformPlan) -> Vec<Diagnostic> {
                 .any(|edge| edge.to == target && edge.kind == crate::model::EdgeKind::Containment)
         {
             found.insert(Diagnostic {
+                deposed_key: node.deposed_key.clone(),
                 address: node.address.clone(),
                 attribute: expected[0].0.into(),
                 reason: Reason::AmbiguousContainmentParent,
@@ -258,6 +267,7 @@ pub fn collect(plan: &crate::model::TerraformPlan) -> Vec<Diagnostic> {
                     .any(|e| e.to != target || !incoming.contains(&e.from))
             {
                 found.insert(Diagnostic {
+                    deposed_key: node.deposed_key.clone(),
                     address: node.address.clone(),
                     attribute: expected
                         .iter()
