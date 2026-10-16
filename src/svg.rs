@@ -2,6 +2,7 @@ mod annotations;
 mod checks;
 mod components;
 mod containers;
+mod coverage;
 mod endpoints;
 mod entities;
 mod icons;
@@ -92,7 +93,7 @@ impl Sections {
             graph,
             layout,
             index,
-            annotation_cards(graph, index, address_format),
+            annotation_cards(graph, index, address_format, ""),
             index.width,
             true,
         )
@@ -110,7 +111,7 @@ impl Sections {
             graph,
             layout,
             index,
-            annotation_cards(graph, index, address_format),
+            annotation_cards(graph, index, address_format, ""),
             available_width,
             false,
         )
@@ -192,8 +193,14 @@ fn annotation_cards(
     graph: &Graph,
     index: &relationship_index::Index<'_>,
     address_format: AddressFormat,
+    state: &str,
 ) -> Vec<(&'static str, style::SectionPalette, Vec<annotations::Card>)> {
     vec![
+        (
+            "Diagram Coverage",
+            style::RELATIONSHIP_RESOURCES,
+            vec![coverage::card(std::iter::once((state, &graph.coverage)))],
+        ),
         (
             "Logical Resources",
             style::LOGICAL_RESOURCES,
