@@ -2,6 +2,8 @@ function selection(context, index, navigation, highlights, coordinator) {
   const { svg, viewport, byId, details, results } = context;
   const { targets, label, title, relationshipEntries, relationshipEdges, links, edges, components } = index;
   const { reveal } = navigation;
+  const history = selectionHistory(context, index, navigation, coordinator, select);
+  coordinator.saveHistory = history.save;
   function button(text, action) {
     const el = document.createElement('button');
     el.type = 'button'; el.textContent = text; el.addEventListener('click', action);
@@ -44,9 +46,10 @@ function selection(context, index, navigation, highlights, coordinator) {
     copy.setAttribute('aria-label', `Copy Terraform address: ${resource.address} · ${caption.textContent}`);
     group.append(caption, field, copy, status); details.append(group);
   }
-  function select(id) {
+  function select(id, restoring = false) {
     const el = byId(id);
-    if (!el || !svg.contains(el)) return;
+    if (!el || !svg.contains(el)) return false;
+    if (!restoring) history.before(id);
     coordinator.clear(); coordinator.selected = id;
     highlights.mark(el, 'selected');
     viewport.setAttribute('data-selection', 'true');
@@ -67,7 +70,8 @@ function selection(context, index, navigation, highlights, coordinator) {
         if (targets.has(endpoint)) copyIdentity(targets.get(endpoint), 'Endpoint resource');
       }
       reveal(el);
-      return;
+      if (!restoring) history.after();
+      return true;
     }
     if (r) {
       const identity = document.createElement('p');
@@ -121,7 +125,9 @@ function selection(context, index, navigation, highlights, coordinator) {
     if (details.children.length <= (r ? 3 : 1)) section('Relationships', [{ text: 'No rendered edges, references or component memberships in this view.' }]);
     for (const b of results.querySelectorAll('button')) b.setAttribute('aria-pressed', String(b.dataset.target === id));
     reveal(el);
+    if (!restoring) history.after();
+    return true;
   }
 
-  return { select, button };
+  return { select, button, clearHistory: history.clear };
 }

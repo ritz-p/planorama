@@ -70,10 +70,22 @@ line patterns, bundles or routing. Clear selection restores their normal styling
 | Resource links | Tab to a resource or link, then Enter; clicking also selects |
 | Relationship numbers | Click, or Tab then Enter/Space; endpoint buttons navigate to resources |
 | Copy address | Copy Terraform address in selection details; Tab then Enter also works |
+| Selection history | Back/Forward buttons; Tab then Enter also works |
 | Clear selection | Escape or Clear selection |
 | Pan | Drag or scroll; arrow keys while the diagram has focus |
 | Zoom | +/− buttons, +/− keys in the diagram, or Ctrl/Command+scroll |
 | Fit entire view | Fit to view or F while the diagram has focus |
+
+Back/Forward restores earlier selections and their viewport positions. History
+holds up to 100 selections in memory, distinguishing state-qualified resources,
+current/deposed instances, relationship entries and provenance resources. Leaving
+a selection saves its latest pan/zoom position; pan/zoom alone and repeated
+selection of the same target do not add entries. A new selection after Back
+discards the forward branch. Missing targets are skipped safely and never rebuilt.
+Restoration resets impact and diagnostic overlays through normal selection and
+focuses the restored target. Clear selection/Escape empties history; search edits,
+facets, Reset search and Fit retain it. Reloading the file starts fresh. These
+controls use no browser-history shortcuts, storage, URL state or network access.
 
 Selection details offer the native Terraform address, independent of address-format
 settings, with managed/data, current/deposed and state shown separately. Relationship
@@ -237,6 +249,8 @@ Build the CLI with `cargo build --locked` in the same container first.
 `metadata.js` owns identity and DOM indexes; `selection.js` renders details and
 relationship navigation; `searching.js` owns search/results; `navigation.js` owns
 the view box and pan/zoom; `highlighting.js` owns selection highlighting cleanup.
+`selection-history.js` stores bounded selection/viewport history and restores it
+through selection and navigation, preserving the shared overlay reset lifecycle.
 `lifecycle.js` registers optional feature adapters with a `reset()` method. New
 overlays register there so resource/relationship selection and Clear cannot leave
 stale feature state. Modules receive their dependencies explicitly and return
