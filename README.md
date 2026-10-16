@@ -15,6 +15,8 @@ docker compose exec -T dev cargo run --locked -- examples/plan.json -o diagram.s
 
 `--coverage-report coverage.md` を付けると、入力・選択・除外件数や診断集計を別の Markdown に保存します。SVG・HTML・複数 state に対応します。[レポート例](examples/coverage.md)と[集計の定義](docs/coverage.md)を参照してください。
 
+`--hide-relationship-legend` で線種・方向・包含・cross-state の説明を省きます。action の色見本、実際の線・矢印・関係番号・Relationship Resources は保持します。SVG・HTML に共通で使えます。[省略例](examples/relationship-legend-hidden.svg)と[凡例の設定](docs/relationships.md)を参照してください。
+
 [SQS/SNS の例](examples/messaging.svg) と [SNS 購読の例](examples/sns-subscriptions.svg) では、サービスの配置と検証済みの購読関係を表示します。購読リソースは論理行として保持し、未解決の接続先も明示します。[判定条件](docs/aws.md#sns-subscriptions)を参照してください。
 
 [イベントソースの例](examples/event-sources.svg) は、明示参照と計画値で検証した SQS → Lambda のマッピングを表示します。非対応ソースや未解決のマッピングも論理行として保持します。

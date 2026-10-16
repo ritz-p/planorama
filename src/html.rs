@@ -6,7 +6,7 @@ mod semantic_diagnostics;
 pub(crate) fn render(
     graph: &view::ViewGraph,
     layout: &Layout<'_>,
-    format: svg::AddressFormat,
+    format: impl Into<svg::Options>,
 ) -> String {
     document(
         svg::render_content(graph, layout, format, svg::Content::ValueFree),
@@ -18,7 +18,7 @@ pub(crate) fn render(
 
 pub(crate) fn render_states(
     architecture: &view::ViewArchitecture,
-    format: svg::AddressFormat,
+    format: impl Into<svg::Options>,
 ) -> String {
     let resources = architecture
         .states
@@ -41,7 +41,7 @@ pub(crate) fn render_states(
 pub(crate) fn render_report(
     graph: &view::ViewGraph,
     layout: &Layout<'_>,
-    format: svg::AddressFormat,
+    format: impl Into<svg::Options>,
     report: &mut Value,
     diagnostics: bool,
 ) -> String {
@@ -55,7 +55,7 @@ pub(crate) fn render_report(
 
 pub(crate) fn render_states_report(
     architecture: &view::ViewArchitecture,
-    format: svg::AddressFormat,
+    format: impl Into<svg::Options>,
     report: &mut Value,
     diagnostics: bool,
 ) -> String {

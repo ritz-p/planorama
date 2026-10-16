@@ -3,6 +3,58 @@ use crate::layout::Layout;
 use crate::svg::{color, label, render};
 
 #[test]
+fn hidden_explanations_keep_action_colors_and_remove_their_measured_height() {
+    let raw = crate::plan::parse(include_str!("../../fixtures/association-plan.json")).unwrap();
+    let graph = crate::semantic::transform(&raw);
+    for width in [400, 720, 1120] {
+        let full = MeasuredLegend::from_graphs([&graph.0], width, 148, false);
+        let compact = MeasuredLegend::from_graphs([&graph.0], width, 148, true);
+        assert!(compact.height > 0 && compact.height < full.height);
+        let output = compact.render();
+        assert!(output.contains("Relationship actions"));
+        assert!(!output.contains("Relationship lines"));
+        assert!(!output.contains("data-legend-entry"));
+        assert!(!output.contains("Hollow circles"));
+        assert!(!output.contains("Matching [N]"));
+        let document = roxmltree::Document::parse(&output).unwrap();
+        let card = document
+            .descendants()
+            .find(|n| n.has_tag_name("rect"))
+            .unwrap();
+        assert_eq!(
+            card.attribute("height").unwrap().parse::<usize>().unwrap() + 12,
+            compact.height
+        );
+        for action in graph
+            .edges
+            .iter()
+            .filter(|e| e.kind != EdgeKind::Containment)
+            .map(|e| e.change.as_ref().map(|c| c.action))
+        {
+            assert!(output.contains(crate::svg::relationships::action_stroke(action)));
+        }
+        let layout = Layout::new(&graph);
+        let options = crate::svg::Options {
+            hide_relationship_legend: true,
+            ..Default::default()
+        };
+        let index = crate::svg::relationship_index::Index::new(&graph, &layout);
+        let normal = crate::svg::Sections::new(
+            &graph,
+            &layout,
+            &index,
+            crate::svg::AddressFormat::Qualified,
+        );
+        let hidden = crate::svg::Sections::new(&graph, &layout, &index, options);
+        assert_eq!(
+            normal.dimensions(&layout).1 - hidden.dimensions(&layout).1,
+            normal.legend.height - hidden.legend.height
+        );
+        assert_eq!(normal.annotations.height, hidden.annotations.height);
+    }
+}
+
+#[test]
 fn rendering_uses_final_lines_and_positions_without_measuring_again() {
     fn discard_packing_inputs(content: &mut MeasuredContent) {
         content.width = 0;

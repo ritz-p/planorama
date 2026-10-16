@@ -15,7 +15,7 @@ pub(super) enum OutputFormat {
     Html,
 }
 
-const HELP: &str = "planorama — Terraform plan JSON → SVG / HTML (pure Rust)\n\nUsage: planorama <plan.json | -> [--format svg|html] [-o <path | ->] [--address-format qualified|terraform] [--diagnostics]\n\n  -o, --output PATH   Output file (default: diagram.svg or diagram.html); '-' for stdout\n  --format FORMAT    Output format: svg (default) or self-contained html\n  --icon-mode MODE   Service display: icon (default) or service-name\n  --address-format FORMAT  Resource labels: qualified (default) or terraform\n  --provider-plan PATH  Verify accounts against a saved Terraform 1.9.8 / AWS 5.100.0 plan\n  --state-provider-plan ID=PATH  Saved plan evidence for one named state\n  --changed-only     Retain changes and required context\n  --focus ADDRESS    Select a resource (STATE:ADDRESS for named states)\n  --focus-depth N    Neighbor depth (default: 1; requires --focus)\n  --remote-state CONSUMER:ADDRESS=PRODUCER  Map a named remote-state data source\n  --timings          Report generation stage timings on stderr\n  --diagnostics      Explain unresolved references and semantic fallbacks on stderr\n  --html-diagnostics  Include bounded routing hotspots (requires --format html)\n  --html-semantic-diagnostics  Include bounded semantic findings (requires --format html)\n  --coverage-report PATH  Write a separate Markdown coverage report\n  --layout-diagnostics  Report final layout quality on stderr\n  --layout-diagnostics-json PATH  Write a versioned layout report to a separate JSON file\n  -h, --help          Show help\n  -V, --version       Show version\n\nInput: terraform show -json <saved-plan> (not terraform plan -json).\nJSON-only inputs leave AWS accounts unknown. Provider evidence requires Terraform and initialized schemas.\nLines show reference or architectural relationships; containment uses nested boxes.\nAttribute values are never included in the diagram.\n";
+const HELP: &str = "planorama — Terraform plan JSON → SVG / HTML (pure Rust)\n\nUsage: planorama <plan.json | -> [--format svg|html] [-o <path | ->] [--address-format qualified|terraform] [--diagnostics]\n\n  -o, --output PATH   Output file (default: diagram.svg or diagram.html); '-' for stdout\n  --format FORMAT    Output format: svg (default) or self-contained html\n  --hide-relationship-legend  Omit relationship explanations; keep action colors\n  --icon-mode MODE   Service display: icon (default) or service-name\n  --address-format FORMAT  Resource labels: qualified (default) or terraform\n  --provider-plan PATH  Verify accounts against a saved Terraform 1.9.8 / AWS 5.100.0 plan\n  --state-provider-plan ID=PATH  Saved plan evidence for one named state\n  --changed-only     Retain changes and required context\n  --focus ADDRESS    Select a resource (STATE:ADDRESS for named states)\n  --focus-depth N    Neighbor depth (default: 1; requires --focus)\n  --remote-state CONSUMER:ADDRESS=PRODUCER  Map a named remote-state data source\n  --timings          Report generation stage timings on stderr\n  --diagnostics      Explain unresolved references and semantic fallbacks on stderr\n  --html-diagnostics  Include bounded routing hotspots (requires --format html)\n  --html-semantic-diagnostics  Include bounded semantic findings (requires --format html)\n  --coverage-report PATH  Write a separate Markdown coverage report\n  --layout-diagnostics  Report final layout quality on stderr\n  --layout-diagnostics-json PATH  Write a versioned layout report to a separate JSON file\n  -h, --help          Show help\n  -V, --version       Show version\n\nInput: terraform show -json <saved-plan> (not terraform plan -json).\nJSON-only inputs leave AWS accounts unknown. Provider evidence requires Terraform and initialized schemas.\nLines show reference or architectural relationships; containment uses nested boxes.\nAttribute values are never included in the diagram.\n";
 
 pub(crate) fn run() -> Result<(), String> {
     let mut input = None;
@@ -24,7 +24,7 @@ pub(crate) fn run() -> Result<(), String> {
     let mut provider_plan = provider_plan::Options::default();
     let mut output = None;
     let mut output_format = OutputFormat::default();
-    let mut address_format = svg::AddressFormat::default();
+    let mut render_options = svg::Options::default();
     let mut diagnostics = false;
     let mut timings = false;
     let mut layout_diagnostics = layout_diagnostics::Options::default();
@@ -65,6 +65,7 @@ pub(crate) fn run() -> Result<(), String> {
                     None => return Err("--format requires svg or html".into()),
                 };
             }
+            "--hide-relationship-legend" => render_options.hide_relationship_legend = true,
             "--changed-only" => filter.changed_only = true,
             "--focus" => filter.focus = Some(args.next().ok_or("--focus requires an address")?),
             "--focus-depth" => {
@@ -129,7 +130,7 @@ pub(crate) fn run() -> Result<(), String> {
                 ))
             }
             "--address-format" => {
-                address_format = match args.next().as_deref() {
+                render_options.address_format = match args.next().as_deref() {
                     Some("qualified") => svg::AddressFormat::Qualified,
                     Some("terraform") => svg::AddressFormat::Terraform,
                     Some(value) => {
@@ -180,7 +181,7 @@ pub(crate) fn run() -> Result<(), String> {
         states::run(
             (state_inputs, &provider_plan),
             &output,
-            address_format,
+            render_options,
             output_format,
             (diagnostics, &layout_diagnostics, &coverage_report),
             &mappings,
@@ -254,26 +255,28 @@ pub(crate) fn run() -> Result<(), String> {
     let layout = Layout::new(&graph);
     let mut report = serde_json::Value::Null;
     let composition_timing = crate::timing::span("composition_serialization", &[]);
-    let image = match (output_format, address_format) {
+    let image = match (output_format, render_options.address_format) {
         (OutputFormat::Html, _) if layout_diagnostics.enabled() => crate::html::render_report(
             &graph,
             &layout,
-            address_format,
+            render_options,
             &mut report,
             layout_diagnostics.html,
         ),
         (OutputFormat::Svg, _) if layout_diagnostics.enabled() => svg::render_report(
             &graph,
             &layout,
-            address_format,
+            render_options,
             svg::Content::Standard,
             Some(&mut report),
         ),
-        (OutputFormat::Html, _) => crate::html::render(&graph, &layout, address_format),
-        (OutputFormat::Svg, svg::AddressFormat::Qualified) => svg::render(&graph, &layout),
-        (OutputFormat::Svg, svg::AddressFormat::Terraform) => {
-            svg::render_with_format(&graph, &layout, address_format)
+        (OutputFormat::Html, _) => crate::html::render(&graph, &layout, render_options),
+        (OutputFormat::Svg, svg::AddressFormat::Qualified)
+            if !render_options.hide_relationship_legend =>
+        {
+            svg::render(&graph, &layout)
         }
+        (OutputFormat::Svg, _) => svg::render_with_format(&graph, &layout, render_options),
     };
     drop(composition_timing);
     let output_timing = crate::timing::span("output_io", &[("output_bytes", image.len())]);

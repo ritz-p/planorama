@@ -4,6 +4,7 @@ mod html;
 mod layout_diagnostics;
 mod messaging;
 mod provider_plan;
+mod relationship_legend;
 mod service_names;
 mod states;
 mod support;
