@@ -44,6 +44,10 @@ the current card projection copies the safe metadata required for existing SVGs.
 Layout/rendering consume architecture graphs only. Named plans keep separate
 Terraform models under explicit `StateId`s.
 
+`Graph.coverage` preserves input counters and selected source instances across
+lowering and filtering. It carries structured semantic findings separately from
+graph relationships; see the [coverage contract](coverage.md).
+
 `Node.placement` classifies spatial, logical and unresolved presentation separately
 from role. Logical nodes retain their native identity, action and provenance.
 `Node.references` retains direct attribute, verified inverse monitoring and graph-level reference evidence,

@@ -29,6 +29,7 @@ impl Input {
 
 pub(crate) fn base_graph(plan: &TerraformPlan) -> Graph {
     let mut graph = Graph {
+        coverage: Default::default(),
         relationships: Vec::new(),
         components: Vec::new(),
         checks: plan.checks.clone(),

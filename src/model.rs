@@ -91,6 +91,7 @@ pub enum ResourceRole {
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Graph {
+    pub coverage: crate::coverage::Coverage,
     pub relationships: Vec<ArchitectureRelationship>,
     pub components: Vec<SyntheticComponent>,
     pub checks: Vec<CheckResult>,

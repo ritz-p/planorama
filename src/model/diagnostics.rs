@@ -71,6 +71,7 @@ impl DiagnosticReason {
 
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Diagnostic {
+    pub deposed_key: Option<String>,
     pub address: String,
     pub attribute: String,
     pub reason: DiagnosticReason,

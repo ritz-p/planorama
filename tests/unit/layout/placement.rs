@@ -54,6 +54,7 @@ fn numbered_cycles_reserve_both_terminal_clearances_between_flat_rows() {
 #[test]
 fn long_edges_order_through_three_ranks_deterministically() {
     let graph = Graph {
+        coverage: Default::default(),
         relationships: Vec::new(),
         components: Vec::new(),
         checks: Vec::new(),

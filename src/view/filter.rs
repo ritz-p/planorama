@@ -230,6 +230,10 @@ pub fn apply(all: &Architecture, options: &Options) -> Result<Architecture, Stri
                 .0
                 .relationships
                 .retain(|r| ids.contains(&r.from) && ids.contains(&r.to));
+            let represented = crate::coverage::represented(&graph);
+            graph.0.coverage.retain(&represented);
+            graph.0.coverage.focused = options.focus.is_some();
+            graph.0.coverage.changed_only = options.changed_only;
             (state.clone(), graph)
         })
         .collect();

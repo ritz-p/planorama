@@ -81,6 +81,7 @@ fn layout_uses_native_identity_and_svg_can_render_an_address_free_aggregate() {
     let graph = semantic::transform(&raw);
     let component = graph.components[0].clone();
     let only_aggregate = Graph {
+        coverage: Default::default(),
         nodes: vec![],
         edges: vec![],
         relationships: Vec::new(),
