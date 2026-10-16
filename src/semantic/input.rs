@@ -39,6 +39,7 @@ pub(crate) fn base_graph(plan: &TerraformPlan) -> Graph {
             .iter()
             .enumerate()
             .map(|(index, fact)| Node {
+                member_owner: None,
                 service_name: None,
                 routes: crate::model::RoutePresentation {
                     entries: fact.route_entries.clone(),

@@ -363,6 +363,10 @@ fn namespace(svg: &str, prefix: &str) -> String {
             "data-route-table=\"resource-",
             &format!("data-route-table=\"{prefix}resource-"),
         )
+        .replace(
+            "data-member-cluster=\"resource-",
+            &format!("data-member-cluster=\"{prefix}resource-"),
+        )
         .replace(" href=\"#", &format!(" href=\"#{prefix}"))
         .replace(
             "data-source=\"resource-",

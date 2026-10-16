@@ -10,6 +10,9 @@ The selected original SVG files are stored unchanged under `assets/icons/aws/`. 
 and Amazon Simple Notification Service icons from the same verified release,
 for both managed and data resources. See the [messaging example](../examples/messaging.svg).
 
+RDS Cluster Instances (`aws_rds_cluster_instance`) use the Amazon RDS icon in
+ordinary cards and verified cluster member cards. See the [Aurora example](../examples/aurora.svg).
+
 ElastiCache subnet and replication groups use the existing Amazon ElastiCache
 icon and are classified architecture resources. Their verified common-VPC
 placement is shown in the [ElastiCache example](../examples/elasticache.svg).

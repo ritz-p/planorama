@@ -20,6 +20,10 @@ Containment ancestors and verified owning Route Tables are then retained automat
 retain both endpoints transitively, even at depth zero, to preserve provenance.
 Context nodes can therefore be unchanged or outside the requested depth.
 
+RDS cluster membership does not expand selection. If the cluster is excluded,
+selected instances return to ordinary visible cards. If an instance is excluded,
+only the remaining selected members occupy the cluster card.
+
 If an ElastiCache Replication Group's referenced Subnet Group is excluded, its
 inferred VPC placement is removed and the replication group remains visible.
 That removed placement does not retain an otherwise unselected VPC as context.

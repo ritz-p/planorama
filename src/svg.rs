@@ -278,14 +278,25 @@ pub(crate) fn render_report(
 }
 
 fn diagnostic_cards(graph: &Graph, layout: &Layout<'_>) -> serde_json::Value {
-    serde_json::json!({
+    let mut cards = serde_json::json!({
         "spatial": layout.bounds.iter().zip(&graph.nodes).filter(|(b, n)| b.width > 0 && b.height > 0 && n.placement != crate::model::Placement::Logical && crate::view::routes::owner(graph, n).is_none()).count(),
         "logical_resources": graph.nodes.iter().filter(|n| n.placement == crate::model::Placement::Logical).count(),
         "logical_groups": logical::group_count(graph),
-        "embedded_routes": graph.nodes.iter().enumerate().map(|(i, _)| crate::view::routes::cards(graph, i).len()).sum::<usize>(),
+        "embedded_routes": graph.nodes.iter().enumerate().map(|(i, _)| crate::view::routes::cards(graph, i).into_iter().filter(|card| card.node.is_none_or(|node| node.member_owner.is_none())).count()).sum::<usize>(),
         "logical_components": components::cards(graph).len(),
         "relationship_groups": relationship_index::Index::new(graph, layout).cards().len(),
-    })
+    });
+    let members = graph
+        .nodes
+        .iter()
+        .filter(|node| {
+            node.member_owner.is_some() && crate::view::routes::owner(graph, node).is_some()
+        })
+        .count();
+    if members > 0 {
+        cards["embedded_members"] = members.into();
+    }
+    cards
 }
 
 fn render_with_index(
@@ -577,10 +588,13 @@ fn render_with_index(
             graph,
             layout,
             i,
-            x + 12,
-            y + metrics.routes_y,
+            crate::layout::Point {
+                x: x + 12,
+                y: y + metrics.routes_y,
+            },
             relationship_index,
             content,
+            address_format,
         ));
         let role = roles::annotation(node.role, &node.module);
         let footer = match role.is_empty() {

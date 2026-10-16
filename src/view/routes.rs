@@ -29,21 +29,57 @@ pub(crate) struct Card<'a> {
 
 impl Card<'_> {
     pub fn badge_height(&self) -> usize {
-        self.node.map_or(0, super::card::import_height)
+        self.node.map_or(0, |node| {
+            super::card::import_height(node) + if node.member_owner.is_some() { 32 } else { 0 }
+        })
     }
 
     pub fn height(&self) -> usize {
         24 + self.badge_height()
             + self
+                .node
+                .filter(|node| node.member_owner.is_some())
+                .map_or(0, |node| {
+                    super::references::height_at_width(node, WIDTH - 24)
+                })
+            + self
                 .rows
                 .iter()
-                .map(|r| r.lines(&r.text).len() * 18)
+                .enumerate()
+                .map(|(index, r)| {
+                    let lines = r.lines(&r.text).len();
+                    let lines = if index == 0 {
+                        self.node
+                            .filter(|node| node.member_owner.is_some())
+                            .map_or(lines, |node| {
+                                lines
+                                    .max(r.lines(&heading(node, true)).len())
+                                    .max(r.lines(&heading(node, false)).len())
+                            })
+                    } else {
+                        lines
+                    };
+                    lines * 18
+                })
                 .sum::<usize>()
     }
 }
 
+pub(crate) fn heading(node: &Node, qualified: bool) -> String {
+    let operation = node.metadata.state_removal.map_or_else(
+        || format!("{:?}", node.action).to_lowercase(),
+        |removal| removal.label().into(),
+    );
+    let address = if qualified {
+        node.resource_address().qualified()
+    } else {
+        std::borrow::Cow::Borrowed(node.address.as_str())
+    };
+    format!("{address} [{operation}]")
+}
+
 pub(crate) fn owner(graph: &Graph, node: &Node) -> Option<usize> {
-    let owner = node.routes.owner.as_ref()?;
+    let owner = node.routes.owner.as_ref().or(node.member_owner.as_ref())?;
     graph
         .nodes
         .iter()
@@ -150,17 +186,29 @@ pub(crate) fn cards(graph: &Graph, parent: usize) -> Vec<Card<'_>> {
         .collect();
     children.sort_by_key(|(_, n)| &n.entity.id);
     for (index, child) in children {
-        let operation = child.metadata.state_removal.map_or_else(
-            || format!("{:?}", child.action).to_lowercase(),
-            |removal| removal.label().into(),
-        );
         let mut rows = vec![Row {
-            text: format!("{} [{operation}]", child.address),
+            text: heading(child, false),
             target: None,
             moved: false,
             destination: false,
             address: true,
         }];
+        if child.member_owner.is_some() {
+            rows.push(Row {
+                text: super::scope::label(child.entity.scope.as_ref(), &child.provider),
+                target: None,
+                moved: false,
+                destination: false,
+                address: false,
+            });
+            rows.push(Row {
+                text: format!("Cluster: {}", node.address),
+                target: child.member_owner.clone(),
+                moved: false,
+                destination: false,
+                address: true,
+            });
+        }
         if let Some(previous) = &child.previous_address {
             rows.push(Row {
                 text: super::text::moved_from(previous),
@@ -196,6 +244,14 @@ pub(crate) fn cards(graph: &Graph, parent: usize) -> Vec<Card<'_>> {
                     return None;
                 };
                 if other == parent
+                    || (child.member_owner.is_some()
+                        && e.to == index
+                        && super::references::rows(child).iter().any(|row| {
+                            row.target.is_some_and(|target| {
+                                target.state.is_none()
+                                    && graph.nodes[other].entity.provenance.contains(&target.id)
+                            })
+                        }))
                     || child.routes.entries.iter().any(|r| {
                         r.target
                             .as_ref()

@@ -78,6 +78,12 @@ Route child cards use presentation nesting; their safe ownership and entry detai
 are in `route-presentations`, and original reference evidence remains in metadata.
 See [Route cards](routes.md) for next-hop evidence and direction.
 
+RDS Cluster Instances also use presentation nesting, recorded in
+`member-presentations`. Their original dependencies remain in relationship
+metadata and appear as links inside each member card; membership does not add
+VPC/Subnet containment. `data-embedded-member` and `data-member-owner` identify the
+displayed member and cluster without duplicating either resource's DOM identity.
+
 Cross-state dependencies retain blue dashed gutter routes and their own visible
 cross-state legend. Blue identifies the cross-state relationship, independently
 of state-local relationship action colors and producer output-action metadata.

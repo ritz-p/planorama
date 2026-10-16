@@ -6,6 +6,7 @@ mod containment;
 mod data;
 pub(super) mod diagnostics;
 mod icons;
+mod members;
 mod messaging;
 mod monitoring;
 mod placement;
@@ -71,6 +72,7 @@ pub(crate) fn icon_for(resource_type: &str) -> Option<crate::icons::ResourceIcon
 pub(super) fn transform(raw: crate::semantic::Input) -> crate::model::Graph {
     let mut graph = security_groups::infer(&raw, containment::infer(&raw));
     routes::present(&raw, &mut graph);
+    members::present(&raw, &mut graph);
     monitoring::present(&raw, &mut graph);
     autoscaling::present(&raw, &mut graph);
     messaging::present(&raw, &mut graph);

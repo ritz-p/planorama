@@ -32,6 +32,11 @@ port capacity used during height refinement; resetting every port to the right
 can overlap numbered reservations on compact cards. Newly visible edges start
 on the right and participate in the same numbered-port selection.
 
+RDS cluster members share this measured footprint and layout-only parent relation.
+Member content expands the cluster before routing, including wrapped addresses,
+scope and dependency links. References involving members remain navigable text
+and semantic metadata; other cluster relationships use its expanded bounds.
+
 ## Placement
 
 Before routing, verified AWS Listener ownership adds a soft preference toward its
@@ -393,7 +398,7 @@ Preferred gaps are soft: a clean residual near-parallel run beats new bends or a
 excessive detour. When preferred capacity cannot be obtained, the pass tries the
 minimum stroke-aware margin within the existing geometry.
 
-This pass runs once on the final graph, after embedded Route reconstruction,
+This pass runs once on the final graph, after embedded Route and cluster-member reconstruction,
 same-side port refinement, bundling and ordinary shortcutting. It permits at most
 20 sweeps and `clamp(path_count, 60, 240)` total corridor attempts. Cumulative
 growth on each axis is `clamp(initial_axis_size / 4, 640, 4096)` pixels, shared by

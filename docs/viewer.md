@@ -32,7 +32,7 @@ Search matches the complete native and qualified address, architecture identity,
 module, state, resource type, managed/data mode and deposed key. Space-separated
 terms must all match. Results retain full addresses and state/mode distinctions.
 Selecting a result or diagram resource reveals its individual stable target,
-including nested logical-resource rows and embedded Route cards.
+including nested logical-resource rows, embedded Route cards and RDS cluster members.
 Lowered association resources use their visible Relationship Resources entry;
 their selection identifies the original relationship endpoints and paths.
 
