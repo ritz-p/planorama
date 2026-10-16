@@ -69,6 +69,8 @@ fn aggregate_reconciles_named_states_and_preserves_empty_state_counts() {
     assert_eq!(values[0]["input"]["resources"], 2);
     assert_eq!(values[0]["selected"]["resources"], 1);
     assert_eq!(values[2]["selected"]["resources"], 0);
+    assert_eq!(values[1]["states"][0]["state"], long);
+    assert_eq!(values[2]["states"][0]["state"], "empty");
     assert!(svg.contains("not applicable"));
 }
 
@@ -85,4 +87,9 @@ fn measured_coverage_wraps_and_distinguishes_unavailable_from_zero() {
     assert!(card.content.contains("input 0 | selected 0 | excluded 0"));
     assert!(card.content.contains("Input completeness: incomplete"));
     assert!(!card.content.contains("analysis unavailable"));
+    assert!(card.content.contains("Selection: no CLI filter"));
+    assert!(
+        card.content
+            .contains("Selected reference findings (subset)")
+    );
 }

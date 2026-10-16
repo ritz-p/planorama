@@ -67,7 +67,7 @@ docker compose exec -T dev cargo run --locked -- - -o - < plan.json > diagram.sv
 - AWS の VPC・Subnet が空間的なコンテナです。間接参照から導いた配置には `inferred placement` を表示します。
 - data リソースは破線と `external` 表示で区別します。一部の AWS メタデータ data は省略します。
 - import を含むリソースには専用の `import` バッジを表示します。作成・更新・置換・変更なしの色や action は保持し、import ID や identity の値は表示しません。
-- 上部は Logical Resources（シアン）、Logical Components（紫）、Relationship Resources の順です。ECS Cluster・Task Definition・IAM 定義・AMI・EC2 Launch Template・CloudWatch Log Group・Metric Alarm・Auto Scaling Policy は最初のセクションにまとめ、空間配置と経路計算から分離します。
+- 上部は Diagram Coverage、Logical Resources（シアン）、Logical Components（紫）、Relationship Resources の順です。ECS Cluster・Task Definition・IAM 定義・AMI・EC2 Launch Template・CloudWatch Log Group・Metric Alarm・Auto Scaling Policy は Logical Resources にまとめ、空間配置と経路計算から分離します。
 - Relationship Resources は1枚に最大5件をまとめ、最終的な本文の横幅に収まる限り右へ並べます。列数の上限はありません。番号から索引へ、索引の端点から各リソースへ移動できます。複数 state では共通の本文幅を使い、state 間の配線領域は含めません。[21件の例](examples/relationship-index.svg) と [40件の例](examples/relationship-index-wide.svg) を参照してください。
 - Logical Resources は state 内で provider source・resource type・managed/data ごとに中立色のカードへまとめ、個々のリソースを行として表示します。各行の情報と変更数を保持し、リソース数とグループカード数は別に表示します。
 - 各種類カードの内部は Create・Update・Delete・Replace・Read・Unchanged・Other の順に、件数付きの変更色の枠で区切ります。Policy／Controller の意味も見出しに表示します。SVG・HTML とも全区画を表示し、HTML の操作別フィルターは[後続対応](docs/viewer.md)です。

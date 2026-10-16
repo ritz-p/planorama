@@ -56,14 +56,17 @@ state, with a whole-diagram summary above named states. Input, selected and
 excluded resources come from shared accounting, not rendered cards. Unknown
 account/region fractions use the selected applicable-resource denominator;
 zero applicable resources display `not applicable`. Reference finding counts
-are selected records and may overlap on a resource. Unassociated findings are
-explicitly labeled as input findings. Counts never imply invalid infrastructure.
+are a labeled subset of selected findings and may overlap on a resource.
+Unassociated findings are explicitly labeled as input findings. Counts never
+imply invalid infrastructure.
 
 Summaries distinguish complete, incomplete and unknown input status, supported-rule
 analysis, and unavailable collection. CLI focus/changed-only modes and retained
-context are labeled. Summary text and state headings use measured wrapping.
+context are labeled. `no CLI filter` still allows semantic projection to exclude
+resources. Summary text and state headings use measured wrapping.
 Whole-diagram input completeness is incomplete if any input is incomplete,
 unknown if any remaining input has no flag, and complete only if all inputs say so.
 This summary does not combine or change the state-local plan-status flags.
 The `data-view-coverage` metadata carries version 1 counters and per-state totals,
-with no resource identities. HTML uses the same SVG summary without DOM counting.
+including explicit named state IDs in local and aggregate summaries, with no
+resource identities. HTML uses the same SVG summary without DOM counting.

@@ -66,16 +66,12 @@ pub(super) fn card<'a>(
                 input.resources, selected.resources, excluded
             ),
             format!(
-                "Selection: {}{}",
-                if focused {
-                    "focus + required context"
-                } else {
-                    "whole input"
-                },
-                if changed_only {
-                    "; changed-only + context"
-                } else {
-                    ""
+                "Selection: {}",
+                match (focused, changed_only) {
+                    (true, true) => "focus + changed-only + required context",
+                    (true, false) => "focus + required context",
+                    (false, true) => "changed-only + required context",
+                    (false, false) => "no CLI filter",
                 }
             ),
             format!(
@@ -84,7 +80,7 @@ pub(super) fn card<'a>(
                 unknown(selected.unknown_region, selected.region_applicable)
             ),
             format!(
-                "Selected findings: unresolved {}; ambiguous {}; dynamic {}",
+                "Selected reference findings (subset): unresolved {}; ambiguous {}; dynamic {}",
                 findings.get("unresolved").unwrap_or(&0),
                 findings.get("ambiguous").unwrap_or(&0),
                 findings.get("dynamic").unwrap_or(&0)

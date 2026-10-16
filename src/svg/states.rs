@@ -132,7 +132,7 @@ pub(crate) fn render_report(
     for (id, graph) in &prepared_graphs {
         let layout = Layout::new(graph);
         let index = super::relationship_index::Index::new(graph, &layout);
-        let cards = super::annotation_cards(graph, &index, format);
+        let cards = super::annotation_cards(graph, &index, format, id.as_str());
         width = width.max(super::annotations::Area::required_width(
             &cards,
             index.width,
