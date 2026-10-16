@@ -20,6 +20,10 @@ Containment ancestors and verified owning Route Tables are then retained automat
 retain both endpoints transitively, even at depth zero, to preserve provenance.
 Context nodes can therefore be unchanged or outside the requested depth.
 
+RDS cluster membership does not expand selection. If the cluster is excluded,
+selected instances return to ordinary visible cards. If an instance is excluded,
+only the remaining selected members occupy the cluster card.
+
 Plan checks/status remain visible. Logical components are shown only when all
 their members remain. Empty state panels remain identifiable. Filters create a
 new architecture graph without changing parsed plans or the original graph.

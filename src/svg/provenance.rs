@@ -44,8 +44,21 @@ pub(super) fn metadata(graph: &Graph, content: super::Content) -> String {
             super::escape(&serde_json::Value::Array(routes).to_string())
         )
     };
+    let members: Vec<_> = graph.nodes.iter().filter_map(|node| {
+        node.member_owner.as_ref()?;
+        let parent = crate::view::routes::owner(graph, node)?;
+        Some(serde_json::json!({"source": node.entity.id.as_str(), "owner": graph.nodes[parent].entity.id.as_str()}))
+    }).collect();
+    let member_metadata = if members.is_empty() {
+        String::new()
+    } else {
+        format!(
+            "<metadata id=\"member-presentations\">{}</metadata>\n",
+            super::escape(&serde_json::Value::Array(members).to_string())
+        )
+    };
     format!(
-        "<metadata id=\"architecture-entities\">{}</metadata>\n<metadata id=\"architecture-relationships\">{}</metadata>\n{reference_metadata}{route_metadata}",
+        "<metadata id=\"architecture-entities\">{}</metadata>\n<metadata id=\"architecture-relationships\">{}</metadata>\n{reference_metadata}{route_metadata}{member_metadata}",
         super::escape(&serde_json::Value::Array(entities).to_string()),
         super::escape(&serde_json::Value::Array(relationships).to_string())
     )

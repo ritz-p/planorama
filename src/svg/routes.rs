@@ -21,8 +21,17 @@ pub(super) fn render(
     }
     let radius = crate::view::geometry::ROUTE_RADIUS;
     let stroke = crate::view::geometry::ROUTE_STROKE as f64 / 4.0;
+    let members = cards
+        .iter()
+        .any(|card| card.node.is_some_and(|node| node.member_owner.is_some()));
+    let section = if members { "cluster-members" } else { "routes" };
+    let heading = if members {
+        "Cluster instances"
+    } else {
+        "Routes"
+    };
     let mut svg = format!(
-        r##"<g data-routes="true"><text x="{x}" y="{y}" font-size="12" font-weight="700" fill="#475569">Routes</text>"##
+        r##"<g data-{section}="true"><text x="{x}" y="{y}" font-size="12" font-weight="700" fill="#475569">{heading}</text>"##
     );
     y += 12;
     for mut card in cards {
@@ -59,9 +68,22 @@ pub(super) fn render(
         let node = card.node.unwrap_or(&graph.nodes[parent]);
         let (background, border) = super::color(node.action);
         if let Some(node) = card.node {
-            write!(svg, r#"<g id="{}" data-architecture-id="{}" data-terraform-address="{}" data-qualified-address="{}" data-embedded-route="true"{}"#,
+            let kind = if node.member_owner.is_some() {
+                "member"
+            } else {
+                "route"
+            };
+            write!(svg, r#"<g id="{}" data-architecture-id="{}" data-terraform-address="{}" data-qualified-address="{}" data-embedded-{kind}="true"{}"#,
                 super::identity::resource(node), super::escape(node.entity.id.as_str()), super::escape(&node.address),
                 super::escape(&node.resource_address().qualified()), super::operations::attributes(&node.metadata)).unwrap();
+            if let Some(owner) = &node.member_owner {
+                write!(
+                    svg,
+                    " data-member-owner=\"{}\"",
+                    super::escape(&owner.address)
+                )
+                .unwrap();
+            }
             for (attribute, value) in [
                 ("previous-address", &node.previous_address),
                 ("deposed-key", &node.deposed_key),
@@ -96,6 +118,18 @@ pub(super) fn render(
             node.deposed_key.as_ref().map(|a| format!("; deposed: {}", super::escape(a))).unwrap_or_default()).unwrap();
         if let Some(node) = card.node {
             svg.push_str(&super::entities::import_badge(node, x + 12, y + 10));
+            if node.member_owner.is_some() {
+                let icon_y = y + 10 + crate::view::card::import_height(node);
+                if let Some(icon) = super::icons::for_node(node) {
+                    svg.push_str(&super::icons::render(icon, x + 12, icon_y));
+                }
+                svg.push_str(&super::icons::service_name(
+                    node,
+                    x + 12,
+                    icon_y + 18,
+                    width - 24,
+                ));
+            }
         }
         let mut line_y = y + 24 + card.badge_height();
         for row in card.rows {

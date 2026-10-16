@@ -29,7 +29,9 @@ pub(crate) struct Card<'a> {
 
 impl Card<'_> {
     pub fn badge_height(&self) -> usize {
-        self.node.map_or(0, super::card::import_height)
+        self.node.map_or(0, |node| {
+            super::card::import_height(node) + if node.member_owner.is_some() { 32 } else { 0 }
+        })
     }
 
     pub fn height(&self) -> usize {
@@ -43,7 +45,7 @@ impl Card<'_> {
 }
 
 pub(crate) fn owner(graph: &Graph, node: &Node) -> Option<usize> {
-    let owner = node.routes.owner.as_ref()?;
+    let owner = node.routes.owner.as_ref().or(node.member_owner.as_ref())?;
     graph
         .nodes
         .iter()
@@ -161,6 +163,22 @@ pub(crate) fn cards(graph: &Graph, parent: usize) -> Vec<Card<'_>> {
             destination: false,
             address: true,
         }];
+        if child.member_owner.is_some() {
+            rows.push(Row {
+                text: super::scope::label(child.entity.scope.as_ref(), &child.provider),
+                target: None,
+                moved: false,
+                destination: false,
+                address: false,
+            });
+            rows.push(Row {
+                text: format!("Cluster: {}", node.address),
+                target: child.member_owner.clone(),
+                moved: false,
+                destination: false,
+                address: true,
+            });
+        }
         if let Some(previous) = &child.previous_address {
             rows.push(Row {
                 text: super::text::moved_from(previous),

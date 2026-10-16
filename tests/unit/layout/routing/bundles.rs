@@ -74,6 +74,7 @@ fn graph(count: usize, edges: Vec<(usize, usize)>) -> Graph {
         status: Default::default(),
         nodes: (0..count)
             .map(|i| Node {
+                member_owner: None,
                 service_name: None,
                 routes: Default::default(),
                 placement: Default::default(),

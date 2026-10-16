@@ -20,6 +20,7 @@ examples/multi-plan.svg
 examples/network-scope.svg
 examples/port-collisions.svg
 examples/rds-subnet-group.svg
+examples/aurora.svg
 examples/regions.svg
 examples/messaging.svg
 examples/sns-subscriptions.svg

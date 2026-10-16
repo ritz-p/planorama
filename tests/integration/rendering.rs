@@ -1,3 +1,4 @@
+mod aurora;
 mod regions;
 mod support;
 

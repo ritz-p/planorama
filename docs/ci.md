@@ -509,13 +509,13 @@ generation source. Rerunning a job may capture a newer PR head; consult its summ
 
 ### Ordinary snapshot coverage
 
-Ordinary unit/integration tests compare 25 of the 40 maintained SVGs with current
+Ordinary unit/integration tests compare 26 of the 41 maintained SVGs with current
 rendering: `association`, `bundling`, `checks`, `components`, `containment`,
 `data`, `data-icons`, `service-names`, `dense-architecture`, `diagram`, `hierarchy-routing`,
 `multi-container`, `multi-plan`, `port-collisions`, `regions`, `regional-states`,
 `relationship-index`, `relationship-index-wide`, `routes`, `spanning-dense`,
 `subnet-groups`, `terraform`, `terraform-large/diagram`, `vpc-workloads`, and
-`workload-security-groups` (paths under `examples/`, with `.svg`).
+`workload-security-groups`, and `aurora` (paths under `examples/`, with `.svg`).
 
 The other 15 are `accounts`, `aws-relationships`, `autoscaling-policy`,
 `cross-state`, `logical-actions`, `logical-regions`, `multi-account/diagram`,
