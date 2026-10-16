@@ -6,6 +6,82 @@ fn input() -> Value {
 }
 
 #[test]
+fn deleting_members_use_before_identifiers() {
+    for destroy_cluster in [false, true] {
+        for matching in [false, true] {
+            let mut value = input();
+            value["resource_changes"][4]["change"]["before"] = json!({"id":"old-cluster"});
+            value["resource_changes"][4]["change"]["after"] = json!({"id":"new-cluster"});
+            if destroy_cluster {
+                value["resource_changes"][4]["change"]["actions"] = json!(["delete"]);
+                value["resource_changes"][4]["change"]["after"] = Value::Null;
+            }
+            for index in [5, 6] {
+                value["resource_changes"][index]["change"] = json!({"actions":["delete"],"before":{"cluster_identifier": if matching {"old-cluster"} else {"new-cluster"}},"after":null});
+            }
+            let graph = semantic::transform(&plan::parse(&value.to_string()).unwrap());
+            assert_eq!(
+                graph
+                    .nodes
+                    .iter()
+                    .filter(|node| node.member_owner.is_some())
+                    .count(),
+                if matching { 2 } else { 0 }
+            );
+            let output = svg::render(&graph, &Layout::new(&graph));
+            let doc = roxmltree::Document::parse(&output).unwrap();
+            let members: Vec<_> = doc
+                .descendants()
+                .filter(|node| node.attribute("data-embedded-member").is_some())
+                .collect();
+            assert_eq!(members.len(), if matching { 2 } else { 0 });
+            for member in members {
+                assert!(
+                    member
+                        .children()
+                        .find(|node| node.has_tag_name("title"))
+                        .unwrap()
+                        .text()
+                        .unwrap()
+                        .contains("[delete]")
+                );
+            }
+        }
+    }
+}
+
+#[test]
+fn local_logical_member_references_are_not_duplicated() {
+    let mut value = input();
+    value["resource_changes"]
+        .as_array_mut()
+        .unwrap()
+        .push(json!({"address":"aws_iam_policy.shared","type":"aws_iam_policy"}));
+    value["configuration"]["root_module"]["resources"][5]["expressions"]["policy"] =
+        json!({"references":["aws_iam_policy.shared.arn"]});
+    let graph = semantic::transform(&plan::parse(&value.to_string()).unwrap());
+    let output = svg::render(&graph, &Layout::new(&graph));
+    let doc = roxmltree::Document::parse(&output).unwrap();
+    let policy = doc
+        .descendants()
+        .find(|node| node.attribute("data-terraform-address") == Some("aws_iam_policy.shared"))
+        .unwrap();
+    let href = format!("#{}", policy.attribute("id").unwrap());
+    for member in doc
+        .descendants()
+        .filter(|node| node.attribute("data-embedded-member").is_some())
+    {
+        assert_eq!(
+            member
+                .descendants()
+                .filter(|node| node.attribute("href") == Some(href.as_str()))
+                .count(),
+            1
+        );
+    }
+}
+
+#[test]
 fn account_only_scopes_do_not_verify_regional_membership() {
     for overrides in [false, true] {
         let mut value = input();

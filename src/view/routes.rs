@@ -244,6 +244,14 @@ pub(crate) fn cards(graph: &Graph, parent: usize) -> Vec<Card<'_>> {
                     return None;
                 };
                 if other == parent
+                    || (child.member_owner.is_some()
+                        && e.to == index
+                        && super::references::rows(child).iter().any(|row| {
+                            row.target.is_some_and(|target| {
+                                target.state.is_none()
+                                    && graph.nodes[other].entity.provenance.contains(&target.id)
+                            })
+                        }))
                     || child.routes.entries.iter().any(|r| {
                         r.target
                             .as_ref()

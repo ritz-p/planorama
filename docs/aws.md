@@ -10,6 +10,7 @@ semantics. Provider source and configuration identity are described in [models](
 Managed instances with a complete, explicit, unique `cluster_identifier` reference
 to a managed AWS `aws_rds_cluster` appear as individual cards inside that cluster
 when the known `cluster_identifier` matches its referenced `id`.
+Deleting instances use both identifiers from before-state evidence.
 The instance and cluster must have equal deployment scopes; unknown, incompatible,
 dynamic, ambiguous or filtered ownership falls back to an ordinary visible card.
 Each member retains its address, action, lifecycle metadata and account/region
