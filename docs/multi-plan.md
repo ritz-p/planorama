@@ -33,6 +33,9 @@ when the first state has no relationships. No qualifying relationships means no
 legend or reserved height. Resource/action summaries, checks, plan status,
 annotations and **Relationship Resources** indexes stay within their states;
 equal visible relationship numbers in different states refer to independent entries.
+The [coverage summary](coverage.md) additionally sums input/selected/excluded
+resource counts across states above the first state section, without merging
+resource identities. State headings wrap within the shared content width.
 
 Use `--remote-state CONSUMER:DATA_ADDRESS=PRODUCER` to explicitly connect an exact `data.terraform_remote_state.NAME.outputs.OUTPUT` traversal to a loaded producer state. Repeat mappings as needed; conflicting producers remain ambiguous and emit no relationship. Root output provenance must be complete and nonempty. `--diagnostics` reports successful chains and unmapped, missing or incomplete sources without backend configuration or output values. The resolver handles direct exact traversals, including statically identified module instances; it does not guess backend identity or resolve dynamic output selections.
 
