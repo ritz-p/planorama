@@ -1,0 +1,14 @@
+[generation]
+icon-mode = "service-name"
+address-format = "terraform"
+
+[presets.review]
+format = "html"
+changed-only = true
+hide-relationship-legend = true
+
+[presets.full]
+format = "svg"
+changed-only = false
+modules = []
+focus = []

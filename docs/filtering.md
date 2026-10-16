@@ -1,5 +1,10 @@
 # Focused diagrams
 
+Selection settings can also come from an explicit [TOML config and preset](configuration.md).
+CLI selections replace configured arrays. `--no-modules`, `--no-focus` and
+`--no-changed-only` clear the corresponding configured selection; clearing focus
+also removes inherited depth.
+
 `--list-modules` lists original input modules without semantic projection, layout,
 routing or diagram output. It writes deterministic tab-separated text to stdout;
 `-o modules.txt` writes that text to a file. Inputs follow the normal positional,

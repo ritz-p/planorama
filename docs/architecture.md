@@ -3,6 +3,10 @@
 The processing pipeline is `CLI → TerraformPlan → ArchitectureGraph → ViewGraph → Layout → SVG`, with an optional self-contained HTML viewer around the SVG.
 The CLI owns file I/O and coordinates each stage. Named-state inputs preserve the
 same boundaries and carry explicit cross-state relationships.
+Explicit [TOML generation settings](configuration.md) are decoded in
+`cli::settings`. Typed layers merge common settings, a selected preset and explicit
+CLI overrides before populating the existing generation options. File access is
+separate from merging; resolved settings use the same validation and pipeline.
 `svg::Options` carries address formatting and relationship-legend visibility into
 shared measurement and rendering. Legend visibility never changes the graph or
 `Layout`; composition uses the measured compact action legend when explanations
