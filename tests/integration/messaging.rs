@@ -2,6 +2,57 @@ use super::{cli, support};
 use roxmltree::Document;
 
 #[test]
+fn eventbridge_cards_filters_and_named_states() {
+    let fixture = include_bytes!("../fixtures/eventbridge-plan.json");
+    for format in ["svg", "html"] {
+        let output = support::run_with_args(fixture, &["--format", format]);
+        assert!(output.status.success());
+        let text = String::from_utf8(output.stdout).unwrap();
+        assert!(text.contains("planorama-icon-aws-eventbridge"));
+        assert!(text.contains("ap-northeast-1"));
+        assert!(text.contains("us-east-1"));
+        assert!(text.contains("4 resources"));
+        let output = support::run_with_args(
+            fixture,
+            &[
+                "--format",
+                format,
+                "--focus",
+                "aws_cloudwatch_event_rule.jobs",
+                "--focus-depth",
+                "0",
+            ],
+        );
+        assert!(output.status.success());
+        assert!(
+            String::from_utf8(output.stdout)
+                .unwrap()
+                .contains("1 resource")
+        );
+    }
+    let output = cli()
+        .args([
+            "--state",
+            "one=tests/fixtures/eventbridge-plan.json",
+            "--state",
+            "two=tests/fixtures/eventbridge-plan.json",
+            "-o",
+            "-",
+        ])
+        .output()
+        .unwrap();
+    assert!(output.status.success());
+    let text = String::from_utf8(output.stdout).unwrap();
+    let doc = Document::parse(&text).unwrap();
+    for state in ["one", "two"] {
+        assert!(
+            doc.descendants()
+                .any(|n| n.attribute("data-state-id") == Some(state))
+        );
+    }
+}
+
+#[test]
 fn subscription_svg_html_filters_and_named_states_keep_real_navigation() {
     verify(
         "tests/fixtures/sns-subscriptions-plan.json",

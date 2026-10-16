@@ -21,6 +21,8 @@ docker compose exec -T dev cargo run --locked -- examples/plan.json -o diagram.s
 
 [イベントソースの例](examples/event-sources.svg) は、明示参照と計画値で検証した SQS → Lambda のマッピングを表示します。非対応ソースや未解決のマッピングも論理行として保持します。
 
+[EventBridge の例](examples/eventbridge.svg) は、Bus と Rule のリージョン配置と明示参照を表示します。暗黙のデフォルトバスは生成しません。
+
 検索・選択・ズーム付きの HTML は `--format html` で生成します。生成後はネットワークなしでローカルのブラウザから開けます。[HTML の例](examples/viewer.html) と [操作方法](docs/viewer.md) を参照してください。
 
 ```sh
