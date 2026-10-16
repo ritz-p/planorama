@@ -3,6 +3,7 @@
 mod benchmarks;
 mod classification;
 mod cli;
+mod coverage;
 mod html;
 mod icons;
 mod layout;

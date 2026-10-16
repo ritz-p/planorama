@@ -26,6 +26,7 @@ fn cycle_is_condensed_and_dependents_follow() {
         })
         .collect();
     let graph = Graph {
+        coverage: Default::default(),
         relationships: Vec::new(),
         components: Vec::new(),
         checks: Vec::new(),

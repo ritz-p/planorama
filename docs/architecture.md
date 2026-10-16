@@ -23,6 +23,7 @@ the collector never changes graph or layout data.
 | `plan` | Terraform JSON ingestion, native identity, changes, reference/output facts |
 | `model` | Shared domain contracts, architecture identity and value-free provenance |
 | `semantic` | Architecture transformation and final relationship evidence |
+| `coverage` | Input/effective resource accounting and structured semantic findings; [contract](coverage.md) |
 | `provider/aws` | AWS classification, containment, connections, lowering, components, diagnostics and icons |
 | `provider/terraform` | Exact built-in Terraform resource icon mapping |
 | `icons` | Provider dispatch, shared artwork IDs and presentation measurements |

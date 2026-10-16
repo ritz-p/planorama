@@ -7,6 +7,7 @@ mod tests;
 
 fn failure(raw: &Input, route: usize, attribute: &str, reason: Reason) -> Diagnostic {
     Diagnostic {
+        deposed_key: raw.nodes[route].deposed_key.clone(),
         address: raw.nodes[route].address.clone(),
         attribute: attribute.into(),
         reason,

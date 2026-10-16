@@ -6,6 +6,7 @@ mod ports;
 
 fn graph(count: usize, edges: Vec<(usize, usize)>) -> Graph {
     Graph {
+        coverage: Default::default(),
         relationships: Vec::new(),
         components: Vec::new(),
         checks: Vec::new(),

@@ -62,6 +62,7 @@ pub(super) fn diagnostic(raw: &Input, index: usize) -> Option<Diagnostic> {
         return None;
     }
     target(raw, index).err().map(|reason| Diagnostic {
+        deposed_key: policy.deposed_key.clone(),
         address: policy.address.clone(),
         attribute: ATTRIBUTE.into(),
         reason,

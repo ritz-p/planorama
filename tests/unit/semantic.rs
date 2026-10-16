@@ -1,6 +1,12 @@
 use super::*;
 use crate::{layout::Layout, plan, svg};
 
+pub(crate) fn base_graph(plan: &TerraformPlan) -> crate::model::Graph {
+    let mut graph = super::input::base_graph(plan);
+    graph.coverage = crate::coverage::Coverage::collect(plan, &graph);
+    graph
+}
+
 #[test]
 fn messaging_resources_keep_scopes_data_actions_and_explicit_dependencies() {
     use crate::model::{Action, EdgeKind, EntityMode, Placement, ResourceRole};

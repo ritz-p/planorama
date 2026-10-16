@@ -187,6 +187,7 @@ fn ranked_fixture() -> Graph {
         .collect();
     edges.extend([(1, 3), (2, 4), (3, 5), (4, 6)].map(Edge::from));
     Graph {
+        coverage: Default::default(),
         relationships: Vec::new(),
         components: Vec::new(),
         checks: Vec::new(),
@@ -918,6 +919,7 @@ fn reciprocal_relationships_and_self_loops_use_distinct_incoming_and_outgoing_po
         })
         .collect();
         let graph = Graph {
+            coverage: Default::default(),
             relationships: Vec::new(),
             components: Vec::new(),
             checks: Vec::new(),
