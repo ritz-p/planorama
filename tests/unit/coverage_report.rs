@@ -2,6 +2,172 @@ use super::*;
 use crate::{plan, semantic, view};
 
 #[test]
+fn selection_reasons_capture_direct_ancestors_routes_and_projection_once() {
+    for (input, focus, direct_count, context_count, reason) in [
+        (
+            include_str!("../fixtures/containment-plan.json"),
+            "aws_instance.app",
+            1,
+            2,
+            "containment ancestor",
+        ),
+        (
+            include_str!("../fixtures/routes-plan.json"),
+            "aws_route.default",
+            1,
+            1,
+            "verified Route Table owner",
+        ),
+        (
+            include_str!("../fixtures/association-plan.json"),
+            "aws_route_table_association.private",
+            3,
+            0,
+            "lowered relationship provenance",
+        ),
+    ] {
+        let source = semantic::transform(&plan::parse(input).unwrap());
+        let options = view::Options {
+            explain_selection: true,
+            selection_details: 100,
+            focus: Some(focus.into()),
+            depth: Some(0),
+            ..Default::default()
+        };
+        let graph = view::single(&source, &options).unwrap();
+        let selection = graph.coverage.selection.as_ref().unwrap();
+        assert_eq!(selection.reasons.len(), graph.coverage.selected.resources);
+        assert_eq!(selection.direct(), direct_count, "{focus}");
+        assert_eq!(
+            graph.coverage.selected.resources - selection.direct(),
+            context_count
+        );
+        assert!(
+            selection
+                .reasons
+                .values()
+                .any(|reasons| reasons.contains(reason))
+        );
+        let report = render(std::iter::once(("", &graph.coverage)), &options);
+        assert!(report.contains(&format!(
+            "Direct selection: {direct_count}. Additional context: {context_count}."
+        )));
+        assert!(!report.contains("TOP_SECRET"));
+        let plain = view::single(
+            &source,
+            &view::Options {
+                explain_selection: false,
+                ..options
+            },
+        )
+        .unwrap();
+        assert!(plain.coverage.selection.is_none());
+        assert_eq!(graph.nodes, plain.nodes);
+        assert_eq!(graph.edges, plain.edges);
+        assert_eq!(graph.relationships, plain.relationships);
+    }
+}
+
+#[test]
+fn selection_details_escape_bound_and_keep_current_deposed_and_data() {
+    let mut input: serde_json::Value =
+        serde_json::from_str(r#"{"format_version":"1.2","resource_changes":[]}"#).unwrap();
+    for (address, mode, deposed) in [
+        (
+            "module.app.terraform_data.x[\"<script>|`&\"]",
+            "managed",
+            None,
+        ),
+        (
+            "module.app.terraform_data.x[\"<script>|`&\"]",
+            "managed",
+            Some("old|key"),
+        ),
+        ("module.app.data.aws_ami.image", "data", None),
+        ("module.other.terraform_data.hidden", "managed", None),
+    ] {
+        input["resource_changes"].as_array_mut().unwrap().push(serde_json::json!({"address":address,"mode":mode,"deposed":deposed,"type":"terraform_data","change":{"actions":["no-op"]}}));
+    }
+    let source = semantic::transform(&plan::parse(&input.to_string()).unwrap());
+    let mut options = view::Options {
+        explain_selection: true,
+        selection_details: 2,
+        modules: vec!["module.app".into()],
+        ..Default::default()
+    };
+    let graph = view::single(&source, &options).unwrap();
+    assert_eq!(graph.coverage.selection.as_ref().unwrap().direct(), 3);
+    let text = render(std::iter::once(("state", &graph.coverage)), &options);
+    assert!(text.contains("Shown: 2. Omitted selected identities: 1."));
+    assert!(!text.contains("<script>"));
+    assert!(!text.contains("terraform_data.hidden"));
+    options.selection_details = 10;
+    let text = render(std::iter::once(("state", &graph.coverage)), &options);
+    assert!(text.contains("deposed&#58; old&#124;key"));
+    assert!(text.contains("| data | current | direct |"));
+    options.changed_only = true;
+    let empty = view::single(&source, &options).unwrap();
+    let text = render(std::iter::once(("state", &empty.coverage)), &options);
+    assert!(text.contains("Direct selection: 0. Additional context: 0. Effective selected: 0."));
+}
+
+#[test]
+fn cross_state_closure_records_overlapping_reasons() {
+    use crate::model::{
+        PlanInput, StateId,
+        cross_state::{Architecture, Mapping},
+    };
+    let inputs = [
+        ("producer", include_str!("../fixtures/multi/producer.json")),
+        ("consumer", include_str!("../fixtures/multi/consumer.json")),
+    ]
+    .into_iter()
+    .map(|(state, json)| PlanInput {
+        state_id: StateId::new(state).unwrap(),
+        plan_json: json.into(),
+    })
+    .collect();
+    let plans = plan::parse_inputs(inputs).unwrap();
+    let resolved = semantic::cross_state::resolve(
+        &plans,
+        &[Mapping::parse("consumer:data.terraform_remote_state.network=producer").unwrap()],
+    );
+    let architecture = Architecture {
+        states: plans
+            .states
+            .iter()
+            .map(|(id, raw)| (id.clone(), semantic::transform(raw)))
+            .collect(),
+        relationships: resolved.edges,
+    };
+    let options = view::Options {
+        explain_selection: true,
+        focus: Some("consumer:aws_instance.app".into()),
+        depth: Some(0),
+        ..Default::default()
+    };
+    let graph = view::apply(&architecture, &options).unwrap();
+    for state in graph.states.values() {
+        let selection = state.coverage.selection.as_ref().unwrap();
+        assert_eq!(selection.reasons.len(), state.coverage.selected.resources);
+        assert!(
+            selection
+                .reasons
+                .values()
+                .any(|reasons| reasons.contains("cross-state provenance"))
+        );
+    }
+    assert!(
+        graph
+            .states
+            .values()
+            .flat_map(|g| g.coverage.selection.as_ref().unwrap().reasons.values())
+            .any(|reasons| reasons.contains("direct selection")
+                && reasons.contains("cross-state provenance"))
+    );
+}
+
+#[test]
 fn focused_named_report_keeps_empty_states_and_unassociated_input_findings() {
     let raw = plan::parse(r#"{"format_version":"1.2","resource_changes":[{"address":"terraform_data.x","type":"terraform_data"}],"configuration":{"root_module":{"outputs":{"missing":{"expression":{"references":["terraform_data.missing.id"]}}}}}}"#).unwrap();
     let architecture = crate::model::cross_state::Architecture {
@@ -47,9 +213,14 @@ fn report_uses_shared_counts_for_all_presentations_and_filters() {
         let raw = plan::parse(input).unwrap();
         let options = view::Options {
             changed_only: true,
+            explain_selection: true,
             ..Default::default()
         };
         let graph = view::single(&semantic::transform(&raw), &options).unwrap();
+        assert_eq!(
+            graph.coverage.selection.as_ref().unwrap().reasons.len(),
+            graph.coverage.selected.resources
+        );
         let report = render(std::iter::once(("", &graph.coverage)), &options);
         assert!(report.contains(&format!(
             "| Resource instances | {} | {} |",

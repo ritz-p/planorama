@@ -4,6 +4,8 @@ use std::collections::{BTreeMap, BTreeSet};
 
 #[derive(Default)]
 pub struct Options {
+    pub explain_selection: bool,
+    pub selection_details: usize,
     pub modules: Vec<String>,
     pub html_semantic_diagnostics: bool,
     pub icon_mode: crate::icons::IconMode,
@@ -85,7 +87,11 @@ pub fn apply(all: &Architecture, options: &Options) -> Result<Architecture, Stri
                 .as_ref()
                 .and_then(|_| crate::view::routes::owner(graph, node))
             {
-                parents.push(((state.clone(), parent), (state.clone(), i)));
+                parents.push((
+                    (state.clone(), parent),
+                    (state.clone(), i),
+                    "verified Route Table owner",
+                ));
             }
             let key = (state.clone(), i);
             keys.insert(key.clone());
@@ -111,7 +117,7 @@ pub fn apply(all: &Architecture, options: &Options) -> Result<Architecture, Stri
                 .or_default()
                 .insert(from.clone());
             if edge.kind == EdgeKind::Containment {
-                parents.push((from.clone(), to.clone()));
+                parents.push((from.clone(), to.clone(), "containment ancestor"));
             }
             if let Some(change) = &edge.change {
                 if graph.nodes[edge.from].address == change.address {
@@ -229,20 +235,53 @@ pub fn apply(all: &Architecture, options: &Options) -> Result<Architecture, Stri
                     .any(|id| module_matches(&modules, state, &id.address))
         });
     }
+    let direct = options.explain_selection.then(|| selected.clone());
+    let mut reasons: Option<BTreeMap<Key, BTreeSet<&'static str>>> =
+        options.explain_selection.then(|| {
+            selected
+                .iter()
+                .map(|key| {
+                    let node = &all.states[&key.0].nodes[key.1];
+                    let reason = if options.modules.is_empty()
+                        || node
+                            .entity
+                            .provenance
+                            .iter()
+                            .any(|id| module_matches(&modules, &key.0, &id.address))
+                    {
+                        "direct selection"
+                    } else {
+                        "lowered relationship endpoint"
+                    };
+                    (key.clone(), BTreeSet::from([reason]))
+                })
+                .collect()
+        });
     loop {
         let count = selected.len();
-        for (parent, child) in &parents {
+        for (parent, child, reason) in &parents {
             if selected.contains(child)
                 && placement_available(&all.states[&child.0], child.1, |source| {
                     selected.contains(&(child.0.clone(), source))
                 })
             {
                 selected.insert(parent.clone());
+                if let Some(reasons) = &mut reasons {
+                    reasons.entry(parent.clone()).or_default().insert(reason);
+                }
             }
         }
         for (from, to) in &cross {
             if selected.contains(from) || selected.contains(to) {
                 selected.extend([from.clone(), to.clone()]);
+                if let Some(reasons) = &mut reasons {
+                    for endpoint in [from, to] {
+                        reasons
+                            .entry(endpoint.clone())
+                            .or_default()
+                            .insert("cross-state provenance");
+                    }
+                }
             }
         }
         if selected.len() == count {
@@ -254,6 +293,11 @@ pub fn apply(all: &Architecture, options: &Options) -> Result<Architecture, Stri
         .iter()
         .map(|(state, graph)| {
             let mut graph = graph.clone();
+            if let (Some(reasons), Some(direct)) = (&reasons, &direct) {
+                graph.0.coverage.selection = Some(selection_reasons(
+                    &graph, state, &selected, direct, reasons, &modules, options,
+                ));
+            }
             let remap: BTreeMap<_, _> = graph
                 .nodes
                 .iter()
@@ -351,6 +395,65 @@ pub fn apply(all: &Architecture, options: &Options) -> Result<Architecture, Stri
         states,
         relationships,
     })
+}
+
+fn selection_reasons(
+    graph: &crate::model::Graph,
+    state: &StateId,
+    selected: &BTreeSet<Key>,
+    direct: &BTreeSet<Key>,
+    reasons: &BTreeMap<Key, BTreeSet<&'static str>>,
+    modules: &BTreeMap<StateId, Vec<crate::model::modules::Address>>,
+    options: &Options,
+) -> crate::coverage::Selection {
+    let mut result = crate::coverage::Selection::default();
+    let mut node_indices = BTreeMap::new();
+    for (index, node) in graph.nodes.iter().enumerate() {
+        node_indices.entry(&node.entity.id).or_insert(index);
+        if let Some(reasons) = reasons.get(&(state.clone(), index)) {
+            for id in &node.entity.provenance {
+                result
+                    .reasons
+                    .entry(id.clone())
+                    .or_default()
+                    .extend(reasons);
+            }
+        }
+    }
+    for relationship in &graph.relationships {
+        let endpoints: Vec<_> = [&relationship.from, &relationship.to]
+            .into_iter()
+            .filter_map(|id| {
+                node_indices
+                    .get(id)
+                    .copied()
+                    .map(|index| (state.clone(), index))
+            })
+            .collect();
+        if endpoints.len() != 2 || !endpoints.iter().all(|key| selected.contains(key)) {
+            continue;
+        }
+        for proof in &relationship.provenance {
+            let crate::model::RelationshipProvenance::Resource { source, change, .. } = proof
+            else {
+                continue;
+            };
+            if !options.modules.is_empty() && !module_matches(modules, state, &source.address) {
+                continue;
+            }
+            let changed = change.action != Action::Unchanged
+                || change.metadata != ChangeMetadata::default()
+                || change.previous_address.is_some();
+            let reasons = result.reasons.entry(source.clone()).or_default();
+            reasons.insert("lowered relationship provenance");
+            if endpoints.iter().all(|key| direct.contains(key))
+                && (!options.changed_only || changed)
+            {
+                reasons.insert("direct selection");
+            }
+        }
+    }
+    result
 }
 
 fn module_selections(

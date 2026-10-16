@@ -138,11 +138,13 @@ fn modules_keep_containment_context_but_not_external_dependencies() {
         &graph,
         &view::Options {
             modules: vec!["module.app".into()],
+            explain_selection: true,
             ..Default::default()
         },
     )
     .unwrap();
     assert_eq!(selected.coverage.selected.resources, 4);
+    assert_eq!(selected.coverage.selection.as_ref().unwrap().direct(), 2);
     assert!(selected.nodes.iter().any(|n| n.address == "aws_vpc.main"));
     assert!(
         selected

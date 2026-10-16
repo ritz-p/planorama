@@ -16,7 +16,7 @@ pub(super) enum OutputFormat {
     Html,
 }
 
-const HELP: &str = "planorama — Terraform plan JSON → SVG / HTML (pure Rust)\n\nUsage: planorama <plan.json | -> [--format svg|html] [-o <path | ->] [--address-format qualified|terraform] [--diagnostics]\n\n  -o, --output PATH   Output file (default: diagram.svg or diagram.html); '-' for stdout\n  --format FORMAT    Output format: svg (default) or self-contained html\n  --hide-relationship-legend  Omit relationship explanations; keep action colors\n  --icon-mode MODE   Service display: icon (default) or service-name\n  --address-format FORMAT  Resource labels: qualified (default) or terraform\n  --provider-plan PATH  Verify accounts against a saved Terraform 1.9.8 / AWS 5.100.0 plan\n  --state-provider-plan ID=PATH  Saved plan evidence for one named state\n  --list-modules     List original module instances/counts; stdout by default; no diagram\n  --modules ADDRESS...  Select module subtrees (repeatable; STATE:ADDRESS for named states)\n  --changed-only     Retain changes and required context\n  --focus ADDRESS    Select a resource (STATE:ADDRESS for named states)\n  --focus-depth N    Neighbor depth (default: 1; requires --focus)\n  --remote-state CONSUMER:ADDRESS=PRODUCER  Map a named remote-state data source\n  --timings          Report generation stage timings on stderr\n  --diagnostics      Explain unresolved references and semantic fallbacks on stderr\n  --html-diagnostics  Include bounded routing hotspots (requires --format html)\n  --html-semantic-diagnostics  Include bounded semantic findings (requires --format html)\n  --coverage-report PATH  Write a separate Markdown coverage report\n  --layout-diagnostics  Report final layout quality on stderr\n  --layout-diagnostics-json PATH  Write a versioned layout report to a separate JSON file\n  -h, --help          Show help\n  -V, --version       Show version\n\nInput: terraform show -json <saved-plan> (not terraform plan -json).\nJSON-only inputs leave AWS accounts unknown. Provider evidence requires Terraform and initialized schemas.\nLines show reference or architectural relationships; containment uses nested boxes.\nAttribute values are never included in the diagram.\n";
+const HELP: &str = "planorama — Terraform plan JSON → SVG / HTML (pure Rust)\n\nUsage: planorama <plan.json | -> [--format svg|html] [-o <path | ->] [--address-format qualified|terraform] [--diagnostics]\n\n  -o, --output PATH   Output file (default: diagram.svg or diagram.html); '-' for stdout\n  --format FORMAT    Output format: svg (default) or self-contained html\n  --hide-relationship-legend  Omit relationship explanations; keep action colors\n  --icon-mode MODE   Service display: icon (default) or service-name\n  --address-format FORMAT  Resource labels: qualified (default) or terraform\n  --provider-plan PATH  Verify accounts against a saved Terraform 1.9.8 / AWS 5.100.0 plan\n  --state-provider-plan ID=PATH  Saved plan evidence for one named state\n  --list-modules     List original module instances/counts; stdout by default; no diagram\n  --modules ADDRESS...  Select module subtrees (repeatable; STATE:ADDRESS for named states)\n  --changed-only     Retain changes and required context\n  --focus ADDRESS    Select a resource (STATE:ADDRESS for named states)\n  --focus-depth N    Neighbor depth (default: 1; requires --focus)\n  --remote-state CONSUMER:ADDRESS=PRODUCER  Map a named remote-state data source\n  --timings          Report generation stage timings on stderr\n  --diagnostics      Explain unresolved references and semantic fallbacks on stderr\n  --html-diagnostics  Include bounded routing hotspots (requires --format html)\n  --html-semantic-diagnostics  Include bounded semantic findings (requires --format html)\n  --coverage-report PATH  Write a separate Markdown coverage report\n  --coverage-selection-details N  Include up to N selected identities/reasons (0-1000; requires report)\n  --layout-diagnostics  Report final layout quality on stderr\n  --layout-diagnostics-json PATH  Write a versioned layout report to a separate JSON file\n  -h, --help          Show help\n  -V, --version       Show version\n\nInput: terraform show -json <saved-plan> (not terraform plan -json).\nJSON-only inputs leave AWS accounts unknown. Provider evidence requires Terraform and initialized schemas.\nLines show reference or architectural relationships; containment uses nested boxes.\nAttribute values are never included in the diagram.\n";
 
 pub(crate) fn run() -> Result<(), String> {
     let mut input = None;
@@ -123,6 +123,16 @@ pub(crate) fn run() -> Result<(), String> {
                     return Err("duplicate --coverage-report".into());
                 }
             }
+            "--coverage-selection-details" => {
+                filter.selection_details = args
+                    .next()
+                    .ok_or("--coverage-selection-details requires a limit (0-1000)")?
+                    .parse()
+                    .map_err(|_| "--coverage-selection-details requires a limit (0-1000)")?;
+                if filter.selection_details > 1000 {
+                    return Err("--coverage-selection-details limit must be 0-1000".into());
+                }
+            }
             "--layout-diagnostics-json" => {
                 layout_diagnostics.json = Some(
                     args.next()
@@ -167,6 +177,14 @@ pub(crate) fn run() -> Result<(), String> {
         }
     }
     let timing = crate::timing::Session::start(timings);
+    filter.explain_selection = coverage_report.path.is_some();
+    if specified
+        .iter()
+        .any(|arg| arg == "--coverage-selection-details")
+        && !filter.explain_selection
+    {
+        return Err("--coverage-selection-details requires --coverage-report".into());
+    }
     if list_modules {
         for option in &specified {
             if !matches!(
