@@ -1,6 +1,7 @@
 use crate::{layout::Layout, model::Graph, svg, view};
 use serde_json::{Value, json};
 mod diagnostics;
+mod semantic_diagnostics;
 
 pub(crate) fn render(
     graph: &view::ViewGraph,
@@ -11,6 +12,7 @@ pub(crate) fn render(
         svg::render_content(graph, layout, format, svg::Content::ValueFree),
         resources(graph, "", ""),
         None,
+        semantic_diagnostics::bridge(std::iter::once(("", &graph.coverage))),
     )
 }
 
@@ -27,6 +29,12 @@ pub(crate) fn render_states(
         svg::render_states_content(architecture, format, svg::Content::ValueFree),
         resources,
         None,
+        semantic_diagnostics::bridge(
+            architecture
+                .states
+                .iter()
+                .map(|(state, graph)| (state.as_str(), &graph.coverage)),
+        ),
     )
 }
 
@@ -41,6 +49,7 @@ pub(crate) fn render_report(
         svg::render_report(graph, layout, format, svg::Content::ValueFree, Some(report)),
         resources(graph, "", ""),
         diagnostics.then(|| diagnostics::bridge(report)),
+        semantic_diagnostics::bridge(std::iter::once(("", &graph.coverage))),
     )
 }
 
@@ -59,6 +68,12 @@ pub(crate) fn render_states_report(
         svg::render_states_report(architecture, format, svg::Content::ValueFree, Some(report)),
         resources,
         diagnostics.then(|| diagnostics::bridge(report)),
+        semantic_diagnostics::bridge(
+            architecture
+                .states
+                .iter()
+                .map(|(state, graph)| (state.as_str(), &graph.coverage)),
+        ),
     )
 }
 
@@ -87,8 +102,21 @@ fn safe_json(value: &Value) -> String {
         .replace('\u{2029}', "\\u2029")
 }
 
-fn document(svg: String, resources: Vec<Value>, diagnostics: Option<Value>) -> String {
+fn document(
+    svg: String,
+    resources: Vec<Value>,
+    diagnostics: Option<Value>,
+    semantic: Option<Value>,
+) -> String {
     let data = safe_json(&Value::Array(resources));
+    let semantic = semantic
+        .map(|value| {
+            format!(
+                "<script id=\"viewer-semantic-diagnostics\" type=\"application/json\">{}</script>",
+                safe_json(&value)
+            )
+        })
+        .unwrap_or_default();
     let diagnostics = diagnostics
         .map(|value| {
             format!(
@@ -118,6 +146,8 @@ fn document(svg: String, resources: Vec<Value>, diagnostics: Option<Value>) -> S
                     "\n",
                     include_str!("html/diagnostics.js"),
                     "\n",
+                    include_str!("html/semantic-diagnostics.js"),
+                    "\n",
                     include_str!("html/impact-graph.js"),
                     "\n",
                     include_str!("html/impact.js"),
@@ -126,5 +156,6 @@ fn document(svg: String, resources: Vec<Value>, diagnostics: Option<Value>) -> S
         )
         .replace("<!-- VIEWER_DATA -->", &data)
         .replace("<!-- VIEWER_DIAGNOSTICS -->", &diagnostics)
+        .replace("<!-- VIEWER_SEMANTIC_DIAGNOSTICS -->", &semantic)
         .replace("<!-- DIAGRAM -->", &svg)
 }

@@ -30,6 +30,73 @@ fn data(html: &str) -> Vec<Value> {
     serde_json::from_str(script).unwrap()
 }
 
+fn semantic_data(html: &str) -> Value {
+    serde_json::from_str(
+        html.split("<script id=\"viewer-semantic-diagnostics\" type=\"application/json\">")
+            .nth(1)
+            .unwrap()
+            .split("</script>")
+            .next()
+            .unwrap(),
+    )
+    .unwrap()
+}
+
+#[test]
+fn semantic_diagnostics_are_opt_in_selected_safe_and_do_not_change_svg() {
+    let address = "test.item[\"</script><script>alert(1)</script>\"]";
+    let input = json!({"format_version":"1.2", "resource_changes":[
+        {"address":address,"type":"test","change":{"actions":["create"],"after":{"secret":"NEVER_EMBED_VALUE"}}},
+        {"address":"test.excluded","type":"test","change":{"actions":["no-op"]}}
+    ]}).to_string();
+    let baseline = html(input.as_bytes(), &["--changed-only"]);
+    assert!(!baseline.contains("<script id=\"viewer-semantic-diagnostics\""));
+    let enabled = html(
+        input.as_bytes(),
+        &["--changed-only", "--html-semantic-diagnostics"],
+    );
+    assert_eq!(diagram(&baseline), diagram(&enabled));
+    assert!(!enabled.contains("test.excluded"));
+    assert!(!enabled.contains("NEVER_EMBED_VALUE"));
+    assert!(!enabled.contains("<script>alert"));
+    assert_eq!(semantic_data(&enabled)["records"][0]["address"], address);
+    assert_eq!(semantic_data(&enabled)["records"][0]["mode"], "managed");
+    let rejected = support::run_with_args(input.as_bytes(), &["--html-semantic-diagnostics"]);
+    assert!(!rejected.status.success());
+    assert!(String::from_utf8_lossy(&rejected.stderr).contains("requires --format html"));
+}
+
+#[test]
+fn semantic_reference_reasons_keep_paths_and_deterministic_order() {
+    let mut input = json!({"format_version":"1.2", "resource_changes":[
+        {"address":"test.a","type":"test"}, {"address":"test.b","type":"test"}
+    ],"configuration":{"root_module":{"resources":[
+        {"address":"test.a","expressions":{"missing":{"references":["test.absent.id"]}}},
+        {"address":"test.b","expressions":{"dynamic":{"references":["each.value"]}}}
+    ]}}});
+    let first = semantic_data(&html(
+        input.to_string().as_bytes(),
+        &["--html-semantic-diagnostics"],
+    ));
+    let records = first["records"].as_array().unwrap();
+    assert!(
+        records
+            .iter()
+            .any(|r| r["reason"] == "unresolved_reference" && r["attribute"] == "missing")
+    );
+    assert!(
+        records
+            .iter()
+            .any(|r| r["category"] == "dynamic" && r["attribute"] == "dynamic")
+    );
+    input["resource_changes"].as_array_mut().unwrap().reverse();
+    let second = semantic_data(&html(
+        input.to_string().as_bytes(),
+        &["--html-semantic-diagnostics"],
+    ));
+    assert_eq!(first, second);
+}
+
 #[test]
 fn html_keeps_selected_svg_and_indexes_only_visible_resources() {
     let input = include_bytes!("../fixtures/lifecycle-plan.json");

@@ -108,6 +108,91 @@ class ViewerTests(unittest.TestCase):
             self.assertEqual(result['coverage']['input']['resources'], len(changes))
             self.assertEqual(result['coverage']['selected']['resources'], len(changes))
 
+    def test_semantic_diagnostics_navigate_all_resource_presentations_and_reset(self):
+        for fixture, address in [('containment', 'aws_instance.app'),
+                                 ('logical-regions', 'aws_iam_policy'),
+                                 ('routes', 'aws_route.'),
+                                 ('association', 'aws_route_table_association.private')]:
+            self.load('--state', 'one=tests/fixtures/' + fixture + '-plan.json',
+                      '--state', 'two=tests/fixtures/' + fixture + '-plan.json',
+                      '--html-semantic-diagnostics')
+            before = self.driver.execute_script("return [...document.querySelectorAll('path[data-edge-kind]')].map(p=>p.outerHTML)")
+            self.find('#semantic-toggle').send_keys(Keys.ENTER)
+            self.find('#semantic-search').send_keys('two ' + address)
+            button = self.find('#semantic-list button')
+            self.assertIn('two:', button.text)
+            button.send_keys(Keys.ENTER)
+            selected = self.find('[data-viewer-selected]')
+            self.assertEqual(selected.find_element(By.XPATH, './ancestor::*[@data-state-id]').get_attribute('data-state-id'), 'two')
+            self.assertEqual(self.find('#semantic-toggle').get_attribute('aria-expanded'), 'false')
+            self.assertEqual(self.driver.switch_to.active_element.get_attribute('id'), selected.get_attribute('id'))
+            self.find('#clear').click()
+            self.assertEqual(self.driver.find_elements(By.CSS_SELECTOR, '[data-viewer-selected]'), [])
+            self.assertEqual(before, self.driver.execute_script("return [...document.querySelectorAll('path[data-edge-kind]')].map(p=>p.outerHTML)"))
+
+    def test_semantic_filters_deposed_identity_bounds_unavailable_and_safe_text(self):
+        hostile = 'test.item["</script><script>alert(1)</script>"]'
+        plan = {'format_version': '1.2', 'resource_changes': [
+            {'address': hostile, 'type': 'test'},
+            {'address': hostile, 'type': 'test', 'deposed': 'old'},
+            {'address': 'test.dynamic', 'type': 'test'}],
+            'configuration': {'root_module': {'resources': [
+                {'address': 'test.dynamic', 'expressions': {
+                    'input': {'references': ['each.value']},
+                    'missing': {'references': ['test.absent.id']}}}]}}}
+        self.load('-', '--html-semantic-diagnostics', input_plan=plan)
+        self.find('#semantic-toggle').click()
+        self.find('#semantic-search').send_keys('old')
+        self.find('#semantic-list button').click()
+        self.assertEqual(self.find('[data-viewer-selected]').get_attribute('data-deposed-key'), 'old')
+        self.find('#semantic-toggle').click()
+        self.find('#semantic-search').clear()
+        Select(self.find('#semantic-category')).select_by_value('dynamic')
+        self.assertIn('dynamic_instance_selection', self.find('#semantic-list').text)
+        self.assertNotIn('unsupported_classification', self.find('#semantic-list').text)
+        Select(self.find('#semantic-category')).select_by_value('unresolved')
+        self.assertIn('unresolved_reference', self.find('#semantic-list').text)
+        self.find('#semantic-list button').click()
+        self.assertEqual(self.find('[data-viewer-selected]').get_attribute('data-terraform-address'), 'test.dynamic')
+        self.find('#semantic-toggle').click()
+        self.find('#semantic-search').send_keys(Keys.ESCAPE)
+        self.assertEqual(self.find('#semantic-toggle').get_attribute('aria-expanded'), 'false')
+
+        def alter(document):
+            start = document.index('<script id="viewer-semantic-diagnostics" type="application/json">')
+            payload_start = document.index('>', start) + 1
+            end = document.index('</script>', payload_start)
+            payload = json.loads(document[payload_start:end])
+            record = dict(payload['records'][0], address='missing.resource')
+            payload.update(records=[record] * 110, total=115, omitted=5, records_complete=False)
+            return document[:payload_start] + json.dumps(payload).replace('<', '\\u003c') + document[end:]
+
+        self.load('-', '--html-semantic-diagnostics', input_plan=plan, transform=alter)
+        self.find('#semantic-toggle').click()
+        self.assertEqual(len(self.driver.find_elements(By.CSS_SELECTOR, '#semantic-list li')), 100)
+        self.assertEqual(self.driver.find_elements(By.CSS_SELECTOR, '#semantic-list button'), [])
+        self.assertIn('navigation unavailable', self.find('#semantic-list').text)
+        self.assertIn('10 hidden by list limit', self.find('#semantic-status').text)
+        self.assertIn('5 omitted', self.find('#semantic-status').text)
+        self.load('examples/plan.json')
+        self.assertFalse(self.find('#semantic-toggle').is_enabled())
+
+    def test_ambiguous_semantic_reason_navigates_its_source_without_guessing_endpoint(self):
+        plan = {'format_version': '1.2', 'resource_changes': [
+            {'address': 'aws_vpc.a', 'type': 'aws_vpc'},
+            {'address': 'aws_vpc.b', 'type': 'aws_vpc'},
+            {'address': 'aws_subnet.ambiguous', 'type': 'aws_subnet'}],
+            'configuration': {'root_module': {'resources': [
+                {'address': 'aws_subnet.ambiguous', 'expressions': {
+                    'vpc_id': {'references': ['aws_vpc.a.id', 'aws_vpc.b.id']}}}]}}}
+        self.load('-', '--html-semantic-diagnostics', '--html-diagnostics', input_plan=plan)
+        self.find('#semantic-toggle').click()
+        Select(self.find('#semantic-category')).select_by_value('ambiguous')
+        self.assertIn('ambiguous_containment_parent', self.find('#semantic-list').text)
+        self.assertIn('Attribute: vpc_id', self.find('#semantic-list').text)
+        self.find('#semantic-list button').click()
+        self.assertEqual(self.find('[data-viewer-selected]').get_attribute('data-terraform-address'), 'aws_subnet.ambiguous')
+
     def search(self, text):
         field = self.find('#search')
         field.clear()

@@ -27,6 +27,7 @@
   const { select, button } = selection(context, index, view, highlights, coordinator);
   const { renderResults } = searching(context, index, { select, button }, coordinator);
   adapters.register(diagnostics(context, index, view, { select, button }, coordinator));
+  adapters.register(semanticDiagnostics(context, index, { select, button }, coordinator));
   const impactView = impact(context, index, { select, button }, coordinator);
   adapters.register(impactView);
   search.addEventListener('input', () => adapters.reset());

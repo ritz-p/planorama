@@ -19,7 +19,12 @@ p { line-height: 1.5; }
 #selection h3 { font-size: 14px; margin-bottom: 8px; }
 #selection ul { padding-left: 18px; }
 #selection li { margin-bottom: 8px; }
-#diagnostics { overflow-wrap: anywhere; }
+#diagnostics, #semantic-diagnostics { overflow-wrap: anywhere; }
+#semantic-diagnostics h2 { font-size: 16px; }
+#semantic-diagnostics button, #semantic-category { width: 100%; text-align: left; }
+#semantic-category { font: inherit; padding: 6px; }
+#semantic-list { padding-left: 20px; }
+#semantic-list li { margin-bottom: 12px; }
 #diagnostics h2 { font-size: 16px; }
 #diagnostics button { text-align: left; width: 100%; }
 #hotspot-list { padding-left: 20px; }

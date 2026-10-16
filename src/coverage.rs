@@ -27,10 +27,12 @@ pub struct Finding {
     pub attribute: Option<String>,
     pub code: &'static str,
     pub category: &'static str,
+    pub message: &'static str,
 }
 
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
 pub struct Coverage {
+    pub embed_findings: bool,
     pub collected: bool,
     pub input_complete: Option<bool>,
     pub input_findings: BTreeMap<&'static str, usize>,
@@ -131,6 +133,7 @@ impl Coverage {
                     attribute: (!diagnostic.attribute.is_empty()).then_some(diagnostic.attribute),
                     code: diagnostic.reason.code(),
                     category: diagnostic.reason.category(),
+                    message: diagnostic.reason.description(),
                 });
             } else {
                 result.unassociated_findings += 1;
@@ -149,6 +152,7 @@ impl Coverage {
                     attribute: None,
                     code: "unsupported_classification",
                     category: "classification",
+                    message: "resource type has no supported semantic classification",
                 });
             }
             let resource = &result.resources[&TerraformEntityId::from(node)];
@@ -162,6 +166,7 @@ impl Coverage {
                         attribute: None,
                         code,
                         category: "scope",
+                        message: "applicable deployment scope has no verified evidence",
                     });
                 }
             }
