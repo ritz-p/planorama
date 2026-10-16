@@ -117,6 +117,8 @@ fn uncertain_cluster_ownership_falls_back_without_hiding_instances() {
         "data_owner",
         "data_child",
         "scope",
+        "unknown_scope",
+        "dynamic_scope",
         "deposed",
     ] {
         let mut value = input();
@@ -156,6 +158,16 @@ fn uncertain_cluster_ownership_falls_back_without_hiding_instances() {
                 value["configuration"]["root_module"]["resources"][5]["expressions"]["region"] =
                     json!({"constant_value":"us-west-2"})
             }
+            "unknown_scope" => {
+                value["configuration"]["provider_config"]["aws"]["expressions"]
+                    .as_object_mut()
+                    .unwrap()
+                    .remove("region");
+            }
+            "dynamic_scope" => {
+                value["configuration"]["provider_config"]["aws"]["expressions"]["region"] =
+                    json!({"references": ["var.region"]});
+            }
             "deposed" => {
                 for i in [5, 6] {
                     value["resource_changes"][i]["deposed"] = json!("old");
@@ -189,6 +201,19 @@ fn uncertain_cluster_ownership_falls_back_without_hiding_instances() {
             graph.nodes.iter().all(|n| n.member_owner.is_none()),
             "{case}"
         );
+        if matches!(case, "unknown_scope" | "dynamic_scope") {
+            assert!(graph.nodes.iter().all(|node| node.entity.scope.is_none()));
+            let output = svg::render(&graph, &Layout::new(&graph));
+            let document = roxmltree::Document::parse(&output).unwrap();
+            assert_eq!(
+                document
+                    .descendants()
+                    .filter(|node| node.attribute("data-terraform-address").is_some())
+                    .count(),
+                graph.nodes.len()
+            );
+            assert!(!output.contains("data-embedded-member"));
+        }
     }
 }
 

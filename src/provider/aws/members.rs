@@ -36,6 +36,7 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             && parent.provider.is_aws()
             && parent.mode == EntityMode::Managed
             && parent.deposed_key.is_none()
+            && parent.entity.scope.is_some()
             && parent.entity.scope == node.entity.scope
         {
             graph.nodes[index].member_owner = parent.entity.provenance.first().cloned();
