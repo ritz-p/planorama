@@ -36,7 +36,7 @@ Layout includes its routing work; no separate routing estimate is added to it.
 Named-state layout and cross-state routing occur inside composition: subtract
 their durations to obtain composition's exclusive time. Inclusive rows must not
 be summed. Exclusive rows are disjoint, but their sum is not the wall-clock total:
-`total_ms` starts after argument parsing and ends after output I/O, includes
+`total_ms` starts after argument parsing and generation-config resolution and ends after output I/O, includes
 validation, diagnostic work, intermediate destruction and instrumentation, and
 excludes timing-report formatting/writing and subsequent cleanup. Diagnostic
 scene construction is charged to composition. Output I/O measures writes, not

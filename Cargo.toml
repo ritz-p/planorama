@@ -25,7 +25,9 @@ path = "tests/integration/rendering.rs"
 [dependencies]
 hcl-rs = "0.19.8"
 same-file = "1.0.6"
+serde = { version = "1", features = ["derive"] }
 serde_json = "1"
+toml = "0.8.23"
 tempfile = "3"
 zip = { version = "2.4.2", default-features = false, features = ["deflate"] }
 

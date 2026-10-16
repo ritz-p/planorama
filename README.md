@@ -13,6 +13,15 @@ docker compose exec -T dev cargo run --locked -- examples/plan.json -o diagram.s
 
 `diagram.svg` をブラウザで開いて確認できます。生成済みの [基本例](examples/diagram.svg)、[大規模 AWS 例](examples/terraform-large/diagram.svg)、[data ソースのアイコン例](examples/data-icons.svg) もあります。
 
+繰り返す生成設定は `--config PATH --preset NAME` で TOML から読み込めます。
+優先順位は「組み込み既定値 → ファイル共通設定 → 選択プリセット → 明示的 CLI 指定」です。
+boolean は `--no-changed-only` などで解除でき、配列は上位の設定で置き換えます。
+設定ファイルの自動探索は行いません。[設定仕様](docs/configuration.md)と[サンプル](examples/planorama.toml)を参照してください。
+
+```sh
+docker compose exec -T dev cargo run --locked -- examples/plan.json --config examples/planorama.toml --preset review -o review.html
+```
+
 `--coverage-report coverage.md` を付けると、入力・選択・除外件数や診断集計を別の Markdown に保存します。SVG・HTML・複数 state に対応します。[レポート例](examples/coverage.md)と[集計の定義](docs/coverage.md)を参照してください。
 
 `--hide-relationship-legend` で線種・方向・包含・cross-state の説明を省きます。action の色見本、実際の線・矢印・関係番号・Relationship Resources は保持します。SVG・HTML に共通で使えます。[省略例](examples/relationship-legend-hidden.svg)と[凡例の設定](docs/relationships.md)を参照してください。
