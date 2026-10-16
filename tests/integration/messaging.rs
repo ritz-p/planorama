@@ -72,6 +72,16 @@ fn event_source_svg_html_filters_and_named_states_keep_real_navigation() {
     );
 }
 
+#[test]
+fn event_target_svg_html_filters_and_named_states_keep_real_navigation() {
+    verify(
+        "tests/fixtures/eventbridge-targets-plan.json",
+        "eventtarget",
+        "aws_cloudwatch_event_target.jobs",
+        12,
+    );
+}
+
 fn verify(path: &str, kind: &str, address: &str, resources: usize) {
     let bytes = std::fs::read(path).unwrap();
     let fixture = bytes.as_slice();

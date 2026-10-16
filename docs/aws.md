@@ -160,6 +160,32 @@ type, endpoint and direction rules before they can produce event-source edges.
 See [the event-source example](../examples/event-sources.svg), including duplicate
 endpoints, a cross-region data queue, an unsupported source and a literal fallback.
 
+## EventBridge targets
+
+Managed `aws_cloudwatch_event_target` resources remain regional logical rows.
+A complete, unique explicit `rule` reference must identify an AWS EventBridge
+Rule whose known name matches the target's rule value. A complete, unique `arn`
+reference must identify an AWS SQS Queue or Lambda Function with a matching known
+ARN. These proofs produce a directed `Event target` relationship from Rule to
+endpoint, carrying the target resource's identity, action and lifecycle metadata.
+
+When a bus is configured, both target and rule must explicitly reference the same
+recognized Bus and their known bus values must match its name or ARN. If neither
+configures a bus, both plan values must independently identify `default`; this
+does not identify or synthesize a Bus resource. Target, Rule and any explicitly
+identified Bus require equal known regional scopes. Unknown accounts additionally
+require the same non-conflicting provider configuration. Endpoint scope remains
+independent; the relationship does not prove delivery, permissions or reachability.
+Deleted targets compare before-state evidence for all referenced resources.
+
+Missing, literal-only, ambiguous, dynamic, mismatched and foreign-provider
+evidence leaves partial logical context without an invented relationship. Data
+and deposed targets do not create edges. Unsupported endpoint types stay visible.
+Filtering never borrows identity from another state; unavailable links become
+plain context. Parallel targets retain separate provenance and numbers, while
+each target is counted once across logical rows and the relationship index.
+See the [EventBridge target example](../examples/eventbridge-targets.svg).
+
 ## Resource roles and data
 
 VPC and Subnet are spatial `Container` resources. Other supported types are
@@ -177,7 +203,7 @@ mode. Their action subsections change presentation only, not role or placement.
 
 Placement is independent of role. ECS Cluster, ECS Task Definition, IAM Role,
 Policy, Role Policy, Instance Profile, AMI, EC2 Launch Template, CloudWatch Log Group,
-Metric Alarm, Auto Scaling Policy, SNS Topic Subscription and Lambda Event Source Mapping definitions are explicit logical resources, rendered as rows grouped
+Metric Alarm, Auto Scaling Policy, SNS Topic Subscription, Lambda Event Source Mapping and EventBridge Target definitions are explicit logical resources, rendered as rows grouped
 by provider source, resource type and mode in
 the top annotation area. AMI describes
 an image definition used by workloads, not a deployed compute instance. These
