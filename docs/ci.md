@@ -493,6 +493,9 @@ git diff -- examples
 
 Inspect the affected diagrams and commit the necessary outputs with the source
 change. When adding generation inputs, update the script and manifest as needed.
+The local script also refreshes `examples/coverage.md` alongside the basic SVG.
+The manual workflow's SVG writeback remains limited to the SVG manifest; commit
+Markdown report changes locally.
 For recovery, choose **Actions → Update SVG examples → Run workflow**, select
 `main` for the workflow definition, and supply the open PR number, or run:
 

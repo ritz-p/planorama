@@ -49,27 +49,39 @@ The contract contains counts and safe identifiers, never attribute values,
 provider settings, raw expressions or plan payloads. Existing stderr formatting
 is unchanged by collection.
 
-## Diagram summary
+## Markdown report
 
-SVG and HTML display the same measured Diagram Coverage annotation for each
-state, with a whole-diagram summary above named states. Input, selected and
-excluded resources come from shared accounting, not rendered cards. Unknown
-account/region fractions use the selected applicable-resource denominator;
-zero applicable resources display `not applicable`. Reference finding counts
-are a labeled subset of selected findings and may overlap on a resource.
-Unassociated findings are explicitly labeled as input findings. Counts never
-imply invalid infrastructure.
+Use `--coverage-report PATH` with SVG or self-contained HTML to write a separate
+UTF-8 Markdown report. No report is created without the option. The report has
+whole-diagram and per-state input/selected/excluded counts, supported/unsupported
+classification counts, scope denominators and finding categories. Logical rows
+are not inherently unsupported. It labels effective filters and input completeness.
+An unavailable collection reports unknown counts rather than zeros; aggregate
+completeness is incomplete if any state is incomplete, otherwise unknown if any
+state has no completeness flag.
 
-Summaries distinguish complete, incomplete and unknown input status, supported-rule
-analysis, and unavailable collection. CLI focus/changed-only modes and retained
-context are labeled. `no CLI filter` still allows semantic projection to exclude
-resources. Summary text and state headings use measured wrapping.
-Whole-diagram input completeness is incomplete if any input is incomplete,
-unknown if any remaining input has no flag, and complete only if all inputs say so.
-This summary does not combine or change the state-local plan-status flags.
-The `data-view-coverage` metadata carries version 1 counters and per-state totals,
-including explicit named state IDs in local and aggregate summaries, with no
-resource identities. HTML uses the same SVG summary without DOM counting.
+The report contains aggregate findings without enumerating resource identities
+or attribute paths. Counts are not truncated. Input-derived state/focus text is
+escaped for Markdown, and content has no timestamps or machine-specific paths.
+Individual selected findings remain available in the optional HTML panel.
+
+SVG and HTML diagrams have no coverage summary cards or reserved summary space.
+The report option does not change diagram bytes. Input files, provider evidence,
+diagram output and layout JSON output cannot alias the report destination;
+validation precedes writes. `-` is not a report destination. Write errors fail the
+command and are reported on stderr.
+
+Regenerate the maintained [report example](../examples/coverage.md) in Docker:
+
+```sh
+docker compose exec -T dev sh scripts/update-examples.sh
+```
+
+The script runs the equivalent of:
+
+```sh
+planorama examples/plan.json -o examples/diagram.svg --coverage-report examples/coverage.md
+```
 
 The optional `viewer-semantic-diagnostics` JSON bridge has schema version 1 and
 contains only selected findings, each explicitly qualified by state and mode.

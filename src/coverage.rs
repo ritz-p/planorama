@@ -2,6 +2,7 @@ use crate::model::{
     DiagnosticReason, EntityMode, Graph, RelationshipProvenance, TerraformEntityId, TerraformPlan,
 };
 use std::collections::{BTreeMap, BTreeSet};
+pub(crate) mod report;
 
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
 pub struct Counts {

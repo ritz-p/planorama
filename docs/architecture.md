@@ -13,6 +13,10 @@ Optional [layout diagnostics](layout-diagnostics.md) collect final geometry duri
 SVG composition, including annotation offsets and cross-state routing, and reuse
 runtime layout measurements. The CLI owns the separate report destination.
 
+The optional [Markdown coverage report](coverage.md) consumes shared accounting
+after selection. Its output destination uses the same alias protection as layout
+reports; coverage reporting does not participate in SVG composition.
+
 Opt-in HTML semantic diagnostics consume selected coverage records through a
 bounded serialization bridge. Their viewer adapter reuses resource selection and
 the lifecycle reset coordinator; it does not change graph or routing semantics.
