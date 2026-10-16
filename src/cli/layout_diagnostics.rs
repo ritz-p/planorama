@@ -21,58 +21,7 @@ impl Options {
         let Some(path) = &self.json else {
             return Ok(());
         };
-        if path == Path::new("-") {
-            return Err("--layout-diagnostics-json requires a separate file, not '-'".into());
-        }
-        for destination in [path.as_path(), output] {
-            if destination == Path::new("-") {
-                continue;
-            }
-            match std::fs::symlink_metadata(destination) {
-                Ok(metadata) if metadata.is_symlink() => {
-                    destination.canonicalize().map_err(|e| {
-                        format!(
-                            "cannot resolve output symlink {}: {e}",
-                            destination.display()
-                        )
-                    })?;
-                }
-                Ok(_) => {}
-                Err(e) if e.kind() == std::io::ErrorKind::NotFound => {}
-                Err(e) => {
-                    return Err(format!(
-                        "cannot inspect output {}: {e}",
-                        destination.display()
-                    ));
-                }
-            }
-        }
-        for input in inputs {
-            super::states::protect_input(input.as_ref(), path)?;
-        }
-        if output != Path::new("-") {
-            if output.exists() {
-                super::files::reject_same_file(output, path)?;
-            }
-            let resolve = |p: &Path| -> Result<PathBuf, String> {
-                let p = if p.is_absolute() {
-                    p.to_owned()
-                } else {
-                    std::env::current_dir().map_err(|e| e.to_string())?.join(p)
-                };
-                Ok(p.canonicalize().unwrap_or_else(|_| {
-                    p.parent()
-                        .and_then(|v| v.canonicalize().ok())
-                        .zip(p.file_name())
-                        .map(|(parent, name)| parent.join(name))
-                        .unwrap_or(p)
-                }))
-            };
-            if resolve(output)? == resolve(path)? {
-                return Err("diagram and layout diagnostics must be different files".into());
-            }
-        }
-        Ok(())
+        super::files::validate_report(path, inputs, output, "--layout-diagnostics-json")
     }
 
     pub fn write(&self, report: &serde_json::Value, output: &Path) -> Result<(), String> {

@@ -132,7 +132,7 @@ pub(crate) fn render_report(
     for (id, graph) in &prepared_graphs {
         let layout = Layout::new(graph);
         let index = super::relationship_index::Index::new(graph, &layout);
-        let cards = super::annotation_cards(graph, &index, format, id.as_str());
+        let cards = super::annotation_cards(graph, &index, format);
         width = width.max(super::annotations::Area::required_width(
             &cards,
             index.width,
@@ -155,22 +155,7 @@ pub(crate) fn render_report(
         }
     }
     sections.push_str(&legend.render());
-    let overview = super::annotations::Area::flow(
-        vec![super::coverage::card(
-            graphs
-                .iter()
-                .map(|(id, graph)| (id.as_str(), &graph.coverage)),
-        )],
-        width,
-        Point {
-            x: 40,
-            y: 60 + legend.height,
-        },
-        40,
-        20,
-    );
-    sections.push_str(&overview.render());
-    let mut top = 60 + legend.height + overview.height;
+    let mut top = 60 + legend.height;
     for (id, graph, layout, index, cards) in states {
         let heading = format!("State: {}", id.as_str());
         let heading_lines = crate::view::text::wrap(&heading, (width - 80) / 12);

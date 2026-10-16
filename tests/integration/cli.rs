@@ -1,3 +1,4 @@
+mod coverage_report;
 mod filtering;
 mod html;
 mod layout_diagnostics;

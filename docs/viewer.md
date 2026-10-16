@@ -17,9 +17,9 @@ changed-only selection, remote-state mappings and diagnostics work in both modes
 Logical Resources rows show the same per-resource deployment-scope labels in both
 formats; see [scope evidence and limitations](aws.md#deployment-scopes).
 
-Diagram Coverage shows input/selected/excluded resources and applicable unknown
-scope counts, with per-state and whole-diagram totals identical to SVG. The
-[coverage contract](coverage.md) defines counts and analysis limits.
+Use `--coverage-report PATH` for a separate Markdown report of input/selected/
+excluded resources and unknown scope counts. SVG and HTML share the same
+[coverage accounting](coverage.md); the diagram reserves no summary space.
 
 The maintained [combined AWS viewer](../examples/multi-account/diagram.html)
 exercises 250 input instances, repeated addresses in three states, region

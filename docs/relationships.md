@@ -20,8 +20,7 @@ the widest state's content width up to the same cap, excluding the cross-state r
 Its action colors come from all displayed states; if none has a non-containment
 relationship, no legend or legend height is added. State-local checks, annotations
 and Relationship Resources indexes retain their own identities and numbering.
-State positions and cross-state endpoints include the shared legend and
-whole-diagram coverage summary heights once.
+State positions and cross-state endpoints include the shared legend height once.
 
 Line color describes the relationship's own Terraform action, independently of
 its endpoint resources. A relationship without an independent change

@@ -21,7 +21,7 @@ while IFS= read -r output || [ -n "$output" ]; do
             "$binary" --state services=tests/fixtures/data-icons-plan.json --state builtin=tests/fixtures/terraform-plan.json --icon-mode service-name -o "$output"
             ;;
         examples/diagram.svg)
-            "$binary" examples/plan.json -o "$output"
+            "$binary" examples/plan.json -o "$output" --coverage-report examples/coverage.md
             ;;
         examples/data.svg)
             "$binary" examples/data-plan.json -o "$output"

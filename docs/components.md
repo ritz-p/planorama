@@ -35,8 +35,8 @@ is explanatory metadata: original target cards, resource counts, target-worker
 associations, placement and routes remain unchanged. Component IDs stay anchored
 to the LB when targets join or leave.
 
-Above the architecture, Diagram Coverage (neutral) precedes Logical Resources
-(cyan), Logical Components (purple), then Relationship Resources (neutral).
+Above the architecture, Logical Resources (cyan) precede Logical Components
+(purple), then Relationship Resources (neutral).
 Empty resource/component/relationship sections reserve no space. Section colors identify their type.
 Frames fit their child-card bounds plus header and padding. Cards use all available
 horizontal space before wrapping, while the overall canvas retains its architecture width.

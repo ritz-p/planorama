@@ -90,23 +90,11 @@ class ViewerTests(unittest.TestCase):
         self.assertEqual(result['overlaps'], [])
         self.assertEqual(result['symbols'], 0)
 
-    def test_coverage_summary_fits_empty_and_single_resource_diagrams(self):
+    def test_coverage_summary_is_absent_from_empty_and_single_resource_diagrams(self):
         for changes in [[], [{"address": "terraform_data.one", "type": "terraform_data"}]]:
             self.load('-', input_plan={"format_version": "1.2", "resource_changes": changes})
-            result = self.driver.execute_script("""
-                const metadata = document.querySelector('[data-view-coverage]');
-                const card = metadata.closest('[data-annotation-card]');
-                const bounds = card.querySelector('rect').getBoundingClientRect();
-                const outside = [...card.querySelectorAll('text')].filter(text => {
-                    const b = text.getBoundingClientRect();
-                    return b.left < bounds.left || b.right > bounds.right ||
-                           b.top < bounds.top || b.bottom > bounds.bottom;
-                }).map(text => text.textContent);
-                return {outside, coverage: JSON.parse(metadata.textContent)};
-            """)
-            self.assertEqual(result['outside'], [])
-            self.assertEqual(result['coverage']['input']['resources'], len(changes))
-            self.assertEqual(result['coverage']['selected']['resources'], len(changes))
+            self.assertFalse(self.driver.execute_script("return !!document.querySelector('[data-view-coverage]')"))
+            self.assertNotIn('Diagram Coverage', self.find('svg').text)
 
     def test_semantic_diagnostics_navigate_all_resource_presentations_and_reset(self):
         for fixture, address in [('containment', 'aws_instance.app'),
