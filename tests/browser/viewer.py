@@ -119,6 +119,13 @@ class ViewerTests(unittest.TestCase):
                 groups = self.driver.find_elements(By.CSS_SELECTOR, '.copy-identity')
                 self.assertTrue(groups)
                 self.assertTrue(all('Endpoint resource' in group.text or 'Provenance resource' in group.text for group in groups))
+                names = []
+                for group in groups:
+                    name = group.find_element(By.TAG_NAME, 'button').accessible_name
+                    self.assertIn(group.find_element(By.TAG_NAME, 'textarea').get_attribute('value'), name)
+                    self.assertIn(group.find_element(By.TAG_NAME, 'p').text, name)
+                    names.append(name)
+                self.assertEqual(len(names), len(set(names)))
 
     def test_service_names_have_space_in_named_state_resource_rows(self):
         self.load('--state', 'services=tests/fixtures/data-icons-plan.json',
