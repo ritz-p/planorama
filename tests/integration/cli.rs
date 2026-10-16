@@ -3,6 +3,7 @@ mod html;
 mod layout_diagnostics;
 mod messaging;
 mod provider_plan;
+mod service_names;
 mod states;
 mod support;
 use std::process::Command;

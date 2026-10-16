@@ -61,6 +61,35 @@ class ViewerTests(unittest.TestCase):
     def view_box(self):
         return self.driver.execute_script("return document.querySelector('#viewport > svg').getAttribute('viewBox')")
 
+    def test_service_names_have_space_in_named_state_resource_rows(self):
+        self.load('--state', 'services=tests/fixtures/data-icons-plan.json',
+                  '--state', 'builtin=tests/fixtures/terraform-plan.json',
+                  '--icon-mode', 'service-name')
+        result = self.driver.execute_script("""
+            const svg = document.querySelector('#viewport > svg');
+            const viewport = document.querySelector('#viewport');
+            svg.setAttribute('viewBox', `0 0 ${viewport.clientWidth} ${viewport.clientHeight}`);
+            const labels = [...svg.querySelectorAll('[data-service-name]')];
+            const overlaps = [];
+            for (const label of labels) {
+                const row = label.closest('[data-terraform-address]');
+                const a = label.getBoundingClientRect();
+                for (const other of row.querySelectorAll('text')) {
+                    if (other === label) continue;
+                    const b = other.getBoundingClientRect();
+                    if (Math.min(a.right, b.right) - Math.max(a.left, b.left) > 0.1 &&
+                        Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top) > 0.1) {
+                        overlaps.push([label.textContent, other.textContent]);
+                    }
+                }
+            }
+            return {count: labels.length, overlaps,
+                    symbols: svg.querySelectorAll('symbol, image').length};
+        """)
+        self.assertGreater(result['count'], 10)
+        self.assertEqual(result['overlaps'], [])
+        self.assertEqual(result['symbols'], 0)
+
     def search(self, text):
         field = self.find('#search')
         field.clear()

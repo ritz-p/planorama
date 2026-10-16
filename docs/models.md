@@ -15,6 +15,9 @@ Route entries retain validated, nonsensitive configuration destination constants
 and safe target identities. `Node.routes` holds presentation ownership, inline
 entries and projected content height; it does not create semantic Containment.
 
+`Node.service_name` is optional view presentation populated by service-name mode
+from the provider-aware icon mapping. It does not affect identity or semantics.
+
 The parser has no dependency on architecture `Graph`, `Node`, `EdgeKind` or role
 classification. Its `nodes`/`edges` fields are Terraform entities/references, not
 rendering objects. A reference has only source and consumer; it does not claim

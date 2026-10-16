@@ -23,6 +23,12 @@ docker compose exec -T dev cargo run --locked -- examples/plan.json -o diagram.s
 docker compose exec -T dev cargo run --locked -- examples/plan.json --format html -o diagram.html
 ```
 
+`--icon-mode service-name` でサービスアイコンを Amazon EC2、Amazon VPC、Terraform built-in などの文字に置き換えます。SVG・HTML・複数 state に対応し、長い表示名は全文を折り返します。既定は `--icon-mode icon` です。[サービス名表示の例](examples/service-names.svg)と[対応・出典の扱い](docs/icons.md#service-name-mode)を参照してください。
+
+```sh
+docker compose exec -T dev cargo run --locked -- examples/plan.json --icon-mode service-name -o services.svg
+```
+
 実際の plan は Terraform を実行できる環境で JSON に変換し、リポジトリ内に配置してください。
 
 ```sh
