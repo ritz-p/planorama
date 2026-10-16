@@ -1,4 +1,5 @@
 mod aurora;
+mod elasticache;
 mod regions;
 mod support;
 

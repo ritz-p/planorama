@@ -34,6 +34,36 @@ pub fn single(graph: &ArchitectureGraph, options: &Options) -> Result<Architectu
 
 type Key = (StateId, usize);
 
+fn placement_available(
+    graph: &crate::model::Graph,
+    child: usize,
+    selected: impl Fn(usize) -> bool,
+) -> bool {
+    let node = &graph.nodes[child];
+    if node.resource_type != "aws_elasticache_replication_group" {
+        return true;
+    }
+    graph
+        .relationships
+        .iter()
+        .filter(|relationship| {
+            relationship.to == node.entity.id && relationship.kind == EdgeKind::Containment
+        })
+        .flat_map(|relationship| &relationship.provenance)
+        .all(|proof| match proof {
+            crate::model::RelationshipProvenance::Reference { from, to }
+                if node.entity.provenance.contains(to) =>
+            {
+                graph
+                    .nodes
+                    .iter()
+                    .position(|source| source.entity.provenance.contains(from))
+                    .is_some_and(&selected)
+            }
+            _ => true,
+        })
+}
+
 pub fn apply(all: &Architecture, options: &Options) -> Result<Architecture, String> {
     options.validate()?;
     let mut keys = BTreeSet::new();
@@ -174,7 +204,11 @@ pub fn apply(all: &Architecture, options: &Options) -> Result<Architecture, Stri
     loop {
         let count = selected.len();
         for (parent, child) in &parents {
-            if selected.contains(child) {
+            if selected.contains(child)
+                && placement_available(&all.states[&child.0], child.1, |source| {
+                    selected.contains(&(child.0.clone(), source))
+                })
+            {
                 selected.insert(parent.clone());
             }
         }
@@ -226,6 +260,24 @@ pub fn apply(all: &Architecture, options: &Options) -> Result<Architecture, Stri
                     Some(e)
                 })
                 .collect();
+            let unplaced_cache: BTreeSet<_> = graph
+                .nodes
+                .iter()
+                .enumerate()
+                .filter(|(index, _)| !placement_available(&graph, *index, |_| true))
+                .map(|(index, _)| index)
+                .collect();
+            graph.0.edges.retain(|edge| {
+                edge.kind != EdgeKind::Containment || !unplaced_cache.contains(&edge.to)
+            });
+            let unplaced_cache: BTreeSet<_> = unplaced_cache
+                .into_iter()
+                .map(|index| graph.nodes[index].entity.id.clone())
+                .collect();
+            graph.0.relationships.retain(|relationship| {
+                relationship.kind != EdgeKind::Containment
+                    || !unplaced_cache.contains(&relationship.to)
+            });
             let addresses: BTreeSet<_> = graph.0.nodes.iter().map(|n| n.address.as_str()).collect();
             graph
                 .0

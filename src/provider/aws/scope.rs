@@ -37,6 +37,8 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
             | "aws_rds_cluster_instance"
             | "aws_dynamodb_table"
             | "aws_elasticache_cluster"
+            | "aws_elasticache_subnet_group"
+            | "aws_elasticache_replication_group"
             | "aws_opensearch_domain"
             | "aws_s3_bucket"
             | "aws_cloudwatch_log_group"

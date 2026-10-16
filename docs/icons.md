@@ -13,6 +13,10 @@ for both managed and data resources. See the [messaging example](../examples/mes
 RDS Cluster Instances (`aws_rds_cluster_instance`) use the Amazon RDS icon in
 ordinary cards and verified cluster member cards. See the [Aurora example](../examples/aurora.svg).
 
+ElastiCache subnet and replication groups use the existing Amazon ElastiCache
+icon and are classified architecture resources. Their verified common-VPC
+placement is shown in the [ElastiCache example](../examples/elasticache.svg).
+
 ### Rights and scope
 
 AWS owns these assets. They are **not MIT-licensed**. The official page permits customers and partners to use the assets in architecture diagrams; the [AWS Site Terms](https://aws.amazon.com/terms/) also apply. The downloaded package contains SVG/PNG assets and no separate license document. This is not a grant of unrestricted redistribution or sublicensing rights. The selected assets support this AWS architecture diagram renderer, not a standalone icon distribution service. For other uses, consult AWS's terms or obtain permission. Planorama does not imply AWS endorsement.
