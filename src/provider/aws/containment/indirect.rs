@@ -26,12 +26,17 @@ fn static_reference<'a>(
 }
 
 pub(in crate::provider::aws) fn resolved_subnets(raw: &Input, target: usize) -> Option<&[usize]> {
-    let group_ref = static_reference(raw, target, "db_subnet_group_name")?;
+    let (attribute, group_type) = group_rule(&raw.nodes[target].resource_type)?;
+    let group_ref = static_reference(raw, target, attribute)?;
     let [group] = group_ref.sources.as_slice() else {
         return None;
     };
     let group_node = &raw.nodes[*group];
-    if group_node.resource_type != "aws_db_subnet_group" || !group_node.provider.is_aws() {
+    if group_node.resource_type != group_type
+        || !group_node.provider.is_aws()
+        || (raw.nodes[target].resource_type == "aws_elasticache_replication_group"
+            && !group_configuration_matches(&raw.nodes[target], group_node))
+    {
         return None;
     }
     let subnets = static_reference(raw, *group, "subnet_ids")?;
@@ -46,6 +51,26 @@ pub(in crate::provider::aws) fn resolved_subnets(raw: &Input, target: usize) -> 
         .then_some(subnets.sources.as_slice())
 }
 
+pub(in crate::provider::aws) fn group_configuration_matches(
+    child: &crate::model::Node,
+    group: &crate::model::Node,
+) -> bool {
+    child.provider_configuration == group.provider_configuration
+        && child.entity.scope == group.entity.scope
+}
+
+fn group_rule(resource_type: &str) -> Option<(&'static str, &'static str)> {
+    match resource_type {
+        "aws_db_instance" | "aws_rds_cluster" => {
+            Some(("db_subnet_group_name", "aws_db_subnet_group"))
+        }
+        "aws_elasticache_replication_group" => {
+            Some(("subnet_group_name", "aws_elasticache_subnet_group"))
+        }
+        _ => None,
+    }
+}
+
 pub(super) fn infer(raw: &Input, mut graph: Graph) -> Graph {
     let mut parents = vec![BTreeSet::new(); graph.nodes.len()];
     for edge in &graph.edges {
@@ -56,10 +81,7 @@ pub(super) fn infer(raw: &Input, mut graph: Graph) -> Graph {
     for (target, node) in raw.nodes.iter().enumerate() {
         if node.mode != EntityMode::Managed
             || !node.provider.is_aws()
-            || !matches!(
-                node.resource_type.as_str(),
-                "aws_db_instance" | "aws_rds_cluster"
-            )
+            || group_rule(&node.resource_type).is_none()
             || !parents[target].is_empty()
         {
             continue;
@@ -67,15 +89,23 @@ pub(super) fn infer(raw: &Input, mut graph: Graph) -> Graph {
         let Some(subnets) = resolved_subnets(raw, target) else {
             continue;
         };
-        let Some(parent) = super::spanning::common_parent(subnets, &parents) else {
+        let (attribute, _) = group_rule(&node.resource_type).expect("supported subnet group rule");
+        let group = static_reference(raw, target, attribute)
+            .expect("resolved subnet group")
+            .sources[0];
+        let parent = if node.resource_type == "aws_elasticache_replication_group" {
+            (parents[group].len() == 1)
+                .then(|| *parents[group].first().expect("one parent"))
+                .filter(|&parent| raw.nodes[parent].resource_type == "aws_vpc")
+        } else {
+            super::spanning::common_parent(subnets, &parents)
+        };
+        let Some(parent) = parent else {
             continue;
         };
         if parent == target || raw.nodes[parent].role != ResourceRole::Container {
             continue;
         }
-        let group = static_reference(raw, target, "db_subnet_group_name")
-            .expect("resolved subnet group")
-            .sources[0];
         let mut proof = super::spanning::evidence(&graph, parent, subnets, &parents);
         proof.extend(
             subnets
@@ -92,11 +122,12 @@ pub(super) fn infer(raw: &Input, mut graph: Graph) -> Graph {
             EdgeKind::Containment,
             proof,
         );
-        if let Some(edge) = graph
-            .edges
-            .iter_mut()
-            .find(|e| e.from == parent && e.to == target && e.kind == EdgeKind::Dependency)
-        {
+        if let Some(edge) = graph.edges.iter_mut().find(|e| {
+            node.resource_type != "aws_elasticache_replication_group"
+                && e.from == parent
+                && e.to == target
+                && e.kind == EdgeKind::Dependency
+        }) {
             edge.kind = EdgeKind::Containment;
         } else {
             graph.edges.push(Edge {
