@@ -238,9 +238,15 @@ docker compose exec -T dev cargo run --locked -- tests/fixtures/viewer-plan.json
 HTML is maintained with this command, separately from the SVG writeback manifest;
 the representative HTML snapshot is checked by the CLI integration tests.
 Rust CLI tests check safe serialization, target IDs, selection and unchanged SVG
-content. `docker compose exec -T dev python3 tests/browser/viewer.py` runs Chromium
+content. `docker compose exec -T dev node tests/browser/viewer.cjs` runs Chromium
 against local files with networking disabled, checking search, keyboard controls,
 navigation, references, membership and preservation of edge geometry and styles.
+The Node-only WebDriver helper uses ChromeDriver's CDP commands and performance
+logs to reject attempted external HTTP(S) requests even while offline, and fails
+on severe browser console errors. Conditions and protocol requests have bounded
+timeouts; browser, driver and temporary files are cleaned up on failure.
+Run `docker compose exec -T dev node --test tests/browser/webdriver.test.cjs`
+to verify the monitor's failure paths and cleanup.
 Build the CLI with `cargo build --locked` in the same container first.
 
 ## Viewer source modules

@@ -121,14 +121,15 @@ docker compose exec -T dev cargo test --locked --all-targets --all-features
 docker compose exec -T dev cargo clippy --locked --all-targets --all-features -- -D warnings
 docker compose exec -T dev cargo build --locked
 docker compose exec -T dev sh -c 'node --test tests/ci/*.test.cjs'
-docker compose exec -T dev python3 tests/browser/viewer.py
+docker compose exec -T dev node tests/browser/viewer.cjs
+docker compose exec -T dev node --test tests/browser/webdriver.test.cjs tests/support/tooling.test.cjs
 docker build --build-arg RUST_VERSION=1.85.0 -t planorama-msrv .
 docker run --rm --mount type=bind,source=.,target=/workspace --env CARGO_TARGET_DIR=/tmp/planorama-target planorama-msrv cargo +1.85.0 test --locked --all-targets --all-features
 ```
 
 ローカル開発ではソースをコンテナにバインドマウントし、Cargo のキャッシュとビルド成果物を named volume に保存します。`docker compose stop dev` / `start dev` で停止・再開、Dockerfile の変更後は `up -d --build dev` で再作成します。
 
-通常の CI は Ubuntu runner 上で `rust-toolchain.toml` の固定ツールチェーンを使い、Formatting・Tests・Clippy を直接実行します。開発イメージには SVG の描画確認用に `rsvg-convert` と DejaVu フォント、HTML のオフライン操作テスト用に Chromium・ChromeDriver・Python Selenium を含みます。Tests は単体テスト・通常の結合テスト・example などを実行する `standard` と、重い結合テスト `large_example` を実行する `large` の2ジョブを並列実行します。各ジョブでコンパイルと実行を別ステップにし、両方の成功を従来の `Tests` チェックに集約します。対象は Cargo metadata から選択し、`--locked --all-features` を維持します。[分割と計測の詳細](docs/ci.md#parallel-rust-test-suites) を参照してください。
+通常の CI は Ubuntu runner 上で `rust-toolchain.toml` の固定ツールチェーンを使い、Formatting・Tests・Clippy を直接実行します。開発イメージには SVG の描画確認用に `rsvg-convert` と DejaVu フォント、HTML のオフライン操作テスト用に Chromium・ChromeDriver・Node.js を含みます。Tests は単体テスト・通常の結合テスト・example などを実行する `standard` と、重い結合テスト `large_example` を実行する `large` の2ジョブを並列実行します。各ジョブでコンパイルと実行を別ステップにし、両方の成功を従来の `Tests` チェックに集約します。対象は Cargo metadata から選択し、`--locked --all-features` を維持します。[分割と計測の詳細](docs/ci.md#parallel-rust-test-suites) を参照してください。
 
 Formatting・Tests・Clippy は同じ PR の新しい `pull_request` 実行が始まると、同じ workflow の古い実行をキャンセルします。workflow ごとの固定キーと PR 番号で分離するため、別の PR・別の workflow は干渉しません。手動実行（SVG 自動更新後の PR 指定 dispatch を含む）とマージ後の検証は実行 ID ごとに独立し、完了済みのチェック結果も残ります。詳細は [CI のキャンセル制御](docs/ci.md#cancelling-superseded-validation) を参照してください。
 
