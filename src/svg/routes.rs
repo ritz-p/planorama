@@ -10,11 +10,12 @@ pub(super) fn render(
     graph: &Graph,
     layout: &crate::layout::Layout<'_>,
     parent: usize,
-    x: usize,
-    mut y: usize,
+    origin: crate::layout::Point,
     index: &super::relationship_index::Index<'_>,
     content: super::Content,
+    address_format: super::AddressFormat,
 ) -> String {
+    let crate::layout::Point { x, mut y } = origin;
     let cards = cards(graph, parent);
     if cards.is_empty() {
         return String::new();
@@ -35,6 +36,12 @@ pub(super) fn render(
     );
     y += 12;
     for mut card in cards {
+        if let Some(node) = card.node.filter(|node| node.member_owner.is_some()) {
+            card.rows[0].text = crate::view::routes::heading(
+                node,
+                matches!(address_format, super::AddressFormat::Qualified),
+            );
+        }
         let height = card.height();
         let bounds = card.node.map_or(
             crate::layout::Bounds {

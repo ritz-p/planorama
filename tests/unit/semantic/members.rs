@@ -6,6 +6,42 @@ fn input() -> Value {
 }
 
 #[test]
+fn account_only_scopes_do_not_verify_regional_membership() {
+    for overrides in [false, true] {
+        let mut value = input();
+        if overrides {
+            for index in [4, 5] {
+                value["configuration"]["root_module"]["resources"][index]["expressions"]["region"] =
+                    json!({"references": ["var.region"]});
+            }
+        } else {
+            value["configuration"]["provider_config"]["aws"]["expressions"]["region"] =
+                json!({"references": ["var.cluster_region"]});
+            value["configuration"]["provider_config"]["aws.member"] =
+                value["configuration"]["provider_config"]["aws"].clone();
+            value["configuration"]["provider_config"]["aws.member"]["alias"] = json!("member");
+            value["configuration"]["provider_config"]["aws.member"]["expressions"]["region"] =
+                json!({"references": ["var.member_region"]});
+            value["configuration"]["root_module"]["resources"][5]["provider_config_key"] =
+                json!("aws.member");
+        }
+        let raw = crate::plan::evidence::tests::parse_fixture(&value.to_string()).unwrap();
+        let graph = semantic::transform(&raw);
+        for node in graph.nodes.iter().filter(|node| {
+            matches!(
+                node.resource_type.as_str(),
+                "aws_rds_cluster" | "aws_rds_cluster_instance"
+            )
+        }) {
+            let scope = node.entity.scope.as_ref().unwrap();
+            assert!(scope.account.is_some());
+            assert!(scope.region.is_none());
+            assert!(node.member_owner.is_none());
+        }
+    }
+}
+
+#[test]
 fn indexed_cluster_requires_an_explicit_instance_reference() {
     let mut value = input();
     value["resource_changes"][4]["address"] = json!("aws_rds_cluster.main[0]");

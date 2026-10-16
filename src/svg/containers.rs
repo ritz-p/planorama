@@ -50,6 +50,10 @@ pub(super) fn boundaries(graph: &Graph, layout: &Layout<'_>) -> String {
         let id = super::identity::resource(&graph.nodes[node]);
         let attribute = if graph.nodes[node].role == ResourceRole::Container {
             "data-container"
+        } else if graph.nodes.iter().any(|child| {
+            child.member_owner.is_some() && crate::view::routes::owner(graph, child) == Some(node)
+        }) {
+            "data-member-cluster"
         } else {
             "data-route-table"
         };

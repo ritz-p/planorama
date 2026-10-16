@@ -39,9 +39,37 @@ impl Card<'_> {
             + self
                 .rows
                 .iter()
-                .map(|r| r.lines(&r.text).len() * 18)
+                .enumerate()
+                .map(|(index, r)| {
+                    let lines = r.lines(&r.text).len();
+                    let lines = if index == 0 {
+                        self.node
+                            .filter(|node| node.member_owner.is_some())
+                            .map_or(lines, |node| {
+                                lines
+                                    .max(r.lines(&heading(node, true)).len())
+                                    .max(r.lines(&heading(node, false)).len())
+                            })
+                    } else {
+                        lines
+                    };
+                    lines * 18
+                })
                 .sum::<usize>()
     }
+}
+
+pub(crate) fn heading(node: &Node, qualified: bool) -> String {
+    let operation = node.metadata.state_removal.map_or_else(
+        || format!("{:?}", node.action).to_lowercase(),
+        |removal| removal.label().into(),
+    );
+    let address = if qualified {
+        node.resource_address().qualified()
+    } else {
+        std::borrow::Cow::Borrowed(node.address.as_str())
+    };
+    format!("{address} [{operation}]")
 }
 
 pub(crate) fn owner(graph: &Graph, node: &Node) -> Option<usize> {
@@ -152,12 +180,8 @@ pub(crate) fn cards(graph: &Graph, parent: usize) -> Vec<Card<'_>> {
         .collect();
     children.sort_by_key(|(_, n)| &n.entity.id);
     for (index, child) in children {
-        let operation = child.metadata.state_removal.map_or_else(
-            || format!("{:?}", child.action).to_lowercase(),
-            |removal| removal.label().into(),
-        );
         let mut rows = vec![Row {
-            text: format!("{} [{operation}]", child.address),
+            text: heading(child, false),
             target: None,
             moved: false,
             destination: false,

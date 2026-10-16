@@ -588,10 +588,13 @@ fn render_with_index(
             graph,
             layout,
             i,
-            x + 12,
-            y + metrics.routes_y,
+            crate::layout::Point {
+                x: x + 12,
+                y: y + metrics.routes_y,
+            },
             relationship_index,
             content,
+            address_format,
         ));
         let role = roles::annotation(node.role, &node.module);
         let footer = match role.is_empty() {

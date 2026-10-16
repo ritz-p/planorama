@@ -16,6 +16,13 @@ fn aurora_members_keep_unique_identities_links_actions_and_deterministic_output(
             .replace("\r\n", "\n")
     );
     let doc = roxmltree::Document::parse(&svg).unwrap();
+    assert!(!svg.contains("data-route-table="));
+    assert_eq!(
+        doc.descendants()
+            .filter(|node| node.attribute("data-member-cluster").is_some())
+            .count(),
+        1
+    );
     let cards: Vec<_> = doc
         .descendants()
         .filter(|n| n.attribute("data-terraform-address").is_some())
@@ -72,8 +79,16 @@ fn aurora_long_members_lifecycle_html_and_named_states_remain_accessible() {
     value["resource_changes"][5]["previous_address"] =
         json!("aws_rds_cluster_instance.old[\"<&>\"]");
     value["resource_changes"][5]["change"]["importing"] = json!({"id":"TOP_SECRET_IMPORT"});
-    for format in ["svg", "html"] {
-        let output = support::run_with_args(value.to_string().as_bytes(), &["--format", format]);
+    for (format, address_format) in [
+        ("svg", "qualified"),
+        ("svg", "terraform"),
+        ("html", "qualified"),
+        ("html", "terraform"),
+    ] {
+        let output = support::run_with_args(
+            value.to_string().as_bytes(),
+            &["--format", format, "--address-format", address_format],
+        );
         assert!(output.status.success());
         let text = String::from_utf8(output.stdout).unwrap();
         assert!(!text.contains("TOP_SECRET"));
@@ -84,6 +99,18 @@ fn aurora_long_members_lifecycle_html_and_named_states_remain_accessible() {
             .descendants()
             .filter(|n| n.attribute("data-embedded-member").is_some())
         {
+            let visible = card
+                .children()
+                .filter(|node| node.has_tag_name("text"))
+                .filter_map(|node| node.text())
+                .collect::<String>();
+            let native = card.attribute("data-terraform-address").unwrap();
+            let expected = if address_format == "qualified" {
+                format!("module.root.{native}")
+            } else {
+                native.to_string()
+            };
+            assert!(visible.starts_with(&expected), "{visible}");
             let rect = card.children().find(|n| n.has_tag_name("rect")).unwrap();
             let top: usize = rect.attribute("y").unwrap().parse().unwrap();
             let height: usize = rect.attribute("height").unwrap().parse().unwrap();
