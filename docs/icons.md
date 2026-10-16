@@ -150,6 +150,11 @@ the same provider-aware exact-type lookup: for example Amazon EC2, Amazon S3,
 AWS Lambda, Amazon VPC and Terraform built-in. Unsupported resources receive no
 new label.
 
+Endpoint resources use the neutral name Amazon VPC: the shared endpoint mapping
+does not retain endpoint subtype, and [gateway endpoints do not use AWS
+PrivateLink](https://docs.aws.amazon.com/vpc/latest/privatelink/gateway-endpoints.html).
+The existing icon artwork mapping remains unchanged.
+
 Spatial cards and container headers put the service name above the address in
 the former icon area. Logical rows put it at the upper right above the address.
 Shared text measurement and wrapping reserve full line heights before addresses,

@@ -8,6 +8,8 @@ fn provider_mapping_supplies_service_names_without_resource_prefix_inference() {
         ("aws_lambda_function", "AWS Lambda"),
         ("aws_vpc", "Amazon VPC"),
         ("aws_subnet", "Amazon VPC"),
+        ("aws_vpc_endpoint", "Amazon VPC"),
+        ("aws_vpc_endpoint_route_table_association", "Amazon VPC"),
         ("aws_iam_role", "AWS Identity and Access Management"),
     ] {
         assert_eq!(

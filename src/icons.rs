@@ -66,7 +66,7 @@ impl ResourceIcon {
         match self {
             Self::Vpc | Self::Subnet | Self::Gateway | Self::Route | Self::Security => "Amazon VPC",
             Self::Ec2 => "Amazon EC2",
-            Self::Endpoint => "AWS PrivateLink",
+            Self::Endpoint => "Amazon VPC",
             Self::LoadBalancer => "Elastic Load Balancing",
             Self::Lambda => "AWS Lambda",
             Self::Sqs => "Amazon Simple Queue Service",

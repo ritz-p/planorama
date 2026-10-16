@@ -1,6 +1,41 @@
 use super::{cli, support};
 
 #[test]
+fn gateway_endpoints_use_a_neutral_service_name() {
+    let input = serde_json::json!({"format_version":"1.2","resource_changes":[
+        {"address":"aws_vpc_endpoint.gateway","type":"aws_vpc_endpoint",
+         "provider_name":"registry.terraform.io/hashicorp/aws",
+         "change":{"actions":["create"],"after":{"vpc_endpoint_type":"Gateway"}}},
+        {"address":"aws_vpc_endpoint_route_table_association.gateway","type":"aws_vpc_endpoint_route_table_association",
+         "provider_name":"registry.terraform.io/hashicorp/aws","change":{"actions":["create"]}}
+    ]}).to_string();
+    for format in ["svg", "html"] {
+        let output = support::run_with_args(
+            input.as_bytes(),
+            &["--icon-mode", "service-name", "--format", format],
+        );
+        assert!(
+            output.status.success(),
+            "{}",
+            String::from_utf8_lossy(&output.stderr)
+        );
+        let text = String::from_utf8(output.stdout).unwrap();
+        assert!(!text.contains("AWS PrivateLink"));
+        assert!(!text.contains("planorama-icon"));
+        assert_eq!(
+            text.matches("xml:space=\"preserve\">Amazon VPC</text>")
+                .count(),
+            2
+        );
+    }
+    let output = support::run(input.as_bytes());
+    assert!(output.status.success());
+    assert!(
+        String::from_utf8_lossy(&output.stdout).contains("href=\"#planorama-icon-aws-endpoint\"")
+    );
+}
+
+#[test]
 fn icon_mode_validation_and_default_output() {
     for args in [vec!["--icon-mode"], vec!["--icon-mode", "none"]] {
         let output = cli().args(args).output().unwrap();
