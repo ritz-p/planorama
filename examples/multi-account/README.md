@@ -20,8 +20,8 @@ docker compose exec -T dev sh scripts/render-multi-account.sh target/release/pla
 docker compose exec -T dev sh scripts/render-multi-account.sh target/release/planorama html
 docker compose exec -T dev cargo test --locked --test large_example multi_account_inputs
 docker compose exec -T dev cargo test --locked --release --test large_example multi_account_example -- --ignored --nocapture
-docker compose exec -T dev python3 tests/support/measure_multi_account.py
-docker compose exec -T dev python3 tests/browser/viewer.py
+docker compose exec -T dev node tests/support/measure_multi_account.cjs
+docker compose exec -T dev node tests/browser/viewer.cjs
 ```
 
 [diagram.svg](diagram.svg) and [diagram.html](diagram.html) use identical inputs
@@ -68,6 +68,11 @@ For normal SVG/HTML generation, `--timings` reports per-stage and per-state cost
 without running a benchmark; see the [CLI measurement commands](../../docs/benchmarks.md#cli-stage-timings).
 Layout costs depend on the machine; no timing threshold is imposed. Long paths
 and crowded corridors remain possible.
+
+Both measurement and screenshot tools use Node.js and the development image's
+Chromium/ChromeDriver. `node tests/support/capture_multi_account.cjs` writes four
+crops under `output/multi-account-review`; its account crop uses the whole state
+when account evidence is absent.
 
 The concentrated [routing stress fixture](../../tests/fixtures/routing-stress/account-high-fanin.json)
 is excluded from routine rendering because of its cost. It originally exposed
