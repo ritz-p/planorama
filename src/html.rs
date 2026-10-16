@@ -11,6 +11,7 @@ pub(crate) fn render(
     document(
         svg::render_content(graph, layout, format, svg::Content::ValueFree),
         resources(graph, "", ""),
+        provenance_providers(graph, ""),
         None,
         semantic_diagnostics::bridge(std::iter::once(("", &graph.coverage))),
     )
@@ -28,6 +29,11 @@ pub(crate) fn render_states(
     document(
         svg::render_states_content(architecture, format, svg::Content::ValueFree),
         resources,
+        architecture
+            .states
+            .iter()
+            .flat_map(|(state, graph)| provenance_providers(graph, state.as_str()))
+            .collect(),
         None,
         semantic_diagnostics::bridge(
             architecture
@@ -48,6 +54,7 @@ pub(crate) fn render_report(
     document(
         svg::render_report(graph, layout, format, svg::Content::ValueFree, Some(report)),
         resources(graph, "", ""),
+        provenance_providers(graph, ""),
         diagnostics.then(|| diagnostics::bridge(report)),
         semantic_diagnostics::bridge(std::iter::once(("", &graph.coverage))),
     )
@@ -67,6 +74,11 @@ pub(crate) fn render_states_report(
     document(
         svg::render_states_report(architecture, format, svg::Content::ValueFree, Some(report)),
         resources,
+        architecture
+            .states
+            .iter()
+            .flat_map(|(state, graph)| provenance_providers(graph, state.as_str()))
+            .collect(),
         diagnostics.then(|| diagnostics::bridge(report)),
         semantic_diagnostics::bridge(
             architecture
@@ -86,6 +98,7 @@ fn resources(graph: &Graph, state: &str, prefix: &str) -> Vec<Value> {
         "module": node.module,
         "state": state,
         "type": node.resource_type,
+        "provider": node.provider.source(),
         "mode": match node.mode { crate::model::EntityMode::Data => "data", crate::model::EntityMode::Managed => "managed" },
         "deposed": node.deposed_key,
         "action": format!("{:?}", node.action).to_lowercase(),
@@ -102,9 +115,34 @@ fn safe_json(value: &Value) -> String {
         .replace('\u{2029}', "\\u2029")
 }
 
+fn provenance_providers(graph: &Graph, state: &str) -> Vec<Value> {
+    graph
+        .relationships
+        .iter()
+        .flat_map(|relationship| &relationship.provenance)
+        .filter_map(|source| {
+            let crate::model::RelationshipProvenance::Resource {
+                source, deployment, ..
+            } = source
+            else {
+                return None;
+            };
+            Some(json!([
+                state,
+                source.address,
+                source.deposed_key,
+                deployment
+                    .as_ref()
+                    .and_then(|deployment| deployment.provider.source())
+            ]))
+        })
+        .collect()
+}
+
 fn document(
     svg: String,
     resources: Vec<Value>,
+    providers: Vec<Value>,
     diagnostics: Option<Value>,
     semantic: Option<Value>,
 ) -> String {
@@ -155,6 +193,10 @@ fn document(
             ),
         )
         .replace("<!-- VIEWER_DATA -->", &data)
+        .replace(
+            "<!-- VIEWER_PROVIDER_DATA -->",
+            &safe_json(&Value::Array(providers)),
+        )
         .replace("<!-- VIEWER_DIAGNOSTICS -->", &diagnostics)
         .replace("<!-- VIEWER_SEMANTIC_DIAGNOSTICS -->", &semantic)
         .replace("<!-- DIAGRAM -->", &svg)

@@ -120,6 +120,73 @@ class ViewerTests(unittest.TestCase):
                 self.assertTrue(groups)
                 self.assertTrue(all('Endpoint resource' in group.text or 'Provenance resource' in group.text for group in groups))
 
+    def test_search_facets_combine_reset_and_preserve_selection_and_geometry(self):
+        actions = [('create', ['create']), ('update', ['update']), ('delete', ['delete']),
+                   ('replace', ['delete', 'create']), ('read', ['read']),
+                   ('unchanged', ['no-op']), ('other', ['unexpected'])]
+        plan = {'format_version': '1.2', 'resource_changes': [
+            {'address': 'test.' + name, 'type': 'test', 'provider_name': 'example.com/a/test',
+             'change': {'actions': action}} for name, action in actions]}
+        plan['resource_changes'] += [
+            {'address': 'test.create', 'type': 'test', 'provider_name': 'example.com/b/test', 'deposed': 'old', 'change': {'actions': ['create']}},
+            {'address': 'data.test.lookup', 'type': 'test', 'mode': 'data', 'provider_name': 'example.com/b/test', 'change': {'actions': ['read']}}]
+        path = Path(self.temp.name) / 'facets.json'
+        path.write_text(json.dumps(plan))
+        self.load('--state', 'one=' + str(path), '--state', 'two=' + str(path))
+        geometry = "return [...document.querySelectorAll('#viewport svg *')].map(e=>['d','x','y','width','height','transform'].map(a=>e.getAttribute(a)))"
+        before = self.driver.execute_script(geometry)
+        self.assertEqual(self.find('#result-count').text, '18 of 18 resources')
+        Select(self.find('#search-state')).select_by_visible_text('two')
+        for action, _ in actions:
+            Select(self.find('#search-action')).select_by_value(action)
+            expected = 2 if action in ['create', 'read'] else 1
+            self.assertEqual(len(self.driver.find_elements(By.CSS_SELECTOR, '#results button')), expected)
+        Select(self.find('#search-action')).select_by_value('create')
+        Select(self.find('#search-type')).select_by_visible_text('test · example.com/b/test')
+        self.find('#search').send_keys('old', Keys.ARROW_DOWN)
+        self.driver.switch_to.active_element.send_keys(Keys.ENTER)
+        selected = self.find('[data-viewer-selected]').get_attribute('id')
+        self.assertIn('two:', self.find('#selection h2').text)
+        self.assertIn('deposed: old', self.find('#selection h2').text)
+        box = self.view_box()
+        Select(self.find('#search-action')).select_by_value('read')
+        self.assertIn('0 of 18', self.find('#result-count').text)
+        self.assertEqual(self.find('[data-viewer-selected]').get_attribute('id'), selected)
+        self.assertEqual(self.view_box(), box)
+        self.find('#search-reset').send_keys(Keys.ENTER)
+        self.assertEqual(self.find('#result-count').text, '18 of 18 resources')
+        self.assertEqual(self.driver.switch_to.active_element.get_attribute('id'), 'search')
+        self.assertEqual(self.find('[data-viewer-selected]').get_attribute('id'), selected)
+        self.assertEqual(self.driver.execute_script(geometry), before)
+        self.find('#search').send_keys('data.test.lookup')
+        Select(self.find('#search-state')).select_by_visible_text('one')
+        self.find('#search').send_keys(Keys.ENTER)
+        self.assertIn('data', self.find('#selection h2').text)
+
+    def test_search_facets_include_lowered_resources_and_never_restore_cli_exclusions(self):
+        self.load('tests/fixtures/association-plan.json')
+        Select(self.find('#search-type')).select_by_visible_text('aws_route_table_association · registry.terraform.io/hashicorp/aws')
+        self.assertTrue(self.driver.find_elements(By.CSS_SELECTOR, '#results button'))
+        self.find('#search').send_keys(Keys.ENTER)
+        self.assertIn('Rendered relationships from this resource', self.find('#selection').text)
+        plan = {'format_version': '1.2', 'resource_changes': [
+            {'address': 'aws_iam_role.item' + str(i), 'type': 'aws_iam_role',
+             'change': {'actions': ['create'] if i == 0 else ['no-op']}} for i in range(105)]}
+        self.load('-', input_plan=plan)
+        self.assertEqual(self.find('#result-count').text, '105 of 105 resources')
+        self.assertEqual(len(self.driver.find_elements(By.CSS_SELECTOR, '#results button')), 105)
+        Select(self.find('#search-action')).select_by_value('unchanged')
+        self.assertEqual(self.find('#result-count').text, '104 of 105 resources')
+        self.find('#search').send_keys(Keys.ARROW_DOWN)
+        self.driver.switch_to.active_element.send_keys(Keys.END, Keys.ENTER)
+        self.assertIn('unchanged', self.find('#selection').text.lower())
+        for flags in [('--changed-only',), ('--focus', 'aws_iam_role.item0', '--focus-depth', '0')]:
+            self.load('-', *flags, input_plan=plan)
+            self.find('#search-reset').click()
+            self.assertEqual(self.find('#result-count').text, '1 of 1 resources')
+            Select(self.find('#search-action')).select_by_value('unchanged')
+            self.assertIn('0 of 1', self.find('#result-count').text)
+
     def test_service_names_have_space_in_named_state_resource_rows(self):
         self.load('--state', 'services=tests/fixtures/data-icons-plan.json',
                   '--state', 'builtin=tests/fixtures/terraform-plan.json',

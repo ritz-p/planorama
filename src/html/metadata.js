@@ -1,6 +1,7 @@
 function metadata(svg, byId) {
   const resources = JSON.parse(byId('viewer-data').textContent).filter(r => byId(r.id));
   const resourceIds = new Set(resources.map(r => r.id));
+  const providers = new Map(JSON.parse(byId('viewer-provider-data').textContent).map(([state, address, deposed, provider]) => [JSON.stringify([state, address, deposed]), provider]));
   const hex = text => Array.from(new TextEncoder().encode(text), byte => byte.toString(16).padStart(2, '0')).join('');
   const addressParts = address => {
     const parts = []; let start = 0, depth = 0, quoted = false, escaped = false;
@@ -36,7 +37,7 @@ function metadata(svg, byId) {
         row.id = id;
         resourceIds.add(id);
         const parts = addressParts(source.address);
-        resources.push({ id, address: source.address, qualified: parts.module === 'root' ? 'module.root.' + source.address : source.address, identity: 'terraform:' + suffix, ...parts, state, deposed: source.deposed_key, action: source.action, relationship: true });
+        resources.push({ id, address: source.address, qualified: parts.module === 'root' ? 'module.root.' + source.address : source.address, identity: 'terraform:' + suffix, ...parts, state, deposed: source.deposed_key, action: source.action, provider: providers.get(JSON.stringify([state, source.address, source.deposed_key])) || null, relationship: true });
       }
     }
   }

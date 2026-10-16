@@ -141,11 +141,11 @@ fn metadata_round_trips_hostile_long_indexed_addresses_without_values_or_markup(
     let document = html(input.to_string().as_bytes(), &[]);
     assert!(!document.contains("ATTRIBUTE_SECRET"));
     assert!(!document.contains("<script>alert"));
-    assert_eq!(document.matches("</script>").count(), 2);
+    assert_eq!(document.matches("</script>").count(), 3);
     let diagnostics = html(input.to_string().as_bytes(), &["--html-diagnostics"]);
     assert!(!diagnostics.contains("ATTRIBUTE_SECRET"));
     assert!(!diagnostics.contains("<script>alert"));
-    assert_eq!(diagnostics.matches("</script>").count(), 3);
+    assert_eq!(diagnostics.matches("</script>").count(), 4);
     let resources = data(&document);
     assert!(resources.iter().any(|r| r["address"] == address));
     assert!(resources.iter().any(|r| r["mode"] == "data"));

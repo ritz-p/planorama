@@ -19,6 +19,7 @@ label { display: block; font-weight: 650; margin-bottom: 8px; }
 input { width: 100%; }
 p { line-height: 1.5; }
 #search-help { font-size: 12px; color: #475569; }
+#search-filters select { width: 100%; font: inherit; padding: 6px; margin-bottom: 8px; }
 #results { max-height: 32vh; overflow: auto; display: grid; gap: 6px; padding: 3px; }
 #results button, #selection button { text-align: left; overflow-wrap: anywhere; width: 100%; }
 #selection { overflow-wrap: anywhere; }
@@ -63,6 +64,12 @@ p { line-height: 1.5; }
 <aside aria-label="Resources and relationships">
 <label for="search">Search resources</label>
 <input id="search" type="search" placeholder="Address, module, state, type or mode" autocomplete="off" aria-controls="results" aria-describedby="search-help">
+<div id="search-filters">
+<label for="search-action">Action</label><select id="search-action"><option value="">All actions</option></select>
+<label for="search-state">State</label><select id="search-state"><option value="">All states</option></select>
+<label for="search-type">Resource type / provider source</label><select id="search-type"><option value="">All resource types</option></select>
+<button id="search-reset" type="button">Reset search and filters</button>
+</div>
 <p id="search-help">Arrow Down moves to results. Enter selects. Escape clears selection. Drag or scroll to pan. In the diagram, arrow keys pan, +/− zoom and F fits the view. Ctrl+scroll zooms.</p>
 <p id="result-count" role="status"></p>
 <div id="results" aria-label="Search results"></div>
@@ -340,7 +347,8 @@ Task definition: aws_ecs_task_definition.app [task_definition; direct attribute 
 </section>
 </main>
 <noscript>Enable JavaScript for search and navigation. The diagram is included below.</noscript>
-<script id="viewer-data" type="application/json">[{"action":"unchanged","address":"aws_ecs_cluster.app","deposed":null,"id":"resource-6177735f6563735f636c75737465722e617070-current","identity":"terraform:6177735f6563735f636c75737465722e617070-current","mode":"managed","module":"root","qualified":"module.root.aws_ecs_cluster.app","state":"","type":"aws_ecs_cluster"},{"action":"update","address":"aws_ecs_service.app","deposed":null,"id":"resource-6177735f6563735f736572766963652e617070-current","identity":"terraform:6177735f6563735f736572766963652e617070-current","mode":"managed","module":"root","qualified":"module.root.aws_ecs_service.app","state":"","type":"aws_ecs_service"},{"action":"create","address":"aws_ecs_task_definition.app","deposed":null,"id":"resource-6177735f6563735f7461736b5f646566696e6974696f6e2e617070-current","identity":"terraform:6177735f6563735f7461736b5f646566696e6974696f6e2e617070-current","mode":"managed","module":"root","qualified":"module.root.aws_ecs_task_definition.app","state":"","type":"aws_ecs_task_definition"},{"action":"create","address":"aws_iam_role.app","deposed":null,"id":"resource-6177735f69616d5f726f6c652e617070-current","identity":"terraform:6177735f69616d5f726f6c652e617070-current","mode":"managed","module":"root","qualified":"module.root.aws_iam_role.app","state":"","type":"aws_iam_role"},{"action":"create","address":"aws_lb.app","deposed":null,"id":"resource-6177735f6c622e617070-current","identity":"terraform:6177735f6c622e617070-current","mode":"managed","module":"root","qualified":"module.root.aws_lb.app","state":"","type":"aws_lb"},{"action":"update","address":"aws_lb_listener.http","deposed":null,"id":"resource-6177735f6c625f6c697374656e65722e68747470-current","identity":"terraform:6177735f6c625f6c697374656e65722e68747470-current","mode":"managed","module":"root","qualified":"module.root.aws_lb_listener.http","state":"","type":"aws_lb_listener"},{"action":"read","address":"data.aws_iam_role.app","deposed":null,"id":"resource-646174612e6177735f69616d5f726f6c652e617070-current","identity":"terraform:646174612e6177735f69616d5f726f6c652e617070-current","mode":"data","module":"root","qualified":"module.root.data.aws_iam_role.app","state":"","type":"aws_iam_role"},{"action":"unchanged","address":"module.worker.aws_iam_role.app","deposed":null,"id":"resource-6d6f64756c652e776f726b65722e6177735f69616d5f726f6c652e617070-current","identity":"terraform:6d6f64756c652e776f726b65722e6177735f69616d5f726f6c652e617070-current","mode":"managed","module":"module.worker","qualified":"module.worker.aws_iam_role.app","state":"","type":"aws_iam_role"}]</script>
+<script id="viewer-data" type="application/json">[{"action":"unchanged","address":"aws_ecs_cluster.app","deposed":null,"id":"resource-6177735f6563735f636c75737465722e617070-current","identity":"terraform:6177735f6563735f636c75737465722e617070-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_ecs_cluster.app","state":"","type":"aws_ecs_cluster"},{"action":"update","address":"aws_ecs_service.app","deposed":null,"id":"resource-6177735f6563735f736572766963652e617070-current","identity":"terraform:6177735f6563735f736572766963652e617070-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_ecs_service.app","state":"","type":"aws_ecs_service"},{"action":"create","address":"aws_ecs_task_definition.app","deposed":null,"id":"resource-6177735f6563735f7461736b5f646566696e6974696f6e2e617070-current","identity":"terraform:6177735f6563735f7461736b5f646566696e6974696f6e2e617070-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_ecs_task_definition.app","state":"","type":"aws_ecs_task_definition"},{"action":"create","address":"aws_iam_role.app","deposed":null,"id":"resource-6177735f69616d5f726f6c652e617070-current","identity":"terraform:6177735f69616d5f726f6c652e617070-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_iam_role.app","state":"","type":"aws_iam_role"},{"action":"create","address":"aws_lb.app","deposed":null,"id":"resource-6177735f6c622e617070-current","identity":"terraform:6177735f6c622e617070-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_lb.app","state":"","type":"aws_lb"},{"action":"update","address":"aws_lb_listener.http","deposed":null,"id":"resource-6177735f6c625f6c697374656e65722e68747470-current","identity":"terraform:6177735f6c625f6c697374656e65722e68747470-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_lb_listener.http","state":"","type":"aws_lb_listener"},{"action":"read","address":"data.aws_iam_role.app","deposed":null,"id":"resource-646174612e6177735f69616d5f726f6c652e617070-current","identity":"terraform:646174612e6177735f69616d5f726f6c652e617070-current","mode":"data","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.data.aws_iam_role.app","state":"","type":"aws_iam_role"},{"action":"unchanged","address":"module.worker.aws_iam_role.app","deposed":null,"id":"resource-6d6f64756c652e776f726b65722e6177735f69616d5f726f6c652e617070-current","identity":"terraform:6d6f64756c652e776f726b65722e6177735f69616d5f726f6c652e617070-current","mode":"managed","module":"module.worker","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.worker.aws_iam_role.app","state":"","type":"aws_iam_role"}]</script>
+<script id="viewer-provider-data" type="application/json">[]</script>
 
 
 <script>(() => {
@@ -348,6 +356,7 @@ Task definition: aws_ecs_task_definition.app [task_definition; direct attribute 
 function metadata(svg, byId) {
   const resources = JSON.parse(byId('viewer-data').textContent).filter(r => byId(r.id));
   const resourceIds = new Set(resources.map(r => r.id));
+  const providers = new Map(JSON.parse(byId('viewer-provider-data').textContent).map(([state, address, deposed, provider]) => [JSON.stringify([state, address, deposed]), provider]));
   const hex = text => Array.from(new TextEncoder().encode(text), byte => byte.toString(16).padStart(2, '0')).join('');
   const addressParts = address => {
     const parts = []; let start = 0, depth = 0, quoted = false, escaped = false;
@@ -383,7 +392,7 @@ function metadata(svg, byId) {
         row.id = id;
         resourceIds.add(id);
         const parts = addressParts(source.address);
-        resources.push({ id, address: source.address, qualified: parts.module === 'root' ? 'module.root.' + source.address : source.address, identity: 'terraform:' + suffix, ...parts, state, deposed: source.deposed_key, action: source.action, relationship: true });
+        resources.push({ id, address: source.address, qualified: parts.module === 'root' ? 'module.root.' + source.address : source.address, identity: 'terraform:' + suffix, ...parts, state, deposed: source.deposed_key, action: source.action, provider: providers.get(JSON.stringify([state, source.address, source.deposed_key])) || null, relationship: true });
       }
     }
   }
@@ -602,16 +611,37 @@ function searching(context, index, selection, coordinator) {
   const { search, results, byId } = context;
   const { resources, label } = index;
   const { button, select } = selection;
+  const action = byId('search-action'), state = byId('search-state'), type = byId('search-type');
+  const typeKey = resource => JSON.stringify([resource.provider || null, resource.type]);
+  function options(control, entries) {
+    for (const [value, text] of entries) {
+      const option = document.createElement('option'); option.value = value; option.textContent = text;
+      control.append(option);
+    }
+  }
+  options(action, ['Create', 'Update', 'Delete', 'Replace', 'Read', 'Unchanged', 'Other'].map(label => [label.toLowerCase(), label]));
+  options(state, [...new Set(resources.map(r => r.state))].sort().map(value => [JSON.stringify(value), value || '(unnamed)']));
+  options(type, [...new Map(resources.map(r => [typeKey(r), `${r.type} · ${r.provider || 'unknown provider source'}`]))].sort((a, b) => a[1].localeCompare(b[1])));
   function renderResults() {
     const terms = search.value.toLocaleLowerCase().trim().split(/\s+/).filter(Boolean);
-    const matched = resources.filter(r => terms.every(term => [label(r), r.qualified, r.state + ':' + r.qualified, r.identity, r.module, r.state, r.type, r.mode, r.deposed || ''].join(' ').toLocaleLowerCase().includes(term)));
+    const focused = results.contains(document.activeElement);
+    const matched = resources.filter(r => (!action.value || r.action === action.value) && (!state.value || JSON.stringify(r.state) === state.value) && (!type.value || typeKey(r) === type.value) && terms.every(term => [label(r), r.qualified, r.state + ':' + r.qualified, r.identity, r.module, r.state, r.type, r.provider || '', r.mode, r.deposed || ''].join(' ').toLocaleLowerCase().includes(term)));
     results.replaceChildren();
     for (const r of matched) {
       const b = button(label(r), () => select(r.id));
       b.dataset.target = r.id; b.setAttribute('aria-pressed', String(coordinator.selected === r.id)); results.append(b);
     }
     byId('result-count').textContent = `${matched.length} of ${resources.length} resources`;
+    if (!matched.length) byId('result-count').textContent += ' match this search. The diagram is unchanged.';
+    if (focused) (results.firstElementChild || search).focus();
   }
+  for (const control of [action, state, type]) control.addEventListener('change', () => {
+    search.dispatchEvent(new Event('input'));
+  });
+  byId('search-reset').addEventListener('click', () => {
+    search.value = ''; action.value = ''; state.value = ''; type.value = '';
+    search.dispatchEvent(new Event('input')); search.focus();
+  });
   search.addEventListener('input', renderResults);
   search.addEventListener('keydown', event => {
     if (event.key === 'ArrowDown') { event.preventDefault(); results.querySelector('button')?.focus(); }
