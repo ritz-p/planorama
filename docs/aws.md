@@ -258,7 +258,8 @@ Subnet groups, RDS and the other workloads retain their original dependencies.
 ElastiCache subnet and replication groups are supported visible resources with
 AWS account/region scope and the ElastiCache icon. Replication placement requires
 a complete, static reference to exactly one AWS ElastiCache subnet group with
-verified VPC placement; unresolved, dynamic or incompatible references stay
+the same provider-configuration identity and deployment scope and verified VPC
+placement; unresolved, dynamic or incompatible references stay
 visible without inferred placement. See the [ElastiCache example](../examples/elasticache.svg).
 Nested fields are resolved separately: flattened block references or sibling SG
 fields cannot establish subnet membership. Derived containment retains the reference

@@ -264,3 +264,96 @@ fn elasticache_inherits_group_vpc_even_for_one_subnet() {
             && graph.nodes[e.to].resource_type == "aws_elasticache_replication_group"));
     }
 }
+
+#[test]
+fn elasticache_rejects_different_provider_bindings_and_deployment_scopes() {
+    for case in ["same", "alias", "region", "account", "region_override"] {
+        let mut value: Value =
+            serde_json::from_str(include_str!("../../fixtures/elasticache-plan.json")).unwrap();
+        if case != "same" && case != "region_override" {
+            value["configuration"]["provider_config"]["aws.other"] =
+                value["configuration"]["provider_config"]["aws"].clone();
+            value["configuration"]["provider_config"]["aws.other"]["alias"] = json!("other");
+            value["configuration"]["root_module"]["resources"][4]["provider_config_key"] =
+                json!("aws.other");
+        }
+        if case == "region" {
+            value["configuration"]["provider_config"]["aws.other"]["expressions"]["region"] =
+                json!({"constant_value":"us-west-2"});
+        }
+        if case == "account" {
+            value["configuration"]["provider_config"]["aws.other"]["expressions"]["assume_role"] =
+                json!([{"role_arn":{"constant_value":"arn:aws:iam::210987654321:role/Fixture"}}]);
+        }
+        if case == "region_override" {
+            value["configuration"]["root_module"]["resources"][4]["expressions"]["region"] =
+                json!({"constant_value":"us-west-2"});
+        }
+        let raw = crate::plan::evidence::tests::parse_fixture(&value.to_string()).unwrap();
+        let graph = semantic::transform(&raw);
+        let target = graph
+            .nodes
+            .iter()
+            .position(|n| n.resource_type == "aws_elasticache_replication_group")
+            .unwrap();
+        assert_eq!(
+            graph
+                .edges
+                .iter()
+                .any(|e| e.to == target && e.kind == EdgeKind::Containment),
+            case == "same",
+            "{case}"
+        );
+        assert!(
+            graph
+                .edges
+                .iter()
+                .any(|e| e.to == target && e.kind == EdgeKind::Dependency)
+        );
+    }
+}
+
+#[test]
+fn elasticache_direct_vpc_dependency_remains_distinct_from_inferred_placement() {
+    let mut value: Value =
+        serde_json::from_str(include_str!("../../fixtures/elasticache-plan.json")).unwrap();
+    value["configuration"]["root_module"]["resources"][4]["expressions"]["tags"] =
+        json!({"references":["aws_vpc.main.id"]});
+    let graph = semantic::transform(&plan::parse(&value.to_string()).unwrap());
+    let parent = graph
+        .nodes
+        .iter()
+        .position(|n| n.resource_type == "aws_vpc")
+        .unwrap();
+    let target = graph
+        .nodes
+        .iter()
+        .position(|n| n.resource_type == "aws_elasticache_replication_group")
+        .unwrap();
+    for kind in [EdgeKind::Dependency, EdgeKind::Containment] {
+        assert!(
+            graph
+                .edges
+                .iter()
+                .any(|e| e.from == parent && e.to == target && e.kind == kind)
+        );
+        let relationship = graph
+            .relationships
+            .iter()
+            .find(|r| {
+                r.from == graph.nodes[parent].entity.id
+                    && r.to == graph.nodes[target].entity.id
+                    && r.kind == kind
+            })
+            .unwrap();
+        assert_eq!(relationship.inferred, kind == EdgeKind::Containment);
+        if kind == EdgeKind::Dependency {
+            assert_eq!(
+                relationship.provenance,
+                vec![crate::semantic::relationships::reference(
+                    &graph, parent, target
+                )]
+            );
+        }
+    }
+}

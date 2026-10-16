@@ -34,6 +34,36 @@ pub fn single(graph: &ArchitectureGraph, options: &Options) -> Result<Architectu
 
 type Key = (StateId, usize);
 
+fn placement_available(
+    graph: &crate::model::Graph,
+    child: usize,
+    selected: impl Fn(usize) -> bool,
+) -> bool {
+    let node = &graph.nodes[child];
+    if node.resource_type != "aws_elasticache_replication_group" {
+        return true;
+    }
+    graph
+        .relationships
+        .iter()
+        .filter(|relationship| {
+            relationship.to == node.entity.id && relationship.kind == EdgeKind::Containment
+        })
+        .flat_map(|relationship| &relationship.provenance)
+        .all(|proof| match proof {
+            crate::model::RelationshipProvenance::Reference { from, to }
+                if node.entity.provenance.contains(to) =>
+            {
+                graph
+                    .nodes
+                    .iter()
+                    .position(|source| source.entity.provenance.contains(from))
+                    .is_some_and(&selected)
+            }
+            _ => true,
+        })
+}
+
 pub fn apply(all: &Architecture, options: &Options) -> Result<Architecture, String> {
     options.validate()?;
     let mut keys = BTreeSet::new();
@@ -169,7 +199,11 @@ pub fn apply(all: &Architecture, options: &Options) -> Result<Architecture, Stri
     loop {
         let count = selected.len();
         for (parent, child) in &parents {
-            if selected.contains(child) {
+            if selected.contains(child)
+                && placement_available(&all.states[&child.0], child.1, |source| {
+                    selected.contains(&(child.0.clone(), source))
+                })
+            {
                 selected.insert(parent.clone());
             }
         }
@@ -225,18 +259,7 @@ pub fn apply(all: &Architecture, options: &Options) -> Result<Architecture, Stri
                 .nodes
                 .iter()
                 .enumerate()
-                .filter(|(_, node)| {
-                    node.resource_type == "aws_elasticache_replication_group"
-                        && graph.relationships.iter().any(|relationship| {
-                            relationship.to == node.entity.id
-                                && relationship.kind == EdgeKind::Containment
-                                && relationship.provenance.iter().any(|proof| {
-                                    matches!(proof, crate::model::RelationshipProvenance::Reference { from, to }
-                                        if node.entity.provenance.contains(to)
-                                            && !graph.nodes.iter().any(|source| source.entity.provenance.contains(from)))
-                                })
-                        })
-                })
+                .filter(|(index, _)| !placement_available(&graph, *index, |_| true))
                 .map(|(index, _)| index)
                 .collect();
             graph.0.edges.retain(|edge| {

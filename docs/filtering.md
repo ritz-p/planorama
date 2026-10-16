@@ -22,6 +22,7 @@ Context nodes can therefore be unchanged or outside the requested depth.
 
 If an ElastiCache Replication Group's referenced Subnet Group is excluded, its
 inferred VPC placement is removed and the replication group remains visible.
+That removed placement does not retain an otherwise unselected VPC as context.
 
 Plan checks/status remain visible. Logical components are shown only when all
 their members remain. Empty state panels remain identifiable. Filters create a

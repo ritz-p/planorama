@@ -86,13 +86,22 @@ fn elasticache_cards_preserve_scope_actions_identity_and_safe_filtering() {
         vec!["--changed-only"],
     ] {
         let mut plan: Value = serde_json::from_str(input).unwrap();
-        plan["resource_changes"][3]["change"]["actions"] = json!(["no-op"]);
+        for change in plan["resource_changes"]
+            .as_array_mut()
+            .unwrap()
+            .iter_mut()
+            .take(4)
+        {
+            change["change"]["actions"] = json!(["no-op"]);
+        }
         let output = support::run_with_args(plan.to_string().as_bytes(), &args);
         assert!(output.status.success());
         let svg = String::from_utf8(output.stdout).unwrap();
         assert!(svg.contains("data-terraform-address=\"aws_elasticache_replication_group.main\""));
         assert!(!svg.contains("data-terraform-address=\"aws_elasticache_subnet_group.main\""));
         assert!(!svg.contains("data-placement=\"inferred\""));
+        assert!(!svg.contains("data-terraform-address=\"aws_vpc.main\""));
+        assert_eq!(svg.matches("data-terraform-address=").count(), 1);
     }
     let mut plan: Value = serde_json::from_str(input).unwrap();
     for change in plan["resource_changes"]

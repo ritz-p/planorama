@@ -32,7 +32,12 @@ pub(in crate::provider::aws) fn resolved_subnets(raw: &Input, target: usize) -> 
         return None;
     };
     let group_node = &raw.nodes[*group];
-    if group_node.resource_type != group_type || !group_node.provider.is_aws() {
+    if group_node.resource_type != group_type
+        || !group_node.provider.is_aws()
+        || (raw.nodes[target].resource_type == "aws_elasticache_replication_group"
+            && (group_node.provider_configuration != raw.nodes[target].provider_configuration
+                || group_node.entity.scope != raw.nodes[target].entity.scope))
+    {
         return None;
     }
     let subnets = static_reference(raw, *group, "subnet_ids")?;
@@ -110,11 +115,12 @@ pub(super) fn infer(raw: &Input, mut graph: Graph) -> Graph {
             EdgeKind::Containment,
             proof,
         );
-        if let Some(edge) = graph
-            .edges
-            .iter_mut()
-            .find(|e| e.from == parent && e.to == target && e.kind == EdgeKind::Dependency)
-        {
+        if let Some(edge) = graph.edges.iter_mut().find(|e| {
+            node.resource_type != "aws_elasticache_replication_group"
+                && e.from == parent
+                && e.to == target
+                && e.kind == EdgeKind::Dependency
+        }) {
             edge.kind = EdgeKind::Containment;
         } else {
             graph.edges.push(Edge {
