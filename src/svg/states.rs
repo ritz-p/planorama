@@ -155,8 +155,26 @@ pub(crate) fn render_report(
         }
     }
     sections.push_str(&legend.render());
-    let mut top = 60 + legend.height;
+    let overview = super::annotations::Area::flow(
+        vec![super::coverage::card(
+            graphs
+                .iter()
+                .map(|(id, graph)| (id.as_str(), &graph.coverage)),
+        )],
+        width,
+        Point {
+            x: 40,
+            y: 60 + legend.height,
+        },
+        40,
+        20,
+    );
+    sections.push_str(&overview.render());
+    let mut top = 60 + legend.height + overview.height;
     for (id, graph, layout, index, cards) in states {
+        let heading = format!("State: {}", id.as_str());
+        let heading_lines = crate::view::text::wrap(&heading, (width - 80) / 12);
+        let header_height = heading_lines.len() * 26 + 14;
         let measured_sections =
             super::Sections::from_cards(graph, &layout, &index, cards, width, false);
         let (_, height) = measured_sections.dimensions(&layout);
@@ -167,7 +185,7 @@ pub(crate) fn render_report(
                 graph,
                 &layout,
                 Some(id.as_str()),
-                top + 40 + architecture_offset,
+                top + header_height + architecture_offset,
                 super::diagnostic_cards(graph, &layout),
             );
         }
@@ -177,7 +195,7 @@ pub(crate) fn render_report(
                 markers: index
                     .marker_bounds()
                     .map(|mut bounds| {
-                        bounds.origin.y += top + 40 + architecture_offset;
+                        bounds.origin.y += top + header_height + architecture_offset;
                         bounds
                     })
                     .collect(),
@@ -186,7 +204,7 @@ pub(crate) fn render_report(
                     .iter()
                     .map(|panel| {
                         let mut header = panel.bounds.header(36);
-                        header.origin.y += top + 40 + architecture_offset;
+                        header.origin.y += top + header_height + architecture_offset;
                         header
                     })
                     .collect(),
@@ -195,7 +213,7 @@ pub(crate) fn render_report(
                     .iter()
                     .map(|b| {
                         let mut bounds = *b;
-                        bounds.origin.y += top + 40 + architecture_offset;
+                        bounds.origin.y += top + header_height + architecture_offset;
                         bounds
                     })
                     .collect::<Vec<_>>(),
@@ -215,7 +233,7 @@ pub(crate) fn render_report(
                 },
                 (
                     bounds.right(),
-                    top + 40
+                    top + header_height
                         + architecture_offset
                         + bounds.origin.y
                         + layout.header_heights[port_index] / 2,
@@ -232,10 +250,22 @@ pub(crate) fn render_report(
             &super::render_with_index(graph, &layout, format, &index, &measured_sections, content),
             &prefix,
         );
-        writeln!(sections, r##"<g id="{prefix}state" data-state-id="{}"><text x="40" y="{}" font-family="ui-monospace, Consolas, monospace" font-size="20" font-weight="700" fill="#0f172a">State: {}</text>"##, super::escape(id.as_str()), top + 25, super::escape(id.as_str())).unwrap();
-        sections.push_str(&document.replacen("<svg ", &format!("<svg y=\"{}\" ", top + 40), 1));
+        writeln!(
+            sections,
+            r#"<g id="{prefix}state" data-state-id="{}">"#,
+            super::escape(id.as_str())
+        )
+        .unwrap();
+        for (line, text) in heading_lines.iter().enumerate() {
+            writeln!(sections, r##"<text x="40" y="{}" font-family="ui-monospace, Consolas, monospace" font-size="20" font-weight="700" fill="#0f172a">{}</text>"##, top + 25 + line * 26, super::escape(text)).unwrap();
+        }
+        sections.push_str(&document.replacen(
+            "<svg ",
+            &format!("<svg y=\"{}\" ", top + header_height),
+            1,
+        ));
         sections.push_str("</g>\n");
-        top += height + 60;
+        top += height + header_height + 20;
     }
     let mut links = String::new();
     let mut link_count = 0;

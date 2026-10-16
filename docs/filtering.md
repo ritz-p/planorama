@@ -24,6 +24,11 @@ Plan checks/status remain visible. Logical components are shown only when all
 their members remain. Empty state panels remain identifiable. Filters create a
 new architecture graph without changing parsed plans or the original graph.
 
+Diagram Coverage preserves input counts and reports selected/excluded instances.
+Excluded includes metadata suppressed during projection and resources outside CLI
+selection; it does not mean those resources are absent from Terraform. Required
+context is included in selected counts. See [coverage accounting](coverage.md).
+
 Logical Terraform resources participate in the same selection and neighbor rules.
 Their references retain stable source identities even if a target is filtered out;
 rendering must check target availability before emitting a fragment link.

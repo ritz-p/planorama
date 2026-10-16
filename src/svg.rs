@@ -2,6 +2,7 @@ mod annotations;
 mod checks;
 mod components;
 mod containers;
+mod coverage;
 mod endpoints;
 mod entities;
 mod icons;
@@ -194,6 +195,11 @@ fn annotation_cards(
     address_format: AddressFormat,
 ) -> Vec<(&'static str, style::SectionPalette, Vec<annotations::Card>)> {
     vec![
+        (
+            "Diagram Coverage",
+            style::RELATIONSHIP_RESOURCES,
+            vec![coverage::card(std::iter::once(("", &graph.coverage)))],
+        ),
         (
             "Logical Resources",
             style::LOGICAL_RESOURCES,

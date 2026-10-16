@@ -1380,7 +1380,7 @@ fn resource_provenance_is_indexed_and_reference_provenance_is_not() {
     assert!(!svg::render(&inferred, &layout).contains("data-relationship-index="));
     assert_eq!(
         svg::dimensions(&graph, &layout).1 - svg::dimensions(&inferred, &layout).1,
-        index.cards()[0].height + 48 + 16 + 24
+        index.cards()[0].height + 48 + 16 + 20
     );
 }
 
