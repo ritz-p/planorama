@@ -66,13 +66,15 @@ class ViewerTests {
                     dangling: [...exported.querySelectorAll('[href]')].filter(el => !exported.getElementById(el.getAttribute('href').slice(1))).length,
                     paths: [...exported.querySelectorAll('path[data-edge-kind]')].map(el => [el.getAttribute('d'), el.getAttribute('stroke'), el.getAttribute('marker-end')]),
                     originalPaths: [...live.querySelectorAll('path[data-edge-kind]')].map(el => [el.getAttribute('d'), el.getAttribute('stroke'), el.getAttribute('marker-end')]),
-                    name: window.exportName
+                    name: window.exportName,
+                    imageRoles: [exported.documentElement, ...exported.querySelectorAll('svg svg')].every(el => el.getAttribute('role') === 'img')
                 };
             `);
             this.assertTrue(result.unchanged); this.assertTrue(result.viewBox);
             this.assertEqual(result.invalid, 0); this.assertEqual(result.dangling, 0);
             this.assertEqual(result.paths, result.originalPaths);
             this.assertEqual(result.name, 'planorama-viewport.svg');
+            this.assertTrue(result.imageRoles);
             const exportedFile = join(this.temp, 'export.svg');
             writeFileSync(exportedFile, this.driver.execute_script('return window.exportText'));
             this.driver.get(pathToFileURL(exportedFile).href);
@@ -85,6 +87,20 @@ class ViewerTests {
         this.driver.execute_script("URL.createObjectURL = () => { throw new Error('download denied'); }");
         this.find('#export-viewport').click();
         this.assertIn('download denied', this.find('#export-status').text);
+        this.load('-', {input_plan: {format_version: '1.2', resource_changes: [{address: 'test.item["url(foo)"]', type: 'test'}]}});
+        this.driver.execute_script(`
+            URL.createObjectURL = () => 'blob:export-test';
+            HTMLAnchorElement.prototype.click = function () {};
+        `);
+        this.find('#export-viewport').click();
+        this.assertIn('download requested', this.find('#export-status').text);
+        this.driver.execute_script(`
+            const svg = document.querySelector('#viewport > svg');
+            const clone = svg.cloneNode.bind(svg);
+            svg.cloneNode = deep => { const copy = clone(deep); copy.setAttribute('filter', 'URL(https://invalid.example/filter)'); return copy; };
+        `);
+        this.find('#export-viewport').click();
+        this.assertIn('Unavailable SVG definition', this.find('#export-status').text);
     }
     test_copy_native_address_success_rejection_and_unavailable() {
         let address = 'module.demo["日本語"].test.item["a\\\"b"]';
