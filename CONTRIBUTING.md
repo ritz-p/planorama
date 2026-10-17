@@ -20,6 +20,7 @@ docker compose exec -T dev cargo run --locked -- --help
 `docker compose stop dev` / `docker compose start dev` で停止・再開し、Dockerfile の変更後は `docker compose up -d --build dev` で再作成します。
 
 開発イメージには Terraform 1.9.8、SVG 描画確認用の `rsvg-convert` と DejaVu フォント、HTML 操作テスト用の Chromium・ChromeDriver・Node.js を含みます。
+Wasm 用には `wasm32-unknown-unknown` と wasm-bindgen-cli 0.2.100 を含みます。[ビルド・ブラウザ検証](docs/browser.md)では同じ Docker 環境を使用します。
 実環境の plan/state や認証情報をコミットしないでください。
 
 ## 検証
@@ -35,7 +36,7 @@ docker compose exec -T dev node --test tests/browser/webdriver.test.cjs tests/su
 ```
 
 `tests/unit` は実装モジュール内に読み込む単体テスト、`tests/integration` は CLI 経由の結合テストです。Cargo.toml に4つの結合テスト対象を登録しています。
-`--bin planorama` で単体テスト、`--test rendering` などで結合テストを選択できます。
+`--lib` で単体テスト、`--test rendering` などで結合テストを選択できます。
 テストプロファイルは `opt-level = 1` で経路計算を高速化し、debug assertion と overflow check を有効にしています。
 
 MSRV の確認:

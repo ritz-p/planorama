@@ -309,12 +309,12 @@ opt-in and are not selected by the regression filter.
 Reproduce all deferred checks with the pinned Docker toolchain:
 
 ```sh
-docker compose exec -T dev cargo test --locked --all-features --bin planorama deferred_regression_ -- --ignored --test-threads=2 --nocapture
+docker compose exec -T dev cargo test --locked --all-features --lib deferred_regression_ -- --ignored --test-threads=2 --nocapture
 ```
 
 For one failure, replace the prefix with its full test name and add `--exact`
-after `--`. Compile separately with `cargo test --locked --all-features --bin
-planorama --no-run`. Two test threads limit concurrent expensive routing work.
+after `--`. Compile separately with `cargo test --locked --all-features --lib
+--no-run`. Two test threads limit concurrent expensive routing work.
 The workflow retains a failing job status, console diagnostics and a
 `routing-regressions-<SHA>` log artifact for 14 days, including assertion failures.
 Inspect the failed test and revision in Actions, reproduce at that SHA, and fix
@@ -812,3 +812,11 @@ References: [workflow triggers and GITHUB_TOKEN](https://docs.github.com/en/acti
 [merged-PR events](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#running-your-pull_request_target-workflow-when-a-pull-request-merges),
 [workflow dispatch API](https://docs.github.com/en/rest/actions/workflows#create-a-workflow-dispatch-event),
 [atomic Git ref updates](https://docs.github.com/en/graphql/reference/git#updaterefs).
+
+## Browser Wasm (#432)
+
+The `Browser Wasm` workflow builds the native CLI and Wasm library in the pinned
+Docker environment on pull requests and manual dispatch. It checks exact output
+parity, offline generation, isolated previews, downloads and cancellation using
+Chromium. See [browser build and verification](browser.md). Unit tests now run
+from the library target (`--lib`); suite discovery includes that target automatically.

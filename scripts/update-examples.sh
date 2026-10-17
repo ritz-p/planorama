@@ -7,12 +7,12 @@ binary=${CARGO_TARGET_DIR:-target}/debug/planorama
 update_snapshot() {
     snapshot_test=$1
     snapshot_flag=$2
-    listing=$(cargo test --locked --bin planorama "$snapshot_test" -- --exact --list)
+    listing=$(cargo test --locked --lib "$snapshot_test" -- --exact --list)
     if ! printf '%s\n' "$listing" | grep -F -x "$snapshot_test: test" > /dev/null; then
         printf 'Snapshot test not found: %s\n' "$snapshot_test" >&2
         exit 1
     fi
-    env "$snapshot_flag=1" cargo test --locked --bin planorama "$snapshot_test" -- --exact
+    env "$snapshot_flag=1" cargo test --locked --lib "$snapshot_test" -- --exact
 }
 
 while IFS= read -r output || [ -n "$output" ]; do

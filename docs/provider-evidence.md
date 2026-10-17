@@ -75,7 +75,7 @@ account, provider binding and Terraform state remain independent identities.
 The development Docker image includes Terraform 1.9.8. Run:
 
 ```sh
-docker compose exec -T dev cargo test --locked --bin planorama plan::evidence
+docker compose exec -T dev cargo test --locked --lib plan::evidence
 docker compose exec -T dev cargo build --locked --bin planorama
 docker compose exec -T dev sh tests/support/verify_provider_plan.sh
 ```

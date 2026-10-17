@@ -31,8 +31,8 @@ test('calibration is opt-in, read-only and bound to a validated immutable source
 });
 
 test('manual calibration preserves the ignored experiment and uploads complete revision-labelled output', () => {
-  assert.match(manual, /cargo test --locked --bin planorama budget_calibration --no-run/);
-  assert.match(manual, /cargo test --locked --bin planorama budget_calibration -- --ignored --nocapture/);
+  assert.match(manual, /cargo test --locked --lib budget_calibration --no-run/);
+  assert.match(manual, /cargo test --locked --lib budget_calibration -- --ignored --nocapture/);
   assert.match(manual, /PLANORAMA_SPACING_REPORT_DIR: output\/spacing-calibration/);
   assert.match(manual, /name: spacing-calibration-\$\{\{ env.SOURCE_SHA \}\}/);
   assert.match(manual, /path: output\/spacing-calibration/);

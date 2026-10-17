@@ -36,7 +36,7 @@ test('deferred regressions run after merge and nightly without executing PR head
   assert.match(workflow, /contents: read/);
   assert.match(workflow, /persist-credentials: false/);
   assert.doesNotMatch(workflow, /ref:|: write|continue-on-error|pull_request.head|--include-ignored/);
-  assert.match(workflow, /cargo test --locked --all-features --bin planorama deferred_regression_ -- --ignored --test-threads=2 --nocapture/);
+  assert.match(workflow, /cargo test --locked --all-features --lib deferred_regression_ -- --ignored --test-threads=2 --nocapture/);
   assert.match(workflow, /set -o pipefail/);
   assert.match(workflow, /if: \$\{\{ !cancelled\(\) \}\}/);
   assert.match(workflow, /path: routing-regressions.log/);

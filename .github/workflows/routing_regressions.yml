@@ -30,11 +30,11 @@ jobs:
           shared-key: ${{ hashFiles('build.rs', 'assets/**') }}-tests
           cache-workspace-crates: 'false'
       - name: Compile regressions
-        run: cargo test --locked --all-features --bin planorama --no-run
+        run: cargo test --locked --all-features --lib --no-run
       - name: Run regressions
         run: |
           set -o pipefail
-          cargo test --locked --all-features --bin planorama deferred_regression_ -- --ignored --test-threads=2 --nocapture 2>&1 | tee routing-regressions.log
+          cargo test --locked --all-features --lib deferred_regression_ -- --ignored --test-threads=2 --nocapture 2>&1 | tee routing-regressions.log
       - name: Upload regression log
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v7.0.2

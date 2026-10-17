@@ -1,24 +1,7 @@
-#[cfg(test)]
-#[path = "../tests/benchmarks.rs"]
-mod benchmarks;
-mod classification;
-mod cli;
-mod coverage;
-mod html;
-mod icons;
-mod layout;
-mod model;
-mod plan;
-mod provider;
-mod semantic;
-mod svg;
-mod timing;
-mod view;
-
 use std::process::ExitCode;
 
 fn main() -> ExitCode {
-    match cli::run() {
+    match planorama::run_cli() {
         Ok(()) => ExitCode::SUCCESS,
         Err(error) => {
             eprintln!("planorama: {error}");
