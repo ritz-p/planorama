@@ -1,0 +1,27 @@
+Planorama native CLI
+
+Extract the entire archive. Run ./planorama --help (Windows: .\planorama.exe --help).
+Run ./planorama --version to check the installed version.
+
+terraform plan -out=tfplan
+terraform show -json tfplan > plan.json
+./planorama plan.json -o diagram.svg
+./planorama plan.json --format html -o diagram.html
+
+Windows: use .\planorama.exe. Save JSON as UTF-8; Windows PowerShell 5.1
+redirection writes UTF-16. Terraform/provider plugins are needed to create
+a plan, but not to render an existing JSON plan. No Rust or Docker is required.
+Provider evidence (--provider-plan) separately requires Terraform 1.9.8 and
+initialized hashicorp/aws 5.100.0 schemas. JSON-only AWS accounts stay unknown.
+Plan JSON can contain secrets. Do not commit real plans or state files.
+
+Supported: Linux x86_64 (glibc 2.35+, Ubuntu 22.04), Windows x86_64
+(Windows 10/Server 2022 or later), macOS 15+ (arm64 and x86_64).
+Linux uses system libc/libgcc; Alpine/musl, Linux arm64, Windows arm64 and
+32-bit systems are not supplied. macOS binaries are not signed or notarized.
+
+SHA256SUMS detects corruption, not authenticity. Verify the archive before
+extracting; see https://github.com/ritz-p/planorama for platform-specific steps.
+Project code is MIT OR Apache-2.0, at your option; see LICENSE, LICENSE-MIT
+and LICENSE-APACHE. Icon notices and THIRD-PARTY-NOTICES.txt cover
+separate bundled material and dependencies.

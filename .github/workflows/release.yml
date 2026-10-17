@@ -1,0 +1,122 @@
+name: Native release
+
+on:
+  push:
+    tags: ['v*']
+  pull_request:
+    paths:
+      - .github/workflows/release.yml
+      - .github/scripts/release.cjs
+      - tests/ci/release.test.cjs
+      - Cargo.toml
+      - Cargo.lock
+      - rust-toolchain.toml
+      - src/**
+      - build/**
+      - build.rs
+      - assets/**
+      - LICENSE*
+      - third-party/**
+      - docs/release-usage.txt
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: native-release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-22.04
+            target: x86_64-unknown-linux-gnu
+          - os: windows-2022
+            target: x86_64-pc-windows-msvc
+          - os: macos-15
+            target: aarch64-apple-darwin
+          - os: macos-15-intel
+            target: x86_64-apple-darwin
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4.4.0
+        with:
+          node-version: 22.16.0
+      - name: Check release controls
+        run: node --test tests/ci/release.test.cjs
+      - name: Install fixed compiler
+        run: rustup toolchain install 1.85.1 --profile minimal --target ${{ matrix.target }}
+      - name: Check tag and package version
+        env:
+          RELEASE_TAG: ${{ github.ref_type == 'tag' && github.ref_name || '' }}
+        shell: bash
+        run: |
+          node -e 'const r=require("./.github/scripts/release.cjs"); const m=JSON.parse(require("node:child_process").execFileSync("cargo",["metadata","--locked","--no-deps","--format-version","1"])); const v=m.packages.find(p=>p.name==="planorama").version; r.validateVersion(v,process.env.RELEASE_TAG || "v"+v);'
+      - name: Build native CLI
+        env:
+          MACOSX_DEPLOYMENT_TARGET: '15.0'
+        run: cargo +1.85.1 build --release --locked --bin planorama --target ${{ matrix.target }}
+      - name: Package and smoke test extracted binary
+        env:
+          RELEASE_TAG: ${{ github.ref_type == 'tag' && github.ref_name || '' }}
+        run: node .github/scripts/release.cjs ${{ matrix.target }}
+      - uses: actions/upload-artifact@v7.0.2
+        with:
+          name: native-${{ matrix.target }}
+          path: output/release/*
+          if-no-files-found: error
+          retention-days: 14
+
+  verify:
+    needs: build
+    runs-on: ubuntu-22.04
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@v8.0.1
+        with:
+          pattern: native-*
+          merge-multiple: true
+          path: output/release
+      - name: Verify complete archive and checksum set
+        run: |
+          node -e 'const fs=require("node:fs"); const v=fs.readFileSync("Cargo.toml","utf8").match(/^version = "([^"]+)"/m)[1]; require("./.github/scripts/release.cjs").collect("output/release",v);'
+
+  publish:
+    needs: [build, verify]
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-22.04
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@v8.0.1
+        with:
+          pattern: native-*
+          merge-multiple: true
+          path: output/release
+      - name: Upload verified draft and publish
+        uses: actions/github-script@v9.0.0
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+        with:
+          script: |
+            const fs = require('node:fs');
+            const version = fs.readFileSync('Cargo.toml', 'utf8').match(/^version = "([^"]+)"/m)[1];
+            await require('./.github/scripts/release.cjs').publish({github, context, directory: 'output/release', version, tag: process.env.RELEASE_TAG});
