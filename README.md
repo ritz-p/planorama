@@ -2,6 +2,15 @@
 
 Terraform plan JSON を SVG または自己完結型 HTML に変換する Rust 製 CLI です。参照関係と AWS の構成からカード・包含・接続を描画します。Graphviz や Node.js は不要です。
 
+## ネイティブ CLI の配布
+
+公開済みのリリースはまだありません。初回公開後は [GitHub Releases](https://github.com/ritz-p/planorama/releases)
+から Linux x86_64、Windows x86_64、macOS arm64/x86_64 向け archive と `SHA256SUMS` を取得できます。
+[OS 別のダウンロード・検証・展開・実行手順](docs/releases.md) を参照してください。
+既存の plan JSON の描画には Rust・Docker・Terraform は不要です。
+provider evidence は別途 Terraform と初期化済み provider スキーマを必要とします。
+本体のライセンスは [MIT OR Apache-2.0](LICENSE) です。アイコン・依存ライブラリは各通知に従います。
+
 ## 使い方
 
 Docker Desktop を Linux コンテナモードで起動し、リポジトリのルートで実行します。

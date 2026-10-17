@@ -1,5 +1,9 @@
 # SVG generation and PR validation
 
+Native CLI distribution has a separate [release workflow and recovery procedure](releases.md).
+PRs and manual runs validate all native archives without publishing; only version-tag
+pushes can publish after every target and the aggregate verification succeed.
+
 Contributors and Codex regenerate maintained diagrams locally when rendering or
 generation inputs change, inspect the diff, and include the outputs in the PR.
 **Update SVG examples** is manual-only. When requested, it can append SVG changes
