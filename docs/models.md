@@ -102,10 +102,12 @@ a region. Credentials and unrelated provider expressions are not retained.
 Region is provider deployment metadata, independent of state identity and resource
 containment; it does not classify global AWS resources as regional.
 
-`TerraformEntity.has_region_override` records only the presence of a resource's
-configured `region` expression. AWS regional scope resolution treats that unsupported
-override as unknown without changing `provider_configuration.region` or retaining
-the expression's value. `ArchitectureEntity.scope` remains independent of logical
+`TerraformEntity.has_region_override` blocks provider-region fallback for an explicit
+resource `region` expression and historical objects using the verified v6 contract.
+`region_override` retains only a proven safe region, following the restricted
+[AWS evidence contract](aws.md#deployment-scopes). Unresolved overrides stay unknown;
+`provider_configuration.region` keeps the original provider value.
+`ArchitectureEntity.scope` remains independent of logical
 placement: account and region are independent optional dimensions, and `global`
 explicitly distinguishes AWS Global from an unknown region. The shared `view::scope` label helper
 consumes this evidence; known non-AWS providers without scope use `Region: not

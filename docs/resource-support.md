@@ -20,8 +20,9 @@ other unlisted types have unknown regional scope. Non-AWS/non-built-in providers
 use Unknown / unresolved spatial / no icon / unknown scope, even for lookalike names.
 See [provider identity and inference](models.md).
 
-Regional means eligible with a known static provider region. Overrides, missing or
-dynamic evidence and deposed objects can leave scope unknown. Account evidence is
+Regional means eligible with a known static provider region or a verified resource
+override. Unsupported overrides, missing/dynamic evidence and historical objects
+can leave scope unknown. Account evidence is
 independent, including for unknown-region types. See the canonical
 [provider configuration/account contract](provider-evidence.md) and
 [deployment-scope rules](aws.md#deployment-scopes).

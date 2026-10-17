@@ -17,6 +17,9 @@ update_snapshot() {
 
 while IFS= read -r output || [ -n "$output" ]; do
     case "$output" in
+        examples/region-overrides.svg)
+            "$binary" tests/fixtures/aws-region-overrides/plan.json -o "$output"
+            ;;
         examples/relationship-legend-hidden.svg)
             "$binary" tests/fixtures/routes-plan.json --hide-relationship-legend -o "$output"
             ;;

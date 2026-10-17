@@ -86,7 +86,7 @@ pub(crate) fn parse(json: &str) -> Result<TerraformPlan, String> {
         }
     }
     let mut nodes: Vec<_> = nodes.into_values().collect();
-    providers::enrich(&plan["configuration"], &mut nodes);
+    providers::enrich(&plan, &mut nodes);
     routes::enrich(&plan, &mut nodes);
     let mut drift = drift::collect(&plan, &mut nodes)?;
     let relevant_attributes = relevance::collect(&plan, &mut nodes, &mut drift);
