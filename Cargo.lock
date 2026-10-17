@@ -240,10 +240,12 @@ name = "planorama"
 version = "0.1.0"
 dependencies = [
  "hcl-rs",
+ "proc-macro2",
  "roxmltree",
  "same-file",
  "serde",
  "serde_json",
+ "syn",
  "tempfile",
  "toml",
  "zip",

@@ -77,6 +77,6 @@ planorama plan.json --config planorama.toml --preset review -o review.html
 | 操作・変更・検査結果 | [import・移動・置換・drift](docs/operations.md)、[Terraform checks](docs/checks.md) |
 | 生成設定と選択 | [設定ファイル](docs/configuration.md)、[絞り込み](docs/filtering.md)、[複数 plan](docs/multi-plan.md)、[outputs](docs/outputs.md) |
 | HTML と診断 | [ビューアー操作](docs/viewer.md)、[coverage report](docs/coverage.md)、[layout diagnostics](docs/layout-diagnostics.md) |
-| アイコン・表示名・出典 | [アイコン仕様](docs/icons.md) |
+| リソース対応・アイコン・表示名・出典 | [生成された対応一覧](docs/resource-support.md)、[アイコン仕様](docs/icons.md) |
 | 開発・設計・性能計測 | [CONTRIBUTING](CONTRIBUTING.md)、[Architecture](docs/architecture.md)、[Models](docs/models.md)、[Routing](docs/routing.md)、[Benchmarks](docs/benchmarks.md) |
 | CI・配布 | [CI 運用](docs/ci.md)、[リリース手順](docs/releases.md) |

@@ -14,6 +14,10 @@ pub(crate) use placement::owner_affinities;
 mod routes;
 mod scope;
 mod security_groups;
+
+#[cfg(test)]
+#[path = "../../tests/unit/resource_support.rs"]
+mod resource_support;
 pub(super) use scope::scope;
 
 pub(super) fn reference_label(resource_type: &str, attribute: &str) -> &'static str {
