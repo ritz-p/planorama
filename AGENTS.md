@@ -62,6 +62,7 @@
 - テストコードはすべて tests ディレクトリに入れること
 
 ## 開発環境
+- セットアップ・検証・SVG/HTML 更新の手順は [CONTRIBUTING.md](CONTRIBUTING.md) を参照する。
 - 基本 Docker を使用すること
 - Docker container の機能が不足していれば install するか、install しても不足している場合は作業を中断しその内容を書くこと
 - Docker まわりの修正があればそれも併せてコミットすること

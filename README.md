@@ -1,188 +1,82 @@
 # planorama
 
-Terraform plan JSON を SVG または自己完結型 HTML に変換する Rust 製 CLI です。参照関係と AWS の構成からカード・包含・接続を描画します。Graphviz や Node.js は不要です。
+Terraform plan JSON を、構成の参照関係・AWS の包含・接続が分かる SVG または自己完結型 HTML に変換する CLI です。HTML は検索・選択・ズームに対応し、生成後はオフラインで開けます。
 
-## ネイティブ CLI の配布
+![Terraform plan から生成した構成図](examples/diagram.svg)
 
-公開済みのリリースはまだありません。初回公開後は [GitHub Releases](https://github.com/ritz-p/planorama/releases)
-から Linux x86_64、Windows x86_64、macOS arm64/x86_64 向け archive と `SHA256SUMS` を取得できます。
-[OS 別のダウンロード・検証・展開・実行手順](docs/releases.md) を参照してください。
-既存の plan JSON の描画には Rust・Docker・Terraform は不要です。
-provider evidence は別途 Terraform と初期化済み provider スキーマを必要とします。
-本体のライセンスは [MIT OR Apache-2.0](LICENSE) です。アイコン・依存ライブラリは各通知に従います。
+[基本 SVG](examples/diagram.svg) · [HTML ビューアー例](examples/viewer.html) · [大型 AWS 例](examples/multi-account/diagram.svg)
 
-## 使い方
+## 入手・導入
 
-Docker Desktop を Linux コンテナモードで起動し、リポジトリのルートで実行します。
+**公開済みリリースはまだありません。** 初回公開後は [GitHub Releases](https://github.com/ritz-p/planorama/releases) から、OS に合う archive と同じ release の `SHA256SUMS` を取得してください。現時点で試す場合は [開発者ガイド](CONTRIBUTING.md#開発環境) のソースビルドを使えます。
 
-```sh
-docker compose up -d --build dev
-docker compose exec -T dev cargo run --locked -- examples/plan.json -o diagram.svg
-```
+| OS / architecture | 配布ファイル名（`<VERSION>` は公開バージョン） |
+| --- | --- |
+| Linux x86_64（glibc 2.35 以上） | `planorama-v<VERSION>-x86_64-unknown-linux-gnu.tar.gz` |
+| Windows x86_64（Windows 10 / Server 2022 以降向け） | `planorama-v<VERSION>-x86_64-pc-windows-msvc.tar.gz` |
+| macOS 15 以上 / Apple Silicon | `planorama-v<VERSION>-aarch64-apple-darwin.tar.gz` |
+| macOS 15 以上 / Intel | `planorama-v<VERSION>-x86_64-apple-darwin.tar.gz` |
 
-`diagram.svg` をブラウザで開いて確認できます。生成済みの [基本例](examples/diagram.svg)、[大規模 AWS 例](examples/terraform-large/diagram.svg)、[data ソースのアイコン例](examples/data-icons.svg) もあります。
+[OS 別のダウンロード・SHA-256 確認・展開・起動手順](docs/releases.md#ダウンロードと実行) に従い、展開先で `./planorama --version`（Windows は `.\planorama.exe --version`）を確認します。Linux arm64・Alpine/musl・Windows arm64・32-bit は提供しません。チェックサムは破損確認用で、署名による真正性保証ではありません。
 
-繰り返す生成設定は `--config PATH --preset NAME` で TOML から読み込めます。
-優先順位は「組み込み既定値 → ファイル共通設定 → 選択プリセット → 明示的 CLI 指定」です。
-boolean は `--no-changed-only` などで解除でき、配列は上位の設定で置き換えます。
-設定ファイルの自動探索は行いません。[設定仕様](docs/configuration.md)と[サンプル](examples/planorama.toml)を参照してください。
+既存の plan JSON を描画するだけなら Rust・Docker・Terraform・Graphviz・Node.js は不要です。本体は [MIT OR Apache-2.0](LICENSE) です。アイコン・依存ライブラリには各通知が適用されます。
 
-```sh
-docker compose exec -T dev cargo run --locked -- examples/plan.json --config examples/planorama.toml --preset review -o review.html
-```
+## 最短の生成手順
 
-`--coverage-report coverage.md` を付けると、入力・選択・除外件数や診断集計を別の Markdown に保存します。SVG・HTML・複数 state に対応します。[レポート例](examples/coverage.md)と[集計の定義](docs/coverage.md)を参照してください。
-
-`--hide-relationship-legend` で線種・方向・包含・cross-state の説明を省きます。action の色見本、実際の線・矢印・関係番号・Relationship Resources は保持します。SVG・HTML に共通で使えます。[省略例](examples/relationship-legend-hidden.svg)と[凡例の設定](docs/relationships.md)を参照してください。
-
-[SQS/SNS の例](examples/messaging.svg) と [SNS 購読の例](examples/sns-subscriptions.svg) では、サービスの配置と検証済みの購読関係を表示します。購読リソースは論理行として保持し、未解決の接続先も明示します。[判定条件](docs/aws.md#sns-subscriptions)を参照してください。
-
-[イベントソースの例](examples/event-sources.svg) は、明示参照と計画値で検証した SQS → Lambda のマッピングを表示します。非対応ソースや未解決のマッピングも論理行として保持します。
-
-[EventBridge の例](examples/eventbridge.svg) は、Bus と Rule のリージョン配置と明示参照を表示します。暗黙のデフォルトバスは生成しません。
-[ターゲットの例](examples/eventbridge-targets.svg) は、検証済みの Rule → SQS/Lambda 設定を表示し、未解決・非対応の設定も論理リソースとして保持します。[判定条件](docs/aws.md#eventbridge-targets)を参照してください。
-
-検索・選択・ズーム付きの HTML は `--format html` で生成します。生成後はネットワークなしでローカルのブラウザから開けます。[HTML の例](examples/viewer.html) と [操作方法](docs/viewer.md) を参照してください。
-
-```sh
-docker compose exec -T dev cargo run --locked -- examples/plan.json --format html -o diagram.html
-```
-
-`--icon-mode service-name` でサービスアイコンを Amazon EC2、Amazon VPC、Terraform built-in などの文字に置き換えます。SVG・HTML・複数 state に対応し、長い表示名は全文を折り返します。既定は `--icon-mode icon` です。[サービス名表示の例](examples/service-names.svg)と[対応・出典の扱い](docs/icons.md#service-name-mode)を参照してください。
-
-```sh
-docker compose exec -T dev cargo run --locked -- examples/plan.json --icon-mode service-name -o services.svg
-```
-
-実際の plan は Terraform を実行できる環境で JSON に変換し、リポジトリ内に配置してください。
+Terraform を初期化済みの作業ディレクトリで、保存済み plan を JSON に変換します。以下は導入した `planorama` を `PATH` に追加した場合の例です。
 
 ```sh
 terraform plan -out=tfplan
 terraform show -json tfplan > plan.json
-docker compose exec -T dev cargo run --locked -- plan.json -o diagram.svg
+planorama plan.json -o diagram.svg
+planorama plan.json --format html -o diagram.html
 ```
 
-入力は `terraform show -json` の保存済み plan 形式です。`terraform plan -json` のイベントストリームや state JSON は対象外です。PowerShell 5.1 のリダイレクトは UTF-16 になるため、JSON は UTF-8 で保存してください。
+`diagram.svg` または `diagram.html` をブラウザで開きます。バイナリを `PATH` に追加しない場合は `planorama` を展開先の実行ファイルへのパスに置き換えてください。カレントディレクトリに置いた場合は Linux/macOS で `./planorama`、Windows で `.\planorama.exe` です。
 
-JSON 単独では AWS account は unknown です。Terraform 1.9.8 の保存済み plan を
-`--provider-plan tfplan` で併せて渡すと、JSON との一致と plan 内の構成を検証し、
-対応する static ロールからアカウントを解決します。現時点の対応 provider は hashicorp/aws 5.100.0 です。Terraform と初期化済み provider
-スキーマが必要です。複数 state では `--state-provider-plan ID=PATH` を使います。
-dynamic ロールや未解決式は unknown のままです。[入力・機密情報の扱い](docs/provider-evidence.md)を参照してください。
+Windows PowerShell 5.1 では、JSON 変換行を次に置き換えます。`cmd` のリダイレクトで Terraform の UTF-8 出力を直接保存し、PowerShell による文字列への変換を避けます。
+
+```powershell
+cmd /d /c "terraform show -json tfplan > plan.json"
+if ($LASTEXITCODE -ne 0) { throw 'terraform show failed' }
+```
+
+既存の JSON があれば Terraform の2行は不要です。小規模な [サンプル入力](examples/plan.json) でも同じ生成コマンドを試せます。
+
+## よく使う設定
 
 ```sh
-docker compose exec -T dev cargo run --locked -- --help
-docker compose exec -T dev cargo run --locked -- plan.json --changed-only -o changes.svg
-docker compose exec -T dev cargo run --locked -- plan.json --list-modules
-docker compose exec -T dev cargo run --locked -- plan.json --modules module.app module.database -o selected.svg
-docker compose exec -T dev cargo run --locked -- plan.json --focus module.app.aws_instance.web --focus-depth 2
-docker compose exec -T dev cargo run --locked -- plan.json --diagnostics
-docker compose exec -T dev cargo run --locked -- --state network=network.json --state app=app.json -o architecture.svg
+planorama plan.json --changed-only -o changes.svg
+planorama plan.json --icon-mode service-name -o services.svg
+planorama plan.json --coverage-report coverage.md -o diagram.svg
+planorama plan.json --diagnostics -o diagram.svg
 ```
 
-`-` は標準入力・標準出力を表します。次の例は POSIX シェル向けです。
+[絞り込み](docs/filtering.md)では module の選択や特定リソース周辺への focus、[凡例の設定](docs/relationships.md)では関係の説明の省略ができます。[複数 plan](docs/multi-plan.md) は `--state ID=PATH` を使います。全オプションは `planorama --help` で確認してください。
+
+繰り返し使う設定は [TOML ファイル](docs/configuration.md)にまとめられます。[サンプル](examples/planorama.toml)を保存した場合:
 
 ```sh
-docker compose exec -T dev cargo run --locked -- - -o - < plan.json > diagram.svg
+planorama plan.json --config planorama.toml --preset review -o review.html
 ```
 
-## 図の見方と制限
+設定の優先順位は「既定値 → ファイル共通設定 → プリセット → 明示的 CLI 指定」です。設定ファイルの自動探索は行いません。
 
-- リソースの変更色・ラベルは作成、更新、削除、置換、読み取り、変更なしを表します。関係線の色は関係自身の変更を表し、接続先カードの変更色は引き継ぎません。独立した変更を持たない関係の `no independent change` は、明示的な「変更なし」と区別します。
-- 中立色の `Relationship lines` カードで線種・色・接続点・矢印・番号の意味を確認できます。カード幅は最大960px、説明項目は画像の幅に応じて1〜2列に並び、狭い画像では記号の下に説明を折り返します。依存辺は参照されるリソースから参照するリソースへ向き、包含は入れ子の枠です。関連付けは通常は矢印のない破線ですが、Route の next hop は矢印付きです。白抜きの丸はカードへの接続点、線上の塗りつぶした点は分岐・合流点を表します。接続は矢印のない太い点線で、構成から推論した関係を表し、ネットワーク到達性は保証しません。
-- Terraform リソースに由来する関連付けは、有向・無向とも両端に同じ `[N]` を表示し、Relationship Resources の1項目に対応します。番号は方向や件数を表さず、参照のみの関係には付けません。
-- AWS の VPC・Subnet が空間的なコンテナです。間接参照から導いた配置には `inferred placement` を表示します。
-- data リソースは破線と `external` 表示で区別します。一部の AWS メタデータ data は省略します。
-- import を含むリソースには専用の `import` バッジを表示します。作成・更新・置換・変更なしの色や action は保持し、import ID や identity の値は表示しません。
-- 上部は Logical Resources（シアン）、Logical Components（紫）、Relationship Resources の順です。ECS Cluster・Task Definition・IAM 定義・AMI・EC2 Launch Template・CloudWatch Log Group・Metric Alarm・Auto Scaling Policy は Logical Resources にまとめ、空間配置と経路計算から分離します。
-- Relationship Resources は1枚に最大5件をまとめ、最終的な本文の横幅に収まる限り右へ並べます。列数の上限はありません。番号から索引へ、索引の端点から各リソースへ移動できます。複数 state では共通の本文幅を使い、state 間の配線領域は含めません。[21件の例](examples/relationship-index.svg) と [40件の例](examples/relationship-index-wide.svg) を参照してください。
-- Logical Resources は state 内で provider source・resource type・managed/data ごとに中立色のカードへまとめ、個々のリソースを行として表示します。各行の情報と変更数を保持し、リソース数とグループカード数は別に表示します。
-- 各種類カードの内部は Create・Update・Delete・Replace・Read・Unchanged・Other の順に、件数付きの変更色の枠で区切ります。Policy／Controller の意味も見出しに表示します。SVG・HTML とも全区画を表示します。HTML の検索結果は action・state・provider source 付き resource type で絞り込めます。図の区画を変更するフィルターは[後続対応](docs/viewer.md)です。
-- Logical Resources の各行には `Region: ap-northeast-1`、`AWS Global`、`Region: unknown` などの配置スコープを表示します。同じ種類のリソースでもリージョンは行ごとに区別します。[表示例](examples/logical-regions.svg)と[判定条件](docs/aws.md#deployment-scopes)を参照してください。
-- Logical Resources のリソース行と Logical Components のメンバー行は、中立色のテキストと項目全体の下に引く変更色の下線で表示します。長い項目は全文を折り返し、各リソースの識別子と操作情報を保持します。メンバー行から元リソースへ移動できます。Logical Components の見出しは紫です。
-- 利用側の `Uses` 行は参照を全件表示し、対応する論理リソース行へ移動できます。依存指定・未解決・表示対象外を区別し、module・instance・state を含む完全な参照アドレスを折り返して表示します。カードと配置領域は内容に合わせて拡張します。
-- 既定のアドレス表示は Planorama 修飾形式です。`--address-format terraform` で Terraform 本来の表記に切り替えられます。長いアドレスは要素の区切りを優先して折り返し、全文を表示します。引用符付きの instance key 内のドットは区切りとして扱いません。
-- 移動したリソースには `Moved from:` と移動元の完全なアドレスを表示します。空間カード、論理リソース行、Route 子カード、関係一覧の各リソースで確認でき、長い移動元も折り返して表示します。
-- Route は所有先を確認できた Route Table 内に子カードとして表示します。表示可能な接続先へは子カードのポートから矢印付きの破線を引き、接続先を描けない場合は状態を文字で表示します。SVG の宛先は安全性を検証した設定定数（CIDR・prefix list ID）だけを表示します。HTML では宛先定数も省略し、その他の属性値はどちらにも描画しません。plan JSON 自体には機密値が含まれ得るため、実環境の plan/state はコミットしないでください。
+## 重要な制限
 
-図は構成から解決した関係を表し、Terraform の厳密な実行グラフではありません。式の評価、provider 内部の依存、削除専用リソースの過去の参照は復元しません。未解決・動的・曖昧な参照は保守的に扱い、`--diagnostics` で理由を stderr に出力します。診断は SVG や終了条件を変更しません。経路は決定的に生成しますが、交差や重なりのない最適配置は保証しません。
+- 入力は `terraform show -json` の保存済み plan 形式です。`terraform plan -json` のイベントストリームや state JSON は対象外です。
+- plan・JSON には機密値が含まれ得ます。実環境の plan/state をコミットしないでください。図にはリソース識別子が残り、SVG の Route には検証済みの宛先定数を表示する場合があります。HTML では宛先定数を省略します。[入力と機密情報](docs/provider-evidence.md#privacy-and-validation)、[Route の表示範囲](docs/routes.md)を確認してください。
+- JSON 単独では AWS account は unknown です。任意の `--provider-plan` は、同じ保存済み plan、Terraform 1.9.8、初期化済み hashicorp/aws 5.100.0 スキーマを必要とします。動的・未解決の構成は unknown のままです。[provider evidence の条件](docs/provider-evidence.md)を参照してください。
+- 図は解決できた構成上の関係を表します。Terraform の厳密な実行順序やネットワーク到達性、交差・重なりのない最適配置は保証しません。未解決の理由は `--diagnostics` で確認できます。
 
-## ドキュメント
+## 詳細文書・開発
 
 | 内容 | 文書 |
 | --- | --- |
-| AWS の分類・包含・SG 接続・関連付け | [AWS relationships](docs/aws.md) |
-| 線種・推論注記 | [Relationship styles](docs/relationships.md) |
-| Route Table 内の子カード | [Routes](docs/routes.md) |
-| 論理コンポーネント | [Components](docs/components.md) |
-| 複数 plan・state 間参照 | [Multi-plan](docs/multi-plan.md)、[Outputs](docs/outputs.md) |
-| 表示対象の絞り込み | [Filtering](docs/filtering.md) |
-| ローカル HTML ビューアー | [Viewer](docs/viewer.md) |
-| import・移動・削除・置換・drift | [Operations](docs/operations.md) |
-| Terraform check 結果 | [Checks](docs/checks.md) |
-| モデル・provider 設定識別子 | [Models](docs/models.md) |
-| レイヤー構成・レイアウト | [Architecture](docs/architecture.md)、[Routing](docs/routing.md) |
-| AWS・Terraform 組み込みリソース用アイコンの出典・ライセンス | [Icons](docs/icons.md) |
-| `--timings` による工程別計測・ベンチマーク | [Benchmarks](docs/benchmarks.md) |
-| 最終レイアウトの text / JSON 診断 | [Layout diagnostics](docs/layout-diagnostics.md) |
-| 入力・選択・除外件数と不明スコープ | [Diagram coverage](docs/coverage.md) |
-| HTML 内の意味解析診断とリソースへの移動 | [Semantic diagnostics](docs/viewer.md#semantic-diagnostics) |
-| 任意実行のレイアウト品質比較・ベースライン更新 | [Layout quality CI](docs/ci.md#layout-quality-comparison-390) |
-| 複数 state・region と account 証拠不足を示す大型例 | [生成方法・計測](examples/multi-account/README.md)、[SVG](examples/multi-account/diagram.svg)、[HTML](examples/multi-account/diagram.html) |
-| ローカル・手動 CI の SVG 生成と PR 検証結果 | [SVG automation](docs/ci.md) |
-
-## 開発・検証
-
-開発ツールチェーンは Rust 1.85.1、MSRV は 1.85.0 です。Dockerfile と `rust-toolchain.toml` を揃え、依存関係の更新時は `Cargo.lock` もコミットします。
-
-```sh
-docker compose exec -T dev cargo fmt --all --check
-docker compose exec -T dev cargo test --locked --all-targets --all-features
-docker compose exec -T dev cargo clippy --locked --all-targets --all-features -- -D warnings
-docker compose exec -T dev cargo build --locked
-docker compose exec -T dev sh -c 'node --test tests/ci/*.test.cjs'
-docker compose exec -T dev node tests/browser/viewer.cjs
-docker compose exec -T dev node --test tests/browser/webdriver.test.cjs tests/support/tooling.test.cjs
-docker build --build-arg RUST_VERSION=1.85.0 -t planorama-msrv .
-docker run --rm --mount type=bind,source=.,target=/workspace --env CARGO_TARGET_DIR=/tmp/planorama-target planorama-msrv cargo +1.85.0 test --locked --all-targets --all-features
-```
-
-ローカル開発ではソースをコンテナにバインドマウントし、Cargo のキャッシュとビルド成果物を named volume に保存します。`docker compose stop dev` / `start dev` で停止・再開、Dockerfile の変更後は `up -d --build dev` で再作成します。
-
-通常の CI は Ubuntu runner 上で `rust-toolchain.toml` の固定ツールチェーンを使い、Formatting・Tests・Clippy を直接実行します。開発イメージには SVG の描画確認用に `rsvg-convert` と DejaVu フォント、HTML のオフライン操作テスト用に Chromium・ChromeDriver・Node.js を含みます。Tests は単体テスト・通常の結合テスト・example などを実行する `standard` と、重い結合テスト `large_example` を実行する `large` の2ジョブを並列実行します。各ジョブでコンパイルと実行を別ステップにし、両方の成功を従来の `Tests` チェックに集約します。対象は Cargo metadata から選択し、`--locked --all-features` を維持します。[分割と計測の詳細](docs/ci.md#parallel-rust-test-suites) を参照してください。
-
-Formatting・Tests・Clippy は同じ PR の新しい `pull_request` 実行が始まると、同じ workflow の古い実行をキャンセルします。workflow ごとの固定キーと PR 番号で分離するため、別の PR・別の workflow は干渉しません。手動実行（SVG 自動更新後の PR 指定 dispatch を含む）とマージ後の検証は実行 ID ごとに独立し、完了済みのチェック結果も残ります。詳細は [CI のキャンセル制御](docs/ci.md#cancelling-superseded-validation) を参照してください。
-
-Tests・Clippy は `Swatinem/rust-cache` で Cargo registry/git と `target` 内の依存クレートの成果物を保存します。workspace crate は毎回ビルドし、ソース変更後に更新できない同一キーのキャッシュへ成果物を保存しません。キーには runner 環境・Rust compiler・Cargo.toml/Cargo.lock・ツールチェーン・Cargo 設定・ビルド関連環境変数に加え、`build.rs` と `assets/**` のハッシュを含めます。Tests の2ジョブは既存の `tests` キーを共有し、Clippy はプロファイルと成果物が異なるため別のジョブキーを使います。`v1-rust-dependencies` prefix で旧 workspace 成果物を含むキャッシュと区別します。復元後の再ビルド判定は Cargo が行い、キャッシュの有無によらず全対象を検証します。
-両 workflow は関連入力が変わる PR の `main` へのマージ後にも実行し、後続 PR が復元できる既定ブランチのキャッシュを作ります。`pull_request_target` の `closed` イベントでマージ済みの場合だけ起動し、読み取り権限でイベント時点の `main` を検証します。SVG の自動コミットに付く `[skip ci]` が squash merge のメッセージに残っても、マージ後の検証を実行できます。`main` へ直接 push した場合は Actions から手動実行してください。
-
-大型 fixture を繰り返し描画・比較する3つの単体テストは通常実行で ignore し、**Routing regressions** が main へのマージ後と毎晩に実行します。小規模な正当性検証と大型 SVG の結合テストは PR に残します。[分類・再現コマンド・失敗時の確認方法](docs/ci.md#deferred-routing-regressions-253) を参照してください。
-
-cargo-nextest は並列度を変えて繰り返し比較しましたが、通常ジョブの短縮効果がなかったため導入せず、`cargo test` を継続します。[計測結果と再現手順](docs/ci.md#test-runner-evaluation-254) を参照してください。
-
-テストプロファイルは `opt-level = 1` で経路計算を高速化し、debug assertion と overflow check を明示的に有効にしています。MSRV は Docker で Rust 1.85.0 の通常テストを実行し、Cargo.toml/Cargo.lock・ツールチェーン・Docker 関連設定・MSRV workflow の変更で起動します。
-
-`tests/unit` は実装モジュール内に読み込む単体テスト、`tests/integration` は CLI 経由の結合テストです。Cargo.toml に4つの結合テスト対象を登録しています。`--bin planorama` で単体テスト、`--test rendering` などで結合テストを選択できます。
-
-### SVG の更新
-
-レンダラー・生成入力を変更した場合は、Codex・コントリビューターが下記の共通コマンドで SVG を再生成し、差分と表示を確認して実装と同じ PR に含めます。通常の PR 作成・push では全 SVG を自動生成しません。復旧や補助には Actions の **Update SVG examples** を選び、`main` を実行元として open PR の番号を指定してください。指定 PR の最新 SHA を取得し、同一リポジトリ内で書き込み可能なら同じブランチへ SVG の差分をコミットします。
-
-自動コミットには `[skip ci]` を付けて承認待ちになる重複の PR イベント実行を抑えます。新しいコミットを PR ブランチへ反映する前に、Formatting・Clippy・Tests と変更内容に応じた MSRV・Workflow tests を Pending で登録し、反映後にこれらの検証を明示的に起動します。**Report PR validation** が実際の検証結果を確認し、同じコミットの PR チェックへ同名の commit status として反映します。**SVG validation dispatch** の成功は起動要求の確認を表し、検証の成功は各チェックで確認します。
-
-この通常の同一リポジトリ内の処理に追加の承認や個人トークンは不要です。結果の報告は reporter が既定ブランチへマージされてから有効になります。生成対象、チェック名と必須設定、手動再実行、fork PR の差分取得は [SVG automation](docs/ci.md) を参照してください。
-
-```sh
-docker compose exec -T dev sh scripts/update-examples.sh
-```
-
-PowerShell では `./scripts/update-examples.ps1` が開発コンテナの起動と同じ更新処理を行います。[生成対象一覧](scripts/generated-svgs.txt) にある全サンプル SVG を、現在のレンダラーから再生成します。JSON 由来のサンプルに加え、`hierarchy-routing.svg` と `port-collisions.svg` は既存の fixture を構築する単体テストをそれぞれ完全一致で選択して更新します。この処理では全テストを実行しません。アイコン原本は生成対象に含めません。
-
-### Terraform fixture
-
-```sh
-docker compose run --rm terraform-example
-docker compose exec -T dev cargo run --locked -- output/terraform-plan.json -o output/terraform.svg
-```
-
-組み込みリソースと架空のローカル state を使うため、クラウド認証情報は不要です。`apply` は実行しません。通常の Rust テストはコミット済み JSON を使用します。AWS の追加 fixture は [オフライン生成例](examples/terraform-large/README.md) と [Terraform から取得した例](tests/fixtures/aws-captured/README.md) を参照してください。
+| 表示の読み方と AWS の対応範囲 | [関係線・凡例](docs/relationships.md)、[AWS の分類と包含](docs/aws.md)、[論理コンポーネント](docs/components.md)、[Route](docs/routes.md) |
+| 操作・変更・検査結果 | [import・移動・置換・drift](docs/operations.md)、[Terraform checks](docs/checks.md) |
+| 生成設定と選択 | [設定ファイル](docs/configuration.md)、[絞り込み](docs/filtering.md)、[複数 plan](docs/multi-plan.md)、[outputs](docs/outputs.md) |
+| HTML と診断 | [ビューアー操作](docs/viewer.md)、[coverage report](docs/coverage.md)、[layout diagnostics](docs/layout-diagnostics.md) |
+| アイコン・表示名・出典 | [アイコン仕様](docs/icons.md) |
+| 開発・設計・性能計測 | [CONTRIBUTING](CONTRIBUTING.md)、[Architecture](docs/architecture.md)、[Models](docs/models.md)、[Routing](docs/routing.md)、[Benchmarks](docs/benchmarks.md) |
+| CI・配布 | [CI 運用](docs/ci.md)、[リリース手順](docs/releases.md) |
