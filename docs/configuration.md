@@ -1,5 +1,21 @@
 # Generation configuration
 
+## CLI output and addresses
+
+`-o PATH` chooses the destination; `--format svg|html` chooses the format.
+The default is SVG with `diagram.svg`; HTML defaults to `diagram.html`.
+`--address-format qualified` (default) displays Planorama-qualified labels;
+`--address-format terraform` uses native Terraform addresses. Both preserve full
+identities and wrap long addresses rather than truncating them.
+
+`-` selects stdin or stdout. For example, in a POSIX shell:
+
+```sh
+planorama - -o - < plan.json > diagram.svg
+```
+
+## Configuration files
+
 `--config PATH` reads one UTF-8 TOML file. `--preset NAME` selects one of its
 named presets and requires `--config`. Paths are relative to the process working
 directory. No file is discovered automatically, including `planorama.toml` in the
