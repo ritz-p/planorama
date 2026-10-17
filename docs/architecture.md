@@ -1,8 +1,16 @@
 # Architecture and dependency contracts
 
-The processing pipeline is `CLI → TerraformPlan → ArchitectureGraph → ViewGraph → Layout → SVG`, with an optional self-contained HTML viewer around the SVG.
-The CLI owns file I/O and coordinates each stage. Named-state inputs preserve the
+The processing pipeline is `JSON → TerraformPlan → ArchitectureGraph → ViewGraph → Layout → SVG`, with an optional self-contained HTML viewer around the SVG.
+`src/lib.rs` owns the private modules. The public `generate(&str, &Options)` API
+returns an in-memory SVG/HTML and bounded, value-free diagnostic categories.
+The CLI owns file I/O, process invocation, output destinations and timings;
+`src/main.rs` translates its result into an exit status. Named-state inputs preserve the
 same boundaries and carry explicit cross-state relationships.
+The CLI and [browser Wasm binding](browser.md) share parsing, semantic projection,
+selection and single-plan composition through `generation`. Internal graph and
+layout types remain private. Browser timing spans are no-ops; the Worker measures
+elapsed generation time. Native-only dependencies and provider evidence are
+excluded from `wasm32`; browser generation never invokes Terraform or filesystem I/O.
 Explicit [TOML generation settings](configuration.md) are decoded in
 `cli::settings`. Typed layers merge common settings, a selected preset and explicit
 CLI overrides before populating the existing generation options. File access is

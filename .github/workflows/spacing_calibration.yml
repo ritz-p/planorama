@@ -37,9 +37,9 @@ jobs:
           shared-key: ${{ hashFiles('build.rs', 'assets/**') }}-tests
           cache-workspace-crates: 'false'
       - name: Compile calibration
-        run: cargo test --locked --bin planorama budget_calibration --no-run
+        run: cargo test --locked --lib budget_calibration --no-run
       - name: Run calibration
-        run: cargo test --locked --bin planorama budget_calibration -- --ignored --nocapture
+        run: cargo test --locked --lib budget_calibration -- --ignored --nocapture
       - name: Upload spacing comparison
         uses: actions/upload-artifact@v7.0.2
         with:

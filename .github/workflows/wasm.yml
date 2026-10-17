@@ -1,0 +1,25 @@
+name: Browser Wasm
+on:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: wasm-${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: true
+jobs:
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+      - name: Build pinned environment
+        run: docker compose up -d --build dev
+      - name: Build native and browser generators
+        run: |
+          docker compose exec -T dev cargo build --locked --release --bin planorama
+          docker compose exec -T dev sh scripts/build-wasm.sh
+      - name: Verify browser generation and offline isolation
+        run: docker compose exec -T dev node tests/browser/wasm.cjs

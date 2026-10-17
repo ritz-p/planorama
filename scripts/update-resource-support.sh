@@ -6,4 +6,4 @@ case "${1:-}" in
   --check) unset UPDATE_RESOURCE_SUPPORT ;;
   *) echo 'Usage: sh scripts/update-resource-support.sh [--check]' >&2; exit 2 ;;
 esac
-cargo test --locked --bin planorama provider::aws::resource_support::generated_resource_support_is_current -- --exact
+cargo test --locked --lib provider::aws::resource_support::generated_resource_support_is_current -- --exact
