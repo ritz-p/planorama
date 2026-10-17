@@ -34,12 +34,11 @@ planorama plan.json --format html -o diagram.html
 
 `diagram.svg` または `diagram.html` をブラウザで開きます。バイナリを `PATH` に追加しない場合は `planorama` を展開先の実行ファイルへのパスに置き換えてください。カレントディレクトリに置いた場合は Linux/macOS で `./planorama`、Windows で `.\planorama.exe` です。
 
-Windows PowerShell 5.1 では `>` が UTF-16 になるため、JSON 変換行を次に置き換えて UTF-8 で保存します。
+Windows PowerShell 5.1 では、JSON 変換行を次に置き換えます。`cmd` のリダイレクトで Terraform の UTF-8 出力を直接保存し、PowerShell による文字列への変換を避けます。
 
 ```powershell
-$json = terraform show -json tfplan
+cmd /d /c "terraform show -json tfplan > plan.json"
 if ($LASTEXITCODE -ne 0) { throw 'terraform show failed' }
-[IO.File]::WriteAllText((Join-Path (Get-Location) 'plan.json'), ($json -join "`n"), (New-Object Text.UTF8Encoding($false)))
 ```
 
 既存の JSON があれば Terraform の2行は不要です。小規模な [サンプル入力](examples/plan.json) でも同じ生成コマンドを試せます。
