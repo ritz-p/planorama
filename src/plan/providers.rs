@@ -24,6 +24,17 @@ struct ResourceConfiguration<'a> {
 
 pub(super) fn enrich(plan: &Value, nodes: &mut [TerraformEntity]) {
     let configuration = &plan["configuration"];
+    let mut current_changes = BTreeMap::new();
+    for change in plan["resource_changes"].as_array().into_iter().flatten() {
+        if change.get("deposed").is_none() {
+            if let Some(address) = change["address"].as_str() {
+                current_changes
+                    .entry(address)
+                    .and_modify(|entry| *entry = None)
+                    .or_insert(Some(change));
+            }
+        }
+    }
     let mut resources = BTreeMap::new();
     collect(
         &configuration["root_module"],
@@ -52,7 +63,13 @@ pub(super) fn enrich(plan: &Value, nodes: &mut [TerraformEntity]) {
                 && resource["mode"] == "managed"
             {
                 if let Some(expression) = expression {
-                    node.region_override = resource_region(node, expression, plan);
+                    node.region_override = current_changes
+                        .get(node.address.as_str())
+                        .copied()
+                        .flatten()
+                        .and_then(|change| {
+                            resource_region(node, expression, &plan["terraform_version"], change)
+                        });
                 }
             }
             if *verified_version && node.action == Action::Delete {
@@ -126,7 +143,8 @@ fn collect<'a>(
 fn resource_region(
     node: &TerraformEntity,
     expression: &Value,
-    plan: &Value,
+    terraform_version: &Value,
+    change: &Value,
 ) -> Option<RegionScope> {
     if node.mode != EntityMode::Managed
         || !matches!(
@@ -137,7 +155,7 @@ fn resource_region(
             node.resource_type.as_str(),
             "aws_vpc" | "aws_subnet" | "aws_cloudwatch_log_group"
         )
-        || plan["terraform_version"] != "1.9.8"
+        || terraform_version != "1.9.8"
     {
         return None;
     }
@@ -159,13 +177,7 @@ fn resource_region(
     ) {
         return None;
     }
-    let mut changes = plan["resource_changes"]
-        .as_array()?
-        .iter()
-        .filter(|change| change["address"] == node.address && change.get("deposed").is_none());
-    let change = changes.next()?;
-    if changes.next().is_some()
-        || change["change"]["after"]["region"] != region.0
+    if change["change"]["after"]["region"] != region.0
         || !matches!(
             change["change"]["after_unknown"].get("region"),
             None | Some(Value::Bool(false))
