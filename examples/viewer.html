@@ -449,10 +449,16 @@ function diagramExport(context) {
             title.textContent = 'Destination unavailable in this export'; el.append(title);
           }
         }
-        for (const match of attr.value.matchAll(/url\(\s*['"]?([^)'"\s]+)['"]?\s*\)/g)) {
-          if (!match[1].startsWith('#') || !ids.has(match[1].slice(1))) throw new Error('Unavailable SVG definition');
+        if (['style', 'fill', 'stroke', 'filter', 'mask', 'clip-path', 'marker', 'marker-start', 'marker-mid', 'marker-end', 'cursor'].includes(attr.name)) {
+          for (const match of attr.value.matchAll(/url\(\s*['"]?([^)'"\s]+)['"]?\s*\)/gi)) {
+            if (!match[1].startsWith('#') || !ids.has(match[1].slice(1))) throw new Error('Unavailable SVG definition');
+          }
         }
       }
+    }
+    for (const diagram of [clone, ...clone.querySelectorAll('svg')]) {
+      diagram.setAttribute('role', 'img');
+      if (!diagram.hasAttribute('aria-labelledby')) diagram.setAttribute('aria-label', diagram === clone ? description : 'State: ' + (diagram.closest('[data-state-id]')?.dataset.stateId || 'diagram'));
     }
     const desc = document.createElementNS(svg.namespaceURI, 'desc');
     desc.textContent = description; clone.prepend(desc);
