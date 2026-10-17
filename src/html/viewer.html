@@ -12,6 +12,11 @@
 <main>
 <aside aria-label="Resources and relationships">
 <section aria-label="Export diagram"><button id="export-viewport" type="button">Export viewport SVG</button><p id="export-status" role="status"></p></section>
+<section aria-label="Export resource neighborhood">
+<label for="export-depth">Neighborhood depth</label><select id="export-depth"><option value="0">0</option><option value="1" selected>1</option><option value="2">2</option><option value="3">3</option></select>
+<button id="export-neighborhood" type="button">Export selected neighborhood SVG</button>
+<p>Follows rendered relationships in either direction, including associations and inferred connections; not runtime impact. Adds required context and preserves layout without repacking.</p>
+</section>
 <label for="search">Search resources</label>
 <input id="search" type="search" placeholder="Address, module, state, type or mode" autocomplete="off" aria-controls="results" aria-describedby="search-help">
 <div id="search-filters">

@@ -42,6 +42,104 @@ class ViewerTests {
         assert.deepEqual(errors, []);
         assert.deepEqual(remote, []);
     }
+    test_neighborhood_export_preserves_presentations_and_removes_unrelated_resources() {
+        for (const fixture of ['viewer', 'routes', 'association', 'deposed', 'aurora']) {
+            this.load('--state', 'one=tests/fixtures/' + fixture + '-plan.json', '--state', 'two=tests/fixtures/' + fixture + '-plan.json');
+            const candidates = this.driver.execute_script(`return [...document.querySelectorAll('#results button')].map(b => b.textContent)`);
+            for (const address of candidates.slice(0, 4)) {
+                const result = this.driver.find_elements(By.CSS_SELECTOR, '#results button').find(b => b.text === address);
+                result.click();
+                this.driver.execute_script(`
+                    document.getElementById('export-depth').value = '0';
+                    window.beforeExport = document.querySelector('#viewport').innerHTML;
+                    window.exportText = null; window.exportBlob = null;
+                    URL.createObjectURL = blob => { window.exportBlob = blob; return 'blob:export-test'; };
+                    HTMLAnchorElement.prototype.click = function () {};
+                `);
+                this.find('#export-neighborhood').send_keys(Keys.ENTER);
+                this.assertIn('download requested', this.find('#export-status').text);
+                this.driver.execute_script('window.exportBlob.text().then(text => { window.exportText = text; })');
+                wait(() => this.driver.execute_script('return !!window.exportText'), 'neighborhood serialization');
+                const checks = this.driver.execute_script(`
+                    const doc = new DOMParser().parseFromString(window.exportText, 'image/svg+xml');
+                    const meta = JSON.parse(doc.querySelector('metadata').textContent);
+                    const ids = [...doc.querySelectorAll('[id]')].map(el => el.id);
+                    const paths = [...doc.querySelectorAll('path[data-edge-kind]')];
+                    const live = document.querySelector('#viewport');
+                    return {
+                        unchanged: live.innerHTML === window.beforeExport,
+                        duplicates: ids.length !== new Set(ids).size,
+                        selected: meta.resources.includes(document.querySelector('[data-viewer-selected]').id),
+                        foreignState: [...doc.querySelectorAll('[data-state-id]')].some(el => el.dataset.stateId !== document.querySelector('[data-viewer-selected]').closest('[data-state-id]').dataset.stateId),
+                        broken: [...doc.querySelectorAll('[href]')].filter(el => !doc.getElementById(el.getAttribute('href').slice(1))).length,
+                        invalid: doc.querySelectorAll('parsererror, script, [data-viewer-selected], [data-hotspot-overlay]').length,
+                        count: meta.resources.length,
+                        targets: meta.resources.every(id => !!doc.getElementById(id)),
+                        resources: [...doc.querySelectorAll('[data-terraform-address][id], [data-source-identity][id]')].every(el => meta.resources.includes(el.id)),
+                        masks: [...doc.querySelectorAll('[data-occluder]')].every(el => meta.resources.includes(el.dataset.occluder)),
+                        context: JSON.parse(document.getElementById('viewer-data').textContent).filter(r => meta.resources.includes(r.id)).every(r => r.context.every(id => meta.resources.includes(id))),
+                        paths: paths.every(path => [...live.querySelectorAll('path[data-edge-kind]')].some(original => original.getAttribute('d') === path.getAttribute('d') && original.dataset.source === path.dataset.source && original.dataset.target === path.dataset.target)),
+                        summary: doc.documentElement.textContent.includes('Original layout, no repacking')
+                    };
+                `);
+                this.assertTrue(checks.unchanged); this.assertFalse(checks.duplicates); this.assertTrue(checks.selected);
+                this.assertFalse(checks.foreignState); this.assertEqual(checks.broken, 0); this.assertEqual(checks.invalid, 0);
+                this.assertTrue(checks.targets); this.assertTrue(checks.resources); this.assertTrue(checks.masks); this.assertTrue(checks.context);
+                this.assertTrue(checks.paths); this.assertTrue(checks.summary);
+            }
+        }
+    }
+    test_neighborhood_cross_state_scope_filtering_and_cancellation() {
+        this.load('--state', 'producer=tests/fixtures/multi/producer.json', '--state', 'consumer=tests/fixtures/multi/consumer.json', '--remote-state', 'consumer:data.terraform_remote_state.network=producer');
+        this.driver.execute_script(`
+            const path = document.querySelector('path[data-cross-state]');
+            document.getElementById(path.dataset.source).dispatchEvent(new MouseEvent('click', {bubbles:true}));
+            URL.createObjectURL = blob => { window.exportBlob = blob; return 'blob:export-test'; };
+            HTMLAnchorElement.prototype.click = function () {};
+        `);
+        this.find('#export-neighborhood').click();
+        this.assertIn('download requested', this.find('#export-status').text);
+        this.driver.execute_script('window.exportBlob.text().then(text => { window.exportText = text; })');
+        wait(() => this.driver.execute_script('return !!window.exportText'), 'cross-state export');
+        const checks = this.driver.execute_script(`
+            const doc = new DOMParser().parseFromString(window.exportText, 'image/svg+xml');
+            const meta = JSON.parse(doc.querySelector('metadata').textContent);
+            return {states: doc.querySelectorAll('[data-state-id]').length, paths: doc.querySelectorAll('[data-cross-state]').length,
+                remote: meta.relationships.some(edge => edge.provenance.some(p => p.kind === 'remote-state')),
+                dangling: [...doc.querySelectorAll('[href]')].some(el => !doc.getElementById(el.getAttribute('href').slice(1)))};
+        `);
+        this.assertEqual(checks.states, 2); this.assertGreater(checks.paths, 0); this.assertTrue(checks.remote); this.assertFalse(checks.dangling);
+        const standalone = join(this.temp, 'neighborhood.svg');
+        writeFileSync(standalone, this.driver.execute_script('return window.exportText'));
+        this.driver.get(pathToFileURL(standalone).href);
+        this.assertEqual(this.driver.execute_script('return document.documentElement.localName'), 'svg');
+        this.load('tests/fixtures/viewer-plan.json', '--focus', 'aws_ecs_service.app', '--focus-depth', '0');
+        this.find('#export-neighborhood').click();
+        this.assertIn('Select a resource', this.find('#export-status').text);
+        this.find('#results button').click();
+        this.driver.execute_script(`
+            URL.createObjectURL = blob => { window.exportBlob = blob; return 'blob:export-test'; };
+            HTMLAnchorElement.prototype.click = function () {};
+        `);
+        this.find('#export-neighborhood').click();
+        this.assertIn('download requested', this.find('#export-status').text);
+        this.driver.execute_script('window.exportBlob.text().then(text => { window.exportText = text; })');
+        wait(() => this.driver.execute_script('return !!window.exportText'), 'filtered export');
+        this.assertTrue(this.driver.execute_script(`
+            const doc = new DOMParser().parseFromString(window.exportText, 'image/svg+xml');
+            const source = new Set(JSON.parse(document.getElementById('viewer-data').textContent).map(r => r.id));
+            return JSON.parse(doc.querySelector('metadata').textContent).resources.every(id => source.has(id));
+        `));
+        this.driver.execute_script(`
+            const selected = document.querySelector('[data-viewer-selected]');
+            selected.getBBox = () => { throw new Error('Geometry unavailable'); };
+            for (const el of selected.querySelectorAll('*')) if (el.getBBox) el.getBBox = selected.getBBox;
+            window.exportBlob = null;
+        `);
+        this.find('#export-neighborhood').click();
+        this.assertIn('Export cancelled', this.find('#export-status').text);
+        this.assertIsNone(this.driver.execute_script('return window.exportBlob'));
+    }
     test_viewport_export_is_standalone_and_preserves_live_view() {
         for (const fixture of ['viewer', 'routes', 'association', 'deposed']) {
             this.load('--state', 'one=tests/fixtures/' + fixture + '-plan.json', '--state', 'two=tests/fixtures/' + fixture + '-plan.json', '--html-diagnostics');
