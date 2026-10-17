@@ -171,6 +171,7 @@ fn document(
                 "/* VIEWER_MODULES */",
                 concat!(
                     include_str!("html/metadata.js"),
+                    include_str!("html/export.js"),
                     "\n",
                     include_str!("html/navigation.js"),
                     "\n",
