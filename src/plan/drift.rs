@@ -27,7 +27,7 @@ pub(super) fn collect(
             super::parse_action(&change["change"]["actions"]),
         ));
     }
-    super::providers::enrich(&plan["configuration"], &mut changes);
+    super::providers::enrich(plan, &mut changes);
     let mut groups = BTreeMap::<_, Vec<_>>::new();
     for change in changes {
         groups

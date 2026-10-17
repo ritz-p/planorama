@@ -11,6 +11,7 @@ pub struct TerraformEntity {
     pub provider: ProviderIdentity,
     pub provider_configuration: Option<ProviderConfiguration>,
     pub has_region_override: bool,
+    pub region_override: Option<super::RegionScope>,
     pub module: String,
     pub action: Action,
     pub mode: EntityMode,

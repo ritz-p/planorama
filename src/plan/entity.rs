@@ -43,5 +43,6 @@ pub(super) fn parse(resource: &Value, address: &str, action: Action) -> Terrafor
         provider,
         provider_configuration: None,
         has_region_override: false,
+        region_override: None,
     }
 }

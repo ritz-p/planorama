@@ -3,6 +3,57 @@ use crate::{plan, semantic};
 use serde_json::json;
 
 #[test]
+fn drift_only_provider_binding_preserves_alias_and_scope_without_reusing_deposed_evidence() {
+    let input = json!({
+        "format_version":"1.2",
+        "resource_drift":[
+            {"address":"aws_vpc.main","type":"aws_vpc","change":{"actions":["update"]}},
+            {"address":"aws_vpc.main","type":"aws_vpc","deposed":"old","change":{"actions":["delete"]}}
+        ],
+        "configuration":{
+            "provider_config":{"aws.paris":{
+                "full_name":"hashicorp/aws","alias":"paris",
+                "expressions":{"region":{"constant_value":"eu-west-3"}}
+            }},
+            "root_module":{"resources":[{"address":"aws_vpc.main","provider_config_key":"aws.paris"}]}
+        }
+    });
+    let raw = plan::parse(&input.to_string()).unwrap();
+    let current = raw.nodes.iter().find(|n| n.deposed_key.is_none()).unwrap();
+    let binding = current.provider_configuration.as_ref().unwrap();
+    assert!(current.provider.is_explicit());
+    assert_eq!(binding.key, "aws.paris");
+    assert_eq!(binding.alias.as_deref(), Some("paris"));
+    assert_eq!(binding.region.as_ref().unwrap().0, "eu-west-3");
+    assert!(
+        raw.nodes
+            .iter()
+            .find(|n| n.deposed_key.is_some())
+            .unwrap()
+            .provider_configuration
+            .is_none()
+    );
+    let graph = semantic::transform(&raw);
+    let current = graph
+        .nodes
+        .iter()
+        .find(|n| n.deposed_key.is_none())
+        .unwrap();
+    assert_eq!(
+        current
+            .entity
+            .scope
+            .as_ref()
+            .unwrap()
+            .region
+            .as_ref()
+            .unwrap()
+            .0,
+        "eu-west-3"
+    );
+}
+
+#[test]
 fn drift_does_not_overwrite_any_planned_action_or_expose_values() {
     for actions in [
         json!(["create"]),

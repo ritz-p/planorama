@@ -1,6 +1,8 @@
 use super::address::static_address;
 use super::references::qualify;
-use crate::model::{ProviderConfiguration, ProviderIdentity, RegionScope, TerraformEntity};
+use crate::model::{
+    Action, EntityMode, ProviderConfiguration, ProviderIdentity, RegionScope, TerraformEntity,
+};
 use serde_json::Value;
 use std::collections::BTreeMap;
 
@@ -8,7 +10,31 @@ use std::collections::BTreeMap;
 #[path = "../../tests/unit/plan/providers.rs"]
 mod tests;
 
-pub(super) fn enrich(configuration: &Value, nodes: &mut [TerraformEntity]) {
+#[cfg(test)]
+#[path = "../../tests/unit/plan/region_overrides.rs"]
+mod region_override_tests;
+
+struct ResourceConfiguration<'a> {
+    provider: ProviderIdentity,
+    configuration: ProviderConfiguration,
+    resource: &'a Value,
+    verified_version: bool,
+    ambiguous: bool,
+}
+
+pub(super) fn enrich(plan: &Value, nodes: &mut [TerraformEntity]) {
+    let configuration = &plan["configuration"];
+    let mut current_changes = BTreeMap::new();
+    for change in plan["resource_changes"].as_array().into_iter().flatten() {
+        if change.get("deposed").is_none() {
+            if let Some(address) = change["address"].as_str() {
+                current_changes
+                    .entry(address)
+                    .and_modify(|entry| *entry = None)
+                    .or_insert(Some(change));
+            }
+        }
+    }
     let mut resources = BTreeMap::new();
     collect(
         &configuration["root_module"],
@@ -17,12 +43,37 @@ pub(super) fn enrich(configuration: &Value, nodes: &mut [TerraformEntity]) {
         &mut resources,
     );
     for node in nodes.iter_mut().filter(|node| node.deposed_key.is_none()) {
-        if let Some((provider, configuration, has_region_override)) =
-            resources.get(&static_address(&node.address))
-        {
-            node.has_region_override = *has_region_override;
+        if let Some(binding) = resources.get(&static_address(&node.address)) {
+            let ResourceConfiguration {
+                provider,
+                configuration,
+                resource,
+                verified_version,
+                ambiguous,
+            } = binding;
+            let expression = resource["expressions"].get("region");
+            node.has_region_override = expression.is_some() || *ambiguous;
             if !node.provider.is_explicit() {
                 node.provider = provider.clone();
+            }
+            if *verified_version
+                && !ambiguous
+                && node.provider == *provider
+                && resource["type"] == node.resource_type
+                && resource["mode"] == "managed"
+            {
+                if let Some(expression) = expression {
+                    node.region_override = current_changes
+                        .get(node.address.as_str())
+                        .copied()
+                        .flatten()
+                        .and_then(|change| {
+                            resource_region(node, expression, &plan["terraform_version"], change)
+                        });
+                }
+            }
+            if *verified_version && node.action == Action::Delete {
+                node.has_region_override = true;
             }
             let mut configuration = configuration.clone();
             if !node.provider.is_aws() {
@@ -35,11 +86,11 @@ pub(super) fn enrich(configuration: &Value, nodes: &mut [TerraformEntity]) {
     }
 }
 
-fn collect(
-    module: &Value,
+fn collect<'a>(
+    module: &'a Value,
     scope: &str,
     providers: &Value,
-    found: &mut BTreeMap<String, (ProviderIdentity, ProviderConfiguration, bool)>,
+    found: &mut BTreeMap<String, ResourceConfiguration<'a>>,
 ) {
     for resource in module["resources"].as_array().into_iter().flatten() {
         if let (Some(address), Some(key)) = (
@@ -57,13 +108,23 @@ fn collect(
                 account: None,
                 account_conflict: false,
             };
+            let address = qualify(scope, address);
+            if let Some(existing) = found.get_mut(&address) {
+                existing.ambiguous = true;
+                continue;
+            }
             found.insert(
-                qualify(scope, address),
-                (
+                address,
+                ResourceConfiguration {
                     provider,
                     configuration,
-                    resource["expressions"].get("region").is_some(),
-                ),
+                    resource,
+                    ambiguous: false,
+                    verified_version: matches!(
+                        providers[key]["version_constraint"].as_str(),
+                        Some("6.0.0" | "= 6.0.0")
+                    ),
+                },
             );
         }
     }
@@ -77,6 +138,57 @@ fn collect(
             );
         }
     }
+}
+
+fn resource_region(
+    node: &TerraformEntity,
+    expression: &Value,
+    terraform_version: &Value,
+    change: &Value,
+) -> Option<RegionScope> {
+    if node.mode != EntityMode::Managed
+        || !matches!(
+            node.action,
+            Action::Create | Action::Update | Action::Unchanged | Action::Replace
+        )
+        || !matches!(
+            node.resource_type.as_str(),
+            "aws_vpc" | "aws_subnet" | "aws_cloudwatch_log_group"
+        )
+        || terraform_version != "1.9.8"
+    {
+        return None;
+    }
+    let region = static_region(&node.provider, expression)?;
+    if !matches!(
+        region.0.as_str(),
+        "us-east-1"
+            | "us-east-2"
+            | "us-west-1"
+            | "us-west-2"
+            | "eu-west-1"
+            | "eu-west-2"
+            | "eu-west-3"
+            | "eu-central-1"
+            | "ap-northeast-1"
+            | "ap-northeast-2"
+            | "ap-southeast-1"
+            | "ap-southeast-2"
+    ) {
+        return None;
+    }
+    if change["change"]["after"]["region"] != region.0
+        || !matches!(
+            change["change"]["after_unknown"].get("region"),
+            None | Some(Value::Bool(false))
+        )
+        || change["change"]["after_unknown"] == true
+        || change["change"]["after_sensitive"] == true
+        || change["change"]["after_sensitive"]["region"] == true
+    {
+        return None;
+    }
+    Some(region)
 }
 
 pub(super) fn static_account(
