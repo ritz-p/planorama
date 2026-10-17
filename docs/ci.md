@@ -10,6 +10,23 @@ generation inputs change, inspect the diff, and include the outputs in the PR.
 to the same PR branch, dispatch validation on that head, and publish results
 through **Report PR validation**.
 
+## Toolchain and dependency cache
+
+Local setup and check commands live in [CONTRIBUTING](../CONTRIBUTING.md).
+Ordinary Formatting, Tests and Clippy use the pinned `rust-toolchain.toml` on
+Ubuntu runners. Tests and Clippy cache Cargo registry/git data and dependency
+build products with `Swatinem/rust-cache`; workspace crates are rebuilt each run.
+The `v1-rust-dependencies` prefix excludes older workspace-product caches.
+Keys include the runner/compiler environment, Cargo manifests and lockfile,
+toolchain/Cargo configuration, build-related environment and the `build.rs` /
+`assets/**` hash. Test suites share the `-tests` key; Clippy uses a separate key.
+Cargo still checks rebuild requirements, and cache misses do not reduce coverage.
+
+MSRV uses Docker with Rust 1.85.0. Its workflow runs for changes to Cargo.toml,
+Cargo.lock, rust-toolchain.toml, Dockerfile, .dockerignore, compose.yaml, the MSRV
+workflow or shared validation-checkout helper. See [post-merge validation](#validation-after-merging)
+for cache population and direct pushes to main.
+
 ## Cancelling superseded validation
 
 **Cargo fmt**, **Cargo clippy** and **Cargo test** use workflow-level concurrency.
@@ -594,7 +611,7 @@ git push
 
 Check the staged changes before committing if the working tree already contains
 other edits. Local regeneration remains available through the
-[same Docker/PowerShell entry points](../README.md#svg-の更新).
+[same Docker/PowerShell entry points](../CONTRIBUTING.md#svg-の更新).
 
 ## Branch updates and permissions
 

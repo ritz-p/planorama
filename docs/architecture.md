@@ -214,4 +214,4 @@ large-fixture unit comparisons run after merge and nightly; focused correctness
 and full CLI snapshots remain in PR checks. See [test categories](ci.md#deferred-routing-regressions-253).
 Fixtures are
 local to each test, with no shared mutable state or test-order dependency.
-Run the Docker checks in the [README](../README.md).
+Run the Docker checks in the [contributor guide](../CONTRIBUTING.md#検証).

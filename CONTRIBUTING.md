@@ -1,0 +1,93 @@
+# 開発者ガイド
+
+利用者向けの導入・生成手順は [README](README.md)、開発ルールは [AGENTS.md](AGENTS.md) を参照してください。
+CI の起動条件・公開チェック・復旧手順の正本は [docs/ci.md](docs/ci.md) です。
+
+## 開発環境
+
+Docker Desktop を Linux コンテナモードで起動し、リポジトリのルートで実行します。
+
+```sh
+docker compose up -d --build dev
+docker compose exec -T dev cargo build --locked
+docker compose exec -T dev mkdir -p output
+docker compose exec -T dev cargo run --locked -- examples/plan.json -o output/diagram.svg
+docker compose exec -T dev cargo run --locked -- --help
+```
+
+開発ツールチェーンは Rust 1.85.1、MSRV は 1.85.0 です。Dockerfile と `rust-toolchain.toml` を揃え、依存関係の更新時は `Cargo.lock` もコミットします。
+ソースをコンテナへバインドマウントし、Cargo registry/git とビルド成果物は named volume に保存します。
+`docker compose stop dev` / `docker compose start dev` で停止・再開し、Dockerfile の変更後は `docker compose up -d --build dev` で再作成します。
+
+開発イメージには Terraform 1.9.8、SVG 描画確認用の `rsvg-convert` と DejaVu フォント、HTML 操作テスト用の Chromium・ChromeDriver・Node.js を含みます。
+実環境の plan/state や認証情報をコミットしないでください。
+
+## 検証
+
+```sh
+docker compose exec -T dev cargo fmt --all --check
+docker compose exec -T dev cargo test --locked --all-targets --all-features
+docker compose exec -T dev cargo clippy --locked --all-targets --all-features -- -D warnings
+docker compose exec -T dev cargo build --locked
+docker compose exec -T dev sh -c 'node --test tests/ci/*.test.cjs'
+docker compose exec -T dev node tests/browser/viewer.cjs
+docker compose exec -T dev node --test tests/browser/webdriver.test.cjs tests/support/tooling.test.cjs
+```
+
+`tests/unit` は実装モジュール内に読み込む単体テスト、`tests/integration` は CLI 経由の結合テストです。Cargo.toml に4つの結合テスト対象を登録しています。
+`--bin planorama` で単体テスト、`--test rendering` などで結合テストを選択できます。
+テストプロファイルは `opt-level = 1` で経路計算を高速化し、debug assertion と overflow check を有効にしています。
+
+MSRV の確認:
+
+```sh
+docker build --build-arg RUST_VERSION=1.85.0 -t planorama-msrv .
+docker run --rm --mount type=bind,source=.,target=/workspace --env CARGO_TARGET_DIR=/tmp/planorama-target planorama-msrv cargo +1.85.0 test --locked --all-targets --all-features
+```
+
+CI は [standard / large の2 suite](docs/ci.md#parallel-rust-test-suites) の成功を `Tests` に集約します。
+通常実行で ignore する大型回帰は [Routing regressions](docs/ci.md#deferred-routing-regressions-253) を参照してください。
+`cargo test` を継続する理由と nextest の比較は [計測結果](docs/ci.md#test-runner-evaluation-254) にあります。
+
+## SVG の更新
+
+レンダラー・生成入力を変更した場合は、Docker 内で再生成し、差分と表示を確認して実装と同じ PR に含めます。
+
+```sh
+docker compose exec -T dev sh scripts/update-examples.sh
+```
+
+PowerShell では `./scripts/update-examples.ps1` が開発コンテナを起動して同じ処理を実行します。
+[scripts/generated-svgs.txt](scripts/generated-svgs.txt) が生成対象の正本です。アイコン原本は含みません。
+`hierarchy-routing.svg` と `port-collisions.svg` は既存の snapshot テストを完全一致で選択して更新し、更新処理で全テストは実行しません。
+
+通常 PR では全 SVG を自動生成しません。復旧・補助用の **Update SVG examples** と、その後の検証・status 報告は [CI の生成・復旧手順](docs/ci.md#generation-and-review) を参照してください。
+配置・配線・寸法・描画対象が変わる場合は `layout-quality` ラベルを付け、最終コミットの [Layout quality](docs/ci.md#layout-quality-comparison-390) の結果を確認します。
+
+## HTML の更新
+
+```sh
+docker compose exec -T dev cargo run --locked -- tests/fixtures/viewer-plan.json --format html -o examples/viewer.html
+```
+
+大型の複数 account/state 例は専用の [生成コマンド](examples/multi-account/README.md#regeneration-and-validation) を使います。
+HTML の変更は [ブラウザ検証](docs/viewer.md#viewer-source-modules) と上記の操作テストで確認します。
+
+## Terraform fixture
+
+```sh
+docker compose run --rm terraform-example
+docker compose exec -T dev cargo run --locked -- output/terraform-plan.json -o output/terraform.svg
+```
+
+組み込みリソースと架空のローカル state を使い、クラウド認証情報は不要です。`apply` は実行しません。
+通常の Rust テストはコミット済み JSON を使用します。AWS の追加 fixture は [オフライン生成例](examples/terraform-large/README.md) と [Terraform から取得した例](tests/fixtures/aws-captured/README.md) を参照してください。
+provider evidence の追加検証は [専用手順](docs/provider-evidence.md#privacy-and-validation) にあります。
+
+## CI・配布
+
+- [PR ごとのキャンセル制御](docs/ci.md#cancelling-superseded-validation)、[依存キャッシュと MSRV](docs/ci.md#toolchain-and-dependency-cache)、[マージ後の検証](docs/ci.md#validation-after-merging)
+- [SVG 自動コミット後の status 報告](docs/ci.md#pr-results-and-actions-jobs)と[失敗時の復旧](docs/ci.md#recovery)
+- [ネイティブ CLI の公開・再実行手順](docs/releases.md#開発者向け公開手順)
+
+ブランチ・PR・レビューの進め方は [AGENTS.md](AGENTS.md#ブランチ運用) に従います。
