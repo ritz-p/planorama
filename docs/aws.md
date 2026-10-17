@@ -81,10 +81,31 @@ or `Region: unknown` label in SVG and HTML. Equal type/mode resources from diffe
 regions stay in one group without a shared region claim. See the maintained
 [logical-region example](../examples/logical-regions.svg), generated from
 [this fixture](../tests/fixtures/logical-regions-plan.json).
-An explicit resource-level `region` expression currently makes regional scope
-unknown, even when literal: overrides are not yet resolved. The provider's region
-and binding remain intact. Missing/dynamic bindings, unsupported types and deposed
-objects without regional evidence also remain unknown. Global classification is
+Static resource-level `region` overrides are supported for managed `aws_vpc`,
+`aws_subnet` and `aws_cloudwatch_log_group`, verified with Terraform **1.9.8** and
+HashiCorp AWS **6.0.0**. The configuration must pin `version_constraint` to `6.0.0`
+(optionally prefixed by `= `); a range, missing version or another version does
+not prove this schema. AWS v5 fixtures do not support these overrides.
+The reference-free literal must equal the unique current resource change's known,
+non-sensitive `after.region`. Initial accepted literals are `us-east-1`, `us-east-2`,
+`us-west-1`, `us-west-2`, `eu-west-1`, `eu-west-2`, `eu-west-3`, `eu-central-1`,
+`ap-northeast-1`, `ap-northeast-2`, `ap-southeast-1` and `ap-southeast-2`.
+See the [captured evidence](../tests/fixtures/aws-region-overrides/README.md) and
+[maintained example](../examples/region-overrides.svg).
+
+A verified override takes precedence over the provider region. An absent override
+uses the existing provider fallback; an explicit dynamic, unknown, invalid,
+conflicting or unsupported override stays unknown without fallback. Ordinary
+attributes such as data `aws_region` or `aws_vpc_endpoint_service.region` do not
+establish deployment scopes. Data overrides are not resolved in this initial scope.
+Current create/update/no-op/replacement objects use after evidence; deleting
+objects with this verified provider version stay region-unknown, including when
+the current configuration has no override. Deposed objects never borrow current
+configuration. Before values alone are not accepted as override proof.
+The provider's original region, source, configuration identity and independent
+account evidence remain intact; resolving a region does not establish an account.
+Only the accepted scope value is retained, not arbitrary resource attributes.
+Missing/dynamic bindings and unsupported types remain unknown. Global classification is
 explicit and independent of provider region; policy conditions such as
 `aws:RequestedRegion` never determine deployment scope.
 
