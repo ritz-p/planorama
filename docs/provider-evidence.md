@@ -2,8 +2,8 @@
 
 Plan JSON alone never proves an AWS account. Terraform omits dynamic provider
 blocks from that representation, including roles that could change the final
-account. Existing JSON-only invocations keep their provider bindings, regions,
-resource identities and state separation, but no longer receive account labels.
+account. JSON-only invocations retain provider bindings, regions, resource
+identities and state separation while leaving account scope unknown.
 
 ## Input contract
 

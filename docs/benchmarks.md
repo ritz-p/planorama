@@ -111,8 +111,8 @@ It records bounded-pass work and per-edge shape without shortest-route searches.
 
 ## Initial baseline (2026-10-09)
 
-Revision `4389b6092a1f0290a9f4ee48ed77a929ba368e90` plus this benchmark-only
-working change; Windows x86_64, AMD64 Family 25 Model 33 Stepping 2, 32 logical
+Revision `4389b6092a1f0290a9f4ee48ed77a929ba368e90` plus the benchmark harness;
+Windows x86_64, AMD64 Family 25 Model 33 Stepping 2, 32 logical
 processors, Rust 1.85.1 MSVC / LLVM 19.1.7, release profile, one run per case.
 Input fingerprints are included so future generators cannot silently change work.
 

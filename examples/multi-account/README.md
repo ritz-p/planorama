@@ -60,9 +60,8 @@ validates the actual saved-plan CLI using a local STS fixture.
 
 ## Measurements and limitations
 
-The previous account-panel layout and timing baseline used JSON-only account
-inference and no longer describes supported output. Use the measurement script
-above for current geometry, path and byte counts. For optional timings, run
+Use the measurement script above for current geometry, path and byte counts.
+For optional timings, run
 `benchmarks::multi_account::baseline` with `--release -- --ignored --nocapture`.
 For normal SVG/HTML generation, `--timings` reports per-stage and per-state costs
 without running a benchmark; see the [CLI measurement commands](../../docs/benchmarks.md#cli-stage-timings).
@@ -75,6 +74,5 @@ crops under `output/multi-account-review`; its account crop uses the whole state
 when account evidence is absent.
 
 The concentrated [routing stress fixture](../../tests/fixtures/routing-stress/account-high-fanin.json)
-is excluded from routine rendering because of its cost. It originally exposed
-the reserved-port routing panic fixed in #378. Spacing calibration remains in
+is excluded from routine rendering because of its cost. Spacing calibration is in
 [spacing calibration](../terraform-large/spacing-calibration.md).

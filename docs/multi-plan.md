@@ -27,18 +27,11 @@ Root `output_changes` actions are matched to configured outputs by name within e
 
 Resolved mappings between spatial cards appear as blue dashed cross-state dependency lines with one explanation in the document header. Their blue color identifies cross-state provenance and does not follow endpoint or producer output actions. These paths expose `data-source-state`, `data-target-state`, `data-remote-state` and `data-output`; source/target DOM references point into their own state sections. Mappings with a logical endpoint retain the chain in `cross-state-relationships` metadata without a path or path DOM-reference attributes. These relationships live separately from state-local graphs and never introduce containment. Source nodes removed by semantic lowering are not replaced with a guessed endpoint. Unmapped inputs retain independent-state output.
 
-One shared **Relationship lines** legend precedes the state sections in SVG and
-HTML. It includes relationship action colors from every displayed state, even
-when the first state has no relationships. No qualifying relationships means no
-legend or reserved height. Resource/action summaries, checks, plan status,
-annotations and **Relationship Resources** indexes stay within their states;
-equal visible relationship numbers in different states refer to independent entries.
-`--hide-relationship-legend` omits the shared relationship explanations and the
-cross-state header explanation, retaining the compact relationship action colors.
-The reduced measured height is applied once to state sections and routed endpoints.
-The optional [Markdown coverage report](coverage.md) sums input/selected/excluded
-resource counts across states without merging resource identities. State headings
-wrap within the shared content width.
+Named states share one [relationship legend](relationships.md#legend-and-meaning),
+including compact mode. Resource/action summaries, checks, plan status, annotations
+and relationship indexes stay within each state; equal visible numbers identify
+independent entries. The optional [coverage report](coverage.md) sums state counts
+without merging resource identities. State headings wrap within the shared width.
 
 Use `--remote-state CONSUMER:DATA_ADDRESS=PRODUCER` to explicitly connect an exact `data.terraform_remote_state.NAME.outputs.OUTPUT` traversal to a loaded producer state. Repeat mappings as needed; conflicting producers remain ambiguous and emit no relationship. Root output provenance must be complete and nonempty. `--diagnostics` reports successful chains and unmapped, missing or incomplete sources without backend configuration or output values. The resolver handles direct exact traversals, including statically identified module instances; it does not guess backend identity or resolve dynamic output selections.
 

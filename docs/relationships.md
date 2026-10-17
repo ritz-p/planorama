@@ -32,6 +32,8 @@ Association, Connection, Containment. Subscription, Event source and Event targe
 the view. Each cell keeps its complete sample and wrapped explanation.
 On narrow diagrams, a single column puts the sample above
 the text; each row reserves the height of its tallest cell.
+Multiple columns require at least 398px per cell with a 24px gap; individual
+cells stop widening at 640px.
 
 Single-plan output reserves the measured legend height before checks and annotations.
 Named-state SVG and HTML show one shared legend above all state sections, using
@@ -114,11 +116,8 @@ CloudWatch alarms use Monitors and inverse Monitored by rows only with the
 rows never create network connections or additional dependency edges.
 
 Auto Scaling Policies use `Auto Scaling group` and inverse `Scaling policy` rows
-only for a complete, unique explicit `autoscaling_group_name` reference to a
-current AWS Auto Scaling Group using the same provider configuration and with
-matching known planned target/name values. The inverse is provider-specific
-presentation, not a generic reverse-reference facility, and it creates no
-additional graph edge.
+under the [AWS ownership proof](aws.md#resource-roles-and-data). These are
+provider-specific reference rows, not additional graph edges.
 
 Small white circles mark final card ports: the source of a Dependency and both
 ends of Association/Connection paths. Containment has no endpoint circles.
