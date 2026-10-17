@@ -214,29 +214,18 @@ and explicit counts, equally in offline SVG and HTML. Policy and Controller have
 visible explanations in the card heading. See the synthetic
 [all-action example](../examples/logical-actions.svg).
 
-Diagram filtering/reflow from #431 is an explicit follow-up, separate from search
-result facets. It requires coordinated annotation/state/canvas reflow and selection/reference target
-availability, including visible counts and keyboard-accessible controls. The current
-viewer has no runtime layout engine: hiding rows alone would leave stale geometry
-and links. That follow-up must distinguish filtered targets from absent resources
-and must never restore resources excluded by CLI focus or changed-only selection.
+Search facets filter results, not the diagram. Runtime diagram filtering and
+reflow remain unimplemented; CLI [selection](filtering.md) determines the generated
+view. The viewer cannot restore excluded resources.
 
-The Relationship lines card has a 960px width cap in both SVG and HTML. Its five
-base entries use two columns (2 / 2 / 1). Subscription, Event source and Event target entries are
-appended when present: one adds a full third row (2 / 2 / 2), and both add a fourth
-row (2 / 2 / 2 / 1). The card falls back to one column when space is narrow.
-The architecture canvas retains its own width; named states share one legend.
+SVG and HTML share the [relationship legend](relationships.md#legend-and-meaning),
+including conditional Subscription, Event source and Event target entries and
+the compact `--hide-relationship-legend` presentation.
 
 The [representative example](../examples/viewer.html) includes logical resources,
 Uses references, unresolved references, managed/data resources and component
-membership. Regenerate it from the committed fixture:
-
-```sh
-docker compose exec -T dev cargo run --locked -- tests/fixtures/viewer-plan.json --format html -o examples/viewer.html
-```
-
-HTML is maintained with this command, separately from the SVG writeback manifest;
-the representative HTML snapshot is checked by the CLI integration tests.
+membership. Follow [HTML regeneration](../CONTRIBUTING.md#html-の更新), separately
+from the SVG writeback manifest. CLI integration tests check this HTML snapshot.
 Rust CLI tests check safe serialization, target IDs, selection and unchanged SVG
 content. `docker compose exec -T dev node tests/browser/viewer.cjs` runs Chromium
 against local files with networking disabled, checking search, keyboard controls,

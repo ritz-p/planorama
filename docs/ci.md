@@ -287,11 +287,10 @@ This is one local observation, not a CI time threshold or hosted-runner estimate
 **Routing regressions** runs after every PR merge into `main`, nightly at 18:23 UTC
 (03:23 JST), and on manual dispatch. Post-merge checkout uses the event's default
 branch commit, never the PR head. Scheduled runs use the default branch; manual
-runs use the selected revision. This workflow must merge before its automatic
-triggers and dispatch are available.
+runs use the selected revision.
 
-Only these three `deferred_regression_` unit tests are ignored by ordinary Cargo
-runs. Their assertion bodies are unchanged:
+These three `deferred_regression_` unit tests are excluded from ordinary Cargo
+runs and selected by this workflow:
 
 | Test suffix | Reason for deferral | Focused coverage retained on PRs |
 | --- | --- | --- |
@@ -508,7 +507,9 @@ the ordinary suite does not acquire their substantial routing cost. Maintained
 SVG regeneration builds the release binary for this example. HTML remains an
 explicitly regenerated snapshot outside automatic SVG-only writeback.
 
-Regenerate locally when changing these inputs:
+Regenerate locally when changes to these inputs affect rendering behavior or
+generated diagrams. Documentation and test-only changes that leave diagram
+generation unchanged do not require regeneration.
 
 - Renderer and build inputs: `src/**`, `build.rs`, `assets/**`, `Cargo.toml`,
   `Cargo.lock`, `rust-toolchain.toml` and `.cargo/**`.
@@ -741,9 +742,7 @@ workflow execution has been satisfied.
 
 Do not require **Generate SVG examples** or **Commit SVG updates and start
 validation**: manual generation is optional and creates no pending status when
-not dispatched. Before rollout, remove any such requirement from repository or
-organization rules. The repository's main ruleset inspected for #405 contained no
-required status checks; no rule change was needed.
+not dispatched.
 
 See GitHub's [required-check rules and event restrictions](https://docs.github.com/en/pull-requests/how-tos/merge-and-close-pull-requests/troubleshooting-required-status-checks)
 and [Commit Status API](https://docs.github.com/en/rest/commits/statuses).
@@ -770,27 +769,19 @@ on the default branch. Editing its definition only in a PR cannot activate that
 change. Ordinary PR-event checks on a subsequent commit remain separate validation
 of that commit; earlier pending statuses do not represent its result.
 
-### Rollout and verification
+### Reporter verification
 
-Manual dispatch requires the validation workflows to exist on the default branch.
-Dispatch of the new Workflow tests workflow and the `workflow_run` reporter
-become active only after their definitions are merged there. Workflow tests runs
-on `pull_request` during its implementation PR. Those checks cannot demonstrate
-the complete writeback/reporting cycle before that merge. PR branches created before the
-change must incorporate the updated generation tools and validation definitions.
-
-The parallel-test reporter must likewise reach the default branch before
-PR-bound dispatches of split test jobs can publish success. Until then, ordinary
-PR checks and the reporter's CI regression tests validate this change; an older
-reporter expects the serial job shape. The updated reporter accepts both shapes
-after merging, preserving validation for older branches.
+Manual dispatch requires workflow definitions on the default branch. The reporter
+uses its trusted default-branch implementation, so a PR-only reporter change cannot
+demonstrate the complete writeback/reporting cycle. Older PR branches must include
+compatible generation tools and validation definitions.
 
 The separate [Workflow tests](../.github/workflows/workflow_tests.yml) workflow
 runs the `Lint workflows` step with pinned actionlint and the
 `Test validation reporting` step with Node's built-in test runner for
 `tests/ci/**`, including suite-selection and multi-job reporting regressions. Rust
 builds, tests and SVG generation remain in their existing CI workflows.
-After the reporter is on the default branch, verify on a real PR that the
+After changing the reporter and merging it to the default branch, verify that the
 SVG-only bot commit receives the expected commit statuses, each linked to the
 matching SHA's validation run. Check failure and retry reporting as well as
 successful completion, without treating dispatch success as validation success.

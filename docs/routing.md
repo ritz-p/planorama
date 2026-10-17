@@ -334,7 +334,7 @@ then stable geometric and resource order. Groups with no independently movable
 lane, repeated groups and previously attempted groups are filtered before the
 remaining attempt budget is applied. Until an urgent corridor has been attempted,
 the highest-ranked urgent border group moves into the final available slot if it
-would otherwise fall outside that budget. This reserves at most one of the six
+would otherwise fall outside that budget. This reserves at most one of the remaining
 attempts, preserving the higher-ranked prefix; an urgent attempt consumes the
 reservation even if its change is rejected. Every accepted change must still
 satisfy the minimum-gap guards below.

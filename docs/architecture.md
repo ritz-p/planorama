@@ -57,18 +57,10 @@ action swatches and sample geometry. Rendering serializes these measurements
 without wrapping text or packing rows again. Annotation leaf cards retain their
 existing measured content fragments; this contract does not change resource
 identity, provenance or links. Shared text metrics remain in `view::text`.
-The neutral relationship legend has a 960px card-width
-cap. Its relationship kinds form a deterministic
-one- or two-column grid below the action/color explanation. Multiple columns
-require at least 398px per cell with 24px gaps; cells stop widening at 640px.
-Narrow single-column cells place the sample above the text. Each grid row reserves
-its tallest complete cell, including wrapped text and symbols. The same measured
-height controls the canvas, following content and named-state endpoint offsets.
-Named states measure one document-level legend from all displayed states at the
-shared content width, excluding cross-state gutters. State sections reserve no
-local legend height. Legend layout affects section offsets without changing
-architecture placement or routing. It remains separate from the numbered Relationship Resources
-section.
+The [relationship legend](relationships.md#legend-and-meaning) is measured once
+at the shared content width before state composition. Its height changes state
+offsets, not architecture placement or local routing. It remains separate from
+the numbered Relationship Resources section.
 `svg/annotations.rs` packs rounded cards in deterministic
 rows inside ordered sections, reusing the same wrapping and measurement for nested
 cards and growing the canvas for oversized cards.
@@ -84,18 +76,10 @@ top clearance through a shared downward translation and matching canvas height.
 This preserves relative card positions and path shapes, including manually placed
 layout fixtures. Named-state heights, endpoint coordinates and routing obstacles
 include the same clearance.
-Relationship index cards group up to 5 complete numbered entries per card,
-continuing to the right without a column cap before wrapping within their own
-neutral section. Packing uses the final content width after other annotations can
-expand it. Named-state composition prepares each state's cards, resolves the shared
-content width, then packs each state's annotations once. Final measured heights
-control endpoint offsets, with the cross-state
-routing gutter reserved outside that width. Logical
-components share a purple parent, with a card per component and a purple heading.
-Members use neutral text rows without individual backgrounds, borders or card
-wrappers. Each complete wrapped item has one underline in its canonical resource
-action color. Row measurements reserve the wrapped text, import badge, underline
-and spacing before the next member.
+Relationship index packing and number presentation are defined in
+[relationship resources](relationships.md#relationship-resource-index);
+[component summaries](components.md) define member presentation. Both consume
+the shared wrapped measurements, including import badges and action underlines.
 
 Terraform-backed Logical Resources share a cyan parent above Logical Components;
 the relationship index follows both parents. Within each state, `svg/logical.rs`

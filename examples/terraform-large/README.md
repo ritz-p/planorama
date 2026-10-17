@@ -99,9 +99,6 @@ so it is labeled References. The alarm's dimensions reference the database, but
 this fixture does not supply matching planned dimension/identifier values. It
 therefore shows Monitors: unresolved, emits UnverifiedMonitoring with
 `--diagnostics`, and does not claim Monitored by on RDS.
-Moving these two CloudWatch cards reduced routed paths from 39 to 37 (5.1%).
-At that step the spatial card envelope stayed 3416 × 2062 (7,043,792 square pixels),
-and the canvas stayed 3556 × 3392: other resources determined the outer bounds.
 
 Full Uses/Dependencies labels visibly include
 `Task definition: module.application.aws_ecs_task_definition.app` and
@@ -122,7 +119,12 @@ Per-edge regression guards allow up to 14 bends and twice the shortest valid
 route length plus 128 pixels. The reference uses the same hard boundaries,
 ports and marker clearance. Failures identify the offending endpoint addresses.
 
-Listener owner affinity reduces the architecture-local Manhattan center distance
+## Historical locality measurements
+
+The following observations predate the current fixture and must not be read as
+current SVG counts or timing guarantees. They record the locality tradeoff.
+
+Listener owner affinity reduced the architecture-local Manhattan center distance
 to its LB from 3,608 to 1,060 pixels without changing the 10,032,636-pixel layout
 area or the 37 routed relationships. Total path length changes from 44,380 to
 39,914 pixels, bends from 89 to 87 and crossings from 119 to 99; measured overlap
