@@ -3,7 +3,7 @@ const fs = require('node:fs');
 const vm = require('node:vm');
 const test = require('node:test');
 const context = vm.createContext({});
-for (const name of ['lifecycle', 'highlighting', 'impact-graph']) {
+for (const name of ['lifecycle', 'highlighting', 'impact-graph', 'neighborhood']) {
   vm.runInContext(fs.readFileSync(`src/html/${name}.js`, 'utf8'), context);
 }
 
@@ -27,6 +27,20 @@ function graph(edges, ids = ['a', 'b', 'c']) {
 }
 const edge = (from, to, id = from + to, semantics = 'dependency', direction = 'directed') => ({ from, to, id, kind: semantics, semantics, direction });
 const reached = result => [...result.found.keys()];
+
+test('neighborhood follows recorded non-containment relations without impact semantics', () => {
+  const g = graph([edge('a', 'b'), edge('c', 'b', 'inferred', 'inferred'), { ...edge('a', 'd'), kind: 'containment' }, edge('b', 'missing')], ['a', 'b', 'c', 'd']);
+  assert.deepEqual([...context.resourceNeighborhood(g, ['a'], 0).found], ['a']);
+  assert.deepEqual([...context.resourceNeighborhood(g, ['a'], 1).found], ['a', 'b']);
+  const result = context.resourceNeighborhood(g, ['a'], 2);
+  assert.deepEqual([...result.found], ['a', 'b', 'c']);
+  assert.deepEqual([...result.missing], ['missing']);
+  assert.equal(result.relations.get('inferred').semantics, 'inferred');
+  const ids = ['a', ...Array.from({ length: 250 }, (_, i) => 'n' + i)];
+  const bounded = context.resourceNeighborhood(graph(ids.slice(1).map(id => edge('a', id)), ids), ['a'], 3);
+  assert.equal(bounded.found.size, 200);
+  assert.equal(bounded.truncated, true);
+});
 
 test('dependency arrows run upstream to downstream, depth is bounded', () => {
   const g = graph([edge('a', 'b'), edge('b', 'c')]);

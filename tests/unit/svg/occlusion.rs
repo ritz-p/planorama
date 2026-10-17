@@ -78,7 +78,7 @@ fn masks_hide_foreign_containers_without_hiding_internal_or_endpoint_relationshi
     }
     let other = Layout::new(&reordered);
     assert_eq!(
-        masks.definitions(&layout),
-        Masks::new(&reordered, &other).definitions(&other)
+        masks.definitions(&graph, &layout),
+        Masks::new(&reordered, &other).definitions(&reordered, &other)
     );
 }

@@ -88,6 +88,31 @@ become inert with an explanatory title. No HTML index, JavaScript, original plan
 or additional attribute values are included. Download failures are announced beside
 the control; if the browser silently blocks saving, check its download permissions.
 
+Select a resource and choose **Export selected neighborhood SVG** for an extract.
+Depth is 0–3 (default 1). Traversal follows generated relationships in either
+direction, including directed/undirected associations, inferred connections and
+other recorded line kinds. It preserves their original directions, styles and
+structured provenance; this is not runtime impact exploration. A provenance
+resource also seeds its represented endpoints. Containment does not consume hops:
+required ancestors, embedded owners, relationship sources and complete numbered
+entries are added as context. These can extend beyond the requested depth.
+
+Only resources in the effective generated view are eligible. Missing neighbors
+are counted but never recreated. Traversal examines at most 10,000 indexed
+relationships and 2,000 adjacency entries, retaining at most 200 resources and
+400 relationships. Truncation is explicit. If required context or faithful
+presentation exceeds 200 resources, 400 paths/entries or 100,000 SVG elements,
+export is cancelled visibly rather than saving an incomplete representation.
+
+The extract preserves resource coordinates, path geometry, nested state offsets,
+clipping and retained annotation frames. It removes unrelated resource rows,
+cards, paths and mask occluders, without repacking. Empty space can remain inside
+retained frames; the crop encloses retained content with 24px padding and a scope
+caption. The caption and SVG metadata report unique retained resources, additional
+context/provenance and rendered path counts. Logical action counts reflect retained
+rows. Original whole-plan counts are omitted. Links to removed destinations become
+inert explanations. The live diagram, selection and viewport remain unchanged.
+
 Back/Forward restores earlier selections and their viewport positions. History
 holds up to 100 selections in memory, distinguishing state-qualified resources,
 current/deposed instances, relationship entries and provenance resources. Leaving
@@ -116,7 +141,8 @@ remain unchanged.
 JSON escapes HTML delimiters, and dynamic UI text uses DOM text nodes rather than
 executable markup. CLI-filtered resources do not become searchable. Existing
 unavailable-reference descriptions can still identify a target outside the view.
-The viewer provides no editing, persistence or additional graph filtering.
+The viewer provides no editing or saved viewer-state persistence. Neighborhood
+export filters a copy; the live diagram remains unchanged.
 
 ## Routing hotspots
 
@@ -260,6 +286,12 @@ the view box and pan/zoom; `highlighting.js` owns selection highlighting cleanup
 through selection and navigation, preserving the shared overlay reset lifecycle.
 `export.js` clones, cleans and validates standalone SVG downloads without changing
 the live viewer.
+`neighborhood.js` performs bounded traversal using the structured graph index.
+`export-presentation.js` maps retained identities to resource cards, relationship
+entries, containment/scope frames, annotations and masks. The generated HTML index
+provides containment/ownership and scope context; SVG occluders and junctions carry
+explicit resource memberships. Projection preserves geometry and validates identities
+before invoking shared standalone serialization.
 `lifecycle.js` registers optional feature adapters with a `reset()` method. New
 overlays register there so resource/relationship selection and Clear cannot leave
 stale feature state. Modules receive their dependencies explicitly and return
