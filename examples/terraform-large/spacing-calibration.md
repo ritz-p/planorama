@@ -33,7 +33,7 @@ See [dispatch and revision selection](../../docs/ci.md#on-demand-spacing-calibra
 Runtime is observational, without timing assertions.
 
 ```sh
-docker compose exec -T -e PLANORAMA_SPACING_REPORT_DIR=output/spacing-calibration dev cargo test --locked --bin planorama budget_calibration -- --ignored --nocapture
+docker compose exec -T -e PLANORAMA_SPACING_REPORT_DIR=output/spacing-calibration dev cargo test --locked --lib budget_calibration -- --ignored --nocapture
 ```
 
 The raw-polyline dense DAG regression changes from 394 to 396 crossings while

@@ -1,0 +1,7 @@
+#!/bin/sh
+set -eu
+test "$(wasm-bindgen --version)" = 'wasm-bindgen 0.2.100'
+cargo build --locked --release --lib --target wasm32-unknown-unknown
+mkdir -p output/browser/pkg
+wasm-bindgen --target no-modules --no-typescript --out-dir output/browser/pkg "${CARGO_TARGET_DIR:-target}/wasm32-unknown-unknown/release/planorama.wasm"
+cp browser/index.html browser/app.js browser/worker.js output/browser/

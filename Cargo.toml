@@ -6,6 +6,9 @@ edition = "2024"
 rust-version = "1.85"
 autotests = false
 
+[lib]
+crate-type = ["rlib", "cdylib"]
+
 [profile.test]
 opt-level = 1
 debug-assertions = true
@@ -24,10 +27,15 @@ name = "rendering"
 path = "tests/integration/rendering.rs"
 
 [dependencies]
-hcl-rs = "0.19.8"
-same-file = "1.0.6"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
+
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+wasm-bindgen = "=0.2.100"
+
+[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+hcl-rs = "0.19.8"
+same-file = "1.0.6"
 toml = "0.8.23"
 tempfile = "3"
 zip = { version = "2.4.2", default-features = false, features = ["deflate"] }

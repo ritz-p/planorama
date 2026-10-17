@@ -4,6 +4,7 @@ mod checks;
 mod collections;
 mod drift;
 mod entity;
+#[cfg(not(target_arch = "wasm32"))]
 pub(crate) mod evidence;
 mod operations;
 mod outputs;
