@@ -63,7 +63,7 @@ CI の `Resource support` は同じ一致検証だけを実行します。図を
 
 ## SVG の更新
 
-レンダラー・生成入力を変更した場合は、Docker 内で再生成し、差分と表示を確認して実装と同じ PR に含めます。
+レンダリングの挙動・生成入力・fixture・生成スクリプトを変更した場合は、Docker 内で再生成し、差分と表示を確認して実装と同じ PR に含めます。生成入力・fixture・生成スクリプトの変更は、図に差分が出ない想定でも再生成して確認します。
 
 ```sh
 docker compose exec -T dev sh scripts/update-examples.sh

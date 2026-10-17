@@ -507,9 +507,12 @@ the ordinary suite does not acquire their substantial routing cost. Maintained
 SVG regeneration builds the release binary for this example. HTML remains an
 explicitly regenerated snapshot outside automatic SVG-only writeback.
 
-Regenerate locally when changes to these inputs affect rendering behavior or
-generated diagrams. Documentation and test-only changes that leave diagram
-generation unchanged do not require regeneration.
+Run `sh scripts/update-examples.sh` inside Docker whenever rendering behavior,
+generation inputs, fixtures or generation scripts change. Input, fixture and
+generation-script changes require regeneration even when no diagram difference
+is expected; inspect the generated diff to verify that expectation.
+Documentation-only and test-only changes are exempt only when they change none
+of those categories. Relevant locations include:
 
 - Renderer and build inputs: `src/**`, `build.rs`, `assets/**`, `Cargo.toml`,
   `Cargo.lock`, `rust-toolchain.toml` and `.cargo/**`.

@@ -78,8 +78,9 @@ layout fixtures. Named-state heights, endpoint coordinates and routing obstacles
 include the same clearance.
 Relationship index packing and number presentation are defined in
 [relationship resources](relationships.md#relationship-resource-index);
-[component summaries](components.md) define member presentation. Both consume
-the shared wrapped measurements, including import badges and action underlines.
+[component summaries](components.md) define member presentation. Both use shared
+text wrapping and measurement. Component member measurements also reserve import
+badges and action underlines.
 
 Terraform-backed Logical Resources share a cyan parent above Logical Components;
 the relationship index follows both parents. Within each state, `svg/logical.rs`
