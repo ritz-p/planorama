@@ -59,6 +59,8 @@ fn types(source: &str) -> Vec<String> {
 fn matrix() -> String {
     let mut files = BTreeMap::new();
     sources(Path::new("src/provider"), &mut files);
+    let remote = "src/plan/remote.rs";
+    files.insert(remote.into(), fs::read_to_string(remote).unwrap());
     let mut catalog = BTreeMap::<String, Vec<&str>>::new();
     for (path, source) in &files {
         for resource_type in types(source) {
@@ -139,7 +141,9 @@ fn matrix() -> String {
                     )
                 })
                 .map(|path| {
-                    let label = path.strip_prefix("src/provider/").unwrap();
+                    let label = path
+                        .strip_prefix("src/provider/")
+                        .unwrap_or_else(|| path.strip_prefix("src/").unwrap());
                     format!("[{label}](../{path})")
                 })
                 .collect();

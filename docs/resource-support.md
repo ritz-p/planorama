@@ -36,6 +36,11 @@ Terraform references still apply. Read [AWS proof and managed/data restrictions]
 [component inference](components.md) for reference/value proofs, deletion/deposed
 limits and filtering. Names, literal IDs and proximity alone do not prove relations.
 
+Terraform remote-output resolution lives in the plan layer, also linked below.
+Explicit [remote-state mappings](multi-plan.md) can connect complete data-source
+output provenance across loaded states; the built-in icon does not establish such
+a mapping, and managed resources do not act as remote-state data lookups.
+
 ## HashiCorp AWS
 
 Provider source: `registry.terraform.io/hashicorp/aws`.
@@ -258,4 +263,4 @@ Provider source: `terraform.io/builtin/terraform`.
 | Resource type | Role (managed / data) | Display (managed / data) | Icon / service name | Deployment scope | Conditional rule source references |
 | --- | --- | --- | --- | --- | --- |
 | `terraform_data` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Terraform / Terraform built-in | Unknown | — |
-| `terraform_remote_state` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Terraform / Terraform built-in | Unknown | — |
+| `terraform_remote_state` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Terraform / Terraform built-in | Unknown | [plan/remote.rs](../src/plan/remote.rs) |
