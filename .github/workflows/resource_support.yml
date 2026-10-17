@@ -1,0 +1,40 @@
+name: Resource support
+
+on:
+  pull_request:
+    paths:
+      - 'src/**'
+      - 'tests/unit/resource_support*'
+      - 'docs/resource-support.md'
+      - 'scripts/update-resource-support.sh'
+      - 'Cargo.*'
+      - 'build.rs'
+      - 'assets/**'
+      - 'rust-toolchain.toml'
+      - '.github/workflows/resource_support.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: resource-support-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  resource-support:
+    name: Resource support
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+      - name: Install pinned toolchain
+        run: rustc --version --verbose
+      - uses: Swatinem/rust-cache@v2.9.2
+        with:
+          prefix-key: v1-rust-dependencies
+          shared-key: ${{ hashFiles('build.rs', 'assets/**') }}-tests
+          cache-workspace-crates: 'false'
+      - name: Check generated resource support
+        run: sh scripts/update-resource-support.sh --check

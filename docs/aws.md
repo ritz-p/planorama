@@ -3,6 +3,9 @@
 AWS rules live in `src/provider/aws`. Dispatch uses provider source identity and
 exact resource types; a custom provider's lookalike type does not acquire AWS
 semantics. Provider source and configuration identity are described in [models](models.md).
+The generated [resource support matrix](resource-support.md) lists exact-type
+roles, display modes, icons and scope eligibility. This document defines the
+conditional relationship and placement proofs behind that catalog.
 
 ## Deployment scopes
 

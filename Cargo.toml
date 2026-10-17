@@ -36,7 +36,9 @@ zip = { version = "2.4.2", default-features = false, features = ["deflate"] }
 roxmltree = "0.21.1"
 
 [dev-dependencies]
+proc-macro2 = "1"
 roxmltree = "0.21.1"
+syn = { version = "3", features = ["full", "visit"] }
 
 [[test]]
 name = "large_example"
