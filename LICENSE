@@ -1,0 +1,12 @@
+Planorama original code is licensed, at your option, under either:
+
+* the MIT License (LICENSE-MIT), or
+* the Apache License, Version 2.0 (LICENSE-APACHE).
+
+Copyright (c) 2026 Planorama contributors.
+
+Bundled third-party code and artwork retain their own licenses and notices.
+In particular, AWS architecture icons are not covered by this dual license.
+See assets/icons/aws/NOTICE.txt and assets/icons/terraform/NOTICE.txt.
+Native archives include the corresponding icon notices, dependency notices,
+and Rust runtime license texts alongside this file.
