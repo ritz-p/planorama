@@ -315,7 +315,7 @@ fn render_with_index(
     let markers = relationships::markers(graph);
     let icon_definitions = icons::definitions(&graph.nodes);
     let occlusion = occlusion::Masks::new(graph, layout);
-    let occlusion_definitions = occlusion.definitions(layout);
+    let occlusion_definitions = occlusion.definitions(graph, layout);
     let semantic_edges = graph
         .edges
         .iter()
@@ -449,6 +449,19 @@ fn render_with_index(
         writeln!(svg, r##"<path d="{path}"{relation}{previous}{operation}{indexed} data-directionality="{direction}" data-source="{source}" data-target="{target}" fill="none" stroke="{stroke}" {style} stroke-linejoin="round"{arrow}{mask}><title>{title}</title></path>"##).unwrap();
     }
     for point in &layout.junctions {
+        let members: Vec<_> = graph
+            .edges
+            .iter()
+            .zip(&layout.paths)
+            .filter(|(_, path)| path.contains(point))
+            .map(|(edge, _)| {
+                [
+                    identity::resource(&graph.nodes[edge.from]),
+                    identity::resource(&graph.nodes[edge.to]),
+                ]
+            })
+            .collect();
+        let members = escape(&serde_json::json!(members).to_string());
         let mask = layout
             .paths
             .iter()
@@ -457,7 +470,7 @@ fn render_with_index(
             .unwrap_or_default();
         writeln!(
             svg,
-            r##"<circle cx="{}" cy="{}" r="3" fill="#94a3b8"{mask}/>"##,
+            r##"<circle data-junction-edges="{members}" cx="{}" cy="{}" r="3" fill="#94a3b8"{mask}/>"##,
             point.x, point.y
         )
         .unwrap();

@@ -11,7 +11,7 @@
   const index = metadata(svg, byId);
   const { resources, label, title, components } = index;
   const view = navigation(svg, viewport, byId);
-  diagramExport(context);
+  const exporter = diagramExport(context);
   const highlights = highlighting(svg, viewport);
   const adapters = lifecycle();
   const coordinator = {
@@ -26,6 +26,7 @@
     }
   };
   const { select, button, clearHistory } = selection(context, index, view, highlights, coordinator);
+  neighborhoodExport(context, index, coordinator, exporter);
   const clear = () => { clearHistory(); coordinator.clear(); };
   const { renderResults } = searching(context, index, { select, button }, coordinator);
   adapters.register(diagnostics(context, index, view, { select, button }, coordinator));

@@ -90,7 +90,8 @@ pub(crate) fn render_states_report(
 }
 
 fn resources(graph: &Graph, state: &str, prefix: &str) -> Vec<Value> {
-    graph.nodes.iter().map(|node| json!({
+    let containment = crate::layout::ContainmentTree::new(graph);
+    graph.nodes.iter().enumerate().map(|(index, node)| json!({
         "id": format!("{prefix}{}", svg::resource_id(node)),
         "address": node.address,
         "qualified": node.resource_address().qualified(),
@@ -102,6 +103,14 @@ fn resources(graph: &Graph, state: &str, prefix: &str) -> Vec<Value> {
         "mode": match node.mode { crate::model::EntityMode::Data => "data", crate::model::EntityMode::Managed => "managed" },
         "deposed": node.deposed_key,
         "action": format!("{:?}", node.action).to_lowercase(),
+        "context": containment.parents[index].into_iter().chain(crate::view::routes::owner(graph, node))
+            .map(|parent| format!("{prefix}{}", svg::resource_id(&graph.nodes[parent]))).collect::<Vec<_>>(),
+        "scope": node.entity.scope.as_ref().map(|scope| json!({
+            "provider": scope.provider,
+            "account": scope.account.as_ref().map(|account| account.as_str()),
+            "region": scope.region.as_ref().map(|region| &region.0),
+            "global": scope.global,
+        })),
     })).collect()
 }
 
@@ -172,6 +181,8 @@ fn document(
                 concat!(
                     include_str!("html/metadata.js"),
                     include_str!("html/export.js"),
+                    include_str!("html/neighborhood.js"),
+                    include_str!("html/export-presentation.js"),
                     "\n",
                     include_str!("html/navigation.js"),
                     "\n",

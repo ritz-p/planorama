@@ -48,7 +48,7 @@ impl Masks {
         })
     }
 
-    pub fn definitions(&self, layout: &Layout<'_>) -> String {
+    pub fn definitions(&self, graph: &Graph, layout: &Layout<'_>) -> String {
         let mut svg = String::new();
         let padding = crate::view::geometry::MASK_PADDING;
         let radius = crate::view::geometry::CONTAINER_RADIUS + padding;
@@ -58,7 +58,8 @@ impl Masks {
                 let bounds = layout.bounds[node];
                 writeln!(
                     svg,
-                    r#"<rect x="{}" y="{}" width="{}" height="{}" rx="{radius}" fill="black"/>"#,
+                    r#"<rect data-occluder="{}" x="{}" y="{}" width="{}" height="{}" rx="{radius}" fill="black"/>"#,
+                    super::identity::resource(&graph.nodes[node]),
                     bounds.origin.x.saturating_sub(padding),
                     bounds.origin.y.saturating_sub(padding),
                     bounds.width + padding * 2,

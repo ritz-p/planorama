@@ -31,6 +31,13 @@ Opt-in HTML semantic diagnostics consume selected coverage records through a
 bounded serialization bridge. Their viewer adapter reuses resource selection and
 the lifecycle reset coordinator; it does not change graph or routing semantics.
 
+HTML neighborhood export projects retained identities onto existing SVG presentation
+elements without rerunning layout. The value-free resource index includes containment,
+embedded ownership and deployment scope. Mask occluders and bundle junctions carry
+resource memberships so removing unrelated content preserves retained path geometry.
+The bounded export projection and standalone serialization leave the live viewer intact;
+see [export scope and limits](viewer.md).
+
 Opt-in [stage timings](benchmarks.md#cli-stage-timings) use a thread-local collector
 for the synchronous generation pipeline. Disabled spans do not read the clock or
 allocate report rows. Nested spans subtract child durations for exclusive time;

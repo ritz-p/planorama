@@ -356,6 +356,10 @@ fn namespace(svg: &str, prefix: &str) -> String {
     let mut scoped = svg
         .replace(" id=\"", &format!(" id=\"{prefix}"))
         .replace(
+            "data-occluder=\"resource-",
+            &format!("data-occluder=\"{prefix}resource-"),
+        )
+        .replace(
             "data-container=\"resource-",
             &format!("data-container=\"{prefix}resource-"),
         )

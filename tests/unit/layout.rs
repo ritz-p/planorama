@@ -101,7 +101,10 @@ fn bundled_stars_avoid_cards_and_keep_individual_svg_relationships() {
             3
         );
         assert!(!layout.junctions.is_empty());
-        assert_eq!(svg.matches("<circle cx=").count(), layout.junctions.len());
+        assert_eq!(
+            svg.matches("data-junction-edges=").count(),
+            layout.junctions.len()
+        );
         assert_eq!(svg.matches("data-endpoint=\"source\"").count(), 3);
         for edge in &graph.edges {
             let (a, b) = edge.endpoints();
