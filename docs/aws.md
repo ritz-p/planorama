@@ -204,19 +204,13 @@ not establish runtime control, traffic or relationships. Logical type cards show
 these explanations once per role, separately from Terraform action and managed/data
 mode. Their action subsections change presentation only, not role or placement.
 
-Placement is independent of role. ECS Cluster, ECS Task Definition, IAM Role,
-Policy, Role Policy, Instance Profile, AMI, EC2 Launch Template, CloudWatch Log Group,
-Metric Alarm, Auto Scaling Policy, SNS Topic Subscription, Lambda Event Source Mapping and EventBridge Target definitions are explicit logical resources, rendered as rows grouped
-by provider source, resource type and mode in
-the top annotation area. AMI describes
+Placement is independent of role. The [generated matrix](resource-support.md)
+lists the explicit logical types. They render as rows grouped by provider source,
+resource type and mode in the top annotation area. AMI describes
 an image definition used by workloads, not a deployed compute instance. These
 provider-aware rules apply to managed and data resources; custom providers do
 not inherit them. Unknown types retain unresolved placement and stay visible in
 the spatial diagram. Missing VPC/subnet references never imply logical placement.
-S3, DynamoDB, CloudFront, ECS Service and load balancers remain spatial.
-
-Only `aws_cloudwatch_log_group` and `aws_cloudwatch_metric_alarm` receive this
-CloudWatch policy; unsupported CloudWatch types retain unresolved spatial cards.
 Logical placement does not suppress architectural significance: individual resource
 rows retain actions, identities, operation metadata, scope and focus/filter
 participation. A focused observability view can emphasize them; no spatial-view
@@ -260,10 +254,9 @@ emitting a dangling link. See
 
 Infrastructure data sources retain their roles and external identity. Spatial
 cards use an external badge and dashed border; logical resources use separate
-`data / external` groups and dashed action underlines. AWS metadata data sources
-`aws_region`, `aws_partition`,
-`aws_caller_identity`, `aws_availability_zones`, and `aws_iam_policy_document`
-and their incident edges are omitted. References from retained resources keep
+`data / external` groups and dashed action underlines. The matrix marks omitted
+AWS metadata data sources; their incident edges are also omitted.
+References from retained resources keep
 the omitted source identities as provenance, without creating cards or paths.
 Cached data resources in prior state are
 included when still present in configuration. See [data.svg](../examples/data.svg).

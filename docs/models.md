@@ -112,19 +112,13 @@ consumes this evidence; known non-AWS providers without scope use `Region: not
 applicable`, and unknown provider identities use `Region: unknown`. Labels never
 participate in architecture, provider-configuration or state identity.
 
-`provider_configuration.account` retains only a validated `AwsAccountScope`:
-exactly 12 ASCII digits from commercial-partition IAM role ARNs. JSON-only parsing
-always leaves it unknown: Terraform's
-[nested-expression serializer](https://github.com/hashicorp/terraform/blob/v1.9.8/internal/command/jsonconfig/expression.go)
-omits dynamic blocks, so visible role expressions cannot establish completeness.
-
-The optional saved-plan input described in [provider evidence](provider-evidence.md)
-checks the plan against its embedded configuration snapshot. Every role in a
-supported static provider declaration must be literal and agree on the account.
-Dynamic blocks, unresolved expressions and cross-account chains remain unknown.
-Validated conflicting static roles produce `ConflictingAwsAccount` without
-exposing role or provider values. Evidence is applied before semantic projection,
-using the exact state-local provider key and the plan's module/resource bindings.
+`provider_configuration.account` retains a validated `AwsAccountScope` (12 ASCII
+digits) and a separate conflict flag. JSON-only parsing leaves the account unknown.
+Optional [saved-plan evidence](provider-evidence.md) validates the snapshot and
+provider declaration before semantic projection, using exact state-local binding
+keys. Conflicting static roles produce `ConflictingAwsAccount` without retaining
+role values. The evidence document defines supported versions, literal-role and
+partition restrictions, completeness checks and the trust boundary.
 
 State, provider binding, AWS account and region are separate identities. One state
 can manage several accounts; several bindings can target one account; equal

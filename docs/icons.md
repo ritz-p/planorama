@@ -6,21 +6,6 @@ Planorama embeds official AWS Architecture Icons from the **07312026 (July 31, 2
 
 The selected original SVG files are stored unchanged under `assets/icons/aws/`. `manifest.json` records the official download URL, ZIP SHA-256, original entry paths, and individual file hashes. Only 20 required service icons are bundled; the full ZIP is not committed. Git preserves asset bytes through `.gitattributes`.
 
-EventBridge Bus, Rule and Target resources use the official Amazon EventBridge service
-icon from the same verified archive, added on 2026-10-17. The shared AWS notice
-and terms below apply. See the [EventBridge example](../examples/eventbridge.svg).
-
-`aws_sqs_queue` and `aws_sns_topic` use the official Amazon Simple Queue Service
-and Amazon Simple Notification Service icons from the same verified release,
-for both managed and data resources. See the [messaging example](../examples/messaging.svg).
-
-RDS Cluster Instances (`aws_rds_cluster_instance`) use the Amazon RDS icon in
-ordinary cards and verified cluster member cards. See the [Aurora example](../examples/aurora.svg).
-
-ElastiCache subnet and replication groups use the existing Amazon ElastiCache
-icon and are classified architecture resources. Their verified common-VPC
-placement is shown in the [ElastiCache example](../examples/elasticache.svg).
-
 ### Rights and scope
 
 AWS owns these assets. They are **not MIT-licensed**. The official page permits customers and partners to use the assets in architecture diagrams; the [AWS Site Terms](https://aws.amazon.com/terms/) also apply. The downloaded package contains SVG/PNG assets and no separate license document. This is not a grant of unrestricted redistribution or sublicensing rights. The selected assets support this AWS architecture diagram renderer, not a standalone icon distribution service. For other uses, consult AWS's terms or obtain permission. Planorama does not imply AWS endorsement.
@@ -54,6 +39,7 @@ are independent of relationship rules; unlisted exact types have no icon.
 The [data icon fixture](../tests/fixtures/data-icons-plan.json) and
 [example](../examples/data-icons.svg) exercise managed resources, data lookups and
 foreign-provider/unknown fallbacks.
+
 ## Planorama icon for Terraform built-in resources
 
 Planorama uses an original neutral state-file symbol for its Terraform built-in

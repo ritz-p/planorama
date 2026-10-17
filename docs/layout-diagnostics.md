@@ -113,7 +113,7 @@ This measures composition with and without diagnostics using one final layout
 of `terraform-large`, excluding layout and file I/O. Timings are observations,
 not CI thresholds.
 
-On 2026-10-14, `origin/main` `1920cd3` plus this change, Rust 1.85.1 release
+On 2026-10-14, `1920cd3` plus the layout-diagnostics instrumentation, Rust 1.85.1 release
 in Docker Desktop Linux: two disabled runs took 3.386/3.308ms; enabled runs took
 7.683/7.867ms. SVG remained 318,966 bytes and compact report JSON was 165,641
 bytes. These same-layout observations include collection and report construction,

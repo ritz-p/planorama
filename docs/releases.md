@@ -87,7 +87,7 @@ archive の時刻まで固定した byte-for-byte reproducible build は保証�
 小規模 fixture の SVG/HTML の構造を検証します。その後全4対象の archive/checksum を照合します。
 通常 PR と手動 dispatch は検証のみで公開しません。
 
-初回公開時は以下を順に行います。この実装作業だけではタグを作成しません。
+公開を依頼された場合は以下を順に行います。
 
 1. 配布変更を main へマージし、公開予定のコミットを決めます。
 2. `Cargo.toml` の version と `vMAJOR.MINOR.PATCH` タグの一致を確認します。
