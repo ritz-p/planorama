@@ -4884,7 +4884,8 @@ function diagramExport(context) {
     }
     for (const diagram of [clone, ...clone.querySelectorAll('svg')]) {
       diagram.setAttribute('role', 'img');
-      if (!diagram.hasAttribute('aria-labelledby')) diagram.setAttribute('aria-label', diagram === clone ? description : 'State: ' + (diagram.closest('[data-state-id]')?.dataset.stateId || 'diagram'));
+      diagram.removeAttribute('aria-labelledby');
+      diagram.setAttribute('aria-label', diagram === clone ? description : 'State: ' + (diagram.closest('[data-state-id]')?.dataset.stateId || 'diagram'));
     }
     const desc = document.createElementNS(svg.namespaceURI, 'desc');
     desc.textContent = description; clone.prepend(desc);

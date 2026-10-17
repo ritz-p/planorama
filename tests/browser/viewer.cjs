@@ -67,7 +67,8 @@ class ViewerTests {
                     paths: [...exported.querySelectorAll('path[data-edge-kind]')].map(el => [el.getAttribute('d'), el.getAttribute('stroke'), el.getAttribute('marker-end')]),
                     originalPaths: [...live.querySelectorAll('path[data-edge-kind]')].map(el => [el.getAttribute('d'), el.getAttribute('stroke'), el.getAttribute('marker-end')]),
                     name: window.exportName,
-                    imageRoles: [exported.documentElement, ...exported.querySelectorAll('svg svg')].every(el => el.getAttribute('role') === 'img')
+                    imageRoles: [exported.documentElement, ...exported.querySelectorAll('svg svg')].every(el => el.getAttribute('role') === 'img'),
+                    imageNames: [exported.documentElement, ...exported.querySelectorAll('svg svg')].map(el => el.getAttribute('aria-labelledby') || el.getAttribute('aria-label'))
                 };
             `);
             this.assertTrue(result.unchanged); this.assertTrue(result.viewBox);
@@ -75,6 +76,7 @@ class ViewerTests {
             this.assertEqual(result.paths, result.originalPaths);
             this.assertEqual(result.name, 'planorama-viewport.svg');
             this.assertTrue(result.imageRoles);
+            this.assertEqual(result.imageNames, ['Current viewport; content outside this viewBox is intentionally cropped. Selection and diagnostic overlays are omitted.', 'State: one', 'State: two']);
             const exportedFile = join(this.temp, 'export.svg');
             writeFileSync(exportedFile, this.driver.execute_script('return window.exportText'));
             this.driver.get(pathToFileURL(exportedFile).href);
