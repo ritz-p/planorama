@@ -10,6 +10,14 @@ generation inputs change, inspect the diff, and include the outputs in the PR.
 to the same PR branch, dispatch validation on that head, and publish results
 through **Report PR validation**.
 
+## Resource support catalog
+
+**Resource support** runs `sh scripts/update-resource-support.sh --check` for
+changes to provider/runtime sources, catalog generation, its Markdown output and
+build inputs. It compares deterministic Markdown using one unit test; it performs
+no SVG generation or routing. The same test belongs to the standard Rust suite.
+See [regeneration instructions](../CONTRIBUTING.md#リソース対応一覧の更新).
+
 ## Toolchain and dependency cache
 
 Local setup and check commands live in [CONTRIBUTING](../CONTRIBUTING.md).
