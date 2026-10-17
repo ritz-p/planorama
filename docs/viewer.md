@@ -75,6 +75,18 @@ line patterns, bundles or routing. Clear selection restores their normal styling
 | Pan | Drag or scroll; arrow keys while the diagram has focus |
 | Zoom | +/− buttons, +/− keys in the diagram, or Ctrl/Command+scroll |
 | Fit entire view | Fit to view or F while the diagram has focus |
+| Export visible area | Export viewport SVG; Tab then Enter also works |
+
+**Export viewport SVG** downloads a standalone `planorama-viewport.svg` using the
+current viewBox. The file intentionally crops content outside that viewport;
+it retains the generated layout, nested state offsets, definitions, icons, action
+colors and font fallback lists. Font availability can vary between computers.
+Selection, impact and routing diagnostic overlays are omitted from the clone;
+the live selection and viewport remain unchanged. Internal links remain active
+only when their destination exists in the exported document. Unavailable links
+become inert with an explanatory title. No HTML index, JavaScript, original plan
+or additional attribute values are included. Download failures are announced beside
+the control; if the browser silently blocks saving, check its download permissions.
 
 Back/Forward restores earlier selections and their viewport positions. History
 holds up to 100 selections in memory, distinguishing state-qualified resources,
@@ -246,6 +258,8 @@ relationship navigation; `searching.js` owns search/results; `navigation.js` own
 the view box and pan/zoom; `highlighting.js` owns selection highlighting cleanup.
 `selection-history.js` stores bounded selection/viewport history and restores it
 through selection and navigation, preserving the shared overlay reset lifecycle.
+`export.js` clones, cleans and validates standalone SVG downloads without changing
+the live viewer.
 `lifecycle.js` registers optional feature adapters with a `reset()` method. New
 overlays register there so resource/relationship selection and Clear cannot leave
 stale feature state. Modules receive their dependencies explicitly and return
