@@ -52,6 +52,16 @@ Terraform models under explicit `StateId`s.
 lowering and filtering. It carries structured semantic findings separately from
 graph relationships; see the [coverage contract](coverage.md).
 
+`Node.member_owner` is an optional `PresentationOwner`: a provider-verified,
+state-local Terraform target (including deposed identity), attribute and display
+labels. This candidate is distinct from Containment edges, configured
+`ResourceReference` values (`ReferenceKind::Configured` or verified
+`ReferenceKind::Membership`); none implicitly establishes
+the other. The view resolves the candidate after selection, with independent
+fallback for unavailable, ambiguous, nested/cyclic or scope-incompatible owners.
+No additional resource or dependency edge is created. See the
+[presentation policy](resource-presentation.md).
+
 `Node.placement` classifies spatial, logical and unresolved presentation separately
 from role. Logical nodes retain their native identity, action and provenance.
 `Node.references` retains direct attribute, verified inverse monitoring and graph-level reference evidence,

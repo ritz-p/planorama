@@ -13,8 +13,8 @@ pub(crate) fn project(source: &Graph) -> Projection {
         .iter()
         .enumerate()
         .filter(|(_, node)| {
-            node.placement != crate::model::Placement::Logical
-                && super::routes::owner(source, node).is_none()
+            super::presentation::effective(source, node)
+                == super::presentation::Effective::Independent
         })
         .map(|(index, _)| index)
         .collect();

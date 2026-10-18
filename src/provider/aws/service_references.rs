@@ -258,6 +258,15 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
         graph.nodes[reference.target]
             .references
             .push(ResourceReference {
+                kind: if verified
+                    && matches!(
+                        node.resource_type.as_str(),
+                        "aws_iam_group_membership" | "aws_iam_user_group_membership"
+                    ) {
+                    crate::model::ReferenceKind::Membership
+                } else {
+                    crate::model::ReferenceKind::Configured
+                },
                 show_spatial: true,
                 label,
                 attribute: reference.attribute.clone(),

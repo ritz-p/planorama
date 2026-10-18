@@ -22,7 +22,7 @@ pub(super) fn metadata(graph: &Graph, content: super::Content) -> String {
         serde_json::json!({"from":relationship.from.as_str(), "to":relationship.to.as_str(), "kind":format!("{:?}",relationship.kind).to_lowercase(), "directionality":relationship.directionality().as_str(), "inferred":relationship.inferred, "provenance":provenance})
     }).collect();
     let references: Vec<_> = graph.nodes.iter().flat_map(|node| node.references.iter().map(move |reference| {
-        serde_json::json!({"consumer":node.entity.id.as_str(), "attribute":reference.attribute, "dependency":reference.dependency, "complete":reference.complete, "targets":reference.targets.iter().map(reference_target).collect::<Vec<_>>(), "issues":reference.issues.iter().map(|issue| format!("{issue:?}")).collect::<Vec<_>>()})
+        serde_json::json!({"consumer":node.entity.id.as_str(), "attribute":reference.attribute, "kind": match reference.kind { crate::model::ReferenceKind::Configured => "configured", crate::model::ReferenceKind::Membership => "membership" }, "dependency":reference.dependency, "complete":reference.complete, "targets":reference.targets.iter().map(reference_target).collect::<Vec<_>>(), "issues":reference.issues.iter().map(|issue| format!("{issue:?}")).collect::<Vec<_>>()})
     })).collect();
     let reference_metadata = if references.is_empty() {
         String::new()
@@ -45,9 +45,9 @@ pub(super) fn metadata(graph: &Graph, content: super::Content) -> String {
         )
     };
     let members: Vec<_> = graph.nodes.iter().filter_map(|node| {
-        node.member_owner.as_ref()?;
+        let candidate = node.member_owner.as_ref()?;
         let parent = crate::view::routes::owner(graph, node)?;
-        Some(serde_json::json!({"source": node.entity.id.as_str(), "owner": graph.nodes[parent].entity.id.as_str()}))
+        Some(serde_json::json!({"source": node.entity.id.as_str(), "owner": graph.nodes[parent].entity.id.as_str(), "attribute": candidate.attribute, "kind": "presentation", "provenance": {"kind": "verified-reference", "consumer": node.entity.id.as_str(), "target": graph.nodes[parent].entity.id.as_str()}}))
     }).collect();
     let member_metadata = if members.is_empty() {
         String::new()
