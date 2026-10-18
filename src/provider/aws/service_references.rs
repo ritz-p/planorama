@@ -132,6 +132,7 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
         graph.nodes[reference.target]
             .references
             .push(ResourceReference {
+                show_spatial: true,
                 label,
                 attribute: reference.attribute.clone(),
                 targets: if verified {

@@ -83,7 +83,7 @@ pub(crate) fn rows(node: &Node) -> Vec<Row<'_>> {
         for target in &reference.targets {
             if node.placement != Placement::Logical
                 && target.placement != Placement::Logical
-                && matches!(reference.label, "References" | "Dependency")
+                && !reference.show_spatial
             {
                 continue;
             }

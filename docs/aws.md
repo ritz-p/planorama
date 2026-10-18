@@ -33,6 +33,10 @@ The field contract follows the AWS Provider 5.100.0
 and [record](https://github.com/hashicorp/terraform-provider-aws/blob/v5.100.0/website/docs/r/route53_record.html.markdown)
 schemas and Terraform 1.9.8 nested expression paths.
 
+Regenerate the Route 53 SVG with `sh scripts/update-examples.sh` and HTML with
+`cargo run --locked -- tests/fixtures/route53-plan.json --format html -o examples/route53.html`
+inside the development container.
+
 `aws_cloudwatch_event_bus` and `aws_cloudwatch_event_rule` are regional spatial
 nodes with the Amazon EventBridge icon. They preserve Terraform identities,
 managed/data mode, actions and lifecycle metadata. Explicit references remain

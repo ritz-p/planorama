@@ -57,6 +57,7 @@ pub enum Placement {
 
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub struct ResourceReference {
+    pub show_spatial: bool,
     pub label: &'static str,
     pub attribute: String,
     pub targets: Vec<ReferenceTarget>,
