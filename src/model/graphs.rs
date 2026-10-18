@@ -24,6 +24,8 @@ pub struct AttributeReference {
     pub arn_values_match: bool,
     pub messaging_endpoint_verified: bool,
     pub monitoring_verified: bool,
+    pub source_attributes: std::collections::BTreeSet<String>,
+    pub service_reference_verified: bool,
     pub ids_only: bool,
     pub issues: std::collections::BTreeSet<super::DiagnosticReason>,
 }

@@ -1,0 +1,178 @@
+use crate::model::{
+    Action, AttributeReference, Diagnostic, DiagnosticReason, EntityMode, Graph, ReferenceTarget,
+    ResourceReference, TerraformEntity,
+};
+use crate::semantic::Input;
+use serde_json::Value;
+
+#[cfg(test)]
+#[path = "../../../tests/unit/semantic/service_references.rs"]
+mod tests;
+
+fn label(resource: &str, attribute: &str) -> Option<&'static str> {
+    match (resource, attribute) {
+        ("aws_route53_record", "zone_id") => Some("Hosted zone"),
+        ("aws_route53_record", "alias.name") => Some("Alias target"),
+        ("aws_route53_zone", "vpc.vpc_id") => Some("Associated VPC"),
+        _ => None,
+    }
+}
+
+fn source_fields(resource: &str, attribute: &str, source: &str) -> &'static [&'static str] {
+    match (resource, attribute, source) {
+        ("aws_route53_record", "zone_id", "aws_route53_zone") => &["zone_id", "id"],
+        ("aws_route53_record", "alias.name", "aws_lb") => &["dns_name"],
+        ("aws_route53_record", "alias.name", "aws_cloudfront_distribution") => &["domain_name"],
+        ("aws_route53_record", "alias.zone_id", "aws_lb") => &["zone_id"],
+        ("aws_route53_record", "alias.zone_id", "aws_cloudfront_distribution") => {
+            &["hosted_zone_id"]
+        }
+        ("aws_route53_zone", "vpc.vpc_id", "aws_vpc") => &["id"],
+        _ => &[],
+    }
+}
+
+fn scalar<'a>(value: &'a Value, unknown: &Value, path: &[&str]) -> Option<&'a str> {
+    if unknown == &Value::Bool(true) {
+        return None;
+    }
+    if path.is_empty() {
+        return value.as_str().filter(|s| !s.is_empty());
+    }
+    if let Some(values) = value.as_array() {
+        let [value] = values.as_slice() else {
+            return None;
+        };
+        if unknown.as_array().is_some_and(|u| u.len() != 1) {
+            return None;
+        }
+        return scalar(value, &unknown[0], path);
+    }
+    scalar(&value[path[0]], &unknown[path[0]], &path[1..])
+}
+
+pub(crate) fn annotate(
+    nodes: &[TerraformEntity],
+    references: &mut [AttributeReference],
+    evidence: &[(&Value, &Value)],
+) {
+    for reference in references.iter_mut() {
+        let node = &nodes[reference.target];
+        let [source] = reference.sources.as_slice() else {
+            continue;
+        };
+        let endpoint = &nodes[*source];
+        if !reference.complete
+            || !reference.instances_explicit
+            || !reference.issues.is_empty()
+            || !node.provider.is_aws()
+            || !endpoint.provider.is_aws()
+            || node.mode != EntityMode::Managed
+            || endpoint.mode != EntityMode::Managed
+            || node.deposed_key.is_some()
+            || endpoint.deposed_key.is_some()
+            || node.action == Action::Delete
+            || endpoint.action == Action::Delete
+        {
+            continue;
+        }
+        let fields = source_fields(
+            &node.resource_type,
+            &reference.attribute,
+            &endpoint.resource_type,
+        );
+        let (value, unknown) = evidence[reference.target];
+        let (target, target_unknown) = evidence[*source];
+        let actual = scalar(
+            value,
+            unknown,
+            &reference.attribute.split('.').collect::<Vec<_>>(),
+        );
+        reference.service_reference_verified = fields.iter().any(|field| {
+            reference.source_attributes.len() == 1
+                && reference.source_attributes.contains(*field)
+                && actual.is_some()
+                && actual == scalar(target, target_unknown, &[*field])
+        });
+        if reference.service_reference_verified
+            && reference.attribute == "alias.name"
+            && endpoint.resource_type == "aws_lb"
+        {
+            reference.service_reference_verified = matches!(
+                scalar(target, target_unknown, &["load_balancer_type"]),
+                Some("application" | "network")
+            );
+        }
+    }
+    let aliases: Vec<_> = references
+        .iter()
+        .filter(|r| r.attribute == "alias.zone_id" && r.service_reference_verified)
+        .map(|r| (r.target, r.sources.clone()))
+        .collect();
+    for reference in references
+        .iter_mut()
+        .filter(|r| r.attribute == "alias.name")
+    {
+        reference.service_reference_verified &= aliases
+            .iter()
+            .any(|(target, sources)| *target == reference.target && *sources == reference.sources);
+    }
+}
+
+pub(super) fn present(raw: &Input, graph: &mut Graph) {
+    for reference in &raw.attributes {
+        let node = &raw.nodes[reference.target];
+        if !node.provider.is_aws() {
+            continue;
+        }
+        let Some(label) = label(&node.resource_type, &reference.attribute) else {
+            continue;
+        };
+        let verified = reference.service_reference_verified;
+        graph.nodes[reference.target]
+            .references
+            .push(ResourceReference {
+                show_spatial: true,
+                label,
+                attribute: reference.attribute.clone(),
+                targets: if verified {
+                    reference
+                        .sources
+                        .iter()
+                        .map(|&source| ReferenceTarget {
+                            state: None,
+                            id: raw.nodes[source].entity.provenance[0].clone(),
+                            placement: raw.nodes[source].placement,
+                        })
+                        .collect()
+                } else {
+                    Vec::new()
+                },
+                complete: verified,
+                dependency: false,
+                issues: if verified {
+                    Default::default()
+                } else {
+                    [DiagnosticReason::UnprovenEndpointValue].into()
+                },
+            });
+    }
+}
+
+pub(super) fn diagnostics(raw: &Input) -> Vec<Diagnostic> {
+    raw.attributes
+        .iter()
+        .filter_map(|reference| {
+            let node = &raw.nodes[reference.target];
+            (node.provider.is_aws()
+                && label(&node.resource_type, &reference.attribute).is_some()
+                && !reference.service_reference_verified)
+                .then(|| Diagnostic {
+                    address: node.address.clone(),
+                    deposed_key: node.deposed_key.clone(),
+                    attribute: reference.attribute.clone(),
+                    reason: DiagnosticReason::UnprovenEndpointValue,
+                })
+        })
+        .collect()
+}

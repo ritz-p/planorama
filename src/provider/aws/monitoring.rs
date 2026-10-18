@@ -40,6 +40,7 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
                 .any(|r| r.label == "Monitors")
         {
             graph.nodes[index].references.push(ResourceReference {
+                show_spatial: false,
                 label: "Monitors",
                 attribute: "dimensions".into(),
                 targets: Vec::new(),
@@ -51,6 +52,7 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
         for reference in verified {
             for &source in &reference.sources {
                 let inverse = ResourceReference {
+                    show_spatial: false,
                     label: "Monitored by",
                     attribute: reference.attribute.clone(),
                     targets: vec![ReferenceTarget {

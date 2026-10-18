@@ -38,6 +38,17 @@ pub(super) fn collect(
                     .map(|r| contextualize(r, &node.address))
                     .collect();
                 let resolution = resolve(&refs, &instances, &aliases);
+                let source_attributes = resolution
+                    .sources
+                    .iter()
+                    .flat_map(|&source| {
+                        refs.iter().filter_map(move |reference: &String| {
+                            reference
+                                .strip_prefix(&format!("{}.", nodes[source].address))
+                                .map(str::to_owned)
+                        })
+                    })
+                    .collect();
                 result.push(AttributeReference {
                     target,
                     attribute: attribute.clone(),
@@ -51,6 +62,8 @@ pub(super) fn collect(
                     arn_values_match: false,
                     messaging_endpoint_verified: false,
                     monitoring_verified: false,
+                    source_attributes,
+                    service_reference_verified: false,
                     ids_only: resolution.ids_only,
                     issues: resolution.issues,
                 });

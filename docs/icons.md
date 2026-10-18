@@ -4,7 +4,7 @@
 
 Planorama embeds official AWS Architecture Icons from the **07312026 (July 31, 2026)** package downloaded from the [AWS Architecture Icons page](https://aws.amazon.com/architecture/icons/) on 2026-10-05.
 
-The selected original SVG files are stored unchanged under `assets/icons/aws/`. `manifest.json` records the official download URL, ZIP SHA-256, original entry paths, and individual file hashes. Only 20 required service icons are bundled; the full ZIP is not committed. Git preserves asset bytes through `.gitattributes`.
+The selected original SVG files are stored unchanged under `assets/icons/aws/`. `manifest.json` records the official download URL, ZIP SHA-256, original entry paths, and individual file hashes. Only required service icons are bundled; the full ZIP is not committed. Git preserves asset bytes through `.gitattributes`.
 
 ### Rights and scope
 

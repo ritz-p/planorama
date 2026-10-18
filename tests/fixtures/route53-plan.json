@@ -1,0 +1,15 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {"address":"aws_route53_zone.public","type":"aws_route53_zone","change":{"actions":["create"],"after":{"zone_id":"Z-SYNTHETIC"}}},
+    {"address":"aws_route53_record.alias","type":"aws_route53_record","change":{"actions":["create"],"after":{"zone_id":"Z-SYNTHETIC","alias":[{"name":"synthetic.invalid","zone_id":"Z-LB"}]}}},
+    {"address":"aws_lb.web","type":"aws_lb","change":{"actions":["create"],"after":{"dns_name":"synthetic.invalid","zone_id":"Z-LB","load_balancer_type":"application"}}},
+    {"address":"aws_route53_zone.private","type":"aws_route53_zone","change":{"actions":["create"],"after":{"vpc":[{"vpc_id":"vpc-synthetic"}]}}},
+    {"address":"aws_vpc.network","type":"aws_vpc","change":{"actions":["create"],"after":{"id":"vpc-synthetic"}}}
+  ],
+  "configuration":{"root_module":{"resources":[
+    {"address":"aws_route53_record.alias","expressions":{"zone_id":{"references":["aws_route53_zone.public.zone_id"]},"alias":[{"name":{"references":["aws_lb.web.dns_name"]},"zone_id":{"references":["aws_lb.web.zone_id"]}}]}},
+    {"address":"aws_route53_zone.private","expressions":{"vpc":[{"vpc_id":{"references":["aws_vpc.network.id"]}}]}}
+  ]}}
+}
