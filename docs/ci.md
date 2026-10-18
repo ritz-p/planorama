@@ -555,7 +555,7 @@ generation source. Rerunning a job may capture a newer PR head; consult its summ
 
 ### Ordinary snapshot coverage
 
-Ordinary unit/integration tests compare 27 of the 53 maintained SVGs with current
+Ordinary unit/integration tests compare 27 of the 54 maintained SVGs with current
 rendering: `association`, `bundling`, `checks`, `components`, `containment`,
 `data`, `data-icons`, `service-names`, `dense-architecture`, `diagram`, `hierarchy-routing`,
 `multi-container`, `multi-plan`, `port-collisions`, `regions`, `regional-states`,
@@ -563,10 +563,10 @@ rendering: `association`, `bundling`, `checks`, `components`, `containment`,
 `subnet-groups`, `terraform`, `terraform-large/diagram`, `vpc-workloads`,
 `workload-security-groups`, `aurora`, and `elasticache` (paths under `examples/`, with `.svg`).
 
-The other 26 are `accounts`, `aws-relationships`, `autoscaling-policy`,
+The other 27 are `accounts`, `aws-relationships`, `autoscaling-policy`,
 `cross-state`, `logical-actions`, `logical-regions`, `multi-account/diagram`,
 `network-scope`, `rds-subnet-group`, `relationship-scopes`, `security-groups`,
-`messaging`, `sns-subscriptions`, `event-sources`, `kinesis`, `eventbridge`, `eventbridge-targets`,
+`messaging`, `sns-subscriptions`, `event-sources`, `kinesis`, `firehose`, `eventbridge`, `eventbridge-targets`,
 `region-overrides`, `relationship-legend-hidden`, `route53`, `acm`, `kms`,
 `secrets-manager`, `ssm`, `efs`, and `ebs`.
 Related behavior has focused tests, but ordinary tests do not reproduce these

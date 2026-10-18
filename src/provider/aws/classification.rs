@@ -26,6 +26,7 @@ pub(super) fn classify(resource_type: &str) -> ResourceRole {
         | "aws_lambda_function"
         | "aws_sqs_queue"
         | "aws_kinesis_stream"
+        | "aws_kinesis_firehose_delivery_stream"
         | "aws_sns_topic"
         | "aws_cloudwatch_event_bus"
         | "aws_cloudwatch_event_rule"

@@ -355,6 +355,53 @@ and Terraform's [JSON plan format](https://developer.hashicorp.com/terraform/int
 Known synthetic values demonstrate verified links; a new stream with an unknown
 ARN retains ordinary references without an event-source edge.
 
+## Amazon Data Firehose
+
+Exact AWS `aws_kinesis_firehose_delivery_stream` resources are regional spatial
+Nodes with the Amazon Data Firehose icon/service name. They retain their own
+action, identity, lifecycle metadata and coverage record. Static provider regions
+apply when no resource override is present; explicit overrides remain unknown
+until supported by the verified override allowlist.
+
+Dedicated links reuse the service-reference rows and preserve ordinary Terraform
+dependency arrows. They identify configured roles, not runtime delivery paths:
+
+| Label | Delivery-stream attribute | Evidence |
+| --- | --- | --- |
+| Kinesis source | `kinesis_source_configuration.kinesis_stream_arn` | One Kinesis source block, no competing/unknown source block, explicit managed `aws_kinesis_stream.arn` reference and matching known value. |
+| S3 delivery destination | `extended_s3_configuration.bucket_arn` | Known `destination = extended_s3`, one matching block, no competing/unknown destination block, explicit managed `aws_s3_bucket.arn` reference and matching known value. |
+| S3 backup destination | `extended_s3_configuration.s3_backup_configuration.bucket_arn` | The same destination proof, known `s3_backup_mode = Enabled`, one backup block and a separately verified bucket ARN reference. |
+
+Each reference must be complete, unique and instance-explicit. Source and
+destination proofs are independent; an unsupported destination does not invalidate
+an independently proven Kinesis source. DirectPut has no inferred source link.
+Disabled/unknown backup modes do not acquire a backup role. Other destinations,
+MSK sources and transformation processors retain ordinary references only.
+No dedicated delivery/backup graph edges are added, so a Terraform dependency
+arrow is never presented as an assertion of delivery or backup behavior.
+
+Literal ARN equality, dynamic/ambiguous selections and missing values do not
+establish dedicated links. Unverified allowlisted fields retain ordinary references
+and `unproven_endpoint_value` diagnostics. Deleted/deposed streams or endpoints
+never borrow current configuration to establish past dedicated links. Data-mode
+streams/endpoints retain visible fallback resources. Filtered links show Unavailable;
+missing endpoints never resolve against a different state. Endpoint URLs, credentials,
+processor code, record payloads and raw attributes are neither retained nor output.
+Links imply no runtime delivery, transformation, permission or reachability guarantee.
+
+The implementation was checked against AWS Provider 5.100.0's installed schema,
+official [delivery-stream schema](https://github.com/hashicorp/terraform-provider-aws/blob/v5.100.0/internal/service/firehose/delivery_stream.go)
+and [documentation](https://github.com/hashicorp/terraform-provider-aws/blob/v5.100.0/website/docs/r/kinesis_firehose_delivery_stream.html.markdown).
+The synthetic [fixture](../tests/fixtures/firehose-plan.json),
+[SVG](../examples/firehose.svg) and [offline HTML](../examples/firehose.html)
+show distinct delivery/backup buckets and literal fallback. Regenerate and verify:
+
+```sh
+docker compose exec -T dev sh scripts/update-examples.sh
+docker compose exec -T dev cargo run --locked -- tests/fixtures/firehose-plan.json --format html -o examples/firehose.html
+docker compose exec -T dev node tests/browser/streaming.cjs
+```
+
 ## EventBridge targets
 
 Managed `aws_cloudwatch_event_target` resources remain regional logical rows.

@@ -11,6 +11,7 @@ mod tests;
 
 fn label(resource: &str, attribute: &str) -> Option<&'static str> {
     match (resource, attribute) {
+        ("aws_kinesis_firehose_delivery_stream", attribute) => super::firehose::label(attribute),
         ("aws_efs_mount_target" | "aws_efs_access_point", "file_system_id") => Some("File system"),
         ("aws_efs_mount_target", "subnet_id") => Some("Mount target subnet"),
         ("aws_volume_attachment", "instance_id") => Some("Attached instance"),
@@ -39,6 +40,17 @@ fn label(resource: &str, attribute: &str) -> Option<&'static str> {
 
 fn source_fields(resource: &str, attribute: &str, source: &str) -> &'static [&'static str] {
     match (resource, attribute, source) {
+        (
+            "aws_kinesis_firehose_delivery_stream",
+            "kinesis_source_configuration.kinesis_stream_arn",
+            "aws_kinesis_stream",
+        )
+        | (
+            "aws_kinesis_firehose_delivery_stream",
+            "extended_s3_configuration.bucket_arn"
+            | "extended_s3_configuration.s3_backup_configuration.bucket_arn",
+            "aws_s3_bucket",
+        ) => &["arn"],
         (
             "aws_efs_mount_target" | "aws_efs_access_point",
             "file_system_id",
@@ -89,7 +101,7 @@ fn source_fields(resource: &str, attribute: &str, source: &str) -> &'static [&'s
     }
 }
 
-fn scalar<'a>(value: &'a Value, unknown: &Value, path: &[&str]) -> Option<&'a str> {
+pub(super) fn scalar<'a>(value: &'a Value, unknown: &Value, path: &[&str]) -> Option<&'a str> {
     if unknown == &Value::Bool(true) {
         return None;
     }
@@ -152,6 +164,10 @@ pub(crate) fn annotate(
                 && actual.is_some()
                 && actual == scalar(target, target_unknown, &[*field])
         });
+        if node.resource_type == "aws_kinesis_firehose_delivery_stream" {
+            reference.service_reference_verified &=
+                super::firehose::configuration_verified(&reference.attribute, value, unknown);
+        }
         if reference.service_reference_verified
             && reference.attribute == "alias.name"
             && endpoint.resource_type == "aws_lb"

@@ -36,6 +36,7 @@ examples/eventbridge-targets.svg
 examples/sns-subscriptions.svg
 examples/event-sources.svg
 examples/kinesis.svg
+examples/firehose.svg
 examples/logical-regions.svg
 examples/logical-actions.svg
 examples/regional-states.svg

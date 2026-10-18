@@ -11,6 +11,8 @@ Subscription endpoint evidence similarly retains only ARN equality and a boolean
 protocol/type compatibility proof. Event-source mappings also retain a boolean
 function-name/ARN equality proof. EventBridge targets retain a boolean Rule-name
 and bus-context proof plus endpoint ARN equality; raw values are discarded.
+Firehose service references retain only endpoint/mode verification booleans;
+destination blocks and backup-mode values are discarded after provider validation.
 See [messaging rules](aws.md#sns-subscriptions) and [EventBridge targets](aws.md#eventbridge-targets).
 
 Route entries retain validated, nonsensitive configuration destination constants
