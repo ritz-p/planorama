@@ -7,29 +7,42 @@ use serde_json::{Value, json};
 const FIXTURE: &str = include_str!("../../fixtures/private-ca-plan.json");
 
 #[test]
-fn private_ca_keeps_data_identity_and_does_not_assign_execution_account_to_issuance() {
-    let mut parsed = plan::parse(FIXTURE).unwrap();
-    for node in &mut parsed.nodes {
-        node.provider_configuration.as_mut().unwrap().account =
-            crate::model::AwsAccountScope::new("123456789012");
-    }
-    let graph = semantic::transform(&parsed);
-    for node in &graph.nodes {
-        assert_eq!(
-            node.entity.scope.as_ref().unwrap().account.is_none(),
-            matches!(
-                node.resource_type.as_str(),
-                "aws_acmpca_certificate" | "aws_acmpca_certificate_authority_certificate"
-            )
-        );
-    }
+fn private_ca_preserves_owner_accounts_and_keeps_shared_ca_accounts_unknown() {
     let mut value: Value = serde_json::from_str(FIXTURE).unwrap();
     let mut data = value["resource_changes"][0].clone();
     data["address"] = json!("data.aws_acmpca_certificate_authority.lookup");
     data["mode"] = json!("data");
     data["change"]["actions"] = json!(["read"]);
     value["resource_changes"].as_array_mut().unwrap().push(data);
-    let graph = semantic::transform(&plan::parse(&value.to_string()).unwrap());
+    value["configuration"]["root_module"]["resources"]
+        .as_array_mut()
+        .unwrap()
+        .push(json!({
+            "address":"data.aws_acmpca_certificate_authority.lookup",
+            "mode":"data",
+            "provider_config_key":"aws"
+        }));
+    let mut parsed = plan::parse(&value.to_string()).unwrap();
+    for account in [None, crate::model::AwsAccountScope::new("123456789012")] {
+        for node in &mut parsed.nodes {
+            node.provider_configuration.as_mut().unwrap().account = account.clone();
+        }
+        let graph = semantic::transform(&parsed);
+        for node in &graph.nodes {
+            let expected = match (node.resource_type.as_str(), node.mode) {
+                ("aws_acmpca_certificate", _)
+                | ("aws_acmpca_certificate_authority", crate::model::EntityMode::Data) => None,
+                _ => account.as_ref(),
+            };
+            assert_eq!(
+                node.entity.scope.as_ref().unwrap().account.as_ref(),
+                expected,
+                "{}",
+                node.address
+            );
+        }
+    }
+    let graph = semantic::transform(&parsed);
     assert_eq!(graph.coverage.selected.resources, 7);
     let data = graph
         .nodes

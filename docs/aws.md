@@ -13,8 +13,11 @@ Exact AWS `aws_acmpca_certificate_authority` and `aws_acmpca_certificate` are
 logical Nodes; `aws_acmpca_certificate_authority_certificate` is a logical
 Controller that preserves the installation resource's own identity. All three
 use the AWS Private CA icon/service name and their proven regional provider
-scope. Issuance and installation account scope remains unknown because their
-target CA can belong to another account.
+scope. Managed authorities and certificate installations retain the verified
+provider account. Issued certificates and authority data sources keep account
+scope unknown because they can use a CA shared by another account.
+[AWS cross-account permissions](https://docs.aws.amazon.com/privateca/latest/userguide/pca-rbp.html)
+include issuance and authority lookup, but not certificate import.
 
 `Signing CA reference` on Private CA and ACM certificates and `Target CA reference`
 on installations require a complete, explicit, unique reference to a managed
