@@ -27,6 +27,7 @@ impl ResourceIcon {
             Self::CloudFront => "planorama-icon-aws-cloudfront",
             Self::Route53 => "planorama-icon-aws-route53",
             Self::Acm => "planorama-icon-aws-acm",
+            Self::PrivateCa => "planorama-icon-aws-private-ca",
             Self::Kms => "planorama-icon-aws-kms",
             Self::SecretsManager => "planorama-icon-aws-secretsmanager",
             Self::Ssm => "planorama-icon-aws-ssm",
@@ -93,6 +94,10 @@ impl ResourceIcon {
             Self::CloudFront => include_str!(concat!(env!("OUT_DIR"), "/Amazon-CloudFront.svg")),
             Self::Route53 => include_str!(concat!(env!("OUT_DIR"), "/Amazon-Route-53.svg")),
             Self::Acm => include_str!(concat!(env!("OUT_DIR"), "/AWS-Certificate-Manager.svg")),
+            Self::PrivateCa => include_str!(concat!(
+                env!("OUT_DIR"),
+                "/AWS-Private-Certificate-Authority.svg"
+            )),
             Self::Kms => include_str!(concat!(env!("OUT_DIR"), "/AWS-Key-Management-Service.svg")),
             Self::SecretsManager => {
                 include_str!(concat!(env!("OUT_DIR"), "/AWS-Secrets-Manager.svg"))

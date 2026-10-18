@@ -1,4 +1,4 @@
-use crate::model::{TerraformEntity, architecture::DeploymentScope};
+use crate::model::{EntityMode, TerraformEntity, architecture::DeploymentScope};
 
 pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentScope> {
     let resource = entity.resource_type.as_str();
@@ -19,8 +19,9 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
         .and_then(|c| c.account.clone());
     if matches!(
         resource,
-        "aws_glue_catalog_database" | "aws_glue_catalog_table"
-    ) {
+        "aws_glue_catalog_database" | "aws_glue_catalog_table" | "aws_acmpca_certificate"
+    ) || (resource == "aws_acmpca_certificate_authority" && entity.mode == EntityMode::Data)
+    {
         account = None;
     }
     let region = if global {
@@ -40,6 +41,9 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
             | "aws_ebs_volume"
             | "aws_volume_attachment"
             | "aws_acm_certificate"
+            | "aws_acmpca_certificate_authority"
+            | "aws_acmpca_certificate"
+            | "aws_acmpca_certificate_authority_certificate"
             | "aws_acm_certificate_validation"
             | "aws_kms_key"
             | "aws_kms_alias"

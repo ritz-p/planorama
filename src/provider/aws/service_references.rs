@@ -11,6 +11,15 @@ pub(super) mod tests;
 
 fn label(resource: &str, attribute: &str) -> Option<&'static str> {
     match (resource, attribute) {
+        ("aws_acmpca_certificate" | "aws_acm_certificate", "certificate_authority_arn") => {
+            Some("Signing CA reference")
+        }
+        ("aws_acmpca_certificate_authority_certificate", "certificate_authority_arn") => {
+            Some("Target CA reference")
+        }
+        ("aws_acmpca_certificate_authority_certificate", "certificate") => {
+            Some("Installed certificate reference")
+        }
         ("aws_glue_catalog_table", "database_name") => Some("Catalog database"),
         ("aws_glue_crawler", "role") | ("aws_glue_job", "role_arn") => {
             Some("Execution role reference")
@@ -44,6 +53,18 @@ fn label(resource: &str, attribute: &str) -> Option<&'static str> {
 
 fn source_fields(resource: &str, attribute: &str, source: &str) -> &'static [&'static str] {
     match (resource, attribute, source) {
+        (
+            "aws_acmpca_certificate"
+            | "aws_acm_certificate"
+            | "aws_acmpca_certificate_authority_certificate",
+            "certificate_authority_arn",
+            "aws_acmpca_certificate_authority",
+        ) => &["arn"],
+        (
+            "aws_acmpca_certificate_authority_certificate",
+            "certificate",
+            "aws_acmpca_certificate",
+        ) => &["certificate"],
         ("aws_glue_catalog_table", "database_name", "aws_glue_catalog_database") => &["name"],
         ("aws_glue_crawler", "role", "aws_iam_role") => &["arn"],
         ("aws_glue_job", "role_arn", "aws_iam_role") => &["arn"],
