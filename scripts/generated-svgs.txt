@@ -18,6 +18,7 @@ examples/kms.svg
 examples/secrets-manager.svg
 examples/ssm.svg
 examples/iam.svg
+examples/identity-providers.svg
 examples/efs.svg
 examples/ebs.svg
 examples/accounts.svg

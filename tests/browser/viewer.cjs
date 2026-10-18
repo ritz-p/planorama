@@ -858,6 +858,23 @@ class ViewerTests {
         this.assertIn('Unavailable', this.find('#viewport').text);
         this.assertEqual(len(this.driver.find_elements(By.CSS_SELECTOR, '#viewport a[href]')), 0);
     }
+    test_identity_provider_references_preserve_offline_navigation() {
+        this.load('tests/fixtures/identity-providers-plan.json', '--icon-mode', 'service-name');
+        this.assertIn('AWS Identity and Access Management', this.driver.page_source);
+        this.assertNotIn('PRIVATE_', this.driver.page_source);
+        for (const suffix of ['workload', 'workforce']) {
+            this.choose('aws_iam_role.' + suffix);
+            const link = this.find('[data-viewer-selected] a[data-reference-attribute="assume_role_policy"]');
+            const target = link.get_attribute('href').split('#').at(-1);
+            this.driver.execute_script("arguments[0].dispatchEvent(new MouseEvent('click', {bubbles:true,cancelable:true}))", link);
+            this.assertEqual(this.find('[data-viewer-selected]').get_attribute('id'), target);
+            this.assertEqual(this.find('[data-viewer-selected]').get_attribute('data-placement'), 'logical');
+        }
+        this.choose('aws_iam_role.literal');
+        this.assertFalse(this.driver.find_elements(By.CSS_SELECTOR, '[data-viewer-selected] a[data-reference-attribute]'));
+        this.load('tests/fixtures/identity-providers-plan.json', '--focus', 'aws_iam_role.workload', '--focus-depth', '0');
+        this.assertIn('Unavailable', this.find('#viewport').text);
+    }
     test_escaped_long_addresses_modes_and_individual_logical_targets() {
         let address = 'module.app["a.b"].aws_iam_role.item["</script><script>window.pwned=1</script>&\\\"' + 'x'.repeat(100) + '"]';
         let plan = {'format_version': '1.2', 'resource_changes': [ {'address': address, 'type': 'aws_iam_role', 'change': {'actions': ['create'], 'after': {'secret': 'DO_NOT_EXPOSE'}}}, {'address': 'aws_iam_role.item', 'type': 'aws_iam_role'}, {'address': 'data.aws_iam_role.item', 'type': 'aws_iam_role', 'mode': 'data'}, ]};
