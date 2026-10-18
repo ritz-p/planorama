@@ -27,6 +27,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         ("AWS-Certificate-Manager", "acm"),
         ("AWS-Key-Management-Service", "kms"),
         ("AWS-Secrets-Manager", "secretsmanager"),
+        ("AWS-Systems-Manager", "ssm"),
         ("Amazon-API-Gateway", "api"),
         ("AWS-Identity-and-Access-Management", "iam"),
         ("Amazon-CloudWatch", "monitoring"),

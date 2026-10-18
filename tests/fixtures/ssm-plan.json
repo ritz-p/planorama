@@ -1,0 +1,16 @@
+{
+  "format_version":"1.2",
+  "resource_changes":[
+    {"address":"aws_ssm_parameter.app","type":"aws_ssm_parameter","change":{"actions":["create"],"after":{"name":"/fixture/app/config","type":"SecureString","value":"SYNTHETIC_PARAMETER_NOT_FOR_OUTPUT","arn":"arn:aws:ssm:us-east-1:123456789012:parameter/fixture/app/config"},"after_sensitive":{"value":true}}},
+    {"address":"aws_ecs_task_definition.app","type":"aws_ecs_task_definition","change":{"actions":["create"],"after":{"container_definitions":"[{\"name\":\"fixture\",\"image\":\"fixture.invalid/image\",\"secrets\":[{\"name\":\"CONFIG\",\"valueFrom\":\"arn:aws:ssm:us-east-1:123456789012:parameter/fixture/app/config\"}]}]"}}},
+    {"address":"data.aws_ssm_parameter.lookup","type":"aws_ssm_parameter","mode":"data","change":{"actions":["read"],"after":{"name":"/fixture/app/config","type":"SecureString","value":"SYNTHETIC_PARAMETER_NOT_FOR_OUTPUT"}}}
+  ],
+  "configuration":{
+    "provider_config":{"aws":{"name":"aws","full_name":"registry.terraform.io/hashicorp/aws","expressions":{"region":{"constant_value":"us-east-1"}}}},
+    "root_module":{"resources":[
+      {"address":"aws_ssm_parameter.app","provider_config_key":"aws"},
+      {"address":"aws_ecs_task_definition.app","provider_config_key":"aws","expressions":{"container_definitions":{"references":["aws_ssm_parameter.app.arn","aws_ssm_parameter.app"]}}},
+      {"address":"data.aws_ssm_parameter.lookup","mode":"data","provider_config_key":"aws"}
+    ]}
+  }
+}
