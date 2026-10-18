@@ -6,8 +6,16 @@ use std::collections::BTreeMap;
 #[path = "../../../tests/unit/semantic/associations.rs"]
 mod tests;
 
+#[cfg(test)]
+#[path = "../../../tests/unit/semantic/ebs.rs"]
+mod ebs_tests;
+
 pub(super) fn rule(resource_type: &str) -> Option<[(&'static str, &'static str); 2]> {
     match resource_type {
+        "aws_volume_attachment" => Some([
+            ("instance_id", "aws_instance"),
+            ("volume_id", "aws_ebs_volume"),
+        ]),
         "aws_route_table_association" => Some([
             ("subnet_id", "aws_subnet"),
             ("route_table_id", "aws_route_table"),
@@ -129,6 +137,11 @@ pub(super) fn endpoint(
         .attributes
         .iter()
         .find(|a| a.target == target && a.attribute == attribute)?;
+    if raw.nodes[target].resource_type == "aws_volume_attachment"
+        && !reference.service_reference_verified
+    {
+        return None;
+    }
     match reference.sources.as_slice() {
         [source]
             if reference.complete
