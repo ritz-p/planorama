@@ -7,10 +7,14 @@ use serde_json::Value;
 
 #[cfg(test)]
 #[path = "../../../tests/unit/semantic/service_references.rs"]
-mod tests;
+pub(super) mod tests;
 
 fn label(resource: &str, attribute: &str) -> Option<&'static str> {
     match (resource, attribute) {
+        ("aws_glue_catalog_table", "database_name") => Some("Catalog database"),
+        ("aws_glue_crawler", "role") | ("aws_glue_job", "role_arn") => {
+            Some("Execution role reference")
+        }
         ("aws_kinesis_firehose_delivery_stream", attribute) => super::firehose::label(attribute),
         ("aws_efs_mount_target" | "aws_efs_access_point", "file_system_id") => Some("File system"),
         ("aws_efs_mount_target", "subnet_id") => Some("Mount target subnet"),
@@ -40,6 +44,9 @@ fn label(resource: &str, attribute: &str) -> Option<&'static str> {
 
 fn source_fields(resource: &str, attribute: &str, source: &str) -> &'static [&'static str] {
     match (resource, attribute, source) {
+        ("aws_glue_catalog_table", "database_name", "aws_glue_catalog_database") => &["name"],
+        ("aws_glue_crawler", "role", "aws_iam_role") => &["arn"],
+        ("aws_glue_job", "role_arn", "aws_iam_role") => &["arn"],
         (
             "aws_kinesis_firehose_delivery_stream",
             "kinesis_source_configuration.kinesis_stream_arn",
@@ -168,6 +175,17 @@ pub(crate) fn annotate(
                 && actual.is_some()
                 && actual == scalar(target, target_unknown, &[*field])
         });
+        if node.resource_type == "aws_glue_catalog_table" && reference.attribute == "database_name"
+        {
+            reference.service_reference_verified &= super::glue::catalog_verified(
+                node,
+                endpoint,
+                value,
+                unknown,
+                target,
+                target_unknown,
+            );
+        }
         if node.resource_type == "aws_kinesis_firehose_delivery_stream" {
             reference.service_reference_verified &=
                 super::firehose::configuration_verified(&reference.attribute, value, unknown);

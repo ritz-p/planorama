@@ -1,0 +1,25 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {"address":"aws_glue_catalog_database.lake","type":"aws_glue_catalog_database","mode":"managed","change":{"actions":["no-op"],"after":{"name":"fixture_lake","catalog_id":"123456789012"}}},
+    {"address":"aws_glue_catalog_table.events","type":"aws_glue_catalog_table","mode":"managed","change":{"actions":["create"],"after":{"name":"fixture_events","database_name":"fixture_lake","catalog_id":"123456789012","storage_descriptor":[{"columns":[{"name":"PRIVATE_SCHEMA","type":"string"}]}]}}},
+    {"address":"aws_iam_role.etl","type":"aws_iam_role","mode":"managed","change":{"actions":["no-op"],"after":{"arn":"arn:aws:iam::123456789012:role/fixture-etl","name":"fixture-etl"}}},
+    {"address":"aws_s3_bucket.lake","type":"aws_s3_bucket","mode":"managed","change":{"actions":["no-op"],"after":{"bucket":"fixture-lake","arn":"arn:aws:s3:::fixture-lake"}}},
+    {"address":"aws_glue_crawler.events","type":"aws_glue_crawler","mode":"managed","change":{"actions":["update"],"after":{"database_name":"fixture_lake","role":"arn:aws:iam::123456789012:role/fixture-etl","s3_target":[{"path":"s3://fixture-lake/PRIVATE_INPUT"}]}}},
+    {"address":"aws_glue_job.etl","type":"aws_glue_job","mode":"managed","change":{"actions":["create"],"after":{"role_arn":"arn:aws:iam::123456789012:role/fixture-etl","command":[{"script_location":"s3://fixture-lake/PRIVATE_SCRIPT"}],"default_arguments":{"--input":"s3://fixture-lake/PRIVATE_ARGUMENT"}}}},
+    {"address":"aws_glue_job.literal","type":"aws_glue_job","mode":"managed","change":{"actions":["create"],"after":{"role_arn":"arn:aws:iam::123456789012:role/fixture-etl","command":[{"script_location":"s3://fixture-lake/PRIVATE_SCRIPT"}]}}}
+  ],
+  "configuration": {
+    "provider_config":{"aws":{"full_name":"registry.terraform.io/hashicorp/aws","version_constraint":"5.100.0","expressions":{"region":{"constant_value":"us-east-1"}}}},
+    "root_module":{"resources":[
+      {"address":"aws_glue_catalog_database.lake","provider_config_key":"aws"},
+      {"address":"aws_glue_catalog_table.events","provider_config_key":"aws","expressions":{"database_name":{"references":["aws_glue_catalog_database.lake.name"]},"catalog_id":{"references":["aws_glue_catalog_database.lake.catalog_id"]}}},
+      {"address":"aws_iam_role.etl","provider_config_key":"aws"},
+      {"address":"aws_s3_bucket.lake","provider_config_key":"aws"},
+      {"address":"aws_glue_crawler.events","provider_config_key":"aws","expressions":{"database_name":{"references":["aws_glue_catalog_database.lake.name"]},"role":{"references":["aws_iam_role.etl.arn"]},"s3_target":[{"path":{"references":["aws_s3_bucket.lake.bucket"]}}]}},
+      {"address":"aws_glue_job.etl","provider_config_key":"aws","expressions":{"role_arn":{"references":["aws_iam_role.etl.arn"]},"command":[{"script_location":{"references":["aws_s3_bucket.lake.bucket"]}}]}},
+      {"address":"aws_glue_job.literal","provider_config_key":"aws"}
+    ]}
+  }
+}

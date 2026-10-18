@@ -13,15 +13,25 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
                 | "aws_route53_traffic_policy"
                 | "aws_route53_traffic_policy_instance"
         );
-    let account = entity
+    let mut account = entity
         .provider_configuration
         .as_ref()
         .and_then(|c| c.account.clone());
+    if matches!(
+        resource,
+        "aws_glue_catalog_database" | "aws_glue_catalog_table"
+    ) {
+        account = None;
+    }
     let region = if global {
         None
     } else if matches!(
         resource,
         "aws_vpc"
+            | "aws_glue_catalog_database"
+            | "aws_glue_catalog_table"
+            | "aws_glue_crawler"
+            | "aws_glue_job"
             | "aws_efs_file_system"
             | "aws_efs_mount_target"
             | "aws_efs_access_point"
