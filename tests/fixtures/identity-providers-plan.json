@@ -1,0 +1,23 @@
+{
+  "format_version":"1.2",
+  "terraform_version":"1.9.8",
+  "resource_changes":[
+    {"address":"aws_iam_openid_connect_provider.workload","type":"aws_iam_openid_connect_provider","change":{"actions":["create"],"after":{"url":"https://PRIVATE_ISSUER.invalid","client_id_list":["PRIVATE_CLIENT"],"thumbprint_list":["PRIVATE_THUMBPRINT"],"arn":"arn:aws:iam::123456789012:oidc-provider/PRIVATE_ISSUER.invalid"}}},
+    {"address":"aws_iam_role.workload","type":"aws_iam_role","change":{"actions":["create"],"after":{"assume_role_policy":"PRIVATE_TRUST_POLICY"}}},
+    {"address":"aws_iam_saml_provider.workforce","type":"aws_iam_saml_provider","change":{"actions":["update"],"after":{"name":"fixture-workforce","saml_metadata_document":"PRIVATE_SAML_METADATA","arn":"arn:aws:iam::123456789012:saml-provider/fixture-workforce"}}},
+    {"address":"aws_iam_role.workforce","type":"aws_iam_role","change":{"actions":["update"],"after":{"assume_role_policy":"PRIVATE_TRUST_POLICY"}}},
+    {"address":"aws_iam_role.literal","type":"aws_iam_role","change":{"actions":["create"],"after":{"assume_role_policy":"{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Principal\":{\"Federated\":\"arn:aws:iam::123456789012:oidc-provider/PRIVATE_ISSUER.invalid\"},\"Action\":\"sts:AssumeRoleWithWebIdentity\"}]}"}}},
+    {"address":"aws_eks_cluster.literal","type":"aws_eks_cluster","change":{"actions":["no-op"],"after":{"identity":[{"oidc":[{"issuer":"https://PRIVATE_ISSUER.invalid"}]}]}}}
+  ],
+  "configuration":{
+    "provider_config":{"aws":{"name":"aws","full_name":"registry.terraform.io/hashicorp/aws","expressions":{"region":{"constant_value":"us-east-1"}}}},
+    "root_module":{"resources":[
+      {"address":"aws_iam_openid_connect_provider.workload","provider_config_key":"aws"},
+      {"address":"aws_iam_role.workload","provider_config_key":"aws","expressions":{"assume_role_policy":{"references":["aws_iam_openid_connect_provider.workload.arn","aws_iam_openid_connect_provider.workload"]}}},
+      {"address":"aws_iam_saml_provider.workforce","provider_config_key":"aws"},
+      {"address":"aws_iam_role.workforce","provider_config_key":"aws","expressions":{"assume_role_policy":{"references":["aws_iam_saml_provider.workforce.arn","aws_iam_saml_provider.workforce"]}}},
+      {"address":"aws_iam_role.literal","provider_config_key":"aws"},
+      {"address":"aws_eks_cluster.literal","provider_config_key":"aws"}
+    ]}
+  }
+}

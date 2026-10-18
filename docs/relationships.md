@@ -106,6 +106,8 @@ Terraform reference semantics; these labels do not add runtime-delivery edges.
 [IAM membership and direct policy references](aws.md#iam-users-and-groups) retain
 each membership/attachment resource and its action; they do not evaluate inherited
 or effective permissions.
+[IAM identity provider references](aws.md#iam-identity-providers) are configuration
+dependencies only; trust-policy JSON and matching issuer URLs do not create edges.
 Graph-only references such as
 `depends_on` use Dependency, not an attribute-specific usage label. Logical-resource
 rows show their own direct references, including references to spatial resources.
