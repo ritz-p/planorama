@@ -11,6 +11,16 @@ mod tests;
 
 fn label(resource: &str, attribute: &str) -> Option<&'static str> {
     match (resource, attribute) {
+        ("aws_kms_alias", "target_key_id") => Some("Alias key"),
+        ("aws_sqs_queue", "kms_master_key_id")
+        | ("aws_db_instance" | "aws_rds_cluster", "kms_key_id")
+        | (
+            "aws_s3_bucket_server_side_encryption_configuration",
+            "rule.apply_server_side_encryption_by_default.kms_master_key_id",
+        ) => Some("Encryption key reference"),
+        ("aws_s3_bucket_server_side_encryption_configuration", "bucket") => {
+            Some("Configured bucket")
+        }
         ("aws_acm_certificate_validation" | "aws_lb_listener", "certificate_arn")
         | ("aws_cloudfront_distribution", "viewer_certificate.acm_certificate_arn") => {
             Some("Certificate reference")
@@ -24,6 +34,17 @@ fn label(resource: &str, attribute: &str) -> Option<&'static str> {
 
 fn source_fields(resource: &str, attribute: &str, source: &str) -> &'static [&'static str] {
     match (resource, attribute, source) {
+        ("aws_kms_alias", "target_key_id", "aws_kms_key")
+        | ("aws_sqs_queue", "kms_master_key_id", "aws_kms_key")
+        | ("aws_db_instance" | "aws_rds_cluster", "kms_key_id", "aws_kms_key")
+        | (
+            "aws_s3_bucket_server_side_encryption_configuration",
+            "rule.apply_server_side_encryption_by_default.kms_master_key_id",
+            "aws_kms_key",
+        ) => &["id", "key_id", "arn"],
+        ("aws_s3_bucket_server_side_encryption_configuration", "bucket", "aws_s3_bucket") => {
+            &["id", "bucket"]
+        }
         (
             "aws_acm_certificate_validation" | "aws_lb_listener",
             "certificate_arn",
