@@ -67,9 +67,17 @@ pub(super) fn classify(resource_type: &str) -> ResourceRole {
         | "aws_vpc_endpoint_route_table_association"
         | "aws_vpc_endpoint_subnet_association"
         | "aws_iam_role_policy_attachment" => ResourceRole::Association,
+        "aws_iam_group_membership"
+        | "aws_iam_user_group_membership"
+        | "aws_iam_user_policy_attachment"
+        | "aws_iam_group_policy_attachment" => ResourceRole::Association,
         "aws_security_group"
         | "aws_network_acl"
         | "aws_iam_role"
+        | "aws_iam_user"
+        | "aws_iam_group"
+        | "aws_iam_user_policy"
+        | "aws_iam_group_policy"
         | "aws_iam_policy"
         | "aws_iam_role_policy"
         | "aws_iam_instance_profile"

@@ -34,7 +34,7 @@ fn label(resource: &str, attribute: &str) -> Option<&'static str> {
         ("aws_route53_record", "zone_id") => Some("Hosted zone"),
         ("aws_route53_record", "alias.name") => Some("Alias target"),
         ("aws_route53_zone", "vpc.vpc_id") => Some("Associated VPC"),
-        _ => None,
+        _ => super::iam::label(resource, attribute),
     }
 }
 
@@ -127,6 +127,10 @@ pub(crate) fn annotate(
 ) {
     for reference in references.iter_mut() {
         let node = &nodes[reference.target];
+        if super::iam::label(&node.resource_type, &reference.attribute).is_some() {
+            reference.service_reference_verified = super::iam::verified(nodes, reference, evidence);
+            continue;
+        }
         let [source] = reference.sources.as_slice() else {
             continue;
         };

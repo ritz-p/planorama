@@ -840,6 +840,24 @@ class ViewerTests {
         this.assertIn('Create (1)', this.find('[data-action-section]').get_attribute('textContent'));
         this.assertFalse(this.search('aws_iam_policy.create_b'));
     }
+    test_iam_memberships_and_direct_policies_keep_search_and_links() {
+        this.load('tests/fixtures/iam-plan.json', '--icon-mode', 'service-name');
+        this.assertEqual(len(this.driver.find_elements(By.CSS_SELECTOR, '[data-placement="logical"]')), 11);
+        this.assertIn('AWS Identity and Access Management', this.driver.page_source);
+        this.assertNotIn('PRIVATE_', this.driver.page_source);
+        this.choose('aws_iam_group_membership.team');
+        const row = this.find('[data-viewer-selected]');
+        this.assertIn('Member users', row.get_attribute('textContent'));
+        const link = this.find('[data-viewer-selected] a[data-reference-attribute="users"]');
+        const target = link.get_attribute('href').split('#').at(-1);
+        this.driver.execute_script("arguments[0].dispatchEvent(new MouseEvent('click', {bubbles:true,cancelable:true}))", link);
+        this.assertEqual(this.find('[data-viewer-selected]').get_attribute('id'), target);
+        this.choose('aws_iam_group_policy_attachment.read');
+        this.assertEqual(this.driver.execute_script("return document.querySelector('[data-viewer-selected]').closest('[data-action-section]').dataset.actionSection"), 'update');
+        this.load('tests/fixtures/iam-plan.json', '--focus', 'aws_iam_group_membership.team', '--focus-depth', '0');
+        this.assertIn('Unavailable', this.find('#viewport').text);
+        this.assertEqual(len(this.driver.find_elements(By.CSS_SELECTOR, '#viewport a[href]')), 0);
+    }
     test_escaped_long_addresses_modes_and_individual_logical_targets() {
         let address = 'module.app["a.b"].aws_iam_role.item["</script><script>window.pwned=1</script>&\\\"' + 'x'.repeat(100) + '"]';
         let plan = {'format_version': '1.2', 'resource_changes': [ {'address': address, 'type': 'aws_iam_role', 'change': {'actions': ['create'], 'after': {'secret': 'DO_NOT_EXPOSE'}}}, {'address': 'aws_iam_role.item', 'type': 'aws_iam_role'}, {'address': 'data.aws_iam_role.item', 'type': 'aws_iam_role', 'mode': 'data'}, ]};

@@ -1,0 +1,33 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {"address":"aws_iam_user.alice","type":"aws_iam_user","change":{"actions":["create"],"after":{"name":"fixture-alice"}}},
+    {"address":"aws_iam_group_membership.team","type":"aws_iam_group_membership","change":{"actions":["create"],"after":{"group":"fixture-team","users":["fixture-alice","fixture-bob"]}}},
+    {"address":"aws_iam_user.bob","type":"aws_iam_user","change":{"actions":["no-op"],"after":{"name":"fixture-bob"}}},
+    {"address":"aws_iam_group.team","type":"aws_iam_group","change":{"actions":["create"],"after":{"name":"fixture-team"}}},
+    {"address":"aws_iam_policy.read","type":"aws_iam_policy","change":{"actions":["create"],"after":{"arn":"arn:aws:iam::123456789012:policy/fixture-read","policy":"PRIVATE_POLICY"}}},
+    {"address":"aws_iam_user_policy_attachment.read","type":"aws_iam_user_policy_attachment","change":{"actions":["create"],"after":{"user":"fixture-alice","policy_arn":"arn:aws:iam::123456789012:policy/fixture-read"}}},
+    {"address":"aws_iam_group_policy_attachment.read","type":"aws_iam_group_policy_attachment","change":{"actions":["update"],"after":{"group":"fixture-team","policy_arn":"arn:aws:iam::123456789012:policy/fixture-read"}}},
+    {"address":"aws_iam_user_group_membership.bob","type":"aws_iam_user_group_membership","change":{"actions":["create"],"after":{"user":"fixture-bob","groups":["fixture-team"]}}},
+    {"address":"aws_iam_user_policy.inline","type":"aws_iam_user_policy","change":{"actions":["create"],"after":{"user":"fixture-alice","policy":"PRIVATE_INLINE_POLICY"}}},
+    {"address":"aws_iam_group_policy.inline","type":"aws_iam_group_policy","change":{"actions":["create"],"after":{"group":"fixture-team","policy":"PRIVATE_INLINE_POLICY"}}},
+    {"address":"aws_iam_group_membership.literal","type":"aws_iam_group_membership","change":{"actions":["create"],"after":{"group":"fixture-team","users":["fixture-alice"]}}}
+  ],
+  "configuration": {
+    "provider_config":{"aws":{"name":"aws","full_name":"registry.terraform.io/hashicorp/aws","expressions":{"region":{"constant_value":"us-east-1"}}}},
+    "root_module":{"resources":[
+      {"address":"aws_iam_user.alice","provider_config_key":"aws"},
+      {"address":"aws_iam_group_membership.team","provider_config_key":"aws","expressions":{"group":{"references":["aws_iam_group.team.name","aws_iam_group.team"]},"users":{"references":["aws_iam_user.alice.name","aws_iam_user.alice","aws_iam_user.bob.name","aws_iam_user.bob"]}}},
+      {"address":"aws_iam_user.bob","provider_config_key":"aws"},
+      {"address":"aws_iam_group.team","provider_config_key":"aws"},
+      {"address":"aws_iam_policy.read","provider_config_key":"aws"},
+      {"address":"aws_iam_user_policy_attachment.read","provider_config_key":"aws","expressions":{"user":{"references":["aws_iam_user.alice.name","aws_iam_user.alice"]},"policy_arn":{"references":["aws_iam_policy.read.arn","aws_iam_policy.read"]}}},
+      {"address":"aws_iam_group_policy_attachment.read","provider_config_key":"aws","expressions":{"group":{"references":["aws_iam_group.team.name","aws_iam_group.team"]},"policy_arn":{"references":["aws_iam_policy.read.arn","aws_iam_policy.read"]}}},
+      {"address":"aws_iam_user_group_membership.bob","provider_config_key":"aws","expressions":{"user":{"references":["aws_iam_user.bob.name","aws_iam_user.bob"]},"groups":{"references":["aws_iam_group.team.name","aws_iam_group.team"]}}},
+      {"address":"aws_iam_user_policy.inline","provider_config_key":"aws","expressions":{"user":{"references":["aws_iam_user.alice.name","aws_iam_user.alice"]}}},
+      {"address":"aws_iam_group_policy.inline","provider_config_key":"aws","expressions":{"group":{"references":["aws_iam_group.team.name","aws_iam_group.team"]}}},
+      {"address":"aws_iam_group_membership.literal","provider_config_key":"aws","expressions":{"group":{"references":["aws_iam_group.team.name","aws_iam_group.team"]},"users":{"constant_value":["fixture-alice"]}}}
+    ]}
+  }
+}

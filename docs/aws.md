@@ -7,6 +7,44 @@ The generated [resource support matrix](resource-support.md) lists exact-type
 roles, display modes, icons and scope eligibility. This document defines the
 conditional relationship and placement proofs behind that catalog.
 
+## IAM users and groups
+
+Exact AWS `aws_iam_user`, `aws_iam_group`, `aws_iam_user_policy` and
+`aws_iam_group_policy` use the existing logical IAM Policy presentation.
+`aws_iam_group_membership`, `aws_iam_user_group_membership`,
+`aws_iam_user_policy_attachment` and `aws_iam_group_policy_attachment` are logical
+Associations. All use the IAM icon/service name and Global scope, independently
+of the provider region. Each stays a separate resource with its own action,
+provenance, selection/search identity and coverage entry.
+
+`User`, `Group`, `Member users`, `Member groups` and `Direct policy` reference rows
+require complete, explicit references to current managed AWS resources of the
+exact endpoint type. User/group references use `name`, and direct policy references
+use `arn`, with equal known planned values. Membership collections must match the
+entire uniquely named referenced endpoint set; literal names alone, mixed literal
+members, unknown values and ambiguous instance selections cannot establish these
+links. Deleted/deposed resources cannot establish current membership or attachment.
+Ordinary Terraform references remain available when dedicated proof fails, with
+an unproven-value diagnostic; filtered targets become Unavailable. Dependency
+arrows remain Terraform dependencies, not effective-permission or trust edges.
+Inline policy bodies, credentials, access keys, login profiles and passwords are
+not displayed. Group-inherited permissions and policy contents are not evaluated.
+The aggregate `aws_iam_policy_attachment` and exclusive management resources are
+outside this initial scope.
+
+The checked AWS Provider 5.100.0 schemas for
+[group membership](https://github.com/hashicorp/terraform-provider-aws/blob/v5.100.0/internal/service/iam/group_membership.go),
+[user group membership](https://github.com/hashicorp/terraform-provider-aws/blob/v5.100.0/internal/service/iam/user_group_membership.go),
+[direct attachment](https://github.com/hashicorp/terraform-provider-aws/blob/v5.100.0/internal/service/iam/user_policy_attachment.go)
+and [inline policy](https://github.com/hashicorp/terraform-provider-aws/blob/v5.100.0/website/docs/r/iam_user_policy.html.markdown)
+define the name sets and scalar endpoints. Installed schema and an offline
+Terraform 1.9.8 plan confirm the name-set and reference shapes. The synthetic
+[fixture](../tests/fixtures/iam-plan.json), [SVG](../examples/iam.svg) and
+[offline HTML](../examples/iam.html) include both membership directions, inline
+policies, independent attachments and an unresolved literal-only membership.
+Regenerate SVGs with the standard script and HTML in Docker with
+`cargo run --locked -- tests/fixtures/iam-plan.json --format html -o examples/iam.html`.
+
 ## Deployment scopes
 
 EFS File Systems and Mount Targets are regional spatial Nodes; Access Points are

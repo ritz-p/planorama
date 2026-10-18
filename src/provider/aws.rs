@@ -6,6 +6,7 @@ mod containment;
 mod data;
 pub(super) mod diagnostics;
 mod firehose;
+mod iam;
 mod icons;
 mod members;
 mod messaging;
@@ -60,6 +61,14 @@ pub(super) fn placement(resource_type: &str) -> crate::model::Placement {
         | "aws_s3_bucket_server_side_encryption_configuration"
         | "aws_ecs_task_definition"
         | "aws_iam_role"
+        | "aws_iam_user"
+        | "aws_iam_group"
+        | "aws_iam_user_policy"
+        | "aws_iam_group_policy"
+        | "aws_iam_group_membership"
+        | "aws_iam_user_group_membership"
+        | "aws_iam_user_policy_attachment"
+        | "aws_iam_group_policy_attachment"
         | "aws_iam_policy"
         | "aws_iam_role_policy"
         | "aws_iam_instance_profile"
