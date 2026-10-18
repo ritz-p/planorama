@@ -48,6 +48,7 @@ pub(super) fn reference_label(resource_type: &str, attribute: &str) -> &'static 
 pub(super) fn placement(resource_type: &str) -> crate::model::Placement {
     match resource_type {
         "aws_ecs_cluster"
+        | "aws_efs_access_point"
         | "aws_acm_certificate"
         | "aws_acm_certificate_validation"
         | "aws_kms_key"

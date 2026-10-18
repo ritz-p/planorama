@@ -128,6 +128,11 @@
             "file": "AWS-Systems-Manager.svg",
             "source": "Architecture-Service-Icons_07312026/Arch_Management-Tools/48/Arch_AWS-Systems-Manager_48.svg",
             "sha256": "b03519f1080a84cc183f7d24d48ee84114834b06f788c6f6459c717527d4df13"
+        },
+        {
+            "file": "Amazon-EFS.svg",
+            "source": "Architecture-Service-Icons_07312026/Arch_Storage/48/Arch_Amazon-EFS_48.svg",
+            "sha256": "82f8c32b68799a33b3c6737920d492493e6d293ba58caca65cfd6f4056a80e68"
         }
     ]
 }
