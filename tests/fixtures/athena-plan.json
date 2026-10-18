@@ -1,0 +1,23 @@
+{
+  "format_version":"1.2",
+  "terraform_version":"1.9.8",
+  "resource_changes":[
+    {"address":"aws_s3_bucket.results","type":"aws_s3_bucket","mode":"managed","change":{"actions":["no-op"],"after":{"bucket":"fixture-results"}}},
+    {"address":"aws_kms_key.results","type":"aws_kms_key","mode":"managed","change":{"actions":["no-op"],"after":{"arn":"arn:aws:kms:us-east-1:123456789012:key/fixture-results"}}},
+    {"address":"aws_athena_workgroup.analytics","type":"aws_athena_workgroup","mode":"managed","change":{"actions":["create"],"after":{"name":"fixture_analytics","configuration":[{"result_configuration":[{"output_location":"s3://fixture-results/PRIVATE_OUTPUT","encryption_configuration":[{"encryption_option":"SSE_KMS","kms_key_arn":"arn:aws:kms:us-east-1:123456789012:key/fixture-results"}]}]}]}}},
+    {"address":"aws_athena_data_catalog.lake","type":"aws_athena_data_catalog","mode":"managed","change":{"actions":["create"],"after":{"name":"fixture_lake","description":"PRIVATE_DESCRIPTION","type":"GLUE","parameters":{"catalog-id":"123456789012","fixture-private":"PRIVATE_PARAMETERS"}}}},
+    {"address":"aws_glue_catalog_database.lake","type":"aws_glue_catalog_database","mode":"managed","change":{"actions":["no-op"],"after":{"name":"fixture_lake","catalog_id":"123456789012"}}},
+    {"address":"aws_athena_workgroup.literal","type":"aws_athena_workgroup","mode":"managed","change":{"actions":["create"],"after":{"configuration":[{"result_configuration":[{"output_location":"s3://fixture-results/PRIVATE_OUTPUT","encryption_configuration":[{"encryption_option":"SSE_KMS","kms_key_arn":"arn:aws:kms:us-east-1:123456789012:key/fixture-results"}]}]}]}}}
+  ],
+  "configuration":{
+    "provider_config":{"aws":{"full_name":"registry.terraform.io/hashicorp/aws","version_constraint":"5.100.0","expressions":{"region":{"constant_value":"us-east-1"}}}},
+    "root_module":{"resources":[
+      {"address":"aws_s3_bucket.results","provider_config_key":"aws"},
+      {"address":"aws_kms_key.results","provider_config_key":"aws"},
+      {"address":"aws_athena_workgroup.analytics","provider_config_key":"aws","expressions":{"configuration":[{"result_configuration":[{"output_location":{"references":["aws_s3_bucket.results.bucket","aws_s3_bucket.results"]},"encryption_configuration":[{"encryption_option":{"constant_value":"SSE_KMS"},"kms_key_arn":{"references":["aws_kms_key.results.arn","aws_kms_key.results"]}}]}]}]}},
+      {"address":"aws_athena_data_catalog.lake","provider_config_key":"aws","expressions":{"parameters":{"constant_value":{"catalog-id":"123456789012","fixture-private":"PRIVATE_PARAMETERS"}}}},
+      {"address":"aws_glue_catalog_database.lake","provider_config_key":"aws"},
+      {"address":"aws_athena_workgroup.literal","provider_config_key":"aws"}
+    ]}
+  }
+}

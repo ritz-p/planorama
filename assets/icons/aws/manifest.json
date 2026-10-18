@@ -153,6 +153,11 @@
             "file": "AWS-Glue.svg",
             "source": "Architecture-Service-Icons_07312026/Arch_Analytics/48/Arch_AWS-Glue_48.svg",
             "sha256": "f98d18c9698d54ecf10b6d05ddc80b4da8c22fa2a28f8d1795e5a9c182dd3f90"
+        },
+        {
+            "file": "Amazon-Athena.svg",
+            "source": "Architecture-Service-Icons_07312026/Arch_Analytics/48/Arch_Amazon-Athena_48.svg",
+            "sha256": "5644ca441ec8fea1519218ac70d998c97358855d9f28598f7db5910d625ba4bc"
         }
     ]
 }
