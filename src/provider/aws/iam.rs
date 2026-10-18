@@ -36,6 +36,34 @@ pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
     })
 }
 
+pub(super) fn bindings_compatible(
+    nodes: &[crate::model::Node],
+    reference: &AttributeReference,
+) -> bool {
+    let node = &nodes[reference.target];
+    if !matches!(
+        rule(&node.resource_type, &reference.attribute),
+        Some((_, "name", _))
+    ) {
+        return true;
+    }
+    let Some(consumer) = &node.provider_configuration else {
+        return false;
+    };
+    !consumer.account_conflict
+        && reference.sources.iter().all(|&source| {
+            let Some(endpoint) = &nodes[source].provider_configuration else {
+                return false;
+            };
+            !endpoint.account_conflict
+                && match (&consumer.account, &endpoint.account) {
+                    (Some(left), Some(right)) => left == right,
+                    (None, None) => consumer == endpoint,
+                    _ => false,
+                }
+        })
+}
+
 pub(super) fn verified(
     nodes: &[TerraformEntity],
     reference: &AttributeReference,
