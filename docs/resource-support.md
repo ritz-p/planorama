@@ -234,6 +234,8 @@ Provider source: `registry.terraform.io/hashicorp/aws`.
 | `aws_s3control_access_points` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Storage / Amazon S3 | Unknown | — |
 | `aws_s3control_multi_region_access_point` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Storage / Amazon S3 | Unknown | — |
 | `aws_s3control_multi_region_access_points` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Storage / Amazon S3 | Unknown | — |
+| `aws_secretsmanager_secret` | Node / Node | Logical / Logical | SecretsManager / AWS Secrets Manager | Regional (conditional) | [aws.rs](../src/provider/aws.rs), [aws/service_references.rs](../src/provider/aws/service_references.rs) |
+| `aws_secretsmanager_secret_version` | Controller / Controller | Logical / Logical | SecretsManager / AWS Secrets Manager | Regional (conditional) | [aws.rs](../src/provider/aws.rs), [aws/service_references.rs](../src/provider/aws/service_references.rs) |
 | `aws_security_group` | Policy / Policy | Spatial / Spatial | Security / Amazon VPC | Regional (conditional) | [aws/containment.rs](../src/provider/aws/containment.rs), [aws/security_groups.rs](../src/provider/aws/security_groups.rs) |
 | `aws_security_groups` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Security / Amazon VPC | Unknown | — |
 | `aws_sns_topic` | Node / Node | Spatial / Spatial | Sns / Amazon Simple Notification Service | Regional (conditional) | [aws/messaging.rs](../src/provider/aws/messaging.rs) |

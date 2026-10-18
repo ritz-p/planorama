@@ -9,6 +9,27 @@ conditional relationship and placement proofs behind that catalog.
 
 ## Deployment scopes
 
+Secrets Manager Secrets and Versions are separate regional logical resources,
+including data lookups, with the AWS Secrets Manager icon. `Version secret` requires
+an explicit `secret_id` reference to a managed Secret's `id`, `arn` or `name`,
+matching known planned values. Versions retain their own identities and actions.
+Equal names never merge managed/data resources. Payloads, secret strings/binary,
+rotation configuration and container environment values are not retained or output.
+See [SVG](../examples/secrets-manager.svg) / [HTML](../examples/secrets-manager.html).
+
+Terraform 1.9.8 with AWS Provider 5.100.0 serializes ECS `container_definitions` as
+a JSON string and flattens `jsonencode` references to the whole attribute. This
+does not prove which reference supplies `secrets.valueFrom`. Such ECS references
+remain navigable ordinary Terraform references; no dedicated secret-consumption
+relationship is asserted. Literal JSON and ARN suffixes never establish endpoints.
+No arbitrary JSON/definition parsing or expression evaluation is added. The
+[Secret](https://github.com/hashicorp/terraform-provider-aws/blob/v5.100.0/website/docs/r/secretsmanager_secret.html.markdown),
+[Version](https://github.com/hashicorp/terraform-provider-aws/blob/v5.100.0/website/docs/r/secretsmanager_secret_version.html.markdown)
+and [ECS](https://github.com/hashicorp/terraform-provider-aws/blob/v5.100.0/website/docs/r/ecs_task_definition.html.markdown)
+contracts were checked against the installed schema and a real fixture plan.
+Regenerate HTML in Docker with
+`cargo run --locked -- tests/fixtures/secrets-manager-plan.json --format html -o examples/secrets-manager.html`.
+
 KMS Keys and Aliases are separate regional logical resources with the AWS Key
 Management Service icon. `Alias key` verifies `target_key_id` against an explicitly
 referenced Key's `id`, `key_id` or `arn`. Encryption-key links use an exact allowlist:

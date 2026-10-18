@@ -11,6 +11,7 @@ mod tests;
 
 fn label(resource: &str, attribute: &str) -> Option<&'static str> {
     match (resource, attribute) {
+        ("aws_secretsmanager_secret_version", "secret_id") => Some("Version secret"),
         ("aws_kms_alias", "target_key_id") => Some("Alias key"),
         ("aws_sqs_queue", "kms_master_key_id")
         | ("aws_db_instance" | "aws_rds_cluster", "kms_key_id")
@@ -34,6 +35,9 @@ fn label(resource: &str, attribute: &str) -> Option<&'static str> {
 
 fn source_fields(resource: &str, attribute: &str, source: &str) -> &'static [&'static str] {
     match (resource, attribute, source) {
+        ("aws_secretsmanager_secret_version", "secret_id", "aws_secretsmanager_secret") => {
+            &["id", "arn", "name"]
+        }
         ("aws_kms_alias", "target_key_id", "aws_kms_key")
         | ("aws_sqs_queue", "kms_master_key_id", "aws_kms_key")
         | ("aws_db_instance" | "aws_rds_cluster", "kms_key_id", "aws_kms_key")
