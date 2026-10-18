@@ -271,6 +271,7 @@ fn ssm_preserves_parameter_identity_without_values_or_path_inference() {
 fn maintained_service_examples_keep_valid_links_service_names_and_module_selection() {
     for (fixture, name) in [
         (include_str!("../../fixtures/efs-plan.json"), "Amazon EFS"),
+        (include_str!("../../fixtures/ebs-plan.json"), "Amazon EBS"),
         (
             include_str!("../../fixtures/route53-plan.json"),
             "Amazon Route 53",

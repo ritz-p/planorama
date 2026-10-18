@@ -27,6 +27,7 @@ impl ResourceIcon {
             Self::SecretsManager => "planorama-icon-aws-secretsmanager",
             Self::Ssm => "planorama-icon-aws-ssm",
             Self::Efs => "planorama-icon-aws-efs",
+            Self::Ebs => "planorama-icon-aws-ebs",
             Self::ApiGateway => "planorama-icon-aws-api",
             Self::Iam => "planorama-icon-aws-iam",
             Self::Monitoring => "planorama-icon-aws-monitoring",
@@ -88,6 +89,7 @@ impl ResourceIcon {
             }
             Self::Ssm => include_str!(concat!(env!("OUT_DIR"), "/AWS-Systems-Manager.svg")),
             Self::Efs => include_str!(concat!(env!("OUT_DIR"), "/Amazon-EFS.svg")),
+            Self::Ebs => include_str!(concat!(env!("OUT_DIR"), "/Amazon-Elastic-Block-Store.svg")),
             Self::ApiGateway => include_str!(concat!(env!("OUT_DIR"), "/Amazon-API-Gateway.svg")),
             Self::Iam => {
                 include_str!(concat!(

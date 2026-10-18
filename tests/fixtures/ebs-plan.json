@@ -1,0 +1,20 @@
+{
+  "format_version": "1.2",
+  "resource_changes": [
+    {"address":"aws_instance.app","type":"aws_instance","change":{"actions":["no-op"],"after":{"id":"i-synthetic","availability_zone":"us-east-1a","subnet_id":"subnet-synthetic"}}},
+    {"address":"aws_ebs_volume.data","type":"aws_ebs_volume","change":{"actions":["no-op"],"after":{"id":"vol-synthetic","availability_zone":"us-east-1a","size":10}}},
+    {"address":"aws_volume_attachment.data","type":"aws_volume_attachment","change":{"actions":["create"],"after":{"instance_id":"i-synthetic","volume_id":"vol-synthetic","device_name":"/dev/sdf"}}},
+    {"address":"aws_subnet.app","type":"aws_subnet","change":{"actions":["no-op"],"after":{"id":"subnet-synthetic","vpc_id":"vpc-synthetic"}}},
+    {"address":"aws_vpc.app","type":"aws_vpc","change":{"actions":["no-op"],"after":{"id":"vpc-synthetic"}}}
+  ],
+  "configuration": {
+    "provider_config":{"aws":{"name":"aws","full_name":"registry.terraform.io/hashicorp/aws","expressions":{"region":{"constant_value":"us-east-1"}}}},
+    "root_module":{"resources":[
+      {"address":"aws_instance.app","provider_config_key":"aws","expressions":{"subnet_id":{"references":["aws_subnet.app.id","aws_subnet.app"]}}},
+      {"address":"aws_ebs_volume.data","provider_config_key":"aws"},
+      {"address":"aws_volume_attachment.data","provider_config_key":"aws","expressions":{"instance_id":{"references":["aws_instance.app.id","aws_instance.app"]},"volume_id":{"references":["aws_ebs_volume.data.id","aws_ebs_volume.data"]}}},
+      {"address":"aws_subnet.app","provider_config_key":"aws","expressions":{"vpc_id":{"references":["aws_vpc.app.id","aws_vpc.app"]}}},
+      {"address":"aws_vpc.app","provider_config_key":"aws"}
+    ]}
+  }
+}

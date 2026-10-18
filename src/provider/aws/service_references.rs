@@ -13,6 +13,8 @@ fn label(resource: &str, attribute: &str) -> Option<&'static str> {
     match (resource, attribute) {
         ("aws_efs_mount_target" | "aws_efs_access_point", "file_system_id") => Some("File system"),
         ("aws_efs_mount_target", "subnet_id") => Some("Mount target subnet"),
+        ("aws_volume_attachment", "instance_id") => Some("Attached instance"),
+        ("aws_volume_attachment", "volume_id") => Some("Attached volume"),
         ("aws_secretsmanager_secret_version", "secret_id") => Some("Version secret"),
         ("aws_kms_alias", "target_key_id") => Some("Alias key"),
         ("aws_sqs_queue", "kms_master_key_id")
@@ -43,6 +45,8 @@ fn source_fields(resource: &str, attribute: &str, source: &str) -> &'static [&'s
             "aws_efs_file_system",
         )
         | ("aws_efs_mount_target", "subnet_id", "aws_subnet") => &["id"],
+        ("aws_volume_attachment", "instance_id", "aws_instance")
+        | ("aws_volume_attachment", "volume_id", "aws_ebs_volume") => &["id"],
         ("aws_secretsmanager_secret_version", "secret_id", "aws_secretsmanager_secret") => {
             &["id", "arn"]
         }
