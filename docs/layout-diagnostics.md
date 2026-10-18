@@ -37,7 +37,7 @@ Consumers should check the version before comparing reports.
   unshifted `spatial_layout` dimensions, retained source-resource count, and
   separate spatial, embedded-route, logical-resource, logical-group,
   logical-component and relationship-group counts. Groups are not resources.
-  `embedded_members` is present when RDS cluster member cards are displayed;
+  `embedded_members` is present when RDS cluster members or EFS access point cards are displayed;
   these members are excluded from spatial and embedded-route counts.
   Zero-sized logical placeholders are excluded from spatial frames.
 - `edges` contains nonempty routed polylines, sorted by stable `id`. The ID is

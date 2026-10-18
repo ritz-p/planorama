@@ -5,6 +5,7 @@ mod components;
 mod containment;
 mod data;
 pub(super) mod diagnostics;
+mod efs;
 mod firehose;
 mod glue;
 mod iam;
@@ -65,7 +66,6 @@ pub(super) fn placement(resource_type: &str) -> crate::model::Placement {
         | "aws_glue_catalog_table"
         | "aws_glue_crawler"
         | "aws_glue_job"
-        | "aws_efs_access_point"
         | "aws_acm_certificate"
         | "aws_acmpca_certificate_authority"
         | "aws_acmpca_certificate"
@@ -121,6 +121,7 @@ pub(super) fn transform(raw: crate::semantic::Input) -> crate::model::Graph {
     autoscaling::present(&raw, &mut graph);
     messaging::present(&raw, &mut graph);
     service_references::present(&raw, &mut graph);
+    efs::present(&raw, &mut graph);
     let contained = crate::semantic::Input { graph, ..raw };
     let mut graph = data::visible(associations::lower(&contained));
     graph.components = components::infer(&contained, &graph);

@@ -32,10 +32,10 @@ port capacity used during height refinement; resetting every port to the right
 can overlap numbered reservations on compact cards. Newly visible edges start
 on the right and participate in the same numbered-port selection.
 
-RDS cluster members share this measured footprint and layout-only parent relation.
-Member content expands the cluster before routing, including wrapped addresses,
+RDS cluster members and EFS access points share this measured footprint and layout-only
+parent relation. Child content expands the owner before routing, including wrapped addresses,
 scope and dependency links. References involving members remain navigable text
-and semantic metadata; other cluster relationships use its expanded bounds.
+and semantic metadata; other owner relationships use its expanded bounds.
 
 ## Placement
 

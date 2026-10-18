@@ -236,7 +236,7 @@ pub(crate) fn annotate(
     }
 }
 
-fn verified(raw: &Input, reference: &AttributeReference) -> bool {
+pub(super) fn verified(raw: &Input, reference: &AttributeReference) -> bool {
     reference.service_reference_verified && super::iam::bindings_compatible(&raw.nodes, reference)
 }
 
