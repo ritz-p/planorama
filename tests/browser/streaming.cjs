@@ -19,6 +19,7 @@ async function main() {
             ['kinesis', ['aws_kinesis_stream.jobs', 'aws_lambda_event_source_mapping.jobs']],
             ['firehose', ['aws_kinesis_firehose_delivery_stream.archive', 'aws_s3_bucket.backup']],
             ['glue', ['aws_glue_catalog_database.lake', 'aws_glue_catalog_table.events']],
+            ['athena', ['aws_athena_workgroup.analytics', 'aws_athena_data_catalog.lake']],
         ]) {
             viewer.load('--state', `one=tests/fixtures/${fixture}-plan.json`,
                 '--state', `two=tests/fixtures/${fixture}-plan.json`);

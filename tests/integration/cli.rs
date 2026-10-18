@@ -1,3 +1,4 @@
+mod athena;
 mod configuration;
 mod coverage_report;
 mod filtering;

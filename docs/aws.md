@@ -7,6 +7,41 @@ The generated [resource support matrix](resource-support.md) lists exact-type
 roles, display modes, icons and scope eligibility. This document defines the
 conditional relationship and placement proofs behind that catalog.
 
+## Athena Workgroup and Data Catalog
+
+Exact AWS `aws_athena_workgroup` and `aws_athena_data_catalog` are regional logical
+Nodes with the Amazon Athena icon/service name. Their own deployment region comes
+from the verified provider binding; a catalog's parameters do not relocate it to
+the region/account of a backend. Missing or unresolved region overrides remain
+unknown. Managed/data resources keep separate identities and coverage entries.
+
+Explicit Workgroup configuration references, including S3 output-location and
+KMS encryption-key expressions, remain ordinary Terraform `References` and
+dependencies. They do not assert query execution, effective encryption, access or
+runtime use. Unknown planned values do not erase structurally explicit Terraform
+provenance. Dynamic, missing and ambiguous references use shared diagnostics;
+filtered targets become Unavailable. Foreign providers and unsupported exact types
+keep generic presentation and ordinary references.
+
+No dedicated association is inferred between Workgroups and Data Catalogs, or
+between a Data Catalog and a Glue Database merely present in the same input.
+Literal output URIs, matching names and Catalog parameters never create links.
+Query bodies/history, Catalog parameter values and arbitrary attributes are not
+rendered. Named queries, prepared statements and runtime query graphs are outside
+the initial scope. Current configuration does not prove historical use for
+deleted/deposed objects; their lifecycle and Terraform provenance remain visible.
+
+AWS Provider 5.100.0 official
+[Workgroup](https://github.com/hashicorp/terraform-provider-aws/blob/v5.100.0/website/docs/r/athena_workgroup.html.markdown)
+and [Data Catalog](https://github.com/hashicorp/terraform-provider-aws/blob/v5.100.0/website/docs/r/athena_data_catalog.html.markdown)
+definitions, installed schemas and a Terraform 1.9.8 offline plan confirm the
+nested configuration and map-expression shapes. The synthetic
+[fixture](../tests/fixtures/athena-plan.json), [SVG](../examples/athena.svg) and
+[offline HTML](../examples/athena.html) contrast explicit S3/KMS references with
+literal-only settings and independent Athena/Glue catalogs. Regenerate HTML in
+Docker with
+`cargo run --locked -- tests/fixtures/athena-plan.json --format html -o examples/athena.html`.
+
 ## Glue Catalog, Crawler and Job
 
 Exact AWS `aws_glue_catalog_database`, `aws_glue_catalog_table`, `aws_glue_crawler`
