@@ -8,6 +8,7 @@ pub(super) fn classify(resource_type: &str) -> ResourceRole {
     match resource_type {
         "aws_vpc" | "aws_subnet" => ResourceRole::Container,
         "aws_instance"
+        | "aws_ebs_volume"
         | "aws_route53_zone"
         | "aws_route53_record"
         | "aws_acm_certificate"
@@ -49,6 +50,7 @@ pub(super) fn classify(resource_type: &str) -> ResourceRole {
         | "aws_api_gateway_rest_api"
         | "aws_apigatewayv2_api" => ResourceRole::Connector,
         "aws_route_table_association"
+        | "aws_volume_attachment"
         | "aws_sns_topic_subscription"
         | "aws_cloudwatch_event_target"
         | "aws_lambda_event_source_mapping"

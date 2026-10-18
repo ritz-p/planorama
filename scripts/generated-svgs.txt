@@ -17,6 +17,7 @@ examples/acm.svg
 examples/kms.svg
 examples/secrets-manager.svg
 examples/ssm.svg
+examples/ebs.svg
 examples/accounts.svg
 examples/multi-account/diagram.svg
 examples/hierarchy-routing.svg

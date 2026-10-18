@@ -9,6 +9,30 @@ conditional relationship and placement proofs behind that catalog.
 
 ## Deployment scopes
 
+EBS Volumes are regional spatial Nodes with the Amazon EBS icon. A volume belongs
+to an Availability Zone in AWS; this view groups it by its proven region without
+adding an AZ layer or placing it inside the attached instance's Subnet. An AZ
+string does not infer a region, attachment, co-location or attachment success.
+Independent `aws_volume_attachment` resources are Associations. Both `instance_id`
+and `volume_id` must explicitly and uniquely reference a current managed AWS
+Instance/Volume's `id`, with known matching planned values. Only the proof survives
+ingestion. Deleted/deposed, unknown, dynamic, wrong-type/provider and ambiguous
+endpoints retain a visible attachment card and safe diagnostics. Additional
+dependencies/consumers also retain that card so its references remain navigable.
+Verified edges keep the attachment's identity, action, import/move provenance and
+coverage once, independently of endpoint identities. Filtering removes unavailable
+edges or marks unavailable fallback-card links without inventing endpoints.
+Inline `aws_instance.ebs_block_device` blocks do not create extra Terraform
+resources and are never merged with standalone volumes. Device paths, snapshot
+payloads and arbitrary block attributes are not output. The association makes no
+claim about encryption, mount success or runtime access.
+See the synthetic [SVG](../examples/ebs.svg) / [HTML](../examples/ebs.html).
+The AWS Provider 5.100.0 [Volume](https://github.com/hashicorp/terraform-provider-aws/blob/v5.100.0/website/docs/r/ebs_volume.html.markdown)
+and [Attachment](https://github.com/hashicorp/terraform-provider-aws/blob/v5.100.0/website/docs/r/volume_attachment.html.markdown)
+documentation, installed schema and Terraform 1.9.8 offline plan confirm these
+fields and reference shapes. Regenerate HTML in Docker with
+`cargo run --locked -- tests/fixtures/ebs-plan.json --format html -o examples/ebs.html`.
+
 SSM Parameter Store `aws_ssm_parameter` is a regional logical Node with the AWS
 Systems Manager icon. Managed parameters and data lookups keep separate identities,
 even with equal names. Parameter paths create no inferred hierarchy, environment,
@@ -465,6 +489,7 @@ Examples: [security-groups.svg](../examples/security-groups.svg),
 | Resource | Endpoint attributes | Relationship |
 | --- | --- | --- |
 | `aws_route_table_association` | `subnet_id`, `route_table_id` | Subnet ↔ Route Table |
+| `aws_volume_attachment` | `instance_id`, `volume_id`, with known ID proof | EC2 Instance ↔ EBS Volume |
 | `aws_lb_target_group_attachment` | `target_group_arn`, `target_id` | Target Group ↔ EC2 Instance |
 | `aws_vpc_endpoint_route_table_association` | `vpc_endpoint_id`, `route_table_id` | VPC Endpoint ↔ Route Table |
 
