@@ -22,6 +22,8 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
     } else if matches!(
         resource,
         "aws_vpc"
+            | "aws_acm_certificate"
+            | "aws_acm_certificate_validation"
             | "aws_subnet"
             | "aws_instance"
             | "aws_ami"

@@ -2,6 +2,7 @@ use crate::icons::ResourceIcon;
 
 pub(super) fn icon_for(resource_type: &str) -> Option<ResourceIcon> {
     Some(match resource_type {
+        "aws_acm_certificate" | "aws_acm_certificate_validation" => ResourceIcon::Acm,
         "aws_route53_zone" | "aws_route53_record" => ResourceIcon::Route53,
         "aws_vpc"
         | "aws_vpcs"

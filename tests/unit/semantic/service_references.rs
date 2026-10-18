@@ -1,6 +1,172 @@
 use crate::{layout::Layout, plan, semantic, svg};
 use serde_json::{Value, json};
 
+fn check_service_fixture(fixture: &str, label: &str, attribute: &str) {
+    let original: Value = serde_json::from_str(fixture).unwrap();
+    let source = original["resource_changes"][0]["address"].as_str().unwrap();
+    let consumer = original["resource_changes"][1]["address"].as_str().unwrap();
+    for case in 0..11 {
+        let mut value = original.clone();
+        match case {
+            1 => value["resource_changes"][0]["provider_name"] = json!("example.com/foreign/aws"),
+            2 => value["resource_changes"][0]["change"]["after_unknown"] = json!(true),
+            3 => value["resource_changes"][1]["change"]["after"][attribute] = json!("different"),
+            4 => value["resource_changes"][0]["type"] = json!("aws_instance"),
+            5 => value["resource_changes"][1]["change"]["actions"] = json!(["delete"]),
+            6 => value["resource_changes"][0]["deposed"] = json!("old"),
+            7 => {
+                value["configuration"]["root_module"]["resources"][1]["expressions"][attribute] =
+                    json!({"constant_value":"literal"})
+            }
+            8 => {
+                value["configuration"]["root_module"]["resources"][1]["expressions"][attribute] =
+                    json!({"references":[format!("{source}.arn"), "aws_instance.missing.id"]})
+            }
+            9 => value["resource_changes"][0]["mode"] = json!("data"),
+            10 => {
+                value["configuration"]["root_module"]["resources"][1]["expressions"][attribute] =
+                    json!({"references":[source, "var.selector"]})
+            }
+            _ => {}
+        }
+        let parsed = plan::parse(&value.to_string()).unwrap();
+        let graph = semantic::transform(&parsed);
+        assert_eq!(graph.coverage.selected.resources, parsed.nodes.len());
+        assert_eq!(
+            graph
+                .nodes
+                .iter()
+                .find(|n| n.address == consumer)
+                .unwrap()
+                .references
+                .iter()
+                .any(|r| r.label == label && r.complete),
+            case == 0,
+            "case {case}: {consumer}"
+        );
+    }
+    let indexed = fixture.replace(source, &format!("{source}[0]"));
+    let graph = semantic::transform(&plan::parse(&indexed).unwrap());
+    assert!(
+        graph
+            .nodes
+            .iter()
+            .find(|n| n.address == consumer)
+            .unwrap()
+            .references
+            .iter()
+            .any(|r| r.label == label && r.complete)
+    );
+    let filtered = crate::view::single(
+        &graph,
+        &crate::view::Options {
+            focus: Some(consumer.into()),
+            depth: Some(0),
+            ..Default::default()
+        },
+    )
+    .unwrap();
+    assert!(svg::render(&filtered, &Layout::new(&filtered)).contains("Unavailable"));
+    let mut ambiguous = original.clone();
+    let mut second = ambiguous["resource_changes"][0].clone();
+    ambiguous["resource_changes"][0]["address"] = json!(format!("{source}[0]"));
+    second["address"] = json!(format!("{source}[1]"));
+    ambiguous["resource_changes"]
+        .as_array_mut()
+        .unwrap()
+        .push(second);
+    let graph = semantic::transform(&plan::parse(&ambiguous.to_string()).unwrap());
+    assert!(
+        !graph
+            .nodes
+            .iter()
+            .find(|n| n.address == consumer)
+            .unwrap()
+            .references
+            .iter()
+            .any(|r| r.label == label && r.complete)
+    );
+    let plans = plan::parse_inputs(
+        ["one", "two"]
+            .into_iter()
+            .map(|state| crate::model::PlanInput {
+                state_id: crate::model::StateId::new(state).unwrap(),
+                plan_json: fixture.into(),
+            })
+            .collect(),
+    )
+    .unwrap();
+    assert!(semantic::cross_state::resolve(&plans, &[]).edges.is_empty());
+    for plan in plans.states.values() {
+        let graph = semantic::transform(plan);
+        assert_eq!(
+            graph.coverage.selected.resources,
+            original["resource_changes"].as_array().unwrap().len()
+        );
+    }
+}
+
+#[test]
+fn acm_preserves_certificate_workflow_scope_and_safe_references() {
+    let fixture = include_str!("../../fixtures/acm-plan.json");
+    check_service_fixture(fixture, "Certificate reference", "certificate_arn");
+    let mut value: Value = serde_json::from_str(fixture).unwrap();
+    for key in [
+        "private_key",
+        "certificate_body",
+        "certificate_chain",
+        "domain_name",
+        "domain_validation_options",
+    ] {
+        value["resource_changes"][0]["change"]["after"][key] = json!("PRIVATE_<script>&secret");
+    }
+    let graph = semantic::transform(&plan::parse(&value.to_string()).unwrap());
+    assert!(
+        graph
+            .nodes
+            .iter()
+            .filter(|n| n.resource_type.starts_with("aws_acm_"))
+            .all(|n| n.placement == crate::model::Placement::Logical
+                && n.entity
+                    .scope
+                    .as_ref()
+                    .is_some_and(|s| !s.global && s.region.is_some()))
+    );
+    assert!(
+        graph
+            .nodes
+            .iter()
+            .find(|n| n.resource_type == "aws_cloudfront_distribution")
+            .unwrap()
+            .entity
+            .scope
+            .as_ref()
+            .unwrap()
+            .global
+    );
+    assert_eq!(
+        graph
+            .nodes
+            .iter()
+            .flat_map(|n| &n.references)
+            .filter(|r| r.label == "Certificate reference" && r.complete)
+            .count(),
+        3
+    );
+    for format in [crate::OutputFormat::Svg, crate::OutputFormat::Html] {
+        let output = crate::generate(
+            &value.to_string(),
+            &crate::Options {
+                format,
+                ..Default::default()
+            },
+        )
+        .unwrap();
+        assert!(!output.content.contains("PRIVATE_"));
+        assert!(output.content.contains("Certificate reference"));
+    }
+}
+
 #[test]
 fn route53_rejects_ambiguous_and_dynamic_instances_and_accepts_nlb() {
     for dynamic in [false, true] {

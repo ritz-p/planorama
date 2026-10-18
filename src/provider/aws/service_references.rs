@@ -11,6 +11,10 @@ mod tests;
 
 fn label(resource: &str, attribute: &str) -> Option<&'static str> {
     match (resource, attribute) {
+        ("aws_acm_certificate_validation" | "aws_lb_listener", "certificate_arn")
+        | ("aws_cloudfront_distribution", "viewer_certificate.acm_certificate_arn") => {
+            Some("Certificate reference")
+        }
         ("aws_route53_record", "zone_id") => Some("Hosted zone"),
         ("aws_route53_record", "alias.name") => Some("Alias target"),
         ("aws_route53_zone", "vpc.vpc_id") => Some("Associated VPC"),
@@ -20,6 +24,22 @@ fn label(resource: &str, attribute: &str) -> Option<&'static str> {
 
 fn source_fields(resource: &str, attribute: &str, source: &str) -> &'static [&'static str] {
     match (resource, attribute, source) {
+        (
+            "aws_acm_certificate_validation" | "aws_lb_listener",
+            "certificate_arn",
+            "aws_acm_certificate",
+        )
+        | (
+            "aws_cloudfront_distribution",
+            "viewer_certificate.acm_certificate_arn",
+            "aws_acm_certificate",
+        ) => &["arn", "id"],
+        ("aws_lb_listener", "certificate_arn", "aws_acm_certificate_validation")
+        | (
+            "aws_cloudfront_distribution",
+            "viewer_certificate.acm_certificate_arn",
+            "aws_acm_certificate_validation",
+        ) => &["certificate_arn"],
         ("aws_route53_record", "zone_id", "aws_route53_zone") => &["zone_id", "id"],
         ("aws_route53_record", "alias.name", "aws_lb") => &["dns_name"],
         ("aws_route53_record", "alias.name", "aws_cloudfront_distribution") => &["domain_name"],
@@ -129,6 +149,11 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             continue;
         };
         let verified = reference.service_reference_verified;
+        if verified {
+            graph.nodes[reference.target]
+                .references
+                .retain(|r| r.dependency || r.attribute != reference.attribute);
+        }
         graph.nodes[reference.target]
             .references
             .push(ResourceReference {
