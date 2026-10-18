@@ -99,7 +99,8 @@ Spatial cards show a Uses section for verified references to top logical-resourc
 rows. Links target the individual resource, not its group card. Known attributes
 use Cluster, Task definition, Instance profile, AMI, Launch template,
 Role, Execution role or Task role. Verified [AWS service references](aws.md) use
-their service-specific labels; other references use References. Graph-only references such as
+their service-specific labels, such as File system; other references use References.
+Graph-only references such as
 `depends_on` use Dependency, not an attribute-specific usage label. Logical-resource
 rows show their own direct references, including references to spatial resources.
 Incomplete references show unresolved without asserting candidate targets.

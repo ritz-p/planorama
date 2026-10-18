@@ -9,6 +9,25 @@ conditional relationship and placement proofs behind that catalog.
 
 ## Deployment scopes
 
+EFS File Systems and Mount Targets are regional spatial Nodes; Access Points are
+regional logical Nodes. All three use the Amazon EFS icon. A File System is never
+placed inside a Subnet, including One Zone file systems; no AZ layer is inferred.
+Mount Targets reuse Subnet containment and SG connections. `File system` and
+`Mount target subnet` require a complete, explicit, unique managed-resource `id`
+reference with matching known planned values and the exact AWS endpoint type.
+Unknown values retain ordinary Terraform references and an unproven-value diagnostic.
+Deleted/deposed endpoints do not establish these current-configuration links.
+SG lists use the existing complete collection proof. Access Points keep their own
+identity, action and coverage. No EC2/ECS mount, NFS reachability, file content or
+arbitrary POSIX/path setting is inferred or output.
+See the synthetic [SVG](../examples/efs.svg) / [HTML](../examples/efs.html).
+The AWS Provider 5.100.0 [File System](https://github.com/hashicorp/terraform-provider-aws/blob/v5.100.0/website/docs/r/efs_file_system.html.markdown),
+[Mount Target](https://github.com/hashicorp/terraform-provider-aws/blob/v5.100.0/website/docs/r/efs_mount_target.html.markdown)
+and [Access Point](https://github.com/hashicorp/terraform-provider-aws/blob/v5.100.0/website/docs/r/efs_access_point.html.markdown)
+documentation, installed schema and Terraform 1.9.8 offline plan confirm these
+fields and reference shapes. Regenerate HTML in Docker with
+`cargo run --locked -- tests/fixtures/efs-plan.json --format html -o examples/efs.html`.
+
 EBS Volumes are regional spatial Nodes with the Amazon EBS icon. A volume belongs
 to an Availability Zone in AWS; this view groups it by its proven region without
 adding an AZ layer or placing it inside the attached instance's Subnet. An AZ
@@ -424,6 +443,7 @@ data-source search conditions do not create containment.
 | --- | --- | --- |
 | Subnet, VPC Endpoint, Route Table, Security Group, Network ACL, LB Target Group | `vpc_id` | VPC |
 | EC2 Instance, NAT Gateway | `subnet_id` | Subnet |
+| EFS Mount Target | `subnet_id` with known ID proof | Managed Subnet |
 
 Target groups can omit `vpc_id`, including Lambda target groups; omission does not
 produce a missing-attribute diagnostic. See [network-scope.svg](../examples/network-scope.svg).
@@ -463,7 +483,7 @@ Examples: [multiple subnets](../examples/multi-container.svg),
 | Consumer | Attribute |
 | --- | --- |
 | EC2, RDS Instance / Cluster | `vpc_security_group_ids` |
-| Load Balancer | `security_groups` |
+| Load Balancer, EFS Mount Target | `security_groups` |
 | ECS Service | `network_configuration.security_groups` |
 | VPC Endpoint | `security_group_ids` |
 | Lambda / EKS | `vpc_config.security_group_ids` |
@@ -472,6 +492,8 @@ Examples: [multiple subnets](../examples/multi-container.svg),
 Each explicitly referenced AWS SG becomes a Connection to the managed consumer.
 Multiple groups and exact indexed references are supported, including external
 SG data sources. Attachment does not change containment or hide SG cards.
+EFS Mount Targets additionally require current managed SG endpoints and reject
+deleted consumers/endpoints; other consumers retain their existing data-SG rules.
 
 The entire planned ID collection must match the referenced resources' IDs using
 planned values/unknown slots, with prior state available for cached data sources.

@@ -22,6 +22,9 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
     } else if matches!(
         resource,
         "aws_vpc"
+            | "aws_efs_file_system"
+            | "aws_efs_mount_target"
+            | "aws_efs_access_point"
             | "aws_ebs_volume"
             | "aws_volume_attachment"
             | "aws_acm_certificate"

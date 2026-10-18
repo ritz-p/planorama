@@ -2,6 +2,141 @@ use crate::{layout::Layout, plan, semantic, svg};
 use serde_json::{Value, json};
 
 #[test]
+fn efs_preserves_regional_storage_and_validates_mount_target_relationships() {
+    let fixture = include_str!("../../fixtures/efs-plan.json");
+    check_service_fixture(fixture, "File system", "file_system_id");
+    let mut access: Value = serde_json::from_str(fixture).unwrap();
+    access["resource_changes"]
+        .as_array_mut()
+        .unwrap()
+        .swap(1, 2);
+    access["configuration"]["root_module"]["resources"]
+        .as_array_mut()
+        .unwrap()
+        .swap(1, 2);
+    check_service_fixture(&access.to_string(), "File system", "file_system_id");
+    let graph = semantic::transform(&plan::parse(fixture).unwrap());
+    let index = |address: &str| {
+        graph
+            .nodes
+            .iter()
+            .position(|n| n.address == address)
+            .unwrap()
+    };
+    let fs = index("aws_efs_file_system.shared");
+    let mount = index("aws_efs_mount_target.app");
+    let subnet = index("aws_subnet.app");
+    let sg = index("aws_security_group.mount");
+    assert!(graph.edges.iter().any(|e| e.from == subnet
+        && e.to == mount
+        && e.kind == crate::model::EdgeKind::Containment));
+    assert!(
+        graph
+            .edges
+            .iter()
+            .any(|e| e.from == sg && e.to == mount && e.kind == crate::model::EdgeKind::Connection)
+    );
+    assert!(
+        !graph
+            .edges
+            .iter()
+            .any(|e| e.to == fs && e.kind == crate::model::EdgeKind::Containment)
+    );
+    assert!(
+        graph.nodes[fs]
+            .entity
+            .scope
+            .as_ref()
+            .is_some_and(|s| !s.global && s.region.is_some())
+    );
+    for case in 0..5 {
+        let mut value: Value = serde_json::from_str(fixture).unwrap();
+        match case {
+            0 => value["resource_changes"][3]["provider_name"] = json!("example.com/foreign/aws"),
+            1 => value["resource_changes"][1]["change"]["actions"] = json!(["delete"]),
+            2 => value["resource_changes"][1]["deposed"] = json!("old"),
+            3 => value["resource_changes"][3]["change"]["after_unknown"] = json!(true),
+            _ => value["resource_changes"][3]["type"] = json!("aws_instance"),
+        }
+        let graph = semantic::transform(&plan::parse(&value.to_string()).unwrap());
+        assert!(
+            !graph
+                .edges
+                .iter()
+                .any(|e| graph.nodes[e.to].address == "aws_efs_mount_target.app"
+                    && e.kind == crate::model::EdgeKind::Containment)
+        );
+    }
+    for format in [crate::OutputFormat::Svg, crate::OutputFormat::Html] {
+        let output = crate::generate(
+            fixture,
+            &crate::Options {
+                format,
+                ..Default::default()
+            },
+        )
+        .unwrap()
+        .content;
+        assert!(!output.contains("PRIVATE_PATH"));
+        assert!(!output.contains("12345"));
+        assert!(output.contains("File system"));
+    }
+    for case in 0..6 {
+        let mut value: Value = serde_json::from_str(fixture).unwrap();
+        match case {
+            0 => value["resource_changes"][5]["provider_name"] = json!("example.com/foreign/aws"),
+            1 => value["resource_changes"][5]["change"]["actions"] = json!(["delete"]),
+            2 => value["resource_changes"][5]["mode"] = json!("data"),
+            3 => {
+                value["resource_changes"][1]["change"]["after"]["security_groups"] =
+                    json!(["sg-synthetic", "literal"])
+            }
+            4 => {
+                value["configuration"]["root_module"]["resources"][1]["expressions"]["security_groups"] =
+                    json!({"references":["aws_security_group.mount", "var.selector"]})
+            }
+            _ => value["resource_changes"][5]["type"] = json!("aws_instance"),
+        }
+        let graph = semantic::transform(&plan::parse(&value.to_string()).unwrap());
+        assert!(
+            !graph
+                .edges
+                .iter()
+                .any(|e| graph.nodes[e.to].address == "aws_efs_mount_target.app"
+                    && e.kind == crate::model::EdgeKind::Connection)
+        );
+        assert_eq!(graph.coverage.selected.resources, 6);
+    }
+    let mut value: Value = serde_json::from_str(fixture).unwrap();
+    value["resource_changes"][1]["previous_address"] = json!("aws_efs_mount_target.old");
+    value["resource_changes"][1]["change"]["importing"] = json!({"id":"PRIVATE_IMPORT"});
+    let mut old = value["resource_changes"][1].clone();
+    old["deposed"] = json!("old");
+    old["change"]["actions"] = json!(["delete"]);
+    value["resource_changes"].as_array_mut().unwrap().push(old);
+    let graph = semantic::transform(&plan::parse(&value.to_string()).unwrap());
+    assert_eq!(graph.coverage.selected.resources, 7);
+    assert_eq!(
+        graph
+            .nodes
+            .iter()
+            .filter(|n| n.address == "aws_efs_mount_target.app")
+            .count(),
+        2
+    );
+    assert!(
+        !graph
+            .edges
+            .iter()
+            .any(|e| graph.nodes[e.to].deposed_key.is_some()
+                && matches!(
+                    e.kind,
+                    crate::model::EdgeKind::Containment | crate::model::EdgeKind::Connection
+                ))
+    );
+}
+
+#[test]
 fn ssm_preserves_parameter_identity_without_values_or_path_inference() {
     let fixture = include_str!("../../fixtures/ssm-plan.json");
     for parameter_type in ["String", "StringList", "SecureString", "PRIVATE_TYPE"] {
@@ -135,6 +270,7 @@ fn ssm_preserves_parameter_identity_without_values_or_path_inference() {
 #[test]
 fn maintained_service_examples_keep_valid_links_service_names_and_module_selection() {
     for (fixture, name) in [
+        (include_str!("../../fixtures/efs-plan.json"), "Amazon EFS"),
         (include_str!("../../fixtures/ebs-plan.json"), "Amazon EBS"),
         (
             include_str!("../../fixtures/route53-plan.json"),
