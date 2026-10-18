@@ -15,7 +15,9 @@ pub(super) fn direct_rule(resource_type: &str) -> Option<(&'static str, &'static
         | "aws_security_group"
         | "aws_network_acl"
         | "aws_lb_target_group" => Some(("vpc_id", "aws_vpc")),
-        "aws_instance" | "aws_nat_gateway" => Some(("subnet_id", "aws_subnet")),
+        "aws_instance" | "aws_nat_gateway" | "aws_efs_mount_target" => {
+            Some(("subnet_id", "aws_subnet"))
+        }
         _ => None,
     }
 }
@@ -41,6 +43,9 @@ pub(super) fn infer(raw: &Input) -> Graph {
             continue;
         };
         if reference.attribute != attribute {
+            continue;
+        }
+        if child.resource_type == "aws_efs_mount_target" && !reference.service_reference_verified {
             continue;
         }
         if let [parent] = reference.sources.as_slice() {

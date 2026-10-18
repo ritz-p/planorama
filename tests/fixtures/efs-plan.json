@@ -1,0 +1,22 @@
+{
+  "format_version": "1.2",
+  "resource_changes": [
+    {"address":"aws_efs_file_system.shared","type":"aws_efs_file_system","change":{"actions":["no-op"],"after":{"id":"fs-synthetic"}}},
+    {"address":"aws_efs_mount_target.app","type":"aws_efs_mount_target","change":{"actions":["create"],"after":{"file_system_id":"fs-synthetic","subnet_id":"subnet-synthetic","security_groups":["sg-synthetic"]}}},
+    {"address":"aws_efs_access_point.app","type":"aws_efs_access_point","change":{"actions":["create"],"after":{"file_system_id":"fs-synthetic","root_directory":[{"path":"PRIVATE_PATH"}],"posix_user":[{"uid":12345,"gid":12345}]}}},
+    {"address":"aws_subnet.app","type":"aws_subnet","change":{"actions":["no-op"],"after":{"id":"subnet-synthetic","vpc_id":"vpc-synthetic"}}},
+    {"address":"aws_vpc.app","type":"aws_vpc","change":{"actions":["no-op"],"after":{"id":"vpc-synthetic"}}},
+    {"address":"aws_security_group.mount","type":"aws_security_group","change":{"actions":["no-op"],"after":{"id":"sg-synthetic","vpc_id":"vpc-synthetic"}}}
+  ],
+  "configuration": {
+    "provider_config":{"aws":{"name":"aws","full_name":"registry.terraform.io/hashicorp/aws","expressions":{"region":{"constant_value":"us-east-1"}}}},
+    "root_module":{"resources":[
+      {"address":"aws_efs_file_system.shared","provider_config_key":"aws"},
+      {"address":"aws_efs_mount_target.app","provider_config_key":"aws","expressions":{"file_system_id":{"references":["aws_efs_file_system.shared.id","aws_efs_file_system.shared"]},"subnet_id":{"references":["aws_subnet.app.id","aws_subnet.app"]},"security_groups":{"references":["aws_security_group.mount.id","aws_security_group.mount"]}}},
+      {"address":"aws_efs_access_point.app","provider_config_key":"aws","expressions":{"file_system_id":{"references":["aws_efs_file_system.shared.id","aws_efs_file_system.shared"]}}},
+      {"address":"aws_subnet.app","provider_config_key":"aws","expressions":{"vpc_id":{"references":["aws_vpc.app.id","aws_vpc.app"]}}},
+      {"address":"aws_vpc.app","provider_config_key":"aws"},
+      {"address":"aws_security_group.mount","provider_config_key":"aws","expressions":{"vpc_id":{"references":["aws_vpc.app.id","aws_vpc.app"]}}}
+    ]}
+  }
+}
