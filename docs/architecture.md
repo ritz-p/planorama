@@ -130,6 +130,8 @@ bounds and incident edges have empty paths. They create no routing obstacles.
 The SVG summary distinguishes spatial cards, logical resources and logical group
 cards while retaining total resource and action counts.
 Value-free reference evidence is available in `resource-references` metadata.
+Each entry includes `kind` (`configured` or verified `membership`), independently
+of effective presentation ownership and network containment.
 
 Verified Route ownership uses the same projection boundary: the Route node remains
 in the graph, while its card is embedded in the owning table. `view/routes.rs`

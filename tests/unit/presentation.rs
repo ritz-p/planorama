@@ -169,6 +169,22 @@ fn semantic_membership_does_not_imply_presentation_ownership() {
 }
 
 #[test]
+fn explicit_and_inferred_provider_sources_share_presentation_scope() {
+    let mut graph = fixture();
+    let child = graph
+        .nodes
+        .iter()
+        .position(|node| node.member_owner.is_some())
+        .unwrap();
+    let parent = owner(&graph, &graph.nodes[child]).unwrap();
+    graph.nodes[child].provider = crate::model::ProviderIdentity::InferredAws;
+    graph.nodes[parent].provider = crate::model::ProviderIdentity::from_source("hashicorp/aws");
+    assert_eq!(owner(&graph, &graph.nodes[child]), Some(parent));
+    graph.nodes[parent].provider = crate::model::ProviderIdentity::from_source("example/aws");
+    assert_eq!(owner(&graph, &graph.nodes[child]), None);
+}
+
+#[test]
 fn selected_children_and_state_local_export_context_share_effective_owner() {
     let graph = crate::model::ArchitectureGraph(fixture());
     for address in ["aws_efs_access_point.app", "aws_efs_file_system.shared"] {

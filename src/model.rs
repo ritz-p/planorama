@@ -40,7 +40,7 @@ pub struct PresentationOwner {
 
 impl Node {
     pub(crate) fn presentation_scope_matches(&self, owner: &Node) -> bool {
-        self.provider == owner.provider
+        self.provider.source() == owner.provider.source()
             && self.entity.scope == owner.entity.scope
             && self.entity.scope.as_ref().is_some_and(|scope| {
                 (scope.region.is_some() || scope.global)
