@@ -4,6 +4,75 @@ use serde_json::{Value, json};
 const FIXTURE: &str = include_str!("../../fixtures/iam-plan.json");
 
 #[test]
+fn iam_name_endpoints_require_compatible_account_evidence() {
+    for case in 0..8 {
+        let mut value: Value = serde_json::from_str(FIXTURE).unwrap();
+        value["configuration"]["provider_config"]["aws.other"] = json!({
+            "name":"aws", "alias":"other", "full_name":"registry.terraform.io/hashicorp/aws",
+            "expressions":{"region":{"constant_value":"eu-west-1"}}
+        });
+        if case != 0 {
+            value["configuration"]["root_module"]["resources"][0]["provider_config_key"] =
+                json!("aws.other");
+        }
+        let mut parsed = plan::parse(&value.to_string()).unwrap();
+        for node in &mut parsed.nodes {
+            let is_alice = node.address == "aws_iam_user.alice";
+            let binding = node.provider_configuration.as_mut().unwrap();
+            if (2..=5).contains(&case) {
+                binding.account = crate::model::AwsAccountScope::new(if case == 3 && is_alice {
+                    "210987654321"
+                } else {
+                    "123456789012"
+                });
+            }
+            if case == 4 && is_alice {
+                binding.account_conflict = true;
+            }
+            if case == 5 && is_alice {
+                binding.account = None;
+            }
+            if case == 6 {
+                binding.account_conflict = true;
+            }
+            if case == 7 && is_alice {
+                node.provider_configuration = None;
+            }
+        }
+        let graph = semantic::transform(&parsed);
+        for (address, attribute) in [
+            ("aws_iam_group_membership.team", "users"),
+            ("aws_iam_user_policy_attachment.read", "user"),
+            ("aws_iam_user_policy.inline", "user"),
+        ] {
+            let node = graph.nodes.iter().find(|n| n.address == address).unwrap();
+            let reference = node
+                .references
+                .iter()
+                .find(|r| r.attribute == attribute && r.show_spatial)
+                .unwrap();
+            assert_eq!(
+                reference.complete,
+                matches!(case, 0 | 2),
+                "case {case}: {address}"
+            );
+            assert_eq!(
+                semantic::diagnostics::collect(&parsed)
+                    .iter()
+                    .any(|diagnostic| diagnostic.address == address
+                        && diagnostic.attribute == attribute
+                        && diagnostic.reason
+                            == crate::model::DiagnosticReason::UnprovenEndpointValue),
+                !matches!(case, 0 | 2)
+            );
+            if !reference.complete {
+                assert!(reference.targets.is_empty());
+            }
+        }
+    }
+}
+
+#[test]
 fn iam_module_selection_keeps_individual_memberships() {
     let mut value: Value = serde_json::from_str(FIXTURE).unwrap();
     for resource in value["resource_changes"].as_array_mut().unwrap() {

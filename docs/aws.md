@@ -20,7 +20,12 @@ provenance, selection/search identity and coverage entry.
 `User`, `Group`, `Member users`, `Member groups` and `Direct policy` reference rows
 require complete, explicit references to current managed AWS resources of the
 exact endpoint type. User/group references use `name`, and direct policy references
-use `arn`, with equal known planned values. Membership collections must match the
+use `arn`, with equal known planned values. Name endpoints require equal
+verified accounts, or the same non-conflicting provider configuration when both
+accounts are unknown. Missing/conflicting bindings and cross-account name matches
+remain unproven. Account compatibility is checked after optional saved-plan
+evidence is applied, so different aliases can qualify when their proven accounts
+agree. Membership collections must match the
 entire uniquely named referenced endpoint set; literal names alone, mixed literal
 members, unknown values and ambiguous instance selections cannot establish these
 links. Deleted/deposed resources cannot establish current membership or attachment.
