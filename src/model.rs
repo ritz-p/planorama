@@ -11,7 +11,7 @@ pub enum Action {
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Node {
-    pub member_owner: Option<TerraformEntityId>,
+    pub member_owner: Option<PresentationOwner>,
     pub service_name: Option<&'static str>,
     pub routes: RoutePresentation,
     pub placement: Placement,
@@ -28,6 +28,32 @@ pub struct Node {
     pub action: Action,
     pub mode: EntityMode,
     pub role: ResourceRole,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct PresentationOwner {
+    pub target: TerraformEntityId,
+    pub attribute: &'static str,
+    pub label: &'static str,
+    pub section: &'static str,
+}
+
+impl Node {
+    pub(crate) fn presentation_scope_matches(&self, owner: &Node) -> bool {
+        self.provider == owner.provider
+            && self.entity.scope == owner.entity.scope
+            && self.entity.scope.as_ref().is_some_and(|scope| {
+                (scope.region.is_some() || scope.global)
+                    && (scope.account.is_some()
+                        || owner
+                            .provider_configuration
+                            .as_ref()
+                            .is_some_and(|configuration| {
+                                !configuration.account_conflict
+                                    && self.provider_configuration.as_ref() == Some(configuration)
+                            }))
+            })
+    }
 }
 
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
@@ -57,6 +83,7 @@ pub enum Placement {
 
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub struct ResourceReference {
+    pub kind: ReferenceKind,
     pub show_spatial: bool,
     pub label: &'static str,
     pub attribute: String,
@@ -64,6 +91,12 @@ pub struct ResourceReference {
     pub complete: bool,
     pub dependency: bool,
     pub issues: std::collections::BTreeSet<DiagnosticReason>,
+}
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
+pub enum ReferenceKind {
+    Configured,
+    Membership,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]

@@ -40,6 +40,7 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
                 .any(|r| r.label == "Monitors")
         {
             graph.nodes[index].references.push(ResourceReference {
+                kind: crate::model::ReferenceKind::Configured,
                 show_spatial: false,
                 label: "Monitors",
                 attribute: "dimensions".into(),
@@ -52,6 +53,7 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
         for reference in verified {
             for &source in &reference.sources {
                 let inverse = ResourceReference {
+                    kind: crate::model::ReferenceKind::Configured,
                     show_spatial: false,
                     label: "Monitored by",
                     attribute: reference.attribute.clone(),

@@ -45,9 +45,9 @@ pub(super) fn metadata(graph: &Graph, content: super::Content) -> String {
         )
     };
     let members: Vec<_> = graph.nodes.iter().filter_map(|node| {
-        node.member_owner.as_ref()?;
+        let candidate = node.member_owner.as_ref()?;
         let parent = crate::view::routes::owner(graph, node)?;
-        Some(serde_json::json!({"source": node.entity.id.as_str(), "owner": graph.nodes[parent].entity.id.as_str()}))
+        Some(serde_json::json!({"source": node.entity.id.as_str(), "owner": graph.nodes[parent].entity.id.as_str(), "attribute": candidate.attribute, "kind": "presentation", "provenance": {"kind": "verified-reference", "consumer": node.entity.id.as_str(), "target": graph.nodes[parent].entity.id.as_str()}}))
     }).collect();
     let member_metadata = if members.is_empty() {
         String::new()

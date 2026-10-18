@@ -27,7 +27,10 @@ pub(super) fn render(
         .any(|card| card.node.is_some_and(|node| node.member_owner.is_some()));
     let section = if members { "cluster-members" } else { "routes" };
     let heading = if members {
-        "Cluster instances"
+        cards
+            .iter()
+            .find_map(|card| card.node?.member_owner.as_ref().map(|owner| owner.section))
+            .unwrap_or("Members")
     } else {
         "Routes"
     };
@@ -87,7 +90,7 @@ pub(super) fn render(
                 write!(
                     svg,
                     " data-member-owner=\"{}\"",
-                    super::escape(&owner.address)
+                    super::escape(&owner.target.address)
                 )
                 .unwrap();
             }

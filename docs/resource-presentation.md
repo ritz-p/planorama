@@ -75,8 +75,13 @@ Existing Route and RDS instance presentations reuse `view/routes.rs` card
 measurements, `view/spatial.rs` projection and `svg/routes.rs` output. Route
 ownership retains its specialized next-hop evidence; RDS `member_owner` is
 provider-verified display ownership. Missing selected RDS parents already release
-members to ordinary cards. RDS labels and owner lookup are currently specialized;
-#550 must extract the minimum common contract before adding new child families.
+members to ordinary cards. `PresentationOwner` records a state-local Terraform
+target, verified attribute and provider-supplied labels. `view/presentation.rs`
+resolves Independent, Logical or Embedded after selection, rejecting ambiguous
+identity, self/cyclic/nested owners and incompatible member scopes. Route-specific
+proof remains in `RoutePresentation`; both paths share effective owner lookup.
+The generic model is exercised with EFS child cards in unit tests; the EFS provider
+default migration remains a separate #548 change.
 
 Measure headers, service icons, references, import/move badges and wrapped child
 addresses before packing. Reserve parent height and actual child bounds/ports;

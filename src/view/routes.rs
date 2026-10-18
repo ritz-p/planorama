@@ -79,11 +79,7 @@ pub(crate) fn heading(node: &Node, qualified: bool) -> String {
 }
 
 pub(crate) fn owner(graph: &Graph, node: &Node) -> Option<usize> {
-    let owner = node.routes.owner.as_ref().or(node.member_owner.as_ref())?;
-    graph
-        .nodes
-        .iter()
-        .position(|n| n.entity.provenance.contains(owner))
+    super::presentation::owner(graph, node)
 }
 
 pub(crate) fn routed(graph: &Graph, index: usize) -> bool {
@@ -193,7 +189,7 @@ pub(crate) fn cards(graph: &Graph, parent: usize) -> Vec<Card<'_>> {
             destination: false,
             address: true,
         }];
-        if child.member_owner.is_some() {
+        if let Some(owner) = &child.member_owner {
             rows.push(Row {
                 text: super::scope::label(child.entity.scope.as_ref(), &child.provider),
                 target: None,
@@ -202,8 +198,8 @@ pub(crate) fn cards(graph: &Graph, parent: usize) -> Vec<Card<'_>> {
                 address: false,
             });
             rows.push(Row {
-                text: format!("Cluster: {}", node.address),
-                target: child.member_owner.clone(),
+                text: format!("{}: {}", owner.label, node.address),
+                target: Some(owner.target.clone()),
                 moved: false,
                 destination: false,
                 address: true,

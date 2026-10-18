@@ -51,7 +51,20 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             })
             && parent.entity.scope == node.entity.scope
         {
-            graph.nodes[index].member_owner = parent.entity.provenance.first().cloned();
+            for reference in &mut graph.nodes[index].references {
+                if reference.attribute == "cluster_identifier" {
+                    reference.kind = crate::model::ReferenceKind::Membership;
+                }
+            }
+            graph.nodes[index].member_owner =
+                parent.entity.provenance.first().cloned().map(|target| {
+                    crate::model::PresentationOwner {
+                        target,
+                        attribute: "cluster_identifier",
+                        label: "Cluster",
+                        section: "Cluster instances",
+                    }
+                });
         }
     }
 }
