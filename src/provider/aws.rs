@@ -6,6 +6,7 @@ mod containment;
 mod data;
 pub(super) mod diagnostics;
 mod firehose;
+mod glue;
 mod iam;
 mod icons;
 mod members;
@@ -50,6 +51,10 @@ pub(super) fn reference_label(resource_type: &str, attribute: &str) -> &'static 
 pub(super) fn placement(resource_type: &str) -> crate::model::Placement {
     match resource_type {
         "aws_ecs_cluster"
+        | "aws_glue_catalog_database"
+        | "aws_glue_catalog_table"
+        | "aws_glue_crawler"
+        | "aws_glue_job"
         | "aws_efs_access_point"
         | "aws_acm_certificate"
         | "aws_acm_certificate_validation"
