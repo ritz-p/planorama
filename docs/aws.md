@@ -198,8 +198,8 @@ Regenerate HTML in Docker with
 
 ## Deployment scopes
 
-EFS File Systems and Mount Targets are regional spatial Nodes; Access Points are
-regional logical Nodes. All three use the Amazon EFS icon. A File System is never
+EFS File Systems, Mount Targets and Access Points are regional spatial Nodes.
+All three use the Amazon EFS icon. A File System is never
 placed inside a Subnet, including One Zone file systems; no AZ layer is inferred.
 Mount Targets reuse Subnet containment and SG connections. `File system` and
 `Mount target subnet` require a complete, explicit, unique managed-resource `id`
@@ -209,6 +209,19 @@ Deleted/deposed endpoints do not establish these current-configuration links.
 SG lists use the existing complete collection proof. Access Points keep their own
 identity, action and coverage. No EC2/ECS mount, NFS reachability, file content or
 arbitrary POSIX/path setting is inferred or output.
+Access Points with a verified `file_system_id` reference render as measured child
+cards inside that File System. This is presentation ownership, not network
+containment, and never places them under a Mount Target or Subnet. Scope must
+match independently: known account and region, or a known region and the same
+nonconflicting provider configuration. Parent scope is never copied to the child.
+Missing, external, ambiguous, filtered or scope-incompatible owners leave an
+independent Access Point card with its own scope. Data, deleted and deposed Access
+Points also remain independent because current managed service-reference proof
+does not apply. Child-only focus/modules selections do not restore the File System;
+parent-only selection does not restore excluded children. Shared File Systems can
+contain multiple distinct Access Points, each counted once. Verified references,
+service-name/icon modes, lifecycle badges and state-local HTML export context are
+preserved through the [common presentation contract](resource-presentation.md).
 See the synthetic [SVG](../examples/efs.svg) / [HTML](../examples/efs.html).
 The AWS Provider 5.100.0 [File System](https://github.com/hashicorp/terraform-provider-aws/blob/v5.100.0/website/docs/r/efs_file_system.html.markdown),
 [Mount Target](https://github.com/hashicorp/terraform-provider-aws/blob/v5.100.0/website/docs/r/efs_mount_target.html.markdown)

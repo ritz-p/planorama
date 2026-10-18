@@ -43,7 +43,7 @@ class ViewerTests {
         assert.deepEqual(remote, []);
     }
     test_neighborhood_export_preserves_presentations_and_removes_unrelated_resources() {
-        for (const fixture of ['viewer', 'routes', 'association', 'deposed', 'aurora']) {
+        for (const fixture of ['viewer', 'routes', 'association', 'deposed', 'aurora', 'efs']) {
             this.load('--state', 'one=tests/fixtures/' + fixture + '-plan.json', '--state', 'two=tests/fixtures/' + fixture + '-plan.json');
             const candidates = this.driver.execute_script(`return [...document.querySelectorAll('#results button')].map(b => b.textContent)`);
             for (const address of candidates.slice(0, 4)) {
@@ -141,7 +141,7 @@ class ViewerTests {
         this.assertIsNone(this.driver.execute_script('return window.exportBlob'));
     }
     test_viewport_export_is_standalone_and_preserves_live_view() {
-        for (const fixture of ['viewer', 'routes', 'association', 'deposed']) {
+        for (const fixture of ['viewer', 'routes', 'association', 'deposed', 'efs']) {
             this.load('--state', 'one=tests/fixtures/' + fixture + '-plan.json', '--state', 'two=tests/fixtures/' + fixture + '-plan.json', '--html-diagnostics');
             this.find('#results button').send_keys(Keys.ENTER);
             this.find('#zoom-in').click();

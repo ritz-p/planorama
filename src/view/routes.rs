@@ -197,13 +197,20 @@ pub(crate) fn cards(graph: &Graph, parent: usize) -> Vec<Card<'_>> {
                 destination: false,
                 address: false,
             });
-            rows.push(Row {
-                text: format!("{}: {}", owner.label, node.address),
-                target: Some(owner.target.clone()),
-                moved: false,
-                destination: false,
-                address: true,
-            });
+            if !super::references::rows(child).iter().any(|row| {
+                row.reference.attribute == owner.attribute
+                    && row
+                        .target
+                        .is_some_and(|target| target.state.is_none() && target.id == owner.target)
+            }) {
+                rows.push(Row {
+                    text: format!("{}: {}", owner.label, node.address),
+                    target: Some(owner.target.clone()),
+                    moved: false,
+                    destination: false,
+                    address: true,
+                });
+            }
         }
         if let Some(previous) = &child.previous_address {
             rows.push(Row {

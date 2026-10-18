@@ -80,8 +80,9 @@ target, verified attribute and provider-supplied labels. `view/presentation.rs`
 resolves Independent, Logical or Embedded after selection, rejecting ambiguous
 identity, self/cyclic/nested owners and incompatible member scopes. Route-specific
 proof remains in `RoutePresentation`; both paths share effective owner lookup.
-The generic model is exercised with EFS child cards in unit tests; the EFS provider
-default migration remains a separate #548 change.
+EFS Access Points now use this model with verified `file_system_id` service
+references and independent Spatial fallback. The audit above remains a historical
+inventory of defaults at its recorded commit; other service migrations are pending.
 
 Measure headers, service icons, references, import/move badges and wrapped child
 addresses before packing. Reserve parent height and actual child bounds/ports;
