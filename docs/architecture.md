@@ -166,6 +166,8 @@ when placing subsequent text and child bounds. Badges stay separate from service
 icons and external-mode indicators, preserving space for complete addresses.
 
 RDS Cluster Instances reuse the embedded-card measurements and layout projection.
+The [resource presentation contract](resource-presentation.md) distinguishes proposed
+ownership from effective selected presentation and documents the shared-model gaps.
 Provider rules set `member_owner` from verified explicit references; this is
 presentation ownership and adds no semantic Containment edge. Each member keeps
 its Terraform identity and contributes once to resource/action counts. Missing

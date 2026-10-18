@@ -633,6 +633,9 @@ these explanations once per role, separately from Terraform action and managed/d
 mode. Their action subsections change presentation only, not role or placement.
 
 Placement is independent of role. The [generated matrix](resource-support.md)
+records current behavior; the [42-type placement audit and migration policy](resource-presentation.md)
+separately describe proposed service cards and conditional child presentations.
+The matrix
 lists the explicit logical types. They render as rows grouped by provider source,
 resource type and mode in the top annotation area. AMI describes
 an image definition used by workloads, not a deployed compute instance. These
