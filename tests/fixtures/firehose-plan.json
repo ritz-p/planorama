@@ -1,0 +1,58 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_kinesis_stream.input[0]", "type": "aws_kinesis_stream", "mode": "managed", "index": 0,
+      "change": {"actions": ["no-op"], "after": {"arn": "arn:aws:kinesis:us-east-1:123456789012:stream/fixture-input"}}
+    },
+    {
+      "address": "aws_s3_bucket.delivery", "type": "aws_s3_bucket", "mode": "managed",
+      "change": {"actions": ["no-op"], "after": {"arn": "arn:aws:s3:::fixture-delivery"}}
+    },
+    {
+      "address": "aws_s3_bucket.backup", "type": "aws_s3_bucket", "mode": "managed",
+      "change": {"actions": ["no-op"], "after": {"arn": "arn:aws:s3:::fixture-backup"}}
+    },
+    {
+      "address": "aws_kinesis_firehose_delivery_stream.archive", "type": "aws_kinesis_firehose_delivery_stream", "mode": "managed",
+      "change": {"actions": ["update"], "after": {
+        "destination": "extended_s3",
+        "kinesis_source_configuration": [{"kinesis_stream_arn": "arn:aws:kinesis:us-east-1:123456789012:stream/fixture-input", "role_arn": "arn:aws:iam::123456789012:role/fixture-only"}],
+        "extended_s3_configuration": [{
+          "bucket_arn": "arn:aws:s3:::fixture-delivery", "role_arn": "arn:aws:iam::123456789012:role/fixture-only",
+          "s3_backup_mode": "Enabled",
+          "s3_backup_configuration": [{"bucket_arn": "arn:aws:s3:::fixture-backup", "role_arn": "arn:aws:iam::123456789012:role/fixture-only"}]
+        }]
+      }}
+    },
+    {
+      "address": "aws_kinesis_firehose_delivery_stream.literal", "type": "aws_kinesis_firehose_delivery_stream", "mode": "managed",
+      "change": {"actions": ["create"], "after": {
+        "destination": "extended_s3",
+        "extended_s3_configuration": [{"bucket_arn": "arn:aws:s3:::fixture-delivery", "role_arn": "arn:aws:iam::123456789012:role/fixture-only", "s3_backup_mode": "Disabled"}]
+      }}
+    }
+  ],
+  "configuration": {
+    "provider_config": {"aws": {"full_name": "registry.terraform.io/hashicorp/aws", "version_constraint": "5.100.0", "expressions": {"region": {"constant_value": "us-east-1"}}}},
+    "root_module": {"resources": [
+      {"address": "aws_kinesis_stream.input", "provider_config_key": "aws"},
+      {"address": "aws_s3_bucket.delivery", "provider_config_key": "aws"},
+      {"address": "aws_s3_bucket.backup", "provider_config_key": "aws"},
+      {"address": "aws_kinesis_firehose_delivery_stream.archive", "provider_config_key": "aws", "expressions": {
+        "destination": {"constant_value": "extended_s3"},
+        "kinesis_source_configuration": [{"kinesis_stream_arn": {"references": ["aws_kinesis_stream.input[0].arn"]}}],
+        "extended_s3_configuration": [{
+          "bucket_arn": {"references": ["aws_s3_bucket.delivery.arn"]},
+          "s3_backup_mode": {"constant_value": "Enabled"},
+          "s3_backup_configuration": [{"bucket_arn": {"references": ["aws_s3_bucket.backup.arn"]}}]
+        }]
+      }},
+      {"address": "aws_kinesis_firehose_delivery_stream.literal", "provider_config_key": "aws", "expressions": {
+        "destination": {"constant_value": "extended_s3"},
+        "extended_s3_configuration": [{"bucket_arn": {"constant_value": "arn:aws:s3:::fixture-delivery"}}]
+      }}
+    ]}
+  }
+}

@@ -100,6 +100,9 @@ rows. Links target the individual resource, not its group card. Known attributes
 use Cluster, Task definition, Instance profile, AMI, Launch template,
 Role, Execution role or Task role. Verified [AWS service references](aws.md) use
 their service-specific labels, such as File system; other references use References.
+[Firehose references](aws.md#amazon-data-firehose) distinguish Kinesis source,
+S3 delivery destination and S3 backup destination. Their dependency arrows retain
+Terraform reference semantics; these labels do not add runtime-delivery edges.
 Graph-only references such as
 `depends_on` use Dependency, not an attribute-specific usage label. Logical-resource
 rows show their own direct references, including references to spatial resources.
