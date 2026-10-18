@@ -6,6 +6,44 @@ fn input() -> Value {
 }
 
 #[test]
+fn verified_membership_survives_incompatible_presentation_scope() {
+    let mut value = input();
+    value["configuration"]["root_module"]["resources"][5]["expressions"]["region"] =
+        json!({"constant_value":"us-west-2"});
+    let graph = semantic::transform(&plan::parse(&value.to_string()).unwrap());
+    let member = graph
+        .nodes
+        .iter()
+        .find(|node| node.address == "aws_rds_cluster_instance.member[0]")
+        .unwrap();
+    assert!(member.member_owner.is_none());
+    assert!(
+        member
+            .references
+            .iter()
+            .any(|reference| reference.attribute == "cluster_identifier"
+                && reference.kind == crate::model::ReferenceKind::Membership)
+    );
+    let output = svg::render(&graph, &Layout::new(&graph));
+    let doc = roxmltree::Document::parse(&output).unwrap();
+    let metadata = doc
+        .descendants()
+        .find(|node| node.attribute("id") == Some("resource-references"))
+        .unwrap();
+    let references: Vec<Value> = serde_json::from_str(metadata.text().unwrap()).unwrap();
+    assert!(references.iter().any(
+        |reference| reference["consumer"] == member.entity.id.as_str()
+            && reference["attribute"] == "cluster_identifier"
+            && reference["kind"] == "membership"
+    ));
+    assert!(
+        references
+            .iter()
+            .any(|reference| reference["kind"] == "configured")
+    );
+}
+
+#[test]
 fn member_accounts_require_shared_configuration_or_verified_account() {
     for case in [
         "same_configuration",

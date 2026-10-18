@@ -130,6 +130,8 @@ bounds and incident edges have empty paths. They create no routing obstacles.
 The SVG summary distinguishes spatial cards, logical resources and logical group
 cards while retaining total resource and action counts.
 Value-free reference evidence is available in `resource-references` metadata.
+Each entry includes `kind` (`configured` or verified `membership`), independently
+of effective presentation ownership and network containment.
 
 Verified Route ownership uses the same projection boundary: the Route node remains
 in the graph, while its card is embedded in the owning table. `view/routes.rs`
@@ -167,12 +169,17 @@ icons and external-mode indicators, preserving space for complete addresses.
 
 RDS Cluster Instances reuse the embedded-card measurements and layout projection.
 The [resource presentation contract](resource-presentation.md) distinguishes proposed
-ownership from effective selected presentation and documents the shared-model gaps.
+ownership from effective selected presentation.
 Provider rules set `member_owner` from verified explicit references; this is
 presentation ownership and adds no semantic Containment edge. Each member keeps
 its Terraform identity and contributes once to resource/action counts. Missing
 owners after selection release members to ordinary cards. `member-presentations`
 metadata records displayed ownership separately from dependency provenance.
+`PresentationOwner` includes the target identity, verified attribute and display
+labels. `view/presentation.rs` resolves it against the selected state graph, with
+independent fallback for missing, ambiguous, nested/cyclic or incompatible owners.
+The same effective owner drives cards, bounds, routing ancestry, masks and the HTML
+resource context index. Route-specific proof and context closure remain separate.
 
 Ingestion does not import provider rules, layout or SVG. Layout, view and SVG use
 the `model::architecture` facade, which excludes Terraform ingestion contracts.

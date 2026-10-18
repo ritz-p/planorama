@@ -34,24 +34,39 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             continue;
         };
         let parent = &raw.nodes[*owner];
-        if parent.resource_type == "aws_rds_cluster"
-            && parent.provider.is_aws()
-            && parent.mode == EntityMode::Managed
-            && parent.deposed_key.is_none()
-            && parent.entity.scope.as_ref().is_some_and(|scope| {
-                scope.region.is_some()
-                    && (scope.account.is_some()
-                        || parent
-                            .provider_configuration
-                            .as_ref()
-                            .is_some_and(|configuration| {
-                                !configuration.account_conflict
-                                    && node.provider_configuration.as_ref() == Some(configuration)
-                            }))
-            })
-            && parent.entity.scope == node.entity.scope
+        if parent.resource_type != "aws_rds_cluster"
+            || !parent.provider.is_aws()
+            || parent.mode != EntityMode::Managed
+            || parent.deposed_key.is_some()
         {
-            graph.nodes[index].member_owner = parent.entity.provenance.first().cloned();
+            continue;
+        }
+        for reference in &mut graph.nodes[index].references {
+            if reference.attribute == "cluster_identifier" {
+                reference.kind = crate::model::ReferenceKind::Membership;
+            }
+        }
+        if parent.entity.scope.as_ref().is_some_and(|scope| {
+            scope.region.is_some()
+                && (scope.account.is_some()
+                    || parent
+                        .provider_configuration
+                        .as_ref()
+                        .is_some_and(|configuration| {
+                            !configuration.account_conflict
+                                && node.provider_configuration.as_ref() == Some(configuration)
+                        }))
+        }) && parent.entity.scope == node.entity.scope
+        {
+            graph.nodes[index].member_owner =
+                parent.entity.provenance.first().cloned().map(|target| {
+                    crate::model::PresentationOwner {
+                        target,
+                        attribute: "cluster_identifier",
+                        label: "Cluster",
+                        section: "Cluster instances",
+                    }
+                });
         }
     }
 }
