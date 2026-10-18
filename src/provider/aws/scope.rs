@@ -19,7 +19,10 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
         .and_then(|c| c.account.clone());
     if matches!(
         resource,
-        "aws_glue_catalog_database" | "aws_glue_catalog_table"
+        "aws_glue_catalog_database"
+            | "aws_glue_catalog_table"
+            | "aws_acmpca_certificate"
+            | "aws_acmpca_certificate_authority_certificate"
     ) {
         account = None;
     }
@@ -40,6 +43,9 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
             | "aws_ebs_volume"
             | "aws_volume_attachment"
             | "aws_acm_certificate"
+            | "aws_acmpca_certificate_authority"
+            | "aws_acmpca_certificate"
+            | "aws_acmpca_certificate_authority_certificate"
             | "aws_acm_certificate_validation"
             | "aws_kms_key"
             | "aws_kms_alias"

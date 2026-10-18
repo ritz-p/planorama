@@ -24,6 +24,10 @@ mod security_groups;
 mod athena_tests;
 
 #[cfg(test)]
+#[path = "../../tests/unit/semantic/private_ca.rs"]
+mod private_ca_tests;
+
+#[cfg(test)]
 #[path = "../../tests/unit/resource_support.rs"]
 mod resource_support;
 pub(super) use scope::scope;
@@ -63,6 +67,9 @@ pub(super) fn placement(resource_type: &str) -> crate::model::Placement {
         | "aws_glue_job"
         | "aws_efs_access_point"
         | "aws_acm_certificate"
+        | "aws_acmpca_certificate_authority"
+        | "aws_acmpca_certificate"
+        | "aws_acmpca_certificate_authority_certificate"
         | "aws_acm_certificate_validation"
         | "aws_kms_key"
         | "aws_kms_alias"

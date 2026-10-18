@@ -29,6 +29,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         ("Amazon-CloudFront", "cloudfront"),
         ("Amazon-Route-53", "route53"),
         ("AWS-Certificate-Manager", "acm"),
+        ("AWS-Private-Certificate-Authority", "private-ca"),
         ("AWS-Key-Management-Service", "kms"),
         ("AWS-Secrets-Manager", "secretsmanager"),
         ("AWS-Systems-Manager", "ssm"),

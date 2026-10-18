@@ -1,0 +1,186 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_acmpca_certificate_authority.root",
+      "type": "aws_acmpca_certificate_authority",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "arn": "arn:aws:acm-pca:us-east-1:123456789012:certificate-authority/root",
+          "type": "ROOT",
+          "certificate_signing_request": "PRIVATE_ROOT_CSR"
+        }
+      }
+    },
+    {
+      "address": "aws_acmpca_certificate.subordinate",
+      "type": "aws_acmpca_certificate",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "certificate_authority_arn": "arn:aws:acm-pca:us-east-1:123456789012:certificate-authority/root",
+          "certificate_signing_request": "PRIVATE_SUB_CSR",
+          "certificate": "PRIVATE_SUB_CERTIFICATE",
+          "certificate_chain": "PRIVATE_CHAIN"
+        }
+      }
+    },
+    {
+      "address": "aws_acmpca_certificate_authority.subordinate",
+      "type": "aws_acmpca_certificate_authority",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:acm-pca:us-east-1:123456789012:certificate-authority/subordinate",
+          "type": "SUBORDINATE",
+          "certificate_signing_request": "PRIVATE_SUB_CSR"
+        }
+      }
+    },
+    {
+      "address": "aws_acmpca_certificate_authority_certificate.install",
+      "type": "aws_acmpca_certificate_authority_certificate",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "certificate_authority_arn": "arn:aws:acm-pca:us-east-1:123456789012:certificate-authority/subordinate",
+          "certificate": "PRIVATE_SUB_CERTIFICATE",
+          "certificate_chain": "PRIVATE_CHAIN"
+        }
+      }
+    },
+    {
+      "address": "aws_acm_certificate.application",
+      "type": "aws_acm_certificate",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "certificate_authority_arn": "arn:aws:acm-pca:us-east-1:123456789012:certificate-authority/subordinate",
+          "domain_name": "PRIVATE_DOMAIN",
+          "private_key": "PRIVATE_KEY"
+        }
+      }
+    },
+    {
+      "address": "aws_acmpca_certificate.external",
+      "type": "aws_acmpca_certificate",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "certificate_authority_arn": "arn:aws:acm-pca:us-east-1:123456789012:certificate-authority/external",
+          "certificate_signing_request": "PRIVATE_EXTERNAL_CSR"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "version_constraint": "5.100.0",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_acmpca_certificate_authority.root",
+          "provider_config_key": "aws"
+        },
+        {
+          "address": "aws_acmpca_certificate.subordinate",
+          "provider_config_key": "aws",
+          "expressions": {
+            "certificate_authority_arn": {
+              "references": [
+                "aws_acmpca_certificate_authority.root.arn",
+                "aws_acmpca_certificate_authority.root"
+              ]
+            },
+            "certificate_signing_request": {
+              "references": [
+                "aws_acmpca_certificate_authority.subordinate.certificate_signing_request",
+                "aws_acmpca_certificate_authority.subordinate"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_acmpca_certificate_authority.subordinate",
+          "provider_config_key": "aws"
+        },
+        {
+          "address": "aws_acmpca_certificate_authority_certificate.install",
+          "provider_config_key": "aws",
+          "expressions": {
+            "certificate_authority_arn": {
+              "references": [
+                "aws_acmpca_certificate_authority.subordinate.arn",
+                "aws_acmpca_certificate_authority.subordinate"
+              ]
+            },
+            "certificate": {
+              "references": [
+                "aws_acmpca_certificate.subordinate.certificate",
+                "aws_acmpca_certificate.subordinate"
+              ]
+            },
+            "certificate_chain": {
+              "references": [
+                "aws_acmpca_certificate.subordinate.certificate_chain",
+                "aws_acmpca_certificate.subordinate"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_acm_certificate.application",
+          "provider_config_key": "aws",
+          "expressions": {
+            "certificate_authority_arn": {
+              "references": [
+                "aws_acmpca_certificate_authority.subordinate.arn",
+                "aws_acmpca_certificate_authority.subordinate"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_acmpca_certificate.external",
+          "provider_config_key": "aws",
+          "expressions": {
+            "certificate_authority_arn": {
+              "references": [
+                "var.external_ca"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

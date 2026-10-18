@@ -158,6 +158,11 @@
             "file": "Amazon-Athena.svg",
             "source": "Architecture-Service-Icons_07312026/Arch_Analytics/48/Arch_Amazon-Athena_48.svg",
             "sha256": "5644ca441ec8fea1519218ac70d998c97358855d9f28598f7db5910d625ba4bc"
+        },
+        {
+            "file": "AWS-Private-Certificate-Authority.svg",
+            "source": "Architecture-Service-Icons_07312026/Arch_Security-Identity/48/Arch_AWS-Private-Certificate-Authority_48.svg",
+            "sha256": "3fbe1cde23507a3516279d9fc833af0c1fc8b7f30ccd50d023856a5ee630004d"
         }
     ]
 }
