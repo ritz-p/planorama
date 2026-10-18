@@ -2,6 +2,9 @@ use crate::icons::ResourceIcon;
 
 pub(super) fn icon_for(resource_type: &str) -> Option<ResourceIcon> {
     Some(match resource_type {
+        "aws_efs_file_system" | "aws_efs_mount_target" | "aws_efs_access_point" => {
+            ResourceIcon::Efs
+        }
         "aws_ssm_parameter" => ResourceIcon::Ssm,
         "aws_secretsmanager_secret" | "aws_secretsmanager_secret_version" => {
             ResourceIcon::SecretsManager
