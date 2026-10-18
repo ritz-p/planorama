@@ -5,6 +5,34 @@ use serde_json::{Value, json};
 fn secrets_keep_version_identity_and_never_infer_json_usage_or_retain_payloads() {
     let fixture = include_str!("../../fixtures/secrets-manager-plan.json");
     check_service_fixture(fixture, "Version secret", "secret_id");
+    for data in [false, true] {
+        for field in ["id", "arn", "name"] {
+            let mut value: Value = serde_json::from_str(fixture).unwrap();
+            if data {
+                let address = "data.aws_secretsmanager_secret_version.app";
+                value["resource_changes"][1]["address"] = json!(address);
+                value["resource_changes"][1]["mode"] = json!("data");
+                value["resource_changes"][1]["change"]["actions"] = json!(["read"]);
+                value["configuration"]["root_module"]["resources"][1]["address"] = json!(address);
+                value["configuration"]["root_module"]["resources"][1]["mode"] = json!("data");
+            }
+            value["resource_changes"][1]["change"]["after"]["secret_id"] =
+                value["resource_changes"][0]["change"]["after"][field].clone();
+            value["configuration"]["root_module"]["resources"][1]["expressions"]["secret_id"] =
+                json!({"references": [format!("aws_secretsmanager_secret.app.{field}")]});
+            let parsed = plan::parse(&value.to_string()).unwrap();
+            let reference = parsed
+                .attributes
+                .iter()
+                .find(|r| r.attribute == "secret_id")
+                .unwrap();
+            assert_eq!(
+                reference.service_reference_verified,
+                field != "name",
+                "{data} {field}"
+            );
+        }
+    }
     let mut value: Value = serde_json::from_str(fixture).unwrap();
     for key in [
         "secret_string",

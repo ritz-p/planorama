@@ -36,7 +36,7 @@ fn label(resource: &str, attribute: &str) -> Option<&'static str> {
 fn source_fields(resource: &str, attribute: &str, source: &str) -> &'static [&'static str] {
     match (resource, attribute, source) {
         ("aws_secretsmanager_secret_version", "secret_id", "aws_secretsmanager_secret") => {
-            &["id", "arn", "name"]
+            &["id", "arn"]
         }
         ("aws_kms_alias", "target_key_id", "aws_kms_key")
         | ("aws_sqs_queue", "kms_master_key_id", "aws_kms_key")
@@ -112,7 +112,8 @@ pub(crate) fn annotate(
             || !reference.issues.is_empty()
             || !node.provider.is_aws()
             || !endpoint.provider.is_aws()
-            || node.mode != EntityMode::Managed
+            || (node.mode != EntityMode::Managed
+                && node.resource_type != "aws_secretsmanager_secret_version")
             || endpoint.mode != EntityMode::Managed
             || node.deposed_key.is_some()
             || endpoint.deposed_key.is_some()

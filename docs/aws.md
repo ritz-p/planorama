@@ -11,8 +11,10 @@ conditional relationship and placement proofs behind that catalog.
 
 Secrets Manager Secrets and Versions are separate regional logical resources,
 including data lookups, with the AWS Secrets Manager icon. `Version secret` requires
-an explicit `secret_id` reference to a managed Secret's `id`, `arn` or `name`,
-matching known planned values. Versions retain their own identities and actions.
+an explicit `secret_id` reference from a managed or data Version to a managed
+Secret's `id` or `arn`, matching known planned values. Name-based references remain
+ordinary Terraform references because names resolve in the consumer's account and
+region. Versions retain their own identities and actions.
 Equal names never merge managed/data resources. Payloads, secret strings/binary,
 rotation configuration and container environment values are not retained or output.
 See [SVG](../examples/secrets-manager.svg) / [HTML](../examples/secrets-manager.html).
