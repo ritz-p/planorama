@@ -13,6 +13,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         ("Elastic-Load-Balancing", "elb"),
         ("AWS-Lambda", "lambda"),
         ("Amazon-Simple-Queue-Service", "sqs"),
+        ("Amazon-Kinesis-Data-Streams", "kinesis"),
         ("Amazon-Simple-Notification-Service", "sns"),
         ("Amazon-EventBridge", "eventbridge"),
         ("Amazon-Elastic-Container-Service", "ecs"),

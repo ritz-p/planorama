@@ -32,7 +32,13 @@ fn endpoint(raw: &Input, index: usize, attribute: &str) -> Option<usize> {
         && match attribute {
             "topic_arn" => node.resource_type == "aws_sns_topic" && reference.arn_values_match,
             "event_source_arn" => {
-                node.resource_type == "aws_sqs_queue" && reference.arn_values_match
+                matches!(
+                    node.resource_type.as_str(),
+                    "aws_sqs_queue" | "aws_kinesis_stream"
+                ) && reference.arn_values_match
+                    && (node.resource_type != "aws_kinesis_stream"
+                        || (reference.source_attributes.len() == 1
+                            && reference.source_attributes.contains("arn")))
             }
             "endpoint" => reference.messaging_endpoint_verified,
             "rule" => {
@@ -55,6 +61,30 @@ fn endpoint(raw: &Input, index: usize, attribute: &str) -> Option<usize> {
             _ => false,
         })
     .then_some(*source)
+}
+
+pub(super) fn diagnostics(raw: &Input) -> Vec<crate::model::Diagnostic> {
+    raw.nodes
+        .iter()
+        .enumerate()
+        .filter(|(_, node)| {
+            node.provider.is_aws()
+                && node.resource_type == "aws_lambda_event_source_mapping"
+                && node.mode == EntityMode::Managed
+                && node.deposed_key.is_none()
+        })
+        .flat_map(|(index, node)| {
+            ["event_source_arn", "function_name"]
+                .into_iter()
+                .filter(move |attribute| endpoint(raw, index, attribute).is_none())
+                .map(move |attribute| crate::model::Diagnostic {
+                    address: node.address.clone(),
+                    deposed_key: node.deposed_key.clone(),
+                    attribute: attribute.into(),
+                    reason: crate::model::DiagnosticReason::UnprovenEndpointValue,
+                })
+        })
+        .collect()
 }
 
 pub(super) fn present(raw: &Input, graph: &mut Graph) {

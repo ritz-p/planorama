@@ -70,6 +70,20 @@ fn event_source_svg_html_filters_and_named_states_keep_real_navigation() {
         "aws_lambda_event_source_mapping.jobs",
         9,
     );
+    verify(
+        "tests/fixtures/kinesis-plan.json",
+        "eventsource",
+        "aws_lambda_event_source_mapping.jobs",
+        9,
+    );
+    let output = support::run_with_args(
+        include_bytes!("../fixtures/kinesis-plan.json"),
+        &["--icon-mode", "service-name"],
+    );
+    assert!(output.status.success());
+    let text = String::from_utf8(output.stdout).unwrap();
+    assert!(text.contains("Amazon Kinesis Data Streams"));
+    assert!(!text.contains("stream-proof"));
 }
 
 #[test]
