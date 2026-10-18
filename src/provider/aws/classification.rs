@@ -8,6 +8,10 @@ pub(super) fn classify(resource_type: &str) -> ResourceRole {
     match resource_type {
         "aws_vpc" | "aws_subnet" => ResourceRole::Container,
         "aws_instance"
+        | "aws_glue_catalog_database"
+        | "aws_glue_catalog_table"
+        | "aws_glue_crawler"
+        | "aws_glue_job"
         | "aws_efs_file_system"
         | "aws_efs_mount_target"
         | "aws_efs_access_point"

@@ -502,7 +502,7 @@ fn kms_uses_only_allowlisted_configuration_fields_and_never_exposes_key_material
     );
 }
 
-fn check_service_fixture(fixture: &str, label: &str, attribute: &str) {
+pub(in crate::provider::aws) fn check_service_fixture(fixture: &str, label: &str, attribute: &str) {
     let original: Value = serde_json::from_str(fixture).unwrap();
     let source = original["resource_changes"][0]["address"].as_str().unwrap();
     let consumer = original["resource_changes"][1]["address"].as_str().unwrap();
@@ -547,7 +547,9 @@ fn check_service_fixture(fixture: &str, label: &str, attribute: &str) {
         );
     }
     let indexed = fixture.replace(source, &format!("{source}[0]"));
-    let graph = semantic::transform(&plan::parse(&indexed).unwrap());
+    let mut indexed: Value = serde_json::from_str(&indexed).unwrap();
+    indexed["configuration"]["root_module"]["resources"][0]["address"] = json!(source);
+    let graph = semantic::transform(&plan::parse(&indexed.to_string()).unwrap());
     assert!(
         graph
             .nodes

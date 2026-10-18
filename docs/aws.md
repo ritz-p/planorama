@@ -7,6 +7,45 @@ The generated [resource support matrix](resource-support.md) lists exact-type
 roles, display modes, icons and scope eligibility. This document defines the
 conditional relationship and placement proofs behind that catalog.
 
+## Glue Catalog, Crawler and Job
+
+Exact AWS `aws_glue_catalog_database`, `aws_glue_catalog_table`, `aws_glue_crawler`
+and `aws_glue_job` are regional logical Nodes using the AWS Glue icon/service
+name. Every resource retains its own identity, lifecycle and coverage entry.
+Catalog Database/Table account scope remains unknown: an explicit catalog can
+belong to a different account from the execution provider.
+
+Table `Catalog database` membership is a reference row, not geometric containment.
+It requires a complete, unique, explicit reference to a current managed Database's
+`name`, matching known planned names and catalog IDs, and equal known effective
+regions. Crawler database references remain ordinary Terraform references because
+the crawler has no catalog ID field proving the target catalog. Unknown region/catalog evidence,
+dynamic instances, wrong providers/types and deleted/deposed endpoints keep
+ordinary Terraform references with an unproven-value diagnostic. Filtered links
+become Unavailable. Matching literal names alone establish no relationship.
+
+Crawler `role` and Job `role_arn` produce `Execution role reference` rows only for
+explicit IAM Role `arn` references with equal known values. Name-only role
+references remain ordinary Terraform references. Explicit S3 references in
+Crawler targets and Job script locations also retain the shared Terraform
+reference presentation; URI strings create no links. These configuration
+references prove neither execution success nor effective permissions.
+Script bodies, connection credentials, schema contents and argument values are
+omitted. Job arguments/scripts are not interpreted as lineage or execution order;
+workflows, triggers and execution graphs remain outside the initial scope.
+
+AWS Provider 5.100.0 installed schemas and official
+[Database](https://github.com/hashicorp/terraform-provider-aws/blob/v5.100.0/website/docs/r/glue_catalog_database.html.markdown),
+[Table](https://github.com/hashicorp/terraform-provider-aws/blob/v5.100.0/internal/service/glue/catalog_table.go),
+[Crawler](https://github.com/hashicorp/terraform-provider-aws/blob/v5.100.0/website/docs/r/glue_crawler.html.markdown)
+and [Job](https://github.com/hashicorp/terraform-provider-aws/blob/v5.100.0/website/docs/r/glue_job.html.markdown)
+definitions were checked with Terraform 1.9.8 and its
+[plan JSON representation](https://developer.hashicorp.com/terraform/internals/json-format).
+The synthetic [fixture](../tests/fixtures/glue-plan.json), [SVG](../examples/glue.svg)
+and [offline HTML](../examples/glue.html) contrast explicit configuration with
+literal-only values. Regenerate HTML inside Docker with
+`cargo run --locked -- tests/fixtures/glue-plan.json --format html -o examples/glue.html`.
+
 ## IAM users and groups
 
 Exact AWS `aws_iam_user`, `aws_iam_group`, `aws_iam_user_policy` and

@@ -148,6 +148,11 @@
             "file": "Amazon-Data-Firehose.svg",
             "source": "Architecture-Service-Icons_07312026/Arch_Analytics/48/Arch_Amazon-Data-Firehose_48.svg",
             "sha256": "8bba0a1b04c3953d6a2dd45326dc5b13117aad63b10367e48a7cce6642e4b180"
+        },
+        {
+            "file": "AWS-Glue.svg",
+            "source": "Architecture-Service-Icons_07312026/Arch_Analytics/48/Arch_AWS-Glue_48.svg",
+            "sha256": "f98d18c9698d54ecf10b6d05ddc80b4da8c22fa2a28f8d1795e5a9c182dd3f90"
         }
     ]
 }
