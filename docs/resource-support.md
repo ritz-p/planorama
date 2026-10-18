@@ -48,6 +48,8 @@ Provider source: `registry.terraform.io/hashicorp/aws`.
 
 | Resource type | Role (managed / data) | Display (managed / data) | Icon / service name | Deployment scope | Conditional rule source references |
 | --- | --- | --- | --- | --- | --- |
+| `aws_acm_certificate` | Node / Node | Logical / Logical | Acm / AWS Certificate Manager | Regional (conditional) | [aws.rs](../src/provider/aws.rs), [aws/service_references.rs](../src/provider/aws/service_references.rs) |
+| `aws_acm_certificate_validation` | Controller / Controller | Logical / Logical | Acm / AWS Certificate Manager | Regional (conditional) | [aws.rs](../src/provider/aws.rs), [aws/service_references.rs](../src/provider/aws/service_references.rs) |
 | `aws_alb` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | LoadBalancer / Elastic Load Balancing | Unknown | — |
 | `aws_alb_listener` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | LoadBalancer / Elastic Load Balancing | Unknown | — |
 | `aws_alb_target_group` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | LoadBalancer / Elastic Load Balancing | Unknown | — |
@@ -181,7 +183,7 @@ Provider source: `registry.terraform.io/hashicorp/aws`.
 | `aws_launch_configuration` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Scaling / Amazon EC2 Auto Scaling | Unknown | — |
 | `aws_launch_template` | Node / Node | Logical / Logical | Ec2 / Amazon EC2 | Regional (conditional) | [aws.rs](../src/provider/aws.rs) |
 | `aws_lb` | Connector / Connector | Spatial / Spatial | LoadBalancer / Elastic Load Balancing | Regional (conditional) | [aws/components.rs](../src/provider/aws/components.rs), [aws/containment/spanning.rs](../src/provider/aws/containment/spanning.rs), [aws/diagnostics.rs](../src/provider/aws/diagnostics.rs), [aws/placement.rs](../src/provider/aws/placement.rs), [aws/security_groups.rs](../src/provider/aws/security_groups.rs), [aws/service_references.rs](../src/provider/aws/service_references.rs) |
-| `aws_lb_listener` | Connector / Connector | Spatial / Spatial | LoadBalancer / Elastic Load Balancing | Regional (conditional) | [aws/components.rs](../src/provider/aws/components.rs), [aws/placement.rs](../src/provider/aws/placement.rs) |
+| `aws_lb_listener` | Connector / Connector | Spatial / Spatial | LoadBalancer / Elastic Load Balancing | Regional (conditional) | [aws/components.rs](../src/provider/aws/components.rs), [aws/placement.rs](../src/provider/aws/placement.rs), [aws/service_references.rs](../src/provider/aws/service_references.rs) |
 | `aws_lb_listener_rule` | Policy / Policy | Spatial / Spatial | LoadBalancer / Elastic Load Balancing | Regional (conditional) | [aws/components.rs](../src/provider/aws/components.rs) |
 | `aws_lb_target_group` | Controller / Controller | Spatial / Spatial | LoadBalancer / Elastic Load Balancing | Regional (conditional) | [aws/associations.rs](../src/provider/aws/associations.rs), [aws/components.rs](../src/provider/aws/components.rs), [aws/containment.rs](../src/provider/aws/containment.rs), [aws/diagnostics.rs](../src/provider/aws/diagnostics.rs) |
 | `aws_lb_target_group_attachment` | Association / Association | Spatial / Spatial | LoadBalancer / Elastic Load Balancing | Regional (conditional) | [aws/associations.rs](../src/provider/aws/associations.rs), [aws/components.rs](../src/provider/aws/components.rs) |
