@@ -27,6 +27,7 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
             | "aws_kms_key"
             | "aws_kms_alias"
             | "aws_secretsmanager_secret"
+            | "aws_ssm_parameter"
             | "aws_secretsmanager_secret_version"
             | "aws_s3_bucket_server_side_encryption_configuration"
             | "aws_subnet"

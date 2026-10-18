@@ -123,6 +123,11 @@
             "file": "AWS-Secrets-Manager.svg",
             "source": "Architecture-Service-Icons_07312026/Arch_Security-Identity/48/Arch_AWS-Secrets-Manager_48.svg",
             "sha256": "0258cbde7033b45683db4e814980f5871d3e88fd8490ad9e9f3f531049fffe40"
+        },
+        {
+            "file": "AWS-Systems-Manager.svg",
+            "source": "Architecture-Service-Icons_07312026/Arch_Management-Tools/48/Arch_AWS-Systems-Manager_48.svg",
+            "sha256": "b03519f1080a84cc183f7d24d48ee84114834b06f788c6f6459c717527d4df13"
         }
     ]
 }

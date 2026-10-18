@@ -14,6 +14,7 @@ pub(super) fn classify(resource_type: &str) -> ResourceRole {
         | "aws_kms_key"
         | "aws_kms_alias"
         | "aws_secretsmanager_secret"
+        | "aws_ssm_parameter"
         | "aws_ami"
         | "aws_eip"
         | "aws_db_instance"

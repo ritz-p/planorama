@@ -2,6 +2,210 @@ use crate::{layout::Layout, plan, semantic, svg};
 use serde_json::{Value, json};
 
 #[test]
+fn ssm_preserves_parameter_identity_without_values_or_path_inference() {
+    let fixture = include_str!("../../fixtures/ssm-plan.json");
+    for parameter_type in ["String", "StringList", "SecureString", "PRIVATE_TYPE"] {
+        let mut value: Value = serde_json::from_str(fixture).unwrap();
+        for key in ["value", "insecure_value", "description", "name"] {
+            value["resource_changes"][0]["change"]["after"][key] =
+                json!("PRIVATE_/environment/<script>&payload");
+        }
+        value["resource_changes"][0]["change"]["after"]["type"] = json!(parameter_type);
+        let parsed = plan::parse(&value.to_string()).unwrap();
+        assert!(!format!("{parsed:?}").contains("PRIVATE_"));
+        let graph = semantic::transform(&parsed);
+        assert_eq!(graph.nodes.len(), 3);
+        assert_eq!(graph.coverage.selected.resources, 3);
+        assert!(
+            graph
+                .nodes
+                .iter()
+                .filter(|n| n.resource_type == "aws_ssm_parameter")
+                .all(|n| n.placement == crate::model::Placement::Logical
+                    && n.entity
+                        .scope
+                        .as_ref()
+                        .is_some_and(|s| !s.global && s.region.is_some()))
+        );
+        assert!(
+            parsed
+                .attributes
+                .iter()
+                .all(|r| !r.service_reference_verified)
+        );
+        for format in [crate::OutputFormat::Svg, crate::OutputFormat::Html] {
+            let output = crate::generate(
+                &value.to_string(),
+                &crate::Options {
+                    format,
+                    ..Default::default()
+                },
+            )
+            .unwrap();
+            assert!(!output.content.contains("PRIVATE_"));
+            assert!(
+                !output
+                    .content
+                    .contains("SYNTHETIC_PARAMETER_NOT_FOR_OUTPUT")
+            );
+            assert!(output.content.contains("References: aws_ssm_parameter.app"));
+        }
+    }
+    let graph = semantic::transform(&plan::parse(fixture).unwrap());
+    let filtered = crate::view::single(
+        &graph,
+        &crate::view::Options {
+            focus: Some("aws_ecs_task_definition.app".into()),
+            depth: Some(0),
+            ..Default::default()
+        },
+    )
+    .unwrap();
+    assert!(svg::render(&filtered, &Layout::new(&filtered)).contains("Unavailable"));
+    for case in 0..5 {
+        let mut value: Value = serde_json::from_str(fixture).unwrap();
+        match case {
+            0 => value["resource_changes"][0]["provider_name"] = json!("example.com/foreign/aws"),
+            1 => value["resource_changes"][0]["change"]["after_unknown"] = json!(true),
+            2 => value["resource_changes"][0]["change"]["actions"] = json!(["delete"]),
+            3 => value["resource_changes"][0]["deposed"] = json!("old"),
+            _ => {
+                value["configuration"]["root_module"]["resources"][1]["expressions"]["container_definitions"] =
+                    json!({"references":["aws_ssm_parameter.app", "var.selector"]})
+            }
+        }
+        let parsed = plan::parse(&value.to_string()).unwrap();
+        let graph = semantic::transform(&parsed);
+        assert_eq!(graph.coverage.selected.resources, 3);
+        assert!(
+            parsed
+                .attributes
+                .iter()
+                .all(|r| !r.service_reference_verified)
+        );
+        if case == 0 {
+            assert!(
+                !graph
+                    .nodes
+                    .iter()
+                    .find(|n| n.address == "aws_ssm_parameter.app")
+                    .unwrap()
+                    .provider
+                    .is_aws()
+            );
+        }
+    }
+    let indexed = fixture.replace("aws_ssm_parameter.app", "aws_ssm_parameter.app[0]");
+    assert_eq!(
+        semantic::transform(&plan::parse(&indexed).unwrap())
+            .coverage
+            .selected
+            .resources,
+        3
+    );
+    let mut ambiguous: Value = serde_json::from_str(fixture).unwrap();
+    let mut second = ambiguous["resource_changes"][0].clone();
+    ambiguous["resource_changes"][0]["address"] = json!("aws_ssm_parameter.app[0]");
+    second["address"] = json!("aws_ssm_parameter.app[1]");
+    ambiguous["resource_changes"]
+        .as_array_mut()
+        .unwrap()
+        .push(second);
+    let parsed = plan::parse(&ambiguous.to_string()).unwrap();
+    assert_eq!(semantic::transform(&parsed).coverage.selected.resources, 4);
+    assert!(
+        semantic::diagnostics::collect(&parsed)
+            .iter()
+            .any(|d| d.reason == crate::model::DiagnosticReason::MultipleMatchingInstances)
+    );
+    let plans = plan::parse_inputs(
+        ["one", "two"]
+            .into_iter()
+            .map(|state| crate::model::PlanInput {
+                state_id: crate::model::StateId::new(state).unwrap(),
+                plan_json: fixture.into(),
+            })
+            .collect(),
+    )
+    .unwrap();
+    assert_eq!(plans.states.len(), 2);
+    assert!(semantic::cross_state::resolve(&plans, &[]).edges.is_empty());
+}
+
+#[test]
+fn maintained_service_examples_keep_valid_links_service_names_and_module_selection() {
+    for (fixture, name) in [
+        (
+            include_str!("../../fixtures/route53-plan.json"),
+            "Amazon Route 53",
+        ),
+        (
+            include_str!("../../fixtures/acm-plan.json"),
+            "AWS Certificate Manager",
+        ),
+        (
+            include_str!("../../fixtures/kms-plan.json"),
+            "AWS Key Management Service",
+        ),
+        (
+            include_str!("../../fixtures/secrets-manager-plan.json"),
+            "AWS Secrets Manager",
+        ),
+        (
+            include_str!("../../fixtures/ssm-plan.json"),
+            "AWS Systems Manager",
+        ),
+    ] {
+        for format in [crate::OutputFormat::Svg, crate::OutputFormat::Html] {
+            let output = crate::generate(
+                fixture,
+                &crate::Options {
+                    format,
+                    icon_mode: crate::IconMode::ServiceName,
+                    ..Default::default()
+                },
+            )
+            .unwrap()
+            .content;
+            assert!(output.contains(name));
+            let start = output.find("<svg").unwrap();
+            let end = output.rfind("</svg>").unwrap() + 6;
+            let doc = roxmltree::Document::parse(&output[start..end]).unwrap();
+            let ids: std::collections::BTreeSet<_> = doc
+                .descendants()
+                .filter_map(|n| n.attribute("id"))
+                .collect();
+            for href in doc
+                .descendants()
+                .filter_map(|n| n.attribute("href"))
+                .filter_map(|h| h.strip_prefix('#'))
+            {
+                assert!(ids.contains(href), "dangling link in {name}: {href}");
+            }
+        }
+        let mut value: Value = serde_json::from_str(fixture).unwrap();
+        for resource in value["resource_changes"].as_array_mut().unwrap() {
+            resource["address"] = json!(format!(
+                "module.services.{}",
+                resource["address"].as_str().unwrap()
+            ));
+        }
+        let module = value["configuration"]["root_module"].take();
+        value["configuration"]["root_module"] =
+            json!({"module_calls":{"services":{"module":module}}});
+        let output = crate::generate(
+            &value.to_string(),
+            &crate::Options {
+                modules: vec!["module.services".into()],
+                ..Default::default()
+            },
+        )
+        .unwrap();
+        assert!(output.content.contains("module.services"));
+    }
+}
+
+#[test]
 fn secrets_keep_version_identity_and_never_infer_json_usage_or_retain_payloads() {
     let fixture = include_str!("../../fixtures/secrets-manager-plan.json");
     check_service_fixture(fixture, "Version secret", "secret_id");
