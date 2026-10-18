@@ -15,6 +15,7 @@ examples/diagram.svg
 examples/route53.svg
 examples/acm.svg
 examples/kms.svg
+examples/secrets-manager.svg
 examples/accounts.svg
 examples/multi-account/diagram.svg
 examples/hierarchy-routing.svg
