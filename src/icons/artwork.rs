@@ -23,6 +23,7 @@ impl ResourceIcon {
             Self::CloudFront => "planorama-icon-aws-cloudfront",
             Self::Route53 => "planorama-icon-aws-route53",
             Self::Acm => "planorama-icon-aws-acm",
+            Self::Kms => "planorama-icon-aws-kms",
             Self::ApiGateway => "planorama-icon-aws-api",
             Self::Iam => "planorama-icon-aws-iam",
             Self::Monitoring => "planorama-icon-aws-monitoring",
@@ -78,6 +79,7 @@ impl ResourceIcon {
             Self::CloudFront => include_str!(concat!(env!("OUT_DIR"), "/Amazon-CloudFront.svg")),
             Self::Route53 => include_str!(concat!(env!("OUT_DIR"), "/Amazon-Route-53.svg")),
             Self::Acm => include_str!(concat!(env!("OUT_DIR"), "/AWS-Certificate-Manager.svg")),
+            Self::Kms => include_str!(concat!(env!("OUT_DIR"), "/AWS-Key-Management-Service.svg")),
             Self::ApiGateway => include_str!(concat!(env!("OUT_DIR"), "/Amazon-API-Gateway.svg")),
             Self::Iam => {
                 include_str!(concat!(

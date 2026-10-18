@@ -1,6 +1,68 @@
 use crate::{layout::Layout, plan, semantic, svg};
 use serde_json::{Value, json};
 
+#[test]
+fn kms_uses_only_allowlisted_configuration_fields_and_never_exposes_key_material() {
+    let fixture = include_str!("../../fixtures/kms-plan.json");
+    check_service_fixture(fixture, "Alias key", "target_key_id");
+    let mut value: Value = serde_json::from_str(fixture).unwrap();
+    value["resource_changes"][0]["change"]["after"]["policy"] = json!("PRIVATE_POLICY_<script>&");
+    value["resource_changes"][0]["change"]["after"]["key_material"] = json!("PRIVATE_KEY");
+    let graph = semantic::transform(&plan::parse(&value.to_string()).unwrap());
+    assert_eq!(
+        graph
+            .nodes
+            .iter()
+            .flat_map(|n| &n.references)
+            .filter(|r| r.label == "Encryption key reference" && r.complete)
+            .count(),
+        4
+    );
+    assert!(
+        graph
+            .nodes
+            .iter()
+            .filter(|n| n.resource_type.starts_with("aws_kms_"))
+            .all(|n| n.placement == crate::model::Placement::Logical
+                && n.entity
+                    .scope
+                    .as_ref()
+                    .is_some_and(|s| !s.global && s.region.is_some()))
+    );
+    for format in [crate::OutputFormat::Svg, crate::OutputFormat::Html] {
+        let output = crate::generate(
+            &value.to_string(),
+            &crate::Options {
+                format,
+                ..Default::default()
+            },
+        )
+        .unwrap();
+        assert!(!output.content.contains("PRIVATE_"));
+    }
+    value["resource_changes"][3]["type"] = json!("aws_instance");
+    let graph = semantic::transform(&plan::parse(&value.to_string()).unwrap());
+    assert!(
+        !graph
+            .nodes
+            .iter()
+            .find(|n| n.address == "aws_db_instance.data")
+            .unwrap()
+            .references
+            .iter()
+            .any(|r| r.label == "Encryption key reference")
+    );
+    value["resource_changes"][0]["type"] = json!("aws_kms_replica_key");
+    let graph = semantic::transform(&plan::parse(&value.to_string()).unwrap());
+    assert!(
+        !graph
+            .nodes
+            .iter()
+            .flat_map(|n| &n.references)
+            .any(|r| r.label == "Alias key" && r.complete)
+    );
+}
+
 fn check_service_fixture(fixture: &str, label: &str, attribute: &str) {
     let original: Value = serde_json::from_str(fixture).unwrap();
     let source = original["resource_changes"][0]["address"].as_str().unwrap();
