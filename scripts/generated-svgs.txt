@@ -55,3 +55,4 @@ examples/vpc-workloads.svg
 examples/workload-security-groups.svg
 examples/region-overrides.svg
 examples/glue.svg
+examples/athena.svg

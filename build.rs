@@ -16,6 +16,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         ("Amazon-Kinesis-Data-Streams", "kinesis"),
         ("Amazon-Data-Firehose", "firehose"),
         ("AWS-Glue", "glue"),
+        ("Amazon-Athena", "athena"),
         ("Amazon-Simple-Notification-Service", "sns"),
         ("Amazon-EventBridge", "eventbridge"),
         ("Amazon-Elastic-Container-Service", "ecs"),

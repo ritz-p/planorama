@@ -28,6 +28,8 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
     } else if matches!(
         resource,
         "aws_vpc"
+            | "aws_athena_workgroup"
+            | "aws_athena_data_catalog"
             | "aws_glue_catalog_database"
             | "aws_glue_catalog_table"
             | "aws_glue_crawler"

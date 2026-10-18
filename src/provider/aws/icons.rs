@@ -2,6 +2,7 @@ use crate::icons::ResourceIcon;
 
 pub(super) fn icon_for(resource_type: &str) -> Option<ResourceIcon> {
     Some(match resource_type {
+        "aws_athena_workgroup" | "aws_athena_data_catalog" => ResourceIcon::Athena,
         "aws_glue_catalog_database"
         | "aws_glue_catalog_table"
         | "aws_glue_crawler"

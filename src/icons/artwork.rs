@@ -14,6 +14,7 @@ impl ResourceIcon {
             Self::Kinesis => "planorama-icon-aws-kinesis",
             Self::Firehose => "planorama-icon-aws-firehose",
             Self::Glue => "planorama-icon-aws-glue",
+            Self::Athena => "planorama-icon-aws-athena",
             Self::Sns => "planorama-icon-aws-sns",
             Self::EventBridge => "planorama-icon-aws-eventbridge",
             Self::Ecs => "planorama-icon-aws-ecs",
@@ -55,6 +56,7 @@ impl ResourceIcon {
             Self::Lambda => include_str!(concat!(env!("OUT_DIR"), "/AWS-Lambda.svg")),
             Self::Firehose => include_str!(concat!(env!("OUT_DIR"), "/Amazon-Data-Firehose.svg")),
             Self::Glue => include_str!(concat!(env!("OUT_DIR"), "/AWS-Glue.svg")),
+            Self::Athena => include_str!(concat!(env!("OUT_DIR"), "/Amazon-Athena.svg")),
             Self::Kinesis => {
                 include_str!(concat!(env!("OUT_DIR"), "/Amazon-Kinesis-Data-Streams.svg"))
             }
