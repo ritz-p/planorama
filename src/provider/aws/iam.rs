@@ -6,6 +6,10 @@ use std::collections::BTreeSet;
 #[path = "../../../tests/unit/semantic/iam.rs"]
 mod tests;
 
+#[cfg(test)]
+#[path = "../../../tests/unit/semantic/identity_providers.rs"]
+mod identity_provider_tests;
+
 fn rule(resource: &str, attribute: &str) -> Option<(&'static str, &'static str, bool)> {
     match (resource, attribute) {
         ("aws_iam_group_membership", "group")

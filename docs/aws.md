@@ -45,6 +45,38 @@ policies, independent attachments and an unresolved literal-only membership.
 Regenerate SVGs with the standard script and HTML in Docker with
 `cargo run --locked -- tests/fixtures/iam-plan.json --format html -o examples/iam.html`.
 
+## IAM identity providers
+
+Exact AWS `aws_iam_openid_connect_provider` and `aws_iam_saml_provider` use logical
+IAM Policy rows with the IAM icon/service name and Global scope. Provider region
+does not make them regional. Managed/data instances, independent actions, moves,
+imports, deposed resources and state-qualified identities use the shared resource
+presentation and coverage rules.
+
+Structured Terraform expression references remain ordinary `References` links and
+dependency relationships, including references inside `assume_role_policy`
+expressions. They describe configuration provenance, not established trust,
+federation, effective permissions or successful execution. Unknown planned values
+do not prevent a structurally explicit Terraform dependency. Dynamic/missing or
+ambiguous references keep the shared unresolved diagnostics; filtered targets show
+Unavailable. Wrong-provider or unrecognized types keep generic fallback and
+ordinary Terraform references, without AWS classification. No dedicated historical
+trust relationship is inferred for deleted/deposed resources.
+
+Literal trust-policy JSON and matching issuer URLs/ARNs create no relationships.
+An EKS issuer URL match does not prove provider identity. SAML metadata, thumbprints,
+client ID lists, issuer values and trust-policy contents are not included in output.
+
+The AWS Provider 5.100.0
+[OIDC schema](https://github.com/hashicorp/terraform-provider-aws/blob/v5.100.0/internal/service/iam/openid_connect_provider.go)
+and [SAML documentation](https://github.com/hashicorp/terraform-provider-aws/blob/v5.100.0/website/docs/r/iam_saml_provider.html.markdown),
+installed schemas and Terraform 1.9.8 offline plan were checked for the initial
+scope. The synthetic [fixture](../tests/fixtures/identity-providers-plan.json),
+[SVG](../examples/identity-providers.svg) and [offline HTML](../examples/identity-providers.html)
+contrast explicit OIDC/SAML references with literal policy and EKS issuer matches.
+Regenerate HTML in Docker with
+`cargo run --locked -- tests/fixtures/identity-providers-plan.json --format html -o examples/identity-providers.html`.
+
 ## Deployment scopes
 
 EFS File Systems and Mount Targets are regional spatial Nodes; Access Points are

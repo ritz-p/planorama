@@ -62,6 +62,8 @@ pub(super) fn placement(resource_type: &str) -> crate::model::Placement {
         | "aws_ecs_task_definition"
         | "aws_iam_role"
         | "aws_iam_user"
+        | "aws_iam_openid_connect_provider"
+        | "aws_iam_saml_provider"
         | "aws_iam_group"
         | "aws_iam_user_policy"
         | "aws_iam_group_policy"
