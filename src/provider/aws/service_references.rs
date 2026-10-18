@@ -34,7 +34,7 @@ fn label(resource: &str, attribute: &str) -> Option<&'static str> {
         ("aws_route53_record", "zone_id") => Some("Hosted zone"),
         ("aws_route53_record", "alias.name") => Some("Alias target"),
         ("aws_route53_zone", "vpc.vpc_id") => Some("Associated VPC"),
-        _ => None,
+        _ => super::iam::label(resource, attribute),
     }
 }
 
@@ -127,6 +127,10 @@ pub(crate) fn annotate(
 ) {
     for reference in references.iter_mut() {
         let node = &nodes[reference.target];
+        if super::iam::label(&node.resource_type, &reference.attribute).is_some() {
+            reference.service_reference_verified = super::iam::verified(nodes, reference, evidence);
+            continue;
+        }
         let [source] = reference.sources.as_slice() else {
             continue;
         };
@@ -193,6 +197,10 @@ pub(crate) fn annotate(
     }
 }
 
+fn verified(raw: &Input, reference: &AttributeReference) -> bool {
+    reference.service_reference_verified && super::iam::bindings_compatible(&raw.nodes, reference)
+}
+
 pub(super) fn present(raw: &Input, graph: &mut Graph) {
     for reference in &raw.attributes {
         let node = &raw.nodes[reference.target];
@@ -202,7 +210,7 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
         let Some(label) = label(&node.resource_type, &reference.attribute) else {
             continue;
         };
-        let verified = reference.service_reference_verified;
+        let verified = verified(raw, reference);
         if verified {
             graph.nodes[reference.target]
                 .references
@@ -245,13 +253,13 @@ pub(super) fn diagnostics(raw: &Input) -> Vec<Diagnostic> {
             let node = &raw.nodes[reference.target];
             (node.provider.is_aws()
                 && label(&node.resource_type, &reference.attribute).is_some()
-                && !reference.service_reference_verified)
-                .then(|| Diagnostic {
-                    address: node.address.clone(),
-                    deposed_key: node.deposed_key.clone(),
-                    attribute: reference.attribute.clone(),
-                    reason: DiagnosticReason::UnprovenEndpointValue,
-                })
+                && !verified(raw, reference))
+            .then(|| Diagnostic {
+                address: node.address.clone(),
+                deposed_key: node.deposed_key.clone(),
+                attribute: reference.attribute.clone(),
+                reason: DiagnosticReason::UnprovenEndpointValue,
+            })
         })
         .collect()
 }

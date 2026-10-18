@@ -156,11 +156,14 @@ Provider source: `registry.terraform.io/hashicorp/aws`.
 | `aws_elasticsearch_domain` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Search / Amazon OpenSearch Service | Unknown | — |
 | `aws_elb` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | LoadBalancer / Elastic Load Balancing | Unknown | — |
 | `aws_iam_access_keys` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Iam / AWS Identity and Access Management | Global | — |
-| `aws_iam_group` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Iam / AWS Identity and Access Management | Global | — |
+| `aws_iam_group` | Policy / Policy | Logical / Logical | Iam / AWS Identity and Access Management | Global | [aws.rs](../src/provider/aws.rs), [aws/iam.rs](../src/provider/aws/iam.rs) |
+| `aws_iam_group_membership` | Association / Association | Logical / Logical | Iam / AWS Identity and Access Management | Global | [aws.rs](../src/provider/aws.rs), [aws/iam.rs](../src/provider/aws/iam.rs) |
+| `aws_iam_group_policy` | Policy / Policy | Logical / Logical | Iam / AWS Identity and Access Management | Global | [aws.rs](../src/provider/aws.rs), [aws/iam.rs](../src/provider/aws/iam.rs) |
+| `aws_iam_group_policy_attachment` | Association / Association | Logical / Logical | Iam / AWS Identity and Access Management | Global | [aws.rs](../src/provider/aws.rs), [aws/iam.rs](../src/provider/aws/iam.rs) |
 | `aws_iam_instance_profile` | Policy / Policy | Logical / Logical | Iam / AWS Identity and Access Management | Global | [aws.rs](../src/provider/aws.rs) |
 | `aws_iam_instance_profiles` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Iam / AWS Identity and Access Management | Global | — |
 | `aws_iam_openid_connect_provider` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Iam / AWS Identity and Access Management | Global | — |
-| `aws_iam_policy` | Policy / Policy | Logical / Logical | Iam / AWS Identity and Access Management | Global | [aws.rs](../src/provider/aws.rs) |
+| `aws_iam_policy` | Policy / Policy | Logical / Logical | Iam / AWS Identity and Access Management | Global | [aws.rs](../src/provider/aws.rs), [aws/iam.rs](../src/provider/aws/iam.rs) |
 | `aws_iam_policy_document` | Unknown / Unknown | Spatial (unresolved) / Omitted | — | Global | — |
 | `aws_iam_role` | Policy / Policy | Logical / Logical | Iam / AWS Identity and Access Management | Global | [aws.rs](../src/provider/aws.rs) |
 | `aws_iam_role_policies` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Iam / AWS Identity and Access Management | Global | — |
@@ -170,7 +173,10 @@ Provider source: `registry.terraform.io/hashicorp/aws`.
 | `aws_iam_roles` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Iam / AWS Identity and Access Management | Global | — |
 | `aws_iam_saml_provider` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Iam / AWS Identity and Access Management | Global | — |
 | `aws_iam_server_certificate` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Iam / AWS Identity and Access Management | Global | — |
-| `aws_iam_user` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Iam / AWS Identity and Access Management | Global | — |
+| `aws_iam_user` | Policy / Policy | Logical / Logical | Iam / AWS Identity and Access Management | Global | [aws.rs](../src/provider/aws.rs), [aws/iam.rs](../src/provider/aws/iam.rs) |
+| `aws_iam_user_group_membership` | Association / Association | Logical / Logical | Iam / AWS Identity and Access Management | Global | [aws.rs](../src/provider/aws.rs), [aws/iam.rs](../src/provider/aws/iam.rs) |
+| `aws_iam_user_policy` | Policy / Policy | Logical / Logical | Iam / AWS Identity and Access Management | Global | [aws.rs](../src/provider/aws.rs), [aws/iam.rs](../src/provider/aws/iam.rs) |
+| `aws_iam_user_policy_attachment` | Association / Association | Logical / Logical | Iam / AWS Identity and Access Management | Global | [aws.rs](../src/provider/aws.rs), [aws/iam.rs](../src/provider/aws/iam.rs) |
 | `aws_iam_user_ssh_key` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Iam / AWS Identity and Access Management | Global | — |
 | `aws_iam_users` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Iam / AWS Identity and Access Management | Global | — |
 | `aws_instance` | Node / Node | Spatial / Spatial | Ec2 / Amazon EC2 | Regional (conditional) | [aws.rs](../src/provider/aws.rs), [aws/associations.rs](../src/provider/aws/associations.rs), [aws/containment.rs](../src/provider/aws/containment.rs), [aws/security_groups.rs](../src/provider/aws/security_groups.rs), [aws/service_references.rs](../src/provider/aws/service_references.rs) |

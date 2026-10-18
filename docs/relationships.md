@@ -103,6 +103,9 @@ their service-specific labels, such as File system; other references use Referen
 [Firehose references](aws.md#amazon-data-firehose) distinguish Kinesis source,
 S3 delivery destination and S3 backup destination. Their dependency arrows retain
 Terraform reference semantics; these labels do not add runtime-delivery edges.
+[IAM membership and direct policy references](aws.md#iam-users-and-groups) retain
+each membership/attachment resource and its action; they do not evaluate inherited
+or effective permissions.
 Graph-only references such as
 `depends_on` use Dependency, not an attribute-specific usage label. Logical-resource
 rows show their own direct references, including references to spatial resources.
