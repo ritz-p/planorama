@@ -5,6 +5,10 @@ fn fixture() -> Value {
     serde_json::from_str(include_str!("../../fixtures/event-sources-plan.json")).unwrap()
 }
 
+fn kinesis_fixture() -> Value {
+    serde_json::from_str(include_str!("../../fixtures/kinesis-plan.json")).unwrap()
+}
+
 fn graph(value: &Value) -> ArchitectureGraph {
     semantic::transform(&plan::parse(&value.to_string()).unwrap())
 }
@@ -18,7 +22,114 @@ fn mappings(graph: &Graph) -> Vec<&Edge> {
 }
 
 #[test]
+fn kinesis_stream_instances_scope_and_arn_attributes_are_verified() {
+    let indexed = kinesis_fixture()
+        .to_string()
+        .replace("aws_kinesis_stream.jobs", "aws_kinesis_stream.jobs[0]");
+    let mut input: Value = serde_json::from_str(&indexed).unwrap();
+    input["resource_changes"][1]["index"] = json!(0);
+    input["configuration"]["root_module"]["resources"][1]["address"] =
+        json!("aws_kinesis_stream.jobs");
+    let result = graph(&input);
+    assert_eq!(mappings(&result).len(), 3);
+    let stream = result
+        .nodes
+        .iter()
+        .find(|n| n.address == "aws_kinesis_stream.jobs[0]")
+        .unwrap();
+    assert_eq!(stream.role, ResourceRole::Node);
+    assert_eq!(stream.placement, Placement::Spatial);
+    assert_eq!(
+        stream
+            .entity
+            .scope
+            .as_ref()
+            .unwrap()
+            .region
+            .as_ref()
+            .map(|r| r.0.as_str()),
+        Some("ap-northeast-1")
+    );
+    for case in ["attribute", "dynamic", "provider", "unknown", "ambiguous"] {
+        let mut invalid = input.clone();
+        match case {
+            "attribute" => {
+                invalid["configuration"]["root_module"]["resources"][4]["expressions"]["event_source_arn"] =
+                    json!({"references": ["aws_kinesis_stream.jobs[0].name"]})
+            }
+            "dynamic" => {
+                invalid["configuration"]["root_module"]["resources"][4]["expressions"]["event_source_arn"] =
+                    json!({"references": ["aws_kinesis_stream.jobs[count.index].arn"]})
+            }
+            "provider" => {
+                invalid["resource_changes"][1]["provider_name"] =
+                    json!("example.invalid/foreign/aws")
+            }
+            "unknown" => {
+                invalid["resource_changes"][1]["change"]["after_unknown"]["arn"] = json!(true)
+            }
+            _ => {
+                let mut other = invalid["resource_changes"][1].clone();
+                other["address"] = json!("aws_kinesis_stream.jobs[1]");
+                other["index"] = json!(1);
+                invalid["resource_changes"]
+                    .as_array_mut()
+                    .unwrap()
+                    .push(other);
+                invalid["configuration"]["root_module"]["resources"][4]["expressions"]["event_source_arn"] =
+                    json!({"references": ["aws_kinesis_stream.jobs.arn"]});
+            }
+        }
+        assert!(
+            !mappings(&graph(&invalid)).iter().any(|e| e
+                .change
+                .as_ref()
+                .unwrap()
+                .address
+                .ends_with(".jobs")),
+            "{case}"
+        );
+        assert!(
+            semantic::diagnostics::collect(&plan::parse(&invalid.to_string()).unwrap())
+                .iter()
+                .any(|d| d.address.ends_with("mapping.jobs")
+                    && d.reason == DiagnosticReason::UnprovenEndpointValue)
+        );
+    }
+    for region in [json!("eu-west-1"), Value::Null] {
+        let mut overridden = input.clone();
+        overridden["resource_changes"][1]["change"]["after"]["region"] = region.clone();
+        overridden["resource_changes"][1]["change"]["after_unknown"]["region"] =
+            json!(region.is_null());
+        overridden["configuration"]["root_module"]["resources"][1]["expressions"]["region"] =
+            json!({"constant_value": region});
+        let result = graph(&overridden);
+        let stream = result
+            .nodes
+            .iter()
+            .find(|n| n.address == "aws_kinesis_stream.jobs[0]")
+            .unwrap();
+        assert_eq!(
+            stream
+                .entity
+                .scope
+                .as_ref()
+                .and_then(|s| s.region.as_ref().map(|r| r.0.as_str())),
+            None
+        );
+    }
+}
+
+#[test]
 fn deleted_mappings_verify_before_names_and_arns_without_borrowing_after_values() {
+    for fixture in [fixture, kinesis_fixture] {
+        deleted_mappings_verify_before_names_and_arns_without_borrowing_after_values_with(fixture);
+    }
+}
+
+fn deleted_mappings_verify_before_names_and_arns_without_borrowing_after_values_with(
+    fixture: fn() -> Value,
+) {
     let mut input = fixture();
     for change in input["resource_changes"].as_array_mut().unwrap() {
         change["change"]["before"] = change["change"]["after"].take();
@@ -53,12 +164,23 @@ fn deleted_mappings_verify_before_names_and_arns_without_borrowing_after_values(
 
 #[test]
 fn event_sources_keep_direction_parallel_identities_and_provenance() {
+    for fixture in [fixture, kinesis_fixture] {
+        event_sources_keep_direction_parallel_identities_and_provenance_with(fixture);
+    }
+}
+
+fn event_sources_keep_direction_parallel_identities_and_provenance_with(fixture: fn() -> Value) {
     let input = fixture();
     let result = graph(&input);
     assert_eq!(result.nodes.len(), 9);
+    assert_eq!(result.coverage.input.resources, 9);
+    assert_eq!(result.coverage.selected.resources, 9);
     assert_eq!(mappings(&result).len(), 3);
     for edge in mappings(&result) {
-        assert_eq!(result.nodes[edge.from].resource_type, "aws_sqs_queue");
+        assert!(matches!(
+            result.nodes[edge.from].resource_type.as_str(),
+            "aws_sqs_queue" | "aws_kinesis_stream"
+        ));
         assert_eq!(result.nodes[edge.to].resource_type, "aws_lambda_function");
         assert_eq!(edge.directionality(), Directionality::Directed);
         let change = edge.change.as_ref().unwrap();
@@ -95,6 +217,14 @@ fn event_sources_keep_direction_parallel_identities_and_provenance() {
 
 #[test]
 fn event_sources_require_complete_unique_matching_source_and_function_evidence() {
+    for fixture in [fixture, kinesis_fixture] {
+        event_sources_require_complete_unique_matching_source_and_function_evidence_with(fixture);
+    }
+}
+
+fn event_sources_require_complete_unique_matching_source_and_function_evidence_with(
+    fixture: fn() -> Value,
+) {
     for (attribute, expression, value, unknown) in [
         (
             "event_source_arn",
@@ -158,6 +288,16 @@ fn event_sources_require_complete_unique_matching_source_and_function_evidence()
         ),
     ] {
         let mut input = fixture();
+        let expression = serde_json::from_str::<Value>(&expression.to_string().replace(
+            "aws_sqs_queue",
+            input["resource_changes"][1]["type"].as_str().unwrap(),
+        ))
+        .unwrap();
+        let value = if value == json!("queue-proof") {
+            input["resource_changes"][1]["change"]["after"]["arn"].clone()
+        } else {
+            value
+        };
         input["configuration"]["root_module"]["resources"][4]["expressions"][attribute] =
             expression;
         input["resource_changes"][4]["change"]["after"][attribute] = value;
@@ -176,7 +316,7 @@ fn event_sources_require_complete_unique_matching_source_and_function_evidence()
         );
     }
     for resource_type in [
-        "aws_kinesis_stream",
+        "aws_kinesis_stream_consumer",
         "aws_dynamodb_table",
         "aws_msk_cluster",
         "aws_mq_broker",
@@ -197,6 +337,14 @@ fn event_sources_require_complete_unique_matching_source_and_function_evidence()
 
 #[test]
 fn event_source_lifecycle_scopes_modes_and_historical_versions_stay_independent() {
+    for fixture in [fixture, kinesis_fixture] {
+        event_source_lifecycle_scopes_modes_and_historical_versions_stay_independent_with(fixture);
+    }
+}
+
+fn event_source_lifecycle_scopes_modes_and_historical_versions_stay_independent_with(
+    fixture: fn() -> Value,
+) {
     let mut input = fixture();
     let address = format!(
         "aws_lambda_event_source_mapping.jobs[\"{}\"]",

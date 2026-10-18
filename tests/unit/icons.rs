@@ -11,6 +11,7 @@ fn provider_lookup_shares_service_icons_and_handles_unknown_types() {
         ("aws_lb_listener", ResourceIcon::LoadBalancer),
         ("aws_lambda_function", ResourceIcon::Lambda),
         ("aws_sqs_queue", ResourceIcon::Sqs),
+        ("aws_kinesis_stream", ResourceIcon::Kinesis),
         ("aws_sns_topic", ResourceIcon::Sns),
         ("aws_ecs_service", ResourceIcon::Ecs),
         ("aws_eks_cluster", ResourceIcon::Eks),

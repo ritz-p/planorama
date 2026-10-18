@@ -302,12 +302,13 @@ See [the subscription example](../examples/sns-subscriptions.svg).
 ## Lambda event source mappings
 
 Managed `aws_lambda_event_source_mapping` resources remain logical rows and add a
-directed `Event source` relationship from a verified SQS Queue to a verified Lambda
+directed `Event source` relationship from a verified SQS Queue or Kinesis Data Stream to a verified Lambda
 Function. Both `event_source_arn` and `function_name` require complete, unique,
-explicit references. Known planned values must match the queue ARN and the function
+explicit references. Known planned values must match the queue/stream ARN and the function
 name or ARN, respectively. Values are compared transiently; only boolean evidence
 is retained. Literal names/ARNs, policies, environment variables and proximity do
 not identify endpoints. Unknown or mismatched values remain unresolved.
+Unverified mapping endpoints report `unproven_endpoint_value` without exposing values.
 Deletion actions use known `before` values (or prior state when a resource has no
 change entry) for the mapping and both endpoints, still requiring explicit
 configuration references, just as subscriptions do.
@@ -315,7 +316,7 @@ configuration references, just as subscriptions do.
 Each mapping retains its own action, import/move metadata, scope, source identity
 and relationship number, including parallel mappings between identical endpoints.
 Deposed mappings stay separate logical rows without borrowing current references.
-Data queue/function endpoints are supported; data mappings do not establish edges.
+Data queue/stream/function endpoints are supported; data mappings do not establish edges.
 Unsupported sources, missing/filtered targets and incomplete or dynamic references
 keep the logical row and independently verified partial context. A missing endpoint
 never resolves against another state. Cross-account/region endpoints retain their
@@ -323,10 +324,36 @@ own scope; the mapping's provider binding does not assign scope to either endpoi
 
 The relationship describes configured event consumption, not active mapping state,
 processing success, access permissions, reachability or delivery guarantees.
-Kinesis, DynamoDB Streams, MSK, Kafka, MQ and DocumentDB require separate explicit
+DynamoDB Streams, Kinesis consumers, MSK, Kafka, MQ and DocumentDB require separate explicit
 type, endpoint and direction rules before they can produce event-source edges.
 See [the event-source example](../examples/event-sources.svg), including duplicate
 endpoints, a cross-region data queue, an unsupported source and a literal fallback.
+
+## Kinesis Data Streams
+
+Exact AWS `aws_kinesis_stream` resources are regional spatial nodes with the
+Amazon Kinesis Data Streams icon/service name. Static provider regions are used
+when no resource override is present. Stream region overrides are not yet in the
+verified override allowlist and conservatively leave deployment region unknown.
+The Lambda mapping rules above support stream `.arn` references, including
+independent parallel mappings. Consumer resources and shard/runtime state are
+outside this scope.
+
+The synthetic [Kinesis fixture](../tests/fixtures/kinesis-plan.json) and
+[SVG](../examples/kinesis.svg) / [offline HTML](../examples/kinesis.html) cover managed/data streams, parallel mappings,
+unsupported sources and literal fallback. Generate the offline viewer with:
+
+```sh
+docker compose exec -T dev cargo run --locked -- tests/fixtures/kinesis-plan.json --format html -o examples/kinesis.html
+docker compose exec -T dev node tests/browser/streaming.cjs
+```
+
+Evidence shapes were checked against the pinned AWS Provider 5.100.0
+[stream schema](https://github.com/hashicorp/terraform-provider-aws/blob/v5.100.0/internal/service/kinesis/stream.go),
+the official [mapping documentation](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lambda_event_source_mapping)
+and Terraform's [JSON plan format](https://developer.hashicorp.com/terraform/internals/json-format).
+Known synthetic values demonstrate verified links; a new stream with an unknown
+ARN retains ordinary references without an event-source edge.
 
 ## EventBridge targets
 

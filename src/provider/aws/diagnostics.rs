@@ -7,6 +7,7 @@ pub fn collect(plan: &crate::model::TerraformPlan) -> Vec<Diagnostic> {
     let raw = &input;
     let mut found = BTreeSet::new();
     found.extend(super::service_references::diagnostics(raw));
+    found.extend(super::messaging::diagnostics(raw));
     for (index, node) in raw.nodes.iter().enumerate() {
         if let Some(diagnostic) = super::autoscaling::diagnostic(raw, index) {
             found.insert(diagnostic);

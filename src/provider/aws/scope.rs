@@ -43,6 +43,7 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
             | "aws_db_subnet_group"
             | "aws_lambda_function"
             | "aws_sqs_queue"
+            | "aws_kinesis_stream"
             | "aws_sns_topic"
             | "aws_cloudwatch_event_bus"
             | "aws_cloudwatch_event_rule"
