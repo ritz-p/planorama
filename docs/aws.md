@@ -9,6 +9,25 @@ conditional relationship and placement proofs behind that catalog.
 
 ## Deployment scopes
 
+KMS Keys and Aliases are separate regional logical resources with the AWS Key
+Management Service icon. `Alias key` verifies `target_key_id` against an explicitly
+referenced Key's `id`, `key_id` or `arn`. Encryption-key links use an exact allowlist:
+SQS Queue `kms_master_key_id`, RDS Instance/Cluster `kms_key_id`, and S3 Bucket
+Server-Side Encryption Configuration
+`rule.apply_server_side_encryption_by_default.kms_master_key_id`. The S3
+configuration remains a regional logical Controller with a separately verified
+`bucket` link. Each key field requires matching known values and an explicit
+managed `aws_kms_key` attribute reference. Same-named fields on other types do not
+qualify. Literal aliases/ARNs, AWS managed keys and multi-region replicas are never
+merged or guessed. Key policies, key material and encryption contexts are omitted;
+configuration references establish neither runtime encryption nor permissions.
+See [SVG](../examples/kms.svg) / [HTML](../examples/kms.html). The allowlist follows
+AWS Provider 5.100.0 [Key](https://github.com/hashicorp/terraform-provider-aws/blob/v5.100.0/website/docs/r/kms_key.html.markdown),
+[Alias](https://github.com/hashicorp/terraform-provider-aws/blob/v5.100.0/website/docs/r/kms_alias.html.markdown)
+and [S3 encryption](https://github.com/hashicorp/terraform-provider-aws/blob/v5.100.0/website/docs/r/s3_bucket_server_side_encryption_configuration.html.markdown)
+schemas, checked with Terraform 1.9.8. Regenerate HTML in Docker with
+`cargo run --locked -- tests/fixtures/kms-plan.json --format html -o examples/kms.html`.
+
 ACM certificates and certificate-validation resources are separate regional
 logical resources with the AWS Certificate Manager icon. `Certificate reference`
 links on validation resources, LB listeners and CloudFront viewer certificates
