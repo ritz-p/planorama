@@ -9,6 +9,22 @@ conditional relationship and placement proofs behind that catalog.
 
 ## Deployment scopes
 
+ACM certificates and certificate-validation resources are separate regional
+logical resources with the AWS Certificate Manager icon. `Certificate reference`
+links on validation resources, LB listeners and CloudFront viewer certificates
+require a complete explicit reference to `aws_acm_certificate.arn` / `.id` or,
+for consumers, `aws_acm_certificate_validation.certificate_arn`, and matching known
+planned values. They do not claim issuance, validation success or validity.
+CloudFront keeps Global scope; each certificate keeps its own regional scope.
+Certificate bodies, private keys, domains and validation DNS values are omitted.
+Route 53 is not required. The same conservative service-link rules below apply.
+See [SVG](../examples/acm.svg) / [offline HTML](../examples/acm.html) and the
+AWS Provider 5.100.0 [certificate](https://github.com/hashicorp/terraform-provider-aws/blob/v5.100.0/website/docs/r/acm_certificate.html.markdown)
+and [validation](https://github.com/hashicorp/terraform-provider-aws/blob/v5.100.0/website/docs/r/acm_certificate_validation.html.markdown)
+contracts, checked against the installed schema and a Terraform 1.9.8 plan.
+Regenerate HTML in Docker with
+`cargo run --locked -- tests/fixtures/acm-plan.json --format html -o examples/acm.html`.
+
 Route 53 Hosted Zones and Records are spatial nodes with Global scope and the
 Amazon Route 53 icon. The [synthetic example](../examples/route53.svg) also has
 [offline HTML](../examples/route53.html). `Hosted zone` links require a complete,

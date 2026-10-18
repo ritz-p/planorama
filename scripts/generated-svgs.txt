@@ -13,6 +13,7 @@ examples/data.svg
 examples/dense-architecture.svg
 examples/diagram.svg
 examples/route53.svg
+examples/acm.svg
 examples/accounts.svg
 examples/multi-account/diagram.svg
 examples/hierarchy-routing.svg

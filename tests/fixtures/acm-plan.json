@@ -1,0 +1,18 @@
+{
+  "format_version":"1.2",
+  "resource_changes":[
+    {"address":"aws_acm_certificate.site","type":"aws_acm_certificate","provider_name":"registry.terraform.io/hashicorp/aws","change":{"actions":["create"],"after":{"arn":"arn:aws:acm:us-east-1:123456789012:certificate/fixture"}}},
+    {"address":"aws_acm_certificate_validation.site","type":"aws_acm_certificate_validation","change":{"actions":["create"],"after":{"certificate_arn":"arn:aws:acm:us-east-1:123456789012:certificate/fixture"}}},
+    {"address":"aws_lb_listener.https","type":"aws_lb_listener","change":{"actions":["create"],"after":{"certificate_arn":"arn:aws:acm:us-east-1:123456789012:certificate/fixture"}}},
+    {"address":"aws_cloudfront_distribution.site","type":"aws_cloudfront_distribution","change":{"actions":["create"],"after":{"viewer_certificate":[{"acm_certificate_arn":"arn:aws:acm:us-east-1:123456789012:certificate/fixture"}]}}}
+  ],
+  "configuration":{
+    "provider_config":{"aws":{"name":"aws","full_name":"registry.terraform.io/hashicorp/aws","expressions":{"region":{"constant_value":"us-east-1"}}}},
+    "root_module":{"resources":[
+      {"address":"aws_acm_certificate.site","provider_config_key":"aws"},
+      {"address":"aws_acm_certificate_validation.site","provider_config_key":"aws","expressions":{"certificate_arn":{"references":["aws_acm_certificate.site.arn","aws_acm_certificate.site"]}}},
+      {"address":"aws_lb_listener.https","provider_config_key":"aws","expressions":{"certificate_arn":{"references":["aws_acm_certificate_validation.site.certificate_arn","aws_acm_certificate_validation.site"]}}},
+      {"address":"aws_cloudfront_distribution.site","provider_config_key":"aws","expressions":{"viewer_certificate":[{"acm_certificate_arn":{"references":["aws_acm_certificate.site.arn","aws_acm_certificate.site"]}}]}}
+    ]}
+  }
+}
