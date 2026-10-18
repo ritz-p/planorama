@@ -23,6 +23,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         ("Amazon-OpenSearch-Service", "search"),
         ("Amazon-Simple-Storage-Service", "s3"),
         ("Amazon-CloudFront", "cloudfront"),
+        ("Amazon-Route-53", "route53"),
         ("Amazon-API-Gateway", "api"),
         ("AWS-Identity-and-Access-Management", "iam"),
         ("Amazon-CloudWatch", "monitoring"),

@@ -9,6 +9,34 @@ conditional relationship and placement proofs behind that catalog.
 
 ## Deployment scopes
 
+Route 53 Hosted Zones and Records are spatial nodes with Global scope and the
+Amazon Route 53 icon. The [synthetic example](../examples/route53.svg) also has
+[offline HTML](../examples/route53.html). `Hosted zone` links require a complete,
+unique explicit `zone_id` reference to a managed Zone's `zone_id` or `id`, with
+equal known planned values. `Alias target` requires both `alias.name` and
+`alias.zone_id` to reference the same managed ALB/NLB (`dns_name`, `zone_id`) or
+CloudFront distribution (`domain_name`, `hosted_zone_id`) with matching values.
+The LB type must be known as `application` or `network`. A single private-zone
+`vpc.vpc_id` reference can show `Associated VPC`; this is not network containment.
+
+These service links supplement ordinary Terraform references. They preserve
+source identity, state, actions, provenance, coverage and selection. Incomplete,
+dynamic, ambiguous, literal-only, wrong-type/provider and unknown-value proofs
+remain unresolved with `UnprovenEndpointValue`; filtered targets are unavailable.
+Deleting/deposed objects do not borrow current configuration to prove historical
+service links. Local/module aliases without a direct attribute traversal and
+multi-VPC blocks remain ordinary references. DNS values are compared transiently
+and never displayed. Records, DNSSEC, routing policies and DNS resolution are not
+evaluated. Links do not guarantee reachability or successful DNS configuration.
+The field contract follows the AWS Provider 5.100.0
+[zone](https://github.com/hashicorp/terraform-provider-aws/blob/v5.100.0/website/docs/r/route53_zone.html.markdown)
+and [record](https://github.com/hashicorp/terraform-provider-aws/blob/v5.100.0/website/docs/r/route53_record.html.markdown)
+schemas and Terraform 1.9.8 nested expression paths.
+
+Regenerate the Route 53 SVG with `sh scripts/update-examples.sh` and HTML with
+`cargo run --locked -- tests/fixtures/route53-plan.json --format html -o examples/route53.html`
+inside the development container.
+
 `aws_cloudwatch_event_bus` and `aws_cloudwatch_event_rule` are regional spatial
 nodes with the Amazon EventBridge icon. They preserve Terraform identities,
 managed/data mode, actions and lifecycle metadata. Explicit references remain

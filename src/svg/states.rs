@@ -112,6 +112,7 @@ pub(crate) fn render_report(
                 ..
             } = &edge.provenance;
             consumer.references.push(crate::model::ResourceReference {
+                show_spatial: false,
                 label: "References",
                 attribute: format!("{remote}.outputs.{output}"),
                 targets: vec![crate::model::ReferenceTarget {

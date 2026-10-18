@@ -71,7 +71,7 @@ Provider source: `registry.terraform.io/hashicorp/aws`.
 | `aws_caller_identity` | Unknown / Unknown | Spatial (unresolved) / Omitted | — | Unknown | — |
 | `aws_cloudfront_cache_policy` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | CloudFront / Amazon CloudFront | Global | — |
 | `aws_cloudfront_connection_group` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | CloudFront / Amazon CloudFront | Global | — |
-| `aws_cloudfront_distribution` | Connector / Connector | Spatial / Spatial | CloudFront / Amazon CloudFront | Global | — |
+| `aws_cloudfront_distribution` | Connector / Connector | Spatial / Spatial | CloudFront / Amazon CloudFront | Global | [aws/service_references.rs](../src/provider/aws/service_references.rs) |
 | `aws_cloudfront_distribution_tenant` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | CloudFront / Amazon CloudFront | Global | — |
 | `aws_cloudfront_function` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | CloudFront / Amazon CloudFront | Global | — |
 | `aws_cloudfront_origin_access_control` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | CloudFront / Amazon CloudFront | Global | — |
@@ -180,7 +180,7 @@ Provider source: `registry.terraform.io/hashicorp/aws`.
 | `aws_lambda_layer_version` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Lambda / AWS Lambda | Unknown | — |
 | `aws_launch_configuration` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Scaling / Amazon EC2 Auto Scaling | Unknown | — |
 | `aws_launch_template` | Node / Node | Logical / Logical | Ec2 / Amazon EC2 | Regional (conditional) | [aws.rs](../src/provider/aws.rs) |
-| `aws_lb` | Connector / Connector | Spatial / Spatial | LoadBalancer / Elastic Load Balancing | Regional (conditional) | [aws/components.rs](../src/provider/aws/components.rs), [aws/containment/spanning.rs](../src/provider/aws/containment/spanning.rs), [aws/diagnostics.rs](../src/provider/aws/diagnostics.rs), [aws/placement.rs](../src/provider/aws/placement.rs), [aws/security_groups.rs](../src/provider/aws/security_groups.rs) |
+| `aws_lb` | Connector / Connector | Spatial / Spatial | LoadBalancer / Elastic Load Balancing | Regional (conditional) | [aws/components.rs](../src/provider/aws/components.rs), [aws/containment/spanning.rs](../src/provider/aws/containment/spanning.rs), [aws/diagnostics.rs](../src/provider/aws/diagnostics.rs), [aws/placement.rs](../src/provider/aws/placement.rs), [aws/security_groups.rs](../src/provider/aws/security_groups.rs), [aws/service_references.rs](../src/provider/aws/service_references.rs) |
 | `aws_lb_listener` | Connector / Connector | Spatial / Spatial | LoadBalancer / Elastic Load Balancing | Regional (conditional) | [aws/components.rs](../src/provider/aws/components.rs), [aws/placement.rs](../src/provider/aws/placement.rs) |
 | `aws_lb_listener_rule` | Policy / Policy | Spatial / Spatial | LoadBalancer / Elastic Load Balancing | Regional (conditional) | [aws/components.rs](../src/provider/aws/components.rs) |
 | `aws_lb_target_group` | Controller / Controller | Spatial / Spatial | LoadBalancer / Elastic Load Balancing | Regional (conditional) | [aws/associations.rs](../src/provider/aws/associations.rs), [aws/components.rs](../src/provider/aws/components.rs), [aws/containment.rs](../src/provider/aws/containment.rs), [aws/diagnostics.rs](../src/provider/aws/diagnostics.rs) |
@@ -206,10 +206,10 @@ Provider source: `registry.terraform.io/hashicorp/aws`.
 | `aws_route` | Connector / Connector | Spatial / Spatial | Route / Amazon VPC | Regional (conditional) | [aws/diagnostics.rs](../src/provider/aws/diagnostics.rs), [aws/routes.rs](../src/provider/aws/routes.rs) |
 | `aws_route53_delegation_set` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | — | Global | — |
 | `aws_route53_health_check` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | — | Global | — |
-| `aws_route53_record` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | — | Global | — |
+| `aws_route53_record` | Node / Node | Spatial / Spatial | Route53 / Amazon Route 53 | Global | [aws/service_references.rs](../src/provider/aws/service_references.rs) |
 | `aws_route53_traffic_policy` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | — | Global | — |
 | `aws_route53_traffic_policy_instance` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | — | Global | — |
-| `aws_route53_zone` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | — | Global | — |
+| `aws_route53_zone` | Node / Node | Spatial / Spatial | Route53 / Amazon Route 53 | Global | [aws/service_references.rs](../src/provider/aws/service_references.rs) |
 | `aws_route_table` | Connector / Connector | Spatial / Spatial | Route / Amazon VPC | Regional (conditional) | [aws/associations.rs](../src/provider/aws/associations.rs), [aws/containment.rs](../src/provider/aws/containment.rs), [aws/diagnostics.rs](../src/provider/aws/diagnostics.rs), [aws/routes.rs](../src/provider/aws/routes.rs) |
 | `aws_route_table_association` | Association / Association | Spatial / Spatial | Route / Amazon VPC | Regional (conditional) | [aws/associations.rs](../src/provider/aws/associations.rs) |
 | `aws_route_tables` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Route / Amazon VPC | Unknown | — |
@@ -237,7 +237,7 @@ Provider source: `registry.terraform.io/hashicorp/aws`.
 | `aws_sqs_queue` | Node / Node | Spatial / Spatial | Sqs / Amazon Simple Queue Service | Regional (conditional) | [aws/messaging.rs](../src/provider/aws/messaging.rs) |
 | `aws_subnet` | Container / Container | Spatial / Spatial | Subnet / Amazon VPC | Regional (conditional) | [aws/associations.rs](../src/provider/aws/associations.rs), [aws/containment.rs](../src/provider/aws/containment.rs), [aws/containment/indirect.rs](../src/provider/aws/containment/indirect.rs), [aws/containment/spanning.rs](../src/provider/aws/containment/spanning.rs), [aws/containment/vpc_scope.rs](../src/provider/aws/containment/vpc_scope.rs), [aws/diagnostics.rs](../src/provider/aws/diagnostics.rs) |
 | `aws_subnets` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Subnet / Amazon VPC | Unknown | — |
-| `aws_vpc` | Container / Container | Spatial / Spatial | Vpc / Amazon VPC | Regional (conditional) | [aws/containment.rs](../src/provider/aws/containment.rs), [aws/containment/indirect.rs](../src/provider/aws/containment/indirect.rs), [aws/containment/vpc_scope.rs](../src/provider/aws/containment/vpc_scope.rs) |
+| `aws_vpc` | Container / Container | Spatial / Spatial | Vpc / Amazon VPC | Regional (conditional) | [aws/containment.rs](../src/provider/aws/containment.rs), [aws/containment/indirect.rs](../src/provider/aws/containment/indirect.rs), [aws/containment/vpc_scope.rs](../src/provider/aws/containment/vpc_scope.rs), [aws/service_references.rs](../src/provider/aws/service_references.rs) |
 | `aws_vpc_dhcp_options` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Vpc / Amazon VPC | Unknown | — |
 | `aws_vpc_endpoint` | Connector / Connector | Spatial / Spatial | Endpoint / Amazon VPC | Regional (conditional) | [aws/associations.rs](../src/provider/aws/associations.rs), [aws/containment.rs](../src/provider/aws/containment.rs), [aws/security_groups.rs](../src/provider/aws/security_groups.rs) |
 | `aws_vpc_endpoint_associations` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Endpoint / Amazon VPC | Unknown | — |

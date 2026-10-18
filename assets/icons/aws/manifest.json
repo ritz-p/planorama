@@ -103,6 +103,11 @@
             "file": "Amazon-EventBridge.svg",
             "source": "Architecture-Service-Icons_07312026/Arch_Application-Integration/48/Arch_Amazon-EventBridge_48.svg",
             "sha256": "78f7fead59316ad6ac38cc262582bec81fc6649d0f6fdd5327708c08bede65e9"
+        },
+        {
+            "file": "Amazon-Route-53.svg",
+            "source": "Architecture-Service-Icons_07312026/Arch_Networking-Content-Delivery/48/Arch_Amazon-Route-53_48.svg",
+            "sha256": "624f55ebfca201a7a69a4037baabed2fafac0a99ea05d5089efb5b6bf1819f5b"
         }
     ]
 }

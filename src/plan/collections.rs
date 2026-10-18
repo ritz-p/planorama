@@ -145,6 +145,7 @@ pub(super) fn annotate(
         })
         .collect();
     let buses = eventbridge::bus_references(references);
+    crate::provider::aws::service_references::annotate(nodes, references, &evidence);
     for reference in references {
         let consumer = &nodes[reference.target];
         let evidence = if consumer.provider.is_aws()

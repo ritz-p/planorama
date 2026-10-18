@@ -10,6 +10,7 @@ mod members;
 mod messaging;
 mod monitoring;
 mod placement;
+pub(crate) mod service_references;
 pub(crate) use placement::owner_affinities;
 mod routes;
 mod scope;
@@ -80,6 +81,7 @@ pub(super) fn transform(raw: crate::semantic::Input) -> crate::model::Graph {
     monitoring::present(&raw, &mut graph);
     autoscaling::present(&raw, &mut graph);
     messaging::present(&raw, &mut graph);
+    service_references::present(&raw, &mut graph);
     let contained = crate::semantic::Input { graph, ..raw };
     let mut graph = data::visible(associations::lower(&contained));
     graph.components = components::infer(&contained, &graph);

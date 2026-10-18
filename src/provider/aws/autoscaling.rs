@@ -95,6 +95,7 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             continue;
         };
         let inverse = ResourceReference {
+            show_spatial: false,
             label: "Scaling policy",
             attribute: ATTRIBUTE.into(),
             targets: vec![ReferenceTarget {
