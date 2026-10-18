@@ -12,6 +12,7 @@ impl ResourceIcon {
             Self::Lambda => "planorama-icon-aws-lambda",
             Self::Sqs => "planorama-icon-aws-sqs",
             Self::Kinesis => "planorama-icon-aws-kinesis",
+            Self::Firehose => "planorama-icon-aws-firehose",
             Self::Sns => "planorama-icon-aws-sns",
             Self::EventBridge => "planorama-icon-aws-eventbridge",
             Self::Ecs => "planorama-icon-aws-ecs",
@@ -51,6 +52,7 @@ impl ResourceIcon {
                 include_str!(concat!(env!("OUT_DIR"), "/Elastic-Load-Balancing.svg"))
             }
             Self::Lambda => include_str!(concat!(env!("OUT_DIR"), "/AWS-Lambda.svg")),
+            Self::Firehose => include_str!(concat!(env!("OUT_DIR"), "/Amazon-Data-Firehose.svg")),
             Self::Kinesis => {
                 include_str!(concat!(env!("OUT_DIR"), "/Amazon-Kinesis-Data-Streams.svg"))
             }

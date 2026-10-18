@@ -5,6 +5,7 @@ mod components;
 mod containment;
 mod data;
 pub(super) mod diagnostics;
+mod firehose;
 mod icons;
 mod members;
 mod messaging;

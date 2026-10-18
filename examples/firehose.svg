@@ -1,0 +1,183 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="1464" viewBox="0 0 1100 1464" role="img" aria-labelledby="title description">
+<title id="title">Terraform plan</title>
+<desc id="description">5 resources, 3 reference edges. Arrows point from dependencies to dependent resources. References are conservative, not Terraform execution order. Thin solid: dependency. Dashed: association. Thick dotted: connection. Nested boxes: containment. Edge color preserves the Terraform action when available.</desc>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/></marker><metadata id="planorama-icons-license">AWS Architecture Icons, release 07312026.
+Copyright Amazon Web Services, Inc. or its affiliates. All rights reserved.
+AWS service names and artwork are trademarks or other proprietary assets of AWS.
+Source: https://aws.amazon.com/architecture/icons/
+Terms: https://aws.amazon.com/terms/
+These assets are used to illustrate AWS architecture. They are not licensed
+under Planorama&apos;s original glyph MIT notice or any repository code license.
+No AWS endorsement is implied. Consult the AWS terms for other uses.
+</metadata><symbol id="planorama-icon-aws-firehose" viewBox="0 0 64 64"><g>
+    <title>Icon-Architecture/48/Arch_Amazon-Kinesis-Data-Firehose_48</title>
+    <g id="planorama-icon-aws-firehose-local-49636f6e2d4172636869746563747572652f34382f417263685f416d617a6f6e2d4b696e657369732d446174612d46697265686f73655f3438" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="planorama-icon-aws-firehose-local-49636f6e2d4172636869746563747572652d42472f34382f416e616c7974696373" fill="#8C4FFF">
+            <rect id="planorama-icon-aws-firehose-local-52656374616e676c65" x="0" y="0" width="64" height="64"></rect>
+        </g>
+        <g id="planorama-icon-aws-firehose-local-49636f6e2d536572766963652f34382f416d617a6f6e2d4b696e657369732d446174612d46697265686f7365" transform="translate(11.000000, 12.000000)" fill="#FFFFFF">
+            <path d="M32.0641793,22 C35.3301793,22 39.0891793,22.755 42.3791793,24.072 L41.6371793,25.928 C38.5741793,24.703 35.0851793,24 32.0641793,24 L32.0641793,22 Z M41.4251793,22.812 C40.2451793,21.965 35.2581793,21 32.0641793,21 L32.0641793,19 C35.4271793,19 40.2831793,17.952 41.4521793,17.169 L42.5651793,18.831 C41.9371793,19.251 40.8231793,19.648 39.5051793,19.986 C40.8211793,20.32 41.9481793,20.726 42.5911793,21.188 L41.4251793,22.812 Z M42.3661793,15.934 C40.3491793,16.706 36.3301793,18 32.0641793,18 L32.0641793,16 C34.9451793,16 38.4391793,15.295 41.6511793,14.066 L42.3661793,15.934 Z M28.0081793,22.198 L21.0081793,23.753 L21.0081793,16.247 L28.0081793,17.802 L28.0081793,22.198 Z M19.0081793,26 L17.0081793,26 L17.0081793,14 L19.0081793,14 L19.0081793,15 L19.0081793,25 L19.0081793,26 Z M29.2251793,16.024 L21.0081793,14.198 L21.0081793,13 C21.0081793,12.448 20.5611793,12 20.0081793,12 L16.0081793,12 C15.4791793,12 15.0571793,12.415 15.0221793,12.935 C3.51817933,12.065 2.00817933,7.724 2.00817933,4 L2.00817933,0 L0.00817932921,0 L0.00817932921,4 C0.00817932921,12.674 8.30817933,14.468 15.0081793,14.938 L15.0081793,15.935 C8.91917933,15.574 4.31917933,13.699 1.49517933,12.126 L0.522179329,13.874 C3.54917933,15.559 8.48717933,17.572 15.0081793,17.938 L15.0081793,18.955 C10.2391793,18.767 5.19017933,18.069 1.26317933,17.033 L0.753179329,18.967 C2.24517933,19.36 3.90017933,19.703 5.63017933,19.994 C3.92417933,20.286 2.27617933,20.631 0.753179329,21.033 L1.26317933,22.967 C5.33117933,21.894 10.2841793,21.206 15.0081793,21.036 L15.0081793,22.062 C8.53817933,22.426 3.58117933,24.438 0.525179329,26.125 L1.49217933,27.875 C4.34417933,26.301 8.96717933,24.425 15.0081793,24.065 L15.0081793,25.068 C1.99117933,26.09 0.00817932921,32.94 0.00817932921,37 L0.00617932921,37.304 C-0.00582067079,39.729 0.00117932921,39.989 0.0141793292,40.107 L2.00517933,39.926 C1.99817933,39.778 1.99917933,38.899 2.00617933,37.315 L2.00817933,37 C2.00817933,29.775 8.85317933,27.583 15.0231793,27.072 C15.0621793,27.589 15.4811793,28 16.0081793,28 L20.0081793,28 C20.5611793,28 21.0081793,27.552 21.0081793,27 L21.0081793,25.802 L29.2251793,23.976 C29.6831793,23.875 30.0081793,23.469 30.0081793,23 L30.0081793,17 C30.0081793,16.531 29.6831793,16.125 29.2251793,16.024 L29.2251793,16.024 Z" id="planorama-icon-aws-firehose-local-416d617a6f6e2d4b696e657369732d446174612d46697265686f73655f49636f6e5f34385f5371756964"></path>
+        </g>
+    </g>
+</g></symbol><symbol id="planorama-icon-aws-kinesis" viewBox="0 0 64 64"><g>
+    <title>Icon-Architecture/48/Arch_Amazon-Kinesis-Data-Streams_48</title>
+    <g id="planorama-icon-aws-kinesis-local-49636f6e2d4172636869746563747572652f34382f417263685f416d617a6f6e2d4b696e657369732d446174612d53747265616d735f3438" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="planorama-icon-aws-kinesis-local-49636f6e2d4172636869746563747572652d42472f34382f416e616c7974696373" fill="#8C4FFF">
+            <rect id="planorama-icon-aws-kinesis-local-52656374616e676c65" x="0" y="0" width="64" height="64"></rect>
+        </g>
+        <g id="planorama-icon-aws-kinesis-local-49636f6e2d536572766963652f34382f416d617a6f6e2d4b696e657369732d446174612d53747265616d73" transform="translate(11.000000, 10.000000)" fill="#FFFFFF">
+            <path d="M33,39.001 L34,39.001 L34,38.001 L33,38.001 L33,39.001 Z M36,37.001 L36,40.001 C36,40.553 35.553,41.001 35,41.001 L32,41.001 C31.448,41.001 31,40.553 31,40.001 L31,37.001 C31,36.449 31.448,36.001 32,36.001 L35,36.001 C35.553,36.001 36,36.449 36,37.001 L36,37.001 Z M31,34.001 L34,34.001 L34,32.001 L31,32.001 L31,34.001 Z M37,31.001 L38,31.001 L38,30.001 L37,30.001 L37,31.001 Z M41,34.501 C41,33.145 40.633,31.874 40,30.775 L40,32.001 C40,32.553 39.553,33.001 39,33.001 L36,33.001 C35.448,33.001 35,32.553 35,32.001 L35,29.001 C35,28.449 35.448,28.001 36,28.001 L37.226,28.001 C36.127,27.369 34.857,27.001 33.5,27.001 C32.144,27.001 30.873,27.369 29.775,28.001 L34,28.001 L34,30.001 L27.514,30.001 C27.06,30.604 26.696,31.276 26.438,32.001 L30,32.001 L30,34.001 L26.026,34.001 C26.015,34.167 26,34.332 26,34.501 C26,35.015 26.053,35.516 26.152,36.001 L29,36.001 L29,38.001 L26.872,38.001 C27.059,38.353 27.276,38.685 27.514,39.001 L29,39.001 L29,40.487 C30.255,41.433 31.811,42.001 33.5,42.001 C34.857,42.001 36.127,41.633 37.226,41.001 L37,41.001 L37,39.001 L39.487,39.001 C39.725,38.685 39.942,38.353 40.128,38.001 L37,38.001 L37,36.001 L40.849,36.001 C40.948,35.516 41,35.015 41,34.501 L41,34.501 Z M43,34.501 C43,39.739 38.739,44.001 33.5,44.001 C28.262,44.001 24,39.739 24,34.501 C24,29.263 28.262,25.001 33.5,25.001 C38.739,25.001 43,29.263 43,34.501 L43,34.501 Z M26.646,25.601 C8.695,27.162 5,31.688 5,38 L7,38 C7,33.8 8.412,29.579 24.467,27.825 C25.088,26.986 25.821,26.238 26.646,25.601 L26.646,25.601 Z M10,43.876 L10,44 L12,44 L12,43.876 C11.999,39.591 12.006,35.169 22.402,32.742 C22.521,31.99 22.713,31.264 22.973,30.569 C10.006,33.284 9.999,39.146 10,43.876 L10,43.876 Z M2,13 L0,13 C0,16.614 2.747,20.285 19.012,22 C2.747,23.715 0,27.386 0,31 L2,31 C2,25.617 15.412,23 43,23 L43,21 C15.412,21 2,18.383 2,13 L2,13 Z M7,6 L5,6 C5,14.233 11.218,19 43,19 L43,17 C9.78,17 7,11.566 7,6 L7,6 Z M43,13 L43,15 C28.551,15 19.209,13.443 14.441,10.241 C9.998,7.257 9.999,3.302 9.99997,0.124 L9.99997,0 L12,0 L12,0.124 C11.999,3.244 11.999,6.191 15.556,8.58 C19.985,11.554 28.961,13 43,13 L43,13 Z" id="planorama-icon-aws-kinesis-local-416d617a6f6e2d4b696e657369732d446174612d53747265616d735f49636f6e5f34385f5371756964"></path>
+        </g>
+    </g>
+</g></symbol><symbol id="planorama-icon-aws-s3" viewBox="0 0 64 64"><g>
+    <title>Icon-Architecture/48/Arch_Amazon-Simple-Storage-Service_48</title>
+    <g id="planorama-icon-aws-s3-local-49636f6e2d4172636869746563747572652f34382f417263685f416d617a6f6e2d53696d706c652d53746f726167652d536572766963655f3438" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="planorama-icon-aws-s3-local-49636f6e2d4172636869746563747572652d42472f34382f53746f72616765" fill="#7AA116">
+            <rect id="planorama-icon-aws-s3-local-52656374616e676c65" x="0" y="0" width="64" height="64"></rect>
+        </g>
+        <g id="planorama-icon-aws-s3-local-49636f6e2d536572766963652f34382f416d617a6f6e2d53696d706c652d53746f726167652d536572766963655f3438" transform="translate(10.999800, 10.000200)" fill="#FFFFFF">
+            <path d="M36.759,23.948 L36.993,22.131 C39.166,23.385 39.842,24.121 40.037,24.424 C39.713,24.485 38.832,24.509 36.759,23.948 L36.759,23.948 Z M19.5,11 C9.125,11 2.382,8.488 2,6.696 L2,6.511 C2.349,5.392 8.14,2 19.5,2 C30.84,2 36.632,5.381 37,6.505 L37,6.616 C36.724,8.446 29.961,11 19.5,11 L19.5,11 Z M34.818,23.362 C30.053,21.797 23.912,18.979 21.594,17.888 C21.535,16.786 20.628,15.906 19.512,15.906 C18.358,15.906 17.418,16.845 17.418,18 C17.418,19.154 18.358,20.094 19.512,20.094 C19.969,20.094 20.389,19.942 20.733,19.693 C23.132,20.822 29.619,23.798 34.558,25.38 L32.837,38.724 C32.583,40.352 27.919,42 19.497,42 C11.072,42 6.405,40.352 6.155,38.751 L2.435,9.814 C5.945,11.915 12.749,13 19.5,13 C26.25,13 33.054,11.915 36.565,9.815 L34.818,23.362 Z M39,6.5 C39,3.431 30.661,0 19.5,0 C8.339,0 -3.55271368e-15,3.431 -3.55271368e-15,6.5 L-3.55271368e-15,7.043 L4.174,39.033 C4.875,43.516 15.123,44 19.497,44 C23.869,44 34.113,43.516 34.818,39.007 L36.501,25.947 C37.778,26.279 38.812,26.456 39.616,26.455 C40.606,26.455 41.273,26.203 41.697,25.697 C42.047,25.281 42.185,24.756 42.085,24.221 C41.857,23 40.403,21.712 37.37,20.044 L37.27,19.989 L39,7.044 L39,6.5 Z" id="planorama-icon-aws-s3-local-416d617a6f6e2d53696d706c652d53746f726167652d536572766963652d49636f6e5f34385f5371756964"></path>
+        </g>
+    </g>
+</g></symbol></defs>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<g font-family="ui-monospace, SFMono-Regular, Consolas, monospace">
+<text x="40" y="45" font-size="25" font-weight="700" fill="#0f172a">Terraform plan</text>
+<text x="40" y="73" font-size="13" fill="#475569">5 resources · 3 reference edges · dependency → dependent</text>
+<metadata id="architecture-entities">[{&quot;id&quot;:&quot;terraform:6177735f6b696e657369735f66697265686f73655f64656c69766572795f73747265616d2e61726368697665-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_kinesis_firehose_delivery_stream.archive&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:6177735f6b696e657369735f66697265686f73655f64656c69766572795f73747265616d2e6c69746572616c-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_kinesis_firehose_delivery_stream.literal&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:6177735f6b696e657369735f73747265616d2e696e7075745b305d-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_kinesis_stream.input[0]&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:6177735f73335f6275636b65742e6261636b7570-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_s3_bucket.backup&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:6177735f73335f6275636b65742e64656c6976657279-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_s3_bucket.delivery&quot;,&quot;deposed_key&quot;:null}]}]</metadata>
+<metadata id="architecture-relationships">[{&quot;directionality&quot;:&quot;directed&quot;,&quot;from&quot;:&quot;terraform:6177735f6b696e657369735f73747265616d2e696e7075745b305d-current&quot;,&quot;inferred&quot;:false,&quot;kind&quot;:&quot;dependency&quot;,&quot;provenance&quot;:[{&quot;from&quot;:&quot;aws_kinesis_stream.input[0]&quot;,&quot;from_deposed_key&quot;:null,&quot;kind&quot;:&quot;reference&quot;,&quot;to&quot;:&quot;aws_kinesis_firehose_delivery_stream.archive&quot;,&quot;to_deposed_key&quot;:null}],&quot;to&quot;:&quot;terraform:6177735f6b696e657369735f66697265686f73655f64656c69766572795f73747265616d2e61726368697665-current&quot;},{&quot;directionality&quot;:&quot;directed&quot;,&quot;from&quot;:&quot;terraform:6177735f73335f6275636b65742e6261636b7570-current&quot;,&quot;inferred&quot;:false,&quot;kind&quot;:&quot;dependency&quot;,&quot;provenance&quot;:[{&quot;from&quot;:&quot;aws_s3_bucket.backup&quot;,&quot;from_deposed_key&quot;:null,&quot;kind&quot;:&quot;reference&quot;,&quot;to&quot;:&quot;aws_kinesis_firehose_delivery_stream.archive&quot;,&quot;to_deposed_key&quot;:null}],&quot;to&quot;:&quot;terraform:6177735f6b696e657369735f66697265686f73655f64656c69766572795f73747265616d2e61726368697665-current&quot;},{&quot;directionality&quot;:&quot;directed&quot;,&quot;from&quot;:&quot;terraform:6177735f73335f6275636b65742e64656c6976657279-current&quot;,&quot;inferred&quot;:false,&quot;kind&quot;:&quot;dependency&quot;,&quot;provenance&quot;:[{&quot;from&quot;:&quot;aws_s3_bucket.delivery&quot;,&quot;from_deposed_key&quot;:null,&quot;kind&quot;:&quot;reference&quot;,&quot;to&quot;:&quot;aws_kinesis_firehose_delivery_stream.archive&quot;,&quot;to_deposed_key&quot;:null}],&quot;to&quot;:&quot;terraform:6177735f6b696e657369735f66697265686f73655f64656c69766572795f73747265616d2e61726368697665-current&quot;}]</metadata>
+<metadata id="resource-references">[{&quot;attribute&quot;:&quot;extended_s3_configuration&quot;,&quot;complete&quot;:true,&quot;consumer&quot;:&quot;terraform:6177735f6b696e657369735f66697265686f73655f64656c69766572795f73747265616d2e61726368697665-current&quot;,&quot;dependency&quot;:false,&quot;issues&quot;:[],&quot;targets&quot;:[{&quot;address&quot;:&quot;aws_s3_bucket.backup&quot;,&quot;deposed_key&quot;:null},{&quot;address&quot;:&quot;aws_s3_bucket.delivery&quot;,&quot;deposed_key&quot;:null}]},{&quot;attribute&quot;:&quot;kinesis_source_configuration&quot;,&quot;complete&quot;:true,&quot;consumer&quot;:&quot;terraform:6177735f6b696e657369735f66697265686f73655f64656c69766572795f73747265616d2e61726368697665-current&quot;,&quot;dependency&quot;:false,&quot;issues&quot;:[],&quot;targets&quot;:[{&quot;address&quot;:&quot;aws_kinesis_stream.input[0]&quot;,&quot;deposed_key&quot;:null}]},{&quot;attribute&quot;:&quot;extended_s3_configuration.bucket_arn&quot;,&quot;complete&quot;:true,&quot;consumer&quot;:&quot;terraform:6177735f6b696e657369735f66697265686f73655f64656c69766572795f73747265616d2e61726368697665-current&quot;,&quot;dependency&quot;:false,&quot;issues&quot;:[],&quot;targets&quot;:[{&quot;address&quot;:&quot;aws_s3_bucket.delivery&quot;,&quot;deposed_key&quot;:null}]},{&quot;attribute&quot;:&quot;extended_s3_configuration.s3_backup_configuration.bucket_arn&quot;,&quot;complete&quot;:true,&quot;consumer&quot;:&quot;terraform:6177735f6b696e657369735f66697265686f73655f64656c69766572795f73747265616d2e61726368697665-current&quot;,&quot;dependency&quot;:false,&quot;issues&quot;:[],&quot;targets&quot;:[{&quot;address&quot;:&quot;aws_s3_bucket.backup&quot;,&quot;deposed_key&quot;:null}]},{&quot;attribute&quot;:&quot;kinesis_source_configuration.kinesis_stream_arn&quot;,&quot;complete&quot;:true,&quot;consumer&quot;:&quot;terraform:6177735f6b696e657369735f66697265686f73655f64656c69766572795f73747265616d2e61726368697665-current&quot;,&quot;dependency&quot;:false,&quot;issues&quot;:[],&quot;targets&quot;:[{&quot;address&quot;:&quot;aws_kinesis_stream.input[0]&quot;,&quot;deposed_key&quot;:null}]},{&quot;attribute&quot;:&quot;extended_s3_configuration.bucket_arn&quot;,&quot;complete&quot;:false,&quot;consumer&quot;:&quot;terraform:6177735f6b696e657369735f66697265686f73655f64656c69766572795f73747265616d2e6c69746572616c-current&quot;,&quot;dependency&quot;:false,&quot;issues&quot;:[&quot;UnprovenEndpointValue&quot;],&quot;targets&quot;:[]}]</metadata>
+<rect x="40" y="100" width="12" height="12" fill="#ecfdf5" stroke="#047857"/><text x="59" y="111" font-size="12" fill="#047857">create (1)</text>
+<rect x="180" y="100" width="12" height="12" fill="#eff6ff" stroke="#1d4ed8"/><text x="199" y="111" font-size="12" fill="#1d4ed8">update (1)</text>
+<rect x="320" y="100" width="12" height="12" fill="#fef2f2" stroke="#b91c1c"/><text x="339" y="111" font-size="12" fill="#b91c1c">delete (0)</text>
+<rect x="460" y="100" width="12" height="12" fill="#fff7ed" stroke="#c2410c"/><text x="479" y="111" font-size="12" fill="#c2410c">replace (0)</text>
+<rect x="600" y="100" width="12" height="12" fill="#faf5ff" stroke="#7e22ce"/><text x="619" y="111" font-size="12" fill="#7e22ce">read (0)</text>
+<rect x="740" y="100" width="12" height="12" fill="#f8fafc" stroke="#64748b"/><text x="759" y="111" font-size="12" fill="#64748b">unchanged (3)</text>
+<rect x="880" y="100" width="12" height="12" fill="#fefce8" stroke="#854d0e"/><text x="899" y="111" font-size="12" fill="#854d0e">other (0)</text>
+<g id="relationship-legend" font-size="12" fill="#475569" transform="translate(40 148)"><rect width="960" height="546" rx="12" fill="#f8fafc" stroke="#cbd5e1"/>
+<text x="16" y="29" font-size="15" font-weight="700" fill="#334155">Relationship lines</text>
+<text x="16" y="56">Line color shows the relationship&apos;s own Terraform action, independently of endpoint-card actions.</text>
+<path data-legend-action="none" d="M 16 77 H 42" fill="none" stroke="#94a3b8" stroke-width="1.5"/><text x="50" y="82">no independent change</text>
+<path data-legend-action="unchanged" d="M 234 77 H 260" fill="none" stroke="#64748b" stroke-width="1.5"/><text x="268" y="82">unchanged</text>
+<text x="16" y="110">no independent change: no separate Terraform action is identified. unchanged: an explicit no-op action.</text>
+<g data-legend-entry="dependency" transform="translate(0 132)">
+<g data-legend-sample="dependency">
+<path data-legend-kind="dependency" data-directionality="directed" d="M 21 11 H 153" fill="none" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+<circle data-legend-endpoint="source" cx="21" cy="11" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+<text x="174" y="12" font-weight="700">Dependency</text>
+<text x="174" y="30">Thin solid arrow from the</text>
+<text x="174" y="48">referenced resource to the</text>
+<text x="174" y="66">dependent resource; not exact</text>
+<text x="174" y="84">Terraform execution order.</text>
+</g>
+<g data-legend-entry="association" transform="translate(492 132)">
+<g data-legend-sample="association">
+<path data-legend-kind="association" data-directionality="undirected" d="M 21 11 H 153" fill="none" stroke="#94a3b8" stroke-width="2" stroke-dasharray="7 4"/>
+<circle data-legend-endpoint="source" cx="21" cy="11" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/><circle data-legend-endpoint="target" cx="153" cy="11" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/><g data-legend-badge="source">
+<rect x="31" y="2" width="32" height="18" rx="4" fill="#ffffff" stroke="#94a3b8" stroke-width="2" stroke-dasharray="7 4"/><text x="47" y="15" text-anchor="middle" font-size="11" fill="#334155">[12]</text>
+</g>
+<g data-legend-badge="target">
+<rect x="111" y="2" width="32" height="18" rx="4" fill="#ffffff" stroke="#94a3b8" stroke-width="2" stroke-dasharray="7 4"/><text x="127" y="15" text-anchor="middle" font-size="11" fill="#334155">[12]</text>
+</g>
+</g>
+<text x="174" y="12" font-weight="700">Association</text>
+<text x="174" y="30">Dashed, undirected relationship.</text>
+<text x="174" y="48">Matching badges identify the same</text>
+<text x="174" y="66">Terraform-backed relationship at</text>
+<text x="174" y="84">both attachment points.</text>
+</g>
+<g data-legend-entry="directed-association" transform="translate(0 238)">
+<g data-legend-sample="directed-association">
+<path data-legend-kind="directed-association" data-directionality="directed" d="M 21 11 H 153" fill="none" stroke="#94a3b8" stroke-width="2" stroke-dasharray="7 4" marker-end="url(#arrow)"/>
+<circle data-legend-endpoint="source" cx="21" cy="11" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/><circle data-legend-endpoint="target" cx="153" cy="11" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/><path data-legend-arrow="true" d="M 146.7 7.5 L 153.7 11 L 146.7 14.5 Z" fill="#94a3b8"/>
+<g data-legend-badge="source">
+<rect x="31" y="2" width="32" height="18" rx="4" fill="#ffffff" stroke="#94a3b8" stroke-width="2" stroke-dasharray="7 4"/><text x="47" y="15" text-anchor="middle" font-size="11" fill="#334155">[12]</text>
+</g>
+<g data-legend-badge="target">
+<rect x="111" y="2" width="32" height="18" rx="4" fill="#ffffff" stroke="#94a3b8" stroke-width="2" stroke-dasharray="7 4"/><text x="127" y="15" text-anchor="middle" font-size="11" fill="#334155">[12]</text>
+</g>
+</g>
+<text x="174" y="12" font-weight="700">Directed Association</text>
+<text x="174" y="30">Dashed line from a Route to its</text>
+<text x="174" y="48">next hop. The destination arrow</text>
+<text x="174" y="66">expresses direction; matching</text>
+<text x="174" y="84">badges identify the same</text>
+<text x="174" y="102">relationship.</text>
+</g>
+<g data-legend-entry="connection" transform="translate(492 238)">
+<g data-legend-sample="connection">
+<path data-legend-kind="connection" data-directionality="undirected" d="M 21 11 H 153" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-dasharray="0 3.5" stroke-linecap="round"/>
+<circle data-legend-endpoint="source" cx="21" cy="11" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/><circle data-legend-endpoint="target" cx="153" cy="11" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+<text x="174" y="12" font-weight="700">Connection</text>
+<text x="174" y="30">Thicker dotted line shows an</text>
+<text x="174" y="48">inferred, undirected connection;</text>
+<text x="174" y="66">this does not guarantee actual</text>
+<text x="174" y="84">network reachability.</text>
+</g>
+<g data-legend-entry="containment" transform="translate(0 362)">
+<g data-legend-sample="containment">
+<g data-legend-kind="containment" fill="none" stroke="#94a3b8"><rect x="65" y="2" width="44" height="28" rx="4"/><rect x="74" y="12" width="26" height="12" rx="2"/></g>
+</g>
+<text x="174" y="12" font-weight="700">Containment</text>
+<text x="174" y="30">Nested boxes show containment;</text>
+<text x="174" y="48">nesting replaces a redundant</text>
+<text x="174" y="66">relationship line.</text>
+</g>
+<text x="16" y="462">Hollow circles mark resource/card attachment points; neither end of an undirected line is a directional start.</text>
+<text x="16" y="480">Filled internal dots mark bundle junctions.</text>
+<text x="16" y="506">Matching [N] badges identify the same Terraform-backed relationship and its Relationship Resources entry. They do</text>
+<text x="16" y="524">not express direction or count connections. Reference-only Connections and Dependencies have no number.</text>
+</g>
+<g transform="translate(0 558)">
+<g data-architecture="true" transform="translate(0 0)">
+<g data-deployment-scope="true" data-scope-provider="AWS" data-region="us-east-1"><rect x="40" y="160" width="928" height="626" rx="14" fill="#f8fafc" stroke="#94a3b8" stroke-dasharray="9 5"/><text x="56" y="185" font-size="15" font-weight="700" fill="#334155">AWS us-east-1</text></g>
+<path d="M 684 511 L 684 471 " data-edge-kind="dependency" data-directionality="directed" data-source="resource-6177735f6b696e657369735f73747265616d2e696e7075745b305d-current" data-target="resource-6177735f6b696e657369735f66697265686f73655f64656c69766572795f73747265616d2e61726368697665-current" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>aws_kinesis_stream.input[0] → aws_kinesis_firehose_delivery_stream.archive</title></path>
+<path d="M 844 695 L 852 695 Q 860 695 860 687 L 860 509 Q 860 501 852 501 L 814 501 Q 806 501 806 493 L 806 471 " data-edge-kind="dependency" data-directionality="directed" data-source="resource-6177735f73335f6275636b65742e6261636b7570-current" data-target="resource-6177735f6b696e657369735f66697265686f73655f64656c69766572795f73747265616d2e61726368697665-current" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>aws_s3_bucket.backup → aws_kinesis_firehose_delivery_stream.archive</title></path>
+<path d="M 380 384 L 392 384 Q 400 384 400 376 L 400 358 Q 400 350 408 350 L 420 350 " data-edge-kind="dependency" data-directionality="directed" data-source="resource-6177735f73335f6275636b65742e64656c6976657279-current" data-target="resource-6177735f6b696e657369735f66697265686f73655f64656c69766572795f73747265616d2e61726368697665-current" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>aws_s3_bucket.delivery → aws_kinesis_firehose_delivery_stream.archive</title></path>
+<g id="resource-6177735f6b696e657369735f66697265686f73655f64656c69766572795f73747265616d2e61726368697665-current" data-architecture-id="terraform:6177735f6b696e657369735f66697265686f73655f64656c69766572795f73747265616d2e61726368697665-current" data-qualified-address="module.root.aws_kinesis_firehose_delivery_stream.archive" data-terraform-address="aws_kinesis_firehose_delivery_stream.archive"><title>module.root.aws_kinesis_firehose_delivery_stream.archive — update</title>
+<rect x="420" y="297" width="528" height="174" rx="8" fill="#eff6ff" stroke="#1d4ed8" stroke-width="1.5" data-mode="managed"/>
+<text x="432" y="317" font-size="11" fill="#1d4ed8">aws_kinesis_firehose_del… · update</text>
+<use href="#planorama-icon-aws-firehose" x="432" y="325" width="24" height="24" aria-hidden="true"/><text x="464" y="342" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_kinesis_firehose_delivery_stream.archive</text>
+<g data-resource-references="true"><title>Kinesis source: aws_kinesis_stream.input[0] [kinesis_source_configuration.kinesis_stream_arn; direct attribute reference]
+S3 backup destination: aws_s3_bucket.backup [extended_s3_configuration.s3_backup_configuration.bucket_arn; direct attribute reference]
+S3 delivery destination: aws_s3_bucket.delivery [extended_s3_configuration.bucket_arn; direct attribute reference]</title><text x="432" y="383" font-size="11" font-weight="700" fill="#475569">Uses</text><a href="#resource-6177735f6b696e657369735f73747265616d2e696e7075745b305d-current" data-reference-attribute="kinesis_source_configuration.kinesis_stream_arn"><title>Kinesis source: aws_kinesis_stream.input[0] [kinesis_source_configuration.kinesis_stream_arn; direct attribute reference]</title><text x="432" y="401" font-size="11" fill="#334155" xml:space="preserve">Kinesis source: aws_kinesis_stream.input[0]</text>
+</a><a href="#resource-6177735f73335f6275636b65742e6261636b7570-current" data-reference-attribute="extended_s3_configuration.s3_backup_configuration.bucket_arn"><title>S3 backup destination: aws_s3_bucket.backup [extended_s3_configuration.s3_backup_configuration.bucket_arn; direct attribute reference]</title><text x="432" y="419" font-size="11" fill="#334155" xml:space="preserve">S3 backup destination: aws_s3_bucket.backup</text>
+</a><a href="#resource-6177735f73335f6275636b65742e64656c6976657279-current" data-reference-attribute="extended_s3_configuration.bucket_arn"><title>S3 delivery destination: aws_s3_bucket.delivery [extended_s3_configuration.bucket_arn; direct attribute reference]</title><text x="432" y="437" font-size="11" fill="#334155" xml:space="preserve">S3 delivery destination: aws_s3_bucket.delivery</text>
+</a></g>
+</g>
+<g id="resource-6177735f6b696e657369735f66697265686f73655f64656c69766572795f73747265616d2e6c69746572616c-current" data-architecture-id="terraform:6177735f6b696e657369735f66697265686f73655f64656c69766572795f73747265616d2e6c69746572616c-current" data-qualified-address="module.root.aws_kinesis_firehose_delivery_stream.literal" data-terraform-address="aws_kinesis_firehose_delivery_stream.literal"><title>module.root.aws_kinesis_firehose_delivery_stream.literal — create</title>
+<rect x="60" y="608" width="320" height="158" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
+<text x="72" y="628" font-size="11" fill="#047857">aws_kinesis_firehose_del… · create</text>
+<use href="#planorama-icon-aws-firehose" x="72" y="636" width="24" height="24" aria-hidden="true"/><text x="104" y="653" font-size="13" fill="#0f172a" xml:space="preserve">module.root.</text>
+<text x="104" y="673" font-size="13" fill="#0f172a" xml:space="preserve">aws_kinesis_firehose_delivery_str</text>
+<text x="104" y="693" font-size="13" fill="#0f172a" xml:space="preserve">eam.literal</text>
+<g data-resource-references="true"><title>S3 delivery destination: unresolved [extended_s3_configuration.bucket_arn; unresolved attribute reference]</title><text x="72" y="714" font-size="11" font-weight="700" fill="#475569">Uses</text><g data-reference-status="unresolved"><title>S3 delivery destination: unresolved [extended_s3_configuration.bucket_arn; unresolved attribute reference]</title><text x="72" y="732" font-size="11" fill="#334155" xml:space="preserve">S3 delivery destination: unresolved</text>
+</g></g>
+</g>
+<g id="resource-6177735f6b696e657369735f73747265616d2e696e7075745b305d-current" data-architecture-id="terraform:6177735f6b696e657369735f73747265616d2e696e7075745b305d-current" data-qualified-address="module.root.aws_kinesis_stream.input[0]" data-terraform-address="aws_kinesis_stream.input[0]"><title>module.root.aws_kinesis_stream.input[0] — unchanged</title>
+<rect x="524" y="511" width="320" height="96" rx="8" fill="#f8fafc" stroke="#64748b" stroke-width="1.5" data-mode="managed"/>
+<text x="536" y="531" font-size="11" fill="#64748b">aws_kinesis_stream · unchanged</text>
+<use href="#planorama-icon-aws-kinesis" x="536" y="539" width="24" height="24" aria-hidden="true"/><text x="568" y="556" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_kinesis_stream.</text>
+<text x="568" y="576" font-size="13" fill="#0f172a" xml:space="preserve">input[0]</text>
+</g>
+<g id="resource-6177735f73335f6275636b65742e6261636b7570-current" data-architecture-id="terraform:6177735f73335f6275636b65742e6261636b7570-current" data-qualified-address="module.root.aws_s3_bucket.backup" data-terraform-address="aws_s3_bucket.backup"><title>module.root.aws_s3_bucket.backup — unchanged</title>
+<rect x="524" y="647" width="320" height="96" rx="8" fill="#f8fafc" stroke="#64748b" stroke-width="1.5" data-mode="managed"/>
+<text x="536" y="667" font-size="11" fill="#64748b">aws_s3_bucket · unchanged</text>
+<use href="#planorama-icon-aws-s3" x="536" y="675" width="24" height="24" aria-hidden="true"/><text x="568" y="692" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_s3_bucket.backup</text>
+</g>
+<g id="resource-6177735f73335f6275636b65742e64656c6976657279-current" data-architecture-id="terraform:6177735f73335f6275636b65742e64656c6976657279-current" data-qualified-address="module.root.aws_s3_bucket.delivery" data-terraform-address="aws_s3_bucket.delivery"><title>module.root.aws_s3_bucket.delivery — unchanged</title>
+<rect x="60" y="336" width="320" height="96" rx="8" fill="#f8fafc" stroke="#64748b" stroke-width="1.5" data-mode="managed"/>
+<text x="72" y="356" font-size="11" fill="#64748b">aws_s3_bucket · unchanged</text>
+<use href="#planorama-icon-aws-s3" x="72" y="364" width="24" height="24" aria-hidden="true"/><text x="104" y="381" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_s3_bucket.</text>
+<text x="104" y="401" font-size="13" fill="#0f172a" xml:space="preserve">delivery</text>
+</g>
+<g data-endpoints="true" data-source="resource-6177735f6b696e657369735f73747265616d2e696e7075745b305d-current" data-target="resource-6177735f6b696e657369735f66697265686f73655f64656c69766572795f73747265616d2e61726368697665-current" aria-hidden="true">
+<circle data-endpoint="source" cx="684" cy="511" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+<g data-endpoints="true" data-source="resource-6177735f73335f6275636b65742e6261636b7570-current" data-target="resource-6177735f6b696e657369735f66697265686f73655f64656c69766572795f73747265616d2e61726368697665-current" aria-hidden="true">
+<circle data-endpoint="source" cx="844" cy="695" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+<g data-endpoints="true" data-source="resource-6177735f73335f6275636b65742e64656c6976657279-current" data-target="resource-6177735f6b696e657369735f66697265686f73655f64656c69766572795f73747265616d2e61726368697665-current" aria-hidden="true">
+<circle data-endpoint="source" cx="380" cy="384" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+</g>
+</g>
+</g>
+</svg>

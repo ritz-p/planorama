@@ -1,6 +1,7 @@
 mod configuration;
 mod coverage_report;
 mod filtering;
+mod firehose;
 mod html;
 mod layout_diagnostics;
 mod messaging;
