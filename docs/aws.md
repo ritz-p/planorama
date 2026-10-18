@@ -9,6 +9,21 @@ conditional relationship and placement proofs behind that catalog.
 
 ## Deployment scopes
 
+SSM Parameter Store `aws_ssm_parameter` is a regional logical Node with the AWS
+Systems Manager icon. Managed parameters and data lookups keep separate identities,
+even with equal names. Parameter paths create no inferred hierarchy, environment,
+containment or deployment scope. Values (including ordinary String/StringList),
+SecureString payloads, descriptions and arbitrary type strings are omitted.
+ECS and other consumers retain explicit ordinary Terraform references; the ECS
+JSON-expression limitation described below also applies to parameters. Neither
+literal JSON/ARNs nor equal path names add links. Run Command, Session Manager and
+Automation remain outside this scope. See [SVG](../examples/ssm.svg) /
+[HTML](../examples/ssm.html) and the checked AWS Provider 5.100.0
+[Parameter schema](https://github.com/hashicorp/terraform-provider-aws/blob/v5.100.0/website/docs/r/ssm_parameter.html.markdown).
+The installed schema and Terraform 1.9.8 fixture plan confirmed the value fields
+and ECS reference shape. Regenerate HTML in Docker with
+`cargo run --locked -- tests/fixtures/ssm-plan.json --format html -o examples/ssm.html`.
+
 Secrets Manager Secrets and Versions are separate regional logical resources,
 including data lookups, with the AWS Secrets Manager icon. `Version secret` requires
 an explicit `secret_id` reference from a managed or data Version to a managed
