@@ -138,6 +138,11 @@
             "file": "Amazon-Elastic-Block-Store.svg",
             "source": "Architecture-Service-Icons_07312026/Arch_Storage/48/Arch_Amazon-Elastic-Block-Store_48.svg",
             "sha256": "6d816e4b5d90ff8930cecb63a8951cc3287328fcd4c43cd44c7d2f915ef87452"
+        },
+        {
+            "file": "Amazon-Kinesis-Data-Streams.svg",
+            "source": "Architecture-Service-Icons_07312026/Arch_Analytics/48/Arch_Amazon-Kinesis-Data-Streams_48.svg",
+            "sha256": "d007fb1e2ebfb5b5577beb536b21e6ae055b08bb6e0ddbf0b257409bf96aeb3d"
         }
     ]
 }

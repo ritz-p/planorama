@@ -92,6 +92,7 @@ pub(super) fn icon_for(resource_type: &str) -> Option<ResourceIcon> {
         | "aws_lb_trust_store"
         | "aws_lb_target_group_attachment" => ResourceIcon::LoadBalancer,
         "aws_sqs_queue" => ResourceIcon::Sqs,
+        "aws_kinesis_stream" => ResourceIcon::Kinesis,
         "aws_sns_topic" => ResourceIcon::Sns,
         "aws_cloudwatch_event_bus"
         | "aws_cloudwatch_event_rule"
