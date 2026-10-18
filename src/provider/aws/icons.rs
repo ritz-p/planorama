@@ -2,6 +2,7 @@ use crate::icons::ResourceIcon;
 
 pub(super) fn icon_for(resource_type: &str) -> Option<ResourceIcon> {
     Some(match resource_type {
+        "aws_route53_zone" | "aws_route53_record" => ResourceIcon::Route53,
         "aws_vpc"
         | "aws_vpcs"
         | "aws_vpc_peering_connection"

@@ -81,7 +81,10 @@ pub(crate) fn rows(node: &Node) -> Vec<Row<'_>> {
             continue;
         }
         for target in &reference.targets {
-            if node.placement != Placement::Logical && target.placement != Placement::Logical {
+            if node.placement != Placement::Logical
+                && target.placement != Placement::Logical
+                && matches!(reference.label, "References" | "Dependency")
+            {
                 continue;
             }
             if node.references.iter().any(|other| {
