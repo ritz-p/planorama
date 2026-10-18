@@ -14,6 +14,7 @@ examples/dense-architecture.svg
 examples/diagram.svg
 examples/route53.svg
 examples/acm.svg
+examples/private-ca.svg
 examples/kms.svg
 examples/secrets-manager.svg
 examples/ssm.svg

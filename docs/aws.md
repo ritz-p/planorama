@@ -7,6 +7,46 @@ The generated [resource support matrix](resource-support.md) lists exact-type
 roles, display modes, icons and scope eligibility. This document defines the
 conditional relationship and placement proofs behind that catalog.
 
+## AWS Private CA
+
+Exact AWS `aws_acmpca_certificate_authority` and `aws_acmpca_certificate` are
+logical Nodes; `aws_acmpca_certificate_authority_certificate` is a logical
+Controller that preserves the installation resource's own identity. All three
+use the AWS Private CA icon/service name and their proven regional provider
+scope. Managed authorities and certificate installations retain the verified
+provider account. Issued certificates and authority data sources keep account
+scope unknown because they can use a CA shared by another account.
+[AWS cross-account permissions](https://docs.aws.amazon.com/privateca/latest/userguide/pca-rbp.html)
+include issuance and authority lookup, but not certificate import.
+
+`Signing CA reference` on Private CA and ACM certificates and `Target CA reference`
+on installations require a complete, explicit, unique reference to a managed
+CA's `arn`, with equal known planned values. `Installed certificate reference`
+requires the same proof for an installation's `certificate` reference to a
+managed Private CA certificate's `certificate` attribute. These are configuration
+links alongside ordinary Terraform dependencies, not a derived CA hierarchy.
+CSR and chain references retain ordinary Terraform provenance; CA type, names,
+literal ARNs, certificate contents and co-occurrence never establish a parent CA.
+Unresolved, external, ambiguous, unknown, wrong-provider/type, deleted/deposed
+and filtered endpoints cannot become verified links. Unproven configured
+references show unresolved with safe diagnostics, or Unavailable when filtered;
+absent configuration does
+not fabricate a missing parent resource. Data resources remain visible without
+managed-only verification. No link claims issuance, installation success,
+validity, revocation status or trust. CSR, certificate/chain contents, private
+keys and subject values are omitted from generated output and retained models.
+
+The [synthetic fixture](../tests/fixtures/private-ca-plan.json),
+[SVG](../examples/private-ca.svg) and [offline HTML](../examples/private-ca.html)
+show subordinate issuance, installation, ACM use and an external CA reference.
+The AWS Provider 5.100.0
+[authority](https://github.com/hashicorp/terraform-provider-aws/blob/v5.100.0/website/docs/r/acmpca_certificate_authority.html.markdown),
+[certificate](https://github.com/hashicorp/terraform-provider-aws/blob/v5.100.0/website/docs/r/acmpca_certificate.html.markdown)
+and [installation](https://github.com/hashicorp/terraform-provider-aws/blob/v5.100.0/website/docs/r/acmpca_certificate_authority_certificate.html.markdown)
+contracts were checked against the installed schema and a Terraform 1.9.8
+offline plan. Regenerate HTML in Docker with
+`cargo run --locked -- tests/fixtures/private-ca-plan.json --format html -o examples/private-ca.html`.
+
 ## Athena Workgroup and Data Catalog
 
 Exact AWS `aws_athena_workgroup` and `aws_athena_data_catalog` are regional logical
