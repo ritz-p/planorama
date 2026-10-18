@@ -2,6 +2,104 @@ use crate::{layout::Layout, plan, semantic, svg};
 use serde_json::{Value, json};
 
 #[test]
+fn secrets_keep_version_identity_and_never_infer_json_usage_or_retain_payloads() {
+    let fixture = include_str!("../../fixtures/secrets-manager-plan.json");
+    check_service_fixture(fixture, "Version secret", "secret_id");
+    for data in [false, true] {
+        for field in ["id", "arn", "name"] {
+            let mut value: Value = serde_json::from_str(fixture).unwrap();
+            if data {
+                let address = "data.aws_secretsmanager_secret_version.app";
+                value["resource_changes"][1]["address"] = json!(address);
+                value["resource_changes"][1]["mode"] = json!("data");
+                value["resource_changes"][1]["change"]["actions"] = json!(["read"]);
+                value["configuration"]["root_module"]["resources"][1]["address"] = json!(address);
+                value["configuration"]["root_module"]["resources"][1]["mode"] = json!("data");
+            }
+            value["resource_changes"][1]["change"]["after"]["secret_id"] =
+                value["resource_changes"][0]["change"]["after"][field].clone();
+            value["configuration"]["root_module"]["resources"][1]["expressions"]["secret_id"] =
+                json!({"references": [format!("aws_secretsmanager_secret.app.{field}")]});
+            let parsed = plan::parse(&value.to_string()).unwrap();
+            let reference = parsed
+                .attributes
+                .iter()
+                .find(|r| r.attribute == "secret_id")
+                .unwrap();
+            assert_eq!(
+                reference.service_reference_verified,
+                field != "name",
+                "{data} {field}"
+            );
+        }
+    }
+    let mut value: Value = serde_json::from_str(fixture).unwrap();
+    for key in [
+        "secret_string",
+        "secret_binary",
+        "secret_string_wo",
+        "version_payload",
+        "rotation_lambda_arn",
+    ] {
+        value["resource_changes"][1]["change"]["after"][key] = json!("PRIVATE_<script>&payload");
+    }
+    value["resource_changes"][2]["change"]["after"]["container_definitions"] =
+        json!("[{\"environment\":[{\"name\":\"TOKEN\",\"value\":\"PRIVATE_ENV\"}]}]");
+    let parsed = plan::parse(&value.to_string()).unwrap();
+    assert!(!format!("{parsed:?}").contains("PRIVATE_"));
+    let graph = semantic::transform(&parsed);
+    assert_eq!(graph.nodes.len(), 4);
+    assert_eq!(
+        graph
+            .nodes
+            .iter()
+            .filter(|n| n.resource_type == "aws_secretsmanager_secret")
+            .count(),
+        2
+    );
+    let task = graph
+        .nodes
+        .iter()
+        .find(|n| n.resource_type == "aws_ecs_task_definition")
+        .unwrap();
+    assert!(
+        task.references
+            .iter()
+            .any(|r| r.attribute == "container_definitions"
+                && r.label == "References"
+                && r.complete)
+    );
+    assert!(
+        !parsed
+            .attributes
+            .iter()
+            .any(|r| r.attribute == "container_definitions" && r.service_reference_verified)
+    );
+    for format in [crate::OutputFormat::Svg, crate::OutputFormat::Html] {
+        let output = crate::generate(
+            &value.to_string(),
+            &crate::Options {
+                format,
+                ..Default::default()
+            },
+        )
+        .unwrap();
+        assert!(!output.content.contains("PRIVATE_"));
+        assert!(!output.content.contains("SYNTHETIC_PAYLOAD_NOT_FOR_OUTPUT"));
+        assert!(output.content.contains("Version secret"));
+    }
+    value["configuration"]["root_module"]["resources"][2]["expressions"]["container_definitions"] =
+        json!({"constant_value":"literal secret ARN including :key:stage:version suffix"});
+    let graph = semantic::transform(&plan::parse(&value.to_string()).unwrap());
+    let task = graph
+        .nodes
+        .iter()
+        .find(|n| n.resource_type == "aws_ecs_task_definition")
+        .unwrap();
+    assert!(task.references.is_empty());
+}
+
+#[test]
 fn kms_uses_only_allowlisted_configuration_fields_and_never_exposes_key_material() {
     let fixture = include_str!("../../fixtures/kms-plan.json");
     check_service_fixture(fixture, "Alias key", "target_key_id");
