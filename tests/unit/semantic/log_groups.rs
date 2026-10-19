@@ -4,6 +4,38 @@ use serde_json::{Value, json};
 const FIXTURE: &str = include_str!("../../fixtures/log-groups-plan.json");
 
 #[test]
+fn mixed_references_expose_only_log_group_targets_without_losing_provenance() {
+    let mut value: Value = serde_json::from_str(FIXTURE).unwrap();
+    value["configuration"]["root_module"]["resources"][1]["expressions"] = json!({"tags":{"references":["aws_cloudwatch_log_group.app.name", "aws_s3_bucket.tagged.id"]}});
+    value["configuration"]["root_module"]["resources"][1]["depends_on"] =
+        json!(["aws_cloudwatch_log_group.app", "aws_s3_bucket.tagged"]);
+    let graph = semantic::transform(&plan::parse(&value.to_string()).unwrap());
+    let consumer = graph
+        .nodes
+        .iter()
+        .find(|n| n.address == "aws_lambda_function.app")
+        .unwrap();
+    let rows = view::references::rows(consumer);
+    assert_eq!(rows.len(), 2);
+    assert!(
+        rows.iter()
+            .all(|r| r.target.unwrap().id.address == "aws_cloudwatch_log_group.app")
+    );
+    for dependency in [false, true] {
+        let targets: Vec<_> = consumer
+            .references
+            .iter()
+            .filter(|r| r.dependency == dependency)
+            .flat_map(|r| &r.targets)
+            .map(|t| t.id.address.as_str())
+            .collect();
+        assert_eq!(targets.len(), 2);
+        assert!(targets.contains(&"aws_s3_bucket.tagged"));
+        assert!(targets.contains(&"aws_cloudwatch_log_group.app"));
+    }
+}
+
+#[test]
 fn log_group_cards_preserve_reference_meaning_scope_and_selection() {
     let parsed = plan::parse(FIXTURE).unwrap();
     let graph = semantic::transform(&parsed);
