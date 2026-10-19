@@ -84,6 +84,9 @@ EFS Access Points now use this model with verified `file_system_id` service
 references and independent Spatial fallback. KMS Keys are independent cards;
 Aliases reuse the same presentation model with verified `target_key_id` references
 and compatible scope. Keys never become children of encryption consumers.
+Secrets are independent cards; managed/data Versions use the same service-member
+proof and scope checks with `secret_id`. Data Secrets remain separate, and missing
+or incompatible parents leave selected Versions as independent cards.
 The audit above remains a historical inventory of defaults at its recorded commit;
 other service migrations are pending.
 

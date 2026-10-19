@@ -194,7 +194,7 @@ Provider source: `registry.terraform.io/hashicorp/aws`.
 | `aws_key_pair` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Ec2 / Amazon EC2 | Unknown | — |
 | `aws_kinesis_firehose_delivery_stream` | Node / Node | Spatial / Spatial | Firehose / Amazon Data Firehose | Regional (conditional) | [aws/service_references.rs](../src/provider/aws/service_references.rs) |
 | `aws_kinesis_stream` | Node / Node | Spatial / Spatial | Kinesis / Amazon Kinesis Data Streams | Regional (conditional) | [aws/messaging.rs](../src/provider/aws/messaging.rs), [aws/service_references.rs](../src/provider/aws/service_references.rs) |
-| `aws_kms_alias` | Node / Node | Spatial / Spatial | Kms / AWS Key Management Service | Regional (conditional) | [aws/kms.rs](../src/provider/aws/kms.rs), [aws/service_references.rs](../src/provider/aws/service_references.rs) |
+| `aws_kms_alias` | Node / Node | Spatial / Spatial | Kms / AWS Key Management Service | Regional (conditional) | [aws/service_members.rs](../src/provider/aws/service_members.rs), [aws/service_references.rs](../src/provider/aws/service_references.rs) |
 | `aws_kms_key` | Node / Node | Spatial / Spatial | Kms / AWS Key Management Service | Regional (conditional) | [aws/service_references.rs](../src/provider/aws/service_references.rs) |
 | `aws_lambda_alias` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Lambda / AWS Lambda | Unknown | — |
 | `aws_lambda_code_signing_config` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Lambda / AWS Lambda | Unknown | — |
@@ -255,8 +255,8 @@ Provider source: `registry.terraform.io/hashicorp/aws`.
 | `aws_s3control_access_points` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Storage / Amazon S3 | Unknown | — |
 | `aws_s3control_multi_region_access_point` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Storage / Amazon S3 | Unknown | — |
 | `aws_s3control_multi_region_access_points` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Storage / Amazon S3 | Unknown | — |
-| `aws_secretsmanager_secret` | Node / Node | Logical / Logical | SecretsManager / AWS Secrets Manager | Regional (conditional) | [aws.rs](../src/provider/aws.rs), [aws/service_references.rs](../src/provider/aws/service_references.rs) |
-| `aws_secretsmanager_secret_version` | Controller / Controller | Logical / Logical | SecretsManager / AWS Secrets Manager | Regional (conditional) | [aws.rs](../src/provider/aws.rs), [aws/service_references.rs](../src/provider/aws/service_references.rs) |
+| `aws_secretsmanager_secret` | Node / Node | Spatial / Spatial | SecretsManager / AWS Secrets Manager | Regional (conditional) | [aws/service_references.rs](../src/provider/aws/service_references.rs) |
+| `aws_secretsmanager_secret_version` | Controller / Controller | Spatial / Spatial | SecretsManager / AWS Secrets Manager | Regional (conditional) | [aws/service_members.rs](../src/provider/aws/service_members.rs), [aws/service_references.rs](../src/provider/aws/service_references.rs) |
 | `aws_security_group` | Policy / Policy | Spatial / Spatial | Security / Amazon VPC | Regional (conditional) | [aws/containment.rs](../src/provider/aws/containment.rs), [aws/security_groups.rs](../src/provider/aws/security_groups.rs) |
 | `aws_security_groups` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Security / Amazon VPC | Unknown | — |
 | `aws_sns_topic` | Node / Node | Spatial / Spatial | Sns / Amazon Simple Notification Service | Regional (conditional) | [aws/messaging.rs](../src/provider/aws/messaging.rs) |
