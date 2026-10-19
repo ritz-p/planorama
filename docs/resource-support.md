@@ -194,8 +194,8 @@ Provider source: `registry.terraform.io/hashicorp/aws`.
 | `aws_key_pair` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Ec2 / Amazon EC2 | Unknown | — |
 | `aws_kinesis_firehose_delivery_stream` | Node / Node | Spatial / Spatial | Firehose / Amazon Data Firehose | Regional (conditional) | [aws/service_references.rs](../src/provider/aws/service_references.rs) |
 | `aws_kinesis_stream` | Node / Node | Spatial / Spatial | Kinesis / Amazon Kinesis Data Streams | Regional (conditional) | [aws/messaging.rs](../src/provider/aws/messaging.rs), [aws/service_references.rs](../src/provider/aws/service_references.rs) |
-| `aws_kms_alias` | Node / Node | Logical / Logical | Kms / AWS Key Management Service | Regional (conditional) | [aws.rs](../src/provider/aws.rs), [aws/service_references.rs](../src/provider/aws/service_references.rs) |
-| `aws_kms_key` | Node / Node | Logical / Logical | Kms / AWS Key Management Service | Regional (conditional) | [aws.rs](../src/provider/aws.rs), [aws/service_references.rs](../src/provider/aws/service_references.rs) |
+| `aws_kms_alias` | Node / Node | Spatial / Spatial | Kms / AWS Key Management Service | Regional (conditional) | [aws/kms.rs](../src/provider/aws/kms.rs), [aws/service_references.rs](../src/provider/aws/service_references.rs) |
+| `aws_kms_key` | Node / Node | Spatial / Spatial | Kms / AWS Key Management Service | Regional (conditional) | [aws/service_references.rs](../src/provider/aws/service_references.rs) |
 | `aws_lambda_alias` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Lambda / AWS Lambda | Unknown | — |
 | `aws_lambda_code_signing_config` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Lambda / AWS Lambda | Unknown | — |
 | `aws_lambda_event_source_mapping` | Association / Association | Logical / Logical | — | Regional (conditional) | [aws.rs](../src/provider/aws.rs), [aws/messaging.rs](../src/provider/aws/messaging.rs) |

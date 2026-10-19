@@ -466,7 +466,7 @@ fn kms_uses_only_allowlisted_configuration_fields_and_never_exposes_key_material
             .nodes
             .iter()
             .filter(|n| n.resource_type.starts_with("aws_kms_"))
-            .all(|n| n.placement == crate::model::Placement::Logical
+            .all(|n| n.placement == crate::model::Placement::Spatial
                 && n.entity
                     .scope
                     .as_ref()

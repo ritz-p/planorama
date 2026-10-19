@@ -167,8 +167,8 @@ Route and component-member presentations. Shared measurements include this heigh
 when placing subsequent text and child bounds. Badges stay separate from service
 icons and external-mode indicators, preserving space for complete addresses.
 
-RDS Cluster Instances and EFS Access Points reuse the embedded-card measurements
-and layout projection.
+RDS Cluster Instances, EFS Access Points and KMS Aliases reuse the embedded-card
+measurements and layout projection.
 The [resource presentation contract](resource-presentation.md) distinguishes proposed
 ownership from effective selected presentation.
 Provider rules set `member_owner` from verified explicit references; this is
