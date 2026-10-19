@@ -1,24 +1,13 @@
 name: Native release
 
 on:
-  push:
-    tags: ['v*']
-  pull_request:
-    paths:
-      - .github/workflows/release.yml
-      - .github/scripts/release.cjs
-      - tests/ci/release.test.cjs
-      - Cargo.toml
-      - Cargo.lock
-      - rust-toolchain.toml
-      - src/**
-      - build/**
-      - build.rs
-      - assets/**
-      - LICENSE*
-      - third-party/**
-      - docs/release-usage.txt
   workflow_dispatch:
+    inputs:
+      publish:
+        description: Publish verified assets (requires a matching existing version tag)
+        type: boolean
+        default: false
+        required: false
 
 permissions: {}
 
@@ -27,7 +16,32 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  validate:
+    permissions:
+      contents: read
+    runs-on: ubuntu-22.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4.4.0
+        with:
+          node-version: 22.16.0
+      - name: Check release controls
+        run: node --test tests/ci/release.test.cjs
+      - name: Validate manual release request
+        uses: actions/github-script@v9.0.0
+        env:
+          RELEASE_PUBLISH: ${{ inputs.publish }}
+        with:
+          script: |
+            const fs = require('node:fs');
+            const version = fs.readFileSync('Cargo.toml', 'utf8').match(/^version = "([^"]+)"/m)[1];
+            require('./.github/scripts/release.cjs').validateRequest(context, version, process.env.RELEASE_PUBLISH === 'true');
+
   build:
+    needs: validate
     permissions:
       contents: read
     strategy:
@@ -51,16 +65,8 @@ jobs:
       - uses: actions/setup-node@v4.4.0
         with:
           node-version: 22.16.0
-      - name: Check release controls
-        run: node --test tests/ci/release.test.cjs
       - name: Install fixed compiler
         run: rustup toolchain install 1.85.1 --profile minimal --target ${{ matrix.target }}
-      - name: Check tag and package version
-        env:
-          RELEASE_TAG: ${{ github.ref_type == 'tag' && github.ref_name || '' }}
-        shell: bash
-        run: |
-          node -e 'const r=require("./.github/scripts/release.cjs"); const m=JSON.parse(require("node:child_process").execFileSync("cargo",["metadata","--locked","--no-deps","--format-version","1"])); const v=m.packages.find(p=>p.name==="planorama").version; r.validateVersion(v,process.env.RELEASE_TAG || "v"+v);'
       - name: Build native CLI
         env:
           MACOSX_DEPLOYMENT_TARGET: '15.0'
@@ -97,7 +103,7 @@ jobs:
 
   publish:
     needs: [build, verify]
-    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+    if: github.event_name == 'workflow_dispatch' && inputs.publish && startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-22.04
     timeout-minutes: 5
     permissions:
@@ -115,8 +121,9 @@ jobs:
         uses: actions/github-script@v9.0.0
         env:
           RELEASE_TAG: ${{ github.ref_name }}
+          RELEASE_PUBLISH: ${{ inputs.publish }}
         with:
           script: |
             const fs = require('node:fs');
             const version = fs.readFileSync('Cargo.toml', 'utf8').match(/^version = "([^"]+)"/m)[1];
-            await require('./.github/scripts/release.cjs').publish({github, context, directory: 'output/release', version, tag: process.env.RELEASE_TAG});
+            await require('./.github/scripts/release.cjs').publish({github, context, directory: 'output/release', version, tag: process.env.RELEASE_TAG, publishRequested: process.env.RELEASE_PUBLISH === 'true'});

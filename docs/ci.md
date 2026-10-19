@@ -1,8 +1,10 @@
 # SVG generation and PR validation
 
 Native CLI distribution has a separate [release workflow and recovery procedure](releases.md).
-PRs and manual runs validate all native archives without publishing; only version-tag
-pushes can publish after every target and the aggregate verification succeed.
+Native release builds run only through `workflow_dispatch`, never automatically on
+PR updates or tag pushes. Manual runs verify artifacts by default; publication
+requires explicit `publish: true` on a matching existing version tag. Lightweight
+release-control tests remain part of Workflow Tests on ordinary PRs.
 
 Contributors and Codex regenerate maintained diagrams locally when rendering or
 generation inputs change, inspect the diff, and include the outputs in the PR.
