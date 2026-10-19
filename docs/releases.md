@@ -85,18 +85,26 @@ archive には本体、`LICENSE`・`LICENSE-MIT`・`LICENSE-APACHE`、依存ク�
 archive の時刻まで固定した byte-for-byte reproducible build は保証しません。
 各 native runner で archive を展開し、元ファイルとの一致、`--version` / `--help`、
 小規模 fixture の SVG/HTML の構造を検証します。その後全4対象の archive/checksum を照合します。
-通常 PR と手動 dispatch は検証のみで公開しません。
+起動方法は `workflow_dispatch` のみです。PR 更新・通常 push・version tag の push では
+ビルドも公開も行いません。通常の手動実行は `publish: false`（既定値）で、
+選択した branch/tag のビルド・パッケージ・検証だけを行います。
+公開には、既存の一致する stable version tag を ref に選び、`publish: true` を明示します。
+branch からの公開要求や version mismatch は4対象のビルド前に拒否します。
+公開制御の軽量 Node テストは、通常 PR の Workflow Tests でも実行します。
 
 公開を依頼された場合は以下を順に行います。
 
 1. 配布変更を main へマージし、公開予定のコミットを決めます。
 2. `Cargo.toml` の version と `vMAJOR.MINOR.PATCH` タグの一致を確認します。
    初期は stable version のみを扱い、pre-release tag は拒否します。
-3. 公開予定の同じコミットで Native release の手動実行と通常テストを確認します。
+3. 公開予定の同じコミットで通常テストを確認します。
    [Layout quality](ci.md#layout-quality-comparison-390) も同じ SHA の成功を確認し、
    なければ対象 ref で手動実行して checkout SHA を照合します。
 4. 公開を依頼された場合に限り、そのコミットに version tag を作成・push します。
-5. tag の全 target build と集約検証が成功すると、draft release を作成し、
+5. 作成した tag を ref に選び、`publish: true` で Native release を手動実行します。
+   例えば `gh workflow run release.yml --ref v0.1.0 -f publish=true` です。
+   実行画面の ref が対象 tag で、checkout SHA が公開予定の commit と一致することを確認します。
+   全 target build と集約検証が成功すると、draft release を作成し、
    archive と `SHA256SUMS` をアップロードします。API の SHA-256 digest・size と
    asset 一覧を確認してから公開します。job ごとの権限は build/verify が read、publish のみ write です。
 6. 公開 assets を取得し、チェックサムと案内を確認します。初回公開後は README と
@@ -106,7 +114,8 @@ archive の時刻まで固定した byte-for-byte reproducible build は保証�
 同一 ref の実行は直列化し、既存 release（draft を含む）がある場合は変更せず失敗します。
 公開済み assets を上書きせず、修正配布は新バージョンにします。
 アップロード途中の失敗は draft に留まります。復旧時は人が draft のタグ・assets・
-失敗理由を確認し、未公開 draft を削除してから同じタグの run 全体を再実行します。
+失敗理由を確認し、未公開 draft を削除してから、同じタグを ref に選び `publish: true` で
+run 全体を手動で再実行します。
 公開完了後の再実行も既存 release を検出して停止するため、正常な既存配布に影響しません。
 
 公開制御のテストは `node --test tests/ci/release.test.cjs`、Linux のパッケージ確認は
