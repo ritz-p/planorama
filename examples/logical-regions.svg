@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1040" height="1588" viewBox="0 0 1040 1588" role="img" aria-labelledby="title description">
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="1642" viewBox="0 0 1100 1642" role="img" aria-labelledby="title description">
 <title id="title">Terraform plan</title>
-<desc id="description">7 resources (0 spatial cards, 7 logical resources in 3 group cards) · 0 relationships Thin solid: dependency. Dashed: association. Thick dotted: connection. Nested boxes: containment. Edge color preserves the Terraform action when available.</desc>
+<desc id="description">7 resources (6 spatial cards, 1 logical resources in 1 group cards) · 0 relationships Thin solid: dependency. Dashed: association. Thick dotted: connection. Nested boxes: containment. Edge color preserves the Terraform action when available.</desc>
 <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/></marker><metadata id="planorama-icons-license">AWS Architecture Icons, release 07312026.
 Copyright Amazon Web Services, Inc. or its affiliates. All rights reserved.
 AWS service names and artwork are trademarks or other proprietary assets of AWS.
@@ -29,7 +29,7 @@ No AWS endorsement is implied. Consult the AWS terms for other uses.
 <rect width="100%" height="100%" fill="#ffffff"/>
 <g font-family="ui-monospace, SFMono-Regular, Consolas, monospace">
 <text x="40" y="45" font-size="25" font-weight="700" fill="#0f172a">Terraform plan</text>
-<text x="40" y="73" font-size="13" fill="#475569">7 resources (0 spatial cards, 7 logical resources in 3 group cards) · 0 relationships</text>
+<text x="40" y="73" font-size="13" fill="#475569">7 resources (6 spatial cards, 1 logical resources in 1 group cards) · 0 relationships</text>
 <metadata id="architecture-entities">[{&quot;id&quot;:&quot;terraform:6177735f636c6f756477617463685f6c6f675f67726f75702e6f76657272696465-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_cloudwatch_log_group.override&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:6177735f636c6f756477617463685f6c6f675f67726f75702e746f6b796f-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_cloudwatch_log_group.tokyo&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:6177735f636c6f756477617463685f6c6f675f67726f75702e746f6b796f-deposed-6f6c64&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_cloudwatch_log_group.tokyo&quot;,&quot;deposed_key&quot;:&quot;old&quot;}]},{&quot;id&quot;:&quot;terraform:6177735f636c6f756477617463685f6c6f675f67726f75702e756e6b6e6f776e-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_cloudwatch_log_group.unknown&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:6177735f636c6f756477617463685f6c6f675f67726f75702e76697267696e6961-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_cloudwatch_log_group.virginia&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:6177735f69616d5f706f6c6963792e616363657373-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_iam_policy.access&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:646174612e6177735f636c6f756477617463685f6c6f675f67726f75702e6c6f6f6b7570-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;data.aws_cloudwatch_log_group.lookup&quot;,&quot;deposed_key&quot;:null}]}]</metadata>
 <metadata id="architecture-relationships">[]</metadata>
 <rect x="40" y="100" width="12" height="12" fill="#ecfdf5" stroke="#047857"/><text x="59" y="111" font-size="12" fill="#047857">create (2)</text>
@@ -40,52 +40,7 @@ No AWS endorsement is implied. Consult the AWS terms for other uses.
 <rect x="740" y="100" width="12" height="12" fill="#f8fafc" stroke="#64748b"/><text x="759" y="111" font-size="12" fill="#64748b">unchanged (0)</text>
 <rect x="880" y="100" width="12" height="12" fill="#fefce8" stroke="#854d0e"/><text x="899" y="111" font-size="12" fill="#854d0e">other (2)</text>
 <g data-annotation-area="true">
-<g data-annotation-card="true" transform="translate(40 160)"><rect width="860" height="1264" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-annotation-section="Logical Resources"><rect width="860" height="1264" rx="12" fill="#ecfeff" stroke="#0891b2"/><text x="16" y="28" font-size="15" font-weight="700" fill="#0e7490">Logical Resources</text><g data-annotation-card="true" transform="translate(16 48)"><rect width="416" height="238" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-logical-group="true" data-provider-source="registry.terraform.io/hashicorp/aws" data-resource-type="aws_cloudwatch_log_group" data-mode="data"><title>aws_cloudwatch_log_group · data / external — registry.terraform.io/hashicorp/aws</title><text x="16" y="28" font-size="13" font-weight="700" fill="#0e7490">aws_cloudwatch_log_group · data / external</text>
-<text x="16" y="48" font-size="11" fill="#64748b">registry.terraform.io/hashicorp/aws</text>
-<g data-action-section="read"><rect x="8" y="66" width="400" height="144" rx="8" fill="none" stroke="#7e22ce" stroke-width="2"/><title>Read (1)</title><text x="16" y="90" font-size="13" font-weight="700" fill="#7e22ce">Read (1)</text><g id="resource-646174612e6177735f636c6f756477617463685f6c6f675f67726f75702e6c6f6f6b7570-current" data-architecture-id="terraform:646174612e6177735f636c6f756477617463685f6c6f675f67726f75702e6c6f6f6b7570-current" data-entity-kind="terraform" data-placement="logical" data-terraform-address="data.aws_cloudwatch_log_group.lookup" data-qualified-address="module.root.data.aws_cloudwatch_log_group.lookup" data-mode="data" transform="translate(0 98)" data-external="true"><title>module.root.data.aws_cloudwatch_log_group.lookup — read</title><use href="#planorama-icon-aws-monitoring" x="376" y="8" width="24" height="24" aria-hidden="true"/><text x="16" y="28" font-size="12" fill="#334155" xml:space="preserve" font-weight="700">module.root.data.aws_cloudwatch_log_group.</text>
-<text x="16" y="48" font-size="12" fill="#334155" xml:space="preserve" font-weight="700">lookup</text>
-<text x="16" y="68" font-size="12" fill="#334155" xml:space="preserve">read</text>
-<text x="16" y="88" font-size="12" fill="#334155" xml:space="preserve">Region: us-east-1</text>
-<line data-resource-underline="true" x1="16" y1="96" x2="400" y2="96" stroke="#7e22ce" stroke-width="2" stroke-dasharray="6 4"/></g>
-</g>
-</g>
-</g>
-<g data-annotation-card="true" transform="translate(452 48)"><rect width="392" height="882" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-logical-group="true" data-provider-source="registry.terraform.io/hashicorp/aws" data-resource-type="aws_cloudwatch_log_group" data-mode="managed"><title>aws_cloudwatch_log_group · managed — registry.terraform.io/hashicorp/aws</title><text x="16" y="28" font-size="13" font-weight="700" fill="#0e7490">aws_cloudwatch_log_group · managed</text>
-<text x="16" y="48" font-size="11" fill="#64748b">registry.terraform.io/hashicorp/aws</text>
-<g data-action-section="create"><rect x="8" y="66" width="376" height="144" rx="8" fill="none" stroke="#047857" stroke-width="2"/><title>Create (1)</title><text x="16" y="90" font-size="13" font-weight="700" fill="#047857">Create (1)</text><g id="resource-6177735f636c6f756477617463685f6c6f675f67726f75702e76697267696e6961-current" data-architecture-id="terraform:6177735f636c6f756477617463685f6c6f675f67726f75702e76697267696e6961-current" data-entity-kind="terraform" data-placement="logical" data-terraform-address="aws_cloudwatch_log_group.virginia" data-qualified-address="module.root.aws_cloudwatch_log_group.virginia" data-mode="managed" transform="translate(0 98)"><title>module.root.aws_cloudwatch_log_group.virginia — create</title><use href="#planorama-icon-aws-monitoring" x="352" y="8" width="24" height="24" aria-hidden="true"/><text x="16" y="28" font-size="12" fill="#334155" xml:space="preserve" font-weight="700">module.root.aws_cloudwatch_log_group.</text>
-<text x="16" y="48" font-size="12" fill="#334155" xml:space="preserve" font-weight="700">virginia</text>
-<text x="16" y="68" font-size="12" fill="#334155" xml:space="preserve">create</text>
-<text x="16" y="88" font-size="12" fill="#334155" xml:space="preserve">Region: us-east-1</text>
-<line data-resource-underline="true" x1="16" y1="96" x2="376" y2="96" stroke="#047857" stroke-width="2"/></g>
-</g>
-<g data-action-section="update"><rect x="8" y="222" width="376" height="188" rx="8" fill="none" stroke="#1d4ed8" stroke-width="2"/><title>Update (1)</title><text x="16" y="246" font-size="13" font-weight="700" fill="#1d4ed8">Update (1)</text><g id="resource-6177735f636c6f756477617463685f6c6f675f67726f75702e746f6b796f-current" data-architecture-id="terraform:6177735f636c6f756477617463685f6c6f675f67726f75702e746f6b796f-current" data-entity-kind="terraform" data-placement="logical" data-terraform-address="aws_cloudwatch_log_group.tokyo" data-qualified-address="module.root.aws_cloudwatch_log_group.tokyo" data-mode="managed" transform="translate(0 254)" data-import="true" data-import-id-present="true" data-import-identity-present="false" data-import-unknown="false" data-previous-address="aws_cloudwatch_log_group.old"><title>module.root.aws_cloudwatch_log_group.tokyo — import / update; moved from: aws_cloudwatch_log_group.old</title><g data-import-badge="true"><title>Imported resource</title><rect x="16" y="10" width="52" height="18" rx="4" fill="#ede9fe" stroke="#8b5cf6"/><text x="22" y="23" font-size="10" fill="#5b21b6">import</text></g><use href="#planorama-icon-aws-monitoring" x="352" y="8" width="24" height="24" aria-hidden="true"/><text x="16" y="52" font-size="12" fill="#334155" xml:space="preserve" font-weight="700">module.root.aws_cloudwatch_log_group.</text>
-<text x="16" y="72" font-size="12" fill="#334155" xml:space="preserve" font-weight="700">tokyo</text>
-<text x="16" y="92" font-size="12" fill="#334155" xml:space="preserve">update</text>
-<text x="16" y="112" font-size="12" fill="#334155" xml:space="preserve">Region: ap-northeast-1</text>
-<text x="16" y="132" font-size="12" fill="#334155" xml:space="preserve">Moved from: aws_cloudwatch_log_group.old</text>
-<line data-resource-underline="true" x1="16" y1="140" x2="376" y2="140" stroke="#1d4ed8" stroke-width="2"/></g>
-</g>
-<g data-action-section="delete"><rect x="8" y="422" width="376" height="164" rx="8" fill="none" stroke="#b91c1c" stroke-width="2"/><title>Delete (1)</title><text x="16" y="446" font-size="13" font-weight="700" fill="#b91c1c">Delete (1)</text><g id="resource-6177735f636c6f756477617463685f6c6f675f67726f75702e746f6b796f-deposed-6f6c64" data-architecture-id="terraform:6177735f636c6f756477617463685f6c6f675f67726f75702e746f6b796f-deposed-6f6c64" data-entity-kind="terraform" data-placement="logical" data-terraform-address="aws_cloudwatch_log_group.tokyo" data-qualified-address="module.root.aws_cloudwatch_log_group.tokyo" data-mode="managed" transform="translate(0 454)" data-deposed-key="old"><title>module.root.aws_cloudwatch_log_group.tokyo — delete; deposed: old</title><use href="#planorama-icon-aws-monitoring" x="352" y="8" width="24" height="24" aria-hidden="true"/><text x="16" y="28" font-size="12" fill="#334155" xml:space="preserve" font-weight="700">module.root.aws_cloudwatch_log_group.</text>
-<text x="16" y="48" font-size="12" fill="#334155" xml:space="preserve" font-weight="700">tokyo</text>
-<text x="16" y="68" font-size="12" fill="#334155" xml:space="preserve">delete</text>
-<text x="16" y="88" font-size="12" fill="#334155" xml:space="preserve">Region: unknown</text>
-<text x="16" y="108" font-size="12" fill="#334155" xml:space="preserve">Deposed: old</text>
-<line data-resource-underline="true" x1="16" y1="116" x2="376" y2="116" stroke="#b91c1c" stroke-width="2"/></g>
-</g>
-<g data-action-section="other"><rect x="8" y="598" width="376" height="256" rx="8" fill="none" stroke="#854d0e" stroke-width="2"/><title>Other (2)</title><text x="16" y="622" font-size="13" font-weight="700" fill="#854d0e">Other (2)</text><g id="resource-6177735f636c6f756477617463685f6c6f675f67726f75702e6f76657272696465-current" data-architecture-id="terraform:6177735f636c6f756477617463685f6c6f675f67726f75702e6f76657272696465-current" data-entity-kind="terraform" data-placement="logical" data-terraform-address="aws_cloudwatch_log_group.override" data-qualified-address="module.root.aws_cloudwatch_log_group.override" data-mode="managed" transform="translate(0 630)"><title>module.root.aws_cloudwatch_log_group.override — other</title><use href="#planorama-icon-aws-monitoring" x="352" y="8" width="24" height="24" aria-hidden="true"/><text x="16" y="28" font-size="12" fill="#334155" xml:space="preserve" font-weight="700">module.root.aws_cloudwatch_log_group.</text>
-<text x="16" y="48" font-size="12" fill="#334155" xml:space="preserve" font-weight="700">override</text>
-<text x="16" y="68" font-size="12" fill="#334155" xml:space="preserve">other</text>
-<text x="16" y="88" font-size="12" fill="#334155" xml:space="preserve">Region: unknown</text>
-<line data-resource-underline="true" x1="16" y1="96" x2="376" y2="96" stroke="#854d0e" stroke-width="2"/></g>
-<g id="resource-6177735f636c6f756477617463685f6c6f675f67726f75702e756e6b6e6f776e-current" data-architecture-id="terraform:6177735f636c6f756477617463685f6c6f675f67726f75702e756e6b6e6f776e-current" data-entity-kind="terraform" data-placement="logical" data-terraform-address="aws_cloudwatch_log_group.unknown" data-qualified-address="module.root.aws_cloudwatch_log_group.unknown" data-mode="managed" transform="translate(0 742)"><title>module.root.aws_cloudwatch_log_group.unknown — other</title><use href="#planorama-icon-aws-monitoring" x="352" y="8" width="24" height="24" aria-hidden="true"/><text x="16" y="28" font-size="12" fill="#334155" xml:space="preserve" font-weight="700">module.root.aws_cloudwatch_log_group.</text>
-<text x="16" y="48" font-size="12" fill="#334155" xml:space="preserve" font-weight="700">unknown</text>
-<text x="16" y="68" font-size="12" fill="#334155" xml:space="preserve">other</text>
-<text x="16" y="88" font-size="12" fill="#334155" xml:space="preserve">Region: unknown</text>
-<line data-resource-underline="true" x1="16" y1="96" x2="376" y2="96" stroke="#854d0e" stroke-width="2"/></g>
-</g>
-</g>
-</g>
-<g data-annotation-card="true" transform="translate(16 950)"><rect width="360" height="298" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-logical-group="true" data-provider-source="registry.terraform.io/hashicorp/aws" data-resource-type="aws_iam_policy" data-mode="managed"><title>aws_iam_policy · managed — registry.terraform.io/hashicorp/aws</title><text x="16" y="28" font-size="13" font-weight="700" fill="#0e7490">aws_iam_policy · managed</text>
+<g data-annotation-card="true" transform="translate(40 160)"><rect width="392" height="362" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-annotation-section="Logical Resources"><rect width="392" height="362" rx="12" fill="#ecfeff" stroke="#0891b2"/><text x="16" y="28" font-size="15" font-weight="700" fill="#0e7490">Logical Resources</text><g data-annotation-card="true" transform="translate(16 48)"><rect width="360" height="298" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-logical-group="true" data-provider-source="registry.terraform.io/hashicorp/aws" data-resource-type="aws_iam_policy" data-mode="managed"><title>aws_iam_policy · managed — registry.terraform.io/hashicorp/aws</title><text x="16" y="28" font-size="13" font-weight="700" fill="#0e7490">aws_iam_policy · managed</text>
 <text x="16" y="48" font-size="11" fill="#64748b">registry.terraform.io/hashicorp/aws</text>
 <text data-role-explanation="true" x="16" y="66" font-size="12" fill="#475569" xml:space="preserve">Role: Policy — access/control rules or p</text>
 <text data-role-explanation="true" x="16" y="86" font-size="12" fill="#475569" xml:space="preserve">olicy-like configuration; not necessarily</text>
@@ -100,7 +55,48 @@ No AWS endorsement is implied. Consult the AWS terms for other uses.
 </g>
 </g></g>
 </g>
-<g data-architecture="true" transform="translate(0 1288)">
+<g data-architecture="true" transform="translate(0 386)">
+<g data-deployment-scope="true" data-scope-provider="AWS" data-region="ap-northeast-1"><rect x="40" y="160" width="360" height="216" rx="14" fill="#f8fafc" stroke="#94a3b8" stroke-dasharray="9 5"/><text x="56" y="185" font-size="15" font-weight="700" fill="#334155">AWS ap-northeast-1</text></g>
+<g data-deployment-scope="true" data-scope-provider="AWS" data-region="us-east-1"><rect x="40" y="416" width="360" height="292" rx="14" fill="#f8fafc" stroke="#94a3b8" stroke-dasharray="9 5"/><text x="56" y="441" font-size="15" font-weight="700" fill="#334155">AWS us-east-1</text></g>
+<g id="resource-6177735f636c6f756477617463685f6c6f675f67726f75702e6f76657272696465-current" data-architecture-id="terraform:6177735f636c6f756477617463685f6c6f675f67726f75702e6f76657272696465-current" data-qualified-address="module.root.aws_cloudwatch_log_group.override" data-terraform-address="aws_cloudwatch_log_group.override"><title>module.root.aws_cloudwatch_log_group.override — other</title>
+<rect x="60" y="748" width="320" height="96" rx="8" fill="#fefce8" stroke="#854d0e" stroke-width="1.5" data-mode="managed"/>
+<text x="72" y="768" font-size="11" fill="#854d0e">aws_cloudwatch_log_group · other</text>
+<use href="#planorama-icon-aws-monitoring" x="72" y="776" width="24" height="24" aria-hidden="true"/><text x="104" y="793" font-size="13" fill="#0f172a" xml:space="preserve">module.root.</text>
+<text x="104" y="813" font-size="13" fill="#0f172a" xml:space="preserve">aws_cloudwatch_log_group.override</text>
+</g>
+<g id="resource-6177735f636c6f756477617463685f6c6f675f67726f75702e746f6b796f-current" data-architecture-id="terraform:6177735f636c6f756477617463685f6c6f675f67726f75702e746f6b796f-current" data-qualified-address="module.root.aws_cloudwatch_log_group.tokyo" data-terraform-address="aws_cloudwatch_log_group.tokyo" data-previous-address="aws_cloudwatch_log_group.old" data-import="true" data-import-id-present="true" data-import-identity-present="false" data-import-unknown="false"><title>module.root.aws_cloudwatch_log_group.tokyo — import / update; moved from: aws_cloudwatch_log_group.old</title>
+<rect x="60" y="200" width="320" height="156" rx="8" fill="#eff6ff" stroke="#1d4ed8" stroke-width="1.5" data-mode="managed"/>
+<g data-import-badge="true"><title>Imported resource</title><rect x="72" y="228" width="52" height="18" rx="4" fill="#ede9fe" stroke="#8b5cf6"/><text x="78" y="241" font-size="10" fill="#5b21b6">import</text></g><text x="72" y="220" font-size="11" fill="#1d4ed8">aws_cloudwatch_log_group · update</text>
+<use href="#planorama-icon-aws-monitoring" x="72" y="252" width="24" height="24" aria-hidden="true"/><text x="104" y="269" font-size="13" fill="#0f172a" xml:space="preserve">module.root.</text>
+<text x="104" y="289" font-size="13" fill="#0f172a" xml:space="preserve">aws_cloudwatch_log_group.tokyo</text>
+<text data-move-annotation="true" font-size="11" fill="#64748b"><title>Moved from: aws_cloudwatch_log_group.old</title><tspan x="72" y="310" xml:space="preserve">Moved from: aws_cloudwatch_log_group.</tspan>
+<tspan x="72" y="328" xml:space="preserve">old</tspan>
+</text>
+</g>
+<g id="resource-6177735f636c6f756477617463685f6c6f675f67726f75702e746f6b796f-deposed-6f6c64" data-architecture-id="terraform:6177735f636c6f756477617463685f6c6f675f67726f75702e746f6b796f-deposed-6f6c64" data-qualified-address="module.root.aws_cloudwatch_log_group.tokyo" data-terraform-address="aws_cloudwatch_log_group.tokyo" data-deposed-key="old"><title>module.root.aws_cloudwatch_log_group.tokyo — delete</title>
+<rect x="60" y="884" width="320" height="96" rx="8" fill="#fef2f2" stroke="#b91c1c" stroke-width="1.5" data-mode="managed"/>
+<text x="72" y="904" font-size="11" fill="#b91c1c">aws_cloudwatch_log_group · delete</text>
+<use href="#planorama-icon-aws-monitoring" x="72" y="912" width="24" height="24" aria-hidden="true"/><text x="104" y="929" font-size="13" fill="#0f172a" xml:space="preserve">module.root.</text>
+<text x="104" y="949" font-size="13" fill="#0f172a" xml:space="preserve">aws_cloudwatch_log_group.tokyo</text>
+</g>
+<g id="resource-6177735f636c6f756477617463685f6c6f675f67726f75702e756e6b6e6f776e-current" data-architecture-id="terraform:6177735f636c6f756477617463685f6c6f675f67726f75702e756e6b6e6f776e-current" data-qualified-address="module.root.aws_cloudwatch_log_group.unknown" data-terraform-address="aws_cloudwatch_log_group.unknown"><title>module.root.aws_cloudwatch_log_group.unknown — other</title>
+<rect x="60" y="1020" width="320" height="96" rx="8" fill="#fefce8" stroke="#854d0e" stroke-width="1.5" data-mode="managed"/>
+<text x="72" y="1040" font-size="11" fill="#854d0e">aws_cloudwatch_log_group · other</text>
+<use href="#planorama-icon-aws-monitoring" x="72" y="1048" width="24" height="24" aria-hidden="true"/><text x="104" y="1065" font-size="13" fill="#0f172a" xml:space="preserve">module.root.</text>
+<text x="104" y="1085" font-size="13" fill="#0f172a" xml:space="preserve">aws_cloudwatch_log_group.unknown</text>
+</g>
+<g id="resource-6177735f636c6f756477617463685f6c6f675f67726f75702e76697267696e6961-current" data-architecture-id="terraform:6177735f636c6f756477617463685f6c6f675f67726f75702e76697267696e6961-current" data-qualified-address="module.root.aws_cloudwatch_log_group.virginia" data-terraform-address="aws_cloudwatch_log_group.virginia"><title>module.root.aws_cloudwatch_log_group.virginia — create</title>
+<rect x="60" y="456" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
+<text x="72" y="476" font-size="11" fill="#047857">aws_cloudwatch_log_group · create</text>
+<use href="#planorama-icon-aws-monitoring" x="72" y="484" width="24" height="24" aria-hidden="true"/><text x="104" y="501" font-size="13" fill="#0f172a" xml:space="preserve">module.root.</text>
+<text x="104" y="521" font-size="13" fill="#0f172a" xml:space="preserve">aws_cloudwatch_log_group.virginia</text>
+</g>
+<g id="resource-646174612e6177735f636c6f756477617463685f6c6f675f67726f75702e6c6f6f6b7570-current" data-architecture-id="terraform:646174612e6177735f636c6f756477617463685f6c6f675f67726f75702e6c6f6f6b7570-current" data-qualified-address="module.root.data.aws_cloudwatch_log_group.lookup" data-terraform-address="data.aws_cloudwatch_log_group.lookup"><title>module.root.data.aws_cloudwatch_log_group.lookup — read</title>
+<rect x="60" y="592" width="320" height="96" rx="8" fill="#faf5ff" stroke="#7e22ce" stroke-width="1.5" data-mode="data" stroke-dasharray="6 4"/>
+<g data-external="true"><title>External resource: read by Terraform, not managed by this configuration</title><rect x="302" y="599" width="68" height="18" rx="4" fill="#e2e8f0"/><text x="308" y="612" font-size="10" fill="#334155">external</text></g><text x="72" y="612" font-size="11" fill="#7e22ce">aws_cloudwatch_lo… · read</text>
+<use href="#planorama-icon-aws-monitoring" x="72" y="620" width="24" height="24" aria-hidden="true"/><text x="104" y="637" font-size="13" fill="#0f172a" xml:space="preserve">module.root.data.</text>
+<text x="104" y="657" font-size="13" fill="#0f172a" xml:space="preserve">aws_cloudwatch_log_group.lookup</text>
+</g>
 </g>
 </g>
 </svg>

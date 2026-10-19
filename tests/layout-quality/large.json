@@ -163,6 +163,58 @@
         }
       },
       {
+        "id": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"aws_cloudwatch_log_group.app\",\"from_deposed_key\":null,\"to\":\"module.application.aws_ecs_service.app\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6177735f636c6f756477617463685f6c6f675f67726f75702e617070-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6563735f736572766963652e617070-current\",\"state\":null}}",
+        "identity": {
+          "directionality": "directed",
+          "kind": "dependency",
+          "provenance": [
+            {
+              "from": "aws_cloudwatch_log_group.app",
+              "from_deposed_key": null,
+              "to": "module.application.aws_ecs_service.app",
+              "to_deposed_key": null
+            }
+          ],
+          "relationship_resource": null,
+          "source": {
+            "id": "terraform:6177735f636c6f756477617463685f6c6f675f67726f75702e617070-current",
+            "state": null
+          },
+          "target": {
+            "id": "terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6563735f736572766963652e617070-current",
+            "state": null
+          }
+        },
+        "polyline": [
+          [
+            3872,
+            3628
+          ],
+          [
+            3586,
+            3628
+          ],
+          [
+            3586,
+            3659
+          ],
+          [
+            3300,
+            3659
+          ]
+        ],
+        "raw_polyline": {
+          "bends": 2,
+          "length": 603
+        },
+        "visible_border": {
+          "close_length": 0,
+          "minimum_deficit": 0,
+          "minimum_gap_within_8px": null,
+          "preferred_deficit": 0
+        }
+      },
+      {
         "id": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.application.aws_lb.app\",\"from_deposed_key\":null,\"to\":\"module.application.aws_lb_listener.http\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6c622e617070-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6c625f6c697374656e65722e68747470-current\",\"state\":null}}",
         "identity": {
           "directionality": "directed",
@@ -959,11 +1011,11 @@
             2844
           ],
           [
-            3838,
+            3814,
             2844
           ],
           [
-            3838,
+            3814,
             2405
           ],
           [
@@ -1112,11 +1164,11 @@
           ],
           [
             2171,
-            3456
+            3511
           ],
           [
             3854,
-            3456
+            3511
           ],
           [
             3854,
@@ -1134,7 +1186,7 @@
         "visible_border": {
           "close_length": 0,
           "minimum_deficit": 0,
-          "minimum_gap_within_8px": null,
+          "minimum_gap_within_8px": 8,
           "preferred_deficit": 0
         }
       },
@@ -1368,16 +1420,24 @@
         "polyline": [
           [
             3872,
-            3628
+            3448
+          ],
+          [
+            3586,
+            3448
+          ],
+          [
+            3586,
+            3597
           ],
           [
             3300,
-            3628
+            3597
           ]
         ],
         "raw_polyline": {
-          "bends": 0,
-          "length": 572
+          "bends": 2,
+          "length": 721
         },
         "visible_border": {
           "close_length": 0,
@@ -1412,14 +1472,14 @@
         "polyline": [
           [
             548,
-            2805
+            2985
           ],
           [
-            566,
-            2805
+            642,
+            2985
           ],
           [
-            566,
+            642,
             2793
           ],
           [
@@ -1429,7 +1489,7 @@
         ],
         "raw_polyline": {
           "bends": 2,
-          "length": 3336
+          "length": 3516
         },
         "visible_border": {
           "close_length": 0,
@@ -2485,11 +2545,11 @@
         "location": {
           "point": [
             582,
-            2793
+            2985
           ]
         },
         "peer": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.shared.data.aws_vpc.shared\",\"from_deposed_key\":null,\"to\":\"module.network.aws_vpc_peering_connection.shared\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e7368617265642e646174612e6177735f7670632e736861726564-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7670635f70656572696e675f636f6e6e656374696f6e2e736861726564-current\",\"state\":null}}",
-        "peer_segment": 2,
+        "peer_segment": 0,
         "segment": 1
       },
       {
@@ -2809,7 +2869,7 @@
         "edge": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.network.aws_subnet.private_a\",\"from_deposed_key\":null,\"to\":\"module.application.aws_autoscaling_group.app\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7375626e65742e707269766174655f61-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6175746f7363616c696e675f67726f75702e617070-current\",\"state\":null}}",
         "location": {
           "point": [
-            3838,
+            3814,
             2793
           ]
         },
@@ -2862,7 +2922,7 @@
         "location": {
           "point": [
             2614,
-            3456
+            3511
           ]
         },
         "peer": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.network.aws_subnet.private_b\",\"from_deposed_key\":null,\"to\":\"module.database.aws_db_subnet_group.database\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7375626e65742e707269766174655f62-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e64617461626173652e6177735f64625f7375626e65745f67726f75702e6461746162617365-current\",\"state\":null}}",
@@ -2875,7 +2935,7 @@
         "location": {
           "point": [
             2618,
-            3456
+            3511
           ]
         },
         "peer": "{\"directionality\":\"undirected\",\"kind\":\"association\",\"provenance\":[{\"deposed_key\":null,\"resource\":\"module.network.aws_route_table_association.private_b\"}],\"relationship_resource\":\"module.network.aws_route_table_association.private_b\",\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7375626e65742e707269766174655f62-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f726f7574655f7461626c652e70726976617465-current\",\"state\":null}}",
@@ -2888,7 +2948,7 @@
         "location": {
           "point": [
             2636,
-            3456
+            3511
           ]
         },
         "peer": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.network.aws_subnet.private_b\",\"from_deposed_key\":null,\"to\":\"module.network.aws_vpc_endpoint.logs\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7375626e65742e707269766174655f62-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7670635f656e64706f696e742e6c6f6773-current\",\"state\":null}}",
@@ -2901,10 +2961,23 @@
         "location": {
           "point": [
             2642,
-            3456
+            3511
           ]
         },
         "peer": "{\"directionality\":\"undirected\",\"kind\":\"connection\",\"provenance\":[{\"from\":\"module.network.aws_subnet.private_a\",\"from_deposed_key\":null,\"to\":\"module.application.aws_ecs_service.app\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7375626e65742e707269766174655f61-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6563735f736572766963652e617070-current\",\"state\":null}}",
+        "peer_segment": 1,
+        "segment": 1
+      },
+      {
+        "category": "crossing",
+        "edge": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.network.aws_subnet.private_b\",\"from_deposed_key\":null,\"to\":\"module.application.aws_autoscaling_group.app\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7375626e65742e707269766174655f62-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6175746f7363616c696e675f67726f75702e617070-current\",\"state\":null}}",
+        "location": {
+          "point": [
+            3586,
+            3511
+          ]
+        },
+        "peer": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.shared.data.aws_security_group.shared\",\"from_deposed_key\":null,\"to\":\"module.application.aws_ecs_service.app\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e7368617265642e646174612e6177735f73656375726974795f67726f75702e736861726564-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6563735f736572766963652e617070-current\",\"state\":null}}",
         "peer_segment": 1,
         "segment": 1
       },
@@ -2932,6 +3005,19 @@
         },
         "peer": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.network.aws_vpc.main\",\"from_deposed_key\":null,\"to\":\"module.network.aws_vpc_peering_connection.shared\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7670632e6d61696e-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7670635f70656572696e675f636f6e6e656374696f6e2e736861726564-current\",\"state\":null}}",
         "peer_segment": 2,
+        "segment": 2
+      },
+      {
+        "category": "crossing",
+        "edge": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.network.aws_subnet.private_b\",\"from_deposed_key\":null,\"to\":\"module.application.aws_autoscaling_group.app\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7375626e65742e707269766174655f62-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6175746f7363616c696e675f67726f75702e617070-current\",\"state\":null}}",
+        "location": {
+          "point": [
+            3854,
+            3448
+          ]
+        },
+        "peer": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.shared.data.aws_security_group.shared\",\"from_deposed_key\":null,\"to\":\"module.application.aws_ecs_service.app\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e7368617265642e646174612e6177735f73656375726974795f67726f75702e736861726564-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6563735f736572766963652e617070-current\",\"state\":null}}",
+        "peer_segment": 0,
         "segment": 2
       },
       {
@@ -3151,7 +3237,7 @@
     "limits": {
       "finding_limit": 20000,
       "findings_complete": true,
-      "pair_comparisons": 6648,
+      "pair_comparisons": 7118,
       "pair_limit": 2000000,
       "pair_metrics_complete": true,
       "unsupported_diagonal_segments": 0
@@ -3176,10 +3262,10 @@
         "cards": {
           "embedded_routes": 4,
           "logical_components": 1,
-          "logical_groups": 8,
-          "logical_resources": 9,
+          "logical_groups": 7,
+          "logical_resources": 8,
           "relationship_groups": 2,
-          "spatial": 29
+          "spatial": 30
         },
         "origin": [
           0,
@@ -3195,13 +3281,13 @@
     ],
     "summary": {
       "raw_polyline": {
-        "bends": 73,
-        "length": 40508
+        "bends": 77,
+        "length": 41440
       },
-      "routed_paths": 39,
+      "routed_paths": 40,
       "visible_border_minimum_deficit": 3,
       "visible_straight_sections": {
-        "crossings": 68,
+        "crossings": 70,
         "independent_overlap_length": 0,
         "parallel_deficit": 9550,
         "shared_trunk_length": 0

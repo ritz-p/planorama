@@ -94,7 +94,9 @@ Private CA certificate account uncertainty never inherits the issuer's scope.
 Installation and validation resources remain Logical. Detailed proof and fallback
 rules are in [AWS relationships](aws.md#aws-private-ca).
 The audit above remains a historical inventory of defaults at its recorded commit;
-other service migrations are pending.
+CloudWatch Log Groups are independent cards and preserve ordinary consumer
+reference/dependency navigation across spatial endpoints without inferring logging
+delivery or ownership. Other service migrations are pending.
 
 Measure headers, service icons, references, import/move badges and wrapped child
 addresses before packing. Reserve parent height and actual child bounds/ports;

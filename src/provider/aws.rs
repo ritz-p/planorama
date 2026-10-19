@@ -30,6 +30,10 @@ mod athena_tests;
 mod private_ca_tests;
 
 #[cfg(test)]
+#[path = "../../tests/unit/semantic/log_groups.rs"]
+mod log_group_tests;
+
+#[cfg(test)]
 #[path = "../../tests/unit/resource_support.rs"]
 mod resource_support;
 pub(super) use scope::scope;
@@ -86,7 +90,6 @@ pub(super) fn placement(resource_type: &str) -> crate::model::Placement {
         | "aws_iam_policy"
         | "aws_iam_role_policy"
         | "aws_iam_instance_profile"
-        | "aws_cloudwatch_log_group"
         | "aws_cloudwatch_metric_alarm"
         | "aws_autoscaling_policy"
         | "aws_ami"

@@ -241,6 +241,17 @@ pub(super) fn verified(raw: &Input, reference: &AttributeReference) -> bool {
 }
 
 pub(super) fn present(raw: &Input, graph: &mut Graph) {
+    for node in &mut graph.nodes {
+        for reference in &mut node.references {
+            reference.show_spatial |= reference.targets.iter().any(|target| {
+                raw.nodes.iter().any(|endpoint| {
+                    endpoint.provider.is_aws()
+                        && endpoint.resource_type == "aws_cloudwatch_log_group"
+                        && endpoint.entity.provenance.contains(&target.id)
+                })
+            });
+        }
+    }
     for reference in &raw.attributes {
         let node = &raw.nodes[reference.target];
         if !node.provider.is_aws() {

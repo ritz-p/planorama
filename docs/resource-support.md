@@ -90,7 +90,7 @@ Provider source: `registry.terraform.io/hashicorp/aws`.
 | `aws_cloudwatch_event_bus` | Node / Node | Spatial / Spatial | EventBridge / Amazon EventBridge | Regional (conditional) | [aws/messaging.rs](../src/provider/aws/messaging.rs) |
 | `aws_cloudwatch_event_rule` | Node / Node | Spatial / Spatial | EventBridge / Amazon EventBridge | Regional (conditional) | [aws/messaging.rs](../src/provider/aws/messaging.rs) |
 | `aws_cloudwatch_event_target` | Association / Association | Logical / Logical | EventBridge / Amazon EventBridge | Regional (conditional) | [aws.rs](../src/provider/aws.rs), [aws/messaging.rs](../src/provider/aws/messaging.rs) |
-| `aws_cloudwatch_log_group` | Node / Node | Logical / Logical | Monitoring / Amazon CloudWatch | Regional (conditional) | [aws.rs](../src/provider/aws.rs) |
+| `aws_cloudwatch_log_group` | Node / Node | Spatial / Spatial | Monitoring / Amazon CloudWatch | Regional (conditional) | [aws/service_references.rs](../src/provider/aws/service_references.rs) |
 | `aws_cloudwatch_log_groups` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Monitoring / Amazon CloudWatch | Unknown | — |
 | `aws_cloudwatch_metric_alarm` | Controller / Controller | Logical / Logical | Monitoring / Amazon CloudWatch | Regional (conditional) | [aws.rs](../src/provider/aws.rs), [aws/diagnostics.rs](../src/provider/aws/diagnostics.rs), [aws/monitoring.rs](../src/provider/aws/monitoring.rs) |
 | `aws_customer_gateway` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Gateway / Amazon VPC | Unknown | — |
