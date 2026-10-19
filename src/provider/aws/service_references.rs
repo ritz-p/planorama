@@ -11,6 +11,7 @@ pub(super) mod tests;
 
 fn label(resource: &str, attribute: &str) -> Option<&'static str> {
     match (resource, attribute) {
+        ("aws_ecs_service", "cluster") => Some("Cluster membership"),
         ("aws_acmpca_certificate" | "aws_acm_certificate", "certificate_authority_arn") => {
             Some("Signing CA reference")
         }
@@ -53,6 +54,7 @@ fn label(resource: &str, attribute: &str) -> Option<&'static str> {
 
 fn source_fields(resource: &str, attribute: &str, source: &str) -> &'static [&'static str] {
     match (resource, attribute, source) {
+        ("aws_ecs_service", "cluster", "aws_ecs_cluster") => &["id", "arn", "name"],
         (
             "aws_acmpca_certificate"
             | "aws_acm_certificate"
@@ -129,6 +131,18 @@ fn source_fields(resource: &str, attribute: &str, source: &str) -> &'static [&'s
     }
 }
 
+fn cluster_binding_matches(
+    consumer: Option<&crate::model::ProviderConfiguration>,
+    endpoint: Option<&crate::model::ProviderConfiguration>,
+    consumer_region: Option<&crate::model::RegionScope>,
+    endpoint_region: Option<&crate::model::RegionScope>,
+) -> bool {
+    consumer.is_some_and(|config| {
+        !config.account_conflict && config.region.is_some() && endpoint == Some(config)
+    }) && consumer_region.is_some()
+        && consumer_region == endpoint_region
+}
+
 pub(super) fn scalar<'a>(value: &'a Value, unknown: &Value, path: &[&str]) -> Option<&'a str> {
     if unknown == &Value::Bool(true) {
         return None;
@@ -196,6 +210,18 @@ pub(crate) fn annotate(
                 && actual.is_some()
                 && actual == scalar(target, target_unknown, &[*field])
         });
+        if node.resource_type == "aws_ecs_service" && reference.attribute == "cluster" {
+            reference.service_reference_verified &= cluster_binding_matches(
+                node.provider_configuration.as_ref(),
+                endpoint.provider_configuration.as_ref(),
+                super::scope::scope(node)
+                    .as_ref()
+                    .and_then(|s| s.region.as_ref()),
+                super::scope::scope(endpoint)
+                    .as_ref()
+                    .and_then(|s| s.region.as_ref()),
+            );
+        }
         if node.resource_type == "aws_glue_catalog_table" && reference.attribute == "database_name"
         {
             reference.service_reference_verified &= super::glue::catalog_verified(
@@ -237,14 +263,38 @@ pub(crate) fn annotate(
 }
 
 pub(super) fn verified(raw: &Input, reference: &AttributeReference) -> bool {
-    reference.service_reference_verified && super::iam::bindings_compatible(&raw.nodes, reference)
+    reference.service_reference_verified
+        && super::iam::bindings_compatible(&raw.nodes, reference)
+        && (raw.nodes[reference.target].resource_type != "aws_ecs_service"
+            || reference.sources.iter().all(|&source| {
+                cluster_binding_matches(
+                    raw.nodes[reference.target].provider_configuration.as_ref(),
+                    raw.nodes[source].provider_configuration.as_ref(),
+                    raw.nodes[reference.target]
+                        .entity
+                        .scope
+                        .as_ref()
+                        .and_then(|s| s.region.as_ref()),
+                    raw.nodes[source]
+                        .entity
+                        .scope
+                        .as_ref()
+                        .and_then(|s| s.region.as_ref()),
+                )
+            }))
 }
 
 pub(super) fn present(raw: &Input, graph: &mut Graph) {
     let spatial_targets: std::collections::BTreeSet<_> = raw
         .nodes
         .iter()
-        .filter(|node| node.provider.is_aws() && node.resource_type == "aws_cloudwatch_log_group")
+        .filter(|node| {
+            node.provider.is_aws()
+                && matches!(
+                    node.resource_type.as_str(),
+                    "aws_cloudwatch_log_group" | "aws_ecs_cluster"
+                )
+        })
         .flat_map(|node| &node.entity.provenance)
         .collect();
     for node in &mut graph.nodes {
@@ -298,7 +348,9 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
                 kind: if verified
                     && matches!(
                         node.resource_type.as_str(),
-                        "aws_iam_group_membership" | "aws_iam_user_group_membership"
+                        "aws_iam_group_membership"
+                            | "aws_iam_user_group_membership"
+                            | "aws_ecs_service"
                     ) {
                     crate::model::ReferenceKind::Membership
                 } else {

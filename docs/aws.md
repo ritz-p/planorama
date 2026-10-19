@@ -754,6 +754,33 @@ the omitted source identities as provenance, without creating cards or paths.
 Cached data resources in prior state are
 included when still present in configuration. See [data.svg](../examples/data.svg).
 
+## ECS Cluster membership
+
+`aws_ecs_cluster` is an independent regional card for managed and data resources.
+It retains its own proven deployment scope, or unknown scope, and never becomes a
+VPC/Subnet container or a presentation owner for Services. `aws_ecs_task_definition`
+remains Logical. Service placement still uses `network_configuration.subnets`;
+Services in different VPCs may reference the same Cluster without moving either
+the Cluster or another Service.
+
+The service-reference proof recognizes Service `cluster` references to one current
+managed Cluster's `id`, `arn` or `name`. It requires complete explicit unambiguous
+provenance, known equal planned values, non-deleted endpoints and identical provider
+configuration with a known region and no account conflict. Only the proof is kept;
+names, ARNs and task-definition bodies are not output. A verified `Cluster membership`
+row uses membership metadata and links to the Cluster. It adds no containment,
+ownership or runtime-communication edge. Existing dependency arrows retain their
+Terraform direction, Cluster → Service.
+
+Unproven membership remains unresolved while ordinary `Cluster` references retain
+their original evidence and navigation. Tags and `depends_on` remain ordinary
+references/dependencies. Filtering either endpoint preserves the selected resource;
+filtered Cluster links show Unavailable. Data, unknown scope, different provider
+bindings and deposed objects do not acquire a current membership proof. State-local
+identities never join equally named Clusters across states.
+The [ECS example](../examples/ecs-clusters.svg) includes shared membership across
+two VPCs, a multi-subnet Service, data lookup and an unknown-scope Cluster.
+
 ## Containment
 
 Listener cards prefer nearby positions to their uniquely referenced managed LB.

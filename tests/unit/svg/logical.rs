@@ -106,7 +106,7 @@ fn action_sections_keep_one_type_card_canonical_colors_counts_and_stable_rows() 
 
 fn input() -> serde_json::Value {
     serde_json::json!({"format_version":"1.2", "resource_changes":[
-        {"address":"aws_ecs_cluster.app", "type":"aws_ecs_cluster", "previous_address":"aws_ecs_cluster.old", "change":{"actions":["update"],"importing":{"id":"PRIVATE_IMPORT"},"after":{"secret":"PRIVATE_VALUE"}}},
+        {"address":"aws_acm_certificate_validation.app", "type":"aws_acm_certificate_validation", "previous_address":"aws_acm_certificate_validation.old", "change":{"actions":["update"],"importing":{"id":"PRIVATE_IMPORT"},"after":{"secret":"PRIVATE_VALUE"}}},
         {"address":"aws_ecs_task_definition.app", "type":"aws_ecs_task_definition"},
         {"address":"aws_ecs_service.app", "type":"aws_ecs_service"},
         {"address":"aws_iam_role.app", "type":"aws_iam_role"},
@@ -115,11 +115,11 @@ fn input() -> serde_json::Value {
         {"address":"data.aws_ami.app", "type":"aws_ami", "mode":"data"},
         {"address":"custom_resource.app", "type":"custom_resource"}
     ],"configuration":{"root_module":{"resources":[
-        {"address":"aws_ecs_service.app", "expressions":{"cluster":{"references":["aws_ecs_cluster.app.id"]},"task_definition":{"references":["aws_ecs_task_definition.app.arn"]}}},
+        {"address":"aws_ecs_service.app", "expressions":{"cluster":{"references":["aws_acm_certificate_validation.app.id"]},"task_definition":{"references":["aws_ecs_task_definition.app.arn"]}}},
         {"address":"aws_iam_instance_profile.app", "expressions":{"role":{"references":["aws_iam_role.app.name"]}}},
-        {"address":"aws_instance.app", "depends_on":["aws_ecs_cluster.app"], "expressions":{"iam_instance_profile":{"references":["aws_iam_instance_profile.app.name"]},"ami":{"references":["data.aws_ami.app.id"]},"unknown":{"references":["aws_iam_role.missing.arn"]}}},
+        {"address":"aws_instance.app", "depends_on":["aws_acm_certificate_validation.app"], "expressions":{"iam_instance_profile":{"references":["aws_iam_instance_profile.app.name"]},"ami":{"references":["data.aws_ami.app.id"]},"unknown":{"references":["aws_iam_role.missing.arn"]}}},
         {"address":"aws_ecs_task_definition.app", "expressions":{"configuration":{"references":["aws_instance.app.id"]}}},
-        {"address":"aws_ecs_cluster.app", "expressions":{"name":{"constant_value":"example-cluster"}}}
+        {"address":"aws_acm_certificate_validation.app", "expressions":{"name":{"constant_value":"example-cluster"}}}
     ]}}})
 }
 
@@ -302,7 +302,7 @@ fn logical_projection_retains_graph_identity_references_and_operations() {
         graph
             .nodes
             .iter()
-            .find(|n| n.address == "aws_ecs_cluster.app")
+            .find(|n| n.address == "aws_acm_certificate_validation.app")
             .unwrap()
             .references
             .is_empty()
@@ -388,11 +388,13 @@ fn logical_projection_retains_graph_identity_references_and_operations() {
     );
     let cluster = doc
         .descendants()
-        .find(|n| n.attribute("data-terraform-address") == Some("aws_ecs_cluster.app"))
+        .find(|n| {
+            n.attribute("data-terraform-address") == Some("aws_acm_certificate_validation.app")
+        })
         .unwrap();
     assert_eq!(
         cluster.attribute("data-previous-address"),
-        Some("aws_ecs_cluster.old")
+        Some("aws_acm_certificate_validation.old")
     );
     assert_eq!(cluster.attribute("data-import"), Some("true"));
     let badges: Vec<_> = cluster
@@ -432,7 +434,7 @@ fn logical_projection_retains_graph_identity_references_and_operations() {
         n.has_tag_name("title")
             && n.text()
                 .unwrap()
-                .starts_with("module.root.aws_ecs_cluster.app")
+                .starts_with("module.root.aws_acm_certificate_validation.app")
     }));
     assert!(
         cluster
@@ -466,6 +468,8 @@ fn logical_classification_is_explicit_and_provider_aware() {
         ("aws_cloudfront_distribution", Placement::Spatial),
         ("aws_lb", Placement::Spatial),
         ("aws_ecs_service", Placement::Spatial),
+        ("aws_ecs_cluster", Placement::Spatial),
+        ("aws_ecs_task_definition", Placement::Logical),
         ("aws_future_resource", Placement::Unresolved),
         ("aws_cloudwatch_log_group", Placement::Spatial),
         ("aws_cloudwatch_metric_alarm", Placement::Logical),
@@ -484,7 +488,7 @@ fn logical_classification_is_explicit_and_provider_aware() {
         graph
             .nodes
             .iter()
-            .find(|n| n.address == "aws_ecs_cluster.app")
+            .find(|n| n.address == "aws_acm_certificate_validation.app")
             .unwrap()
             .placement,
         Placement::Unresolved
@@ -673,7 +677,10 @@ fn logical_groups_use_canonical_provider_type_and_mode_without_combining_actions
 #[test]
 fn logical_focus_and_changes_preserve_selected_resources_and_reference_evidence() {
     let graph = semantic::transform(&plan::parse(&input().to_string()).unwrap());
-    for (focus, count) in [("aws_instance.app", 0), ("aws_ecs_cluster.app", 1)] {
+    for (focus, count) in [
+        ("aws_instance.app", 0),
+        ("aws_acm_certificate_validation.app", 1),
+    ] {
         let selected = view::single(
             &graph,
             &view::Options {
@@ -703,7 +710,7 @@ fn logical_focus_and_changes_preserve_selected_resources_and_reference_evidence(
         changed
             .nodes
             .iter()
-            .any(|n| n.address == "aws_ecs_cluster.app")
+            .any(|n| n.address == "aws_acm_certificate_validation.app")
     );
     let output = svg::render(&changed, &Layout::new(&changed));
     let doc = roxmltree::Document::parse(&output).unwrap();
@@ -815,7 +822,7 @@ fn named_states_keep_logical_ids_separate_and_cross_state_provenance_without_rou
         relationships: vec![CrossStateEdge {
             from: Endpoint {
                 state: first,
-                address: "aws_ecs_cluster.app".into(),
+                address: "aws_acm_certificate_validation.app".into(),
             },
             to: Endpoint {
                 state: second,
@@ -850,31 +857,29 @@ fn named_states_keep_logical_ids_separate_and_cross_state_provenance_without_rou
     }
     let ids: Vec<_> = doc
         .descendants()
-        .filter(|n| n.attribute("data-terraform-address") == Some("aws_ecs_cluster.app"))
+        .filter(|n| {
+            n.attribute("data-terraform-address") == Some("aws_acm_certificate_validation.app")
+        })
         .map(|n| n.attribute("id").unwrap())
         .collect();
     assert_eq!(ids.len(), 2);
     assert_ne!(ids[0], ids[1]);
-    for card in doc
-        .descendants()
-        .filter(|n| n.attribute("data-terraform-address") == Some("aws_ecs_cluster.app"))
-    {
+    for card in doc.descendants().filter(|n| {
+        n.attribute("data-terraform-address") == Some("aws_acm_certificate_validation.app")
+    }) {
         assert_eq!(
             card.attribute("data-previous-address"),
-            Some("aws_ecs_cluster.old")
+            Some("aws_acm_certificate_validation.old")
         );
-        assert!(
-            card.children()
-                .any(|n| n.has_tag_name("text")
-                    && n.text() == Some("Moved from: aws_ecs_cluster.old"))
-        );
+        assert!(card.children().any(|n| n.has_tag_name("text")
+            && n.text() == Some("Moved from: aws_acm_certificate_validation.old")));
         assert!(
             card.children()
                 .find(|n| n.has_tag_name("title"))
                 .unwrap()
                 .text()
                 .unwrap()
-                .contains("moved from: aws_ecs_cluster.old")
+                .contains("moved from: aws_acm_certificate_validation.old")
         );
     }
     assert!(output.contains("cross-state-relationships"));
@@ -896,7 +901,7 @@ fn named_states_keep_logical_ids_separate_and_cross_state_provenance_without_rou
     assert_eq!(remote_metadata["targets"][0]["state"], "first");
     assert_eq!(
         remote_metadata["targets"][0]["address"],
-        "aws_ecs_cluster.app"
+        "aws_acm_certificate_validation.app"
     );
     assert!(
         references
