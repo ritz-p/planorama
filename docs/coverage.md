@@ -10,7 +10,7 @@ Terraform data addresses include the `data.` prefix.
 
 Input resources are distinct parsed Terraform instances. Selected resources are
 the intersection of input identities and node or lowered relationship provenance.
-Logical rows, embedded routes, RDS cluster members and EFS access points count once. Components and annotation/group
+Logical rows and embedded resource children count once. Components and annotation/group
 cards add no resources. Input minus selected counts resources outside the effective
 view, including semantic metadata suppression and CLI selection. It does not mean
 the resource is absent from Terraform. Module and focus selection retain required context; changed-only

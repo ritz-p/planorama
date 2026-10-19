@@ -7,7 +7,7 @@ semantic membership and presentation ownership are independent.
 
 ## Audit of the 42 AWS Logical types
 
-The audit uses `provider/aws.rs` at `ac700bb`. Every type below currently defaults
+The audit uses `provider/aws.rs` at `ac700bb`. Every type below then defaulted
 to Logical for managed and data resources. Names in the table omit `aws_`.
 
 | Types | Proposed treatment and reason |
@@ -81,8 +81,11 @@ resolves Independent, Logical or Embedded after selection, rejecting ambiguous
 identity, self/cyclic/nested owners and incompatible member scopes. Route-specific
 proof remains in `RoutePresentation`; both paths share effective owner lookup.
 EFS Access Points now use this model with verified `file_system_id` service
-references and independent Spatial fallback. The audit above remains a historical
-inventory of defaults at its recorded commit; other service migrations are pending.
+references and independent Spatial fallback. KMS Keys are independent cards;
+Aliases reuse the same presentation model with verified `target_key_id` references
+and compatible scope. Keys never become children of encryption consumers.
+The audit above remains a historical inventory of defaults at its recorded commit;
+other service migrations are pending.
 
 Measure headers, service icons, references, import/move badges and wrapped child
 addresses before packing. Reserve parent height and actual child bounds/ports;

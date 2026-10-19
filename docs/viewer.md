@@ -43,7 +43,7 @@ removed from Terraform or the diagram. **Reset search and filters** clears all
 text and facets and focuses search; Clear selection/Escape retains them. Facet
 changes reset transient impact and diagnostic overlays like text search does.
 Selecting a result or diagram resource reveals its individual stable target,
-including nested logical-resource rows, embedded Route cards, RDS cluster members and EFS access points.
+including nested logical-resource rows, embedded Route cards and generic member cards.
 Lowered association resources use their visible Relationship Resources entry;
 their selection identifies the original relationship endpoints and paths.
 
