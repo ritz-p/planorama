@@ -269,12 +269,23 @@ The installed schema and Terraform 1.9.8 fixture plan confirmed the value fields
 and ECS reference shape. Regenerate HTML in Docker with
 `cargo run --locked -- tests/fixtures/ssm-plan.json --format html -o examples/ssm.html`.
 
-Secrets Manager Secrets and Versions are separate regional logical resources,
-including data lookups, with the AWS Secrets Manager icon. `Version secret` requires
+Secrets Manager Secrets are independent regional cards, including separate data
+lookups, with the AWS Secrets Manager icon. `Version secret` requires
 an explicit `secret_id` reference from a managed or data Version to a managed
 Secret's `id` or `arn`, matching known planned values. Name-based references remain
 ordinary Terraform references because names resolve in the consumer's account and
 region. Versions retain their own identities and actions.
+Managed and data Versions become measured children only of one verified managed
+Secret with compatible proven scope. Unknown, external, ambiguous, filtered,
+data or deposed Secrets leave Versions as independent cards; deposed/deleted
+Versions also remain independent. A shared nonconflicting provider configuration
+and known region can prove compatibility without inferring an account.
+Direct Version focus or `--modules` selection keeps the selected Version without
+restoring its Secret; Secret-only selection does not restore excluded Versions.
+Multiple Versions remain distinct children with their own bounds, links and
+coverage counts. Shared consumers never own the Secret. Cards retain their own
+proven region or unknown scope; display ownership adds no containment or consumer
+association.
 Equal names never merge managed/data resources. Payloads, secret strings/binary,
 rotation configuration and container environment values are not retained or output.
 See [SVG](../examples/secrets-manager.svg) / [HTML](../examples/secrets-manager.html).
