@@ -125,8 +125,9 @@ fn input() -> serde_json::Value {
 
 #[test]
 fn scope_labels_preserve_rows_measurements_and_html_metadata() {
-    let input = include_str!("../../fixtures/logical-regions-plan.json");
-    let graph = semantic::transform(&plan::parse(input).unwrap());
+    let input = include_str!("../../fixtures/logical-regions-plan.json")
+        .replace("aws_cloudwatch_log_group", "aws_ssm_parameter");
+    let graph = semantic::transform(&plan::parse(&input).unwrap());
     let original = graph.clone();
     for options in [
         view::Options::default(),
@@ -135,7 +136,7 @@ fn scope_labels_preserve_rows_measurements_and_html_metadata() {
             ..Default::default()
         },
         view::Options {
-            focus: Some("aws_cloudwatch_log_group.virginia".into()),
+            focus: Some("aws_ssm_parameter.virginia".into()),
             depth: Some(0),
             ..Default::default()
         },
@@ -154,9 +155,10 @@ fn scope_labels_preserve_rows_measurements_and_html_metadata() {
                 "Region: unknown"
             } else {
                 match node.address.as_str() {
-                    "aws_cloudwatch_log_group.tokyo" => "Region: ap-northeast-1",
-                    "aws_cloudwatch_log_group.virginia"
-                    | "data.aws_cloudwatch_log_group.lookup" => "Region: us-east-1",
+                    "aws_ssm_parameter.tokyo" => "Region: ap-northeast-1",
+                    "aws_ssm_parameter.virginia" | "data.aws_ssm_parameter.lookup" => {
+                        "Region: us-east-1"
+                    }
                     "aws_iam_policy.access" => "AWS Global",
                     _ => "Region: unknown",
                 }
@@ -465,7 +467,7 @@ fn logical_classification_is_explicit_and_provider_aware() {
         ("aws_lb", Placement::Spatial),
         ("aws_ecs_service", Placement::Spatial),
         ("aws_future_resource", Placement::Unresolved),
-        ("aws_cloudwatch_log_group", Placement::Logical),
+        ("aws_cloudwatch_log_group", Placement::Spatial),
         ("aws_cloudwatch_metric_alarm", Placement::Logical),
         ("aws_cloudwatch_dashboard", Placement::Unresolved),
         ("aws_lb_listener_rule", Placement::Spatial),

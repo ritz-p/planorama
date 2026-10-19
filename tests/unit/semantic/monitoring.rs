@@ -75,14 +75,16 @@ fn monitoring_requires_verified_values_and_preserves_native_edges() {
             !matches!(case, 0 | 10)
         );
         let layout = Layout::new(&graph);
-        assert!(layout.paths.iter().all(Vec::is_empty));
+        assert!(graph.edges.iter().zip(&layout.paths).all(|(edge, path)| {
+            path.is_empty() || graph.nodes[edge.from].resource_type == "aws_cloudwatch_log_group"
+        }));
         assert_eq!(
             graph
                 .nodes
                 .iter()
                 .filter(|n| n.placement == Placement::Logical)
                 .count(),
-            2
+            1
         );
         let output = svg::render(&graph, &layout);
         assert!(!output.contains("PRIVATE_"));
@@ -205,7 +207,7 @@ fn multiple_alarms_consumers_and_states_keep_distinct_identities() {
         doc.descendants()
             .filter(|n| n.attribute("data-placement") == Some("logical"))
             .count(),
-        6
+        4
     );
     for href in doc.descendants().filter_map(|n| n.attribute("href")) {
         assert!(

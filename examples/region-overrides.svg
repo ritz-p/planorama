@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="1214" viewBox="0 0 1100 1214" role="img" aria-labelledby="title description">
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="1024" viewBox="0 0 1100 1024" role="img" aria-labelledby="title description">
 <title id="title">Terraform plan</title>
-<desc id="description">4 resources (3 spatial cards, 1 logical resources in 1 group cards) · 1 relationships Thin solid: dependency. Dashed: association. Thick dotted: connection. Nested boxes: containment. Edge color preserves the Terraform action when available.</desc>
+<desc id="description">4 resources (4 cards), 1 relationships. Lines show architectural relationships. Edge titles identify the relationship kind and Terraform change. Thin solid: dependency. Dashed: association. Thick dotted: connection. Nested boxes: containment. Edge color preserves the Terraform action when available.</desc>
 <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/></marker><metadata id="planorama-icons-license">AWS Architecture Icons, release 07312026.
 Copyright Amazon Web Services, Inc. or its affiliates. All rights reserved.
 AWS service names and artwork are trademarks or other proprietary assets of AWS.
@@ -29,7 +29,7 @@ No AWS endorsement is implied. Consult the AWS terms for other uses.
 <rect width="100%" height="100%" fill="#ffffff"/>
 <g font-family="ui-monospace, SFMono-Regular, Consolas, monospace">
 <text x="40" y="45" font-size="25" font-weight="700" fill="#0f172a">Terraform plan</text>
-<text x="40" y="73" font-size="13" fill="#475569">4 resources (3 spatial cards, 1 logical resources in 1 group cards) · 1 relationships</text>
+<text x="40" y="73" font-size="13" fill="#475569">4 resources (4 cards) · 1 relationships</text>
 <metadata id="architecture-entities">[{&quot;id&quot;:&quot;terraform:6177735f636c6f756477617463685f6c6f675f67726f75702e7061726973-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_cloudwatch_log_group.paris&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:6177735f7375626e65742e7061726973-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_subnet.paris&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:6177735f7670632e64656661756c74-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_vpc.default&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:6177735f7670632e7061726973-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_vpc.paris&quot;,&quot;deposed_key&quot;:null}]}]</metadata>
 <metadata id="architecture-relationships">[{&quot;directionality&quot;:&quot;directed&quot;,&quot;from&quot;:&quot;terraform:6177735f7670632e7061726973-current&quot;,&quot;inferred&quot;:true,&quot;kind&quot;:&quot;containment&quot;,&quot;provenance&quot;:[{&quot;from&quot;:&quot;aws_vpc.paris&quot;,&quot;from_deposed_key&quot;:null,&quot;kind&quot;:&quot;reference&quot;,&quot;to&quot;:&quot;aws_subnet.paris&quot;,&quot;to_deposed_key&quot;:null}],&quot;to&quot;:&quot;terraform:6177735f7375626e65742e7061726973-current&quot;}]</metadata>
 <metadata id="resource-references">[{&quot;attribute&quot;:&quot;vpc_id&quot;,&quot;complete&quot;:true,&quot;consumer&quot;:&quot;terraform:6177735f7375626e65742e7061726973-current&quot;,&quot;dependency&quot;:false,&quot;issues&quot;:[],&quot;kind&quot;:&quot;configured&quot;,&quot;targets&quot;:[{&quot;address&quot;:&quot;aws_vpc.paris&quot;,&quot;deposed_key&quot;:null}]}]</metadata>
@@ -43,35 +43,29 @@ No AWS endorsement is implied. Consult the AWS terms for other uses.
 <g id="plan-status" data-plan-applyable="true" data-plan-complete="true" data-plan-errored="false">
 <text x="40" y="137" font-size="12" fill="#475569">Plan status: applyable: true complete: true errored: false</text>
 </g>
-<g data-annotation-area="true">
-<g data-annotation-card="true" transform="translate(40 160)"><rect width="400" height="302" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-annotation-section="Logical Resources"><rect width="400" height="302" rx="12" fill="#ecfeff" stroke="#0891b2"/><text x="16" y="28" font-size="15" font-weight="700" fill="#0e7490">Logical Resources</text><g data-annotation-card="true" transform="translate(16 48)"><rect width="368" height="238" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-logical-group="true" data-provider-source="registry.terraform.io/hashicorp/aws" data-resource-type="aws_cloudwatch_log_group" data-mode="managed"><title>aws_cloudwatch_log_group · managed — registry.terraform.io/hashicorp/aws</title><text x="16" y="28" font-size="13" font-weight="700" fill="#0e7490">aws_cloudwatch_log_group · managed</text>
-<text x="16" y="48" font-size="11" fill="#64748b">registry.terraform.io/hashicorp/aws</text>
-<g data-action-section="create"><rect x="8" y="66" width="352" height="144" rx="8" fill="none" stroke="#047857" stroke-width="2"/><title>Create (1)</title><text x="16" y="90" font-size="13" font-weight="700" fill="#047857">Create (1)</text><g id="resource-6177735f636c6f756477617463685f6c6f675f67726f75702e7061726973-current" data-architecture-id="terraform:6177735f636c6f756477617463685f6c6f675f67726f75702e7061726973-current" data-entity-kind="terraform" data-placement="logical" data-terraform-address="aws_cloudwatch_log_group.paris" data-qualified-address="module.root.aws_cloudwatch_log_group.paris" data-mode="managed" transform="translate(0 98)"><title>module.root.aws_cloudwatch_log_group.paris — create</title><use href="#planorama-icon-aws-monitoring" x="328" y="8" width="24" height="24" aria-hidden="true"/><text x="16" y="28" font-size="12" fill="#334155" xml:space="preserve" font-weight="700">module.root.aws_cloudwatch_log_group.</text>
-<text x="16" y="48" font-size="12" fill="#334155" xml:space="preserve" font-weight="700">paris</text>
-<text x="16" y="68" font-size="12" fill="#334155" xml:space="preserve">create</text>
-<text x="16" y="88" font-size="12" fill="#334155" xml:space="preserve">Region: eu-west-3</text>
-<line data-resource-underline="true" x1="16" y1="96" x2="352" y2="96" stroke="#047857" stroke-width="2"/></g>
-</g>
-</g>
-</g>
-</g></g>
-</g>
-<g data-architecture="true" transform="translate(0 326)">
-<g data-deployment-scope="true" data-scope-provider="AWS" data-region="eu-west-3"><rect x="40" y="160" width="520" height="372" rx="14" fill="#f8fafc" stroke="#94a3b8" stroke-dasharray="9 5"/><text x="56" y="185" font-size="15" font-weight="700" fill="#334155">AWS eu-west-3</text></g>
-<g data-deployment-scope="true" data-scope-provider="AWS" data-region="us-east-1"><rect x="40" y="572" width="440" height="196" rx="14" fill="#f8fafc" stroke="#94a3b8" stroke-dasharray="9 5"/><text x="56" y="597" font-size="15" font-weight="700" fill="#334155">AWS us-east-1</text></g>
-<g data-container="resource-6177735f7670632e64656661756c74-current"><title>aws_vpc.default</title><rect x="60" y="612" width="400" height="136" rx="12" fill="#ecfdf5" stroke="#047857" stroke-width="2" data-mode="managed"/></g>
+<g data-architecture="true" transform="translate(0 0)">
+<g data-deployment-scope="true" data-scope-provider="AWS" data-region="eu-west-3"><rect x="40" y="160" width="520" height="508" rx="14" fill="#f8fafc" stroke="#94a3b8" stroke-dasharray="9 5"/><text x="56" y="185" font-size="15" font-weight="700" fill="#334155">AWS eu-west-3</text></g>
+<g data-deployment-scope="true" data-scope-provider="AWS" data-region="us-east-1"><rect x="40" y="708" width="440" height="196" rx="14" fill="#f8fafc" stroke="#94a3b8" stroke-dasharray="9 5"/><text x="56" y="733" font-size="15" font-weight="700" fill="#334155">AWS us-east-1</text></g>
+<g data-container="resource-6177735f7670632e64656661756c74-current"><title>aws_vpc.default</title><rect x="60" y="748" width="400" height="136" rx="12" fill="#ecfdf5" stroke="#047857" stroke-width="2" data-mode="managed"/></g>
 <g data-container="resource-6177735f7670632e7061726973-current"><title>aws_vpc.paris</title><rect x="60" y="200" width="480" height="312" rx="12" fill="#ecfdf5" stroke="#047857" stroke-width="2" data-mode="managed"/></g>
 <g data-container="resource-6177735f7375626e65742e7061726973-current"><title>aws_subnet.paris</title><rect x="100" y="336" width="400" height="136" rx="12" fill="#d1fae5" stroke="#047857" stroke-width="2" data-mode="managed"/></g>
 <g data-edge-kind="containment" data-source="resource-6177735f7670632e7061726973-current" data-target="resource-6177735f7375626e65742e7061726973-current"><title>aws_vpc.paris → aws_subnet.paris (containment)</title></g>
+<g id="resource-6177735f636c6f756477617463685f6c6f675f67726f75702e7061726973-current" data-architecture-id="terraform:6177735f636c6f756477617463685f6c6f675f67726f75702e7061726973-current" data-qualified-address="module.root.aws_cloudwatch_log_group.paris" data-terraform-address="aws_cloudwatch_log_group.paris"><title>module.root.aws_cloudwatch_log_group.paris — create</title>
+<rect x="60" y="552" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
+<text x="72" y="572" font-size="11" fill="#047857">aws_cloudwatch_log_group · create</text>
+<use href="#planorama-icon-aws-monitoring" x="72" y="580" width="24" height="24" aria-hidden="true"/><text x="104" y="597" font-size="13" fill="#0f172a" xml:space="preserve">module.root.</text>
+<text x="104" y="617" font-size="13" fill="#0f172a" xml:space="preserve">aws_cloudwatch_log_group.paris</text>
+<text x="72" y="636" font-size="10" fill="#64748b"><title>root</title>root</text>
+</g>
 <g id="resource-6177735f7375626e65742e7061726973-current" data-architecture-id="terraform:6177735f7375626e65742e7061726973-current" data-qualified-address="module.root.aws_subnet.paris" data-terraform-address="aws_subnet.paris"><title>module.root.aws_subnet.paris — create</title>
 <text x="112" y="356" font-size="11" fill="#047857">aws_subnet · create</text>
 <use href="#planorama-icon-aws-vpc" x="112" y="364" width="24" height="24" aria-hidden="true"/><text x="144" y="381" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_subnet.paris</text>
 <text x="112" y="420" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
 <g id="resource-6177735f7670632e64656661756c74-current" data-architecture-id="terraform:6177735f7670632e64656661756c74-current" data-qualified-address="module.root.aws_vpc.default" data-terraform-address="aws_vpc.default"><title>module.root.aws_vpc.default — create</title>
-<text x="72" y="632" font-size="11" fill="#047857">aws_vpc · create</text>
-<use href="#planorama-icon-aws-vpc" x="72" y="640" width="24" height="24" aria-hidden="true"/><text x="104" y="657" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_vpc.default</text>
-<text x="72" y="696" font-size="10" fill="#64748b"><title>root</title>root</text>
+<text x="72" y="768" font-size="11" fill="#047857">aws_vpc · create</text>
+<use href="#planorama-icon-aws-vpc" x="72" y="776" width="24" height="24" aria-hidden="true"/><text x="104" y="793" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_vpc.default</text>
+<text x="72" y="832" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
 <g id="resource-6177735f7670632e7061726973-current" data-architecture-id="terraform:6177735f7670632e7061726973-current" data-qualified-address="module.root.aws_vpc.paris" data-terraform-address="aws_vpc.paris" data-plan-relevant="true" data-relevant-attributes="[[&quot;id&quot;]]"><title>module.root.aws_vpc.paris — create; Terraform-reported plan relevance; attributes: [[&quot;id&quot;]]</title>
 <text x="72" y="220" font-size="11" fill="#047857">aws_vpc · create</text>

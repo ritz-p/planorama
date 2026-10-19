@@ -66,8 +66,8 @@ per card, with full addresses wrapped before horizontal packing. In HTML, number
 selection emphasizes the entry, both badges, endpoints and corresponding path.
 
 The generated plan has 50 resource changes. After omitting two AWS metadata data
-sources, the renderer retains 48 resources and produces 29 spatial cards, 2 embedded
-Route cards, 9 logical resources in 8 group cards within one cyan Logical Resources
+sources, the renderer retains 48 resources and produces 30 spatial cards, 2 embedded
+Route cards, 8 logical resources in 7 group cards within one cyan Logical Resources
 section and 79 relationships. Four route-table associations and four target-group
 attachments become edges.
 
@@ -77,7 +77,8 @@ inside their referenced subnets. ALB/ECS keep individual subnet connections; the
 DB subnet group and RDS retain their dependency chain and inferred-placement notes.
 Shared VPC and Security Group data sources remain external spatial cards. ECS
 Cluster/Task Definition, IAM definitions, the external AMI, EC2 Launch Template,
-CloudWatch Log Group and Metric Alarm are logical-resource rows. The two managed IAM Roles share one
+Metric Alarm are logical-resource rows. CloudWatch Log Group is an independent
+regional card. The two managed IAM Roles share one
 provider/type/mode group; each resource retains its own identity, action underline
 and references. Groups use neutral frames rather than a combined action color.
 A purple Logical Components section contains the load balancer, its Listener and
@@ -85,7 +86,7 @@ its uniquely referenced Target Group as neutral member links, each with one
 action-colored underline below its wrapped text. The Target Group link points to
 the original spatial card. Relationship Resources follow in a separate neutral
 section. Empty sections are omitted in smaller examples.
-The 79 relationships remain queryable; 39 paths are spatially routed.
+The 79 relationships remain queryable; 40 paths are spatially routed.
 Internet and NAT Routes appear inside the public and private Route Tables with
 destination constants and directed lines from their own ports to the Internet
 Gateway and NAT Gateway. Matching standalone numbers appear near both child and

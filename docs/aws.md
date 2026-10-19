@@ -708,8 +708,17 @@ proximity are never matched heuristically. Launch Templates retain regional depl
 scope metadata when their provider configuration proves it, but remain outside spatial
 VPC/Subnet containment.
 
-Configured Log Group references remain linked on their consumers. A tag reference
-is labeled References and does not claim configured logging. Alarm monitoring is
+CloudWatch Log Groups are independent regional cards, using only their own proven
+deployment scope and keeping unknown scope when it cannot be established. Managed,
+data and deposed groups retain separate identities; consumers never become their
+network parents or presentation owners. Existing complete, explicit references to
+groups remain navigable on spatial and Logical consumers, with unavailable targets
+after filtering and unresolved rows for partial or ambiguous references. These are
+ordinary `References` or `Dependency` rows, including Lambda logging configuration
+and ECS container-definition references; they do not prove configured logging or
+delivery success. Tags and `depends_on` receive no logging semantics or dedicated
+delivery edge. The [Log Group example](../examples/log-groups.svg) covers shared
+consumers, data lookup and unknown scope. Alarm monitoring is
 separate from a dependency: the initial supported proof requires AWS/RDS, a known
 metric name, exactly one DBInstanceIdentifier dimension, complete explicit
 provenance to one current AWS DB Instance, matching provider configuration and a

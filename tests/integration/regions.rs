@@ -23,8 +23,8 @@ fn verified_region_overrides_survive_selection_and_rendering() {
         let text = String::from_utf8(output.stdout).unwrap();
         assert!(text.contains("eu-west-3"));
         if args.contains(&"aws_cloudwatch_log_group.paris") {
-            assert!(text.contains("Region: eu-west-3"));
-            assert!(!text.contains("data-deployment-scope="));
+            assert!(text.contains("data-region=\"eu-west-3\""));
+            assert!(text.contains("data-deployment-scope="));
         } else {
             assert!(text.contains("data-region=\"eu-west-3\""));
             assert!(text.contains("aws_vpc.paris") && text.contains("aws_subnet.paris"));
@@ -36,8 +36,17 @@ fn verified_region_overrides_survive_selection_and_rendering() {
         serde_json::json!("us-west-2");
     let svg = render(value.to_string().as_bytes());
     assert!(svg.contains("aws_vpc.paris") && svg.contains("aws_subnet.paris"));
+    assert!(svg.contains("data-region=\"eu-west-3\""));
+    assert!(!svg.contains("data-region=\"us-west-2\""));
+    let doc = roxmltree::Document::parse(&svg).unwrap();
+    let subnet = doc
+        .descendants()
+        .find(|n| n.attribute("data-terraform-address") == Some("aws_subnet.paris"))
+        .unwrap();
     assert!(
-        !svg.contains("data-region=\"eu-west-3\"") && !svg.contains("data-region=\"us-west-2\"")
+        !subnet
+            .ancestors()
+            .any(|n| n.attribute("data-region").is_some())
     );
 }
 
@@ -76,7 +85,7 @@ fn verified_region_overrides_remain_independent_across_states_and_modules() {
         assert!(
             state
                 .descendants()
-                .any(|n| n.text() == Some("Region: eu-west-3"))
+                .any(|n| n.text() == Some("AWS eu-west-3"))
         );
     }
     let mut value: serde_json::Value =
@@ -101,11 +110,11 @@ fn verified_region_overrides_remain_independent_across_states_and_modules() {
         String::from_utf8_lossy(&output.stderr)
     );
     let text = String::from_utf8(output.stdout).unwrap();
-    assert!(text.contains("data-region=\"eu-west-3\"") && text.contains("Region: eu-west-3"));
+    assert!(text.contains("data-region=\"eu-west-3\"") && text.contains("AWS eu-west-3"));
 }
 
 #[test]
-fn logical_regions_keep_separate_state_ids_in_svg_and_html() {
+fn mixed_logical_and_log_group_regions_keep_separate_state_ids_in_svg_and_html() {
     let path = format!(
         "{}/tests/fixtures/logical-regions-plan.json",
         env!("CARGO_MANIFEST_DIR")
@@ -137,7 +146,7 @@ fn logical_regions_keep_separate_state_ids_in_svg_and_html() {
                 .unwrap();
             let rows: Vec<_> = section
                 .descendants()
-                .filter(|n| n.attribute("data-placement") == Some("logical"))
+                .filter(|n| n.attribute("data-terraform-address").is_some())
                 .collect();
             assert_eq!(rows.len(), 7);
             assert_eq!(
@@ -145,17 +154,22 @@ fn logical_regions_keep_separate_state_ids_in_svg_and_html() {
                     .descendants()
                     .filter(|n| n.attribute("data-logical-group").is_some())
                     .count(),
-                3
+                1
             );
             for row in rows {
                 assert!(ids.insert(row.attribute("id").unwrap()));
-                assert!(row.children().any(|n| {
-                    n.has_tag_name("text")
-                        && n.text()
-                            .is_some_and(|t| t.starts_with("Region") || t == "AWS Global")
-                }));
+                assert_eq!(
+                    row.attribute("data-placement") == Some("logical"),
+                    row.attribute("data-terraform-address") == Some("aws_iam_policy.access")
+                );
             }
-            assert_eq!(section.descendants().filter(|n| n.has_tag_name("text") && n.text() == Some("Region: ap-northeast-1")).count(), 1);
+            assert_eq!(
+                section
+                    .descendants()
+                    .filter(|n| n.attribute("data-region") == Some("ap-northeast-1"))
+                    .count(),
+                1
+            );
         }
         assert_eq!(ids.len(), 14);
         assert!(!text.contains("PRIVATE_") && !text.contains("eu-west-3"));
