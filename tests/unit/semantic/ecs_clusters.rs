@@ -200,6 +200,68 @@ fn ecs_membership_requires_current_values_and_compatible_regional_bindings() {
 }
 
 #[test]
+fn ecs_membership_rejects_unknown_resource_override_scopes() {
+    for endpoint in [0, 1] {
+        for expression in [
+            json!({"constant_value":"eu-west-1"}),
+            json!({"references":["var.region"]}),
+        ] {
+            let mut value: Value = serde_json::from_str(FIXTURE).unwrap();
+            value["resource_changes"][1]["change"]["after"]["cluster"] =
+                json!("PRIVATE_CLUSTER_NAME");
+            value["configuration"]["root_module"]["resources"][1]["expressions"]["cluster"] =
+                json!({"references":["aws_ecs_cluster.shared.name"]});
+            value["configuration"]["root_module"]["resources"][endpoint]["expressions"]["region"] =
+                expression;
+            value["resource_changes"][endpoint]["change"]["after"]["region"] = json!("eu-west-1");
+            let parsed = plan::parse(&value.to_string()).unwrap();
+            assert!(
+                parsed
+                    .attributes
+                    .iter()
+                    .filter(|r| r.target == 1 && r.attribute == "cluster")
+                    .all(|r| !r.service_reference_verified)
+            );
+            let graph = semantic::transform(&parsed);
+            let consumer = graph
+                .nodes
+                .iter()
+                .find(|n| n.address == "aws_ecs_service.a")
+                .unwrap();
+            assert!(
+                consumer
+                    .references
+                    .iter()
+                    .all(|r| r.kind != ReferenceKind::Membership)
+            );
+            assert!(
+                view::references::rows(consumer)
+                    .iter()
+                    .any(|r| r.reference.label == "Cluster" && r.target.is_some())
+            );
+            let address = if endpoint == 0 {
+                "aws_ecs_cluster.shared"
+            } else {
+                "aws_ecs_service.a"
+            };
+            assert!(
+                graph
+                    .nodes
+                    .iter()
+                    .find(|n| n.address == address)
+                    .unwrap()
+                    .entity
+                    .scope
+                    .as_ref()
+                    .and_then(|s| s.region.as_ref())
+                    .is_none()
+            );
+            assert_eq!(graph.coverage.selected.resources, 11);
+        }
+    }
+}
+
+#[test]
 fn ecs_long_identity_lifecycle_and_named_state_exports_remain_distinct() {
     let address = format!("aws_ecs_cluster.shared[\"{}<&\"]", "long".repeat(60));
     let mut value: Value = serde_json::from_str(

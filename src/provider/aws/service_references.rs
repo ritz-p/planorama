@@ -134,10 +134,13 @@ fn source_fields(resource: &str, attribute: &str, source: &str) -> &'static [&'s
 fn cluster_binding_matches(
     consumer: Option<&crate::model::ProviderConfiguration>,
     endpoint: Option<&crate::model::ProviderConfiguration>,
+    consumer_region: Option<&crate::model::RegionScope>,
+    endpoint_region: Option<&crate::model::RegionScope>,
 ) -> bool {
     consumer.is_some_and(|config| {
         !config.account_conflict && config.region.is_some() && endpoint == Some(config)
-    })
+    }) && consumer_region.is_some()
+        && consumer_region == endpoint_region
 }
 
 pub(super) fn scalar<'a>(value: &'a Value, unknown: &Value, path: &[&str]) -> Option<&'a str> {
@@ -211,6 +214,12 @@ pub(crate) fn annotate(
             reference.service_reference_verified &= cluster_binding_matches(
                 node.provider_configuration.as_ref(),
                 endpoint.provider_configuration.as_ref(),
+                super::scope::scope(node)
+                    .as_ref()
+                    .and_then(|s| s.region.as_ref()),
+                super::scope::scope(endpoint)
+                    .as_ref()
+                    .and_then(|s| s.region.as_ref()),
             );
         }
         if node.resource_type == "aws_glue_catalog_table" && reference.attribute == "database_name"
@@ -261,6 +270,16 @@ pub(super) fn verified(raw: &Input, reference: &AttributeReference) -> bool {
                 cluster_binding_matches(
                     raw.nodes[reference.target].provider_configuration.as_ref(),
                     raw.nodes[source].provider_configuration.as_ref(),
+                    raw.nodes[reference.target]
+                        .entity
+                        .scope
+                        .as_ref()
+                        .and_then(|s| s.region.as_ref()),
+                    raw.nodes[source]
+                        .entity
+                        .scope
+                        .as_ref()
+                        .and_then(|s| s.region.as_ref()),
                 )
             }))
 }
