@@ -3,16 +3,26 @@ use crate::semantic::Input;
 
 #[cfg(test)]
 #[path = "../../../tests/unit/semantic/kms.rs"]
-mod tests;
+mod kms_tests;
+
+#[cfg(test)]
+#[path = "../../../tests/unit/semantic/secrets_manager.rs"]
+mod secrets_manager_tests;
 
 pub(super) fn present(raw: &Input, graph: &mut Graph) {
     for (index, node) in raw.nodes.iter().enumerate() {
-        if node.resource_type != "aws_kms_alias" || !node.provider.is_aws() {
+        if !node.provider.is_aws() {
             continue;
         }
-        let mut candidates = raw.attributes.iter().filter(|reference| {
-            reference.target == index && reference.attribute == "target_key_id"
-        });
+        let (attribute, label, section) = match node.resource_type.as_str() {
+            "aws_kms_alias" => ("target_key_id", "Alias key", "Aliases"),
+            "aws_secretsmanager_secret_version" => ("secret_id", "Version secret", "Versions"),
+            _ => continue,
+        };
+        let mut candidates = raw
+            .attributes
+            .iter()
+            .filter(|reference| reference.target == index && reference.attribute == attribute);
         let Some(reference) = candidates.next() else {
             continue;
         };
@@ -27,9 +37,9 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
         }
         graph.nodes[index].member_owner = Some(PresentationOwner {
             target: raw.nodes[*owner].entity.provenance[0].clone(),
-            attribute: "target_key_id",
-            label: "Alias key",
-            section: "Aliases",
+            attribute,
+            label,
+            section,
         });
     }
 }

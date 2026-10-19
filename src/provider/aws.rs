@@ -10,7 +10,6 @@ mod firehose;
 mod glue;
 mod iam;
 mod icons;
-mod kms;
 mod members;
 mod messaging;
 mod monitoring;
@@ -20,6 +19,7 @@ pub(crate) use placement::owner_affinities;
 mod routes;
 mod scope;
 mod security_groups;
+mod service_members;
 
 #[cfg(test)]
 #[path = "../../tests/unit/semantic/athena.rs"]
@@ -72,9 +72,7 @@ pub(super) fn placement(resource_type: &str) -> crate::model::Placement {
         | "aws_acmpca_certificate"
         | "aws_acmpca_certificate_authority_certificate"
         | "aws_acm_certificate_validation"
-        | "aws_secretsmanager_secret"
         | "aws_ssm_parameter"
-        | "aws_secretsmanager_secret_version"
         | "aws_s3_bucket_server_side_encryption_configuration"
         | "aws_ecs_task_definition"
         | "aws_iam_role"
@@ -121,7 +119,7 @@ pub(super) fn transform(raw: crate::semantic::Input) -> crate::model::Graph {
     messaging::present(&raw, &mut graph);
     service_references::present(&raw, &mut graph);
     efs::present(&raw, &mut graph);
-    kms::present(&raw, &mut graph);
+    service_members::present(&raw, &mut graph);
     let contained = crate::semantic::Input { graph, ..raw };
     let mut graph = data::visible(associations::lower(&contained));
     graph.components = components::infer(&contained, &graph);
