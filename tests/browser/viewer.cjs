@@ -43,7 +43,7 @@ class ViewerTests {
         assert.deepEqual(remote, []);
     }
     test_neighborhood_export_preserves_presentations_and_removes_unrelated_resources() {
-        for (const fixture of ['viewer', 'routes', 'association', 'deposed', 'aurora', 'efs']) {
+        for (const fixture of ['viewer', 'routes', 'association', 'deposed', 'aurora', 'efs', 'kms']) {
             this.load('--state', 'one=tests/fixtures/' + fixture + '-plan.json', '--state', 'two=tests/fixtures/' + fixture + '-plan.json');
             const candidates = this.driver.execute_script(`return [...document.querySelectorAll('#results button')].map(b => b.textContent)`);
             for (const address of candidates.slice(0, 4)) {

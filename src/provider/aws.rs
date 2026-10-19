@@ -10,6 +10,7 @@ mod firehose;
 mod glue;
 mod iam;
 mod icons;
+mod kms;
 mod members;
 mod messaging;
 mod monitoring;
@@ -71,8 +72,6 @@ pub(super) fn placement(resource_type: &str) -> crate::model::Placement {
         | "aws_acmpca_certificate"
         | "aws_acmpca_certificate_authority_certificate"
         | "aws_acm_certificate_validation"
-        | "aws_kms_key"
-        | "aws_kms_alias"
         | "aws_secretsmanager_secret"
         | "aws_ssm_parameter"
         | "aws_secretsmanager_secret_version"
@@ -122,6 +121,7 @@ pub(super) fn transform(raw: crate::semantic::Input) -> crate::model::Graph {
     messaging::present(&raw, &mut graph);
     service_references::present(&raw, &mut graph);
     efs::present(&raw, &mut graph);
+    kms::present(&raw, &mut graph);
     let contained = crate::semantic::Input { graph, ..raw };
     let mut graph = data::visible(associations::lower(&contained));
     graph.components = components::infer(&contained, &graph);
