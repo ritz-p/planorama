@@ -15,6 +15,7 @@ examples/diagram.svg
 examples/route53.svg
 examples/acm.svg
 examples/private-ca.svg
+examples/log-groups.svg
 examples/certificate-cards.svg
 examples/kms.svg
 examples/secrets-manager.svg

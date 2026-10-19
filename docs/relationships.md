@@ -97,7 +97,8 @@ descriptive title.
 ## Reference rows and endpoints
 
 Spatial cards show a Uses section for verified references to top logical-resource
-rows. Links target the individual resource, not its group card. Known attributes
+rows, supported service references and ordinary references to CloudWatch Log Group
+cards. Links target the individual resource, not its group card. Known attributes
 use Cluster, Task definition, Instance profile, AMI, Launch template,
 Role, Execution role or Task role. Verified [AWS service references](aws.md) use
 their service-specific labels, such as File system; other references use References.

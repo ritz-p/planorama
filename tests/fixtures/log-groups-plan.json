@@ -1,0 +1,21 @@
+{
+  "format_version":"1.2",
+  "resource_changes":[
+    {"address":"aws_cloudwatch_log_group.app","type":"aws_cloudwatch_log_group","change":{"actions":["create"],"after":{"name":"PRIVATE_LOG_NAME"}}},
+    {"address":"aws_lambda_function.app","type":"aws_lambda_function","change":{"actions":["update"],"after":{"logging_config":[{"log_group":"PRIVATE_LOG_NAME"}]}}},
+    {"address":"aws_ecs_task_definition.app","type":"aws_ecs_task_definition","change":{"actions":["create"],"after":{"container_definitions":"PRIVATE_DEFINITION"}}},
+    {"address":"aws_s3_bucket.tagged","type":"aws_s3_bucket","change":{"actions":["no-op"]}},
+    {"address":"data.aws_cloudwatch_log_group.lookup","type":"aws_cloudwatch_log_group","mode":"data","change":{"actions":["read"]}},
+    {"address":"aws_cloudwatch_log_group.unknown","type":"aws_cloudwatch_log_group"}
+  ],
+  "configuration":{
+    "provider_config":{"aws":{"full_name":"hashicorp/aws","expressions":{"region":{"constant_value":"us-east-1"}}}},
+    "root_module":{"resources":[
+      {"address":"aws_cloudwatch_log_group.app","provider_config_key":"aws"},
+      {"address":"aws_lambda_function.app","provider_config_key":"aws","expressions":{"logging_config":{"log_group":{"references":["aws_cloudwatch_log_group.app.name"]}}}},
+      {"address":"aws_ecs_task_definition.app","provider_config_key":"aws","expressions":{"container_definitions":{"references":["aws_cloudwatch_log_group.app.name"]}}},
+      {"address":"aws_s3_bucket.tagged","provider_config_key":"aws","depends_on":["aws_cloudwatch_log_group.app"],"expressions":{"tags":{"references":["data.aws_cloudwatch_log_group.lookup.name"]}}},
+      {"address":"data.aws_cloudwatch_log_group.lookup","mode":"data","provider_config_key":"aws"}
+    ]}
+  }
+}

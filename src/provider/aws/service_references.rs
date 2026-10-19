@@ -241,6 +241,43 @@ pub(super) fn verified(raw: &Input, reference: &AttributeReference) -> bool {
 }
 
 pub(super) fn present(raw: &Input, graph: &mut Graph) {
+    let spatial_targets: std::collections::BTreeSet<_> = raw
+        .nodes
+        .iter()
+        .filter(|node| node.provider.is_aws() && node.resource_type == "aws_cloudwatch_log_group")
+        .flat_map(|node| &node.entity.provenance)
+        .collect();
+    for node in &mut graph.nodes {
+        let mut split_references = Vec::new();
+        for reference in &mut node.references {
+            if reference.show_spatial
+                || !reference
+                    .targets
+                    .iter()
+                    .any(|target| spatial_targets.contains(&target.id))
+            {
+                continue;
+            }
+            if reference
+                .targets
+                .iter()
+                .all(|target| spatial_targets.contains(&target.id))
+            {
+                reference.show_spatial = true;
+                continue;
+            }
+            let (spatial, ordinary): (Vec<_>, Vec<_>) = reference
+                .targets
+                .drain(..)
+                .partition(|target| spatial_targets.contains(&target.id));
+            let mut split = reference.clone();
+            split.targets = spatial;
+            split.show_spatial = true;
+            reference.targets = ordinary;
+            split_references.push(split);
+        }
+        node.references.extend(split_references);
+    }
     for reference in &raw.attributes {
         let node = &raw.nodes[reference.target];
         if !node.provider.is_aws() {

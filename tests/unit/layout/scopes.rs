@@ -54,8 +54,8 @@ fn singleton_regions_follow_displayed_spatial_resources_after_filtering() {
         ),
         ("aws_s3_bucket.other", "aws_s3_bucket", "aws.other", "no-op"),
         (
-            "aws_cloudwatch_log_group.other",
-            "aws_cloudwatch_log_group",
+            "aws_ssm_parameter.other",
+            "aws_ssm_parameter",
             "aws.other",
             "update",
         ),

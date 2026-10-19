@@ -57,6 +57,10 @@ pub(crate) fn text_width(node: &Node) -> usize {
 
 fn verified(reference: &ResourceReference) -> bool {
     reference.complete
+        && !(reference.show_spatial
+            && reference
+                .issues
+                .contains(&crate::model::DiagnosticReason::MultipleMatchingInstances))
         && !reference
             .issues
             .contains(&crate::model::DiagnosticReason::DynamicInstanceSelection)
@@ -66,7 +70,8 @@ pub(crate) fn rows(node: &Node) -> Vec<Row<'_>> {
     let mut rows = Vec::new();
     for reference in &node.references {
         if !verified(reference) {
-            if node.placement == Placement::Logical
+            if reference.show_spatial
+                || node.placement == Placement::Logical
                 || reference
                     .targets
                     .iter()
