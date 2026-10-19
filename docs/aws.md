@@ -10,7 +10,7 @@ conditional relationship and placement proofs behind that catalog.
 ## AWS Private CA
 
 Exact AWS `aws_acmpca_certificate_authority` and `aws_acmpca_certificate` are
-logical Nodes; `aws_acmpca_certificate_authority_certificate` is a logical
+independent spatial Nodes; `aws_acmpca_certificate_authority_certificate` is a logical
 Controller that preserves the installation resource's own identity. All three
 use the AWS Private CA icon/service name and their proven regional provider
 scope. Managed authorities and certificate installations retain the verified
@@ -18,6 +18,21 @@ provider account. Issued certificates and authority data sources keep account
 scope unknown because they can use a CA shared by another account.
 [AWS cross-account permissions](https://docs.aws.amazon.com/privateca/latest/userguide/pca-rbp.html)
 include issuance and authority lookup, but not certificate import.
+
+ACM certificates default to independent cards. A current managed certificate can
+appear in its signing CA's measured `Certificates` section only with the verified
+`Signing CA reference` below, compatible scope and no incoming attribute references
+from other resources. Even one possible consumer keeps the certificate independent;
+this includes validation intermediaries and unverified references. Shared certificates
+are never duplicated under consumers. Private CA issued certificates always remain
+independent because their account ownership is unknown, even with a matching provider
+configuration. No certificate is embedded under a consumer or installation resource.
+Missing, unknown or incompatible scope and missing/filtered issuers keep independent
+cards using the certificate's own scope. Equal known region and a shared nonconflicting
+provider configuration permit ACM grouping when both account scopes are unknown;
+this does not establish account identity. Authorities never become network containers.
+Child identity, lifecycle, references, coverage and selection/export use the shared
+[presentation contract](resource-presentation.md).
 
 `Signing CA reference` on Private CA and ACM certificates and `Target CA reference`
 on installations require a complete, explicit, unique reference to a managed
@@ -39,6 +54,9 @@ keys and subject values are omitted from generated output and retained models.
 The [synthetic fixture](../tests/fixtures/private-ca-plan.json),
 [SVG](../examples/private-ca.svg) and [offline HTML](../examples/private-ca.html)
 show subordinate issuance, installation, ACM use and an external CA reference.
+The smaller [certificate-card fixture](../tests/fixtures/certificate-cards-plan.json)
+and [SVG](../examples/certificate-cards.svg) contrast an unused certificate grouped
+under its issuer with one shared by an LB listener and CloudFront.
 The AWS Provider 5.100.0
 [authority](https://github.com/hashicorp/terraform-provider-aws/blob/v5.100.0/website/docs/r/acmpca_certificate_authority.html.markdown),
 [certificate](https://github.com/hashicorp/terraform-provider-aws/blob/v5.100.0/website/docs/r/acmpca_certificate.html.markdown)
@@ -332,8 +350,9 @@ and [S3 encryption](https://github.com/hashicorp/terraform-provider-aws/blob/v5.
 schemas, checked with Terraform 1.9.8. Regenerate HTML in Docker with
 `cargo run --locked -- tests/fixtures/kms-plan.json --format html -o examples/kms.html`.
 
-ACM certificates and certificate-validation resources are separate regional
-logical resources with the AWS Certificate Manager icon. `Certificate reference`
+ACM certificates are regional cards, optionally grouped under a verified signing CA
+as described above; certificate-validation resources remain separate Logical
+configuration with the AWS Certificate Manager icon. `Certificate reference`
 links on validation resources, LB listeners and CloudFront viewer certificates
 require a complete explicit reference to `aws_acm_certificate.arn` / `.id` or,
 for consumers, `aws_acm_certificate_validation.certificate_arn`, and matching known

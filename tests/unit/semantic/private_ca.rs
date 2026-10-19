@@ -7,6 +7,223 @@ use serde_json::{Value, json};
 const FIXTURE: &str = include_str!("../../fixtures/private-ca-plan.json");
 
 #[test]
+fn certificate_ownership_requires_signing_proof_scope_and_no_consumers() {
+    for case in [
+        "valid",
+        "consumer",
+        "unknown",
+        "ambiguous",
+        "data",
+        "deposed",
+        "scope",
+        "account",
+    ] {
+        let mut value: Value = serde_json::from_str(FIXTURE).unwrap();
+        match case {
+            "consumer" => {
+                value["configuration"]["root_module"]["resources"][5]["expressions"]["certificate"] =
+                    json!({"references":["aws_acm_certificate.application.arn"]});
+            }
+            "unknown" => {
+                value["resource_changes"][4]["change"]["after_unknown"]["certificate_authority_arn"] =
+                    json!(true)
+            }
+            "ambiguous" => {
+                value["configuration"]["root_module"]["resources"][4]["expressions"]["certificate_authority_arn"] = json!({"references":["aws_acmpca_certificate_authority.root.arn", "aws_acmpca_certificate_authority.subordinate.arn"]})
+            }
+            "data" => value["resource_changes"][4]["mode"] = json!("data"),
+            "deposed" => value["resource_changes"][4]["deposed"] = json!("old"),
+            _ => {}
+        }
+        let mut raw = semantic::Input::new(&plan::parse(&value.to_string()).unwrap());
+        let index = raw
+            .nodes
+            .iter()
+            .position(|n| n.resource_type == "aws_acm_certificate")
+            .unwrap();
+        match case {
+            "scope" => raw.graph.nodes[index].entity.scope = None,
+            "account" => {
+                raw.graph.nodes[index]
+                    .entity
+                    .scope
+                    .as_mut()
+                    .unwrap()
+                    .account = crate::model::AwsAccountScope::new("999999999999")
+            }
+            _ => {}
+        }
+        let graph = crate::provider::transform(raw);
+        let child = &graph.nodes[index];
+        assert_eq!(child.member_owner.is_some(), case == "valid", "{case}");
+        assert_eq!(child.placement, Placement::Spatial);
+        assert!(
+            graph
+                .nodes
+                .iter()
+                .filter(|n| n.resource_type == "aws_acmpca_certificate")
+                .all(|n| n.member_owner.is_none())
+        );
+        assert_eq!(graph.nodes.len(), 6);
+        assert!(
+            graph
+                .edges
+                .iter()
+                .all(|e| e.kind != crate::model::EdgeKind::Containment)
+        );
+        let layout = crate::layout::Layout::new(&graph);
+        assert!(layout.bounds[index].width > 0);
+        if case == "valid" {
+            let owner = crate::view::routes::owner(&graph, child).unwrap();
+            let bounds = layout.bounds[index];
+            let frame = layout.bounds[owner];
+            assert!(bounds.origin.x > frame.origin.x && bounds.right() < frame.right());
+            assert!(
+                bounds.origin.y > frame.origin.y
+                    && bounds.origin.y + bounds.height < frame.origin.y + frame.height
+            );
+        }
+    }
+}
+
+#[test]
+fn certificate_selection_releases_filtered_issuers_and_keeps_shared_cards() {
+    let shared = semantic::transform(
+        &plan::parse(include_str!("../../fixtures/certificate-cards-plan.json")).unwrap(),
+    );
+    assert_eq!(shared.coverage.selected.resources, 5);
+    for node in &shared.nodes {
+        assert_eq!(
+            node.member_owner.is_some(),
+            node.address == "aws_acm_certificate.unused"
+        );
+    }
+    assert_eq!(
+        shared
+            .nodes
+            .iter()
+            .flat_map(|n| &n.references)
+            .filter(|r| r.complete && r.label == "Certificate reference")
+            .count(),
+        2
+    );
+    let input = FIXTURE.replace(
+        "aws_acm_certificate.application",
+        "module.application.aws_acm_certificate.application",
+    );
+    let graph = semantic::transform(&plan::parse(&input).unwrap());
+    for options in [
+        crate::view::Options {
+            focus: Some("module.application.aws_acm_certificate.application".into()),
+            depth: Some(0),
+            ..Default::default()
+        },
+        crate::view::Options {
+            modules: vec!["module.application".into()],
+            ..Default::default()
+        },
+    ] {
+        let selected = crate::view::single(&graph, &options).unwrap();
+        assert_eq!(selected.coverage.selected.resources, 1);
+        assert_eq!(selected.nodes.len(), 1);
+        assert!(crate::view::routes::owner(&selected, &selected.nodes[0]).is_none());
+        let output = crate::svg::render(&selected, &crate::layout::Layout::new(&selected));
+        assert!(output.contains("Unavailable"));
+    }
+    let graph =
+        semantic::transform(&plan::parse(include_str!("../../fixtures/acm-plan.json")).unwrap());
+    assert_eq!(
+        graph
+            .nodes
+            .iter()
+            .filter(|n| n.resource_type == "aws_acm_certificate")
+            .count(),
+        1
+    );
+    assert!(graph.nodes.iter().all(|n| n.member_owner.is_none()));
+    assert_eq!(graph.coverage.selected.resources, 4);
+}
+
+#[test]
+fn embedded_certificate_preserves_long_identity_lifecycle_and_named_state_exports() {
+    let mut value: Value = serde_json::from_str(FIXTURE).unwrap();
+    let address = format!(
+        "aws_acm_certificate.application[\"{}<&\"]",
+        "long".repeat(70)
+    );
+    value["resource_changes"][4]["address"] = json!(address);
+    value["resource_changes"][4]["previous_address"] = json!("aws_acm_certificate.old");
+    value["resource_changes"][4]["change"]["importing"] = json!({"id":"PRIVATE_IMPORT"});
+    let mut old = value["resource_changes"][4].clone();
+    old["deposed"] = json!("old");
+    old["change"]["actions"] = json!(["delete"]);
+    value["resource_changes"].as_array_mut().unwrap().push(old);
+    let graph = semantic::transform(&plan::parse(&value.to_string()).unwrap());
+    assert_eq!(graph.coverage.selected.resources, 7);
+    let child = graph
+        .nodes
+        .iter()
+        .find(|n| n.address == address && n.deposed_key.is_none())
+        .unwrap();
+    assert!(child.member_owner.is_some());
+    assert_eq!(
+        child.previous_address.as_deref(),
+        Some("aws_acm_certificate.old")
+    );
+    assert!(child.metadata.import.is_some());
+    assert!(
+        graph
+            .nodes
+            .iter()
+            .filter(|n| n.deposed_key.is_some())
+            .all(|n| n.member_owner.is_none())
+    );
+    let svg = crate::svg::render(&graph, &crate::layout::Layout::new(&graph));
+    let doc = roxmltree::Document::parse(&svg).unwrap();
+    assert_eq!(
+        doc.descendants()
+            .filter(|n| n.attribute("data-terraform-address") == Some(address.as_str()))
+            .count(),
+        2
+    );
+    let architecture = crate::model::architecture::Architecture {
+        states: [
+            (crate::model::StateId::new("one").unwrap(), graph.clone()),
+            (crate::model::StateId::new("two").unwrap(), graph),
+        ]
+        .into(),
+        relationships: Vec::new(),
+    };
+    let selected = crate::view::apply(&architecture, &Default::default()).unwrap();
+    let html = crate::html::render_states(&selected, crate::svg::Options::default());
+    assert!(!html.contains("PRIVATE_"));
+    let text = &html[html.find("id=\"viewer-data\"").unwrap()..];
+    let resources: Vec<Value> =
+        serde_json::from_str(&text[text.find('>').unwrap() + 1..text.find("</script>").unwrap()])
+            .unwrap();
+    assert_eq!(resources.len(), 14);
+    for state in ["one", "two"] {
+        let child = resources
+            .iter()
+            .find(|r| {
+                r["state"] == state
+                    && r["address"] == address
+                    && r["deposed"].as_str().is_none_or(str::is_empty)
+            })
+            .unwrap();
+        let parent = resources
+            .iter()
+            .find(|r| {
+                r["state"] == state
+                    && r["address"] == "aws_acmpca_certificate_authority.subordinate"
+            })
+            .unwrap();
+        assert_eq!(child["context"], json!([parent["id"]]));
+        assert_ne!(child["id"], parent["id"]);
+    }
+}
+
+#[test]
 fn private_ca_preserves_owner_accounts_and_keeps_shared_ca_accounts_unknown() {
     let mut value: Value = serde_json::from_str(FIXTURE).unwrap();
     let mut data = value["resource_changes"][0].clone();
@@ -49,7 +266,7 @@ fn private_ca_preserves_owner_accounts_and_keeps_shared_ca_accounts_unknown() {
         .iter()
         .find(|n| n.mode == crate::model::EntityMode::Data)
         .unwrap();
-    assert_eq!(data.placement, Placement::Logical);
+    assert_eq!(data.placement, Placement::Spatial);
     assert_eq!(data.role, ResourceRole::Node);
     for resource in [
         "aws_acmpca_certificate_authority",
@@ -108,7 +325,14 @@ fn private_ca_verifies_signing_installation_and_acm_references_without_inventing
         .iter()
         .filter(|n| n.resource_type.starts_with("aws_acmpca_"))
     {
-        assert_eq!(node.placement, Placement::Logical);
+        assert_eq!(
+            node.placement,
+            if node.address.ends_with(".install") {
+                Placement::Logical
+            } else {
+                Placement::Spatial
+            }
+        );
         assert_eq!(
             node.role,
             if node.address.ends_with(".install") {

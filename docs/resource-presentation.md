@@ -87,6 +87,12 @@ and compatible scope. Keys never become children of encryption consumers.
 Secrets are independent cards; managed/data Versions use the same service-member
 proof and scope checks with `secret_id`. Data Secrets remain separate, and missing
 or incompatible parents leave selected Versions as independent cards.
+Private CA authorities and issued certificates are independent cards. ACM certificates
+reuse service-member measurements under a verified signing CA only with compatible
+scope and no incoming attribute references. Used/shared certificates stay independent;
+Private CA certificate account uncertainty never inherits the issuer's scope.
+Installation and validation resources remain Logical. Detailed proof and fallback
+rules are in [AWS relationships](aws.md#aws-private-ca).
 The audit above remains a historical inventory of defaults at its recorded commit;
 other service migrations are pending.
 

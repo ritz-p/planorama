@@ -1,0 +1,20 @@
+{
+  "format_version": "1.2",
+  "resource_changes": [
+    {"address":"aws_acmpca_certificate_authority.issuer","type":"aws_acmpca_certificate_authority","change":{"actions":["no-op"],"after":{"arn":"arn:aws:acm-pca:us-east-1:123456789012:certificate-authority/issuer"}}},
+    {"address":"aws_acm_certificate.unused","type":"aws_acm_certificate","change":{"actions":["create"],"after":{"certificate_authority_arn":"arn:aws:acm-pca:us-east-1:123456789012:certificate-authority/issuer"}}},
+    {"address":"aws_acm_certificate.shared","type":"aws_acm_certificate","change":{"actions":["update"],"after":{"arn":"arn:aws:acm:us-east-1:123456789012:certificate/shared","certificate_authority_arn":"arn:aws:acm-pca:us-east-1:123456789012:certificate-authority/issuer"}}},
+    {"address":"aws_lb_listener.https","type":"aws_lb_listener","change":{"actions":["create"],"after":{"certificate_arn":"arn:aws:acm:us-east-1:123456789012:certificate/shared"}}},
+    {"address":"aws_cloudfront_distribution.site","type":"aws_cloudfront_distribution","change":{"actions":["create"],"after":{"viewer_certificate":[{"acm_certificate_arn":"arn:aws:acm:us-east-1:123456789012:certificate/shared"}]}}}
+  ],
+  "configuration": {
+    "provider_config":{"aws":{"full_name":"registry.terraform.io/hashicorp/aws","expressions":{"region":{"constant_value":"us-east-1"}}}},
+    "root_module":{"resources":[
+      {"address":"aws_acmpca_certificate_authority.issuer","provider_config_key":"aws"},
+      {"address":"aws_acm_certificate.unused","provider_config_key":"aws","expressions":{"certificate_authority_arn":{"references":["aws_acmpca_certificate_authority.issuer.arn"]}}},
+      {"address":"aws_acm_certificate.shared","provider_config_key":"aws","expressions":{"certificate_authority_arn":{"references":["aws_acmpca_certificate_authority.issuer.arn"]}}},
+      {"address":"aws_lb_listener.https","provider_config_key":"aws","expressions":{"certificate_arn":{"references":["aws_acm_certificate.shared.arn"]}}},
+      {"address":"aws_cloudfront_distribution.site","provider_config_key":"aws","expressions":{"viewer_certificate":[{"acm_certificate_arn":{"references":["aws_acm_certificate.shared.arn"]}}]}}
+    ]}
+  }
+}
