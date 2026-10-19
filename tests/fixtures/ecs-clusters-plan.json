@@ -1,0 +1,31 @@
+{
+  "format_version":"1.2",
+  "resource_changes":[
+    {"address":"aws_ecs_cluster.shared","type":"aws_ecs_cluster","change":{"actions":["create"],"after":{"id":"PRIVATE_CLUSTER_ARN","arn":"PRIVATE_CLUSTER_ARN","name":"PRIVATE_CLUSTER_NAME"}}},
+    {"address":"aws_ecs_service.a","type":"aws_ecs_service","change":{"actions":["create"],"after":{"cluster":"PRIVATE_CLUSTER_ARN"}}},
+    {"address":"aws_ecs_service.b","type":"aws_ecs_service","change":{"actions":["update"],"after":{"cluster":"PRIVATE_CLUSTER_ARN"}}},
+    {"address":"aws_ecs_task_definition.app","type":"aws_ecs_task_definition","change":{"actions":["create"],"after":{"container_definitions":"PRIVATE_DEFINITION"}}},
+    {"address":"aws_vpc.a","type":"aws_vpc","change":{"actions":["create"]}},
+    {"address":"aws_vpc.b","type":"aws_vpc","change":{"actions":["create"]}},
+    {"address":"aws_subnet.a1","type":"aws_subnet","change":{"actions":["create"]}},
+    {"address":"aws_subnet.a2","type":"aws_subnet","change":{"actions":["create"]}},
+    {"address":"aws_subnet.b","type":"aws_subnet","change":{"actions":["create"]}},
+    {"address":"data.aws_ecs_cluster.lookup","type":"aws_ecs_cluster","mode":"data","change":{"actions":["read"]}},
+    {"address":"aws_ecs_cluster.unknown","type":"aws_ecs_cluster"}
+  ],
+  "configuration":{
+    "provider_config":{"aws":{"full_name":"hashicorp/aws","expressions":{"region":{"constant_value":"us-east-1"}}}},
+    "root_module":{"resources":[
+      {"address":"aws_ecs_cluster.shared","provider_config_key":"aws"},
+      {"address":"aws_ecs_service.a","provider_config_key":"aws","expressions":{"cluster":{"references":["aws_ecs_cluster.shared.id"]},"task_definition":{"references":["aws_ecs_task_definition.app.arn"]},"network_configuration":{"subnets":{"references":["aws_subnet.a1.id","aws_subnet.a2.id"]}}}},
+      {"address":"aws_ecs_service.b","provider_config_key":"aws","expressions":{"cluster":{"references":["aws_ecs_cluster.shared.arn"]},"task_definition":{"references":["aws_ecs_task_definition.app.arn"]},"network_configuration":{"subnets":{"references":["aws_subnet.b.id"]}}}},
+      {"address":"aws_ecs_task_definition.app","provider_config_key":"aws"},
+      {"address":"aws_vpc.a","provider_config_key":"aws"},
+      {"address":"aws_vpc.b","provider_config_key":"aws"},
+      {"address":"aws_subnet.a1","provider_config_key":"aws","expressions":{"vpc_id":{"references":["aws_vpc.a.id"]}}},
+      {"address":"aws_subnet.a2","provider_config_key":"aws","expressions":{"vpc_id":{"references":["aws_vpc.a.id"]}}},
+      {"address":"aws_subnet.b","provider_config_key":"aws","expressions":{"vpc_id":{"references":["aws_vpc.b.id"]}}},
+      {"address":"data.aws_ecs_cluster.lookup","mode":"data","provider_config_key":"aws"}
+    ]}
+  }
+}

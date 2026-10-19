@@ -34,6 +34,10 @@ mod private_ca_tests;
 mod log_group_tests;
 
 #[cfg(test)]
+#[path = "../../tests/unit/semantic/ecs_clusters.rs"]
+mod ecs_cluster_tests;
+
+#[cfg(test)]
 #[path = "../../tests/unit/resource_support.rs"]
 mod resource_support;
 pub(super) use scope::scope;
@@ -64,8 +68,7 @@ pub(super) fn reference_label(resource_type: &str, attribute: &str) -> &'static 
 
 pub(super) fn placement(resource_type: &str) -> crate::model::Placement {
     match resource_type {
-        "aws_ecs_cluster"
-        | "aws_athena_workgroup"
+        "aws_athena_workgroup"
         | "aws_athena_data_catalog"
         | "aws_glue_catalog_database"
         | "aws_glue_catalog_table"

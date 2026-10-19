@@ -557,7 +557,7 @@ generation source. Rerunning a job may capture a newer PR head; consult its summ
 
 ### Ordinary snapshot coverage
 
-Ordinary unit/integration tests compare 27 of the 61 maintained SVGs with current
+Ordinary unit/integration tests compare 27 of the 62 maintained SVGs with current
 rendering: `association`, `bundling`, `checks`, `components`, `containment`,
 `data`, `data-icons`, `service-names`, `dense-architecture`, `diagram`, `hierarchy-routing`,
 `multi-container`, `multi-plan`, `port-collisions`, `regions`, `regional-states`,
@@ -565,7 +565,7 @@ rendering: `association`, `bundling`, `checks`, `components`, `containment`,
 `subnet-groups`, `terraform`, `terraform-large/diagram`, `vpc-workloads`,
 `workload-security-groups`, `aurora`, and `elasticache` (paths under `examples/`, with `.svg`).
 
-The other 34 are `certificate-cards`, `log-groups`, `accounts`, `aws-relationships`, `autoscaling-policy`,
+The other 35 are `ecs-clusters`, `certificate-cards`, `log-groups`, `accounts`, `aws-relationships`, `autoscaling-policy`,
 `cross-state`, `logical-actions`, `logical-regions`, `multi-account/diagram`,
 `network-scope`, `rds-subnet-group`, `relationship-scopes`, `security-groups`,
 `messaging`, `sns-subscriptions`, `event-sources`, `kinesis`, `firehose`, `eventbridge`, `eventbridge-targets`,

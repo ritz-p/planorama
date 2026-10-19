@@ -96,7 +96,10 @@ rules are in [AWS relationships](aws.md#aws-private-ca).
 The audit above remains a historical inventory of defaults at its recorded commit;
 CloudWatch Log Groups are independent cards and preserve ordinary consumer
 reference/dependency navigation across spatial endpoints without inferring logging
-delivery or ownership. Other service migrations are pending.
+delivery or ownership. ECS Clusters are independent cards; verified Service
+membership uses service-reference metadata without changing network placement or
+creating presentation ownership. Task Definitions remain Logical.
+Other service migrations are pending.
 
 Measure headers, service icons, references, import/move badges and wrapped child
 addresses before packing. Reserve parent height and actual child bounds/ports;

@@ -136,10 +136,10 @@ Provider source: `registry.terraform.io/hashicorp/aws`.
 | `aws_ec2_transit_gateway_vpc_attachment` | Association / Association | Spatial / Spatial | Gateway / Amazon VPC | Regional (conditional) | — |
 | `aws_ec2_transit_gateway_vpc_attachments` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Gateway / Amazon VPC | Unknown | — |
 | `aws_ec2_transit_gateway_vpn_attachment` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Gateway / Amazon VPC | Unknown | — |
-| `aws_ecs_cluster` | Controller / Controller | Logical / Logical | Ecs / Amazon ECS | Regional (conditional) | [aws.rs](../src/provider/aws.rs) |
+| `aws_ecs_cluster` | Controller / Controller | Spatial / Spatial | Ecs / Amazon ECS | Regional (conditional) | [aws/service_references.rs](../src/provider/aws/service_references.rs) |
 | `aws_ecs_clusters` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Ecs / Amazon ECS | Unknown | — |
 | `aws_ecs_container_definition` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Ecs / Amazon ECS | Unknown | — |
-| `aws_ecs_service` | Controller / Controller | Spatial / Spatial | Ecs / Amazon ECS | Regional (conditional) | [aws.rs](../src/provider/aws.rs), [aws/containment/spanning.rs](../src/provider/aws/containment/spanning.rs), [aws/diagnostics.rs](../src/provider/aws/diagnostics.rs), [aws/security_groups.rs](../src/provider/aws/security_groups.rs) |
+| `aws_ecs_service` | Controller / Controller | Spatial / Spatial | Ecs / Amazon ECS | Regional (conditional) | [aws.rs](../src/provider/aws.rs), [aws/containment/spanning.rs](../src/provider/aws/containment/spanning.rs), [aws/diagnostics.rs](../src/provider/aws/diagnostics.rs), [aws/security_groups.rs](../src/provider/aws/security_groups.rs), [aws/service_references.rs](../src/provider/aws/service_references.rs) |
 | `aws_ecs_task_definition` | Controller / Controller | Logical / Logical | Ecs / Amazon ECS | Regional (conditional) | [aws.rs](../src/provider/aws.rs) |
 | `aws_efs_access_point` | Node / Node | Spatial / Spatial | Efs / Amazon EFS | Regional (conditional) | [aws/efs.rs](../src/provider/aws/efs.rs), [aws/service_references.rs](../src/provider/aws/service_references.rs) |
 | `aws_efs_file_system` | Node / Node | Spatial / Spatial | Efs / Amazon EFS | Regional (conditional) | [aws/service_references.rs](../src/provider/aws/service_references.rs) |

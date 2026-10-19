@@ -9,7 +9,7 @@
     {"address":"aws_iam_policy.read","type":"aws_iam_policy","change":{"actions":["read"]}},
     {"address":"aws_iam_policy.unchanged","type":"aws_iam_policy","change":{"actions":["no-op"]}},
     {"address":"aws_iam_policy.other","type":"aws_iam_policy"},
-    {"address":"aws_ecs_cluster.new","type":"aws_ecs_cluster","change":{"actions":["create"]}},
-    {"address":"aws_ecs_cluster.old","type":"aws_ecs_cluster","change":{"actions":["delete"]}}
+    {"address":"aws_ecs_task_definition.new","type":"aws_ecs_task_definition","change":{"actions":["create"]}},
+    {"address":"aws_ecs_task_definition.old","type":"aws_ecs_task_definition","change":{"actions":["delete"]}}
   ]
 }
