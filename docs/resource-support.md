@@ -48,10 +48,10 @@ Provider source: `registry.terraform.io/hashicorp/aws`.
 
 | Resource type | Role (managed / data) | Display (managed / data) | Icon / service name | Deployment scope | Conditional rule source references |
 | --- | --- | --- | --- | --- | --- |
-| `aws_acm_certificate` | Node / Node | Logical / Logical | Acm / AWS Certificate Manager | Regional (conditional) | [aws.rs](../src/provider/aws.rs), [aws/service_references.rs](../src/provider/aws/service_references.rs) |
+| `aws_acm_certificate` | Node / Node | Spatial / Spatial | Acm / AWS Certificate Manager | Regional (conditional) | [aws/service_members.rs](../src/provider/aws/service_members.rs), [aws/service_references.rs](../src/provider/aws/service_references.rs) |
 | `aws_acm_certificate_validation` | Controller / Controller | Logical / Logical | Acm / AWS Certificate Manager | Regional (conditional) | [aws.rs](../src/provider/aws.rs), [aws/service_references.rs](../src/provider/aws/service_references.rs) |
-| `aws_acmpca_certificate` | Node / Node | Logical / Logical | PrivateCa / AWS Private CA | Regional (conditional) | [aws.rs](../src/provider/aws.rs), [aws/service_references.rs](../src/provider/aws/service_references.rs) |
-| `aws_acmpca_certificate_authority` | Node / Node | Logical / Logical | PrivateCa / AWS Private CA | Regional (conditional) | [aws.rs](../src/provider/aws.rs), [aws/service_references.rs](../src/provider/aws/service_references.rs) |
+| `aws_acmpca_certificate` | Node / Node | Spatial / Spatial | PrivateCa / AWS Private CA | Regional (conditional) | [aws/service_references.rs](../src/provider/aws/service_references.rs) |
+| `aws_acmpca_certificate_authority` | Node / Node | Spatial / Spatial | PrivateCa / AWS Private CA | Regional (conditional) | [aws/service_references.rs](../src/provider/aws/service_references.rs) |
 | `aws_acmpca_certificate_authority_certificate` | Controller / Controller | Logical / Logical | PrivateCa / AWS Private CA | Regional (conditional) | [aws.rs](../src/provider/aws.rs), [aws/service_references.rs](../src/provider/aws/service_references.rs) |
 | `aws_alb` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | LoadBalancer / Elastic Load Balancing | Unknown | — |
 | `aws_alb_listener` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | LoadBalancer / Elastic Load Balancing | Unknown | — |
