@@ -280,7 +280,8 @@ fn large_fixture_is_reproducible_from_terraform_sources_and_renders_deterministi
                 document
                     .descendants()
                     .any(|n| n.attribute("id") == Some(target)
-                        && n.attribute("data-placement") == Some("logical"))
+                        && (n.attribute("data-placement") == Some("logical"))
+                            == (attribute != "cluster"))
             );
         }
     }

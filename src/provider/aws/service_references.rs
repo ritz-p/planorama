@@ -11,6 +11,7 @@ pub(super) mod tests;
 
 fn label(resource: &str, attribute: &str) -> Option<&'static str> {
     match (resource, attribute) {
+        ("aws_ecs_service", "cluster") => Some("Cluster membership"),
         ("aws_acmpca_certificate" | "aws_acm_certificate", "certificate_authority_arn") => {
             Some("Signing CA reference")
         }
@@ -53,6 +54,7 @@ fn label(resource: &str, attribute: &str) -> Option<&'static str> {
 
 fn source_fields(resource: &str, attribute: &str, source: &str) -> &'static [&'static str] {
     match (resource, attribute, source) {
+        ("aws_ecs_service", "cluster", "aws_ecs_cluster") => &["id", "arn", "name"],
         (
             "aws_acmpca_certificate"
             | "aws_acm_certificate"
@@ -129,6 +131,15 @@ fn source_fields(resource: &str, attribute: &str, source: &str) -> &'static [&'s
     }
 }
 
+fn cluster_binding_matches(
+    consumer: Option<&crate::model::ProviderConfiguration>,
+    endpoint: Option<&crate::model::ProviderConfiguration>,
+) -> bool {
+    consumer.is_some_and(|config| {
+        !config.account_conflict && config.region.is_some() && endpoint == Some(config)
+    })
+}
+
 pub(super) fn scalar<'a>(value: &'a Value, unknown: &Value, path: &[&str]) -> Option<&'a str> {
     if unknown == &Value::Bool(true) {
         return None;
@@ -196,6 +207,12 @@ pub(crate) fn annotate(
                 && actual.is_some()
                 && actual == scalar(target, target_unknown, &[*field])
         });
+        if node.resource_type == "aws_ecs_service" && reference.attribute == "cluster" {
+            reference.service_reference_verified &= cluster_binding_matches(
+                node.provider_configuration.as_ref(),
+                endpoint.provider_configuration.as_ref(),
+            );
+        }
         if node.resource_type == "aws_glue_catalog_table" && reference.attribute == "database_name"
         {
             reference.service_reference_verified &= super::glue::catalog_verified(
@@ -237,7 +254,15 @@ pub(crate) fn annotate(
 }
 
 pub(super) fn verified(raw: &Input, reference: &AttributeReference) -> bool {
-    reference.service_reference_verified && super::iam::bindings_compatible(&raw.nodes, reference)
+    reference.service_reference_verified
+        && super::iam::bindings_compatible(&raw.nodes, reference)
+        && (raw.nodes[reference.target].resource_type != "aws_ecs_service"
+            || reference.sources.iter().all(|&source| {
+                cluster_binding_matches(
+                    raw.nodes[reference.target].provider_configuration.as_ref(),
+                    raw.nodes[source].provider_configuration.as_ref(),
+                )
+            }))
 }
 
 pub(super) fn present(raw: &Input, graph: &mut Graph) {
@@ -246,7 +271,10 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             reference.show_spatial |= reference.targets.iter().any(|target| {
                 raw.nodes.iter().any(|endpoint| {
                     endpoint.provider.is_aws()
-                        && endpoint.resource_type == "aws_cloudwatch_log_group"
+                        && matches!(
+                            endpoint.resource_type.as_str(),
+                            "aws_cloudwatch_log_group" | "aws_ecs_cluster"
+                        )
                         && endpoint.entity.provenance.contains(&target.id)
                 })
             });
@@ -272,7 +300,9 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
                 kind: if verified
                     && matches!(
                         node.resource_type.as_str(),
-                        "aws_iam_group_membership" | "aws_iam_user_group_membership"
+                        "aws_iam_group_membership"
+                            | "aws_iam_user_group_membership"
+                            | "aws_ecs_service"
                     ) {
                     crate::model::ReferenceKind::Membership
                 } else {

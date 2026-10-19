@@ -98,7 +98,7 @@ descriptive title.
 
 Spatial cards show a Uses section for verified references to top logical-resource
 rows, supported service references and ordinary references to CloudWatch Log Group
-cards. Links target the individual resource, not its group card. Known attributes
+and ECS Cluster cards. Links target the individual resource, not its group card. Known attributes
 use Cluster, Task definition, Instance profile, AMI, Launch template,
 Role, Execution role or Task role. Verified [AWS service references](aws.md) use
 their service-specific labels, such as File system; other references use References.
@@ -110,6 +110,9 @@ each membership/attachment resource and its action; they do not evaluate inherit
 or effective permissions.
 [IAM identity provider references](aws.md#iam-identity-providers) are configuration
 dependencies only; trust-policy JSON and matching issuer URLs do not create edges.
+Verified [ECS membership](aws.md#ecs-cluster-membership) uses `Cluster membership`
+without creating network containment or display ownership. Unproven Service
+membership keeps the ordinary `Cluster` reference and an unresolved membership row.
 Graph-only references such as
 `depends_on` use Dependency, not an attribute-specific usage label. Logical-resource
 rows show their own direct references, including references to spatial resources.
