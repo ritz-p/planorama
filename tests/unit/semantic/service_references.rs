@@ -633,7 +633,12 @@ fn acm_preserves_certificate_workflow_scope_and_safe_references() {
             .nodes
             .iter()
             .filter(|n| n.resource_type.starts_with("aws_acm_"))
-            .all(|n| n.placement == crate::model::Placement::Logical
+            .all(|n| n.placement
+                == if n.resource_type == "aws_acm_certificate" {
+                    crate::model::Placement::Spatial
+                } else {
+                    crate::model::Placement::Logical
+                }
                 && n.entity
                     .scope
                     .as_ref()
