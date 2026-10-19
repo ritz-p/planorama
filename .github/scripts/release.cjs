@@ -19,6 +19,14 @@ function validateVersion(version, tag) {
   }
 }
 
+function validateRequest(context, version, publishRequested = false) {
+  if (context.eventName !== 'workflow_dispatch') throw new Error('Release builds require workflow_dispatch');
+  if (typeof publishRequested !== 'boolean') throw new Error('Publication request must be a boolean');
+  const tag = context.ref.startsWith('refs/tags/') ? context.ref.slice('refs/tags/'.length) : '';
+  if (publishRequested && !tag) throw new Error('Publication requires an existing version tag');
+  validateVersion(version, tag || `v${version}`);
+}
+
 function smoke(binary, version, directory) {
   if (run(binary, ['--version']).trim() !== `planorama ${version}`) throw new Error('Wrong binary version');
   if (!run(binary, ['--help']).includes('Usage: planorama')) throw new Error('Missing help');
@@ -103,9 +111,10 @@ function collect(directory, version) {
   return [...names.map(name => ({name, data: fs.readFileSync(path.join(directory, name))})), {name: 'SHA256SUMS', data: Buffer.from(checksums)}];
 }
 
-async function publish({github, context, directory, version, tag}) {
+async function publish({github, context, directory, version, tag, publishRequested = false}) {
+  validateRequest(context, version, publishRequested);
   validateVersion(version, tag);
-  if (context.eventName !== 'push' || context.ref !== `refs/tags/${tag}`) throw new Error('Publication requires a tag push');
+  if (!publishRequested || context.ref !== `refs/tags/${tag}`) throw new Error('Publication requires explicit workflow_dispatch on the matching tag');
   const assets = collect(directory, version);
   const repo = context.repo;
   const existing = await github.paginate(github.rest.repos.listReleases, {...repo, per_page: 100});
@@ -120,5 +129,5 @@ async function publish({github, context, directory, version, tag}) {
   await github.rest.repos.updateRelease({...repo, release_id: release.id, draft: false});
 }
 
-module.exports = {targets, archiveName, validateVersion, collect, publish};
+module.exports = {targets, archiveName, validateVersion, validateRequest, collect, publish};
 if (require.main === module) pack(process.argv[2]);
