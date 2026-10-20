@@ -70,7 +70,8 @@ pub(crate) fn rows(node: &Node) -> Vec<Row<'_>> {
     let mut rows = Vec::new();
     for reference in &node.references {
         if !verified(reference) {
-            if reference.show_spatial
+            if reference.preserve_spatial
+                || reference.show_spatial
                 || node.placement == Placement::Logical
                 || reference
                     .targets
@@ -89,6 +90,7 @@ pub(crate) fn rows(node: &Node) -> Vec<Row<'_>> {
             if node.placement != Placement::Logical
                 && target.placement != Placement::Logical
                 && !reference.show_spatial
+                && !reference.preserve_spatial
             {
                 continue;
             }

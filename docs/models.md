@@ -64,6 +64,9 @@ No additional resource or dependency edge is created. See the
 
 `Node.placement` classifies spatial, logical and unresolved presentation separately
 from role. Logical nodes retain their native identity, action and provenance.
+The explicit Spatial type option changes this field only in the view projection.
+`ResourceReference.preserve_spatial` retains rows across promoted endpoints without
+changing completeness or the service-specific verification rules.
 `Node.references` retains direct attribute, verified inverse monitoring and graph-level reference evidence,
 resolved source identities, completeness and diagnostics; it never expands a
 resource dependency transitively. Module/input/output resolution follows the

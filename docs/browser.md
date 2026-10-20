@@ -61,9 +61,10 @@ Runtime traps are handled by the Worker as a generic generation failure.
 | `focus` | Resource address or null |
 | `focus_depth` | Nonnegative integer; requires focus; default neighbor depth 1 |
 | `modules` | Array of module addresses, default empty |
+| `spatial_types` | Array of the seven [allowed AWS types](configuration.md#explicit-spatial-types), default empty; API only |
 
 Unknown keys, invalid enum values and invalid combinations fail explicitly.
-The UI exposes all rows above, with the same defaults. Generation settings remain
+The UI exposes the rows above except `spatial_types`, with the same defaults. Generation settings remain
 visible and use the existing API decoder and selection rules.
 
 Choose the output, address format and icon mode, and optionally hide the

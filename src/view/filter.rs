@@ -4,6 +4,7 @@ use std::collections::{BTreeMap, BTreeSet};
 
 #[derive(Default)]
 pub struct Options {
+    pub spatial_types: Vec<String>,
     pub explain_selection: bool,
     pub selection_details: usize,
     pub modules: Vec<String>,
@@ -16,6 +17,7 @@ pub struct Options {
 
 impl Options {
     pub fn validate(&self) -> Result<(), String> {
+        super::purpose::validate(&self.spatial_types)?;
         if self.depth.is_some() && self.focus.is_none() {
             return Err("--focus-depth requires --focus".into());
         }
@@ -391,10 +393,12 @@ pub fn apply(all: &Architecture, options: &Options) -> Result<Architecture, Stri
         })
         .cloned()
         .collect();
-    Ok(Architecture {
+    let mut projected = Architecture {
         states,
         relationships,
-    })
+    };
+    super::purpose::apply(all, &mut projected, &options.spatial_types);
+    Ok(projected)
 }
 
 fn selection_reasons(

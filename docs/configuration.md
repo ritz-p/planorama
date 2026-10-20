@@ -43,6 +43,7 @@ Both tables accept exactly these keys, using the same spelling as CLI options:
 | `hide-relationship-legend` | boolean | `false` |
 | `changed-only` | boolean | `false` |
 | `modules` | array of module selector strings | `[]` |
+| `spatial-types` | array of allowed AWS type strings (see below) | `[]` |
 | `focus` | array containing zero or one resource address | `[]` |
 | `focus-depth` | nonnegative integer, requires focus | `1` when focused |
 | `diagnostics` | boolean | `false` |
@@ -100,3 +101,31 @@ The [sample file](../examples/planorama.toml) contains generation settings only.
 File I/O and TOML decoding live in `cli::settings`; its typed `Generation` values
 merge independently of file access, then populate the existing render, selection
 and diagnostic options. SVG/HTML generation uses the shared pipeline.
+
+## Explicit Spatial types
+
+Repeat `--spatial-type TYPE` to display selected types as independent Spatial cards.
+The exact allowlist is `aws_ssm_parameter`, `aws_cloudwatch_metric_alarm`,
+`aws_iam_role`, `aws_iam_user`, `aws_iam_group`,
+`aws_iam_openid_connect_provider` and `aws_iam_saml_provider`.
+These types default to Logical; only HashiCorp AWS identities are eligible.
+Unsupported type strings are errors. Foreign-provider lookalikes and unknown
+resource types retain their existing fallback.
+
+```sh
+planorama plan.json --spatial-type aws_iam_role --spatial-type aws_iam_openid_connect_provider -o federation.svg
+```
+
+TOML uses `spatial-types = ["aws_iam_role"]` in either generation table, following
+the existing kebab-case convention. Arrays replace lower layers. Repeated CLI
+flags accumulate within the CLI layer; `--no-spatial-types` clears earlier and
+configured types. Later flags start a new list. An empty TOML array clears the
+lower layer. Rust `Options` and the Wasm JSON request use `spatial_types`.
+
+The shared immutable projection applies presentation after selection and context
+closure, before reference measurement/layout. Focus alone does not activate it.
+Roles, scopes, identities, actions, relationships and coverage stay unchanged.
+Service and ordinary configuration references retain their meaning and details,
+including unresolved and unavailable endpoints. This adds no Embedded owner,
+effective-permission, trust or monitoring-success claim and exposes no attribute
+values. See the [comparison](purpose-placement.md) for the five scenarios.

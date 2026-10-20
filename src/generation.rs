@@ -11,6 +11,7 @@ pub enum OutputFormat {
 #[derive(Default, serde::Deserialize)]
 #[serde(default, deny_unknown_fields)]
 pub struct Options {
+    pub spatial_types: Vec<String>,
     pub format: OutputFormat,
     pub address_format: svg::AddressFormat,
     pub icon_mode: crate::icons::IconMode,
@@ -60,6 +61,7 @@ pub fn generate(json: &str, options: &Options) -> Result<Generated, Error> {
         return Err(Error::InputTooLarge);
     }
     let filter = view::Options {
+        spatial_types: options.spatial_types.clone(),
         changed_only: options.changed_only,
         focus: options.focus.clone(),
         depth: options.focus_depth,

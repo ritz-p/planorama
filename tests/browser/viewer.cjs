@@ -42,6 +42,48 @@ class ViewerTests {
         assert.deepEqual(errors, []);
         assert.deepEqual(remote, []);
     }
+    test_spatial_types_search_reference_navigation_and_exports() {
+        this.load('tests/fixtures/identity-providers-plan.json',
+            '--spatial-type', 'aws_iam_role',
+            '--spatial-type', 'aws_iam_openid_connect_provider',
+            '--spatial-type', 'aws_iam_saml_provider');
+        const selected = this.choose('aws_iam_role.workload');
+        const reference = this.find(`[id="${selected}"] a[href]`);
+        const target = reference.get_attribute('href').split('#').at(-1);
+        this.driver.execute_script("arguments[0].dispatchEvent(new MouseEvent('click', {bubbles:true,cancelable:true}))", reference);
+        this.assertEqual(this.find('[data-viewer-selected]').get_attribute('id'), target);
+        for (const kind of ['neighborhood', 'viewport']) {
+            this.driver.execute_script(`
+                document.getElementById('export-depth').value = '1';
+                window.beforeExport = document.querySelector('#viewport').innerHTML;
+                window.exportText = null;
+                URL.createObjectURL = blob => { window.exportBlob = blob; return 'blob:export-test'; };
+                HTMLAnchorElement.prototype.click = function () {};
+            `);
+            this.find('#export-' + kind).click();
+            this.assertIn('download requested', this.find('#export-status').text);
+            this.driver.execute_script('window.exportBlob.text().then(text => { window.exportText = text; })');
+            wait(() => this.driver.execute_script('return !!window.exportText'), 'Spatial export');
+            const result = this.driver.execute_script(`
+                const doc = new DOMParser().parseFromString(window.exportText, 'image/svg+xml');
+                return {
+                    unchanged: window.beforeExport === document.querySelector('#viewport').innerHTML,
+                    reference: doc.documentElement.textContent.includes('References: aws_iam_openid_connect_provider.workload'),
+                    broken: [...doc.querySelectorAll('[href]')].filter(el => !doc.getElementById(el.getAttribute('href').slice(1))).length,
+                    private: window.exportText.includes('PRIVATE_'),
+                    invalid: doc.querySelectorAll('parsererror').length
+                };
+            `);
+            this.assertTrue(result.unchanged);
+            this.assertTrue(result.reference);
+            this.assertEqual(result.broken, 0);
+            this.assertEqual(result.invalid, 0);
+            this.assertFalse(result.private);
+        }
+        this.load('tests/fixtures/identity-providers-plan.json', '--focus', 'aws_iam_role.workload', '--focus-depth', '0', '--spatial-type', 'aws_iam_role', '--spatial-type', 'aws_iam_openid_connect_provider');
+        this.assertIn('Unavailable', this.find('#viewport').text);
+        this.assertNotIn('PRIVATE_', this.find('#viewport').text);
+    }
     test_neighborhood_export_preserves_presentations_and_removes_unrelated_resources() {
         for (const fixture of ['viewer', 'routes', 'association', 'deposed', 'aurora', 'efs', 'kms', 'secrets-manager', 'private-ca', 'acm', 'certificate-cards', 'glue', 'athena']) {
             this.load('--state', 'one=tests/fixtures/' + fixture + '-plan.json', '--state', 'two=tests/fixtures/' + fixture + '-plan.json');

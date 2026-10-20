@@ -13,6 +13,8 @@ not imply architecture classification or relationship support.
 
 Spatial is the initial presentation: verified associations can become edges and
 verified routes/members can become child cards. Logical resources remain rows.
+The table records defaults; the explicit [Spatial type option](configuration.md#explicit-spatial-types)
+can present seven Logical AWS types as independent cards while preserving references.
 Unknown roles and unresolved placement are visible fallbacks, not rejected input.
 Unlisted types also use these fallbacks, without an icon or dedicated type rule.
 AWS `aws_iam_*` and `aws_cloudfront_*` types have global scope even when unlisted;

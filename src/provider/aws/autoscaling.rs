@@ -96,6 +96,7 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
         };
         let inverse = ResourceReference {
             kind: crate::model::ReferenceKind::Configured,
+            preserve_spatial: false,
             show_spatial: false,
             label: "Scaling policy",
             attribute: ATTRIBUTE.into(),
