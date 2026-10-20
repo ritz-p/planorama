@@ -1,0 +1,43 @@
+name: Terraform compatibility
+
+on:
+  pull_request:
+    paths:
+      - tests/fixtures/compatibility/**
+      - scripts/terraform-compatibility.cjs
+      - .github/workflows/terraform_compatibility.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  committed:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+      - run: node scripts/terraform-compatibility.cjs check
+  capture:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+      - run: docker compose up -d --build dev
+      - run: docker compose exec -T dev node scripts/terraform-compatibility.cjs prepare
+      - run: >-
+          docker run --rm --network none
+          --mount type=bind,source="$PWD",target=/workspace
+          planorama-dev node scripts/terraform-compatibility.cjs capture
+      - run: docker compose exec -T dev node scripts/terraform-compatibility.cjs check
+      - run: docker compose exec -T dev cargo test --locked --test terraform_plan
+      - uses: actions/upload-artifact@v7.0.2
+        with:
+          name: terraform-compatibility
+          path: tests/fixtures/compatibility
+          include-hidden-files: true

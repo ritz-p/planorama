@@ -19,6 +19,10 @@ pub use states::parse_inputs;
 #[path = "../tests/unit/plan.rs"]
 mod tests;
 
+#[cfg(test)]
+#[path = "../tests/unit/plan/compatibility.rs"]
+mod compatibility_tests;
+
 use crate::model::{Action, EntityMode, PlanStatus, TerraformEntity, TerraformPlan};
 use address::static_address;
 use references::{collect_config, resolve};
