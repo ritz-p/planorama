@@ -288,6 +288,30 @@ fn waf_lifecycle_and_modules_retain_association_identity() {
         .unwrap();
     assert!(old.entity.scope.as_ref().unwrap().global);
     assert!(old.references.is_empty());
+    let mut missing_before = value.clone();
+    missing_before["prior_state"]["values"]["root_module"]["resources"] = json!([{
+        "address": "aws_wafv2_web_acl.cdn",
+        "mode": "managed",
+        "type": "aws_wafv2_web_acl",
+        "name": "cdn",
+        "provider_name": "registry.terraform.io/hashicorp/aws",
+        "values": {"scope": "CLOUDFRONT"}
+    }]);
+    missing_before["resource_changes"]
+        .as_array_mut()
+        .unwrap()
+        .last_mut()
+        .unwrap()["change"]
+        .as_object_mut()
+        .unwrap()
+        .remove("before");
+    let parsed = plan::parse(&missing_before.to_string()).unwrap();
+    let old = parsed
+        .nodes
+        .iter()
+        .find(|node| node.deposed_key.is_some())
+        .unwrap();
+    assert!(old.waf_scope.is_none());
     let resources = value["configuration"]["root_module"]["resources"].take();
     value["configuration"]["root_module"]["module_calls"] =
         json!({"web":{"module":{"resources":resources}}});
