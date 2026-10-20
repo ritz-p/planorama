@@ -140,6 +140,7 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
                 .retain(|r| r.dependency || r.attribute != attribute);
             graph.nodes[index].references.push(ResourceReference {
                 kind: crate::model::ReferenceKind::Configured,
+                preserve_spatial: false,
                 show_spatial: false,
                 label,
                 attribute: attribute.into(),

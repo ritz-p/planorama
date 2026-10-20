@@ -5,6 +5,7 @@ use std::collections::BTreeMap;
 
 #[derive(Default)]
 pub(super) struct Generation {
+    pub spatial_types: Option<Vec<String>>,
     pub format: Option<OutputFormat>,
     pub icon_mode: Option<IconMode>,
     pub address_format: Option<AddressFormat>,
@@ -31,6 +32,7 @@ impl Generation {
             };
         }
         overlay!(
+            spatial_types,
             format,
             icon_mode,
             address_format,
@@ -50,6 +52,7 @@ impl Generation {
 
     fn parse(mut table: toml::Table) -> Result<Self, String> {
         let result = Self {
+            spatial_types: take(&mut table, "spatial-types")?,
             format: take(&mut table, "format")?,
             icon_mode: take(&mut table, "icon-mode")?,
             address_format: take(&mut table, "address-format")?,
@@ -69,6 +72,9 @@ impl Generation {
         }
         if result.focus.as_ref().is_some_and(|values| values.len() > 1) {
             return Err("config focus must contain at most one address".into());
+        }
+        if let Some(types) = &result.spatial_types {
+            crate::view::purpose::validate(types)?;
         }
         Ok(result)
     }

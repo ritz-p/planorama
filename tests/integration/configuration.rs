@@ -7,6 +7,82 @@ const INPUT: &[u8] = br#"{"format_version":"1.2","resource_changes":[
     {"address":"terraform_data.root","type":"terraform_data","change":{"actions":["create"]}}
 ]}"#;
 
+#[test]
+fn spatial_types_replace_layers_and_clear_explicitly() {
+    let input = include_bytes!("../fixtures/identity-providers-plan.json");
+    let dir = tempfile::tempdir().unwrap();
+    let path = dir.path().join("spatial.toml");
+    std::fs::write(
+        &path,
+        r#"
+[generation]
+spatial-types = ["aws_iam_role"]
+[presets.providers]
+spatial-types = ["aws_iam_openid_connect_provider", "aws_iam_saml_provider"]
+"#,
+    )
+    .unwrap();
+    for format in ["svg", "html"] {
+        for (overrides, expected) in [
+            (vec![], vec!["--spatial-type", "aws_iam_role"]),
+            (
+                vec!["--preset", "providers"],
+                vec![
+                    "--spatial-type",
+                    "aws_iam_openid_connect_provider",
+                    "--spatial-type",
+                    "aws_iam_saml_provider",
+                ],
+            ),
+            (
+                vec!["--preset", "providers", "--spatial-type", "aws_iam_role"],
+                vec!["--spatial-type", "aws_iam_role"],
+            ),
+            (vec!["--no-spatial-types"], vec![]),
+            (
+                vec![
+                    "--spatial-type",
+                    "aws_iam_role",
+                    "--no-spatial-types",
+                    "--spatial-type",
+                    "aws_iam_saml_provider",
+                ],
+                vec!["--spatial-type", "aws_iam_saml_provider"],
+            ),
+        ] {
+            let mut args = vec!["--config", path.to_str().unwrap(), "--format", format];
+            args.extend(overrides);
+            let mut direct = vec!["--format", format];
+            direct.extend(expected);
+            same(
+                support::run_with_args(input, &args),
+                support::run_with_args(input, &direct),
+            );
+        }
+        let default = support::run_with_args(input, &["--format", format]);
+        let spatial = support::run_with_args(
+            input,
+            &["--format", format, "--spatial-type", "aws_iam_role"],
+        );
+        assert_ne!(default.stdout, spatial.stdout);
+    }
+    for args in [
+        vec!["--spatial-type"],
+        vec!["--spatial-type", "aws_iam_policy"],
+        vec!["--spatial-type", "aws_iam_role,aws_iam_user"],
+    ] {
+        assert!(!support::run_with_args(input, &args).status.success());
+    }
+    std::fs::write(
+        &path,
+        "[generation]\nspatial-types = [\"private-invalid-type\"]",
+    )
+    .unwrap();
+    let rejected = support::run_with_args(input, &["--config", path.to_str().unwrap()]);
+    assert!(!rejected.status.success());
+    assert!(!String::from_utf8_lossy(&rejected.stderr).contains("private-invalid-type"));
+}
+
 fn configured(source: &str, args: &[&str]) -> Output {
     let dir = tempfile::tempdir().unwrap();
     let path = dir.path().join("planorama.toml");

@@ -710,8 +710,9 @@ Placement is independent of role. The [generated matrix](resource-support.md)
 records current behavior; the [42-type placement audit and migration policy](resource-presentation.md)
 separately describe proposed service cards and conditional child presentations.
 The [purpose-dependent review](purpose-placement.md) retains Logical defaults for
-SSM Parameters, metric alarms and the five IAM Identity types, with a separate
-proposal for explicit generation-time independent cards.
+SSM Parameters, metric alarms and the five IAM Identity types.
+The [explicit generation-time option](configuration.md#explicit-spatial-types)
+displays these types as independent Spatial cards while retaining reference details.
 The matrix
 lists the explicit logical types. They render as rows grouped by provider source,
 resource type and mode in the top annotation area. AMI describes
@@ -721,8 +722,8 @@ not inherit them. Unknown types retain unresolved placement and stay visible in
 the spatial diagram. Missing VPC/subnet references never imply logical placement.
 Logical placement does not suppress architectural significance: individual resource
 rows retain actions, identities, operation metadata, scope and focus/filter
-participation. A focused observability view can emphasize them; no spatial-view
-override is currently implemented.
+participation. Focus selects resources without changing their placement;
+independent Spatial cards require an explicit allowed `--spatial-type`.
 
 Auto Scaling Group Launch Template usage is shown only from complete, explicit
 `launch_template.id` / `launch_template.name` references or the equivalent

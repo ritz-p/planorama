@@ -376,6 +376,7 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
                 } else {
                     crate::model::ReferenceKind::Configured
                 },
+                preserve_spatial: false,
                 show_spatial: true,
                 label,
                 attribute: reference.attribute.clone(),

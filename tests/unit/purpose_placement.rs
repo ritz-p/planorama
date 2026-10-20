@@ -26,6 +26,266 @@ fn monitoring() -> Value {
     ]}}})
 }
 
+#[test]
+fn explicit_spatial_types_preserve_semantics_references_and_selection() {
+    for input in [
+        include_str!("../fixtures/viewer-plan.json").to_owned(),
+        monitoring().to_string(),
+        include_str!("../fixtures/iam-plan.json").to_owned(),
+        include_str!("../fixtures/identity-providers-plan.json").to_owned(),
+        include_str!("../fixtures/ssm-plan.json").to_owned(),
+    ] {
+        let original = semantic::transform(&plan::parse(&input).unwrap());
+        let snapshot = original.clone();
+        for focus in std::iter::once(None)
+            .chain(original.nodes.iter().map(|node| Some(node.address.clone())))
+        {
+            let options = view::Options {
+                depth: focus.as_ref().map(|_| 0),
+                focus,
+                ..Default::default()
+            };
+            let default = view::single(&original, &options).unwrap();
+            let spatial = view::single(
+                &original,
+                &view::Options {
+                    spatial_types: TYPES.into_iter().map(String::from).collect(),
+                    ..options
+                },
+            )
+            .unwrap();
+            let mut restored = spatial.0.clone();
+            for (before, after) in default.nodes.iter().zip(&mut restored.0.nodes) {
+                assert_eq!(
+                    after.placement,
+                    if eligible(before) {
+                        Placement::Spatial
+                    } else {
+                        before.placement
+                    }
+                );
+                let rows = |node: &crate::model::Node| {
+                    view::references::rows(node)
+                        .iter()
+                        .map(|row| row.label(false))
+                        .collect::<Vec<_>>()
+                };
+                assert_eq!(rows(before), rows(after));
+                after.placement = before.placement;
+                for (before, after) in before.references.iter().zip(&mut after.references) {
+                    after.preserve_spatial = before.preserve_spatial;
+                    for (before, after) in before.targets.iter().zip(&mut after.targets) {
+                        after.placement = before.placement;
+                    }
+                }
+            }
+            assert_eq!(restored, default.0);
+            assert_eq!(original, snapshot);
+        }
+    }
+}
+
+#[test]
+fn spatial_cross_state_references_keep_qualified_targets() {
+    use crate::model::architecture::{
+        Architecture, CrossStateEdge, CrossStateProvenance, Endpoint, StateId,
+    };
+    use std::collections::BTreeMap;
+    let input = r#"{"format_version":"1.2","resource_changes":[{"address":"aws_iam_role.same","type":"aws_iam_role"}]}"#;
+    let one = StateId::new("one").unwrap();
+    let two = StateId::new("two").unwrap();
+    let original = Architecture {
+        states: BTreeMap::from([
+            (
+                one.clone(),
+                semantic::transform(&plan::parse(input).unwrap()),
+            ),
+            (
+                two.clone(),
+                semantic::transform(&plan::parse(input).unwrap()),
+            ),
+        ]),
+        relationships: vec![CrossStateEdge {
+            from: Endpoint {
+                state: one,
+                address: "aws_iam_role.same".into(),
+            },
+            to: Endpoint {
+                state: two,
+                address: "aws_iam_role.same".into(),
+            },
+            provenance: CrossStateProvenance::TerraformRemoteState {
+                remote: "data.terraform_remote_state.roles".into(),
+                output: "role".into(),
+                output_action: None,
+            },
+        }],
+    };
+    let projected = view::apply(
+        &original,
+        &view::Options {
+            focus: Some("two:aws_iam_role.same".into()),
+            depth: Some(0),
+            spatial_types: vec!["aws_iam_role".into()],
+            ..Default::default()
+        },
+    )
+    .unwrap();
+    assert_eq!(projected.relationships(), original.relationships);
+    let svg = svg::render_states(&projected, svg::Options::default());
+    let doc = roxmltree::Document::parse(&svg).unwrap();
+    let links: Vec<_> = doc
+        .descendants()
+        .filter(|node| node.attribute("data-reference-attribute").is_some())
+        .collect();
+    assert_eq!(links.len(), 1);
+    let target = links[0]
+        .attribute("href")
+        .unwrap()
+        .strip_prefix('#')
+        .unwrap();
+    let target = doc
+        .descendants()
+        .find(|node| node.attribute("id") == Some(target))
+        .unwrap();
+    assert!(
+        target
+            .ancestors()
+            .any(|node| node.attribute("data-state-id") == Some("one"))
+    );
+    for graph in original.states.values() {
+        assert_eq!(graph.nodes[0].placement, Placement::Logical);
+        assert!(graph.nodes[0].references.is_empty());
+    }
+}
+
+#[test]
+fn spatial_projection_preserves_all_deployment_scopes() {
+    use crate::model::{AwsAccountScope, RegionScope, architecture::DeploymentScope};
+    let input = include_str!("../fixtures/identity-providers-plan.json");
+    for global in [false, true] {
+        for region in [None, Some(RegionScope("us-east-1".into()))] {
+            for account in [None, AwsAccountScope::new("123456789012")] {
+                let mut graph = semantic::transform(&plan::parse(input).unwrap());
+                for node in &mut graph.0.nodes {
+                    node.entity.scope = Some(DeploymentScope {
+                        provider: "registry.terraform.io/hashicorp/aws".into(),
+                        region: region.clone(),
+                        account: account.clone(),
+                        global,
+                    });
+                }
+                let original = graph.clone();
+                let projected = view::single(
+                    &graph,
+                    &view::Options {
+                        spatial_types: TYPES.into_iter().map(String::from).collect(),
+                        ..Default::default()
+                    },
+                )
+                .unwrap();
+                for (before, after) in graph.nodes.iter().zip(&projected.nodes) {
+                    assert_eq!(before.entity, after.entity);
+                    assert_eq!(before.provider_configuration, after.provider_configuration);
+                }
+                assert_eq!(graph, original);
+                assert!(!svg::render(&projected, &Layout::new(&projected)).contains("PRIVATE_"));
+            }
+        }
+    }
+}
+
+#[test]
+fn spatial_allowlist_is_exact_and_state_scoped() {
+    use crate::model::architecture::{Architecture, StateId};
+    use std::collections::BTreeMap;
+    let input = json!({"format_version":"1.2","resource_changes":[
+        {"address":"module.a.aws_iam_role.same","type":"aws_iam_role","provider_name":"registry.terraform.io/hashicorp/aws","change":{"actions":["create"]}},
+        {"address":"module.b.aws_iam_role.same","type":"aws_iam_role","provider_name":"registry.terraform.io/foreign/aws","change":{"actions":["delete"]}},
+        {"address":"data.aws_ssm_parameter.same","mode":"data","type":"aws_ssm_parameter","change":{"actions":["read"]}},
+        {"address":"aws_iam_role.old","type":"aws_iam_role","deposed":"old","change":{"actions":["delete"]}},
+        {"address":"aws_iam_role.old","type":"aws_iam_role","change":{"actions":["create"]}},
+        {"address":"aws_iam_policy.policy","type":"aws_iam_policy","change":{"actions":["create"]}},
+        {"address":"aws_iam_unknown.unknown","type":"aws_iam_unknown","change":{"actions":["create"]}}
+    ]});
+    let graph = semantic::transform(&plan::parse(&input.to_string()).unwrap());
+    let architecture = Architecture {
+        states: BTreeMap::from([
+            (StateId::new("one").unwrap(), graph.clone()),
+            (StateId::new("two").unwrap(), graph),
+        ]),
+        relationships: Vec::new(),
+    };
+    for modules in [
+        vec![],
+        vec!["one:module.a".into()],
+        vec!["two:module.b".into()],
+    ] {
+        let default = view::apply(
+            &architecture,
+            &view::Options {
+                modules: modules.clone(),
+                ..Default::default()
+            },
+        )
+        .unwrap();
+        let spatial = view::apply(
+            &architecture,
+            &view::Options {
+                spatial_types: TYPES.into_iter().map(String::from).collect(),
+                modules,
+                ..Default::default()
+            },
+        )
+        .unwrap();
+        for (state, graph) in &spatial.states {
+            assert_eq!(graph.nodes.len(), default.states[state].nodes.len());
+            for (before, after) in default.states[state].nodes.iter().zip(&graph.nodes) {
+                assert_eq!(before.entity, after.entity);
+                assert_eq!(before.provider, after.provider);
+                assert_eq!(before.mode, after.mode);
+                assert_eq!(before.action, after.action);
+                assert_eq!(
+                    after.placement,
+                    if eligible(before) {
+                        Placement::Spatial
+                    } else {
+                        before.placement
+                    }
+                );
+            }
+        }
+    }
+    for invalid in [
+        "aws_iam_policy",
+        "aws_iam_role_policy",
+        "aws_iam_instance_profile",
+        "aws_iam_group_membership",
+        "aws_cloudwatch_composite_alarm",
+        "aws_ssm_document",
+        "AWS_IAM_ROLE",
+        "aws_iam_role ",
+        "secret",
+    ] {
+        let options = view::Options {
+            spatial_types: vec![invalid.into()],
+            ..Default::default()
+        };
+        assert!(view::apply(&architecture, &options).is_err());
+        assert_eq!(
+            crate::generate(
+                &input.to_string(),
+                &crate::Options {
+                    spatial_types: vec![invalid.into()],
+                    ..Default::default()
+                }
+            )
+            .err(),
+            Some(crate::Error::InvalidOptions)
+        );
+    }
+}
+
 fn repeat(input: &Value, count: usize) -> Value {
     fn rename(value: &mut Value, addresses: &[&str], copy: usize) {
         match value {
@@ -132,22 +392,18 @@ fn compare_purpose_placements() {
                 }
             }
             for independent in [false, true] {
-                let mut candidate = original.clone();
-                if independent {
-                    for node in &mut candidate.0.nodes {
-                        if eligible(node) {
-                            node.placement = Placement::Spatial;
-                        }
-                        for reference in &mut node.references {
-                            for target in &mut reference.targets {
-                                if targets.contains(&target.id) {
-                                    target.placement = Placement::Spatial;
-                                }
-                            }
-                        }
-                    }
-                }
-                let projected = view::single(&candidate, &view::Options::default()).unwrap();
+                let projected = view::single(
+                    &original,
+                    &view::Options {
+                        spatial_types: if independent {
+                            TYPES.into_iter().map(String::from).collect()
+                        } else {
+                            Vec::new()
+                        },
+                        ..Default::default()
+                    },
+                )
+                .unwrap();
                 assert_eq!(projected.nodes.len(), original.nodes.len());
                 assert_eq!(projected.edges, original.edges);
                 assert_eq!(projected.relationships, original.relationships);
@@ -159,8 +415,8 @@ fn compare_purpose_placements() {
                 }
                 let output = svg::render(&projected, &Layout::new(&projected));
                 assert_eq!(
-                    candidate,
-                    view::single(&candidate, &view::Options::default())
+                    original,
+                    view::single(&original, &view::Options::default())
                         .unwrap()
                         .0
                 );
@@ -191,6 +447,23 @@ fn compare_purpose_placements() {
                     .iter()
                     .map(|node| view::references::rows(node).len())
                     .sum::<usize>();
+                assert_eq!(
+                    rows,
+                    original
+                        .nodes
+                        .iter()
+                        .map(|node| view::references::rows(node).len())
+                        .sum::<usize>()
+                );
+                for node in &projected.nodes {
+                    for reference in &node.references {
+                        for target in &reference.targets {
+                            if independent && targets.contains(&target.id) {
+                                assert_eq!(target.placement, Placement::Spatial);
+                            }
+                        }
+                    }
+                }
                 let variant = if independent {
                     "independent"
                 } else {
