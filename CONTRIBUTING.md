@@ -100,6 +100,7 @@ docker compose exec -T dev cargo run --locked -- output/terraform-plan.json -o o
 組み込みリソースと架空のローカル state を使い、クラウド認証情報は不要です。`apply` は実行しません。
 通常の Rust テストはコミット済み JSON を使用します。AWS の追加 fixture は [オフライン生成例](examples/terraform-large/README.md) と [Terraform から取得した例](tests/fixtures/aws-captured/README.md) を参照してください。
 provider evidence の追加検証は [専用手順](docs/provider-evidence.md#privacy-and-validation) にあります。
+この検証では Docker 内に Terraform 1.9.8 / 1.16.6 と AWS 5.100.0 を組み合わせた作業ディレクトリを個別に準備し、外部ネットワークなしで実 plan とローカル STS を検証します。開発イメージの既定 Terraform は変更しません。
 
 ## CI・配布
 
