@@ -1055,26 +1055,26 @@
   },
   "relevant_attributes": [
     {
-      "resource": "data.aws_iam_policy_document.fixture",
-      "attribute": [
-        "json"
-      ]
-    },
-    {
       "resource": "module.network.aws_route_table.private",
       "attribute": [
         "id"
       ]
     },
     {
-      "resource": "module.network.aws_subnet.private",
-      "attribute": []
-    },
-    {
       "resource": "module.network.aws_vpc.main",
       "attribute": [
         "id"
       ]
+    },
+    {
+      "resource": "data.aws_iam_policy_document.fixture",
+      "attribute": [
+        "json"
+      ]
+    },
+    {
+      "resource": "module.network.aws_subnet.private",
+      "attribute": []
     }
   ],
   "applyable": true,

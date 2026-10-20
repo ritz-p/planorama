@@ -1061,14 +1061,14 @@
       ]
     },
     {
+      "resource": "module.network.aws_subnet.private",
+      "attribute": []
+    },
+    {
       "resource": "module.network.aws_route_table.private",
       "attribute": [
         "id"
       ]
-    },
-    {
-      "resource": "module.network.aws_subnet.private",
-      "attribute": []
     },
     {
       "resource": "data.aws_iam_policy_document.fixture",

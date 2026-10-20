@@ -33,11 +33,18 @@ docker compose exec -T dev cargo test --locked --test terraform_plan
 On PowerShell, use `source="${PWD}"` for the bind mount.
 `prepare` downloads checksum-verified linux_amd64 archives and initializes exact
 provider selections, using committed locks read-only when present.
+Each preparation recreates its dedicated case directory, removing obsolete HCL
+and prior local state. Downloads remain in the separate checksum-verified binary
+and provider caches.
 `capture` uses the same binary and initialized provider for plan, show and schema.
 Only the top-level timestamp is removed. Inputs are copied from existing offline
 fixtures with required Core/Provider versions substituted and committed
 `compatibility/inputs` HCL added. Binary plans stay under ignored
 `output/terraform-compatibility`.
+Each committed `capture.json` binds the normalized prepared inputs, Terraform
+archive, lock, plan and extracted schema with SHA-256. `check` re-reads the declared
+source HCL, nested modules, additional HCL and local-state fixture, so source changes
+require recapture. Capture also rejects prepared inputs that changed after preparation.
 
 Capture uses no network, empty local managed state and public dummy credentials.
 There is no apply or cloud account. The language case reads the existing synthetic
@@ -105,3 +112,5 @@ Ordinary Rust tests use committed JSON without Terraform execution.
 Manual dispatch also regenerates with fixed tools and disabled capture networking,
 checks the result and runs the rendering regression. It does not run large routing
 suites or regenerate all SVGs on every PR.
+The manual lane also runs the library compatibility tests for language/override
+semantics. Source directories are included in the PR workflow trigger.
