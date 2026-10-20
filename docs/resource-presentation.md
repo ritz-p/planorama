@@ -5,6 +5,10 @@ that the proposed placements are implemented. The [generated support matrix](res
 records current defaults. Role, placement, deployment scope, network containment,
 semantic membership and presentation ownership are independent.
 
+The [purpose-dependent review](purpose-placement.md) covers SSM Parameter,
+CloudWatch Alarm and the five IAM Identity types. Their defaults remain Logical;
+optional independent presentation requires the shared generation-time follow-up.
+
 ## Audit of the 42 AWS Logical types
 
 The audit uses `provider/aws.rs` at `ac700bb`. Every type below then defaulted
