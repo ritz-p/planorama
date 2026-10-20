@@ -105,6 +105,7 @@ pub(super) fn classify(resource_type: &str) -> ResourceRole {
         | "aws_autoscaling_policy" => ResourceRole::Policy,
         "aws_autoscaling_group"
         | "aws_s3_bucket_notification"
+        | "aws_s3_bucket_replication_configuration"
         | "aws_ecs_service"
         | "aws_ecs_cluster"
         | "aws_ecs_task_definition"

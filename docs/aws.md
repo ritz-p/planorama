@@ -118,6 +118,30 @@ synthetic [fixture](../tests/fixtures/s3-notification-plan.json),
 show two queue entries, SNS/Lambda references and a literal fallback. Regenerate HTML with
 `docker compose exec -T dev cargo run --locked -- tests/fixtures/s3-notification-plan.json --format html -o examples/s3-notification.html`.
 
+Replication configurations are separate regional Logical Controllers.
+`Replication source bucket reference` proves the `bucket` reference to Bucket
+`id`/`bucket`; `Replication destination reference` proves each
+`rule.<index>.destination.<index>.bucket` reference to Bucket `arn`.
+The same explicit/current/managed/type/value checks and nested list-length proofs
+apply, including the schema's single destination per rule. Source and destination buckets keep their own scopes, including
+cross-region destinations. Every rule keeps its positional provenance while the
+configuration resource contributes one identity/action and coverage count.
+
+References describe configuration whether a rule is enabled or disabled; they
+do not assert replication activity, permission, versioning or transfer success.
+IAM role dependencies remain ordinary Terraform references. Rule IDs, filter
+values, payloads and policy bodies are not emitted. Missing/filtered, ambiguous,
+dynamic, unknown, wrong-provider/type and deleted/deposed endpoints cannot be
+resolved from names or matching ARN strings alone.
+
+Verified against AWS Provider 5.100.0/6.0.0 list schemas, Terraform 1.9.8 plan
+expressions and the official
+[replication contract](https://github.com/hashicorp/terraform-provider-aws/blob/v6.0.0/website/docs/r/s3_bucket_replication_configuration.html.markdown).
+The synthetic [fixture](../tests/fixtures/s3-replication-plan.json),
+[SVG](../examples/s3-replication.svg) and [offline HTML](../examples/s3-replication.html)
+show two rules, regional separation and a literal fallback. Regenerate HTML with
+`docker compose exec -T dev cargo run --locked -- tests/fixtures/s3-replication-plan.json --format html -o examples/s3-replication.html`.
+
 ## AWS Private CA
 
 Exact AWS `aws_acmpca_certificate_authority` and `aws_acmpca_certificate` are
