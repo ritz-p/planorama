@@ -1,0 +1,18 @@
+{
+  "format_version":"1.2",
+  "resource_changes":[
+    {"address":"aws_ecr_repository.app","type":"aws_ecr_repository","change":{"actions":["create"],"after":{"id":"fixture","name":"fixture","repository_url":"PRIVATE_REGISTRY_URL"}}},
+    {"address":"aws_ecr_repository_policy.app","type":"aws_ecr_repository_policy","change":{"actions":["create"],"after":{"repository":"fixture","policy":"PRIVATE_POLICY"}}},
+    {"address":"aws_ecr_lifecycle_policy.app","type":"aws_ecr_lifecycle_policy","change":{"actions":["create"],"after":{"repository":"fixture","policy":"PRIVATE_LIFECYCLE"}}},
+    {"address":"aws_ecs_task_definition.app","type":"aws_ecs_task_definition","change":{"actions":["create"],"after":{"container_definitions":"PRIVATE_IMAGE_METADATA"}}}
+  ],
+  "configuration":{
+    "provider_config":{"aws":{"name":"aws","full_name":"registry.terraform.io/hashicorp/aws","expressions":{"region":{"constant_value":"us-east-1"}}}},
+    "root_module":{"resources":[
+      {"address":"aws_ecr_repository.app","provider_config_key":"aws"},
+      {"address":"aws_ecr_repository_policy.app","provider_config_key":"aws","expressions":{"repository":{"references":["aws_ecr_repository.app.name","aws_ecr_repository.app"]}}},
+      {"address":"aws_ecr_lifecycle_policy.app","provider_config_key":"aws","expressions":{"repository":{"references":["aws_ecr_repository.app.name","aws_ecr_repository.app"]}}},
+      {"address":"aws_ecs_task_definition.app","provider_config_key":"aws","expressions":{"container_definitions":{"references":["aws_ecr_repository.app.repository_url","aws_ecr_repository.app"]}}}
+    ]}
+  }
+}

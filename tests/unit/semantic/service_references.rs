@@ -2,6 +2,83 @@ use crate::{layout::Layout, plan, semantic, svg};
 use serde_json::{Value, json};
 
 #[test]
+fn ecr_validates_configuration_without_inventing_image_pull_relationships() {
+    let fixture = include_str!("../../fixtures/ecr-plan.json");
+    check_service_fixture(fixture, "Configured repository", "repository");
+    let mut value: Value = serde_json::from_str(fixture).unwrap();
+    value["resource_changes"].as_array_mut().unwrap().swap(1, 2);
+    value["configuration"]["root_module"]["resources"]
+        .as_array_mut()
+        .unwrap()
+        .swap(1, 2);
+    check_service_fixture(&value.to_string(), "Configured repository", "repository");
+    for case in ["unknown_region", "other_region", "foreign_consumer"] {
+        let mut changed: Value = serde_json::from_str(fixture).unwrap();
+        match case {
+            "unknown_region" => {
+                changed["configuration"]["provider_config"]["aws"]["expressions"]["region"] =
+                    json!({"references":["var.region"]})
+            }
+            "other_region" => {
+                changed["configuration"]["root_module"]["resources"][0]["expressions"]["region"] =
+                    json!({"constant_value":"us-west-2"})
+            }
+            _ => changed["resource_changes"][1]["provider_name"] = json!("example.com/foreign/aws"),
+        }
+        let graph = semantic::transform(&plan::parse(&changed.to_string()).unwrap());
+        assert!(
+            !graph
+                .nodes
+                .iter()
+                .find(|n| n.address == "aws_ecr_repository_policy.app")
+                .unwrap()
+                .references
+                .iter()
+                .any(|r| r.label == "Configured repository" && r.complete),
+            "{case}"
+        );
+    }
+    let graph = semantic::transform(&plan::parse(fixture).unwrap());
+    assert_eq!(graph.coverage.selected.resources, 4);
+    assert!(
+        graph
+            .nodes
+            .iter()
+            .filter(|n| n.resource_type.starts_with("aws_ecr_"))
+            .all(|n| n
+                .entity
+                .scope
+                .as_ref()
+                .is_some_and(|s| !s.global && s.region.is_some()))
+    );
+    for format in [crate::OutputFormat::Svg, crate::OutputFormat::Html] {
+        let output = crate::generate(
+            fixture,
+            &crate::Options {
+                format,
+                ..Default::default()
+            },
+        )
+        .unwrap()
+        .content;
+        assert!(!output.contains("PRIVATE_"));
+        assert!(output.contains("Configured repository"));
+        assert!(output.contains("planorama-icon-aws-ecr"));
+    }
+    value["configuration"]["root_module"]["resources"][3]["expressions"] = json!({});
+    let graph = semantic::transform(&plan::parse(&value.to_string()).unwrap());
+    assert!(
+        graph
+            .nodes
+            .iter()
+            .find(|n| n.resource_type == "aws_ecs_task_definition")
+            .unwrap()
+            .references
+            .is_empty()
+    );
+}
+
+#[test]
 fn efs_preserves_regional_storage_and_validates_mount_target_relationships() {
     let fixture = include_str!("../../fixtures/efs-plan.json");
     check_service_fixture(fixture, "File system", "file_system_id");

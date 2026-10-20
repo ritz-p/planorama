@@ -168,6 +168,11 @@
             "file": "AWS-WAF.svg",
             "source": "Architecture-Service-Icons_07312026/Arch_Security-Identity/48/Arch_AWS-WAF_48.svg",
             "sha256": "e67f918f21cf5fab0846faea3dfa703c9f167275da408c3b4e5f423e3e4ec24a"
+        },
+        {
+            "file": "Amazon-Elastic-Container-Registry.svg",
+            "source": "Architecture-Service-Icons_07312026/Arch_Containers/48/Arch_Amazon-Elastic-Container-Registry_48.svg",
+            "sha256": "bf829eab882165f4fb850bab032e5c81312cb579e2ad880372f206936db4a2be"
         }
     ]
 }

@@ -18,6 +18,7 @@ impl ResourceIcon {
             Self::Sns => "planorama-icon-aws-sns",
             Self::EventBridge => "planorama-icon-aws-eventbridge",
             Self::Ecs => "planorama-icon-aws-ecs",
+            Self::Ecr => "planorama-icon-aws-ecr",
             Self::Eks => "planorama-icon-aws-eks",
             Self::Database => "planorama-icon-aws-rds",
             Self::DynamoDb => "planorama-icon-aws-dynamodb",
@@ -44,6 +45,10 @@ impl ResourceIcon {
 
     pub fn svg(self) -> &'static str {
         match self {
+            Self::Ecr => include_str!(concat!(
+                env!("OUT_DIR"),
+                "/Amazon-Elastic-Container-Registry.svg"
+            )),
             Self::Waf => include_str!(concat!(env!("OUT_DIR"), "/AWS-WAF.svg")),
             Self::Vpc | Self::Subnet | Self::Gateway | Self::Route | Self::Security => {
                 include_str!(concat!(
