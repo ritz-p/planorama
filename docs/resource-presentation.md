@@ -99,7 +99,11 @@ reference/dependency navigation across spatial endpoints without inferring loggi
 delivery or ownership. ECS Clusters are independent cards; verified Service
 membership uses service-reference metadata without changing network placement or
 creating presentation ownership. Task Definitions remain Logical.
-Other service migrations are pending.
+Glue Database, Crawler and Job are independent cards. Tables reuse service-member
+measurements under an explicitly verified Database with matching catalog IDs and
+regions, compatible provider scope and no incoming attribute references. Catalog
+account scope stays unknown; data tables and unresolved/shared tables stay independent.
+Athena migration is pending.
 
 Measure headers, service icons, references, import/move badges and wrapped child
 addresses before packing. Reserve parent height and actual child bounds/ports;

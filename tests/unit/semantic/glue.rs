@@ -131,6 +131,109 @@ fn glue_catalog_requires_explicit_current_typed_and_matching_catalog_region() {
             "case {case}"
         );
         assert_eq!(graph.coverage.selected.resources, 7);
+        assert!(graph.nodes.iter().all(|n| n.member_owner.is_none()));
+    }
+}
+
+#[test]
+fn catalog_cards_preserve_measured_identity_and_selected_fallback() {
+    use crate::{layout::Layout, svg, view};
+    for case in ["valid", "shared", "data", "external", "ambiguous"] {
+        let mut value: Value = serde_json::from_str(FIXTURE).unwrap();
+        match case {
+            "shared" => {
+                value["configuration"]["root_module"]["resources"][5]["expressions"]["default_arguments"] =
+                    json!({"references":["aws_glue_catalog_table.events.name"]});
+            }
+            "data" => value["resource_changes"][1]["mode"] = json!("data"),
+            "external" => {
+                value["configuration"]["root_module"]["resources"][1]["expressions"]["database_name"] =
+                    json!({"references":["aws_glue_catalog_database.missing.name"]});
+            }
+            "ambiguous" => {
+                value["configuration"]["root_module"]["resources"][1]["expressions"]["database_name"] =
+                    json!({"references":["aws_glue_catalog_database.lake.name","var.other"]});
+            }
+            _ => {}
+        }
+        let graph = semantic::transform(&plan::parse(&value.to_string()).unwrap());
+        let child = graph
+            .nodes
+            .iter()
+            .position(|n| n.resource_type == "aws_glue_catalog_table")
+            .unwrap();
+        assert_eq!(
+            view::routes::owner(&graph, &graph.nodes[child]).is_some(),
+            case == "valid",
+            "{case}"
+        );
+        let layout = Layout::new(&graph);
+        assert!(layout.bounds[child].width > 0);
+        let output = svg::render(&graph, &layout);
+        let doc = roxmltree::Document::parse(&output).unwrap();
+        assert_eq!(
+            doc.descendants()
+                .filter(|n| n.attribute("data-terraform-address").is_some())
+                .count(),
+            7
+        );
+        let selected = view::single(
+            &graph,
+            &view::Options {
+                focus: Some("aws_glue_catalog_table.events".into()),
+                depth: Some(0),
+                ..Default::default()
+            },
+        )
+        .unwrap();
+        assert_eq!(selected.nodes.len(), 1);
+        assert!(view::routes::owner(&selected, &selected.nodes[0]).is_none());
+        assert!(Layout::new(&selected).bounds[0].width > 0);
+    }
+
+    let address = format!("aws_glue_catalog_table.events[\"{}<&\"]", "long".repeat(70));
+    let mut value: Value = serde_json::from_str(FIXTURE).unwrap();
+    value["resource_changes"][1]["address"] = json!(address);
+    let graph = semantic::transform(&plan::parse(&value.to_string()).unwrap());
+    let child = graph
+        .nodes
+        .iter()
+        .position(|n| n.resource_type == "aws_glue_catalog_table")
+        .unwrap();
+    let layout = Layout::new(&graph);
+    let parent = view::routes::owner(&graph, &graph.nodes[child]).unwrap();
+    let bounds = layout.bounds[child];
+    let frame = layout.bounds[parent];
+    assert!(bounds.origin.x > frame.origin.x && bounds.right() < frame.right());
+    assert!(
+        bounds.origin.y > frame.origin.y
+            && bounds.origin.y + bounds.height < frame.origin.y + frame.height
+    );
+    let architecture = crate::model::architecture::Architecture {
+        states: [
+            (crate::model::StateId::new("one").unwrap(), graph.clone()),
+            (crate::model::StateId::new("two").unwrap(), graph),
+        ]
+        .into(),
+        relationships: Vec::new(),
+    };
+    let selected = view::apply(&architecture, &Default::default()).unwrap();
+    let html = crate::html::render_states(&selected, svg::Options::default());
+    let text = &html[html.find("id=\"viewer-data\"").unwrap()..];
+    let resources: Vec<Value> =
+        serde_json::from_str(&text[text.find('>').unwrap() + 1..text.find("</script>").unwrap()])
+            .unwrap();
+    assert_eq!(resources.len(), 14);
+    for state in ["one", "two"] {
+        let child = resources
+            .iter()
+            .find(|r| r["state"] == state && r["address"] == address)
+            .unwrap();
+        let parent = resources
+            .iter()
+            .find(|r| r["state"] == state && r["address"] == "aws_glue_catalog_database.lake")
+            .unwrap();
+        assert_eq!(child["context"], json!([parent["id"]]));
     }
 }
 
@@ -145,7 +248,7 @@ fn glue_keeps_safe_references_identity_and_omits_payloads() {
         .filter(|n| n.resource_type.starts_with("aws_glue_"))
     {
         assert_eq!(node.role, ResourceRole::Node);
-        assert_eq!(node.placement, Placement::Logical);
+        assert_eq!(node.placement, Placement::Spatial);
         assert!(
             node.entity
                 .scope
