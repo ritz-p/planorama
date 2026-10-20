@@ -10,6 +10,13 @@ form { display: flex; flex-wrap: wrap; gap: 1rem; align-items: center }
 button, select, input { font: inherit }
 iframe { width: 100%; height: 65vh; border: 1px solid #cbd5e1; background: white; margin-top: 1rem }
 a { margin-right: 1rem }
+fieldset { flex-basis: 100%; display: grid; gap: 1rem; min-width: 0 }
+fieldset label { display: block }
+input[type="text"] { width: min(95%, 40rem) }
+.module-row { display: flex; gap: .5rem; align-items: end; margin: .5rem 0 }
+.module-row label { flex: 1 }
+#settings-help, #modules-help, #depth-help { margin: 0 }
+:focus-visible { outline: 3px solid #1769aa; outline-offset: 3px }
 </style>
 <h1>Planorama</h1>
 <p>Select one saved plan from <code>terraform show -json</code> (up to 32 MiB). Generation stays in this browser. Files and results are not uploaded or automatically saved.</p>
@@ -17,9 +24,27 @@ a { margin-right: 1rem }
   <label>Plan JSON <input id="file" type="file" accept=".json,application/json" required></label>
   <label>Output <select id="format"><option value="svg">SVG</option><option value="html">HTML</option></select></label>
   <label><input id="changed" type="checkbox"> Changed only</label>
+  <fieldset>
+    <legend>Generation settings</legend>
+    <p id="settings-help">Changing a setting cancels generation and clears the previous result. Generate again to apply your settings.</p>
+    <label>Address format <select id="address-format"><option value="qualified">Qualified</option><option value="terraform">Terraform</option></select></label>
+    <label>Icons <select id="icon-mode"><option value="icon">Icons</option><option value="service-name">Service names</option></select></label>
+    <label><input id="hide-legend" type="checkbox"> Hide relationship legend</label>
+    <label>Focus resource address (optional) <input id="focus" type="text" autocomplete="off" spellcheck="false"></label>
+    <label>Focus depth <input id="focus-depth" type="text" inputmode="numeric" autocomplete="off" placeholder="1" disabled aria-describedby="depth-help"></label>
+    <p id="depth-help">Enabled only with a focus address. Empty uses depth 1; otherwise enter a nonnegative integer (0–4294967295). Clearing focus preserves this input but excludes it from generation.</p>
+    <fieldset aria-describedby="modules-help">
+      <legend>Modules (optional)</legend>
+      <p id="modules-help">Add one complete module selector per row. Spaces, commas, dots and quotes are preserved. No rows means no module filter. Empty rows must be filled or removed. Duplicate selectors are passed unchanged to the generator and select the same resources once.</p>
+      <div id="modules"></div>
+      <button id="add-module" type="button">Add module</button>
+    </fieldset>
+  </fieldset>
+  <button id="reset-settings" type="button">Reset settings</button>
   <button id="generate" disabled>Generate</button>
   <button id="cancel" type="button" disabled>Cancel</button>
 </form>
+<p id="settings-error" role="alert"></p>
 <p id="status" role="status">Loading local generator…</p>
 <a id="download" hidden>Download</a>
 <iframe id="preview" title="Generated diagram" sandbox="allow-scripts" referrerpolicy="no-referrer"></iframe>
