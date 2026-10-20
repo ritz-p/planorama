@@ -69,6 +69,7 @@ planorama plan.json --config planorama.toml --preset review -o review.html
 - 入力は `terraform show -json` の保存済み plan 形式です。`terraform plan -json` のイベントストリームや state JSON は対象外です。
 - plan・JSON には機密値が含まれ得ます。実環境の plan/state をコミットしないでください。図にはリソース識別子が残り、SVG の Route には検証済みの宛先定数を表示する場合があります。HTML では宛先定数を省略します。[入力と機密情報](docs/provider-evidence.md#privacy-and-validation)、[Route の表示範囲](docs/routes.md)を確認してください。
 - JSON 単独では AWS account は unknown です。任意の `--provider-plan` は、同じ保存済み plan、Terraform 1.9.8、初期化済み hashicorp/aws 5.100.0 スキーマを必要とします。動的・未解決の構成は unknown のままです。[provider evidence の条件](docs/provider-evidence.md)を参照してください。
+- JSON 読み込み、resource region override、provider evidence は検証済み範囲が異なります。[Terraform / AWS Provider 互換性 matrix](docs/terraform-compatibility.md)で実 plan の比較対象と制限を確認できます。
 - 図は解決できた構成上の関係を表します。Terraform の厳密な実行順序やネットワーク到達性、交差・重なりのない最適配置は保証しません。未解決の理由は `--diagnostics` で確認できます。
 
 ## 詳細文書・開発

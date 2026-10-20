@@ -284,6 +284,12 @@ On 2026-10-15, Docker Desktop Linux with Rust 1.85.1 took 31.30 seconds for
 the six-fixture check, excluding compilation and including container startup.
 This is one local observation, not a CI time threshold or hosted-runner estimate.
 
+## Terraform compatibility (#525)
+
+The separate [Terraform compatibility matrix](terraform-compatibility.md) uses
+committed-fixture checks on relevant PRs and fixed-tool offline capture only on
+manual dispatch. It does not replace Tests, SVG regeneration or Layout quality.
+
 ## Deferred routing regressions (#253)
 
 **Routing regressions** runs after every PR merge into `main`, nightly at 18:23 UTC
