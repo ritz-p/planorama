@@ -25,6 +25,7 @@ impl ResourceIcon {
             Self::Search => "planorama-icon-aws-search",
             Self::Storage => "planorama-icon-aws-s3",
             Self::CloudFront => "planorama-icon-aws-cloudfront",
+            Self::Waf => "planorama-icon-aws-waf",
             Self::Route53 => "planorama-icon-aws-route53",
             Self::Acm => "planorama-icon-aws-acm",
             Self::PrivateCa => "planorama-icon-aws-private-ca",
@@ -43,6 +44,7 @@ impl ResourceIcon {
 
     pub fn svg(self) -> &'static str {
         match self {
+            Self::Waf => include_str!(concat!(env!("OUT_DIR"), "/AWS-WAF.svg")),
             Self::Vpc | Self::Subnet | Self::Gateway | Self::Route | Self::Security => {
                 include_str!(concat!(
                     env!("OUT_DIR"),

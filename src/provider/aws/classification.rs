@@ -8,6 +8,7 @@ pub(super) fn classify(resource_type: &str) -> ResourceRole {
     match resource_type {
         "aws_vpc" | "aws_subnet" => ResourceRole::Container,
         "aws_instance"
+        | "aws_api_gateway_stage"
         | "aws_athena_workgroup"
         | "aws_athena_data_catalog"
         | "aws_glue_catalog_database"
@@ -63,6 +64,7 @@ pub(super) fn classify(resource_type: &str) -> ResourceRole {
         | "aws_api_gateway_rest_api"
         | "aws_apigatewayv2_api" => ResourceRole::Connector,
         "aws_route_table_association"
+        | "aws_wafv2_web_acl_association"
         | "aws_volume_attachment"
         | "aws_sns_topic_subscription"
         | "aws_cloudwatch_event_target"
@@ -85,6 +87,8 @@ pub(super) fn classify(resource_type: &str) -> ResourceRole {
         | "aws_iam_saml_provider"
         | "aws_iam_group" => ResourceRole::Identity,
         "aws_security_group"
+        | "aws_wafv2_web_acl"
+        | "aws_wafv2_rule_group"
         | "aws_cloudfront_origin_access_control"
         | "aws_cloudfront_origin_access_identity"
         | "aws_cloudfront_cache_policy"

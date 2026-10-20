@@ -67,6 +67,7 @@ Provider source: `registry.terraform.io/hashicorp/aws`.
 | `aws_api_gateway_domain_name` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | ApiGateway / Amazon API Gateway | Unknown | — |
 | `aws_api_gateway_resource` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | ApiGateway / Amazon API Gateway | Unknown | — |
 | `aws_api_gateway_rest_api` | Connector / Connector | Spatial / Spatial | ApiGateway / Amazon API Gateway | Regional (conditional) | — |
+| `aws_api_gateway_stage` | Node / Node | Spatial / Spatial | ApiGateway / Amazon API Gateway | Regional (conditional) | [aws/associations.rs](../src/provider/aws/associations.rs), [aws/waf.rs](../src/provider/aws/waf.rs) |
 | `aws_api_gateway_vpc_link` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | ApiGateway / Amazon API Gateway | Unknown | — |
 | `aws_apigatewayv2_api` | Connector / Connector | Spatial / Spatial | ApiGateway / Amazon API Gateway | Regional (conditional) | — |
 | `aws_apigatewayv2_apis` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | ApiGateway / Amazon API Gateway | Unknown | — |
@@ -80,7 +81,7 @@ Provider source: `registry.terraform.io/hashicorp/aws`.
 | `aws_caller_identity` | Unknown / Unknown | Spatial (unresolved) / Omitted | — | Unknown | — |
 | `aws_cloudfront_cache_policy` | Policy / Policy | Logical / Logical | CloudFront / Amazon CloudFront | Global | [aws.rs](../src/provider/aws.rs), [aws/cloudfront.rs](../src/provider/aws/cloudfront.rs) |
 | `aws_cloudfront_connection_group` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | CloudFront / Amazon CloudFront | Global | — |
-| `aws_cloudfront_distribution` | Connector / Connector | Spatial / Spatial | CloudFront / Amazon CloudFront | Global | [aws/service_references.rs](../src/provider/aws/service_references.rs) |
+| `aws_cloudfront_distribution` | Connector / Connector | Spatial / Spatial | CloudFront / Amazon CloudFront | Global | [aws/service_references.rs](../src/provider/aws/service_references.rs), [aws/waf.rs](../src/provider/aws/waf.rs) |
 | `aws_cloudfront_distribution_tenant` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | CloudFront / Amazon CloudFront | Global | — |
 | `aws_cloudfront_function` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | CloudFront / Amazon CloudFront | Global | — |
 | `aws_cloudfront_origin_access_control` | Policy / Policy | Logical / Logical | CloudFront / Amazon CloudFront | Global | [aws.rs](../src/provider/aws.rs), [aws/cloudfront.rs](../src/provider/aws/cloudfront.rs) |
@@ -207,7 +208,7 @@ Provider source: `registry.terraform.io/hashicorp/aws`.
 | `aws_lambda_layer_version` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Lambda / AWS Lambda | Unknown | — |
 | `aws_launch_configuration` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Scaling / Amazon EC2 Auto Scaling | Unknown | — |
 | `aws_launch_template` | Node / Node | Logical / Logical | Ec2 / Amazon EC2 | Regional (conditional) | [aws.rs](../src/provider/aws.rs) |
-| `aws_lb` | Connector / Connector | Spatial / Spatial | LoadBalancer / Elastic Load Balancing | Regional (conditional) | [aws/cloudfront.rs](../src/provider/aws/cloudfront.rs), [aws/components.rs](../src/provider/aws/components.rs), [aws/containment/spanning.rs](../src/provider/aws/containment/spanning.rs), [aws/diagnostics.rs](../src/provider/aws/diagnostics.rs), [aws/placement.rs](../src/provider/aws/placement.rs), [aws/security_groups.rs](../src/provider/aws/security_groups.rs), [aws/service_references.rs](../src/provider/aws/service_references.rs) |
+| `aws_lb` | Connector / Connector | Spatial / Spatial | LoadBalancer / Elastic Load Balancing | Regional (conditional) | [aws/associations.rs](../src/provider/aws/associations.rs), [aws/cloudfront.rs](../src/provider/aws/cloudfront.rs), [aws/components.rs](../src/provider/aws/components.rs), [aws/containment/spanning.rs](../src/provider/aws/containment/spanning.rs), [aws/diagnostics.rs](../src/provider/aws/diagnostics.rs), [aws/placement.rs](../src/provider/aws/placement.rs), [aws/security_groups.rs](../src/provider/aws/security_groups.rs), [aws/service_references.rs](../src/provider/aws/service_references.rs), [aws/waf.rs](../src/provider/aws/waf.rs) |
 | `aws_lb_listener` | Connector / Connector | Spatial / Spatial | LoadBalancer / Elastic Load Balancing | Regional (conditional) | [aws/components.rs](../src/provider/aws/components.rs), [aws/placement.rs](../src/provider/aws/placement.rs), [aws/service_references.rs](../src/provider/aws/service_references.rs) |
 | `aws_lb_listener_rule` | Policy / Policy | Spatial / Spatial | LoadBalancer / Elastic Load Balancing | Regional (conditional) | [aws/components.rs](../src/provider/aws/components.rs) |
 | `aws_lb_target_group` | Controller / Controller | Spatial / Spatial | LoadBalancer / Elastic Load Balancing | Regional (conditional) | [aws/associations.rs](../src/provider/aws/associations.rs), [aws/components.rs](../src/provider/aws/components.rs), [aws/containment.rs](../src/provider/aws/containment.rs), [aws/diagnostics.rs](../src/provider/aws/diagnostics.rs) |
@@ -288,6 +289,9 @@ Provider source: `registry.terraform.io/hashicorp/aws`.
 | `aws_vpcs` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Vpc / Amazon VPC | Unknown | — |
 | `aws_vpn_connection` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Gateway / Amazon VPC | Unknown | — |
 | `aws_vpn_gateway` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Gateway / Amazon VPC | Unknown | [aws/routes.rs](../src/provider/aws/routes.rs) |
+| `aws_wafv2_rule_group` | Policy / Policy | Spatial / Spatial | Waf / AWS WAF | Global / Regional / Unknown (scope-dependent) | [aws/diagnostics.rs](../src/provider/aws/diagnostics.rs), [aws/waf.rs](../src/provider/aws/waf.rs) |
+| `aws_wafv2_web_acl` | Policy / Policy | Spatial / Spatial | Waf / AWS WAF | Global / Regional / Unknown (scope-dependent) | [aws/associations.rs](../src/provider/aws/associations.rs), [aws/diagnostics.rs](../src/provider/aws/diagnostics.rs), [aws/waf.rs](../src/provider/aws/waf.rs) |
+| `aws_wafv2_web_acl_association` | Association / Association | Logical / Logical | Waf / AWS WAF | Regional (conditional) | [aws.rs](../src/provider/aws.rs), [aws/associations.rs](../src/provider/aws/associations.rs), [aws/waf.rs](../src/provider/aws/waf.rs) |
 
 ## Terraform built-in
 

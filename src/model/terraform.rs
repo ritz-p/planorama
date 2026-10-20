@@ -1,7 +1,14 @@
 use super::{Action, ChangeMetadata, EntityMode, ProviderConfiguration, ProviderIdentity};
 
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum WafScope {
+    Regional,
+    CloudFront,
+}
+
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct TerraformEntity {
+    pub waf_scope: Option<WafScope>,
     pub route_entries: Vec<super::RouteEntry>,
     pub address: String,
     pub deposed_key: Option<String>,

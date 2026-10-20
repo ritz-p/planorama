@@ -163,6 +163,11 @@
             "file": "AWS-Private-Certificate-Authority.svg",
             "source": "Architecture-Service-Icons_07312026/Arch_Security-Identity/48/Arch_AWS-Private-Certificate-Authority_48.svg",
             "sha256": "3fbe1cde23507a3516279d9fc833af0c1fc8b7f30ccd50d023856a5ee630004d"
+        },
+        {
+            "file": "AWS-WAF.svg",
+            "source": "Architecture-Service-Icons_07312026/Arch_Security-Identity/48/Arch_AWS-WAF_48.svg",
+            "sha256": "e67f918f21cf5fab0846faea3dfa703c9f167275da408c3b4e5f423e3e4ec24a"
         }
     ]
 }
