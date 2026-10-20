@@ -12,8 +12,11 @@ function settingsChanged() {
   clearResult();
   element('focus-depth').disabled = element('focus').value === '';
   element('settings-error').textContent = '';
-  document.querySelectorAll('[aria-invalid]').forEach(input => input.removeAttribute('aria-invalid'));
-  element('status').textContent = assets ? 'Settings changed. Generate again to apply them.' : 'Loading local generator…';
+  document.querySelectorAll('[aria-invalid]').forEach(input => {
+    input.removeAttribute('aria-invalid');
+    input.setAttribute('aria-describedby', input.id === 'focus-depth' ? 'depth-help' : 'modules-help');
+  });
+  if (assets) element('status').textContent = 'Settings changed. Generate again to apply them.';
 }
 
 element('generate-form').addEventListener('input', settingsChanged);
@@ -27,6 +30,7 @@ element('add-module').onclick = () => {
   input.id = `module-${++moduleId}`;
   input.autocomplete = 'off';
   input.spellcheck = false;
+  input.setAttribute('aria-describedby', 'modules-help');
   label.htmlFor = input.id;
   label.append('Module selector ', input);
   const remove = document.createElement('button');
@@ -54,7 +58,7 @@ element('reset-settings').onclick = () => {
   element('focus-depth').value = '';
   element('modules').replaceChildren();
   settingsChanged();
-  element('status').textContent = assets ? 'Settings reset to defaults. Generate again; the selected file is retained.' : 'Loading local generator…';
+  if (assets) element('status').textContent = 'Settings reset to defaults. Generate again; the selected file is retained.';
 };
 
 function invalidSetting(input, message) {

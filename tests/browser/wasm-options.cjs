@@ -90,6 +90,7 @@ module.exports = function checkOptions({driver, small, run, submit, status, nati
     assert.equal(find('#focus-depth').get_attribute('value'), depth, 'Invalid input is not corrected');
   }
   set('focus', '');
+  assert.equal(find('#focus-depth').get_attribute('aria-describedby'), 'depth-help');
   assert.equal(find('#focus-depth').is_enabled(), false);
   assert.ok(!('focus_depth' in options()));
   set('focus', 'aws_ecs_service.app');
@@ -107,6 +108,7 @@ module.exports = function checkOptions({driver, small, run, submit, status, nati
   submit(small, 'svg');
   assert.equal(find('#settings-error').text, 'Enter a module selector or remove the empty row.');
   assert.equal(driver.execute_script('return document.activeElement.getAttribute("aria-invalid")'), 'true');
+  assert.equal(find('#focus-depth').get_attribute('aria-describedby'), 'depth-help', 'Corrected depth does not describe a module error');
   const selectors = ['module.worker["a b,c.d\\"e"]', 'module.worker["other"]'];
   const json = JSON.stringify({
     format_version: '1.2',
@@ -116,6 +118,14 @@ module.exports = function checkOptions({driver, small, run, submit, status, nati
     })),
   });
   find('#modules input').send_keys(selectors[0]);
+  assert.equal(find('#modules input').get_attribute('aria-describedby'), 'modules-help');
+  set('focus', 'aws_ecs_service.app');
+  set('focus-depth', '-1');
+  submit(small, 'svg');
+  assert.ok(find('#settings-error').text.startsWith('Focus depth must'));
+  assert.equal(find('#modules input').get_attribute('aria-describedby'), 'modules-help', 'Corrected module does not describe a depth error');
+  set('focus', '');
+  set('focus-depth', '');
   find('#add-module').send_keys(Keys.SPACE);
   driver.switch_to.active_element.send_keys(selectors[1]);
   find('#add-module').click();
@@ -189,4 +199,37 @@ module.exports = function checkOptions({driver, small, run, submit, status, nati
     URL.createObjectURL = originalCreateUrl;
     URL.revokeObjectURL = originalRevokeUrl;
   `);
+};
+
+module.exports.checkStartupFailure = function({driver, url, status}) {
+  for (const source of [
+    'window.fetch = () => Promise.reject(new Error("test asset failure"));',
+    'WebAssembly.compile = () => Promise.reject(new Error("test compile failure"));',
+  ]) {
+    const {identifier} = driver.execute_cdp_cmd('Page.addScriptToEvaluateOnNewDocument', {source});
+    try {
+      driver.get(url);
+      const failure = 'Could not load the generator. Reload while connected.';
+      wait(() => status() === failure, 'startup failure');
+      const assertFailure = () => {
+        assert.equal(status(), failure);
+        assert.equal(driver.find_element(By.CSS_SELECTOR, '#generate').is_enabled(), false);
+      };
+      driver.find_element(By.CSS_SELECTOR, '#focus').send_keys('example');
+      assertFailure();
+      driver.execute_script(`
+        const transfer = new DataTransfer();
+        transfer.items.add(new File(['{}'], 'plan.json'));
+        document.getElementById('file').files = transfer.files;
+        document.getElementById('file').dispatchEvent(new Event('change', {bubbles: true}));
+      `);
+      assertFailure();
+      for (const selector of ['#add-module', '#modules button', '#reset-settings']) {
+        driver.find_element(By.CSS_SELECTOR, selector).click();
+        assertFailure();
+      }
+    } finally {
+      driver.execute_cdp_cmd('Page.removeScriptToEvaluateOnNewDocument', {identifier});
+    }
+  }
 };

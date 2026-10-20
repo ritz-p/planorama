@@ -37,6 +37,7 @@ async function main() {
     document.getElementById('generate-form').requestSubmit();
   `, json, format);
   try {
+    require('./wasm-options.cjs').checkStartupFailure({driver, url: `http://127.0.0.1:${port}/`, status});
     driver.get(`http://127.0.0.1:${port}/`);
     wait(() => status().startsWith('Ready.'), 'asset loading', 30000);
     driver.execute_cdp_cmd('Network.enable', {});
