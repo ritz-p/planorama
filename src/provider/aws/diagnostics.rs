@@ -8,6 +8,22 @@ pub fn collect(plan: &crate::model::TerraformPlan) -> Vec<Diagnostic> {
     let mut found = BTreeSet::new();
     found.extend(super::service_references::diagnostics(raw));
     found.extend(super::messaging::diagnostics(raw));
+    for node in &plan.nodes {
+        if node.provider.is_aws()
+            && matches!(
+                node.resource_type.as_str(),
+                "aws_wafv2_web_acl" | "aws_wafv2_rule_group"
+            )
+            && node.waf_scope.is_none()
+        {
+            found.insert(Diagnostic {
+                address: node.address.clone(),
+                deposed_key: node.deposed_key.clone(),
+                attribute: "scope".into(),
+                reason: Reason::UnprovenEndpointValue,
+            });
+        }
+    }
     for (index, node) in raw.nodes.iter().enumerate() {
         if let Some(diagnostic) = super::autoscaling::diagnostic(raw, index) {
             found.insert(diagnostic);
@@ -209,7 +225,12 @@ pub fn collect(plan: &crate::model::TerraformPlan) -> Vec<Diagnostic> {
                 Some(r)
                     if r.sources.iter().any(|&source| {
                         source == target
-                            || raw.nodes[source].resource_type != resource_type
+                            || !super::associations::endpoint_type_matches(
+                                &node.resource_type,
+                                attribute,
+                                resource_type,
+                                &raw.nodes[source].resource_type,
+                            )
                             || !raw.nodes[source].provider.is_aws()
                     }) =>
                 {

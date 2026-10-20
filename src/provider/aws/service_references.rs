@@ -10,6 +10,9 @@ use serde_json::Value;
 pub(super) mod tests;
 
 fn label(resource: &str, attribute: &str) -> Option<&'static str> {
+    if let Some(label) = super::waf::label(resource, attribute) {
+        return Some(label);
+    }
     match (resource, attribute) {
         ("aws_ecs_service", "cluster") => Some("Cluster membership"),
         ("aws_acmpca_certificate" | "aws_acm_certificate", "certificate_authority_arn") => {
@@ -54,6 +57,10 @@ fn label(resource: &str, attribute: &str) -> Option<&'static str> {
 }
 
 fn source_fields(resource: &str, attribute: &str, source: &str) -> &'static [&'static str] {
+    let waf = super::waf::source_fields(resource, attribute, source);
+    if !waf.is_empty() {
+        return waf;
+    }
     match (resource, attribute, source) {
         ("aws_ecs_service", "cluster", "aws_ecs_cluster") => &["id", "arn", "name"],
         (
@@ -214,6 +221,8 @@ pub(crate) fn annotate(
                 && actual.is_some()
                 && actual == scalar(target, target_unknown, &[*field])
         });
+        reference.service_reference_verified &=
+            super::waf::verify_scope(nodes, reference, evidence);
         if node.resource_type == "aws_ecs_service" && reference.attribute == "cluster" {
             reference.service_reference_verified &= cluster_binding_matches(
                 node.provider_configuration.as_ref(),

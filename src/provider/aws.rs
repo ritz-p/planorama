@@ -21,6 +21,7 @@ mod routes;
 mod scope;
 mod security_groups;
 mod service_members;
+pub(crate) mod waf;
 
 #[cfg(test)]
 #[path = "../../tests/unit/semantic/athena.rs"]
@@ -69,6 +70,7 @@ pub(super) fn reference_label(resource_type: &str, attribute: &str) -> &'static 
 
 pub(super) fn placement(resource_type: &str) -> crate::model::Placement {
     match resource_type {
+        "aws_wafv2_web_acl_association" => crate::model::Placement::Logical,
         "aws_cloudfront_origin_access_control"
         | "aws_cloudfront_origin_access_identity"
         | "aws_cloudfront_cache_policy"

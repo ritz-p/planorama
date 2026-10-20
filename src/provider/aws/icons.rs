@@ -2,6 +2,9 @@ use crate::icons::ResourceIcon;
 
 pub(super) fn icon_for(resource_type: &str) -> Option<ResourceIcon> {
     Some(match resource_type {
+        "aws_wafv2_web_acl" | "aws_wafv2_rule_group" | "aws_wafv2_web_acl_association" => {
+            ResourceIcon::Waf
+        }
         "aws_acmpca_certificate_authority"
         | "aws_acmpca_certificate"
         | "aws_acmpca_certificate_authority_certificate" => ResourceIcon::PrivateCa,
@@ -174,6 +177,7 @@ pub(super) fn icon_for(resource_type: &str) -> Option<ResourceIcon> {
         | "aws_cloudfront_distribution_tenant"
         | "aws_cloudfront_realtime_log_config" => ResourceIcon::CloudFront,
         "aws_api_gateway_rest_api"
+        | "aws_api_gateway_stage"
         | "aws_api_gateway_domain_name"
         | "aws_api_gateway_resource"
         | "aws_api_gateway_vpc_link"

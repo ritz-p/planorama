@@ -12,6 +12,10 @@ mod ebs_tests;
 
 pub(super) fn rule(resource_type: &str) -> Option<[(&'static str, &'static str); 2]> {
     match resource_type {
+        "aws_wafv2_web_acl_association" => Some([
+            ("web_acl_arn", "aws_wafv2_web_acl"),
+            ("resource_arn", "aws_lb"),
+        ]),
         "aws_volume_attachment" => Some([
             ("instance_id", "aws_instance"),
             ("volume_id", "aws_ebs_volume"),
@@ -137,8 +141,10 @@ pub(super) fn endpoint(
         .attributes
         .iter()
         .find(|a| a.target == target && a.attribute == attribute)?;
-    if raw.nodes[target].resource_type == "aws_volume_attachment"
-        && !reference.service_reference_verified
+    if matches!(
+        raw.nodes[target].resource_type.as_str(),
+        "aws_volume_attachment" | "aws_wafv2_web_acl_association"
+    ) && !reference.service_reference_verified
     {
         return None;
     }
@@ -149,10 +155,27 @@ pub(super) fn endpoint(
                     .issues
                     .contains(&crate::model::DiagnosticReason::DynamicInstanceSelection)
                 && *source != target
-                && raw.nodes[*source].resource_type == resource_type =>
+                && endpoint_type_matches(
+                    &raw.nodes[target].resource_type,
+                    attribute,
+                    resource_type,
+                    &raw.nodes[*source].resource_type,
+                ) =>
         {
             raw.nodes[*source].provider.is_aws().then_some(*source)
         }
         _ => None,
     }
+}
+
+pub(super) fn endpoint_type_matches(
+    resource: &str,
+    attribute: &str,
+    expected: &str,
+    actual: &str,
+) -> bool {
+    actual == expected
+        || (resource == "aws_wafv2_web_acl_association"
+            && attribute == "resource_arn"
+            && actual == "aws_api_gateway_stage")
 }
