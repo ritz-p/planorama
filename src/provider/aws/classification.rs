@@ -85,6 +85,11 @@ pub(super) fn classify(resource_type: &str) -> ResourceRole {
         | "aws_iam_saml_provider"
         | "aws_iam_group" => ResourceRole::Identity,
         "aws_security_group"
+        | "aws_cloudfront_origin_access_control"
+        | "aws_cloudfront_origin_access_identity"
+        | "aws_cloudfront_cache_policy"
+        | "aws_cloudfront_origin_request_policy"
+        | "aws_cloudfront_response_headers_policy"
         | "aws_network_acl"
         | "aws_iam_user_policy"
         | "aws_iam_group_policy"

@@ -1,0 +1,354 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_s3_bucket.assets[0]",
+      "type": "aws_s3_bucket",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "bucket_regional_domain_name": "assets.s3.us-west-2.amazonaws.com"
+        }
+      }
+    },
+    {
+      "address": "aws_lb.app",
+      "type": "aws_lb",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "dns_name": "app.us-west-2.elb.amazonaws.com",
+          "load_balancer_type": "application"
+        }
+      }
+    },
+    {
+      "address": "aws_cloudfront_origin_access_control.assets",
+      "type": "aws_cloudfront_origin_access_control",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "id": "fixture-oac"
+        }
+      }
+    },
+    {
+      "address": "aws_cloudfront_origin_access_identity.legacy",
+      "type": "aws_cloudfront_origin_access_identity",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "cloudfront_access_identity_path": "origin-access-identity/cloudfront/fixture-oai"
+        }
+      }
+    },
+    {
+      "address": "aws_cloudfront_cache_policy.app",
+      "type": "aws_cloudfront_cache_policy",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "id": "fixture-cache"
+        }
+      }
+    },
+    {
+      "address": "aws_cloudfront_origin_request_policy.app",
+      "type": "aws_cloudfront_origin_request_policy",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "id": "fixture-origin_request"
+        }
+      }
+    },
+    {
+      "address": "aws_cloudfront_response_headers_policy.app",
+      "type": "aws_cloudfront_response_headers_policy",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "id": "fixture-response_headers"
+        }
+      }
+    },
+    {
+      "address": "aws_cloudfront_distribution.assets",
+      "type": "aws_cloudfront_distribution",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "update"
+        ],
+        "after": {
+          "origin": [
+            {
+              "domain_name": "assets.s3.us-west-2.amazonaws.com",
+              "origin_access_control_id": "fixture-oac",
+              "custom_header": [
+                {
+                  "name": "Authorization",
+                  "value": "PRIVATE_HEADER"
+                }
+              ]
+            }
+          ],
+          "default_cache_behavior": [
+            {
+              "cache_policy_id": "fixture-cache",
+              "origin_request_policy_id": "fixture-origin_request",
+              "response_headers_policy_id": "fixture-response_headers"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_cloudfront_distribution.app",
+      "type": "aws_cloudfront_distribution",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "origin": [
+            {
+              "domain_name": "app.us-west-2.elb.amazonaws.com"
+            }
+          ],
+          "ordered_cache_behavior": [
+            {
+              "cache_policy_id": "fixture-cache",
+              "origin_request_policy_id": "fixture-origin_request",
+              "response_headers_policy_id": "fixture-response_headers"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_cloudfront_distribution.legacy",
+      "type": "aws_cloudfront_distribution",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "origin": [
+            {
+              "domain_name": "assets.s3.us-west-2.amazonaws.com",
+              "s3_origin_config": [
+                {
+                  "origin_access_identity": "origin-access-identity/cloudfront/fixture-oai"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_cloudfront_distribution.custom",
+      "type": "aws_cloudfront_distribution",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "origin": [
+            {
+              "domain_name": "PRIVATE_DOMAIN.invalid"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "version_constraint": "5.100.0",
+        "expressions": {
+          "region": {
+            "constant_value": "us-west-2"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_s3_bucket.assets",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_lb.app",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_cloudfront_origin_access_control.assets",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_cloudfront_origin_access_identity.legacy",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_cloudfront_cache_policy.app",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_cloudfront_origin_request_policy.app",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_cloudfront_response_headers_policy.app",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_cloudfront_distribution.assets",
+          "provider_config_key": "aws",
+          "expressions": {
+            "origin": [
+              {
+                "domain_name": {
+                  "references": [
+                    "aws_s3_bucket.assets[0].bucket_regional_domain_name"
+                  ]
+                },
+                "origin_access_control_id": {
+                  "references": [
+                    "aws_cloudfront_origin_access_control.assets.id"
+                  ]
+                }
+              }
+            ],
+            "default_cache_behavior": [
+              {
+                "cache_policy_id": {
+                  "references": [
+                    "aws_cloudfront_cache_policy.app.id"
+                  ]
+                },
+                "origin_request_policy_id": {
+                  "references": [
+                    "aws_cloudfront_origin_request_policy.app.id"
+                  ]
+                },
+                "response_headers_policy_id": {
+                  "references": [
+                    "aws_cloudfront_response_headers_policy.app.id"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_cloudfront_distribution.app",
+          "provider_config_key": "aws",
+          "expressions": {
+            "origin": [
+              {
+                "domain_name": {
+                  "references": [
+                    "aws_lb.app.dns_name"
+                  ]
+                }
+              }
+            ],
+            "ordered_cache_behavior": [
+              {
+                "cache_policy_id": {
+                  "references": [
+                    "aws_cloudfront_cache_policy.app.id"
+                  ]
+                },
+                "origin_request_policy_id": {
+                  "references": [
+                    "aws_cloudfront_origin_request_policy.app.id"
+                  ]
+                },
+                "response_headers_policy_id": {
+                  "references": [
+                    "aws_cloudfront_response_headers_policy.app.id"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_cloudfront_distribution.legacy",
+          "provider_config_key": "aws",
+          "expressions": {
+            "origin": [
+              {
+                "domain_name": {
+                  "references": [
+                    "aws_s3_bucket.assets[0].bucket_regional_domain_name"
+                  ]
+                },
+                "s3_origin_config": [
+                  {
+                    "origin_access_identity": {
+                      "references": [
+                        "aws_cloudfront_origin_access_identity.legacy.cloudfront_access_identity_path"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_cloudfront_distribution.custom",
+          "provider_config_key": "aws",
+          "expressions": {
+            "origin": [
+              {
+                "domain_name": {
+                  "constant_value": "PRIVATE_DOMAIN.invalid"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}
