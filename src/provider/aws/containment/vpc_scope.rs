@@ -9,6 +9,7 @@ mod tests;
 pub(in crate::provider::aws) fn attribute(resource_type: &str) -> Option<&'static str> {
     match resource_type {
         "aws_db_subnet_group" | "aws_elasticache_subnet_group" => Some("subnet_ids"),
+        "aws_eks_node_group" | "aws_eks_fargate_profile" => Some("subnet_ids"),
         "aws_lambda_function" | "aws_eks_cluster" => Some("vpc_config.subnet_ids"),
         "aws_opensearch_domain" => Some("vpc_options.subnet_ids"),
         _ => None,
@@ -29,6 +30,9 @@ pub(super) fn infer(raw: &Input, mut graph: Graph) -> Graph {
             || !node.provider.is_aws()
             || attribute(&node.resource_type) != Some(reference.attribute.as_str())
             || !reference.complete
+            || (super::super::network::endpoint_type(&node.resource_type, &reference.attribute)
+                .is_some()
+                && !reference.service_reference_verified)
             || reference.sources.is_empty()
             || reference
                 .issues
@@ -54,6 +58,23 @@ pub(super) fn infer(raw: &Input, mut graph: Graph) -> Graph {
             raw.nodes[parent].resource_type == "aws_vpc"
                 && raw.nodes[parent].provider.is_aws()
                 && raw.nodes[parent].role == ResourceRole::Container
+                && (super::super::network::endpoint_type(&node.resource_type, &reference.attribute)
+                    .is_none()
+                    || (raw.nodes[parent].mode == EntityMode::Managed
+                        && raw.nodes[parent].action != crate::model::Action::Delete
+                        && raw.nodes[parent].deposed_key.is_none()
+                        && super::group_configuration_matches(node, &raw.nodes[parent])
+                        && reference.sources.iter().all(|&subnet| {
+                            raw.attributes.iter().any(|r| {
+                                r.target == subnet
+                                    && r.attribute == "vpc_id"
+                                    && r.complete
+                                    && r.instances_explicit
+                                    && r.issues.is_empty()
+                                    && r.scalar_id_matches
+                                    && r.sources.as_slice() == [parent]
+                            })
+                        })))
         }) else {
             continue;
         };

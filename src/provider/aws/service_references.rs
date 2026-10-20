@@ -17,6 +17,15 @@ fn label(resource: &str, attribute: &str) -> Option<&'static str> {
         return Some(label);
     }
     match (resource, attribute) {
+        ("aws_eks_node_group" | "aws_eks_fargate_profile" | "aws_eks_addon", "cluster_name") => {
+            Some("Cluster membership")
+        }
+        ("aws_eks_access_entry", "cluster_name") => Some("Access configuration cluster"),
+        ("aws_eks_fargate_profile", "pod_execution_role_arn")
+        | ("aws_eks_node_group", "node_role_arn")
+        | ("aws_eks_cluster", "role_arn")
+        | ("aws_eks_addon", "service_account_role_arn") => Some("Execution role reference"),
+        ("aws_eks_access_entry", "principal_arn") => Some("Configured principal"),
         ("aws_ecr_repository_policy" | "aws_ecr_lifecycle_policy", "repository") => {
             Some("Configured repository")
         }
@@ -72,6 +81,19 @@ fn source_fields(resource: &str, attribute: &str, source: &str) -> &'static [&'s
         return waf;
     }
     match (resource, attribute, source) {
+        (
+            "aws_eks_node_group"
+            | "aws_eks_fargate_profile"
+            | "aws_eks_addon"
+            | "aws_eks_access_entry",
+            "cluster_name",
+            "aws_eks_cluster",
+        ) => &["name", "id"],
+        ("aws_eks_fargate_profile", "pod_execution_role_arn", "aws_iam_role")
+        | ("aws_eks_node_group", "node_role_arn", "aws_iam_role")
+        | ("aws_eks_cluster", "role_arn", "aws_iam_role")
+        | ("aws_eks_addon", "service_account_role_arn", "aws_iam_role")
+        | ("aws_eks_access_entry", "principal_arn", "aws_iam_role" | "aws_iam_user") => &["arn"],
         (
             "aws_ecr_repository_policy" | "aws_ecr_lifecycle_policy",
             "repository",
@@ -157,7 +179,7 @@ fn source_fields(resource: &str, attribute: &str, source: &str) -> &'static [&'s
     }
 }
 
-fn cluster_binding_matches(
+pub(super) fn cluster_binding_matches(
     consumer: Option<&crate::model::ProviderConfiguration>,
     endpoint: Option<&crate::model::ProviderConfiguration>,
     consumer_region: Option<&crate::model::RegionScope>,
@@ -229,6 +251,11 @@ pub(crate) fn annotate(
 ) {
     for reference in references.iter_mut() {
         let node = &nodes[reference.target];
+        if super::network::endpoint_type(&node.resource_type, &reference.attribute).is_some() {
+            reference.service_reference_verified =
+                super::network::verified(nodes, reference, evidence);
+            continue;
+        }
         if super::iam::label(&node.resource_type, &reference.attribute).is_some() {
             reference.service_reference_verified = super::iam::verified(nodes, reference, evidence);
             continue;
@@ -279,6 +306,7 @@ pub(crate) fn annotate(
         reference.service_reference_verified &=
             super::waf::verify_scope(nodes, reference, evidence);
         if (node.resource_type == "aws_ecs_service" && reference.attribute == "cluster")
+            || (node.resource_type.starts_with("aws_eks_") && reference.attribute == "cluster_name")
             || matches!(
                 node.resource_type.as_str(),
                 "aws_ecr_repository_policy" | "aws_ecr_lifecycle_policy"
@@ -376,6 +404,7 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
                     node.resource_type.as_str(),
                     "aws_cloudwatch_log_group"
                         | "aws_ecr_repository"
+                        | "aws_eks_cluster"
                         | "aws_ecs_cluster"
                         | "aws_athena_workgroup"
                         | "aws_athena_data_catalog"
@@ -455,12 +484,12 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             .references
             .push(ResourceReference {
                 kind: if verified
-                    && matches!(
-                        node.resource_type.as_str(),
-                        "aws_iam_group_membership"
-                            | "aws_iam_user_group_membership"
-                            | "aws_ecs_service"
-                    ) {
+                    && (label == "Cluster membership"
+                        || matches!(
+                            node.resource_type.as_str(),
+                            "aws_iam_group_membership" | "aws_iam_user_group_membership"
+                        ))
+                {
                     crate::model::ReferenceKind::Membership
                 } else {
                     crate::model::ReferenceKind::Configured

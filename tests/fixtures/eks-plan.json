@@ -1,0 +1,328 @@
+{
+  "format_version": "1.2",
+  "resource_changes": [
+    {
+      "address": "aws_eks_cluster.app",
+      "type": "aws_eks_cluster",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "fixture",
+          "id": "fixture",
+          "vpc_config": [
+            {
+              "subnet_ids": [
+                "subnet-a",
+                "subnet-b"
+              ],
+              "security_group_ids": [
+                "sg-fixture"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_eks_addon.app",
+      "type": "aws_eks_addon",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "cluster_name": "fixture",
+          "configuration_values": "PRIVATE_ADDON_BODY",
+          "service_account_role_arn": "arn:aws:iam::123456789012:role/fixture"
+        }
+      }
+    },
+    {
+      "address": "aws_eks_fargate_profile.app",
+      "type": "aws_eks_fargate_profile",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "cluster_name": "fixture",
+          "subnet_ids": [
+            "subnet-a",
+            "subnet-b"
+          ],
+          "pod_execution_role_arn": "arn:aws:iam::123456789012:role/fixture",
+          "selector": [
+            {
+              "namespace": "PRIVATE_NAMESPACE"
+            }
+          ]
+        },
+        "after_unknown": {
+          "subnet_ids": [
+            false,
+            false
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_eks_access_entry.app",
+      "type": "aws_eks_access_entry",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "cluster_name": "fixture",
+          "principal_arn": "arn:aws:iam::123456789012:role/fixture",
+          "user_name": "PRIVATE_PRINCIPAL"
+        }
+      }
+    },
+    {
+      "address": "aws_eks_node_group.app",
+      "type": "aws_eks_node_group",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "cluster_name": "fixture",
+          "subnet_ids": [
+            "subnet-a",
+            "subnet-b"
+          ],
+          "node_role_arn": "arn:aws:iam::123456789012:role/fixture"
+        },
+        "after_unknown": {
+          "subnet_ids": [
+            false,
+            false
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_vpc.main",
+      "type": "aws_vpc",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "vpc-fixture"
+        }
+      }
+    },
+    {
+      "address": "aws_subnet.a",
+      "type": "aws_subnet",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "subnet-a",
+          "vpc_id": "vpc-fixture"
+        }
+      }
+    },
+    {
+      "address": "aws_subnet.b",
+      "type": "aws_subnet",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "subnet-b",
+          "vpc_id": "vpc-fixture"
+        }
+      }
+    },
+    {
+      "address": "aws_security_group.app",
+      "type": "aws_security_group",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "sg-fixture",
+          "vpc_id": "vpc-fixture"
+        }
+      }
+    },
+    {
+      "address": "aws_iam_role.app",
+      "type": "aws_iam_role",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:iam::123456789012:role/fixture"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_eks_cluster.app",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_config": [
+              {
+                "subnet_ids": {
+                  "references": [
+                    "aws_subnet.a.id",
+                    "aws_subnet.b.id"
+                  ]
+                },
+                "security_group_ids": {
+                  "references": [
+                    "aws_security_group.app.id"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_eks_addon.app",
+          "provider_config_key": "aws",
+          "expressions": {
+            "cluster_name": {
+              "references": [
+                "aws_eks_cluster.app.name"
+              ]
+            },
+            "service_account_role_arn": {
+              "references": [
+                "aws_iam_role.app.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_eks_fargate_profile.app",
+          "provider_config_key": "aws",
+          "expressions": {
+            "cluster_name": {
+              "references": [
+                "aws_eks_cluster.app.name"
+              ]
+            },
+            "subnet_ids": {
+              "references": [
+                "aws_subnet.a.id",
+                "aws_subnet.b.id"
+              ]
+            },
+            "pod_execution_role_arn": {
+              "references": [
+                "aws_iam_role.app.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_eks_access_entry.app",
+          "provider_config_key": "aws",
+          "expressions": {
+            "cluster_name": {
+              "references": [
+                "aws_eks_cluster.app.name"
+              ]
+            },
+            "principal_arn": {
+              "references": [
+                "aws_iam_role.app.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_eks_node_group.app",
+          "provider_config_key": "aws",
+          "expressions": {
+            "cluster_name": {
+              "references": [
+                "aws_eks_cluster.app.name"
+              ]
+            },
+            "subnet_ids": {
+              "references": [
+                "aws_subnet.a.id",
+                "aws_subnet.b.id"
+              ]
+            },
+            "node_role_arn": {
+              "references": [
+                "aws_iam_role.app.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_vpc.main",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_subnet.a",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_subnet.b",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_security_group.app",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_iam_role.app",
+          "provider_config_key": "aws",
+          "expressions": {}
+        }
+      ]
+    }
+  }
+}

@@ -118,6 +118,9 @@ pub(super) fn classify(resource_type: &str) -> ResourceRole {
         | "aws_s3_bucket_server_side_encryption_configuration"
         | "aws_eks_cluster"
         | "aws_eks_node_group"
+        | "aws_eks_addon"
+        | "aws_eks_fargate_profile"
+        | "aws_eks_access_entry"
         | "aws_lb_target_group"
         | "aws_cloudwatch_metric_alarm" => ResourceRole::Controller,
         _ => ResourceRole::Unknown,

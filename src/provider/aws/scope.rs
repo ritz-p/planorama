@@ -116,6 +116,9 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
                 | "aws_ecs_task_definition"
                 | "aws_eks_cluster"
                 | "aws_eks_node_group"
+                | "aws_eks_addon"
+                | "aws_eks_fargate_profile"
+                | "aws_eks_access_entry"
                 | "aws_lb_target_group"
                 | "aws_cloudwatch_metric_alarm"
         )

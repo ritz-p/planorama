@@ -75,6 +75,18 @@ pub fn collect(plan: &crate::model::TerraformPlan) -> Vec<Diagnostic> {
         .chain(raw.graph_references.iter().map(|r| (r, true)))
     {
         let node = &raw.nodes[reference.target];
+        if !dependency_metadata
+            && node.provider.is_aws()
+            && super::network::endpoint_type(&node.resource_type, &reference.attribute).is_some()
+            && !reference.service_reference_verified
+        {
+            found.insert(Diagnostic {
+                address: node.address.clone(),
+                deposed_key: node.deposed_key.clone(),
+                attribute: reference.attribute.clone(),
+                reason: Reason::UnprovenEndpointValue,
+            });
+        }
         let plural = node.provider.is_aws()
             && (super::containment::vpc_scope_attribute(&node.resource_type).is_some_and(
                 |attribute| {
