@@ -234,7 +234,7 @@ pub(crate) fn annotate(
                 &node.provider,
                 &node.resource_type,
                 &reference.attribute,
-            ) && reference.indexed_block_lengths.is_empty())
+            ) && !super::s3::list_shape(&node.resource_type, &reference.indexed_block_lengths))
             || !reference.instances_explicit
             || !reference.issues.is_empty()
             || !node.provider.is_aws()

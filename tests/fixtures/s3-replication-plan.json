@@ -1,0 +1,242 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_s3_bucket.source[0]",
+      "type": "aws_s3_bucket",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "id": "fixture-source",
+          "bucket": "fixture-source",
+          "arn": "arn:aws:s3:::fixture-source"
+        }
+      }
+    },
+    {
+      "address": "aws_s3_bucket.destination[0]",
+      "type": "aws_s3_bucket",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "id": "fixture-destination-0",
+          "arn": "arn:aws:s3:::fixture-destination-0"
+        }
+      }
+    },
+    {
+      "address": "aws_s3_bucket.destination[1]",
+      "type": "aws_s3_bucket",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "id": "fixture-destination-1",
+          "arn": "arn:aws:s3:::fixture-destination-1"
+        }
+      }
+    },
+    {
+      "address": "aws_iam_role.replication",
+      "type": "aws_iam_role",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "arn": "arn:aws:iam::123456789012:role/fixture",
+          "assume_role_policy": "PRIVATE_POLICY"
+        }
+      }
+    },
+    {
+      "address": "aws_s3_bucket_replication_configuration.assets",
+      "type": "aws_s3_bucket_replication_configuration",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "update"
+        ],
+        "after": {
+          "bucket": "fixture-source",
+          "role": "arn:aws:iam::123456789012:role/fixture",
+          "rule": [
+            {
+              "id": "PRIVATE_RULE_0",
+              "status": "Enabled",
+              "filter": [
+                {
+                  "prefix": "PRIVATE_PREFIX"
+                }
+              ],
+              "destination": [
+                {
+                  "bucket": "arn:aws:s3:::fixture-destination-0"
+                }
+              ]
+            },
+            {
+              "id": "PRIVATE_RULE_1",
+              "status": "Disabled",
+              "filter": [
+                {
+                  "prefix": "PRIVATE_PREFIX"
+                }
+              ],
+              "destination": [
+                {
+                  "bucket": "arn:aws:s3:::fixture-destination-1"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_s3_bucket_replication_configuration.literal",
+      "type": "aws_s3_bucket_replication_configuration",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "bucket": "fixture-source",
+          "rule": [
+            {
+              "destination": [
+                {
+                  "bucket": "arn:aws:s3:::fixture-destination-0"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "version_constraint": "5.100.0",
+        "expressions": {
+          "region": {
+            "constant_value": "us-west-2"
+          }
+        }
+      },
+      "aws.replica": {
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "version_constraint": "5.100.0",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_s3_bucket.source",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_s3_bucket.destination",
+          "provider_config_key": "aws.replica",
+          "expressions": {}
+        },
+        {
+          "address": "aws_iam_role.replication",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_s3_bucket_replication_configuration.assets",
+          "provider_config_key": "aws",
+          "expressions": {
+            "bucket": {
+              "references": [
+                "aws_s3_bucket.source[0].id",
+                "aws_s3_bucket.source[0]",
+                "aws_s3_bucket.source"
+              ]
+            },
+            "role": {
+              "references": [
+                "aws_iam_role.replication.arn",
+                "aws_iam_role.replication",
+                "aws_iam_role.replication.arn"
+              ]
+            },
+            "rule": [
+              {
+                "destination": [
+                  {
+                    "bucket": {
+                      "references": [
+                        "aws_s3_bucket.destination[0].arn",
+                        "aws_s3_bucket.destination[0]",
+                        "aws_s3_bucket.destination"
+                      ]
+                    }
+                  }
+                ]
+              },
+              {
+                "destination": [
+                  {
+                    "bucket": {
+                      "references": [
+                        "aws_s3_bucket.destination[1].arn",
+                        "aws_s3_bucket.destination[1]",
+                        "aws_s3_bucket.destination"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_s3_bucket_replication_configuration.literal",
+          "provider_config_key": "aws",
+          "expressions": {
+            "bucket": {
+              "references": [
+                "aws_s3_bucket.source[0].id",
+                "aws_s3_bucket.source[0]",
+                "aws_s3_bucket.source"
+              ]
+            },
+            "rule": [
+              {
+                "destination": [
+                  {
+                    "bucket": {
+                      "constant_value": "arn:aws:s3:::fixture-destination-0"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}
