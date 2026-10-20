@@ -243,12 +243,12 @@ Provider source: `registry.terraform.io/hashicorp/aws`.
 | `aws_route_tables` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Route / Amazon VPC | Unknown | — |
 | `aws_s3_access_point` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Storage / Amazon S3 | Unknown | — |
 | `aws_s3_account_public_access_block` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Storage / Amazon S3 | Unknown | — |
-| `aws_s3_bucket` | Node / Node | Spatial / Spatial | Storage / Amazon S3 | Regional (conditional) | [aws/cloudfront.rs](../src/provider/aws/cloudfront.rs), [aws/service_references.rs](../src/provider/aws/service_references.rs) |
+| `aws_s3_bucket` | Node / Node | Spatial / Spatial | Storage / Amazon S3 | Regional (conditional) | [aws/cloudfront.rs](../src/provider/aws/cloudfront.rs), [aws/s3.rs](../src/provider/aws/s3.rs), [aws/service_references.rs](../src/provider/aws/service_references.rs) |
 | `aws_s3_bucket_notification` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Storage / Amazon S3 | Unknown | — |
 | `aws_s3_bucket_object` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Storage / Amazon S3 | Unknown | — |
 | `aws_s3_bucket_object_lock_configuration` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Storage / Amazon S3 | Unknown | — |
 | `aws_s3_bucket_objects` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Storage / Amazon S3 | Unknown | — |
-| `aws_s3_bucket_policy` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Storage / Amazon S3 | Unknown | — |
+| `aws_s3_bucket_policy` | Policy / Policy | Logical / Logical | Storage / Amazon S3 | Regional (conditional) | [aws.rs](../src/provider/aws.rs), [aws/s3.rs](../src/provider/aws/s3.rs) |
 | `aws_s3_bucket_replication_configuration` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Storage / Amazon S3 | Unknown | — |
 | `aws_s3_bucket_server_side_encryption_configuration` | Controller / Controller | Logical / Logical | Storage / Amazon S3 | Regional (conditional) | [aws.rs](../src/provider/aws.rs), [aws/service_references.rs](../src/provider/aws/service_references.rs) |
 | `aws_s3_buckets` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Storage / Amazon S3 | Unknown | — |

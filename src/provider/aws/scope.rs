@@ -31,6 +31,7 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
         || matches!(
             resource,
             "aws_vpc"
+                | "aws_s3_bucket_policy"
                 | "aws_wafv2_web_acl_association"
                 | "aws_api_gateway_stage"
                 | "aws_athena_workgroup"

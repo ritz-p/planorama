@@ -73,6 +73,28 @@ contracts. The synthetic [fixture](../tests/fixtures/waf-plan.json),
 ALB/stage associations and unresolved configuration. Regenerate HTML with
 `docker compose exec -T dev cargo run --locked -- tests/fixtures/waf-plan.json --format html -o examples/waf.html`.
 
+## S3 bucket configuration
+
+`aws_s3_bucket_policy` is a regional Logical Policy resource with the S3 icon,
+independent identity, action and coverage. Its `Policy bucket reference` requires
+a complete explicit unique current managed AWS Bucket reference to `id` or
+`bucket` and matching known evaluated values. Bucket names alone, unknown/dynamic
+expressions, data, deleted/deposed and wrong-provider/type endpoints do not prove
+ownership. Missing/filtered endpoints remain visible as unresolved/unavailable;
+state and module selection keep the original identities.
+
+Policy JSON is not interpreted for permissions or data flow and is never emitted.
+Ordinary Terraform reference/dependency navigation remains independent of the
+dedicated bucket reference. No policy resource is folded into the bucket.
+This is configuration evidence, not proof that a policy is effective.
+
+AWS Provider 5.100.0/6.0.0 installed schemas and the
+[policy contract](https://github.com/hashicorp/terraform-provider-aws/blob/v5.100.0/website/docs/r/s3_bucket_policy.html.markdown)
+define the initial scope. See the synthetic [fixture](../tests/fixtures/s3-policy-plan.json),
+[SVG](../examples/s3-policy.svg) and [offline HTML](../examples/s3-policy.html).
+Regenerate HTML with
+`docker compose exec -T dev cargo run --locked -- tests/fixtures/s3-policy-plan.json --format html -o examples/s3-policy.html`.
+
 ## AWS Private CA
 
 Exact AWS `aws_acmpca_certificate_authority` and `aws_acmpca_certificate` are
