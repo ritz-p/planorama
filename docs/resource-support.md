@@ -69,8 +69,8 @@ Provider source: `registry.terraform.io/hashicorp/aws`.
 | `aws_apigatewayv2_api` | Connector / Connector | Spatial / Spatial | ApiGateway / Amazon API Gateway | Regional (conditional) | — |
 | `aws_apigatewayv2_apis` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | ApiGateway / Amazon API Gateway | Unknown | — |
 | `aws_apigatewayv2_vpc_link` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | ApiGateway / Amazon API Gateway | Unknown | — |
-| `aws_athena_data_catalog` | Node / Node | Logical / Logical | Athena / Amazon Athena | Regional (conditional) | [aws.rs](../src/provider/aws.rs) |
-| `aws_athena_workgroup` | Node / Node | Logical / Logical | Athena / Amazon Athena | Regional (conditional) | [aws.rs](../src/provider/aws.rs) |
+| `aws_athena_data_catalog` | Node / Node | Spatial / Spatial | Athena / Amazon Athena | Regional (conditional) | [aws/service_references.rs](../src/provider/aws/service_references.rs) |
+| `aws_athena_workgroup` | Node / Node | Spatial / Spatial | Athena / Amazon Athena | Regional (conditional) | [aws/service_references.rs](../src/provider/aws/service_references.rs) |
 | `aws_autoscaling_group` | Controller / Controller | Spatial / Spatial | Scaling / Amazon EC2 Auto Scaling | Regional (conditional) | [aws.rs](../src/provider/aws.rs), [aws/autoscaling.rs](../src/provider/aws/autoscaling.rs) |
 | `aws_autoscaling_groups` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Scaling / Amazon EC2 Auto Scaling | Unknown | — |
 | `aws_autoscaling_policy` | Policy / Policy | Logical / Logical | Scaling / Amazon EC2 Auto Scaling | Regional (conditional) | [aws.rs](../src/provider/aws.rs), [aws/autoscaling.rs](../src/provider/aws/autoscaling.rs) |

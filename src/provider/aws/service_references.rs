@@ -294,6 +294,8 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
                     node.resource_type.as_str(),
                     "aws_cloudwatch_log_group"
                         | "aws_ecs_cluster"
+                        | "aws_athena_workgroup"
+                        | "aws_athena_data_catalog"
                         | "aws_glue_job"
                         | "aws_glue_crawler"
                         | "aws_glue_catalog_database"
@@ -308,7 +310,9 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             if node.provider.is_aws()
                 && matches!(
                     node.resource_type.as_str(),
-                    "aws_glue_job"
+                    "aws_athena_workgroup"
+                        | "aws_athena_data_catalog"
+                        | "aws_glue_job"
                         | "aws_glue_crawler"
                         | "aws_glue_catalog_database"
                         | "aws_glue_catalog_table"
