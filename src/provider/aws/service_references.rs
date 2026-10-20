@@ -48,6 +48,7 @@ fn label(resource: &str, attribute: &str) -> Option<&'static str> {
         ("aws_route53_record", "zone_id") => Some("Hosted zone"),
         ("aws_route53_record", "alias.name") => Some("Alias target"),
         ("aws_route53_zone", "vpc.vpc_id") => Some("Associated VPC"),
+        ("aws_cloudfront_distribution", attribute) => super::cloudfront::label(attribute),
         _ => super::iam::label(resource, attribute),
     }
 }
@@ -127,6 +128,9 @@ fn source_fields(resource: &str, attribute: &str, source: &str) -> &'static [&'s
             &["hosted_zone_id"]
         }
         ("aws_route53_zone", "vpc.vpc_id", "aws_vpc") => &["id"],
+        ("aws_cloudfront_distribution", attribute, source) => {
+            super::cloudfront::source_fields(attribute, source)
+        }
         _ => &[],
     }
 }
@@ -236,6 +240,13 @@ pub(crate) fn annotate(
         if node.resource_type == "aws_kinesis_firehose_delivery_stream" {
             reference.service_reference_verified &=
                 super::firehose::configuration_verified(&reference.attribute, value, unknown);
+        }
+        if node.resource_type == "aws_cloudfront_distribution"
+            && reference.attribute == "origin.domain_name"
+            && endpoint.resource_type == "aws_lb"
+        {
+            reference.service_reference_verified &=
+                scalar(target, target_unknown, &["load_balancer_type"]) == Some("application");
         }
         if reference.service_reference_verified
             && reference.attribute == "alias.name"

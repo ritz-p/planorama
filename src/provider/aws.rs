@@ -1,6 +1,7 @@
 mod associations;
 mod autoscaling;
 mod classification;
+mod cloudfront;
 mod components;
 mod containment;
 mod data;
@@ -68,6 +69,11 @@ pub(super) fn reference_label(resource_type: &str, attribute: &str) -> &'static 
 
 pub(super) fn placement(resource_type: &str) -> crate::model::Placement {
     match resource_type {
+        "aws_cloudfront_origin_access_control"
+        | "aws_cloudfront_origin_access_identity"
+        | "aws_cloudfront_cache_policy"
+        | "aws_cloudfront_origin_request_policy"
+        | "aws_cloudfront_response_headers_policy" => crate::model::Placement::Logical,
         "aws_acmpca_certificate_authority_certificate"
         | "aws_acm_certificate_validation"
         | "aws_ssm_parameter"
