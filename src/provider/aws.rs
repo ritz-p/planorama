@@ -47,6 +47,10 @@ mod ecs_cluster_tests;
 mod eks_tests;
 
 #[cfg(test)]
+#[path = "../../tests/unit/semantic/serverless.rs"]
+mod serverless_tests;
+
+#[cfg(test)]
 #[path = "../../tests/unit/resource_support.rs"]
 mod resource_support;
 pub(super) use scope::scope;

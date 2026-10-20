@@ -1034,6 +1034,30 @@ and [target](https://registry.terraform.io/providers/hashicorp/aws/6.0.0/docs/re
 contracts. See the maintained [SVG](../examples/rds-proxy.svg) and
 [offline HTML](../examples/rds-proxy.html).
 
+## ElastiCache Serverless
+
+`aws_elasticache_serverless_cache` is an independent regional Node card, using
+the Amazon ElastiCache icon/service name. It is distinct from provisioned Cluster
+and Replication Group resources: no cache nodes, replication members or subnet
+groups are synthesized.
+
+Explicit `subnet_ids` and `security_group_ids` use the current managed endpoint,
+known-value and provider-scope checks described for RDS Proxy. Complete Subnet
+evidence places the cache in their verified common VPC, including a single-subnet
+configuration; it does not assign a cache node to each Subnet. Missing, unknown,
+mixed literal/reference, dynamic, ambiguous, wrong-provider/type, deleted/deposed
+or filtered evidence never invents placement or SG connections. The original
+resource identity, ordinary references, actions and coverage remain available.
+Data lookups keep their identity without inferred network attachments.
+
+Endpoint and reader endpoint values, user-group values and connection details
+are not displayed; the graph does not claim runtime cache node count or reachability.
+Terraform 1.9.8 / 1.16.6 and AWS Provider 5.100.0 / 6.0.0 schemas and offline plans
+were checked against the official
+[Serverless Cache contract](https://registry.terraform.io/providers/hashicorp/aws/6.0.0/docs/resources/elasticache_serverless_cache).
+See the maintained [SVG](../examples/elasticache-serverless.svg) and
+[offline HTML](../examples/elasticache-serverless.html).
+
 ## Containment
 
 Listener cards prefer nearby positions to their uniquely referenced managed LB.
@@ -1070,6 +1094,7 @@ do not invent a common container.
 | Lambda / EKS | `vpc_config.subnet_ids` | Common VPC |
 | EKS Node Group / Fargate Profile | `subnet_ids` | Verified current Subnets and common VPC; independent of cluster membership |
 | RDS Proxy | `vpc_subnet_ids` | Verified current Subnets and common VPC; independent of DB targets |
+| ElastiCache Serverless | `subnet_ids` | Verified current Subnets and common VPC; no provisioned nodes/members |
 | OpenSearch | `vpc_options.subnet_ids` | Common VPC |
 
 LB/ECS subnet references outside the chosen parent become Connection edges.
@@ -1090,23 +1115,25 @@ Examples: [multiple subnets](../examples/multi-container.svg),
 
 ## Security Group attachments
 
-RDS Proxy `vpc_security_group_ids` uses the strict current-resource and known-value
-checks described above before adding SG connections.
+RDS Proxy `vpc_security_group_ids` and ElastiCache Serverless `security_group_ids`
+use the strict current-resource and known-value checks described above before
+adding SG connections.
 
 | Consumer | Attribute |
 | --- | --- |
 | EC2, RDS Instance / Cluster / Proxy | `vpc_security_group_ids` |
 | Load Balancer, EFS Mount Target | `security_groups` |
 | ECS Service | `network_configuration.security_groups` |
-| VPC Endpoint | `security_group_ids` |
+| VPC Endpoint, ElastiCache Serverless | `security_group_ids` |
 | Lambda / EKS | `vpc_config.security_group_ids` |
 | OpenSearch | `vpc_options.security_group_ids` |
 
 Each explicitly referenced AWS SG becomes a Connection to the managed consumer.
 Multiple groups and exact indexed references are supported, including external
 SG data sources. Attachment does not change containment or hide SG cards.
-EFS Mount Targets and RDS Proxies additionally require current managed SG endpoints
-and reject deleted consumers/endpoints; other consumers retain their existing data-SG rules.
+EFS Mount Targets, RDS Proxies and ElastiCache Serverless additionally require
+current managed SG endpoints and reject deleted consumers/endpoints; other
+consumers retain their existing data-SG rules.
 
 The entire planned ID collection must match the referenced resources' IDs using
 planned values/unknown slots, with prior state available for cached data sources.
