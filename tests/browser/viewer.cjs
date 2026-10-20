@@ -843,6 +843,7 @@ class ViewerTests {
     test_iam_memberships_and_direct_policies_keep_search_and_links() {
         this.load('tests/fixtures/iam-plan.json', '--icon-mode', 'service-name');
         this.assertEqual(len(this.driver.find_elements(By.CSS_SELECTOR, '[data-placement="logical"]')), 11);
+        this.assertEqual(len(this.driver.find_elements(By.CSS_SELECTOR, '[data-role="identity"]')), 3);
         this.assertIn('AWS Identity and Access Management', this.driver.page_source);
         this.assertNotIn('PRIVATE_', this.driver.page_source);
         this.choose('aws_iam_group_membership.team');
@@ -860,6 +861,9 @@ class ViewerTests {
     }
     test_identity_provider_references_preserve_offline_navigation() {
         this.load('tests/fixtures/identity-providers-plan.json', '--icon-mode', 'service-name');
+        this.assertEqual(len(this.driver.find_elements(By.CSS_SELECTOR, '[data-role="identity"]')), 5);
+        this.assertIn('Role: Identity', this.find('#viewport').text);
+        this.assertNotIn('Role: Policy', this.find('#viewport').text);
         this.assertIn('AWS Identity and Access Management', this.driver.page_source);
         this.assertNotIn('PRIVATE_', this.driver.page_source);
         for (const suffix of ['workload', 'workforce']) {
@@ -869,6 +873,7 @@ class ViewerTests {
             this.driver.execute_script("arguments[0].dispatchEvent(new MouseEvent('click', {bubbles:true,cancelable:true}))", link);
             this.assertEqual(this.find('[data-viewer-selected]').get_attribute('id'), target);
             this.assertEqual(this.find('[data-viewer-selected]').get_attribute('data-placement'), 'logical');
+            this.assertEqual(this.find('[data-viewer-selected]').get_attribute('data-role'), 'identity');
         }
         this.choose('aws_iam_role.literal');
         this.assertFalse(this.driver.find_elements(By.CSS_SELECTOR, '[data-viewer-selected] a[data-reference-attribute]'));

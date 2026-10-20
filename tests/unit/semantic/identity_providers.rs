@@ -75,7 +75,7 @@ fn identity_providers_are_global_logical_with_only_configuration_references() {
         .iter()
         .filter(|n| n.resource_type.ends_with("_provider"))
     {
-        assert_eq!(node.role, ResourceRole::Policy);
+        assert_eq!(node.role, ResourceRole::Identity);
         assert_eq!(node.placement, Placement::Logical);
         assert!(
             node.entity
@@ -105,6 +105,9 @@ fn identity_providers_are_global_logical_with_only_configuration_references() {
         )
         .unwrap();
         assert!(!output.content.contains("PRIVATE_"));
+        assert!(output.content.contains("data-role=\"identity\""));
+        assert!(output.content.contains("Role: Identity"));
+        assert!(!output.content.contains("Role: Policy"));
         assert!(
             output
                 .content
@@ -226,7 +229,9 @@ fn identity_providers_keep_indexed_data_deposed_state_and_selection_identity() {
         graph
             .nodes
             .iter()
-            .any(|n| n.mode == crate::model::EntityMode::Data && n.placement == Placement::Logical)
+            .any(|n| n.mode == crate::model::EntityMode::Data
+                && n.placement == Placement::Logical
+                && n.role == ResourceRole::Identity)
     );
     assert!(
         graph

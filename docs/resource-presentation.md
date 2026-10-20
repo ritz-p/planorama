@@ -27,7 +27,7 @@ to Logical for managed and data resources. Names in the table omit `aws_`.
 | `iam_group_membership`, `iam_user_group_membership`, `iam_user_policy_attachment`, `iam_group_policy_attachment` | Keep existing provenance-backed relationship presentation; do not turn membership/attachment into containment. |
 | `sns_topic_subscription`, `lambda_event_source_mapping`, `cloudwatch_event_target` | Keep existing association presentation and provenance; not independent execution resources. |
 | `iam_role`, `iam_instance_profile`, `iam_group` | Keep Logical for this work: identity/access configuration with existing navigable references. |
-| `iam_user`, `iam_openid_connect_provider`, `iam_saml_provider` | Conditional future review of identity semantics; retain current Logical placement and Policy role here. Neither the type name nor a display change justifies reclassifying these identities as policies or execution nodes. |
+| `iam_user`, `iam_openid_connect_provider`, `iam_saml_provider` | Retain Logical placement; the later #551 classification correction uses Identity, also for Role/Group. Presentation review remains separate. |
 | `ssm_parameter` | Conditional future review as a stored object; retain Logical in this series and never expose parameter values. |
 | `cloudwatch_metric_alarm` | Keep Logical: monitoring configuration with existing verified monitor relationships. |
 

@@ -3,6 +3,9 @@ use crate::model::architecture::ResourceRole;
 
 pub(super) fn explanation(role: ResourceRole) -> Option<&'static str> {
     match role {
+        ResourceRole::Identity => Some(
+            "Role: Identity — principals, identity collections or federation configuration; does not prove authentication, role assumption or effective permissions.",
+        ),
         ResourceRole::Policy => Some(
             "Role: Policy — access/control rules or policy-like configuration; not necessarily IAM or policy enforcement.",
         ),
@@ -15,6 +18,7 @@ pub(super) fn explanation(role: ResourceRole) -> Option<&'static str> {
 
 pub(super) fn annotation(role: ResourceRole, module: &str) -> String {
     let name = match role {
+        ResourceRole::Identity => "identity",
         ResourceRole::Policy => "policy",
         ResourceRole::Controller => "controller",
         _ => return String::new(),
@@ -24,6 +28,7 @@ pub(super) fn annotation(role: ResourceRole, module: &str) -> String {
 
 pub(super) fn attributes(role: ResourceRole) -> &'static str {
     match role {
+        ResourceRole::Identity => " data-role=\"identity\"",
         ResourceRole::Policy => " data-role=\"policy\"",
         ResourceRole::Controller => " data-role=\"controller\"",
         _ => "",

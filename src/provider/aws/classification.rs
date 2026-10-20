@@ -79,13 +79,13 @@ pub(super) fn classify(resource_type: &str) -> ResourceRole {
         | "aws_iam_user_group_membership"
         | "aws_iam_user_policy_attachment"
         | "aws_iam_group_policy_attachment" => ResourceRole::Association,
-        "aws_security_group"
-        | "aws_network_acl"
-        | "aws_iam_role"
+        "aws_iam_role"
         | "aws_iam_user"
         | "aws_iam_openid_connect_provider"
         | "aws_iam_saml_provider"
-        | "aws_iam_group"
+        | "aws_iam_group" => ResourceRole::Identity,
+        "aws_security_group"
+        | "aws_network_acl"
         | "aws_iam_user_policy"
         | "aws_iam_group_policy"
         | "aws_iam_policy"
