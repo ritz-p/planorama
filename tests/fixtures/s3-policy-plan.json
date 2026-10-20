@@ -1,0 +1,38 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_s3_bucket.assets[0]",
+      "type": "aws_s3_bucket",
+      "mode": "managed",
+      "index": 0,
+      "change": {"actions": ["no-op"], "after": {"id": "fixture-assets", "bucket": "fixture-assets"}}
+    },
+    {
+      "address": "aws_s3_bucket_policy.assets",
+      "type": "aws_s3_bucket_policy",
+      "mode": "managed",
+      "change": {"actions": ["update"], "after": {"bucket": "fixture-assets", "policy": "PRIVATE_POLICY_BODY"}}
+    },
+    {
+      "address": "aws_s3_bucket_policy.literal",
+      "type": "aws_s3_bucket_policy",
+      "mode": "managed",
+      "change": {"actions": ["create"], "after": {"bucket": "fixture-assets", "policy": "PRIVATE_POLICY_BODY"}}
+    }
+  ],
+  "configuration": {
+    "provider_config": {"aws": {"full_name": "registry.terraform.io/hashicorp/aws", "version_constraint": "5.100.0", "expressions": {"region": {"constant_value": "us-west-2"}}}},
+    "root_module": {"resources": [
+      {"address": "aws_s3_bucket.assets", "provider_config_key": "aws"},
+      {"address": "aws_s3_bucket_policy.assets", "provider_config_key": "aws", "expressions": {
+        "bucket": {"references": ["aws_s3_bucket.assets[0].id", "aws_s3_bucket.assets[0]", "aws_s3_bucket.assets"]},
+        "policy": {"constant_value": "PRIVATE_POLICY_BODY"}
+      }},
+      {"address": "aws_s3_bucket_policy.literal", "provider_config_key": "aws", "expressions": {
+        "bucket": {"constant_value": "fixture-assets"}
+      }}
+    ]}
+  }
+}
