@@ -139,7 +139,12 @@ pub(super) fn annotate(
             let value = changes
                 .get(&(node.address.as_str(), node.deposed_key.as_deref()))
                 .and_then(|c| c["change"].get("before"))
-                .or_else(|| prior.get(node.address.as_str()).copied())
+                .or_else(|| {
+                    node.deposed_key
+                        .is_none()
+                        .then(|| prior.get(node.address.as_str()).copied())
+                        .flatten()
+                })
                 .unwrap_or(&Value::Null);
             (value, &Value::Null)
         })
