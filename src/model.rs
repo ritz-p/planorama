@@ -118,6 +118,7 @@ pub enum ResourceRole {
     Node,
     Connector,
     Association,
+    Identity,
     Policy,
     Controller,
     #[default]

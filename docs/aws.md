@@ -148,8 +148,11 @@ literal-only values. Regenerate HTML inside Docker with
 
 ## IAM users and groups
 
-Exact AWS `aws_iam_user`, `aws_iam_group`, `aws_iam_user_policy` and
-`aws_iam_group_policy` use the existing logical IAM Policy presentation.
+Exact AWS `aws_iam_role`, `aws_iam_user` and `aws_iam_group` use logical Identity
+rows. Roles and users represent principals; groups represent collections of
+identities, not assumable principals. `aws_iam_policy` and inline role/user/group
+policies remain Policy, as does the existing instance-profile auxiliary
+configuration. Classification does not promote any of these resources to Spatial.
 `aws_iam_group_membership`, `aws_iam_user_group_membership`,
 `aws_iam_user_policy_attachment` and `aws_iam_group_policy_attachment` are logical
 Associations. All use the IAM icon/service name and Global scope, independently
@@ -192,7 +195,8 @@ Regenerate SVGs with the standard script and HTML in Docker with
 ## IAM identity providers
 
 Exact AWS `aws_iam_openid_connect_provider` and `aws_iam_saml_provider` use logical
-IAM Policy rows with the IAM icon/service name and Global scope. Provider region
+Identity rows with the IAM icon/service name and Global scope. These represent
+federation configuration, not IAM users or principals. Provider region
 does not make them regional. Managed/data instances, independent actions, moves,
 imports, deposed resources and state-qualified identities use the shared resource
 presentation and coverage rules.
@@ -680,11 +684,15 @@ See the [EventBridge target example](../examples/eventbridge-targets.svg).
 ## Resource roles and data
 
 VPC and Subnet are spatial `Container` resources. Other supported types are
-classified as nodes, connectors, associations, policies or controllers by
+classified as nodes, connectors, associations, identities, policies or controllers by
 `classification.rs`. Unknown types remain visible as `Unknown`. Roles are separate
 from managed/data mode; Security Groups remain Policy cards and target groups
 remain Controller cards even when placed inside a VPC.
 
+Identity describes principals, identity collections or federation configuration;
+it proves neither authentication, role assumption nor effective permissions.
+It does not establish equivalence between users or accounts: state, managed/data
+and current/deposed identities remain separate even when display names match.
 Policy describes access/control rules or policy-like configuration; it does not
 necessarily mean IAM or policy enforcement. Controller describes resources that
 manage or configure services, workloads or related resources; the role alone does

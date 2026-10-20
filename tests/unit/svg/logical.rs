@@ -447,7 +447,7 @@ fn logical_projection_retains_graph_identity_references_and_operations() {
         .descendants()
         .find(|n| n.attribute("data-terraform-address") == Some("aws_iam_role.app"))
         .unwrap();
-    assert_eq!(role.attribute("data-role"), Some("policy"));
+    assert_eq!(role.attribute("data-role"), Some("identity"));
     assert!(
         role.children()
             .any(|n| n.has_tag_name("title") && n.text().unwrap().starts_with("aws_iam_role.app"))
