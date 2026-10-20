@@ -107,6 +107,13 @@ fn matrix() -> String {
             }
             let entity = &plan.nodes[0];
             let scope = match provider::scope(entity) {
+                _ if matches!(
+                    resource_type.as_str(),
+                    "aws_wafv2_web_acl" | "aws_wafv2_rule_group"
+                ) =>
+                {
+                    "Global / Regional / Unknown (scope-dependent)"
+                }
                 Some(scope) if scope.global => "Global",
                 Some(scope) if scope.region.is_some() => "Regional (conditional)",
                 _ => "Unknown",

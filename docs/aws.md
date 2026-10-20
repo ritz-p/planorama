@@ -38,6 +38,41 @@ show S3/ALB origins, OAC/OAI, policies and an unresolved custom origin.
 Regenerate HTML with
 `docker compose exec -T dev cargo run --locked -- tests/fixtures/cloudfront-plan.json --format html -o examples/cloudfront.html`.
 
+## WAFv2
+
+Exact AWS Web ACLs and Rule Groups are spatial Policy cards with the AWS WAF
+icon. Known `scope = CLOUDFRONT` means Global even when the API provider uses
+`us-east-1`; `REGIONAL` uses verified resource/provider region evidence. Unknown
+scope stays unknown with a diagnostic. Deleted/deposed scope can use its own
+before-value, but current configuration cannot establish historical links.
+
+`aws_wafv2_web_acl_association` retains its identity/action as a logical
+association fallback. It becomes an undirected Association edge only when both
+`web_acl_arn` and `resource_arn` prove unique current managed AWS endpoints with
+matching known ARN outputs, compatible account/provider bindings and the same
+known region. Protected endpoints are application LBs and explicit
+`aws_api_gateway_stage.arn` (REST stages, not HTTP/WebSocket APIs or a REST API
+root ARN). Extra relationships keep the association resource visible.
+The edge preserves import/move provenance and coverage exactly once.
+
+CloudFront `web_acl_id` is a separate configured reference to an explicit Web ACL
+ARN with known CLOUDFRONT scope; it never creates an association resource.
+Singleton `rule.statement.rule_group_reference_statement.arn` links require
+known matching scope and compatible bindings. Multiple/ambiguous rules keep
+ordinary references. Inline and AWS-managed rule groups never create resources.
+Literal, unknown, dynamic, data, deleted/deposed and wrong-provider/type endpoints
+remain unresolved. Filtering cannot invent missing endpoints; each state resolves
+independently. Rule bodies, match criteria, IP sets and arbitrary values are not
+emitted, and links do not assert successful protection or runtime inspection.
+
+Verified against AWS Provider 5.100.0/6.0.0 schemas and the official
+[Web ACL](https://github.com/hashicorp/terraform-provider-aws/blob/v6.0.0/website/docs/r/wafv2_web_acl.html.markdown)
+and [association](https://github.com/hashicorp/terraform-provider-aws/blob/v5.100.0/website/docs/r/wafv2_web_acl_association.html.markdown)
+contracts. The synthetic [fixture](../tests/fixtures/waf-plan.json),
+[SVG](../examples/waf.svg) and [offline HTML](../examples/waf.html) cover both scopes,
+ALB/stage associations and unresolved configuration. Regenerate HTML with
+`docker compose exec -T dev cargo run --locked -- tests/fixtures/waf-plan.json --format html -o examples/waf.html`.
+
 ## AWS Private CA
 
 Exact AWS `aws_acmpca_certificate_authority` and `aws_acmpca_certificate` are

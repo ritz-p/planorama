@@ -94,7 +94,7 @@ fn known_strings<'a>(value: &'a Value, unknown: &'a Value, path: &[&str]) -> Opt
 
 pub(super) fn annotate(
     plan: &Value,
-    nodes: &[TerraformEntity],
+    nodes: &mut [TerraformEntity],
     references: &mut [AttributeReference],
 ) {
     let mut values = BTreeMap::new();
@@ -145,6 +145,7 @@ pub(super) fn annotate(
         })
         .collect();
     let buses = eventbridge::bus_references(references);
+    crate::provider::aws::waf::enrich(nodes, &evidence, &before_evidence);
     crate::provider::aws::service_references::annotate(nodes, references, &evidence);
     for reference in references {
         let consumer = &nodes[reference.target];

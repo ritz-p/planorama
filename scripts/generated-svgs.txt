@@ -61,3 +61,4 @@ examples/region-overrides.svg
 examples/glue.svg
 examples/athena.svg
 examples/cloudfront.svg
+examples/waf.svg

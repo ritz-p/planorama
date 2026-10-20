@@ -1,0 +1,300 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_wafv2_rule_group.app[0]",
+      "type": "aws_wafv2_rule_group",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "arn": "arn:aws:wafv2:us-west-2:123456789012:regional/rulegroup/app/fixture",
+          "scope": "REGIONAL",
+          "rule": [
+            {
+              "statement": "PRIVATE_RULE"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_wafv2_web_acl.app",
+      "type": "aws_wafv2_web_acl",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "arn": "arn:aws:wafv2:us-west-2:123456789012:regional/webacl/app/fixture",
+          "scope": "REGIONAL",
+          "rule": [
+            {
+              "statement": [
+                {
+                  "rule_group_reference_statement": [
+                    {
+                      "arn": "arn:aws:wafv2:us-west-2:123456789012:regional/rulegroup/app/fixture"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_wafv2_web_acl.cdn",
+      "type": "aws_wafv2_web_acl",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "arn": "arn:aws:wafv2:us-east-1:123456789012:global/webacl/cdn/fixture",
+          "scope": "CLOUDFRONT"
+        }
+      }
+    },
+    {
+      "address": "aws_lb.app",
+      "type": "aws_lb",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "arn": "arn:aws:elasticloadbalancing:us-west-2:123456789012:loadbalancer/app/app/fixture",
+          "load_balancer_type": "application"
+        }
+      }
+    },
+    {
+      "address": "aws_api_gateway_stage.app",
+      "type": "aws_api_gateway_stage",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "arn": "arn:aws:apigateway:us-west-2::/restapis/fixture/stages/app"
+        }
+      }
+    },
+    {
+      "address": "aws_wafv2_web_acl_association.alb",
+      "type": "aws_wafv2_web_acl_association",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "web_acl_arn": "arn:aws:wafv2:us-west-2:123456789012:regional/webacl/app/fixture",
+          "resource_arn": "arn:aws:elasticloadbalancing:us-west-2:123456789012:loadbalancer/app/app/fixture"
+        }
+      }
+    },
+    {
+      "address": "aws_wafv2_web_acl_association.api",
+      "type": "aws_wafv2_web_acl_association",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "web_acl_arn": "arn:aws:wafv2:us-west-2:123456789012:regional/webacl/app/fixture",
+          "resource_arn": "arn:aws:apigateway:us-west-2::/restapis/fixture/stages/app"
+        }
+      }
+    },
+    {
+      "address": "aws_cloudfront_distribution.cdn",
+      "type": "aws_cloudfront_distribution",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "web_acl_id": "arn:aws:wafv2:us-east-1:123456789012:global/webacl/cdn/fixture"
+        }
+      }
+    },
+    {
+      "address": "aws_wafv2_web_acl.unknown",
+      "type": "aws_wafv2_web_acl",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "scope": "FUTURE_SCOPE",
+          "rule_json": "PRIVATE_RULE_JSON"
+        }
+      }
+    },
+    {
+      "address": "aws_wafv2_web_acl_association.literal",
+      "type": "aws_wafv2_web_acl_association",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "web_acl_arn": "arn:aws:wafv2:us-west-2:123456789012:regional/webacl/app/fixture",
+          "resource_arn": "arn:aws:elasticloadbalancing:us-west-2:123456789012:loadbalancer/app/app/fixture"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "version_constraint": "5.100.0",
+        "expressions": {
+          "region": {
+            "constant_value": "us-west-2"
+          }
+        }
+      },
+      "aws.global": {
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "version_constraint": "5.100.0",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_wafv2_rule_group.app",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_wafv2_web_acl.app",
+          "provider_config_key": "aws",
+          "expressions": {
+            "rule": [
+              {
+                "statement": [
+                  {
+                    "rule_group_reference_statement": [
+                      {
+                        "arn": {
+                          "references": [
+                            "aws_wafv2_rule_group.app[0].arn",
+                            "aws_wafv2_rule_group.app[0]"
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_wafv2_web_acl.cdn",
+          "provider_config_key": "aws.global",
+          "expressions": {}
+        },
+        {
+          "address": "aws_lb.app",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_api_gateway_stage.app",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_wafv2_web_acl_association.alb",
+          "provider_config_key": "aws",
+          "expressions": {
+            "web_acl_arn": {
+              "references": [
+                "aws_wafv2_web_acl.app.arn",
+                "aws_wafv2_web_acl.app"
+              ]
+            },
+            "resource_arn": {
+              "references": [
+                "aws_lb.app.arn",
+                "aws_lb.app"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_wafv2_web_acl_association.api",
+          "provider_config_key": "aws",
+          "expressions": {
+            "web_acl_arn": {
+              "references": [
+                "aws_wafv2_web_acl.app.arn",
+                "aws_wafv2_web_acl.app"
+              ]
+            },
+            "resource_arn": {
+              "references": [
+                "aws_api_gateway_stage.app.arn",
+                "aws_api_gateway_stage.app"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_cloudfront_distribution.cdn",
+          "provider_config_key": "aws.global",
+          "expressions": {
+            "web_acl_id": {
+              "references": [
+                "aws_wafv2_web_acl.cdn.arn",
+                "aws_wafv2_web_acl.cdn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_wafv2_web_acl.unknown",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_wafv2_web_acl_association.literal",
+          "provider_config_key": "aws",
+          "expressions": {
+            "web_acl_arn": {
+              "references": [
+                "aws_wafv2_web_acl.app.arn",
+                "aws_wafv2_web_acl.app"
+              ]
+            },
+            "resource_arn": {
+              "constant_value": "arn:aws:elasticloadbalancing:us-west-2:123456789012:loadbalancer/app/app/fixture"
+            }
+          }
+        }
+      ]
+    }
+  }
+}

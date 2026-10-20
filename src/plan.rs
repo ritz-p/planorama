@@ -102,7 +102,7 @@ pub(crate) fn parse(json: &str) -> Result<TerraformPlan, String> {
         &symbols,
         false,
     );
-    collections::annotate(&plan, &nodes, &mut attributes);
+    collections::annotate(&plan, &mut nodes, &mut attributes);
     let graph_references = attributes::collect(
         &plan["configuration"]["root_module"],
         &nodes,
