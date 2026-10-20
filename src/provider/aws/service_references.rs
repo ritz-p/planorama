@@ -10,6 +10,9 @@ use serde_json::Value;
 pub(super) mod tests;
 
 fn label(resource: &str, attribute: &str) -> Option<&'static str> {
+    if let Some(label) = super::s3::label(resource, attribute) {
+        return Some(label);
+    }
     if let Some(label) = super::waf::label(resource, attribute) {
         return Some(label);
     }
@@ -57,6 +60,10 @@ fn label(resource: &str, attribute: &str) -> Option<&'static str> {
 }
 
 fn source_fields(resource: &str, attribute: &str, source: &str) -> &'static [&'static str] {
+    let s3 = super::s3::source_fields(resource, attribute, source);
+    if !s3.is_empty() {
+        return s3;
+    }
     let waf = super::waf::source_fields(resource, attribute, source);
     if !waf.is_empty() {
         return waf;
