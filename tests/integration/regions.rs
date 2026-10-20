@@ -2,52 +2,57 @@ use super::render;
 
 #[test]
 fn verified_region_overrides_survive_selection_and_rendering() {
-    let input = include_bytes!("../fixtures/aws-region-overrides/plan.json");
-    for args in [
-        vec![],
-        vec!["--format", "html"],
-        vec!["--focus", "aws_subnet.paris", "--focus-depth", "0"],
-        vec![
-            "--focus",
-            "aws_cloudwatch_log_group.paris",
-            "--focus-depth",
-            "0",
-        ],
+    for input in [
+        include_bytes!("../fixtures/aws-region-overrides/plan.json").as_slice(),
+        include_bytes!("../fixtures/compatibility/1.16.6/overrides/plan.json").as_slice(),
     ] {
-        let output = super::support::run_with_args(input, &args);
-        assert!(
-            output.status.success(),
-            "{}",
-            String::from_utf8_lossy(&output.stderr)
-        );
-        let text = String::from_utf8(output.stdout).unwrap();
-        assert!(text.contains("eu-west-3"));
-        if args.contains(&"aws_cloudwatch_log_group.paris") {
-            assert!(text.contains("data-region=\"eu-west-3\""));
-            assert!(text.contains("data-deployment-scope="));
-        } else {
-            assert!(text.contains("data-region=\"eu-west-3\""));
-            assert!(text.contains("aws_vpc.paris") && text.contains("aws_subnet.paris"));
+        for args in [
+            vec![],
+            vec!["--changed-only"],
+            vec!["--format", "html"],
+            vec!["--focus", "aws_subnet.paris", "--focus-depth", "0"],
+            vec![
+                "--focus",
+                "aws_cloudwatch_log_group.paris",
+                "--focus-depth",
+                "0",
+            ],
+        ] {
+            let output = super::support::run_with_args(input, &args);
+            assert!(
+                output.status.success(),
+                "{}",
+                String::from_utf8_lossy(&output.stderr)
+            );
+            let text = String::from_utf8(output.stdout).unwrap();
+            assert!(text.contains("eu-west-3"));
+            if args.contains(&"aws_cloudwatch_log_group.paris") {
+                assert!(text.contains("data-region=\"eu-west-3\""));
+                assert!(text.contains("data-deployment-scope="));
+            } else {
+                assert!(text.contains("data-region=\"eu-west-3\""));
+                assert!(text.contains("aws_vpc.paris") && text.contains("aws_subnet.paris"));
+            }
         }
+        let mut value: serde_json::Value = serde_json::from_slice(input).unwrap();
+        value["resource_changes"][1]["change"]["after"]["region"] = serde_json::json!("us-west-2");
+        value["configuration"]["root_module"]["resources"][1]["expressions"]["region"]["constant_value"] =
+            serde_json::json!("us-west-2");
+        let svg = render(value.to_string().as_bytes());
+        assert!(svg.contains("aws_vpc.paris") && svg.contains("aws_subnet.paris"));
+        assert!(svg.contains("data-region=\"eu-west-3\""));
+        assert!(!svg.contains("data-region=\"us-west-2\""));
+        let doc = roxmltree::Document::parse(&svg).unwrap();
+        let subnet = doc
+            .descendants()
+            .find(|n| n.attribute("data-terraform-address") == Some("aws_subnet.paris"))
+            .unwrap();
+        assert!(
+            !subnet
+                .ancestors()
+                .any(|n| n.attribute("data-region").is_some())
+        );
     }
-    let mut value: serde_json::Value = serde_json::from_slice(input).unwrap();
-    value["resource_changes"][1]["change"]["after"]["region"] = serde_json::json!("us-west-2");
-    value["configuration"]["root_module"]["resources"][1]["expressions"]["region"]["constant_value"] =
-        serde_json::json!("us-west-2");
-    let svg = render(value.to_string().as_bytes());
-    assert!(svg.contains("aws_vpc.paris") && svg.contains("aws_subnet.paris"));
-    assert!(svg.contains("data-region=\"eu-west-3\""));
-    assert!(!svg.contains("data-region=\"us-west-2\""));
-    let doc = roxmltree::Document::parse(&svg).unwrap();
-    let subnet = doc
-        .descendants()
-        .find(|n| n.attribute("data-terraform-address") == Some("aws_subnet.paris"))
-        .unwrap();
-    assert!(
-        !subnet
-            .ancestors()
-            .any(|n| n.attribute("data-region").is_some())
-    );
 }
 
 #[test]
@@ -56,12 +61,16 @@ fn verified_region_overrides_remain_independent_across_states_and_modules() {
         "{}/tests/fixtures/aws-region-overrides/plan.json",
         env!("CARGO_MANIFEST_DIR")
     );
+    let additional_path = format!(
+        "{}/tests/fixtures/compatibility/1.16.6/overrides/plan.json",
+        env!("CARGO_MANIFEST_DIR")
+    );
     let output = std::process::Command::new(env!("CARGO_BIN_EXE_planorama"))
         .args([
             "--state",
             &format!("first={path}"),
             "--state",
-            &format!("second={path}"),
+            &format!("second={additional_path}"),
             "-o",
             "-",
         ])
@@ -88,29 +97,33 @@ fn verified_region_overrides_remain_independent_across_states_and_modules() {
                 .any(|n| n.text() == Some("AWS eu-west-3"))
         );
     }
-    let mut value: serde_json::Value =
-        serde_json::from_str(include_str!("../fixtures/aws-region-overrides/plan.json")).unwrap();
-    for resource in value["resource_changes"].as_array_mut().unwrap() {
-        resource["address"] = serde_json::json!(format!(
-            "module.regional.{}",
-            resource["address"].as_str().unwrap()
-        ));
+    for input in [
+        include_str!("../fixtures/aws-region-overrides/plan.json"),
+        include_str!("../fixtures/compatibility/1.16.6/overrides/plan.json"),
+    ] {
+        let mut value: serde_json::Value = serde_json::from_str(input).unwrap();
+        for resource in value["resource_changes"].as_array_mut().unwrap() {
+            resource["address"] = serde_json::json!(format!(
+                "module.regional.{}",
+                resource["address"].as_str().unwrap()
+            ));
+        }
+        value.as_object_mut().unwrap().remove("planned_values");
+        let module = value["configuration"]["root_module"].take();
+        value["configuration"]["root_module"] =
+            serde_json::json!({"module_calls":{"regional":{"module":module}}});
+        let output = super::support::run_with_args(
+            value.to_string().as_bytes(),
+            &["--modules", "module.regional"],
+        );
+        assert!(
+            output.status.success(),
+            "{}",
+            String::from_utf8_lossy(&output.stderr)
+        );
+        let text = String::from_utf8(output.stdout).unwrap();
+        assert!(text.contains("data-region=\"eu-west-3\"") && text.contains("AWS eu-west-3"));
     }
-    value.as_object_mut().unwrap().remove("planned_values");
-    let module = value["configuration"]["root_module"].take();
-    value["configuration"]["root_module"] =
-        serde_json::json!({"module_calls":{"regional":{"module":module}}});
-    let output = super::support::run_with_args(
-        value.to_string().as_bytes(),
-        &["--modules", "module.regional"],
-    );
-    assert!(
-        output.status.success(),
-        "{}",
-        String::from_utf8_lossy(&output.stderr)
-    );
-    let text = String::from_utf8(output.stdout).unwrap();
-    assert!(text.contains("data-region=\"eu-west-3\"") && text.contains("AWS eu-west-3"));
 }
 
 #[test]
