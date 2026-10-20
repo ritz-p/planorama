@@ -18,7 +18,7 @@ mod placement;
 pub(crate) mod service_references;
 pub(crate) use placement::owner_affinities;
 mod routes;
-mod s3;
+pub(crate) mod s3;
 mod scope;
 mod security_groups;
 mod service_members;
@@ -71,7 +71,7 @@ pub(super) fn reference_label(resource_type: &str, attribute: &str) -> &'static 
 
 pub(super) fn placement(resource_type: &str) -> crate::model::Placement {
     match resource_type {
-        "aws_s3_bucket_policy" => crate::model::Placement::Logical,
+        "aws_s3_bucket_policy" | "aws_s3_bucket_notification" => crate::model::Placement::Logical,
         "aws_wafv2_web_acl_association" => crate::model::Placement::Logical,
         "aws_cloudfront_origin_access_control"
         | "aws_cloudfront_origin_access_identity"

@@ -95,6 +95,29 @@ define the initial scope. See the synthetic [fixture](../tests/fixtures/s3-polic
 Regenerate HTML with
 `docker compose exec -T dev cargo run --locked -- tests/fixtures/s3-policy-plan.json --format html -o examples/s3-policy.html`.
 
+Bucket notifications are regional Logical Controllers. The independent
+`Notification bucket reference` uses the same Bucket identity proof.
+Queue, topic and Lambda function references accept only exact managed AWS
+SQS Queue, SNS Topic and Lambda Function `arn` outputs with matching known values.
+They are configured references, not runtime event-flow or permission assertions.
+`eventbridge` does not create a fabricated endpoint.
+
+AWS Provider 5.100.0/6.0.0 notification blocks are lists. Each configured entry
+retains its dotted ordinal path, such as `queue.0.queue_arn`, and list length.
+Every enclosing evaluated list and unknown mask must have the expected shape.
+Entries are verified independently, so repeated destinations retain distinct
+configuration provenance. Reordering only evaluated values, changed list lengths,
+unknown/dynamic/ambiguous entries and wrong-provider/type endpoints cannot
+borrow another entry's proof. Aggregate ordinary Terraform dependencies remain
+independent; no inline setting becomes a separate resource or coverage count.
+Filter prefixes/suffixes, IDs, events and payloads are not emitted.
+
+The official [notification contract](https://github.com/hashicorp/terraform-provider-aws/blob/v5.100.0/website/docs/r/s3_bucket_notification.html.markdown),
+synthetic [fixture](../tests/fixtures/s3-notification-plan.json),
+[SVG](../examples/s3-notification.svg) and [offline HTML](../examples/s3-notification.html)
+show two queue entries, SNS/Lambda references and a literal fallback. Regenerate HTML with
+`docker compose exec -T dev cargo run --locked -- tests/fixtures/s3-notification-plan.json --format html -o examples/s3-notification.html`.
+
 ## AWS Private CA
 
 Exact AWS `aws_acmpca_certificate_authority` and `aws_acmpca_certificate` are
