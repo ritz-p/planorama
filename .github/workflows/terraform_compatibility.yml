@@ -11,12 +11,36 @@ on:
       - tests/fixtures/aws-region-overrides/**
       - examples/terraform/**
       - .github/workflows/terraform_compatibility.yml
+      - src/plan/evidence.rs
+      - src/plan/evidence/**
+      - src/cli/provider_plan.rs
+      - tests/unit/plan/evidence.rs
+      - tests/integration/provider_plan.rs
+      - tests/fixtures/provider-plan/**
+      - tests/support/provider_plan.cjs
+      - tests/support/verify_provider_plan.sh
+      - tests/support/sts_fixture.cjs
   workflow_dispatch:
 
 permissions:
   contents: read
 
 jobs:
+  evidence:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+      - run: docker compose up -d --build dev
+      - run: docker compose exec -T dev node tests/support/provider_plan.cjs prepare
+      - run: docker compose exec -T dev cargo build --locked --bin planorama
+      - name: Verify real saved plans without external network
+        run: >-
+          docker run --rm --network none
+          --volumes-from "$(docker compose ps -q dev)"
+          planorama-dev node tests/support/provider_plan.cjs verify
   committed:
     runs-on: ubuntu-latest
     timeout-minutes: 5

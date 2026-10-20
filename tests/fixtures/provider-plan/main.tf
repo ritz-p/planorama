@@ -8,8 +8,6 @@ terraform {
   }
 }
 
-variable "sts_endpoint" { type = string }
-
 provider "aws" {
   alias = "verified"
   region = "us-east-1"
@@ -17,7 +15,7 @@ provider "aws" {
   skip_requesting_account_id = true
   skip_metadata_api_check = true
   skip_region_validation = true
-  endpoints { sts = var.sts_endpoint }
+  endpoints { sts = "http://127.0.0.1:12345" }
   assume_role {
     role_arn = "arn:aws:iam::123456789012:role/Fixture"
   }

@@ -17,7 +17,11 @@ fn archive(files: &[(&str, &str)]) -> Vec<u8> {
     for (name, content) in files {
         zip.start_file(*name, zip::write::SimpleFileOptions::default())
             .unwrap();
-        zip.write_all(content.as_bytes()).unwrap();
+        if *name == "tfplan" && *content == "fixture" {
+            zip.write_all(b"\x08\x03\x72\x051.9.8").unwrap();
+        } else {
+            zip.write_all(content.as_bytes()).unwrap();
+        }
     }
     zip.finish().unwrap().into_inner()
 }
@@ -162,19 +166,52 @@ fn stale_missing_modules_and_overrides_are_rejected() {
     assert!(Evidence::validate(&snapshot(STATIC), &json, b"{}").is_err());
     for files in [
         vec![
-            ("tfplan", "x"),
+            ("tfplan", "fixture"),
             ("tfconfig/modules.json", r#"[{"Key":""}]"#),
             ("tfconfig/m-/main.tf", STATIC),
         ],
         vec![
-            ("tfplan", "x"),
+            ("tfplan", "fixture"),
             ("tfconfig/modules.json", r#"[{"Key":""},{"Key":"child"}]"#),
             ("tfconfig/m-/override.tf", STATIC),
+            ("tfconfig/m-child/main.tf", ""),
+        ],
+        vec![
+            ("tfplan", "fixture"),
+            (
+                "tfconfig/modules.json",
+                r#"[{"Key":""},{"Key":""},{"Key":"child"}]"#,
+            ),
+            ("tfconfig/m-/main.tf", STATIC),
+            ("tfconfig/m-child/main.tf", ""),
+        ],
+        vec![
+            ("tfplan", "fixture"),
+            ("tfconfig/modules.json", r#"[{"Key":""},{"Key":"child"}]"#),
+            ("tfconfig/m-/main.tf", STATIC),
+        ],
+        vec![
+            ("tfplan", "fixture"),
+            ("tfconfig/modules.json", r#"[{"Key":""},{"Key":"child"}]"#),
+            ("tfconfig/m-/main.tf", "provider \"aws\" {"),
             ("tfconfig/m-child/main.tf", ""),
         ],
     ] {
         assert!(Evidence::validate(&archive(&files), &json, json.as_bytes()).is_err());
     }
+    let mut duplicate = archive(&[
+        ("tfplan", "fixture"),
+        ("tfconfig/modules.json", r#"[{"Key":""},{"Key":"child"}]"#),
+        ("tfconfig/m-/main.tf", STATIC),
+        ("tfconfig/m-/else.tf", ""),
+        ("tfconfig/m-child/main.tf", ""),
+    ]);
+    for index in 0..duplicate.len() - 7 {
+        if &duplicate[index..index + 7] == b"else.tf" {
+            duplicate[index..index + 7].copy_from_slice(b"main.tf");
+        }
+    }
+    assert!(Evidence::validate(&duplicate, &json, json.as_bytes()).is_err());
 }
 
 #[test]
@@ -260,4 +297,158 @@ fn unexamined_provider_version_cannot_establish_completeness() {
         .err()
         .unwrap();
     assert!(error.contains("5.100.0"));
+}
+
+#[test]
+fn core_binary_archive_json_and_lock_are_independently_checked() {
+    for core in ["1.9.8", "1.16.6"] {
+        let mut input = fixture();
+        input["terraform_version"] = json!(core);
+        let json = input.to_string();
+        let header = format!("\u{8}\u{3}r{}{core}", char::from(core.len() as u8));
+        let saved = archive(&[
+            ("tfplan", &header),
+            ("tfconfig/modules.json", r#"[{"Key":""},{"Key":"child"}]"#),
+            ("tfconfig/m-/main.tf", STATIC),
+            ("tfconfig/m-child/main.tf", ""),
+        ]);
+        let version = json!({"terraform_version":core,"provider_selections":{"registry.terraform.io/hashicorp/aws":"5.100.0"}});
+        Evidence::validate_runtime(&json, &serde_json::to_vec(&version).unwrap()).unwrap();
+        let evidence = Evidence::validate(&saved, &json, json.as_bytes()).unwrap();
+        let mut parsed = crate::plan::parse(&json).unwrap();
+        evidence.apply(&mut parsed);
+        assert_eq!(
+            parsed.nodes[0]
+                .provider_configuration
+                .as_ref()
+                .unwrap()
+                .account
+                .as_ref()
+                .unwrap()
+                .as_str(),
+            "123456789012"
+        );
+        let mut unrelated = input.clone();
+        unrelated["output_changes"] = json!({"unrelated":{"actions":["create"],"after":"private"}});
+        assert!(
+            Evidence::validate(&saved, &json, &serde_json::to_vec(&unrelated).unwrap()).is_err()
+        );
+        Evidence::validate(&saved, &json, &serde_json::to_vec_pretty(&input).unwrap()).unwrap();
+        for wrong in ["1.9.7", "1.16.5", "secret-value"] {
+            let mut version = version.clone();
+            version["terraform_version"] = json!(wrong);
+            let error = Evidence::validate_runtime(&json, &serde_json::to_vec(&version).unwrap())
+                .unwrap_err();
+            assert!(!error.contains(wrong));
+            assert!(validate_header(header.as_bytes(), wrong).is_none());
+        }
+        for provider in ["6.0.0", "5.99.0", "secret-value"] {
+            let mut version = version.clone();
+            version["provider_selections"]["registry.terraform.io/hashicorp/aws"] = json!(provider);
+            assert!(
+                Evidence::validate_runtime(&json, &serde_json::to_vec(&version).unwrap()).is_err()
+            );
+        }
+    }
+    for header in [
+        b"".as_slice(),
+        b"\x08\x04\x72\x051.9.8",
+        b"\x08\x03",
+        b"\x08\x03\x72\x051.9.8\x72\x051.9.8",
+        b"\x08\x03\x72\x051.9.8\x08\x03",
+        b"\x08\x03\x72\xff",
+        b"\x08\x03\x72\x051.9.8\x00",
+        b"\x08\x03\x72\x051.9.8\xff\xff\xff\xff\xff\xff\xff\xff\xff\xff",
+    ] {
+        assert!(validate_header(header, "1.9.8").is_none());
+    }
+    let mut unsupported = fixture();
+    unsupported["terraform_version"] = json!("unverified-private-version");
+    let json = unsupported.to_string();
+    let error = Evidence::validate(&snapshot(STATIC), &json, json.as_bytes())
+        .err()
+        .unwrap();
+    assert!(error.contains("unsupported Terraform"));
+    assert!(!error.contains("unverified-private-version"));
+    assert!(Evidence::validate_runtime(&json, br#"{"terraform_version":"unverified-private-version","provider_selections":{"registry.terraform.io/hashicorp/aws":"5.100.0"}}"#).is_err());
+    assert!(
+        Evidence::validate_runtime(&fixture().to_string(), b"private-invalid-response").is_err()
+    );
+}
+
+#[test]
+fn evidence_keeps_data_current_deposed_and_removed_objects_distinct() {
+    let mut input = fixture();
+    input["configuration"]["root_module"]["module_calls"]["child"]["module"]["resources"]
+        .as_array_mut()
+        .unwrap()
+        .push(
+            json!({"address":"data.aws_vpc.main","mode":"data","provider_config_key":"aws.prod"}),
+        );
+    input["resource_changes"].as_array_mut().unwrap().extend([
+        json!({"address":"module.child[0].data.aws_vpc.main","mode":"data","type":"aws_vpc","change":{"actions":["read"]}}),
+        json!({"address":"module.child[0].aws_vpc.main","type":"aws_vpc","deposed":"old","change":{"actions":["delete"]}}),
+        json!({"address":"module.child[0].aws_vpc.removed","type":"aws_vpc","change":{"actions":["delete"]}}),
+    ]);
+    let parsed = parse_fixture(&input.to_string()).unwrap();
+    assert_eq!(parsed.nodes.len(), 4);
+    for node in &parsed.nodes {
+        let account = node
+            .provider_configuration
+            .as_ref()
+            .and_then(|binding| binding.account.as_ref());
+        assert_eq!(
+            account.is_some(),
+            node.deposed_key.is_none() && !node.address.ends_with(".removed"),
+            "{}",
+            node.address
+        );
+    }
+}
+
+#[test]
+fn entire_provider_and_nested_authentication_must_be_known_literals() {
+    assert!(
+        hcl_providers(include_bytes!("../../fixtures/provider-plan/main.tf")).unwrap()[0]
+            .2
+            .is_some()
+    );
+    for extra in [
+        "profile = var.profile",
+        "region = \"${var.region}\"",
+        "new_authentication = \"secret\"",
+        "unknown_role { role_arn = \"arn:aws:iam::123456789012:role/Test\" }",
+        "endpoints { sts = var.endpoint }",
+        "default_tags { tags = { Name = var.name } }",
+        "assume_role {\n role_arn = \"arn:aws:iam::123456789012:role/Test\"\n external_id = var.id\n }",
+        "assume_role {\n role_arn = \"arn:aws:iam::123456789012:role/Test\"\n unknown_auth = \"secret\"\n }",
+        "assume_role {\n role_arn = \"arn:aws:iam::123456789012:role/Test\"\n nested {}\n }",
+    ] {
+        let source = STATIC.replace("  alias", &format!("  {extra}\n  alias"));
+        assert!(
+            hcl_providers(source.as_bytes()).unwrap()[0].2.is_none(),
+            "{extra}"
+        );
+    }
+    for extra in [
+        json!({"profile":"${var.profile}"}),
+        json!({"new_authentication":"secret"}),
+        json!({"endpoints":{"sts":"${var.endpoint}"}}),
+        json!({"assume_role":{"role_arn":"arn:aws:iam::123456789012:role/Test","new_auth":"secret"}}),
+    ] {
+        let mut declaration =
+            json!({"assume_role":{"role_arn":"arn:aws:iam::123456789012:role/Test"}});
+        declaration
+            .as_object_mut()
+            .unwrap()
+            .extend(extra.as_object().unwrap().clone());
+        let body = json!({"provider":{"aws":declaration}});
+        assert!(
+            json_providers(&serde_json::to_vec(&body).unwrap()).unwrap()[0]
+                .2
+                .is_none()
+        );
+    }
+    let literal = STATIC.replace("  alias", "  profile = \"local\"\n default_tags { tags = { Name = \"test\" } }\n endpoints { sts = \"http://127.0.0.1:1234\" }\n  alias");
+    assert!(hcl_providers(literal.as_bytes()).unwrap()[0].2.is_some());
 }

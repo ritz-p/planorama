@@ -11,7 +11,7 @@ terraform show -json tfplan > plan.json
 Windows: use .\planorama.exe. Save JSON as UTF-8; Windows PowerShell 5.1
 redirection writes UTF-16. Terraform/provider plugins are needed to create
 a plan, but not to render an existing JSON plan. No Rust or Docker is required.
-Provider evidence (--provider-plan) separately requires Terraform 1.9.8 and
+Provider evidence (--provider-plan) separately requires matching Terraform 1.9.8 or 1.16.6 and
 initialized hashicorp/aws 5.100.0 schemas. JSON-only AWS accounts stay unknown.
 Plan JSON can contain secrets. Do not commit real plans or state files.
 
