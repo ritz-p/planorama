@@ -202,7 +202,7 @@ Provider source: `registry.terraform.io/hashicorp/aws`.
 | `aws_lambda_alias` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Lambda / AWS Lambda | Unknown | — |
 | `aws_lambda_code_signing_config` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Lambda / AWS Lambda | Unknown | — |
 | `aws_lambda_event_source_mapping` | Association / Association | Logical / Logical | — | Regional (conditional) | [aws.rs](../src/provider/aws.rs), [aws/messaging.rs](../src/provider/aws/messaging.rs) |
-| `aws_lambda_function` | Node / Node | Spatial / Spatial | Lambda / AWS Lambda | Regional (conditional) | [aws/containment/vpc_scope.rs](../src/provider/aws/containment/vpc_scope.rs), [aws/messaging.rs](../src/provider/aws/messaging.rs), [aws/security_groups.rs](../src/provider/aws/security_groups.rs) |
+| `aws_lambda_function` | Node / Node | Spatial / Spatial | Lambda / AWS Lambda | Regional (conditional) | [aws/containment/vpc_scope.rs](../src/provider/aws/containment/vpc_scope.rs), [aws/messaging.rs](../src/provider/aws/messaging.rs), [aws/s3.rs](../src/provider/aws/s3.rs), [aws/security_groups.rs](../src/provider/aws/security_groups.rs) |
 | `aws_lambda_function_url` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Lambda / AWS Lambda | Unknown | — |
 | `aws_lambda_functions` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Lambda / AWS Lambda | Unknown | — |
 | `aws_lambda_layer_version` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Lambda / AWS Lambda | Unknown | — |
@@ -244,7 +244,7 @@ Provider source: `registry.terraform.io/hashicorp/aws`.
 | `aws_s3_access_point` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Storage / Amazon S3 | Unknown | — |
 | `aws_s3_account_public_access_block` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Storage / Amazon S3 | Unknown | — |
 | `aws_s3_bucket` | Node / Node | Spatial / Spatial | Storage / Amazon S3 | Regional (conditional) | [aws/cloudfront.rs](../src/provider/aws/cloudfront.rs), [aws/s3.rs](../src/provider/aws/s3.rs), [aws/service_references.rs](../src/provider/aws/service_references.rs) |
-| `aws_s3_bucket_notification` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Storage / Amazon S3 | Unknown | — |
+| `aws_s3_bucket_notification` | Controller / Controller | Logical / Logical | Storage / Amazon S3 | Regional (conditional) | [aws.rs](../src/provider/aws.rs), [aws/s3.rs](../src/provider/aws/s3.rs) |
 | `aws_s3_bucket_object` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Storage / Amazon S3 | Unknown | — |
 | `aws_s3_bucket_object_lock_configuration` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Storage / Amazon S3 | Unknown | — |
 | `aws_s3_bucket_objects` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Storage / Amazon S3 | Unknown | — |
@@ -262,10 +262,10 @@ Provider source: `registry.terraform.io/hashicorp/aws`.
 | `aws_secretsmanager_secret_version` | Controller / Controller | Spatial / Spatial | SecretsManager / AWS Secrets Manager | Regional (conditional) | [aws/service_members.rs](../src/provider/aws/service_members.rs), [aws/service_references.rs](../src/provider/aws/service_references.rs) |
 | `aws_security_group` | Policy / Policy | Spatial / Spatial | Security / Amazon VPC | Regional (conditional) | [aws/containment.rs](../src/provider/aws/containment.rs), [aws/security_groups.rs](../src/provider/aws/security_groups.rs) |
 | `aws_security_groups` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Security / Amazon VPC | Unknown | — |
-| `aws_sns_topic` | Node / Node | Spatial / Spatial | Sns / Amazon Simple Notification Service | Regional (conditional) | [aws/messaging.rs](../src/provider/aws/messaging.rs) |
+| `aws_sns_topic` | Node / Node | Spatial / Spatial | Sns / Amazon Simple Notification Service | Regional (conditional) | [aws/messaging.rs](../src/provider/aws/messaging.rs), [aws/s3.rs](../src/provider/aws/s3.rs) |
 | `aws_sns_topic_subscription` | Association / Association | Logical / Logical | — | Regional (conditional) | [aws.rs](../src/provider/aws.rs), [aws/messaging.rs](../src/provider/aws/messaging.rs) |
 | `aws_spot_datafeed_subscription` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Ec2 / Amazon EC2 | Unknown | — |
-| `aws_sqs_queue` | Node / Node | Spatial / Spatial | Sqs / Amazon Simple Queue Service | Regional (conditional) | [aws/messaging.rs](../src/provider/aws/messaging.rs), [aws/service_references.rs](../src/provider/aws/service_references.rs) |
+| `aws_sqs_queue` | Node / Node | Spatial / Spatial | Sqs / Amazon Simple Queue Service | Regional (conditional) | [aws/messaging.rs](../src/provider/aws/messaging.rs), [aws/s3.rs](../src/provider/aws/s3.rs), [aws/service_references.rs](../src/provider/aws/service_references.rs) |
 | `aws_ssm_parameter` | Node / Node | Logical / Logical | Ssm / AWS Systems Manager | Regional (conditional) | [aws.rs](../src/provider/aws.rs) |
 | `aws_subnet` | Container / Container | Spatial / Spatial | Subnet / Amazon VPC | Regional (conditional) | [aws/associations.rs](../src/provider/aws/associations.rs), [aws/containment.rs](../src/provider/aws/containment.rs), [aws/containment/indirect.rs](../src/provider/aws/containment/indirect.rs), [aws/containment/spanning.rs](../src/provider/aws/containment/spanning.rs), [aws/containment/vpc_scope.rs](../src/provider/aws/containment/vpc_scope.rs), [aws/diagnostics.rs](../src/provider/aws/diagnostics.rs), [aws/service_references.rs](../src/provider/aws/service_references.rs) |
 | `aws_subnets` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Subnet / Amazon VPC | Unknown | — |

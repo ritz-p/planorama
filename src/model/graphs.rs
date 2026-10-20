@@ -12,6 +12,7 @@ pub struct StateOutput {
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct AttributeReference {
+    pub indexed_block_lengths: Vec<usize>,
     pub target: usize,
     pub attribute: String,
     pub has_references: bool,

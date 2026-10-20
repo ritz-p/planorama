@@ -1,0 +1,238 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_s3_bucket.assets[0]",
+      "type": "aws_s3_bucket",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "id": "fixture-assets"
+        }
+      }
+    },
+    {
+      "address": "aws_sqs_queue.events[0]",
+      "type": "aws_sqs_queue",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "arn": "arn:aws:sqs:us-west-2:123456789012:events-a"
+        }
+      }
+    },
+    {
+      "address": "aws_sqs_queue.events[1]",
+      "type": "aws_sqs_queue",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "arn": "arn:aws:sqs:us-west-2:123456789012:events-b"
+        }
+      }
+    },
+    {
+      "address": "aws_sns_topic.events",
+      "type": "aws_sns_topic",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "arn": "arn:aws:sns:us-west-2:123456789012:events"
+        }
+      }
+    },
+    {
+      "address": "aws_lambda_function.events",
+      "type": "aws_lambda_function",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "arn": "arn:aws:lambda:us-west-2:123456789012:function:events"
+        }
+      }
+    },
+    {
+      "address": "aws_s3_bucket_notification.assets",
+      "type": "aws_s3_bucket_notification",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "update"
+        ],
+        "after": {
+          "bucket": "fixture-assets",
+          "queue": [
+            {
+              "queue_arn": "arn:aws:sqs:us-west-2:123456789012:events-a",
+              "id": "PRIVATE_ID_0",
+              "filter_prefix": "PRIVATE_PREFIX_0",
+              "events": [
+                "s3:ObjectCreated:*"
+              ]
+            },
+            {
+              "queue_arn": "arn:aws:sqs:us-west-2:123456789012:events-b",
+              "id": "PRIVATE_ID_1",
+              "filter_prefix": "PRIVATE_PREFIX_1",
+              "events": [
+                "s3:ObjectCreated:*"
+              ]
+            }
+          ],
+          "topic": [
+            {
+              "topic_arn": "arn:aws:sns:us-west-2:123456789012:events",
+              "filter_suffix": "PRIVATE_SUFFIX"
+            }
+          ],
+          "lambda_function": [
+            {
+              "lambda_function_arn": "arn:aws:lambda:us-west-2:123456789012:function:events"
+            }
+          ],
+          "eventbridge": true
+        }
+      }
+    },
+    {
+      "address": "aws_s3_bucket_notification.literal",
+      "type": "aws_s3_bucket_notification",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "bucket": "fixture-assets",
+          "queue": [
+            {
+              "queue_arn": "arn:aws:sqs:us-west-2:123456789012:events-a"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "version_constraint": "5.100.0",
+        "expressions": {
+          "region": {
+            "constant_value": "us-west-2"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_s3_bucket.assets",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_sqs_queue.events",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_sns_topic.events",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_lambda_function.events",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_s3_bucket_notification.assets",
+          "provider_config_key": "aws",
+          "expressions": {
+            "bucket": {
+              "references": [
+                "aws_s3_bucket.assets[0].id",
+                "aws_s3_bucket.assets[0]"
+              ]
+            },
+            "queue": [
+              {
+                "queue_arn": {
+                  "references": [
+                    "aws_sqs_queue.events[0].arn",
+                    "aws_sqs_queue.events[0]"
+                  ]
+                }
+              },
+              {
+                "queue_arn": {
+                  "references": [
+                    "aws_sqs_queue.events[1].arn",
+                    "aws_sqs_queue.events[1]"
+                  ]
+                }
+              }
+            ],
+            "topic": [
+              {
+                "topic_arn": {
+                  "references": [
+                    "aws_sns_topic.events.arn",
+                    "aws_sns_topic.events"
+                  ]
+                }
+              }
+            ],
+            "lambda_function": [
+              {
+                "lambda_function_arn": {
+                  "references": [
+                    "aws_lambda_function.events.arn",
+                    "aws_lambda_function.events"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_s3_bucket_notification.literal",
+          "provider_config_key": "aws",
+          "expressions": {
+            "bucket": {
+              "references": [
+                "aws_s3_bucket.assets[0].id",
+                "aws_s3_bucket.assets[0]"
+              ]
+            },
+            "queue": [
+              {
+                "queue_arn": {
+                  "constant_value": "arn:aws:sqs:us-west-2:123456789012:events-a"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

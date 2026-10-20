@@ -7,6 +7,13 @@ use serde_json::Value;
 use std::collections::{BTreeMap, BTreeSet};
 
 type ExpressionPaths = BTreeMap<String, (BTreeSet<String>, bool)>;
+type IndexedExpressionPaths = BTreeMap<String, (BTreeSet<String>, bool, Vec<usize>)>;
+
+#[derive(Default)]
+struct ResourceExpressions {
+    attributes: ExpressionPaths,
+    indexed: IndexedExpressionPaths,
+}
 
 #[cfg(test)]
 #[path = "../../tests/unit/plan/attributes.rs"]
@@ -19,7 +26,21 @@ pub(super) fn collect(
     graph_only: bool,
 ) -> Vec<AttributeReference> {
     let mut expressions = BTreeMap::new();
-    collect_expressions(module, "", &BTreeMap::new(), &mut expressions, graph_only);
+    let indexed_resources = nodes
+        .iter()
+        .filter(|node| {
+            crate::provider::has_indexed_service_references(&node.provider, &node.resource_type)
+        })
+        .map(|node| static_address(&node.address))
+        .collect();
+    collect_expressions(
+        module,
+        "",
+        &BTreeMap::new(),
+        &mut expressions,
+        graph_only,
+        &indexed_resources,
+    );
     let aliases = symbols
         .iter()
         .filter(|(key, _)| !expressions.contains_key(*key))
@@ -32,7 +53,24 @@ pub(super) fn collect(
             continue;
         }
         if let Some(attributes) = expressions.get(&static_address(&node.address)) {
-            for (attribute, (refs, structurally_complete)) in attributes {
+            let ordinary = attributes
+                .attributes
+                .iter()
+                .map(|(path, (refs, complete))| (path, refs, complete, &[][..]));
+            let indexed = attributes
+                .indexed
+                .iter()
+                .filter(|(path, _)| {
+                    crate::provider::indexed_service_reference(
+                        &node.provider,
+                        &node.resource_type,
+                        path,
+                    )
+                })
+                .map(|(path, (refs, complete, lengths))| {
+                    (path, refs, complete, lengths.as_slice())
+                });
+            for (attribute, refs, structurally_complete, lengths) in ordinary.chain(indexed) {
                 let refs = refs
                     .iter()
                     .map(|r| contextualize(r, &node.address))
@@ -50,6 +88,7 @@ pub(super) fn collect(
                     })
                     .collect();
                 result.push(AttributeReference {
+                    indexed_block_lengths: lengths.to_vec(),
                     target,
                     attribute: attribute.clone(),
                     has_references: !refs.is_empty(),
@@ -77,12 +116,16 @@ fn collect_expressions(
     module: &Value,
     scope: &str,
     inherited: &BTreeMap<String, BTreeSet<String>>,
-    found: &mut BTreeMap<String, ExpressionPaths>,
+    found: &mut BTreeMap<String, ResourceExpressions>,
     graph_only: bool,
+    indexed_resources: &BTreeSet<String>,
 ) {
     for resource in module["resources"].as_array().into_iter().flatten() {
         if let Some(address) = resource["address"].as_str() {
-            let attributes = found.entry(qualify(scope, address)).or_default();
+            let address = qualify(scope, address);
+            let include_indexed = indexed_resources.contains(&address);
+            let resource_expressions = found.entry(address).or_default();
+            let attributes = &mut resource_expressions.attributes;
             if graph_only {
                 attributes.extend(
                     inherited
@@ -123,6 +166,24 @@ fn collect_expressions(
                         );
                     }
                 }
+                if include_indexed {
+                    resource_expressions.indexed.extend(
+                        indexed_paths(expression, name, &[]).into_iter().map(
+                            |(path, (refs, complete, lengths))| {
+                                (
+                                    path,
+                                    (
+                                        refs.into_iter()
+                                            .map(|r| qualify_reference(scope, &r))
+                                            .collect(),
+                                        complete,
+                                        lengths,
+                                    ),
+                                )
+                            },
+                        ),
+                    );
+                }
             }
         }
     }
@@ -135,8 +196,42 @@ fn collect_expressions(
                     .into_iter()
                     .map(|(attribute, refs)| (format!("{child}.{attribute}"), refs)),
             );
-            collect_expressions(&call["module"], &child, &inherited, found, graph_only);
+            collect_expressions(
+                &call["module"],
+                &child,
+                &inherited,
+                found,
+                graph_only,
+                indexed_resources,
+            );
         }
+    }
+}
+
+fn indexed_paths(value: &Value, path: &str, lengths: &[usize]) -> IndexedExpressionPaths {
+    match value {
+        Value::Object(fields) if super::references::expression_object(fields) => {
+            nested_paths(value, path)
+                .into_iter()
+                .map(|(path, (refs, complete))| (path, (refs, complete, lengths.to_vec())))
+                .collect()
+        }
+        Value::Object(fields) => fields
+            .iter()
+            .flat_map(|(name, value)| indexed_paths(value, &format!("{path}.{name}"), lengths))
+            .collect(),
+        Value::Array(values) => {
+            let mut nested = lengths.to_vec();
+            nested.push(values.len());
+            values
+                .iter()
+                .enumerate()
+                .flat_map(|(index, value)| {
+                    indexed_paths(value, &format!("{path}.{index}"), &nested)
+                })
+                .collect()
+        }
+        _ => BTreeMap::new(),
     }
 }
 
