@@ -5,6 +5,98 @@ let resultUrl;
 let previewUrl;
 let serial = 0;
 const maxBytes = 32 * 1024 * 1024;
+let moduleId = 0;
+
+function settingsChanged() {
+  stop();
+  clearResult();
+  element('focus-depth').disabled = element('focus').value === '';
+  element('settings-error').textContent = '';
+  document.querySelectorAll('[aria-invalid]').forEach(input => {
+    input.removeAttribute('aria-invalid');
+    input.setAttribute('aria-describedby', input.id === 'focus-depth' ? 'depth-help' : 'modules-help');
+  });
+  if (assets) element('status').textContent = 'Settings changed. Generate again to apply them.';
+}
+
+element('generate-form').addEventListener('input', settingsChanged);
+element('file').addEventListener('change', settingsChanged);
+element('add-module').onclick = () => {
+  const row = document.createElement('div');
+  row.className = 'module-row';
+  const label = document.createElement('label');
+  const input = document.createElement('input');
+  input.type = 'text';
+  input.id = `module-${++moduleId}`;
+  input.autocomplete = 'off';
+  input.spellcheck = false;
+  input.setAttribute('aria-describedby', 'modules-help');
+  label.htmlFor = input.id;
+  label.append('Module selector ', input);
+  const remove = document.createElement('button');
+  remove.type = 'button';
+  remove.textContent = 'Remove module';
+  remove.onclick = () => {
+    const next = row.nextElementSibling?.querySelector('input') || row.previousElementSibling?.querySelector('input') || element('add-module');
+    row.remove();
+    settingsChanged();
+    next.focus();
+  };
+  row.append(label, remove);
+  element('modules').append(row);
+  settingsChanged();
+  input.focus();
+};
+
+element('reset-settings').onclick = () => {
+  element('format').value = 'svg';
+  element('changed').checked = false;
+  element('address-format').value = 'qualified';
+  element('icon-mode').value = 'icon';
+  element('hide-legend').checked = false;
+  element('focus').value = '';
+  element('focus-depth').value = '';
+  element('modules').replaceChildren();
+  settingsChanged();
+  if (assets) element('status').textContent = 'Settings reset to defaults. Generate again; the selected file is retained.';
+};
+
+function invalidSetting(input, message) {
+  input.setAttribute('aria-invalid', 'true');
+  input.setAttribute('aria-describedby', input.id === 'focus-depth' ? 'depth-help settings-error' : 'modules-help settings-error');
+  element('settings-error').textContent = message;
+  input.focus();
+}
+
+function snapshotOptions() {
+  const options = {
+    format: element('format').value,
+    changed_only: element('changed').checked,
+    address_format: element('address-format').value,
+    icon_mode: element('icon-mode').value,
+    hide_relationship_legend: element('hide-legend').checked,
+    modules: [],
+  };
+  if (element('focus').value !== '') {
+    options.focus = element('focus').value;
+    const depth = element('focus-depth');
+    if (depth.value !== '') {
+      if (!/^[0-9]+$/.test(depth.value) || Number(depth.value) > 4294967295) {
+        invalidSetting(depth, 'Focus depth must be a nonnegative integer from 0 to 4294967295, or empty for the default.');
+        return;
+      }
+      options.focus_depth = Number(depth.value);
+    }
+  }
+  for (const input of element('modules').querySelectorAll('input')) {
+    if (input.value === '') {
+      invalidSetting(input, 'Enter a module selector or remove the empty row.');
+      return;
+    }
+    options.modules.push(input.value);
+  }
+  return options;
+}
 
 function clearResult() {
   element('download').hidden = true;
@@ -56,8 +148,9 @@ element('generate-form').onsubmit = async event => {
     element('status').textContent = 'Input exceeds the 32 MiB limit.';
     return;
   }
-  const format = element('format').value;
-  const options = {format, changed_only: element('changed').checked};
+  const options = snapshotOptions();
+  if (!options) return;
+  const {format} = options;
   element('generate').disabled = true;
   element('cancel').disabled = false;
   element('status').textContent = 'Generating…';
