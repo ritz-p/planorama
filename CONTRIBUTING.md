@@ -88,6 +88,10 @@ HTML の変更は [ブラウザ検証](docs/viewer.md#viewer-source-modules) と
 
 ## Terraform fixture
 
+複数の固定 Core / Provider での実 plan 生成・比較は
+[互換性 matrix](docs/terraform-compatibility.md)を参照してください。
+通常 JSON、resource region override、保存済み plan の provider evidence は別々に検証します。
+
 ```sh
 docker compose run --rm terraform-example
 docker compose exec -T dev cargo run --locked -- output/terraform-plan.json -o output/terraform.svg

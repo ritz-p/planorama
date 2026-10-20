@@ -420,6 +420,21 @@ fn rejects_invalid_input_and_future_major_versions() {
             .nodes
             .is_empty()
     );
+    assert!(
+        parse(
+            r#"{"format_version":"1.999","future_field":{"unknown":true},"resource_changes":[]}"#
+        )
+        .unwrap()
+        .nodes
+        .is_empty()
+    );
+    assert_eq!(
+        parse(r#"{"format_version":"1.999","resource_changes":[{"address":"terraform_data.future","type":"terraform_data","change":{"actions":["future-action"]}}]}"#)
+            .unwrap()
+            .nodes[0]
+            .action,
+        Action::Other
+    );
 }
 #[test]
 fn module_output_resolves_to_resource() {

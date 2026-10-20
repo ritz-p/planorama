@@ -1,0 +1,14 @@
+{
+  "platform": "linux_amd64",
+  "verified_on": "2026-10-20",
+  "terraform": {
+    "1.9.8": "186e0145f5e5f2eb97cbd785bc78f21bae4ef15119349f6ad4fa535b83b10df8",
+    "1.16.6": "38034b38d03096399a7a1264a14561a8029b2b496fd1f169452656e53968f1b7"
+  },
+  "cases": [
+    {"name": "aws5", "source": "tests/fixtures/aws-captured", "provider": "5.100.0"},
+    {"name": "aws6", "source": "tests/fixtures/aws-captured", "provider": "6.0.0"},
+    {"name": "overrides", "source": "tests/fixtures/aws-region-overrides", "provider": "6.0.0"},
+    {"name": "language", "source": "examples/terraform", "provider": null}
+  ]
+}

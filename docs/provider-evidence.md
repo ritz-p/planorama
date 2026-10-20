@@ -1,5 +1,9 @@
 # AWS provider evidence
 
+The [JSON compatibility matrix](terraform-compatibility.md) does not expand this
+saved-plan archive contract. Account evidence and resource-region evidence have
+independent version allowlists.
+
 Plan JSON alone never proves an AWS account. Terraform omits dynamic provider
 blocks from that representation, including roles that could change the final
 account. JSON-only invocations retain provider bindings, regions, resource
