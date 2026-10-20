@@ -249,7 +249,7 @@ Provider source: `registry.terraform.io/hashicorp/aws`.
 | `aws_s3_bucket_object_lock_configuration` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Storage / Amazon S3 | Unknown | — |
 | `aws_s3_bucket_objects` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Storage / Amazon S3 | Unknown | — |
 | `aws_s3_bucket_policy` | Policy / Policy | Logical / Logical | Storage / Amazon S3 | Regional (conditional) | [aws.rs](../src/provider/aws.rs), [aws/s3.rs](../src/provider/aws/s3.rs) |
-| `aws_s3_bucket_replication_configuration` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Storage / Amazon S3 | Unknown | — |
+| `aws_s3_bucket_replication_configuration` | Controller / Controller | Logical / Logical | Storage / Amazon S3 | Regional (conditional) | [aws.rs](../src/provider/aws.rs), [aws/s3.rs](../src/provider/aws/s3.rs) |
 | `aws_s3_bucket_server_side_encryption_configuration` | Controller / Controller | Logical / Logical | Storage / Amazon S3 | Regional (conditional) | [aws.rs](../src/provider/aws.rs), [aws/service_references.rs](../src/provider/aws/service_references.rs) |
 | `aws_s3_buckets` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Storage / Amazon S3 | Unknown | — |
 | `aws_s3_directory_buckets` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Storage / Amazon S3 | Unknown | — |
