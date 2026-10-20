@@ -103,7 +103,9 @@ Glue Database, Crawler and Job are independent cards. Tables reuse service-membe
 measurements under an explicitly verified Database with matching catalog IDs and
 regions, compatible provider scope and no incoming attribute references. Catalog
 account scope stays unknown; data tables and unresolved/shared tables stay independent.
-Athena migration is pending.
+Athena Workgroups and Data Catalogs are independent cards. Matching names and co-presence
+never create ownership or usage; explicit configuration references keep their ordinary
+Terraform provenance and navigation.
 
 Measure headers, service icons, references, import/move badges and wrapped child
 addresses before packing. Reserve parent height and actual child bounds/ports;
