@@ -118,8 +118,18 @@ and provider identity. Its wrapped height is reserved before group-card packing.
 Data rows use a dashed underline. Groups sort by their keys. Every selected row
 remains visible; height grows with action headings, borders, wrapped role
 explanations, content, badges, underlines and spacing without a row or height cap.
-The provider-neutral `svg::roles` mapping explains Policy and Controller once per
+The provider-neutral `svg::roles` mapping explains Identity, Policy and Controller once per
 role in the group heading, while individual rows retain their role metadata.
+
+`ResourceRole::Identity` covers principals, identity collections and federation
+configuration without changing Placement or proving authentication, permissions,
+scope or relationships. The graph and immutable view retain the enum unchanged.
+SVG and embedded HTML expose `data-role="identity"` and the same measured heading;
+HTML search/navigation/export do not dispatch on a closed role list. The generated
+support matrix prints the enum name. There is no serialized role option in the
+library/Wasm request API. Consumers of SVG metadata must accept unfamiliar role
+strings as descriptive metadata; Rust exhaustive matches must handle the new
+variant. Unknown provider/type fallback remains `Unknown`, not Identity.
 
 Logical rows retain their original resource DOM IDs and metadata; resource links
 target the specific row. Group cards do not introduce architecture identities.

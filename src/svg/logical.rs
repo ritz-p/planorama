@@ -54,6 +54,7 @@ fn resource_lines(node: &Node, address_format: super::AddressFormat) -> Vec<(Str
         false,
     ));
     match node.role {
+        crate::model::ResourceRole::Identity => lines.push(("identity".into(), false)),
         crate::model::ResourceRole::Policy => lines.push(("policy".into(), false)),
         crate::model::ResourceRole::Controller => lines.push(("controller".into(), false)),
         _ => {}

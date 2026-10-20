@@ -248,7 +248,7 @@ the keyboard. This is neither an apply-order prediction nor a runtime blast-radi
 reachability or guaranteed-effect model; the static SVG is unchanged.
 
 Logical-resource type cards show all nonempty action sections with colored borders
-and explicit counts, equally in offline SVG and HTML. Policy and Controller have
+and explicit counts, equally in offline SVG and HTML. Identity, Policy and Controller have
 visible explanations in the card heading. See the synthetic
 [all-action example](../examples/logical-actions.svg).
 
