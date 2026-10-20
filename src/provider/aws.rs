@@ -70,10 +70,6 @@ pub(super) fn placement(resource_type: &str) -> crate::model::Placement {
     match resource_type {
         "aws_athena_workgroup"
         | "aws_athena_data_catalog"
-        | "aws_glue_catalog_database"
-        | "aws_glue_catalog_table"
-        | "aws_glue_crawler"
-        | "aws_glue_job"
         | "aws_acmpca_certificate_authority_certificate"
         | "aws_acm_certificate_validation"
         | "aws_ssm_parameter"
