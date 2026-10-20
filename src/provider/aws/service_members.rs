@@ -17,6 +17,14 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
         let (attribute, label, section) = match node.resource_type.as_str() {
             "aws_kms_alias" => ("target_key_id", "Alias key", "Aliases"),
             "aws_secretsmanager_secret_version" => ("secret_id", "Version secret", "Versions"),
+            "aws_glue_catalog_table" => {
+                if raw.attributes.iter().any(|reference| {
+                    reference.target != index && reference.sources.contains(&index)
+                }) {
+                    continue;
+                }
+                ("database_name", "Catalog database", "Tables")
+            }
             "aws_acm_certificate" => {
                 if raw.attributes.iter().any(|reference| {
                     reference.target != index && reference.sources.contains(&index)

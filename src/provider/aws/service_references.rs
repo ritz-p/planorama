@@ -296,6 +296,10 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
                         | "aws_ecs_cluster"
                         | "aws_athena_workgroup"
                         | "aws_athena_data_catalog"
+                        | "aws_glue_job"
+                        | "aws_glue_crawler"
+                        | "aws_glue_catalog_database"
+                        | "aws_glue_catalog_table"
                 )
         })
         .flat_map(|node| &node.entity.provenance)
@@ -306,7 +310,12 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             if node.provider.is_aws()
                 && matches!(
                     node.resource_type.as_str(),
-                    "aws_athena_workgroup" | "aws_athena_data_catalog"
+                    "aws_athena_workgroup"
+                        | "aws_athena_data_catalog"
+                        | "aws_glue_job"
+                        | "aws_glue_crawler"
+                        | "aws_glue_catalog_database"
+                        | "aws_glue_catalog_table"
                 )
             {
                 reference.show_spatial = true;

@@ -160,10 +160,10 @@ Provider source: `registry.terraform.io/hashicorp/aws`.
 | `aws_elasticache_user` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Cache / Amazon ElastiCache | Unknown | — |
 | `aws_elasticsearch_domain` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Search / Amazon OpenSearch Service | Unknown | — |
 | `aws_elb` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | LoadBalancer / Elastic Load Balancing | Unknown | — |
-| `aws_glue_catalog_database` | Node / Node | Logical / Logical | Glue / AWS Glue | Regional (conditional) | [aws.rs](../src/provider/aws.rs), [aws/service_references.rs](../src/provider/aws/service_references.rs) |
-| `aws_glue_catalog_table` | Node / Node | Logical / Logical | Glue / AWS Glue | Regional (conditional) | [aws.rs](../src/provider/aws.rs), [aws/service_references.rs](../src/provider/aws/service_references.rs) |
-| `aws_glue_crawler` | Node / Node | Logical / Logical | Glue / AWS Glue | Regional (conditional) | [aws.rs](../src/provider/aws.rs), [aws/service_references.rs](../src/provider/aws/service_references.rs) |
-| `aws_glue_job` | Node / Node | Logical / Logical | Glue / AWS Glue | Regional (conditional) | [aws.rs](../src/provider/aws.rs), [aws/service_references.rs](../src/provider/aws/service_references.rs) |
+| `aws_glue_catalog_database` | Node / Node | Spatial / Spatial | Glue / AWS Glue | Regional (conditional) | [aws/service_references.rs](../src/provider/aws/service_references.rs) |
+| `aws_glue_catalog_table` | Node / Node | Spatial / Spatial | Glue / AWS Glue | Regional (conditional) | [aws/service_members.rs](../src/provider/aws/service_members.rs), [aws/service_references.rs](../src/provider/aws/service_references.rs) |
+| `aws_glue_crawler` | Node / Node | Spatial / Spatial | Glue / AWS Glue | Regional (conditional) | [aws/service_references.rs](../src/provider/aws/service_references.rs) |
+| `aws_glue_job` | Node / Node | Spatial / Spatial | Glue / AWS Glue | Regional (conditional) | [aws/service_references.rs](../src/provider/aws/service_references.rs) |
 | `aws_iam_access_keys` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Iam / AWS Identity and Access Management | Global | — |
 | `aws_iam_group` | Policy / Policy | Logical / Logical | Iam / AWS Identity and Access Management | Global | [aws.rs](../src/provider/aws.rs), [aws/iam.rs](../src/provider/aws/iam.rs) |
 | `aws_iam_group_membership` | Association / Association | Logical / Logical | Iam / AWS Identity and Access Management | Global | [aws.rs](../src/provider/aws.rs), [aws/iam.rs](../src/provider/aws/iam.rs), [aws/service_references.rs](../src/provider/aws/service_references.rs) |

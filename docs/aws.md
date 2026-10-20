@@ -104,12 +104,18 @@ catalogs. Regenerate HTML in Docker with
 ## Glue Catalog, Crawler and Job
 
 Exact AWS `aws_glue_catalog_database`, `aws_glue_catalog_table`, `aws_glue_crawler`
-and `aws_glue_job` are regional logical Nodes using the AWS Glue icon/service
+and `aws_glue_job` are regional spatial Nodes using the AWS Glue icon/service
 name. Every resource retains its own identity, lifecycle and coverage entry.
 Catalog Database/Table account scope remains unknown: an explicit catalog can
 belong to a different account from the execution provider.
 
-Table `Catalog database` membership is a reference row, not geometric containment.
+Database, Crawler and Job are independent cards. Database is not a network container.
+Table `Catalog database` membership retains its reference row and can also provide
+presentation ownership for a measured child card in the Database's Tables section.
+The child keeps its own identity, action, bounds, ports and coverage entry.
+Missing or filtered parents, incompatible or unknown scope, ambiguous references,
+deleted/deposed endpoints and tables referenced by other resources use independent
+cards. Presentation ownership never supplies account or region evidence.
 It requires a complete, unique, explicit reference to a current managed Database's
 `name`, matching known planned names and catalog IDs, and equal known effective
 regions. Crawler database references remain ordinary Terraform references because
