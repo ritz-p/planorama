@@ -1100,13 +1100,25 @@
   },
   "relevant_attributes": [
     {
+      "resource": "data.terraform_remote_state.after_ready",
+      "attribute": [
+        "outputs"
+      ]
+    },
+    {
+      "resource": "data.terraform_remote_state.existing",
+      "attribute": [
+        "outputs"
+      ]
+    },
+    {
       "resource": "module.replica[0].terraform_data.leaf",
       "attribute": [
         "id"
       ]
     },
     {
-      "resource": "module.service[\"api\"].module.nested.terraform_data.leaf",
+      "resource": "module.replica[1].terraform_data.leaf",
       "attribute": [
         "id"
       ]
@@ -1118,7 +1130,7 @@
       ]
     },
     {
-      "resource": "module.service[\"web\"].module.nested.terraform_data.leaf",
+      "resource": "module.service[\"api\"].module.nested.terraform_data.leaf",
       "attribute": [
         "id"
       ]
@@ -1136,21 +1148,9 @@
       ]
     },
     {
-      "resource": "data.terraform_remote_state.after_ready",
-      "attribute": [
-        "outputs"
-      ]
-    },
-    {
-      "resource": "module.service.module.nested.terraform_data.leaf",
+      "resource": "module.service[\"web\"].module.nested.terraform_data.leaf",
       "attribute": [
         "id"
-      ]
-    },
-    {
-      "resource": "data.terraform_remote_state.existing",
-      "attribute": [
-        "outputs"
       ]
     },
     {
@@ -1160,7 +1160,7 @@
       ]
     },
     {
-      "resource": "module.replica[1].terraform_data.leaf",
+      "resource": "module.service.module.nested.terraform_data.leaf",
       "attribute": [
         "id"
       ]

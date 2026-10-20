@@ -3,6 +3,7 @@ const path = require('node:path');
 const crypto = require('node:crypto');
 const { execFileSync } = require('node:child_process');
 const assert = require('node:assert/strict');
+const { readInputs, sourceInputs, digest, recreateInputs } = require('./terraform-compatibility-inputs.cjs');
 
 const root = path.resolve(__dirname, '..');
 const fixtures = path.join(root, 'tests/fixtures/compatibility');
@@ -12,10 +13,12 @@ const phase = process.argv[2];
 if (!['prepare', 'capture', 'check'].includes(phase)) {
   throw new Error('Usage: node scripts/terraform-compatibility.cjs prepare|capture|check');
 }
+const cache = path.join(work, 'plugins');
+if (phase === 'prepare') fs.mkdirSync(cache, { recursive: true });
 function run(binary, args, cwd) {
   return execFileSync(binary, args, {
     cwd, maxBuffer: 128 * 1024 * 1024, timeout: 300000,
-    env: { ...process.env, TF_IN_AUTOMATION: '1', CHECKPOINT_DISABLE: '1',
+    env: { ...process.env, TF_IN_AUTOMATION: '1', CHECKPOINT_DISABLE: '1', TF_PLUGIN_CACHE_DIR: cache,
       AWS_ACCESS_KEY_ID: 'fixture-only', AWS_SECRET_ACCESS_KEY: 'fixture-only',
       AWS_EC2_METADATA_DISABLED: 'true' },
     stdio: ['ignore', 'pipe', 'pipe']
@@ -25,22 +28,17 @@ function write(file, value) {
   fs.mkdirSync(path.dirname(file), { recursive: true });
   fs.writeFileSync(file, JSON.stringify(value, null, 2) + '\n');
 }
-function copyInputs(source, target, version, provider) {
-  fs.mkdirSync(target, { recursive: true });
-  for (const item of fs.readdirSync(source, { withFileTypes: true })) {
-    if (item.name.startsWith('.')) continue;
-    const from = path.join(source, item.name);
-    const to = path.join(target, item.name);
-    if (item.isDirectory()) copyInputs(from, to, version, provider);
-    else if (item.name.endsWith('.tf') || item.name === 'shared-state.json') {
-      let content = fs.readFileSync(from, 'utf8');
-      content = content.replace(/required_version\s*=\s*"[^"]+"/,
-        `required_version = "= ${version}"`);
-      if (provider) content = content.replace(/version\s*=\s*"= (5\.100\.0|6\.0\.0)"/,
-        `version = "= ${provider}"`);
-      fs.writeFileSync(to, content);
-    }
-  }
+function fileHash(file) {
+  return crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex');
+}
+function captureContract(destination, inputs, checksum, provider) {
+  return {
+    inputs_sha256: digest(inputs),
+    terraform_archive_sha256: checksum,
+    plan_sha256: fileHash(path.join(destination, 'plan.json')),
+    schema_sha256: fileHash(path.join(destination, 'schema.json')),
+    provider_lock_sha256: provider ? fileHash(path.join(destination, '.terraform.lock.hcl')) : null
+  };
 }
 function schemaContract(schema) {
   const aws = schema.provider_schemas['registry.terraform.io/hashicorp/aws'];
@@ -50,6 +48,7 @@ function schemaContract(schema) {
       region: aws.resource_schemas[type].block.attributes.region ?? null }]));
 }
 for (const [version, checksum] of Object.entries(matrix.terraform)) {
+  assert.match(version, /^\d+\.\d+\.\d+$/);
   const binDir = path.join(work, 'bin', version);
   const binary = path.join(binDir, 'terraform');
   if (phase === 'prepare') {
@@ -62,16 +61,18 @@ for (const [version, checksum] of Object.entries(matrix.terraform)) {
     run('unzip', ['-oq', archive, '-d', binDir]);
   }
   for (const item of matrix.cases) {
+    assert.match(item.name, /^[a-z][a-z0-9-]*$/);
     const cwd = path.join(work, version, item.name);
     const destination = path.join(fixtures, version, item.name);
+    const extra = path.join(fixtures, 'inputs', `${item.name === 'aws5' || item.name === 'aws6' ? 'aws' : item.name}.tf`);
+    const inputs = sourceInputs(path.join(root, item.source), extra, version, item.provider);
     if (phase === 'prepare') {
-      copyInputs(path.join(root, item.source), cwd, version, item.provider);
-      const extra = path.join(fixtures, 'inputs', `${item.name === 'aws5' || item.name === 'aws6' ? 'aws' : item.name}.tf`);
-      if (fs.existsSync(extra)) fs.copyFileSync(extra, path.join(cwd, 'compatibility.tf'));
+      recreateInputs(work, cwd, inputs);
       const lock = path.join(destination, '.terraform.lock.hcl');
       if (fs.existsSync(lock)) fs.copyFileSync(lock, path.join(cwd, '.terraform.lock.hcl'));
       run(binary, ['init', '-backend=false', '-input=false', ...(fs.existsSync(lock) ? ['-lockfile=readonly'] : [])], cwd);
     } else if (phase === 'capture') {
+      assert.equal(digest(readInputs(cwd)), digest(inputs), 'prepared inputs differ from current sources; rerun prepare');
       assert.equal(fs.existsSync(path.join(cwd, 'terraform.tfstate')), false, 'capture requires empty managed state');
       assert.equal(JSON.parse(run(binary, ['version', '-json'], cwd)).terraform_version, version);
       run(binary, ['plan', '-refresh=false', '-input=false', '-out=capture.tfplan'], cwd);
@@ -85,7 +86,10 @@ for (const [version, checksum] of Object.entries(matrix.terraform)) {
         assert.match(fs.readFileSync(path.join(destination, '.terraform.lock.hcl'), 'utf8'),
           new RegExp(`version\\s*=\\s*"${item.provider.replaceAll('.', '\\.')}"`));
       }
+      write(path.join(destination, 'capture.json'), captureContract(destination, inputs, checksum, item.provider));
     } else {
+      assert.deepEqual(JSON.parse(fs.readFileSync(path.join(destination, 'capture.json'))),
+        captureContract(destination, inputs, checksum, item.provider), `${version}/${item.name}: capture differs from sources or tools`);
       const plan = JSON.parse(fs.readFileSync(path.join(destination, 'plan.json')));
       assert.equal(plan.terraform_version, version);
       assert.equal(plan.format_version, '1.2');
