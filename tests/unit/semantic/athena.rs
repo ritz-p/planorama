@@ -7,10 +7,10 @@ use serde_json::{Value, json};
 const FIXTURE: &str = include_str!("../../fixtures/athena-plan.json");
 
 #[test]
-fn athena_is_regional_logical_and_only_preserves_explicit_configuration_references() {
+fn athena_is_regional_spatial_and_only_preserves_explicit_configuration_references() {
     let parsed = plan::parse(FIXTURE).unwrap();
     let graph = semantic::transform(&parsed);
-    assert_eq!(graph.coverage.selected.resources, 6);
+    assert_eq!(graph.coverage.selected.resources, 9);
     assert_eq!(graph.edges.len(), 2);
     assert!(graph.edges.iter().all(|e| e.kind == EdgeKind::Dependency));
     assert!(
@@ -25,7 +25,8 @@ fn athena_is_regional_logical_and_only_preserves_explicit_configuration_referenc
         .filter(|n| n.resource_type.starts_with("aws_athena_"))
     {
         assert_eq!(node.role, ResourceRole::Node);
-        assert_eq!(node.placement, Placement::Logical);
+        assert_eq!(node.placement, Placement::Spatial);
+        assert!(node.member_owner.is_none());
         assert!(node.entity.scope.as_ref().is_some_and(|s| !s.global && s.region.as_ref().is_some_and(|r| r.0 == "us-east-1")));
         if node.address.ends_with(".analytics") {
             assert!(
@@ -73,6 +74,34 @@ fn athena_is_regional_logical_and_only_preserves_explicit_configuration_referenc
         assert!(!output.contains("PRIVATE_"));
         assert!(!output.contains("arn:aws:"));
         assert!(!output.contains("s3://"));
+        let svg = &output[output.find("<svg ").unwrap()..output.rfind("</svg>").unwrap() + 6];
+        let doc = roxmltree::Document::parse(svg).unwrap();
+        assert_eq!(
+            doc.descendants()
+                .filter(|n| n.attribute("data-terraform-address").is_some())
+                .count(),
+            9
+        );
+    }
+    let layout = crate::layout::Layout::new(&graph);
+    let cards: Vec<_> = graph
+        .nodes
+        .iter()
+        .enumerate()
+        .filter(|(_, n)| n.resource_type.starts_with("aws_athena_"))
+        .map(|(index, _)| layout.bounds[index])
+        .collect();
+    assert_eq!(cards.len(), 6);
+    for (index, card) in cards.iter().enumerate() {
+        assert!(card.width > 0 && card.height > 0);
+        for other in &cards[index + 1..] {
+            assert!(
+                card.right() <= other.origin.x
+                    || other.right() <= card.origin.x
+                    || card.origin.y + card.height <= other.origin.y
+                    || other.origin.y + other.height <= card.origin.y
+            );
+        }
     }
 }
 
@@ -194,7 +223,7 @@ fn athena_preserves_indexed_data_lifecycle_module_filter_and_state_identity() {
     data["change"]["actions"] = json!(["read"]);
     value["resource_changes"].as_array_mut().unwrap().push(data);
     let graph = semantic::transform(&plan::parse(&value.to_string()).unwrap());
-    assert_eq!(graph.coverage.selected.resources, 8);
+    assert_eq!(graph.coverage.selected.resources, 11);
     assert!(
         graph
             .nodes
@@ -216,7 +245,7 @@ fn athena_preserves_indexed_data_lifecycle_module_filter_and_state_identity() {
         graph
             .nodes
             .iter()
-            .any(|n| n.mode == crate::model::EntityMode::Data && n.placement == Placement::Logical)
+            .any(|n| n.mode == crate::model::EntityMode::Data && n.placement == Placement::Spatial)
     );
     let mut modular: Value = serde_json::from_str(FIXTURE).unwrap();
     let resources = modular["configuration"]["root_module"]["resources"].take();
@@ -238,7 +267,7 @@ fn athena_preserves_indexed_data_lifecycle_module_filter_and_state_identity() {
     )
     .unwrap()
     .content;
-    assert!(output.contains("6 resources"));
+    assert!(output.contains("9 resources"));
     let plans = plan::parse_inputs(
         ["one", "two"]
             .into_iter()
@@ -252,7 +281,7 @@ fn athena_preserves_indexed_data_lifecycle_module_filter_and_state_identity() {
     assert!(semantic::cross_state::resolve(&plans, &[]).edges.is_empty());
     for parsed in plans.states.values() {
         let graph = semantic::transform(parsed);
-        assert_eq!(graph.coverage.selected.resources, 6);
+        assert_eq!(graph.coverage.selected.resources, 9);
         assert!(
             graph
                 .nodes

@@ -292,7 +292,10 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             node.provider.is_aws()
                 && matches!(
                     node.resource_type.as_str(),
-                    "aws_cloudwatch_log_group" | "aws_ecs_cluster"
+                    "aws_cloudwatch_log_group"
+                        | "aws_ecs_cluster"
+                        | "aws_athena_workgroup"
+                        | "aws_athena_data_catalog"
                 )
         })
         .flat_map(|node| &node.entity.provenance)
@@ -300,6 +303,14 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
     for node in &mut graph.nodes {
         let mut split_references = Vec::new();
         for reference in &mut node.references {
+            if node.provider.is_aws()
+                && matches!(
+                    node.resource_type.as_str(),
+                    "aws_athena_workgroup" | "aws_athena_data_catalog"
+                )
+            {
+                reference.show_spatial = true;
+            }
             if reference.show_spatial
                 || !reference
                     .targets

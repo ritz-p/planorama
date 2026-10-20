@@ -99,7 +99,9 @@ reference/dependency navigation across spatial endpoints without inferring loggi
 delivery or ownership. ECS Clusters are independent cards; verified Service
 membership uses service-reference metadata without changing network placement or
 creating presentation ownership. Task Definitions remain Logical.
-Other service migrations are pending.
+Athena Workgroups and Data Catalogs are independent cards. Matching names and co-presence
+never create ownership or usage; explicit configuration references keep their ordinary
+Terraform provenance and navigation. Glue migration is pending.
 
 Measure headers, service icons, references, import/move badges and wrapped child
 addresses before packing. Reserve parent height and actual child bounds/ports;

@@ -67,8 +67,9 @@ offline plan. Regenerate HTML in Docker with
 
 ## Athena Workgroup and Data Catalog
 
-Exact AWS `aws_athena_workgroup` and `aws_athena_data_catalog` are regional logical
-Nodes with the Amazon Athena icon/service name. Their own deployment region comes
+Exact AWS `aws_athena_workgroup` and `aws_athena_data_catalog` are independent
+regional spatial Nodes with the Amazon Athena icon/service name. Neither is a
+presentation owner of the other. Their own deployment region comes
 from the verified provider binding; a catalog's parameters do not relocate it to
 the region/account of a backend. Missing or unresolved region overrides remain
 unknown. Managed/data resources keep separate identities and coverage entries.
@@ -96,8 +97,8 @@ definitions, installed schemas and a Terraform 1.9.8 offline plan confirm the
 nested configuration and map-expression shapes. The synthetic
 [fixture](../tests/fixtures/athena-plan.json), [SVG](../examples/athena.svg) and
 [offline HTML](../examples/athena.html) contrast explicit S3/KMS references with
-literal-only settings and independent Athena/Glue catalogs. Regenerate HTML in
-Docker with
+literal-only settings, multiple indexed instances and independent Athena/Glue
+catalogs. Regenerate HTML in Docker with
 `cargo run --locked -- tests/fixtures/athena-plan.json --format html -o examples/athena.html`.
 
 ## Glue Catalog, Crawler and Job

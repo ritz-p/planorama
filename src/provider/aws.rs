@@ -68,9 +68,7 @@ pub(super) fn reference_label(resource_type: &str, attribute: &str) -> &'static 
 
 pub(super) fn placement(resource_type: &str) -> crate::model::Placement {
     match resource_type {
-        "aws_athena_workgroup"
-        | "aws_athena_data_catalog"
-        | "aws_glue_catalog_database"
+        "aws_glue_catalog_database"
         | "aws_glue_catalog_table"
         | "aws_glue_crawler"
         | "aws_glue_job"
