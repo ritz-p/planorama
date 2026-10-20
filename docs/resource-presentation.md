@@ -7,7 +7,7 @@ semantic membership and presentation ownership are independent.
 
 The [purpose-dependent review](purpose-placement.md) covers SSM Parameter,
 CloudWatch Alarm and the five IAM Identity types. Their defaults remain Logical;
-optional independent presentation requires the shared generation-time follow-up.
+optional independent presentation uses the shared [Spatial type option](configuration.md#explicit-spatial-types).
 
 ## Audit of the 42 AWS Logical types
 

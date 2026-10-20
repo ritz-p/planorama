@@ -56,6 +56,7 @@ pub(crate) fn base_graph(plan: &TerraformPlan) -> Graph {
                     })
                     .map(|(r, dependency)| crate::model::ResourceReference {
                         kind: crate::model::ReferenceKind::Configured,
+                        preserve_spatial: false,
                         show_spatial: false,
                         label: crate::provider::reference_label(
                             &fact.provider,

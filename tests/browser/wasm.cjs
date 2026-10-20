@@ -68,11 +68,22 @@ async function main() {
       [small, {states: ['secret']}, 'invalid_options'],
       [small, {focus: 'secret'}, 'selection_failed'],
       [small, {focus_depth: 2}, 'invalid_options'],
+      [small, {spatial_types: ['aws_iam_policy']}, 'invalid_options'],
       [' '.repeat(32 * 1024 * 1024 + 1), {}, 'input_too_large'],
     ]) {
       const result = run(json, options);
       assert.equal(result.error?.code, code);
       assert.ok(!JSON.stringify(result).includes('secret'));
+    }
+    for (const fixture of ['iam', 'identity-providers', 'ssm']) {
+      const json = readFileSync(join(root, `tests/fixtures/${fixture}-plan.json`), 'utf8');
+      const spatial_types = ['aws_ssm_parameter', 'aws_cloudwatch_metric_alarm', 'aws_iam_role', 'aws_iam_user', 'aws_iam_group', 'aws_iam_openid_connect_provider', 'aws_iam_saml_provider'];
+      for (const format of ['svg', 'html']) {
+        const result = run(json, {format, spatial_types});
+        assert.equal(result.ok, true, JSON.stringify(result));
+        const native = execFileSync(binary, ['-', '-o', '-', '--format', format, ...spatial_types.flatMap(type => ['--spatial-type', type])], {input: json, encoding: 'utf8', maxBuffer: 32 * 1024 * 1024});
+        assert.equal(result.content, native, `Spatial native/Wasm parity: ${fixture}/${format}`);
+      }
     }
     submit('secret{', 'svg');
     wait(() => status() === 'Input is not valid plan JSON.', 'UI error');

@@ -2,6 +2,7 @@ pub(crate) mod card;
 mod filter;
 pub(crate) mod geometry;
 pub(crate) mod presentation;
+pub(crate) mod purpose;
 pub(crate) mod references;
 pub(crate) mod routes;
 pub(crate) mod scope;

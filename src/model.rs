@@ -83,6 +83,7 @@ pub enum Placement {
 
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub struct ResourceReference {
+    pub preserve_spatial: bool,
     pub kind: ReferenceKind,
     pub show_spatial: bool,
     pub label: &'static str,

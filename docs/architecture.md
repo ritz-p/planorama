@@ -20,6 +20,10 @@ shared measurement and rendering. Legend visibility never changes the graph or
 `Layout`; composition uses the measured compact action legend when explanations
 are omitted.
 
+The explicit Spatial type allowlist is applied in immutable view projection after
+selection/context closure. It refreshes reference-target placement and preserves
+reference rows before shared measurement; semantic evidence and selection stay intact.
+
 Optional saved-plan [provider evidence](provider-evidence.md) is read and matched
 by the CLI using Terraform show. The plan layer validates the embedded snapshot
 and dependency lock, then attaches only account IDs to existing provider bindings

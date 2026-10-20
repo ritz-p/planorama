@@ -1,10 +1,11 @@
-# Purpose-dependent placement review (#549)
+# Purpose-dependent placement (#549, #568)
 
 All seven reviewed types retain **Logical** as their default for managed and data
 resources. Identity classification from #551 does not select a presentation.
-Explicit independent cards are useful for specialized diagrams, but require a
-shared generation-time option and preservation of reference details before release.
-This review adds a reproducible experiment, not a public option or a new renderer.
+Explicit independent cards are available through the shared
+[generation-time option](configuration.md#explicit-spatial-types) implemented in
+#568. The original #549 placement-only prototype lost monitoring and federation
+reference rows; the production projection preserves them.
 
 ## Decisions by exact AWS type
 
@@ -18,9 +19,9 @@ This review adds a reproducible experiment, not a public option or a new rendere
 | `aws_iam_openid_connect_provider` | Logical | Federation-configuration diagrams | The federation setting is useful as a named endpoint. Explicit Terraform references remain dependencies, not proven trust. Neither an EKS issuer match nor a role reference establishes display ownership. |
 | `aws_iam_saml_provider` | Logical | Federation-configuration diagrams | The federation setting is distinct from a user/principal. A provider may be referenced by several roles; neither a name match nor SAML content establishes ownership or authentication success. |
 
-No default type is promoted in this review. Policy/inline policy, membership,
+No default type is promoted. Policy/inline policy, membership,
 attachment, instance profile, unsupported Alarm/SSM types and unknown types are
-outside the proposed switch. ResourceRole, deployment scope and network containment
+outside the allowlist. ResourceRole, deployment scope and network containment
 remain independent of that switch.
 
 ## Reproducible comparison
@@ -41,12 +42,12 @@ RDS/alarm pair and literal-only alarm. Each is rendered once and with four
 address-distinct copies. Copies preserve configuration references and action/mode;
 they are a count-growth probe within one state, not evidence of cross-state identity.
 
-The Logical variant uses the current default. The independent prototype changes
-only the seven types' placement and cached reference-target placement in a cloned
-graph before immutable selection and the shared measured layout. It deliberately
-does not patch reference visibility: missing rows expose work needed before a
-real option can ship. Role, resource identity, action, coverage and relationships
-are asserted unchanged; secret sentinels must not appear. The prototype is test-only.
+The Logical variant uses the current default. The independent variant uses
+`view::Options::spatial_types` after immutable selection and context closure,
+before shared reference measurement/layout. It refreshes target placement and
+preserves visible references without changing their verification status.
+Role, resource identity, action, coverage, relationships and reference counts
+are asserted unchanged; secret sentinels must not appear.
 
 Attached presentation was evaluated against the same examples: none of these
 seven types has provider-verified `member_owner` or Route ownership, which the
@@ -57,16 +58,16 @@ does not fabricate owner assignments or misleading attached-card screenshots.
 Federation has only configuration dependencies. References, membership, trust,
 monitoring and display ownership must not be substituted for one another.
 
-Measured against renderer commit `e884873`, canvases below are in pixels
+Measured with the #568 projection, canvases below are in pixels
 (Logical → independent). Reference rows count the shared visible reference
 projection, not graph-edge count:
 
 | Scenario | Resources, 1 / 4 copies | Canvas, 1 copy | Canvas, 4 copies | Reference rows, 1 copy |
 | --- | --- | --- | --- | --- |
 | Infrastructure | 8 / 32 | 1188×2452 → 1188×2470 | 1284×5006 → 1284×5648 | 5 → 5 |
-| Monitoring | 3 / 12 | 1040×1694 → 1040×1188 | 1040×3308 → 1040×2298 | 3 → 1 |
+| Monitoring | 3 / 12 | 1040×1694 → 1216×1230 | 1040×3308 → 1312×2406 | 3 → 3 |
 | IAM | 11 / 44 | 1040×3046 → 1040×2902 | 1040×6484 → 1040×6958 | 13 → 13 |
-| Federation | 6 / 24 | 1100×2094 → 1100×1482 | 1100×4712 → 1540×2142 | 2 → 0 |
+| Federation | 6 / 24 | 1100×2094 → 1100×1482 | 1100×4712 → 2060×2258 | 2 → 2 |
 | Configuration | 3 / 12 | 1040×1536 → 1100×1570 | 1040×2390 → 1100×2340 | 1 → 1 |
 
 Visual review of all five small pairs found Logical type headings useful for
@@ -74,35 +75,22 @@ action/mode comparison. Independent IAM cards move principals away from their
 membership/attachment rows; at four copies the diagram becomes taller. Standalone
 parameters show their region and external/data identity clearly but do not improve
 the small overview's size. Independent alarms and federation endpoints are compact,
-yet lose the verified monitor labels and explicit reference details respectively.
-Their ordinary dependency arrows cannot replace those meanings. Canvas area alone
+and retain verified monitor labels and explicit reference details.
+Ordinary dependency arrows cannot replace those meanings. Canvas area alone
 therefore cannot justify promotion. Four-copy measurements are a bounded growth
 comparison, not a performance or readability guarantee for arbitrary plans.
 
-## Generation-time follow-up
+## Generation-time contract
 
-Implementation is tracked in [#568](https://github.com/ritz-p/planorama/issues/568).
+The exact allowlist applies to HashiCorp AWS, including the existing inferred AWS
+identity when provider source is absent. Explicit foreign providers are excluded.
+CLI `--spatial-type`, TOML `spatial-types`, library `Options::spatial_types` and
+Wasm `spatial_types` use one projection; the browser form has no new control.
 
-Use one exact-type allowlist for optional Spatial presentation, initially restricted
-to these seven types from `registry.terraform.io/hashicorp/aws`. Proposed surfaces
-are repeatable CLI `--spatial-type`, TOML `spatial_types`, library `Options` and
-the corresponding versioned Wasm request. These names describe a proposal, not
-currently accepted input. Reject unsupported types; foreign provider lookalikes
-must remain unaffected. CLI precedence must follow existing configuration rules.
-Do not add a separate preset engine or an unsupported option to the #490 UI.
-
-Apply the option once during immutable view projection after normal selection and
-context closure, before reference measurement, scope packing and routing. Never
-mutate the semantic architecture or change selection because focus was used.
-Refresh reference-target presentation consistently, retain verified service rows
-and unresolved/unavailable diagnostics across Spatial endpoints, and use the same
-result for CLI/library/Wasm SVG and embedded HTML. HTML needs a regeneration
-control only after the shared API exists; DOM rearrangement is not a renderer.
-
-Acceptance must cover known/unknown account/region/global scope, multiple states,
-managed/data/current/deposed identities, action/coverage, focus/modules,
-search/navigation/export and secret non-disclosure. Filtered endpoints stay
-Unavailable; equal names, issuer URLs and parameter paths add no edges, ownership
-or identity merges. Parameter values, policy bodies, SAML metadata, credentials and
-tokens stay excluded. Run browser parity checks, SVG/HTML regeneration and final
-Layout quality for the actual presentation implementation.
+Filtered endpoints stay Unavailable. Equal names, issuer URLs and parameter paths
+add no edges, ownership or identity merges. Parameter values, policy bodies, SAML
+metadata, credentials and tokens stay excluded. Configuration dependencies,
+membership/attachment evidence and verified monitoring retain distinct semantics.
+Normal tests cover immutable selection, exact provider/type matching, multiple
+states and managed/data/current/deposed identities. Browser tests cover native/Wasm
+parity, search, reference navigation and neighborhood/viewport exports.

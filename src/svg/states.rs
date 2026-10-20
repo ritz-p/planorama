@@ -101,7 +101,12 @@ pub(crate) fn render_report(
             else {
                 continue;
             };
-            if source.placement != crate::model::Placement::Logical
+            let preserve_spatial = [source, &*consumer].iter().any(|node| {
+                node.placement == crate::model::Placement::Spatial
+                    && crate::view::purpose::eligible(node)
+            });
+            if !preserve_spatial
+                && source.placement != crate::model::Placement::Logical
                 && consumer.placement != crate::model::Placement::Logical
             {
                 continue;
@@ -113,6 +118,7 @@ pub(crate) fn render_report(
             } = &edge.provenance;
             consumer.references.push(crate::model::ResourceReference {
                 kind: crate::model::ReferenceKind::Configured,
+                preserve_spatial,
                 show_spatial: false,
                 label: "References",
                 attribute: format!("{remote}.outputs.{output}"),
