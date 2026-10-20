@@ -7,6 +7,37 @@ The generated [resource support matrix](resource-support.md) lists exact-type
 roles, display modes, icons and scope eligibility. This document defines the
 conditional relationship and placement proofs behind that catalog.
 
+## CloudFront origins and policies
+
+`aws_cloudfront_distribution` remains a Global spatial connector. Exact AWS
+OAC, OAI, cache, origin-request and response-headers policy resources are Global
+logical policy rows with their original identity, action and CloudFront icon.
+Inline origins and behaviors do not become Terraform resources.
+
+Dedicated configured references require a complete, explicit, unique managed
+endpoint, its allowed output attribute and equal known evaluated values:
+S3 `bucket_regional_domain_name` / `bucket_domain_name` or application LB
+`dns_name` for `origin.domain_name`; OAC `id`; OAI
+`cloudfront_access_identity_path`; and each behavior policy's `id`.
+The existing ACM certificate reference retains the certificate's regional scope.
+These references describe configuration, not connectivity or effective access.
+
+Only singleton nested blocks can currently prove these links. Multiple origins
+or ordered behaviors, unknown or dynamic expressions, missing endpoints, data,
+deleted/deposed resources and wrong-provider/type endpoints retain ordinary
+references and safe unresolved diagnostics. Custom domains and literal IDs are
+never matched by name or value alone. Selection marks filtered endpoints
+unavailable, and states never resolve through another state's matching address.
+Headers, authentication values, domains, URLs and policy bodies are not emitted.
+
+Checked against AWS Provider 5.100.0 and 6.0.0 schemas and the official
+[distribution contract](https://github.com/hashicorp/terraform-provider-aws/blob/v6.0.0/website/docs/r/cloudfront_distribution.html.markdown).
+The synthetic [fixture](../tests/fixtures/cloudfront-plan.json),
+[SVG](../examples/cloudfront.svg) and [offline HTML](../examples/cloudfront.html)
+show S3/ALB origins, OAC/OAI, policies and an unresolved custom origin.
+Regenerate HTML with
+`docker compose exec -T dev cargo run --locked -- tests/fixtures/cloudfront-plan.json --format html -o examples/cloudfront.html`.
+
 ## AWS Private CA
 
 Exact AWS `aws_acmpca_certificate_authority` and `aws_acmpca_certificate` are
