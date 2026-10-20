@@ -722,8 +722,8 @@ not inherit them. Unknown types retain unresolved placement and stay visible in
 the spatial diagram. Missing VPC/subnet references never imply logical placement.
 Logical placement does not suppress architectural significance: individual resource
 rows retain actions, identities, operation metadata, scope and focus/filter
-participation. A focused observability view can emphasize them; no spatial-view
-override is currently implemented.
+participation. Focus selects resources without changing their placement;
+independent Spatial cards require an explicit allowed `--spatial-type`.
 
 Auto Scaling Group Launch Template usage is shown only from complete, explicit
 `launch_template.id` / `launch_template.name` references or the equivalent
