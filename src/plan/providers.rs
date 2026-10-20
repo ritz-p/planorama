@@ -14,6 +14,8 @@ mod tests;
 #[path = "../../tests/unit/plan/region_overrides.rs"]
 mod region_override_tests;
 
+const REGION_OVERRIDE_CORE_VERSIONS: &[&str] = &["1.9.8", "1.16.6"];
+
 struct ResourceConfiguration<'a> {
     provider: ProviderIdentity,
     configuration: ProviderConfiguration,
@@ -155,7 +157,9 @@ fn resource_region(
             node.resource_type.as_str(),
             "aws_vpc" | "aws_subnet" | "aws_cloudwatch_log_group"
         )
-        || terraform_version != "1.9.8"
+        || !terraform_version
+            .as_str()
+            .is_some_and(|version| REGION_OVERRIDE_CORE_VERSIONS.contains(&version))
     {
         return None;
     }

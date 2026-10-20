@@ -56,23 +56,15 @@ fn provider_versions_preserve_semantics_for_the_common_configuration() {
 }
 
 #[test]
-fn real_override_contract_is_equal_but_new_core_remains_unverified() {
+fn real_override_contract_preserves_scopes_and_coverage_across_verified_cores() {
     let baseline = plan::parse(&fixture("1.9.8", "overrides")).unwrap();
     let candidate = plan::parse(&fixture("1.16.6", "overrides")).unwrap();
+    assert_eq!(baseline.nodes, candidate.nodes);
     assert_eq!(baseline.edges, candidate.edges);
-    for (old, new) in baseline.nodes.iter().zip(&candidate.nodes) {
-        assert_eq!(old.address, new.address);
-        assert_eq!(old.provider, new.provider);
-        assert_eq!(old.action, new.action);
-        assert_eq!(old.has_region_override, new.has_region_override);
-        assert!(new.region_override.is_none());
-        if old.has_region_override {
-            assert_eq!(old.region_override.as_ref().unwrap().0, "eu-west-3");
-            assert!(
-                crate::provider::scope(new)
-                    .and_then(|scope| scope.region)
-                    .is_none()
-            );
-        }
-    }
+    assert_eq!(baseline.attributes, candidate.attributes);
+    let before = Coverage::collect(&baseline, &semantic::transform(&baseline));
+    let after = Coverage::collect(&candidate, &semantic::transform(&candidate));
+    assert_eq!(before, after);
+    assert_eq!(after.input.unknown_region, 0);
+    assert_eq!(after.input.unknown_account, 4);
 }
