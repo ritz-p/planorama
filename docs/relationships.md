@@ -81,7 +81,8 @@ Route child cards use presentation nesting; their safe ownership and entry detai
 are in `route-presentations`, and original reference evidence remains in metadata.
 See [Route cards](routes.md) for next-hop evidence and direction.
 
-RDS Cluster Instances, EFS Access Points, KMS Aliases and Secret Versions use
+RDS Cluster Instances, EFS Access Points, KMS Aliases, Secret Versions,
+eligible ACM Certificates and Glue Catalog Tables use
 presentation nesting, recorded in `member-presentations`. Their original
 dependencies remain in relationship metadata and appear as links inside each
 member card; display nesting does not add
