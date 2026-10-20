@@ -703,6 +703,9 @@ mode. Their action subsections change presentation only, not role or placement.
 Placement is independent of role. The [generated matrix](resource-support.md)
 records current behavior; the [42-type placement audit and migration policy](resource-presentation.md)
 separately describe proposed service cards and conditional child presentations.
+The [purpose-dependent review](purpose-placement.md) retains Logical defaults for
+SSM Parameters, metric alarms and the five IAM Identity types, with a separate
+proposal for explicit generation-time independent cards.
 The matrix
 lists the explicit logical types. They render as rows grouped by provider source,
 resource type and mode in the top annotation area. AMI describes

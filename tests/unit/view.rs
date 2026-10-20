@@ -1,5 +1,8 @@
 use super::*;
 
+#[path = "purpose_placement.rs"]
+mod purpose_placement;
+
 #[test]
 fn projection_keeps_native_relationship_endpoints_and_source_immutable() {
     let plan = crate::plan::parse(include_str!(concat!(
