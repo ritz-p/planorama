@@ -289,6 +289,10 @@ This is one local observation, not a CI time threshold or hosted-runner estimate
 The separate [Terraform compatibility matrix](terraform-compatibility.md) uses
 committed-fixture checks on relevant PRs and fixed-tool offline capture only on
 manual dispatch. It does not replace Tests, SVG regeneration or Layout quality.
+Its separate `evidence` job also runs on relevant PRs: it prepares fixed Terraform
+1.9.8 and 1.16.6 / AWS 5.100.0 installations, builds the CLI in Docker, then
+verifies real saved plans against a local STS fixture with external networking
+disabled. See the independent [provider evidence contract](provider-evidence.md).
 
 ## Deferred routing regressions (#253)
 

@@ -8,7 +8,7 @@ Terraform language feature or provider release.
 | --- | --- | --- |
 | JSON interpretation | Terraform 1.9.8 and 1.16.6; AWS 5.100.0 and 6.0.0; JSON 1.2 | The committed cases below, not every resource or language feature |
 | Resource region override | Terraform 1.9.8 and 1.16.6 / AWS 6.0.0 | VPC, Subnet, CloudWatch Log Group and the [static evidence contract](aws.md#deployment-scopes) |
-| Saved-plan provider evidence | Terraform 1.9.8 / AWS 5.100.0 | The separate [archive and account contract](provider-evidence.md) |
+| Saved-plan provider evidence | Terraform 1.9.8 or 1.16.6 / AWS 5.100.0 | The separate [archive and account contract](provider-evidence.md); AWS 6.0.0 is excluded |
 
 The candidate 1.16.6 was the stable release returned by the official
 [release API](https://api.github.com/repos/hashicorp/terraform/releases/latest)

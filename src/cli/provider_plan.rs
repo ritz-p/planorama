@@ -67,29 +67,44 @@ impl Options {
             None => self.single.as_ref(),
         };
         let Some(path) = path else { return Ok(None) };
+        let version = terraform().args(["version", "-json"]).output()
+            .map_err(|_| "provider plan requires a verified Terraform binary on PATH and initialized provider schemas")?;
+        if !version.status.success() {
+            return Err(
+                "provider plan: Terraform version check failed (details suppressed for privacy)"
+                    .into(),
+            );
+        }
+        Evidence::validate_runtime(json, &version.stdout)?;
         let bytes = std::fs::read(path).map_err(|_| "cannot read provider plan")?;
         let mut copy =
             tempfile::NamedTempFile::new().map_err(|_| "cannot create provider plan copy")?;
         copy.write_all(&bytes)
             .map_err(|_| "cannot copy provider plan")?;
-        let mut command = Command::new("terraform");
+        let mut command = terraform();
         command
             .args(["show", "-json"])
             .arg(copy.path())
             .stdin(Stdio::null());
-        for (name, _) in std::env::vars_os() {
-            if name.to_string_lossy().starts_with("TF_CLI_ARGS")
-                || name.to_string_lossy().starts_with("TF_LOG")
-            {
-                command.env_remove(name);
-            }
-        }
         let shown = command.output().map_err(
-            |_| "provider plan requires Terraform 1.9.8 on PATH and initialized provider schemas",
+            |_| "provider plan requires a verified Terraform binary on PATH and initialized provider schemas",
         )?;
         if !shown.status.success() {
             return Err("provider plan: terraform show failed; check Terraform version and installed provider schemas (details suppressed for privacy)".into());
         }
         Evidence::validate(&bytes, json, &shown.stdout).map(Some)
     }
+}
+
+fn terraform() -> Command {
+    let mut command = Command::new("terraform");
+    command.stdin(Stdio::null()).stderr(Stdio::null());
+    for (name, _) in std::env::vars_os() {
+        let text = name.to_string_lossy().to_ascii_uppercase();
+        if text.starts_with("TF_CLI_ARGS") || text.starts_with("TF_LOG") {
+            command.env_remove(name);
+        }
+    }
+    command.env("CHECKPOINT_DISABLE", "1");
+    command
 }
