@@ -7,7 +7,7 @@ Terraform language feature or provider release.
 | Boundary | Verified versions | Limits |
 | --- | --- | --- |
 | JSON interpretation | Terraform 1.9.8 and 1.16.6; AWS 5.100.0 and 6.0.0; JSON 1.2 | The committed cases below, not every resource or language feature |
-| Resource region override | Terraform 1.9.8 / AWS 6.0.0 | VPC, Subnet, CloudWatch Log Group and the [static evidence contract](aws.md#deployment-scopes) |
+| Resource region override | Terraform 1.9.8 and 1.16.6 / AWS 6.0.0 | VPC, Subnet, CloudWatch Log Group and the [static evidence contract](aws.md#deployment-scopes) |
 | Saved-plan provider evidence | Terraform 1.9.8 / AWS 5.100.0 | The separate [archive and account contract](provider-evidence.md) |
 
 The candidate 1.16.6 was the stable release returned by the official
@@ -55,7 +55,9 @@ The Node check compares planned values, changes, configuration, checks and
 extracted schema contracts across Core versions, excluding volatile metadata.
 Rust compares identity, action, reference provenance, completeness, checks and
 coverage; SVG and HTML are compared for equivalent drawing inputs.
-The override case separately records the deliberate 1.9.8 guard.
+The override case verifies equal resolved regions, relationships, coverage and
+SVG/HTML across both exact Core versions. Negative tests apply to both real
+captures; no intervening or later Core/Provider versions are implicitly allowed.
 
 Observed differences are asserted before normalization: 1.16.6 / AWS 6.0.0
 adds ALB identity metadata with an unknown ARN, and 1.16.6's built-in

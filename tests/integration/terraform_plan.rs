@@ -2,7 +2,7 @@ mod support;
 
 #[test]
 fn captured_compatibility_matrix_reproduces_svg_and_html_across_core_versions() {
-    for case in ["aws5", "aws6"] {
+    for case in ["aws5", "aws6", "overrides"] {
         let inputs: Vec<_> = ["1.9.8", "1.16.6"]
             .map(|version| {
                 std::fs::read_to_string(format!(
