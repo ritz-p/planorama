@@ -63,3 +63,4 @@ examples/athena.svg
 examples/cloudfront.svg
 examples/waf.svg
 examples/s3-policy.svg
+examples/s3-notification.svg

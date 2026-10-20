@@ -180,6 +180,40 @@ pub(super) fn scalar<'a>(value: &'a Value, unknown: &Value, path: &[&str]) -> Op
     scalar(&value[path[0]], &unknown[path[0]], &path[1..])
 }
 
+fn indexed_scalar<'a>(
+    value: &'a Value,
+    unknown: &Value,
+    path: &[&str],
+    lengths: &[usize],
+) -> Option<&'a str> {
+    if unknown == &Value::Bool(true) {
+        return None;
+    }
+    if let Some(values) = value.as_array() {
+        let (&length, remaining) = lengths.split_first()?;
+        let (&index, path) = path.split_first()?;
+        let index = index.parse::<usize>().ok()?;
+        if !matches!(unknown, Value::Null | Value::Bool(false) | Value::Array(_))
+            || values.len() != length
+            || unknown
+                .as_array()
+                .is_some_and(|masks| masks.len() != length)
+        {
+            return None;
+        }
+        return indexed_scalar(values.get(index)?, &unknown[index], path, remaining);
+    }
+    if let Some((field, path)) = path.split_first() {
+        if !matches!(unknown, Value::Null | Value::Bool(false) | Value::Object(_)) {
+            return None;
+        }
+        return indexed_scalar(&value[*field], &unknown[*field], path, lengths);
+    }
+    (lengths.is_empty() && matches!(unknown, Value::Null | Value::Bool(false)))
+        .then(|| value.as_str().filter(|s| !s.is_empty()))
+        .flatten()
+}
+
 pub(crate) fn annotate(
     nodes: &[TerraformEntity],
     references: &mut [AttributeReference],
@@ -196,6 +230,11 @@ pub(crate) fn annotate(
         };
         let endpoint = &nodes[*source];
         if !reference.complete
+            || (crate::provider::indexed_service_reference(
+                &node.provider,
+                &node.resource_type,
+                &reference.attribute,
+            ) && reference.indexed_block_lengths.is_empty())
             || !reference.instances_explicit
             || !reference.issues.is_empty()
             || !node.provider.is_aws()
@@ -217,11 +256,12 @@ pub(crate) fn annotate(
         );
         let (value, unknown) = evidence[reference.target];
         let (target, target_unknown) = evidence[*source];
-        let actual = scalar(
-            value,
-            unknown,
-            &reference.attribute.split('.').collect::<Vec<_>>(),
-        );
+        let path = reference.attribute.split('.').collect::<Vec<_>>();
+        let actual = if reference.indexed_block_lengths.is_empty() {
+            scalar(value, unknown, &path)
+        } else {
+            indexed_scalar(value, unknown, &path, &reference.indexed_block_lengths)
+        };
         reference.service_reference_verified = fields.iter().any(|field| {
             reference.source_attributes.len() == 1
                 && reference.source_attributes.contains(*field)
@@ -380,6 +420,12 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
         if !node.provider.is_aws() {
             continue;
         }
+        if super::s3::aggregate(raw, reference) {
+            graph.nodes[reference.target]
+                .references
+                .retain(|r| r.dependency || r.attribute != reference.attribute);
+            continue;
+        }
         let Some(label) = label(&node.resource_type, &reference.attribute) else {
             continue;
         };
@@ -437,6 +483,7 @@ pub(super) fn diagnostics(raw: &Input) -> Vec<Diagnostic> {
         .filter_map(|reference| {
             let node = &raw.nodes[reference.target];
             (node.provider.is_aws()
+                && !super::s3::aggregate(raw, reference)
                 && label(&node.resource_type, &reference.attribute).is_some()
                 && !verified(raw, reference))
             .then(|| Diagnostic {

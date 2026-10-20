@@ -33,6 +33,12 @@ their own completeness checks. Module inputs/outputs and serialized local defini
 are followed with cycle detection; absent local definitions cannot be reconstructed.
 Nested block fields retain dotted paths, and repeated blocks require complete
 provenance in every entry. Literal values are not traversed as expressions.
+Provider-selected list fields additionally retain positional paths (for example
+`queue.0.queue_arn`) and nested list lengths. These are configuration provenance,
+not new resources or arbitrary attribute values. Dedicated service proofs require
+the evaluated list shapes to match before checking the value at that position.
+WAF scope retains only a provider-validated Regional/CloudFront enum; unknown
+values and rule bodies are discarded.
 Attribute evidence also records whether every referenced instance key was explicit
 through alias resolution. Target-group component ownership requires this proof;
 it does not narrow existing dependency edges or change other semantic rules.
