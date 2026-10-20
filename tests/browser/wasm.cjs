@@ -42,6 +42,10 @@ async function main() {
     driver.execute_cdp_cmd('Network.enable', {});
     driver.execute_cdp_cmd('Network.emulateNetworkConditions', {offline: true, latency: 0, downloadThroughput: 0, uploadThroughput: 0});
     driver.get_log('performance');
+    require('./wasm-options.cjs')({
+      driver, small, run, submit, status,
+      native: (json, args) => execFileSync(binary, ['-', '-o', '-', ...args], {input: json, encoding: 'utf8', maxBuffer: 32 * 1024 * 1024}),
+    });
     for (const [options, args] of [
       [{}, []],
       [{format: 'html'}, ['--format', 'html']],
@@ -109,10 +113,28 @@ async function main() {
     const large = readFileSync(largePath, 'utf8');
     submit(large, 'svg');
     wait(() => driver.execute_script('return !!worker'), 'worker start');
+    driver.execute_script(`
+      window.oldCompletion = worker.onmessage;
+      document.getElementById('icon-mode').value = 'service-name';
+      document.getElementById('icon-mode').dispatchEvent(new Event('input', {bubbles: true}));
+    `);
+    assert.equal(driver.execute_script('return worker === undefined'), true);
+    assert.ok(status().startsWith('Settings changed.'));
+    driver.find_element(By.CSS_SELECTOR, '#reset-settings').click();
+    submit(large, 'svg');
+    wait(() => driver.execute_script('return !!worker'), 'worker before reset');
+    driver.find_element(By.CSS_SELECTOR, '#reset-settings').click();
+    assert.equal(driver.execute_script('return worker === undefined'), true);
+    assert.ok(status().startsWith('Settings reset'));
+    submit(large, 'svg');
+    wait(() => driver.execute_script('return !!worker'), 'worker before cancel');
     driver.find_element(By.CSS_SELECTOR, '#cancel').click();
     assert.ok(status().startsWith('Cancelled.'));
     submit(small, 'svg');
     wait(() => status().startsWith('Generated in'), 'retry after cancellation');
+    const currentStatus = status();
+    driver.execute_script("oldCompletion({data: {ok: false, error: {message: 'STALE'}}});");
+    assert.equal(status(), currentStatus, 'Stale completion cannot replace a newer result');
     const largeResult = run(large);
     assert.equal(largeResult.ok, true);
     const native = execFileSync(binary, ['-', '-o', '-'], {input: large, encoding: 'utf8', timeout: 180000, maxBuffer: 64 * 1024 * 1024});

@@ -63,7 +63,26 @@ Runtime traps are handled by the Worker as a generic generation failure.
 | `modules` | Array of module addresses, default empty |
 
 Unknown keys, invalid enum values and invalid combinations fail explicitly.
-The minimal UI exposes format and changed-only; the API supports all rows above.
+The UI exposes all rows above, with the same defaults. Generation settings remain
+visible and use the existing API decoder and selection rules.
+
+Choose the output, address format and icon mode, and optionally hide the
+relationship legend or enable changed-only. Enter a focus resource address to
+enable depth: empty uses the API default of 1, and 0 selects no neighbors.
+Explicit depth must be decimal digits in the Wasm nonnegative integer range
+0–4294967295; invalid input is announced and focused without correction.
+Clearing focus disables depth and omits it from requests, retaining the field
+value for when focus is entered again.
+
+Use **Add module** to enter one complete selector per row. Rows preserve spaces,
+commas, dots, quotes and escapes inside instance keys; they are not split or
+trimmed. No rows sends an empty array (no module filter). Empty rows must be
+filled or removed. Duplicate rows are passed unchanged to the API, which selects
+each resource once. Removing a row moves keyboard focus to an adjacent selector
+or the Add module button. Invalid selectors use the API's safe selection error.
+
+**Reset settings** restores every option, removes module rows and clears depth,
+while retaining the selected file. It also cancels pending work and clears results.
 State JSON, plan event streams, multiple states, saved binary plans, Terraform
 execution, provider evidence, config/preset files, module listing, coverage/layout
 report files and opt-in HTML diagnostic panels are unsupported in this API.
@@ -79,7 +98,11 @@ worker or persistent offline cache managed by the sample.
 Input, output and diagnostics are never sent over the network or automatically
 written to localStorage, sessionStorage or IndexedDB. Downloads are explicit.
 Each request uses a new Worker; completion, cancellation and failure terminate
-it. Cancellation also invalidates pending file reads. Blob URLs from prior results
+it. Generate snapshots all settings before reading the file. Editing any setting,
+changing the file, resetting or cancelling terminates pending generation and
+invalidates pending file reads and stale completion callbacks. Edits stay visible;
+generate again to apply them. Failure leaves settings available for correction
+and retry. Blob URLs from prior results
 are revoked. Retrying after failure or cancellation does not reload remote assets.
 
 Preview uses an opaque-origin sandboxed iframe with scripts allowed for the HTML
@@ -117,7 +140,10 @@ docker compose exec -T dev node tests/browser/wasm.cjs
 `Browser Wasm` runs these steps in CI. The browser test requires exact native/Wasm
 output equality (including identity, action, relationships and geometry), covers
 SVG/HTML downloads, selections, invalid input/options, markup-bearing addresses,
-repeated generation, cancellation/retry, sandbox isolation and empty browser
+all UI defaults/changes/reset, focus/depth validation, special-character module
+rows and duplicates, keyboard focus, safe error announcements, settings changes
+during file reads and Worker execution, stale completions, repeated generation,
+cancellation/retry, sandbox isolation and empty browser
 storage. After asset loading it disables network access and asserts zero HTTP
 requests through Chrome's network log. Large-fixture elapsed time, linear memory
 and output sizes are printed as observations, without timing thresholds in CI.
