@@ -174,9 +174,10 @@ fn compare_purpose_placements() {
                     original.nodes.len()
                 );
                 for href in doc.descendants().filter_map(|node| node.attribute("href")) {
+                    let target = href.strip_prefix('#').expect("expected a fragment href");
                     assert!(
                         doc.descendants()
-                            .any(|node| node.attribute("id") == href.strip_prefix('#'))
+                            .any(|node| node.attribute("id") == Some(target))
                     );
                 }
                 let root = doc.root_element();
