@@ -51,6 +51,7 @@ pub(super) fn classify(resource_type: &str) -> ResourceRole {
         | "aws_cloudwatch_log_group"
         | "aws_launch_template" => ResourceRole::Node,
         "aws_vpc_peering_connection"
+        | "aws_db_proxy"
         | "aws_internet_gateway"
         | "aws_nat_gateway"
         | "aws_route_table"
@@ -107,6 +108,8 @@ pub(super) fn classify(resource_type: &str) -> ResourceRole {
         | "aws_lb_listener_rule"
         | "aws_autoscaling_policy" => ResourceRole::Policy,
         "aws_autoscaling_group"
+        | "aws_db_proxy_default_target_group"
+        | "aws_db_proxy_target"
         | "aws_s3_bucket_notification"
         | "aws_s3_bucket_replication_configuration"
         | "aws_ecs_service"

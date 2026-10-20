@@ -137,6 +137,8 @@ pub(super) fn icon_for(resource_type: &str) -> Option<ResourceIcon> {
         | "aws_db_cluster_snapshot"
         | "aws_db_parameter_group"
         | "aws_db_proxy"
+        | "aws_db_proxy_default_target_group"
+        | "aws_db_proxy_target"
         | "aws_rds_cluster"
         | "aws_rds_cluster_instance"
         | "aws_rds_clusters"

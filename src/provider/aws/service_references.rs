@@ -17,6 +17,13 @@ fn label(resource: &str, attribute: &str) -> Option<&'static str> {
         return Some(label);
     }
     match (resource, attribute) {
+        ("aws_db_proxy_default_target_group", "db_proxy_name") => Some("Proxy owner"),
+        ("aws_db_proxy_target", "db_proxy_name") => Some("Configured proxy"),
+        ("aws_db_proxy_target", "target_group_name") => Some("Target group"),
+        ("aws_db_proxy_target", "db_instance_identifier") => Some("DB instance target"),
+        ("aws_db_proxy_target", "db_cluster_identifier") => Some("DB cluster target"),
+        ("aws_db_proxy", "role_arn") => Some("Execution role reference"),
+        ("aws_db_proxy", "auth.secret_arn") => Some("Authentication secret reference"),
         ("aws_eks_node_group" | "aws_eks_fargate_profile" | "aws_eks_addon", "cluster_name") => {
             Some("Cluster membership")
         }
@@ -81,6 +88,20 @@ fn source_fields(resource: &str, attribute: &str, source: &str) -> &'static [&'s
         return waf;
     }
     match (resource, attribute, source) {
+        (
+            "aws_db_proxy_default_target_group" | "aws_db_proxy_target",
+            "db_proxy_name",
+            "aws_db_proxy",
+        ) => &["name", "id"],
+        ("aws_db_proxy_target", "target_group_name", "aws_db_proxy_default_target_group") => {
+            &["name"]
+        }
+        ("aws_db_proxy_target", "db_instance_identifier", "aws_db_instance") => &["identifier"],
+        ("aws_db_proxy_target", "db_cluster_identifier", "aws_rds_cluster") => {
+            &["cluster_identifier"]
+        }
+        ("aws_db_proxy", "role_arn", "aws_iam_role")
+        | ("aws_db_proxy", "auth.secret_arn", "aws_secretsmanager_secret") => &["arn"],
         (
             "aws_eks_node_group"
             | "aws_eks_fargate_profile"
@@ -306,6 +327,10 @@ pub(crate) fn annotate(
         reference.service_reference_verified &=
             super::waf::verify_scope(nodes, reference, evidence);
         if (node.resource_type == "aws_ecs_service" && reference.attribute == "cluster")
+            || matches!(
+                node.resource_type.as_str(),
+                "aws_db_proxy_default_target_group" | "aws_db_proxy_target"
+            )
             || (node.resource_type.starts_with("aws_eks_") && reference.attribute == "cluster_name")
             || matches!(
                 node.resource_type.as_str(),
@@ -355,6 +380,7 @@ pub(crate) fn annotate(
             );
         }
     }
+    super::rds_proxy::validate_targets(nodes, references, evidence);
     let aliases: Vec<_> = references
         .iter()
         .filter(|r| r.attribute == "alias.zone_id" && r.service_reference_verified)
