@@ -1254,6 +1254,10 @@ endpoints do not produce links. One unique member can navigate to separately
 state-qualified deployment frames in multiple input states. These are navigation
 correspondences, not Terraform dependencies or cross-state ownership. Account
 frames link back to the member; resources, actions and coverage counts are unchanged.
+Current spatial managed resources and data sources can witness a frame. Candidates
+use the same projected, scope-consistent containment groups as layout; mixed-scope
+trees without an Account panel cannot produce deployment links. Ordinary Terraform
+attributes named `deployment_scope` retain their own reference rows and metadata.
 
 The [maintained SVG](../examples/organization-deployments.svg) and
 [offline HTML](../examples/organization-deployments.html) use the synthetic

@@ -17,6 +17,98 @@ fn architecture(input: &str, verified: bool) -> crate::model::ArchitectureGraph 
 }
 
 #[test]
+fn real_deployment_scope_attributes_survive_view_projection() {
+    let input = json!({"format_version":"1.2", "resource_changes":[
+        {"address":"test_resource.source", "type":"test_resource"},
+        {"address":"test_resource.consumer", "type":"test_resource"}
+    ], "configuration":{"root_module":{"resources":[
+        {"address":"test_resource.source"},
+        {"address":"test_resource.consumer", "expressions":{"deployment_scope":{"references":["test_resource.source.id"]}}}
+    ]}}});
+    let graph = architecture(&input.to_string(), false);
+    let selected = view::single(&graph, &Default::default()).unwrap();
+    let reference = selected
+        .nodes
+        .iter()
+        .flat_map(|n| &n.references)
+        .find(|r| r.attribute == "deployment_scope")
+        .unwrap();
+    assert_eq!(reference.kind, ReferenceKind::Configured);
+    assert_eq!(reference.targets[0].id.address, "test_resource.source");
+    assert!(svg::render(&selected, &Layout::new(&selected)).contains("deployment_scope"));
+}
+
+#[test]
+fn deployment_witnesses_require_rendered_scope_groups_and_accept_data() {
+    for case in 0..3 {
+        let mut input: Value = serde_json::from_str(FIXTURE).unwrap();
+        if case == 0 {
+            input = serde_json::from_str(
+                &input
+                    .to_string()
+                    .replace("aws_vpc.workload", "data.aws_vpc.workload"),
+            )
+            .unwrap();
+            input["resource_changes"][5]["mode"] = json!("data");
+            input["resource_changes"][5]["change"]["actions"] = json!(["read"]);
+            input["configuration"]["root_module"]["resources"][5]["mode"] = json!("data");
+        } else {
+            input["configuration"]["provider_config"]["aws.other"] =
+                input["configuration"]["provider_config"]["aws.member"].clone();
+            input["configuration"]["provider_config"]["aws.other"]["alias"] = json!("other");
+            input["configuration"]["provider_config"]["aws.other"]["expressions"]["assume_role"] =
+                json!([{"role_arn":{"constant_value":"arn:aws:iam::999999999999:role/Fixture"}}]);
+            input["resource_changes"].as_array_mut().unwrap().push(json!({"address":"aws_subnet.conflicting", "type":"aws_subnet", "mode":"managed", "provider_name":"registry.terraform.io/hashicorp/aws", "change":{"actions":["create"], "after":{"id":"subnet-test", "vpc_id":"vpc-fixture"}}}));
+            input["configuration"]["root_module"]["resources"].as_array_mut().unwrap().push(json!({"address":"aws_subnet.conflicting", "mode":"managed", "type":"aws_subnet", "provider_config_key":"aws.other", "expressions":{"vpc_id":{"references":["aws_vpc.workload.id"]}}}));
+            if case == 2 {
+                let mut resource = input["resource_changes"][5].clone();
+                resource["address"] = json!("aws_vpc.independent");
+                input["resource_changes"]
+                    .as_array_mut()
+                    .unwrap()
+                    .push(resource);
+                let mut config = input["configuration"]["root_module"]["resources"][5].clone();
+                config["address"] = json!("aws_vpc.independent");
+                input["configuration"]["root_module"]["resources"]
+                    .as_array_mut()
+                    .unwrap()
+                    .push(config);
+            }
+        }
+        let graph = architecture(&input.to_string(), true);
+        let selected = view::single(&graph, &Default::default()).unwrap();
+        let layout = Layout::new(&selected);
+        let links: Vec<_> = selected
+            .nodes
+            .iter()
+            .flat_map(|n| &n.references)
+            .filter(|r| r.kind == ReferenceKind::DeploymentScope)
+            .collect();
+        assert_eq!(links.len(), usize::from(case != 1), "case {case}");
+        assert_eq!(
+            layout.scopes.iter().filter(|p| p.account_panel).count(),
+            usize::from(case != 1)
+        );
+        if case == 2 {
+            assert_eq!(links[0].targets[0].id.address, "aws_vpc.independent");
+        }
+        let content = svg::render(&selected, &layout);
+        let doc = roxmltree::Document::parse(&content).unwrap();
+        for href in doc
+            .descendants()
+            .filter(|n| n.has_tag_name("a"))
+            .filter_map(|n| n.attribute("href"))
+            .filter_map(|href| href.strip_prefix('#'))
+        {
+            assert!(
+                doc.descendants().any(|n| n.attribute("id") == Some(href)),
+                "dangling {href}"
+            );
+        }
+    }
+}
+
+#[test]
 fn account_links_require_verified_scope_unique_current_member_and_visible_endpoint() {
     for case in 0..9 {
         let mut input: Value = serde_json::from_str(FIXTURE).unwrap();

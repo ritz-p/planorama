@@ -1,6 +1,6 @@
 use super::{Bounds, ContainmentTree, Point, ScopePanel, containers::placement};
 use crate::model::architecture::{DeploymentScope, Graph};
-use std::collections::{BTreeMap, BTreeSet};
+use std::collections::BTreeSet;
 
 #[cfg(test)]
 #[path = "../../tests/unit/layout/accounts.rs"]
@@ -17,20 +17,7 @@ pub(super) fn pack(
 ) -> (usize, Vec<ScopePanel>) {
     let spacing = super::relationship_markers::padding(graph);
     let protected = super::containers::affinity::protected_roots(graph, &tree.parents);
-    let mut groups: BTreeMap<Option<DeploymentScope>, Vec<usize>> = BTreeMap::new();
-    for &root in &tree.roots {
-        let scope = graph.nodes[root].entity.scope.as_ref();
-        let mut pending = vec![root];
-        let mut consistent = true;
-        while let Some(node) = pending.pop() {
-            consistent &= graph.nodes[node].entity.scope.as_ref() == scope;
-            pending.extend(tree.children[node].iter().copied());
-        }
-        groups
-            .entry(if consistent { scope.cloned() } else { None })
-            .or_default()
-            .push(root);
-    }
+    let groups = crate::view::scope::groups(graph, tree);
     if !groups
         .keys()
         .flatten()

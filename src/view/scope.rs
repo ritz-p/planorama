@@ -1,5 +1,26 @@
 use crate::model::{ProviderIdentity, architecture::DeploymentScope};
 
+pub(crate) fn groups(
+    graph: &crate::model::Graph,
+    tree: &crate::layout::ContainmentTree,
+) -> std::collections::BTreeMap<Option<DeploymentScope>, Vec<usize>> {
+    let mut groups = std::collections::BTreeMap::<_, Vec<_>>::new();
+    for &root in &tree.roots {
+        let scope = graph.nodes[root].entity.scope.as_ref();
+        let mut pending = vec![root];
+        let mut consistent = true;
+        while let Some(node) = pending.pop() {
+            consistent &= graph.nodes[node].entity.scope.as_ref() == scope;
+            pending.extend(tree.children[node].iter().copied());
+        }
+        groups
+            .entry(if consistent { scope.cloned() } else { None })
+            .or_default()
+            .push(root);
+    }
+    groups
+}
+
 pub(crate) fn component<'a>(
     members: impl Iterator<Item = Option<&'a crate::model::Node>>,
 ) -> String {

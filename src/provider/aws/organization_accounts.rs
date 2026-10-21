@@ -36,6 +36,16 @@ fn reference(
 }
 
 pub(crate) fn link(all: &Architecture, selected: &mut Architecture) {
+    for ArchitectureGraph(graph) in selected.states.values_mut() {
+        for node in &mut graph.nodes {
+            node.references.retain(|r| {
+                !(matches!(
+                    r.kind,
+                    ReferenceKind::DeploymentScope | ReferenceKind::DeploymentMember
+                ) || r.kind == ReferenceKind::Information && r.attribute == "deployment_scope")
+            });
+        }
+    }
     let mut candidates = BTreeMap::<AwsAccountScope, usize>::new();
     for node in all
         .states
@@ -47,11 +57,37 @@ pub(crate) fn link(all: &Architecture, selected: &mut Architecture) {
             *candidates.entry(account.clone()).or_default() += 1;
         }
     }
+    if !selected
+        .states
+        .values()
+        .flat_map(|graph| &graph.nodes)
+        .any(member)
+    {
+        return;
+    }
     let mut scopes = BTreeMap::<(StateId, AwsAccountScope), (usize, TerraformEntityId)>::new();
     for (state, graph) in &selected.states {
-        for (index, node) in graph.nodes.iter().enumerate() {
+        let projection = crate::view::spatial::project(graph);
+        let tree = crate::layout::ContainmentTree::new(&projection.graph);
+        let groups = crate::view::scope::groups(&projection.graph, &tree);
+        let mut visible = BTreeSet::new();
+        for (scope, roots) in groups {
+            if scope
+                .as_ref()
+                .and_then(|scope| scope.account.as_ref())
+                .is_none()
+            {
+                continue;
+            }
+            let mut pending = roots;
+            while let Some(index) = pending.pop() {
+                visible.insert(projection.nodes[index]);
+                pending.extend(tree.children[index].iter().copied());
+            }
+        }
+        for index in visible {
+            let node = &graph.nodes[index];
             if !node.provider.is_aws()
-                || node.mode != EntityMode::Managed
                 || node.placement != Placement::Spatial
                 || node.deposed_key.is_some()
                 || node.action == Action::Delete
@@ -133,12 +169,6 @@ pub(crate) fn link(all: &Architecture, selected: &mut Architecture) {
                     )
                 },
             ));
-        }
-    }
-    for ArchitectureGraph(graph) in selected.states.values_mut() {
-        for node in &mut graph.nodes {
-            node.references
-                .retain(|r| r.attribute != "deployment_scope");
         }
     }
     for (state, index, reference) in additions {
