@@ -11,6 +11,7 @@ pub(in crate::provider::aws) fn attribute(resource_type: &str) -> Option<&'stati
         "aws_db_proxy" => Some("vpc_subnet_ids"),
         "aws_db_subnet_group" | "aws_elasticache_subnet_group" => Some("subnet_ids"),
         "aws_eks_node_group" | "aws_eks_fargate_profile" => Some("subnet_ids"),
+        "aws_elasticache_serverless_cache" => Some("subnet_ids"),
         "aws_lambda_function" | "aws_eks_cluster" => Some("vpc_config.subnet_ids"),
         "aws_opensearch_domain" => Some("vpc_options.subnet_ids"),
         _ => None,
