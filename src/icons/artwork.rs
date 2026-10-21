@@ -7,6 +7,7 @@ impl ResourceIcon {
             Self::StepFunctions => "planorama-icon-aws-step-functions",
             Self::Redshift => "planorama-icon-aws-redshift",
             Self::CloudTrail => "planorama-icon-aws-cloudtrail",
+            Self::Backup => "planorama-icon-aws-backup",
             Self::Organizations => "planorama-icon-aws-organizations",
             Self::Vpc | Self::Subnet | Self::Gateway | Self::Route | Self::Security => {
                 "planorama-icon-aws-vpc"
@@ -56,6 +57,7 @@ impl ResourceIcon {
             }
             Self::Redshift => include_str!(concat!(env!("OUT_DIR"), "/Amazon-Redshift.svg")),
             Self::CloudTrail => include_str!(concat!(env!("OUT_DIR"), "/AWS-CloudTrail.svg")),
+            Self::Backup => include_str!(concat!(env!("OUT_DIR"), "/AWS-Backup.svg")),
             Self::Organizations => include_str!(concat!(env!("OUT_DIR"), "/AWS-Organizations.svg")),
             Self::Ecr => include_str!(concat!(
                 env!("OUT_DIR"),

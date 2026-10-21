@@ -11,6 +11,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         ("AWS-Step-Functions", "step-functions"),
         ("Amazon-Redshift", "redshift"),
         ("AWS-CloudTrail", "cloudtrail"),
+        ("AWS-Backup", "backup"),
         ("AWS-Organizations", "organizations"),
         ("Amazon-Virtual-Private-Cloud", "vpc"),
         ("Amazon-EC2", "ec2"),
