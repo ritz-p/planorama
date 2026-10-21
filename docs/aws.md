@@ -965,6 +965,41 @@ identities never join equally named Clusters across states.
 The [ECS example](../examples/ecs-clusters.svg) includes shared membership across
 two VPCs, a multi-subnet Service, data lookup and an unknown-scope Cluster.
 
+## EKS configuration and membership
+
+Cluster and Node Group retain spatial cards. Fargate Profile is a regional spatial
+Controller; Add-on and Access Entry are regional logical Controllers. All use the
+Amazon EKS icon and retain separate identity, search, selection and coverage.
+
+Node Group, Add-on and Fargate Profile show `Cluster membership` only for complete,
+unique explicit `cluster_name` references to a current managed AWS Cluster's
+`name`/`id`, with equal known values and compatible provider/region bindings.
+Access Entry uses `Access configuration cluster`, which describes configuration,
+not authentication or effective permissions. Explicit IAM role/principal ARN
+references can link to a managed IAM resource without displaying the ARN.
+Unknown, ambiguous, wrong-provider/type, deleted/deposed and filtered endpoints
+retain ordinary Terraform provenance or unavailable references.
+
+Fargate Profile and Node Group `subnet_ids` require complete explicit ID references
+and matching known values to current managed AWS Subnets in the same provider
+scope. Placement uses their verified common VPC; cluster membership never makes
+the Cluster a network container. A missing/unknown subnet leaves the resource
+visible without inferred containment. Cluster SG references keep their existing
+`vpc_config.security_group_ids` rules. Fargate Profile has no SG input in the
+verified schemas, so no profile SG attachment is inferred from the cluster.
+Selectors do not create Pods, namespaces or workloads. Add-on configuration,
+principal values and selectors are not displayed.
+
+Add-on, Fargate Profile and Access Entry have independent membership validation
+cases; Node Group uses the same checks. Network placement is tested separately.
+Schemas and offline plans were checked with Terraform 1.9.8 / 1.16.6 and AWS
+Provider 5.100.0 / 6.0.0 against the official
+[Add-on](https://registry.terraform.io/providers/hashicorp/aws/6.0.0/docs/resources/eks_addon),
+[Fargate Profile](https://registry.terraform.io/providers/hashicorp/aws/6.0.0/docs/resources/eks_fargate_profile)
+and [Access Entry](https://registry.terraform.io/providers/hashicorp/aws/6.0.0/docs/resources/eks_access_entry)
+contracts. See the maintained [SVG](../examples/eks.svg) and
+[offline HTML](../examples/eks.html).
+
 ## Containment
 
 Listener cards prefer nearby positions to their uniquely referenced managed LB.
@@ -999,6 +1034,7 @@ do not invent a common container.
 | DB / ElastiCache Subnet Group | `subnet_ids` | Common VPC, including a single-subnet group |
 | ElastiCache Replication Group | `subnet_group_name` → ElastiCache Subnet Group | Same verified VPC as the subnet group |
 | Lambda / EKS | `vpc_config.subnet_ids` | Common VPC |
+| EKS Node Group / Fargate Profile | `subnet_ids` | Verified current Subnets and common VPC; independent of cluster membership |
 | OpenSearch | `vpc_options.subnet_ids` | Common VPC |
 
 LB/ECS subnet references outside the chosen parent become Connection edges.

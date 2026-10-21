@@ -21,6 +21,7 @@ examples/certificate-cards.svg
 examples/kms.svg
 examples/secrets-manager.svg
 examples/ecr.svg
+examples/eks.svg
 examples/ssm.svg
 examples/iam.svg
 examples/identity-providers.svg
