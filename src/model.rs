@@ -98,6 +98,8 @@ pub struct ResourceReference {
 pub enum ReferenceKind {
     Configured,
     Membership,
+    OrganizationParent,
+    OrganizationRoot(usize),
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]

@@ -6,6 +6,7 @@ pub fn collect(plan: &crate::model::TerraformPlan) -> Vec<Diagnostic> {
     let input = Input::new(plan);
     let raw = &input;
     let mut found = BTreeSet::new();
+    found.extend(super::organizations::diagnostics(raw));
     found.extend(super::service_references::diagnostics(raw));
     found.extend(super::messaging::diagnostics(raw));
     for node in &plan.nodes {

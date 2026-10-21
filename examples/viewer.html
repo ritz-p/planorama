@@ -882,12 +882,19 @@ function selection(context, index, navigation, highlights, coordinator) {
     section('Resource navigation', navigation);
     section('Unavailable / unresolved references', Array.from(el.querySelectorAll('[data-reference-status]')).filter(ref => ref.closest('[data-viewer-target]') === el).map(ref => ({ text: title(ref) + ' (' + ref.dataset.referenceStatus + ')' })));
     const memberships = [];
+    const derived = [];
     for (const component of components) {
       const members = links.filter(link => component.contains(link.el));
+      if (component.dataset.componentKind === 'organization_root') {
+        if (members.some(link => link.target === id)) derived.push({ target: component.id, text: title(component) });
+        if (component.id === id) section('Source Organization', members.map(link => ({ target: link.target, text: title(link.el) })));
+        continue;
+      }
       if (members.some(link => link.target === id)) memberships.push({ target: component.id, text: title(component) });
       if (component.id === id) section('Component members', members.map(link => ({ target: link.target, text: title(link.el) })));
     }
     section('Logical Component membership', memberships);
+    section('Derived Roots', derived);
     if (details.children.length <= (r ? 3 : 1)) section('Relationships', [{ text: 'No rendered edges, references or component memberships in this view.' }]);
     for (const b of results.querySelectorAll('button')) b.setAttribute('aria-pressed', String(b.dataset.target === id));
     reveal(el);

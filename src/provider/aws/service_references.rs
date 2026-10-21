@@ -276,6 +276,10 @@ pub(crate) fn annotate(
 ) {
     for reference in references.iter_mut() {
         let node = &nodes[reference.target];
+        if super::organizations::resource(&node.resource_type) && reference.attribute == "parent_id"
+        {
+            continue;
+        }
         if super::network::endpoint_type(&node.resource_type, &reference.attribute).is_some() {
             reference.service_reference_verified =
                 super::network::verified(nodes, reference, evidence);

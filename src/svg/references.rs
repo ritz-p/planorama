@@ -70,7 +70,7 @@ pub(super) fn render(graph: &Graph, node: &Node, x: usize, y: usize, width: usiz
         let remote = row
             .target
             .and_then(|target| target.state.as_ref().map(|state| (target, state)));
-        let href = remote
+        let mut href = remote
             .map(|(target, state)| {
                 format!(
                     "{}{}",
@@ -79,6 +79,16 @@ pub(super) fn render(graph: &Graph, node: &Node, x: usize, y: usize, width: usiz
                 )
             })
             .or_else(|| available.map(super::identity::resource));
+        if let crate::model::ReferenceKind::OrganizationRoot(index) = row.reference.kind {
+            href = row.target.and_then(|target| {
+                let id = crate::provider::aws::organizations::root_id(&target.id.address, index);
+                graph
+                    .components
+                    .iter()
+                    .find(|component| component.entity.id == id)
+                    .map(|component| super::identity::architecture(&component.entity.id))
+            });
+        }
         let label = row.label(href.is_some());
         if let Some(href) = &href {
             write!(

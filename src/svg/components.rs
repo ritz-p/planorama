@@ -8,6 +8,7 @@ pub(super) fn membership(graph: &Graph) -> BTreeMap<&str, &str> {
     graph
         .components
         .iter()
+        .filter(|component| component.kind != "organization_root")
         .flat_map(|component| {
             component
                 .members
@@ -33,14 +34,23 @@ pub(super) fn cards(graph: &Graph) -> Vec<Card> {
         members.sort();
         members.dedup();
         let rows: Vec<_> = members.iter().map(|address| {
-            let node = nodes.get(address.as_str()).and_then(|nodes| match nodes.as_slice() {
-                [node] => Some(*node),
-                _ => None,
+            let node = nodes.get(address.as_str()).and_then(|nodes| {
+                if component.kind == "organization_root" {
+                    nodes.iter().copied().find(|node| node.entity.provenance.iter().any(|id| component.entity.provenance.contains(id)))
+                } else {
+                    match nodes.as_slice() {
+                        [node] => Some(*node),
+                        _ => None,
+                    }
+                }
             });
             let text = node.map_or_else(|| (*address).clone(), |node| format!("{}: {address}", super::operations::label(node.action, &node.metadata)));
             (address, node, text)
         }).collect();
-        let scope = crate::view::scope::component(rows.iter().map(|(_, node, _)| *node));
+        let mut scope = crate::view::scope::component(rows.iter().map(|(_, node, _)| *node));
+        if component.kind == "organization_root" {
+            scope = scope.replacen("Member scope:", "Source Organization scope:", 1);
+        }
         let member_scopes: Vec<_> = rows.iter().map(|(_, node, _)| node.map_or_else(|| "Member unavailable in this view".into(), |node| crate::view::scope::label(node.entity.scope.as_ref(), &node.provider))).collect();
         let width = card_width([heading.as_str(), scope.as_str()].into_iter().chain(rows.iter().map(|(_, _, text)| text.as_str())).chain(member_scopes.iter().map(String::as_str)));
         let limit = (width - 32) / 8;
