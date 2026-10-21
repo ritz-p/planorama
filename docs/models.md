@@ -85,6 +85,8 @@ Reference kinds are `configured`, `membership`, `organization_parent`,
 `organization_root`, `policy_attachment` and `information`. Information rows have
 no relationship target; direct attachment and hierarchy kinds describe only their
 verified configuration facts.
+Derived Roots retain their source's full Terraform identity, including the
+current/deposed discriminator, independently of the display address.
 In SVG `resource-references` metadata, remote targets include `state` alongside
 their address and deposed key. Targets without `state` belong to the enclosing
 state section, or the single input in unnamed diagrams.
