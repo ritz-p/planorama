@@ -178,6 +178,11 @@
             "file": "Amazon-Elastic-Container-Registry.svg",
             "source": "Architecture-Service-Icons_07312026/Arch_Containers/48/Arch_Amazon-Elastic-Container-Registry_48.svg",
             "sha256": "bf829eab882165f4fb850bab032e5c81312cb579e2ad880372f206936db4a2be"
+        },
+        {
+            "file": "Amazon-Cognito.svg",
+            "source": "Architecture-Service-Icons_07312026/Arch_Security-Identity/48/Arch_Amazon-Cognito_48.svg",
+            "sha256": "66a89c507aced4afefe99d39fa7d5b7bd22e3f6bed03f511a031bf44f57f34ce"
         }
     ]
 }

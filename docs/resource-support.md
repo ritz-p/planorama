@@ -96,6 +96,9 @@ Provider source: `registry.terraform.io/hashicorp/aws`.
 | `aws_cloudwatch_log_group` | Node / Node | Spatial / Spatial | Monitoring / Amazon CloudWatch | Regional (conditional) | [aws/service_references.rs](../src/provider/aws/service_references.rs) |
 | `aws_cloudwatch_log_groups` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Monitoring / Amazon CloudWatch | Unknown | — |
 | `aws_cloudwatch_metric_alarm` | Controller / Controller | Logical / Logical | Monitoring / Amazon CloudWatch | Regional (conditional) | [aws.rs](../src/provider/aws.rs), [aws/diagnostics.rs](../src/provider/aws/diagnostics.rs), [aws/monitoring.rs](../src/provider/aws/monitoring.rs) |
+| `aws_cognito_identity_pool` | Node / Node | Spatial / Spatial | Cognito / Amazon Cognito | Regional (conditional) | [aws/service_references.rs](../src/provider/aws/service_references.rs) |
+| `aws_cognito_user_pool` | Node / Node | Spatial / Spatial | Cognito / Amazon Cognito | Regional (conditional) | [aws/service_references.rs](../src/provider/aws/service_references.rs) |
+| `aws_cognito_user_pool_client` | Node / Node | Spatial / Spatial | Cognito / Amazon Cognito | Regional (conditional) | [aws/service_references.rs](../src/provider/aws/service_references.rs) |
 | `aws_customer_gateway` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Gateway / Amazon VPC | Unknown | — |
 | `aws_db_cluster_snapshot` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Database / Amazon RDS | Unknown | — |
 | `aws_db_instance` | Node / Node | Spatial / Spatial | Database / Amazon RDS | Regional (conditional) | [aws/containment/indirect.rs](../src/provider/aws/containment/indirect.rs), [aws/diagnostics.rs](../src/provider/aws/diagnostics.rs), [aws/security_groups.rs](../src/provider/aws/security_groups.rs), [aws/service_references.rs](../src/provider/aws/service_references.rs) |
