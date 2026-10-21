@@ -85,7 +85,7 @@ class ViewerTests {
         this.assertNotIn('PRIVATE_', this.find('#viewport').text);
     }
     test_neighborhood_export_preserves_presentations_and_removes_unrelated_resources() {
-        for (const fixture of ['viewer', 'routes', 'association', 'deposed', 'aurora', 'efs', 'kms', 'secrets-manager', 'private-ca', 'acm', 'certificate-cards', 'glue', 'athena']) {
+        for (const fixture of ['viewer', 'routes', 'association', 'deposed', 'aurora', 'efs', 'kms', 'secrets-manager', 'private-ca', 'acm', 'certificate-cards', 'glue', 'athena', 'organizations']) {
             this.load('--state', 'one=tests/fixtures/' + fixture + '-plan.json', '--state', 'two=tests/fixtures/' + fixture + '-plan.json');
             const candidates = this.driver.execute_script(`return [...document.querySelectorAll('#results button')].map(b => b.textContent)`);
             for (const address of candidates.slice(0, fixture === 'private-ca' ? 6 : 4)) {
