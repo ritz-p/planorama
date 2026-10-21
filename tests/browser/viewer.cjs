@@ -941,6 +941,22 @@ class ViewerTests {
         this.load('tests/fixtures/identity-providers-plan.json', '--focus', 'aws_iam_role.workload', '--focus-depth', '0');
         this.assertIn('Unavailable', this.find('#viewport').text);
     }
+    test_organization_policy_attachments_keep_identity_and_root_navigation() {
+        this.load('tests/fixtures/organization-policies-plan.json');
+        this.assertNotIn('PRIVATE_', this.driver.page_source);
+        this.choose('aws_organizations_policy.guardrails');
+        this.assertIn('SERVICE_CONTROL_POLICY (SCP)', this.find('[data-viewer-selected]').text);
+        this.choose('aws_organizations_policy.tags');
+        this.assertIn('TAG_POLICY', this.find('[data-viewer-selected]').text);
+        this.choose('aws_organizations_policy_attachment.root');
+        const link = this.find('[data-viewer-selected] a[data-reference-attribute="target_id"]');
+        this.driver.execute_script("arguments[0].dispatchEvent(new MouseEvent('click', {bubbles:true,cancelable:true}))", link);
+        this.assertEqual(this.find('[data-viewer-selected]').get_attribute('data-component-kind'), 'organization_root');
+        this.assertEqual(len(this.search('aws_organizations_policy_attachment.')), 4);
+        this.load('tests/fixtures/organization-policies-plan.json', '--focus', 'aws_organizations_policy_attachment.account', '--focus-depth', '0');
+        this.assertIn('Unavailable', this.find('#viewport').text);
+        this.assertFalse(this.driver.find_elements(By.CSS_SELECTOR, '#viewport a[data-reference-attribute]'));
+    }
     test_escaped_long_addresses_modes_and_individual_logical_targets() {
         let address = 'module.app["a.b"].aws_iam_role.item["</script><script>window.pwned=1</script>&\\\"' + 'x'.repeat(100) + '"]';
         let plan = {'format_version': '1.2', 'resource_changes': [ {'address': address, 'type': 'aws_iam_role', 'change': {'actions': ['create'], 'after': {'secret': 'DO_NOT_EXPOSE'}}}, {'address': 'aws_iam_role.item', 'type': 'aws_iam_role'}, {'address': 'data.aws_iam_role.item', 'type': 'aws_iam_role', 'mode': 'data'}, ]};

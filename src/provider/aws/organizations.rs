@@ -25,17 +25,24 @@ pub(crate) fn unsupported_data(
     kind: &str,
     mode: EntityMode,
 ) -> bool {
-    provider.is_aws() && mode == EntityMode::Data && kind == "aws_organizations_account"
+    provider.is_aws()
+        && mode == EntityMode::Data
+        && matches!(
+            kind,
+            "aws_organizations_account" | "aws_organizations_policy_attachment"
+        )
 }
 
-fn eligible(node: &TerraformEntity) -> bool {
+pub(super) fn eligible(node: &TerraformEntity) -> bool {
     node.provider.is_aws()
         && node.deposed_key.is_none()
         && node.action != Action::Delete
         && (node.mode == EntityMode::Managed
             || matches!(
                 node.resource_type.as_str(),
-                "aws_organizations_organization" | "aws_organizations_organizational_unit"
+                "aws_organizations_organization"
+                    | "aws_organizations_organizational_unit"
+                    | "aws_organizations_policy"
             ))
 }
 
@@ -45,7 +52,7 @@ pub(crate) fn root_index(path: &str) -> Option<usize> {
     (parsed.to_string() == index).then_some(parsed)
 }
 
-fn root_value<'a>(value: &'a Value, unknown: &Value, index: usize) -> Option<&'a str> {
+pub(super) fn root_value<'a>(value: &'a Value, unknown: &Value, index: usize) -> Option<&'a str> {
     if unknown == &Value::Bool(true) || unknown["roots"] == Value::Bool(true) {
         return None;
     }

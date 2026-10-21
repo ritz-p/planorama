@@ -70,3 +70,4 @@ examples/s3-policy.svg
 examples/s3-notification.svg
 examples/s3-replication.svg
 examples/organizations.svg
+examples/organization-policies.svg

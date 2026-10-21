@@ -96,6 +96,8 @@ pub struct ResourceReference {
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub enum ReferenceKind {
+    Information,
+    PolicyAttachment,
     Configured,
     Membership,
     OrganizationParent,

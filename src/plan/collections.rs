@@ -152,6 +152,7 @@ pub(super) fn annotate(
     let buses = eventbridge::bus_references(references);
     crate::provider::aws::waf::enrich(nodes, &evidence, &before_evidence);
     crate::provider::aws::organizations::annotate(nodes, references, &evidence);
+    crate::provider::aws::organization_policies::annotate(nodes, references, &evidence);
     crate::provider::aws::service_references::annotate(nodes, references, &evidence);
     for reference in references {
         let consumer = &nodes[reference.target];
