@@ -15,6 +15,7 @@ mod members;
 mod messaging;
 mod monitoring;
 mod network;
+pub(crate) mod organization_accounts;
 pub(crate) mod organization_policies;
 pub(crate) mod organizations;
 mod placement;

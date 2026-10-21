@@ -77,6 +77,7 @@ pub(crate) fn base_graph(plan: &TerraformPlan) -> Graph {
                             .sources
                             .iter()
                             .map(|&i| crate::model::ReferenceTarget {
+                                account_scope: None,
                                 state: None,
                                 id: (&plan.nodes[i]).into(),
                                 placement: crate::provider::placement(
@@ -92,6 +93,7 @@ pub(crate) fn base_graph(plan: &TerraformPlan) -> Graph {
                     .collect(),
                 entity: {
                     let mut entity = crate::model::ArchitectureEntity::terraform(fact.into());
+                    entity.represented_account = fact.represented_account.clone();
                     entity.scope = crate::provider::scope(fact);
                     entity
                 },

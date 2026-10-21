@@ -11,6 +11,16 @@ fn description(row: &Row<'_>) -> String {
         return row.reference.label.into();
     }
     let reference = row.reference;
+    if matches!(
+        row.reference.kind,
+        crate::model::ReferenceKind::DeploymentScope
+            | crate::model::ReferenceKind::DeploymentMember
+    ) {
+        return format!(
+            "{}; verified deployment-scope correspondence, not a Terraform dependency",
+            row.label(true)
+        );
+    }
     let target = row.target.map_or_else(
         || "unresolved".into(),
         |t| match &t.id.deposed_key {
@@ -91,6 +101,17 @@ pub(super) fn render(graph: &Graph, node: &Node, x: usize, y: usize, width: usiz
                     .find(|component| component.entity.id == id)
                     .map(|component| super::identity::architecture(&component.entity.id))
             });
+        }
+        if let Some(account) = row.target.and_then(|target| target.account_scope.as_ref()) {
+            href = if let Some((_, state)) = remote {
+                Some(format!(
+                    "{}{}",
+                    super::states::prefix(state),
+                    super::identity::account_scope(account)
+                ))
+            } else {
+                available.map(|_| super::identity::account_scope(account))
+            };
         }
         let label = row.label(href.is_some());
         if let Some(href) = &href {

@@ -65,6 +65,14 @@ pub(crate) fn annotate(
     evidence: &[(&Value, &Value)],
 ) {
     for (index, node) in nodes.iter_mut().enumerate() {
+        if eligible(node)
+            && node.mode == EntityMode::Managed
+            && node.resource_type == "aws_organizations_account"
+        {
+            let (value, unknown) = evidence[index];
+            node.represented_account = super::service_references::scalar(value, unknown, &["id"])
+                .and_then(crate::model::AwsAccountScope::new);
+        }
         if eligible(node) && node.resource_type == "aws_organizations_organization" {
             let (value, unknown) = evidence[index];
             node.organization_roots = value["roots"]
@@ -232,6 +240,7 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
                 .into_iter()
                 .flat_map(|r| r.sources.iter())
                 .map(|source| ReferenceTarget {
+                    account_scope: None,
                     state: None,
                     id: raw.nodes[*source].entity.provenance[0].clone(),
                     placement: raw.nodes[*source].placement,

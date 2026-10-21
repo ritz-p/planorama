@@ -6,6 +6,9 @@ fn reference_target(target: &crate::model::ReferenceTarget) -> serde_json::Value
     if let Some(state) = &target.state {
         value["state"] = state.as_str().into();
     }
+    if let Some(account) = &target.account_scope {
+        value["deployment_account"] = account.as_str().into();
+    }
     value
 }
 
@@ -22,7 +25,7 @@ pub(super) fn metadata(graph: &Graph, content: super::Content) -> String {
         serde_json::json!({"from":relationship.from.as_str(), "to":relationship.to.as_str(), "kind":format!("{:?}",relationship.kind).to_lowercase(), "directionality":relationship.directionality().as_str(), "inferred":relationship.inferred, "provenance":provenance})
     }).collect();
     let references: Vec<_> = graph.nodes.iter().flat_map(|node| node.references.iter().map(move |reference| {
-        serde_json::json!({"consumer":node.entity.id.as_str(), "attribute":reference.attribute, "kind": match reference.kind { crate::model::ReferenceKind::Information => "information", crate::model::ReferenceKind::PolicyAttachment => "policy_attachment", crate::model::ReferenceKind::Configured => "configured", crate::model::ReferenceKind::Membership => "membership", crate::model::ReferenceKind::OrganizationParent => "organization_parent", crate::model::ReferenceKind::OrganizationRoot(_) => "organization_root" }, "dependency":reference.dependency, "complete":reference.complete, "targets":reference.targets.iter().map(reference_target).collect::<Vec<_>>(), "issues":reference.issues.iter().map(|issue| format!("{issue:?}")).collect::<Vec<_>>()})
+        serde_json::json!({"consumer":node.entity.id.as_str(), "attribute":reference.attribute, "kind": match reference.kind { crate::model::ReferenceKind::DeploymentScope => "deployment_scope", crate::model::ReferenceKind::DeploymentMember => "deployment_member", crate::model::ReferenceKind::Information => "information", crate::model::ReferenceKind::PolicyAttachment => "policy_attachment", crate::model::ReferenceKind::Configured => "configured", crate::model::ReferenceKind::Membership => "membership", crate::model::ReferenceKind::OrganizationParent => "organization_parent", crate::model::ReferenceKind::OrganizationRoot(_) => "organization_root" }, "dependency":reference.dependency, "complete":reference.complete, "targets":reference.targets.iter().map(reference_target).collect::<Vec<_>>(), "issues":reference.issues.iter().map(|issue| format!("{issue:?}")).collect::<Vec<_>>()})
     })).collect();
     let reference_metadata = if references.is_empty() {
         String::new()

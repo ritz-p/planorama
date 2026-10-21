@@ -156,6 +156,7 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
                     .into_iter()
                     .flat_map(|r| r.sources.iter())
                     .map(|source| ReferenceTarget {
+                        account_scope: None,
                         state: None,
                         id: raw.nodes[*source].entity.provenance[0].clone(),
                         placement: raw.nodes[*source].placement,

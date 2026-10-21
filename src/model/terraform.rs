@@ -8,6 +8,7 @@ pub enum WafScope {
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct TerraformEntity {
+    pub represented_account: Option<super::AwsAccountScope>,
     pub organization_policy_type: Option<&'static str>,
     pub organization_roots: Vec<usize>,
     pub waf_scope: Option<WafScope>,

@@ -1234,3 +1234,30 @@ and [attachment](https://github.com/hashicorp/terraform-provider-aws/blob/v5.100
 ```sh
 planorama tests/fixtures/organization-policies-plan.json --format html -o examples/organization-policies.html
 ```
+
+## Organizations member Account deployment navigation
+
+A current managed Organizations Account can link to an existing verified AWS
+Account deployment frame when its known, valid 12-digit account identity matches
+the provider-evidence account. The provider's management account remains separate
+from the member identity. JSON-only provider scopes stay unknown; member resources
+never supply provider evidence. Names, emails, provider aliases and module/state
+names are not matching evidence.
+
+Matching runs after selection but checks member-identity ambiguity against the
+complete input. Duplicate member representations remain explicitly ambiguous even
+if filtering hides one. Missing, unknown, mismatched, deleted/deposed or excluded
+endpoints do not produce links. One unique member can navigate to separately
+state-qualified deployment frames in multiple input states. These are navigation
+correspondences, not Terraform dependencies or cross-state ownership. Account
+frames link back to the member; resources, actions and coverage counts are unchanged.
+
+The [maintained SVG](../examples/organization-deployments.svg) and
+[offline HTML](../examples/organization-deployments.html) use the synthetic
+[evidence fixture](../tests/fixtures/organization-deployments-plan.json). The
+snapshot test passes a synthetic saved-plan/configuration archive through the
+existing evidence validator, then renders the normal selection pipeline. This
+is a test-only example, not a CLI account-evidence bypass. Rendering that JSON
+alone deliberately shows no verified deployment link. Regenerate both example
+formats through the registered SVG generation script. Neither role ARNs nor
+credentials are copied into the output.

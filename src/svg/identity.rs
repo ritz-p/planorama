@@ -1,6 +1,10 @@
 use crate::model::architecture::Node;
 use std::fmt::Write;
 
+pub(super) fn account_scope(account: &crate::model::AwsAccountScope) -> String {
+    format!("deployment-account-{}", account.as_str())
+}
+
 pub(super) fn architecture(id: &crate::model::architecture::ArchitectureId) -> String {
     let mut encoded = String::from("architecture-");
     for byte in id.as_str().bytes() {
