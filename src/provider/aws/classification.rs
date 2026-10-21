@@ -16,6 +16,8 @@ pub(super) fn classify(resource_type: &str) -> ResourceRole {
         | "aws_cognito_user_pool"
         | "aws_cognito_user_pool_client"
         | "aws_cognito_identity_pool"
+        | "aws_sfn_state_machine"
+        | "aws_sfn_activity"
         | "aws_rds_global_cluster"
         | "aws_ecr_repository"
         | "aws_api_gateway_stage"

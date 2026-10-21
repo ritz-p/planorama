@@ -183,6 +183,11 @@
             "file": "Amazon-Cognito.svg",
             "source": "Architecture-Service-Icons_07312026/Arch_Security-Identity/48/Arch_Amazon-Cognito_48.svg",
             "sha256": "66a89c507aced4afefe99d39fa7d5b7bd22e3f6bed03f511a031bf44f57f34ce"
+        },
+        {
+            "file": "AWS-Step-Functions.svg",
+            "source": "Architecture-Service-Icons_07312026/Arch_Application-Integration/48/Arch_AWS-Step-Functions_48.svg",
+            "sha256": "c1bb81d6504d283c6b31cbd9516fa6b8364010ea3c30ae614507114ca34192ad"
         }
     ]
 }

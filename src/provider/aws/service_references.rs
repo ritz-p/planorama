@@ -24,6 +24,7 @@ fn label(resource: &str, attribute: &str) -> Option<&'static str> {
         ("aws_cognito_identity_pool", "cognito_identity_providers.provider_name") => {
             Some("User pool provider reference")
         }
+        ("aws_sfn_state_machine", "role_arn") => Some("Execution role reference"),
         ("aws_rds_cluster", "global_cluster_identifier") => Some("Global Cluster membership"),
         ("aws_db_proxy_default_target_group", "db_proxy_name") => Some("Proxy owner"),
         ("aws_db_proxy_target", "db_proxy_name") => Some("Configured proxy"),
@@ -107,6 +108,7 @@ fn source_fields(resource: &str, attribute: &str, source: &str) -> &'static [&'s
             "cognito_identity_providers.provider_name",
             "aws_cognito_user_pool",
         ) => &["endpoint"],
+        ("aws_sfn_state_machine", "role_arn", "aws_iam_role") => &["arn"],
         ("aws_rds_cluster", "global_cluster_identifier", "aws_rds_global_cluster") => {
             &["id", "global_cluster_identifier"]
         }

@@ -8,6 +8,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let out = std::path::PathBuf::from(std::env::var("OUT_DIR")?);
     for (file, id) in [
         ("Amazon-Cognito", "cognito"),
+        ("AWS-Step-Functions", "step-functions"),
         ("AWS-Organizations", "organizations"),
         ("Amazon-Virtual-Private-Cloud", "vpc"),
         ("Amazon-EC2", "ec2"),

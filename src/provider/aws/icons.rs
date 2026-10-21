@@ -5,6 +5,7 @@ pub(super) fn icon_for(resource_type: &str) -> Option<ResourceIcon> {
         "aws_cognito_user_pool" | "aws_cognito_user_pool_client" | "aws_cognito_identity_pool" => {
             ResourceIcon::Cognito
         }
+        "aws_sfn_state_machine" | "aws_sfn_activity" => ResourceIcon::StepFunctions,
         "aws_organizations_policy" | "aws_organizations_policy_attachment" => {
             ResourceIcon::Organizations
         }

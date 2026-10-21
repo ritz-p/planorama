@@ -23,6 +23,9 @@ pub(crate) mod organization_policies;
 pub(crate) mod organizations;
 mod placement;
 mod rds_proxy;
+#[cfg(test)]
+#[path = "../../tests/unit/semantic/step_functions.rs"]
+mod step_functions_tests;
 
 #[cfg(test)]
 #[path = "../../tests/unit/semantic/rds_global.rs"]
