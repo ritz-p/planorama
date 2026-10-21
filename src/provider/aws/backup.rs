@@ -10,13 +10,14 @@ pub(super) fn verified_resources(
     reference: &AttributeReference,
     evidence: &[(&Value, &Value)],
 ) -> bool {
+    let node = &nodes[reference.target];
     let current = |node: &TerraformEntity| {
         node.provider.is_aws()
             && node.mode == EntityMode::Managed
             && node.action != Action::Delete
             && node.deposed_key.is_none()
     };
-    if !current(&nodes[reference.target])
+    if !current(node)
         || !reference.complete
         || !reference.instances_explicit
         || !reference.issues.is_empty()
@@ -64,6 +65,16 @@ pub(super) fn verified_resources(
     for &source in &reference.sources {
         let endpoint = &nodes[source];
         if !current(endpoint)
+            || !super::service_references::cluster_binding_matches(
+                node.provider_configuration.as_ref(),
+                endpoint.provider_configuration.as_ref(),
+                super::scope::scope(node)
+                    .as_ref()
+                    .and_then(|s| s.region.as_ref()),
+                super::scope::scope(endpoint)
+                    .as_ref()
+                    .and_then(|s| s.region.as_ref()),
+            )
             || !matches!(
                 endpoint.resource_type.as_str(),
                 "aws_instance"

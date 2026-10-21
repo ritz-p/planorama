@@ -117,6 +117,57 @@ fn backup_resource_proof_rejects_partial_wildcard_and_filtered_selections() {
 }
 
 #[test]
+fn backup_resources_require_compatible_provider_and_regional_scope() {
+    for endpoint in [3, 4] {
+        for (case, verified) in [
+            ("same-region", true),
+            ("different-provider-region", false),
+            ("different-resource-region", false),
+            ("unknown-resource-region", false),
+            ("unknown-provider-region", false),
+        ] {
+            let mut value: Value = serde_json::from_str(FIXTURE).unwrap();
+            match case {
+                "same-region" => {}
+                "different-provider-region" => {
+                    let mut config = value["configuration"]["provider_config"]["aws"].clone();
+                    config["expressions"]["region"] = json!({"constant_value":"us-west-2"});
+                    value["configuration"]["provider_config"]["aws.other"] = config;
+                    value["configuration"]["root_module"]["resources"][endpoint]["provider_config_key"] =
+                        json!("aws.other");
+                }
+                "different-resource-region" => {
+                    value["configuration"]["root_module"]["resources"][endpoint]["expressions"]["region"] =
+                        json!({"constant_value":"us-west-2"});
+                    value["resource_changes"][endpoint]["change"]["after"]["region"] =
+                        json!("us-west-2");
+                }
+                "unknown-resource-region" => {
+                    value["configuration"]["root_module"]["resources"][endpoint]["expressions"]["region"] =
+                        json!({"references":["var.region"]});
+                }
+                "unknown-provider-region" => {
+                    value["configuration"]["provider_config"]["aws"]["expressions"]["region"] =
+                        json!({"references":["var.region"]});
+                }
+                _ => unreachable!(),
+            }
+            let parsed = plan::parse(&value.to_string()).unwrap();
+            let reference = parsed
+                .attributes
+                .iter()
+                .find(|r| r.attribute == "resources")
+                .unwrap();
+            assert_eq!(reference.sources.len(), 2);
+            assert_eq!(
+                reference.service_reference_verified, verified,
+                "{endpoint}: {case}"
+            );
+        }
+    }
+}
+
+#[test]
 fn backup_single_rule_proof_and_filtered_indexed_state_identity() {
     let mut value: Value = serde_json::from_str(FIXTURE).unwrap();
     let rule = value["resource_changes"][1]["change"]["after"]["rule"][0].clone();

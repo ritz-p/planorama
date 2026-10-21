@@ -351,6 +351,8 @@ All dedicated references require current managed AWS endpoints and known values.
 Selection `resources` is verified only when complete explicit ARN references
 equal the entire known ARN collection. Initial endpoint types are EC2 Instance,
 EBS Volume, EFS File System, RDS Instance/Cluster, DynamoDB Table and S3 Bucket.
+Every endpoint must have compatible provider configuration and the same known
+regional scope as the Selection; different or unknown regions remain unverified.
 Wildcards, extra literal values, unknowns, wrong types/providers and historical
 endpoints remain unavailable. Selections with tags, conditions or exclusions
 also remain unverified; these are never expanded into a resource list. Ordinary
