@@ -149,6 +149,8 @@ Each entry includes `kind`: `configured`, verified `membership`,
 independently of presentation ownership and network containment. `information`
 has no relationship target. The allowlisted Organizations policy-type display
 label is retained separately from this value-free reference metadata.
+`organization_root` entries include a zero-based `root_index`; together with the
+target Organization identity and enclosing state, it identifies the derived Root.
 
 Verified Route ownership uses the same projection boundary: the Route node remains
 in the graph, while its card is embedded in the owning table. `view/routes.rs`

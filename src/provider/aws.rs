@@ -19,6 +19,10 @@ pub(crate) mod organization_policies;
 pub(crate) mod organizations;
 mod placement;
 mod rds_proxy;
+
+#[cfg(test)]
+#[path = "../../tests/unit/semantic/rds_global.rs"]
+mod rds_global_tests;
 pub(crate) mod service_references;
 pub(crate) use placement::owner_affinities;
 mod routes;

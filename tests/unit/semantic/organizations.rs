@@ -67,6 +67,66 @@ fn roots_are_derived_and_private_attributes_are_not_rendered() {
 }
 
 #[test]
+fn distinct_root_indices_survive_reference_metadata() {
+    let mut input = fixture();
+    input["resource_changes"][0]["change"]["after"]["roots"] =
+        json!([{"id":"r-root"}, {"id":"r-second"}]);
+    input["resource_changes"][3]["change"]["after"]["parent_id"] = json!("r-second");
+    input["configuration"]["root_module"]["resources"][3]["expressions"]["parent_id"] = json!({"references":["aws_organizations_organization.main.roots[1].id", "aws_organizations_organization.main.roots[1]", "aws_organizations_organization.main.roots", "aws_organizations_organization.main"]});
+    let svg = crate::generate(&input.to_string(), &Default::default())
+        .unwrap()
+        .content;
+    let doc = roxmltree::Document::parse(&svg).unwrap();
+    let metadata = doc
+        .descendants()
+        .find(|n| n.attribute("id") == Some("resource-references"))
+        .unwrap();
+    let references: Vec<Value> = serde_json::from_str(metadata.text().unwrap()).unwrap();
+    let indices: std::collections::BTreeSet<_> = references
+        .iter()
+        .filter(|r| r["kind"] == "organization_root")
+        .map(|r| {
+            assert_eq!(
+                r["targets"][0]["address"],
+                "aws_organizations_organization.main"
+            );
+            r["root_index"].as_u64().unwrap()
+        })
+        .collect();
+    assert_eq!(indices, std::collections::BTreeSet::from([0, 1]));
+    assert!(
+        references
+            .iter()
+            .filter(|r| r["kind"] != "organization_root")
+            .all(|r| r.get("root_index").is_none())
+    );
+}
+
+#[test]
+fn unsupported_account_data_mode_matches_coverage_classification() {
+    for mode in ["managed", "data"] {
+        let input = json!({"format_version":"1.2", "resource_changes":[{
+            "address":if mode == "data" {"data.aws_organizations_account.member"} else {"aws_organizations_account.member"},
+            "type":"aws_organizations_account", "provider_name":"registry.terraform.io/hashicorp/aws", "mode":mode
+        }]});
+        let graph = semantic::transform(&plan::parse(&input.to_string()).unwrap());
+        assert_eq!(
+            graph.nodes[0].role == crate::model::ResourceRole::Unknown,
+            mode == "data"
+        );
+        assert_eq!(
+            graph
+                .coverage
+                .findings
+                .iter()
+                .any(|f| f.code == "unsupported_classification"),
+            mode == "data"
+        );
+        assert_eq!(graph.coverage.selected.resources, 1);
+    }
+}
+
+#[test]
 fn organization_cycles_and_omitted_parents_never_claim_membership() {
     let mut input = fixture();
     input["resource_changes"][1]["change"]["after"]["parent_id"] = json!("ou-root-platform");
