@@ -145,10 +145,13 @@ The SVG summary distinguishes spatial cards, logical resources and logical group
 cards while retaining total resource and action counts.
 Value-free reference evidence is available in `resource-references` metadata.
 Each entry includes `kind`: `configured`, verified `membership`,
-`organization_parent`, `organization_root`, `policy_attachment` or `information`,
+`organization_parent`, `organization_root`, `policy_attachment`, `information`,
+`deployment_scope` or `deployment_member`,
 independently of presentation ownership and network containment. `information`
 has no relationship target. The allowlisted Organizations policy-type display
-label is retained separately from this value-free reference metadata.
+label is retained separately from this value-free reference metadata. Deployment
+correspondence targets may include `deployment_account`, the verified AWS Account
+scope identifier. These references do not describe Terraform dependencies.
 
 Verified Route ownership uses the same projection boundary: the Route node remains
 in the graph, while its card is embedded in the owning table. `view/routes.rs`
