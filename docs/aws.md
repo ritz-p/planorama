@@ -1000,6 +1000,40 @@ and [Access Entry](https://registry.terraform.io/providers/hashicorp/aws/6.0.0/d
 contracts. See the maintained [SVG](../examples/eks.svg) and
 [offline HTML](../examples/eks.html).
 
+## RDS Proxy
+
+`aws_db_proxy` is an independent regional Connector card. Its default target group
+and targets are regional logical Controllers, with their own identities, actions,
+search and coverage. They use the Amazon RDS icon.
+
+`Proxy owner` and `Configured proxy` require an explicit reference to a current
+managed AWS Proxy's `name`/`id`, matching known values and compatible provider scope.
+`Target group` additionally requires the target and group to reference the same
+Proxy identity. A literal `default` group name does not establish ownership.
+`DB instance target` accepts an explicit DB Instance `identifier` reference;
+`DB cluster target` accepts an RDS Cluster `cluster_identifier` reference. They
+require validated group ownership and exactly one target kind, including known
+absence of the other kind. Ambiguous, unknown, foreign-provider/type, deleted or
+deposed resources do not prove these links. Ordinary Terraform references survive
+unverified cases; filtering preserves unavailable endpoint identities.
+
+Proxy `vpc_subnet_ids` and `vpc_security_group_ids` require complete explicit ID
+references, matching known values and current managed AWS endpoints in the same
+provider scope. Subnet evidence places the Proxy in the verified common VPC,
+never inside a target DB. Role and single-auth-block Secret references can be
+shown without their values. Multiple/unknown auth references remain ordinary
+Terraform provenance. Endpoint URLs, authentication values and connection-pool
+configuration are not displayed. The diagram does not certify connections,
+authentication, permissions or read/write routing.
+
+Terraform 1.9.8 / 1.16.6 and AWS Provider 5.100.0 / 6.0.0 schemas and offline plans
+were checked against the official
+[Proxy](https://registry.terraform.io/providers/hashicorp/aws/6.0.0/docs/resources/db_proxy),
+[default target group](https://registry.terraform.io/providers/hashicorp/aws/6.0.0/docs/resources/db_proxy_default_target_group)
+and [target](https://registry.terraform.io/providers/hashicorp/aws/6.0.0/docs/resources/db_proxy_target)
+contracts. See the maintained [SVG](../examples/rds-proxy.svg) and
+[offline HTML](../examples/rds-proxy.html).
+
 ## Containment
 
 Listener cards prefer nearby positions to their uniquely referenced managed LB.
@@ -1035,6 +1069,7 @@ do not invent a common container.
 | ElastiCache Replication Group | `subnet_group_name` → ElastiCache Subnet Group | Same verified VPC as the subnet group |
 | Lambda / EKS | `vpc_config.subnet_ids` | Common VPC |
 | EKS Node Group / Fargate Profile | `subnet_ids` | Verified current Subnets and common VPC; independent of cluster membership |
+| RDS Proxy | `vpc_subnet_ids` | Verified current Subnets and common VPC; independent of DB targets |
 | OpenSearch | `vpc_options.subnet_ids` | Common VPC |
 
 LB/ECS subnet references outside the chosen parent become Connection edges.
@@ -1055,9 +1090,12 @@ Examples: [multiple subnets](../examples/multi-container.svg),
 
 ## Security Group attachments
 
+RDS Proxy `vpc_security_group_ids` uses the strict current-resource and known-value
+checks described above before adding SG connections.
+
 | Consumer | Attribute |
 | --- | --- |
-| EC2, RDS Instance / Cluster | `vpc_security_group_ids` |
+| EC2, RDS Instance / Cluster / Proxy | `vpc_security_group_ids` |
 | Load Balancer, EFS Mount Target | `security_groups` |
 | ECS Service | `network_configuration.security_groups` |
 | VPC Endpoint | `security_group_ids` |
@@ -1067,8 +1105,8 @@ Examples: [multiple subnets](../examples/multi-container.svg),
 Each explicitly referenced AWS SG becomes a Connection to the managed consumer.
 Multiple groups and exact indexed references are supported, including external
 SG data sources. Attachment does not change containment or hide SG cards.
-EFS Mount Targets additionally require current managed SG endpoints and reject
-deleted consumers/endpoints; other consumers retain their existing data-SG rules.
+EFS Mount Targets and RDS Proxies additionally require current managed SG endpoints
+and reject deleted consumers/endpoints; other consumers retain their existing data-SG rules.
 
 The entire planned ID collection must match the referenced resources' IDs using
 planned values/unknown slots, with prior state available for cached data sources.
