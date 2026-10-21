@@ -38,6 +38,7 @@ impl Provider {
 pub enum ResourceIcon {
     Cognito,
     StepFunctions,
+    Redshift,
     Organizations,
     Vpc,
     Subnet,
@@ -85,6 +86,7 @@ impl ResourceIcon {
         match self {
             Self::Cognito => "Amazon Cognito",
             Self::StepFunctions => "AWS Step Functions",
+            Self::Redshift => "Amazon Redshift",
             Self::Organizations => "AWS Organizations",
             Self::Vpc | Self::Subnet | Self::Gateway | Self::Route | Self::Security => "Amazon VPC",
             Self::Ec2 => "Amazon EC2",

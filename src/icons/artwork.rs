@@ -5,6 +5,7 @@ impl ResourceIcon {
         match self {
             Self::Cognito => "planorama-icon-aws-cognito",
             Self::StepFunctions => "planorama-icon-aws-step-functions",
+            Self::Redshift => "planorama-icon-aws-redshift",
             Self::Organizations => "planorama-icon-aws-organizations",
             Self::Vpc | Self::Subnet | Self::Gateway | Self::Route | Self::Security => {
                 "planorama-icon-aws-vpc"
@@ -52,6 +53,7 @@ impl ResourceIcon {
             Self::StepFunctions => {
                 include_str!(concat!(env!("OUT_DIR"), "/AWS-Step-Functions.svg"))
             }
+            Self::Redshift => include_str!(concat!(env!("OUT_DIR"), "/Amazon-Redshift.svg")),
             Self::Organizations => include_str!(concat!(env!("OUT_DIR"), "/AWS-Organizations.svg")),
             Self::Ecr => include_str!(concat!(
                 env!("OUT_DIR"),

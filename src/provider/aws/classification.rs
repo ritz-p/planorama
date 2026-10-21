@@ -18,6 +18,8 @@ pub(super) fn classify(resource_type: &str) -> ResourceRole {
         | "aws_cognito_identity_pool"
         | "aws_sfn_state_machine"
         | "aws_sfn_activity"
+        | "aws_redshift_cluster"
+        | "aws_redshift_subnet_group"
         | "aws_rds_global_cluster"
         | "aws_ecr_repository"
         | "aws_api_gateway_stage"
@@ -101,6 +103,7 @@ pub(super) fn classify(resource_type: &str) -> ResourceRole {
         | "aws_iam_saml_provider"
         | "aws_iam_group" => ResourceRole::Identity,
         "aws_security_group"
+        | "aws_redshift_parameter_group"
         | "aws_ecr_repository_policy"
         | "aws_ecr_lifecycle_policy"
         | "aws_s3_bucket_policy"

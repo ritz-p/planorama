@@ -25,6 +25,8 @@ fn label(resource: &str, attribute: &str) -> Option<&'static str> {
             Some("User pool provider reference")
         }
         ("aws_sfn_state_machine", "role_arn") => Some("Execution role reference"),
+        ("aws_redshift_cluster", "cluster_subnet_group_name") => Some("Cluster subnet group"),
+        ("aws_redshift_cluster", "cluster_parameter_group_name") => Some("Cluster parameter group"),
         ("aws_rds_cluster", "global_cluster_identifier") => Some("Global Cluster membership"),
         ("aws_db_proxy_default_target_group", "db_proxy_name") => Some("Proxy owner"),
         ("aws_db_proxy_target", "db_proxy_name") => Some("Configured proxy"),
@@ -109,6 +111,12 @@ fn source_fields(resource: &str, attribute: &str, source: &str) -> &'static [&'s
             "aws_cognito_user_pool",
         ) => &["endpoint"],
         ("aws_sfn_state_machine", "role_arn", "aws_iam_role") => &["arn"],
+        ("aws_redshift_cluster", "cluster_subnet_group_name", "aws_redshift_subnet_group")
+        | (
+            "aws_redshift_cluster",
+            "cluster_parameter_group_name",
+            "aws_redshift_parameter_group",
+        ) => &["name", "id"],
         ("aws_rds_cluster", "global_cluster_identifier", "aws_rds_global_cluster") => {
             &["id", "global_cluster_identifier"]
         }
@@ -357,6 +365,7 @@ pub(crate) fn annotate(
         reference.service_reference_verified &=
             super::waf::verify_scope(nodes, reference, evidence);
         if (node.resource_type == "aws_ecs_service" && reference.attribute == "cluster")
+            || node.resource_type == "aws_redshift_cluster"
             || matches!(
                 node.resource_type.as_str(),
                 "aws_db_proxy_default_target_group" | "aws_db_proxy_target"

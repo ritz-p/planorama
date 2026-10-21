@@ -279,6 +279,35 @@ The AWS Provider 5.100.0 [State Machine](https://registry.terraform.io/providers
 and [Activity](https://registry.terraform.io/providers/hashicorp/aws/5.100.0/docs/resources/sfn_activity)
 schema defines regional resources and a scalar `role_arn`; ASL is an opaque string.
 
+## Redshift provisioned clusters
+
+`aws_redshift_cluster` and `aws_redshift_subnet_group` are regional spatial Nodes;
+`aws_redshift_parameter_group` is a regional Logical Policy. All use Amazon
+Redshift icons/service names. Serverless resources retain their existing fallback.
+
+Cluster subnet/parameter group references require complete unique explicit
+references to the corresponding group's `name` or `id`, matching known values
+and compatible provider/region evidence. Subnet Group `subnet_ids` and Cluster
+`vpc_security_group_ids` require complete explicit ID collections equal to the
+known current managed AWS endpoint IDs. Historical, unknown, mismatched,
+ambiguous and foreign endpoints remain unverified and diagnosable.
+
+A verified Subnet Group is placed in its Subnets' common VPC with proven VPC
+references. A Cluster follows that verified group to the VPC, including when
+only one Subnet is selected; it is never duplicated across Subnets or treated as
+deployed in every listed Subnet. Security Group connections describe configured
+association, not reachability or effective access. Parameter values, passwords
+and connection endpoints are never emitted. Filtering and named states retain
+each resource's identity and coverage.
+
+See the [synthetic fixture](../tests/fixtures/redshift-plan.json),
+[SVG](../examples/redshift.svg) and [offline HTML](../examples/redshift.html).
+Regenerate HTML in Docker with `cargo run --locked -- tests/fixtures/redshift-plan.json --format html -o examples/redshift.html`.
+The AWS 5.100.0 schema and official [Cluster](https://registry.terraform.io/providers/hashicorp/aws/5.100.0/docs/resources/redshift_cluster),
+[Subnet Group](https://registry.terraform.io/providers/hashicorp/aws/5.100.0/docs/resources/redshift_subnet_group)
+and [Parameter Group](https://registry.terraform.io/providers/hashicorp/aws/5.100.0/docs/resources/redshift_parameter_group)
+contracts define these scalar names and set-valued ID collections.
+
 ## Athena Workgroup and Data Catalog
 
 Exact AWS `aws_athena_workgroup` and `aws_athena_data_catalog` are independent
