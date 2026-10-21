@@ -8,6 +8,7 @@ pub(super) fn classify(resource_type: &str) -> ResourceRole {
     match resource_type {
         "aws_vpc" | "aws_subnet" => ResourceRole::Container,
         "aws_instance"
+        | "aws_rds_global_cluster"
         | "aws_ecr_repository"
         | "aws_api_gateway_stage"
         | "aws_athena_workgroup"
