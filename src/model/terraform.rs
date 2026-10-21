@@ -8,6 +8,7 @@ pub enum WafScope {
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct TerraformEntity {
+    pub organization_roots: Vec<usize>,
     pub waf_scope: Option<WafScope>,
     pub route_entries: Vec<super::RouteEntry>,
     pub address: String,

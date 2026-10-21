@@ -108,7 +108,7 @@ impl Coverage {
                 let account_applicable = node.provider.is_aws() && node.mode == EntityMode::Managed;
                 let region_applicable = account_applicable
                     && !scope.as_ref().is_some_and(|scope| scope.global)
-                    && crate::provider::classify(&node.provider, &node.resource_type)
+                    && crate::classification::classify_entity(node)
                         != crate::model::ResourceRole::Unknown;
                 (
                     node.into(),
@@ -162,9 +162,7 @@ impl Coverage {
             }
         }
         for node in &plan.nodes {
-            if crate::provider::classify(&node.provider, &node.resource_type)
-                == crate::model::ResourceRole::Unknown
-            {
+            if crate::classification::classify_entity(node) == crate::model::ResourceRole::Unknown {
                 result.findings.push(Finding {
                     source: node.into(),
                     attribute: None,

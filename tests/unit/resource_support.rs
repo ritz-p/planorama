@@ -131,6 +131,11 @@ fn matrix() -> String {
                     })
             };
             let role = provider::classify(&entity.provider, resource_type);
+            let data_role = graph
+                .nodes
+                .iter()
+                .find(|node| node.mode == model::EntityMode::Data)
+                .map_or(role, |node| node.role);
             let icon = icons::icon_for(
                 icons::Provider::from_identity(&entity.provider),
                 resource_type,
@@ -156,7 +161,7 @@ fn matrix() -> String {
                 .collect();
             writeln!(
                 output,
-                "| `{resource_type}` | {role:?} / {role:?} | {} / {} | {icon} | {scope} | {} |",
+                "| `{resource_type}` | {role:?} / {data_role:?} | {} / {} | {icon} | {scope} | {} |",
                 display(model::EntityMode::Managed),
                 display(model::EntityMode::Data),
                 if rules.is_empty() {

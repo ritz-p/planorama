@@ -6,6 +6,9 @@ mod tests;
 
 pub(super) fn classify(resource_type: &str) -> ResourceRole {
     match resource_type {
+        "aws_organizations_organization"
+        | "aws_organizations_organizational_unit"
+        | "aws_organizations_account" => ResourceRole::Node,
         "aws_vpc" | "aws_subnet" => ResourceRole::Container,
         "aws_instance"
         | "aws_rds_global_cluster"

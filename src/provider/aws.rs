@@ -15,6 +15,7 @@ mod members;
 mod messaging;
 mod monitoring;
 mod network;
+pub(crate) mod organizations;
 mod placement;
 mod rds_proxy;
 
@@ -152,6 +153,9 @@ pub(super) fn transform(raw: crate::semantic::Input) -> crate::model::Graph {
     service_members::present(&raw, &mut graph);
     let contained = crate::semantic::Input { graph, ..raw };
     let mut graph = data::visible(associations::lower(&contained));
-    graph.components = components::infer(&contained, &graph);
+    graph
+        .components
+        .extend(components::infer(&contained, &graph));
+    organizations::present(&contained, &mut graph);
     graph
 }

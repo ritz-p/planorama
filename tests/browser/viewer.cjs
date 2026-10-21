@@ -85,7 +85,7 @@ class ViewerTests {
         this.assertNotIn('PRIVATE_', this.find('#viewport').text);
     }
     test_neighborhood_export_preserves_presentations_and_removes_unrelated_resources() {
-        for (const fixture of ['viewer', 'routes', 'association', 'deposed', 'aurora', 'efs', 'kms', 'secrets-manager', 'private-ca', 'acm', 'certificate-cards', 'glue', 'athena']) {
+        for (const fixture of ['viewer', 'routes', 'association', 'deposed', 'aurora', 'efs', 'kms', 'secrets-manager', 'private-ca', 'acm', 'certificate-cards', 'glue', 'athena', 'organizations']) {
             this.load('--state', 'one=tests/fixtures/' + fixture + '-plan.json', '--state', 'two=tests/fixtures/' + fixture + '-plan.json');
             const candidates = this.driver.execute_script(`return [...document.querySelectorAll('#results button')].map(b => b.textContent)`);
             for (const address of candidates.slice(0, fixture === 'private-ca' ? 6 : 4)) {
@@ -900,6 +900,25 @@ class ViewerTests {
         this.load('tests/fixtures/iam-plan.json', '--focus', 'aws_iam_group_membership.team', '--focus-depth', '0');
         this.assertIn('Unavailable', this.find('#viewport').text);
         this.assertEqual(len(this.driver.find_elements(By.CSS_SELECTOR, '#viewport a[href]')), 0);
+    }
+    test_organizations_root_provenance_and_offline_navigation() {
+        this.load('tests/fixtures/organizations-plan.json', '--icon-mode', 'service-name');
+        this.assertNotIn('PRIVATE_', this.driver.page_source);
+        this.assertIn('AWS Organizations', this.driver.page_source);
+        this.choose('aws_organizations_organizational_unit.engineering');
+        const link = this.find('[data-viewer-selected] a[data-reference-attribute="parent_id"]');
+        this.driver.execute_script("arguments[0].dispatchEvent(new MouseEvent('click', {bubbles:true,cancelable:true}))", link);
+        this.assertEqual(this.find('[data-viewer-selected]').get_attribute('data-component-kind'), 'organization_root');
+        this.assertIn('Source Organization', this.find('#selection').text);
+        this.choose('aws_organizations_organization.main');
+        this.assertIn('Derived Roots', this.find('#selection').text);
+        this.assertNotIn('Logical Component membership', this.find('#selection').text);
+        this.load('tests/fixtures/organizations-plan.json', '--focus', 'aws_organizations_organizational_unit.engineering', '--focus-depth', '0');
+        this.assertIn('Unavailable', this.find('#viewport').text);
+        this.assertFalse(this.driver.find_elements(By.CSS_SELECTOR, '[data-component-kind="organization_root"]'));
+        this.load('--state', 'one=tests/fixtures/organizations-plan.json', '--state', 'two=tests/fixtures/organizations-plan.json');
+        this.assertEqual(len(this.driver.find_elements(By.CSS_SELECTOR, '[data-component-kind="organization_root"]')), 2);
+        this.assertTrue(this.driver.execute_script("return Array.from(document.querySelectorAll('a[data-reference-attribute=parent_id]')).every(a => { const target = document.getElementById(a.getAttribute('href').slice(1)); return target && target.closest('[data-state-id]') === a.closest('[data-state-id]'); })"));
     }
     test_identity_provider_references_preserve_offline_navigation() {
         this.load('tests/fixtures/identity-providers-plan.json', '--icon-mode', 'service-name');
