@@ -78,6 +78,9 @@ resolved source identities, completeness and diagnostics; it never expands a
 resource dependency transitively. Module/input/output resolution follows the
 parser's existing evidence. Graph-level references such as `depends_on` are
 distinct from configured attribute usage. Evaluated attribute values are not retained.
+Organization hierarchy uses `organization_parent` or `organization_root` reference
+kinds. Derived Roots retain their source's full Terraform identity, including the
+current/deposed discriminator, independently of the display address.
 In SVG `resource-references` metadata, remote targets include `state` alongside
 their address and deposed key. Targets without `state` belong to the enclosing
 state section, or the single input in unnamed diagrams.
