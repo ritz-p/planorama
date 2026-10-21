@@ -1,0 +1,24 @@
+{
+  "format_version":"1.2", "terraform_version":"1.9.8",
+  "resource_changes":[
+    {"address":"aws_vpc.main","type":"aws_vpc","change":{"actions":["no-op"],"after":{"id":"vpc-fixture"}}},
+    {"address":"aws_subnet.a","type":"aws_subnet","change":{"actions":["no-op"],"after":{"id":"subnet-a","vpc_id":"vpc-fixture"}}},
+    {"address":"aws_subnet.b","type":"aws_subnet","change":{"actions":["no-op"],"after":{"id":"subnet-b","vpc_id":"vpc-fixture"}}},
+    {"address":"aws_redshift_subnet_group.main","type":"aws_redshift_subnet_group","change":{"actions":["create"],"after":{"name":"fixture-subnets","subnet_ids":["subnet-a","subnet-b"]}}},
+    {"address":"aws_redshift_parameter_group.main","type":"aws_redshift_parameter_group","change":{"actions":["create"],"after":{"name":"fixture-parameters","parameter":[{"name":"PRIVATE_PARAMETER","value":"PRIVATE_VALUE"}]}}},
+    {"address":"aws_security_group.main","type":"aws_security_group","change":{"actions":["no-op"],"after":{"id":"sg-fixture","vpc_id":"vpc-fixture"}}},
+    {"address":"aws_redshift_cluster.main","type":"aws_redshift_cluster","change":{"actions":["create"],"after":{"cluster_subnet_group_name":"fixture-subnets","cluster_parameter_group_name":"fixture-parameters","vpc_security_group_ids":["sg-fixture"],"master_password":"PRIVATE_PASSWORD","endpoint":"PRIVATE_ENDPOINT"}}}
+  ],
+  "configuration":{
+    "provider_config":{"aws":{"full_name":"registry.terraform.io/hashicorp/aws","version_constraint":"5.100.0","expressions":{"region":{"constant_value":"us-east-1"}}}},
+    "root_module":{"resources":[
+      {"address":"aws_vpc.main","provider_config_key":"aws"},
+      {"address":"aws_subnet.a","provider_config_key":"aws","expressions":{"vpc_id":{"references":["aws_vpc.main.id"]}}},
+      {"address":"aws_subnet.b","provider_config_key":"aws","expressions":{"vpc_id":{"references":["aws_vpc.main.id"]}}},
+      {"address":"aws_redshift_subnet_group.main","provider_config_key":"aws","expressions":{"subnet_ids":{"references":["aws_subnet.a.id","aws_subnet.b.id"]}}},
+      {"address":"aws_redshift_parameter_group.main","provider_config_key":"aws"},
+      {"address":"aws_security_group.main","provider_config_key":"aws","expressions":{"vpc_id":{"references":["aws_vpc.main.id"]}}},
+      {"address":"aws_redshift_cluster.main","provider_config_key":"aws","expressions":{"cluster_subnet_group_name":{"references":["aws_redshift_subnet_group.main.name"]},"cluster_parameter_group_name":{"references":["aws_redshift_parameter_group.main.name"]},"vpc_security_group_ids":{"references":["aws_security_group.main.id"]}}}
+    ]}
+  }
+}

@@ -28,6 +28,11 @@ fn static_reference<'a>(
 pub(in crate::provider::aws) fn resolved_subnets(raw: &Input, target: usize) -> Option<&[usize]> {
     let (attribute, group_type) = group_rule(&raw.nodes[target].resource_type)?;
     let group_ref = static_reference(raw, target, attribute)?;
+    if raw.nodes[target].resource_type == "aws_redshift_cluster"
+        && !group_ref.service_reference_verified
+    {
+        return None;
+    }
     let [group] = group_ref.sources.as_slice() else {
         return None;
     };
@@ -40,6 +45,11 @@ pub(in crate::provider::aws) fn resolved_subnets(raw: &Input, target: usize) -> 
         return None;
     }
     let subnets = static_reference(raw, *group, "subnet_ids")?;
+    if raw.nodes[target].resource_type == "aws_redshift_cluster"
+        && !subnets.service_reference_verified
+    {
+        return None;
+    }
     subnets
         .sources
         .iter()
@@ -61,6 +71,7 @@ pub(in crate::provider::aws) fn group_configuration_matches(
 
 fn group_rule(resource_type: &str) -> Option<(&'static str, &'static str)> {
     match resource_type {
+        "aws_redshift_cluster" => Some(("cluster_subnet_group_name", "aws_redshift_subnet_group")),
         "aws_db_instance" | "aws_rds_cluster" => {
             Some(("db_subnet_group_name", "aws_db_subnet_group"))
         }
@@ -93,7 +104,10 @@ pub(super) fn infer(raw: &Input, mut graph: Graph) -> Graph {
         let group = static_reference(raw, target, attribute)
             .expect("resolved subnet group")
             .sources[0];
-        let parent = if node.resource_type == "aws_elasticache_replication_group" {
+        let parent = if matches!(
+            node.resource_type.as_str(),
+            "aws_elasticache_replication_group" | "aws_redshift_cluster"
+        ) {
             (parents[group].len() == 1)
                 .then(|| *parents[group].first().expect("one parent"))
                 .filter(|&parent| raw.nodes[parent].resource_type == "aws_vpc")

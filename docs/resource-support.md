@@ -244,6 +244,9 @@ Provider source: `registry.terraform.io/hashicorp/aws`.
 | `aws_rds_clusters` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Database / Amazon RDS | Unknown | — |
 | `aws_rds_global_cluster` | Node / Node | Spatial / Spatial | Database / Amazon RDS | Global | [aws/service_references.rs](../src/provider/aws/service_references.rs) |
 | `aws_rds_snapshots` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Database / Amazon RDS | Unknown | — |
+| `aws_redshift_cluster` | Node / Node | Spatial / Spatial | Redshift / Amazon Redshift | Regional (conditional) | [aws/containment/indirect.rs](../src/provider/aws/containment/indirect.rs), [aws/network.rs](../src/provider/aws/network.rs), [aws/security_groups.rs](../src/provider/aws/security_groups.rs), [aws/service_references.rs](../src/provider/aws/service_references.rs) |
+| `aws_redshift_parameter_group` | Policy / Policy | Logical / Logical | Redshift / Amazon Redshift | Regional (conditional) | [aws.rs](../src/provider/aws.rs), [aws/service_references.rs](../src/provider/aws/service_references.rs) |
+| `aws_redshift_subnet_group` | Node / Node | Spatial / Spatial | Redshift / Amazon Redshift | Regional (conditional) | [aws/containment/indirect.rs](../src/provider/aws/containment/indirect.rs), [aws/containment/vpc_scope.rs](../src/provider/aws/containment/vpc_scope.rs), [aws/network.rs](../src/provider/aws/network.rs), [aws/service_references.rs](../src/provider/aws/service_references.rs) |
 | `aws_region` | Unknown / Unknown | Spatial (unresolved) / Omitted | — | Unknown | — |
 | `aws_route` | Connector / Connector | Spatial / Spatial | Route / Amazon VPC | Regional (conditional) | [aws/diagnostics.rs](../src/provider/aws/diagnostics.rs), [aws/routes.rs](../src/provider/aws/routes.rs) |
 | `aws_route53_delegation_set` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | — | Global | — |

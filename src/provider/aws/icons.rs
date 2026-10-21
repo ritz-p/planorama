@@ -6,6 +6,9 @@ pub(super) fn icon_for(resource_type: &str) -> Option<ResourceIcon> {
             ResourceIcon::Cognito
         }
         "aws_sfn_state_machine" | "aws_sfn_activity" => ResourceIcon::StepFunctions,
+        "aws_redshift_cluster" | "aws_redshift_subnet_group" | "aws_redshift_parameter_group" => {
+            ResourceIcon::Redshift
+        }
         "aws_organizations_policy" | "aws_organizations_policy_attachment" => {
             ResourceIcon::Organizations
         }

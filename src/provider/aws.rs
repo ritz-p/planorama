@@ -24,6 +24,9 @@ pub(crate) mod organizations;
 mod placement;
 mod rds_proxy;
 #[cfg(test)]
+#[path = "../../tests/unit/semantic/redshift.rs"]
+mod redshift_tests;
+#[cfg(test)]
 #[path = "../../tests/unit/semantic/step_functions.rs"]
 mod step_functions_tests;
 
@@ -94,6 +97,7 @@ pub(super) fn reference_label(resource_type: &str, attribute: &str) -> &'static 
 
 pub(super) fn placement(resource_type: &str) -> crate::model::Placement {
     match resource_type {
+        "aws_redshift_parameter_group" => crate::model::Placement::Logical,
         "aws_organizations_policy" | "aws_organizations_policy_attachment" => {
             crate::model::Placement::Logical
         }
