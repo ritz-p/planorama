@@ -134,7 +134,8 @@ copied, and no clipboard reading, network access or storage is used.
 
 The viewer consumes only selected view identities and rendered metadata. It does
 not embed or reparse the input plan. The index explicitly lists identity fields;
-attribute values are not added to it or to scripts. HTML also omits Route
+arbitrary attribute values are not added to it or to scripts. SVG/HTML may show
+allowlisted Organizations policy-type labels. HTML also omits Route
 destination constants from diagram text, titles and metadata; standalone SVG
 retains its existing destination display. Graph selection and routed geometry
 remain unchanged.

@@ -15,6 +15,7 @@ mod members;
 mod messaging;
 mod monitoring;
 mod network;
+pub(crate) mod organization_policies;
 pub(crate) mod organizations;
 mod placement;
 mod rds_proxy;
@@ -86,6 +87,9 @@ pub(super) fn reference_label(resource_type: &str, attribute: &str) -> &'static 
 
 pub(super) fn placement(resource_type: &str) -> crate::model::Placement {
     match resource_type {
+        "aws_organizations_policy" | "aws_organizations_policy_attachment" => {
+            crate::model::Placement::Logical
+        }
         "aws_db_proxy_default_target_group" | "aws_db_proxy_target" => {
             crate::model::Placement::Logical
         }
@@ -157,5 +161,6 @@ pub(super) fn transform(raw: crate::semantic::Input) -> crate::model::Graph {
         .components
         .extend(components::infer(&contained, &graph));
     organizations::present(&contained, &mut graph);
+    organization_policies::present(&contained, &mut graph);
     graph
 }

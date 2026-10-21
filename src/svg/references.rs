@@ -7,6 +7,9 @@ use std::fmt::Write;
 mod tests;
 
 fn description(row: &Row<'_>) -> String {
+    if row.reference.kind == crate::model::ReferenceKind::Information {
+        return row.reference.label.into();
+    }
     let reference = row.reference;
     let target = row.target.map_or_else(
         || "unresolved".into(),
@@ -103,6 +106,8 @@ pub(super) fn render(graph: &Graph, node: &Node, x: usize, y: usize, width: usiz
                 super::escape(&row.reference.attribute)
             )
             .unwrap();
+        } else if row.reference.kind == crate::model::ReferenceKind::Information {
+            svg.push_str("<g>");
         } else {
             write!(
                 svg,

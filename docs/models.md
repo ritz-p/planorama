@@ -6,7 +6,9 @@ attribute provenance, outputs, remote references, checks, status and diagnostics
 Entities retain native address, deposed key, previous address, provider, module,
 mode, action and safe lifecycle metadata. Current and deposed objects at one
 address remain distinct. Before/after values and sensitive import identities are
-not stored. Collection/scalar identity proofs are boolean facts, not raw values.
+not stored as arbitrary values. Organizations policy types retain only an allowlisted
+static label for SVG/HTML; unknown values are discarded. Collection/scalar identity
+proofs are boolean facts, not raw values.
 Subscription endpoint evidence similarly retains only ARN equality and a boolean
 protocol/type compatibility proof. Event-source mappings also retain a boolean
 function-name/ARN equality proof. EventBridge targets retain a boolean Rule-name
@@ -77,9 +79,13 @@ changing completeness or the service-specific verification rules.
 resolved source identities, completeness and diagnostics; it never expands a
 resource dependency transitively. Module/input/output resolution follows the
 parser's existing evidence. Graph-level references such as `depends_on` are
-distinct from configured attribute usage. Evaluated attribute values are not retained.
-Organization hierarchy uses `organization_parent` or `organization_root` reference
-kinds. Derived Roots retain their source's full Terraform identity, including the
+distinct from configured attribute usage. Arbitrary evaluated attribute values are
+not retained; the allowlisted Organizations policy-type label is an explicit exception.
+Reference kinds are `configured`, `membership`, `organization_parent`,
+`organization_root`, `policy_attachment` and `information`. Information rows have
+no relationship target; direct attachment and hierarchy kinds describe only their
+verified configuration facts.
+Derived Roots retain their source's full Terraform identity, including the
 current/deposed discriminator, independently of the display address.
 Root reference metadata preserves `root_index` separately from its source
 Organization identity. Coverage uses the same mode-aware classification as nodes;

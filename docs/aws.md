@@ -1231,3 +1231,38 @@ Generate offline HTML with:
 ```sh
 planorama tests/fixtures/organizations-plan.json --format html -o examples/organizations.html
 ```
+
+## Organizations policies and direct attachments
+
+`aws_organizations_policy` and `aws_organizations_policy_attachment` retain
+individual logical rows, Terraform actions and resource counts. Policies display
+an allowlisted policy type; `SERVICE_CONTROL_POLICY` is identified as SCP, while
+TAG/BACKUP/other recognized types keep their own names. Unknown types remain
+explicitly unsupported. Policy content, description, conditions and account emails
+are never retained for rendering. Policy data sources use the real provider schema;
+there is no policy-attachment data source. Deleted/deposed policies use their
+own before-value for the type label; current configuration never creates past
+attachments. Data policies may be referenced through `id` or `policy_id`; managed
+policies use `id`. The referenced field must match the known attachment value.
+
+Each attachment independently verifies `policy_id` and `target_id` against a
+complete, explicit, unique, current AWS reference and known matching plan values.
+Targets are derived Organization Roots, OUs or member Accounts. Its two labeled
+reference rows describe the configured direct attachment and preserve partial
+information when one endpoint is unresolved. Parallel attachments remain separate
+resources. Filtering never restores a hidden policy, Organization or account.
+These references do not calculate inherited/effective policy, IAM authorization
+or runtime application success. Dependency arrows remain Terraform dependencies.
+Policies/attachments keep the executing provider's verified management-account
+scope, separately from the member-account identity at the target.
+
+The [synthetic input](../tests/fixtures/organization-policies-plan.json),
+[SVG](../examples/organization-policies.svg) and
+[offline HTML](../examples/organization-policies.html) cover Root, OU, Account
+and parallel attachments. Schema verification used AWS Provider 5.100.0:
+[policy](https://github.com/hashicorp/terraform-provider-aws/blob/v5.100.0/internal/service/organizations/policy.go)
+and [attachment](https://github.com/hashicorp/terraform-provider-aws/blob/v5.100.0/internal/service/organizations/policy_attachment.go).
+
+```sh
+planorama tests/fixtures/organization-policies-plan.json --format html -o examples/organization-policies.html
+```

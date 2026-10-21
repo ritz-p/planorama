@@ -145,9 +145,10 @@ The SVG summary distinguishes spatial cards, logical resources and logical group
 cards while retaining total resource and action counts.
 Value-free reference evidence is available in `resource-references` metadata.
 Each entry includes `kind`: `configured`, verified `membership`,
-`organization_parent` or `organization_root`, independently of effective
-presentation ownership and network containment. Organization hierarchy references
-do not introduce network containment.
+`organization_parent`, `organization_root`, `policy_attachment` or `information`,
+independently of presentation ownership and network containment. `information`
+has no relationship target. The allowlisted Organizations policy-type display
+label is retained separately from this value-free reference metadata.
 `organization_root` entries include a zero-based `root_index`; together with the
 target Organization identity and enclosing state, it identifies the derived Root.
 

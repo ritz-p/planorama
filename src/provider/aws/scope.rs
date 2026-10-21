@@ -14,6 +14,10 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
         });
     }
     let global = entity.waf_scope == Some(crate::model::WafScope::CloudFront)
+        || matches!(
+            resource,
+            "aws_organizations_policy" | "aws_organizations_policy_attachment"
+        )
         || resource == "aws_rds_global_cluster"
         || resource.starts_with("aws_iam_")
         || resource.starts_with("aws_cloudfront_")
