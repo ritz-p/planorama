@@ -138,3 +138,40 @@ fn indexed_roots_keep_structural_identity() {
             )
     );
 }
+
+#[test]
+fn derived_roots_retain_current_source_identity_with_deposed_organizations() {
+    let mut input = fixture();
+    let mut old = input["resource_changes"][0].clone();
+    old["deposed"] = json!("old");
+    old["change"]["actions"] = json!(["delete"]);
+    old["change"]["after"] = Value::Null;
+    input["resource_changes"].as_array_mut().unwrap().push(old);
+    let graph = semantic::transform(&plan::parse(&input.to_string()).unwrap());
+    let selected = crate::view::single(&graph, &Default::default()).unwrap();
+    let svg = crate::svg::render(&selected, &crate::layout::Layout::new(&selected));
+    let doc = roxmltree::Document::parse(&svg).unwrap();
+    let root = doc
+        .descendants()
+        .find(|n| n.attribute("data-component-kind") == Some("organization_root"))
+        .unwrap();
+    let href = root
+        .descendants()
+        .find_map(|n| n.attribute("href"))
+        .unwrap();
+    let source = doc
+        .descendants()
+        .find(|n| n.attribute("id") == href.strip_prefix('#'))
+        .unwrap();
+    assert!(source.attribute("data-deposed-key").is_none());
+    assert!(!href.contains("deposed"));
+    let changed = crate::view::single(
+        &graph,
+        &crate::view::Options {
+            changed_only: true,
+            ..Default::default()
+        },
+    )
+    .unwrap();
+    assert!(changed.components.is_empty());
+}

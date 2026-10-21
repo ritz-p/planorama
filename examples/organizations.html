@@ -573,6 +573,11 @@ function exportPresentation(context, index, requested, provenanceSeeds) {
     return clone;
   }
   const output = project(svg);
+  const outputIds = new Set([...output.querySelectorAll('[id]')].map(el => el.id));
+  for (const link of output.querySelectorAll('a[href]')) {
+    const href = link.getAttribute('href');
+    if (href.startsWith('#') && !outputIds.has(href.slice(1))) link.removeAttribute('href');
+  }
   for (const defs of svg.querySelectorAll('defs')) {
     if (retained.has(defs)) continue;
     const parent = retained.get(defs.parentElement);

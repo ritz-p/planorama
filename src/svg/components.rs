@@ -34,9 +34,15 @@ pub(super) fn cards(graph: &Graph) -> Vec<Card> {
         members.sort();
         members.dedup();
         let rows: Vec<_> = members.iter().map(|address| {
-            let node = nodes.get(address.as_str()).and_then(|nodes| match nodes.as_slice() {
-                [node] => Some(*node),
-                _ => None,
+            let node = nodes.get(address.as_str()).and_then(|nodes| {
+                if component.kind == "organization_root" {
+                    nodes.iter().copied().find(|node| node.entity.provenance.iter().any(|id| component.entity.provenance.contains(id)))
+                } else {
+                    match nodes.as_slice() {
+                        [node] => Some(*node),
+                        _ => None,
+                    }
+                }
             });
             let text = node.map_or_else(|| (*address).clone(), |node| format!("{}: {address}", super::operations::label(node.action, &node.metadata)));
             (address, node, text)
