@@ -412,10 +412,10 @@ pub(super) fn verified(raw: &Input, reference: &AttributeReference) -> bool {
                     .into_iter()
                     .chain(right)
                     .any(|config| config.account_conflict)
-                    && !left
+                    && left
                         .and_then(|config| config.account.as_ref())
                         .zip(right.and_then(|config| config.account.as_ref()))
-                        .is_some_and(|(left, right)| left != right)
+                        .is_none_or(|(left, right)| left == right)
             }))
         && (!matches!(
             raw.nodes[reference.target].resource_type.as_str(),
