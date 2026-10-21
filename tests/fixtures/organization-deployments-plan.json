@@ -1,0 +1,251 @@
+{
+    "format_version":  "1.2",
+    "terraform_version":  "1.9.8",
+    "resource_changes":  [
+                             {
+                                 "mode":  "managed",
+                                 "change":  {
+                                                "before":  {
+                                                               "master_account_email":  "PRIVATE_EMAIL",
+                                                               "id":  "o-example",
+                                                               "roots":  [
+                                                                             {
+                                                                                 "id":  "r-root"
+                                                                             }
+                                                                         ]
+                                                           },
+                                                "actions":  [
+                                                                "no-op"
+                                                            ],
+                                                "after_unknown":  {
+
+                                                                  },
+                                                "after":  {
+                                                              "master_account_email":  "PRIVATE_EMAIL",
+                                                              "id":  "o-example",
+                                                              "roots":  [
+                                                                            {
+                                                                                "id":  "r-root"
+                                                                            }
+                                                                        ]
+                                                          }
+                                            },
+                                 "type":  "aws_organizations_organization",
+                                 "address":  "aws_organizations_organization.main",
+                                 "provider_name":  "registry.terraform.io/hashicorp/aws"
+                             },
+                             {
+                                 "mode":  "managed",
+                                 "change":  {
+                                                "before":  {
+                                                               "parent_id":  "r-root",
+                                                               "name":  "PRIVATE_NAME",
+                                                               "id":  "ou-root-engineer"
+                                                           },
+                                                "actions":  [
+                                                                "no-op"
+                                                            ],
+                                                "after_unknown":  {
+
+                                                                  },
+                                                "after":  {
+                                                              "parent_id":  "r-root",
+                                                              "name":  "PRIVATE_NAME",
+                                                              "id":  "ou-root-engineer"
+                                                          }
+                                            },
+                                 "type":  "aws_organizations_organizational_unit",
+                                 "address":  "aws_organizations_organizational_unit.engineering",
+                                 "provider_name":  "registry.terraform.io/hashicorp/aws"
+                             },
+                             {
+                                 "mode":  "managed",
+                                 "change":  {
+                                                "before":  {
+                                                               "id":  "ou-root-platform",
+                                                               "parent_id":  "ou-root-engineer"
+                                                           },
+                                                "actions":  [
+                                                                "no-op"
+                                                            ],
+                                                "after_unknown":  {
+
+                                                                  },
+                                                "after":  {
+                                                              "id":  "ou-root-platform",
+                                                              "parent_id":  "ou-root-engineer"
+                                                          }
+                                            },
+                                 "type":  "aws_organizations_organizational_unit",
+                                 "address":  "aws_organizations_organizational_unit.platform",
+                                 "provider_name":  "registry.terraform.io/hashicorp/aws"
+                             },
+                             {
+                                 "mode":  "managed",
+                                 "change":  {
+                                                "before":  {
+                                                               "email":  "PRIVATE_EMAIL",
+                                                               "parent_id":  "ou-root-platform",
+                                                               "id":  "111111111111"
+                                                           },
+                                                "actions":  [
+                                                                "no-op"
+                                                            ],
+                                                "after_unknown":  {
+
+                                                                  },
+                                                "after":  {
+                                                              "email":  "PRIVATE_EMAIL",
+                                                              "parent_id":  "ou-root-platform",
+                                                              "id":  "111111111111"
+                                                          }
+                                            },
+                                 "type":  "aws_organizations_account",
+                                 "address":  "aws_organizations_account.production",
+                                 "provider_name":  "registry.terraform.io/hashicorp/aws"
+                             },
+                             {
+                                 "mode":  "managed",
+                                 "change":  {
+                                                "before":  {
+                                                               "id":  "222222222222",
+                                                               "parent_id":  "ou-root-engineer"
+                                                           },
+                                                "actions":  [
+                                                                "no-op"
+                                                            ],
+                                                "after_unknown":  {
+
+                                                                  },
+                                                "after":  {
+                                                              "id":  "222222222222",
+                                                              "parent_id":  "ou-root-engineer"
+                                                          }
+                                            },
+                                 "type":  "aws_organizations_account",
+                                 "address":  "aws_organizations_account.sandbox",
+                                 "provider_name":  "registry.terraform.io/hashicorp/aws"
+                             },
+                             {
+                                 "mode":  "managed",
+                                 "change":  {
+                                                "actions":  [
+                                                                "create"
+                                                            ],
+                                                "after":  {
+                                                              "id":  "vpc-fixture"
+                                                          }
+                                            },
+                                 "type":  "aws_vpc",
+                                 "address":  "aws_vpc.workload",
+                                 "provider_name":  "registry.terraform.io/hashicorp/aws"
+                             }
+                         ],
+    "configuration":  {
+                          "root_module":  {
+                                              "resources":  [
+                                                                {
+                                                                    "mode":  "managed",
+                                                                    "provider_config_key":  "aws",
+                                                                    "expressions":  {
+
+                                                                                    },
+                                                                    "type":  "aws_organizations_organization",
+                                                                    "address":  "aws_organizations_organization.main"
+                                                                },
+                                                                {
+                                                                    "mode":  "managed",
+                                                                    "provider_config_key":  "aws",
+                                                                    "expressions":  {
+                                                                                        "parent_id":  {
+                                                                                                          "references":  [
+                                                                                                                             "aws_organizations_organization.main.roots[0].id",
+                                                                                                                             "aws_organizations_organization.main.roots[0]",
+                                                                                                                             "aws_organizations_organization.main.roots",
+                                                                                                                             "aws_organizations_organization.main"
+                                                                                                                         ]
+                                                                                                      }
+                                                                                    },
+                                                                    "type":  "aws_organizations_organizational_unit",
+                                                                    "address":  "aws_organizations_organizational_unit.engineering"
+                                                                },
+                                                                {
+                                                                    "mode":  "managed",
+                                                                    "provider_config_key":  "aws",
+                                                                    "expressions":  {
+                                                                                        "parent_id":  {
+                                                                                                          "references":  [
+                                                                                                                             "aws_organizations_organizational_unit.engineering.id"
+                                                                                                                         ]
+                                                                                                      }
+                                                                                    },
+                                                                    "type":  "aws_organizations_organizational_unit",
+                                                                    "address":  "aws_organizations_organizational_unit.platform"
+                                                                },
+                                                                {
+                                                                    "mode":  "managed",
+                                                                    "provider_config_key":  "aws",
+                                                                    "expressions":  {
+                                                                                        "parent_id":  {
+                                                                                                          "references":  [
+                                                                                                                             "aws_organizations_organizational_unit.platform.id"
+                                                                                                                         ]
+                                                                                                      }
+                                                                                    },
+                                                                    "type":  "aws_organizations_account",
+                                                                    "address":  "aws_organizations_account.production"
+                                                                },
+                                                                {
+                                                                    "mode":  "managed",
+                                                                    "provider_config_key":  "aws",
+                                                                    "expressions":  {
+                                                                                        "parent_id":  {
+                                                                                                          "references":  [
+                                                                                                                             "aws_organizations_organizational_unit.engineering.id"
+                                                                                                                         ]
+                                                                                                      }
+                                                                                    },
+                                                                    "type":  "aws_organizations_account",
+                                                                    "address":  "aws_organizations_account.sandbox"
+                                                                },
+                                                                {
+                                                                    "mode":  "managed",
+                                                                    "provider_config_key":  "aws.member",
+                                                                    "expressions":  {
+
+                                                                                    },
+                                                                    "type":  "aws_vpc",
+                                                                    "address":  "aws_vpc.workload"
+                                                                }
+                                                            ]
+                                          },
+                          "provider_config":  {
+                                                  "aws":  {
+                                                              "full_name":  "registry.terraform.io/hashicorp/aws",
+                                                              "expressions":  {
+                                                                                  "region":  {
+                                                                                                 "constant_value":  "us-east-1"
+                                                                                             }
+                                                                              },
+                                                              "name":  "aws"
+                                                          },
+                                                  "aws.member":  {
+                                                                     "full_name":  "registry.terraform.io/hashicorp/aws",
+                                                                     "alias":  "member",
+                                                                     "name":  "aws",
+                                                                     "expressions":  {
+                                                                                         "region":  {
+                                                                                                        "constant_value":  "eu-west-1"
+                                                                                                    },
+                                                                                         "assume_role":  [
+                                                                                                             {
+                                                                                                                 "role_arn":  {
+                                                                                                                                  "constant_value":  "arn:aws:iam::111111111111:role/PRIVATE_ROLE"
+                                                                                                                              }
+                                                                                                             }
+                                                                                                         ]
+                                                                                     }
+                                                                 }
+                                              }
+                      }
+}

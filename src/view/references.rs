@@ -16,7 +16,10 @@ impl Row<'_> {
         let Some(target) = self.target else {
             return format!("{}: unresolved", self.reference.label);
         };
-        let mut address = target.id.address.clone();
+        let mut address = target.account_scope.as_ref().map_or_else(
+            || target.id.address.clone(),
+            |account| format!("AWS Account {}", account.as_str()),
+        );
         if let crate::model::ReferenceKind::OrganizationRoot(index) = self.reference.kind {
             address.push_str(&format!(".roots[{index}]"));
         }

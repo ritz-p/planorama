@@ -60,6 +60,7 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
                     label: "Monitored by",
                     attribute: reference.attribute.clone(),
                     targets: vec![ReferenceTarget {
+                        account_scope: None,
                         state: None,
                         id: alarm.entity.provenance[0].clone(),
                         placement: alarm.placement,

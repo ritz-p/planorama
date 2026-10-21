@@ -96,6 +96,8 @@ pub struct ResourceReference {
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub enum ReferenceKind {
+    DeploymentScope,
+    DeploymentMember,
     Information,
     PolicyAttachment,
     Configured,
@@ -106,6 +108,7 @@ pub enum ReferenceKind {
 
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub struct ReferenceTarget {
+    pub account_scope: Option<AwsAccountScope>,
     pub state: Option<StateId>,
     pub id: TerraformEntityId,
     pub placement: Placement,

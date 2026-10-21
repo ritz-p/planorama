@@ -82,9 +82,13 @@ parser's existing evidence. Graph-level references such as `depends_on` are
 distinct from configured attribute usage. Arbitrary evaluated attribute values are
 not retained; the allowlisted Organizations policy-type label is an explicit exception.
 Reference kinds are `configured`, `membership`, `organization_parent`,
-`organization_root`, `policy_attachment` and `information`. Information rows have
+`organization_root`, `policy_attachment`, `information`, `deployment_scope` and
+`deployment_member`. Information rows have
 no relationship target; direct attachment and hierarchy kinds describe only their
 verified configuration facts.
+Organizations Accounts also retain a validated member-account identifier for
+matching verified deployment scopes. It is independent of their provider scope;
+only a unique selected correspondence produces deployment navigation.
 Derived Roots retain their source's full Terraform identity, including the
 current/deposed discriminator, independently of the display address.
 Root reference metadata preserves `root_index` separately from its source

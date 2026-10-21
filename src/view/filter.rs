@@ -407,6 +407,7 @@ pub fn apply(all: &Architecture, options: &Options) -> Result<Architecture, Stri
         relationships,
     };
     super::purpose::apply(all, &mut projected, &options.spatial_types);
+    crate::provider::aws::organization_accounts::link(all, &mut projected);
     Ok(projected)
 }
 

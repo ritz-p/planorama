@@ -123,6 +123,7 @@ pub(crate) fn render_report(
                 label: "References",
                 attribute: format!("{remote}.outputs.{output}"),
                 targets: vec![crate::model::ReferenceTarget {
+                    account_scope: None,
                     state: Some(edge.from.state.clone()),
                     id: crate::model::TerraformEntityId {
                         address: source.address.clone(),
