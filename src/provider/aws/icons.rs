@@ -128,6 +128,7 @@ pub(super) fn icon_for(resource_type: &str) -> Option<ResourceIcon> {
         | "aws_eks_node_group"
         | "aws_eks_node_groups"
         | "aws_eks_addon"
+        | "aws_eks_fargate_profile"
         | "aws_eks_access_entry" => ResourceIcon::Eks,
         "aws_db_instance"
         | "aws_db_instances"

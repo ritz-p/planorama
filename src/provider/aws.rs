@@ -14,6 +14,7 @@ mod icons;
 mod members;
 mod messaging;
 mod monitoring;
+mod network;
 mod placement;
 pub(crate) mod service_references;
 pub(crate) use placement::owner_affinities;
@@ -39,6 +40,10 @@ mod log_group_tests;
 #[cfg(test)]
 #[path = "../../tests/unit/semantic/ecs_clusters.rs"]
 mod ecs_cluster_tests;
+
+#[cfg(test)]
+#[path = "../../tests/unit/semantic/eks.rs"]
+mod eks_tests;
 
 #[cfg(test)]
 #[path = "../../tests/unit/resource_support.rs"]
@@ -71,6 +76,7 @@ pub(super) fn reference_label(resource_type: &str, attribute: &str) -> &'static 
 
 pub(super) fn placement(resource_type: &str) -> crate::model::Placement {
     match resource_type {
+        "aws_eks_addon" | "aws_eks_access_entry" => crate::model::Placement::Logical,
         "aws_ecr_repository_policy" | "aws_ecr_lifecycle_policy" => {
             crate::model::Placement::Logical
         }
