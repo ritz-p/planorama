@@ -20,6 +20,7 @@ examples/ecs-clusters.svg
 examples/certificate-cards.svg
 examples/kms.svg
 examples/secrets-manager.svg
+examples/ecr.svg
 examples/ssm.svg
 examples/iam.svg
 examples/identity-providers.svg

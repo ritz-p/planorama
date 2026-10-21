@@ -31,6 +31,9 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
         || matches!(
             resource,
             "aws_vpc"
+                | "aws_ecr_repository"
+                | "aws_ecr_repository_policy"
+                | "aws_ecr_lifecycle_policy"
                 | "aws_s3_bucket_policy"
                 | "aws_s3_bucket_notification"
                 | "aws_s3_bucket_replication_configuration"
