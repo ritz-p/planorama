@@ -308,6 +308,32 @@ The AWS 5.100.0 schema and official [Cluster](https://registry.terraform.io/prov
 and [Parameter Group](https://registry.terraform.io/providers/hashicorp/aws/5.100.0/docs/resources/redshift_parameter_group)
 contracts define these scalar names and set-valued ID collections.
 
+## CloudTrail
+
+`aws_cloudtrail` is one regional spatial Node with the AWS CloudTrail icon/service
+name. Provider region describes the trail's home region. Multi-region and
+organization settings do not clone the trail into other regions/accounts or
+make it Global; they do not prove collection coverage or successful delivery.
+
+Dedicated configured references support `s3_bucket_name` to S3 `id`/`bucket`,
+`cloud_watch_logs_group_arn` to Log Group `arn`, `cloud_watch_logs_role_arn` to IAM
+Role `arn`, and `kms_key_id` to KMS Key `id`/`key_id`/`arn`. Each requires one
+complete explicit reference to a current managed AWS endpoint and matching known
+values. The Logs destination additionally accepts exactly the endpoint ARN plus
+`:*`, as required by the provider contract. Other suffixes, unknown or ambiguous
+values, foreign types/providers and historical endpoints remain unverified.
+Literal strings alone never resolve endpoints. Filtering marks removed endpoints
+unavailable and named states preserve independent identity.
+
+Event selector text, audit events, log contents and raw attribute values are not
+emitted. References do not claim logging permissions or organization membership.
+Unsupported configurations retain ordinary Terraform references and fallback.
+The [synthetic fixture](../tests/fixtures/cloudtrail-plan.json) produces
+[SVG](../examples/cloudtrail.svg) and [offline HTML](../examples/cloudtrail.html).
+Regenerate HTML in Docker with `cargo run --locked -- tests/fixtures/cloudtrail-plan.json --format html -o examples/cloudtrail.html`.
+The AWS Provider 5.100.0 schema and [official trail contract](https://registry.terraform.io/providers/hashicorp/aws/5.100.0/docs/resources/cloudtrail)
+define the home-region requirement and scalar destination references.
+
 ## Athena Workgroup and Data Catalog
 
 Exact AWS `aws_athena_workgroup` and `aws_athena_data_catalog` are independent

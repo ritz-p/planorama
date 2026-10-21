@@ -15,6 +15,7 @@ examples/diagram.svg
 examples/cognito.svg
 examples/step-functions.svg
 examples/redshift.svg
+examples/cloudtrail.svg
 examples/route53.svg
 examples/acm.svg
 examples/private-ca.svg

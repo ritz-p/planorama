@@ -90,6 +90,7 @@ Provider source: `registry.terraform.io/hashicorp/aws`.
 | `aws_cloudfront_origin_request_policy` | Policy / Policy | Logical / Logical | CloudFront / Amazon CloudFront | Global | [aws.rs](../src/provider/aws.rs), [aws/cloudfront.rs](../src/provider/aws/cloudfront.rs) |
 | `aws_cloudfront_realtime_log_config` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | CloudFront / Amazon CloudFront | Global | — |
 | `aws_cloudfront_response_headers_policy` | Policy / Policy | Logical / Logical | CloudFront / Amazon CloudFront | Global | [aws.rs](../src/provider/aws.rs), [aws/cloudfront.rs](../src/provider/aws/cloudfront.rs) |
+| `aws_cloudtrail` | Node / Node | Spatial / Spatial | CloudTrail / AWS CloudTrail | Regional (conditional) | [aws/service_references.rs](../src/provider/aws/service_references.rs) |
 | `aws_cloudwatch_event_bus` | Node / Node | Spatial / Spatial | EventBridge / Amazon EventBridge | Regional (conditional) | [aws/messaging.rs](../src/provider/aws/messaging.rs) |
 | `aws_cloudwatch_event_rule` | Node / Node | Spatial / Spatial | EventBridge / Amazon EventBridge | Regional (conditional) | [aws/messaging.rs](../src/provider/aws/messaging.rs) |
 | `aws_cloudwatch_event_target` | Association / Association | Logical / Logical | EventBridge / Amazon EventBridge | Regional (conditional) | [aws.rs](../src/provider/aws.rs), [aws/messaging.rs](../src/provider/aws/messaging.rs) |
