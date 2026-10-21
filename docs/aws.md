@@ -1211,7 +1211,10 @@ an allowlisted policy type; `SERVICE_CONTROL_POLICY` is identified as SCP, while
 TAG/BACKUP/other recognized types keep their own names. Unknown types remain
 explicitly unsupported. Policy content, description, conditions and account emails
 are never retained for rendering. Policy data sources use the real provider schema;
-there is no policy-attachment data source.
+there is no policy-attachment data source. Deleted/deposed policies use their
+own before-value for the type label; current configuration never creates past
+attachments. Data policies may be referenced through `id` or `policy_id`; managed
+policies use `id`. The referenced field must match the known attachment value.
 
 Each attachment independently verifies `policy_id` and `target_id` against a
 complete, explicit, unique, current AWS reference and known matching plan values.
