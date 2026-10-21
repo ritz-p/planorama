@@ -16,6 +16,7 @@ mod messaging;
 mod monitoring;
 mod network;
 mod placement;
+mod rds_proxy;
 pub(crate) mod service_references;
 pub(crate) use placement::owner_affinities;
 mod routes;
@@ -76,6 +77,9 @@ pub(super) fn reference_label(resource_type: &str, attribute: &str) -> &'static 
 
 pub(super) fn placement(resource_type: &str) -> crate::model::Placement {
     match resource_type {
+        "aws_db_proxy_default_target_group" | "aws_db_proxy_target" => {
+            crate::model::Placement::Logical
+        }
         "aws_eks_addon" | "aws_eks_access_entry" => crate::model::Placement::Logical,
         "aws_ecr_repository_policy" | "aws_ecr_lifecycle_policy" => {
             crate::model::Placement::Logical

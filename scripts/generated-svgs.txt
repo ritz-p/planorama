@@ -22,6 +22,7 @@ examples/kms.svg
 examples/secrets-manager.svg
 examples/ecr.svg
 examples/eks.svg
+examples/rds-proxy.svg
 examples/ssm.svg
 examples/iam.svg
 examples/identity-providers.svg

@@ -7,7 +7,9 @@ mod tests;
 
 pub(super) fn attribute(resource_type: &str) -> Option<&'static str> {
     match resource_type {
-        "aws_instance" | "aws_db_instance" | "aws_rds_cluster" => Some("vpc_security_group_ids"),
+        "aws_instance" | "aws_db_instance" | "aws_rds_cluster" | "aws_db_proxy" => {
+            Some("vpc_security_group_ids")
+        }
         "aws_lb" | "aws_efs_mount_target" => Some("security_groups"),
         "aws_ecs_service" => Some("network_configuration.security_groups"),
         "aws_vpc_endpoint" => Some("security_group_ids"),
@@ -19,6 +21,11 @@ pub(super) fn attribute(resource_type: &str) -> Option<&'static str> {
 
 pub(super) fn failure(raw: &Input, reference: &AttributeReference) -> Option<DiagnosticReason> {
     let node = &raw.nodes[reference.target];
+    if super::network::endpoint_type(&node.resource_type, &reference.attribute).is_some()
+        && !reference.service_reference_verified
+    {
+        return Some(DiagnosticReason::UnprovenEndpointValue);
+    }
     if node.resource_type == "aws_efs_mount_target"
         && (node.action == crate::model::Action::Delete
             || node.deposed_key.is_some()
