@@ -3,6 +3,7 @@ use crate::model::{EntityMode, TerraformEntity, architecture::DeploymentScope};
 pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentScope> {
     let resource = entity.resource_type.as_str();
     let global = entity.waf_scope == Some(crate::model::WafScope::CloudFront)
+        || resource == "aws_rds_global_cluster"
         || resource.starts_with("aws_iam_")
         || resource.starts_with("aws_cloudfront_")
         || matches!(
