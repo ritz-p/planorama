@@ -17,6 +17,13 @@ fn label(resource: &str, attribute: &str) -> Option<&'static str> {
         return Some(label);
     }
     match (resource, attribute) {
+        ("aws_cognito_user_pool_client", "user_pool_id") => Some("User pool reference"),
+        ("aws_cognito_identity_pool", "cognito_identity_providers.client_id") => {
+            Some("User pool client reference")
+        }
+        ("aws_cognito_identity_pool", "cognito_identity_providers.provider_name") => {
+            Some("User pool provider reference")
+        }
         ("aws_rds_cluster", "global_cluster_identifier") => Some("Global Cluster membership"),
         ("aws_db_proxy_default_target_group", "db_proxy_name") => Some("Proxy owner"),
         ("aws_db_proxy_target", "db_proxy_name") => Some("Configured proxy"),
@@ -89,6 +96,17 @@ fn source_fields(resource: &str, attribute: &str, source: &str) -> &'static [&'s
         return waf;
     }
     match (resource, attribute, source) {
+        ("aws_cognito_user_pool_client", "user_pool_id", "aws_cognito_user_pool")
+        | (
+            "aws_cognito_identity_pool",
+            "cognito_identity_providers.client_id",
+            "aws_cognito_user_pool_client",
+        ) => &["id"],
+        (
+            "aws_cognito_identity_pool",
+            "cognito_identity_providers.provider_name",
+            "aws_cognito_user_pool",
+        ) => &["endpoint"],
         ("aws_rds_cluster", "global_cluster_identifier", "aws_rds_global_cluster") => {
             &["id", "global_cluster_identifier"]
         }

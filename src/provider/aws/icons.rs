@@ -2,6 +2,9 @@ use crate::icons::ResourceIcon;
 
 pub(super) fn icon_for(resource_type: &str) -> Option<ResourceIcon> {
     Some(match resource_type {
+        "aws_cognito_user_pool" | "aws_cognito_user_pool_client" | "aws_cognito_identity_pool" => {
+            ResourceIcon::Cognito
+        }
         "aws_organizations_policy" | "aws_organizations_policy_attachment" => {
             ResourceIcon::Organizations
         }
