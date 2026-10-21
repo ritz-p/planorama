@@ -237,7 +237,7 @@ Provider source: `registry.terraform.io/hashicorp/aws`.
 | `aws_rds_cluster_instance` | Node / Node | Spatial / Spatial | Database / Amazon RDS | Regional (conditional) | [aws/members.rs](../src/provider/aws/members.rs) |
 | `aws_rds_cluster_parameter_group` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Database / Amazon RDS | Unknown | — |
 | `aws_rds_clusters` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Database / Amazon RDS | Unknown | — |
-| `aws_rds_global_cluster` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Database / Amazon RDS | Unknown | — |
+| `aws_rds_global_cluster` | Node / Node | Spatial / Spatial | Database / Amazon RDS | Global | [aws/service_references.rs](../src/provider/aws/service_references.rs) |
 | `aws_rds_snapshots` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Database / Amazon RDS | Unknown | — |
 | `aws_region` | Unknown / Unknown | Spatial (unresolved) / Omitted | — | Unknown | — |
 | `aws_route` | Connector / Connector | Spatial / Spatial | Route / Amazon VPC | Regional (conditional) | [aws/diagnostics.rs](../src/provider/aws/diagnostics.rs), [aws/routes.rs](../src/provider/aws/routes.rs) |

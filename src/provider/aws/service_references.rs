@@ -17,6 +17,7 @@ fn label(resource: &str, attribute: &str) -> Option<&'static str> {
         return Some(label);
     }
     match (resource, attribute) {
+        ("aws_rds_cluster", "global_cluster_identifier") => Some("Global Cluster membership"),
         ("aws_db_proxy_default_target_group", "db_proxy_name") => Some("Proxy owner"),
         ("aws_db_proxy_target", "db_proxy_name") => Some("Configured proxy"),
         ("aws_db_proxy_target", "target_group_name") => Some("Target group"),
@@ -88,6 +89,9 @@ fn source_fields(resource: &str, attribute: &str, source: &str) -> &'static [&'s
         return waf;
     }
     match (resource, attribute, source) {
+        ("aws_rds_cluster", "global_cluster_identifier", "aws_rds_global_cluster") => {
+            &["id", "global_cluster_identifier"]
+        }
         (
             "aws_db_proxy_default_target_group" | "aws_db_proxy_target",
             "db_proxy_name",
@@ -403,6 +407,20 @@ pub(crate) fn annotate(
 pub(super) fn verified(raw: &Input, reference: &AttributeReference) -> bool {
     reference.service_reference_verified
         && super::iam::bindings_compatible(&raw.nodes, reference)
+        && (raw.nodes[reference.target].resource_type != "aws_rds_cluster"
+            || reference.attribute != "global_cluster_identifier"
+            || reference.sources.iter().all(|&source| {
+                let left = raw.nodes[reference.target].provider_configuration.as_ref();
+                let right = raw.nodes[source].provider_configuration.as_ref();
+                !left
+                    .into_iter()
+                    .chain(right)
+                    .any(|config| config.account_conflict)
+                    && left
+                        .and_then(|config| config.account.as_ref())
+                        .zip(right.and_then(|config| config.account.as_ref()))
+                        .is_none_or(|(left, right)| left == right)
+            }))
         && (!matches!(
             raw.nodes[reference.target].resource_type.as_str(),
             "aws_ecs_service" | "aws_ecr_repository_policy" | "aws_ecr_lifecycle_policy"
@@ -514,7 +532,7 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             .references
             .push(ResourceReference {
                 kind: if verified
-                    && (label == "Cluster membership"
+                    && (matches!(label, "Cluster membership" | "Global Cluster membership")
                         || matches!(
                             node.resource_type.as_str(),
                             "aws_iam_group_membership" | "aws_iam_user_group_membership"
