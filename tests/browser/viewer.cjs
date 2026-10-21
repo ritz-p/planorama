@@ -957,6 +957,21 @@ class ViewerTests {
         this.assertIn('Unavailable', this.find('#viewport').text);
         this.assertFalse(this.driver.find_elements(By.CSS_SELECTOR, '#viewport a[data-reference-attribute]'));
     }
+    test_verified_organization_account_scope_navigation_preserves_json_unknown() {
+        this.driver.get(pathToFileURL(join(ROOT, 'examples/organization-deployments.html')).href);
+        this.assertNotIn('PRIVATE_', this.driver.page_source);
+        this.choose('aws_organizations_account.production');
+        const link = this.find('[data-viewer-selected] a[data-reference-attribute="deployment_scope"]');
+        this.driver.execute_script("arguments[0].dispatchEvent(new MouseEvent('click', {bubbles:true,cancelable:true}))", link);
+        this.assertEqual(this.find('[data-viewer-selected]').get_attribute('data-account-panel'), 'true');
+        this.assertIn('AWS Account deployment scope', this.find('#selection').text);
+        const back = this.find('[data-viewer-selected] a[data-deployment-member]');
+        this.driver.execute_script("arguments[0].dispatchEvent(new MouseEvent('click', {bubbles:true,cancelable:true}))", back);
+        this.assertEqual(this.find('[data-viewer-selected]').get_attribute('data-terraform-address'), 'aws_organizations_account.production');
+        this.load('tests/fixtures/organization-deployments-plan.json');
+        this.assertFalse(this.driver.find_elements(By.CSS_SELECTOR, 'a[data-reference-attribute="deployment_scope"]'));
+        this.assertIn('no visible verified match', this.find('#viewport').text);
+    }
     test_escaped_long_addresses_modes_and_individual_logical_targets() {
         let address = 'module.app["a.b"].aws_iam_role.item["</script><script>window.pwned=1</script>&\\\"' + 'x'.repeat(100) + '"]';
         let plan = {'format_version': '1.2', 'resource_changes': [ {'address': address, 'type': 'aws_iam_role', 'change': {'actions': ['create'], 'after': {'secret': 'DO_NOT_EXPOSE'}}}, {'address': 'aws_iam_role.item', 'type': 'aws_iam_role'}, {'address': 'data.aws_iam_role.item', 'type': 'aws_iam_role', 'mode': 'data'}, ]};

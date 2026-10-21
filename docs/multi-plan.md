@@ -94,3 +94,9 @@ These synthetic JSON files have no saved-plan evidence, so their account scopes
 remain unknown. To resolve accounts from real plans, supply
 `--state-provider-plan ID=PATH` for each state with supported evidence; see
 [provider evidence](provider-evidence.md). Evidence is never reused across states.
+
+Organizations member-account correspondence is separate from remote-output
+resolution. Verified provider-account frames can link to one unambiguous member
+Account in another input state, using explicit state-qualified navigation without
+adding a Terraform edge or ownership. Selection retains only available endpoints;
+see [Organizations deployment navigation](aws.md#organizations-member-account-deployment-navigation).

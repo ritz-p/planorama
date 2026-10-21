@@ -17,6 +17,9 @@ update_snapshot() {
 
 while IFS= read -r output || [ -n "$output" ]; do
     case "$output" in
+        examples/organization-deployments.svg)
+            update_snapshot provider::aws::organization_accounts::tests::verified_deployment_example UPDATE_ORGANIZATION_DEPLOYMENTS
+            ;;
         examples/region-overrides.svg)
             "$binary" tests/fixtures/aws-region-overrides/plan.json -o "$output"
             ;;

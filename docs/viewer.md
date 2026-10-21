@@ -313,3 +313,9 @@ Run `docker compose exec -T dev node --test tests/browser/modules.cjs` for modul
 contracts, plus the browser and Rust CLI tests above. Regenerate both maintained
 HTML files after source changes; use `scripts/render-multi-account.sh` for the
 combined example. HTML snapshot comparisons verify deterministic bundling.
+
+Organizations member Accounts can navigate to verified AWS Account frames and
+back without moving infrastructure into the organization hierarchy. The account
+frame is a navigation target, not a searchable Terraform resource, so it does not
+change resource counts or expose a copyable synthetic Terraform address. See
+[the evidence and selection contract](aws.md#organizations-member-account-deployment-navigation).
