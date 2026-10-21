@@ -9,6 +9,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     for (file, id) in [
         ("Amazon-Cognito", "cognito"),
         ("AWS-Step-Functions", "step-functions"),
+        ("Amazon-Redshift", "redshift"),
         ("AWS-Organizations", "organizations"),
         ("Amazon-Virtual-Private-Cloud", "vpc"),
         ("Amazon-EC2", "ec2"),

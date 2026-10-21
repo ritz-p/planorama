@@ -8,6 +8,7 @@ mod tests;
 
 pub(in crate::provider::aws) fn attribute(resource_type: &str) -> Option<&'static str> {
     match resource_type {
+        "aws_redshift_subnet_group" => Some("subnet_ids"),
         "aws_db_proxy" => Some("vpc_subnet_ids"),
         "aws_db_subnet_group" | "aws_elasticache_subnet_group" => Some("subnet_ids"),
         "aws_eks_node_group" | "aws_eks_fargate_profile" => Some("subnet_ids"),

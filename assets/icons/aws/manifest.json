@@ -188,6 +188,11 @@
             "file": "AWS-Step-Functions.svg",
             "source": "Architecture-Service-Icons_07312026/Arch_Application-Integration/48/Arch_AWS-Step-Functions_48.svg",
             "sha256": "c1bb81d6504d283c6b31cbd9516fa6b8364010ea3c30ae614507114ca34192ad"
+        },
+        {
+            "file": "Amazon-Redshift.svg",
+            "source": "Architecture-Service-Icons_07312026/Arch_Analytics/48/Arch_Amazon-Redshift_48.svg",
+            "sha256": "b2a267bb27552a7608cae3cd0284b5617498848a273a2ef752f9dcb338312b65"
         }
     ]
 }
