@@ -1,0 +1,22 @@
+{
+  "format_version":"1.2",
+  "resource_changes":[
+    {"address":"aws_elasticache_serverless_cache.app","type":"aws_elasticache_serverless_cache","change":{"actions":["create"],"after":{"name":"fixture","engine":"valkey","subnet_ids":["subnet-a","subnet-b"],"security_group_ids":["sg-fixture"],"endpoint":[{"address":"PRIVATE_ENDPOINT","port":6379}],"reader_endpoint":[{"address":"PRIVATE_READER_ENDPOINT","port":6379}],"user_group_id":"PRIVATE_USER_GROUP"},"after_unknown":{"subnet_ids":[false,false],"security_group_ids":[false]}}},
+    {"address":"aws_vpc.main","type":"aws_vpc","change":{"actions":["create"],"after":{"id":"vpc-fixture"}}},
+    {"address":"aws_subnet.a","type":"aws_subnet","change":{"actions":["create"],"after":{"id":"subnet-a","vpc_id":"vpc-fixture"}}},
+    {"address":"aws_subnet.b","type":"aws_subnet","change":{"actions":["create"],"after":{"id":"subnet-b","vpc_id":"vpc-fixture"}}},
+    {"address":"aws_security_group.app","type":"aws_security_group","change":{"actions":["create"],"after":{"id":"sg-fixture","vpc_id":"vpc-fixture"}}},
+    {"address":"aws_elasticache_cluster.provisioned","type":"aws_elasticache_cluster","change":{"actions":["create"],"after":{"cluster_id":"fixture-provisioned"}}}
+  ],
+  "configuration":{
+    "provider_config":{"aws":{"name":"aws","full_name":"registry.terraform.io/hashicorp/aws","expressions":{"region":{"constant_value":"us-east-1"}}}},
+    "root_module":{"resources":[
+      {"address":"aws_elasticache_serverless_cache.app","provider_config_key":"aws","expressions":{"subnet_ids":{"references":["aws_subnet.a.id","aws_subnet.b.id"]},"security_group_ids":{"references":["aws_security_group.app.id"]}}},
+      {"address":"aws_vpc.main","provider_config_key":"aws"},
+      {"address":"aws_subnet.a","provider_config_key":"aws","expressions":{"vpc_id":{"references":["aws_vpc.main.id"]}}},
+      {"address":"aws_subnet.b","provider_config_key":"aws","expressions":{"vpc_id":{"references":["aws_vpc.main.id"]}}},
+      {"address":"aws_security_group.app","provider_config_key":"aws","expressions":{"vpc_id":{"references":["aws_vpc.main.id"]}}},
+      {"address":"aws_elasticache_cluster.provisioned","provider_config_key":"aws"}
+    ]}
+  }
+}

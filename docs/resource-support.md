@@ -164,7 +164,7 @@ Provider source: `registry.terraform.io/hashicorp/aws`.
 | `aws_eks_node_groups` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Eks / Amazon EKS | Unknown | — |
 | `aws_elasticache_cluster` | Node / Node | Spatial / Spatial | Cache / Amazon ElastiCache | Regional (conditional) | — |
 | `aws_elasticache_replication_group` | Node / Node | Spatial / Spatial | Cache / Amazon ElastiCache | Regional (conditional) | [aws/containment/indirect.rs](../src/provider/aws/containment/indirect.rs), [aws/diagnostics.rs](../src/provider/aws/diagnostics.rs) |
-| `aws_elasticache_serverless_cache` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Cache / Amazon ElastiCache | Unknown | — |
+| `aws_elasticache_serverless_cache` | Node / Node | Spatial / Spatial | Cache / Amazon ElastiCache | Regional (conditional) | [aws/containment/vpc_scope.rs](../src/provider/aws/containment/vpc_scope.rs), [aws/network.rs](../src/provider/aws/network.rs), [aws/security_groups.rs](../src/provider/aws/security_groups.rs) |
 | `aws_elasticache_subnet_group` | Node / Node | Spatial / Spatial | Cache / Amazon ElastiCache | Regional (conditional) | [aws/containment/indirect.rs](../src/provider/aws/containment/indirect.rs), [aws/containment/vpc_scope.rs](../src/provider/aws/containment/vpc_scope.rs), [aws/diagnostics.rs](../src/provider/aws/diagnostics.rs) |
 | `aws_elasticache_user` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Cache / Amazon ElastiCache | Unknown | — |
 | `aws_elasticsearch_domain` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Search / Amazon OpenSearch Service | Unknown | — |
