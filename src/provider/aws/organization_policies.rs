@@ -30,10 +30,16 @@ pub(crate) fn annotate(
     nodes: &mut [TerraformEntity],
     references: &mut [AttributeReference],
     evidence: &[(&Value, &Value)],
+    before_evidence: &[(&Value, &Value)],
 ) {
     for (index, node) in nodes.iter_mut().enumerate() {
-        if eligible(node) && node.resource_type == "aws_organizations_policy" {
-            let (value, unknown) = evidence[index];
+        if node.provider.is_aws() && node.resource_type == "aws_organizations_policy" {
+            let (value, unknown) =
+                if node.action == crate::model::Action::Delete || node.deposed_key.is_some() {
+                    before_evidence[index]
+                } else {
+                    evidence[index]
+                };
             node.organization_policy_type = Some(policy_label(scalar(value, unknown, &["type"])));
         }
     }
@@ -60,6 +66,12 @@ pub(crate) fn annotate(
             reference.attribute.as_str(),
             endpoint.resource_type.as_str(),
         ) {
+            ("policy_id", "aws_organizations_policy")
+                if endpoint.mode == crate::model::EntityMode::Data
+                    && reference.source_attributes == BTreeSet::from(["policy_id".into()]) =>
+            {
+                scalar(value, unknown, &["policy_id"])
+            }
             ("policy_id", "aws_organizations_policy")
             | (
                 "target_id",

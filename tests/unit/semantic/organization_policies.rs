@@ -4,7 +4,7 @@ const FIXTURE: &str = include_str!("../../fixtures/organization-policies-plan.js
 
 #[test]
 fn direct_policy_attachments_keep_each_resource_and_partial_evidence() {
-    for case in 0..9 {
+    for case in 0..11 {
         let mut input: Value = serde_json::from_str(FIXTURE).unwrap();
         match case {
             1 => input["resource_changes"][5]["provider_name"] = json!("example.com/foreign/aws"),
@@ -23,6 +23,18 @@ fn direct_policy_attachments_keep_each_resource_and_partial_evidence() {
                     json!({"references":["aws_organizations_policy.guardrails.id", "var.dynamic"]})
             }
             8 => input["resource_changes"][5]["mode"] = json!("data"),
+            9 | 10 => {
+                input = serde_json::from_str(&input.to_string().replace(
+                    "aws_organizations_policy.guardrails",
+                    "data.aws_organizations_policy.guardrails",
+                ))
+                .unwrap();
+                input["resource_changes"][5]["mode"] = json!("data");
+                input["resource_changes"][5]["change"]["after"]["policy_id"] =
+                    json!(if case == 9 { "p-guardrails" } else { "wrong" });
+                input["configuration"]["root_module"]["resources"][7]["expressions"]["policy_id"] =
+                    json!({"references":["data.aws_organizations_policy.guardrails.policy_id"]});
+            }
             _ => {}
         }
         let graph = semantic::transform(&plan::parse(&input.to_string()).unwrap());
@@ -36,7 +48,7 @@ fn direct_policy_attachments_keep_each_resource_and_partial_evidence() {
                 .references
                 .iter()
                 .any(|r| r.label == "Direct attachment policy" && r.complete),
-            matches!(case, 0 | 8),
+            matches!(case, 0 | 8 | 9),
             "case {case}"
         );
         assert!(
@@ -73,4 +85,36 @@ fn policy_types_are_explicit_and_never_include_content() {
         .content;
     assert!(svg.contains("Policy type: unknown or unsupported"));
     assert!(!svg.contains("PRIVATE_"));
+}
+
+#[test]
+fn historical_policy_types_use_only_their_own_before_values() {
+    for deposed in [false, true] {
+        let mut input: Value = serde_json::from_str(FIXTURE).unwrap();
+        let policy = &mut input["resource_changes"][5];
+        policy["change"]["actions"] = json!(["delete"]);
+        policy["change"]["before"] = json!({"type":"BACKUP_POLICY", "content":"PRIVATE_BODY"});
+        policy["change"]["after"] = json!({"type":"TAG_POLICY"});
+        if deposed {
+            policy["deposed"] = json!("old");
+        }
+        let graph = semantic::transform(&plan::parse(&input.to_string()).unwrap());
+        let policy = graph
+            .nodes
+            .iter()
+            .find(|n| n.address == "aws_organizations_policy.guardrails")
+            .unwrap();
+        assert!(
+            policy
+                .references
+                .iter()
+                .any(|r| r.label == "Policy type: BACKUP_POLICY")
+        );
+        assert!(
+            !policy
+                .references
+                .iter()
+                .any(|r| r.label == "Policy type: TAG_POLICY")
+        );
+    }
 }

@@ -360,10 +360,19 @@ pub fn apply(all: &Architecture, options: &Options) -> Result<Architecture, Stri
                     || !unplaced_cache.contains(&relationship.to)
             });
             let addresses: BTreeSet<_> = graph.0.nodes.iter().map(|n| n.address.as_str()).collect();
-            graph
+            let sources: BTreeSet<_> = graph
                 .0
-                .components
-                .retain(|c| c.members.iter().all(|m| addresses.contains(m.as_str())));
+                .nodes
+                .iter()
+                .flat_map(|n| &n.entity.provenance)
+                .collect();
+            graph.0.components.retain(|c| {
+                if c.kind == "organization_root" {
+                    c.entity.provenance.iter().all(|id| sources.contains(id))
+                } else {
+                    c.members.iter().all(|m| addresses.contains(m.as_str()))
+                }
+            });
             let ids: BTreeSet<_> = graph.entities().map(|e| e.id.clone()).collect();
             graph.0.relationships.retain(|r| {
                 ids.contains(&r.from)
