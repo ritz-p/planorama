@@ -14,6 +14,9 @@ impl Row<'_> {
             return format!("{}: unresolved", self.reference.label);
         };
         let mut address = target.id.address.clone();
+        if let crate::model::ReferenceKind::OrganizationRoot(index) = self.reference.kind {
+            address.push_str(&format!(".roots[{index}]"));
+        }
         if let Some(state) = &target.state {
             address = format!("{}:{address}", state.as_str());
         }

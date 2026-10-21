@@ -1164,3 +1164,41 @@ action and lifecycle metadata. Parallel associations remain distinct.
 `aws_route` remains a graph node and uses verified [Route Table child-card ownership](routes.md).
 Other Association-role resources remain cards. Examples:
 [association.svg](../examples/association.svg), [aws-relationships.svg](../examples/aws-relationships.svg).
+
+## Organizations hierarchy
+
+`aws_organizations_organization`, `aws_organizations_organizational_unit` and
+`aws_organizations_account` retain individual spatial cards. Organization and OU
+also support their real data-source schemas; no Account data source is assumed.
+These cards use a separate `AWS Organizations Global` scope without inheriting
+the executing provider's management-account identity. An Organizations Account
+represents a member account, not a deployment scope or a VPC/Subnet container.
+
+Known `roots[index].id` values produce synthetic Root cards whose provenance is
+the source Organization and list index. The source row links back to the
+Organization; Root cards have no Terraform action and add no resources to counts.
+Explicit `parent_id` references link OU/Account cards to their derived Root or OU.
+Verification requires a unique exact AWS endpoint, a complete static traversal
+and matching known planned values. The intermediate traversals emitted by
+Terraform for `roots[0].id` are accepted. Literal-only IDs, missing parents,
+dynamic selection, wrong providers/types, ambiguity, cycles and unknown values
+remain unresolved. Current configuration never establishes deleted/deposed
+hierarchy. Filtering can make a parent unavailable without restoring it.
+
+Names, email addresses, account/root IDs, role values and other plan attributes
+are not retained for this display. Cards use Terraform addresses; Root labels
+add only the structural `roots[index]` path. Organization grouping is state-local;
+it does not infer cross-state ownership or account deployment evidence.
+
+The implementation was checked against the AWS Provider 5.100.0 schema and a
+Terraform 1.9.8 offline plan. Upstream schemas:
+[Organization](https://github.com/hashicorp/terraform-provider-aws/blob/v5.100.0/internal/service/organizations/organization.go),
+[OU](https://github.com/hashicorp/terraform-provider-aws/blob/v5.100.0/internal/service/organizations/organizational_unit.go),
+[Account](https://github.com/hashicorp/terraform-provider-aws/blob/v5.100.0/internal/service/organizations/account.go).
+The synthetic [input](../tests/fixtures/organizations-plan.json) and
+[SVG](../examples/organizations.svg) / [HTML](../examples/organizations.html) show a Root, nested OUs and two member accounts.
+Generate offline HTML with:
+
+```sh
+planorama tests/fixtures/organizations-plan.json --format html -o examples/organizations.html
+```

@@ -5,6 +5,11 @@
     "archive_sha256": "d2d166c453526471749d520e0db022c459abef759d2946cf2dd1d1c992dc6526",
     "files": [
         {
+            "file": "AWS-Organizations.svg",
+            "source": "Architecture-Service-Icons_07312026/Arch_Management-Tools/48/Arch_AWS-Organizations_48.svg",
+            "sha256": "f049a5f29536f8fcfcacd19baa197b6af175ff235ebf7451726b469c088629c9"
+        },
+        {
             "file": "Amazon-Virtual-Private-Cloud.svg",
             "source": "Architecture-Service-Icons_07312026/Arch_Networking-Content-Delivery/48/Arch_Amazon-Virtual-Private-Cloud_48.svg",
             "sha256": "7b842e6a64b2238b159d2470e9dc2389f0d1d373a2236abe20aed971b1f69ded"

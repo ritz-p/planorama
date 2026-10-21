@@ -31,7 +31,7 @@ pub(crate) fn base_graph(plan: &TerraformPlan) -> Graph {
     let mut graph = Graph {
         coverage: Default::default(),
         relationships: Vec::new(),
-        components: Vec::new(),
+        components: crate::provider::aws::organizations::roots(plan),
         checks: plan.checks.clone(),
         status: plan.status,
         nodes: plan
@@ -45,7 +45,15 @@ pub(crate) fn base_graph(plan: &TerraformPlan) -> Graph {
                     entries: fact.route_entries.clone(),
                     ..Default::default()
                 },
-                placement: crate::provider::placement(&fact.provider, &fact.resource_type),
+                placement: if crate::provider::aws::organizations::unsupported_data(
+                    &fact.provider,
+                    &fact.resource_type,
+                    fact.mode,
+                ) {
+                    crate::model::Placement::Unresolved
+                } else {
+                    crate::provider::placement(&fact.provider, &fact.resource_type)
+                },
                 references: plan
                     .attributes
                     .iter()
@@ -97,7 +105,15 @@ pub(crate) fn base_graph(plan: &TerraformPlan) -> Graph {
                 module: fact.module.clone(),
                 action: fact.action,
                 mode: fact.mode,
-                role: crate::classification::classify(&fact.provider, &fact.resource_type),
+                role: if crate::provider::aws::organizations::unsupported_data(
+                    &fact.provider,
+                    &fact.resource_type,
+                    fact.mode,
+                ) {
+                    crate::model::ResourceRole::Unknown
+                } else {
+                    crate::classification::classify(&fact.provider, &fact.resource_type)
+                },
             })
             .collect(),
         edges: plan
