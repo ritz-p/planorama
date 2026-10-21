@@ -10,6 +10,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         ("Amazon-Cognito", "cognito"),
         ("AWS-Step-Functions", "step-functions"),
         ("Amazon-Redshift", "redshift"),
+        ("AWS-CloudTrail", "cloudtrail"),
         ("AWS-Organizations", "organizations"),
         ("Amazon-Virtual-Private-Cloud", "vpc"),
         ("Amazon-EC2", "ec2"),
