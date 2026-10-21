@@ -1,0 +1,24 @@
+{
+ "format_version":"1.2", "terraform_version":"1.9.8",
+ "resource_changes":[
+  {"address":"aws_backup_vault.archive","type":"aws_backup_vault","change":{"actions":["no-op"],"after":{"name":"fixture-vault"}}},
+  {"address":"aws_backup_plan.archive","type":"aws_backup_plan","change":{"actions":["create"],"after":{"id":"fixture-plan","rule":[{"target_vault_name":"fixture-vault","schedule":"PRIVATE_RULE"}]}}},
+  {"address":"aws_iam_role.backup","type":"aws_iam_role","change":{"actions":["no-op"],"after":{"arn":"arn:aws:iam::123456789012:role/fixture"}}},
+  {"address":"aws_s3_bucket.data","type":"aws_s3_bucket","change":{"actions":["no-op"],"after":{"arn":"arn:aws:s3:::fixture-data"}}},
+  {"address":"aws_ebs_volume.data","type":"aws_ebs_volume","change":{"actions":["no-op"],"after":{"arn":"arn:aws:ec2:us-east-1:123456789012:volume/vol-fixture"}}},
+  {"address":"aws_backup_selection.explicit","type":"aws_backup_selection","change":{"actions":["create"],"after":{"plan_id":"fixture-plan","iam_role_arn":"arn:aws:iam::123456789012:role/fixture","resources":["arn:aws:s3:::fixture-data","arn:aws:ec2:us-east-1:123456789012:volume/vol-fixture"]}}},
+  {"address":"aws_backup_selection.tagged","type":"aws_backup_selection","change":{"actions":["create"],"after":{"plan_id":"fixture-plan","iam_role_arn":"arn:aws:iam::123456789012:role/fixture","resources":["*"],"selection_tag":[{"key":"PRIVATE_TAG","value":"PRIVATE_VALUE"}]}}}
+ ],
+ "configuration":{
+  "provider_config":{"aws":{"full_name":"registry.terraform.io/hashicorp/aws","version_constraint":"5.100.0","expressions":{"region":{"constant_value":"us-east-1"}}}},
+  "root_module":{"resources":[
+   {"address":"aws_backup_vault.archive","provider_config_key":"aws"},
+   {"address":"aws_backup_plan.archive","provider_config_key":"aws","expressions":{"rule":[{"target_vault_name":{"references":["aws_backup_vault.archive.name"]}}]}},
+   {"address":"aws_iam_role.backup","provider_config_key":"aws"},
+   {"address":"aws_s3_bucket.data","provider_config_key":"aws"},
+   {"address":"aws_ebs_volume.data","provider_config_key":"aws"},
+   {"address":"aws_backup_selection.explicit","provider_config_key":"aws","expressions":{"plan_id":{"references":["aws_backup_plan.archive.id"]},"iam_role_arn":{"references":["aws_iam_role.backup.arn"]},"resources":{"references":["aws_s3_bucket.data.arn","aws_ebs_volume.data.arn"]}}},
+   {"address":"aws_backup_selection.tagged","provider_config_key":"aws","expressions":{"plan_id":{"references":["aws_backup_plan.archive.id"]},"iam_role_arn":{"references":["aws_iam_role.backup.arn"]}}}
+  ]}
+ }
+}

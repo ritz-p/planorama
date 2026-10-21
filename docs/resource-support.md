@@ -78,6 +78,9 @@ Provider source: `registry.terraform.io/hashicorp/aws`.
 | `aws_autoscaling_groups` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Scaling / Amazon EC2 Auto Scaling | Unknown | — |
 | `aws_autoscaling_policy` | Policy / Policy | Logical / Logical | Scaling / Amazon EC2 Auto Scaling | Regional (conditional) | [aws.rs](../src/provider/aws.rs), [aws/autoscaling.rs](../src/provider/aws/autoscaling.rs) |
 | `aws_availability_zones` | Unknown / Unknown | Spatial (unresolved) / Omitted | — | Unknown | — |
+| `aws_backup_plan` | Controller / Controller | Spatial / Spatial | Backup / AWS Backup | Regional (conditional) | [aws/service_references.rs](../src/provider/aws/service_references.rs) |
+| `aws_backup_selection` | Controller / Controller | Spatial / Spatial | Backup / AWS Backup | Regional (conditional) | [aws/service_references.rs](../src/provider/aws/service_references.rs) |
+| `aws_backup_vault` | Node / Node | Spatial / Spatial | Backup / AWS Backup | Regional (conditional) | [aws/service_references.rs](../src/provider/aws/service_references.rs) |
 | `aws_caller_identity` | Unknown / Unknown | Spatial (unresolved) / Omitted | — | Unknown | — |
 | `aws_cloudfront_cache_policy` | Policy / Policy | Logical / Logical | CloudFront / Amazon CloudFront | Global | [aws.rs](../src/provider/aws.rs), [aws/cloudfront.rs](../src/provider/aws/cloudfront.rs) |
 | `aws_cloudfront_connection_group` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | CloudFront / Amazon CloudFront | Global | — |
@@ -102,7 +105,7 @@ Provider source: `registry.terraform.io/hashicorp/aws`.
 | `aws_cognito_user_pool_client` | Node / Node | Spatial / Spatial | Cognito / Amazon Cognito | Regional (conditional) | [aws/service_references.rs](../src/provider/aws/service_references.rs) |
 | `aws_customer_gateway` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Gateway / Amazon VPC | Unknown | — |
 | `aws_db_cluster_snapshot` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Database / Amazon RDS | Unknown | — |
-| `aws_db_instance` | Node / Node | Spatial / Spatial | Database / Amazon RDS | Regional (conditional) | [aws/containment/indirect.rs](../src/provider/aws/containment/indirect.rs), [aws/diagnostics.rs](../src/provider/aws/diagnostics.rs), [aws/security_groups.rs](../src/provider/aws/security_groups.rs), [aws/service_references.rs](../src/provider/aws/service_references.rs) |
+| `aws_db_instance` | Node / Node | Spatial / Spatial | Database / Amazon RDS | Regional (conditional) | [aws/backup.rs](../src/provider/aws/backup.rs), [aws/containment/indirect.rs](../src/provider/aws/containment/indirect.rs), [aws/diagnostics.rs](../src/provider/aws/diagnostics.rs), [aws/security_groups.rs](../src/provider/aws/security_groups.rs), [aws/service_references.rs](../src/provider/aws/service_references.rs) |
 | `aws_db_instances` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Database / Amazon RDS | Unknown | — |
 | `aws_db_parameter_group` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Database / Amazon RDS | Unknown | — |
 | `aws_db_proxy` | Connector / Connector | Spatial / Spatial | Database / Amazon RDS | Regional (conditional) | [aws/containment/vpc_scope.rs](../src/provider/aws/containment/vpc_scope.rs), [aws/network.rs](../src/provider/aws/network.rs), [aws/security_groups.rs](../src/provider/aws/security_groups.rs), [aws/service_references.rs](../src/provider/aws/service_references.rs) |
@@ -111,10 +114,10 @@ Provider source: `registry.terraform.io/hashicorp/aws`.
 | `aws_db_snapshot` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Database / Amazon RDS | Unknown | — |
 | `aws_db_subnet_group` | Node / Node | Spatial / Spatial | Database / Amazon RDS | Regional (conditional) | [aws/containment/indirect.rs](../src/provider/aws/containment/indirect.rs), [aws/containment/vpc_scope.rs](../src/provider/aws/containment/vpc_scope.rs), [aws/diagnostics.rs](../src/provider/aws/diagnostics.rs) |
 | `aws_dynamodb_backups` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | DynamoDb / Amazon DynamoDB | Unknown | — |
-| `aws_dynamodb_table` | Node / Node | Spatial / Spatial | DynamoDb / Amazon DynamoDB | Regional (conditional) | — |
+| `aws_dynamodb_table` | Node / Node | Spatial / Spatial | DynamoDb / Amazon DynamoDB | Regional (conditional) | [aws/backup.rs](../src/provider/aws/backup.rs) |
 | `aws_dynamodb_table_item` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | DynamoDb / Amazon DynamoDB | Unknown | — |
 | `aws_dynamodb_tables` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | DynamoDb / Amazon DynamoDB | Unknown | — |
-| `aws_ebs_volume` | Node / Node | Spatial / Spatial | Ebs / Amazon EBS | Regional (conditional) | [aws/associations.rs](../src/provider/aws/associations.rs), [aws/service_references.rs](../src/provider/aws/service_references.rs) |
+| `aws_ebs_volume` | Node / Node | Spatial / Spatial | Ebs / Amazon EBS | Regional (conditional) | [aws/associations.rs](../src/provider/aws/associations.rs), [aws/backup.rs](../src/provider/aws/backup.rs), [aws/service_references.rs](../src/provider/aws/service_references.rs) |
 | `aws_ec2_capacity_block_reservation` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Ec2 / Amazon EC2 | Unknown | — |
 | `aws_ec2_carrier_gateway` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | — | Unknown | [aws/routes.rs](../src/provider/aws/routes.rs) |
 | `aws_ec2_host` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Ec2 / Amazon EC2 | Unknown | — |
@@ -154,7 +157,7 @@ Provider source: `registry.terraform.io/hashicorp/aws`.
 | `aws_ecs_service` | Controller / Controller | Spatial / Spatial | Ecs / Amazon ECS | Regional (conditional) | [aws.rs](../src/provider/aws.rs), [aws/containment/spanning.rs](../src/provider/aws/containment/spanning.rs), [aws/diagnostics.rs](../src/provider/aws/diagnostics.rs), [aws/security_groups.rs](../src/provider/aws/security_groups.rs), [aws/service_references.rs](../src/provider/aws/service_references.rs) |
 | `aws_ecs_task_definition` | Controller / Controller | Logical / Logical | Ecs / Amazon ECS | Regional (conditional) | [aws.rs](../src/provider/aws.rs) |
 | `aws_efs_access_point` | Node / Node | Spatial / Spatial | Efs / Amazon EFS | Regional (conditional) | [aws/efs.rs](../src/provider/aws/efs.rs), [aws/service_references.rs](../src/provider/aws/service_references.rs) |
-| `aws_efs_file_system` | Node / Node | Spatial / Spatial | Efs / Amazon EFS | Regional (conditional) | [aws/service_references.rs](../src/provider/aws/service_references.rs) |
+| `aws_efs_file_system` | Node / Node | Spatial / Spatial | Efs / Amazon EFS | Regional (conditional) | [aws/backup.rs](../src/provider/aws/backup.rs), [aws/service_references.rs](../src/provider/aws/service_references.rs) |
 | `aws_efs_mount_target` | Node / Node | Spatial / Spatial | Efs / Amazon EFS | Regional (conditional) | [aws/containment.rs](../src/provider/aws/containment.rs), [aws/security_groups.rs](../src/provider/aws/security_groups.rs), [aws/service_references.rs](../src/provider/aws/service_references.rs) |
 | `aws_egress_only_internet_gateway` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | — | Unknown | [aws/routes.rs](../src/provider/aws/routes.rs) |
 | `aws_eip` | Node / Node | Spatial / Spatial | Ec2 / Amazon EC2 | Regional (conditional) | — |
@@ -201,7 +204,7 @@ Provider source: `registry.terraform.io/hashicorp/aws`.
 | `aws_iam_user_policy_attachment` | Association / Association | Logical / Logical | Iam / AWS Identity and Access Management | Global | [aws.rs](../src/provider/aws.rs), [aws/iam.rs](../src/provider/aws/iam.rs) |
 | `aws_iam_user_ssh_key` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Iam / AWS Identity and Access Management | Global | — |
 | `aws_iam_users` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Iam / AWS Identity and Access Management | Global | — |
-| `aws_instance` | Node / Node | Spatial / Spatial | Ec2 / Amazon EC2 | Regional (conditional) | [aws.rs](../src/provider/aws.rs), [aws/associations.rs](../src/provider/aws/associations.rs), [aws/containment.rs](../src/provider/aws/containment.rs), [aws/security_groups.rs](../src/provider/aws/security_groups.rs), [aws/service_references.rs](../src/provider/aws/service_references.rs) |
+| `aws_instance` | Node / Node | Spatial / Spatial | Ec2 / Amazon EC2 | Regional (conditional) | [aws.rs](../src/provider/aws.rs), [aws/associations.rs](../src/provider/aws/associations.rs), [aws/backup.rs](../src/provider/aws/backup.rs), [aws/containment.rs](../src/provider/aws/containment.rs), [aws/security_groups.rs](../src/provider/aws/security_groups.rs), [aws/service_references.rs](../src/provider/aws/service_references.rs) |
 | `aws_instances` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Ec2 / Amazon EC2 | Unknown | — |
 | `aws_internet_gateway` | Connector / Connector | Spatial / Spatial | Gateway / Amazon VPC | Regional (conditional) | [aws/routes.rs](../src/provider/aws/routes.rs) |
 | `aws_key_pair` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Ec2 / Amazon EC2 | Unknown | — |
@@ -239,7 +242,7 @@ Provider source: `registry.terraform.io/hashicorp/aws`.
 | `aws_organizations_policy_attachment` | Association / Unknown | Logical / Spatial (unresolved) | Organizations / AWS Organizations | Global | [aws.rs](../src/provider/aws.rs), [aws/organization_policies.rs](../src/provider/aws/organization_policies.rs), [aws/organizations.rs](../src/provider/aws/organizations.rs), [aws/service_references.rs](../src/provider/aws/service_references.rs) |
 | `aws_partition` | Unknown / Unknown | Spatial (unresolved) / Omitted | — | Unknown | — |
 | `aws_prefix_list` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Vpc / Amazon VPC | Unknown | — |
-| `aws_rds_cluster` | Node / Node | Spatial / Spatial | Database / Amazon RDS | Regional (conditional) | [aws/containment/indirect.rs](../src/provider/aws/containment/indirect.rs), [aws/diagnostics.rs](../src/provider/aws/diagnostics.rs), [aws/members.rs](../src/provider/aws/members.rs), [aws/security_groups.rs](../src/provider/aws/security_groups.rs), [aws/service_references.rs](../src/provider/aws/service_references.rs) |
+| `aws_rds_cluster` | Node / Node | Spatial / Spatial | Database / Amazon RDS | Regional (conditional) | [aws/backup.rs](../src/provider/aws/backup.rs), [aws/containment/indirect.rs](../src/provider/aws/containment/indirect.rs), [aws/diagnostics.rs](../src/provider/aws/diagnostics.rs), [aws/members.rs](../src/provider/aws/members.rs), [aws/security_groups.rs](../src/provider/aws/security_groups.rs), [aws/service_references.rs](../src/provider/aws/service_references.rs) |
 | `aws_rds_cluster_instance` | Node / Node | Spatial / Spatial | Database / Amazon RDS | Regional (conditional) | [aws/members.rs](../src/provider/aws/members.rs) |
 | `aws_rds_cluster_parameter_group` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Database / Amazon RDS | Unknown | — |
 | `aws_rds_clusters` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Database / Amazon RDS | Unknown | — |
@@ -261,7 +264,7 @@ Provider source: `registry.terraform.io/hashicorp/aws`.
 | `aws_route_tables` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Route / Amazon VPC | Unknown | — |
 | `aws_s3_access_point` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Storage / Amazon S3 | Unknown | — |
 | `aws_s3_account_public_access_block` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Storage / Amazon S3 | Unknown | — |
-| `aws_s3_bucket` | Node / Node | Spatial / Spatial | Storage / Amazon S3 | Regional (conditional) | [aws/cloudfront.rs](../src/provider/aws/cloudfront.rs), [aws/s3.rs](../src/provider/aws/s3.rs), [aws/service_references.rs](../src/provider/aws/service_references.rs) |
+| `aws_s3_bucket` | Node / Node | Spatial / Spatial | Storage / Amazon S3 | Regional (conditional) | [aws/backup.rs](../src/provider/aws/backup.rs), [aws/cloudfront.rs](../src/provider/aws/cloudfront.rs), [aws/s3.rs](../src/provider/aws/s3.rs), [aws/service_references.rs](../src/provider/aws/service_references.rs) |
 | `aws_s3_bucket_notification` | Controller / Controller | Logical / Logical | Storage / Amazon S3 | Regional (conditional) | [aws.rs](../src/provider/aws.rs), [aws/s3.rs](../src/provider/aws/s3.rs) |
 | `aws_s3_bucket_object` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Storage / Amazon S3 | Unknown | — |
 | `aws_s3_bucket_object_lock_configuration` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Storage / Amazon S3 | Unknown | — |

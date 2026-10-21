@@ -1,5 +1,6 @@
 mod associations;
 mod autoscaling;
+mod backup;
 mod classification;
 mod cloudfront;
 #[cfg(test)]
