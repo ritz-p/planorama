@@ -31,6 +31,11 @@ fn label(resource: &str, attribute: &str) -> Option<&'static str> {
         ("aws_cloudtrail", "cloud_watch_logs_group_arn") => Some("Trail log group reference"),
         ("aws_cloudtrail", "cloud_watch_logs_role_arn") => Some("Logging role reference"),
         ("aws_cloudtrail", "kms_key_id") => Some("Encryption key reference"),
+        ("aws_backup_plan", "rule.target_vault_name") => Some("Backup vault reference"),
+        ("aws_backup_selection", "plan_id") => Some("Backup plan reference"),
+        ("aws_backup_selection", "iam_role_arn") => Some("Backup role reference"),
+        ("aws_backup_selection", "resources") => Some("Explicit backup resource reference"),
+        ("aws_backup_vault", "kms_key_arn") => Some("Encryption key reference"),
         ("aws_rds_cluster", "global_cluster_identifier") => Some("Global Cluster membership"),
         ("aws_db_proxy_default_target_group", "db_proxy_name") => Some("Proxy owner"),
         ("aws_db_proxy_target", "db_proxy_name") => Some("Configured proxy"),
@@ -125,6 +130,10 @@ fn source_fields(resource: &str, attribute: &str, source: &str) -> &'static [&'s
         ("aws_cloudtrail", "cloud_watch_logs_group_arn", "aws_cloudwatch_log_group")
         | ("aws_cloudtrail", "cloud_watch_logs_role_arn", "aws_iam_role") => &["arn"],
         ("aws_cloudtrail", "kms_key_id", "aws_kms_key") => &["arn", "id", "key_id"],
+        ("aws_backup_plan", "rule.target_vault_name", "aws_backup_vault") => &["name", "id"],
+        ("aws_backup_selection", "plan_id", "aws_backup_plan") => &["id"],
+        ("aws_backup_selection", "iam_role_arn", "aws_iam_role")
+        | ("aws_backup_vault", "kms_key_arn", "aws_kms_key") => &["arn"],
         ("aws_rds_cluster", "global_cluster_identifier", "aws_rds_global_cluster") => {
             &["id", "global_cluster_identifier"]
         }
@@ -312,6 +321,11 @@ pub(crate) fn annotate(
 ) {
     for reference in references.iter_mut() {
         let node = &nodes[reference.target];
+        if node.resource_type == "aws_backup_selection" && reference.attribute == "resources" {
+            reference.service_reference_verified =
+                super::backup::verified_resources(nodes, reference, evidence);
+            continue;
+        }
         if (super::organizations::resource(&node.resource_type)
             && reference.attribute == "parent_id")
             || node.resource_type == "aws_organizations_policy_attachment"
@@ -379,6 +393,9 @@ pub(crate) fn annotate(
             super::waf::verify_scope(nodes, reference, evidence);
         if (node.resource_type == "aws_ecs_service" && reference.attribute == "cluster")
             || node.resource_type == "aws_redshift_cluster"
+            || (node.resource_type == "aws_backup_plan"
+                && reference.attribute == "rule.target_vault_name")
+            || (node.resource_type == "aws_backup_selection" && reference.attribute == "plan_id")
             || matches!(
                 node.resource_type.as_str(),
                 "aws_db_proxy_default_target_group" | "aws_db_proxy_target"

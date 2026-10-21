@@ -21,6 +21,7 @@ pub(super) fn classify(resource_type: &str) -> ResourceRole {
         | "aws_redshift_cluster"
         | "aws_redshift_subnet_group"
         | "aws_cloudtrail"
+        | "aws_backup_vault"
         | "aws_rds_global_cluster"
         | "aws_ecr_repository"
         | "aws_api_gateway_stage"
@@ -124,6 +125,8 @@ pub(super) fn classify(resource_type: &str) -> ResourceRole {
         | "aws_lb_listener_rule"
         | "aws_autoscaling_policy" => ResourceRole::Policy,
         "aws_autoscaling_group"
+        | "aws_backup_plan"
+        | "aws_backup_selection"
         | "aws_db_proxy_default_target_group"
         | "aws_db_proxy_target"
         | "aws_s3_bucket_notification"

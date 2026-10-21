@@ -334,6 +334,40 @@ Regenerate HTML in Docker with `cargo run --locked -- tests/fixtures/cloudtrail-
 The AWS Provider 5.100.0 schema and [official trail contract](https://registry.terraform.io/providers/hashicorp/aws/5.100.0/docs/resources/cloudtrail)
 define the home-region requirement and scalar destination references.
 
+## AWS Backup
+
+`aws_backup_vault` is a regional spatial Node; `aws_backup_plan` and
+`aws_backup_selection` are regional spatial Controllers. All have independent
+identity, coverage and AWS Backup icons/service names.
+
+Plan `rule.target_vault_name` references require a unique explicit Vault
+`name`/`id` reference and matching known value. Since rules are a set, only a
+single rule is verified initially; multiple rules remain unavailable without
+assuming positional correspondence. Selection `plan_id` requires a Plan `id`
+reference. Both require compatible provider/region evidence. Selection
+`iam_role_arn` and Vault `kms_key_arn` accept explicit Role/Key ARN references.
+All dedicated references require current managed AWS endpoints and known values.
+
+Selection `resources` is verified only when complete explicit ARN references
+equal the entire known ARN collection. Initial endpoint types are EC2 Instance,
+EBS Volume, EFS File System, RDS Instance/Cluster, DynamoDB Table and S3 Bucket.
+Wildcards, extra literal values, unknowns, wrong types/providers and historical
+endpoints remain unavailable. Selections with tags, conditions or exclusions
+also remain unverified; these are never expanded into a resource list. Ordinary
+Terraform references remain available separately. Filtering and named states
+preserve each resource's identity.
+
+Configured references do not prove execution, recoverability or retention.
+Rule contents, tag/condition values and recovery point contents are not emitted.
+The [synthetic fixture](../tests/fixtures/backup-plan.json),
+[SVG](../examples/backup.svg) and [offline HTML](../examples/backup.html) contrast
+explicit and tag-based selections. Regenerate HTML in Docker with
+`cargo run --locked -- tests/fixtures/backup-plan.json --format html -o examples/backup.html`.
+See the AWS Provider 5.100.0 [Vault](https://registry.terraform.io/providers/hashicorp/aws/5.100.0/docs/resources/backup_vault),
+[Plan](https://registry.terraform.io/providers/hashicorp/aws/5.100.0/docs/resources/backup_plan)
+and [Selection](https://registry.terraform.io/providers/hashicorp/aws/5.100.0/docs/resources/backup_selection)
+schema and reference contracts.
+
 ## Athena Workgroup and Data Catalog
 
 Exact AWS `aws_athena_workgroup` and `aws_athena_data_catalog` are independent

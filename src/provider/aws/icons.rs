@@ -10,6 +10,7 @@ pub(super) fn icon_for(resource_type: &str) -> Option<ResourceIcon> {
             ResourceIcon::Redshift
         }
         "aws_cloudtrail" => ResourceIcon::CloudTrail,
+        "aws_backup_vault" | "aws_backup_plan" | "aws_backup_selection" => ResourceIcon::Backup,
         "aws_organizations_policy" | "aws_organizations_policy_attachment" => {
             ResourceIcon::Organizations
         }

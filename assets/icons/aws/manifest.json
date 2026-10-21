@@ -198,6 +198,11 @@
             "file": "AWS-CloudTrail.svg",
             "source": "Architecture-Service-Icons_07312026/Arch_Management-Tools/48/Arch_AWS-CloudTrail_48.svg",
             "sha256": "f7d90eab5dd0fd668a515cc0d5d20df075bd01940549a28b4c26116fa22ffb18"
+        },
+        {
+            "file": "AWS-Backup.svg",
+            "source": "Architecture-Service-Icons_07312026/Arch_Storage/48/Arch_AWS-Backup_48.svg",
+            "sha256": "5a1fe6e1fc55644821dddd4ff9aab45b4906e45dca16e5181bd373d5d08432e6"
         }
     ]
 }
