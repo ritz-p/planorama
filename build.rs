@@ -20,6 +20,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         ("Amazon-Simple-Notification-Service", "sns"),
         ("Amazon-EventBridge", "eventbridge"),
         ("Amazon-Elastic-Container-Service", "ecs"),
+        ("Amazon-Elastic-Container-Registry", "ecr"),
         ("Amazon-Elastic-Kubernetes-Service", "eks"),
         ("Amazon-RDS", "rds"),
         ("Amazon-DynamoDB", "dynamodb"),

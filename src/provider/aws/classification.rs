@@ -8,6 +8,7 @@ pub(super) fn classify(resource_type: &str) -> ResourceRole {
     match resource_type {
         "aws_vpc" | "aws_subnet" => ResourceRole::Container,
         "aws_instance"
+        | "aws_ecr_repository"
         | "aws_api_gateway_stage"
         | "aws_athena_workgroup"
         | "aws_athena_data_catalog"
@@ -87,6 +88,8 @@ pub(super) fn classify(resource_type: &str) -> ResourceRole {
         | "aws_iam_saml_provider"
         | "aws_iam_group" => ResourceRole::Identity,
         "aws_security_group"
+        | "aws_ecr_repository_policy"
+        | "aws_ecr_lifecycle_policy"
         | "aws_s3_bucket_policy"
         | "aws_wafv2_web_acl"
         | "aws_wafv2_rule_group"

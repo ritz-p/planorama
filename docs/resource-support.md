@@ -139,6 +139,9 @@ Provider source: `registry.terraform.io/hashicorp/aws`.
 | `aws_ec2_transit_gateway_vpc_attachment` | Association / Association | Spatial / Spatial | Gateway / Amazon VPC | Regional (conditional) | — |
 | `aws_ec2_transit_gateway_vpc_attachments` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Gateway / Amazon VPC | Unknown | — |
 | `aws_ec2_transit_gateway_vpn_attachment` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Gateway / Amazon VPC | Unknown | — |
+| `aws_ecr_lifecycle_policy` | Policy / Policy | Logical / Logical | Ecr / Amazon ECR | Regional (conditional) | [aws.rs](../src/provider/aws.rs), [aws/service_references.rs](../src/provider/aws/service_references.rs) |
+| `aws_ecr_repository` | Node / Node | Spatial / Spatial | Ecr / Amazon ECR | Regional (conditional) | [aws/service_references.rs](../src/provider/aws/service_references.rs) |
+| `aws_ecr_repository_policy` | Policy / Policy | Logical / Logical | Ecr / Amazon ECR | Regional (conditional) | [aws.rs](../src/provider/aws.rs), [aws/service_references.rs](../src/provider/aws/service_references.rs) |
 | `aws_ecs_cluster` | Controller / Controller | Spatial / Spatial | Ecs / Amazon ECS | Regional (conditional) | [aws/service_references.rs](../src/provider/aws/service_references.rs) |
 | `aws_ecs_clusters` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Ecs / Amazon ECS | Unknown | — |
 | `aws_ecs_container_definition` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Ecs / Amazon ECS | Unknown | — |

@@ -17,6 +17,9 @@ fn label(resource: &str, attribute: &str) -> Option<&'static str> {
         return Some(label);
     }
     match (resource, attribute) {
+        ("aws_ecr_repository_policy" | "aws_ecr_lifecycle_policy", "repository") => {
+            Some("Configured repository")
+        }
         ("aws_ecs_service", "cluster") => Some("Cluster membership"),
         ("aws_acmpca_certificate" | "aws_acm_certificate", "certificate_authority_arn") => {
             Some("Signing CA reference")
@@ -69,6 +72,11 @@ fn source_fields(resource: &str, attribute: &str, source: &str) -> &'static [&'s
         return waf;
     }
     match (resource, attribute, source) {
+        (
+            "aws_ecr_repository_policy" | "aws_ecr_lifecycle_policy",
+            "repository",
+            "aws_ecr_repository",
+        ) => &["name", "id"],
         ("aws_ecs_service", "cluster", "aws_ecs_cluster") => &["id", "arn", "name"],
         (
             "aws_acmpca_certificate"
@@ -270,7 +278,12 @@ pub(crate) fn annotate(
         });
         reference.service_reference_verified &=
             super::waf::verify_scope(nodes, reference, evidence);
-        if node.resource_type == "aws_ecs_service" && reference.attribute == "cluster" {
+        if (node.resource_type == "aws_ecs_service" && reference.attribute == "cluster")
+            || matches!(
+                node.resource_type.as_str(),
+                "aws_ecr_repository_policy" | "aws_ecr_lifecycle_policy"
+            )
+        {
             reference.service_reference_verified &= cluster_binding_matches(
                 node.provider_configuration.as_ref(),
                 endpoint.provider_configuration.as_ref(),
@@ -332,23 +345,25 @@ pub(crate) fn annotate(
 pub(super) fn verified(raw: &Input, reference: &AttributeReference) -> bool {
     reference.service_reference_verified
         && super::iam::bindings_compatible(&raw.nodes, reference)
-        && (raw.nodes[reference.target].resource_type != "aws_ecs_service"
-            || reference.sources.iter().all(|&source| {
-                cluster_binding_matches(
-                    raw.nodes[reference.target].provider_configuration.as_ref(),
-                    raw.nodes[source].provider_configuration.as_ref(),
-                    raw.nodes[reference.target]
-                        .entity
-                        .scope
-                        .as_ref()
-                        .and_then(|s| s.region.as_ref()),
-                    raw.nodes[source]
-                        .entity
-                        .scope
-                        .as_ref()
-                        .and_then(|s| s.region.as_ref()),
-                )
-            }))
+        && (!matches!(
+            raw.nodes[reference.target].resource_type.as_str(),
+            "aws_ecs_service" | "aws_ecr_repository_policy" | "aws_ecr_lifecycle_policy"
+        ) || reference.sources.iter().all(|&source| {
+            cluster_binding_matches(
+                raw.nodes[reference.target].provider_configuration.as_ref(),
+                raw.nodes[source].provider_configuration.as_ref(),
+                raw.nodes[reference.target]
+                    .entity
+                    .scope
+                    .as_ref()
+                    .and_then(|s| s.region.as_ref()),
+                raw.nodes[source]
+                    .entity
+                    .scope
+                    .as_ref()
+                    .and_then(|s| s.region.as_ref()),
+            )
+        }))
 }
 
 pub(super) fn present(raw: &Input, graph: &mut Graph) {
@@ -360,6 +375,7 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
                 && matches!(
                     node.resource_type.as_str(),
                     "aws_cloudwatch_log_group"
+                        | "aws_ecr_repository"
                         | "aws_ecs_cluster"
                         | "aws_athena_workgroup"
                         | "aws_athena_data_catalog"

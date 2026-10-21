@@ -2,6 +2,9 @@ use crate::icons::ResourceIcon;
 
 pub(super) fn icon_for(resource_type: &str) -> Option<ResourceIcon> {
     Some(match resource_type {
+        "aws_ecr_repository" | "aws_ecr_repository_policy" | "aws_ecr_lifecycle_policy" => {
+            ResourceIcon::Ecr
+        }
         "aws_wafv2_web_acl" | "aws_wafv2_rule_group" | "aws_wafv2_web_acl_association" => {
             ResourceIcon::Waf
         }

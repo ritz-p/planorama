@@ -1,0 +1,178 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="1786" viewBox="0 0 1100 1786" role="img" aria-labelledby="title description">
+<title id="title">Terraform plan</title>
+<desc id="description">4 resources (1 spatial cards, 3 logical resources in 3 group cards) · 3 relationships Thin solid: dependency. Dashed: association. Thick dotted: connection. Nested boxes: containment. Edge color preserves the Terraform action when available.</desc>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/></marker><metadata id="planorama-icons-license">AWS Architecture Icons, release 07312026.
+Copyright Amazon Web Services, Inc. or its affiliates. All rights reserved.
+AWS service names and artwork are trademarks or other proprietary assets of AWS.
+Source: https://aws.amazon.com/architecture/icons/
+Terms: https://aws.amazon.com/terms/
+These assets are used to illustrate AWS architecture. They are not licensed
+under Planorama&apos;s original glyph MIT notice or any repository code license.
+No AWS endorsement is implied. Consult the AWS terms for other uses.
+</metadata><symbol id="planorama-icon-aws-ecr" viewBox="0 0 64 64"><g>
+    <title>Icon-Architecture/48/Arch_Amazon-Elastic-Container-Registry_48</title>
+    <g id="planorama-icon-aws-ecr-local-49636f6e2d4172636869746563747572652f34382f417263685f416d617a6f6e2d456c61737469632d436f6e7461696e65722d52656769737472795f3438" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="planorama-icon-aws-ecr-local-49636f6e2d4172636869746563747572652d42472f34382f436f6d70757465" fill="#ED7100">
+            <rect id="planorama-icon-aws-ecr-local-52656374616e676c65" x="0" y="0" width="64" height="64"></rect>
+        </g>
+        <path d="M30.726,29.9221953 C30.279,30.1827125 30,30.6666734 30,31.1847019 L30,51.5341041 L15,42.8578781 L15,23.0114745 L32.172,13.0777519 L47.088,20.4574036 L30.726,29.9221953 Z M49.704,20.42033 C49.704,19.9023015 49.426,19.4203446 48.921,19.1317717 L32.879,11.1960158 C32.433,10.9354986 31.876,10.9344966 31.428,11.1940118 L13.729,21.4333413 C13.28,21.6928565 13,22.1768174 13,22.6968499 L13,43.1725028 C13,43.6905313 13.279,44.1744922 13.728,44.4350094 L29.816,53.7414867 C30.04,53.8717454 30.292,53.9368747 30.545,53.9368747 C30.796,53.9368747 31.047,53.8727473 31.272,53.7424887 C31.721,53.4829735 32,52.9990126 32,52.4789801 L32,31.4993265 L48.978,21.6778267 C49.426,21.4193134 49.704,20.9373565 49.704,20.42033 L49.704,20.42033 Z M50,42.9410432 L37.004,51.5331022 L37.004,44.4099597 L43.603,39.4160446 C43.853,39.2266686 44,38.9300798 44,38.6164571 L44,30.4803034 L50,27.0064062 L50,42.9410432 Z M51.273,24.7990236 C50.825,24.5385063 50.267,24.5375044 49.817,24.7990236 L42.879,28.812993 C42.639,28.9422497 42,29.287936 42,30.0304101 L42,38.1174664 L35.663,42.9129875 C35.255,43.1805187 35.004,43.6414338 35.004,44.1344126 L35.004,52.5461134 C35.004,53.0661459 35.284,53.5501068 35.733,53.809622 C35.951,53.9348707 36.195,54 36.445,54 C36.709,54 36.982,53.9278568 37.239,53.7775584 L51.275,44.4971327 C51.722,44.2376175 52,43.7536566 52,43.2356281 L52,26.0625322 C52,25.5424997 51.721,25.0585388 51.273,24.7990236 L51.273,24.7990236 Z" id="planorama-icon-aws-ecr-local-416d617a6f6e2d456c61737469632d436f6e7461696e65722d52656769737472795f49636f6e5f34385f5371756964" fill="#FFFFFF"></path>
+    </g>
+</g></symbol><symbol id="planorama-icon-aws-ecs" viewBox="0 0 64 64"><g>
+    <title>Icon-Architecture/48/Arch_Amazon-Elastic-Container-Service_48</title>
+    <g id="planorama-icon-aws-ecs-local-49636f6e2d4172636869746563747572652f34382f417263685f416d617a6f6e2d456c61737469632d436f6e7461696e65722d536572766963655f3438" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="planorama-icon-aws-ecs-local-49636f6e2d4172636869746563747572652d42472f34382f436f6d70757465" fill="#ED7100">
+            <rect id="planorama-icon-aws-ecs-local-52656374616e676c65" x="0" y="0" width="64" height="64"></rect>
+        </g>
+        <path d="M50,36.3822466 L44,33.3822885 L44,25.0004058 C44,24.6374109 43.803,24.3024156 43.485,24.1264181 L35,19.412484 L35,12.7495773 L50,21.5724538 L50,36.3822466 Z M51.507,20.1384739 L34.507,10.1386138 C34.199,9.95761637 33.815,9.95461641 33.504,10.1326139 C33.192,10.3106114 33,10.6416068 33,11.0006018 L33,20.0004758 C33,20.3634707 33.197,20.6984661 33.515,20.8744636 L42,25.5883976 L42,34.0002799 C42,34.3792746 42.214,34.7252697 42.553,34.8952674 L50.553,38.8952114 C50.694,38.9652104 50.847,39.0002099 51,39.0002099 C51.183,39.0002099 51.365,38.9502106 51.525,38.851212 C51.82,38.6682146 52,38.3472191 52,38.0002239 L52,21.0004618 C52,20.6464668 51.812,20.3184714 51.507,20.1384739 L51.507,20.1384739 Z M32,51.8280304 L15,41.4391758 L15,21.5544541 L29,12.8045765 L29,19.4464836 L21.47,24.1524177 C21.178,24.3354152 21,24.6554107 21,25.0004058 L21,38.0002239 C21,38.351219 21.185,38.6772144 21.485,38.8572119 L31.485,44.857128 C31.789,45.0401254 32.167,45.0481253 32.479,44.8781277 L42.988,39.1462079 L48.035,42.0291675 L32,51.8280304 Z M50.496,41.1321801 L43.496,37.1322361 C43.194,36.9592385 42.825,36.9562385 42.521,37.1222362 L32.023,42.8481561 L23,37.4342318 L23,25.5543981 L30.53,20.848464 C30.822,20.6654665 31,20.345471 31,20.0004758 L31,11.0006018 C31,10.6366069 30.803,10.3026115 30.484,10.125614 C30.168,9.9486165 29.778,9.95961634 29.47,10.1526136 L13.47,20.1524737 C13.178,20.3354711 13,20.6554667 13,21.0004618 L13,42.0001679 C13,42.3481631 13.182,42.6711585 13.479,42.854156 L31.479,53.854002 C31.639,53.9510007 31.819,54 32,54 C32.181,54 32.361,53.9510007 32.521,53.854002 L50.521,42.854156 C50.823,42.6691586 51.005,42.3391632 51.0001004,41.9851681 C50.995,41.6321731 50.803,41.3071776 50.496,41.1321801 L50.496,41.1321801 Z" id="planorama-icon-aws-ecs-local-416d617a6f6e2d456c61737469632d436f6e7461696e65722d536572766963655f49636f6e5f34385f5371756964" fill="#FFFFFF"></path>
+    </g>
+</g></symbol></defs>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<g font-family="ui-monospace, SFMono-Regular, Consolas, monospace">
+<text x="40" y="45" font-size="25" font-weight="700" fill="#0f172a">Terraform plan</text>
+<text x="40" y="73" font-size="13" fill="#475569">4 resources (1 spatial cards, 3 logical resources in 3 group cards) · 3 relationships</text>
+<metadata id="architecture-entities">[{&quot;id&quot;:&quot;terraform:6177735f6563725f6c6966656379636c655f706f6c6963792e617070-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_ecr_lifecycle_policy.app&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:6177735f6563725f7265706f7369746f72792e617070-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_ecr_repository.app&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:6177735f6563725f7265706f7369746f72795f706f6c6963792e617070-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_ecr_repository_policy.app&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:6177735f6563735f7461736b5f646566696e6974696f6e2e617070-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_ecs_task_definition.app&quot;,&quot;deposed_key&quot;:null}]}]</metadata>
+<metadata id="architecture-relationships">[{&quot;directionality&quot;:&quot;directed&quot;,&quot;from&quot;:&quot;terraform:6177735f6563725f7265706f7369746f72792e617070-current&quot;,&quot;inferred&quot;:false,&quot;kind&quot;:&quot;dependency&quot;,&quot;provenance&quot;:[{&quot;from&quot;:&quot;aws_ecr_repository.app&quot;,&quot;from_deposed_key&quot;:null,&quot;kind&quot;:&quot;reference&quot;,&quot;to&quot;:&quot;aws_ecr_lifecycle_policy.app&quot;,&quot;to_deposed_key&quot;:null}],&quot;to&quot;:&quot;terraform:6177735f6563725f6c6966656379636c655f706f6c6963792e617070-current&quot;},{&quot;directionality&quot;:&quot;directed&quot;,&quot;from&quot;:&quot;terraform:6177735f6563725f7265706f7369746f72792e617070-current&quot;,&quot;inferred&quot;:false,&quot;kind&quot;:&quot;dependency&quot;,&quot;provenance&quot;:[{&quot;from&quot;:&quot;aws_ecr_repository.app&quot;,&quot;from_deposed_key&quot;:null,&quot;kind&quot;:&quot;reference&quot;,&quot;to&quot;:&quot;aws_ecr_repository_policy.app&quot;,&quot;to_deposed_key&quot;:null}],&quot;to&quot;:&quot;terraform:6177735f6563725f7265706f7369746f72795f706f6c6963792e617070-current&quot;},{&quot;directionality&quot;:&quot;directed&quot;,&quot;from&quot;:&quot;terraform:6177735f6563725f7265706f7369746f72792e617070-current&quot;,&quot;inferred&quot;:false,&quot;kind&quot;:&quot;dependency&quot;,&quot;provenance&quot;:[{&quot;from&quot;:&quot;aws_ecr_repository.app&quot;,&quot;from_deposed_key&quot;:null,&quot;kind&quot;:&quot;reference&quot;,&quot;to&quot;:&quot;aws_ecs_task_definition.app&quot;,&quot;to_deposed_key&quot;:null}],&quot;to&quot;:&quot;terraform:6177735f6563735f7461736b5f646566696e6974696f6e2e617070-current&quot;}]</metadata>
+<metadata id="resource-references">[{&quot;attribute&quot;:&quot;repository&quot;,&quot;complete&quot;:true,&quot;consumer&quot;:&quot;terraform:6177735f6563725f6c6966656379636c655f706f6c6963792e617070-current&quot;,&quot;dependency&quot;:false,&quot;issues&quot;:[],&quot;kind&quot;:&quot;configured&quot;,&quot;targets&quot;:[{&quot;address&quot;:&quot;aws_ecr_repository.app&quot;,&quot;deposed_key&quot;:null}]},{&quot;attribute&quot;:&quot;repository&quot;,&quot;complete&quot;:true,&quot;consumer&quot;:&quot;terraform:6177735f6563725f7265706f7369746f72795f706f6c6963792e617070-current&quot;,&quot;dependency&quot;:false,&quot;issues&quot;:[],&quot;kind&quot;:&quot;configured&quot;,&quot;targets&quot;:[{&quot;address&quot;:&quot;aws_ecr_repository.app&quot;,&quot;deposed_key&quot;:null}]},{&quot;attribute&quot;:&quot;container_definitions&quot;,&quot;complete&quot;:true,&quot;consumer&quot;:&quot;terraform:6177735f6563735f7461736b5f646566696e6974696f6e2e617070-current&quot;,&quot;dependency&quot;:false,&quot;issues&quot;:[],&quot;kind&quot;:&quot;configured&quot;,&quot;targets&quot;:[{&quot;address&quot;:&quot;aws_ecr_repository.app&quot;,&quot;deposed_key&quot;:null}]}]</metadata>
+<rect x="40" y="100" width="12" height="12" fill="#ecfdf5" stroke="#047857"/><text x="59" y="111" font-size="12" fill="#047857">create (4)</text>
+<rect x="180" y="100" width="12" height="12" fill="#eff6ff" stroke="#1d4ed8"/><text x="199" y="111" font-size="12" fill="#1d4ed8">update (0)</text>
+<rect x="320" y="100" width="12" height="12" fill="#fef2f2" stroke="#b91c1c"/><text x="339" y="111" font-size="12" fill="#b91c1c">delete (0)</text>
+<rect x="460" y="100" width="12" height="12" fill="#fff7ed" stroke="#c2410c"/><text x="479" y="111" font-size="12" fill="#c2410c">replace (0)</text>
+<rect x="600" y="100" width="12" height="12" fill="#faf5ff" stroke="#7e22ce"/><text x="619" y="111" font-size="12" fill="#7e22ce">read (0)</text>
+<rect x="740" y="100" width="12" height="12" fill="#f8fafc" stroke="#64748b"/><text x="759" y="111" font-size="12" fill="#64748b">unchanged (0)</text>
+<rect x="880" y="100" width="12" height="12" fill="#fefce8" stroke="#854d0e"/><text x="899" y="111" font-size="12" fill="#854d0e">other (0)</text>
+<g id="relationship-legend" font-size="12" fill="#475569" transform="translate(40 148)"><rect width="960" height="546" rx="12" fill="#f8fafc" stroke="#cbd5e1"/>
+<text x="16" y="29" font-size="15" font-weight="700" fill="#334155">Relationship lines</text>
+<text x="16" y="56">Line color shows the relationship&apos;s own Terraform action, independently of endpoint-card actions.</text>
+<path data-legend-action="none" d="M 16 77 H 42" fill="none" stroke="#94a3b8" stroke-width="1.5"/><text x="50" y="82">no independent change</text>
+<path data-legend-action="unchanged" d="M 234 77 H 260" fill="none" stroke="#64748b" stroke-width="1.5"/><text x="268" y="82">unchanged</text>
+<text x="16" y="110">no independent change: no separate Terraform action is identified. unchanged: an explicit no-op action.</text>
+<g data-legend-entry="dependency" transform="translate(0 132)">
+<g data-legend-sample="dependency">
+<path data-legend-kind="dependency" data-directionality="directed" d="M 21 11 H 153" fill="none" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+<circle data-legend-endpoint="source" cx="21" cy="11" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+<text x="174" y="12" font-weight="700">Dependency</text>
+<text x="174" y="30">Thin solid arrow from the</text>
+<text x="174" y="48">referenced resource to the</text>
+<text x="174" y="66">dependent resource; not exact</text>
+<text x="174" y="84">Terraform execution order.</text>
+</g>
+<g data-legend-entry="association" transform="translate(492 132)">
+<g data-legend-sample="association">
+<path data-legend-kind="association" data-directionality="undirected" d="M 21 11 H 153" fill="none" stroke="#94a3b8" stroke-width="2" stroke-dasharray="7 4"/>
+<circle data-legend-endpoint="source" cx="21" cy="11" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/><circle data-legend-endpoint="target" cx="153" cy="11" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/><g data-legend-badge="source">
+<rect x="31" y="2" width="32" height="18" rx="4" fill="#ffffff" stroke="#94a3b8" stroke-width="2" stroke-dasharray="7 4"/><text x="47" y="15" text-anchor="middle" font-size="11" fill="#334155">[12]</text>
+</g>
+<g data-legend-badge="target">
+<rect x="111" y="2" width="32" height="18" rx="4" fill="#ffffff" stroke="#94a3b8" stroke-width="2" stroke-dasharray="7 4"/><text x="127" y="15" text-anchor="middle" font-size="11" fill="#334155">[12]</text>
+</g>
+</g>
+<text x="174" y="12" font-weight="700">Association</text>
+<text x="174" y="30">Dashed, undirected relationship.</text>
+<text x="174" y="48">Matching badges identify the same</text>
+<text x="174" y="66">Terraform-backed relationship at</text>
+<text x="174" y="84">both attachment points.</text>
+</g>
+<g data-legend-entry="directed-association" transform="translate(0 238)">
+<g data-legend-sample="directed-association">
+<path data-legend-kind="directed-association" data-directionality="directed" d="M 21 11 H 153" fill="none" stroke="#94a3b8" stroke-width="2" stroke-dasharray="7 4" marker-end="url(#arrow)"/>
+<circle data-legend-endpoint="source" cx="21" cy="11" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/><circle data-legend-endpoint="target" cx="153" cy="11" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/><path data-legend-arrow="true" d="M 146.7 7.5 L 153.7 11 L 146.7 14.5 Z" fill="#94a3b8"/>
+<g data-legend-badge="source">
+<rect x="31" y="2" width="32" height="18" rx="4" fill="#ffffff" stroke="#94a3b8" stroke-width="2" stroke-dasharray="7 4"/><text x="47" y="15" text-anchor="middle" font-size="11" fill="#334155">[12]</text>
+</g>
+<g data-legend-badge="target">
+<rect x="111" y="2" width="32" height="18" rx="4" fill="#ffffff" stroke="#94a3b8" stroke-width="2" stroke-dasharray="7 4"/><text x="127" y="15" text-anchor="middle" font-size="11" fill="#334155">[12]</text>
+</g>
+</g>
+<text x="174" y="12" font-weight="700">Directed Association</text>
+<text x="174" y="30">Dashed line from a Route to its</text>
+<text x="174" y="48">next hop. The destination arrow</text>
+<text x="174" y="66">expresses direction; matching</text>
+<text x="174" y="84">badges identify the same</text>
+<text x="174" y="102">relationship.</text>
+</g>
+<g data-legend-entry="connection" transform="translate(492 238)">
+<g data-legend-sample="connection">
+<path data-legend-kind="connection" data-directionality="undirected" d="M 21 11 H 153" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-dasharray="0 3.5" stroke-linecap="round"/>
+<circle data-legend-endpoint="source" cx="21" cy="11" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/><circle data-legend-endpoint="target" cx="153" cy="11" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+<text x="174" y="12" font-weight="700">Connection</text>
+<text x="174" y="30">Thicker dotted line shows an</text>
+<text x="174" y="48">inferred, undirected connection;</text>
+<text x="174" y="66">this does not guarantee actual</text>
+<text x="174" y="84">network reachability.</text>
+</g>
+<g data-legend-entry="containment" transform="translate(0 362)">
+<g data-legend-sample="containment">
+<g data-legend-kind="containment" fill="none" stroke="#94a3b8"><rect x="65" y="2" width="44" height="28" rx="4"/><rect x="74" y="12" width="26" height="12" rx="2"/></g>
+</g>
+<text x="174" y="12" font-weight="700">Containment</text>
+<text x="174" y="30">Nested boxes show containment;</text>
+<text x="174" y="48">nesting replaces a redundant</text>
+<text x="174" y="66">relationship line.</text>
+</g>
+<text x="16" y="462">Hollow circles mark resource/card attachment points; neither end of an undirected line is a directional start.</text>
+<text x="16" y="480">Filled internal dots mark bundle junctions.</text>
+<text x="16" y="506">Matching [N] badges identify the same Terraform-backed relationship and its Relationship Resources entry. They do</text>
+<text x="16" y="524">not express direction or count connections. Reference-only Connections and Dependencies have no number.</text>
+</g>
+<g transform="translate(0 558)">
+<g data-annotation-area="true">
+<g data-annotation-card="true" transform="translate(40 160)"><rect width="988" height="768" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-annotation-section="Logical Resources"><rect width="988" height="768" rx="12" fill="#ecfeff" stroke="#0891b2"/><text x="16" y="28" font-size="15" font-weight="700" fill="#0e7490">Logical Resources</text><g data-annotation-card="true" transform="translate(16 48)"><rect width="512" height="332" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-logical-group="true" data-provider-source="registry.terraform.io/hashicorp/aws" data-resource-type="aws_ecr_lifecycle_policy" data-mode="managed"><title>aws_ecr_lifecycle_policy · managed — registry.terraform.io/hashicorp/aws</title><text x="16" y="28" font-size="13" font-weight="700" fill="#0e7490">aws_ecr_lifecycle_policy · managed</text>
+<text x="16" y="48" font-size="11" fill="#64748b">registry.terraform.io/hashicorp/aws</text>
+<text data-role-explanation="true" x="16" y="66" font-size="12" fill="#475569" xml:space="preserve">Role: Policy — access/control rules or policy-like configur</text>
+<text data-role-explanation="true" x="16" y="86" font-size="12" fill="#475569" xml:space="preserve">ation; not necessarily IAM or policy enforcement.</text>
+<g data-action-section="create"><rect x="8" y="106" width="496" height="198" rx="8" fill="none" stroke="#047857" stroke-width="2"/><title>Create (1)</title><text x="16" y="130" font-size="13" font-weight="700" fill="#047857">Create (1)</text><g id="resource-6177735f6563725f6c6966656379636c655f706f6c6963792e617070-current" data-architecture-id="terraform:6177735f6563725f6c6966656379636c655f706f6c6963792e617070-current" data-entity-kind="terraform" data-placement="logical" data-terraform-address="aws_ecr_lifecycle_policy.app" data-qualified-address="module.root.aws_ecr_lifecycle_policy.app" data-mode="managed" transform="translate(0 138)" data-role="policy"><title>module.root.aws_ecr_lifecycle_policy.app — create</title><use href="#planorama-icon-aws-ecr" x="472" y="8" width="24" height="24" aria-hidden="true"/><text x="16" y="28" font-size="12" fill="#334155" xml:space="preserve" font-weight="700">module.root.aws_ecr_lifecycle_policy.app</text>
+<text x="16" y="48" font-size="12" fill="#334155" xml:space="preserve">create</text>
+<text x="16" y="68" font-size="12" fill="#334155" xml:space="preserve">Region: us-east-1</text>
+<text x="16" y="88" font-size="12" fill="#334155" xml:space="preserve">policy</text>
+<g data-resource-references="true"><title>Configured repository: aws_ecr_repository.app [repository; direct attribute reference]</title><text x="16" y="116" font-size="11" font-weight="700" fill="#475569">Uses</text><a href="#resource-6177735f6563725f7265706f7369746f72792e617070-current" data-reference-attribute="repository"><title>Configured repository: aws_ecr_repository.app [repository; direct attribute reference]</title><text x="16" y="134" font-size="11" fill="#334155" xml:space="preserve">Configured repository: aws_ecr_repository.app</text>
+</a></g>
+<line data-resource-underline="true" x1="16" y1="150" x2="496" y2="150" stroke="#047857" stroke-width="2"/></g>
+</g>
+</g>
+</g>
+<g data-annotation-card="true" transform="translate(16 400)"><rect width="512" height="332" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-logical-group="true" data-provider-source="registry.terraform.io/hashicorp/aws" data-resource-type="aws_ecr_repository_policy" data-mode="managed"><title>aws_ecr_repository_policy · managed — registry.terraform.io/hashicorp/aws</title><text x="16" y="28" font-size="13" font-weight="700" fill="#0e7490">aws_ecr_repository_policy · managed</text>
+<text x="16" y="48" font-size="11" fill="#64748b">registry.terraform.io/hashicorp/aws</text>
+<text data-role-explanation="true" x="16" y="66" font-size="12" fill="#475569" xml:space="preserve">Role: Policy — access/control rules or policy-like configur</text>
+<text data-role-explanation="true" x="16" y="86" font-size="12" fill="#475569" xml:space="preserve">ation; not necessarily IAM or policy enforcement.</text>
+<g data-action-section="create"><rect x="8" y="106" width="496" height="198" rx="8" fill="none" stroke="#047857" stroke-width="2"/><title>Create (1)</title><text x="16" y="130" font-size="13" font-weight="700" fill="#047857">Create (1)</text><g id="resource-6177735f6563725f7265706f7369746f72795f706f6c6963792e617070-current" data-architecture-id="terraform:6177735f6563725f7265706f7369746f72795f706f6c6963792e617070-current" data-entity-kind="terraform" data-placement="logical" data-terraform-address="aws_ecr_repository_policy.app" data-qualified-address="module.root.aws_ecr_repository_policy.app" data-mode="managed" transform="translate(0 138)" data-role="policy"><title>module.root.aws_ecr_repository_policy.app — create</title><use href="#planorama-icon-aws-ecr" x="472" y="8" width="24" height="24" aria-hidden="true"/><text x="16" y="28" font-size="12" fill="#334155" xml:space="preserve" font-weight="700">module.root.aws_ecr_repository_policy.app</text>
+<text x="16" y="48" font-size="12" fill="#334155" xml:space="preserve">create</text>
+<text x="16" y="68" font-size="12" fill="#334155" xml:space="preserve">Region: us-east-1</text>
+<text x="16" y="88" font-size="12" fill="#334155" xml:space="preserve">policy</text>
+<g data-resource-references="true"><title>Configured repository: aws_ecr_repository.app [repository; direct attribute reference]</title><text x="16" y="116" font-size="11" font-weight="700" fill="#475569">Uses</text><a href="#resource-6177735f6563725f7265706f7369746f72792e617070-current" data-reference-attribute="repository"><title>Configured repository: aws_ecr_repository.app [repository; direct attribute reference]</title><text x="16" y="134" font-size="11" fill="#334155" xml:space="preserve">Configured repository: aws_ecr_repository.app</text>
+</a></g>
+<line data-resource-underline="true" x1="16" y1="150" x2="496" y2="150" stroke="#047857" stroke-width="2"/></g>
+</g>
+</g>
+</g>
+<g data-annotation-card="true" transform="translate(548 400)"><rect width="424" height="352" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-logical-group="true" data-provider-source="registry.terraform.io/hashicorp/aws" data-resource-type="aws_ecs_task_definition" data-mode="managed"><title>aws_ecs_task_definition · managed — registry.terraform.io/hashicorp/aws</title><text x="16" y="28" font-size="13" font-weight="700" fill="#0e7490">aws_ecs_task_definition · managed</text>
+<text x="16" y="48" font-size="11" fill="#64748b">registry.terraform.io/hashicorp/aws</text>
+<text data-role-explanation="true" x="16" y="66" font-size="12" fill="#475569" xml:space="preserve">Role: Controller — manages or configures service</text>
+<text data-role-explanation="true" x="16" y="86" font-size="12" fill="#475569" xml:space="preserve">s, workloads or related resources; does not prove</text>
+<text data-role-explanation="true" x="16" y="106" font-size="12" fill="#475569" xml:space="preserve"> runtime control, traffic or relationships.</text>
+<g data-action-section="create"><rect x="8" y="126" width="408" height="198" rx="8" fill="none" stroke="#047857" stroke-width="2"/><title>Create (1)</title><text x="16" y="150" font-size="13" font-weight="700" fill="#047857">Create (1)</text><g id="resource-6177735f6563735f7461736b5f646566696e6974696f6e2e617070-current" data-architecture-id="terraform:6177735f6563735f7461736b5f646566696e6974696f6e2e617070-current" data-entity-kind="terraform" data-placement="logical" data-terraform-address="aws_ecs_task_definition.app" data-qualified-address="module.root.aws_ecs_task_definition.app" data-mode="managed" transform="translate(0 158)" data-role="controller"><title>module.root.aws_ecs_task_definition.app — create</title><use href="#planorama-icon-aws-ecs" x="384" y="8" width="24" height="24" aria-hidden="true"/><text x="16" y="28" font-size="12" fill="#334155" xml:space="preserve" font-weight="700">module.root.aws_ecs_task_definition.app</text>
+<text x="16" y="48" font-size="12" fill="#334155" xml:space="preserve">create</text>
+<text x="16" y="68" font-size="12" fill="#334155" xml:space="preserve">Region: us-east-1</text>
+<text x="16" y="88" font-size="12" fill="#334155" xml:space="preserve">controller</text>
+<g data-resource-references="true"><title>References: aws_ecr_repository.app [container_definitions; direct attribute reference]</title><text x="16" y="116" font-size="11" font-weight="700" fill="#475569">Uses</text><a href="#resource-6177735f6563725f7265706f7369746f72792e617070-current" data-reference-attribute="container_definitions"><title>References: aws_ecr_repository.app [container_definitions; direct attribute reference]</title><text x="16" y="134" font-size="11" fill="#334155" xml:space="preserve">References: aws_ecr_repository.app</text>
+</a></g>
+<line data-resource-underline="true" x1="16" y1="150" x2="408" y2="150" stroke="#047857" stroke-width="2"/></g>
+</g>
+</g>
+</g>
+</g></g>
+</g>
+<g data-architecture="true" transform="translate(0 792)">
+<g data-deployment-scope="true" data-scope-provider="AWS" data-region="us-east-1"><rect x="40" y="160" width="360" height="156" rx="14" fill="#f8fafc" stroke="#94a3b8" stroke-dasharray="9 5"/><text x="56" y="185" font-size="15" font-weight="700" fill="#334155">AWS us-east-1</text></g>
+<g data-edge-kind="dependency" data-source="resource-6177735f6563725f7265706f7369746f72792e617070-current" data-target="resource-6177735f6563725f6c6966656379636c655f706f6c6963792e617070-current"><title>aws_ecr_repository.app → aws_ecr_lifecycle_policy.app</title></g>
+<g data-edge-kind="dependency" data-source="resource-6177735f6563725f7265706f7369746f72792e617070-current" data-target="resource-6177735f6563725f7265706f7369746f72795f706f6c6963792e617070-current"><title>aws_ecr_repository.app → aws_ecr_repository_policy.app</title></g>
+<g data-edge-kind="dependency" data-source="resource-6177735f6563725f7265706f7369746f72792e617070-current" data-target="resource-6177735f6563735f7461736b5f646566696e6974696f6e2e617070-current"><title>aws_ecr_repository.app → aws_ecs_task_definition.app</title></g>
+<g id="resource-6177735f6563725f7265706f7369746f72792e617070-current" data-architecture-id="terraform:6177735f6563725f7265706f7369746f72792e617070-current" data-qualified-address="module.root.aws_ecr_repository.app" data-terraform-address="aws_ecr_repository.app"><title>module.root.aws_ecr_repository.app — create</title>
+<rect x="60" y="200" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
+<text x="72" y="220" font-size="11" fill="#047857">aws_ecr_repository · create</text>
+<use href="#planorama-icon-aws-ecr" x="72" y="228" width="24" height="24" aria-hidden="true"/><text x="104" y="245" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_ecr_repository.</text>
+<text x="104" y="265" font-size="13" fill="#0f172a" xml:space="preserve">app</text>
+</g>
+</g>
+</g>
+</g>
+</svg>

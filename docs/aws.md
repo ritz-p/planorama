@@ -914,6 +914,30 @@ the omitted source identities as provenance, without creating cards or paths.
 Cached data resources in prior state are
 included when still present in configuration. See [data.svg](../examples/data.svg).
 
+## ECR repositories
+
+`aws_ecr_repository` is a regional spatial card. `aws_ecr_repository_policy`
+and `aws_ecr_lifecycle_policy` remain individually selectable logical resources,
+with the Amazon ECR icon and service name. `Configured repository` requires a
+complete, unique explicit `repository` reference to a managed AWS repository's
+`name` or `id`, matching known values and compatible provider bindings.
+Unknown, ambiguous, foreign-provider, deleted and deposed endpoints do not prove
+this configuration relationship; ordinary Terraform references remain available.
+Filtering an endpoint preserves an unavailable reference and coverage identity.
+
+ECS container definitions retain their ordinary structured Terraform references.
+Image URL, tag and digest strings do not establish repository relationships.
+Policy/lifecycle bodies, registry URLs, credentials and image metadata are not
+displayed. References do not certify image pulls, effective permissions or replication.
+See the maintained [SVG](../examples/ecr.svg) and [offline HTML](../examples/ecr.html).
+
+The implementation was checked with Terraform 1.9.8 / 1.16.6 and AWS Provider
+5.100.0 / 6.0.0 schemas and offline plans. The official
+[repository](https://registry.terraform.io/providers/hashicorp/aws/6.0.0/docs/resources/ecr_repository),
+[repository policy](https://registry.terraform.io/providers/hashicorp/aws/6.0.0/docs/resources/ecr_repository_policy)
+and [lifecycle policy](https://registry.terraform.io/providers/hashicorp/aws/6.0.0/docs/resources/ecr_lifecycle_policy)
+contracts use repository names; fresh computed values remain unverified until known.
+
 ## ECS Cluster membership
 
 `aws_ecs_cluster` is an independent regional card for managed and data resources.

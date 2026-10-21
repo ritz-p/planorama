@@ -71,6 +71,9 @@ pub(super) fn reference_label(resource_type: &str, attribute: &str) -> &'static 
 
 pub(super) fn placement(resource_type: &str) -> crate::model::Placement {
     match resource_type {
+        "aws_ecr_repository_policy" | "aws_ecr_lifecycle_policy" => {
+            crate::model::Placement::Logical
+        }
         "aws_s3_bucket_policy"
         | "aws_s3_bucket_notification"
         | "aws_s3_bucket_replication_configuration" => crate::model::Placement::Logical,
