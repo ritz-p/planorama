@@ -72,3 +72,4 @@ examples/s3-replication.svg
 examples/organizations.svg
 examples/organization-policies.svg
 examples/organization-deployments.svg
+examples/rds-global.svg

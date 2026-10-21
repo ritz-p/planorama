@@ -7,6 +7,35 @@ The generated [resource support matrix](resource-support.md) lists exact-type
 roles, display modes, icons and scope eligibility. This document defines the
 conditional relationship and placement proofs behind that catalog.
 
+## RDS Global Clusters
+
+`aws_rds_global_cluster` is a Global spatial resource with the RDS icon and
+service name. It never inherits the execution provider's region. Regional
+`aws_rds_cluster` cards retain their own provider/account/region identity and
+existing embedded Instance ownership and coverage.
+
+A Cluster's `global_cluster_identifier` becomes **Global Cluster membership**
+only with a complete, unique explicit reference to a current managed AWS Global
+Cluster's `id` or `global_cluster_identifier` and equal known evaluated values.
+Different provider aliases and regions are allowed; conflicting verified account
+evidence rejects membership. Literal IDs, unknown/dynamic/ambiguous references,
+data, deleted/deposed and wrong-provider/type endpoints keep ordinary references
+and unresolved diagnostics. Filtering marks absent endpoints unavailable, and
+named states resolve their own identities independently.
+
+Membership describes configuration, not replication health, writer/reader roles
+or failover order. Computed `global_cluster_members`, credentials and attribute
+values are not emitted. `source_db_cluster_identifier` retains ordinary Terraform
+reference behavior without inferring a primary role.
+
+Checked against Terraform 1.9.8 plan output and AWS Provider 5.100.0's schema and
+[Global Cluster contract](https://github.com/hashicorp/terraform-provider-aws/blob/v5.100.0/website/docs/r/rds_global_cluster.html.markdown).
+The synthetic [fixture](../tests/fixtures/rds-global-plan.json),
+[SVG](../examples/rds-global.svg) and [offline HTML](../examples/rds-global.html)
+show two regional clusters, embedded instances and an unresolved literal ID.
+Regenerate HTML with
+`docker compose exec -T dev cargo run --locked -- tests/fixtures/rds-global-plan.json --format html -o examples/rds-global.html`.
+
 ## CloudFront origins and policies
 
 `aws_cloudfront_distribution` remains a Global spatial connector. Exact AWS

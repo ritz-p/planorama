@@ -107,15 +107,7 @@ pub(crate) fn base_graph(plan: &TerraformPlan) -> Graph {
                 module: fact.module.clone(),
                 action: fact.action,
                 mode: fact.mode,
-                role: if crate::provider::aws::organizations::unsupported_data(
-                    &fact.provider,
-                    &fact.resource_type,
-                    fact.mode,
-                ) {
-                    crate::model::ResourceRole::Unknown
-                } else {
-                    crate::classification::classify(&fact.provider, &fact.resource_type)
-                },
+                role: crate::classification::classify_entity(fact),
             })
             .collect(),
         edges: plan

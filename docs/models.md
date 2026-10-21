@@ -91,6 +91,9 @@ matching verified deployment scopes. It is independent of their provider scope;
 only a unique selected correspondence produces deployment navigation.
 Derived Roots retain their source's full Terraform identity, including the
 current/deposed discriminator, independently of the display address.
+Root reference metadata preserves `root_index` separately from its source
+Organization identity. Coverage uses the same mode-aware classification as nodes;
+unsupported data-source modes remain `unsupported_classification` findings.
 In SVG `resource-references` metadata, remote targets include `state` alongside
 their address and deposed key. Targets without `state` belong to the enclosing
 state section, or the single input in unnamed diagrams.
