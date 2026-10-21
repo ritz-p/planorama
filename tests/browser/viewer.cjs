@@ -938,6 +938,22 @@ class ViewerTests {
         this.assertEqual(selected, this.choose('module.app'));
         this.assertEqual(len(this.driver.find_elements(By.CSS_SELECTOR, '[data-viewer-selected]')), 1);
     }
+    test_rds_global_membership_preserves_state_and_embedded_selection() {
+        this.load('--state', 'one=tests/fixtures/rds-global-plan.json', '--state', 'two=tests/fixtures/rds-global-plan.json');
+        this.choose('one:aws_rds_cluster.east');
+        let link = this.find('[data-viewer-selected] a[data-reference-attribute="global_cluster_identifier"]');
+        let target = this.driver.execute_script("return arguments[0].getAttribute('href').slice(1)", link);
+        this.driver.execute_script("arguments[0].dispatchEvent(new MouseEvent('click', {bubbles:true,cancelable:true}))", link);
+        this.assertEqual(this.find('[data-viewer-selected]').get_attribute('id'), target);
+        this.assertIn('one', this.find('#selection').text);
+        this.assertIn('aws_rds_global_cluster.world[0]', this.find('#selection').text);
+        this.choose('two:aws_rds_cluster_instance.west[0]');
+        this.assertIn('aws_rds_cluster_instance.west[0]', this.find('#selection').text);
+        let broken = this.driver.execute_script("return Array.from(document.querySelectorAll('#viewport a[href]')).filter(a=>!document.getElementById(a.getAttribute('href').slice(1))).length");
+        this.assertEqual(broken, 0);
+        this.load('tests/fixtures/rds-global-plan.json', '--focus', 'aws_rds_cluster.east', '--focus-depth', '0');
+        this.assertEqual(this.driver.find_elements(By.CSS_SELECTOR, 'a[data-reference-attribute="global_cluster_identifier"]').length, 0);
+    }
     test_filtered_and_unresolved_targets_do_not_gain_navigation() {
         this.load('tests/fixtures/viewer-plan.json', '--focus', 'aws_ecs_service.app', '--focus-depth', '0');
         let resources = this.driver.execute_script("return JSON.parse(document.getElementById('viewer-data').textContent)");

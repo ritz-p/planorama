@@ -1,0 +1,244 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "mode": "managed",
+      "change": {
+        "before": {
+          "global_cluster_members": [
+            {
+              "is_writer": true,
+              "db_cluster_arn": "PRIVATE_ARN"
+            }
+          ],
+          "id": "fixture-world",
+          "global_cluster_identifier": "fixture-world"
+        },
+        "actions": [
+          "no-op"
+        ],
+        "after_unknown": {},
+        "after": {
+          "global_cluster_members": [
+            {
+              "is_writer": true,
+              "db_cluster_arn": "PRIVATE_ARN"
+            }
+          ],
+          "id": "fixture-world",
+          "global_cluster_identifier": "fixture-world"
+        }
+      },
+      "type": "aws_rds_global_cluster",
+      "address": "aws_rds_global_cluster.world[0]",
+      "provider_name": "registry.terraform.io/hashicorp/aws"
+    },
+    {
+      "mode": "managed",
+      "change": {
+        "before": {
+          "master_password": "PRIVATE_PASSWORD",
+          "id": "fixture-east",
+          "cluster_identifier": "fixture-east",
+          "global_cluster_identifier": "fixture-world"
+        },
+        "actions": [
+          "no-op"
+        ],
+        "after_unknown": {},
+        "after": {
+          "master_password": "PRIVATE_PASSWORD",
+          "id": "fixture-east",
+          "cluster_identifier": "fixture-east",
+          "global_cluster_identifier": "fixture-world"
+        }
+      },
+      "type": "aws_rds_cluster",
+      "address": "aws_rds_cluster.east",
+      "provider_name": "registry.terraform.io/hashicorp/aws"
+    },
+    {
+      "mode": "managed",
+      "change": {
+        "before": {
+          "id": "fixture-west",
+          "cluster_identifier": "fixture-west",
+          "global_cluster_identifier": "fixture-world"
+        },
+        "actions": [
+          "no-op"
+        ],
+        "after_unknown": {},
+        "after": {
+          "id": "fixture-west",
+          "cluster_identifier": "fixture-west",
+          "global_cluster_identifier": "fixture-world"
+        }
+      },
+      "type": "aws_rds_cluster",
+      "address": "aws_rds_cluster.west",
+      "provider_name": "registry.terraform.io/hashicorp/aws"
+    },
+    {
+      "mode": "managed",
+      "change": {
+        "before": {
+          "id": "fixture-east-instance",
+          "cluster_identifier": "fixture-east"
+        },
+        "actions": [
+          "no-op"
+        ],
+        "after_unknown": {},
+        "after": {
+          "id": "fixture-east-instance",
+          "cluster_identifier": "fixture-east"
+        }
+      },
+      "type": "aws_rds_cluster_instance",
+      "address": "aws_rds_cluster_instance.east[0]",
+      "provider_name": "registry.terraform.io/hashicorp/aws"
+    },
+    {
+      "mode": "managed",
+      "change": {
+        "before": {
+          "id": "fixture-west-instance",
+          "cluster_identifier": "fixture-west"
+        },
+        "actions": [
+          "no-op"
+        ],
+        "after_unknown": {},
+        "after": {
+          "id": "fixture-west-instance",
+          "cluster_identifier": "fixture-west"
+        }
+      },
+      "type": "aws_rds_cluster_instance",
+      "address": "aws_rds_cluster_instance.west[0]",
+      "provider_name": "registry.terraform.io/hashicorp/aws"
+    },
+    {
+      "mode": "managed",
+      "change": {
+        "before": {
+          "id": "fixture-literal",
+          "global_cluster_identifier": "fixture-world"
+        },
+        "actions": [
+          "no-op"
+        ],
+        "after_unknown": {},
+        "after": {
+          "id": "fixture-literal",
+          "global_cluster_identifier": "fixture-world"
+        }
+      },
+      "type": "aws_rds_cluster",
+      "address": "aws_rds_cluster.literal",
+      "provider_name": "registry.terraform.io/hashicorp/aws"
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws.west": {
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "alias": "west",
+        "name": "aws",
+        "expressions": {
+          "region": {
+            "constant_value": "eu-west-1"
+          }
+        }
+      },
+      "aws.east": {
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "alias": "east",
+        "name": "aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "mode": "managed",
+          "provider_config_key": "aws.east",
+          "expressions": {},
+          "type": "aws_rds_global_cluster",
+          "address": "aws_rds_global_cluster.world"
+        },
+        {
+          "mode": "managed",
+          "provider_config_key": "aws.east",
+          "expressions": {
+            "global_cluster_identifier": {
+              "references": [
+                "aws_rds_global_cluster.world[0].id",
+                "aws_rds_global_cluster.world[0]",
+                "aws_rds_global_cluster.world"
+              ]
+            }
+          },
+          "type": "aws_rds_cluster",
+          "address": "aws_rds_cluster.east"
+        },
+        {
+          "mode": "managed",
+          "provider_config_key": "aws.west",
+          "expressions": {
+            "global_cluster_identifier": {
+              "references": [
+                "aws_rds_global_cluster.world[0].global_cluster_identifier"
+              ]
+            }
+          },
+          "type": "aws_rds_cluster",
+          "address": "aws_rds_cluster.west"
+        },
+        {
+          "mode": "managed",
+          "provider_config_key": "aws.east",
+          "expressions": {
+            "cluster_identifier": {
+              "references": [
+                "aws_rds_cluster.east.id"
+              ]
+            }
+          },
+          "type": "aws_rds_cluster_instance",
+          "address": "aws_rds_cluster_instance.east"
+        },
+        {
+          "mode": "managed",
+          "provider_config_key": "aws.west",
+          "expressions": {
+            "cluster_identifier": {
+              "references": [
+                "aws_rds_cluster.west.id"
+              ]
+            }
+          },
+          "type": "aws_rds_cluster_instance",
+          "address": "aws_rds_cluster_instance.west"
+        },
+        {
+          "mode": "managed",
+          "provider_config_key": "aws.east",
+          "expressions": {
+            "global_cluster_identifier": {
+              "constant_value": "fixture-world"
+            }
+          },
+          "type": "aws_rds_cluster",
+          "address": "aws_rds_cluster.literal"
+        }
+      ]
+    }
+  }
+}
