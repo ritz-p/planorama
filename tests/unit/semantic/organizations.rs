@@ -123,6 +123,21 @@ fn unsupported_account_data_mode_matches_coverage_classification() {
             mode == "data"
         );
         assert_eq!(graph.coverage.selected.resources, 1);
+        assert_eq!(
+            graph.nodes[0]
+                .references
+                .iter()
+                .any(|r| matches!(r.kind, crate::model::ReferenceKind::OrganizationParent)),
+            mode == "managed"
+        );
+        assert_eq!(
+            graph
+                .coverage
+                .findings
+                .iter()
+                .any(|f| f.code == "unproven_endpoint_value"),
+            mode == "managed"
+        );
     }
 }
 

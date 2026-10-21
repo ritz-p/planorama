@@ -195,6 +195,7 @@ pub(crate) fn roots(plan: &TerraformPlan) -> Vec<SyntheticComponent> {
 pub(super) fn present(raw: &Input, graph: &mut Graph) {
     for (index, node) in raw.nodes.iter().enumerate() {
         if !node.provider.is_aws()
+            || unsupported_data(&node.provider, &node.resource_type, node.mode)
             || !matches!(
                 node.resource_type.as_str(),
                 "aws_organizations_organizational_unit" | "aws_organizations_account"
@@ -268,6 +269,7 @@ pub(super) fn diagnostics(raw: &Input) -> Vec<Diagnostic> {
         .enumerate()
         .filter(|(_, node)| {
             node.provider.is_aws()
+                && !unsupported_data(&node.provider, &node.resource_type, node.mode)
                 && matches!(
                     node.resource_type.as_str(),
                     "aws_organizations_organizational_unit" | "aws_organizations_account"
