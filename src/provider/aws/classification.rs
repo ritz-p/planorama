@@ -6,6 +6,8 @@ mod tests;
 
 pub(super) fn classify(resource_type: &str) -> ResourceRole {
     match resource_type {
+        "aws_organizations_policy" => ResourceRole::Policy,
+        "aws_organizations_policy_attachment" => ResourceRole::Association,
         "aws_organizations_organization"
         | "aws_organizations_organizational_unit"
         | "aws_organizations_account" => ResourceRole::Node,

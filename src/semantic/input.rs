@@ -114,6 +114,7 @@ pub(crate) fn base_graph(plan: &TerraformPlan) -> Graph {
             .map(|edge| edge.endpoints().into())
             .collect(),
     };
+    crate::provider::aws::organization_policies::facts(plan, &mut graph);
     graph.relationships =
         super::relationships::collect(&graph, &super::relationships::deployments(&graph.nodes));
     graph

@@ -276,7 +276,9 @@ pub(crate) fn annotate(
 ) {
     for reference in references.iter_mut() {
         let node = &nodes[reference.target];
-        if super::organizations::resource(&node.resource_type) && reference.attribute == "parent_id"
+        if (super::organizations::resource(&node.resource_type)
+            && reference.attribute == "parent_id")
+            || node.resource_type == "aws_organizations_policy_attachment"
         {
             continue;
         }
