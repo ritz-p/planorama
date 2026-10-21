@@ -257,6 +257,28 @@ were checked against the provider's [User Pool](https://registry.terraform.io/pr
 and [Identity Pool](https://registry.terraform.io/providers/hashicorp/aws/5.100.0/docs/resources/cognito_identity_pool)
 documentation. Create-time unknown IDs remain unverified.
 
+## Step Functions
+
+`aws_sfn_state_machine` and `aws_sfn_activity` are independent regional spatial
+Nodes with the AWS Step Functions icon/service name. A State Machine's `role_arn`
+is an Execution role reference only with a complete unique explicit reference to
+a current managed AWS IAM Role's `arn` and matching known evaluated values.
+Unknown, ambiguous, wrong-provider/type and deleted/deposed endpoints stay
+unverified; filtering marks absent endpoints unavailable. Ordinary Terraform
+references and state-qualified identities remain intact.
+
+ASL definitions are never parsed into task nodes, execution order or runtime
+targets. Explicit Terraform references inside a definition retain their ordinary
+dependency meaning. Definition text, payloads and attribute values are not
+embedded. Activity resources do not imply workers or execution success.
+
+The [synthetic fixture](../tests/fixtures/step-functions-plan.json) produces
+[SVG](../examples/step-functions.svg) and [offline HTML](../examples/step-functions.html).
+Regenerate HTML with `cargo run --locked -- tests/fixtures/step-functions-plan.json --format html -o examples/step-functions.html` in Docker.
+The AWS Provider 5.100.0 [State Machine](https://registry.terraform.io/providers/hashicorp/aws/5.100.0/docs/resources/sfn_state_machine)
+and [Activity](https://registry.terraform.io/providers/hashicorp/aws/5.100.0/docs/resources/sfn_activity)
+schema defines regional resources and a scalar `role_arn`; ASL is an opaque string.
+
 ## Athena Workgroup and Data Catalog
 
 Exact AWS `aws_athena_workgroup` and `aws_athena_data_catalog` are independent

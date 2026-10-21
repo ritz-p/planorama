@@ -276,6 +276,8 @@ Provider source: `registry.terraform.io/hashicorp/aws`.
 | `aws_secretsmanager_secret_version` | Controller / Controller | Spatial / Spatial | SecretsManager / AWS Secrets Manager | Regional (conditional) | [aws/service_members.rs](../src/provider/aws/service_members.rs), [aws/service_references.rs](../src/provider/aws/service_references.rs) |
 | `aws_security_group` | Policy / Policy | Spatial / Spatial | Security / Amazon VPC | Regional (conditional) | [aws/containment.rs](../src/provider/aws/containment.rs), [aws/network.rs](../src/provider/aws/network.rs), [aws/security_groups.rs](../src/provider/aws/security_groups.rs) |
 | `aws_security_groups` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Security / Amazon VPC | Unknown | — |
+| `aws_sfn_activity` | Node / Node | Spatial / Spatial | StepFunctions / AWS Step Functions | Regional (conditional) | — |
+| `aws_sfn_state_machine` | Node / Node | Spatial / Spatial | StepFunctions / AWS Step Functions | Regional (conditional) | [aws/service_references.rs](../src/provider/aws/service_references.rs) |
 | `aws_sns_topic` | Node / Node | Spatial / Spatial | Sns / Amazon Simple Notification Service | Regional (conditional) | [aws/messaging.rs](../src/provider/aws/messaging.rs), [aws/s3.rs](../src/provider/aws/s3.rs) |
 | `aws_sns_topic_subscription` | Association / Association | Logical / Logical | — | Regional (conditional) | [aws.rs](../src/provider/aws.rs), [aws/messaging.rs](../src/provider/aws/messaging.rs) |
 | `aws_spot_datafeed_subscription` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Ec2 / Amazon EC2 | Unknown | — |
