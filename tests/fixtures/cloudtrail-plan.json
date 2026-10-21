@@ -1,0 +1,20 @@
+{
+ "format_version":"1.2", "terraform_version":"1.9.8",
+ "resource_changes":[
+  {"address":"aws_s3_bucket.audit","type":"aws_s3_bucket","change":{"actions":["no-op"],"after":{"bucket":"fixture-audit"}}},
+  {"address":"aws_cloudwatch_log_group.audit","type":"aws_cloudwatch_log_group","change":{"actions":["no-op"],"after":{"arn":"arn:aws:logs:us-east-1:123456789012:log-group:fixture"}}},
+  {"address":"aws_iam_role.audit","type":"aws_iam_role","change":{"actions":["no-op"],"after":{"arn":"arn:aws:iam::123456789012:role/fixture"}}},
+  {"address":"aws_kms_key.audit","type":"aws_kms_key","change":{"actions":["no-op"],"after":{"arn":"arn:aws:kms:us-east-1:123456789012:key/fixture"}}},
+  {"address":"aws_cloudtrail.audit","type":"aws_cloudtrail","change":{"actions":["create"],"after":{"s3_bucket_name":"fixture-audit","cloud_watch_logs_group_arn":"arn:aws:logs:us-east-1:123456789012:log-group:fixture:*","cloud_watch_logs_role_arn":"arn:aws:iam::123456789012:role/fixture","kms_key_id":"arn:aws:kms:us-east-1:123456789012:key/fixture","is_multi_region_trail":true,"is_organization_trail":true,"event_selector":[{"data_resource":[{"values":["PRIVATE_SELECTOR"]}]}],"s3_key_prefix":"PRIVATE_PREFIX"}}}
+ ],
+ "configuration":{
+  "provider_config":{"aws":{"full_name":"registry.terraform.io/hashicorp/aws","version_constraint":"5.100.0","expressions":{"region":{"constant_value":"us-east-1"}}}},
+  "root_module":{"resources":[
+   {"address":"aws_s3_bucket.audit","provider_config_key":"aws"},
+   {"address":"aws_cloudwatch_log_group.audit","provider_config_key":"aws"},
+   {"address":"aws_iam_role.audit","provider_config_key":"aws"},
+   {"address":"aws_kms_key.audit","provider_config_key":"aws"},
+   {"address":"aws_cloudtrail.audit","provider_config_key":"aws","expressions":{"s3_bucket_name":{"references":["aws_s3_bucket.audit.bucket"]},"cloud_watch_logs_group_arn":{"references":["aws_cloudwatch_log_group.audit.arn"]},"cloud_watch_logs_role_arn":{"references":["aws_iam_role.audit.arn"]},"kms_key_id":{"references":["aws_kms_key.audit.arn"]}}}
+  ]}
+ }
+}

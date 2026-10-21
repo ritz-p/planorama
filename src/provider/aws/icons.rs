@@ -9,6 +9,7 @@ pub(super) fn icon_for(resource_type: &str) -> Option<ResourceIcon> {
         "aws_redshift_cluster" | "aws_redshift_subnet_group" | "aws_redshift_parameter_group" => {
             ResourceIcon::Redshift
         }
+        "aws_cloudtrail" => ResourceIcon::CloudTrail,
         "aws_organizations_policy" | "aws_organizations_policy_attachment" => {
             ResourceIcon::Organizations
         }

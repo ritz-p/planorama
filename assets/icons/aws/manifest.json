@@ -193,6 +193,11 @@
             "file": "Amazon-Redshift.svg",
             "source": "Architecture-Service-Icons_07312026/Arch_Analytics/48/Arch_Amazon-Redshift_48.svg",
             "sha256": "b2a267bb27552a7608cae3cd0284b5617498848a273a2ef752f9dcb338312b65"
+        },
+        {
+            "file": "AWS-CloudTrail.svg",
+            "source": "Architecture-Service-Icons_07312026/Arch_Management-Tools/48/Arch_AWS-CloudTrail_48.svg",
+            "sha256": "f7d90eab5dd0fd668a515cc0d5d20df075bd01940549a28b4c26116fa22ffb18"
         }
     ]
 }

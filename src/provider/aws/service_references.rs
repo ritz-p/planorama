@@ -27,6 +27,10 @@ fn label(resource: &str, attribute: &str) -> Option<&'static str> {
         ("aws_sfn_state_machine", "role_arn") => Some("Execution role reference"),
         ("aws_redshift_cluster", "cluster_subnet_group_name") => Some("Cluster subnet group"),
         ("aws_redshift_cluster", "cluster_parameter_group_name") => Some("Cluster parameter group"),
+        ("aws_cloudtrail", "s3_bucket_name") => Some("Trail bucket reference"),
+        ("aws_cloudtrail", "cloud_watch_logs_group_arn") => Some("Trail log group reference"),
+        ("aws_cloudtrail", "cloud_watch_logs_role_arn") => Some("Logging role reference"),
+        ("aws_cloudtrail", "kms_key_id") => Some("Encryption key reference"),
         ("aws_rds_cluster", "global_cluster_identifier") => Some("Global Cluster membership"),
         ("aws_db_proxy_default_target_group", "db_proxy_name") => Some("Proxy owner"),
         ("aws_db_proxy_target", "db_proxy_name") => Some("Configured proxy"),
@@ -117,6 +121,10 @@ fn source_fields(resource: &str, attribute: &str, source: &str) -> &'static [&'s
             "cluster_parameter_group_name",
             "aws_redshift_parameter_group",
         ) => &["name", "id"],
+        ("aws_cloudtrail", "s3_bucket_name", "aws_s3_bucket") => &["id", "bucket"],
+        ("aws_cloudtrail", "cloud_watch_logs_group_arn", "aws_cloudwatch_log_group")
+        | ("aws_cloudtrail", "cloud_watch_logs_role_arn", "aws_iam_role") => &["arn"],
+        ("aws_cloudtrail", "kms_key_id", "aws_kms_key") => &["arn", "id", "key_id"],
         ("aws_rds_cluster", "global_cluster_identifier", "aws_rds_global_cluster") => {
             &["id", "global_cluster_identifier"]
         }
@@ -360,7 +368,12 @@ pub(crate) fn annotate(
             reference.source_attributes.len() == 1
                 && reference.source_attributes.contains(*field)
                 && actual.is_some()
-                && actual == scalar(target, target_unknown, &[*field])
+                && (actual == scalar(target, target_unknown, &[*field])
+                    || (node.resource_type == "aws_cloudtrail"
+                        && reference.attribute == "cloud_watch_logs_group_arn"
+                        && scalar(target, target_unknown, &[*field]).is_some_and(|target| {
+                            actual.and_then(|arn| arn.strip_suffix(":*")) == Some(target)
+                        })))
         });
         reference.service_reference_verified &=
             super::waf::verify_scope(nodes, reference, evidence);

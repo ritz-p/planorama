@@ -20,6 +20,7 @@ pub(super) fn classify(resource_type: &str) -> ResourceRole {
         | "aws_sfn_activity"
         | "aws_redshift_cluster"
         | "aws_redshift_subnet_group"
+        | "aws_cloudtrail"
         | "aws_rds_global_cluster"
         | "aws_ecr_repository"
         | "aws_api_gateway_stage"

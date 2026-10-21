@@ -3,6 +3,9 @@ mod autoscaling;
 mod classification;
 mod cloudfront;
 #[cfg(test)]
+#[path = "../../tests/unit/semantic/cloudtrail.rs"]
+mod cloudtrail_tests;
+#[cfg(test)]
 #[path = "../../tests/unit/semantic/cognito.rs"]
 mod cognito_tests;
 mod components;

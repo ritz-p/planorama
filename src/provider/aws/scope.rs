@@ -55,6 +55,7 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
                 | "aws_redshift_cluster"
                 | "aws_redshift_subnet_group"
                 | "aws_redshift_parameter_group"
+                | "aws_cloudtrail"
                 | "aws_ecr_repository"
                 | "aws_ecr_repository_policy"
                 | "aws_ecr_lifecycle_policy"
