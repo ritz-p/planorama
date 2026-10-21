@@ -229,6 +229,34 @@ contracts were checked against the installed schema and a Terraform 1.9.8
 offline plan. Regenerate HTML in Docker with
 `cargo run --locked -- tests/fixtures/private-ca-plan.json --format html -o examples/private-ca.html`.
 
+## Cognito
+
+`aws_cognito_user_pool`, `aws_cognito_user_pool_client` and
+`aws_cognito_identity_pool` are independent regional spatial Nodes with the
+Amazon Cognito icon and service name. Their identity, lifecycle and coverage
+remain independent of any verified reference.
+
+Client `user_pool_id` references require an explicit unique User Pool `id`
+reference and matching known values. Identity Pool
+`cognito_identity_providers.client_id` and `.provider_name` references require
+respectively a Client `id` or User Pool `endpoint` reference with matching known
+values. The provider block is a set: only a single element is currently verified;
+multiple elements, unknown values and ambiguous endpoints remain unavailable.
+Managed, current, non-deleted AWS endpoints are required. Ordinary Terraform
+references remain distinct from these configured associations. Literal ID/URL
+matches alone never create associations; filtered endpoints become unavailable.
+External IdP and role configuration retain ordinary Terraform references only.
+
+No client secret, user schema, callback URL, credentials or provider attribute
+values are included in the diagram. References do not prove authentication flow,
+user counts or effective permissions. The [synthetic fixture](../tests/fixtures/cognito-plan.json)
+produces [SVG](../examples/cognito.svg) and [offline HTML](../examples/cognito.html).
+Terraform 1.9.8 / AWS Provider 5.100.0 schema and a refresh-disabled create plan
+were checked against the provider's [User Pool](https://registry.terraform.io/providers/hashicorp/aws/5.100.0/docs/resources/cognito_user_pool),
+[Client](https://registry.terraform.io/providers/hashicorp/aws/5.100.0/docs/resources/cognito_user_pool_client)
+and [Identity Pool](https://registry.terraform.io/providers/hashicorp/aws/5.100.0/docs/resources/cognito_identity_pool)
+documentation. Create-time unknown IDs remain unverified.
+
 ## Athena Workgroup and Data Catalog
 
 Exact AWS `aws_athena_workgroup` and `aws_athena_data_catalog` are independent

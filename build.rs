@@ -7,6 +7,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!("cargo:rerun-if-changed=build/icon.rs");
     let out = std::path::PathBuf::from(std::env::var("OUT_DIR")?);
     for (file, id) in [
+        ("Amazon-Cognito", "cognito"),
         ("AWS-Organizations", "organizations"),
         ("Amazon-Virtual-Private-Cloud", "vpc"),
         ("Amazon-EC2", "ec2"),

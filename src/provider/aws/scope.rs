@@ -47,6 +47,9 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
         || matches!(
             resource,
             "aws_vpc"
+                | "aws_cognito_user_pool"
+                | "aws_cognito_user_pool_client"
+                | "aws_cognito_identity_pool"
                 | "aws_ecr_repository"
                 | "aws_ecr_repository_policy"
                 | "aws_ecr_lifecycle_policy"

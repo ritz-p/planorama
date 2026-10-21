@@ -2,6 +2,9 @@ mod associations;
 mod autoscaling;
 mod classification;
 mod cloudfront;
+#[cfg(test)]
+#[path = "../../tests/unit/semantic/cognito.rs"]
+mod cognito_tests;
 mod components;
 mod containment;
 mod data;

@@ -1,0 +1,17 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {"address":"aws_cognito_user_pool.users","mode":"managed","type":"aws_cognito_user_pool","change":{"actions":["no-op"],"after":{"id":"us-east-1_fixture","endpoint":"cognito-idp.us-east-1.amazonaws.com/us-east-1_fixture","schema":[{"name":"PRIVATE_ATTRIBUTE"}]}}},
+    {"address":"aws_cognito_user_pool_client.app","mode":"managed","type":"aws_cognito_user_pool_client","change":{"actions":["update"],"after":{"id":"fixture-client","user_pool_id":"us-east-1_fixture","client_secret":"PRIVATE_SECRET","callback_urls":["https://PRIVATE_CALLBACK.invalid"]}}},
+    {"address":"aws_cognito_identity_pool.identities","mode":"managed","type":"aws_cognito_identity_pool","change":{"actions":["create"],"after":{"cognito_identity_providers":[{"client_id":"fixture-client","provider_name":"cognito-idp.us-east-1.amazonaws.com/us-east-1_fixture"}],"supported_login_providers":{"PRIVATE_PROVIDER":"PRIVATE_CREDENTIAL"}}}}
+  ],
+  "configuration": {
+    "provider_config":{"aws":{"full_name":"registry.terraform.io/hashicorp/aws","version_constraint":"5.100.0","expressions":{"region":{"constant_value":"us-east-1"}}}},
+    "root_module":{"resources":[
+      {"address":"aws_cognito_user_pool.users","provider_config_key":"aws"},
+      {"address":"aws_cognito_user_pool_client.app","provider_config_key":"aws","expressions":{"user_pool_id":{"references":["aws_cognito_user_pool.users.id","aws_cognito_user_pool.users"]}}},
+      {"address":"aws_cognito_identity_pool.identities","provider_config_key":"aws","expressions":{"cognito_identity_providers":[{"client_id":{"references":["aws_cognito_user_pool_client.app.id","aws_cognito_user_pool_client.app"]},"provider_name":{"references":["aws_cognito_user_pool.users.endpoint","aws_cognito_user_pool.users"]}}]}}
+    ]}
+  }
+}
