@@ -4,6 +4,7 @@ impl ResourceIcon {
     pub fn id(self) -> &'static str {
         match self {
             Self::Cognito => "planorama-icon-aws-cognito",
+            Self::StepFunctions => "planorama-icon-aws-step-functions",
             Self::Organizations => "planorama-icon-aws-organizations",
             Self::Vpc | Self::Subnet | Self::Gateway | Self::Route | Self::Security => {
                 "planorama-icon-aws-vpc"
@@ -48,6 +49,9 @@ impl ResourceIcon {
     pub fn svg(self) -> &'static str {
         match self {
             Self::Cognito => include_str!(concat!(env!("OUT_DIR"), "/Amazon-Cognito.svg")),
+            Self::StepFunctions => {
+                include_str!(concat!(env!("OUT_DIR"), "/AWS-Step-Functions.svg"))
+            }
             Self::Organizations => include_str!(concat!(env!("OUT_DIR"), "/AWS-Organizations.svg")),
             Self::Ecr => include_str!(concat!(
                 env!("OUT_DIR"),

@@ -1,0 +1,16 @@
+{
+  "format_version":"1.2", "terraform_version":"1.9.8",
+  "resource_changes":[
+    {"address":"aws_iam_role.workflow","type":"aws_iam_role","mode":"managed","change":{"actions":["no-op"],"after":{"arn":"arn:aws:iam::123456789012:role/fixture","assume_role_policy":"PRIVATE_POLICY"}}},
+    {"address":"aws_sfn_state_machine.workflow","type":"aws_sfn_state_machine","mode":"managed","change":{"actions":["create"],"after":{"role_arn":"arn:aws:iam::123456789012:role/fixture","definition":"{\"StartAt\":\"PRIVATE_TASK\",\"States\":{\"PRIVATE_TASK\":{\"Type\":\"Task\",\"Resource\":\"PRIVATE_RESOURCE\",\"End\":true}}}"}}},
+    {"address":"aws_sfn_activity.worker","type":"aws_sfn_activity","mode":"managed","change":{"actions":["create"],"after":{"name":"PRIVATE_ACTIVITY"}}}
+  ],
+  "configuration":{
+    "provider_config":{"aws":{"full_name":"registry.terraform.io/hashicorp/aws","version_constraint":"5.100.0","expressions":{"region":{"constant_value":"us-east-1"}}}},
+    "root_module":{"resources":[
+      {"address":"aws_iam_role.workflow","provider_config_key":"aws"},
+      {"address":"aws_sfn_state_machine.workflow","provider_config_key":"aws","expressions":{"role_arn":{"references":["aws_iam_role.workflow.arn","aws_iam_role.workflow"]}}},
+      {"address":"aws_sfn_activity.worker","provider_config_key":"aws"}
+    ]}
+  }
+}

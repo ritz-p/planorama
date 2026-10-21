@@ -37,6 +37,7 @@ impl Provider {
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub enum ResourceIcon {
     Cognito,
+    StepFunctions,
     Organizations,
     Vpc,
     Subnet,
@@ -83,6 +84,7 @@ impl ResourceIcon {
     pub fn service_name(self) -> &'static str {
         match self {
             Self::Cognito => "Amazon Cognito",
+            Self::StepFunctions => "AWS Step Functions",
             Self::Organizations => "AWS Organizations",
             Self::Vpc | Self::Subnet | Self::Gateway | Self::Route | Self::Security => "Amazon VPC",
             Self::Ec2 => "Amazon EC2",
