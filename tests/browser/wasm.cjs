@@ -127,8 +127,8 @@ async function main() {
     wait(() => driver.execute_script('return !!worker'), 'worker start');
     driver.execute_script(`
       window.oldCompletion = worker.onmessage;
-      document.getElementById('icon-mode').value = 'service-name';
-      document.getElementById('icon-mode').dispatchEvent(new Event('input', {bubbles: true}));
+      document.getElementById('spatial-aws_iam_role').checked = true;
+      document.getElementById('spatial-aws_iam_role').dispatchEvent(new Event('input', {bubbles: true}));
     `);
     assert.equal(driver.execute_script('return worker === undefined'), true);
     assert.ok(status().startsWith('Settings changed.'));
@@ -138,6 +138,15 @@ async function main() {
     driver.find_element(By.CSS_SELECTOR, '#reset-settings').click();
     assert.equal(driver.execute_script('return worker === undefined'), true);
     assert.ok(status().startsWith('Settings reset'));
+    submit(large, 'svg');
+    wait(() => driver.execute_script('return !!worker'), 'worker before file replacement');
+    driver.execute_script("document.getElementById('file').dispatchEvent(new Event('change', {bubbles: true}));");
+    assert.equal(driver.execute_script('return worker === undefined'), true);
+    submit(large, 'svg');
+    wait(() => driver.execute_script('return !!worker'), 'worker before error');
+    driver.execute_script("worker.onerror({preventDefault() {}});");
+    assert.equal(status(), 'Diagram generation failed. Try a smaller plan.');
+    assert.equal(driver.execute_script('return worker === undefined'), true);
     submit(large, 'svg');
     wait(() => driver.execute_script('return !!worker'), 'worker before cancel');
     driver.find_element(By.CSS_SELECTOR, '#cancel').click();

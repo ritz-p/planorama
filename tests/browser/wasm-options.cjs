@@ -1,4 +1,6 @@
 const assert = require('node:assert/strict');
+const {readFileSync} = require('node:fs');
+const {join} = require('node:path');
 const {By, Keys, wait} = require('./webdriver.cjs');
 
 module.exports = function checkOptions({driver, small, run, submit, status, native}) {
@@ -11,7 +13,7 @@ module.exports = function checkOptions({driver, small, run, submit, status, nati
   `, id, value);
   const reset = () => find('#reset-settings').click();
   const options = () => driver.execute_script('return snapshotOptions()');
-  const defaults = {format: 'svg', changed_only: false, address_format: 'qualified', icon_mode: 'icon', hide_relationship_legend: false, modules: []};
+  const defaults = {format: 'svg', changed_only: false, address_format: 'qualified', icon_mode: 'icon', hide_relationship_legend: false, modules: [], spatial_types: []};
   assert.deepEqual(options(), defaults);
   assert.equal(find('#focus-depth').is_enabled(), false);
   assert.equal(find('#settings-error').get_attribute('role'), 'alert');
@@ -59,6 +61,36 @@ module.exports = function checkOptions({driver, small, run, submit, status, nati
     assert.equal(content, native(json, args), 'UI/native exact parity');
     assert.equal(content, run(json, expected).content, 'UI/Wasm exact parity');
   };
+  const types = ['aws_ssm_parameter', 'aws_cloudwatch_metric_alarm', 'aws_iam_role', 'aws_iam_user', 'aws_iam_group', 'aws_iam_openid_connect_provider', 'aws_iam_saml_provider'];
+  assert.deepEqual(driver.execute_script('return Array.from(document.querySelectorAll("#spatial-types input"), input => input.value)'), types);
+  for (const type of types) {
+    const checkbox = find('#spatial-' + type);
+    assert.equal(checkbox.accessible_name, type);
+    checkbox.send_keys(Keys.SPACE);
+    assert.deepEqual(options().spatial_types, [type]);
+    assert.equal(driver.execute_script('return document.activeElement.id'), 'spatial-' + type);
+    reset();
+    assert.deepEqual(options(), defaults);
+  }
+  for (const fixture of ['iam', 'identity-providers', 'ssm', 'cloudwatch']) {
+    const json = fixture === 'cloudwatch' ? JSON.stringify({format_version: '1.2', resource_changes: [
+      {address: 'aws_db_instance.database', type: 'aws_db_instance',
+        change: {actions: ['create'], after: {identifier: 'PRIVATE_DATABASE'}}},
+      {address: 'aws_cloudwatch_metric_alarm.cpu', type: 'aws_cloudwatch_metric_alarm',
+        change: {actions: ['update'], after: {namespace: 'AWS/RDS', metric_name: 'CPUUtilization', dimensions: {DBInstanceIdentifier: 'PRIVATE_DATABASE'}}}},
+    ], configuration: {root_module: {resources: [
+      {address: 'aws_cloudwatch_metric_alarm.cpu', expressions: {dimensions: {references: ['aws_db_instance.database.id']}}},
+    ]}}}) : readFileSync(join(__dirname, `../fixtures/${fixture}-plan.json`), 'utf8');
+    for (const selected of [[], [types[fixture === 'ssm' ? 0 : fixture === 'cloudwatch' ? 1 : 2]], types]) {
+      reset();
+      selected.forEach(type => set('spatial-' + type, true));
+      for (const format of ['svg', 'html']) {
+        generate(json, {...defaults, format, spatial_types: selected},
+          ['--format', format, ...selected.flatMap(type => ['--spatial-type', type])]);
+      }
+    }
+  }
+  reset();
   for (const format of ['svg', 'html']) {
     set('format', format);
     set('address-format', 'terraform');
@@ -163,7 +195,7 @@ module.exports = function checkOptions({driver, small, run, submit, status, nati
   `);
   submit(small, 'svg');
   driver.execute_script(`
-    document.getElementById('icon-mode').value = 'service-name';
+    document.getElementById('spatial-aws_iam_role').checked = true;
     finishRead();
   `);
   wait(() => status().startsWith('Generated in'), 'snapshot taken before file read');
@@ -171,7 +203,7 @@ module.exports = function checkOptions({driver, small, run, submit, status, nati
   reset();
   const requestCount = driver.execute_script('return uiRequests.length');
   submit(small, 'svg');
-  set('icon-mode', 'service-name');
+  set('spatial-aws_iam_role', true);
   driver.execute_script('finishRead();');
   assert.equal(driver.execute_script('return uiRequests.length'), requestCount, 'Settings invalidate pending file reads');
   assert.equal(driver.execute_script("return document.getElementById('download').hidden"), true);
@@ -187,6 +219,15 @@ module.exports = function checkOptions({driver, small, run, submit, status, nati
     driver.execute_script('finishRead();');
     assert.equal(driver.execute_script('return uiRequests.length'), requestCount);
   }
+  submit(small, 'svg');
+  driver.execute_script(`
+    const transfer = new DataTransfer();
+    transfer.items.add(new File(['{}'], 'replacement.json'));
+    document.getElementById('file').files = transfer.files;
+    document.getElementById('file').dispatchEvent(new Event('change', {bubbles: true}));
+    finishRead();
+  `);
+  assert.equal(driver.execute_script('return uiRequests.length'), requestCount, 'File replacement invalidates pending reads');
   driver.execute_script('File.prototype.text = originalFileText;');
   generate(small, defaults, []);
   reset();
