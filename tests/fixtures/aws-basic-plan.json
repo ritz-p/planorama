@@ -1,0 +1,29 @@
+{
+  "format_version": "1.2",
+  "resource_changes": [
+    {"address":"aws_mq_broker.main","type":"aws_mq_broker","change":{"actions":["create"],"after":{"user":[{"username":"PRIVATE_USER","password":"PRIVATE_PASSWORD"}]}}},
+    {"address":"aws_mq_configuration.main","type":"aws_mq_configuration","change":{"actions":["create"],"after":{"data":"PRIVATE_CONFIGURATION"}}},
+    {"address":"aws_identitystore_user.operator","type":"aws_identitystore_user","change":{"actions":["create"]}},
+    {"address":"aws_identitystore_group_membership.operators","type":"aws_identitystore_group_membership","change":{"actions":["create"]}},
+    {"address":"aws_acmpca_policy.example","type":"aws_acmpca_policy","change":{"actions":["create"],"after":{"policy":"PRIVATE_POLICY"}}},
+    {"address":"aws_iam_service_linked_role.example","type":"aws_iam_service_linked_role","change":{"actions":["create"]}},
+    {"address":"aws_cloudcontrolapi_resource.target[\"long_resource_address_for_an_unknown_target_scope_and_a_neutral_service_card\"]","type":"aws_cloudcontrolapi_resource","change":{"actions":["create"],"after":{"desired_state":"PRIVATE_DESIRED_STATE"}}},
+    {"address":"aws_accountaccess_application.example","type":"aws_accountaccess_application","change":{"actions":["create"]}},
+    {"address":"aws_memorydb_cluster.foreign","type":"aws_memorydb_cluster","provider_name":"example.com/foreign/aws","change":{"actions":["create"]}},
+    {"address":"data.aws_mq_broker.external","type":"aws_mq_broker","mode":"data","change":{"actions":["read"]}}
+  ],
+  "configuration": {
+    "provider_config": {"aws":{"full_name":"registry.terraform.io/hashicorp/aws","expressions":{"region":{"constant_value":"ap-northeast-1"}}}},
+    "root_module": {"resources":[
+      {"address":"aws_mq_broker.main","provider_config_key":"aws","expressions":{"configuration":{"references":["aws_mq_configuration.main.id"]}}},
+      {"address":"aws_mq_configuration.main","provider_config_key":"aws"},
+      {"address":"aws_identitystore_user.operator","provider_config_key":"aws"},
+      {"address":"aws_identitystore_group_membership.operators","provider_config_key":"aws","expressions":{"member_id":{"references":["aws_identitystore_user.operator.user_id"]}}},
+      {"address":"aws_acmpca_policy.example","provider_config_key":"aws"},
+      {"address":"aws_iam_service_linked_role.example","provider_config_key":"aws"},
+      {"address":"aws_cloudcontrolapi_resource.target","provider_config_key":"aws"},
+      {"address":"aws_accountaccess_application.example","provider_config_key":"aws"},
+      {"address":"data.aws_mq_broker.external","provider_config_key":"aws"}
+    ]}
+  }
+}

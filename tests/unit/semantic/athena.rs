@@ -177,8 +177,15 @@ fn athena_failures_and_unknown_values_keep_only_terraform_provenance() {
                 .as_str()
                 .unwrap();
             let node = graph.nodes.iter().find(|n| n.address == address).unwrap();
-            if case < 2 {
+            if case == 0 {
                 assert_eq!(node.role, ResourceRole::Unknown);
+            } else if case == 1 {
+                assert_eq!(node.role, ResourceRole::Controller);
+                assert!(
+                    node.references
+                        .iter()
+                        .all(|reference| reference.label == "References")
+                );
             } else {
                 assert!(
                     node.entity

@@ -6,6 +6,10 @@ Planorama embeds official AWS Architecture Icons from the **07312026 (July 31, 2
 
 The selected original SVG files are stored unchanged under `assets/icons/aws/`. `manifest.json` records the official download URL, ZIP SHA-256, original entry paths, and individual file hashes. Only required service icons are bundled; the full ZIP is not committed. Git preserves asset bytes through `.gitattributes`.
 
+The managed-resource inventory expanded this selection on 2026-10-22 using the
+same hash-verified package. Additional service symbols use the same build-time
+SVG validator and AWS notice; the manifest records each added file's source/hash.
+
 ### Rights and scope
 
 AWS owns these assets. They are **not MIT-licensed**. The official page permits customers and partners to use the assets in architecture diagrams; the [AWS Site Terms](https://aws.amazon.com/terms/) also apply. The downloaded package contains SVG/PNG assets and no separate license document. This is not a grant of unrestricted redistribution or sublicensing rights. The selected assets support this AWS architecture diagram renderer, not a standalone icon distribution service. For other uses, consult AWS's terms or obtain permission. Planorama does not imply AWS endorsement.
@@ -20,9 +24,9 @@ provider information is entirely absent. Explicit foreign provider information
 and unresolved bindings block that fallback; an `aws_` prefix alone does not
 override them. See [provider identity](models.md).
 
-Selection matches exact resource types, independently of managed/data mode,
-ResourceRole and action. Managed and data entities of the same type share a service
-icon. Related types intentionally use service-level icons: subnet, gateway,
+Selection matches exact resource types. Existing managed/data mappings are
+retained; the [managed inventory](aws-inventory.md) extends managed coverage only.
+Related types intentionally use service-level icons: subnet, gateway,
 routing, peering and network security resources use Amazon VPC; listeners and
 target groups use Elastic Load Balancing. No public/private subnet status is
 inferred from the resource type. Icon coverage does not add classification,
@@ -36,6 +40,9 @@ The generated [resource support matrix](resource-support.md) is the exact-type
 catalog for icons, service names, classification, placement and deployment scope.
 It includes managed/data behavior and omitted metadata sources. Icon mappings
 are independent of relationship rules; unlisted exact types have no icon.
+Managed types without bundled service artwork display the reviewed service
+service label on a neutral card/row in both icon modes. No unrelated logo is
+substituted and no artwork is fetched at runtime. The matrix marks this fallback.
 The [data icon fixture](../tests/fixtures/data-icons-plan.json) and
 [example](../examples/data-icons.svg) exercise managed resources, data lookups and
 foreign-provider/unknown fallbacks.
@@ -95,8 +102,8 @@ adds no AWS classification, containment or connection rules.
 
 `--icon-mode service-name` replaces service artwork with ordinary text in SVG and
 self-contained HTML, including named-state output. The default `--icon-mode icon`
-retains the existing artwork. Names come from `ResourceIcon::service_name()` after
-the same provider-aware exact-type lookup: for example Amazon EC2, Amazon S3,
+retains the existing artwork. Names come from the provider-aware exact-type
+capabilities or `ResourceIcon::service_name()`: for example Amazon EC2, Amazon S3,
 AWS Lambda, Amazon VPC and Terraform built-in. Unsupported resources receive no
 new label.
 

@@ -78,3 +78,5 @@ examples/organizations.svg
 examples/organization-policies.svg
 examples/organization-deployments.svg
 examples/rds-global.svg
+examples/aws-basic.svg
+examples/aws-basic-service-names.svg

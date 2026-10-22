@@ -7,6 +7,8 @@ pub(crate) fn classify_entity(entity: &crate::model::TerraformEntity) -> Resourc
         entity.mode,
     ) {
         ResourceRole::Unknown
+    } else if entity.provider.is_aws() && entity.mode == crate::model::EntityMode::Data {
+        crate::provider::aws::data_role(&entity.resource_type)
     } else {
         classify(&entity.provider, &entity.resource_type)
     }

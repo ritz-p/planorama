@@ -52,6 +52,14 @@ pub(crate) fn scope(
         .flatten()
 }
 
+pub(crate) fn entity_placement(entity: &crate::model::TerraformEntity) -> crate::model::Placement {
+    if entity.provider.is_aws() && entity.mode == crate::model::EntityMode::Data {
+        aws::data_placement(&entity.resource_type)
+    } else {
+        placement(&entity.provider, &entity.resource_type)
+    }
+}
+
 pub(crate) fn classify(
     provider: &crate::model::ProviderIdentity,
     resource_type: &str,

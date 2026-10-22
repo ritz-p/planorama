@@ -42,6 +42,38 @@ class ViewerTests {
         assert.deepEqual(errors, []);
         assert.deepEqual(remote, []);
     }
+    test_basic_inventory_search_references_and_offline_export() {
+        for (const mode of ['icon', 'service-name']) {
+            this.load('tests/fixtures/aws-basic-plan.json', '--icon-mode', mode);
+            this.assertEqual(this.driver.execute_script("return JSON.parse(document.getElementById('viewer-data').textContent).length"), 10);
+            const membership = this.choose('aws_identitystore_group_membership.operators');
+            const reference = this.find(`[id="${membership}"] a[data-reference-attribute="member_id"]`);
+            const target = reference.get_attribute('href').split('#').at(-1);
+            this.driver.execute_script("arguments[0].dispatchEvent(new MouseEvent('click', {bubbles:true,cancelable:true}))", reference);
+            this.assertEqual(this.find('[data-viewer-selected]').get_attribute('id'), target);
+            this.choose('aws_mq_broker.main');
+            this.driver.execute_script(`
+                document.getElementById('export-depth').value = '1';
+                window.exportText = null;
+                URL.createObjectURL = blob => { window.exportBlob = blob; return 'blob:export-test'; };
+                HTMLAnchorElement.prototype.click = function () {};
+            `);
+            this.find('#export-neighborhood').click();
+            this.assertIn('download requested', this.find('#export-status').text);
+            this.driver.execute_script('window.exportBlob.text().then(text => { window.exportText = text; })');
+            wait(() => this.driver.execute_script('return !!window.exportText'), 'AWS basic export');
+            const exported = this.driver.execute_script(`
+                const doc = new DOMParser().parseFromString(window.exportText, 'image/svg+xml');
+                return {text: window.exportText, invalid: doc.querySelectorAll('parsererror').length,
+                    broken: [...doc.querySelectorAll('[href]')].filter(el => !doc.getElementById(el.getAttribute('href').slice(1))).length};
+            `);
+            this.assertEqual(exported.invalid, 0);
+            this.assertEqual(exported.broken, 0);
+            this.assertIn('aws_mq_broker.main', exported.text);
+            this.assertNotIn('PRIVATE_', exported.text);
+            this.assertIn(mode === 'icon' ? 'planorama-icon-aws-service-amazon-mq' : 'Amazon MQ', exported.text);
+        }
+    }
     test_spatial_types_search_reference_navigation_and_exports() {
         this.load('tests/fixtures/identity-providers-plan.json',
             '--spatial-type', 'aws_iam_role',

@@ -60,6 +60,7 @@ docker compose exec -T dev sh scripts/update-resource-support.sh --check
 ```
 
 生成先は [docs/resource-support.md](docs/resource-support.md) です。型名は provider と remote-output 解決の Rust ソースの文字列リテラルから収集し、分類・表示・scope・アイコンは実装関数で評価します。新しい定義形式や provider を追加する場合は `tests/unit/resource_support.rs` の収集処理も更新してください。関係ルールのリンクは型名の出現箇所であり、無条件の対応保証ではありません。
+AWS managed resource の正本は固定 Provider inventory です。全型との差分、基本分類表の追加方法、schema・登録コード・公式 docs の再採取手順は [AWS inventory](docs/aws-inventory.md) を参照してください。基本表示の baseline と保存済み plan の provider evidence の検証版は別の契約です。
 CI の `Resource support` は同じ一致検証だけを実行します。図を生成しないため、この一覧だけの更新に SVG 再生成や Layout quality は不要です。
 
 ## SVG の更新
