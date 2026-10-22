@@ -17,6 +17,9 @@ update_snapshot() {
 
 while IFS= read -r output || [ -n "$output" ]; do
     case "$output" in
+        examples/aws-basic-service-names.svg)
+            "$binary" tests/fixtures/aws-basic-plan.json --icon-mode service-name -o "$output"
+            ;;
         examples/organization-deployments.svg)
             update_snapshot provider::aws::organization_accounts::tests::verified_deployment_example UPDATE_ORGANIZATION_DEPLOYMENTS
             ;;

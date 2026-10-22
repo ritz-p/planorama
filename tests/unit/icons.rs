@@ -10,6 +10,8 @@ fn provider_lookup_shares_service_icons_and_handles_unknown_types() {
         ("aws_lb", ResourceIcon::LoadBalancer),
         ("aws_lb_listener", ResourceIcon::LoadBalancer),
         ("aws_lambda_function", ResourceIcon::Lambda),
+        ("aws_lambda_invocation", ResourceIcon::Lambda),
+        ("aws_vpc_ipam_preview_next_cidr", ResourceIcon::Vpc),
         ("aws_sqs_queue", ResourceIcon::Sqs),
         ("aws_kinesis_stream", ResourceIcon::Kinesis),
         (
@@ -51,9 +53,7 @@ fn provider_lookup_shares_service_icons_and_handles_unknown_types() {
         "aws_ec2_instance_type",
         "aws_ecs_task_execution",
         "aws_eks_cluster_auth",
-        "aws_lambda_invocation",
         "aws_lb_hosted_zone_id",
-        "aws_vpc_ipam_preview_next_cidr",
         "aws_cloudwatch_contributor_managed_insight_rules",
         "aws_cloudwatch_log_data_protection_policy_document",
         "AWS_VPC",

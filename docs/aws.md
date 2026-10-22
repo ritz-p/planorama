@@ -7,6 +7,10 @@ The generated [resource support matrix](resource-support.md) lists exact-type
 roles, display modes, icons and scope eligibility. This document defines the
 conditional relationship and placement proofs behind that catalog.
 
+The [AWS managed inventory](aws-inventory.md) supplies basic capabilities for all
+registered Provider 6.70.0 managed types. These defaults add no dedicated
+relationships or containment. Existing rules below retain their evidence contracts.
+
 ## RDS Global Clusters
 
 `aws_rds_global_cluster` is a Global spatial resource with the RDS icon and
@@ -996,7 +1000,8 @@ See the [EventBridge target example](../examples/eventbridge-targets.svg).
 
 VPC and Subnet are spatial `Container` resources. Other supported types are
 classified as nodes, connectors, associations, identities, policies or controllers by
-`classification.rs`. Unknown types remain visible as `Unknown`. Roles are separate
+the dedicated classification rules or the [basic capability table](aws-inventory.md).
+Unknown types remain visible as `Unknown`. Roles are separate
 from managed/data mode; Security Groups remain Policy cards and target groups
 remain Controller cards even when placed inside a VPC.
 
@@ -1022,7 +1027,8 @@ The matrix
 lists the explicit logical types. They render as rows grouped by provider source,
 resource type and mode in the top annotation area. AMI describes
 an image definition used by workloads, not a deployed compute instance. These
-provider-aware rules apply to managed and data resources; custom providers do
+existing provider-aware rules apply to managed and data resources; the basic
+inventory extends managed resources only. Custom providers do
 not inherit them. Unknown types retain unresolved placement and stay visible in
 the spatial diagram. Missing VPC/subnet references never imply logical placement.
 Logical placement does not suppress architectural significance: individual resource

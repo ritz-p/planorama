@@ -282,7 +282,7 @@ fn private_ca_preserves_owner_accounts_and_keeps_shared_ca_accounts_unknown() {
             None
         );
     }
-    assert_eq!(super::classify("aws_acmpca_policy"), ResourceRole::Unknown);
+    assert_eq!(super::classify("aws_acmpca_policy"), ResourceRole::Policy);
     assert_eq!(super::icon_for("aws_acmpca_certificate_fake"), None);
 }
 

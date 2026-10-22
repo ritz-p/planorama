@@ -1,5 +1,26 @@
 mod artwork;
 
+macro_rules! service_icons {
+    ($($variant:ident => ($file:literal, $id:literal, $name:literal),)*) => {
+        #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
+        pub enum ServiceIcon { $($variant,)* }
+        impl ServiceIcon {
+            pub(super) fn id(self) -> &'static str {
+                match self { $(Self::$variant => $id,)* }
+            }
+            pub(super) fn svg(self) -> &'static str {
+                match self { $(Self::$variant => include_str!(concat!(env!("OUT_DIR"), "/service-", $file)),)* }
+            }
+            pub(super) fn name(self) -> &'static str {
+                match self { $(Self::$variant => $name,)* }
+            }
+        }
+    };
+}
+
+mod services;
+pub use services::ServiceIcon;
+
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, serde::Deserialize)]
 #[serde(rename_all = "kebab-case")]
 pub enum IconMode {
@@ -36,6 +57,7 @@ impl Provider {
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub enum ResourceIcon {
+    Service(ServiceIcon),
     Cognito,
     StepFunctions,
     Redshift,
@@ -86,6 +108,7 @@ pub enum ResourceIcon {
 impl ResourceIcon {
     pub fn service_name(self) -> &'static str {
         match self {
+            Self::Service(icon) => icon.name(),
             Self::Cognito => "Amazon Cognito",
             Self::StepFunctions => "AWS Step Functions",
             Self::Redshift => "Amazon Redshift",
@@ -140,5 +163,8 @@ pub fn icon_for(provider: Provider, resource_type: &str) -> Option<ResourceIcon>
 }
 
 pub(crate) fn for_node(node: &crate::model::Node) -> Option<ResourceIcon> {
+    if node.provider.is_aws() && node.mode == crate::model::EntityMode::Data {
+        return crate::provider::aws::data_icon(&node.resource_type);
+    }
     icon_for(Provider::from_identity(&node.provider), &node.resource_type)
 }

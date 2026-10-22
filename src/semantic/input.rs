@@ -52,7 +52,7 @@ pub(crate) fn base_graph(plan: &TerraformPlan) -> Graph {
                 ) {
                     crate::model::Placement::Unresolved
                 } else {
-                    crate::provider::placement(&fact.provider, &fact.resource_type)
+                    crate::provider::entity_placement(fact)
                 },
                 references: plan
                     .attributes
@@ -80,10 +80,7 @@ pub(crate) fn base_graph(plan: &TerraformPlan) -> Graph {
                                 account_scope: None,
                                 state: None,
                                 id: (&plan.nodes[i]).into(),
-                                placement: crate::provider::placement(
-                                    &plan.nodes[i].provider,
-                                    &plan.nodes[i].resource_type,
-                                ),
+                                placement: crate::provider::entity_placement(&plan.nodes[i]),
                             })
                             .collect(),
                         complete: r.complete,
