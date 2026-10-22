@@ -2,6 +2,10 @@ use crate::model::{EntityMode, TerraformEntity, architecture::DeploymentScope};
 
 pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentScope> {
     let resource = entity.resource_type.as_str();
+    let basic = (entity.mode == EntityMode::Managed
+        && super::classification::classify(resource) == crate::model::ResourceRole::Unknown)
+        .then(|| super::basic::get(resource))
+        .flatten();
     if super::organizations::unsupported_data(&entity.provider, resource, entity.mode) {
         return None;
     }
@@ -13,7 +17,8 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
             global: true,
         });
     }
-    let global = entity.waf_scope == Some(crate::model::WafScope::CloudFront)
+    let global = basic.is_some_and(|entry| entry.scope == super::basic::Scope::Global)
+        || entity.waf_scope == Some(crate::model::WafScope::CloudFront)
         || matches!(
             resource,
             "aws_organizations_policy" | "aws_organizations_policy_attachment"
@@ -34,6 +39,9 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
         .provider_configuration
         .as_ref()
         .and_then(|c| c.account.clone());
+    if basic.is_some() {
+        account = None;
+    }
     if matches!(
         resource,
         "aws_glue_catalog_database" | "aws_glue_catalog_table" | "aws_acmpca_certificate"
@@ -43,7 +51,8 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
     }
     let region = if global {
         None
-    } else if entity.waf_scope == Some(crate::model::WafScope::Regional)
+    } else if basic.is_some_and(|entry| entry.scope == super::basic::Scope::Regional)
+        || entity.waf_scope == Some(crate::model::WafScope::Regional)
         || matches!(
             resource,
             "aws_vpc"
@@ -155,7 +164,11 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
                 | "aws_cloudwatch_metric_alarm"
         )
     {
-        if entity.has_region_override {
+        if basic.is_some()
+            && (entity.action == crate::model::Action::Delete || entity.deposed_key.is_some())
+        {
+            None
+        } else if entity.has_region_override {
             entity.region_override.clone()
         } else {
             entity

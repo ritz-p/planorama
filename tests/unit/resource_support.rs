@@ -57,6 +57,14 @@ fn types(source: &str) -> Vec<String> {
 }
 
 fn matrix() -> String {
+    let inventory: serde_json::Value =
+        serde_json::from_str(include_str!("../fixtures/aws-inventory/6.70.0.json")).unwrap();
+    let baseline: BTreeMap<_, _> = inventory["resources"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|entry| (entry["type"].as_str().unwrap(), entry))
+        .collect();
     let mut files = BTreeMap::new();
     sources(Path::new("src/provider"), &mut files);
     let remote = "src/plan/remote.rs";
@@ -84,7 +92,10 @@ fn matrix() -> String {
         ),
     ] {
         writeln!(output, "\n## {title}\n\nProvider source: `{source}`.\n").unwrap();
-        output.push_str("| Resource type | Role (managed / data) | Display (managed / data) | Icon / service name | Deployment scope | Conditional rule source references |\n| --- | --- | --- | --- | --- | --- |\n");
+        if prefix == "aws_" {
+            writeln!(output, "Baseline: AWS Provider **{}**, commit `{}`; **{} managed resource types**. [Inventory and update procedure](aws-inventory.md). Counts describe types, not input instances.\n", inventory["version"].as_str().unwrap(), inventory["commit"].as_str().unwrap(), baseline.len()).unwrap();
+        }
+        output.push_str("| Resource type | Role (managed / data) | Display (managed / data) | Icon / service name | Deployment scope | Baseline / basic display notes | Conditional rule source references |\n| --- | --- | --- | --- | --- | --- | --- |\n");
         for (resource_type, paths) in &catalog {
             if !resource_type.starts_with(prefix) {
                 continue;
@@ -141,15 +152,31 @@ fn matrix() -> String {
                 resource_type,
             )
             .map_or_else(
-                || "—".into(),
-                |icon| format!("{icon:?} / {}", icon.service_name()),
+                || {
+                    super::service_name(resource_type).map_or_else(
+                        || "—".into(),
+                        |name| format!("Neutral card / {name} (no matching service artwork in package 07312026)"),
+                    )
+                },
+                |icon| {
+                    format!(
+                        "{icon:?} / {}",
+                        super::service_name(resource_type).unwrap_or(icon.service_name())
+                    )
+                },
             );
             let rules: Vec<_> = paths
                 .iter()
                 .filter(|path| {
                     !matches!(
                         path.rsplit('/').next().unwrap(),
-                        "classification.rs" | "scope.rs" | "icons.rs" | "data.rs" | "terraform.rs"
+                        "classification.rs"
+                            | "scope.rs"
+                            | "icons.rs"
+                            | "data.rs"
+                            | "terraform.rs"
+                            | "basic_entries.rs"
+                            | "basic.rs"
                     )
                 })
                 .map(|path| {
@@ -159,11 +186,49 @@ fn matrix() -> String {
                     format!("[{label}](../{path})")
                 })
                 .collect();
+            let mut notes = Vec::new();
+            if let Some(entry) = baseline.get(resource_type.as_str()) {
+                notes.push(format!("[Managed resource](https://github.com/hashicorp/terraform-provider-aws/blob/{}/{})", inventory["commit"].as_str().unwrap(), entry["documentation"].as_str().unwrap()));
+                if entry["dataSource"] == true {
+                    notes.push("Also a registered data source".into());
+                }
+                if entry["deprecated"] == true {
+                    notes.push("Deprecated".into());
+                }
+                if let Some(alias) = entry["aliasOf"].as_str() {
+                    notes.push(format!("Alias of `{alias}`"));
+                }
+                if scope == "Unknown" {
+                    notes.push(format!(
+                        "Scope unknown: {}",
+                        super::basic::unknown_scope_reason(resource_type)
+                            .unwrap_or("Missing verified scope evidence")
+                    ));
+                }
+                if super::classification::classify(resource_type) == model::ResourceRole::Unknown {
+                    notes.push(if super::icons::icon_for(resource_type).is_some() {
+                        "Previously icon-only / incomplete basic classification".into()
+                    } else {
+                        "Previously generic fallback".into()
+                    });
+                    notes.push(
+                        "Basic display only; no new dedicated relationship or verified owner"
+                            .into(),
+                    );
+                } else {
+                    notes.push("Existing classification and presentation retained".into());
+                }
+            } else if prefix == "aws_" {
+                notes.push(
+                    "Outside managed baseline (data-only or historical implementation type)".into(),
+                );
+            }
             writeln!(
                 output,
-                "| `{resource_type}` | {role:?} / {data_role:?} | {} / {} | {icon} | {scope} | {} |",
+                "| `{resource_type}` | {role:?} / {data_role:?} | {} / {} | {icon} | {scope} | {} | {} |",
                 display(model::EntityMode::Managed),
                 display(model::EntityMode::Data),
+                notes.join("; "),
                 if rules.is_empty() {
                     "—".into()
                 } else {

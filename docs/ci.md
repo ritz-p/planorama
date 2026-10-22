@@ -16,8 +16,10 @@ through **Report PR validation**.
 
 **Resource support** runs `sh scripts/update-resource-support.sh --check` for
 changes to provider/runtime sources, catalog generation, its Markdown output and
-build inputs. It compares deterministic Markdown using one unit test; it performs
-no SVG generation or routing. The same test belongs to the standard Rust suite.
+build inputs, plus the pinned AWS inventory and extractor. It compares deterministic
+Markdown, checks every managed type's basic capabilities and runs the offline
+extractor regression. It performs no SVG generation, routing or Provider download.
+The Rust checks also belong to the standard Rust suite.
 See [regeneration instructions](../CONTRIBUTING.md#リソース対応一覧の更新).
 
 ## Toolchain and dependency cache

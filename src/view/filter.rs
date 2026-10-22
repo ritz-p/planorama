@@ -316,9 +316,17 @@ pub fn apply(all: &Architecture, options: &Options) -> Result<Architecture, Stri
                 .map(|(_, n)| {
                     let mut node = n.clone();
                     node.service_name = match options.icon_mode {
-                        crate::icons::IconMode::Icon => None,
+                        crate::icons::IconMode::Icon => (crate::icons::for_node(n).is_none()
+                            && n.provider.is_aws()
+                            && n.mode == crate::model::EntityMode::Managed)
+                            .then(|| crate::provider::aws::service_name(&n.resource_type))
+                            .flatten(),
                         crate::icons::IconMode::ServiceName => {
-                            crate::icons::for_node(n).map(|icon| icon.service_name())
+                            if n.provider.is_aws() && n.mode == crate::model::EntityMode::Managed {
+                                crate::provider::aws::service_name(&n.resource_type)
+                            } else {
+                                crate::icons::for_node(n).map(|icon| icon.service_name())
+                            }
                         }
                     };
                     node

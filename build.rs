@@ -6,6 +6,22 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!("cargo:rerun-if-changed=assets/icons/terraform");
     println!("cargo:rerun-if-changed=build/icon.rs");
     let out = std::path::PathBuf::from(std::env::var("OUT_DIR")?);
+    for entry in std::fs::read_dir("assets/icons/aws")? {
+        let path = entry?.path();
+        if path.extension().is_some_and(|extension| extension == "svg") {
+            let name = path
+                .file_stem()
+                .and_then(|name| name.to_str())
+                .ok_or("invalid artwork filename")?;
+            let source = std::fs::read_to_string(&path)?;
+            let symbol = icon::symbol(
+                &source,
+                &format!("planorama-icon-aws-service-{}", name.to_ascii_lowercase()),
+            )
+            .map_err(|error| format!("invalid bundled icon {name}: {error}"))?;
+            std::fs::write(out.join(format!("service-{name}.svg")), symbol)?;
+        }
+    }
     for (file, id) in [
         ("Amazon-Cognito", "cognito"),
         ("AWS-Step-Functions", "step-functions"),

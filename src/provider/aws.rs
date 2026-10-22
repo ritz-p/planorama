@@ -1,6 +1,7 @@
 mod associations;
 mod autoscaling;
 mod backup;
+mod basic;
 mod classification;
 mod cloudfront;
 #[cfg(test)]
@@ -147,17 +148,45 @@ pub(super) fn placement(resource_type: &str) -> crate::model::Placement {
         "aws_sns_topic_subscription"
         | "aws_lambda_event_source_mapping"
         | "aws_cloudwatch_event_target" => crate::model::Placement::Logical,
-        _ if classify(resource_type) != crate::model::ResourceRole::Unknown => {
+        _ if classification::classify(resource_type) != crate::model::ResourceRole::Unknown => {
             crate::model::Placement::Spatial
         }
-        _ => crate::model::Placement::Unresolved,
+        _ => basic::get(resource_type)
+            .map_or(crate::model::Placement::Unresolved, |entry| entry.placement),
     }
 }
 
 pub(crate) fn classify(resource_type: &str) -> crate::model::ResourceRole {
+    let role = classification::classify(resource_type);
+    if role == crate::model::ResourceRole::Unknown {
+        basic::get(resource_type).map_or(role, |entry| entry.role)
+    } else {
+        role
+    }
+}
+pub(crate) fn data_role(resource_type: &str) -> crate::model::ResourceRole {
     classification::classify(resource_type)
 }
+
+pub(crate) fn data_placement(resource_type: &str) -> crate::model::Placement {
+    if classification::classify(resource_type) == crate::model::ResourceRole::Unknown {
+        crate::model::Placement::Unresolved
+    } else {
+        placement(resource_type)
+    }
+}
+
+pub(crate) fn service_name(resource_type: &str) -> Option<&'static str> {
+    icons::icon_for(resource_type)
+        .map(|icon| icon.service_name())
+        .or_else(|| basic::get(resource_type).map(|entry| entry.service))
+}
+
 pub(crate) fn icon_for(resource_type: &str) -> Option<crate::icons::ResourceIcon> {
+    icons::icon_for(resource_type)
+        .or_else(|| basic::get(resource_type).and_then(|entry| entry.icon))
+}
+pub(crate) fn data_icon(resource_type: &str) -> Option<crate::icons::ResourceIcon> {
     icons::icon_for(resource_type)
 }
 pub(super) fn transform(raw: crate::semantic::Input) -> crate::model::Graph {

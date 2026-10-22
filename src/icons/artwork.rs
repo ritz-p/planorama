@@ -3,6 +3,7 @@ use super::ResourceIcon;
 impl ResourceIcon {
     pub fn id(self) -> &'static str {
         match self {
+            Self::Service(icon) => icon.id(),
             Self::Cognito => "planorama-icon-aws-cognito",
             Self::StepFunctions => "planorama-icon-aws-step-functions",
             Self::Redshift => "planorama-icon-aws-redshift",
@@ -51,6 +52,7 @@ impl ResourceIcon {
 
     pub fn svg(self) -> &'static str {
         match self {
+            Self::Service(icon) => icon.svg(),
             Self::Cognito => include_str!(concat!(env!("OUT_DIR"), "/Amazon-Cognito.svg")),
             Self::StepFunctions => {
                 include_str!(concat!(env!("OUT_DIR"), "/AWS-Step-Functions.svg"))
