@@ -24,8 +24,10 @@ mod timing;
 mod view;
 
 mod generation;
+mod module_inventory;
 pub use generation::{Error, Generated, Options, OutputFormat, generate};
 pub use icons::IconMode;
+pub use module_inventory::{ModuleInventoryEntry, inspect_modules};
 pub use svg::AddressFormat;
 
 #[cfg(not(target_arch = "wasm32"))]

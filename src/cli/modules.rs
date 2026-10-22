@@ -1,4 +1,4 @@
-use crate::model::{StateId, TerraformPlan, modules::Address};
+use crate::model::{StateId, TerraformPlan};
 use std::collections::BTreeMap;
 use std::fmt::Write as _;
 use std::io::{Read, Write};
@@ -59,38 +59,25 @@ pub(super) fn run(
 }
 
 fn append(text: &mut String, state: &str, plan: &TerraformPlan) -> Result<(), String> {
-    let resources = plan
-        .nodes
-        .iter()
-        .map(|node| Address::resource(&node.address))
-        .collect::<Result<Vec<_>, _>>()?;
-    for (module, actual) in &plan.modules.0 {
-        let selector = if module.depth() == 0 {
-            "(root; not selectable)".into()
-        } else {
-            module.to_string()
-        };
+    for entry in crate::module_inventory::inventory(plan)? {
+        let selector = entry
+            .selector
+            .unwrap_or_else(|| "(root; not selectable)".into());
         let selector = if state.is_empty() {
             selector
         } else {
             format!("{state}:{selector}")
         };
-        let subtree = resources
-            .iter()
-            .filter(|resource| module.contains(resource))
-            .count();
-        let direct = resources
-            .iter()
-            .filter(|resource| module.depth() == resource.depth() && module.contains(resource))
-            .count();
         writeln!(
             text,
-            "{selector}\t{}\t{direct}\t{subtree}",
-            if *actual {
+            "{selector}\t{}\t{}\t{}",
+            if entry.instance {
                 "instance"
             } else {
                 "configuration (aggregate)"
-            }
+            },
+            entry.direct,
+            entry.subtree
         )
         .unwrap();
     }

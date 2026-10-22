@@ -7,7 +7,9 @@ The CLI owns file I/O, process invocation, output destinations and timings;
 `src/main.rs` translates its result into an exit status. Named-state inputs preserve the
 same boundaries and carry explicit cross-state relationships.
 The CLI and [browser Wasm binding](browser.md) share parsing, semantic projection,
-selection and single-plan composition through `generation`. Internal graph and
+selection and single-plan composition through `generation`. Module inspection
+shares `module_inventory` with the native listing command and stops after parsing
+and counting original resources. Internal graph and
 layout types remain private. Browser timing spans are no-ops; the Worker measures
 elapsed generation time. Native-only dependencies and provider evidence are
 excluded from `wasm32`; browser generation never invokes Terraform or filesystem I/O.

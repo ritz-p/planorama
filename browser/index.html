@@ -15,6 +15,7 @@ fieldset label { display: block }
 input[type="text"] { width: min(95%, 40rem) }
 .module-row { display: flex; gap: .5rem; align-items: end; margin: .5rem 0 }
 .module-row label { flex: 1 }
+#module-inventory label { overflow-wrap: anywhere; margin: .5rem 0 }
 #settings-help, #modules-help, #depth-help { margin: 0 }
 :focus-visible { outline: 3px solid #1769aa; outline-offset: 3px }
 </style>
@@ -43,6 +44,13 @@ input[type="text"] { width: min(95%, 40rem) }
       <p id="modules-help">Add one complete module selector per row. Spaces, commas, dots and quotes are preserved. No rows means no module filter. Empty rows must be filled or removed. Duplicate selectors are passed unchanged to the generator and select the same resources once.</p>
       <div id="modules"></div>
       <button id="add-module" type="button">Add module</button>
+      <button id="inspect-modules" type="button" disabled>Reload module list</button>
+      <p>Original input counts include managed/data and current/deposed objects. Subtree includes direct resources; overlapping rows must not be added together. Configuration rows aggregate backed instances, including zero when none are known. Root cannot be selected.</p>
+      <label>Search modules <input id="module-search" type="search" autocomplete="off"></label>
+      <p id="inventory-status" role="status">Select a file to list its modules.</p>
+      <p id="module-count" role="status"></p>
+      <div id="module-inventory"></div>
+      <div><button id="module-previous" type="button" disabled>Previous modules</button> <button id="module-next" type="button" disabled>Next modules</button></div>
     </fieldset>
   </fieldset>
   <button id="reset-settings" type="button">Reset settings</button>
