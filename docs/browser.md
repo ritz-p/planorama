@@ -61,10 +61,10 @@ Runtime traps are handled by the Worker as a generic generation failure.
 | `focus` | Resource address or null |
 | `focus_depth` | Nonnegative integer; requires focus; default neighbor depth 1 |
 | `modules` | Array of module addresses, default empty |
-| `spatial_types` | Array of the seven [allowed AWS types](configuration.md#explicit-spatial-types), default empty; API only |
+| `spatial_types` | Array of the seven [allowed AWS types](configuration.md#explicit-spatial-types), default empty |
 
 Unknown keys, invalid enum values and invalid combinations fail explicitly.
-The UI exposes the rows above except `spatial_types`, with the same defaults. Generation settings remain
+The UI exposes all rows above with the same defaults. Generation settings remain
 visible and use the existing API decoder and selection rules.
 
 Choose the output, address format and icon mode, and optionally hide the
@@ -82,7 +82,15 @@ filled or removed. Duplicate rows are passed unchanged to the API, which selects
 each resource once. Removing a row moves keyboard focus to an adjacent selector
 or the Add module button. Invalid selectors use the API's safe selection error.
 
-**Reset settings** restores every option, removes module rows and clears depth,
+Use **Spatial resource types** in Generation settings to select any combination
+of the seven AWS types. No selection preserves the default Logical presentation.
+Selections pass exact type names to the Wasm API; reference details and resource
+identity follow the shared native/library projection rules. The build generates
+labelled checkboxes from `src/view/purpose.rs`'s `TYPES` definition using
+`scripts/build-spatial-options.cjs`, so the UI and decoder share the allowed list.
+Each checkbox supports keyboard focus and Space to toggle.
+
+**Reset settings** restores every option, clears spatial selections, removes module rows and clears depth,
 while retaining the selected file. It also cancels pending work and clears results.
 State JSON, plan event streams, multiple states, saved binary plans, Terraform
 execution, provider evidence, config/preset files, module listing, coverage/layout
@@ -141,7 +149,7 @@ docker compose exec -T dev node tests/browser/wasm.cjs
 `Browser Wasm` runs these steps in CI. The browser test requires exact native/Wasm
 output equality (including identity, action, relationships and geometry), covers
 SVG/HTML downloads, selections, invalid input/options, markup-bearing addresses,
-all UI defaults/changes/reset, focus/depth validation, special-character module
+all UI defaults/changes/reset, empty/single/multiple spatial selections, focus/depth validation, special-character module
 rows and duplicates, keyboard focus, safe error announcements, settings changes
 during file reads and Worker execution, stale completions, repeated generation,
 cancellation/retry, sandbox isolation and empty browser

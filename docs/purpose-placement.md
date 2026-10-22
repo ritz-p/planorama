@@ -85,7 +85,8 @@ comparison, not a performance or readability guarantee for arbitrary plans.
 The exact allowlist applies to HashiCorp AWS, including the existing inferred AWS
 identity when provider source is absent. Explicit foreign providers are excluded.
 CLI `--spatial-type`, TOML `spatial-types`, library `Options::spatial_types` and
-Wasm `spatial_types` use one projection; the browser form has no new control.
+Wasm `spatial_types` use one projection; the browser form exposes the same types
+as optional checkboxes in Generation settings.
 
 Filtered endpoints stay Unavailable. Equal names, issuer URLs and parameter paths
 add no edges, ownership or identity merges. Parameter values, policy bodies, SAML
