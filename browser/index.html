@@ -30,6 +30,11 @@ input[type="text"] { width: min(95%, 40rem) }
     <label>Address format <select id="address-format"><option value="qualified">Qualified</option><option value="terraform">Terraform</option></select></label>
     <label>Icons <select id="icon-mode"><option value="icon">Icons</option><option value="service-name">Service names</option></select></label>
     <label><input id="hide-legend" type="checkbox"> Hide relationship legend</label>
+    <fieldset aria-describedby="spatial-help">
+      <legend>Spatial resource types (optional)</legend>
+      <p id="spatial-help">Show selected resource types in the spatial diagram. With none selected, these resources remain Logical. Reference details are retained.</p>
+      <div id="spatial-types"><!-- spatial-type-options --></div>
+    </fieldset>
     <label>Focus resource address (optional) <input id="focus" type="text" autocomplete="off" spellcheck="false"></label>
     <label>Focus depth <input id="focus-depth" type="text" inputmode="numeric" autocomplete="off" placeholder="1" disabled aria-describedby="depth-help"></label>
     <p id="depth-help">Enabled only with a focus address. Empty uses depth 1; otherwise enter a nonnegative integer (0–4294967295). Clearing focus preserves this input but excludes it from generation.</p>

@@ -57,6 +57,7 @@ element('reset-settings').onclick = () => {
   element('focus').value = '';
   element('focus-depth').value = '';
   element('modules').replaceChildren();
+  element('spatial-types').querySelectorAll('input').forEach(input => { input.checked = false; });
   settingsChanged();
   if (assets) element('status').textContent = 'Settings reset to defaults. Generate again; the selected file is retained.';
 };
@@ -76,6 +77,7 @@ function snapshotOptions() {
     icon_mode: element('icon-mode').value,
     hide_relationship_legend: element('hide-legend').checked,
     modules: [],
+    spatial_types: Array.from(element('spatial-types').querySelectorAll('input:checked'), input => input.value),
   };
   if (element('focus').value !== '') {
     options.focus = element('focus').value;
