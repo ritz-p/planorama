@@ -18,14 +18,14 @@ async function main() {
     server.once('exit', () => reject(new Error('Static server exited')));
   });
   const driver = await Driver.start();
-  const run = (json, options = {}) => {
+  const run = (json, options = {}, operation = 'generate') => {
     driver.execute_script(`
       window.testResult = null;
       const w = new Worker(assets.url);
       w.onmessage = ({data}) => { window.testResult = data; w.terminate(); };
       w.onerror = () => { window.testResult = {ok: false, trap: true}; w.terminate(); };
-      w.postMessage({module: assets.module, json: arguments[0], options: arguments[1]});
-    `, json, options);
+      w.postMessage({module: assets.module, json: arguments[0], options: arguments[1], operation: arguments[2]});
+    `, json, options, operation);
     return wait(() => driver.execute_script('return window.testResult ? [window.testResult] : null'), 'Wasm result', 180000)[0];
   };
   const status = () => driver.execute_script("return document.getElementById('status').textContent");
@@ -43,6 +43,10 @@ async function main() {
     driver.execute_cdp_cmd('Network.enable', {});
     driver.execute_cdp_cmd('Network.emulateNetworkConditions', {offline: true, latency: 0, downloadThroughput: 0, uploadThroughput: 0});
     driver.get_log('performance');
+    require('./wasm-modules.cjs')({
+      driver, small, run, status,
+      native: (json, args) => execFileSync(binary, ['-', '-o', '-', ...args], {input: json, encoding: 'utf8', maxBuffer: 32 * 1024 * 1024}),
+    });
     require('./wasm-options.cjs')({
       driver, small, run, submit, status,
       native: (json, args) => execFileSync(binary, ['-', '-o', '-', ...args], {input: json, encoding: 'utf8', maxBuffer: 32 * 1024 * 1024}),
@@ -150,8 +154,8 @@ async function main() {
     assert.ok(status().startsWith('Settings reset'));
     submit(large, 'svg');
     wait(() => driver.execute_script('return !!worker'), 'worker before file replacement');
-    driver.execute_script("document.getElementById('file').dispatchEvent(new Event('change', {bubbles: true}));");
-    assert.equal(driver.execute_script('return worker === undefined'), true);
+    driver.execute_script("window.replacedWorker = worker; document.getElementById('file').dispatchEvent(new Event('change', {bubbles: true}));");
+    assert.equal(driver.execute_script('return worker !== replacedWorker'), true);
     submit(large, 'svg');
     wait(() => driver.execute_script('return !!worker'), 'worker before error');
     driver.execute_script("worker.onerror({preventDefault() {}});");

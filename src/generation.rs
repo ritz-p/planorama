@@ -70,13 +70,7 @@ pub fn generate(json: &str, options: &Options) -> Result<Generated, Error> {
         ..Default::default()
     };
     filter.validate().map_err(|_| Error::InvalidOptions)?;
-    let raw = plan::parse(json).map_err(|error| {
-        if error.starts_with("invalid JSON:") {
-            Error::InvalidJson
-        } else {
-            Error::UnsupportedInput
-        }
-    })?;
+    let raw = parse_input(json)?;
     let diagnostics = semantic::diagnostics::collect(&raw)
         .into_iter()
         .map(|diagnostic| diagnostic.reason.description().to_owned())
@@ -99,6 +93,19 @@ pub fn generate(json: &str, options: &Options) -> Result<Generated, Error> {
     Ok(Generated {
         content,
         diagnostics,
+    })
+}
+
+pub(crate) fn parse_input(json: &str) -> Result<crate::model::TerraformPlan, Error> {
+    if json.len() > MAX_INPUT_BYTES {
+        return Err(Error::InputTooLarge);
+    }
+    plan::parse(json).map_err(|error| {
+        if error.starts_with("invalid JSON:") {
+            Error::InvalidJson
+        } else {
+            Error::UnsupportedInput
+        }
     })
 }
 
