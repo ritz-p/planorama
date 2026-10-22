@@ -39,7 +39,7 @@ module.exports = function checkOptions({driver, small, run, submit, status, nati
     window.NativeWorker = Worker;
     window.Worker = class extends NativeWorker {
       postMessage(data) {
-        if (this === worker) {
+        if (this === worker && data.operation !== 'inspect') {
           window.uiRequests.push(structuredClone(data.options));
           window.lastCompletion = this.onmessage;
         }
@@ -223,9 +223,10 @@ module.exports = function checkOptions({driver, small, run, submit, status, nati
   driver.execute_script(`
     const transfer = new DataTransfer();
     transfer.items.add(new File(['{}'], 'replacement.json'));
+    const finishOldRead = finishRead;
     document.getElementById('file').files = transfer.files;
     document.getElementById('file').dispatchEvent(new Event('change', {bubbles: true}));
-    finishRead();
+    finishOldRead();
   `);
   assert.equal(driver.execute_script('return uiRequests.length'), requestCount, 'File replacement invalidates pending reads');
   driver.execute_script('File.prototype.text = originalFileText;');

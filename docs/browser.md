@@ -51,6 +51,17 @@ with `code` and `message`. Codes are `input_too_large`, `invalid_json`,
 `unsupported_input`, `invalid_options`, `selection_failed`, `generation_failed`.
 Runtime traps are handled by the Worker as a generic generation failure.
 
+`planorama::inspect_modules(json)` returns `Result<Vec<ModuleInventoryEntry>, Error>`;
+`wasm_bindgen.inspect_modules(jsonString)` returns the same entries as a JSON array.
+Both use the CLI inventory collector on the original parsed input, without semantic
+projection, selection, layout or routing. Each entry has `selector` (null for root),
+`instance` (false for configuration aggregates), `direct` and `subtree` counts.
+Counts include distinct managed/data instances and each current/deposed object;
+subtree includes direct resources. Overlapping rows must not be summed. Empty
+instances and configuration modules with no known instances have zero counts;
+configuration evidence does not prove an indexed instance exists. Inspection uses
+the same input limit and safe error contract as generation.
+
 | Option | Values / default |
 | --- | --- |
 | `format` | `svg` (default), `html` |
@@ -75,6 +86,14 @@ Explicit depth must be decimal digits in the Wasm nonnegative integer range
 Clearing focus disables depth and omits it from requests, retaining the field
 value for when focus is entered again.
 
+Choosing a file automatically lists its modules. Search the original inventory and
+use **Previous modules** / **Next modules** to browse 50 rows at a time. Checkboxes
+support Tab and Space; root is disabled. Selection and the selected-selector count
+survive searching and pagination. Picking an entry adds a selector row; unchecking
+it removes every matching row. Manual edits update the corresponding checkbox.
+The rows are passed to the existing `modules` option, sharing CLI focus,
+changed-only and context-closure rules. Generated HTML runtime filters are unchanged.
+
 Use **Add module** to enter one complete selector per row. Rows preserve spaces,
 commas, dots, quotes and escapes inside instance keys; they are not split or
 trimmed. No rows sends an empty array (no module filter). Empty rows must be
@@ -91,16 +110,22 @@ labelled checkboxes from `src/view/purpose.rs`'s `TYPES` definition using
 Each checkbox supports keyboard focus and Space to toggle.
 
 **Reset settings** restores every option, clears spatial selections, removes module rows and clears depth,
-while retaining the selected file. It also cancels pending work and clears results.
+while retaining the selected file and any completed module inventory. It also
+clears module search, cancels pending work and clears results. Replacing the file
+clears all module selectors, search and the old inventory before reading its list;
+other settings are retained. **Reload module list** retries inspection after
+cancellation or failure without clearing selectors. Changing generation settings
+cancels pending inspection; search and pagination do not. Stale reads and Worker
+completions cannot replace a newer list. Completed inventory remains unfiltered.
 State JSON, plan event streams, multiple states, saved binary plans, Terraform
-execution, provider evidence, config/preset files, module listing, coverage/layout
+execution, provider evidence, config/preset files, coverage/layout
 report files and opt-in HTML diagnostic panels are unsupported in this API.
 
 ## Privacy and lifecycle
 
 Only static assets are fetched at startup, without credentials. After the Ready
 message the page holds the compiled Wasm module and Worker source in memory.
-Generation, preview and download work with the network disabled while this page
+Module inspection, generation, preview and download work with the network disabled while this page
 remains open. Reloading requires fetching the assets again; there is no service
 worker or persistent offline cache managed by the sample.
 
@@ -150,7 +175,9 @@ docker compose exec -T dev node tests/browser/wasm.cjs
 output equality (including identity, action, relationships and geometry), covers
 SVG/HTML downloads, selections, invalid input/options, markup-bearing addresses,
 all UI defaults/changes/reset, empty/single/multiple spatial selections, focus/depth validation, special-character module
-rows and duplicates, keyboard focus, safe error announcements, settings changes
+rows and duplicates, native/Wasm inventory counts, root/empty/configuration rows,
+data/deposed objects, search/pagination and selection retention, keyboard focus,
+safe error announcements, settings changes
 during file reads and Worker execution, stale completions, repeated generation,
 cancellation/retry, sandbox isolation and empty browser
 storage. After asset loading it disables network access and asserts zero HTTP
