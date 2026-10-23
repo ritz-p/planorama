@@ -8,11 +8,17 @@ pub(super) struct Grid {
 }
 
 impl Grid {
+    #[cfg(test)]
     pub fn new(xs: &[usize], ys: &[usize], bounds: &[Occluder]) -> Self {
+        crate::work::complete(Self::new_step(xs, ys, bounds))
+    }
+
+    pub async fn new_step(xs: &[usize], ys: &[usize], bounds: &[Occluder]) -> Self {
         let columns = xs.len();
         let mut horizontal = vec![0; columns * ys.len()];
         let mut vertical = vec![0; columns * ys.len()];
         for (row, &y) in ys.iter().enumerate() {
+            crate::work::checkpoint().await;
             let mut coverage = [Coverage::default(), Coverage::default()];
             for bounds in bounds {
                 if bounds.origin.y < y && y < bounds.origin.y + bounds.height {
@@ -31,6 +37,7 @@ impl Grid {
             }
         }
         for (column, &x) in xs.iter().enumerate() {
+            crate::work::checkpoint().await;
             let mut coverage = [Coverage::default(), Coverage::default()];
             for bounds in bounds {
                 if bounds.origin.x < x && x < bounds.right() {

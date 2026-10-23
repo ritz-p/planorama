@@ -1,4 +1,5 @@
 use crate::{html, layout::Layout, plan, semantic, svg, view};
+mod budget;
 
 #[derive(Clone, Copy, Default, serde::Deserialize)]
 #[serde(rename_all = "kebab-case")]
@@ -31,6 +32,8 @@ pub enum Error {
     InvalidOptions,
     SelectionFailed,
     GenerationFailed,
+    GenerationClosed,
+    ResourceLimit,
 }
 
 impl std::fmt::Display for Error {
@@ -42,6 +45,8 @@ impl std::fmt::Display for Error {
             Self::InvalidOptions => "Unsupported or invalid generation options.",
             Self::SelectionFailed => "The requested selection could not be resolved.",
             Self::GenerationFailed => "Diagram generation failed.",
+            Self::GenerationClosed => "Generation has completed or was cancelled.",
+            Self::ResourceLimit => "The browser generation budget was exceeded. Reduce the input or select fewer modules or a narrower focus.",
         })
     }
 }
@@ -55,8 +60,15 @@ pub struct Generated {
 }
 
 pub const MAX_INPUT_BYTES: usize = 32 * 1024 * 1024;
+pub const MAX_BROWSER_INPUT_BYTES: usize = 2 * 1024 * 1024;
+pub const MAX_BROWSER_OUTPUT_BYTES: usize = 4 * 1024 * 1024;
+pub(crate) const MAX_BROWSER_OPTIONS_BYTES: usize = 64 * 1024;
 
 pub fn generate(json: &str, options: &Options) -> Result<Generated, Error> {
+    crate::work::complete(generate_step(json, options))
+}
+
+async fn generate_step(json: &str, options: &Options) -> Result<Generated, Error> {
     if json.len() > MAX_INPUT_BYTES {
         return Err(Error::InputTooLarge);
     }
@@ -70,7 +82,15 @@ pub fn generate(json: &str, options: &Options) -> Result<Generated, Error> {
         ..Default::default()
     };
     filter.validate().map_err(|_| Error::InvalidOptions)?;
+    crate::work::checkpoint().await;
+    if crate::work::limited() {
+        budget::validate(json)?;
+        crate::work::checkpoint().await;
+    }
     let raw = parse_input(json)?;
+    crate::work::check_limit(raw.nodes.len(), 256).await;
+    crate::work::check_limit(raw.edges.len(), 1024).await;
+    crate::work::checkpoint().await;
     let diagnostics = semantic::diagnostics::collect(&raw)
         .into_iter()
         .map(|diagnostic| diagnostic.reason.description().to_owned())
@@ -78,7 +98,12 @@ pub fn generate(json: &str, options: &Options) -> Result<Generated, Error> {
         .into_iter()
         .collect();
     let graph = project(&raw, &filter).map_err(|_| Error::SelectionFailed)?;
-    let layout = Layout::new(&graph);
+    drop(raw);
+    crate::work::checkpoint().await;
+    crate::work::check_limit(graph.nodes.len(), 256).await;
+    crate::work::check_limit(graph.edges.len(), 1024).await;
+    let layout = Layout::new_step(&graph).await;
+    crate::work::checkpoint().await;
     let content = render(
         &graph,
         &layout,
@@ -90,10 +115,67 @@ pub fn generate(json: &str, options: &Options) -> Result<Generated, Error> {
         None,
         false,
     );
+    crate::work::check_limit(content.len(), MAX_BROWSER_OUTPUT_BYTES).await;
     Ok(Generated {
         content,
         diagnostics,
     })
+}
+
+type GenerationFuture =
+    std::pin::Pin<Box<dyn std::future::Future<Output = Result<Generated, Error>>>>;
+
+pub struct Generator {
+    future: Option<GenerationFuture>,
+}
+
+impl Generator {
+    pub fn new(json: String, options: Options) -> Result<Self, Error> {
+        if json.len() > MAX_BROWSER_INPUT_BYTES {
+            return Err(Error::ResourceLimit);
+        }
+        if options.modules.len() > 256 || options.spatial_types.len() > 256 {
+            return Err(Error::ResourceLimit);
+        }
+        let mut remaining = MAX_BROWSER_OPTIONS_BYTES;
+        for value in options
+            .modules
+            .iter()
+            .chain(&options.spatial_types)
+            .chain(options.focus.iter())
+        {
+            remaining = remaining
+                .checked_sub(value.len())
+                .ok_or(Error::ResourceLimit)?;
+        }
+        Ok(Self {
+            future: Some(Box::pin(
+                async move { generate_step(&json, &options).await },
+            )),
+        })
+    }
+
+    pub fn step(&mut self, units: usize) -> Result<Option<Generated>, Error> {
+        if units == 0 || units > 4096 {
+            return Err(Error::InvalidOptions);
+        }
+        let future = self.future.as_mut().ok_or(Error::GenerationClosed)?;
+        match crate::work::step(future.as_mut(), units, true) {
+            Ok(std::task::Poll::Pending) => Ok(None),
+            Ok(std::task::Poll::Ready(result)) => {
+                self.future = None;
+                result.map(Some)
+            }
+            Err(error) => {
+                self.future = None;
+                Err(error)
+            }
+        }
+    }
+
+    pub fn cancel(&mut self) {
+        self.future = None;
+    }
 }
 
 pub(crate) fn parse_input(json: &str) -> Result<crate::model::TerraformPlan, Error> {

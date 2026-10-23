@@ -7,11 +7,17 @@ pub(super) struct Grid {
 }
 
 impl Grid {
+    #[cfg(test)]
     pub fn new(xs: &[usize], ys: &[usize], obstacles: &[Bounds]) -> Self {
+        crate::work::complete(Self::new_step(xs, ys, obstacles))
+    }
+
+    pub async fn new_step(xs: &[usize], ys: &[usize], obstacles: &[Bounds]) -> Self {
         let columns = xs.len();
         let mut horizontal = vec![0; columns * ys.len()];
         let mut vertical = vec![0; columns * ys.len()];
         for bounds in obstacles {
+            crate::work::checkpoint().await;
             let left = xs
                 .partition_point(|&x| x <= bounds.origin.x)
                 .saturating_sub(1);
@@ -40,6 +46,7 @@ impl Grid {
             }
         }
         for row in horizontal.chunks_mut(columns) {
+            crate::work::checkpoint().await;
             let mut count = 0;
             for cell in row {
                 count += *cell;
@@ -47,6 +54,7 @@ impl Grid {
             }
         }
         for column in 0..columns {
+            crate::work::checkpoint().await;
             let mut count = 0;
             for row in 0..ys.len() {
                 let cell = &mut vertical[row * columns + column];

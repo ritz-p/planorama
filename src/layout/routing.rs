@@ -21,15 +21,27 @@ pub(super) struct Routed {
     pub junctions: Vec<Point>,
 }
 
+#[cfg(test)]
 pub(super) fn route(
     graph: &Graph,
     ranks: &[usize],
     bounds: &mut [Bounds],
     channels: &[usize],
 ) -> Routed {
-    route_impl(graph, ranks, bounds, channels, true)
+    crate::work::complete(route_step(graph, ranks, bounds, channels))
 }
 
+pub(super) async fn route_step(
+    graph: &Graph,
+    ranks: &[usize],
+    bounds: &mut [Bounds],
+    channels: &[usize],
+) -> Routed {
+    crate::work::checkpoint().await;
+    route_impl_step(graph, ranks, bounds, channels, true).await
+}
+
+#[cfg(test)]
 fn route_impl(
     graph: &Graph,
     ranks: &[usize],
@@ -37,9 +49,21 @@ fn route_impl(
     channels: &[usize],
     shortcuts: bool,
 ) -> Routed {
-    route_selected(graph, ranks, bounds, channels, shortcuts, None)
+    crate::work::complete(route_impl_step(graph, ranks, bounds, channels, shortcuts))
 }
 
+async fn route_impl_step(
+    graph: &Graph,
+    ranks: &[usize],
+    bounds: &mut [Bounds],
+    channels: &[usize],
+    shortcuts: bool,
+) -> Routed {
+    crate::work::checkpoint().await;
+    route_selected_step(graph, ranks, bounds, channels, shortcuts, None).await
+}
+
+#[cfg(test)]
 pub(super) fn route_selected(
     graph: &Graph,
     ranks: &[usize],
@@ -48,11 +72,26 @@ pub(super) fn route_selected(
     shortcuts: bool,
     sides: Option<&[[Side; 2]]>,
 ) -> Routed {
+    crate::work::complete(route_selected_step(
+        graph, ranks, bounds, channels, shortcuts, sides,
+    ))
+}
+
+pub(super) async fn route_selected_step(
+    graph: &Graph,
+    ranks: &[usize],
+    bounds: &mut [Bounds],
+    channels: &[usize],
+    shortcuts: bool,
+    sides: Option<&[[Side; 2]]>,
+) -> Routed {
+    crate::work::checkpoint().await;
     let mut source_ports = vec![0; graph.edges.len()];
     let mut target_ports = vec![0; graph.edges.len()];
     let mut sources = vec![Vec::new(); graph.nodes.len()];
     let mut targets = vec![Vec::new(); graph.nodes.len()];
     for (edge, link) in graph.edges.iter().enumerate() {
+        crate::work::checkpoint().await;
         let (a, b) = link.endpoints();
         sources[a].push(edge);
         targets[b].push(edge);
@@ -70,6 +109,7 @@ pub(super) fn route_selected(
     let (source_slots, target_slots) =
         super::routing_shared::slots::assign_selected(graph, bounds, &incident, sides);
     for (index, edge) in graph.edges.iter().enumerate() {
+        crate::work::checkpoint().await;
         source_ports[index] =
             source_slots[index][sides.map_or(Side::Right, |s| s[index][0]) as usize];
         target_ports[index] = target_slots[index][sides.map_or(
@@ -94,6 +134,7 @@ pub(super) fn route_selected(
     let columns = ranks.iter().max().copied().unwrap_or(0) + 1;
     let mut column_widths = vec![0; columns];
     for (node, bound) in bounds.iter().enumerate() {
+        crate::work::checkpoint().await;
         column_widths[ranks[node]] = column_widths[ranks[node]].max(bound.width);
     }
     let mut gutter_widths = vec![100; columns];
@@ -101,10 +142,12 @@ pub(super) fn route_selected(
         let mut column_x = Vec::with_capacity(columns);
         let mut x = 60;
         for (column, &width) in gutter_widths.iter().enumerate() {
+            crate::work::checkpoint().await;
             column_x.push(x);
             x += column_widths[column] + width;
         }
         for (index, bounds) in bounds.iter_mut().enumerate() {
+            crate::work::checkpoint().await;
             bounds.origin.x = column_x[ranks[index]];
         }
         let column_right: Vec<_> = column_x
@@ -140,6 +183,7 @@ pub(super) fn route_selected(
             )
         });
         for &edge in &order {
+            crate::work::checkpoint().await;
             let link = &graph.edges[edge];
             let (a, b) = link.endpoints();
             scorer.set_kind(link.kind);
@@ -213,16 +257,17 @@ pub(super) fn route_selected(
                 if selected_start.point == start && selected_end.point == end {
                     chosen.points
                 } else {
-                    super::routing_shared::ports::connect(
+                    super::routing_shared::ports::connect_step(
                         selected_start,
                         selected_end,
                         bounds,
                         Some(&scorer),
                     )
+                    .await
                     .expect("selected sides have an orthogonal corridor")
                 }
             } else if bundles.group(edge).is_none() {
-                super::routing_shared::ports::select_with_slots(
+                super::routing_shared::ports::select_with_slots_step(
                     bounds[a],
                     bounds[b],
                     chosen.points,
@@ -230,6 +275,7 @@ pub(super) fn route_selected(
                     &scorer,
                     Some((&source_slots[edge], &target_slots[edge])),
                 )
+                .await
             } else {
                 chosen.points
             };
@@ -238,6 +284,7 @@ pub(super) fn route_selected(
         }
         let mut expanded = false;
         for (column, width) in gutter_widths.iter_mut().enumerate() {
+            crate::work::checkpoint().await;
             let needed = lanes.width(column);
             if needed > *width {
                 *width = needed;

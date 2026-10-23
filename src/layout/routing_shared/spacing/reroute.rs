@@ -111,6 +111,7 @@ pub(super) fn preserves_overlap(
     })
 }
 
+#[cfg(test)]
 pub(super) fn apply(
     graph: &Graph,
     layout: &mut Layout<'_>,
@@ -119,6 +120,18 @@ pub(super) fn apply(
     baseline: &[Shape],
     expanded: bool,
 ) -> bool {
+    crate::work::complete(apply_step(graph, layout, plan, before, baseline, expanded))
+}
+
+pub(super) async fn apply_step(
+    graph: &Graph,
+    layout: &mut Layout<'_>,
+    plan: &plan::Corridor,
+    before: &expansion::Snapshot,
+    baseline: &[Shape],
+    expanded: bool,
+) -> bool {
+    crate::work::checkpoint().await;
     let numbers = relationship_markers::numbers(graph);
     let legal = |layout: &Layout<'_>, i: usize| {
         let path = &layout.paths[i];
@@ -168,6 +181,7 @@ pub(super) fn apply(
     });
     let mut routed = 0;
     for &i in &order {
+        crate::work::checkpoint().await;
         let overlap_before: usize = before
             .paths
             .iter()
@@ -190,6 +204,7 @@ pub(super) fn apply(
         scorer.set_layout(graph, layout);
         scorer.set_kind(graph.edges[i].kind);
         for (other, path) in layout.paths.iter().enumerate() {
+            crate::work::checkpoint().await;
             if other != i {
                 scorer.insert(path.clone());
             }
@@ -252,6 +267,7 @@ pub(super) fn apply(
                 },
             );
             for coordinate in coordinates {
+                crate::work::checkpoint().await;
                 scorer.routing_axes.push((plan.horizontal, coordinate));
                 candidates.extend(lane_candidates(seed, plan, coordinate, clearances));
             }
@@ -275,16 +291,20 @@ pub(super) fn apply(
                         <= overlap_before
             })
         {
-            candidates.extend(ports::candidates_with_clearances(
-                start,
-                end,
-                &obstacles,
-                Some(&scorer),
-                clearances,
-            ));
+            candidates.extend(
+                ports::candidates_with_clearances_step(
+                    start,
+                    end,
+                    &obstacles,
+                    Some(&scorer),
+                    clearances,
+                )
+                .await,
+            );
         }
         let mut best = None;
         for candidate in candidates {
+            crate::work::checkpoint().await;
             if !ports::valid_with_clearances(&candidate, start, end, &obstacles, clearances) {
                 continue;
             }

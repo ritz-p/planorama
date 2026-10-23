@@ -18,11 +18,22 @@ pub(super) struct Placed<'a> {
     strategy: Strategy,
 }
 
-pub(super) fn place(graph: &Graph, tree: ContainmentTree) -> Placed<'_> {
-    place_sized(graph, tree, None)
+pub(super) async fn place_step(graph: &Graph, tree: ContainmentTree) -> Placed<'_> {
+    crate::work::checkpoint().await;
+    place_sized_step(graph, tree, None).await
 }
 
+#[cfg(test)]
 fn place_sized(graph: &Graph, tree: ContainmentTree, heights: Option<Vec<usize>>) -> Placed<'_> {
+    crate::work::complete(place_sized_step(graph, tree, heights))
+}
+
+async fn place_sized_step(
+    graph: &Graph,
+    tree: ContainmentTree,
+    heights: Option<Vec<usize>>,
+) -> Placed<'_> {
+    crate::work::checkpoint().await;
     let mut placed = if graph.nodes.iter().any(|node| {
         node.role == ResourceRole::Container
             || node
@@ -98,25 +109,33 @@ fn place_sized(graph: &Graph, tree: ContainmentTree, heights: Option<Vec<usize>>
             },
         }
     };
-    super::locality::refine(graph, &mut placed.layout);
+    super::locality::refine_step(graph, &mut placed.layout).await;
     placed
 }
 
-pub(super) fn route<'a>(graph: &'a Graph, placed: &mut Placed<'a>) {
+pub(super) async fn route_step<'a>(graph: &'a Graph, placed: &mut Placed<'a>) {
+    crate::work::checkpoint().await;
     match &placed.strategy {
         Strategy::Flat { ranks, channels } => {
-            let routed = routing::route(graph, ranks, &mut placed.layout.bounds, channels);
+            let routed =
+                routing::route_step(graph, ranks, &mut placed.layout.bounds, channels).await;
             placed.layout.width = routed.width;
             placed.layout.paths = routed.paths;
             placed.layout.junctions = routed.junctions;
         }
-        Strategy::Nested => containers::route(graph, &mut placed.layout, true),
+        Strategy::Nested => containers::route_step(graph, &mut placed.layout, true).await,
     }
-    refine(graph, placed);
-    super::routing_shared::refinement::refine(graph, &mut placed.layout);
+    refine_step(graph, placed).await;
+    super::routing_shared::refinement::refine_step(graph, &mut placed.layout).await;
 }
 
+#[cfg(test)]
 fn refine<'a>(graph: &'a Graph, placed: &mut Placed<'a>) {
+    crate::work::complete(refine_step(graph, placed))
+}
+
+async fn refine_step<'a>(graph: &'a Graph, placed: &mut Placed<'a>) {
+    crate::work::checkpoint().await;
     let side = |a: super::Point, b: super::Point| match a.x.cmp(&b.x) {
         std::cmp::Ordering::Equal => {
             if a.y > b.y {
@@ -178,25 +197,28 @@ fn refine<'a>(graph: &'a Graph, placed: &mut Placed<'a>) {
         let independent_demand =
             super::routing_shared::slots::required_heights(graph, &sides, &visible);
         for (height, demand) in heights.iter_mut().zip(independent_demand) {
+            crate::work::checkpoint().await;
             *height = (*height).max(demand);
         }
-        *placed = place_sized(graph, ContainmentTree::new(graph), Some(heights));
+        *placed = place_sized_step(graph, ContainmentTree::new(graph), Some(heights)).await;
         match &placed.strategy {
             Strategy::Flat { ranks, channels } => {
-                let routed = routing::route_selected(
+                let routed = routing::route_selected_step(
                     graph,
                     ranks,
                     &mut placed.layout.bounds,
                     channels,
                     true,
                     Some(&sides),
-                );
+                )
+                .await;
                 placed.layout.width = routed.width;
                 placed.layout.paths = routed.paths;
                 placed.layout.junctions = routed.junctions;
             }
             Strategy::Nested => {
-                let routed = containers::routing::route_selected(graph, &placed.layout, &sides);
+                let routed =
+                    containers::routing::route_selected_step(graph, &placed.layout, &sides).await;
                 placed.layout.paths = routed.paths;
                 placed.layout.junctions = routed.junctions;
             }
