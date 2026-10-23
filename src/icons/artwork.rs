@@ -50,6 +50,12 @@ impl ResourceIcon {
         }
     }
 
+    #[cfg(not(feature = "icon-artwork"))]
+    pub fn svg(self) -> &'static str {
+        ""
+    }
+
+    #[cfg(feature = "icon-artwork")]
     pub fn svg(self) -> &'static str {
         match self {
             Self::Service(icon) => icon.svg(),
@@ -141,6 +147,12 @@ impl ResourceIcon {
         }
     }
 
+    #[cfg(not(feature = "icon-artwork"))]
+    pub fn notice(self) -> &'static str {
+        ""
+    }
+
+    #[cfg(feature = "icon-artwork")]
     pub fn notice(self) -> &'static str {
         match self {
             Self::Terraform => concat!(

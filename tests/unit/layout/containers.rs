@@ -83,7 +83,7 @@ fn hierarchy_obstacles_and_direct_container_endpoints() {
             change: None,
         });
         let layout = Layout::new(&case);
-        if from == 3 && to == 0 {
+        if cfg!(feature = "icon-artwork") && from == 3 && to == 0 {
             let rendered = svg::render(&case, &layout);
             let snapshot = "examples/hierarchy-routing.svg";
             if std::env::var_os("UPDATE_ROUTING_SNAPSHOT").is_some() {

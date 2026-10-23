@@ -1,5 +1,9 @@
 # Architecture icons
 
+The default `icon-artwork` Cargo feature embeds the assets described here.
+Builds with `--no-default-features` exclude artwork and use service-name mode;
+explicit icon mode is rejected. See the [standalone Wasm engine](browser.md#standalone-engine-without-artwork).
+
 ## AWS Architecture Icons
 
 Planorama embeds official AWS Architecture Icons from the **07312026 (July 31, 2026)** package downloaded from the [AWS Architecture Icons page](https://aws.amazon.com/architecture/icons/) on 2026-10-05.

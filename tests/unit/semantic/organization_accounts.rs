@@ -200,10 +200,12 @@ fn verified_deployment_example() {
             );
         }
     }
-    if std::env::var_os("UPDATE_ORGANIZATION_DEPLOYMENTS").is_some() {
+    if cfg!(feature = "icon-artwork")
+        && std::env::var_os("UPDATE_ORGANIZATION_DEPLOYMENTS").is_some()
+    {
         std::fs::write("examples/organization-deployments.svg", &svg).unwrap();
         std::fs::write("examples/organization-deployments.html", &html).unwrap();
-    } else {
+    } else if cfg!(feature = "icon-artwork") {
         assert_eq!(
             std::fs::read_to_string("examples/organization-deployments.svg").unwrap(),
             svg

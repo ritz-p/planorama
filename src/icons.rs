@@ -8,6 +8,7 @@ macro_rules! service_icons {
             pub(super) fn id(self) -> &'static str {
                 match self { $(Self::$variant => $id,)* }
             }
+            #[cfg(feature = "icon-artwork")]
             pub(super) fn svg(self) -> &'static str {
                 match self { $(Self::$variant => include_str!(concat!(env!("OUT_DIR"), "/service-", $file)),)* }
             }
@@ -24,8 +25,9 @@ pub use services::ServiceIcon;
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, serde::Deserialize)]
 #[serde(rename_all = "kebab-case")]
 pub enum IconMode {
-    #[default]
+    #[cfg_attr(feature = "icon-artwork", default)]
     Icon,
+    #[cfg_attr(not(feature = "icon-artwork"), default)]
     ServiceName,
 }
 

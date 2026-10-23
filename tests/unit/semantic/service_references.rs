@@ -63,7 +63,10 @@ fn ecr_validates_configuration_without_inventing_image_pull_relationships() {
         .content;
         assert!(!output.contains("PRIVATE_"));
         assert!(output.contains("Configured repository"));
-        assert!(output.contains("planorama-icon-aws-ecr"));
+        assert_eq!(
+            output.contains("planorama-icon-aws-ecr"),
+            cfg!(feature = "icon-artwork")
+        );
     }
     value["configuration"]["root_module"]["resources"][3]["expressions"] = json!({});
     let graph = semantic::transform(&plan::parse(&value.to_string()).unwrap());

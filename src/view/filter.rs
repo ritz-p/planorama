@@ -17,6 +17,9 @@ pub struct Options {
 
 impl Options {
     pub fn validate(&self) -> Result<(), String> {
+        if !cfg!(feature = "icon-artwork") && self.icon_mode == crate::icons::IconMode::Icon {
+            return Err("icon mode is unavailable in builds without icon-artwork".into());
+        }
         super::purpose::validate(&self.spatial_types)?;
         if self.depth.is_some() && self.focus.is_none() {
             return Err("--focus-depth requires --focus".into());
