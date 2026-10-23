@@ -5,10 +5,11 @@ use crate::model::architecture::Graph;
 #[path = "../../tests/unit/layout/spatial.rs"]
 mod tests;
 
-pub(super) fn layout(graph: &Graph) -> Layout<'_> {
+pub(super) async fn layout_step(graph: &Graph) -> Layout<'_> {
+    crate::work::checkpoint().await;
     let projected = crate::view::spatial::project(graph);
     let route_insets = crate::view::routes::insets(graph);
-    let spatial = Layout::unspaced(&projected.graph);
+    let spatial = Layout::unspaced_step(&projected.graph).await;
     let empty = Bounds {
         origin: Point { x: 0, y: 0 },
         width: 0,
@@ -20,6 +21,7 @@ pub(super) fn layout(graph: &Graph) -> Layout<'_> {
     let mut children = vec![Vec::new(); graph.nodes.len()];
     let mut keys = vec![0; graph.nodes.len()];
     for (new, &old) in projected.nodes.iter().enumerate() {
+        crate::work::checkpoint().await;
         bounds[old] = spatial.bounds[new];
         header_heights[old] = spatial.header_heights[new];
         parents[old] = spatial.containment.parents[new].map(|p| projected.nodes[p]);
@@ -31,6 +33,7 @@ pub(super) fn layout(graph: &Graph) -> Layout<'_> {
     }
     let mut paths = vec![Vec::new(); graph.edges.len()];
     for (new, &old) in projected.edges.iter().enumerate() {
+        crate::work::checkpoint().await;
         paths[old] = spatial.paths[new].clone();
     }
     let mut layout = Layout {
@@ -76,9 +79,11 @@ pub(super) fn layout(graph: &Graph) -> Layout<'_> {
     };
     let mut embedded = false;
     for &parent in &projected.nodes {
+        crate::work::checkpoint().await;
         let metrics = crate::view::card::measure(&graph.nodes[parent]);
         let mut y = layout.bounds[parent].origin.y + metrics.routes_y + 12;
         for card in crate::view::routes::cards(graph, parent) {
+            crate::work::checkpoint().await;
             let height = card.height();
             if let Some(node) = card.node {
                 embedded = true;
@@ -142,12 +147,14 @@ pub(super) fn layout(graph: &Graph) -> Layout<'_> {
                 }
             })
             .collect();
-        let routed = super::containers::routing::route_selected(&routing, &layout, &sides);
+        let routed =
+            super::containers::routing::route_selected_step(&routing, &layout, &sides).await;
         layout.paths = routed.paths;
         layout.junctions = routed.junctions;
-        super::routing_shared::refinement::refine(&routing, &mut layout);
+        super::routing_shared::refinement::refine_step(&routing, &mut layout).await;
         let routed = std::mem::replace(&mut layout.paths, vec![Vec::new(); graph.edges.len()]);
         for (index, path) in indices.into_iter().zip(routed) {
+            crate::work::checkpoint().await;
             layout.paths[index] = path;
         }
     }

@@ -11,13 +11,18 @@ pub(super) struct Grid<'a> {
 }
 
 impl<'a> Grid<'a> {
+    #[cfg(test)]
     pub fn new(xs: &[usize], ys: &[usize], scorer: &'a Scorer) -> Self {
+        crate::work::complete(Self::new_step(xs, ys, scorer))
+    }
+
+    pub async fn new_step(xs: &[usize], ys: &[usize], scorer: &'a Scorer) -> Self {
         Self {
             scorer,
             columns: xs.len(),
             segments: vec![[u128::MAX; 2]; xs.len() * ys.len()],
             junctions: vec![[u128::MAX; 2]; xs.len() * ys.len()],
-            occlusion: occlusion::Grid::new(xs, ys, scorer.soft()),
+            occlusion: occlusion::Grid::new_step(xs, ys, scorer.soft()).await,
             #[cfg(test)]
             evaluations: [0; 2],
         }

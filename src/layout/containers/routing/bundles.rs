@@ -63,6 +63,7 @@ pub(super) struct Bundle {
     pub junctions: Vec<Point>,
 }
 
+#[cfg(test)]
 pub(super) fn try_bundle(
     graph: &Graph,
     layout: &Layout<'_>,
@@ -72,12 +73,33 @@ pub(super) fn try_bundle(
     reservations: &[Bounds],
     independent: impl Fn(usize, &Scorer) -> Vec<Point>,
 ) -> Option<Bundle> {
+    crate::work::complete(try_bundle_step(
+        graph,
+        layout,
+        group,
+        offsets,
+        scorer,
+        reservations,
+        async |index, scorer: &Scorer| independent(index, scorer),
+    ))
+}
+
+pub(super) async fn try_bundle_step(
+    graph: &Graph,
+    layout: &Layout<'_>,
+    group: &Group,
+    offsets: (&[[usize; 4]], &[[usize; 4]]),
+    scorer: &mut Scorer,
+    reservations: &[Bounds],
+    independent: impl AsyncFn(usize, &Scorer) -> Vec<Point>,
+) -> Option<Bundle> {
     let target = layout.bounds[group.target];
     let first = *group.sources.first()?;
     let pairs = ports::facing_pairs(layout.bounds[first], target);
     let mut independent_cost = None;
     let mut best = None;
     for pair in pairs {
+        crate::work::checkpoint().await;
         if !group
             .sources
             .iter()
@@ -86,6 +108,7 @@ pub(super) fn try_bundle(
             continue;
         }
         for clearance in [16, 24, 8] {
+            crate::work::checkpoint().await;
             if let Some((bundle, cost)) = candidate(
                 graph,
                 layout,
@@ -95,9 +118,22 @@ pub(super) fn try_bundle(
                 reservations,
                 (pair, clearance),
             ) {
-                let independent_cost = *independent_cost.get_or_insert_with(|| {
-                    self::independent_cost(graph, layout, group, scorer, reservations, &independent)
-                });
+                let independent_cost = match independent_cost {
+                    Some(cost) => cost,
+                    None => {
+                        let cost = self::independent_cost_step(
+                            graph,
+                            layout,
+                            group,
+                            scorer,
+                            reservations,
+                            &independent,
+                        )
+                        .await;
+                        independent_cost = Some(cost);
+                        cost
+                    }
+                };
                 if cost <= independent_cost && best.as_ref().is_none_or(|(_, old)| cost < *old) {
                     best = Some((bundle, cost));
                 }
@@ -107,6 +143,7 @@ pub(super) fn try_bundle(
     best.map(|(bundle, _)| bundle)
 }
 
+#[cfg(test)]
 fn independent_cost(
     graph: &Graph,
     layout: &Layout<'_>,
@@ -114,6 +151,24 @@ fn independent_cost(
     scorer: &mut Scorer,
     reservations: &[Bounds],
     independent: impl Fn(usize, &Scorer) -> Vec<Point>,
+) -> u128 {
+    crate::work::complete(independent_cost_step(
+        graph,
+        layout,
+        group,
+        scorer,
+        reservations,
+        async |index, scorer: &Scorer| independent(index, scorer),
+    ))
+}
+
+async fn independent_cost_step(
+    graph: &Graph,
+    layout: &Layout<'_>,
+    group: &Group,
+    scorer: &mut Scorer,
+    reservations: &[Bounds],
+    independent: impl AsyncFn(usize, &Scorer) -> Vec<Point>,
 ) -> u128 {
     let mut cost = 0;
     let checkpoint = scorer.len();
@@ -137,6 +192,7 @@ fn independent_cost(
         )
     });
     for &index in &order {
+        crate::work::checkpoint().await;
         let edge = &graph.edges[index];
         scorer.set_kind(edge.kind);
         scorer.set_soft(super::soft_obstacles(layout, edge));
@@ -145,11 +201,12 @@ fn independent_cost(
                 .containment
                 .routing_peers(edge.from, edge.to, &layout.bounds),
         );
-        let path = independent(index, scorer);
+        let path = independent(index, scorer).await;
         scorer.insert(path.clone());
         paths.push(path);
     }
     for (slot, &index) in order.iter().enumerate() {
+        crate::work::checkpoint().await;
         scorer.set_kind(graph.edges[index].kind);
         scorer.set_soft(super::soft_obstacles(layout, &graph.edges[index]));
         let mut barriers = obstacles(layout, &graph.edges[index]);
@@ -164,6 +221,7 @@ fn independent_cost(
     }
     scorer.truncate(checkpoint);
     for (index, path) in order.into_iter().zip(paths) {
+        crate::work::checkpoint().await;
         scorer.set_kind(graph.edges[index].kind);
         scorer.set_soft(super::soft_obstacles(layout, &graph.edges[index]));
         cost += scorer.readability_cost(&path);

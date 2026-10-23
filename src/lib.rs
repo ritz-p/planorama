@@ -22,13 +22,14 @@ mod timing;
 #[path = "timing_browser.rs"]
 mod timing;
 mod view;
+mod work;
 
 #[cfg(all(test, not(feature = "icon-artwork")))]
 #[path = "../tests/unit/artwork_free.rs"]
 mod artwork_free;
 mod generation;
 mod module_inventory;
-pub use generation::{Error, Generated, Options, OutputFormat, generate};
+pub use generation::{Error, Generated, Generator, Options, OutputFormat, generate};
 pub use icons::IconMode;
 pub use module_inventory::{ModuleInventoryEntry, inspect_modules};
 pub use svg::AddressFormat;

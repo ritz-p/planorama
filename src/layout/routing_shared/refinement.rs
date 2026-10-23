@@ -74,7 +74,13 @@ pub(super) fn overlap(a: &[Point], b: &[Point]) -> usize {
         .sum()
 }
 
+#[cfg(test)]
 pub(in crate::layout) fn refine(graph: &Graph, layout: &mut Layout<'_>) {
+    crate::work::complete(refine_step(graph, layout))
+}
+
+pub(in crate::layout) async fn refine_step(graph: &Graph, layout: &mut Layout<'_>) {
+    crate::work::checkpoint().await;
     let numbers = relationship_markers::numbers(graph);
     let clearances: Vec<_> = layout
         .paths
@@ -91,6 +97,7 @@ pub(in crate::layout) fn refine(graph: &Graph, layout: &mut Layout<'_>) {
         .collect();
     let mut groups = BTreeMap::<_, Vec<_>>::new();
     for (i, (edge, path)) in graph.edges.iter().zip(&layout.paths).enumerate() {
+        crate::work::checkpoint().await;
         if path.len() < 2 {
             continue;
         }
@@ -107,6 +114,7 @@ pub(in crate::layout) fn refine(graph: &Graph, layout: &mut Layout<'_>) {
             continue;
         }
         for (end, node) in [edge.from, edge.to].into_iter().enumerate() {
+            crate::work::checkpoint().await;
             if layout.containers.contains(&node) {
                 continue;
             }
@@ -119,6 +127,7 @@ pub(in crate::layout) fn refine(graph: &Graph, layout: &mut Layout<'_>) {
     }
     let mut attempts = 0;
     for ends in groups.values_mut() {
+        crate::work::checkpoint().await;
         ends.sort_by_key(|&(i, end)| {
             let p = terminal(&layout.paths[i], end);
             let e = &graph.edges[i];
@@ -132,6 +141,7 @@ pub(in crate::layout) fn refine(graph: &Graph, layout: &mut Layout<'_>) {
             )
         });
         for pair in ends.windows(2) {
+            crate::work::checkpoint().await;
             let [(a, ae), (b, be)] = [pair[0], pair[1]];
             if a == b || crossings(&layout.paths[a], &layout.paths[b]) == 0 {
                 continue;
@@ -163,12 +173,14 @@ pub(in crate::layout) fn refine(graph: &Graph, layout: &mut Layout<'_>) {
             let mut scorer = Scorer::default();
             scorer.set_layout(graph, layout);
             for (i, path) in layout.paths.iter().enumerate() {
+                crate::work::checkpoint().await;
                 if i != a && i != b {
                     scorer.insert(path.clone());
                 }
             }
             let mut replacements = Vec::new();
             for i in [a, b] {
+                crate::work::checkpoint().await;
                 let edge = &graph.edges[i];
                 scorer.set_kind(edge.kind);
                 scorer.set_soft(crate::layout::containers::routing::soft_obstacles(
@@ -209,6 +221,7 @@ pub(in crate::layout) fn refine(graph: &Graph, layout: &mut Layout<'_>) {
                     break;
                 }
                 for (other, endpoints) in terminals.iter().enumerate() {
+                    crate::work::checkpoint().await;
                     if other == i {
                         continue;
                     }
@@ -224,13 +237,15 @@ pub(in crate::layout) fn refine(graph: &Graph, layout: &mut Layout<'_>) {
                         }));
                     }
                 }
-                let Some(path) = ports::connect_with_clearances(
+                let Some(path) = ports::connect_with_clearances_step(
                     start,
                     end,
                     &obstacles,
                     Some(&scorer),
                     clearances[i],
-                ) else {
+                )
+                .await
+                else {
                     break;
                 };
                 let path = shortcuts::simplify_path_with_clearances(

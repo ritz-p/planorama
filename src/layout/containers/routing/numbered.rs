@@ -24,6 +24,7 @@ impl Terminals {
         Self::with_sides(graph, layout, order, offsets, slots, quality, None)
     }
 
+    #[cfg(test)]
     pub fn with_sides(
         graph: &Graph,
         layout: &Layout<'_>,
@@ -33,6 +34,21 @@ impl Terminals {
         quality: bool,
         sides: Option<&[[Side; 2]]>,
     ) -> Self {
+        crate::work::complete(Self::with_sides_step(
+            graph, layout, order, offsets, slots, quality, sides,
+        ))
+    }
+
+    pub async fn with_sides_step(
+        graph: &Graph,
+        layout: &Layout<'_>,
+        order: &[usize],
+        offsets: (&[usize], &[usize]),
+        slots: (&[[usize; 4]], &[[usize; 4]]),
+        quality: bool,
+        sides: Option<&[[Side; 2]]>,
+    ) -> Self {
+        crate::work::checkpoint().await;
         let numbers = relationship_markers::numbers(graph);
         let ports: Vec<_> = graph
             .edges
@@ -86,11 +102,14 @@ impl Terminals {
         scorer.set_layout(graph, layout);
         let mut selected = vec![Vec::new(); graph.edges.len()];
         for _ in &graph.edges {
+            crate::work::checkpoint().await;
             scorer.insert(Vec::new());
         }
         let mut reconsidered = 0;
         for sweep in 0..2 {
+            crate::work::checkpoint().await;
             for &index in order {
+                crate::work::checkpoint().await;
                 let edge = &graph.edges[index];
                 if numbers[index][1].is_none() || represented_by_nesting(edge, &layout.containment)
                 {
@@ -177,6 +196,7 @@ impl Terminals {
                         .collect();
                     options.sort_by_key(|&(bound, rank, _, _)| (bound, rank));
                     for (bound, rank, pair, clearances) in options {
+                        crate::work::checkpoint().await;
                         if bound > limit {
                             break;
                         }
@@ -207,13 +227,15 @@ impl Terminals {
                             continue;
                         }
                         let mut optimal = false;
-                        for path in ports::candidates_with_clearances(
+                        for path in ports::candidates_with_clearances_step(
                             pair[0],
                             pair[1],
                             &barriers,
                             Some(&scorer),
                             clearances,
-                        ) {
+                        )
+                        .await
+                        {
                             optimal = scorer.readability_cost(&path)
                                 == ports::distance_bound(
                                     layout.bounds[edge.from],

@@ -13,8 +13,14 @@ mod tests;
 #[cfg(test)]
 const PADDING: usize = 40;
 
+#[cfg(test)]
 pub(super) fn route(graph: &Graph, layout: &mut Layout<'_>, bundle: bool) {
-    let routed = routing::route(graph, layout, &layout.containment.keys, bundle);
+    crate::work::complete(route_step(graph, layout, bundle))
+}
+
+pub(super) async fn route_step(graph: &Graph, layout: &mut Layout<'_>, bundle: bool) {
+    crate::work::checkpoint().await;
+    let routed = routing::route_step(graph, layout, &layout.containment.keys, bundle).await;
     layout.paths = routed.paths;
     layout.junctions = routed.junctions;
 }

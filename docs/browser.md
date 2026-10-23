@@ -98,6 +98,79 @@ async function generatePlan(planJson, format = 'svg') {
 Production integrations should invoke the same API in a Worker to keep the UI
 responsive. The error, inspection and generation contracts below also apply.
 
+## Resumable generation
+
+`new wasm_bindgen.Generation(json, optionsJson)` owns one generation. Call
+`step(units)` with 1–4096 work units. It returns `undefined` while pending and the
+same JSON result as `generate` on completion. `cancel()` drops all retained Rust
+state and is idempotent; `free()` disposes the binding object. A step after
+completion, failure or cancellation returns `generation_closed`. Invalid unit
+counts return `invalid_options` without advancing the job. Always free the job;
+terminate its Worker after completion, failure or cancellation to release the
+instance's linear-memory high-water allocation.
+
+The Rust equivalent is `Generator::new(String, Options)` and
+`step(usize) -> Result<Option<Generated>, Error>`. Compiler-generated Future state
+machines retain placement preferences, route candidates, search queues, scoring
+caches and refinement attempts. They resume at the pending checkpoint without
+replaying completed work. The existing synchronous API drives this shared
+implementation to completion, without the browser structure/search budgets.
+Dropping the Future cancels it; no background executor or thread is retained.
+
+One unit crosses one cooperative checkpoint, not a fixed number of milliseconds.
+Checkpoints cover placement refinement, route candidates, queue expansion, path
+reconstruction and refinement passes. Input validation/parsing, semantic
+projection, initial placement, sorting, grid allocations and output composition
+still contain synchronous work. The following budgets bound those inputs; they
+do not guarantee a device-independent maximum step duration.
+
+| Resumable budget | Limit | Enforcement |
+| --- | ---: | --- |
+| Input UTF-8 bytes | 2 MiB | Before retaining the job |
+| JSON values and keys / nesting | 32,768 / 64 levels | Streaming preflight, before building input trees |
+| Parsed and projected nodes / edges | 256 / 1,024 | Before semantic expansion and layout respectively |
+| Search grid points | 131,072 | Before grid and distance allocations |
+| Search queue entries | 262,144 | Before queue insertion |
+| Output UTF-8 bytes | 4 MiB | After composition, before returning output |
+| Wasm linear memory | 256 MiB | Linker maximum, for both Wasm builds |
+
+Budget failures return `resource_limit`, discard the job, and never return a
+partial diagram. Projection and output checks occur after their respective
+allocations; the earlier input/structure checks and Wasm memory maximum provide
+additional protection. The native API retains its 32 MiB input limit. Wasm OOM
+can trap rather than return a typed error; discard that Worker and retry with a
+smaller input. Multiple-input integrations must apply budgets to the aggregate.
+
+Consumers must run only one job per Worker, insert a real timer/task between
+steps, pause at boundaries when hidden, and invalidate callbacks when cancelling
+or changing settings. The site starts at 64 units, adjusts toward 4 ms observed
+steps, and rests for at least 25 ms or nine times the preceding work duration.
+This targets at most approximately 10% active time over sustained work, not a
+fixed CPU percentage. Compilation, startup, host copies and preview are outside
+that ratio. A watchdog should cover an active step, not elapsed time including
+normal rests. Browser timer throttling can delay both work and watchdogs.
+
+`node tests/browser/resumable.cjs` compares small-fixture SVG/HTML output hashes and reports
+active/elapsed time, longest observed step, process CPU time, linear memory and
+process RSS in isolated Node Workers using the distribution Wasm. Run it inside
+Docker with an outer timeout; it also terminates each measurement after three
+minutes. Set `PLANORAMA_STRESS=1` to include the longer Terraform fixture, and use
+an isolated container with explicit CPU/memory limits for that opt-in run.
+The report records runtime, CPU, total system memory and distribution file hashes.
+Process CPU/RSS includes the Node host and compiler threads, and RSS is
+an end-of-case sample, not a browser peak. It does not measure preview or claim
+equivalence to a low-performance physical machine. Browser/site measurements
+must additionally cover transfer, preview, UI response, cancellation and retries.
+
+An initial Docker/Node 18 observation on `terraform-plan.json` (15,740 bytes)
+reduced uninterrupted SVG generation from 2.51 s to a longest observed step of
+22.3 ms, with 3.29 s active work over 83.9 s elapsed and 12 MiB Wasm memory.
+HTML's longest observed step was 67.5 ms. These are single observations during
+development, not calibrated capacity guarantees or completed site#30 results.
+Budget and scheduling choices remain conservative provisional values until
+representative browser stress measurements and low-performance hardware results
+are available.
+
 Verify the extracted release archive in Chromium with
 `node tests/browser/wasm-engine.cjs` after building the release CLI (with
 `--no-default-features` for the standalone configuration) and
