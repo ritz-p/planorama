@@ -57,7 +57,8 @@ from different archives. Normal `scripts/build-wasm.sh` output is unchanged.
 The manual **Wasm engine release** workflow validates both normal browser and
 standalone engine builds. Its default is build-only. Publication requires an
 existing `v<package-version>` tag and published stable GitHub Release, plus a
-successful **Layout quality** run for the checked-out commit. It attaches the
+successful manually dispatched **Layout quality** run for the checked-out commit
+(a PR merge-ref check does not qualify). It attaches the
 archive and checksum without replacing existing assets; it creates no tags or
 releases. Run publication only after the release commit has passed validation.
 

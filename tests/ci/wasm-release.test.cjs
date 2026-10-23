@@ -13,7 +13,7 @@ test('standalone software notices do not copy artwork notices', t => {
 test('engine publication requires an executed comparison on the exact commit', async () => {
   const listWorkflowRuns = Symbol('runs');
   const listJobsForWorkflowRun = Symbol('jobs');
-  let run = {id: 1, head_sha: 'expected', conclusion: 'success'};
+  let run = {id: 1, event: 'workflow_dispatch', head_sha: 'expected', conclusion: 'success'};
   let job = {conclusion: 'success', steps: [{name: 'Compare final layouts', conclusion: 'success'}]};
   const github = {
     rest: {actions: {listWorkflowRuns, listJobsForWorkflowRun}},
@@ -28,6 +28,9 @@ test('engine publication requires an executed comparison on the exact commit', a
     },
   };
   await requireLayoutQuality(github, {}, 'expected');
+  run = {...run, event: 'pull_request'};
+  await assert.rejects(requireLayoutQuality(github, {}, 'expected'));
+  run = {...run, event: 'workflow_dispatch'};
   job = {conclusion: 'skipped', steps: []};
   await assert.rejects(requireLayoutQuality(github, {}, 'expected'), /comparison is required/);
   job = {conclusion: 'success', steps: [{name: 'Compare final layouts', conclusion: 'skipped'}]};
