@@ -199,7 +199,11 @@ fn waf_selection_states_and_outputs_keep_identity_without_rule_values() {
         for icon_mode in [
             crate::icons::IconMode::Icon,
             crate::icons::IconMode::ServiceName,
-        ] {
+        ]
+        .into_iter()
+        .filter(|mode| {
+            cfg!(feature = "icon-artwork") || *mode == crate::icons::IconMode::ServiceName
+        }) {
             let text = crate::generate(
                 &value.to_string(),
                 &crate::Options {

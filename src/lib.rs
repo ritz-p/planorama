@@ -23,6 +23,9 @@ mod timing;
 mod timing;
 mod view;
 
+#[cfg(all(test, not(feature = "icon-artwork")))]
+#[path = "../tests/unit/artwork_free.rs"]
+mod artwork_free;
 mod generation;
 mod module_inventory;
 pub use generation::{Error, Generated, Options, OutputFormat, generate};

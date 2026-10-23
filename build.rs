@@ -2,6 +2,10 @@
 mod icon;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
+    println!("cargo:rerun-if-env-changed=CARGO_FEATURE_ICON_ARTWORK");
+    if std::env::var_os("CARGO_FEATURE_ICON_ARTWORK").is_none() {
+        return Ok(());
+    }
     println!("cargo:rerun-if-changed=assets/icons/aws");
     println!("cargo:rerun-if-changed=assets/icons/terraform");
     println!("cargo:rerun-if-changed=build/icon.rs");

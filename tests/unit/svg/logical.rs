@@ -274,7 +274,10 @@ fn assert_logical_row(row: roxmltree::Node, action: crate::model::Action) {
         assert!(text.range().end <= line.range().start);
         assert!(number(text, "y") + 4 < number(line, "y1"));
     }
-    for text in row.children().filter(|n| n.has_tag_name("text")) {
+    for text in row
+        .children()
+        .filter(|n| n.has_tag_name("text") && n.attribute("data-service-name").is_none())
+    {
         assert_eq!(text.attribute("fill"), Some("#334155"));
         assert_eq!(number(text, "x"), 16);
         let width: usize = text

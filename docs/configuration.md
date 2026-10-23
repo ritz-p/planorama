@@ -38,7 +38,7 @@ Both tables accept exactly these keys, using the same spelling as CLI options:
 | Key | TOML value | Built-in default |
 | --- | --- | --- |
 | `format` | `"svg"` or `"html"` | `"svg"` |
-| `icon-mode` | `"icon"` or `"service-name"` | `"icon"` |
+| `icon-mode` | `"icon"` or `"service-name"` | `"icon"` with `icon-artwork`; otherwise `"service-name"` |
 | `address-format` | `"qualified"` or `"terraform"` | `"qualified"` |
 | `hide-relationship-legend` | boolean | `false` |
 | `changed-only` | boolean | `false` |
@@ -51,6 +51,10 @@ Both tables accept exactly these keys, using the same spelling as CLI options:
 | `html-diagnostics` | boolean, requires HTML | `false` |
 | `html-semantic-diagnostics` | boolean, requires HTML | `false` |
 | `layout-diagnostics` | boolean | `false` |
+
+Builds with `--no-default-features` exclude icon artwork and reject explicit
+`icon` mode from either CLI flags or configuration. Only `service-name` is
+available in those builds; `--help` reflects the enabled feature set.
 
 Every boolean can be disabled on the CLI with `--no-` followed by its key, for
 example `--no-changed-only`, `--no-hide-relationship-legend` or

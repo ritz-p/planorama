@@ -13,7 +13,13 @@ fn projection_keeps_native_relationship_endpoints_and_source_immutable() {
     let architecture = crate::semantic::transform(&plan);
     let original = architecture.clone();
     let full = single(&architecture, &Options::default()).unwrap();
-    assert_eq!(*full, architecture.0);
+    let mut expected = architecture.0.clone();
+    if !cfg!(feature = "icon-artwork") {
+        for node in &mut expected.nodes {
+            node.service_name = crate::icons::for_node(node).map(|icon| icon.service_name());
+        }
+    }
+    assert_eq!(*full, expected);
     let focused = single(
         &architecture,
         &Options {

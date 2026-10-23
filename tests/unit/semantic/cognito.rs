@@ -87,7 +87,10 @@ fn cognito_preserves_identity_and_verified_references_without_secrets() {
         )
         .unwrap()
         .content;
-        assert!(output.contains("planorama-icon-aws-cognito"));
+        assert_eq!(
+            output.contains("planorama-icon-aws-cognito"),
+            cfg!(feature = "icon-artwork")
+        );
         assert!(!output.contains("PRIVATE_"));
         assert!(!output.contains("fixture-client"));
     }

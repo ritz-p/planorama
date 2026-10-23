@@ -378,19 +378,20 @@ fn cross_state_paths_avoid_intervening_cards_and_describe_dependencies() {
     });
     let first = StateId::new("first").unwrap();
     let second = StateId::new("second").unwrap();
-    let local = Layout::new(&graph);
+    let projected = crate::view::single(&graph, &Default::default()).unwrap();
+    let local = Layout::new(&projected);
     assert_eq!(local.scopes.len(), 1);
     assert!(local.bounds[0].right() < local.bounds[1].right());
-    let index = super::super::relationship_index::Index::new(&graph, &local);
+    let index = super::super::relationship_index::Index::new(&projected, &local);
     let sections = super::super::Sections::without_legend(
-        &graph,
+        &projected,
         &local,
         &index,
         super::super::AddressFormat::Qualified,
         1120,
     );
     let (_, height) = sections.dimensions(&local);
-    let legend_height = super::super::legend::MeasuredLegend::new(&graph, 1120).height;
+    let legend_height = super::super::legend::MeasuredLegend::new(&projected, 1120).height;
     let offset = 100 + legend_height + sections.height();
     let obstacles: Vec<_> = [offset, offset + height + 60]
         .into_iter()

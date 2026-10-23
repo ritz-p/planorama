@@ -1,5 +1,7 @@
 # ネイティブ CLI の配布
 
+素材を含まない Wasm エンジンの配布は、別の [Wasm engine release](browser.md#standalone-engine-without-artwork) workflow で行います。
+
 現時点で公開済みのリリースはありません。以下は初回公開後の配布仕様です。
 [GitHub Releases](https://github.com/ritz-p/planorama/releases) に対象タグの assets が
 あることを確認してください。CI の artifact は検証用で、公開リリースではありません。
