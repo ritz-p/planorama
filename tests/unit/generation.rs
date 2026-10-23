@@ -39,6 +39,62 @@ fn slices_preserve_svg_html_and_diagnostics() {
 }
 
 #[test]
+fn resumable_accepts_the_same_leading_boms_as_the_parser() {
+    let json = format!(
+        "\u{feff}\u{feff}{}",
+        include_str!("../fixtures/viewer-plan.json")
+    );
+    let expected = generate(&json, &Options::default()).unwrap();
+    let mut job = Generator::new(json, Options::default()).unwrap();
+    loop {
+        if let Some(actual) = job.step(4096).unwrap() {
+            assert_eq!(actual.content, expected.content);
+            break;
+        }
+    }
+}
+
+#[test]
+fn resumable_options_are_bounded_before_retaining_the_job() {
+    let json = "{}";
+    for options in [
+        Options {
+            modules: vec![String::new(); 257],
+            ..Default::default()
+        },
+        Options {
+            spatial_types: vec![String::new(); 257],
+            ..Default::default()
+        },
+        Options {
+            focus: Some("x".repeat(MAX_BROWSER_OPTIONS_BYTES + 1)),
+            ..Default::default()
+        },
+        Options {
+            modules: vec!["x".repeat(MAX_BROWSER_OPTIONS_BYTES)],
+            focus: Some("x".into()),
+            ..Default::default()
+        },
+    ] {
+        assert!(matches!(
+            Generator::new(json.into(), options),
+            Err(Error::ResourceLimit)
+        ));
+    }
+    assert!(
+        Generator::new(
+            json.into(),
+            Options {
+                modules: vec!["x".repeat(MAX_BROWSER_OPTIONS_BYTES / 256); 256],
+                spatial_types: vec![String::new(); 256],
+                ..Default::default()
+            }
+        )
+        .is_ok()
+    );
+}
+
+#[test]
 fn cancellation_and_failure_release_state() {
     let json = include_str!("../fixtures/viewer-plan.json");
     for steps in [0, 1, 10, 100] {

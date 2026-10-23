@@ -105,7 +105,8 @@ responsive. The error, inspection and generation contracts below also apply.
 same JSON result as `generate` on completion. `cancel()` drops all retained Rust
 state and is idempotent; `free()` disposes the binding object. A step after
 completion, failure or cancellation returns `generation_closed`. Invalid unit
-counts return `invalid_options` without advancing the job. Always free the job;
+counts, including non-finite or fractional JavaScript numbers, return
+`invalid_options` without advancing the job. Always free the job;
 terminate its Worker after completion, failure or cancellation to release the
 instance's linear-memory high-water allocation.
 
@@ -127,6 +128,9 @@ do not guarantee a device-independent maximum step duration.
 | Resumable budget | Limit | Enforcement |
 | --- | ---: | --- |
 | Input UTF-8 bytes | 2 MiB | Before retaining the job |
+| Options JSON UTF-8 bytes | 64 KiB | Before Wasm options deserialization |
+| Module / spatial-type selections | 256 each | Before retaining the job |
+| Combined module, spatial-type and focus string bytes | 64 KiB | Before retaining the job, including the Rust API |
 | JSON values and keys / nesting | 32,768 / 64 levels | Streaming preflight, before building input trees |
 | Parsed and projected nodes / edges | 256 / 1,024 | Before semantic expansion and layout respectively |
 | Search grid points | 131,072 | Before grid and distance allocations |
@@ -140,6 +144,9 @@ allocations; the earlier input/structure checks and Wasm memory maximum provide
 additional protection. The native API retains its 32 MiB input limit. Wasm OOM
 can trap rather than return a typed error; discard that Worker and retry with a
 smaller input. Multiple-input integrations must apply budgets to the aggregate.
+The structural preflight accepts the same leading UTF-8 BOM characters as the
+plan parser. Input byte budgets still count those characters. Options budgets
+apply only to resumable generation; synchronous API compatibility is unchanged.
 
 Consumers must run only one job per Worker, insert a real timer/task between
 steps, pause at boundaries when hidden, and invalidate callbacks when cancelling

@@ -8,7 +8,7 @@ mod tests;
 pub(super) fn validate(json: &str) -> Result<(), super::Error> {
     let remaining = Cell::new(32_768);
     let exceeded = Cell::new(false);
-    let mut deserializer = serde_json::Deserializer::from_str(json);
+    let mut deserializer = serde_json::Deserializer::from_str(json.trim_start_matches('\u{feff}'));
     Seed {
         remaining: &remaining,
         exceeded: &exceeded,

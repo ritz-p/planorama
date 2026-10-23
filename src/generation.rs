@@ -62,6 +62,7 @@ pub struct Generated {
 pub const MAX_INPUT_BYTES: usize = 32 * 1024 * 1024;
 pub const MAX_BROWSER_INPUT_BYTES: usize = 2 * 1024 * 1024;
 pub const MAX_BROWSER_OUTPUT_BYTES: usize = 4 * 1024 * 1024;
+pub(crate) const MAX_BROWSER_OPTIONS_BYTES: usize = 64 * 1024;
 
 pub fn generate(json: &str, options: &Options) -> Result<Generated, Error> {
     crate::work::complete(generate_step(json, options))
@@ -132,6 +133,20 @@ impl Generator {
     pub fn new(json: String, options: Options) -> Result<Self, Error> {
         if json.len() > MAX_BROWSER_INPUT_BYTES {
             return Err(Error::ResourceLimit);
+        }
+        if options.modules.len() > 256 || options.spatial_types.len() > 256 {
+            return Err(Error::ResourceLimit);
+        }
+        let mut remaining = MAX_BROWSER_OPTIONS_BYTES;
+        for value in options
+            .modules
+            .iter()
+            .chain(&options.spatial_types)
+            .chain(options.focus.iter())
+        {
+            remaining = remaining
+                .checked_sub(value.len())
+                .ok_or(Error::ResourceLimit)?;
         }
         Ok(Self {
             future: Some(Box::pin(

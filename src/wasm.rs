@@ -26,6 +26,9 @@ pub struct Generation {
 impl Generation {
     #[wasm_bindgen(constructor)]
     pub fn new(json: String, options: &str) -> Result<Generation, JsValue> {
+        if options.len() > crate::generation::MAX_BROWSER_OPTIONS_BYTES {
+            return Err(error(crate::Error::ResourceLimit));
+        }
         let options =
             serde_json::from_str(options).map_err(|_| error(crate::Error::InvalidOptions))?;
         Ok(Self {
@@ -33,7 +36,10 @@ impl Generation {
         })
     }
 
-    pub fn step(&mut self, units: u32) -> Result<Option<String>, JsValue> {
+    pub fn step(&mut self, units: f64) -> Result<Option<String>, JsValue> {
+        if !units.is_finite() || units.fract() != 0.0 || !(1.0..=4096.0).contains(&units) {
+            return Err(error(crate::Error::InvalidOptions));
+        }
         self.inner
             .step(units as usize)
             .map_err(error)?

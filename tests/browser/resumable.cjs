@@ -38,6 +38,24 @@ if (isMainThread) {
     const wasm = binding.initSync({module: fs.readFileSync(`${directory}/planorama_bg.wasm`)});
     const input = fs.readFileSync(`tests/fixtures/${workerData.fixture}.json`, 'utf8');
     const options = JSON.stringify({format: workerData.format, icon_mode: 'service-name'});
+    const invalid = code => value => JSON.parse(String(value)).code === code;
+    assert.throws(() => new binding.Generation(input, ' '.repeat(65537)), invalid('resource_limit'));
+    new binding.Generation(input, options.padEnd(65536, ' ')).free();
+    assert.throws(() => new binding.Generation(input, JSON.stringify({modules: Array(257).fill('module.a')})), invalid('resource_limit'));
+    const checked = new binding.Generation(input, options);
+    const untouched = new binding.Generation(input, options);
+    try {
+      for (const units of [1.5, 4294967297, -4294967295, NaN, Infinity, -Infinity, 0, 4097]) {
+        assert.throws(() => checked.step(units), invalid('invalid_options'));
+      }
+      assert.equal(checked.step(1), untouched.step(1));
+      let actual, expected;
+      do {
+        actual = checked.step(4096);
+        expected = untouched.step(4096);
+        assert.equal(actual, expected);
+      } while (actual === undefined);
+    } finally { checked.free(); untouched.free(); }
     const started = performance.now();
     const cpu = process.cpuUsage();
     let result, steps = 0, longest = 0, activeMs = 0, memory = wasm.memory.buffer.byteLength;
