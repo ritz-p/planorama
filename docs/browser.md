@@ -33,7 +33,74 @@ requires another network fetch. No npm build dependencies are needed.
 
 `hcl-rs`, `zip`, `same-file`, `tempfile` and `toml` are native-only dependencies:
 saved-plan/provider evidence, filesystem protection and CLI settings are outside
-the browser boundary. Icons are compiled from the same bundled assets.
+the browser boundary. The normal build compiles icons from the bundled assets.
+
+## Standalone engine without artwork
+
+`sh scripts/build-wasm-engine.sh` (inside the development container) builds with
+`--no-default-features`. The default `icon-artwork` feature remains enabled for
+normal CLI and Wasm builds. Without it, build.rs does not read or generate icon
+assets, and artwork `include_str!` expressions are excluded from compilation.
+Service classification, labels and layout use the existing service-name mode.
+An omitted `icon_mode` defaults to `service-name`; explicitly requesting `icon`
+returns `invalid_options` (the native CLI also rejects it). Site integrations
+must explicitly send `"icon_mode":"service-name"`.
+
+The engine build writes `output/wasm-engine/planorama.js` and
+`planorama_bg.wasm` from one wasm-bindgen invocation, plus `manifest.json` with
+package version, source commit, binding version and SHA-256 hashes. Packaging
+produces `output/wasm-release/planorama-<version>-wasm-no-artwork.tar.gz` and
+its `.sha256` sidecar. The archive contains the engine, manifest and software licenses,
+without the sample browser UI or artwork. Do not mix bindings and Wasm files
+from different archives. Normal `scripts/build-wasm.sh` output is unchanged.
+
+The manual **Wasm engine release** workflow validates both normal browser and
+standalone engine builds. Its default is build-only. Publication requires an
+existing `v<package-version>` tag and published stable GitHub Release, plus a
+successful **Layout quality** run for the checked-out commit. It attaches the
+archive and checksum without replacing existing assets; it creates no tags or
+releases. Run publication only after the release commit has passed validation.
+
+After that version's assets have been published, fetch a pinned pair:
+
+```sh
+version=0.1.0
+archive="planorama-${version}-wasm-no-artwork.tar.gz"
+gh release download "v${version}" --repo ritz-p/planorama --pattern "$archive" --pattern "$archive.sha256"
+sha256sum -c "$archive.sha256"
+mkdir -p engine
+tar -xzf "$archive" -C engine
+```
+
+Check `engine/manifest.json` against the expected version and commit; record the
+archive checksum with the site dependency. The command describes the release
+contract and does not imply that assets for a version have already been published.
+Serve the two engine files locally with the site using the MIME types above.
+No sample UI files need to be copied. A minimal consumer is:
+
+```html
+<script src="./engine/planorama.js"></script>
+<script>
+async function generatePlan(planJson, format = 'svg') {
+  await wasm_bindgen({module_or_path: './engine/planorama_bg.wasm'});
+  return JSON.parse(wasm_bindgen.generate(planJson, JSON.stringify({
+    format, icon_mode: 'service-name'
+  })));
+}
+</script>
+```
+
+Production integrations should invoke the same API in a Worker to keep the UI
+responsive. The error, inspection and generation contracts below also apply.
+
+Verify the extracted release archive in Chromium with
+`node tests/browser/wasm-engine.cjs` after building the release CLI (with
+`--no-default-features` for the standalone configuration) and
+the standalone engine. It checks archive membership, provenance and hashes,
+scans JS/Wasm for embedded artwork markers, compares AWS and Terraform SVG/HTML
+outputs exactly with native service-name generation, and tests omitted/explicit
+icon options. `cargo test --locked --no-default-features --lib artwork_free`
+checks the native API contract. The normal feature set retains the full suite.
 
 ## API and supported options
 
@@ -66,7 +133,7 @@ the same input limit and safe error contract as generation.
 | --- | --- |
 | `format` | `svg` (default), `html` |
 | `address_format` | `qualified` (default), `terraform` |
-| `icon_mode` | `icon` (default), `service-name` |
+| `icon_mode` | `icon` (normal build default), `service-name` (standalone engine default and only supported mode) |
 | `hide_relationship_legend` | Boolean, false |
 | `changed_only` | Boolean, false |
 | `focus` | Resource address or null |

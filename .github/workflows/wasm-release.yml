@@ -1,0 +1,82 @@
+name: Wasm engine release
+on:
+  workflow_dispatch:
+    inputs:
+      publish:
+        description: Attach verified engine assets to an existing published version release
+        type: boolean
+        default: false
+permissions: {}
+concurrency:
+  group: wasm-release-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+      - name: Validate release request
+        uses: actions/github-script@v9.0.0
+        with:
+          script: |
+            const version = require('node:fs').readFileSync('Cargo.toml', 'utf8').match(/^version = "([^"]+)"/m)[1];
+            require('./.github/scripts/release.cjs').validateRequest(context, version, ${{ inputs.publish }});
+      - run: docker compose up -d --build dev
+      - name: Build and verify both distributions
+        run: |
+          docker compose exec -T dev cargo build --locked --release --bin planorama
+          docker compose exec -T dev sh scripts/build-wasm.sh
+          docker compose exec -T dev node tests/browser/wasm.cjs
+          docker compose exec -T dev cargo build --locked --release --bin planorama --no-default-features
+          docker compose exec -T dev sh scripts/build-wasm-engine.sh
+          docker compose exec -T dev node tests/browser/wasm-engine.cjs
+      - uses: actions/upload-artifact@v7.0.2
+        with:
+          name: wasm-no-artwork
+          path: output/wasm-release/*
+          if-no-files-found: error
+  publish:
+    needs: build
+    if: inputs.publish
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+      actions: read
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@v8.0.1
+        with:
+          name: wasm-no-artwork
+          path: output/wasm-release
+      - name: Check commit quality and attach assets without overwriting
+        uses: actions/github-script@v9.0.0
+        with:
+          script: |
+            const fs = require('node:fs');
+            const {execFileSync} = require('node:child_process');
+            const version = fs.readFileSync('Cargo.toml', 'utf8').match(/^version = "([^"]+)"/m)[1];
+            require('./.github/scripts/release.cjs').validateRequest(context, version, true);
+            const commit = execFileSync('git', ['rev-parse', 'HEAD'], {encoding: 'utf8'}).trim();
+            await require('./.github/scripts/wasm-release.cjs').requireLayoutQuality(github, context.repo, commit);
+            const release = (await github.rest.repos.getReleaseByTag({...context.repo, tag: `v${version}`})).data;
+            if (release.draft || release.prerelease) throw new Error('A published stable release is required');
+            const archive = `planorama-${version}-wasm-no-artwork.tar.gz`;
+            const files = [archive, `${archive}.sha256`];
+            if (release.assets.some(asset => files.includes(asset.name))) throw new Error('Engine assets already exist; overwriting is prohibited');
+            execFileSync('sha256sum', ['-c', `${archive}.sha256`], {cwd: 'output/wasm-release'});
+            const manifest = JSON.parse(execFileSync('tar', ['-xOf', `output/wasm-release/${archive}`, 'manifest.json'], {encoding: 'utf8'}));
+            if (manifest.commit !== commit || manifest.version !== version || manifest.icon_artwork !== false) throw new Error('Engine provenance mismatch');
+            for (const name of files) {
+              const data = fs.readFileSync(`output/wasm-release/${name}`);
+              const digest = require('node:crypto').createHash('sha256').update(data).digest('hex');
+              const uploaded = (await github.rest.repos.uploadReleaseAsset({...context.repo, release_id: release.id, name, data, headers: {'content-type': 'application/octet-stream', 'content-length': data.length}})).data;
+              if (uploaded.size !== data.length || uploaded.digest !== `sha256:${digest}`) throw new Error(`Upload verification failed: ${name}`);
+            }
