@@ -308,17 +308,34 @@ mod quality;
 mod reroute;
 pub(in crate::layout) use quality::Shape;
 
+#[cfg(test)]
 pub(in crate::layout) fn refine(graph: &Graph, layout: &mut Layout<'_>) -> Statistics {
-    refine_with_budget(graph, layout, Budget::for_layout(layout))
+    crate::work::complete(refine_step(graph, layout))
 }
 
+pub(in crate::layout) async fn refine_step(graph: &Graph, layout: &mut Layout<'_>) -> Statistics {
+    crate::work::checkpoint().await;
+    refine_with_budget_step(graph, layout, Budget::for_layout(layout)).await
+}
+
+#[cfg(test)]
 fn refine_with_budget(graph: &Graph, layout: &mut Layout<'_>, budget: Budget) -> Statistics {
+    crate::work::complete(refine_with_budget_step(graph, layout, budget))
+}
+
+async fn refine_with_budget_step(
+    graph: &Graph,
+    layout: &mut Layout<'_>,
+    budget: Budget,
+) -> Statistics {
+    crate::work::checkpoint().await;
     let original = (layout.width, layout.height);
     let baseline: Vec<_> = layout.paths.iter().map(|p| Shape::measure(p)).collect();
     let mut reference = layout.paths.clone();
     let mut stats = Statistics::default();
     let mut history = std::collections::BTreeSet::new();
     for _ in 0..budget.sweeps {
+        crate::work::checkpoint().await;
         if stats.attempts == budget.attempts {
             break;
         }
@@ -336,6 +353,7 @@ fn refine_with_budget(graph: &Graph, layout: &mut Layout<'_>, budget: Budget) ->
         let current_baseline = quality::translated_baseline(&baseline, &reference);
         let mut changed = false;
         for corridor in corridors {
+            crate::work::checkpoint().await;
             if stats.attempts >= budget.attempts {
                 break;
             }
@@ -368,21 +386,24 @@ fn refine_with_budget(graph: &Graph, layout: &mut Layout<'_>, budget: Budget) ->
             }
             planned.allocate(layout);
             let planned_baseline = quality::translated_baseline(&baseline, &planned_reference);
-            if reroute::apply(
+            if reroute::apply_step(
                 graph,
                 layout,
                 &planned,
                 &before,
                 &planned_baseline,
                 expanded,
-            ) && quality::improves(
-                graph,
-                &before.paths,
-                &layout.paths,
-                &before_borders,
-                &border_metrics(graph, layout),
-                expanded,
-            ) {
+            )
+            .await
+                && quality::improves(
+                    graph,
+                    &before.paths,
+                    &layout.paths,
+                    &before_borders,
+                    &border_metrics(graph, layout),
+                    expanded,
+                )
+            {
                 changed = true;
                 reference = planned_reference;
                 stats.accepted += 1;
@@ -395,7 +416,8 @@ fn refine_with_budget(graph: &Graph, layout: &mut Layout<'_>, budget: Budget) ->
                 let fallback = expansion::Snapshot::capture(layout);
                 let mut planned = corridor;
                 planned.allocate(layout);
-                if reroute::apply(graph, layout, &planned, &fallback, &current_baseline, false)
+                if reroute::apply_step(graph, layout, &planned, &fallback, &current_baseline, false)
+                    .await
                     && quality::improves(
                         graph,
                         &fallback.paths,

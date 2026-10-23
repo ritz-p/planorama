@@ -33,7 +33,13 @@ fn leaves(graph: &Graph) -> Vec<(usize, usize)> {
         .collect()
 }
 
+#[cfg(test)]
 pub(super) fn refine(graph: &Graph, layout: &mut Layout<'_>) {
+    crate::work::complete(refine_step(graph, layout))
+}
+
+pub(super) async fn refine_step(graph: &Graph, layout: &mut Layout<'_>) {
+    crate::work::checkpoint().await;
     let mut preferences = crate::provider::aws::owner_affinities(graph);
     preferences.sort_by_key(|&(node, owner)| {
         (&graph.nodes[owner].entity.id, &graph.nodes[node].entity.id)
@@ -59,12 +65,14 @@ pub(super) fn refine(graph: &Graph, layout: &mut Layout<'_>) {
     let padding = super::relationship_markers::padding(graph);
     let mut peers = vec![Vec::new(); graph.nodes.len()];
     for edge in &graph.edges {
+        crate::work::checkpoint().await;
         if edge.kind != EdgeKind::Containment && edge.from != edge.to {
             peers[edge.from].push(edge.to);
             peers[edge.to].push(edge.from);
         }
     }
     for (node, owner) in preferences {
+        crate::work::checkpoint().await;
         if graph.nodes[node].role == ResourceRole::Container
             || !layout.containment.children[node].is_empty()
             || protected.contains(&node)
@@ -93,6 +101,7 @@ pub(super) fn refine(graph: &Graph, layout: &mut Layout<'_>) {
         let mut xs = BTreeSet::from([original.origin.x, min_x, max_x]);
         let mut ys = BTreeSet::from([original.origin.y, min_y, max_y]);
         for bounds in obstacles.iter().chain([&target]) {
+            crate::work::checkpoint().await;
             xs.extend([
                 bounds.origin.x.saturating_sub(original.width + padding),
                 bounds.right() + padding,
@@ -137,7 +146,9 @@ pub(super) fn refine(graph: &Graph, layout: &mut Layout<'_>) {
         };
         let mut best = (score(original), original.origin.x, original.origin.y);
         for x in xs {
+            crate::work::checkpoint().await;
             for &y in &ys {
+                crate::work::checkpoint().await;
                 let candidate = Bounds {
                     origin: Point { x, y },
                     ..original

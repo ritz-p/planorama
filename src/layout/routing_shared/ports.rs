@@ -9,7 +9,19 @@ pub(in crate::layout) fn select(
     obstacles: &[Bounds],
     scorer: &Scorer,
 ) -> Vec<Point> {
-    select_with_slots(source, target, baseline, obstacles, scorer, None)
+    crate::work::complete(select_step(source, target, baseline, obstacles, scorer))
+}
+
+#[cfg(test)]
+pub(in crate::layout) async fn select_step(
+    source: Bounds,
+    target: Bounds,
+    baseline: Vec<Point>,
+    obstacles: &[Bounds],
+    scorer: &Scorer,
+) -> Vec<Point> {
+    crate::work::checkpoint().await;
+    select_with_slots_step(source, target, baseline, obstacles, scorer, None).await
 }
 
 pub(in crate::layout) fn facing_pairs(source: Bounds, target: Bounds) -> Vec<(Side, Side)> {
@@ -100,6 +112,7 @@ pub(in crate::layout) fn cost_bound(start: Port, end: Port, terminals: [Terminal
         + bends * super::scoring::BEND_COST
 }
 
+#[cfg(test)]
 pub(in crate::layout) fn select_with_slots(
     source: Bounds,
     target: Bounds,
@@ -108,9 +121,26 @@ pub(in crate::layout) fn select_with_slots(
     scorer: &Scorer,
     slots: Option<(&[usize; 4], &[usize; 4])>,
 ) -> Vec<Point> {
-    select_candidates(source, target, &baseline, obstacles, scorer, slots).unwrap_or(baseline)
+    crate::work::complete(select_with_slots_step(
+        source, target, baseline, obstacles, scorer, slots,
+    ))
 }
 
+pub(in crate::layout) async fn select_with_slots_step(
+    source: Bounds,
+    target: Bounds,
+    baseline: Vec<Point>,
+    obstacles: &[Bounds],
+    scorer: &Scorer,
+    slots: Option<(&[usize; 4], &[usize; 4])>,
+) -> Vec<Point> {
+    crate::work::checkpoint().await;
+    select_candidates_step(source, target, &baseline, obstacles, scorer, slots)
+        .await
+        .unwrap_or(baseline)
+}
+
+#[cfg(test)]
 pub(in crate::layout) fn select_from_ports(
     source: Bounds,
     target: Bounds,
@@ -119,7 +149,21 @@ pub(in crate::layout) fn select_from_ports(
     scorer: &Scorer,
     slots: (&[usize; 4], &[usize; 4]),
 ) -> Option<Vec<Point>> {
-    select_candidates(
+    crate::work::complete(select_from_ports_step(
+        source, target, ports, obstacles, scorer, slots,
+    ))
+}
+
+pub(in crate::layout) async fn select_from_ports_step(
+    source: Bounds,
+    target: Bounds,
+    ports: [Port; 2],
+    obstacles: &[Bounds],
+    scorer: &Scorer,
+    slots: (&[usize; 4], &[usize; 4]),
+) -> Option<Vec<Point>> {
+    crate::work::checkpoint().await;
+    select_candidates_step(
         source,
         target,
         &ports.map(|p| p.point),
@@ -127,9 +171,10 @@ pub(in crate::layout) fn select_from_ports(
         scorer,
         Some(slots),
     )
+    .await
 }
 
-fn select_candidates(
+async fn select_candidates_step(
     source: Bounds,
     target: Bounds,
     baseline: &[Point],
@@ -137,6 +182,7 @@ fn select_candidates(
     scorer: &Scorer,
     slots: Option<(&[usize; 4], &[usize; 4])>,
 ) -> Option<Vec<Point>> {
+    crate::work::checkpoint().await;
     let offset = |bounds: Bounds, point: Point, side| {
         let horizontal = point.x > bounds.origin.x
             && point.x < bounds.right()
@@ -158,6 +204,7 @@ fn select_candidates(
     let mut candidates = Vec::new();
     let mut limit = u128::MAX;
     for batch in pair_batches(source, target) {
+        crate::work::checkpoint().await;
         let mut pairs: Vec<_> = batch
             .into_iter()
             .map(|(rank, (a, b))| {
@@ -187,6 +234,7 @@ fn select_candidates(
             .collect();
         pairs.sort_by_key(|&(bound, rank, _, _)| (bound, rank));
         for (bound, rank, start, end) in pairs {
+            crate::work::checkpoint().await;
             if bound > limit {
                 break;
             }
@@ -201,13 +249,15 @@ fn select_candidates(
             {
                 candidates.push((rank, baseline.to_vec()));
             }
-            for candidate in candidates_with_clearances(
+            for candidate in candidates_with_clearances_step(
                 start,
                 end,
                 obstacles,
                 Some(scorer),
                 [Terminal::plain(16); 2],
-            ) {
+            )
+            .await
+            {
                 if scorer.readability_cost(&candidate) == distance_bound(source, target) {
                     return Some(candidate);
                 }
@@ -233,15 +283,27 @@ fn on_side(bounds: Bounds, point: Point, side: Side) -> bool {
     }
 }
 
+#[cfg(test)]
 pub(in crate::layout) fn connect(
     start: Port,
     end: Port,
     obstacles: &[Bounds],
     scorer: Option<&Scorer>,
 ) -> Option<Vec<Point>> {
-    connect_with_clearances(start, end, obstacles, scorer, [Terminal::plain(16); 2])
+    crate::work::complete(connect_step(start, end, obstacles, scorer))
 }
 
+pub(in crate::layout) async fn connect_step(
+    start: Port,
+    end: Port,
+    obstacles: &[Bounds],
+    scorer: Option<&Scorer>,
+) -> Option<Vec<Point>> {
+    crate::work::checkpoint().await;
+    connect_with_clearances_step(start, end, obstacles, scorer, [Terminal::plain(16); 2]).await
+}
+
+#[cfg(test)]
 pub(in crate::layout) fn connect_with_clearances(
     start: Port,
     end: Port,
@@ -249,13 +311,27 @@ pub(in crate::layout) fn connect_with_clearances(
     scorer: Option<&Scorer>,
     terminals: [Terminal; 2],
 ) -> Option<Vec<Point>> {
+    crate::work::complete(connect_with_clearances_step(
+        start, end, obstacles, scorer, terminals,
+    ))
+}
+
+pub(in crate::layout) async fn connect_with_clearances_step(
+    start: Port,
+    end: Port,
+    obstacles: &[Bounds],
+    scorer: Option<&Scorer>,
+    terminals: [Terminal; 2],
+) -> Option<Vec<Point>> {
+    crate::work::checkpoint().await;
     let default_scorer = Scorer::default();
     scorer.unwrap_or(&default_scorer).choose(
-        candidates_with_clearances(start, end, obstacles, scorer, terminals),
+        candidates_with_clearances_step(start, end, obstacles, scorer, terminals).await,
         obstacles,
     )
 }
 
+#[cfg(test)]
 pub(in crate::layout) fn candidates_with_clearances(
     start: Port,
     end: Port,
@@ -263,9 +339,23 @@ pub(in crate::layout) fn candidates_with_clearances(
     scorer: Option<&Scorer>,
     terminals: [Terminal; 2],
 ) -> Vec<Vec<Point>> {
-    candidates_impl::<true>(start, end, obstacles, scorer, terminals)
+    crate::work::complete(candidates_with_clearances_step(
+        start, end, obstacles, scorer, terminals,
+    ))
 }
 
+pub(in crate::layout) async fn candidates_with_clearances_step(
+    start: Port,
+    end: Port,
+    obstacles: &[Bounds],
+    scorer: Option<&Scorer>,
+    terminals: [Terminal; 2],
+) -> Vec<Vec<Point>> {
+    crate::work::checkpoint().await;
+    candidates_impl_step::<true>(start, end, obstacles, scorer, terminals).await
+}
+
+#[cfg(test)]
 fn candidates_impl<const PRUNE: bool>(
     start: Port,
     end: Port,
@@ -273,6 +363,19 @@ fn candidates_impl<const PRUNE: bool>(
     scorer: Option<&Scorer>,
     terminals: [Terminal; 2],
 ) -> Vec<Vec<Point>> {
+    crate::work::complete(candidates_impl_step::<PRUNE>(
+        start, end, obstacles, scorer, terminals,
+    ))
+}
+
+async fn candidates_impl_step<const PRUNE: bool>(
+    start: Port,
+    end: Port,
+    obstacles: &[Bounds],
+    scorer: Option<&Scorer>,
+    terminals: [Terminal; 2],
+) -> Vec<Vec<Point>> {
+    crate::work::checkpoint().await;
     #[cfg(test)]
     CANDIDATE_COUNT.set(CANDIDATE_COUNT.get() + 1);
     let first = start.outward(terminals[0].clearance);
@@ -304,6 +407,7 @@ fn candidates_impl<const PRUNE: bool>(
                 })
             }));
     for (horizontal, coordinate) in tracks {
+        crate::work::checkpoint().await;
         let bends = if horizontal {
             [
                 Point {
@@ -359,13 +463,15 @@ fn candidates_impl<const PRUNE: bool>(
         {
             break;
         }
-        if let Some(middle) = search::search(
+        if let Some(middle) = search::search_step(
             first,
             last,
             &barriers,
             occupancy,
             Some((start.side, end.side)),
-        ) {
+        )
+        .await
+        {
             let path = simplify(
                 std::iter::once(start.point)
                     .chain(middle)

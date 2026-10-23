@@ -4,7 +4,7 @@ use crate::model::architecture::{Edge, EdgeKind, Graph};
 mod bundles;
 mod numbered;
 use crate::layout::routing_shared::search;
-use search::find_path;
+use search::find_path_step;
 
 use crate::layout::routing_shared::{Simplification, simplify};
 
@@ -33,16 +33,37 @@ pub(in crate::layout) struct Routed {
     pub junctions: Vec<Point>,
 }
 
+#[cfg(test)]
 pub(super) fn route(graph: &Graph, layout: &Layout<'_>, keys: &[usize], bundle: bool) -> Routed {
-    route_impl(graph, layout, keys, true, bundle, true)
+    crate::work::complete(route_step(graph, layout, keys, bundle))
 }
 
+pub(super) async fn route_step(
+    graph: &Graph,
+    layout: &Layout<'_>,
+    keys: &[usize],
+    bundle: bool,
+) -> Routed {
+    crate::work::checkpoint().await;
+    route_impl_step(graph, layout, keys, true, bundle, true).await
+}
+
+#[cfg(test)]
 pub(in crate::layout) fn route_selected(
     graph: &Graph,
     layout: &Layout<'_>,
     sides: &[[Side; 2]],
 ) -> Routed {
-    route_selected_impl(
+    crate::work::complete(route_selected_step(graph, layout, sides))
+}
+
+pub(in crate::layout) async fn route_selected_step(
+    graph: &Graph,
+    layout: &Layout<'_>,
+    sides: &[[Side; 2]],
+) -> Routed {
+    crate::work::checkpoint().await;
+    route_selected_impl_step(
         graph,
         layout,
         &layout.containment.keys,
@@ -51,6 +72,7 @@ pub(in crate::layout) fn route_selected(
         true,
         Some(sides),
     )
+    .await
 }
 
 #[cfg(test)]
@@ -63,6 +85,7 @@ pub(super) fn route_with_quality(
     route_impl(graph, layout, keys, quality, false, true).paths
 }
 
+#[cfg(test)]
 fn route_impl(
     graph: &Graph,
     layout: &Layout<'_>,
@@ -71,10 +94,24 @@ fn route_impl(
     bundle: bool,
     shortcuts: bool,
 ) -> Routed {
-    route_selected_impl(graph, layout, keys, quality, bundle, shortcuts, None)
+    crate::work::complete(route_impl_step(
+        graph, layout, keys, quality, bundle, shortcuts,
+    ))
 }
 
-fn route_selected_impl(
+async fn route_impl_step(
+    graph: &Graph,
+    layout: &Layout<'_>,
+    keys: &[usize],
+    quality: bool,
+    bundle: bool,
+    shortcuts: bool,
+) -> Routed {
+    crate::work::checkpoint().await;
+    route_selected_impl_step(graph, layout, keys, quality, bundle, shortcuts, None).await
+}
+
+async fn route_selected_impl_step(
     graph: &Graph,
     layout: &Layout<'_>,
     keys: &[usize],
@@ -83,6 +120,7 @@ fn route_selected_impl(
     shortcuts: bool,
     sides: Option<&[[Side; 2]]>,
 ) -> Routed {
+    crate::work::checkpoint().await;
     let geometry = |node: usize| {
         let bounds = layout.bounds[node];
         (
@@ -112,7 +150,9 @@ fn route_selected_impl(
     );
     let mut target_ports = vec![0; graph.edges.len()];
     for (node, edges) in incident.iter().enumerate() {
+        crate::work::checkpoint().await;
         for &(edge, source) in edges {
+            crate::work::checkpoint().await;
             let side = sides.map_or(Side::Right, |s| s[edge][usize::from(!source)]);
             let mut port = if source {
                 source_slots[edge][side as usize]
@@ -154,7 +194,7 @@ fn route_selected_impl(
             edge.change.as_ref().map(|change| change.address.as_str()),
         )
     });
-    let terminals = numbered::Terminals::with_sides(
+    let terminals = numbered::Terminals::with_sides_step(
         graph,
         layout,
         &order,
@@ -162,7 +202,8 @@ fn route_selected_impl(
         (&source_slots, &target_slots),
         quality,
         sides,
-    );
+    )
+    .await;
     let reservations = terminals.all();
     let mut scorer = Scorer::default();
     scorer.set_layout(graph, layout);
@@ -172,12 +213,12 @@ fn route_selected_impl(
     let mut attempted = std::collections::BTreeSet::new();
     let mut junctions = Vec::new();
     let mut bundled_edges = vec![false; graph.edges.len()];
-    let independent = |index: usize, scorer: &Scorer| {
+    let independent = async |index: usize, scorer: &Scorer| {
         let edge = &graph.edges[index];
         let [start, end] = terminals.ports[index];
         let obstacles = terminals.barriers(layout, graph, index);
         let path = if sides.is_none() && quality && !resource_edges[index] {
-            crate::layout::routing_shared::ports::select_from_ports(
+            if let Some(path) = crate::layout::routing_shared::ports::select_from_ports_step(
                 layout.bounds[edge.from],
                 layout.bounds[edge.to],
                 [start, end],
@@ -185,34 +226,40 @@ fn route_selected_impl(
                 scorer,
                 (&source_slots[index], &target_slots[index]),
             )
-            .unwrap_or_else(|| {
-                path_with_clearance(start.point, end.point, &obstacles, Some(scorer), [16; 2])
-            })
+            .await
+            {
+                path
+            } else {
+                path_with_clearance_step(start.point, end.point, &obstacles, Some(scorer), [16; 2])
+                    .await
+            }
         } else if resource_edges[index] || sides.is_some() {
-            crate::layout::routing_shared::ports::connect_with_clearances(
+            crate::layout::routing_shared::ports::connect_with_clearances_step(
                 start,
                 end,
                 &obstacles,
                 quality.then_some(scorer),
                 terminals.clearances[index],
-            )
+            ).await
             .unwrap_or_else(|| panic!("reserved ports have no corridor: {} -> {}, edge={index}, start={start:?}, end={end:?}, selected={}", graph.nodes[edge.from].address, graph.nodes[edge.to].address, sides.is_some()))
         } else {
-            path_with_clearance(
+            path_with_clearance_step(
                 start.point,
                 end.point,
                 &obstacles,
                 quality.then_some(scorer),
                 [16; 2],
             )
+            .await
         };
         if sides.is_none() && !resource_edges[index] {
-            container_endpoint_path(layout, edge, path, &obstacles, scorer)
+            container_endpoint_path_step(layout, edge, path, &obstacles, scorer).await
         } else {
             path
         }
     };
     for &index in &order {
+        crate::work::checkpoint().await;
         let edge = &graph.edges[index];
         scorer.set_kind(edge.kind);
         scorer.set_soft(soft_obstacles(layout, edge));
@@ -236,7 +283,7 @@ fn route_selected_impl(
                         .all(|&edge| !resource_edges[edge] && paths[edge].is_empty())
             }) {
                 if attempted.insert(group_index) {
-                    if let Some(bundled) = bundles::try_bundle(
+                    if let Some(bundled) = bundles::try_bundle_step(
                         graph,
                         layout,
                         group,
@@ -244,8 +291,11 @@ fn route_selected_impl(
                         &mut scorer,
                         &reservations,
                         independent,
-                    ) {
+                    )
+                    .await
+                    {
                         for (index, path) in bundled.paths {
+                            crate::work::checkpoint().await;
                             bundled_edges[index] = true;
                             scorer.insert(path.clone());
                             paths[index] = path;
@@ -256,7 +306,7 @@ fn route_selected_impl(
                 }
             }
         }
-        let path = independent(index, &scorer);
+        let path = independent(index, &scorer).await;
         scorer.insert(path.clone());
         paths[index] = path;
     }
@@ -402,14 +452,16 @@ pub(super) fn shortest_valid_route(graph: &Graph, layout: &Layout<'_>, index: us
     reference
 }
 
-fn container_endpoint_path(
+async fn container_endpoint_path_step(
     layout: &Layout<'_>,
     edge: &Edge,
     mut best: Vec<Point>,
     obstacles: &[Bounds],
     scorer: &Scorer,
 ) -> Vec<Point> {
+    crate::work::checkpoint().await;
     for (container, child, reverse) in [(edge.to, edge.from, false), (edge.from, edge.to, true)] {
+        crate::work::checkpoint().await;
         if container == child || !layout.containment.is_ancestor(container, child) {
             continue;
         }
@@ -460,12 +512,18 @@ fn container_endpoint_path(
             ),
         ];
         for (a, b) in pairs {
+            crate::work::checkpoint().await;
             let (start, end) = if reverse { (b, a) } else { (a, b) };
             if scorer.uses_endpoint(start.point) || scorer.uses_endpoint(end.point) {
                 continue;
             }
-            if let Some(candidate) =
-                crate::layout::routing_shared::ports::connect(start, end, obstacles, Some(scorer))
+            if let Some(candidate) = crate::layout::routing_shared::ports::connect_step(
+                start,
+                end,
+                obstacles,
+                Some(scorer),
+            )
+            .await
             {
                 if scorer.score(&candidate, obstacles) < scorer.score(&best, obstacles) {
                     best = candidate;
@@ -483,16 +541,28 @@ pub(super) fn path_between(
     obstacles: &[Bounds],
     scorer: Option<&Scorer>,
 ) -> Vec<Point> {
-    path_with_clearance(start, end, obstacles, scorer, [16; 2])
+    crate::work::complete(path_between_step(start, end, obstacles, scorer))
 }
 
-fn path_with_clearance(
+#[cfg(test)]
+pub(super) async fn path_between_step(
+    start: Point,
+    end: Point,
+    obstacles: &[Bounds],
+    scorer: Option<&Scorer>,
+) -> Vec<Point> {
+    crate::work::checkpoint().await;
+    path_with_clearance_step(start, end, obstacles, scorer, [16; 2]).await
+}
+
+async fn path_with_clearance_step(
     start: Point,
     end: Point,
     obstacles: &[Bounds],
     scorer: Option<&Scorer>,
     clearance: [usize; 2],
 ) -> Vec<Point> {
+    crate::work::checkpoint().await;
     let first = Point {
         x: start.x + clearance[0],
         ..start
@@ -509,10 +579,10 @@ fn path_with_clearance(
             Simplification::PreserveReversals,
         )
     };
-    let shortest = finish(find_path(first, last, obstacles, None));
+    let shortest = finish(find_path_step(first, last, obstacles, None).await);
     match scorer {
         Some(scorer) => {
-            let candidate = finish(find_path(first, last, obstacles, Some(scorer)));
+            let candidate = finish(find_path_step(first, last, obstacles, Some(scorer)).await);
             scorer
                 .choose(vec![shortest, candidate], obstacles)
                 .expect("shortest route is within its detour budget")
