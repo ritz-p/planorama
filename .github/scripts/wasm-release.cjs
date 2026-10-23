@@ -10,4 +10,21 @@ async function requireLayoutQuality(github, repo, commit) {
   throw new Error('Successful Layout quality comparison is required for the release commit');
 }
 
-module.exports = {requireLayoutQuality};
+async function uploadAssets(github, repo, releaseId, assets) {
+  const existing = await github.paginate(github.rest.repos.listReleaseAssets, {...repo, release_id: releaseId, per_page: 100});
+  const matches = (remote, asset) => remote.size === asset.data.length && remote.digest === `sha256:${asset.digest}`;
+  for (const asset of assets) {
+    const remote = existing.find(remote => remote.name === asset.name);
+    if (remote && !matches(remote, asset)) throw new Error(`Existing asset differs: ${asset.name}`);
+  }
+  for (const asset of assets) {
+    if (existing.some(remote => remote.name === asset.name)) continue;
+    const uploaded = (await github.rest.repos.uploadReleaseAsset({
+      ...repo, release_id: releaseId, name: asset.name, data: asset.data,
+      headers: {'content-type': 'application/octet-stream', 'content-length': asset.data.length},
+    })).data;
+    if (!matches(uploaded, asset)) throw new Error(`Upload verification failed: ${asset.name}`);
+  }
+}
+
+module.exports = {requireLayoutQuality, uploadAssets};

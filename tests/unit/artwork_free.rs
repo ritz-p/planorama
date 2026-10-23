@@ -1,6 +1,17 @@
 use crate::{Error, IconMode, Options, OutputFormat, generate};
 
 #[test]
+fn direct_rendering_never_references_unavailable_artwork() {
+    let raw = crate::plan::parse(include_str!("../fixtures/viewer-plan.json")).unwrap();
+    let graph = crate::semantic::transform(&raw);
+    let layout = crate::layout::Layout::new(&graph);
+    let output = crate::svg::render(&graph, &layout);
+    assert!(!output.contains("planorama-icon-"));
+    assert!(!output.contains("planorama-icons-license"));
+    assert!(!output.contains("<symbol"));
+}
+
+#[test]
 fn artwork_free_defaults_and_explicit_icon_rejection() {
     assert_eq!(IconMode::default(), IconMode::ServiceName);
     let json = include_str!("../fixtures/viewer-plan.json");

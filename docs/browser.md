@@ -59,7 +59,11 @@ standalone engine builds. Its default is build-only. Publication requires an
 existing `v<package-version>` tag and published stable GitHub Release, plus a
 successful manually dispatched **Layout quality** run for the checked-out commit
 (a PR merge-ref check does not qualify). It attaches the
-archive and checksum without replacing existing assets; it creates no tags or
+archive and checksum without replacing existing assets; matching existing assets
+are verified by size and SHA-256 and reused, so retrying a partial upload sends
+only missing files. Conflicting assets stop publication before any upload.
+Archive metadata (timestamps, owners and modes) is normalized so rebuilding the
+same engine files produces the same checksum. The workflow creates no tags or
 releases. Run publication only after the release commit has passed validation.
 
 After that version's assets have been published, fetch a pinned pair:
@@ -100,8 +104,9 @@ Verify the extracted release archive in Chromium with
 the standalone engine. It checks archive membership, provenance and hashes,
 scans JS/Wasm for embedded artwork markers, compares AWS and Terraform SVG/HTML
 outputs exactly with native service-name generation, and tests omitted/explicit
-icon options. `cargo test --locked --no-default-features --lib artwork_free`
-checks the native API contract. The normal feature set retains the full suite.
+icon options and archive reproducibility. `cargo test --locked --no-default-features --lib`
+runs the complete library suite, including the native API contract. Artwork-only
+checks run with `icon-artwork`; shared assertions verify both configurations.
 
 ## API and supported options
 

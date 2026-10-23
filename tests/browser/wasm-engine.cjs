@@ -14,6 +14,10 @@ async function main() {
   let server;
   try {
     const bytes = fs.readFileSync(`output/wasm-release/${archive}`);
+    const future = new Date('2030-01-01T00:00:00Z');
+    fs.utimesSync('output/wasm-engine/planorama.js', future, future);
+    execFileSync(process.execPath, ['scripts/package-wasm-engine.cjs']);
+    assert.deepEqual(fs.readFileSync(`output/wasm-release/${archive}`), bytes, 'archive bytes must not depend on file timestamps');
     assert.equal(createHash('sha256').update(bytes).digest('hex'), fs.readFileSync(`output/wasm-release/${archive}.sha256`, 'utf8').split(' ')[0]);
     execFileSync('tar', ['-xzf', `output/wasm-release/${archive}`, '-C', temp]);
     assert.deepEqual(fs.readdirSync(temp).sort(), ['LICENSE', 'LICENSE-APACHE', 'LICENSE-MIT', 'THIRD-PARTY-NOTICES.txt', 'manifest.json', 'planorama.js', 'planorama_bg.wasm']);

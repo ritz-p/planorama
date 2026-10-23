@@ -41,7 +41,10 @@ fn backup_preserves_distinct_identity_and_only_explicit_resource_collections() {
         )
         .unwrap()
         .content;
-        assert!(output.contains("planorama-icon-aws-backup"));
+        assert_eq!(
+            output.contains("planorama-icon-aws-backup"),
+            cfg!(feature = "icon-artwork")
+        );
         assert!(!output.contains("PRIVATE_"));
         assert!(!output.contains("arn:aws:"));
     }

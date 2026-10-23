@@ -8,7 +8,7 @@ fn data_icon_fixture_preserves_external_styling_and_matches_deterministic_exampl
     let graph = view::single(&semantic::transform(&raw), &Default::default()).unwrap();
     let output = svg::render(&graph, &Layout::new(&graph));
     let document = roxmltree::Document::parse(&output).unwrap();
-    let expected = [
+    let mut expected = [
         ("data.aws_subnets.shared", Some("#planorama-icon-aws-vpc")),
         (
             "data.aws_ami_ids.available",
@@ -51,6 +51,11 @@ fn data_icon_fixture_preserves_external_styling_and_matches_deterministic_exampl
         ("data.aws_subnets.foreign", None),
         ("data.aws_future_widget.unknown", None),
     ];
+    if !cfg!(feature = "icon-artwork") {
+        for (_, icon) in &mut expected {
+            *icon = None;
+        }
+    }
     assert_eq!(graph.nodes.len(), expected.len());
     assert_eq!(raw.nodes.len(), expected.len() + 3);
     let symbols: Vec<_> = document
@@ -115,13 +120,16 @@ fn data_icon_fixture_preserves_external_styling_and_matches_deterministic_exampl
             "{address}"
         );
     }
-    let snapshot = concat!(env!("CARGO_MANIFEST_DIR"), "/examples/data-icons.svg");
-    assert_eq!(
-        output,
-        std::fs::read_to_string(snapshot)
-            .unwrap()
-            .replace("\r\n", "\n")
-    );
+    #[cfg(feature = "icon-artwork")]
+    {
+        let snapshot = concat!(env!("CARGO_MANIFEST_DIR"), "/examples/data-icons.svg");
+        assert_eq!(
+            output,
+            std::fs::read_to_string(snapshot)
+                .unwrap()
+                .replace("\r\n", "\n")
+        );
+    }
     let mut reordered: serde_json::Value = serde_json::from_str(input).unwrap();
     reordered["resource_changes"]
         .as_array_mut()

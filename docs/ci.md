@@ -828,7 +828,9 @@ The `Browser Wasm` workflow builds the native CLI and Wasm library in the pinned
 Docker environment on pull requests and manual dispatch. It checks exact output
 parity, offline generation, isolated previews, downloads and cancellation using
 Chromium. It also builds and checks the standalone artwork-free engine archive,
-including native output parity and JS/Wasm artwork exclusion. The manual
+including native output parity, JS/Wasm artwork exclusion and reproducible
+packaging. The no-default-feature build runs the full library suite and CLI help
+checks; only artwork-specific tests require the artwork feature. The manual
 **Wasm engine release** workflow distributes this engine separately from the UI;
 see [browser build, distribution and verification](browser.md). Unit tests now run
 from the library target (`--lib`); suite discovery includes that target automatically.

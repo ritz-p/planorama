@@ -30,6 +30,12 @@ fn help_documents_remote_state_mapping_syntax() {
     let options = text.split("\n\n").nth(2).unwrap();
     assert!(options.contains("--layout-diagnostics  "));
     assert!(options.contains("--layout-diagnostics-json PATH"));
+    let modes = if cfg!(feature = "icon-artwork") {
+        "Service display: icon (default) or service-name"
+    } else {
+        "Service display: service-name (default; icon unavailable in this build)"
+    };
+    assert!(options.contains(modes));
 }
 
 #[test]

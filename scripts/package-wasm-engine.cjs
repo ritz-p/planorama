@@ -23,5 +23,5 @@ fs.writeFileSync(path.join(directory, 'manifest.json'), JSON.stringify({
 }, null, 2) + '\n');
 fs.mkdirSync('output/wasm-release', {recursive: true});
 const archive = `planorama-${version}-wasm-no-artwork.tar.gz`;
-execFileSync('tar', ['-czf', path.resolve('output/wasm-release', archive), '-C', directory, ...files, 'manifest.json']);
+execFileSync('tar', ['--mtime=@0', '--owner=0', '--group=0', '--numeric-owner', '--mode=0644', '-czf', path.resolve('output/wasm-release', archive), '-C', directory, ...files, 'manifest.json']);
 fs.writeFileSync(`output/wasm-release/${archive}.sha256`, `${sha256(fs.readFileSync(`output/wasm-release/${archive}`))}  ${archive}\n`);

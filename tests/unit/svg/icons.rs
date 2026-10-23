@@ -6,9 +6,11 @@ mod icon_import;
 #[path = "service_names.rs"]
 mod service_names;
 #[path = "terraform_icons.rs"]
+#[cfg(feature = "icon-artwork")]
 mod terraform_icons;
 
 #[test]
+#[cfg(feature = "icon-artwork")]
 fn symbols_are_deduplicated_and_used_locally_on_cards_and_containers() {
     let address = format!(
         r#"data.aws_instance.b["{}"]"#,
@@ -136,6 +138,7 @@ fn symbols_are_deduplicated_and_used_locally_on_cards_and_containers() {
 }
 
 #[test]
+#[cfg(feature = "icon-artwork")]
 fn official_assets_are_inline_and_shared_by_service() {
     assert_eq!(ResourceIcon::Vpc.id(), ResourceIcon::Subnet.id());
     assert_eq!(ResourceIcon::Vpc.svg(), ResourceIcon::Subnet.svg());
@@ -160,7 +163,12 @@ fn large_example_icons_are_independent_of_roles_and_entity_modes() {
     let graph = crate::semantic::transform(&raw);
     for node in &graph.nodes {
         let expected = for_node(node);
-        assert!(expected.is_some(), "{}", node.resource_type);
+        assert_eq!(
+            expected.is_some(),
+            cfg!(feature = "icon-artwork"),
+            "{}",
+            node.resource_type
+        );
         let mut modified = node.clone();
         modified.mode = crate::model::EntityMode::Data;
         modified.role = crate::model::ResourceRole::Unknown;
