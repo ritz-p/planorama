@@ -2,9 +2,15 @@ self.onmessage = ({data}) => {
   try {
     const wasm = wasm_bindgen.initSync({module: data.module});
     const started = performance.now();
+    let lastStage;
+    const progress = stage => {
+      if (stage === lastStage) return;
+      lastStage = stage;
+      self.postMessage({type: 'progress', request: data.request, stage});
+    };
     const result = data.operation === 'inspect'
       ? {modules: JSON.parse(wasm_bindgen.inspect_modules(data.json))}
-      : JSON.parse(wasm_bindgen.generate(data.json, JSON.stringify(data.options)));
+      : JSON.parse(wasm_bindgen.generate_with_progress(data.json, JSON.stringify(data.options), progress));
     self.postMessage({ok: true, ...result, elapsed_ms: performance.now() - started, memory_bytes: wasm.memory.buffer.byteLength});
   } catch (error) {
     let failure = {code: 'generation_failed', message: 'Diagram generation failed.'};

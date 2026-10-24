@@ -21,8 +21,12 @@ async function main() {
   const run = (json, options = {}, operation = 'generate') => {
     driver.execute_script(`
       window.testResult = null;
+      window.progressStages = [];
       const w = new Worker(assets.url);
-      w.onmessage = ({data}) => { window.testResult = data; w.terminate(); };
+      w.onmessage = ({data}) => {
+        if (data.type === 'progress') { window.progressStages.push(data); return; }
+        window.testResult = data; w.terminate();
+      };
       w.onerror = () => { window.testResult = {ok: false, trap: true}; w.terminate(); };
       w.postMessage({module: assets.module, json: arguments[0], options: arguments[1], operation: arguments[2]});
     `, json, options, operation);
@@ -146,6 +150,7 @@ async function main() {
     `);
     assert.equal(driver.execute_script('return worker === undefined'), true);
     assert.ok(status().startsWith('Settings changed.'));
+    assert.equal(driver.execute_script('return elapsedTimer === undefined'), true);
     driver.find_element(By.CSS_SELECTOR, '#reset-settings').click();
     submit(large, 'svg');
     wait(() => driver.execute_script('return !!worker'), 'worker before reset');
@@ -161,17 +166,29 @@ async function main() {
     driver.execute_script("worker.onerror({preventDefault() {}});");
     assert.equal(status(), 'Diagram generation failed. Try a smaller plan.');
     assert.equal(driver.execute_script('return worker === undefined'), true);
+    assert.equal(driver.execute_script('return elapsedTimer === undefined'), true);
     submit(large, 'svg');
     wait(() => driver.execute_script('return !!worker'), 'worker before cancel');
+    wait(() => status() === 'Routing connections…', 'large fixture routing stage', 180000);
+    assert.equal(driver.execute_script("return document.getElementById('cancel').disabled"), false);
+    assert.match(driver.execute_script("return document.getElementById('elapsed').textContent"), /^Elapsed: \d+ s$/);
+    const routingStatus = status();
+    driver.execute_script("worker.onmessage({data: {type: 'progress', request: serial - 1, stage: 'output'}});");
+    assert.equal(status(), routingStatus, 'Wrong request progress is discarded');
     driver.find_element(By.CSS_SELECTOR, '#cancel').click();
     assert.ok(status().startsWith('Cancelled.'));
+    assert.equal(driver.execute_script('return elapsedTimer === undefined'), true);
     submit(small, 'svg');
     wait(() => status().startsWith('Generated in'), 'retry after cancellation');
     const currentStatus = status();
     driver.execute_script("oldCompletion({data: {ok: false, error: {message: 'STALE'}}});");
+    driver.execute_script("oldCompletion({data: {type: 'progress', request: serial, stage: 'routing'}});");
     assert.equal(status(), currentStatus, 'Stale completion cannot replace a newer result');
+    assert.equal(driver.execute_script('return elapsedTimer === undefined'), true);
     const largeResult = run(large);
     assert.equal(largeResult.ok, true);
+    assert.deepEqual(driver.execute_script('return progressStages.map(event => event.stage)'), ['parsing', 'selection', 'placement', 'routing', 'output']);
+    assert.equal(driver.execute_script("return progressStages.every(event => Object.keys(event).sort().join(',') === 'request,stage,type')"), true);
     const native = execFileSync(binary, ['-', '-o', '-'], {input: large, encoding: 'utf8', timeout: 180000, maxBuffer: 64 * 1024 * 1024});
     assert.equal(largeResult.content, native, 'Large native/Wasm exact parity');
     console.log(JSON.stringify({fixture: 'terraform-large', input_bytes: Buffer.byteLength(large), elapsed_ms: largeResult.elapsed_ms, memory_bytes: largeResult.memory_bytes, output_bytes: Buffer.byteLength(largeResult.content)}));
