@@ -54,6 +54,57 @@ attribute values, and does not invent resources from names or literal identifier
 Saved-plan provider evidence and dedicated relationship proofs keep their separately
 pinned verification versions; this inventory is not a compatibility claim for them.
 
+## Verified resource aliases
+
+Provider dispatch reuses canonical capabilities without rewriting Terraform types,
+addresses, state-qualified identities, modes, lifecycle objects or provenance.
+Distinct alias/canonical instances remain distinct. Provider and reference evidence
+checks still apply at both endpoints; literal IDs/ARNs do not create relationships.
+
+The six inventory aliases were checked against the pinned 6.70.0
+[registration](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/internal/service/elbv2/service_package_gen.go),
+full managed/data schemas (inventory SHA-256), and each canonical resource's
+versioned documentation, which explicitly describes identical functionality.
+Each managed pair shares its factory, region behavior and complete schema,
+including the subnet, security-group, VPC, listener, forwarding, certificate and
+attachment fields consumed by existing rules. No prefix or service-name inference
+is used.
+
+| Alias | Canonical | Managed factory | Data equivalence |
+| --- | --- | --- | --- |
+| `aws_alb` | `aws_lb` | `resourceLoadBalancer` | Same `dataSourceLoadBalancer` and schema |
+| `aws_alb_listener` | `aws_lb_listener` | `resourceListener` | Same `dataSourceListener` and schema |
+| `aws_alb_listener_certificate` | `aws_lb_listener_certificate` | `resourceListenerCertificate` | Neither registered |
+| `aws_alb_listener_rule` | `aws_lb_listener_rule` | `resourceListenerRule` | Alias unregistered; canonical has a separate Framework data source |
+| `aws_alb_target_group` | `aws_lb_target_group` | `resourceTargetGroup` | Same `dataSourceTargetGroup` and schema |
+| `aws_alb_target_group_attachment` | `aws_lb_target_group_attachment` | `resourceTargetGroupAttachment` | Neither registered |
+
+Only the three verified data aliases inherit data capabilities. Unregistered data
+aliases retain their fallback classification. Listener certificates retain the
+canonical basic display; this does not add a dedicated certificate relationship.
+The support matrix follows canonical rule source references for verified managed
+aliases, while displaying the original type and separate managed/data capabilities.
+
+After obtaining the pinned source and schema using the procedure below, run:
+
+```sh
+node tests/support/verify-aws-aliases.cjs SOURCE /tmp/aws-inventory-schema/schema.json
+cargo test --locked --lib provider::aws::aliases
+```
+
+`SOURCE` is the extracted pinned Provider source directory. The verifier checks
+the schema hash, full schema equality, shared factories and official alias notes.
+Ordinary Rust tests use committed fixtures offline. The
+[mixed fixture](../tests/fixtures/aws-aliases-plan.json),
+[icon SVG](../examples/aws-aliases.svg),
+[service-name SVG](../examples/aws-aliases-service-names.svg) and
+[offline HTML](../examples/aws-aliases.html) retain original alias names alongside
+separate canonical instances. Regenerate the HTML with:
+
+```sh
+cargo run --locked -- tests/fixtures/aws-aliases-plan.json --format html -o examples/aws-aliases.html
+```
+
 ## Reproduce and update
 
 Inside the development container:

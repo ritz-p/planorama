@@ -51,7 +51,9 @@ fn every_registered_managed_type_has_basic_capabilities() {
         let future = format!("{resource_type}_unregistered_future");
         assert_eq!(super::super::classify(&future), ResourceRole::Unknown);
         assert!(super::super::icon_for(&future).is_none());
-        if super::super::classification::classify(resource_type) == ResourceRole::Unknown {
+        if super::super::classification::classify(super::super::aliases::canonical(resource_type))
+            == ResourceRole::Unknown
+        {
             let mut parsed = plan::parse(&input(resource_type, "managed").to_string()).unwrap();
             parsed.nodes[0].provider_configuration = Some(model::ProviderConfiguration {
                 key: "aws".into(),

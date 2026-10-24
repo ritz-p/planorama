@@ -8,6 +8,7 @@ mod vpc_scope;
 pub(super) use vpc_scope::attribute as vpc_scope_attribute;
 
 pub(super) fn direct_rule(resource_type: &str) -> Option<(&'static str, &'static str)> {
+    let resource_type = super::aliases::canonical(resource_type);
     match resource_type {
         "aws_subnet"
         | "aws_vpc_endpoint"

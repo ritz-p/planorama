@@ -13,7 +13,7 @@ pub fn collect(plan: &crate::model::TerraformPlan) -> Vec<Diagnostic> {
     for node in &plan.nodes {
         if node.provider.is_aws()
             && matches!(
-                node.resource_type.as_str(),
+                crate::provider::aws::aliases::entity_type(node),
                 "aws_wafv2_web_acl" | "aws_wafv2_rule_group"
             )
             && node.waf_scope.is_none()
@@ -98,7 +98,10 @@ pub fn collect(plan: &crate::model::TerraformPlan) -> Vec<Diagnostic> {
                             .is_some_and(|(block, _)| block == reference.attribute)
                 },
             ) || matches!(
-                (node.resource_type.as_str(), reference.attribute.as_str()),
+                (
+                    crate::provider::aws::aliases::node_type(node),
+                    reference.attribute.as_str()
+                ),
                 ("aws_lb", "subnets")
                     | ("aws_db_subnet_group", "subnet_ids")
                     | ("aws_elasticache_subnet_group", "subnet_ids")
@@ -155,7 +158,7 @@ pub fn collect(plan: &crate::model::TerraformPlan) -> Vec<Diagnostic> {
         }
         let direct = super::containment::direct_rule(&node.resource_type)
             .filter(|(attribute, _)| {
-                node.resource_type != "aws_lb_target_group"
+                crate::provider::aws::aliases::node_type(node) != "aws_lb_target_group"
                     || raw
                         .attributes
                         .iter()
@@ -196,7 +199,7 @@ pub fn collect(plan: &crate::model::TerraformPlan) -> Vec<Diagnostic> {
         } else if let Some(rule) = &vpc_scope {
             rule
         } else {
-            match node.resource_type.as_str() {
+            match crate::provider::aws::aliases::node_type(node) {
                 "aws_lb" => &[("subnets", "aws_subnet", true, false)],
                 "aws_db_subnet_group" | "aws_elasticache_subnet_group" => {
                     &[("subnet_ids", "aws_subnet", true, false)]
@@ -280,14 +283,14 @@ pub fn collect(plan: &crate::model::TerraformPlan) -> Vec<Diagnostic> {
         if endpoints_valid
             && (vpc_scope.is_some()
                 || matches!(
-                    node.resource_type.as_str(),
+                    crate::provider::aws::aliases::node_type(node),
                     "aws_lb"
                         | "aws_ecs_service"
                         | "aws_db_subnet_group"
                         | "aws_elasticache_subnet_group"
                 )
                 || (matches!(
-                    node.resource_type.as_str(),
+                    crate::provider::aws::aliases::node_type(node),
                     "aws_db_instance" | "aws_rds_cluster" | "aws_elasticache_replication_group"
                 ) && super::containment::resolved_subnets(raw, target).is_some()))
             && !contained

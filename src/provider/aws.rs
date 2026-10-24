@@ -1,3 +1,4 @@
+mod aliases;
 mod associations;
 mod autoscaling;
 mod backup;
@@ -77,6 +78,7 @@ mod resource_support;
 pub(super) use scope::scope;
 
 pub(super) fn reference_label(resource_type: &str, attribute: &str) -> &'static str {
+    let resource_type = aliases::canonical(resource_type);
     match (resource_type, attribute) {
         ("aws_ecs_service", "cluster") => "Cluster",
         ("aws_ecs_service", "task_definition") => "Task definition",
@@ -101,6 +103,7 @@ pub(super) fn reference_label(resource_type: &str, attribute: &str) -> &'static 
 }
 
 pub(super) fn placement(resource_type: &str) -> crate::model::Placement {
+    let resource_type = aliases::canonical(resource_type);
     match resource_type {
         "aws_redshift_parameter_group" => crate::model::Placement::Logical,
         "aws_organizations_policy" | "aws_organizations_policy_attachment" => {
@@ -157,6 +160,7 @@ pub(super) fn placement(resource_type: &str) -> crate::model::Placement {
 }
 
 pub(crate) fn classify(resource_type: &str) -> crate::model::ResourceRole {
+    let resource_type = aliases::canonical(resource_type);
     let role = classification::classify(resource_type);
     if role == crate::model::ResourceRole::Unknown {
         basic::get(resource_type).map_or(role, |entry| entry.role)
@@ -165,10 +169,12 @@ pub(crate) fn classify(resource_type: &str) -> crate::model::ResourceRole {
     }
 }
 pub(crate) fn data_role(resource_type: &str) -> crate::model::ResourceRole {
+    let resource_type = aliases::data_type(resource_type);
     classification::classify(resource_type)
 }
 
 pub(crate) fn data_placement(resource_type: &str) -> crate::model::Placement {
+    let resource_type = aliases::data_type(resource_type);
     if classification::classify(resource_type) == crate::model::ResourceRole::Unknown {
         crate::model::Placement::Unresolved
     } else {
@@ -177,16 +183,19 @@ pub(crate) fn data_placement(resource_type: &str) -> crate::model::Placement {
 }
 
 pub(crate) fn service_name(resource_type: &str) -> Option<&'static str> {
+    let resource_type = aliases::canonical(resource_type);
     icons::icon_for(resource_type)
         .map(|icon| icon.service_name())
         .or_else(|| basic::get(resource_type).map(|entry| entry.service))
 }
 
 pub(crate) fn icon_for(resource_type: &str) -> Option<crate::icons::ResourceIcon> {
+    let resource_type = aliases::canonical(resource_type);
     icons::icon_for(resource_type)
         .or_else(|| basic::get(resource_type).and_then(|entry| entry.icon))
 }
 pub(crate) fn data_icon(resource_type: &str) -> Option<crate::icons::ResourceIcon> {
+    let resource_type = aliases::data_type(resource_type);
     icons::icon_for(resource_type)
 }
 pub(super) fn transform(raw: crate::semantic::Input) -> crate::model::Graph {
