@@ -74,7 +74,7 @@ fn inferred_placement_notes_use_provenance_and_fit_below_long_addresses() {
         .filter(|n| n.attribute("data-placement") == Some("inferred"))
     {
         let card = note.parent().unwrap();
-        let rect = card.children().find(|n| n.has_tag_name("rect")).unwrap();
+        let rect = card.children().find(|n| n.has_tag_name("rect") && n.attribute("data-service-badge").is_none()).unwrap();
         let y = |n: roxmltree::Node| n.attribute("y").unwrap().parse::<usize>().unwrap();
         let height = rect.attribute("height").unwrap().parse::<usize>().unwrap();
         assert!(y(note) >= y(rect) + 80);
@@ -693,12 +693,12 @@ fn moved_metadata_survives_cards_and_lowered_relationships_and_is_escaped() {
             );
             let rect = card
                 .children()
-                .find(|n| n.has_tag_name("rect"))
+                .find(|n| n.has_tag_name("rect") && n.attribute("data-service-badge").is_none())
                 .or_else(|| {
                     document
                         .descendants()
                         .find(|n| n.attribute("data-container") == card.attribute("id"))
-                        .and_then(|container| container.children().find(|n| n.has_tag_name("rect")))
+                        .and_then(|container| container.children().find(|n| n.has_tag_name("rect") && n.attribute("data-service-badge").is_none()))
                 })
                 .unwrap();
             let bottom = rect.attribute("y").unwrap().parse::<usize>().unwrap()
@@ -814,7 +814,7 @@ fn relationship_index_examples_use_available_width_for_complete_entry_cards() {
                 .parent()
                 .unwrap()
                 .children()
-                .find(|n| n.has_tag_name("rect"))
+                .find(|n| n.has_tag_name("rect") && n.attribute("data-service-badge").is_none())
                 .unwrap(),
             "width",
         );
