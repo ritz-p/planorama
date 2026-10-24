@@ -17,9 +17,37 @@ function startElapsed() {
 const maxBytes = 32 * 1024 * 1024;
 let moduleId = 0;
 let inventory = [];
+let resources = [];
+let resourcePage = 0;
 let inventoryPage = 0;
 let inspecting = false;
 const pageSize = 50;
+
+function renderResources() {
+  const focus = element('focus').value;
+  const query = element('resource-search').value.toLowerCase();
+  const matches = resources.filter(entry => [entry.address, entry.resource_type, entry.module, entry.mode, entry.state ?? 'single plan'].some(value => value.toLowerCase().includes(query)));
+  resourcePage = Math.max(0, Math.min(resourcePage, Math.ceil(matches.length / pageSize) - 1));
+  const start = resourcePage * pageSize;
+  element('resource-selection').textContent = focus === '' ? 'No focus selected.' : `Focus: ${focus}. ${resources.some(entry => entry.selector === focus) ? 'Present in original input; generation validates selection.' : 'Not in the completed list; generation validates this manual selector.'}`;
+  element('resource-count').textContent = `${matches.length} of ${resources.length} addresses match. Showing ${matches.length ? start + 1 : 0}–${Math.min(start + pageSize, matches.length)}.`;
+  element('resource-previous').disabled = resourcePage === 0;
+  element('resource-next').disabled = start + pageSize >= matches.length;
+  element('resource-inventory').replaceChildren(...matches.slice(start, start + pageSize).map(entry => {
+    const label = document.createElement('label');
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.checked = entry.selector === focus;
+    checkbox.value = entry.selector;
+    checkbox.onchange = () => {
+      element('focus').value = checkbox.checked ? entry.selector : '';
+      settingsChanged();
+      Array.from(element('resource-inventory').querySelectorAll('input')).find(input => input.value === entry.selector)?.focus();
+    };
+    label.append(checkbox, ` ${entry.address} — ${entry.resource_type}; ${entry.module}; ${entry.mode}; state: ${entry.state ?? 'single plan (unnamed)'}; current ${entry.current}; deposed ${entry.deposed}`);
+    return label;
+  }));
+}
 
 function renderInventory() {
   const selected = new Set(Array.from(element('modules').querySelectorAll('input'), input => input.value).filter(value => value !== ''));
@@ -63,13 +91,18 @@ function settingsChanged() {
   });
   if (assets) element('status').textContent = 'Settings changed. Generate again to apply them.';
   renderInventory();
+  renderResources();
 }
 
 element('generate-form').addEventListener('input', event => {
-  if (event.target.id !== 'module-search' && !element('module-inventory').contains(event.target)) settingsChanged();
+  if (!['module-search', 'resource-search'].includes(event.target.id) && !element('module-inventory').contains(event.target) && !element('resource-inventory').contains(event.target)) settingsChanged();
 });
 element('file').addEventListener('change', () => {
   inventory = [];
+  resources = [];
+  resourcePage = 0;
+  element('resource-search').value = '';
+  element('focus').value = '';
   inventoryPage = 0;
   element('module-search').value = '';
   element('modules').replaceChildren();
@@ -83,6 +116,12 @@ element('module-search').onkeydown = event => {
 element('module-previous').onclick = () => { inventoryPage--; renderInventory(); };
 element('module-next').onclick = () => { inventoryPage++; renderInventory(); };
 element('inspect-modules').onclick = inspectModules;
+element('inspect-resources').onclick = inspectModules;
+element('resource-search').oninput = () => { resourcePage = 0; renderResources(); };
+element('resource-search').onkeydown = event => { if (event.key === 'Enter') event.preventDefault(); };
+element('resource-previous').onclick = () => { resourcePage--; renderResources(); };
+element('resource-next').onclick = () => { resourcePage++; renderResources(); };
+element('clear-focus').onclick = () => { element('focus').value = ''; settingsChanged(); };
 element('add-module').onclick = () => addModule();
 function addModule(value = '', focus = true) {
   const row = document.createElement('div');
@@ -122,6 +161,8 @@ element('reset-settings').onclick = () => {
   element('focus-depth').value = '';
   element('modules').replaceChildren();
   element('module-search').value = '';
+  element('resource-search').value = '';
+  resourcePage = 0;
   inventoryPage = 0;
   element('spatial-types').querySelectorAll('input').forEach(input => { input.checked = false; });
   settingsChanged();
@@ -182,7 +223,7 @@ function stop() {
   serial++;
   if (worker) worker.terminate();
   worker = undefined;
-  if (inspecting) element('inventory-status').textContent = 'Module listing cancelled. Reload the module list to retry.';
+  if (inspecting) element('inventory-status').textContent = 'Module and resource listing cancelled. Reload either list to retry.';
   inspecting = false;
   element('generate').disabled = !assets;
   element('cancel').disabled = true;
@@ -203,6 +244,7 @@ async function loadAssets() {
   element('generate').disabled = false;
   element('status').textContent = 'Ready. Generation works offline while this page remains open.';
   element('inspect-modules').disabled = false;
+  element('inspect-resources').disabled = false;
   if (element('file').files[0]) inspectModules();
 }
 
@@ -221,7 +263,7 @@ async function inspectModules() {
   }
   inspecting = true;
   element('cancel').disabled = false;
-  element('inventory-status').textContent = 'Listing modules…';
+  element('inventory-status').textContent = 'Listing modules and resources…';
   try {
     const json = await file.text();
     if (request !== serial) return;
@@ -230,21 +272,23 @@ async function inspectModules() {
       event.preventDefault();
       if (request !== serial) return;
       stop();
-      element('inventory-status').textContent = 'Module listing failed. Try a smaller plan.';
+      element('inventory-status').textContent = 'Module and resource listing failed. Try a smaller plan.';
     };
     worker.onmessage = ({data}) => {
       if (request !== serial) return;
       inspecting = false;
       stop();
       inventory = data.ok ? data.modules : [];
+      resources = data.ok ? data.resources : [];
       renderInventory();
-      element('inventory-status').textContent = data.ok ? 'Modules from the original input. No selection filters applied.' : data.error.message;
+      renderResources();
+      element('inventory-status').textContent = data.ok ? 'Modules from the original input, with resource addresses listed above. No selection filters applied.' : data.error.message;
     };
     worker.postMessage({module: assets.module, json, operation: 'inspect'});
   } catch {
     if (request !== serial) return;
     stop();
-    element('inventory-status').textContent = 'Could not read the selected file or list modules.';
+    element('inventory-status').textContent = 'Could not read the selected file or list modules and resources.';
   }
 }
 
