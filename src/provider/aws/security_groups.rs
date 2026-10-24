@@ -6,6 +6,7 @@ use crate::semantic::Input;
 mod tests;
 
 pub(super) fn attribute(resource_type: &str) -> Option<&'static str> {
+    let resource_type = super::aliases::canonical(resource_type);
     match resource_type {
         "aws_redshift_cluster" => Some("vpc_security_group_ids"),
         "aws_instance" | "aws_db_instance" | "aws_rds_cluster" | "aws_db_proxy" => {

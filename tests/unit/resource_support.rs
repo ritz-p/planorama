@@ -165,6 +165,8 @@ fn matrix() -> String {
                     )
                 },
             );
+            let canonical = super::aliases::canonical(resource_type);
+            let paths = catalog.get(canonical).unwrap_or(paths);
             let rules: Vec<_> = paths
                 .iter()
                 .filter(|path| {
@@ -177,6 +179,7 @@ fn matrix() -> String {
                             | "terraform.rs"
                             | "basic_entries.rs"
                             | "basic.rs"
+                            | "aliases.rs"
                     )
                 })
                 .map(|path| {
@@ -196,7 +199,7 @@ fn matrix() -> String {
                     notes.push("Deprecated".into());
                 }
                 if let Some(alias) = entry["aliasOf"].as_str() {
-                    notes.push(format!("Alias of `{alias}`"));
+                    notes.push(format!("Verified managed alias of `{alias}`; [mode limits and evidence](aws-inventory.md#verified-resource-aliases)"));
                 }
                 if scope == "Unknown" {
                     notes.push(format!(
@@ -205,7 +208,7 @@ fn matrix() -> String {
                             .unwrap_or("Missing verified scope evidence")
                     ));
                 }
-                if super::classification::classify(resource_type) == model::ResourceRole::Unknown {
+                if super::classification::classify(canonical) == model::ResourceRole::Unknown {
                     notes.push(if super::icons::icon_for(resource_type).is_some() {
                         "Previously icon-only / incomplete basic classification".into()
                     } else {

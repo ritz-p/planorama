@@ -80,3 +80,5 @@ examples/organization-deployments.svg
 examples/rds-global.svg
 examples/aws-basic.svg
 examples/aws-basic-service-names.svg
+examples/aws-aliases.svg
+examples/aws-aliases-service-names.svg

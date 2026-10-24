@@ -52,7 +52,10 @@ pub(super) fn infer(raw: &Input, mut graph: Graph) -> Graph {
         {
             continue;
         }
-        match (node.resource_type.as_str(), reference.attribute.as_str()) {
+        match (
+            crate::provider::aws::aliases::node_type(node),
+            reference.attribute.as_str(),
+        ) {
             ("aws_lb", "subnets") | ("aws_ecs_service", "network_configuration.subnets") => {}
             _ => continue,
         }

@@ -14,7 +14,7 @@ pub(super) fn infer(raw: &Input, graph: &Graph) -> Vec<SyntheticComponent> {
     let visible: BTreeSet<_> = graph.nodes.iter().map(|n| n.address.as_str()).collect();
     let eligible = |index: usize, kind: &str| {
         let node = &raw.nodes[index];
-        node.resource_type == kind
+        super::aliases::node_type(node) == super::aliases::canonical(kind)
             && node.provider.is_aws()
             && node.mode == EntityMode::Managed
             && node.deposed_key.is_none()
@@ -131,7 +131,7 @@ fn target_group_owners(
         if !node.provider.is_aws() || node.mode != EntityMode::Managed {
             continue;
         }
-        let action = match node.resource_type.as_str() {
+        let action = match crate::provider::aws::aliases::node_type(node) {
             "aws_lb_listener" => "default_action",
             "aws_lb_listener_rule" => "action",
             _ => continue,
@@ -201,7 +201,8 @@ fn target_group_owners(
             });
             let attachment = node.provider.is_aws()
                 && node.mode == EntityMode::Managed
-                && node.resource_type == "aws_lb_target_group_attachment"
+                && crate::provider::aws::aliases::node_type(node)
+                    == "aws_lb_target_group_attachment"
                 && reference.attribute == "target_group_arn"
                 && verified(reference)
                 && reference.sources.len() == 1;

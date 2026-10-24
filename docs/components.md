@@ -4,6 +4,10 @@
 
 The supported grouping rule recognizes a managed AWS `aws_lb` with one or more `aws_lb_listener` resources linked through complete, uniquely resolved `load_balancer_arn` references. `aws_lb_listener_rule` resources can join through an equally unambiguous `listener_arn` reference to an included listener. Resource type, provider, mode, visibility, uniqueness, and deposed status are checked. Literal values, partial/dynamic references, conflicting candidates, and standalone load balancers do not create groups. A rule with an ambiguous listener remains ungrouped. Membership and component order are sorted deterministically.
 
+The [verified managed `aws_alb*` aliases](aws-inventory.md#verified-resource-aliases)
+use these same rules at both endpoints, including mixed alias/canonical plans.
+Member identities and component anchors retain their original addresses.
+
 Target groups join only when all supported owning paths identify the same LB.
 Supported paths are Listener `default_action.target_group_arn` and
 `default_action.forward.target_group.arn`, plus the corresponding Rule `action`

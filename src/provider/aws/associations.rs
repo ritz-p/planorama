@@ -11,6 +11,7 @@ mod tests;
 mod ebs_tests;
 
 pub(super) fn rule(resource_type: &str) -> Option<[(&'static str, &'static str); 2]> {
+    let resource_type = super::aliases::canonical(resource_type);
     match resource_type {
         "aws_wafv2_web_acl_association" => Some([
             ("web_acl_arn", "aws_wafv2_web_acl"),
@@ -174,7 +175,7 @@ pub(super) fn endpoint_type_matches(
     expected: &str,
     actual: &str,
 ) -> bool {
-    actual == expected
+    super::aliases::canonical(actual) == super::aliases::canonical(expected)
         || (resource == "aws_wafv2_web_acl_association"
             && attribute == "resource_arn"
             && actual == "aws_api_gateway_stage")
