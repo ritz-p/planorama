@@ -1,6 +1,7 @@
 use crate::{html, layout::Layout, plan, semantic, svg, view};
 mod budget;
 pub(crate) mod memory;
+pub(crate) mod progress;
 
 #[derive(Clone, Copy, Default, serde::Deserialize)]
 #[serde(rename_all = "kebab-case")]
@@ -79,6 +80,7 @@ pub fn generate(json: &str, options: &Options) -> Result<Generated, Error> {
 }
 
 async fn generate_step(json: &str, options: &Options) -> Result<Generated, Error> {
+    progress::report("parsing");
     if json.len() > MAX_INPUT_BYTES {
         return Err(Error::InputTooLarge);
     }
@@ -101,6 +103,7 @@ async fn generate_step(json: &str, options: &Options) -> Result<Generated, Error
     crate::work::check_limit(raw.nodes.len(), 256).await;
     crate::work::check_limit(raw.edges.len(), 1024).await;
     crate::work::checkpoint().await;
+    progress::report("selection");
     let diagnostics = semantic::diagnostics::collect(&raw)
         .into_iter()
         .map(|diagnostic| diagnostic.reason.description().to_owned())
@@ -112,8 +115,10 @@ async fn generate_step(json: &str, options: &Options) -> Result<Generated, Error
     crate::work::checkpoint().await;
     crate::work::check_limit(graph.nodes.len(), 256).await;
     crate::work::check_limit(graph.edges.len(), 1024).await;
+    progress::report("placement");
     let layout = Layout::new_step(&graph).await;
     crate::work::checkpoint().await;
+    progress::report("output");
     let content = render(
         &graph,
         &layout,

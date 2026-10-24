@@ -1,6 +1,54 @@
 use super::*;
 
 #[test]
+fn failed_generation_releases_progress_observer() {
+    use std::{cell::RefCell, rc::Rc};
+    let stages = Rc::new(RefCell::new(Vec::new()));
+    let captured = stages.clone();
+    assert_eq!(
+        progress::observe(
+            Rc::new(move |stage| captured.borrow_mut().push(stage)),
+            || generate("invalid", &Options::default()),
+        )
+        .err(),
+        Some(Error::InvalidJson)
+    );
+    assert_eq!(
+        generate("invalid", &Options::default()).err(),
+        Some(Error::InvalidJson)
+    );
+    assert_eq!(*stages.borrow(), ["parsing"]);
+    assert_eq!(Rc::strong_count(&stages), 1);
+}
+
+#[test]
+fn progress_observation_preserves_output_and_is_scoped() {
+    use std::{cell::RefCell, rc::Rc};
+    let stages = Rc::new(RefCell::new(Vec::new()));
+    let captured = stages.clone();
+    let json = include_str!("../fixtures/viewer-plan.json");
+    let options = Options::default();
+    let actual = progress::observe(
+        Rc::new(move |stage| captured.borrow_mut().push(stage)),
+        || generate(json, &options),
+    )
+    .unwrap();
+    let expected = generate(json, &options).unwrap();
+    assert_eq!(actual.content, expected.content);
+    assert_eq!(actual.diagnostics, expected.diagnostics);
+    let recorded = stages.borrow();
+    assert_eq!(recorded.first(), Some(&"parsing"));
+    assert_eq!(recorded.last(), Some(&"output"));
+    for stage in ["selection", "placement", "routing"] {
+        assert!(recorded.contains(&stage));
+    }
+    assert_eq!(
+        recorded.iter().filter(|&&stage| stage == "parsing").count(),
+        1
+    );
+}
+
+#[test]
 fn slices_preserve_svg_html_and_diagnostics() {
     for json in [
         include_str!("../fixtures/viewer-plan.json"),
