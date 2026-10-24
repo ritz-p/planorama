@@ -87,7 +87,7 @@ function settingsChanged() {
   element('settings-error').textContent = '';
   document.querySelectorAll('[aria-invalid]').forEach(input => {
     input.removeAttribute('aria-invalid');
-    input.setAttribute('aria-describedby', input.id === 'focus-depth' ? 'depth-help' : 'modules-help');
+    input.setAttribute('aria-describedby', settingHelp(input));
   });
   if (assets) element('status').textContent = 'Settings changed. Generate again to apply them.';
   renderInventory();
@@ -157,6 +157,8 @@ element('reset-settings').onclick = () => {
   element('address-format').value = 'qualified';
   element('icon-mode').value = 'icon';
   element('hide-legend').checked = false;
+  element('html-diagnostics').checked = false;
+  element('html-semantic-diagnostics').checked = false;
   element('focus').value = '';
   element('focus-depth').value = '';
   element('modules').replaceChildren();
@@ -169,9 +171,13 @@ element('reset-settings').onclick = () => {
   if (assets) element('status').textContent = 'Settings reset to defaults. Generate again; the selected file is retained.';
 };
 
+function settingHelp(input) {
+  return input.id.startsWith('html-') ? 'diagnostics-help' : input.id === 'focus-depth' ? 'depth-help' : 'modules-help';
+}
+
 function invalidSetting(input, message) {
   input.setAttribute('aria-invalid', 'true');
-  input.setAttribute('aria-describedby', input.id === 'focus-depth' ? 'depth-help settings-error' : 'modules-help settings-error');
+  input.setAttribute('aria-describedby', settingHelp(input) + ' settings-error');
   element('settings-error').textContent = message;
   input.focus();
 }
@@ -183,9 +189,15 @@ function snapshotOptions() {
     address_format: element('address-format').value,
     icon_mode: element('icon-mode').value,
     hide_relationship_legend: element('hide-legend').checked,
+    html_diagnostics: element('html-diagnostics').checked,
+    html_semantic_diagnostics: element('html-semantic-diagnostics').checked,
     modules: [],
     spatial_types: Array.from(element('spatial-types').querySelectorAll('input:checked'), input => input.value),
   };
+  if (options.format !== 'html' && (options.html_diagnostics || options.html_semantic_diagnostics)) {
+    invalidSetting(element(options.html_semantic_diagnostics ? 'html-semantic-diagnostics' : 'html-diagnostics'), 'HTML diagnostics require HTML output. Choose HTML or turn off both diagnostic options.');
+    return;
+  }
   if (element('focus').value !== '') {
     options.focus = element('focus').value;
     const depth = element('focus-depth');

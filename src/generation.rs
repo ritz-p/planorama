@@ -21,6 +21,8 @@ pub struct Options {
     pub address_format: svg::AddressFormat,
     pub icon_mode: crate::icons::IconMode,
     pub hide_relationship_legend: bool,
+    pub html_diagnostics: bool,
+    pub html_semantic_diagnostics: bool,
     pub changed_only: bool,
     pub focus: Option<String>,
     pub focus_depth: Option<usize>,
@@ -80,6 +82,11 @@ pub fn generate(json: &str, options: &Options) -> Result<Generated, Error> {
 }
 
 async fn generate_step(json: &str, options: &Options) -> Result<Generated, Error> {
+    if (options.html_diagnostics || options.html_semantic_diagnostics)
+        && !matches!(options.format, OutputFormat::Html)
+    {
+        return Err(Error::InvalidOptions);
+    }
     progress::report("parsing");
     if json.len() > MAX_INPUT_BYTES {
         return Err(Error::InputTooLarge);
@@ -91,6 +98,7 @@ async fn generate_step(json: &str, options: &Options) -> Result<Generated, Error
         depth: options.focus_depth,
         modules: options.modules.clone(),
         icon_mode: options.icon_mode,
+        html_semantic_diagnostics: options.html_semantic_diagnostics,
         ..Default::default()
     };
     filter.validate().map_err(|_| Error::InvalidOptions)?;
@@ -119,6 +127,7 @@ async fn generate_step(json: &str, options: &Options) -> Result<Generated, Error
     let layout = Layout::new_step(&graph).await;
     crate::work::checkpoint().await;
     progress::report("output");
+    let mut report = serde_json::Value::Null;
     let content = render(
         &graph,
         &layout,
@@ -127,8 +136,8 @@ async fn generate_step(json: &str, options: &Options) -> Result<Generated, Error
             address_format: options.address_format,
             hide_relationship_legend: options.hide_relationship_legend,
         },
-        None,
-        false,
+        options.html_diagnostics.then_some(&mut report),
+        options.html_diagnostics,
     );
     crate::work::check_limit(content.len(), MAX_BROWSER_OUTPUT_BYTES).await;
     Ok(Generated {

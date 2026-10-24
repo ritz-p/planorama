@@ -174,6 +174,11 @@ See [diagnostic approximations and limits](layout-diagnostics.md).
 
 ## Semantic diagnostics
 
+The [browser generator](browser.md) exposes **Semantic findings** and **Routing
+hotspots** for HTML output. Its `html_semantic_diagnostics` and `html_diagnostics`
+options use these same panels, limits and selected-resource navigation, with both
+disabled by default.
+
 Generate with `--format html --html-semantic-diagnostics` to embed selected-view
 semantic findings. Without the flag, no semantic record payload is included.
 `--diagnostics` continues to write its existing stderr output independently.
