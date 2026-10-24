@@ -51,6 +51,9 @@ async function main() {
       driver, small, run, status,
       native: (json, args) => execFileSync(binary, ['-', '-o', '-', ...args], {input: json, encoding: 'utf8', maxBuffer: 32 * 1024 * 1024}),
     });
+    require('./wasm-resources.cjs')({driver, run,
+      native: (json, args) => execFileSync(binary, ['-', '-o', '-', ...args], {input: json, encoding: 'utf8', maxBuffer: 32 * 1024 * 1024}),
+    });
     require('./wasm-options.cjs')({
       driver, small, run, submit, status,
       native: (json, args) => execFileSync(binary, ['-', '-o', '-', ...args], {input: json, encoding: 'utf8', maxBuffer: 32 * 1024 * 1024}),

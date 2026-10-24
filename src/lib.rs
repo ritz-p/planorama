@@ -29,9 +29,13 @@ mod work;
 mod artwork_free;
 mod generation;
 mod module_inventory;
+mod resource_inventory;
 pub use generation::{Error, Generated, Generator, Options, OutputFormat, generate};
 pub use icons::IconMode;
 pub use module_inventory::{ModuleInventoryEntry, inspect_modules};
+pub use resource_inventory::{
+    InputInventory, ResourceInventoryEntry, inspect_input, inspect_resources,
+};
 pub use svg::AddressFormat;
 
 #[cfg(not(target_arch = "wasm32"))]

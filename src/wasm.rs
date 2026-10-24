@@ -49,6 +49,18 @@ fn decode_options(options: &str) -> Result<crate::Options, JsValue> {
 }
 
 #[wasm_bindgen]
+pub fn inspect_input(json: &str) -> Result<String, JsValue> {
+    let result = crate::inspect_input(json).map_err(error)?;
+    serde_json::to_string(&result).map_err(|_| error(crate::Error::GenerationFailed))
+}
+
+#[wasm_bindgen]
+pub fn inspect_resources(json: &str) -> Result<String, JsValue> {
+    let result = crate::inspect_resources(json).map_err(error)?;
+    serde_json::to_string(&result).map_err(|_| error(crate::Error::GenerationFailed))
+}
+
+#[wasm_bindgen]
 pub fn inspect_modules(json: &str) -> Result<String, JsValue> {
     let result = crate::inspect_modules(json).map_err(error)?;
     serde_json::to_string(&result).map_err(|_| error(crate::Error::GenerationFailed))

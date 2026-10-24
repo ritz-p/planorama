@@ -15,7 +15,7 @@ fieldset label { display: block }
 input[type="text"] { width: min(95%, 40rem) }
 .module-row { display: flex; gap: .5rem; align-items: end; margin: .5rem 0 }
 .module-row label { flex: 1 }
-#module-inventory label { overflow-wrap: anywhere; margin: .5rem 0 }
+#module-inventory label, #resource-inventory label { overflow-wrap: anywhere; margin: .5rem 0 }
 #settings-help, #modules-help, #depth-help { margin: 0 }
 :focus-visible { outline: 3px solid #1769aa; outline-offset: 3px }
 </style>
@@ -37,6 +37,17 @@ input[type="text"] { width: min(95%, 40rem) }
       <div id="spatial-types"><!-- spatial-type-options --></div>
     </fieldset>
     <label>Focus resource address (optional) <input id="focus" type="text" autocomplete="off" spellcheck="false"></label>
+    <fieldset aria-describedby="resource-help inventory-status">
+      <legend>Find focus in original input</legend>
+      <p id="resource-help">Choose one exact address or edit focus above. Listed resources may be excluded by selection filters. Current and deposed objects sharing an address form one row; generation may reject an ambiguous address. Historical objects cannot be selected individually.</p>
+      <label>Search address, type or module <input id="resource-search" type="search" autocomplete="off"></label>
+      <button id="inspect-resources" type="button" disabled>Reload resource and module lists</button>
+      <button id="clear-focus" type="button">Clear focus</button>
+      <p id="resource-selection" role="status"></p>
+      <p id="resource-count" role="status"></p>
+      <div id="resource-inventory"></div>
+      <div><button id="resource-previous" type="button" disabled>Previous resources</button> <button id="resource-next" type="button" disabled>Next resources</button></div>
+    </fieldset>
     <label>Focus depth <input id="focus-depth" type="text" inputmode="numeric" autocomplete="off" placeholder="1" disabled aria-describedby="depth-help"></label>
     <p id="depth-help">Enabled only with a focus address. Empty uses depth 1; otherwise enter a nonnegative integer (0–4294967295). Clearing focus preserves this input but excludes it from generation.</p>
     <fieldset aria-describedby="modules-help">

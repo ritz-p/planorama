@@ -293,6 +293,18 @@ instances and configuration modules with no known instances have zero counts;
 configuration evidence does not prove an indexed instance exists. Inspection uses
 the same input limit and safe error contract as generation.
 
+`planorama::inspect_resources(json)` returns `Result<Vec<ResourceInventoryEntry>, Error>`;
+the Wasm export returns these rows as JSON. `inspect_input(json)` returns both
+`modules` and `resources` using one parse, and is used by the sample Worker.
+Neither API performs semantic projection, selection, layout or routing. Resource
+rows contain only `state`, `selector`, original `address`, `resource_type`, `module`,
+`mode` (`managed`/`data`), and `current`/`deposed` object counts. One row groups all
+objects sharing an exact focus address; it does not offer individual historical
+objects. Generation still rejects ambiguous focus according to shared selection
+rules. No attributes or deposed keys are returned. Single-plan `state` is null;
+future named-state inventory must group by state and address and return
+`STATE:ADDRESS` selectors. Consumers must pass `selector` unchanged.
+
 | Option | Values / default |
 | --- | --- |
 | `format` | `svg` (default), `html` |
@@ -317,7 +329,16 @@ Explicit depth must be decimal digits in the Wasm nonnegative integer range
 Clearing focus disables depth and omits it from requests, retaining the field
 value for when focus is entered again.
 
-Choosing a file automatically lists its modules. Search the original inventory and
+Choosing a file automatically lists resources and modules. The focus picker searches
+address, type, module, mode and state, showing total matches and a range of up to
+50 addresses. Tab/Space selects one address and synchronizes the manual focus field;
+selecting another replaces it. Uncheck or **Clear focus** to clear it. Search and
+pagination retain the exact selected string, including indexed-key whitespace,
+quotes, commas and backslashes. Manual selectors absent from the list are retained
+for generation validation. Presence in the original input does not guarantee
+rendering after modules, changed-only, depth and context closure are applied.
+
+Search the original module inventory and
 use **Previous modules** / **Next modules** to browse 50 rows at a time. Checkboxes
 support Tab and Space; root is disabled. Selection and the selected-selector count
 survive searching and pagination. Picking an entry adds a selector row; unchecking
@@ -341,11 +362,13 @@ labelled checkboxes from `src/view/purpose.rs`'s `TYPES` definition using
 Each checkbox supports keyboard focus and Space to toggle.
 
 **Reset settings** restores every option, clears spatial selections, removes module rows and clears depth,
-while retaining the selected file and any completed module inventory. It also
-clears module search, cancels pending work and clears results. Replacing the file
-clears all module selectors, search and the old inventory before reading its list;
-other settings are retained. **Reload module list** retries inspection after
-cancellation or failure without clearing selectors. Changing generation settings
+while retaining the selected file and completed inventories. It also clears focus
+and both searches, cancels pending work and clears results. Replacing the file
+clears focus, module selectors, both searches and old inventories before reading;
+other settings (including the depth field) are retained. Either reload-list button
+retries both inventories after cancellation or failure without clearing selectors.
+Cancellation and read/Worker failures retain completed lists; reported input
+errors clear the lists. Both preserve manual selectors. Changing generation settings
 cancels pending inspection; search and pagination do not. Stale reads and Worker
 completions cannot replace a newer list. Completed inventory remains unfiltered.
 State JSON, plan event streams, multiple states, saved binary plans, Terraform
@@ -362,7 +385,7 @@ result indicates completion. Elapsed seconds use the page's monotonic clock,
 starting before file reading, and stop on completion, failure or cancellation.
 Only stage changes are announced to screen readers. Cancel terminates the Worker;
 settings changes, file replacement and retry invalidate its notifications and timer.
-Module inspection has its own status and does not report generation progress.
+Module and resource inspection share a status and do not report generation progress.
 
 The optional synchronous Wasm `generate_with_progress(json, options, callback)`
 uses the same pipeline and limits as `generate`. The callback receives only a
@@ -425,7 +448,9 @@ output equality (including identity, action, relationships and geometry), covers
 SVG/HTML downloads, selections, invalid input/options, markup-bearing addresses,
 all UI defaults/changes/reset, empty/single/multiple spatial selections, focus/depth validation, special-character module
 rows and duplicates, native/Wasm inventory counts, root/empty/configuration rows,
-data/deposed objects, search/pagination and selection retention, keyboard focus,
+data/deposed objects, resource-picker/manual/native focus parity, ambiguous and
+non-rendered addresses, inspection without generation stages, search/pagination
+and selection retention, keyboard focus,
 safe error announcements, settings changes
 during file reads and Worker execution, stale completions, repeated generation,
 cancellation/retry, sandbox isolation and empty browser

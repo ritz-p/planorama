@@ -9,7 +9,7 @@ self.onmessage = ({data}) => {
       self.postMessage({type: 'progress', request: data.request, stage});
     };
     const result = data.operation === 'inspect'
-      ? {modules: JSON.parse(wasm_bindgen.inspect_modules(data.json))}
+      ? JSON.parse(wasm_bindgen.inspect_input(data.json))
       : JSON.parse(wasm_bindgen.generate_with_progress(data.json, JSON.stringify(data.options), progress));
     self.postMessage({ok: true, ...result, elapsed_ms: performance.now() - started, memory_bytes: wasm.memory.buffer.byteLength});
   } catch (error) {
