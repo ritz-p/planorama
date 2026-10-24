@@ -1,7 +1,7 @@
 use crate::model::{EntityMode, TerraformEntity, architecture::DeploymentScope};
 
 pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentScope> {
-    let resource = entity.resource_type.as_str();
+    let resource = crate::provider::aws::aliases::entity_type(entity);
     let basic = (entity.mode == EntityMode::Managed
         && super::classification::classify(resource) == crate::model::ResourceRole::Unknown)
         .then(|| super::basic::get(resource))

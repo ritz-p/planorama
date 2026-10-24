@@ -4,7 +4,7 @@ pub(crate) fn owner_affinities(graph: &Graph) -> Vec<(usize, usize)> {
     let eligible = |index: usize, kind: &str| {
         let node = &graph.nodes[index];
         node.provider.is_aws()
-            && node.resource_type == kind
+            && super::aliases::node_type(node) == kind
             && node.mode == EntityMode::Managed
             && node.deposed_key.is_none()
             && graph

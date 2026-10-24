@@ -71,6 +71,16 @@ async function main() {
       assert.equal(result.content, native, `Native/Wasm exact parity: ${JSON.stringify(options)}`);
       console.log(JSON.stringify({fixture: 'viewer-plan', options, elapsed_ms: result.elapsed_ms, memory_bytes: result.memory_bytes, output_bytes: Buffer.byteLength(result.content)}));
     }
+    const aliases = readFileSync(join(root, 'tests/fixtures/aws-aliases-plan.json'), 'utf8');
+    for (const format of ['svg', 'html']) {
+      for (const icon_mode of ['icon', 'service-name']) {
+        const result = run(aliases, {format, icon_mode});
+        assert.equal(result.ok, true, JSON.stringify(result));
+        const native = execFileSync(binary, ['-', '-o', '-', '--format', format, '--icon-mode', icon_mode], {input: aliases, encoding: 'utf8', maxBuffer: 32 * 1024 * 1024});
+        assert.equal(result.content, native, `AWS aliases native/Wasm ${format}/${icon_mode}`);
+        assert.ok(result.content.includes('aws_alb.web'));
+      }
+    }
     for (const [json, options, code] of [
       ['secret{', {}, 'invalid_json'],
       ['{"format_version":"secret"}', {}, 'unsupported_input'],

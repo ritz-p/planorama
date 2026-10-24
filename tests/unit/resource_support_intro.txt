@@ -8,7 +8,8 @@ The AWS managed baseline covers all 1,742 resource types in Provider 6.70.0,
 cross-checked against its schema, registration code and versioned resource docs.
 The table also includes implementation types outside that baseline. Both mode
 columns describe input behavior; the baseline notes identify real data sources.
-New basic capabilities apply to managed resources; existing data behavior is retained. Omitted data sources retain
+Basic table entries apply to managed resources; verified aliases share only their
+documented managed/data capabilities. Omitted data sources retain
 reference provenance but have no card or incident path. Icon coverage alone does
 not imply dedicated relationship support. The baseline notes distinguish basic
 display from existing rules and identify neutral artwork and unknown-scope fallbacks.
@@ -31,7 +32,8 @@ independent, including for unknown-region types. See the canonical
 [provider configuration/account contract](provider-evidence.md) and
 [deployment-scope rules](aws.md#deployment-scopes).
 
-The last column links implementation files containing the exact type literal;
+The last column links implementation files containing the exact type literal
+(the canonical literal for [verified aliases](aws-inventory.md#verified-resource-aliases));
 these are navigation aids to conditional rules, not a promise that a given input
 creates an edge. A type can occur as an endpoint, a condition or an exclusion.
 The entry file `aws.rs` also defines logical placement and reference labels.

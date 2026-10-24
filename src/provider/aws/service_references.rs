@@ -10,6 +10,7 @@ use serde_json::Value;
 pub(super) mod tests;
 
 fn label(resource: &str, attribute: &str) -> Option<&'static str> {
+    let resource = super::aliases::canonical(resource);
     if let Some(label) = super::s3::label(resource, attribute) {
         return Some(label);
     }
@@ -366,9 +367,9 @@ pub(crate) fn annotate(
             continue;
         }
         let fields = source_fields(
-            &node.resource_type,
+            super::aliases::entity_type(node),
             &reference.attribute,
-            &endpoint.resource_type,
+            super::aliases::entity_type(endpoint),
         );
         let (value, unknown) = evidence[reference.target];
         let (target, target_unknown) = evidence[*source];
@@ -434,14 +435,14 @@ pub(crate) fn annotate(
         }
         if node.resource_type == "aws_cloudfront_distribution"
             && reference.attribute == "origin.domain_name"
-            && endpoint.resource_type == "aws_lb"
+            && super::aliases::entity_type(endpoint) == "aws_lb"
         {
             reference.service_reference_verified &=
                 scalar(target, target_unknown, &["load_balancer_type"]) == Some("application");
         }
         if reference.service_reference_verified
             && reference.attribute == "alias.name"
-            && endpoint.resource_type == "aws_lb"
+            && super::aliases::entity_type(endpoint) == "aws_lb"
         {
             reference.service_reference_verified = matches!(
                 scalar(target, target_unknown, &["load_balancer_type"]),

@@ -1,0 +1,391 @@
+{
+  "format_version": "1.2",
+  "resource_changes": [
+    {
+      "address": "aws_vpc.network",
+      "type": "aws_vpc",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "vpc-example"
+        }
+      }
+    },
+    {
+      "address": "aws_subnet.public",
+      "type": "aws_subnet",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "subnet-example"
+        }
+      }
+    },
+    {
+      "address": "aws_security_group.web",
+      "type": "aws_security_group",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "sg-example"
+        }
+      }
+    },
+    {
+      "address": "aws_alb.web",
+      "type": "aws_alb",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "lb-example",
+          "subnets": [
+            "subnet-example"
+          ],
+          "security_groups": [
+            "sg-example"
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_lb.separate",
+      "type": "aws_lb",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "lb-other",
+          "subnets": [
+            "subnet-example"
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_alb_listener.https",
+      "type": "aws_alb_listener",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "listener-example",
+          "load_balancer_arn": "lb-example",
+          "default_action": [
+            {
+              "target_group_arn": "group-example"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_alb_listener_rule.app",
+      "type": "aws_alb_listener_rule",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "listener_arn": "listener-example",
+          "action": [
+            {
+              "target_group_arn": "group-example"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_lb_target_group.app",
+      "type": "aws_lb_target_group",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "group-example",
+          "vpc_id": "vpc-example"
+        }
+      }
+    },
+    {
+      "address": "aws_alb_target_group.separate",
+      "type": "aws_alb_target_group",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "group-other",
+          "vpc_id": "vpc-example"
+        }
+      }
+    },
+    {
+      "address": "aws_instance.app",
+      "type": "aws_instance",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "instance-example",
+          "subnet_id": "subnet-example"
+        }
+      }
+    },
+    {
+      "address": "aws_alb_target_group_attachment.app",
+      "type": "aws_alb_target_group_attachment",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "target_group_arn": "group-example",
+          "target_id": "instance-example"
+        }
+      }
+    },
+    {
+      "address": "aws_alb_listener_certificate.extra",
+      "type": "aws_alb_listener_certificate",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "listener_arn": "listener-example"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_vpc.network",
+          "type": "aws_vpc",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_subnet.public",
+          "type": "aws_subnet",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.network.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_security_group.web",
+          "type": "aws_security_group",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.network.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_alb.web",
+          "type": "aws_alb",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "subnets": {
+              "references": [
+                "aws_subnet.public.id"
+              ]
+            },
+            "security_groups": {
+              "references": [
+                "aws_security_group.web.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_lb.separate",
+          "type": "aws_lb",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "subnets": {
+              "references": [
+                "aws_subnet.public.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_alb_listener.https",
+          "type": "aws_alb_listener",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "load_balancer_arn": {
+              "references": [
+                "aws_alb.web.arn"
+              ]
+            },
+            "default_action": [
+              {
+                "target_group_arn": {
+                  "references": [
+                    "aws_lb_target_group.app.arn"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_alb_listener_rule.app",
+          "type": "aws_alb_listener_rule",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "listener_arn": {
+              "references": [
+                "aws_alb_listener.https.arn"
+              ]
+            },
+            "action": [
+              {
+                "target_group_arn": {
+                  "references": [
+                    "aws_lb_target_group.app.arn"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_lb_target_group.app",
+          "type": "aws_lb_target_group",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.network.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_alb_target_group.separate",
+          "type": "aws_alb_target_group",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.network.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_instance.app",
+          "type": "aws_instance",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "subnet_id": {
+              "references": [
+                "aws_subnet.public.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_alb_target_group_attachment.app",
+          "type": "aws_alb_target_group_attachment",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "target_group_arn": {
+              "references": [
+                "aws_lb_target_group.app.arn"
+              ]
+            },
+            "target_id": {
+              "references": [
+                "aws_instance.app.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_alb_listener_certificate.extra",
+          "type": "aws_alb_listener_certificate",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "listener_arn": {
+              "references": [
+                "aws_alb_listener.https.arn"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}
