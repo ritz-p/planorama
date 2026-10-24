@@ -31,6 +31,12 @@ input[type="text"] { width: min(95%, 40rem) }
     <label>Address format <select id="address-format"><option value="qualified">Qualified</option><option value="terraform">Terraform</option></select></label>
     <label>Icons <select id="icon-mode"><option value="icon">Icons</option><option value="service-name">Service names</option></select></label>
     <label><input id="hide-legend" type="checkbox"> Hide relationship legend</label>
+    <fieldset aria-describedby="diagnostics-help">
+      <legend>HTML diagnostics (optional)</legend>
+      <label><input id="html-semantic-diagnostics" type="checkbox" aria-describedby="diagnostics-help"> Semantic findings</label>
+      <label><input id="html-diagnostics" type="checkbox" aria-describedby="diagnostics-help"> Routing hotspots</label>
+      <p id="diagnostics-help">Requires HTML output. Both are off by default. Separate panels show unresolved relationships and final geometry findings for the selected view. Findings are bounded; panels distinguish unavailable collection, zero findings, incomplete input and omitted entries. This is not a complete analysis: cross-state mapping diagnostics and provider evidence are unsupported.</p>
+    </fieldset>
     <fieldset aria-describedby="spatial-help">
       <legend>Spatial resource types (optional)</legend>
       <p id="spatial-help">Show selected resource types in the spatial diagram. With none selected, these resources remain Logical. Reference details are retained.</p>

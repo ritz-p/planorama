@@ -311,6 +311,8 @@ future named-state inventory must group by state and address and return
 | `address_format` | `qualified` (default), `terraform` |
 | `icon_mode` | `icon` (normal build default), `service-name` (standalone engine default and only supported mode) |
 | `hide_relationship_legend` | Boolean, false |
+| `html_semantic_diagnostics` | Boolean, false; requires `format: "html"` |
+| `html_diagnostics` | Boolean, false; requires `format: "html"` |
 | `changed_only` | Boolean, false |
 | `focus` | Resource address or null |
 | `focus_depth` | Nonnegative integer; requires focus; default neighbor depth 1 |
@@ -318,8 +320,28 @@ future named-state inventory must group by state and address and return
 | `spatial_types` | Array of the seven [allowed AWS types](configuration.md#explicit-spatial-types), default empty |
 
 Unknown keys, invalid enum values and invalid combinations fail explicitly.
+Both diagnostic options reject SVG with `invalid_options`; the form explains
+the conflict and focuses the enabled diagnostic checkbox. Switching formats
+retains checkbox values. Reset clears both.
 The UI exposes all rows above with the same defaults. Generation settings remain
 visible and use the existing API decoder and selection rules.
+
+**Semantic findings** and **Routing hotspots** independently enable the existing
+[HTML viewer panels](viewer.md#routing-hotspots). Rust `Options` and Wasm JSON
+use the names above; CLI equivalents are `--html-semantic-diagnostics` and
+`--html-diagnostics`. The default output embeds neither diagnostic payload.
+Semantic findings describe supported rules for the selected resources; geometry
+findings describe final layout and routes. Navigation uses the selected view's
+resource index. Unavailable targets remain explanatory text.
+
+These reuse the native collectors and bounded bridges: semantic records are
+limited to 1,000 and 256 KiB, routing groups to 200. Panels distinguish
+uncollected diagnostics from collected zero findings, report omitted entries and
+incomplete analysis/input (including unknown input completeness). Cross-state
+mapping diagnostics and provider evidence are unsupported; this is not complete
+analysis. Only existing identifiers and fixed explanations are embedded, without
+raw attribute values, expressions, provider settings or the plan body. Diagnostic
+settings share snapshot, reset, cancellation and offline sandbox preview behavior.
 
 Choose the output, address format and icon mode, and optionally hide the
 relationship legend or enable changed-only. Enter a focus resource address to
@@ -373,7 +395,7 @@ cancels pending inspection; search and pagination do not. Stale reads and Worker
 completions cannot replace a newer list. Completed inventory remains unfiltered.
 State JSON, plan event streams, multiple states, saved binary plans, Terraform
 execution, provider evidence, config/preset files, coverage/layout
-report files and opt-in HTML diagnostic panels are unsupported in this API.
+report files are unsupported in this API.
 
 ## Privacy and lifecycle
 

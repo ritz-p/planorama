@@ -13,7 +13,7 @@ module.exports = function checkOptions({driver, small, run, submit, status, nati
   `, id, value);
   const reset = () => find('#reset-settings').click();
   const options = () => driver.execute_script('return snapshotOptions()');
-  const defaults = {format: 'svg', changed_only: false, address_format: 'qualified', icon_mode: 'icon', hide_relationship_legend: false, modules: [], spatial_types: []};
+  const defaults = {format: 'svg', changed_only: false, address_format: 'qualified', icon_mode: 'icon', hide_relationship_legend: false, html_diagnostics: false, html_semantic_diagnostics: false, modules: [], spatial_types: []};
   assert.deepEqual(options(), defaults);
   assert.equal(find('#focus-depth').is_enabled(), false);
   assert.equal(find('#settings-error').get_attribute('role'), 'alert');
@@ -62,6 +62,63 @@ module.exports = function checkOptions({driver, small, run, submit, status, nati
     assert.equal(content, run(json, expected).content, 'UI/Wasm exact parity');
   };
   const types = ['aws_ssm_parameter', 'aws_cloudwatch_metric_alarm', 'aws_iam_role', 'aws_iam_user', 'aws_iam_group', 'aws_iam_openid_connect_provider', 'aws_iam_saml_provider'];
+  for (const flags of [['html-semantic-diagnostics'], ['html-diagnostics'], ['html-semantic-diagnostics', 'html-diagnostics']]) {
+    reset();
+    for (const flag of flags) {
+      assert.ok(find('#' + flag).accessible_name);
+      find('#' + flag).send_keys(Keys.SPACE);
+    }
+    submit(small, 'svg');
+    assert.match(find('#settings-error').text, /require HTML output/);
+    assert.equal(driver.execute_script('return document.activeElement.id'), flags[0]);
+    for (const flag of flags) assert.equal(run(small, {[flag.replaceAll('-', '_')]: true}).error.code, 'invalid_options');
+    const enabled = Object.fromEntries(flags.map(flag => [flag.replaceAll('-', '_'), true]));
+    generate(small, {...defaults, format: 'html', ...enabled}, ['--format', 'html', ...flags.map(flag => '--' + flag)]);
+    driver.command('POST', '/frame', {id: find('#preview')});
+    wait(() => driver.execute_script('return !!document.getElementById("semantic-toggle")'), 'diagnostic preview');
+    assert.equal(find('#semantic-toggle').is_enabled(), flags.includes('html-semantic-diagnostics'));
+    assert.equal(find('#hotspot-toggle').is_enabled(), flags.includes('html-diagnostics'));
+    if (flags.includes('html-semantic-diagnostics')) {
+      find('#semantic-toggle').click();
+      find('#semantic-search').send_keys('aws_ecs_task_definition.app');
+      find('#semantic-list button').click();
+      assert.equal(find('[data-viewer-selected]').get_attribute('data-terraform-address'), 'aws_ecs_task_definition.app');
+    }
+    assert.equal(driver.execute_script('try { parent.document.body; return true; } catch { return false; }'), false);
+    driver.command('POST', '/frame', {id: null});
+  }
+  reset();
+  assert.deepEqual(options(), defaults);
+  const payload = (html, id) => {
+    const marker = `<script id="${id}" type="application/json">`;
+    const start = html.indexOf(marker);
+    return start < 0 ? null : JSON.parse(html.slice(start + marker.length, html.indexOf('</script>', start)));
+  };
+  const diagnosticOptions = {format: 'html', html_semantic_diagnostics: true, html_diagnostics: true};
+  const empty = JSON.stringify({format_version: '1.2', complete: true, resource_changes: []});
+  const emptyResult = run(empty, diagnosticOptions);
+  assert.equal(emptyResult.ok, true);
+  assert.equal(payload(emptyResult.content, 'viewer-semantic-diagnostics').total, 0);
+  assert.equal(payload(emptyResult.content, 'viewer-semantic-diagnostics').available, true);
+  assert.equal(payload(emptyResult.content, 'viewer-diagnostics').total, 0);
+  const crowded = JSON.stringify({format_version: '1.2', complete: false,
+    resource_changes: [{address: 'terraform_data.one', type: 'terraform_data', change: {actions: ['create'], after: {input: 'PRIVATE_ATTRIBUTE'}}}],
+    configuration: {root_module: {resources: [{address: 'terraform_data.one', expressions: Object.fromEntries(
+      Array.from({length: 1100}, (_, i) => [`field_${i}`, {references: ['terraform_data.missing.id'], constant_value: 'PRIVATE_EXPRESSION'}]))}]}},
+  });
+  const bounded = run(crowded, diagnosticOptions);
+  assert.equal(bounded.ok, true);
+  assert.equal(bounded.content, native(crowded, ['--format', 'html', '--html-diagnostics', '--html-semantic-diagnostics']));
+  const findings = payload(bounded.content, 'viewer-semantic-diagnostics');
+  assert.equal(findings.input_complete, false);
+  assert.ok(findings.omitted > 0);
+  assert.equal(findings.records_complete, false);
+  assert.ok(findings.records.length <= 1000);
+  assert.ok(!bounded.content.includes('PRIVATE_'));
+  const selected = run(small, {...diagnosticOptions, focus: 'aws_ecs_task_definition.app', focus_depth: 0});
+  assert.equal(selected.ok, true);
+  assert.equal(selected.content, native(small, ['--format', 'html', '--html-diagnostics', '--html-semantic-diagnostics', '--focus', 'aws_ecs_task_definition.app', '--focus-depth', '0']));
+  assert.ok(payload(selected.content, 'viewer-semantic-diagnostics').records.every(record => record.address === 'aws_ecs_task_definition.app'));
   assert.deepEqual(driver.execute_script('return Array.from(document.querySelectorAll("#spatial-types input"), input => input.value)'), types);
   for (const type of types) {
     const checkbox = find('#spatial-' + type);
@@ -195,7 +252,7 @@ module.exports = function checkOptions({driver, small, run, submit, status, nati
   `);
   submit(small, 'svg');
   driver.execute_script(`
-    document.getElementById('spatial-aws_iam_role').checked = true;
+    document.getElementById('html-semantic-diagnostics').checked = true;
     finishRead();
   `);
   wait(() => status().startsWith('Generated in'), 'snapshot taken before file read');
@@ -203,7 +260,7 @@ module.exports = function checkOptions({driver, small, run, submit, status, nati
   reset();
   const requestCount = driver.execute_script('return uiRequests.length');
   submit(small, 'svg');
-  set('spatial-aws_iam_role', true);
+  set('html-diagnostics', true);
   driver.execute_script('finishRead();');
   assert.equal(driver.execute_script('return uiRequests.length'), requestCount, 'Settings invalidate pending file reads');
   assert.equal(driver.execute_script("return document.getElementById('download').hidden"), true);
