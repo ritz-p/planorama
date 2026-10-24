@@ -42,6 +42,8 @@ or alias matches, external keys, unresolved expressions and sensitive key fields
 do not create managed-key links. Deleted/deposed summaries read `before` values
 and masks only; current configuration cannot supply their key links or bucket owner.
 Data summaries describe observed plan values without changing managed/data identity.
+Unchanged cached data resources recovered only from prior state use those prior
+values and their sensitive masks; present planned values take precedence.
 State-qualified identities and shared coverage accounting are preserved.
 
 The [icon SVG](../examples/encryption.svg),

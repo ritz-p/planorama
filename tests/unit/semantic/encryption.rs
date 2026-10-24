@@ -323,3 +323,33 @@ fn planned_values_masks_and_provider_dispatch_are_preserved() {
         assert_eq!(parsed.nodes[0].encryption, expected);
     }
 }
+
+#[test]
+fn cached_data_encryption_uses_prior_values_and_their_sensitive_masks() {
+    for (encrypted, sensitive, expected) in [
+        (true, json!({}), ENABLED),
+        (false, json!({}), DISABLED),
+        (true, json!({"storage_encrypted":true}), UNKNOWN),
+        (false, json!(true), UNKNOWN),
+    ] {
+        let mut input = json!({
+            "format_version":"1.2",
+            "planned_values":{"root_module":{}},
+            "prior_state":{"values":{"root_module":{"resources":[{
+                "address":"data.aws_db_instance.cached", "type":"aws_db_instance", "mode":"data",
+                "provider_name":"registry.terraform.io/hashicorp/aws",
+                "values":{"storage_encrypted":encrypted}, "sensitive_values":sensitive
+            }]}}},
+            "configuration":{"root_module":{"resources":[{"address":"data.aws_db_instance.cached"}]}}
+        });
+        let parsed = crate::plan::parse(&input.to_string()).unwrap();
+        assert_eq!(parsed.nodes.len(), 1);
+        assert_eq!(parsed.nodes[0].encryption, Some(expected));
+        assert_eq!(parsed.nodes[0].mode, EntityMode::Data);
+        input["planned_values"]["root_module"]["resources"] = json!([{
+            "address":"data.aws_db_instance.cached", "type":"aws_db_instance", "mode":"data", "values":{}
+        }]);
+        let parsed = crate::plan::parse(&input.to_string()).unwrap();
+        assert_eq!(parsed.nodes[0].encryption, Some(UNKNOWN));
+    }
+}

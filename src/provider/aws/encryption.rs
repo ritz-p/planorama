@@ -155,6 +155,11 @@ pub(crate) fn enrich(
             } else {
                 let resource = if historical { &prior } else { &planned }
                     .get(node.address.as_str())
+                    .or_else(|| {
+                        (node.mode == EntityMode::Data)
+                            .then(|| prior.get(node.address.as_str()))
+                            .flatten()
+                    })
                     .copied()
                     .unwrap_or(&Value::Null);
                 (
