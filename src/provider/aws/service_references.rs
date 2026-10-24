@@ -9,7 +9,7 @@ use serde_json::Value;
 #[path = "../../../tests/unit/semantic/service_references.rs"]
 pub(super) mod tests;
 
-fn label(resource: &str, attribute: &str) -> Option<&'static str> {
+pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
     let resource = super::aliases::canonical(resource);
     if let Some(label) = super::s3::label(resource, attribute) {
         return Some(label);

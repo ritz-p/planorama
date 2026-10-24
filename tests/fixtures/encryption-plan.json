@@ -1,0 +1,289 @@
+{
+  "format_version": "1.2",
+  "resource_changes": [
+    {
+      "address": "aws_kms_key.data",
+      "type": "aws_kms_key",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "key-fixture",
+          "key_id": "key-fixture",
+          "arn": "arn:aws:kms:us-east-1:123456789012:key/fixture"
+        }
+      }
+    },
+    {
+      "address": "aws_kms_alias.data",
+      "type": "aws_kms_alias",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "target_key_id": "key-fixture"
+        }
+      }
+    },
+    {
+      "address": "aws_sqs_queue.jobs",
+      "type": "aws_sqs_queue",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "kms_master_key_id": "arn:aws:kms:us-east-1:123456789012:key/fixture"
+        }
+      }
+    },
+    {
+      "address": "aws_db_instance.data",
+      "type": "aws_db_instance",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "kms_key_id": "arn:aws:kms:us-east-1:123456789012:key/fixture",
+          "storage_encrypted": true
+        }
+      }
+    },
+    {
+      "address": "aws_rds_cluster.data",
+      "type": "aws_rds_cluster",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "kms_key_id": "arn:aws:kms:us-east-1:123456789012:key/fixture",
+          "storage_encrypted": false
+        }
+      }
+    },
+    {
+      "address": "aws_s3_bucket.data",
+      "type": "aws_s3_bucket",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "bucket-fixture"
+        }
+      }
+    },
+    {
+      "address": "aws_s3_bucket_server_side_encryption_configuration.data",
+      "type": "aws_s3_bucket_server_side_encryption_configuration",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "bucket": "bucket-fixture",
+          "rule": [
+            {
+              "apply_server_side_encryption_by_default": [
+                {
+                  "kms_master_key_id": "arn:aws:kms:us-east-1:123456789012:key/fixture",
+                  "sse_algorithm": "aws:kms"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_sqs_queue.service_managed",
+      "type": "aws_sqs_queue",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "sqs_managed_sse_enabled": true,
+          "kms_master_key_id": null
+        },
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "aws_sqs_queue.disabled",
+      "type": "aws_sqs_queue",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "sqs_managed_sse_enabled": false,
+          "kms_master_key_id": null
+        },
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "aws_sqs_queue.external_key_with_a_long_resource_address_for_wrapping",
+      "type": "aws_sqs_queue",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "kms_master_key_id": "alias/external-fixture"
+        },
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "aws_sqs_queue.unknown",
+      "type": "aws_sqs_queue",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {},
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "aws_sqs_queue.sensitive",
+      "type": "aws_sqs_queue",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "kms_master_key_id": "PRIVATE_ENCRYPTION_KEY"
+        },
+        "after_sensitive": {
+          "kms_master_key_id": true
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_kms_key.data",
+          "provider_config_key": "aws"
+        },
+        {
+          "address": "aws_kms_alias.data",
+          "provider_config_key": "aws",
+          "expressions": {
+            "target_key_id": {
+              "references": [
+                "aws_kms_key.data.key_id",
+                "aws_kms_key.data"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_sqs_queue.jobs",
+          "provider_config_key": "aws",
+          "expressions": {
+            "kms_master_key_id": {
+              "references": [
+                "aws_kms_key.data.arn",
+                "aws_kms_key.data"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_db_instance.data",
+          "provider_config_key": "aws",
+          "expressions": {
+            "kms_key_id": {
+              "references": [
+                "aws_kms_key.data.arn",
+                "aws_kms_key.data"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_rds_cluster.data",
+          "provider_config_key": "aws",
+          "expressions": {
+            "kms_key_id": {
+              "references": [
+                "aws_kms_key.data.arn",
+                "aws_kms_key.data"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_s3_bucket.data",
+          "provider_config_key": "aws"
+        },
+        {
+          "address": "aws_s3_bucket_server_side_encryption_configuration.data",
+          "provider_config_key": "aws",
+          "expressions": {
+            "bucket": {
+              "references": [
+                "aws_s3_bucket.data.id",
+                "aws_s3_bucket.data"
+              ]
+            },
+            "rule": [
+              {
+                "apply_server_side_encryption_by_default": [
+                  {
+                    "kms_master_key_id": {
+                      "references": [
+                        "aws_kms_key.data.arn",
+                        "aws_kms_key.data"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_sqs_queue.service_managed",
+          "provider_config_key": "aws"
+        },
+        {
+          "address": "aws_sqs_queue.disabled",
+          "provider_config_key": "aws"
+        },
+        {
+          "address": "aws_sqs_queue.external_key_with_a_long_resource_address_for_wrapping",
+          "provider_config_key": "aws"
+        },
+        {
+          "address": "aws_sqs_queue.unknown",
+          "provider_config_key": "aws"
+        },
+        {
+          "address": "aws_sqs_queue.sensitive",
+          "provider_config_key": "aws"
+        }
+      ]
+    }
+  }
+}

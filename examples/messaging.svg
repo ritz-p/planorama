@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="1190" viewBox="0 0 1100 1190" role="img" aria-labelledby="title description">
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="1274" viewBox="0 0 1100 1274" role="img" aria-labelledby="title description">
 <title id="title">Terraform plan</title>
 <desc id="description">3 resources, 1 reference edges. Arrows point from dependencies to dependent resources. References are conservative, not Terraform execution order. Thin solid: dependency. Dashed: association. Thick dotted: connection. Nested boxes: containment. Edge color preserves the Terraform action when available.</desc>
 <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/></marker><metadata id="planorama-icons-license">AWS Architecture Icons, release 07312026.
@@ -32,7 +32,7 @@ No AWS endorsement is implied. Consult the AWS terms for other uses.
 <text x="40" y="73" font-size="13" fill="#475569">3 resources · 1 reference edges · dependency → dependent</text>
 <metadata id="architecture-entities">[{&quot;id&quot;:&quot;terraform:6177735f736e735f746f7069632e6576656e7473-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_sns_topic.events&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:6177735f7371735f71756575652e6a6f6273-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_sqs_queue.jobs&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:646174612e6177735f7371735f71756575652e61726368697665-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;data.aws_sqs_queue.archive&quot;,&quot;deposed_key&quot;:null}]}]</metadata>
 <metadata id="architecture-relationships">[{&quot;directionality&quot;:&quot;directed&quot;,&quot;from&quot;:&quot;terraform:6177735f736e735f746f7069632e6576656e7473-current&quot;,&quot;inferred&quot;:false,&quot;kind&quot;:&quot;dependency&quot;,&quot;provenance&quot;:[{&quot;from&quot;:&quot;aws_sns_topic.events&quot;,&quot;from_deposed_key&quot;:null,&quot;kind&quot;:&quot;reference&quot;,&quot;to&quot;:&quot;aws_sqs_queue.jobs&quot;,&quot;to_deposed_key&quot;:null}],&quot;to&quot;:&quot;terraform:6177735f7371735f71756575652e6a6f6273-current&quot;}]</metadata>
-<metadata id="resource-references">[{&quot;attribute&quot;:&quot;depends_on&quot;,&quot;complete&quot;:true,&quot;consumer&quot;:&quot;terraform:6177735f7371735f71756575652e6a6f6273-current&quot;,&quot;dependency&quot;:true,&quot;issues&quot;:[],&quot;kind&quot;:&quot;configured&quot;,&quot;targets&quot;:[{&quot;address&quot;:&quot;aws_sns_topic.events&quot;,&quot;deposed_key&quot;:null}]}]</metadata>
+<metadata id="resource-references">[{&quot;attribute&quot;:&quot;depends_on&quot;,&quot;complete&quot;:true,&quot;consumer&quot;:&quot;terraform:6177735f7371735f71756575652e6a6f6273-current&quot;,&quot;dependency&quot;:true,&quot;issues&quot;:[],&quot;kind&quot;:&quot;configured&quot;,&quot;targets&quot;:[{&quot;address&quot;:&quot;aws_sns_topic.events&quot;,&quot;deposed_key&quot;:null}]},{&quot;attribute&quot;:&quot;at_rest_encryption&quot;,&quot;complete&quot;:true,&quot;consumer&quot;:&quot;terraform:6177735f7371735f71756575652e6a6f6273-current&quot;,&quot;dependency&quot;:false,&quot;issues&quot;:[],&quot;kind&quot;:&quot;information&quot;,&quot;targets&quot;:[]},{&quot;attribute&quot;:&quot;at_rest_encryption&quot;,&quot;complete&quot;:true,&quot;consumer&quot;:&quot;terraform:646174612e6177735f7371735f71756575652e61726368697665-current&quot;,&quot;dependency&quot;:false,&quot;issues&quot;:[],&quot;kind&quot;:&quot;information&quot;,&quot;targets&quot;:[]}]</metadata>
 <rect x="40" y="100" width="12" height="12" fill="#ecfdf5" stroke="#047857"/><text x="59" y="111" font-size="12" fill="#047857">create (1)</text>
 <rect x="180" y="100" width="12" height="12" fill="#eff6ff" stroke="#1d4ed8"/><text x="199" y="111" font-size="12" fill="#1d4ed8">update (1)</text>
 <rect x="320" y="100" width="12" height="12" fill="#fef2f2" stroke="#b91c1c"/><text x="339" y="111" font-size="12" fill="#b91c1c">delete (0)</text>
@@ -116,27 +116,31 @@ No AWS endorsement is implied. Consult the AWS terms for other uses.
 </g>
 <g transform="translate(0 558)">
 <g data-architecture="true" transform="translate(0 0)">
-<g data-deployment-scope="true" data-scope-provider="AWS" data-region="ap-northeast-1"><rect x="40" y="160" width="720" height="156" rx="14" fill="#f8fafc" stroke="#94a3b8" stroke-dasharray="9 5"/><text x="56" y="185" font-size="15" font-weight="700" fill="#334155">AWS ap-northeast-1</text></g>
-<g data-deployment-scope="true" data-scope-provider="AWS" data-region="us-east-1"><rect x="40" y="356" width="360" height="156" rx="14" fill="#f8fafc" stroke="#94a3b8" stroke-dasharray="9 5"/><text x="56" y="381" font-size="15" font-weight="700" fill="#334155">AWS us-east-1</text></g>
-<path d="M 380 248 L 420 248 " data-edge-kind="dependency" data-directionality="directed" data-source="resource-6177735f736e735f746f7069632e6576656e7473-current" data-target="resource-6177735f7371735f71756575652e6a6f6273-current" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>aws_sns_topic.events → aws_sqs_queue.jobs</title></path>
+<g data-deployment-scope="true" data-scope-provider="AWS" data-region="ap-northeast-1"><rect x="40" y="160" width="720" height="198" rx="14" fill="#f8fafc" stroke="#94a3b8" stroke-dasharray="9 5"/><text x="56" y="185" font-size="15" font-weight="700" fill="#334155">AWS ap-northeast-1</text></g>
+<g data-deployment-scope="true" data-scope-provider="AWS" data-region="us-east-1"><rect x="40" y="398" width="360" height="198" rx="14" fill="#f8fafc" stroke="#94a3b8" stroke-dasharray="9 5"/><text x="56" y="423" font-size="15" font-weight="700" fill="#334155">AWS us-east-1</text></g>
+<path d="M 380 269 L 420 269 " data-edge-kind="dependency" data-directionality="directed" data-source="resource-6177735f736e735f746f7069632e6576656e7473-current" data-target="resource-6177735f7371735f71756575652e6a6f6273-current" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>aws_sns_topic.events → aws_sqs_queue.jobs</title></path>
 <g id="resource-6177735f736e735f746f7069632e6576656e7473-current" data-architecture-id="terraform:6177735f736e735f746f7069632e6576656e7473-current" data-qualified-address="module.root.aws_sns_topic.events" data-terraform-address="aws_sns_topic.events"><title>module.root.aws_sns_topic.events — create</title>
-<rect x="60" y="200" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
-<text x="72" y="220" font-size="11" fill="#047857">aws_sns_topic · create</text>
-<use href="#planorama-icon-aws-sns" x="72" y="228" width="24" height="24" aria-hidden="true"/><text x="104" y="245" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_sns_topic.events</text>
+<rect x="60" y="221" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
+<text x="72" y="241" font-size="11" fill="#047857">aws_sns_topic · create</text>
+<use href="#planorama-icon-aws-sns" x="72" y="249" width="24" height="24" aria-hidden="true"/><text x="104" y="266" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_sns_topic.events</text>
 </g>
 <g id="resource-6177735f7371735f71756575652e6a6f6273-current" data-architecture-id="terraform:6177735f7371735f71756575652e6a6f6273-current" data-qualified-address="module.root.aws_sqs_queue.jobs" data-terraform-address="aws_sqs_queue.jobs"><title>module.root.aws_sqs_queue.jobs — update</title>
-<rect x="420" y="200" width="320" height="96" rx="8" fill="#eff6ff" stroke="#1d4ed8" stroke-width="1.5" data-mode="managed"/>
+<rect x="420" y="200" width="320" height="138" rx="8" fill="#eff6ff" stroke="#1d4ed8" stroke-width="1.5" data-mode="managed"/>
 <text x="432" y="220" font-size="11" fill="#1d4ed8">aws_sqs_queue · update</text>
 <use href="#planorama-icon-aws-sqs" x="432" y="228" width="24" height="24" aria-hidden="true"/><text x="464" y="245" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_sqs_queue.jobs</text>
+<g data-resource-references="true"><title>At-rest encryption (plan): unknown</title><text x="432" y="286" font-size="11" font-weight="700" fill="#475569">Uses</text><g><title>At-rest encryption (plan): unknown</title><text x="432" y="304" font-size="11" fill="#334155" xml:space="preserve">At-rest encryption (plan): unknown</text>
+</g></g>
 </g>
 <g id="resource-646174612e6177735f7371735f71756575652e61726368697665-current" data-architecture-id="terraform:646174612e6177735f7371735f71756575652e61726368697665-current" data-qualified-address="module.root.data.aws_sqs_queue.archive" data-terraform-address="data.aws_sqs_queue.archive"><title>module.root.data.aws_sqs_queue.archive — read</title>
-<rect x="60" y="396" width="320" height="96" rx="8" fill="#faf5ff" stroke="#7e22ce" stroke-width="1.5" data-mode="data" stroke-dasharray="6 4"/>
-<g data-external="true"><title>External resource: read by Terraform, not managed by this configuration</title><rect x="302" y="403" width="68" height="18" rx="4" fill="#e2e8f0"/><text x="308" y="416" font-size="10" fill="#334155">external</text></g><text x="72" y="416" font-size="11" fill="#7e22ce">aws_sqs_queue · read</text>
-<use href="#planorama-icon-aws-sqs" x="72" y="424" width="24" height="24" aria-hidden="true"/><text x="104" y="441" font-size="13" fill="#0f172a" xml:space="preserve">module.root.data.aws_sqs_queue.</text>
-<text x="104" y="461" font-size="13" fill="#0f172a" xml:space="preserve">archive</text>
+<rect x="60" y="438" width="320" height="138" rx="8" fill="#faf5ff" stroke="#7e22ce" stroke-width="1.5" data-mode="data" stroke-dasharray="6 4"/>
+<g data-external="true"><title>External resource: read by Terraform, not managed by this configuration</title><rect x="302" y="445" width="68" height="18" rx="4" fill="#e2e8f0"/><text x="308" y="458" font-size="10" fill="#334155">external</text></g><text x="72" y="458" font-size="11" fill="#7e22ce">aws_sqs_queue · read</text>
+<use href="#planorama-icon-aws-sqs" x="72" y="466" width="24" height="24" aria-hidden="true"/><text x="104" y="483" font-size="13" fill="#0f172a" xml:space="preserve">module.root.data.aws_sqs_queue.</text>
+<text x="104" y="503" font-size="13" fill="#0f172a" xml:space="preserve">archive</text>
+<g data-resource-references="true"><title>At-rest encryption (plan): unknown</title><text x="72" y="524" font-size="11" font-weight="700" fill="#475569">Uses</text><g><title>At-rest encryption (plan): unknown</title><text x="72" y="542" font-size="11" fill="#334155" xml:space="preserve">At-rest encryption (plan): unknown</text>
+</g></g>
 </g>
 <g data-endpoints="true" data-source="resource-6177735f736e735f746f7069632e6576656e7473-current" data-target="resource-6177735f7371735f71756575652e6a6f6273-current" aria-hidden="true">
-<circle data-endpoint="source" cx="380" cy="248" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+<circle data-endpoint="source" cx="380" cy="269" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
 </g>
 </g>
 </g>
