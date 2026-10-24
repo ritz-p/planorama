@@ -157,6 +157,7 @@ element('reset-settings').onclick = () => {
   element('address-format').value = 'qualified';
   element('icon-mode').value = 'icon';
   element('hide-legend').checked = false;
+  element('omit-legend').checked = false;
   element('html-diagnostics').checked = false;
   element('html-semantic-diagnostics').checked = false;
   element('focus').value = '';
@@ -189,6 +190,7 @@ function snapshotOptions() {
     address_format: element('address-format').value,
     icon_mode: element('icon-mode').value,
     hide_relationship_legend: element('hide-legend').checked,
+    omit_relationship_legend: element('omit-legend').checked,
     html_diagnostics: element('html-diagnostics').checked,
     html_semantic_diagnostics: element('html-semantic-diagnostics').checked,
     modules: [],

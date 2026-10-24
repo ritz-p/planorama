@@ -51,6 +51,22 @@ fn hidden_explanations_keep_action_colors_and_remove_their_measured_height() {
             normal.legend.height - hidden.legend.height
         );
         assert_eq!(normal.annotations.height, hidden.annotations.height);
+        let omitted = crate::svg::Sections::new(
+            &graph,
+            &layout,
+            &index,
+            crate::svg::Options {
+                omit_relationship_legend: true,
+                ..options
+            },
+        );
+        assert_eq!(omitted.legend.height, 0);
+        assert!(omitted.legend.render().is_empty());
+        assert_eq!(
+            normal.dimensions(&layout).1 - omitted.dimensions(&layout).1,
+            normal.legend.height
+        );
+        assert_eq!(normal.annotations.height, omitted.annotations.height);
     }
 }
 

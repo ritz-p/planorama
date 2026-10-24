@@ -8,6 +8,43 @@ const INPUT: &[u8] = br#"{"format_version":"1.2","resource_changes":[
 ]}"#;
 
 #[test]
+fn entire_legend_omission_overlays_and_can_be_disabled() {
+    let dir = tempfile::tempdir().unwrap();
+    let path = dir.path().join("legend.toml");
+    std::fs::write(&path, "[generation]\nomit-relationship-legend = true\nhide-relationship-legend = true\n[presets.actions]\nomit-relationship-legend = false\n").unwrap();
+    let input = include_bytes!("../fixtures/association-plan.json");
+    for (overrides, expected) in [
+        (vec![], vec!["--omit-relationship-legend"]),
+        (
+            vec!["--preset", "actions"],
+            vec!["--hide-relationship-legend"],
+        ),
+        (
+            vec!["--no-omit-relationship-legend"],
+            vec!["--hide-relationship-legend"],
+        ),
+        (
+            vec![
+                "--no-omit-relationship-legend",
+                "--no-hide-relationship-legend",
+            ],
+            vec![],
+        ),
+        (
+            vec!["--preset", "actions", "--omit-relationship-legend"],
+            vec!["--omit-relationship-legend"],
+        ),
+    ] {
+        let mut args = vec!["--config", path.to_str().unwrap()];
+        args.extend(overrides);
+        same(
+            support::run_with_args(input, &args),
+            support::run_with_args(input, &expected),
+        );
+    }
+}
+
+#[test]
 fn spatial_types_replace_layers_and_clear_explicitly() {
     let input = include_bytes!("../fixtures/identity-providers-plan.json");
     let dir = tempfile::tempdir().unwrap();

@@ -50,6 +50,7 @@ if ($LASTEXITCODE -ne 0) { throw 'terraform show failed' }
 ```sh
 planorama plan.json --changed-only -o changes.svg
 planorama plan.json --icon-mode service-name -o services.svg
+planorama plan.json --omit-relationship-legend -o without-legend.svg
 planorama plan.json --coverage-report coverage.md -o diagram.svg
 planorama plan.json --diagnostics -o diagram.svg
 ```
