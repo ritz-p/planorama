@@ -1,6 +1,6 @@
 # Browser generation
 
-The browser API accepts one `terraform show -json <saved-plan>` JSON string and
+The browser API accepts a `terraform show -json <saved-plan>` JSON string or explicit named inputs and
 returns SVG or self-contained HTML in memory. It uses the native CLI's parser,
 semantic rules, selection, layout and rendering. JSON-only AWS accounts remain
 unknown; no provider evidence or account inference is added.
@@ -302,7 +302,7 @@ rows contain only `state`, `selector`, original `address`, `resource_type`, `mod
 objects sharing an exact focus address; it does not offer individual historical
 objects. Generation still rejects ambiguous focus according to shared selection
 rules. No attributes or deposed keys are returned. Single-plan `state` is null;
-future named-state inventory must group by state and address and return
+named-state inventory groups by state and address and returns
 `STATE:ADDRESS` selectors. Consumers must pass `selector` unchanged.
 
 | Option | Values / default |
@@ -400,9 +400,65 @@ Cancellation and read/Worker failures retain completed lists; reported input
 errors clear the lists. Both preserve manual selectors. Changing generation settings
 cancels pending inspection; search and pagination do not. Stale reads and Worker
 completions cannot replace a newer list. Completed inventory remains unfiltered.
-State JSON, plan event streams, multiple states, saved binary plans, Terraform
+State JSON, plan event streams, saved binary plans, Terraform
 execution, provider evidence, config/preset files, coverage/layout
 report files are unsupported in this API.
+
+## Named state inputs
+
+Enable **Use named states**, then **Add state input** for each file. Enter each
+state name explicitly; filenames never supply state identity or AWS accounts.
+Names follow the [native multi-plan contract](multi-plan.md): case-sensitive,
+unique, 1–64 ASCII letters, digits, periods, underscores or hyphens. A single
+named input also keeps its state-qualified identity. Disable named mode to return
+to the existing unnamed file input; files in the inactive mode are excluded.
+
+Rust exposes `NamedInput { state: String, json: String }`,
+`generate_named(&[NamedInput], &Options)` and `inspect_named_inputs(&[NamedInput])`.
+Wasm exposes `generate_named(inputsJson, optionsJson)`,
+`generate_named_with_progress(inputsJson, optionsJson, callback)` and
+`inspect_named_inputs(inputsJson)`. `inputsJson` is a JSON array of objects with
+exactly `state` and `json` string fields. These are synchronous APIs intended for
+a fresh Worker; the single-input resumable `Generation` API is unchanged.
+
+```js
+const inputs = [{state: 'network', json: networkJson},
+                {state: 'application', json: applicationJson}];
+const result = JSON.parse(wasm_bindgen.generate_named(JSON.stringify(inputs),
+  JSON.stringify({format: 'svg', modules: ['application:module.app']})));
+```
+
+All names and the combined input size are validated before parsing any plan.
+There must be 1–64 inputs; each file and the sum of decoded JSON UTF-8 bytes are
+limited to 32 MiB. The UI checks file sizes before reading. Named-input envelope
+bytes have an additional Wasm pre-deserialization bound of 192 MiB + 16 KiB to
+allow JSON escaping; this does not increase the decoded input allowance.
+`invalid_state_name`, `duplicate_state_name` and `empty_inputs` supplement the
+existing safe error codes. The UI identifies missing/invalid/duplicate input rows
+and failed file reads by position without exposing file contents or runtime errors.
+
+Inspection includes a `state` on each module and resource row. Module roots stay
+unselectable and show per-state direct/subtree counts; other module and focus
+selectors are `STATE:ADDRESS`. Identical addresses and current/deposed objects in
+different states stay independent. Counts refer to original inputs, before filters.
+Generation shares native state-local parsing, semantic transformation, selection
+and SVG/HTML rendering. Explicit remote-state mappings and provider evidence are
+not exposed by this API; use the CLI for those features. Equal names or ARNs do
+not automatically create cross-state connections.
+
+Each request snapshots all active files, names and generation settings before
+reading. Adding, removing or replacing a file, renaming a state, or switching input
+mode cancels the Worker, invalidates pending reads and results, clears inventories,
+focus, module selectors and searches, and retains other settings. Reload either
+list once inputs are ready. Settings edits cancel work and results while retaining
+completed inventories and selections. Reset retains all chosen files and state
+names. Cancel/read failure retains manual selectors for retry; stale callbacks
+cannot publish an inventory or result. No partial input set is generated.
+
+`tests/fixtures/browser-named.json` deliberately reuses the same addresses across
+two named states. Browser checks compare exact native/Wasm SVG and HTML, module
+and focus selection, data/deposed counts, safe validation, read failure,
+cancellation/retry and the aggregate byte limit, with networking disabled.
 
 ## Privacy and lifecycle
 

@@ -3,6 +3,11 @@
 Named states keep their own Terraform identities. Explicit remote-state mappings
 can connect resources across states using `TerraformRemoteState` provenance.
 
+The [browser generator and library](browser.md#named-state-inputs) also accept
+explicit named plan JSON inputs with state-qualified module and focus pickers.
+They enforce a combined 32 MiB input budget and do not expose remote-state
+mappings or provider evidence. Use the CLI when those features are needed.
+
 [Layout diagnostics](layout-diagnostics.md) distinguish per-state layout sizes
 from the full canvas and include final cross-state paths in whole-diagram metrics.
 

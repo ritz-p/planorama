@@ -2,6 +2,8 @@ use crate::model::{TerraformPlan, modules::Address};
 
 #[derive(Debug, serde::Serialize)]
 pub struct ModuleInventoryEntry {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub state: Option<String>,
     pub selector: Option<String>,
     pub instance: bool,
     pub direct: usize,
@@ -33,6 +35,7 @@ pub(crate) fn inventory(plan: &TerraformPlan) -> Result<Vec<ModuleInventoryEntry
                 .filter(|resource| module.depth() == resource.depth() && module.contains(resource))
                 .count();
             ModuleInventoryEntry {
+                state: None,
                 selector: (module.depth() > 0).then(|| module.to_string()),
                 instance: *actual,
                 direct,
