@@ -47,6 +47,7 @@ async function main() {
     driver.execute_cdp_cmd('Network.enable', {});
     driver.execute_cdp_cmd('Network.emulateNetworkConditions', {offline: true, latency: 0, downloadThroughput: 0, uploadThroughput: 0});
     driver.get_log('performance');
+    require('./wasm-named.cjs')({driver, root, binary});
     require('./wasm-modules.cjs')({
       driver, small, run, status,
       native: (json, args) => execFileSync(binary, ['-', '-o', '-', ...args], {input: json, encoding: 'utf8', maxBuffer: 32 * 1024 * 1024}),
