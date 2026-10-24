@@ -151,6 +151,12 @@ async fn search_grid_step(
     ys.sort_unstable();
     ys.dedup();
     crate::work::check_limit(xs.len().saturating_mul(ys.len()), 131_072).await;
+    crate::work::check_memory(
+        (xs.len() as u64)
+            .saturating_mul(ys.len() as u64)
+            .saturating_mul(256),
+    )
+    .await;
     crate::work::checkpoint().await;
     #[cfg(test)]
     GRID_POINT_COUNT.set(xs.len() * ys.len());
@@ -168,8 +174,8 @@ async fn search_grid_step(
         y: ys[i / xs.len()],
     };
     let (first, last) = (index(start), index(end));
-    let mut distances = vec![u128::MAX; xs.len() * ys.len() * 3];
-    let mut previous = vec![None; distances.len()];
+    let mut distances = crate::work::filled_vec(u128::MAX, xs.len() * ys.len() * 3).await;
+    let mut previous = crate::work::filled_vec(None, distances.len()).await;
     let direction = |side| match side {
         Side::Left | Side::Right => 1,
         Side::Top | Side::Bottom => 2,
@@ -240,6 +246,17 @@ async fn search_grid_step(
                 distances[next_state] = candidate;
                 previous[next_state] = Some(state);
                 crate::work::check_limit(queue.len().saturating_add(1), 262_144).await;
+                if queue.len() == queue.capacity() {
+                    crate::work::check_memory(
+                        (queue.capacity() as u64)
+                            .saturating_mul(64)
+                            .saturating_add(256),
+                    )
+                    .await;
+                    if crate::work::limited() {
+                        crate::work::check_allocation(queue.try_reserve(1).is_ok()).await;
+                    }
+                }
                 queue.push(Reverse((candidate, next_state)));
             }
         }

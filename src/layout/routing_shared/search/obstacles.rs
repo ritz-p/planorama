@@ -14,8 +14,8 @@ impl Grid {
 
     pub async fn new_step(xs: &[usize], ys: &[usize], obstacles: &[Bounds]) -> Self {
         let columns = xs.len();
-        let mut horizontal = vec![0; columns * ys.len()];
-        let mut vertical = vec![0; columns * ys.len()];
+        let mut horizontal = crate::work::filled_vec(0, columns * ys.len()).await;
+        let mut vertical = crate::work::filled_vec(0, columns * ys.len()).await;
         for bounds in obstacles {
             crate::work::checkpoint().await;
             let left = xs

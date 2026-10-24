@@ -19,6 +19,7 @@ for (const file of files) {
 }
 fs.writeFileSync(path.join(directory, 'manifest.json'), JSON.stringify({
   version, commit, icon_artwork: false, wasm_bindgen: '0.2.100',
+  memory: JSON.parse(fs.readFileSync(path.join(directory, 'memory-capabilities.json'), 'utf8')),
   files: Object.fromEntries(files.map(file => [file, sha256(fs.readFileSync(path.join(directory, file)))])),
 }, null, 2) + '\n');
 fs.mkdirSync('output/wasm-release', {recursive: true});

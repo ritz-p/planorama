@@ -1,6 +1,30 @@
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
+pub fn memory_capabilities() -> String {
+    use crate::generation::memory;
+    serde_json::json!({
+        "allowed_mib": memory::ALLOWED_MIB,
+        "default_mib": memory::DEFAULT_MIB,
+        "maximum_bytes": memory::MAX_BYTES,
+        "scope": "instance_linear_memory",
+        "enforcement": "imported_memory_maximum",
+        "synchronous_option": false,
+        "requires_new_worker_on_change": true,
+    })
+    .to_string()
+}
+
+#[wasm_bindgen]
+pub fn configure_memory_budget(mib: u32) -> Result<(), JsValue> {
+    crate::generation::memory::configure(mib).map_err(error)
+}
+
+fn decode_options(options: &str) -> Result<crate::Options, JsValue> {
+    serde_json::from_str(options).map_err(|_| error(crate::Error::InvalidOptions))
+}
+
+#[wasm_bindgen]
 pub fn inspect_modules(json: &str) -> Result<String, JsValue> {
     let result = crate::inspect_modules(json).map_err(error)?;
     serde_json::to_string(&result).map_err(|_| error(crate::Error::GenerationFailed))
@@ -8,7 +32,7 @@ pub fn inspect_modules(json: &str) -> Result<String, JsValue> {
 
 #[wasm_bindgen]
 pub fn generate(json: &str, options: &str) -> Result<String, JsValue> {
-    let options = serde_json::from_str(options).map_err(|_| error(crate::Error::InvalidOptions))?;
+    let options = decode_options(options)?;
     let result = crate::generate(json, &options).map_err(error)?;
     serde_json::to_string(&result).map_err(|_| error(crate::Error::GenerationFailed))
 }
@@ -29,8 +53,7 @@ impl Generation {
         if options.len() > crate::generation::MAX_BROWSER_OPTIONS_BYTES {
             return Err(error(crate::Error::ResourceLimit));
         }
-        let options =
-            serde_json::from_str(options).map_err(|_| error(crate::Error::InvalidOptions))?;
+        let options = decode_options(options)?;
         Ok(Self {
             inner: crate::Generator::new(json, options).map_err(error)?,
         })
