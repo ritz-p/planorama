@@ -551,6 +551,13 @@ class ViewerTests {
         this.assertTrue(result.pointerEvents.every(value => value === 'none'));
         const selected = this.choose('aws_s3_bucket.archive');
         this.assertEqual(this.driver.execute_script('return document.getElementById(arguments[0]).querySelector("[data-role-shape]").getAttribute("data-role-shape")', selected), 'data-store');
+        const badge = this.driver.execute_script(`
+            const row = document.getElementById(arguments[0]);
+            const background = row.querySelector('[data-service-badge]');
+            const text = row.querySelector('[data-service-name]');
+            return [background.dataset.serviceCategory, getComputedStyle(background).fill, getComputedStyle(text).fill, text.textContent];
+        `, selected);
+        this.assertEqual(badge, ['storage', 'rgb(220, 252, 231)', 'rgb(20, 83, 45)', 'S3']);
     }
     test_coverage_summary_is_absent_from_empty_and_single_resource_diagrams() {
         for (const changes of [[], [{"address": "terraform_data.one", "type": "terraform_data"}]]) {
