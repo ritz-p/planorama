@@ -124,6 +124,7 @@ module.exports = function({driver, small, run, status, native}) {
     window.Worker = InventoryWorker;
   `);
   assert.deepEqual(rows(), []);
+  assert.deepEqual(driver.execute_script('return resources'), [], 'Stale Worker cannot replace resources');
   load('secret{');
   wait(() => find('#inventory-status').text === 'Input is not valid plan JSON.', 'safe inventory error');
   load(small);

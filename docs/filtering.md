@@ -57,7 +57,9 @@ dependency expansion is added: focus depth affects only focus. Containment paren
 verified Route Table owners and cross-state provenance can remain outside the
 selected modules. A selected lowered relationship uses its existing endpoint
 representation. Excluded logical targets remain unavailable without fragment
-links. Module selection creates no new module containers or interactive picker.
+links. Module selection creates no new module containers in the generated diagram.
+The [browser generator](browser.md) provides original-input module and resource
+pickers that pass exact selectors to these same selection rules.
 
 ```sh
 planorama plan.json --modules module.app module.database -o selected.svg
