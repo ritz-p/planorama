@@ -91,7 +91,7 @@ Containment ancestors and verified owning Route Tables are then retained automat
 retain both endpoints transitively, even at depth zero, to preserve provenance.
 Context nodes can therefore be unchanged or outside the requested depth.
 
-RDS cluster membership and EFS/KMS/Secrets Manager presentation ownership do not
+RDS cluster membership and EFS/KMS/S3 encryption/Secrets Manager presentation ownership do not
 expand selection.
 If the owner is excluded, selected children return to ordinary visible cards.
 If a child is excluded, only the remaining selected children occupy the owner card.

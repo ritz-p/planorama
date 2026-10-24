@@ -650,8 +650,10 @@ referenced Key's `id`, `key_id` or `arn`. Encryption-key links use an exact allo
 SQS Queue `kms_master_key_id`, RDS Instance/Cluster `kms_key_id`, and S3 Bucket
 Server-Side Encryption Configuration
 `rule.apply_server_side_encryption_by_default.kms_master_key_id`. The S3
-configuration remains a regional logical Controller with a separately verified
-`bucket` link. Each key field requires matching known values and an explicit
+configuration is a regional Controller, summarized inside its uniquely verified
+bucket when scope is compatible; otherwise it remains independently visible.
+See [at-rest encryption](encryption.md) for plan-setting summaries and fallback rules.
+Each key field requires matching known values and an explicit
 managed `aws_kms_key` attribute reference. Same-named fields on other types do not
 qualify. Literal aliases/ARNs, AWS managed keys and multi-region replicas are never
 merged or guessed. Key policies, key material and encryption contexts are omitted;

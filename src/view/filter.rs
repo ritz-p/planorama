@@ -396,6 +396,7 @@ pub fn apply(all: &Architecture, options: &Options) -> Result<Architecture, Stri
                             _ => true,
                         }))
             });
+            crate::provider::aws::encryption::refresh(&mut graph.0);
             let represented = crate::coverage::represented(&graph);
             graph.0.coverage.retain(&represented);
             graph.0.coverage.focused = options.focus.is_some();

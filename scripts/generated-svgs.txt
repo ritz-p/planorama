@@ -83,3 +83,5 @@ examples/aws-basic.svg
 examples/aws-basic-service-names.svg
 examples/aws-aliases.svg
 examples/aws-aliases-service-names.svg
+examples/encryption.svg
+examples/encryption-service-names.svg

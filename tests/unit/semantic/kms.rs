@@ -155,7 +155,7 @@ fn selected_aliases_fall_back_and_shared_keys_are_counted_once() {
             .find(|n| n.resource_type == "aws_s3_bucket_server_side_encryption_configuration")
             .unwrap()
             .placement,
-        Placement::Logical
+        Placement::Spatial
     );
     for options in [
         view::Options {

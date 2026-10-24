@@ -25,7 +25,7 @@ to Logical for managed and data resources. Names in the table omit `aws_`.
 | `kms_alias`, `secretsmanager_secret_version` | Conditional children of the verified key/secret; retain each object's own identity and scope. |
 | `acm_certificate`, `acmpca_certificate` | Conditional owner/consumer presentation only with unique service-specific proof; shared certificates remain independent. Issuance and use are different relationships. |
 | `acmpca_certificate_authority_certificate`, `acm_certificate_validation` | Keep Logical: installation/validation configuration, not another authority. |
-| `s3_bucket_server_side_encryption_configuration` | Keep Logical: bucket configuration, not a separate storage endpoint. |
+| `s3_bucket_server_side_encryption_configuration` | Configuration child of a uniquely verified, scope-compatible bucket; independent fallback retains identity and action. See [encryption](encryption.md). |
 | `ecs_task_definition`, `ami`, `launch_template` | Keep Logical: definitions/templates rather than deployed execution subjects. |
 | `iam_policy`, `iam_role_policy`, `iam_user_policy`, `iam_group_policy`, `autoscaling_policy` | Keep Logical: policy/configuration objects, irrespective of role names. |
 | `iam_group_membership`, `iam_user_group_membership`, `iam_user_policy_attachment`, `iam_group_policy_attachment` | Keep existing provenance-backed relationship presentation; do not turn membership/attachment into containment. |

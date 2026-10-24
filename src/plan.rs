@@ -103,6 +103,7 @@ pub(crate) fn parse(json: &str) -> Result<TerraformPlan, String> {
         false,
     );
     collections::annotate(&plan, &mut nodes, &mut attributes);
+    crate::provider::aws::encryption::enrich(&plan, &mut nodes, &mut attributes);
     let graph_references = attributes::collect(
         &plan["configuration"]["root_module"],
         &nodes,

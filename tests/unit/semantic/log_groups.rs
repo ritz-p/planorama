@@ -76,6 +76,7 @@ fn log_group_cards_preserve_reference_meaning_scope_and_selection() {
         assert!(!rows.is_empty());
         assert!(
             rows.iter()
+                .filter(|r| r.reference.kind != crate::model::ReferenceKind::Information)
                 .all(|r| matches!(r.reference.label, "References" | "Dependency"))
         );
         let selected = view::single(
