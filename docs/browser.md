@@ -48,11 +48,12 @@ must explicitly send `"icon_mode":"service-name"`.
 
 The engine build writes `output/wasm-engine/planorama.js` and
 `planorama_bg.wasm` from one wasm-bindgen invocation, plus `manifest.json` with
-package version, source commit, binding version and SHA-256 hashes. Packaging
+package version, source commit, binding version, memory capabilities and SHA-256 hashes. Packaging
 produces `output/wasm-release/planorama-<version>-wasm-no-artwork.tar.gz` and
 its `.sha256` sidecar. The archive contains the engine, manifest and software licenses,
 without the sample browser UI or artwork. Do not mix bindings and Wasm files
-from different archives. Normal `scripts/build-wasm.sh` output is unchanged.
+from different archives. Both builds append the same memory initialization adapter
+to the pinned bindings. The normal distribution also contains `pkg/memory-capabilities.json`.
 
 The manual **Wasm engine release** workflow validates both normal browser and
 standalone engine builds. Its default is build-only. Publication requires an
@@ -136,9 +137,10 @@ do not guarantee a device-independent maximum step duration.
 | Search grid points | 131,072 | Before grid and distance allocations |
 | Search queue entries | 262,144 | Before queue insertion |
 | Output UTF-8 bytes | 4 MiB | After composition, before returning output |
-| Wasm linear memory | 256 MiB | Linker maximum, for both Wasm builds |
+| Wasm linear memory | 512 MiB default; 512 / 1024 / 2048 / 4096 MiB | Imported memory maximum, fixed at instance initialization |
 
-Budget failures return `resource_limit`, discard the job, and never return a
+Structural budget failures return `resource_limit`; memory preflight or fallible
+allocation failures return `memory_limit`. Both discard the job and never return a
 partial diagram. Projection and output checks occur after their respective
 allocations; the earlier input/structure checks and Wasm memory maximum provide
 additional protection. The native API retains its 32 MiB input limit. Wasm OOM
@@ -146,7 +148,83 @@ can trap rather than return a typed error; discard that Worker and retry with a
 smaller input. Multiple-input integrations must apply budgets to the aggregate.
 The structural preflight accepts the same leading UTF-8 BOM characters as the
 plan parser. Input byte budgets still count those characters. Options budgets
-apply only to resumable generation; synchronous API compatibility is unchanged.
+apply only to resumable generation. Synchronous generation retains its existing
+options and rejects an explicit `memory_budget_mib` with `invalid_options`.
+
+### Per-generation memory selection
+
+`memory_budget_mib` is an integer option for Wasm `Generation`: 512, 1024, 2048
+or 4096, default 512. Null, strings, fractions, zero, negative and other values
+are errors. The shared Rust options decoder validates it; native Rust generation
+rejects explicit memory selection because it cannot enforce a Wasm memory limit.
+Read `JSON.parse(wasm_bindgen.memory_capabilities())` before initialization for
+`allowed_mib`, `default_mib`, `maximum_bytes`, `initial_pages`, enforcement and
+lifecycle metadata. `manifest.json.memory` contains the same capability object
+for the standalone engine. A supported maximum is not a reservation guarantee
+on every device.
+
+Start a fresh Worker, initialize with the selected budget, then send that same
+value in the generation options. For example, inside the Worker:
+
+```js
+const memory_budget_mib = 1024;
+const wasm = wasm_bindgen.initSync({module, memory_budget_mib});
+const job = new wasm_bindgen.Generation(planJson, JSON.stringify({
+  memory_budget_mib, icon_mode: 'service-name', format: 'svg'
+}));
+```
+
+The asynchronous initializer accepts the same option alongside `module_or_path`.
+Omitting both settings selects 512 MiB. A generation/initialization mismatch or
+attempt to change an initialized instance returns `memory_budget_mismatch`;
+settings are never silently reduced. Supplying a custom `memory` is unsupported
+by the distribution adapter. If the runtime cannot create the requested memory,
+initialization returns `memory_unavailable`; discard that Worker. Other module
+loading/instantiation failures also require a fresh Worker, with no fallback to
+a lower budget. The sample synchronous UI has no memory selector; the site UI
+is maintained separately.
+
+Both modules declare an imported wasm32 memory with a 65,536-page (4 GiB)
+maximum. The adapter creates memory with its small module-required initial size
+and a selected maximum of 8,192–65,536 pages. The runtime refuses growth beyond
+that maximum **before** allocating more linear memory, including inside a step
+and during string transfer. This includes static data, stack, allocator overhead,
+fragmentation and unused capacity; it is not all usable input/output storage.
+It excludes JS strings/copies, runtime/compiler metadata, browser/Worker overhead
+and preview DOM. Allocator live bytes are not measured. The reported
+`wasm.memory.buffer.byteLength` is capacity, not live allocations or process RSS.
+
+At construction and checkpoints, a conservative preflight keeps 1 MiB of linear
+memory headroom. Grid expansion estimates additional storage before allocating;
+grid/distance vectors and queue growth also use fallible reservations. These
+checks may reject work even when the allocator could reuse existing free blocks.
+Parsing, semantic projection, some collections and output serialization still
+contain infallible allocation and non-interruptible work. Their OOM can trap
+instead of returning `memory_limit`; the imported maximum still applies. On a
+trap, terminate the Worker without further Wasm calls, including `free`, and
+retry using a new Worker. No partial diagram is a successful result.
+
+Use one active generation per Worker. Any jobs or synchronous calls sharing an
+instance share its single memory maximum; there is no additive per-job allowance.
+Freeing/cancelling a job does not shrink linear memory or immediately return
+memory to the OS. A lower budget requires a fresh Worker/instance even after a
+job finishes. Input, reference, grid/queue, output and preview limits remain
+independent; `resource_limit` can therefore occur at any memory setting. Scheduling
+units, rest intervals and hidden-page behavior are independent of this option.
+
+The build verifies the binary import limits against the binding and capability.
+The pinned wasm-bindgen uses unsigned pointers for JS views; Rust byte conversions
+use `u64`, and JavaScript uses Numbers without 32-bit bitwise conversion. Individual
+Rust allocations remain limited by `isize::MAX` and allocator/runtime constraints.
+[V8's 4 GiB implementation](https://v8.dev/blog/4gb-wasm-memory) explains the
+separate pointer and length boundaries; this does not promise 4 GiB availability
+in every browser. Normal CI uses small inputs at every configured maximum and a
+small imported-memory cap to exercise real OOM/trap recovery without allocating
+GiB of data. `node tests/browser/memory.cjs [distribution-directory]` runs these
+checks. Opt-in `PLANORAMA_MEMORY_STRESS=1 node tests/browser/memory-large.cjs`
+tests allocator/string pointers above 2 GiB, a full 4 GiB buffer and high-water
+refusal. Run it in an isolated container with an external timeout; it is excluded
+from normal CI.
 
 Consumers must run only one job per Worker, insert a real timer/task between
 steps, pause at boundaries when hidden, and invalidate callbacks when cancelling
@@ -314,7 +392,8 @@ output strings, structured-clone copies and the preview consume additional memor
 Very dense or oversized plans may exhaust a browser process or Wasm memory before
 a recoverable error is possible. Use Cancel for long work and reduce the plan or
 use CLI selection for inputs that exceed practical browser capacity. Worker
-termination releases its Wasm allocation; a fresh request does not retain its
+termination allows the runtime to reclaim its Wasm allocation, without promising
+immediate OS reclamation; a fresh request does not retain its
 high-water memory. Worker measurements report Wasm linear memory size, not total
 browser RSS or JavaScript heap usage.
 

@@ -25,6 +25,7 @@ async function main() {
     assert.equal(manifest.version, version);
     assert.equal(manifest.commit, execFileSync('git', ['-c', `safe.directory=${process.cwd()}`, 'rev-parse', 'HEAD'], {encoding: 'utf8'}).trim());
     assert.equal(manifest.icon_artwork, false);
+    assert.equal(manifest.memory.maximum_bytes, 4294967296);
     for (const [file, hash] of Object.entries(manifest.files)) {
       const content = fs.readFileSync(join(temp, file));
       assert.equal(createHash('sha256').update(content).digest('hex'), hash);
@@ -39,6 +40,8 @@ async function main() {
     driver = await Driver.start();
     driver.get(`http://127.0.0.1:${port}/`);
     wait(() => driver.execute_script('return window.ready === true;'), 'versioned engine initialization');
+    assert.deepEqual(JSON.parse(driver.execute_script('return window.engine.memory_capabilities();')), manifest.memory);
+    require('./memory-chromium.cjs')(driver, fs.readFileSync(join(temp, 'planorama.js'), 'utf8'), `/v${version}/planorama_bg.wasm`, fs.readFileSync('tests/fixtures/viewer-plan.json', 'utf8'));
     const binary = resolve(process.env.CARGO_TARGET_DIR || 'target', 'release/planorama');
     for (const fixture of ['viewer-plan', 'aws-basic-plan', 'terraform-plan']) {
       const json = fs.readFileSync(`tests/fixtures/${fixture}.json`, 'utf8');

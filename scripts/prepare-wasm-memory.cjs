@@ -1,0 +1,24 @@
+const fs = require('node:fs');
+const vm = require('node:vm');
+const path = require('node:path');
+const assert = require('node:assert/strict');
+
+const directory = process.argv[2];
+const filename = path.join(directory, 'planorama.js');
+const source = fs.readFileSync(filename, 'utf8');
+const match = source.match(/new WebAssembly\.Memory\(\{initial:(\d+),maximum:(\d+)\}\)/);
+assert.ok(match, 'Expected pinned wasm-bindgen imported memory initializer');
+assert.equal(Number(match[2]), 65536, 'Expected 4 GiB imported memory maximum');
+const binding = vm.runInThisContext(source + '\nwasm_bindgen;');
+const bytes = fs.readFileSync(path.join(directory, 'planorama_bg.wasm'));
+assert.deepEqual(require('./wasm-memory.cjs').memoryLimits(bytes), {minimum: Number(match[1]), maximum: Number(match[2])});
+const moduleObject = new WebAssembly.Module(bytes);
+assert.deepEqual(WebAssembly.Module.imports(moduleObject).filter(item => item.kind === 'memory'), [{module: 'wbg', name: 'memory', kind: 'memory'}]);
+const exportsObject = binding.initSync({module: moduleObject});
+assert.equal(exportsObject.memory.buffer.byteLength, Number(match[1]) * 65536);
+const capabilities = {...JSON.parse(binding.memory_capabilities()), initial_pages: Number(match[1])};
+assert.equal(capabilities.maximum_bytes, Number(match[2]) * 65536);
+assert.ok(capabilities.initial_pages < capabilities.default_mib * 16);
+const wrapper = fs.readFileSync('browser/memory.js', 'utf8').replace('MEMORY_CAPABILITIES', JSON.stringify(capabilities));
+fs.writeFileSync(filename, source + '\n' + wrapper);
+fs.writeFileSync(path.join(directory, 'memory-capabilities.json'), JSON.stringify(capabilities, null, 2) + '\n');

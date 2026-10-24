@@ -20,8 +20,8 @@ impl<'a> Grid<'a> {
         Self {
             scorer,
             columns: xs.len(),
-            segments: vec![[u128::MAX; 2]; xs.len() * ys.len()],
-            junctions: vec![[u128::MAX; 2]; xs.len() * ys.len()],
+            segments: crate::work::filled_vec([u128::MAX; 2], xs.len() * ys.len()).await,
+            junctions: crate::work::filled_vec([u128::MAX; 2], xs.len() * ys.len()).await,
             occlusion: occlusion::Grid::new_step(xs, ys, scorer.soft()).await,
             #[cfg(test)]
             evaluations: [0; 2],

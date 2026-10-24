@@ -1,5 +1,6 @@
 use crate::{html, layout::Layout, plan, semantic, svg, view};
 mod budget;
+pub(crate) mod memory;
 
 #[derive(Clone, Copy, Default, serde::Deserialize)]
 #[serde(rename_all = "kebab-case")]
@@ -12,6 +13,8 @@ pub enum OutputFormat {
 #[derive(Default, serde::Deserialize)]
 #[serde(default, deny_unknown_fields)]
 pub struct Options {
+    #[serde(deserialize_with = "memory::deserialize")]
+    pub memory_budget_mib: Option<u32>,
     pub spatial_types: Vec<String>,
     pub format: OutputFormat,
     pub address_format: svg::AddressFormat,
@@ -34,6 +37,8 @@ pub enum Error {
     GenerationFailed,
     GenerationClosed,
     ResourceLimit,
+    MemoryLimit,
+    MemoryBudgetMismatch,
 }
 
 impl std::fmt::Display for Error {
@@ -47,6 +52,8 @@ impl std::fmt::Display for Error {
             Self::GenerationFailed => "Diagram generation failed.",
             Self::GenerationClosed => "Generation has completed or was cancelled.",
             Self::ResourceLimit => "The browser generation budget was exceeded. Reduce the input or select fewer modules or a narrower focus.",
+            Self::MemoryLimit => "The generation memory budget was exceeded. Retry in a new Worker with a larger memory budget or smaller input.",
+            Self::MemoryBudgetMismatch => "The generation memory budget must match initialization. Use a new Worker to change it.",
         })
     }
 }
@@ -65,6 +72,9 @@ pub const MAX_BROWSER_OUTPUT_BYTES: usize = 4 * 1024 * 1024;
 pub(crate) const MAX_BROWSER_OPTIONS_BYTES: usize = 64 * 1024;
 
 pub fn generate(json: &str, options: &Options) -> Result<Generated, Error> {
+    if options.memory_budget_mib.is_some() {
+        return Err(Error::InvalidOptions);
+    }
     crate::work::complete(generate_step(json, options))
 }
 
@@ -131,6 +141,12 @@ pub struct Generator {
 
 impl Generator {
     pub fn new(json: String, options: Options) -> Result<Self, Error> {
+        #[cfg(target_arch = "wasm32")]
+        memory::check_options(options.memory_budget_mib)?;
+        #[cfg(not(target_arch = "wasm32"))]
+        if options.memory_budget_mib.is_some() {
+            return Err(Error::InvalidOptions);
+        }
         if json.len() > MAX_BROWSER_INPUT_BYTES {
             return Err(Error::ResourceLimit);
         }

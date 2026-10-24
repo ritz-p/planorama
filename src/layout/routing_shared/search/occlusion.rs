@@ -15,8 +15,8 @@ impl Grid {
 
     pub async fn new_step(xs: &[usize], ys: &[usize], bounds: &[Occluder]) -> Self {
         let columns = xs.len();
-        let mut horizontal = vec![0; columns * ys.len()];
-        let mut vertical = vec![0; columns * ys.len()];
+        let mut horizontal = crate::work::filled_vec(0, columns * ys.len()).await;
+        let mut vertical = crate::work::filled_vec(0, columns * ys.len()).await;
         for (row, &y) in ys.iter().enumerate() {
             crate::work::checkpoint().await;
             let mut coverage = [Coverage::default(), Coverage::default()];
