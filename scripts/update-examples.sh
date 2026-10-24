@@ -17,6 +17,9 @@ update_snapshot() {
 
 while IFS= read -r output || [ -n "$output" ]; do
     case "$output" in
+        examples/encryption-service-names.svg)
+            "$binary" tests/fixtures/encryption-plan.json --icon-mode service-name -o "$output"
+            ;;
         examples/aws-aliases-service-names.svg)
             "$binary" tests/fixtures/aws-aliases-plan.json --icon-mode service-name -o "$output"
             ;;

@@ -143,8 +143,13 @@ fn deposed_alarms_keep_identity_without_synthesized_monitoring() {
         .iter()
         .find(|n| n.address == "aws_db_instance.database")
         .unwrap();
-    assert_eq!(database.references.len(), 1);
-    assert!(database.references[0].targets[0].id.deposed_key.is_none());
+    let references: Vec<_> = database
+        .references
+        .iter()
+        .filter(|r| r.kind != crate::model::ReferenceKind::Information)
+        .collect();
+    assert_eq!(references.len(), 1);
+    assert!(references[0].targets[0].id.deposed_key.is_none());
     let output = svg::render(&graph, &Layout::new(&graph));
     let doc = roxmltree::Document::parse(&output).unwrap();
     let old = doc
@@ -186,7 +191,9 @@ fn multiple_alarms_consumers_and_states_keep_distinct_identities() {
                 .find(|n| n.address == "aws_db_instance.database")
                 .unwrap()
                 .references
-                .len(),
+                .iter()
+                .filter(|r| r.kind != crate::model::ReferenceKind::Information)
+                .count(),
             2
         );
         let architecture = crate::model::architecture::Architecture {

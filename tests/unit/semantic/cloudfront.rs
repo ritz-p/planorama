@@ -57,7 +57,9 @@ fn cloudfront_preserves_resources_and_distinguishes_verified_references() {
             .nodes
             .iter()
             .flat_map(|n| &n.references)
-            .filter(|r| r.complete && r.label != "References")
+            .filter(|r| r.complete
+                && r.label != "References"
+                && r.kind != crate::model::ReferenceKind::Information)
             .count(),
         11
     );

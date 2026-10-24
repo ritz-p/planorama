@@ -16,6 +16,7 @@ mod containment;
 mod data;
 pub(super) mod diagnostics;
 mod efs;
+pub(crate) mod encryption;
 mod firehose;
 mod glue;
 mod iam;
@@ -208,6 +209,7 @@ pub(super) fn transform(raw: crate::semantic::Input) -> crate::model::Graph {
     service_references::present(&raw, &mut graph);
     efs::present(&raw, &mut graph);
     service_members::present(&raw, &mut graph);
+    encryption::present(&raw, &mut graph);
     let contained = crate::semantic::Input { graph, ..raw };
     let mut graph = data::visible(associations::lower(&contained));
     graph

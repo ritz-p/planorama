@@ -30,6 +30,7 @@ pub(super) fn parse(resource: &Value, address: &str, action: Action) -> Terrafor
         .map(ProviderIdentity::from_source)
         .unwrap_or_else(|| ProviderIdentity::inferred(resource_type));
     TerraformEntity {
+        encryption: None,
         represented_account: None,
         organization_policy_type: None,
         organization_roots: Vec::new(),
