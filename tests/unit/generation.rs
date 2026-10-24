@@ -1,6 +1,56 @@
 use super::*;
 
 #[test]
+fn html_diagnostics_are_independent_opt_ins_in_shared_generation() {
+    let json = include_str!("../fixtures/viewer-plan.json");
+    for semantic in [false, true] {
+        for routing in [false, true] {
+            let options = || Options {
+                format: OutputFormat::Html,
+                html_semantic_diagnostics: semantic,
+                html_diagnostics: routing,
+                ..Default::default()
+            };
+            let result = generate(json, &options()).unwrap();
+            assert_eq!(
+                result
+                    .content
+                    .contains("id=\"viewer-semantic-diagnostics\""),
+                semantic
+            );
+            assert_eq!(
+                result.content.contains("id=\"viewer-diagnostics\""),
+                routing
+            );
+            let mut job = Generator::new(json.into(), options()).unwrap();
+            loop {
+                if let Some(sliced) = job.step(4096).unwrap() {
+                    assert_eq!(sliced.content, result.content);
+                    break;
+                }
+            }
+            let svg_options = Options {
+                format: OutputFormat::Svg,
+                ..options()
+            };
+            if semantic || routing {
+                assert_eq!(
+                    generate(json, &svg_options).err(),
+                    Some(Error::InvalidOptions)
+                );
+            } else {
+                assert!(generate(json, &svg_options).is_ok());
+            }
+        }
+    }
+    for name in ["html_diagnostics", "html_semantic_diagnostics"] {
+        for invalid in ["null", "1", "\"true\""] {
+            assert!(serde_json::from_str::<Options>(&format!("{{\"{name}\":{invalid}}}")).is_err());
+        }
+    }
+}
+
+#[test]
 fn failed_generation_releases_progress_observer() {
     use std::{cell::RefCell, rc::Rc};
     let stages = Rc::new(RefCell::new(Vec::new()));
