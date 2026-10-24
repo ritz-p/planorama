@@ -48,6 +48,41 @@ fn decode_options(options: &str) -> Result<crate::Options, JsValue> {
     serde_json::from_str(options).map_err(|_| error(crate::Error::InvalidOptions))
 }
 
+fn decode_inputs(inputs: &str) -> Result<Vec<crate::NamedInput>, JsValue> {
+    if inputs.len() > crate::generation::MAX_INPUT_BYTES * 6 + 16384 {
+        return Err(error(crate::Error::InputTooLarge));
+    }
+    serde_json::from_str(inputs).map_err(|_| error(crate::Error::InvalidJson))
+}
+
+#[wasm_bindgen]
+pub fn inspect_named_inputs(inputs: &str) -> Result<String, JsValue> {
+    let result = crate::inspect_named_inputs(&decode_inputs(inputs)?).map_err(error)?;
+    serde_json::to_string(&result).map_err(|_| error(crate::Error::GenerationFailed))
+}
+
+#[wasm_bindgen]
+pub fn generate_named(inputs: &str, options: &str) -> Result<String, JsValue> {
+    let result =
+        crate::generate_named(&decode_inputs(inputs)?, &decode_options(options)?).map_err(error)?;
+    serde_json::to_string(&result).map_err(|_| error(crate::Error::GenerationFailed))
+}
+
+#[wasm_bindgen]
+pub fn generate_named_with_progress(
+    inputs: &str,
+    options: &str,
+    callback: ProgressCallback,
+) -> Result<String, JsValue> {
+    crate::generation::progress::observe(
+        std::rc::Rc::new(move |stage| {
+            // Observer failures must not change the generated result.
+            let _ = callback.notify(&JsValue::UNDEFINED, stage);
+        }),
+        || generate_named(inputs, options),
+    )
+}
+
 #[wasm_bindgen]
 pub fn inspect_input(json: &str) -> Result<String, JsValue> {
     let result = crate::inspect_input(json).map_err(error)?;

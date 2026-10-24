@@ -7,7 +7,9 @@ The CLI owns file I/O, process invocation, output destinations and timings;
 `src/main.rs` translates its result into an exit status. Named-state inputs preserve the
 same boundaries and carry explicit cross-state relationships.
 The CLI and [browser Wasm binding](browser.md) share parsing, semantic projection,
-selection and single-plan composition through `generation`. Module inspection
+selection and composition through `generation` and `named_inputs`. Named inputs
+use the native state partitions and multi-state renderer without filesystem I/O
+or implicit cross-state mappings. Module inspection
 shares `module_inventory` with the native listing command and stops after parsing
 and counting original resources. Internal graph and
 layout types remain private. Browser timing spans are no-ops; the Worker measures

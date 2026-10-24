@@ -1,4 +1,3 @@
-// Multi-state/report helpers remain shared source but are not browser API entry points.
 #![cfg_attr(target_arch = "wasm32", allow(dead_code, unused_imports))]
 
 #[cfg(test)]
@@ -28,6 +27,8 @@ mod work;
 #[path = "../tests/unit/artwork_free.rs"]
 mod artwork_free;
 mod generation;
+mod named_inputs;
+pub use named_inputs::{NamedInput, generate_named, inspect_named_inputs};
 mod module_inventory;
 mod resource_inventory;
 pub use generation::{Error, Generated, Generator, Options, OutputFormat, generate};

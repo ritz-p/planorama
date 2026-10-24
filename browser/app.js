@@ -22,6 +22,93 @@ let resourcePage = 0;
 let inventoryPage = 0;
 let inspecting = false;
 const pageSize = 50;
+class InputReadError extends Error {}
+
+function inputsChanged() {
+  Array.from(element('named-inputs').children).forEach((row, index) => {
+    row.children[0].firstChild.textContent = `State name for input ${index + 1} `;
+    row.children[1].firstChild.textContent = `Plan JSON for input ${index + 1} `;
+    row.children[2].textContent = `Remove input ${index + 1}`;
+  });
+  inventory = [];
+  resources = [];
+  inventoryPage = resourcePage = 0;
+  element('focus').value = '';
+  element('module-search').value = element('resource-search').value = '';
+  element('modules').replaceChildren();
+  settingsChanged();
+  element('inventory-status').textContent = 'Inputs changed. Reload either list after choosing files and state names.';
+}
+
+element('named-mode').onchange = () => {
+  const named = element('named-mode').checked;
+  element('file').disabled = named;
+  element('file').required = !named;
+  element('add-input').disabled = !named;
+  element('named-inputs').hidden = !named;
+  inputsChanged();
+};
+element('add-input').onclick = () => {
+  const row = document.createElement('div');
+  row.className = 'named-input';
+  const id = element('named-inputs').children.length + 1;
+  const label = document.createElement('label');
+  const name = document.createElement('input');
+  name.type = 'text';
+  name.className = 'state-name';
+  name.autocomplete = 'off';
+  name.spellcheck = false;
+  label.append(`State name for input ${id} `, name);
+  const fileLabel = document.createElement('label');
+  const file = document.createElement('input');
+  file.type = 'file';
+  file.accept = '.json,application/json';
+  fileLabel.append(`Plan JSON for input ${id} `, file);
+  const remove = document.createElement('button');
+  remove.type = 'button';
+  remove.textContent = `Remove input ${id}`;
+  remove.onclick = () => { row.remove(); inputsChanged(); element('add-input').focus(); };
+  name.oninput = inputsChanged;
+  file.onchange = inputsChanged;
+  row.append(label, fileLabel, remove);
+  element('named-inputs').append(row);
+  inputsChanged();
+  name.focus();
+};
+
+function snapshotInputs(target) {
+  const named = element('named-mode').checked;
+  const entries = named ? Array.from(element('named-inputs').children, row => ({
+    state: row.querySelector('.state-name').value,
+    file: row.querySelector('input[type=file]').files[0],
+  })) : [{file: element('file').files[0]}];
+  const fail = message => { element(target).textContent = message; };
+  if (!entries.length || entries.length > 64) return fail('Select between 1 and 64 inputs.');
+  const names = new Set();
+  let total = 0;
+  for (const [index, entry] of entries.entries()) {
+    if (named && !/^[A-Za-z0-9._-]{1,64}$/.test(entry.state)) return fail(`Input ${index + 1}: enter a state name with 1–64 ASCII letters, digits, periods, underscores or hyphens.`);
+    if (named && names.has(entry.state)) return fail(`Input ${index + 1}: duplicate state name. Each name must be unique.`);
+    names.add(entry.state);
+    if (!entry.file) return fail(`Input ${index + 1}: select a plan JSON file.`);
+    total += entry.file.size;
+    if (entry.file.size > maxBytes || total > maxBytes) return fail('Input exceeds the 32 MiB limit per file or in total.');
+  }
+  return {named, entries};
+}
+
+async function readInputs(snapshot, request) {
+  const inputs = [];
+  for (const [index, entry] of snapshot.entries.entries()) {
+    if (request !== serial) return;
+    let json;
+    try { json = await entry.file.text(); }
+    catch { throw new InputReadError(`Input ${index + 1}: could not read the selected file. Reselect it and retry.`); }
+    if (request !== serial) return;
+    inputs.push({state: entry.state, json});
+  }
+  return snapshot.named ? {inputs} : {json: inputs[0].json};
+}
 
 function renderResources() {
   const focus = element('focus').value;
@@ -52,7 +139,7 @@ function renderResources() {
 function renderInventory() {
   const selected = new Set(Array.from(element('modules').querySelectorAll('input'), input => input.value).filter(value => value !== ''));
   const query = element('module-search').value.toLowerCase();
-  const matches = inventory.filter(entry => (entry.selector ?? '(root)').toLowerCase().includes(query));
+  const matches = inventory.filter(entry => `${entry.state ?? ''} ${entry.selector ?? '(root)'}`.toLowerCase().includes(query));
   inventoryPage = Math.max(0, Math.min(inventoryPage, Math.ceil(matches.length / pageSize) - 1));
   const start = inventoryPage * pageSize;
   element('module-count').textContent = `${selected.size} selectors selected. ${matches.length} of ${inventory.length} rows match. Showing ${matches.length ? start + 1 : 0}–${Math.min(start + pageSize, matches.length)}.`;
@@ -75,7 +162,7 @@ function renderInventory() {
       }
       Array.from(element('module-inventory').querySelectorAll('input')).find(input => input.value === entry.selector)?.focus();
     };
-    label.append(checkbox, ` ${entry.selector ?? '(root; not selectable)'} — ${entry.instance ? 'instance' : 'configuration (aggregate)'}; direct ${entry.direct}; subtree ${entry.subtree}`);
+    label.append(checkbox, ` ${entry.selector ?? `${entry.state ? entry.state + ':' : ''}(root; not selectable)`} — ${entry.instance ? 'instance' : 'configuration (aggregate)'}; direct ${entry.direct}; subtree ${entry.subtree}`);
     return label;
   }));
 }
@@ -266,20 +353,15 @@ async function inspectModules() {
   stop();
   clearResult();
   const request = serial;
-  const file = element('file').files[0];
-  if (!file || !assets) {
-    element('inventory-status').textContent = 'Select a file after the generator is ready.';
-    return;
-  }
-  if (file.size > maxBytes) {
-    element('inventory-status').textContent = 'Input exceeds the 32 MiB limit.';
+  const snapshot = snapshotInputs('inventory-status');
+  if (!snapshot || !assets) {
     return;
   }
   inspecting = true;
   element('cancel').disabled = false;
   element('inventory-status').textContent = 'Listing modules and resources…';
   try {
-    const json = await file.text();
+    const payload = await readInputs(snapshot, request);
     if (request !== serial) return;
     worker = new Worker(assets.url);
     worker.onerror = event => {
@@ -298,11 +380,11 @@ async function inspectModules() {
       renderResources();
       element('inventory-status').textContent = data.ok ? 'Modules from the original input, with resource addresses listed above. No selection filters applied.' : data.error.message;
     };
-    worker.postMessage({module: assets.module, json, operation: 'inspect'});
-  } catch {
+    worker.postMessage({module: assets.module, ...payload, operation: 'inspect'});
+  } catch (error) {
     if (request !== serial) return;
     stop();
-    element('inventory-status').textContent = 'Could not read the selected file or list modules and resources.';
+    element('inventory-status').textContent = error instanceof InputReadError ? error.message : 'Could not read the selected file or list modules and resources.';
   }
 }
 
@@ -317,12 +399,8 @@ element('generate-form').onsubmit = async event => {
   stop();
   clearResult();
   const request = serial;
-  const file = element('file').files[0];
-  if (!file || !assets) return;
-  if (file.size > maxBytes) {
-    element('status').textContent = 'Input exceeds the 32 MiB limit.';
-    return;
-  }
+  const snapshot = snapshotInputs('status');
+  if (!snapshot || !assets) return;
   const options = snapshotOptions();
   if (!options) return;
   const {format} = options;
@@ -331,7 +409,7 @@ element('generate-form').onsubmit = async event => {
   element('status').textContent = 'Generating…';
   startElapsed();
   try {
-    const json = await file.text();
+    const payload = await readInputs(snapshot, request);
     if (request !== serial) return;
     worker = new Worker(assets.url);
     const activeWorker = worker;
@@ -368,11 +446,11 @@ element('generate-form').onsubmit = async event => {
       element('download').hidden = false;
       element('status').textContent = `Generated in ${Math.round(data.elapsed_ms)} ms. ${data.diagnostics.join(' ')}`;
     };
-    worker.postMessage({module: assets.module, json, options, request});
-  } catch {
+    worker.postMessage({module: assets.module, ...payload, options, request});
+  } catch (error) {
     if (request !== serial) return;
     stop();
-    element('status').textContent = 'Could not read the selected file or start the generator.';
+    element('status').textContent = error instanceof InputReadError ? error.message : 'Could not read the selected file or start the generator.';
   }
 };
 

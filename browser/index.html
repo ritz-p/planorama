@@ -20,9 +20,16 @@ input[type="text"] { width: min(95%, 40rem) }
 :focus-visible { outline: 3px solid #1769aa; outline-offset: 3px }
 </style>
 <h1>Planorama</h1>
-<p>Select one saved plan from <code>terraform show -json</code> (up to 32 MiB). Generation stays in this browser. Files and results are not uploaded or automatically saved.</p>
+<p>Select saved plan JSON from <code>terraform show -json</code> (up to 32 MiB total). Use one file or explicitly named states. Generation stays in this browser. Files and results are not uploaded or automatically saved.</p>
 <form id="generate-form">
   <label>Plan JSON <input id="file" type="file" accept=".json,application/json" required></label>
+  <fieldset>
+    <legend>Named state inputs (optional)</legend>
+    <label><input id="named-mode" type="checkbox"> Use named states</label>
+    <p>Each state needs an explicit unique name: 1–64 ASCII letters, digits, periods, underscores or hyphens. Up to 64 files; 32 MiB per file and 32 MiB total. Names do not imply AWS accounts. Cross-state mappings are unsupported here; use the CLI for explicit remote-state mappings.</p>
+    <div id="named-inputs"></div>
+    <button id="add-input" type="button" disabled>Add state input</button>
+  </fieldset>
   <label>Output <select id="format"><option value="svg">SVG</option><option value="html">HTML</option></select></label>
   <label><input id="changed" type="checkbox"> Changed only</label>
   <fieldset>

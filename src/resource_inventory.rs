@@ -33,7 +33,7 @@ pub fn inspect_input(json: &str) -> Result<InputInventory, crate::Error> {
     })
 }
 
-fn inventory(plan: &TerraformPlan) -> Vec<ResourceInventoryEntry> {
+pub(crate) fn inventory(plan: &TerraformPlan) -> Vec<ResourceInventoryEntry> {
     let mut entries = BTreeMap::new();
     for node in &plan.nodes {
         let entry = entries

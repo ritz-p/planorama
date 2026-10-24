@@ -2,7 +2,7 @@
 
 Terraform plan JSON を、構成の参照関係・AWS の包含・接続が分かる SVG または自己完結型 HTML に変換する CLI です。HTML は検索・選択・ズームに対応し、生成後はオフラインで開けます。
 
-単一 JSON をアップロードせずに生成する [ブラウザ UI と Wasm API](docs/browser.md) も利用できます。CLI と同じ解析・選択・描画処理を Web Worker 内で実行します。
+単一 JSON または明示的な state 名を付けた複数 JSON から、アップロードせずに生成する [ブラウザ UI と Wasm API](docs/browser.md) も利用できます。CLI と同じ解析・選択・描画処理を Web Worker 内で実行します。
 
 ![Terraform plan から生成した構成図](examples/diagram.svg)
 
