@@ -1,23 +1,7 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="1326" viewBox="0 0 1100 1326" role="img" aria-labelledby="title description">
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="1386" viewBox="0 0 1100 1386" role="img" aria-labelledby="title description">
 <title id="title">Terraform plan</title>
 <desc id="description">4 resources, 1 reference edges. Arrows point from dependencies to dependent resources. References are conservative, not Terraform execution order. Thin solid: dependency. Dashed: association. Thick dotted: connection. Nested boxes: containment. Edge color preserves the Terraform action when available.</desc>
-<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/></marker><metadata id="planorama-icons-license">AWS Architecture Icons, release 07312026.
-Copyright Amazon Web Services, Inc. or its affiliates. All rights reserved.
-AWS service names and artwork are trademarks or other proprietary assets of AWS.
-Source: https://aws.amazon.com/architecture/icons/
-Terms: https://aws.amazon.com/terms/
-These assets are used to illustrate AWS architecture. They are not licensed
-under Planorama&apos;s original glyph MIT notice or any repository code license.
-No AWS endorsement is implied. Consult the AWS terms for other uses.
-</metadata><symbol id="planorama-icon-aws-eventbridge" viewBox="0 0 64 64"><g>
-    <title>Icon-Architecture/48/Arch_Amazon-EventBridge_48</title>
-    <g id="planorama-icon-aws-eventbridge-local-49636f6e2d4172636869746563747572652f34382f417263685f416d617a6f6e2d4576656e744272696467655f3438" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <g id="planorama-icon-aws-eventbridge-local-49636f6e2d4172636869746563747572652d42472f34382f4170706c69636174696f6e2d496e746567726174696f6e" fill="#E7157B">
-            <rect id="planorama-icon-aws-eventbridge-local-52656374616e676c65" x="0" y="0" width="64" height="64"></rect>
-        </g>
-        <path d="M43.2617752,52 C41.6961147,52 40.4226302,50.736 40.4226302,49.182 C40.4226302,47.628 41.6961147,46.364 43.2617752,46.364 C44.8274357,46.364 46.1009202,47.628 46.1009202,49.182 C46.1009202,50.736 44.8274357,52 43.2617752,52 L43.2617752,52 Z M36.5437415,39 L28.4000902,39 L24.3277608,32 L28.4000902,25 L36.5437415,25 L40.6160709,32 L36.5437415,39 Z M22.7459802,17.636 C21.1803197,17.636 19.9058277,16.372 19.9058277,14.818 C19.9058277,13.264 21.1803197,12 22.7459802,12 C24.3106333,12 25.5851253,13.264 25.5851253,14.818 C25.5851253,16.372 24.3106333,17.636 22.7459802,17.636 L22.7459802,17.636 Z M43.2617752,44.364 C42.7197383,44.364 42.206919,44.473 41.7192872,44.636 L38.6161763,39.438 L42.6522355,32.5 C42.8315712,32.19 42.8315712,31.81 42.6522355,31.5 L37.9975691,23.5 C37.8182335,23.19 37.4857573,23 37.125071,23 L28.8010766,23 L26.0243968,18.349 C26.9865627,17.468 27.6001324,16.217 27.6001324,14.818 C27.6001324,12.162 25.4229172,10 22.7459802,10 C20.0680358,10 17.8908206,12.162 17.8908206,14.818 C17.8908206,17.475 20.0680358,19.636 22.7459802,19.636 C23.2880172,19.636 23.8008365,19.527 24.2884682,19.364 L26.8535722,23.659 L22.2926036,31.5 C22.1122605,31.81 22.1122605,32.19 22.2926036,32.5 L26.9462626,40.5 C27.1255982,40.81 27.4580744,41 27.8187607,41 L37.125071,41 C37.1512661,41 37.1754462,40.992 37.1996263,40.99 L39.9833586,45.651 C39.0211927,46.532 38.4076231,47.783 38.4076231,49.182 C38.4076231,51.838 40.5848382,54 43.2617752,54 C45.9387122,54 48.1159273,51.838 48.1159273,49.182 C48.1159273,46.525 45.9387122,44.364 43.2617752,44.364 L43.2617752,44.364 Z M47.9335692,25.636 C46.3679087,25.636 45.0934167,24.372 45.0934167,22.818 C45.0934167,21.264 46.3679087,20 47.9335692,20 C49.4982222,20 50.7727142,21.264 50.7727142,22.818 C50.7727142,24.372 49.4982222,25.636 47.9335692,25.636 L47.9335692,25.636 Z M50.9792525,26.539 C52.0734013,25.655 52.7877213,24.325 52.7877213,22.818 C52.7877213,20.162 50.6105062,18 47.9335692,18 C47.2958194,18 46.6903098,18.13 46.1331603,18.353 L43.4048407,14.432 C43.21543,14.162 42.9051189,14 42.5746578,14 L33.5071257,14 L33.5071257,16 L42.0467259,16 L44.4576819,19.466 C43.6083564,20.334 43.0784096,21.515 43.0784096,22.818 C43.0784096,25.475 45.2556247,27.636 47.9335692,27.636 C48.3678032,27.636 48.7818872,27.561 49.1838811,27.454 L51.8295855,32 L47.9809219,38.616 L49.725918,39.616 L53.8647426,32.5 C54.0450858,32.19 54.0450858,31.81 53.8647426,31.5 L50.9792525,26.539 Z M17.7084624,43.636 C16.1428019,43.636 14.8683099,42.372 14.8683099,40.818 C14.8683099,39.264 16.1428019,38 17.7084624,38 C19.2731155,38 20.5476075,39.264 20.5476075,40.818 C20.5476075,42.372 19.2731155,43.636 17.7084624,43.636 L17.7084624,43.636 Z M20.6221627,44.647 C21.7928819,43.767 22.5626146,42.386 22.5626146,40.818 C22.5626146,38.162 20.3853994,36 17.7084624,36 C17.00724,36 16.3443026,36.155 15.742823,36.421 L13.1706664,32 L17.6429747,24.311 L15.8979785,23.311 L11.1345017,31.5 C10.9551661,31.81 10.9551661,32.19 11.1345017,32.5 L14.1086522,37.614 C13.337912,38.468 12.8533028,39.583 12.8533028,40.818 C12.8533028,43.475 15.030518,45.636 17.7084624,45.636 C18.0762012,45.636 18.4308425,45.588 18.7744012,45.511 L21.5954112,49.568 C21.7838143,49.838 22.0931179,50 22.4245866,50 L31.4921186,50 L31.4921186,48 L22.9545335,48 L20.6221627,44.647 Z" id="planorama-icon-aws-eventbridge-local-4157532d4576656e744272696467655f49636f6e5f34385f5371756964" fill="#FFFFFF"></path>
-    </g>
-</g></symbol></defs>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/></marker></defs>
 <rect width="100%" height="100%" fill="#ffffff"/>
 <g font-family="ui-monospace, SFMono-Regular, Consolas, monospace">
 <text x="40" y="45" font-size="25" font-weight="700" fill="#0f172a">Terraform plan</text>
@@ -108,35 +92,35 @@ No AWS endorsement is implied. Consult the AWS terms for other uses.
 </g>
 <g transform="translate(0 558)">
 <g data-architecture="true" transform="translate(0 0)">
-<g data-deployment-scope="true" data-scope-provider="AWS" data-region="ap-northeast-1"><rect x="40" y="160" width="720" height="292" rx="14" fill="#f8fafc" stroke="#94a3b8" stroke-dasharray="9 5"/><text x="56" y="185" font-size="15" font-weight="700" fill="#334155">AWS ap-northeast-1</text></g>
-<g data-deployment-scope="true" data-scope-provider="AWS" data-region="us-east-1"><rect x="40" y="492" width="360" height="156" rx="14" fill="#f8fafc" stroke="#94a3b8" stroke-dasharray="9 5"/><text x="56" y="517" font-size="15" font-weight="700" fill="#334155">AWS us-east-1</text></g>
-<path d="M 380 248 L 420 248 " data-edge-kind="dependency" data-directionality="directed" data-source="resource-6177735f636c6f756477617463685f6576656e745f6275732e6576656e7473-current" data-target="resource-6177735f636c6f756477617463685f6576656e745f72756c652e6a6f6273-current" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>aws_cloudwatch_event_bus.events → aws_cloudwatch_event_rule.jobs</title></path>
+<g data-deployment-scope="true" data-scope-provider="AWS" data-region="ap-northeast-1"><rect x="40" y="160" width="720" height="332" rx="14" fill="#f8fafc" stroke="#94a3b8" stroke-dasharray="9 5"/><text x="56" y="185" font-size="15" font-weight="700" fill="#334155">AWS ap-northeast-1</text></g>
+<g data-deployment-scope="true" data-scope-provider="AWS" data-region="us-east-1"><rect x="40" y="532" width="360" height="176" rx="14" fill="#f8fafc" stroke="#94a3b8" stroke-dasharray="9 5"/><text x="56" y="557" font-size="15" font-weight="700" fill="#334155">AWS us-east-1</text></g>
+<path d="M 380 258 L 420 258 " data-edge-kind="dependency" data-directionality="directed" data-source="resource-6177735f636c6f756477617463685f6576656e745f6275732e6576656e7473-current" data-target="resource-6177735f636c6f756477617463685f6576656e745f72756c652e6a6f6273-current" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>aws_cloudwatch_event_bus.events → aws_cloudwatch_event_rule.jobs</title></path>
 <g id="resource-6177735f636c6f756477617463685f6576656e745f6275732e6576656e7473-current" data-architecture-id="terraform:6177735f636c6f756477617463685f6576656e745f6275732e6576656e7473-current" data-qualified-address="module.root.aws_cloudwatch_event_bus.events" data-terraform-address="aws_cloudwatch_event_bus.events"><title>module.root.aws_cloudwatch_event_bus.events — create</title>
-<rect x="60" y="200" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
+<rect x="60" y="200" width="320" height="116" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text x="72" y="220" font-size="11" fill="#047857">aws_cloudwatch_event_bus · create</text>
-<use href="#planorama-icon-aws-eventbridge" x="72" y="228" width="24" height="24" aria-hidden="true"/><text x="104" y="245" font-size="13" fill="#0f172a" xml:space="preserve">module.root.</text>
-<text x="104" y="265" font-size="13" fill="#0f172a" xml:space="preserve">aws_cloudwatch_event_bus.events</text>
+<text data-service-name="true" x="72" y="245" font-size="13" fill="#0f172a" xml:space="preserve">Amazon EventBridge</text><text x="72" y="265" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_cloudwatch_event_bus.</text>
+<text x="72" y="285" font-size="13" fill="#0f172a" xml:space="preserve">events</text>
 </g>
 <g id="resource-6177735f636c6f756477617463685f6576656e745f72756c652e64656661756c74-current" data-architecture-id="terraform:6177735f636c6f756477617463685f6576656e745f72756c652e64656661756c74-current" data-qualified-address="module.root.aws_cloudwatch_event_rule.default" data-terraform-address="aws_cloudwatch_event_rule.default"><title>module.root.aws_cloudwatch_event_rule.default — unchanged</title>
-<rect x="60" y="336" width="320" height="96" rx="8" fill="#f8fafc" stroke="#64748b" stroke-width="1.5" data-mode="managed"/>
-<text x="72" y="356" font-size="11" fill="#64748b">aws_cloudwatch_event_rule · unchanged</text>
-<use href="#planorama-icon-aws-eventbridge" x="72" y="364" width="24" height="24" aria-hidden="true"/><text x="104" y="381" font-size="13" fill="#0f172a" xml:space="preserve">module.root.</text>
-<text x="104" y="401" font-size="13" fill="#0f172a" xml:space="preserve">aws_cloudwatch_event_rule.default</text>
+<rect x="60" y="356" width="320" height="116" rx="8" fill="#f8fafc" stroke="#64748b" stroke-width="1.5" data-mode="managed"/>
+<text x="72" y="376" font-size="11" fill="#64748b">aws_cloudwatch_event_rule · unchanged</text>
+<text data-service-name="true" x="72" y="401" font-size="13" fill="#0f172a" xml:space="preserve">Amazon EventBridge</text><text x="72" y="421" font-size="13" fill="#0f172a" xml:space="preserve">module.root.</text>
+<text x="72" y="441" font-size="13" fill="#0f172a" xml:space="preserve">aws_cloudwatch_event_rule.default</text>
 </g>
 <g id="resource-6177735f636c6f756477617463685f6576656e745f72756c652e6a6f6273-current" data-architecture-id="terraform:6177735f636c6f756477617463685f6576656e745f72756c652e6a6f6273-current" data-qualified-address="module.root.aws_cloudwatch_event_rule.jobs" data-terraform-address="aws_cloudwatch_event_rule.jobs"><title>module.root.aws_cloudwatch_event_rule.jobs — update</title>
-<rect x="420" y="200" width="320" height="96" rx="8" fill="#eff6ff" stroke="#1d4ed8" stroke-width="1.5" data-mode="managed"/>
+<rect x="420" y="200" width="320" height="116" rx="8" fill="#eff6ff" stroke="#1d4ed8" stroke-width="1.5" data-mode="managed"/>
 <text x="432" y="220" font-size="11" fill="#1d4ed8">aws_cloudwatch_event_rule · update</text>
-<use href="#planorama-icon-aws-eventbridge" x="432" y="228" width="24" height="24" aria-hidden="true"/><text x="464" y="245" font-size="13" fill="#0f172a" xml:space="preserve">module.root.</text>
-<text x="464" y="265" font-size="13" fill="#0f172a" xml:space="preserve">aws_cloudwatch_event_rule.jobs</text>
+<text data-service-name="true" x="432" y="245" font-size="13" fill="#0f172a" xml:space="preserve">Amazon EventBridge</text><text x="432" y="265" font-size="13" fill="#0f172a" xml:space="preserve">module.root.</text>
+<text x="432" y="285" font-size="13" fill="#0f172a" xml:space="preserve">aws_cloudwatch_event_rule.jobs</text>
 </g>
 <g id="resource-646174612e6177735f636c6f756477617463685f6576656e745f6275732e61726368697665-current" data-architecture-id="terraform:646174612e6177735f636c6f756477617463685f6576656e745f6275732e61726368697665-current" data-qualified-address="module.root.data.aws_cloudwatch_event_bus.archive" data-terraform-address="data.aws_cloudwatch_event_bus.archive"><title>module.root.data.aws_cloudwatch_event_bus.archive — read</title>
-<rect x="60" y="532" width="320" height="96" rx="8" fill="#faf5ff" stroke="#7e22ce" stroke-width="1.5" data-mode="data" stroke-dasharray="6 4"/>
-<g data-external="true"><title>External resource: read by Terraform, not managed by this configuration</title><rect x="302" y="539" width="68" height="18" rx="4" fill="#e2e8f0"/><text x="308" y="552" font-size="10" fill="#334155">external</text></g><text x="72" y="552" font-size="11" fill="#7e22ce">aws_cloudwatch_ev… · read</text>
-<use href="#planorama-icon-aws-eventbridge" x="72" y="560" width="24" height="24" aria-hidden="true"/><text x="104" y="577" font-size="13" fill="#0f172a" xml:space="preserve">module.root.data.</text>
-<text x="104" y="597" font-size="13" fill="#0f172a" xml:space="preserve">aws_cloudwatch_event_bus.archive</text>
+<rect x="60" y="572" width="320" height="116" rx="8" fill="#faf5ff" stroke="#7e22ce" stroke-width="1.5" data-mode="data" stroke-dasharray="6 4"/>
+<g data-external="true"><title>External resource: read by Terraform, not managed by this configuration</title><rect x="302" y="579" width="68" height="18" rx="4" fill="#e2e8f0"/><text x="308" y="592" font-size="10" fill="#334155">external</text></g><text x="72" y="592" font-size="11" fill="#7e22ce">aws_cloudwatch_ev… · read</text>
+<text data-service-name="true" x="72" y="617" font-size="13" fill="#0f172a" xml:space="preserve">Amazon EventBridge</text><text x="72" y="637" font-size="13" fill="#0f172a" xml:space="preserve">module.root.data.</text>
+<text x="72" y="657" font-size="13" fill="#0f172a" xml:space="preserve">aws_cloudwatch_event_bus.archive</text>
 </g>
 <g data-endpoints="true" data-source="resource-6177735f636c6f756477617463685f6576656e745f6275732e6576656e7473-current" data-target="resource-6177735f636c6f756477617463685f6576656e745f72756c652e6a6f6273-current" aria-hidden="true">
-<circle data-endpoint="source" cx="380" cy="248" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+<circle data-endpoint="source" cx="380" cy="258" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
 </g>
 </g>
 </g>

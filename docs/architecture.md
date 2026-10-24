@@ -233,10 +233,8 @@ View projection retains relationships only when their required endpoints survive
 `ViewGraph` and `ViewArchitecture` have private constructors and no mutable deref.
 Even unfiltered CLI output passes through projection.
 
-`view::Options::icon_mode` selects service artwork or service-name text before
-layout. Projection sets `Node.service_name` through provider-aware capabilities,
-including a neutral service-name fallback when managed types lack bundled artwork,
-leaving semantic graphs untouched. Card and logical-row measurements
+Projection sets `Node.service_name` through provider-aware capabilities,
+leaving semantic graphs untouched. The old icon mode is rejected. Card and logical-row measurements
 reserve wrapped label heights; SVG and HTML consume the same presentation.
 
 Implementation submodules remain private; entry points are crate-visible.

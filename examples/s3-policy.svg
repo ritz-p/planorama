@@ -1,25 +1,7 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="1666" viewBox="0 0 1100 1666" role="img" aria-labelledby="title description">
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="1726" viewBox="0 0 1100 1726" role="img" aria-labelledby="title description">
 <title id="title">Terraform plan</title>
 <desc id="description">3 resources (1 spatial cards, 2 logical resources in 1 group cards) · 1 relationships Thin solid: dependency. Dashed: association. Thick dotted: connection. Nested boxes: containment. Edge color preserves the Terraform action when available.</desc>
-<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/></marker><metadata id="planorama-icons-license">AWS Architecture Icons, release 07312026.
-Copyright Amazon Web Services, Inc. or its affiliates. All rights reserved.
-AWS service names and artwork are trademarks or other proprietary assets of AWS.
-Source: https://aws.amazon.com/architecture/icons/
-Terms: https://aws.amazon.com/terms/
-These assets are used to illustrate AWS architecture. They are not licensed
-under Planorama&apos;s original glyph MIT notice or any repository code license.
-No AWS endorsement is implied. Consult the AWS terms for other uses.
-</metadata><symbol id="planorama-icon-aws-s3" viewBox="0 0 64 64"><g>
-    <title>Icon-Architecture/48/Arch_Amazon-Simple-Storage-Service_48</title>
-    <g id="planorama-icon-aws-s3-local-49636f6e2d4172636869746563747572652f34382f417263685f416d617a6f6e2d53696d706c652d53746f726167652d536572766963655f3438" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <g id="planorama-icon-aws-s3-local-49636f6e2d4172636869746563747572652d42472f34382f53746f72616765" fill="#7AA116">
-            <rect id="planorama-icon-aws-s3-local-52656374616e676c65" x="0" y="0" width="64" height="64"></rect>
-        </g>
-        <g id="planorama-icon-aws-s3-local-49636f6e2d536572766963652f34382f416d617a6f6e2d53696d706c652d53746f726167652d536572766963655f3438" transform="translate(10.999800, 10.000200)" fill="#FFFFFF">
-            <path d="M36.759,23.948 L36.993,22.131 C39.166,23.385 39.842,24.121 40.037,24.424 C39.713,24.485 38.832,24.509 36.759,23.948 L36.759,23.948 Z M19.5,11 C9.125,11 2.382,8.488 2,6.696 L2,6.511 C2.349,5.392 8.14,2 19.5,2 C30.84,2 36.632,5.381 37,6.505 L37,6.616 C36.724,8.446 29.961,11 19.5,11 L19.5,11 Z M34.818,23.362 C30.053,21.797 23.912,18.979 21.594,17.888 C21.535,16.786 20.628,15.906 19.512,15.906 C18.358,15.906 17.418,16.845 17.418,18 C17.418,19.154 18.358,20.094 19.512,20.094 C19.969,20.094 20.389,19.942 20.733,19.693 C23.132,20.822 29.619,23.798 34.558,25.38 L32.837,38.724 C32.583,40.352 27.919,42 19.497,42 C11.072,42 6.405,40.352 6.155,38.751 L2.435,9.814 C5.945,11.915 12.749,13 19.5,13 C26.25,13 33.054,11.915 36.565,9.815 L34.818,23.362 Z M39,6.5 C39,3.431 30.661,0 19.5,0 C8.339,0 -3.55271368e-15,3.431 -3.55271368e-15,6.5 L-3.55271368e-15,7.043 L4.174,39.033 C4.875,43.516 15.123,44 19.497,44 C23.869,44 34.113,43.516 34.818,39.007 L36.501,25.947 C37.778,26.279 38.812,26.456 39.616,26.455 C40.606,26.455 41.273,26.203 41.697,25.697 C42.047,25.281 42.185,24.756 42.085,24.221 C41.857,23 40.403,21.712 37.37,20.044 L37.27,19.989 L39,7.044 L39,6.5 Z" id="planorama-icon-aws-s3-local-416d617a6f6e2d53696d706c652d53746f726167652d536572766963652d49636f6e5f34385f5371756964"></path>
-        </g>
-    </g>
-</g></symbol></defs>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/></marker></defs>
 <rect width="100%" height="100%" fill="#ffffff"/>
 <g font-family="ui-monospace, SFMono-Regular, Consolas, monospace">
 <text x="40" y="45" font-size="25" font-weight="700" fill="#0f172a">Terraform plan</text>
@@ -110,39 +92,38 @@ No AWS endorsement is implied. Consult the AWS terms for other uses.
 </g>
 <g transform="translate(0 558)">
 <g data-annotation-area="true">
-<g data-annotation-card="true" transform="translate(40 160)"><rect width="568" height="606" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-annotation-section="Logical Resources"><rect width="568" height="606" rx="12" fill="#ecfeff" stroke="#0891b2"/><text x="16" y="28" font-size="15" font-weight="700" fill="#0e7490">Logical Resources</text><g data-annotation-card="true" transform="translate(16 48)"><rect width="536" height="542" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-logical-group="true" data-provider-source="registry.terraform.io/hashicorp/aws" data-resource-type="aws_s3_bucket_policy" data-mode="managed"><title>aws_s3_bucket_policy · managed — registry.terraform.io/hashicorp/aws</title><text x="16" y="28" font-size="13" font-weight="700" fill="#0e7490">aws_s3_bucket_policy · managed</text>
+<g data-annotation-card="true" transform="translate(40 160)"><rect width="568" height="646" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-annotation-section="Logical Resources"><rect width="568" height="646" rx="12" fill="#ecfeff" stroke="#0891b2"/><text x="16" y="28" font-size="15" font-weight="700" fill="#0e7490">Logical Resources</text><g data-annotation-card="true" transform="translate(16 48)"><rect width="536" height="582" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-logical-group="true" data-provider-source="registry.terraform.io/hashicorp/aws" data-resource-type="aws_s3_bucket_policy" data-mode="managed"><title>aws_s3_bucket_policy · managed — registry.terraform.io/hashicorp/aws</title><text x="16" y="28" font-size="13" font-weight="700" fill="#0e7490">aws_s3_bucket_policy · managed</text>
 <text x="16" y="48" font-size="11" fill="#64748b">registry.terraform.io/hashicorp/aws</text>
 <text data-role-explanation="true" x="16" y="66" font-size="12" fill="#475569" xml:space="preserve">Role: Policy — access/control rules or policy-like configurati</text>
 <text data-role-explanation="true" x="16" y="86" font-size="12" fill="#475569" xml:space="preserve">on; not necessarily IAM or policy enforcement.</text>
-<g data-action-section="create"><rect x="8" y="106" width="520" height="198" rx="8" fill="none" stroke="#047857" stroke-width="2"/><title>Create (1)</title><text x="16" y="130" font-size="13" font-weight="700" fill="#047857">Create (1)</text><g id="resource-6177735f73335f6275636b65745f706f6c6963792e6c69746572616c-current" data-architecture-id="terraform:6177735f73335f6275636b65745f706f6c6963792e6c69746572616c-current" data-entity-kind="terraform" data-placement="logical" data-terraform-address="aws_s3_bucket_policy.literal" data-qualified-address="module.root.aws_s3_bucket_policy.literal" data-mode="managed" transform="translate(0 138)" data-role="policy"><title>module.root.aws_s3_bucket_policy.literal — create</title><use href="#planorama-icon-aws-s3" x="496" y="8" width="24" height="24" aria-hidden="true"/><text x="16" y="28" font-size="12" fill="#334155" xml:space="preserve" font-weight="700">module.root.aws_s3_bucket_policy.literal</text>
-<text x="16" y="48" font-size="12" fill="#334155" xml:space="preserve">create</text>
-<text x="16" y="68" font-size="12" fill="#334155" xml:space="preserve">Region: us-west-2</text>
-<text x="16" y="88" font-size="12" fill="#334155" xml:space="preserve">policy</text>
-<g data-resource-references="true"><title>Policy bucket reference: unresolved [bucket; unresolved attribute reference]</title><text x="16" y="116" font-size="11" font-weight="700" fill="#475569">Uses</text><g data-reference-status="unresolved"><title>Policy bucket reference: unresolved [bucket; unresolved attribute reference]</title><text x="16" y="134" font-size="11" fill="#334155" xml:space="preserve">Policy bucket reference: unresolved</text>
+<g data-action-section="create"><rect x="8" y="106" width="520" height="218" rx="8" fill="none" stroke="#047857" stroke-width="2"/><title>Create (1)</title><text x="16" y="130" font-size="13" font-weight="700" fill="#047857">Create (1)</text><g id="resource-6177735f73335f6275636b65745f706f6c6963792e6c69746572616c-current" data-architecture-id="terraform:6177735f73335f6275636b65745f706f6c6963792e6c69746572616c-current" data-entity-kind="terraform" data-placement="logical" data-terraform-address="aws_s3_bucket_policy.literal" data-qualified-address="module.root.aws_s3_bucket_policy.literal" data-mode="managed" transform="translate(0 138)" data-role="policy"><title>module.root.aws_s3_bucket_policy.literal — create</title><text data-service-name="true" x="448" y="28" font-size="13" fill="#0f172a" xml:space="preserve">Amazon S3</text><text x="16" y="48" font-size="12" fill="#334155" xml:space="preserve" font-weight="700">module.root.aws_s3_bucket_policy.literal</text>
+<text x="16" y="68" font-size="12" fill="#334155" xml:space="preserve">create</text>
+<text x="16" y="88" font-size="12" fill="#334155" xml:space="preserve">Region: us-west-2</text>
+<text x="16" y="108" font-size="12" fill="#334155" xml:space="preserve">policy</text>
+<g data-resource-references="true"><title>Policy bucket reference: unresolved [bucket; unresolved attribute reference]</title><text x="16" y="136" font-size="11" font-weight="700" fill="#475569">Uses</text><g data-reference-status="unresolved"><title>Policy bucket reference: unresolved [bucket; unresolved attribute reference]</title><text x="16" y="154" font-size="11" fill="#334155" xml:space="preserve">Policy bucket reference: unresolved</text>
 </g></g>
-<line data-resource-underline="true" x1="16" y1="150" x2="520" y2="150" stroke="#047857" stroke-width="2"/></g>
+<line data-resource-underline="true" x1="16" y1="170" x2="520" y2="170" stroke="#047857" stroke-width="2"/></g>
 </g>
-<g data-action-section="update"><rect x="8" y="316" width="520" height="198" rx="8" fill="none" stroke="#1d4ed8" stroke-width="2"/><title>Update (1)</title><text x="16" y="340" font-size="13" font-weight="700" fill="#1d4ed8">Update (1)</text><g id="resource-6177735f73335f6275636b65745f706f6c6963792e617373657473-current" data-architecture-id="terraform:6177735f73335f6275636b65745f706f6c6963792e617373657473-current" data-entity-kind="terraform" data-placement="logical" data-terraform-address="aws_s3_bucket_policy.assets" data-qualified-address="module.root.aws_s3_bucket_policy.assets" data-mode="managed" transform="translate(0 348)" data-role="policy"><title>module.root.aws_s3_bucket_policy.assets — update</title><use href="#planorama-icon-aws-s3" x="496" y="8" width="24" height="24" aria-hidden="true"/><text x="16" y="28" font-size="12" fill="#334155" xml:space="preserve" font-weight="700">module.root.aws_s3_bucket_policy.assets</text>
-<text x="16" y="48" font-size="12" fill="#334155" xml:space="preserve">update</text>
-<text x="16" y="68" font-size="12" fill="#334155" xml:space="preserve">Region: us-west-2</text>
-<text x="16" y="88" font-size="12" fill="#334155" xml:space="preserve">policy</text>
-<g data-resource-references="true"><title>Policy bucket reference: aws_s3_bucket.assets[0] [bucket; direct attribute reference]</title><text x="16" y="116" font-size="11" font-weight="700" fill="#475569">Uses</text><a href="#resource-6177735f73335f6275636b65742e6173736574735b305d-current" data-reference-attribute="bucket"><title>Policy bucket reference: aws_s3_bucket.assets[0] [bucket; direct attribute reference]</title><text x="16" y="134" font-size="11" fill="#334155" xml:space="preserve">Policy bucket reference: aws_s3_bucket.assets[0]</text>
+<g data-action-section="update"><rect x="8" y="336" width="520" height="218" rx="8" fill="none" stroke="#1d4ed8" stroke-width="2"/><title>Update (1)</title><text x="16" y="360" font-size="13" font-weight="700" fill="#1d4ed8">Update (1)</text><g id="resource-6177735f73335f6275636b65745f706f6c6963792e617373657473-current" data-architecture-id="terraform:6177735f73335f6275636b65745f706f6c6963792e617373657473-current" data-entity-kind="terraform" data-placement="logical" data-terraform-address="aws_s3_bucket_policy.assets" data-qualified-address="module.root.aws_s3_bucket_policy.assets" data-mode="managed" transform="translate(0 368)" data-role="policy"><title>module.root.aws_s3_bucket_policy.assets — update</title><text data-service-name="true" x="448" y="28" font-size="13" fill="#0f172a" xml:space="preserve">Amazon S3</text><text x="16" y="48" font-size="12" fill="#334155" xml:space="preserve" font-weight="700">module.root.aws_s3_bucket_policy.assets</text>
+<text x="16" y="68" font-size="12" fill="#334155" xml:space="preserve">update</text>
+<text x="16" y="88" font-size="12" fill="#334155" xml:space="preserve">Region: us-west-2</text>
+<text x="16" y="108" font-size="12" fill="#334155" xml:space="preserve">policy</text>
+<g data-resource-references="true"><title>Policy bucket reference: aws_s3_bucket.assets[0] [bucket; direct attribute reference]</title><text x="16" y="136" font-size="11" font-weight="700" fill="#475569">Uses</text><a href="#resource-6177735f73335f6275636b65742e6173736574735b305d-current" data-reference-attribute="bucket"><title>Policy bucket reference: aws_s3_bucket.assets[0] [bucket; direct attribute reference]</title><text x="16" y="154" font-size="11" fill="#334155" xml:space="preserve">Policy bucket reference: aws_s3_bucket.assets[0]</text>
 </a></g>
-<line data-resource-underline="true" x1="16" y1="150" x2="520" y2="150" stroke="#1d4ed8" stroke-width="2"/></g>
+<line data-resource-underline="true" x1="16" y1="170" x2="520" y2="170" stroke="#1d4ed8" stroke-width="2"/></g>
 </g>
 </g>
 </g>
 </g></g>
 </g>
-<g data-architecture="true" transform="translate(0 630)">
-<g data-deployment-scope="true" data-scope-provider="AWS" data-region="us-west-2"><rect x="40" y="160" width="360" height="198" rx="14" fill="#f8fafc" stroke="#94a3b8" stroke-dasharray="9 5"/><text x="56" y="185" font-size="15" font-weight="700" fill="#334155">AWS us-west-2</text></g>
+<g data-architecture="true" transform="translate(0 670)">
+<g data-deployment-scope="true" data-scope-provider="AWS" data-region="us-west-2"><rect x="40" y="160" width="360" height="218" rx="14" fill="#f8fafc" stroke="#94a3b8" stroke-dasharray="9 5"/><text x="56" y="185" font-size="15" font-weight="700" fill="#334155">AWS us-west-2</text></g>
 <g data-edge-kind="dependency" data-source="resource-6177735f73335f6275636b65742e6173736574735b305d-current" data-target="resource-6177735f73335f6275636b65745f706f6c6963792e617373657473-current"><title>aws_s3_bucket.assets[0] → aws_s3_bucket_policy.assets</title></g>
 <g id="resource-6177735f73335f6275636b65742e6173736574735b305d-current" data-architecture-id="terraform:6177735f73335f6275636b65742e6173736574735b305d-current" data-qualified-address="module.root.aws_s3_bucket.assets[0]" data-terraform-address="aws_s3_bucket.assets[0]"><title>module.root.aws_s3_bucket.assets[0] — unchanged</title>
-<rect x="60" y="200" width="320" height="138" rx="8" fill="#f8fafc" stroke="#64748b" stroke-width="1.5" data-mode="managed"/>
+<rect x="60" y="200" width="320" height="158" rx="8" fill="#f8fafc" stroke="#64748b" stroke-width="1.5" data-mode="managed"/>
 <text x="72" y="220" font-size="11" fill="#64748b">aws_s3_bucket · unchanged</text>
-<use href="#planorama-icon-aws-s3" x="72" y="228" width="24" height="24" aria-hidden="true"/><text x="104" y="245" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_s3_bucket.</text>
-<text x="104" y="265" font-size="13" fill="#0f172a" xml:space="preserve">assets[0]</text>
-<g data-resource-references="true"><title>At-rest encryption (plan): unknown</title><text x="72" y="286" font-size="11" font-weight="700" fill="#475569">Uses</text><g><title>At-rest encryption (plan): unknown</title><text x="72" y="304" font-size="11" fill="#334155" xml:space="preserve">At-rest encryption (plan): unknown</text>
+<text data-service-name="true" x="72" y="245" font-size="13" fill="#0f172a" xml:space="preserve">Amazon S3</text><text x="72" y="265" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_s3_bucket.assets[0]</text>
+<g data-resource-references="true"><title>At-rest encryption (plan): unknown</title><text x="72" y="306" font-size="11" font-weight="700" fill="#475569">Uses</text><g><title>At-rest encryption (plan): unknown</title><text x="72" y="324" font-size="11" fill="#334155" xml:space="preserve">At-rest encryption (plan): unknown</text>
 </g></g>
 </g>
 </g>

@@ -33,15 +33,14 @@ requires another network fetch. No npm build dependencies are needed.
 
 `hcl-rs`, `zip`, `same-file`, `tempfile` and `toml` are native-only dependencies:
 saved-plan/provider evidence, filesystem protection and CLI settings are outside
-the browser boundary. The normal build compiles icons from the bundled assets.
+the browser boundary. All builds use service names without bundled artwork.
 
 ## Standalone engine without artwork
 
 `sh scripts/build-wasm-engine.sh` (inside the development container) builds with
-`--no-default-features`. The default `icon-artwork` feature remains enabled for
-normal CLI and Wasm builds. Without it, build.rs does not read or generate icon
-assets, and artwork `include_str!` expressions are excluded from compilation.
-Service classification, labels and layout use the existing service-name mode.
+`--no-default-features`. Normal CLI and Wasm builds also exclude artwork.
+The deprecated `icon-artwork` feature is a no-op. Service classification, labels
+and layout use service-name mode.
 An omitted `icon_mode` defaults to `service-name`; explicitly requesting `icon`
 returns `invalid_options` (the native CLI also rejects it). Site integrations
 must explicitly send `"icon_mode":"service-name"`.
@@ -263,8 +262,7 @@ the standalone engine. It checks archive membership, provenance and hashes,
 scans JS/Wasm for embedded artwork markers, compares AWS and Terraform SVG/HTML
 outputs exactly with native service-name generation, and tests omitted/explicit
 icon options and archive reproducibility. `cargo test --locked --no-default-features --lib`
-runs the complete library suite, including the native API contract. Artwork-only
-checks run with `icon-artwork`; shared assertions verify both configurations.
+runs the complete library suite, including the native API contract. The same artwork-exclusion contract applies with all features enabled.
 
 ## API and supported options
 
@@ -344,7 +342,7 @@ analysis. Only existing identifiers and fixed explanations are embedded, without
 raw attribute values, expressions, provider settings or the plan body. Diagnostic
 settings share snapshot, reset, cancellation and offline sandbox preview behavior.
 
-Choose the output, address format and icon mode, and optionally hide relationship
+Choose the output and address format, and optionally hide relationship
 explanations (retaining the action color key), omit the entire relationship legend,
 or enable changed-only. Both legend settings default to false; entire omission
 takes precedence. They apply at generation time to SVG and HTML and participate

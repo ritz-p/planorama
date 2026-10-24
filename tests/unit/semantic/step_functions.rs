@@ -47,10 +47,7 @@ fn step_functions_are_regional_cards_with_safe_role_references() {
         )
         .unwrap()
         .content;
-        assert_eq!(
-            output.contains("planorama-icon-aws-step-functions"),
-            cfg!(feature = "icon-artwork")
-        );
+        assert!(!output.contains("planorama-icon-aws-step-functions"));
         assert!(!output.contains("PRIVATE_"));
         assert!(!output.contains("arn:aws:"));
     }

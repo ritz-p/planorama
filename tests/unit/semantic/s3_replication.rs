@@ -263,9 +263,8 @@ fn s3_replication_lifecycle_selection_states_and_output_privacy() {
             crate::icons::IconMode::ServiceName,
         ]
         .into_iter()
-        .filter(|mode| {
-            cfg!(feature = "icon-artwork") || *mode == crate::icons::IconMode::ServiceName
-        }) {
+        .filter(|mode| *mode == crate::icons::IconMode::ServiceName)
+        {
             let output = crate::generate(
                 &value.to_string(),
                 &crate::Options {

@@ -175,11 +175,7 @@ pub(crate) fn run() -> Result<(), String> {
                 )
             }
             "-h" | "--help" => {
-                let modes = if cfg!(feature = "icon-artwork") {
-                    "icon (default) or service-name"
-                } else {
-                    "service-name (default; icon unavailable in this build)"
-                };
+                let modes = "service-name (default; icon unavailable in this build)";
                 let help = HELP.replace("{icon_modes}", modes);
                 print!(
                     "{help}\nMultiple plans: planorama --state ID=PATH [--state ID=PATH ...] [-o diagram.svg]\nState IDs are explicit and unique (1-64 ASCII letters, digits, '.', '_' or '-').\nOne named input may use '-' for stdin; do not mix --state with a positional input.\n"

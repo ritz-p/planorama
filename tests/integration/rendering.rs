@@ -81,7 +81,11 @@ fn inferred_placement_notes_use_provenance_and_fit_below_long_addresses() {
         assert!(y(note) < y(rect) + height - 12);
         let heading: Vec<_> = card
             .children()
-            .filter(|n| n.has_tag_name("text") && n.attribute("font-size") == Some("13"))
+            .filter(|n| {
+                n.has_tag_name("text")
+                    && n.attribute("font-size") == Some("13")
+                    && n.attribute("data-service-name").is_none()
+            })
             .collect();
         assert!(heading.iter().all(|n| y(*n) + 10 < y(note)));
         if card.attribute("data-terraform-address") == Some(address.as_str()) {

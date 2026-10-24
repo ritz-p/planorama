@@ -14,7 +14,7 @@ The [generated support matrix](resource-support.md) evaluates runtime behavior a
 links the pinned resource documentation. Its baseline notes distinguish existing
 classifications from basic-only display; conditional relationship links remain
 separate. No managed types are missing basic role, presentation and service
-capabilities. Neutral artwork and unresolved scope are explicit fallbacks, not
+capabilities. Neutral presentation and unresolved scope are explicit fallbacks, not
 claims of full relationship support. Counts here describe types; input coverage
 continues to count state-qualified resource instances and lifecycle objects.
 
@@ -30,9 +30,8 @@ Generic Terraform references and dependencies remain available.
 
 The inventory retains the Provider's `names/data/names_data.hcl` labels. Runtime
 labels correct its historical brand names against the [AWS documentation index](https://docs.aws.amazon.com/)
-(for example, Amazon MQ rather than the Provider's AWS MQ). Appropriate existing bundled service artwork is reused;
-otherwise both icon modes show the service name on a neutral card/row. Additional
-artwork must follow the [asset provenance procedure](icons.md#updating-sources).
+(for example, Amazon MQ rather than the Provider's AWS MQ). All resources use provider-aware service names on neutral cards/rows.
+No official artwork is required for basic support; see [service labels](icons.md).
 
 Regional entries use static provider region evidence, subject to the existing
 resource-override contract. A region attribute in the new Provider schema does
@@ -129,7 +128,7 @@ with a documented registered counterpart.
 For a new baseline, verify the official stable release/tag and commit, update both
 scripts' pinned version/commit, and regenerate the inventory. Review added,
 removed and renamed exact types against their documentation and actual schema;
-update the runtime table with explicit role, presentation, scope and artwork
+update the runtime table with explicit role, presentation, scope and service labels
 decisions. Preserve historical implementation types when a Provider removes them.
 Do not infer runtime capabilities from prefixes or automatically replace reviewed
 entries when updating the inventory. Extend unknown-scope reasons when necessary.

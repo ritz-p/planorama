@@ -7,7 +7,7 @@ fn firehose_svg_and_offline_html_keep_distinct_references_and_filtered_links() {
         let output = support::run_with_args(fixture, &["--format", format]);
         assert!(output.status.success());
         let text = String::from_utf8(output.stdout).unwrap();
-        assert!(text.contains("planorama-icon-aws-firehose"));
+        assert!(text.contains("Amazon Data Firehose"));
         assert!(text.contains("5 resources"));
         for label in [
             "Kinesis source",

@@ -5,12 +5,8 @@ use crate::{
 use std::collections::{BTreeMap, BTreeSet};
 use std::fmt::Write;
 
-pub(super) fn for_node(node: &Node) -> Option<ResourceIcon> {
-    if !cfg!(feature = "icon-artwork") || node.service_name.is_some() {
-        None
-    } else {
-        crate::icons::for_node(node)
-    }
+pub(super) fn for_node(_node: &Node) -> Option<ResourceIcon> {
+    None
 }
 
 pub(super) fn service_name(node: &Node, x: usize, y: usize, width: usize) -> String {

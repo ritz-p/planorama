@@ -242,7 +242,7 @@ element('reset-settings').onclick = () => {
   element('format').value = 'svg';
   element('changed').checked = false;
   element('address-format').value = 'qualified';
-  element('icon-mode').value = 'icon';
+  element('icon-mode').value = 'service-name';
   element('hide-legend').checked = false;
   element('omit-legend').checked = false;
   element('html-diagnostics').checked = false;

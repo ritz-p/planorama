@@ -52,7 +52,7 @@ test('standalone software notices do not copy artwork notices', t => {
   const fs = require('node:fs');
   const directory = fs.mkdtempSync(require('node:path').join(require('node:os').tmpdir(), 'engine-notices-'));
   t.after(() => fs.rmSync(directory, {recursive: true, force: true}));
-  require('../../.github/scripts/release.cjs').notices([], directory, false);
+  require('../../.github/scripts/release.cjs').notices([], directory);
   assert.deepEqual(fs.readdirSync(directory), ['THIRD-PARTY-NOTICES.txt']);
 });
 

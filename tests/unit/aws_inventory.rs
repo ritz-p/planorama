@@ -37,14 +37,9 @@ fn every_registered_managed_type_has_basic_capabilities() {
             "{resource_type}"
         );
         if let Some(icon) = super::super::icon_for(resource_type) {
-            assert_eq!(
-                icon.svg().is_empty(),
-                !cfg!(feature = "icon-artwork"),
-                "{resource_type}"
-            );
-            assert_eq!(
-                icon.svg().contains(&format!("id=\"{}\"", icon.id())),
-                cfg!(feature = "icon-artwork"),
+            assert!(icon.svg().is_empty(), "{resource_type}");
+            assert!(
+                !icon.svg().contains(&format!("id=\"{}\"", icon.id())),
                 "{resource_type}"
             );
         }
@@ -240,7 +235,7 @@ fn basic_fixture_preserves_references_counts_and_private_values() {
     )));
     for icon_mode in [crate::IconMode::Icon, crate::IconMode::ServiceName]
         .into_iter()
-        .filter(|mode| cfg!(feature = "icon-artwork") || *mode == crate::IconMode::ServiceName)
+        .filter(|mode| *mode == crate::IconMode::ServiceName)
     {
         for format in [crate::OutputFormat::Svg, crate::OutputFormat::Html] {
             let generated = crate::generate(

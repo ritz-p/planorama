@@ -30,9 +30,7 @@ fn gateway_endpoints_use_a_neutral_service_name() {
     }
     let output = support::run(input.as_bytes());
     assert!(output.status.success());
-    assert!(
-        String::from_utf8_lossy(&output.stdout).contains("href=\"#planorama-icon-aws-endpoint\"")
-    );
+    assert!(String::from_utf8_lossy(&output.stdout).contains("Amazon VPC"));
 }
 
 #[test]
@@ -45,10 +43,13 @@ fn icon_mode_validation_and_default_output() {
     }
     let input = include_bytes!("../fixtures/data-icons-plan.json");
     let default = support::run(input);
-    let explicit = support::run_with_args(input, &["--icon-mode", "icon"]);
+    let removed = support::run_with_args(input, &["--icon-mode", "icon"]);
+    assert!(!removed.status.success());
+    assert!(String::from_utf8_lossy(&removed.stderr).contains("use service-name"));
+    let explicit = support::run_with_args(input, &["--icon-mode", "service-name"]);
     assert!(default.status.success() && explicit.status.success());
     assert_eq!(default.stdout, explicit.stdout);
-    assert!(String::from_utf8_lossy(&default.stdout).contains("<symbol "));
+    assert!(!String::from_utf8_lossy(&default.stdout).contains("<symbol "));
     let help = cli().arg("--help").output().unwrap();
     assert!(String::from_utf8_lossy(&help.stdout).contains("--icon-mode MODE"));
 }

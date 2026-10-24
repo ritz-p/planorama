@@ -561,7 +561,7 @@ Points also remain independent because current managed service-reference proof
 does not apply. Child-only focus/modules selections do not restore the File System;
 parent-only selection does not restore excluded children. Shared File Systems can
 contain multiple distinct Access Points, each counted once. Verified references,
-service-name/icon modes, lifecycle badges and state-local HTML export context are
+service-name rendering, lifecycle badges and state-local HTML export context are
 preserved through the [common presentation contract](resource-presentation.md).
 See the synthetic [SVG](../examples/efs.svg) / [HTML](../examples/efs.html).
 The AWS Provider 5.100.0 [File System](https://github.com/hashicorp/terraform-provider-aws/blob/v5.100.0/website/docs/r/efs_file_system.html.markdown),
