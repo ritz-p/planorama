@@ -311,6 +311,7 @@ future named-state inventory must group by state and address and return
 | `address_format` | `qualified` (default), `terraform` |
 | `icon_mode` | `icon` (normal build default), `service-name` (standalone engine default and only supported mode) |
 | `hide_relationship_legend` | Boolean, false |
+| `omit_relationship_legend` | Boolean, false; omits the entire card, overriding `hide_relationship_legend` |
 | `html_semantic_diagnostics` | Boolean, false; requires `format: "html"` |
 | `html_diagnostics` | Boolean, false; requires `format: "html"` |
 | `changed_only` | Boolean, false |
@@ -343,8 +344,14 @@ analysis. Only existing identifiers and fixed explanations are embedded, without
 raw attribute values, expressions, provider settings or the plan body. Diagnostic
 settings share snapshot, reset, cancellation and offline sandbox preview behavior.
 
-Choose the output, address format and icon mode, and optionally hide the
-relationship legend or enable changed-only. Enter a focus resource address to
+Choose the output, address format and icon mode, and optionally hide relationship
+explanations (retaining the action color key), omit the entire relationship legend,
+or enable changed-only. Both legend settings default to false; entire omission
+takes precedence. They apply at generation time to SVG and HTML and participate
+in the settings snapshot, reset and cancellation of stale results. For example,
+`generate(json, JSON.stringify({omit_relationship_legend: true}))` removes the
+legend and its reserved space without changing relationships or resource cards.
+Enter a focus resource address to
 enable depth: empty uses the API default of 1, and 0 selects no neighbors.
 Explicit depth must be decimal digits in the Wasm nonnegative integer range
 0–4294967295; invalid input is announced and focused without correction.

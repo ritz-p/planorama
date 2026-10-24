@@ -16,6 +16,9 @@ The default remains SVG and `diagram.svg`. HTML defaults to `diagram.html`;
 changed-only and module selection, remote-state mappings and diagnostics work in both modes.
 `--hide-relationship-legend` applies during SVG generation in both formats;
 there is no viewer toggle. It keeps action colors and relationship navigation.
+`--omit-relationship-legend` instead removes the entire relationship legend,
+including its action color key and reserved space. Fit and SVG/HTML export use
+the resulting diagram bounds; relationship navigation remains available.
 Logical Resources rows show the same per-resource deployment-scope labels in both
 formats; see [scope evidence and limitations](aws.md#deployment-scopes).
 

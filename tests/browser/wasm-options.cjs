@@ -13,12 +13,12 @@ module.exports = function checkOptions({driver, small, run, submit, status, nati
   `, id, value);
   const reset = () => find('#reset-settings').click();
   const options = () => driver.execute_script('return snapshotOptions()');
-  const defaults = {format: 'svg', changed_only: false, address_format: 'qualified', icon_mode: 'icon', hide_relationship_legend: false, html_diagnostics: false, html_semantic_diagnostics: false, modules: [], spatial_types: []};
+  const defaults = {format: 'svg', changed_only: false, address_format: 'qualified', icon_mode: 'icon', hide_relationship_legend: false, omit_relationship_legend: false, html_diagnostics: false, html_semantic_diagnostics: false, modules: [], spatial_types: []};
   assert.deepEqual(options(), defaults);
   assert.equal(find('#focus-depth').is_enabled(), false);
   assert.equal(find('#settings-error').get_attribute('role'), 'alert');
   assert.equal(find('#status').get_attribute('role'), 'status');
-  for (const id of ['format', 'changed', 'address-format', 'icon-mode', 'hide-legend', 'focus', 'focus-depth']) {
+  for (const id of ['format', 'changed', 'address-format', 'icon-mode', 'hide-legend', 'omit-legend', 'focus', 'focus-depth']) {
     assert.ok(find('#' + id).accessible_name, `${id} has a label`);
   }
 
@@ -62,6 +62,22 @@ module.exports = function checkOptions({driver, small, run, submit, status, nati
     assert.equal(content, run(json, expected).content, 'UI/Wasm exact parity');
   };
   const types = ['aws_ssm_parameter', 'aws_cloudwatch_metric_alarm', 'aws_iam_role', 'aws_iam_user', 'aws_iam_group', 'aws_iam_openid_connect_provider', 'aws_iam_saml_provider'];
+  const relationships = readFileSync(join(__dirname, '../fixtures/association-plan.json'), 'utf8');
+  for (const format of ['svg', 'html']) {
+    for (const partial of [false, true]) {
+      reset();
+      set('omit-legend', true);
+      set('hide-legend', partial);
+      generate(relationships, {...defaults, format, hide_relationship_legend: partial, omit_relationship_legend: true},
+        ['--format', format, '--omit-relationship-legend', ...(partial ? ['--hide-relationship-legend'] : [])]);
+      const content = driver.execute_script('return uiContent');
+      assert.ok(!/id="relationship-(legend|actions)"/.test(content));
+      assert.ok(content.includes('data-relationship-entry'));
+      assert.ok(content.includes('data-edge-kind'));
+    }
+  }
+  reset();
+  assert.deepEqual(options(), defaults);
   for (const flags of [['html-semantic-diagnostics'], ['html-diagnostics'], ['html-semantic-diagnostics', 'html-diagnostics']]) {
     reset();
     for (const flag of flags) {
@@ -252,7 +268,7 @@ module.exports = function checkOptions({driver, small, run, submit, status, nati
   `);
   submit(small, 'svg');
   driver.execute_script(`
-    document.getElementById('html-semantic-diagnostics').checked = true;
+    document.getElementById('omit-legend').checked = true;
     finishRead();
   `);
   wait(() => status().startsWith('Generated in'), 'snapshot taken before file read');
@@ -260,7 +276,7 @@ module.exports = function checkOptions({driver, small, run, submit, status, nati
   reset();
   const requestCount = driver.execute_script('return uiRequests.length');
   submit(small, 'svg');
-  set('html-diagnostics', true);
+  set('omit-legend', true);
   driver.execute_script('finishRead();');
   assert.equal(driver.execute_script('return uiRequests.length'), requestCount, 'Settings invalidate pending file reads');
   assert.equal(driver.execute_script("return document.getElementById('download').hidden"), true);

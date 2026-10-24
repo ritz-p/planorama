@@ -21,6 +21,7 @@ pub struct Options {
     pub address_format: svg::AddressFormat,
     pub icon_mode: crate::icons::IconMode,
     pub hide_relationship_legend: bool,
+    pub omit_relationship_legend: bool,
     pub html_diagnostics: bool,
     pub html_semantic_diagnostics: bool,
     pub changed_only: bool,
@@ -135,6 +136,7 @@ async fn generate_step(json: &str, options: &Options) -> Result<Generated, Error
         svg::Options {
             address_format: options.address_format,
             hide_relationship_legend: options.hide_relationship_legend,
+            omit_relationship_legend: options.omit_relationship_legend,
         },
         options.html_diagnostics.then_some(&mut report),
         options.html_diagnostics,
@@ -247,7 +249,8 @@ pub(crate) fn render(
         (OutputFormat::Html, None) => html::render(graph, layout, options),
         (OutputFormat::Svg, None)
             if matches!(options.address_format, svg::AddressFormat::Qualified)
-                && !options.hide_relationship_legend =>
+                && !options.hide_relationship_legend
+                && !options.omit_relationship_legend =>
         {
             svg::render(graph, layout)
         }

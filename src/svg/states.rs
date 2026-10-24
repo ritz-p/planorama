@@ -150,12 +150,16 @@ pub(crate) fn render_report(
         ));
         states.push((*id, graph, layout, index, cards));
     }
-    let legend = super::legend::MeasuredLegend::from_graphs(
-        prepared_graphs.iter().map(|(_, graph)| &graph.0),
-        width,
-        60,
-        options.hide_relationship_legend,
-    );
+    let legend = if options.omit_relationship_legend {
+        super::legend::MeasuredLegend::empty(width)
+    } else {
+        super::legend::MeasuredLegend::from_graphs(
+            prepared_graphs.iter().map(|(_, graph)| &graph.0),
+            width,
+            60,
+            options.hide_relationship_legend,
+        )
+    };
     if legend.height > 0 {
         if let Some((_, graph)) = prepared_graphs.first() {
             writeln!(
@@ -319,7 +323,7 @@ pub(crate) fn render_report(
         width += 80 + (link_count - 1) * 12;
         sections.push_str("<defs><marker id=\"cross-state-arrow\" viewBox=\"0 0 10 10\" refX=\"9\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto-start-reverse\"><path d=\"M 0 0 L 10 5 L 0 10 z\" fill=\"#2563eb\"/></marker></defs>\n");
         sections.push_str(&links);
-        if !options.hide_relationship_legend {
+        if !options.hide_relationship_legend && !options.omit_relationship_legend {
             sections.push_str("<text x=\"350\" y=\"35\" font-family=\"ui-monospace, Consolas, monospace\" font-size=\"12\" fill=\"#2563eb\">Dashed blue: cross-state dependency</text>\n");
         }
     }

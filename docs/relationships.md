@@ -13,13 +13,24 @@ actions** card. Measurement reserves only that card's actual height; subsequent
 annotations and state sections move up. Actual lines, arrows, attachment points,
 numbers, links and **Relationship Resources** entries remain unchanged.
 
+Use `--omit-relationship-legend` to omit the entire card, including its heading,
+background, explanations and action color legend. No **Relationship actions**
+replacement or reserved legend space remains. This setting defaults to `false`
+and takes precedence over `--hide-relationship-legend` when both are enabled.
+Resource action colors, actual relationship lines and the **Relationship Resources**
+index remain visible in SVG and HTML, for single and named states. With no
+relationship lines, there is already no card to remove.
+
 ```sh
 planorama plan.json --hide-relationship-legend -o compact.svg
 planorama plan.json --format html --hide-relationship-legend --coverage-report coverage.md -o compact.html
+planorama plan.json --omit-relationship-legend -o without-legend.svg
+planorama plan.json --format html --omit-relationship-legend -o without-legend.html
 ```
 
 Compare the maintained [compact example](../examples/relationship-legend-hidden.svg)
-with its [full legend version](../examples/routes.svg). Regenerate both using
+with its [full legend version](../examples/routes.svg) and
+[entirely omitted version](../examples/relationship-legend-omitted.svg). Regenerate all three using
 `docker compose exec -T dev sh scripts/update-examples.sh`. The option combines
 with either icon mode and does not change graph analysis or local path routing.
 

@@ -86,6 +86,7 @@ async function main() {
       ['{"format_version":"secret"}', {}, 'unsupported_input'],
       ['{"format_version":"1.0","values":{}}', {}, 'unsupported_input'],
       [small, {provider_plan: 'secret'}, 'invalid_options'],
+      [small, {omit_relationship_legend: 'true'}, 'invalid_options'],
       [small, {states: ['secret']}, 'invalid_options'],
       [small, {focus: 'secret'}, 'selection_failed'],
       [small, {focus_depth: 2}, 'invalid_options'],
