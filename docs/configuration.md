@@ -41,6 +41,7 @@ Both tables accept exactly these keys, using the same spelling as CLI options:
 | `icon-mode` | `"icon"` or `"service-name"` | `"icon"` with `icon-artwork`; otherwise `"service-name"` |
 | `address-format` | `"qualified"` or `"terraform"` | `"qualified"` |
 | `hide-relationship-legend` | boolean | `false` |
+| `omit-relationship-legend` | boolean; entire card, overriding partial hide | `false` |
 | `changed-only` | boolean | `false` |
 | `modules` | array of module selector strings | `[]` |
 | `spatial-types` | array of allowed AWS type strings (see below) | `[]` |

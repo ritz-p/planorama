@@ -59,6 +59,7 @@ examples/relationship-index-wide.svg
 examples/relationship-index.svg
 examples/routes.svg
 examples/relationship-legend-hidden.svg
+examples/relationship-legend-omitted.svg
 examples/security-groups.svg
 examples/spanning-dense.svg
 examples/subnet-groups.svg

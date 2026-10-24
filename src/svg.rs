@@ -48,6 +48,7 @@ pub enum AddressFormat {
 pub struct Options {
     pub address_format: AddressFormat,
     pub hide_relationship_legend: bool,
+    pub omit_relationship_legend: bool,
 }
 
 impl From<AddressFormat> for Options {
@@ -111,7 +112,7 @@ impl Sections {
             index,
             annotation_cards(graph, index, options.address_format),
             index.width,
-            Some(options.hide_relationship_legend),
+            (!options.omit_relationship_legend).then_some(options.hide_relationship_legend),
         )
     }
 

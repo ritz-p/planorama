@@ -562,6 +562,31 @@ class ViewerTests {
         this.assertFalse(compact['outside']);
         this.assertGreater(compact['entries'], 0);
         this.assertEqual(compact['explanations'], 0);
+        this.load('tests/fixtures/routes-plan.json', '--omit-relationship-legend');
+        this.assertEqual(this.driver.execute_script("return document.querySelector('svg').viewBox.baseVal.height"), full_height - full_legend - 12);
+        this.assertEqual(this.driver.find_elements(By.CSS_SELECTOR, '#relationship-legend, #relationship-actions'), []);
+        this.assertEqual(this.driver.execute_script("return document.querySelectorAll('[data-relationship-entry]').length"), compact['entries']);
+        const omittedBox = this.view_box();
+        this.find('#zoom-in').click();
+        this.find('#fit').click();
+        this.assertEqual(this.view_box(), omittedBox);
+        this.find('#search').send_keys('aws_route.');
+        wait(() => this.driver.find_elements(By.CSS_SELECTOR, '#results button').length > 0, 'omitted legend search');
+        this.find('#results button').click();
+        this.assertGreater(this.driver.find_elements(By.CSS_SELECTOR, '[data-viewer-selected]').length, 0);
+        this.driver.execute_script(`
+            window.exportText = null;
+            URL.createObjectURL = blob => { window.exportBlob = blob; return 'blob:export-test'; };
+            HTMLAnchorElement.prototype.click = function () {};
+        `);
+        this.find('#export-viewport').click();
+        this.driver.execute_script('window.exportBlob.text().then(text => { window.exportText = text; })');
+        wait(() => this.driver.execute_script('return !!window.exportText'), 'omitted legend export');
+        this.assertTrue(this.driver.execute_script(`
+            const doc = new DOMParser().parseFromString(window.exportText, 'image/svg+xml');
+            return !doc.querySelector('#relationship-legend, #relationship-actions') &&
+                doc.documentElement.getAttribute('viewBox') === document.querySelector('#viewport > svg').getAttribute('viewBox');
+        `));
     }
     test_semantic_diagnostics_navigate_all_resource_presentations_and_reset() {
         for (const [fixture, address] of [['containment', 'aws_instance.app'], ['logical-regions', 'aws_iam_policy'], ['routes', 'aws_route.'], ['association', 'aws_route_table_association.private']]) {
