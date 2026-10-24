@@ -1,6 +1,30 @@
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
+extern "C" {
+    #[wasm_bindgen(js_name = Function)]
+    pub type ProgressCallback;
+
+    #[wasm_bindgen(method, catch, js_name = call)]
+    fn notify(this: &ProgressCallback, context: &JsValue, stage: &str) -> Result<JsValue, JsValue>;
+}
+
+#[wasm_bindgen]
+pub fn generate_with_progress(
+    json: &str,
+    options: &str,
+    callback: ProgressCallback,
+) -> Result<String, JsValue> {
+    crate::generation::progress::observe(
+        std::rc::Rc::new(move |stage| {
+            // Observer failures must not change the generated result.
+            let _ = callback.notify(&JsValue::UNDEFINED, stage);
+        }),
+        || generate(json, options),
+    )
+}
+
+#[wasm_bindgen]
 pub fn memory_capabilities() -> String {
     use crate::generation::memory;
     serde_json::json!({

@@ -114,6 +114,7 @@ async fn place_sized_step(
 }
 
 pub(super) async fn route_step<'a>(graph: &'a Graph, placed: &mut Placed<'a>) {
+    crate::generation::progress::report("routing");
     crate::work::checkpoint().await;
     match &placed.strategy {
         Strategy::Flat { ranks, channels } => {

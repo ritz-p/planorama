@@ -4,6 +4,16 @@ let worker;
 let resultUrl;
 let previewUrl;
 let serial = 0;
+let elapsedTimer;
+const stages = Object.freeze({parsing: 'Parsing plan', selection: 'Interpreting and selecting resources', placement: 'Placing resources', routing: 'Routing connections', output: 'Composing output'});
+
+function startElapsed() {
+  const started = performance.now();
+  const update = () => { element('elapsed').textContent = `Elapsed: ${Math.floor((performance.now() - started) / 1000)} s`; };
+  element('elapsed').hidden = false;
+  update();
+  elapsedTimer = setInterval(update, 1000);
+}
 const maxBytes = 32 * 1024 * 1024;
 let moduleId = 0;
 let inventory = [];
@@ -166,6 +176,9 @@ function clearResult() {
 }
 
 function stop() {
+  clearInterval(elapsedTimer);
+  elapsedTimer = undefined;
+  element('elapsed').hidden = true;
   serial++;
   if (worker) worker.terminate();
   worker = undefined;
@@ -258,10 +271,12 @@ element('generate-form').onsubmit = async event => {
   element('generate').disabled = true;
   element('cancel').disabled = false;
   element('status').textContent = 'Generating…';
+  startElapsed();
   try {
     const json = await file.text();
     if (request !== serial) return;
     worker = new Worker(assets.url);
+    const activeWorker = worker;
     worker.onerror = event => {
       event.preventDefault();
       if (request !== serial) return;
@@ -270,6 +285,14 @@ element('generate-form').onsubmit = async event => {
     };
     worker.onmessage = ({data}) => {
       if (request !== serial) return;
+      if (worker !== activeWorker) return;
+      if (data.type === 'progress') {
+        if (data.request === request && Object.hasOwn(stages, data.stage)) {
+          const message = `${stages[data.stage]}…`;
+          if (element('status').textContent !== message) element('status').textContent = message;
+        }
+        return;
+      }
       stop();
       if (!data.ok) {
         element('status').textContent = data.error.message;
@@ -287,7 +310,7 @@ element('generate-form').onsubmit = async event => {
       element('download').hidden = false;
       element('status').textContent = `Generated in ${Math.round(data.elapsed_ms)} ms. ${data.diagnostics.join(' ')}`;
     };
-    worker.postMessage({module: assets.module, json, options});
+    worker.postMessage({module: assets.module, json, options, request});
   } catch {
     if (request !== serial) return;
     stop();

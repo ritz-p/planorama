@@ -354,6 +354,23 @@ report files and opt-in HTML diagnostic panels are unsupported in this API.
 
 ## Privacy and lifecycle
 
+During generation the UI shows parsing, interpretation/selection, placement,
+routing and output composition at their actual pipeline boundaries. Routing
+includes geometry refinement and may remain visible for a long time. These
+stages are not percentages or predictions of remaining time; only a successful
+result indicates completion. Elapsed seconds use the page's monotonic clock,
+starting before file reading, and stop on completion, failure or cancellation.
+Only stage changes are announced to screen readers. Cancel terminates the Worker;
+settings changes, file replacement and retry invalidate its notifications and timer.
+Module inspection has its own status and does not report generation progress.
+
+The optional synchronous Wasm `generate_with_progress(json, options, callback)`
+uses the same pipeline and limits as `generate`. The callback receives only a
+fixed stage name (`parsing`, `selection`, `placement`, `routing`, `output`);
+callback exceptions do not change generation. The sample Worker suppresses
+repeated stages and associates notifications with the current request. Neither
+progress nor elapsed time contains plan identifiers or attributes or is persisted.
+
 Only static assets are fetched at startup, without credentials. After the Ready
 message the page holds the compiled Wasm module and Worker source in memory.
 Module inspection, generation, preview and download work with the network disabled while this page
