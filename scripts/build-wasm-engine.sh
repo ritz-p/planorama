@@ -11,4 +11,5 @@ if grep -E 'assets/icons/|/service-[^ ]+\.svg' "$dependencies"; then
 fi
 mkdir -p output/wasm-engine
 wasm-bindgen --target no-modules --no-typescript --out-dir output/wasm-engine "${CARGO_TARGET_DIR:-target}/wasm32-unknown-unknown/release/planorama.wasm"
+node scripts/prepare-wasm-memory.cjs output/wasm-engine
 node scripts/package-wasm-engine.cjs

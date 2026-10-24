@@ -31,10 +31,12 @@ jobs:
         run: |
           docker compose exec -T dev cargo build --locked --release --bin planorama
           docker compose exec -T dev sh scripts/build-wasm.sh
+          docker compose exec -T dev node tests/browser/memory.cjs output/browser/pkg
           docker compose exec -T dev node tests/browser/wasm.cjs
           docker compose exec -T dev cargo test --locked --no-default-features --lib
           docker compose exec -T dev cargo build --locked --release --bin planorama --no-default-features
           docker compose exec -T dev sh scripts/build-wasm-engine.sh
+          docker compose exec -T dev node tests/browser/memory.cjs
           docker compose exec -T dev node tests/browser/wasm-engine.cjs
       - uses: actions/upload-artifact@v7.0.2
         with:
