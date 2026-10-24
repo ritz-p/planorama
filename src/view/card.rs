@@ -5,6 +5,7 @@ pub(crate) struct Metrics {
     pub line_limit: usize,
     pub import_height: usize,
     pub service_height: usize,
+    pub service_width: usize,
     pub previous_y: usize,
     pub previous_line_limit: usize,
     pub references_y: usize,
@@ -25,6 +26,17 @@ pub(crate) fn import_height(node: &Node) -> usize {
     }
 }
 
+pub(crate) fn role_mark(node: &Node) -> Option<crate::services::VisualRole> {
+    if node.placement != crate::model::Placement::Spatial
+        || node.service_name.is_none()
+        || node.member_owner.is_some()
+        || node.routes.reserved_height != 0
+    {
+        return None;
+    }
+    crate::services::visual_role(node)
+}
+
 pub(crate) fn measure(node: &Node) -> Metrics {
     let inset = 12
         + if node.service_name.is_none() && crate::icons::for_node(node).is_some() {
@@ -39,9 +51,10 @@ pub(crate) fn measure(node: &Node) -> Metrics {
         .len()
         .max(super::text::wrap_address(&address.qualified(), line_limit).len());
     let import_height = import_height(node);
+    let service_width = line_limit * 8 - if role_mark(node).is_some() { 32 } else { 0 };
     let service_height = node
         .service_name
-        .map_or(0, |name| super::service_label::height(name, line_limit * 8));
+        .map_or(0, |name| super::service_label::height(name, service_width));
     let extra = lines.saturating_sub(2) * 20 + import_height + service_height;
     let previous_line_limit = (width - 24) / 8;
     let previous_height = node.previous_address.as_deref().map_or(0, |previous| {
@@ -55,6 +68,7 @@ pub(crate) fn measure(node: &Node) -> Metrics {
         line_limit,
         import_height,
         service_height,
+        service_width,
         previous_y: 86 + extra,
         previous_line_limit,
         references_y: 86 + extra + previous_height,

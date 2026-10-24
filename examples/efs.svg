@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1484" height="1466" viewBox="0 0 1484 1466" role="img" aria-labelledby="title description">
 <title id="title">Terraform plan</title>
-<desc id="description">6 resources (5 spatial cards, 0 logical resources in 0 group cards, 0 embedded route cards, 1 member cards) · 6 relationships Thin solid: dependency. Dashed: association. Thick dotted: connection. Nested boxes: containment. Edge color preserves the Terraform action when available.</desc>
+<desc id="description">6 resources (5 spatial cards, 0 logical resources in 0 group cards, 0 embedded route cards, 1 member cards) · 6 relationships Thin solid: dependency. Dashed: association. Thick dotted: connection. Nested boxes: containment. Edge color preserves the Terraform action when available. Spatial card role marks: rounded rectangle = execution; cylinder = data store; hexagon = network.</desc>
 <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/></marker><mask id="container-occlusion-0" maskUnits="userSpaceOnUse" maskContentUnits="userSpaceOnUse" x="0" y="0" width="1484" height="908" style="mask-type:luminance"><rect width="1484" height="908" fill="white"/>
 <rect data-occluder="resource-6177735f6566735f66696c655f73797374656d2e736861726564-current" x="58" y="435" width="324" height="330" rx="14" fill="black"/>
 </mask>

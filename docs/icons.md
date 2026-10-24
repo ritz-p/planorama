@@ -89,3 +89,29 @@ use the same measurement and rendering. Formal names also remain in SVG metadata
 | Amazon CloudWatch | CloudWatch |
 | Amazon Route 53 | Route 53 |
 | Amazon CloudFront | CloudFront |
+
+## Neutral role marks (#634)
+
+Role marks are small neutral shapes in the service-label row of individual spatial
+cards. They describe a visual role independently of the graph's ResourceRole:
+execution can include both Node and Controller, while network marks identify
+selected Connector resources. Classification uses verified AWS provider identity
+and an explicit resource-type allowlist, never names, ARNs or arbitrary attributes.
+
+| Visual role | Mark | Initial examples |
+| --- | --- | --- |
+| Execution | Rounded rectangle | EC2 instance, Lambda function, ECS service, EKS cluster |
+| Data store | Cylinder | S3 bucket, EBS volume, EFS filesystem, RDS database/cluster, DynamoDB table, ElastiCache cache, Redshift cluster, OpenSearch domain |
+| Network | Hexagon | NAT/internet gateway, VPC endpoint, load balancer, CloudFront distribution, API Gateway API |
+
+Other types, foreign/unknown providers, Identity/Policy/Association objects,
+Logical rows, embedded members and containers use the existing neutral card
+presentation without a role mark. A VPC/Subnet containment boundary is not a
+network mark. The mark occupies a reserved 22x18px area within the header; service
+text wraps in the remaining width. Connections, arrowheads and relationship
+numbers attach to the card boundary, and selection uses that same enclosing card.
+Marks do not add graph entities, relationships or containment. Their meaning is
+also provided in SVG descriptions and accessible labels; color is not required.
+
+[Role mark example](../examples/role-shapes.svg) includes long addresses, multiple
+actions, a container, a logical identity and foreign/unknown providers.

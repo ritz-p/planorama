@@ -728,6 +728,9 @@ fn named_states_reflow_indexes_at_shared_width_and_keep_cross_state_offsets() {
             .filter(|node| {
                 matches!(node.tag_name().name(), "rect" | "path" | "circle")
                     && node.attribute("data-service-badge").is_none()
+                    && node
+                        .ancestors()
+                        .all(|n| n.attribute("data-role-shape").is_none())
             })
             .map(|node| {
                 ["d", "x", "y", "width", "height", "cx", "cy", "r"]
