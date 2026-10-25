@@ -156,12 +156,12 @@
 <g data-container="state-70726f6475636572-resource-6177735f7375626e65742e617070-current"><title>module.root.aws_subnet.app</title><rect x="60" y="160" width="400" height="152" rx="12" fill="#fefce8" stroke="#854d0e" stroke-width="2" data-mode="managed"/></g>
 <g data-container="state-70726f6475636572-resource-6177735f7375626e65742e6f74686572-current"><title>module.root.aws_subnet.other</title><rect x="60" y="352" width="400" height="152" rx="12" fill="#fefce8" stroke="#854d0e" stroke-width="2" data-mode="managed"/></g>
 <g id="state-70726f6475636572-resource-6177735f7375626e65742e617070-current" data-architecture-id="terraform:6177735f7375626e65742e617070-current" data-qualified-address="module.root.aws_subnet.app" data-terraform-address="aws_subnet.app" data-presentation-header="60 160 400 112"><title>module.root.aws_subnet.app — other</title>
-<text data-resource-type-heading="true" x="72" y="188" font-size="11" fill="#854d0e" xml:space="preserve">aws_subnet · other</text>
+<text data-resource-type-heading="true" x="72" y="188" font-size="11" fill="#854d0e" xml:space="preserve">other</text>
 <rect data-service-badge="true" data-presentation-padding="10 4" data-service-category="network" data-service-full-name="Amazon VPC" data-display-name="Subnet" x="366" y="168" width="86" height="32" rx="4" fill="#dbeafe"/><text data-service-name="true" x="376" y="190" font-size="18" font-weight="700" fill="#1e3a8a" xml:space="preserve">Subnet</text><text x="72" y="221" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_subnet.app</text>
 <text x="72" y="260" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
 <g id="state-70726f6475636572-resource-6177735f7375626e65742e6f74686572-current" data-architecture-id="terraform:6177735f7375626e65742e6f74686572-current" data-qualified-address="module.root.aws_subnet.other" data-terraform-address="aws_subnet.other" data-presentation-header="60 352 400 112"><title>module.root.aws_subnet.other — other</title>
-<text data-resource-type-heading="true" x="72" y="380" font-size="11" fill="#854d0e" xml:space="preserve">aws_subnet · other</text>
+<text data-resource-type-heading="true" x="72" y="380" font-size="11" fill="#854d0e" xml:space="preserve">other</text>
 <rect data-service-badge="true" data-presentation-padding="10 4" data-service-category="network" data-service-full-name="Amazon VPC" data-display-name="Subnet" x="366" y="360" width="86" height="32" rx="4" fill="#dbeafe"/><text data-service-name="true" x="376" y="382" font-size="18" font-weight="700" fill="#1e3a8a" xml:space="preserve">Subnet</text><text x="72" y="413" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_subnet.other</text>
 <text x="72" y="452" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>

@@ -104,12 +104,12 @@
 <text x="152" y="564" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
 <g id="resource-6177735f7375626e65742e70726976617465-current" data-architecture-id="terraform:6177735f7375626e65742e70726976617465-current" data-qualified-address="module.root.aws_subnet.private" data-terraform-address="aws_subnet.private" data-presentation-header="100 312 400 112"><title>module.root.aws_subnet.private — create</title>
-<text data-resource-type-heading="true" x="112" y="340" font-size="11" fill="#047857" xml:space="preserve">aws_subnet · create</text>
+<text data-resource-type-heading="true" x="112" y="340" font-size="11" fill="#047857" xml:space="preserve">create</text>
 <rect data-service-badge="true" data-presentation-padding="10 4" data-service-category="network" data-service-full-name="Amazon VPC" data-display-name="Subnet" x="406" y="320" width="86" height="32" rx="4" fill="#dbeafe"/><text data-service-name="true" x="416" y="342" font-size="18" font-weight="700" fill="#1e3a8a" xml:space="preserve">Subnet</text><text x="112" y="373" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_subnet.private</text>
 <text x="112" y="412" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
 <g id="resource-6177735f7670632e6d61696e-current" data-architecture-id="terraform:6177735f7670632e6d61696e-current" data-qualified-address="module.root.aws_vpc.main" data-terraform-address="aws_vpc.main" data-presentation-header="60 160 480 112"><title>module.root.aws_vpc.main — create</title>
-<text data-resource-type-heading="true" x="72" y="188" font-size="11" fill="#047857" xml:space="preserve">aws_vpc · create</text>
+<text data-resource-type-heading="true" x="72" y="188" font-size="11" fill="#047857" xml:space="preserve">create</text>
 <rect data-service-badge="true" data-presentation-padding="10 4" data-service-category="network" data-service-full-name="Amazon VPC" data-display-name="VPC" x="479" y="168" width="53" height="32" rx="4" fill="#dbeafe"/><text data-service-name="true" x="489" y="190" font-size="18" font-weight="700" fill="#1e3a8a" xml:space="preserve">VPC</text><text x="72" y="221" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_vpc.main</text>
 <text x="72" y="260" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>

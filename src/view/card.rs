@@ -4,6 +4,7 @@ pub(crate) struct Metrics {
     pub inset: usize,
     pub line_limit: usize,
     pub type_line_limit: usize,
+    pub external_inset: usize,
     pub import_height: usize,
     pub service_height: usize,
     pub service_width: usize,
@@ -26,13 +27,24 @@ fn header_width(node: &Node) -> usize {
             |removal| removal.label().into(),
         );
         let left = if node.mode == crate::model::EntityMode::Data {
-            310
+            external_inset(node) + 68
         } else {
-            12 + (super::text::width(&node.resource_type).min(25) + 3 + operation.len()) * 7
+            12 + (super::heading::type_name(node, true)
+                .map_or(0, |name| super::text::width(name).min(25) + 3)
+                + operation.len())
+                * 7
         };
         left + 12 + super::service_label::width(name, 360) + 8
     });
     super::references::width(node).max(header)
+}
+
+fn external_inset(node: &Node) -> usize {
+    if super::heading::type_name(node, true).is_none() {
+        24 + super::text::width(&super::heading::text(node, false, true)) * 7
+    } else {
+        242
+    }
 }
 
 pub(crate) fn import_height(node: &Node) -> usize {
@@ -62,19 +74,21 @@ pub(crate) fn measure(node: &Node) -> Metrics {
     let service_height = crate::services::display_name(node).map_or(0, |name| {
         super::service_label::height(name, service_width).saturating_sub(24)
     });
+    let external_inset = external_inset(node);
     let mut heading_right = if service_width == 0 {
         width - 12
     } else {
         width - 8 - service_width - 4
     };
     if node.mode == crate::model::EntityMode::Data {
-        heading_right = heading_right.min(242 - 12);
+        heading_right = heading_right.min(external_inset - 12);
     }
     let type_line_limit = (heading_right.saturating_sub(12) / 7).max(1);
-    let heading_height = super::heading::lines(&super::heading::text(node, false), type_line_limit)
-        .len()
-        .saturating_sub(1)
-        * super::heading::LINE_HEIGHT;
+    let heading_height =
+        super::heading::lines(&super::heading::text(node, false, true), type_line_limit)
+            .len()
+            .saturating_sub(1)
+            * super::heading::LINE_HEIGHT;
     let service_height =
         service_height.max(heading_height + if node.service_name.is_some() { 8 } else { 0 });
     let extra = lines.saturating_sub(2) * 20 + import_height + service_height;
@@ -89,6 +103,7 @@ pub(crate) fn measure(node: &Node) -> Metrics {
         inset,
         line_limit,
         type_line_limit,
+        external_inset,
         import_height,
         service_height,
         service_width,

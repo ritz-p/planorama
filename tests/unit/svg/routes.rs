@@ -73,7 +73,14 @@ fn embedded_resource_type_headings_preserve_operations_and_fit() {
                         .filter(|element| element.is_text())
                         .filter_map(|element| element.text())
                         .collect();
-                    assert_eq!(text, format!("{} · {expected}", node.resource_type));
+                    assert_eq!(
+                        text,
+                        if node.resource_type == "aws_rds_cluster_instance" {
+                            expected.to_owned()
+                        } else {
+                            format!("{} · {expected}", node.resource_type)
+                        }
+                    );
                     let bounds = layout.bounds[index];
                     let mut last_y = bounds.origin.y;
                     for line in heading

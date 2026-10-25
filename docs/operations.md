@@ -53,8 +53,9 @@ prefix; embedded type/action headings and annotation operation fields retain the
 composed label. Accessible titles preserve the full operation and its order.
 Existing `data-import` and the value-free presence/unknown flags remain unchanged.
 
-Ordinary and embedded cards place the type/action heading before the address;
-embedded addresses do not repeat that action. Their address area reserves at least
+Ordinary and embedded cards place the operation heading before the address;
+it includes the complete type only when no resource-specific label is displayed.
+Embedded addresses do not repeat that action. Their address area reserves at least
 two lines to keep child cards and routing anchors stable for short identities.
 Logical Component members and
 Relationship Resources put the complete address before a separate compact
