@@ -48,7 +48,7 @@ fn role_marks_preserve_provider_boundaries_and_fit_inside_individual_cards() {
             .children()
             .find(|n| n.attribute("data-service-badge").is_some())
             .unwrap();
-        assert!(number(badge, "x") + number(badge, "width") < position[0]);
+        assert!(position[0] + 22 < number(badge, "x"));
         for text in card.children().filter(|n| {
             n.has_tag_name("text")
                 && n.attribute("font-size") == Some("13")

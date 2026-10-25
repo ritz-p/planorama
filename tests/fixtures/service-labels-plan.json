@@ -1,0 +1,23 @@
+{
+  "format_version": "1.2",
+  "configuration": {"root_module":{"resources":[
+    {"address":"aws_subnet.application","type":"aws_subnet","expressions":{"vpc_id":{"references":["aws_vpc.main.id"]}}},
+    {"address":"aws_route_table.application","type":"aws_route_table","expressions":{"vpc_id":{"references":["aws_vpc.main.id"]}}},
+    {"address":"aws_nat_gateway.egress","type":"aws_nat_gateway","expressions":{"subnet_id":{"references":["aws_subnet.application.id"]}}}
+  ]}},
+  "resource_changes": [
+    {"address":"aws_vpc.main","type":"aws_vpc","change":{"actions":["create"],"after":{"id":"vpc-example"}}},
+    {"address":"aws_subnet.application","type":"aws_subnet","change":{"actions":["create"],"after":{"id":"subnet-example","vpc_id":"vpc-example"}}},
+    {"address":"aws_route_table.application","type":"aws_route_table","change":{"actions":["update"],"after":{"vpc_id":"vpc-example"}}},
+    {"address":"aws_nat_gateway.egress","type":"aws_nat_gateway","change":{"actions":["no-op"],"after":{"subnet_id":"subnet-example"}}},
+    {"address":"module.application.aws_instance.long_application_worker_with_a_complete_resource_address","type":"aws_instance","change":{"actions":["create"],"after":{"subnet_id":"subnet-example"}}},
+    {"address":"aws_iam_user.operator","type":"aws_iam_user","change":{"actions":["create"]}},
+    {"address":"aws_iam_role.worker","type":"aws_iam_role","change":{"actions":["delete"]}},
+    {"address":"aws_iam_group.operators","type":"aws_iam_group","change":{"actions":["update"]}},
+    {"address":"aws_iam_policy.access","type":"aws_iam_policy","change":{"actions":["no-op"]}},
+    {"address":"aws_iam_role_policy_attachment.long","type":"aws_iam_role_policy_attachment","change":{"actions":["create"]}},
+    {"address":"data.aws_subnet.external","type":"aws_subnet","mode":"data"},
+    {"address":"aws_subnet.foreign","type":"aws_subnet","provider_name":"example.com/other/aws"},
+    {"address":"aws_unclassified.example","type":"aws_unclassified"}
+  ]
+}

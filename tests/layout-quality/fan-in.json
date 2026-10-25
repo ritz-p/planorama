@@ -57,8 +57,8 @@
   },
   "report": {
     "canvas": {
-      "height": 1330,
-      "width": 1340
+      "height": 1318,
+      "width": 1613
     },
     "category": "layout",
     "edges": [
@@ -87,25 +87,25 @@
         },
         "polyline": [
           [
-            800,
-            811
+            982,
+            810
           ],
           [
-            824,
-            811
+            1006,
+            810
           ],
           [
-            824,
-            824
+            1006,
+            822
           ],
           [
-            900,
-            824
+            1082,
+            822
           ]
         ],
         "raw_polyline": {
           "bends": 2,
-          "length": 113
+          "length": 112
         },
         "visible_border": {
           "close_length": 0,
@@ -139,25 +139,25 @@
         },
         "polyline": [
           [
-            800,
-            975
+            982,
+            970
           ],
           [
-            824,
-            975
+            1006,
+            970
           ],
           [
-            824,
-            824
+            1006,
+            822
           ],
           [
-            900,
-            824
+            1082,
+            822
           ]
         ],
         "raw_polyline": {
           "bends": 2,
-          "length": 251
+          "length": 248
         },
         "visible_border": {
           "close_length": 0,
@@ -191,25 +191,25 @@
         },
         "polyline": [
           [
-            800,
-            1139
+            982,
+            1130
           ],
           [
-            824,
-            1139
+            1006,
+            1130
           ],
           [
-            824,
-            824
+            1006,
+            822
           ],
           [
-            900,
-            824
+            1082,
+            822
           ]
         ],
         "raw_polyline": {
           "bends": 2,
-          "length": 415
+          "length": 408
         },
         "visible_border": {
           "close_length": 0,
@@ -243,20 +243,20 @@
         },
         "polyline": [
           [
-            380,
-            824
+            471,
+            822
           ],
           [
-            404,
-            824
+            495,
+            822
           ],
           [
-            404,
-            836
+            495,
+            834
           ],
           [
-            480,
-            836
+            571,
+            834
           ]
         ],
         "raw_polyline": {
@@ -295,25 +295,25 @@
         },
         "polyline": [
           [
-            380,
-            824
+            471,
+            822
           ],
           [
-            404,
-            824
+            495,
+            822
           ],
           [
-            404,
-            1000
+            495,
+            994
           ],
           [
-            480,
-            1000
+            571,
+            994
           ]
         ],
         "raw_polyline": {
           "bends": 2,
-          "length": 276
+          "length": 272
         },
         "visible_border": {
           "close_length": 0,
@@ -347,25 +347,25 @@
         },
         "polyline": [
           [
-            380,
-            824
+            471,
+            822
           ],
           [
-            404,
-            824
+            495,
+            822
           ],
           [
-            404,
-            1164
+            495,
+            1154
           ],
           [
-            480,
-            1164
+            571,
+            1154
           ]
         ],
         "raw_polyline": {
           "bends": 2,
-          "length": 440
+          "length": 432
         },
         "visible_border": {
           "close_length": 0,
@@ -415,8 +415,8 @@
         ],
         "resources": 5,
         "spatial_layout": {
-          "height": 772,
-          "width": 1340
+          "height": 760,
+          "width": 1613
         },
         "state": null
       }
@@ -424,7 +424,7 @@
     "summary": {
       "raw_polyline": {
         "bends": 12,
-        "length": 1607
+        "length": 1584
       },
       "routed_paths": 6,
       "visible_border_minimum_deficit": 0,
@@ -432,7 +432,7 @@
         "crossings": 0,
         "independent_overlap_length": 0,
         "parallel_deficit": 0,
-        "shared_trunk_length": 547
+        "shared_trunk_length": 540
       }
     },
     "units": "SVG user units (px)"

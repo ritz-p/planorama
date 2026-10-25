@@ -559,6 +559,32 @@ class ViewerTests {
         `, selected);
         this.assertEqual(badge, ['storage', 'rgb(220, 252, 231)', 'rgb(20, 83, 45)', 'S3']);
     }
+    test_resource_labels_are_large_readable_and_right_aligned() {
+        this.load('tests/fixtures/service-labels-plan.json');
+        const result = this.driver.execute_script(`
+            const badges = [...document.querySelectorAll('#viewport [data-service-badge]')];
+            const problems = [];
+            for (const badge of badges) {
+                const row = badge.parentElement;
+                const a = badge.getBoundingClientRect();
+                const action = [...row.children].find(e => e.tagName === 'text' && !e.hasAttribute('data-service-name') && (e.getAttribute('font-size') === '11' || row.dataset.placement === 'logical'));
+                if (!action || Number(action.getAttribute('y')) !== Number(badge.getAttribute('y')) + 20) problems.push('action row: ' + badge.dataset.displayName);
+                for (const text of row.querySelectorAll(':scope > text, :scope > [data-external] text')) {
+                    const b = text.getBoundingClientRect();
+                    if (text.hasAttribute('data-service-name')) {
+                        if (getComputedStyle(text).fontSize !== '18px' || b.left < a.left - 0.1 || b.right > a.right + 0.1 || b.top < a.top - 0.1 || b.bottom > a.bottom + 0.1) problems.push(text.textContent);
+                    } else if (Math.min(a.right,b.right)>Math.max(a.left,b.left)+0.1 && Math.min(a.bottom,b.bottom)>Math.max(a.top,b.top)+0.1) problems.push(text.textContent);
+                }
+            }
+            return {problems, names: badges.map(b => b.dataset.displayName)};
+        `);
+        this.assertEqual(result.problems, []);
+        this.assertIn('Subnet', result.names);
+        this.assertIn('VPC', result.names);
+        this.assertIn('IAM Role', result.names);
+        this.choose('aws_iam_role.worker');
+        this.assertEqual(this.driver.execute_script(`return [...document.querySelectorAll('[data-viewer-selected] [data-service-badge]')].map(b => [b.dataset.displayName, getComputedStyle(b).fill])`), [['IAM Role', 'rgb(254, 226, 226)']]);
+    }
     test_coverage_summary_is_absent_from_empty_and_single_resource_diagrams() {
         for (const changes of [[], [{"address": "terraform_data.one", "type": "terraform_data"}]]) {
             this.load('-', {input_plan: {"format_version": "1.2", "resource_changes": changes}});

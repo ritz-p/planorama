@@ -34,7 +34,7 @@ fn category_badges_share_colors_across_presentations_and_preserve_actions() {
                 "#dbeafe",
                 "#1e3a8a",
             ),
-            ("aws_iam_role.neutral", "neutral", "#e2e8f0", "#0f172a"),
+            ("aws_iam_role.neutral", "iam", "#fee2e2", "#7f1d1d"),
             ("terraform_data.neutral", "neutral", "#e2e8f0", "#0f172a"),
         ] {
             let row = doc
@@ -92,6 +92,7 @@ fn category_text_contrast_remains_readable_without_color_distinction() {
         Category::Compute,
         Category::Storage,
         Category::Network,
+        Category::Iam,
         Category::Neutral,
     ] {
         let (_, background, foreground) = category.palette();
