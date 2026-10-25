@@ -4,6 +4,8 @@ services:
     working_dir: /workspace
     init: true
     command: ["sleep", "infinity"]
+    environment:
+      CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_LINKER: /usr/local/bin/planorama-native-linker
     volumes:
       - .:/workspace
       - cargo-registry:/usr/local/cargo/registry

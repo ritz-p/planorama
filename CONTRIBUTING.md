@@ -23,6 +23,15 @@ docker compose exec -T dev cargo run --locked -- --help
 Wasm 用には `wasm32-unknown-unknown` と wasm-bindgen-cli 0.2.100 を含みます。[ビルド・ブラウザ検証](docs/browser.md)では同じ Docker 環境を使用します。
 実環境の plan/state や認証情報をコミットしないでください。
 
+Linux x86_64 の Compose 開発環境では native target の linker に mold 2.40.4 を使います。
+Wasm の `wasm-ld`、他 OS/architecture、公開 release の設定は変更しません。
+Dockerfile は upstream 配布物の SHA-256 を検証して導入します。
+Docker 外では `sudo sh scripts/install-mold.sh` の後、
+`CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_LINKER="$PWD/scripts/native-linker.sh" cargo test --locked`
+で有効化できます（GCC 12.1 以降が必要）。設定しない通常の Cargo は既存 linker を使います。
+Compose 内で無効化するには `docker compose exec -T -e CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_LINKER=cc dev cargo test --locked` を使います。
+linker の切替は Cargo の再ビルドを伴います。比較手順と結果は [build performance](docs/build-performance.md) を参照してください。
+
 ## 検証
 
 ```sh
