@@ -117,9 +117,12 @@ remain intact. Grouping does not change which resources have logical placement.
 Each group has one neutral card with a wrapped resource-type/mode heading and
 canonical provider-source line. Nonempty action subsections appear inside the card
 in Create, Update, Delete, Replace, Read, Unchanged, Other order, with counts and
-canonical action-colored borders. Rows sort by architecture identity within each
+canonical action-colored borders. Each action heading has one resource/service
+label on its right, padded inside the section frame. Heading, count and label are
+measured together; wrapped headers reserve space before the resource rows.
+Rows sort by architecture identity within each
 subsection; wrappers introduce no resource or DOM identity. Each row retains the full selected
-address, action label, deployment-scope label, role, Uses/Dependencies, service icon or name
+address, action label, deployment-scope label, role, Uses/Dependencies
 and import/move/deposed information, with one action-colored underline below its
 complete content. `view::scope` supplies the reusable label from resolved scope
 and provider identity. Its wrapped height is reserved before group-card packing.

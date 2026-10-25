@@ -41,13 +41,18 @@ fn category_badges_share_colors_across_presentations_and_preserve_actions() {
                 .descendants()
                 .find(|n| n.attribute("data-terraform-address") == Some(address))
                 .unwrap();
-            let badge = row
+            let label_owner = if row.attribute("data-placement") == Some("logical") {
+                row.parent().unwrap()
+            } else {
+                row
+            };
+            let badge = label_owner
                 .children()
                 .find(|n| n.attribute("data-service-badge").is_some())
                 .unwrap();
             assert_eq!(badge.attribute("data-service-category"), Some(category));
             assert_eq!(badge.attribute("fill"), Some(background));
-            for text in row
+            for text in label_owner
                 .children()
                 .filter(|n| n.attribute("data-service-name").is_some())
             {

@@ -116,30 +116,7 @@ fn resource_row(
     if let Some(icon) = super::icons::for_node(node) {
         svg.push_str(&super::icons::render(icon, width - 40, 8));
     }
-    if let Some(name) = crate::services::display_name(node) {
-        let service_width = crate::view::service_label::width(
-            name,
-            width - 32 - crate::view::text::width(&lines[1].0) * 8,
-        );
-        writeln!(
-            svg,
-            r##"<text x="16" y="{}" font-size="12" fill="#334155" xml:space="preserve">{}</text>"##,
-            y + 4,
-            super::escape(&lines[1].0)
-        )
-        .unwrap();
-        svg.push_str(&super::icons::service_name(
-            node,
-            width - 8,
-            y - 16,
-            service_width,
-        ));
-        y += crate::view::service_label::height(name, service_width);
-    }
     for (index, (text, is_address)) in lines.iter().enumerate() {
-        if index == 1 && node.service_name.is_some() {
-            continue;
-        }
         let limit = (width
             - if index == 0 && node.service_name.is_none() {
                 64
@@ -177,6 +154,40 @@ fn resource_row(
     (svg, underline_y + 16)
 }
 
+fn action_header(node: &Node, heading: &str, width: usize, top: usize) -> (String, usize) {
+    let name = crate::services::display_name(node);
+    let available = width.saturating_sub(52);
+    let service_width = name.map_or(0, |name| {
+        crate::view::service_label::width(
+            name,
+            available.saturating_sub((crate::view::text::width(heading) * 8).min(available / 2)),
+        )
+    });
+    let heading_width = width.saturating_sub(
+        40 + if name.is_some() {
+            service_width + 12
+        } else {
+            0
+        },
+    );
+    let lines = wrap(heading, (heading_width / 8).max(1));
+    let (_, color) = super::color(node.action);
+    let mut svg = format!("<title>{}</title>", super::escape(heading));
+    for (index, line) in lines.iter().enumerate() {
+        write!(svg, r##"<text data-action-heading="true" x="20" y="{}" font-size="13" font-weight="700" fill="{color}" xml:space="preserve">{}</text>"##, top + 32 + index * 20, super::escape(line)).unwrap();
+    }
+    svg.push_str(&super::icons::service_name(
+        node,
+        width - 20,
+        top + 12,
+        service_width,
+    ));
+    let height = (lines.len() * 20).max(name.map_or(0, |name| {
+        crate::view::service_label::height(name, service_width) - 8
+    })) + 24;
+    (svg, height)
+}
+
 pub(super) fn cards(graph: &Graph, address_format: super::AddressFormat) -> Vec<Card> {
     groups(graph).into_iter().map(|((provider, resource_type, mode), mut nodes)| {
         nodes.sort_by_key(|node| &node.entity.id);
@@ -184,10 +195,15 @@ pub(super) fn cards(graph: &Graph, address_format: super::AddressFormat) -> Vec<
         let provider_label = provider.unwrap_or("Provider unavailable");
         let explanations: std::collections::BTreeSet<_> = nodes.iter().filter_map(|node| super::roles::explanation(node.role)).collect();
         let rows: Vec<_> = nodes.into_iter().map(|node| (node, resource_lines(node, address_format))).collect();
+        let mut counts = BTreeMap::new();
+        for (node, _) in &rows {
+            *counts.entry(node.action).or_insert(0) += 1;
+        }
         let heading_width = card_width([heading.as_str(), provider_label].into_iter());
         let width = rows.iter().fold(heading_width, |width, (node, lines)| {
             let header_width = crate::services::display_name(node).map_or(0, |name| {
-                32 + crate::view::text::width(&lines[1].0) * 8 + crate::view::service_label::width(name, 360)
+                let action = format!("{:?} ({})", node.action, counts[&node.action]);
+                52 + crate::view::text::width(&action) * 8 + crate::view::service_label::width(name, 360)
             });
             width.max(card_width(lines.iter().map(|(text, _)| text))).max(crate::view::references::width(node)).max(header_width)
         });
@@ -217,8 +233,8 @@ pub(super) fn cards(graph: &Graph, address_format: super::AddressFormat) -> Vec<
             let start = y;
             let heading = format!("{label} ({})", members.len());
             let (_, stroke) = super::color(action);
-            let mut content = format!(r##"<title>{heading}</title><text x="16" y="{}" font-size="13" font-weight="700" fill="{stroke}">{heading}</text>"##, start + 24);
-            y += 32;
+            let (mut content, header_height) = action_header(members[0].0, &heading, width, start);
+            y += header_height;
             for (node, lines) in members {
                 let (row, height) = resource_row(graph, node, lines, width, y);
                 content.push_str(&row);
