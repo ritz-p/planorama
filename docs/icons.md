@@ -70,7 +70,7 @@ For example, `aws_subnet` is **Subnet**, `aws_vpc` is **VPC** and
 below; unlisted names wrap in full. Unknown provider/type retains its existing
 neutral fallback. No name, ARN, attribute value or resource-prefix inference is used.
 
-Spatial labels share the top row with the action/type text and role mark. Cards
+Spatial labels share the top row with the action/type text. Cards
 reserve separate space for the label and external indicator. Complete Terraform
 types and operations wrap instead of being shortened; imports and complete
 addresses appear below the measured heading. The label ends 8px inside the right edge.
@@ -126,32 +126,6 @@ IAM actions, long addresses, data resources and foreign/unknown types.
 | Amazon CloudWatch | CloudWatch |
 | Amazon Route 53 | Route 53 |
 | Amazon CloudFront | CloudFront |
-
-## Neutral role marks (#634)
-
-Role marks are small neutral shapes in the service-label row of individual spatial
-cards. They describe a visual role independently of the graph's ResourceRole:
-execution can include both Node and Controller, while network marks identify
-selected Connector resources. Classification uses verified AWS provider identity
-and an explicit resource-type allowlist, never names, ARNs or arbitrary attributes.
-
-| Visual role | Mark | Initial examples |
-| --- | --- | --- |
-| Execution | Rounded rectangle | EC2 instance, Lambda function, ECS service, EKS cluster |
-| Data store | Cylinder | S3 bucket, EBS volume, EFS filesystem, RDS database/cluster, DynamoDB table, ElastiCache cache, Redshift cluster, OpenSearch domain |
-| Network | Hexagon | NAT/internet gateway, VPC endpoint, load balancer, CloudFront distribution, API Gateway API |
-
-Other types, foreign/unknown providers, Identity/Policy/Association objects,
-Logical rows, embedded members and containers use the existing neutral card
-presentation without a role mark. A VPC/Subnet containment boundary is not a
-network mark. The mark occupies a reserved 22x18px area on the left of the header; service
-text wraps in the remaining width. Connections, arrowheads and relationship
-numbers attach to the card boundary, and selection uses that same enclosing card.
-Marks do not add graph entities, relationships or containment. Their meaning is
-also provided in SVG descriptions and accessible labels; color is not required.
-
-[Role mark example](../examples/role-shapes.svg) includes long addresses, multiple
-actions, a container, a logical identity and foreign/unknown providers.
 
 ## Service category colors (#635)
 

@@ -30,10 +30,7 @@ fn header_width(node: &Node) -> usize {
         } else {
             12 + (super::text::width(&node.resource_type).min(25) + 3 + operation.len()) * 7
         };
-        left + if role_mark(node).is_some() { 32 } else { 0 }
-            + 12
-            + super::service_label::width(name, 360)
-            + 8
+        left + 12 + super::service_label::width(name, 360) + 8
     });
     super::references::width(node).max(header)
 }
@@ -44,17 +41,6 @@ pub(crate) fn import_height(node: &Node) -> usize {
     } else {
         0
     }
-}
-
-pub(crate) fn role_mark(node: &Node) -> Option<crate::services::VisualRole> {
-    if node.placement != crate::model::Placement::Spatial
-        || node.service_name.is_none()
-        || node.member_owner.is_some()
-        || node.routes.reserved_height != 0
-    {
-        return None;
-    }
-    crate::services::visual_role(node)
 }
 
 pub(crate) fn measure(node: &Node) -> Metrics {
@@ -76,16 +62,15 @@ pub(crate) fn measure(node: &Node) -> Metrics {
     let service_height = crate::services::display_name(node).map_or(0, |name| {
         super::service_label::height(name, service_width).saturating_sub(24)
     });
-    let role_inset = if role_mark(node).is_some() { 32 } else { 0 };
     let mut heading_right = if service_width == 0 {
         width - 12
     } else {
         width - 8 - service_width - 4
     };
     if node.mode == crate::model::EntityMode::Data {
-        heading_right = heading_right.min(242 + role_inset - 12);
+        heading_right = heading_right.min(242 - 12);
     }
-    let type_line_limit = (heading_right.saturating_sub(12 + role_inset) / 7).max(1);
+    let type_line_limit = (heading_right.saturating_sub(12) / 7).max(1);
     let heading_height = super::heading::lines(&super::heading::text(node, false), type_line_limit)
         .len()
         .saturating_sub(1)

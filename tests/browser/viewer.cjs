@@ -538,26 +538,10 @@ class ViewerTests {
         this.assertEqual(result['overlaps'], []);
         this.assertEqual(result['symbols'], 0);
     }
-    test_role_marks_keep_clear_text_and_resource_selection() {
+    test_headers_without_role_marks_keep_resource_selection() {
         this.load('tests/fixtures/role-shapes-plan.json');
-        const result = this.driver.execute_script(`
-            const marks = [...document.querySelectorAll('#viewport [data-role-shape]')];
-            const overlaps = [];
-            for (const mark of marks) {
-                const a = mark.getBoundingClientRect();
-                for (const text of mark.parentElement.querySelectorAll('text')) {
-                    const b = text.getBoundingClientRect();
-                    if (Math.min(a.right, b.right) > Math.max(a.left, b.left) + 0.1 &&
-                        Math.min(a.bottom, b.bottom) > Math.max(a.top, b.top) + 0.1) overlaps.push(text.textContent);
-                }
-            }
-            return {count: marks.length, overlaps, pointerEvents: marks.map(mark => getComputedStyle(mark).pointerEvents)};
-        `);
-        this.assertEqual(result.count, 4);
-        this.assertEqual(result.overlaps, []);
-        this.assertTrue(result.pointerEvents.every(value => value === 'none'));
+        this.assertEqual(this.driver.execute_script('return document.querySelectorAll("#viewport [data-role-shape]").length'), 0);
         const selected = this.choose('aws_s3_bucket.archive');
-        this.assertEqual(this.driver.execute_script('return document.getElementById(arguments[0]).querySelector("[data-role-shape]").getAttribute("data-role-shape")', selected), 'data-store');
         const badge = this.driver.execute_script(`
             const row = document.getElementById(arguments[0]);
             const background = row.querySelector('[data-service-badge]');
