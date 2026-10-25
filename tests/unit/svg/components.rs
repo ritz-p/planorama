@@ -327,11 +327,17 @@ fn component_cards_keep_identity_members_operations_and_links() {
                 .filter(|n| n.has_tag_name("tspan"))
                 .filter_map(|n| n.text())
                 .collect();
+            assert_eq!(text, *address);
             assert_eq!(
-                text,
-                format!(
-                    "{}: {address}",
-                    crate::svg::operations::label(node.action, &node.metadata)
+                link.descendants()
+                    .find(|n| n.attribute("data-resource-action").is_some())
+                    .and_then(|n| n.text()),
+                Some(
+                    format!(
+                        "Action: {}",
+                        crate::svg::operations::label(node.action, &node.metadata)
+                    )
+                    .as_str()
                 )
             );
         }
@@ -483,15 +489,7 @@ fn long_member_lists_and_multiple_components_wrap_without_losing_text() {
                 .filter(|n| n.has_tag_name("tspan"))
                 .collect();
             let visible: String = lines.iter().filter_map(|n| n.text()).collect();
-            let expected = node.map_or_else(
-                || address.to_string(),
-                |node| {
-                    format!(
-                        "{}: {address}",
-                        crate::svg::operations::label(node.action, &node.metadata)
-                    )
-                },
-            );
+            let expected = address.to_string();
             assert_eq!(visible, expected);
             if address.contains("長いモジュール") {
                 assert!(lines.len() > 1);

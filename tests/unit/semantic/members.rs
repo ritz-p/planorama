@@ -135,7 +135,7 @@ fn deleting_members_use_before_identifiers() {
                         .unwrap()
                         .text()
                         .unwrap()
-                        .contains("[delete]")
+                        .contains("; delete")
                 );
             }
         }

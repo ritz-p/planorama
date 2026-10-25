@@ -431,7 +431,20 @@ fn route_children_keep_identity_palette_metadata_and_reference_edges() {
             .filter(|n| n.has_tag_name("text"))
             .filter_map(|n| n.text())
             .collect();
-        assert!(visible.starts_with(&format!("aws_route.default [{visible_operation}]")));
+        assert!(visible.starts_with("aws_route.default"));
+        assert!(!visible.contains(&format!("[{visible_operation}]")));
+        let type_heading: String = child
+            .descendants()
+            .find(|n| n.attribute("data-resource-type-heading").is_some())
+            .unwrap()
+            .descendants()
+            .filter(|n| n.has_tag_name("tspan"))
+            .filter_map(|n| n.text())
+            .collect();
+        assert_eq!(
+            type_heading,
+            format!("aws_route · import / {visible_operation}")
+        );
         assert_eq!(child.attribute("data-import-id-present"), Some("true"));
         assert_eq!(
             child.attribute("data-import-identity-present"),

@@ -82,8 +82,9 @@ and 4px vertical padding: a one-line background is 32px high. Measurements reser
 space before subsequent content. Long labels wrap at the available width and expand header height,
 without reducing the font or truncating text. Logical action headings, counts,
 labels and the gap between them are measured together before positioning rows.
-Embedded members retain their combined address/action line below the
-label. There is no smaller-label exception for logical or embedded rows.
+Embedded members retain their complete address below the label and show the
+operation in the separate type heading. There is no smaller-label exception for
+logical or embedded rows.
 
 Embedded Terraform resources, including Routes, have a separate complete
 `resource_type · operation` heading above their badges and address. Long headings

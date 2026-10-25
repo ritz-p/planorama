@@ -505,7 +505,7 @@ fn logical_projection_retains_graph_identity_references_and_operations() {
     assert!(
         cluster
             .children()
-            .any(|n| n.has_tag_name("text") && n.text() == Some("update"))
+            .any(|n| n.has_tag_name("text") && n.text() == Some("import / update"))
     );
     for card in doc
         .descendants()
@@ -734,8 +734,12 @@ fn logical_groups_use_canonical_provider_type_and_mode_without_combining_actions
             );
             assert!(row_y(row) > bottom);
             bottom = row_y(row) + number(underline(row), "y1");
-            assert!(row.children().any(|n| n.has_tag_name("text")
-                && n.text() == Some(svg::operations::action_label(node.action, &node.metadata))));
+            let operation = svg::operations::label(node.action, &node.metadata);
+            assert_eq!(
+                row.children()
+                    .any(|n| n.has_tag_name("text") && n.text() == Some(operation.as_str())),
+                node.metadata.import.is_some() || node.metadata.state_removal.is_some()
+            );
         }
     }
     assert_eq!(output.matches("data-placement=\"logical\"").count(), 7);

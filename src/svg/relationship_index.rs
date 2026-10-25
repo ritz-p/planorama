@@ -363,7 +363,9 @@ impl<'a> Index<'a> {
                         }
                     }
                     if let Some(actions) = entry.actions.get(source) {
-                        text_row(&mut svg, &format!("Action: {}", actions.iter().cloned().collect::<Vec<_>>().join(", ")), text_x, &mut y, width, None);
+                        let (field, height) = super::operations::action_field(&actions.iter().cloned().collect::<Vec<_>>().join(", "), text_x, y, (width - text_x - 16) / 8);
+                        svg.push_str(&field);
+                        y += height;
                     }
                     if let Some(scopes) = entry.scopes.get(source) {
                         for scope in scopes {

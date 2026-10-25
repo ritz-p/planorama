@@ -52,7 +52,8 @@ classification prefix or Members heading, and relationship index cards start
 with numbered entries.
 Each component has an inner card ordered by synthetic identity. Headings and member
 addresses wrap without truncation. Members are sorted by address and appear as
-neutral text rows without individual backgrounds, borders or card wrappers. One
+neutral text rows with the complete address first, a separate compact `Action:`
+field, then scope. They have no individual backgrounds, borders or card wrappers. One
 underline below each complete wrapped item uses the original resource's canonical
 action color. Members link to the original spatial card or logical-resource row;
 missing or ambiguous targets use neutral underlines and non-clickable rows. Row measurements

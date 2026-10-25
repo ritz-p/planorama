@@ -44,7 +44,7 @@ pub(super) fn cards(graph: &Graph) -> Vec<Card> {
                     }
                 }
             });
-            let text = node.map_or_else(|| (*address).clone(), |node| format!("{}: {address}", super::operations::label(node.action, &node.metadata)));
+            let text = (*address).clone();
             (address, node, text)
         }).collect();
         let mut scope = crate::view::scope::component(rows.iter().map(|(_, node, _)| *node));
@@ -73,8 +73,9 @@ pub(super) fn cards(graph: &Graph) -> Vec<Card> {
             let lines = wrap_address(&text, member_width / 8);
             let badge_height = node.map_or(0, crate::view::card::import_height);
             let scope_lines = wrap(&member_scope, member_width / 8);
-            let scope_y = lines.len() * 20 + 20 + badge_height;
-            let underline_y = (lines.len() + scope_lines.len()) * 20 + 8 + badge_height;
+            let (action_field, action_height) = node.map(|node| super::operations::action_field(&super::operations::label(node.action, &node.metadata), 0, 20 + badge_height + lines.len() * 20, member_width / 8)).unwrap_or_default();
+            let scope_y = lines.len() * 20 + action_height + 20 + badge_height;
+            let underline_y = (lines.len() + scope_lines.len()) * 20 + action_height + 8 + badge_height;
             let (_, underline) = super::color(node.map_or(crate::model::Action::Unchanged, |node| node.action));
             let mut member = format!(r#"<g data-component-member="true" transform="translate(16 {y})">"#);
             if let Some(node) = node {
@@ -87,10 +88,11 @@ pub(super) fn cards(graph: &Graph) -> Vec<Card> {
                 member.push_str(&super::entities::import_badge(node, 0, 0));
             }
             member.push_str("<text font-size=\"12\" fill=\"#334155\">\n");
-            for (index, line) in lines.into_iter().enumerate() {
+            for (index, line) in lines.iter().enumerate() {
                 writeln!(member, "<tspan x=\"0\" y=\"{}\" xml:space=\"preserve\">{}</tspan>", 20 + badge_height + index * 20, super::escape(line)).unwrap();
             }
             member.push_str("</text>");
+            member.push_str(&action_field);
             for (index, line) in scope_lines.into_iter().enumerate() {
                 writeln!(member, r##"<text data-member-scope="true" x="0" y="{}" font-size="12" fill="#64748b">{}</text>"##, scope_y + index * 20, super::escape(line)).unwrap();
             }
