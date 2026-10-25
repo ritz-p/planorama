@@ -37,7 +37,7 @@ hashes; Clippy uses a separate key.
 Cargo still checks rebuild requirements, and cache misses do not reduce coverage.
 
 Cargo test additionally uses checksum-verified sccache 0.10.0 with incremental
-compilation disabled only in those two jobs. Its 2 GiB local compiler cache is
+compilation disabled in those two jobs and Browser Wasm. Its 2 GiB local compiler cache is
 restored separately from the existing dependency target cache. Target hits avoid
 compiler requests; sccache is a fallback for eligible requests after invalidation
 or a missing target cache. Only successful runs with newly written compiler
@@ -909,3 +909,58 @@ failure/trap recovery. Multi-GiB growth and pointer tests remain opt-in; see the
 **Wasm engine release** workflow distributes this engine separately from the UI;
 see [browser build, distribution and verification](browser.md). Unit tests now run
 from the library target (`--lib`); suite discovery includes that target automatically.
+
+### Browser Wasm caches and measurements (#674)
+
+The required `browser` job still runs on every PR and manual dispatch, with the
+same 20-minute timeout. There is no path-based skip or cross-job binary transfer.
+Pushes to `main` that change cache inputs run the same validation to seed trusted
+caches for later PRs; manual dispatch on `main` can also populate an empty cache.
+Default and `--no-default-features` builds remain independent even though the
+current default feature list is empty: Cargo exposes the `default` feature to
+the compiler, and future manifest changes must not silently remove coverage.
+Both binding, memory and distribution paths run on every invocation.
+
+Buildx loads the pinned Dockerfile image as `planorama-wasm-ci:local`, restoring
+and exporting GitHub Actions BuildKit layers under `browser-wasm`. Tool layers
+copy only their installation scripts; ordinary source edits do not invalidate
+Rust, Terraform, Chromium or wasm-bindgen installation. `compose.wasm-ci.yaml`
+overrides the registry/git/target named volumes with `.wasm-ci` bind mounts so
+the restored host files are actually visible inside the container. The local
+Compose setup retains its named volumes. Container-created cache files are
+returned to the runner's ownership before upload.
+
+Cargo caches separate default/standalone modes and native/Wasm targets; release
+and test artifacts occupy Cargo's separate profile directories. Keys include
+runner OS/architecture, Docker/Compose, toolchain, manifests/lock, Cargo config,
+build script, assets, scripts and workflow. A changed key starts empty, without
+a broad fallback. Workspace products and CLI test binaries are removed before
+save; bindings and distribution archives are always generated from freshly built
+workspace code. Only successful runs save Cargo caches. Immutable dependency
+keys avoid uploading the same dependencies on every source edit.
+
+Native compilation retains mold; Wasm retains `wasm-ld` and its memory flags.
+The existing container sccache wrapper can reuse eligible compilations within
+the job, with incremental compilation disabled and a 2 GiB local limit. Its
+cache is not separately transferred: the [compiler-cache measurements](build-performance.md#compiler-cache)
+show a small Wasm benefit before transfer overhead, while the Cargo caches
+already avoid those compiler requests. No host wrapper settings are assumed.
+
+All jobs use `contents: read` and checkout without persisted credentials.
+GitHub's [PR cache scope](https://docs.github.com/en/actions/reference/workflows-and-actions/dependency-caching#restrictions-for-accessing-a-cache) isolates untrusted writes from the base branch and
+other PRs; the workflow never uses `pull_request_target`. No secrets or external
+cache service are required. A miss rebuilds everything. If a restored cache
+causes failures, delete the affected `wasm-ci-v1-*` entry and rerun; bump the
+prefix for a full Cargo reset. Delete the `browser-wasm` BuildKit cache to reset
+environment layers. Cache hits never bypass build or validation commands.
+
+`sh scripts/wasm-ci.sh` runs the full sequence inside Docker and writes
+`output/wasm-ci/{timings,bindings}.tsv` (phase, wall seconds, user seconds,
+system seconds, peak RSS KiB), environment, cache sizes and sccache statistics.
+`WASM_CI_REPORT_DIR` selects another repository-relative report directory.
+The seven-day `wasm-ci-<sha>-<attempt>` artifact carries these records. Action
+step timestamps include environment import/export, cache restore/save and
+artifact upload overhead; use the complete job duration when comparing runs.
+Native reference reuse is process-local, bounded to 64 MiB and keyed by input
+bytes, the full argument vector/options and executable SHA-256. Failures are
+never cached. Named/file-based cases remain uncached, and every Wasm case runs.

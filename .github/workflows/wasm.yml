@@ -1,6 +1,20 @@
-﻿name: Browser Wasm
+name: Browser Wasm
 on:
   pull_request:
+  push:
+    branches: [main]
+    paths:
+      - Dockerfile
+      - .dockerignore
+      - compose*.yaml
+      - rust-toolchain.toml
+      - Cargo.toml
+      - Cargo.lock
+      - .cargo/**
+      - build.rs
+      - assets/**
+      - scripts/**
+      - .github/workflows/wasm.yml
   workflow_dispatch:
 permissions:
   contents: read
@@ -20,7 +34,7 @@ jobs:
       - name: Cache identity
         id: identity
         env:
-          CONFIG: ${{ hashFiles('Dockerfile', 'compose*.yaml', 'rust-toolchain.toml', 'Cargo.lock', 'Cargo.toml', '.cargo/**', 'build.rs', 'assets/**', 'scripts/**', '.github/workflows/wasm.yml') }}
+          CONFIG: ${{ hashFiles('Dockerfile', '.dockerignore', 'compose*.yaml', 'rust-toolchain.toml', 'Cargo.lock', 'Cargo.toml', '.cargo/**', 'build.rs', 'assets/**', 'scripts/**', '.github/workflows/wasm.yml') }}
         run: echo "key=wasm-ci-v1-${{ runner.os }}-${{ runner.arch }}-$CONFIG" >> "$GITHUB_OUTPUT"
       - uses: docker/setup-buildx-action@v3
       - name: Build pinned environment
@@ -38,24 +52,21 @@ jobs:
           path: |
             .wasm-ci/registry
             .wasm-ci/git
-          key: ${{ steps.identity.outputs.key }}-registry-${{ github.sha }}
-          restore-keys: ${{ steps.identity.outputs.key }}-registry-
+          key: ${{ steps.identity.outputs.key }}-registry
       - name: Restore default-native
         id: default-native
         uses: actions/cache/restore@v6.1.0
         with:
           path: |
             .wasm-ci/target/default/release
-          key: ${{ steps.identity.outputs.key }}-default-native-${{ github.sha }}
-          restore-keys: ${{ steps.identity.outputs.key }}-default-native-
+          key: ${{ steps.identity.outputs.key }}-default-native
       - name: Restore default-wasm
         id: default-wasm
         uses: actions/cache/restore@v6.1.0
         with:
           path: |
             .wasm-ci/target/default/wasm32-unknown-unknown/release
-          key: ${{ steps.identity.outputs.key }}-default-wasm-${{ github.sha }}
-          restore-keys: ${{ steps.identity.outputs.key }}-default-wasm-
+          key: ${{ steps.identity.outputs.key }}-default-wasm
       - name: Restore standalone-native
         id: standalone-native
         uses: actions/cache/restore@v6.1.0
@@ -63,16 +74,14 @@ jobs:
           path: |
             .wasm-ci/target/standalone/release
             .wasm-ci/target/standalone/debug
-          key: ${{ steps.identity.outputs.key }}-standalone-native-${{ github.sha }}
-          restore-keys: ${{ steps.identity.outputs.key }}-standalone-native-
+          key: ${{ steps.identity.outputs.key }}-standalone-native
       - name: Restore standalone-wasm
         id: standalone-wasm
         uses: actions/cache/restore@v6.1.0
         with:
           path: |
             .wasm-ci/target/standalone/wasm32-unknown-unknown/release
-          key: ${{ steps.identity.outputs.key }}-standalone-wasm-${{ github.sha }}
-          restore-keys: ${{ steps.identity.outputs.key }}-standalone-wasm-
+          key: ${{ steps.identity.outputs.key }}-standalone-wasm
       - name: Start environment
         run: |
           mkdir -p .wasm-ci/registry .wasm-ci/git .wasm-ci/target
@@ -84,7 +93,7 @@ jobs:
         run: docker compose exec -T dev sh scripts/wasm-ci.sh
       - name: Prepare dependency caches
         run: |
-          docker compose exec -T dev sh -c 'find /workspace/target -depth -name "*planorama*" -exec rm -rf {} +'
+          docker compose exec -T dev sh -c 'find /workspace/target -depth \( -name "*planorama*" -o -name "cli-*" \) -exec rm -rf {} +'
           sudo chown -R "$(id -u):$(id -g)" .wasm-ci
       - name: Save registry
         if: success() && steps.registry.outputs.cache-hit != 'true'

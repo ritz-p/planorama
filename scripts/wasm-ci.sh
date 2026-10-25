@@ -1,12 +1,16 @@
 #!/bin/sh
 set -eu
-mkdir -p output/wasm-ci
+report=${WASM_CI_REPORT_DIR:-output/wasm-ci}
+mkdir -p "$report"
+export WASM_BUILD_TIMINGS="$PWD/$report/bindings.tsv"
+: > "$report/timings.tsv"
+: > "$WASM_BUILD_TIMINGS"
 measure() {
     name=$1
     shift
-    /usr/bin/time -f "$name\t%e\t%U\t%S\t%M" -a -o output/wasm-ci/timings.tsv "$@"
+    /usr/bin/time -f "$name\t%e\t%U\t%S\t%M" -a -o "$report/timings.tsv" "$@"
 }
-{ rustc -vV; cargo -V; wasm-bindgen --version; sccache --version; uname -a; nproc; } > output/wasm-ci/environment.txt
+{ rustc -vV; cargo -V; wasm-bindgen --version; sccache --version; node --version; chromium --version; uname -a; nproc; git -c safe.directory="$PWD" rev-parse HEAD; } > "$report/environment.txt"
 target=${CARGO_TARGET_DIR:-/workspace/target}
 export CARGO_TARGET_DIR="$target/default"
 measure native cargo build --locked --release --bin planorama
@@ -20,5 +24,5 @@ measure standalone-native cargo build --locked --release --bin planorama --no-de
 measure standalone-build sh scripts/build-wasm-engine.sh
 measure standalone-memory node tests/browser/memory.cjs
 measure standalone-tests node tests/browser/wasm-engine.cjs
-sccache --show-stats > output/wasm-ci/sccache.txt
-du -sk /usr/local/cargo/registry /usr/local/cargo/git /workspace/target > output/wasm-ci/cache-sizes.txt
+sccache --show-stats > "$report/sccache.txt"
+du -sk /usr/local/cargo/registry /usr/local/cargo/git "$target" > "$report/cache-sizes.txt"
