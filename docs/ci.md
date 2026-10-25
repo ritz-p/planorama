@@ -36,6 +36,16 @@ toolchain/Cargo configuration, build-related environment and the `build.rs` /
 hashes; Clippy uses a separate key.
 Cargo still checks rebuild requirements, and cache misses do not reduce coverage.
 
+Cargo test additionally uses checksum-verified sccache 0.10.0 with incremental
+compilation disabled only in those two jobs. Its 2 GiB local compiler cache is
+restored separately from the existing dependency target cache. Target hits avoid
+compiler requests; sccache is a fallback for eligible requests after invalidation
+or a missing target cache. Only successful runs with newly written compiler
+entries upload a new cache, after stopping the server. Unchanged cache hits do
+not repeatedly upload identical data. Fork/PR cache scopes and workflow permissions
+are unchanged. Clippy retains its existing target cache without this wrapper.
+See [measurements and recovery](build-performance.md#compiler-cache).
+
 Tests install checksum-verified mold 2.40.4 and select its compiler-driver wrapper
 only through `CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_LINKER`. Docker Compose uses
 the same selection. Wasm retains its target rustflags and `wasm-ld`; native

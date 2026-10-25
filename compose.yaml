@@ -6,11 +6,15 @@ services:
     command: ["sleep", "infinity"]
     environment:
       CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_LINKER: /usr/local/bin/planorama-native-linker
+      RUSTC_WRAPPER: /usr/local/bin/planorama-rustc-cache
+      SCCACHE_DIR: /var/cache/sccache
+      SCCACHE_CACHE_SIZE: 2G
     volumes:
       - .:/workspace
       - cargo-registry:/usr/local/cargo/registry
       - cargo-git:/usr/local/cargo/git
       - cargo-target:/workspace/target
+      - sccache:/var/cache/sccache
   terraform-example:
     image: hashicorp/terraform:1.9.8
     profiles: [examples]
@@ -22,3 +26,4 @@ volumes:
   cargo-registry:
   cargo-git:
   cargo-target:
+  sccache:
