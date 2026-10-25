@@ -13,26 +13,37 @@ pub struct NamedInput {
 }
 
 fn parse(inputs: &[NamedInput]) -> Result<crate::model::MultiPlan, Error> {
-    if inputs.is_empty() || inputs.len() > 64 {
-        return Err(Error::EmptyInputs);
-    }
-    let mut remaining = crate::generation::MAX_INPUT_BYTES;
-    let mut names = BTreeSet::new();
-    for input in inputs {
-        crate::model::StateId::new(&input.state).map_err(|_| Error::InvalidStateName)?;
-        if !names.insert(&input.state) {
-            return Err(Error::DuplicateStateName);
-        }
-        remaining = remaining
-            .checked_sub(input.json.len())
-            .ok_or(Error::InputTooLarge)?;
-    }
+    validate(
+        inputs,
+        crate::generation::MAX_INPUT_BYTES,
+        Error::InputTooLarge,
+    )?;
     let mut states = BTreeMap::new();
     for input in inputs {
         let id = crate::model::StateId::new(&input.state).map_err(|_| Error::InvalidStateName)?;
         states.insert(id, crate::generation::parse_input(&input.json)?);
     }
     Ok(crate::model::MultiPlan { states })
+}
+
+pub(crate) fn validate(
+    inputs: &[NamedInput],
+    maximum: usize,
+    exceeded: Error,
+) -> Result<(), Error> {
+    if inputs.is_empty() || inputs.len() > 64 {
+        return Err(Error::EmptyInputs);
+    }
+    let mut remaining = maximum;
+    let mut names = BTreeSet::new();
+    for input in inputs {
+        crate::model::StateId::new(&input.state).map_err(|_| Error::InvalidStateName)?;
+        if !names.insert(&input.state) {
+            return Err(Error::DuplicateStateName);
+        }
+        remaining = remaining.checked_sub(input.json.len()).ok_or(exceeded)?;
+    }
+    Ok(())
 }
 
 pub fn inspect_named_inputs(inputs: &[NamedInput]) -> Result<InputInventory, Error> {
@@ -60,9 +71,18 @@ pub fn inspect_named_inputs(inputs: &[NamedInput]) -> Result<InputInventory, Err
 }
 
 pub fn generate_named(inputs: &[NamedInput], options: &Options) -> Result<Generated, Error> {
-    if options.memory_budget_mib.is_some()
-        || ((options.html_diagnostics || options.html_semantic_diagnostics)
-            && !matches!(options.format, OutputFormat::Html))
+    if options.memory_budget_mib.is_some() {
+        return Err(Error::InvalidOptions);
+    }
+    crate::work::complete(generate_step(inputs, options))
+}
+
+pub(crate) async fn generate_step(
+    inputs: &[NamedInput],
+    options: &Options,
+) -> Result<Generated, Error> {
+    if (options.html_diagnostics || options.html_semantic_diagnostics)
+        && !matches!(options.format, OutputFormat::Html)
     {
         return Err(Error::InvalidOptions);
     }
@@ -78,7 +98,31 @@ pub fn generate_named(inputs: &[NamedInput], options: &Options) -> Result<Genera
     };
     filter.validate().map_err(|_| Error::InvalidOptions)?;
     crate::generation::progress::report("parsing");
-    let plans = parse(inputs)?;
+    validate(
+        inputs,
+        crate::generation::MAX_INPUT_BYTES,
+        Error::InputTooLarge,
+    )?;
+    let remaining = std::cell::Cell::new(32_768);
+    let mut states = BTreeMap::new();
+    let (mut nodes, mut edges) = (0, 0);
+    for input in inputs {
+        crate::work::checkpoint().await;
+        if crate::work::limited() {
+            crate::generation::budget::validate_remaining(&input.json, &remaining)?;
+        }
+        let plan = crate::generation::parse_input(&input.json)?;
+        nodes += plan.nodes.len();
+        edges += plan.edges.len();
+        crate::work::check_limit(nodes, 256).await;
+        crate::work::check_limit(edges, 1024).await;
+        states.insert(
+            crate::model::StateId::new(&input.state).map_err(|_| Error::InvalidStateName)?,
+            plan,
+        );
+    }
+    let plans = crate::model::MultiPlan { states };
+    crate::work::checkpoint().await;
     crate::generation::progress::report("selection");
     let diagnostics = plans
         .states
@@ -97,6 +141,26 @@ pub fn generate_named(inputs: &[NamedInput], options: &Options) -> Result<Genera
         relationships: semantic::cross_state::resolve(&plans, &[]).edges,
     };
     let architecture = view::apply(&architecture, &filter).map_err(|_| Error::SelectionFailed)?;
+    drop(plans);
+    crate::work::check_limit(
+        architecture
+            .states
+            .values()
+            .map(|graph| graph.nodes.len())
+            .sum(),
+        256,
+    )
+    .await;
+    crate::work::check_limit(
+        architecture
+            .states
+            .values()
+            .map(|graph| graph.edges.len())
+            .sum(),
+        1024,
+    )
+    .await;
+    crate::work::checkpoint().await;
     crate::generation::progress::report("placement");
     let format = svg::Options {
         address_format: options.address_format,
@@ -104,15 +168,21 @@ pub fn generate_named(inputs: &[NamedInput], options: &Options) -> Result<Genera
         omit_relationship_legend: options.omit_relationship_legend,
     };
     let content = match options.format {
-        OutputFormat::Svg => svg::render_states(&architecture, format),
-        OutputFormat::Html if options.html_diagnostics => crate::html::render_states_report(
-            &architecture,
-            format,
-            &mut serde_json::Value::Null,
-            true,
-        ),
-        OutputFormat::Html => crate::html::render_states(&architecture, format),
+        OutputFormat::Svg => {
+            svg::render_states_step(&architecture, format, svg::Content::Standard, None).await
+        }
+        OutputFormat::Html if options.html_diagnostics => {
+            crate::html::render_states_report_step(
+                &architecture,
+                format,
+                &mut serde_json::Value::Null,
+                true,
+            )
+            .await
+        }
+        OutputFormat::Html => crate::html::render_states_step(&architecture, format).await,
     };
+    crate::work::check_limit(content.len(), crate::generation::MAX_BROWSER_OUTPUT_BYTES).await;
     Ok(Generated {
         content,
         diagnostics,

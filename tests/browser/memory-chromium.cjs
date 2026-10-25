@@ -8,12 +8,14 @@ module.exports = (driver, source, wasmUrl, input) => {
     (async () => {
       const module = await WebAssembly.compile(await (await fetch(url)).arrayBuffer());
       const results = [];
-      for (const mib of [512, 1024, 2048, 4096, 512]) {
+      for (const named of [false, true]) for (const mib of [512, 1024, 2048, 4096, 512]) {
         const body = source + '\\nself.onmessage = ({data}) => {\\n' +
           'try { const wasm = wasm_bindgen.initSync({module:data.module,memory_budget_mib:data.mib});' +
-          'const job = new wasm_bindgen.Generation(data.input,JSON.stringify({memory_budget_mib:data.mib,icon_mode:"service-name"}));' +
-          'const step = () => { try { const result=job.step(64); if(result===undefined) setTimeout(step,0);' +
-          'else { job.free(); self.postMessage({result,capacity:wasm.memory.buffer.byteLength}); }' +
+          'const options = JSON.stringify({memory_budget_mib:data.mib,icon_mode:"service-name"});' +
+          'const job = data.named ? wasm_bindgen.Generation.named(JSON.stringify([{state:"a",json:data.input},{state:"b",json:data.input}]),options) : new wasm_bindgen.Generation(data.input,options);' +
+          'const stages = [];' +
+          'const step = () => { try { const result=job.step_with_progress(64, stage => stages.push(stage)); if(result===undefined) setTimeout(step,0);' +
+          'else { job.free(); self.postMessage({result,named:data.named,stages,capacity:wasm.memory.buffer.byteLength}); }' +
           '} catch(error) { self.postMessage({error:String(error)}); } }; step();' +
           '} catch(error) { self.postMessage({error:String(error)}); } };';
         const blob = URL.createObjectURL(new Blob([body], {type:'text/javascript'}));
@@ -22,7 +24,7 @@ module.exports = (driver, source, wasmUrl, input) => {
           results.push(await new Promise((resolve, reject) => {
             worker.onmessage = event => resolve(event.data);
             worker.onerror = () => reject(new Error('Memory Worker failed'));
-            worker.postMessage({module, input, mib});
+            worker.postMessage({module, input, mib, named});
           }));
         } finally { worker.terminate(); URL.revokeObjectURL(blob); }
       }
@@ -33,7 +35,10 @@ module.exports = (driver, source, wasmUrl, input) => {
   assert.equal(result.error, undefined);
   for (const entry of result.results) {
     assert.equal(entry.error, undefined);
-    assert.equal(entry.result, result.results[0].result);
+    assert.equal(entry.result, result.results.find(value => value.named === entry.named).result);
+    assert.equal(entry.stages[0], 'parsing');
+    assert.equal(entry.stages.at(-1), 'output');
+    assert.ok(entry.stages.includes('routing'));
     assert.ok(entry.capacity < 512 * 1024 * 1024);
   }
 };

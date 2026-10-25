@@ -14,7 +14,6 @@ pub(crate) fn report(stage: &'static str) {
     }
 }
 
-#[cfg(any(test, target_arch = "wasm32"))]
 pub(crate) fn observe<T>(observer: Observer, run: impl FnOnce() -> T) -> T {
     struct Restore(Option<Observer>);
     impl Drop for Restore {

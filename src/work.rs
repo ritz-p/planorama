@@ -8,6 +8,27 @@ std::thread_local! {
     static LIMITED: Cell<bool> = const { Cell::new(false) };
     static EXCEEDED: Cell<bool> = const { Cell::new(false) };
     static MEMORY_EXCEEDED: Cell<bool> = const { Cell::new(false) };
+    static SEARCH_REMAINING: Cell<usize> = const { Cell::new(usize::MAX) };
+}
+
+pub(crate) fn with_search_budget<T>(remaining: &mut usize, run: impl FnOnce() -> T) -> T {
+    struct Restore<'a>(&'a mut usize, usize);
+    impl Drop for Restore<'_> {
+        fn drop(&mut self) {
+            *self.0 = SEARCH_REMAINING.replace(self.1);
+        }
+    }
+    let previous = SEARCH_REMAINING.replace(*remaining);
+    let _restore = Restore(remaining, previous);
+    run()
+}
+
+pub(crate) async fn search_work(amount: usize) {
+    if limited() {
+        let remaining = SEARCH_REMAINING.get();
+        check_limit(amount, remaining).await;
+        SEARCH_REMAINING.set(remaining - amount);
+    }
 }
 
 pub(crate) fn limited() -> bool {

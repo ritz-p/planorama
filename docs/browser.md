@@ -100,7 +100,9 @@ responsive. The error, inspection and generation contracts below also apply.
 
 ## Resumable generation
 
-`new wasm_bindgen.Generation(json, optionsJson)` owns one generation. Call
+`new wasm_bindgen.Generation(json, optionsJson)` owns a single-input generation.
+`wasm_bindgen.Generation.named(inputsJson, optionsJson)` owns a named-input
+generation with the same lifecycle. Call
 `step(units)` with 1–4096 work units. It returns `undefined` while pending and the
 same JSON result as `generate` on completion. `cancel()` drops all retained Rust
 state and is idempotent; `free()` disposes the binding object. A step after
@@ -111,12 +113,48 @@ terminate its Worker after completion, failure or cancellation to release the
 instance's linear-memory high-water allocation.
 
 The Rust equivalent is `Generator::new(String, Options)` and
+`Generator::new_named(Vec<NamedInput>, Options)`, with
 `step(usize) -> Result<Option<Generated>, Error>`. Compiler-generated Future state
 machines retain placement preferences, route candidates, search queues, scoring
 caches and refinement attempts. They resume at the pending checkpoint without
 replaying completed work. The existing synchronous API drives this shared
 implementation to completion, without the browser structure/search budgets.
 Dropping the Future cancels it; no background executor or thread is retained.
+
+Both job forms expose `stage()` and `step_with_progress(units, callback)`.
+The latter has the same result and work-unit contract as `step`, and invokes the
+callback at real boundaries crossed during that step. It retains neither the
+callback nor an event history between calls. Wasm callback exceptions are ignored;
+callbacks should return promptly and must not re-enter the job. Rust accepts an
+`Fn(&'static str) + 'static` observer. Names are fixed: `parsing`, `selection`,
+`placement`, `routing`, `output`. No identifiers, values or percentages are sent.
+`stage()` initially returns `parsing`, then the most recently entered stage,
+including after closure; it is not a completion indicator. Named jobs parse all
+states and select once, then perform placement/routing for each selected state,
+then compose output. Placement/routing may repeat, including internal refinement;
+stages are not a monotonic progress scale. Use the callback to observe boundaries
+that a larger step crosses before returning. Pending/rest/paused scheduling,
+timers, stale-message rejection and Worker termination remain caller responsibilities.
+
+Inside a fresh, initialized Worker, a named job can be driven with:
+
+```js
+const job = wasm_bindgen.Generation.named(JSON.stringify(inputs), optionsJson);
+function tick() {
+  try {
+    const result = job.step_with_progress(64, stage => postMessage({stage}));
+    if (result === undefined) setTimeout(tick, 0);
+    else { job.free(); postMessage({result}); close(); }
+  } catch (error) {
+    // A trap can leave the instance unusable; the caller must discard this Worker.
+    postMessage({failed: true}); close();
+  }
+}
+tick();
+```
+
+The parent terminates the Worker on cancellation and after its terminal message.
+Retry uses a fresh Worker. The synchronous sample UI remains on its existing API.
 
 One unit crosses one cooperative checkpoint, not a fixed number of milliseconds.
 Checkpoints cover placement refinement, route candidates, queue expansion, path
@@ -135,6 +173,7 @@ do not guarantee a device-independent maximum step duration.
 | Parsed and projected nodes / edges | 256 / 1,024 | Before semantic expansion and layout respectively |
 | Search grid points | 131,072 | Before grid and distance allocations |
 | Search queue entries | 262,144 | Before queue insertion |
+| Cumulative search work | 67,108,864 grid points plus queue pops | Across all searches, steps and states; charged before grid allocation and on queue removal |
 | Output UTF-8 bytes | 4 MiB | After composition, before returning output |
 | Wasm linear memory | 512 MiB default; 512 / 1024 / 2048 / 4096 MiB | Imported memory maximum, fixed at instance initialization |
 
@@ -144,7 +183,14 @@ partial diagram. Projection and output checks occur after their respective
 allocations; the earlier input/structure checks and Wasm memory maximum provide
 additional protection. The native API retains its 32 MiB input limit. Wasm OOM
 can trap rather than return a typed error; discard that Worker and retry with a
-smaller input. Multiple-input integrations must apply budgets to the aggregate.
+smaller input. Named jobs enforce the same input, structure, parsed/projected
+node/edge, search-work and output limits across the entire input set. They do not
+reset per state or step. Grid/queue capacity limits apply to each individual
+search. Options are shared by the whole job. There are at most 64 valid state
+names (at most 4,096 ASCII name bytes in total), separately from the 2 MiB decoded
+plan budget. The named Wasm envelope is limited to 12 MiB + 16 KiB before JSON
+deserialization to allow escaping; decoded plan bytes must still fit 2 MiB.
+Envelope decoding and each plan's streaming preflight/parsing are synchronous.
 The structural preflight accepts the same leading UTF-8 BOM characters as the
 plan parser. Input byte budgets still count those characters. Options budgets
 apply only to resumable generation. Synchronous generation retains its existing
@@ -417,7 +463,9 @@ Wasm exposes `generate_named(inputsJson, optionsJson)`,
 `generate_named_with_progress(inputsJson, optionsJson, callback)` and
 `inspect_named_inputs(inputsJson)`. `inputsJson` is a JSON array of objects with
 exactly `state` and `json` string fields. These are synchronous APIs intended for
-a fresh Worker; the single-input resumable `Generation` API is unchanged.
+a fresh Worker. For bounded cooperative execution, use
+`Generation.named(inputsJson, optionsJson)` as described under
+[resumable generation](#resumable-generation); its aggregate limits are smaller.
 
 ```js
 const inputs = [{state: 'network', json: networkJson},
@@ -427,7 +475,7 @@ const result = JSON.parse(wasm_bindgen.generate_named(JSON.stringify(inputs),
 ```
 
 All names and the combined input size are validated before parsing any plan.
-There must be 1–64 inputs; each file and the sum of decoded JSON UTF-8 bytes are
+For synchronous generation and inspection, there must be 1–64 inputs; each file and the sum of decoded JSON UTF-8 bytes are
 limited to 32 MiB. The UI checks file sizes before reading. Named-input envelope
 bytes have an additional Wasm pre-deserialization bound of 192 MiB + 16 KiB to
 allow JSON escaping; this does not increase the decoded input allowance.
@@ -457,6 +505,11 @@ cannot publish an inventory or result. No partial input set is generated.
 two named states. Browser checks compare exact native/Wasm SVG and HTML, module
 and focus selection, data/deposed counts, safe validation, read failure,
 cancellation/retry and the aggregate byte limit, with networking disabled.
+`tests/browser/named-resumable.cjs`, invoked by the memory suite for both Wasm
+distributions, checks sliced SVG/HTML equality, selection, stage observation,
+invalid units, cancellation/retry, safe closure and aggregate refusal. The memory
+suite also exercises named jobs under every supported memory maximum, allocation
+failure, trap isolation and fresh-instance retry.
 
 ## Privacy and lifecycle
 

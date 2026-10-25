@@ -1,5 +1,5 @@
 use crate::{html, layout::Layout, plan, semantic, svg, view};
-mod budget;
+pub(crate) mod budget;
 pub(crate) mod memory;
 pub(crate) mod progress;
 
@@ -159,18 +159,35 @@ type GenerationFuture =
 
 pub struct Generator {
     future: Option<GenerationFuture>,
+    stage: std::rc::Rc<std::cell::Cell<&'static str>>,
+    search_remaining: usize,
 }
 
 impl Generator {
     pub fn new(json: String, options: Options) -> Result<Self, Error> {
+        Self::validate_options(&options)?;
+        if json.len() > MAX_BROWSER_INPUT_BYTES {
+            return Err(Error::ResourceLimit);
+        }
+        Ok(Self::from_future(Box::pin(async move {
+            generate_step(&json, &options).await
+        })))
+    }
+
+    pub fn new_named(inputs: Vec<crate::NamedInput>, options: Options) -> Result<Self, Error> {
+        Self::validate_options(&options)?;
+        crate::named_inputs::validate(&inputs, MAX_BROWSER_INPUT_BYTES, Error::ResourceLimit)?;
+        Ok(Self::from_future(Box::pin(async move {
+            crate::named_inputs::generate_step(&inputs, &options).await
+        })))
+    }
+
+    fn validate_options(options: &Options) -> Result<(), Error> {
         #[cfg(target_arch = "wasm32")]
         memory::check_options(options.memory_budget_mib)?;
         #[cfg(not(target_arch = "wasm32"))]
         if options.memory_budget_mib.is_some() {
             return Err(Error::InvalidOptions);
-        }
-        if json.len() > MAX_BROWSER_INPUT_BYTES {
-            return Err(Error::ResourceLimit);
         }
         if options.modules.len() > 256 || options.spatial_types.len() > 256 {
             return Err(Error::ResourceLimit);
@@ -186,19 +203,47 @@ impl Generator {
                 .checked_sub(value.len())
                 .ok_or(Error::ResourceLimit)?;
         }
-        Ok(Self {
-            future: Some(Box::pin(
-                async move { generate_step(&json, &options).await },
-            )),
-        })
+        Ok(())
+    }
+
+    fn from_future(future: GenerationFuture) -> Self {
+        Self {
+            future: Some(future),
+            stage: std::rc::Rc::new(std::cell::Cell::new("parsing")),
+            search_remaining: 64 * 1024 * 1024,
+        }
+    }
+
+    pub fn stage(&self) -> &'static str {
+        self.stage.get()
     }
 
     pub fn step(&mut self, units: usize) -> Result<Option<Generated>, Error> {
+        self.step_with_progress(units, |_| {})
+    }
+
+    pub fn step_with_progress(
+        &mut self,
+        units: usize,
+        observer: impl Fn(&'static str) + 'static,
+    ) -> Result<Option<Generated>, Error> {
         if units == 0 || units > 4096 {
             return Err(Error::InvalidOptions);
         }
         let future = self.future.as_mut().ok_or(Error::GenerationClosed)?;
-        match crate::work::step(future.as_mut(), units, true) {
+        let stage = self.stage.clone();
+        let result = progress::observe(
+            std::rc::Rc::new(move |value| {
+                stage.set(value);
+                observer(value);
+            }),
+            || {
+                crate::work::with_search_budget(&mut self.search_remaining, || {
+                    crate::work::step(future.as_mut(), units, true)
+                })
+            },
+        );
+        match result {
             Ok(std::task::Poll::Pending) => Ok(None),
             Ok(std::task::Poll::Ready(result)) => {
                 self.future = None;

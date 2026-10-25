@@ -22,9 +22,11 @@ mod scopes;
 mod states;
 mod style;
 pub(crate) use identity::resource as resource_id;
+pub(crate) use states::prefix as state_prefix;
+#[cfg(test)]
+pub(crate) use states::render_content as render_states_content;
 pub(crate) use states::render_report as render_states_report;
 pub use states::render_states;
-pub(crate) use states::{prefix as state_prefix, render_content as render_states_content};
 #[cfg(test)]
 #[path = "../tests/unit/svg/address_format.rs"]
 mod address_format_tests;
@@ -679,3 +681,5 @@ fn render_with_index(
     svg.push_str("</g>\n</svg>\n");
     svg
 }
+
+pub(crate) use states::render_step as render_states_step;

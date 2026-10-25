@@ -292,3 +292,52 @@ fn bounded_input_and_static_diagnostics() {
             .all(|message| !message.contains("aws_"))
     );
 }
+
+#[test]
+fn search_budget_is_retained_across_steps_and_isolated_between_jobs() {
+    let future = || {
+        Box::pin(async {
+            crate::work::search_work(2).await;
+            crate::work::checkpoint().await;
+            crate::work::checkpoint().await;
+            crate::work::search_work(2).await;
+            Ok(Generated {
+                content: String::new(),
+                diagnostics: vec![],
+            })
+        })
+    };
+    let mut short = Generator::from_future(future());
+    short.search_remaining = 3;
+    let mut enough = Generator::from_future(future());
+    enough.search_remaining = 4;
+    assert!(short.step(1).unwrap().is_none());
+    assert!(enough.step(1).unwrap().is_none());
+    assert_eq!(short.step(1).err(), Some(Error::ResourceLimit));
+    assert!(enough.step(1).unwrap().is_some());
+    assert_eq!(short.step(1).err(), Some(Error::GenerationClosed));
+}
+
+#[test]
+fn named_routing_charges_one_search_budget_across_states() {
+    let input = |state: &str| crate::NamedInput {
+        state: state.into(),
+        json: include_str!("../fixtures/terraform-plan.json").into(),
+    };
+    let mut single = Generator::new_named(vec![input("a")], Options::default()).unwrap();
+    let maximum = single.search_remaining;
+    while single.step(4096).unwrap().is_none() {}
+    let used = maximum - single.search_remaining;
+    assert!(used > 0, "fixture must exercise routing search");
+    let mut pair = Generator::new_named(vec![input("a"), input("b")], Options::default()).unwrap();
+    pair.search_remaining = used + used / 2;
+    loop {
+        match pair.step(4096) {
+            Ok(None) => {}
+            Err(Error::ResourceLimit) => break,
+            _ => panic!("second state must consume the same retained search budget"),
+        }
+    }
+    assert_eq!(pair.stage(), "routing");
+    assert_eq!(pair.step(1).err(), Some(Error::GenerationClosed));
+}
