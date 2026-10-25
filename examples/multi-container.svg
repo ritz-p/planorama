@@ -1,0 +1,165 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1482" height="1334" viewBox="0 0 1482 1334" role="img" aria-labelledby="title description">
+<title id="title">Terraform plan</title>
+<desc id="description">6 resources (6 cards), 9 relationships. Lines show architectural relationships. Edge titles identify the relationship kind and Terraform change. Thin solid: dependency. Dashed: association. Thick dotted: connection. Nested boxes: containment. Edge color preserves the Terraform action when available. Service label backgrounds: orange = compute; green = storage; blue = network; red = IAM; gray = unclassified. Spatial card role marks: rounded rectangle = execution; cylinder = data store; hexagon = network.</desc>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/></marker><mask id="container-occlusion-0" maskUnits="userSpaceOnUse" maskContentUnits="userSpaceOnUse" x="0" y="0" width="1482" height="776" style="mask-type:luminance"><rect width="1482" height="776" fill="white"/>
+<rect data-occluder="resource-6177735f7375626e65742e61-current" x="533" y="310" width="404" height="156" rx="14" fill="black"/>
+</mask>
+<mask id="container-occlusion-1" maskUnits="userSpaceOnUse" maskContentUnits="userSpaceOnUse" x="0" y="0" width="1482" height="776" style="mask-type:luminance"><rect width="1482" height="776" fill="white"/>
+<rect data-occluder="resource-6177735f7375626e65742e61-current" x="533" y="310" width="404" height="156" rx="14" fill="black"/>
+<rect data-occluder="resource-6177735f7375626e65742e62-current" x="533" y="502" width="404" height="156" rx="14" fill="black"/>
+</mask>
+<mask id="container-occlusion-2" maskUnits="userSpaceOnUse" maskContentUnits="userSpaceOnUse" x="0" y="0" width="1482" height="776" style="mask-type:luminance"><rect width="1482" height="776" fill="white"/>
+<rect data-occluder="resource-6177735f7375626e65742e62-current" x="533" y="502" width="404" height="156" rx="14" fill="black"/>
+</mask>
+</defs>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<g font-family="ui-monospace, SFMono-Regular, Consolas, monospace">
+<text x="40" y="45" font-size="25" font-weight="700" fill="#0f172a">Terraform plan</text>
+<text x="40" y="73" font-size="13" fill="#475569">6 resources (6 cards) · 9 relationships</text>
+<metadata id="architecture-entities">[{&quot;id&quot;:&quot;terraform:6177735f6563735f736572766963652e617070-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_ecs_service.app&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:6177735f6c622e617070-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_lb.app&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:6177735f73656375726974795f67726f75702e617070-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_security_group.app&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:6177735f7375626e65742e61-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_subnet.a&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:6177735f7375626e65742e62-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_subnet.b&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:6177735f7670632e6d61696e-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_vpc.main&quot;,&quot;deposed_key&quot;:null}]}]</metadata>
+<metadata id="architecture-relationships">[{&quot;directionality&quot;:&quot;undirected&quot;,&quot;from&quot;:&quot;terraform:6177735f73656375726974795f67726f75702e617070-current&quot;,&quot;inferred&quot;:true,&quot;kind&quot;:&quot;connection&quot;,&quot;provenance&quot;:[{&quot;from&quot;:&quot;aws_security_group.app&quot;,&quot;from_deposed_key&quot;:null,&quot;kind&quot;:&quot;reference&quot;,&quot;to&quot;:&quot;aws_ecs_service.app&quot;,&quot;to_deposed_key&quot;:null}],&quot;to&quot;:&quot;terraform:6177735f6563735f736572766963652e617070-current&quot;},{&quot;directionality&quot;:&quot;undirected&quot;,&quot;from&quot;:&quot;terraform:6177735f7375626e65742e61-current&quot;,&quot;inferred&quot;:true,&quot;kind&quot;:&quot;connection&quot;,&quot;provenance&quot;:[{&quot;from&quot;:&quot;aws_subnet.a&quot;,&quot;from_deposed_key&quot;:null,&quot;kind&quot;:&quot;reference&quot;,&quot;to&quot;:&quot;aws_ecs_service.app&quot;,&quot;to_deposed_key&quot;:null}],&quot;to&quot;:&quot;terraform:6177735f6563735f736572766963652e617070-current&quot;},{&quot;directionality&quot;:&quot;undirected&quot;,&quot;from&quot;:&quot;terraform:6177735f7375626e65742e61-current&quot;,&quot;inferred&quot;:true,&quot;kind&quot;:&quot;connection&quot;,&quot;provenance&quot;:[{&quot;from&quot;:&quot;aws_subnet.a&quot;,&quot;from_deposed_key&quot;:null,&quot;kind&quot;:&quot;reference&quot;,&quot;to&quot;:&quot;aws_lb.app&quot;,&quot;to_deposed_key&quot;:null}],&quot;to&quot;:&quot;terraform:6177735f6c622e617070-current&quot;},{&quot;directionality&quot;:&quot;undirected&quot;,&quot;from&quot;:&quot;terraform:6177735f7375626e65742e62-current&quot;,&quot;inferred&quot;:true,&quot;kind&quot;:&quot;connection&quot;,&quot;provenance&quot;:[{&quot;from&quot;:&quot;aws_subnet.b&quot;,&quot;from_deposed_key&quot;:null,&quot;kind&quot;:&quot;reference&quot;,&quot;to&quot;:&quot;aws_ecs_service.app&quot;,&quot;to_deposed_key&quot;:null}],&quot;to&quot;:&quot;terraform:6177735f6563735f736572766963652e617070-current&quot;},{&quot;directionality&quot;:&quot;undirected&quot;,&quot;from&quot;:&quot;terraform:6177735f7375626e65742e62-current&quot;,&quot;inferred&quot;:true,&quot;kind&quot;:&quot;connection&quot;,&quot;provenance&quot;:[{&quot;from&quot;:&quot;aws_subnet.b&quot;,&quot;from_deposed_key&quot;:null,&quot;kind&quot;:&quot;reference&quot;,&quot;to&quot;:&quot;aws_lb.app&quot;,&quot;to_deposed_key&quot;:null}],&quot;to&quot;:&quot;terraform:6177735f6c622e617070-current&quot;},{&quot;directionality&quot;:&quot;directed&quot;,&quot;from&quot;:&quot;terraform:6177735f7670632e6d61696e-current&quot;,&quot;inferred&quot;:true,&quot;kind&quot;:&quot;containment&quot;,&quot;provenance&quot;:[{&quot;from&quot;:&quot;aws_subnet.a&quot;,&quot;from_deposed_key&quot;:null,&quot;kind&quot;:&quot;reference&quot;,&quot;to&quot;:&quot;aws_ecs_service.app&quot;,&quot;to_deposed_key&quot;:null},{&quot;from&quot;:&quot;aws_subnet.b&quot;,&quot;from_deposed_key&quot;:null,&quot;kind&quot;:&quot;reference&quot;,&quot;to&quot;:&quot;aws_ecs_service.app&quot;,&quot;to_deposed_key&quot;:null},{&quot;from&quot;:&quot;aws_vpc.main&quot;,&quot;from_deposed_key&quot;:null,&quot;kind&quot;:&quot;reference&quot;,&quot;to&quot;:&quot;aws_subnet.a&quot;,&quot;to_deposed_key&quot;:null},{&quot;from&quot;:&quot;aws_vpc.main&quot;,&quot;from_deposed_key&quot;:null,&quot;kind&quot;:&quot;reference&quot;,&quot;to&quot;:&quot;aws_subnet.b&quot;,&quot;to_deposed_key&quot;:null}],&quot;to&quot;:&quot;terraform:6177735f6563735f736572766963652e617070-current&quot;},{&quot;directionality&quot;:&quot;directed&quot;,&quot;from&quot;:&quot;terraform:6177735f7670632e6d61696e-current&quot;,&quot;inferred&quot;:true,&quot;kind&quot;:&quot;containment&quot;,&quot;provenance&quot;:[{&quot;from&quot;:&quot;aws_subnet.a&quot;,&quot;from_deposed_key&quot;:null,&quot;kind&quot;:&quot;reference&quot;,&quot;to&quot;:&quot;aws_lb.app&quot;,&quot;to_deposed_key&quot;:null},{&quot;from&quot;:&quot;aws_subnet.b&quot;,&quot;from_deposed_key&quot;:null,&quot;kind&quot;:&quot;reference&quot;,&quot;to&quot;:&quot;aws_lb.app&quot;,&quot;to_deposed_key&quot;:null},{&quot;from&quot;:&quot;aws_vpc.main&quot;,&quot;from_deposed_key&quot;:null,&quot;kind&quot;:&quot;reference&quot;,&quot;to&quot;:&quot;aws_subnet.a&quot;,&quot;to_deposed_key&quot;:null},{&quot;from&quot;:&quot;aws_vpc.main&quot;,&quot;from_deposed_key&quot;:null,&quot;kind&quot;:&quot;reference&quot;,&quot;to&quot;:&quot;aws_subnet.b&quot;,&quot;to_deposed_key&quot;:null}],&quot;to&quot;:&quot;terraform:6177735f6c622e617070-current&quot;},{&quot;directionality&quot;:&quot;directed&quot;,&quot;from&quot;:&quot;terraform:6177735f7670632e6d61696e-current&quot;,&quot;inferred&quot;:true,&quot;kind&quot;:&quot;containment&quot;,&quot;provenance&quot;:[{&quot;from&quot;:&quot;aws_vpc.main&quot;,&quot;from_deposed_key&quot;:null,&quot;kind&quot;:&quot;reference&quot;,&quot;to&quot;:&quot;aws_subnet.a&quot;,&quot;to_deposed_key&quot;:null}],&quot;to&quot;:&quot;terraform:6177735f7375626e65742e61-current&quot;},{&quot;directionality&quot;:&quot;directed&quot;,&quot;from&quot;:&quot;terraform:6177735f7670632e6d61696e-current&quot;,&quot;inferred&quot;:true,&quot;kind&quot;:&quot;containment&quot;,&quot;provenance&quot;:[{&quot;from&quot;:&quot;aws_vpc.main&quot;,&quot;from_deposed_key&quot;:null,&quot;kind&quot;:&quot;reference&quot;,&quot;to&quot;:&quot;aws_subnet.b&quot;,&quot;to_deposed_key&quot;:null}],&quot;to&quot;:&quot;terraform:6177735f7375626e65742e62-current&quot;}]</metadata>
+<metadata id="resource-references">[{&quot;attribute&quot;:&quot;network_configuration&quot;,&quot;complete&quot;:true,&quot;consumer&quot;:&quot;terraform:6177735f6563735f736572766963652e617070-current&quot;,&quot;dependency&quot;:false,&quot;issues&quot;:[],&quot;kind&quot;:&quot;configured&quot;,&quot;targets&quot;:[{&quot;address&quot;:&quot;aws_security_group.app&quot;,&quot;deposed_key&quot;:null},{&quot;address&quot;:&quot;aws_subnet.a&quot;,&quot;deposed_key&quot;:null},{&quot;address&quot;:&quot;aws_subnet.b&quot;,&quot;deposed_key&quot;:null}]},{&quot;attribute&quot;:&quot;network_configuration.security_groups&quot;,&quot;complete&quot;:true,&quot;consumer&quot;:&quot;terraform:6177735f6563735f736572766963652e617070-current&quot;,&quot;dependency&quot;:false,&quot;issues&quot;:[],&quot;kind&quot;:&quot;configured&quot;,&quot;targets&quot;:[{&quot;address&quot;:&quot;aws_security_group.app&quot;,&quot;deposed_key&quot;:null}]},{&quot;attribute&quot;:&quot;network_configuration.subnets&quot;,&quot;complete&quot;:true,&quot;consumer&quot;:&quot;terraform:6177735f6563735f736572766963652e617070-current&quot;,&quot;dependency&quot;:false,&quot;issues&quot;:[],&quot;kind&quot;:&quot;configured&quot;,&quot;targets&quot;:[{&quot;address&quot;:&quot;aws_subnet.a&quot;,&quot;deposed_key&quot;:null},{&quot;address&quot;:&quot;aws_subnet.b&quot;,&quot;deposed_key&quot;:null}]},{&quot;attribute&quot;:&quot;subnets&quot;,&quot;complete&quot;:true,&quot;consumer&quot;:&quot;terraform:6177735f6c622e617070-current&quot;,&quot;dependency&quot;:false,&quot;issues&quot;:[],&quot;kind&quot;:&quot;configured&quot;,&quot;targets&quot;:[{&quot;address&quot;:&quot;aws_subnet.a&quot;,&quot;deposed_key&quot;:null},{&quot;address&quot;:&quot;aws_subnet.b&quot;,&quot;deposed_key&quot;:null}]},{&quot;attribute&quot;:&quot;vpc_id&quot;,&quot;complete&quot;:true,&quot;consumer&quot;:&quot;terraform:6177735f7375626e65742e61-current&quot;,&quot;dependency&quot;:false,&quot;issues&quot;:[],&quot;kind&quot;:&quot;configured&quot;,&quot;targets&quot;:[{&quot;address&quot;:&quot;aws_vpc.main&quot;,&quot;deposed_key&quot;:null}]},{&quot;attribute&quot;:&quot;vpc_id&quot;,&quot;complete&quot;:true,&quot;consumer&quot;:&quot;terraform:6177735f7375626e65742e62-current&quot;,&quot;dependency&quot;:false,&quot;issues&quot;:[],&quot;kind&quot;:&quot;configured&quot;,&quot;targets&quot;:[{&quot;address&quot;:&quot;aws_vpc.main&quot;,&quot;deposed_key&quot;:null}]}]</metadata>
+<rect x="40" y="100" width="12" height="12" fill="#ecfdf5" stroke="#047857"/><text x="59" y="111" font-size="12" fill="#047857">create (6)</text>
+<rect x="180" y="100" width="12" height="12" fill="#eff6ff" stroke="#1d4ed8"/><text x="199" y="111" font-size="12" fill="#1d4ed8">update (0)</text>
+<rect x="320" y="100" width="12" height="12" fill="#fef2f2" stroke="#b91c1c"/><text x="339" y="111" font-size="12" fill="#b91c1c">delete (0)</text>
+<rect x="460" y="100" width="12" height="12" fill="#fff7ed" stroke="#c2410c"/><text x="479" y="111" font-size="12" fill="#c2410c">replace (0)</text>
+<rect x="600" y="100" width="12" height="12" fill="#faf5ff" stroke="#7e22ce"/><text x="619" y="111" font-size="12" fill="#7e22ce">read (0)</text>
+<rect x="740" y="100" width="12" height="12" fill="#f8fafc" stroke="#64748b"/><text x="759" y="111" font-size="12" fill="#64748b">unchanged (0)</text>
+<rect x="880" y="100" width="12" height="12" fill="#fefce8" stroke="#854d0e"/><text x="899" y="111" font-size="12" fill="#854d0e">other (0)</text>
+<g id="relationship-legend" font-size="12" fill="#475569" transform="translate(40 148)"><rect width="960" height="546" rx="12" fill="#f8fafc" stroke="#cbd5e1"/>
+<text x="16" y="29" font-size="15" font-weight="700" fill="#334155">Relationship lines</text>
+<text x="16" y="56">Line color shows the relationship&apos;s own Terraform action, independently of endpoint-card actions.</text>
+<path data-legend-action="none" d="M 16 77 H 42" fill="none" stroke="#94a3b8" stroke-width="1.5"/><text x="50" y="82">no independent change</text>
+<path data-legend-action="unchanged" d="M 234 77 H 260" fill="none" stroke="#64748b" stroke-width="1.5"/><text x="268" y="82">unchanged</text>
+<text x="16" y="110">no independent change: no separate Terraform action is identified. unchanged: an explicit no-op action.</text>
+<g data-legend-entry="dependency" transform="translate(0 132)">
+<g data-legend-sample="dependency">
+<path data-legend-kind="dependency" data-directionality="directed" d="M 21 11 H 153" fill="none" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+<circle data-legend-endpoint="source" cx="21" cy="11" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+<text x="174" y="12" font-weight="700">Dependency</text>
+<text x="174" y="30">Thin solid arrow from the</text>
+<text x="174" y="48">referenced resource to the</text>
+<text x="174" y="66">dependent resource; not exact</text>
+<text x="174" y="84">Terraform execution order.</text>
+</g>
+<g data-legend-entry="association" transform="translate(492 132)">
+<g data-legend-sample="association">
+<path data-legend-kind="association" data-directionality="undirected" d="M 21 11 H 153" fill="none" stroke="#94a3b8" stroke-width="2" stroke-dasharray="7 4"/>
+<circle data-legend-endpoint="source" cx="21" cy="11" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/><circle data-legend-endpoint="target" cx="153" cy="11" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/><g data-legend-badge="source">
+<rect x="31" y="2" width="32" height="18" rx="4" fill="#ffffff" stroke="#94a3b8" stroke-width="2" stroke-dasharray="7 4"/><text x="47" y="15" text-anchor="middle" font-size="11" fill="#334155">[12]</text>
+</g>
+<g data-legend-badge="target">
+<rect x="111" y="2" width="32" height="18" rx="4" fill="#ffffff" stroke="#94a3b8" stroke-width="2" stroke-dasharray="7 4"/><text x="127" y="15" text-anchor="middle" font-size="11" fill="#334155">[12]</text>
+</g>
+</g>
+<text x="174" y="12" font-weight="700">Association</text>
+<text x="174" y="30">Dashed, undirected relationship.</text>
+<text x="174" y="48">Matching badges identify the same</text>
+<text x="174" y="66">Terraform-backed relationship at</text>
+<text x="174" y="84">both attachment points.</text>
+</g>
+<g data-legend-entry="directed-association" transform="translate(0 238)">
+<g data-legend-sample="directed-association">
+<path data-legend-kind="directed-association" data-directionality="directed" d="M 21 11 H 153" fill="none" stroke="#94a3b8" stroke-width="2" stroke-dasharray="7 4" marker-end="url(#arrow)"/>
+<circle data-legend-endpoint="source" cx="21" cy="11" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/><circle data-legend-endpoint="target" cx="153" cy="11" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/><path data-legend-arrow="true" d="M 146.7 7.5 L 153.7 11 L 146.7 14.5 Z" fill="#94a3b8"/>
+<g data-legend-badge="source">
+<rect x="31" y="2" width="32" height="18" rx="4" fill="#ffffff" stroke="#94a3b8" stroke-width="2" stroke-dasharray="7 4"/><text x="47" y="15" text-anchor="middle" font-size="11" fill="#334155">[12]</text>
+</g>
+<g data-legend-badge="target">
+<rect x="111" y="2" width="32" height="18" rx="4" fill="#ffffff" stroke="#94a3b8" stroke-width="2" stroke-dasharray="7 4"/><text x="127" y="15" text-anchor="middle" font-size="11" fill="#334155">[12]</text>
+</g>
+</g>
+<text x="174" y="12" font-weight="700">Directed Association</text>
+<text x="174" y="30">Dashed line from a Route to its</text>
+<text x="174" y="48">next hop. The destination arrow</text>
+<text x="174" y="66">expresses direction; matching</text>
+<text x="174" y="84">badges identify the same</text>
+<text x="174" y="102">relationship.</text>
+</g>
+<g data-legend-entry="connection" transform="translate(492 238)">
+<g data-legend-sample="connection">
+<path data-legend-kind="connection" data-directionality="undirected" d="M 21 11 H 153" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-dasharray="0 3.5" stroke-linecap="round"/>
+<circle data-legend-endpoint="source" cx="21" cy="11" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/><circle data-legend-endpoint="target" cx="153" cy="11" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+<text x="174" y="12" font-weight="700">Connection</text>
+<text x="174" y="30">Thicker dotted line shows an</text>
+<text x="174" y="48">inferred, undirected connection;</text>
+<text x="174" y="66">this does not guarantee actual</text>
+<text x="174" y="84">network reachability.</text>
+</g>
+<g data-legend-entry="containment" transform="translate(0 362)">
+<g data-legend-sample="containment">
+<g data-legend-kind="containment" fill="none" stroke="#94a3b8"><rect x="65" y="2" width="44" height="28" rx="4"/><rect x="74" y="12" width="26" height="12" rx="2"/></g>
+</g>
+<text x="174" y="12" font-weight="700">Containment</text>
+<text x="174" y="30">Nested boxes show containment;</text>
+<text x="174" y="48">nesting replaces a redundant</text>
+<text x="174" y="66">relationship line.</text>
+</g>
+<text x="16" y="462">Hollow circles mark resource/card attachment points; neither end of an undirected line is a directional start.</text>
+<text x="16" y="480">Filled internal dots mark bundle junctions.</text>
+<text x="16" y="506">Matching [N] badges identify the same Terraform-backed relationship and its Relationship Resources entry. They do</text>
+<text x="16" y="524">not express direction or count connections. Reference-only Connections and Dependencies have no number.</text>
+</g>
+<g transform="translate(0 558)">
+<g data-architecture="true" transform="translate(0 0)">
+<g data-container="resource-6177735f7670632e6d61696e-current"><title>aws_vpc.main</title><rect x="495" y="160" width="907" height="536" rx="12" fill="#ecfdf5" stroke="#047857" stroke-width="2" data-mode="managed"/></g>
+<g data-container="resource-6177735f7375626e65742e61-current"><title>aws_subnet.a</title><rect x="535" y="312" width="400" height="152" rx="12" fill="#d1fae5" stroke="#047857" stroke-width="2" data-mode="managed"/></g>
+<g data-container="resource-6177735f7375626e65742e62-current"><title>aws_subnet.b</title><rect x="535" y="504" width="400" height="152" rx="12" fill="#d1fae5" stroke="#047857" stroke-width="2" data-mode="managed"/></g>
+<path d="M 455 377 L 465 377 Q 473 377 473 369 L 473 362 Q 473 354 481 354 L 989 354 " data-edge-kind="connection" data-directionality="undirected" data-source="resource-6177735f73656375726974795f67726f75702e617070-current" data-target="resource-6177735f6563735f736572766963652e617070-current" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-dasharray="0 3.5" stroke-linecap="round" stroke-linejoin="round" mask="url(#container-occlusion-1)"><title>aws_security_group.app ↔ aws_ecs_service.app (connection)</title></path>
+<path d="M 935 355 L 961 355 Q 969 355 969 363 L 969 369 Q 969 377 977 377 L 989 377 " data-edge-kind="connection" data-directionality="undirected" data-source="resource-6177735f7375626e65742e61-current" data-target="resource-6177735f6563735f736572766963652e617070-current" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-dasharray="0 3.5" stroke-linecap="round" stroke-linejoin="round" mask="url(#container-occlusion-2)"><title>aws_subnet.a ↔ aws_ecs_service.app (connection)</title></path>
+<path d="M 935 379 L 962 379 Q 970 379 970 387 L 970 524 Q 970 532 978 532 L 989 532 " data-edge-kind="connection" data-directionality="undirected" data-source="resource-6177735f7375626e65742e61-current" data-target="resource-6177735f6c622e617070-current" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-dasharray="0 3.5" stroke-linecap="round" stroke-linejoin="round" mask="url(#container-occlusion-2)"><title>aws_subnet.a ↔ aws_lb.app (connection)</title></path>
+<path d="M 935 547 L 945 547 Q 953 547 953 539 L 953 407 Q 953 399 961 399 L 989 399 " data-edge-kind="connection" data-directionality="undirected" data-source="resource-6177735f7375626e65742e62-current" data-target="resource-6177735f6563735f736572766963652e617070-current" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-dasharray="0 3.5" stroke-linecap="round" stroke-linejoin="round" mask="url(#container-occlusion-0)"><title>aws_subnet.b ↔ aws_ecs_service.app (connection)</title></path>
+<path d="M 935 571 L 964.5 571 Q 969 571 969 566.5 L 969 566.5 Q 969 562 973.5 562 L 989 562 " data-edge-kind="connection" data-directionality="undirected" data-source="resource-6177735f7375626e65742e62-current" data-target="resource-6177735f6c622e617070-current" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-dasharray="0 3.5" stroke-linecap="round" stroke-linejoin="round" mask="url(#container-occlusion-0)"><title>aws_subnet.b ↔ aws_lb.app (connection)</title></path>
+<g data-edge-kind="containment" data-source="resource-6177735f7670632e6d61696e-current" data-target="resource-6177735f7375626e65742e61-current"><title>aws_vpc.main → aws_subnet.a (containment)</title></g>
+<g data-edge-kind="containment" data-source="resource-6177735f7670632e6d61696e-current" data-target="resource-6177735f7375626e65742e62-current"><title>aws_vpc.main → aws_subnet.b (containment)</title></g>
+<g data-edge-kind="containment" data-source="resource-6177735f7670632e6d61696e-current" data-target="resource-6177735f6563735f736572766963652e617070-current"><title>aws_vpc.main → aws_ecs_service.app (containment)</title></g>
+<g data-edge-kind="containment" data-source="resource-6177735f7670632e6d61696e-current" data-target="resource-6177735f6c622e617070-current"><title>aws_vpc.main → aws_lb.app (containment)</title></g>
+<g id="resource-6177735f6563735f736572766963652e617070-current" data-architecture-id="terraform:6177735f6563735f736572766963652e617070-current" data-qualified-address="module.root.aws_ecs_service.app" data-terraform-address="aws_ecs_service.app"><title>module.root.aws_ecs_service.app — create</title>
+<rect x="989" y="312" width="373" height="130" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
+<text x="1033" y="340" font-size="11" fill="#047857">aws_ecs_service · create</text>
+<rect data-service-badge="true" data-service-category="compute" data-service-full-name="Amazon ECS" data-display-name="ECS Service" x="1213" y="320" width="141" height="32" rx="4" fill="#ffedd5"/><text data-service-name="true" x="1223" y="342" font-size="18" font-weight="700" fill="#7c2d12" xml:space="preserve">ECS Service</text><g data-role-shape="execution" transform="translate(1001 327)" role="img" aria-label="Visual role: execution" pointer-events="none" fill="#f8fafc" stroke="#475569" stroke-width="1"><title>Visual role: execution</title><rect x="1" y="1" width="20" height="16" rx="4"/></g><text x="1001" y="373" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_ecs_service.app</text>
+<text x="1001" y="430" font-size="10" fill="#64748b" data-role="controller"><title>root</title>controller · root</text>
+<text x="1001" y="412" font-size="10" fill="#64748b" data-placement="inferred">inferred placement</text>
+</g>
+<g id="resource-6177735f6c622e617070-current" data-architecture-id="terraform:6177735f6c622e617070-current" data-qualified-address="module.root.aws_lb.app" data-terraform-address="aws_lb.app"><title>module.root.aws_lb.app — create</title>
+<rect x="989" y="482" width="332" height="130" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
+<text x="1033" y="510" font-size="11" fill="#047857">aws_lb · create</text>
+<rect data-service-badge="true" data-service-category="network" data-service-full-name="Elastic Load Balancing" data-display-name="Load Balancer" x="1150" y="490" width="163" height="32" rx="4" fill="#dbeafe"/><text data-service-name="true" x="1160" y="512" font-size="18" font-weight="700" fill="#1e3a8a" xml:space="preserve">Load Balancer</text><g data-role-shape="network" transform="translate(1001 497)" role="img" aria-label="Visual role: network" pointer-events="none" fill="#f8fafc" stroke="#475569" stroke-width="1"><title>Visual role: network</title><path d="M5 1 H17 L21 9 L17 17 H5 L1 9 Z"/></g><text x="1001" y="543" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_lb.app</text>
+<text x="1001" y="600" font-size="10" fill="#64748b"><title>root</title>root</text>
+<text x="1001" y="582" font-size="10" fill="#64748b" data-placement="inferred">inferred placement</text>
+</g>
+<g id="resource-6177735f73656375726974795f67726f75702e617070-current" data-architecture-id="terraform:6177735f73656375726974795f67726f75702e617070-current" data-qualified-address="module.root.aws_security_group.app" data-terraform-address="aws_security_group.app"><title>module.root.aws_security_group.app — create</title>
+<rect x="60" y="321" width="395" height="112" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
+<text x="72" y="349" font-size="11" fill="#047857">aws_security_group · create</text>
+<rect data-service-badge="true" data-service-category="network" data-service-full-name="Amazon VPC" data-display-name="Security Group" x="273" y="329" width="174" height="32" rx="4" fill="#dbeafe"/><text data-service-name="true" x="283" y="351" font-size="18" font-weight="700" fill="#1e3a8a" xml:space="preserve">Security Group</text><text x="72" y="382" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_security_group.app</text>
+<text x="72" y="421" font-size="10" fill="#64748b" data-role="policy"><title>root</title>policy · root</text>
+</g>
+<g id="resource-6177735f7375626e65742e61-current" data-architecture-id="terraform:6177735f7375626e65742e61-current" data-qualified-address="module.root.aws_subnet.a" data-terraform-address="aws_subnet.a"><title>module.root.aws_subnet.a — create</title>
+<text x="547" y="340" font-size="11" fill="#047857">aws_subnet · create</text>
+<rect data-service-badge="true" data-service-category="network" data-service-full-name="Amazon VPC" data-display-name="Subnet" x="841" y="320" width="86" height="32" rx="4" fill="#dbeafe"/><text data-service-name="true" x="851" y="342" font-size="18" font-weight="700" fill="#1e3a8a" xml:space="preserve">Subnet</text><text x="547" y="373" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_subnet.a</text>
+<text x="547" y="412" font-size="10" fill="#64748b"><title>root</title>root</text>
+</g>
+<g id="resource-6177735f7375626e65742e62-current" data-architecture-id="terraform:6177735f7375626e65742e62-current" data-qualified-address="module.root.aws_subnet.b" data-terraform-address="aws_subnet.b"><title>module.root.aws_subnet.b — create</title>
+<text x="547" y="532" font-size="11" fill="#047857">aws_subnet · create</text>
+<rect data-service-badge="true" data-service-category="network" data-service-full-name="Amazon VPC" data-display-name="Subnet" x="841" y="512" width="86" height="32" rx="4" fill="#dbeafe"/><text data-service-name="true" x="851" y="534" font-size="18" font-weight="700" fill="#1e3a8a" xml:space="preserve">Subnet</text><text x="547" y="565" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_subnet.b</text>
+<text x="547" y="604" font-size="10" fill="#64748b"><title>root</title>root</text>
+</g>
+<g id="resource-6177735f7670632e6d61696e-current" data-architecture-id="terraform:6177735f7670632e6d61696e-current" data-qualified-address="module.root.aws_vpc.main" data-terraform-address="aws_vpc.main"><title>module.root.aws_vpc.main — create</title>
+<text x="507" y="188" font-size="11" fill="#047857">aws_vpc · create</text>
+<rect data-service-badge="true" data-service-category="network" data-service-full-name="Amazon VPC" data-display-name="VPC" x="1341" y="168" width="53" height="32" rx="4" fill="#dbeafe"/><text data-service-name="true" x="1351" y="190" font-size="18" font-weight="700" fill="#1e3a8a" xml:space="preserve">VPC</text><text x="507" y="221" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_vpc.main</text>
+<text x="507" y="260" font-size="10" fill="#64748b"><title>root</title>root</text>
+</g>
+<g data-endpoints="true" data-source="resource-6177735f73656375726974795f67726f75702e617070-current" data-target="resource-6177735f6563735f736572766963652e617070-current" aria-hidden="true">
+<circle data-endpoint="source" cx="455" cy="377" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/><circle data-endpoint="target" cx="989" cy="354" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+<g data-endpoints="true" data-source="resource-6177735f7375626e65742e61-current" data-target="resource-6177735f6563735f736572766963652e617070-current" aria-hidden="true">
+<circle data-endpoint="source" cx="935" cy="355" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/><circle data-endpoint="target" cx="989" cy="377" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+<g data-endpoints="true" data-source="resource-6177735f7375626e65742e61-current" data-target="resource-6177735f6c622e617070-current" aria-hidden="true">
+<circle data-endpoint="source" cx="935" cy="379" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/><circle data-endpoint="target" cx="989" cy="532" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+<g data-endpoints="true" data-source="resource-6177735f7375626e65742e62-current" data-target="resource-6177735f6563735f736572766963652e617070-current" aria-hidden="true">
+<circle data-endpoint="source" cx="935" cy="547" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/><circle data-endpoint="target" cx="989" cy="399" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+<g data-endpoints="true" data-source="resource-6177735f7375626e65742e62-current" data-target="resource-6177735f6c622e617070-current" aria-hidden="true">
+<circle data-endpoint="source" cx="935" cy="571" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/><circle data-endpoint="target" cx="989" cy="562" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+</g>
+</g>
+</g>
+</svg>

@@ -1,0 +1,180 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="2744" viewBox="0 0 1100 2744" role="img" aria-labelledby="title description">
+<title id="title">Terraform plan</title>
+<desc id="description">9 resources (8 spatial cards, 1 logical resources in 1 group cards) · 2 relationships Thin solid: dependency. Dashed: association. Thick dotted: connection. Nested boxes: containment. Edge color preserves the Terraform action when available. Service label backgrounds: orange = compute; green = storage; blue = network; red = IAM; gray = unclassified. Spatial card role marks: rounded rectangle = execution; cylinder = data store; hexagon = network.</desc>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/></marker></defs>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<g font-family="ui-monospace, SFMono-Regular, Consolas, monospace">
+<text x="40" y="45" font-size="25" font-weight="700" fill="#0f172a">Terraform plan</text>
+<text x="40" y="73" font-size="13" fill="#475569">9 resources (8 spatial cards, 1 logical resources in 1 group cards) · 2 relationships</text>
+<metadata id="architecture-entities">[{&quot;id&quot;:&quot;terraform:6177735f636c6f756466726f6e745f646973747269627574696f6e2e676c6f62616c-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_cloudfront_distribution.global&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:6177735f69616d5f726f6c652e6c6f676963616c-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_iam_role.logical&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:6177735f73335f6275636b65742e616c696173-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_s3_bucket.alias&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:6177735f73335f6275636b65742e65617374-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_s3_bucket.east&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:6177735f73335f6275636b65742e6f74686572-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_s3_bucket.other&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:6177735f73335f6275636b65742e756e6b6e6f776e-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_s3_bucket.unknown&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:6177735f73335f6275636b65742e756e6b6e6f776e5f6163636f756e74-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_s3_bucket.unknown_account&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:6177735f73335f6275636b65742e756e6b6e6f776e5f726567696f6e-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_s3_bucket.unknown_region&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:6177735f73335f6275636b65742e77657374-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_s3_bucket.west&quot;,&quot;deposed_key&quot;:null}]}]</metadata>
+<metadata id="architecture-relationships">[{&quot;directionality&quot;:&quot;directed&quot;,&quot;from&quot;:&quot;terraform:6177735f73335f6275636b65742e6f74686572-current&quot;,&quot;inferred&quot;:false,&quot;kind&quot;:&quot;dependency&quot;,&quot;provenance&quot;:[{&quot;from&quot;:&quot;aws_s3_bucket.other&quot;,&quot;from_deposed_key&quot;:null,&quot;kind&quot;:&quot;reference&quot;,&quot;to&quot;:&quot;aws_s3_bucket.east&quot;,&quot;to_deposed_key&quot;:null}],&quot;to&quot;:&quot;terraform:6177735f73335f6275636b65742e65617374-current&quot;},{&quot;directionality&quot;:&quot;directed&quot;,&quot;from&quot;:&quot;terraform:6177735f73335f6275636b65742e77657374-current&quot;,&quot;inferred&quot;:false,&quot;kind&quot;:&quot;dependency&quot;,&quot;provenance&quot;:[{&quot;from&quot;:&quot;aws_s3_bucket.west&quot;,&quot;from_deposed_key&quot;:null,&quot;kind&quot;:&quot;reference&quot;,&quot;to&quot;:&quot;aws_s3_bucket.east&quot;,&quot;to_deposed_key&quot;:null}],&quot;to&quot;:&quot;terraform:6177735f73335f6275636b65742e65617374-current&quot;}]</metadata>
+<metadata id="resource-references">[{&quot;attribute&quot;:&quot;at_rest_encryption&quot;,&quot;complete&quot;:true,&quot;consumer&quot;:&quot;terraform:6177735f73335f6275636b65742e616c696173-current&quot;,&quot;dependency&quot;:false,&quot;issues&quot;:[],&quot;kind&quot;:&quot;information&quot;,&quot;targets&quot;:[]},{&quot;attribute&quot;:&quot;tags&quot;,&quot;complete&quot;:true,&quot;consumer&quot;:&quot;terraform:6177735f73335f6275636b65742e65617374-current&quot;,&quot;dependency&quot;:false,&quot;issues&quot;:[],&quot;kind&quot;:&quot;configured&quot;,&quot;targets&quot;:[{&quot;address&quot;:&quot;aws_s3_bucket.other&quot;,&quot;deposed_key&quot;:null},{&quot;address&quot;:&quot;aws_s3_bucket.west&quot;,&quot;deposed_key&quot;:null}]},{&quot;attribute&quot;:&quot;at_rest_encryption&quot;,&quot;complete&quot;:true,&quot;consumer&quot;:&quot;terraform:6177735f73335f6275636b65742e65617374-current&quot;,&quot;dependency&quot;:false,&quot;issues&quot;:[],&quot;kind&quot;:&quot;information&quot;,&quot;targets&quot;:[]},{&quot;attribute&quot;:&quot;at_rest_encryption&quot;,&quot;complete&quot;:true,&quot;consumer&quot;:&quot;terraform:6177735f73335f6275636b65742e6f74686572-current&quot;,&quot;dependency&quot;:false,&quot;issues&quot;:[],&quot;kind&quot;:&quot;information&quot;,&quot;targets&quot;:[]},{&quot;attribute&quot;:&quot;at_rest_encryption&quot;,&quot;complete&quot;:true,&quot;consumer&quot;:&quot;terraform:6177735f73335f6275636b65742e756e6b6e6f776e-current&quot;,&quot;dependency&quot;:false,&quot;issues&quot;:[],&quot;kind&quot;:&quot;information&quot;,&quot;targets&quot;:[]},{&quot;attribute&quot;:&quot;at_rest_encryption&quot;,&quot;complete&quot;:true,&quot;consumer&quot;:&quot;terraform:6177735f73335f6275636b65742e756e6b6e6f776e5f6163636f756e74-current&quot;,&quot;dependency&quot;:false,&quot;issues&quot;:[],&quot;kind&quot;:&quot;information&quot;,&quot;targets&quot;:[]},{&quot;attribute&quot;:&quot;at_rest_encryption&quot;,&quot;complete&quot;:true,&quot;consumer&quot;:&quot;terraform:6177735f73335f6275636b65742e756e6b6e6f776e5f726567696f6e-current&quot;,&quot;dependency&quot;:false,&quot;issues&quot;:[],&quot;kind&quot;:&quot;information&quot;,&quot;targets&quot;:[]},{&quot;attribute&quot;:&quot;at_rest_encryption&quot;,&quot;complete&quot;:true,&quot;consumer&quot;:&quot;terraform:6177735f73335f6275636b65742e77657374-current&quot;,&quot;dependency&quot;:false,&quot;issues&quot;:[],&quot;kind&quot;:&quot;information&quot;,&quot;targets&quot;:[]}]</metadata>
+<rect x="40" y="100" width="12" height="12" fill="#ecfdf5" stroke="#047857"/><text x="59" y="111" font-size="12" fill="#047857">create (1)</text>
+<rect x="180" y="100" width="12" height="12" fill="#eff6ff" stroke="#1d4ed8"/><text x="199" y="111" font-size="12" fill="#1d4ed8">update (0)</text>
+<rect x="320" y="100" width="12" height="12" fill="#fef2f2" stroke="#b91c1c"/><text x="339" y="111" font-size="12" fill="#b91c1c">delete (0)</text>
+<rect x="460" y="100" width="12" height="12" fill="#fff7ed" stroke="#c2410c"/><text x="479" y="111" font-size="12" fill="#c2410c">replace (0)</text>
+<rect x="600" y="100" width="12" height="12" fill="#faf5ff" stroke="#7e22ce"/><text x="619" y="111" font-size="12" fill="#7e22ce">read (0)</text>
+<rect x="740" y="100" width="12" height="12" fill="#f8fafc" stroke="#64748b"/><text x="759" y="111" font-size="12" fill="#64748b">unchanged (8)</text>
+<rect x="880" y="100" width="12" height="12" fill="#fefce8" stroke="#854d0e"/><text x="899" y="111" font-size="12" fill="#854d0e">other (0)</text>
+<g id="relationship-legend" font-size="12" fill="#475569" transform="translate(40 148)"><rect width="960" height="546" rx="12" fill="#f8fafc" stroke="#cbd5e1"/>
+<text x="16" y="29" font-size="15" font-weight="700" fill="#334155">Relationship lines</text>
+<text x="16" y="56">Line color shows the relationship&apos;s own Terraform action, independently of endpoint-card actions.</text>
+<path data-legend-action="none" d="M 16 77 H 42" fill="none" stroke="#94a3b8" stroke-width="1.5"/><text x="50" y="82">no independent change</text>
+<path data-legend-action="unchanged" d="M 234 77 H 260" fill="none" stroke="#64748b" stroke-width="1.5"/><text x="268" y="82">unchanged</text>
+<text x="16" y="110">no independent change: no separate Terraform action is identified. unchanged: an explicit no-op action.</text>
+<g data-legend-entry="dependency" transform="translate(0 132)">
+<g data-legend-sample="dependency">
+<path data-legend-kind="dependency" data-directionality="directed" d="M 21 11 H 153" fill="none" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+<circle data-legend-endpoint="source" cx="21" cy="11" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+<text x="174" y="12" font-weight="700">Dependency</text>
+<text x="174" y="30">Thin solid arrow from the</text>
+<text x="174" y="48">referenced resource to the</text>
+<text x="174" y="66">dependent resource; not exact</text>
+<text x="174" y="84">Terraform execution order.</text>
+</g>
+<g data-legend-entry="association" transform="translate(492 132)">
+<g data-legend-sample="association">
+<path data-legend-kind="association" data-directionality="undirected" d="M 21 11 H 153" fill="none" stroke="#94a3b8" stroke-width="2" stroke-dasharray="7 4"/>
+<circle data-legend-endpoint="source" cx="21" cy="11" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/><circle data-legend-endpoint="target" cx="153" cy="11" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/><g data-legend-badge="source">
+<rect x="31" y="2" width="32" height="18" rx="4" fill="#ffffff" stroke="#94a3b8" stroke-width="2" stroke-dasharray="7 4"/><text x="47" y="15" text-anchor="middle" font-size="11" fill="#334155">[12]</text>
+</g>
+<g data-legend-badge="target">
+<rect x="111" y="2" width="32" height="18" rx="4" fill="#ffffff" stroke="#94a3b8" stroke-width="2" stroke-dasharray="7 4"/><text x="127" y="15" text-anchor="middle" font-size="11" fill="#334155">[12]</text>
+</g>
+</g>
+<text x="174" y="12" font-weight="700">Association</text>
+<text x="174" y="30">Dashed, undirected relationship.</text>
+<text x="174" y="48">Matching badges identify the same</text>
+<text x="174" y="66">Terraform-backed relationship at</text>
+<text x="174" y="84">both attachment points.</text>
+</g>
+<g data-legend-entry="directed-association" transform="translate(0 238)">
+<g data-legend-sample="directed-association">
+<path data-legend-kind="directed-association" data-directionality="directed" d="M 21 11 H 153" fill="none" stroke="#94a3b8" stroke-width="2" stroke-dasharray="7 4" marker-end="url(#arrow)"/>
+<circle data-legend-endpoint="source" cx="21" cy="11" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/><circle data-legend-endpoint="target" cx="153" cy="11" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/><path data-legend-arrow="true" d="M 146.7 7.5 L 153.7 11 L 146.7 14.5 Z" fill="#94a3b8"/>
+<g data-legend-badge="source">
+<rect x="31" y="2" width="32" height="18" rx="4" fill="#ffffff" stroke="#94a3b8" stroke-width="2" stroke-dasharray="7 4"/><text x="47" y="15" text-anchor="middle" font-size="11" fill="#334155">[12]</text>
+</g>
+<g data-legend-badge="target">
+<rect x="111" y="2" width="32" height="18" rx="4" fill="#ffffff" stroke="#94a3b8" stroke-width="2" stroke-dasharray="7 4"/><text x="127" y="15" text-anchor="middle" font-size="11" fill="#334155">[12]</text>
+</g>
+</g>
+<text x="174" y="12" font-weight="700">Directed Association</text>
+<text x="174" y="30">Dashed line from a Route to its</text>
+<text x="174" y="48">next hop. The destination arrow</text>
+<text x="174" y="66">expresses direction; matching</text>
+<text x="174" y="84">badges identify the same</text>
+<text x="174" y="102">relationship.</text>
+</g>
+<g data-legend-entry="connection" transform="translate(492 238)">
+<g data-legend-sample="connection">
+<path data-legend-kind="connection" data-directionality="undirected" d="M 21 11 H 153" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-dasharray="0 3.5" stroke-linecap="round"/>
+<circle data-legend-endpoint="source" cx="21" cy="11" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/><circle data-legend-endpoint="target" cx="153" cy="11" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+<text x="174" y="12" font-weight="700">Connection</text>
+<text x="174" y="30">Thicker dotted line shows an</text>
+<text x="174" y="48">inferred, undirected connection;</text>
+<text x="174" y="66">this does not guarantee actual</text>
+<text x="174" y="84">network reachability.</text>
+</g>
+<g data-legend-entry="containment" transform="translate(0 362)">
+<g data-legend-sample="containment">
+<g data-legend-kind="containment" fill="none" stroke="#94a3b8"><rect x="65" y="2" width="44" height="28" rx="4"/><rect x="74" y="12" width="26" height="12" rx="2"/></g>
+</g>
+<text x="174" y="12" font-weight="700">Containment</text>
+<text x="174" y="30">Nested boxes show containment;</text>
+<text x="174" y="48">nesting replaces a redundant</text>
+<text x="174" y="66">relationship line.</text>
+</g>
+<text x="16" y="462">Hollow circles mark resource/card attachment points; neither end of an undirected line is a directional start.</text>
+<text x="16" y="480">Filled internal dots mark bundle junctions.</text>
+<text x="16" y="506">Matching [N] badges identify the same Terraform-backed relationship and its Relationship Resources entry. They do</text>
+<text x="16" y="524">not express direction or count connections. Reference-only Connections and Dependencies have no number.</text>
+</g>
+<g transform="translate(0 558)">
+<g data-annotation-area="true">
+<g data-annotation-card="true" transform="translate(40 160)"><rect width="392" height="406" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-annotation-section="Logical Resources"><rect width="392" height="406" rx="12" fill="#ecfeff" stroke="#0891b2"/><text x="16" y="28" font-size="15" font-weight="700" fill="#0e7490">Logical Resources</text><g data-annotation-card="true" transform="translate(16 48)"><rect width="360" height="342" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-logical-group="true" data-provider-source="registry.terraform.io/hashicorp/aws" data-resource-type="aws_iam_role" data-mode="managed"><title>aws_iam_role · managed — registry.terraform.io/hashicorp/aws</title><text x="16" y="28" font-size="13" font-weight="700" fill="#0e7490">aws_iam_role · managed</text>
+<text x="16" y="48" font-size="11" fill="#64748b">registry.terraform.io/hashicorp/aws</text>
+<text data-role-explanation="true" x="16" y="66" font-size="12" fill="#475569" xml:space="preserve">Role: Identity — principals, identity co</text>
+<text data-role-explanation="true" x="16" y="86" font-size="12" fill="#475569" xml:space="preserve">llections or federation configuration; do</text>
+<text data-role-explanation="true" x="16" y="106" font-size="12" fill="#475569" xml:space="preserve">es not prove authentication, role assumpt</text>
+<text data-role-explanation="true" x="16" y="126" font-size="12" fill="#475569" xml:space="preserve">ion or effective permissions.</text>
+<g data-action-section="unchanged"><rect x="8" y="146" width="344" height="168" rx="8" fill="none" stroke="#64748b" stroke-width="2"/><title>Unchanged (1)</title><text data-action-heading="true" x="20" y="178" font-size="13" font-weight="700" fill="#64748b" xml:space="preserve">Unchanged (1)</text><rect data-service-badge="true" data-service-category="iam" data-service-full-name="AWS Identity and Access Management" data-display-name="IAM Role" x="232" y="158" width="108" height="32" rx="4" fill="#fee2e2"/><text data-service-name="true" x="242" y="180" font-size="18" font-weight="700" fill="#7f1d1d" xml:space="preserve">IAM Role</text><g id="resource-6177735f69616d5f726f6c652e6c6f676963616c-current" data-architecture-id="terraform:6177735f69616d5f726f6c652e6c6f676963616c-current" data-entity-kind="terraform" data-placement="logical" data-terraform-address="aws_iam_role.logical" data-qualified-address="module.root.aws_iam_role.logical" data-mode="managed" transform="translate(0 202)" data-role="identity"><title>module.root.aws_iam_role.logical — unchanged</title><text x="16" y="28" font-size="12" fill="#334155" xml:space="preserve" font-weight="700">module.root.aws_iam_role.logical</text>
+<text x="16" y="48" font-size="12" fill="#334155" xml:space="preserve">unchanged</text>
+<text x="16" y="68" font-size="12" fill="#334155" xml:space="preserve">AWS Global</text>
+<text x="16" y="88" font-size="12" fill="#334155" xml:space="preserve">identity</text>
+<line data-resource-underline="true" x1="16" y1="96" x2="344" y2="96" stroke="#64748b" stroke-width="2"/></g>
+</g>
+</g>
+</g>
+</g></g>
+</g>
+<g data-architecture="true" transform="translate(0 430)">
+<g data-deployment-scope="true" data-scope-provider="AWS" data-global="true"><rect x="40" y="160" width="493" height="172" rx="14" fill="#f8fafc" stroke="#94a3b8" stroke-dasharray="9 5"/><text x="56" y="185" font-size="15" font-weight="700" fill="#334155">AWS Global</text></g>
+<g data-deployment-scope="true" data-scope-provider="AWS" data-region="us-east-1"><rect x="40" y="372" width="720" height="602" rx="14" fill="#f8fafc" stroke="#94a3b8" stroke-dasharray="9 5"/><text x="56" y="397" font-size="15" font-weight="700" fill="#334155">AWS us-east-1</text></g>
+<g data-deployment-scope="true" data-scope-provider="AWS" data-region="us-west-2"><rect x="40" y="1014" width="360" height="214" rx="14" fill="#f8fafc" stroke="#94a3b8" stroke-dasharray="9 5"/><text x="56" y="1039" font-size="15" font-weight="700" fill="#334155">AWS us-west-2</text></g>
+<path d="M 580 566 L 580 578 Q 580 586 588 586 L 618 586 Q 626 586 626 594 L 626 606 " data-edge-kind="dependency" data-directionality="directed" data-source="resource-6177735f73335f6275636b65742e6f74686572-current" data-target="resource-6177735f73335f6275636b65742e65617374-current" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>aws_s3_bucket.other → aws_s3_bucket.east</title></path>
+<path d="M 380 1131 L 525 1131 Q 533 1131 533 1123 L 533 760 " data-edge-kind="dependency" data-directionality="directed" data-source="resource-6177735f73335f6275636b65742e77657374-current" data-target="resource-6177735f73335f6275636b65742e65617374-current" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>aws_s3_bucket.west → aws_s3_bucket.east</title></path>
+<g id="resource-6177735f636c6f756466726f6e745f646973747269627574696f6e2e676c6f62616c-current" data-architecture-id="terraform:6177735f636c6f756466726f6e745f646973747269627574696f6e2e676c6f62616c-current" data-qualified-address="module.root.aws_cloudfront_distribution.global" data-terraform-address="aws_cloudfront_distribution.global"><title>module.root.aws_cloudfront_distribution.global — unchanged</title>
+<rect x="60" y="200" width="453" height="112" rx="8" fill="#f8fafc" stroke="#64748b" stroke-width="1.5" data-mode="managed"/>
+<text x="104" y="228" font-size="11" fill="#64748b">aws_cloudfront_distribut… · unchanged</text>
+<rect data-service-badge="true" data-service-category="network" data-service-full-name="Amazon CloudFront" data-display-name="CloudFront" x="375" y="208" width="130" height="32" rx="4" fill="#dbeafe"/><text data-service-name="true" x="385" y="230" font-size="18" font-weight="700" fill="#1e3a8a" xml:space="preserve">CloudFront</text><g data-role-shape="network" transform="translate(72 215)" role="img" aria-label="Visual role: network" pointer-events="none" fill="#f8fafc" stroke="#475569" stroke-width="1"><title>Visual role: network</title><path d="M5 1 H17 L21 9 L17 17 H5 L1 9 Z"/></g><text x="72" y="261" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_cloudfront_distribution.global</text>
+</g>
+<g id="resource-6177735f73335f6275636b65742e616c696173-current" data-architecture-id="terraform:6177735f73335f6275636b65742e616c696173-current" data-qualified-address="module.root.aws_s3_bucket.alias" data-terraform-address="aws_s3_bucket.alias"><title>module.root.aws_s3_bucket.alias — unchanged</title>
+<rect x="60" y="412" width="320" height="154" rx="8" fill="#f8fafc" stroke="#64748b" stroke-width="1.5" data-mode="managed"/>
+<text x="104" y="440" font-size="11" fill="#64748b">aws_s3_bucket · unchanged</text>
+<rect data-service-badge="true" data-service-category="storage" data-service-full-name="Amazon S3" data-display-name="S3" x="330" y="420" width="42" height="32" rx="4" fill="#dcfce7"/><text data-service-name="true" x="340" y="442" font-size="18" font-weight="700" fill="#14532d" xml:space="preserve">S3</text><g data-role-shape="data-store" transform="translate(72 427)" role="img" aria-label="Visual role: data-store" pointer-events="none" fill="#f8fafc" stroke="#475569" stroke-width="1"><title>Visual role: data-store</title><path d="M1 4 C1 0 21 0 21 4 V14 C21 18 1 18 1 14 Z"/><path d="M1 4 C1 8 21 8 21 4" fill="none"/></g><text x="72" y="473" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_s3_bucket.alias</text>
+<g data-resource-references="true"><title>At-rest encryption (plan): unknown</title><text x="72" y="514" font-size="11" font-weight="700" fill="#475569">Uses</text><g><title>At-rest encryption (plan): unknown</title><text x="72" y="532" font-size="11" fill="#334155" xml:space="preserve">At-rest encryption (plan): unknown</text>
+</g></g>
+</g>
+<g id="resource-6177735f73335f6275636b65742e65617374-current" data-architecture-id="terraform:6177735f73335f6275636b65742e65617374-current" data-qualified-address="module.root.aws_s3_bucket.east" data-terraform-address="aws_s3_bucket.east"><title>module.root.aws_s3_bucket.east — create</title>
+<rect x="420" y="606" width="320" height="154" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
+<text x="464" y="634" font-size="11" fill="#047857">aws_s3_bucket · create</text>
+<rect data-service-badge="true" data-service-category="storage" data-service-full-name="Amazon S3" data-display-name="S3" x="690" y="614" width="42" height="32" rx="4" fill="#dcfce7"/><text data-service-name="true" x="700" y="636" font-size="18" font-weight="700" fill="#14532d" xml:space="preserve">S3</text><g data-role-shape="data-store" transform="translate(432 621)" role="img" aria-label="Visual role: data-store" pointer-events="none" fill="#f8fafc" stroke="#475569" stroke-width="1"><title>Visual role: data-store</title><path d="M1 4 C1 0 21 0 21 4 V14 C21 18 1 18 1 14 Z"/><path d="M1 4 C1 8 21 8 21 4" fill="none"/></g><text x="432" y="667" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_s3_bucket.east</text>
+<g data-resource-references="true"><title>At-rest encryption (plan): unknown</title><text x="432" y="708" font-size="11" font-weight="700" fill="#475569">Uses</text><g><title>At-rest encryption (plan): unknown</title><text x="432" y="726" font-size="11" fill="#334155" xml:space="preserve">At-rest encryption (plan): unknown</text>
+</g></g>
+</g>
+<g id="resource-6177735f73335f6275636b65742e6f74686572-current" data-architecture-id="terraform:6177735f73335f6275636b65742e6f74686572-current" data-qualified-address="module.root.aws_s3_bucket.other" data-terraform-address="aws_s3_bucket.other"><title>module.root.aws_s3_bucket.other — unchanged</title>
+<rect x="420" y="412" width="320" height="154" rx="8" fill="#f8fafc" stroke="#64748b" stroke-width="1.5" data-mode="managed"/>
+<text x="464" y="440" font-size="11" fill="#64748b">aws_s3_bucket · unchanged</text>
+<rect data-service-badge="true" data-service-category="storage" data-service-full-name="Amazon S3" data-display-name="S3" x="690" y="420" width="42" height="32" rx="4" fill="#dcfce7"/><text data-service-name="true" x="700" y="442" font-size="18" font-weight="700" fill="#14532d" xml:space="preserve">S3</text><g data-role-shape="data-store" transform="translate(432 427)" role="img" aria-label="Visual role: data-store" pointer-events="none" fill="#f8fafc" stroke="#475569" stroke-width="1"><title>Visual role: data-store</title><path d="M1 4 C1 0 21 0 21 4 V14 C21 18 1 18 1 14 Z"/><path d="M1 4 C1 8 21 8 21 4" fill="none"/></g><text x="432" y="473" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_s3_bucket.other</text>
+<g data-resource-references="true"><title>At-rest encryption (plan): unknown</title><text x="432" y="514" font-size="11" font-weight="700" fill="#475569">Uses</text><g><title>At-rest encryption (plan): unknown</title><text x="432" y="532" font-size="11" fill="#334155" xml:space="preserve">At-rest encryption (plan): unknown</text>
+</g></g>
+</g>
+<g id="resource-6177735f73335f6275636b65742e756e6b6e6f776e-current" data-architecture-id="terraform:6177735f73335f6275636b65742e756e6b6e6f776e-current" data-qualified-address="module.root.aws_s3_bucket.unknown" data-terraform-address="aws_s3_bucket.unknown"><title>module.root.aws_s3_bucket.unknown — unchanged</title>
+<rect x="60" y="1268" width="320" height="154" rx="8" fill="#f8fafc" stroke="#64748b" stroke-width="1.5" data-mode="managed"/>
+<text x="104" y="1296" font-size="11" fill="#64748b">aws_s3_bucket · unchanged</text>
+<rect data-service-badge="true" data-service-category="storage" data-service-full-name="Amazon S3" data-display-name="S3" x="330" y="1276" width="42" height="32" rx="4" fill="#dcfce7"/><text data-service-name="true" x="340" y="1298" font-size="18" font-weight="700" fill="#14532d" xml:space="preserve">S3</text><g data-role-shape="data-store" transform="translate(72 1283)" role="img" aria-label="Visual role: data-store" pointer-events="none" fill="#f8fafc" stroke="#475569" stroke-width="1"><title>Visual role: data-store</title><path d="M1 4 C1 0 21 0 21 4 V14 C21 18 1 18 1 14 Z"/><path d="M1 4 C1 8 21 8 21 4" fill="none"/></g><text x="72" y="1329" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_s3_bucket.unknown</text>
+<g data-resource-references="true"><title>At-rest encryption (plan): unknown</title><text x="72" y="1370" font-size="11" font-weight="700" fill="#475569">Uses</text><g><title>At-rest encryption (plan): unknown</title><text x="72" y="1388" font-size="11" fill="#334155" xml:space="preserve">At-rest encryption (plan): unknown</text>
+</g></g>
+</g>
+<g id="resource-6177735f73335f6275636b65742e756e6b6e6f776e5f6163636f756e74-current" data-architecture-id="terraform:6177735f73335f6275636b65742e756e6b6e6f776e5f6163636f756e74-current" data-qualified-address="module.root.aws_s3_bucket.unknown_account" data-terraform-address="aws_s3_bucket.unknown_account"><title>module.root.aws_s3_bucket.unknown_account — unchanged</title>
+<rect x="60" y="800" width="320" height="154" rx="8" fill="#f8fafc" stroke="#64748b" stroke-width="1.5" data-mode="managed"/>
+<text x="104" y="828" font-size="11" fill="#64748b">aws_s3_bucket · unchanged</text>
+<rect data-service-badge="true" data-service-category="storage" data-service-full-name="Amazon S3" data-display-name="S3" x="330" y="808" width="42" height="32" rx="4" fill="#dcfce7"/><text data-service-name="true" x="340" y="830" font-size="18" font-weight="700" fill="#14532d" xml:space="preserve">S3</text><g data-role-shape="data-store" transform="translate(72 815)" role="img" aria-label="Visual role: data-store" pointer-events="none" fill="#f8fafc" stroke="#475569" stroke-width="1"><title>Visual role: data-store</title><path d="M1 4 C1 0 21 0 21 4 V14 C21 18 1 18 1 14 Z"/><path d="M1 4 C1 8 21 8 21 4" fill="none"/></g><text x="72" y="861" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_s3_bucket.</text>
+<text x="72" y="881" font-size="13" fill="#0f172a" xml:space="preserve">unknown_account</text>
+<g data-resource-references="true"><title>At-rest encryption (plan): unknown</title><text x="72" y="902" font-size="11" font-weight="700" fill="#475569">Uses</text><g><title>At-rest encryption (plan): unknown</title><text x="72" y="920" font-size="11" fill="#334155" xml:space="preserve">At-rest encryption (plan): unknown</text>
+</g></g>
+</g>
+<g id="resource-6177735f73335f6275636b65742e756e6b6e6f776e5f726567696f6e-current" data-architecture-id="terraform:6177735f73335f6275636b65742e756e6b6e6f776e5f726567696f6e-current" data-qualified-address="module.root.aws_s3_bucket.unknown_region" data-terraform-address="aws_s3_bucket.unknown_region"><title>module.root.aws_s3_bucket.unknown_region — unchanged</title>
+<rect x="60" y="1462" width="320" height="154" rx="8" fill="#f8fafc" stroke="#64748b" stroke-width="1.5" data-mode="managed"/>
+<text x="104" y="1490" font-size="11" fill="#64748b">aws_s3_bucket · unchanged</text>
+<rect data-service-badge="true" data-service-category="storage" data-service-full-name="Amazon S3" data-display-name="S3" x="330" y="1470" width="42" height="32" rx="4" fill="#dcfce7"/><text data-service-name="true" x="340" y="1492" font-size="18" font-weight="700" fill="#14532d" xml:space="preserve">S3</text><g data-role-shape="data-store" transform="translate(72 1477)" role="img" aria-label="Visual role: data-store" pointer-events="none" fill="#f8fafc" stroke="#475569" stroke-width="1"><title>Visual role: data-store</title><path d="M1 4 C1 0 21 0 21 4 V14 C21 18 1 18 1 14 Z"/><path d="M1 4 C1 8 21 8 21 4" fill="none"/></g><text x="72" y="1523" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_s3_bucket.</text>
+<text x="72" y="1543" font-size="13" fill="#0f172a" xml:space="preserve">unknown_region</text>
+<g data-resource-references="true"><title>At-rest encryption (plan): unknown</title><text x="72" y="1564" font-size="11" font-weight="700" fill="#475569">Uses</text><g><title>At-rest encryption (plan): unknown</title><text x="72" y="1582" font-size="11" fill="#334155" xml:space="preserve">At-rest encryption (plan): unknown</text>
+</g></g>
+</g>
+<g id="resource-6177735f73335f6275636b65742e77657374-current" data-architecture-id="terraform:6177735f73335f6275636b65742e77657374-current" data-qualified-address="module.root.aws_s3_bucket.west" data-terraform-address="aws_s3_bucket.west"><title>module.root.aws_s3_bucket.west — unchanged</title>
+<rect x="60" y="1054" width="320" height="154" rx="8" fill="#f8fafc" stroke="#64748b" stroke-width="1.5" data-mode="managed"/>
+<text x="104" y="1082" font-size="11" fill="#64748b">aws_s3_bucket · unchanged</text>
+<rect data-service-badge="true" data-service-category="storage" data-service-full-name="Amazon S3" data-display-name="S3" x="330" y="1062" width="42" height="32" rx="4" fill="#dcfce7"/><text data-service-name="true" x="340" y="1084" font-size="18" font-weight="700" fill="#14532d" xml:space="preserve">S3</text><g data-role-shape="data-store" transform="translate(72 1069)" role="img" aria-label="Visual role: data-store" pointer-events="none" fill="#f8fafc" stroke="#475569" stroke-width="1"><title>Visual role: data-store</title><path d="M1 4 C1 0 21 0 21 4 V14 C21 18 1 18 1 14 Z"/><path d="M1 4 C1 8 21 8 21 4" fill="none"/></g><text x="72" y="1115" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_s3_bucket.west</text>
+<g data-resource-references="true"><title>At-rest encryption (plan): unknown</title><text x="72" y="1156" font-size="11" font-weight="700" fill="#475569">Uses</text><g><title>At-rest encryption (plan): unknown</title><text x="72" y="1174" font-size="11" fill="#334155" xml:space="preserve">At-rest encryption (plan): unknown</text>
+</g></g>
+</g>
+<g data-endpoints="true" data-source="resource-6177735f73335f6275636b65742e6f74686572-current" data-target="resource-6177735f73335f6275636b65742e65617374-current" aria-hidden="true">
+<circle data-endpoint="source" cx="580" cy="566" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+<g data-endpoints="true" data-source="resource-6177735f73335f6275636b65742e77657374-current" data-target="resource-6177735f73335f6275636b65742e65617374-current" aria-hidden="true">
+<circle data-endpoint="source" cx="380" cy="1131" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+</g>
+</g>
+</g>
+</svg>

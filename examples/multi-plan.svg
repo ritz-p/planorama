@@ -1,0 +1,180 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="1862" viewBox="0 0 1120 1862" font-family="ui-monospace, Consolas, monospace" role="img" aria-labelledby="multi-title multi-description">
+<title id="multi-title">Terraform plans</title><desc id="multi-description">2 independent states. Resource identities and relationships are scoped to each state.</desc>
+<rect width="100%" height="100%" fill="#ffffff"/><text x="40" y="35" font-family="ui-monospace, Consolas, monospace" font-size="25" fill="#0f172a">Terraform plans</text>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/></marker></defs>
+<g id="relationship-legend" font-size="12" fill="#475569" transform="translate(40 60)"><rect width="960" height="546" rx="12" fill="#f8fafc" stroke="#cbd5e1"/>
+<text x="16" y="29" font-size="15" font-weight="700" fill="#334155">Relationship lines</text>
+<text x="16" y="56">Line color shows the relationship&apos;s own Terraform action, independently of endpoint-card actions.</text>
+<path data-legend-action="none" d="M 16 77 H 42" fill="none" stroke="#94a3b8" stroke-width="1.5"/><text x="50" y="82">no independent change</text>
+<path data-legend-action="unchanged" d="M 234 77 H 260" fill="none" stroke="#64748b" stroke-width="1.5"/><text x="268" y="82">unchanged</text>
+<text x="16" y="110">no independent change: no separate Terraform action is identified. unchanged: an explicit no-op action.</text>
+<g data-legend-entry="dependency" transform="translate(0 132)">
+<g data-legend-sample="dependency">
+<path data-legend-kind="dependency" data-directionality="directed" d="M 21 11 H 153" fill="none" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+<circle data-legend-endpoint="source" cx="21" cy="11" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+<text x="174" y="12" font-weight="700">Dependency</text>
+<text x="174" y="30">Thin solid arrow from the</text>
+<text x="174" y="48">referenced resource to the</text>
+<text x="174" y="66">dependent resource; not exact</text>
+<text x="174" y="84">Terraform execution order.</text>
+</g>
+<g data-legend-entry="association" transform="translate(492 132)">
+<g data-legend-sample="association">
+<path data-legend-kind="association" data-directionality="undirected" d="M 21 11 H 153" fill="none" stroke="#94a3b8" stroke-width="2" stroke-dasharray="7 4"/>
+<circle data-legend-endpoint="source" cx="21" cy="11" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/><circle data-legend-endpoint="target" cx="153" cy="11" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/><g data-legend-badge="source">
+<rect x="31" y="2" width="32" height="18" rx="4" fill="#ffffff" stroke="#94a3b8" stroke-width="2" stroke-dasharray="7 4"/><text x="47" y="15" text-anchor="middle" font-size="11" fill="#334155">[12]</text>
+</g>
+<g data-legend-badge="target">
+<rect x="111" y="2" width="32" height="18" rx="4" fill="#ffffff" stroke="#94a3b8" stroke-width="2" stroke-dasharray="7 4"/><text x="127" y="15" text-anchor="middle" font-size="11" fill="#334155">[12]</text>
+</g>
+</g>
+<text x="174" y="12" font-weight="700">Association</text>
+<text x="174" y="30">Dashed, undirected relationship.</text>
+<text x="174" y="48">Matching badges identify the same</text>
+<text x="174" y="66">Terraform-backed relationship at</text>
+<text x="174" y="84">both attachment points.</text>
+</g>
+<g data-legend-entry="directed-association" transform="translate(0 238)">
+<g data-legend-sample="directed-association">
+<path data-legend-kind="directed-association" data-directionality="directed" d="M 21 11 H 153" fill="none" stroke="#94a3b8" stroke-width="2" stroke-dasharray="7 4" marker-end="url(#arrow)"/>
+<circle data-legend-endpoint="source" cx="21" cy="11" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/><circle data-legend-endpoint="target" cx="153" cy="11" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/><path data-legend-arrow="true" d="M 146.7 7.5 L 153.7 11 L 146.7 14.5 Z" fill="#94a3b8"/>
+<g data-legend-badge="source">
+<rect x="31" y="2" width="32" height="18" rx="4" fill="#ffffff" stroke="#94a3b8" stroke-width="2" stroke-dasharray="7 4"/><text x="47" y="15" text-anchor="middle" font-size="11" fill="#334155">[12]</text>
+</g>
+<g data-legend-badge="target">
+<rect x="111" y="2" width="32" height="18" rx="4" fill="#ffffff" stroke="#94a3b8" stroke-width="2" stroke-dasharray="7 4"/><text x="127" y="15" text-anchor="middle" font-size="11" fill="#334155">[12]</text>
+</g>
+</g>
+<text x="174" y="12" font-weight="700">Directed Association</text>
+<text x="174" y="30">Dashed line from a Route to its</text>
+<text x="174" y="48">next hop. The destination arrow</text>
+<text x="174" y="66">expresses direction; matching</text>
+<text x="174" y="84">badges identify the same</text>
+<text x="174" y="102">relationship.</text>
+</g>
+<g data-legend-entry="connection" transform="translate(492 238)">
+<g data-legend-sample="connection">
+<path data-legend-kind="connection" data-directionality="undirected" d="M 21 11 H 153" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-dasharray="0 3.5" stroke-linecap="round"/>
+<circle data-legend-endpoint="source" cx="21" cy="11" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/><circle data-legend-endpoint="target" cx="153" cy="11" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+<text x="174" y="12" font-weight="700">Connection</text>
+<text x="174" y="30">Thicker dotted line shows an</text>
+<text x="174" y="48">inferred, undirected connection;</text>
+<text x="174" y="66">this does not guarantee actual</text>
+<text x="174" y="84">network reachability.</text>
+</g>
+<g data-legend-entry="containment" transform="translate(0 362)">
+<g data-legend-sample="containment">
+<g data-legend-kind="containment" fill="none" stroke="#94a3b8"><rect x="65" y="2" width="44" height="28" rx="4"/><rect x="74" y="12" width="26" height="12" rx="2"/></g>
+</g>
+<text x="174" y="12" font-weight="700">Containment</text>
+<text x="174" y="30">Nested boxes show containment;</text>
+<text x="174" y="48">nesting replaces a redundant</text>
+<text x="174" y="66">relationship line.</text>
+</g>
+<text x="16" y="462">Hollow circles mark resource/card attachment points; neither end of an undirected line is a directional start.</text>
+<text x="16" y="480">Filled internal dots mark bundle junctions.</text>
+<text x="16" y="506">Matching [N] badges identify the same Terraform-backed relationship and its Relationship Resources entry. They do</text>
+<text x="16" y="524">not express direction or count connections. Reference-only Connections and Dependencies have no number.</text>
+</g>
+<g id="state-6170706c69636174696f6e-state" data-state-id="application">
+<text x="40" y="643" font-family="ui-monospace, Consolas, monospace" font-size="20" font-weight="700" fill="#0f172a">State: application</text>
+<svg y="658" xmlns="http://www.w3.org/2000/svg" width="1120" height="476" viewBox="0 0 1120 476" role="img" aria-labelledby="state-6170706c69636174696f6e-title state-6170706c69636174696f6e-description">
+<title id="state-6170706c69636174696f6e-title">Terraform plan</title>
+<desc id="state-6170706c69636174696f6e-description">2 resources, 1 reference edges. Arrows point from dependencies to dependent resources. References are conservative, not Terraform execution order. Thin solid: dependency. Dashed: association. Thick dotted: connection. Nested boxes: containment. Edge color preserves the Terraform action when available. Service label backgrounds: orange = compute; green = storage; blue = network; red = IAM; gray = unclassified. Spatial card role marks: rounded rectangle = execution; cylinder = data store; hexagon = network.</desc>
+<defs><marker id="state-6170706c69636174696f6e-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/></marker></defs>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<g font-family="ui-monospace, SFMono-Regular, Consolas, monospace">
+<text x="40" y="45" font-size="25" font-weight="700" fill="#0f172a">Terraform plan</text>
+<text x="40" y="73" font-size="13" fill="#475569">2 resources · 1 reference edges · dependency → dependent</text>
+<metadata id="state-6170706c69636174696f6e-architecture-entities">[{&quot;id&quot;:&quot;terraform:6177735f696e7374616e63652e617070-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_instance.app&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:6177735f73656375726974795f67726f75702e617070-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_security_group.app&quot;,&quot;deposed_key&quot;:null}]}]</metadata>
+<metadata id="state-6170706c69636174696f6e-architecture-relationships">[{&quot;directionality&quot;:&quot;directed&quot;,&quot;from&quot;:&quot;terraform:6177735f73656375726974795f67726f75702e617070-current&quot;,&quot;inferred&quot;:false,&quot;kind&quot;:&quot;dependency&quot;,&quot;provenance&quot;:[{&quot;from&quot;:&quot;aws_security_group.app&quot;,&quot;from_deposed_key&quot;:null,&quot;kind&quot;:&quot;reference&quot;,&quot;to&quot;:&quot;aws_instance.app&quot;,&quot;to_deposed_key&quot;:null}],&quot;to&quot;:&quot;terraform:6177735f696e7374616e63652e617070-current&quot;}]</metadata>
+<metadata id="state-6170706c69636174696f6e-resource-references">[{&quot;attribute&quot;:&quot;other&quot;,&quot;complete&quot;:false,&quot;consumer&quot;:&quot;terraform:6177735f696e7374616e63652e617070-current&quot;,&quot;dependency&quot;:false,&quot;issues&quot;:[&quot;UnresolvedReference&quot;],&quot;kind&quot;:&quot;configured&quot;,&quot;targets&quot;:[]},{&quot;attribute&quot;:&quot;security_groups&quot;,&quot;complete&quot;:true,&quot;consumer&quot;:&quot;terraform:6177735f696e7374616e63652e617070-current&quot;,&quot;dependency&quot;:false,&quot;issues&quot;:[],&quot;kind&quot;:&quot;configured&quot;,&quot;targets&quot;:[{&quot;address&quot;:&quot;aws_security_group.app&quot;,&quot;deposed_key&quot;:null}]}]</metadata>
+<rect x="40" y="100" width="12" height="12" fill="#ecfdf5" stroke="#047857"/><text x="59" y="111" font-size="12" fill="#047857">create (2)</text>
+<rect x="180" y="100" width="12" height="12" fill="#eff6ff" stroke="#1d4ed8"/><text x="199" y="111" font-size="12" fill="#1d4ed8">update (0)</text>
+<rect x="320" y="100" width="12" height="12" fill="#fef2f2" stroke="#b91c1c"/><text x="339" y="111" font-size="12" fill="#b91c1c">delete (0)</text>
+<rect x="460" y="100" width="12" height="12" fill="#fff7ed" stroke="#c2410c"/><text x="479" y="111" font-size="12" fill="#c2410c">replace (0)</text>
+<rect x="600" y="100" width="12" height="12" fill="#faf5ff" stroke="#7e22ce"/><text x="619" y="111" font-size="12" fill="#7e22ce">read (0)</text>
+<rect x="740" y="100" width="12" height="12" fill="#f8fafc" stroke="#64748b"/><text x="759" y="111" font-size="12" fill="#64748b">unchanged (0)</text>
+<rect x="880" y="100" width="12" height="12" fill="#fefce8" stroke="#854d0e"/><text x="899" y="111" font-size="12" fill="#854d0e">other (0)</text>
+<g id="state-6170706c69636174696f6e-plan-status" data-plan-applyable="false" data-plan-complete="false" data-plan-errored="true">
+<text x="40" y="137" font-size="12" fill="#475569">Plan status: applyable: false complete: false errored: true</text>
+</g>
+<g id="state-6170706c69636174696f6e-plan-checks"><title>Object: fail
+  unassociated instance: fail
+</title><text x="40" y="161" font-size="12" fill="#475569">Checks (objects): 0 pass / 1 fail / 0 error / 0 unknown / 0 other / 0 unavailable</text></g>
+<g transform="translate(0 24)">
+<g data-architecture="true" transform="translate(0 0)">
+<g data-deployment-scope="true" data-scope-provider="AWS" data-region="ap-northeast-1"><rect x="40" y="160" width="795" height="172" rx="14" fill="#f8fafc" stroke="#94a3b8" stroke-dasharray="9 5"/><text x="56" y="185" font-size="15" font-weight="700" fill="#334155">AWS ap-northeast-1</text></g>
+<path d="M 455 256 L 495 256 " data-edge-kind="dependency" data-directionality="directed" data-source="state-6170706c69636174696f6e-resource-6177735f73656375726974795f67726f75702e617070-current" data-target="state-6170706c69636174696f6e-resource-6177735f696e7374616e63652e617070-current" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#state-6170706c69636174696f6e-arrow)"><title>aws_security_group.app → aws_instance.app</title></path>
+<g id="state-6170706c69636174696f6e-resource-6177735f696e7374616e63652e617070-current" data-architecture-id="terraform:6177735f696e7374616e63652e617070-current" data-qualified-address="module.root.aws_instance.app" data-terraform-address="aws_instance.app"><title>module.root.aws_instance.app — create</title>
+<rect x="495" y="200" width="320" height="112" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
+<text x="539" y="228" font-size="11" fill="#047857">aws_instance · create</text>
+<rect data-service-badge="true" data-service-category="compute" data-service-full-name="Amazon EC2" data-display-name="EC2" x="754" y="208" width="53" height="32" rx="4" fill="#ffedd5"/><text data-service-name="true" x="764" y="230" font-size="18" font-weight="700" fill="#7c2d12" xml:space="preserve">EC2</text><g data-role-shape="execution" transform="translate(507 215)" role="img" aria-label="Visual role: execution" pointer-events="none" fill="#f8fafc" stroke="#475569" stroke-width="1"><title>Visual role: execution</title><rect x="1" y="1" width="20" height="16" rx="4"/></g><text x="507" y="261" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_instance.app</text>
+</g>
+<g id="state-6170706c69636174696f6e-resource-6177735f73656375726974795f67726f75702e617070-current" data-architecture-id="terraform:6177735f73656375726974795f67726f75702e617070-current" data-qualified-address="module.root.aws_security_group.app" data-terraform-address="aws_security_group.app"><title>module.root.aws_security_group.app — create</title>
+<rect x="60" y="200" width="395" height="112" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
+<text x="72" y="228" font-size="11" fill="#047857">aws_security_group · create</text>
+<rect data-service-badge="true" data-service-category="network" data-service-full-name="Amazon VPC" data-display-name="Security Group" x="273" y="208" width="174" height="32" rx="4" fill="#dbeafe"/><text data-service-name="true" x="283" y="230" font-size="18" font-weight="700" fill="#1e3a8a" xml:space="preserve">Security Group</text><text x="72" y="261" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_security_group.app</text>
+<text x="72" y="300" font-size="10" fill="#64748b" data-role="policy"><title>root</title>policy · root</text>
+</g>
+<g data-endpoints="true" data-source="state-6170706c69636174696f6e-resource-6177735f73656375726974795f67726f75702e617070-current" data-target="state-6170706c69636174696f6e-resource-6177735f696e7374616e63652e617070-current" aria-hidden="true">
+<circle data-endpoint="source" cx="455" cy="256" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+</g>
+</g>
+</g>
+</svg>
+</g>
+<g id="state-6e6574776f726b-state" data-state-id="network">
+<text x="40" y="1179" font-family="ui-monospace, Consolas, monospace" font-size="20" font-weight="700" fill="#0f172a">State: network</text>
+<svg y="1194" xmlns="http://www.w3.org/2000/svg" width="1120" height="648" viewBox="0 0 1120 648" role="img" aria-labelledby="state-6e6574776f726b-title state-6e6574776f726b-description">
+<title id="state-6e6574776f726b-title">Terraform plan</title>
+<desc id="state-6e6574776f726b-description">3 resources, 1 reference edges. Arrows point from dependencies to dependent resources. References are conservative, not Terraform execution order. Thin solid: dependency. Dashed: association. Thick dotted: connection. Nested boxes: containment. Edge color preserves the Terraform action when available. Service label backgrounds: orange = compute; green = storage; blue = network; red = IAM; gray = unclassified. Spatial card role marks: rounded rectangle = execution; cylinder = data store; hexagon = network.</desc>
+<defs><marker id="state-6e6574776f726b-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/></marker></defs>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<g font-family="ui-monospace, SFMono-Regular, Consolas, monospace">
+<text x="40" y="45" font-size="25" font-weight="700" fill="#0f172a">Terraform plan</text>
+<text x="40" y="73" font-size="13" fill="#475569">3 resources · 1 reference edges · dependency → dependent</text>
+<metadata id="state-6e6574776f726b-architecture-entities">[{&quot;id&quot;:&quot;terraform:6177735f696e7374616e63652e617070-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_instance.app&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:6177735f73656375726974795f67726f75702e617070-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_security_group.app&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:6177735f73656375726974795f67726f75702e617070-deposed-6f6c64&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_security_group.app&quot;,&quot;deposed_key&quot;:&quot;old&quot;}]}]</metadata>
+<metadata id="state-6e6574776f726b-architecture-relationships">[{&quot;directionality&quot;:&quot;directed&quot;,&quot;from&quot;:&quot;terraform:6177735f73656375726974795f67726f75702e617070-current&quot;,&quot;inferred&quot;:false,&quot;kind&quot;:&quot;dependency&quot;,&quot;provenance&quot;:[{&quot;from&quot;:&quot;aws_security_group.app&quot;,&quot;from_deposed_key&quot;:null,&quot;kind&quot;:&quot;reference&quot;,&quot;to&quot;:&quot;aws_instance.app&quot;,&quot;to_deposed_key&quot;:null}],&quot;to&quot;:&quot;terraform:6177735f696e7374616e63652e617070-current&quot;}]</metadata>
+<metadata id="state-6e6574776f726b-resource-references">[{&quot;attribute&quot;:&quot;security_groups&quot;,&quot;complete&quot;:true,&quot;consumer&quot;:&quot;terraform:6177735f696e7374616e63652e617070-current&quot;,&quot;dependency&quot;:false,&quot;issues&quot;:[],&quot;kind&quot;:&quot;configured&quot;,&quot;targets&quot;:[{&quot;address&quot;:&quot;aws_security_group.app&quot;,&quot;deposed_key&quot;:null}]}]</metadata>
+<rect x="40" y="100" width="12" height="12" fill="#ecfdf5" stroke="#047857"/><text x="59" y="111" font-size="12" fill="#047857">create (0)</text>
+<rect x="180" y="100" width="12" height="12" fill="#eff6ff" stroke="#1d4ed8"/><text x="199" y="111" font-size="12" fill="#1d4ed8">update (1)</text>
+<rect x="320" y="100" width="12" height="12" fill="#fef2f2" stroke="#b91c1c"/><text x="339" y="111" font-size="12" fill="#b91c1c">delete (1)</text>
+<rect x="460" y="100" width="12" height="12" fill="#fff7ed" stroke="#c2410c"/><text x="479" y="111" font-size="12" fill="#c2410c">replace (0)</text>
+<rect x="600" y="100" width="12" height="12" fill="#faf5ff" stroke="#7e22ce"/><text x="619" y="111" font-size="12" fill="#7e22ce">read (0)</text>
+<rect x="740" y="100" width="12" height="12" fill="#f8fafc" stroke="#64748b"/><text x="759" y="111" font-size="12" fill="#64748b">unchanged (1)</text>
+<rect x="880" y="100" width="12" height="12" fill="#fefce8" stroke="#854d0e"/><text x="899" y="111" font-size="12" fill="#854d0e">other (0)</text>
+<g id="state-6e6574776f726b-plan-status" data-plan-applyable="true" data-plan-complete="true" data-plan-errored="false">
+<text x="40" y="137" font-size="12" fill="#475569">Plan status: applyable: true complete: true errored: false</text>
+</g>
+<g id="state-6e6574776f726b-plan-checks"><title>Object: pass
+</title><text x="40" y="161" font-size="12" fill="#475569">Checks (objects): 1 pass / 0 fail / 0 error / 0 unknown / 0 other / 0 unavailable</text></g>
+<g transform="translate(0 24)">
+<g data-architecture="true" transform="translate(0 0)">
+<g data-deployment-scope="true" data-scope-provider="AWS" data-region="ap-northeast-1"><rect x="40" y="160" width="795" height="172" rx="14" fill="#f8fafc" stroke="#94a3b8" stroke-dasharray="9 5"/><text x="56" y="185" font-size="15" font-weight="700" fill="#334155">AWS ap-northeast-1</text></g>
+<path d="M 455 256 L 495 256 " data-edge-kind="dependency" data-directionality="directed" data-source="state-6e6574776f726b-resource-6177735f73656375726974795f67726f75702e617070-current" data-target="state-6e6574776f726b-resource-6177735f696e7374616e63652e617070-current" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#state-6e6574776f726b-arrow)"><title>aws_security_group.app → aws_instance.app</title></path>
+<g id="state-6e6574776f726b-resource-6177735f696e7374616e63652e617070-current" data-architecture-id="terraform:6177735f696e7374616e63652e617070-current" data-qualified-address="module.root.aws_instance.app" data-terraform-address="aws_instance.app"><title>module.root.aws_instance.app — unchanged</title>
+<rect x="495" y="200" width="320" height="112" rx="8" fill="#f8fafc" stroke="#64748b" stroke-width="1.5" data-mode="managed"/>
+<text x="539" y="228" font-size="11" fill="#64748b">aws_instance · unchanged</text>
+<rect data-service-badge="true" data-service-category="compute" data-service-full-name="Amazon EC2" data-display-name="EC2" x="754" y="208" width="53" height="32" rx="4" fill="#ffedd5"/><text data-service-name="true" x="764" y="230" font-size="18" font-weight="700" fill="#7c2d12" xml:space="preserve">EC2</text><g data-role-shape="execution" transform="translate(507 215)" role="img" aria-label="Visual role: execution" pointer-events="none" fill="#f8fafc" stroke="#475569" stroke-width="1"><title>Visual role: execution</title><rect x="1" y="1" width="20" height="16" rx="4"/></g><text x="507" y="261" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_instance.app</text>
+</g>
+<g id="state-6e6574776f726b-resource-6177735f73656375726974795f67726f75702e617070-current" data-architecture-id="terraform:6177735f73656375726974795f67726f75702e617070-current" data-qualified-address="module.root.aws_security_group.app" data-terraform-address="aws_security_group.app"><title>module.root.aws_security_group.app — update</title>
+<rect x="60" y="200" width="395" height="112" rx="8" fill="#eff6ff" stroke="#1d4ed8" stroke-width="1.5" data-mode="managed"/>
+<text x="72" y="228" font-size="11" fill="#1d4ed8">aws_security_group · update</text>
+<rect data-service-badge="true" data-service-category="network" data-service-full-name="Amazon VPC" data-display-name="Security Group" x="273" y="208" width="174" height="32" rx="4" fill="#dbeafe"/><text data-service-name="true" x="283" y="230" font-size="18" font-weight="700" fill="#1e3a8a" xml:space="preserve">Security Group</text><text x="72" y="261" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_security_group.app</text>
+<text x="72" y="300" font-size="10" fill="#64748b" data-role="policy"><title>root</title>policy · root</text>
+</g>
+<g id="state-6e6574776f726b-resource-6177735f73656375726974795f67726f75702e617070-deposed-6f6c64" data-architecture-id="terraform:6177735f73656375726974795f67726f75702e617070-deposed-6f6c64" data-qualified-address="module.root.aws_security_group.app" data-terraform-address="aws_security_group.app" data-deposed-key="old"><title>module.root.aws_security_group.app — delete</title>
+<rect x="60" y="372" width="395" height="112" rx="8" fill="#fef2f2" stroke="#b91c1c" stroke-width="1.5" data-mode="managed"/>
+<text x="72" y="400" font-size="11" fill="#b91c1c">aws_security_group · delete</text>
+<rect data-service-badge="true" data-service-category="network" data-service-full-name="Amazon VPC" data-display-name="Security Group" x="273" y="380" width="174" height="32" rx="4" fill="#dbeafe"/><text data-service-name="true" x="283" y="402" font-size="18" font-weight="700" fill="#1e3a8a" xml:space="preserve">Security Group</text><text x="72" y="433" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_security_group.app</text>
+<text x="72" y="472" font-size="10" fill="#64748b" data-role="policy"><title>root</title>policy · root</text>
+</g>
+<g data-endpoints="true" data-source="state-6e6574776f726b-resource-6177735f73656375726974795f67726f75702e617070-current" data-target="state-6e6574776f726b-resource-6177735f696e7374616e63652e617070-current" aria-hidden="true">
+<circle data-endpoint="source" cx="455" cy="256" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+</g>
+</g>
+</g>
+</svg>
+</g>
+</svg>

@@ -1,0 +1,161 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2898" height="1532" viewBox="0 0 2898 1532" role="img" aria-labelledby="title description">
+<title id="title">Terraform plan</title>
+<desc id="description">5 resources, 4 reference edges. Arrows point from dependencies to dependent resources. References are conservative, not Terraform execution order. Thin solid: dependency. Dashed: association. Thick dotted: connection. Nested boxes: containment. Edge color preserves the Terraform action when available. Service label backgrounds: orange = compute; green = storage; blue = network; red = IAM; gray = unclassified. Spatial card role marks: rounded rectangle = execution; cylinder = data store; hexagon = network.</desc>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/></marker></defs>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<g font-family="ui-monospace, SFMono-Regular, Consolas, monospace">
+<text x="40" y="45" font-size="25" font-weight="700" fill="#0f172a">Terraform plan</text>
+<text x="40" y="73" font-size="13" fill="#475569">5 resources · 4 reference edges · dependency → dependent</text>
+<metadata id="architecture-entities">[{&quot;id&quot;:&quot;terraform:6177735f6f7267616e697a6174696f6e735f6163636f756e742e70726f64756374696f6e-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_organizations_account.production&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:6177735f6f7267616e697a6174696f6e735f6163636f756e742e73616e64626f78-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_organizations_account.sandbox&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:6177735f6f7267616e697a6174696f6e735f6f7267616e697a6174696f6e2e6d61696e-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_organizations_organization.main&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:6177735f6f7267616e697a6174696f6e735f6f7267616e697a6174696f6e616c5f756e69742e656e67696e656572696e67-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_organizations_organizational_unit.engineering&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:6177735f6f7267616e697a6174696f6e735f6f7267616e697a6174696f6e616c5f756e69742e706c6174666f726d-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_organizations_organizational_unit.platform&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;synthetic:6f7267616e697a6174696f6e5f726f6f74-6177735f6f7267616e697a6174696f6e735f6f7267616e697a6174696f6e2e6d61696e2e726f6f74735b305d&quot;,&quot;kind&quot;:&quot;synthetic&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_organizations_organization.main&quot;,&quot;deposed_key&quot;:null}]}]</metadata>
+<metadata id="architecture-relationships">[{&quot;directionality&quot;:&quot;directed&quot;,&quot;from&quot;:&quot;terraform:6177735f6f7267616e697a6174696f6e735f6f7267616e697a6174696f6e2e6d61696e-current&quot;,&quot;inferred&quot;:false,&quot;kind&quot;:&quot;dependency&quot;,&quot;provenance&quot;:[{&quot;from&quot;:&quot;aws_organizations_organization.main&quot;,&quot;from_deposed_key&quot;:null,&quot;kind&quot;:&quot;reference&quot;,&quot;to&quot;:&quot;aws_organizations_organizational_unit.engineering&quot;,&quot;to_deposed_key&quot;:null}],&quot;to&quot;:&quot;terraform:6177735f6f7267616e697a6174696f6e735f6f7267616e697a6174696f6e616c5f756e69742e656e67696e656572696e67-current&quot;},{&quot;directionality&quot;:&quot;directed&quot;,&quot;from&quot;:&quot;terraform:6177735f6f7267616e697a6174696f6e735f6f7267616e697a6174696f6e616c5f756e69742e656e67696e656572696e67-current&quot;,&quot;inferred&quot;:false,&quot;kind&quot;:&quot;dependency&quot;,&quot;provenance&quot;:[{&quot;from&quot;:&quot;aws_organizations_organizational_unit.engineering&quot;,&quot;from_deposed_key&quot;:null,&quot;kind&quot;:&quot;reference&quot;,&quot;to&quot;:&quot;aws_organizations_account.sandbox&quot;,&quot;to_deposed_key&quot;:null}],&quot;to&quot;:&quot;terraform:6177735f6f7267616e697a6174696f6e735f6163636f756e742e73616e64626f78-current&quot;},{&quot;directionality&quot;:&quot;directed&quot;,&quot;from&quot;:&quot;terraform:6177735f6f7267616e697a6174696f6e735f6f7267616e697a6174696f6e616c5f756e69742e656e67696e656572696e67-current&quot;,&quot;inferred&quot;:false,&quot;kind&quot;:&quot;dependency&quot;,&quot;provenance&quot;:[{&quot;from&quot;:&quot;aws_organizations_organizational_unit.engineering&quot;,&quot;from_deposed_key&quot;:null,&quot;kind&quot;:&quot;reference&quot;,&quot;to&quot;:&quot;aws_organizations_organizational_unit.platform&quot;,&quot;to_deposed_key&quot;:null}],&quot;to&quot;:&quot;terraform:6177735f6f7267616e697a6174696f6e735f6f7267616e697a6174696f6e616c5f756e69742e706c6174666f726d-current&quot;},{&quot;directionality&quot;:&quot;directed&quot;,&quot;from&quot;:&quot;terraform:6177735f6f7267616e697a6174696f6e735f6f7267616e697a6174696f6e616c5f756e69742e706c6174666f726d-current&quot;,&quot;inferred&quot;:false,&quot;kind&quot;:&quot;dependency&quot;,&quot;provenance&quot;:[{&quot;from&quot;:&quot;aws_organizations_organizational_unit.platform&quot;,&quot;from_deposed_key&quot;:null,&quot;kind&quot;:&quot;reference&quot;,&quot;to&quot;:&quot;aws_organizations_account.production&quot;,&quot;to_deposed_key&quot;:null}],&quot;to&quot;:&quot;terraform:6177735f6f7267616e697a6174696f6e735f6163636f756e742e70726f64756374696f6e-current&quot;}]</metadata>
+<metadata id="resource-references">[{&quot;attribute&quot;:&quot;parent_id&quot;,&quot;complete&quot;:true,&quot;consumer&quot;:&quot;terraform:6177735f6f7267616e697a6174696f6e735f6163636f756e742e70726f64756374696f6e-current&quot;,&quot;dependency&quot;:false,&quot;issues&quot;:[],&quot;kind&quot;:&quot;organization_parent&quot;,&quot;targets&quot;:[{&quot;address&quot;:&quot;aws_organizations_organizational_unit.platform&quot;,&quot;deposed_key&quot;:null}]},{&quot;attribute&quot;:&quot;deployment_scope&quot;,&quot;complete&quot;:true,&quot;consumer&quot;:&quot;terraform:6177735f6f7267616e697a6174696f6e735f6163636f756e742e70726f64756374696f6e-current&quot;,&quot;dependency&quot;:false,&quot;issues&quot;:[],&quot;kind&quot;:&quot;information&quot;,&quot;targets&quot;:[]},{&quot;attribute&quot;:&quot;parent_id&quot;,&quot;complete&quot;:true,&quot;consumer&quot;:&quot;terraform:6177735f6f7267616e697a6174696f6e735f6163636f756e742e73616e64626f78-current&quot;,&quot;dependency&quot;:false,&quot;issues&quot;:[],&quot;kind&quot;:&quot;organization_parent&quot;,&quot;targets&quot;:[{&quot;address&quot;:&quot;aws_organizations_organizational_unit.engineering&quot;,&quot;deposed_key&quot;:null}]},{&quot;attribute&quot;:&quot;deployment_scope&quot;,&quot;complete&quot;:true,&quot;consumer&quot;:&quot;terraform:6177735f6f7267616e697a6174696f6e735f6163636f756e742e73616e64626f78-current&quot;,&quot;dependency&quot;:false,&quot;issues&quot;:[],&quot;kind&quot;:&quot;information&quot;,&quot;targets&quot;:[]},{&quot;attribute&quot;:&quot;parent_id&quot;,&quot;complete&quot;:true,&quot;consumer&quot;:&quot;terraform:6177735f6f7267616e697a6174696f6e735f6f7267616e697a6174696f6e616c5f756e69742e656e67696e656572696e67-current&quot;,&quot;dependency&quot;:false,&quot;issues&quot;:[],&quot;kind&quot;:&quot;organization_root&quot;,&quot;root_index&quot;:0,&quot;targets&quot;:[{&quot;address&quot;:&quot;aws_organizations_organization.main&quot;,&quot;deposed_key&quot;:null}]},{&quot;attribute&quot;:&quot;parent_id&quot;,&quot;complete&quot;:true,&quot;consumer&quot;:&quot;terraform:6177735f6f7267616e697a6174696f6e735f6f7267616e697a6174696f6e616c5f756e69742e706c6174666f726d-current&quot;,&quot;dependency&quot;:false,&quot;issues&quot;:[],&quot;kind&quot;:&quot;organization_parent&quot;,&quot;targets&quot;:[{&quot;address&quot;:&quot;aws_organizations_organizational_unit.engineering&quot;,&quot;deposed_key&quot;:null}]}]</metadata>
+<rect x="40" y="100" width="12" height="12" fill="#ecfdf5" stroke="#047857"/><text x="59" y="111" font-size="12" fill="#047857">create (0)</text>
+<rect x="180" y="100" width="12" height="12" fill="#eff6ff" stroke="#1d4ed8"/><text x="199" y="111" font-size="12" fill="#1d4ed8">update (0)</text>
+<rect x="320" y="100" width="12" height="12" fill="#fef2f2" stroke="#b91c1c"/><text x="339" y="111" font-size="12" fill="#b91c1c">delete (0)</text>
+<rect x="460" y="100" width="12" height="12" fill="#fff7ed" stroke="#c2410c"/><text x="479" y="111" font-size="12" fill="#c2410c">replace (0)</text>
+<rect x="600" y="100" width="12" height="12" fill="#faf5ff" stroke="#7e22ce"/><text x="619" y="111" font-size="12" fill="#7e22ce">read (0)</text>
+<rect x="740" y="100" width="12" height="12" fill="#f8fafc" stroke="#64748b"/><text x="759" y="111" font-size="12" fill="#64748b">unchanged (5)</text>
+<rect x="880" y="100" width="12" height="12" fill="#fefce8" stroke="#854d0e"/><text x="899" y="111" font-size="12" fill="#854d0e">other (0)</text>
+<g id="relationship-legend" font-size="12" fill="#475569" transform="translate(40 148)"><rect width="960" height="546" rx="12" fill="#f8fafc" stroke="#cbd5e1"/>
+<text x="16" y="29" font-size="15" font-weight="700" fill="#334155">Relationship lines</text>
+<text x="16" y="56">Line color shows the relationship&apos;s own Terraform action, independently of endpoint-card actions.</text>
+<path data-legend-action="none" d="M 16 77 H 42" fill="none" stroke="#94a3b8" stroke-width="1.5"/><text x="50" y="82">no independent change</text>
+<path data-legend-action="unchanged" d="M 234 77 H 260" fill="none" stroke="#64748b" stroke-width="1.5"/><text x="268" y="82">unchanged</text>
+<text x="16" y="110">no independent change: no separate Terraform action is identified. unchanged: an explicit no-op action.</text>
+<g data-legend-entry="dependency" transform="translate(0 132)">
+<g data-legend-sample="dependency">
+<path data-legend-kind="dependency" data-directionality="directed" d="M 21 11 H 153" fill="none" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+<circle data-legend-endpoint="source" cx="21" cy="11" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+<text x="174" y="12" font-weight="700">Dependency</text>
+<text x="174" y="30">Thin solid arrow from the</text>
+<text x="174" y="48">referenced resource to the</text>
+<text x="174" y="66">dependent resource; not exact</text>
+<text x="174" y="84">Terraform execution order.</text>
+</g>
+<g data-legend-entry="association" transform="translate(492 132)">
+<g data-legend-sample="association">
+<path data-legend-kind="association" data-directionality="undirected" d="M 21 11 H 153" fill="none" stroke="#94a3b8" stroke-width="2" stroke-dasharray="7 4"/>
+<circle data-legend-endpoint="source" cx="21" cy="11" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/><circle data-legend-endpoint="target" cx="153" cy="11" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/><g data-legend-badge="source">
+<rect x="31" y="2" width="32" height="18" rx="4" fill="#ffffff" stroke="#94a3b8" stroke-width="2" stroke-dasharray="7 4"/><text x="47" y="15" text-anchor="middle" font-size="11" fill="#334155">[12]</text>
+</g>
+<g data-legend-badge="target">
+<rect x="111" y="2" width="32" height="18" rx="4" fill="#ffffff" stroke="#94a3b8" stroke-width="2" stroke-dasharray="7 4"/><text x="127" y="15" text-anchor="middle" font-size="11" fill="#334155">[12]</text>
+</g>
+</g>
+<text x="174" y="12" font-weight="700">Association</text>
+<text x="174" y="30">Dashed, undirected relationship.</text>
+<text x="174" y="48">Matching badges identify the same</text>
+<text x="174" y="66">Terraform-backed relationship at</text>
+<text x="174" y="84">both attachment points.</text>
+</g>
+<g data-legend-entry="directed-association" transform="translate(0 238)">
+<g data-legend-sample="directed-association">
+<path data-legend-kind="directed-association" data-directionality="directed" d="M 21 11 H 153" fill="none" stroke="#94a3b8" stroke-width="2" stroke-dasharray="7 4" marker-end="url(#arrow)"/>
+<circle data-legend-endpoint="source" cx="21" cy="11" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/><circle data-legend-endpoint="target" cx="153" cy="11" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/><path data-legend-arrow="true" d="M 146.7 7.5 L 153.7 11 L 146.7 14.5 Z" fill="#94a3b8"/>
+<g data-legend-badge="source">
+<rect x="31" y="2" width="32" height="18" rx="4" fill="#ffffff" stroke="#94a3b8" stroke-width="2" stroke-dasharray="7 4"/><text x="47" y="15" text-anchor="middle" font-size="11" fill="#334155">[12]</text>
+</g>
+<g data-legend-badge="target">
+<rect x="111" y="2" width="32" height="18" rx="4" fill="#ffffff" stroke="#94a3b8" stroke-width="2" stroke-dasharray="7 4"/><text x="127" y="15" text-anchor="middle" font-size="11" fill="#334155">[12]</text>
+</g>
+</g>
+<text x="174" y="12" font-weight="700">Directed Association</text>
+<text x="174" y="30">Dashed line from a Route to its</text>
+<text x="174" y="48">next hop. The destination arrow</text>
+<text x="174" y="66">expresses direction; matching</text>
+<text x="174" y="84">badges identify the same</text>
+<text x="174" y="102">relationship.</text>
+</g>
+<g data-legend-entry="connection" transform="translate(492 238)">
+<g data-legend-sample="connection">
+<path data-legend-kind="connection" data-directionality="undirected" d="M 21 11 H 153" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-dasharray="0 3.5" stroke-linecap="round"/>
+<circle data-legend-endpoint="source" cx="21" cy="11" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/><circle data-legend-endpoint="target" cx="153" cy="11" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+<text x="174" y="12" font-weight="700">Connection</text>
+<text x="174" y="30">Thicker dotted line shows an</text>
+<text x="174" y="48">inferred, undirected connection;</text>
+<text x="174" y="66">this does not guarantee actual</text>
+<text x="174" y="84">network reachability.</text>
+</g>
+<g data-legend-entry="containment" transform="translate(0 362)">
+<g data-legend-sample="containment">
+<g data-legend-kind="containment" fill="none" stroke="#94a3b8"><rect x="65" y="2" width="44" height="28" rx="4"/><rect x="74" y="12" width="26" height="12" rx="2"/></g>
+</g>
+<text x="174" y="12" font-weight="700">Containment</text>
+<text x="174" y="30">Nested boxes show containment;</text>
+<text x="174" y="48">nesting replaces a redundant</text>
+<text x="174" y="66">relationship line.</text>
+</g>
+<text x="16" y="462">Hollow circles mark resource/card attachment points; neither end of an undirected line is a directional start.</text>
+<text x="16" y="480">Filled internal dots mark bundle junctions.</text>
+<text x="16" y="506">Matching [N] badges identify the same Terraform-backed relationship and its Relationship Resources entry. They do</text>
+<text x="16" y="524">not express direction or count connections. Reference-only Connections and Dependencies have no number.</text>
+</g>
+<g transform="translate(0 558)">
+<g data-annotation-area="true">
+<g data-annotation-card="true" transform="translate(40 160)"><rect width="632" height="212" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-annotation-section="Logical Components"><rect width="632" height="212" rx="12" fill="#f5f3ff" stroke="#a78bfa"/><text x="16" y="28" font-size="15" font-weight="700" fill="#6d28d9">Logical Components</text><g data-annotation-card="true" transform="translate(16 48)"><rect width="600" height="148" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g id="architecture-73796e7468657469633a366637323637363136653639376136313734363936663665356637323666366637342d36313737373335663666373236373631366536393761363137343639366636653733356636663732363736313665363937613631373436393666366532653664363136393665326537323666366637343733356233303564" data-architecture-id="synthetic:6f7267616e697a6174696f6e5f726f6f74-6177735f6f7267616e697a6174696f6e735f6f7267616e697a6174696f6e2e6d61696e2e726f6f74735b305d" data-entity-kind="synthetic" data-component-id="organization_root:aws_organizations_organization.main.roots[0]" data-component-kind="organization_root"><title>Derived Organization Root: aws_organizations_organization.main.roots[0]</title><text x="16" y="28" font-size="13" font-weight="700" fill="#5b21b6">Derived Organization Root: aws_organizations_organization.main.roots[0]</text>
+<text data-component-scope="true" x="16" y="48" font-size="12" fill="#64748b">Source Organization scope: AWS Organizations Global</text>
+<g data-component-member="true" transform="translate(16 68)"><a href="#resource-6177735f6f7267616e697a6174696f6e735f6f7267616e697a6174696f6e2e6d61696e-current" data-source-address="aws_organizations_organization.main"><title>module.root.aws_organizations_organization.main; unchanged</title><text font-size="12" fill="#334155">
+<tspan x="0" y="20" xml:space="preserve">unchanged: aws_organizations_organization.main</tspan>
+</text><text data-member-scope="true" x="0" y="40" font-size="12" fill="#64748b">AWS Organizations Global</text>
+<line data-member-underline="true" x1="0" y1="48" x2="568" y2="48" stroke="#64748b" stroke-width="2"/>
+</a></g>
+</g>
+</g>
+</g></g>
+</g>
+<g data-architecture="true" transform="translate(0 236)">
+<rect x="35" y="160" width="2828" height="514" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-dasharray="5 4"/><text x="52" y="185" font-size="13" font-weight="700" fill="#475569"><title>root</title>root</text>
+<path d="M 558 294 L 574 294 Q 582 294 582 286 L 582 269 Q 582 261 590 261 L 658 261 " data-edge-kind="dependency" data-directionality="directed" data-source="resource-6177735f6f7267616e697a6174696f6e735f6f7267616e697a6174696f6e2e6d61696e-current" data-target="resource-6177735f6f7267616e697a6174696f6e735f6f7267616e697a6174696f6e616c5f756e69742e656e67696e656572696e67-current" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>aws_organizations_organization.main → aws_organizations_organizational_unit.engineering</title></path>
+<path d="M 1298 294 L 1317.5 294 Q 1322 294 1322 298.5 L 1322 298.5 Q 1322 303 1326.5 303 L 1398 303 " data-edge-kind="dependency" data-directionality="directed" data-source="resource-6177735f6f7267616e697a6174696f6e735f6f7267616e697a6174696f6e616c5f756e69742e656e67696e656572696e67-current" data-target="resource-6177735f6f7267616e697a6174696f6e735f6163636f756e742e73616e64626f78-current" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>aws_organizations_organizational_unit.engineering → aws_organizations_account.sandbox</title></path>
+<path d="M 1298 294 L 1314 294 Q 1322 294 1322 302 L 1322 502 Q 1322 510 1330 510 L 1398 510 " data-edge-kind="dependency" data-directionality="directed" data-source="resource-6177735f6f7267616e697a6174696f6e735f6f7267616e697a6174696f6e616c5f756e69742e656e67696e656572696e67-current" data-target="resource-6177735f6f7267616e697a6174696f6e735f6f7267616e697a6174696f6e616c5f756e69742e706c6174666f726d-current" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>aws_organizations_organizational_unit.engineering → aws_organizations_organizational_unit.platform</title></path>
+<path d="M 2038 554 L 2054 554 Q 2062 554 2062 546 L 2062 540 Q 2062 532 2070 532 L 2138 532 " data-edge-kind="dependency" data-directionality="directed" data-source="resource-6177735f6f7267616e697a6174696f6e735f6f7267616e697a6174696f6e616c5f756e69742e706c6174666f726d-current" data-target="resource-6177735f6f7267616e697a6174696f6e735f6163636f756e742e70726f64756374696f6e-current" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>aws_organizations_organizational_unit.platform → aws_organizations_account.production</title></path>
+<circle data-junction-edges="[[&quot;resource-6177735f6f7267616e697a6174696f6e735f6f7267616e697a6174696f6e616c5f756e69742e656e67696e656572696e67-current&quot;,&quot;resource-6177735f6f7267616e697a6174696f6e735f6163636f756e742e73616e64626f78-current&quot;]]" cx="1322" cy="303" r="3" fill="#94a3b8"/>
+<g id="resource-6177735f6f7267616e697a6174696f6e735f6163636f756e742e70726f64756374696f6e-current" data-architecture-id="terraform:6177735f6f7267616e697a6174696f6e735f6163636f756e742e70726f64756374696f6e-current" data-qualified-address="module.root.aws_organizations_account.production" data-terraform-address="aws_organizations_account.production"><title>module.root.aws_organizations_account.production — unchanged</title>
+<rect x="2138" y="437" width="640" height="190" rx="8" fill="#f8fafc" stroke="#64748b" stroke-width="1.5" data-mode="managed"/>
+<text x="2150" y="465" font-size="11" fill="#64748b">aws_organizations_account · unchanged</text>
+<rect data-service-badge="true" data-service-category="neutral" data-service-full-name="AWS Organizations" data-display-name="AWS Organizations" x="2563" y="445" width="207" height="32" rx="4" fill="#e2e8f0"/><text data-service-name="true" x="2573" y="467" font-size="18" font-weight="700" fill="#0f172a" xml:space="preserve">AWS Organizations</text><text x="2150" y="498" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_organizations_account.production</text>
+<g data-resource-references="true"><title>Deployment scope: no visible verified match
+Organization parent: aws_organizations_organizational_unit.platform [parent_id; direct attribute reference]</title><text x="2150" y="539" font-size="11" font-weight="700" fill="#475569">Uses</text><g><title>Deployment scope: no visible verified match</title><text x="2150" y="557" font-size="11" fill="#334155" xml:space="preserve">Deployment scope: no visible verified match</text>
+</g><a href="#resource-6177735f6f7267616e697a6174696f6e735f6f7267616e697a6174696f6e616c5f756e69742e706c6174666f726d-current" data-reference-attribute="parent_id"><title>Organization parent: aws_organizations_organizational_unit.platform [parent_id; direct attribute reference]</title><text x="2150" y="575" font-size="11" fill="#334155" xml:space="preserve">Organization parent: aws_organizations_organizational_unit.platform</text>
+</a></g>
+</g>
+<g id="resource-6177735f6f7267616e697a6174696f6e735f6163636f756e742e73616e64626f78-current" data-architecture-id="terraform:6177735f6f7267616e697a6174696f6e735f6163636f756e742e73616e64626f78-current" data-qualified-address="module.root.aws_organizations_account.sandbox" data-terraform-address="aws_organizations_account.sandbox"><title>module.root.aws_organizations_account.sandbox — unchanged</title>
+<rect x="1398" y="208" width="640" height="190" rx="8" fill="#f8fafc" stroke="#64748b" stroke-width="1.5" data-mode="managed"/>
+<text x="1410" y="236" font-size="11" fill="#64748b">aws_organizations_account · unchanged</text>
+<rect data-service-badge="true" data-service-category="neutral" data-service-full-name="AWS Organizations" data-display-name="AWS Organizations" x="1823" y="216" width="207" height="32" rx="4" fill="#e2e8f0"/><text data-service-name="true" x="1833" y="238" font-size="18" font-weight="700" fill="#0f172a" xml:space="preserve">AWS Organizations</text><text x="1410" y="269" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_organizations_account.sandbox</text>
+<g data-resource-references="true"><title>Deployment scope: no visible verified match
+Organization parent: aws_organizations_organizational_unit.engineering [parent_id; direct attribute reference]</title><text x="1410" y="310" font-size="11" font-weight="700" fill="#475569">Uses</text><g><title>Deployment scope: no visible verified match</title><text x="1410" y="328" font-size="11" fill="#334155" xml:space="preserve">Deployment scope: no visible verified match</text>
+</g><a href="#resource-6177735f6f7267616e697a6174696f6e735f6f7267616e697a6174696f6e616c5f756e69742e656e67696e656572696e67-current" data-reference-attribute="parent_id"><title>Organization parent: aws_organizations_organizational_unit.engineering [parent_id; direct attribute reference]</title><text x="1410" y="346" font-size="11" fill="#334155" xml:space="preserve">Organization parent: aws_organizations_organizational_unit.engineering</text>
+</a></g>
+</g>
+<g id="resource-6177735f6f7267616e697a6174696f6e735f6f7267616e697a6174696f6e2e6d61696e-current" data-architecture-id="terraform:6177735f6f7267616e697a6174696f6e735f6f7267616e697a6174696f6e2e6d61696e-current" data-qualified-address="module.root.aws_organizations_organization.main" data-terraform-address="aws_organizations_organization.main"><title>module.root.aws_organizations_organization.main — unchanged</title>
+<rect x="60" y="238" width="498" height="112" rx="8" fill="#f8fafc" stroke="#64748b" stroke-width="1.5" data-mode="managed"/>
+<text x="72" y="266" font-size="11" fill="#64748b">aws_organizations_organi… · unchanged</text>
+<rect data-service-badge="true" data-service-category="neutral" data-service-full-name="AWS Organizations" data-display-name="AWS Organizations" x="343" y="246" width="207" height="32" rx="4" fill="#e2e8f0"/><text data-service-name="true" x="353" y="268" font-size="18" font-weight="700" fill="#0f172a" xml:space="preserve">AWS Organizations</text><text x="72" y="299" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_organizations_organization.main</text>
+</g>
+<g id="resource-6177735f6f7267616e697a6174696f6e735f6f7267616e697a6174696f6e616c5f756e69742e656e67696e656572696e67-current" data-architecture-id="terraform:6177735f6f7267616e697a6174696f6e735f6f7267616e697a6174696f6e616c5f756e69742e656e67696e656572696e67-current" data-qualified-address="module.root.aws_organizations_organizational_unit.engineering" data-terraform-address="aws_organizations_organizational_unit.engineering"><title>module.root.aws_organizations_organizational_unit.engineering — unchanged</title>
+<rect x="658" y="208" width="640" height="172" rx="8" fill="#f8fafc" stroke="#64748b" stroke-width="1.5" data-mode="managed"/>
+<text x="670" y="236" font-size="11" fill="#64748b">aws_organizations_organi… · unchanged</text>
+<rect data-service-badge="true" data-service-category="neutral" data-service-full-name="AWS Organizations" data-display-name="AWS Organizations" x="1083" y="216" width="207" height="32" rx="4" fill="#e2e8f0"/><text data-service-name="true" x="1093" y="238" font-size="18" font-weight="700" fill="#0f172a" xml:space="preserve">AWS Organizations</text><text x="670" y="269" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_organizations_organizational_unit.engineering</text>
+<g data-resource-references="true"><title>Organization Root parent: aws_organizations_organization.main [parent_id; direct attribute reference]</title><text x="670" y="310" font-size="11" font-weight="700" fill="#475569">Uses</text><a href="#architecture-73796e7468657469633a366637323637363136653639376136313734363936663665356637323666366637342d36313737373335663666373236373631366536393761363137343639366636653733356636663732363736313665363937613631373436393666366532653664363136393665326537323666366637343733356233303564" data-reference-attribute="parent_id"><title>Organization Root parent: aws_organizations_organization.main [parent_id; direct attribute reference]</title><text x="670" y="328" font-size="11" fill="#334155" xml:space="preserve">Organization Root parent: aws_organizations_organization.main.roots[0]</text>
+</a></g>
+</g>
+<g id="resource-6177735f6f7267616e697a6174696f6e735f6f7267616e697a6174696f6e616c5f756e69742e706c6174666f726d-current" data-architecture-id="terraform:6177735f6f7267616e697a6174696f6e735f6f7267616e697a6174696f6e616c5f756e69742e706c6174666f726d-current" data-qualified-address="module.root.aws_organizations_organizational_unit.platform" data-terraform-address="aws_organizations_organizational_unit.platform"><title>module.root.aws_organizations_organizational_unit.platform — unchanged</title>
+<rect x="1398" y="446" width="640" height="172" rx="8" fill="#f8fafc" stroke="#64748b" stroke-width="1.5" data-mode="managed"/>
+<text x="1410" y="474" font-size="11" fill="#64748b">aws_organizations_organi… · unchanged</text>
+<rect data-service-badge="true" data-service-category="neutral" data-service-full-name="AWS Organizations" data-display-name="AWS Organizations" x="1823" y="454" width="207" height="32" rx="4" fill="#e2e8f0"/><text data-service-name="true" x="1833" y="476" font-size="18" font-weight="700" fill="#0f172a" xml:space="preserve">AWS Organizations</text><text x="1410" y="507" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_organizations_organizational_unit.platform</text>
+<g data-resource-references="true"><title>Organization parent: aws_organizations_organizational_unit.engineering [parent_id; direct attribute reference]</title><text x="1410" y="548" font-size="11" font-weight="700" fill="#475569">Uses</text><a href="#resource-6177735f6f7267616e697a6174696f6e735f6f7267616e697a6174696f6e616c5f756e69742e656e67696e656572696e67-current" data-reference-attribute="parent_id"><title>Organization parent: aws_organizations_organizational_unit.engineering [parent_id; direct attribute reference]</title><text x="1410" y="566" font-size="11" fill="#334155" xml:space="preserve">Organization parent: aws_organizations_organizational_unit.engineering</text>
+</a></g>
+</g>
+<g data-endpoints="true" data-source="resource-6177735f6f7267616e697a6174696f6e735f6f7267616e697a6174696f6e2e6d61696e-current" data-target="resource-6177735f6f7267616e697a6174696f6e735f6f7267616e697a6174696f6e616c5f756e69742e656e67696e656572696e67-current" aria-hidden="true">
+<circle data-endpoint="source" cx="558" cy="294" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+<g data-endpoints="true" data-source="resource-6177735f6f7267616e697a6174696f6e735f6f7267616e697a6174696f6e616c5f756e69742e656e67696e656572696e67-current" data-target="resource-6177735f6f7267616e697a6174696f6e735f6163636f756e742e73616e64626f78-current" aria-hidden="true">
+<circle data-endpoint="source" cx="1298" cy="294" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+<g data-endpoints="true" data-source="resource-6177735f6f7267616e697a6174696f6e735f6f7267616e697a6174696f6e616c5f756e69742e656e67696e656572696e67-current" data-target="resource-6177735f6f7267616e697a6174696f6e735f6f7267616e697a6174696f6e616c5f756e69742e706c6174666f726d-current" aria-hidden="true">
+<circle data-endpoint="source" cx="1298" cy="294" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+<g data-endpoints="true" data-source="resource-6177735f6f7267616e697a6174696f6e735f6f7267616e697a6174696f6e616c5f756e69742e706c6174666f726d-current" data-target="resource-6177735f6f7267616e697a6174696f6e735f6163636f756e742e70726f64756374696f6e-current" aria-hidden="true">
+<circle data-endpoint="source" cx="2038" cy="554" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+</g>
+</g>
+</g>
+</svg>

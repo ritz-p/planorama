@@ -24,16 +24,17 @@ Service names wrap using shared measurement on spatial cards, container headings
 and Logical Resources. Resource identity, action, managed/data state, relationships,
 coverage and viewer operations retain their meaning.
 
-The original Planorama Terraform state-file SVG and its MIT license/notice remain
-in `assets/icons/terraform` as source assets, but are not embedded by the renderer.
+Terraform artwork, including the original Planorama state-file SVG, and its
+associated source licenses and notices are no longer bundled.
 Cargo dependency notices and the repository licenses remain in release packages.
-AWS-specific notices are removed with the AWS artwork.
 
 ## Existing distributions and site follow-up
 
 On 2026-10-25, GitHub Releases for ritz-p/planorama contained no releases
-(`gh release list --limit 100`). Git history still contains previous artwork;
-this change does not rewrite history. The Actions artifact inventory on that date contained 557 entries: 160 native
+(`gh release list --limit 100`). Branch and tag history has been rewritten to remove
+AWS and Terraform artwork and older diagrams that embedded it. GitHub-managed PR
+references, old-SHA caches and local backups can still retain previous artwork.
+The Actions artifact inventory on that date contained 557 entries: 160 native
 archives (40 per supported target), 168 layout-quality bundles, 92 SVG-example
 bundles, 27 spacing-calibration bundles and 110 routing-regression logs. Native
 archives and diagram bundles from icon-enabled revisions are retirement targets;
@@ -45,15 +46,10 @@ outputs must not be republished as current builds. Rebuild native binaries, Wasm
 bindings and archives from this revision, and retire any retained old build
 artifacts through a separately authorized cleanup.
 
-The local planorama-site checkout has unrelated uncommitted work. Its
-`samples/manifest.json` references engine commit
-`65782ebfbad9ad9fcf2a6cb1232cf22eda5f319d`; its `dist/licenses/AWS-ICONS-NOTICE.txt`
-is a stale build output. Follow-up in that repository must update the pinned
-engine and bindings together, rebuild public samples with service-name output,
-remove obsolete AWS notice-copying steps and direct artwork, and replace deployed
-Wasm/demo assets and cached versions. Check the deployed asset URLs after publishing;
-a local rebuild alone does not retire an existing deployment or browser cache.
-Existing site work and deployments are not modified by this PR.
+After a history rewrite, rebuild planorama-site using one resolved new `main`
+commit consistently for the engine, bindings, samples and build metadata. Preserve
+unrelated local work. Check the deployed asset URLs after publishing; a local
+rebuild alone does not retire an existing deployment or browser cache.
 
 User-supplied or remote artwork is a separate feature and permission question;
 it is not an alternative implementation of removal.
