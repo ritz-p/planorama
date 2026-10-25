@@ -86,6 +86,12 @@ without reducing the font or truncating text. Logical resource actions share the
 label row; embedded members retain their combined address/action line below the
 label. There is no smaller-label exception for logical or embedded rows.
 
+Embedded Terraform resources, including Routes, have a separate complete
+`resource_type · operation` heading above their badges and address. Long headings
+wrap and reserve their height in the parent layout. Import and state-removal
+operations retain their composed labels. Inline route entries have no independent
+Terraform identity and do not receive a resource-type heading.
+
 | Presentation | Text | Height | Horizontal padding |
 | --- | --- | --- | --- |
 | Former service icon | SVG artwork | 24px (24×24px square) | 8px gap to address |

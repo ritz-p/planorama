@@ -119,7 +119,9 @@ fn aurora_long_members_lifecycle_html_and_named_states_remain_accessible() {
             let rect = card.children().find(|n| n.has_tag_name("rect")).unwrap();
             let top: usize = rect.attribute("y").unwrap().parse().unwrap();
             let height: usize = rect.attribute("height").unwrap().parse().unwrap();
-            for text in card.descendants().filter(|n| n.has_tag_name("text")) {
+            for text in card.descendants().filter(|n| {
+                (n.has_tag_name("text") && n.attribute("y").is_some()) || n.has_tag_name("tspan")
+            }) {
                 let y: usize = text.attribute("y").unwrap().parse().unwrap();
                 assert!(y > top && y < top + height);
             }

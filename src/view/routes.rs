@@ -28,6 +28,27 @@ pub(crate) struct Card<'a> {
 }
 
 impl Card<'_> {
+    pub fn type_heading(&self) -> Option<String> {
+        self.node.map(|node| {
+            let operation = node.metadata.state_removal.map_or_else(
+                || format!("{:?}", node.action).to_lowercase(),
+                |removal| removal.label().into(),
+            );
+            let import = if node.metadata.import.is_some() {
+                "import / "
+            } else {
+                ""
+            };
+            format!("{} · {import}{operation}", node.resource_type)
+        })
+    }
+
+    pub fn type_heading_height(&self) -> usize {
+        self.type_heading().map_or(0, |heading| {
+            super::text::wrap_address(&heading, LINE_LIMIT).len() * 18 + 8
+        })
+    }
+
     pub fn badge_height(&self) -> usize {
         self.node.map_or(0, |node| {
             super::card::import_height(node)
@@ -42,7 +63,8 @@ impl Card<'_> {
     }
 
     pub fn height(&self) -> usize {
-        24 + self.badge_height()
+        24 + self.type_heading_height()
+            + self.badge_height()
             + self
                 .node
                 .filter(|node| node.member_owner.is_some())

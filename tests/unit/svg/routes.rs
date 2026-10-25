@@ -6,6 +6,104 @@ fn input() -> Value {
     serde_json::from_str(include_str!("../../fixtures/routes-plan.json")).unwrap()
 }
 
+#[test]
+fn embedded_resource_type_headings_preserve_operations_and_fit() {
+    for fixture in [
+        include_str!("../../fixtures/aurora-plan.json"),
+        include_str!("../../fixtures/routes-plan.json"),
+        include_str!("../../fixtures/certificate-cards-plan.json"),
+    ] {
+        let source = semantic::transform(&plan::parse(fixture).unwrap());
+        let original = view::single(&source, &view::Options::default()).unwrap();
+        for (action, removal, import, expected) in [
+            (Action::Create, None, false, "create"),
+            (Action::Update, None, false, "update"),
+            (Action::Delete, None, false, "delete"),
+            (Action::Unchanged, None, false, "unchanged"),
+            (Action::Replace, None, false, "replace"),
+            (Action::Update, None, true, "import / update"),
+            (
+                Action::Create,
+                Some(crate::model::StateRemoval::ForgetThenCreate),
+                false,
+                "forget then create",
+            ),
+        ] {
+            let mut graph = (*original).clone();
+            let embedded: Vec<_> = graph
+                .nodes
+                .iter()
+                .enumerate()
+                .filter(|(_, node)| view::routes::owner(&graph, node).is_some())
+                .map(|(index, _)| index)
+                .collect();
+            assert!(!embedded.is_empty());
+            for &index in &embedded {
+                let node = &mut graph.nodes[index];
+                node.action = action;
+                node.metadata.state_removal = removal;
+                node.metadata.import = import.then(Default::default);
+                if action == Action::Replace {
+                    node.resource_type = "aws_extremely_long_embedded_resource_type_that_requires_multiple_header_lines".into();
+                }
+            }
+            let layout = Layout::new(&graph);
+            for content in [svg::Content::Standard, svg::Content::ValueFree] {
+                let output = svg::render_content(&graph, &layout, svg::Options::default(), content);
+                let doc = roxmltree::Document::parse(&output).unwrap();
+                for &index in &embedded {
+                    let node = &graph.nodes[index];
+                    let card = doc
+                        .descendants()
+                        .find(|element| {
+                            element.attribute("data-architecture-id")
+                                == Some(node.entity.id.as_str())
+                                && (element.attribute("data-embedded-member").is_some()
+                                    || element.attribute("data-embedded-route").is_some())
+                        })
+                        .unwrap();
+                    let heading = card
+                        .children()
+                        .find(|element| {
+                            element.attribute("data-resource-type-heading") == Some("true")
+                        })
+                        .unwrap();
+                    let text: String = heading
+                        .descendants()
+                        .filter(|element| element.is_text())
+                        .filter_map(|element| element.text())
+                        .collect();
+                    assert_eq!(text, format!("{} · {expected}", node.resource_type));
+                    let bounds = layout.bounds[index];
+                    let mut last_y = bounds.origin.y;
+                    for line in heading
+                        .children()
+                        .filter(|element| element.has_tag_name("tspan"))
+                    {
+                        let x = line.attribute("x").unwrap().parse::<usize>().unwrap();
+                        let y = line.attribute("y").unwrap().parse::<usize>().unwrap();
+                        assert!(x >= bounds.origin.x + 12);
+                        assert!(
+                            x + view::text::width(line.text().unwrap()) * 8 <= bounds.right() - 12
+                        );
+                        assert!(y > last_y && y < bounds.origin.y + bounds.height - 12);
+                        last_y = y;
+                    }
+                    let next = heading.next_sibling_element().unwrap();
+                    assert!(next.attribute("y").map_or_else(
+                        || next.descendants().any(|element| {
+                            element
+                                .attribute("y")
+                                .is_some_and(|y| y.parse::<usize>().unwrap() > last_y)
+                        }),
+                        |y| y.parse::<usize>().unwrap() > last_y
+                    ));
+                }
+            }
+        }
+    }
+}
+
 fn output(value: &Value) -> String {
     let graph = semantic::transform(&plan::parse(&value.to_string()).unwrap());
     let layout = Layout::new(&graph);
@@ -266,7 +364,9 @@ fn verify_cards(svg: &str) {
         assert!(
             y > number(outer, "y") && y + height < number(outer, "y") + number(outer, "height")
         );
-        for text in card.descendants().filter(|n| n.has_tag_name("text")) {
+        for text in card.descendants().filter(|n| {
+            (n.has_tag_name("text") && n.attribute("y").is_some()) || n.has_tag_name("tspan")
+        }) {
             assert!(number(text, "y") > y && number(text, "y") < y + height);
         }
     }
@@ -321,7 +421,10 @@ fn route_children_keep_identity_palette_metadata_and_reference_edges() {
                 .unwrap()
                 .parse::<usize>()
                 .unwrap();
-        let heading = child.children().find(|n| n.has_tag_name("text")).unwrap();
+        let heading = child
+            .children()
+            .find(|n| n.has_tag_name("text") && n.attribute("data-resource-type-heading").is_none())
+            .unwrap();
         assert!(badge_bottom + 10 < heading.attribute("y").unwrap().parse::<usize>().unwrap());
         let visible: String = child
             .children()

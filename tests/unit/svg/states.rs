@@ -74,10 +74,9 @@ fn embedded_members_keep_logical_remote_references_within_bounds() {
         .unwrap();
     let y: usize = rect.attribute("y").unwrap().parse().unwrap();
     let height: usize = rect.attribute("height").unwrap().parse().unwrap();
-    for text in member
-        .descendants()
-        .filter(|node| node.has_tag_name("text"))
-    {
+    for text in member.descendants().filter(|node| {
+        (node.has_tag_name("text") && node.attribute("y").is_some()) || node.has_tag_name("tspan")
+    }) {
         let baseline: usize = text.attribute("y").unwrap().parse().unwrap();
         assert!(baseline > y && baseline < y + height);
     }
