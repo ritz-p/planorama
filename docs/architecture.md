@@ -122,9 +122,11 @@ label on its right, padded inside the section frame. Heading, count and label ar
 measured together; wrapped headers reserve space before the resource rows.
 Rows sort by architecture identity within each
 subsection; wrappers introduce no resource or DOM identity. Each row retains the full selected
-address, action label, deployment-scope label, role, Uses/Dependencies
+address, deployment-scope label, role, Uses/Dependencies
 and import/move/deposed information, with one action-colored underline below its
-complete content. `view::scope` supplies the reusable label from resolved scope
+complete content. Plain actions appear in the counted section headings; individual
+rows retain composed import/state-removal operation labels. `view::scope` supplies
+the reusable label from resolved scope
 and provider identity. Its wrapped height is reserved before group-card packing.
 Data rows use a dashed underline. Groups sort by their keys. Every selected row
 remains visible; height grows with action headings, borders, wrapped role
