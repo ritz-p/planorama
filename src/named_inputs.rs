@@ -5,11 +5,33 @@ use std::collections::{BTreeMap, BTreeSet};
 #[path = "../tests/unit/named_inputs.rs"]
 mod tests;
 
+#[cfg(test)]
+#[path = "../tests/unit/named_mappings.rs"]
+mod mapping_tests;
+
 #[derive(serde::Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct NamedInput {
     pub state: String,
     pub json: String,
+}
+
+#[derive(Clone, Debug, serde::Deserialize, serde::Serialize)]
+#[serde(deny_unknown_fields)]
+pub struct RemoteStateMapping {
+    pub consumer: String,
+    pub remote: String,
+    pub producer: String,
+}
+
+impl RemoteStateMapping {
+    pub(crate) fn validate(&self) -> Result<crate::model::cross_state::Mapping, Error> {
+        if self.remote.len() > 4096 {
+            return Err(Error::ResourceLimit);
+        }
+        crate::model::cross_state::Mapping::new(&self.consumer, &self.remote, &self.producer)
+            .map_err(|_| Error::InvalidRemoteStateMapping)
+    }
 }
 
 fn parse(inputs: &[NamedInput]) -> Result<crate::model::MultiPlan, Error> {
@@ -81,6 +103,7 @@ pub(crate) async fn generate_step(
     inputs: &[NamedInput],
     options: &Options,
 ) -> Result<Generated, Error> {
+    crate::generation::validate_option_sizes(options)?;
     if (options.html_diagnostics || options.html_semantic_diagnostics)
         && !matches!(options.format, OutputFormat::Html)
     {
@@ -124,11 +147,30 @@ pub(crate) async fn generate_step(
     let plans = crate::model::MultiPlan { states };
     crate::work::checkpoint().await;
     crate::generation::progress::report("selection");
+    let mappings = options
+        .remote_state_mappings
+        .iter()
+        .map(RemoteStateMapping::validate)
+        .collect::<Result<Vec<_>, _>>()?;
+    semantic::cross_state::validate_mappings(&plans, &mappings).map_err(|reason| match reason {
+        crate::model::cross_state::Failure::MissingState => Error::UnknownRemoteStateMapping,
+        crate::model::cross_state::Failure::Ambiguous => Error::AmbiguousRemoteStateMapping,
+        _ => Error::InvalidRemoteStateMapping,
+    })?;
+    let cross = semantic::cross_state::resolve_step(&plans, &mappings).await;
+    crate::work::check_limit(edges + cross.edges.len(), 1024).await;
     let diagnostics = plans
         .states
         .values()
         .flat_map(semantic::diagnostics::collect)
         .map(|diagnostic| diagnostic.reason.description().to_owned())
+        .chain(
+            cross
+                .diagnostics
+                .iter()
+                .filter(|_| !mappings.is_empty())
+                .map(|diagnostic| diagnostic.reason.description().to_owned()),
+        )
         .collect::<BTreeSet<_>>()
         .into_iter()
         .collect();
@@ -138,7 +180,7 @@ pub(crate) async fn generate_step(
             .iter()
             .map(|(id, plan)| (id.clone(), semantic::transform(plan)))
             .collect(),
-        relationships: semantic::cross_state::resolve(&plans, &[]).edges,
+        relationships: cross.edges,
     };
     let architecture = view::apply(&architecture, &filter).map_err(|_| Error::SelectionFailed)?;
     drop(plans);
@@ -152,11 +194,12 @@ pub(crate) async fn generate_step(
     )
     .await;
     crate::work::check_limit(
-        architecture
-            .states
-            .values()
-            .map(|graph| graph.edges.len())
-            .sum(),
+        architecture.relationships().len()
+            + architecture
+                .states
+                .values()
+                .map(|graph| graph.edges.len())
+                .sum::<usize>(),
         1024,
     )
     .await;

@@ -28,6 +28,7 @@ pub struct Options {
     pub focus: Option<String>,
     pub focus_depth: Option<usize>,
     pub modules: Vec<String>,
+    pub remote_state_mappings: Vec<crate::RemoteStateMapping>,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, serde::Serialize)]
@@ -40,6 +41,9 @@ pub enum Error {
     InvalidStateName,
     DuplicateStateName,
     EmptyInputs,
+    InvalidRemoteStateMapping,
+    UnknownRemoteStateMapping,
+    AmbiguousRemoteStateMapping,
     SelectionFailed,
     GenerationFailed,
     GenerationClosed,
@@ -58,6 +62,9 @@ impl std::fmt::Display for Error {
             Self::InvalidStateName => "State names must contain 1–64 ASCII letters, digits, '.', '_' or '-'.",
             Self::DuplicateStateName => "Each input must have a unique state name.",
             Self::EmptyInputs => "Select at least one named input (at most 64).",
+            Self::InvalidRemoteStateMapping => "Expected an exact, unique Terraform remote-state data source in the consumer state.",
+            Self::UnknownRemoteStateMapping => "Both mapped states must be loaded named inputs.",
+            Self::AmbiguousRemoteStateMapping => "A remote-state data source cannot map to different producer states.",
             Self::SelectionFailed => "The requested selection could not be resolved.",
             Self::GenerationFailed => "Diagram generation failed.",
             Self::GenerationClosed => "Generation has completed or was cancelled.",
@@ -89,6 +96,10 @@ pub fn generate(json: &str, options: &Options) -> Result<Generated, Error> {
 }
 
 async fn generate_step(json: &str, options: &Options) -> Result<Generated, Error> {
+    validate_option_sizes(options)?;
+    if !options.remote_state_mappings.is_empty() {
+        return Err(Error::InvalidOptions);
+    }
     if (options.html_diagnostics || options.html_semantic_diagnostics)
         && !matches!(options.format, OutputFormat::Html)
     {
@@ -166,6 +177,9 @@ pub struct Generator {
 impl Generator {
     pub fn new(json: String, options: Options) -> Result<Self, Error> {
         Self::validate_options(&options)?;
+        if !options.remote_state_mappings.is_empty() {
+            return Err(Error::InvalidOptions);
+        }
         if json.len() > MAX_BROWSER_INPUT_BYTES {
             return Err(Error::ResourceLimit);
         }
@@ -189,21 +203,7 @@ impl Generator {
         if options.memory_budget_mib.is_some() {
             return Err(Error::InvalidOptions);
         }
-        if options.modules.len() > 256 || options.spatial_types.len() > 256 {
-            return Err(Error::ResourceLimit);
-        }
-        let mut remaining = MAX_BROWSER_OPTIONS_BYTES;
-        for value in options
-            .modules
-            .iter()
-            .chain(&options.spatial_types)
-            .chain(options.focus.iter())
-        {
-            remaining = remaining
-                .checked_sub(value.len())
-                .ok_or(Error::ResourceLimit)?;
-        }
-        Ok(())
+        validate_option_sizes(options)
     }
 
     fn from_future(future: GenerationFuture) -> Self {
@@ -259,6 +259,36 @@ impl Generator {
     pub fn cancel(&mut self) {
         self.future = None;
     }
+}
+
+pub(crate) fn validate_option_sizes(options: &Options) -> Result<(), Error> {
+    if options.modules.len() > 256
+        || options.spatial_types.len() > 256
+        || options.remote_state_mappings.len() > 256
+    {
+        return Err(Error::ResourceLimit);
+    }
+    let mut remaining = MAX_BROWSER_OPTIONS_BYTES;
+    for value in options
+        .modules
+        .iter()
+        .chain(&options.spatial_types)
+        .chain(options.focus.iter())
+        .chain(
+            options
+                .remote_state_mappings
+                .iter()
+                .flat_map(|mapping| [&mapping.consumer, &mapping.remote, &mapping.producer]),
+        )
+    {
+        remaining = remaining
+            .checked_sub(value.len())
+            .ok_or(Error::ResourceLimit)?;
+    }
+    for mapping in &options.remote_state_mappings {
+        mapping.validate()?;
+    }
+    Ok(())
 }
 
 pub(crate) fn parse_input(json: &str) -> Result<crate::model::TerraformPlan, Error> {

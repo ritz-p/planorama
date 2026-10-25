@@ -5,8 +5,9 @@ can connect resources across states using `TerraformRemoteState` provenance.
 
 The [browser generator and library](browser.md#named-state-inputs) also accept
 explicit named plan JSON inputs with state-qualified module and focus pickers.
-They enforce a combined 32 MiB input budget and do not expose remote-state
-mappings or provider evidence. Use the CLI when those features are needed.
+Synchronous calls enforce a combined 32 MiB input budget; resumable jobs use a
+2 MiB aggregate budget. Both support [typed explicit remote-state mappings](browser.md#explicit-remote-state-mappings).
+Provider evidence remains CLI-only.
 
 [Layout diagnostics](layout-diagnostics.md) distinguish per-state layout sizes
 from the full canvas and include final cross-state paths in whole-diagram metrics.

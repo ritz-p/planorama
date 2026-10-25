@@ -22,6 +22,10 @@ impl Mapping {
         let (consumer, remote) = left
             .split_once(':')
             .ok_or("--remote-state requires CONSUMER:ADDRESS=PRODUCER")?;
+        Self::new(consumer, remote, producer)
+    }
+
+    pub fn new(consumer: &str, remote: &str, producer: &str) -> Result<Self, String> {
         if remote.is_empty() || remote.chars().any(char::is_control) {
             return Err("invalid remote-state address".into());
         }

@@ -18,7 +18,7 @@ self.onmessage = ({data}) => {
     let failure = {code: 'generation_failed', message: 'Diagram generation failed.'};
     try {
       const parsed = JSON.parse(error);
-      if (['invalid_state_name', 'duplicate_state_name', 'empty_inputs', 'input_too_large', 'invalid_json', 'unsupported_input', 'invalid_options', 'selection_failed', 'generation_failed'].includes(parsed.code)) failure = parsed;
+      if (['invalid_state_name', 'duplicate_state_name', 'empty_inputs', 'input_too_large', 'invalid_json', 'unsupported_input', 'invalid_options', 'selection_failed', 'generation_failed', 'resource_limit', 'invalid_remote_state_mapping', 'unknown_remote_state_mapping', 'ambiguous_remote_state_mapping'].includes(parsed.code)) failure = parsed;
     } catch {
       // Traps and runtime exceptions must not expose input or implementation details.
     }

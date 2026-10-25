@@ -45,6 +45,9 @@ pub fn configure_memory_budget(mib: u32) -> Result<(), JsValue> {
 }
 
 fn decode_options(options: &str) -> Result<crate::Options, JsValue> {
+    if options.len() > crate::generation::MAX_BROWSER_OPTIONS_BYTES {
+        return Err(error(crate::Error::ResourceLimit));
+    }
     serde_json::from_str(options).map_err(|_| error(crate::Error::InvalidOptions))
 }
 
