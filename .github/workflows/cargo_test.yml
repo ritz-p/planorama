@@ -67,6 +67,10 @@ jobs:
     env:
       TEST_SUITE: ${{ matrix.suite }}
       CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_LINKER: /usr/local/bin/planorama-native-linker
+      RUSTC_WRAPPER: sccache
+      CARGO_INCREMENTAL: '0'
+      SCCACHE_DIR: ${{ runner.temp }}/sccache
+      SCCACHE_CACHE_SIZE: 2G
     steps:
       - uses: actions/checkout@v7.0.1
         with:
@@ -84,15 +88,43 @@ jobs:
         run: |
           sudo sh scripts/install-mold.sh
           sudo install -m 755 scripts/native-linker.sh /usr/local/bin/planorama-native-linker
+      - name: Install compiler cache
+        run: sudo sh scripts/install-sccache.sh
+      - name: Restore compiler cache
+        id: compiler-cache
+        uses: actions/cache/restore@v6.1.0
+        with:
+          path: ${{ env.SCCACHE_DIR }}
+          key: sccache-0.10.0-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('rust-toolchain.toml', 'Cargo.lock', 'Cargo.toml', '.cargo/**', 'build.rs', 'assets/**', 'scripts/install-sccache.sh', 'scripts/native-linker.sh', '.github/workflows/cargo_test.yml') }}-${{ matrix.suite }}-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: |
+            sccache-0.10.0-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('rust-toolchain.toml', 'Cargo.lock', 'Cargo.toml', '.cargo/**', 'build.rs', 'assets/**', 'scripts/install-sccache.sh', 'scripts/native-linker.sh', '.github/workflows/cargo_test.yml') }}-
       - uses: Swatinem/rust-cache@v2.9.2
         with:
           prefix-key: v2-mold-2.40.4
           shared-key: ${{ hashFiles('build.rs', 'assets/**', 'scripts/install-mold.sh', 'scripts/native-linker.sh') }}-tests
           cache-workspace-crates: 'false'
+      - name: Start compiler cache
+        id: compiler-start
+        run: |
+          sccache --start-server
+          sccache --zero-stats
       - name: Compile tests
         run: node .github/scripts/test-suites.cjs "$TEST_SUITE" compile
       - name: Run tests
         run: node .github/scripts/test-suites.cjs "$TEST_SUITE" run
+      - name: Compiler cache statistics
+        id: compiler-statistics
+        if: always() && steps.compiler-start.outcome == 'success'
+        run: |
+          sccache --show-stats
+          node .github/scripts/compiler-cache.cjs
+          sccache --stop-server
+      - name: Save new compiler entries
+        if: success() && steps.compiler-statistics.outputs.save == 'true'
+        uses: actions/cache/save@v6.1.0
+        with:
+          path: ${{ env.SCCACHE_DIR }}
+          key: ${{ steps.compiler-cache.outputs.cache-primary-key }}
 
   tests:
     name: ${{ github.event_name == 'workflow_dispatch' && 'Dispatched Tests' || 'Tests' }}

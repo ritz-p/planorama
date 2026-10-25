@@ -32,6 +32,13 @@ Docker 外では `sudo sh scripts/install-mold.sh` の後、
 Compose 内で無効化するには `docker compose exec -T -e CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_LINKER=cc dev cargo test --locked` を使います。
 linker の切替は Cargo の再ビルドを伴います。比較手順と結果は [build performance](docs/build-performance.md) を参照してください。
 
+Compose は sccache 0.10.0 を compiler wrapper として使い、2 GiB 上限の named volume
+`sccache` にコンパイル結果を保存します。コンテナ再作成後も再利用できます。
+ローカルの incremental compilation は Cargo の既定を維持します。
+統計は `docker compose exec -T dev sccache --show-stats`、無効化は
+`docker compose exec -T -e RUSTC_WRAPPER= dev cargo build --locked` です。
+削除・CI との役割分担・測定条件は [compiler cache](docs/build-performance.md#compiler-cache) を参照してください。
+
 ## 検証
 
 ```sh
