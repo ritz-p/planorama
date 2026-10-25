@@ -88,3 +88,5 @@ examples/aws-aliases-service-names.svg
 examples/encryption.svg
 examples/encryption-service-names.svg
 examples/lambda.svg
+examples/api-gateway-rest.svg
+examples/api-gateway-v2.svg

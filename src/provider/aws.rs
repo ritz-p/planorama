@@ -1,4 +1,5 @@
 mod aliases;
+mod api_gateway;
 mod associations;
 mod autoscaling;
 mod backup;
@@ -41,6 +42,7 @@ mod step_functions_tests;
 #[cfg(test)]
 #[path = "../../tests/unit/semantic/rds_global.rs"]
 mod rds_global_tests;
+mod service_evidence;
 pub(crate) mod service_references;
 pub(crate) use placement::owner_affinities;
 mod routes;

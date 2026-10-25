@@ -42,6 +42,24 @@ class ViewerTests {
         assert.deepEqual(errors, []);
         assert.deepEqual(remote, []);
     }
+    test_api_gateway_references_keep_state_identity_and_hide_payloads() {
+        for (const family of ['rest', 'v2']) {
+            const fixture = `tests/fixtures/api-gateway-${family}-plan.json`;
+            const type = family === 'rest' ? 'aws_api_gateway_integration' : 'aws_apigatewayv2_integration';
+            const attribute = family === 'rest' ? 'uri' : 'integration_uri';
+            this.load('--state', `one=${fixture}`, '--state', `two=${fixture}`);
+            const id = this.choose(`two:${type}.lambda`);
+            const reference = this.find(`[id="${id}"] a[data-reference-attribute="${attribute}"]`);
+            const target = reference.get_attribute('href').slice(1);
+            this.driver.execute_script("arguments[0].dispatchEvent(new MouseEvent('click', {bubbles:true,cancelable:true}))", reference);
+            this.assertEqual(this.find('[data-viewer-selected]').get_attribute('id'), target);
+            this.assertIn('two', this.find('#selection').text);
+            this.assertIn('aws_lambda_function.app', this.find('#selection').text);
+            this.assertFalse(this.driver.execute_script("return document.documentElement.outerHTML.includes('NOT_FOR_OUTPUT')"));
+            this.load(fixture, '--focus', `${type}.lambda`, '--focus-depth', '0');
+            this.assertEqual(this.driver.execute_script("return [...document.querySelectorAll('#viewport a[href]')].filter(a=>!document.getElementById(a.getAttribute('href').slice(1))).length"), 0);
+        }
+    }
     test_lambda_references_keep_state_identity_and_hide_payloads() {
         this.load('--state', 'one=tests/fixtures/lambda-plan.json', '--state', 'two=tests/fixtures/lambda-plan.json');
         const id = this.choose('two:aws_lambda_function_url.live');
