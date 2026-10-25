@@ -897,7 +897,8 @@ References: [workflow triggers and GITHUB_TOKEN](https://docs.github.com/en/acti
 ## Browser Wasm (#432)
 
 The `Browser Wasm` workflow builds the native CLI and Wasm library in the pinned
-Docker environment on pull requests and manual dispatch. It checks exact output
+Docker environment on pull requests, manual dispatch and cache-input pushes to
+`main`. It checks exact output
 parity, offline generation, isolated previews, downloads and cancellation using
 Chromium. It also builds and checks the standalone artwork-free engine archive,
 including native output parity, JS/Wasm artwork exclusion and reproducible
@@ -913,7 +914,7 @@ from the library target (`--lib`); suite discovery includes that target automati
 ### Browser Wasm caches and measurements (#674)
 
 The required `browser` job still runs on every PR and manual dispatch, with the
-same 20-minute timeout. There is no path-based skip or cross-job binary transfer.
+same 20-minute timeout. PR coverage has no path-based skip or cross-job binary transfer.
 Pushes to `main` that change cache inputs run the same validation to seed trusted
 caches for later PRs; manual dispatch on `main` can also populate an empty cache.
 Default and `--no-default-features` builds remain independent even though the
@@ -961,6 +962,72 @@ system seconds, peak RSS KiB), environment, cache sizes and sccache statistics.
 The seven-day `wasm-ci-<sha>-<attempt>` artifact carries these records. Action
 step timestamps include environment import/export, cache restore/save and
 artifact upload overhead; use the complete job duration when comparing runs.
-Native reference reuse is process-local, bounded to 64 MiB and keyed by input
+Native reference reuse is process-local, bounded to 64 MiB of UTF-8 output and keyed by input
 bytes, the full argument vector/options and executable SHA-256. Failures are
 never cached. Named/file-based cases remain uncached, and every Wasm case runs.
+
+### Browser Wasm comparison, 2026-10-26
+
+GitHub measurements use Ubuntu 24.04 image `20261012.334.1`, four x86_64 CPUs,
+Rust/Cargo 1.85.1, wasm-bindgen 0.2.100, mold 2.40.4 and sccache 0.10.0 in the
+same Dockerfile environment. Durations below are job elapsed time, including
+cache/artifact transfers and cleanup, but excluding runner queue time.
+
+| Hosted run | Environment step | Build and validation | Cargo restore / save | Measurement upload | Complete job |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| [Before, no persistent cache](https://github.com/ritz-p/planorama/actions/runs/40209178857), `2fee66b` | 135 s | 567 s | — | — | 707 s |
+| [Initial cold candidate](https://github.com/ritz-p/planorama/actions/runs/40211432756), `3ec1d8c` | 277 s | 565 s | 2 / 11 s | 1 s | 885 s |
+| [Final orchestration, Docker warm / Cargo cold](https://github.com/ritz-p/planorama/actions/runs/40212680609), `025acd7` | 65 s | 565 s | 1 / 10 s | 1 s | 665 s |
+
+Before this change a new runner had no persistent Docker/container Cargo cache,
+so repeating CI did not produce a warm-cache case. The cold candidate had zero
+hits in all five Cargo caches. Its environment step included 40.5 s exporting
+and loading the image and 89.8 s exporting BuildKit layers. That initial cost
+is a regression, not a cold speedup. In the
+[next run](https://github.com/ritz-p/planorama/actions/runs/40212680609), BuildKit
+reuse reduced the environment step to 65 s; the revised Cargo key deliberately
+missed after changing orchestration inputs. [PR #675](https://github.com/ritz-p/planorama/pull/675)
+records the complete hosted warm comparison and final validation links.
+
+The initial BuildKit cache stored about 1.0 GB of compressed layers; the five
+Cargo archives totaled about 205 MB (13 MB registry/git, 50 MB default native,
+6 MB default Wasm, 129 MB standalone native, 6 MB standalone Wasm). The final
+version also removes CLI test binaries and uses immutable dependency keys rather
+than a new upload for each source revision. Main-branch cache warming amortizes
+the environment setup across PRs. There is no second transferred sccache archive.
+
+Local Docker Desktop/WSL2 checks used the final working-tree implementation,
+32 CPUs and Chromium 155.0.8059.79. Registry data and the image were already
+present. Cold used empty target/compiler caches; warm retained dependencies but
+removed workspace products and CLI test binaries, matching CI preparation.
+The local compiler cache was retained to measure whether it added useful hits.
+Cold overlapped the required SVG regeneration, so these local phase differences
+are diagnostic rather than a controlled performance comparison.
+
+| Phase | Cold seconds | Warm seconds |
+| --- | ---: | ---: |
+| Default native | 30.08 | 19.34 |
+| Browser Wasm build, including bindings/preparation | 22.66 | 17.82 |
+| Browser memory | 0.97 | 0.97 |
+| Browser suite | 85.36 | 84.44 |
+| Standalone library tests, including compilation | 129.53 | 122.25 |
+| Standalone CLI help tests, including compilation | 31.98 | 30.24 |
+| Standalone native | 30.84 | 19.39 |
+| Standalone Wasm build, including bindings/package | 22.11 | 17.83 |
+| Standalone memory | 0.98 | 0.95 |
+| Standalone distribution suite | 15.12 | 15.61 |
+| Sum of measured phases, excluding transfers | 369.63 | 328.84 |
+
+Browser/standalone binding generation was 0.40/0.40 s cold and 0.41/0.38 s warm,
+already included in the build rows. sccache recorded 0 hits/180 misses cold,
+then 0 hits/0 misses and 13 non-cacheable calls warm: Cargo dependencies avoided
+compiler requests altogether. Cache read/write errors were zero. Seven cold
+compiler-probe failures were expected dependency feature detection; every suite
+succeeded. Native references reused 8 of 68 calls in each browser run. Local
+gzip packing took 21.13 s for 208 MB; this is not GitHub's zstd/network transfer
+cost. Local phase totals do not establish a hosted end-to-end improvement.
+
+The standalone library suite remains the largest validation phase (258.88 s in
+the hosted cold run, including 148.31 s of tests). Binding generation is small,
+and default/standalone contracts differ. No tests or builds are removed, and no
+sharding or PR filtering is introduced without a measured end-to-end benefit.
