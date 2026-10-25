@@ -42,13 +42,10 @@ fn resource_lines(node: &Node, address_format: super::AddressFormat) -> Vec<(Str
         super::AddressFormat::Qualified => node.resource_address().qualified().into_owned(),
         super::AddressFormat::Terraform => node.address.clone(),
     };
-    let mut lines = vec![
-        (address, true),
-        (
-            super::operations::action_label(node.action, &node.metadata).into(),
-            false,
-        ),
-    ];
+    let mut lines = vec![(address, true)];
+    if node.metadata.state_removal.is_some() || node.metadata.import.is_some() {
+        lines.push((super::operations::label(node.action, &node.metadata), false));
+    }
     lines.push((
         crate::view::scope::label(node.entity.scope.as_ref(), &node.provider),
         false,

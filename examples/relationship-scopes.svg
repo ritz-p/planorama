@@ -99,7 +99,7 @@
 <text data-source-address="aws_route_table_association.private" data-source-identity="terraform:6177735f726f7574655f7461626c655f6173736f63696174696f6e2e70726976617465-current" font-size="12" font-weight="600" fill="#334155"><title>aws_route_table_association.private</title>
 <tspan x="52" y="28" xml:space="preserve">aws_route_table_association.private</tspan>
 </text>
-<text font-size="12" fill="#334155"><tspan x="52" y="48" xml:space="preserve">Action: create</tspan></text>
+<text data-resource-action="true" x="52" y="48" font-size="11" fill="#64748b">Action: create</text>
 <text font-size="12" fill="#334155"><tspan x="52" y="68" xml:space="preserve">Resource scope: Region: ap-northeast-1</tspan></text>
 <text font-size="12" fill="#334155"><tspan x="68" y="88" xml:space="preserve">- Connects (association, undirected)</tspan></text>
 <a href="#resource-6177735f7375626e65742e70726976617465-current" data-relationship-endpoint="true" aria-label="- aws_subnet.private · Region: ap-northeast-1"><text font-size="12" fill="#334155"><tspan x="84" y="108" xml:space="preserve">- aws_subnet.private · Region: ap-northeast-1</tspan></text>

@@ -48,11 +48,21 @@ or logical resource, embedded Route, and component member presentation. Empty an
 unknown imports receive the same indicator. The synthetic component does not inherit
 an import operation, and inline Route entries do not duplicate the table's badge.
 The badge has its own measured row, separate from addresses, service icons and the
-gray `external` indicator. Spatial, logical-resource and embedded Route action
-labels omit the redundant `import /` prefix. Component member rows retain the full
-composed label; accessible titles preserve the full operation and its order in
-every presentation.
+gray `external` indicator. Spatial action headings omit the redundant `import /`
+prefix; embedded type/action headings and annotation operation fields retain the
+composed label. Accessible titles preserve the full operation and its order.
 Existing `data-import` and the value-free presence/unknown flags remain unchanged.
+
+Ordinary and embedded cards place the type/action heading before the address;
+embedded addresses do not repeat that action. Their address area reserves at least
+two lines to keep child cards and routing anchors stable for short identities.
+Logical Component members and
+Relationship Resources put the complete address before a separate compact
+`Action:` field and scope. Relationship entries retain each source's operations.
+Logical Resources convey plain actions through their counted section headings;
+individual rows retain import/composed state-removal labels, move/deposed identity
+and metadata. Synthetic components have no Terraform action. SVG and offline HTML
+share these measurements and preserve action colors, counts and resource links.
 
 Exact action arrays `['forget']`, `['create','forget']`, and `['forget','create']` are represented by distinct `StateRemoval` variants. Forgetting removes Terraform's state binding without destroying the old remote object; a combined create/forget operation also creates a new object. These sequences retain the existing `Action::Other` palette/legend category, while resource labels and edge titles explicitly show the operation and order. Ordinary delete remains delete. SVG exposes `data-import`, redacted import flags, and `data-state-removal` on resource elements and lowered relationships.
 

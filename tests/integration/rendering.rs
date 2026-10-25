@@ -272,8 +272,10 @@ fn synthetic_components_are_distinct_and_link_to_original_changes() {
     assert!(svg.contains(">Load balancer: aws_lb.app</text>"));
     assert!(!svg.contains("Logical component:"));
     assert!(!svg.contains(">Members</text>"));
-    assert!(svg.contains("update: aws_lb_listener.https"));
-    assert!(svg.contains("replace: aws_lb_listener_rule.api"));
+    assert!(svg.contains("Action: import / update"));
+    assert!(svg.contains("aws_lb_listener.https</tspan>"));
+    assert!(svg.contains("Action: replace"));
+    assert!(svg.contains("aws_lb_listener_rule.api</tspan>"));
     assert!(svg.contains("data-previous-address=\"aws_lb_listener_rule.old\""));
     assert_eq!(svg.matches("data-source-address=").count(), 3);
     assert!(!svg.contains("data-container="));

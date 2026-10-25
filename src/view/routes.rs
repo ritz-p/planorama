@@ -77,7 +77,7 @@ impl Card<'_> {
                 .enumerate()
                 .map(|(index, r)| {
                     let lines = r.lines(&r.text).len();
-                    let lines = if index == 0 {
+                    let lines = if index == 0 && self.node.is_some() {
                         self.node
                             .filter(|node| node.member_owner.is_some())
                             .map_or(lines, |node| {
@@ -85,6 +85,7 @@ impl Card<'_> {
                                     .max(r.lines(&heading(node, true)).len())
                                     .max(r.lines(&heading(node, false)).len())
                             })
+                            .max(2)
                     } else {
                         lines
                     };
@@ -95,16 +96,12 @@ impl Card<'_> {
 }
 
 pub(crate) fn heading(node: &Node, qualified: bool) -> String {
-    let operation = node.metadata.state_removal.map_or_else(
-        || format!("{:?}", node.action).to_lowercase(),
-        |removal| removal.label().into(),
-    );
     let address = if qualified {
         node.resource_address().qualified()
     } else {
         std::borrow::Cow::Borrowed(node.address.as_str())
     };
-    format!("{address} [{operation}]")
+    address.into_owned()
 }
 
 pub(crate) fn owner(graph: &Graph, node: &Node) -> Option<usize> {

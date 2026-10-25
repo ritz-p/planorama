@@ -17,6 +17,16 @@ pub(super) fn label(action: Action, metadata: &ChangeMetadata) -> String {
     }
 }
 
+pub(super) fn action_field(operation: &str, x: usize, y: usize, limit: usize) -> (String, usize) {
+    let text = format!("Action: {operation}");
+    let lines = crate::view::text::wrap(&text, limit);
+    let mut svg = String::new();
+    for (index, line) in lines.iter().enumerate() {
+        writeln!(svg, r##"<text data-resource-action="true" x="{x}" y="{}" font-size="11" fill="#64748b">{}</text>"##, y + index * 20, super::escape(line)).unwrap();
+    }
+    (svg, lines.len() * 20)
+}
+
 pub(super) fn moved_from(previous: &str, x: usize, y: usize, limit: usize) -> (String, usize) {
     let text = crate::view::text::moved_from(previous);
     let lines = crate::view::text::wrap_address(&text, limit);
