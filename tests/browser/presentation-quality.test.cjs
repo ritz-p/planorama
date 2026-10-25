@@ -71,6 +71,10 @@ test('rendered representative cards use the same reusable presentation checks', 
     const cases = [
       [longPlan],
       [portsPlan],
+      ['--state', 's=tests/fixtures/association-plan.json'],
+      ['--state', 'W'.repeat(64) + '=tests/fixtures/association-plan.json'],
+      ['--state', 'W'.repeat(64) + '=tests/fixtures/association-plan.json', '--state', 's=tests/fixtures/association-plan.json'],
+      ['--state', 'producer=tests/fixtures/multi/producer.json', '--state', 'consumer=tests/fixtures/multi/consumer.json', '--remote-state', 'consumer:data.terraform_remote_state.network=producer'],
       ['tests/fixtures/service-labels-plan.json'],
       ['tests/fixtures/logical-actions-plan.json'],
       ['tests/fixtures/ecs-clusters-plan.json'],
@@ -87,6 +91,41 @@ test('rendered representative cards use the same reusable presentation checks', 
       driver.get(pathToFileURL(file).href);
       const report = driver.execute_script(`return (${inspectPresentation.toString()})();`);
       fs.writeFileSync(path.join(directory, `${index}.json`), JSON.stringify(report, null, 2));
+      const headings = driver.execute_script(`
+        const root = document.documentElement;
+        return [...document.querySelectorAll('[data-state-heading]')].map(heading => {
+          const state = heading.closest('[data-state-id]');
+          const texts = [...heading.querySelectorAll('text')];
+          const rect = heading.querySelector('rect').getBBox();
+          const nested = state.querySelector(':scope > svg');
+          const title = [...nested.querySelectorAll('text')].find(text => text.textContent === 'Terraform plan');
+          const luminance = color => color.match(/[0-9.]+/g).slice(0,3).map(Number).map(v => v / 255)
+            .map(v => v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4)
+            .reduce((total,v,i) => total + v * [0.2126,0.7152,0.0722][i], 0);
+          const contrast = (luminance(getComputedStyle(heading.querySelector('rect')).fill) + 0.05) /
+            (luminance(getComputedStyle(texts[0]).fill) + 0.05);
+          let pathOverlap = false;
+          for (const path of document.querySelectorAll('[data-cross-state]')) {
+            const length = path.getTotalLength();
+            for (let d = 0; d <= length; d += 4) {
+              const point = path.getPointAtLength(d);
+              if (point.x >= rect.x && point.x <= rect.x + rect.width && point.y >= rect.y && point.y <= rect.y + rect.height) pathOverlap = true;
+            }
+          }
+          return {complete: texts.map(text => text.textContent).join('') === 'State: ' + state.dataset.stateId,
+            fontMatches: texts.every(text => getComputedStyle(text).fontSize === getComputedStyle(title).fontSize),
+            wrapped: state.dataset.stateId.length < 64 || texts.length > 1, contrast, pathOverlap,
+            spaced: nested.y.baseVal.value > rect.y + rect.height,
+            inside: rect.x > 0 && rect.x + rect.width < root.viewBox.baseVal.width &&
+              nested.y.baseVal.value + nested.height.baseVal.value <= root.viewBox.baseVal.height};
+        });
+      `);
+      assert.equal(headings.length, args.filter(arg => arg === '--state').length);
+      for (const heading of headings) {
+        assert(heading.complete && heading.fontMatches && heading.wrapped && heading.spaced && heading.inside);
+        assert(heading.contrast >= 4.5);
+        assert.equal(heading.pathOverlap, false);
+      }
       assert(report.counts.text > 0 && report.counts.frames > 0);
       assert.equal(report.limits.complete, true);
       assert.deepEqual(report.findings, [], `${args.join(' ')}: ${JSON.stringify(report.findings)}`);

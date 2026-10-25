@@ -7,7 +7,7 @@ function inspectPresentation() {
   const tolerance = 1;
   const pairLimit = 2000000;
   const findingLimit = 20000;
-  const scopeSelector = '[data-architecture-id], [data-annotation-card], [data-route-entry]';
+  const scopeSelector = '[data-architecture-id], [data-annotation-card], [data-route-entry], [data-state-heading]';
   const badgeSelector = '[data-service-badge], [data-import-badge] rect, g[data-external] > rect, [data-relationship-entry] rect';
   const frames = new Map();
   const items = [];

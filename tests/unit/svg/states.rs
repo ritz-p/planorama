@@ -221,7 +221,105 @@ fn shared_legend_collects_later_state_actions_and_omits_empty_height() {
         .descendants()
         .find(|node| node.has_tag_name("svg") && node.attribute("y").is_some())
         .unwrap();
-    assert_eq!(first.attribute("y").unwrap().parse::<usize>().unwrap(), 100);
+    let heading = document
+        .descendants()
+        .find(|node| node.attribute("data-state-heading").is_some())
+        .unwrap();
+    let background = heading
+        .children()
+        .find(|node| node.has_tag_name("rect"))
+        .unwrap();
+    assert_eq!(background.attribute("y"), Some("60"));
+    assert_eq!(
+        first.attribute("y").unwrap().parse::<usize>().unwrap(),
+        60 + background
+            .attribute("height")
+            .unwrap()
+            .parse::<usize>()
+            .unwrap()
+            + HEADING_GAP
+    );
+}
+
+#[test]
+fn named_headings_preserve_complete_names_and_allocate_padded_title_size_bands() {
+    let longest = "W".repeat(64);
+    for names in [
+        vec!["s"],
+        vec![longest.as_str()],
+        vec!["s", longest.as_str()],
+    ] {
+        let inputs: Vec<_> = names
+            .iter()
+            .map(|state| crate::NamedInput {
+                state: (*state).into(),
+                json: include_str!("../../fixtures/association-plan.json").into(),
+            })
+            .collect();
+        let svg = crate::generate_named(&inputs, &Default::default())
+            .unwrap()
+            .content;
+        let html = crate::generate_named(
+            &inputs,
+            &crate::Options {
+                format: crate::OutputFormat::Html,
+                ..Default::default()
+            },
+        )
+        .unwrap()
+        .content;
+        assert!(html.contains(&svg));
+        let doc = roxmltree::Document::parse(&svg).unwrap();
+        let number =
+            |node: roxmltree::Node, attr| node.attribute(attr).unwrap().parse::<usize>().unwrap();
+        let root = doc.root_element();
+        let mut bottom = 0;
+        for state in root
+            .children()
+            .filter(|node| node.attribute("data-state-id").is_some())
+        {
+            let heading = state
+                .children()
+                .find(|node| node.attribute("data-state-heading").is_some())
+                .unwrap();
+            let background = heading
+                .children()
+                .find(|node| node.has_tag_name("rect"))
+                .unwrap();
+            let lines: Vec<_> = heading
+                .children()
+                .filter(|node| node.has_tag_name("text"))
+                .collect();
+            let title = state
+                .descendants()
+                .find(|node| node.has_tag_name("text") && node.text() == Some("Terraform plan"))
+                .unwrap();
+            assert_eq!(
+                lines
+                    .iter()
+                    .map(|node| node.text().unwrap())
+                    .collect::<String>(),
+                format!("State: {}", state.attribute("data-state-id").unwrap())
+            );
+            assert!(
+                lines
+                    .iter()
+                    .all(|line| line.attribute("font-size") == title.attribute("font-size"))
+            );
+            if state.attribute("data-state-id") == Some(longest.as_str()) {
+                assert!(lines.len() > 1);
+            }
+            assert!(number(background, "y") >= bottom);
+            assert!(number(background, "x") + number(background, "width") < number(root, "width"));
+            let nested = state
+                .children()
+                .find(|node| node.has_tag_name("svg"))
+                .unwrap();
+            assert!(number(nested, "y") > number(background, "y") + number(background, "height"));
+            bottom = number(nested, "y") + number(nested, "height");
+            assert!(bottom <= number(root, "height"));
+        }
+    }
 }
 
 #[test]
@@ -392,8 +490,8 @@ fn cross_state_paths_avoid_intervening_cards_and_describe_dependencies() {
     );
     let (_, height) = sections.dimensions(&local);
     let legend_height = super::super::legend::MeasuredLegend::new(&projected, 1120).height;
-    let offset = 100 + legend_height + sections.height();
-    let obstacles: Vec<_> = [offset, offset + height + 60]
+    let offset = 136 + legend_height + sections.height();
+    let obstacles: Vec<_> = [offset, offset + height + 96]
         .into_iter()
         .flat_map(|offset| {
             local
@@ -491,7 +589,7 @@ fn cross_state_paths_avoid_intervening_cards_and_describe_dependencies() {
         .collect();
     assert!(points.len() > 4);
     assert_eq!(points[0].y, endpoint_y);
-    assert_eq!(points.last().unwrap().y, endpoint_y + height + 60);
+    assert_eq!(points.last().unwrap().y, endpoint_y + height + 96);
     for segment in points.windows(2) {
         let (a, b) = (segment[0], segment[1]);
         for obstacle in &obstacles {
@@ -654,12 +752,12 @@ fn named_states_reflow_indexes_at_shared_width_and_keep_cross_state_offsets() {
     assert_eq!(number(document.root_element(), "width"), width + 80 + 12);
     assert_eq!(
         number(narrow, "y"),
-        100 + legend_shape(document.root_element()).1 + 12
+        136 + legend_shape(document.root_element()).1 + 12
     );
     assert!(number(narrow, "height") < number(standalone_root, "height"));
     assert_eq!(
         number(wide, "y"),
-        number(narrow, "y") + number(narrow, "height") + 60
+        number(narrow, "y") + number(narrow, "height") + 96
     );
     assert_eq!(
         number(document.root_element(), "height"),
