@@ -77,8 +77,8 @@
 <text x="16" y="524">not express direction or count connections. Reference-only Connections and Dependencies have no number.</text>
 </g>
 <g id="state-6170706c69636174696f6e-state" data-state-id="application">
-<g data-state-heading="true" data-presentation-header="56 634 1008 32">
-<rect x="40" y="618" width="1040" height="64" rx="8" fill="#e2e8f0" stroke="#94a3b8"/>
+<g data-state-heading="true" data-presentation-header="56 634 288 32">
+<rect x="40" y="618" width="320" height="64" rx="8" fill="#e2e8f0" stroke="#94a3b8"/>
 
 <text x="56" y="659" font-family="ui-monospace, Consolas, monospace" font-size="25" font-weight="700" fill="#0f172a">State: application</text>
 </g>
@@ -129,8 +129,8 @@
 </svg>
 </g>
 <g id="state-6e6574776f726b-state" data-state-id="network">
-<g data-state-heading="true" data-presentation-header="56 1206 1008 32">
-<rect x="40" y="1190" width="1040" height="64" rx="8" fill="#e2e8f0" stroke="#94a3b8"/>
+<g data-state-heading="true" data-presentation-header="56 1206 224 32">
+<rect x="40" y="1190" width="256" height="64" rx="8" fill="#e2e8f0" stroke="#94a3b8"/>
 
 <text x="56" y="1231" font-family="ui-monospace, Consolas, monospace" font-size="25" font-weight="700" fill="#0f172a">State: network</text>
 </g>
@@ -186,8 +186,8 @@
 </svg>
 </g>
 <g id="state-73696e676c65746f6e-state" data-state-id="singleton">
-<g data-state-heading="true" data-presentation-header="56 1950 1008 32">
-<rect x="40" y="1934" width="1040" height="64" rx="8" fill="#e2e8f0" stroke="#94a3b8"/>
+<g data-state-heading="true" data-presentation-header="56 1950 256 32">
+<rect x="40" y="1934" width="288" height="64" rx="8" fill="#e2e8f0" stroke="#94a3b8"/>
 
 <text x="56" y="1975" font-family="ui-monospace, Consolas, monospace" font-size="25" font-weight="700" fill="#0f172a">State: singleton</text>
 </g>

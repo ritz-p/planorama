@@ -37,8 +37,9 @@ including compact mode. Resource/action summaries, checks, plan status, annotati
 and relationship indexes stay within each state; equal visible numbers identify
 independent entries. The optional [coverage report](coverage.md) sums state counts
 without merging resource identities. Each `State: <name>` heading uses the same
-25px type as the Terraform plan title, on a padded slate background. The background
-identifies a state section, not an action, service category or AWS account.
+25px type as the Terraform plan title, on a slate background sized to the longest
+wrapped line with padding. The background identifies a state section, not an
+action, service category or AWS account.
 Complete names wrap within the shared width; measured heading height reserves
 space above annotations and architecture content. SVG, HTML and retained-state
 exports share this presentation, including a single explicitly named input.

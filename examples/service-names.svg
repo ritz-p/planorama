@@ -77,8 +77,8 @@
 <text x="16" y="524">not express direction or count connections. Reference-only Connections and Dependencies have no number.</text>
 </g>
 <g id="state-6275696c74696e-state" data-state-id="builtin">
-<g data-state-heading="true" data-presentation-header="56 634 2384 32">
-<rect x="40" y="618" width="2416" height="64" rx="8" fill="#e2e8f0" stroke="#94a3b8"/>
+<g data-state-heading="true" data-presentation-header="56 634 224 32">
+<rect x="40" y="618" width="256" height="64" rx="8" fill="#e2e8f0" stroke="#94a3b8"/>
 
 <text x="56" y="659" font-family="ui-monospace, Consolas, monospace" font-size="25" font-weight="700" fill="#0f172a">State: builtin</text>
 </g>
@@ -283,8 +283,8 @@
 </svg>
 </g>
 <g id="state-7365727669636573-state" data-state-id="services">
-<g data-state-heading="true" data-presentation-header="56 3966 2384 32">
-<rect x="40" y="3950" width="2416" height="64" rx="8" fill="#e2e8f0" stroke="#94a3b8"/>
+<g data-state-heading="true" data-presentation-header="56 3966 240 32">
+<rect x="40" y="3950" width="272" height="64" rx="8" fill="#e2e8f0" stroke="#94a3b8"/>
 
 <text x="56" y="3991" font-family="ui-monospace, Consolas, monospace" font-size="25" font-weight="700" fill="#0f172a">State: services</text>
 </g>

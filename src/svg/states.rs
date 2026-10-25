@@ -191,11 +191,17 @@ pub(crate) async fn render_step(
     let mut top = 60 + legend.height;
     for (id, graph, layout, index, cards) in states {
         let heading = format!("State: {}", id.as_str());
-        let heading_width = width - 80;
         let heading_lines = crate::view::text::wrap(
             &heading,
-            (heading_width - 2 * HEADING_PADDING) / (TITLE_FONT_SIZE * 2 / 3),
+            (width - 80 - 2 * HEADING_PADDING) / (TITLE_FONT_SIZE * 2 / 3),
         );
+        let heading_width = heading_lines
+            .iter()
+            .map(|line| crate::view::text::width(line))
+            .max()
+            .unwrap_or(0)
+            * (TITLE_FONT_SIZE * 2 / 3)
+            + 2 * HEADING_PADDING;
         let heading_height = heading_lines.len() * HEADING_LINE_HEIGHT + 2 * HEADING_PADDING;
         let header_height = heading_height + HEADING_GAP;
         let measured_sections =

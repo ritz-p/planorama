@@ -78,8 +78,8 @@
 <text x="16" y="524">not express direction or count connections. Reference-only Connections and Dependencies have no number.</text>
 </g>
 <g id="state-636f6e73756d6572-state" data-state-id="consumer">
-<g data-state-heading="true" data-presentation-header="56 634 1036 32">
-<rect x="40" y="618" width="1068" height="64" rx="8" fill="#e2e8f0" stroke="#94a3b8"/>
+<g data-state-heading="true" data-presentation-header="56 634 240 32">
+<rect x="40" y="618" width="272" height="64" rx="8" fill="#e2e8f0" stroke="#94a3b8"/>
 
 <text x="56" y="659" font-family="ui-monospace, Consolas, monospace" font-size="25" font-weight="700" fill="#0f172a">State: consumer</text>
 </g>
@@ -130,8 +130,8 @@
 </svg>
 </g>
 <g id="state-70726f6475636572-state" data-state-id="producer">
-<g data-state-heading="true" data-presentation-header="56 1330 1036 32">
-<rect x="40" y="1314" width="1068" height="64" rx="8" fill="#e2e8f0" stroke="#94a3b8"/>
+<g data-state-heading="true" data-presentation-header="56 1330 240 32">
+<rect x="40" y="1314" width="272" height="64" rx="8" fill="#e2e8f0" stroke="#94a3b8"/>
 
 <text x="56" y="1355" font-family="ui-monospace, Consolas, monospace" font-size="25" font-weight="700" fill="#0f172a">State: producer</text>
 </g>

@@ -97,6 +97,7 @@ test('rendered representative cards use the same reusable presentation checks', 
           const state = heading.closest('[data-state-id]');
           const texts = [...heading.querySelectorAll('text')];
           const rect = heading.querySelector('rect').getBBox();
+          const textWidth = Math.max(...texts.map(text => text.getBBox().width));
           const nested = state.querySelector(':scope > svg');
           const title = [...nested.querySelectorAll('text')].find(text => text.textContent === 'Terraform plan');
           const luminance = color => color.match(/[0-9.]+/g).slice(0,3).map(Number).map(v => v / 255)
@@ -114,6 +115,7 @@ test('rendered representative cards use the same reusable presentation checks', 
           }
           return {complete: texts.map(text => text.textContent).join('') === 'State: ' + state.dataset.stateId,
             fontMatches: texts.every(text => getComputedStyle(text).fontSize === getComputedStyle(title).fontSize),
+            fitted: rect.width >= textWidth + 32 && rect.width <= textWidth * 1.1 + 32,
             wrapped: state.dataset.stateId.length < 64 || texts.length > 1, contrast, pathOverlap,
             spaced: nested.y.baseVal.value > rect.y + rect.height,
             inside: rect.x > 0 && rect.x + rect.width < root.viewBox.baseVal.width &&
@@ -122,7 +124,7 @@ test('rendered representative cards use the same reusable presentation checks', 
       `);
       assert.equal(headings.length, args.filter(arg => arg === '--state').length);
       for (const heading of headings) {
-        assert(heading.complete && heading.fontMatches && heading.wrapped && heading.spaced && heading.inside);
+        assert(heading.complete && heading.fontMatches && heading.fitted && heading.wrapped && heading.spaced && heading.inside);
         assert(heading.contrast >= 4.5);
         assert.equal(heading.pathOverlap, false);
       }
