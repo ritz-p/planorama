@@ -13,11 +13,17 @@ jobs:
   quality:
     if: github.event_name == 'workflow_dispatch' || contains(github.event.pull_request.labels.*.name, 'layout-quality')
     runs-on: ubuntu-latest
+    container: rust:1.85.1-bookworm
     timeout-minutes: 35
     steps:
       - uses: actions/checkout@v7.0.1
         with:
           persist-credentials: false
+      - name: Install presentation measurement tools
+        timeout-minutes: 5
+        run: |
+          apt-get update
+          apt-get install -y --no-install-recommends nodejs chromium chromium-driver fonts-dejavu-core
       - uses: Swatinem/rust-cache@v2.9.2
         with:
           prefix-key: v1-rust-dependencies
@@ -34,17 +40,32 @@ jobs:
       - name: Compare final layouts
         timeout-minutes: 20
         run: node scripts/layout-quality.cjs check target/release/planorama output/layout-quality
+      - name: Test presentation diagnostics
+        if: ${{ !cancelled() }}
+        timeout-minutes: 5
+        env:
+          LAYOUT_QUALITY_BINARY: target/release/planorama
+        run: node --test tests/browser/presentation-quality.test.cjs
+      - name: Check presentation geometry
+        if: ${{ !cancelled() }}
+        timeout-minutes: 2
+        run: node scripts/presentation-quality.cjs output/layout-quality output/layout-quality/*.svg
       - name: Publish summary
         if: ${{ !cancelled() }}
         run: |
           if [ -f output/layout-quality/summary.md ]; then
             cat output/layout-quality/summary.md >> "$GITHUB_STEP_SUMMARY"
           fi
+          if [ -f output/layout-quality/presentation.md ]; then
+            cat output/layout-quality/presentation.md >> "$GITHUB_STEP_SUMMARY"
+          fi
       - name: Retain full diagnostics
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v7.0.2
         with:
           name: layout-quality-${{ github.sha }}
-          path: output/layout-quality
+          path: |
+            output/layout-quality
+            output/presentation-test-*
           if-no-files-found: warn
           retention-days: 14

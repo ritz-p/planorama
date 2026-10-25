@@ -17,7 +17,7 @@ pub(super) fn service_name(node: &Node, right: usize, y: usize, width: usize) ->
         let lines = crate::view::service_label::lines(name, width);
         let badge_width = crate::view::service_label::width(name, width);
         let x = right.saturating_sub(badge_width);
-        write!(svg, r##"<rect data-service-badge="true" data-service-category="{category}" data-service-full-name="{}" data-display-name="{}" x="{x}" y="{y}" width="{badge_width}" height="{}" rx="4" fill="{background}"/>"##,
+        write!(svg, r##"<rect data-service-badge="true" data-presentation-padding="{PADDING} {VERTICAL_PADDING}" data-service-category="{category}" data-service-full-name="{}" data-display-name="{}" x="{x}" y="{y}" width="{badge_width}" height="{}" rx="4" fill="{background}"/>"##,
             super::escape(node.service_name.unwrap()), super::escape(name), lines.len() * LINE_HEIGHT + VERTICAL_PADDING * 2).unwrap();
         for (index, line) in lines.iter().enumerate() {
             write!(svg, r##"<text data-service-name="true" x="{}" y="{}" font-size="{FONT_SIZE}" font-weight="700" fill="{foreground}" xml:space="preserve">{}</text>"##,

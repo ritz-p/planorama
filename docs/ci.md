@@ -154,6 +154,24 @@ account evidence; it does not claim saved-plan account resolution coverage.
 The expensive concentrated account-high-fan-in stress input is excluded; deferred
 routing regressions retain their separate non-blocking lane below.
 
+The same job runs [presentation geometry checks](presentation-quality.md) in
+Bookworm Chromium against these generated SVGs and focused card fixtures.
+Text/badge overlaps and content overflow fail independently of routing budgets;
+browser observations are retained as `presentation.json` and `presentation.md`,
+alongside the routing artifacts. The Rust diagnostic schema is unchanged.
+
+#648's initial presentation check exposed NAT/Internet Gateway headings hidden
+behind service labels in the large and multi-account examples. Spatial projection
+now preserves the original header width when reserving height for incoming route
+ports; that reservation previously removed the role-mark inset from measurement
+while rendering retained it. The large fixture's baseline reflects this required
+width change and the resulting rerouting, with unchanged budgets. Review covered
+all 11 newly affected crossing pairs (13 intersections), including the Internet
+Gateway route and load-balancer listener paths, against the SVG and per-pair
+report. These new crossings are explicitly accepted consequences of the changed
+geometry, not offset by improvements on other pairs or fixtures. Border deficits
+remain unchanged and bend changes stay within their existing per-edge budget.
+
 The [manifest](../tests/layout-quality/manifest.json) is the ordered fixture and
 budget authority. Each checked-in baseline records exact CLI arguments, SHA-256
 input bytes, budgets, comparison format version, renderer contract

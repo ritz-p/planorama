@@ -32,6 +32,7 @@ docker compose exec -T dev cargo clippy --locked --all-targets --all-features --
 docker compose exec -T dev cargo build --locked
 docker compose exec -T dev sh -c 'node --test tests/ci/*.test.cjs'
 docker compose exec -T dev node tests/browser/viewer.cjs
+docker compose exec -T dev node --test tests/browser/presentation-quality.test.cjs
 docker compose exec -T dev node --test tests/browser/webdriver.test.cjs tests/support/tooling.test.cjs
 ```
 

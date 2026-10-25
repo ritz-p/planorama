@@ -1,5 +1,9 @@
 # Final layout diagnostics
 
+For browser-observed text, badge and frame overlap/overflow checks, see
+[presentation geometry](presentation-quality.md). Those checks supplement this
+measurement-based routing report and do not change its schema or CLI options.
+
 `--layout-diagnostics` writes an informational text report to stderr.
 `--layout-diagnostics-json PATH` writes the same measurements to a separate JSON
 file. Both can be combined with semantic `--diagnostics`, SVG stdout, HTML,
