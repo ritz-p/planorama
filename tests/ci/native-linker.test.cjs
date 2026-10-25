@@ -1,9 +1,19 @@
 const {test} = require('node:test');
 const assert = require('node:assert/strict');
-const {mkdtempSync, writeFileSync, rmSync} = require('node:fs');
+const {mkdtempSync, writeFileSync, rmSync, readFileSync} = require('node:fs');
 const {tmpdir} = require('node:os');
 const {join, resolve} = require('node:path');
 const {spawnSync} = require('node:child_process');
+
+test('linker-only changes trigger both PR and merged-PR Rust validation', () => {
+  const workflow = readFileSync('.github/workflows/cargo_test.yml', 'utf8');
+  for (const [start, end] of [['  pull_request_target:', '  pull_request:'], ['  pull_request:', '  workflow_dispatch:']]) {
+    const block = workflow.split(start)[1].split(end)[0];
+    for (const input of ['scripts/install-mold.sh', 'scripts/native-linker.sh']) {
+      assert.ok(block.includes(`      - ${input}\n`), `${start} must include ${input}`);
+    }
+  }
+});
 
 test('native linker preserves arguments, selects mold explicitly and propagates driver failures', () => {
   const directory = mkdtempSync(join(tmpdir(), 'planorama-linker-'));
