@@ -126,10 +126,33 @@ pub(super) fn render(
             super::escape(&details), super::operations::label(node.action, &node.metadata), super::escape(&super::operations::details(&node.metadata)),
             node.previous_address.as_ref().map(|a| format!("; moved from: {}", super::escape(a))).unwrap_or_default(),
             node.deposed_key.as_ref().map(|a| format!("; deposed: {}", super::escape(a))).unwrap_or_default()).unwrap();
+        let heading_height = card.type_heading_height();
+        if let Some(heading) = card.type_heading() {
+            svg.push_str(r##"<text data-resource-type-heading="true" font-size="12" font-weight="700" fill="#334155">"##);
+            for (line, text) in
+                crate::view::text::wrap_address(&heading, crate::view::routes::LINE_LIMIT)
+                    .iter()
+                    .enumerate()
+            {
+                write!(
+                    svg,
+                    r#"<tspan x="{}" y="{}" xml:space="preserve">{}</tspan>"#,
+                    x + 12,
+                    y + 24 + line * 18,
+                    super::escape(text)
+                )
+                .unwrap();
+            }
+            svg.push_str("</text>");
+        }
         if let Some(node) = card.node {
-            svg.push_str(&super::entities::import_badge(node, x + 12, y + 10));
+            svg.push_str(&super::entities::import_badge(
+                node,
+                x + 12,
+                y + 10 + heading_height,
+            ));
             if node.member_owner.is_some() {
-                let icon_y = y + 10 + crate::view::card::import_height(node);
+                let icon_y = y + 10 + heading_height + crate::view::card::import_height(node);
                 if let Some(icon) = super::icons::for_node(node) {
                     svg.push_str(&super::icons::render(icon, x + 12, icon_y));
                 }
@@ -141,7 +164,7 @@ pub(super) fn render(
                 ));
             }
         }
-        let mut line_y = y + 24 + card.badge_height();
+        let mut line_y = y + 24 + heading_height + card.badge_height();
         for row in card.rows {
             let next_hop = if row.text == "Next hop" {
                 index.number(node).map(|n| format!("Next hop [{n}]"))

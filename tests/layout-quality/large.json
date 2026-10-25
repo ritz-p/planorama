@@ -58,7 +58,7 @@
   "report": {
     "canvas": {
       "height": 4755,
-      "width": 4739
+      "width": 4735
     },
     "category": "layout",
     "edges": [
@@ -85,15 +85,15 @@
         },
         "polyline": [
           [
-            1710,
-            2991
+            1722,
+            3004
           ],
           [
-            1777,
-            2991
+            1790,
+            3004
           ],
           [
-            1777,
+            1790,
             4604
           ],
           [
@@ -103,7 +103,7 @@
         ],
         "raw_polyline": {
           "bends": 2,
-          "length": 2331
+          "length": 2332
         },
         "visible_border": {
           "close_length": 0,
@@ -135,35 +135,31 @@
         },
         "polyline": [
           [
-            2801,
-            3319
+            3093,
+            3332
           ],
           [
-            2759,
-            3319
+            3147,
+            3332
           ],
           [
-            2759,
-            3325
+            3147,
+            3461
           ],
           [
-            1101,
-            3325
-          ],
-          [
-            1101,
-            3393
+            1204,
+            3461
           ]
         ],
         "raw_polyline": {
-          "bends": 3,
-          "length": 1774
+          "bends": 2,
+          "length": 2126
         },
         "visible_border": {
-          "close_length": 10,
-          "minimum_deficit": 52.5,
-          "minimum_gap_within_8px": -2,
-          "preferred_deficit": 92.5
+          "close_length": 6,
+          "minimum_deficit": 1.5,
+          "minimum_gap_within_8px": 1.75,
+          "preferred_deficit": 17.75
         }
       },
       {
@@ -191,12 +187,12 @@
         },
         "polyline": [
           [
-            4035,
-            3799
+            4031,
+            3825
           ],
           [
-            3399,
-            3799
+            3395,
+            3825
           ]
         ],
         "raw_polyline": {
@@ -235,20 +231,20 @@
         },
         "polyline": [
           [
-            4035,
-            3603
+            4031,
+            3629
           ],
           [
-            3717,
-            3603
+            3713,
+            3629
           ],
           [
-            3717,
-            3744
+            3713,
+            3770
           ],
           [
-            3399,
-            3744
+            3395,
+            3770
           ]
         ],
         "raw_polyline": {
@@ -287,33 +283,33 @@
         },
         "polyline": [
           [
-            1704,
+            1716,
             3599
           ],
           [
-            2749,
+            2745,
             3599
           ],
           [
-            2749,
-            3408
+            2745,
+            3482
           ],
           [
-            3893,
-            3408
+            3889,
+            3482
           ],
           [
-            3893,
+            3889,
             2720
           ],
           [
-            4035,
+            4031,
             2720
           ]
         ],
         "raw_polyline": {
           "bends": 4,
-          "length": 3210
+          "length": 3194
         },
         "visible_border": {
           "close_length": 0,
@@ -355,21 +351,21 @@
             2592
           ],
           [
-            3877,
+            3873,
             2592
           ],
           [
-            3877,
+            3873,
             2691
           ],
           [
-            4035,
+            4031,
             2691
           ]
         ],
         "raw_polyline": {
           "bends": 3,
-          "length": 3182
+          "length": 3178
         },
         "visible_border": {
           "close_length": 1,
@@ -404,28 +400,28 @@
         "polyline": [
           [
             1174,
-            2860
+            2875
           ],
           [
             1298,
-            2860
+            2875
           ],
           [
             1298,
-            3301
+            3311
           ],
           [
-            1537,
-            3301
+            1549,
+            3311
           ],
           [
-            1537,
+            1549,
             3535
           ]
         ],
         "raw_polyline": {
           "bends": 3,
-          "length": 1038
+          "length": 1035
         },
         "visible_border": {
           "close_length": 0,
@@ -459,21 +455,25 @@
         },
         "polyline": [
           [
-            976,
-            2917
+            1174,
+            2846
           ],
           [
-            976,
-            3222
+            1337,
+            2846
           ],
           [
-            1372,
-            3222
+            1337,
+            3240
+          ],
+          [
+            1384,
+            3240
           ]
         ],
         "raw_polyline": {
-          "bends": 1,
-          "length": 701
+          "bends": 2,
+          "length": 604
         },
         "visible_border": {
           "close_length": 0,
@@ -507,29 +507,29 @@
         },
         "polyline": [
           [
-            1767,
-            3230
+            1581,
+            3301
           ],
           [
-            1849,
-            3230
+            1581,
+            3319
           ],
           [
-            1849,
-            3638
+            1758,
+            3319
           ],
           [
-            3078,
-            3638
+            1758,
+            3825
           ],
           [
-            3078,
-            3678
+            2755,
+            3825
           ]
         ],
         "raw_polyline": {
           "bends": 3,
-          "length": 1759
+          "length": 1698
         },
         "visible_border": {
           "close_length": 0,
@@ -563,25 +563,25 @@
         },
         "polyline": [
           [
-            1767,
-            3198
+            1779,
+            3224
           ],
           [
-            1927,
-            3198
+            1923,
+            3224
           ],
           [
-            1927,
+            1923,
             3141
           ],
           [
-            1951,
+            1947,
             3141
           ]
         ],
         "raw_polyline": {
           "bends": 2,
-          "length": 241
+          "length": 251
         },
         "visible_border": {
           "close_length": 0,
@@ -615,25 +615,25 @@
         },
         "polyline": [
           [
-            1767,
-            3214
+            1779,
+            3240
           ],
           [
-            1933,
-            3214
+            1929,
+            3240
           ],
           [
-            1933,
+            1929,
             3359
           ],
           [
-            1951,
+            1947,
             3359
           ]
         ],
         "raw_polyline": {
           "bends": 2,
-          "length": 329
+          "length": 287
         },
         "visible_border": {
           "close_length": 0,
@@ -667,25 +667,25 @@
         },
         "polyline": [
           [
-            1767,
-            3246
+            1779,
+            3256
           ],
           [
-            1808,
-            3246
+            1827,
+            3256
           ],
           [
-            1808,
+            1827,
             3914
           ],
           [
-            1951,
+            1947,
             3914
           ]
         ],
         "raw_polyline": {
           "bends": 2,
-          "length": 852
+          "length": 826
         },
         "visible_border": {
           "close_length": 0,
@@ -719,25 +719,25 @@
         },
         "polyline": [
           [
-            1767,
-            3262
+            1779,
+            3272
           ],
           [
-            1833,
-            3262
+            1811,
+            3272
           ],
           [
-            1833,
+            1811,
             4188
           ],
           [
-            1951,
+            1947,
             4188
           ]
         ],
         "raw_polyline": {
           "bends": 2,
-          "length": 1110
+          "length": 1084
         },
         "visible_border": {
           "close_length": 0,
@@ -771,25 +771,25 @@
         },
         "polyline": [
           [
-            1767,
-            3182
+            1779,
+            3208
           ],
           [
-            1825,
-            3182
+            1821,
+            3208
           ],
           [
-            1825,
+            1821,
             2663
           ],
           [
-            1867,
+            1863,
             2663
           ]
         ],
         "raw_polyline": {
           "bends": 2,
-          "length": 619
+          "length": 629
         },
         "visible_border": {
           "close_length": 0,
@@ -823,19 +823,19 @@
         },
         "polyline": [
           [
-            3172,
+            3168,
             2672
           ],
           [
-            3327,
+            3323,
             2672
           ],
           [
-            3327,
+            3323,
             2693
           ],
           [
-            3483,
+            3479,
             2693
           ]
         ],
@@ -875,19 +875,19 @@
         },
         "polyline": [
           [
-            2064,
+            2060,
             2608
           ],
           [
-            2064,
+            2060,
             2590
           ],
           [
-            3674,
+            3670,
             2590
           ],
           [
-            3674,
+            3670,
             2608
           ]
         ],
@@ -1035,12 +1035,12 @@
         },
         "polyline": [
           [
-            3234,
-            3537
+            3230,
+            3563
           ],
           [
-            3150,
-            3537
+            3146,
+            3563
           ]
         ],
         "raw_polyline": {
@@ -1079,19 +1079,19 @@
         },
         "polyline": [
           [
-            2675,
+            2671,
             2937
           ],
           [
-            3983,
+            3979,
             2937
           ],
           [
-            3983,
+            3979,
             2467
           ],
           [
-            4035,
+            4031,
             2467
           ]
         ],
@@ -1131,15 +1131,15 @@
         },
         "polyline": [
           [
-            2675,
+            2671,
             3058
           ],
           [
-            2965,
+            2961,
             3058
           ],
           [
-            2965,
+            2961,
             2738
           ]
         ],
@@ -1179,25 +1179,25 @@
         },
         "polyline": [
           [
-            2675,
+            2671,
             3309
           ],
           [
-            2697,
+            2693,
             3309
           ],
           [
-            2697,
-            3523
+            2693,
+            3549
           ],
           [
-            2759,
-            3523
+            2755,
+            3549
           ]
         ],
         "raw_polyline": {
           "bends": 2,
-          "length": 298
+          "length": 324
         },
         "visible_border": {
           "close_length": 0,
@@ -1231,35 +1231,39 @@
         },
         "polyline": [
           [
-            2270,
-            3649
+            2671,
+            3803
           ],
           [
-            2270,
-            3619
+            2689,
+            3803
           ],
           [
-            4017,
-            3619
+            2689,
+            3498
           ],
           [
-            4017,
+            4015,
+            3498
+          ],
+          [
+            4015,
             2510
           ],
           [
-            4035,
+            4031,
             2510
           ]
         ],
         "raw_polyline": {
-          "bends": 3,
-          "length": 2904
+          "bends": 4,
+          "length": 2653
         },
         "visible_border": {
-          "close_length": 0,
+          "close_length": 2,
           "minimum_deficit": 0,
-          "minimum_gap_within_8px": null,
-          "preferred_deficit": 0
+          "minimum_gap_within_8px": 6.25,
+          "preferred_deficit": 2.5
         }
       },
       {
@@ -1287,25 +1291,25 @@
         },
         "polyline": [
           [
-            2675,
-            3803
+            2671,
+            3945
           ],
           [
-            2713,
-            3803
+            2709,
+            3945
           ],
           [
-            2713,
+            2709,
             2672
           ],
           [
-            2759,
+            2755,
             2672
           ]
         ],
         "raw_polyline": {
           "bends": 2,
-          "length": 1215
+          "length": 1357
         },
         "visible_border": {
           "close_length": 0,
@@ -1339,31 +1343,27 @@
         },
         "polyline": [
           [
-            2675,
-            4096
+            2266,
+            3649
           ],
           [
-            2743,
-            4096
+            2266,
+            3578
           ],
           [
-            2743,
-            3552
-          ],
-          [
-            2759,
-            3552
+            2755,
+            3578
           ]
         ],
         "raw_polyline": {
-          "bends": 2,
-          "length": 628
+          "bends": 1,
+          "length": 560
         },
         "visible_border": {
-          "close_length": 2,
+          "close_length": 0,
           "minimum_deficit": 0,
-          "minimum_gap_within_8px": 6.25,
-          "preferred_deficit": 2.5
+          "minimum_gap_within_8px": null,
+          "preferred_deficit": 0
         }
       },
       {
@@ -1391,11 +1391,11 @@
         },
         "polyline": [
           [
-            2330,
+            2326,
             4478
           ],
           [
-            2330,
+            2326,
             4635
           ],
           [
@@ -1405,7 +1405,7 @@
         ],
         "raw_polyline": {
           "bends": 1,
-          "length": 1361
+          "length": 1357
         },
         "visible_border": {
           "close_length": 0,
@@ -1439,19 +1439,19 @@
         },
         "polyline": [
           [
-            3951,
+            3947,
             3444
           ],
           [
-            3993,
+            3989,
             3444
           ],
           [
-            3993,
+            3989,
             2916
           ],
           [
-            4035,
+            4031,
             2916
           ]
         ],
@@ -1491,20 +1491,20 @@
         },
         "polyline": [
           [
-            4035,
-            3995
+            4031,
+            4021
           ],
           [
-            3717,
-            3995
+            3713,
+            4021
           ],
           [
-            3717,
-            3854
+            3713,
+            3880
           ],
           [
-            3399,
-            3854
+            3395,
+            3880
           ]
         ],
         "raw_polyline": {
@@ -1555,21 +1555,21 @@
             2396
           ],
           [
-            4001,
+            3999,
             2396
           ],
           [
-            4001,
+            3999,
             2887
           ],
           [
-            4035,
+            4031,
             2887
           ]
         ],
         "raw_polyline": {
           "bends": 4,
-          "length": 4812
+          "length": 4808
         },
         "visible_border": {
           "close_length": 0,
@@ -1609,27 +1609,27 @@
             2757
           ],
           [
-            1799,
+            1774,
             2757
           ],
           [
-            1799,
+            1774,
             3085
           ],
           [
-            1951,
+            1947,
             3085
           ]
         ],
         "raw_polyline": {
           "bends": 3,
-          "length": 1347
+          "length": 1343
         },
         "visible_border": {
-          "close_length": 0,
+          "close_length": 2,
           "minimum_deficit": 0,
-          "minimum_gap_within_8px": null,
-          "preferred_deficit": 0
+          "minimum_gap_within_8px": 7.75,
+          "preferred_deficit": 0.5
         }
       },
       {
@@ -1659,21 +1659,21 @@
             2664
           ],
           [
-            1246,
+            1217,
             2664
           ],
           [
-            1246,
+            1217,
             3415
           ],
           [
-            1951,
+            1947,
             3415
           ]
         ],
         "raw_polyline": {
           "bends": 2,
-          "length": 1543
+          "length": 1539
         },
         "visible_border": {
           "close_length": 0,
@@ -1709,21 +1709,21 @@
             2640
           ],
           [
-            1230,
+            1201,
             2640
           ],
           [
-            1230,
+            1201,
             3970
           ],
           [
-            1951,
+            1947,
             3970
           ]
         ],
         "raw_polyline": {
           "bends": 2,
-          "length": 2122
+          "length": 2118
         },
         "visible_border": {
           "close_length": 0,
@@ -1759,21 +1759,21 @@
             2688
           ],
           [
-            1214,
+            1843,
             2688
           ],
           [
-            1214,
+            1843,
             4244
           ],
           [
-            1951,
+            1947,
             4244
           ]
         ],
         "raw_polyline": {
           "bends": 2,
-          "length": 2348
+          "length": 2344
         },
         "visible_border": {
           "close_length": 0,
@@ -1805,12 +1805,12 @@
         },
         "polyline": [
           [
-            2675,
-            3235
+            2671,
+            3243
           ],
           [
-            2759,
-            3235
+            2755,
+            3243
           ]
         ],
         "raw_polyline": {
@@ -1847,25 +1847,25 @@
         },
         "polyline": [
           [
-            2675,
-            3949
+            2671,
+            4092
           ],
           [
-            2717,
-            3949
+            2713,
+            4092
           ],
           [
-            2717,
-            3312
+            2713,
+            3329
           ],
           [
-            2759,
-            3312
+            2755,
+            3329
           ]
         ],
         "raw_polyline": {
           "bends": 2,
-          "length": 721
+          "length": 847
         },
         "visible_border": {
           "close_length": 0,
@@ -1902,20 +1902,20 @@
           ],
           [
             1106,
-            3133
+            3146
           ],
           [
-            1625,
-            3133
+            1637,
+            3146
           ],
           [
-            1625,
-            3070
+            1637,
+            3096
           ]
         ],
         "raw_polyline": {
           "bends": 2,
-          "length": 646
+          "length": 632
         },
         "visible_border": {
           "close_length": 0,
@@ -1951,21 +1951,21 @@
             3768
           ],
           [
-            1317,
+            1321,
             3768
           ],
           [
-            1317,
-            2984
+            1321,
+            3001
           ],
           [
-            1372,
-            2984
+            1384,
+            3001
           ]
         ],
         "raw_polyline": {
           "bends": 2,
-          "length": 889
+          "length": 884
         },
         "visible_border": {
           "close_length": 0,
@@ -1999,31 +1999,31 @@
         },
         "polyline": [
           [
-            2675,
+            2671,
             3430
           ],
           [
-            2691,
+            2729,
             3430
           ],
           [
-            2691,
-            3763
+            2729,
+            3770
           ],
           [
-            2759,
-            3763
+            2755,
+            3770
           ]
         ],
         "raw_polyline": {
           "bends": 2,
-          "length": 417
+          "length": 424
         },
         "visible_border": {
-          "close_length": 2,
+          "close_length": 0,
           "minimum_deficit": 0,
-          "minimum_gap_within_8px": 5.5,
-          "preferred_deficit": 2
+          "minimum_gap_within_8px": null,
+          "preferred_deficit": 0
         }
       },
       {
@@ -2051,25 +2051,25 @@
         },
         "polyline": [
           [
-            2675,
+            2671,
             4238
           ],
           [
-            2727,
+            2733,
             4238
           ],
           [
-            2727,
-            3836
+            2733,
+            3880
           ],
           [
-            2759,
-            3836
+            2755,
+            3880
           ]
         ],
         "raw_polyline": {
           "bends": 2,
-          "length": 486
+          "length": 442
         },
         "visible_border": {
           "close_length": 0,
@@ -2107,27 +2107,27 @@
             3473
           ],
           [
-            1333,
+            1366,
             3473
           ],
           [
-            1333,
+            1366,
             3582
           ],
           [
-            1372,
+            1384,
             3582
           ]
         ],
         "raw_polyline": {
           "bends": 2,
-          "length": 193
+          "length": 205
         },
         "visible_border": {
-          "close_length": 0,
+          "close_length": 1,
           "minimum_deficit": 0,
-          "minimum_gap_within_8px": null,
-          "preferred_deficit": 0
+          "minimum_gap_within_8px": 7.75,
+          "preferred_deficit": 0.25
         }
       },
       {
@@ -2159,21 +2159,21 @@
             3826
           ],
           [
-            1348,
+            1360,
             3826
           ],
           [
-            1348,
+            1360,
             3617
           ],
           [
-            1372,
+            1384,
             3617
           ]
         ],
         "raw_polyline": {
           "bends": 2,
-          "length": 314
+          "length": 326
         },
         "visible_border": {
           "close_length": 0,
@@ -2184,6 +2184,50 @@
       }
     ],
     "findings": [
+      {
+        "below_minimum": false,
+        "category": "visible_border_clearance",
+        "coordinate": 1366,
+        "edge": "{\"directionality\":\"undirected\",\"kind\":\"connection\",\"provenance\":[{\"from\":\"module.network.aws_subnet.public_a\",\"from_deposed_key\":null,\"to\":\"module.application.aws_lb.app\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7375626e65742e7075626c69635f61-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6c622e617070-current\",\"state\":null}}",
+        "frame": {
+          "bounds": {
+            "height": 130,
+            "width": 332,
+            "x": 1384,
+            "y": 3535
+          },
+          "node": "terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6c622e617070-current",
+          "state": null
+        },
+        "horizontal": false,
+        "interval": [
+          3574,
+          3582
+        ],
+        "segment": 1
+      },
+      {
+        "below_minimum": false,
+        "category": "visible_border_clearance",
+        "coordinate": 1774,
+        "edge": "{\"directionality\":\"undirected\",\"kind\":\"association\",\"provenance\":[{\"deposed_key\":null,\"resource\":\"module.application.aws_lb_target_group_attachment.a0\"}],\"relationship_resource\":\"module.application.aws_lb_target_group_attachment.a0\",\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6c625f7461726765745f67726f75702e617070-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f696e7374616e63652e776f726b6572735f615b305d-current\",\"state\":null}}",
+        "frame": {
+          "bounds": {
+            "height": 274,
+            "width": 380,
+            "x": 1384,
+            "y": 2822
+          },
+          "node": "terraform:6d6f64756c652e6e6574776f726b2e6177735f726f7574655f7461626c652e7075626c6963-current",
+          "state": null
+        },
+        "horizontal": false,
+        "interval": [
+          3077,
+          3085
+        ],
+        "segment": 2
+      },
       {
         "below_minimum": false,
         "category": "visible_border_clearance",
@@ -2209,46 +2253,46 @@
       {
         "below_minimum": false,
         "category": "visible_border_clearance",
-        "coordinate": 2691,
-        "edge": "{\"directionality\":\"undirected\",\"kind\":\"connection\",\"provenance\":[{\"from\":\"module.network.aws_subnet.private_a\",\"from_deposed_key\":null,\"to\":\"module.application.aws_ecs_service.app\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7375626e65742e707269766174655f61-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6563735f736572766963652e617070-current\",\"state\":null}}",
+        "coordinate": 3085,
+        "edge": "{\"directionality\":\"undirected\",\"kind\":\"association\",\"provenance\":[{\"deposed_key\":null,\"resource\":\"module.application.aws_lb_target_group_attachment.a0\"}],\"relationship_resource\":\"module.application.aws_lb_target_group_attachment.a0\",\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6c625f7461726765745f67726f75702e617070-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f696e7374616e63652e776f726b6572735f615b305d-current\",\"state\":null}}",
         "frame": {
           "bounds": {
-            "height": 761,
-            "width": 808,
-            "x": 1867,
-            "y": 2804
+            "height": 274,
+            "width": 380,
+            "x": 1384,
+            "y": 2822
           },
-          "node": "terraform:6d6f64756c652e6e6574776f726b2e6177735f7375626e65742e707269766174655f61-current",
+          "node": "terraform:6d6f64756c652e6e6574776f726b2e6177735f726f7574655f7461626c652e7075626c6963-current",
           "state": null
         },
-        "horizontal": false,
+        "horizontal": true,
         "interval": [
-          3430,
-          3438
+          1774,
+          1782
         ],
-        "segment": 1
+        "segment": 3
       },
       {
         "below_minimum": false,
         "category": "visible_border_clearance",
-        "coordinate": 2743,
-        "edge": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.network.aws_subnet.private_b\",\"from_deposed_key\":null,\"to\":\"module.network.aws_vpc_endpoint.logs\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7375626e65742e707269766174655f62-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7670635f656e64706f696e742e6c6f6773-current\",\"state\":null}}",
+        "coordinate": 4015,
+        "edge": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.network.aws_subnet.private_b\",\"from_deposed_key\":null,\"to\":\"module.application.aws_autoscaling_group.app\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7375626e65742e707269766174655f62-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6175746f7363616c696e675f67726f75702e617070-current\",\"state\":null}}",
         "frame": {
           "bounds": {
-            "height": 112,
-            "width": 391,
-            "x": 2759,
-            "y": 3482
+            "height": 154,
+            "width": 624,
+            "x": 4031,
+            "y": 2412
           },
-          "node": "terraform:6d6f64756c652e6e6574776f726b2e6177735f7670635f656e64706f696e742e6c6f6773-current",
+          "node": "terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6175746f7363616c696e675f67726f75702e617070-current",
           "state": null
         },
         "horizontal": false,
         "interval": [
-          3552,
-          3560
+          2510,
+          2518
         ],
-        "segment": 1
+        "segment": 3
       },
       {
         "below_minimum": false,
@@ -2275,13 +2319,13 @@
       {
         "below_minimum": true,
         "category": "visible_border_clearance",
-        "coordinate": 2759,
+        "coordinate": 3147,
         "edge": "{\"directionality\":\"directed\",\"kind\":\"association\",\"provenance\":[{\"deposed_key\":null,\"resource\":\"module.network.aws_route.nat\"}],\"relationship_resource\":\"module.network.aws_route.nat\",\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f726f7574652e6e6174-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f6e61745f676174657761792e6d61696e-current\",\"state\":null}}",
         "frame": {
           "bounds": {
-            "height": 248,
+            "height": 274,
             "width": 380,
-            "x": 2759,
+            "x": 2755,
             "y": 3150
           },
           "node": "terraform:6d6f64756c652e6e6574776f726b2e6177735f726f7574655f7461626c652e70726976617465-current",
@@ -2289,8 +2333,8 @@
         },
         "horizontal": false,
         "interval": [
-          3319,
-          3325
+          3332,
+          3340
         ],
         "segment": 1
       },
@@ -2299,8 +2343,34 @@
         "edge": "{\"directionality\":\"directed\",\"kind\":\"association\",\"provenance\":[{\"deposed_key\":null,\"resource\":\"module.network.aws_route.internet\"}],\"relationship_resource\":\"module.network.aws_route.internet\",\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f726f7574652e696e7465726e6574-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f696e7465726e65745f676174657761792e6d61696e-current\",\"state\":null}}",
         "location": {
           "point": [
-            1777,
-            3182
+            1774,
+            3004
+          ]
+        },
+        "peer": "{\"directionality\":\"undirected\",\"kind\":\"association\",\"provenance\":[{\"deposed_key\":null,\"resource\":\"module.application.aws_lb_target_group_attachment.a0\"}],\"relationship_resource\":\"module.application.aws_lb_target_group_attachment.a0\",\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6c625f7461726765745f67726f75702e617070-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f696e7374616e63652e776f726b6572735f615b305d-current\",\"state\":null}}",
+        "peer_segment": 2,
+        "segment": 0
+      },
+      {
+        "category": "crossing",
+        "edge": "{\"directionality\":\"directed\",\"kind\":\"association\",\"provenance\":[{\"deposed_key\":null,\"resource\":\"module.network.aws_route.internet\"}],\"relationship_resource\":\"module.network.aws_route.internet\",\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f726f7574652e696e7465726e6574-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f696e7465726e65745f676174657761792e6d61696e-current\",\"state\":null}}",
+        "location": {
+          "point": [
+            1790,
+            3085
+          ]
+        },
+        "peer": "{\"directionality\":\"undirected\",\"kind\":\"association\",\"provenance\":[{\"deposed_key\":null,\"resource\":\"module.application.aws_lb_target_group_attachment.a0\"}],\"relationship_resource\":\"module.application.aws_lb_target_group_attachment.a0\",\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6c625f7461726765745f67726f75702e617070-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f696e7374616e63652e776f726b6572735f615b305d-current\",\"state\":null}}",
+        "peer_segment": 3,
+        "segment": 1
+      },
+      {
+        "category": "crossing",
+        "edge": "{\"directionality\":\"directed\",\"kind\":\"association\",\"provenance\":[{\"deposed_key\":null,\"resource\":\"module.network.aws_route.internet\"}],\"relationship_resource\":\"module.network.aws_route.internet\",\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f726f7574652e696e7465726e6574-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f696e7465726e65745f676174657761792e6d61696e-current\",\"state\":null}}",
+        "location": {
+          "point": [
+            1790,
+            3208
           ]
         },
         "peer": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.application.aws_security_group.app\",\"from_deposed_key\":null,\"to\":\"module.database.aws_security_group.database\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f73656375726974795f67726f75702e617070-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e64617461626173652e6177735f73656375726974795f67726f75702e6461746162617365-current\",\"state\":null}}",
@@ -2312,8 +2382,8 @@
         "edge": "{\"directionality\":\"directed\",\"kind\":\"association\",\"provenance\":[{\"deposed_key\":null,\"resource\":\"module.network.aws_route.internet\"}],\"relationship_resource\":\"module.network.aws_route.internet\",\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f726f7574652e696e7465726e6574-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f696e7465726e65745f676174657761792e6d61696e-current\",\"state\":null}}",
         "location": {
           "point": [
-            1777,
-            3198
+            1790,
+            3224
           ]
         },
         "peer": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.application.aws_security_group.app\",\"from_deposed_key\":null,\"to\":\"module.application.aws_instance.workers_a[0]\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f73656375726974795f67726f75702e617070-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f696e7374616e63652e776f726b6572735f615b305d-current\",\"state\":null}}",
@@ -2325,8 +2395,8 @@
         "edge": "{\"directionality\":\"directed\",\"kind\":\"association\",\"provenance\":[{\"deposed_key\":null,\"resource\":\"module.network.aws_route.internet\"}],\"relationship_resource\":\"module.network.aws_route.internet\",\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f726f7574652e696e7465726e6574-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f696e7465726e65745f676174657761792e6d61696e-current\",\"state\":null}}",
         "location": {
           "point": [
-            1777,
-            3214
+            1790,
+            3240
           ]
         },
         "peer": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.application.aws_security_group.app\",\"from_deposed_key\":null,\"to\":\"module.application.aws_instance.workers_a[1]\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f73656375726974795f67726f75702e617070-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f696e7374616e63652e776f726b6572735f615b315d-current\",\"state\":null}}",
@@ -2338,21 +2408,8 @@
         "edge": "{\"directionality\":\"directed\",\"kind\":\"association\",\"provenance\":[{\"deposed_key\":null,\"resource\":\"module.network.aws_route.internet\"}],\"relationship_resource\":\"module.network.aws_route.internet\",\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f726f7574652e696e7465726e6574-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f696e7465726e65745f676174657761792e6d61696e-current\",\"state\":null}}",
         "location": {
           "point": [
-            1777,
-            3230
-          ]
-        },
-        "peer": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.application.aws_security_group.app\",\"from_deposed_key\":null,\"to\":\"module.application.aws_ecs_service.app\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f73656375726974795f67726f75702e617070-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6563735f736572766963652e617070-current\",\"state\":null}}",
-        "peer_segment": 0,
-        "segment": 1
-      },
-      {
-        "category": "crossing",
-        "edge": "{\"directionality\":\"directed\",\"kind\":\"association\",\"provenance\":[{\"deposed_key\":null,\"resource\":\"module.network.aws_route.internet\"}],\"relationship_resource\":\"module.network.aws_route.internet\",\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f726f7574652e696e7465726e6574-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f696e7465726e65745f676174657761792e6d61696e-current\",\"state\":null}}",
-        "location": {
-          "point": [
-            1777,
-            3246
+            1790,
+            3256
           ]
         },
         "peer": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.application.aws_security_group.app\",\"from_deposed_key\":null,\"to\":\"module.application.aws_instance.workers_b[0]\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f73656375726974795f67726f75702e617070-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f696e7374616e63652e776f726b6572735f625b305d-current\",\"state\":null}}",
@@ -2364,8 +2421,8 @@
         "edge": "{\"directionality\":\"directed\",\"kind\":\"association\",\"provenance\":[{\"deposed_key\":null,\"resource\":\"module.network.aws_route.internet\"}],\"relationship_resource\":\"module.network.aws_route.internet\",\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f726f7574652e696e7465726e6574-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f696e7465726e65745f676174657761792e6d61696e-current\",\"state\":null}}",
         "location": {
           "point": [
-            1777,
-            3262
+            1790,
+            3272
           ]
         },
         "peer": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.application.aws_security_group.app\",\"from_deposed_key\":null,\"to\":\"module.application.aws_instance.workers_b[1]\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f73656375726974795f67726f75702e617070-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f696e7374616e63652e776f726b6572735f625b315d-current\",\"state\":null}}",
@@ -2377,20 +2434,7 @@
         "edge": "{\"directionality\":\"directed\",\"kind\":\"association\",\"provenance\":[{\"deposed_key\":null,\"resource\":\"module.network.aws_route.internet\"}],\"relationship_resource\":\"module.network.aws_route.internet\",\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f726f7574652e696e7465726e6574-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f696e7465726e65745f676174657761792e6d61696e-current\",\"state\":null}}",
         "location": {
           "point": [
-            1777,
-            3325
-          ]
-        },
-        "peer": "{\"directionality\":\"directed\",\"kind\":\"association\",\"provenance\":[{\"deposed_key\":null,\"resource\":\"module.network.aws_route.nat\"}],\"relationship_resource\":\"module.network.aws_route.nat\",\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f726f7574652e6e6174-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f6e61745f676174657761792e6d61696e-current\",\"state\":null}}",
-        "peer_segment": 2,
-        "segment": 1
-      },
-      {
-        "category": "crossing",
-        "edge": "{\"directionality\":\"directed\",\"kind\":\"association\",\"provenance\":[{\"deposed_key\":null,\"resource\":\"module.network.aws_route.internet\"}],\"relationship_resource\":\"module.network.aws_route.internet\",\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f726f7574652e696e7465726e6574-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f696e7465726e65745f676174657761792e6d61696e-current\",\"state\":null}}",
-        "location": {
-          "point": [
-            1777,
+            1790,
             3415
           ]
         },
@@ -2403,7 +2447,20 @@
         "edge": "{\"directionality\":\"directed\",\"kind\":\"association\",\"provenance\":[{\"deposed_key\":null,\"resource\":\"module.network.aws_route.internet\"}],\"relationship_resource\":\"module.network.aws_route.internet\",\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f726f7574652e696e7465726e6574-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f696e7465726e65745f676174657761792e6d61696e-current\",\"state\":null}}",
         "location": {
           "point": [
-            1777,
+            1790,
+            3461
+          ]
+        },
+        "peer": "{\"directionality\":\"directed\",\"kind\":\"association\",\"provenance\":[{\"deposed_key\":null,\"resource\":\"module.network.aws_route.nat\"}],\"relationship_resource\":\"module.network.aws_route.nat\",\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f726f7574652e6e6174-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f6e61745f676174657761792e6d61696e-current\",\"state\":null}}",
+        "peer_segment": 2,
+        "segment": 1
+      },
+      {
+        "category": "crossing",
+        "edge": "{\"directionality\":\"directed\",\"kind\":\"association\",\"provenance\":[{\"deposed_key\":null,\"resource\":\"module.network.aws_route.internet\"}],\"relationship_resource\":\"module.network.aws_route.internet\",\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f726f7574652e696e7465726e6574-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f696e7465726e65745f676174657761792e6d61696e-current\",\"state\":null}}",
+        "location": {
+          "point": [
+            1790,
             3599
           ]
         },
@@ -2416,7 +2473,20 @@
         "edge": "{\"directionality\":\"directed\",\"kind\":\"association\",\"provenance\":[{\"deposed_key\":null,\"resource\":\"module.network.aws_route.internet\"}],\"relationship_resource\":\"module.network.aws_route.internet\",\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f726f7574652e696e7465726e6574-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f696e7465726e65745f676174657761792e6d61696e-current\",\"state\":null}}",
         "location": {
           "point": [
-            1777,
+            1790,
+            3825
+          ]
+        },
+        "peer": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.application.aws_security_group.app\",\"from_deposed_key\":null,\"to\":\"module.application.aws_ecs_service.app\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f73656375726974795f67726f75702e617070-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6563735f736572766963652e617070-current\",\"state\":null}}",
+        "peer_segment": 3,
+        "segment": 1
+      },
+      {
+        "category": "crossing",
+        "edge": "{\"directionality\":\"directed\",\"kind\":\"association\",\"provenance\":[{\"deposed_key\":null,\"resource\":\"module.network.aws_route.internet\"}],\"relationship_resource\":\"module.network.aws_route.internet\",\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f726f7574652e696e7465726e6574-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f696e7465726e65745f676174657761792e6d61696e-current\",\"state\":null}}",
+        "location": {
+          "point": [
+            1790,
             3970
           ]
         },
@@ -2426,24 +2496,11 @@
       },
       {
         "category": "crossing",
-        "edge": "{\"directionality\":\"directed\",\"kind\":\"association\",\"provenance\":[{\"deposed_key\":null,\"resource\":\"module.network.aws_route.internet\"}],\"relationship_resource\":\"module.network.aws_route.internet\",\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f726f7574652e696e7465726e6574-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f696e7465726e65745f676174657761792e6d61696e-current\",\"state\":null}}",
-        "location": {
-          "point": [
-            1777,
-            4244
-          ]
-        },
-        "peer": "{\"directionality\":\"undirected\",\"kind\":\"association\",\"provenance\":[{\"deposed_key\":null,\"resource\":\"module.application.aws_lb_target_group_attachment.b1\"}],\"relationship_resource\":\"module.application.aws_lb_target_group_attachment.b1\",\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6c625f7461726765745f67726f75702e617070-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f696e7374616e63652e776f726b6572735f625b315d-current\",\"state\":null}}",
-        "peer_segment": 2,
-        "segment": 1
-      },
-      {
-        "category": "crossing",
         "edge": "{\"directionality\":\"directed\",\"kind\":\"association\",\"provenance\":[{\"deposed_key\":null,\"resource\":\"module.network.aws_route.nat\"}],\"relationship_resource\":\"module.network.aws_route.nat\",\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f726f7574652e6e6174-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f6e61745f676174657761792e6d61696e-current\",\"state\":null}}",
         "location": {
           "point": [
-            1317,
-            3325
+            1321,
+            3461
           ]
         },
         "peer": "{\"directionality\":\"undirected\",\"kind\":\"association\",\"provenance\":[{\"deposed_key\":null,\"resource\":\"module.network.aws_route_table_association.public_b\"}],\"relationship_resource\":\"module.network.aws_route_table_association.public_b\",\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7375626e65742e7075626c69635f62-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f726f7574655f7461626c652e7075626c6963-current\",\"state\":null}}",
@@ -2455,8 +2512,8 @@
         "edge": "{\"directionality\":\"directed\",\"kind\":\"association\",\"provenance\":[{\"deposed_key\":null,\"resource\":\"module.network.aws_route.nat\"}],\"relationship_resource\":\"module.network.aws_route.nat\",\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f726f7574652e6e6174-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f6e61745f676174657761792e6d61696e-current\",\"state\":null}}",
         "location": {
           "point": [
-            1537,
-            3325
+            1549,
+            3461
           ]
         },
         "peer": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.application.aws_security_group.alb\",\"from_deposed_key\":null,\"to\":\"module.application.aws_lb.app\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f73656375726974795f67726f75702e616c62-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6c622e617070-current\",\"state\":null}}",
@@ -2468,12 +2525,12 @@
         "edge": "{\"directionality\":\"directed\",\"kind\":\"association\",\"provenance\":[{\"deposed_key\":null,\"resource\":\"module.network.aws_route.nat\"}],\"relationship_resource\":\"module.network.aws_route.nat\",\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f726f7574652e6e6174-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f6e61745f676174657761792e6d61696e-current\",\"state\":null}}",
         "location": {
           "point": [
-            1808,
-            3325
+            1758,
+            3461
           ]
         },
-        "peer": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.application.aws_security_group.app\",\"from_deposed_key\":null,\"to\":\"module.application.aws_instance.workers_b[0]\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f73656375726974795f67726f75702e617070-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f696e7374616e63652e776f726b6572735f625b305d-current\",\"state\":null}}",
-        "peer_segment": 1,
+        "peer": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.application.aws_security_group.app\",\"from_deposed_key\":null,\"to\":\"module.application.aws_ecs_service.app\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f73656375726974795f67726f75702e617070-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6563735f736572766963652e617070-current\",\"state\":null}}",
+        "peer_segment": 2,
         "segment": 2
       },
       {
@@ -2481,8 +2538,8 @@
         "edge": "{\"directionality\":\"directed\",\"kind\":\"association\",\"provenance\":[{\"deposed_key\":null,\"resource\":\"module.network.aws_route.nat\"}],\"relationship_resource\":\"module.network.aws_route.nat\",\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f726f7574652e6e6174-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f6e61745f676174657761792e6d61696e-current\",\"state\":null}}",
         "location": {
           "point": [
-            1833,
-            3325
+            1811,
+            3461
           ]
         },
         "peer": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.application.aws_security_group.app\",\"from_deposed_key\":null,\"to\":\"module.application.aws_instance.workers_b[1]\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f73656375726974795f67726f75702e617070-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f696e7374616e63652e776f726b6572735f625b315d-current\",\"state\":null}}",
@@ -2494,11 +2551,11 @@
         "edge": "{\"directionality\":\"directed\",\"kind\":\"association\",\"provenance\":[{\"deposed_key\":null,\"resource\":\"module.network.aws_route.nat\"}],\"relationship_resource\":\"module.network.aws_route.nat\",\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f726f7574652e6e6174-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f6e61745f676174657761792e6d61696e-current\",\"state\":null}}",
         "location": {
           "point": [
-            1849,
-            3325
+            1827,
+            3461
           ]
         },
-        "peer": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.application.aws_security_group.app\",\"from_deposed_key\":null,\"to\":\"module.application.aws_ecs_service.app\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f73656375726974795f67726f75702e617070-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6563735f736572766963652e617070-current\",\"state\":null}}",
+        "peer": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.application.aws_security_group.app\",\"from_deposed_key\":null,\"to\":\"module.application.aws_instance.workers_b[0]\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f73656375726974795f67726f75702e617070-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f696e7374616e63652e776f726b6572735f625b305d-current\",\"state\":null}}",
         "peer_segment": 1,
         "segment": 2
       },
@@ -2507,8 +2564,21 @@
         "edge": "{\"directionality\":\"directed\",\"kind\":\"association\",\"provenance\":[{\"deposed_key\":null,\"resource\":\"module.network.aws_route.nat\"}],\"relationship_resource\":\"module.network.aws_route.nat\",\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f726f7574652e6e6174-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f6e61745f676174657761792e6d61696e-current\",\"state\":null}}",
         "location": {
           "point": [
-            2697,
-            3325
+            1843,
+            3461
+          ]
+        },
+        "peer": "{\"directionality\":\"undirected\",\"kind\":\"association\",\"provenance\":[{\"deposed_key\":null,\"resource\":\"module.application.aws_lb_target_group_attachment.b1\"}],\"relationship_resource\":\"module.application.aws_lb_target_group_attachment.b1\",\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6c625f7461726765745f67726f75702e617070-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f696e7374616e63652e776f726b6572735f625b315d-current\",\"state\":null}}",
+        "peer_segment": 1,
+        "segment": 2
+      },
+      {
+        "category": "crossing",
+        "edge": "{\"directionality\":\"directed\",\"kind\":\"association\",\"provenance\":[{\"deposed_key\":null,\"resource\":\"module.network.aws_route.nat\"}],\"relationship_resource\":\"module.network.aws_route.nat\",\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f726f7574652e6e6174-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f6e61745f676174657761792e6d61696e-current\",\"state\":null}}",
+        "location": {
+          "point": [
+            2693,
+            3461
           ]
         },
         "peer": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.network.aws_subnet.private_a\",\"from_deposed_key\":null,\"to\":\"module.network.aws_vpc_endpoint.logs\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7375626e65742e707269766174655f61-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7670635f656e64706f696e742e6c6f6773-current\",\"state\":null}}",
@@ -2520,8 +2590,8 @@
         "edge": "{\"directionality\":\"directed\",\"kind\":\"association\",\"provenance\":[{\"deposed_key\":null,\"resource\":\"module.network.aws_route.nat\"}],\"relationship_resource\":\"module.network.aws_route.nat\",\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f726f7574652e6e6174-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f6e61745f676174657761792e6d61696e-current\",\"state\":null}}",
         "location": {
           "point": [
-            2713,
-            3325
+            2709,
+            3461
           ]
         },
         "peer": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.network.aws_subnet.private_b\",\"from_deposed_key\":null,\"to\":\"module.database.aws_db_subnet_group.database\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7375626e65742e707269766174655f62-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e64617461626173652e6177735f64625f7375626e65745f67726f75702e6461746162617365-current\",\"state\":null}}",
@@ -2533,8 +2603,8 @@
         "edge": "{\"directionality\":\"directed\",\"kind\":\"association\",\"provenance\":[{\"deposed_key\":null,\"resource\":\"module.network.aws_route.nat\"}],\"relationship_resource\":\"module.network.aws_route.nat\",\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f726f7574652e6e6174-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f6e61745f676174657761792e6d61696e-current\",\"state\":null}}",
         "location": {
           "point": [
-            2717,
-            3325
+            2713,
+            3461
           ]
         },
         "peer": "{\"directionality\":\"undirected\",\"kind\":\"association\",\"provenance\":[{\"deposed_key\":null,\"resource\":\"module.network.aws_route_table_association.private_b\"}],\"relationship_resource\":\"module.network.aws_route_table_association.private_b\",\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7375626e65742e707269766174655f62-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f726f7574655f7461626c652e70726976617465-current\",\"state\":null}}",
@@ -2543,27 +2613,27 @@
       },
       {
         "category": "crossing",
-        "edge": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.application.aws_ecs_cluster.app\",\"from_deposed_key\":null,\"to\":\"module.application.aws_ecs_service.app\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6563735f636c75737465722e617070-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6563735f736572766963652e617070-current\",\"state\":null}}",
+        "edge": "{\"directionality\":\"directed\",\"kind\":\"association\",\"provenance\":[{\"deposed_key\":null,\"resource\":\"module.network.aws_route.nat\"}],\"relationship_resource\":\"module.network.aws_route.nat\",\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f726f7574652e6e6174-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f6e61745f676174657761792e6d61696e-current\",\"state\":null}}",
         "location": {
           "point": [
-            3717,
-            3619
+            2729,
+            3461
           ]
         },
-        "peer": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.network.aws_subnet.private_b\",\"from_deposed_key\":null,\"to\":\"module.application.aws_autoscaling_group.app\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7375626e65742e707269766174655f62-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6175746f7363616c696e675f67726f75702e617070-current\",\"state\":null}}",
+        "peer": "{\"directionality\":\"undirected\",\"kind\":\"connection\",\"provenance\":[{\"from\":\"module.network.aws_subnet.private_a\",\"from_deposed_key\":null,\"to\":\"module.application.aws_ecs_service.app\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7375626e65742e707269766174655f61-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6563735f736572766963652e617070-current\",\"state\":null}}",
         "peer_segment": 1,
-        "segment": 1
+        "segment": 2
       },
       {
         "category": "crossing",
-        "edge": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.application.aws_ecs_cluster.app\",\"from_deposed_key\":null,\"to\":\"module.application.aws_ecs_service.app\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6563735f636c75737465722e617070-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6563735f736572766963652e617070-current\",\"state\":null}}",
+        "edge": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.application.aws_lb.app\",\"from_deposed_key\":null,\"to\":\"module.application.aws_lb_listener.http\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6c622e617070-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6c625f6c697374656e65722e68747470-current\",\"state\":null}}",
         "location": {
           "point": [
-            4017,
-            3603
+            1758,
+            3599
           ]
         },
-        "peer": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.network.aws_subnet.private_b\",\"from_deposed_key\":null,\"to\":\"module.application.aws_autoscaling_group.app\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7375626e65742e707269766174655f62-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6175746f7363616c696e675f67726f75702e617070-current\",\"state\":null}}",
+        "peer": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.application.aws_security_group.app\",\"from_deposed_key\":null,\"to\":\"module.application.aws_ecs_service.app\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f73656375726974795f67726f75702e617070-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6563735f736572766963652e617070-current\",\"state\":null}}",
         "peer_segment": 2,
         "segment": 0
       },
@@ -2572,20 +2642,7 @@
         "edge": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.application.aws_lb.app\",\"from_deposed_key\":null,\"to\":\"module.application.aws_lb_listener.http\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6c622e617070-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6c625f6c697374656e65722e68747470-current\",\"state\":null}}",
         "location": {
           "point": [
-            1808,
-            3599
-          ]
-        },
-        "peer": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.application.aws_security_group.app\",\"from_deposed_key\":null,\"to\":\"module.application.aws_instance.workers_b[0]\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f73656375726974795f67726f75702e617070-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f696e7374616e63652e776f726b6572735f625b305d-current\",\"state\":null}}",
-        "peer_segment": 1,
-        "segment": 0
-      },
-      {
-        "category": "crossing",
-        "edge": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.application.aws_lb.app\",\"from_deposed_key\":null,\"to\":\"module.application.aws_lb_listener.http\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6c622e617070-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6c625f6c697374656e65722e68747470-current\",\"state\":null}}",
-        "location": {
-          "point": [
-            1833,
+            1811,
             3599
           ]
         },
@@ -2598,11 +2655,11 @@
         "edge": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.application.aws_lb.app\",\"from_deposed_key\":null,\"to\":\"module.application.aws_lb_listener.http\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6c622e617070-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6c625f6c697374656e65722e68747470-current\",\"state\":null}}",
         "location": {
           "point": [
-            1849,
+            1827,
             3599
           ]
         },
-        "peer": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.application.aws_security_group.app\",\"from_deposed_key\":null,\"to\":\"module.application.aws_ecs_service.app\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f73656375726974795f67726f75702e617070-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6563735f736572766963652e617070-current\",\"state\":null}}",
+        "peer": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.application.aws_security_group.app\",\"from_deposed_key\":null,\"to\":\"module.application.aws_instance.workers_b[0]\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f73656375726974795f67726f75702e617070-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f696e7374616e63652e776f726b6572735f625b305d-current\",\"state\":null}}",
         "peer_segment": 1,
         "segment": 0
       },
@@ -2611,7 +2668,72 @@
         "edge": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.application.aws_lb.app\",\"from_deposed_key\":null,\"to\":\"module.application.aws_lb_listener.http\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6c622e617070-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6c625f6c697374656e65722e68747470-current\",\"state\":null}}",
         "location": {
           "point": [
-            2691,
+            1843,
+            3599
+          ]
+        },
+        "peer": "{\"directionality\":\"undirected\",\"kind\":\"association\",\"provenance\":[{\"deposed_key\":null,\"resource\":\"module.application.aws_lb_target_group_attachment.b1\"}],\"relationship_resource\":\"module.application.aws_lb_target_group_attachment.b1\",\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6c625f7461726765745f67726f75702e617070-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f696e7374616e63652e776f726b6572735f625b315d-current\",\"state\":null}}",
+        "peer_segment": 1,
+        "segment": 0
+      },
+      {
+        "category": "crossing",
+        "edge": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.application.aws_lb.app\",\"from_deposed_key\":null,\"to\":\"module.application.aws_lb_listener.http\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6c622e617070-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6c625f6c697374656e65722e68747470-current\",\"state\":null}}",
+        "location": {
+          "point": [
+            2266,
+            3599
+          ]
+        },
+        "peer": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.network.aws_subnet.private_b\",\"from_deposed_key\":null,\"to\":\"module.network.aws_vpc_endpoint.logs\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7375626e65742e707269766174655f62-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7670635f656e64706f696e742e6c6f6773-current\",\"state\":null}}",
+        "peer_segment": 0,
+        "segment": 0
+      },
+      {
+        "category": "crossing",
+        "edge": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.application.aws_lb.app\",\"from_deposed_key\":null,\"to\":\"module.application.aws_lb_listener.http\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6c622e617070-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6c625f6c697374656e65722e68747470-current\",\"state\":null}}",
+        "location": {
+          "point": [
+            2689,
+            3599
+          ]
+        },
+        "peer": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.network.aws_subnet.private_b\",\"from_deposed_key\":null,\"to\":\"module.application.aws_autoscaling_group.app\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7375626e65742e707269766174655f62-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6175746f7363616c696e675f67726f75702e617070-current\",\"state\":null}}",
+        "peer_segment": 1,
+        "segment": 0
+      },
+      {
+        "category": "crossing",
+        "edge": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.application.aws_lb.app\",\"from_deposed_key\":null,\"to\":\"module.application.aws_lb_listener.http\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6c622e617070-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6c625f6c697374656e65722e68747470-current\",\"state\":null}}",
+        "location": {
+          "point": [
+            2709,
+            3599
+          ]
+        },
+        "peer": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.network.aws_subnet.private_b\",\"from_deposed_key\":null,\"to\":\"module.database.aws_db_subnet_group.database\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7375626e65742e707269766174655f62-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e64617461626173652e6177735f64625f7375626e65745f67726f75702e6461746162617365-current\",\"state\":null}}",
+        "peer_segment": 1,
+        "segment": 0
+      },
+      {
+        "category": "crossing",
+        "edge": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.application.aws_lb.app\",\"from_deposed_key\":null,\"to\":\"module.application.aws_lb_listener.http\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6c622e617070-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6c625f6c697374656e65722e68747470-current\",\"state\":null}}",
+        "location": {
+          "point": [
+            2713,
+            3599
+          ]
+        },
+        "peer": "{\"directionality\":\"undirected\",\"kind\":\"association\",\"provenance\":[{\"deposed_key\":null,\"resource\":\"module.network.aws_route_table_association.private_b\"}],\"relationship_resource\":\"module.network.aws_route_table_association.private_b\",\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7375626e65742e707269766174655f62-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f726f7574655f7461626c652e70726976617465-current\",\"state\":null}}",
+        "peer_segment": 1,
+        "segment": 0
+      },
+      {
+        "category": "crossing",
+        "edge": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.application.aws_lb.app\",\"from_deposed_key\":null,\"to\":\"module.application.aws_lb_listener.http\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6c622e617070-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6c625f6c697374656e65722e68747470-current\",\"state\":null}}",
+        "location": {
+          "point": [
+            2729,
             3599
           ]
         },
@@ -2624,34 +2746,21 @@
         "edge": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.application.aws_lb.app\",\"from_deposed_key\":null,\"to\":\"module.application.aws_lb_listener.http\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6c622e617070-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6c625f6c697374656e65722e68747470-current\",\"state\":null}}",
         "location": {
           "point": [
-            2713,
-            3599
+            2745,
+            3498
           ]
         },
-        "peer": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.network.aws_subnet.private_b\",\"from_deposed_key\":null,\"to\":\"module.database.aws_db_subnet_group.database\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7375626e65742e707269766174655f62-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e64617461626173652e6177735f64625f7375626e65745f67726f75702e6461746162617365-current\",\"state\":null}}",
-        "peer_segment": 1,
-        "segment": 0
+        "peer": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.network.aws_subnet.private_b\",\"from_deposed_key\":null,\"to\":\"module.application.aws_autoscaling_group.app\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7375626e65742e707269766174655f62-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6175746f7363616c696e675f67726f75702e617070-current\",\"state\":null}}",
+        "peer_segment": 2,
+        "segment": 1
       },
       {
         "category": "crossing",
         "edge": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.application.aws_lb.app\",\"from_deposed_key\":null,\"to\":\"module.application.aws_lb_listener.http\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6c622e617070-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6c625f6c697374656e65722e68747470-current\",\"state\":null}}",
         "location": {
           "point": [
-            2717,
-            3599
-          ]
-        },
-        "peer": "{\"directionality\":\"undirected\",\"kind\":\"association\",\"provenance\":[{\"deposed_key\":null,\"resource\":\"module.network.aws_route_table_association.private_b\"}],\"relationship_resource\":\"module.network.aws_route_table_association.private_b\",\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7375626e65742e707269766174655f62-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f726f7574655f7461626c652e70726976617465-current\",\"state\":null}}",
-        "peer_segment": 1,
-        "segment": 0
-      },
-      {
-        "category": "crossing",
-        "edge": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.application.aws_lb.app\",\"from_deposed_key\":null,\"to\":\"module.application.aws_lb_listener.http\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6c622e617070-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6c625f6c697374656e65722e68747470-current\",\"state\":null}}",
-        "location": {
-          "point": [
-            2749,
-            3523
+            2745,
+            3549
           ]
         },
         "peer": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.network.aws_subnet.private_a\",\"from_deposed_key\":null,\"to\":\"module.network.aws_vpc_endpoint.logs\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7375626e65742e707269766174655f61-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7670635f656e64706f696e742e6c6f6773-current\",\"state\":null}}",
@@ -2663,7 +2772,20 @@
         "edge": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.application.aws_lb.app\",\"from_deposed_key\":null,\"to\":\"module.application.aws_lb_listener.http\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6c622e617070-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6c625f6c697374656e65722e68747470-current\",\"state\":null}}",
         "location": {
           "point": [
-            3893,
+            2745,
+            3578
+          ]
+        },
+        "peer": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.network.aws_subnet.private_b\",\"from_deposed_key\":null,\"to\":\"module.network.aws_vpc_endpoint.logs\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7375626e65742e707269766174655f62-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7670635f656e64706f696e742e6c6f6773-current\",\"state\":null}}",
+        "peer_segment": 1,
+        "segment": 1
+      },
+      {
+        "category": "crossing",
+        "edge": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.application.aws_lb.app\",\"from_deposed_key\":null,\"to\":\"module.application.aws_lb_listener.http\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6c622e617070-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6c625f6c697374656e65722e68747470-current\",\"state\":null}}",
+        "location": {
+          "point": [
+            3889,
             2937
           ]
         },
@@ -2676,7 +2798,7 @@
         "edge": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.application.aws_lb.app\",\"from_deposed_key\":null,\"to\":\"module.application.aws_lb_listener.http\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6c622e617070-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6c625f6c697374656e65722e68747470-current\",\"state\":null}}",
         "location": {
           "point": [
-            3983,
+            3979,
             2720
           ]
         },
@@ -2689,7 +2811,7 @@
         "edge": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.application.aws_lb.app\",\"from_deposed_key\":null,\"to\":\"module.application.aws_lb_listener.http\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6c622e617070-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6c625f6c697374656e65722e68747470-current\",\"state\":null}}",
         "location": {
           "point": [
-            4001,
+            3999,
             2720
           ]
         },
@@ -2702,12 +2824,12 @@
         "edge": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.application.aws_lb.app\",\"from_deposed_key\":null,\"to\":\"module.application.aws_lb_listener.http\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6c622e617070-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6c625f6c697374656e65722e68747470-current\",\"state\":null}}",
         "location": {
           "point": [
-            4017,
+            4015,
             2720
           ]
         },
         "peer": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.network.aws_subnet.private_b\",\"from_deposed_key\":null,\"to\":\"module.application.aws_autoscaling_group.app\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7375626e65742e707269766174655f62-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6175746f7363616c696e675f67726f75702e617070-current\",\"state\":null}}",
-        "peer_segment": 2,
+        "peer_segment": 3,
         "segment": 4
       },
       {
@@ -2715,7 +2837,7 @@
         "edge": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.application.aws_lb_target_group.app\",\"from_deposed_key\":null,\"to\":\"module.application.aws_lb_listener.http\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6c625f7461726765745f67726f75702e617070-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6c625f6c697374656e65722e68747470-current\",\"state\":null}}",
         "location": {
           "point": [
-            3983,
+            3979,
             2691
           ]
         },
@@ -2728,7 +2850,7 @@
         "edge": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.application.aws_lb_target_group.app\",\"from_deposed_key\":null,\"to\":\"module.application.aws_lb_listener.http\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6c625f7461726765745f67726f75702e617070-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6c625f6c697374656e65722e68747470-current\",\"state\":null}}",
         "location": {
           "point": [
-            4001,
+            3999,
             2691
           ]
         },
@@ -2741,12 +2863,12 @@
         "edge": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.application.aws_lb_target_group.app\",\"from_deposed_key\":null,\"to\":\"module.application.aws_lb_listener.http\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6c625f7461726765745f67726f75702e617070-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6c625f6c697374656e65722e68747470-current\",\"state\":null}}",
         "location": {
           "point": [
-            4017,
+            4015,
             2691
           ]
         },
         "peer": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.network.aws_subnet.private_b\",\"from_deposed_key\":null,\"to\":\"module.application.aws_autoscaling_group.app\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7375626e65742e707269766174655f62-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6175746f7363616c696e675f67726f75702e617070-current\",\"state\":null}}",
-        "peer_segment": 2,
+        "peer_segment": 3,
         "segment": 3
       },
       {
@@ -2754,21 +2876,8 @@
         "edge": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.application.aws_security_group.alb\",\"from_deposed_key\":null,\"to\":\"module.application.aws_lb.app\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f73656375726974795f67726f75702e616c62-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6c622e617070-current\",\"state\":null}}",
         "location": {
           "point": [
-            1214,
-            2860
-          ]
-        },
-        "peer": "{\"directionality\":\"undirected\",\"kind\":\"association\",\"provenance\":[{\"deposed_key\":null,\"resource\":\"module.application.aws_lb_target_group_attachment.b1\"}],\"relationship_resource\":\"module.application.aws_lb_target_group_attachment.b1\",\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6c625f7461726765745f67726f75702e617070-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f696e7374616e63652e776f726b6572735f625b315d-current\",\"state\":null}}",
-        "peer_segment": 1,
-        "segment": 0
-      },
-      {
-        "category": "crossing",
-        "edge": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.application.aws_security_group.alb\",\"from_deposed_key\":null,\"to\":\"module.application.aws_lb.app\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f73656375726974795f67726f75702e616c62-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6c622e617070-current\",\"state\":null}}",
-        "location": {
-          "point": [
-            1230,
-            2860
+            1201,
+            2875
           ]
         },
         "peer": "{\"directionality\":\"undirected\",\"kind\":\"association\",\"provenance\":[{\"deposed_key\":null,\"resource\":\"module.application.aws_lb_target_group_attachment.b0\"}],\"relationship_resource\":\"module.application.aws_lb_target_group_attachment.b0\",\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6c625f7461726765745f67726f75702e617070-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f696e7374616e63652e776f726b6572735f625b305d-current\",\"state\":null}}",
@@ -2780,8 +2889,8 @@
         "edge": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.application.aws_security_group.alb\",\"from_deposed_key\":null,\"to\":\"module.application.aws_lb.app\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f73656375726974795f67726f75702e616c62-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6c622e617070-current\",\"state\":null}}",
         "location": {
           "point": [
-            1246,
-            2860
+            1217,
+            2875
           ]
         },
         "peer": "{\"directionality\":\"undirected\",\"kind\":\"association\",\"provenance\":[{\"deposed_key\":null,\"resource\":\"module.application.aws_lb_target_group_attachment.a1\"}],\"relationship_resource\":\"module.application.aws_lb_target_group_attachment.a1\",\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6c625f7461726765745f67726f75702e617070-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f696e7374616e63652e776f726b6572735f615b315d-current\",\"state\":null}}",
@@ -2794,7 +2903,7 @@
         "location": {
           "point": [
             1298,
-            3133
+            3146
           ]
         },
         "peer": "{\"directionality\":\"undirected\",\"kind\":\"association\",\"provenance\":[{\"deposed_key\":null,\"resource\":\"module.network.aws_route_table_association.public_a\"}],\"relationship_resource\":\"module.network.aws_route_table_association.public_a\",\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7375626e65742e7075626c69635f61-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f726f7574655f7461626c652e7075626c6963-current\",\"state\":null}}",
@@ -2806,21 +2915,8 @@
         "edge": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.application.aws_security_group.alb\",\"from_deposed_key\":null,\"to\":\"module.application.aws_lb.app\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f73656375726974795f67726f75702e616c62-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6c622e617070-current\",\"state\":null}}",
         "location": {
           "point": [
-            1298,
-            3222
-          ]
-        },
-        "peer": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.application.aws_security_group.alb\",\"from_deposed_key\":null,\"to\":\"module.application.aws_security_group.app\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f73656375726974795f67726f75702e616c62-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f73656375726974795f67726f75702e617070-current\",\"state\":null}}",
-        "peer_segment": 1,
-        "segment": 1
-      },
-      {
-        "category": "crossing",
-        "edge": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.application.aws_security_group.alb\",\"from_deposed_key\":null,\"to\":\"module.application.aws_lb.app\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f73656375726974795f67726f75702e616c62-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6c622e617070-current\",\"state\":null}}",
-        "location": {
-          "point": [
-            1317,
-            3301
+            1321,
+            3311
           ]
         },
         "peer": "{\"directionality\":\"undirected\",\"kind\":\"association\",\"provenance\":[{\"deposed_key\":null,\"resource\":\"module.network.aws_route_table_association.public_b\"}],\"relationship_resource\":\"module.network.aws_route_table_association.public_b\",\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7375626e65742e7075626c69635f62-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f726f7574655f7461626c652e7075626c6963-current\",\"state\":null}}",
@@ -2832,7 +2928,7 @@
         "edge": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.application.aws_security_group.alb\",\"from_deposed_key\":null,\"to\":\"module.application.aws_lb.app\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f73656375726974795f67726f75702e616c62-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6c622e617070-current\",\"state\":null}}",
         "location": {
           "point": [
-            1537,
+            1549,
             3415
           ]
         },
@@ -2845,38 +2941,64 @@
         "edge": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.application.aws_security_group.alb\",\"from_deposed_key\":null,\"to\":\"module.application.aws_security_group.app\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f73656375726974795f67726f75702e616c62-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f73656375726974795f67726f75702e617070-current\",\"state\":null}}",
         "location": {
           "point": [
-            1317,
-            3222
+            1201,
+            2846
           ]
         },
-        "peer": "{\"directionality\":\"undirected\",\"kind\":\"association\",\"provenance\":[{\"deposed_key\":null,\"resource\":\"module.network.aws_route_table_association.public_b\"}],\"relationship_resource\":\"module.network.aws_route_table_association.public_b\",\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7375626e65742e7075626c69635f62-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f726f7574655f7461626c652e7075626c6963-current\",\"state\":null}}",
+        "peer": "{\"directionality\":\"undirected\",\"kind\":\"association\",\"provenance\":[{\"deposed_key\":null,\"resource\":\"module.application.aws_lb_target_group_attachment.b0\"}],\"relationship_resource\":\"module.application.aws_lb_target_group_attachment.b0\",\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6c625f7461726765745f67726f75702e617070-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f696e7374616e63652e776f726b6572735f625b305d-current\",\"state\":null}}",
         "peer_segment": 1,
-        "segment": 1
+        "segment": 0
       },
       {
         "category": "crossing",
-        "edge": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.application.aws_security_group.app\",\"from_deposed_key\":null,\"to\":\"module.application.aws_ecs_service.app\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f73656375726974795f67726f75702e617070-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6563735f736572766963652e617070-current\",\"state\":null}}",
+        "edge": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.application.aws_security_group.alb\",\"from_deposed_key\":null,\"to\":\"module.application.aws_security_group.app\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f73656375726974795f67726f75702e616c62-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f73656375726974795f67726f75702e617070-current\",\"state\":null}}",
         "location": {
           "point": [
-            1849,
-            3415
+            1217,
+            2846
           ]
         },
         "peer": "{\"directionality\":\"undirected\",\"kind\":\"association\",\"provenance\":[{\"deposed_key\":null,\"resource\":\"module.application.aws_lb_target_group_attachment.a1\"}],\"relationship_resource\":\"module.application.aws_lb_target_group_attachment.a1\",\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6c625f7461726765745f67726f75702e617070-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f696e7374616e63652e776f726b6572735f615b315d-current\",\"state\":null}}",
+        "peer_segment": 1,
+        "segment": 0
+      },
+      {
+        "category": "crossing",
+        "edge": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.application.aws_security_group.alb\",\"from_deposed_key\":null,\"to\":\"module.application.aws_security_group.app\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f73656375726974795f67726f75702e616c62-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f73656375726974795f67726f75702e617070-current\",\"state\":null}}",
+        "location": {
+          "point": [
+            1337,
+            3001
+          ]
+        },
+        "peer": "{\"directionality\":\"undirected\",\"kind\":\"association\",\"provenance\":[{\"deposed_key\":null,\"resource\":\"module.network.aws_route_table_association.public_b\"}],\"relationship_resource\":\"module.network.aws_route_table_association.public_b\",\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7375626e65742e7075626c69635f62-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f726f7574655f7461626c652e7075626c6963-current\",\"state\":null}}",
         "peer_segment": 2,
         "segment": 1
       },
       {
         "category": "crossing",
+        "edge": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.application.aws_security_group.alb\",\"from_deposed_key\":null,\"to\":\"module.application.aws_security_group.app\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f73656375726974795f67726f75702e616c62-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f73656375726974795f67726f75702e617070-current\",\"state\":null}}",
+        "location": {
+          "point": [
+            1337,
+            3146
+          ]
+        },
+        "peer": "{\"directionality\":\"undirected\",\"kind\":\"association\",\"provenance\":[{\"deposed_key\":null,\"resource\":\"module.network.aws_route_table_association.public_a\"}],\"relationship_resource\":\"module.network.aws_route_table_association.public_a\",\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7375626e65742e7075626c69635f61-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f726f7574655f7461626c652e7075626c6963-current\",\"state\":null}}",
+        "peer_segment": 1,
+        "segment": 1
+      },
+      {
+        "category": "crossing",
         "edge": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.application.aws_security_group.app\",\"from_deposed_key\":null,\"to\":\"module.application.aws_ecs_service.app\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f73656375726974795f67726f75702e617070-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6563735f736572766963652e617070-current\",\"state\":null}}",
         "location": {
           "point": [
-            2270,
-            3638
+            1758,
+            3415
           ]
         },
-        "peer": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.network.aws_subnet.private_b\",\"from_deposed_key\":null,\"to\":\"module.application.aws_autoscaling_group.app\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7375626e65742e707269766174655f62-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6175746f7363616c696e675f67726f75702e617070-current\",\"state\":null}}",
-        "peer_segment": 0,
+        "peer": "{\"directionality\":\"undirected\",\"kind\":\"association\",\"provenance\":[{\"deposed_key\":null,\"resource\":\"module.application.aws_lb_target_group_attachment.a1\"}],\"relationship_resource\":\"module.application.aws_lb_target_group_attachment.a1\",\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6c625f7461726765745f67726f75702e617070-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f696e7374616e63652e776f726b6572735f615b315d-current\",\"state\":null}}",
+        "peer_segment": 2,
         "segment": 2
       },
       {
@@ -2884,13 +3006,52 @@
         "edge": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.application.aws_security_group.app\",\"from_deposed_key\":null,\"to\":\"module.application.aws_ecs_service.app\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f73656375726974795f67726f75702e617070-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6563735f736572766963652e617070-current\",\"state\":null}}",
         "location": {
           "point": [
-            2691,
-            3638
+            1811,
+            3825
           ]
         },
-        "peer": "{\"directionality\":\"undirected\",\"kind\":\"connection\",\"provenance\":[{\"from\":\"module.network.aws_subnet.private_a\",\"from_deposed_key\":null,\"to\":\"module.application.aws_ecs_service.app\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7375626e65742e707269766174655f61-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6563735f736572766963652e617070-current\",\"state\":null}}",
+        "peer": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.application.aws_security_group.app\",\"from_deposed_key\":null,\"to\":\"module.application.aws_instance.workers_b[1]\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f73656375726974795f67726f75702e617070-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f696e7374616e63652e776f726b6572735f625b315d-current\",\"state\":null}}",
         "peer_segment": 1,
-        "segment": 2
+        "segment": 3
+      },
+      {
+        "category": "crossing",
+        "edge": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.application.aws_security_group.app\",\"from_deposed_key\":null,\"to\":\"module.application.aws_ecs_service.app\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f73656375726974795f67726f75702e617070-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6563735f736572766963652e617070-current\",\"state\":null}}",
+        "location": {
+          "point": [
+            1827,
+            3825
+          ]
+        },
+        "peer": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.application.aws_security_group.app\",\"from_deposed_key\":null,\"to\":\"module.application.aws_instance.workers_b[0]\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f73656375726974795f67726f75702e617070-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f696e7374616e63652e776f726b6572735f625b305d-current\",\"state\":null}}",
+        "peer_segment": 1,
+        "segment": 3
+      },
+      {
+        "category": "crossing",
+        "edge": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.application.aws_security_group.app\",\"from_deposed_key\":null,\"to\":\"module.application.aws_ecs_service.app\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f73656375726974795f67726f75702e617070-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6563735f736572766963652e617070-current\",\"state\":null}}",
+        "location": {
+          "point": [
+            1843,
+            3825
+          ]
+        },
+        "peer": "{\"directionality\":\"undirected\",\"kind\":\"association\",\"provenance\":[{\"deposed_key\":null,\"resource\":\"module.application.aws_lb_target_group_attachment.b1\"}],\"relationship_resource\":\"module.application.aws_lb_target_group_attachment.b1\",\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6c625f7461726765745f67726f75702e617070-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f696e7374616e63652e776f726b6572735f625b315d-current\",\"state\":null}}",
+        "peer_segment": 1,
+        "segment": 3
+      },
+      {
+        "category": "crossing",
+        "edge": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.application.aws_security_group.app\",\"from_deposed_key\":null,\"to\":\"module.application.aws_ecs_service.app\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f73656375726974795f67726f75702e617070-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6563735f736572766963652e617070-current\",\"state\":null}}",
+        "location": {
+          "point": [
+            2709,
+            3825
+          ]
+        },
+        "peer": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.network.aws_subnet.private_b\",\"from_deposed_key\":null,\"to\":\"module.database.aws_db_subnet_group.database\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7375626e65742e707269766174655f62-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e64617461626173652e6177735f64625f7375626e65745f67726f75702e6461746162617365-current\",\"state\":null}}",
+        "peer_segment": 1,
+        "segment": 3
       },
       {
         "category": "crossing",
@@ -2898,58 +3059,45 @@
         "location": {
           "point": [
             2713,
-            3638
-          ]
-        },
-        "peer": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.network.aws_subnet.private_b\",\"from_deposed_key\":null,\"to\":\"module.database.aws_db_subnet_group.database\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7375626e65742e707269766174655f62-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e64617461626173652e6177735f64625f7375626e65745f67726f75702e6461746162617365-current\",\"state\":null}}",
-        "peer_segment": 1,
-        "segment": 2
-      },
-      {
-        "category": "crossing",
-        "edge": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.application.aws_security_group.app\",\"from_deposed_key\":null,\"to\":\"module.application.aws_ecs_service.app\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f73656375726974795f67726f75702e617070-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6563735f736572766963652e617070-current\",\"state\":null}}",
-        "location": {
-          "point": [
-            2717,
-            3638
+            3825
           ]
         },
         "peer": "{\"directionality\":\"undirected\",\"kind\":\"association\",\"provenance\":[{\"deposed_key\":null,\"resource\":\"module.network.aws_route_table_association.private_b\"}],\"relationship_resource\":\"module.network.aws_route_table_association.private_b\",\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7375626e65742e707269766174655f62-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f726f7574655f7461626c652e70726976617465-current\",\"state\":null}}",
         "peer_segment": 1,
-        "segment": 2
+        "segment": 3
       },
       {
         "category": "crossing",
-        "edge": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.application.aws_security_group.app\",\"from_deposed_key\":null,\"to\":\"module.application.aws_ecs_service.app\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f73656375726974795f67726f75702e617070-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6563735f736572766963652e617070-current\",\"state\":null}}",
+        "edge": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.application.aws_security_group.app\",\"from_deposed_key\":null,\"to\":\"module.application.aws_instance.workers_a[0]\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f73656375726974795f67726f75702e617070-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f696e7374616e63652e776f726b6572735f615b305d-current\",\"state\":null}}",
         "location": {
           "point": [
-            2743,
-            3638
+            1843,
+            3224
           ]
         },
-        "peer": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.network.aws_subnet.private_b\",\"from_deposed_key\":null,\"to\":\"module.network.aws_vpc_endpoint.logs\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7375626e65742e707269766174655f62-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7670635f656e64706f696e742e6c6f6773-current\",\"state\":null}}",
+        "peer": "{\"directionality\":\"undirected\",\"kind\":\"association\",\"provenance\":[{\"deposed_key\":null,\"resource\":\"module.application.aws_lb_target_group_attachment.b1\"}],\"relationship_resource\":\"module.application.aws_lb_target_group_attachment.b1\",\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6c625f7461726765745f67726f75702e617070-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f696e7374616e63652e776f726b6572735f625b315d-current\",\"state\":null}}",
         "peer_segment": 1,
-        "segment": 2
+        "segment": 0
       },
       {
         "category": "crossing",
-        "edge": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.application.aws_security_group.app\",\"from_deposed_key\":null,\"to\":\"module.application.aws_instance.workers_b[0]\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f73656375726974795f67726f75702e617070-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f696e7374616e63652e776f726b6572735f625b305d-current\",\"state\":null}}",
+        "edge": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.application.aws_security_group.app\",\"from_deposed_key\":null,\"to\":\"module.application.aws_instance.workers_a[1]\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f73656375726974795f67726f75702e617070-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f696e7374616e63652e776f726b6572735f615b315d-current\",\"state\":null}}",
         "location": {
           "point": [
-            1808,
-            3262
+            1843,
+            3240
           ]
         },
-        "peer": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.application.aws_security_group.app\",\"from_deposed_key\":null,\"to\":\"module.application.aws_instance.workers_b[1]\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f73656375726974795f67726f75702e617070-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f696e7374616e63652e776f726b6572735f625b315d-current\",\"state\":null}}",
-        "peer_segment": 0,
-        "segment": 1
+        "peer": "{\"directionality\":\"undirected\",\"kind\":\"association\",\"provenance\":[{\"deposed_key\":null,\"resource\":\"module.application.aws_lb_target_group_attachment.b1\"}],\"relationship_resource\":\"module.application.aws_lb_target_group_attachment.b1\",\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6c625f7461726765745f67726f75702e617070-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f696e7374616e63652e776f726b6572735f625b315d-current\",\"state\":null}}",
+        "peer_segment": 1,
+        "segment": 0
       },
       {
         "category": "crossing",
         "edge": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.application.aws_security_group.app\",\"from_deposed_key\":null,\"to\":\"module.application.aws_instance.workers_b[0]\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f73656375726974795f67726f75702e617070-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f696e7374616e63652e776f726b6572735f625b305d-current\",\"state\":null}}",
         "location": {
           "point": [
-            1808,
+            1827,
             3415
           ]
         },
@@ -2962,11 +3110,11 @@
         "edge": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.application.aws_security_group.app\",\"from_deposed_key\":null,\"to\":\"module.application.aws_instance.workers_b[0]\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f73656375726974795f67726f75702e617070-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f696e7374616e63652e776f726b6572735f625b305d-current\",\"state\":null}}",
         "location": {
           "point": [
-            1833,
+            1843,
             3914
           ]
         },
-        "peer": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.application.aws_security_group.app\",\"from_deposed_key\":null,\"to\":\"module.application.aws_instance.workers_b[1]\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f73656375726974795f67726f75702e617070-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f696e7374616e63652e776f726b6572735f625b315d-current\",\"state\":null}}",
+        "peer": "{\"directionality\":\"undirected\",\"kind\":\"association\",\"provenance\":[{\"deposed_key\":null,\"resource\":\"module.application.aws_lb_target_group_attachment.b1\"}],\"relationship_resource\":\"module.application.aws_lb_target_group_attachment.b1\",\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6c625f7461726765745f67726f75702e617070-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f696e7374616e63652e776f726b6572735f625b315d-current\",\"state\":null}}",
         "peer_segment": 1,
         "segment": 2
       },
@@ -2975,7 +3123,7 @@
         "edge": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.application.aws_security_group.app\",\"from_deposed_key\":null,\"to\":\"module.application.aws_instance.workers_b[1]\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f73656375726974795f67726f75702e617070-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f696e7374616e63652e776f726b6572735f625b315d-current\",\"state\":null}}",
         "location": {
           "point": [
-            1833,
+            1811,
             3415
           ]
         },
@@ -2988,7 +3136,7 @@
         "edge": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.application.aws_security_group.app\",\"from_deposed_key\":null,\"to\":\"module.application.aws_instance.workers_b[1]\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f73656375726974795f67726f75702e617070-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f696e7374616e63652e776f726b6572735f625b315d-current\",\"state\":null}}",
         "location": {
           "point": [
-            1833,
+            1811,
             3970
           ]
         },
@@ -2998,10 +3146,36 @@
       },
       {
         "category": "crossing",
+        "edge": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.application.aws_security_group.app\",\"from_deposed_key\":null,\"to\":\"module.application.aws_instance.workers_b[1]\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f73656375726974795f67726f75702e617070-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f696e7374616e63652e776f726b6572735f625b315d-current\",\"state\":null}}",
+        "location": {
+          "point": [
+            1843,
+            4188
+          ]
+        },
+        "peer": "{\"directionality\":\"undirected\",\"kind\":\"association\",\"provenance\":[{\"deposed_key\":null,\"resource\":\"module.application.aws_lb_target_group_attachment.b1\"}],\"relationship_resource\":\"module.application.aws_lb_target_group_attachment.b1\",\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6c625f7461726765745f67726f75702e617070-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f696e7374616e63652e776f726b6572735f625b315d-current\",\"state\":null}}",
+        "peer_segment": 1,
+        "segment": 2
+      },
+      {
+        "category": "crossing",
         "edge": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.application.aws_security_group.app\",\"from_deposed_key\":null,\"to\":\"module.database.aws_security_group.database\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f73656375726974795f67726f75702e617070-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e64617461626173652e6177735f73656375726974795f67726f75702e6461746162617365-current\",\"state\":null}}",
         "location": {
           "point": [
-            1825,
+            1821,
+            2688
+          ]
+        },
+        "peer": "{\"directionality\":\"undirected\",\"kind\":\"association\",\"provenance\":[{\"deposed_key\":null,\"resource\":\"module.application.aws_lb_target_group_attachment.b1\"}],\"relationship_resource\":\"module.application.aws_lb_target_group_attachment.b1\",\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6c625f7461726765745f67726f75702e617070-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f696e7374616e63652e776f726b6572735f625b315d-current\",\"state\":null}}",
+        "peer_segment": 0,
+        "segment": 1
+      },
+      {
+        "category": "crossing",
+        "edge": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.application.aws_security_group.app\",\"from_deposed_key\":null,\"to\":\"module.database.aws_security_group.database\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f73656375726974795f67726f75702e617070-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e64617461626173652e6177735f73656375726974795f67726f75702e6461746162617365-current\",\"state\":null}}",
+        "location": {
+          "point": [
+            1821,
             3085
           ]
         },
@@ -3014,7 +3188,7 @@
         "edge": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.network.aws_subnet.private_a\",\"from_deposed_key\":null,\"to\":\"module.application.aws_autoscaling_group.app\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7375626e65742e707269766174655f61-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6175746f7363616c696e675f67726f75702e617070-current\",\"state\":null}}",
         "location": {
           "point": [
-            2713,
+            2709,
             2937
           ]
         },
@@ -3027,7 +3201,7 @@
         "edge": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.network.aws_subnet.private_a\",\"from_deposed_key\":null,\"to\":\"module.application.aws_autoscaling_group.app\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7375626e65742e707269766174655f61-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6175746f7363616c696e675f67726f75702e617070-current\",\"state\":null}}",
         "location": {
           "point": [
-            2965,
+            2961,
             2937
           ]
         },
@@ -3040,7 +3214,7 @@
         "edge": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.network.aws_subnet.private_a\",\"from_deposed_key\":null,\"to\":\"module.application.aws_autoscaling_group.app\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7375626e65742e707269766174655f61-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6175746f7363616c696e675f67726f75702e617070-current\",\"state\":null}}",
         "location": {
           "point": [
-            4001,
+            3999,
             2467
           ]
         },
@@ -3053,7 +3227,7 @@
         "edge": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.network.aws_subnet.private_a\",\"from_deposed_key\":null,\"to\":\"module.database.aws_db_subnet_group.database\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7375626e65742e707269766174655f61-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e64617461626173652e6177735f64625f7375626e65745f67726f75702e6461746162617365-current\",\"state\":null}}",
         "location": {
           "point": [
-            2713,
+            2709,
             3058
           ]
         },
@@ -3066,8 +3240,21 @@
         "edge": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.network.aws_subnet.private_a\",\"from_deposed_key\":null,\"to\":\"module.network.aws_vpc_endpoint.logs\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7375626e65742e707269766174655f61-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7670635f656e64706f696e742e6c6f6773-current\",\"state\":null}}",
         "location": {
           "point": [
-            2713,
-            3523
+            2693,
+            3430
+          ]
+        },
+        "peer": "{\"directionality\":\"undirected\",\"kind\":\"connection\",\"provenance\":[{\"from\":\"module.network.aws_subnet.private_a\",\"from_deposed_key\":null,\"to\":\"module.application.aws_ecs_service.app\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7375626e65742e707269766174655f61-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6563735f736572766963652e617070-current\",\"state\":null}}",
+        "peer_segment": 0,
+        "segment": 1
+      },
+      {
+        "category": "crossing",
+        "edge": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.network.aws_subnet.private_a\",\"from_deposed_key\":null,\"to\":\"module.network.aws_vpc_endpoint.logs\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7375626e65742e707269766174655f61-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7670635f656e64706f696e742e6c6f6773-current\",\"state\":null}}",
+        "location": {
+          "point": [
+            2709,
+            3549
           ]
         },
         "peer": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.network.aws_subnet.private_b\",\"from_deposed_key\":null,\"to\":\"module.database.aws_db_subnet_group.database\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7375626e65742e707269766174655f62-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e64617461626173652e6177735f64625f7375626e65745f67726f75702e6461746162617365-current\",\"state\":null}}",
@@ -3079,8 +3266,8 @@
         "edge": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.network.aws_subnet.private_a\",\"from_deposed_key\":null,\"to\":\"module.network.aws_vpc_endpoint.logs\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7375626e65742e707269766174655f61-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7670635f656e64706f696e742e6c6f6773-current\",\"state\":null}}",
         "location": {
           "point": [
-            2717,
-            3523
+            2713,
+            3549
           ]
         },
         "peer": "{\"directionality\":\"undirected\",\"kind\":\"association\",\"provenance\":[{\"deposed_key\":null,\"resource\":\"module.network.aws_route_table_association.private_b\"}],\"relationship_resource\":\"module.network.aws_route_table_association.private_b\",\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7375626e65742e707269766174655f62-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f726f7574655f7461626c652e70726976617465-current\",\"state\":null}}",
@@ -3089,50 +3276,24 @@
       },
       {
         "category": "crossing",
-        "edge": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.network.aws_subnet.private_b\",\"from_deposed_key\":null,\"to\":\"module.application.aws_autoscaling_group.app\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7375626e65742e707269766174655f62-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6175746f7363616c696e675f67726f75702e617070-current\",\"state\":null}}",
+        "edge": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.network.aws_subnet.private_a\",\"from_deposed_key\":null,\"to\":\"module.network.aws_vpc_endpoint.logs\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7375626e65742e707269766174655f61-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7670635f656e64706f696e742e6c6f6773-current\",\"state\":null}}",
         "location": {
           "point": [
-            2691,
-            3619
+            2729,
+            3549
           ]
         },
         "peer": "{\"directionality\":\"undirected\",\"kind\":\"connection\",\"provenance\":[{\"from\":\"module.network.aws_subnet.private_a\",\"from_deposed_key\":null,\"to\":\"module.application.aws_ecs_service.app\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7375626e65742e707269766174655f61-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6563735f736572766963652e617070-current\",\"state\":null}}",
         "peer_segment": 1,
-        "segment": 1
+        "segment": 2
       },
       {
         "category": "crossing",
         "edge": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.network.aws_subnet.private_b\",\"from_deposed_key\":null,\"to\":\"module.application.aws_autoscaling_group.app\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7375626e65742e707269766174655f62-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6175746f7363616c696e675f67726f75702e617070-current\",\"state\":null}}",
         "location": {
           "point": [
-            2713,
-            3619
-          ]
-        },
-        "peer": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.network.aws_subnet.private_b\",\"from_deposed_key\":null,\"to\":\"module.database.aws_db_subnet_group.database\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7375626e65742e707269766174655f62-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e64617461626173652e6177735f64625f7375626e65745f67726f75702e6461746162617365-current\",\"state\":null}}",
-        "peer_segment": 1,
-        "segment": 1
-      },
-      {
-        "category": "crossing",
-        "edge": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.network.aws_subnet.private_b\",\"from_deposed_key\":null,\"to\":\"module.application.aws_autoscaling_group.app\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7375626e65742e707269766174655f62-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6175746f7363616c696e675f67726f75702e617070-current\",\"state\":null}}",
-        "location": {
-          "point": [
-            2717,
-            3619
-          ]
-        },
-        "peer": "{\"directionality\":\"undirected\",\"kind\":\"association\",\"provenance\":[{\"deposed_key\":null,\"resource\":\"module.network.aws_route_table_association.private_b\"}],\"relationship_resource\":\"module.network.aws_route_table_association.private_b\",\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7375626e65742e707269766174655f62-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f726f7574655f7461626c652e70726976617465-current\",\"state\":null}}",
-        "peer_segment": 1,
-        "segment": 1
-      },
-      {
-        "category": "crossing",
-        "edge": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.network.aws_subnet.private_b\",\"from_deposed_key\":null,\"to\":\"module.application.aws_autoscaling_group.app\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7375626e65742e707269766174655f62-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6175746f7363616c696e675f67726f75702e617070-current\",\"state\":null}}",
-        "location": {
-          "point": [
-            2743,
-            3619
+            2689,
+            3578
           ]
         },
         "peer": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.network.aws_subnet.private_b\",\"from_deposed_key\":null,\"to\":\"module.network.aws_vpc_endpoint.logs\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7375626e65742e707269766174655f62-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7670635f656e64706f696e742e6c6f6773-current\",\"state\":null}}",
@@ -3144,12 +3305,12 @@
         "edge": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.network.aws_subnet.private_b\",\"from_deposed_key\":null,\"to\":\"module.application.aws_autoscaling_group.app\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7375626e65742e707269766174655f62-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6175746f7363616c696e675f67726f75702e617070-current\",\"state\":null}}",
         "location": {
           "point": [
-            4017,
-            2887
+            2709,
+            3498
           ]
         },
-        "peer": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.shared.data.aws_vpc.shared\",\"from_deposed_key\":null,\"to\":\"module.network.aws_vpc_peering_connection.shared\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e7368617265642e646174612e6177735f7670632e736861726564-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7670635f70656572696e675f636f6e6e656374696f6e2e736861726564-current\",\"state\":null}}",
-        "peer_segment": 4,
+        "peer": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.network.aws_subnet.private_b\",\"from_deposed_key\":null,\"to\":\"module.database.aws_db_subnet_group.database\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7375626e65742e707269766174655f62-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e64617461626173652e6177735f64625f7375626e65745f67726f75702e6461746162617365-current\",\"state\":null}}",
+        "peer_segment": 1,
         "segment": 2
       },
       {
@@ -3157,21 +3318,60 @@
         "edge": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.network.aws_subnet.private_b\",\"from_deposed_key\":null,\"to\":\"module.application.aws_autoscaling_group.app\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7375626e65742e707269766174655f62-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6175746f7363616c696e675f67726f75702e617070-current\",\"state\":null}}",
         "location": {
           "point": [
-            4017,
+            2713,
+            3498
+          ]
+        },
+        "peer": "{\"directionality\":\"undirected\",\"kind\":\"association\",\"provenance\":[{\"deposed_key\":null,\"resource\":\"module.network.aws_route_table_association.private_b\"}],\"relationship_resource\":\"module.network.aws_route_table_association.private_b\",\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7375626e65742e707269766174655f62-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f726f7574655f7461626c652e70726976617465-current\",\"state\":null}}",
+        "peer_segment": 1,
+        "segment": 2
+      },
+      {
+        "category": "crossing",
+        "edge": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.network.aws_subnet.private_b\",\"from_deposed_key\":null,\"to\":\"module.application.aws_autoscaling_group.app\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7375626e65742e707269766174655f62-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6175746f7363616c696e675f67726f75702e617070-current\",\"state\":null}}",
+        "location": {
+          "point": [
+            2729,
+            3498
+          ]
+        },
+        "peer": "{\"directionality\":\"undirected\",\"kind\":\"connection\",\"provenance\":[{\"from\":\"module.network.aws_subnet.private_a\",\"from_deposed_key\":null,\"to\":\"module.application.aws_ecs_service.app\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7375626e65742e707269766174655f61-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6563735f736572766963652e617070-current\",\"state\":null}}",
+        "peer_segment": 1,
+        "segment": 2
+      },
+      {
+        "category": "crossing",
+        "edge": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.network.aws_subnet.private_b\",\"from_deposed_key\":null,\"to\":\"module.application.aws_autoscaling_group.app\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7375626e65742e707269766174655f62-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6175746f7363616c696e675f67726f75702e617070-current\",\"state\":null}}",
+        "location": {
+          "point": [
+            4015,
+            2887
+          ]
+        },
+        "peer": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.shared.data.aws_vpc.shared\",\"from_deposed_key\":null,\"to\":\"module.network.aws_vpc_peering_connection.shared\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e7368617265642e646174612e6177735f7670632e736861726564-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7670635f70656572696e675f636f6e6e656374696f6e2e736861726564-current\",\"state\":null}}",
+        "peer_segment": 4,
+        "segment": 3
+      },
+      {
+        "category": "crossing",
+        "edge": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.network.aws_subnet.private_b\",\"from_deposed_key\":null,\"to\":\"module.application.aws_autoscaling_group.app\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7375626e65742e707269766174655f62-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6175746f7363616c696e675f67726f75702e617070-current\",\"state\":null}}",
+        "location": {
+          "point": [
+            4015,
             2916
           ]
         },
         "peer": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.network.aws_vpc.main\",\"from_deposed_key\":null,\"to\":\"module.network.aws_vpc_peering_connection.shared\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7670632e6d61696e-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7670635f70656572696e675f636f6e6e656374696f6e2e736861726564-current\",\"state\":null}}",
         "peer_segment": 2,
-        "segment": 2
+        "segment": 3
       },
       {
         "category": "crossing",
         "edge": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.network.aws_subnet.private_b\",\"from_deposed_key\":null,\"to\":\"module.database.aws_db_subnet_group.database\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7375626e65742e707269766174655f62-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e64617461626173652e6177735f64625f7375626e65745f67726f75702e6461746162617365-current\",\"state\":null}}",
         "location": {
           "point": [
-            2713,
-            3235
+            2709,
+            3243
           ]
         },
         "peer": "{\"directionality\":\"undirected\",\"kind\":\"association\",\"provenance\":[{\"deposed_key\":null,\"resource\":\"module.network.aws_route_table_association.private_a\"}],\"relationship_resource\":\"module.network.aws_route_table_association.private_a\",\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7375626e65742e707269766174655f61-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f726f7574655f7461626c652e70726976617465-current\",\"state\":null}}",
@@ -3183,63 +3383,50 @@
         "edge": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.network.aws_subnet.private_b\",\"from_deposed_key\":null,\"to\":\"module.database.aws_db_subnet_group.database\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7375626e65742e707269766174655f62-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e64617461626173652e6177735f64625f7375626e65745f67726f75702e6461746162617365-current\",\"state\":null}}",
         "location": {
           "point": [
+            2709,
+            3430
+          ]
+        },
+        "peer": "{\"directionality\":\"undirected\",\"kind\":\"connection\",\"provenance\":[{\"from\":\"module.network.aws_subnet.private_a\",\"from_deposed_key\":null,\"to\":\"module.application.aws_ecs_service.app\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7375626e65742e707269766174655f61-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6563735f736572766963652e617070-current\",\"state\":null}}",
+        "peer_segment": 0,
+        "segment": 1
+      },
+      {
+        "category": "crossing",
+        "edge": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.network.aws_subnet.private_b\",\"from_deposed_key\":null,\"to\":\"module.database.aws_db_subnet_group.database\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7375626e65742e707269766174655f62-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e64617461626173652e6177735f64625f7375626e65745f67726f75702e6461746162617365-current\",\"state\":null}}",
+        "location": {
+          "point": [
+            2709,
+            3578
+          ]
+        },
+        "peer": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.network.aws_subnet.private_b\",\"from_deposed_key\":null,\"to\":\"module.network.aws_vpc_endpoint.logs\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7375626e65742e707269766174655f62-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7670635f656e64706f696e742e6c6f6773-current\",\"state\":null}}",
+        "peer_segment": 1,
+        "segment": 1
+      },
+      {
+        "category": "crossing",
+        "edge": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.network.aws_subnet.private_b\",\"from_deposed_key\":null,\"to\":\"module.network.aws_vpc_endpoint.logs\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7375626e65742e707269766174655f62-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7670635f656e64706f696e742e6c6f6773-current\",\"state\":null}}",
+        "location": {
+          "point": [
             2713,
-            3763
+            3578
           ]
         },
-        "peer": "{\"directionality\":\"undirected\",\"kind\":\"connection\",\"provenance\":[{\"from\":\"module.network.aws_subnet.private_a\",\"from_deposed_key\":null,\"to\":\"module.application.aws_ecs_service.app\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7375626e65742e707269766174655f61-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6563735f736572766963652e617070-current\",\"state\":null}}",
-        "peer_segment": 2,
-        "segment": 1
-      },
-      {
-        "category": "crossing",
-        "edge": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.network.aws_subnet.private_b\",\"from_deposed_key\":null,\"to\":\"module.network.aws_vpc_endpoint.logs\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7375626e65742e707269766174655f62-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7670635f656e64706f696e742e6c6f6773-current\",\"state\":null}}",
-        "location": {
-          "point": [
-            2727,
-            4096
-          ]
-        },
-        "peer": "{\"directionality\":\"undirected\",\"kind\":\"connection\",\"provenance\":[{\"from\":\"module.network.aws_subnet.private_b\",\"from_deposed_key\":null,\"to\":\"module.application.aws_ecs_service.app\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7375626e65742e707269766174655f62-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6563735f736572766963652e617070-current\",\"state\":null}}",
+        "peer": "{\"directionality\":\"undirected\",\"kind\":\"association\",\"provenance\":[{\"deposed_key\":null,\"resource\":\"module.network.aws_route_table_association.private_b\"}],\"relationship_resource\":\"module.network.aws_route_table_association.private_b\",\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7375626e65742e707269766174655f62-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f726f7574655f7461626c652e70726976617465-current\",\"state\":null}}",
         "peer_segment": 1,
-        "segment": 0
+        "segment": 1
       },
       {
         "category": "crossing",
         "edge": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.network.aws_subnet.private_b\",\"from_deposed_key\":null,\"to\":\"module.network.aws_vpc_endpoint.logs\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7375626e65742e707269766174655f62-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7670635f656e64706f696e742e6c6f6773-current\",\"state\":null}}",
         "location": {
           "point": [
-            2743,
-            3763
+            2729,
+            3578
           ]
         },
         "peer": "{\"directionality\":\"undirected\",\"kind\":\"connection\",\"provenance\":[{\"from\":\"module.network.aws_subnet.private_a\",\"from_deposed_key\":null,\"to\":\"module.application.aws_ecs_service.app\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7375626e65742e707269766174655f61-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6563735f736572766963652e617070-current\",\"state\":null}}",
-        "peer_segment": 2,
-        "segment": 1
-      },
-      {
-        "category": "crossing",
-        "edge": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.network.aws_subnet.private_b\",\"from_deposed_key\":null,\"to\":\"module.network.aws_vpc_endpoint.logs\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7375626e65742e707269766174655f62-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7670635f656e64706f696e742e6c6f6773-current\",\"state\":null}}",
-        "location": {
-          "point": [
-            2743,
-            3836
-          ]
-        },
-        "peer": "{\"directionality\":\"undirected\",\"kind\":\"connection\",\"provenance\":[{\"from\":\"module.network.aws_subnet.private_b\",\"from_deposed_key\":null,\"to\":\"module.application.aws_ecs_service.app\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7375626e65742e707269766174655f62-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6563735f736572766963652e617070-current\",\"state\":null}}",
-        "peer_segment": 2,
-        "segment": 1
-      },
-      {
-        "category": "crossing",
-        "edge": "{\"directionality\":\"undirected\",\"kind\":\"association\",\"provenance\":[{\"deposed_key\":null,\"resource\":\"module.application.aws_lb_target_group_attachment.a0\"}],\"relationship_resource\":\"module.application.aws_lb_target_group_attachment.a0\",\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6c625f7461726765745f67726f75702e617070-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f696e7374616e63652e776f726b6572735f615b305d-current\",\"state\":null}}",
-        "location": {
-          "point": [
-            1214,
-            2757
-          ]
-        },
-        "peer": "{\"directionality\":\"undirected\",\"kind\":\"association\",\"provenance\":[{\"deposed_key\":null,\"resource\":\"module.application.aws_lb_target_group_attachment.b1\"}],\"relationship_resource\":\"module.application.aws_lb_target_group_attachment.b1\",\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6c625f7461726765745f67726f75702e617070-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f696e7374616e63652e776f726b6572735f625b315d-current\",\"state\":null}}",
         "peer_segment": 1,
         "segment": 1
       },
@@ -3248,7 +3435,7 @@
         "edge": "{\"directionality\":\"undirected\",\"kind\":\"association\",\"provenance\":[{\"deposed_key\":null,\"resource\":\"module.application.aws_lb_target_group_attachment.a0\"}],\"relationship_resource\":\"module.application.aws_lb_target_group_attachment.a0\",\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6c625f7461726765745f67726f75702e617070-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f696e7374616e63652e776f726b6572735f615b305d-current\",\"state\":null}}",
         "location": {
           "point": [
-            1230,
+            1201,
             2757
           ]
         },
@@ -3261,7 +3448,7 @@
         "edge": "{\"directionality\":\"undirected\",\"kind\":\"association\",\"provenance\":[{\"deposed_key\":null,\"resource\":\"module.application.aws_lb_target_group_attachment.a0\"}],\"relationship_resource\":\"module.application.aws_lb_target_group_attachment.a0\",\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6c625f7461726765745f67726f75702e617070-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f696e7374616e63652e776f726b6572735f615b305d-current\",\"state\":null}}",
         "location": {
           "point": [
-            1246,
+            1217,
             2757
           ]
         },
@@ -3271,10 +3458,23 @@
       },
       {
         "category": "crossing",
+        "edge": "{\"directionality\":\"undirected\",\"kind\":\"association\",\"provenance\":[{\"deposed_key\":null,\"resource\":\"module.application.aws_lb_target_group_attachment.a0\"}],\"relationship_resource\":\"module.application.aws_lb_target_group_attachment.a0\",\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6c625f7461726765745f67726f75702e617070-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f696e7374616e63652e776f726b6572735f615b305d-current\",\"state\":null}}",
+        "location": {
+          "point": [
+            1843,
+            3085
+          ]
+        },
+        "peer": "{\"directionality\":\"undirected\",\"kind\":\"association\",\"provenance\":[{\"deposed_key\":null,\"resource\":\"module.application.aws_lb_target_group_attachment.b1\"}],\"relationship_resource\":\"module.application.aws_lb_target_group_attachment.b1\",\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6c625f7461726765745f67726f75702e617070-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f696e7374616e63652e776f726b6572735f625b315d-current\",\"state\":null}}",
+        "peer_segment": 1,
+        "segment": 3
+      },
+      {
+        "category": "crossing",
         "edge": "{\"directionality\":\"undirected\",\"kind\":\"association\",\"provenance\":[{\"deposed_key\":null,\"resource\":\"module.application.aws_lb_target_group_attachment.a1\"}],\"relationship_resource\":\"module.application.aws_lb_target_group_attachment.a1\",\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6c625f7461726765745f67726f75702e617070-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f696e7374616e63652e776f726b6572735f615b315d-current\",\"state\":null}}",
         "location": {
           "point": [
-            1230,
+            1201,
             2664
           ]
         },
@@ -3287,8 +3487,21 @@
         "edge": "{\"directionality\":\"undirected\",\"kind\":\"association\",\"provenance\":[{\"deposed_key\":null,\"resource\":\"module.application.aws_lb_target_group_attachment.a1\"}],\"relationship_resource\":\"module.application.aws_lb_target_group_attachment.a1\",\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6c625f7461726765745f67726f75702e617070-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f696e7374616e63652e776f726b6572735f615b315d-current\",\"state\":null}}",
         "location": {
           "point": [
-            1246,
-            3133
+            1217,
+            2688
+          ]
+        },
+        "peer": "{\"directionality\":\"undirected\",\"kind\":\"association\",\"provenance\":[{\"deposed_key\":null,\"resource\":\"module.application.aws_lb_target_group_attachment.b1\"}],\"relationship_resource\":\"module.application.aws_lb_target_group_attachment.b1\",\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6c625f7461726765745f67726f75702e617070-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f696e7374616e63652e776f726b6572735f625b315d-current\",\"state\":null}}",
+        "peer_segment": 0,
+        "segment": 1
+      },
+      {
+        "category": "crossing",
+        "edge": "{\"directionality\":\"undirected\",\"kind\":\"association\",\"provenance\":[{\"deposed_key\":null,\"resource\":\"module.application.aws_lb_target_group_attachment.a1\"}],\"relationship_resource\":\"module.application.aws_lb_target_group_attachment.a1\",\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6c625f7461726765745f67726f75702e617070-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f696e7374616e63652e776f726b6572735f615b315d-current\",\"state\":null}}",
+        "location": {
+          "point": [
+            1217,
+            3146
           ]
         },
         "peer": "{\"directionality\":\"undirected\",\"kind\":\"association\",\"provenance\":[{\"deposed_key\":null,\"resource\":\"module.network.aws_route_table_association.public_a\"}],\"relationship_resource\":\"module.network.aws_route_table_association.public_a\",\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7375626e65742e7075626c69635f61-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f726f7574655f7461626c652e7075626c6963-current\",\"state\":null}}",
@@ -3300,7 +3513,7 @@
         "edge": "{\"directionality\":\"undirected\",\"kind\":\"association\",\"provenance\":[{\"deposed_key\":null,\"resource\":\"module.application.aws_lb_target_group_attachment.a1\"}],\"relationship_resource\":\"module.application.aws_lb_target_group_attachment.a1\",\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6c625f7461726765745f67726f75702e617070-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f696e7374616e63652e776f726b6572735f615b315d-current\",\"state\":null}}",
         "location": {
           "point": [
-            1317,
+            1321,
             3415
           ]
         },
@@ -3310,11 +3523,37 @@
       },
       {
         "category": "crossing",
+        "edge": "{\"directionality\":\"undirected\",\"kind\":\"association\",\"provenance\":[{\"deposed_key\":null,\"resource\":\"module.application.aws_lb_target_group_attachment.a1\"}],\"relationship_resource\":\"module.application.aws_lb_target_group_attachment.a1\",\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6c625f7461726765745f67726f75702e617070-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f696e7374616e63652e776f726b6572735f615b315d-current\",\"state\":null}}",
+        "location": {
+          "point": [
+            1843,
+            3415
+          ]
+        },
+        "peer": "{\"directionality\":\"undirected\",\"kind\":\"association\",\"provenance\":[{\"deposed_key\":null,\"resource\":\"module.application.aws_lb_target_group_attachment.b1\"}],\"relationship_resource\":\"module.application.aws_lb_target_group_attachment.b1\",\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6c625f7461726765745f67726f75702e617070-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f696e7374616e63652e776f726b6572735f625b315d-current\",\"state\":null}}",
+        "peer_segment": 1,
+        "segment": 2
+      },
+      {
+        "category": "crossing",
         "edge": "{\"directionality\":\"undirected\",\"kind\":\"association\",\"provenance\":[{\"deposed_key\":null,\"resource\":\"module.application.aws_lb_target_group_attachment.b0\"}],\"relationship_resource\":\"module.application.aws_lb_target_group_attachment.b0\",\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6c625f7461726765745f67726f75702e617070-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f696e7374616e63652e776f726b6572735f625b305d-current\",\"state\":null}}",
         "location": {
           "point": [
-            1230,
-            3133
+            1201,
+            2688
+          ]
+        },
+        "peer": "{\"directionality\":\"undirected\",\"kind\":\"association\",\"provenance\":[{\"deposed_key\":null,\"resource\":\"module.application.aws_lb_target_group_attachment.b1\"}],\"relationship_resource\":\"module.application.aws_lb_target_group_attachment.b1\",\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6c625f7461726765745f67726f75702e617070-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f696e7374616e63652e776f726b6572735f625b315d-current\",\"state\":null}}",
+        "peer_segment": 0,
+        "segment": 1
+      },
+      {
+        "category": "crossing",
+        "edge": "{\"directionality\":\"undirected\",\"kind\":\"association\",\"provenance\":[{\"deposed_key\":null,\"resource\":\"module.application.aws_lb_target_group_attachment.b0\"}],\"relationship_resource\":\"module.application.aws_lb_target_group_attachment.b0\",\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6c625f7461726765745f67726f75702e617070-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f696e7374616e63652e776f726b6572735f625b305d-current\",\"state\":null}}",
+        "location": {
+          "point": [
+            1201,
+            3146
           ]
         },
         "peer": "{\"directionality\":\"undirected\",\"kind\":\"association\",\"provenance\":[{\"deposed_key\":null,\"resource\":\"module.network.aws_route_table_association.public_a\"}],\"relationship_resource\":\"module.network.aws_route_table_association.public_a\",\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7375626e65742e7075626c69635f61-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f726f7574655f7461626c652e7075626c6963-current\",\"state\":null}}",
@@ -3323,28 +3562,28 @@
       },
       {
         "category": "crossing",
-        "edge": "{\"directionality\":\"undirected\",\"kind\":\"association\",\"provenance\":[{\"deposed_key\":null,\"resource\":\"module.application.aws_lb_target_group_attachment.b1\"}],\"relationship_resource\":\"module.application.aws_lb_target_group_attachment.b1\",\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6c625f7461726765745f67726f75702e617070-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f696e7374616e63652e776f726b6572735f625b315d-current\",\"state\":null}}",
+        "edge": "{\"directionality\":\"undirected\",\"kind\":\"association\",\"provenance\":[{\"deposed_key\":null,\"resource\":\"module.application.aws_lb_target_group_attachment.b0\"}],\"relationship_resource\":\"module.application.aws_lb_target_group_attachment.b0\",\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6c625f7461726765745f67726f75702e617070-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f696e7374616e63652e776f726b6572735f625b305d-current\",\"state\":null}}",
         "location": {
           "point": [
-            1214,
-            3133
+            1843,
+            3970
           ]
         },
-        "peer": "{\"directionality\":\"undirected\",\"kind\":\"association\",\"provenance\":[{\"deposed_key\":null,\"resource\":\"module.network.aws_route_table_association.public_a\"}],\"relationship_resource\":\"module.network.aws_route_table_association.public_a\",\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7375626e65742e7075626c69635f61-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f726f7574655f7461626c652e7075626c6963-current\",\"state\":null}}",
+        "peer": "{\"directionality\":\"undirected\",\"kind\":\"association\",\"provenance\":[{\"deposed_key\":null,\"resource\":\"module.application.aws_lb_target_group_attachment.b1\"}],\"relationship_resource\":\"module.application.aws_lb_target_group_attachment.b1\",\"source\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6c625f7461726765745f67726f75702e617070-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f696e7374616e63652e776f726b6572735f625b315d-current\",\"state\":null}}",
         "peer_segment": 1,
-        "segment": 1
+        "segment": 2
       },
       {
         "category": "crossing",
         "edge": "{\"directionality\":\"undirected\",\"kind\":\"association\",\"provenance\":[{\"deposed_key\":null,\"resource\":\"module.network.aws_route_table_association.private_b\"}],\"relationship_resource\":\"module.network.aws_route_table_association.private_b\",\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7375626e65742e707269766174655f62-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f726f7574655f7461626c652e70726976617465-current\",\"state\":null}}",
         "location": {
           "point": [
-            2717,
-            3763
+            2713,
+            3430
           ]
         },
         "peer": "{\"directionality\":\"undirected\",\"kind\":\"connection\",\"provenance\":[{\"from\":\"module.network.aws_subnet.private_a\",\"from_deposed_key\":null,\"to\":\"module.application.aws_ecs_service.app\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7375626e65742e707269766174655f61-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6563735f736572766963652e617070-current\",\"state\":null}}",
-        "peer_segment": 2,
+        "peer_segment": 0,
         "segment": 1
       },
       {
@@ -3352,8 +3591,8 @@
         "edge": "{\"directionality\":\"undirected\",\"kind\":\"association\",\"provenance\":[{\"deposed_key\":null,\"resource\":\"module.network.aws_route_table_association.public_a\"}],\"relationship_resource\":\"module.network.aws_route_table_association.public_a\",\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7375626e65742e7075626c69635f61-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f726f7574655f7461626c652e7075626c6963-current\",\"state\":null}}",
         "location": {
           "point": [
-            1317,
-            3133
+            1321,
+            3146
           ]
         },
         "peer": "{\"directionality\":\"undirected\",\"kind\":\"association\",\"provenance\":[{\"deposed_key\":null,\"resource\":\"module.network.aws_route_table_association.public_b\"}],\"relationship_resource\":\"module.network.aws_route_table_association.public_b\",\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7375626e65742e7075626c69635f62-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f726f7574655f7461626c652e7075626c6963-current\",\"state\":null}}",
@@ -3365,7 +3604,7 @@
         "edge": "{\"directionality\":\"undirected\",\"kind\":\"association\",\"provenance\":[{\"deposed_key\":null,\"resource\":\"module.network.aws_route_table_association.public_b\"}],\"relationship_resource\":\"module.network.aws_route_table_association.public_b\",\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7375626e65742e7075626c69635f62-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f726f7574655f7461626c652e7075626c6963-current\",\"state\":null}}",
         "location": {
           "point": [
-            1317,
+            1321,
             3473
           ]
         },
@@ -3383,8 +3622,8 @@
           ],
           "horizontal": true,
           "interval": [
-            2072,
-            3666
+            2068,
+            3662
           ],
           "visible_gap": 0.5
         },
@@ -3394,58 +3633,20 @@
       },
       {
         "category": "parallel_proximity",
-        "edge": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.network.aws_subnet.private_a\",\"from_deposed_key\":null,\"to\":\"module.network.aws_vpc_endpoint.logs\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7375626e65742e707269766174655f61-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7670635f656e64706f696e742e6c6f6773-current\",\"state\":null}}",
-        "location": {
-          "coordinates": [
-            2697,
-            2691
-          ],
-          "horizontal": false,
-          "interval": [
-            3438,
-            3515
-          ],
-          "visible_gap": 4
-        },
-        "peer": "{\"directionality\":\"undirected\",\"kind\":\"connection\",\"provenance\":[{\"from\":\"module.network.aws_subnet.private_a\",\"from_deposed_key\":null,\"to\":\"module.application.aws_ecs_service.app\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7375626e65742e707269766174655f61-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6563735f736572766963652e617070-current\",\"state\":null}}",
-        "peer_segment": 1,
-        "segment": 1
-      },
-      {
-        "category": "parallel_proximity",
         "edge": "{\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":[{\"from\":\"module.network.aws_subnet.private_b\",\"from_deposed_key\":null,\"to\":\"module.database.aws_db_subnet_group.database\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7375626e65742e707269766174655f62-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e64617461626173652e6177735f64625f7375626e65745f67726f75702e6461746162617365-current\",\"state\":null}}",
         "location": {
           "coordinates": [
-            2713,
-            2717
+            2709,
+            2713
           ],
           "horizontal": false,
           "interval": [
-            3320,
-            3795
+            3337,
+            3937
           ],
           "visible_gap": 2.25
         },
         "peer": "{\"directionality\":\"undirected\",\"kind\":\"association\",\"provenance\":[{\"deposed_key\":null,\"resource\":\"module.network.aws_route_table_association.private_b\"}],\"relationship_resource\":\"module.network.aws_route_table_association.private_b\",\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7375626e65742e707269766174655f62-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f726f7574655f7461626c652e70726976617465-current\",\"state\":null}}",
-        "peer_segment": 1,
-        "segment": 1
-      },
-      {
-        "category": "parallel_proximity",
-        "edge": "{\"directionality\":\"undirected\",\"kind\":\"association\",\"provenance\":[{\"deposed_key\":null,\"resource\":\"module.network.aws_route_table_association.private_b\"}],\"relationship_resource\":\"module.network.aws_route_table_association.private_b\",\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7375626e65742e707269766174655f62-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f726f7574655f7461626c652e70726976617465-current\",\"state\":null}}",
-        "location": {
-          "coordinates": [
-            2717,
-            2727
-          ],
-          "horizontal": false,
-          "interval": [
-            3844,
-            3941
-          ],
-          "visible_gap": 7.75
-        },
-        "peer": "{\"directionality\":\"undirected\",\"kind\":\"connection\",\"provenance\":[{\"from\":\"module.network.aws_subnet.private_b\",\"from_deposed_key\":null,\"to\":\"module.application.aws_ecs_service.app\",\"to_deposed_key\":null}],\"relationship_resource\":null,\"source\":{\"id\":\"terraform:6d6f64756c652e6e6574776f726b2e6177735f7375626e65742e707269766174655f62-current\",\"state\":null},\"target\":{\"id\":\"terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f6563735f736572766963652e617070-current\",\"state\":null}}",
         "peer_segment": 1,
         "segment": 1
       }
@@ -3453,7 +3654,7 @@
     "limits": {
       "finding_limit": 20000,
       "findings_complete": true,
-      "pair_comparisons": 8224,
+      "pair_comparisons": 8223,
       "pair_limit": 2000000,
       "pair_metrics_complete": true,
       "unsupported_diagonal_segments": 0
@@ -3490,7 +3691,7 @@
         "resources": 48,
         "spatial_layout": {
           "height": 2503,
-          "width": 4739
+          "width": 4735
         },
         "state": null
       }
@@ -3498,14 +3699,14 @@
     "summary": {
       "raw_polyline": {
         "bends": 84,
-        "length": 48281
+        "length": 48298
       },
       "routed_paths": 41,
-      "visible_border_minimum_deficit": 52.5,
+      "visible_border_minimum_deficit": 1.5,
       "visible_straight_sections": {
-        "crossings": 83,
+        "crossings": 98,
         "independent_overlap_length": 0,
-        "parallel_deficit": 29368,
+        "parallel_deficit": 29516,
         "shared_trunk_length": 0
       }
     },

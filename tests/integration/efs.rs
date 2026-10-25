@@ -60,7 +60,9 @@ fn efs_children_preserve_long_addresses_lifecycle_modes_and_reference_links() {
             let rect = child.children().find(|n| n.has_tag_name("rect")).unwrap();
             let top = rect.attribute("y").unwrap().parse::<usize>().unwrap();
             let bottom = top + rect.attribute("height").unwrap().parse::<usize>().unwrap();
-            for line in child.descendants().filter(|n| n.has_tag_name("text")) {
+            for line in child.descendants().filter(|n| {
+                (n.has_tag_name("text") && n.attribute("y").is_some()) || n.has_tag_name("tspan")
+            }) {
                 let y = line.attribute("y").unwrap().parse::<usize>().unwrap();
                 assert!(y > top && y < bottom);
             }
