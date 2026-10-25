@@ -70,12 +70,17 @@ For example, `aws_subnet` is **Subnet**, `aws_vpc` is **VPC** and
 below; unlisted names wrap in full. Unknown provider/type retains its existing
 neutral fallback. No name, ARN, attribute value or resource-prefix inference is used.
 
-Spatial labels share the top row with the action/type text. Cards
-reserve separate space for the label and external indicator. Complete Terraform
+Spatial labels share the top row with the operation heading. Shared display
+metadata distinguishes resource-specific labels from broad service fallbacks.
+A specific label such as `RDS Instance` suppresses the repeated standalone
+Terraform type; a broad `RDS` label, missing label or unknown type retains it.
+Cards reserve separate space for the label and external indicator. Fallback
 types and operations wrap instead of being shortened; imports and complete
 addresses appear below the measured heading. The label ends 8px inside the right edge.
 Containers use their enclosing header's right edge; embedded members use their
-own card's right edge. Logical Resources show one label to the right of each
+own card's right edge. Embedded routes without a resource label retain their
+type heading. Logical Resources retain their type-level group heading and show
+one label to the right of each
 action-section heading, with 12px clearance inside its frame; individual rows do
 not repeat it. All locations
 share 18px bold text, 11px measured character advance, 24px line height, 10px horizontal
@@ -84,12 +89,12 @@ space before subsequent content. Long labels wrap at the available width and exp
 without reducing the font or truncating text. Logical action headings, counts,
 labels and the gap between them are measured together before positioning rows.
 Embedded members retain their complete address below the label and show the
-operation in the separate type heading. There is no smaller-label exception for
+operation in the separate heading. There is no smaller-label exception for
 logical or embedded rows.
 
-Embedded Terraform resources, including Routes, have a separate complete
-`resource_type · operation` heading above their badges and address. Long headings
-wrap and reserve their height in the parent layout. Import and state-removal
+Embedded Terraform resources have a separate operation heading above their badges
+and address, prefixed by the complete type when no specific label is displayed.
+Long headings wrap and reserve their height in the parent layout. Import and state-removal
 operations retain their composed labels. Inline route entries have no independent
 Terraform identity and do not receive a resource-type heading.
 

@@ -30,7 +30,8 @@ pub(crate) struct Card<'a> {
 
 impl Card<'_> {
     pub fn type_heading(&self) -> Option<String> {
-        self.node.map(|node| super::heading::text(node, true))
+        self.node
+            .map(|node| super::heading::text(node, true, node.member_owner.is_some()))
     }
 
     pub fn type_heading_height(&self) -> usize {

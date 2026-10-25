@@ -190,9 +190,13 @@ instance keys stay part of the key, including after an escaped quote or a forced
 line break. An individual token wider than the available space falls back to
 UTF-8 character boundaries; every delimiter and space is preserved. Ordinary
 explanatory text keeps its separate wrapping behavior.
-Resource headings display the complete selected address. Shared measurements
-also wrap complete Terraform type/action headings without ellipsis. Ordinary and
-embedded cards share the heading text and line-spacing rules. Ordinary headers
+Resource headings display the complete selected address. Shared display metadata
+marks labels as resource-specific or service-level. Ordinary/container headers
+and labeled embedded members omit the standalone type only for a specific label.
+Other headings wrap the full Terraform type and operation without ellipsis.
+Unlabeled embedded routes retain their type. Search and details keep the exact
+type independently of presentation. Cards share heading text and line-spacing
+rules. Ordinary headers
 reserve separate columns for top-right resource/service labels and
 external indicators; extra heading lines move import badges, addresses, references
 and children down before layout and routing. Logical Resources retain their full

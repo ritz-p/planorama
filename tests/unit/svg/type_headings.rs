@@ -5,6 +5,73 @@ fn number(node: roxmltree::Node<'_, '_>, key: &str) -> usize {
 }
 
 #[test]
+fn specific_labels_remove_duplicate_types_but_service_fallbacks_keep_them() {
+    let input = serde_json::json!({"format_version":"1.2", "resource_changes":[
+        {"address":"module.db.aws_db_instance.main", "type":"aws_db_instance", "change":{"actions":["create"]}}
+    ]});
+    let source = semantic::transform(&plan::parse(&input.to_string()).unwrap());
+    let original = view::single(&source, &Default::default()).unwrap();
+    for (resource_type, service, label, expected) in [
+        (
+            "aws_db_instance",
+            Some("Amazon RDS"),
+            Some("RDS Instance"),
+            "create",
+        ),
+        (
+            "aws_db_option_group",
+            Some("Amazon RDS"),
+            Some("RDS"),
+            "aws_db_option_group · create",
+        ),
+        (
+            "custom_unknown",
+            Some("RDS Instance"),
+            Some("RDS Instance"),
+            "custom_unknown · create",
+        ),
+        ("aws_db_instance", None, None, "aws_db_instance · create"),
+    ] {
+        let mut graph = (*original).clone();
+        let node = &mut graph.nodes[0];
+        node.resource_type = resource_type.into();
+        node.service_name = service;
+        let layout = Layout::new(&graph);
+        for output in [
+            svg::render(&graph, &layout),
+            svg::render_content(
+                &graph,
+                &layout,
+                svg::Options::default(),
+                svg::Content::ValueFree,
+            ),
+        ] {
+            let svg = &output[output.find("<svg").unwrap()..output.rfind("</svg>").unwrap() + 6];
+            let doc = roxmltree::Document::parse(svg).unwrap();
+            let card = doc
+                .descendants()
+                .find(|n| n.attribute("data-terraform-address").is_some())
+                .unwrap();
+            assert_eq!(
+                card.attribute("data-terraform-address"),
+                Some("module.db.aws_db_instance.main")
+            );
+            let heading: String = card
+                .children()
+                .filter(|n| n.attribute("data-resource-type-heading").is_some())
+                .filter_map(|n| n.text())
+                .collect();
+            assert_eq!(heading, expected);
+            assert_eq!(
+                card.children()
+                    .find_map(|n| n.attribute("data-display-name")),
+                label
+            );
+        }
+    }
+}
+
+#[test]
 fn spatial_type_headings_fit_with_labels_external_indicators_and_imports() {
     let mut input: serde_json::Value =
         serde_json::from_str(include_str!("../../fixtures/service-labels-plan.json")).unwrap();
@@ -54,7 +121,20 @@ fn spatial_type_headings_fit_with_labels_external_indicators_and_imports() {
                         .iter()
                         .filter_map(|line| line.text())
                         .collect::<String>(),
-                    format!("{} · {operation}", node.resource_type)
+                    if node.provider.is_aws()
+                        && matches!(
+                            node.resource_type.as_str(),
+                            "aws_vpc"
+                                | "aws_subnet"
+                                | "aws_route_table"
+                                | "aws_nat_gateway"
+                                | "aws_iam_role_policy_attachment"
+                        )
+                    {
+                        operation.clone()
+                    } else {
+                        format!("{} · {operation}", node.resource_type)
+                    }
                 );
                 if node.resource_type.contains("_with_a_complete") {
                     assert!(lines.len() > 1);

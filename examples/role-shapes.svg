@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1302" height="1110" viewBox="0 0 1302 1110" role="img" aria-labelledby="title description">
+<svg xmlns="http://www.w3.org/2000/svg" width="1260" height="1110" viewBox="0 0 1260 1110" role="img" aria-labelledby="title description">
 <title id="title">Terraform plan</title>
 <desc id="description">8 resources (7 spatial cards, 1 logical resources in 1 group cards) · 0 relationships Thin solid: dependency. Dashed: association. Thick dotted: connection. Nested boxes: containment. Edge color preserves the Terraform action when available. Service label backgrounds: orange = compute; green = storage; blue = network; red = IAM; gray = unclassified.</desc>
 <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/></marker></defs>
@@ -48,9 +48,9 @@
 <text x="512" y="260" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
 <g id="resource-6177735f6e61745f676174657761792e656772657373-current" data-architecture-id="terraform:6177735f6e61745f676174657761792e656772657373-current" data-qualified-address="module.root.aws_nat_gateway.egress" data-terraform-address="aws_nat_gateway.egress"><title>module.root.aws_nat_gateway.egress — unchanged</title>
-<rect x="500" y="312" width="362" height="112" rx="8" fill="#f8fafc" stroke="#64748b" stroke-width="1.5" data-mode="managed"/>
-<text data-resource-type-heading="true" x="512" y="340" font-size="11" fill="#64748b" xml:space="preserve">aws_nat_gateway · unchanged</text>
-<rect data-service-badge="true" data-presentation-padding="10 4" data-service-category="network" data-service-full-name="Amazon VPC" data-display-name="NAT Gateway" x="713" y="320" width="141" height="32" rx="4" fill="#dbeafe"/><text data-service-name="true" x="723" y="342" font-size="18" font-weight="700" fill="#1e3a8a" xml:space="preserve">NAT Gateway</text><text x="512" y="373" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_nat_gateway.egress</text>
+<rect x="500" y="312" width="320" height="112" rx="8" fill="#f8fafc" stroke="#64748b" stroke-width="1.5" data-mode="managed"/>
+<text data-resource-type-heading="true" x="512" y="340" font-size="11" fill="#64748b" xml:space="preserve">unchanged</text>
+<rect data-service-badge="true" data-presentation-padding="10 4" data-service-category="network" data-service-full-name="Amazon VPC" data-display-name="NAT Gateway" x="671" y="320" width="141" height="32" rx="4" fill="#dbeafe"/><text data-service-name="true" x="681" y="342" font-size="18" font-weight="700" fill="#1e3a8a" xml:space="preserve">NAT Gateway</text><text x="512" y="373" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_nat_gateway.egress</text>
 <text x="512" y="412" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
 <g id="resource-6177735f73335f6275636b65742e61726368697665-current" data-architecture-id="terraform:6177735f73335f6275636b65742e61726368697665-current" data-qualified-address="module.root.aws_s3_bucket.archive" data-terraform-address="aws_s3_bucket.archive"><title>module.root.aws_s3_bucket.archive — delete</title>
@@ -62,15 +62,15 @@
 <text x="512" y="606" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
 <g id="resource-6177735f7670632e6d61696e-current" data-architecture-id="terraform:6177735f7670632e6d61696e-current" data-qualified-address="module.root.aws_vpc.main" data-terraform-address="aws_vpc.main" data-presentation-header="60 160 400 112"><title>module.root.aws_vpc.main — other</title>
-<text data-resource-type-heading="true" x="72" y="188" font-size="11" fill="#854d0e" xml:space="preserve">aws_vpc · other</text>
+<text data-resource-type-heading="true" x="72" y="188" font-size="11" fill="#854d0e" xml:space="preserve">other</text>
 <rect data-service-badge="true" data-presentation-padding="10 4" data-service-category="network" data-service-full-name="Amazon VPC" data-display-name="VPC" x="399" y="168" width="53" height="32" rx="4" fill="#dbeafe"/><text data-service-name="true" x="409" y="190" font-size="18" font-weight="700" fill="#1e3a8a" xml:space="preserve">VPC</text><text x="72" y="221" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_vpc.main</text>
 <text x="72" y="260" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
 <g id="resource-637573746f6d5f7769646765742e756e6b6e6f776e-current" data-architecture-id="terraform:637573746f6d5f7769646765742e756e6b6e6f776e-current" data-qualified-address="module.root.custom_widget.unknown" data-terraform-address="custom_widget.unknown"><title>module.root.custom_widget.unknown — other</title>
-<rect x="902" y="160" width="320" height="96" rx="8" fill="#fefce8" stroke="#854d0e" stroke-width="1.5" data-mode="managed"/>
-<text data-resource-type-heading="true" x="914" y="180" font-size="11" fill="#854d0e" xml:space="preserve">custom_widget · other</text>
-<text x="914" y="205" font-size="13" fill="#0f172a" xml:space="preserve">module.root.custom_widget.unknown</text>
-<text x="914" y="244" font-size="10" fill="#64748b"><title>root</title>root</text>
+<rect x="860" y="160" width="320" height="96" rx="8" fill="#fefce8" stroke="#854d0e" stroke-width="1.5" data-mode="managed"/>
+<text data-resource-type-heading="true" x="872" y="180" font-size="11" fill="#854d0e" xml:space="preserve">custom_widget · other</text>
+<text x="872" y="205" font-size="13" fill="#0f172a" xml:space="preserve">module.root.custom_widget.unknown</text>
+<text x="872" y="244" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
 <g id="resource-6d6f64756c652e6170706c69636174696f6e2e6177735f696e7374616e63652e6c6f6e675f6170706c69636174696f6e5f776f726b65725f776974685f615f636f6d706c6574655f7265736f757263655f61646472657373-current" data-architecture-id="terraform:6d6f64756c652e6170706c69636174696f6e2e6177735f696e7374616e63652e6c6f6e675f6170706c69636174696f6e5f776f726b65725f776974685f615f636f6d706c6574655f7265736f757263655f61646472657373-current" data-qualified-address="module.application.aws_instance.long_application_worker_with_a_complete_resource_address" data-terraform-address="module.application.aws_instance.long_application_worker_with_a_complete_resource_address"><title>module.application.aws_instance.long_application_worker_with_a_complete_resource_address — create</title>
 <rect x="60" y="488" width="320" height="132" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>

@@ -569,13 +569,17 @@ fn render_with_index(
         }
         let named = node.service_name.is_some();
         let heading_offset = if named { 8 } else { 0 };
-        svg.push_str(&entities::badge(node.mode, x, y + heading_offset));
+        svg.push_str(&entities::badge(
+            node.mode,
+            x + metrics.external_inset,
+            y + heading_offset,
+        ));
         svg.push_str(&entities::import_badge(
             node,
             x + 12,
             y + 28 + metrics.service_height,
         ));
-        let type_heading = crate::view::heading::text(node, false);
+        let type_heading = crate::view::heading::text(node, false, true);
         for (line, text) in crate::view::heading::lines(&type_heading, metrics.type_line_limit)
             .iter()
             .enumerate()

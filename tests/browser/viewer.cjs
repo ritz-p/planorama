@@ -581,6 +581,31 @@ class ViewerTests {
         this.choose('aws_iam_role.worker');
         this.assertEqual(this.driver.execute_script(`return [...document.querySelector('[data-viewer-selected]').closest('[data-action-section]').querySelectorAll('[data-service-badge]')].map(b => [b.dataset.displayName, getComputedStyle(b).fill])`), [['IAM Role', 'rgb(254, 226, 226)']]);
     }
+    test_specific_labels_omit_types_without_losing_search_or_selection_metadata() {
+        const address = 'module.db.aws_db_instance.main';
+        this.load('-', {input_plan: {format_version: '1.2', resource_changes: [
+            {address, type: 'aws_db_instance', change: {actions: ['create']}},
+            {address: 'aws_db_option_group.options', type: 'aws_db_option_group', change: {actions: ['create']}},
+        ]}});
+        const selected = this.choose('aws_db_instance');
+        const result = this.driver.execute_script(`
+            const card = document.getElementById(arguments[0]);
+            const data = JSON.parse(document.getElementById('viewer-data').textContent).find(r => r.id === arguments[0]);
+            return {
+                heading: [...card.querySelectorAll('[data-resource-type-heading]')].map(n => n.textContent).join(''),
+                label: card.querySelector('[data-service-badge]').dataset.displayName,
+                address: card.dataset.terraformAddress,
+                metadata: data
+            };
+        `, selected);
+        this.assertEqual(result.heading, 'create');
+        this.assertEqual(result.label, 'RDS Instance');
+        this.assertEqual(result.address, address);
+        this.assertEqual(result.metadata.type, 'aws_db_instance');
+        this.assertIn('aws_db_instance', this.find('#selection').text);
+        this.choose('aws_db_option_group');
+        this.assertIn('aws_db_option_group', this.find('#viewport').text);
+    }
     test_logical_labels_are_shared_and_contained_in_action_sections() {
         for (const fixture of ['logical-actions', 'service-labels', 'aurora', 'certificate-cards']) {
             this.load('tests/fixtures/' + fixture + '-plan.json');

@@ -154,7 +154,7 @@
 </g>
 <g data-architecture="true" transform="translate(0 1034)">
 <g data-deployment-scope="true" data-scope-provider="AWS" data-global="true"><rect x="44" y="160" width="680" height="1094" rx="14" fill="#f8fafc" stroke="#94a3b8" stroke-dasharray="9 5"/><text x="60" y="185" font-size="15" font-weight="700" fill="#334155">AWS Global</text></g>
-<g data-deployment-scope="true" data-scope-provider="AWS" data-region="us-west-2"><rect x="44" y="1294" width="361" height="366" rx="14" fill="#f8fafc" stroke="#94a3b8" stroke-dasharray="9 5"/><text x="60" y="1319" font-size="15" font-weight="700" fill="#334155">AWS us-west-2</text></g>
+<g data-deployment-scope="true" data-scope-provider="AWS" data-region="us-west-2"><rect x="44" y="1294" width="360" height="366" rx="14" fill="#f8fafc" stroke="#94a3b8" stroke-dasharray="9 5"/><text x="60" y="1319" font-size="15" font-weight="700" fill="#334155">AWS us-west-2</text></g>
 <g data-edge-kind="dependency" data-source="resource-6177735f636c6f756466726f6e745f63616368655f706f6c6963792e617070-current" data-target="resource-6177735f636c6f756466726f6e745f646973747269627574696f6e2e617070-current"><title>module.root.aws_cloudfront_cache_policy.app → module.root.aws_cloudfront_distribution.app</title></g>
 <g data-edge-kind="dependency" data-source="resource-6177735f636c6f756466726f6e745f63616368655f706f6c6963792e617070-current" data-target="resource-6177735f636c6f756466726f6e745f646973747269627574696f6e2e617373657473-current"><title>module.root.aws_cloudfront_cache_policy.app → module.root.aws_cloudfront_distribution.assets</title></g>
 <g data-edge-kind="dependency" data-source="resource-6177735f636c6f756466726f6e745f6f726967696e5f6163636573735f636f6e74726f6c2e617373657473-current" data-target="resource-6177735f636c6f756466726f6e745f646973747269627574696f6e2e617373657473-current"><title>module.root.aws_cloudfront_origin_access_control.assets → module.root.aws_cloudfront_distribution.assets</title></g>
@@ -218,9 +218,9 @@ Origin reference: module.root.aws_s3_bucket.assets[0] [origin.domain_name; direc
 </a></g>
 </g>
 <g id="resource-6177735f6c622e617070-current" data-architecture-id="terraform:6177735f6c622e617070-current" data-qualified-address="module.root.aws_lb.app" data-terraform-address="aws_lb.app"><title>module.root.aws_lb.app — unchanged</title>
-<rect x="64" y="1334" width="321" height="112" rx="8" fill="#f8fafc" stroke="#64748b" stroke-width="1.5" data-mode="managed"/>
-<text data-resource-type-heading="true" x="76" y="1362" font-size="11" fill="#64748b" xml:space="preserve">aws_lb · unchanged</text>
-<rect data-service-badge="true" data-presentation-padding="10 4" data-service-category="network" data-service-full-name="Elastic Load Balancing" data-display-name="Load Balancer" x="214" y="1342" width="163" height="32" rx="4" fill="#dbeafe"/><text data-service-name="true" x="224" y="1364" font-size="18" font-weight="700" fill="#1e3a8a" xml:space="preserve">Load Balancer</text><text x="76" y="1395" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_lb.app</text>
+<rect x="64" y="1334" width="320" height="112" rx="8" fill="#f8fafc" stroke="#64748b" stroke-width="1.5" data-mode="managed"/>
+<text data-resource-type-heading="true" x="76" y="1362" font-size="11" fill="#64748b" xml:space="preserve">unchanged</text>
+<rect data-service-badge="true" data-presentation-padding="10 4" data-service-category="network" data-service-full-name="Elastic Load Balancing" data-display-name="Load Balancer" x="213" y="1342" width="163" height="32" rx="4" fill="#dbeafe"/><text data-service-name="true" x="223" y="1364" font-size="18" font-weight="700" fill="#1e3a8a" xml:space="preserve">Load Balancer</text><text x="76" y="1395" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_lb.app</text>
 </g>
 <g id="resource-6177735f73335f6275636b65742e6173736574735b305d-current" data-architecture-id="terraform:6177735f73335f6275636b65742e6173736574735b305d-current" data-qualified-address="module.root.aws_s3_bucket.assets[0]" data-terraform-address="aws_s3_bucket.assets[0]"><title>module.root.aws_s3_bucket.assets[0] — unchanged</title>
 <rect x="64" y="1486" width="320" height="154" rx="8" fill="#f8fafc" stroke="#64748b" stroke-width="1.5" data-mode="managed"/>

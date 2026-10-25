@@ -203,6 +203,18 @@ Independent overlap and border deficits do not increase; per-edge bends stay
 within existing budgets. Other fixture baselines and all budgets are unchanged.
 The PR records each increased pair; improvements elsewhere do not excuse them.
 
+#667 shortens specifically labeled resource headings and moves the external
+indicator beside the operation. The large fixture's resulting packing changes
+24 crossing pairs (25 added intersections), including Internet/NAT routes,
+load-balancer/security-group paths and target attachments. Each increase was
+reviewed against its SVG location and is recorded in the PR, independently of
+the aggregate reduction from 94 to 72 crossings. The private-b subnet's DB subnet
+group path and route-table association now run with 2.25px visible clearance for
+600px (7,200 px² parallel deficit); that pair is explicitly accepted for this
+header-width change. Independent overlap and border deficits remain unchanged,
+and per-edge bends remain within budget. Only the large baseline changes;
+budgets and the other five baselines remain unchanged.
+
 #660 enlarges each named-state heading allocation from 40 to 76 pixels for
 title-size text and a padded background. In the multi-state fixture, all three
 cross-state paths become 36 pixels longer at their existing gutter positions.

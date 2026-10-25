@@ -28,7 +28,19 @@ pub(crate) fn short_name(name: &str) -> &str {
         .unwrap_or(name)
 }
 
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub(crate) enum DisplayLabel<'a> {
+    Resource(&'a str),
+    Service(&'a str),
+}
+
 pub(crate) fn display_name(node: &crate::model::Node) -> Option<&str> {
+    display_label(node).map(|label| match label {
+        DisplayLabel::Resource(name) | DisplayLabel::Service(name) => name,
+    })
+}
+
+pub(crate) fn display_label(node: &crate::model::Node) -> Option<DisplayLabel<'_>> {
     let service = node.service_name?;
     if node.provider.is_aws() {
         let name = match node.resource_type.as_str() {
@@ -100,11 +112,11 @@ pub(crate) fn display_name(node: &crate::model::Node) -> Option<&str> {
             "aws_iam_access_key" => "IAM Access Key",
             "aws_iam_openid_connect_provider" => "IAM OIDC Provider",
             "aws_iam_saml_provider" => "IAM SAML Provider",
-            _ => return Some(short_name(service)),
+            _ => return Some(DisplayLabel::Service(short_name(service))),
         };
-        return Some(name);
+        return Some(DisplayLabel::Resource(name));
     }
-    Some(short_name(service))
+    Some(DisplayLabel::Service(short_name(service)))
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
