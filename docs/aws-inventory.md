@@ -30,7 +30,7 @@ Generic Terraform references and dependencies remain available.
 
 The inventory retains the Provider's `names/data/names_data.hcl` labels. Runtime
 labels correct its historical brand names against the [AWS documentation index](https://docs.aws.amazon.com/)
-(for example, Amazon MQ rather than the Provider's AWS MQ). All resources use provider-aware service names on neutral cards/rows.
+(for example, Amazon MQ rather than the Provider's AWS MQ). Resources use provider-aware labels on card or logical action-section headers.
 No official artwork is required for basic support; see [service labels](icons.md).
 
 Regional entries use static provider region evidence, subject to the existing

@@ -28,7 +28,12 @@ fn resource_labels_distinguish_targets_and_reserve_right_aligned_header_space() 
             .descendants()
             .find(|n| n.attribute("data-terraform-address") == Some(address))
             .unwrap();
-        let badge = row
+        let label_owner = if row.attribute("data-placement") == Some("logical") {
+            row.parent().unwrap()
+        } else {
+            row
+        };
+        let badge = label_owner
             .children()
             .find(|n| n.attribute("data-service-badge").is_some())
             .unwrap();
@@ -146,7 +151,12 @@ fn service_labels_preserve_provider_boundaries_and_measured_geometry() {
                 .descendants()
                 .find(|n| n.attribute("data-terraform-address") == Some(&node.address))
                 .unwrap();
-            let services: Vec<_> = row
+            let label_owner = if node.placement == crate::model::Placement::Logical {
+                row.parent().unwrap()
+            } else {
+                row
+            };
+            let services: Vec<_> = label_owner
                 .children()
                 .filter(|n| n.attribute("data-service-name") == Some("true"))
                 .collect();
@@ -157,7 +167,7 @@ fn service_labels_preserve_provider_boundaries_and_measured_geometry() {
             if services.is_empty() {
                 continue;
             }
-            let badge = row
+            let badge = label_owner
                 .children()
                 .find(|n| n.attribute("data-service-badge") == Some("true"))
                 .unwrap();
@@ -189,7 +199,21 @@ fn service_labels_preserve_provider_boundaries_and_measured_geometry() {
                         || n.attribute("font-weight") == Some("700")
                 })
                 .unwrap();
-            let address_y: usize = address_text.attribute("y").unwrap().parse().unwrap();
+            let offset = row.attribute("transform").map_or(0, |transform| {
+                transform
+                    .strip_prefix("translate(0 ")
+                    .unwrap()
+                    .strip_suffix(')')
+                    .unwrap()
+                    .parse::<usize>()
+                    .unwrap()
+            });
+            let address_y: usize = address_text
+                .attribute("y")
+                .unwrap()
+                .parse::<usize>()
+                .unwrap()
+                + offset;
             assert!(address_y >= last_y + 20);
             if node.placement != crate::model::Placement::Logical {
                 let metrics = view::card::measure(node);

@@ -1,6 +1,88 @@
 use crate::{layout::Layout, model::Placement, plan, semantic, svg, view};
 
 #[test]
+fn action_labels_are_shared_and_padded_inside_every_section() {
+    let source = semantic::transform(
+        &plan::parse(include_str!("../../fixtures/logical-actions-plan.json")).unwrap(),
+    );
+    let graph = view::single(&source, &Default::default()).unwrap();
+    for card in super::cards(&graph, svg::AddressFormat::Qualified) {
+        let doc = roxmltree::Document::parse(&card.content).unwrap();
+        for section in doc
+            .descendants()
+            .filter(|n| n.attribute("data-action-section").is_some())
+        {
+            let badges: Vec<_> = section
+                .descendants()
+                .filter(|n| n.attribute("data-service-badge").is_some())
+                .collect();
+            assert_eq!(badges.len(), 1);
+            let badge = badges[0];
+            assert_eq!(badge.parent(), Some(section));
+            let frame = section.children().find(|n| n.has_tag_name("rect")).unwrap();
+            assert!(number(badge, "x") >= number(frame, "x") + 12);
+            assert!(
+                number(badge, "x") + number(badge, "width")
+                    <= number(frame, "x") + number(frame, "width") - 12
+            );
+            assert!(number(badge, "y") >= number(frame, "y") + 12);
+            let bottom = number(badge, "y") + number(badge, "height");
+            assert!(bottom <= number(frame, "y") + number(frame, "height") - 12);
+            for row in section
+                .children()
+                .filter(|n| n.attribute("data-placement").is_some())
+            {
+                assert!(
+                    !row.descendants()
+                        .any(|n| n.attribute("data-service-badge").is_some())
+                );
+                assert!(row_y(row) > bottom);
+                assert!(row.attribute("data-terraform-address").is_some());
+                assert!(
+                    row.descendants()
+                        .any(|n| n.attribute("data-resource-underline").is_some())
+                );
+            }
+        }
+    }
+    let mut node = graph.nodes[0].clone();
+    node.resource_type = "custom_long_label".into();
+    node.service_name =
+        Some("A very long resource label that must wrap without clipping or truncation");
+    let heading = "Unchanged with a very long operation heading (123456789)";
+    for width in [200, 360, 640] {
+        let (header, height) = super::action_header(&node, heading, width, 0);
+        let output = format!("<g>{header}</g>");
+        let doc = roxmltree::Document::parse(&output).unwrap();
+        let badge = doc
+            .descendants()
+            .find(|n| n.attribute("data-service-badge").is_some())
+            .unwrap();
+        let label: String = doc
+            .descendants()
+            .filter(|n| n.attribute("data-service-name").is_some())
+            .filter_map(|n| n.text())
+            .collect();
+        assert_eq!(label, node.service_name.unwrap());
+        let mut actual = String::new();
+        for line in doc
+            .descendants()
+            .filter(|n| n.attribute("data-action-heading").is_some())
+        {
+            actual.push_str(line.text().unwrap());
+            assert!(
+                number(line, "x") + view::text::width(line.text().unwrap()) * 8 + 12
+                    <= number(badge, "x")
+            );
+            assert!(number(line, "y") < height - 8);
+        }
+        assert_eq!(actual, heading);
+        assert_eq!(number(badge, "x") + number(badge, "width"), width - 20);
+        assert!(number(badge, "y") + number(badge, "height") <= height - 12);
+    }
+}
+
+#[test]
 fn action_sections_keep_one_type_card_canonical_colors_counts_and_stable_rows() {
     use crate::model::Action;
     let input = include_str!("../../fixtures/logical-actions-plan.json");

@@ -513,7 +513,7 @@ class ViewerTests {
             const labels = [...svg.querySelectorAll('[data-service-name]')];
             const overlaps = [];
             for (const label of labels) {
-                const row = label.closest('[data-terraform-address]');
+                const row = label.closest('[data-action-section], [data-terraform-address]');
                 const a = label.getBoundingClientRect();
                 for (const other of row.querySelectorAll('text')) {
                     if (other === label) continue;
@@ -567,8 +567,13 @@ class ViewerTests {
             for (const badge of badges) {
                 const row = badge.parentElement;
                 const a = badge.getBoundingClientRect();
-                const action = [...row.children].find(e => e.tagName === 'text' && !e.hasAttribute('data-service-name') && (e.getAttribute('font-size') === '11' || row.dataset.placement === 'logical'));
+                const action = [...row.children].find(e => e.tagName === 'text' && !e.hasAttribute('data-service-name') && (e.getAttribute('font-size') === '11' || e.hasAttribute('data-action-heading')));
                 if (!action || Number(action.getAttribute('y')) !== Number(badge.getAttribute('y')) + 20) problems.push('action row: ' + badge.dataset.displayName);
+                const frame = [...row.children].find(e => e.tagName === 'rect' && !e.hasAttribute('data-service-badge'));
+                if (frame) {
+                    const f = frame.getBoundingClientRect();
+                    if (a.left <= f.left || a.right >= f.right || a.top <= f.top || a.bottom >= f.bottom) problems.push('frame: ' + badge.dataset.displayName);
+                }
                 for (const text of row.querySelectorAll(':scope > text, :scope > [data-external] text')) {
                     const b = text.getBoundingClientRect();
                     if (text.hasAttribute('data-service-name')) {
@@ -583,7 +588,38 @@ class ViewerTests {
         this.assertIn('VPC', result.names);
         this.assertIn('IAM Role', result.names);
         this.choose('aws_iam_role.worker');
-        this.assertEqual(this.driver.execute_script(`return [...document.querySelectorAll('[data-viewer-selected] [data-service-badge]')].map(b => [b.dataset.displayName, getComputedStyle(b).fill])`), [['IAM Role', 'rgb(254, 226, 226)']]);
+        this.assertEqual(this.driver.execute_script(`return [...document.querySelector('[data-viewer-selected]').closest('[data-action-section]').querySelectorAll('[data-service-badge]')].map(b => [b.dataset.displayName, getComputedStyle(b).fill])`), [['IAM Role', 'rgb(254, 226, 226)']]);
+    }
+    test_logical_labels_are_shared_and_contained_in_action_sections() {
+        for (const fixture of ['logical-actions', 'service-labels', 'aurora', 'certificate-cards']) {
+            this.load('tests/fixtures/' + fixture + '-plan.json');
+            const problems = this.driver.execute_script(`
+                const problems = [];
+                for (const section of document.querySelectorAll('#viewport [data-action-section]')) {
+                    const badges = [...section.querySelectorAll('[data-service-badge]')];
+                    if (badges.length !== 1 || badges[0].parentElement !== section) problems.push('shared label');
+                    for (const row of section.querySelectorAll('[data-placement="logical"]')) {
+                        if (row.querySelector('[data-service-badge]')) problems.push('repeated label');
+                    }
+                }
+                for (const badge of document.querySelectorAll('#viewport [data-service-badge]')) {
+                    const owner = badge.parentElement;
+                    let frame = [...owner.children].find(e => e.tagName === 'rect' && !e.hasAttribute('data-service-badge'));
+                    if (!frame && owner.id) frame = document.querySelector('[data-container="' + owner.id + '"] rect, [data-member-cluster="' + owner.id + '"] rect, [data-route-table="' + owner.id + '"] rect');
+                    if (!frame) { problems.push('missing frame: ' + badge.dataset.displayName); continue; }
+                    const a = badge.getBoundingClientRect(), f = frame.getBoundingClientRect();
+                    if (a.left <= f.left || a.right >= f.right || a.top <= f.top || a.bottom >= f.bottom) problems.push('outside frame: ' + badge.dataset.displayName);
+                    for (const text of owner.querySelectorAll('text')) {
+                        const b = text.getBoundingClientRect();
+                        if (text.hasAttribute('data-service-name') && text.parentElement === owner) {
+                            if (b.left < a.left || b.right > a.right || b.top < a.top || b.bottom > a.bottom) problems.push('label text: ' + text.textContent);
+                        } else if (Math.min(a.right,b.right) > Math.max(a.left,b.left) + 0.1 && Math.min(a.bottom,b.bottom) > Math.max(a.top,b.top) + 0.1) problems.push('overlap: ' + text.textContent);
+                    }
+                }
+                return problems;
+            `);
+            this.assertEqual(problems, []);
+        }
     }
     test_coverage_summary_is_absent_from_empty_and_single_resource_diagrams() {
         for (const changes of [[], [{"address": "terraform_data.one", "type": "terraform_data"}]]) {
