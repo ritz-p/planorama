@@ -210,7 +210,10 @@ fn verify_cards(svg: &str) {
     for card in doc.descendants().filter(|n| {
         n.attribute("data-embedded-route").is_some() || n.attribute("data-route-entry").is_some()
     }) {
-        let rect = card.children().find(|n| n.has_tag_name("rect")).unwrap();
+        let rect = card
+            .children()
+            .find(|n| n.has_tag_name("rect") && n.attribute("data-service-badge").is_none())
+            .unwrap();
         assert_eq!(number(rect, "rx"), view::geometry::ROUTE_RADIUS);
         assert_eq!(
             rect.attribute("stroke-width")
@@ -233,7 +236,7 @@ fn verify_cards(svg: &str) {
             .unwrap();
         let outer = parent
             .children()
-            .find(|n| n.has_tag_name("rect"))
+            .find(|n| n.has_tag_name("rect") && n.attribute("data-service-badge").is_none())
             .unwrap_or_else(|| {
                 let boundary = doc
                     .descendants()

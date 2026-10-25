@@ -30,7 +30,14 @@ pub(crate) struct Card<'a> {
 impl Card<'_> {
     pub fn badge_height(&self) -> usize {
         self.node.map_or(0, |node| {
-            super::card::import_height(node) + if node.member_owner.is_some() { 32 } else { 0 }
+            super::card::import_height(node)
+                + if node.member_owner.is_some() {
+                    node.service_name.map_or(32, |name| {
+                        super::service_label::height(name, WIDTH - 24).max(32)
+                    })
+                } else {
+                    0
+                }
         })
     }
 

@@ -12,11 +12,19 @@ pub(super) fn for_node(_node: &Node) -> Option<ResourceIcon> {
 pub(super) fn service_name(node: &Node, x: usize, y: usize, width: usize) -> String {
     let mut svg = String::new();
     if let Some(name) = node.service_name {
-        for (index, line) in crate::view::text::wrap(name, (width / 8).max(1))
+        let lines = crate::view::service_label::lines(name, width);
+        let badge_width = lines
             .iter()
-            .enumerate()
-        {
-            write!(svg, r##"<text data-service-name="true" x="{x}" y="{}" font-size="13" fill="#0f172a" xml:space="preserve">{}</text>"##, y + index * 20, super::escape(line)).unwrap();
+            .map(|line| crate::view::text::width(line) * 8)
+            .max()
+            .unwrap_or(0)
+            + crate::view::service_label::PADDING * 2;
+        write!(svg, r##"<rect data-service-badge="true" data-service-full-name="{}" x="{x}" y="{}" width="{badge_width}" height="{}" rx="4" fill="#e2e8f0"/>"##,
+            super::escape(name), y.saturating_sub(14), lines.len() * crate::view::service_label::LINE_HEIGHT - 2).unwrap();
+        for (index, line) in lines.iter().enumerate() {
+            write!(svg, r##"<text data-service-name="true" x="{}" y="{}" font-size="13" font-weight="700" fill="#0f172a" xml:space="preserve">{}</text>"##,
+                x + crate::view::service_label::PADDING,
+                y + index * crate::view::service_label::LINE_HEIGHT, super::escape(line)).unwrap();
         }
     }
     svg

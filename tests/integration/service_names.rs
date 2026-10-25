@@ -22,11 +22,7 @@ fn gateway_endpoints_use_a_neutral_service_name() {
         let text = String::from_utf8(output.stdout).unwrap();
         assert!(!text.contains("AWS PrivateLink"));
         assert!(!text.contains("planorama-icon"));
-        assert_eq!(
-            text.matches("xml:space=\"preserve\">Amazon VPC</text>")
-                .count(),
-            2
-        );
+        assert_eq!(text.matches("xml:space=\"preserve\">VPC</text>").count(), 2);
     }
     let output = support::run(input.as_bytes());
     assert!(output.status.success());

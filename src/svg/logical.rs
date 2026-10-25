@@ -117,14 +117,14 @@ fn resource_row(
         svg.push_str(&super::icons::render(icon, width - 40, 8));
     }
     if let Some(name) = node.service_name {
-        let service_width = (crate::view::text::width(name) * 8).min(width - 32);
+        let service_width = crate::view::service_label::width(name, width - 32);
         svg.push_str(&super::icons::service_name(
             node,
             width - 16 - service_width,
             y,
             service_width,
         ));
-        y += wrap(name, service_width / 8).len() * 20;
+        y += crate::view::service_label::height(name, service_width);
     }
     for (index, (text, is_address)) in lines.iter().enumerate() {
         let limit = (width

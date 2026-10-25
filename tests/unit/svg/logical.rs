@@ -258,7 +258,10 @@ fn assert_logical_row(row: roxmltree::Node, action: crate::model::Action) {
     let rect = card.children().find(|n| n.has_tag_name("rect")).unwrap();
     assert_eq!(rect.attribute("fill"), Some("#f8fafc"));
     assert_eq!(rect.attribute("stroke"), Some("#cbd5e1"));
-    assert!(row.children().all(|n| !n.has_tag_name("rect")));
+    assert!(
+        row.children()
+            .all(|n| !n.has_tag_name("rect") || n.attribute("data-service-badge") == Some("true"))
+    );
     assert!(
         row.descendants()
             .all(|n| n.attribute("data-annotation-card").is_none())
