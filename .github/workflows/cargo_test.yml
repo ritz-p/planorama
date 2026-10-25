@@ -22,6 +22,8 @@ on:
       - .github/scripts/test-suites.cjs
       - scripts/install-mold.sh
       - scripts/native-linker.sh
+      - scripts/install-sccache.sh
+      - .github/scripts/compiler-cache.cjs
   pull_request:
     paths:
       - '**.rs'
@@ -37,6 +39,8 @@ on:
       - .github/scripts/test-suites.cjs
       - scripts/install-mold.sh
       - scripts/native-linker.sh
+      - scripts/install-sccache.sh
+      - .github/scripts/compiler-cache.cjs
   workflow_dispatch:
     inputs:
       pull_request:
