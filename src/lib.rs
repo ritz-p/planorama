@@ -14,6 +14,7 @@ mod model;
 mod plan;
 mod provider;
 mod semantic;
+mod services;
 mod svg;
 #[cfg(not(target_arch = "wasm32"))]
 mod timing;

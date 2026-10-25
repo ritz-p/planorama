@@ -57,3 +57,35 @@ Existing site work and deployments are not modified by this PR.
 
 User-supplied or remote artwork is a separate feature and permission question;
 it is not an alternative implementation of removal.
+
+## Compact service labels (#633)
+
+Short names are explicit shared metadata, applied only after provider-aware service
+classification. Every other name is preserved in full and wraps without truncation.
+Unknown provider/type keeps its existing neutral fallback. Labels use bold text,
+6px horizontal padding and a neutral background; address and operation text remain
+separate. Spatial cards, container headings, embedded members and Logical Resources
+use the same measurement and rendering. Formal names also remain in SVG metadata.
+
+| Formal service name | Label |
+| --- | --- |
+| Amazon EC2 | EC2 |
+| Amazon S3 | S3 |
+| AWS Lambda | Lambda |
+| Amazon VPC | VPC |
+| Amazon ECS | ECS |
+| Amazon EKS | EKS |
+| Amazon ECR | ECR |
+| Amazon RDS | RDS |
+| Amazon DynamoDB | DynamoDB |
+| Amazon ElastiCache | ElastiCache |
+| Amazon EFS | EFS |
+| Amazon EBS | EBS |
+| Amazon Simple Queue Service | SQS |
+| Amazon Simple Notification Service | SNS |
+| AWS Identity and Access Management | IAM |
+| AWS Key Management Service | KMS |
+| Elastic Load Balancing | ELB |
+| Amazon CloudWatch | CloudWatch |
+| Amazon Route 53 | Route 53 |
+| Amazon CloudFront | CloudFront |

@@ -6,6 +6,7 @@ pub(crate) mod purpose;
 pub(crate) mod references;
 pub(crate) mod routes;
 pub(crate) mod scope;
+pub(crate) mod service_label;
 pub(crate) mod spatial;
 pub(crate) mod text;
 use crate::model::architecture::{Architecture, ArchitectureGraph, Graph};

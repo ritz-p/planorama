@@ -725,7 +725,10 @@ fn named_states_reflow_indexes_at_shared_width_and_keep_cross_state_offsets() {
             .find(|node| node.attribute("data-architecture").is_some())
             .unwrap()
             .descendants()
-            .filter(|node| matches!(node.tag_name().name(), "rect" | "path" | "circle"))
+            .filter(|node| {
+                matches!(node.tag_name().name(), "rect" | "path" | "circle")
+                    && node.attribute("data-service-badge").is_none()
+            })
             .map(|node| {
                 ["d", "x", "y", "width", "height", "cx", "cy", "r"]
                     .map(|key| node.attribute(key).map(str::to_owned))

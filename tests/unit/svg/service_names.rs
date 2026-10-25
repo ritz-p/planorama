@@ -81,10 +81,26 @@ fn service_labels_preserve_provider_boundaries_and_measured_geometry() {
                 .collect();
             assert_eq!(
                 services.iter().filter_map(|n| n.text()).collect::<String>(),
-                node.service_name.unwrap_or_default()
+                crate::services::short_name(node.service_name.unwrap_or_default())
             );
             if services.is_empty() {
                 continue;
+            }
+            let badge = row
+                .children()
+                .find(|n| n.attribute("data-service-badge") == Some("true"))
+                .unwrap();
+            let number =
+                |n: roxmltree::Node, key: &str| n.attribute(key).unwrap().parse::<usize>().unwrap();
+            for text in &services {
+                assert_eq!(text.attribute("font-weight"), Some("700"));
+                assert!(number(*text, "x") >= number(badge, "x") + 6);
+                assert!(
+                    number(*text, "x") + crate::view::text::width(text.text().unwrap()) * 8
+                        <= number(badge, "x") + number(badge, "width") - 6
+                );
+                assert!(number(*text, "y") > number(badge, "y"));
+                assert!(number(*text, "y") < number(badge, "y") + number(badge, "height"));
             }
             let last_y: usize = services
                 .last()

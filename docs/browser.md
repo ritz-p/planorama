@@ -307,7 +307,7 @@ named-state inventory groups by state and address and returns
 | --- | --- |
 | `format` | `svg` (default), `html` |
 | `address_format` | `qualified` (default), `terraform` |
-| `icon_mode` | `service-name` (default and only supported mode) |
+| `icon_mode` | `service-name` (default and only supported mode; renders compact service labels) |
 | `hide_relationship_legend` | Boolean, false |
 | `omit_relationship_legend` | Boolean, false; omits the entire card, overriding `hide_relationship_legend` |
 | `html_semantic_diagnostics` | Boolean, false; requires `format: "html"` |

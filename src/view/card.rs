@@ -41,7 +41,7 @@ pub(crate) fn measure(node: &Node) -> Metrics {
     let import_height = import_height(node);
     let service_height = node
         .service_name
-        .map_or(0, |name| super::text::wrap(name, line_limit).len() * 20);
+        .map_or(0, |name| super::service_label::height(name, line_limit * 8));
     let extra = lines.saturating_sub(2) * 20 + import_height + service_height;
     let previous_line_limit = (width - 24) / 8;
     let previous_height = node.previous_address.as_deref().map_or(0, |previous| {
