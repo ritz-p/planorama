@@ -15,6 +15,7 @@ mod provenance;
 mod references;
 mod relationship_index;
 mod relationships;
+mod role_marks;
 mod roles;
 mod routes;
 mod scopes;
@@ -324,7 +325,7 @@ fn render_with_index(
     let mut svg = format!(
         r##"<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}" role="img" aria-labelledby="title description">
 <title id="title">Terraform plan</title>
-<desc id="description">{description} Thin solid: dependency. Dashed: association. Thick dotted: connection. Nested boxes: containment. Edge color preserves the Terraform action when available.</desc>
+<desc id="description">{description} Thin solid: dependency. Dashed: association. Thick dotted: connection. Nested boxes: containment. Edge color preserves the Terraform action when available. Spatial card role marks: rounded rectangle = execution; cylinder = data store; hexagon = network.</desc>
 <defs>{markers}{icon_definitions}{occlusion_definitions}</defs>
 <rect width="100%" height="100%" fill="#ffffff"/>
 <g font-family="ui-monospace, SFMono-Regular, Consolas, monospace">
@@ -572,8 +573,17 @@ fn render_with_index(
             node,
             x + 12,
             y + 45 + metrics.import_height,
-            metrics.line_limit * 8,
+            metrics.service_width,
         ));
+        if !layout.containers.contains(&i) {
+            if let Some(role) = crate::view::card::role_mark(node) {
+                svg.push_str(&role_marks::render(
+                    role,
+                    x + card_width - 34,
+                    y + 31 + metrics.import_height,
+                ));
+            }
+        }
         for (line, text) in lines.iter().enumerate() {
             writeln!(
                 svg,

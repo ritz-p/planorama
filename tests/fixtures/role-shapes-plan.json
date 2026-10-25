@@ -1,0 +1,13 @@
+{
+  "format_version": "1.2",
+  "resource_changes": [
+    {"address":"module.application.aws_instance.long_application_worker_with_a_complete_resource_address","type":"aws_instance","change":{"actions":["create"]}},
+    {"address":"aws_lambda_function.worker","type":"aws_lambda_function","change":{"actions":["update"]}},
+    {"address":"aws_s3_bucket.archive","type":"aws_s3_bucket","change":{"actions":["delete"]}},
+    {"address":"aws_nat_gateway.egress","type":"aws_nat_gateway","change":{"actions":["no-op"]}},
+    {"address":"aws_vpc.main","type":"aws_vpc"},
+    {"address":"aws_iam_role.worker","type":"aws_iam_role"},
+    {"address":"aws_instance.foreign","type":"aws_instance","provider_name":"example.com/other/aws"},
+    {"address":"custom_widget.unknown","type":"custom_widget"}
+  ]
+}
