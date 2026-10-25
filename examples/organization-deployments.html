@@ -23,6 +23,10 @@ p { line-height: 1.5; }
 #results { max-height: 32vh; overflow: auto; display: grid; gap: 6px; padding: 3px; }
 #results button, #selection button { text-align: left; overflow-wrap: anywhere; width: 100%; }
 #selection { overflow-wrap: anywhere; }
+#generation-info { margin-bottom: 16px; overflow-wrap: anywhere; }
+#generation-info summary { cursor: pointer; font-weight: 650; }
+#generation-info dt { font-weight: 650; }
+#generation-info dd { margin: 4px 0 12px; }
 #selection h2 { font-size: 16px; }
 #selection h3 { font-size: 14px; margin-bottom: 8px; }
 .copy-identity textarea { width: 100%; font: inherit; resize: vertical; }
@@ -62,6 +66,7 @@ p { line-height: 1.5; }
 <header><strong>Planorama</strong><button id="selection-back" type="button" aria-label="Back to previous selection" disabled>Back</button><button id="selection-forward" type="button" aria-label="Forward to next selection" disabled>Forward</button><button id="clear" type="button">Clear selection</button><button id="zoom-out" type="button" aria-label="Zoom out">−</button><button id="zoom-in" type="button" aria-label="Zoom in">+</button><button id="fit" type="button">Fit to view</button><output id="zoom-level" aria-live="polite"></output></header>
 <main>
 <aside aria-label="Resources and relationships">
+<details id="generation-info"><summary>Generation information</summary><div id="generation-details"></div></details>
 <section aria-label="Export diagram"><button id="export-viewport" type="button">Export viewport SVG</button><p id="export-status" role="status"></p></section>
 <section aria-label="Export resource neighborhood">
 <label for="export-depth">Neighborhood depth</label><select id="export-depth"><option value="0">0</option><option value="1" selected>1</option><option value="2">2</option><option value="3">3</option></select>
@@ -303,11 +308,39 @@ Organization parent: module.root.aws_organizations_organizational_unit.engineeri
 </main>
 <noscript>Enable JavaScript for search and navigation. The diagram is included below.</noscript>
 <script id="viewer-data" type="application/json">[{"action":"unchanged","address":"aws_organizations_account.production","context":[],"deposed":null,"id":"resource-6177735f6f7267616e697a6174696f6e735f6163636f756e742e70726f64756374696f6e-current","identity":"terraform:6177735f6f7267616e697a6174696f6e735f6163636f756e742e70726f64756374696f6e-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_organizations_account.production","scope":{"account":null,"global":true,"provider":"AWS Organizations","region":null},"state":"","type":"aws_organizations_account"},{"action":"unchanged","address":"aws_organizations_account.sandbox","context":[],"deposed":null,"id":"resource-6177735f6f7267616e697a6174696f6e735f6163636f756e742e73616e64626f78-current","identity":"terraform:6177735f6f7267616e697a6174696f6e735f6163636f756e742e73616e64626f78-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_organizations_account.sandbox","scope":{"account":null,"global":true,"provider":"AWS Organizations","region":null},"state":"","type":"aws_organizations_account"},{"action":"unchanged","address":"aws_organizations_organization.main","context":[],"deposed":null,"id":"resource-6177735f6f7267616e697a6174696f6e735f6f7267616e697a6174696f6e2e6d61696e-current","identity":"terraform:6177735f6f7267616e697a6174696f6e735f6f7267616e697a6174696f6e2e6d61696e-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_organizations_organization.main","scope":{"account":null,"global":true,"provider":"AWS Organizations","region":null},"state":"","type":"aws_organizations_organization"},{"action":"unchanged","address":"aws_organizations_organizational_unit.engineering","context":[],"deposed":null,"id":"resource-6177735f6f7267616e697a6174696f6e735f6f7267616e697a6174696f6e616c5f756e69742e656e67696e656572696e67-current","identity":"terraform:6177735f6f7267616e697a6174696f6e735f6f7267616e697a6174696f6e616c5f756e69742e656e67696e656572696e67-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_organizations_organizational_unit.engineering","scope":{"account":null,"global":true,"provider":"AWS Organizations","region":null},"state":"","type":"aws_organizations_organizational_unit"},{"action":"unchanged","address":"aws_organizations_organizational_unit.platform","context":[],"deposed":null,"id":"resource-6177735f6f7267616e697a6174696f6e735f6f7267616e697a6174696f6e616c5f756e69742e706c6174666f726d-current","identity":"terraform:6177735f6f7267616e697a6174696f6e735f6f7267616e697a6174696f6e616c5f756e69742e706c6174666f726d-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_organizations_organizational_unit.platform","scope":{"account":null,"global":true,"provider":"AWS Organizations","region":null},"state":"","type":"aws_organizations_organizational_unit"},{"action":"create","address":"aws_vpc.workload","context":[],"deposed":null,"id":"resource-6177735f7670632e776f726b6c6f6164-current","identity":"terraform:6177735f7670632e776f726b6c6f6164-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_vpc.workload","scope":{"account":"111111111111","global":false,"provider":"AWS","region":"eu-west-1"},"state":"","type":"aws_vpc"}]</script>
+<script id="viewer-generation" type="application/json">null</script>
 <script id="viewer-provider-data" type="application/json">[]</script>
 
 
 <script>(() => {
   'use strict';
+function generationInformation(byId) {
+  const panel = byId('generation-details');
+  const metadata = JSON.parse(byId('viewer-generation').textContent);
+  const paragraph = text => {
+    const p = document.createElement('p'); p.textContent = text; panel.append(p);
+  };
+  if (!metadata || metadata.schema_version !== 1) {
+    paragraph('Generation metadata unavailable. Selection and generation settings cannot be established from this diagram.');
+    return;
+  }
+  paragraph(`${metadata.generator.name} ${metadata.generator.version}. Revision: ${metadata.generator.revision || 'unavailable'}.`);
+  paragraph(metadata.selected_view ? 'Selected view. Omitted resources may still exist in Terraform.' : 'Full input view: no changed-only, module or focus selection. This describes the supplied inputs, not all resources in Terraform.');
+  paragraph('Values below are effective generation settings. Whether a value was explicitly supplied or defaulted is unavailable; “matches default” describes the value only.');
+  const defaults = { changed_only: false, modules: [], focus: null, focus_depth: null, spatial_types: [], address_format: 'qualified', icon_mode: 'service-name', relationship_legend: 'full', html_diagnostics: false, html_semantic_diagnostics: false, states: [], remote_state_mappings: [] };
+  const labels = { changed_only: 'Changed only', modules: 'Module selection', focus: 'Focus', focus_depth: 'Focus depth', spatial_types: 'Spatial type overrides', address_format: 'Address format', icon_mode: 'Service labels', relationship_legend: 'Relationship legend', html_diagnostics: 'Routing diagnostics', html_semantic_diagnostics: 'Semantic diagnostics', states: 'Named states', remote_state_mappings: 'Remote state mappings' };
+  const list = document.createElement('dl');
+  for (const [key, label] of Object.entries(labels)) {
+    const term = document.createElement('dt'), value = document.createElement('dd');
+    term.textContent = label;
+    const setting = metadata.settings[key];
+    const display = setting === null ? 'disabled / not applicable' : typeof setting === 'boolean' ? (setting ? 'enabled' : 'disabled') : Array.isArray(setting) && !setting.length ? 'none' : typeof setting === 'string' ? setting : JSON.stringify(setting);
+    value.textContent = setting === undefined ? 'unavailable' : `${display}${JSON.stringify(setting) === JSON.stringify(defaults[key]) ? ' (matches default)' : ''}`;
+    list.append(term, value);
+  }
+  panel.append(list);
+}
+
 function metadata(svg, byId) {
   const resources = JSON.parse(byId('viewer-data').textContent).filter(r => byId(r.id));
   const resourceIds = new Set(resources.map(r => r.id));
@@ -1267,6 +1300,7 @@ function impact(context, index, selection, coordinator) {
 }
 
   const byId = id => document.getElementById(id);
+  generationInformation(byId);
   const viewport = byId('viewport');
   const svg = viewport.querySelector('svg');
   const search = byId('search');

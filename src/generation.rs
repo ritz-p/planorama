@@ -158,6 +158,18 @@ async fn generate_step(json: &str, options: &Options) -> Result<Generated, Error
         options.html_diagnostics.then_some(&mut report),
         options.html_diagnostics,
     );
+    let content = html::generation::attach(
+        content,
+        &filter,
+        svg::Options {
+            address_format: options.address_format,
+            hide_relationship_legend: options.hide_relationship_legend,
+            omit_relationship_legend: options.omit_relationship_legend,
+        },
+        options.html_diagnostics,
+        vec![],
+        vec![],
+    );
     crate::work::check_limit(content.len(), MAX_BROWSER_OUTPUT_BYTES).await;
     Ok(Generated {
         content,

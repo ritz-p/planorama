@@ -1,6 +1,7 @@
 use crate::{layout::Layout, model::Graph, svg, view};
 use serde_json::{Value, json};
 mod diagnostics;
+pub(crate) mod generation;
 mod semantic_diagnostics;
 
 pub(crate) fn render(
@@ -200,6 +201,8 @@ fn document(
             &include_str!("html/viewer.js").replace(
                 "/* VIEWER_MODULES */",
                 concat!(
+                    include_str!("html/generation.js"),
+                    "\n",
                     include_str!("html/metadata.js"),
                     include_str!("html/export.js"),
                     include_str!("html/neighborhood.js"),

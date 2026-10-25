@@ -2,6 +2,7 @@
   'use strict';
 /* VIEWER_MODULES */
   const byId = id => document.getElementById(id);
+  generationInformation(byId);
   const viewport = byId('viewport');
   const svg = viewport.querySelector('svg');
   const search = byId('search');

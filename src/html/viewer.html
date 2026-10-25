@@ -11,6 +11,7 @@
 <header><strong>Planorama</strong><button id="selection-back" type="button" aria-label="Back to previous selection" disabled>Back</button><button id="selection-forward" type="button" aria-label="Forward to next selection" disabled>Forward</button><button id="clear" type="button">Clear selection</button><button id="zoom-out" type="button" aria-label="Zoom out">−</button><button id="zoom-in" type="button" aria-label="Zoom in">+</button><button id="fit" type="button">Fit to view</button><output id="zoom-level" aria-live="polite"></output></header>
 <main>
 <aside aria-label="Resources and relationships">
+<details id="generation-info"><summary>Generation information</summary><div id="generation-details"></div></details>
 <section aria-label="Export diagram"><button id="export-viewport" type="button">Export viewport SVG</button><p id="export-status" role="status"></p></section>
 <section aria-label="Export resource neighborhood">
 <label for="export-depth">Neighborhood depth</label><select id="export-depth"><option value="0">0</option><option value="1" selected>1</option><option value="2">2</option><option value="3">3</option></select>
@@ -66,6 +67,7 @@
 </main>
 <noscript>Enable JavaScript for search and navigation. The diagram is included below.</noscript>
 <script id="viewer-data" type="application/json"><!-- VIEWER_DATA --></script>
+<script id="viewer-generation" type="application/json">null</script>
 <script id="viewer-provider-data" type="application/json"><!-- VIEWER_PROVIDER_DATA --></script>
 <!-- VIEWER_DIAGNOSTICS -->
 <!-- VIEWER_SEMANTIC_DIAGNOSTICS -->
