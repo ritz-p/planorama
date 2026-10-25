@@ -104,17 +104,17 @@
 <g data-edge-kind="containment" data-source="resource-746573742e6e6f646532-current" data-target="resource-746573742e6e6f646534-current"><title>module.root.test.node2 → module.root.test.node4 (containment)</title></g>
 <g data-edge-kind="containment" data-source="resource-746573742e6e6f646532-current" data-target="resource-746573742e6e6f646536-current"><title>module.root.test.node2 → module.root.test.node6 (containment)</title></g>
 <path d="M 140 480 L 60 480 " data-edge-kind="connection" data-directionality="undirected" data-source="resource-746573742e6e6f646533-current" data-target="resource-746573742e6e6f646530-current" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-dasharray="0 3.5" stroke-linecap="round" stroke-linejoin="round" mask="url(#container-occlusion-0)"><title>module.root.test.node3 ↔ module.root.test.node0 (connection)</title></path>
-<g id="resource-746573742e6e6f646530-current" data-architecture-id="terraform:746573742e6e6f646530-current" data-qualified-address="module.root.test.node0" data-terraform-address="test.node0"><title>module.root.test.node0 — create</title>
+<g id="resource-746573742e6e6f646530-current" data-architecture-id="terraform:746573742e6e6f646530-current" data-qualified-address="module.root.test.node0" data-terraform-address="test.node0" data-presentation-header="60 160 920 96"><title>module.root.test.node0 — create</title>
 <text data-resource-type-heading="true" x="72" y="180" font-size="11" fill="#047857" xml:space="preserve">aws_instance · create</text>
 <text x="104" y="205" font-size="13" fill="#0f172a" xml:space="preserve">module.root.test.node0</text>
 <text x="72" y="244" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
-<g id="resource-746573742e6e6f646531-current" data-architecture-id="terraform:746573742e6e6f646531-current" data-qualified-address="module.root.test.node1" data-terraform-address="test.node1"><title>module.root.test.node1 — create</title>
+<g id="resource-746573742e6e6f646531-current" data-architecture-id="terraform:746573742e6e6f646531-current" data-qualified-address="module.root.test.node1" data-terraform-address="test.node1" data-presentation-header="100 296 400 96"><title>module.root.test.node1 — create</title>
 <text data-resource-type-heading="true" x="112" y="316" font-size="11" fill="#047857" xml:space="preserve">aws_instance · create</text>
 <text x="144" y="341" font-size="13" fill="#0f172a" xml:space="preserve">module.root.test.node1</text>
 <text x="112" y="380" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
-<g id="resource-746573742e6e6f646532-current" data-architecture-id="terraform:746573742e6e6f646532-current" data-qualified-address="module.root.test.node2" data-terraform-address="test.node2"><title>module.root.test.node2 — create</title>
+<g id="resource-746573742e6e6f646532-current" data-architecture-id="terraform:746573742e6e6f646532-current" data-qualified-address="module.root.test.node2" data-terraform-address="test.node2" data-presentation-header="540 296 400 96"><title>module.root.test.node2 — create</title>
 <text data-resource-type-heading="true" x="552" y="316" font-size="11" fill="#047857" xml:space="preserve">aws_instance · create</text>
 <text x="584" y="341" font-size="13" fill="#0f172a" xml:space="preserve">module.root.test.node2</text>
 <text x="552" y="380" font-size="10" fill="#64748b"><title>root</title>root</text>

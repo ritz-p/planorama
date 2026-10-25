@@ -40,6 +40,7 @@ pub(crate) fn project(source: &Graph) -> Projection {
                 .filter(|e| e.to == i && super::routes::routed(source, e.from))
                 .count();
             if incoming > 0 {
+                let header_width = super::card::width(&node);
                 let incident = source
                     .edges
                     .iter()
@@ -49,6 +50,7 @@ pub(crate) fn project(source: &Graph) -> Projection {
                     (41 + incident * crate::layout::relationship_markers::PORT_SPACING)
                         .saturating_sub(super::card::measure(&node).header_height),
                 );
+                node.routes.reserved_width = node.routes.reserved_width.max(header_width);
             }
             node
         })

@@ -547,6 +547,13 @@ fn render_with_index(
             r#"<g id="{resource_id}" data-architecture-id="{architecture_id}" data-qualified-address="{qualified}" data-terraform-address="{address}"{deposed}{previous}{operation}{component}><title>{selected_title} — {operation_label}{operation_details}{move_details}</title>"#,
         )
         .unwrap();
+        if layout.containers.contains(&i) {
+            let close = svg.rfind("><title>").unwrap();
+            svg.insert_str(
+                close,
+                &format!(" data-presentation-header=\"{x} {y} {card_width} {header_height}\""),
+            );
+        }
         if node.role != crate::model::architecture::ResourceRole::Container
             && !layout.containers.contains(&i)
         {
