@@ -21,7 +21,7 @@ Terraform plan JSON を、構成の参照関係・AWS の包含・接続が分�
 
 [OS 別のダウンロード・SHA-256 確認・展開・起動手順](docs/releases.md#ダウンロードと実行) に従い、展開先で `./planorama --version`（Windows は `.\planorama.exe --version`）を確認します。Linux arm64・Alpine/musl・Windows arm64・32-bit は提供しません。チェックサムは破損確認用で、署名による真正性保証ではありません。
 
-既存の plan JSON を描画するだけなら Rust・Docker・Terraform・Graphviz・Node.js は不要です。本体は [MIT OR Apache-2.0](LICENSE) です。アイコン・依存ライブラリには各通知が適用されます。
+既存の plan JSON を描画するだけなら Rust・Docker・Terraform・Graphviz・Node.js は不要です。本体は [MIT OR Apache-2.0](LICENSE) です。依存ライブラリには各通知が適用されます。AWS 公式アイコンは同梱せず、サービス名で表示します。[旧設定からの移行](docs/icons.md)を参照してください。
 
 ## 最短の生成手順
 

@@ -4,17 +4,10 @@ const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 const {spawnSync} = require('node:child_process');
-const {createHash} = require('node:crypto');
 
-test('bundled AWS artwork matches the recorded source hashes', () => {
-  const directory = path.resolve(__dirname, '../../assets/icons/aws');
-  const manifest = JSON.parse(fs.readFileSync(path.join(directory, 'manifest.json')));
-  assert.equal(manifest.archive_sha256, 'd2d166c453526471749d520e0db022c459abef759d2946cf2dd1d1c992dc6526');
-  assert.equal(new Set(manifest.files.map(file => file.file)).size, manifest.files.length);
-  for (const file of manifest.files) {
-    assert.match(file.source, /^Architecture-Service-Icons_07312026\//);
-    assert.equal(createHash('sha256').update(fs.readFileSync(path.join(directory, file.file))).digest('hex'), file.sha256, file.file);
-  }
+test('AWS artwork is absent from build inputs', () => {
+  assert.equal(fs.existsSync(path.resolve(__dirname, '../../assets/icons/aws')), false);
+  assert.doesNotMatch(fs.readFileSync(path.resolve(__dirname, '../../build.rs'), 'utf8'), /include_str|assets/);
 });
 
 test('inventory uses managed schema and registrations, handles aliases and rejects silent omissions', () => {

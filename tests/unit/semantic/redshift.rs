@@ -31,10 +31,7 @@ fn redshift_preserves_multisubnet_vpc_placement_and_private_configuration() {
         )
         .unwrap()
         .content;
-        assert_eq!(
-            output.contains("planorama-icon-aws-redshift"),
-            cfg!(feature = "icon-artwork")
-        );
+        assert!(!output.contains("planorama-icon-aws-redshift"));
         assert!(!output.contains("PRIVATE_"));
     }
 }

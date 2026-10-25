@@ -47,10 +47,7 @@ fn cloudtrail_keeps_home_region_without_replicating_organization_or_multiregion_
         )
         .unwrap()
         .content;
-        assert_eq!(
-            output.contains("planorama-icon-aws-cloudtrail"),
-            cfg!(feature = "icon-artwork")
-        );
+        assert!(!output.contains("planorama-icon-aws-cloudtrail"));
         assert!(!output.contains("PRIVATE_"));
         assert!(!output.contains("arn:aws:"));
     }

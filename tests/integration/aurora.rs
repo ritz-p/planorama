@@ -55,7 +55,10 @@ fn aurora_members_keep_unique_identities_links_actions_and_deterministic_output(
             card.attribute("data-member-owner"),
             Some("aws_rds_cluster.main")
         );
-        assert!(card.children().any(|n| n.has_tag_name("use")));
+        assert!(
+            card.children()
+                .any(|n| n.attribute("data-service-name") == Some("true"))
+        );
         assert!(
             card.descendants()
                 .any(|n| n.text().is_some_and(|t| t.contains("ap-northeast-1")))
@@ -101,7 +104,9 @@ fn aurora_long_members_lifecycle_html_and_named_states_remain_accessible() {
         {
             let visible = card
                 .children()
-                .filter(|node| node.has_tag_name("text"))
+                .filter(|node| {
+                    node.has_tag_name("text") && node.attribute("data-service-name").is_none()
+                })
                 .filter_map(|node| node.text())
                 .collect::<String>();
             let native = card.attribute("data-terraform-address").unwrap();

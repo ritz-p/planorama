@@ -376,10 +376,7 @@ fn private_ca_verifies_signing_installation_and_acm_references_without_inventing
         )
         .unwrap()
         .content;
-        assert_eq!(
-            output.contains("planorama-icon-aws-private-ca"),
-            cfg!(feature = "icon-artwork")
-        );
+        assert!(!output.contains("planorama-icon-aws-private-ca"));
         assert!(!output.contains("PRIVATE_"));
         assert!(!output.contains("arn:aws:"));
     }

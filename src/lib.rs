@@ -23,7 +23,7 @@ mod timing;
 mod view;
 mod work;
 
-#[cfg(all(test, not(feature = "icon-artwork")))]
+#[cfg(test)]
 #[path = "../tests/unit/artwork_free.rs"]
 mod artwork_free;
 mod generation;

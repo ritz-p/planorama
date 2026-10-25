@@ -52,14 +52,14 @@ CI は [standard / large の2 suite](docs/ci.md#parallel-rust-test-suites) の�
 
 ## リソース対応一覧の更新
 
-provider の型定義・分類・表示・scope・アイコンを変更したら、Docker 内で次を実行します。
+provider の型定義・分類・表示・scope・サービス名を変更したら、Docker 内で次を実行します。
 
 ```sh
 docker compose exec -T dev sh scripts/update-resource-support.sh
 docker compose exec -T dev sh scripts/update-resource-support.sh --check
 ```
 
-生成先は [docs/resource-support.md](docs/resource-support.md) です。型名は provider と remote-output 解決の Rust ソースの文字列リテラルから収集し、分類・表示・scope・アイコンは実装関数で評価します。確認済み resource alias の関係ルールは canonical 型の参照先を使います。新しい定義形式や provider を追加する場合は `tests/unit/resource_support.rs` の収集処理も更新してください。関係ルールのリンクは条件付き処理の参照先であり、無条件の対応保証ではありません。
+生成先は [docs/resource-support.md](docs/resource-support.md) です。型名は provider と remote-output 解決の Rust ソースの文字列リテラルから収集し、分類・表示・scope・サービス名は実装関数で評価します。確認済み resource alias の関係ルールは canonical 型の参照先を使います。新しい定義形式や provider を追加する場合は `tests/unit/resource_support.rs` の収集処理も更新してください。関係ルールのリンクは条件付き処理の参照先であり、無条件の対応保証ではありません。
 AWS managed resource の正本は固定 Provider inventory です。全型との差分、基本分類表の追加方法、schema・登録コード・公式 docs の再採取手順は [AWS inventory](docs/aws-inventory.md) を参照してください。基本表示の baseline と保存済み plan の provider evidence の検証版は別の契約です。
 CI の `Resource support` は同じ一致検証だけを実行します。図を生成しないため、この一覧だけの更新に SVG 再生成や Layout quality は不要です。
 
@@ -72,7 +72,7 @@ docker compose exec -T dev sh scripts/update-examples.sh
 ```
 
 PowerShell では `./scripts/update-examples.ps1` が開発コンテナを起動して同じ処理を実行します。
-[scripts/generated-svgs.txt](scripts/generated-svgs.txt) が生成対象の正本です。アイコン原本は含みません。
+[scripts/generated-svgs.txt](scripts/generated-svgs.txt) が生成対象の正本です。公式アイコン素材は同梱しません。
 `hierarchy-routing.svg` と `port-collisions.svg` は既存の snapshot テストを完全一致で選択して更新し、更新処理で全テストは実行しません。
 
 通常 PR では全 SVG を自動生成しません。復旧・補助用の **Update SVG examples** と、その後の検証・status 報告は [CI の生成・復旧手順](docs/ci.md#generation-and-review) を参照してください。

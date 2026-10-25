@@ -50,117 +50,11 @@ impl ResourceIcon {
         }
     }
 
-    #[cfg(not(feature = "icon-artwork"))]
     pub fn svg(self) -> &'static str {
         ""
     }
 
-    #[cfg(feature = "icon-artwork")]
-    pub fn svg(self) -> &'static str {
-        match self {
-            Self::Service(icon) => icon.svg(),
-            Self::Cognito => include_str!(concat!(env!("OUT_DIR"), "/Amazon-Cognito.svg")),
-            Self::StepFunctions => {
-                include_str!(concat!(env!("OUT_DIR"), "/AWS-Step-Functions.svg"))
-            }
-            Self::Redshift => include_str!(concat!(env!("OUT_DIR"), "/Amazon-Redshift.svg")),
-            Self::CloudTrail => include_str!(concat!(env!("OUT_DIR"), "/AWS-CloudTrail.svg")),
-            Self::Backup => include_str!(concat!(env!("OUT_DIR"), "/AWS-Backup.svg")),
-            Self::Organizations => include_str!(concat!(env!("OUT_DIR"), "/AWS-Organizations.svg")),
-            Self::Ecr => include_str!(concat!(
-                env!("OUT_DIR"),
-                "/Amazon-Elastic-Container-Registry.svg"
-            )),
-            Self::Waf => include_str!(concat!(env!("OUT_DIR"), "/AWS-WAF.svg")),
-            Self::Vpc | Self::Subnet | Self::Gateway | Self::Route | Self::Security => {
-                include_str!(concat!(
-                    env!("OUT_DIR"),
-                    "/Amazon-Virtual-Private-Cloud.svg"
-                ))
-            }
-            Self::Ec2 => include_str!(concat!(env!("OUT_DIR"), "/Amazon-EC2.svg")),
-            Self::Endpoint => include_str!(concat!(env!("OUT_DIR"), "/AWS-PrivateLink.svg")),
-            Self::LoadBalancer => {
-                include_str!(concat!(env!("OUT_DIR"), "/Elastic-Load-Balancing.svg"))
-            }
-            Self::Lambda => include_str!(concat!(env!("OUT_DIR"), "/AWS-Lambda.svg")),
-            Self::Firehose => include_str!(concat!(env!("OUT_DIR"), "/Amazon-Data-Firehose.svg")),
-            Self::Glue => include_str!(concat!(env!("OUT_DIR"), "/AWS-Glue.svg")),
-            Self::Athena => include_str!(concat!(env!("OUT_DIR"), "/Amazon-Athena.svg")),
-            Self::Kinesis => {
-                include_str!(concat!(env!("OUT_DIR"), "/Amazon-Kinesis-Data-Streams.svg"))
-            }
-            Self::Sqs => include_str!(concat!(env!("OUT_DIR"), "/Amazon-Simple-Queue-Service.svg")),
-            Self::EventBridge => include_str!(concat!(env!("OUT_DIR"), "/Amazon-EventBridge.svg")),
-            Self::Sns => include_str!(concat!(
-                env!("OUT_DIR"),
-                "/Amazon-Simple-Notification-Service.svg"
-            )),
-            Self::Ecs => {
-                include_str!(concat!(
-                    env!("OUT_DIR"),
-                    "/Amazon-Elastic-Container-Service.svg"
-                ))
-            }
-            Self::Eks => {
-                include_str!(concat!(
-                    env!("OUT_DIR"),
-                    "/Amazon-Elastic-Kubernetes-Service.svg"
-                ))
-            }
-            Self::Database => include_str!(concat!(env!("OUT_DIR"), "/Amazon-RDS.svg")),
-            Self::DynamoDb => include_str!(concat!(env!("OUT_DIR"), "/Amazon-DynamoDB.svg")),
-            Self::Cache => include_str!(concat!(env!("OUT_DIR"), "/Amazon-ElastiCache.svg")),
-            Self::Search => {
-                include_str!(concat!(env!("OUT_DIR"), "/Amazon-OpenSearch-Service.svg"))
-            }
-            Self::Storage => {
-                include_str!(concat!(
-                    env!("OUT_DIR"),
-                    "/Amazon-Simple-Storage-Service.svg"
-                ))
-            }
-            Self::CloudFront => include_str!(concat!(env!("OUT_DIR"), "/Amazon-CloudFront.svg")),
-            Self::Route53 => include_str!(concat!(env!("OUT_DIR"), "/Amazon-Route-53.svg")),
-            Self::Acm => include_str!(concat!(env!("OUT_DIR"), "/AWS-Certificate-Manager.svg")),
-            Self::PrivateCa => include_str!(concat!(
-                env!("OUT_DIR"),
-                "/AWS-Private-Certificate-Authority.svg"
-            )),
-            Self::Kms => include_str!(concat!(env!("OUT_DIR"), "/AWS-Key-Management-Service.svg")),
-            Self::SecretsManager => {
-                include_str!(concat!(env!("OUT_DIR"), "/AWS-Secrets-Manager.svg"))
-            }
-            Self::Ssm => include_str!(concat!(env!("OUT_DIR"), "/AWS-Systems-Manager.svg")),
-            Self::Efs => include_str!(concat!(env!("OUT_DIR"), "/Amazon-EFS.svg")),
-            Self::Ebs => include_str!(concat!(env!("OUT_DIR"), "/Amazon-Elastic-Block-Store.svg")),
-            Self::ApiGateway => include_str!(concat!(env!("OUT_DIR"), "/Amazon-API-Gateway.svg")),
-            Self::Iam => {
-                include_str!(concat!(
-                    env!("OUT_DIR"),
-                    "/AWS-Identity-and-Access-Management.svg"
-                ))
-            }
-            Self::Monitoring => include_str!(concat!(env!("OUT_DIR"), "/Amazon-CloudWatch.svg")),
-            Self::Scaling => include_str!(concat!(env!("OUT_DIR"), "/Amazon-EC2-Auto-Scaling.svg")),
-            Self::Terraform => include_str!(concat!(env!("OUT_DIR"), "/terraform-builtin-24.svg")),
-        }
-    }
-
-    #[cfg(not(feature = "icon-artwork"))]
     pub fn notice(self) -> &'static str {
         ""
-    }
-
-    #[cfg(feature = "icon-artwork")]
-    pub fn notice(self) -> &'static str {
-        match self {
-            Self::Terraform => concat!(
-                include_str!("../../assets/icons/terraform/NOTICE.txt"),
-                "\n",
-                include_str!("../../assets/icons/terraform/LICENSE.txt")
-            ),
-            _ => include_str!("../../assets/icons/aws/NOTICE.txt"),
-        }
     }
 }

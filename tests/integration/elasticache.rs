@@ -108,7 +108,8 @@ fn elasticache_cards_preserve_scope_actions_identity_and_safe_filtering() {
         .find(|n| n.attribute("data-terraform-address") == Some(&long))
         .unwrap();
     assert!(
-        card.children().any(|n| n.has_tag_name("use"))
+        card.children()
+            .any(|n| n.attribute("data-service-name") == Some("true"))
             || card
                 .descendants()
                 .any(|n| n.attribute("href").is_some_and(|s| s.contains("cache")))

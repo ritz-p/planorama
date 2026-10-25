@@ -833,8 +833,7 @@ packaging. The no-default-feature build runs the full library suite and CLI help
 checks. Both distributions run memory-budget tests with small fixtures at every
 configured maximum, binary import/capability checks and tiny-memory allocation
 failure/trap recovery. Multi-GiB growth and pointer tests remain opt-in; see the
-[memory contract](browser.md#per-generation-memory-selection). Only artwork-specific
-tests require the artwork feature. The manual
+[memory contract](browser.md#per-generation-memory-selection). Artwork-exclusion tests also run with all features enabled. The manual
 **Wasm engine release** workflow distributes this engine separately from the UI;
 see [browser build, distribution and verification](browser.md). Unit tests now run
 from the library target (`--lib`); suite discovery includes that target automatically.

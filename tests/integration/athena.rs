@@ -7,7 +7,7 @@ fn athena_svg_and_offline_html_preserve_configuration_references_and_filtered_li
         let output = support::run_with_args(fixture, &["--format", format]);
         assert!(output.status.success());
         let text = String::from_utf8(output.stdout).unwrap();
-        assert!(text.contains("planorama-icon-aws-athena"));
+        assert!(text.contains("Amazon Athena"));
         assert!(text.contains("9 resources"));
         for label in [
             "References: aws_s3_bucket.results",
