@@ -13,6 +13,7 @@ examples/data.svg
 examples/dense-architecture.svg
 examples/diagram.svg
 examples/role-shapes.svg
+examples/service-labels.svg
 examples/cognito.svg
 examples/step-functions.svg
 examples/redshift.svg

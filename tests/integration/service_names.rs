@@ -1,7 +1,7 @@
 use super::{cli, support};
 
 #[test]
-fn gateway_endpoints_use_a_neutral_service_name() {
+fn gateway_endpoints_use_resource_names_without_inferring_private_link() {
     let input = serde_json::json!({"format_version":"1.2","resource_changes":[
         {"address":"aws_vpc_endpoint.gateway","type":"aws_vpc_endpoint",
          "provider_name":"registry.terraform.io/hashicorp/aws",
@@ -22,7 +22,8 @@ fn gateway_endpoints_use_a_neutral_service_name() {
         let text = String::from_utf8(output.stdout).unwrap();
         assert!(!text.contains("AWS PrivateLink"));
         assert!(!text.contains("planorama-icon"));
-        assert_eq!(text.matches("xml:space=\"preserve\">VPC</text>").count(), 2);
+        assert!(text.contains("data-display-name=\"VPC Endpoint\""));
+        assert!(text.contains("data-display-name=\"Endpoint Route Table Association\""));
     }
     let output = support::run(input.as_bytes());
     assert!(output.status.success());

@@ -15,7 +15,26 @@ pub(crate) struct Metrics {
 }
 
 pub(crate) fn width(node: &Node) -> usize {
-    super::references::width(node).max(node.routes.reserved_width)
+    header_width(node).max(node.routes.reserved_width)
+}
+
+fn header_width(node: &Node) -> usize {
+    let header = crate::services::display_name(node).map_or(0, |name| {
+        let operation = node.metadata.state_removal.map_or_else(
+            || format!("{:?}", node.action).to_lowercase(),
+            |removal| removal.label().into(),
+        );
+        let left = if node.mode == crate::model::EntityMode::Data {
+            310
+        } else {
+            12 + (super::text::width(&node.resource_type).min(25) + 3 + operation.len()) * 7
+        };
+        left + if role_mark(node).is_some() { 32 } else { 0 }
+            + 12
+            + super::service_label::width(name, 360)
+            + 8
+    });
+    super::references::width(node).max(header)
 }
 
 pub(crate) fn import_height(node: &Node) -> usize {
@@ -44,17 +63,18 @@ pub(crate) fn measure(node: &Node) -> Metrics {
         } else {
             0
         };
-    let width = super::references::width(node);
+    let width = header_width(node);
     let line_limit = (width.saturating_sub(inset + 12) / 8).max(1);
     let address = node.resource_address();
     let lines = super::text::wrap_address(address.terraform(), line_limit)
         .len()
         .max(super::text::wrap_address(&address.qualified(), line_limit).len());
     let import_height = import_height(node);
-    let service_width = line_limit * 8 - if role_mark(node).is_some() { 32 } else { 0 };
-    let service_height = node
-        .service_name
-        .map_or(0, |name| super::service_label::height(name, service_width));
+    let service_width = crate::services::display_name(node)
+        .map_or(0, |name| super::service_label::width(name, 360));
+    let service_height = crate::services::display_name(node).map_or(0, |name| {
+        super::service_label::height(name, service_width).saturating_sub(24)
+    });
     let extra = lines.saturating_sub(2) * 20 + import_height + service_height;
     let previous_line_limit = (width - 24) / 8;
     let previous_height = node.previous_address.as_deref().map_or(0, |previous| {

@@ -571,7 +571,8 @@ fn named_states_reflow_indexes_at_shared_width_and_keep_cross_state_offsets() {
         crate::semantic::transform(&crate::plan::parse(&input.to_string()).unwrap())
     };
     let narrow = graph(&narrow_input);
-    let standalone = crate::svg::render(&narrow, &Layout::new(&narrow));
+    let standalone_view = crate::view::single(&narrow, &Default::default()).unwrap();
+    let standalone = crate::svg::render(&standalone_view, &Layout::new(&standalone_view));
     let standalone_document = roxmltree::Document::parse(&standalone).unwrap();
     let standalone_root = standalone_document.root_element();
     let first = StateId::new("first").unwrap();

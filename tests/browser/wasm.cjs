@@ -108,14 +108,16 @@ async function main() {
         assert.equal(result.content, native, `Spatial native/Wasm parity: ${fixture}/${format}`);
       }
     }
-    const basic = readFileSync(join(root, 'tests/fixtures/aws-basic-plan.json'), 'utf8');
-    for (const format of ['svg', 'html']) {
-      for (const icon_mode of ['service-name']) {
-        const result = run(basic, {format, icon_mode});
-        assert.equal(result.ok, true, JSON.stringify(result));
-        const native = execFileSync(binary, ['-', '-o', '-', '--format', format, '--icon-mode', icon_mode], {input: basic, encoding: 'utf8', maxBuffer: 32 * 1024 * 1024});
-        assert.equal(result.content, native, `AWS basic native/Wasm parity: ${format}/${icon_mode}`);
-        assert.ok(!result.content.includes('PRIVATE_'));
+    for (const fixture of ['aws-basic', 'service-labels']) {
+      const basic = readFileSync(join(root, `tests/fixtures/${fixture}-plan.json`), 'utf8');
+      for (const format of ['svg', 'html']) {
+        for (const icon_mode of ['service-name']) {
+          const result = run(basic, {format, icon_mode});
+          assert.equal(result.ok, true, JSON.stringify(result));
+          const native = execFileSync(binary, ['-', '-o', '-', '--format', format, '--icon-mode', icon_mode], {input: basic, encoding: 'utf8', maxBuffer: 32 * 1024 * 1024});
+          assert.equal(result.content, native, `Resource labels native/Wasm parity: ${fixture}/${format}/${icon_mode}`);
+          assert.ok(!result.content.includes('PRIVATE_'));
+        }
       }
     }
     submit('secret{', 'svg');

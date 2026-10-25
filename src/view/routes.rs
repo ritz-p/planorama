@@ -32,7 +32,7 @@ impl Card<'_> {
         self.node.map_or(0, |node| {
             super::card::import_height(node)
                 + if node.member_owner.is_some() {
-                    node.service_name.map_or(32, |name| {
+                    crate::services::display_name(node).map_or(32, |name| {
                         super::service_label::height(name, WIDTH - 24).max(32)
                     })
                 } else {

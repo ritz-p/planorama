@@ -57,7 +57,7 @@
   },
   "report": {
     "canvas": {
-      "height": 3124,
+      "height": 3088,
       "width": 1100
     },
     "category": "layout",
@@ -88,24 +88,24 @@
         "polyline": [
           [
             140,
-            1926
+            1908
           ],
           [
             36,
-            1926
+            1908
           ],
           [
             36,
-            2534
+            2504
           ],
           [
             140,
-            2534
+            2504
           ]
         ],
         "raw_polyline": {
           "bends": 2,
-          "length": 816
+          "length": 804
         },
         "visible_border": {
           "close_length": 0,
@@ -155,7 +155,7 @@
         ],
         "resources": 12,
         "spatial_layout": {
-          "height": 2140,
+          "height": 2104,
           "width": 1100
         },
         "state": null
@@ -164,7 +164,7 @@
     "summary": {
       "raw_polyline": {
         "bends": 2,
-        "length": 816
+        "length": 804
       },
       "routed_paths": 1,
       "visible_border_minimum_deficit": 0,
