@@ -28,11 +28,19 @@ Local setup and check commands live in [CONTRIBUTING](../CONTRIBUTING.md).
 Ordinary Formatting, Tests and Clippy use the pinned `rust-toolchain.toml` on
 Ubuntu runners. Tests and Clippy cache Cargo registry/git data and dependency
 build products with `Swatinem/rust-cache`; workspace crates are rebuilt each run.
-The `v1-rust-dependencies` prefix excludes older workspace-product caches.
+Tests use the `v2-mold-2.40.4` prefix for the pinned Linux x86_64 native linker;
+Clippy retains `v1-rust-dependencies`. Both exclude older workspace-product caches.
 Keys include the runner/compiler environment, Cargo manifests and lockfile,
 toolchain/Cargo configuration, build-related environment and the `build.rs` /
-`assets/**` hash. Test suites share the `-tests` key; Clippy uses a separate key.
+`assets/**` hash. Test suites share the `-tests` key, including installer/wrapper
+hashes; Clippy uses a separate key.
 Cargo still checks rebuild requirements, and cache misses do not reduce coverage.
+
+Tests install checksum-verified mold 2.40.4 and select its compiler-driver wrapper
+only through `CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_LINKER`. Docker Compose uses
+the same selection. Wasm retains its target rustflags and `wasm-ld`; native
+release publication, cross compilation and other architectures keep their existing
+linkers. See [scope, reproduction and measurements](build-performance.md).
 
 MSRV uses Docker with Rust 1.85.0. Its workflow runs for changes to Cargo.toml,
 Cargo.lock, rust-toolchain.toml, Dockerfile, .dockerignore, compose.yaml, the MSRV
@@ -94,8 +102,8 @@ kinds, incomplete metadata, or a renamed/missing/ambiguous `large_example` targe
 fail explicitly and require updating the selection policy.
 
 The two jobs share the existing dependency cache through a `shared-key` containing
-the `build.rs`/`assets/**` hash followed by `-tests`, matching the former serial
-job's key. Clippy retains its separate cache. The pinned compiler, Cargo configuration,
+the `build.rs`/`assets/**` and linker installer/wrapper hashes followed by `-tests`.
+Clippy retains its separate cache. The pinned compiler, Cargo configuration,
 manifest/lockfiles and build inputs still determine compatibility. Workspace
 crates are rebuilt in each job and are not cached. Thus parallel execution can
 shorten waiting time while increasing total runner time. Normal integration tests

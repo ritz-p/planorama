@@ -20,6 +20,8 @@ on:
       - .github/workflows/cargo_test.yml
       - .github/scripts/checkout-validation.sh
       - .github/scripts/test-suites.cjs
+      - scripts/install-mold.sh
+      - scripts/native-linker.sh
   pull_request:
     paths:
       - '**.rs'
@@ -33,6 +35,8 @@ on:
       - .github/workflows/cargo_test.yml
       - .github/scripts/checkout-validation.sh
       - .github/scripts/test-suites.cjs
+      - scripts/install-mold.sh
+      - scripts/native-linker.sh
   workflow_dispatch:
     inputs:
       pull_request:
@@ -66,6 +70,7 @@ jobs:
         suite: [standard, large]
     env:
       TEST_SUITE: ${{ matrix.suite }}
+      CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_LINKER: /usr/local/bin/planorama-native-linker
     steps:
       - uses: actions/checkout@v7.0.1
         with:
@@ -79,10 +84,14 @@ jobs:
         run: bash .github/scripts/checkout-validation.sh
       - name: Install pinned toolchain
         run: rustc --version --verbose
+      - name: Install native linker
+        run: |
+          sudo sh scripts/install-mold.sh
+          sudo install -m 755 scripts/native-linker.sh /usr/local/bin/planorama-native-linker
       - uses: Swatinem/rust-cache@v2.9.2
         with:
-          prefix-key: v1-rust-dependencies
-          shared-key: ${{ hashFiles('build.rs', 'assets/**') }}-tests
+          prefix-key: v2-mold-2.40.4
+          shared-key: ${{ hashFiles('build.rs', 'assets/**', 'scripts/install-mold.sh', 'scripts/native-linker.sh') }}-tests
           cache-workspace-crates: 'false'
       - name: Compile tests
         run: node .github/scripts/test-suites.cjs "$TEST_SUITE" compile
