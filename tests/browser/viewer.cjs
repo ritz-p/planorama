@@ -43,7 +43,7 @@ class ViewerTests {
         assert.deepEqual(remote, []);
     }
     test_basic_inventory_search_references_and_offline_export() {
-        for (const mode of ['icon', 'service-name']) {
+        for (const mode of ['service-name']) {
             this.load('tests/fixtures/aws-basic-plan.json', '--icon-mode', mode);
             this.assertEqual(this.driver.execute_script("return JSON.parse(document.getElementById('viewer-data').textContent).length"), 10);
             const membership = this.choose('aws_identitystore_group_membership.operators');

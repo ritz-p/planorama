@@ -70,10 +70,7 @@ fn athena_is_regional_spatial_and_only_preserves_explicit_configuration_referenc
         )
         .unwrap()
         .content;
-        assert_eq!(
-            output.contains("planorama-icon-aws-athena"),
-            cfg!(feature = "icon-artwork")
-        );
+        assert!(!output.contains("planorama-icon-aws-athena"));
         assert!(!output.contains("PRIVATE_"));
         assert!(!output.contains("arn:aws:"));
         assert!(!output.contains("s3://"));

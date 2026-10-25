@@ -24,14 +24,8 @@ fn messaging_resources_keep_scopes_data_actions_and_explicit_dependencies() {
     assert_eq!(graph.edges.len(), 1);
     assert_eq!(graph.edges[0].kind, EdgeKind::Dependency);
     let output = svg::render(&graph, &Layout::new(&graph));
-    assert_eq!(
-        output.contains("planorama-icon-aws-sqs"),
-        cfg!(feature = "icon-artwork")
-    );
-    assert_eq!(
-        output.contains("planorama-icon-aws-sns"),
-        cfg!(feature = "icon-artwork")
-    );
+    assert!(!output.contains("planorama-icon-aws-sqs"));
+    assert!(!output.contains("planorama-icon-aws-sns"));
     assert!(output.contains("us-east-1"));
     assert_eq!(graph, transform(&raw));
 }

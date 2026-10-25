@@ -1,176 +1,59 @@
-# Architecture icons
+# Service labels and artwork migration
 
-The default `icon-artwork` Cargo feature embeds the assets described here.
-Builds with `--no-default-features` exclude artwork and use service-name mode;
-explicit icon mode is rejected. See the [standalone Wasm engine](browser.md#standalone-engine-without-artwork).
+Planorama uses provider-aware service names in native, library, Wasm, SVG and
+offline HTML output. AWS Architecture Icons are no longer bundled or embedded
+(#632). AWS's response concerning distribution in third-party applications
+motivated removal; this is not a claim that all use in architecture diagrams is
+prohibited. No icon download, proxy or external icon URL is used.
 
-## AWS Architecture Icons
+## Configuration migration
 
-Planorama embeds official AWS Architecture Icons from the **07312026 (July 31, 2026)** package downloaded from the [AWS Architecture Icons page](https://aws.amazon.com/architecture/icons/) on 2026-10-05.
+Omit `--icon-mode`, or select `--icon-mode service-name`. TOML uses
+`icon-mode = "service-name"`; Rust uses `IconMode::ServiceName`; Wasm options
+use `"icon_mode":"service-name"`. All defaults select service names.
+`IconMode::Icon` and the old `icon` string remain recognized only to return an
+explicit invalid-options error. The `icon-artwork` Cargo feature is a deprecated
+no-op for build compatibility; even `--all-features` includes no artwork.
 
-The selected original SVG files are stored unchanged under `assets/icons/aws/`. `manifest.json` records the official download URL, ZIP SHA-256, original entry paths, and individual file hashes. Only required service icons are bundled; the full ZIP is not committed. Git preserves asset bytes through `.gitattributes`.
+## Classification and rendering
 
-The managed-resource inventory expanded this selection on 2026-10-22 using the
-same hash-verified package. Additional service symbols use the same build-time
-SVG validator and AWS notice; the manifest records each added file's source/hash.
+The existing exact resource-type and provider identity mappings remain the source
+of service names. Foreign and unresolved providers do not gain AWS classification
+from a type prefix. Unknown types retain their address and neutral presentation.
+Service names wrap using shared measurement on spatial cards, container headings
+and Logical Resources. Resource identity, action, managed/data state, relationships,
+coverage and viewer operations retain their meaning.
 
-### Rights and scope
+The original Planorama Terraform state-file SVG and its MIT license/notice remain
+in `assets/icons/terraform` as source assets, but are not embedded by the renderer.
+Cargo dependency notices and the repository licenses remain in release packages.
+AWS-specific notices are removed with the AWS artwork.
 
-AWS owns these assets. They are **not MIT-licensed**. The official page permits customers and partners to use the assets in architecture diagrams; the [AWS Site Terms](https://aws.amazon.com/terms/) also apply. The downloaded package contains SVG/PNG assets and no separate license document. This is not a grant of unrestricted redistribution or sublicensing rights. The selected assets support this AWS architecture diagram renderer, not a standalone icon distribution service. For other uses, consult AWS's terms or obtain permission. Planorama does not imply AWS endorsement.
+## Existing distributions and site follow-up
 
-`assets/icons/aws/NOTICE.txt` records ownership and source, and accompanies SVGs that use AWS icons.
+On 2026-10-25, GitHub Releases for ritz-p/planorama contained no releases
+(`gh release list --limit 100`). Git history still contains previous artwork;
+this change does not rewrite history. The Actions artifact inventory on that date contained 557 entries: 160 native
+archives (40 per supported target), 168 layout-quality bundles, 92 SVG-example
+bundles, 27 spacing-calibration bundles and 110 routing-regression logs. Native
+archives and diagram bundles from icon-enabled revisions are retirement targets;
+routing logs require a content check before deciding whether removal is needed.
+This inventory is metadata-based, not a claim that every archive was extracted.
+Use the repository Actions artifact API to identify IDs, source runs and expiration
+before separately authorizing deletion. Old Actions artifacts and local build
+outputs must not be republished as current builds. Rebuild native binaries, Wasm
+bindings and archives from this revision, and retire any retained old build
+artifacts through a separately authorized cleanup.
 
-### Mapping
+The local planorama-site checkout has unrelated uncommitted work. Its
+`samples/manifest.json` references engine commit
+`65782ebfbad9ad9fcf2a6cb1232cf22eda5f319d`; its `dist/licenses/AWS-ICONS-NOTICE.txt`
+is a stale build output. Follow-up in that repository must update the pinned
+engine and bindings together, rebuild public samples with service-name output,
+remove obsolete AWS notice-copying steps and direct artwork, and replace deployed
+Wasm/demo assets and cached versions. Check the deployed asset URLs after publishing;
+a local rebuild alone does not retire an existing deployment or browser cache.
+Existing site work and deployments are not modified by this PR.
 
-AWS selection requires the HashiCorp AWS provider identity
-`registry.terraform.io/hashicorp/aws`, or the existing `InferredAws` fallback when
-provider information is entirely absent. Explicit foreign provider information
-and unresolved bindings block that fallback; an `aws_` prefix alone does not
-override them. See [provider identity](models.md).
-
-Selection matches exact resource types. Existing managed/data mappings are
-retained; the [managed inventory](aws-inventory.md) extends managed coverage only.
-Related types intentionally use service-level icons: subnet, gateway,
-routing, peering and network security resources use Amazon VPC; listeners and
-target groups use Elastic Load Balancing. No public/private subnet status is
-inferred from the resource type. Icon coverage does not add classification,
-placement, containment or connection rules. Spatial data cards retain their
-external badge and dashed border; logical data rows retain external metadata and
-a dashed action underline.
-
-### Resource coverage
-
-The generated [resource support matrix](resource-support.md) is the exact-type
-catalog for icons, service names, classification, placement and deployment scope.
-It includes managed/data behavior and omitted metadata sources. Icon mappings
-are independent of relationship rules; unlisted exact types have no icon.
-Managed types without bundled service artwork display the reviewed service
-service label on a neutral card/row in both icon modes. No unrelated logo is
-substituted and no artwork is fetched at runtime. The matrix marks this fallback.
-The [data icon fixture](../tests/fixtures/data-icons-plan.json) and
-[example](../examples/data-icons.svg) exercise managed resources, data lookups and
-foreign-provider/unknown fallbacks.
-
-## Planorama icon for Terraform built-in resources
-
-Planorama uses an original neutral state-file symbol for its Terraform built-in
-provider category. Version **1.0.0**, created on 2026-10-12, is stored at
-`assets/icons/terraform/terraform-builtin-24.svg` with a 24px view box. The adjacent
-`manifest.json` records the Planorama source, version, date, file hash and license
-scope. This independent artwork is not the HashiCorp Terraform product logo and
-does not reproduce its stylized T or brand design.
-
-The Flight Icons logo candidate was removed because permission for bundling it
-had not been established. The
-[HashiCorp Trademark Policy](https://www.hashicorp.com/en/trademark-policy)
-distinguishes graphic-logo permission from the software license; this replacement
-does not claim permission to redistribute HashiCorp logos or imply endorsement.
-
-### License and scope
-
-The original Planorama icon is licensed under **MIT**. The complete license and
-`Copyright (c) 2026 Planorama contributors` notice are in
-`assets/icons/terraform/LICENSE.txt`. The license applies to
-`terraform-builtin-24.svg` and its embedded copies, not to the repository as a
-whole or to AWS assets. Its terms permit copying, modification and redistribution
-with the copyright and permission notices retained.
-
-`NOTICE.txt` records the artwork's source and independent identity. SVGs using
-this icon embed that notice together with the complete MIT license, so the
-permission notice accompanies distributed diagrams. Runtime rendering makes no
-network request.
-
-### Mapping
-
-Selection requires the canonical built-in source `terraform.io/builtin/terraform`,
-or the narrowly defined `InferredTerraform` fallback when provider information is
-entirely absent. Explicit provider information takes precedence; unresolved
-bindings, `hashicorp/terraform`, `builtin/terraform`, and foreign hosts do not
-select the built-in provider icon. See [provider identity](models.md).
-
-| Resource type | Example address | Shared icon |
-| --- | --- | --- |
-| `terraform_data` | `terraform_data.example` | `ResourceIcon::Terraform` |
-| `terraform_remote_state` | `data.terraform_remote_state.example` | `ResourceIcon::Terraform` |
-
-Both types use the symbol ID `planorama-icon-terraform`. Module paths and instance
-keys do not alter selection. The icon is independent of managed/data mode,
-ResourceRole and action; spatial data cards keep their external marker and dashed
-border, while logical data rows retain external metadata and a dashed underline.
-Unsupported resource types keep their existing icon-free rendering. This mapping
-adds no AWS classification, containment or connection rules.
-
-## Shared rendering
-
-### Service-name mode
-
-`--icon-mode service-name` replaces service artwork with ordinary text in SVG and
-self-contained HTML, including named-state output. The default `--icon-mode icon`
-retains the existing artwork. Names come from the provider-aware exact-type
-capabilities or `ResourceIcon::service_name()`: for example Amazon EC2, Amazon S3,
-AWS Lambda, Amazon VPC and Terraform built-in. Unsupported resources receive no
-new label.
-
-Endpoint resources use the neutral name Amazon VPC: the shared endpoint mapping
-does not retain endpoint subtype, and [gateway endpoints do not use AWS
-PrivateLink](https://docs.aws.amazon.com/vpc/latest/privatelink/gateway-endpoints.html).
-The existing icon artwork mapping remains unchanged.
-
-Spatial cards and container headers put the service name above the address in
-the former icon area. Logical rows put it at the upper right above the address.
-Shared text measurement and wrapping reserve full line heights before addresses,
-move annotations, references and child cards. Import and external badges retain
-their own space. Resource identity, actions, relationships and links are unchanged.
-This mode changes service artwork only; legends, ports, arrows and operation
-badges remain. It adds no category colors or service classification.
-
-No unused service symbols or images are emitted. Artwork notices continue to
-follow actual artwork use, so the service-name output omits notices for those
-unused icons without removing unrelated notices. Bundled source assets and the
-normal icon mode remain available; this is not an asset-free binary build option.
-
-See the [service-name example](../examples/service-names.svg), generated from the
-data-icon and Terraform fixtures as two named states:
-
-```sh
-planorama --state services=tests/fixtures/data-icons-plan.json --state builtin=tests/fixtures/terraform-plan.json --icon-mode service-name -o examples/service-names.svg
-```
-
-### Icon mode
-
-The build script parses each bundled SVG through the same allowlisted parser and
-emits reusable inline symbols. Original geometry, groups, view boxes, gradients,
-clip paths and masks are preserved; internal IDs and local references are
-deterministically namespaced per symbol. The allowlist rejects scripts, event
-handlers, CSS, images, external references, duplicate IDs and unresolved local
-references at build time. Rust's `include_str!` embeds the validated symbols, so
-no XML parser or asset files are needed at runtime.
-
-Repeated resources share their icon symbol. Spatial cards and container headers
-display icons at 24px beside the selected full address, preserving the existing
-icon gap and heading measurements. Logical-resource groups place the same 24px
-symbol in the upper-right corner of each resource row and reserve address-heading
-space for it.
-Notices are selected by the artwork actually used;
-Terraform-only output does not receive an AWS ownership notice, and mixed output
-retains both. Named-state panels namespace IDs and local fragment references.
-Action colors, external markers, metadata and resource identity remain separate
-from the artwork.
-
-## Updating sources
-
-For AWS, download a release directly from AWS and select the original service
-SVGs. Preserve their original colors and paths, and update the manifest, notice
-and source dates together. Review changed license, trademark and brand conditions.
-
-For Planorama's built-in provider icon, update the original SVG and its version,
-hash and source date in the manifest together. Retain the asset's MIT license and
-notice, and keep the artwork independent of HashiCorp's product logos. Introducing
-third-party artwork requires a separate source and rights review before bundling.
-
-Verify source hashes and inspect SVGs for external dependencies or executable
-content.
-Regenerate examples locally with `scripts/update-examples.sh`, inspect the diff,
-and commit the affected outputs. The [manual SVG workflow](ci.md) can also recover
-snapshots; ordinary CI runs formatting, tests and Clippy. Original icon assets
-are not generated outputs.
+User-supplied or remote artwork is a separate feature and permission question;
+it is not an alternative implementation of removal.

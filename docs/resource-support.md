@@ -54,7 +54,7 @@ Provider source: `registry.terraform.io/hashicorp/aws`.
 
 Baseline: AWS Provider **6.70.0**, commit `5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f`; **1742 managed resource types**. [Inventory and update procedure](aws-inventory.md). Counts describe types, not input instances.
 
-| Resource type | Role (managed / data) | Display (managed / data) | Icon / service name | Deployment scope | Baseline / basic display notes | Conditional rule source references |
+| Resource type | Role (managed / data) | Display (managed / data) | Service mapping / name | Deployment scope | Baseline / basic display notes | Conditional rule source references |
 | --- | --- | --- | --- | --- | --- | --- |
 | `aws_accessanalyzer_analyzer` | Node / Unknown | Logical / Spatial (unresolved) | Iam / AWS IAM Access Analyzer | Regional (conditional) | [Managed resource](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/website/docs/r/accessanalyzer_analyzer.html.markdown); Previously generic fallback; Basic display only; no new dedicated relationship or verified owner | — |
 | `aws_accessanalyzer_archive_rule` | Policy / Unknown | Logical / Spatial (unresolved) | Iam / AWS IAM Access Analyzer | Regional (conditional) | [Managed resource](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/website/docs/r/accessanalyzer_archive_rule.html.markdown); Previously generic fallback; Basic display only; no new dedicated relationship or verified owner | — |
@@ -1870,7 +1870,7 @@ Baseline: AWS Provider **6.70.0**, commit `5e13eedee7c22ac362e6ffdfbdcfd23a5f9f7
 
 Provider source: `terraform.io/builtin/terraform`.
 
-| Resource type | Role (managed / data) | Display (managed / data) | Icon / service name | Deployment scope | Baseline / basic display notes | Conditional rule source references |
+| Resource type | Role (managed / data) | Display (managed / data) | Service mapping / name | Deployment scope | Baseline / basic display notes | Conditional rule source references |
 | --- | --- | --- | --- | --- | --- | --- |
 | `terraform_data` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Terraform / Terraform built-in | Unknown |  | — |
 | `terraform_remote_state` | Unknown / Unknown | Spatial (unresolved) / Spatial (unresolved) | Terraform / Terraform built-in | Unknown |  | [plan/remote.rs](../src/plan/remote.rs) |

@@ -51,7 +51,7 @@ fn data_icon_fixture_preserves_external_styling_and_matches_deterministic_exampl
         ("data.aws_subnets.foreign", None),
         ("data.aws_future_widget.unknown", None),
     ];
-    if !cfg!(feature = "icon-artwork") {
+    {
         for (_, icon) in &mut expected {
             *icon = None;
         }
@@ -120,7 +120,6 @@ fn data_icon_fixture_preserves_external_styling_and_matches_deterministic_exampl
             "{address}"
         );
     }
-    #[cfg(feature = "icon-artwork")]
     {
         let snapshot = concat!(env!("CARGO_MANIFEST_DIR"), "/examples/data-icons.svg");
         assert_eq!(

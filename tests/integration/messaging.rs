@@ -8,7 +8,7 @@ fn eventbridge_cards_filters_and_named_states() {
         let output = support::run_with_args(fixture, &["--format", format]);
         assert!(output.status.success());
         let text = String::from_utf8(output.stdout).unwrap();
-        assert!(text.contains("planorama-icon-aws-eventbridge"));
+        assert!(text.contains("Amazon EventBridge"));
         assert!(text.contains("ap-northeast-1"));
         assert!(text.contains("us-east-1"));
         assert!(text.contains("4 resources"));

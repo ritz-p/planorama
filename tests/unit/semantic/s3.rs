@@ -134,9 +134,8 @@ fn s3_policy_keeps_lifecycle_selection_state_and_private_policy_contents() {
             crate::icons::IconMode::ServiceName,
         ]
         .into_iter()
-        .filter(|mode| {
-            cfg!(feature = "icon-artwork") || *mode == crate::icons::IconMode::ServiceName
-        }) {
+        .filter(|mode| *mode == crate::icons::IconMode::ServiceName)
+        {
             let output = crate::generate(
                 &value.to_string(),
                 &crate::Options {

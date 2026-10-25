@@ -32,7 +32,7 @@ Compare the maintained [compact example](../examples/relationship-legend-hidden.
 with its [full legend version](../examples/routes.svg) and
 [entirely omitted version](../examples/relationship-legend-omitted.svg). Regenerate all three using
 `docker compose exec -T dev sh scripts/update-examples.sh`. The option combines
-with either icon mode and does not change graph analysis or local path routing.
+with service-name rendering and does not change graph analysis or local path routing.
 
 By default, the full card remains visible.
 Action colors and their explanation appear above a grid of relationship kinds.

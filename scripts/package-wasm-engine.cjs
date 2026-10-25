@@ -8,7 +8,7 @@ const commit = execFileSync('git', ['-c', `safe.directory=${process.cwd()}`, 're
 const sha256 = bytes => crypto.createHash('sha256').update(bytes).digest('hex');
 const files = ['planorama.js', 'planorama_bg.wasm'];
 const metadata = JSON.parse(execFileSync('cargo', ['metadata', '--locked', '--format-version', '1', '--no-default-features', '--filter-platform', 'wasm32-unknown-unknown'], {encoding: 'utf8', maxBuffer: 32 * 1024 * 1024}));
-require('../.github/scripts/release.cjs').notices(metadata.packages, directory, false);
+require('../.github/scripts/release.cjs').notices(metadata.packages, directory);
 for (const file of ['LICENSE', 'LICENSE-MIT', 'LICENSE-APACHE']) fs.copyFileSync(file, path.join(directory, file));
 files.push('LICENSE', 'LICENSE-MIT', 'LICENSE-APACHE', 'THIRD-PARTY-NOTICES.txt');
 for (const file of files) {

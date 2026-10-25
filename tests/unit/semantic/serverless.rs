@@ -41,7 +41,7 @@ fn serverless_has_its_own_card_and_never_invents_provisioned_members() {
     for format in [crate::OutputFormat::Svg, crate::OutputFormat::Html] {
         for icon_mode in [crate::IconMode::Icon, crate::IconMode::ServiceName]
             .into_iter()
-            .filter(|mode| cfg!(feature = "icon-artwork") || *mode == crate::IconMode::ServiceName)
+            .filter(|mode| *mode == crate::IconMode::ServiceName)
         {
             let output = crate::generate(
                 FIXTURE,

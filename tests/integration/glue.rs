@@ -7,7 +7,7 @@ fn glue_svg_and_offline_html_keep_catalog_references_and_filtered_links() {
         let output = support::run_with_args(fixture, &["--format", format]);
         assert!(output.status.success());
         let text = String::from_utf8(output.stdout).unwrap();
-        assert!(text.contains("planorama-icon-aws-glue"));
+        assert!(text.contains("AWS Glue"));
         assert!(text.contains("7 resources"));
         for label in ["Catalog database", "Execution role reference"] {
             assert!(text.contains(label));

@@ -13,7 +13,7 @@ module.exports = function checkOptions({driver, small, run, submit, status, nati
   `, id, value);
   const reset = () => find('#reset-settings').click();
   const options = () => driver.execute_script('return snapshotOptions()');
-  const defaults = {format: 'svg', changed_only: false, address_format: 'qualified', icon_mode: 'icon', hide_relationship_legend: false, omit_relationship_legend: false, html_diagnostics: false, html_semantic_diagnostics: false, modules: [], spatial_types: []};
+  const defaults = {format: 'svg', changed_only: false, address_format: 'qualified', icon_mode: 'service-name', hide_relationship_legend: false, omit_relationship_legend: false, html_diagnostics: false, html_semantic_diagnostics: false, modules: [], spatial_types: []};
   assert.deepEqual(options(), defaults);
   assert.equal(find('#focus-depth').is_enabled(), false);
   assert.equal(find('#settings-error').get_attribute('role'), 'alert');

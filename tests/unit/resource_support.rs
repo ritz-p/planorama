@@ -95,7 +95,7 @@ fn matrix() -> String {
         if prefix == "aws_" {
             writeln!(output, "Baseline: AWS Provider **{}**, commit `{}`; **{} managed resource types**. [Inventory and update procedure](aws-inventory.md). Counts describe types, not input instances.\n", inventory["version"].as_str().unwrap(), inventory["commit"].as_str().unwrap(), baseline.len()).unwrap();
         }
-        output.push_str("| Resource type | Role (managed / data) | Display (managed / data) | Icon / service name | Deployment scope | Baseline / basic display notes | Conditional rule source references |\n| --- | --- | --- | --- | --- | --- | --- |\n");
+        output.push_str("| Resource type | Role (managed / data) | Display (managed / data) | Service mapping / name | Deployment scope | Baseline / basic display notes | Conditional rule source references |\n| --- | --- | --- | --- | --- | --- | --- |\n");
         for (resource_type, paths) in &catalog {
             if !resource_type.starts_with(prefix) {
                 continue;

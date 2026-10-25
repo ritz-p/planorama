@@ -283,10 +283,7 @@ fn glue_keeps_safe_references_identity_and_omits_payloads() {
         .content;
         assert!(!output.contains("PRIVATE_"));
         assert!(!output.contains("arn:aws:"));
-        assert_eq!(
-            output.contains("planorama-icon-aws-glue"),
-            cfg!(feature = "icon-artwork")
-        );
+        assert!(!output.contains("planorama-icon-aws-glue"));
         assert!(output.contains("Catalog database"));
         assert!(output.contains("References: aws_s3_bucket.lake"));
     }

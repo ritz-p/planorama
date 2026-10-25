@@ -43,7 +43,7 @@ function smoke(binary, version, directory) {
   }
 }
 
-function notices(packages, destination, iconArtwork = true) {
+function notices(packages, destination) {
   const index = ['Third-party Cargo packages (including build/dev and other-target dependencies).', 'License expressions and original license/notice files follow.'];
   for (const pkg of packages.filter(pkg => pkg.source).sort((a, b) => a.id.localeCompare(b.id))) {
     const root = path.dirname(pkg.manifest_path);
@@ -57,10 +57,7 @@ function notices(packages, destination, iconArtwork = true) {
     for (const file of files.sort()) index.push(`--- ${file} ---\n${fs.readFileSync(path.join(root, file), 'utf8')}`);
   }
   fs.writeFileSync(path.join(destination, 'THIRD-PARTY-NOTICES.txt'), `${index.join('\n')}\n`);
-  if (!iconArtwork) return;
-  fs.cpSync('assets/icons/aws/NOTICE.txt', path.join(destination, 'AWS-ICONS-NOTICE.txt'));
-  fs.cpSync('assets/icons/terraform/NOTICE.txt', path.join(destination, 'BUILTIN-ICON-NOTICE.txt'));
-  fs.cpSync('assets/icons/terraform/LICENSE.txt', path.join(destination, 'BUILTIN-ICON-LICENSE.txt'));
+
 }
 
 function pack(target) {

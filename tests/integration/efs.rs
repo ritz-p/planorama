@@ -18,7 +18,7 @@ fn efs_children_preserve_long_addresses_lifecycle_modes_and_reference_links() {
         .unwrap()
         .push(deposed);
     for format in ["svg", "html"] {
-        for icons in ["icon", "service-name"] {
+        for icons in ["service-name"] {
             let output = support::run_with_args(
                 value.to_string().as_bytes(),
                 &["--format", format, "--icon-mode", icons],

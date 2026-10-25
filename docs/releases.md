@@ -73,7 +73,7 @@ Set-Location $stem
 ```
 
 archive には本体、`LICENSE`・`LICENSE-MIT`・`LICENSE-APACHE`、依存クレートと Rust runtime のライセンス・通知、
-アイコンの通知、`README.txt` が含まれます。実行には Rust・Docker・Node.js は不要です。
+`README.txt` が含まれます。実行には Rust・Docker・Node.js は不要です。
 本体は MIT または Apache-2.0 を選択できるデュアルライセンスです。第三者素材には各通知が適用されます。
 `pratt 0.4.0` は crate にライセンスファイルがないため、manifest の MIT 宣言・著者と
 [同梱補足](../third-party/pratt-0.4.0.txt) を使用します。未確認の欠落は packaging を失敗させます。
