@@ -1,7 +1,12 @@
+use super::TITLE_FONT_SIZE;
 use crate::layout::{Bounds, Layout, Point};
 use crate::model::architecture::{Endpoint, StateId};
 use std::collections::BTreeMap;
 use std::fmt::Write;
+
+const HEADING_PADDING: usize = 16;
+const HEADING_LINE_HEIGHT: usize = TITLE_FONT_SIZE + 7;
+const HEADING_GAP: usize = 12;
 
 struct StateObstacles {
     scopes: Vec<Bounds>,
@@ -186,8 +191,19 @@ pub(crate) async fn render_step(
     let mut top = 60 + legend.height;
     for (id, graph, layout, index, cards) in states {
         let heading = format!("State: {}", id.as_str());
-        let heading_lines = crate::view::text::wrap(&heading, (width - 80) / 12);
-        let header_height = heading_lines.len() * 26 + 14;
+        let heading_lines = crate::view::text::wrap(
+            &heading,
+            (width - 80 - 2 * HEADING_PADDING) / (TITLE_FONT_SIZE * 2 / 3),
+        );
+        let heading_width = heading_lines
+            .iter()
+            .map(|line| crate::view::text::width(line))
+            .max()
+            .unwrap_or(0)
+            * (TITLE_FONT_SIZE * 2 / 3)
+            + 2 * HEADING_PADDING;
+        let heading_height = heading_lines.len() * HEADING_LINE_HEIGHT + 2 * HEADING_PADDING;
+        let header_height = heading_height + HEADING_GAP;
         let measured_sections =
             super::Sections::from_cards(graph, &layout, &index, cards, width, None);
         let (_, height) = measured_sections.dimensions(&layout);
@@ -269,9 +285,15 @@ pub(crate) async fn render_step(
             super::escape(id.as_str())
         )
         .unwrap();
+        let text_x = 40 + HEADING_PADDING;
+        let text_top = top + HEADING_PADDING;
+        writeln!(sections, r##"<g data-state-heading="true" data-presentation-header="{text_x} {text_top} {} {}">
+<rect x="40" y="{top}" width="{heading_width}" height="{heading_height}" rx="8" fill="#e2e8f0" stroke="#94a3b8"/>
+"##, heading_width - 2 * HEADING_PADDING, heading_lines.len() * HEADING_LINE_HEIGHT).unwrap();
         for (line, text) in heading_lines.iter().enumerate() {
-            writeln!(sections, r##"<text x="40" y="{}" font-family="ui-monospace, Consolas, monospace" font-size="20" font-weight="700" fill="#0f172a">{}</text>"##, top + 25 + line * 26, super::escape(text)).unwrap();
+            writeln!(sections, r##"<text x="{text_x}" y="{}" font-family="ui-monospace, Consolas, monospace" font-size="{TITLE_FONT_SIZE}" font-weight="700" fill="#0f172a">{}</text>"##, text_top + TITLE_FONT_SIZE + line * HEADING_LINE_HEIGHT, super::escape(text)).unwrap();
         }
+        sections.push_str("</g>\n");
         sections.push_str(&document.replacen(
             "<svg ",
             &format!("<svg y=\"{}\" ", top + header_height),
@@ -376,7 +398,7 @@ pub(crate) async fn render_step(
     format!(
         r##"<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{top}" viewBox="0 0 {width} {top}" font-family="ui-monospace, Consolas, monospace" role="img" aria-labelledby="multi-title multi-description">
 <title id="multi-title">Terraform plans</title><desc id="multi-description">{description}</desc>
-<rect width="100%" height="100%" fill="#ffffff"/><text x="40" y="35" font-family="ui-monospace, Consolas, monospace" font-size="25" fill="#0f172a">Terraform plans</text>
+<rect width="100%" height="100%" fill="#ffffff"/><text x="40" y="35" font-family="ui-monospace, Consolas, monospace" font-size="{TITLE_FONT_SIZE}" fill="#0f172a">Terraform plans</text>
 {sections}</svg>
 "##
     )

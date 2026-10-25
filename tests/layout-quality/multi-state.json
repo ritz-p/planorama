@@ -66,7 +66,7 @@
   },
   "report": {
     "canvas": {
-      "height": 1922,
+      "height": 1994,
       "width": 1252
     },
     "category": "layout",
@@ -93,24 +93,24 @@
         "polyline": [
           [
             460,
-            1534
+            1606
           ],
           [
             1190,
-            1534
+            1606
           ],
           [
             1190,
-            1074
+            1110
           ],
           [
             1028,
-            1074
+            1110
           ]
         ],
         "raw_polyline": {
           "bends": 2,
-          "length": 1352
+          "length": 1388
         },
         "visible_border": {
           "close_length": 0,
@@ -141,24 +141,24 @@
         "polyline": [
           [
             460,
-            1726
+            1798
           ],
           [
             1202,
-            1726
+            1798
           ],
           [
             1202,
-            1074
+            1110
           ],
           [
             1028,
-            1074
+            1110
           ]
         ],
         "raw_polyline": {
           "bends": 2,
-          "length": 1568
+          "length": 1604
         },
         "visible_border": {
           "close_length": 0,
@@ -189,24 +189,24 @@
         "polyline": [
           [
             460,
-            1534
+            1606
           ],
           [
             1178,
-            1534
+            1606
           ],
           [
             1178,
-            922
+            958
           ],
           [
             1028,
-            922
+            958
           ]
         ],
         "raw_polyline": {
           "bends": 2,
-          "length": 1480
+          "length": 1516
         },
         "visible_border": {
           "close_length": 0,
@@ -241,11 +241,11 @@
         "polyline": [
           [
             608,
-            922
+            958
           ],
           [
             708,
-            922
+            958
           ]
         ],
         "raw_polyline": {
@@ -285,19 +285,19 @@
         "polyline": [
           [
             608,
-            922
+            958
           ],
           [
             632,
-            922
+            958
           ],
           [
             632,
-            1074
+            1110
           ],
           [
             708,
-            1074
+            1110
           ]
         ],
         "raw_polyline": {
@@ -319,7 +319,7 @@
         "location": {
           "point": [
             1178,
-            1074
+            1110
           ]
         },
         "peer": "{\"cross_state\":true,\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":{\"output\":\"subnet\",\"remote\":\"data.terraform_remote_state.network\"},\"source\":{\"id\":\"aws_subnet.app\",\"state\":\"producer\"},\"target\":{\"id\":\"aws_instance.app\",\"state\":\"consumer\"}}",
@@ -332,7 +332,7 @@
         "location": {
           "point": [
             1178,
-            1074
+            1110
           ]
         },
         "peer": "{\"cross_state\":true,\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":{\"output\":\"subnet\",\"remote\":\"data.terraform_remote_state.network\"},\"source\":{\"id\":\"aws_subnet.app\",\"state\":\"producer\"},\"target\":{\"id\":\"aws_instance.app\",\"state\":\"consumer\"}}",
@@ -349,8 +349,8 @@
           ],
           "horizontal": false,
           "interval": [
-            1074,
-            1534
+            1110,
+            1606
           ],
           "visible_gap": 10.5
         },
@@ -368,8 +368,8 @@
           ],
           "horizontal": false,
           "interval": [
-            1074,
-            1534
+            1110,
+            1606
           ],
           "visible_gap": 10.5
         },
@@ -413,7 +413,7 @@
         },
         "origin": [
           0,
-          658
+          694
         ],
         "resources": 3,
         "spatial_layout": {
@@ -433,7 +433,7 @@
         },
         "origin": [
           0,
-          1318
+          1390
         ],
         "resources": 2,
         "spatial_layout": {
@@ -446,14 +446,14 @@
     "summary": {
       "raw_polyline": {
         "bends": 8,
-        "length": 4752
+        "length": 4860
       },
       "routed_paths": 5,
       "visible_border_minimum_deficit": 0,
       "visible_straight_sections": {
         "crossings": 2,
         "independent_overlap_length": 0,
-        "parallel_deficit": 3680,
+        "parallel_deficit": 3968,
         "shared_trunk_length": 896
       }
     },

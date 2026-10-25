@@ -172,6 +172,17 @@ report. These new crossings are explicitly accepted consequences of the changed
 geometry, not offset by improvements on other pairs or fixtures. Border deficits
 remain unchanged and bend changes stay within their existing per-edge budget.
 
+#660 enlarges each named-state heading allocation from 40 to 76 pixels for
+title-size text and a padded background. In the multi-state fixture, all three
+cross-state paths become 36 pixels longer at their existing gutter positions.
+The two parallel pairs involving `producer:aws_subnet.app` →
+`consumer:aws_instance.other` (paired with the `subnet` path to
+`consumer:aws_instance.app`, and the `both` path from `producer:aws_subnet.other`)
+each increase their parallel deficit by 144 px², from 1,840 to 1,984 px².
+The reviewed multi-state baseline accepts these two height-induced increases
+(total 3,680 → 3,968 px²). Crossings, independent overlap, bends and border deficits
+are unchanged. Other fixture baselines and all budgets remain unchanged.
+
 The [manifest](../tests/layout-quality/manifest.json) is the ordered fixture and
 budget authority. Each checked-in baseline records exact CLI arguments, SHA-256
 input bytes, budgets, comparison format version, renderer contract

@@ -593,7 +593,7 @@ function exportPresentation(context, index, requested, provenanceSeeds) {
         if (atomic) clone.append(child.cloneNode(true));
         continue;
       }
-      const decoration = !atomic && el.matches(frames) && child.matches('rect, text, title') && !index.targets.has(child.id);
+      const decoration = !atomic && el.matches(frames) && child.matches('rect, text, title, [data-state-heading]') && !index.targets.has(child.id);
       const copied = project(child, atomic || decoration);
       if (copied) clone.append(copied);
     }

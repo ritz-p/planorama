@@ -45,6 +45,8 @@ use crate::model::architecture::{Action, EdgeKind, Graph};
 use std::fmt::Write;
 use style::{color, label, shorten};
 
+const TITLE_FONT_SIZE: usize = 25;
+
 #[derive(Clone, Copy, Default, serde::Deserialize)]
 #[serde(rename_all = "kebab-case")]
 pub enum AddressFormat {
@@ -338,7 +340,7 @@ fn render_with_index(
 <defs>{markers}{icon_definitions}{occlusion_definitions}</defs>
 <rect width="100%" height="100%" fill="#ffffff"/>
 <g font-family="ui-monospace, SFMono-Regular, Consolas, monospace">
-<text x="40" y="45" font-size="25" font-weight="700" fill="#0f172a">Terraform plan</text>
+<text x="40" y="45" font-size="{TITLE_FONT_SIZE}" font-weight="700" fill="#0f172a">Terraform plan</text>
 <text x="40" y="73" font-size="13" fill="#475569">{summary}</text>
 "##,
     );

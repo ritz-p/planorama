@@ -36,7 +36,13 @@ Named states share one [relationship legend](relationships.md#legend-and-meaning
 including compact mode. Resource/action summaries, checks, plan status, annotations
 and relationship indexes stay within each state; equal visible numbers identify
 independent entries. The optional [coverage report](coverage.md) sums state counts
-without merging resource identities. State headings wrap within the shared width.
+without merging resource identities. Each `State: <name>` heading uses the same
+25px type as the Terraform plan title, on a slate background sized to the longest
+wrapped line with padding. The background identifies a state section, not an
+action, service category or AWS account.
+Complete names wrap within the shared width; measured heading height reserves
+space above annotations and architecture content. SVG, HTML and retained-state
+exports share this presentation, including a single explicitly named input.
 
 Use `--remote-state CONSUMER:DATA_ADDRESS=PRODUCER` to explicitly connect an exact `data.terraform_remote_state.NAME.outputs.OUTPUT` traversal to a loaded producer state. Repeat mappings as needed; conflicting producers remain ambiguous and emit no relationship. Root output provenance must be complete and nonempty. `--diagnostics` reports successful chains and unmapped, missing or incomplete sources without backend configuration or output values. The resolver handles direct exact traversals, including statically identified module instances; it does not guess backend identity or resolve dynamic output selections.
 

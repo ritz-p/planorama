@@ -153,13 +153,20 @@ class ViewerTests {
                         masks: [...doc.querySelectorAll('[data-occluder]')].every(el => meta.resources.includes(el.dataset.occluder)),
                         context: JSON.parse(document.getElementById('viewer-data').textContent).filter(r => meta.resources.includes(r.id)).every(r => r.context.every(id => meta.resources.includes(id))),
                         paths: paths.every(path => [...live.querySelectorAll('path[data-edge-kind]')].some(original => original.getAttribute('d') === path.getAttribute('d') && original.dataset.source === path.dataset.source && original.dataset.target === path.dataset.target)),
+                        headings: [...doc.querySelectorAll('[data-state-id]')].every(state => {
+                            const heading = state.querySelector(':scope > [data-state-heading]');
+                            const rect = heading?.querySelector('rect');
+                            const box = doc.documentElement.viewBox.baseVal;
+                            return !!rect && [...heading.querySelectorAll('text')].map(t => t.textContent).join('') === 'State: ' + state.dataset.stateId &&
+                                +rect.getAttribute('y') >= box.y && +rect.getAttribute('y') + +rect.getAttribute('height') <= box.y + box.height;
+                        }),
                         summary: doc.documentElement.textContent.includes('Original layout, no repacking')
                     };
                 `);
                 this.assertTrue(checks.unchanged); this.assertFalse(checks.duplicates); this.assertTrue(checks.selected);
                 this.assertFalse(checks.foreignState); this.assertEqual(checks.broken, 0); this.assertEqual(checks.invalid, 0);
                 this.assertTrue(checks.targets); this.assertTrue(checks.resources); this.assertTrue(checks.masks); this.assertTrue(checks.context);
-                this.assertTrue(checks.paths); this.assertTrue(checks.summary);
+                this.assertTrue(checks.paths); this.assertTrue(checks.summary); this.assertTrue(checks.headings);
             }
         }
     }
@@ -875,6 +882,40 @@ class ViewerTests {
         }
         this.assertTrue(this.search('producer'));
         this.assertTrue(this.search('producer').every(b => b.text.includes('producer:')));
+    }
+    test_long_named_heading_survives_navigation_and_viewport_export() {
+        const state = 'W'.repeat(64);
+        this.load('--state', state + '=tests/fixtures/association-plan.json');
+        const original = this.view_box();
+        const choice = this.find('#results button');
+        choice.click();
+        this.assertEqual(this.driver.execute_script("return document.querySelector('[data-viewer-selected]').closest('[data-state-id]').dataset.stateId"), state);
+        this.find('#fit').click();
+        this.assertEqual(this.view_box(), original);
+        this.driver.execute_script(`
+            window.exportText = null;
+            URL.createObjectURL = blob => { window.exportBlob = blob; return 'blob:export-test'; };
+            HTMLAnchorElement.prototype.click = function () {};
+        `);
+        this.find('#export-viewport').click();
+        this.driver.execute_script('window.exportBlob.text().then(text => { window.exportText = text; })');
+        wait(() => this.driver.execute_script('return !!window.exportText'), 'named heading viewport export');
+        const exported = join(this.temp, 'named-heading.svg');
+        writeFileSync(exported, this.driver.execute_script('return window.exportText'));
+        this.driver.get(pathToFileURL(exported).href);
+        const result = this.driver.execute_script(`
+            const heading = document.querySelector('[data-state-heading]');
+            const rect = heading.querySelector('rect').getBBox();
+            const box = document.documentElement.viewBox.baseVal;
+            const texts = [...heading.querySelectorAll('text')];
+            return {name:texts.map(text => text.textContent).join(''), lines:texts.length,
+                inside: rect.x >= box.x && rect.y >= box.y && rect.x + rect.width <= box.x + box.width && rect.y + rect.height <= box.y + box.height,
+                clipped: texts.some(text => { const b = text.getBBox(); return b.x < rect.x || b.y < rect.y || b.x + b.width > rect.x + rect.width || b.y + b.height > rect.y + rect.height; }),
+                broken:[...document.querySelectorAll('[href]')].some(el => !document.getElementById(el.getAttribute('href').slice(1)))};
+        `);
+        this.assertEqual(result.name, 'State: ' + state);
+        this.assertGreater(result.lines, 1);
+        this.assertTrue(result.inside); this.assertFalse(result.clipped); this.assertFalse(result.broken);
     }
     test_impact_dependency_depth_direction_keyboard_and_reset() {
         let plan = {'format_version': '1.2', 'resource_changes': [['a', 'create'], ['b', 'update'], ['c', 'delete']].map(([name, action]) => ({address: 'aws_instance.' + name, type: 'aws_instance', change: {actions: [action]}})), 'configuration': {'root_module': {'resources': [['b', 'a'], ['c', 'b']].map(([name, dependency]) => ({address: 'aws_instance.' + name, expressions: {input: {references: ['aws_instance.' + dependency + '.id']}}}))}}};

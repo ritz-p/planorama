@@ -20,7 +20,7 @@ change. This command checks the files on disk; it does not silently regenerate
 or accept findings. CI checks the six freshly rendered layout fixtures and
 focused rendering cases covering spatial cards, container headers, embedded
 members/routes, Logical Resources action sections, Logical Components and
-Relationship Resources. Long types/addresses, multiple actions, data/import
+Relationship Resources and padded named-state headings. Long types/addresses, multiple actions, data/import
 indicators, narrow frames and named states are exercised in browser tests.
 
 ## Findings and bounds
@@ -36,7 +36,7 @@ There is no baseline allowance: a clean fixture must remain clean.
 - `overlap`: text/text, text/badge or badge/badge intersection.
 - `content-overflow`: text or badge exceeds the nearest enclosing frame's
   interior, including the actual action section or embedded child frame.
-- `header-overflow`: content exceeds a container header's allocated area.
+- `header-overflow`: content exceeds a container or state heading's allocated area.
 - `badge-text-overflow`: a badge's own text exceeds its interior and padding.
 - `badge-frame-intersection`: a badge crosses a visible frame border.
 
