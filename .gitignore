@@ -1,6 +1,7 @@
 /target
 __pycache__/
 /output
+/.wasm-ci
 /plan.json
 /*.tfplan
 .terraform/

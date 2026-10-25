@@ -1,5 +1,5 @@
 const assert = require('node:assert/strict');
-const {fork, execFileSync} = require('node:child_process');
+const {fork} = require('node:child_process');
 const {readFileSync, mkdtempSync, rmSync, existsSync} = require('node:fs');
 const {join, resolve} = require('node:path');
 const {tmpdir} = require('node:os');
@@ -7,6 +7,7 @@ const {Driver, By, wait} = require('./webdriver.cjs');
 
 const root = resolve(__dirname, '../..');
 const binary = join(process.env.CARGO_TARGET_DIR || join(root, 'target'), 'release/planorama');
+const nativeReference = require('../support/native-reference.cjs')(binary);
 const small = readFileSync(join(root, 'tests/fixtures/viewer-plan.json'), 'utf8');
 const server = fork(join(root, 'scripts/serve-browser.cjs'), [], {env: {...process.env, PORT: '0'}, stdio: ['ignore', 'inherit', 'inherit', 'ipc']});
 const temp = mkdtempSync(join(tmpdir(), 'planorama-wasm-'));
@@ -50,14 +51,14 @@ async function main() {
     require('./wasm-named.cjs')({driver, root, binary});
     require('./wasm-modules.cjs')({
       driver, small, run, status,
-      native: (json, args) => execFileSync(binary, ['-', '-o', '-', ...args], {input: json, encoding: 'utf8', maxBuffer: 32 * 1024 * 1024}),
+      native: nativeReference,
     });
     require('./wasm-resources.cjs')({driver, run,
-      native: (json, args) => execFileSync(binary, ['-', '-o', '-', ...args], {input: json, encoding: 'utf8', maxBuffer: 32 * 1024 * 1024}),
+      native: nativeReference,
     });
     require('./wasm-options.cjs')({
       driver, small, run, submit, status,
-      native: (json, args) => execFileSync(binary, ['-', '-o', '-', ...args], {input: json, encoding: 'utf8', maxBuffer: 32 * 1024 * 1024}),
+      native: nativeReference,
     });
     for (const [options, args] of [
       [{}, []],
@@ -68,7 +69,7 @@ async function main() {
     ]) {
       const result = run(small, options);
       assert.equal(result.ok, true, JSON.stringify(result));
-      const native = execFileSync(binary, ['-', '-o', '-', ...args], {input: small, encoding: 'utf8', maxBuffer: 32 * 1024 * 1024});
+      const native = nativeReference(small, args);
       assert.equal(result.content, native, `Native/Wasm exact parity: ${JSON.stringify(options)}`);
       console.log(JSON.stringify({fixture: 'viewer-plan', options, elapsed_ms: result.elapsed_ms, memory_bytes: result.memory_bytes, output_bytes: Buffer.byteLength(result.content)}));
     }
@@ -77,7 +78,7 @@ async function main() {
       for (const icon_mode of ['service-name']) {
         const result = run(aliases, {format, icon_mode});
         assert.equal(result.ok, true, JSON.stringify(result));
-        const native = execFileSync(binary, ['-', '-o', '-', '--format', format, '--icon-mode', icon_mode], {input: aliases, encoding: 'utf8', maxBuffer: 32 * 1024 * 1024});
+        const native = nativeReference(aliases, ['--format', format, '--icon-mode', icon_mode]);
         assert.equal(result.content, native, `AWS aliases native/Wasm ${format}/${icon_mode}`);
         assert.ok(result.content.includes('aws_alb.web'));
       }
@@ -104,7 +105,7 @@ async function main() {
       for (const format of ['svg', 'html']) {
         const result = run(json, {format, spatial_types});
         assert.equal(result.ok, true, JSON.stringify(result));
-        const native = execFileSync(binary, ['-', '-o', '-', '--format', format, ...spatial_types.flatMap(type => ['--spatial-type', type])], {input: json, encoding: 'utf8', maxBuffer: 32 * 1024 * 1024});
+        const native = nativeReference(json, ['--format', format, ...spatial_types.flatMap(type => ['--spatial-type', type])]);
         assert.equal(result.content, native, `Spatial native/Wasm parity: ${fixture}/${format}`);
       }
     }
@@ -114,7 +115,7 @@ async function main() {
         for (const icon_mode of ['service-name']) {
           const result = run(basic, {format, icon_mode});
           assert.equal(result.ok, true, JSON.stringify(result));
-          const native = execFileSync(binary, ['-', '-o', '-', '--format', format, '--icon-mode', icon_mode], {input: basic, encoding: 'utf8', maxBuffer: 32 * 1024 * 1024});
+          const native = nativeReference(basic, ['--format', format, '--icon-mode', icon_mode]);
           assert.equal(result.content, native, `Resource labels native/Wasm parity: ${fixture}/${format}/${icon_mode}`);
           assert.ok(!result.content.includes('PRIVATE_'));
         }
@@ -206,7 +207,7 @@ async function main() {
     assert.equal(largeResult.ok, true);
     assert.deepEqual(driver.execute_script('return progressStages.map(event => event.stage)'), ['parsing', 'selection', 'placement', 'routing', 'output']);
     assert.equal(driver.execute_script("return progressStages.every(event => Object.keys(event).sort().join(',') === 'request,stage,type')"), true);
-    const native = execFileSync(binary, ['-', '-o', '-'], {input: large, encoding: 'utf8', timeout: 180000, maxBuffer: 64 * 1024 * 1024});
+    const native = nativeReference(large, [], {timeout: 180000, maxBuffer: 64 * 1024 * 1024});
     assert.equal(largeResult.content, native, 'Large native/Wasm exact parity');
     console.log(JSON.stringify({fixture: 'terraform-large', input_bytes: Buffer.byteLength(large), elapsed_ms: largeResult.elapsed_ms, memory_bytes: largeResult.memory_bytes, output_bytes: Buffer.byteLength(largeResult.content)}));
     const requests = driver.get_log('performance').map(entry => JSON.parse(entry.message).message)
@@ -219,6 +220,7 @@ async function main() {
     assert.deepEqual(errors, []);
     console.log('Browser Wasm: parity, errors, isolated previews, downloads, cancellation and offline checks passed.');
   } finally {
+    console.log({nativeReference: nativeReference.stats});
     await driver.quit();
   }
 }
