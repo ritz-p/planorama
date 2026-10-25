@@ -9,7 +9,7 @@ pub(crate) struct Row<'a> {
 }
 
 impl Row<'_> {
-    pub(crate) fn label(&self, available: bool) -> String {
+    pub(crate) fn label(&self, available: bool, qualified: bool) -> String {
         if self.reference.kind == crate::model::ReferenceKind::Information {
             return self.reference.label.into();
         }
@@ -17,7 +17,13 @@ impl Row<'_> {
             return format!("{}: unresolved", self.reference.label);
         };
         let mut address = target.account_scope.as_ref().map_or_else(
-            || target.id.address.clone(),
+            || {
+                target
+                    .id
+                    .resource_address()
+                    .formatted(qualified)
+                    .into_owned()
+            },
             |account| format!("AWS Account {}", account.as_str()),
         );
         if let crate::model::ReferenceKind::OrganizationRoot(index) = self.reference.kind {
@@ -37,9 +43,14 @@ impl Row<'_> {
     }
 
     pub(crate) fn line_count(&self, width: usize) -> usize {
-        self.lines(&self.label(false), width)
-            .len()
-            .max(self.lines(&self.label(true), width).len())
+        [false, true]
+            .into_iter()
+            .flat_map(|available| {
+                [false, true]
+                    .map(|qualified| self.lines(&self.label(available, qualified), width).len())
+            })
+            .max()
+            .unwrap_or(0)
     }
 
     pub(crate) fn lines<'a>(&self, text: &'a str, width: usize) -> Vec<&'a str> {
@@ -54,7 +65,12 @@ impl Row<'_> {
 pub(crate) fn width(node: &Node) -> usize {
     rows(node)
         .iter()
-        .map(|row| super::text::width(&row.label(false)) * 8 + TEXT_INSET)
+        .map(|row| {
+            super::text::width(&row.label(false, true))
+                .max(super::text::width(&row.label(false, false)))
+                * 8
+                + TEXT_INSET
+        })
         .max()
         .unwrap_or(crate::layout::NODE_WIDTH)
         .clamp(crate::layout::NODE_WIDTH, 640)

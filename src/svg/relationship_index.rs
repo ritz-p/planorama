@@ -54,6 +54,7 @@ impl Context {
 }
 
 pub(super) struct Index<'a> {
+    address_format: super::AddressFormat,
     entries: Vec<Entry<'a>>,
     markers: Vec<Marker>,
     pub width: usize,
@@ -68,6 +69,14 @@ struct Marker {
 
 impl<'a> Index<'a> {
     pub fn new(graph: &'a Graph, layout: &Layout<'_>) -> Self {
+        Self::with_format(graph, layout, super::AddressFormat::Qualified)
+    }
+
+    pub fn with_format(
+        graph: &'a Graph,
+        layout: &Layout<'_>,
+        address_format: super::AddressFormat,
+    ) -> Self {
         let entries: Vec<_> = crate::layout::relationship_markers::entries(graph)
             .into_iter()
             .enumerate()
@@ -141,7 +150,7 @@ impl<'a> Index<'a> {
                             endpoints: [from, to].map(|i| {
                                 let node = &graph.nodes[i];
                                 (
-                                    display_parts(&node.address, node.deposed_key.as_deref()),
+                                    display_parts(&node.resource_address().formatted(matches!(address_format, super::AddressFormat::Qualified)), node.deposed_key.as_deref()),
                                     Some(super::identity::resource(node)),
                                 )
                             }),
@@ -208,6 +217,7 @@ impl<'a> Index<'a> {
             width.max(marker.bounds.right() + 20)
         });
         Self {
+            address_format,
             entries,
             markers,
             width,
@@ -284,7 +294,7 @@ impl<'a> Index<'a> {
             .iter()
             .flat_map(|entry| {
                 entry.sources.iter().flat_map(move |source| {
-                    std::iter::once(display(source)).chain(
+                    std::iter::once(display(source, self.address_format)).chain(
                         entry
                             .previous_addresses
                             .get(source)
@@ -346,7 +356,7 @@ impl<'a> Index<'a> {
                     y += 20;
                 }
                 for source in &entry.sources {
-                    let text = display(source);
+                    let text = display(source, self.address_format);
                     writeln!(svg, r##"<text data-source-address="{}" data-source-identity="{}" font-size="12" font-weight="600" fill="#334155"><title>{}</title>"##, super::escape(&source.address), super::identity::source(source).replacen("resource-", "terraform:", 1), super::escape(&text)).unwrap();
                     for line in wrap_address(&text, (width - text_x - 16) / 8) {
                         writeln!(svg, "<tspan x=\"{text_x}\" y=\"{y}\" xml:space=\"preserve\">{}</tspan>", super::escape(line)).unwrap();
@@ -452,8 +462,13 @@ pub(super) fn badge(number: usize, bounds: Bounds, stroke: &str, style: &str) ->
     )
 }
 
-fn display(source: &TerraformEntityId) -> String {
-    display_parts(&source.address, source.deposed_key.as_deref())
+fn display(source: &TerraformEntityId, address_format: super::AddressFormat) -> String {
+    display_parts(
+        &source
+            .resource_address()
+            .formatted(matches!(address_format, super::AddressFormat::Qualified)),
+        source.deposed_key.as_deref(),
+    )
 }
 
 fn display_parts(address: &str, deposed: Option<&str>) -> String {

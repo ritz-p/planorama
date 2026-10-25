@@ -39,11 +39,12 @@ pub(super) fn render(
     );
     y += 12;
     for mut card in cards {
-        if let Some(node) = card.node.filter(|node| node.member_owner.is_some()) {
-            card.rows[0].text = crate::view::routes::heading(
-                node,
-                matches!(address_format, super::AddressFormat::Qualified),
-            );
+        if matches!(address_format, super::AddressFormat::Qualified) {
+            for row in &mut card.rows {
+                if let Some(text) = &row.qualified_text {
+                    row.text = text.clone();
+                }
+            }
         }
         let height = card.height();
         let bounds = card.node.map_or(
@@ -211,6 +212,7 @@ pub(super) fn render(
                 x + 12,
                 line_y,
                 width - 24,
+                address_format,
             ));
         }
         svg.push_str("</g>\n");

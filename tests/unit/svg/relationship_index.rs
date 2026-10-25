@@ -879,7 +879,7 @@ fn wide_addresses_wrap_within_the_canvas_and_reserved_height() {
         .collect();
     assert_eq!(
         lines.iter().filter_map(|n| n.text()).collect::<String>(),
-        address
+        format!("module.root.{address}")
     );
     for line in &lines {
         let width: usize = line
@@ -944,7 +944,7 @@ fn a_long_multisource_fifth_entry_stays_in_the_first_card() {
         .filter(|n| n.has_tag_name("tspan"))
         .filter_map(|n| n.text())
         .collect();
-    assert_eq!(visible, format!("{address} (deposed: old-key)"));
+    assert_eq!(visible, format!("module.root.{address} (deposed: old-key)"));
     assert!(
         sources[1]
             .children()

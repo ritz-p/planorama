@@ -66,7 +66,7 @@ fn embedded_members_keep_logical_remote_references_within_bounds() {
         link.descendants()
             .filter_map(|node| node.text())
             .collect::<String>()
-            .contains("shared:aws_iam_policy.shared")
+            .contains("shared:module.root.aws_iam_policy.shared")
     );
     let rect = member
         .children()
@@ -373,6 +373,7 @@ fn cross_state_paths_avoid_intervening_cards_and_describe_dependencies() {
         id: "test-group".into(),
         kind: "test".into(),
         label: "Test group".into(),
+        label_reference: None,
         members: vec!["aws_instance.a".into(), "aws_instance.b".into()],
     });
     let first = StateId::new("first").unwrap();

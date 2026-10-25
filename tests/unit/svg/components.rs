@@ -15,7 +15,7 @@ fn member_scope_summaries_preserve_mixed_evidence_and_measure_annotations() {
         });
     }
     let summary = |graph: &Graph| {
-        let card = cards(graph).remove(0);
+        let card = cards(graph, crate::svg::AddressFormat::Qualified).remove(0);
         let doc = roxmltree::Document::parse(&card.content).unwrap();
         for member in doc
             .descendants()
@@ -68,10 +68,17 @@ fn member_scope_summaries_preserve_mixed_evidence_and_measure_annotations() {
     assert!(summary(&graph).contains("AWS Global"));
     graph.nodes.remove(index);
     assert!(summary(&graph).contains("Member unavailable in this view"));
-    let before = cards(&graph).remove(0).content;
+    let before = cards(&graph, crate::svg::AddressFormat::Qualified)
+        .remove(0)
+        .content;
     graph.nodes.reverse();
     graph.components[0].members.reverse();
-    assert_eq!(before, cards(&graph).remove(0).content);
+    assert_eq!(
+        before,
+        cards(&graph, crate::svg::AddressFormat::Qualified)
+            .remove(0)
+            .content
+    );
     assert!(graph.components[0].entity.scope.is_none());
 }
 
@@ -327,7 +334,7 @@ fn component_cards_keep_identity_members_operations_and_links() {
                 .filter(|n| n.has_tag_name("tspan"))
                 .filter_map(|n| n.text())
                 .collect();
-            assert_eq!(text, *address);
+            assert_eq!(text, node.resource_address().qualified());
             assert_eq!(
                 link.descendants()
                     .find(|n| n.attribute("data-resource-action").is_some())
@@ -359,7 +366,7 @@ fn empty_components_and_ambiguous_member_addresses_do_not_invent_links() {
         .unwrap()
         .clone();
     graph.nodes.push(duplicate);
-    let output = cards(&graph).remove(0);
+    let output = cards(&graph, crate::svg::AddressFormat::Qualified).remove(0);
     let doc = roxmltree::Document::parse(&output.content).unwrap();
     let member = doc
         .descendants()
@@ -383,7 +390,7 @@ fn empty_components_and_ambiguous_member_addresses_do_not_invent_links() {
             .all(|n| n.attribute("data-import-badge").is_none())
     );
     graph.components[0].members.clear();
-    let empty = cards(&graph).remove(0);
+    let empty = cards(&graph, crate::svg::AddressFormat::Qualified).remove(0);
     assert!(empty.height > 28);
     assert!(empty.height < output.height);
     assert!(!empty.content.contains(">Members</text>"));
@@ -411,6 +418,7 @@ fn long_member_lists_and_multiple_components_wrap_without_losing_text() {
         let mut component = template.clone();
         component.id = format!("component-{i}");
         component.label = format!("Group {i} {}", "長い名前".repeat(24));
+        component.label_reference = None;
         component.entity = crate::model::ArchitectureEntity::synthetic(
             "test",
             &component.id,
@@ -425,7 +433,7 @@ fn long_member_lists_and_multiple_components_wrap_without_losing_text() {
         component.members.push(component.members[0].clone());
         graph.components.push(component);
     }
-    let cards = cards(&graph);
+    let cards = cards(&graph, crate::svg::AddressFormat::Qualified);
     assert_eq!(cards.len(), 5);
     for card in &cards {
         assert!(card.width <= 640);
@@ -489,7 +497,10 @@ fn long_member_lists_and_multiple_components_wrap_without_losing_text() {
                 .filter(|n| n.has_tag_name("tspan"))
                 .collect();
             let visible: String = lines.iter().filter_map(|n| n.text()).collect();
-            let expected = address.to_string();
+            let expected = node.map_or_else(
+                || address.to_string(),
+                |node| node.resource_address().qualified().into_owned(),
+            );
             assert_eq!(visible, expected);
             if address.contains("長いモジュール") {
                 assert!(lines.len() > 1);
@@ -528,7 +539,7 @@ fn long_member_lists_and_multiple_components_wrap_without_losing_text() {
     }
     assert_eq!(
         crate::svg::annotations::Area::flow(
-            super::cards(&graph),
+            super::cards(&graph, crate::svg::AddressFormat::Qualified),
             1500,
             crate::layout::Point { x: 40, y: 160 },
             40,

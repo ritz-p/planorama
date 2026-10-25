@@ -108,7 +108,9 @@ fn bundled_stars_avoid_cards_and_keep_individual_svg_relationships() {
         assert_eq!(svg.matches("data-endpoint=\"source\"").count(), 3);
         for edge in &graph.edges {
             let (a, b) = edge.endpoints();
-            assert!(svg.contains(&format!("<title>test.n{a} → test.n{b}</title>")));
+            assert!(svg.contains(&format!(
+                "<title>module.root.test.n{a} → module.root.test.n{b}</title>"
+            )));
         }
         assert_eq!(svg, crate::svg::render(&graph, &Layout::new(&graph)));
     }

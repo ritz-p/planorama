@@ -142,7 +142,7 @@ pub(crate) fn render_report(
     let mut states = Vec::with_capacity(prepared_graphs.len());
     for (id, graph) in &prepared_graphs {
         let layout = Layout::new(graph);
-        let index = super::relationship_index::Index::new(graph, &layout);
+        let index = super::relationship_index::Index::with_format(graph, &layout, format);
         let cards = super::annotation_cards(graph, &index, format);
         width = width.max(super::annotations::Area::required_width(
             &cards,
@@ -307,13 +307,27 @@ pub(crate) fn render_report(
         let action_metadata = output_action
             .map(|action| format!(" data-output-action=\"{}\"", super::label(action)))
             .unwrap_or_default();
+        let endpoint_address = |state: &StateId, address: &str| {
+            architecture.states[state]
+                .nodes
+                .iter()
+                .find(|node| node.address == address && node.deposed_key.is_none())
+                .map_or_else(
+                    || address.to_owned(),
+                    |node| {
+                        node.resource_address()
+                            .formatted(matches!(format, super::AddressFormat::Qualified))
+                            .into_owned()
+                    },
+                )
+        };
         let title = super::escape(&format!(
             "{}:{} -> {}:{} via {}.outputs.{} (cross-state dependency)",
             edge.from.state.as_str(),
-            edge.from.address,
+            endpoint_address(&edge.from.state, &edge.from.address),
             edge.to.state.as_str(),
-            edge.to.address,
-            remote,
+            endpoint_address(&edge.to.state, &edge.to.address),
+            endpoint_address(&edge.to.state, remote),
             output
         ));
         writeln!(links, r##"<path data-edge-kind="dependency" data-cross-state="true"{action_metadata} data-source="{source}" data-target="{target}" data-source-port="{source_port}" data-target-port="{target_port}" data-source-state="{}" data-target-state="{}" data-remote-state="{}" data-output="{}" d="{}" fill="none" stroke="#2563eb" stroke-width="1.5" stroke-dasharray="7 4" marker-end="url(#cross-state-arrow)"><title>{title}</title></path>"##, super::escape(edge.from.state.as_str()),super::escape(edge.to.state.as_str()),super::escape(remote),super::escape(output),path.trim()).unwrap();

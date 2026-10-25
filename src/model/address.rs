@@ -1,4 +1,4 @@
-use super::{EdgeChange, Node};
+use super::{EdgeChange, Node, TerraformEntityId};
 use std::borrow::Cow;
 
 #[cfg(test)]
@@ -29,8 +29,8 @@ impl Node {
     }
 }
 
-impl EdgeChange {
-    pub fn local_address(&self) -> &str {
+impl TerraformEntityId {
+    pub(crate) fn resource_address(&self) -> ResourceAddress<'_> {
         ResourceAddress {
             terraform_address: &self.address,
             module_path: match module_of(&self.address) {
@@ -38,11 +38,34 @@ impl EdgeChange {
                 module => ModulePath::Child(module),
             },
         }
-        .local()
+    }
+}
+
+impl EdgeChange {
+    pub(crate) fn resource_address(&self) -> ResourceAddress<'_> {
+        ResourceAddress {
+            terraform_address: &self.address,
+            module_path: match module_of(&self.address) {
+                "root" => ModulePath::Root,
+                module => ModulePath::Child(module),
+            },
+        }
+    }
+
+    pub fn local_address(&self) -> &str {
+        self.resource_address().local()
     }
 }
 
 impl<'a> ResourceAddress<'a> {
+    pub(crate) fn formatted(self, qualified: bool) -> Cow<'a, str> {
+        if qualified {
+            self.qualified()
+        } else {
+            Cow::Borrowed(self.terraform())
+        }
+    }
+
     pub fn terraform(self) -> &'a str {
         self.terraform_address
     }

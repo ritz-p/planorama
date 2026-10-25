@@ -100,7 +100,7 @@ class ViewerTests {
                 const doc = new DOMParser().parseFromString(window.exportText, 'image/svg+xml');
                 return {
                     unchanged: window.beforeExport === document.querySelector('#viewport').innerHTML,
-                    reference: doc.documentElement.textContent.includes('References: aws_iam_openid_connect_provider.workload'),
+                    reference: doc.documentElement.textContent.includes('References: module.root.aws_iam_openid_connect_provider.workload'),
                     broken: [...doc.querySelectorAll('[href]')].filter(el => !doc.getElementById(el.getAttribute('href').slice(1))).length,
                     private: window.exportText.includes('PRIVATE_'),
                     invalid: doc.querySelectorAll('parsererror').length

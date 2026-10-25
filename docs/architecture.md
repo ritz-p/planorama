@@ -191,6 +191,9 @@ space, and for wrapped move annotations before packing. Uses rows and embedded
 Route cards start below that complete header; rendering, child bounds and routing
 obstacles use the same offsets. Address formatting never changes resource identity,
 metadata or links.
+The same module-aware formatting applies to annotation sources, component headings,
+parent/Uses references and endpoint titles; [configuration](configuration.md#cli-output-and-addresses)
+defines the conservative fallback for historical and unresolved identities.
 Imported resources reserve a separate badge row in spatial, logical, embedded
 Route and component-member presentations. Shared measurements include this height
 when placing subsequent text and child bounds. Badges stay separate from service

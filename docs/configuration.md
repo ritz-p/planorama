@@ -8,6 +8,20 @@ The default is SVG with `diagram.svg`; HTML defaults to `diagram.html`.
 `--address-format terraform` uses native Terraform addresses. Both preserve full
 identities and wrap long addresses rather than truncating them.
 
+The selected format applies to resource/container cards, embedded members and
+routes, Logical Resources, Logical Component members and source-backed headings,
+Relationship Resources sources/endpoints, and Uses/parent/reference rows in SVG
+and offline HTML. Named-state prefixes, data/managed identity, instance keys and
+deposed identity remain distinct. Measurements reserve space for either format.
+Known provenance/reference identities use the same module-aware formatter even
+when their resource is lowered or absent from the selected view; this does not
+create a new navigation target. Unresolved identifiers and unavailable component
+members without unique identity context remain verbatim and unlinked. Historical
+`Moved from:` addresses retain the reported spelling because a previous object's
+full context may be unavailable. Free-form labels and check-object names are not
+interpreted as resource identities. DOM IDs, canonical metadata, search identities
+and the viewer's Copy Terraform address behavior are unchanged.
+
 `-` selects stdin or stdout. For example, in a POSIX shell:
 
 ```sh

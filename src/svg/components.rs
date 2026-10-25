@@ -18,7 +18,7 @@ pub(super) fn membership(graph: &Graph) -> BTreeMap<&str, &str> {
         .collect()
 }
 
-pub(super) fn cards(graph: &Graph) -> Vec<Card> {
+pub(super) fn cards(graph: &Graph, address_format: super::AddressFormat) -> Vec<Card> {
     let mut nodes = BTreeMap::<_, Vec<_>>::new();
     for node in &graph.nodes {
         nodes.entry(node.address.as_str()).or_default().push(node);
@@ -28,8 +28,8 @@ pub(super) fn cards(graph: &Graph) -> Vec<Card> {
     components.into_iter().map(|component| {
         let dom_id = super::identity::architecture(&component.entity.id);
         let architecture_id = super::escape(component.entity.id.as_str());
-        let label = super::escape(&component.label);
-        let heading = &component.label;
+        let heading = component.label_reference.as_ref().map_or_else(|| component.label.clone(), |reference| format!("{}{}{}", reference.prefix, reference.source.resource_address().formatted(matches!(address_format, super::AddressFormat::Qualified)), reference.suffix));
+        let label = super::escape(&heading);
         let mut members: Vec<_> = component.members.iter().collect();
         members.sort();
         members.dedup();
@@ -44,7 +44,7 @@ pub(super) fn cards(graph: &Graph) -> Vec<Card> {
                     }
                 }
             });
-            let text = (*address).clone();
+            let text = node.map_or_else(|| (*address).clone(), |node| node.resource_address().formatted(matches!(address_format, super::AddressFormat::Qualified)).into_owned());
             (address, node, text)
         }).collect();
         let mut scope = crate::view::scope::component(rows.iter().map(|(_, node, _)| *node));
@@ -56,7 +56,7 @@ pub(super) fn cards(graph: &Graph) -> Vec<Card> {
         let limit = (width - 32) / 8;
         let mut svg = format!(r#"<g id="{dom_id}" data-architecture-id="{architecture_id}" data-entity-kind="synthetic" data-component-id="{}" data-component-kind="{}"><title>{label}</title>"#, super::escape(&component.id), super::escape(&component.kind));
         let mut y = 28;
-        for line in wrap(heading, limit) {
+        for line in wrap(&heading, limit) {
             writeln!(svg, r##"<text x="16" y="{y}" font-size="13" font-weight="700" fill="#5b21b6">{}</text>"##, super::escape(line)).unwrap();
             y += 20;
         }
@@ -67,7 +67,7 @@ pub(super) fn cards(graph: &Graph) -> Vec<Card> {
         let member_width = width - 32;
         for ((address, node, text), member_scope) in rows.into_iter().zip(member_scopes) {
             let title = match node {
-                Some(node) => format!("{}; {}{}{}{}", node.resource_address().qualified(), super::operations::label(node.action, &node.metadata), super::operations::details(&node.metadata), node.previous_address.as_ref().map(|address| format!("; moved from: {address}")).unwrap_or_default(), node.deposed_key.as_ref().map(|key| format!("; deposed: {key}")).unwrap_or_default()),
+                Some(node) => format!("{}; {}{}{}{}", node.resource_address().formatted(matches!(address_format, super::AddressFormat::Qualified)), super::operations::label(node.action, &node.metadata), super::operations::details(&node.metadata), node.previous_address.as_ref().map(|address| format!("; moved from: {address}")).unwrap_or_default(), node.deposed_key.as_ref().map(|key| format!("; deposed: {key}")).unwrap_or_default()),
                 None => (*address).clone(),
             };
             let lines = wrap_address(&text, member_width / 8);

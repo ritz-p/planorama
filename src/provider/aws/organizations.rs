@@ -185,6 +185,11 @@ pub(crate) fn roots(plan: &TerraformPlan) -> Vec<SyntheticComponent> {
                     id: format!("organization_root:{key}"),
                     kind: "organization_root".into(),
                     label: format!("Derived Organization Root: {key}"),
+                    label_reference: Some(crate::model::ComponentLabelReference {
+                        prefix: "Derived Organization Root: ",
+                        source: node.into(),
+                        suffix: format!(".roots[{index}]"),
+                    }),
                     members: vec![node.address.clone()],
                 }
             })

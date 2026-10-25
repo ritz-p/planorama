@@ -67,7 +67,7 @@ fn explicit_spatial_types_preserve_semantics_references_and_selection() {
                 let rows = |node: &crate::model::Node| {
                     view::references::rows(node)
                         .iter()
-                        .map(|row| row.label(false))
+                        .map(|row| row.label(false, true))
                         .collect::<Vec<_>>()
                 };
                 assert_eq!(rows(before), rows(after));

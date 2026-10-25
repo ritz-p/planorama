@@ -159,7 +159,7 @@ mod checks;
 mod components;
 pub(crate) use address::module_of;
 pub use checks::{CheckInstance, CheckResult};
-pub use components::SyntheticComponent;
+pub use components::{ComponentLabelReference, SyntheticComponent};
 pub mod cross_state;
 mod diagnostics;
 mod graphs;
