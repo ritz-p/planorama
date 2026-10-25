@@ -1,6 +1,7 @@
 pub(crate) mod card;
 mod filter;
 pub(crate) mod geometry;
+pub(crate) mod heading;
 pub(crate) mod presentation;
 pub(crate) mod purpose;
 pub(crate) mod references;

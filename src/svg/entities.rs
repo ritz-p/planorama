@@ -30,10 +30,3 @@ pub(super) fn import_badge(node: &Node, x: usize, y: usize) -> String {
         y + 13
     )
 }
-
-pub(super) fn type_limit(mode: EntityMode) -> usize {
-    match mode {
-        EntityMode::Data => 18,
-        EntityMode::Managed => 25,
-    }
-}

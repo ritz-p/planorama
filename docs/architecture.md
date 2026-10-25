@@ -186,7 +186,13 @@ line break. An individual token wider than the available space falls back to
 UTF-8 character boundaries; every delimiter and space is preserved. Ordinary
 explanatory text keeps its separate wrapping behavior.
 Resource headings display the complete selected address. Shared measurements
-reserve enough height for both native and qualified headings, including icon
+also wrap complete Terraform type/action headings without ellipsis. Ordinary and
+embedded cards share the heading text and line-spacing rules. Ordinary headers
+reserve separate columns for role marks, top-right resource/service labels and
+external indicators; extra heading lines move import badges, addresses, references
+and children down before layout and routing. Logical Resources retain their full
+group-level type heading without adding redundant per-resource type fields.
+Address measurements reserve enough height for both native and qualified headings, including icon
 space, and for wrapped move annotations before packing. Uses rows and embedded
 Route cards start below that complete header; rendering, child bounds and routing
 obstacles use the same offsets. Address formatting never changes resource identity,

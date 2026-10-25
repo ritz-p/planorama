@@ -34,6 +34,9 @@ mod composition_tests;
 #[cfg(test)]
 #[path = "../tests/unit/svg.rs"]
 mod tests;
+#[cfg(test)]
+#[path = "../tests/unit/svg/type_headings.rs"]
+mod type_heading_tests;
 
 use crate::layout::Layout;
 use crate::model::architecture::{Action, EdgeKind, Graph};
@@ -569,25 +572,26 @@ fn render_with_index(
             x + 12,
             y + 28 + metrics.service_height,
         ));
-        let visible_operation = operations::action_label(node.action, &node.metadata);
-        writeln!(
-            svg,
-            r#"<text x="{}" y="{}" font-size="11" fill="{border}">{} · {}</text>"#,
-            x + 12 + role_inset,
-            y + 20 + heading_offset,
-            escape(&shorten(
-                &node.resource_type,
-                entities::type_limit(node.mode).saturating_sub(
-                    visible_operation
-                        .len()
-                        .saturating_sub(label(node.action).len())
-                )
-            )),
-            visible_operation
-        )
-        .unwrap();
+        let type_heading = crate::view::heading::text(node, false);
+        for (line, text) in crate::view::heading::lines(&type_heading, metrics.type_line_limit)
+            .iter()
+            .enumerate()
+        {
+            writeln!(
+                svg,
+                r#"<text data-resource-type-heading="true" x="{}" y="{}" font-size="11" fill="{border}" xml:space="preserve">{}</text>"#,
+                x + 12 + role_inset,
+                y + 20 + heading_offset + line * crate::view::heading::LINE_HEIGHT,
+                escape(text)
+            )
+            .unwrap();
+        }
         if let Some(icon) = icon {
-            svg.push_str(&icons::render(icon, x + 12, y + 28 + metrics.import_height));
+            svg.push_str(&icons::render(
+                icon,
+                x + 12,
+                y + 28 + metrics.import_height + metrics.service_height,
+            ));
         }
         svg.push_str(&icons::service_name(
             node,

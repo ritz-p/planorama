@@ -71,8 +71,9 @@ below; unlisted names wrap in full. Unknown provider/type retains its existing
 neutral fallback. No name, ARN, attribute value or resource-prefix inference is used.
 
 Spatial labels share the top row with the action/type text and role mark. Cards
-grow horizontally to reserve space for the label and external indicator; imports
-and complete addresses appear below. The label ends 8px inside the right edge.
+reserve separate space for the label and external indicator. Complete Terraform
+types and operations wrap instead of being shortened; imports and complete
+addresses appear below the measured heading. The label ends 8px inside the right edge.
 Containers use their enclosing header's right edge; embedded members use their
 own card's right edge. Logical Resources show one label to the right of each
 action-section heading, with 12px clearance inside its frame; individual rows do
@@ -82,8 +83,9 @@ and 4px vertical padding: a one-line background is 32px high. Measurements reser
 space before subsequent content. Long labels wrap at the available width and expand header height,
 without reducing the font or truncating text. Logical action headings, counts,
 labels and the gap between them are measured together before positioning rows.
-Embedded members retain their combined address/action line below the
-label. There is no smaller-label exception for logical or embedded rows.
+Embedded members retain their complete address below the label and show the
+operation in the separate type heading. There is no smaller-label exception for
+logical or embedded rows.
 
 Embedded Terraform resources, including Routes, have a separate complete
 `resource_type · operation` heading above their badges and address. Long headings
