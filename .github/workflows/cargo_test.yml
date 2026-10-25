@@ -69,7 +69,7 @@ jobs:
       CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_LINKER: /usr/local/bin/planorama-native-linker
       RUSTC_WRAPPER: sccache
       CARGO_INCREMENTAL: '0'
-      SCCACHE_DIR: ${{ runner.temp }}/sccache
+      SCCACHE_DIR: ${{ github.workspace }}/../planorama-sccache
       SCCACHE_CACHE_SIZE: 2G
     steps:
       - uses: actions/checkout@v7.0.1
