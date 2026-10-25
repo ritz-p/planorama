@@ -5,6 +5,7 @@ pub(crate) const LINE_LIMIT: usize = (WIDTH - 24) / 8;
 
 pub(crate) struct Row {
     pub text: String,
+    pub qualified_text: Option<String>,
     pub target: Option<TerraformEntityId>,
     pub moved: bool,
     pub destination: bool,
@@ -76,16 +77,13 @@ impl Card<'_> {
                 .iter()
                 .enumerate()
                 .map(|(index, r)| {
-                    let lines = r.lines(&r.text).len();
+                    let lines = r.lines(&r.text).len().max(
+                        r.qualified_text
+                            .as_deref()
+                            .map_or(0, |text| r.lines(text).len()),
+                    );
                     let lines = if index == 0 && self.node.is_some() {
-                        self.node
-                            .filter(|node| node.member_owner.is_some())
-                            .map_or(lines, |node| {
-                                lines
-                                    .max(r.lines(&heading(node, true)).len())
-                                    .max(r.lines(&heading(node, false)).len())
-                            })
-                            .max(2)
+                        lines.max(2)
                     } else {
                         lines
                     };
@@ -146,6 +144,7 @@ pub(crate) fn insets(graph: &Graph) -> Vec<usize> {
 fn details(entry: &RouteEntry) -> Vec<Row> {
     vec![
         Row {
+            qualified_text: None,
             text: format!(
                 "Destination: {}",
                 entry.destination.as_deref().unwrap_or("unresolved")
@@ -156,8 +155,16 @@ fn details(entry: &RouteEntry) -> Vec<Row> {
             address: false,
         },
         Row {
+            qualified_text: match (&entry.target_kind, &entry.target) {
+                (Some(kind), Some(target)) => {
+                    Some(target_text(&format!("Target ({kind})"), target, true))
+                }
+                _ => None,
+            },
             text: match (&entry.target_kind, &entry.target) {
-                (Some(kind), Some(target)) => format!("Target ({kind}): {}", target.address),
+                (Some(kind), Some(target)) => {
+                    target_text(&format!("Target ({kind})"), target, false)
+                }
                 _ => "Target: unresolved / unsupported".into(),
             },
             target: entry.target.clone(),
@@ -168,12 +175,23 @@ fn details(entry: &RouteEntry) -> Vec<Row> {
     ]
 }
 
+fn target_text(label: &str, target: &TerraformEntityId, qualified: bool) -> String {
+    let address = target.resource_address().formatted(qualified);
+    let deposed = target
+        .deposed_key
+        .as_ref()
+        .map(|key| format!(" (deposed: {key})"))
+        .unwrap_or_default();
+    format!("{label}: {address}{deposed}")
+}
+
 pub(crate) fn cards(graph: &Graph, parent: usize) -> Vec<Card<'_>> {
     let node = &graph.nodes[parent];
     let mut cards = Vec::new();
     for entry in &node.routes.entries {
         let inline = node.routes.inline;
         let mut rows = vec![Row {
+            qualified_text: None,
             text: if inline {
                 "Inline route (table action)".into()
             } else {
@@ -187,6 +205,7 @@ pub(crate) fn cards(graph: &Graph, parent: usize) -> Vec<Card<'_>> {
         rows.extend(details(entry));
         if !inline && node.routes.owner.is_none() {
             rows.push(Row {
+                qualified_text: None,
                 text: "Route Table: unresolved".into(),
                 target: None,
                 moved: false,
@@ -209,6 +228,7 @@ pub(crate) fn cards(graph: &Graph, parent: usize) -> Vec<Card<'_>> {
     children.sort_by_key(|(_, n)| &n.entity.id);
     for (index, child) in children {
         let mut rows = vec![Row {
+            qualified_text: Some(heading(child, true)),
             text: heading(child, false),
             target: None,
             moved: false,
@@ -217,6 +237,7 @@ pub(crate) fn cards(graph: &Graph, parent: usize) -> Vec<Card<'_>> {
         }];
         if let Some(owner) = &child.member_owner {
             rows.push(Row {
+                qualified_text: None,
                 text: super::scope::label(child.entity.scope.as_ref(), &child.provider),
                 target: None,
                 moved: false,
@@ -230,7 +251,8 @@ pub(crate) fn cards(graph: &Graph, parent: usize) -> Vec<Card<'_>> {
                         .is_some_and(|target| target.state.is_none() && target.id == owner.target)
             }) {
                 rows.push(Row {
-                    text: format!("{}: {}", owner.label, node.address),
+                    qualified_text: Some(target_text(owner.label, &owner.target, true)),
+                    text: target_text(owner.label, &owner.target, false),
                     target: Some(owner.target.clone()),
                     moved: false,
                     destination: false,
@@ -240,6 +262,7 @@ pub(crate) fn cards(graph: &Graph, parent: usize) -> Vec<Card<'_>> {
         }
         if let Some(previous) = &child.previous_address {
             rows.push(Row {
+                qualified_text: None,
                 text: super::text::moved_from(previous),
                 target: None,
                 moved: true,
@@ -252,6 +275,7 @@ pub(crate) fn cards(graph: &Graph, parent: usize) -> Vec<Card<'_>> {
             if routed(graph, index) {
                 detail.truncate(1);
                 detail.push(Row {
+                    qualified_text: None,
                     text: "Next hop".into(),
                     target: None,
                     moved: false,
@@ -296,6 +320,7 @@ pub(crate) fn cards(graph: &Graph, parent: usize) -> Vec<Card<'_>> {
         related.dedup();
         for (label, other) in related {
             rows.push(Row {
+                qualified_text: Some(format!("{label}: {}", other.resource_address().qualified())),
                 text: format!("{label}: {}", other.address),
                 target: other.entity.provenance.first().cloned(),
                 moved: false,
@@ -312,16 +337,18 @@ pub(crate) fn cards(graph: &Graph, parent: usize) -> Vec<Card<'_>> {
     for card in &mut cards {
         for row in &mut card.rows {
             if let Some(id) = &row.target {
-                match graph
+                let status = match graph
                     .nodes
                     .iter()
                     .find(|n| n.entity.provenance.contains(id))
                 {
-                    None => row.text.push_str(" (unavailable)"),
-                    Some(n) if n.placement == crate::model::Placement::Logical => {
-                        row.text.push_str(" (nonspatial)")
-                    }
-                    _ => {}
+                    None => " (unavailable)",
+                    Some(n) if n.placement == crate::model::Placement::Logical => " (nonspatial)",
+                    _ => "",
+                };
+                row.text.push_str(status);
+                if let Some(text) = &mut row.qualified_text {
+                    text.push_str(status);
                 }
             }
         }

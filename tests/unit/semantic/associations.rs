@@ -60,7 +60,7 @@ fn lowering_preserves_every_action_in_relationship_and_legend() {
         };
         assert!(image.contains(&format!("{label} ({count})")));
         assert!(image.contains(&format!(
-            "association; {label}: aws_route_table_association.private"
+            "association; {label}: module.root.aws_route_table_association.private"
         )));
         assert!(
             image

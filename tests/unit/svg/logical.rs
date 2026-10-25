@@ -1206,7 +1206,17 @@ fn shared_profiles_and_long_reference_lists_are_fully_visible() {
                         .filter(|n| n.has_tag_name("text"))
                         .filter_map(|n| n.text())
                         .collect::<String>();
-                    visible == format!("References: {address}")
+                    visible
+                        == format!(
+                            "References: {}",
+                            graph
+                                .nodes
+                                .iter()
+                                .find(|node| &node.address == address)
+                                .unwrap()
+                                .resource_address()
+                                .qualified()
+                        )
                 })
         );
     }

@@ -43,18 +43,21 @@ fn real_plan_renders_module_and_data_source_dependencies() {
         28
     );
     for (source, target) in [
-        ("terraform_data.independent", "terraform_data.explicit"),
         (
-            "terraform_data.ready",
-            "data.terraform_remote_state.after_ready",
+            "module.root.terraform_data.independent",
+            "module.root.terraform_data.explicit",
         ),
         (
-            "data.terraform_remote_state.existing",
-            "terraform_data.from_state",
+            "module.root.terraform_data.ready",
+            "module.root.data.terraform_remote_state.after_ready",
         ),
         (
-            "data.terraform_remote_state.after_ready",
-            "terraform_data.from_state",
+            "module.root.data.terraform_remote_state.existing",
+            "module.root.terraform_data.from_state",
+        ),
+        (
+            "module.root.data.terraform_remote_state.after_ready",
+            "module.root.terraform_data.from_state",
         ),
         (
             "module.service[&quot;api&quot;].terraform_data.worker[0]",

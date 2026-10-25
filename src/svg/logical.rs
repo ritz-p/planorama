@@ -71,6 +71,7 @@ fn resource_row(
     lines: &[(String, bool)],
     width: usize,
     origin_y: usize,
+    address_format: super::AddressFormat,
 ) -> (String, usize) {
     let operation = super::operations::label(node.action, &node.metadata);
     let mut svg = format!(
@@ -138,6 +139,7 @@ fn resource_row(
         16,
         y + 8,
         width - 32,
+        address_format,
     ));
     let underline_y = y + reference_height - if reference_height == 0 { 12 } else { 0 };
     let underline_end = width - 16;
@@ -233,7 +235,7 @@ pub(super) fn cards(graph: &Graph, address_format: super::AddressFormat) -> Vec<
             let (mut content, header_height) = action_header(members[0].0, &heading, width, start);
             y += header_height;
             for (node, lines) in members {
-                let (row, height) = resource_row(graph, node, lines, width, y);
+                let (row, height) = resource_row(graph, node, lines, width, y, address_format);
                 content.push_str(&row);
                 y += height;
             }

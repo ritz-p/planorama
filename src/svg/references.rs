@@ -6,7 +6,7 @@ use std::fmt::Write;
 #[path = "../../tests/unit/svg/references.rs"]
 mod tests;
 
-fn description(row: &Row<'_>) -> String {
+fn description(row: &Row<'_>, qualified: bool) -> String {
     if row.reference.kind == crate::model::ReferenceKind::Information {
         return row.reference.label.into();
     }
@@ -18,17 +18,21 @@ fn description(row: &Row<'_>) -> String {
     ) {
         return format!(
             "{}; verified deployment-scope correspondence, not a Terraform dependency",
-            row.label(true)
+            row.label(true, qualified)
         );
     }
     let target = row.target.map_or_else(
         || "unresolved".into(),
-        |t| match &t.id.deposed_key {
-            Some(key) => format!("{} (deposed: {key})", t.id.address),
-            None => match &t.state {
-                Some(state) => format!("{}:{}", state.as_str(), t.id.address),
-                None => t.id.address.clone(),
-            },
+        |t| {
+            let address = t.id.resource_address().formatted(qualified);
+            let mut label = t.state.as_ref().map_or_else(
+                || address.to_string(),
+                |state| format!("{}:{address}", state.as_str()),
+            );
+            if let Some(key) = &t.id.deposed_key {
+                label.push_str(&format!(" (deposed: {key})"));
+            }
+            label
         },
     );
     format!(
@@ -51,12 +55,24 @@ fn description(row: &Row<'_>) -> String {
     )
 }
 
-pub(super) fn render(graph: &Graph, node: &Node, x: usize, y: usize, width: usize) -> String {
+pub(super) fn render(
+    graph: &Graph,
+    node: &Node,
+    x: usize,
+    y: usize,
+    width: usize,
+    address_format: super::AddressFormat,
+) -> String {
     let rows = rows(node);
     if rows.is_empty() {
         return String::new();
     }
-    let complete = rows.iter().map(description).collect::<Vec<_>>().join("\n");
+    let qualified = matches!(address_format, super::AddressFormat::Qualified);
+    let complete = rows
+        .iter()
+        .map(|row| description(row, qualified))
+        .collect::<Vec<_>>()
+        .join("\n");
     let heading = if rows.iter().all(|r| r.reference.dependency) {
         "Dependencies"
     } else if rows.iter().any(|r| r.reference.dependency) {
@@ -113,7 +129,10 @@ pub(super) fn render(graph: &Graph, node: &Node, x: usize, y: usize, width: usiz
                 available.map(|_| super::identity::account_scope(account))
             };
         }
-        let label = row.label(href.is_some());
+        let label = row.label(
+            href.is_some(),
+            matches!(address_format, super::AddressFormat::Qualified),
+        );
         if let Some(href) = &href {
             write!(
                 svg,
@@ -141,7 +160,12 @@ pub(super) fn render(graph: &Graph, node: &Node, x: usize, y: usize, width: usiz
             )
             .unwrap();
         }
-        write!(svg, "<title>{}</title>", super::escape(&description(row))).unwrap();
+        write!(
+            svg,
+            "<title>{}</title>",
+            super::escape(&description(row, qualified))
+        )
+        .unwrap();
         for (line, text) in row.lines(&label, text_width).iter().enumerate() {
             writeln!(
                 svg,

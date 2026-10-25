@@ -939,7 +939,9 @@ fn reciprocal_relationships_and_self_loops_use_distinct_incoming_and_outgoing_po
         assert_ne!(layout.paths[2].first(), layout.paths[2].last());
         let output = svg::render(&graph, &layout);
         for (index, action) in ["create", "update", "delete"].iter().enumerate() {
-            assert!(output.contains(&format!("association; {action}: test.relationship{index}")));
+            assert!(output.contains(&format!(
+                "association; {action}: module.root.test.relationship{index}"
+            )));
             assert!(
                 output
                     .lines()
@@ -1010,8 +1012,8 @@ fn parallel_association_changes_have_distinct_ports_and_paths() {
     assert_ne!(layout.paths[0].last(), layout.paths[1].last());
     let output = svg::render(&graph, &layout);
     for expected in [
-        "association; create: aws_route_table_association.private",
-        "association; update: aws_route_table_association.other",
+        "association; create: module.root.aws_route_table_association.private",
+        "association; update: module.root.aws_route_table_association.other",
         "data-directionality=\"undirected\"",
         "stroke-dasharray=\"7 4\"",
     ] {

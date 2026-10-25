@@ -260,7 +260,11 @@ fn ssm_preserves_parameter_identity_without_values_or_path_inference() {
                     .content
                     .contains("SYNTHETIC_PARAMETER_NOT_FOR_OUTPUT")
             );
-            assert!(output.content.contains("References: aws_ssm_parameter.app"));
+            assert!(
+                output
+                    .content
+                    .contains("References: module.root.aws_ssm_parameter.app")
+            );
         }
     }
     let graph = semantic::transform(&plan::parse(fixture).unwrap());

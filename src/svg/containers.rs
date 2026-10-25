@@ -32,7 +32,11 @@ pub(super) fn background(graph: &Graph, layout: &Layout<'_>, node: usize) -> &'s
     shades[depth.min(4)]
 }
 
-pub(super) fn boundaries(graph: &Graph, layout: &Layout<'_>) -> String {
+pub(super) fn boundaries(
+    graph: &Graph,
+    layout: &Layout<'_>,
+    address_format: super::AddressFormat,
+) -> String {
     let mut svg = String::new();
     let radius = crate::view::geometry::CONTAINER_RADIUS;
     let stroke = crate::view::geometry::CONTAINER_STROKE as f64 / 4.0;
@@ -57,7 +61,7 @@ pub(super) fn boundaries(graph: &Graph, layout: &Layout<'_>) -> String {
         } else {
             "data-route-table"
         };
-        writeln!(svg, r##"<g {attribute}="{id}"><title>{}</title><rect x="{x}" y="{y}" width="{width}" height="{height}" rx="{radius}" fill="{background}" stroke="{border}" stroke-width="{stroke}"{mode}/></g>"##, escape(&graph.nodes[node].address)).unwrap();
+        writeln!(svg, r##"<g {attribute}="{id}"><title>{}</title><rect x="{x}" y="{y}" width="{width}" height="{height}" rx="{radius}" fill="{background}" stroke="{border}" stroke-width="{stroke}"{mode}/></g>"##, escape(&graph.nodes[node].resource_address().formatted(matches!(address_format, super::AddressFormat::Qualified)))).unwrap();
     }
     svg
 }

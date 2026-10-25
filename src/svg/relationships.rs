@@ -114,16 +114,24 @@ fn additional_resources(graph: &Graph) -> usize {
         .count()
 }
 
-pub(super) fn title(graph: &Graph, edge: &Edge, semantic_edges: bool) -> String {
+pub(super) fn title(
+    graph: &Graph,
+    edge: &Edge,
+    semantic_edges: bool,
+    address_format: super::AddressFormat,
+) -> String {
+    let qualified = matches!(address_format, super::AddressFormat::Qualified);
     let mut title = format!(
         "{} {} {}",
-        graph.nodes[edge.from].address,
+        graph.nodes[edge.from]
+            .resource_address()
+            .formatted(qualified),
         if edge.directionality() == crate::model::Directionality::Undirected {
             "↔"
         } else {
             "→"
         },
-        graph.nodes[edge.to].address
+        graph.nodes[edge.to].resource_address().formatted(qualified)
     );
     let kind = match edge.kind {
         EdgeKind::Dependency => "dependency",
@@ -139,7 +147,7 @@ pub(super) fn title(graph: &Graph, edge: &Edge, semantic_edges: bool) -> String 
             title,
             " ({kind}; {}: {})",
             super::operations::label(change.action, &change.metadata),
-            change.address
+            change.resource_address().formatted(qualified)
         )
         .unwrap(),
         None if semantic_edges => write!(title, " ({kind})").unwrap(),

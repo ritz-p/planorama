@@ -26,6 +26,9 @@ pub(crate) use states::render_report as render_states_report;
 pub use states::render_states;
 pub(crate) use states::{prefix as state_prefix, render_content as render_states_content};
 #[cfg(test)]
+#[path = "../tests/unit/svg/address_format.rs"]
+mod address_format_tests;
+#[cfg(test)]
 #[path = "../tests/unit/svg/composition.rs"]
 mod composition_tests;
 #[cfg(test)]
@@ -221,7 +224,7 @@ fn annotation_cards(
         (
             "Logical Components",
             style::LOGICAL_COMPONENTS,
-            components::cards(graph),
+            components::cards(graph, address_format),
         ),
         (
             "Relationship Resources",
@@ -256,7 +259,8 @@ pub(crate) fn render_report(
     report: Option<&mut serde_json::Value>,
 ) -> String {
     let options = options.into();
-    let relationship_index = relationship_index::Index::new(graph, layout);
+    let relationship_index =
+        relationship_index::Index::with_format(graph, layout, options.address_format);
     let sections = Sections::new(graph, layout, &relationship_index, options);
     if let Some(report) = report {
         let mut scene = crate::layout::diagnostics::Scene::default();
@@ -286,7 +290,7 @@ fn diagnostic_cards(graph: &Graph, layout: &Layout<'_>) -> serde_json::Value {
         "logical_resources": graph.nodes.iter().filter(|n| n.placement == crate::model::Placement::Logical).count(),
         "logical_groups": logical::group_count(graph),
         "embedded_routes": graph.nodes.iter().enumerate().map(|(i, _)| crate::view::routes::cards(graph, i).into_iter().filter(|card| card.node.is_none_or(|node| node.member_owner.is_none())).count()).sum::<usize>(),
-        "logical_components": components::cards(graph).len(),
+        "logical_components": components::cards(graph, AddressFormat::Qualified).len(),
         "relationship_groups": relationship_index::Index::new(graph, layout).cards().len(),
     });
     let members = graph
@@ -409,7 +413,7 @@ fn render_with_index(
         writeln!(svg, r##"<rect x="35" y="{y}" width="{}" height="{h}" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-dasharray="5 4"/><text x="52" y="{}" font-size="13" font-weight="700" fill="#475569"><title>{}</title>{}</text>"##, relationship_index.width - 70, y + 25, escape(module), escape(&shorten(module, 110))).unwrap();
     }
     svg.push_str(&scopes::render(graph, layout));
-    svg.push_str(&containers::boundaries(graph, layout));
+    svg.push_str(&containers::boundaries(graph, layout, address_format));
     for (index, (edge, points)) in graph.edges.iter().zip(&layout.paths).enumerate() {
         let relation = match edge.kind {
             EdgeKind::Dependency => " data-edge-kind=\"dependency\"",
@@ -420,7 +424,7 @@ fn render_with_index(
             EdgeKind::Connection => " data-edge-kind=\"connection\"",
             EdgeKind::Containment => " data-edge-kind=\"containment\"",
         };
-        let title = relationships::title(graph, edge, semantic_edges);
+        let title = relationships::title(graph, edge, semantic_edges, address_format);
         let operation = edge
             .change
             .as_ref()
@@ -621,6 +625,7 @@ fn render_with_index(
             x + 12,
             y + metrics.references_y,
             card_width - 24,
+            address_format,
         ));
         svg.push_str(&routes::render(
             graph,

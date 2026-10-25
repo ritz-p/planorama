@@ -70,9 +70,9 @@ fn policies_are_logical_and_add_verified_asg_context_without_spatial_paths() {
     assert_eq!(inverse.len(), 2);
     assert_eq!(graph.edges.len(), 2);
     assert!(Layout::new(&graph).paths.iter().all(Vec::is_empty));
-    assert!(output.contains("Auto Scaling group: aws_autoscaling_group.app"));
-    assert!(output.contains("Scaling policy: aws_autoscaling_policy.cpu"));
-    assert!(output.contains("Scaling policy: aws_autoscaling_policy.memory"));
+    assert!(output.contains("Auto Scaling group: module.root.aws_autoscaling_group.app"));
+    assert!(output.contains("Scaling policy: module.root.aws_autoscaling_policy.cpu"));
+    assert!(output.contains("Scaling policy: module.root.aws_autoscaling_policy.memory"));
 }
 
 #[test]

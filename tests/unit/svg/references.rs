@@ -104,10 +104,18 @@ fn every_remote_reference_keeps_its_full_state_qualified_label_and_link() {
     let output = render(&architecture);
     let doc = roxmltree::Document::parse(&output).unwrap();
     for address in &addresses {
+        let formatted = architecture.states[&producer]
+            .nodes
+            .iter()
+            .find(|node| &node.address == address)
+            .unwrap()
+            .resource_address()
+            .qualified();
         let link = doc
             .descendants()
             .find(|n| {
-                n.has_tag_name("a") && visible_text(*n) == format!("References: producer:{address}")
+                n.has_tag_name("a")
+                    && visible_text(*n) == format!("References: producer:{formatted}")
             })
             .unwrap();
         let href = link.attribute("href").unwrap().strip_prefix('#').unwrap();
@@ -149,9 +157,16 @@ fn full_reference_rows_fit_flat_nested_and_regional_geometry() {
                 .find(|n| n.attribute("data-resource-references").is_some())
                 .unwrap();
             for target in &addresses {
+                let formatted = graph
+                    .nodes
+                    .iter()
+                    .find(|node| &node.address == target)
+                    .unwrap()
+                    .resource_address()
+                    .qualified();
                 assert!(
                     references.children().any(|link| link.has_tag_name("a")
-                        && visible_text(link) == format!("References: {target}")),
+                        && visible_text(link) == format!("References: {formatted}")),
                     "missing {target}"
                 );
             }
@@ -328,14 +343,20 @@ fn full_reference_rows_fit_flat_nested_and_regional_geometry() {
         let filtered = svg::render(&focused, &Layout::new(&focused));
         let filtered_doc = roxmltree::Document::parse(&filtered).unwrap();
         for address in &addresses {
-            assert!(
-                filtered_doc
-                    .descendants()
-                    .any(
-                        |n| n.attribute("data-reference-status") == Some("unavailable")
-                            && visible_text(n) == format!("Unavailable — References: {address}")
-                    )
-            );
+            assert!(filtered_doc.descendants().any(|n| {
+                n.attribute("data-reference-status") == Some("unavailable")
+                    && visible_text(n)
+                        == format!(
+                            "Unavailable — References: {}",
+                            graph
+                                .nodes
+                                .iter()
+                                .find(|node| &node.address == address)
+                                .unwrap()
+                                .resource_address()
+                                .qualified()
+                        )
+            }));
         }
         for href in filtered_doc
             .descendants()

@@ -190,7 +190,7 @@ fn filtered_root_links_are_unavailable_without_restoring_source() {
     let rows = crate::view::references::rows(node);
     assert!(
         rows.iter()
-            .any(|row| row.label(false).contains("Unavailable"))
+            .any(|row| row.label(false, true).contains("Unavailable"))
     );
 }
 

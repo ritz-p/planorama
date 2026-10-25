@@ -58,8 +58,10 @@ underline below each complete wrapped item uses the original resource's canonica
 action color. Members link to the original spatial card or logical-resource row;
 missing or ambiguous targets use neutral underlines and non-clickable rows. Row measurements
 include wrapping, scope labels, badge height, the underline and spacing before the next member.
-Accessible titles preserve full qualified addresses and operation/move/deposed
+Visible addresses and accessible titles follow `address-format`, preserving operation/move/deposed
 context. These annotations do not affect architecture placement or routing.
+Source-backed component headings carry their original identity separately from
+their label text, so formatting does not guess an address from a label prefix.
 Imported members also show their own `import` badge in a reserved row. The badge
 follows the original member's metadata; the synthetic component and other members
 do not acquire an import operation. Visible member text and accessible titles keep

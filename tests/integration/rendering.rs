@@ -18,7 +18,7 @@ fn workload_security_groups_keep_policy_cards_and_individual_connections() {
     ] {
         for group in ["a", "b"] {
             assert!(svg.contains(&format!(
-                "aws_security_group.{group} ↔ {kind}.main (connection)"
+                "module.root.aws_security_group.{group} ↔ module.root.{kind}.main (connection)"
             )));
         }
     }
@@ -269,7 +269,7 @@ fn synthetic_components_are_distinct_and_link_to_original_changes() {
             .count(),
         4
     );
-    assert!(svg.contains(">Load balancer: aws_lb.app</text>"));
+    assert!(svg.contains(">Load balancer: module.root.aws_lb.app</text>"));
     assert!(!svg.contains("Logical component:"));
     assert!(!svg.contains(">Members</text>"));
     assert!(svg.contains("Action: import / update"));
@@ -297,7 +297,7 @@ fn referenced_ids_with_different_planned_values_keep_route_cards() {
     assert!(output.status.success());
     let svg = String::from_utf8(output.stdout).unwrap();
     let stderr = String::from_utf8(output.stderr).unwrap();
-    assert!(!svg.contains("association; replace: aws_route.default"));
+    assert!(!svg.contains("association; replace: module.root.aws_route.default"));
     assert!(svg.contains("data-terraform-address=\"aws_route.default\""));
     assert!(svg.contains("data-terraform-address=\"aws_route.second\""));
     assert!(stderr.contains("planned endpoint value is not proven"));
@@ -481,7 +481,7 @@ fn replacement_reasons_are_escaped_and_visible_on_cards_and_lowered_edges() {
     let svg = render(input.to_string().as_bytes());
     assert!(svg.contains("data-action-reason=\"replace_because_cannot_update\""));
     assert!(svg.contains("data-replace-paths=\"[[&quot;subnet_id&quot;]]\""));
-    assert!(svg.contains("association; replace: aws_route_table_association.private"));
+    assert!(svg.contains("association; replace: module.root.aws_route_table_association.private"));
     assert!(svg.contains("replacement paths:"));
 }
 
@@ -535,7 +535,9 @@ fn mixed_literal_security_group_ids_keep_dependency_edges_and_redacted_diagnosti
     let bytes = input.to_string();
     let svg = render(bytes.as_bytes());
     assert_eq!(svg.matches("data-edge-kind=\"connection\"").count(), 2);
-    assert!(svg.contains("aws_security_group.web → aws_instance.app (dependency)"));
+    assert!(svg.contains(
+        "module.root.aws_security_group.web → module.root.aws_instance.app (dependency)"
+    ));
     let result = support::run_with_args(bytes.as_bytes(), &["--diagnostics"]);
     assert!(result.status.success());
     assert_eq!(svg.as_bytes(), result.stdout);
@@ -559,7 +561,7 @@ fn security_groups_fixture_preserves_policy_cards_and_inspectable_connections() 
         ("shared", "aws_ecs_service.app"),
     ] {
         assert!(svg.contains(&format!(
-            "aws_security_group.{group} ↔ {target} (connection)"
+            "module.root.aws_security_group.{group} ↔ module.root.{target} (connection)"
         )));
         assert!(svg.contains(&format!(
             "data-terraform-address=\"aws_security_group.{group}\""
@@ -903,10 +905,10 @@ fn association_resources_are_lowered_by_the_cli() {
         include_str!("../../examples/association.svg").replace("\r\n", "\n")
     );
     assert!(svg.contains("3 resources (2 cards), 1 relationships"));
-    assert!(svg.contains("aws_subnet.private ↔ aws_route_table.private"));
+    assert!(svg.contains("module.root.aws_subnet.private ↔ module.root.aws_route_table.private"));
     assert!(!svg.contains("data-terraform-address=\"aws_route_table_association.private\""));
     assert!(svg.contains("data-source-address=\"aws_route_table_association.private\""));
-    assert!(svg.contains("association; create: aws_route_table_association.private"));
+    assert!(svg.contains("association; create: module.root.aws_route_table_association.private"));
     assert!(svg.contains("create (3)"));
     assert!(!svg.contains("reference edges"));
     assert!(!svg.contains("dependency → dependent"));
@@ -963,10 +965,10 @@ fn bundled_fixture_preserves_individual_dependency_arrows() {
     assert!(svg.contains("<circle "));
     for name in ["a", "b", "c"] {
         assert!(svg.contains(&format!(
-            "<title>terraform_data.seed → terraform_data.{name}</title>"
+            "<title>module.root.terraform_data.seed → module.root.terraform_data.{name}</title>"
         )));
         assert!(svg.contains(&format!(
-            "<title>terraform_data.{name} → terraform_data.aggregate</title>"
+            "<title>module.root.terraform_data.{name} → module.root.terraform_data.aggregate</title>"
         )));
     }
 }
@@ -1018,7 +1020,7 @@ fn mixed_aws_relationships_render_actions_without_helper_cards() {
     ] {
         assert!(!svg.contains(&format!("data-terraform-address=\"{kind}.main\"")));
         assert!(svg.contains(&format!("data-source-address=\"{kind}.main\"")));
-        assert!(svg.contains(&format!("association; {action}: {kind}.main")));
+        assert!(svg.contains(&format!("association; {action}: module.root.{kind}.main")));
         assert!(svg.contains(&format!("{action} (1)")));
     }
 }

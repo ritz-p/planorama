@@ -111,6 +111,14 @@ pub(super) fn infer(raw: &Input, graph: &Graph) -> Vec<SyntheticComponent> {
                 id: format!("logical:load_balancer:{address}"),
                 kind: "load_balancer".into(),
                 label: format!("Load balancer: {address}"),
+                label_reference: Some(crate::model::ComponentLabelReference {
+                    prefix: "Load balancer: ",
+                    source: crate::model::TerraformEntityId {
+                        address: address.clone(),
+                        deposed_key: raw.nodes[anchor].deposed_key.clone(),
+                    },
+                    suffix: String::new(),
+                }),
                 members: members.into_iter().collect(),
             }
         })

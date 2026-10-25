@@ -185,7 +185,9 @@ fn cross_state_edges_connect_real_resources_and_are_order_independent() {
     assert_eq!(svg, render(true));
     assert_eq!(svg.matches("data-cross-state=\"true\"").count(), 3);
     assert!(svg.contains("data-source-state=\"producer\" data-target-state=\"consumer\""));
-    assert!(svg.contains("producer:aws_subnet.app -&gt; consumer:aws_instance.app"));
+    assert!(svg.contains(
+        "producer:module.root.aws_subnet.app -&gt; consumer:module.root.aws_instance.app"
+    ));
     assert!(svg.contains("data-remote-state=\"data.terraform_remote_state.network\""));
     assert!(!svg.contains("TOP_SECRET"));
 }

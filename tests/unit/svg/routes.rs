@@ -431,7 +431,7 @@ fn route_children_keep_identity_palette_metadata_and_reference_edges() {
             .filter(|n| n.has_tag_name("text"))
             .filter_map(|n| n.text())
             .collect();
-        assert!(visible.starts_with("aws_route.default"));
+        assert!(visible.starts_with("module.root.aws_route.default"));
         assert!(!visible.contains(&format!("[{visible_operation}]")));
         let type_heading: String = child
             .descendants()

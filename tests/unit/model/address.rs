@@ -90,6 +90,12 @@ fn qualified_addresses_preserve_native_module_and_instance_identity() {
         assert_eq!(node.module, module);
         assert_eq!(address.terraform(), native);
         assert_eq!(address.qualified(), qualified);
+        let identity = crate::model::TerraformEntityId {
+            address: native.into(),
+            deposed_key: Some("old".into()),
+        };
+        assert_eq!(identity.resource_address().formatted(true), qualified);
+        assert_eq!(identity.resource_address().formatted(false), native);
         assert_eq!(address.local(), local);
         assert_eq!(address.qualified(), address.qualified());
     }

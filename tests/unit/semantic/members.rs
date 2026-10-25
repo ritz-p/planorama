@@ -291,7 +291,7 @@ fn cluster_members_preserve_semantics_and_reserve_final_bounds() {
         (children[0].origin.y + children[0].height) < children[1].origin.y
             || (children[1].origin.y + children[1].height) < children[0].origin.y
     );
-    assert!(output.contains("Referenced by: aws_instance.client"));
+    assert!(output.contains("Referenced by: module.root.aws_instance.client"));
     for (edge, path) in graph.edges.iter().zip(&layout.paths) {
         if edge.kind == EdgeKind::Dependency && edge.to == owner {
             assert!(path.len() >= 2);
