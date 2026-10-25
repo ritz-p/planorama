@@ -20,6 +20,8 @@ on:
       - .github/workflows/cargo_test.yml
       - .github/scripts/checkout-validation.sh
       - .github/scripts/test-suites.cjs
+      - scripts/install-mold.sh
+      - scripts/native-linker.sh
   pull_request:
     paths:
       - '**.rs'
@@ -33,6 +35,8 @@ on:
       - .github/workflows/cargo_test.yml
       - .github/scripts/checkout-validation.sh
       - .github/scripts/test-suites.cjs
+      - scripts/install-mold.sh
+      - scripts/native-linker.sh
   workflow_dispatch:
     inputs:
       pull_request:
