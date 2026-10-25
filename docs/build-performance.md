@@ -91,7 +91,7 @@ by target/profile/features/compiler flags. The engine's final Wasm link still
 runs through wasm-ld. Proc macros with undeclared filesystem inputs require care;
 this project uses serde/wasm-bindgen derives with normal declared inputs.
 
-CI disables incremental compilation only in the test jobs; incremental rustc
+CI disables incremental compilation in Cargo test and Browser Wasm jobs; incremental rustc
 invocations are not cacheable. Local Compose retains Cargo's default incremental
 behavior. sccache 0.10.0 refuses an explicit `CARGO_INCREMENTAL=1` environment;
 the local wrapper bypasses sccache in that case. No external cache service,

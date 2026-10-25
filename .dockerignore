@@ -1,5 +1,6 @@
 .git
 target
 output
+.wasm-ci
 *.tfplan
 plan.json
