@@ -567,8 +567,9 @@ class ViewerTests {
             for (const badge of badges) {
                 const row = badge.parentElement;
                 const a = badge.getBoundingClientRect();
-                for (const text of row.children) {
-                    if (text.tagName !== 'text') continue;
+                const action = [...row.children].find(e => e.tagName === 'text' && !e.hasAttribute('data-service-name') && (e.getAttribute('font-size') === '11' || row.dataset.placement === 'logical'));
+                if (!action || Number(action.getAttribute('y')) !== Number(badge.getAttribute('y')) + 20) problems.push('action row: ' + badge.dataset.displayName);
+                for (const text of row.querySelectorAll(':scope > text, :scope > [data-external] text')) {
                     const b = text.getBoundingClientRect();
                     if (text.hasAttribute('data-service-name')) {
                         if (getComputedStyle(text).fontSize !== '18px' || b.left < a.left - 0.1 || b.right > a.right + 0.1 || b.top < a.top - 0.1 || b.bottom > a.bottom + 0.1) problems.push(text.textContent);

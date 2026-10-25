@@ -1,11 +1,11 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="1406" viewBox="0 0 1100 1406" role="img" aria-labelledby="title description">
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="1334" viewBox="0 0 1100 1334" role="img" aria-labelledby="title description">
 <title id="title">Terraform plan</title>
 <desc id="description">5 resources (5 cards), 8 relationships. Lines show architectural relationships. Edge titles identify the relationship kind and Terraform change. Thin solid: dependency. Dashed: association. Thick dotted: connection. Nested boxes: containment. Edge color preserves the Terraform action when available. Service label backgrounds: orange = compute; green = storage; blue = network; red = IAM; gray = unclassified. Spatial card role marks: rounded rectangle = execution; cylinder = data store; hexagon = network.</desc>
-<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/></marker><mask id="container-occlusion-0" maskUnits="userSpaceOnUse" maskContentUnits="userSpaceOnUse" x="0" y="0" width="1100" height="848" style="mask-type:luminance"><rect width="1100" height="848" fill="white"/>
-<rect data-occluder="resource-6177735f7375626e65742e61-current" x="98" y="334" width="404" height="180" rx="14" fill="black"/>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/></marker><mask id="container-occlusion-0" maskUnits="userSpaceOnUse" maskContentUnits="userSpaceOnUse" x="0" y="0" width="1100" height="776" style="mask-type:luminance"><rect width="1100" height="776" fill="white"/>
+<rect data-occluder="resource-6177735f7375626e65742e61-current" x="98" y="310" width="404" height="156" rx="14" fill="black"/>
 </mask>
-<mask id="container-occlusion-1" maskUnits="userSpaceOnUse" maskContentUnits="userSpaceOnUse" x="0" y="0" width="1100" height="848" style="mask-type:luminance"><rect width="1100" height="848" fill="white"/>
-<rect data-occluder="resource-6177735f7375626e65742e62-current" x="98" y="550" width="404" height="180" rx="14" fill="black"/>
+<mask id="container-occlusion-1" maskUnits="userSpaceOnUse" maskContentUnits="userSpaceOnUse" x="0" y="0" width="1100" height="776" style="mask-type:luminance"><rect width="1100" height="776" fill="white"/>
+<rect data-occluder="resource-6177735f7375626e65742e62-current" x="98" y="502" width="404" height="156" rx="14" fill="black"/>
 </mask>
 </defs>
 <rect width="100%" height="100%" fill="#ffffff"/>
@@ -98,57 +98,56 @@
 </g>
 <g transform="translate(0 558)">
 <g data-architecture="true" transform="translate(0 0)">
-<g data-container="resource-6177735f7670632e6d61696e-current"><title>aws_vpc.main</title><rect x="60" y="160" width="840" height="608" rx="12" fill="#fefce8" stroke="#854d0e" stroke-width="2" data-mode="managed"/></g>
-<g data-container="resource-6177735f7375626e65742e61-current"><title>aws_subnet.a</title><rect x="100" y="336" width="400" height="176" rx="12" fill="#fef9c3" stroke="#854d0e" stroke-width="2" data-mode="managed"/></g>
-<g data-container="resource-6177735f7375626e65742e62-current"><title>aws_subnet.b</title><rect x="100" y="552" width="400" height="176" rx="12" fill="#fef9c3" stroke="#854d0e" stroke-width="2" data-mode="managed"/></g>
-<path d="M 500 401 L 514 401 Q 516 401 516 403 L 516 403 Q 516 405 518 405 L 540 405 " data-edge-kind="dependency" data-directionality="directed" data-source="resource-6177735f7375626e65742e61-current" data-target="resource-6177735f64625f7375626e65745f67726f75702e6d61696e-current" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)" mask="url(#container-occlusion-1)"><title>aws_subnet.a → aws_db_subnet_group.main (dependency)</title></path>
-<path d="M 500 446 L 516 446 Q 524 446 524 454 L 524 591 Q 524 599 532 599 L 540 599 " data-edge-kind="dependency" data-directionality="directed" data-source="resource-6177735f7375626e65742e61-current" data-target="resource-6177735f656c6173746963616368655f7375626e65745f67726f75702e6d61696e-current" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)" mask="url(#container-occlusion-1)"><title>aws_subnet.a → aws_elasticache_subnet_group.main (dependency)</title></path>
-<path d="M 500 617 L 508 617 Q 516 617 516 609 L 516 413 Q 516 405 524 405 L 540 405 " data-edge-kind="dependency" data-directionality="directed" data-source="resource-6177735f7375626e65742e62-current" data-target="resource-6177735f64625f7375626e65745f67726f75702e6d61696e-current" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)" mask="url(#container-occlusion-0)"><title>aws_subnet.b → aws_db_subnet_group.main (dependency)</title></path>
-<path d="M 500 662 L 516 662 Q 524 662 524 654 L 524 607 Q 524 599 532 599 L 540 599 " data-edge-kind="dependency" data-directionality="directed" data-source="resource-6177735f7375626e65742e62-current" data-target="resource-6177735f656c6173746963616368655f7375626e65745f67726f75702e6d61696e-current" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)" mask="url(#container-occlusion-0)"><title>aws_subnet.b → aws_elasticache_subnet_group.main (dependency)</title></path>
+<g data-container="resource-6177735f7670632e6d61696e-current"><title>aws_vpc.main</title><rect x="60" y="160" width="926" height="536" rx="12" fill="#fefce8" stroke="#854d0e" stroke-width="2" data-mode="managed"/></g>
+<g data-container="resource-6177735f7375626e65742e61-current"><title>aws_subnet.a</title><rect x="100" y="312" width="400" height="152" rx="12" fill="#fef9c3" stroke="#854d0e" stroke-width="2" data-mode="managed"/></g>
+<g data-container="resource-6177735f7375626e65742e62-current"><title>aws_subnet.b</title><rect x="100" y="504" width="400" height="152" rx="12" fill="#fef9c3" stroke="#854d0e" stroke-width="2" data-mode="managed"/></g>
+<path d="M 500 369 L 514 369 Q 516 369 516 371 L 516 371 Q 516 373 518 373 L 540 373 " data-edge-kind="dependency" data-directionality="directed" data-source="resource-6177735f7375626e65742e61-current" data-target="resource-6177735f64625f7375626e65745f67726f75702e6d61696e-current" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)" mask="url(#container-occlusion-1)"><title>aws_subnet.a → aws_db_subnet_group.main (dependency)</title></path>
+<path d="M 500 406 L 516 406 Q 524 406 524 414 L 524 535 Q 524 543 532 543 L 540 543 " data-edge-kind="dependency" data-directionality="directed" data-source="resource-6177735f7375626e65742e61-current" data-target="resource-6177735f656c6173746963616368655f7375626e65745f67726f75702e6d61696e-current" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)" mask="url(#container-occlusion-1)"><title>aws_subnet.a → aws_elasticache_subnet_group.main (dependency)</title></path>
+<path d="M 500 561 L 508 561 Q 516 561 516 553 L 516 381 Q 516 373 524 373 L 540 373 " data-edge-kind="dependency" data-directionality="directed" data-source="resource-6177735f7375626e65742e62-current" data-target="resource-6177735f64625f7375626e65745f67726f75702e6d61696e-current" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)" mask="url(#container-occlusion-0)"><title>aws_subnet.b → aws_db_subnet_group.main (dependency)</title></path>
+<path d="M 500 598 L 516 598 Q 524 598 524 590 L 524 551 Q 524 543 532 543 L 540 543 " data-edge-kind="dependency" data-directionality="directed" data-source="resource-6177735f7375626e65742e62-current" data-target="resource-6177735f656c6173746963616368655f7375626e65745f67726f75702e6d61696e-current" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)" mask="url(#container-occlusion-0)"><title>aws_subnet.b → aws_elasticache_subnet_group.main (dependency)</title></path>
 <g data-edge-kind="containment" data-source="resource-6177735f7670632e6d61696e-current" data-target="resource-6177735f7375626e65742e61-current"><title>aws_vpc.main → aws_subnet.a (containment)</title></g>
 <g data-edge-kind="containment" data-source="resource-6177735f7670632e6d61696e-current" data-target="resource-6177735f7375626e65742e62-current"><title>aws_vpc.main → aws_subnet.b (containment)</title></g>
 <g data-edge-kind="containment" data-source="resource-6177735f7670632e6d61696e-current" data-target="resource-6177735f64625f7375626e65745f67726f75702e6d61696e-current"><title>aws_vpc.main → aws_db_subnet_group.main (containment)</title></g>
 <g data-edge-kind="containment" data-source="resource-6177735f7670632e6d61696e-current" data-target="resource-6177735f656c6173746963616368655f7375626e65745f67726f75702e6d61696e-current"><title>aws_vpc.main → aws_elasticache_subnet_group.main (containment)</title></g>
-<circle data-junction-edges="[[&quot;resource-6177735f7375626e65742e61-current&quot;,&quot;resource-6177735f64625f7375626e65745f67726f75702e6d61696e-current&quot;],[&quot;resource-6177735f7375626e65742e62-current&quot;,&quot;resource-6177735f64625f7375626e65745f67726f75702e6d61696e-current&quot;]]" cx="516" cy="405" r="3" fill="#94a3b8" mask="url(#container-occlusion-1)"/>
-<circle data-junction-edges="[[&quot;resource-6177735f7375626e65742e61-current&quot;,&quot;resource-6177735f656c6173746963616368655f7375626e65745f67726f75702e6d61696e-current&quot;],[&quot;resource-6177735f7375626e65742e62-current&quot;,&quot;resource-6177735f656c6173746963616368655f7375626e65745f67726f75702e6d61696e-current&quot;]]" cx="524" cy="599" r="3" fill="#94a3b8" mask="url(#container-occlusion-1)"/>
+<circle data-junction-edges="[[&quot;resource-6177735f7375626e65742e61-current&quot;,&quot;resource-6177735f64625f7375626e65745f67726f75702e6d61696e-current&quot;],[&quot;resource-6177735f7375626e65742e62-current&quot;,&quot;resource-6177735f64625f7375626e65745f67726f75702e6d61696e-current&quot;]]" cx="516" cy="373" r="3" fill="#94a3b8" mask="url(#container-occlusion-1)"/>
+<circle data-junction-edges="[[&quot;resource-6177735f7375626e65742e61-current&quot;,&quot;resource-6177735f656c6173746963616368655f7375626e65745f67726f75702e6d61696e-current&quot;],[&quot;resource-6177735f7375626e65742e62-current&quot;,&quot;resource-6177735f656c6173746963616368655f7375626e65745f67726f75702e6d61696e-current&quot;]]" cx="524" cy="543" r="3" fill="#94a3b8" mask="url(#container-occlusion-1)"/>
 <g id="resource-6177735f64625f7375626e65745f67726f75702e6d61696e-current" data-architecture-id="terraform:6177735f64625f7375626e65745f67726f75702e6d61696e-current" data-qualified-address="module.root.aws_db_subnet_group.main" data-terraform-address="aws_db_subnet_group.main"><title>module.root.aws_db_subnet_group.main — other</title>
-<rect x="540" y="347" width="320" height="154" rx="8" fill="#fefce8" stroke="#854d0e" stroke-width="1.5" data-mode="managed"/>
-<text x="552" y="367" font-size="11" fill="#854d0e">aws_db_subnet_group · other</text>
-<rect data-service-badge="true" data-service-category="neutral" data-service-full-name="Amazon RDS" data-display-name="DB Subnet Group" x="663" y="375" width="185" height="32" rx="4" fill="#e2e8f0"/><text data-service-name="true" x="673" y="397" font-size="18" font-weight="700" fill="#0f172a" xml:space="preserve">DB Subnet Group</text><text x="552" y="432" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_db_subnet_group.main</text>
-<text x="552" y="489" font-size="10" fill="#64748b"><title>root</title>root</text>
-<text x="552" y="471" font-size="10" fill="#64748b" data-placement="inferred">inferred placement</text>
+<rect x="540" y="323" width="406" height="130" rx="8" fill="#fefce8" stroke="#854d0e" stroke-width="1.5" data-mode="managed"/>
+<text x="552" y="351" font-size="11" fill="#854d0e">aws_db_subnet_group · other</text>
+<rect data-service-badge="true" data-service-category="neutral" data-service-full-name="Amazon RDS" data-display-name="DB Subnet Group" x="753" y="331" width="185" height="32" rx="4" fill="#e2e8f0"/><text data-service-name="true" x="763" y="353" font-size="18" font-weight="700" fill="#0f172a" xml:space="preserve">DB Subnet Group</text><text x="552" y="384" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_db_subnet_group.main</text>
+<text x="552" y="441" font-size="10" fill="#64748b"><title>root</title>root</text>
+<text x="552" y="423" font-size="10" fill="#64748b" data-placement="inferred">inferred placement</text>
 </g>
 <g id="resource-6177735f656c6173746963616368655f7375626e65745f67726f75702e6d61696e-current" data-architecture-id="terraform:6177735f656c6173746963616368655f7375626e65745f67726f75702e6d61696e-current" data-qualified-address="module.root.aws_elasticache_subnet_group.main" data-terraform-address="aws_elasticache_subnet_group.main"><title>module.root.aws_elasticache_subnet_group.main — other</title>
-<rect x="540" y="541" width="320" height="154" rx="8" fill="#fefce8" stroke="#854d0e" stroke-width="1.5" data-mode="managed"/>
-<text x="552" y="561" font-size="11" fill="#854d0e">aws_elasticache_subnet_g… · other</text>
-<rect data-service-badge="true" data-service-category="neutral" data-service-full-name="Amazon ElastiCache" data-display-name="ElastiCache" x="707" y="569" width="141" height="32" rx="4" fill="#e2e8f0"/><text data-service-name="true" x="717" y="591" font-size="18" font-weight="700" fill="#0f172a" xml:space="preserve">ElastiCache</text><text x="552" y="626" font-size="13" fill="#0f172a" xml:space="preserve">module.root.</text>
-<text x="552" y="646" font-size="13" fill="#0f172a" xml:space="preserve">aws_elasticache_subnet_group.main</text>
-<text x="552" y="683" font-size="10" fill="#64748b"><title>root</title>root</text>
-<text x="552" y="665" font-size="10" fill="#64748b" data-placement="inferred">inferred placement</text>
+<rect x="540" y="493" width="404" height="130" rx="8" fill="#fefce8" stroke="#854d0e" stroke-width="1.5" data-mode="managed"/>
+<text x="552" y="521" font-size="11" fill="#854d0e">aws_elasticache_subnet_g… · other</text>
+<rect data-service-badge="true" data-service-category="neutral" data-service-full-name="Amazon ElastiCache" data-display-name="ElastiCache" x="795" y="501" width="141" height="32" rx="4" fill="#e2e8f0"/><text data-service-name="true" x="805" y="523" font-size="18" font-weight="700" fill="#0f172a" xml:space="preserve">ElastiCache</text><text x="552" y="554" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_elasticache_subnet_group.main</text>
+<text x="552" y="611" font-size="10" fill="#64748b"><title>root</title>root</text>
+<text x="552" y="593" font-size="10" fill="#64748b" data-placement="inferred">inferred placement</text>
 </g>
 <g id="resource-6177735f7375626e65742e61-current" data-architecture-id="terraform:6177735f7375626e65742e61-current" data-qualified-address="module.root.aws_subnet.a" data-terraform-address="aws_subnet.a"><title>module.root.aws_subnet.a — other</title>
-<text x="112" y="356" font-size="11" fill="#854d0e">aws_subnet · other</text>
-<rect data-service-badge="true" data-service-category="network" data-service-full-name="Amazon VPC" data-display-name="Subnet" x="402" y="364" width="86" height="32" rx="4" fill="#dbeafe"/><text data-service-name="true" x="412" y="386" font-size="18" font-weight="700" fill="#1e3a8a" xml:space="preserve">Subnet</text><text x="112" y="421" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_subnet.a</text>
-<text x="112" y="460" font-size="10" fill="#64748b"><title>root</title>root</text>
+<text x="112" y="340" font-size="11" fill="#854d0e">aws_subnet · other</text>
+<rect data-service-badge="true" data-service-category="network" data-service-full-name="Amazon VPC" data-display-name="Subnet" x="406" y="320" width="86" height="32" rx="4" fill="#dbeafe"/><text data-service-name="true" x="416" y="342" font-size="18" font-weight="700" fill="#1e3a8a" xml:space="preserve">Subnet</text><text x="112" y="373" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_subnet.a</text>
+<text x="112" y="412" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
 <g id="resource-6177735f7375626e65742e62-current" data-architecture-id="terraform:6177735f7375626e65742e62-current" data-qualified-address="module.root.aws_subnet.b" data-terraform-address="aws_subnet.b"><title>module.root.aws_subnet.b — other</title>
-<text x="112" y="572" font-size="11" fill="#854d0e">aws_subnet · other</text>
-<rect data-service-badge="true" data-service-category="network" data-service-full-name="Amazon VPC" data-display-name="Subnet" x="402" y="580" width="86" height="32" rx="4" fill="#dbeafe"/><text data-service-name="true" x="412" y="602" font-size="18" font-weight="700" fill="#1e3a8a" xml:space="preserve">Subnet</text><text x="112" y="637" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_subnet.b</text>
-<text x="112" y="676" font-size="10" fill="#64748b"><title>root</title>root</text>
+<text x="112" y="532" font-size="11" fill="#854d0e">aws_subnet · other</text>
+<rect data-service-badge="true" data-service-category="network" data-service-full-name="Amazon VPC" data-display-name="Subnet" x="406" y="512" width="86" height="32" rx="4" fill="#dbeafe"/><text data-service-name="true" x="416" y="534" font-size="18" font-weight="700" fill="#1e3a8a" xml:space="preserve">Subnet</text><text x="112" y="565" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_subnet.b</text>
+<text x="112" y="604" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
 <g id="resource-6177735f7670632e6d61696e-current" data-architecture-id="terraform:6177735f7670632e6d61696e-current" data-qualified-address="module.root.aws_vpc.main" data-terraform-address="aws_vpc.main"><title>module.root.aws_vpc.main — other</title>
-<text x="72" y="180" font-size="11" fill="#854d0e">aws_vpc · other</text>
-<rect data-service-badge="true" data-service-category="network" data-service-full-name="Amazon VPC" data-display-name="VPC" x="835" y="188" width="53" height="32" rx="4" fill="#dbeafe"/><text data-service-name="true" x="845" y="210" font-size="18" font-weight="700" fill="#1e3a8a" xml:space="preserve">VPC</text><text x="72" y="245" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_vpc.main</text>
-<text x="72" y="284" font-size="10" fill="#64748b"><title>root</title>root</text>
+<text x="72" y="188" font-size="11" fill="#854d0e">aws_vpc · other</text>
+<rect data-service-badge="true" data-service-category="network" data-service-full-name="Amazon VPC" data-display-name="VPC" x="925" y="168" width="53" height="32" rx="4" fill="#dbeafe"/><text data-service-name="true" x="935" y="190" font-size="18" font-weight="700" fill="#1e3a8a" xml:space="preserve">VPC</text><text x="72" y="221" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_vpc.main</text>
+<text x="72" y="260" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
 <g data-endpoints="true" data-source="resource-6177735f7375626e65742e61-current" data-target="resource-6177735f64625f7375626e65745f67726f75702e6d61696e-current" aria-hidden="true">
-<circle data-endpoint="source" cx="500" cy="401" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+<circle data-endpoint="source" cx="500" cy="369" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
 <g data-endpoints="true" data-source="resource-6177735f7375626e65742e61-current" data-target="resource-6177735f656c6173746963616368655f7375626e65745f67726f75702e6d61696e-current" aria-hidden="true">
-<circle data-endpoint="source" cx="500" cy="446" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+<circle data-endpoint="source" cx="500" cy="406" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
 <g data-endpoints="true" data-source="resource-6177735f7375626e65742e62-current" data-target="resource-6177735f64625f7375626e65745f67726f75702e6d61696e-current" aria-hidden="true">
-<circle data-endpoint="source" cx="500" cy="617" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+<circle data-endpoint="source" cx="500" cy="561" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
 <g data-endpoints="true" data-source="resource-6177735f7375626e65742e62-current" data-target="resource-6177735f656c6173746963616368655f7375626e65745f67726f75702e6d61696e-current" aria-hidden="true">
-<circle data-endpoint="source" cx="500" cy="662" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+<circle data-endpoint="source" cx="500" cy="598" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
 </g>
 </g>
 </g>

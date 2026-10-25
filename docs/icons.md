@@ -74,15 +74,17 @@ For example, `aws_subnet` is **Subnet**, `aws_vpc` is **VPC** and
 below; unlisted names wrap in full. Unknown provider/type retains its existing
 neutral fallback. No name, ARN, attribute value or resource-prefix inference is used.
 
-Labels are right-aligned in a reserved header row below operation/import indicators
-and above the complete address. Containers use their enclosing header's right edge;
+Spatial labels share the top row with the action/type text and role mark. Cards
+grow horizontally to reserve space for the label and external indicator; imports
+and complete addresses appear below. The label ends 8px inside the right edge.
+Containers use their enclosing header's right edge;
 Logical Resources and embedded members use their own row's right edge. All locations
 share 18px bold text, 11px measured character advance, 24px line height, 10px horizontal
 and 4px vertical padding: a one-line background is 32px high, with an additional
 8px reserved gap. Long labels wrap at the available width and expand header height,
-without reducing the font or truncating text. Role marks occupy the left side of
-this row. The separate operation row is intentional to avoid collisions with long
-type/action text; there is no smaller-label exception for logical or embedded rows.
+without reducing the font or truncating text. Logical resource actions share the
+label row; embedded members retain their combined address/action line below the
+label. There is no smaller-label exception for logical or embedded rows.
 
 | Presentation | Text | Height | Horizontal padding |
 | --- | --- | --- | --- |

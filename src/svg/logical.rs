@@ -117,16 +117,29 @@ fn resource_row(
         svg.push_str(&super::icons::render(icon, width - 40, 8));
     }
     if let Some(name) = crate::services::display_name(node) {
-        let service_width = crate::view::service_label::width(name, width - 32);
+        let service_width = crate::view::service_label::width(
+            name,
+            width - 32 - crate::view::text::width(&lines[1].0) * 8,
+        );
+        writeln!(
+            svg,
+            r##"<text x="16" y="{}" font-size="12" fill="#334155" xml:space="preserve">{}</text>"##,
+            y + 4,
+            super::escape(&lines[1].0)
+        )
+        .unwrap();
         svg.push_str(&super::icons::service_name(
             node,
-            width - 16,
+            width - 8,
             y - 16,
             service_width,
         ));
         y += crate::view::service_label::height(name, service_width);
     }
     for (index, (text, is_address)) in lines.iter().enumerate() {
+        if index == 1 && node.service_name.is_some() {
+            continue;
+        }
         let limit = (width
             - if index == 0 && node.service_name.is_none() {
                 64
@@ -173,7 +186,10 @@ pub(super) fn cards(graph: &Graph, address_format: super::AddressFormat) -> Vec<
         let rows: Vec<_> = nodes.into_iter().map(|node| (node, resource_lines(node, address_format))).collect();
         let heading_width = card_width([heading.as_str(), provider_label].into_iter());
         let width = rows.iter().fold(heading_width, |width, (node, lines)| {
-            width.max(card_width(lines.iter().map(|(text, _)| text))).max(crate::view::references::width(node))
+            let header_width = crate::services::display_name(node).map_or(0, |name| {
+                32 + crate::view::text::width(&lines[1].0) * 8 + crate::view::service_label::width(name, 360)
+            });
+            width.max(card_width(lines.iter().map(|(text, _)| text))).max(crate::view::references::width(node)).max(header_width)
         });
         let mut svg = format!(r#"<g data-logical-group="true" data-provider-source="{}" data-resource-type="{}" data-mode="{mode}"><title>{} — {}</title>"#, super::escape(provider.unwrap_or("unknown")), super::escape(resource_type), super::escape(&heading), super::escape(provider_label));
         let mut y = 28;

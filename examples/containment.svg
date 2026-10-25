@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="1366" viewBox="0 0 1100 1366" role="img" aria-labelledby="title description">
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="1294" viewBox="0 0 1100 1294" role="img" aria-labelledby="title description">
 <title id="title">Terraform plan</title>
 <desc id="description">3 resources (3 cards), 3 relationships. Lines show architectural relationships. Edge titles identify the relationship kind and Terraform change. Thin solid: dependency. Dashed: association. Thick dotted: connection. Nested boxes: containment. Edge color preserves the Terraform action when available. Service label backgrounds: orange = compute; green = storage; blue = network; red = IAM; gray = unclassified. Spatial card role marks: rounded rectangle = execution; cylinder = data store; hexagon = network.</desc>
 <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/></marker></defs>
@@ -92,26 +92,26 @@
 </g>
 <g transform="translate(0 558)">
 <g data-architecture="true" transform="translate(0 0)">
-<g data-container="resource-6177735f7670632e6d61696e-current"><title>aws_vpc.main</title><rect x="60" y="160" width="480" height="568" rx="12" fill="#ecfdf5" stroke="#047857" stroke-width="2" data-mode="managed"/></g>
-<g data-container="resource-6177735f7375626e65742e70726976617465-current"><title>aws_subnet.private</title><rect x="100" y="336" width="400" height="352" rx="12" fill="#d1fae5" stroke="#047857" stroke-width="2" data-mode="managed"/></g>
+<g data-container="resource-6177735f7670632e6d61696e-current"><title>aws_vpc.main</title><rect x="60" y="160" width="480" height="496" rx="12" fill="#ecfdf5" stroke="#047857" stroke-width="2" data-mode="managed"/></g>
+<g data-container="resource-6177735f7375626e65742e70726976617465-current"><title>aws_subnet.private</title><rect x="100" y="312" width="400" height="304" rx="12" fill="#d1fae5" stroke="#047857" stroke-width="2" data-mode="managed"/></g>
 <g data-edge-kind="containment" data-source="resource-6177735f7375626e65742e70726976617465-current" data-target="resource-6177735f696e7374616e63652e617070-current"><title>aws_subnet.private → aws_instance.app (containment)</title></g>
 <g data-edge-kind="dependency" data-source="resource-6177735f7670632e6d61696e-current" data-target="resource-6177735f696e7374616e63652e617070-current"><title>aws_vpc.main → aws_instance.app (dependency)</title></g>
 <g data-edge-kind="containment" data-source="resource-6177735f7670632e6d61696e-current" data-target="resource-6177735f7375626e65742e70726976617465-current"><title>aws_vpc.main → aws_subnet.private (containment)</title></g>
 <g id="resource-6177735f696e7374616e63652e617070-current" data-architecture-id="terraform:6177735f696e7374616e63652e617070-current" data-qualified-address="module.root.aws_instance.app" data-terraform-address="aws_instance.app"><title>module.root.aws_instance.app — create</title>
-<rect x="140" y="512" width="320" height="136" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
-<text x="152" y="532" font-size="11" fill="#047857">aws_instance · create</text>
-<rect data-service-badge="true" data-service-category="compute" data-service-full-name="Amazon EC2" data-display-name="EC2" x="395" y="540" width="53" height="32" rx="4" fill="#ffedd5"/><text data-service-name="true" x="405" y="562" font-size="18" font-weight="700" fill="#7c2d12" xml:space="preserve">EC2</text><g data-role-shape="execution" transform="translate(152 547)" role="img" aria-label="Visual role: execution" pointer-events="none" fill="#f8fafc" stroke="#475569" stroke-width="1"><title>Visual role: execution</title><rect x="1" y="1" width="20" height="16" rx="4"/></g><text x="152" y="597" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_instance.app</text>
-<text x="152" y="636" font-size="10" fill="#64748b"><title>root</title>root</text>
+<rect x="140" y="464" width="320" height="112" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
+<text x="184" y="492" font-size="11" fill="#047857">aws_instance · create</text>
+<rect data-service-badge="true" data-service-category="compute" data-service-full-name="Amazon EC2" data-display-name="EC2" x="399" y="472" width="53" height="32" rx="4" fill="#ffedd5"/><text data-service-name="true" x="409" y="494" font-size="18" font-weight="700" fill="#7c2d12" xml:space="preserve">EC2</text><g data-role-shape="execution" transform="translate(152 479)" role="img" aria-label="Visual role: execution" pointer-events="none" fill="#f8fafc" stroke="#475569" stroke-width="1"><title>Visual role: execution</title><rect x="1" y="1" width="20" height="16" rx="4"/></g><text x="152" y="525" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_instance.app</text>
+<text x="152" y="564" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
 <g id="resource-6177735f7375626e65742e70726976617465-current" data-architecture-id="terraform:6177735f7375626e65742e70726976617465-current" data-qualified-address="module.root.aws_subnet.private" data-terraform-address="aws_subnet.private"><title>module.root.aws_subnet.private — create</title>
-<text x="112" y="356" font-size="11" fill="#047857">aws_subnet · create</text>
-<rect data-service-badge="true" data-service-category="network" data-service-full-name="Amazon VPC" data-display-name="Subnet" x="402" y="364" width="86" height="32" rx="4" fill="#dbeafe"/><text data-service-name="true" x="412" y="386" font-size="18" font-weight="700" fill="#1e3a8a" xml:space="preserve">Subnet</text><text x="112" y="421" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_subnet.private</text>
-<text x="112" y="460" font-size="10" fill="#64748b"><title>root</title>root</text>
+<text x="112" y="340" font-size="11" fill="#047857">aws_subnet · create</text>
+<rect data-service-badge="true" data-service-category="network" data-service-full-name="Amazon VPC" data-display-name="Subnet" x="406" y="320" width="86" height="32" rx="4" fill="#dbeafe"/><text data-service-name="true" x="416" y="342" font-size="18" font-weight="700" fill="#1e3a8a" xml:space="preserve">Subnet</text><text x="112" y="373" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_subnet.private</text>
+<text x="112" y="412" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
 <g id="resource-6177735f7670632e6d61696e-current" data-architecture-id="terraform:6177735f7670632e6d61696e-current" data-qualified-address="module.root.aws_vpc.main" data-terraform-address="aws_vpc.main"><title>module.root.aws_vpc.main — create</title>
-<text x="72" y="180" font-size="11" fill="#047857">aws_vpc · create</text>
-<rect data-service-badge="true" data-service-category="network" data-service-full-name="Amazon VPC" data-display-name="VPC" x="475" y="188" width="53" height="32" rx="4" fill="#dbeafe"/><text data-service-name="true" x="485" y="210" font-size="18" font-weight="700" fill="#1e3a8a" xml:space="preserve">VPC</text><text x="72" y="245" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_vpc.main</text>
-<text x="72" y="284" font-size="10" fill="#64748b"><title>root</title>root</text>
+<text x="72" y="188" font-size="11" fill="#047857">aws_vpc · create</text>
+<rect data-service-badge="true" data-service-category="network" data-service-full-name="Amazon VPC" data-display-name="VPC" x="479" y="168" width="53" height="32" rx="4" fill="#dbeafe"/><text data-service-name="true" x="489" y="190" font-size="18" font-weight="700" fill="#1e3a8a" xml:space="preserve">VPC</text><text x="72" y="221" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_vpc.main</text>
+<text x="72" y="260" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
 </g>
 </g>

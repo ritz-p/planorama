@@ -45,8 +45,13 @@ fn resource_labels_distinguish_targets_and_reserve_right_aligned_header_space() 
         if graph.nodes[index].placement == crate::model::Placement::Spatial {
             assert_eq!(
                 number(badge, "x") + number(badge, "width"),
-                layout.bounds[index].origin.x + layout.bounds[index].width - 12
+                layout.bounds[index].origin.x + layout.bounds[index].width - 8
             );
+            let action = row
+                .children()
+                .find(|n| n.has_tag_name("text") && n.attribute("font-size") == Some("11"))
+                .unwrap();
+            assert_eq!(number(action, "y"), number(badge, "y") + 20);
             assert!(
                 number(badge, "y") + number(badge, "height")
                     < layout.bounds[index].origin.y
@@ -190,7 +195,7 @@ fn service_labels_preserve_provider_boundaries_and_measured_geometry() {
                 let metrics = view::card::measure(node);
                 let index = graph.nodes.iter().position(|n| n == node).unwrap();
                 assert!(last_y < layout.positions[index].y + metrics.header_height);
-                assert!(metrics.service_height >= 20);
+                assert!(metrics.service_height >= 16);
             }
         }
     }
@@ -207,8 +212,9 @@ fn long_service_name_wraps_with_card_header_measurement() {
         "A very long service name requiring several complete lines of text without truncation",
     );
     let after = view::card::measure(node);
-    assert!(after.service_height >= 60);
-    assert!(after.header_height >= before.header_height + 60);
+    assert!(after.service_height >= 40);
+    assert!(after.header_height >= before.header_height + 40);
+    assert!(view::card::width(node) > crate::layout::NODE_WIDTH);
     let rendered = super::service_name(node, 12 + after.line_limit * 8, 45, after.line_limit * 8);
     let wrapped = format!("<g>{rendered}</g>");
     let doc = roxmltree::Document::parse(&wrapped).unwrap();

@@ -135,7 +135,7 @@ pub(super) fn render(
                 }
                 svg.push_str(&super::icons::service_name(
                     node,
-                    x + width - 12,
+                    x + width - 8,
                     icon_y,
                     width - 24,
                 ));
