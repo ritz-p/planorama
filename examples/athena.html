@@ -114,7 +114,7 @@ p { line-height: 1.5; }
 <section id="viewport" tabindex="0" aria-label="Diagram. Arrow keys pan; plus and minus zoom; F fits the view; Escape clears selection.">
 <svg xmlns="http://www.w3.org/2000/svg" width="1276" height="1524" viewBox="0 0 1276 1524" role="img" aria-labelledby="title description">
 <title id="title">Terraform plan</title>
-<desc id="description">9 resources, 2 reference edges. Arrows point from dependencies to dependent resources. References are conservative, not Terraform execution order. Thin solid: dependency. Dashed: association. Thick dotted: connection. Nested boxes: containment. Edge color preserves the Terraform action when available.</desc>
+<desc id="description">9 resources, 2 reference edges. Arrows point from dependencies to dependent resources. References are conservative, not Terraform execution order. Thin solid: dependency. Dashed: association. Thick dotted: connection. Nested boxes: containment. Edge color preserves the Terraform action when available. Spatial card role marks: rounded rectangle = execution; cylinder = data store; hexagon = network.</desc>
 <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/></marker></defs>
 <rect width="100%" height="100%" fill="#ffffff"/>
 <g font-family="ui-monospace, SFMono-Regular, Consolas, monospace">
@@ -264,7 +264,7 @@ References: aws_s3_bucket.results [configuration.result_configuration.output_loc
 <g id="resource-6177735f73335f6275636b65742e726573756c7473-current" data-architecture-id="terraform:6177735f73335f6275636b65742e726573756c7473-current" data-qualified-address="module.root.aws_s3_bucket.results" data-terraform-address="aws_s3_bucket.results"><title>module.root.aws_s3_bucket.results — unchanged</title>
 <rect x="828" y="572" width="320" height="158" rx="8" fill="#f8fafc" stroke="#64748b" stroke-width="1.5" data-mode="managed"/>
 <text x="840" y="592" font-size="11" fill="#64748b">aws_s3_bucket · unchanged</text>
-<rect data-service-badge="true" data-service-full-name="Amazon S3" x="840" y="603" width="28" height="18" rx="4" fill="#e2e8f0"/><text data-service-name="true" x="846" y="617" font-size="13" font-weight="700" fill="#0f172a" xml:space="preserve">S3</text><text x="840" y="637" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_s3_bucket.results</text>
+<rect data-service-badge="true" data-service-full-name="Amazon S3" x="840" y="603" width="28" height="18" rx="4" fill="#e2e8f0"/><text data-service-name="true" x="846" y="617" font-size="13" font-weight="700" fill="#0f172a" xml:space="preserve">S3</text><g data-role-shape="data-store" transform="translate(1114 603)" role="img" aria-label="Visual role: data-store" pointer-events="none" fill="#f8fafc" stroke="#475569" stroke-width="1"><title>Visual role: data-store</title><path d="M1 4 C1 0 21 0 21 4 V14 C21 18 1 18 1 14 Z"/><path d="M1 4 C1 8 21 8 21 4" fill="none"/></g><text x="840" y="637" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_s3_bucket.results</text>
 <g data-resource-references="true"><title>At-rest encryption (plan): unknown</title><text x="840" y="678" font-size="11" font-weight="700" fill="#475569">Uses</text><g><title>At-rest encryption (plan): unknown</title><text x="840" y="696" font-size="11" fill="#334155" xml:space="preserve">At-rest encryption (plan): unknown</text>
 </g></g>
 </g>
