@@ -19,7 +19,10 @@ if (!isMainThread) {
     const wasm = binding.initSync({module: bytes, memory});
     binding.configure_memory_budget(512);
     if (workerData.mode === 'trap') wasm.__wbindgen_malloc(16 * 1024 * 1024, 1);
-    const job = new binding.Generation(fs.readFileSync('tests/fixtures/terraform-plan.json', 'utf8'), '{"icon_mode":"service-name"}');
+    const input = fs.readFileSync('tests/fixtures/terraform-plan.json', 'utf8');
+    const job = workerData.named
+      ? binding.Generation.named(JSON.stringify([{state:'a',json:input}]), '{}')
+      : new binding.Generation(input, '{}');
     for (let i = 0; i < 1_000_000; i++) {
       try {
         if (job.step(4096) !== undefined) throw new Error('Expected allocation failure');
@@ -53,6 +56,15 @@ if (!isMainThread) {
       assert.equal(wasm.memory.buffer.byteLength, limits.minimum * 65536);
       assert.throws(() => wasm.memory.grow((mib || 512) * 16), RangeError);
       const memoryBudget = mib === undefined ? {} : {memory_budget_mib: mib};
+      const namedInputs = JSON.stringify([{state:'a',json:input}, {state:'b',json:input}]);
+      const named = binding.Generation.named(namedInputs, JSON.stringify(memoryBudget));
+      try {
+        let result;
+        do { result = named.step(4096); } while (result === undefined);
+        assert.equal(result, binding.generate_named(namedInputs, '{}'));
+      } finally { named.free(); }
+      assert.throws(() => binding.Generation.named(namedInputs, JSON.stringify({memory_budget_mib:mib === 1024 ? 512 : 1024})), invalid('memory_budget_mismatch'));
+      if (mib === undefined) require('./named-resumable.cjs')(binding);
       for (const format of ['svg', 'html']) {
         const options = JSON.stringify({format, icon_mode: 'service-name', ...memoryBudget});
         const job = new binding.Generation(input, options);
@@ -87,8 +99,8 @@ if (!isMainThread) {
     const unavailable = load(directory, source => source, {...WebAssembly, Memory: class { constructor() { attempts++; throw new RangeError(); } }});
     assert.throws(() => unavailable.initSync({module: bytes, memory_budget_mib: 4096}), invalid('memory_unavailable'));
     assert.equal(attempts, 1, 'no fallback to a lower memory maximum');
-    for (const mode of ['step', 'trap']) await new Promise((resolve, reject) => {
-      const worker = new Worker(__filename, {workerData: {directory, mode}});
+    for (const named of [false, true]) for (const mode of ['step', 'trap']) await new Promise((resolve, reject) => {
+      const worker = new Worker(__filename, {workerData: {directory, mode, named}});
       const deadline = setTimeout(() => { worker.terminate(); reject(new Error('Trap test timed out')); }, 30_000);
       worker.once('message', message => { assert.equal(message, mode === 'trap' ? 'trapped' : 'memory_limit'); clearTimeout(deadline); worker.terminate().then(resolve, reject); });
       worker.once('error', error => { clearTimeout(deadline); reject(error); });

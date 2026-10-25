@@ -151,6 +151,7 @@ async fn search_grid_step(
     ys.sort_unstable();
     ys.dedup();
     crate::work::check_limit(xs.len().saturating_mul(ys.len()), 131_072).await;
+    crate::work::search_work(xs.len().saturating_mul(ys.len())).await;
     crate::work::check_memory(
         (xs.len() as u64)
             .saturating_mul(ys.len() as u64)
@@ -187,6 +188,7 @@ async fn search_grid_step(
     distances[initial] = 0;
     let mut final_state = None;
     while let Some(Reverse((distance, state))) = queue.pop() {
+        crate::work::search_work(1).await;
         crate::work::checkpoint().await;
         let (current, direction) = (state / 3, state % 3);
         if distance != distances[state] {

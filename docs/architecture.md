@@ -9,7 +9,10 @@ same boundaries and carry explicit cross-state relationships.
 The CLI and [browser Wasm binding](browser.md) share parsing, semantic projection,
 selection and composition through `generation` and `named_inputs`. Named inputs
 use the native state partitions and multi-state renderer without filesystem I/O
-or implicit cross-state mappings. Module inspection
+or implicit cross-state mappings. Both input forms use retained Future state for
+resumable jobs, including each state's layout; synchronous callers drive the same
+implementation to completion. Browser jobs enforce aggregate budgets across steps
+and states and expose fixed pipeline stages through scoped observers. Module inspection
 shares `module_inventory` with the native listing command and stops after parsing
 and counting original resources. Internal graph and
 layout types remain private. Browser timing spans are no-ops; the Worker measures

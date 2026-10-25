@@ -60,14 +60,12 @@ fn memory_preflight_keeps_headroom_and_never_wraps() {
 
 #[test]
 fn allocation_failure_inside_a_step_discards_the_job_and_allows_retry() {
-    let mut job = crate::Generator {
-        future: Some(Box::pin(async {
-            crate::work::checkpoint().await;
-            crate::work::checkpoint().await;
-            crate::work::filled_vec(0_u64, usize::MAX).await;
-            panic!("failed allocation must not produce a diagram");
-        })),
-    };
+    let mut job = crate::Generator::from_future(Box::pin(async {
+        crate::work::checkpoint().await;
+        crate::work::checkpoint().await;
+        crate::work::filled_vec(0_u64, usize::MAX).await;
+        panic!("failed allocation must not produce a diagram");
+    }));
     assert!(matches!(job.step(1), Ok(None)));
     assert!(matches!(job.step(4096), Err(Error::MemoryLimit)));
     assert!(matches!(job.step(1), Err(Error::GenerationClosed)));

@@ -56,7 +56,15 @@ pub(crate) fn render_report(
     content: super::Content,
     report: Option<&mut serde_json::Value>,
 ) -> String {
-    let options = options.into();
+    crate::work::complete(render_step(architecture, options.into(), content, report))
+}
+
+pub(crate) async fn render_step(
+    architecture: &crate::view::ViewArchitecture,
+    options: super::Options,
+    content: super::Content,
+    report: Option<&mut serde_json::Value>,
+) -> String {
     let format = options.address_format;
     let mut scene = report
         .as_ref()
@@ -141,7 +149,9 @@ pub(crate) fn render_report(
     let mut width = 1120;
     let mut states = Vec::with_capacity(prepared_graphs.len());
     for (id, graph) in &prepared_graphs {
-        let layout = Layout::new(graph);
+        crate::generation::progress::report("placement");
+        crate::work::checkpoint().await;
+        let layout = Layout::new_step(graph).await;
         let index = super::relationship_index::Index::with_format(graph, &layout, format);
         let cards = super::annotation_cards(graph, &index, format);
         width = width.max(super::annotations::Area::required_width(
@@ -150,6 +160,8 @@ pub(crate) fn render_report(
         ));
         states.push((*id, graph, layout, index, cards));
     }
+    crate::generation::progress::report("output");
+    crate::work::checkpoint().await;
     let legend = if options.omit_relationship_legend {
         super::legend::MeasuredLegend::empty(width)
     } else {

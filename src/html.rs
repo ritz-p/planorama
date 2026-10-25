@@ -21,13 +21,20 @@ pub(crate) fn render_states(
     architecture: &view::ViewArchitecture,
     format: impl Into<svg::Options>,
 ) -> String {
+    crate::work::complete(render_states_step(architecture, format.into()))
+}
+
+pub(crate) async fn render_states_step(
+    architecture: &view::ViewArchitecture,
+    format: svg::Options,
+) -> String {
     let resources = architecture
         .states
         .iter()
         .flat_map(|(state, graph)| resources(graph, state.as_str(), &svg::state_prefix(state)))
         .collect();
     document(
-        svg::render_states_content(architecture, format, svg::Content::ValueFree),
+        svg::render_states_step(architecture, format, svg::Content::ValueFree, None).await,
         resources,
         architecture
             .states
@@ -66,13 +73,27 @@ pub(crate) fn render_states_report(
     report: &mut Value,
     diagnostics: bool,
 ) -> String {
+    crate::work::complete(render_states_report_step(
+        architecture,
+        format.into(),
+        report,
+        diagnostics,
+    ))
+}
+
+pub(crate) async fn render_states_report_step(
+    architecture: &view::ViewArchitecture,
+    format: svg::Options,
+    report: &mut Value,
+    diagnostics: bool,
+) -> String {
     let resources = architecture
         .states
         .iter()
         .flat_map(|(state, graph)| resources(graph, state.as_str(), &svg::state_prefix(state)))
         .collect();
     document(
-        svg::render_states_report(architecture, format, svg::Content::ValueFree, Some(report)),
+        svg::render_states_step(architecture, format, svg::Content::ValueFree, Some(report)).await,
         resources,
         architecture
             .states

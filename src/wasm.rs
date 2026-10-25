@@ -119,6 +119,42 @@ pub struct Generation {
 
 #[wasm_bindgen]
 impl Generation {
+    pub fn named(inputs: &str, options: &str) -> Result<Generation, JsValue> {
+        if inputs.len() > crate::generation::MAX_BROWSER_INPUT_BYTES * 6 + 16384
+            || options.len() > crate::generation::MAX_BROWSER_OPTIONS_BYTES
+        {
+            return Err(error(crate::Error::ResourceLimit));
+        }
+        Ok(Self {
+            inner: crate::Generator::new_named(decode_inputs(inputs)?, decode_options(options)?)
+                .map_err(error)?,
+        })
+    }
+
+    pub fn stage(&self) -> String {
+        self.inner.stage().to_owned()
+    }
+
+    pub fn step_with_progress(
+        &mut self,
+        units: f64,
+        callback: ProgressCallback,
+    ) -> Result<Option<String>, JsValue> {
+        if !units.is_finite() || units.fract() != 0.0 || !(1.0..=4096.0).contains(&units) {
+            return Err(error(crate::Error::InvalidOptions));
+        }
+        self.inner
+            .step_with_progress(units as usize, move |stage| {
+                // Observer failures must not change the generated result.
+                let _ = callback.notify(&JsValue::UNDEFINED, stage);
+            })
+            .map_err(error)?
+            .map(|result| {
+                serde_json::to_string(&result).map_err(|_| error(crate::Error::GenerationFailed))
+            })
+            .transpose()
+    }
+
     #[wasm_bindgen(constructor)]
     pub fn new(json: String, options: &str) -> Result<Generation, JsValue> {
         if options.len() > crate::generation::MAX_BROWSER_OPTIONS_BYTES {
