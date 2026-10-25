@@ -193,7 +193,7 @@ explanatory text keeps its separate wrapping behavior.
 Resource headings display the complete selected address. Shared measurements
 also wrap complete Terraform type/action headings without ellipsis. Ordinary and
 embedded cards share the heading text and line-spacing rules. Ordinary headers
-reserve separate columns for role marks, top-right resource/service labels and
+reserve separate columns for top-right resource/service labels and
 external indicators; extra heading lines move import badges, addresses, references
 and children down before layout and routing. Logical Resources retain their full
 group-level type heading without adding redundant per-resource type fields.

@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1100" height="2422" viewBox="0 0 1100 2422" role="img" aria-labelledby="title description">
 <title id="title">Terraform plan</title>
-<desc id="description">6 resources (1 spatial cards, 5 logical resources in 3 group cards) · 2 relationships Thin solid: dependency. Dashed: association. Thick dotted: connection. Nested boxes: containment. Edge color preserves the Terraform action when available. Service label backgrounds: orange = compute; green = storage; blue = network; red = IAM; gray = unclassified. Spatial card role marks: rounded rectangle = execution; cylinder = data store; hexagon = network.</desc>
+<desc id="description">6 resources (1 spatial cards, 5 logical resources in 3 group cards) · 2 relationships Thin solid: dependency. Dashed: association. Thick dotted: connection. Nested boxes: containment. Edge color preserves the Terraform action when available. Service label backgrounds: orange = compute; green = storage; blue = network; red = IAM; gray = unclassified.</desc>
 <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/></marker></defs>
 <rect width="100%" height="100%" fill="#ffffff"/>
 <g font-family="ui-monospace, SFMono-Regular, Consolas, monospace">
@@ -144,13 +144,13 @@
 </g></g>
 </g>
 <g data-architecture="true" transform="translate(0 1412)">
-<g data-deployment-scope="true" data-scope-provider="AWS" data-region="us-east-1"><rect x="40" y="160" width="434" height="172" rx="14" fill="#f8fafc" stroke="#94a3b8" stroke-dasharray="9 5"/><text x="56" y="185" font-size="15" font-weight="700" fill="#334155">AWS us-east-1</text></g>
+<g data-deployment-scope="true" data-scope-provider="AWS" data-region="us-east-1"><rect x="40" y="160" width="402" height="172" rx="14" fill="#f8fafc" stroke="#94a3b8" stroke-dasharray="9 5"/><text x="56" y="185" font-size="15" font-weight="700" fill="#334155">AWS us-east-1</text></g>
 <g data-edge-kind="dependency" data-source="resource-6177735f69616d5f6f70656e69645f636f6e6e6563745f70726f76696465722e776f726b6c6f6164-current" data-target="resource-6177735f69616d5f726f6c652e776f726b6c6f6164-current"><title>module.root.aws_iam_openid_connect_provider.workload → module.root.aws_iam_role.workload</title></g>
 <g data-edge-kind="dependency" data-source="resource-6177735f69616d5f73616d6c5f70726f76696465722e776f726b666f726365-current" data-target="resource-6177735f69616d5f726f6c652e776f726b666f726365-current"><title>module.root.aws_iam_saml_provider.workforce → module.root.aws_iam_role.workforce</title></g>
 <g id="resource-6177735f656b735f636c75737465722e6c69746572616c-current" data-architecture-id="terraform:6177735f656b735f636c75737465722e6c69746572616c-current" data-qualified-address="module.root.aws_eks_cluster.literal" data-terraform-address="aws_eks_cluster.literal"><title>module.root.aws_eks_cluster.literal — unchanged</title>
-<rect x="60" y="200" width="394" height="112" rx="8" fill="#f8fafc" stroke="#64748b" stroke-width="1.5" data-mode="managed"/>
-<text data-resource-type-heading="true" x="104" y="228" font-size="11" fill="#64748b" xml:space="preserve">aws_eks_cluster · unchanged</text>
-<rect data-service-badge="true" data-presentation-padding="10 4" data-service-category="compute" data-service-full-name="Amazon EKS" data-display-name="EKS Cluster" x="305" y="208" width="141" height="32" rx="4" fill="#ffedd5"/><text data-service-name="true" x="315" y="230" font-size="18" font-weight="700" fill="#7c2d12" xml:space="preserve">EKS Cluster</text><g data-role-shape="execution" transform="translate(72 215)" role="img" aria-label="Visual role: execution" pointer-events="none" fill="#f8fafc" stroke="#475569" stroke-width="1"><title>Visual role: execution</title><rect x="1" y="1" width="20" height="16" rx="4"/></g><text x="72" y="261" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_eks_cluster.literal</text>
+<rect x="60" y="200" width="362" height="112" rx="8" fill="#f8fafc" stroke="#64748b" stroke-width="1.5" data-mode="managed"/>
+<text data-resource-type-heading="true" x="72" y="228" font-size="11" fill="#64748b" xml:space="preserve">aws_eks_cluster · unchanged</text>
+<rect data-service-badge="true" data-presentation-padding="10 4" data-service-category="compute" data-service-full-name="Amazon EKS" data-display-name="EKS Cluster" x="273" y="208" width="141" height="32" rx="4" fill="#ffedd5"/><text data-service-name="true" x="283" y="230" font-size="18" font-weight="700" fill="#7c2d12" xml:space="preserve">EKS Cluster</text><text x="72" y="261" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_eks_cluster.literal</text>
 <text x="72" y="300" font-size="10" fill="#64748b" data-role="controller"><title>root</title>controller · root</text>
 </g>
 </g>

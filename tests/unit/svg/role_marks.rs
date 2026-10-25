@@ -3,65 +3,28 @@ use crate::{NamedInput, Options, OutputFormat, generate, generate_named};
 const INPUT: &str = include_str!("../../fixtures/role-shapes-plan.json");
 
 #[test]
-fn role_marks_preserve_provider_boundaries_and_fit_inside_individual_cards() {
+fn resource_headers_reclaim_role_mark_space() {
     let output = generate(INPUT, &Options::default()).unwrap();
+    assert!(!output.content.contains("data-role-shape"));
+    assert!(!output.content.contains("Visual role:"));
     let doc = roxmltree::Document::parse(&output.content).unwrap();
-    let marks: Vec<_> = doc
+    for heading in doc
         .descendants()
-        .filter(|n| n.attribute("data-role-shape").is_some())
-        .collect();
-    assert_eq!(marks.len(), 4);
-    for mark in marks {
-        let card = mark.parent().unwrap();
-        let address = card.attribute("data-terraform-address").unwrap();
-        let expected =
-            if address.contains("aws_instance.") || address.contains("aws_lambda_function.") {
-                "execution"
-            } else if address == "aws_s3_bucket.archive" {
-                "data-store"
-            } else {
-                assert_eq!(address, "aws_nat_gateway.egress");
-                "network"
-            };
-        assert_eq!(mark.attribute("data-role-shape"), Some(expected));
-        let rect = card
+        .filter(|n| n.attribute("data-resource-type-heading").is_some())
+    {
+        let card = heading.parent().unwrap();
+        if let Some(rect) = card
             .children()
             .find(|n| n.has_tag_name("rect") && n.attribute("data-service-badge").is_none())
-            .unwrap();
-        let number =
-            |n: roxmltree::Node, key: &str| n.attribute(key).unwrap().parse::<usize>().unwrap();
-        let position: Vec<usize> = mark
-            .attribute("transform")
-            .unwrap()
-            .strip_prefix("translate(")
-            .unwrap()
-            .strip_suffix(')')
-            .unwrap()
-            .split_whitespace()
-            .map(|n| n.parse().unwrap())
-            .collect();
-        assert!(position[0] > number(rect, "x"));
-        assert!(position[0] + 22 < number(rect, "x") + number(rect, "width"));
-        assert!(position[1] > number(rect, "y"));
-        assert!(position[1] + 18 < number(rect, "y") + number(rect, "height"));
-        let badge = card
-            .children()
-            .find(|n| n.attribute("data-service-badge").is_some())
-            .unwrap();
-        assert!(position[0] + 22 < number(badge, "x"));
-        for text in card.children().filter(|n| {
-            n.has_tag_name("text")
-                && n.attribute("font-size") == Some("13")
-                && n.attribute("data-service-name").is_none()
-        }) {
-            assert!(number(text, "y") >= position[1] + 18 + 13);
+        {
+            let x = |n: roxmltree::Node| n.attribute("x").unwrap().parse::<usize>().unwrap();
+            assert_eq!(x(heading), x(rect) + 12);
         }
-        assert_eq!(mark.attribute("pointer-events"), Some("none"));
     }
 }
 
 #[test]
-fn named_state_svg_and_html_share_roles_without_changing_resource_identity() {
+fn named_state_svg_and_html_omit_marks_without_changing_resource_identity() {
     let inputs = [
         NamedInput {
             state: "one".into(),
@@ -88,7 +51,7 @@ fn named_state_svg_and_html_share_roles_without_changing_resource_identity() {
             doc.descendants()
                 .filter(|n| n.attribute("data-role-shape").is_some())
                 .count(),
-            8
+            0
         );
         assert_eq!(
             doc.descendants()

@@ -190,6 +190,19 @@ report. These new crossings are explicitly accepted consequences of the changed
 geometry, not offset by improvements on other pairs or fixtures. Border deficits
 remain unchanged and bend changes stay within their existing per-edge budget.
 
+#666 removes the 32px role-mark reservation from spatial headers. Narrower
+NAT/Internet Gateway cards change packing and route selection in the large
+fixture. Its reviewed baseline accepts 28 crossing-pair increases (31 added
+intersections, total 78 -> 94) and three parallel-pair increases: target group ->
+listener against database security group -> DB instance (22,316 px^2), private-b
+subnet -> DB subnet group against private-b -> VPC endpoint (1,854 px^2), and that
+endpoint path against the private-b route-table association (2,610 px^2).
+The first pair has a 0.5px visible gap over 1,594px; this close parallel run is an
+accepted consequence of the requested width change, not a routing improvement.
+Independent overlap and border deficits do not increase; per-edge bends stay
+within existing budgets. Other fixture baselines and all budgets are unchanged.
+The PR records each increased pair; improvements elsewhere do not excuse them.
+
 #660 enlarges each named-state heading allocation from 40 to 76 pixels for
 title-size text and a padded background. In the multi-state fixture, all three
 cross-state paths become 36 pixels longer at their existing gutter positions.

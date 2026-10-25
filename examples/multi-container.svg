@@ -1,14 +1,14 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1482" height="1334" viewBox="0 0 1482 1334" role="img" aria-labelledby="title description">
+<svg xmlns="http://www.w3.org/2000/svg" width="1450" height="1334" viewBox="0 0 1450 1334" role="img" aria-labelledby="title description">
 <title id="title">Terraform plan</title>
-<desc id="description">6 resources (6 cards), 9 relationships. Lines show architectural relationships. Edge titles identify the relationship kind and Terraform change. Thin solid: dependency. Dashed: association. Thick dotted: connection. Nested boxes: containment. Edge color preserves the Terraform action when available. Service label backgrounds: orange = compute; green = storage; blue = network; red = IAM; gray = unclassified. Spatial card role marks: rounded rectangle = execution; cylinder = data store; hexagon = network.</desc>
-<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/></marker><mask id="container-occlusion-0" maskUnits="userSpaceOnUse" maskContentUnits="userSpaceOnUse" x="0" y="0" width="1482" height="776" style="mask-type:luminance"><rect width="1482" height="776" fill="white"/>
+<desc id="description">6 resources (6 cards), 9 relationships. Lines show architectural relationships. Edge titles identify the relationship kind and Terraform change. Thin solid: dependency. Dashed: association. Thick dotted: connection. Nested boxes: containment. Edge color preserves the Terraform action when available. Service label backgrounds: orange = compute; green = storage; blue = network; red = IAM; gray = unclassified.</desc>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/></marker><mask id="container-occlusion-0" maskUnits="userSpaceOnUse" maskContentUnits="userSpaceOnUse" x="0" y="0" width="1450" height="776" style="mask-type:luminance"><rect width="1450" height="776" fill="white"/>
 <rect data-occluder="resource-6177735f7375626e65742e61-current" x="533" y="310" width="404" height="156" rx="14" fill="black"/>
 </mask>
-<mask id="container-occlusion-1" maskUnits="userSpaceOnUse" maskContentUnits="userSpaceOnUse" x="0" y="0" width="1482" height="776" style="mask-type:luminance"><rect width="1482" height="776" fill="white"/>
+<mask id="container-occlusion-1" maskUnits="userSpaceOnUse" maskContentUnits="userSpaceOnUse" x="0" y="0" width="1450" height="776" style="mask-type:luminance"><rect width="1450" height="776" fill="white"/>
 <rect data-occluder="resource-6177735f7375626e65742e61-current" x="533" y="310" width="404" height="156" rx="14" fill="black"/>
 <rect data-occluder="resource-6177735f7375626e65742e62-current" x="533" y="502" width="404" height="156" rx="14" fill="black"/>
 </mask>
-<mask id="container-occlusion-2" maskUnits="userSpaceOnUse" maskContentUnits="userSpaceOnUse" x="0" y="0" width="1482" height="776" style="mask-type:luminance"><rect width="1482" height="776" fill="white"/>
+<mask id="container-occlusion-2" maskUnits="userSpaceOnUse" maskContentUnits="userSpaceOnUse" x="0" y="0" width="1450" height="776" style="mask-type:luminance"><rect width="1450" height="776" fill="white"/>
 <rect data-occluder="resource-6177735f7375626e65742e62-current" x="533" y="502" width="404" height="156" rx="14" fill="black"/>
 </mask>
 </defs>
@@ -102,7 +102,7 @@
 </g>
 <g transform="translate(0 558)">
 <g data-architecture="true" transform="translate(0 0)">
-<g data-container="resource-6177735f7670632e6d61696e-current"><title>module.root.aws_vpc.main</title><rect x="495" y="160" width="907" height="536" rx="12" fill="#ecfdf5" stroke="#047857" stroke-width="2" data-mode="managed"/></g>
+<g data-container="resource-6177735f7670632e6d61696e-current"><title>module.root.aws_vpc.main</title><rect x="495" y="160" width="875" height="536" rx="12" fill="#ecfdf5" stroke="#047857" stroke-width="2" data-mode="managed"/></g>
 <g data-container="resource-6177735f7375626e65742e61-current"><title>module.root.aws_subnet.a</title><rect x="535" y="312" width="400" height="152" rx="12" fill="#d1fae5" stroke="#047857" stroke-width="2" data-mode="managed"/></g>
 <g data-container="resource-6177735f7375626e65742e62-current"><title>module.root.aws_subnet.b</title><rect x="535" y="504" width="400" height="152" rx="12" fill="#d1fae5" stroke="#047857" stroke-width="2" data-mode="managed"/></g>
 <path d="M 455 377 L 465 377 Q 473 377 473 369 L 473 362 Q 473 354 481 354 L 989 354 " data-edge-kind="connection" data-directionality="undirected" data-source="resource-6177735f73656375726974795f67726f75702e617070-current" data-target="resource-6177735f6563735f736572766963652e617070-current" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-dasharray="0 3.5" stroke-linecap="round" stroke-linejoin="round" mask="url(#container-occlusion-1)"><title>module.root.aws_security_group.app ↔ module.root.aws_ecs_service.app (connection)</title></path>
@@ -115,16 +115,16 @@
 <g data-edge-kind="containment" data-source="resource-6177735f7670632e6d61696e-current" data-target="resource-6177735f6563735f736572766963652e617070-current"><title>module.root.aws_vpc.main → module.root.aws_ecs_service.app (containment)</title></g>
 <g data-edge-kind="containment" data-source="resource-6177735f7670632e6d61696e-current" data-target="resource-6177735f6c622e617070-current"><title>module.root.aws_vpc.main → module.root.aws_lb.app (containment)</title></g>
 <g id="resource-6177735f6563735f736572766963652e617070-current" data-architecture-id="terraform:6177735f6563735f736572766963652e617070-current" data-qualified-address="module.root.aws_ecs_service.app" data-terraform-address="aws_ecs_service.app"><title>module.root.aws_ecs_service.app — create</title>
-<rect x="989" y="312" width="373" height="130" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
-<text data-resource-type-heading="true" x="1033" y="340" font-size="11" fill="#047857" xml:space="preserve">aws_ecs_service · create</text>
-<rect data-service-badge="true" data-presentation-padding="10 4" data-service-category="compute" data-service-full-name="Amazon ECS" data-display-name="ECS Service" x="1213" y="320" width="141" height="32" rx="4" fill="#ffedd5"/><text data-service-name="true" x="1223" y="342" font-size="18" font-weight="700" fill="#7c2d12" xml:space="preserve">ECS Service</text><g data-role-shape="execution" transform="translate(1001 327)" role="img" aria-label="Visual role: execution" pointer-events="none" fill="#f8fafc" stroke="#475569" stroke-width="1"><title>Visual role: execution</title><rect x="1" y="1" width="20" height="16" rx="4"/></g><text x="1001" y="373" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_ecs_service.app</text>
+<rect x="989" y="312" width="341" height="130" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
+<text data-resource-type-heading="true" x="1001" y="340" font-size="11" fill="#047857" xml:space="preserve">aws_ecs_service · create</text>
+<rect data-service-badge="true" data-presentation-padding="10 4" data-service-category="compute" data-service-full-name="Amazon ECS" data-display-name="ECS Service" x="1181" y="320" width="141" height="32" rx="4" fill="#ffedd5"/><text data-service-name="true" x="1191" y="342" font-size="18" font-weight="700" fill="#7c2d12" xml:space="preserve">ECS Service</text><text x="1001" y="373" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_ecs_service.app</text>
 <text x="1001" y="430" font-size="10" fill="#64748b" data-role="controller"><title>root</title>controller · root</text>
 <text x="1001" y="412" font-size="10" fill="#64748b" data-placement="inferred">inferred placement</text>
 </g>
 <g id="resource-6177735f6c622e617070-current" data-architecture-id="terraform:6177735f6c622e617070-current" data-qualified-address="module.root.aws_lb.app" data-terraform-address="aws_lb.app"><title>module.root.aws_lb.app — create</title>
-<rect x="989" y="482" width="332" height="130" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
-<text data-resource-type-heading="true" x="1033" y="510" font-size="11" fill="#047857" xml:space="preserve">aws_lb · create</text>
-<rect data-service-badge="true" data-presentation-padding="10 4" data-service-category="network" data-service-full-name="Elastic Load Balancing" data-display-name="Load Balancer" x="1150" y="490" width="163" height="32" rx="4" fill="#dbeafe"/><text data-service-name="true" x="1160" y="512" font-size="18" font-weight="700" fill="#1e3a8a" xml:space="preserve">Load Balancer</text><g data-role-shape="network" transform="translate(1001 497)" role="img" aria-label="Visual role: network" pointer-events="none" fill="#f8fafc" stroke="#475569" stroke-width="1"><title>Visual role: network</title><path d="M5 1 H17 L21 9 L17 17 H5 L1 9 Z"/></g><text x="1001" y="543" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_lb.app</text>
+<rect x="989" y="482" width="320" height="130" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
+<text data-resource-type-heading="true" x="1001" y="510" font-size="11" fill="#047857" xml:space="preserve">aws_lb · create</text>
+<rect data-service-badge="true" data-presentation-padding="10 4" data-service-category="network" data-service-full-name="Elastic Load Balancing" data-display-name="Load Balancer" x="1138" y="490" width="163" height="32" rx="4" fill="#dbeafe"/><text data-service-name="true" x="1148" y="512" font-size="18" font-weight="700" fill="#1e3a8a" xml:space="preserve">Load Balancer</text><text x="1001" y="543" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_lb.app</text>
 <text x="1001" y="600" font-size="10" fill="#64748b"><title>root</title>root</text>
 <text x="1001" y="582" font-size="10" fill="#64748b" data-placement="inferred">inferred placement</text>
 </g>
@@ -144,9 +144,9 @@
 <rect data-service-badge="true" data-presentation-padding="10 4" data-service-category="network" data-service-full-name="Amazon VPC" data-display-name="Subnet" x="841" y="512" width="86" height="32" rx="4" fill="#dbeafe"/><text data-service-name="true" x="851" y="534" font-size="18" font-weight="700" fill="#1e3a8a" xml:space="preserve">Subnet</text><text x="547" y="565" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_subnet.b</text>
 <text x="547" y="604" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
-<g id="resource-6177735f7670632e6d61696e-current" data-architecture-id="terraform:6177735f7670632e6d61696e-current" data-qualified-address="module.root.aws_vpc.main" data-terraform-address="aws_vpc.main" data-presentation-header="495 160 907 112"><title>module.root.aws_vpc.main — create</title>
+<g id="resource-6177735f7670632e6d61696e-current" data-architecture-id="terraform:6177735f7670632e6d61696e-current" data-qualified-address="module.root.aws_vpc.main" data-terraform-address="aws_vpc.main" data-presentation-header="495 160 875 112"><title>module.root.aws_vpc.main — create</title>
 <text data-resource-type-heading="true" x="507" y="188" font-size="11" fill="#047857" xml:space="preserve">aws_vpc · create</text>
-<rect data-service-badge="true" data-presentation-padding="10 4" data-service-category="network" data-service-full-name="Amazon VPC" data-display-name="VPC" x="1341" y="168" width="53" height="32" rx="4" fill="#dbeafe"/><text data-service-name="true" x="1351" y="190" font-size="18" font-weight="700" fill="#1e3a8a" xml:space="preserve">VPC</text><text x="507" y="221" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_vpc.main</text>
+<rect data-service-badge="true" data-presentation-padding="10 4" data-service-category="network" data-service-full-name="Amazon VPC" data-display-name="VPC" x="1309" y="168" width="53" height="32" rx="4" fill="#dbeafe"/><text data-service-name="true" x="1319" y="190" font-size="18" font-weight="700" fill="#1e3a8a" xml:space="preserve">VPC</text><text x="507" y="221" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_vpc.main</text>
 <text x="507" y="260" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
 <g data-endpoints="true" data-source="resource-6177735f73656375726974795f67726f75702e617070-current" data-target="resource-6177735f6563735f736572766963652e617070-current" aria-hidden="true">

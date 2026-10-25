@@ -15,7 +15,9 @@ mod provenance;
 mod references;
 mod relationship_index;
 mod relationships;
-mod role_marks;
+#[cfg(test)]
+#[path = "../tests/unit/svg/role_marks.rs"]
+mod role_marks_tests;
 mod roles;
 mod routes;
 mod scopes;
@@ -336,7 +338,7 @@ fn render_with_index(
     let mut svg = format!(
         r##"<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}" role="img" aria-labelledby="title description">
 <title id="title">Terraform plan</title>
-<desc id="description">{description} Thin solid: dependency. Dashed: association. Thick dotted: connection. Nested boxes: containment. Edge color preserves the Terraform action when available. Service label backgrounds: orange = compute; green = storage; blue = network; red = IAM; gray = unclassified. Spatial card role marks: rounded rectangle = execution; cylinder = data store; hexagon = network.</desc>
+<desc id="description">{description} Thin solid: dependency. Dashed: association. Thick dotted: connection. Nested boxes: containment. Edge color preserves the Terraform action when available. Service label backgrounds: orange = compute; green = storage; blue = network; red = IAM; gray = unclassified.</desc>
 <defs>{markers}{icon_definitions}{occlusion_definitions}</defs>
 <rect width="100%" height="100%" fill="#ffffff"/>
 <g font-family="ui-monospace, SFMono-Regular, Consolas, monospace">
@@ -566,18 +568,8 @@ fn render_with_index(
             writeln!(svg, r#"<rect x="{x}" y="{y}" width="{card_width}" height="{header_height}" rx="{radius}" fill="{background}" stroke="{border}" stroke-width="{stroke}"{mode}/>"#).unwrap();
         }
         let named = node.service_name.is_some();
-        let role_inset =
-            if crate::view::card::role_mark(node).is_some() && !layout.containers.contains(&i) {
-                32
-            } else {
-                0
-            };
         let heading_offset = if named { 8 } else { 0 };
-        svg.push_str(&entities::badge(
-            node.mode,
-            x + role_inset,
-            y + heading_offset,
-        ));
+        svg.push_str(&entities::badge(node.mode, x, y + heading_offset));
         svg.push_str(&entities::import_badge(
             node,
             x + 12,
@@ -591,7 +583,7 @@ fn render_with_index(
             writeln!(
                 svg,
                 r#"<text data-resource-type-heading="true" x="{}" y="{}" font-size="11" fill="{border}" xml:space="preserve">{}</text>"#,
-                x + 12 + role_inset,
+                x + 12,
                 y + 20 + heading_offset + line * crate::view::heading::LINE_HEIGHT,
                 escape(text)
             )
@@ -610,11 +602,6 @@ fn render_with_index(
             y + 8,
             metrics.service_width,
         ));
-        if !layout.containers.contains(&i) {
-            if let Some(role) = crate::view::card::role_mark(node) {
-                svg.push_str(&role_marks::render(role, x + 12, y + 15));
-            }
-        }
         for (line, text) in lines.iter().enumerate() {
             writeln!(
                 svg,
