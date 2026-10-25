@@ -42,6 +42,21 @@ class ViewerTests {
         assert.deepEqual(errors, []);
         assert.deepEqual(remote, []);
     }
+    test_lambda_references_keep_state_identity_and_hide_payloads() {
+        this.load('--state', 'one=tests/fixtures/lambda-plan.json', '--state', 'two=tests/fixtures/lambda-plan.json');
+        const id = this.choose('two:aws_lambda_function_url.live');
+        const alias = this.find(`[id="${id}"] a[data-reference-attribute="qualifier"]`);
+        const target = alias.get_attribute('href').slice(1);
+        this.driver.execute_script("arguments[0].dispatchEvent(new MouseEvent('click', {bubbles:true,cancelable:true}))", alias);
+        this.assertEqual(this.find('[data-viewer-selected]').get_attribute('id'), target);
+        this.assertIn('two', this.find('#selection').text);
+        this.assertIn('aws_lambda_alias.live', this.find('#selection').text);
+        this.choose('one:aws_lambda_function.app');
+        this.assertEqual(this.driver.execute_script("return JSON.parse(document.getElementById('viewer-data').textContent).length"), 16);
+        this.assertFalse(this.driver.execute_script("return document.documentElement.outerHTML.includes('NOT_FOR_OUTPUT')"));
+        this.load('tests/fixtures/lambda-plan.json', '--focus', 'aws_lambda_function.app', '--focus-depth', '0');
+        this.assertEqual(this.driver.execute_script("return [...document.querySelectorAll('#viewport a[href]')].filter(a=>!document.getElementById(a.getAttribute('href').slice(1))).length"), 0);
+    }
     test_basic_inventory_search_references_and_offline_export() {
         for (const mode of ['service-name']) {
             this.load('tests/fixtures/aws-basic-plan.json', '--icon-mode', mode);

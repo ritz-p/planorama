@@ -1,0 +1,276 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_lambda_function.app",
+      "mode": "managed",
+      "type": "aws_lambda_function",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "function_name": "synthetic-function",
+          "arn": "arn:aws:lambda:us-east-1:123456789012:function:synthetic-function",
+          "version": "7",
+          "layers": [
+            "arn:aws:lambda:us-east-1:123456789012:layer:synthetic-one:1",
+            "arn:aws:lambda:us-east-1:123456789012:layer:synthetic-two:1"
+          ],
+          "environment": [
+            {
+              "variables": {
+                "SECRET": "SYNTHETIC_SECRET_NOT_FOR_OUTPUT"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_lambda_layer_version.shared[0]",
+      "mode": "managed",
+      "type": "aws_lambda_layer_version",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "layer_name": "synthetic-one",
+          "layer_arn": "arn:aws:lambda:us-east-1:123456789012:layer:synthetic-one",
+          "arn": "arn:aws:lambda:us-east-1:123456789012:layer:synthetic-one:1",
+          "version": "1",
+          "filename": "SYNTHETIC_CODE_PATH_NOT_FOR_OUTPUT"
+        }
+      }
+    },
+    {
+      "address": "aws_lambda_layer_version.shared[1]",
+      "mode": "managed",
+      "type": "aws_lambda_layer_version",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "layer_name": "synthetic-two",
+          "layer_arn": "arn:aws:lambda:us-east-1:123456789012:layer:synthetic-two",
+          "arn": "arn:aws:lambda:us-east-1:123456789012:layer:synthetic-two:1",
+          "version": "1"
+        }
+      }
+    },
+    {
+      "address": "aws_lambda_alias.live",
+      "mode": "managed",
+      "type": "aws_lambda_alias",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "function_name": "synthetic-function",
+          "function_version": "7",
+          "name": "live"
+        }
+      }
+    },
+    {
+      "address": "aws_lambda_alias.canary",
+      "mode": "managed",
+      "type": "aws_lambda_alias",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "function_name": "synthetic-function",
+          "function_version": "6",
+          "name": "canary"
+        }
+      }
+    },
+    {
+      "address": "aws_lambda_function_url.live",
+      "mode": "managed",
+      "type": "aws_lambda_function_url",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "function_name": "synthetic-function",
+          "qualifier": "live",
+          "authorization_type": "AWS_IAM",
+          "function_url": "https://SYNTHETIC_ENDPOINT_NOT_FOR_OUTPUT.invalid"
+        }
+      }
+    },
+    {
+      "address": "aws_lambda_layer_version_permission.shared",
+      "mode": "managed",
+      "type": "aws_lambda_layer_version_permission",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "layer_name": "synthetic-one",
+          "version_number": 1,
+          "policy": "SYNTHETIC_POLICY_NOT_FOR_OUTPUT"
+        }
+      }
+    },
+    {
+      "address": "aws_lambda_function_url.unresolved",
+      "mode": "managed",
+      "type": "aws_lambda_function_url",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "function_name": "synthetic-function",
+          "authorization_type": "NONE"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_lambda_function.app",
+          "mode": "managed",
+          "type": "aws_lambda_function",
+          "provider_config_key": "aws",
+          "expressions": {
+            "layers": {
+              "references": [
+                "aws_lambda_layer_version.shared[0].arn",
+                "aws_lambda_layer_version.shared[0]",
+                "aws_lambda_layer_version.shared[1].arn",
+                "aws_lambda_layer_version.shared[1]"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_lambda_layer_version.shared",
+          "mode": "managed",
+          "type": "aws_lambda_layer_version",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_lambda_alias.live",
+          "mode": "managed",
+          "type": "aws_lambda_alias",
+          "provider_config_key": "aws",
+          "expressions": {
+            "function_name": {
+              "references": [
+                "aws_lambda_function.app.function_name",
+                "aws_lambda_function.app"
+              ]
+            },
+            "function_version": {
+              "references": [
+                "aws_lambda_function.app.version",
+                "aws_lambda_function.app"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_lambda_alias.canary",
+          "mode": "managed",
+          "type": "aws_lambda_alias",
+          "provider_config_key": "aws",
+          "expressions": {
+            "function_name": {
+              "references": [
+                "aws_lambda_function.app.function_name",
+                "aws_lambda_function.app"
+              ]
+            },
+            "function_version": {
+              "constant_value": "6"
+            }
+          }
+        },
+        {
+          "address": "aws_lambda_function_url.live",
+          "mode": "managed",
+          "type": "aws_lambda_function_url",
+          "provider_config_key": "aws",
+          "expressions": {
+            "function_name": {
+              "references": [
+                "aws_lambda_function.app.function_name",
+                "aws_lambda_function.app"
+              ]
+            },
+            "qualifier": {
+              "references": [
+                "aws_lambda_alias.live.name",
+                "aws_lambda_alias.live"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_lambda_layer_version_permission.shared",
+          "mode": "managed",
+          "type": "aws_lambda_layer_version_permission",
+          "provider_config_key": "aws",
+          "expressions": {
+            "layer_name": {
+              "references": [
+                "aws_lambda_layer_version.shared[0].layer_name",
+                "aws_lambda_layer_version.shared[0]"
+              ]
+            },
+            "version_number": {
+              "references": [
+                "aws_lambda_layer_version.shared[0].version",
+                "aws_lambda_layer_version.shared[0]"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_lambda_function_url.unresolved",
+          "mode": "managed",
+          "type": "aws_lambda_function_url",
+          "provider_config_key": "aws",
+          "expressions": {
+            "function_name": {
+              "constant_value": "synthetic-function"
+            }
+          }
+        }
+      ]
+    }
+  }
+}

@@ -214,10 +214,11 @@ fn matrix() -> String {
                     } else {
                         "Previously generic fallback".into()
                     });
-                    notes.push(
-                        "Basic display only; no new dedicated relationship or verified owner"
-                            .into(),
-                    );
+                    notes.push(if paths.iter().any(|path| path.ends_with("/lambda.rs")) {
+                        "Basic role and presentation retained; dedicated references require verified evidence".into()
+                    } else {
+                        "Basic display only; no new dedicated relationship or verified owner".into()
+                    });
                 } else {
                     notes.push("Existing classification and presentation retained".into());
                 }

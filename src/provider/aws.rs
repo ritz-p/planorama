@@ -21,6 +21,7 @@ mod firehose;
 mod glue;
 mod iam;
 mod icons;
+mod lambda;
 mod members;
 mod messaging;
 mod monitoring;
