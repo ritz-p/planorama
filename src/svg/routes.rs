@@ -131,7 +131,7 @@ pub(super) fn render(
         if let Some(heading) = card.type_heading() {
             svg.push_str(r##"<text data-resource-type-heading="true" font-size="12" font-weight="700" fill="#334155">"##);
             for (line, text) in
-                crate::view::text::wrap_address(&heading, crate::view::routes::LINE_LIMIT)
+                crate::view::heading::lines(&heading, crate::view::routes::LINE_LIMIT)
                     .iter()
                     .enumerate()
             {
@@ -139,7 +139,7 @@ pub(super) fn render(
                     svg,
                     r#"<tspan x="{}" y="{}" xml:space="preserve">{}</tspan>"#,
                     x + 12,
-                    y + 24 + line * 18,
+                    y + 24 + line * crate::view::heading::LINE_HEIGHT,
                     super::escape(text)
                 )
                 .unwrap();

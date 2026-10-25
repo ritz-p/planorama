@@ -134,7 +134,7 @@
 <circle data-junction-edges="[[&quot;resource-6177735f7375626e65742e61-current&quot;,&quot;resource-6177735f72656473686966745f7375626e65745f67726f75702e6d61696e-current&quot;],[&quot;resource-6177735f7375626e65742e62-current&quot;,&quot;resource-6177735f72656473686966745f7375626e65745f67726f75702e6d61696e-current&quot;]]" cx="532" cy="442" r="3" fill="#94a3b8" mask="url(#container-occlusion-2)"/>
 <g id="resource-6177735f72656473686966745f636c75737465722e6d61696e-current" data-architecture-id="terraform:6177735f72656473686966745f636c75737465722e6d61696e-current" data-qualified-address="module.root.aws_redshift_cluster.main" data-terraform-address="aws_redshift_cluster.main"><title>module.root.aws_redshift_cluster.main — create</title>
 <rect x="1051" y="352" width="640" height="226" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
-<text x="1095" y="380" font-size="11" fill="#047857">aws_redshift_cluster · create</text>
+<text data-resource-type-heading="true" x="1095" y="380" font-size="11" fill="#047857" xml:space="preserve">aws_redshift_cluster · create</text>
 <rect data-service-badge="true" data-service-category="neutral" data-service-full-name="Amazon Redshift" data-display-name="Amazon Redshift" x="1498" y="360" width="185" height="32" rx="4" fill="#e2e8f0"/><text data-service-name="true" x="1508" y="382" font-size="18" font-weight="700" fill="#0f172a" xml:space="preserve">Amazon Redshift</text><g data-role-shape="data-store" transform="translate(1063 367)" role="img" aria-label="Visual role: data-store" pointer-events="none" fill="#f8fafc" stroke="#475569" stroke-width="1"><title>Visual role: data-store</title><path d="M1 4 C1 0 21 0 21 4 V14 C21 18 1 18 1 14 Z"/><path d="M1 4 C1 8 21 8 21 4" fill="none"/></g><text x="1063" y="413" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_redshift_cluster.main</text>
 <g data-resource-references="true"><title>Cluster parameter group: module.root.aws_redshift_parameter_group.main [cluster_parameter_group_name; direct attribute reference]
 Cluster subnet group: module.root.aws_redshift_subnet_group.main [cluster_subnet_group_name; direct attribute reference]</title><text x="1063" y="454" font-size="11" font-weight="700" fill="#475569">Uses</text><a href="#resource-6177735f72656473686966745f706172616d657465725f67726f75702e6d61696e-current" data-reference-attribute="cluster_parameter_group_name"><title>Cluster parameter group: module.root.aws_redshift_parameter_group.main [cluster_parameter_group_name; direct attribute reference]</title><text x="1063" y="472" font-size="11" fill="#334155" xml:space="preserve">Cluster parameter group: module.root.aws_redshift_parameter_group.main</text>
@@ -145,29 +145,29 @@ Cluster subnet group: module.root.aws_redshift_subnet_group.main [cluster_subnet
 </g>
 <g id="resource-6177735f72656473686966745f7375626e65745f67726f75702e6d61696e-current" data-architecture-id="terraform:6177735f72656473686966745f7375626e65745f67726f75702e6d61696e-current" data-qualified-address="module.root.aws_redshift_subnet_group.main" data-terraform-address="aws_redshift_subnet_group.main"><title>module.root.aws_redshift_subnet_group.main — create</title>
 <rect x="556" y="400" width="455" height="130" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
-<text x="568" y="428" font-size="11" fill="#047857">aws_redshift_subnet_group · create</text>
+<text data-resource-type-heading="true" x="568" y="428" font-size="11" fill="#047857" xml:space="preserve">aws_redshift_subnet_group · create</text>
 <rect data-service-badge="true" data-service-category="neutral" data-service-full-name="Amazon Redshift" data-display-name="Amazon Redshift" x="818" y="408" width="185" height="32" rx="4" fill="#e2e8f0"/><text data-service-name="true" x="828" y="430" font-size="18" font-weight="700" fill="#0f172a" xml:space="preserve">Amazon Redshift</text><text x="568" y="461" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_redshift_subnet_group.main</text>
 <text x="568" y="518" font-size="10" fill="#64748b"><title>root</title>root</text>
 <text x="568" y="500" font-size="10" fill="#64748b" data-placement="inferred">inferred placement</text>
 </g>
 <g id="resource-6177735f73656375726974795f67726f75702e6d61696e-current" data-architecture-id="terraform:6177735f73656375726974795f67726f75702e6d61696e-current" data-qualified-address="module.root.aws_security_group.main" data-terraform-address="aws_security_group.main"><title>module.root.aws_security_group.main — unchanged</title>
 <rect x="1163" y="618" width="416" height="112" rx="8" fill="#f8fafc" stroke="#64748b" stroke-width="1.5" data-mode="managed"/>
-<text x="1175" y="646" font-size="11" fill="#64748b">aws_security_group · unchanged</text>
+<text data-resource-type-heading="true" x="1175" y="646" font-size="11" fill="#64748b" xml:space="preserve">aws_security_group · unchanged</text>
 <rect data-service-badge="true" data-service-category="network" data-service-full-name="Amazon VPC" data-display-name="Security Group" x="1397" y="626" width="174" height="32" rx="4" fill="#dbeafe"/><text data-service-name="true" x="1407" y="648" font-size="18" font-weight="700" fill="#1e3a8a" xml:space="preserve">Security Group</text><text x="1175" y="679" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_security_group.main</text>
 <text x="1175" y="718" font-size="10" fill="#64748b" data-role="policy"><title>root</title>policy · root</text>
 </g>
 <g id="resource-6177735f7375626e65742e61-current" data-architecture-id="terraform:6177735f7375626e65742e61-current" data-qualified-address="module.root.aws_subnet.a" data-terraform-address="aws_subnet.a"><title>module.root.aws_subnet.a — unchanged</title>
-<text x="112" y="380" font-size="11" fill="#64748b">aws_subnet · unchanged</text>
+<text data-resource-type-heading="true" x="112" y="380" font-size="11" fill="#64748b" xml:space="preserve">aws_subnet · unchanged</text>
 <rect data-service-badge="true" data-service-category="network" data-service-full-name="Amazon VPC" data-display-name="Subnet" x="406" y="360" width="86" height="32" rx="4" fill="#dbeafe"/><text data-service-name="true" x="416" y="382" font-size="18" font-weight="700" fill="#1e3a8a" xml:space="preserve">Subnet</text><text x="112" y="413" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_subnet.a</text>
 <text x="112" y="452" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
 <g id="resource-6177735f7375626e65742e62-current" data-architecture-id="terraform:6177735f7375626e65742e62-current" data-qualified-address="module.root.aws_subnet.b" data-terraform-address="aws_subnet.b"><title>module.root.aws_subnet.b — unchanged</title>
-<text x="112" y="572" font-size="11" fill="#64748b">aws_subnet · unchanged</text>
+<text data-resource-type-heading="true" x="112" y="572" font-size="11" fill="#64748b" xml:space="preserve">aws_subnet · unchanged</text>
 <rect data-service-badge="true" data-service-category="network" data-service-full-name="Amazon VPC" data-display-name="Subnet" x="406" y="552" width="86" height="32" rx="4" fill="#dbeafe"/><text data-service-name="true" x="416" y="574" font-size="18" font-weight="700" fill="#1e3a8a" xml:space="preserve">Subnet</text><text x="112" y="605" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_subnet.b</text>
 <text x="112" y="644" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
 <g id="resource-6177735f7670632e6d61696e-current" data-architecture-id="terraform:6177735f7670632e6d61696e-current" data-qualified-address="module.root.aws_vpc.main" data-terraform-address="aws_vpc.main"><title>module.root.aws_vpc.main — unchanged</title>
-<text x="72" y="228" font-size="11" fill="#64748b">aws_vpc · unchanged</text>
+<text data-resource-type-heading="true" x="72" y="228" font-size="11" fill="#64748b" xml:space="preserve">aws_vpc · unchanged</text>
 <rect data-service-badge="true" data-service-category="network" data-service-full-name="Amazon VPC" data-display-name="VPC" x="1670" y="208" width="53" height="32" rx="4" fill="#dbeafe"/><text data-service-name="true" x="1680" y="230" font-size="18" font-weight="700" fill="#1e3a8a" xml:space="preserve">VPC</text><text x="72" y="261" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_vpc.main</text>
 <text x="72" y="300" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>

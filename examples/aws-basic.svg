@@ -179,20 +179,20 @@
 <g data-edge-kind="dependency" data-source="resource-6177735f6d715f636f6e66696775726174696f6e2e6d61696e-current" data-target="resource-6177735f6d715f62726f6b65722e6d61696e-current"><title>module.root.aws_mq_configuration.main → module.root.aws_mq_broker.main</title></g>
 <g id="resource-6177735f6d656d6f727964625f636c75737465722e666f726569676e-current" data-architecture-id="terraform:6177735f6d656d6f727964625f636c75737465722e666f726569676e-current" data-qualified-address="module.root.aws_memorydb_cluster.foreign" data-terraform-address="aws_memorydb_cluster.foreign"><title>module.root.aws_memorydb_cluster.foreign — create</title>
 <rect x="60" y="414" width="320" height="96" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
-<text x="72" y="434" font-size="11" fill="#047857">aws_memorydb_cluster · create</text>
+<text data-resource-type-heading="true" x="72" y="434" font-size="11" fill="#047857" xml:space="preserve">aws_memorydb_cluster · create</text>
 <text x="72" y="459" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_memorydb_cluster.</text>
 <text x="72" y="479" font-size="13" fill="#0f172a" xml:space="preserve">foreign</text>
 </g>
 <g id="resource-6177735f6d715f62726f6b65722e6d61696e-current" data-architecture-id="terraform:6177735f6d715f62726f6b65722e6d61696e-current" data-qualified-address="module.root.aws_mq_broker.main" data-terraform-address="aws_mq_broker.main"><title>module.root.aws_mq_broker.main — create</title>
 <rect x="60" y="200" width="544" height="154" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
-<text x="72" y="228" font-size="11" fill="#047857">aws_mq_broker · create</text>
+<text data-resource-type-heading="true" x="72" y="228" font-size="11" fill="#047857" xml:space="preserve">aws_mq_broker · create</text>
 <rect data-service-badge="true" data-service-category="neutral" data-service-full-name="Amazon MQ" data-display-name="Amazon MQ" x="477" y="208" width="119" height="32" rx="4" fill="#e2e8f0"/><text data-service-name="true" x="487" y="230" font-size="18" font-weight="700" fill="#0f172a" xml:space="preserve">Amazon MQ</text><text x="72" y="261" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_mq_broker.main</text>
 <g data-resource-references="true"><title>References: module.root.aws_mq_configuration.main [configuration; direct attribute reference]</title><text x="72" y="302" font-size="11" font-weight="700" fill="#475569">Uses</text><a href="#resource-6177735f6d715f636f6e66696775726174696f6e2e6d61696e-current" data-reference-attribute="configuration"><title>References: module.root.aws_mq_configuration.main [configuration; direct attribute reference]</title><text x="72" y="320" font-size="11" fill="#334155" xml:space="preserve">References: module.root.aws_mq_configuration.main</text>
 </a></g>
 </g>
 <g id="resource-646174612e6177735f6d715f62726f6b65722e65787465726e616c-current" data-architecture-id="terraform:646174612e6177735f6d715f62726f6b65722e65787465726e616c-current" data-qualified-address="module.root.data.aws_mq_broker.external" data-terraform-address="data.aws_mq_broker.external"><title>module.root.data.aws_mq_broker.external — read</title>
 <rect x="60" y="550" width="320" height="96" rx="8" fill="#faf5ff" stroke="#7e22ce" stroke-width="1.5" data-mode="data" stroke-dasharray="6 4"/>
-<g data-external="true"><title>External resource: read by Terraform, not managed by this configuration</title><rect x="302" y="557" width="68" height="18" rx="4" fill="#e2e8f0"/><text x="308" y="570" font-size="10" fill="#334155">external</text></g><text x="72" y="570" font-size="11" fill="#7e22ce">aws_mq_broker · read</text>
+<g data-external="true"><title>External resource: read by Terraform, not managed by this configuration</title><rect x="302" y="557" width="68" height="18" rx="4" fill="#e2e8f0"/><text x="308" y="570" font-size="10" fill="#334155">external</text></g><text data-resource-type-heading="true" x="72" y="570" font-size="11" fill="#7e22ce" xml:space="preserve">aws_mq_broker · read</text>
 <text x="72" y="595" font-size="13" fill="#0f172a" xml:space="preserve">module.root.data.aws_mq_broker.</text>
 <text x="72" y="615" font-size="13" fill="#0f172a" xml:space="preserve">external</text>
 </g>

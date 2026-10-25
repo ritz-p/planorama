@@ -3,6 +3,7 @@ use crate::model::Node;
 pub(crate) struct Metrics {
     pub inset: usize,
     pub line_limit: usize,
+    pub type_line_limit: usize,
     pub import_height: usize,
     pub service_height: usize,
     pub service_width: usize,
@@ -75,6 +76,22 @@ pub(crate) fn measure(node: &Node) -> Metrics {
     let service_height = crate::services::display_name(node).map_or(0, |name| {
         super::service_label::height(name, service_width).saturating_sub(24)
     });
+    let role_inset = if role_mark(node).is_some() { 32 } else { 0 };
+    let mut heading_right = if service_width == 0 {
+        width - 12
+    } else {
+        width - 8 - service_width - 4
+    };
+    if node.mode == crate::model::EntityMode::Data {
+        heading_right = heading_right.min(242 + role_inset - 12);
+    }
+    let type_line_limit = (heading_right.saturating_sub(12 + role_inset) / 7).max(1);
+    let heading_height = super::heading::lines(&super::heading::text(node, false), type_line_limit)
+        .len()
+        .saturating_sub(1)
+        * super::heading::LINE_HEIGHT;
+    let service_height =
+        service_height.max(heading_height + if node.service_name.is_some() { 8 } else { 0 });
     let extra = lines.saturating_sub(2) * 20 + import_height + service_height;
     let previous_line_limit = (width - 24) / 8;
     let previous_height = node.previous_address.as_deref().map_or(0, |previous| {
@@ -86,6 +103,7 @@ pub(crate) fn measure(node: &Node) -> Metrics {
     Metrics {
         inset,
         line_limit,
+        type_line_limit,
         import_height,
         service_height,
         service_width,

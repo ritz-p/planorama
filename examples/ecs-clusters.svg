@@ -143,19 +143,19 @@
 <g data-edge-kind="containment" data-source="resource-6177735f7670632e61-current" data-target="resource-6177735f6563735f736572766963652e61-current"><title>module.root.aws_vpc.a → module.root.aws_ecs_service.a (containment)</title></g>
 <g id="resource-6177735f6563735f636c75737465722e736861726564-current" data-architecture-id="terraform:6177735f6563735f636c75737465722e736861726564-current" data-qualified-address="module.root.aws_ecs_cluster.shared" data-terraform-address="aws_ecs_cluster.shared"><title>module.root.aws_ecs_cluster.shared — create</title>
 <rect x="60" y="200" width="341" height="112" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
-<text x="72" y="228" font-size="11" fill="#047857">aws_ecs_cluster · create</text>
+<text data-resource-type-heading="true" x="72" y="228" font-size="11" fill="#047857" xml:space="preserve">aws_ecs_cluster · create</text>
 <rect data-service-badge="true" data-service-category="compute" data-service-full-name="Amazon ECS" data-display-name="ECS Cluster" x="252" y="208" width="141" height="32" rx="4" fill="#ffedd5"/><text data-service-name="true" x="262" y="230" font-size="18" font-weight="700" fill="#7c2d12" xml:space="preserve">ECS Cluster</text><text x="72" y="261" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_ecs_cluster.shared</text>
 <text x="72" y="300" font-size="10" fill="#64748b" data-role="controller"><title>root</title>controller · root</text>
 </g>
 <g id="resource-6177735f6563735f636c75737465722e756e6b6e6f776e-current" data-architecture-id="terraform:6177735f6563735f636c75737465722e756e6b6e6f776e-current" data-qualified-address="module.root.aws_ecs_cluster.unknown" data-terraform-address="aws_ecs_cluster.unknown"><title>module.root.aws_ecs_cluster.unknown — other</title>
 <rect x="60" y="1392" width="334" height="112" rx="8" fill="#fefce8" stroke="#854d0e" stroke-width="1.5" data-mode="managed"/>
-<text x="72" y="1420" font-size="11" fill="#854d0e">aws_ecs_cluster · other</text>
+<text data-resource-type-heading="true" x="72" y="1420" font-size="11" fill="#854d0e" xml:space="preserve">aws_ecs_cluster · other</text>
 <rect data-service-badge="true" data-service-category="compute" data-service-full-name="Amazon ECS" data-display-name="ECS Cluster" x="245" y="1400" width="141" height="32" rx="4" fill="#ffedd5"/><text data-service-name="true" x="255" y="1422" font-size="18" font-weight="700" fill="#7c2d12" xml:space="preserve">ECS Cluster</text><text x="72" y="1453" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_ecs_cluster.unknown</text>
 <text x="72" y="1492" font-size="10" fill="#64748b" data-role="controller"><title>root</title>controller · root</text>
 </g>
 <g id="resource-6177735f6563735f736572766963652e61-current" data-architecture-id="terraform:6177735f6563735f736572766963652e61-current" data-qualified-address="module.root.aws_ecs_service.a" data-terraform-address="aws_ecs_service.a"><title>module.root.aws_ecs_service.a — create</title>
 <rect x="1059" y="429" width="600" height="190" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
-<text x="1103" y="457" font-size="11" fill="#047857">aws_ecs_service · create</text>
+<text data-resource-type-heading="true" x="1103" y="457" font-size="11" fill="#047857" xml:space="preserve">aws_ecs_service · create</text>
 <rect data-service-badge="true" data-service-category="compute" data-service-full-name="Amazon ECS" data-display-name="ECS Service" x="1510" y="437" width="141" height="32" rx="4" fill="#ffedd5"/><text data-service-name="true" x="1520" y="459" font-size="18" font-weight="700" fill="#7c2d12" xml:space="preserve">ECS Service</text><g data-role-shape="execution" transform="translate(1071 444)" role="img" aria-label="Visual role: execution" pointer-events="none" fill="#f8fafc" stroke="#475569" stroke-width="1"><title>Visual role: execution</title><rect x="1" y="1" width="20" height="16" rx="4"/></g><text x="1071" y="490" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_ecs_service.a</text>
 <g data-resource-references="true"><title>Cluster membership: module.root.aws_ecs_cluster.shared [cluster; direct attribute reference]
 Task definition: module.root.aws_ecs_task_definition.app [task_definition; direct attribute reference]</title><text x="1071" y="531" font-size="11" font-weight="700" fill="#475569">Uses</text><a href="#resource-6177735f6563735f636c75737465722e736861726564-current" data-reference-attribute="cluster"><title>Cluster membership: module.root.aws_ecs_cluster.shared [cluster; direct attribute reference]</title><text x="1071" y="549" font-size="11" fill="#334155" xml:space="preserve">Cluster membership: module.root.aws_ecs_cluster.shared</text>
@@ -166,7 +166,7 @@ Task definition: module.root.aws_ecs_task_definition.app [task_definition; direc
 </g>
 <g id="resource-6177735f6563735f736572766963652e62-current" data-architecture-id="terraform:6177735f6563735f736572766963652e62-current" data-qualified-address="module.root.aws_ecs_service.b" data-terraform-address="aws_ecs_service.b"><title>module.root.aws_ecs_service.b — update</title>
 <rect x="659" y="1080" width="600" height="172" rx="8" fill="#eff6ff" stroke="#1d4ed8" stroke-width="1.5" data-mode="managed"/>
-<text x="703" y="1108" font-size="11" fill="#1d4ed8">aws_ecs_service · update</text>
+<text data-resource-type-heading="true" x="703" y="1108" font-size="11" fill="#1d4ed8" xml:space="preserve">aws_ecs_service · update</text>
 <rect data-service-badge="true" data-service-category="compute" data-service-full-name="Amazon ECS" data-display-name="ECS Service" x="1110" y="1088" width="141" height="32" rx="4" fill="#ffedd5"/><text data-service-name="true" x="1120" y="1110" font-size="18" font-weight="700" fill="#7c2d12" xml:space="preserve">ECS Service</text><g data-role-shape="execution" transform="translate(671 1095)" role="img" aria-label="Visual role: execution" pointer-events="none" fill="#f8fafc" stroke="#475569" stroke-width="1"><title>Visual role: execution</title><rect x="1" y="1" width="20" height="16" rx="4"/></g><text x="671" y="1141" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_ecs_service.b</text>
 <g data-resource-references="true"><title>Cluster membership: module.root.aws_ecs_cluster.shared [cluster; direct attribute reference]
 Task definition: module.root.aws_ecs_task_definition.app [task_definition; direct attribute reference]</title><text x="671" y="1182" font-size="11" font-weight="700" fill="#475569">Uses</text><a href="#resource-6177735f6563735f636c75737465722e736861726564-current" data-reference-attribute="cluster"><title>Cluster membership: module.root.aws_ecs_cluster.shared [cluster; direct attribute reference]</title><text x="671" y="1200" font-size="11" fill="#334155" xml:space="preserve">Cluster membership: module.root.aws_ecs_cluster.shared</text>
@@ -175,33 +175,33 @@ Task definition: module.root.aws_ecs_task_definition.app [task_definition; direc
 <text x="671" y="1240" font-size="10" fill="#64748b" data-role="controller"><title>root</title>controller · root</text>
 </g>
 <g id="resource-6177735f7375626e65742e6131-current" data-architecture-id="terraform:6177735f7375626e65742e6131-current" data-qualified-address="module.root.aws_subnet.a1" data-terraform-address="aws_subnet.a1"><title>module.root.aws_subnet.a1 — create</title>
-<text x="631" y="380" font-size="11" fill="#047857">aws_subnet · create</text>
+<text data-resource-type-heading="true" x="631" y="380" font-size="11" fill="#047857" xml:space="preserve">aws_subnet · create</text>
 <rect data-service-badge="true" data-service-category="network" data-service-full-name="Amazon VPC" data-display-name="Subnet" x="925" y="360" width="86" height="32" rx="4" fill="#dbeafe"/><text data-service-name="true" x="935" y="382" font-size="18" font-weight="700" fill="#1e3a8a" xml:space="preserve">Subnet</text><text x="631" y="413" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_subnet.a1</text>
 <text x="631" y="452" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
 <g id="resource-6177735f7375626e65742e6132-current" data-architecture-id="terraform:6177735f7375626e65742e6132-current" data-qualified-address="module.root.aws_subnet.a2" data-terraform-address="aws_subnet.a2"><title>module.root.aws_subnet.a2 — create</title>
-<text x="631" y="572" font-size="11" fill="#047857">aws_subnet · create</text>
+<text data-resource-type-heading="true" x="631" y="572" font-size="11" fill="#047857" xml:space="preserve">aws_subnet · create</text>
 <rect data-service-badge="true" data-service-category="network" data-service-full-name="Amazon VPC" data-display-name="Subnet" x="925" y="552" width="86" height="32" rx="4" fill="#dbeafe"/><text data-service-name="true" x="935" y="574" font-size="18" font-weight="700" fill="#1e3a8a" xml:space="preserve">Subnet</text><text x="631" y="605" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_subnet.a2</text>
 <text x="631" y="644" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
 <g id="resource-6177735f7375626e65742e62-current" data-architecture-id="terraform:6177735f7375626e65742e62-current" data-qualified-address="module.root.aws_subnet.b" data-terraform-address="aws_subnet.b"><title>module.root.aws_subnet.b — create</title>
-<text x="631" y="956" font-size="11" fill="#047857">aws_subnet · create</text>
+<text data-resource-type-heading="true" x="631" y="956" font-size="11" fill="#047857" xml:space="preserve">aws_subnet · create</text>
 <rect data-service-badge="true" data-service-category="network" data-service-full-name="Amazon VPC" data-display-name="Subnet" x="1205" y="936" width="86" height="32" rx="4" fill="#dbeafe"/><text data-service-name="true" x="1215" y="958" font-size="18" font-weight="700" fill="#1e3a8a" xml:space="preserve">Subnet</text><text x="631" y="989" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_subnet.b</text>
 <text x="631" y="1028" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
 <g id="resource-6177735f7670632e61-current" data-architecture-id="terraform:6177735f7670632e61-current" data-qualified-address="module.root.aws_vpc.a" data-terraform-address="aws_vpc.a"><title>module.root.aws_vpc.a — create</title>
-<text x="591" y="228" font-size="11" fill="#047857">aws_vpc · create</text>
+<text data-resource-type-heading="true" x="591" y="228" font-size="11" fill="#047857" xml:space="preserve">aws_vpc · create</text>
 <rect data-service-badge="true" data-service-category="network" data-service-full-name="Amazon VPC" data-display-name="VPC" x="1638" y="208" width="53" height="32" rx="4" fill="#dbeafe"/><text data-service-name="true" x="1648" y="230" font-size="18" font-weight="700" fill="#1e3a8a" xml:space="preserve">VPC</text><text x="591" y="261" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_vpc.a</text>
 <text x="591" y="300" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
 <g id="resource-6177735f7670632e62-current" data-architecture-id="terraform:6177735f7670632e62-current" data-qualified-address="module.root.aws_vpc.b" data-terraform-address="aws_vpc.b"><title>module.root.aws_vpc.b — create</title>
-<text x="591" y="804" font-size="11" fill="#047857">aws_vpc · create</text>
+<text data-resource-type-heading="true" x="591" y="804" font-size="11" fill="#047857" xml:space="preserve">aws_vpc · create</text>
 <rect data-service-badge="true" data-service-category="network" data-service-full-name="Amazon VPC" data-display-name="VPC" x="1278" y="784" width="53" height="32" rx="4" fill="#dbeafe"/><text data-service-name="true" x="1288" y="806" font-size="18" font-weight="700" fill="#1e3a8a" xml:space="preserve">VPC</text><text x="591" y="837" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_vpc.b</text>
 <text x="591" y="876" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
 <g id="resource-646174612e6177735f6563735f636c75737465722e6c6f6f6b7570-current" data-architecture-id="terraform:646174612e6177735f6563735f636c75737465722e6c6f6f6b7570-current" data-qualified-address="module.root.data.aws_ecs_cluster.lookup" data-terraform-address="data.aws_ecs_cluster.lookup"><title>module.root.data.aws_ecs_cluster.lookup — read</title>
 <rect x="60" y="352" width="471" height="112" rx="8" fill="#faf5ff" stroke="#7e22ce" stroke-width="1.5" data-mode="data" stroke-dasharray="6 4"/>
-<g data-external="true"><title>External resource: read by Terraform, not managed by this configuration</title><rect x="302" y="367" width="68" height="18" rx="4" fill="#e2e8f0"/><text x="308" y="380" font-size="10" fill="#334155">external</text></g><text x="72" y="380" font-size="11" fill="#7e22ce">aws_ecs_cluster · read</text>
+<g data-external="true"><title>External resource: read by Terraform, not managed by this configuration</title><rect x="302" y="367" width="68" height="18" rx="4" fill="#e2e8f0"/><text x="308" y="380" font-size="10" fill="#334155">external</text></g><text data-resource-type-heading="true" x="72" y="380" font-size="11" fill="#7e22ce" xml:space="preserve">aws_ecs_cluster · read</text>
 <rect data-service-badge="true" data-service-category="compute" data-service-full-name="Amazon ECS" data-display-name="ECS Cluster" x="382" y="360" width="141" height="32" rx="4" fill="#ffedd5"/><text data-service-name="true" x="392" y="382" font-size="18" font-weight="700" fill="#7c2d12" xml:space="preserve">ECS Cluster</text><text x="72" y="413" font-size="13" fill="#0f172a" xml:space="preserve">module.root.data.aws_ecs_cluster.lookup</text>
 <text x="72" y="452" font-size="10" fill="#64748b" data-role="controller"><title>root</title>controller · root</text>
 </g>

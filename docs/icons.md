@@ -71,8 +71,9 @@ below; unlisted names wrap in full. Unknown provider/type retains its existing
 neutral fallback. No name, ARN, attribute value or resource-prefix inference is used.
 
 Spatial labels share the top row with the action/type text and role mark. Cards
-grow horizontally to reserve space for the label and external indicator; imports
-and complete addresses appear below. The label ends 8px inside the right edge.
+reserve separate space for the label and external indicator. Complete Terraform
+types and operations wrap instead of being shortened; imports and complete
+addresses appear below the measured heading. The label ends 8px inside the right edge.
 Containers use their enclosing header's right edge; embedded members use their
 own card's right edge. Logical Resources show one label to the right of each
 action-section heading, with 12px clearance inside its frame; individual rows do

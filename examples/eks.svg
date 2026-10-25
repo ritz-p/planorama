@@ -176,14 +176,14 @@ Execution role reference: module.root.aws_iam_role.app [service_account_role_arn
 <g data-edge-kind="containment" data-source="resource-6177735f7670632e6d61696e-current" data-target="resource-6177735f656b735f6e6f64655f67726f75702e617070-current"><title>module.root.aws_vpc.main → module.root.aws_eks_node_group.app (containment)</title></g>
 <g id="resource-6177735f656b735f636c75737465722e617070-current" data-architecture-id="terraform:6177735f656b735f636c75737465722e617070-current" data-qualified-address="module.root.aws_eks_cluster.app" data-terraform-address="aws_eks_cluster.app"><title>module.root.aws_eks_cluster.app — create</title>
 <rect x="540" y="515" width="373" height="130" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
-<text x="584" y="543" font-size="11" fill="#047857">aws_eks_cluster · create</text>
+<text data-resource-type-heading="true" x="584" y="543" font-size="11" fill="#047857" xml:space="preserve">aws_eks_cluster · create</text>
 <rect data-service-badge="true" data-service-category="compute" data-service-full-name="Amazon EKS" data-display-name="EKS Cluster" x="764" y="523" width="141" height="32" rx="4" fill="#ffedd5"/><text data-service-name="true" x="774" y="545" font-size="18" font-weight="700" fill="#7c2d12" xml:space="preserve">EKS Cluster</text><g data-role-shape="execution" transform="translate(552 530)" role="img" aria-label="Visual role: execution" pointer-events="none" fill="#f8fafc" stroke="#475569" stroke-width="1"><title>Visual role: execution</title><rect x="1" y="1" width="20" height="16" rx="4"/></g><text x="552" y="576" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_eks_cluster.app</text>
 <text x="552" y="633" font-size="10" fill="#64748b" data-role="controller"><title>root</title>controller · root</text>
 <text x="552" y="615" font-size="10" fill="#64748b" data-placement="inferred">inferred placement</text>
 </g>
 <g id="resource-6177735f656b735f666172676174655f70726f66696c652e617070-current" data-architecture-id="terraform:6177735f656b735f666172676174655f70726f66696c652e617070-current" data-qualified-address="module.root.aws_eks_fargate_profile.app" data-terraform-address="aws_eks_fargate_profile.app"><title>module.root.aws_eks_fargate_profile.app — create</title>
 <rect x="953" y="428" width="584" height="190" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
-<text x="965" y="456" font-size="11" fill="#047857">aws_eks_fargate_profile · create</text>
+<text data-resource-type-heading="true" x="965" y="456" font-size="11" fill="#047857" xml:space="preserve">aws_eks_fargate_profile · create</text>
 <rect data-service-badge="true" data-service-category="compute" data-service-full-name="Amazon EKS" data-display-name="EKS" x="1476" y="436" width="53" height="32" rx="4" fill="#ffedd5"/><text data-service-name="true" x="1486" y="458" font-size="18" font-weight="700" fill="#7c2d12" xml:space="preserve">EKS</text><text x="965" y="489" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_eks_fargate_profile.app</text>
 <g data-resource-references="true"><title>Cluster membership: module.root.aws_eks_cluster.app [cluster_name; direct attribute reference]
 Execution role reference: module.root.aws_iam_role.app [pod_execution_role_arn; direct attribute reference]</title><text x="965" y="530" font-size="11" font-weight="700" fill="#475569">Uses</text><a href="#resource-6177735f656b735f636c75737465722e617070-current" data-reference-attribute="cluster_name"><title>Cluster membership: module.root.aws_eks_cluster.app [cluster_name; direct attribute reference]</title><text x="965" y="548" font-size="11" fill="#334155" xml:space="preserve">Cluster membership: module.root.aws_eks_cluster.app</text>
@@ -194,7 +194,7 @@ Execution role reference: module.root.aws_iam_role.app [pod_execution_role_arn; 
 </g>
 <g id="resource-6177735f656b735f6e6f64655f67726f75702e617070-current" data-architecture-id="terraform:6177735f656b735f6e6f64655f67726f75702e617070-current" data-qualified-address="module.root.aws_eks_node_group.app" data-terraform-address="aws_eks_node_group.app"><title>module.root.aws_eks_node_group.app — create</title>
 <rect x="953" y="658" width="584" height="190" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
-<text x="965" y="686" font-size="11" fill="#047857">aws_eks_node_group · create</text>
+<text data-resource-type-heading="true" x="965" y="686" font-size="11" fill="#047857" xml:space="preserve">aws_eks_node_group · create</text>
 <rect data-service-badge="true" data-service-category="compute" data-service-full-name="Amazon EKS" data-display-name="EKS Node Group" x="1355" y="666" width="174" height="32" rx="4" fill="#ffedd5"/><text data-service-name="true" x="1365" y="688" font-size="18" font-weight="700" fill="#7c2d12" xml:space="preserve">EKS Node Group</text><text x="965" y="719" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_eks_node_group.app</text>
 <g data-resource-references="true"><title>Cluster membership: module.root.aws_eks_cluster.app [cluster_name; direct attribute reference]
 Execution role reference: module.root.aws_iam_role.app [node_role_arn; direct attribute reference]</title><text x="965" y="760" font-size="11" font-weight="700" fill="#475569">Uses</text><a href="#resource-6177735f656b735f636c75737465722e617070-current" data-reference-attribute="cluster_name"><title>Cluster membership: module.root.aws_eks_cluster.app [cluster_name; direct attribute reference]</title><text x="965" y="778" font-size="11" fill="#334155" xml:space="preserve">Cluster membership: module.root.aws_eks_cluster.app</text>
@@ -205,22 +205,22 @@ Execution role reference: module.root.aws_iam_role.app [node_role_arn; direct at
 </g>
 <g id="resource-6177735f73656375726974795f67726f75702e617070-current" data-architecture-id="terraform:6177735f73656375726974795f67726f75702e617070-current" data-qualified-address="module.root.aws_security_group.app" data-terraform-address="aws_security_group.app"><title>module.root.aws_security_group.app — create</title>
 <rect x="518" y="352" width="395" height="112" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
-<text x="530" y="380" font-size="11" fill="#047857">aws_security_group · create</text>
+<text data-resource-type-heading="true" x="530" y="380" font-size="11" fill="#047857" xml:space="preserve">aws_security_group · create</text>
 <rect data-service-badge="true" data-service-category="network" data-service-full-name="Amazon VPC" data-display-name="Security Group" x="731" y="360" width="174" height="32" rx="4" fill="#dbeafe"/><text data-service-name="true" x="741" y="382" font-size="18" font-weight="700" fill="#1e3a8a" xml:space="preserve">Security Group</text><text x="530" y="413" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_security_group.app</text>
 <text x="530" y="452" font-size="10" fill="#64748b" data-role="policy"><title>root</title>policy · root</text>
 </g>
 <g id="resource-6177735f7375626e65742e61-current" data-architecture-id="terraform:6177735f7375626e65742e61-current" data-qualified-address="module.root.aws_subnet.a" data-terraform-address="aws_subnet.a"><title>module.root.aws_subnet.a — create</title>
-<text x="112" y="532" font-size="11" fill="#047857">aws_subnet · create</text>
+<text data-resource-type-heading="true" x="112" y="532" font-size="11" fill="#047857" xml:space="preserve">aws_subnet · create</text>
 <rect data-service-badge="true" data-service-category="network" data-service-full-name="Amazon VPC" data-display-name="Subnet" x="406" y="512" width="86" height="32" rx="4" fill="#dbeafe"/><text data-service-name="true" x="416" y="534" font-size="18" font-weight="700" fill="#1e3a8a" xml:space="preserve">Subnet</text><text x="112" y="565" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_subnet.a</text>
 <text x="112" y="604" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
 <g id="resource-6177735f7375626e65742e62-current" data-architecture-id="terraform:6177735f7375626e65742e62-current" data-qualified-address="module.root.aws_subnet.b" data-terraform-address="aws_subnet.b"><title>module.root.aws_subnet.b — create</title>
-<text x="112" y="724" font-size="11" fill="#047857">aws_subnet · create</text>
+<text data-resource-type-heading="true" x="112" y="724" font-size="11" fill="#047857" xml:space="preserve">aws_subnet · create</text>
 <rect data-service-badge="true" data-service-category="network" data-service-full-name="Amazon VPC" data-display-name="Subnet" x="406" y="704" width="86" height="32" rx="4" fill="#dbeafe"/><text data-service-name="true" x="416" y="726" font-size="18" font-weight="700" fill="#1e3a8a" xml:space="preserve">Subnet</text><text x="112" y="757" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_subnet.b</text>
 <text x="112" y="796" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
 <g id="resource-6177735f7670632e6d61696e-current" data-architecture-id="terraform:6177735f7670632e6d61696e-current" data-qualified-address="module.root.aws_vpc.main" data-terraform-address="aws_vpc.main"><title>module.root.aws_vpc.main — create</title>
-<text x="72" y="228" font-size="11" fill="#047857">aws_vpc · create</text>
+<text data-resource-type-heading="true" x="72" y="228" font-size="11" fill="#047857" xml:space="preserve">aws_vpc · create</text>
 <rect data-service-badge="true" data-service-category="network" data-service-full-name="Amazon VPC" data-display-name="VPC" x="1516" y="208" width="53" height="32" rx="4" fill="#dbeafe"/><text data-service-name="true" x="1526" y="230" font-size="18" font-weight="700" fill="#1e3a8a" xml:space="preserve">VPC</text><text x="72" y="261" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_vpc.main</text>
 <text x="72" y="300" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>

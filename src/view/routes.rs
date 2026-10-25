@@ -30,23 +30,12 @@ pub(crate) struct Card<'a> {
 
 impl Card<'_> {
     pub fn type_heading(&self) -> Option<String> {
-        self.node.map(|node| {
-            let operation = node.metadata.state_removal.map_or_else(
-                || format!("{:?}", node.action).to_lowercase(),
-                |removal| removal.label().into(),
-            );
-            let import = if node.metadata.import.is_some() {
-                "import / "
-            } else {
-                ""
-            };
-            format!("{} · {import}{operation}", node.resource_type)
-        })
+        self.node.map(|node| super::heading::text(node, true))
     }
 
     pub fn type_heading_height(&self) -> usize {
         self.type_heading().map_or(0, |heading| {
-            super::text::wrap_address(&heading, LINE_LIMIT).len() * 18 + 8
+            super::heading::lines(&heading, LINE_LIMIT).len() * super::heading::LINE_HEIGHT + 8
         })
     }
 
