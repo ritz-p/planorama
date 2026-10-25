@@ -325,7 +325,7 @@ fn render_with_index(
     let mut svg = format!(
         r##"<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}" role="img" aria-labelledby="title description">
 <title id="title">Terraform plan</title>
-<desc id="description">{description} Thin solid: dependency. Dashed: association. Thick dotted: connection. Nested boxes: containment. Edge color preserves the Terraform action when available. Service label backgrounds: orange = compute; green = storage; blue = network; gray = unclassified. Spatial card role marks: rounded rectangle = execution; cylinder = data store; hexagon = network.</desc>
+<desc id="description">{description} Thin solid: dependency. Dashed: association. Thick dotted: connection. Nested boxes: containment. Edge color preserves the Terraform action when available. Service label backgrounds: orange = compute; green = storage; blue = network; red = IAM; gray = unclassified. Spatial card role marks: rounded rectangle = execution; cylinder = data store; hexagon = network.</desc>
 <defs>{markers}{icon_definitions}{occlusion_definitions}</defs>
 <rect width="100%" height="100%" fill="#ffffff"/>
 <g font-family="ui-monospace, SFMono-Regular, Consolas, monospace">
@@ -571,16 +571,16 @@ fn render_with_index(
         }
         svg.push_str(&icons::service_name(
             node,
-            x + 12,
-            y + 45 + metrics.import_height,
+            x + card_width - 12,
+            y + 28 + metrics.import_height,
             metrics.service_width,
         ));
         if !layout.containers.contains(&i) {
             if let Some(role) = crate::view::card::role_mark(node) {
                 svg.push_str(&role_marks::render(
                     role,
-                    x + card_width - 34,
-                    y + 31 + metrics.import_height,
+                    x + 12,
+                    y + 35 + metrics.import_height,
                 ));
             }
         }

@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="1874" viewBox="0 0 1120 1874" font-family="ui-monospace, Consolas, monospace" role="img" aria-labelledby="multi-title multi-description">
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="1934" viewBox="0 0 1120 1934" font-family="ui-monospace, Consolas, monospace" role="img" aria-labelledby="multi-title multi-description">
 <title id="multi-title">Terraform plans</title><desc id="multi-description">2 independent states. Resource identities and relationships are scoped to each state.</desc>
 <rect width="100%" height="100%" fill="#ffffff"/><text x="40" y="35" font-family="ui-monospace, Consolas, monospace" font-size="25" fill="#0f172a">Terraform plans</text>
 <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/></marker></defs>
@@ -78,9 +78,9 @@
 </g>
 <g id="state-6170706c69636174696f6e-state" data-state-id="application">
 <text x="40" y="643" font-family="ui-monospace, Consolas, monospace" font-size="20" font-weight="700" fill="#0f172a">State: application</text>
-<svg y="658" xmlns="http://www.w3.org/2000/svg" width="1120" height="480" viewBox="0 0 1120 480" role="img" aria-labelledby="state-6170706c69636174696f6e-title state-6170706c69636174696f6e-description">
+<svg y="658" xmlns="http://www.w3.org/2000/svg" width="1120" height="500" viewBox="0 0 1120 500" role="img" aria-labelledby="state-6170706c69636174696f6e-title state-6170706c69636174696f6e-description">
 <title id="state-6170706c69636174696f6e-title">Terraform plan</title>
-<desc id="state-6170706c69636174696f6e-description">2 resources, 1 reference edges. Arrows point from dependencies to dependent resources. References are conservative, not Terraform execution order. Thin solid: dependency. Dashed: association. Thick dotted: connection. Nested boxes: containment. Edge color preserves the Terraform action when available. Service label backgrounds: orange = compute; green = storage; blue = network; gray = unclassified. Spatial card role marks: rounded rectangle = execution; cylinder = data store; hexagon = network.</desc>
+<desc id="state-6170706c69636174696f6e-description">2 resources, 1 reference edges. Arrows point from dependencies to dependent resources. References are conservative, not Terraform execution order. Thin solid: dependency. Dashed: association. Thick dotted: connection. Nested boxes: containment. Edge color preserves the Terraform action when available. Service label backgrounds: orange = compute; green = storage; blue = network; red = IAM; gray = unclassified. Spatial card role marks: rounded rectangle = execution; cylinder = data store; hexagon = network.</desc>
 <defs><marker id="state-6170706c69636174696f6e-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/></marker></defs>
 <rect width="100%" height="100%" fill="#ffffff"/>
 <g font-family="ui-monospace, SFMono-Regular, Consolas, monospace">
@@ -104,31 +104,31 @@
 </title><text x="40" y="161" font-size="12" fill="#475569">Checks (objects): 0 pass / 1 fail / 0 error / 0 unknown / 0 other / 0 unavailable</text></g>
 <g transform="translate(0 24)">
 <g data-architecture="true" transform="translate(0 0)">
-<g data-deployment-scope="true" data-scope-provider="AWS" data-region="ap-northeast-1"><rect x="40" y="160" width="720" height="176" rx="14" fill="#f8fafc" stroke="#94a3b8" stroke-dasharray="9 5"/><text x="56" y="185" font-size="15" font-weight="700" fill="#334155">AWS ap-northeast-1</text></g>
-<path d="M 380 258 L 420 258 " data-edge-kind="dependency" data-directionality="directed" data-source="state-6170706c69636174696f6e-resource-6177735f73656375726974795f67726f75702e617070-current" data-target="state-6170706c69636174696f6e-resource-6177735f696e7374616e63652e617070-current" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#state-6170706c69636174696f6e-arrow)"><title>aws_security_group.app → aws_instance.app</title></path>
+<g data-deployment-scope="true" data-scope-provider="AWS" data-region="ap-northeast-1"><rect x="40" y="160" width="720" height="196" rx="14" fill="#f8fafc" stroke="#94a3b8" stroke-dasharray="9 5"/><text x="56" y="185" font-size="15" font-weight="700" fill="#334155">AWS ap-northeast-1</text></g>
+<path d="M 380 268 L 420 268 " data-edge-kind="dependency" data-directionality="directed" data-source="state-6170706c69636174696f6e-resource-6177735f73656375726974795f67726f75702e617070-current" data-target="state-6170706c69636174696f6e-resource-6177735f696e7374616e63652e617070-current" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#state-6170706c69636174696f6e-arrow)"><title>aws_security_group.app → aws_instance.app</title></path>
 <g id="state-6170706c69636174696f6e-resource-6177735f696e7374616e63652e617070-current" data-architecture-id="terraform:6177735f696e7374616e63652e617070-current" data-qualified-address="module.root.aws_instance.app" data-terraform-address="aws_instance.app"><title>module.root.aws_instance.app — create</title>
-<rect x="420" y="200" width="320" height="116" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
+<rect x="420" y="200" width="320" height="136" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text x="432" y="220" font-size="11" fill="#047857">aws_instance · create</text>
-<rect data-service-badge="true" data-service-category="compute" data-service-full-name="Amazon EC2" x="432" y="231" width="36" height="18" rx="4" fill="#ffedd5"/><text data-service-name="true" x="438" y="245" font-size="13" font-weight="700" fill="#7c2d12" xml:space="preserve">EC2</text><g data-role-shape="execution" transform="translate(706 231)" role="img" aria-label="Visual role: execution" pointer-events="none" fill="#f8fafc" stroke="#475569" stroke-width="1"><title>Visual role: execution</title><rect x="1" y="1" width="20" height="16" rx="4"/></g><text x="432" y="265" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_instance.app</text>
+<rect data-service-badge="true" data-service-category="compute" data-service-full-name="Amazon EC2" data-display-name="EC2" x="675" y="228" width="53" height="32" rx="4" fill="#ffedd5"/><text data-service-name="true" x="685" y="250" font-size="18" font-weight="700" fill="#7c2d12" xml:space="preserve">EC2</text><g data-role-shape="execution" transform="translate(432 235)" role="img" aria-label="Visual role: execution" pointer-events="none" fill="#f8fafc" stroke="#475569" stroke-width="1"><title>Visual role: execution</title><rect x="1" y="1" width="20" height="16" rx="4"/></g><text x="432" y="285" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_instance.app</text>
 </g>
 <g id="state-6170706c69636174696f6e-resource-6177735f73656375726974795f67726f75702e617070-current" data-architecture-id="terraform:6177735f73656375726974795f67726f75702e617070-current" data-qualified-address="module.root.aws_security_group.app" data-terraform-address="aws_security_group.app"><title>module.root.aws_security_group.app — create</title>
-<rect x="60" y="200" width="320" height="116" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
+<rect x="60" y="200" width="320" height="136" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text x="72" y="220" font-size="11" fill="#047857">aws_security_group · create</text>
-<rect data-service-badge="true" data-service-category="network" data-service-full-name="Amazon VPC" x="72" y="231" width="36" height="18" rx="4" fill="#dbeafe"/><text data-service-name="true" x="78" y="245" font-size="13" font-weight="700" fill="#1e3a8a" xml:space="preserve">VPC</text><text x="72" y="265" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_security_group.app</text>
-<text x="72" y="304" font-size="10" fill="#64748b" data-role="policy"><title>root</title>policy · root</text>
+<rect data-service-badge="true" data-service-category="network" data-service-full-name="Amazon VPC" data-display-name="Security Group" x="194" y="228" width="174" height="32" rx="4" fill="#dbeafe"/><text data-service-name="true" x="204" y="250" font-size="18" font-weight="700" fill="#1e3a8a" xml:space="preserve">Security Group</text><text x="72" y="285" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_security_group.app</text>
+<text x="72" y="324" font-size="10" fill="#64748b" data-role="policy"><title>root</title>policy · root</text>
 </g>
 <g data-endpoints="true" data-source="state-6170706c69636174696f6e-resource-6177735f73656375726974795f67726f75702e617070-current" data-target="state-6170706c69636174696f6e-resource-6177735f696e7374616e63652e617070-current" aria-hidden="true">
-<circle data-endpoint="source" cx="380" cy="258" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+<circle data-endpoint="source" cx="380" cy="268" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
 </g>
 </g>
 </g>
 </svg>
 </g>
 <g id="state-6e6574776f726b-state" data-state-id="network">
-<text x="40" y="1183" font-family="ui-monospace, Consolas, monospace" font-size="20" font-weight="700" fill="#0f172a">State: network</text>
-<svg y="1198" xmlns="http://www.w3.org/2000/svg" width="1120" height="656" viewBox="0 0 1120 656" role="img" aria-labelledby="state-6e6574776f726b-title state-6e6574776f726b-description">
+<text x="40" y="1203" font-family="ui-monospace, Consolas, monospace" font-size="20" font-weight="700" fill="#0f172a">State: network</text>
+<svg y="1218" xmlns="http://www.w3.org/2000/svg" width="1120" height="696" viewBox="0 0 1120 696" role="img" aria-labelledby="state-6e6574776f726b-title state-6e6574776f726b-description">
 <title id="state-6e6574776f726b-title">Terraform plan</title>
-<desc id="state-6e6574776f726b-description">3 resources, 1 reference edges. Arrows point from dependencies to dependent resources. References are conservative, not Terraform execution order. Thin solid: dependency. Dashed: association. Thick dotted: connection. Nested boxes: containment. Edge color preserves the Terraform action when available. Service label backgrounds: orange = compute; green = storage; blue = network; gray = unclassified. Spatial card role marks: rounded rectangle = execution; cylinder = data store; hexagon = network.</desc>
+<desc id="state-6e6574776f726b-description">3 resources, 1 reference edges. Arrows point from dependencies to dependent resources. References are conservative, not Terraform execution order. Thin solid: dependency. Dashed: association. Thick dotted: connection. Nested boxes: containment. Edge color preserves the Terraform action when available. Service label backgrounds: orange = compute; green = storage; blue = network; red = IAM; gray = unclassified. Spatial card role marks: rounded rectangle = execution; cylinder = data store; hexagon = network.</desc>
 <defs><marker id="state-6e6574776f726b-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/></marker></defs>
 <rect width="100%" height="100%" fill="#ffffff"/>
 <g font-family="ui-monospace, SFMono-Regular, Consolas, monospace">
@@ -151,27 +151,27 @@
 </title><text x="40" y="161" font-size="12" fill="#475569">Checks (objects): 1 pass / 0 fail / 0 error / 0 unknown / 0 other / 0 unavailable</text></g>
 <g transform="translate(0 24)">
 <g data-architecture="true" transform="translate(0 0)">
-<g data-deployment-scope="true" data-scope-provider="AWS" data-region="ap-northeast-1"><rect x="40" y="160" width="720" height="176" rx="14" fill="#f8fafc" stroke="#94a3b8" stroke-dasharray="9 5"/><text x="56" y="185" font-size="15" font-weight="700" fill="#334155">AWS ap-northeast-1</text></g>
-<path d="M 380 258 L 420 258 " data-edge-kind="dependency" data-directionality="directed" data-source="state-6e6574776f726b-resource-6177735f73656375726974795f67726f75702e617070-current" data-target="state-6e6574776f726b-resource-6177735f696e7374616e63652e617070-current" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#state-6e6574776f726b-arrow)"><title>aws_security_group.app → aws_instance.app</title></path>
+<g data-deployment-scope="true" data-scope-provider="AWS" data-region="ap-northeast-1"><rect x="40" y="160" width="720" height="196" rx="14" fill="#f8fafc" stroke="#94a3b8" stroke-dasharray="9 5"/><text x="56" y="185" font-size="15" font-weight="700" fill="#334155">AWS ap-northeast-1</text></g>
+<path d="M 380 268 L 420 268 " data-edge-kind="dependency" data-directionality="directed" data-source="state-6e6574776f726b-resource-6177735f73656375726974795f67726f75702e617070-current" data-target="state-6e6574776f726b-resource-6177735f696e7374616e63652e617070-current" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#state-6e6574776f726b-arrow)"><title>aws_security_group.app → aws_instance.app</title></path>
 <g id="state-6e6574776f726b-resource-6177735f696e7374616e63652e617070-current" data-architecture-id="terraform:6177735f696e7374616e63652e617070-current" data-qualified-address="module.root.aws_instance.app" data-terraform-address="aws_instance.app"><title>module.root.aws_instance.app — unchanged</title>
-<rect x="420" y="200" width="320" height="116" rx="8" fill="#f8fafc" stroke="#64748b" stroke-width="1.5" data-mode="managed"/>
+<rect x="420" y="200" width="320" height="136" rx="8" fill="#f8fafc" stroke="#64748b" stroke-width="1.5" data-mode="managed"/>
 <text x="432" y="220" font-size="11" fill="#64748b">aws_instance · unchanged</text>
-<rect data-service-badge="true" data-service-category="compute" data-service-full-name="Amazon EC2" x="432" y="231" width="36" height="18" rx="4" fill="#ffedd5"/><text data-service-name="true" x="438" y="245" font-size="13" font-weight="700" fill="#7c2d12" xml:space="preserve">EC2</text><g data-role-shape="execution" transform="translate(706 231)" role="img" aria-label="Visual role: execution" pointer-events="none" fill="#f8fafc" stroke="#475569" stroke-width="1"><title>Visual role: execution</title><rect x="1" y="1" width="20" height="16" rx="4"/></g><text x="432" y="265" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_instance.app</text>
+<rect data-service-badge="true" data-service-category="compute" data-service-full-name="Amazon EC2" data-display-name="EC2" x="675" y="228" width="53" height="32" rx="4" fill="#ffedd5"/><text data-service-name="true" x="685" y="250" font-size="18" font-weight="700" fill="#7c2d12" xml:space="preserve">EC2</text><g data-role-shape="execution" transform="translate(432 235)" role="img" aria-label="Visual role: execution" pointer-events="none" fill="#f8fafc" stroke="#475569" stroke-width="1"><title>Visual role: execution</title><rect x="1" y="1" width="20" height="16" rx="4"/></g><text x="432" y="285" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_instance.app</text>
 </g>
 <g id="state-6e6574776f726b-resource-6177735f73656375726974795f67726f75702e617070-current" data-architecture-id="terraform:6177735f73656375726974795f67726f75702e617070-current" data-qualified-address="module.root.aws_security_group.app" data-terraform-address="aws_security_group.app"><title>module.root.aws_security_group.app — update</title>
-<rect x="60" y="200" width="320" height="116" rx="8" fill="#eff6ff" stroke="#1d4ed8" stroke-width="1.5" data-mode="managed"/>
+<rect x="60" y="200" width="320" height="136" rx="8" fill="#eff6ff" stroke="#1d4ed8" stroke-width="1.5" data-mode="managed"/>
 <text x="72" y="220" font-size="11" fill="#1d4ed8">aws_security_group · update</text>
-<rect data-service-badge="true" data-service-category="network" data-service-full-name="Amazon VPC" x="72" y="231" width="36" height="18" rx="4" fill="#dbeafe"/><text data-service-name="true" x="78" y="245" font-size="13" font-weight="700" fill="#1e3a8a" xml:space="preserve">VPC</text><text x="72" y="265" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_security_group.app</text>
-<text x="72" y="304" font-size="10" fill="#64748b" data-role="policy"><title>root</title>policy · root</text>
+<rect data-service-badge="true" data-service-category="network" data-service-full-name="Amazon VPC" data-display-name="Security Group" x="194" y="228" width="174" height="32" rx="4" fill="#dbeafe"/><text data-service-name="true" x="204" y="250" font-size="18" font-weight="700" fill="#1e3a8a" xml:space="preserve">Security Group</text><text x="72" y="285" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_security_group.app</text>
+<text x="72" y="324" font-size="10" fill="#64748b" data-role="policy"><title>root</title>policy · root</text>
 </g>
 <g id="state-6e6574776f726b-resource-6177735f73656375726974795f67726f75702e617070-deposed-6f6c64" data-architecture-id="terraform:6177735f73656375726974795f67726f75702e617070-deposed-6f6c64" data-qualified-address="module.root.aws_security_group.app" data-terraform-address="aws_security_group.app" data-deposed-key="old"><title>module.root.aws_security_group.app — delete</title>
-<rect x="60" y="376" width="320" height="116" rx="8" fill="#fef2f2" stroke="#b91c1c" stroke-width="1.5" data-mode="managed"/>
-<text x="72" y="396" font-size="11" fill="#b91c1c">aws_security_group · delete</text>
-<rect data-service-badge="true" data-service-category="network" data-service-full-name="Amazon VPC" x="72" y="407" width="36" height="18" rx="4" fill="#dbeafe"/><text data-service-name="true" x="78" y="421" font-size="13" font-weight="700" fill="#1e3a8a" xml:space="preserve">VPC</text><text x="72" y="441" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_security_group.app</text>
-<text x="72" y="480" font-size="10" fill="#64748b" data-role="policy"><title>root</title>policy · root</text>
+<rect x="60" y="396" width="320" height="136" rx="8" fill="#fef2f2" stroke="#b91c1c" stroke-width="1.5" data-mode="managed"/>
+<text x="72" y="416" font-size="11" fill="#b91c1c">aws_security_group · delete</text>
+<rect data-service-badge="true" data-service-category="network" data-service-full-name="Amazon VPC" data-display-name="Security Group" x="194" y="424" width="174" height="32" rx="4" fill="#dbeafe"/><text data-service-name="true" x="204" y="446" font-size="18" font-weight="700" fill="#1e3a8a" xml:space="preserve">Security Group</text><text x="72" y="481" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_security_group.app</text>
+<text x="72" y="520" font-size="10" fill="#64748b" data-role="policy"><title>root</title>policy · root</text>
 </g>
 <g data-endpoints="true" data-source="state-6e6574776f726b-resource-6177735f73656375726974795f67726f75702e617070-current" data-target="state-6e6574776f726b-resource-6177735f696e7374616e63652e617070-current" aria-hidden="true">
-<circle data-endpoint="source" cx="380" cy="258" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+<circle data-endpoint="source" cx="380" cy="268" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
 </g>
 </g>
 </g>

@@ -57,7 +57,7 @@
   },
   "report": {
     "canvas": {
-      "height": 1872,
+      "height": 1972,
       "width": 1100
     },
     "category": "layout",
@@ -98,11 +98,11 @@
         },
         "origin": [
           0,
-          884
+          904
         ],
         "resources": 6,
         "spatial_layout": {
-          "height": 988,
+          "height": 1068,
           "width": 1100
         },
         "state": null

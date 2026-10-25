@@ -58,16 +58,44 @@ Existing site work and deployments are not modified by this PR.
 User-supplied or remote artwork is a separate feature and permission question;
 it is not an alternative implementation of removal.
 
-## Compact service labels (#633)
+## Resource and service labels (#641)
 
-Short names are explicit shared metadata, applied only after provider-aware service
-classification. Every other name is preserved in full and wraps without truncation.
-Unknown provider/type keeps its existing neutral fallback. Labels use bold text,
-6px horizontal padding and a category background; address and operation text remain
-separate. Spatial cards, container headings, embedded members and Logical Resources
-use the same measurement and rendering. Formal names also remain in SVG metadata.
+Display names use verified provider identity and explicit exact resource types in
+`src/services.rs`, independently of the old shared icon names. The audited overrides
+distinguish VPC/Subnet, routes and route tables, gateways, endpoints and their
+associations, security groups/rules, network ACLs, interfaces, Elastic IPs,
+load balancers/listeners/targets, ECS/EKS members, RDS members/subnet groups/proxies,
+S3 policy/notification/replication resources, and IAM identities/policies/attachments.
+AMI/launch templates/configurations, Auto Scaling groups, EBS snapshots, EFS access
+points/mount targets, KMS aliases, secret versions, log groups/streams and SNS
+subscriptions also have explicit names instead of reusing their parent service label.
+For example, `aws_subnet` is **Subnet**, `aws_vpc` is **VPC** and
+`aws_iam_role` is **IAM Role**. Other verified services use the short-name fallback
+below; unlisted names wrap in full. Unknown provider/type retains its existing
+neutral fallback. No name, ARN, attribute value or resource-prefix inference is used.
 
-| Formal service name | Label |
+Labels are right-aligned in a reserved header row below operation/import indicators
+and above the complete address. Containers use their enclosing header's right edge;
+Logical Resources and embedded members use their own row's right edge. All locations
+share 18px bold text, 11px measured character advance, 24px line height, 10px horizontal
+and 4px vertical padding: a one-line background is 32px high, with an additional
+8px reserved gap. Long labels wrap at the available width and expand header height,
+without reducing the font or truncating text. Role marks occupy the left side of
+this row. The separate operation row is intentional to avoid collisions with long
+type/action text; there is no smaller-label exception for logical or embedded rows.
+
+| Presentation | Text | Height | Horizontal padding |
+| --- | --- | --- | --- |
+| Former service icon | SVG artwork | 24px (24×24px square) | 8px gap to address |
+| Previous compact label | 13px bold | 18px | 6px |
+| Current label | 18px bold | 32px per first line; +24px per extra line | 10px |
+
+Formal service names remain in SVG metadata and determine category color separately
+from display names: Subnet and VPC share Network blue. The
+[label example](../examples/service-labels.svg) includes VPC/Subnet containment,
+IAM actions, long addresses, data resources and foreign/unknown types.
+
+| Formal service name | Fallback label (when no resource override applies) |
 | --- | --- |
 | Amazon EC2 | EC2 |
 | Amazon S3 | S3 |
@@ -107,7 +135,7 @@ and an explicit resource-type allowlist, never names, ARNs or arbitrary attribut
 Other types, foreign/unknown providers, Identity/Policy/Association objects,
 Logical rows, embedded members and containers use the existing neutral card
 presentation without a role mark. A VPC/Subnet containment boundary is not a
-network mark. The mark occupies a reserved 22x18px area within the header; service
+network mark. The mark occupies a reserved 22x18px area on the left of the header; service
 text wraps in the remaining width. Connections, arrowheads and relationship
 numbers attach to the card boundary, and selection uses that same enclosing card.
 Marks do not add graph entities, relationships or containment. Their meaning is
@@ -127,6 +155,7 @@ embedded members and Logical Resources in SVG and HTML.
 | Compute (orange) | Amazon EC2, AWS Lambda, Amazon ECS, Amazon EKS, Amazon EC2 Auto Scaling | `#ffedd5` / `#7c2d12` |
 | Storage (green) | Amazon S3, Amazon EBS, Amazon EFS | `#dcfce7` / `#14532d` |
 | Network (blue) | Amazon VPC, Elastic Load Balancing, Amazon Route 53, Amazon CloudFront, Amazon API Gateway | `#dbeafe` / `#1e3a8a` |
+| IAM (red) | Verified AWS Identity and Access Management service classification, including User, Role, Group, Policy and their attachments | `#fee2e2` / `#7f1d1d` |
 | Neutral (gray) | Every other service, unknown classification and other providers | `#e2e8f0` / `#0f172a` |
 
 Unknown provider/types retain their neutral presentation without inventing a

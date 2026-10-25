@@ -116,12 +116,12 @@ fn resource_row(
     if let Some(icon) = super::icons::for_node(node) {
         svg.push_str(&super::icons::render(icon, width - 40, 8));
     }
-    if let Some(name) = node.service_name {
+    if let Some(name) = crate::services::display_name(node) {
         let service_width = crate::view::service_label::width(name, width - 32);
         svg.push_str(&super::icons::service_name(
             node,
-            width - 16 - service_width,
-            y,
+            width - 16,
+            y - 16,
             service_width,
         ));
         y += crate::view::service_label::height(name, service_width);

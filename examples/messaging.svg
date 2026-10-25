@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="1314" viewBox="0 0 1100 1314" role="img" aria-labelledby="title description">
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="1354" viewBox="0 0 1100 1354" role="img" aria-labelledby="title description">
 <title id="title">Terraform plan</title>
-<desc id="description">3 resources, 1 reference edges. Arrows point from dependencies to dependent resources. References are conservative, not Terraform execution order. Thin solid: dependency. Dashed: association. Thick dotted: connection. Nested boxes: containment. Edge color preserves the Terraform action when available. Service label backgrounds: orange = compute; green = storage; blue = network; gray = unclassified. Spatial card role marks: rounded rectangle = execution; cylinder = data store; hexagon = network.</desc>
+<desc id="description">3 resources, 1 reference edges. Arrows point from dependencies to dependent resources. References are conservative, not Terraform execution order. Thin solid: dependency. Dashed: association. Thick dotted: connection. Nested boxes: containment. Edge color preserves the Terraform action when available. Service label backgrounds: orange = compute; green = storage; blue = network; red = IAM; gray = unclassified. Spatial card role marks: rounded rectangle = execution; cylinder = data store; hexagon = network.</desc>
 <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/></marker></defs>
 <rect width="100%" height="100%" fill="#ffffff"/>
 <g font-family="ui-monospace, SFMono-Regular, Consolas, monospace">
@@ -92,31 +92,31 @@
 </g>
 <g transform="translate(0 558)">
 <g data-architecture="true" transform="translate(0 0)">
-<g data-deployment-scope="true" data-scope-provider="AWS" data-region="ap-northeast-1"><rect x="40" y="160" width="720" height="218" rx="14" fill="#f8fafc" stroke="#94a3b8" stroke-dasharray="9 5"/><text x="56" y="185" font-size="15" font-weight="700" fill="#334155">AWS ap-northeast-1</text></g>
-<g data-deployment-scope="true" data-scope-provider="AWS" data-region="us-east-1"><rect x="40" y="418" width="360" height="218" rx="14" fill="#f8fafc" stroke="#94a3b8" stroke-dasharray="9 5"/><text x="56" y="443" font-size="15" font-weight="700" fill="#334155">AWS us-east-1</text></g>
-<path d="M 380 279 L 420 279 " data-edge-kind="dependency" data-directionality="directed" data-source="resource-6177735f736e735f746f7069632e6576656e7473-current" data-target="resource-6177735f7371735f71756575652e6a6f6273-current" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>aws_sns_topic.events → aws_sqs_queue.jobs</title></path>
+<g data-deployment-scope="true" data-scope-provider="AWS" data-region="ap-northeast-1"><rect x="40" y="160" width="720" height="238" rx="14" fill="#f8fafc" stroke="#94a3b8" stroke-dasharray="9 5"/><text x="56" y="185" font-size="15" font-weight="700" fill="#334155">AWS ap-northeast-1</text></g>
+<g data-deployment-scope="true" data-scope-provider="AWS" data-region="us-east-1"><rect x="40" y="438" width="360" height="238" rx="14" fill="#f8fafc" stroke="#94a3b8" stroke-dasharray="9 5"/><text x="56" y="463" font-size="15" font-weight="700" fill="#334155">AWS us-east-1</text></g>
+<path d="M 380 289 L 420 289 " data-edge-kind="dependency" data-directionality="directed" data-source="resource-6177735f736e735f746f7069632e6576656e7473-current" data-target="resource-6177735f7371735f71756575652e6a6f6273-current" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>aws_sns_topic.events → aws_sqs_queue.jobs</title></path>
 <g id="resource-6177735f736e735f746f7069632e6576656e7473-current" data-architecture-id="terraform:6177735f736e735f746f7069632e6576656e7473-current" data-qualified-address="module.root.aws_sns_topic.events" data-terraform-address="aws_sns_topic.events"><title>module.root.aws_sns_topic.events — create</title>
-<rect x="60" y="221" width="320" height="116" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
+<rect x="60" y="221" width="320" height="136" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
 <text x="72" y="241" font-size="11" fill="#047857">aws_sns_topic · create</text>
-<rect data-service-badge="true" data-service-category="neutral" data-service-full-name="Amazon Simple Notification Service" x="72" y="252" width="36" height="18" rx="4" fill="#e2e8f0"/><text data-service-name="true" x="78" y="266" font-size="13" font-weight="700" fill="#0f172a" xml:space="preserve">SNS</text><text x="72" y="286" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_sns_topic.events</text>
+<rect data-service-badge="true" data-service-category="neutral" data-service-full-name="Amazon Simple Notification Service" data-display-name="SNS" x="315" y="249" width="53" height="32" rx="4" fill="#e2e8f0"/><text data-service-name="true" x="325" y="271" font-size="18" font-weight="700" fill="#0f172a" xml:space="preserve">SNS</text><text x="72" y="306" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_sns_topic.events</text>
 </g>
 <g id="resource-6177735f7371735f71756575652e6a6f6273-current" data-architecture-id="terraform:6177735f7371735f71756575652e6a6f6273-current" data-qualified-address="module.root.aws_sqs_queue.jobs" data-terraform-address="aws_sqs_queue.jobs"><title>module.root.aws_sqs_queue.jobs — update</title>
-<rect x="420" y="200" width="320" height="158" rx="8" fill="#eff6ff" stroke="#1d4ed8" stroke-width="1.5" data-mode="managed"/>
+<rect x="420" y="200" width="320" height="178" rx="8" fill="#eff6ff" stroke="#1d4ed8" stroke-width="1.5" data-mode="managed"/>
 <text x="432" y="220" font-size="11" fill="#1d4ed8">aws_sqs_queue · update</text>
-<rect data-service-badge="true" data-service-category="neutral" data-service-full-name="Amazon Simple Queue Service" x="432" y="231" width="36" height="18" rx="4" fill="#e2e8f0"/><text data-service-name="true" x="438" y="245" font-size="13" font-weight="700" fill="#0f172a" xml:space="preserve">SQS</text><text x="432" y="265" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_sqs_queue.jobs</text>
-<g data-resource-references="true"><title>At-rest encryption (plan): unknown</title><text x="432" y="306" font-size="11" font-weight="700" fill="#475569">Uses</text><g><title>At-rest encryption (plan): unknown</title><text x="432" y="324" font-size="11" fill="#334155" xml:space="preserve">At-rest encryption (plan): unknown</text>
+<rect data-service-badge="true" data-service-category="neutral" data-service-full-name="Amazon Simple Queue Service" data-display-name="SQS" x="675" y="228" width="53" height="32" rx="4" fill="#e2e8f0"/><text data-service-name="true" x="685" y="250" font-size="18" font-weight="700" fill="#0f172a" xml:space="preserve">SQS</text><text x="432" y="285" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_sqs_queue.jobs</text>
+<g data-resource-references="true"><title>At-rest encryption (plan): unknown</title><text x="432" y="326" font-size="11" font-weight="700" fill="#475569">Uses</text><g><title>At-rest encryption (plan): unknown</title><text x="432" y="344" font-size="11" fill="#334155" xml:space="preserve">At-rest encryption (plan): unknown</text>
 </g></g>
 </g>
 <g id="resource-646174612e6177735f7371735f71756575652e61726368697665-current" data-architecture-id="terraform:646174612e6177735f7371735f71756575652e61726368697665-current" data-qualified-address="module.root.data.aws_sqs_queue.archive" data-terraform-address="data.aws_sqs_queue.archive"><title>module.root.data.aws_sqs_queue.archive — read</title>
-<rect x="60" y="458" width="320" height="158" rx="8" fill="#faf5ff" stroke="#7e22ce" stroke-width="1.5" data-mode="data" stroke-dasharray="6 4"/>
-<g data-external="true"><title>External resource: read by Terraform, not managed by this configuration</title><rect x="302" y="465" width="68" height="18" rx="4" fill="#e2e8f0"/><text x="308" y="478" font-size="10" fill="#334155">external</text></g><text x="72" y="478" font-size="11" fill="#7e22ce">aws_sqs_queue · read</text>
-<rect data-service-badge="true" data-service-category="neutral" data-service-full-name="Amazon Simple Queue Service" x="72" y="489" width="36" height="18" rx="4" fill="#e2e8f0"/><text data-service-name="true" x="78" y="503" font-size="13" font-weight="700" fill="#0f172a" xml:space="preserve">SQS</text><text x="72" y="523" font-size="13" fill="#0f172a" xml:space="preserve">module.root.data.aws_sqs_queue.</text>
-<text x="72" y="543" font-size="13" fill="#0f172a" xml:space="preserve">archive</text>
-<g data-resource-references="true"><title>At-rest encryption (plan): unknown</title><text x="72" y="564" font-size="11" font-weight="700" fill="#475569">Uses</text><g><title>At-rest encryption (plan): unknown</title><text x="72" y="582" font-size="11" fill="#334155" xml:space="preserve">At-rest encryption (plan): unknown</text>
+<rect x="60" y="478" width="320" height="178" rx="8" fill="#faf5ff" stroke="#7e22ce" stroke-width="1.5" data-mode="data" stroke-dasharray="6 4"/>
+<g data-external="true"><title>External resource: read by Terraform, not managed by this configuration</title><rect x="302" y="485" width="68" height="18" rx="4" fill="#e2e8f0"/><text x="308" y="498" font-size="10" fill="#334155">external</text></g><text x="72" y="498" font-size="11" fill="#7e22ce">aws_sqs_queue · read</text>
+<rect data-service-badge="true" data-service-category="neutral" data-service-full-name="Amazon Simple Queue Service" data-display-name="SQS" x="315" y="506" width="53" height="32" rx="4" fill="#e2e8f0"/><text data-service-name="true" x="325" y="528" font-size="18" font-weight="700" fill="#0f172a" xml:space="preserve">SQS</text><text x="72" y="563" font-size="13" fill="#0f172a" xml:space="preserve">module.root.data.aws_sqs_queue.</text>
+<text x="72" y="583" font-size="13" fill="#0f172a" xml:space="preserve">archive</text>
+<g data-resource-references="true"><title>At-rest encryption (plan): unknown</title><text x="72" y="604" font-size="11" font-weight="700" fill="#475569">Uses</text><g><title>At-rest encryption (plan): unknown</title><text x="72" y="622" font-size="11" fill="#334155" xml:space="preserve">At-rest encryption (plan): unknown</text>
 </g></g>
 </g>
 <g data-endpoints="true" data-source="resource-6177735f736e735f746f7069632e6576656e7473-current" data-target="resource-6177735f7371735f71756575652e6a6f6273-current" aria-hidden="true">
-<circle data-endpoint="source" cx="380" cy="279" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+<circle data-endpoint="source" cx="380" cy="289" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
 </g>
 </g>
 </g>

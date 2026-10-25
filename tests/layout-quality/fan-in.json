@@ -57,7 +57,7 @@
   },
   "report": {
     "canvas": {
-      "height": 1330,
+      "height": 1390,
       "width": 1340
     },
     "category": "layout",
@@ -88,24 +88,24 @@
         "polyline": [
           [
             800,
-            811
+            818
           ],
           [
             824,
-            811
+            818
           ],
           [
             824,
-            824
+            834
           ],
           [
             900,
-            824
+            834
           ]
         ],
         "raw_polyline": {
           "bends": 2,
-          "length": 113
+          "length": 116
         },
         "visible_border": {
           "close_length": 0,
@@ -140,24 +140,24 @@
         "polyline": [
           [
             800,
-            975
+            1002
           ],
           [
             824,
-            975
+            1002
           ],
           [
             824,
-            824
+            834
           ],
           [
             900,
-            824
+            834
           ]
         ],
         "raw_polyline": {
           "bends": 2,
-          "length": 251
+          "length": 268
         },
         "visible_border": {
           "close_length": 0,
@@ -192,24 +192,24 @@
         "polyline": [
           [
             800,
-            1139
+            1186
           ],
           [
             824,
-            1139
+            1186
           ],
           [
             824,
-            824
+            834
           ],
           [
             900,
-            824
+            834
           ]
         ],
         "raw_polyline": {
           "bends": 2,
-          "length": 415
+          "length": 452
         },
         "visible_border": {
           "close_length": 0,
@@ -244,24 +244,24 @@
         "polyline": [
           [
             380,
-            824
+            834
           ],
           [
             404,
-            824
+            834
           ],
           [
             404,
-            836
+            850
           ],
           [
             480,
-            836
+            850
           ]
         ],
         "raw_polyline": {
           "bends": 2,
-          "length": 112
+          "length": 116
         },
         "visible_border": {
           "close_length": 0,
@@ -296,24 +296,24 @@
         "polyline": [
           [
             380,
-            824
+            834
           ],
           [
             404,
-            824
+            834
           ],
           [
             404,
-            1000
+            1034
           ],
           [
             480,
-            1000
+            1034
           ]
         ],
         "raw_polyline": {
           "bends": 2,
-          "length": 276
+          "length": 300
         },
         "visible_border": {
           "close_length": 0,
@@ -348,24 +348,24 @@
         "polyline": [
           [
             380,
-            824
+            834
           ],
           [
             404,
-            824
+            834
           ],
           [
             404,
-            1164
+            1218
           ],
           [
             480,
-            1164
+            1218
           ]
         ],
         "raw_polyline": {
           "bends": 2,
-          "length": 440
+          "length": 484
         },
         "visible_border": {
           "close_length": 0,
@@ -415,7 +415,7 @@
         ],
         "resources": 5,
         "spatial_layout": {
-          "height": 772,
+          "height": 832,
           "width": 1340
         },
         "state": null
@@ -424,7 +424,7 @@
     "summary": {
       "raw_polyline": {
         "bends": 12,
-        "length": 1607
+        "length": 1736
       },
       "routed_paths": 6,
       "visible_border_minimum_deficit": 0,
@@ -432,7 +432,7 @@
         "crossings": 0,
         "independent_overlap_length": 0,
         "parallel_deficit": 0,
-        "shared_trunk_length": 547
+        "shared_trunk_length": 588
       }
     },
     "units": "SVG user units (px)"

@@ -66,7 +66,7 @@
   },
   "report": {
     "canvas": {
-      "height": 1938,
+      "height": 2018,
       "width": 1224
     },
     "category": "layout",
@@ -93,24 +93,24 @@
         "polyline": [
           [
             460,
-            1544
+            1594
           ],
           [
             1162,
-            1544
+            1594
           ],
           [
             1162,
-            1080
+            1110
           ],
           [
             800,
-            1080
+            1110
           ]
         ],
         "raw_polyline": {
           "bends": 2,
-          "length": 1528
+          "length": 1548
         },
         "visible_border": {
           "close_length": 0,
@@ -141,24 +141,24 @@
         "polyline": [
           [
             460,
-            1740
+            1810
           ],
           [
             1174,
-            1740
+            1810
           ],
           [
             1174,
-            1080
+            1110
           ],
           [
             800,
-            1080
+            1110
           ]
         ],
         "raw_polyline": {
           "bends": 2,
-          "length": 1748
+          "length": 1788
         },
         "visible_border": {
           "close_length": 0,
@@ -189,24 +189,24 @@
         "polyline": [
           [
             460,
-            1544
+            1594
           ],
           [
             1150,
-            1544
+            1594
           ],
           [
             1150,
-            924
+            934
           ],
           [
             800,
-            924
+            934
           ]
         ],
         "raw_polyline": {
           "bends": 2,
-          "length": 1660
+          "length": 1700
         },
         "visible_border": {
           "close_length": 0,
@@ -241,11 +241,11 @@
         "polyline": [
           [
             380,
-            924
+            934
           ],
           [
             480,
-            924
+            934
           ]
         ],
         "raw_polyline": {
@@ -285,24 +285,24 @@
         "polyline": [
           [
             380,
-            924
+            934
           ],
           [
             404,
-            924
+            934
           ],
           [
             404,
-            1080
+            1110
           ],
           [
             480,
-            1080
+            1110
           ]
         ],
         "raw_polyline": {
           "bends": 2,
-          "length": 256
+          "length": 276
         },
         "visible_border": {
           "close_length": 0,
@@ -319,7 +319,7 @@
         "location": {
           "point": [
             1150,
-            1080
+            1110
           ]
         },
         "peer": "{\"cross_state\":true,\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":{\"output\":\"subnet\",\"remote\":\"data.terraform_remote_state.network\"},\"source\":{\"id\":\"aws_subnet.app\",\"state\":\"producer\"},\"target\":{\"id\":\"aws_instance.app\",\"state\":\"consumer\"}}",
@@ -332,7 +332,7 @@
         "location": {
           "point": [
             1150,
-            1080
+            1110
           ]
         },
         "peer": "{\"cross_state\":true,\"directionality\":\"directed\",\"kind\":\"dependency\",\"provenance\":{\"output\":\"subnet\",\"remote\":\"data.terraform_remote_state.network\"},\"source\":{\"id\":\"aws_subnet.app\",\"state\":\"producer\"},\"target\":{\"id\":\"aws_instance.app\",\"state\":\"consumer\"}}",
@@ -349,8 +349,8 @@
           ],
           "horizontal": false,
           "interval": [
-            1080,
-            1544
+            1110,
+            1594
           ],
           "visible_gap": 10.5
         },
@@ -368,8 +368,8 @@
           ],
           "horizontal": false,
           "interval": [
-            1080,
-            1544
+            1110,
+            1594
           ],
           "visible_gap": 10.5
         },
@@ -417,7 +417,7 @@
         ],
         "resources": 3,
         "spatial_layout": {
-          "height": 608,
+          "height": 648,
           "width": 1040
         },
         "state": "consumer"
@@ -433,11 +433,11 @@
         },
         "origin": [
           0,
-          1326
+          1366
         ],
         "resources": 2,
         "spatial_layout": {
-          "height": 592,
+          "height": 632,
           "width": 1100
         },
         "state": "producer"
@@ -446,14 +446,14 @@
     "summary": {
       "raw_polyline": {
         "bends": 8,
-        "length": 5292
+        "length": 5412
       },
       "routed_paths": 5,
       "visible_border_minimum_deficit": 0,
       "visible_straight_sections": {
         "crossings": 2,
         "independent_overlap_length": 0,
-        "parallel_deficit": 3712,
+        "parallel_deficit": 3872,
         "shared_trunk_length": 1068
       }
     },

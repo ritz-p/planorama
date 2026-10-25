@@ -9,23 +9,20 @@ pub(super) fn for_node(_node: &Node) -> Option<ResourceIcon> {
     None
 }
 
-pub(super) fn service_name(node: &Node, x: usize, y: usize, width: usize) -> String {
+pub(super) fn service_name(node: &Node, right: usize, y: usize, width: usize) -> String {
     let mut svg = String::new();
-    if let Some(name) = node.service_name {
+    if let Some(name) = crate::services::display_name(node) {
+        use crate::view::service_label::{FONT_SIZE, LINE_HEIGHT, PADDING, VERTICAL_PADDING};
         let (category, background, foreground) = crate::services::category(node).palette();
         let lines = crate::view::service_label::lines(name, width);
-        let badge_width = lines
-            .iter()
-            .map(|line| crate::view::text::width(line) * 8)
-            .max()
-            .unwrap_or(0)
-            + crate::view::service_label::PADDING * 2;
-        write!(svg, r##"<rect data-service-badge="true" data-service-category="{category}" data-service-full-name="{}" x="{x}" y="{}" width="{badge_width}" height="{}" rx="4" fill="{background}"/>"##,
-            super::escape(name), y.saturating_sub(14), lines.len() * crate::view::service_label::LINE_HEIGHT - 2).unwrap();
+        let badge_width = crate::view::service_label::width(name, width);
+        let x = right.saturating_sub(badge_width);
+        write!(svg, r##"<rect data-service-badge="true" data-service-category="{category}" data-service-full-name="{}" data-display-name="{}" x="{x}" y="{y}" width="{badge_width}" height="{}" rx="4" fill="{background}"/>"##,
+            super::escape(node.service_name.unwrap()), super::escape(name), lines.len() * LINE_HEIGHT + VERTICAL_PADDING * 2).unwrap();
         for (index, line) in lines.iter().enumerate() {
-            write!(svg, r##"<text data-service-name="true" x="{}" y="{}" font-size="13" font-weight="700" fill="{foreground}" xml:space="preserve">{}</text>"##,
-                x + crate::view::service_label::PADDING,
-                y + index * crate::view::service_label::LINE_HEIGHT, super::escape(line)).unwrap();
+            write!(svg, r##"<text data-service-name="true" x="{}" y="{}" font-size="{FONT_SIZE}" font-weight="700" fill="{foreground}" xml:space="preserve">{}</text>"##,
+                x + PADDING,
+                y + VERTICAL_PADDING + FONT_SIZE + index * LINE_HEIGHT, super::escape(line)).unwrap();
         }
     }
     svg

@@ -52,8 +52,7 @@ pub(crate) fn measure(node: &Node) -> Metrics {
         .max(super::text::wrap_address(&address.qualified(), line_limit).len());
     let import_height = import_height(node);
     let service_width = line_limit * 8 - if role_mark(node).is_some() { 32 } else { 0 };
-    let service_height = node
-        .service_name
+    let service_height = crate::services::display_name(node)
         .map_or(0, |name| super::service_label::height(name, service_width));
     let extra = lines.saturating_sub(2) * 20 + import_height + service_height;
     let previous_line_limit = (width - 24) / 8;
