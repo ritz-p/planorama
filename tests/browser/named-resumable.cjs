@@ -5,6 +5,34 @@ module.exports = binding => {
   const json = fs.readFileSync('tests/fixtures/browser-named.json', 'utf8');
   const inputs = JSON.stringify([{state:'a', json}, {state:'b', json}]);
   const invalid = code => error => JSON.parse(String(error)).code === code;
+  const mapped = JSON.stringify(['producer','consumer'].map(state => ({state,json:fs.readFileSync(`tests/fixtures/multi/${state}.json`,'utf8')})));
+  const mapping = {consumer:'consumer',remote:'data.terraform_remote_state.network',producer:'producer'};
+  for (const format of ['svg','html']) {
+    const options = JSON.stringify({format,remote_state_mappings:[mapping]});
+    const expected = binding.generate_named(mapped, options);
+    for (const units of [1,4096]) {
+      const job = binding.Generation.named(mapped, options);
+      try {
+        let actual;
+        do { actual = job.step(units); } while (actual === undefined);
+        assert.equal(actual, expected);
+      } finally { job.free(); }
+    }
+    const job = binding.Generation.named(mapped, options);
+    job.step(1); job.cancel();
+    assert.throws(() => job.step(1), invalid('generation_closed')); job.free();
+  }
+  for (const [mappings, code] of [[[{...mapping,producer:'missing'}],'unknown_remote_state_mapping'], [[mapping,{...mapping,producer:'consumer'}],'ambiguous_remote_state_mapping']]) {
+    const job = binding.Generation.named(mapped, JSON.stringify({remote_state_mappings:mappings}));
+    try {
+      assert.throws(() => { while(job.step(4096) === undefined) {} }, invalid(code));
+      assert.throws(() => job.step(1), invalid('generation_closed'));
+    } finally { job.free(); }
+  }
+  for (const create of [options => binding.generate_named(mapped, options), options => binding.Generation.named(mapped, options)]) {
+    assert.throws(() => create(' '.repeat(65537)), invalid('resource_limit'));
+    assert.throws(() => create(JSON.stringify({remote_state_mappings:Array(257).fill(mapping)})), invalid('resource_limit'));
+  }
   for (const named of [false, true]) {
     for (const format of ['svg', 'html']) {
       for (const selection of [{}, {modules:[named ? 'a:module.app' : 'module.app']}, {focus:(named ? 'a:' : '') + 'module.app.terraform_data.item'}]) {

@@ -167,8 +167,8 @@ do not guarantee a device-independent maximum step duration.
 | --- | ---: | --- |
 | Input UTF-8 bytes | 2 MiB | Before retaining the job |
 | Options JSON UTF-8 bytes | 64 KiB | Before Wasm options deserialization |
-| Module / spatial-type selections | 256 each | Before retaining the job |
-| Combined module, spatial-type and focus string bytes | 64 KiB | Before retaining the job, including the Rust API |
+| Module / spatial-type selections / remote-state mappings | 256 each | Before retaining the job |
+| Combined module, spatial-type, focus and mapping string bytes | 64 KiB | Before retaining the job, including the Rust API |
 | JSON values and keys / nesting | 32,768 / 64 levels | Streaming preflight, before building input trees |
 | Parsed and projected nodes / edges | 256 / 1,024 | Before semantic expansion and layout respectively |
 | Search grid points | 131,072 | Before grid and distance allocations |
@@ -184,7 +184,9 @@ allocations; the earlier input/structure checks and Wasm memory maximum provide
 additional protection. The native API retains its 32 MiB input limit. Wasm OOM
 can trap rather than return a typed error; discard that Worker and retry with a
 smaller input. Named jobs enforce the same input, structure, parsed/projected
-node/edge, search-work and output limits across the entire input set. They do not
+node/edge, search-work and output limits across the entire input set. Cross-state
+edges count toward the 1,024-edge budget before and after filtering, and resolution
+yields between references and output sources. Budgets do not
 reset per state or step. Grid/queue capacity limits apply to each individual
 search. Options are shared by the whole job. There are at most 64 valid state
 names (at most 4,096 ASCII name bytes in total), separately from the 2 MiB decoded
@@ -192,9 +194,9 @@ plan budget. The named Wasm envelope is limited to 12 MiB + 16 KiB before JSON
 deserialization to allow escaping; decoded plan bytes must still fit 2 MiB.
 Envelope decoding and each plan's streaming preflight/parsing are synchronous.
 The structural preflight accepts the same leading UTF-8 BOM characters as the
-plan parser. Input byte budgets still count those characters. Options budgets
-apply only to resumable generation. Synchronous generation retains its existing
-options and rejects an explicit `memory_budget_mib` with `invalid_options`.
+plan parser. Input byte budgets still count those characters. Options byte and
+count budgets also apply to synchronous generation. Synchronous generation
+rejects an explicit `memory_budget_mib` with `invalid_options`.
 
 ### Per-generation memory selection
 
@@ -363,12 +365,14 @@ named-state inventory groups by state and address and returns
 | `focus_depth` | Nonnegative integer; requires focus; default neighbor depth 1 |
 | `modules` | Array of module addresses, default empty |
 | `spatial_types` | Array of the seven [allowed AWS types](configuration.md#explicit-spatial-types), default empty |
+| `remote_state_mappings` | Array of explicit named-state mappings, default empty; [schema below](#explicit-remote-state-mappings) |
 
 Unknown keys, invalid enum values and invalid combinations fail explicitly.
 Both diagnostic options reject SVG with `invalid_options`; the form explains
 the conflict and focuses the enabled diagnostic checkbox. Switching formats
 retains checkbox values. Reset clears both.
-The UI exposes all rows above with the same defaults. Generation settings remain
+The sample UI exposes the options above except remote-state mappings, which are
+available through the Rust/Wasm API. Generation settings remain
 visible and use the existing API decoder and selection rules.
 
 **Semantic findings** and **Routing hotspots** independently enable the existing
@@ -383,8 +387,9 @@ These reuse the native collectors and bounded bridges: semantic records are
 limited to 1,000 and 256 KiB, routing groups to 200. Panels distinguish
 uncollected diagnostics from collected zero findings, report omitted entries and
 incomplete analysis/input (including unknown input completeness). Cross-state
-mapping diagnostics and provider evidence are unsupported; this is not complete
-analysis. Only existing identifiers and fixed explanations are embedded, without
+mapping diagnostics are returned in `Generated.diagnostics`, not these panels.
+Provider evidence is unsupported; this is not complete analysis. Only existing
+identifiers and fixed explanations are embedded, without
 raw attribute values, expressions, provider settings or the plan body. Diagnostic
 settings share snapshot, reset, cancellation and offline sandbox preview behavior.
 
@@ -488,8 +493,8 @@ unselectable and show per-state direct/subtree counts; other module and focus
 selectors are `STATE:ADDRESS`. Identical addresses and current/deposed objects in
 different states stay independent. Counts refer to original inputs, before filters.
 Generation shares native state-local parsing, semantic transformation, selection
-and SVG/HTML rendering. Explicit remote-state mappings and provider evidence are
-not exposed by this API; use the CLI for those features. Equal names or ARNs do
+and SVG/HTML rendering. Explicit remote-state mappings use the shared CLI resolver
+as described below. Provider evidence remains CLI-only. Equal names or ARNs do
 not automatically create cross-state connections.
 
 Each request snapshots all active files, names and generation settings before
@@ -510,6 +515,64 @@ distributions, checks sliced SVG/HTML equality, selection, stage observation,
 invalid units, cancellation/retry, safe closure and aggregate refusal. The memory
 suite also exercises named jobs under every supported memory maximum, allocation
 failure, trap isolation and fresh-instance retry.
+
+### Explicit remote-state mappings
+
+Rust `Options.remote_state_mappings` is a `Vec<RemoteStateMapping>`, where the
+public type has three required `String` fields: `consumer`, `remote`, `producer`.
+The same option works with synchronous/progress generation and resumable named
+jobs in Rust and both Wasm distributions. The JSON schema is:
+
+```json
+{
+  "remote_state_mappings": [
+    {
+      "consumer": "application",
+      "remote": "module.app.data.terraform_remote_state.network",
+      "producer": "network"
+    }
+  ]
+}
+```
+
+`consumer` and `producer` are exact loaded state names; `remote` is the exact
+consumer-local data-source address, without a state prefix or `.outputs` suffix.
+Indexed module/resource selectors are preserved verbatim. This is equivalent to
+CLI `--remote-state application:module.app.data.terraform_remote_state.network=network`.
+No mapping is inferred from names, filenames, literal IDs, ARNs or backend values.
+An omitted/empty array preserves existing callers; nonempty mappings on a
+single unnamed input return `invalid_options`. Inspection does not take mappings.
+
+Validation runs against original inputs before filtering. Unknown fields, missing
+fields, nulls and non-string fields return `invalid_options` during JSON decoding.
+Invalid names, empty/control-bearing addresses, missing or non-unique current
+data sources, wrong types/modes and non-Terraform providers return
+`invalid_remote_state_mapping`. Missing consumer/producer states return
+`unknown_remote_state_mapping`. Conflicting producers for the same consumer and
+remote address return `ambiguous_remote_state_mapping`; identical duplicates
+are idempotent. Errors contain fixed explanations and never echo supplied values.
+
+Valid mappings reuse native output-provenance resolution, state-qualified identity,
+provider checks, current/deposed handling and selection/context closure. Missing
+or incomplete producer outputs emit no guessed edges. When mappings are supplied,
+`Generated.diagnostics` includes the resolver's deduplicated fixed failure
+descriptions, including unmapped references; it excludes expressions, output
+values, credentials and input excerpts. Filtered targets follow native selection
+rules; mappings never bypass filters. SVG/HTML bytes match the CLI for identical
+inputs, mappings and options.
+
+There are at most 256 mappings, each remote address is at most 4,096 UTF-8 bytes,
+and all mapping fields share the 64 KiB decoded option-string allowance with
+module, spatial-type and focus selections. Every Wasm generation entry point
+also bounds the serialized options envelope to 64 KiB before JSON decoding.
+Limit violations return `resource_limit`; input/envelope and aggregate resumable
+budgets remain independent. The host must bound strings before transferring them
+into Wasm, because binding argument copies precede Rust validation.
+
+Rust tests cover resolution, validation, safe diagnostics, special characters,
+repeated addresses, historical objects, filtering and aggregate cross-state
+fanout. Browser tests compare mapped SVG/HTML with the native CLI; memory tests
+cover mapped synchronous/resumable parity, cancellation and typed failures.
 
 ## Privacy and lifecycle
 

@@ -29,7 +29,7 @@ mod work;
 mod artwork_free;
 mod generation;
 mod named_inputs;
-pub use named_inputs::{NamedInput, generate_named, inspect_named_inputs};
+pub use named_inputs::{NamedInput, RemoteStateMapping, generate_named, inspect_named_inputs};
 mod module_inventory;
 mod resource_inventory;
 pub use generation::{Error, Generated, Generator, Options, OutputFormat, generate};

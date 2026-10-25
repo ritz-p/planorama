@@ -1,5 +1,6 @@
 const assert = require('node:assert/strict');
-const {readFileSync} = require('node:fs');
+const {readFileSync, writeFileSync, mkdtempSync, rmSync} = require('node:fs');
+const {tmpdir} = require('node:os');
 const {join} = require('node:path');
 const {execFileSync} = require('node:child_process');
 const {wait} = require('./webdriver.cjs');
@@ -19,6 +20,45 @@ module.exports = function({driver, root, binary}) {
     return wait(() => driver.execute_script('return window.namedResult ? [window.namedResult] : null'), 'named result', 60000)[0];
   };
   const inventory = run(inputs, {}, 'inspect');
+  const mappingDirectory = mkdtempSync(join(tmpdir(), 'named-mappings-'));
+  try {
+    const mappedInputs = ['producer', 'consumer'].map(state => ({state, json:readFileSync(join(root, `tests/fixtures/multi/${state}.json`), 'utf8')}));
+    mappedInputs.push({state:'other', json:mappedInputs[0].json});
+    for (const special of [false, true]) {
+      const remote = special ? 'data.terraform_remote_state.network["</script><svg/onload=alert(1)>&=\\\""]' : 'data.terraform_remote_state.network';
+      const current = mappedInputs.map(input => ({...input, json: input.state === 'consumer' ? input.json.replaceAll('data.terraform_remote_state.network', JSON.stringify(remote).slice(1,-1)) : input.json}));
+      for (const input of current) writeFileSync(join(mappingDirectory, input.state + '.json'), input.json);
+      const remote_state_mappings = [{consumer:'consumer', remote, producer:'producer'}];
+      for (const [options, args] of [[{}, []], [{format:'html'}, ['--format','html']], [{focus:'consumer:aws_instance.app', focus_depth:0}, ['--focus','consumer:aws_instance.app','--focus-depth','0']], [{focus:'consumer:aws_instance.app'}, ['--focus','consumer:aws_instance.app']], [{changed_only:true}, ['--changed-only']]]) {
+        const result = run(current, {...options, remote_state_mappings});
+        assert.equal(result.ok, true, JSON.stringify(result));
+        const native = execFileSync(binary, [...current.flatMap(input => ['--state', input.state + '=' + join(mappingDirectory, input.state + '.json')]), '--remote-state', `consumer:${remote}=producer`, '-o', '-', ...args], {encoding:'utf8', maxBuffer:32*1024*1024});
+        assert.equal(result.content, native);
+        assert.ok(!result.content.includes('data-source-state="other"'));
+        assert.ok(!result.content.includes('</script><svg/onload'));
+      }
+    }
+    const mapping = {consumer:'consumer', remote:'data.terraform_remote_state.network', producer:'producer'};
+    for (const [remote_state_mappings, code] of [
+      [[{...mapping, producer:'missing'}], 'unknown_remote_state_mapping'],
+      [[{...mapping, remote:'SECRET\ninvalid'}], 'invalid_remote_state_mapping'],
+      [[{...mapping, remote:'data.terraform_remote_state.missing'}], 'invalid_remote_state_mapping'],
+      [[mapping, {...mapping, producer:'other'}], 'ambiguous_remote_state_mapping'],
+      [[{...mapping, extra:'SECRET'}], 'invalid_options'],
+      [Array(257).fill(mapping), 'resource_limit'],
+      [[{...mapping, remote:'x'.repeat(65537)}], 'resource_limit'],
+    ]) {
+      const result = run(mappedInputs, {remote_state_mappings});
+      assert.equal(result.error.code, code);
+      assert.ok(!JSON.stringify(result).includes('SECRET'));
+    }
+    const incomplete = mappedInputs.map(input => ({...input, json:input.state === 'producer' ? JSON.stringify({...JSON.parse(input.json), configuration:{root_module:{outputs:{both:{expression:{constant_value:'SECRET'}}}}}}) : input.json}));
+    const result = run(incomplete, {remote_state_mappings:[mapping]});
+    assert.equal(result.ok, true);
+    assert.ok(result.diagnostics.includes('producer output is missing'));
+    assert.ok(result.diagnostics.includes('producer output provenance is unresolved'));
+    assert.ok(!JSON.stringify(result).includes('SECRET'));
+  } finally { rmSync(mappingDirectory, {recursive:true, force:true}); }
   assert.equal(inventory.ok, true);
   assert.equal(inventory.resources.length, 6);
   for (const state of ['network', 'application']) {
