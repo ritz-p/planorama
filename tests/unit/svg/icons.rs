@@ -1,6 +1,8 @@
 use super::*;
 #[path = "data_icons.rs"]
 mod data_icons;
+#[path = "service_categories.rs"]
+mod service_categories;
 #[path = "service_names.rs"]
 mod service_names;
 #[test]

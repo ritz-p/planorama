@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1100" height="1346" viewBox="0 0 1100 1346" role="img" aria-labelledby="title description">
 <title id="title">Terraform plan</title>
-<desc id="description">5 resources (5 cards), 8 relationships. Lines show architectural relationships. Edge titles identify the relationship kind and Terraform change. Thin solid: dependency. Dashed: association. Thick dotted: connection. Nested boxes: containment. Edge color preserves the Terraform action when available. Spatial card role marks: rounded rectangle = execution; cylinder = data store; hexagon = network.</desc>
+<desc id="description">5 resources (5 cards), 8 relationships. Lines show architectural relationships. Edge titles identify the relationship kind and Terraform change. Thin solid: dependency. Dashed: association. Thick dotted: connection. Nested boxes: containment. Edge color preserves the Terraform action when available. Service label backgrounds: orange = compute; green = storage; blue = network; gray = unclassified. Spatial card role marks: rounded rectangle = execution; cylinder = data store; hexagon = network.</desc>
 <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/></marker><mask id="container-occlusion-0" maskUnits="userSpaceOnUse" maskContentUnits="userSpaceOnUse" x="0" y="0" width="1100" height="788" style="mask-type:luminance"><rect width="1100" height="788" fill="white"/>
 <rect data-occluder="resource-6177735f7375626e65742e61-current" x="98" y="314" width="404" height="160" rx="14" fill="black"/>
 </mask>
@@ -114,31 +114,31 @@
 <g id="resource-6177735f64625f7375626e65745f67726f75702e6d61696e-current" data-architecture-id="terraform:6177735f64625f7375626e65745f67726f75702e6d61696e-current" data-qualified-address="module.root.aws_db_subnet_group.main" data-terraform-address="aws_db_subnet_group.main"><title>module.root.aws_db_subnet_group.main — other</title>
 <rect x="540" y="327" width="320" height="134" rx="8" fill="#fefce8" stroke="#854d0e" stroke-width="1.5" data-mode="managed"/>
 <text x="552" y="347" font-size="11" fill="#854d0e">aws_db_subnet_group · other</text>
-<rect data-service-badge="true" data-service-full-name="Amazon RDS" x="552" y="358" width="36" height="18" rx="4" fill="#e2e8f0"/><text data-service-name="true" x="558" y="372" font-size="13" font-weight="700" fill="#0f172a" xml:space="preserve">RDS</text><text x="552" y="392" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_db_subnet_group.main</text>
+<rect data-service-badge="true" data-service-category="neutral" data-service-full-name="Amazon RDS" x="552" y="358" width="36" height="18" rx="4" fill="#e2e8f0"/><text data-service-name="true" x="558" y="372" font-size="13" font-weight="700" fill="#0f172a" xml:space="preserve">RDS</text><text x="552" y="392" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_db_subnet_group.main</text>
 <text x="552" y="449" font-size="10" fill="#64748b"><title>root</title>root</text>
 <text x="552" y="431" font-size="10" fill="#64748b" data-placement="inferred">inferred placement</text>
 </g>
 <g id="resource-6177735f656c6173746963616368655f7375626e65745f67726f75702e6d61696e-current" data-architecture-id="terraform:6177735f656c6173746963616368655f7375626e65745f67726f75702e6d61696e-current" data-qualified-address="module.root.aws_elasticache_subnet_group.main" data-terraform-address="aws_elasticache_subnet_group.main"><title>module.root.aws_elasticache_subnet_group.main — other</title>
 <rect x="540" y="501" width="320" height="134" rx="8" fill="#fefce8" stroke="#854d0e" stroke-width="1.5" data-mode="managed"/>
 <text x="552" y="521" font-size="11" fill="#854d0e">aws_elasticache_subnet_g… · other</text>
-<rect data-service-badge="true" data-service-full-name="Amazon ElastiCache" x="552" y="532" width="100" height="18" rx="4" fill="#e2e8f0"/><text data-service-name="true" x="558" y="546" font-size="13" font-weight="700" fill="#0f172a" xml:space="preserve">ElastiCache</text><text x="552" y="566" font-size="13" fill="#0f172a" xml:space="preserve">module.root.</text>
+<rect data-service-badge="true" data-service-category="neutral" data-service-full-name="Amazon ElastiCache" x="552" y="532" width="100" height="18" rx="4" fill="#e2e8f0"/><text data-service-name="true" x="558" y="546" font-size="13" font-weight="700" fill="#0f172a" xml:space="preserve">ElastiCache</text><text x="552" y="566" font-size="13" fill="#0f172a" xml:space="preserve">module.root.</text>
 <text x="552" y="586" font-size="13" fill="#0f172a" xml:space="preserve">aws_elasticache_subnet_group.main</text>
 <text x="552" y="623" font-size="10" fill="#64748b"><title>root</title>root</text>
 <text x="552" y="605" font-size="10" fill="#64748b" data-placement="inferred">inferred placement</text>
 </g>
 <g id="resource-6177735f7375626e65742e61-current" data-architecture-id="terraform:6177735f7375626e65742e61-current" data-qualified-address="module.root.aws_subnet.a" data-terraform-address="aws_subnet.a"><title>module.root.aws_subnet.a — other</title>
 <text x="112" y="336" font-size="11" fill="#854d0e">aws_subnet · other</text>
-<rect data-service-badge="true" data-service-full-name="Amazon VPC" x="112" y="347" width="36" height="18" rx="4" fill="#e2e8f0"/><text data-service-name="true" x="118" y="361" font-size="13" font-weight="700" fill="#0f172a" xml:space="preserve">VPC</text><text x="112" y="381" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_subnet.a</text>
+<rect data-service-badge="true" data-service-category="network" data-service-full-name="Amazon VPC" x="112" y="347" width="36" height="18" rx="4" fill="#dbeafe"/><text data-service-name="true" x="118" y="361" font-size="13" font-weight="700" fill="#1e3a8a" xml:space="preserve">VPC</text><text x="112" y="381" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_subnet.a</text>
 <text x="112" y="420" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
 <g id="resource-6177735f7375626e65742e62-current" data-architecture-id="terraform:6177735f7375626e65742e62-current" data-qualified-address="module.root.aws_subnet.b" data-terraform-address="aws_subnet.b"><title>module.root.aws_subnet.b — other</title>
 <text x="112" y="532" font-size="11" fill="#854d0e">aws_subnet · other</text>
-<rect data-service-badge="true" data-service-full-name="Amazon VPC" x="112" y="543" width="36" height="18" rx="4" fill="#e2e8f0"/><text data-service-name="true" x="118" y="557" font-size="13" font-weight="700" fill="#0f172a" xml:space="preserve">VPC</text><text x="112" y="577" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_subnet.b</text>
+<rect data-service-badge="true" data-service-category="network" data-service-full-name="Amazon VPC" x="112" y="543" width="36" height="18" rx="4" fill="#dbeafe"/><text data-service-name="true" x="118" y="557" font-size="13" font-weight="700" fill="#1e3a8a" xml:space="preserve">VPC</text><text x="112" y="577" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_subnet.b</text>
 <text x="112" y="616" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
 <g id="resource-6177735f7670632e6d61696e-current" data-architecture-id="terraform:6177735f7670632e6d61696e-current" data-qualified-address="module.root.aws_vpc.main" data-terraform-address="aws_vpc.main"><title>module.root.aws_vpc.main — other</title>
 <text x="72" y="180" font-size="11" fill="#854d0e">aws_vpc · other</text>
-<rect data-service-badge="true" data-service-full-name="Amazon VPC" x="72" y="191" width="36" height="18" rx="4" fill="#e2e8f0"/><text data-service-name="true" x="78" y="205" font-size="13" font-weight="700" fill="#0f172a" xml:space="preserve">VPC</text><text x="72" y="225" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_vpc.main</text>
+<rect data-service-badge="true" data-service-category="network" data-service-full-name="Amazon VPC" x="72" y="191" width="36" height="18" rx="4" fill="#dbeafe"/><text data-service-name="true" x="78" y="205" font-size="13" font-weight="700" fill="#1e3a8a" xml:space="preserve">VPC</text><text x="72" y="225" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_vpc.main</text>
 <text x="72" y="264" font-size="10" fill="#64748b"><title>root</title>root</text>
 </g>
 <g data-endpoints="true" data-source="resource-6177735f7375626e65742e61-current" data-target="resource-6177735f64625f7375626e65745f67726f75702e6d61696e-current" aria-hidden="true">

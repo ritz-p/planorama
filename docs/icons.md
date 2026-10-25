@@ -63,7 +63,7 @@ it is not an alternative implementation of removal.
 Short names are explicit shared metadata, applied only after provider-aware service
 classification. Every other name is preserved in full and wraps without truncation.
 Unknown provider/type keeps its existing neutral fallback. Labels use bold text,
-6px horizontal padding and a neutral background; address and operation text remain
+6px horizontal padding and a category background; address and operation text remain
 separate. Spatial cards, container headings, embedded members and Logical Resources
 use the same measurement and rendering. Formal names also remain in SVG metadata.
 
@@ -115,3 +115,25 @@ also provided in SVG descriptions and accessible labels; color is not required.
 
 [Role mark example](../examples/role-shapes.svg) includes long addresses, multiple
 actions, a container, a logical identity and foreign/unknown providers.
+
+## Service category colors (#635)
+
+The shared service metadata assigns colors only after AWS provider-aware service
+classification. The same badge renderer covers spatial cards, container headings,
+embedded members and Logical Resources in SVG and HTML.
+
+| Category | Services | Background / text |
+| --- | --- | --- |
+| Compute (orange) | Amazon EC2, AWS Lambda, Amazon ECS, Amazon EKS, Amazon EC2 Auto Scaling | `#ffedd5` / `#7c2d12` |
+| Storage (green) | Amazon S3, Amazon EBS, Amazon EFS | `#dcfce7` / `#14532d` |
+| Network (blue) | Amazon VPC, Elastic Load Balancing, Amazon Route 53, Amazon CloudFront, Amazon API Gateway | `#dbeafe` / `#1e3a8a` |
+| Neutral (gray) | Every other service, unknown classification and other providers | `#e2e8f0` / `#0f172a` |
+
+Unknown provider/types retain their neutral presentation without inventing a
+service label. Category colors apply only to service-label backgrounds, never the
+whole card or operation indicators. Data/import, action, focus and selection
+indicators retain their own presentation. Bold service text remains readable in
+grayscale; every palette pair exceeds a 4.5:1 contrast ratio. Long names wrap using
+the same measurements as neutral badges. SVG descriptions explain the colors
+without adding duplicate category labels. Classification does not change graph
+roles, relationships, containment, or layout.

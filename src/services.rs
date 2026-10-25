@@ -29,6 +29,45 @@ pub(crate) fn short_name(name: &str) -> &str {
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub(crate) enum Category {
+    Compute,
+    Storage,
+    Network,
+    Neutral,
+}
+
+impl Category {
+    pub(crate) fn palette(self) -> (&'static str, &'static str, &'static str) {
+        match self {
+            Self::Compute => ("compute", "#ffedd5", "#7c2d12"),
+            Self::Storage => ("storage", "#dcfce7", "#14532d"),
+            Self::Network => ("network", "#dbeafe", "#1e3a8a"),
+            Self::Neutral => ("neutral", "#e2e8f0", "#0f172a"),
+        }
+    }
+}
+
+pub(crate) fn category(node: &crate::model::Node) -> Category {
+    if !node.provider.is_aws() {
+        return Category::Neutral;
+    }
+    match node.service_name {
+        Some(
+            "Amazon EC2" | "AWS Lambda" | "Amazon ECS" | "Amazon EKS" | "Amazon EC2 Auto Scaling",
+        ) => Category::Compute,
+        Some("Amazon S3" | "Amazon EBS" | "Amazon EFS") => Category::Storage,
+        Some(
+            "Amazon VPC"
+            | "Elastic Load Balancing"
+            | "Amazon Route 53"
+            | "Amazon CloudFront"
+            | "Amazon API Gateway",
+        ) => Category::Network,
+        _ => Category::Neutral,
+    }
+}
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub(crate) enum VisualRole {
     Execution,
     DataStore,
