@@ -155,10 +155,29 @@ fn multi_account_example_reproduces_inputs_svg_and_html_with_state_scoped_identi
             .collect::<Vec<_>>()
     };
     assert_eq!(paths(&document), paths(&html_document));
+    let normalize = |document: &str| {
+        let metadata: serde_json::Value = serde_json::from_str(
+            document
+                .split("<script id=\"viewer-generation\" type=\"application/json\">")
+                .nth(1)
+                .unwrap()
+                .split("</script>")
+                .next()
+                .unwrap(),
+        )
+        .unwrap();
+        document.replacen(
+            &format!("\"revision\":{}", metadata["generator"]["revision"]),
+            "\"revision\":null",
+            1,
+        )
+    };
     assert_eq!(
-        html,
-        std::fs::read_to_string(root.join("examples/multi-account/diagram.html"))
-            .unwrap()
-            .replace("\r\n", "\n")
+        normalize(&html),
+        normalize(
+            &std::fs::read_to_string(root.join("examples/multi-account/diagram.html"))
+                .unwrap()
+                .replace("\r\n", "\n")
+        )
     );
 }
