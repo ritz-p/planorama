@@ -188,8 +188,10 @@ and SVG/PNG exports do not acquire this new metadata or before/after values.
 ## Generation information
 
 The collapsed **Generation information** panel reports the producing Planorama
-package version and effective generation settings. Revision is unavailable because
-the build does not currently record one. A selected view cannot establish that
+package version, engine source revision and effective generation settings.
+Revision is a full Git commit SHA, suffixed with `-dirty` for modified or untracked
+files; unavailable provenance is null. See [build acquisition rules](../CONTRIBUTING.md#build-provenance).
+A selected view cannot establish that
 omitted resources are absent from Terraform; a full view describes only the supplied inputs.
 
 The shared version-1 `viewer-generation` JSON contract contains `generator`,

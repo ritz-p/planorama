@@ -24,6 +24,11 @@ mod timing;
 mod view;
 mod work;
 
+fn build_revision() -> Option<&'static str> {
+    let revision = env!("PLANORAMA_REVISION");
+    (!revision.is_empty()).then_some(revision)
+}
+
 #[cfg(test)]
 #[path = "../tests/unit/artwork_free.rs"]
 mod artwork_free;

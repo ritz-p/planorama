@@ -32,7 +32,15 @@ fn generation_information_is_effective_allowlisted_and_shared() {
     let default = html(input.as_bytes(), &[]);
     let metadata = generation_data(&default);
     assert_eq!(metadata["generator"]["version"], env!("CARGO_PKG_VERSION"));
-    assert!(metadata["generator"]["revision"].is_null());
+    let revision = metadata["generator"]["revision"]
+        .as_str()
+        .unwrap_or("unavailable");
+    let version = support::run_with_args(b"", &["--version"]);
+    assert!(
+        String::from_utf8(version.stdout)
+            .unwrap()
+            .contains(&format!("(revision: {revision})"))
+    );
     assert!(metadata["setting_origins"].is_null());
     assert_eq!(metadata["selected_view"], false);
     assert_eq!(metadata["settings"]["relationship_legend"], "full");
@@ -474,7 +482,14 @@ fn html_omits_route_constants_without_changing_paths_or_identities() {
 #[test]
 fn representative_html_matches_the_renderer() {
     let output = html(include_bytes!("../fixtures/viewer-plan.json"), &[]);
-    assert_eq!(output, include_str!("../../examples/viewer.html"));
+    let normalize = |document: &str| {
+        let revision = &generation_data(document)["generator"]["revision"];
+        document.replacen(&format!("\"revision\":{revision}"), "\"revision\":null", 1)
+    };
+    assert_eq!(
+        normalize(&output),
+        normalize(include_str!("../../examples/viewer.html"))
+    );
     let svg = roxmltree::Document::parse(diagram(&output)).unwrap();
     let entries: Vec<_> = svg
         .descendants()

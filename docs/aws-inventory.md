@@ -18,6 +18,10 @@ capabilities. Neutral presentation and unresolved scope are explicit fallbacks, 
 claims of full relationship support. Counts here describe types; input coverage
 continues to count state-qualified resource instances and lifecycle objects.
 
+The [semantic audit](aws-semantic-audit.md) and [exact-type gap register](aws-semantic-gaps.md)
+track missing ownership, network, reference, scope and summary capabilities separately
+from basic classification, including prioritized issues and deferred cases.
+
 ## Capability policy
 
 [`basic_entries.rs`](../src/provider/aws/basic_entries.rs) is the exact-type runtime

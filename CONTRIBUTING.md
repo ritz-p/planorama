@@ -39,6 +39,29 @@ Compose は sccache 0.10.0 を compiler wrapper として使い、2 GiB 上限�
 `docker compose exec -T -e RUSTC_WRAPPER= dev cargo build --locked` です。
 削除・CI との役割分担・測定条件は [compiler cache](docs/build-performance.md#compiler-cache) を参照してください。
 
+## Build provenance
+
+`build.rs` records the engine checkout's full Git HEAD SHA for native and Wasm builds.
+Tracked modifications (including staged changes) or non-ignored untracked files add
+`-dirty`; such a build does not claim to exactly reproduce the clean commit.
+Ignored build outputs do not affect this marker. The marker does not fingerprint
+dirty contents. Git must identify this package directory as its repository root;
+source archives inside an unrelated checkout cannot inherit its revision.
+Git acquisition and distribution checks trust only the current package/checkout
+directory through a command-scoped `safe.directory` entry. This supports Docker
+bind mounts owned by another UID without changing global Git configuration or
+trusting unrelated repositories.
+Missing Git, missing metadata, unborn HEAD or failed status checks yield unavailable
+revision without failing the build. No environment or hosting-site revision override
+is accepted. No paths, remotes, timestamps or input contents enter the metadata.
+
+Cargo rechecks provenance on every build using an intentionally absent build-script
+dependency (`build-provenance-always-recheck`); this also catches commits, staging
+and new untracked files. This may recompile the package, but dependencies stay cached.
+CLI `--version` and the existing HTML generation metadata use the same compiled
+value. SVG and graph/layout calculation do not use it. Identical provenance and
+generation settings produce identical metadata.
+
 ## 検証
 
 ```sh
@@ -78,7 +101,7 @@ docker compose exec -T dev sh scripts/update-resource-support.sh --check
 
 生成先は [docs/resource-support.md](docs/resource-support.md) です。型名は provider と remote-output 解決の Rust ソースの文字列リテラルから収集し、分類・表示・scope・サービス名は実装関数で評価します。確認済み resource alias の関係ルールは canonical 型の参照先を使います。新しい定義形式や provider を追加する場合は `tests/unit/resource_support.rs` の収集処理も更新してください。関係ルールのリンクは条件付き処理の参照先であり、無条件の対応保証ではありません。
 AWS managed resource の正本は固定 Provider inventory です。全型との差分、基本分類表の追加方法、schema・登録コード・公式 docs の再採取手順は [AWS inventory](docs/aws-inventory.md) を参照してください。基本表示の baseline と保存済み plan の provider evidence の検証版は別の契約です。
-CI の `Resource support` は一覧の一致検証と inventory 抽出・差分比較のオフラインテストを実行します。固定版どうしの取得・比較は [baseline 比較手順](docs/aws-inventory.md#compare-candidate-baselines) を参照してください。図を生成しないため、この一覧や比較ツールだけの更新に SVG 再生成や Layout quality は不要です。
+CI の `Resource support` は一覧・[semantic gap 台帳](docs/aws-semantic-audit.md)の一致検証と inventory 抽出・差分比較のオフラインテストを実行します。固定版どうしの取得・比較は [baseline 比較手順](docs/aws-inventory.md#compare-candidate-baselines) を参照してください。図を生成しないため、この一覧や比較ツールだけの更新に SVG 再生成や Layout quality は不要です。
 
 ## SVG の更新
 

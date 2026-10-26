@@ -183,7 +183,11 @@ pub(crate) fn run() -> Result<(), String> {
                 return Ok(());
             }
             "-V" | "--version" => {
-                println!("planorama {}", env!("CARGO_PKG_VERSION"));
+                println!(
+                    "planorama {} (revision: {})",
+                    env!("CARGO_PKG_VERSION"),
+                    crate::build_revision().unwrap_or("unavailable")
+                );
                 return Ok(());
             }
             "-o" | "--output" => {

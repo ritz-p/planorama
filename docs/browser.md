@@ -6,8 +6,10 @@ semantic rules, selection, layout and rendering. JSON-only AWS accounts remain
 unknown; no provider evidence or account inference is added.
 
 Generated HTML includes the shared [generation information contract](viewer.md#generation-information),
-including effective selection settings and the generator version; setting origins
-and build revision remain explicitly unavailable.
+including effective selection settings, generator version and the revision compiled
+into the Wasm engine. It never substitutes the hosting site's revision. Setting
+origins remain unavailable. [Build provenance](../CONTRIBUTING.md#build-provenance)
+uses the same acquisition and fallback rules for native and Wasm builds.
 
 ## Build and run
 
@@ -51,7 +53,10 @@ must explicitly send `"icon_mode":"service-name"`.
 
 The engine build writes `output/wasm-engine/planorama.js` and
 `planorama_bg.wasm` from one wasm-bindgen invocation, plus `manifest.json` with
-package version, source commit, binding version, memory capabilities and SHA-256 hashes. Packaging
+package version, compiled engine revision (including dirty/unavailable state), binding version,
+memory capabilities and SHA-256 hashes. Packaging reads revision from the engine's
+existing HTML generation metadata, so it also works without Git and cannot relabel
+an older engine with a newer checkout SHA. Packaging
 produces `output/wasm-release/planorama-<version>-wasm-no-artwork.tar.gz` and
 its `.sha256` sidecar. The archive contains the engine, manifest and software licenses,
 without the sample browser UI or artwork. Do not mix bindings and Wasm files

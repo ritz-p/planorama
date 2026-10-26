@@ -36,7 +36,7 @@ pub(crate) fn attach(
     });
     let metadata = json!({
         "schema_version": 1,
-        "generator": { "name": "Planorama", "version": env!("CARGO_PKG_VERSION"), "revision": null },
+        "generator": { "name": "Planorama", "version": env!("CARGO_PKG_VERSION"), "revision": crate::build_revision() },
         "setting_origins": null,
         "selected_view": filter.changed_only || filter.focus.is_some() || !filter.modules.is_empty(),
         "settings": settings,
