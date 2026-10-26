@@ -1,0 +1,400 @@
+{
+  "format_version": "1.2",
+  "resource_changes": [
+    {
+      "address": "aws_elasticache_parameter_group.params",
+      "mode": "managed",
+      "type": "aws_elasticache_parameter_group",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "PRIVATE_PARAMS",
+          "name": "PRIVATE_PARAMS",
+          "family": "redis7",
+          "parameter": [
+            {
+              "name": "PRIVATE_PARAMETER",
+              "value": "PRIVATE_VALUE"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_elasticache_user.first",
+      "mode": "managed",
+      "type": "aws_elasticache_user",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "PRIVATE_USER_A",
+          "user_id": "PRIVATE_USER_A",
+          "user_name": "PRIVATE_LOGIN_A",
+          "engine": "redis",
+          "access_string": "PRIVATE_ACCESS",
+          "passwords": [
+            "PRIVATE_PASSWORD"
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_elasticache_user.second",
+      "mode": "managed",
+      "type": "aws_elasticache_user",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "PRIVATE_USER_B",
+          "user_id": "PRIVATE_USER_B",
+          "user_name": "PRIVATE_LOGIN_B",
+          "engine": "redis",
+          "access_string": "PRIVATE_ACCESS",
+          "authentication_mode": [
+            {
+              "type": "password",
+              "passwords": [
+                "PRIVATE_PASSWORD"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_elasticache_user_group.users",
+      "mode": "managed",
+      "type": "aws_elasticache_user_group",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "PRIVATE_GROUP",
+          "user_group_id": "PRIVATE_GROUP",
+          "engine": "redis",
+          "user_ids": [
+            "PRIVATE_USER_A",
+            "PRIVATE_USER_B"
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_elasticache_user_group_association.member",
+      "mode": "managed",
+      "type": "aws_elasticache_user_group_association",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "user_group_id": "PRIVATE_GROUP",
+          "user_id": "PRIVATE_USER_A"
+        }
+      }
+    },
+    {
+      "address": "aws_elasticache_replication_group.primary",
+      "mode": "managed",
+      "type": "aws_elasticache_replication_group",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "PRIVATE_PRIMARY",
+          "replication_group_id": "PRIVATE_PRIMARY",
+          "parameter_group_name": "PRIVATE_PARAMS",
+          "user_group_ids": [
+            "PRIVATE_GROUP"
+          ],
+          "auth_token": "PRIVATE_TOKEN",
+          "at_rest_encryption_enabled": "true"
+        }
+      }
+    },
+    {
+      "address": "aws_elasticache_global_replication_group.global",
+      "mode": "managed",
+      "type": "aws_elasticache_global_replication_group",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "PRIVATE_GLOBAL",
+          "global_replication_group_id": "PRIVATE_GLOBAL",
+          "global_replication_group_id_suffix": "PRIVATE_SUFFIX",
+          "primary_replication_group_id": "PRIVATE_PRIMARY"
+        }
+      }
+    },
+    {
+      "address": "aws_elasticache_replication_group.secondary",
+      "mode": "managed",
+      "type": "aws_elasticache_replication_group",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "PRIVATE_SECONDARY",
+          "replication_group_id": "PRIVATE_SECONDARY",
+          "global_replication_group_id": "PRIVATE_GLOBAL"
+        }
+      }
+    },
+    {
+      "address": "aws_elasticache_cluster.member",
+      "mode": "managed",
+      "type": "aws_elasticache_cluster",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "PRIVATE_CLUSTER",
+          "cluster_id": "PRIVATE_CLUSTER",
+          "replication_group_id": "PRIVATE_PRIMARY"
+        }
+      }
+    },
+    {
+      "address": "aws_elasticache_cluster.standalone",
+      "mode": "managed",
+      "type": "aws_elasticache_cluster",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "PRIVATE_STANDALONE",
+          "cluster_id": "PRIVATE_STANDALONE",
+          "parameter_group_name": "PRIVATE_PARAMS"
+        }
+      }
+    },
+    {
+      "address": "aws_elasticache_serverless_cache.serverless",
+      "mode": "managed",
+      "type": "aws_elasticache_serverless_cache",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "PRIVATE_CACHE",
+          "engine": "redis",
+          "user_group_id": "PRIVATE_GROUP",
+          "kms_key_id": "PRIVATE_KEY"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          },
+          "assume_role": [
+            {
+              "role_arn": {
+                "constant_value": "arn:aws:iam::111122223333:role/example"
+              }
+            }
+          ]
+        }
+      },
+      "aws.west": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-west-2"
+          },
+          "assume_role": [
+            {
+              "role_arn": {
+                "constant_value": "arn:aws:iam::111122223333:role/example"
+              }
+            }
+          ]
+        },
+        "alias": "west"
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_elasticache_parameter_group.params",
+          "mode": "managed",
+          "type": "aws_elasticache_parameter_group",
+          "name": "params",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_elasticache_user.first",
+          "mode": "managed",
+          "type": "aws_elasticache_user",
+          "name": "first",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_elasticache_user.second",
+          "mode": "managed",
+          "type": "aws_elasticache_user",
+          "name": "second",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_elasticache_user_group.users",
+          "mode": "managed",
+          "type": "aws_elasticache_user_group",
+          "name": "users",
+          "provider_config_key": "aws",
+          "expressions": {
+            "user_ids": {
+              "references": [
+                "aws_elasticache_user.first.user_id",
+                "aws_elasticache_user.second.user_id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_elasticache_user_group_association.member",
+          "mode": "managed",
+          "type": "aws_elasticache_user_group_association",
+          "name": "member",
+          "provider_config_key": "aws",
+          "expressions": {
+            "user_group_id": {
+              "references": [
+                "aws_elasticache_user_group.users.user_group_id"
+              ]
+            },
+            "user_id": {
+              "references": [
+                "aws_elasticache_user.first.user_id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_elasticache_replication_group.primary",
+          "mode": "managed",
+          "type": "aws_elasticache_replication_group",
+          "name": "primary",
+          "provider_config_key": "aws",
+          "expressions": {
+            "parameter_group_name": {
+              "references": [
+                "aws_elasticache_parameter_group.params.name"
+              ]
+            },
+            "user_group_ids": {
+              "references": [
+                "aws_elasticache_user_group.users.user_group_id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_elasticache_global_replication_group.global",
+          "mode": "managed",
+          "type": "aws_elasticache_global_replication_group",
+          "name": "global",
+          "provider_config_key": "aws",
+          "expressions": {
+            "primary_replication_group_id": {
+              "references": [
+                "aws_elasticache_replication_group.primary.replication_group_id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_elasticache_replication_group.secondary",
+          "mode": "managed",
+          "type": "aws_elasticache_replication_group",
+          "name": "secondary",
+          "provider_config_key": "aws.west",
+          "expressions": {
+            "global_replication_group_id": {
+              "references": [
+                "aws_elasticache_global_replication_group.global.global_replication_group_id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_elasticache_cluster.member",
+          "mode": "managed",
+          "type": "aws_elasticache_cluster",
+          "name": "member",
+          "provider_config_key": "aws",
+          "expressions": {
+            "replication_group_id": {
+              "references": [
+                "aws_elasticache_replication_group.primary.replication_group_id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_elasticache_cluster.standalone",
+          "mode": "managed",
+          "type": "aws_elasticache_cluster",
+          "name": "standalone",
+          "provider_config_key": "aws",
+          "expressions": {
+            "parameter_group_name": {
+              "references": [
+                "aws_elasticache_parameter_group.params.name"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_elasticache_serverless_cache.serverless",
+          "mode": "managed",
+          "type": "aws_elasticache_serverless_cache",
+          "name": "serverless",
+          "provider_config_key": "aws",
+          "expressions": {
+            "user_group_id": {
+              "references": [
+                "aws_elasticache_user_group.users.user_group_id"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

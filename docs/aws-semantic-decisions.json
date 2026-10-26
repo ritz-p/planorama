@@ -248,7 +248,7 @@
       "status": "Partial",
       "priority": "P1",
       "issue": 691,
-      "gap": "Partial: global/user/parameter references missing (#691); log/SNS and KMS references deferred to bounded observability/encryption review. See #718 per-dimension review in aws-semantic-decisions.json.",
+      "gap": "Implemented #691: global_replication_group_id, complete user_group_ids set and parameter_group_name references. Existing #360 network placement retained. Log/SNS and KMS summaries/references deferred to bounded observability/encryption contracts. See aws.md#elasticache-configuration-references-691. Review object records the historical #718 baseline.",
       "review": {
         "issue": 718,
         "implementationCommit": "bebadbbeac605bae9efd6810957a89130616d947",
@@ -426,10 +426,10 @@
       "gap": "Proxy network/target/owner references are implemented conditionally; no target database containment, connection pools or authentication values."
     },
     "aws_elasticache_serverless_cache": {
-      "status": "Partial (bounded capabilities implemented)",
+      "status": "Partial",
       "priority": "P1",
       "issue": 691,
-      "gap": "Partial: user_group_id missing (#691); KMS/snapshot restore navigation deferred to separate encryption/historical-source evidence contract. See #718 per-dimension review in aws-semantic-decisions.json.",
+      "gap": "Implemented #691: user_group_id reference. Existing #516 subnet/SG/common-VPC proof retained. KMS and snapshot restoration references deferred until encryption/historical-source evidence is specified. See aws.md#elasticache-configuration-references-691. Review object records the historical #718 baseline.",
       "review": {
         "issue": 718,
         "implementationCommit": "bebadbbeac605bae9efd6810957a89130616d947",
@@ -1105,10 +1105,10 @@
       }
     },
     "aws_elasticache_global_replication_group": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 691,
-      "gap": "Missing: primary_replication_group_id and inbound global_replication_group_id references. Suffix is not full output ID. Global parameter reference requires regional endpoint compatibility. See #718 per-dimension review in aws-semantic-decisions.json.",
+      "gap": "Implemented #691: primary_replication_group_id and inbound regional global_replication_group_id membership; global scope does not propagate provider region. Global parameter_group_name deferred until explicit primary-region/configuration proof exists. See aws.md#elasticache-configuration-references-691. Review object records the historical #718 baseline.",
       "review": {
         "issue": 718,
         "implementationCommit": "bebadbbeac605bae9efd6810957a89130616d947",
@@ -1135,10 +1135,10 @@
       }
     },
     "aws_elasticache_user": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 691,
-      "gap": "Missing: inbound user/group references. user_name is not user_id; permissions and passwords intentionally unsupported. See #718 per-dimension review in aws-semantic-decisions.json.",
+      "gap": "Implemented #691: inbound user_ids/user_id references to user_id/id; user_name is not an identifier substitute. Shared logical identity retained without embedding. Credentials, authentication material and access-string interpretation intentionally unsupported. See aws.md#elasticache-configuration-references-691. Review object records the historical #718 baseline.",
       "review": {
         "issue": 718,
         "implementationCommit": "bebadbbeac605bae9efd6810957a89130616d947",
@@ -1174,10 +1174,10 @@
       }
     },
     "aws_elasticache_user_group": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 691,
-      "gap": "Missing: user_ids set and inbound cache references. No literal-ID matching. See #718 per-dimension review in aws-semantic-decisions.json.",
+      "gap": "Implemented #691: complete user_ids set and inbound cache/helper user_group_id(s) references; all endpoints require equal known values and compatible bindings. Shared logical group retained without embedding users. See aws.md#elasticache-configuration-references-691. Review object records the historical #718 baseline.",
       "review": {
         "issue": 718,
         "implementationCommit": "bebadbbeac605bae9efd6810957a89130616d947",
@@ -1207,10 +1207,10 @@
       }
     },
     "aws_elasticache_user_group_association": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 691,
-      "gap": "Missing: both explicit endpoint references, preserving helper action and identity. See #718 per-dimension review in aws-semantic-decisions.json.",
+      "gap": "Implemented #691: separate user_id and user_group_id references with original association provenance/actions. No ownership, network containment or runtime authorization inference. See aws.md#elasticache-configuration-references-691. Review object records the historical #718 baseline.",
       "review": {
         "issue": 718,
         "implementationCommit": "bebadbbeac605bae9efd6810957a89130616d947",
@@ -1237,10 +1237,10 @@
       }
     },
     "aws_elasticache_parameter_group": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 691,
-      "gap": "Missing: inbound cache references. Never render parameter values or infer engine behavior from them. See #718 per-dimension review in aws-semantic-decisions.json.",
+      "gap": "Implemented #691: inbound cluster/replication-group parameter_group_name references to name/id. Shared logical parameter group retained; parameter values intentionally unsupported. Global consumer scope needs separate proof. See aws.md#elasticache-configuration-references-691. Review object records the historical #718 baseline.",
       "review": {
         "issue": 718,
         "implementationCommit": "bebadbbeac605bae9efd6810957a89130616d947",
@@ -1504,7 +1504,7 @@
       "status": "Partial",
       "priority": "P1",
       "issue": 691,
-      "gap": "Missing: parameter/membership references (#691). Log/SNS configuration deferred until destination-type and log-entry evidence are bound together; revisit with cache observability scope. See #718 per-dimension review in aws-semantic-decisions.json.",
+      "gap": "Implemented #691: replication_group_id membership and parameter_group_name navigation. Existing spatial presentation retained. Standalone subnet-group placement remains deferred until a complete network-evidence contract is added; log/SNS/snapshot references need separate destination/historical evidence. See aws.md#elasticache-configuration-references-691. Review object records the historical #718 baseline.",
       "review": {
         "issue": 718,
         "implementationCommit": "bebadbbeac605bae9efd6810957a89130616d947",
