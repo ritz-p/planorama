@@ -11,6 +11,9 @@ pub(super) mod tests;
 
 pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
     let resource = super::aliases::canonical(resource);
+    if let Some(label) = super::dynamodb::label(resource, attribute) {
+        return Some(label);
+    }
     if let Some(rule) = super::api_gateway::rule(resource, attribute) {
         return Some(rule.label);
     }
@@ -106,6 +109,10 @@ pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
 }
 
 fn source_fields(resource: &str, attribute: &str, source: &str) -> &'static [&'static str] {
+    let dynamodb = super::dynamodb::source_fields(resource, attribute, source);
+    if !dynamodb.is_empty() {
+        return dynamodb;
+    }
     let s3 = super::s3::source_fields(resource, attribute, source);
     if !s3.is_empty() {
         return s3;
@@ -398,6 +405,7 @@ pub(crate) fn annotate(
         });
         reference.service_reference_verified &=
             super::waf::verify_scope(nodes, reference, evidence);
+        reference.service_reference_verified &= super::dynamodb::verify(nodes, reference, evidence);
         if (node.resource_type == "aws_ecs_service" && reference.attribute == "cluster")
             || node.resource_type == "aws_redshift_cluster"
             || (node.resource_type == "aws_backup_plan"
@@ -476,6 +484,26 @@ pub(crate) fn annotate(
 
 pub(super) fn verified(raw: &Input, reference: &AttributeReference) -> bool {
     reference.service_reference_verified
+        && (super::dynamodb::label(
+            &raw.nodes[reference.target].resource_type,
+            &reference.attribute,
+        )
+        .is_none()
+            || reference.sources.iter().all(|&source| {
+                let node = &raw.nodes[reference.target];
+                let endpoint = &raw.nodes[source];
+                super::dynamodb::bindings(
+                    &node.resource_type,
+                    node.provider_configuration.as_ref(),
+                    endpoint.provider_configuration.as_ref(),
+                    node.entity.scope.as_ref().and_then(|s| s.region.as_ref()),
+                    endpoint
+                        .entity
+                        .scope
+                        .as_ref()
+                        .and_then(|s| s.region.as_ref()),
+                )
+            }))
         && super::iam::bindings_compatible(&raw.nodes, reference)
         && (raw.nodes[reference.target].resource_type != "aws_rds_cluster"
             || reference.attribute != "global_cluster_identifier"
@@ -602,12 +630,16 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             .references
             .push(ResourceReference {
                 kind: if verified
-                    && (matches!(label, "Cluster membership" | "Global Cluster membership")
-                        || matches!(
-                            node.resource_type.as_str(),
-                            "aws_iam_group_membership" | "aws_iam_user_group_membership"
-                        ))
-                {
+                    && (matches!(
+                        label,
+                        "Cluster membership"
+                            | "Global Cluster membership"
+                            | "V2 table membership"
+                            | "Legacy V1 table membership"
+                    ) || matches!(
+                        node.resource_type.as_str(),
+                        "aws_iam_group_membership" | "aws_iam_user_group_membership"
+                    )) {
                     crate::model::ReferenceKind::Membership
                 } else {
                     crate::model::ReferenceKind::Configured

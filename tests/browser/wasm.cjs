@@ -74,6 +74,13 @@ async function main() {
       console.log(JSON.stringify({fixture: 'viewer-plan', options, elapsed_ms: result.elapsed_ms, memory_bytes: result.memory_bytes, output_bytes: Buffer.byteLength(result.content)}));
     }
     const aliases = readFileSync(join(root, 'tests/fixtures/aws-aliases-plan.json'), 'utf8');
+    const dynamodb = readFileSync(join(root, 'tests/fixtures/dynamodb-plan.json'), 'utf8');
+    for (const format of ['svg', 'html']) {
+      const result = run(dynamodb, {format});
+      assert.equal(result.ok, true, JSON.stringify(result));
+      assert.equal(result.content, nativeReference(dynamodb, ['--format', format]), `DynamoDB native/Wasm ${format}`);
+      assert.ok(!result.content.includes('PRIVATE_'));
+    }
     for (const format of ['svg', 'html']) {
       for (const icon_mode of ['service-name']) {
         const result = run(aliases, {format, icon_mode});

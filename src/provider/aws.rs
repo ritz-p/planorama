@@ -16,6 +16,7 @@ mod components;
 mod containment;
 mod data;
 pub(super) mod diagnostics;
+mod dynamodb;
 mod efs;
 pub(crate) mod encryption;
 mod firehose;

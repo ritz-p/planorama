@@ -22,6 +22,9 @@ The [semantic audit](aws-semantic-audit.md) and [exact-type gap register](aws-se
 track missing ownership, network, reference, scope and summary capabilities separately
 from basic classification, including prioritized issues and deferred cases.
 
+[DynamoDB configuration references](dynamodb.md) document the exact table, replica,
+legacy global-table, streaming-destination and table-configuration contracts.
+
 ## Capability policy
 
 [`basic_entries.rs`](../src/provider/aws/basic_entries.rs) is the exact-type runtime
