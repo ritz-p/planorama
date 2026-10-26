@@ -25,7 +25,12 @@ test('build provenance handles clean, dirty, missing and parent Git metadata', (
     const sha = git('rev-parse', 'HEAD');
     assert.equal(revision(), sha);
     assert.equal(revision(), sha);
-    const ownerMismatch = {GIT_TEST_ASSUME_DIFFERENT_OWNER: '1'};
+    const ownerMismatch = {
+      GIT_TEST_ASSUME_DIFFERENT_OWNER: '1',
+      GIT_CONFIG_COUNT: '1',
+      GIT_CONFIG_KEY_0: 'safe.directory',
+      GIT_CONFIG_VALUE_0: '',
+    };
     assert.throws(() => execFileSync('git', ['-C', root, 'rev-parse', 'HEAD'], {env:{...process.env,...ownerMismatch},stdio:'pipe'}), error => /dubious ownership/.test(error.stderr.toString()));
     assert.equal(revision(root, ownerMismatch), sha);
     fs.appendFileSync(path.join(root, 'source.rs'), '\n');
