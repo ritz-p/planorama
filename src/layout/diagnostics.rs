@@ -13,6 +13,7 @@ pub(crate) struct Scene {
     edges: Vec<Route>,
     frames: Vec<(Value, borders::Frame)>,
     states: Vec<Value>,
+    resources: Vec<Value>,
 }
 
 struct Route {
@@ -71,6 +72,81 @@ fn identity(graph: &Graph, index: usize, state: Option<&str>) -> Value {
 }
 
 impl Scene {
+    fn add_resources(
+        &mut self,
+        graph: &Graph,
+        layout: &Layout<'_>,
+        state: Option<&str>,
+        offset: usize,
+    ) {
+        let resource_identity = |address: &str,
+                                 deposed: Option<&str>,
+                                 mode: crate::model::EntityMode| {
+            json!({
+                "state": state, "address": address, "deposed": deposed,
+                "mode": match mode { crate::model::EntityMode::Managed => "managed", crate::model::EntityMode::Data => "data" }
+            })
+        };
+        let mut seen = BTreeSet::new();
+        for (index, node) in graph.nodes.iter().enumerate() {
+            seen.insert(crate::model::TerraformEntityId {
+                address: node.address.clone(),
+                deposed_key: node.deposed_key.clone(),
+            });
+            let frame = layout.bounds[index];
+            let measured = node.placement != crate::model::Placement::Logical
+                && frame.width > 0
+                && frame.height > 0;
+            let mut scopes = Vec::new();
+            let mut parent = layout.containment.parents[index]
+                .or_else(|| crate::view::routes::owner(graph, node));
+            let mut ancestors = BTreeSet::new();
+            while let Some(index) = parent {
+                if !ancestors.insert(index) {
+                    break;
+                }
+                let ancestor = &graph.nodes[index];
+                let frame = translated(layout.bounds[index], offset);
+                scopes.push(json!({"identity": {"kind": "resource", "resource": resource_identity(&ancestor.address, ancestor.deposed_key.as_deref(), ancestor.mode)}, "origin": [frame.origin.x, frame.origin.y]}));
+                parent = layout.containment.parents[index];
+            }
+            if measured {
+                let mut panels: Vec<_> = layout
+                    .scopes
+                    .iter()
+                    .filter(|panel| {
+                        frame.origin.x >= panel.bounds.origin.x
+                            && frame.origin.y >= panel.bounds.origin.y
+                            && frame.right() <= panel.bounds.right()
+                            && frame.origin.y + frame.height
+                                <= panel.bounds.origin.y + panel.bounds.height
+                    })
+                    .collect();
+                panels.sort_by_key(|panel| panel.bounds.width.saturating_mul(panel.bounds.height));
+                for panel in panels {
+                    scopes.push(json!({"identity": {"kind": "deployment", "state": state, "provider": panel.scope.provider,
+                        "account": panel.scope.account.as_ref().map(|a| a.as_str()), "region": panel.scope.region.as_ref().map(|r| &r.0),
+                        "global": panel.scope.global, "account_panel": panel.account_panel},
+                        "origin": [panel.bounds.origin.x, panel.bounds.origin.y + offset]}));
+                }
+            }
+            scopes.push(
+                json!({"identity": {"kind": "state", "state": state}, "origin": [0, offset]}),
+            );
+            self.resources.push(json!({"identity": resource_identity(&node.address, node.deposed_key.as_deref(), node.mode),
+                "bounds": measured.then(|| bounds(translated(frame, offset))), "scopes": scopes,
+                "representation": if crate::view::routes::owner(graph, node).is_some() { "embedded" } else if measured { "spatial" } else { "logical" },
+                "unavailable_reason": (!measured).then_some("logical annotation bounds unavailable")}));
+        }
+        for (source, resource) in &graph.coverage.resources {
+            if !seen.contains(source) {
+                self.resources.push(json!({"identity": resource_identity(&source.address, source.deposed_key.as_deref(), resource.mode),
+                    "bounds": null, "scopes": [], "representation": "lowered",
+                    "unavailable_reason": "lowered relationship resource has no independent spatial frame"}));
+            }
+        }
+    }
+
     pub(crate) fn add_state(
         &mut self,
         graph: &Graph,
@@ -79,6 +155,7 @@ impl Scene {
         offset: usize,
         cards: Value,
     ) {
+        self.add_resources(graph, layout, state, offset);
         let resources: BTreeSet<_> = graph
             .entities()
             .flat_map(|e| &e.provenance)
@@ -169,6 +246,8 @@ impl Scene {
             )
         });
         self.frames.sort_by_key(|(id, _)| id.to_string());
+        self.resources
+            .sort_by_key(|resource| resource["identity"].to_string());
         let index = borders::Index::new(self.frames.iter().map(|(_, f)| *f).collect());
         let mut findings = Vec::new();
         let mut findings_complete = true;
@@ -303,6 +382,8 @@ impl Scene {
         }
         findings.sort_by_key(Value::to_string);
         json!({"schema_version": 1, "category": "layout", "scope": "whole_diagram", "units": "SVG user units (px)",
+            "resource_geometry": {"schema_version": 1, "records": self.resources,
+                "bounds_contract": "final spatial and embedded resource frames; logical and lowered resources explicitly unmeasured"},
             "canvas": {"width": width, "height": height}, "states": self.states, "edges": routes, "findings": findings,
             "summary": {"routed_paths": self.edges.len(), "raw_polyline": {"length": raw_length, "bends": raw_bends},
                 "visible_straight_sections": {"crossings": crossing_count, "independent_overlap_length": overlap,

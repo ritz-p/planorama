@@ -90,6 +90,9 @@ CI は [standard / large の2 suite](docs/ci.md#parallel-rust-test-suites) の�
 通常実行で ignore する大型回帰は [Routing regressions](docs/ci.md#deferred-routing-regressions-253) を参照してください。
 `cargo test` を継続する理由と nextest の比較は [計測結果](docs/ci.md#test-runner-evaluation-254) にあります。
 
+入力・表示設定変更による配置の変動を測定する任意の開発コマンドは
+[Layout stability](docs/layout-stability.md) を参照してください。
+
 ## リソース対応一覧の更新
 
 provider の型定義・分類・表示・scope・サービス名を変更したら、Docker 内で次を実行します。

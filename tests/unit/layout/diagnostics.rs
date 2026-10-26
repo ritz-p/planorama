@@ -1,5 +1,47 @@
 use super::*;
 
+#[test]
+fn resource_geometry_uses_final_frames_and_explicitly_marks_unmeasured_resources() {
+    let plan = crate::plan::parse(include_str!("../../layout-stability/base.json")).unwrap();
+    let graph = crate::semantic::transform(&plan);
+    let selected = crate::view::single(&graph, &Default::default()).unwrap();
+    let layout = Layout::new(&selected);
+    let mut scene = Scene::default();
+    scene.add_state(&selected, &layout, Some("one"), 123, json!({}));
+    let result = scene.finish(layout.width, layout.height + 123);
+    let resources = result["resource_geometry"]["records"].as_array().unwrap();
+    assert_eq!(resources.len(), selected.coverage.selected.resources);
+    for (index, node) in selected.nodes.iter().enumerate() {
+        let record = resources
+            .iter()
+            .find(|r| {
+                r["identity"]["address"] == node.address
+                    && r["identity"]["deposed"] == json!(node.deposed_key)
+            })
+            .unwrap();
+        assert_eq!(record["identity"]["state"], "one");
+        if node.placement == crate::model::Placement::Logical {
+            assert!(record["bounds"].is_null());
+            assert!(record["unavailable_reason"].is_string());
+        } else {
+            assert_eq!(
+                record["bounds"],
+                bounds(translated(layout.bounds[index], 123))
+            );
+        }
+    }
+    let app = resources
+        .iter()
+        .find(|r| r["identity"]["address"] == "aws_instance.app")
+        .unwrap();
+    assert_eq!(
+        app["scopes"][0]["identity"]["resource"]["address"],
+        "aws_subnet.app"
+    );
+    assert!(resources.iter().any(|r| r["identity"]["mode"] == "data"));
+    assert!(resources.iter().any(|r| r["identity"]["deposed"] == "old"));
+}
+
 fn route(id: &str, coords: &[(usize, usize)]) -> Route {
     Route {
         identity: json!({"source": id, "target": format!("{id}-target")}),
