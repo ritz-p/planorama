@@ -50,6 +50,10 @@ p { line-height: 1.5; }
 #impact button { width: 100%; text-align: left; }
 #impact-results ol { padding-left: 20px; }
 #impact-results li { margin-bottom: 10px; }
+#logical-filter-controls fieldset { margin: 8px 0; min-width: 0; }
+#logical-filter-controls legend { overflow-wrap: anywhere; }
+#logical-filter-controls label { display: block; }
+#logical-filter-controls input { width: auto; }
 #viewport [data-impact-hop="1"] { outline: 3px dashed #7c3aed; outline-offset: 4px; }
 #viewport [data-impact-hop="2"], #viewport [data-impact-hop="3"] { outline: 3px dotted #0f766e; outline-offset: 4px; }
 #viewport[data-selection] path[data-impact-edge] { opacity: 1; filter: drop-shadow(0 0 2px #0f766e); }
@@ -76,6 +80,11 @@ p { line-height: 1.5; }
 <p>Follows rendered relationships in either direction, including associations and inferred connections; not runtime impact. Adds required context and preserves layout without repacking.</p>
 </section>
 <label for="search">Search resources</label>
+<details id="logical-filters" hidden><summary>Logical Resources action filters</summary>
+<p>Show or hide actions independently for each type/mode card. Diagram-wide totals describe the generated input; counts below describe visible resources. Import, moved and drift remain operation metadata. CLI-excluded resources cannot be restored.</p>
+<button id="logical-filter-reset" type="button">Show all logical actions</button>
+<p id="logical-filter-status" role="status">All generated resources visible.</p>
+<div id="logical-filter-controls"></div></details>
 <input id="search" type="search" placeholder="Address, module, state, type or mode" autocomplete="off" aria-controls="results" aria-describedby="search-help">
 <div id="search-filters">
 <label for="search-action">Action</label><select id="search-action"><option value="">All actions</option></select>
@@ -727,8 +736,8 @@ p { line-height: 1.5; }
 <rect x="600" y="100" width="12" height="12" fill="#faf5ff" stroke="#7e22ce"/><text x="619" y="111" font-size="12" fill="#7e22ce">read (0)</text>
 <rect x="740" y="100" width="12" height="12" fill="#f8fafc" stroke="#64748b"/><text x="759" y="111" font-size="12" fill="#64748b">unchanged (4)</text>
 <rect x="880" y="100" width="12" height="12" fill="#fefce8" stroke="#854d0e"/><text x="899" y="111" font-size="12" fill="#854d0e">other (0)</text>
-<g data-annotation-area="true">
-<g data-annotation-card="true" transform="translate(40 160)"><rect width="3068" height="478" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-annotation-section="Logical Resources"><rect width="3068" height="478" rx="12" fill="#ecfeff" stroke="#0891b2"/><text x="16" y="28" font-size="15" font-weight="700" fill="#0e7490">Logical Resources</text><g data-annotation-card="true" transform="translate(16 48)"><rect width="360" height="222" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-logical-group="true" data-provider-source="registry.terraform.io/hashicorp/aws" data-resource-type="aws_ami" data-mode="data"><title>aws_ami · data / external — registry.terraform.io/hashicorp/aws</title><text x="16" y="28" font-size="13" font-weight="700" fill="#0e7490">aws_ami · data / external</text>
+<g data-annotation-area="true" data-packing-width="8764" data-measured-height="1782">
+<g data-annotation-card="true" transform="translate(40 160)"><rect width="3068" height="478" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-annotation-section="Logical Resources" data-packing-width="8684"><rect width="3068" height="478" rx="12" fill="#ecfeff" stroke="#0891b2"/><text x="16" y="28" font-size="15" font-weight="700" fill="#0e7490">Logical Resources</text><g data-annotation-card="true" transform="translate(16 48)"><rect width="360" height="222" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-logical-group="true" data-provider-source="registry.terraform.io/hashicorp/aws" data-resource-type="aws_ami" data-mode="data"><title>aws_ami · data / external — registry.terraform.io/hashicorp/aws</title><text x="16" y="28" font-size="13" font-weight="700" fill="#0e7490">aws_ami · data / external</text>
 <text x="16" y="48" font-size="11" fill="#64748b">registry.terraform.io/hashicorp/aws</text>
 <g data-action-section="unchanged"><rect x="8" y="66" width="344" height="128" rx="8" fill="none" stroke="#64748b" stroke-width="2"/><title>Unchanged (1)</title><text data-action-heading="true" x="20" y="98" font-size="13" font-weight="700" fill="#64748b" xml:space="preserve">Unchanged (1)</text><rect data-service-badge="true" data-presentation-padding="10 4" data-service-category="compute" data-service-full-name="Amazon EC2" data-display-name="AMI" x="287" y="78" width="53" height="32" rx="4" fill="#ffedd5"/><text data-service-name="true" x="297" y="100" font-size="18" font-weight="700" fill="#7c2d12" xml:space="preserve">AMI</text><g id="state-6170706c69636174696f6e2d61-resource-6d6f64756c652e7368617265642e646174612e6177735f616d692e617070-current" data-architecture-id="terraform:6d6f64756c652e7368617265642e646174612e6177735f616d692e617070-current" data-entity-kind="terraform" data-placement="logical" data-terraform-address="module.shared.data.aws_ami.app" data-qualified-address="module.shared.data.aws_ami.app" data-mode="data" transform="translate(0 122)" data-external="true"><title>module.shared.data.aws_ami.app — unchanged</title><text x="16" y="28" font-size="12" fill="#334155" xml:space="preserve" font-weight="700">module.shared.data.aws_ami.app</text>
 <text x="16" y="48" font-size="12" fill="#334155" xml:space="preserve">Region: us-east-1</text>
@@ -808,7 +817,7 @@ References: module.application.aws_security_group.app [vpc_security_group_ids; d
 </g>
 </g>
 </g></g>
-<g data-annotation-card="true" transform="translate(40 658)"><rect width="416" height="400" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-annotation-section="Logical Components"><rect width="416" height="400" rx="12" fill="#f5f3ff" stroke="#a78bfa"/><text x="16" y="28" font-size="15" font-weight="700" fill="#6d28d9">Logical Components</text><g data-annotation-card="true" transform="translate(16 48)"><rect width="384" height="336" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g id="state-6170706c69636174696f6e2d61-architecture-73796e7468657469633a36633666363136343566363236313663363136653633363537322d36643666363437353663363532653631373037303663363936333631373436393666366532653631373737333566366336323265363137303730" data-architecture-id="synthetic:6c6f61645f62616c616e636572-6d6f64756c652e6170706c69636174696f6e2e6177735f6c622e617070" data-entity-kind="synthetic" data-component-id="logical:load_balancer:module.application.aws_lb.app" data-component-kind="load_balancer"><title>Load balancer: module.application.aws_lb.app</title><text x="16" y="28" font-size="13" font-weight="700" fill="#5b21b6">Load balancer: module.application.aws_lb.app</text>
+<g data-annotation-card="true" transform="translate(40 658)"><rect width="416" height="400" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-annotation-section="Logical Components" data-packing-width="8684"><rect width="416" height="400" rx="12" fill="#f5f3ff" stroke="#a78bfa"/><text x="16" y="28" font-size="15" font-weight="700" fill="#6d28d9">Logical Components</text><g data-annotation-card="true" transform="translate(16 48)"><rect width="384" height="336" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g id="state-6170706c69636174696f6e2d61-architecture-73796e7468657469633a36633666363136343566363236313663363136653633363537322d36643666363437353663363532653631373037303663363936333631373436393666366532653631373737333566366336323265363137303730" data-architecture-id="synthetic:6c6f61645f62616c616e636572-6d6f64756c652e6170706c69636174696f6e2e6177735f6c622e617070" data-entity-kind="synthetic" data-component-id="logical:load_balancer:module.application.aws_lb.app" data-component-kind="load_balancer"><title>Load balancer: module.application.aws_lb.app</title><text x="16" y="28" font-size="13" font-weight="700" fill="#5b21b6">Load balancer: module.application.aws_lb.app</text>
 <text data-component-scope="true" x="16" y="48" font-size="12" fill="#64748b">Member scope: Region: us-east-1</text>
 <g data-component-member="true" transform="translate(16 68)"><a href="#state-6170706c69636174696f6e2d61-resource-6d6f64756c652e6170706c69636174696f6e2e6177735f6c622e617070-current" data-source-address="module.application.aws_lb.app"><title>module.application.aws_lb.app; create</title><text font-size="12" fill="#334155">
 <tspan x="0" y="20" xml:space="preserve">module.application.aws_lb.app</tspan>
@@ -831,7 +840,7 @@ References: module.application.aws_security_group.app [vpc_security_group_ids; d
 </g>
 </g>
 </g></g>
-<g data-annotation-card="true" transform="translate(40 1078)"><rect width="5292" height="840" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-annotation-section="Relationship Resources"><rect width="5292" height="840" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><text x="16" y="28" font-size="15" font-weight="700" fill="#475569">Relationship Resources</text><g data-annotation-card="true" transform="translate(16 48)"><rect width="640" height="776" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-relationship-index="true">
+<g data-annotation-card="true" transform="translate(40 1078)"><rect width="5292" height="840" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-annotation-section="Relationship Resources" data-packing-width="8684"><rect width="5292" height="840" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><text x="16" y="28" font-size="15" font-weight="700" fill="#475569">Relationship Resources</text><g data-annotation-card="true" transform="translate(16 48)"><rect width="640" height="776" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-relationship-index="true">
 <g data-relationship-entry="1" id="state-6170706c69636174696f6e2d61-relationship-5b5b5b226d6f64756c652e6170706c69636174696f6e2e6177735f6c625f7461726765745f67726f75705f6174746163686d656e742e6130222c6e756c6c5d5d2c5b5b227465727261666f726d3a3664366636343735366336353265363137303730366336393633363137343639366636653265363137373733356636633632356637343631373236373635373435663637373236663735373032653631373037302d63757272656e74222c227465727261666f726d3a366436663634373536633635326536313730373036633639363336313734363936663665326536313737373335663639366537333734363136653633363532653737366637323662363537323733356636313562333035642d63757272656e74222c226173736f63696174696f6e222c22756e6469726563746564225d5d5d"><title>Relationship [1]: Connects (association, undirected): module.application.aws_lb_target_group.app / module.application.aws_instance.workers_a[0]</title><a href="#state-6170706c69636174696f6e2d61-relationship-5b5b5b226d6f64756c652e6170706c69636174696f6e2e6177735f6c625f7461726765745f67726f75705f6174746163686d656e742e6130222c6e756c6c5d5d2c5b5b227465727261666f726d3a3664366636343735366336353265363137303730366336393633363137343639366636653265363137373733356636633632356637343631373236373635373435663637373236663735373032653631373037302d63757272656e74222c227465727261666f726d3a366436663634373536633635326536313730373036633639363336313734363936663665326536313737373335663639366537333734363136653633363532653737366637323662363537323733356636313562333035642d63757272656e74222c226173736f63696174696f6e222c22756e6469726563746564225d5d5d" data-relationship-select="true" aria-label="Relationship [1]: Connects (association, undirected): module.application.aws_lb_target_group.app / module.application.aws_instance.workers_a[0]">
 <rect x="16" y="15" width="24" height="18" rx="4" fill="#ffffff" stroke="#047857" stroke-width="2" stroke-dasharray="7 4"/><text x="28" y="28" text-anchor="middle" font-size="11" fill="#334155">[1]</text>
 </a>
@@ -2780,8 +2789,8 @@ References: shared-services:module.shared.data.aws_ami.app [module.application.d
 <rect x="600" y="100" width="12" height="12" fill="#faf5ff" stroke="#7e22ce"/><text x="619" y="111" font-size="12" fill="#7e22ce">read (0)</text>
 <rect x="740" y="100" width="12" height="12" fill="#f8fafc" stroke="#64748b"/><text x="759" y="111" font-size="12" fill="#64748b">unchanged (5)</text>
 <rect x="880" y="100" width="12" height="12" fill="#fefce8" stroke="#854d0e"/><text x="899" y="111" font-size="12" fill="#854d0e">other (0)</text>
-<g data-annotation-area="true">
-<g data-annotation-card="true" transform="translate(40 160)"><rect width="3068" height="478" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-annotation-section="Logical Resources"><rect width="3068" height="478" rx="12" fill="#ecfeff" stroke="#0891b2"/><text x="16" y="28" font-size="15" font-weight="700" fill="#0e7490">Logical Resources</text><g data-annotation-card="true" transform="translate(16 48)"><rect width="360" height="222" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-logical-group="true" data-provider-source="registry.terraform.io/hashicorp/aws" data-resource-type="aws_ami" data-mode="data"><title>aws_ami · data / external — registry.terraform.io/hashicorp/aws</title><text x="16" y="28" font-size="13" font-weight="700" fill="#0e7490">aws_ami · data / external</text>
+<g data-annotation-area="true" data-packing-width="8764" data-measured-height="1782">
+<g data-annotation-card="true" transform="translate(40 160)"><rect width="3068" height="478" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-annotation-section="Logical Resources" data-packing-width="8684"><rect width="3068" height="478" rx="12" fill="#ecfeff" stroke="#0891b2"/><text x="16" y="28" font-size="15" font-weight="700" fill="#0e7490">Logical Resources</text><g data-annotation-card="true" transform="translate(16 48)"><rect width="360" height="222" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-logical-group="true" data-provider-source="registry.terraform.io/hashicorp/aws" data-resource-type="aws_ami" data-mode="data"><title>aws_ami · data / external — registry.terraform.io/hashicorp/aws</title><text x="16" y="28" font-size="13" font-weight="700" fill="#0e7490">aws_ami · data / external</text>
 <text x="16" y="48" font-size="11" fill="#64748b">registry.terraform.io/hashicorp/aws</text>
 <g data-action-section="unchanged"><rect x="8" y="66" width="344" height="128" rx="8" fill="none" stroke="#64748b" stroke-width="2"/><title>Unchanged (1)</title><text data-action-heading="true" x="20" y="98" font-size="13" font-weight="700" fill="#64748b" xml:space="preserve">Unchanged (1)</text><rect data-service-badge="true" data-presentation-padding="10 4" data-service-category="compute" data-service-full-name="Amazon EC2" data-display-name="AMI" x="287" y="78" width="53" height="32" rx="4" fill="#ffedd5"/><text data-service-name="true" x="297" y="100" font-size="18" font-weight="700" fill="#7c2d12" xml:space="preserve">AMI</text><g id="state-6170706c69636174696f6e2d62-resource-6d6f64756c652e7368617265642e646174612e6177735f616d692e617070-current" data-architecture-id="terraform:6d6f64756c652e7368617265642e646174612e6177735f616d692e617070-current" data-entity-kind="terraform" data-placement="logical" data-terraform-address="module.shared.data.aws_ami.app" data-qualified-address="module.shared.data.aws_ami.app" data-mode="data" transform="translate(0 122)" data-external="true"><title>module.shared.data.aws_ami.app — unchanged</title><text x="16" y="28" font-size="12" fill="#334155" xml:space="preserve" font-weight="700">module.shared.data.aws_ami.app</text>
 <text x="16" y="48" font-size="12" fill="#334155" xml:space="preserve">Region: us-east-1</text>
@@ -2861,7 +2870,7 @@ References: module.application.aws_security_group.app [vpc_security_group_ids; d
 </g>
 </g>
 </g></g>
-<g data-annotation-card="true" transform="translate(40 658)"><rect width="416" height="400" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-annotation-section="Logical Components"><rect width="416" height="400" rx="12" fill="#f5f3ff" stroke="#a78bfa"/><text x="16" y="28" font-size="15" font-weight="700" fill="#6d28d9">Logical Components</text><g data-annotation-card="true" transform="translate(16 48)"><rect width="384" height="336" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g id="state-6170706c69636174696f6e2d62-architecture-73796e7468657469633a36633666363136343566363236313663363136653633363537322d36643666363437353663363532653631373037303663363936333631373436393666366532653631373737333566366336323265363137303730" data-architecture-id="synthetic:6c6f61645f62616c616e636572-6d6f64756c652e6170706c69636174696f6e2e6177735f6c622e617070" data-entity-kind="synthetic" data-component-id="logical:load_balancer:module.application.aws_lb.app" data-component-kind="load_balancer"><title>Load balancer: module.application.aws_lb.app</title><text x="16" y="28" font-size="13" font-weight="700" fill="#5b21b6">Load balancer: module.application.aws_lb.app</text>
+<g data-annotation-card="true" transform="translate(40 658)"><rect width="416" height="400" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-annotation-section="Logical Components" data-packing-width="8684"><rect width="416" height="400" rx="12" fill="#f5f3ff" stroke="#a78bfa"/><text x="16" y="28" font-size="15" font-weight="700" fill="#6d28d9">Logical Components</text><g data-annotation-card="true" transform="translate(16 48)"><rect width="384" height="336" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g id="state-6170706c69636174696f6e2d62-architecture-73796e7468657469633a36633666363136343566363236313663363136653633363537322d36643666363437353663363532653631373037303663363936333631373436393666366532653631373737333566366336323265363137303730" data-architecture-id="synthetic:6c6f61645f62616c616e636572-6d6f64756c652e6170706c69636174696f6e2e6177735f6c622e617070" data-entity-kind="synthetic" data-component-id="logical:load_balancer:module.application.aws_lb.app" data-component-kind="load_balancer"><title>Load balancer: module.application.aws_lb.app</title><text x="16" y="28" font-size="13" font-weight="700" fill="#5b21b6">Load balancer: module.application.aws_lb.app</text>
 <text data-component-scope="true" x="16" y="48" font-size="12" fill="#64748b">Member scope: Region: us-east-1</text>
 <g data-component-member="true" transform="translate(16 68)"><a href="#state-6170706c69636174696f6e2d62-resource-6d6f64756c652e6170706c69636174696f6e2e6177735f6c622e617070-current" data-source-address="module.application.aws_lb.app"><title>module.application.aws_lb.app; update</title><text font-size="12" fill="#334155">
 <tspan x="0" y="20" xml:space="preserve">module.application.aws_lb.app</tspan>
@@ -2884,7 +2893,7 @@ References: module.application.aws_security_group.app [vpc_security_group_ids; d
 </g>
 </g>
 </g></g>
-<g data-annotation-card="true" transform="translate(40 1078)"><rect width="1332" height="840" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-annotation-section="Relationship Resources"><rect width="1332" height="840" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><text x="16" y="28" font-size="15" font-weight="700" fill="#475569">Relationship Resources</text><g data-annotation-card="true" transform="translate(16 48)"><rect width="640" height="776" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-relationship-index="true">
+<g data-annotation-card="true" transform="translate(40 1078)"><rect width="1332" height="840" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-annotation-section="Relationship Resources" data-packing-width="8684"><rect width="1332" height="840" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><text x="16" y="28" font-size="15" font-weight="700" fill="#475569">Relationship Resources</text><g data-annotation-card="true" transform="translate(16 48)"><rect width="640" height="776" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-relationship-index="true">
 <g data-relationship-entry="1" id="state-6170706c69636174696f6e2d62-relationship-5b5b5b226d6f64756c652e6170706c69636174696f6e2e6177735f6c625f7461726765745f67726f75705f6174746163686d656e742e6130222c6e756c6c5d5d2c5b5b227465727261666f726d3a3664366636343735366336353265363137303730366336393633363137343639366636653265363137373733356636633632356637343631373236373635373435663637373236663735373032653631373037302d63757272656e74222c227465727261666f726d3a366436663634373536633635326536313730373036633639363336313734363936663665326536313737373335663639366537333734363136653633363532653737366637323662363537323733356636313562333035642d63757272656e74222c226173736f63696174696f6e222c22756e6469726563746564225d5d5d"><title>Relationship [1]: Connects (association, undirected): module.application.aws_lb_target_group.app / module.application.aws_instance.workers_a[0]</title><a href="#state-6170706c69636174696f6e2d62-relationship-5b5b5b226d6f64756c652e6170706c69636174696f6e2e6177735f6c625f7461726765745f67726f75705f6174746163686d656e742e6130222c6e756c6c5d5d2c5b5b227465727261666f726d3a3664366636343735366336353265363137303730366336393633363137343639366636653265363137373733356636633632356637343631373236373635373435663637373236663735373032653631373037302d63757272656e74222c227465727261666f726d3a366436663634373536633635326536313730373036633639363336313734363936663665326536313737373335663639366537333734363136653633363532653737366637323662363537323733356636313562333035642d63757272656e74222c226173736f63696174696f6e222c22756e6469726563746564225d5d5d" data-relationship-select="true" aria-label="Relationship [1]: Connects (association, undirected): module.application.aws_lb_target_group.app / module.application.aws_instance.workers_a[0]">
 <rect x="16" y="15" width="24" height="18" rx="4" fill="#ffffff" stroke="#1d4ed8" stroke-width="2" stroke-dasharray="7 4"/><text x="28" y="28" text-anchor="middle" font-size="11" fill="#334155">[1]</text>
 </a>
@@ -3659,8 +3668,8 @@ References: shared-services:module.shared.data.aws_ami.app [module.application.d
 <rect x="600" y="100" width="12" height="12" fill="#faf5ff" stroke="#7e22ce"/><text x="619" y="111" font-size="12" fill="#7e22ce">read (0)</text>
 <rect x="740" y="100" width="12" height="12" fill="#f8fafc" stroke="#64748b"/><text x="759" y="111" font-size="12" fill="#64748b">unchanged (47)</text>
 <rect x="880" y="100" width="12" height="12" fill="#fefce8" stroke="#854d0e"/><text x="899" y="111" font-size="12" fill="#854d0e">other (0)</text>
-<g data-annotation-area="true">
-<g data-annotation-card="true" transform="translate(40 160)"><rect width="2996" height="478" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-annotation-section="Logical Resources"><rect width="2996" height="478" rx="12" fill="#ecfeff" stroke="#0891b2"/><text x="16" y="28" font-size="15" font-weight="700" fill="#0e7490">Logical Resources</text><g data-annotation-card="true" transform="translate(16 48)"><rect width="360" height="222" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-logical-group="true" data-provider-source="registry.terraform.io/hashicorp/aws" data-resource-type="aws_ami" data-mode="data"><title>aws_ami · data / external — registry.terraform.io/hashicorp/aws</title><text x="16" y="28" font-size="13" font-weight="700" fill="#0e7490">aws_ami · data / external</text>
+<g data-annotation-area="true" data-packing-width="8764" data-measured-height="1782">
+<g data-annotation-card="true" transform="translate(40 160)"><rect width="2996" height="478" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-annotation-section="Logical Resources" data-packing-width="8684"><rect width="2996" height="478" rx="12" fill="#ecfeff" stroke="#0891b2"/><text x="16" y="28" font-size="15" font-weight="700" fill="#0e7490">Logical Resources</text><g data-annotation-card="true" transform="translate(16 48)"><rect width="360" height="222" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-logical-group="true" data-provider-source="registry.terraform.io/hashicorp/aws" data-resource-type="aws_ami" data-mode="data"><title>aws_ami · data / external — registry.terraform.io/hashicorp/aws</title><text x="16" y="28" font-size="13" font-weight="700" fill="#0e7490">aws_ami · data / external</text>
 <text x="16" y="48" font-size="11" fill="#64748b">registry.terraform.io/hashicorp/aws</text>
 <g data-action-section="unchanged"><rect x="8" y="66" width="344" height="128" rx="8" fill="none" stroke="#64748b" stroke-width="2"/><title>Unchanged (1)</title><text data-action-heading="true" x="20" y="98" font-size="13" font-weight="700" fill="#64748b" xml:space="preserve">Unchanged (1)</text><rect data-service-badge="true" data-presentation-padding="10 4" data-service-category="compute" data-service-full-name="Amazon EC2" data-display-name="AMI" x="287" y="78" width="53" height="32" rx="4" fill="#ffedd5"/><text data-service-name="true" x="297" y="100" font-size="18" font-weight="700" fill="#7c2d12" xml:space="preserve">AMI</text><g id="state-7368617265642d7365727669636573-resource-6d6f64756c652e7368617265642e646174612e6177735f616d692e617070-current" data-architecture-id="terraform:6d6f64756c652e7368617265642e646174612e6177735f616d692e617070-current" data-entity-kind="terraform" data-placement="logical" data-terraform-address="module.shared.data.aws_ami.app" data-qualified-address="module.shared.data.aws_ami.app" data-mode="data" transform="translate(0 122)" data-external="true"><title>module.shared.data.aws_ami.app — unchanged</title><text x="16" y="28" font-size="12" fill="#334155" xml:space="preserve" font-weight="700">module.shared.data.aws_ami.app</text>
 <text x="16" y="48" font-size="12" fill="#334155" xml:space="preserve">Region: us-east-1</text>
@@ -3739,7 +3748,7 @@ References: module.application.aws_security_group.app [vpc_security_group_ids; d
 </g>
 </g>
 </g></g>
-<g data-annotation-card="true" transform="translate(40 658)"><rect width="416" height="400" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-annotation-section="Logical Components"><rect width="416" height="400" rx="12" fill="#f5f3ff" stroke="#a78bfa"/><text x="16" y="28" font-size="15" font-weight="700" fill="#6d28d9">Logical Components</text><g data-annotation-card="true" transform="translate(16 48)"><rect width="384" height="336" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g id="state-7368617265642d7365727669636573-architecture-73796e7468657469633a36633666363136343566363236313663363136653633363537322d36643666363437353663363532653631373037303663363936333631373436393666366532653631373737333566366336323265363137303730" data-architecture-id="synthetic:6c6f61645f62616c616e636572-6d6f64756c652e6170706c69636174696f6e2e6177735f6c622e617070" data-entity-kind="synthetic" data-component-id="logical:load_balancer:module.application.aws_lb.app" data-component-kind="load_balancer"><title>Load balancer: module.application.aws_lb.app</title><text x="16" y="28" font-size="13" font-weight="700" fill="#5b21b6">Load balancer: module.application.aws_lb.app</text>
+<g data-annotation-card="true" transform="translate(40 658)"><rect width="416" height="400" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-annotation-section="Logical Components" data-packing-width="8684"><rect width="416" height="400" rx="12" fill="#f5f3ff" stroke="#a78bfa"/><text x="16" y="28" font-size="15" font-weight="700" fill="#6d28d9">Logical Components</text><g data-annotation-card="true" transform="translate(16 48)"><rect width="384" height="336" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g id="state-7368617265642d7365727669636573-architecture-73796e7468657469633a36633666363136343566363236313663363136653633363537322d36643666363437353663363532653631373037303663363936333631373436393666366532653631373737333566366336323265363137303730" data-architecture-id="synthetic:6c6f61645f62616c616e636572-6d6f64756c652e6170706c69636174696f6e2e6177735f6c622e617070" data-entity-kind="synthetic" data-component-id="logical:load_balancer:module.application.aws_lb.app" data-component-kind="load_balancer"><title>Load balancer: module.application.aws_lb.app</title><text x="16" y="28" font-size="13" font-weight="700" fill="#5b21b6">Load balancer: module.application.aws_lb.app</text>
 <text data-component-scope="true" x="16" y="48" font-size="12" fill="#64748b">Member scope: Region: us-east-1</text>
 <g data-component-member="true" transform="translate(16 68)"><a href="#state-7368617265642d7365727669636573-resource-6d6f64756c652e6170706c69636174696f6e2e6177735f6c622e617070-current" data-source-address="module.application.aws_lb.app"><title>module.application.aws_lb.app; unchanged</title><text font-size="12" fill="#334155">
 <tspan x="0" y="20" xml:space="preserve">module.application.aws_lb.app</tspan>
@@ -3762,7 +3771,7 @@ References: module.application.aws_security_group.app [vpc_security_group_ids; d
 </g>
 </g>
 </g></g>
-<g data-annotation-card="true" transform="translate(40 1078)"><rect width="1332" height="840" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-annotation-section="Relationship Resources"><rect width="1332" height="840" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><text x="16" y="28" font-size="15" font-weight="700" fill="#475569">Relationship Resources</text><g data-annotation-card="true" transform="translate(16 48)"><rect width="640" height="776" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-relationship-index="true">
+<g data-annotation-card="true" transform="translate(40 1078)"><rect width="1332" height="840" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-annotation-section="Relationship Resources" data-packing-width="8684"><rect width="1332" height="840" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><text x="16" y="28" font-size="15" font-weight="700" fill="#475569">Relationship Resources</text><g data-annotation-card="true" transform="translate(16 48)"><rect width="640" height="776" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-relationship-index="true">
 <g data-relationship-entry="1" id="state-7368617265642d7365727669636573-relationship-5b5b5b226d6f64756c652e6170706c69636174696f6e2e6177735f6c625f7461726765745f67726f75705f6174746163686d656e742e6130222c6e756c6c5d5d2c5b5b227465727261666f726d3a3664366636343735366336353265363137303730366336393633363137343639366636653265363137373733356636633632356637343631373236373635373435663637373236663735373032653631373037302d63757272656e74222c227465727261666f726d3a366436663634373536633635326536313730373036633639363336313734363936663665326536313737373335663639366537333734363136653633363532653737366637323662363537323733356636313562333035642d63757272656e74222c226173736f63696174696f6e222c22756e6469726563746564225d5d5d"><title>Relationship [1]: Connects (association, undirected): module.application.aws_lb_target_group.app / module.application.aws_instance.workers_a[0]</title><a href="#state-7368617265642d7365727669636573-relationship-5b5b5b226d6f64756c652e6170706c69636174696f6e2e6177735f6c625f7461726765745f67726f75705f6174746163686d656e742e6130222c6e756c6c5d5d2c5b5b227465727261666f726d3a3664366636343735366336353265363137303730366336393633363137343639366636653265363137373733356636633632356637343631373236373635373435663637373236663735373032653631373037302d63757272656e74222c227465727261666f726d3a366436663634373536633635326536313730373036633639363336313734363936663665326536313737373335663639366537333734363136653633363532653737366637323662363537323733356636313562333035642d63757272656e74222c226173736f63696174696f6e222c22756e6469726563746564225d5d5d" data-relationship-select="true" aria-label="Relationship [1]: Connects (association, undirected): module.application.aws_lb_target_group.app / module.application.aws_instance.workers_a[0]">
 <rect x="16" y="15" width="24" height="18" rx="4" fill="#ffffff" stroke="#64748b" stroke-width="2" stroke-dasharray="7 4"/><text x="28" y="28" text-anchor="middle" font-size="11" fill="#334155">[1]</text>
 </a>
@@ -4391,11 +4400,11 @@ Instance profile: module.application.aws_iam_instance_profile.app [iam_instance_
 </svg>
 </g>
 <defs><marker id="cross-state-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#2563eb"/></marker></defs>
-<path data-edge-kind="dependency" data-cross-state="true" data-output-action="create" data-source="state-6170706c69636174696f6e2d61-resource-6d6f64756c652e6170706c69636174696f6e2e6177735f6c622e617070-current" data-target="state-6170706c69636174696f6e2d62-resource-6177735f73335f6275636b65742e706565725f636f6e7472616374-current" data-source-port="state-6170706c69636174696f6e2d61-resource-6d6f64756c652e6170706c69636174696f6e2e6177735f6c622e617070-current" data-target-port="state-6170706c69636174696f6e2d62-resource-6177735f73335f6275636b65742e706565725f636f6e7472616374-current" data-source-state="application-a" data-target-state="application-b" data-remote-state="data.terraform_remote_state.peer" data-output="endpoint" d="M 5660 4186 L 5660 4212 L 8372 4212 L 8372 4186 L 8794 4186 L 8794 12106 L 4241 12106 L 4241 12223 L 3808 12223 L 3808 13046 L 564 13046 L 564 12256 L 380 12256 L 380 12106" fill="none" stroke="#2563eb" stroke-width="1.5" stroke-dasharray="7 4" marker-end="url(#cross-state-arrow)"><title>application-a:module.application.aws_lb.app -&gt; application-b:module.root.aws_s3_bucket.peer_contract via module.root.data.terraform_remote_state.peer.outputs.endpoint (cross-state dependency)</title></path>
-<circle data-endpoint="source" cx="5660" cy="4186" r="3.5" fill="#ffffff" stroke="#2563eb" stroke-width="1.5"/><path data-edge-kind="dependency" data-cross-state="true" data-output-action="unchanged" data-source="state-7368617265642d7365727669636573-resource-6d6f64756c652e6170706c69636174696f6e2e6177735f6c622e617070-current" data-target="state-6170706c69636174696f6e2d61-resource-6d6f64756c652e6170706c69636174696f6e2e6177735f6563735f736572766963652e617070-current" data-source-port="state-7368617265642d7365727669636573-resource-6d6f64756c652e6170706c69636174696f6e2e6177735f6c622e617070-current" data-target-port="state-6170706c69636174696f6e2d61-resource-6d6f64756c652e6170706c69636174696f6e2e6177735f6563735f736572766963652e617070-current" data-source-state="shared-services" data-target-state="application-a" data-remote-state="module.application.data.terraform_remote_state.shared" data-output="endpoint" d="M 1626 17438 L 1626 17468 L 3402 17468 L 3402 17397 L 4210 17397 L 4210 17438 L 8806 17438 L 8806 4365 L 8356 4365 L 8356 4426 L 7400 4426 L 7400 4365" fill="none" stroke="#2563eb" stroke-width="1.5" stroke-dasharray="7 4" marker-end="url(#cross-state-arrow)"><title>shared-services:module.application.aws_lb.app -&gt; application-a:module.application.aws_ecs_service.app via module.application.data.terraform_remote_state.shared.outputs.endpoint (cross-state dependency)</title></path>
-<circle data-endpoint="source" cx="1626" cy="17438" r="3.5" fill="#ffffff" stroke="#2563eb" stroke-width="1.5"/><path data-edge-kind="dependency" data-cross-state="true" data-output-action="unchanged" data-source="state-7368617265642d7365727669636573-resource-6d6f64756c652e6170706c69636174696f6e2e6177735f6c622e617070-current" data-target="state-6170706c69636174696f6e2d61-resource-6d6f64756c652e6170706c69636174696f6e2e6177735f6c622e617070-current" data-source-port="state-7368617265642d7365727669636573-resource-6d6f64756c652e6170706c69636174696f6e2e6177735f6c622e617070-current" data-target-port="state-6170706c69636174696f6e2d61-resource-6d6f64756c652e6170706c69636174696f6e2e6177735f6c622e617070-current" data-source-state="shared-services" data-target-state="application-a" data-remote-state="module.application.data.terraform_remote_state.shared" data-output="endpoint" d="M 1626 17438 L 1626 17468 L 3402 17468 L 3402 17397 L 4210 17397 L 4210 17438 L 8818 17438 L 8818 4186 L 8372 4186 L 8372 4212 L 5660 4212 L 5660 4186" fill="none" stroke="#2563eb" stroke-width="1.5" stroke-dasharray="7 4" marker-end="url(#cross-state-arrow)"><title>shared-services:module.application.aws_lb.app -&gt; application-a:module.application.aws_lb.app via module.application.data.terraform_remote_state.shared.outputs.endpoint (cross-state dependency)</title></path>
-<circle data-endpoint="source" cx="1626" cy="17438" r="3.5" fill="#ffffff" stroke="#2563eb" stroke-width="1.5"/><path data-edge-kind="dependency" data-cross-state="true" data-output-action="unchanged" data-source="state-7368617265642d7365727669636573-resource-6d6f64756c652e6170706c69636174696f6e2e6177735f6c622e617070-current" data-target="state-6170706c69636174696f6e2d62-resource-6d6f64756c652e6170706c69636174696f6e2e6177735f6563735f736572766963652e617070-current" data-source-port="state-7368617265642d7365727669636573-resource-6d6f64756c652e6170706c69636174696f6e2e6177735f6c622e617070-current" data-target-port="state-6170706c69636174696f6e2d62-resource-6d6f64756c652e6170706c69636174696f6e2e6177735f6563735f736572766963652e617070-current" data-source-state="shared-services" data-target-state="application-b" data-remote-state="module.application.data.terraform_remote_state.shared" data-output="endpoint" d="M 1626 17438 L 1626 17468 L 3402 17468 L 3402 17397 L 4210 17397 L 4210 17438 L 8830 17438 L 8830 12352 L 4212 12352 L 4212 12280 L 3304 12280 L 3304 12352" fill="none" stroke="#2563eb" stroke-width="1.5" stroke-dasharray="7 4" marker-end="url(#cross-state-arrow)"><title>shared-services:module.application.aws_lb.app -&gt; application-b:module.application.aws_ecs_service.app via module.application.data.terraform_remote_state.shared.outputs.endpoint (cross-state dependency)</title></path>
-<circle data-endpoint="source" cx="1626" cy="17438" r="3.5" fill="#ffffff" stroke="#2563eb" stroke-width="1.5"/><path data-edge-kind="dependency" data-cross-state="true" data-output-action="unchanged" data-source="state-7368617265642d7365727669636573-resource-6d6f64756c652e6170706c69636174696f6e2e6177735f6c622e617070-current" data-target="state-6170706c69636174696f6e2d62-resource-6d6f64756c652e6170706c69636174696f6e2e6177735f6c622e617070-current" data-source-port="state-7368617265642d7365727669636573-resource-6d6f64756c652e6170706c69636174696f6e2e6177735f6c622e617070-current" data-target-port="state-6170706c69636174696f6e2d62-resource-6d6f64756c652e6170706c69636174696f6e2e6177735f6c622e617070-current" data-source-state="shared-services" data-target-state="application-b" data-remote-state="module.application.data.terraform_remote_state.shared" data-output="endpoint" d="M 1626 17438 L 1626 17468 L 3402 17468 L 3402 17397 L 4210 17397 L 4210 17438 L 8842 17438 L 8842 12152 L 4241 12152 L 4241 12223 L 2596 12223 L 2596 12199 L 1608 12199 L 1608 12152" fill="none" stroke="#2563eb" stroke-width="1.5" stroke-dasharray="7 4" marker-end="url(#cross-state-arrow)"><title>shared-services:module.application.aws_lb.app -&gt; application-b:module.application.aws_lb.app via module.application.data.terraform_remote_state.shared.outputs.endpoint (cross-state dependency)</title></path>
+<path data-edge-kind="dependency" data-cross-state="true" data-source-points="5" data-output-action="create" data-source="state-6170706c69636174696f6e2d61-resource-6d6f64756c652e6170706c69636174696f6e2e6177735f6c622e617070-current" data-target="state-6170706c69636174696f6e2d62-resource-6177735f73335f6275636b65742e706565725f636f6e7472616374-current" data-source-port="state-6170706c69636174696f6e2d61-resource-6d6f64756c652e6170706c69636174696f6e2e6177735f6c622e617070-current" data-target-port="state-6170706c69636174696f6e2d62-resource-6177735f73335f6275636b65742e706565725f636f6e7472616374-current" data-source-state="application-a" data-target-state="application-b" data-remote-state="data.terraform_remote_state.peer" data-output="endpoint" d="M 5660 4186 L 5660 4212 L 8372 4212 L 8372 4186 L 8794 4186 L 8794 12106 L 4241 12106 L 4241 12223 L 3808 12223 L 3808 13046 L 564 13046 L 564 12256 L 380 12256 L 380 12106" fill="none" stroke="#2563eb" stroke-width="1.5" stroke-dasharray="7 4" marker-end="url(#cross-state-arrow)"><title>application-a:module.application.aws_lb.app -&gt; application-b:module.root.aws_s3_bucket.peer_contract via module.root.data.terraform_remote_state.peer.outputs.endpoint (cross-state dependency)</title></path>
+<circle data-endpoint="source" cx="5660" cy="4186" r="3.5" fill="#ffffff" stroke="#2563eb" stroke-width="1.5"/><path data-edge-kind="dependency" data-cross-state="true" data-source-points="7" data-output-action="unchanged" data-source="state-7368617265642d7365727669636573-resource-6d6f64756c652e6170706c69636174696f6e2e6177735f6c622e617070-current" data-target="state-6170706c69636174696f6e2d61-resource-6d6f64756c652e6170706c69636174696f6e2e6177735f6563735f736572766963652e617070-current" data-source-port="state-7368617265642d7365727669636573-resource-6d6f64756c652e6170706c69636174696f6e2e6177735f6c622e617070-current" data-target-port="state-6170706c69636174696f6e2d61-resource-6d6f64756c652e6170706c69636174696f6e2e6177735f6563735f736572766963652e617070-current" data-source-state="shared-services" data-target-state="application-a" data-remote-state="module.application.data.terraform_remote_state.shared" data-output="endpoint" d="M 1626 17438 L 1626 17468 L 3402 17468 L 3402 17397 L 4210 17397 L 4210 17438 L 8806 17438 L 8806 4365 L 8356 4365 L 8356 4426 L 7400 4426 L 7400 4365" fill="none" stroke="#2563eb" stroke-width="1.5" stroke-dasharray="7 4" marker-end="url(#cross-state-arrow)"><title>shared-services:module.application.aws_lb.app -&gt; application-a:module.application.aws_ecs_service.app via module.application.data.terraform_remote_state.shared.outputs.endpoint (cross-state dependency)</title></path>
+<circle data-endpoint="source" cx="1626" cy="17438" r="3.5" fill="#ffffff" stroke="#2563eb" stroke-width="1.5"/><path data-edge-kind="dependency" data-cross-state="true" data-source-points="7" data-output-action="unchanged" data-source="state-7368617265642d7365727669636573-resource-6d6f64756c652e6170706c69636174696f6e2e6177735f6c622e617070-current" data-target="state-6170706c69636174696f6e2d61-resource-6d6f64756c652e6170706c69636174696f6e2e6177735f6c622e617070-current" data-source-port="state-7368617265642d7365727669636573-resource-6d6f64756c652e6170706c69636174696f6e2e6177735f6c622e617070-current" data-target-port="state-6170706c69636174696f6e2d61-resource-6d6f64756c652e6170706c69636174696f6e2e6177735f6c622e617070-current" data-source-state="shared-services" data-target-state="application-a" data-remote-state="module.application.data.terraform_remote_state.shared" data-output="endpoint" d="M 1626 17438 L 1626 17468 L 3402 17468 L 3402 17397 L 4210 17397 L 4210 17438 L 8818 17438 L 8818 4186 L 8372 4186 L 8372 4212 L 5660 4212 L 5660 4186" fill="none" stroke="#2563eb" stroke-width="1.5" stroke-dasharray="7 4" marker-end="url(#cross-state-arrow)"><title>shared-services:module.application.aws_lb.app -&gt; application-a:module.application.aws_lb.app via module.application.data.terraform_remote_state.shared.outputs.endpoint (cross-state dependency)</title></path>
+<circle data-endpoint="source" cx="1626" cy="17438" r="3.5" fill="#ffffff" stroke="#2563eb" stroke-width="1.5"/><path data-edge-kind="dependency" data-cross-state="true" data-source-points="7" data-output-action="unchanged" data-source="state-7368617265642d7365727669636573-resource-6d6f64756c652e6170706c69636174696f6e2e6177735f6c622e617070-current" data-target="state-6170706c69636174696f6e2d62-resource-6d6f64756c652e6170706c69636174696f6e2e6177735f6563735f736572766963652e617070-current" data-source-port="state-7368617265642d7365727669636573-resource-6d6f64756c652e6170706c69636174696f6e2e6177735f6c622e617070-current" data-target-port="state-6170706c69636174696f6e2d62-resource-6d6f64756c652e6170706c69636174696f6e2e6177735f6563735f736572766963652e617070-current" data-source-state="shared-services" data-target-state="application-b" data-remote-state="module.application.data.terraform_remote_state.shared" data-output="endpoint" d="M 1626 17438 L 1626 17468 L 3402 17468 L 3402 17397 L 4210 17397 L 4210 17438 L 8830 17438 L 8830 12352 L 4212 12352 L 4212 12280 L 3304 12280 L 3304 12352" fill="none" stroke="#2563eb" stroke-width="1.5" stroke-dasharray="7 4" marker-end="url(#cross-state-arrow)"><title>shared-services:module.application.aws_lb.app -&gt; application-b:module.application.aws_ecs_service.app via module.application.data.terraform_remote_state.shared.outputs.endpoint (cross-state dependency)</title></path>
+<circle data-endpoint="source" cx="1626" cy="17438" r="3.5" fill="#ffffff" stroke="#2563eb" stroke-width="1.5"/><path data-edge-kind="dependency" data-cross-state="true" data-source-points="7" data-output-action="unchanged" data-source="state-7368617265642d7365727669636573-resource-6d6f64756c652e6170706c69636174696f6e2e6177735f6c622e617070-current" data-target="state-6170706c69636174696f6e2d62-resource-6d6f64756c652e6170706c69636174696f6e2e6177735f6c622e617070-current" data-source-port="state-7368617265642d7365727669636573-resource-6d6f64756c652e6170706c69636174696f6e2e6177735f6c622e617070-current" data-target-port="state-6170706c69636174696f6e2d62-resource-6d6f64756c652e6170706c69636174696f6e2e6177735f6c622e617070-current" data-source-state="shared-services" data-target-state="application-b" data-remote-state="module.application.data.terraform_remote_state.shared" data-output="endpoint" d="M 1626 17438 L 1626 17468 L 3402 17468 L 3402 17397 L 4210 17397 L 4210 17438 L 8842 17438 L 8842 12152 L 4241 12152 L 4241 12223 L 2596 12223 L 2596 12199 L 1608 12199 L 1608 12152" fill="none" stroke="#2563eb" stroke-width="1.5" stroke-dasharray="7 4" marker-end="url(#cross-state-arrow)"><title>shared-services:module.application.aws_lb.app -&gt; application-b:module.application.aws_lb.app via module.application.data.terraform_remote_state.shared.outputs.endpoint (cross-state dependency)</title></path>
 <circle data-endpoint="source" cx="1626" cy="17438" r="3.5" fill="#ffffff" stroke="#2563eb" stroke-width="1.5"/><text x="350" y="35" font-family="ui-monospace, Consolas, monospace" font-size="12" fill="#2563eb">Dashed blue: cross-state dependency</text>
 </svg>
 
@@ -4489,7 +4498,7 @@ function metadata(svg, byId) {
   const relationshipEdges = id => edges.filter(edge => (edge.dataset.relationshipIds || '').split(' ').includes(id));
   const sourceIdentity = source => 'terraform:' + hex(source.address) + (source.deposed_key === null ? '-current' : '-deposed-' + hex(source.deposed_key));
 
-  return { resources, targets, title, label, edges, links, components, relationshipEntries, relationshipEdges, sourceIdentity };
+  return { resources, targets, title, label, edges, links, components, relationshipEntries, relationshipEdges, sourceIdentity, available: id => !!byId(id) };
 }
 function diagramExport(context) {
   const { svg, byId } = context;
@@ -4501,7 +4510,7 @@ function diagramExport(context) {
     const box = clone.getAttribute('viewBox').trim().split(/[ ,]+/).map(Number);
     if (box.length !== 4 || !box.every(Number.isFinite) || box[2] <= 0 || box[3] <= 0) throw new Error('Invalid export viewport');
     clone.setAttribute('width', box[2]); clone.setAttribute('height', box[3]);
-    for (const el of clone.querySelectorAll('[data-hotspot-overlay], script, foreignObject')) el.remove();
+    for (const el of clone.querySelectorAll('[data-hotspot-overlay], [data-html-filtered], script, foreignObject')) el.remove();
     const ids = new Set();
     for (const el of [clone, ...clone.querySelectorAll('*')]) {
       if (el.id) {
@@ -4827,7 +4836,11 @@ function navigation(svg, viewport, byId) {
   function restore(saved) {
     box = saved.slice(); updateView();
   }
-  return { fit, zoom, reveal, updateView, keydown, snapshot: () => box.slice(), restore, wasDragged: () => dragged };
+  function resize(height) {
+    original[3] = height;
+    fit();
+  }
+  return { fit, zoom, reveal, updateView, keydown, resize, snapshot: () => box.slice(), restore, wasDragged: () => dragged };
 }
 
 function highlighting(svg, viewport) {
@@ -4848,6 +4861,7 @@ function selection(context, index, navigation, highlights, coordinator) {
   const { reveal } = navigation;
   const history = selectionHistory(context, index, navigation, coordinator, select);
   coordinator.saveHistory = history.save;
+  coordinator.clearHistory = history.clear;
   function button(text, action) {
     const el = document.createElement('button');
     el.type = 'button'; el.textContent = text; el.addEventListener('click', action);
@@ -4862,7 +4876,7 @@ function selection(context, index, navigation, highlights, coordinator) {
       if (entry.target && byId(entry.target)) {
         li.append(button(entry.text, () => select(entry.target)));
         if (entry.target !== coordinator.selected) byId(entry.target).setAttribute('data-viewer-related', 'true');
-      } else li.textContent = entry.text;
+      } else li.textContent = entry.text + (entry.target && targets.has(entry.target) && !entry.text.includes('hidden by HTML action filters') ? ' (hidden by HTML action filters)' : '');
       list.append(li);
     }
     details.append(h, list);
@@ -5055,14 +5069,16 @@ function searching(context, index, selection, coordinator) {
   function renderResults() {
     const terms = search.value.toLocaleLowerCase().trim().split(/\s+/).filter(Boolean);
     const focused = results.contains(document.activeElement);
-    const matched = resources.filter(r => (!action.value || r.action === action.value) && (!state.value || JSON.stringify(r.state) === state.value) && (!type.value || typeKey(r) === type.value) && terms.every(term => [label(r), r.qualified, r.state + ':' + r.qualified, r.identity, r.module, r.state, r.type, r.provider || '', r.mode, r.deposed || ''].join(' ').toLocaleLowerCase().includes(term)));
+    const visible = resources.filter(r => byId(r.id));
+    const matched = visible.filter(r => (!action.value || r.action === action.value) && (!state.value || JSON.stringify(r.state) === state.value) && (!type.value || typeKey(r) === type.value) && terms.every(term => [label(r), r.qualified, r.state + ':' + r.qualified, r.identity, r.module, r.state, r.type, r.provider || '', r.mode, r.deposed || ''].join(' ').toLocaleLowerCase().includes(term)));
     results.replaceChildren();
     for (const r of matched) {
       const b = button(label(r), () => select(r.id));
       b.dataset.target = r.id; b.setAttribute('aria-pressed', String(coordinator.selected === r.id)); results.append(b);
     }
     byId('result-count').textContent = `${matched.length} of ${resources.length} resources`;
-    if (!matched.length) byId('result-count').textContent += ' match this search. The diagram is unchanged.';
+    if (visible.length !== resources.length) byId('result-count').textContent += `; ${resources.length - visible.length} hidden by HTML action filters`;
+    if (!matched.length) byId('result-count').textContent += '. No visible resources match this search.';
     if (focused) (results.firstElementChild || search).focus();
   }
   for (const control of [action, state, type]) control.addEventListener('change', () => {
@@ -5085,6 +5101,166 @@ function searching(context, index, selection, coordinator) {
   });
 
   return { renderResults };
+}
+function actionFiltering(context, index, view, coordinator, renderResults) {
+  const { svg, byId } = context;
+  const panel = byId('logical-filters'), controls = byId('logical-filter-controls');
+  const actions = ['Create', 'Update', 'Delete', 'Replace', 'Read', 'Unchanged', 'Other'];
+  const number = (el, name) => Number(el.getAttribute(name));
+  const translation = el => {
+    const matrix = el.transform.baseVal.consolidate()?.matrix;
+    return [matrix?.e || 0, matrix?.f || 0];
+  };
+  const move = (el, x, y) => el.setAttribute('transform', `translate(${x} ${y})`);
+  const rootHeight = number(svg, 'height');
+  const areas = [...svg.querySelectorAll('[data-annotation-area]')].map(el => ({
+    el, height: Number(el.dataset.measuredHeight),
+    sections: [...el.querySelectorAll(':scope > [data-annotation-card]')].map(frame => {
+      const section = frame.querySelector(':scope > [data-annotation-section]');
+      return { frame, section,
+        cards: [...section.querySelectorAll(':scope > [data-annotation-card]')].map(card => ({
+          el: card, width: number(card.firstElementChild, 'width'), height: number(card.firstElementChild, 'height')
+        })) };
+    }),
+    architecture: el.parentElement.querySelector(':scope > [data-architecture]'),
+    document: el.ownerSVGElement
+  }));
+  for (const area of areas) {
+    area.offset = translation(area.architecture);
+    area.documentHeight = number(area.document, 'height');
+    area.documentBox = area.document.getAttribute('viewBox').split(/\s+/).map(Number);
+  }
+  const states = [...svg.querySelectorAll('[data-state-id]')].map(el => ({
+    el, area: areas.find(area => el.contains(area.el))
+  }));
+  const paths = [...svg.querySelectorAll('path[data-cross-state]')].map(el => ({
+    el, original: el.getAttribute('d'), points: el.getAttribute('d').match(/-?\d+(?:\.\d+)?/g).map(Number),
+    split: Number(el.dataset.sourcePoints), source: el.dataset.sourceState, target: el.dataset.targetState,
+    marker: el.nextElementSibling?.matches('circle[data-endpoint]') ? el.nextElementSibling : null
+  }));
+  const groups = [];
+  for (const area of areas) for (const section of area.sections) for (const card of section.cards) {
+    const group = card.el.querySelector(':scope > [data-logical-group]');
+    if (!group) continue;
+    const sections = [...group.querySelectorAll(':scope > [data-action-section]')].map(el => ({
+      el, action: el.dataset.actionSection, start: number(el.firstElementChild, 'y'),
+      height: number(el.firstElementChild, 'height'), count: el.querySelectorAll('[data-placement="logical"]').length
+    }));
+    const fieldset = document.createElement('fieldset');
+    fieldset.dataset.resourceType = group.dataset.resourceType;
+    fieldset.dataset.mode = group.dataset.mode;
+    const legend = document.createElement('legend');
+    const state = group.closest('[data-state-id]')?.dataset.stateId;
+    legend.textContent = `${state ? state + ': ' : ''}${group.dataset.resourceType} · ${group.dataset.mode} · ${group.dataset.providerSource}`;
+    fieldset.append(legend);
+    const entry = { card, sections, start: sections[0].start, enabled: new Set(actions.map(action => action.toLowerCase())) };
+    for (const action of actions) {
+      const key = action.toLowerCase(), section = sections.find(section => section.action === key);
+      const label = document.createElement('label'), input = document.createElement('input');
+      input.type = 'checkbox'; input.checked = true; input.dataset.action = key;
+      input.disabled = !section;
+      input.addEventListener('change', () => {
+        if (input.checked) entry.enabled.add(key); else entry.enabled.delete(key);
+        update();
+      });
+      label.append(input, document.createTextNode(`${action} (${section?.count || 0})`)); fieldset.append(label);
+    }
+    entry.status = document.createElement('p'); entry.status.setAttribute('role', 'status');
+    fieldset.append(entry.status); controls.append(fieldset); groups.push(entry);
+    entry.status.textContent = `${sections.reduce((sum, section) => sum + section.count, 0)} visible`;
+  }
+  panel.hidden = !groups.length;
+  const links = index.links.map(link => ({ ...link, href: link.el.getAttribute('href'), title: null }));
+  const hotspot = byId('hotspot-toggle'), hotspotStatus = byId('hotspot-status');
+  const hotspotDisabled = hotspot.disabled;
+  const hotspotDescription = hotspotStatus.textContent;
+  function update() {
+    coordinator.clearHistory();
+    coordinator.clear();
+    let hidden = 0;
+    for (const group of groups) {
+      let y = group.start, visible = 0, total = 0;
+      for (const section of group.sections) {
+        total += section.count;
+        const shown = group.enabled.has(section.action);
+        if (shown) {
+          section.el.removeAttribute('data-html-filtered'); section.el.removeAttribute('display');
+          if (y === section.start) section.el.removeAttribute('transform');
+          else move(section.el, 0, y - section.start);
+          y += section.height + 12; visible += section.count;
+        } else {
+          section.el.setAttribute('data-html-filtered', 'true'); section.el.setAttribute('display', 'none');
+        }
+      }
+      hidden += total - visible;
+      group.card.height = y + 16;
+      group.status.textContent = `${visible} of ${total} visible${visible ? '' : ' · All rows hidden by HTML action filters'}`;
+    }
+    for (const area of areas) {
+      let y = 160;
+      for (const { frame, section, cards } of area.sections) {
+        let x = 16, top = 48, rowHeight = 0;
+        const width = Number(section.dataset.packingWidth);
+        for (const card of cards) {
+          if (x > 16 && x + card.width > width - 16) { x = 16; top += rowHeight + 20; rowHeight = 0; }
+          move(card.el, x, top); card.el.firstElementChild.setAttribute('height', card.height);
+          x += card.width + 20; rowHeight = Math.max(rowHeight, card.height);
+        }
+        const height = top + rowHeight + 16;
+        move(frame, 40, y);
+        frame.firstElementChild.setAttribute('height', height);
+        section.firstElementChild.setAttribute('height', height);
+        y += height + 20;
+      }
+      area.delta = y - 160 - 20 + 24 - area.height;
+      move(area.architecture, area.offset[0], area.offset[1] + area.delta);
+      if (area.document !== svg) {
+        area.document.setAttribute('height', area.documentHeight + area.delta);
+        const box = area.documentBox.slice(); box[3] += area.delta;
+        area.document.setAttribute('viewBox', box.join(' '));
+      }
+    }
+    let delta = 0;
+    const offsets = new Map();
+    for (const state of states) {
+      if (delta) move(state.el, 0, delta); else state.el.removeAttribute('transform');
+      offsets.set(state.el.dataset.stateId, delta + (state.area?.delta || 0));
+      delta += state.area?.delta || 0;
+    }
+    if (!states.length) delta = areas[0]?.delta || 0;
+    for (const path of paths) {
+      const from = offsets.get(path.source) || 0, to = offsets.get(path.target) || 0;
+      path.el.setAttribute('d', from || to ? path.points.reduce((parts, value, i) => {
+        if (!(i % 2)) parts.push(`${i ? 'L' : 'M'} ${value} ${path.points[i + 1] + (i / 2 < path.split ? from : to)}`);
+        return parts;
+      }, []).join(' ') : path.original);
+      if (path.marker) { if (from) move(path.marker, 0, from); else path.marker.removeAttribute('transform'); }
+    }
+    svg.setAttribute('height', rootHeight + delta);
+    view.resize(rootHeight + delta);
+    for (const link of links) {
+      if (!byId(link.target)) {
+        link.el.removeAttribute('href'); link.el.setAttribute('aria-disabled', 'true');
+        if (!link.title) {
+          link.title = document.createElementNS(svg.namespaceURI, 'title');
+          link.title.textContent = `${index.title(link.el) || link.el.textContent} (hidden by HTML action filters)`;
+          link.el.prepend(link.title);
+        }
+      } else {
+        link.el.setAttribute('href', link.href); link.el.removeAttribute('aria-disabled');
+        link.title?.remove(); link.title = null;
+      }
+    }
+    hotspot.disabled = hotspotDisabled || hidden > 0;
+    hotspotStatus.textContent = hidden ? 'Routing hotspots describe the generated layout. Restore all HTML action filters to inspect them.' : hotspotDescription;
+    byId('logical-filter-status').textContent = `${index.resources.length - hidden} of ${index.resources.length} generated resources visible; ${hidden} hidden by HTML action filters. Excluded resources are not restored.`;
+    renderResults();
+  }
+  byId('logical-filter-reset').addEventListener('click', () => {
+    for (const group of groups) group.enabled = new Set(actions.map(action => action.toLowerCase()));
+    for (const input of controls.querySelectorAll('input')) input.checked = true;
+    update();
+  });
 }
 
 function lifecycle() {
@@ -5208,7 +5384,7 @@ function semanticDiagnostics(context, index, selection, coordinator) {
         }));
       } else {
         const identity = document.createElement('p');
-        identity.textContent = `${label} · navigation unavailable in this view`;
+        identity.textContent = `${label} · ${target ? 'hidden by HTML action filters' : 'navigation unavailable in this view'}`;
         row.append(identity);
       }
       const detail = document.createElement('p');
@@ -5237,8 +5413,9 @@ function semanticDiagnostics(context, index, selection, coordinator) {
 
 function impactGraph(index, svg) {
   const key = (state, identity) => JSON.stringify([state, identity]);
-  const nodes = new Map(index.resources.map(r => [key(r.state, r.identity), r]));
-  const domKeys = new Map(index.resources.map(r => [r.id, key(r.state, r.identity)]));
+  const visible = index.resources.filter(r => !index.available || index.available(r.id));
+  const nodes = new Map(visible.map(r => [key(r.state, r.identity), r]));
+  const domKeys = new Map(visible.map(r => [r.id, key(r.state, r.identity)]));
   const addresses = new Map(index.resources.filter(r => !r.deposed).map(r => [key(r.state, r.address), key(r.state, r.identity)]));
   const edges = new Map();
   let scanned = 0, truncated = false;
@@ -5310,7 +5487,7 @@ function exploreImpact(graph, origin, depth, direction, associations) {
 
 function impact(context, index, selection, coordinator) {
   const { svg, byId } = context;
-  const graph = impactGraph(index, svg);
+  let graph = impactGraph(index, svg);
   const status = byId('impact-status'), results = byId('impact-results');
   const depth = byId('impact-depth'), direction = byId('impact-direction'), associations = byId('impact-associations');
   const initial = status.textContent;
@@ -5322,11 +5499,14 @@ function impact(context, index, selection, coordinator) {
   }
   const name = key => {
     const r = graph.nodes.get(key);
+    const hidden = !r && index.resources.find(resource => JSON.stringify([resource.state, resource.identity]) === key);
+    if (hidden) return `${index.label(hidden)} · hidden by HTML action filters`;
     return r ? `${index.label(r)} · ${r.action || 'action unknown'}` : `${key} · unavailable in this view`;
   };
   const edgeText = edge => `${name(edge.from)} ${edge.direction === 'undirected' ? '↔' : '→'} ${name(edge.to)} · ${edge.kind} / ${edge.semantics} / ${edge.direction || 'direction unknown'}`;
   function explore() {
     reset();
+    graph = impactGraph(index, svg);
     const origin = graph.domKeys.get(coordinator.selected);
     if (!origin) { status.textContent = 'Select a resource to explore. Relationship index entries and component summaries are not traversal origins.'; return; }
     const result = exploreImpact(graph, origin, depth.value, direction.value, associations.checked);
@@ -5394,7 +5574,10 @@ function impact(context, index, selection, coordinator) {
   return { reset };
 }
 
-  const byId = id => document.getElementById(id);
+  const byId = id => {
+    const el = document.getElementById(id);
+    return el?.closest('[data-html-filtered]') ? null : el;
+  };
   generationInformation(byId);
   const viewport = byId('viewport');
   const svg = viewport.querySelector('svg');
@@ -5427,6 +5610,7 @@ function impact(context, index, selection, coordinator) {
   adapters.register(semanticDiagnostics(context, index, { select, button }, coordinator));
   const impactView = impact(context, index, { select, button }, coordinator);
   adapters.register(impactView);
+  actionFiltering(context, index, view, coordinator, renderResults);
   search.addEventListener('input', () => adapters.reset());
   const { fit, zoom, updateView } = view;
   const destinations = [...svg.querySelectorAll('[data-architecture], [data-annotation-section]')].filter(el => {

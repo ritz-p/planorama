@@ -42,6 +42,144 @@ class ViewerTests {
         assert.deepEqual(errors, []);
         assert.deepEqual(remote, []);
     }
+    test_logical_action_filters_keyboard_reflow_restore_and_cli_selection() {
+        const plan = JSON.parse(readFileSync(join(ROOT, 'tests/fixtures/logical-actions-plan.json'), 'utf8'));
+        const updated = plan.resource_changes.find(resource => resource.address === 'aws_iam_policy.update');
+        updated.address = 'module.' + 'long_module_'.repeat(18) + '.aws_iam_policy.update';
+        updated.previous_address = 'module.' + 'previous_module_'.repeat(18) + '.aws_iam_policy.old';
+        this.load('-', '--html-diagnostics', { input_plan: plan });
+        this.find('#logical-filters summary').click();
+        const before = this.driver.execute_script(`
+            const svg = document.querySelector('#viewport > svg');
+            return { height: svg.getAttribute('height'), cards: [...svg.querySelectorAll('[data-annotation-card]')].map(el => [el.getAttribute('transform'), el.firstElementChild.getAttribute('height')]),
+                ids: [...svg.querySelectorAll('[data-terraform-address][id]')].map(el => el.id) };
+        `);
+        this.choose('aws_iam_policy.create_a');
+        const checkbox = this.find('#logical-filter-controls fieldset[data-resource-type="aws_iam_policy"] input[data-action="create"]');
+        checkbox.send_keys(Keys.SPACE);
+        this.assertEqual(this.driver.find_elements(By.CSS_SELECTOR, '[data-viewer-selected]').length, 0);
+        this.assertIn('2 hidden by HTML action filters', this.find('#result-count').text);
+        this.assertTrue(this.driver.execute_script("return document.getElementById('hotspot-toggle').disabled"));
+        this.assertTrue(this.driver.execute_script("return +document.querySelector('#viewport > svg').getAttribute('height') < arguments[0]", Number(before.height)));
+        this.assertTrue(this.driver.execute_script(`
+            return [...document.querySelectorAll('[data-action-section]:not([data-html-filtered])')].every(section => {
+                const border = section.firstElementChild.getBoundingClientRect();
+                return [...section.querySelectorAll('[data-placement="logical"]')].every(row => {
+                    const bounds = row.getBoundingClientRect();
+                    return bounds.top >= border.top && bounds.bottom <= border.bottom + 0.1;
+                });
+            });
+        `));
+        this.driver.execute_script(`
+            for (const input of document.querySelectorAll('#logical-filter-controls input:checked:not(:disabled)')) input.click();
+        `);
+        this.assertIn('0 of 10 generated resources visible', this.find('#logical-filter-status').text);
+        this.assertEqual(this.driver.find_elements(By.CSS_SELECTOR, '#results button').length, 0);
+        this.assertTrue(this.driver.execute_script(`
+            return [...document.querySelectorAll('[data-annotation-section]')].every(section => {
+                const frame = section.firstElementChild.getBBox();
+                return [...section.querySelectorAll(':scope > [data-annotation-card]')].every(card => {
+                    const rect = card.firstElementChild.getBBox(), m = card.transform.baseVal.consolidate().matrix;
+                    return m.f + rect.height <= frame.height;
+                });
+            });
+        `));
+        for (let i = 0; i < 3; i++) {
+            this.find('#logical-filter-reset').click();
+            this.driver.execute_script("document.querySelector('#logical-filter-controls input[data-action=create]').click()");
+        }
+        this.find('#logical-filter-reset').click();
+        const after = this.driver.execute_script(`
+            const svg = document.querySelector('#viewport > svg');
+            return { height: svg.getAttribute('height'), cards: [...svg.querySelectorAll('[data-annotation-card]')].map(el => [el.getAttribute('transform'), el.firstElementChild.getAttribute('height')]),
+                ids: [...svg.querySelectorAll('[data-terraform-address][id]')].map(el => el.id) };
+        `);
+        this.assertEqual(after, before);
+        this.assertEqual(new Set(after.ids).size, after.ids.length);
+        this.assertFalse(this.driver.execute_script("return document.getElementById('hotspot-toggle').disabled"));
+        this.load('tests/fixtures/logical-actions-plan.json', '--changed-only');
+        this.find('#logical-filters summary').click();
+        this.find('#logical-filter-reset').click();
+        this.assertEqual(this.driver.find_elements(By.CSS_SELECTOR, '[data-terraform-address="aws_iam_policy.unchanged"]').length, 0);
+    }
+    test_logical_action_filters_references_and_multistate_routes() {
+        this.load('--state', 'one=tests/fixtures/viewer-plan.json', '--state', 'two=tests/fixtures/viewer-plan.json');
+        const result = this.driver.execute_script(`
+            const link = [...document.querySelectorAll('a[data-reference-attribute]')].find(a => document.getElementById(a.getAttribute('href').slice(1))?.closest('[data-logical-group]'));
+            const target = document.getElementById(link.getAttribute('href').slice(1));
+            const group = target.closest('[data-logical-group]');
+            const groups = [...document.querySelectorAll('[data-logical-group]')];
+            const fieldset = document.querySelectorAll('#logical-filter-controls fieldset')[groups.indexOf(group)];
+            const action = target.closest('[data-action-section]').dataset.actionSection;
+            fieldset.querySelector('input[data-action="' + action + '"]').click();
+            return { target: target.id, owner: link.closest('[data-viewer-target]').id, href: link.getAttribute('href'), text: link.textContent };
+        `);
+        this.assertIsNone(result.href);
+        this.assertIn('hidden by HTML action filters', result.text);
+        this.driver.execute_script("document.getElementById(arguments[0]).dispatchEvent(new MouseEvent('click', {bubbles:true}))", result.owner);
+        this.assertIn('hidden by HTML action filters', this.find('#selection').text);
+        this.assertFalse(this.driver.execute_script("return [...document.querySelectorAll('#results button')].some(b => b.dataset.target === arguments[0])", result.target));
+        this.find('#logical-filters summary').click();
+        this.find('#logical-filter-reset').click();
+        this.assertTrue(this.driver.execute_script("return [...document.querySelectorAll('a[href]')].some(a=>a.getAttribute('href') === '#' + arguments[0])", result.target));
+        this.load('--state', 'logical=tests/fixtures/logical-actions-plan.json', '--state', 'producer=tests/fixtures/multi/producer.json', '--state', 'consumer=tests/fixtures/multi/consumer.json', '--remote-state', 'consumer:data.terraform_remote_state.network=producer');
+        const routes = this.driver.execute_script(`
+            const svg = document.querySelector('#viewport > svg');
+            const paths = [...svg.querySelectorAll('path[data-cross-state]')];
+            const before = paths.map(p => p.getAttribute('d'));
+            const points = () => paths.map(p => {
+                const coords = p.getAttribute('d').match(/-?\\d+(?:\\.\\d+)?/g).map(Number);
+                return [p.dataset.source, p.dataset.target].map((id, i) => {
+                    const el = document.getElementById(id), b = el.getBBox();
+                    const matrix = svg.getScreenCTM().inverse().multiply(el.getScreenCTM());
+                    const origin = new DOMPoint(b.x, b.y).matrixTransform(matrix);
+                    return coords[i ? coords.length - 1 : 1] - origin.y;
+                });
+            });
+            const initial = points();
+            for (const input of document.querySelectorAll('#logical-filter-controls input:checked:not(:disabled)')) input.click();
+            const filtered = points();
+            document.getElementById('logical-filter-reset').click();
+            return { count: paths.length, initial, filtered, before, restored: paths.map(p=>p.getAttribute('d')) };
+        `);
+        this.assertGreater(routes.count, 0);
+        this.assertEqual(routes.initial, routes.filtered);
+        this.assertEqual(routes.before, routes.restored);
+    }
+    test_logical_action_filters_large_sample_preserves_routes_and_card_bounds() {
+        this.driver.get(pathToFileURL(join(ROOT, 'examples/multi-account/diagram.html')).href);
+        wait(() => this.driver.find_elements(By.CSS_SELECTOR, '#logical-filter-controls fieldset').length > 0, 'logical action controls');
+        const result = this.driver.execute_script(`
+            const svg = document.querySelector('#viewport > svg');
+            const paths = [...svg.querySelectorAll('path[data-cross-state]')];
+            const original = paths.map(path => path.getAttribute('d'));
+            const endpointOffsets = () => paths.map(path => {
+                const points = path.getAttribute('d').match(/-?\\d+(?:\\.\\d+)?/g).map(Number);
+                return [path.dataset.source, path.dataset.target].map((id, i) => {
+                    const target = document.getElementById(id);
+                    const m = svg.getScreenCTM().inverse().multiply(target.getScreenCTM());
+                    return points[i ? points.length - 1 : 1] - new DOMPoint(0, 0).matrixTransform(m).y;
+                });
+            });
+            const before = endpointOffsets();
+            for (const checkbox of document.querySelectorAll('#logical-filter-controls input:not(:disabled)')) checkbox.click();
+            const after = endpointOffsets();
+            const withinFrames = [...svg.querySelectorAll('[data-annotation-section]')].every(section => {
+                const frame = section.firstElementChild.getBoundingClientRect();
+                const cards = [...section.querySelectorAll(':scope > [data-annotation-card]')].map(card => card.firstElementChild.getBoundingClientRect());
+                return cards.every((card, i) => card.top >= frame.top && card.bottom <= frame.bottom + 0.1 &&
+                    cards.slice(i + 1).every(next => card.right <= next.left || next.right <= card.left || card.bottom <= next.top || next.bottom <= card.top));
+            });
+            const dangling = [...svg.querySelectorAll('a[href]')].some(link => document.getElementById(link.getAttribute('href').slice(1))?.closest('[data-html-filtered]'));
+            document.getElementById('logical-filter-reset').click();
+            return { before, after, withinFrames, dangling, original, restored: paths.map(path=>path.getAttribute('d')) };
+        `);
+        this.assertGreater(result.before.length, 0);
+        for (let i = 0; i < result.before.length; i++) for (let j = 0; j < 2; j++) this.assertLessEqual(Math.abs(result.before[i][j] - result.after[i][j]), 0.001);
+        this.assertTrue(result.withinFrames);
+        this.assertFalse(result.dangling);
+        this.assertEqual(result.original, result.restored);
+    }
     test_api_gateway_references_keep_state_identity_and_hide_payloads() {
         for (const family of ['rest', 'v2']) {
             const fixture = `tests/fixtures/api-gateway-${family}-plan.json`;

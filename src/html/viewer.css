@@ -43,6 +43,10 @@ p { line-height: 1.5; }
 #impact button { width: 100%; text-align: left; }
 #impact-results ol { padding-left: 20px; }
 #impact-results li { margin-bottom: 10px; }
+#logical-filter-controls fieldset { margin: 8px 0; min-width: 0; }
+#logical-filter-controls legend { overflow-wrap: anywhere; }
+#logical-filter-controls label { display: block; }
+#logical-filter-controls input { width: auto; }
 #viewport [data-impact-hop="1"] { outline: 3px dashed #7c3aed; outline-offset: 4px; }
 #viewport [data-impact-hop="2"], #viewport [data-impact-hop="3"] { outline: 3px dotted #0f766e; outline-offset: 4px; }
 #viewport[data-selection] path[data-impact-edge] { opacity: 1; filter: drop-shadow(0 0 2px #0f766e); }

@@ -19,9 +19,7 @@ fn section_rendering_uses_occupied_bounds_without_repacking_cards() {
             width,
         );
         let expected = area.render();
-        area.packing_width = 0;
         for section in &mut area.sections {
-            section.children.packing_width = 0;
             section.children.height = 0;
             for (card, _) in &mut section.children.cards {
                 card.width = 0;
@@ -76,6 +74,10 @@ fn ordered_sections_wrap_children_and_omit_empty_sections_without_gaps() {
             }
             let rendered = area.render();
             let doc = roxmltree::Document::parse(&rendered).unwrap();
+            assert_eq!(
+                doc.root_element().attribute("data-measured-height"),
+                Some(area.height.to_string().as_str())
+            );
             let sections: Vec<_> = doc
                 .descendants()
                 .filter(|n| n.attribute("data-annotation-section").is_some())
@@ -113,6 +115,10 @@ fn ordered_sections_wrap_children_and_omit_empty_sections_without_gaps() {
             };
             let mut bottom = 140;
             for section in sections {
+                assert_eq!(
+                    section.attribute("data-packing-width"),
+                    Some((area.packing_width - 80).to_string().as_str())
+                );
                 let parent = section.parent().unwrap();
                 let (x, y) = position(parent);
                 assert_eq!(x, 40);

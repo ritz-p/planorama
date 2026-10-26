@@ -217,6 +217,7 @@ fn document(
                     include_str!("html/selection-history.js"),
                     "\n",
                     include_str!("html/searching.js"),
+                    include_str!("html/action-filtering.js"),
                     "\n",
                     include_str!("html/lifecycle.js"),
                     "\n",

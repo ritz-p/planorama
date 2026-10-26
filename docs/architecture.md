@@ -96,6 +96,9 @@ stacked, with heights measured from the last occupied row.
 Empty areas reserve no height. One enclosing translation shifts all architecture
 cards, paths and relationship badges together; annotation cards never enter
 `Layout` or routing obstacles. Named-state endpoint coordinates include this shift.
+The HTML viewer reuses exported measurements for its scoped
+[action-filter reflow contract](viewer.md#viewer-source-modules), including state
+translations and the source/target split of cross-state gutter routes.
 Composition also measures the topmost final card, path and relationship badge.
 Geometry that would enter the header or preceding annotation area receives extra
 top clearance through a shared downward translation and matching canvas height.

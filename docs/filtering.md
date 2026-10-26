@@ -121,9 +121,9 @@ Logical-resource grouping runs after selection and does not expand it: only
 selected rows appear, and groups with no remaining resources are omitted. Links
 still identify an individual resource within its group.
 
-These filters also apply to `--format html`. Viewer search operates within the
-generated view; it cannot restore resources excluded by CLI selection. See
-[the local viewer](viewer.md).
+These filters also apply to `--format html`. Viewer search and per-card logical
+action filters operate within the generated view; they cannot restore resources
+excluded by CLI selection. See [the local viewer](viewer.md).
 Its neighborhood SVG export extracts a copy of that effective view with the original
 layout and required context; it cannot recover CLI-excluded resources or repack cards.
 

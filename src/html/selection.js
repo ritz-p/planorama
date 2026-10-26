@@ -4,6 +4,7 @@ function selection(context, index, navigation, highlights, coordinator) {
   const { reveal } = navigation;
   const history = selectionHistory(context, index, navigation, coordinator, select);
   coordinator.saveHistory = history.save;
+  coordinator.clearHistory = history.clear;
   function button(text, action) {
     const el = document.createElement('button');
     el.type = 'button'; el.textContent = text; el.addEventListener('click', action);
@@ -18,7 +19,7 @@ function selection(context, index, navigation, highlights, coordinator) {
       if (entry.target && byId(entry.target)) {
         li.append(button(entry.text, () => select(entry.target)));
         if (entry.target !== coordinator.selected) byId(entry.target).setAttribute('data-viewer-related', 'true');
-      } else li.textContent = entry.text;
+      } else li.textContent = entry.text + (entry.target && targets.has(entry.target) && !entry.text.includes('hidden by HTML action filters') ? ' (hidden by HTML action filters)' : '');
       list.append(li);
     }
     details.append(h, list);

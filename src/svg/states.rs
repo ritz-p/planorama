@@ -329,6 +329,7 @@ pub(crate) async fn render_step(
             &obstacles[&edge.to.state].for_endpoint(*target_index),
         );
         arrival.reverse();
+        let source_points = points.len();
         points.extend(arrival);
         if let Some(scene) = &mut scene {
             scene.add_cross_state(edge, &points);
@@ -364,7 +365,7 @@ pub(crate) async fn render_step(
             endpoint_address(&edge.to.state, remote),
             output
         ));
-        writeln!(links, r##"<path data-edge-kind="dependency" data-cross-state="true"{action_metadata} data-source="{source}" data-target="{target}" data-source-port="{source_port}" data-target-port="{target_port}" data-source-state="{}" data-target-state="{}" data-remote-state="{}" data-output="{}" d="{}" fill="none" stroke="#2563eb" stroke-width="1.5" stroke-dasharray="7 4" marker-end="url(#cross-state-arrow)"><title>{title}</title></path>"##, super::escape(edge.from.state.as_str()),super::escape(edge.to.state.as_str()),super::escape(remote),super::escape(output),path.trim()).unwrap();
+        writeln!(links, r##"<path data-edge-kind="dependency" data-cross-state="true" data-source-points="{source_points}"{action_metadata} data-source="{source}" data-target="{target}" data-source-port="{source_port}" data-target-port="{target_port}" data-source-state="{}" data-target-state="{}" data-remote-state="{}" data-output="{}" d="{}" fill="none" stroke="#2563eb" stroke-width="1.5" stroke-dasharray="7 4" marker-end="url(#cross-state-arrow)"><title>{title}</title></path>"##, super::escape(edge.from.state.as_str()),super::escape(edge.to.state.as_str()),super::escape(remote),super::escape(output),path.trim()).unwrap();
         links.push_str(&super::endpoints::circle(points[0], "source", "#2563eb"));
     }
     if !links.is_empty() {
