@@ -57,7 +57,7 @@ Implementation cross-checks: [classification](../src/provider/aws/classification
 
 Retain existing independent MSK/MQ/DocumentDB/Neptune/DMS/FSx/SageMaker endpoint cards while adding evidence in their bounded issues. Retain Batch compute-environment cards; review Network Firewall firewalls for independent cards. App Runner connectors, database subnet groups, namespace/configuration objects and policies need separate ownership/network decisions; do not promote all objects from a service together. Existing embedded EFS access points, KMS aliases and Secrets Manager versions remain examples of proven presentation ownership, not a default for every reference.
 
-MSK replicators/topics, Network Firewall endpoint associations/transit-gateway/TLS variants, non-Lustre FSx, DocumentDB elastic/global variants, Neptune Analytics, DMS serverless and SageMaker Studio/training remain deferred outside the initial issue scopes. Their exact types and schema candidates remain in the register. Runtime health, effective IAM/firewall policy, packet routing, credentials, item data and arbitrary attribute dumping are intentionally unsupported. Encryption summaries for additional services require a separate allowlist review; do not copy a boolean from a similarly named field.
+MSK replicators (topics are tracked in #754), Network Firewall endpoint associations/transit-gateway/TLS variants, non-Lustre FSx, DocumentDB elastic/global variants, Neptune Analytics, DMS serverless and SageMaker Studio/training remain deferred outside the initial issue scopes. Their exact types and schema candidates remain in the register. Runtime health, effective IAM/firewall policy, packet routing, credentials, item data and arbitrary attribute dumping are intentionally unsupported. Encryption summaries for additional services require a separate allowlist review; do not copy a boolean from a similarly named field.
 
 ## NoSQL, caches and time-series review (#718)
 
@@ -125,6 +125,76 @@ provider region into members. Plain ARN substrings never supply ownership proof.
 The existing reference contract requires explicit unique current managed endpoints,
 correct output attributes, equal known nonempty values, compatible bindings and
 state identity; current configuration cannot establish historical/deposed links.
+
+## Streaming, messaging and workflows review (#721)
+
+Reviewed planorama commit: `de2686ced20f383ee48ec65b1354b643e2fe659c`.
+All 55 managed types in the fixed #721 scope have separate placement, ownership,
+network, reference, scope and summary decisions in
+[the decision register](aws-semantic-decisions.json). Each review records the
+pinned official resource document and checked schema paths with their complete
+collection ancestry. These are historical audit conclusions, not runtime changes.
+
+Implementation and behavioral evidence:
+
+- [Basic defaults](../src/provider/aws/basic_entries.rs),
+  [classification](../src/provider/aws/classification.rs),
+  [scope](../src/provider/aws/scope.rs), [network proof](../src/provider/aws/network.rs)
+  and [basic tests](../tests/unit/aws_inventory.rs) establish the baseline.
+- [Messaging](../src/provider/aws/messaging.rs),
+  [subscription tests](../tests/unit/semantic/messaging.rs),
+  [event-source tests](../tests/unit/semantic/event_sources.rs) and
+  [target tests](../tests/unit/semantic/event_targets.rs) retain existing bounded
+  SNS/SQS/Lambda/Kinesis and EventBridge behavior. Data endpoints supported by
+  existing messaging contracts remain distinct from managed-type audit ownership.
+- [Service references](../src/provider/aws/service_references.rs) and
+  [their tests](../tests/unit/semantic/service_references.rs) retain Step Functions
+  execution-role navigation. [Firehose](../src/provider/aws/firehose.rs) and
+  [its tests](../tests/unit/semantic/firehose.rs) verify Kinesis input and
+  extended-S3 delivery/backup discrimination. [Encryption](../src/provider/aws/encryption.rs)
+  and [its tests](../tests/unit/semantic/encryption.rs) support SQS summaries;
+  they do not establish encryption summaries for the other reviewed services.
+
+Existing implementation scopes remain #688 (MSK), #689 (MQ) and #692
+(Scheduler/Pipes). New bounded gaps are #748 (EventBridge configuration), #749
+(Kinesis consumers/policies), #750 (MSK Connect), #751 (MWAA), #752 (Flink), #753
+(SNS/SQS policy owners), #754 (MSK topic/channel/policy), #755 (Schemas) and #756
+(Firehose MSK source/roles). These issues own the source/helper relationships;
+endpoint audits should coordinate without duplicating them. Other dimensions
+record concrete deferral reasons and revisit conditions per exact type.
+
+Contract distinctions checked against Provider 6.70.0:
+
+- MQ subnet/security-group attributes and MSK secret ARN collections are sets,
+  despite documentation calling them lists. MQ `configuration` is a list block
+  with a numeric revision; a matching ID alone cannot verify that revision.
+- MSK Serverless `vpc_config` is a list with set-valued subnet/SG fields. Per-configuration network contexts must
+  not be flattened into arbitrary subnet ownership. An MSK VPC connection's
+  `vpc_id` belongs to its client, independently of its target cluster scope.
+- MSK Connect plugin/worker references include revisions. Bootstrap server
+  strings are not cluster identity. Channel topic references need same-cluster
+  proof; replicators additionally require indexed source/target tuple evidence.
+- Scheduler `target.arn` may be a universal service operation ARN; it is not
+  necessarily a resource ARN. Pipes supports self-managed Kafka `smk://` sources.
+  Task network blocks cannot establish placement of a schedule or pipe.
+- EventBridge rules retain deprecated `is_enabled` alongside `state` contracts.
+  Global endpoints require two same-named buses in distinct regions; a secondary
+  region string is not a resource. Connection authorization and invocation VPC
+  Lattice references are separate from network containment.
+- SNS application subscription endpoints identify platform endpoints, not platform
+  applications. SQS policy owners use queue URLs, not queue ARNs. Policy bodies,
+  redrive JSON, schema content and message payloads are intentionally uninterpreted.
+- Step Functions alias routes use published version ARNs, not ordinary state
+  machine ARNs. Activity and state-machine encryption enums differ. Legacy SQL
+  analytics and Flink application contracts are not aliases. MWAA log destinations
+  are computed outputs, not explicit configured endpoint references.
+
+No type in this scope is a verified resource alias. Basic regional eligibility
+does not prove account ownership. Exact managed/data, named-state, current/deposed
+and filtering distinctions stay unchanged. Network ownership and references need
+explicit unique endpoint evidence with matching known values and compatible
+scope; neither ARN substrings nor equal literal names establish them. Shared
+configuration remains independent. Unknown evidence never becomes a runtime claim.
 
 ## Maintenance and verification
 
