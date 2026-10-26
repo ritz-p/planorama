@@ -1,0 +1,445 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_lambda_function.app",
+      "mode": "managed",
+      "type": "aws_lambda_function",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "function_name": "synthetic",
+          "arn": "arn:aws:lambda:us-east-1:123456789012:function:synthetic",
+          "invoke_arn": "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:123456789012:function:synthetic/invocations",
+          "environment": [
+            {
+              "variables": {
+                "TOKEN": "SYNTHETIC_SECRET_NOT_FOR_OUTPUT"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_lb.backend",
+      "mode": "managed",
+      "type": "aws_lb",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:elasticloadbalancing:us-east-1:123456789012:loadbalancer/net/synthetic/123",
+          "load_balancer_type": "network"
+        }
+      }
+    },
+    {
+      "address": "aws_apigatewayv2_api.app",
+      "mode": "managed",
+      "type": "aws_apigatewayv2_api",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "v2-synthetic",
+          "name": "synthetic-http",
+          "protocol_type": "HTTP",
+          "api_endpoint": "https://SYNTHETIC_ENDPOINT_NOT_FOR_OUTPUT"
+        }
+      }
+    },
+    {
+      "address": "aws_apigatewayv2_integration.lambda",
+      "mode": "managed",
+      "type": "aws_apigatewayv2_integration",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "api_id": "v2-synthetic",
+          "integration_type": "AWS_PROXY",
+          "connection_type": "INTERNET",
+          "integration_uri": "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:123456789012:function:synthetic/invocations"
+        }
+      }
+    },
+    {
+      "address": "aws_lb_listener.backend",
+      "mode": "managed",
+      "type": "aws_lb_listener",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:elasticloadbalancing:us-east-1:123456789012:listener/net/synthetic/123/456",
+          "load_balancer_arn": "arn:aws:elasticloadbalancing:us-east-1:123456789012:loadbalancer/net/synthetic/123"
+        }
+      }
+    },
+    {
+      "address": "aws_subnet.private[0]",
+      "mode": "managed",
+      "type": "aws_subnet",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "subnet-synthetic-0",
+          "cidr_block": "10.0.1.0/24"
+        }
+      }
+    },
+    {
+      "address": "aws_subnet.private[1]",
+      "mode": "managed",
+      "type": "aws_subnet",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "subnet-synthetic-1",
+          "cidr_block": "10.0.2.0/24"
+        }
+      }
+    },
+    {
+      "address": "aws_security_group.link",
+      "mode": "managed",
+      "type": "aws_security_group",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "sg-synthetic",
+          "name": "synthetic-link"
+        }
+      }
+    },
+    {
+      "address": "aws_apigatewayv2_vpc_link.private",
+      "mode": "managed",
+      "type": "aws_apigatewayv2_vpc_link",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "v2-link",
+          "name": "synthetic-link",
+          "subnet_ids": [
+            "subnet-synthetic-0",
+            "subnet-synthetic-1"
+          ],
+          "security_group_ids": [
+            "sg-synthetic"
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_apigatewayv2_integration.private",
+      "mode": "managed",
+      "type": "aws_apigatewayv2_integration",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "api_id": "v2-synthetic",
+          "integration_type": "HTTP_PROXY",
+          "connection_type": "VPC_LINK",
+          "connection_id": "v2-link",
+          "integration_uri": "arn:aws:elasticloadbalancing:us-east-1:123456789012:listener/net/synthetic/123/456"
+        }
+      }
+    },
+    {
+      "address": "aws_apigatewayv2_authorizer.request",
+      "mode": "managed",
+      "type": "aws_apigatewayv2_authorizer",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "api_id": "v2-synthetic",
+          "authorizer_type": "REQUEST",
+          "name": "synthetic-authorizer",
+          "authorizer_uri": "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:123456789012:function:synthetic/invocations"
+        }
+      }
+    },
+    {
+      "address": "aws_apigatewayv2_deployment.release",
+      "mode": "managed",
+      "type": "aws_apigatewayv2_deployment",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "deployment-synthetic",
+          "api_id": "v2-synthetic"
+        }
+      }
+    },
+    {
+      "address": "aws_apigatewayv2_stage.live",
+      "mode": "managed",
+      "type": "aws_apigatewayv2_stage",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "api_id": "v2-synthetic",
+          "name": "live",
+          "auto_deploy": false,
+          "deployment_id": "deployment-synthetic"
+        }
+      }
+    },
+    {
+      "address": "aws_apigatewayv2_stage.automatic",
+      "mode": "managed",
+      "type": "aws_apigatewayv2_stage",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "api_id": "v2-synthetic",
+          "name": "automatic",
+          "auto_deploy": true
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_lambda_function.app",
+          "mode": "managed",
+          "type": "aws_lambda_function",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_lb.backend",
+          "mode": "managed",
+          "type": "aws_lb",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_apigatewayv2_api.app",
+          "mode": "managed",
+          "type": "aws_apigatewayv2_api",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_apigatewayv2_integration.lambda",
+          "mode": "managed",
+          "type": "aws_apigatewayv2_integration",
+          "provider_config_key": "aws",
+          "expressions": {
+            "api_id": {
+              "references": [
+                "aws_apigatewayv2_api.app.id",
+                "aws_apigatewayv2_api.app"
+              ]
+            },
+            "integration_uri": {
+              "references": [
+                "aws_lambda_function.app.invoke_arn",
+                "aws_lambda_function.app"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_lb_listener.backend",
+          "mode": "managed",
+          "type": "aws_lb_listener",
+          "provider_config_key": "aws",
+          "expressions": {
+            "load_balancer_arn": {
+              "references": [
+                "aws_lb.backend.arn",
+                "aws_lb.backend"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_subnet.private",
+          "mode": "managed",
+          "type": "aws_subnet",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_security_group.link",
+          "mode": "managed",
+          "type": "aws_security_group",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_apigatewayv2_vpc_link.private",
+          "mode": "managed",
+          "type": "aws_apigatewayv2_vpc_link",
+          "provider_config_key": "aws",
+          "expressions": {
+            "subnet_ids": {
+              "references": [
+                "aws_subnet.private[0].id",
+                "aws_subnet.private[0]",
+                "aws_subnet.private[1].id",
+                "aws_subnet.private[1]"
+              ]
+            },
+            "security_group_ids": {
+              "references": [
+                "aws_security_group.link.id",
+                "aws_security_group.link"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_apigatewayv2_integration.private",
+          "mode": "managed",
+          "type": "aws_apigatewayv2_integration",
+          "provider_config_key": "aws",
+          "expressions": {
+            "api_id": {
+              "references": [
+                "aws_apigatewayv2_api.app.id",
+                "aws_apigatewayv2_api.app"
+              ]
+            },
+            "connection_id": {
+              "references": [
+                "aws_apigatewayv2_vpc_link.private.id",
+                "aws_apigatewayv2_vpc_link.private"
+              ]
+            },
+            "integration_uri": {
+              "references": [
+                "aws_lb_listener.backend.arn",
+                "aws_lb_listener.backend"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_apigatewayv2_authorizer.request",
+          "mode": "managed",
+          "type": "aws_apigatewayv2_authorizer",
+          "provider_config_key": "aws",
+          "expressions": {
+            "api_id": {
+              "references": [
+                "aws_apigatewayv2_api.app.id",
+                "aws_apigatewayv2_api.app"
+              ]
+            },
+            "authorizer_uri": {
+              "references": [
+                "aws_lambda_function.app.invoke_arn",
+                "aws_lambda_function.app"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_apigatewayv2_deployment.release",
+          "mode": "managed",
+          "type": "aws_apigatewayv2_deployment",
+          "provider_config_key": "aws",
+          "expressions": {
+            "api_id": {
+              "references": [
+                "aws_apigatewayv2_api.app.id",
+                "aws_apigatewayv2_api.app"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_apigatewayv2_stage.live",
+          "mode": "managed",
+          "type": "aws_apigatewayv2_stage",
+          "provider_config_key": "aws",
+          "expressions": {
+            "api_id": {
+              "references": [
+                "aws_apigatewayv2_api.app.id",
+                "aws_apigatewayv2_api.app"
+              ]
+            },
+            "deployment_id": {
+              "references": [
+                "aws_apigatewayv2_deployment.release.id",
+                "aws_apigatewayv2_deployment.release"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_apigatewayv2_stage.automatic",
+          "mode": "managed",
+          "type": "aws_apigatewayv2_stage",
+          "provider_config_key": "aws",
+          "expressions": {
+            "api_id": {
+              "references": [
+                "aws_apigatewayv2_api.app.id",
+                "aws_apigatewayv2_api.app"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

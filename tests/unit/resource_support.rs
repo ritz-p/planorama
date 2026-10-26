@@ -214,7 +214,7 @@ fn matrix() -> String {
                     } else {
                         "Previously generic fallback".into()
                     });
-                    notes.push(if paths.iter().any(|path| path.ends_with("/lambda.rs")) {
+                    notes.push(if paths.iter().any(|path| path.ends_with("/lambda.rs") || path.contains("/api_gateway/")) {
                         "Basic role and presentation retained; dedicated references require verified evidence".into()
                     } else {
                         "Basic display only; no new dedicated relationship or verified owner".into()

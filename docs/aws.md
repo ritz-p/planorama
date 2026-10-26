@@ -1,5 +1,42 @@
 # AWS architecture relationships
 
+## API Gateway integrations and deployment context
+
+REST and v2 reference rules are separate tables in `api_gateway/rest.rs` and
+`api_gateway/v2.rs`. Existing API, Resource, Method, Deployment and service roles
+remain unchanged. VPC Link references do not place an API inside a subnet.
+
+| Family | Verified navigation | Required evidence |
+| --- | --- | --- |
+| REST | API, Resource and Method context | Exact IDs and method output; Resource and Method must belong to the same explicitly referenced API |
+| REST | Stage deployment | Exact Deployment ID with the same API owner |
+| REST | Lambda Integration / Authorizer | Exact Function or verified Alias `invoke_arn`; Integration requires AWS/AWS_PROXY, POST and matching Method context; Authorizer requires TOKEN/REQUEST |
+| REST | Private Integration and NLB | HTTP/HTTP_PROXY with VPC_LINK and matching Method context; VPC Link has exactly one matching NLB ARN |
+| v2 | API and explicit Stage deployment | Exact IDs and same API owner; deployment navigation requires known `auto_deploy = false` |
+| v2 | Lambda Integration / Authorizer | Known HTTP/WebSocket API; AWS_PROXY and INTERNET for Integration, REQUEST for Authorizer; exact invoke ARN, or raw Lambda ARN for HTTP Integration |
+| v2 | Private Integration | HTTP API, HTTP_PROXY, VPC_LINK and exact listener ARN; listener explicitly identifies an ALB/NLB |
+| v2 | Link subnet / security groups | Entire known list/set matches unique explicitly referenced instances |
+
+These are configuration reference links, not runtime reachability or permission
+claims. No URI substring matching, external endpoint reconstruction, API body,
+authorizer credentials or environment values are displayed. Missing, unknown,
+partial, ambiguous, wrong-provider/type, data, deleted and deposed evidence retains
+generic references and unresolved diagnostics. Provider bindings and known Regions
+must match. Filtering and named states retain their existing identity boundaries.
+An automatic v2 Stage does not acquire a synthetic Deployment.
+
+The contracts were checked against AWS Provider 6.70.0 schema and a synthetic
+Terraform 1.9.8 `plan -refresh=false`. See the official
+[REST Integration](https://github.com/hashicorp/terraform-provider-aws/blob/v6.70.0/website/docs/r/api_gateway_integration.html.markdown),
+[REST VPC Link](https://github.com/hashicorp/terraform-provider-aws/blob/v6.70.0/website/docs/r/api_gateway_vpc_link.html.markdown),
+[v2 Integration](https://github.com/hashicorp/terraform-provider-aws/blob/v6.70.0/website/docs/r/apigatewayv2_integration.html.markdown)
+and [v2 Stage](https://github.com/hashicorp/terraform-provider-aws/blob/v6.70.0/website/docs/r/apigatewayv2_stage.html.markdown) contracts.
+Synthetic examples: REST [SVG](../examples/api-gateway-rest.svg) /
+[HTML](../examples/api-gateway-rest.html), v2 [SVG](../examples/api-gateway-v2.svg) /
+[HTML](../examples/api-gateway-v2.html). Generate HTML in Docker using
+`cargo run --locked -- tests/fixtures/api-gateway-rest-plan.json --format html -o examples/api-gateway-rest.html`
+(replace `rest` with `v2` for the second example).
+
 ## Lambda aliases, layers and function URLs
 
 `aws_lambda_alias` and `aws_lambda_function_url` remain regional logical Nodes;
