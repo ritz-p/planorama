@@ -401,6 +401,14 @@ pub(crate) fn run() -> Result<(), String> {
         layout_diagnostics.enabled().then_some(&mut report),
         layout_diagnostics.html,
     );
+    let image = crate::html::generation::attach(
+        image,
+        &filter,
+        render_options,
+        layout_diagnostics.html,
+        vec![],
+        vec![],
+    );
     let output_timing = crate::timing::span("output_io", &[("output_bytes", image.len())]);
     layout_diagnostics.write(&report, &output)?;
     coverage_report.write(std::iter::once(("", &graph.coverage)), &filter)?;

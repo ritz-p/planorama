@@ -42,6 +42,20 @@ class ViewerTests {
         assert.deepEqual(errors, []);
         assert.deepEqual(remote, []);
     }
+    test_generation_information_full_selected_and_unavailable() {
+        this.load('tests/fixtures/viewer-plan.json');
+        this.find('#generation-info summary').click();
+        this.assertIn('Full input view', this.find('#generation-details').text);
+        this.assertIn('matches default', this.find('#generation-details').text);
+        this.assertIn('Revision: unavailable', this.find('#generation-details').text);
+        this.load('tests/fixtures/viewer-plan.json', '--changed-only', '--omit-relationship-legend');
+        this.find('#generation-info summary').click();
+        this.assertIn('Selected view', this.find('#generation-details').text);
+        this.assertIn('omitted', this.find('#generation-details').text);
+        this.load('tests/fixtures/viewer-plan.json', {transform: text => text.replace(/(<script id="viewer-generation" type="application\/json">)[\s\S]*?(<\/script>)/, '$1null$2')});
+        this.find('#generation-info summary').click();
+        this.assertIn('Generation metadata unavailable', this.find('#generation-details').text);
+    }
     test_section_navigation_uses_translated_bounds_without_resource_selection() {
         this.load('--state', 'one=tests/fixtures/viewer-plan.json', '--state', 'two=tests/fixtures/viewer-plan.json', '--omit-relationship-legend');
         const result = this.driver.execute_script(`

@@ -13,6 +13,79 @@ fn html(input: &[u8], args: &[&str]) -> String {
     String::from_utf8(output.stdout).unwrap()
 }
 
+fn generation_data(document: &str) -> Value {
+    serde_json::from_str(
+        document
+            .split("<script id=\"viewer-generation\" type=\"application/json\">")
+            .nth(1)
+            .unwrap()
+            .split("</script>")
+            .next()
+            .unwrap(),
+    )
+    .unwrap()
+}
+
+#[test]
+fn generation_information_is_effective_allowlisted_and_shared() {
+    let input = include_str!("../fixtures/viewer-plan.json");
+    let default = html(input.as_bytes(), &[]);
+    let metadata = generation_data(&default);
+    assert_eq!(metadata["generator"]["version"], env!("CARGO_PKG_VERSION"));
+    assert!(metadata["generator"]["revision"].is_null());
+    assert!(metadata["setting_origins"].is_null());
+    assert_eq!(metadata["selected_view"], false);
+    assert_eq!(metadata["settings"]["relationship_legend"], "full");
+    assert!(metadata["settings"]["focus_depth"].is_null());
+    let shared = planorama::generate(
+        input,
+        &planorama::Options {
+            format: planorama::OutputFormat::Html,
+            ..Default::default()
+        },
+    )
+    .unwrap();
+    assert_eq!(generation_data(&shared.content), metadata);
+    let filtered = html(
+        input.as_bytes(),
+        &[
+            "--changed-only",
+            "--address-format",
+            "terraform",
+            "--omit-relationship-legend",
+        ],
+    );
+    let metadata = generation_data(&filtered);
+    assert_eq!(metadata["selected_view"], true);
+    assert_eq!(metadata["settings"]["changed_only"], true);
+    assert_eq!(metadata["settings"]["address_format"], "terraform");
+    assert_eq!(metadata["settings"]["relationship_legend"], "omitted");
+    assert_eq!(
+        metadata["settings"]
+            .as_object()
+            .unwrap()
+            .keys()
+            .map(String::as_str)
+            .collect::<Vec<_>>(),
+        [
+            "address_format",
+            "changed_only",
+            "focus",
+            "focus_depth",
+            "html_diagnostics",
+            "html_semantic_diagnostics",
+            "icon_mode",
+            "modules",
+            "relationship_legend",
+            "remote_state_mappings",
+            "spatial_types",
+            "states"
+        ]
+    );
+    assert!(!metadata.to_string().contains("resource_changes"));
+    assert!(!metadata.to_string().contains("viewer-plan.json"));
+}
+
 fn diagram(html: &str) -> &str {
     let start = html.find("<svg ").unwrap();
     let end = html.rfind("</svg>").unwrap() + "</svg>\n".len();
@@ -141,11 +214,19 @@ fn metadata_round_trips_hostile_long_indexed_addresses_without_values_or_markup(
     let document = html(input.to_string().as_bytes(), &[]);
     assert!(!document.contains("ATTRIBUTE_SECRET"));
     assert!(!document.contains("<script>alert"));
-    assert_eq!(document.matches("</script>").count(), 3);
+    let focused = html(
+        input.to_string().as_bytes(),
+        &["--focus", &address, "--focus-depth", "0"],
+    );
+    assert_eq!(generation_data(&focused)["settings"]["focus"], address);
+    assert_eq!(generation_data(&focused)["settings"]["focus_depth"], 0);
+    assert!(!focused.contains("<script>alert"));
+    assert!(!focused.contains("ATTRIBUTE_SECRET"));
+    assert_eq!(document.matches("</script>").count(), 4);
     let diagnostics = html(input.to_string().as_bytes(), &["--html-diagnostics"]);
     assert!(!diagnostics.contains("ATTRIBUTE_SECRET"));
     assert!(!diagnostics.contains("<script>alert"));
-    assert_eq!(diagnostics.matches("</script>").count(), 4);
+    assert_eq!(diagnostics.matches("</script>").count(), 5);
     let resources = data(&document);
     assert!(resources.iter().any(|r| r["address"] == address));
     assert!(resources.iter().any(|r| r["mode"] == "data"));
@@ -178,6 +259,10 @@ fn named_state_html_preserves_namespaces_and_cross_state_paths() {
         .unwrap();
     assert!(output.status.success());
     let document = String::from_utf8(output.stdout).unwrap();
+    assert_eq!(
+        generation_data(&document)["settings"]["states"],
+        json!(["application", "network"])
+    );
     assert_eq!(diagram(&document).as_bytes(), svg.stdout);
     let resources = data(&document);
     assert!(resources.iter().any(|r| r["state"] == "network"));

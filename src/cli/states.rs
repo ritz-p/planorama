@@ -152,6 +152,22 @@ pub(super) fn run(
         super::OutputFormat::Html => crate::html::render_states(&architecture, format),
     };
     drop(composition_timing);
+    let image = crate::html::generation::attach(
+        image,
+        filter,
+        format,
+        layout_diagnostics.html,
+        architecture.states.keys().map(|id| id.as_str()).collect(),
+        mappings
+            .iter()
+            .map(|mapping| {
+                serde_json::json!({
+                    "consumer": mapping.consumer.as_str(), "remote": mapping.remote,
+                    "producer": mapping.producer.as_str(),
+                })
+            })
+            .collect(),
+    );
     let _timing = crate::timing::span("output_io", &[("output_bytes", image.len())]);
     layout_diagnostics.write(&report, output)?;
     coverage_report.write(
