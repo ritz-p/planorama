@@ -357,7 +357,7 @@ fn serverless_account_scope_and_filtered_network_proof_are_preserved() {
             .nodes
             .iter()
             .flat_map(|n| &n.references)
-            .any(|r| r.attribute == "workgroup_name" && r.complete)
+            .any(|r| r.attribute == "workgroup_name" && r.label == "Workgroup owner" && r.complete)
     );
     let mut foreign = value.clone();
     foreign["resource_changes"][9]["change"]["after"]["owner_account"] = json!("210987654321");
@@ -369,7 +369,7 @@ fn serverless_account_scope_and_filtered_network_proof_are_preserved() {
             .nodes
             .iter()
             .flat_map(|n| &n.references)
-            .any(|r| r.attribute == "workgroup_name" && r.complete)
+            .any(|r| r.attribute == "workgroup_name" && r.label == "Workgroup owner" && r.complete)
     );
     for node in &graph.nodes {
         assert_eq!(
