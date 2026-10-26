@@ -33,6 +33,26 @@ fn layout_reports_preserve_svg_and_match_text_and_named_state_canvas() {
         let document = roxmltree::Document::parse(&svg).unwrap();
         let json: Value = serde_json::from_slice(&std::fs::read(&report).unwrap()).unwrap();
         assert_eq!(json["schema_version"], 1);
+        assert_eq!(json["resource_geometry"]["schema_version"], 1);
+        let resources = json["resource_geometry"]["records"].as_array().unwrap();
+        assert!(!resources.is_empty());
+        for resource in resources {
+            assert_eq!(
+                resource["identity"]["state"],
+                if named {
+                    Value::from("example")
+                } else {
+                    Value::Null
+                }
+            );
+            assert!(resource["identity"]["address"].is_string());
+            assert!(["managed", "data"].contains(&resource["identity"]["mode"].as_str().unwrap()));
+            if !resource["bounds"].is_null() {
+                assert!(resource["bounds"]["width"].as_u64().unwrap() > 0);
+                assert!(resource["bounds"]["height"].as_u64().unwrap() > 0);
+                assert!(!resource["scopes"].as_array().unwrap().is_empty());
+            }
+        }
         assert_eq!(
             json["canvas"]["width"].as_u64().unwrap().to_string(),
             document.root_element().attribute("width").unwrap()

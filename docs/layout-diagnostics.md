@@ -32,6 +32,12 @@ of collection.
 
 ## Schema 1
 
+The optional developer [layout stability measurement](layout-stability.md) consumes
+the additive `resource_geometry` object, independently versioned as schema 1.
+It records selected structured resource identities, final spatial/embedded bounds,
+containing scope origins and explicit unavailable reasons for logical/lowered
+resources. This does not change existing edge metrics or quality budgets.
+
 The root has `schema_version: 1`, `category: "layout"`, `scope: "whole_diagram"`,
 `units`, `canvas`, `states`, `edges`, `summary`, `findings`, `policy` and `limits`.
 Consumers should check the version before comparing reports.

@@ -161,6 +161,10 @@ compilation and runner setup. Workflow, Clippy and formatting validation outside
 
 ## Layout quality comparison (#390)
 
+For opt-in paired-input resource displacement measurements, see
+[layout stability](layout-stability.md). It has no automatic workflow or blocking
+threshold and does not update the quality baselines below.
+
 **Layout quality** runs on manual dispatch or PRs carrying the `layout-quality`
 label (including subsequent pushes). It is opt-in and independent of **Tests**;
 do not make this conditionally absent job a repository-wide required check.
