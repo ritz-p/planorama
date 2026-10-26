@@ -1,0 +1,507 @@
+{
+  "format_version": "1.2",
+  "resource_changes": [
+    {
+      "address": "aws_vpc.cluster",
+      "mode": "managed",
+      "type": "aws_vpc",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "vpc-cluster"
+        }
+      }
+    },
+    {
+      "address": "aws_vpc.client",
+      "mode": "managed",
+      "type": "aws_vpc",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "vpc-client"
+        }
+      }
+    },
+    {
+      "address": "aws_subnet.a",
+      "mode": "managed",
+      "type": "aws_subnet",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "subnet-a",
+          "vpc_id": "vpc-cluster",
+          "availability_zone": "us-east-1a"
+        }
+      }
+    },
+    {
+      "address": "aws_subnet.b",
+      "mode": "managed",
+      "type": "aws_subnet",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "subnet-b",
+          "vpc_id": "vpc-cluster",
+          "availability_zone": "us-east-1b"
+        }
+      }
+    },
+    {
+      "address": "aws_subnet.client",
+      "mode": "managed",
+      "type": "aws_subnet",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "subnet-client",
+          "vpc_id": "vpc-client",
+          "availability_zone": "us-east-1a"
+        }
+      }
+    },
+    {
+      "address": "aws_security_group.cluster",
+      "mode": "managed",
+      "type": "aws_security_group",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "sg-cluster",
+          "vpc_id": "vpc-cluster"
+        }
+      }
+    },
+    {
+      "address": "aws_security_group.client",
+      "mode": "managed",
+      "type": "aws_security_group",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "sg-client",
+          "vpc_id": "vpc-client"
+        }
+      }
+    },
+    {
+      "address": "aws_msk_configuration.shared",
+      "mode": "managed",
+      "type": "aws_msk_configuration",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:kafka:us-east-1:111122223333:configuration/PRIVATE_CFG",
+          "latest_revision": 3,
+          "server_properties": "PRIVATE_CONFIG"
+        }
+      }
+    },
+    {
+      "address": "aws_secretsmanager_secret.one",
+      "mode": "managed",
+      "type": "aws_secretsmanager_secret",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:secretsmanager:us-east-1:111122223333:secret:PRIVATE_one"
+        }
+      }
+    },
+    {
+      "address": "aws_secretsmanager_secret.two",
+      "mode": "managed",
+      "type": "aws_secretsmanager_secret",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:secretsmanager:us-east-1:111122223333:secret:PRIVATE_two"
+        }
+      }
+    },
+    {
+      "address": "aws_msk_cluster.main",
+      "mode": "managed",
+      "type": "aws_msk_cluster",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:kafka:us-east-1:111122223333:cluster/PRIVATE_CLUSTER",
+          "broker_node_group_info": [
+            {
+              "client_subnets": [
+                "subnet-a",
+                "subnet-b"
+              ],
+              "security_groups": [
+                "sg-cluster"
+              ]
+            }
+          ],
+          "configuration_info": [
+            {
+              "arn": "arn:aws:kafka:us-east-1:111122223333:configuration/PRIVATE_CFG",
+              "revision": 3
+            }
+          ],
+          "bootstrap_brokers": "PRIVATE_ENDPOINT"
+        }
+      }
+    },
+    {
+      "address": "aws_msk_serverless_cluster.serverless",
+      "mode": "managed",
+      "type": "aws_msk_serverless_cluster",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:kafka:us-east-1:111122223333:cluster/PRIVATE_SERVERLESS",
+          "vpc_config": [
+            {
+              "subnet_ids": [
+                "subnet-a",
+                "subnet-b"
+              ],
+              "security_group_ids": [
+                "sg-cluster"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_msk_scram_secret_association.set",
+      "mode": "managed",
+      "type": "aws_msk_scram_secret_association",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "cluster_arn": "arn:aws:kafka:us-east-1:111122223333:cluster/PRIVATE_CLUSTER",
+          "secret_arn_list": [
+            "arn:aws:secretsmanager:us-east-1:111122223333:secret:PRIVATE_one",
+            "arn:aws:secretsmanager:us-east-1:111122223333:secret:PRIVATE_two"
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_msk_single_scram_secret_association.single",
+      "mode": "managed",
+      "type": "aws_msk_single_scram_secret_association",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "cluster_arn": "arn:aws:kafka:us-east-1:111122223333:cluster/PRIVATE_CLUSTER",
+          "secret_arn": "arn:aws:secretsmanager:us-east-1:111122223333:secret:PRIVATE_one"
+        }
+      }
+    },
+    {
+      "address": "aws_msk_vpc_connection.client",
+      "mode": "managed",
+      "type": "aws_msk_vpc_connection",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "target_cluster_arn": "arn:aws:kafka:us-east-1:111122223333:cluster/PRIVATE_CLUSTER",
+          "vpc_id": "vpc-client",
+          "client_subnets": [
+            "subnet-client"
+          ],
+          "security_groups": [
+            "sg-client"
+          ]
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_vpc.cluster",
+          "mode": "managed",
+          "type": "aws_vpc",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_vpc.client",
+          "mode": "managed",
+          "type": "aws_vpc",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_subnet.a",
+          "mode": "managed",
+          "type": "aws_subnet",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.cluster.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_subnet.b",
+          "mode": "managed",
+          "type": "aws_subnet",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.cluster.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_subnet.client",
+          "mode": "managed",
+          "type": "aws_subnet",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.client.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_security_group.cluster",
+          "mode": "managed",
+          "type": "aws_security_group",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.cluster.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_security_group.client",
+          "mode": "managed",
+          "type": "aws_security_group",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.client.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_msk_configuration.shared",
+          "mode": "managed",
+          "type": "aws_msk_configuration",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_secretsmanager_secret.one",
+          "mode": "managed",
+          "type": "aws_secretsmanager_secret",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_secretsmanager_secret.two",
+          "mode": "managed",
+          "type": "aws_secretsmanager_secret",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_msk_cluster.main",
+          "mode": "managed",
+          "type": "aws_msk_cluster",
+          "provider_config_key": "aws",
+          "expressions": {
+            "broker_node_group_info": [
+              {
+                "client_subnets": {
+                  "references": [
+                    "aws_subnet.a.id",
+                    "aws_subnet.b.id"
+                  ]
+                },
+                "security_groups": {
+                  "references": [
+                    "aws_security_group.cluster.id"
+                  ]
+                }
+              }
+            ],
+            "configuration_info": [
+              {
+                "arn": {
+                  "references": [
+                    "aws_msk_configuration.shared.arn"
+                  ]
+                },
+                "revision": {
+                  "references": [
+                    "aws_msk_configuration.shared.latest_revision"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_msk_serverless_cluster.serverless",
+          "mode": "managed",
+          "type": "aws_msk_serverless_cluster",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_config": [
+              {
+                "subnet_ids": {
+                  "references": [
+                    "aws_subnet.a.id",
+                    "aws_subnet.b.id"
+                  ]
+                },
+                "security_group_ids": {
+                  "references": [
+                    "aws_security_group.cluster.id"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_msk_scram_secret_association.set",
+          "mode": "managed",
+          "type": "aws_msk_scram_secret_association",
+          "provider_config_key": "aws",
+          "expressions": {
+            "cluster_arn": {
+              "references": [
+                "aws_msk_cluster.main.arn"
+              ]
+            },
+            "secret_arn_list": {
+              "references": [
+                "aws_secretsmanager_secret.one.arn",
+                "aws_secretsmanager_secret.two.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_msk_single_scram_secret_association.single",
+          "mode": "managed",
+          "type": "aws_msk_single_scram_secret_association",
+          "provider_config_key": "aws",
+          "expressions": {
+            "cluster_arn": {
+              "references": [
+                "aws_msk_cluster.main.arn"
+              ]
+            },
+            "secret_arn": {
+              "references": [
+                "aws_secretsmanager_secret.one.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_msk_vpc_connection.client",
+          "mode": "managed",
+          "type": "aws_msk_vpc_connection",
+          "provider_config_key": "aws",
+          "expressions": {
+            "target_cluster_arn": {
+              "references": [
+                "aws_msk_cluster.main.arn"
+              ]
+            },
+            "vpc_id": {
+              "references": [
+                "aws_vpc.client.id"
+              ]
+            },
+            "client_subnets": {
+              "references": [
+                "aws_subnet.client.id"
+              ]
+            },
+            "security_groups": {
+              "references": [
+                "aws_security_group.client.id"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

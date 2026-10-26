@@ -93,3 +93,4 @@ examples/api-gateway-v2.svg
 examples/dynamodb.svg
 examples/elasticache-configuration.svg
 examples/eventbridge-configuration.svg
+examples/msk.svg

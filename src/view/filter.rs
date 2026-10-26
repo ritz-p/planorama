@@ -48,7 +48,13 @@ fn placement_available(
     selected: impl Fn(usize) -> bool,
 ) -> bool {
     let node = &graph.nodes[child];
-    if node.resource_type != "aws_elasticache_replication_group" {
+    if !matches!(
+        node.resource_type.as_str(),
+        "aws_elasticache_replication_group"
+            | "aws_msk_cluster"
+            | "aws_msk_serverless_cluster"
+            | "aws_msk_vpc_connection"
+    ) {
         return true;
     }
     graph
@@ -352,23 +358,23 @@ pub fn apply(all: &Architecture, options: &Options) -> Result<Architecture, Stri
                     Some(e)
                 })
                 .collect();
-            let unplaced_cache: BTreeSet<_> = graph
+            let unplaced: BTreeSet<_> = graph
                 .nodes
                 .iter()
                 .enumerate()
                 .filter(|(index, _)| !placement_available(&graph, *index, |_| true))
                 .map(|(index, _)| index)
                 .collect();
-            graph.0.edges.retain(|edge| {
-                edge.kind != EdgeKind::Containment || !unplaced_cache.contains(&edge.to)
-            });
-            let unplaced_cache: BTreeSet<_> = unplaced_cache
+            graph
+                .0
+                .edges
+                .retain(|edge| edge.kind != EdgeKind::Containment || !unplaced.contains(&edge.to));
+            let unplaced: BTreeSet<_> = unplaced
                 .into_iter()
                 .map(|index| graph.nodes[index].entity.id.clone())
                 .collect();
             graph.0.relationships.retain(|relationship| {
-                relationship.kind != EdgeKind::Containment
-                    || !unplaced_cache.contains(&relationship.to)
+                relationship.kind != EdgeKind::Containment || !unplaced.contains(&relationship.to)
             });
             let addresses: BTreeSet<_> = graph.0.nodes.iter().map(|n| n.address.as_str()).collect();
             let sources: BTreeSet<_> = graph

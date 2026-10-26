@@ -1013,7 +1013,7 @@ pub(in crate::provider::aws) const ENTRIES: &[Basic] = &[
     entry!("aws_msk_serverless_cluster", "Amazon Managed Streaming for Apache Kafka", Node, Spatial, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonManagedStreamingforApacheKafka))),
     entry!("aws_msk_single_scram_secret_association", "Amazon Managed Streaming for Apache Kafka", Association, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonManagedStreamingforApacheKafka))),
     entry!("aws_msk_topic", "Amazon Managed Streaming for Apache Kafka", Node, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonManagedStreamingforApacheKafka))),
-    entry!("aws_msk_vpc_connection", "Amazon Managed Streaming for Apache Kafka", Node, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonManagedStreamingforApacheKafka))),
+    entry!("aws_msk_vpc_connection", "Amazon Managed Streaming for Apache Kafka", Node, Spatial, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonManagedStreamingforApacheKafka))),
     entry!("aws_mskconnect_connector", "Amazon MSK Connect", Node, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonManagedStreamingforApacheKafka))),
     entry!("aws_mskconnect_custom_plugin", "Amazon MSK Connect", Node, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonManagedStreamingforApacheKafka))),
     entry!("aws_mskconnect_worker_configuration", "Amazon MSK Connect", Controller, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonManagedStreamingforApacheKafka))),

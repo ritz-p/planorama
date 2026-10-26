@@ -41,6 +41,7 @@ mod redshift_tests;
 #[cfg(test)]
 #[path = "../../tests/unit/semantic/step_functions.rs"]
 mod step_functions_tests;
+mod streaming;
 
 #[cfg(test)]
 #[path = "../../tests/unit/semantic/rds_global.rs"]
@@ -207,6 +208,7 @@ pub(crate) fn data_icon(resource_type: &str) -> Option<crate::icons::ResourceIco
 }
 pub(super) fn transform(raw: crate::semantic::Input) -> crate::model::Graph {
     let mut graph = security_groups::infer(&raw, containment::infer(&raw));
+    streaming::present(&raw, &mut graph);
     routes::present(&raw, &mut graph);
     members::present(&raw, &mut graph);
     monitoring::present(&raw, &mut graph);

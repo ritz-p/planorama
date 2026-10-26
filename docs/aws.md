@@ -924,6 +924,60 @@ Its inputs explicitly bind resources to provider configurations with literal
 regions. A provider alias such as `archive` is not the region label; missing or
 dynamic provider-region metadata cannot produce a guessed panel.
 
+## MSK network and configuration (#688)
+
+Managed `aws_msk_cluster` and `aws_msk_serverless_cluster` retain independent
+spatial cards. Their complete subnet and security-group references can establish
+a common VPC, never an arbitrary subnet/AZ. Provisioned clusters use
+`broker_node_group_info.client_subnets` / `security_groups`; Serverless uses
+`vpc_config.subnet_ids` / `security_group_ids`. All are sets of IDs inside list
+blocks. Initial Serverless placement requires exactly one VPC configuration;
+multiple configurations remain unresolved rather than being flattened. Omitted
+or unknown security groups do not invent the AWS default group.
+
+`aws_msk_vpc_connection` is a spatial client-side connection. `vpc_id`,
+`client_subnets` and `security_groups` must identify the same client VPC.
+Its separately labeled `target_cluster_arn` points to a provisioned MSK cluster;
+that cluster's network never supplies client placement. Initial links require
+compatible account/provider evidence and equal known regions; cross-account
+cluster references remain unproven until an explicit cross-account contract is
+added. Network placement remains independent of target-cluster availability.
+
+Every network member needs a unique current managed AWS endpoint, an explicit
+`id` reference and equal known nonempty values. Complete sets reject duplicate,
+partial and unknown members. Each subnet and SG must itself have a verified
+`vpc_id` reference to the same current VPC. Missing or incompatible evidence
+retains the independent card and reports an unproven placement diagnostic.
+Filtering any required proof removes inferred containment.
+
+Provisioned `configuration_info.arn` references `aws_msk_configuration.arn` only
+when its numeric positive `revision` is also explicitly referenced from the same
+configuration's known `latest_revision` and matches it. Older, unknown, literal
+or mismatched revisions retain ordinary references. Shared configurations remain
+independent logical resources; `server_properties` is never exposed.
+
+`aws_msk_scram_secret_association` verifies `cluster_arn` and the complete
+`secret_arn_list` set. `aws_msk_single_scram_secret_association` verifies
+`cluster_arn` and scalar `secret_arn`. Cluster endpoints are provisioned
+`aws_msk_cluster.arn`; secrets are `aws_secretsmanager_secret.arn`. Serverless
+clusters do not inherit provisioned SCRAM semantics. Each association retains
+its own lifecycle/provenance and coverage record; shared secrets are not embedded.
+These configuration references add no authentication or connectivity claims.
+
+Proofs require compatible bindings, explicit unique current managed endpoints,
+valid known-value masks and exact output fields. Data, deleted, deposed, foreign
+provider/type, missing, dynamic and filtered endpoints remain conservative.
+Named states never supply one another's missing endpoints. Broker URLs, secrets,
+topic contents, replication, CA/log/encryption extensions and runtime health are
+outside this scope. No new arbitrary value summaries are emitted.
+
+The pinned Provider 6.70.0 contracts and collection shapes are recorded in the
+[#721 audit](aws-semantic-audit.md#streaming-messaging-and-workflows-review-721).
+The [fixture](../tests/fixtures/msk-plan.json) and [SVG](../examples/msk.svg)
+show separate client/cluster VPCs, a multi-subnet cluster, Serverless, shared
+configuration and both SCRAM association forms. Regenerate HTML in Docker with
+`cargo run --locked -- tests/fixtures/msk-plan.json --format html -o examples/msk.html`.
+
 ## Scheduler and Pipes configuration (#692)
 
 Managed `aws_scheduler_schedule` and `aws_scheduler_schedule_group` retain

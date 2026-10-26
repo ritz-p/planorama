@@ -151,10 +151,10 @@
       "gap": "Filesystem subnet/SG and encryption-key proof; no S3 ownership from import/export path strings."
     },
     "aws_msk_cluster": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 688,
-      "gap": "Missing: configuration ARN/revision #688; topic/channel/policy inbound #754. Deferred: logs/encryption/CA references until separate enabled/type contracts; no bootstrap-server inference. See #721 per-dimension review in aws-semantic-decisions.json.",
+      "gap": "Implemented #688: complete subnet/SG common-VPC placement and explicit configuration ARN/latest revision pair. See aws.md#msk-network-and-configuration-688. #721 review records the historical baseline. Cross-account targets, multiple VPC configurations, secrets/endpoint contents, replication and runtime connectivity remain excluded.",
       "review": {
         "issue": 721,
         "implementationCommit": "de2686ced20f383ee48ec65b1354b643e2fe659c",
@@ -204,10 +204,10 @@
       }
     },
     "aws_msk_serverless_cluster": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 688,
-      "gap": "Missing: network endpoint references #688; no configuration_info contract exists for this type. See #721 per-dimension review in aws-semantic-decisions.json.",
+      "gap": "Implemented #688: complete subnet/SG common-VPC placement for one vpc_config; multiple configurations remain unresolved. See aws.md#msk-network-and-configuration-688. #721 review records the historical baseline. Cross-account targets, multiple VPC configurations, secrets/endpoint contents, replication and runtime connectivity remain excluded.",
       "review": {
         "issue": 721,
         "implementationCommit": "de2686ced20f383ee48ec65b1354b643e2fe659c",
@@ -242,10 +242,10 @@
       }
     },
     "aws_msk_configuration": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 688,
-      "gap": "Missing: inbound configuration ARN/revision proof #688. See #721 per-dimension review in aws-semantic-decisions.json.",
+      "gap": "Implemented #688: inbound cluster configuration ARN/revision navigation; shared logical identity retained. See aws.md#msk-network-and-configuration-688. #721 review records the historical baseline. Cross-account targets, multiple VPC configurations, secrets/endpoint contents, replication and runtime connectivity remain excluded.",
       "review": {
         "issue": 721,
         "implementationCommit": "de2686ced20f383ee48ec65b1354b643e2fe659c",
@@ -272,10 +272,10 @@
       }
     },
     "aws_msk_scram_secret_association": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 688,
-      "gap": "Missing: explicit cluster and complete secret ARN set #688. See #721 per-dimension review in aws-semantic-decisions.json.",
+      "gap": "Implemented #688: provisioned cluster ARN and complete Secrets Manager ARN set references. See aws.md#msk-network-and-configuration-688. #721 review records the historical baseline. Cross-account targets, multiple VPC configurations, secrets/endpoint contents, replication and runtime connectivity remain excluded.",
       "review": {
         "issue": 721,
         "implementationCommit": "de2686ced20f383ee48ec65b1354b643e2fe659c",
@@ -305,10 +305,10 @@
       }
     },
     "aws_msk_single_scram_secret_association": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 688,
-      "gap": "Missing: explicit cluster and single secret ARN #688; not an alias of the collection resource. See #721 per-dimension review in aws-semantic-decisions.json.",
+      "gap": "Implemented #688: provisioned cluster ARN and single Secrets Manager ARN reference. See aws.md#msk-network-and-configuration-688. #721 review records the historical baseline. Cross-account targets, multiple VPC configurations, secrets/endpoint contents, replication and runtime connectivity remain excluded.",
       "review": {
         "issue": 721,
         "implementationCommit": "de2686ced20f383ee48ec65b1354b643e2fe659c",
@@ -335,10 +335,10 @@
       }
     },
     "aws_msk_vpc_connection": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 688,
-      "gap": "Missing: target cluster plus client-side VPC/subnet/SG references #688. See #721 per-dimension review in aws-semantic-decisions.json.",
+      "gap": "Implemented #688: independent spatial client connection with verified client VPC/subnet/SG context and separate provisioned cluster reference. See aws.md#msk-network-and-configuration-688. #721 review records the historical baseline. Cross-account targets, multiple VPC configurations, secrets/endpoint contents, replication and runtime connectivity remain excluded.",
       "review": {
         "issue": 721,
         "implementationCommit": "de2686ced20f383ee48ec65b1354b643e2fe659c",
