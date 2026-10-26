@@ -37,7 +37,7 @@ The following paths were checked against the pinned schema and resource document
 | Exact type | Pinned input contract | Actual behavior / decision |
 | --- | --- | --- |
 | `aws_msk_cluster` | `broker_node_group_info.client_subnets`, `broker_node_group_info.security_groups`, `configuration_info.arn` | Verified common-VPC subnet/SG and configuration ARN/revision rules (#688); other dimensions retain the historical #721 review. |
-| `aws_mq_broker` | `subnet_ids`, `security_groups`, `configuration.id` | Basic spatial card; no dedicated placement/configuration references. #689. |
+| `aws_mq_broker` | `subnet_ids`, `security_groups`, `configuration.id` | Verified common-VPC subnet/SG and configuration ID/revision rules (#689); other dimensions retain the historical #721 review. |
 | `aws_apprunner_service` | `network_configuration.egress_configuration.vpc_connector_arn` | Spatial service; connector reference is egress configuration, not service subnet ownership. #694. |
 | `aws_apprunner_vpc_connector` | `subnets`, `security_groups` | Logical basic object; verify network context without turning every configuration into a card. #694. |
 | `aws_redshiftserverless_workgroup` | `namespace_name`, `subnet_ids`, `security_group_ids` | Basic spatial workgroup, unlike existing provisioned Redshift #506. #695. |

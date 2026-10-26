@@ -9,6 +9,10 @@ use std::collections::BTreeSet;
 #[path = "../../../tests/unit/semantic/msk.rs"]
 mod tests;
 
+#[cfg(test)]
+#[path = "../../../tests/unit/semantic/mq.rs"]
+mod mq_tests;
+
 pub(super) fn network(resource: &str) -> Option<(&'static str, &'static str)> {
     match resource {
         "aws_msk_cluster" => Some((
@@ -19,6 +23,7 @@ pub(super) fn network(resource: &str) -> Option<(&'static str, &'static str)> {
             Some(("vpc_config.subnet_ids", "vpc_config.security_group_ids"))
         }
         "aws_msk_vpc_connection" => Some(("client_subnets", "security_groups")),
+        "aws_mq_broker" => Some(("subnet_ids", "security_groups")),
         _ => None,
     }
 }
@@ -34,6 +39,7 @@ pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
     }
     match (resource, attribute) {
         ("aws_msk_cluster", "configuration_info.arn") => Some("MSK configuration"),
+        ("aws_mq_broker", "configuration.id") => Some("MQ configuration"),
         (
             "aws_msk_scram_secret_association" | "aws_msk_single_scram_secret_association",
             "cluster_arn",
@@ -59,6 +65,7 @@ fn rule(resource: &str, attribute: &str) -> Option<(&'static str, &'static str, 
         ("aws_msk_cluster", "configuration_info.arn") => {
             Some(("aws_msk_configuration", "arn", false))
         }
+        ("aws_mq_broker", "configuration.id") => Some(("aws_mq_configuration", "id", false)),
         (
             "aws_msk_scram_secret_association" | "aws_msk_single_scram_secret_association",
             "cluster_arn",
@@ -217,13 +224,26 @@ fn verify(
         if !expected.insert(identifier) {
             return false;
         }
-        if reference.attribute == "configuration_info.arn" {
-            let selected = revision(value, unknown, "configuration_info.revision");
+        let revision_path = match reference.attribute.as_str() {
+            "configuration_info.arn" => Some("configuration_info.revision"),
+            "configuration.id" => Some("configuration.revision"),
+            _ => None,
+        };
+        if node.resource_type == "aws_mq_broker" && reference.attribute == "configuration.id" {
+            let engine = scalar(value, unknown, "engine_type");
+            if !matches!(engine, Some("ActiveMQ" | "RabbitMQ"))
+                || engine != scalar(target, mask, "engine_type")
+            {
+                return false;
+            }
+        }
+        if let Some(path) = revision_path {
+            let selected = revision(value, unknown, path);
             if selected.is_none()
                 || selected != revision(target, mask, "latest_revision")
                 || !refs.iter().any(|r| {
                     r.target == reference.target
-                        && r.attribute == "configuration_info.revision"
+                        && r.attribute == path
                         && r.complete
                         && r.instances_explicit
                         && r.issues.is_empty()
