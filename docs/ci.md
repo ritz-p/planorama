@@ -16,9 +16,9 @@ through **Report PR validation**.
 
 **Resource support** runs `sh scripts/update-resource-support.sh --check` for
 changes to provider/runtime sources, catalog generation, its Markdown output and
-build inputs, plus the pinned AWS inventory and extractor. It compares deterministic
+build inputs, plus the pinned AWS inventory, extractor and baseline comparator. It compares deterministic
 Markdown, checks every managed type's basic capabilities and runs the offline
-extractor regression. It performs no SVG generation, routing or Provider download.
+extractor and synthetic schema-diff regressions. It performs no SVG generation, routing or Provider download.
 The Rust checks also belong to the standard Rust suite.
 See [regeneration instructions](../CONTRIBUTING.md#リソース対応一覧の更新).
 

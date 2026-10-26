@@ -31,6 +31,14 @@ test('inventory uses managed schema and registrations, handles aliases and rejec
     assert.equal(result.resources[0].serviceName, 'AWS Example');
     assert.equal(result.resources[1].aliasOf, 'aws_example');
     assert.equal(result.resources[1].deprecated, true);
+    const explicit = spawnSync(process.execPath, [path.resolve(__dirname, '../../scripts/aws-inventory.cjs'), root, schemaPath, output, '7.0.0', 'b'.repeat(40)], {encoding:'utf8'});
+    assert.equal(explicit.status, 0, explicit.stderr);
+    const candidate = JSON.parse(fs.readFileSync(output));
+    assert.equal(candidate.version, '7.0.0');
+    assert.equal(candidate.commit, 'b'.repeat(40));
+    assert.deepEqual(candidate.resources, result.resources);
+    const floating = spawnSync(process.execPath, [path.resolve(__dirname, '../../scripts/aws-inventory.cjs'), root, schemaPath, output, 'latest', 'main'], {encoding:'utf8'});
+    assert.notEqual(floating.status, 0);
     delete schema.provider_schemas['registry.terraform.io/hashicorp/aws'].resource_schemas.aws_example_old;
     fs.writeFileSync(schemaPath, JSON.stringify(schema));
     const missing = run();

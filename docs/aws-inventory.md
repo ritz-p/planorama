@@ -120,20 +120,106 @@ installs signed AWS Provider 6.70.0 through Terraform, captures its schema and
 compares the regenerated inventory byte-for-byte. It needs network access and does
 not configure credentials, call AWS or apply resources. The schema SHA-256 is
 recorded in the inventory. Ordinary tests use the committed inventory offline.
-`scripts/aws-inventory.cjs SOURCE SCHEMA OUTPUT` performs extraction separately;
+`node scripts/aws-inventory.cjs SOURCE SCHEMA OUTPUT [VERSION COMMIT]` performs extraction separately;
 missing registrations, schemas, resource docs or service names fail explicitly.
 Missing alias documentation is accepted only for the same service and factory
 with a documented registered counterpart.
 
-For a new baseline, verify the official stable release/tag and commit, update both
-scripts' pinned version/commit, and regenerate the inventory. Review added,
-removed and renamed exact types against their documentation and actual schema;
+For a new baseline, first follow the comparison procedure below. After review,
+update both scripts' default pinned version/commit and copy the reviewed inventory
+into `tests/fixtures/aws-inventory/VERSION.json`. Review added and removed exact
+types against their documentation and actual schema;
 update the runtime table with explicit role, presentation, scope and service labels
 decisions. Preserve historical implementation types when a Provider removes them.
 Do not infer runtime capabilities from prefixes or automatically replace reviewed
 entries when updating the inventory. Extend unknown-scope reasons when necessary.
 Update the inventory test's baseline/count and matrix input, then regenerate the
 matrix and examples and run the required Layout quality check.
+
+### Compare candidate baselines
+
+Acquisition requires network access; comparison uses only local files. Run these
+commands inside the development container. Verify the official release/tag's full
+40-character commit before setting `NEW_VERSION` and `NEW_COMMIT`; neither the
+extractor nor Terraform proves that a caller-supplied source commit belongs to a
+version. Floating `latest` is not accepted. Explicit output directories must be
+empty, keeping old/new schemas and Terraform lock files separate.
+
+```sh
+sh scripts/prepare-aws-inventory.sh 6.70.0 5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f /tmp/aws-before
+sh scripts/prepare-aws-inventory.sh "$NEW_VERSION" "$NEW_COMMIT" /tmp/aws-after
+sh scripts/update-resource-support.sh --check
+node scripts/aws-inventory-diff.cjs \
+  /tmp/aws-before/inventory.json /tmp/aws-after/inventory.json \
+  /tmp/aws-before/schema.json /tmp/aws-after/schema.json \
+  docs/resource-support.md > /tmp/aws-inventory-diff.json
+```
+
+No credentials, AWS API calls or apply are needed. The no-argument prepare command
+still checks the committed baseline byte-for-byte. Explicit-version acquisition
+does not replace the committed inventory. Keep both original schema files: each
+inventory's SHA-256 binds the comparator to its exact schema bytes. The JSON report
+records both version/commit/hash tuples and the support matrix hash, with sorted
+types and JSON Pointer change paths. Reusing these inputs reproduces the report.
+The matrix describes the current checkout, so run its consistency check first.
+
+`managed.added`, `managed.removed` and `managed.changed` cover exact managed types.
+Changed entries separate inventory metadata (service, region, factory, alias and
+deprecation included) from schema structure. Structure includes resource schema
+version, attribute/block additions and removals, types, nested attributes/blocks,
+nesting modes, bounds and required/optional/computed/sensitive/deprecated flags.
+Documentation prose is omitted; attributes named `description` are still compared.
+`otherSchemas` reports data sources and other supplied schema sections separately;
+they never increase the managed denominator. Only sections present in the supplied
+official schema can be compared.
+
+For example, a synthetic changed resource produces this abbreviated report:
+
+```json
+{
+  "schema": {"status": "compared", "missing": []},
+  "managed": {
+    "added": ["aws_new_service"],
+    "removed": [],
+    "changed": [{
+      "type": "aws_example",
+      "metadata": [],
+      "schema": {"status": "compared", "changes": [{
+        "path": "/block/block_types/child/nesting_mode",
+        "kind": "changed", "before": "list", "after": "set"
+      }]}
+    }]
+  }
+}
+```
+
+Use `-` for either unavailable schema file. The report then says
+`"status": "not-compared"` and names the missing side(s); empty metadata changes
+are **not** evidence of no schema changes. Invalid/missing inventory fields,
+duplicate types, invalid aliases, schema hash or managed-set mismatches, incomplete
+schemas and unsupported formats fail with a nonzero exit status. The current
+reader supports legacy inventories without a format marker (or `formatVersion: 1`)
+and Terraform schema `format_version: "1.0"` with versioned block schemas.
+An unsupported future schema representation requires updating the reader explicitly.
+
+Review every `review` entry against its attached runtime matrix row and linked
+conditional rule sources. New types require a classification decision even if an
+existing implementation row exists; absent rows are `null`. Changed types require
+review of role, scope, icon and dedicated relationships. Removed types retain their
+historical runtime support. A similar name is not rename evidence: without explicit
+registration/documentation proof, removal and addition remain separate. Alias
+metadata likewise does not establish full schema or behavior equivalence.
+
+The command never chooses runtime classifications or updates baselines. Schema
+comparison does not prove runtime compatibility or dedicated relationship correctness;
+retain the [real-plan compatibility checks](terraform-compatibility.md). After human
+review, follow the baseline update steps above. Reports alone do not require SVG
+regeneration or Layout quality; runtime changes that affect diagrams do.
+Offline synthetic comparison tests run in the Resource support workflow:
+
+```sh
+node --test tests/support/aws-inventory.test.cjs tests/support/aws-inventory-diff.test.cjs
+```
 
 The small [fixture](../tests/fixtures/aws-basic-plan.json),
 [icon example](../examples/aws-basic.svg),
