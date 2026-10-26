@@ -14,6 +14,10 @@ reference provenance but have no card or incident path. Service classification a
 not imply dedicated relationship support. The baseline notes distinguish basic
 display from existing rules and identify neutral presentation and unknown-scope fallbacks.
 
+The [semantic gap register](aws-semantic-gaps.md) tracks exact managed types by service,
+with priorities, explicit deferrals and bounded follow-up issues. Its [audit guide](aws-semantic-audit.md)
+distinguishes implemented capabilities from partial and basic-only behavior.
+
 The service mapping/name column records formal service classification and legacy
 mapping identifiers, not the displayed badge text or bundled artwork. Resource-specific
 display names, dimensions and category colors are documented in [Service labels](icons.md).

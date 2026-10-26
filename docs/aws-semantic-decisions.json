@@ -1,0 +1,882 @@
+{
+  "types": {
+    "aws_apprunner_service": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 694,
+      "gap": "Service/egress/ingress reference separation; complete connector subnet/SG proof; do not contain service in connector subnet."
+    },
+    "aws_apprunner_vpc_connector": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 694,
+      "gap": "Service/egress/ingress reference separation; complete connector subnet/SG proof; do not contain service in connector subnet."
+    },
+    "aws_apprunner_vpc_ingress_connection": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 694,
+      "gap": "Service/egress/ingress reference separation; complete connector subnet/SG proof; do not contain service in connector subnet."
+    },
+    "aws_redshiftserverless_namespace": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 695,
+      "gap": "Namespace ownership and workgroup/endpoint subnet/SG proof; namespace is not a network container."
+    },
+    "aws_redshiftserverless_workgroup": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 695,
+      "gap": "Namespace ownership and workgroup/endpoint subnet/SG proof; namespace is not a network container."
+    },
+    "aws_redshiftserverless_endpoint_access": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 695,
+      "gap": "Namespace ownership and workgroup/endpoint subnet/SG proof; namespace is not a network container."
+    },
+    "aws_opensearchserverless_collection": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 696,
+      "gap": "Collection architecture presentation; endpoint VPC/subnet/SG proof without policy-derived collection membership."
+    },
+    "aws_opensearchserverless_vpc_endpoint": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 696,
+      "gap": "Collection architecture presentation; endpoint VPC/subnet/SG proof without policy-derived collection membership."
+    },
+    "aws_docdb_cluster": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 697,
+      "gap": "Cluster subnet-group/SG proof and instance membership; no invented subnet for members."
+    },
+    "aws_docdb_cluster_instance": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 697,
+      "gap": "Cluster subnet-group/SG proof and instance membership; no invented subnet for members."
+    },
+    "aws_docdb_subnet_group": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 697,
+      "gap": "Cluster subnet-group/SG proof and instance membership; no invented subnet for members."
+    },
+    "aws_neptune_cluster": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 698,
+      "gap": "Cluster subnet-group/SG proof and instance membership; separate membership and placement."
+    },
+    "aws_neptune_cluster_instance": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 698,
+      "gap": "Cluster subnet-group/SG proof and instance membership; separate membership and placement."
+    },
+    "aws_neptune_subnet_group": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 698,
+      "gap": "Cluster subnet-group/SG proof and instance membership; separate membership and placement."
+    },
+    "aws_dms_replication_instance": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 699,
+      "gap": "Replication instance network proof and task source/target endpoint references; no database inference from strings."
+    },
+    "aws_dms_replication_subnet_group": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 699,
+      "gap": "Replication instance network proof and task source/target endpoint references; no database inference from strings."
+    },
+    "aws_dms_endpoint": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 699,
+      "gap": "Replication instance network proof and task source/target endpoint references; no database inference from strings."
+    },
+    "aws_dms_replication_task": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 699,
+      "gap": "Replication instance network proof and task source/target endpoint references; no database inference from strings."
+    },
+    "aws_batch_compute_environment": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 700,
+      "gap": "Compute environment subnet/SG proof; queue environment/policy navigation. Policy stays logical; do not synthesize jobs."
+    },
+    "aws_batch_job_queue": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 700,
+      "gap": "Compute environment subnet/SG proof; queue environment/policy navigation. Policy stays logical; do not synthesize jobs."
+    },
+    "aws_batch_scheduling_policy": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 700,
+      "gap": "Compute environment subnet/SG proof; queue environment/policy navigation. Policy stays logical; do not synthesize jobs."
+    },
+    "aws_sagemaker_endpoint": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 701,
+      "gap": "Endpoint/configuration/model references and model VPC proof; no endpoint containment inferred from model ownership."
+    },
+    "aws_sagemaker_endpoint_configuration": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 701,
+      "gap": "Endpoint/configuration/model references and model VPC proof; no endpoint containment inferred from model ownership."
+    },
+    "aws_sagemaker_model": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 701,
+      "gap": "Endpoint/configuration/model references and model VPC proof; no endpoint containment inferred from model ownership."
+    },
+    "aws_fsx_lustre_file_system": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 702,
+      "gap": "Filesystem subnet/SG and encryption-key proof; no S3 ownership from import/export path strings."
+    },
+    "aws_msk_cluster": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 688,
+      "gap": "Complete broker/client subnet and SG evidence, configuration and SCRAM secret references missing; keep configuration logical; no broker/endpoint synthesis."
+    },
+    "aws_msk_serverless_cluster": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 688,
+      "gap": "Complete broker/client subnet and SG evidence, configuration and SCRAM secret references missing; keep configuration logical; no broker/endpoint synthesis."
+    },
+    "aws_msk_configuration": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 688,
+      "gap": "Complete broker/client subnet and SG evidence, configuration and SCRAM secret references missing; keep configuration logical; no broker/endpoint synthesis."
+    },
+    "aws_msk_scram_secret_association": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 688,
+      "gap": "Complete broker/client subnet and SG evidence, configuration and SCRAM secret references missing; keep configuration logical; no broker/endpoint synthesis."
+    },
+    "aws_msk_single_scram_secret_association": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 688,
+      "gap": "Complete broker/client subnet and SG evidence, configuration and SCRAM secret references missing; keep configuration logical; no broker/endpoint synthesis."
+    },
+    "aws_msk_vpc_connection": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 688,
+      "gap": "Complete broker/client subnet and SG evidence, configuration and SCRAM secret references missing; keep configuration logical; no broker/endpoint synthesis."
+    },
+    "aws_mq_broker": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 689,
+      "gap": "Broker subnet/SG and configuration ownership missing; retain broker card and logical configuration; do not retain users/passwords."
+    },
+    "aws_mq_configuration": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 689,
+      "gap": "Broker subnet/SG and configuration ownership missing; retain broker card and logical configuration; do not retain users/passwords."
+    },
+    "aws_dynamodb_table": {
+      "status": "Partial",
+      "priority": "P1",
+      "issue": 690,
+      "gap": "Implemented spatial table and explicit Backup selection endpoint (#508). Lambda DynamoDB stream-source edges and at-rest summaries are NOT implemented; #690 covers table/replica/configuration relationships. Defer stream lowering and summaries to separate exact contracts."
+    },
+    "aws_elasticache_replication_group": {
+      "status": "Partial",
+      "priority": "P1",
+      "issue": 691,
+      "gap": "Implemented subnet-group/common-VPC placement (#360). Global replication/user/parameter-group references remain incomplete (#691); at-rest summary is NOT implemented and is deferred separately."
+    },
+    "aws_api_gateway_rest_api": {
+      "status": "Partial (bounded capabilities implemented)",
+      "priority": "P3",
+      "issue": 509,
+      "gap": "API/Method/deployment/Lambda/private-integration navigation is implemented conditionally; generic integrations, response settings and body interpretation remain outside that contract."
+    },
+    "aws_api_gateway_resource": {
+      "status": "Partial (bounded capabilities implemented)",
+      "priority": "P3",
+      "issue": 509,
+      "gap": "API/Method/deployment/Lambda/private-integration navigation is implemented conditionally; generic integrations, response settings and body interpretation remain outside that contract."
+    },
+    "aws_api_gateway_method": {
+      "status": "Partial (bounded capabilities implemented)",
+      "priority": "P3",
+      "issue": 509,
+      "gap": "API/Method/deployment/Lambda/private-integration navigation is implemented conditionally; generic integrations, response settings and body interpretation remain outside that contract."
+    },
+    "aws_api_gateway_deployment": {
+      "status": "Partial (bounded capabilities implemented)",
+      "priority": "P3",
+      "issue": 509,
+      "gap": "API/Method/deployment/Lambda/private-integration navigation is implemented conditionally; generic integrations, response settings and body interpretation remain outside that contract."
+    },
+    "aws_api_gateway_stage": {
+      "status": "Partial (bounded capabilities implemented)",
+      "priority": "P3",
+      "issue": 509,
+      "gap": "API/Method/deployment/Lambda/private-integration navigation is implemented conditionally; generic integrations, response settings and body interpretation remain outside that contract."
+    },
+    "aws_api_gateway_integration": {
+      "status": "Partial (bounded capabilities implemented)",
+      "priority": "P3",
+      "issue": 509,
+      "gap": "API/Method/deployment/Lambda/private-integration navigation is implemented conditionally; generic integrations, response settings and body interpretation remain outside that contract."
+    },
+    "aws_api_gateway_authorizer": {
+      "status": "Partial (bounded capabilities implemented)",
+      "priority": "P3",
+      "issue": 509,
+      "gap": "API/Method/deployment/Lambda/private-integration navigation is implemented conditionally; generic integrations, response settings and body interpretation remain outside that contract."
+    },
+    "aws_api_gateway_vpc_link": {
+      "status": "Partial (bounded capabilities implemented)",
+      "priority": "P3",
+      "issue": 509,
+      "gap": "API/Method/deployment/Lambda/private-integration navigation is implemented conditionally; generic integrations, response settings and body interpretation remain outside that contract."
+    },
+    "aws_apigatewayv2_api": {
+      "status": "Partial (bounded capabilities implemented)",
+      "priority": "P3",
+      "issue": 509,
+      "gap": "API/Method/deployment/Lambda/private-integration navigation is implemented conditionally; generic integrations, response settings and body interpretation remain outside that contract."
+    },
+    "aws_apigatewayv2_stage": {
+      "status": "Partial (bounded capabilities implemented)",
+      "priority": "P3",
+      "issue": 509,
+      "gap": "API/Method/deployment/Lambda/private-integration navigation is implemented conditionally; generic integrations, response settings and body interpretation remain outside that contract."
+    },
+    "aws_apigatewayv2_deployment": {
+      "status": "Partial (bounded capabilities implemented)",
+      "priority": "P3",
+      "issue": 509,
+      "gap": "API/Method/deployment/Lambda/private-integration navigation is implemented conditionally; generic integrations, response settings and body interpretation remain outside that contract."
+    },
+    "aws_apigatewayv2_integration": {
+      "status": "Partial (bounded capabilities implemented)",
+      "priority": "P3",
+      "issue": 509,
+      "gap": "API/Method/deployment/Lambda/private-integration navigation is implemented conditionally; generic integrations, response settings and body interpretation remain outside that contract."
+    },
+    "aws_apigatewayv2_authorizer": {
+      "status": "Partial (bounded capabilities implemented)",
+      "priority": "P3",
+      "issue": 509,
+      "gap": "API/Method/deployment/Lambda/private-integration navigation is implemented conditionally; generic integrations, response settings and body interpretation remain outside that contract."
+    },
+    "aws_apigatewayv2_vpc_link": {
+      "status": "Partial (bounded capabilities implemented)",
+      "priority": "P3",
+      "issue": 509,
+      "gap": "API/Method/deployment/Lambda/private-integration navigation is implemented conditionally; generic integrations, response settings and body interpretation remain outside that contract."
+    },
+    "aws_lambda_alias": {
+      "status": "Partial (bounded capabilities implemented)",
+      "priority": "P3",
+      "issue": 513,
+      "gap": "Alias/function/version, layer and URL references are implemented conditionally; no synthetic versions, literal ARN matching or environment summaries."
+    },
+    "aws_lambda_layer_version": {
+      "status": "Partial (bounded capabilities implemented)",
+      "priority": "P3",
+      "issue": 513,
+      "gap": "Alias/function/version, layer and URL references are implemented conditionally; no synthetic versions, literal ARN matching or environment summaries."
+    },
+    "aws_lambda_layer_version_permission": {
+      "status": "Partial (bounded capabilities implemented)",
+      "priority": "P3",
+      "issue": 513,
+      "gap": "Alias/function/version, layer and URL references are implemented conditionally; no synthetic versions, literal ARN matching or environment summaries."
+    },
+    "aws_lambda_function_url": {
+      "status": "Partial (bounded capabilities implemented)",
+      "priority": "P3",
+      "issue": 513,
+      "gap": "Alias/function/version, layer and URL references are implemented conditionally; no synthetic versions, literal ARN matching or environment summaries."
+    },
+    "aws_lambda_function": {
+      "status": "Partial (bounded capabilities implemented)",
+      "priority": "P3",
+      "issue": 513,
+      "gap": "Alias/function/version, layer and URL references are implemented conditionally; no synthetic versions, literal ARN matching or environment summaries."
+    },
+    "aws_db_proxy": {
+      "status": "Partial (bounded capabilities implemented)",
+      "priority": "P3",
+      "issue": 514,
+      "gap": "Proxy network/target/owner references are implemented conditionally; no target database containment, connection pools or authentication values."
+    },
+    "aws_db_proxy_target": {
+      "status": "Partial (bounded capabilities implemented)",
+      "priority": "P3",
+      "issue": 514,
+      "gap": "Proxy network/target/owner references are implemented conditionally; no target database containment, connection pools or authentication values."
+    },
+    "aws_db_proxy_default_target_group": {
+      "status": "Partial (bounded capabilities implemented)",
+      "priority": "P3",
+      "issue": 514,
+      "gap": "Proxy network/target/owner references are implemented conditionally; no target database containment, connection pools or authentication values."
+    },
+    "aws_elasticache_serverless_cache": {
+      "status": "Partial (bounded capabilities implemented)",
+      "priority": "P3",
+      "issue": 516,
+      "gap": "Serverless common-VPC/subnet/SG placement implemented; user-group references and endpoint values are outside the completed scope."
+    },
+    "aws_eks_cluster": {
+      "status": "Partial (bounded capabilities implemented)",
+      "priority": "P3",
+      "issue": 512,
+      "gap": "Cluster membership, subnet/SG and role references implemented conditionally; no runtime Kubernetes workloads or effective access inference."
+    },
+    "aws_eks_node_group": {
+      "status": "Partial (bounded capabilities implemented)",
+      "priority": "P3",
+      "issue": 512,
+      "gap": "Cluster membership, subnet/SG and role references implemented conditionally; no runtime Kubernetes workloads or effective access inference."
+    },
+    "aws_eks_fargate_profile": {
+      "status": "Partial (bounded capabilities implemented)",
+      "priority": "P3",
+      "issue": 512,
+      "gap": "Cluster membership, subnet/SG and role references implemented conditionally; no runtime Kubernetes workloads or effective access inference."
+    },
+    "aws_eks_addon": {
+      "status": "Partial (bounded capabilities implemented)",
+      "priority": "P3",
+      "issue": 512,
+      "gap": "Cluster membership, subnet/SG and role references implemented conditionally; no runtime Kubernetes workloads or effective access inference."
+    },
+    "aws_eks_access_entry": {
+      "status": "Partial (bounded capabilities implemented)",
+      "priority": "P3",
+      "issue": 512,
+      "gap": "Cluster membership, subnet/SG and role references implemented conditionally; no runtime Kubernetes workloads or effective access inference."
+    },
+    "aws_s3_bucket_policy": {
+      "status": "Partial (bounded capabilities implemented)",
+      "priority": "P3",
+      "issue": 511,
+      "gap": "Verified bucket owner and bounded destinations/role references implemented; policy semantics, arbitrary notification payloads and runtime replication excluded."
+    },
+    "aws_s3_bucket_notification": {
+      "status": "Partial (bounded capabilities implemented)",
+      "priority": "P3",
+      "issue": 511,
+      "gap": "Verified bucket owner and bounded destinations/role references implemented; policy semantics, arbitrary notification payloads and runtime replication excluded."
+    },
+    "aws_s3_bucket_replication_configuration": {
+      "status": "Partial (bounded capabilities implemented)",
+      "priority": "P3",
+      "issue": 511,
+      "gap": "Verified bucket owner and bounded destinations/role references implemented; policy semantics, arbitrary notification payloads and runtime replication excluded."
+    },
+    "aws_cloudfront_distribution": {
+      "status": "Partial (bounded capabilities implemented)",
+      "priority": "P3",
+      "issue": 510,
+      "gap": "Verified origin/access/policy references implemented; no custom-origin reconstruction or policy interpretation."
+    },
+    "aws_cloudfront_origin_access_control": {
+      "status": "Partial (bounded capabilities implemented)",
+      "priority": "P3",
+      "issue": 510,
+      "gap": "Verified origin/access/policy references implemented; no custom-origin reconstruction or policy interpretation."
+    },
+    "aws_cloudfront_origin_access_identity": {
+      "status": "Partial (bounded capabilities implemented)",
+      "priority": "P3",
+      "issue": 510,
+      "gap": "Verified origin/access/policy references implemented; no custom-origin reconstruction or policy interpretation."
+    },
+    "aws_cloudfront_cache_policy": {
+      "status": "Partial (bounded capabilities implemented)",
+      "priority": "P3",
+      "issue": 510,
+      "gap": "Verified origin/access/policy references implemented; no custom-origin reconstruction or policy interpretation."
+    },
+    "aws_cloudfront_origin_request_policy": {
+      "status": "Partial (bounded capabilities implemented)",
+      "priority": "P3",
+      "issue": 510,
+      "gap": "Verified origin/access/policy references implemented; no custom-origin reconstruction or policy interpretation."
+    },
+    "aws_cloudfront_response_headers_policy": {
+      "status": "Partial (bounded capabilities implemented)",
+      "priority": "P3",
+      "issue": 510,
+      "gap": "Verified origin/access/policy references implemented; no custom-origin reconstruction or policy interpretation."
+    },
+    "aws_efs_file_system": {
+      "status": "Partial (bounded capabilities implemented)",
+      "priority": "P3",
+      "issue": 548,
+      "gap": "Verified filesystem membership, mount-target subnet/SG and access-point embedded owner implemented; filesystem contents and POSIX configuration summaries excluded."
+    },
+    "aws_efs_mount_target": {
+      "status": "Partial (bounded capabilities implemented)",
+      "priority": "P3",
+      "issue": 548,
+      "gap": "Verified filesystem membership, mount-target subnet/SG and access-point embedded owner implemented; filesystem contents and POSIX configuration summaries excluded."
+    },
+    "aws_efs_access_point": {
+      "status": "Partial (bounded capabilities implemented)",
+      "priority": "P3",
+      "issue": 548,
+      "gap": "Verified filesystem membership, mount-target subnet/SG and access-point embedded owner implemented; filesystem contents and POSIX configuration summaries excluded."
+    },
+    "aws_kms_key": {
+      "status": "Partial (bounded capabilities implemented)",
+      "priority": "P3",
+      "issue": 542,
+      "gap": "Key spatial card and verified alias ownership implemented; no policy interpretation or inferred cryptographic access."
+    },
+    "aws_kms_alias": {
+      "status": "Partial (bounded capabilities implemented)",
+      "priority": "P3",
+      "issue": 542,
+      "gap": "Key spatial card and verified alias ownership implemented; no policy interpretation or inferred cryptographic access."
+    },
+    "aws_secretsmanager_secret": {
+      "status": "Partial (bounded capabilities implemented)",
+      "priority": "P3",
+      "issue": 543,
+      "gap": "Secret card and verified version child implemented; values and runtime access intentionally unsupported."
+    },
+    "aws_secretsmanager_secret_version": {
+      "status": "Partial (bounded capabilities implemented)",
+      "priority": "P3",
+      "issue": 543,
+      "gap": "Secret card and verified version child implemented; values and runtime access intentionally unsupported."
+    },
+    "aws_glue_job": {
+      "status": "Partial (bounded capabilities implemented)",
+      "priority": "P3",
+      "issue": 545,
+      "gap": "Job/crawler architecture cards and catalog membership implemented; connection/service expansion remains separate, no scripts or arbitrary job arguments."
+    },
+    "aws_glue_crawler": {
+      "status": "Partial (bounded capabilities implemented)",
+      "priority": "P3",
+      "issue": 545,
+      "gap": "Job/crawler architecture cards and catalog membership implemented; connection/service expansion remains separate, no scripts or arbitrary job arguments."
+    },
+    "aws_glue_catalog_database": {
+      "status": "Partial (bounded capabilities implemented)",
+      "priority": "P3",
+      "issue": 545,
+      "gap": "Job/crawler architecture cards and catalog membership implemented; connection/service expansion remains separate, no scripts or arbitrary job arguments."
+    },
+    "aws_glue_catalog_table": {
+      "status": "Partial (bounded capabilities implemented)",
+      "priority": "P3",
+      "issue": 545,
+      "gap": "Job/crawler architecture cards and catalog membership implemented; connection/service expansion remains separate, no scripts or arbitrary job arguments."
+    },
+    "aws_athena_workgroup": {
+      "status": "Partial (bounded capabilities implemented)",
+      "priority": "P3",
+      "issue": 547,
+      "gap": "Architecture cards and bounded configuration references implemented; query text/results and URI-derived storage ownership excluded."
+    },
+    "aws_athena_data_catalog": {
+      "status": "Partial (bounded capabilities implemented)",
+      "priority": "P3",
+      "issue": 547,
+      "gap": "Architecture cards and bounded configuration references implemented; query text/results and URI-derived storage ownership excluded."
+    },
+    "aws_acmpca_certificate_authority": {
+      "status": "Partial (bounded capabilities implemented)",
+      "priority": "P3",
+      "issue": 541,
+      "gap": "CA cards and proven certificate ownership/reference implemented; certificate bodies and trust inference excluded."
+    },
+    "aws_acmpca_certificate": {
+      "status": "Partial (bounded capabilities implemented)",
+      "priority": "P3",
+      "issue": 541,
+      "gap": "CA cards and proven certificate ownership/reference implemented; certificate bodies and trust inference excluded."
+    },
+    "aws_acmpca_certificate_authority_certificate": {
+      "status": "Partial (bounded capabilities implemented)",
+      "priority": "P3",
+      "issue": 541,
+      "gap": "CA cards and proven certificate ownership/reference implemented; certificate bodies and trust inference excluded."
+    },
+    "aws_organizations_organization": {
+      "status": "Partial (bounded capabilities implemented)",
+      "priority": "P3",
+      "issue": 457,
+      "gap": "Organization/Root/OU hierarchy implemented; member deployment navigation is separate #459; no account identity inferred from names."
+    },
+    "aws_organizations_organizational_unit": {
+      "status": "Partial (bounded capabilities implemented)",
+      "priority": "P3",
+      "issue": 457,
+      "gap": "Organization/Root/OU hierarchy implemented; member deployment navigation is separate #459; no account identity inferred from names."
+    },
+    "aws_organizations_account": {
+      "status": "Partial (bounded capabilities implemented)",
+      "priority": "P3",
+      "issue": 457,
+      "gap": "Organization/Root/OU hierarchy implemented; member deployment navigation is separate #459; no account identity inferred from names."
+    },
+    "aws_organizations_policy": {
+      "status": "Partial (bounded capabilities implemented)",
+      "priority": "P3",
+      "issue": 458,
+      "gap": "Direct target/policy references and allowlisted policy type implemented; inherited/effective policy intentionally unsupported."
+    },
+    "aws_organizations_policy_attachment": {
+      "status": "Partial (bounded capabilities implemented)",
+      "priority": "P3",
+      "issue": 458,
+      "gap": "Direct target/policy references and allowlisted policy type implemented; inherited/effective policy intentionally unsupported."
+    },
+    "aws_redshift_cluster": {
+      "status": "Partial (bounded capabilities implemented)",
+      "priority": "P3",
+      "issue": 506,
+      "gap": "Provisioned cluster subnet/SG and parameter-group references implemented; Serverless tracked separately in #695; credentials and SQL excluded."
+    },
+    "aws_redshift_subnet_group": {
+      "status": "Partial (bounded capabilities implemented)",
+      "priority": "P3",
+      "issue": 506,
+      "gap": "Provisioned cluster subnet/SG and parameter-group references implemented; Serverless tracked separately in #695; credentials and SQL excluded."
+    },
+    "aws_redshift_parameter_group": {
+      "status": "Partial (bounded capabilities implemented)",
+      "priority": "P3",
+      "issue": 506,
+      "gap": "Provisioned cluster subnet/SG and parameter-group references implemented; Serverless tracked separately in #695; credentials and SQL excluded."
+    },
+    "aws_backup_vault": {
+      "status": "Partial (bounded capabilities implemented)",
+      "priority": "P3",
+      "issue": 508,
+      "gap": "Vault/plan/explicit selection references implemented; tag-based effective selection and backup success excluded."
+    },
+    "aws_backup_plan": {
+      "status": "Partial (bounded capabilities implemented)",
+      "priority": "P3",
+      "issue": 508,
+      "gap": "Vault/plan/explicit selection references implemented; tag-based effective selection and backup success excluded."
+    },
+    "aws_backup_selection": {
+      "status": "Partial (bounded capabilities implemented)",
+      "priority": "P3",
+      "issue": 508,
+      "gap": "Vault/plan/explicit selection references implemented; tag-based effective selection and backup success excluded."
+    },
+    "aws_cloudtrail": {
+      "status": "Partial (bounded capabilities implemented)",
+      "priority": "P3",
+      "issue": 507,
+      "gap": "Trail bucket/log/key references implemented; event contents and delivery success excluded."
+    },
+    "aws_rds_global_cluster": {
+      "status": "Partial (bounded capabilities implemented)",
+      "priority": "P3",
+      "issue": 515,
+      "gap": "Global Cluster membership and existing RDS placement implemented; no replication topology/runtime health inference."
+    },
+    "aws_rds_cluster": {
+      "status": "Partial (bounded capabilities implemented)",
+      "priority": "P3",
+      "issue": 515,
+      "gap": "Global Cluster membership and existing RDS placement implemented; no replication topology/runtime health inference."
+    },
+    "aws_iam_openid_connect_provider": {
+      "status": "Partial (bounded capabilities implemented)",
+      "priority": "P3",
+      "issue": 518,
+      "gap": "Identity-provider safe references implemented; trust documents, issuer content and effective identity access excluded."
+    },
+    "aws_iam_saml_provider": {
+      "status": "Partial (bounded capabilities implemented)",
+      "priority": "P3",
+      "issue": 518,
+      "gap": "Identity-provider safe references implemented; trust documents, issuer content and effective identity access excluded."
+    },
+    "aws_iam_user": {
+      "status": "Partial (bounded capabilities implemented)",
+      "priority": "P3",
+      "issue": 517,
+      "gap": "Identity/membership/direct attachment references implemented; no effective permissions or inherited policy calculation."
+    },
+    "aws_iam_group": {
+      "status": "Partial (bounded capabilities implemented)",
+      "priority": "P3",
+      "issue": 517,
+      "gap": "Identity/membership/direct attachment references implemented; no effective permissions or inherited policy calculation."
+    },
+    "aws_iam_group_membership": {
+      "status": "Partial (bounded capabilities implemented)",
+      "priority": "P3",
+      "issue": 517,
+      "gap": "Identity/membership/direct attachment references implemented; no effective permissions or inherited policy calculation."
+    },
+    "aws_iam_user_group_membership": {
+      "status": "Partial (bounded capabilities implemented)",
+      "priority": "P3",
+      "issue": 517,
+      "gap": "Identity/membership/direct attachment references implemented; no effective permissions or inherited policy calculation."
+    },
+    "aws_iam_user_policy": {
+      "status": "Partial (bounded capabilities implemented)",
+      "priority": "P3",
+      "issue": 517,
+      "gap": "Identity/membership/direct attachment references implemented; no effective permissions or inherited policy calculation."
+    },
+    "aws_iam_group_policy": {
+      "status": "Partial (bounded capabilities implemented)",
+      "priority": "P3",
+      "issue": 517,
+      "gap": "Identity/membership/direct attachment references implemented; no effective permissions or inherited policy calculation."
+    },
+    "aws_iam_user_policy_attachment": {
+      "status": "Partial (bounded capabilities implemented)",
+      "priority": "P3",
+      "issue": 517,
+      "gap": "Identity/membership/direct attachment references implemented; no effective permissions or inherited policy calculation."
+    },
+    "aws_iam_group_policy_attachment": {
+      "status": "Partial (bounded capabilities implemented)",
+      "priority": "P3",
+      "issue": 517,
+      "gap": "Identity/membership/direct attachment references implemented; no effective permissions or inherited policy calculation."
+    },
+    "aws_ecr_repository": {
+      "status": "Partial (bounded capabilities implemented)",
+      "priority": "P3",
+      "issue": 499,
+      "gap": "Repository and bounded explicit image/configuration references implemented; image strings alone do not prove ownership."
+    },
+    "aws_ecr_repository_policy": {
+      "status": "Partial (bounded capabilities implemented)",
+      "priority": "P3",
+      "issue": 499,
+      "gap": "Repository and bounded explicit image/configuration references implemented; image strings alone do not prove ownership."
+    },
+    "aws_ecr_lifecycle_policy": {
+      "status": "Partial (bounded capabilities implemented)",
+      "priority": "P3",
+      "issue": 499,
+      "gap": "Repository and bounded explicit image/configuration references implemented; image strings alone do not prove ownership."
+    },
+    "aws_wafv2_web_acl": {
+      "status": "Partial (bounded capabilities implemented)",
+      "priority": "P3",
+      "issue": 496,
+      "gap": "Scope and protected-resource references implemented under strict evidence; rule/policy evaluation and runtime protection excluded."
+    },
+    "aws_wafv2_rule_group": {
+      "status": "Partial (bounded capabilities implemented)",
+      "priority": "P3",
+      "issue": 496,
+      "gap": "Scope and protected-resource references implemented under strict evidence; rule/policy evaluation and runtime protection excluded."
+    },
+    "aws_wafv2_web_acl_association": {
+      "status": "Partial (bounded capabilities implemented)",
+      "priority": "P3",
+      "issue": 496,
+      "gap": "Scope and protected-resource references implemented under strict evidence; rule/policy evaluation and runtime protection excluded."
+    },
+    "aws_cloudwatch_event_bus": {
+      "status": "Partial (bounded capabilities implemented)",
+      "priority": "P3",
+      "issue": 429,
+      "gap": "Bus/rule and verified target association implemented; Scheduler/Pipes are separate #692; no event pattern interpretation."
+    },
+    "aws_cloudwatch_event_rule": {
+      "status": "Partial (bounded capabilities implemented)",
+      "priority": "P3",
+      "issue": 429,
+      "gap": "Bus/rule and verified target association implemented; Scheduler/Pipes are separate #692; no event pattern interpretation."
+    },
+    "aws_cloudwatch_event_target": {
+      "status": "Partial (bounded capabilities implemented)",
+      "priority": "P3",
+      "issue": 429,
+      "gap": "Bus/rule and verified target association implemented; Scheduler/Pipes are separate #692; no event pattern interpretation."
+    },
+    "aws_lambda_event_source_mapping": {
+      "status": "Partial (bounded capabilities implemented)",
+      "priority": "P3",
+      "issue": 394,
+      "gap": "Verified event-source/function lowering implemented; no runtime delivery/ordering inference."
+    },
+    "aws_sns_topic_subscription": {
+      "status": "Partial (bounded capabilities implemented)",
+      "priority": "P3",
+      "issue": 393,
+      "gap": "Verified topic/subscriber lowering implemented; unsupported protocol endpoints remain generic references."
+    },
+    "aws_sqs_queue": {
+      "status": "Partial (bounded capabilities implemented)",
+      "priority": "P3",
+      "issue": 601,
+      "gap": "At-rest encryption summary implemented with explicit known-state rules; no permission or runtime security claim."
+    },
+    "aws_account_alternate_contact": {
+      "status": "Basic-only; value display intentionally unsupported",
+      "priority": "P3",
+      "gap": "Retain logical administrative record; contact names/emails/phone values are intentionally excluded. No architecture ownership inferred from account strings."
+    },
+    "aws_account_primary_contact": {
+      "status": "Basic-only; value display intentionally unsupported",
+      "priority": "P3",
+      "gap": "Retain logical administrative record; contact names/emails/phone values are intentionally excluded. No architecture ownership inferred from account strings."
+    },
+    "aws_opensearchserverless_access_policy": {
+      "status": "Basic-only; policy interpretation intentionally unsupported",
+      "priority": "P3",
+      "gap": "Retain logical policy. Collection association would require interpreting policy JSON, outside this audit and #696."
+    },
+    "aws_opensearchserverless_security_policy": {
+      "status": "Basic-only; policy interpretation intentionally unsupported",
+      "priority": "P3",
+      "gap": "Retain logical policy. Collection association would require interpreting policy JSON, outside this audit and #696."
+    },
+    "aws_dynamodb_table_replica": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 690,
+      "gap": "Explicit table ownership/replica scope or Kinesis destination references missing; table item/index/policy values excluded."
+    },
+    "aws_dynamodb_global_table": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 690,
+      "gap": "Explicit table ownership/replica scope or Kinesis destination references missing; table item/index/policy values excluded."
+    },
+    "aws_dynamodb_kinesis_streaming_destination": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 690,
+      "gap": "Explicit table ownership/replica scope or Kinesis destination references missing; table item/index/policy values excluded."
+    },
+    "aws_dynamodb_contributor_insights": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 690,
+      "gap": "Explicit table ownership/replica scope or Kinesis destination references missing; table item/index/policy values excluded."
+    },
+    "aws_dynamodb_global_secondary_index": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 690,
+      "gap": "Explicit table ownership/replica scope or Kinesis destination references missing; table item/index/policy values excluded."
+    },
+    "aws_dynamodb_resource_policy": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 690,
+      "gap": "Explicit table ownership/replica scope or Kinesis destination references missing; table item/index/policy values excluded."
+    },
+    "aws_dynamodb_tag": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 690,
+      "gap": "Explicit table ownership/replica scope or Kinesis destination references missing; table item/index/policy values excluded."
+    },
+    "aws_elasticache_global_replication_group": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 691,
+      "gap": "Global/member, user/group and parameter-group references missing; preserve shared identities and separate member scope; passwords and parameter values excluded."
+    },
+    "aws_elasticache_user": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 691,
+      "gap": "Global/member, user/group and parameter-group references missing; preserve shared identities and separate member scope; passwords and parameter values excluded."
+    },
+    "aws_elasticache_user_group": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 691,
+      "gap": "Global/member, user/group and parameter-group references missing; preserve shared identities and separate member scope; passwords and parameter values excluded."
+    },
+    "aws_elasticache_user_group_association": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 691,
+      "gap": "Global/member, user/group and parameter-group references missing; preserve shared identities and separate member scope; passwords and parameter values excluded."
+    },
+    "aws_elasticache_parameter_group": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 691,
+      "gap": "Global/member, user/group and parameter-group references missing; preserve shared identities and separate member scope; passwords and parameter values excluded."
+    },
+    "aws_scheduler_schedule": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 692,
+      "gap": "Schedule group and target/role, or Pipe source/enrichment/target references missing; payloads and universal-target interpretation excluded."
+    },
+    "aws_scheduler_schedule_group": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 692,
+      "gap": "Schedule group and target/role, or Pipe source/enrichment/target references missing; payloads and universal-target interpretation excluded."
+    },
+    "aws_pipes_pipe": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 692,
+      "gap": "Schedule group and target/role, or Pipe source/enrichment/target references missing; payloads and universal-target interpretation excluded."
+    },
+    "aws_networkfirewall_firewall": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 693,
+      "gap": "Firewall architecture presentation, VPC/subnet and explicit policy/group/logging references missing; computed endpoint IDs do not create nodes."
+    },
+    "aws_networkfirewall_firewall_policy": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 693,
+      "gap": "Firewall architecture presentation, VPC/subnet and explicit policy/group/logging references missing; computed endpoint IDs do not create nodes."
+    },
+    "aws_networkfirewall_rule_group": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 693,
+      "gap": "Firewall architecture presentation, VPC/subnet and explicit policy/group/logging references missing; computed endpoint IDs do not create nodes."
+    },
+    "aws_networkfirewall_logging_configuration": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 693,
+      "gap": "Firewall architecture presentation, VPC/subnet and explicit policy/group/logging references missing; computed endpoint IDs do not create nodes."
+    }
+  }
+}
