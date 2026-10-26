@@ -19,22 +19,22 @@
       "gap": "Service/egress/ingress reference separation; complete connector subnet/SG proof; do not contain service in connector subnet."
     },
     "aws_redshiftserverless_namespace": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 695,
-      "gap": "Namespace ownership and workgroup/endpoint subnet/SG proof; namespace is not a network container."
+      "gap": "Implemented #695: verified namespace/workgroup owner navigation and independent workgroup/endpoint common-VPC placement from complete subnet/SG sets. Namespace remains logical service ownership, not a network container; endpoint is spatial. Explicit owner_account requires matching verified workgroup account. See aws.md#redshift-serverless-695. IAM/KMS, snapshots, computed endpoints and runtime connectivity remain outside this contract."
     },
     "aws_redshiftserverless_workgroup": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 695,
-      "gap": "Namespace ownership and workgroup/endpoint subnet/SG proof; namespace is not a network container."
+      "gap": "Implemented #695: verified namespace/workgroup owner navigation and independent workgroup/endpoint common-VPC placement from complete subnet/SG sets. Namespace remains logical service ownership, not a network container; endpoint is spatial. Explicit owner_account requires matching verified workgroup account. See aws.md#redshift-serverless-695. IAM/KMS, snapshots, computed endpoints and runtime connectivity remain outside this contract."
     },
     "aws_redshiftserverless_endpoint_access": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 695,
-      "gap": "Namespace ownership and workgroup/endpoint subnet/SG proof; namespace is not a network container."
+      "gap": "Implemented #695: verified namespace/workgroup owner navigation and independent workgroup/endpoint common-VPC placement from complete subnet/SG sets. Namespace remains logical service ownership, not a network container; endpoint is spatial. Explicit owner_account requires matching verified workgroup account. See aws.md#redshift-serverless-695. IAM/KMS, snapshots, computed endpoints and runtime connectivity remain outside this contract."
     },
     "aws_opensearchserverless_collection": {
       "status": "Basic-only",

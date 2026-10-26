@@ -1797,3 +1797,43 @@ and [HTML](../examples/neptune.html). Regenerate HTML inside Docker with
 `cargo run --locked -- tests/fixtures/neptune-plan.json --format html -o examples/neptune.html`.
 Native/Wasm parity covers SVG and HTML; lifecycle, named-state and filtering
 boundaries follow the DocumentDB contract.
+
+## Redshift Serverless (#695)
+
+Workgroups are independent spatial resources. `namespace_name` must explicitly
+reference a managed namespace's `namespace_name` with the same known value to show
+`Namespace owner` navigation. Namespace remains a logical service identity; it is
+not a VPC container and does not inherit the workgroup's network placement.
+
+Workgroup `subnet_ids` and `security_group_ids` must completely match managed
+Subnet and Security Group `id` values whose explicit VPC references agree. Unknown,
+extra literal, missing/default-only or mixed-VPC evidence leaves placement unproven.
+Endpoint access resources are spatial controllers with their own complete
+`subnet_ids`/`vpc_security_group_ids` proof. They may be in a different VPC from the
+workgroup. No placement is copied from `workgroup_name` or computed endpoint/ENI data.
+
+Endpoint `workgroup_name` verifies the exact workgroup's `workgroup_name` for
+`Workgroup owner` navigation. An explicit `owner_account` additionally requires a
+matching verified workgroup account; unknown or foreign ownership cannot borrow a
+same-named workgroup. Cross-account ownership is outside this initial contract.
+Namespaces and endpoints are not embedded into network owners by service references.
+
+All references require unique current managed AWS identities, compatible
+provider/account/known-region evidence and known matching exact output attributes.
+The namespace/workgroup UUID outputs and `id` are not substituted for these named
+outputs. Deleted/deposed, data, dynamic, ambiguous and filtered evidence retains
+fallback display. Named states stay independent; actions and lifecycle identities
+remain visible exactly once. Credentials, endpoint addresses, query/configuration
+contents, effective access and runtime connectivity are excluded. Provisioned
+Redshift #506 is unchanged; namespace IAM/KMS and snapshot semantics are separate.
+
+Pinned Provider 6.70.0 [namespace](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/website/docs/r/redshiftserverless_namespace.html.markdown),
+[workgroup](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/website/docs/r/redshiftserverless_workgroup.html.markdown)
+and [endpoint](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/website/docs/r/redshiftserverless_endpoint_access.html.markdown)
+contracts and schema were checked: all network collections are sets; endpoint SG
+input is `vpc_security_group_ids`, while workgroup uses `security_group_ids`.
+See [fixture](../tests/fixtures/redshift-serverless-plan.json),
+[SVG](../examples/redshift-serverless.svg) and [HTML](../examples/redshift-serverless.html).
+Regenerate HTML inside Docker with
+`cargo run --locked -- tests/fixtures/redshift-serverless-plan.json --format html -o examples/redshift-serverless.html`.
+Both output formats are covered by native/Wasm parity.

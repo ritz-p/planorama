@@ -1243,7 +1243,7 @@ pub(in crate::provider::aws) const ENTRIES: &[Basic] = &[
     entry!("aws_redshift_usage_limit", "Amazon Redshift", Node, Logical, Regional, Some(ResourceIcon::Redshift)),
     entry!("aws_redshiftdata_statement", "Amazon Redshift Data API", Controller, Logical, Regional, Some(ResourceIcon::Redshift)),
     entry!("aws_redshiftserverless_custom_domain_association", "Amazon Redshift Serverless", Association, Logical, Regional, Some(ResourceIcon::Redshift)),
-    entry!("aws_redshiftserverless_endpoint_access", "Amazon Redshift Serverless", Controller, Logical, Regional, Some(ResourceIcon::Redshift)),
+    entry!("aws_redshiftserverless_endpoint_access", "Amazon Redshift Serverless", Controller, Spatial, Regional, Some(ResourceIcon::Redshift)),
     entry!("aws_redshiftserverless_namespace", "Amazon Redshift Serverless", Node, Logical, Regional, Some(ResourceIcon::Redshift)),
     entry!("aws_redshiftserverless_resource_policy", "Amazon Redshift Serverless", Policy, Logical, Regional, Some(ResourceIcon::Redshift)),
     entry!("aws_redshiftserverless_snapshot", "Amazon Redshift Serverless", Node, Logical, Regional, Some(ResourceIcon::Redshift)),

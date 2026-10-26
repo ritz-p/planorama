@@ -13,6 +13,10 @@ mod tests;
 #[path = "../../../tests/unit/semantic/neptune.rs"]
 mod neptune_tests;
 
+#[cfg(test)]
+#[path = "../../../tests/unit/semantic/redshift_serverless.rs"]
+mod redshift_serverless_tests;
+
 fn rule(
     resource: &str,
     attribute: &str,
@@ -53,6 +57,29 @@ fn rule(
             "cluster_identifier",
             false,
             "Cluster membership",
+        )),
+        ("aws_redshiftserverless_workgroup", "namespace_name") => Some((
+            "aws_redshiftserverless_namespace",
+            "namespace_name",
+            false,
+            "Namespace owner",
+        )),
+        ("aws_redshiftserverless_endpoint_access", "workgroup_name") => Some((
+            "aws_redshiftserverless_workgroup",
+            "workgroup_name",
+            false,
+            "Workgroup owner",
+        )),
+        (
+            "aws_redshiftserverless_workgroup" | "aws_redshiftserverless_endpoint_access",
+            "subnet_ids",
+        ) => Some(("aws_subnet", "id", true, "Configured subnets")),
+        ("aws_redshiftserverless_workgroup", "security_group_ids")
+        | ("aws_redshiftserverless_endpoint_access", "vpc_security_group_ids") => Some((
+            "aws_security_group",
+            "id",
+            true,
+            "Configured security groups",
         )),
         _ => None,
     }
@@ -116,6 +143,27 @@ pub(super) fn annotate(
                 ) {
                     return None;
                 }
+                if node.resource_type == "aws_redshiftserverless_endpoint_access"
+                    && r.attribute == "workgroup_name"
+                {
+                    let (value, mask) = evidence[r.target];
+                    if !value["owner_account"].is_null()
+                        || !matches!(&mask["owner_account"], Value::Null | Value::Bool(false))
+                    {
+                        let owner =
+                            super::service_references::scalar(value, mask, &["owner_account"])?;
+                        if endpoint
+                            .provider_configuration
+                            .as_ref()?
+                            .account
+                            .as_ref()?
+                            .as_str()
+                            != owner
+                        {
+                            return None;
+                        }
+                    }
+                }
                 let (value, mask) = evidence[source];
                 super::service_references::scalar(value, mask, &[field])
             })
@@ -157,17 +205,25 @@ fn proof<'a>(raw: &'a Input, target: usize, attribute: &str) -> Option<&'a Attri
 
 fn network(raw: &Input, target: usize) -> Option<(usize, Vec<(usize, usize)>)> {
     let node = &raw.nodes[target];
-    let attribute = match node.resource_type.as_str() {
-        "aws_docdb_cluster" => "db_subnet_group_name",
-        "aws_neptune_cluster" => "neptune_subnet_group_name",
+    let (subnet_target, group_attribute, mut edges) = match node.resource_type.as_str() {
+        "aws_docdb_cluster" | "aws_neptune_cluster" => {
+            let attribute = if node.resource_type == "aws_docdb_cluster" {
+                "db_subnet_group_name"
+            } else {
+                "neptune_subnet_group_name"
+            };
+            let group_ref = proof(raw, target, attribute)?;
+            let [group] = group_ref.sources.as_slice() else {
+                return None;
+            };
+            (*group, "vpc_security_group_ids", vec![(*group, target)])
+        }
+        "aws_redshiftserverless_workgroup" => (target, "security_group_ids", Vec::new()),
+        "aws_redshiftserverless_endpoint_access" => (target, "vpc_security_group_ids", Vec::new()),
         _ => return None,
     };
-    let group_ref = proof(raw, target, attribute)?;
-    let [group] = group_ref.sources.as_slice() else {
-        return None;
-    };
-    let subnets = proof(raw, *group, "subnet_ids")?;
-    let groups = proof(raw, target, "vpc_security_group_ids")?;
+    let subnets = proof(raw, subnet_target, "subnet_ids")?;
+    let groups = proof(raw, target, group_attribute)?;
     let members = subnets.sources.iter().chain(&groups.sources);
     let parents = members
         .map(|&i| super::streaming::vpc(raw, i))
@@ -175,9 +231,8 @@ fn network(raw: &Input, target: usize) -> Option<(usize, Vec<(usize, usize)>)> {
     let [parent] = parents.iter().copied().collect::<Vec<_>>()[..] else {
         return None;
     };
-    let mut edges = vec![(*group, target)];
     for &subnet in &subnets.sources {
-        edges.extend([(parent, subnet), (subnet, *group)]);
+        edges.extend([(parent, subnet), (subnet, subnet_target)]);
     }
     for &sg in &groups.sources {
         edges.extend([(parent, sg), (sg, target)]);
