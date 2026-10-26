@@ -2,8 +2,9 @@ const fs = require('node:fs');
 const path = require('node:path');
 const crypto = require('node:crypto');
 
-const [source, schemaPath, output] = process.argv.slice(2);
-if (!source || !schemaPath || !output) throw new Error('Usage: node scripts/aws-inventory.cjs SOURCE SCHEMA OUTPUT');
+const [source, schemaPath, output, version = '6.70.0', commit = '5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f'] = process.argv.slice(2);
+if (!/^\d+\.\d+\.\d+$/.test(version) || !/^[a-f0-9]{40}$/.test(commit)) throw new Error('Expected pinned version and full commit');
+if (![3, 5].includes(process.argv.length - 2) || !source || !schemaPath || !output) throw new Error('Usage: node scripts/aws-inventory.cjs SOURCE SCHEMA OUTPUT [VERSION COMMIT]');
 const schemaBytes = fs.readFileSync(schemaPath);
 const schema = JSON.parse(schemaBytes).provider_schemas['registry.terraform.io/hashicorp/aws'];
 const registrations = new Map();
@@ -57,7 +58,7 @@ const resources = Object.keys(schema.resource_schemas).sort().map(type => {
     dataSource: Object.hasOwn(schema.data_source_schemas, type)};
 });
 if (registrations.size) throw new Error(`Missing schema: ${[...registrations.keys()]}`);
-const inventory = {version: '6.70.0', commit: '5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f',
+const inventory = {version, commit,
   schemaSha256: crypto.createHash('sha256').update(schemaBytes).digest('hex'), resources};
 fs.writeFileSync(output, JSON.stringify(inventory, null, 2) + '\n');
 console.log(`${resources.length} managed resources; ${new Set(resources.map(r => r.service)).size} services`);

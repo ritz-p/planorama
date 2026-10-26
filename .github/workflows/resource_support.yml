@@ -8,7 +8,9 @@ on:
       - 'tests/unit/aws_inventory.rs'
       - 'tests/fixtures/aws-inventory/**'
       - 'tests/support/aws-inventory.test.cjs'
+      - 'tests/support/aws-inventory-diff.test.cjs'
       - 'scripts/aws-inventory.cjs'
+      - 'scripts/aws-inventory-diff.cjs'
       - 'scripts/prepare-aws-inventory.sh'
       - 'docs/resource-support.md'
       - 'scripts/update-resource-support.sh'
@@ -47,3 +49,4 @@ jobs:
         run: |
           cargo test --locked --lib provider::aws::basic
           node --test tests/support/aws-inventory.test.cjs
+          node --test tests/support/aws-inventory-diff.test.cjs
