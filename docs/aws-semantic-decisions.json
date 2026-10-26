@@ -379,10 +379,10 @@
       }
     },
     "aws_mq_broker": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 689,
-      "gap": "Missing: configuration ID/revision proof #689. Deferred: replication primary/RAM/encryption until explicit cross-account disaster-recovery contract; users and broker URLs are not endpoints. See #721 per-dimension review in aws-semantic-decisions.json.",
+      "gap": "Implemented #689: complete subnet/SG common-VPC placement and explicit configuration ID/latest revision pair with compatible engine types; shared configuration identity retained. See aws.md#amazon-mq-network-and-configuration-689. #721 review records the historical baseline. Defaults, historical revisions, replication, credentials, configuration bodies and runtime connectivity remain excluded.",
       "review": {
         "issue": 721,
         "implementationCommit": "de2686ced20f383ee48ec65b1354b643e2fe659c",
@@ -434,10 +434,10 @@
       }
     },
     "aws_mq_configuration": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 689,
-      "gap": "Missing: inbound broker configuration identifier and revision #689. See #721 per-dimension review in aws-semantic-decisions.json.",
+      "gap": "Implemented #689: complete subnet/SG common-VPC placement and explicit configuration ID/latest revision pair with compatible engine types; shared configuration identity retained. See aws.md#amazon-mq-network-and-configuration-689. #721 review records the historical baseline. Defaults, historical revisions, replication, credentials, configuration bodies and runtime connectivity remain excluded.",
       "review": {
         "issue": 721,
         "implementationCommit": "de2686ced20f383ee48ec65b1354b643e2fe659c",

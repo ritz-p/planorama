@@ -1,0 +1,338 @@
+{
+  "format_version": "1.2",
+  "resource_changes": [
+    {
+      "address": "aws_vpc.main",
+      "mode": "managed",
+      "type": "aws_vpc",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "vpc-main"
+        }
+      }
+    },
+    {
+      "address": "aws_vpc.other",
+      "mode": "managed",
+      "type": "aws_vpc",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "vpc-other"
+        }
+      }
+    },
+    {
+      "address": "aws_subnet.a",
+      "mode": "managed",
+      "type": "aws_subnet",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "subnet-a",
+          "vpc_id": "vpc-main",
+          "availability_zone": "us-east-1a"
+        }
+      }
+    },
+    {
+      "address": "aws_subnet.b",
+      "mode": "managed",
+      "type": "aws_subnet",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "subnet-b",
+          "vpc_id": "vpc-main",
+          "availability_zone": "us-east-1b"
+        }
+      }
+    },
+    {
+      "address": "aws_security_group.broker",
+      "mode": "managed",
+      "type": "aws_security_group",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "sg-broker",
+          "vpc_id": "vpc-main"
+        }
+      }
+    },
+    {
+      "address": "aws_mq_configuration.shared",
+      "mode": "managed",
+      "type": "aws_mq_configuration",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "c-shared",
+          "latest_revision": 3,
+          "engine_type": "ActiveMQ",
+          "engine_version": "5.18",
+          "data": "PRIVATE_XML"
+        }
+      }
+    },
+    {
+      "address": "aws_mq_broker.primary",
+      "mode": "managed",
+      "type": "aws_mq_broker",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "b-primary",
+          "engine_type": "ActiveMQ",
+          "engine_version": "5.18",
+          "subnet_ids": [
+            "subnet-a",
+            "subnet-b"
+          ],
+          "security_groups": [
+            "sg-broker"
+          ],
+          "configuration": [
+            {
+              "id": "c-shared",
+              "revision": 3
+            }
+          ],
+          "user": [
+            {
+              "username": "PRIVATE_USER",
+              "password": "PRIVATE_PASSWORD"
+            }
+          ],
+          "instances": [
+            {
+              "endpoints": [
+                "PRIVATE_ENDPOINT"
+              ],
+              "console_url": "PRIVATE_CONSOLE"
+            }
+          ],
+          "ldap_server_metadata": [
+            {
+              "service_account_username": "PRIVATE_LDAP",
+              "service_account_password": "PRIVATE_LDAP_PASSWORD"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_mq_broker.secondary",
+      "mode": "managed",
+      "type": "aws_mq_broker",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "b-secondary",
+          "engine_type": "ActiveMQ",
+          "engine_version": "5.18",
+          "subnet_ids": [
+            "subnet-a",
+            "subnet-b"
+          ],
+          "security_groups": [
+            "sg-broker"
+          ],
+          "configuration": [
+            {
+              "id": "c-shared",
+              "revision": 3
+            }
+          ],
+          "user": [
+            {
+              "username": "PRIVATE_USER",
+              "password": "PRIVATE_PASSWORD"
+            }
+          ],
+          "instances": [
+            {
+              "endpoints": [
+                "PRIVATE_ENDPOINT"
+              ],
+              "console_url": "PRIVATE_CONSOLE"
+            }
+          ],
+          "ldap_server_metadata": [
+            {
+              "service_account_username": "PRIVATE_LDAP",
+              "service_account_password": "PRIVATE_LDAP_PASSWORD"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_vpc.main",
+          "mode": "managed",
+          "type": "aws_vpc",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_vpc.other",
+          "mode": "managed",
+          "type": "aws_vpc",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_subnet.a",
+          "mode": "managed",
+          "type": "aws_subnet",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_subnet.b",
+          "mode": "managed",
+          "type": "aws_subnet",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_security_group.broker",
+          "mode": "managed",
+          "type": "aws_security_group",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_mq_configuration.shared",
+          "mode": "managed",
+          "type": "aws_mq_configuration",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_mq_broker.primary",
+          "mode": "managed",
+          "type": "aws_mq_broker",
+          "provider_config_key": "aws",
+          "expressions": {
+            "subnet_ids": {
+              "references": [
+                "aws_subnet.a.id",
+                "aws_subnet.b.id"
+              ]
+            },
+            "security_groups": {
+              "references": [
+                "aws_security_group.broker.id"
+              ]
+            },
+            "configuration": [
+              {
+                "id": {
+                  "references": [
+                    "aws_mq_configuration.shared.id"
+                  ]
+                },
+                "revision": {
+                  "references": [
+                    "aws_mq_configuration.shared.latest_revision"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_mq_broker.secondary",
+          "mode": "managed",
+          "type": "aws_mq_broker",
+          "provider_config_key": "aws",
+          "expressions": {
+            "subnet_ids": {
+              "references": [
+                "aws_subnet.a.id",
+                "aws_subnet.b.id"
+              ]
+            },
+            "security_groups": {
+              "references": [
+                "aws_security_group.broker.id"
+              ]
+            },
+            "configuration": [
+              {
+                "id": {
+                  "references": [
+                    "aws_mq_configuration.shared.id"
+                  ]
+                },
+                "revision": {
+                  "references": [
+                    "aws_mq_configuration.shared.latest_revision"
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

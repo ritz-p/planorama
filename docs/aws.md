@@ -924,6 +924,43 @@ Its inputs explicitly bind resources to provider configurations with literal
 regions. A provider alias such as `archive` is not the region label; missing or
 dynamic provider-region metadata cannot produce a guessed panel.
 
+## Amazon MQ network and configuration (#689)
+
+`aws_mq_broker` remains spatial; `aws_mq_configuration` remains an independent
+logical resource, including when several brokers share it. Configured subnet and
+security-group rows require complete, nonempty sets of explicit references to
+current managed AWS `aws_subnet.id` and `aws_security_group.id` endpoints. Every
+known value must match, without duplicate, missing or unknown members. Each member
+must prove its own `vpc_id` reference to the same current managed AWS VPC. Only then
+is the broker placed in that VPC, never an arbitrary subnet or availability zone.
+Missing/default networking, incompatible VPCs or scopes leave placement unresolved
+with a diagnostic. Removing proof endpoints through filtering removes placement.
+
+The `MQ configuration` row verifies `configuration.id` against exactly one
+`aws_mq_configuration.id`, plus an explicit sibling `configuration.revision`
+reference to that same resource's `latest_revision`. Both revisions must be known,
+equal positive integers. Both engine types must be known and agree on `ActiveMQ`
+or `RabbitMQ`. The configuration block must be a single list element. Literal
+IDs/revisions, older revisions, unknown values, ambiguous references, wrong output
+fields, foreign providers, data resources and deleted/deposed endpoints cannot
+establish this dedicated link. Generic Terraform dependencies retain their meaning.
+
+All endpoints require compatible provider account/region evidence, using the same
+provider configuration when neither account is known. Named states retain separate
+identities; current configuration does not establish historical links. Actions,
+import/move provenance and coverage remain attached to each original resource.
+Users/passwords, LDAP settings, XML/Cuttlefish configuration bodies and broker
+endpoints are not rendered. Replication, default networking, historical revisions,
+runtime connectivity, access and health remain outside this implementation.
+
+Contracts were checked against the pinned AWS Provider 6.70.0 schema and official
+[broker documentation](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/website/docs/r/mq_broker.html.markdown)
+and [configuration documentation](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/website/docs/r/mq_configuration.html.markdown):
+`subnet_ids` and `security_groups` are string sets; `configuration` is a list with
+string `id` and numeric `revision`; configuration `latest_revision` is computed.
+The [fixture](../tests/fixtures/mq-plan.json), [SVG](../examples/mq.svg) and
+[HTML](../examples/mq.html) show two brokers sharing one configuration.
+
 ## MSK network and configuration (#688)
 
 Managed `aws_msk_cluster` and `aws_msk_serverless_cluster` retain independent
