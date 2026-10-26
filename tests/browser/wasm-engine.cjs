@@ -23,7 +23,9 @@ async function main() {
     assert.deepEqual(fs.readdirSync(temp).sort(), ['LICENSE', 'LICENSE-APACHE', 'LICENSE-MIT', 'THIRD-PARTY-NOTICES.txt', 'manifest.json', 'planorama.js', 'planorama_bg.wasm']);
     const manifest = JSON.parse(fs.readFileSync(join(temp, 'manifest.json')));
     assert.equal(manifest.version, version);
-    assert.equal(manifest.commit, execFileSync('git', ['-c', `safe.directory=${process.cwd()}`, 'rev-parse', 'HEAD'], {encoding: 'utf8'}).trim());
+    const revision = execFileSync('git', ['rev-parse', 'HEAD'], {encoding: 'utf8'}).trim();
+    const dirty = execFileSync('git', ['status', '--porcelain', '--untracked-files=normal'], {encoding: 'utf8'}).length > 0;
+    assert.equal(manifest.commit, revision + (dirty ? '-dirty' : ''));
     assert.equal(manifest.icon_artwork, false);
     assert.equal(manifest.memory.maximum_bytes, 4294967296);
     for (const [file, hash] of Object.entries(manifest.files)) {
@@ -50,6 +52,10 @@ async function main() {
           const result = JSON.parse(driver.execute_script('return window.engine.generate(arguments[0], arguments[1]);', json, JSON.stringify({format, icon_mode})));
           const native = execFileSync(binary, ['-', '-o', '-', '--format', format, '--icon-mode', 'service-name'], {input: json, encoding: 'utf8', maxBuffer: 32 * 1024 * 1024});
           assert.equal(result.content, native, `${fixture}/${format}/${icon_mode}`);
+          if (format === 'html') {
+            const metadata = JSON.parse(result.content.match(/<script id="viewer-generation" type="application\/json">(.*?)<\/script>/s)[1]);
+            assert.equal(metadata.generator.revision, manifest.commit);
+          }
           assert.doesNotMatch(result.content, /<symbol\b|<image\b|data:image\/|planorama-icon-(aws|terraform)/i);
         }
       }

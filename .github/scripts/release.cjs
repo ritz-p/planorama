@@ -28,7 +28,8 @@ function validateRequest(context, version, publishRequested = false) {
 }
 
 function smoke(binary, version, directory) {
-  if (run(binary, ['--version']).trim() !== `planorama ${version}`) throw new Error('Wrong binary version');
+  const revision = run('git', ['rev-parse', 'HEAD']).trim();
+  if (run(binary, ['--version']).trim() !== `planorama ${version} (revision: ${revision})`) throw new Error('Wrong binary version or revision');
   if (!run(binary, ['--help']).includes('Usage: planorama')) throw new Error('Missing help');
   for (const format of ['svg', 'html']) {
     const output = path.join(directory, `smoke.${format}`);

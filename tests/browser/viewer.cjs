@@ -218,7 +218,8 @@ class ViewerTests {
         this.find('#generation-info summary').click();
         this.assertIn('Full input view', this.find('#generation-details').text);
         this.assertIn('matches default', this.find('#generation-details').text);
-        this.assertIn('Revision: unavailable', this.find('#generation-details').text);
+        const revision = this.driver.execute_script("return JSON.parse(document.getElementById('viewer-generation').textContent).generator.revision");
+        this.assertIn(`Revision: ${revision || 'unavailable'}`, this.find('#generation-details').text);
         this.load('tests/fixtures/viewer-plan.json', '--changed-only', '--omit-relationship-legend');
         this.find('#generation-info summary').click();
         this.assertIn('Selected view', this.find('#generation-details').text);

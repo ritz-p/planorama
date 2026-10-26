@@ -1,5 +1,10 @@
 # ネイティブ CLI の配布
 
+Native release builds record the engine commit through the shared
+[build provenance rules](../CONTRIBUTING.md#build-provenance). Packaging smoke tests
+require `--version` to match the checkout SHA without a dirty suffix. Wasm builds
+embed their own engine revision in generated HTML using the same build script.
+
 素材を含まない Wasm エンジンの配布は、別の [Wasm engine release](browser.md#standalone-engine-without-artwork) workflow で行います。
 
 現時点で公開済みのリリースはありません。以下は初回公開後の配布仕様です。

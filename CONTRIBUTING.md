@@ -39,6 +39,25 @@ Compose は sccache 0.10.0 を compiler wrapper として使い、2 GiB 上限�
 `docker compose exec -T -e RUSTC_WRAPPER= dev cargo build --locked` です。
 削除・CI との役割分担・測定条件は [compiler cache](docs/build-performance.md#compiler-cache) を参照してください。
 
+## Build provenance
+
+`build.rs` records the engine checkout's full Git HEAD SHA for native and Wasm builds.
+Tracked modifications (including staged changes) or non-ignored untracked files add
+`-dirty`; such a build does not claim to exactly reproduce the clean commit.
+Ignored build outputs do not affect this marker. The marker does not fingerprint
+dirty contents. Git must identify this package directory as its repository root;
+source archives inside an unrelated checkout cannot inherit its revision.
+Missing Git, missing metadata, unborn HEAD or failed status checks yield unavailable
+revision without failing the build. No environment or hosting-site revision override
+is accepted. No paths, remotes, timestamps or input contents enter the metadata.
+
+Cargo rechecks provenance on every build using an intentionally absent build-script
+dependency (`build-provenance-always-recheck`); this also catches commits, staging
+and new untracked files. This may recompile the package, but dependencies stay cached.
+CLI `--version` and the existing HTML generation metadata use the same compiled
+value. SVG and graph/layout calculation do not use it. Identical provenance and
+generation settings produce identical metadata.
+
 ## 検証
 
 ```sh
