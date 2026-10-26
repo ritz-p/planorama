@@ -56,6 +56,47 @@ class ViewerTests {
         this.find('#generation-info summary').click();
         this.assertIn('Generation metadata unavailable', this.find('#generation-details').text);
     }
+    test_section_navigation_uses_translated_bounds_without_resource_selection() {
+        this.load('--state', 'one=tests/fixtures/viewer-plan.json', '--state', 'two=tests/fixtures/viewer-plan.json', '--omit-relationship-legend');
+        const result = this.driver.execute_script(`
+            const svg = document.querySelector('#viewport > svg');
+            const select = document.getElementById('section-destination');
+            const sections = [...svg.querySelectorAll('[data-architecture], [data-annotation-section]')]
+                .filter(el => !el.hasAttribute('data-architecture') || el.querySelector('[data-terraform-address]'))
+                .filter(el => { const b = el.getBBox(); return b.width > 0 && b.height > 0; });
+            return [...select.options].map((option, i) => {
+                select.value = option.value;
+                document.getElementById('section-go').click();
+                const bounds = sections[i].getBoundingClientRect();
+                const viewport = document.getElementById('viewport').getBoundingClientRect();
+                return { label: option.textContent, fits: bounds.left >= viewport.left - 1 &&
+                    bounds.right <= viewport.right + 1 && bounds.top >= viewport.top - 1 &&
+                    bounds.bottom <= viewport.bottom + 1 };
+            });
+        `);
+        this.assertTrue(result.length >= 4);
+        this.assertTrue(result.every(item => item.fits));
+        this.assertTrue(result.some(item => item.label.startsWith('one:')));
+        this.assertTrue(result.some(item => item.label.startsWith('two:')));
+        this.assertEqual(this.driver.find_elements(By.CSS_SELECTOR, '[data-viewer-selected]').length, 0);
+        this.assertEqual(this.find('#history-status').text, 'No selection history');
+        this.load('tests/fixtures/components-plan.json');
+        this.assertIn('Logical Components', this.find('#section-destination').text);
+        this.load('tests/fixtures/viewer-plan.json');
+        this.choose('aws_ecs_service.app');
+        this.find('#section-go').send_keys(Keys.ENTER);
+        this.assertEqual(this.driver.find_elements(By.CSS_SELECTOR, '[data-viewer-selected]').length, 0);
+        this.assertIn('Selection 1 of 1', this.find('#history-status').text);
+        this.driver.execute_script("document.querySelector('main').style.width = '600px'; document.querySelector('main').style.height = '400px'");
+        this.find('#section-go').click();
+        const resized = this.view_box();
+        this.find('#zoom-in').click();
+        this.assertNotEqual(this.view_box(), resized);
+        this.find('#section-go').click();
+        this.assertTrue(this.view_box().split(' ').every((value, i) => Math.abs(Number(value) - Number(resized.split(' ')[i])) < 0.001));
+        this.load('-', { input_plan: { format_version: '1.2', resource_changes: [] } });
+        this.assertFalse(this.find('#section-go').is_enabled());
+    }
     test_basic_inventory_search_references_and_offline_export() {
         for (const mode of ['service-name']) {
             this.load('tests/fixtures/aws-basic-plan.json', '--icon-mode', mode);

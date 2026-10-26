@@ -36,6 +36,29 @@
   adapters.register(impactView);
   search.addEventListener('input', () => adapters.reset());
   const { fit, zoom, updateView } = view;
+  const destinations = [...svg.querySelectorAll('[data-architecture], [data-annotation-section]')].filter(el => {
+    if (el.hasAttribute('data-architecture') && !el.querySelector('[data-terraform-address]')) return false;
+    const bounds = el.getBBox();
+    return bounds.width > 0 && bounds.height > 0;
+  });
+  const sectionSelect = byId('section-destination');
+  for (const [i, el] of destinations.entries()) {
+    const state = el.closest('[data-state-id]')?.dataset.stateId;
+    const name = el.dataset.annotationSection || 'Architecture';
+    const option = document.createElement('option');
+    option.value = String(i);
+    option.textContent = state ? `${state}: ${name}` : name;
+    sectionSelect.append(option);
+  }
+  sectionSelect.disabled = byId('section-go').disabled = destinations.length === 0;
+  byId('section-go').addEventListener('click', () => {
+    const destination = destinations[Number(sectionSelect.value)];
+    if (!destination) return;
+    coordinator.clear();
+    view.reveal(destination);
+    byId('section-status').textContent = `Showing ${sectionSelect.selectedOptions[0].textContent}`;
+    viewport.focus({ preventScroll: true });
+  });
   for (const r of resources) {
     const el = byId(r.id); el.setAttribute('data-viewer-target', 'true');
     el.setAttribute('tabindex', '0'); el.setAttribute('role', 'button'); el.setAttribute('aria-label', label(r));

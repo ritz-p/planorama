@@ -78,7 +78,16 @@ line patterns, bundles or routing. Clear selection restores their normal styling
 | Pan | Drag or scroll; arrow keys while the diagram has focus |
 | Zoom | +/− buttons, +/− keys in the diagram, or Ctrl/Command+scroll |
 | Fit entire view | Fit to view or F while the diagram has focus |
+| Jump to section | Choose Diagram section, then Go to section; Tab and Enter also work |
 | Export visible area | Export viewport SVG; Tab then Enter also works |
+
+Diagram section lists the nonempty Architecture, Logical Resources, Logical
+Components and Relationship Resources areas actually present in the generated
+view. Repeated sections include their state name. Go to section fits the measured
+area using its final state translation and current viewport size, clears selection
+and transient overlays, and retains selection history without adding an entry.
+It focuses the diagram for keyboard pan/zoom. Excluded content is never restored.
+The controls remain outside SVG exports and use no storage or network access.
 
 **Export viewport SVG** downloads a standalone `planorama-viewport.svg` using the
 current viewBox. The file intentionally crops content outside that viewport;
