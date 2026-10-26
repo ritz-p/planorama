@@ -44,3 +44,24 @@ test('NoSQL audit covers its exact managed denominator with six dimensions and p
   for(const key of ['placement','ownership','network','references','scope','summaries']) assert.ok(review[key]?.trim().length>0,type+': '+key);
  }
 });
+
+test('streaming audit covers its exact managed denominator and preserves bounded evidence',()=>{
+ const services=new Set('kafka kafkaconnect mq kinesis kinesisanalytics kinesisanalyticsv2 kinesisvideo firehose events scheduler pipes schemas sns sqs sfn swf mwaa'.split(' '));
+ const expected=read('tests/fixtures/aws-inventory/6.70.0.json').resources.filter(r=>services.has(r.service));
+ const entries=Object.entries(read('docs/aws-semantic-decisions.json').types).filter(([,d])=>d.review?.issue===721);
+ assert.equal(expected.length,55);
+ assert.deepEqual(entries.map(([type])=>type).sort(),expected.map(r=>r.type).sort());
+ for(const [type,{review,gap}] of entries) {
+  assert.equal(review.providerCommit,'5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f');
+  assert.match(review.implementationCommit,/^[a-f0-9]{40}$/);
+  assert.equal(review.officialDocumentation,expected.find(r=>r.type===type).documentation);
+  assert.deepEqual(Object.keys(review.shapes),review.fields);
+  for(const key of ['placement','ownership','network','references','scope','summaries']) assert.match(review[key],/^(Supported|Partial|Missing|Not applicable|Intentionally unsupported|Deferred):/,type+': '+key);
+  assert.match(gap,/#721/);
+ }
+ const decisions=Object.fromEntries(entries);
+ assert.deepEqual(decisions.aws_mq_broker.review.shapes.subnet_ids,[['set','string']]);
+ assert.deepEqual(decisions.aws_msk_serverless_cluster.review.shapes['vpc_config.subnet_ids'],['list',['set','string']]);
+ assert.match(decisions.aws_sns_topic_subscription.review.references,/SQS\/Lambda/);
+ assert.match(decisions.aws_sqs_queue.review.summaries,/Supported:.*#601/);
+});

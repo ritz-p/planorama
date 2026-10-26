@@ -154,49 +154,322 @@
       "status": "Basic-only",
       "priority": "P1",
       "issue": 688,
-      "gap": "Complete broker/client subnet and SG evidence, configuration and SCRAM secret references missing; keep configuration logical; no broker/endpoint synthesis."
+      "gap": "Missing: configuration ARN/revision #688; topic/channel/policy inbound #754. Deferred: logs/encryption/CA references until separate enabled/type contracts; no bootstrap-server inference. See #721 per-dimension review in aws-semantic-decisions.json.",
+      "review": {
+        "issue": 721,
+        "implementationCommit": "de2686ced20f383ee48ec65b1354b643e2fe659c",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "broker_node_group_info.client_subnets",
+          "broker_node_group_info.security_groups",
+          "configuration_info.arn",
+          "configuration_info.revision",
+          "encryption_info.encryption_at_rest_kms_key_arn"
+        ],
+        "placement": "Supported: retain Spatial presentation for this independent aws_msk_cluster identity.",
+        "ownership": "Not applicable: independent service/configuration identity; no verified embedding contract.",
+        "network": "Missing: complete subnet/SG evidence and common VPC #688; multiple subnets do not imply one AZ.",
+        "references": "Missing: configuration ARN/revision #688; topic/channel/policy inbound #754. Deferred: logs/encryption/CA references until separate enabled/type contracts; no bootstrap-server inference.",
+        "scope": "Partial: Regional (conditional) eligibility, not inferred account ownership. Basic fallback clears account; managed region requires provider/static override evidence. Unknown, historical and data identities retain their own fallback; no ARN-derived scope.",
+        "summaries": "Intentionally unsupported: broker endpoints/authentication details; deferred encryption summary until key and transit modes are separately specified.",
+        "officialDocumentation": "website/docs/r/msk_cluster.html.markdown",
+        "shapes": {
+          "broker_node_group_info.client_subnets": [
+            "list",
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "broker_node_group_info.security_groups": [
+            "list",
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "configuration_info.arn": [
+            "list",
+            "string"
+          ],
+          "configuration_info.revision": [
+            "list",
+            "number"
+          ],
+          "encryption_info.encryption_at_rest_kms_key_arn": [
+            "list",
+            "string"
+          ]
+        }
+      }
     },
     "aws_msk_serverless_cluster": {
       "status": "Basic-only",
       "priority": "P1",
       "issue": 688,
-      "gap": "Complete broker/client subnet and SG evidence, configuration and SCRAM secret references missing; keep configuration logical; no broker/endpoint synthesis."
+      "gap": "Missing: network endpoint references #688; no configuration_info contract exists for this type. See #721 per-dimension review in aws-semantic-decisions.json.",
+      "review": {
+        "issue": 721,
+        "implementationCommit": "de2686ced20f383ee48ec65b1354b643e2fe659c",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "vpc_config.subnet_ids",
+          "vpc_config.security_group_ids"
+        ],
+        "placement": "Supported: retain Spatial presentation for this independent aws_msk_serverless_cluster identity.",
+        "ownership": "Not applicable: independent service/configuration identity; no verified embedding contract.",
+        "network": "Missing: vpc_config is a list of configurations; preserve complete per-configuration network context and reject unsupported multiplicity #688.",
+        "references": "Missing: network endpoint references #688; no configuration_info contract exists for this type.",
+        "scope": "Partial: Regional (conditional) eligibility, not inferred account ownership. Basic fallback clears account; managed region requires provider/static override evidence. Unknown, historical and data identities retain their own fallback; no ARN-derived scope.",
+        "summaries": "Intentionally unsupported: bootstrap/auth data; capacity cannot be borrowed from provisioned clusters.",
+        "officialDocumentation": "website/docs/r/msk_serverless_cluster.html.markdown",
+        "shapes": {
+          "vpc_config.subnet_ids": [
+            "list",
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "vpc_config.security_group_ids": [
+            "list",
+            [
+              "set",
+              "string"
+            ]
+          ]
+        }
+      }
     },
     "aws_msk_configuration": {
       "status": "Basic-only",
       "priority": "P1",
       "issue": 688,
-      "gap": "Complete broker/client subnet and SG evidence, configuration and SCRAM secret references missing; keep configuration logical; no broker/endpoint synthesis."
+      "gap": "Missing: inbound configuration ARN/revision proof #688. See #721 per-dimension review in aws-semantic-decisions.json.",
+      "review": {
+        "issue": 721,
+        "implementationCommit": "de2686ced20f383ee48ec65b1354b643e2fe659c",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "arn",
+          "latest_revision"
+        ],
+        "placement": "Supported: retain Logical presentation for this independent aws_msk_configuration identity.",
+        "ownership": "Not applicable: shared configuration is independent.",
+        "network": "Not applicable: service configuration does not establish VPC containment.",
+        "references": "Missing: inbound configuration ARN/revision proof #688.",
+        "scope": "Partial: Regional (conditional) eligibility, not inferred account ownership. Basic fallback clears account; managed region requires provider/static override evidence. Unknown, historical and data identities retain their own fallback; no ARN-derived scope.",
+        "summaries": "Intentionally unsupported: server_properties; Kafka-version summary deferred until compatibility proof needs it.",
+        "officialDocumentation": "website/docs/r/msk_configuration.html.markdown",
+        "shapes": {
+          "arn": [
+            "string"
+          ],
+          "latest_revision": [
+            "number"
+          ]
+        }
+      }
     },
     "aws_msk_scram_secret_association": {
       "status": "Basic-only",
       "priority": "P1",
       "issue": 688,
-      "gap": "Complete broker/client subnet and SG evidence, configuration and SCRAM secret references missing; keep configuration logical; no broker/endpoint synthesis."
+      "gap": "Missing: explicit cluster and complete secret ARN set #688. See #721 per-dimension review in aws-semantic-decisions.json.",
+      "review": {
+        "issue": 721,
+        "implementationCommit": "de2686ced20f383ee48ec65b1354b643e2fe659c",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "cluster_arn",
+          "secret_arn_list"
+        ],
+        "placement": "Supported: retain Logical presentation for this independent aws_msk_scram_secret_association identity.",
+        "ownership": "Not applicable: shared Secrets Manager resources remain independent; association identity retained.",
+        "network": "Not applicable: secret association does not own cluster network.",
+        "references": "Missing: explicit cluster and complete secret ARN set #688.",
+        "scope": "Partial: Regional (conditional) eligibility, not inferred account ownership. Basic fallback clears account; managed region requires provider/static override evidence. Unknown, historical and data identities retain their own fallback; no ARN-derived scope.",
+        "summaries": "Intentionally unsupported: secret values, passwords and authentication success.",
+        "officialDocumentation": "website/docs/r/msk_scram_secret_association.html.markdown",
+        "shapes": {
+          "cluster_arn": [
+            "string"
+          ],
+          "secret_arn_list": [
+            [
+              "set",
+              "string"
+            ]
+          ]
+        }
+      }
     },
     "aws_msk_single_scram_secret_association": {
       "status": "Basic-only",
       "priority": "P1",
       "issue": 688,
-      "gap": "Complete broker/client subnet and SG evidence, configuration and SCRAM secret references missing; keep configuration logical; no broker/endpoint synthesis."
+      "gap": "Missing: explicit cluster and single secret ARN #688; not an alias of the collection resource. See #721 per-dimension review in aws-semantic-decisions.json.",
+      "review": {
+        "issue": 721,
+        "implementationCommit": "de2686ced20f383ee48ec65b1354b643e2fe659c",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "cluster_arn",
+          "secret_arn"
+        ],
+        "placement": "Supported: retain Logical presentation for this independent aws_msk_single_scram_secret_association identity.",
+        "ownership": "Not applicable: retain separate association and shared secret identities.",
+        "network": "Not applicable: service configuration does not establish VPC containment.",
+        "references": "Missing: explicit cluster and single secret ARN #688; not an alias of the collection resource.",
+        "scope": "Partial: Regional (conditional) eligibility, not inferred account ownership. Basic fallback clears account; managed region requires provider/static override evidence. Unknown, historical and data identities retain their own fallback; no ARN-derived scope.",
+        "summaries": "Intentionally unsupported: secret contents/authentication claims.",
+        "officialDocumentation": "website/docs/r/msk_single_scram_secret_association.html.markdown",
+        "shapes": {
+          "cluster_arn": [
+            "string"
+          ],
+          "secret_arn": [
+            "string"
+          ]
+        }
+      }
     },
     "aws_msk_vpc_connection": {
       "status": "Basic-only",
       "priority": "P1",
       "issue": 688,
-      "gap": "Complete broker/client subnet and SG evidence, configuration and SCRAM secret references missing; keep configuration logical; no broker/endpoint synthesis."
+      "gap": "Missing: target cluster plus client-side VPC/subnet/SG references #688. See #721 per-dimension review in aws-semantic-decisions.json.",
+      "review": {
+        "issue": 721,
+        "implementationCommit": "de2686ced20f383ee48ec65b1354b643e2fe659c",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "target_cluster_arn",
+          "vpc_id",
+          "client_subnets",
+          "security_groups"
+        ],
+        "placement": "Supported: retain Logical presentation for this independent aws_msk_vpc_connection identity.",
+        "ownership": "Not applicable: target cluster is not owner of client VPC.",
+        "network": "Missing: verify client network separately from cluster placement; cross-account target must not supply local scope #688.",
+        "references": "Missing: target cluster plus client-side VPC/subnet/SG references #688.",
+        "scope": "Partial: Regional (conditional) eligibility, not inferred account ownership. Basic fallback clears account; managed region requires provider/static override evidence. Unknown, historical and data identities retain their own fallback; no ARN-derived scope.",
+        "summaries": "Intentionally unsupported: authentication values, endpoints and live connectivity claims.",
+        "officialDocumentation": "website/docs/r/msk_vpc_connection.html.markdown",
+        "shapes": {
+          "target_cluster_arn": [
+            "string"
+          ],
+          "vpc_id": [
+            "string"
+          ],
+          "client_subnets": [
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "security_groups": [
+            [
+              "set",
+              "string"
+            ]
+          ]
+        }
+      }
     },
     "aws_mq_broker": {
       "status": "Basic-only",
       "priority": "P1",
       "issue": 689,
-      "gap": "Broker subnet/SG and configuration ownership missing; retain broker card and logical configuration; do not retain users/passwords."
+      "gap": "Missing: configuration ID/revision proof #689. Deferred: replication primary/RAM/encryption until explicit cross-account disaster-recovery contract; users and broker URLs are not endpoints. See #721 per-dimension review in aws-semantic-decisions.json.",
+      "review": {
+        "issue": 721,
+        "implementationCommit": "de2686ced20f383ee48ec65b1354b643e2fe659c",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "subnet_ids",
+          "security_groups",
+          "configuration.id",
+          "configuration.revision",
+          "data_replication_primary_broker_arn",
+          "encryption_options.kms_key_id"
+        ],
+        "placement": "Supported: retain Spatial presentation for this independent aws_mq_broker identity.",
+        "ownership": "Not applicable: independent service/configuration identity; no verified embedding contract.",
+        "network": "Missing: complete subnet/SG common VPC #689; no arbitrary AZ owner.",
+        "references": "Missing: configuration ID/revision proof #689. Deferred: replication primary/RAM/encryption until explicit cross-account disaster-recovery contract; users and broker URLs are not endpoints.",
+        "scope": "Partial: Regional (conditional) eligibility, not inferred account ownership. Basic fallback clears account; managed region requires provider/static override evidence. Unknown, historical and data identities retain their own fallback; no ARN-derived scope.",
+        "summaries": "Intentionally unsupported: user passwords, LDAP data, XML/Cuttlefish and broker endpoints; engine summaries deferred until revision compatibility is established.",
+        "officialDocumentation": "website/docs/r/mq_broker.html.markdown",
+        "shapes": {
+          "subnet_ids": [
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "security_groups": [
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "configuration.id": [
+            "list",
+            "string"
+          ],
+          "configuration.revision": [
+            "list",
+            "number"
+          ],
+          "data_replication_primary_broker_arn": [
+            "string"
+          ],
+          "encryption_options.kms_key_id": [
+            "list",
+            "string"
+          ]
+        }
+      }
     },
     "aws_mq_configuration": {
       "status": "Basic-only",
       "priority": "P1",
       "issue": 689,
-      "gap": "Broker subnet/SG and configuration ownership missing; retain broker card and logical configuration; do not retain users/passwords."
+      "gap": "Missing: inbound broker configuration identifier and revision #689. See #721 per-dimension review in aws-semantic-decisions.json.",
+      "review": {
+        "issue": 721,
+        "implementationCommit": "de2686ced20f383ee48ec65b1354b643e2fe659c",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "id",
+          "latest_revision",
+          "engine_type",
+          "engine_version"
+        ],
+        "placement": "Supported: retain Logical presentation for this independent aws_mq_configuration identity.",
+        "ownership": "Not applicable: shared configuration retains independent identity.",
+        "network": "Not applicable: service configuration does not establish VPC containment.",
+        "references": "Missing: inbound broker configuration identifier and revision #689.",
+        "scope": "Partial: Regional (conditional) eligibility, not inferred account ownership. Basic fallback clears account; managed region requires provider/static override evidence. Unknown, historical and data identities retain their own fallback; no ARN-derived scope.",
+        "summaries": "Intentionally unsupported: XML/Cuttlefish configuration data; engine/version metadata used only for proof if required.",
+        "officialDocumentation": "website/docs/r/mq_configuration.html.markdown",
+        "shapes": {
+          "id": [
+            "string"
+          ],
+          "latest_revision": [
+            "number"
+          ],
+          "engine_type": [
+            "string"
+          ],
+          "engine_version": [
+            "string"
+          ]
+        }
+      }
     },
     "aws_dynamodb_table": {
       "status": "Partial",
@@ -830,22 +1103,124 @@
       "gap": "Scope and protected-resource references implemented under strict evidence; rule/policy evaluation and runtime protection excluded."
     },
     "aws_cloudwatch_event_bus": {
-      "status": "Partial (bounded capabilities implemented)",
-      "priority": "P3",
-      "issue": 429,
-      "gap": "Bus/rule and verified target association implemented; Scheduler/Pipes are separate #692; no event pattern interpretation."
+      "status": "Partial",
+      "priority": "P1",
+      "issue": 748,
+      "gap": "Partial: existing target bus endpoint. Rule/policy/archive inbound links in #748. Deferred: bus DLQ/KMS until delivery-failure/encryption configuration extension; partner source name alone is not an endpoint. See #721 per-dimension review in aws-semantic-decisions.json.",
+      "review": {
+        "issue": 721,
+        "implementationCommit": "de2686ced20f383ee48ec65b1354b643e2fe659c",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "name",
+          "event_source_name",
+          "dead_letter_config.arn",
+          "kms_key_identifier"
+        ],
+        "placement": "Supported: retain Spatial presentation for this independent aws_cloudwatch_event_bus identity.",
+        "ownership": "Not applicable: independent service/configuration identity; no verified embedding contract.",
+        "network": "Not applicable: service configuration does not establish VPC containment.",
+        "references": "Partial: existing target bus endpoint. Rule/policy/archive inbound links in #748. Deferred: bus DLQ/KMS until delivery-failure/encryption configuration extension; partner source name alone is not an endpoint.",
+        "scope": "Partial: Regional (conditional) eligibility, not inferred account ownership. Existing classified resource retains verified provider account and region evidence. Unknown, historical and data identities retain their own fallback; no ARN-derived scope.",
+        "summaries": "Intentionally unsupported: event patterns/policy interpretation; deferred log-level summary until operational configuration is explicitly requested.",
+        "officialDocumentation": "website/docs/r/cloudwatch_event_bus.html.markdown",
+        "shapes": {
+          "name": [
+            "string"
+          ],
+          "event_source_name": [
+            "string"
+          ],
+          "dead_letter_config.arn": [
+            "list",
+            "string"
+          ],
+          "kms_key_identifier": [
+            "string"
+          ]
+        }
+      }
     },
     "aws_cloudwatch_event_rule": {
-      "status": "Partial (bounded capabilities implemented)",
-      "priority": "P3",
-      "issue": 429,
-      "gap": "Bus/rule and verified target association implemented; Scheduler/Pipes are separate #692; no event pattern interpretation."
+      "status": "Partial",
+      "priority": "P1",
+      "issue": 748,
+      "gap": "Partial: target-to-rule identity exists. Missing: rule-to-bus and role references. Omitted default bus is not an entity. See #721 per-dimension review in aws-semantic-decisions.json.",
+      "review": {
+        "issue": 721,
+        "implementationCommit": "de2686ced20f383ee48ec65b1354b643e2fe659c",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "event_bus_name",
+          "role_arn",
+          "is_enabled",
+          "state"
+        ],
+        "placement": "Supported: retain Spatial presentation for this independent aws_cloudwatch_event_rule identity.",
+        "ownership": "Not applicable: independent service/configuration identity; no verified embedding contract.",
+        "network": "Not applicable: service configuration does not establish VPC containment.",
+        "references": "Partial: target-to-rule identity exists. Missing: rule-to-bus and role references. Omitted default bus is not an entity.",
+        "scope": "Partial: Regional (conditional) eligibility, not inferred account ownership. Existing classified resource retains verified provider account and region evidence. Unknown, historical and data identities retain their own fallback; no ARN-derived scope.",
+        "summaries": "Deferred: state summary until deprecated is_enabled versus state precedence is specified; schedule expressions/patterns are not interpreted.",
+        "officialDocumentation": "website/docs/r/cloudwatch_event_rule.html.markdown",
+        "shapes": {
+          "event_bus_name": [
+            "string"
+          ],
+          "role_arn": [
+            "string"
+          ],
+          "is_enabled": [
+            "bool"
+          ],
+          "state": [
+            "string"
+          ]
+        }
+      }
     },
     "aws_cloudwatch_event_target": {
-      "status": "Partial (bounded capabilities implemented)",
-      "priority": "P3",
-      "issue": 429,
-      "gap": "Bus/rule and verified target association implemented; Scheduler/Pipes are separate #692; no event pattern interpretation."
+      "status": "Partial",
+      "priority": "P1",
+      "issue": 748,
+      "gap": "Partial: rule/bus plus SQS/Lambda target references and configured edge exist. Missing: role/DLQ (#748). Other target families deferred until their discriminated nested parameters have endpoint-specific contracts. See #721 per-dimension review in aws-semantic-decisions.json.",
+      "review": {
+        "issue": 721,
+        "implementationCommit": "de2686ced20f383ee48ec65b1354b643e2fe659c",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "rule",
+          "arn",
+          "event_bus_name",
+          "role_arn",
+          "dead_letter_config.arn"
+        ],
+        "placement": "Supported: retain Logical presentation for this independent aws_cloudwatch_event_target identity.",
+        "ownership": "Supported: logical association retains action/provenance, parallel target identity and one coverage record.",
+        "network": "Not applicable: ECS target subnets describe tasks, not placement of this rule target.",
+        "references": "Partial: rule/bus plus SQS/Lambda target references and configured edge exist. Missing: role/DLQ (#748). Other target families deferred until their discriminated nested parameters have endpoint-specific contracts.",
+        "scope": "Partial: Regional (conditional) eligibility, not inferred account ownership. Existing classified resource retains verified provider account and region evidence. Unknown, historical and data identities retain their own fallback; no ARN-derived scope.",
+        "summaries": "Intentionally unsupported: input/transforms/SQL/commands; no delivery guarantee.",
+        "officialDocumentation": "website/docs/r/cloudwatch_event_target.html.markdown",
+        "shapes": {
+          "rule": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "event_bus_name": [
+            "string"
+          ],
+          "role_arn": [
+            "string"
+          ],
+          "dead_letter_config.arn": [
+            "list",
+            "string"
+          ]
+        }
+      }
     },
     "aws_lambda_event_source_mapping": {
       "status": "Partial (bounded capabilities implemented)",
@@ -854,16 +1229,75 @@
       "gap": "Verified event-source/function lowering implemented; no runtime delivery/ordering inference."
     },
     "aws_sns_topic_subscription": {
-      "status": "Partial (bounded capabilities implemented)",
+      "status": "Partial",
       "priority": "P3",
-      "issue": 393,
-      "gap": "Verified topic/subscriber lowering implemented; unsupported protocol endpoints remain generic references."
+      "gap": "Partial: SQS/Lambda protocol-checked endpoints/edge. Deferred Firehose protocol+role until #756 delivery-stream contract; application protocol identifies platform endpoint (not application). Email/SMS/HTTP endpoint reconstruction intentionally unsupported. See #721 per-dimension review in aws-semantic-decisions.json.",
+      "review": {
+        "issue": 721,
+        "implementationCommit": "de2686ced20f383ee48ec65b1354b643e2fe659c",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "topic_arn",
+          "endpoint",
+          "protocol",
+          "subscription_role_arn"
+        ],
+        "placement": "Supported: retain Logical presentation for this independent aws_sns_topic_subscription identity.",
+        "ownership": "Supported: association identity/provenance retained once; no embedded subscriber.",
+        "network": "Not applicable: subscription does not impose endpoint network scope.",
+        "references": "Partial: SQS/Lambda protocol-checked endpoints/edge. Deferred Firehose protocol+role until #756 delivery-stream contract; application protocol identifies platform endpoint (not application). Email/SMS/HTTP endpoint reconstruction intentionally unsupported.",
+        "scope": "Partial: Regional (conditional) eligibility, not inferred account ownership. Existing classified resource retains verified provider account and region evidence. Unknown, historical and data identities retain their own fallback; no ARN-derived scope.",
+        "summaries": "Intentionally unsupported: endpoint personal data, filter/redrive/replay policies or delivery guarantees.",
+        "officialDocumentation": "website/docs/r/sns_topic_subscription.html.markdown",
+        "shapes": {
+          "topic_arn": [
+            "string"
+          ],
+          "endpoint": [
+            "string"
+          ],
+          "protocol": [
+            "string"
+          ],
+          "subscription_role_arn": [
+            "string"
+          ]
+        }
+      }
     },
     "aws_sqs_queue": {
-      "status": "Partial (bounded capabilities implemented)",
-      "priority": "P3",
-      "issue": 601,
-      "gap": "At-rest encryption summary implemented with explicit known-state rules; no permission or runtime security claim."
+      "status": "Partial",
+      "priority": "P1",
+      "issue": 753,
+      "gap": "Partial: KMS link plus messaging/S3 endpoints supported; policy helpers #753. Redrive JSON interpretation intentionally unsupported. See #721 per-dimension review in aws-semantic-decisions.json.",
+      "review": {
+        "issue": 721,
+        "implementationCommit": "de2686ced20f383ee48ec65b1354b643e2fe659c",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "kms_master_key_id",
+          "sqs_managed_sse_enabled",
+          "redrive_policy"
+        ],
+        "placement": "Supported: retain Spatial presentation for this independent aws_sqs_queue identity.",
+        "ownership": "Not applicable: independent service/configuration identity; no verified embedding contract.",
+        "network": "Not applicable: service configuration does not establish VPC containment.",
+        "references": "Partial: KMS link plus messaging/S3 endpoints supported; policy helpers #753. Redrive JSON interpretation intentionally unsupported.",
+        "scope": "Partial: Regional (conditional) eligibility, not inferred account ownership. Existing classified resource retains verified provider account and region evidence. Unknown, historical and data identities retain their own fallback; no ARN-derived scope.",
+        "summaries": "Supported: existing SQS encryption allowlist (#601), known/unknown states only. Queue content/policies unsupported; capacity/retention deferred until use case.",
+        "officialDocumentation": "website/docs/r/sqs_queue.html.markdown",
+        "shapes": {
+          "kms_master_key_id": [
+            "string"
+          ],
+          "sqs_managed_sse_enabled": [
+            "bool"
+          ],
+          "redrive_policy": [
+            "string"
+          ]
+        }
+      }
     },
     "aws_account_alternate_contact": {
       "status": "Basic-only; value display intentionally unsupported",
@@ -1274,19 +1708,111 @@
       "status": "Basic-only",
       "priority": "P1",
       "issue": 692,
-      "gap": "Schedule group and target/role, or Pipe source/enrichment/target references missing; payloads and universal-target interpretation excluded."
+      "gap": "Missing: explicit group, allowlisted target and role #692. Deferred KMS/DLQ until initial target contract is stable; universal-target service ARNs do not identify resources. See #721 per-dimension review in aws-semantic-decisions.json.",
+      "review": {
+        "issue": 721,
+        "implementationCommit": "de2686ced20f383ee48ec65b1354b643e2fe659c",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "group_name",
+          "target.arn",
+          "target.role_arn",
+          "kms_key_arn",
+          "target.dead_letter_config.arn"
+        ],
+        "placement": "Supported: retain Logical presentation for this independent aws_scheduler_schedule identity.",
+        "ownership": "Missing: explicit group membership #692 without merging schedule identity.",
+        "network": "Not applicable: target ECS network is not schedule containment.",
+        "references": "Missing: explicit group, allowlisted target and role #692. Deferred KMS/DLQ until initial target contract is stable; universal-target service ARNs do not identify resources.",
+        "scope": "Partial: Regional (conditional) eligibility, not inferred account ownership. Basic fallback clears account; managed region requires provider/static override evidence. Unknown, historical and data identities retain their own fallback; no ARN-derived scope.",
+        "summaries": "Intentionally unsupported: target.input; schedule/timezone summary deferred until recurrence/one-shot semantics and unknowns are allowlisted.",
+        "officialDocumentation": "website/docs/r/scheduler_schedule.html.markdown",
+        "shapes": {
+          "group_name": [
+            "string"
+          ],
+          "target.arn": [
+            "list",
+            "string"
+          ],
+          "target.role_arn": [
+            "list",
+            "string"
+          ],
+          "kms_key_arn": [
+            "string"
+          ],
+          "target.dead_letter_config.arn": [
+            "list",
+            "list",
+            "string"
+          ]
+        }
+      }
     },
     "aws_scheduler_schedule_group": {
       "status": "Basic-only",
       "priority": "P1",
       "issue": 692,
-      "gap": "Schedule group and target/role, or Pipe source/enrichment/target references missing; payloads and universal-target interpretation excluded."
+      "gap": "Missing: inbound schedule.group_name membership #692; omitted default name supplies no identity. See #721 per-dimension review in aws-semantic-decisions.json.",
+      "review": {
+        "issue": 721,
+        "implementationCommit": "de2686ced20f383ee48ec65b1354b643e2fe659c",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "name"
+        ],
+        "placement": "Supported: retain Logical presentation for this independent aws_scheduler_schedule_group identity.",
+        "ownership": "Missing: proven group membership #692; retain independent schedule and group identities.",
+        "network": "Not applicable: service configuration does not establish VPC containment.",
+        "references": "Missing: inbound schedule.group_name membership #692; omitted default name supplies no identity.",
+        "scope": "Partial: Regional (conditional) eligibility, not inferred account ownership. Basic fallback clears account; managed region requires provider/static override evidence. Unknown, historical and data identities retain their own fallback; no ARN-derived scope.",
+        "summaries": "Not applicable: name/identity already displayed, no other useful safe summary.",
+        "officialDocumentation": "website/docs/r/scheduler_schedule_group.html.markdown",
+        "shapes": {
+          "name": [
+            "string"
+          ]
+        }
+      }
     },
     "aws_pipes_pipe": {
       "status": "Basic-only",
       "priority": "P1",
       "issue": 692,
-      "gap": "Schedule group and target/role, or Pipe source/enrichment/target references missing; payloads and universal-target interpretation excluded."
+      "gap": "Missing: separately labeled allowlisted source/enrichment/target/role #692. Unsupported endpoints retain generic evidence. See #721 per-dimension review in aws-semantic-decisions.json.",
+      "review": {
+        "issue": 721,
+        "implementationCommit": "de2686ced20f383ee48ec65b1354b643e2fe659c",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "source",
+          "enrichment",
+          "target",
+          "role_arn"
+        ],
+        "placement": "Missing: review architecture-bearing pipe under #692 while preserving independent identity.",
+        "ownership": "Not applicable: source/target resources remain independent.",
+        "network": "Not applicable: source Kafka VPC or target ECS task network does not contain the pipe.",
+        "references": "Missing: separately labeled allowlisted source/enrichment/target/role #692. Unsupported endpoints retain generic evidence.",
+        "scope": "Partial: Regional (conditional) eligibility, not inferred account ownership. Basic fallback clears account; managed region requires provider/static override evidence. Unknown, historical and data identities retain their own fallback; no ARN-derived scope.",
+        "summaries": "Intentionally unsupported: filters/input templates/credentials/universal targets; no runtime delivery.",
+        "officialDocumentation": "website/docs/r/pipes_pipe.html.markdown",
+        "shapes": {
+          "source": [
+            "string"
+          ],
+          "enrichment": [
+            "string"
+          ],
+          "target": [
+            "string"
+          ],
+          "role_arn": [
+            "string"
+          ]
+        }
+      }
     },
     "aws_networkfirewall_firewall": {
       "status": "Basic-only",
@@ -2232,6 +2758,1394 @@
             "list",
             "list",
             "list",
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_cloudwatch_event_api_destination": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 748,
+      "gap": "Missing: connection_arn -> connection.arn; URL does not identify a Terraform endpoint. See #721 per-dimension review in aws-semantic-decisions.json.",
+      "review": {
+        "issue": 721,
+        "implementationCommit": "de2686ced20f383ee48ec65b1354b643e2fe659c",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "connection_arn",
+          "invocation_endpoint"
+        ],
+        "placement": "Missing: review independent API destination card under #748; current Logical default retained by this audit.",
+        "ownership": "Not applicable: shared connection must not be embedded.",
+        "network": "Not applicable: service configuration does not establish VPC containment.",
+        "references": "Missing: connection_arn -> connection.arn; URL does not identify a Terraform endpoint.",
+        "scope": "Partial: Regional (conditional) eligibility, not inferred account ownership. Basic fallback clears account; managed region requires provider/static override evidence. Unknown, historical and data identities retain their own fallback; no ARN-derived scope.",
+        "summaries": "Intentionally unsupported: invocation URL and HTTP/auth data; a connection link conveys the useful configuration without exporting request details.",
+        "officialDocumentation": "website/docs/r/cloudwatch_event_api_destination.html.markdown",
+        "shapes": {
+          "connection_arn": [
+            "string"
+          ],
+          "invocation_endpoint": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_cloudwatch_event_archive": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 748,
+      "gap": "Missing: event_source_arn -> bus.arn. Deferred: KMS identifier variants until encryption allowlist; aliases must not be mistaken for keys. See #721 per-dimension review in aws-semantic-decisions.json.",
+      "review": {
+        "issue": 721,
+        "implementationCommit": "de2686ced20f383ee48ec65b1354b643e2fe659c",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "event_source_arn",
+          "kms_key_identifier"
+        ],
+        "placement": "Supported: retain Logical presentation for this independent aws_cloudwatch_event_archive identity.",
+        "ownership": "Missing: source-bus association under #748, not embedded archive content.",
+        "network": "Not applicable: service configuration does not establish VPC containment.",
+        "references": "Missing: event_source_arn -> bus.arn. Deferred: KMS identifier variants until encryption allowlist; aliases must not be mistaken for keys.",
+        "scope": "Partial: Regional (conditional) eligibility, not inferred account ownership. Basic fallback clears account; managed region requires provider/static override evidence. Unknown, historical and data identities retain their own fallback; no ARN-derived scope.",
+        "summaries": "Deferred: retention summary until finite versus indefinite values and unknown masks have a tested allowlist; event patterns are intentionally unsupported.",
+        "officialDocumentation": "website/docs/r/cloudwatch_event_archive.html.markdown",
+        "shapes": {
+          "event_source_arn": [
+            "string"
+          ],
+          "kms_key_identifier": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_cloudwatch_event_bus_policy": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 748,
+      "gap": "Missing: explicit bus name ownership navigation; default omission creates no bus. See #721 per-dimension review in aws-semantic-decisions.json.",
+      "review": {
+        "issue": 721,
+        "implementationCommit": "de2686ced20f383ee48ec65b1354b643e2fe659c",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "event_bus_name",
+          "policy"
+        ],
+        "placement": "Supported: retain Logical presentation for this independent aws_cloudwatch_event_bus_policy identity.",
+        "ownership": "Missing: policy-to-bus association in #748; retain policy identity.",
+        "network": "Not applicable: service configuration does not establish VPC containment.",
+        "references": "Missing: explicit bus name ownership navigation; default omission creates no bus.",
+        "scope": "Partial: Regional (conditional) eligibility, not inferred account ownership. Basic fallback clears account; managed region requires provider/static override evidence. Unknown, historical and data identities retain their own fallback; no ARN-derived scope.",
+        "summaries": "Intentionally unsupported: policy JSON, principals and effective permission inference.",
+        "officialDocumentation": "website/docs/r/cloudwatch_event_bus_policy.html.markdown",
+        "shapes": {
+          "event_bus_name": [
+            "string"
+          ],
+          "policy": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_cloudwatch_event_connection": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 748,
+      "gap": "Missing: inbound API destination link in #748. Deferred: two distinct VPC Lattice invocation/authentication endpoints until #716 defines resource-configuration evidence; KMS until encryption contract. See #721 per-dimension review in aws-semantic-decisions.json.",
+      "review": {
+        "issue": 721,
+        "implementationCommit": "de2686ced20f383ee48ec65b1354b643e2fe659c",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "invocation_connectivity_parameters.resource_parameters.resource_configuration_arn",
+          "auth_parameters.connectivity_parameters.resource_parameters.resource_configuration_arn",
+          "kms_key_identifier"
+        ],
+        "placement": "Supported: retain Logical presentation for this independent aws_cloudwatch_event_connection identity.",
+        "ownership": "Not applicable: connection can be shared by destinations; do not embed credentials.",
+        "network": "Not applicable: VPC Lattice resource configuration is a service access reference, not connection subnet ownership.",
+        "references": "Missing: inbound API destination link in #748. Deferred: two distinct VPC Lattice invocation/authentication endpoints until #716 defines resource-configuration evidence; KMS until encryption contract.",
+        "scope": "Partial: Regional (conditional) eligibility, not inferred account ownership. Basic fallback clears account; managed region requires provider/static override evidence. Unknown, historical and data identities retain their own fallback; no ARN-derived scope.",
+        "summaries": "Intentionally unsupported: authorization/header/query/body/client-secret values, including values not marked sensitive by schema.",
+        "officialDocumentation": "website/docs/r/cloudwatch_event_connection.html.markdown",
+        "shapes": {
+          "invocation_connectivity_parameters.resource_parameters.resource_configuration_arn": [
+            "list",
+            "list",
+            "string"
+          ],
+          "auth_parameters.connectivity_parameters.resource_parameters.resource_configuration_arn": [
+            "list",
+            "list",
+            "list",
+            "string"
+          ],
+          "kms_key_identifier": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_cloudwatch_event_endpoint": {
+      "status": "Basic-only",
+      "priority": "P3",
+      "gap": "Deferred: exactly two same-named regional buses, optional replication role and Route53 health-check ARN require a joint cross-region tuple contract; revisit after #748 and #715 endpoint evidence. Never parse secondary region into a resource. See #721 per-dimension review in aws-semantic-decisions.json.",
+      "review": {
+        "issue": 721,
+        "implementationCommit": "de2686ced20f383ee48ec65b1354b643e2fe659c",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "event_bus.event_bus_arn",
+          "role_arn",
+          "routing_config.failover_config.primary.health_check",
+          "routing_config.failover_config.secondary.route"
+        ],
+        "placement": "Supported: retain Logical presentation for this independent aws_cloudwatch_event_endpoint identity.",
+        "ownership": "Not applicable: paired buses remain independent; global failover service is not their owner.",
+        "network": "Not applicable: service configuration does not establish VPC containment.",
+        "references": "Deferred: exactly two same-named regional buses, optional replication role and Route53 health-check ARN require a joint cross-region tuple contract; revisit after #748 and #715 endpoint evidence. Never parse secondary region into a resource.",
+        "scope": "Partial: Regional (conditional) eligibility, not inferred account ownership. Basic fallback clears account; managed region requires provider/static override evidence. Unknown, historical and data identities retain their own fallback; no ARN-derived scope.",
+        "summaries": "Intentionally unsupported: health/failover state claims. Deferred replication summary until paired bus scope contract is implemented.",
+        "officialDocumentation": "website/docs/r/cloudwatch_event_endpoint.html.markdown",
+        "shapes": {
+          "event_bus.event_bus_arn": [
+            "list",
+            "string"
+          ],
+          "role_arn": [
+            "string"
+          ],
+          "routing_config.failover_config.primary.health_check": [
+            "list",
+            "list",
+            "list",
+            "string"
+          ],
+          "routing_config.failover_config.secondary.route": [
+            "list",
+            "list",
+            "list",
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_cloudwatch_event_permission": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 748,
+      "gap": "Missing: explicit bus-name association; principal account literal is not an IAM resource. See #721 per-dimension review in aws-semantic-decisions.json.",
+      "review": {
+        "issue": 721,
+        "implementationCommit": "de2686ced20f383ee48ec65b1354b643e2fe659c",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "event_bus_name",
+          "principal"
+        ],
+        "placement": "Supported: retain Logical presentation for this independent aws_cloudwatch_event_permission identity.",
+        "ownership": "Missing: permission-to-bus navigation under #748, not embedding.",
+        "network": "Not applicable: service configuration does not establish VPC containment.",
+        "references": "Missing: explicit bus-name association; principal account literal is not an IAM resource.",
+        "scope": "Partial: Regional (conditional) eligibility, not inferred account ownership. Basic fallback clears account; managed region requires provider/static override evidence. Unknown, historical and data identities retain their own fallback; no ARN-derived scope.",
+        "summaries": "Intentionally unsupported: permission semantics, organization conditions and principal values.",
+        "officialDocumentation": "website/docs/r/cloudwatch_event_permission.html.markdown",
+        "shapes": {
+          "event_bus_name": [
+            "string"
+          ],
+          "principal": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_kinesis_account_settings": {
+      "status": "Basic-only",
+      "priority": "P3",
+      "gap": "Not applicable: account billing setting has no managed endpoint field. See #721 per-dimension review in aws-semantic-decisions.json.",
+      "review": {
+        "issue": 721,
+        "implementationCommit": "de2686ced20f383ee48ec65b1354b643e2fe659c",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "minimum_throughput_billing_commitment.status"
+        ],
+        "placement": "Supported: retain Logical presentation for this independent aws_kinesis_account_settings identity.",
+        "ownership": "Not applicable: account setting is not a stream owner.",
+        "network": "Not applicable: service configuration does not establish VPC containment.",
+        "references": "Not applicable: account billing setting has no managed endpoint field.",
+        "scope": "Partial: Regional (conditional) eligibility, not inferred account ownership. Basic fallback clears account; managed region requires provider/static override evidence. Unknown, historical and data identities retain their own fallback; no ARN-derived scope.",
+        "summaries": "Intentionally unsupported: billing commitment as a runtime capacity claim; basic identity sufficient.",
+        "officialDocumentation": "website/docs/r/kinesis_account_settings.html.markdown",
+        "shapes": {
+          "minimum_throughput_billing_commitment.status": [
+            "list",
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_kinesis_analytics_application": {
+      "status": "Basic-only",
+      "priority": "P3",
+      "gap": "Deferred: legacy SQL input/output/Lambda/S3 role chains until a migration inventory use case; do not equate legacy SQL with Flink #752. SQL table names are in-application objects, not managed endpoints. See #721 per-dimension review in aws-semantic-decisions.json.",
+      "review": {
+        "issue": 721,
+        "implementationCommit": "de2686ced20f383ee48ec65b1354b643e2fe659c",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "inputs.kinesis_stream.resource_arn",
+          "inputs.kinesis_firehose.resource_arn",
+          "inputs.processing_configuration.lambda.resource_arn",
+          "outputs.kinesis_stream.resource_arn",
+          "outputs.kinesis_firehose.resource_arn",
+          "outputs.lambda.resource_arn",
+          "reference_data_sources.s3.bucket_arn"
+        ],
+        "placement": "Supported: retain Logical presentation for this independent aws_kinesis_analytics_application identity.",
+        "ownership": "Not applicable: independent service/configuration identity; no verified embedding contract.",
+        "network": "Not applicable: service configuration does not establish VPC containment.",
+        "references": "Deferred: legacy SQL input/output/Lambda/S3 role chains until a migration inventory use case; do not equate legacy SQL with Flink #752. SQL table names are in-application objects, not managed endpoints.",
+        "scope": "Partial: Regional (conditional) eligibility, not inferred account ownership. Basic fallback clears account; managed region requires provider/static override evidence. Unknown, historical and data identities retain their own fallback; no ARN-derived scope.",
+        "summaries": "Intentionally unsupported: SQL/schema/record contents. Deferred: legacy application summaries until migration requirements justify additional exposure.",
+        "officialDocumentation": "website/docs/r/kinesis_analytics_application.html.markdown",
+        "shapes": {
+          "inputs.kinesis_stream.resource_arn": [
+            "list",
+            "list",
+            "string"
+          ],
+          "inputs.kinesis_firehose.resource_arn": [
+            "list",
+            "list",
+            "string"
+          ],
+          "inputs.processing_configuration.lambda.resource_arn": [
+            "list",
+            "list",
+            "list",
+            "string"
+          ],
+          "outputs.kinesis_stream.resource_arn": [
+            "set",
+            "list",
+            "string"
+          ],
+          "outputs.kinesis_firehose.resource_arn": [
+            "set",
+            "list",
+            "string"
+          ],
+          "outputs.lambda.resource_arn": [
+            "set",
+            "list",
+            "string"
+          ],
+          "reference_data_sources.s3.bucket_arn": [
+            "list",
+            "list",
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_kinesis_firehose_delivery_stream": {
+      "status": "Partial",
+      "priority": "P1",
+      "issue": 756,
+      "gap": "Partial: exclusive Kinesis source and extended_s3 delivery/enabled backup links. Missing: MSK source and role links #756. Other destination families deferred until family-specific validation; JDBC/HTTP/processor strings cannot manufacture endpoints. See #721 per-dimension review in aws-semantic-decisions.json.",
+      "review": {
+        "issue": 721,
+        "implementationCommit": "de2686ced20f383ee48ec65b1354b643e2fe659c",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "destination",
+          "kinesis_source_configuration.kinesis_stream_arn",
+          "kinesis_source_configuration.role_arn",
+          "extended_s3_configuration.bucket_arn",
+          "extended_s3_configuration.s3_backup_configuration.bucket_arn",
+          "msk_source_configuration.msk_cluster_arn"
+        ],
+        "placement": "Supported: retain Spatial presentation for this independent aws_kinesis_firehose_delivery_stream identity.",
+        "ownership": "Not applicable: sources/buckets remain independent.",
+        "network": "Deferred: destination VPC access contexts until a family-specific network contract; source cluster VPC never contains Firehose.",
+        "references": "Partial: exclusive Kinesis source and extended_s3 delivery/enabled backup links. Missing: MSK source and role links #756. Other destination families deferred until family-specific validation; JDBC/HTTP/processor strings cannot manufacture endpoints.",
+        "scope": "Partial: Regional (conditional) eligibility, not inferred account ownership. Existing classified resource retains verified provider account and region evidence. Unknown, historical and data identities retain their own fallback; no ARN-derived scope.",
+        "summaries": "Intentionally unsupported: records, processor parameters, credentials and arbitrary schema conversion values; encryption summaries require a separate allowlist.",
+        "officialDocumentation": "website/docs/r/kinesis_firehose_delivery_stream.html.markdown",
+        "shapes": {
+          "destination": [
+            "string"
+          ],
+          "kinesis_source_configuration.kinesis_stream_arn": [
+            "list",
+            "string"
+          ],
+          "kinesis_source_configuration.role_arn": [
+            "list",
+            "string"
+          ],
+          "extended_s3_configuration.bucket_arn": [
+            "list",
+            "string"
+          ],
+          "extended_s3_configuration.s3_backup_configuration.bucket_arn": [
+            "list",
+            "list",
+            "string"
+          ],
+          "msk_source_configuration.msk_cluster_arn": [
+            "list",
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_kinesis_resource_policy": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 749,
+      "gap": "Missing: explicit stream or consumer ARN endpoint; ARN substring does not identify parent stream. See #721 per-dimension review in aws-semantic-decisions.json.",
+      "review": {
+        "issue": 721,
+        "implementationCommit": "de2686ced20f383ee48ec65b1354b643e2fe659c",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "resource_arn",
+          "policy"
+        ],
+        "placement": "Supported: retain Logical presentation for this independent aws_kinesis_resource_policy identity.",
+        "ownership": "Missing: policy association under #749 without embedding.",
+        "network": "Not applicable: service configuration does not establish VPC containment.",
+        "references": "Missing: explicit stream or consumer ARN endpoint; ARN substring does not identify parent stream.",
+        "scope": "Partial: Regional (conditional) eligibility, not inferred account ownership. Basic fallback clears account; managed region requires provider/static override evidence. Unknown, historical and data identities retain their own fallback; no ARN-derived scope.",
+        "summaries": "Intentionally unsupported: policy contents or effective permissions.",
+        "officialDocumentation": "website/docs/r/kinesis_resource_policy.html.markdown",
+        "shapes": {
+          "resource_arn": [
+            "string"
+          ],
+          "policy": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_kinesis_stream": {
+      "status": "Partial",
+      "priority": "P1",
+      "issue": 749,
+      "gap": "Partial: Lambda source, Firehose source and DynamoDB streaming destination endpoints retained. Consumer/policy inbound links in #749. Deferred: KMS until key/alias identifier contract and encryption allowlist. See #721 per-dimension review in aws-semantic-decisions.json.",
+      "review": {
+        "issue": 721,
+        "implementationCommit": "de2686ced20f383ee48ec65b1354b643e2fe659c",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "kms_key_id",
+          "encryption_type",
+          "stream_mode_details.stream_mode"
+        ],
+        "placement": "Supported: retain Spatial presentation for this independent aws_kinesis_stream identity.",
+        "ownership": "Not applicable: consumers are independent logical resources; no shard synthesis.",
+        "network": "Not applicable: service configuration does not establish VPC containment.",
+        "references": "Partial: Lambda source, Firehose source and DynamoDB streaming destination endpoints retained. Consumer/policy inbound links in #749. Deferred: KMS until key/alias identifier contract and encryption allowlist.",
+        "scope": "Partial: Regional (conditional) eligibility, not inferred account ownership. Existing classified resource retains verified provider account and region evidence. Unknown, historical and data identities retain their own fallback; no ARN-derived scope.",
+        "summaries": "Deferred: capacity/retention/encryption summary until mode-specific allowlist; record data intentionally unsupported.",
+        "officialDocumentation": "website/docs/r/kinesis_stream.html.markdown",
+        "shapes": {
+          "kms_key_id": [
+            "string"
+          ],
+          "encryption_type": [
+            "string"
+          ],
+          "stream_mode_details.stream_mode": [
+            "list",
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_kinesis_stream_consumer": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 749,
+      "gap": "Missing: stream_arn -> stream.arn, not an application or runtime-consumption link. See #721 per-dimension review in aws-semantic-decisions.json.",
+      "review": {
+        "issue": 721,
+        "implementationCommit": "de2686ced20f383ee48ec65b1354b643e2fe659c",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "stream_arn"
+        ],
+        "placement": "Supported: retain Logical presentation for this independent aws_kinesis_stream_consumer identity.",
+        "ownership": "Missing: explicit stream association #749; retain distinct consumer identity.",
+        "network": "Not applicable: service configuration does not establish VPC containment.",
+        "references": "Missing: stream_arn -> stream.arn, not an application or runtime-consumption link.",
+        "scope": "Partial: Regional (conditional) eligibility, not inferred account ownership. Basic fallback clears account; managed region requires provider/static override evidence. Unknown, historical and data identities retain their own fallback; no ARN-derived scope.",
+        "summaries": "Intentionally unsupported: payloads, policies, credentials and runtime health. Deferred: additional summaries until a value-free architecture use case and a per-field known/unknown/sensitive allowlist exist.",
+        "officialDocumentation": "website/docs/r/kinesis_stream_consumer.html.markdown",
+        "shapes": {
+          "stream_arn": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_kinesis_video_stream": {
+      "status": "Basic-only",
+      "priority": "P3",
+      "gap": "Deferred: KMS navigation until a video-stream encryption use case defines key/default semantics. device_name is not used by the service and must not create a device. See #721 per-dimension review in aws-semantic-decisions.json.",
+      "review": {
+        "issue": 721,
+        "implementationCommit": "de2686ced20f383ee48ec65b1354b643e2fe659c",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "kms_key_id",
+          "device_name"
+        ],
+        "placement": "Supported: retain Logical presentation for this independent aws_kinesis_video_stream identity.",
+        "ownership": "Not applicable: no managed device ownership contract.",
+        "network": "Not applicable: service configuration does not establish VPC containment.",
+        "references": "Deferred: KMS navigation until a video-stream encryption use case defines key/default semantics. device_name is not used by the service and must not create a device.",
+        "scope": "Partial: Regional (conditional) eligibility, not inferred account ownership. Basic fallback clears account; managed region requires provider/static override evidence. Unknown, historical and data identities retain their own fallback; no ARN-derived scope.",
+        "summaries": "Intentionally unsupported: media/device data; deferred retention summary until zero-retention semantics are allowlisted.",
+        "officialDocumentation": "website/docs/r/kinesis_video_stream.html.markdown",
+        "shapes": {
+          "kms_key_id": [
+            "string"
+          ],
+          "device_name": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_kinesisanalyticsv2_application": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 752,
+      "gap": "Missing: execution role and code bucket #752. Deferred: SQL stream chains, encryption, logs and restore snapshots until runtime-mode and version-specific contracts; application properties cannot supply endpoints. See #721 per-dimension review in aws-semantic-decisions.json.",
+      "review": {
+        "issue": 721,
+        "implementationCommit": "de2686ced20f383ee48ec65b1354b643e2fe659c",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "service_execution_role",
+          "application_configuration.vpc_configuration.subnet_ids",
+          "application_configuration.vpc_configuration.security_group_ids",
+          "application_configuration.application_code_configuration.code_content.s3_content_location.bucket_arn",
+          "application_configuration.application_encryption_configuration.key_id"
+        ],
+        "placement": "Missing: application is Logical; independent architecture card review under #752.",
+        "ownership": "Not applicable: independent service/configuration identity; no verified embedding contract.",
+        "network": "Missing: complete subnet/SG common-VPC evidence #752.",
+        "references": "Missing: execution role and code bucket #752. Deferred: SQL stream chains, encryption, logs and restore snapshots until runtime-mode and version-specific contracts; application properties cannot supply endpoints.",
+        "scope": "Partial: Regional (conditional) eligibility, not inferred account ownership. Basic fallback clears account; managed region requires provider/static override evidence. Unknown, historical and data identities retain their own fallback; no ARN-derived scope.",
+        "summaries": "Intentionally unsupported: code/property_map/SQL. Deferred runtime summary until SQL versus Flink modes and unknowns are allowlisted.",
+        "officialDocumentation": "website/docs/r/kinesisanalyticsv2_application.html.markdown",
+        "shapes": {
+          "service_execution_role": [
+            "string"
+          ],
+          "application_configuration.vpc_configuration.subnet_ids": [
+            "list",
+            "list",
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "application_configuration.vpc_configuration.security_group_ids": [
+            "list",
+            "list",
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "application_configuration.application_code_configuration.code_content.s3_content_location.bucket_arn": [
+            "list",
+            "list",
+            "list",
+            "list",
+            "string"
+          ],
+          "application_configuration.application_encryption_configuration.key_id": [
+            "list",
+            "list",
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_kinesisanalyticsv2_application_snapshot": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 752,
+      "gap": "Missing: explicit application.name reference #752. Snapshot name is not proof of restored state. See #721 per-dimension review in aws-semantic-decisions.json.",
+      "review": {
+        "issue": 721,
+        "implementationCommit": "de2686ced20f383ee48ec65b1354b643e2fe659c",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "application_name",
+          "snapshot_name"
+        ],
+        "placement": "Supported: retain Logical presentation for this independent aws_kinesisanalyticsv2_application_snapshot identity.",
+        "ownership": "Missing: application association #752; keep snapshot identity independent.",
+        "network": "Not applicable: service configuration does not establish VPC containment.",
+        "references": "Missing: explicit application.name reference #752. Snapshot name is not proof of restored state.",
+        "scope": "Partial: Regional (conditional) eligibility, not inferred account ownership. Basic fallback clears account; managed region requires provider/static override evidence. Unknown, historical and data identities retain their own fallback; no ARN-derived scope.",
+        "summaries": "Intentionally unsupported: snapshot state/contents and running-status inference.",
+        "officialDocumentation": "website/docs/r/kinesisanalyticsv2_application_snapshot.html.markdown",
+        "shapes": {
+          "application_name": [
+            "string"
+          ],
+          "snapshot_name": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_msk_channel": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 754,
+      "gap": "Missing: cluster/topic/S3/role references #754. Deferred: Iceberg/catalog/schema destinations until #722/#723 establish tuple contracts; do not invent tables from names. See #721 per-dimension review in aws-semantic-decisions.json.",
+      "review": {
+        "issue": 721,
+        "implementationCommit": "de2686ced20f383ee48ec65b1354b643e2fe659c",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "cluster_arn",
+          "topic_configuration.topic_arn",
+          "s3_destination.storage.bucket_arn",
+          "s3_destination.dead_letter_queue_s3.bucket_arn",
+          "s3_destination.service_execution_role_arn"
+        ],
+        "placement": "Supported: retain Logical presentation for this independent aws_msk_channel identity.",
+        "ownership": "Missing: verify channel topic belongs to referenced cluster, preserve channel identity #754.",
+        "network": "Not applicable: delivery channel does not inherit source cluster subnet containment.",
+        "references": "Missing: cluster/topic/S3/role references #754. Deferred: Iceberg/catalog/schema destinations until #722/#723 establish tuple contracts; do not invent tables from names.",
+        "scope": "Partial: Regional (conditional) eligibility, not inferred account ownership. Basic fallback clears account; managed region requires provider/static override evidence. Unknown, historical and data identities retain their own fallback; no ARN-derived scope.",
+        "summaries": "Intentionally unsupported: records/partition schemas; deferred buffering summaries until destination-discriminator contract.",
+        "officialDocumentation": "website/docs/r/msk_channel.html.markdown",
+        "shapes": {
+          "cluster_arn": [
+            "string"
+          ],
+          "topic_configuration.topic_arn": [
+            "list",
+            "string"
+          ],
+          "s3_destination.storage.bucket_arn": [
+            "list",
+            "list",
+            "string"
+          ],
+          "s3_destination.dead_letter_queue_s3.bucket_arn": [
+            "list",
+            "list",
+            "string"
+          ],
+          "s3_destination.service_execution_role_arn": [
+            "list",
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_msk_cluster_policy": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 754,
+      "gap": "Missing: explicit cluster ARN #754. See #721 per-dimension review in aws-semantic-decisions.json.",
+      "review": {
+        "issue": 721,
+        "implementationCommit": "de2686ced20f383ee48ec65b1354b643e2fe659c",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "cluster_arn",
+          "policy"
+        ],
+        "placement": "Supported: retain Logical presentation for this independent aws_msk_cluster_policy identity.",
+        "ownership": "Missing: policy association #754; no embedding.",
+        "network": "Not applicable: service configuration does not establish VPC containment.",
+        "references": "Missing: explicit cluster ARN #754.",
+        "scope": "Partial: Regional (conditional) eligibility, not inferred account ownership. Basic fallback clears account; managed region requires provider/static override evidence. Unknown, historical and data identities retain their own fallback; no ARN-derived scope.",
+        "summaries": "Intentionally unsupported: policy contents and effective access.",
+        "officialDocumentation": "website/docs/r/msk_cluster_policy.html.markdown",
+        "shapes": {
+          "cluster_arn": [
+            "string"
+          ],
+          "policy": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_msk_replicator": {
+      "status": "Basic-only",
+      "priority": "P3",
+      "gap": "Deferred: source/target ARN-or-self-managed-ID alternatives require indexed cluster/replication tuple proof; revisit after #688 network contracts. Topic regexes and bootstrap addresses cannot fabricate endpoints. See #721 per-dimension review in aws-semantic-decisions.json.",
+      "review": {
+        "issue": 721,
+        "implementationCommit": "de2686ced20f383ee48ec65b1354b643e2fe659c",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "kafka_cluster.amazon_msk_cluster.msk_cluster_arn",
+          "kafka_cluster.vpc_config.subnet_ids",
+          "kafka_cluster.vpc_config.security_groups_ids",
+          "replication_info_list.source_kafka_cluster_arn",
+          "replication_info_list.target_kafka_cluster_arn",
+          "service_execution_role_arn"
+        ],
+        "placement": "Supported: retain Logical presentation for this independent aws_msk_replicator identity.",
+        "ownership": "Not applicable: replicated clusters are independent, not embedded children.",
+        "network": "Deferred: per-cluster client network contexts cannot collapse into one VPC; revisit with tuple proof.",
+        "references": "Deferred: source/target ARN-or-self-managed-ID alternatives require indexed cluster/replication tuple proof; revisit after #688 network contracts. Topic regexes and bootstrap addresses cannot fabricate endpoints.",
+        "scope": "Partial: Regional (conditional) eligibility, not inferred account ownership. Basic fallback clears account; managed region requires provider/static override evidence. Unknown, historical and data identities retain their own fallback; no ARN-derived scope.",
+        "summaries": "Intentionally unsupported: topic/consumer patterns, auth secrets and runtime replication/offset claims.",
+        "officialDocumentation": "website/docs/r/msk_replicator.html.markdown",
+        "shapes": {
+          "kafka_cluster.amazon_msk_cluster.msk_cluster_arn": [
+            "list",
+            "list",
+            "string"
+          ],
+          "kafka_cluster.vpc_config.subnet_ids": [
+            "list",
+            "list",
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "kafka_cluster.vpc_config.security_groups_ids": [
+            "list",
+            "list",
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "replication_info_list.source_kafka_cluster_arn": [
+            "list",
+            "string"
+          ],
+          "replication_info_list.target_kafka_cluster_arn": [
+            "list",
+            "string"
+          ],
+          "service_execution_role_arn": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_msk_topic": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 754,
+      "gap": "Missing: explicit cluster reference #754. See #721 per-dimension review in aws-semantic-decisions.json.",
+      "review": {
+        "issue": 721,
+        "implementationCommit": "de2686ced20f383ee48ec65b1354b643e2fe659c",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "cluster_arn"
+        ],
+        "placement": "Supported: retain Logical presentation for this independent aws_msk_topic identity.",
+        "ownership": "Missing: cluster association #754, not payload/partition embedding.",
+        "network": "Not applicable: service configuration does not establish VPC containment.",
+        "references": "Missing: explicit cluster reference #754.",
+        "scope": "Partial: Regional (conditional) eligibility, not inferred account ownership. Basic fallback clears account; managed region requires provider/static override evidence. Unknown, historical and data identities retain their own fallback; no ARN-derived scope.",
+        "summaries": "Intentionally unsupported: configs JSON and topic contents; partition summary deferred until a value-free use case.",
+        "officialDocumentation": "website/docs/r/msk_topic.html.markdown",
+        "shapes": {
+          "cluster_arn": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_mskconnect_connector": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 750,
+      "gap": "Missing: plugin/worker ARN+revision and role #750. Deferred log references until enabled-destination contract; bootstrap_servers cannot identify an MSK cluster. See #721 per-dimension review in aws-semantic-decisions.json.",
+      "review": {
+        "issue": 721,
+        "implementationCommit": "de2686ced20f383ee48ec65b1354b643e2fe659c",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "kafka_cluster.apache_kafka_cluster.vpc.subnets",
+          "kafka_cluster.apache_kafka_cluster.vpc.security_groups",
+          "plugin.custom_plugin.arn",
+          "plugin.custom_plugin.revision",
+          "worker_configuration.arn",
+          "worker_configuration.revision",
+          "service_execution_role_arn"
+        ],
+        "placement": "Missing: review independent connector card #750; currently Logical.",
+        "ownership": "Not applicable: independent service/configuration identity; no verified embedding contract.",
+        "network": "Missing: connector network proof #750, not ownership of external Kafka.",
+        "references": "Missing: plugin/worker ARN+revision and role #750. Deferred log references until enabled-destination contract; bootstrap_servers cannot identify an MSK cluster.",
+        "scope": "Partial: Regional (conditional) eligibility, not inferred account ownership. Basic fallback clears account; managed region requires provider/static override evidence. Unknown, historical and data identities retain their own fallback; no ARN-derived scope.",
+        "summaries": "Intentionally unsupported: connector_configuration, credentials and bootstrap addresses.",
+        "officialDocumentation": "website/docs/r/mskconnect_connector.html.markdown",
+        "shapes": {
+          "kafka_cluster.apache_kafka_cluster.vpc.subnets": [
+            "list",
+            "list",
+            "list",
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "kafka_cluster.apache_kafka_cluster.vpc.security_groups": [
+            "list",
+            "list",
+            "list",
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "plugin.custom_plugin.arn": [
+            "set",
+            "list",
+            "string"
+          ],
+          "plugin.custom_plugin.revision": [
+            "set",
+            "list",
+            "number"
+          ],
+          "worker_configuration.arn": [
+            "list",
+            "string"
+          ],
+          "worker_configuration.revision": [
+            "list",
+            "number"
+          ],
+          "service_execution_role_arn": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_mskconnect_custom_plugin": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 750,
+      "gap": "Missing: S3 artifact bucket and inbound revision proof #750; object key is not an independent resource. See #721 per-dimension review in aws-semantic-decisions.json.",
+      "review": {
+        "issue": 721,
+        "implementationCommit": "de2686ced20f383ee48ec65b1354b643e2fe659c",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "location.s3.bucket_arn",
+          "arn",
+          "latest_revision"
+        ],
+        "placement": "Supported: retain Logical presentation for this independent aws_mskconnect_custom_plugin identity.",
+        "ownership": "Not applicable: shared plugin remains logical and independent.",
+        "network": "Not applicable: service configuration does not establish VPC containment.",
+        "references": "Missing: S3 artifact bucket and inbound revision proof #750; object key is not an independent resource.",
+        "scope": "Partial: Regional (conditional) eligibility, not inferred account ownership. Basic fallback clears account; managed region requires provider/static override evidence. Unknown, historical and data identities retain their own fallback; no ARN-derived scope.",
+        "summaries": "Intentionally unsupported: plugin content/object keys; content-type summary deferred until artifact inventory use case.",
+        "officialDocumentation": "website/docs/r/mskconnect_custom_plugin.html.markdown",
+        "shapes": {
+          "location.s3.bucket_arn": [
+            "list",
+            "list",
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "latest_revision": [
+            "number"
+          ]
+        }
+      }
+    },
+    "aws_mskconnect_worker_configuration": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 750,
+      "gap": "Missing: inbound connector ARN/revision proof #750. See #721 per-dimension review in aws-semantic-decisions.json.",
+      "review": {
+        "issue": 721,
+        "implementationCommit": "de2686ced20f383ee48ec65b1354b643e2fe659c",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "arn",
+          "latest_revision"
+        ],
+        "placement": "Supported: retain Logical presentation for this independent aws_mskconnect_worker_configuration identity.",
+        "ownership": "Not applicable: shared worker configuration is not embedded.",
+        "network": "Not applicable: service configuration does not establish VPC containment.",
+        "references": "Missing: inbound connector ARN/revision proof #750.",
+        "scope": "Partial: Regional (conditional) eligibility, not inferred account ownership. Basic fallback clears account; managed region requires provider/static override evidence. Unknown, historical and data identities retain their own fallback; no ARN-derived scope.",
+        "summaries": "Intentionally unsupported: properties_file_content, including encoded content.",
+        "officialDocumentation": "website/docs/r/mskconnect_worker_configuration.html.markdown",
+        "shapes": {
+          "arn": [
+            "string"
+          ],
+          "latest_revision": [
+            "number"
+          ]
+        }
+      }
+    },
+    "aws_mwaa_environment": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 751,
+      "gap": "Missing: role/source bucket/KMS #751. Computed log group ARNs do not prove configured log resource identity. See #721 per-dimension review in aws-semantic-decisions.json.",
+      "review": {
+        "issue": 721,
+        "implementationCommit": "de2686ced20f383ee48ec65b1354b643e2fe659c",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "network_configuration.subnet_ids",
+          "network_configuration.security_group_ids",
+          "execution_role_arn",
+          "source_bucket_arn",
+          "kms_key"
+        ],
+        "placement": "Missing: environment architecture card review #751; currently Logical.",
+        "ownership": "Not applicable: independent service/configuration identity; no verified embedding contract.",
+        "network": "Missing: two private subnet/SG network evidence #751; no reachability from private/public mode.",
+        "references": "Missing: role/source bucket/KMS #751. Computed log group ARNs do not prove configured log resource identity.",
+        "scope": "Partial: Regional (conditional) eligibility, not inferred account ownership. Basic fallback clears account; managed region requires provider/static override evidence. Unknown, historical and data identities retain their own fallback; no ARN-derived scope.",
+        "summaries": "Intentionally unsupported: DAG/script paths, Airflow options and credentials.",
+        "officialDocumentation": "website/docs/r/mwaa_environment.html.markdown",
+        "shapes": {
+          "network_configuration.subnet_ids": [
+            "list",
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "network_configuration.security_group_ids": [
+            "list",
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "execution_role_arn": [
+            "string"
+          ],
+          "source_bucket_arn": [
+            "string"
+          ],
+          "kms_key": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_schemas_discoverer": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 755,
+      "gap": "Missing: explicit event bus source #755; discovery is not runtime message flow. See #721 per-dimension review in aws-semantic-decisions.json.",
+      "review": {
+        "issue": 721,
+        "implementationCommit": "de2686ced20f383ee48ec65b1354b643e2fe659c",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "source_arn"
+        ],
+        "placement": "Supported: retain Logical presentation for this independent aws_schemas_discoverer identity.",
+        "ownership": "Not applicable: independent service/configuration identity; no verified embedding contract.",
+        "network": "Not applicable: service configuration does not establish VPC containment.",
+        "references": "Missing: explicit event bus source #755; discovery is not runtime message flow.",
+        "scope": "Partial: Regional (conditional) eligibility, not inferred account ownership. Basic fallback clears account; managed region requires provider/static override evidence. Unknown, historical and data identities retain their own fallback; no ARN-derived scope.",
+        "summaries": "Intentionally unsupported: discovered event content; status does not prove runtime discovery.",
+        "officialDocumentation": "website/docs/r/schemas_discoverer.html.markdown",
+        "shapes": {
+          "source_arn": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_schemas_registry": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 755,
+      "gap": "Missing: inbound schema/policy membership #755. See #721 per-dimension review in aws-semantic-decisions.json.",
+      "review": {
+        "issue": 721,
+        "implementationCommit": "de2686ced20f383ee48ec65b1354b643e2fe659c",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "name"
+        ],
+        "placement": "Supported: retain Logical presentation for this independent aws_schemas_registry identity.",
+        "ownership": "Missing: verify registry membership #755; shared registry is not automatically embedded.",
+        "network": "Not applicable: service configuration does not establish VPC containment.",
+        "references": "Missing: inbound schema/policy membership #755.",
+        "scope": "Partial: Regional (conditional) eligibility, not inferred account ownership. Basic fallback clears account; managed region requires provider/static override evidence. Unknown, historical and data identities retain their own fallback; no ARN-derived scope.",
+        "summaries": "Not applicable: identity sufficient; no schema-content summary.",
+        "officialDocumentation": "website/docs/r/schemas_registry.html.markdown",
+        "shapes": {
+          "name": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_schemas_registry_policy": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 755,
+      "gap": "Missing: explicit registry name #755. See #721 per-dimension review in aws-semantic-decisions.json.",
+      "review": {
+        "issue": 721,
+        "implementationCommit": "de2686ced20f383ee48ec65b1354b643e2fe659c",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "registry_name",
+          "policy"
+        ],
+        "placement": "Supported: retain Logical presentation for this independent aws_schemas_registry_policy identity.",
+        "ownership": "Missing: policy association #755 without embedding.",
+        "network": "Not applicable: service configuration does not establish VPC containment.",
+        "references": "Missing: explicit registry name #755.",
+        "scope": "Partial: Regional (conditional) eligibility, not inferred account ownership. Basic fallback clears account; managed region requires provider/static override evidence. Unknown, historical and data identities retain their own fallback; no ARN-derived scope.",
+        "summaries": "Intentionally unsupported: policy body/permissions.",
+        "officialDocumentation": "website/docs/r/schemas_registry_policy.html.markdown",
+        "shapes": {
+          "registry_name": [
+            "string"
+          ],
+          "policy": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_schemas_schema": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 755,
+      "gap": "Missing: explicit registry name #755. See #721 per-dimension review in aws-semantic-decisions.json.",
+      "review": {
+        "issue": 721,
+        "implementationCommit": "de2686ced20f383ee48ec65b1354b643e2fe659c",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "registry_name",
+          "content"
+        ],
+        "placement": "Supported: retain Logical presentation for this independent aws_schemas_schema identity.",
+        "ownership": "Missing: registry membership #755 with independent schema identity.",
+        "network": "Not applicable: service configuration does not establish VPC containment.",
+        "references": "Missing: explicit registry name #755.",
+        "scope": "Partial: Regional (conditional) eligibility, not inferred account ownership. Basic fallback clears account; managed region requires provider/static override evidence. Unknown, historical and data identities retain their own fallback; no ARN-derived scope.",
+        "summaries": "Intentionally unsupported: OpenAPI/JSON schema content and field values.",
+        "officialDocumentation": "website/docs/r/schemas_schema.html.markdown",
+        "shapes": {
+          "registry_name": [
+            "string"
+          ],
+          "content": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_sfn_activity": {
+      "status": "Partial",
+      "priority": "P3",
+      "gap": "Deferred: KMS identifiers until activity-specific encryption contract; activity type AWS_KMS_KEY differs from state-machine AWS_OWNED_KEY. No worker reference field. See #721 per-dimension review in aws-semantic-decisions.json.",
+      "review": {
+        "issue": 721,
+        "implementationCommit": "de2686ced20f383ee48ec65b1354b643e2fe659c",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "encryption_configuration.kms_key_id",
+          "encryption_configuration.type"
+        ],
+        "placement": "Supported: retain Spatial presentation for this independent aws_sfn_activity identity.",
+        "ownership": "Not applicable: independent service/configuration identity; no verified embedding contract.",
+        "network": "Not applicable: service configuration does not establish VPC containment.",
+        "references": "Deferred: KMS identifiers until activity-specific encryption contract; activity type AWS_KMS_KEY differs from state-machine AWS_OWNED_KEY. No worker reference field.",
+        "scope": "Partial: Regional (conditional) eligibility, not inferred account ownership. Existing classified resource retains verified provider account and region evidence. Unknown, historical and data identities retain their own fallback; no ARN-derived scope.",
+        "summaries": "Intentionally unsupported: worker/payload inference. Deferred encryption summary until the distinct activity enum is allowlisted.",
+        "officialDocumentation": "website/docs/r/sfn_activity.html.markdown",
+        "shapes": {
+          "encryption_configuration.kms_key_id": [
+            "list",
+            "string"
+          ],
+          "encryption_configuration.type": [
+            "list",
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_sfn_alias": {
+      "status": "Basic-only",
+      "priority": "P3",
+      "gap": "Deferred: published version ARN output needs version-aware identity and weighted route tuple proof; revisit with published state-machine versions. Do not strip ARN suffix to manufacture parent linkage. See #721 per-dimension review in aws-semantic-decisions.json.",
+      "review": {
+        "issue": 721,
+        "implementationCommit": "de2686ced20f383ee48ec65b1354b643e2fe659c",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "routing_configuration.state_machine_version_arn",
+          "routing_configuration.weight"
+        ],
+        "placement": "Supported: retain Logical presentation for this independent aws_sfn_alias identity.",
+        "ownership": "Deferred: version membership requires version-aware identity, not state-machine-name matching.",
+        "network": "Not applicable: service configuration does not establish VPC containment.",
+        "references": "Deferred: published version ARN output needs version-aware identity and weighted route tuple proof; revisit with published state-machine versions. Do not strip ARN suffix to manufacture parent linkage.",
+        "scope": "Partial: Regional (conditional) eligibility, not inferred account ownership. Basic fallback clears account; managed region requires provider/static override evidence. Unknown, historical and data identities retain their own fallback; no ARN-derived scope.",
+        "summaries": "Deferred: route weights only after version tuple proof; no traffic/runtime routing claims.",
+        "officialDocumentation": "website/docs/r/sfn_alias.html.markdown",
+        "shapes": {
+          "routing_configuration.state_machine_version_arn": [
+            "list",
+            "string"
+          ],
+          "routing_configuration.weight": [
+            "list",
+            "number"
+          ]
+        }
+      }
+    },
+    "aws_sfn_state_machine": {
+      "status": "Partial",
+      "priority": "P3",
+      "gap": "Partial: execution-role reference supported. Deferred: version alias, log destination :* transformation and encryption variants until their dedicated contracts. Definition parsing intentionally unsupported. See #721 per-dimension review in aws-semantic-decisions.json.",
+      "review": {
+        "issue": 721,
+        "implementationCommit": "de2686ced20f383ee48ec65b1354b643e2fe659c",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "role_arn",
+          "state_machine_version_arn",
+          "logging_configuration.log_destination",
+          "encryption_configuration.kms_key_id"
+        ],
+        "placement": "Supported: retain Spatial presentation for this independent aws_sfn_state_machine identity.",
+        "ownership": "Not applicable: independent service/configuration identity; no verified embedding contract.",
+        "network": "Not applicable: service configuration does not establish VPC containment.",
+        "references": "Partial: execution-role reference supported. Deferred: version alias, log destination :* transformation and encryption variants until their dedicated contracts. Definition parsing intentionally unsupported.",
+        "scope": "Partial: Regional (conditional) eligibility, not inferred account ownership. Existing classified resource retains verified provider account and region evidence. Unknown, historical and data identities retain their own fallback; no ARN-derived scope.",
+        "summaries": "Intentionally unsupported: ASL definition/payloads. Deferred STANDARD/EXPRESS/encryption summaries until exact enum/unknown semantics are tested.",
+        "officialDocumentation": "website/docs/r/sfn_state_machine.html.markdown",
+        "shapes": {
+          "role_arn": [
+            "string"
+          ],
+          "state_machine_version_arn": [
+            "string"
+          ],
+          "logging_configuration.log_destination": [
+            "list",
+            "string"
+          ],
+          "encryption_configuration.kms_key_id": [
+            "list",
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_sns_platform_application": {
+      "status": "Basic-only",
+      "priority": "P3",
+      "gap": "Deferred: delivery-event SNS topics and feedback roles until a mobile-push observability use case; platform endpoint ARN is distinct from application ARN, so subscription cannot target application directly. See #721 per-dimension review in aws-semantic-decisions.json.",
+      "review": {
+        "issue": 721,
+        "implementationCommit": "de2686ced20f383ee48ec65b1354b643e2fe659c",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "event_delivery_failure_topic_arn",
+          "event_endpoint_created_topic_arn",
+          "failure_feedback_role_arn",
+          "success_feedback_role_arn"
+        ],
+        "placement": "Supported: retain Logical presentation for this independent aws_sns_platform_application identity.",
+        "ownership": "Not applicable: independent service/configuration identity; no verified embedding contract.",
+        "network": "Not applicable: service configuration does not establish VPC containment.",
+        "references": "Deferred: delivery-event SNS topics and feedback roles until a mobile-push observability use case; platform endpoint ARN is distinct from application ARN, so subscription cannot target application directly.",
+        "scope": "Partial: Regional (conditional) eligibility, not inferred account ownership. Basic fallback clears account; managed region requires provider/static override evidence. Unknown, historical and data identities retain their own fallback; no ARN-derived scope.",
+        "summaries": "Intentionally unsupported: platform credentials/principal/device token; basic application identity is sufficient pending mobile endpoint scope.",
+        "officialDocumentation": "website/docs/r/sns_platform_application.html.markdown",
+        "shapes": {
+          "event_delivery_failure_topic_arn": [
+            "string"
+          ],
+          "event_endpoint_created_topic_arn": [
+            "string"
+          ],
+          "failure_feedback_role_arn": [
+            "string"
+          ],
+          "success_feedback_role_arn": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_sns_sms_preferences": {
+      "status": "Basic-only",
+      "priority": "P3",
+      "gap": "Deferred: log role/report bucket references until SMS reporting inventory is requested; no recipient resources exist in this contract. See #721 per-dimension review in aws-semantic-decisions.json.",
+      "review": {
+        "issue": 721,
+        "implementationCommit": "de2686ced20f383ee48ec65b1354b643e2fe659c",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "delivery_status_iam_role_arn",
+          "usage_report_s3_bucket"
+        ],
+        "placement": "Supported: retain Logical presentation for this independent aws_sns_sms_preferences identity.",
+        "ownership": "Not applicable: account preferences are not topic or subscriber ownership.",
+        "network": "Not applicable: service configuration does not establish VPC containment.",
+        "references": "Deferred: log role/report bucket references until SMS reporting inventory is requested; no recipient resources exist in this contract.",
+        "scope": "Partial: Regional (conditional) eligibility, not inferred account ownership. Basic fallback clears account; managed region requires provider/static override evidence. Unknown, historical and data identities retain their own fallback; no ARN-derived scope.",
+        "summaries": "Intentionally unsupported: sender identifiers/spend as routing information; billing preferences stay logical.",
+        "officialDocumentation": "website/docs/r/sns_sms_preferences.html.markdown",
+        "shapes": {
+          "delivery_status_iam_role_arn": [
+            "string"
+          ],
+          "usage_report_s3_bucket": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_sns_topic": {
+      "status": "Partial",
+      "priority": "P1",
+      "issue": 753,
+      "gap": "Partial: subscription and S3 notification endpoints retained; inbound policy links #753. Deferred KMS/feedback roles until encryption/observability allowlists distinguish every protocol. See #721 per-dimension review in aws-semantic-decisions.json.",
+      "review": {
+        "issue": 721,
+        "implementationCommit": "de2686ced20f383ee48ec65b1354b643e2fe659c",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "kms_master_key_id",
+          "application_success_feedback_role_arn"
+        ],
+        "placement": "Supported: retain Spatial presentation for this independent aws_sns_topic identity.",
+        "ownership": "Not applicable: independent service/configuration identity; no verified embedding contract.",
+        "network": "Not applicable: service configuration does not establish VPC containment.",
+        "references": "Partial: subscription and S3 notification endpoints retained; inbound policy links #753. Deferred KMS/feedback roles until encryption/observability allowlists distinguish every protocol.",
+        "scope": "Partial: Regional (conditional) eligibility, not inferred account ownership. Existing classified resource retains verified provider account and region evidence. Unknown, historical and data identities retain their own fallback; no ARN-derived scope.",
+        "summaries": "Intentionally unsupported: delivery/archive policies. Deferred FIFO/capacity/encryption summaries until explicit mode-specific safe contract.",
+        "officialDocumentation": "website/docs/r/sns_topic.html.markdown",
+        "shapes": {
+          "kms_master_key_id": [
+            "string"
+          ],
+          "application_success_feedback_role_arn": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_sns_topic_data_protection_policy": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 753,
+      "gap": "Missing: topic ARN #753. See #721 per-dimension review in aws-semantic-decisions.json.",
+      "review": {
+        "issue": 721,
+        "implementationCommit": "de2686ced20f383ee48ec65b1354b643e2fe659c",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "arn",
+          "policy"
+        ],
+        "placement": "Supported: retain Logical presentation for this independent aws_sns_topic_data_protection_policy identity.",
+        "ownership": "Missing: topic policy association #753, not embedding.",
+        "network": "Not applicable: service configuration does not establish VPC containment.",
+        "references": "Missing: topic ARN #753.",
+        "scope": "Partial: Regional (conditional) eligibility, not inferred account ownership. Basic fallback clears account; managed region requires provider/static override evidence. Unknown, historical and data identities retain their own fallback; no ARN-derived scope.",
+        "summaries": "Intentionally unsupported: data-protection policy inspection or claims of protected fields.",
+        "officialDocumentation": "website/docs/r/sns_topic_data_protection_policy.html.markdown",
+        "shapes": {
+          "arn": [
+            "string"
+          ],
+          "policy": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_sns_topic_policy": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 753,
+      "gap": "Missing: topic ARN #753. See #721 per-dimension review in aws-semantic-decisions.json.",
+      "review": {
+        "issue": 721,
+        "implementationCommit": "de2686ced20f383ee48ec65b1354b643e2fe659c",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "arn",
+          "policy"
+        ],
+        "placement": "Supported: retain Logical presentation for this independent aws_sns_topic_policy identity.",
+        "ownership": "Missing: topic policy association #753, not embedding.",
+        "network": "Not applicable: service configuration does not establish VPC containment.",
+        "references": "Missing: topic ARN #753.",
+        "scope": "Partial: Regional (conditional) eligibility, not inferred account ownership. Basic fallback clears account; managed region requires provider/static override evidence. Unknown, historical and data identities retain their own fallback; no ARN-derived scope.",
+        "summaries": "Intentionally unsupported: policy body/effective access.",
+        "officialDocumentation": "website/docs/r/sns_topic_policy.html.markdown",
+        "shapes": {
+          "arn": [
+            "string"
+          ],
+          "policy": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_sqs_queue_policy": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 753,
+      "gap": "Missing: queue_url -> queue.url/id #753; ARN output incompatible. See #721 per-dimension review in aws-semantic-decisions.json.",
+      "review": {
+        "issue": 721,
+        "implementationCommit": "de2686ced20f383ee48ec65b1354b643e2fe659c",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "queue_url",
+          "policy"
+        ],
+        "placement": "Supported: retain Logical presentation for this independent aws_sqs_queue_policy identity.",
+        "ownership": "Missing: queue association #753; policy retains identity.",
+        "network": "Not applicable: service configuration does not establish VPC containment.",
+        "references": "Missing: queue_url -> queue.url/id #753; ARN output incompatible.",
+        "scope": "Partial: Regional (conditional) eligibility, not inferred account ownership. Basic fallback clears account; managed region requires provider/static override evidence. Unknown, historical and data identities retain their own fallback; no ARN-derived scope.",
+        "summaries": "Intentionally unsupported: policy JSON and inferred dead-letter delivery/permissions.",
+        "officialDocumentation": "website/docs/r/sqs_queue_policy.html.markdown",
+        "shapes": {
+          "queue_url": [
+            "string"
+          ],
+          "policy": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_sqs_queue_redrive_allow_policy": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 753,
+      "gap": "Missing: queue_url -> queue.url/id #753; ARN output incompatible. See #721 per-dimension review in aws-semantic-decisions.json.",
+      "review": {
+        "issue": 721,
+        "implementationCommit": "de2686ced20f383ee48ec65b1354b643e2fe659c",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "queue_url",
+          "redrive_allow_policy"
+        ],
+        "placement": "Supported: retain Logical presentation for this independent aws_sqs_queue_redrive_allow_policy identity.",
+        "ownership": "Missing: queue association #753; policy retains identity.",
+        "network": "Not applicable: service configuration does not establish VPC containment.",
+        "references": "Missing: queue_url -> queue.url/id #753; ARN output incompatible.",
+        "scope": "Partial: Regional (conditional) eligibility, not inferred account ownership. Basic fallback clears account; managed region requires provider/static override evidence. Unknown, historical and data identities retain their own fallback; no ARN-derived scope.",
+        "summaries": "Intentionally unsupported: redrive_allow_policy JSON and inferred dead-letter delivery/permissions.",
+        "officialDocumentation": "website/docs/r/sqs_queue_redrive_allow_policy.html.markdown",
+        "shapes": {
+          "queue_url": [
+            "string"
+          ],
+          "redrive_allow_policy": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_sqs_queue_redrive_policy": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 753,
+      "gap": "Missing: queue_url -> queue.url/id #753; ARN output incompatible. See #721 per-dimension review in aws-semantic-decisions.json.",
+      "review": {
+        "issue": 721,
+        "implementationCommit": "de2686ced20f383ee48ec65b1354b643e2fe659c",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "queue_url",
+          "redrive_policy"
+        ],
+        "placement": "Supported: retain Logical presentation for this independent aws_sqs_queue_redrive_policy identity.",
+        "ownership": "Missing: queue association #753; policy retains identity.",
+        "network": "Not applicable: service configuration does not establish VPC containment.",
+        "references": "Missing: queue_url -> queue.url/id #753; ARN output incompatible.",
+        "scope": "Partial: Regional (conditional) eligibility, not inferred account ownership. Basic fallback clears account; managed region requires provider/static override evidence. Unknown, historical and data identities retain their own fallback; no ARN-derived scope.",
+        "summaries": "Intentionally unsupported: redrive_policy JSON and inferred dead-letter delivery/permissions.",
+        "officialDocumentation": "website/docs/r/sqs_queue_redrive_policy.html.markdown",
+        "shapes": {
+          "queue_url": [
+            "string"
+          ],
+          "redrive_policy": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_swf_domain": {
+      "status": "Basic-only",
+      "priority": "P3",
+      "gap": "Not applicable: domain contract exposes no managed workflow/activity endpoint. See #721 per-dimension review in aws-semantic-decisions.json.",
+      "review": {
+        "issue": 721,
+        "implementationCommit": "de2686ced20f383ee48ec65b1354b643e2fe659c",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "workflow_execution_retention_period_in_days",
+          "name"
+        ],
+        "placement": "Supported: retain Logical presentation for this independent aws_swf_domain identity.",
+        "ownership": "Not applicable: no Terraform workflow child types in this service inventory.",
+        "network": "Not applicable: service configuration does not establish VPC containment.",
+        "references": "Not applicable: domain contract exposes no managed workflow/activity endpoint.",
+        "scope": "Partial: Regional (conditional) eligibility, not inferred account ownership. Basic fallback clears account; managed region requires provider/static override evidence. Unknown, historical and data identities retain their own fallback; no ARN-derived scope.",
+        "summaries": "Deferred: retention-only summary until workflow archival inventory use case; no executions synthesized.",
+        "officialDocumentation": "website/docs/r/swf_domain.html.markdown",
+        "shapes": {
+          "workflow_execution_retention_period_in_days": [
+            "string"
+          ],
+          "name": [
             "string"
           ]
         }
