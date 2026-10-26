@@ -1,0 +1,90 @@
+# AWS semantic coverage audit
+
+The [gap register](aws-semantic-gaps.md) covers every **1,742 managed type in 249 service packages** from the pinned AWS Provider 6.70.0 inventory. Basic role, display and scope eligibility are implemented for that denominator. This is not 1,742 complete architecture integrations.
+
+## Reading the register
+
+Each exact type has current managed defaults, a semantic status, missing capability or explicit deferral, priority, issue/disposition and schema input candidates. Official contracts are linked at commit `5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f`. Generic Terraform dependencies remain available in every category.
+
+- **Implemented** describes a named capability only: classification, a verified ownership rule, a particular reference path, or an allowlisted summary. It never means all attributes of a type are supported.
+- **Partial** retains bounded existing behavior. The [AWS contracts](aws.md), [routes](routes.md), [components](components.md) and linked completed issues define its evidence and exclusions. An implementation-file mention can be an endpoint or exclusion, not a rule originating from that type.
+- **Basic-only** establishes no dedicated semantic behavior in this audit. A spatial card and service label alone do not prove containment, ownership or associations.
+- **Intentionally unsupported** covers value/policy interpretation and runtime inference, independently of basic display. **Deferred** is a backlog disposition, not proof that an attribute can never support a relationship.
+
+P1 prioritizes network placement and explicit service relationships with high architecture value. P2 covers bounded workload/storage configuration chains. P3 retains current defaults until a concrete use case and exact evidence contract justify additional semantics. P3 is not a claim of completeness or a prohibition on future implementation. The initial triage selects 15 bounded service issues (#688–#702); other services remain explicitly deferred per type rather than being hidden from the denominator.
+
+## Method and limits
+
+The runtime-generated [support matrix](resource-support.md) supplies role, display and conditional scope. All pinned managed schemas were traversed for configurable, non-sensitive identifier/name/network fields. The compact [schema evidence](aws-semantic-evidence.json) records **paths only**, with the source schema SHA-256. Candidate names are an audit index, not inferred endpoint types. Nested JSON policy strings, URI contents and dynamically selected references are not interpreted. No candidate field is automatically added to runtime behavior.
+
+The register combines this inventory-wide mechanical review with explicit [review decisions](aws-semantic-decisions.json) for prioritized and existing bounded behavior. Unreviewed semantic details remain deferred. This is a maintained gap/triage inventory, not an assertion that every official field has received manual semantic verification. The conservative scan can miss fields with unconventional names and includes self-names that may not be relationships; an empty candidate list does not establish complete support. Each implementation issue must verify actual output types, collections, endpoint identity and known-value proofs before adding a rule.
+
+Dimensions are assessed separately:
+
+| Dimension | Current baseline and remaining decision |
+| --- | --- |
+| Architecture placement | Copy actual Spatial/Logical defaults; promote an independent service object only for a justified architecture use case. |
+| Ownership / embedded presentation | Require a uniquely verified owner and preserve shared identities; a reference alone is not ownership. Existing EFS/KMS/Secrets/Glue/CA work remains bounded. |
+| Network containment | Complete subnet/SG/VPC evidence and compatible scope required; service ownership does not place a resource in a subnet. |
+| Dedicated references / associations | Verify exact input/output fields and lifecycle/state identities; keep generic references for unproven endpoints. |
+| Scope evidence | Regional is eligibility, not verified account/region; global objects and cross-region target references are separate. Unknown scope is intentional pending a dedicated contract. |
+| Safe summaries | Only explicit allowlists with known/unknown/sensitive semantics; schema availability alone never permits value rendering. |
+
+## Representative implementation and official-contract checks
+
+The following paths were checked against the pinned schema and resource documentation, then compared with current provider code. The exact type's register row links its official document. These checks establish gaps; they do not add runtime evidence rules.
+
+| Exact type | Pinned input contract | Actual behavior / decision |
+| --- | --- | --- |
+| `aws_msk_cluster` | `broker_node_group_info.client_subnets`, `broker_node_group_info.security_groups`, `configuration_info.arn` | Basic spatial card; no dedicated network/configuration rules. #688. |
+| `aws_mq_broker` | `subnet_ids`, `security_groups`, `configuration.id` | Basic spatial card; no dedicated placement/configuration references. #689. |
+| `aws_apprunner_service` | `network_configuration.egress_configuration.vpc_connector_arn` | Spatial service; connector reference is egress configuration, not service subnet ownership. #694. |
+| `aws_apprunner_vpc_connector` | `subnets`, `security_groups` | Logical basic object; verify network context without turning every configuration into a card. #694. |
+| `aws_redshiftserverless_workgroup` | `namespace_name`, `subnet_ids`, `security_group_ids` | Basic spatial workgroup, unlike existing provisioned Redshift #506. #695. |
+| `aws_opensearchserverless_vpc_endpoint` | `vpc_id`, `subnet_ids`, `security_group_ids` | Basic endpoint; policy JSON is not collection ownership evidence. #696. |
+| `aws_docdb_cluster` | `db_subnet_group_name`, `vpc_security_group_ids` | Basic spatial cluster; RDS rules do not automatically apply. #697. |
+| `aws_neptune_cluster` | `neptune_subnet_group_name`, `vpc_security_group_ids` | Basic spatial cluster; instance membership and placement need separate proof. #698. |
+| `aws_dms_replication_instance` | `replication_subnet_group_id`, `vpc_security_group_ids` | Basic spatial instance; no endpoint/database reconstruction from strings. #699. |
+| `aws_batch_compute_environment` | `compute_resources.subnets`, `compute_resources.security_group_ids` | Basic spatial compute environment; scheduling policy stays logical. #700. |
+| `aws_sagemaker_endpoint` | `endpoint_config_name` | Basic spatial endpoint; model ownership is not network containment. #701. |
+| `aws_fsx_lustre_file_system` | `subnet_ids`, `security_group_ids`, `kms_key_id` | Basic spatial filesystem; network/key references missing. #702. |
+| `aws_dynamodb_table` | `replica.region_name`, `server_side_encryption.kms_key_arn` | Spatial table and explicit Backup selection endpoint exist. DynamoDB Lambda event-source lowering and at-rest summary do **not** exist. #690 is table/configuration work; those additional capabilities remain deferred. |
+| `aws_elasticache_replication_group` | `subnet_group_name`, `global_replication_group_id`, `user_group_ids` | Common-VPC placement via subnet group exists (#360); global/user-group references remain #691. No at-rest summary. |
+
+Implementation cross-checks: [classification](../src/provider/aws/classification.rs), [basic defaults](../src/provider/aws/basic_entries.rs), [placement](../src/provider/aws.rs), [containment](../src/provider/aws/containment/indirect.rs), [service references](../src/provider/aws/service_references.rs), [Backup endpoints](../src/provider/aws/backup.rs), [messaging](../src/provider/aws/messaging.rs) and [encryption allowlist](../src/provider/aws/encryption.rs). In particular, #601's summaries cover S3/SQS/RDS, not every service with encryption attributes. This distinction prevents borrowing adjacent-service support.
+
+## Placement and deferred scope decisions
+
+Retain existing independent MSK/MQ/DocumentDB/Neptune/DMS/FSx/SageMaker endpoint cards while adding evidence in their bounded issues. Retain Batch compute-environment cards; review Network Firewall firewalls for independent cards. App Runner connectors, database subnet groups, namespace/configuration objects and policies need separate ownership/network decisions; do not promote all objects from a service together. Existing embedded EFS access points, KMS aliases and Secrets Manager versions remain examples of proven presentation ownership, not a default for every reference.
+
+MSK replicators/topics, DynamoDB items/exports, Network Firewall endpoint associations/transit-gateway/TLS variants, non-Lustre FSx, DocumentDB elastic/global variants, Neptune Analytics, DMS serverless and SageMaker Studio/training remain deferred outside the initial issue scopes. Their exact types and schema candidates remain in the register. Runtime health, effective IAM/firewall policy, packet routing, credentials, item data and arbitrary attribute dumping are intentionally unsupported. Encryption summaries for additional services require a separate allowlist review; do not copy a boolean from a similarly named field.
+
+## Maintenance and verification
+
+Inside Docker, regenerate the support matrix first, then the gap register:
+
+```sh
+sh scripts/update-resource-support.sh
+node scripts/aws-semantic-audit.cjs
+node scripts/aws-semantic-audit.cjs --check
+node --test tests/support/aws-semantic-audit.test.cjs
+```
+
+To reproduce schema extraction, use the pinned acquisition procedure in [AWS inventory](aws-inventory.md), then:
+
+```sh
+node scripts/aws-semantic-audit.cjs --schema /tmp/aws-inventory-schema/schema.json
+```
+
+Representative fields can also be checked against a retained pinned source checkout:
+
+```sh
+node tests/support/verify-aws-semantic-contracts.cjs /tmp/aws-inventory-schema/schema.json SOURCE
+```
+
+`SOURCE` is the extracted official commit from the inventory acquisition procedure.
+The verifier checks each representative path is configurable, prints its schema type,
+and checks its leaf field is documented; the behavioral interpretation remains the
+explicit manual review above. It performs no AWS calls.
+
+The extractor rejects a schema hash or managed-type denominator mismatch. Ordinary CI checks the committed evidence, exact-type coverage, decision references and deterministic output offline. Update the explicit decisions when service work lands; a closed issue does not automatically upgrade semantic status. Review the scope/placement decisions when #615 identifies changed contracts. Runtime changes still require their normal tests, examples and Layout quality; this audit changes documentation/tooling only.

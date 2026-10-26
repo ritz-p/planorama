@@ -22,6 +22,12 @@ extractor and synthetic schema-diff regressions. It performs no SVG generation, 
 The Rust checks also belong to the standard Rust suite.
 See [regeneration instructions](../CONTRIBUTING.md#リソース対応一覧の更新).
 
+The same job checks the [semantic gap register](aws-semantic-audit.md) offline with
+`node scripts/aws-semantic-audit.cjs --check` and
+`node --test tests/support/aws-semantic-audit.test.cjs`. Schema evidence is pinned by
+SHA-256; candidate paths do not establish runtime semantic coverage. Audit-only
+changes do not require SVG regeneration or Layout quality.
+
 ## Toolchain and dependency cache
 
 Local setup and check commands live in [CONTRIBUTING](../CONTRIBUTING.md).

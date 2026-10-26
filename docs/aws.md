@@ -1,5 +1,9 @@
 # AWS architecture relationships
 
+Inventory-wide basic display does not imply the dedicated capabilities described here.
+See the [semantic audit and exact-type gap register](aws-semantic-audit.md) for current
+limits, intentional exclusions and bounded service follow-ups.
+
 ## API Gateway integrations and deployment context
 
 REST and v2 reference rules are separate tables in `api_gateway/rest.rs` and

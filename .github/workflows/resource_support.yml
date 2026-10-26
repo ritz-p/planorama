@@ -11,6 +11,10 @@ on:
       - 'tests/support/aws-inventory-diff.test.cjs'
       - 'scripts/aws-inventory.cjs'
       - 'scripts/aws-inventory-diff.cjs'
+      - 'scripts/aws-semantic-audit.cjs'
+      - 'tests/support/aws-semantic-audit.test.cjs'
+      - 'tests/support/verify-aws-semantic-contracts.cjs'
+      - 'docs/aws-semantic-*'
       - 'scripts/prepare-aws-inventory.sh'
       - 'docs/resource-support.md'
       - 'scripts/update-resource-support.sh'
@@ -50,3 +54,5 @@ jobs:
           cargo test --locked --lib provider::aws::basic
           node --test tests/support/aws-inventory.test.cjs
           node --test tests/support/aws-inventory-diff.test.cjs
+          node scripts/aws-semantic-audit.cjs --check
+          node --test tests/support/aws-semantic-audit.test.cjs
