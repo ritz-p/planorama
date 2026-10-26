@@ -11,6 +11,9 @@ pub(super) mod tests;
 
 pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
     let resource = super::aliases::canonical(resource);
+    if let Some(label) = super::lambda::label(resource, attribute) {
+        return Some(label);
+    }
     if let Some(label) = super::s3::label(resource, attribute) {
         return Some(label);
     }
@@ -450,6 +453,7 @@ pub(crate) fn annotate(
             );
         }
     }
+    super::lambda::annotate(nodes, references, evidence);
     super::rds_proxy::validate_targets(nodes, references, evidence);
     let aliases: Vec<_> = references
         .iter()

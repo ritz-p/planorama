@@ -1,5 +1,42 @@
 # AWS architecture relationships
 
+## Lambda aliases, layers and function URLs
+
+`aws_lambda_alias` and `aws_lambda_function_url` remain regional logical Nodes;
+`aws_lambda_layer_version` is a regional logical Controller and
+`aws_lambda_layer_version_permission` a regional logical Policy. All use AWS Lambda
+service labels. Their original identities, actions, history and coverage are retained.
+
+| Source | Verified navigation | Required evidence |
+| --- | --- | --- |
+| Alias | Function; published version on that function | Exact `function_name` reference to Function name/ARN; `function_version` must reference that same Function's matching version |
+| Function | Multiple Layer versions | Complete explicit `layers` references to versioned Layer ARNs; the entire known list must match unique referenced instances |
+| Function URL | Function and Alias qualifier | Exact Function name/ARN reference; qualifier must reference the Alias name, and both resources must explicitly identify the same Function |
+| Layer permission | Layer version | Both `layer_name` and numeric `version_number` must reference the same Layer instance and match its name/ARN and string version |
+
+These are configured reference links, not routed associations or runtime reachability
+claims, and do not establish authorization or execution success. Function versions
+never become extra Terraform instances. Traffic-splitting versions are not
+reconstructed from Alias routing configuration. No URL, code, environment values,
+permission principal or policy body is displayed. Literal-only,
+partial, unknown, ambiguous, wrong-provider/type, data, deleted and deposed endpoints
+retain generic behavior with unresolved dedicated-reference diagnostics. Current
+configuration never proves historical links. The initial rules require compatible
+provider bindings and known equal Regions; cross-account sharing is not inferred.
+Filtering removes unavailable destinations without reconstructing excluded resources.
+
+The attribute types were checked against the actual AWS Provider 6.70.0 schema
+(the [inventory hash](aws-inventory.md)) and a Terraform 1.9.8 `plan -refresh=false`
+with synthetic inputs. The plan confirms both attribute and instance references;
+Layer `version` is a string while permission `version_number` is numeric.
+Official contracts: [Alias](https://github.com/hashicorp/terraform-provider-aws/blob/v6.70.0/website/docs/r/lambda_alias.html.markdown),
+[Layer](https://github.com/hashicorp/terraform-provider-aws/blob/v6.70.0/website/docs/r/lambda_layer_version.html.markdown),
+[Layer permission](https://github.com/hashicorp/terraform-provider-aws/blob/v6.70.0/website/docs/r/lambda_layer_version_permission.html.markdown),
+[Function URL](https://github.com/hashicorp/terraform-provider-aws/blob/v6.70.0/website/docs/r/lambda_function_url.html.markdown).
+The synthetic [SVG](../examples/lambda.svg) / [HTML](../examples/lambda.html) includes
+two Layers, two Aliases and a literal-only URL fallback. Generate HTML in Docker with
+`cargo run --locked -- tests/fixtures/lambda-plan.json --format html -o examples/lambda.html`.
+
 AWS rules live in `src/provider/aws`. Dispatch uses provider source identity and
 exact resource types; a custom provider's lookalike type does not acquire AWS
 semantics. Provider source and configuration identity are described in [models](models.md).
