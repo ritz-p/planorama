@@ -177,10 +177,10 @@
       }
     },
     "aws_neptune_cluster": {
-      "status": "Basic-only",
-      "priority": "P2",
+      "status": "Partial",
+      "priority": "P1",
       "issue": 698,
-      "gap": "#717 reviewed: Missing: subnet-group/SG #698, parameters/IAM #762. Deferred: global/replication/key references until cross-region and encryption-enabled contracts are selected.  Missing: complete subnet-group/SG common-VPC proof #698.",
+      "gap": "Implemented #698: complete subnet-group/SG common-VPC proof and unique cluster membership with optional instance group consistency; see aws.md#neptune-698. #717 preserves historical review. Parameter/IAM #762, endpoints #765 and Analytics #766 remain separate; global/replication/key deferrals remain in review.",
       "review": {
         "issue": 717,
         "implementationCommit": "5d233e4a467f323b46082a35ede1467eec999898",
@@ -237,10 +237,10 @@
       }
     },
     "aws_neptune_cluster_instance": {
-      "status": "Basic-only",
-      "priority": "P2",
+      "status": "Partial",
+      "priority": "P1",
       "issue": 698,
-      "gap": "#717 reviewed: Missing: cluster membership #698 and parameter navigation #762; configured group must agree with cluster, without choosing one subnet.  Not applicable: service membership is not subnet containment; group disagreement must remain conservative in #698.",
+      "gap": "Implemented #698: complete subnet-group/SG common-VPC proof and unique cluster membership with optional instance group consistency; see aws.md#neptune-698. #717 preserves historical review. Parameter/IAM #762, endpoints #765 and Analytics #766 remain separate; global/replication/key deferrals remain in review.",
       "review": {
         "issue": 717,
         "implementationCommit": "5d233e4a467f323b46082a35ede1467eec999898",
@@ -275,10 +275,10 @@
       }
     },
     "aws_neptune_subnet_group": {
-      "status": "Basic-only",
-      "priority": "P2",
+      "status": "Partial",
+      "priority": "P1",
       "issue": 698,
-      "gap": "#717 reviewed: Missing: complete subnet and incoming name proof #698.  Missing: complete common-VPC subnet proof #698; no spatial promotion required.",
+      "gap": "Implemented #698: complete subnet-group/SG common-VPC proof and unique cluster membership with optional instance group consistency; see aws.md#neptune-698. #717 preserves historical review. Parameter/IAM #762, endpoints #765 and Analytics #766 remain separate; global/replication/key deferrals remain in review.",
       "review": {
         "issue": 717,
         "implementationCommit": "5d233e4a467f323b46082a35ede1467eec999898",

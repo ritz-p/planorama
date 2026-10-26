@@ -9,6 +9,10 @@ use std::collections::BTreeSet;
 #[path = "../../../tests/unit/semantic/databases.rs"]
 mod tests;
 
+#[cfg(test)]
+#[path = "../../../tests/unit/semantic/neptune.rs"]
+mod neptune_tests;
+
 fn rule(
     resource: &str,
     attribute: &str,
@@ -28,6 +32,24 @@ fn rule(
         }
         ("aws_docdb_cluster_instance", "cluster_identifier") => Some((
             "aws_docdb_cluster",
+            "cluster_identifier",
+            false,
+            "Cluster membership",
+        )),
+        ("aws_neptune_cluster" | "aws_neptune_cluster_instance", "neptune_subnet_group_name") => {
+            Some(("aws_neptune_subnet_group", "name", false, "Subnet group"))
+        }
+        ("aws_neptune_cluster", "vpc_security_group_ids") => Some((
+            "aws_security_group",
+            "id",
+            true,
+            "Configured security groups",
+        )),
+        ("aws_neptune_subnet_group", "subnet_ids") => {
+            Some(("aws_subnet", "id", true, "Configured subnets"))
+        }
+        ("aws_neptune_cluster_instance", "cluster_identifier") => Some((
+            "aws_neptune_cluster",
             "cluster_identifier",
             false,
             "Cluster membership",
@@ -52,7 +74,7 @@ pub(super) fn annotate(
     references: &mut [AttributeReference],
     evidence: &[(&Value, &Value)],
 ) {
-    for r in references {
+    for r in references.iter_mut() {
         let node = &nodes[r.target];
         let Some((kind, field, collection, _)) = rule(&node.resource_type, &r.attribute) else {
             continue;
@@ -101,6 +123,26 @@ pub(super) fn annotate(
         r.service_reference_verified = expected
             .is_some_and(|expected| expected.len() == r.sources.len() && actual == expected);
     }
+    let groups = references
+        .iter()
+        .filter(|r| r.attribute == "neptune_subnet_group_name" && r.service_reference_verified)
+        .filter_map(|r| r.sources.first().map(|&source| (r.target, source)))
+        .collect::<std::collections::BTreeMap<_, _>>();
+    for r in references.iter_mut().filter(|r| {
+        nodes[r.target].resource_type == "aws_neptune_cluster_instance"
+            && r.attribute == "cluster_identifier"
+    }) {
+        let (value, mask) = evidence[r.target];
+        let field = "neptune_subnet_group_name";
+        if value[field].is_null() && matches!(&mask[field], Value::Null | Value::Bool(false)) {
+            continue;
+        }
+        r.service_reference_verified &= r.sources.first().is_some_and(|owner| {
+            groups
+                .get(&r.target)
+                .is_some_and(|group| Some(group) == groups.get(owner))
+        });
+    }
 }
 
 fn proof<'a>(raw: &'a Input, target: usize, attribute: &str) -> Option<&'a AttributeReference> {
@@ -115,10 +157,12 @@ fn proof<'a>(raw: &'a Input, target: usize, attribute: &str) -> Option<&'a Attri
 
 fn network(raw: &Input, target: usize) -> Option<(usize, Vec<(usize, usize)>)> {
     let node = &raw.nodes[target];
-    if node.resource_type != "aws_docdb_cluster" {
-        return None;
-    }
-    let group_ref = proof(raw, target, "db_subnet_group_name")?;
+    let attribute = match node.resource_type.as_str() {
+        "aws_docdb_cluster" => "db_subnet_group_name",
+        "aws_neptune_cluster" => "neptune_subnet_group_name",
+        _ => return None,
+    };
+    let group_ref = proof(raw, target, attribute)?;
     let [group] = group_ref.sources.as_slice() else {
         return None;
     };
@@ -154,7 +198,10 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
                 ..Edge::from((parent, target))
             });
         }
-        if node.resource_type != "aws_docdb_cluster_instance" {
+        if !matches!(
+            node.resource_type.as_str(),
+            "aws_docdb_cluster_instance" | "aws_neptune_cluster_instance"
+        ) {
             continue;
         }
         let Some(r) = proof(raw, target, "cluster_identifier") else {
