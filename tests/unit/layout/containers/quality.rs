@@ -1,6 +1,102 @@
 use super::*;
 use crate::layout::metrics::measure;
 
+fn border_aware_shape_fits(
+    path: &[Point],
+    obstacle_only: &[Point],
+    protected: &[Point],
+    scorer: &crate::layout::routing_shared::scoring::Scorer,
+) -> bool {
+    use crate::layout::routing_shared::spacing::Shape;
+    let shape = Shape::measure(path);
+    let necessary = Shape::measure(protected);
+    let border_offsets = if scorer.border_metrics(obstacle_only).minimum_deficit > 0 {
+        necessary
+            .bends
+            .saturating_sub(Shape::measure(obstacle_only).bends)
+            / 2
+    } else {
+        0
+    };
+    shape.offsets <= border_offsets
+        && scorer.safe_border_change(protected, path)
+        && shape.s_jogs == 0
+        && shape.reversals == necessary.reversals
+        && shape.backtracking == necessary.backtracking
+        && shape.bends <= necessary.bends
+}
+
+#[test]
+fn border_aware_shape_guard_accepts_only_required_clearance_doglegs() {
+    use crate::layout::routing_shared::{ports, refinement::terminal, scoring::Scorer};
+    let path: Vec<_> = [
+        (2171, 1333),
+        (2171, 1259),
+        (2638, 1259),
+        (2638, 1251),
+        (2660, 1251),
+    ]
+    .into_iter()
+    .map(|(x, y)| Point { x, y })
+    .collect();
+    let frame = Bounds {
+        origin: Point { x: 2200, y: 1200 },
+        width: 400,
+        height: 50,
+    };
+    let mut scorer = Scorer::default();
+    scorer.set_borders(&[frame]);
+    let obstacle_only =
+        ports::connect(terminal(&path, 0), terminal(&path, 1), &[frame], None).unwrap();
+    let protected = ports::connect(
+        terminal(&path, 0),
+        terminal(&path, 1),
+        &[frame],
+        Some(&scorer),
+    )
+    .unwrap();
+    assert!(scorer.border_metrics(&obstacle_only).minimum_deficit > 0);
+    assert_eq!(scorer.border_metrics(&protected).minimum_deficit, 0);
+    assert!(border_aware_shape_fits(
+        &path,
+        &obstacle_only,
+        &protected,
+        &scorer
+    ));
+    assert!(!border_aware_shape_fits(
+        &obstacle_only,
+        &obstacle_only,
+        &protected,
+        &scorer
+    ));
+    assert!(!border_aware_shape_fits(
+        &path,
+        &obstacle_only,
+        &obstacle_only,
+        &Scorer::default()
+    ));
+    let extra: Vec<_> = [
+        (2171, 1333),
+        (2171, 1280),
+        (2300, 1280),
+        (2300, 1270),
+        (2500, 1270),
+        (2500, 1259),
+        (2638, 1259),
+        (2638, 1251),
+        (2660, 1251),
+    ]
+    .into_iter()
+    .map(|(x, y)| Point { x, y })
+    .collect();
+    assert!(!border_aware_shape_fits(
+        &extra,
+        &obstacle_only,
+        &protected,
+        &scorer
+    ));
+}
+
 #[test]
 #[ignore = "deferred regression: large-fixture per-edge quality and reordered layout"]
 fn deferred_regression_large_fixture_limits_each_edges_bends_and_valid_route_stretch() {
@@ -95,34 +191,42 @@ fn deferred_regression_large_fixture_limits_each_edges_bends_and_valid_route_str
                     || to.contains("aws_vpc_endpoint.logs")
                     || to.contains("aws_ecs_service.app"))
             {
-                use crate::layout::routing_shared::{ports, refinement::terminal, spacing};
+                use crate::layout::routing_shared::{
+                    ports, refinement::terminal, scoring::Scorer, spacing,
+                };
+                let barriers = spacing::barriers(graph, &layout, index);
+                let terminals = crate::layout::relationship_markers::terminals(
+                    graph,
+                    index,
+                    crate::layout::relationship_markers::numbers(graph)[index],
+                    [terminal(path, 0).side, terminal(path, 1).side],
+                );
+                let obstacle_only = ports::connect_with_clearances(
+                    terminal(path, 0),
+                    terminal(path, 1),
+                    &barriers,
+                    None,
+                    terminals,
+                )
+                .unwrap();
+                let mut scorer = Scorer::default();
+                scorer.set_layout(graph, &layout);
+                scorer.set_kind(edge.kind);
+                scorer.set_soft(routing::soft_obstacles(&layout, edge));
                 let protected = ports::connect_with_clearances(
                     terminal(path, 0),
                     terminal(path, 1),
-                    &spacing::barriers(graph, &layout, index),
-                    None,
-                    crate::layout::relationship_markers::terminals(
-                        graph,
-                        index,
-                        crate::layout::relationship_markers::numbers(graph)[index],
-                        [terminal(path, 0).side, terminal(path, 1).side],
-                    ),
+                    &barriers,
+                    Some(&scorer),
+                    terminals,
                 )
                 .unwrap();
                 let necessary = spacing::Shape::measure(&protected);
-                assert_eq!(
-                    (
-                        shape.offsets,
-                        shape.s_jogs,
-                        shape.reversals,
-                        shape.backtracking
-                    ),
-                    (0, 0, necessary.reversals, necessary.backtracking),
-                    "{from} -> {to}: {shape:?}"
-                );
                 assert!(
-                    shape.bends <= necessary.bends,
-                    "{from} -> {to}: path={path:?}; protected={protected:?}"
+                    border_aware_shape_fits(path, &obstacle_only, &protected, &scorer),
+                    "{from} -> {to}: {shape:?}; necessary={necessary:?}; actual={:?}; reference={:?}; path={path:?}; protected={protected:?}",
+                    scorer.border_metrics(path),
+                    scorer.border_metrics(&protected)
                 );
             }
             shapes.insert(
