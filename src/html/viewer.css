@@ -17,6 +17,10 @@ p { line-height: 1.5; }
 #results { max-height: 32vh; overflow: auto; display: grid; gap: 6px; padding: 3px; }
 #results button, #selection button { text-align: left; overflow-wrap: anywhere; width: 100%; }
 #selection { overflow-wrap: anywhere; }
+#generation-info { margin-bottom: 16px; overflow-wrap: anywhere; }
+#generation-info summary { cursor: pointer; font-weight: 650; }
+#generation-info dt { font-weight: 650; }
+#generation-info dd { margin: 4px 0 12px; }
 #selection h2 { font-size: 16px; }
 #selection h3 { font-size: 14px; margin-bottom: 8px; }
 .copy-identity textarea { width: 100%; font: inherit; resize: vertical; }

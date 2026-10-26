@@ -157,6 +157,34 @@ unavailable-reference descriptions can still identify a target outside the view.
 The viewer provides no editing or saved viewer-state persistence. Neighborhood
 export filters a copy; the live diagram remains unchanged.
 
+## Generation information
+
+The collapsed **Generation information** panel reports the producing Planorama
+package version and effective generation settings. Revision is unavailable because
+the build does not currently record one. A selected view cannot establish that
+omitted resources are absent from Terraform; a full view describes only the supplied inputs.
+
+The shared version-1 `viewer-generation` JSON contract contains `generator`,
+`selected_view`, `settings` and `setting_origins`. CLI, native shared generation,
+resumable browser/Wasm generation and named inputs use the same allowlist:
+changed-only, module selection, focus and effective depth (default 1 when focused),
+spatial type overrides, address format, service-label mode, effective relationship
+legend mode (omitted takes precedence), both HTML diagnostic flags, represented
+state names and explicit remote-state mappings. Focus depth is null when disabled.
+Options consumed through existing APIs do not retain explicit/default origin;
+`setting_origins` is null. “Matches default” compares effective values and never
+claims that an option was omitted. Lower-level rendering without generation
+provenance emits null metadata and the panel explains that settings are unavailable.
+
+The metadata excludes plan bodies, attributes, expressions, provider configuration,
+input/output/config paths, raw commands, timestamps, timing/debug reports and
+memory budgets. Provider-evidence acquisition details are not recorded; existing
+resource scope and diagnostic evidence remain the source for those facts.
+Selectors, state names and remote-state addresses can contain identifying text.
+JSON escapes HTML delimiters; the panel inserts text nodes, stays outside diagram
+SVG exports and uses no network, storage or telemetry. It does not restore inputs
+or settings. Changing provenance does not change graph semantics or selection.
+
 ## Routing hotspots
 
 Routing hotspots describe final geometry. They are independent of the semantic

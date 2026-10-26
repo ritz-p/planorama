@@ -5,6 +5,10 @@ returns SVG or self-contained HTML in memory. It uses the native CLI's parser,
 semantic rules, selection, layout and rendering. JSON-only AWS accounts remain
 unknown; no provider evidence or account inference is added.
 
+Generated HTML includes the shared [generation information contract](viewer.md#generation-information),
+including effective selection settings and the generator version; setting origins
+and build revision remain explicitly unavailable.
+
 ## Build and run
 
 ```sh
