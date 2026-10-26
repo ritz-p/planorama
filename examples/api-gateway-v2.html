@@ -20,6 +20,7 @@ input { width: 100%; }
 p { line-height: 1.5; }
 #search-help { font-size: 12px; color: #475569; }
 #search-filters select { width: 100%; font: inherit; padding: 6px; margin-bottom: 8px; }
+#section-destination { width: 100%; min-width: 0; font: inherit; padding: 6px; margin-bottom: 8px; }
 #results { max-height: 32vh; overflow: auto; display: grid; gap: 6px; padding: 3px; }
 #results button, #selection button { text-align: left; overflow-wrap: anywhere; width: 100%; }
 #selection { overflow-wrap: anywhere; }
@@ -62,6 +63,7 @@ p { line-height: 1.5; }
 <header><strong>Planorama</strong><button id="selection-back" type="button" aria-label="Back to previous selection" disabled>Back</button><button id="selection-forward" type="button" aria-label="Forward to next selection" disabled>Forward</button><button id="clear" type="button">Clear selection</button><button id="zoom-out" type="button" aria-label="Zoom out">−</button><button id="zoom-in" type="button" aria-label="Zoom in">+</button><button id="fit" type="button">Fit to view</button><output id="zoom-level" aria-live="polite"></output></header>
 <main>
 <aside aria-label="Resources and relationships">
+<nav aria-label="Diagram sections"><label for="section-destination">Diagram section</label><select id="section-destination"></select><button id="section-go" type="button">Go to section</button><p id="section-status" role="status"></p></nav>
 <section aria-label="Export diagram"><button id="export-viewport" type="button">Export viewport SVG</button><p id="export-status" role="status"></p></section>
 <section aria-label="Export resource neighborhood">
 <label for="export-depth">Neighborhood depth</label><select id="export-depth"><option value="0">0</option><option value="1" selected>1</option><option value="2">2</option><option value="3">3</option></select>
@@ -1381,6 +1383,29 @@ function impact(context, index, selection, coordinator) {
   adapters.register(impactView);
   search.addEventListener('input', () => adapters.reset());
   const { fit, zoom, updateView } = view;
+  const destinations = [...svg.querySelectorAll('[data-architecture], [data-annotation-section]')].filter(el => {
+    if (el.hasAttribute('data-architecture') && !el.querySelector('[data-terraform-address]')) return false;
+    const bounds = el.getBBox();
+    return bounds.width > 0 && bounds.height > 0;
+  });
+  const sectionSelect = byId('section-destination');
+  for (const [i, el] of destinations.entries()) {
+    const state = el.closest('[data-state-id]')?.dataset.stateId;
+    const name = el.dataset.annotationSection || 'Architecture';
+    const option = document.createElement('option');
+    option.value = String(i);
+    option.textContent = state ? `${state}: ${name}` : name;
+    sectionSelect.append(option);
+  }
+  sectionSelect.disabled = byId('section-go').disabled = destinations.length === 0;
+  byId('section-go').addEventListener('click', () => {
+    const destination = destinations[Number(sectionSelect.value)];
+    if (!destination) return;
+    coordinator.clear();
+    view.reveal(destination);
+    byId('section-status').textContent = `Showing ${sectionSelect.selectedOptions[0].textContent}`;
+    viewport.focus({ preventScroll: true });
+  });
   for (const r of resources) {
     const el = byId(r.id); el.setAttribute('data-viewer-target', 'true');
     el.setAttribute('tabindex', '0'); el.setAttribute('role', 'button'); el.setAttribute('aria-label', label(r));
