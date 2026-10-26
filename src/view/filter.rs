@@ -48,6 +48,35 @@ fn placement_available(
     selected: impl Fn(usize) -> bool,
 ) -> bool {
     let node = &graph.nodes[child];
+    if matches!(
+        node.resource_type.as_str(),
+        "aws_docdb_cluster" | "aws_neptune_cluster"
+    ) {
+        return graph
+            .relationships
+            .iter()
+            .filter(|relationship| {
+                relationship.to == node.entity.id && relationship.kind == EdgeKind::Containment
+            })
+            .all(|relationship| {
+                relationship.provenance.iter().all(|proof| match proof {
+                    crate::model::RelationshipProvenance::Reference { from, to } => {
+                        [from, to].into_iter().all(|id| {
+                            graph
+                                .nodes
+                                .iter()
+                                .position(|source| source.entity.provenance.contains(id))
+                                .is_some_and(|index| {
+                                    graph.nodes[index].entity.id == relationship.from
+                                        || index == child
+                                        || selected(index)
+                                })
+                        })
+                    }
+                    _ => true,
+                })
+            });
+    }
     if !matches!(
         node.resource_type.as_str(),
         "aws_elasticache_replication_group"
