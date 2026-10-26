@@ -392,6 +392,15 @@ equivalence tests remain PR-blocking; size-related names alone do not justify
 deferral. Existing ignored calibration, diagnostics and manual benchmarks remain
 opt-in and are not selected by the regression filter.
 
+The subnet route-shape guard compares against a reference using the same visible
+border frames, relationship stroke and soft occlusion as the renderer. An
+obstacle-only shortest route can run along a card boundary even when its centerline
+does not enter the card. If that route violates minimum border clearance, each
+pair of additional bends in the border-aware reference permits one short offset.
+Otherwise the offset allowance stays zero. Final routes must preserve the
+reference's minimum-clearance safety and cannot add bends, reversals, backtracking
+or S-jogs. A focused guard test rejects boundary-hugging shortcuts and extra doglegs.
+
 Reproduce all deferred checks with the pinned Docker toolchain:
 
 ```sh
