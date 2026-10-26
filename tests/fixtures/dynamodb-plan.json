@@ -1,0 +1,275 @@
+{
+  "format_version": "1.2",
+  "resource_changes": [
+    {
+      "address": "aws_dynamodb_table.main",
+      "type": "aws_dynamodb_table",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "PRIVATE_TABLE",
+          "id": "PRIVATE_TABLE",
+          "arn": "arn:aws:dynamodb:us-east-1:111122223333:table/PRIVATE_TABLE",
+          "hash_key": "PRIVATE_KEY"
+        }
+      }
+    },
+    {
+      "address": "aws_kinesis_stream.changes",
+      "type": "aws_kinesis_stream",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:kinesis:us-east-1:111122223333:stream/PRIVATE_STREAM"
+        }
+      }
+    },
+    {
+      "address": "aws_dynamodb_table_replica.west",
+      "type": "aws_dynamodb_table_replica",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "global_table_arn": "arn:aws:dynamodb:us-east-1:111122223333:table/PRIVATE_TABLE",
+          "arn": "arn:aws:dynamodb:us-west-2:111122223333:table/PRIVATE_TABLE"
+        }
+      }
+    },
+    {
+      "address": "aws_dynamodb_global_table.legacy",
+      "type": "aws_dynamodb_global_table",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "PRIVATE_TABLE",
+          "replica": [
+            {
+              "region_name": "us-east-1"
+            },
+            {
+              "region_name": "us-west-2"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_dynamodb_kinesis_streaming_destination.changes",
+      "type": "aws_dynamodb_kinesis_streaming_destination",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "table_name": "PRIVATE_TABLE",
+          "stream_arn": "arn:aws:kinesis:us-east-1:111122223333:stream/PRIVATE_STREAM"
+        }
+      }
+    },
+    {
+      "address": "aws_dynamodb_contributor_insights.insights",
+      "type": "aws_dynamodb_contributor_insights",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "table_name": "PRIVATE_TABLE",
+          "index_name": "PRIVATE_INDEX"
+        }
+      }
+    },
+    {
+      "address": "aws_dynamodb_global_secondary_index.index",
+      "type": "aws_dynamodb_global_secondary_index",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "table_name": "PRIVATE_TABLE",
+          "index_name": "PRIVATE_INDEX",
+          "key_schema": [
+            {
+              "attribute_name": "PRIVATE_KEY"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_dynamodb_resource_policy.policy",
+      "type": "aws_dynamodb_resource_policy",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "resource_arn": "arn:aws:dynamodb:us-east-1:111122223333:table/PRIVATE_TABLE",
+          "policy": "PRIVATE_POLICY_BODY"
+        }
+      }
+    },
+    {
+      "address": "aws_dynamodb_tag.tag",
+      "type": "aws_dynamodb_tag",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "resource_arn": "arn:aws:dynamodb:us-east-1:111122223333:table/PRIVATE_TABLE",
+          "key": "PRIVATE_TAG_KEY",
+          "value": "PRIVATE_TAG_VALUE"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "full_name": "hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          },
+          "assume_role": [
+            {
+              "role_arn": {
+                "constant_value": "arn:aws:iam::111122223333:role/example"
+              }
+            }
+          ]
+        }
+      },
+      "aws.west": {
+        "full_name": "hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-west-2"
+          },
+          "assume_role": [
+            {
+              "role_arn": {
+                "constant_value": "arn:aws:iam::111122223333:role/example"
+              }
+            }
+          ]
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_dynamodb_table.main",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_kinesis_stream.changes",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_dynamodb_table_replica.west",
+          "provider_config_key": "aws.west",
+          "expressions": {
+            "global_table_arn": {
+              "references": [
+                "aws_dynamodb_table.main.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_dynamodb_global_table.legacy",
+          "provider_config_key": "aws",
+          "expressions": {
+            "name": {
+              "references": [
+                "aws_dynamodb_table.main.name"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_dynamodb_kinesis_streaming_destination.changes",
+          "provider_config_key": "aws",
+          "expressions": {
+            "table_name": {
+              "references": [
+                "aws_dynamodb_table.main.name"
+              ]
+            },
+            "stream_arn": {
+              "references": [
+                "aws_kinesis_stream.changes.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_dynamodb_contributor_insights.insights",
+          "provider_config_key": "aws",
+          "expressions": {
+            "table_name": {
+              "references": [
+                "aws_dynamodb_table.main.name"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_dynamodb_global_secondary_index.index",
+          "provider_config_key": "aws",
+          "expressions": {
+            "table_name": {
+              "references": [
+                "aws_dynamodb_table.main.name"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_dynamodb_resource_policy.policy",
+          "provider_config_key": "aws",
+          "expressions": {
+            "resource_arn": {
+              "references": [
+                "aws_dynamodb_table.main.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_dynamodb_tag.tag",
+          "provider_config_key": "aws",
+          "expressions": {
+            "resource_arn": {
+              "references": [
+                "aws_dynamodb_table.main.arn"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

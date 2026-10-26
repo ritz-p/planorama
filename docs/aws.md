@@ -4,6 +4,9 @@ Inventory-wide basic display does not imply the dedicated capabilities described
 See the [semantic audit and exact-type gap register](aws-semantic-audit.md) for current
 limits, intentional exclusions and bounded service follow-ups.
 
+The [DynamoDB contract](dynamodb.md) covers explicit table/replica membership and
+table configuration navigation, including conservative V1/V2 distinctions.
+
 ## API Gateway integrations and deployment context
 
 REST and v2 reference rules are separate tables in `api_gateway/rest.rs` and

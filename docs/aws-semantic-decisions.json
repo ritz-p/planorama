@@ -201,8 +201,8 @@
     "aws_dynamodb_table": {
       "status": "Partial",
       "priority": "P1",
-      "issue": 690,
-      "gap": "Implemented spatial table and explicit Backup selection endpoint (#508). Lambda DynamoDB stream-source edges and at-rest summaries are NOT implemented; #690 covers table/replica/configuration relationships. Defer stream lowering and summaries to separate exact contracts."
+      "issue": 687,
+      "gap": "Spatial table, explicit Backup endpoint and configuration navigation implemented (#508, #690; docs/dynamodb.md). Lambda DynamoDB stream lowering and at-rest summaries are NOT implemented and remain deferred."
     },
     "aws_elasticache_replication_group": {
       "status": "Partial",
@@ -765,46 +765,46 @@
       "gap": "Retain logical policy. Collection association would require interpreting policy JSON, outside this audit and #696."
     },
     "aws_dynamodb_table_replica": {
-      "status": "Basic-only",
-      "priority": "P1",
-      "issue": 690,
-      "gap": "Explicit table ownership/replica scope or Kinesis destination references missing; table item/index/policy values excluded."
+      "status": "Partial",
+      "priority": "P2",
+      "issue": 687,
+      "gap": "Verified explicit table/configuration navigation implemented (#690; docs/dynamodb.md). Deferred: inline replica/GSI expansion, stream-policy targets, transformed tag ARNs; no item/index/policy payload output."
     },
     "aws_dynamodb_global_table": {
-      "status": "Basic-only",
-      "priority": "P1",
-      "issue": 690,
-      "gap": "Explicit table ownership/replica scope or Kinesis destination references missing; table item/index/policy values excluded."
+      "status": "Partial",
+      "priority": "P2",
+      "issue": 687,
+      "gap": "Verified explicit table/configuration navigation implemented (#690; docs/dynamodb.md). Deferred: inline replica/GSI expansion, stream-policy targets, transformed tag ARNs; no item/index/policy payload output."
     },
     "aws_dynamodb_kinesis_streaming_destination": {
-      "status": "Basic-only",
-      "priority": "P1",
-      "issue": 690,
-      "gap": "Explicit table ownership/replica scope or Kinesis destination references missing; table item/index/policy values excluded."
+      "status": "Partial",
+      "priority": "P2",
+      "issue": 687,
+      "gap": "Verified explicit table/configuration navigation implemented (#690; docs/dynamodb.md). Deferred: inline replica/GSI expansion, stream-policy targets, transformed tag ARNs; no item/index/policy payload output."
     },
     "aws_dynamodb_contributor_insights": {
-      "status": "Basic-only",
-      "priority": "P1",
-      "issue": 690,
-      "gap": "Explicit table ownership/replica scope or Kinesis destination references missing; table item/index/policy values excluded."
+      "status": "Partial",
+      "priority": "P2",
+      "issue": 687,
+      "gap": "Verified explicit table/configuration navigation implemented (#690; docs/dynamodb.md). Deferred: inline replica/GSI expansion, stream-policy targets, transformed tag ARNs; no item/index/policy payload output."
     },
     "aws_dynamodb_global_secondary_index": {
-      "status": "Basic-only",
-      "priority": "P1",
-      "issue": 690,
-      "gap": "Explicit table ownership/replica scope or Kinesis destination references missing; table item/index/policy values excluded."
+      "status": "Partial",
+      "priority": "P2",
+      "issue": 687,
+      "gap": "Verified explicit table/configuration navigation implemented (#690; docs/dynamodb.md). Deferred: inline replica/GSI expansion, stream-policy targets, transformed tag ARNs; no item/index/policy payload output."
     },
     "aws_dynamodb_resource_policy": {
-      "status": "Basic-only",
-      "priority": "P1",
-      "issue": 690,
-      "gap": "Explicit table ownership/replica scope or Kinesis destination references missing; table item/index/policy values excluded."
+      "status": "Partial",
+      "priority": "P2",
+      "issue": 687,
+      "gap": "Verified explicit table/configuration navigation implemented (#690; docs/dynamodb.md). Deferred: inline replica/GSI expansion, stream-policy targets, transformed tag ARNs; no item/index/policy payload output."
     },
     "aws_dynamodb_tag": {
-      "status": "Basic-only",
-      "priority": "P1",
-      "issue": 690,
-      "gap": "Explicit table ownership/replica scope or Kinesis destination references missing; table item/index/policy values excluded."
+      "status": "Partial",
+      "priority": "P2",
+      "issue": 687,
+      "gap": "Verified explicit table/configuration navigation implemented (#690; docs/dynamodb.md). Deferred: inline replica/GSI expansion, stream-policy targets, transformed tag ARNs; no item/index/policy payload output."
     },
     "aws_elasticache_global_replication_group": {
       "status": "Basic-only",
@@ -877,6 +877,18 @@
       "priority": "P1",
       "issue": 693,
       "gap": "Firewall architecture presentation, VPC/subnet and explicit policy/group/logging references missing; computed endpoint IDs do not create nodes."
+    },
+    "aws_dynamodb_table_export": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 687,
+      "gap": "Table export/item content handling deferred; do not expose item data, keys or export payloads."
+    },
+    "aws_dynamodb_table_item": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 687,
+      "gap": "Table export/item content handling deferred; do not expose item data, keys or export payloads."
     }
   }
 }

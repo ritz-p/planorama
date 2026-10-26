@@ -90,3 +90,4 @@ examples/encryption-service-names.svg
 examples/lambda.svg
 examples/api-gateway-rest.svg
 examples/api-gateway-v2.svg
+examples/dynamodb.svg
