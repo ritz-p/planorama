@@ -1296,6 +1296,68 @@ and [target](https://registry.terraform.io/providers/hashicorp/aws/6.0.0/docs/re
 contracts. See the maintained [SVG](../examples/rds-proxy.svg) and
 [offline HTML](../examples/rds-proxy.html).
 
+## ElastiCache configuration references (#691)
+
+Contracts were checked against AWS Provider 6.70.0, official commit
+`5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f`, the pinned full schema and the
+[official resource documents](https://github.com/hashicorp/terraform-provider-aws/tree/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/website/docs/r).
+
+| Managed consumer | Input | Managed endpoint / output |
+| --- | --- | --- |
+| `aws_elasticache_global_replication_group` | `primary_replication_group_id` | `aws_elasticache_replication_group.id` or `.replication_group_id` |
+| `aws_elasticache_replication_group` | `global_replication_group_id` | `aws_elasticache_global_replication_group.id` or `.global_replication_group_id` |
+| `aws_elasticache_cluster` | `replication_group_id` | `aws_elasticache_replication_group.id` or `.replication_group_id` |
+| `aws_elasticache_cluster`, `aws_elasticache_replication_group` | `parameter_group_name` | `aws_elasticache_parameter_group.name` or `.id` |
+| `aws_elasticache_replication_group` | `user_group_ids` (set of strings) | `aws_elasticache_user_group.user_group_id` or `.id` |
+| `aws_elasticache_serverless_cache`, `aws_elasticache_user_group_association` | `user_group_id` | `aws_elasticache_user_group.user_group_id` or `.id` |
+| `aws_elasticache_user_group` | `user_ids` (set of strings) | `aws_elasticache_user.user_id` or `.id` |
+| `aws_elasticache_user_group_association` | `user_id` | `aws_elasticache_user.user_id` or `.id` |
+
+The pinned provider source assigns Terraform IDs from the same API identifiers in
+`internal/service/elasticache/user.go` (UserId), `user_group.go` (UserGroupId),
+`replication_group.go` (ReplicationGroupId) and `global_replication_group.go`
+(GlobalReplicationGroupId); their read functions populate the corresponding
+explicit output attributes. Parameter-group `id` is documented as its name.
+
+Other inputs above are strings. Each scalar requires one explicit unique current
+managed AWS reference and equal known nonempty input/output values. Sets require
+complete known values, one unambiguous output attribute shared by all references,
+and a one-to-one match to distinct endpoints. Mixed `.id`/`.user_id` expressions,
+partial sets, duplicates, unknown elements and transformed references stay
+unproven. Literal values, names, ARN substrings and `depends_on` do not create
+links. `user_name` and global ID suffixes are not accepted endpoint identifiers.
+
+Regional links require equal known regions. Global membership preserves the
+regional endpoint's own scope; it never assigns the global object's provider
+region to its members. Bindings require equal verified accounts or the same
+provider binding when both accounts are unknown. Conflicting or one-sided account
+evidence fails. Cross-region aliases without verified account evidence remain
+unresolved in plain JSON; the existing saved-plan verification supplies account
+proof. Data sources, deleted and deposed resources cannot establish current links.
+Unproven explicit references retain generic dependencies and diagnostics.
+
+Global groups, user groups, users, parameter groups and association helpers retain
+logical presentation and independent identity. Links do not embed shared users,
+create network containment, or route new delivery edges. Association helpers keep
+actions, import/move provenance and coverage exactly once; named states cannot
+borrow endpoints from another state, and filtered endpoints become unavailable.
+The configured-primary label describes the explicit input only, never live role,
+health, failover sequence or replication success. Existing network placement and
+encryption presentation are unchanged. Passwords (including write-only forms),
+authentication/access strings and parameter values are never displayed.
+
+Global-group `parameter_group_name` remains deferred: its regional application
+requires a separate explicit primary-region/configuration proof, and a global
+object's scope cannot supply that proof. Other exclusions are cache log/SNS/KMS
+and snapshot references, standalone-cluster indirect placement, computed member
+expansion and encryption summaries. The #718 audit records their separate scope;
+#691 does not infer them from adjacent service rules.
+
+[Fixture](../tests/fixtures/elasticache-configuration-plan.json),
+[semantic tests](../tests/unit/semantic/elasticache.rs),
+[maintained SVG](../examples/elasticache-configuration.svg), browser presentation
+checks and native/Wasm SVG/HTML parity cover these contracts.
+
 ## ElastiCache Serverless
 
 `aws_elasticache_serverless_cache` is an independent regional Node card, using

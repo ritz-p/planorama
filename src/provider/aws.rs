@@ -18,6 +18,7 @@ mod data;
 pub(super) mod diagnostics;
 mod dynamodb;
 mod efs;
+mod elasticache;
 pub(crate) mod encryption;
 mod firehose;
 mod glue;
