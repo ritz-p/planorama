@@ -50,39 +50,266 @@
     },
     "aws_docdb_cluster": {
       "status": "Basic-only",
-      "priority": "P1",
+      "priority": "P2",
       "issue": 697,
-      "gap": "Cluster subnet-group/SG proof and instance membership; no invented subnet for members."
+      "gap": "#717 reviewed: Missing: subnet-group/SG #697 and parameter navigation #762. Deferred: global membership until asymmetric creation-source ARN and regional identifier contracts are specified; key and restore navigation until enabled/ID-or-ARN contract is selected.  Missing: complete subnet-group/SG common-VPC proof #697.",
+      "review": {
+        "issue": 717,
+        "implementationCommit": "5d233e4a467f323b46082a35ede1467eec999898",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "cluster_identifier",
+          "id",
+          "db_subnet_group_name",
+          "vpc_security_group_ids",
+          "db_cluster_parameter_group_name",
+          "global_cluster_identifier",
+          "kms_key_id"
+        ],
+        "placement": "Supported: retain Spatial presentation for aws_docdb_cluster; current classification/display is not complete semantic support.",
+        "ownership": "Missing: unique incoming DocumentDB instance membership #697; shared subnet/parameter groups remain independent.",
+        "network": "Missing: complete subnet-group/SG common-VPC proof #697.",
+        "references": "Missing: subnet-group/SG #697 and parameter navigation #762. Deferred: global membership until asymmetric creation-source ARN and regional identifier contracts are specified; key and restore navigation until enabled/ID-or-ARN contract is selected.",
+        "scope": "Partial: Regional (conditional) eligibility; basic fallback clears account. Regional identity requires known provider/resource-region evidence; global identity does not supply member region. Managed decisions do not apply to data sources or historical identities.",
+        "summaries": "Deferred: storage_encrypted is not in current RDS summary allowlist; revisit with DocumentDB key/unknown handling. Passwords and master-secret outputs excluded.",
+        "officialDocumentation": "website/docs/r/docdb_cluster.html.markdown",
+        "shapes": {
+          "cluster_identifier": [
+            "string"
+          ],
+          "id": [
+            "string"
+          ],
+          "db_subnet_group_name": [
+            "string"
+          ],
+          "vpc_security_group_ids": [
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "db_cluster_parameter_group_name": [
+            "string"
+          ],
+          "global_cluster_identifier": [
+            "string"
+          ],
+          "kms_key_id": [
+            "string"
+          ]
+        }
+      }
     },
     "aws_docdb_cluster_instance": {
       "status": "Basic-only",
-      "priority": "P1",
+      "priority": "P2",
       "issue": 697,
-      "gap": "Cluster subnet-group/SG proof and instance membership; no invented subnet for members."
+      "gap": "#717 reviewed: Missing: cluster_identifier -> cluster.cluster_identifier membership #697; computed subnet-group and inherited KMS outputs cannot supply configured network/key proof.  Not applicable: membership must not invent an instance subnet from computed group name.",
+      "review": {
+        "issue": 717,
+        "implementationCommit": "5d233e4a467f323b46082a35ede1467eec999898",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "cluster_identifier",
+          "identifier",
+          "db_subnet_group_name",
+          "kms_key_id"
+        ],
+        "placement": "Supported: retain Spatial presentation for aws_docdb_cluster_instance; current classification/display is not complete semantic support.",
+        "ownership": "Missing: verified service child presentation #697; deprecated cluster id is not assumed equivalent to identifier.",
+        "network": "Not applicable: membership must not invent an instance subnet from computed group name.",
+        "references": "Missing: cluster_identifier -> cluster.cluster_identifier membership #697; computed subnet-group and inherited KMS outputs cannot supply configured network/key proof.",
+        "scope": "Partial: Regional (conditional) eligibility; basic fallback clears account. Regional identity requires known provider/resource-region evidence; global identity does not supply member region. Managed decisions do not apply to data sources or historical identities.",
+        "summaries": "Deferred: no aws_docdb_cluster_instance value allowlist; revisit only with a specific useful configuration summary and known/unknown/sensitive contract. Identity/actions remain visible.",
+        "officialDocumentation": "website/docs/r/docdb_cluster_instance.html.markdown",
+        "shapes": {
+          "cluster_identifier": [
+            "string"
+          ],
+          "identifier": [
+            "string"
+          ],
+          "db_subnet_group_name": [
+            "string"
+          ],
+          "kms_key_id": [
+            "string"
+          ]
+        }
+      }
     },
     "aws_docdb_subnet_group": {
       "status": "Basic-only",
-      "priority": "P1",
+      "priority": "P2",
       "issue": 697,
-      "gap": "Cluster subnet-group/SG proof and instance membership; no invented subnet for members."
+      "gap": "#717 reviewed: Missing: complete subnet IDs and inbound cluster group-name contract #697.  Missing: complete subnet set with unique common VPC #697; keep logical selector.",
+      "review": {
+        "issue": 717,
+        "implementationCommit": "5d233e4a467f323b46082a35ede1467eec999898",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "name",
+          "id",
+          "subnet_ids"
+        ],
+        "placement": "Supported: retain Logical presentation for aws_docdb_subnet_group; current classification/display is not complete semantic support.",
+        "ownership": "Not applicable: shared subnet selector.",
+        "network": "Missing: complete subnet set with unique common VPC #697; keep logical selector.",
+        "references": "Missing: complete subnet IDs and inbound cluster group-name contract #697.",
+        "scope": "Partial: Regional (conditional) eligibility; basic fallback clears account. Regional identity requires known provider/resource-region evidence; global identity does not supply member region. Managed decisions do not apply to data sources or historical identities.",
+        "summaries": "Deferred: no aws_docdb_subnet_group value allowlist; revisit only with a specific useful configuration summary and known/unknown/sensitive contract. Identity/actions remain visible.",
+        "officialDocumentation": "website/docs/r/docdb_subnet_group.html.markdown",
+        "shapes": {
+          "name": [
+            "string"
+          ],
+          "id": [
+            "string"
+          ],
+          "subnet_ids": [
+            [
+              "set",
+              "string"
+            ]
+          ]
+        }
+      }
     },
     "aws_neptune_cluster": {
       "status": "Basic-only",
-      "priority": "P1",
+      "priority": "P2",
       "issue": 698,
-      "gap": "Cluster subnet-group/SG proof and instance membership; separate membership and placement."
+      "gap": "#717 reviewed: Missing: subnet-group/SG #698, parameters/IAM #762. Deferred: global/replication/key references until cross-region and encryption-enabled contracts are selected.  Missing: complete subnet-group/SG common-VPC proof #698.",
+      "review": {
+        "issue": 717,
+        "implementationCommit": "5d233e4a467f323b46082a35ede1467eec999898",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "cluster_identifier",
+          "neptune_subnet_group_name",
+          "vpc_security_group_ids",
+          "neptune_cluster_parameter_group_name",
+          "neptune_instance_parameter_group_name",
+          "iam_roles",
+          "global_cluster_identifier",
+          "kms_key_arn"
+        ],
+        "placement": "Supported: retain Spatial presentation for aws_neptune_cluster; current classification/display is not complete semantic support.",
+        "ownership": "Missing: unique incoming Neptune instance presentation #698; group selectors are shared.",
+        "network": "Missing: complete subnet-group/SG common-VPC proof #698.",
+        "references": "Missing: subnet-group/SG #698, parameters/IAM #762. Deferred: global/replication/key references until cross-region and encryption-enabled contracts are selected.",
+        "scope": "Partial: Regional (conditional) eligibility; basic fallback clears account. Regional identity requires known provider/resource-region evidence; global identity does not supply member region. Managed decisions do not apply to data sources or historical identities.",
+        "summaries": "Deferred: Neptune storage_encrypted is outside RDS allowlist; revisit with a Neptune key/unknown contract, not inherited instance flags.",
+        "officialDocumentation": "website/docs/r/neptune_cluster.html.markdown",
+        "shapes": {
+          "cluster_identifier": [
+            "string"
+          ],
+          "neptune_subnet_group_name": [
+            "string"
+          ],
+          "vpc_security_group_ids": [
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "neptune_cluster_parameter_group_name": [
+            "string"
+          ],
+          "neptune_instance_parameter_group_name": [
+            "string"
+          ],
+          "iam_roles": [
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "global_cluster_identifier": [
+            "string"
+          ],
+          "kms_key_arn": [
+            "string"
+          ]
+        }
+      }
     },
     "aws_neptune_cluster_instance": {
       "status": "Basic-only",
-      "priority": "P1",
+      "priority": "P2",
       "issue": 698,
-      "gap": "Cluster subnet-group/SG proof and instance membership; separate membership and placement."
+      "gap": "#717 reviewed: Missing: cluster membership #698 and parameter navigation #762; configured group must agree with cluster, without choosing one subnet.  Not applicable: service membership is not subnet containment; group disagreement must remain conservative in #698.",
+      "review": {
+        "issue": 717,
+        "implementationCommit": "5d233e4a467f323b46082a35ede1467eec999898",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "cluster_identifier",
+          "identifier",
+          "neptune_subnet_group_name",
+          "neptune_parameter_group_name"
+        ],
+        "placement": "Supported: retain Spatial presentation for aws_neptune_cluster_instance; current classification/display is not complete semantic support.",
+        "ownership": "Missing: verified cluster child presentation #698.",
+        "network": "Not applicable: service membership is not subnet containment; group disagreement must remain conservative in #698.",
+        "references": "Missing: cluster membership #698 and parameter navigation #762; configured group must agree with cluster, without choosing one subnet.",
+        "scope": "Partial: Regional (conditional) eligibility; basic fallback clears account. Regional identity requires known provider/resource-region evidence; global identity does not supply member region. Managed decisions do not apply to data sources or historical identities.",
+        "summaries": "Deferred: no aws_neptune_cluster_instance value allowlist; revisit only with a specific useful configuration summary and known/unknown/sensitive contract. Identity/actions remain visible.",
+        "officialDocumentation": "website/docs/r/neptune_cluster_instance.html.markdown",
+        "shapes": {
+          "cluster_identifier": [
+            "string"
+          ],
+          "identifier": [
+            "string"
+          ],
+          "neptune_subnet_group_name": [
+            "string"
+          ],
+          "neptune_parameter_group_name": [
+            "string"
+          ]
+        }
+      }
     },
     "aws_neptune_subnet_group": {
       "status": "Basic-only",
-      "priority": "P1",
+      "priority": "P2",
       "issue": 698,
-      "gap": "Cluster subnet-group/SG proof and instance membership; separate membership and placement."
+      "gap": "#717 reviewed: Missing: complete subnet and incoming name proof #698.  Missing: complete common-VPC subnet proof #698; no spatial promotion required.",
+      "review": {
+        "issue": 717,
+        "implementationCommit": "5d233e4a467f323b46082a35ede1467eec999898",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "name",
+          "id",
+          "subnet_ids"
+        ],
+        "placement": "Supported: retain Logical presentation for aws_neptune_subnet_group; current classification/display is not complete semantic support.",
+        "ownership": "Not applicable: shared network selector.",
+        "network": "Missing: complete common-VPC subnet proof #698; no spatial promotion required.",
+        "references": "Missing: complete subnet and incoming name proof #698.",
+        "scope": "Partial: Regional (conditional) eligibility; basic fallback clears account. Regional identity requires known provider/resource-region evidence; global identity does not supply member region. Managed decisions do not apply to data sources or historical identities.",
+        "summaries": "Deferred: no aws_neptune_subnet_group value allowlist; revisit only with a specific useful configuration summary and known/unknown/sensitive contract. Identity/actions remain visible.",
+        "officialDocumentation": "website/docs/r/neptune_subnet_group.html.markdown",
+        "shapes": {
+          "name": [
+            "string"
+          ],
+          "id": [
+            "string"
+          ],
+          "subnet_ids": [
+            [
+              "set",
+              "string"
+            ]
+          ]
+        }
+      }
     },
     "aws_dms_replication_instance": {
       "status": "Basic-only",
@@ -681,22 +908,121 @@
       "gap": "Alias/function/version, layer and URL references are implemented conditionally; no synthetic versions, literal ARN matching or environment summaries."
     },
     "aws_db_proxy": {
-      "status": "Partial (bounded capabilities implemented)",
+      "status": "Partial",
       "priority": "P3",
-      "issue": 514,
-      "gap": "Proxy network/target/owner references are implemented conditionally; no target database containment, connection pools or authentication values."
+      "issue": 717,
+      "gap": "#717 reviewed: Supported: completed #514 verifies execution role ARN, auth secret ARN and incoming target/default-group links; credentials and auth contents excluded.  Supported: #514 complete known subnet/SG sets and common VPC, independent of database targets.",
+      "review": {
+        "issue": 717,
+        "implementationCommit": "5d233e4a467f323b46082a35ede1467eec999898",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "name",
+          "vpc_subnet_ids",
+          "vpc_security_group_ids",
+          "role_arn",
+          "auth.secret_arn"
+        ],
+        "placement": "Supported: retain Spatial presentation for aws_db_proxy; current classification/display is not complete semantic support.",
+        "ownership": "Not applicable: proxy is independent; default target-group navigation does not embed target databases.",
+        "network": "Supported: #514 complete known subnet/SG sets and common VPC, independent of database targets.",
+        "references": "Supported: completed #514 verifies execution role ARN, auth secret ARN and incoming target/default-group links; credentials and auth contents excluded.",
+        "scope": "Partial: Regional (conditional) eligibility; account requires provider evidence. Regional identity requires known provider/resource-region evidence; global identity does not supply member region. Managed decisions do not apply to data sources or historical identities.",
+        "summaries": "Deferred: TLS/auth-mode summaries need a distinct unknown/default-auth-scheme contract; no authentication values are displayed.",
+        "officialDocumentation": "website/docs/r/db_proxy.html.markdown",
+        "shapes": {
+          "name": [
+            "string"
+          ],
+          "vpc_subnet_ids": [
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "vpc_security_group_ids": [
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "role_arn": [
+            "string"
+          ],
+          "auth.secret_arn": [
+            "set",
+            "string"
+          ]
+        }
+      }
     },
     "aws_db_proxy_target": {
-      "status": "Partial (bounded capabilities implemented)",
+      "status": "Partial",
       "priority": "P3",
-      "issue": 514,
-      "gap": "Proxy network/target/owner references are implemented conditionally; no target database containment, connection pools or authentication values."
+      "issue": 717,
+      "gap": "#717 reviewed: Supported: #514 validates proxy/group consistency and mutually exclusive DB instance identifier or cluster identifier; target_arn is computed and not a substitute.  Not applicable: target registration does not transfer proxy or database network placement.",
+      "review": {
+        "issue": 717,
+        "implementationCommit": "5d233e4a467f323b46082a35ede1467eec999898",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "db_proxy_name",
+          "target_group_name",
+          "db_instance_identifier",
+          "db_cluster_identifier"
+        ],
+        "placement": "Supported: retain Logical presentation for aws_db_proxy_target; current classification/display is not complete semantic support.",
+        "ownership": "Partial: validated proxy/group references retained; target databases stay independent.",
+        "network": "Not applicable: target registration does not transfer proxy or database network placement.",
+        "references": "Supported: #514 validates proxy/group consistency and mutually exclusive DB instance identifier or cluster identifier; target_arn is computed and not a substitute.",
+        "scope": "Partial: Regional (conditional) eligibility; account requires provider evidence. Regional identity requires known provider/resource-region evidence; global identity does not supply member region. Managed decisions do not apply to data sources or historical identities.",
+        "summaries": "Intentionally unsupported: endpoint/port/type output does not establish runtime availability.",
+        "officialDocumentation": "website/docs/r/db_proxy_target.html.markdown",
+        "shapes": {
+          "db_proxy_name": [
+            "string"
+          ],
+          "target_group_name": [
+            "string"
+          ],
+          "db_instance_identifier": [
+            "string"
+          ],
+          "db_cluster_identifier": [
+            "string"
+          ]
+        }
+      }
     },
     "aws_db_proxy_default_target_group": {
-      "status": "Partial (bounded capabilities implemented)",
+      "status": "Partial",
       "priority": "P3",
-      "issue": 514,
-      "gap": "Proxy network/target/owner references are implemented conditionally; no target database containment, connection pools or authentication values."
+      "issue": 717,
+      "gap": "#717 reviewed: Supported: #514 unique db_proxy_name -> proxy.name navigation; name is the group output, not its composite id.  Not applicable: pool configuration is not a VPC workload.",
+      "review": {
+        "issue": 717,
+        "implementationCommit": "5d233e4a467f323b46082a35ede1467eec999898",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "db_proxy_name",
+          "name"
+        ],
+        "placement": "Supported: retain Logical presentation for aws_db_proxy_default_target_group; current classification/display is not complete semantic support.",
+        "ownership": "Partial: verified owner navigation retained as a logical controller, without embedded presentation.",
+        "network": "Not applicable: pool configuration is not a VPC workload.",
+        "references": "Supported: #514 unique db_proxy_name -> proxy.name navigation; name is the group output, not its composite id.",
+        "scope": "Partial: Regional (conditional) eligibility; account requires provider evidence. Regional identity requires known provider/resource-region evidence; global identity does not supply member region. Managed decisions do not apply to data sources or historical identities.",
+        "summaries": "Intentionally unsupported: connection_pool_config.init_query and arbitrary pool/session configuration.",
+        "officialDocumentation": "website/docs/r/db_proxy_default_target_group.html.markdown",
+        "shapes": {
+          "db_proxy_name": [
+            "string"
+          ],
+          "name": [
+            "string"
+          ]
+        }
+      }
     },
     "aws_elasticache_serverless_cache": {
       "status": "Partial",
@@ -995,16 +1321,123 @@
       "gap": "Trail bucket/log/key references implemented; event contents and delivery success excluded."
     },
     "aws_rds_global_cluster": {
-      "status": "Partial (bounded capabilities implemented)",
+      "status": "Partial",
       "priority": "P3",
-      "issue": 515,
-      "gap": "Global Cluster membership and existing RDS placement implemented; no replication topology/runtime health inference."
+      "issue": 717,
+      "gap": "#717 reviewed: Partial: incoming RDS cluster global_cluster_identifier proof retained. Deferred: reverse creation-source ARN navigation until duplicate-direction and source lifecycle contract is selected.  Not applicable: global database not a network container.",
+      "review": {
+        "issue": 717,
+        "implementationCommit": "5d233e4a467f323b46082a35ede1467eec999898",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "id",
+          "global_cluster_identifier",
+          "source_db_cluster_identifier",
+          "global_cluster_members"
+        ],
+        "placement": "Supported: retain Spatial presentation for aws_rds_global_cluster; current classification/display is not complete semantic support.",
+        "ownership": "Not applicable: global membership does not embed regional clusters or transfer their scope.",
+        "network": "Not applicable: global database not a network container.",
+        "references": "Partial: incoming RDS cluster global_cluster_identifier proof retained. Deferred: reverse creation-source ARN navigation until duplicate-direction and source lifecycle contract is selected.",
+        "scope": "Partial: Global eligibility; account requires provider evidence. Regional identity requires known provider/resource-region evidence; global identity does not supply member region. Managed decisions do not apply to data sources or historical identities.",
+        "summaries": "Deferred: source-inherited encryption and computed writer members require separate allowlist; no topology from computed members.",
+        "officialDocumentation": "website/docs/r/rds_global_cluster.html.markdown",
+        "shapes": {
+          "id": [
+            "string"
+          ],
+          "global_cluster_identifier": [
+            "string"
+          ],
+          "source_db_cluster_identifier": [
+            "string"
+          ],
+          "global_cluster_members": [
+            [
+              "set",
+              [
+                "object",
+                {
+                  "db_cluster_arn": "string",
+                  "is_writer": "bool"
+                }
+              ]
+            ]
+          ]
+        }
+      }
     },
     "aws_rds_cluster": {
-      "status": "Partial (bounded capabilities implemented)",
-      "priority": "P3",
-      "issue": 515,
-      "gap": "Global Cluster membership and existing RDS placement implemented; no replication topology/runtime health inference."
+      "status": "Partial",
+      "priority": "P2",
+      "issue": 762,
+      "gap": "#717 reviewed: Partial: global-cluster membership, KMS and Backup endpoint retained. Missing configuration/IAM references #762; restore/replication sources deferred until cross-region and historical-source contracts are selected.  Supported: existing subnet-group indirect placement and SG attachment, with legacy evidence limits in indirect.rs; cluster ownership does not select a subnet for members.",
+      "review": {
+        "issue": 717,
+        "implementationCommit": "5d233e4a467f323b46082a35ede1467eec999898",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "id",
+          "cluster_identifier",
+          "db_subnet_group_name",
+          "vpc_security_group_ids",
+          "global_cluster_identifier",
+          "db_cluster_parameter_group_name",
+          "db_instance_parameter_group_name",
+          "iam_roles",
+          "monitoring_role_arn",
+          "kms_key_id",
+          "storage_encrypted"
+        ],
+        "placement": "Supported: retain Spatial presentation for aws_rds_cluster; current classification/display is not complete semantic support.",
+        "ownership": "Supported: incoming verified RDS instance presentation ownership in members.rs; the cluster remains independent of global database network placement.",
+        "network": "Supported: existing subnet-group indirect placement and SG attachment, with legacy evidence limits in indirect.rs; cluster ownership does not select a subnet for members.",
+        "references": "Partial: global-cluster membership, KMS and Backup endpoint retained. Missing configuration/IAM references #762; restore/replication sources deferred until cross-region and historical-source contracts are selected.",
+        "scope": "Partial: Regional (conditional) eligibility; account requires provider evidence. Regional identity requires known provider/resource-region evidence; global identity does not supply member region. Managed decisions do not apply to data sources or historical identities.",
+        "summaries": "Supported: RDS storage_encrypted/KMS allowlist #601, independently of global-cluster encryption and instance computed outputs.",
+        "officialDocumentation": "website/docs/r/rds_cluster.html.markdown",
+        "shapes": {
+          "id": [
+            "string"
+          ],
+          "cluster_identifier": [
+            "string"
+          ],
+          "db_subnet_group_name": [
+            "string"
+          ],
+          "vpc_security_group_ids": [
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "global_cluster_identifier": [
+            "string"
+          ],
+          "db_cluster_parameter_group_name": [
+            "string"
+          ],
+          "db_instance_parameter_group_name": [
+            "string"
+          ],
+          "iam_roles": [
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "monitoring_role_arn": [
+            "string"
+          ],
+          "kms_key_id": [
+            "string"
+          ],
+          "storage_encrypted": [
+            "bool"
+          ]
+        }
+      }
     },
     "aws_iam_openid_connect_provider": {
       "status": "Partial (bounded capabilities implemented)",
@@ -4146,6 +4579,1865 @@
             "string"
           ],
           "name": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_db_cluster_snapshot": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 763,
+      "gap": "#717 reviewed: Missing: service-specific cluster_identifier source navigation #763; computed snapshot source/KMS/VPC outputs are not configured references.  Not applicable: computed vpc_id describes source snapshot provenance, not deployed network containment.",
+      "review": {
+        "issue": 717,
+        "implementationCommit": "5d233e4a467f323b46082a35ede1467eec999898",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "db_cluster_identifier",
+          "db_cluster_snapshot_identifier",
+          "db_cluster_snapshot_arn",
+          "vpc_id"
+        ],
+        "placement": "Supported: retain Logical presentation for aws_db_cluster_snapshot; current classification/display is not complete semantic support.",
+        "ownership": "Not applicable: retained snapshot artifact can outlive source cluster; no embedding.",
+        "network": "Not applicable: computed vpc_id describes source snapshot provenance, not deployed network containment.",
+        "references": "Missing: service-specific cluster_identifier source navigation #763; computed snapshot source/KMS/VPC outputs are not configured references.",
+        "scope": "Partial: Regional (conditional) eligibility; basic fallback clears account. Regional identity requires known provider/resource-region evidence; global identity does not supply member region. Managed decisions do not apply to data sources or historical identities.",
+        "summaries": "Deferred: snapshot encryption outputs need a separate observed-versus-configured summary contract; no runtime restore claims.",
+        "officialDocumentation": "website/docs/r/db_cluster_snapshot.html.markdown",
+        "shapes": {
+          "db_cluster_identifier": [
+            "string"
+          ],
+          "db_cluster_snapshot_identifier": [
+            "string"
+          ],
+          "db_cluster_snapshot_arn": [
+            "string"
+          ],
+          "vpc_id": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_db_event_subscription": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 764,
+      "gap": "#717 reviewed: Missing: sns_topic ARN (DocumentDB/Neptune use sns_topic_arn) and complete discriminated source_ids references #764; absent source IDs mean service-wide subscription, not all managed nodes.  Not applicable: notification configuration is not a network workload.",
+      "review": {
+        "issue": 717,
+        "implementationCommit": "5d233e4a467f323b46082a35ede1467eec999898",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "sns_topic",
+          "source_ids",
+          "source_type"
+        ],
+        "placement": "Supported: retain Logical presentation for aws_db_event_subscription; current classification/display is not complete semantic support.",
+        "ownership": "Not applicable: subscription can select multiple sources; no unique embedded owner.",
+        "network": "Not applicable: notification configuration is not a network workload.",
+        "references": "Missing: sns_topic ARN (DocumentDB/Neptune use sns_topic_arn) and complete discriminated source_ids references #764; absent source IDs mean service-wide subscription, not all managed nodes.",
+        "scope": "Partial: Regional (conditional) eligibility; basic fallback clears account. Regional identity requires known provider/resource-region evidence; global identity does not supply member region. Managed decisions do not apply to data sources or historical identities.",
+        "summaries": "Intentionally unsupported: event delivery, category interpretation and event payloads.",
+        "officialDocumentation": "website/docs/r/db_event_subscription.html.markdown",
+        "shapes": {
+          "sns_topic": [
+            "string"
+          ],
+          "source_ids": [
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "source_type": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_db_instance": {
+      "status": "Partial",
+      "priority": "P2",
+      "issue": 762,
+      "gap": "#717 reviewed: Partial: KMS ARN navigation and Backup endpoint retained; configuration/monitoring references missing #762. Deferred: replica/restore/AD/CA references until discriminated same/cross-region identifier-versus-ARN contracts and historical-source presentation are specified.  Supported: existing subnet-group reference traversal and SG attachment; indirect.rs may use a single subnet or common ancestor, not the newer strict complete-value service-reference contract. Do not claim #697 proof for legacy RDS.",
+      "review": {
+        "issue": 717,
+        "implementationCommit": "5d233e4a467f323b46082a35ede1467eec999898",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "identifier",
+          "id",
+          "db_subnet_group_name",
+          "vpc_security_group_ids",
+          "parameter_group_name",
+          "option_group_name",
+          "monitoring_role_arn",
+          "kms_key_id",
+          "storage_encrypted",
+          "replicate_source_db"
+        ],
+        "placement": "Supported: retain Spatial presentation for aws_db_instance; current classification/display is not complete semantic support.",
+        "ownership": "Not applicable: retain independent configuration/service identity; references alone do not prove exclusive embedded ownership.",
+        "network": "Supported: existing subnet-group reference traversal and SG attachment; indirect.rs may use a single subnet or common ancestor, not the newer strict complete-value service-reference contract. Do not claim #697 proof for legacy RDS.",
+        "references": "Partial: KMS ARN navigation and Backup endpoint retained; configuration/monitoring references missing #762. Deferred: replica/restore/AD/CA references until discriminated same/cross-region identifier-versus-ARN contracts and historical-source presentation are specified.",
+        "scope": "Partial: Regional (conditional) eligibility; account requires provider evidence. Regional identity requires known provider/resource-region evidence; global identity does not supply member region. Managed decisions do not apply to data sources or historical identities.",
+        "summaries": "Supported: allowlisted RDS storage_encrypted and KMS provenance #601; credentials, secret outputs and performance-insights key values remain excluded.",
+        "officialDocumentation": "website/docs/r/db_instance.html.markdown",
+        "shapes": {
+          "identifier": [
+            "string"
+          ],
+          "id": [
+            "string"
+          ],
+          "db_subnet_group_name": [
+            "string"
+          ],
+          "vpc_security_group_ids": [
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "parameter_group_name": [
+            "string"
+          ],
+          "option_group_name": [
+            "string"
+          ],
+          "monitoring_role_arn": [
+            "string"
+          ],
+          "kms_key_id": [
+            "string"
+          ],
+          "storage_encrypted": [
+            "bool"
+          ],
+          "replicate_source_db": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_db_instance_automated_backups_replication": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 763,
+      "gap": "#717 reviewed: Deferred: cross-region retained backup identity can outlive source DB; revisit with explicit source/destination scope and backup lifecycle contract, distinct from snapshot #763.  Not applicable: replicated backup is not in source VPC.",
+      "review": {
+        "issue": 717,
+        "implementationCommit": "5d233e4a467f323b46082a35ede1467eec999898",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "source_db_instance_arn",
+          "kms_key_id"
+        ],
+        "placement": "Supported: retain Logical presentation for aws_db_instance_automated_backups_replication; current classification/display is not complete semantic support.",
+        "ownership": "Not applicable: retained backup service operation is independent of live source lifetime.",
+        "network": "Not applicable: replicated backup is not in source VPC.",
+        "references": "Deferred: cross-region retained backup identity can outlive source DB; revisit with explicit source/destination scope and backup lifecycle contract, distinct from snapshot #763.",
+        "scope": "Partial: Regional (conditional) eligibility; basic fallback clears account. Regional identity requires known provider/resource-region evidence; global identity does not supply member region. Managed decisions do not apply to data sources or historical identities.",
+        "summaries": "Intentionally unsupported: pre_signed_url and retention/recoverability assertions.",
+        "officialDocumentation": "website/docs/r/db_instance_automated_backups_replication.html.markdown",
+        "shapes": {
+          "source_db_instance_arn": [
+            "string"
+          ],
+          "kms_key_id": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_db_instance_role_association": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 762,
+      "gap": "#717 reviewed: Missing: typed DB instance identifier/IAM ARN association #762; helper role alone does not create an Association edge.  Not applicable: IAM feature association is not networking.",
+      "review": {
+        "issue": 717,
+        "implementationCommit": "5d233e4a467f323b46082a35ede1467eec999898",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "db_instance_identifier",
+          "role_arn"
+        ],
+        "placement": "Supported: retain Logical presentation for aws_db_instance_role_association; current classification/display is not complete semantic support.",
+        "ownership": "Not applicable: retain independent configuration/service identity; references alone do not prove exclusive embedded ownership.",
+        "network": "Not applicable: IAM feature association is not networking.",
+        "references": "Missing: typed DB instance identifier/IAM ARN association #762; helper role alone does not create an Association edge.",
+        "scope": "Partial: Regional (conditional) eligibility; basic fallback clears account. Regional identity requires known provider/resource-region evidence; global identity does not supply member region. Managed decisions do not apply to data sources or historical identities.",
+        "summaries": "Deferred: no aws_db_instance_role_association value allowlist; revisit only with a specific useful configuration summary and known/unknown/sensitive contract. Identity/actions remain visible.",
+        "officialDocumentation": "website/docs/r/db_instance_role_association.html.markdown",
+        "shapes": {
+          "db_instance_identifier": [
+            "string"
+          ],
+          "role_arn": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_db_option_group": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 762,
+      "gap": "#717 reviewed: Missing: inbound option_group_name navigation #762. Deferred: option-specific SG navigation until option-family/legacy-DB-SG distinctions are selected; these are not database network placement.  Not applicable: option SG membership cannot place option group or database.",
+      "review": {
+        "issue": 717,
+        "implementationCommit": "5d233e4a467f323b46082a35ede1467eec999898",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "name",
+          "option.vpc_security_group_memberships",
+          "option.db_security_group_memberships"
+        ],
+        "placement": "Supported: retain Logical presentation for aws_db_option_group; current classification/display is not complete semantic support.",
+        "ownership": "Not applicable: shared option configuration, not owned by one instance.",
+        "network": "Not applicable: option SG membership cannot place option group or database.",
+        "references": "Missing: inbound option_group_name navigation #762. Deferred: option-specific SG navigation until option-family/legacy-DB-SG distinctions are selected; these are not database network placement.",
+        "scope": "Partial: Regional (conditional) eligibility; basic fallback clears account. Regional identity requires known provider/resource-region evidence; global identity does not supply member region. Managed decisions do not apply to data sources or historical identities.",
+        "summaries": "Intentionally unsupported: arbitrary option_settings and option semantics.",
+        "officialDocumentation": "website/docs/r/db_option_group.html.markdown",
+        "shapes": {
+          "name": [
+            "string"
+          ],
+          "option.vpc_security_group_memberships": [
+            "set",
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "option.db_security_group_memberships": [
+            "set",
+            [
+              "set",
+              "string"
+            ]
+          ]
+        }
+      }
+    },
+    "aws_db_parameter_group": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 762,
+      "gap": "#717 reviewed: Missing: inbound exact shared parameter-group references #762. No outbound relationship from arbitrary parameter values.  Not applicable: parameter sets do not define containment.",
+      "review": {
+        "issue": 717,
+        "implementationCommit": "5d233e4a467f323b46082a35ede1467eec999898",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "name",
+          "id",
+          "family",
+          "parameter.name",
+          "parameter.value"
+        ],
+        "placement": "Supported: retain Logical presentation for aws_db_parameter_group; current classification/display is not complete semantic support.",
+        "ownership": "Not applicable: parameter groups may be shared; not embedded in a single database.",
+        "network": "Not applicable: parameter sets do not define containment.",
+        "references": "Missing: inbound exact shared parameter-group references #762. No outbound relationship from arbitrary parameter values.",
+        "scope": "Partial: Regional (conditional) eligibility; basic fallback clears account. Regional identity requires known provider/resource-region evidence; global identity does not supply member region. Managed decisions do not apply to data sources or historical identities.",
+        "summaries": "Intentionally unsupported: arbitrary parameter names/values and engine-specific policy interpretation.",
+        "officialDocumentation": "website/docs/r/db_parameter_group.html.markdown",
+        "shapes": {
+          "name": [
+            "string"
+          ],
+          "id": [
+            "string"
+          ],
+          "family": [
+            "string"
+          ],
+          "parameter.name": [
+            "set",
+            "string"
+          ],
+          "parameter.value": [
+            "set",
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_db_proxy_endpoint": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 765,
+      "gap": "#717 reviewed: Missing: proxy.name owner navigation and complete network sets #765. Missing: currently Logical; independent proxy network endpoint warrants spatial presentation in #765. Missing: endpoint-specific common-VPC subnet/SG proof #765; owner proxy cannot supply its VPC.",
+      "review": {
+        "issue": 717,
+        "implementationCommit": "5d233e4a467f323b46082a35ede1467eec999898",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "db_proxy_name",
+          "vpc_subnet_ids",
+          "vpc_security_group_ids"
+        ],
+        "placement": "Missing: currently Logical; independent proxy network endpoint warrants spatial presentation in #765.",
+        "ownership": "Not applicable: retain independent configuration/service identity; references alone do not prove exclusive embedded ownership.",
+        "network": "Missing: endpoint-specific common-VPC subnet/SG proof #765; owner proxy cannot supply its VPC.",
+        "references": "Missing: proxy.name owner navigation and complete network sets #765.",
+        "scope": "Partial: Regional (conditional) eligibility; basic fallback clears account. Regional identity requires known provider/resource-region evidence; global identity does not supply member region. Managed decisions do not apply to data sources or historical identities.",
+        "summaries": "Deferred: no aws_db_proxy_endpoint value allowlist; revisit only with a specific useful configuration summary and known/unknown/sensitive contract. Identity/actions remain visible.",
+        "officialDocumentation": "website/docs/r/db_proxy_endpoint.html.markdown",
+        "shapes": {
+          "db_proxy_name": [
+            "string"
+          ],
+          "vpc_subnet_ids": [
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "vpc_security_group_ids": [
+            [
+              "set",
+              "string"
+            ]
+          ]
+        }
+      }
+    },
+    "aws_db_snapshot": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 763,
+      "gap": "#717 reviewed: Missing: db_instance_identifier -> DB identifier (not resource id) #763.  Not applicable: computed source VPC/AZ never places a snapshot.",
+      "review": {
+        "issue": 717,
+        "implementationCommit": "5d233e4a467f323b46082a35ede1467eec999898",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "db_instance_identifier",
+          "db_snapshot_identifier",
+          "db_snapshot_arn",
+          "vpc_id"
+        ],
+        "placement": "Supported: retain Logical presentation for aws_db_snapshot; current classification/display is not complete semantic support.",
+        "ownership": "Not applicable: retained artifact is independent of source lifetime.",
+        "network": "Not applicable: computed source VPC/AZ never places a snapshot.",
+        "references": "Missing: db_instance_identifier -> DB identifier (not resource id) #763.",
+        "scope": "Partial: Regional (conditional) eligibility; basic fallback clears account. Regional identity requires known provider/resource-region evidence; global identity does not supply member region. Managed decisions do not apply to data sources or historical identities.",
+        "summaries": "Deferred: computed encrypted/KMS outputs require an observed snapshot summary contract.",
+        "officialDocumentation": "website/docs/r/db_snapshot.html.markdown",
+        "shapes": {
+          "db_instance_identifier": [
+            "string"
+          ],
+          "db_snapshot_identifier": [
+            "string"
+          ],
+          "db_snapshot_arn": [
+            "string"
+          ],
+          "vpc_id": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_db_snapshot_copy": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 763,
+      "gap": "#717 reviewed: Missing: snapshot source and copy navigation #763. Deferred: optional option group and key aliases until copy-specific identity forms are covered; destination_region is not source scope.  Not applicable: source snapshot VPC is provenance, not containment.",
+      "review": {
+        "issue": 717,
+        "implementationCommit": "5d233e4a467f323b46082a35ede1467eec999898",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "source_db_snapshot_identifier",
+          "target_db_snapshot_identifier",
+          "kms_key_id",
+          "option_group_name",
+          "destination_region"
+        ],
+        "placement": "Supported: retain Logical presentation for aws_db_snapshot_copy; current classification/display is not complete semantic support.",
+        "ownership": "Not applicable: copied snapshot remains an independent retained identity.",
+        "network": "Not applicable: source snapshot VPC is provenance, not containment.",
+        "references": "Missing: snapshot source and copy navigation #763. Deferred: optional option group and key aliases until copy-specific identity forms are covered; destination_region is not source scope.",
+        "scope": "Partial: Regional (conditional) eligibility; basic fallback clears account. Regional identity requires known provider/resource-region evidence; global identity does not supply member region. Managed decisions do not apply to data sources or historical identities.",
+        "summaries": "Deferred: no aws_db_snapshot_copy value allowlist; revisit only with a specific useful configuration summary and known/unknown/sensitive contract. Identity/actions remain visible.",
+        "officialDocumentation": "website/docs/r/db_snapshot_copy.html.markdown",
+        "shapes": {
+          "source_db_snapshot_identifier": [
+            "string"
+          ],
+          "target_db_snapshot_identifier": [
+            "string"
+          ],
+          "kms_key_id": [
+            "string"
+          ],
+          "option_group_name": [
+            "string"
+          ],
+          "destination_region": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_db_subnet_group": {
+      "status": "Partial",
+      "priority": "P3",
+      "issue": 717,
+      "gap": "#717 reviewed: Partial: existing indirect RDS placement and common-VPC subnet group behavior retained; no ownership by a single database.  Supported: existing vpc_scope.rs common-VPC inference from referenced subnet set; preserve its current behavior rather than claim newer service-specific verification.",
+      "review": {
+        "issue": 717,
+        "implementationCommit": "5d233e4a467f323b46082a35ede1467eec999898",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "name",
+          "id",
+          "subnet_ids",
+          "vpc_id"
+        ],
+        "placement": "Supported: retain Spatial presentation for aws_db_subnet_group; current classification/display is not complete semantic support.",
+        "ownership": "Not applicable: shared network selector, not owned by one database.",
+        "network": "Supported: existing vpc_scope.rs common-VPC inference from referenced subnet set; preserve its current behavior rather than claim newer service-specific verification.",
+        "references": "Partial: existing indirect RDS placement and common-VPC subnet group behavior retained; no ownership by a single database.",
+        "scope": "Partial: Regional (conditional) eligibility; account requires provider evidence. Regional identity requires known provider/resource-region evidence; global identity does not supply member region. Managed decisions do not apply to data sources or historical identities.",
+        "summaries": "Deferred: no aws_db_subnet_group value allowlist; revisit only with a specific useful configuration summary and known/unknown/sensitive contract. Identity/actions remain visible.",
+        "officialDocumentation": "website/docs/r/db_subnet_group.html.markdown",
+        "shapes": {
+          "name": [
+            "string"
+          ],
+          "id": [
+            "string"
+          ],
+          "subnet_ids": [
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "vpc_id": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_docdb_cluster_parameter_group": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 762,
+      "gap": "#717 reviewed: Missing: inbound exact shared parameter-group references #762. No outbound relationship from arbitrary parameter values.  Not applicable: parameter sets do not define containment.",
+      "review": {
+        "issue": 717,
+        "implementationCommit": "5d233e4a467f323b46082a35ede1467eec999898",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "name",
+          "id",
+          "family",
+          "parameter.name",
+          "parameter.value"
+        ],
+        "placement": "Supported: retain Logical presentation for aws_docdb_cluster_parameter_group; current classification/display is not complete semantic support.",
+        "ownership": "Not applicable: parameter groups may be shared; not embedded in a single database.",
+        "network": "Not applicable: parameter sets do not define containment.",
+        "references": "Missing: inbound exact shared parameter-group references #762. No outbound relationship from arbitrary parameter values.",
+        "scope": "Partial: Regional (conditional) eligibility; basic fallback clears account. Regional identity requires known provider/resource-region evidence; global identity does not supply member region. Managed decisions do not apply to data sources or historical identities.",
+        "summaries": "Intentionally unsupported: arbitrary parameter names/values and engine-specific policy interpretation.",
+        "officialDocumentation": "website/docs/r/docdb_cluster_parameter_group.html.markdown",
+        "shapes": {
+          "name": [
+            "string"
+          ],
+          "id": [
+            "string"
+          ],
+          "family": [
+            "string"
+          ],
+          "parameter.name": [
+            "set",
+            "string"
+          ],
+          "parameter.value": [
+            "set",
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_docdb_cluster_snapshot": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 763,
+      "gap": "#717 reviewed: Missing: service-specific cluster_identifier source navigation #763; computed snapshot source/KMS/VPC outputs are not configured references.  Not applicable: computed vpc_id describes source snapshot provenance, not deployed network containment.",
+      "review": {
+        "issue": 717,
+        "implementationCommit": "5d233e4a467f323b46082a35ede1467eec999898",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "db_cluster_identifier",
+          "db_cluster_snapshot_identifier",
+          "db_cluster_snapshot_arn",
+          "vpc_id"
+        ],
+        "placement": "Supported: retain Logical presentation for aws_docdb_cluster_snapshot; current classification/display is not complete semantic support.",
+        "ownership": "Not applicable: retained snapshot artifact can outlive source cluster; no embedding.",
+        "network": "Not applicable: computed vpc_id describes source snapshot provenance, not deployed network containment.",
+        "references": "Missing: service-specific cluster_identifier source navigation #763; computed snapshot source/KMS/VPC outputs are not configured references.",
+        "scope": "Partial: Regional (conditional) eligibility; basic fallback clears account. Regional identity requires known provider/resource-region evidence; global identity does not supply member region. Managed decisions do not apply to data sources or historical identities.",
+        "summaries": "Deferred: snapshot encryption outputs need a separate observed-versus-configured summary contract; no runtime restore claims.",
+        "officialDocumentation": "website/docs/r/docdb_cluster_snapshot.html.markdown",
+        "shapes": {
+          "db_cluster_identifier": [
+            "string"
+          ],
+          "db_cluster_snapshot_identifier": [
+            "string"
+          ],
+          "db_cluster_snapshot_arn": [
+            "string"
+          ],
+          "vpc_id": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_docdb_event_subscription": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 764,
+      "gap": "#717 reviewed: Missing: topic ARN and complete discriminated source_ids references #764; absent source IDs mean service-wide subscription, not all managed nodes.  Not applicable: notification configuration is not a network workload.",
+      "review": {
+        "issue": 717,
+        "implementationCommit": "5d233e4a467f323b46082a35ede1467eec999898",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "sns_topic_arn",
+          "source_ids",
+          "source_type"
+        ],
+        "placement": "Supported: retain Logical presentation for aws_docdb_event_subscription; current classification/display is not complete semantic support.",
+        "ownership": "Not applicable: subscription can select multiple sources; no unique embedded owner.",
+        "network": "Not applicable: notification configuration is not a network workload.",
+        "references": "Missing: topic ARN and complete discriminated source_ids references #764; absent source IDs mean service-wide subscription, not all managed nodes.",
+        "scope": "Partial: Regional (conditional) eligibility; basic fallback clears account. Regional identity requires known provider/resource-region evidence; global identity does not supply member region. Managed decisions do not apply to data sources or historical identities.",
+        "summaries": "Intentionally unsupported: event delivery, category interpretation and event payloads.",
+        "officialDocumentation": "website/docs/r/docdb_event_subscription.html.markdown",
+        "shapes": {
+          "sns_topic_arn": [
+            "string"
+          ],
+          "source_ids": [
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "source_type": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_docdb_global_cluster": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 697,
+      "gap": "#717 reviewed: Deferred: creation source is ARN despite identifier suffix, member list is computed. Revisit after #697/#698 establish regional membership and a cross-region ownership/reference contract is selected.  Not applicable: global database is not a network container.",
+      "review": {
+        "issue": 717,
+        "implementationCommit": "5d233e4a467f323b46082a35ede1467eec999898",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "global_cluster_identifier",
+          "source_db_cluster_identifier",
+          "global_cluster_members"
+        ],
+        "placement": "Supported: retain Logical presentation for aws_docdb_global_cluster; current classification/display is not complete semantic support.",
+        "ownership": "Deferred: global membership is multi-region, not embedded network ownership; revisit with regional membership contract.",
+        "network": "Not applicable: global database is not a network container.",
+        "references": "Deferred: creation source is ARN despite identifier suffix, member list is computed. Revisit after #697/#698 establish regional membership and a cross-region ownership/reference contract is selected.",
+        "scope": "Partial: Global eligibility; basic fallback clears account. Regional identity requires known provider/resource-region evidence; global identity does not supply member region. Managed decisions do not apply to data sources or historical identities.",
+        "summaries": "Deferred: encryption may inherit source settings; no global claim from one regional cluster.",
+        "officialDocumentation": "website/docs/r/docdb_global_cluster.html.markdown",
+        "shapes": {
+          "global_cluster_identifier": [
+            "string"
+          ],
+          "source_db_cluster_identifier": [
+            "string"
+          ],
+          "global_cluster_members": [
+            [
+              "set",
+              [
+                "object",
+                {
+                  "db_cluster_arn": "string",
+                  "is_writer": "bool"
+                }
+              ]
+            ]
+          ]
+        }
+      }
+    },
+    "aws_docdbelastic_cluster": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 766,
+      "gap": "#717 reviewed: Missing: direct complete network sets and KMS ARN #766; not ordinary DocumentDB group semantics.  Missing: direct common-VPC proof #766.",
+      "review": {
+        "issue": 717,
+        "implementationCommit": "5d233e4a467f323b46082a35ede1467eec999898",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "subnet_ids",
+          "vpc_security_group_ids",
+          "kms_key_id",
+          "auth_type"
+        ],
+        "placement": "Supported: retain Spatial presentation for aws_docdbelastic_cluster; current classification/display is not complete semantic support.",
+        "ownership": "Not applicable: retain independent configuration/service identity; references alone do not prove exclusive embedded ownership.",
+        "network": "Missing: direct common-VPC proof #766.",
+        "references": "Missing: direct complete network sets and KMS ARN #766; not ordinary DocumentDB group semantics.",
+        "scope": "Partial: Regional (conditional) eligibility; basic fallback clears account. Regional identity requires known provider/resource-region evidence; global identity does not supply member region. Managed decisions do not apply to data sources or historical identities.",
+        "summaries": "Intentionally unsupported: admin_user_password is sensitive and may encode secret ARN depending on auth_type; no extraction or display. Deferred encryption summary until explicit key/default contract.",
+        "officialDocumentation": "website/docs/r/docdbelastic_cluster.html.markdown",
+        "shapes": {
+          "subnet_ids": [
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "vpc_security_group_ids": [
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "kms_key_id": [
+            "string"
+          ],
+          "auth_type": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_dsql_cluster": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 767,
+      "gap": "#717 reviewed: Missing: key and complete peer ARN references #767; AWS_OWNED_KMS_KEY is a sentinel, witness region is not an endpoint. Missing: independent database currently Logical; spatial architecture #767. Not applicable: no configured VPC/subnet contract.",
+      "review": {
+        "issue": 717,
+        "implementationCommit": "5d233e4a467f323b46082a35ede1467eec999898",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "identifier",
+          "arn",
+          "kms_encryption_key",
+          "multi_region_properties.clusters",
+          "multi_region_properties.witness_region"
+        ],
+        "placement": "Missing: independent database currently Logical; spatial architecture #767.",
+        "ownership": "Not applicable: retain independent configuration/service identity; references alone do not prove exclusive embedded ownership.",
+        "network": "Not applicable: no configured VPC/subnet contract.",
+        "references": "Missing: key and complete peer ARN references #767; AWS_OWNED_KMS_KEY is a sentinel, witness region is not an endpoint.",
+        "scope": "Partial: Regional (conditional) eligibility; basic fallback clears account. Regional identity requires known provider/resource-region evidence; global identity does not supply member region. Managed decisions do not apply to data sources or historical identities.",
+        "summaries": "Deferred: key sentinel and unknown/default handling need separate summary allowlist; no query/runtime data.",
+        "officialDocumentation": "website/docs/r/dsql_cluster.html.markdown",
+        "shapes": {
+          "identifier": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "kms_encryption_key": [
+            "string"
+          ],
+          "multi_region_properties.clusters": [
+            "list",
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "multi_region_properties.witness_region": [
+            "list",
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_dsql_cluster_peering": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 767,
+      "gap": "#717 reviewed: Missing: cluster identifier and complete peer ARN set #767; witness is not a Terraform node.  Not applicable: regional database peering is not VPC peering.",
+      "review": {
+        "issue": 717,
+        "implementationCommit": "5d233e4a467f323b46082a35ede1467eec999898",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "identifier",
+          "clusters",
+          "witness_region"
+        ],
+        "placement": "Supported: retain Logical presentation for aws_dsql_cluster_peering; current classification/display is not complete semantic support.",
+        "ownership": "Not applicable: relationship between independent clusters, not embedding.",
+        "network": "Not applicable: regional database peering is not VPC peering.",
+        "references": "Missing: cluster identifier and complete peer ARN set #767; witness is not a Terraform node.",
+        "scope": "Partial: Regional (conditional) eligibility; basic fallback clears account. Regional identity requires known provider/resource-region evidence; global identity does not supply member region. Managed decisions do not apply to data sources or historical identities.",
+        "summaries": "Deferred: no aws_dsql_cluster_peering value allowlist; revisit only with a specific useful configuration summary and known/unknown/sensitive contract. Identity/actions remain visible.",
+        "officialDocumentation": "website/docs/r/dsql_cluster_peering.html.markdown",
+        "shapes": {
+          "identifier": [
+            "string"
+          ],
+          "clusters": [
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "witness_region": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_dsql_cluster_policy": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 767,
+      "gap": "#717 reviewed: Missing: policy owner identifier #767; policy body intentionally uninterpreted.  Not applicable: resource policy has no network placement.",
+      "review": {
+        "issue": 717,
+        "implementationCommit": "5d233e4a467f323b46082a35ede1467eec999898",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "identifier",
+          "policy"
+        ],
+        "placement": "Supported: retain Logical presentation for aws_dsql_cluster_policy; current classification/display is not complete semantic support.",
+        "ownership": "Missing: unique cluster owner navigation #767; keep logical policy.",
+        "network": "Not applicable: resource policy has no network placement.",
+        "references": "Missing: policy owner identifier #767; policy body intentionally uninterpreted.",
+        "scope": "Partial: Regional (conditional) eligibility; basic fallback clears account. Regional identity requires known provider/resource-region evidence; global identity does not supply member region. Managed decisions do not apply to data sources or historical identities.",
+        "summaries": "Intentionally unsupported: policy body/effective permissions and lockout inference.",
+        "officialDocumentation": "website/docs/r/dsql_cluster_policy.html.markdown",
+        "shapes": {
+          "identifier": [
+            "string"
+          ],
+          "policy": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_neptune_cluster_endpoint": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 765,
+      "gap": "#717 reviewed: Missing: exact service cluster and same-cluster member selection #765; exclusions cannot imply all other Terraform instances.  Not applicable: endpoint selection supplies no subnet/VPC inputs.",
+      "review": {
+        "issue": 717,
+        "implementationCommit": "5d233e4a467f323b46082a35ede1467eec999898",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "cluster_identifier",
+          "static_members",
+          "excluded_members"
+        ],
+        "placement": "Supported: retain Logical presentation for aws_neptune_cluster_endpoint; current classification/display is not complete semantic support.",
+        "ownership": "Missing: verified owner navigation #765; keep logical configuration rather than duplicate database card.",
+        "network": "Not applicable: endpoint selection supplies no subnet/VPC inputs.",
+        "references": "Missing: exact service cluster and same-cluster member selection #765; exclusions cannot imply all other Terraform instances.",
+        "scope": "Partial: Regional (conditional) eligibility; basic fallback clears account. Regional identity requires known provider/resource-region evidence; global identity does not supply member region. Managed decisions do not apply to data sources or historical identities.",
+        "summaries": "Intentionally unsupported: endpoint addresses and runtime load balancing.",
+        "officialDocumentation": "website/docs/r/neptune_cluster_endpoint.html.markdown",
+        "shapes": {
+          "cluster_identifier": [
+            "string"
+          ],
+          "static_members": [
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "excluded_members": [
+            [
+              "set",
+              "string"
+            ]
+          ]
+        }
+      }
+    },
+    "aws_neptune_cluster_parameter_group": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 762,
+      "gap": "#717 reviewed: Missing: inbound exact shared parameter-group references #762. No outbound relationship from arbitrary parameter values.  Not applicable: parameter sets do not define containment.",
+      "review": {
+        "issue": 717,
+        "implementationCommit": "5d233e4a467f323b46082a35ede1467eec999898",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "name",
+          "id",
+          "family",
+          "parameter.name",
+          "parameter.value"
+        ],
+        "placement": "Supported: retain Logical presentation for aws_neptune_cluster_parameter_group; current classification/display is not complete semantic support.",
+        "ownership": "Not applicable: parameter groups may be shared; not embedded in a single database.",
+        "network": "Not applicable: parameter sets do not define containment.",
+        "references": "Missing: inbound exact shared parameter-group references #762. No outbound relationship from arbitrary parameter values.",
+        "scope": "Partial: Regional (conditional) eligibility; basic fallback clears account. Regional identity requires known provider/resource-region evidence; global identity does not supply member region. Managed decisions do not apply to data sources or historical identities.",
+        "summaries": "Intentionally unsupported: arbitrary parameter names/values and engine-specific policy interpretation.",
+        "officialDocumentation": "website/docs/r/neptune_cluster_parameter_group.html.markdown",
+        "shapes": {
+          "name": [
+            "string"
+          ],
+          "id": [
+            "string"
+          ],
+          "family": [
+            "string"
+          ],
+          "parameter.name": [
+            "set",
+            "string"
+          ],
+          "parameter.value": [
+            "set",
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_neptune_cluster_snapshot": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 763,
+      "gap": "#717 reviewed: Missing: service-specific cluster_identifier source navigation #763; computed snapshot source/KMS/VPC outputs are not configured references.  Not applicable: computed vpc_id describes source snapshot provenance, not deployed network containment.",
+      "review": {
+        "issue": 717,
+        "implementationCommit": "5d233e4a467f323b46082a35ede1467eec999898",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "db_cluster_identifier",
+          "db_cluster_snapshot_identifier",
+          "db_cluster_snapshot_arn",
+          "vpc_id"
+        ],
+        "placement": "Supported: retain Logical presentation for aws_neptune_cluster_snapshot; current classification/display is not complete semantic support.",
+        "ownership": "Not applicable: retained snapshot artifact can outlive source cluster; no embedding.",
+        "network": "Not applicable: computed vpc_id describes source snapshot provenance, not deployed network containment.",
+        "references": "Missing: service-specific cluster_identifier source navigation #763; computed snapshot source/KMS/VPC outputs are not configured references.",
+        "scope": "Partial: Regional (conditional) eligibility; basic fallback clears account. Regional identity requires known provider/resource-region evidence; global identity does not supply member region. Managed decisions do not apply to data sources or historical identities.",
+        "summaries": "Deferred: snapshot encryption outputs need a separate observed-versus-configured summary contract; no runtime restore claims.",
+        "officialDocumentation": "website/docs/r/neptune_cluster_snapshot.html.markdown",
+        "shapes": {
+          "db_cluster_identifier": [
+            "string"
+          ],
+          "db_cluster_snapshot_identifier": [
+            "string"
+          ],
+          "db_cluster_snapshot_arn": [
+            "string"
+          ],
+          "vpc_id": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_neptune_event_subscription": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 764,
+      "gap": "#717 reviewed: Missing: topic ARN and complete discriminated source_ids references #764; absent source IDs mean service-wide subscription, not all managed nodes.  Not applicable: notification configuration is not a network workload.",
+      "review": {
+        "issue": 717,
+        "implementationCommit": "5d233e4a467f323b46082a35ede1467eec999898",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "sns_topic_arn",
+          "source_ids",
+          "source_type"
+        ],
+        "placement": "Supported: retain Logical presentation for aws_neptune_event_subscription; current classification/display is not complete semantic support.",
+        "ownership": "Not applicable: subscription can select multiple sources; no unique embedded owner.",
+        "network": "Not applicable: notification configuration is not a network workload.",
+        "references": "Missing: topic ARN and complete discriminated source_ids references #764; absent source IDs mean service-wide subscription, not all managed nodes.",
+        "scope": "Partial: Regional (conditional) eligibility; basic fallback clears account. Regional identity requires known provider/resource-region evidence; global identity does not supply member region. Managed decisions do not apply to data sources or historical identities.",
+        "summaries": "Intentionally unsupported: event delivery, category interpretation and event payloads.",
+        "officialDocumentation": "website/docs/r/neptune_event_subscription.html.markdown",
+        "shapes": {
+          "sns_topic_arn": [
+            "string"
+          ],
+          "source_ids": [
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "source_type": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_neptune_global_cluster": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 697,
+      "gap": "#717 reviewed: Deferred: creation source is ARN despite identifier suffix, member list is computed. Revisit after #697/#698 establish regional membership and a cross-region ownership/reference contract is selected.  Not applicable: global database is not a network container.",
+      "review": {
+        "issue": 717,
+        "implementationCommit": "5d233e4a467f323b46082a35ede1467eec999898",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "global_cluster_identifier",
+          "source_db_cluster_identifier",
+          "global_cluster_members"
+        ],
+        "placement": "Supported: retain Logical presentation for aws_neptune_global_cluster; current classification/display is not complete semantic support.",
+        "ownership": "Deferred: global membership is multi-region, not embedded network ownership; revisit with regional membership contract.",
+        "network": "Not applicable: global database is not a network container.",
+        "references": "Deferred: creation source is ARN despite identifier suffix, member list is computed. Revisit after #697/#698 establish regional membership and a cross-region ownership/reference contract is selected.",
+        "scope": "Partial: Global eligibility; basic fallback clears account. Regional identity requires known provider/resource-region evidence; global identity does not supply member region. Managed decisions do not apply to data sources or historical identities.",
+        "summaries": "Deferred: encryption may inherit source settings; no global claim from one regional cluster.",
+        "officialDocumentation": "website/docs/r/neptune_global_cluster.html.markdown",
+        "shapes": {
+          "global_cluster_identifier": [
+            "string"
+          ],
+          "source_db_cluster_identifier": [
+            "string"
+          ],
+          "global_cluster_members": [
+            [
+              "set",
+              [
+                "object",
+                {
+                  "db_cluster_arn": "string",
+                  "is_writer": "bool"
+                }
+              ]
+            ]
+          ]
+        }
+      }
+    },
+    "aws_neptune_parameter_group": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 762,
+      "gap": "#717 reviewed: Missing: inbound exact shared parameter-group references #762. No outbound relationship from arbitrary parameter values.  Not applicable: parameter sets do not define containment.",
+      "review": {
+        "issue": 717,
+        "implementationCommit": "5d233e4a467f323b46082a35ede1467eec999898",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "name",
+          "id",
+          "family",
+          "parameter.name",
+          "parameter.value"
+        ],
+        "placement": "Supported: retain Logical presentation for aws_neptune_parameter_group; current classification/display is not complete semantic support.",
+        "ownership": "Not applicable: parameter groups may be shared; not embedded in a single database.",
+        "network": "Not applicable: parameter sets do not define containment.",
+        "references": "Missing: inbound exact shared parameter-group references #762. No outbound relationship from arbitrary parameter values.",
+        "scope": "Partial: Regional (conditional) eligibility; basic fallback clears account. Regional identity requires known provider/resource-region evidence; global identity does not supply member region. Managed decisions do not apply to data sources or historical identities.",
+        "summaries": "Intentionally unsupported: arbitrary parameter names/values and engine-specific policy interpretation.",
+        "officialDocumentation": "website/docs/r/neptune_parameter_group.html.markdown",
+        "shapes": {
+          "name": [
+            "string"
+          ],
+          "id": [
+            "string"
+          ],
+          "family": [
+            "string"
+          ],
+          "parameter.name": [
+            "set",
+            "string"
+          ],
+          "parameter.value": [
+            "set",
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_neptunegraph_graph": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 766,
+      "gap": "#717 reviewed: Missing: KMS navigation #766; graph data is not resource evidence.  Not applicable: graph has no explicit subnet/VPC selector; private endpoint networking is separate #766.",
+      "review": {
+        "issue": 717,
+        "implementationCommit": "5d233e4a467f323b46082a35ede1467eec999898",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "id",
+          "kms_key_identifier",
+          "public_connectivity"
+        ],
+        "placement": "Supported: retain Spatial presentation for aws_neptunegraph_graph; current classification/display is not complete semantic support.",
+        "ownership": "Not applicable: retain independent configuration/service identity; references alone do not prove exclusive embedded ownership.",
+        "network": "Not applicable: graph has no explicit subnet/VPC selector; private endpoint networking is separate #766.",
+        "references": "Missing: KMS navigation #766; graph data is not resource evidence.",
+        "scope": "Partial: Regional (conditional) eligibility; basic fallback clears account. Regional identity requires known provider/resource-region evidence; global identity does not supply member region. Managed decisions do not apply to data sources or historical identities.",
+        "summaries": "Deferred: encryption key/default semantics need allowlist; public_connectivity is not reachability.",
+        "officialDocumentation": "website/docs/r/neptunegraph_graph.html.markdown",
+        "shapes": {
+          "id": [
+            "string"
+          ],
+          "kms_key_identifier": [
+            "string"
+          ],
+          "public_connectivity": [
+            "bool"
+          ]
+        }
+      }
+    },
+    "aws_neptunegraph_private_graph_endpoint": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 766,
+      "gap": "#717 reviewed: Missing: graph ownership/reference and endpoint VPC/subnet/SG proof #766. API does not return SG configuration; no drift assertion. Missing: currently Logical; independent private endpoint network identity warrants review in #766. Missing: endpoint common-VPC proof #766, never graph containment.",
+      "review": {
+        "issue": 717,
+        "implementationCommit": "5d233e4a467f323b46082a35ede1467eec999898",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "graph_identifier",
+          "vpc_id",
+          "subnet_ids",
+          "vpc_security_group_ids"
+        ],
+        "placement": "Missing: currently Logical; independent private endpoint network identity warrants review in #766.",
+        "ownership": "Missing: graph_identifier owner navigation #766; graph remains independent.",
+        "network": "Missing: endpoint common-VPC proof #766, never graph containment.",
+        "references": "Missing: graph ownership/reference and endpoint VPC/subnet/SG proof #766. API does not return SG configuration; no drift assertion.",
+        "scope": "Partial: Regional (conditional) eligibility; basic fallback clears account. Regional identity requires known provider/resource-region evidence; global identity does not supply member region. Managed decisions do not apply to data sources or historical identities.",
+        "summaries": "Deferred: no aws_neptunegraph_private_graph_endpoint value allowlist; revisit only with a specific useful configuration summary and known/unknown/sensitive contract. Identity/actions remain visible.",
+        "officialDocumentation": "website/docs/r/neptunegraph_private_graph_endpoint.html.markdown",
+        "shapes": {
+          "graph_identifier": [
+            "string"
+          ],
+          "vpc_id": [
+            "string"
+          ],
+          "subnet_ids": [
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "vpc_security_group_ids": [
+            [
+              "set",
+              "string"
+            ]
+          ]
+        }
+      }
+    },
+    "aws_odb_autonomous_database": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 768,
+      "gap": "#717 reviewed: Missing: database architecture and ODB network relation #768. Deferred: source_configuration/leader/key references until source discriminator, OCI-versus-AWS identities and encryption provider are selected. Missing: architecture-bearing database currently Logical #768. Missing: ODB network reference #768; no EC2 subnet inference.",
+      "review": {
+        "issue": 717,
+        "implementationCommit": "5d233e4a467f323b46082a35ede1467eec999898",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "id",
+          "arn",
+          "odb_network_id",
+          "kms_key_id",
+          "resource_pool_leader_id"
+        ],
+        "placement": "Missing: architecture-bearing database currently Logical #768.",
+        "ownership": "Not applicable: retain independent configuration/service identity; references alone do not prove exclusive embedded ownership.",
+        "network": "Missing: ODB network reference #768; no EC2 subnet inference.",
+        "references": "Missing: database architecture and ODB network relation #768. Deferred: source_configuration/leader/key references until source discriminator, OCI-versus-AWS identities and encryption provider are selected.",
+        "scope": "Partial: Regional (conditional) eligibility; basic fallback clears account. Regional identity requires known provider/resource-region evidence; global identity does not supply member region. Managed decisions do not apply to data sources or historical identities.",
+        "summaries": "Intentionally unsupported: passwords, admin_password_source, connect strings and clone data; no secret extraction.",
+        "officialDocumentation": "website/docs/r/odb_autonomous_database.html.markdown",
+        "shapes": {
+          "id": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "odb_network_id": [
+            "string"
+          ],
+          "kms_key_id": [
+            "string"
+          ],
+          "resource_pool_leader_id": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_odb_autonomous_database_secrets_manager_integration": {
+      "status": "Basic-only",
+      "priority": "P3",
+      "issue": 717,
+      "gap": "#717 reviewed: Not applicable: account/region service enablement has only computed Oracle-managed role ARN, no configured database or secret owner.  Not applicable: service-role lifecycle configuration.",
+      "review": {
+        "issue": 717,
+        "implementationCommit": "5d233e4a467f323b46082a35ede1467eec999898",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "role_arn",
+          "region"
+        ],
+        "placement": "Supported: retain Logical presentation for aws_odb_autonomous_database_secrets_manager_integration; current classification/display is not complete semantic support.",
+        "ownership": "Not applicable: account-level enablement, not a child of an autonomous database.",
+        "network": "Not applicable: service-role lifecycle configuration.",
+        "references": "Not applicable: account/region service enablement has only computed Oracle-managed role ARN, no configured database or secret owner.",
+        "scope": "Partial: Regional (conditional) eligibility; basic fallback clears account. Regional identity requires known provider/resource-region evidence; global identity does not supply member region. Managed decisions do not apply to data sources or historical identities.",
+        "summaries": "Intentionally unsupported: role readiness/status and credential retrieval; retain logical display.",
+        "officialDocumentation": "website/docs/r/odb_autonomous_database_secrets_manager_integration.html.markdown",
+        "shapes": {
+          "role_arn": [
+            "string"
+          ],
+          "region": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_odb_cloud_autonomous_vm_cluster": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 768,
+      "gap": "#717 reviewed: Missing: exact exclusive paired infrastructure/network ID-or-ARN forms #768; db_servers are OCI identifiers, not EC2 instances. Missing: independent VM cluster currently Logical; architecture presentation #768. Missing: ODB network association #768; not EC2 subnet containment.",
+      "review": {
+        "issue": 717,
+        "implementationCommit": "5d233e4a467f323b46082a35ede1467eec999898",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "cloud_exadata_infrastructure_id",
+          "cloud_exadata_infrastructure_arn",
+          "odb_network_id",
+          "odb_network_arn",
+          "db_servers"
+        ],
+        "placement": "Missing: independent VM cluster currently Logical; architecture presentation #768.",
+        "ownership": "Missing: verified infrastructure relation #768; not implicit embedded containment.",
+        "network": "Missing: ODB network association #768; not EC2 subnet containment.",
+        "references": "Missing: exact exclusive paired infrastructure/network ID-or-ARN forms #768; db_servers are OCI identifiers, not EC2 instances.",
+        "scope": "Partial: Regional (conditional) eligibility; basic fallback clears account. Regional identity requires known provider/resource-region evidence; global identity does not supply member region. Managed decisions do not apply to data sources or historical identities.",
+        "summaries": "Intentionally unsupported: SSH keys, OCI/host endpoints and diagnostic values; capacity summary deferred until an explicit OCPU/ECPU/unit contract.",
+        "officialDocumentation": "website/docs/r/odb_cloud_autonomous_vm_cluster.html.markdown",
+        "shapes": {
+          "cloud_exadata_infrastructure_id": [
+            "string"
+          ],
+          "cloud_exadata_infrastructure_arn": [
+            "string"
+          ],
+          "odb_network_id": [
+            "string"
+          ],
+          "odb_network_arn": [
+            "string"
+          ],
+          "db_servers": [
+            [
+              "set",
+              "string"
+            ]
+          ]
+        }
+      }
+    },
+    "aws_odb_cloud_exadata_infrastructure": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 768,
+      "gap": "#717 reviewed: Missing: independent infrastructure presentation and incoming VM cluster references #768; no inference from OCI anchors. Missing: architecture-bearing infrastructure currently Logical #768. Not applicable: AZ label is not VPC/subnet evidence.",
+      "review": {
+        "issue": 717,
+        "implementationCommit": "5d233e4a467f323b46082a35ede1467eec999898",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "id",
+          "arn",
+          "availability_zone",
+          "availability_zone_id"
+        ],
+        "placement": "Missing: architecture-bearing infrastructure currently Logical #768.",
+        "ownership": "Not applicable: retain independent configuration/service identity; references alone do not prove exclusive embedded ownership.",
+        "network": "Not applicable: AZ label is not VPC/subnet evidence.",
+        "references": "Missing: independent infrastructure presentation and incoming VM cluster references #768; no inference from OCI anchors.",
+        "scope": "Partial: Regional (conditional) eligibility; basic fallback clears account. Regional identity requires known provider/resource-region evidence; global identity does not supply member region. Managed decisions do not apply to data sources or historical identities.",
+        "summaries": "Intentionally unsupported: customer contacts/OCI URLs and live capacity/status; fixed hardware summary deferred until unit/type allowlist.",
+        "officialDocumentation": "website/docs/r/odb_cloud_exadata_infrastructure.html.markdown",
+        "shapes": {
+          "id": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "availability_zone": [
+            "string"
+          ],
+          "availability_zone_id": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_odb_cloud_vm_cluster": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 768,
+      "gap": "#717 reviewed: Missing: exact exclusive paired infrastructure/network ID-or-ARN forms #768; db_servers are OCI identifiers, not EC2 instances. Missing: independent VM cluster currently Logical; architecture presentation #768. Missing: ODB network association #768; not EC2 subnet containment.",
+      "review": {
+        "issue": 717,
+        "implementationCommit": "5d233e4a467f323b46082a35ede1467eec999898",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "cloud_exadata_infrastructure_id",
+          "cloud_exadata_infrastructure_arn",
+          "odb_network_id",
+          "odb_network_arn",
+          "db_servers"
+        ],
+        "placement": "Missing: independent VM cluster currently Logical; architecture presentation #768.",
+        "ownership": "Missing: verified infrastructure relation #768; not implicit embedded containment.",
+        "network": "Missing: ODB network association #768; not EC2 subnet containment.",
+        "references": "Missing: exact exclusive paired infrastructure/network ID-or-ARN forms #768; db_servers are OCI identifiers, not EC2 instances.",
+        "scope": "Partial: Regional (conditional) eligibility; basic fallback clears account. Regional identity requires known provider/resource-region evidence; global identity does not supply member region. Managed decisions do not apply to data sources or historical identities.",
+        "summaries": "Intentionally unsupported: SSH keys, OCI/host endpoints and diagnostic values; capacity summary deferred until an explicit OCPU/ECPU/unit contract.",
+        "officialDocumentation": "website/docs/r/odb_cloud_vm_cluster.html.markdown",
+        "shapes": {
+          "cloud_exadata_infrastructure_id": [
+            "string"
+          ],
+          "cloud_exadata_infrastructure_arn": [
+            "string"
+          ],
+          "odb_network_id": [
+            "string"
+          ],
+          "odb_network_arn": [
+            "string"
+          ],
+          "db_servers": [
+            [
+              "set",
+              "string"
+            ]
+          ]
+        }
+      }
+    },
+    "aws_odb_iam_role_association": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 768,
+      "gap": "#717 reviewed: Missing: typed resource/IAM association #768; KmsTde discriminator cannot imply effective access.  Not applicable: role association does not place either endpoint.",
+      "review": {
+        "issue": 717,
+        "implementationCommit": "5d233e4a467f323b46082a35ede1467eec999898",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "resource_arn",
+          "iam_role_arn",
+          "aws_integration"
+        ],
+        "placement": "Supported: retain Logical presentation for aws_odb_iam_role_association; current classification/display is not complete semantic support.",
+        "ownership": "Not applicable: retain independent configuration/service identity; references alone do not prove exclusive embedded ownership.",
+        "network": "Not applicable: role association does not place either endpoint.",
+        "references": "Missing: typed resource/IAM association #768; KmsTde discriminator cannot imply effective access.",
+        "scope": "Partial: Regional (conditional) eligibility; basic fallback clears account. Regional identity requires known provider/resource-region evidence; global identity does not supply member region. Managed decisions do not apply to data sources or historical identities.",
+        "summaries": "Deferred: no aws_odb_iam_role_association value allowlist; revisit only with a specific useful configuration summary and known/unknown/sensitive contract. Identity/actions remain visible.",
+        "officialDocumentation": "website/docs/r/odb_iam_role_association.html.markdown",
+        "shapes": {
+          "resource_arn": [
+            "string"
+          ],
+          "iam_role_arn": [
+            "string"
+          ],
+          "aws_integration": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_odb_network": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 768,
+      "gap": "#717 reviewed: Missing: infrastructure network presentation and incoming cluster/peering navigation #768; CIDR ranges do not identify managed EC2 subnets. Missing: independent ODB network architecture #768; must not masquerade as EC2 VPC. Not applicable: OCI network and CIDRs cannot establish EC2 containment.",
+      "review": {
+        "issue": 717,
+        "implementationCommit": "5d233e4a467f323b46082a35ede1467eec999898",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "id",
+          "arn",
+          "availability_zone_id",
+          "client_subnet_cidr",
+          "backup_subnet_cidr"
+        ],
+        "placement": "Missing: independent ODB network architecture #768; must not masquerade as EC2 VPC.",
+        "ownership": "Not applicable: retain independent configuration/service identity; references alone do not prove exclusive embedded ownership.",
+        "network": "Not applicable: OCI network and CIDRs cannot establish EC2 containment.",
+        "references": "Missing: infrastructure network presentation and incoming cluster/peering navigation #768; CIDR ranges do not identify managed EC2 subnets.",
+        "scope": "Partial: Regional (conditional) eligibility; basic fallback clears account. Regional identity requires known provider/resource-region evidence; global identity does not supply member region. Managed decisions do not apply to data sources or historical identities.",
+        "summaries": "Intentionally unsupported: policy documents, computed managed-service endpoints and OCI identifiers.",
+        "officialDocumentation": "website/docs/r/odb_network.html.markdown",
+        "shapes": {
+          "id": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "availability_zone_id": [
+            "string"
+          ],
+          "client_subnet_cidr": [
+            "string"
+          ],
+          "backup_subnet_cidr": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_odb_network_peering_connection": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 768,
+      "gap": "#717 reviewed: Missing: exact ODB and peer network references #768; docs have misleading connection-ID examples, require implementation contract.  Not applicable: peering is a relationship, not containment of either network.",
+      "review": {
+        "issue": 717,
+        "implementationCommit": "5d233e4a467f323b46082a35ede1467eec999898",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "odb_network_id",
+          "odb_network_arn",
+          "peer_network_id"
+        ],
+        "placement": "Supported: retain Logical presentation for aws_odb_network_peering_connection; current classification/display is not complete semantic support.",
+        "ownership": "Not applicable: independent network relationship.",
+        "network": "Not applicable: peering is a relationship, not containment of either network.",
+        "references": "Missing: exact ODB and peer network references #768; docs have misleading connection-ID examples, require implementation contract.",
+        "scope": "Partial: Regional (conditional) eligibility; basic fallback clears account. Regional identity requires known provider/resource-region evidence; global identity does not supply member region. Managed decisions do not apply to data sources or historical identities.",
+        "summaries": "Deferred: no aws_odb_network_peering_connection value allowlist; revisit only with a specific useful configuration summary and known/unknown/sensitive contract. Identity/actions remain visible.",
+        "officialDocumentation": "website/docs/r/odb_network_peering_connection.html.markdown",
+        "shapes": {
+          "odb_network_id": [
+            "string"
+          ],
+          "odb_network_arn": [
+            "string"
+          ],
+          "peer_network_id": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_rds_certificate": {
+      "status": "Basic-only",
+      "priority": "P3",
+      "issue": 717,
+      "gap": "#717 reviewed: Not applicable: regional account CA default selection is not a managed ACM certificate. Deferred consumer navigation until default-versus-explicit certificate choice can be represented.  Not applicable: CA selection is not a workload.",
+      "review": {
+        "issue": 717,
+        "implementationCommit": "5d233e4a467f323b46082a35ede1467eec999898",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "certificate_identifier"
+        ],
+        "placement": "Supported: retain Logical presentation for aws_rds_certificate; current classification/display is not complete semantic support.",
+        "ownership": "Not applicable: account default, not an instance-owned certificate.",
+        "network": "Not applicable: CA selection is not a workload.",
+        "references": "Not applicable: regional account CA default selection is not a managed ACM certificate. Deferred consumer navigation until default-versus-explicit certificate choice can be represented.",
+        "scope": "Partial: Regional (conditional) eligibility; basic fallback clears account. Regional identity requires known provider/resource-region evidence; global identity does not supply member region. Managed decisions do not apply to data sources or historical identities.",
+        "summaries": "Intentionally unsupported: TLS security/compliance claims from default certificate choice.",
+        "officialDocumentation": "website/docs/r/rds_certificate.html.markdown",
+        "shapes": {
+          "certificate_identifier": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_rds_cluster_activity_stream": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 769,
+      "gap": "#717 reviewed: Missing: resource ARN/key navigation #769; computed Kinesis name is not explicit configured stream reference.  Not applicable: activity-stream configuration has no network selectors.",
+      "review": {
+        "issue": 717,
+        "implementationCommit": "5d233e4a467f323b46082a35ede1467eec999898",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "resource_arn",
+          "kms_key_id",
+          "kinesis_stream_name"
+        ],
+        "placement": "Supported: retain Logical presentation for aws_rds_cluster_activity_stream; current classification/display is not complete semantic support.",
+        "ownership": "Not applicable: retain independent configuration/service identity; references alone do not prove exclusive embedded ownership.",
+        "network": "Not applicable: activity-stream configuration has no network selectors.",
+        "references": "Missing: resource ARN/key navigation #769; computed Kinesis name is not explicit configured stream reference.",
+        "scope": "Partial: Regional (conditional) eligibility; basic fallback clears account. Regional identity requires known provider/resource-region evidence; global identity does not supply member region. Managed decisions do not apply to data sources or historical identities.",
+        "summaries": "Intentionally unsupported: engine-native audit payloads, live stream state and security inference.",
+        "officialDocumentation": "website/docs/r/rds_cluster_activity_stream.html.markdown",
+        "shapes": {
+          "resource_arn": [
+            "string"
+          ],
+          "kms_key_id": [
+            "string"
+          ],
+          "kinesis_stream_name": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_rds_cluster_endpoint": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 765,
+      "gap": "#717 reviewed: Missing: exact service cluster and same-cluster member selection #765; exclusions cannot imply all other Terraform instances.  Not applicable: endpoint selection supplies no subnet/VPC inputs.",
+      "review": {
+        "issue": 717,
+        "implementationCommit": "5d233e4a467f323b46082a35ede1467eec999898",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "cluster_identifier",
+          "static_members",
+          "excluded_members"
+        ],
+        "placement": "Supported: retain Logical presentation for aws_rds_cluster_endpoint; current classification/display is not complete semantic support.",
+        "ownership": "Missing: verified owner navigation #765; keep logical configuration rather than duplicate database card.",
+        "network": "Not applicable: endpoint selection supplies no subnet/VPC inputs.",
+        "references": "Missing: exact service cluster and same-cluster member selection #765; exclusions cannot imply all other Terraform instances.",
+        "scope": "Partial: Regional (conditional) eligibility; basic fallback clears account. Regional identity requires known provider/resource-region evidence; global identity does not supply member region. Managed decisions do not apply to data sources or historical identities.",
+        "summaries": "Intentionally unsupported: endpoint addresses and runtime load balancing.",
+        "officialDocumentation": "website/docs/r/rds_cluster_endpoint.html.markdown",
+        "shapes": {
+          "cluster_identifier": [
+            "string"
+          ],
+          "static_members": [
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "excluded_members": [
+            [
+              "set",
+              "string"
+            ]
+          ]
+        }
+      }
+    },
+    "aws_rds_cluster_instance": {
+      "status": "Partial",
+      "priority": "P2",
+      "issue": 762,
+      "gap": "#717 reviewed: Partial: existing unique cluster_identifier reference matches cluster id for presentation membership; missing parameter/monitoring navigation #762. CA and performance-insights references deferred until their specific output and enabled-state contract is selected.  Not applicable: presentation membership adds no VPC/subnet edge; explicit instance subnet-group-name configuration does not select an individual subnet.",
+      "review": {
+        "issue": 717,
+        "implementationCommit": "5d233e4a467f323b46082a35ede1467eec999898",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "cluster_identifier",
+          "id",
+          "identifier",
+          "db_subnet_group_name",
+          "db_parameter_group_name",
+          "monitoring_role_arn"
+        ],
+        "placement": "Supported: retain Spatial presentation for aws_rds_cluster_instance; current classification/display is not complete semantic support.",
+        "ownership": "Supported: members.rs verifies unique managed cluster, known matching identity, lifecycle and deployment scope; tests/unit/semantic/members.rs covers fallback. Not network containment.",
+        "network": "Not applicable: presentation membership adds no VPC/subnet edge; explicit instance subnet-group-name configuration does not select an individual subnet.",
+        "references": "Partial: existing unique cluster_identifier reference matches cluster id for presentation membership; missing parameter/monitoring navigation #762. CA and performance-insights references deferred until their specific output and enabled-state contract is selected.",
+        "scope": "Partial: Regional (conditional) eligibility; account requires provider evidence. Regional identity requires known provider/resource-region evidence; global identity does not supply member region. Managed decisions do not apply to data sources or historical identities.",
+        "summaries": "Deferred: computed inherited encryption is not the RDS instance/cluster summary allowlist; revisit only with an explicit inherited-summary contract.",
+        "officialDocumentation": "website/docs/r/rds_cluster_instance.html.markdown",
+        "shapes": {
+          "cluster_identifier": [
+            "string"
+          ],
+          "id": [
+            "string"
+          ],
+          "identifier": [
+            "string"
+          ],
+          "db_subnet_group_name": [
+            "string"
+          ],
+          "db_parameter_group_name": [
+            "string"
+          ],
+          "monitoring_role_arn": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_rds_cluster_parameter_group": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 762,
+      "gap": "#717 reviewed: Missing: inbound exact shared parameter-group references #762. No outbound relationship from arbitrary parameter values.  Not applicable: parameter sets do not define containment.",
+      "review": {
+        "issue": 717,
+        "implementationCommit": "5d233e4a467f323b46082a35ede1467eec999898",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "name",
+          "id",
+          "family",
+          "parameter.name",
+          "parameter.value"
+        ],
+        "placement": "Supported: retain Logical presentation for aws_rds_cluster_parameter_group; current classification/display is not complete semantic support.",
+        "ownership": "Not applicable: parameter groups may be shared; not embedded in a single database.",
+        "network": "Not applicable: parameter sets do not define containment.",
+        "references": "Missing: inbound exact shared parameter-group references #762. No outbound relationship from arbitrary parameter values.",
+        "scope": "Partial: Regional (conditional) eligibility; basic fallback clears account. Regional identity requires known provider/resource-region evidence; global identity does not supply member region. Managed decisions do not apply to data sources or historical identities.",
+        "summaries": "Intentionally unsupported: arbitrary parameter names/values and engine-specific policy interpretation.",
+        "officialDocumentation": "website/docs/r/rds_cluster_parameter_group.html.markdown",
+        "shapes": {
+          "name": [
+            "string"
+          ],
+          "id": [
+            "string"
+          ],
+          "family": [
+            "string"
+          ],
+          "parameter.name": [
+            "set",
+            "string"
+          ],
+          "parameter.value": [
+            "set",
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_rds_cluster_role_association": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 762,
+      "gap": "#717 reviewed: Missing: typed cluster identifier/IAM ARN association #762; no policy evaluation.  Not applicable: IAM feature association is not networking.",
+      "review": {
+        "issue": 717,
+        "implementationCommit": "5d233e4a467f323b46082a35ede1467eec999898",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "db_cluster_identifier",
+          "role_arn"
+        ],
+        "placement": "Supported: retain Logical presentation for aws_rds_cluster_role_association; current classification/display is not complete semantic support.",
+        "ownership": "Not applicable: retain independent configuration/service identity; references alone do not prove exclusive embedded ownership.",
+        "network": "Not applicable: IAM feature association is not networking.",
+        "references": "Missing: typed cluster identifier/IAM ARN association #762; no policy evaluation.",
+        "scope": "Partial: Regional (conditional) eligibility; basic fallback clears account. Regional identity requires known provider/resource-region evidence; global identity does not supply member region. Managed decisions do not apply to data sources or historical identities.",
+        "summaries": "Deferred: no aws_rds_cluster_role_association value allowlist; revisit only with a specific useful configuration summary and known/unknown/sensitive contract. Identity/actions remain visible.",
+        "officialDocumentation": "website/docs/r/rds_cluster_role_association.html.markdown",
+        "shapes": {
+          "db_cluster_identifier": [
+            "string"
+          ],
+          "role_arn": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_rds_cluster_snapshot_copy": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 763,
+      "gap": "#717 reviewed: Missing: snapshot source/copy reference #763; ID/ARN and cross-region semantics must remain separate.  Not applicable: copied VPC output does not establish deployed networking.",
+      "review": {
+        "issue": 717,
+        "implementationCommit": "5d233e4a467f323b46082a35ede1467eec999898",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "source_db_cluster_snapshot_identifier",
+          "target_db_cluster_snapshot_identifier",
+          "kms_key_id"
+        ],
+        "placement": "Supported: retain Logical presentation for aws_rds_cluster_snapshot_copy; current classification/display is not complete semantic support.",
+        "ownership": "Not applicable: copy is independent of source lifetime.",
+        "network": "Not applicable: copied VPC output does not establish deployed networking.",
+        "references": "Missing: snapshot source/copy reference #763; ID/ARN and cross-region semantics must remain separate.",
+        "scope": "Partial: Regional (conditional) eligibility; basic fallback clears account. Regional identity requires known provider/resource-region evidence; global identity does not supply member region. Managed decisions do not apply to data sources or historical identities.",
+        "summaries": "Deferred: no aws_rds_cluster_snapshot_copy value allowlist; revisit only with a specific useful configuration summary and known/unknown/sensitive contract. Identity/actions remain visible.",
+        "officialDocumentation": "website/docs/r/rds_cluster_snapshot_copy.html.markdown",
+        "shapes": {
+          "source_db_cluster_snapshot_identifier": [
+            "string"
+          ],
+          "target_db_cluster_snapshot_identifier": [
+            "string"
+          ],
+          "kms_key_id": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_rds_custom_db_engine_version": {
+      "status": "Basic-only",
+      "priority": "P3",
+      "issue": 717,
+      "gap": "#717 reviewed: Deferred: engine-discriminated S3 installation/AMI/key navigation requires Oracle-versus-SQL-Server artifact contract; revisit with a custom-engine deployment use case. No manifest interpretation.  Not applicable: engine artifact has no network placement.",
+      "review": {
+        "issue": 717,
+        "implementationCommit": "5d233e4a467f323b46082a35ede1467eec999898",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "database_installation_files_s3_bucket_name",
+          "kms_key_id",
+          "source_image_id"
+        ],
+        "placement": "Supported: retain Logical presentation for aws_rds_custom_db_engine_version; current classification/display is not complete semantic support.",
+        "ownership": "Not applicable: version artifact is shared, not owned by one DB.",
+        "network": "Not applicable: engine artifact has no network placement.",
+        "references": "Deferred: engine-discriminated S3 installation/AMI/key navigation requires Oracle-versus-SQL-Server artifact contract; revisit with a custom-engine deployment use case. No manifest interpretation.",
+        "scope": "Partial: Regional (conditional) eligibility; basic fallback clears account. Regional identity requires known provider/resource-region evidence; global identity does not supply member region. Managed decisions do not apply to data sources or historical identities.",
+        "summaries": "Intentionally unsupported: manifests, installation files and license/security assertions.",
+        "officialDocumentation": "website/docs/r/rds_custom_db_engine_version.html.markdown",
+        "shapes": {
+          "database_installation_files_s3_bucket_name": [
+            "string"
+          ],
+          "kms_key_id": [
+            "string"
+          ],
+          "source_image_id": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_rds_export_task": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 763,
+      "gap": "#717 reviewed: Missing: snapshot/S3/IAM/KMS references #763; preserve key ID/ARN forms.  Not applicable: export operation does not place snapshot or bucket in VPC.",
+      "review": {
+        "issue": 717,
+        "implementationCommit": "5d233e4a467f323b46082a35ede1467eec999898",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "source_arn",
+          "s3_bucket_name",
+          "iam_role_arn",
+          "kms_key_id"
+        ],
+        "placement": "Supported: retain Logical presentation for aws_rds_export_task; current classification/display is not complete semantic support.",
+        "ownership": "Not applicable: retain independent configuration/service identity; references alone do not prove exclusive embedded ownership.",
+        "network": "Not applicable: export operation does not place snapshot or bucket in VPC.",
+        "references": "Missing: snapshot/S3/IAM/KMS references #763; preserve key ID/ARN forms.",
+        "scope": "Partial: Regional (conditional) eligibility; basic fallback clears account. Regional identity requires known provider/resource-region evidence; global identity does not supply member region. Managed decisions do not apply to data sources or historical identities.",
+        "summaries": "Intentionally unsupported: export_only table selectors, progress and runtime success.",
+        "officialDocumentation": "website/docs/r/rds_export_task.html.markdown",
+        "shapes": {
+          "source_arn": [
+            "string"
+          ],
+          "s3_bucket_name": [
+            "string"
+          ],
+          "iam_role_arn": [
+            "string"
+          ],
+          "kms_key_id": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_rds_instance_state": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 769,
+      "gap": "#717 reviewed: Missing: identifier -> DB instance identifier #769; controller is not another DB instance.  Not applicable: start/stop intent does not establish placement.",
+      "review": {
+        "issue": 717,
+        "implementationCommit": "5d233e4a467f323b46082a35ede1467eec999898",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "identifier",
+          "state"
+        ],
+        "placement": "Supported: retain Logical presentation for aws_rds_instance_state; current classification/display is not complete semantic support.",
+        "ownership": "Not applicable: retain independent configuration/service identity; references alone do not prove exclusive embedded ownership.",
+        "network": "Not applicable: start/stop intent does not establish placement.",
+        "references": "Missing: identifier -> DB instance identifier #769; controller is not another DB instance.",
+        "scope": "Partial: Regional (conditional) eligibility; basic fallback clears account. Regional identity requires known provider/resource-region evidence; global identity does not supply member region. Managed decisions do not apply to data sources or historical identities.",
+        "summaries": "Intentionally unsupported: desired state must not be reported as live health.",
+        "officialDocumentation": "website/docs/r/rds_instance_state.html.markdown",
+        "shapes": {
+          "identifier": [
+            "string"
+          ],
+          "state": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_rds_integration": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 769,
+      "gap": "#717 reviewed: Missing: typed database source and Redshift namespace/warehouse target #769; deprecated id is ARN, not integration_identifier.  Not applicable: zero-ETL relationship is not network containment.",
+      "review": {
+        "issue": 717,
+        "implementationCommit": "5d233e4a467f323b46082a35ede1467eec999898",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "source_arn",
+          "target_arn",
+          "kms_key_id",
+          "arn",
+          "id"
+        ],
+        "placement": "Supported: retain Logical presentation for aws_rds_integration; current classification/display is not complete semantic support.",
+        "ownership": "Not applicable: source and target remain independent.",
+        "network": "Not applicable: zero-ETL relationship is not network containment.",
+        "references": "Missing: typed database source and Redshift namespace/warehouse target #769; deprecated id is ARN, not integration_identifier.",
+        "scope": "Partial: Regional (conditional) eligibility; basic fallback clears account. Regional identity requires known provider/resource-region evidence; global identity does not supply member region. Managed decisions do not apply to data sources or historical identities.",
+        "summaries": "Intentionally unsupported: data_filter/encryption context and replication health.",
+        "officialDocumentation": "website/docs/r/rds_integration.html.markdown",
+        "shapes": {
+          "source_arn": [
+            "string"
+          ],
+          "target_arn": [
+            "string"
+          ],
+          "kms_key_id": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "id": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_rds_reserved_instance": {
+      "status": "Basic-only",
+      "priority": "P3",
+      "issue": 717,
+      "gap": "#717 reviewed: Not applicable: financial reservation/offering does not identify deployed DB instances; no capacity-to-instance matching.  Not applicable: purchase is not network deployment.",
+      "review": {
+        "issue": 717,
+        "implementationCommit": "5d233e4a467f323b46082a35ede1467eec999898",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "offering_id",
+          "reservation_id"
+        ],
+        "placement": "Supported: retain Logical presentation for aws_rds_reserved_instance; current classification/display is not complete semantic support.",
+        "ownership": "Not applicable: reservation not owned by one DB instance.",
+        "network": "Not applicable: purchase is not network deployment.",
+        "references": "Not applicable: financial reservation/offering does not identify deployed DB instances; no capacity-to-instance matching.",
+        "scope": "Partial: Regional (conditional) eligibility; basic fallback clears account. Regional identity requires known provider/resource-region evidence; global identity does not supply member region. Managed decisions do not apply to data sources or historical identities.",
+        "summaries": "Intentionally unsupported: cost/utilization and live capacity; logical financial record sufficient.",
+        "officialDocumentation": "website/docs/r/rds_reserved_instance.html.markdown",
+        "shapes": {
+          "offering_id": [
+            "string"
+          ],
+          "reservation_id": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_rds_shard_group": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 769,
+      "gap": "#717 reviewed: Missing: cluster owner #769; cluster scalability/Limitless mode needs exact matching proof. Missing: currently Logical; review service-child presentation #769. Not applicable: shard membership must not invent subnet.",
+      "review": {
+        "issue": 717,
+        "implementationCommit": "5d233e4a467f323b46082a35ede1467eec999898",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "db_cluster_identifier",
+          "db_shard_group_identifier"
+        ],
+        "placement": "Missing: currently Logical; review service-child presentation #769.",
+        "ownership": "Missing: unique cluster relation #769.",
+        "network": "Not applicable: shard membership must not invent subnet.",
+        "references": "Missing: cluster owner #769; cluster scalability/Limitless mode needs exact matching proof.",
+        "scope": "Partial: Regional (conditional) eligibility; basic fallback clears account. Regional identity requires known provider/resource-region evidence; global identity does not supply member region. Managed decisions do not apply to data sources or historical identities.",
+        "summaries": "Deferred: no aws_rds_shard_group value allowlist; revisit only with a specific useful configuration summary and known/unknown/sensitive contract. Identity/actions remain visible.",
+        "officialDocumentation": "website/docs/r/rds_shard_group.html.markdown",
+        "shapes": {
+          "db_cluster_identifier": [
+            "string"
+          ],
+          "db_shard_group_identifier": [
             "string"
           ]
         }

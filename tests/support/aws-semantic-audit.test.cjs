@@ -4,6 +4,29 @@ const assert=require('node:assert/strict');
 const fs=require('node:fs');
 const {extract,buildEvidence,render}=require('../../scripts/aws-semantic-audit.cjs');
 const read=p=>JSON.parse(fs.readFileSync(p));
+
+test('relational audit covers 59 exact managed types and preserves field distinctions',()=>{
+ const services=new Set('rds docdb docdbelastic neptune neptunegraph dsql odb'.split(' '));
+ const expected=read('tests/fixtures/aws-inventory/6.70.0.json').resources.filter(r=>services.has(r.service));
+ const entries=Object.entries(read('docs/aws-semantic-decisions.json').types).filter(([,d])=>d.review?.issue===717);
+ assert.equal(expected.length,59);
+ assert.deepEqual(entries.map(([type])=>type).sort(),expected.map(r=>r.type).sort());
+ for(const [type,{review,gap}] of entries) {
+  assert.equal(review.providerCommit,'5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f');
+  assert.match(review.implementationCommit,/^[a-f0-9]{40}$/);
+  assert.equal(review.officialDocumentation,expected.find(r=>r.type===type).documentation);
+  assert.deepEqual(Object.keys(review.shapes),review.fields);
+  for(const key of ['placement','ownership','network','references','scope','summaries']) assert.match(review[key],/^(Supported|Partial|Missing|Not applicable|Intentionally unsupported|Deferred):/,type+': '+key);
+  assert.match(gap,/#717/);
+ }
+ const decisions=Object.fromEntries(entries);
+ assert.deepEqual(decisions.aws_docdb_subnet_group.review.shapes.subnet_ids,[['set','string']]);
+ assert.deepEqual(decisions.aws_dsql_cluster.review.shapes['multi_region_properties.clusters'],['list',['set','string']]);
+ assert.ok(decisions.aws_db_event_subscription.review.fields.includes('sns_topic'));
+ assert.ok(decisions.aws_docdb_event_subscription.review.fields.includes('sns_topic_arn'));
+ assert.match(decisions.aws_db_snapshot.review.network,/Not applicable:.*VPC/);
+ assert.match(decisions.aws_rds_cluster_instance.review.ownership,/Supported:.*members.rs/);
+});
 test('candidate extraction respects nested collections and sensitive boundaries',()=>{
  assert.deepEqual(extract({attributes:{role_arn:{optional:true,type:'string'},computed_id:{computed:true},secret_id:{optional:true,sensitive:true},write_id:{optional:true,write_only:true},secret:{sensitive:true,nested_type:{attributes:{target_id:{optional:true}}}}},block_types:{network:{block:{attributes:{subnets:{required:true,type:['set','string']},security_groups:{optional:true}}}}}}),['network.security_groups','network.subnets','role_arn']);
 });
