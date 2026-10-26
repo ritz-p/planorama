@@ -1730,3 +1730,40 @@ is a test-only example, not a CLI account-evidence bypass. Rendering that JSON
 alone deliberately shows no verified deployment link. Regenerate both example
 formats through the registered SVG generation script. Neither role ARNs nor
 credentials are copied into the output.
+
+## DocumentDB (#697)
+
+`aws_docdb_cluster` and `aws_docdb_cluster_instance` retain their spatial cards;
+`aws_docdb_subnet_group` remains a shared logical selector. A cluster is placed
+inside a VPC only when its `db_subnet_group_name` explicitly references one group's
+`name`, the group's complete `subnet_ids` match managed Subnet `id` values, and the
+cluster's complete `vpc_security_group_ids` match managed Security Group `id` values.
+Every subnet and SG must have a verified reference to the same managed VPC.
+Missing/default-only SG or subnet configuration leaves placement unproven.
+
+Instance `cluster_identifier` must explicitly reference one cluster's
+`cluster_identifier` with the same known value. The deprecated DocumentDB cluster
+`id` (documented as an ARN) is not accepted as an identifier alias. Verified
+instances appear inside their cluster without adding semantic subnet containment.
+Membership and cluster networking are independent: a cluster with incomplete
+network evidence can still have proven members. Shared subnet groups retain one
+identity and are not embedded in a consuming cluster.
+
+All endpoints must be current managed AWS resources with compatible provider,
+account and known region evidence. Unknown/conflicting values, extra literal set
+members, dynamic or ambiguous references, wrong output attributes, deleted/deposed
+or data endpoints and filtered evidence retain ordinary dependency/fallback display.
+Named states do not borrow proofs. Addresses, actions and lifecycle metadata remain
+visible exactly once. Passwords, endpoint strings and arbitrary attributes are not
+rendered. Elastic/global clusters, snapshots, parameter contents and inherited
+instance encryption summaries are outside this contract.
+
+Contracts were checked against the pinned Provider 6.70.0
+[cluster](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/website/docs/r/docdb_cluster.html.markdown),
+[instance](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/website/docs/r/docdb_cluster_instance.html.markdown)
+and [subnet group](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/website/docs/r/docdb_subnet_group.html.markdown)
+docs and schema. Network collections are sets; instance subnet-group output is
+computed. See [fixture](../tests/fixtures/docdb-plan.json), [SVG](../examples/docdb.svg)
+and [HTML](../examples/docdb.html). Regenerate HTML with
+`cargo run --locked -- tests/fixtures/docdb-plan.json --format html -o examples/docdb.html`
+inside Docker. Native/Wasm parity includes both output formats.

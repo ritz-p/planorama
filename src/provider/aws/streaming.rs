@@ -127,7 +127,7 @@ fn revision(value: &Value, unknown: &Value, path: &str) -> Option<u64> {
         .flatten()
 }
 
-fn values<'a>(
+pub(super) fn values<'a>(
     value: &'a Value,
     unknown: &'a Value,
     path: &str,
@@ -275,7 +275,7 @@ pub(super) fn annotate(
     }
 }
 
-fn vpc(raw: &Input, source: usize) -> Option<usize> {
+pub(super) fn vpc(raw: &Input, source: usize) -> Option<usize> {
     let r = raw
         .attributes
         .iter()

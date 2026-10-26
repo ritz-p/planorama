@@ -42,7 +42,7 @@ The following paths were checked against the pinned schema and resource document
 | `aws_apprunner_vpc_connector` | `subnets`, `security_groups` | Logical basic object; verify network context without turning every configuration into a card. #694. |
 | `aws_redshiftserverless_workgroup` | `namespace_name`, `subnet_ids`, `security_group_ids` | Basic spatial workgroup, unlike existing provisioned Redshift #506. #695. |
 | `aws_opensearchserverless_vpc_endpoint` | `vpc_id`, `subnet_ids`, `security_group_ids` | Basic endpoint; policy JSON is not collection ownership evidence. #696. |
-| `aws_docdb_cluster` | `db_subnet_group_name`, `vpc_security_group_ids` | Basic spatial cluster; RDS rules do not automatically apply. #697. |
+| `aws_docdb_cluster` | `db_subnet_group_name`, `vpc_security_group_ids` | Verified group/SG common-VPC placement and instance membership #697; other dimensions retain historical #717 review. |
 | `aws_neptune_cluster` | `neptune_subnet_group_name`, `vpc_security_group_ids` | Basic spatial cluster; instance membership and placement need separate proof. #698. |
 | `aws_dms_replication_instance` | `replication_subnet_group_id`, `vpc_security_group_ids` | Basic spatial instance; no endpoint/database reconstruction from strings. #699. |
 | `aws_batch_compute_environment` | `compute_resources.subnets`, `compute_resources.security_group_ids` | Basic spatial compute environment; scheduling policy stays logical. #700. |

@@ -15,6 +15,7 @@ mod cognito_tests;
 mod components;
 mod containment;
 mod data;
+mod databases;
 pub(super) mod diagnostics;
 mod dynamodb;
 mod efs;
@@ -209,6 +210,7 @@ pub(crate) fn data_icon(resource_type: &str) -> Option<crate::icons::ResourceIco
 pub(super) fn transform(raw: crate::semantic::Input) -> crate::model::Graph {
     let mut graph = security_groups::infer(&raw, containment::infer(&raw));
     streaming::present(&raw, &mut graph);
+    databases::present(&raw, &mut graph);
     routes::present(&raw, &mut graph);
     members::present(&raw, &mut graph);
     monitoring::present(&raw, &mut graph);
