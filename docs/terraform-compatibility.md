@@ -62,6 +62,9 @@ The Node check compares planned values, changes, configuration, checks and
 extracted schema contracts across Core versions, excluding volatile metadata.
 Rust compares identity, action, reference provenance, completeness, checks and
 coverage; SVG and HTML are compared for equivalent drawing inputs.
+Changed-path metadata is excluded from semantic node comparisons: provider schemas
+and Core versions may expose different optional/unknown attributes without changing
+the diagram. The path analyzer is checked separately against the supplied metadata.
 The override case verifies equal resolved regions, relationships, coverage and
 SVG/HTML across both exact Core versions. Negative tests apply to both real
 captures; no intervening or later Core/Provider versions are implicitly allowed.

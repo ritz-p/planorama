@@ -1,11 +1,34 @@
 #[derive(Clone, Debug, Default, PartialEq, Eq, PartialOrd, Ord)]
 pub struct ChangeMetadata {
+    pub changed_paths: ChangedPaths,
     pub import: Option<ImportMetadata>,
     pub state_removal: Option<StateRemoval>,
     pub drift: std::collections::BTreeSet<super::Action>,
     pub action_reason: Option<String>,
     pub replace_paths: Option<Vec<Vec<AttributePathStep>>>,
     pub relevant_attributes: Option<Vec<Vec<AttributePathStep>>>,
+}
+
+#[derive(Clone, Debug, Default, PartialEq, Eq, PartialOrd, Ord, serde::Serialize)]
+pub struct ChangedPaths {
+    pub available: bool,
+    pub paths: Vec<String>,
+    pub unknown_paths: Vec<String>,
+    pub replacement_paths: Vec<String>,
+    pub replacement_available: bool,
+    pub sensitive_omitted: bool,
+    pub truncated: bool,
+}
+
+impl ChangeMetadata {
+    pub fn has_operations(&self) -> bool {
+        self.import.is_some()
+            || self.state_removal.is_some()
+            || !self.drift.is_empty()
+            || self.action_reason.is_some()
+            || self.replace_paths.is_some()
+            || self.relevant_attributes.is_some()
+    }
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]

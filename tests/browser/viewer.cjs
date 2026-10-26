@@ -227,6 +227,31 @@ class ViewerTests {
         this.find('#generation-info summary').click();
         this.assertIn('Generation metadata unavailable', this.find('#generation-details').text);
     }
+    test_changed_paths_are_keyboard_accessible_and_value_free() {
+        this.load('tests/fixtures/changed-paths-plan.json');
+        this.choose('test.unavailable');
+        const summary = this.find('#selection details summary');
+        summary.send_keys(Keys.SPACE);
+        this.assertIn('Change information unavailable', this.find('#selection').text);
+        this.choose('data.test.item');
+        this.find('#selection details summary').send_keys(Keys.SPACE);
+        this.assertIn('$["data_only"]', this.find('#selection').text);
+        this.assertIn('Unknown after values', this.find('#selection').text);
+        this.assertFalse(this.driver.execute_script("return document.documentElement.outerHTML.includes('NEVER_')"));
+    }
+    test_changed_paths_survive_embedded_and_lowered_navigation() {
+        for (const [fixture, address] of [['routes-plan', 'aws_route.default'], ['association-plan', 'aws_route_table_association.private']]) {
+            const plan = JSON.parse(readFileSync(join(ROOT, `tests/fixtures/${fixture}.json`), 'utf8'));
+            const resource = plan.resource_changes.find(r => r.address === address);
+            resource.change.before = structuredClone(resource.change.after || {});
+            resource.change.after = {...resource.change.before, audit_field: 'NEVER_BROWSER_VALUE'};
+            this.load('-', {input_plan: plan});
+            this.choose(address);
+            this.find('#selection details summary').send_keys(Keys.SPACE);
+            this.assertIn('$["audit_field"]', this.find('#selection').text);
+            this.assertFalse(this.driver.execute_script("return document.documentElement.outerHTML.includes('NEVER_BROWSER_VALUE')"));
+        }
+    }
     test_section_navigation_uses_translated_bounds_without_resource_selection() {
         this.load('--state', 'one=tests/fixtures/viewer-plan.json', '--state', 'two=tests/fixtures/viewer-plan.json', '--omit-relationship-legend');
         const result = this.driver.execute_script(`

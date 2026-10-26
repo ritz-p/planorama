@@ -4,6 +4,10 @@ mod diagnostics;
 pub(crate) mod generation;
 mod semantic_diagnostics;
 
+#[cfg(test)]
+#[path = "../tests/unit/html_changed_paths.rs"]
+mod changed_path_tests;
+
 pub(crate) fn render(
     graph: &view::ViewGraph,
     layout: &Layout<'_>,
@@ -125,6 +129,7 @@ fn resources(graph: &Graph, state: &str, prefix: &str) -> Vec<Value> {
         "mode": match node.mode { crate::model::EntityMode::Data => "data", crate::model::EntityMode::Managed => "managed" },
         "deposed": node.deposed_key,
         "action": format!("{:?}", node.action).to_lowercase(),
+        "changed_paths": node.metadata.changed_paths,
         "context": containment.parents[index].into_iter().chain(crate::view::routes::owner(graph, node))
             .map(|parent| format!("{prefix}{}", svg::resource_id(&graph.nodes[parent]))).collect::<Vec<_>>(),
         "scope": node.entity.scope.as_ref().map(|scope| json!({
@@ -153,7 +158,9 @@ fn provenance_providers(graph: &Graph, state: &str) -> Vec<Value> {
         .flat_map(|relationship| &relationship.provenance)
         .filter_map(|source| {
             let crate::model::RelationshipProvenance::Resource {
-                source, deployment, ..
+                source,
+                deployment,
+                change,
             } = source
             else {
                 return None;
@@ -164,7 +171,8 @@ fn provenance_providers(graph: &Graph, state: &str) -> Vec<Value> {
                 source.deposed_key,
                 deployment
                     .as_ref()
-                    .and_then(|deployment| deployment.provider.source())
+                    .and_then(|deployment| deployment.provider.source()),
+                change.metadata.changed_paths
             ]))
         })
         .collect()
@@ -172,11 +180,24 @@ fn provenance_providers(graph: &Graph, state: &str) -> Vec<Value> {
 
 fn document(
     svg: String,
-    resources: Vec<Value>,
-    providers: Vec<Value>,
+    mut resources: Vec<Value>,
+    mut providers: Vec<Value>,
     diagnostics: Option<Value>,
     semantic: Option<Value>,
 ) -> String {
+    let mut path_bytes = 0;
+    for paths in resources
+        .iter_mut()
+        .map(|resource| &mut resource["changed_paths"])
+        .chain(providers.iter_mut().map(|provider| &mut provider[4]))
+    {
+        let bytes = safe_json(paths).len();
+        if path_bytes + bytes > 256 * 1024 {
+            *paths = json!({"available": false, "truncated": true});
+        } else {
+            path_bytes += bytes;
+        }
+    }
     let data = safe_json(&Value::Array(resources));
     let semantic = semantic
         .map(|value| {

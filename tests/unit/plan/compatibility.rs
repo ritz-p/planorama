@@ -13,6 +13,11 @@ fn real_core_versions_preserve_identity_actions_references_and_coverage() {
     for case in ["aws5", "aws6", "language"] {
         let mut baseline = plan::parse(&fixture("1.9.8", case)).unwrap();
         let mut candidate = plan::parse(&fixture("1.16.6", case)).unwrap();
+        for raw in [&mut baseline, &mut candidate] {
+            for node in &mut raw.nodes {
+                node.metadata.changed_paths = Default::default();
+            }
+        }
         if case == "language" {
             for raw in [&mut baseline, &mut candidate] {
                 for node in &mut raw.nodes {
@@ -42,8 +47,13 @@ fn real_core_versions_preserve_identity_actions_references_and_coverage() {
 #[test]
 fn provider_versions_preserve_semantics_for_the_common_configuration() {
     for version in ["1.9.8", "1.16.6"] {
-        let old = plan::parse(&fixture(version, "aws5")).unwrap();
-        let new = plan::parse(&fixture(version, "aws6")).unwrap();
+        let mut old = plan::parse(&fixture(version, "aws5")).unwrap();
+        let mut new = plan::parse(&fixture(version, "aws6")).unwrap();
+        for raw in [&mut old, &mut new] {
+            for node in &mut raw.nodes {
+                node.metadata.changed_paths = Default::default();
+            }
+        }
         assert_eq!(old.nodes.len(), 10);
         assert_eq!(old.nodes, new.nodes);
         assert_eq!(old.edges, new.edges);

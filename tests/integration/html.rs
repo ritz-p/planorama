@@ -103,6 +103,143 @@ fn data(html: &str) -> Vec<Value> {
     serde_json::from_str(script).unwrap()
 }
 
+#[test]
+fn changed_paths_preserve_identity_selection_and_value_free_output() {
+    let input = include_str!("../fixtures/changed-paths-plan.json");
+    let output = html(input.as_bytes(), &[]);
+    assert!(!output.contains("NEVER_"));
+    assert!(!output.contains("</script><script>alert(1)</script>"));
+    let records = data(&output);
+    let current = records
+        .iter()
+        .find(|r| r["address"] == "test.item" && r["deposed"].is_null())
+        .unwrap();
+    assert_eq!(
+        current["changed_paths"]["replacement_paths"],
+        json!(["$[\"nested\"][\"size\"]"])
+    );
+    assert_eq!(
+        current["changed_paths"]["unknown_paths"],
+        json!(["$[\"future\"]"])
+    );
+    assert_eq!(current["changed_paths"]["sensitive_omitted"], true);
+    let deposed = records.iter().find(|r| r["deposed"] == "old").unwrap();
+    assert_eq!(
+        deposed["changed_paths"]["paths"],
+        json!(["$[\"deposed_only\"]"])
+    );
+    let data_resource = records.iter().find(|r| r["mode"] == "data").unwrap();
+    assert_eq!(
+        data_resource["changed_paths"]["unknown_paths"],
+        json!(["$[\"data_only\"]"])
+    );
+    assert_eq!(
+        records
+            .iter()
+            .find(|r| r["address"] == "test.unavailable")
+            .unwrap()["changed_paths"]["available"],
+        false
+    );
+    let selected = html(
+        input.as_bytes(),
+        &["--focus", "data.test.item", "--focus-depth", "0"],
+    );
+    assert!(!selected.contains("EXCLUDED_PATH"));
+    assert!(!selected.contains("test.excluded"));
+    let changed_only = html(input.as_bytes(), &["--changed-only"]);
+    assert!(!changed_only.contains("test.excluded"));
+    let shared = planorama::generate(
+        input,
+        &planorama::Options {
+            format: planorama::OutputFormat::Html,
+            ..Default::default()
+        },
+    )
+    .unwrap();
+    assert_eq!(shared.content, output);
+    let named = planorama::generate_named(
+        &[
+            planorama::NamedInput {
+                state: "one".into(),
+                json: input.into(),
+            },
+            planorama::NamedInput {
+                state: "two".into(),
+                json: input.into(),
+            },
+        ],
+        &planorama::Options {
+            format: planorama::OutputFormat::Html,
+            ..Default::default()
+        },
+    )
+    .unwrap();
+    let records = data(&named.content);
+    assert_eq!(records.len(), 10);
+    assert_eq!(records.iter().filter(|r| r["state"] == "one").count(), 5);
+    assert_eq!(records.iter().filter(|r| r["state"] == "two").count(), 5);
+    assert!(!named.content.contains("NEVER_"));
+}
+
+#[test]
+fn changed_paths_survive_embedding_and_relationship_lowering_without_geometry_changes() {
+    for (fixture, address, lowered) in [
+        (
+            include_str!("../fixtures/routes-plan.json"),
+            "aws_route.default",
+            false,
+        ),
+        (
+            include_str!("../fixtures/association-plan.json"),
+            "aws_route_table_association.private",
+            true,
+        ),
+    ] {
+        let original = html(fixture.as_bytes(), &[]);
+        let mut input: Value = serde_json::from_str(fixture).unwrap();
+        let resource = input["resource_changes"]
+            .as_array_mut()
+            .unwrap()
+            .iter_mut()
+            .find(|r| r["address"] == address)
+            .unwrap();
+        let change = resource["change"].as_object_mut().unwrap();
+        let before = change.get("after").cloned().unwrap_or(json!({}));
+        change.insert("before".into(), before.clone());
+        let mut after = before;
+        after["audit_field"] = json!("NEVER_EMBED_CHANGE_VALUE");
+        change.insert("after".into(), after);
+        let output = html(input.to_string().as_bytes(), &[]);
+        assert!(!output.contains("NEVER_EMBED_CHANGE_VALUE"));
+        assert_eq!(diagram(&output), diagram(&original));
+        let paths = if lowered {
+            let providers: Vec<Value> = serde_json::from_str(
+                output
+                    .split("<script id=\"viewer-provider-data\" type=\"application/json\">")
+                    .nth(1)
+                    .unwrap()
+                    .split("</script>")
+                    .next()
+                    .unwrap(),
+            )
+            .unwrap();
+            providers.iter().find(|r| r[1] == address).unwrap()[4].clone()
+        } else {
+            data(&output)
+                .iter()
+                .find(|r| r["address"] == address)
+                .unwrap()["changed_paths"]
+                .clone()
+        };
+        assert!(
+            paths["paths"]
+                .as_array()
+                .unwrap()
+                .contains(&json!("$[\"audit_field\"]"))
+        );
+    }
+}
+
 fn semantic_data(html: &str) -> Value {
     serde_json::from_str(
         html.split("<script id=\"viewer-semantic-diagnostics\" type=\"application/json\">")

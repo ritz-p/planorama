@@ -43,7 +43,7 @@ async function main() {
     assert.deepEqual(JSON.parse(driver.execute_script('return window.engine.memory_capabilities();')), manifest.memory);
     require('./memory-chromium.cjs')(driver, fs.readFileSync(join(temp, 'planorama.js'), 'utf8'), `/v${version}/planorama_bg.wasm`, fs.readFileSync('tests/fixtures/viewer-plan.json', 'utf8'));
     const binary = resolve(process.env.CARGO_TARGET_DIR || 'target', 'release/planorama');
-    for (const fixture of ['viewer-plan', 'aws-basic-plan', 'terraform-plan']) {
+    for (const fixture of ['viewer-plan', 'aws-basic-plan', 'terraform-plan', 'changed-paths-plan']) {
       const json = fs.readFileSync(`tests/fixtures/${fixture}.json`, 'utf8');
       for (const format of ['svg', 'html']) {
         for (const icon_mode of [undefined, 'service-name']) {
@@ -55,6 +55,13 @@ async function main() {
       }
       const error = driver.execute_script('try { window.engine.generate(arguments[0], \'{"icon_mode":"icon"}\'); } catch(e) { return JSON.parse(e).code; }', json);
       assert.equal(error, 'invalid_options');
+      if (fixture === 'changed-paths-plan') {
+        const result = JSON.parse(driver.execute_script('return window.engine.generate(arguments[0], arguments[1]);', json, JSON.stringify({format:'html', changed_only:true})));
+        const native = execFileSync(binary, ['-', '-o', '-', '--format', 'html', '--changed-only'], {input:json, encoding:'utf8'});
+        assert.equal(result.content, native);
+        assert.ok(!result.content.includes('test.excluded'));
+        assert.ok(!result.content.includes('NEVER_'));
+      }
     }
     console.log('Extracted engine: checksums, browser generation, SVG/HTML parity and artwork exclusion passed');
   } finally {

@@ -158,6 +158,33 @@ unavailable-reference descriptions can still identify a target outside the view.
 The viewer provides no editing or saved viewer-state persistence. Neighborhood
 export filters a copy; the live diagram remains unchanged.
 
+## Changed attribute paths
+
+Each selected resource's keyboard-operable **Changed attribute paths** disclosure
+lists paths only. Shared parsing compares supplied `before` and `after` metadata;
+values and raw expressions are discarded. CLI, native and Wasm HTML use the same
+analysis. Only resources retained by generation-time selection receive metadata,
+including embedded cards and relationship provenance resources. State, mode and
+current/deposed identity remain separate; moves and imports keep current identity.
+
+Paths use `$["attribute"][0]` notation. Scalar/type changes, added/removed members
+and nested leaves are reported. Collections use positional indices, with no
+semantic matching of set elements; insertions or reordering may report many paths.
+Empty objects/arrays and whole-value type changes may report an enclosing path.
+Unknown after values are listed separately as indeterminate, never definite changes.
+Any child subtree containing a sensitive marker is omitted before its keys are
+retained. The panel discloses these omissions. Missing before/after metadata is
+unavailable, distinct from an explicit empty change list. This analysis is not a
+complete explanation of provider behavior or a value comparison UI.
+
+Replacement-trigger paths are shown separately and are not the full change list.
+Per resource, all three lists share 128 paths and an 8 KiB serialized-byte ceiling
+(conservative escaping allowance); traversal stops after 100,000 visited values.
+HTML has a 256 KiB aggregate path-metadata budget; small omission flags remain
+outside that budget. Limits are disclosed as truncation and never as no changes.
+HTML-safe JSON and text-node insertion protect hostile path text. SVG, diagnostics
+and SVG/PNG exports do not acquire this new metadata or before/after values.
+
 ## Generation information
 
 The collapsed **Generation information** panel reports the producing Planorama

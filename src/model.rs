@@ -173,7 +173,8 @@ pub(crate) use diagnostics::Resolution;
 pub use diagnostics::{Diagnostic, DiagnosticReason};
 pub use graphs::{ArchitectureGraph, AttributeReference, StateOutput};
 pub use operations::{
-    AttributePathStep, ChangeMetadata, DriftRecord, ImportMetadata, RelevantAttribute, StateRemoval,
+    AttributePathStep, ChangeMetadata, ChangedPaths, DriftRecord, ImportMetadata,
+    RelevantAttribute, StateRemoval,
 };
 pub use provider::{AwsAccountScope, ProviderConfiguration, ProviderIdentity, RegionScope};
 pub use states::{MultiPlan, PlanInput, StateId};
