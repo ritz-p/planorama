@@ -1705,10 +1705,10 @@
       }
     },
     "aws_scheduler_schedule": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 692,
-      "gap": "Missing: explicit group, allowlisted target and role #692. Deferred KMS/DLQ until initial target contract is stable; universal-target service ARNs do not identify resources. See #721 per-dimension review in aws-semantic-decisions.json.",
+      "gap": "Implemented #692: verified group membership and allowlisted target/execution-role navigation, preserving independent logical schedule/group identities. See aws.md#scheduler-and-pipes-configuration-692. #721 review records the historical audit baseline; KMS/DLQ/logging and additional endpoint families remain deferred.",
       "review": {
         "issue": 721,
         "implementationCommit": "de2686ced20f383ee48ec65b1354b643e2fe659c",
@@ -1751,10 +1751,10 @@
       }
     },
     "aws_scheduler_schedule_group": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 692,
-      "gap": "Missing: inbound schedule.group_name membership #692; omitted default name supplies no identity. See #721 per-dimension review in aws-semantic-decisions.json.",
+      "gap": "Implemented #692: verified group membership and allowlisted target/execution-role navigation, preserving independent logical schedule/group identities. See aws.md#scheduler-and-pipes-configuration-692. #721 review records the historical audit baseline; KMS/DLQ/logging and additional endpoint families remain deferred.",
       "review": {
         "issue": 721,
         "implementationCommit": "de2686ced20f383ee48ec65b1354b643e2fe659c",
@@ -1777,10 +1777,10 @@
       }
     },
     "aws_pipes_pipe": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 692,
-      "gap": "Missing: separately labeled allowlisted source/enrichment/target/role #692. Unsupported endpoints retain generic evidence. See #721 per-dimension review in aws-semantic-decisions.json.",
+      "gap": "Implemented #692: independent spatial pipe with verified source/enrichment/target/role configuration links; SQS/Kinesis sources and Lambda enrichment only. No runtime delivery or network containment. See aws.md#scheduler-and-pipes-configuration-692. #721 review records the historical audit baseline; KMS/DLQ/logging and additional endpoint families remain deferred.",
       "review": {
         "issue": 721,
         "implementationCommit": "de2686ced20f383ee48ec65b1354b643e2fe659c",

@@ -11,6 +11,9 @@ pub(super) mod tests;
 
 pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
     let resource = super::aliases::canonical(resource);
+    if let Some(label) = super::eventbridge::label(resource, attribute) {
+        return Some(label);
+    }
     if let Some(label) = super::elasticache::label(resource, attribute) {
         return Some(label);
     }
@@ -338,6 +341,11 @@ pub(crate) fn annotate(
 ) {
     for reference in references.iter_mut() {
         let node = &nodes[reference.target];
+        if super::eventbridge::label(&node.resource_type, &reference.attribute).is_some() {
+            reference.service_reference_verified =
+                super::eventbridge::verify(nodes, reference, evidence);
+            continue;
+        }
         if super::elasticache::label(&node.resource_type, &reference.attribute).is_some() {
             reference.service_reference_verified =
                 super::elasticache::verify(nodes, reference, evidence);
@@ -492,6 +500,26 @@ pub(crate) fn annotate(
 
 pub(super) fn verified(raw: &Input, reference: &AttributeReference) -> bool {
     reference.service_reference_verified
+        && (super::eventbridge::label(
+            &raw.nodes[reference.target].resource_type,
+            &reference.attribute,
+        )
+        .is_none()
+            || reference.sources.iter().all(|&source| {
+                let node = &raw.nodes[reference.target];
+                let endpoint = &raw.nodes[source];
+                super::eventbridge::bindings(
+                    node.provider_configuration.as_ref(),
+                    endpoint.provider_configuration.as_ref(),
+                    node.entity.scope.as_ref().and_then(|s| s.region.as_ref()),
+                    endpoint
+                        .entity
+                        .scope
+                        .as_ref()
+                        .and_then(|s| s.region.as_ref()),
+                    endpoint.resource_type == "aws_iam_role",
+                )
+            }))
         && (super::elasticache::label(
             &raw.nodes[reference.target].resource_type,
             &reference.attribute,
@@ -667,6 +695,7 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
                             | "Global datastore membership"
                             | "Cache replication group membership"
                             | "Cache user membership"
+                            | "Schedule group membership"
                     ) || matches!(
                         node.resource_type.as_str(),
                         "aws_iam_group_membership" | "aws_iam_user_group_membership"

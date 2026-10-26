@@ -924,6 +924,53 @@ Its inputs explicitly bind resources to provider configurations with literal
 regions. A provider alias such as `archive` is not the region label; missing or
 dynamic provider-region metadata cannot produce a guessed panel.
 
+## Scheduler and Pipes configuration (#692)
+
+Managed `aws_scheduler_schedule` and `aws_scheduler_schedule_group` retain
+independent logical identities. A verified `group_name` reference to a group's
+`name` or `id` is labeled **Schedule group membership**; it does not embed the
+schedule. Omitted/default group names create no group. `target.arn` and
+`target.role_arn` are separately labeled target and execution-role references.
+
+Managed `aws_pipes_pipe` is an independent spatial resource. Its `source`,
+`enrichment`, `target` and `role_arn` references have distinct labels. These are
+configuration links, not routed delivery edges or ownership of endpoints.
+
+| Field | Initial managed endpoint allowlist / output |
+| --- | --- |
+| Schedule `target.arn`, pipe `target` | SQS queue, SNS topic, Lambda function, Kinesis stream, Step Functions state machine, EventBridge bus: `arn` |
+| Pipe `source` | SQS queue or Kinesis stream: `arn`; competing or unknown source-family parameter blocks reject the proof |
+| Pipe `enrichment` | Lambda function: `arn` |
+| Schedule `target.role_arn`, pipe `role_arn` | IAM role: `arn` |
+
+Every dedicated link requires an explicit unique current managed Terraform
+reference, the allowed output field, equal known nonempty values, and compatible
+provider/account evidence. Regional endpoints require equal known deployment
+regions; an IAM role is global and does not borrow a region. Unknown accounts
+require the same provider configuration. Missing, ambiguous, foreign-provider,
+wrong-type, data, deleted and deposed endpoints remain unproven. Deleted schedules
+and pipes do not borrow current configuration. Invalid nested unknown-mask shapes
+also reject the proof. Named states and filtering preserve their existing identity,
+availability, provenance and once-only coverage rules. Unsupported references stay
+ordinary references alongside an unresolved dedicated field and diagnostic.
+
+Universal-target operation ARNs, DynamoDB streams, MSK/MQ and self-managed Kafka
+sources, API destinations, Step Functions enrichment and ECS/Batch targets are
+outside the initial allowlist. Task/source network parameters do not contain the
+schedule or pipe. Payloads, credentials, input templates, filters and arbitrary
+parameters are not displayed or parsed. KMS/DLQ/logging references and schedule
+summaries remain deferred. No runtime delivery or reachability is asserted.
+
+Contracts were checked against AWS Provider 6.70.0 at
+`5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f`:
+[schedule](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/website/docs/r/scheduler_schedule.html.markdown),
+[group](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/website/docs/r/scheduler_schedule_group.html.markdown)
+and [pipe](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/website/docs/r/pipes_pipe.html.markdown).
+The [fixture](../tests/fixtures/eventbridge-configuration-plan.json) and
+[SVG](../examples/eventbridge-configuration.svg) include verified links and a
+literal universal-target fallback. Regenerate its HTML in Docker with
+`cargo run --locked -- tests/fixtures/eventbridge-configuration-plan.json --format html -o examples/eventbridge-configuration.html`.
+
 ## SNS subscriptions
 
 Managed `aws_sns_topic_subscription` resources remain logical rows, with their own

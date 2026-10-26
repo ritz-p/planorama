@@ -1152,7 +1152,7 @@ pub(in crate::provider::aws) const ENTRIES: &[Basic] = &[
     entry!("aws_pinpointsmsvoicev2_pool", "AWS End User Messaging SMS", Node, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AWSEndUserMessaging))),
     entry!("aws_pinpointsmsvoicev2_resource_policy", "AWS End User Messaging SMS", Policy, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AWSEndUserMessaging))),
     entry!("aws_pinpointsmsvoicev2_sender_id", "AWS End User Messaging SMS", Node, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AWSEndUserMessaging))),
-    entry!("aws_pipes_pipe", "Amazon EventBridge Pipes", Node, Logical, Regional, Some(ResourceIcon::EventBridge)),
+    entry!("aws_pipes_pipe", "Amazon EventBridge Pipes", Node, Spatial, Regional, Some(ResourceIcon::EventBridge)),
     entry!("aws_placement_group", "Amazon EC2", Node, Logical, Regional, Some(ResourceIcon::Ec2)),
     entry!("aws_pricingplanmanager_subscription", "AWS Pricing Plan Manager", Controller, Logical, Global, None),
     entry!("aws_prometheus_alert_manager_definition", "Amazon Managed Service for Prometheus", Controller, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonManagedServiceforPrometheus))),

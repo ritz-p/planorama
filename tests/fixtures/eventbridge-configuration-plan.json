@@ -1,0 +1,281 @@
+{
+  "format_version": "1.2",
+  "resource_changes": [
+    {
+      "address": "aws_scheduler_schedule_group.batch",
+      "mode": "managed",
+      "type": "aws_scheduler_schedule_group",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "PRIVATE_GROUP",
+          "id": "PRIVATE_GROUP"
+        }
+      }
+    },
+    {
+      "address": "aws_iam_role.execution",
+      "mode": "managed",
+      "type": "aws_iam_role",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:iam::111122223333:role/PRIVATE_EXECUTION"
+        }
+      }
+    },
+    {
+      "address": "aws_sqs_queue.source",
+      "mode": "managed",
+      "type": "aws_sqs_queue",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:sqs:us-east-1:111122223333:PRIVATE_SOURCE"
+        }
+      }
+    },
+    {
+      "address": "aws_lambda_function.enrich",
+      "mode": "managed",
+      "type": "aws_lambda_function",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:lambda:us-east-1:111122223333:function:PRIVATE_ENRICH"
+        }
+      }
+    },
+    {
+      "address": "aws_sqs_queue.target",
+      "mode": "managed",
+      "type": "aws_sqs_queue",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:sqs:us-east-1:111122223333:PRIVATE_TARGET"
+        }
+      }
+    },
+    {
+      "address": "aws_scheduler_schedule.daily",
+      "mode": "managed",
+      "type": "aws_scheduler_schedule",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "group_name": "PRIVATE_GROUP",
+          "target": [
+            {
+              "arn": "arn:aws:sqs:us-east-1:111122223333:PRIVATE_TARGET",
+              "role_arn": "arn:aws:iam::111122223333:role/PRIVATE_EXECUTION",
+              "input": "PRIVATE_PAYLOAD"
+            }
+          ],
+          "schedule_expression": "PRIVATE_SCHEDULE"
+        }
+      }
+    },
+    {
+      "address": "aws_pipes_pipe.process",
+      "mode": "managed",
+      "type": "aws_pipes_pipe",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "source": "arn:aws:sqs:us-east-1:111122223333:PRIVATE_SOURCE",
+          "enrichment": "arn:aws:lambda:us-east-1:111122223333:function:PRIVATE_ENRICH",
+          "target": "arn:aws:sqs:us-east-1:111122223333:PRIVATE_TARGET",
+          "role_arn": "arn:aws:iam::111122223333:role/PRIVATE_EXECUTION",
+          "source_parameters": [
+            {
+              "sqs_queue_parameters": [
+                {
+                  "batch_size": 10
+                }
+              ],
+              "filter_criteria": [
+                {
+                  "filter": [
+                    {
+                      "pattern": "PRIVATE_FILTER"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_scheduler_schedule.literal",
+      "mode": "managed",
+      "type": "aws_scheduler_schedule",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "group_name": "PRIVATE_GROUP",
+          "target": [
+            {
+              "arn": "arn:aws:scheduler:::aws-sdk:sqs:sendMessage",
+              "role_arn": "PRIVATE_ROLE",
+              "input": "PRIVATE_PAYLOAD"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_scheduler_schedule_group.batch",
+          "mode": "managed",
+          "type": "aws_scheduler_schedule_group",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_iam_role.execution",
+          "mode": "managed",
+          "type": "aws_iam_role",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_sqs_queue.source",
+          "mode": "managed",
+          "type": "aws_sqs_queue",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_lambda_function.enrich",
+          "mode": "managed",
+          "type": "aws_lambda_function",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_sqs_queue.target",
+          "mode": "managed",
+          "type": "aws_sqs_queue",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_scheduler_schedule.daily",
+          "mode": "managed",
+          "type": "aws_scheduler_schedule",
+          "provider_config_key": "aws",
+          "expressions": {
+            "group_name": {
+              "references": [
+                "aws_scheduler_schedule_group.batch.name"
+              ]
+            },
+            "target": [
+              {
+                "arn": {
+                  "references": [
+                    "aws_sqs_queue.target.arn"
+                  ]
+                },
+                "role_arn": {
+                  "references": [
+                    "aws_iam_role.execution.arn"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_pipes_pipe.process",
+          "mode": "managed",
+          "type": "aws_pipes_pipe",
+          "provider_config_key": "aws",
+          "expressions": {
+            "source": {
+              "references": [
+                "aws_sqs_queue.source.arn"
+              ]
+            },
+            "enrichment": {
+              "references": [
+                "aws_lambda_function.enrich.arn"
+              ]
+            },
+            "target": {
+              "references": [
+                "aws_sqs_queue.target.arn"
+              ]
+            },
+            "role_arn": {
+              "references": [
+                "aws_iam_role.execution.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_scheduler_schedule.literal",
+          "mode": "managed",
+          "type": "aws_scheduler_schedule",
+          "provider_config_key": "aws",
+          "expressions": {
+            "group_name": {
+              "constant_value": "PRIVATE_GROUP"
+            },
+            "target": [
+              {
+                "arn": {
+                  "constant_value": "arn:aws:scheduler:::aws-sdk:sqs:sendMessage"
+                },
+                "role_arn": {
+                  "constant_value": "PRIVATE_ROLE"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

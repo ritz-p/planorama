@@ -20,6 +20,7 @@ mod dynamodb;
 mod efs;
 mod elasticache;
 pub(crate) mod encryption;
+mod eventbridge;
 mod firehose;
 mod glue;
 mod iam;
