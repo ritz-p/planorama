@@ -200,15 +200,98 @@
     },
     "aws_dynamodb_table": {
       "status": "Partial",
-      "priority": "P1",
-      "issue": 687,
-      "gap": "Spatial table, explicit Backup endpoint and configuration navigation implemented (#508, #690; docs/dynamodb.md). Lambda DynamoDB stream lowering and at-rest summaries are NOT implemented and remain deferred."
+      "priority": "P2",
+      "issue": 744,
+      "gap": "Partial: #690/Backup retained; import/restore references missing (#744); DynamoDB Lambda stream lowering NOT implemented (#714). See #718 per-dimension review in aws-semantic-decisions.json.",
+      "review": {
+        "issue": 718,
+        "implementationCommit": "bebadbbeac605bae9efd6810957a89130616d947",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "replica.region_name",
+          "server_side_encryption.kms_key_arn",
+          "import_table.s3_bucket_source.bucket",
+          "restore_source_table_arn",
+          "restore_source_name"
+        ],
+        "placement": "Spatial table retained; Backup endpoint remains supported.",
+        "ownership": "Partial: #690 inbound configuration navigation; inline replica/GSI/witness expansion deferred until distinct identity and coverage rules exist.",
+        "network": "Not applicable: service table is not contained in a client VPC endpoint.",
+        "references": "Partial: #690/Backup retained; import/restore references missing (#744); DynamoDB Lambda stream lowering NOT implemented (#714).",
+        "scope": "Partial: Regional eligibility from provider/static resource-region evidence; unknown evidence stays unresolved. Basic fallback intentionally clears account; existing classified endpoints retain verified provider account. Data sources do not inherit managed fallback.",
+        "summaries": "Intentionally unsupported: credentials, payloads, arbitrary parameters and runtime health. Deferred: service-specific encryption/capacity/retention summaries until a bounded allowlist has known/unknown/sensitive rules; current encryption.rs supports S3/SQS/RDS only.",
+        "officialDocumentation": "website/docs/r/dynamodb_table.html.markdown",
+        "shapes": {
+          "replica.region_name": [
+            "set",
+            "string"
+          ],
+          "server_side_encryption.kms_key_arn": [
+            "list",
+            "string"
+          ],
+          "import_table.s3_bucket_source.bucket": [
+            "list",
+            "list",
+            "string"
+          ],
+          "restore_source_table_arn": [
+            "string"
+          ],
+          "restore_source_name": [
+            "string"
+          ]
+        }
+      }
     },
     "aws_elasticache_replication_group": {
       "status": "Partial",
       "priority": "P1",
       "issue": 691,
-      "gap": "Implemented subnet-group/common-VPC placement (#360). Global replication/user/parameter-group references remain incomplete (#691); at-rest summary is NOT implemented and is deferred separately."
+      "gap": "Partial: global/user/parameter references missing (#691); log/SNS and KMS references deferred to bounded observability/encryption review. See #718 per-dimension review in aws-semantic-decisions.json.",
+      "review": {
+        "issue": 718,
+        "implementationCommit": "bebadbbeac605bae9efd6810957a89130616d947",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "subnet_group_name",
+          "global_replication_group_id",
+          "user_group_ids",
+          "parameter_group_name",
+          "kms_key_id",
+          "at_rest_encryption_enabled"
+        ],
+        "placement": "Spatial replication group retained.",
+        "ownership": "Missing: global/user configuration references, not ownership.",
+        "network": "Supported: existing #360 complete subnet-group common-VPC placement remains bounded; no per-node AZ synthesis.",
+        "references": "Partial: global/user/parameter references missing (#691); log/SNS and KMS references deferred to bounded observability/encryption review.",
+        "scope": "Partial: Regional eligibility from provider/static resource-region evidence; unknown evidence stays unresolved. Basic fallback intentionally clears account; existing classified endpoints retain verified provider account. Data sources do not inherit managed fallback.",
+        "summaries": "Intentionally unsupported: credentials, payloads, arbitrary parameters and runtime health. Deferred: service-specific encryption/capacity/retention summaries until a bounded allowlist has known/unknown/sensitive rules; current encryption.rs supports S3/SQS/RDS only.",
+        "officialDocumentation": "website/docs/r/elasticache_replication_group.html.markdown",
+        "shapes": {
+          "subnet_group_name": [
+            "string"
+          ],
+          "global_replication_group_id": [
+            "string"
+          ],
+          "user_group_ids": [
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "parameter_group_name": [
+            "string"
+          ],
+          "kms_key_id": [
+            "string"
+          ],
+          "at_rest_encryption_enabled": [
+            "string"
+          ]
+        }
+      }
     },
     "aws_api_gateway_rest_api": {
       "status": "Partial (bounded capabilities implemented)",
@@ -344,9 +427,47 @@
     },
     "aws_elasticache_serverless_cache": {
       "status": "Partial (bounded capabilities implemented)",
-      "priority": "P3",
-      "issue": 516,
-      "gap": "Serverless common-VPC/subnet/SG placement implemented; user-group references and endpoint values are outside the completed scope."
+      "priority": "P1",
+      "issue": 691,
+      "gap": "Partial: user_group_id missing (#691); KMS/snapshot restore navigation deferred to separate encryption/historical-source evidence contract. See #718 per-dimension review in aws-semantic-decisions.json.",
+      "review": {
+        "issue": 718,
+        "implementationCommit": "bebadbbeac605bae9efd6810957a89130616d947",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "subnet_ids",
+          "security_group_ids",
+          "user_group_id",
+          "kms_key_id"
+        ],
+        "placement": "Spatial cache retained.",
+        "ownership": "Not applicable: shared user group is configuration, not owned.",
+        "network": "Supported: #516 verified subnet/SG references and common-VPC placement.",
+        "references": "Partial: user_group_id missing (#691); KMS/snapshot restore navigation deferred to separate encryption/historical-source evidence contract.",
+        "scope": "Partial: Regional eligibility from provider/static resource-region evidence; unknown evidence stays unresolved. Basic fallback intentionally clears account; existing classified endpoints retain verified provider account. Data sources do not inherit managed fallback.",
+        "summaries": "Intentionally unsupported: credentials, payloads, arbitrary parameters and runtime health. Deferred: service-specific encryption/capacity/retention summaries until a bounded allowlist has known/unknown/sensitive rules; current encryption.rs supports S3/SQS/RDS only.",
+        "officialDocumentation": "website/docs/r/elasticache_serverless_cache.html.markdown",
+        "shapes": {
+          "subnet_ids": [
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "security_group_ids": [
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "user_group_id": [
+            "string"
+          ],
+          "kms_key_id": [
+            "string"
+          ]
+        }
+      }
     },
     "aws_eks_cluster": {
       "status": "Partial (bounded capabilities implemented)",
@@ -767,74 +888,387 @@
     "aws_dynamodb_table_replica": {
       "status": "Partial",
       "priority": "P2",
-      "issue": 687,
-      "gap": "Verified explicit table/configuration navigation implemented (#690; docs/dynamodb.md). Deferred: inline replica/GSI expansion, stream-policy targets, transformed tag ARNs; no item/index/policy payload output."
+      "issue": 690,
+      "gap": "Partial: V2 membership supported with distinct known regions; replica KMS navigation deferred alongside a service encryption allowlist, not inferred from ARN text. See #718 per-dimension review in aws-semantic-decisions.json.",
+      "review": {
+        "issue": 718,
+        "implementationCommit": "bebadbbeac605bae9efd6810957a89130616d947",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "global_table_arn",
+          "kms_key_arn"
+        ],
+        "placement": "Regional logical V2 replica retained.",
+        "ownership": "Supported: verified global_table_arn table membership without embedding.",
+        "network": "Not applicable: replica is not VPC-contained.",
+        "references": "Partial: V2 membership supported with distinct known regions; replica KMS navigation deferred alongside a service encryption allowlist, not inferred from ARN text.",
+        "scope": "Partial: Regional eligibility from provider/static resource-region evidence; unknown evidence stays unresolved. Basic fallback intentionally clears account; existing classified endpoints retain verified provider account. Data sources do not inherit managed fallback.",
+        "summaries": "Intentionally unsupported: credentials, payloads, arbitrary parameters and runtime health. Deferred: service-specific encryption/capacity/retention summaries until a bounded allowlist has known/unknown/sensitive rules; current encryption.rs supports S3/SQS/RDS only.",
+        "officialDocumentation": "website/docs/r/dynamodb_table_replica.html.markdown",
+        "shapes": {
+          "global_table_arn": [
+            "string"
+          ],
+          "kms_key_arn": [
+            "string"
+          ]
+        }
+      }
     },
     "aws_dynamodb_global_table": {
       "status": "Partial",
       "priority": "P2",
-      "issue": 687,
-      "gap": "Verified explicit table/configuration navigation implemented (#690; docs/dynamodb.md). Deferred: inline replica/GSI expansion, stream-policy targets, transformed tag ARNs; no item/index/policy payload output."
+      "issue": 690,
+      "gap": "Supported: referenced table name/id plus known unique replica region set. Literal replica regions do not synthesize tables. See #718 per-dimension review in aws-semantic-decisions.json.",
+      "review": {
+        "issue": 718,
+        "implementationCommit": "bebadbbeac605bae9efd6810957a89130616d947",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "name",
+          "replica.region_name"
+        ],
+        "placement": "Logical legacy V1 configuration retained.",
+        "ownership": "Supported: explicit table navigation only; no V2 ownership.",
+        "network": "Not applicable: service replication is not VPC containment.",
+        "references": "Supported: referenced table name/id plus known unique replica region set. Literal replica regions do not synthesize tables.",
+        "scope": "Partial: Global eligibility; no provider-region propagation to members. Basic fallback intentionally clears account; existing classified endpoints retain verified provider account. Data sources do not inherit managed fallback.",
+        "summaries": "Intentionally unsupported: credentials, payloads, arbitrary parameters and runtime health. Deferred: service-specific encryption/capacity/retention summaries until a bounded allowlist has known/unknown/sensitive rules; current encryption.rs supports S3/SQS/RDS only.",
+        "officialDocumentation": "website/docs/r/dynamodb_global_table.html.markdown",
+        "shapes": {
+          "name": [
+            "string"
+          ],
+          "replica.region_name": [
+            "set",
+            "string"
+          ]
+        }
+      }
     },
     "aws_dynamodb_kinesis_streaming_destination": {
       "status": "Partial",
       "priority": "P2",
-      "issue": 687,
-      "gap": "Verified explicit table/configuration navigation implemented (#690; docs/dynamodb.md). Deferred: inline replica/GSI expansion, stream-policy targets, transformed tag ARNs; no item/index/policy payload output."
+      "issue": 690,
+      "gap": "Supported: table and Kinesis references with same-region proof; no delivery/health assertion. See #718 per-dimension review in aws-semantic-decisions.json.",
+      "review": {
+        "issue": 718,
+        "implementationCommit": "bebadbbeac605bae9efd6810957a89130616d947",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "table_name",
+          "stream_arn"
+        ],
+        "placement": "Logical streaming configuration retained.",
+        "ownership": "Not applicable: table and stream remain shared independent resources.",
+        "network": "Not applicable: no network placement fields.",
+        "references": "Supported: table and Kinesis references with same-region proof; no delivery/health assertion.",
+        "scope": "Partial: Regional eligibility from provider/static resource-region evidence; unknown evidence stays unresolved. Basic fallback intentionally clears account; existing classified endpoints retain verified provider account. Data sources do not inherit managed fallback.",
+        "summaries": "Intentionally unsupported: credentials, payloads, arbitrary parameters and runtime health. Deferred: service-specific encryption/capacity/retention summaries until a bounded allowlist has known/unknown/sensitive rules; current encryption.rs supports S3/SQS/RDS only.",
+        "officialDocumentation": "website/docs/r/dynamodb_kinesis_streaming_destination.html.markdown",
+        "shapes": {
+          "table_name": [
+            "string"
+          ],
+          "stream_arn": [
+            "string"
+          ]
+        }
+      }
     },
     "aws_dynamodb_contributor_insights": {
       "status": "Partial",
       "priority": "P2",
-      "issue": 687,
-      "gap": "Verified explicit table/configuration navigation implemented (#690; docs/dynamodb.md). Deferred: inline replica/GSI expansion, stream-policy targets, transformed tag ARNs; no item/index/policy payload output."
+      "issue": 690,
+      "gap": "Supported: table_name reference; index_name selection deferred until independent index identity can be proven; never infer from a matching name. See #718 per-dimension review in aws-semantic-decisions.json.",
+      "review": {
+        "issue": 718,
+        "implementationCommit": "bebadbbeac605bae9efd6810957a89130616d947",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "table_name",
+          "index_name"
+        ],
+        "placement": "Logical table/index controller retained.",
+        "ownership": "Supported: table navigation, not embedding.",
+        "network": "Not applicable: managed service configuration.",
+        "references": "Supported: table_name reference; index_name selection deferred until independent index identity can be proven; never infer from a matching name.",
+        "scope": "Partial: Regional eligibility from provider/static resource-region evidence; unknown evidence stays unresolved. Basic fallback intentionally clears account; existing classified endpoints retain verified provider account. Data sources do not inherit managed fallback.",
+        "summaries": "Intentionally unsupported: credentials, payloads, arbitrary parameters and runtime health. Deferred: service-specific encryption/capacity/retention summaries until a bounded allowlist has known/unknown/sensitive rules; current encryption.rs supports S3/SQS/RDS only.",
+        "officialDocumentation": "website/docs/r/dynamodb_contributor_insights.html.markdown",
+        "shapes": {
+          "table_name": [
+            "string"
+          ],
+          "index_name": [
+            "string"
+          ]
+        }
+      }
     },
     "aws_dynamodb_global_secondary_index": {
       "status": "Partial",
       "priority": "P2",
-      "issue": 687,
-      "gap": "Verified explicit table/configuration navigation implemented (#690; docs/dynamodb.md). Deferred: inline replica/GSI expansion, stream-policy targets, transformed tag ARNs; no item/index/policy payload output."
+      "issue": 690,
+      "gap": "Supported: table_name reference. Inline indexes remain unexpanded to avoid duplicate identities; revisit only with unified inline/standalone identity. See #718 per-dimension review in aws-semantic-decisions.json.",
+      "review": {
+        "issue": 718,
+        "implementationCommit": "bebadbbeac605bae9efd6810957a89130616d947",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "table_name",
+          "index_name",
+          "key_schema"
+        ],
+        "placement": "Logical index configuration retained.",
+        "ownership": "Supported: table navigation; embedding intentionally not added by #690.",
+        "network": "Not applicable: table index has no subnet.",
+        "references": "Supported: table_name reference. Inline indexes remain unexpanded to avoid duplicate identities; revisit only with unified inline/standalone identity.",
+        "scope": "Partial: Regional eligibility from provider/static resource-region evidence; unknown evidence stays unresolved. Basic fallback intentionally clears account; existing classified endpoints retain verified provider account. Data sources do not inherit managed fallback.",
+        "summaries": "Intentionally unsupported: credentials, payloads, arbitrary parameters and runtime health. Deferred: service-specific encryption/capacity/retention summaries until a bounded allowlist has known/unknown/sensitive rules; current encryption.rs supports S3/SQS/RDS only.",
+        "officialDocumentation": "website/docs/r/dynamodb_global_secondary_index.html.markdown",
+        "shapes": {
+          "table_name": [
+            "string"
+          ],
+          "index_name": [
+            "string"
+          ],
+          "key_schema": [
+            "list"
+          ]
+        }
+      }
     },
     "aws_dynamodb_resource_policy": {
       "status": "Partial",
       "priority": "P2",
-      "issue": 687,
-      "gap": "Verified explicit table/configuration navigation implemented (#690; docs/dynamodb.md). Deferred: inline replica/GSI expansion, stream-policy targets, transformed tag ARNs; no item/index/policy payload output."
+      "issue": 690,
+      "gap": "Partial: table/replica ARN references supported; stream ARN target deferred until #714 defines DynamoDB stream identity. Policy interpretation intentionally unsupported. See #718 per-dimension review in aws-semantic-decisions.json.",
+      "review": {
+        "issue": 718,
+        "implementationCommit": "bebadbbeac605bae9efd6810957a89130616d947",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "resource_arn",
+          "policy"
+        ],
+        "placement": "Logical policy retained.",
+        "ownership": "Supported: table/replica navigation; policy never becomes containment.",
+        "network": "Not applicable: no network placement fields.",
+        "references": "Partial: table/replica ARN references supported; stream ARN target deferred until #714 defines DynamoDB stream identity. Policy interpretation intentionally unsupported.",
+        "scope": "Partial: Regional eligibility from provider/static resource-region evidence; unknown evidence stays unresolved. Basic fallback intentionally clears account; existing classified endpoints retain verified provider account. Data sources do not inherit managed fallback.",
+        "summaries": "Intentionally unsupported: credentials, payloads, arbitrary parameters and runtime health. Deferred: service-specific encryption/capacity/retention summaries until a bounded allowlist has known/unknown/sensitive rules; current encryption.rs supports S3/SQS/RDS only.",
+        "officialDocumentation": "website/docs/r/dynamodb_resource_policy.html.markdown",
+        "shapes": {
+          "resource_arn": [
+            "string"
+          ],
+          "policy": [
+            "string"
+          ]
+        }
+      }
     },
     "aws_dynamodb_tag": {
       "status": "Partial",
       "priority": "P2",
-      "issue": 687,
-      "gap": "Verified explicit table/configuration navigation implemented (#690; docs/dynamodb.md). Deferred: inline replica/GSI expansion, stream-policy targets, transformed tag ARNs; no item/index/policy payload output."
+      "issue": 690,
+      "gap": "Supported: explicit table/replica ARN. Transformed replica ARNs deferred until transformation provenance can be proven; tag values intentionally unsupported. See #718 per-dimension review in aws-semantic-decisions.json.",
+      "review": {
+        "issue": 718,
+        "implementationCommit": "bebadbbeac605bae9efd6810957a89130616d947",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "resource_arn",
+          "key",
+          "value"
+        ],
+        "placement": "Logical tag controller retained.",
+        "ownership": "Supported: table/replica navigation, not ownership.",
+        "network": "Not applicable: no network placement fields.",
+        "references": "Supported: explicit table/replica ARN. Transformed replica ARNs deferred until transformation provenance can be proven; tag values intentionally unsupported.",
+        "scope": "Partial: Regional eligibility from provider/static resource-region evidence; unknown evidence stays unresolved. Basic fallback intentionally clears account; existing classified endpoints retain verified provider account. Data sources do not inherit managed fallback.",
+        "summaries": "Intentionally unsupported: credentials, payloads, arbitrary parameters and runtime health. Deferred: service-specific encryption/capacity/retention summaries until a bounded allowlist has known/unknown/sensitive rules; current encryption.rs supports S3/SQS/RDS only.",
+        "officialDocumentation": "website/docs/r/dynamodb_tag.html.markdown",
+        "shapes": {
+          "resource_arn": [
+            "string"
+          ],
+          "key": [
+            "string"
+          ],
+          "value": [
+            "string"
+          ]
+        }
+      }
     },
     "aws_elasticache_global_replication_group": {
       "status": "Basic-only",
       "priority": "P1",
       "issue": 691,
-      "gap": "Global/member, user/group and parameter-group references missing; preserve shared identities and separate member scope; passwords and parameter values excluded."
+      "gap": "Missing: primary_replication_group_id and inbound global_replication_group_id references. Suffix is not full output ID. Global parameter reference requires regional endpoint compatibility. See #718 per-dimension review in aws-semantic-decisions.json.",
+      "review": {
+        "issue": 718,
+        "implementationCommit": "bebadbbeac605bae9efd6810957a89130616d947",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "primary_replication_group_id",
+          "parameter_group_name"
+        ],
+        "placement": "Logical global datastore retained; member regions remain independent.",
+        "ownership": "Missing: explicit member references; shared groups never embedded.",
+        "network": "Not applicable: global datastore is not a VPC container.",
+        "references": "Missing: primary_replication_group_id and inbound global_replication_group_id references. Suffix is not full output ID. Global parameter reference requires regional endpoint compatibility.",
+        "scope": "Partial: Global eligibility; no provider-region propagation to members. Basic fallback intentionally clears account; existing classified endpoints retain verified provider account. Data sources do not inherit managed fallback.",
+        "summaries": "Intentionally unsupported: credentials, payloads, arbitrary parameters and runtime health. Deferred: service-specific encryption/capacity/retention summaries until a bounded allowlist has known/unknown/sensitive rules; current encryption.rs supports S3/SQS/RDS only.",
+        "officialDocumentation": "website/docs/r/elasticache_global_replication_group.html.markdown",
+        "shapes": {
+          "primary_replication_group_id": [
+            "string"
+          ],
+          "parameter_group_name": [
+            "string"
+          ]
+        }
+      }
     },
     "aws_elasticache_user": {
       "status": "Basic-only",
       "priority": "P1",
       "issue": 691,
-      "gap": "Global/member, user/group and parameter-group references missing; preserve shared identities and separate member scope; passwords and parameter values excluded."
+      "gap": "Missing: inbound user/group references. user_name is not user_id; permissions and passwords intentionally unsupported. See #718 per-dimension review in aws-semantic-decisions.json.",
+      "review": {
+        "issue": 718,
+        "implementationCommit": "bebadbbeac605bae9efd6810957a89130616d947",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "user_id",
+          "user_name",
+          "access_string",
+          "authentication_mode.type"
+        ],
+        "placement": "Logical shared identity retained.",
+        "ownership": "Intentionally unsupported: group membership does not give exclusive ownership.",
+        "network": "Not applicable: authentication identity is not VPC-contained.",
+        "references": "Missing: inbound user/group references. user_name is not user_id; permissions and passwords intentionally unsupported.",
+        "scope": "Partial: Regional eligibility from provider/static resource-region evidence; unknown evidence stays unresolved. Basic fallback intentionally clears account; existing classified endpoints retain verified provider account. Data sources do not inherit managed fallback.",
+        "summaries": "Intentionally unsupported: credentials, payloads, arbitrary parameters and runtime health. Deferred: service-specific encryption/capacity/retention summaries until a bounded allowlist has known/unknown/sensitive rules; current encryption.rs supports S3/SQS/RDS only.",
+        "officialDocumentation": "website/docs/r/elasticache_user.html.markdown",
+        "shapes": {
+          "user_id": [
+            "string"
+          ],
+          "user_name": [
+            "string"
+          ],
+          "access_string": [
+            "string"
+          ],
+          "authentication_mode.type": [
+            "list",
+            "string"
+          ]
+        }
+      }
     },
     "aws_elasticache_user_group": {
       "status": "Basic-only",
       "priority": "P1",
       "issue": 691,
-      "gap": "Global/member, user/group and parameter-group references missing; preserve shared identities and separate member scope; passwords and parameter values excluded."
+      "gap": "Missing: user_ids set and inbound cache references. No literal-ID matching. See #718 per-dimension review in aws-semantic-decisions.json.",
+      "review": {
+        "issue": 718,
+        "implementationCommit": "bebadbbeac605bae9efd6810957a89130616d947",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "user_group_id",
+          "user_ids"
+        ],
+        "placement": "Logical shared group retained.",
+        "ownership": "Not applicable: many-to-many membership forbids embedding users.",
+        "network": "Not applicable: no subnet contract.",
+        "references": "Missing: user_ids set and inbound cache references. No literal-ID matching.",
+        "scope": "Partial: Regional eligibility from provider/static resource-region evidence; unknown evidence stays unresolved. Basic fallback intentionally clears account; existing classified endpoints retain verified provider account. Data sources do not inherit managed fallback.",
+        "summaries": "Intentionally unsupported: credentials, payloads, arbitrary parameters and runtime health. Deferred: service-specific encryption/capacity/retention summaries until a bounded allowlist has known/unknown/sensitive rules; current encryption.rs supports S3/SQS/RDS only.",
+        "officialDocumentation": "website/docs/r/elasticache_user_group.html.markdown",
+        "shapes": {
+          "user_group_id": [
+            "string"
+          ],
+          "user_ids": [
+            [
+              "set",
+              "string"
+            ]
+          ]
+        }
+      }
     },
     "aws_elasticache_user_group_association": {
       "status": "Basic-only",
       "priority": "P1",
       "issue": 691,
-      "gap": "Global/member, user/group and parameter-group references missing; preserve shared identities and separate member scope; passwords and parameter values excluded."
+      "gap": "Missing: both explicit endpoint references, preserving helper action and identity. See #718 per-dimension review in aws-semantic-decisions.json.",
+      "review": {
+        "issue": 718,
+        "implementationCommit": "bebadbbeac605bae9efd6810957a89130616d947",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "user_group_id",
+          "user_id"
+        ],
+        "placement": "Logical association retained with its own provenance.",
+        "ownership": "Not applicable: association does not own user/group.",
+        "network": "Not applicable: no subnet contract.",
+        "references": "Missing: both explicit endpoint references, preserving helper action and identity.",
+        "scope": "Partial: Regional eligibility from provider/static resource-region evidence; unknown evidence stays unresolved. Basic fallback intentionally clears account; existing classified endpoints retain verified provider account. Data sources do not inherit managed fallback.",
+        "summaries": "Intentionally unsupported: credentials, payloads, arbitrary parameters and runtime health. Deferred: service-specific encryption/capacity/retention summaries until a bounded allowlist has known/unknown/sensitive rules; current encryption.rs supports S3/SQS/RDS only.",
+        "officialDocumentation": "website/docs/r/elasticache_user_group_association.html.markdown",
+        "shapes": {
+          "user_group_id": [
+            "string"
+          ],
+          "user_id": [
+            "string"
+          ]
+        }
+      }
     },
     "aws_elasticache_parameter_group": {
       "status": "Basic-only",
       "priority": "P1",
       "issue": 691,
-      "gap": "Global/member, user/group and parameter-group references missing; preserve shared identities and separate member scope; passwords and parameter values excluded."
+      "gap": "Missing: inbound cache references. Never render parameter values or infer engine behavior from them. See #718 per-dimension review in aws-semantic-decisions.json.",
+      "review": {
+        "issue": 718,
+        "implementationCommit": "bebadbbeac605bae9efd6810957a89130616d947",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "name",
+          "family",
+          "parameter"
+        ],
+        "placement": "Logical shared policy retained.",
+        "ownership": "Not applicable: parameters may be reused.",
+        "network": "Not applicable: no subnet contract.",
+        "references": "Missing: inbound cache references. Never render parameter values or infer engine behavior from them.",
+        "scope": "Partial: Regional eligibility from provider/static resource-region evidence; unknown evidence stays unresolved. Basic fallback intentionally clears account; existing classified endpoints retain verified provider account. Data sources do not inherit managed fallback.",
+        "summaries": "Intentionally unsupported: credentials, payloads, arbitrary parameters and runtime health. Deferred: service-specific encryption/capacity/retention summaries until a bounded allowlist has known/unknown/sensitive rules; current encryption.rs supports S3/SQS/RDS only.",
+        "officialDocumentation": "website/docs/r/elasticache_parameter_group.html.markdown",
+        "shapes": {
+          "name": [
+            "string"
+          ],
+          "family": [
+            "string"
+          ],
+          "parameter": [
+            "set"
+          ]
+        }
+      }
     },
     "aws_scheduler_schedule": {
       "status": "Basic-only",
@@ -881,14 +1315,927 @@
     "aws_dynamodb_table_export": {
       "status": "Basic-only",
       "priority": "P2",
-      "issue": 687,
-      "gap": "Table export/item content handling deferred; do not expose item data, keys or export payloads."
+      "issue": 744,
+      "gap": "Missing: explicit table/S3/KMS references; export timestamps do not establish live delivery. See #718 per-dimension review in aws-semantic-decisions.json.",
+      "review": {
+        "issue": 718,
+        "implementationCommit": "bebadbbeac605bae9efd6810957a89130616d947",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "table_arn",
+          "s3_bucket",
+          "s3_bucket_owner",
+          "s3_sse_algorithm",
+          "s3_sse_kms_key_id"
+        ],
+        "placement": "Logical export operation retained.",
+        "ownership": "Not applicable: historical export does not own its source table or shared bucket.",
+        "network": "Not applicable: no network placement fields.",
+        "references": "Missing: explicit table/S3/KMS references; export timestamps do not establish live delivery.",
+        "scope": "Partial: Regional eligibility from provider/static resource-region evidence; unknown evidence stays unresolved. Basic fallback intentionally clears account; existing classified endpoints retain verified provider account. Data sources do not inherit managed fallback.",
+        "summaries": "Intentionally unsupported: credentials, payloads, arbitrary parameters and runtime health. Deferred: service-specific encryption/capacity/retention summaries until a bounded allowlist has known/unknown/sensitive rules; current encryption.rs supports S3/SQS/RDS only.",
+        "officialDocumentation": "website/docs/r/dynamodb_table_export.html.markdown",
+        "shapes": {
+          "table_arn": [
+            "string"
+          ],
+          "s3_bucket": [
+            "string"
+          ],
+          "s3_bucket_owner": [
+            "string"
+          ],
+          "s3_sse_algorithm": [
+            "string"
+          ],
+          "s3_sse_kms_key_id": [
+            "string"
+          ]
+        }
+      }
     },
     "aws_dynamodb_table_item": {
       "status": "Basic-only",
+      "priority": "P3",
+      "issue": 718,
+      "gap": "Deferred: table navigation adds little architecture value for item operations; revisit for an explicit value-free item-operation inventory. Item/key payloads intentionally unsupported. See #718 per-dimension review in aws-semantic-decisions.json.",
+      "review": {
+        "issue": 718,
+        "implementationCommit": "bebadbbeac605bae9efd6810957a89130616d947",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "table_name",
+          "item",
+          "hash_key",
+          "range_key"
+        ],
+        "placement": "Logical data operation sufficient; not an architecture card.",
+        "ownership": "Intentionally unsupported: embedding data items would expose content and inflate architecture.",
+        "network": "Not applicable: no network placement fields.",
+        "references": "Deferred: table navigation adds little architecture value for item operations; revisit for an explicit value-free item-operation inventory. Item/key payloads intentionally unsupported.",
+        "scope": "Partial: Regional eligibility from provider/static resource-region evidence; unknown evidence stays unresolved. Basic fallback intentionally clears account; existing classified endpoints retain verified provider account. Data sources do not inherit managed fallback.",
+        "summaries": "Intentionally unsupported: credentials, payloads, arbitrary parameters and runtime health. Deferred: service-specific encryption/capacity/retention summaries until a bounded allowlist has known/unknown/sensitive rules; current encryption.rs supports S3/SQS/RDS only.",
+        "officialDocumentation": "website/docs/r/dynamodb_table_item.html.markdown",
+        "shapes": {
+          "table_name": [
+            "string"
+          ],
+          "item": [
+            "string"
+          ],
+          "hash_key": [
+            "string"
+          ],
+          "range_key": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_dax_cluster": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 739,
+      "gap": "Missing: subnet/parameter/role/SNS references. See #718 per-dimension review in aws-semantic-decisions.json.",
+      "review": {
+        "issue": 718,
+        "implementationCommit": "bebadbbeac605bae9efd6810957a89130616d947",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "subnet_group_name",
+          "security_group_ids",
+          "parameter_group_name",
+          "iam_role_arn",
+          "notification_topic_arn"
+        ],
+        "placement": "Spatial cluster retained; computed nodes are not independent Terraform identities.",
+        "ownership": "No embedding: shared parameter/subnet groups.",
+        "network": "Missing: complete subnet-group and SG proof.",
+        "references": "Missing: subnet/parameter/role/SNS references.",
+        "scope": "Partial: Regional eligibility from provider/static resource-region evidence; unknown evidence stays unresolved. Basic fallback intentionally clears account; existing classified endpoints retain verified provider account. Data sources do not inherit managed fallback.",
+        "summaries": "Intentionally unsupported: credentials, payloads, arbitrary parameters and runtime health. Deferred: service-specific encryption/capacity/retention summaries until a bounded allowlist has known/unknown/sensitive rules; current encryption.rs supports S3/SQS/RDS only.",
+        "officialDocumentation": "website/docs/r/dax_cluster.html.markdown",
+        "shapes": {
+          "subnet_group_name": [
+            "string"
+          ],
+          "security_group_ids": [
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "parameter_group_name": [
+            "string"
+          ],
+          "iam_role_arn": [
+            "string"
+          ],
+          "notification_topic_arn": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_dax_parameter_group": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 739,
+      "gap": "Missing: inbound cluster parameter reference. Parameter values intentionally unsupported. See #718 per-dimension review in aws-semantic-decisions.json.",
+      "review": {
+        "issue": 718,
+        "implementationCommit": "bebadbbeac605bae9efd6810957a89130616d947",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "name",
+          "parameters"
+        ],
+        "placement": "Logical shared parameters retained.",
+        "ownership": "Not applicable: reusable configuration has no unique owner.",
+        "network": "Not applicable: no subnet contract.",
+        "references": "Missing: inbound cluster parameter reference. Parameter values intentionally unsupported.",
+        "scope": "Partial: Regional eligibility from provider/static resource-region evidence; unknown evidence stays unresolved. Basic fallback intentionally clears account; existing classified endpoints retain verified provider account. Data sources do not inherit managed fallback.",
+        "summaries": "Intentionally unsupported: credentials, payloads, arbitrary parameters and runtime health. Deferred: service-specific encryption/capacity/retention summaries until a bounded allowlist has known/unknown/sensitive rules; current encryption.rs supports S3/SQS/RDS only.",
+        "officialDocumentation": "website/docs/r/dax_parameter_group.html.markdown",
+        "shapes": {
+          "name": [
+            "string"
+          ],
+          "parameters": [
+            "set"
+          ]
+        }
+      }
+    },
+    "aws_dax_subnet_group": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 739,
+      "gap": "Missing: cluster/subnet references; computed vpc_id alone is insufficient. See #718 per-dimension review in aws-semantic-decisions.json.",
+      "review": {
+        "issue": 718,
+        "implementationCommit": "bebadbbeac605bae9efd6810957a89130616d947",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "name",
+          "subnet_ids"
+        ],
+        "placement": "Logical subnet selector retained.",
+        "ownership": "Not applicable: shared selector, not cluster-owned.",
+        "network": "Missing: complete subnet set/common-VPC proof.",
+        "references": "Missing: cluster/subnet references; computed vpc_id alone is insufficient.",
+        "scope": "Partial: Regional eligibility from provider/static resource-region evidence; unknown evidence stays unresolved. Basic fallback intentionally clears account; existing classified endpoints retain verified provider account. Data sources do not inherit managed fallback.",
+        "summaries": "Intentionally unsupported: credentials, payloads, arbitrary parameters and runtime health. Deferred: service-specific encryption/capacity/retention summaries until a bounded allowlist has known/unknown/sensitive rules; current encryption.rs supports S3/SQS/RDS only.",
+        "officialDocumentation": "website/docs/r/dax_subnet_group.html.markdown",
+        "shapes": {
+          "name": [
+            "string"
+          ],
+          "subnet_ids": [
+            [
+              "set",
+              "string"
+            ]
+          ]
+        }
+      }
+    },
+    "aws_elasticache_cluster": {
+      "status": "Partial",
+      "priority": "P1",
+      "issue": 691,
+      "gap": "Missing: parameter/membership references (#691). Log/SNS configuration deferred until destination-type and log-entry evidence are bound together; revisit with cache observability scope. See #718 per-dimension review in aws-semantic-decisions.json.",
+      "review": {
+        "issue": 718,
+        "implementationCommit": "bebadbbeac605bae9efd6810957a89130616d947",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "replication_group_id",
+          "parameter_group_name",
+          "subnet_group_name",
+          "security_group_ids",
+          "log_delivery_configuration.destination",
+          "notification_topic_arn"
+        ],
+        "placement": "Spatial cluster retained.",
+        "ownership": "Missing: verified replication-group membership; no automatic embedding.",
+        "network": "Partial: do not borrow replication-group indirect placement; cluster subnet-group path is not in indirect.rs.",
+        "references": "Missing: parameter/membership references (#691). Log/SNS configuration deferred until destination-type and log-entry evidence are bound together; revisit with cache observability scope.",
+        "scope": "Partial: Regional eligibility from provider/static resource-region evidence; unknown evidence stays unresolved. Basic fallback intentionally clears account; existing classified endpoints retain verified provider account. Data sources do not inherit managed fallback.",
+        "summaries": "Intentionally unsupported: credentials, payloads, arbitrary parameters and runtime health. Deferred: service-specific encryption/capacity/retention summaries until a bounded allowlist has known/unknown/sensitive rules; current encryption.rs supports S3/SQS/RDS only.",
+        "officialDocumentation": "website/docs/r/elasticache_cluster.html.markdown",
+        "shapes": {
+          "replication_group_id": [
+            "string"
+          ],
+          "parameter_group_name": [
+            "string"
+          ],
+          "subnet_group_name": [
+            "string"
+          ],
+          "security_group_ids": [
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "log_delivery_configuration.destination": [
+            "set",
+            "string"
+          ],
+          "notification_topic_arn": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_elasticache_reserved_cache_node": {
+      "status": "Basic-only",
+      "priority": "P3",
+      "issue": 718,
+      "gap": "Intentionally unsupported: offering ID cannot identify a cache node. Pricing/runtime status summaries excluded; revisit only for a separate cost inventory. See #718 per-dimension review in aws-semantic-decisions.json.",
+      "review": {
+        "issue": 718,
+        "implementationCommit": "bebadbbeac605bae9efd6810957a89130616d947",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "reserved_cache_nodes_offering_id"
+        ],
+        "placement": "Logical purchasing record sufficient.",
+        "ownership": "Not applicable: offering purchase identifies no deployed cache owner.",
+        "network": "Not applicable: reservation has no subnet contract.",
+        "references": "Intentionally unsupported: offering ID cannot identify a cache node. Pricing/runtime status summaries excluded; revisit only for a separate cost inventory.",
+        "scope": "Partial: Regional eligibility from provider/static resource-region evidence; unknown evidence stays unresolved. Basic fallback intentionally clears account; existing classified endpoints retain verified provider account. Data sources do not inherit managed fallback.",
+        "summaries": "Intentionally unsupported: credentials, payloads, arbitrary parameters and runtime health. Deferred: service-specific encryption/capacity/retention summaries until a bounded allowlist has known/unknown/sensitive rules; current encryption.rs supports S3/SQS/RDS only.",
+        "officialDocumentation": "website/docs/r/elasticache_reserved_cache_node.html.markdown",
+        "shapes": {
+          "reserved_cache_nodes_offering_id": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_elasticache_subnet_group": {
+      "status": "Partial",
       "priority": "P2",
-      "issue": 687,
-      "gap": "Table export/item content handling deferred; do not expose item data, keys or export payloads."
+      "issue": 360,
+      "gap": "Supported: existing replication-group placement path; name alone does not identify a group. See #718 per-dimension review in aws-semantic-decisions.json.",
+      "review": {
+        "issue": 718,
+        "implementationCommit": "bebadbbeac605bae9efd6810957a89130616d947",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "subnet_ids",
+          "name"
+        ],
+        "placement": "Existing spatial subnet group retained to preserve #360 layout contract.",
+        "ownership": "Not applicable: shared network selector, not cache-owned.",
+        "network": "Supported: common-VPC placement from complete subnet evidence.",
+        "references": "Supported: existing replication-group placement path; name alone does not identify a group.",
+        "scope": "Partial: Regional eligibility from provider/static resource-region evidence; unknown evidence stays unresolved. Basic fallback intentionally clears account; existing classified endpoints retain verified provider account. Data sources do not inherit managed fallback.",
+        "summaries": "Intentionally unsupported: credentials, payloads, arbitrary parameters and runtime health. Deferred: service-specific encryption/capacity/retention summaries until a bounded allowlist has known/unknown/sensitive rules; current encryption.rs supports S3/SQS/RDS only.",
+        "officialDocumentation": "website/docs/r/elasticache_subnet_group.html.markdown",
+        "shapes": {
+          "subnet_ids": [
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "name": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_keyspaces_keyspace": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 741,
+      "gap": "Missing: inbound table reference. Multi-region region_list is not Terraform replica identity. See #718 per-dimension review in aws-semantic-decisions.json.",
+      "review": {
+        "issue": 718,
+        "implementationCommit": "bebadbbeac605bae9efd6810957a89130616d947",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "name",
+          "replication_specification.region_list",
+          "replication_specification.replication_strategy"
+        ],
+        "placement": "Missing: architecture-bearing keyspace currently logical; review independent card under #741.",
+        "ownership": "Missing: table ownership needs explicit keyspace reference.",
+        "network": "Not applicable: managed Keyspaces is not contained by a client VPC endpoint.",
+        "references": "Missing: inbound table reference. Multi-region region_list is not Terraform replica identity.",
+        "scope": "Partial: Regional eligibility from provider/static resource-region evidence; unknown evidence stays unresolved. Basic fallback intentionally clears account; existing classified endpoints retain verified provider account. Data sources do not inherit managed fallback.",
+        "summaries": "Intentionally unsupported: credentials, payloads, arbitrary parameters and runtime health. Deferred: service-specific encryption/capacity/retention summaries until a bounded allowlist has known/unknown/sensitive rules; current encryption.rs supports S3/SQS/RDS only.",
+        "officialDocumentation": "website/docs/r/keyspaces_keyspace.html.markdown",
+        "shapes": {
+          "name": [
+            "string"
+          ],
+          "replication_specification.region_list": [
+            "list",
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "replication_specification.replication_strategy": [
+            "list",
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_keyspaces_table": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 741,
+      "gap": "Missing: keyspace/KMS references. Composite table identity includes keyspace; names alone insufficient. See #718 per-dimension review in aws-semantic-decisions.json.",
+      "review": {
+        "issue": 718,
+        "implementationCommit": "bebadbbeac605bae9efd6810957a89130616d947",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "keyspace_name",
+          "encryption_specification.kms_key_identifier",
+          "encryption_specification.type"
+        ],
+        "placement": "Missing: architecture-bearing table currently logical; review card versus proven child under #741.",
+        "ownership": "Missing: unique keyspace ownership proof.",
+        "network": "Not applicable: managed table has no subnet contract.",
+        "references": "Missing: keyspace/KMS references. Composite table identity includes keyspace; names alone insufficient.",
+        "scope": "Partial: Regional eligibility from provider/static resource-region evidence; unknown evidence stays unresolved. Basic fallback intentionally clears account; existing classified endpoints retain verified provider account. Data sources do not inherit managed fallback.",
+        "summaries": "Intentionally unsupported: credentials, payloads, arbitrary parameters and runtime health. Deferred: service-specific encryption/capacity/retention summaries until a bounded allowlist has known/unknown/sensitive rules; current encryption.rs supports S3/SQS/RDS only.",
+        "officialDocumentation": "website/docs/r/keyspaces_table.html.markdown",
+        "shapes": {
+          "keyspace_name": [
+            "string"
+          ],
+          "encryption_specification.kms_key_identifier": [
+            "list",
+            "string"
+          ],
+          "encryption_specification.type": [
+            "list",
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_memorydb_acl": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 740,
+      "gap": "Missing: user_names set and inbound cluster acl_name references; open-access literal creates no endpoint. See #718 per-dimension review in aws-semantic-decisions.json.",
+      "review": {
+        "issue": 718,
+        "implementationCommit": "bebadbbeac605bae9efd6810957a89130616d947",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "name",
+          "user_names"
+        ],
+        "placement": "Logical shared ACL retained.",
+        "ownership": "Not applicable: users and ACLs may be reused.",
+        "network": "Not applicable: no subnet contract.",
+        "references": "Missing: user_names set and inbound cluster acl_name references; open-access literal creates no endpoint.",
+        "scope": "Partial: Regional eligibility from provider/static resource-region evidence; unknown evidence stays unresolved. Basic fallback intentionally clears account; existing classified endpoints retain verified provider account. Data sources do not inherit managed fallback.",
+        "summaries": "Intentionally unsupported: credentials, payloads, arbitrary parameters and runtime health. Deferred: service-specific encryption/capacity/retention summaries until a bounded allowlist has known/unknown/sensitive rules; current encryption.rs supports S3/SQS/RDS only.",
+        "officialDocumentation": "website/docs/r/memorydb_acl.html.markdown",
+        "shapes": {
+          "name": [
+            "string"
+          ],
+          "user_names": [
+            [
+              "set",
+              "string"
+            ]
+          ]
+        }
+      }
+    },
+    "aws_memorydb_cluster": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 740,
+      "gap": "Missing: ACL/parameter/global/KMS/SNS/snapshot references; distinguish restoration from active ownership. See #718 per-dimension review in aws-semantic-decisions.json.",
+      "review": {
+        "issue": 718,
+        "implementationCommit": "bebadbbeac605bae9efd6810957a89130616d947",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "acl_name",
+          "subnet_group_name",
+          "security_group_ids",
+          "parameter_group_name",
+          "multi_region_cluster_name",
+          "kms_key_arn",
+          "sns_topic_arn",
+          "snapshot_name"
+        ],
+        "placement": "Spatial cluster retained; computed shards do not create Terraform nodes.",
+        "ownership": "Not applicable: shared ACL/parameters not embedded.",
+        "network": "Missing: complete subnet-group and SG proof.",
+        "references": "Missing: ACL/parameter/global/KMS/SNS/snapshot references; distinguish restoration from active ownership.",
+        "scope": "Partial: Regional eligibility from provider/static resource-region evidence; unknown evidence stays unresolved. Basic fallback intentionally clears account; existing classified endpoints retain verified provider account. Data sources do not inherit managed fallback.",
+        "summaries": "Intentionally unsupported: credentials, payloads, arbitrary parameters and runtime health. Deferred: service-specific encryption/capacity/retention summaries until a bounded allowlist has known/unknown/sensitive rules; current encryption.rs supports S3/SQS/RDS only.",
+        "officialDocumentation": "website/docs/r/memorydb_cluster.html.markdown",
+        "shapes": {
+          "acl_name": [
+            "string"
+          ],
+          "subnet_group_name": [
+            "string"
+          ],
+          "security_group_ids": [
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "parameter_group_name": [
+            "string"
+          ],
+          "multi_region_cluster_name": [
+            "string"
+          ],
+          "kms_key_arn": [
+            "string"
+          ],
+          "sns_topic_arn": [
+            "string"
+          ],
+          "snapshot_name": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_memorydb_multi_region_cluster": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 740,
+      "gap": "Missing: cluster reference must use computed multi_region_cluster_name, not suffix. No pinned multi-region parameter-group managed type; regional parameters cannot substitute. See #718 per-dimension review in aws-semantic-decisions.json.",
+      "review": {
+        "issue": 718,
+        "implementationCommit": "bebadbbeac605bae9efd6810957a89130616d947",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "multi_region_cluster_name_suffix",
+          "multi_region_parameter_group_name"
+        ],
+        "placement": "Logical global configuration retained.",
+        "ownership": "Missing: inbound regional cluster membership, not containment.",
+        "network": "Not applicable: global object is not a network container.",
+        "references": "Missing: cluster reference must use computed multi_region_cluster_name, not suffix. No pinned multi-region parameter-group managed type; regional parameters cannot substitute.",
+        "scope": "Partial: Global eligibility; no provider-region propagation to members. Basic fallback intentionally clears account; existing classified endpoints retain verified provider account. Data sources do not inherit managed fallback.",
+        "summaries": "Intentionally unsupported: credentials, payloads, arbitrary parameters and runtime health. Deferred: service-specific encryption/capacity/retention summaries until a bounded allowlist has known/unknown/sensitive rules; current encryption.rs supports S3/SQS/RDS only.",
+        "officialDocumentation": "website/docs/r/memorydb_multi_region_cluster.html.markdown",
+        "shapes": {
+          "multi_region_cluster_name_suffix": [
+            "string"
+          ],
+          "multi_region_parameter_group_name": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_memorydb_parameter_group": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 740,
+      "gap": "Missing: inbound regional cluster reference; parameter values intentionally unsupported. See #718 per-dimension review in aws-semantic-decisions.json.",
+      "review": {
+        "issue": 718,
+        "implementationCommit": "bebadbbeac605bae9efd6810957a89130616d947",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "name",
+          "family",
+          "parameter"
+        ],
+        "placement": "Logical reusable parameters retained.",
+        "ownership": "Not applicable: no unique owner.",
+        "network": "Not applicable: no subnet contract.",
+        "references": "Missing: inbound regional cluster reference; parameter values intentionally unsupported.",
+        "scope": "Partial: Regional eligibility from provider/static resource-region evidence; unknown evidence stays unresolved. Basic fallback intentionally clears account; existing classified endpoints retain verified provider account. Data sources do not inherit managed fallback.",
+        "summaries": "Intentionally unsupported: credentials, payloads, arbitrary parameters and runtime health. Deferred: service-specific encryption/capacity/retention summaries until a bounded allowlist has known/unknown/sensitive rules; current encryption.rs supports S3/SQS/RDS only.",
+        "officialDocumentation": "website/docs/r/memorydb_parameter_group.html.markdown",
+        "shapes": {
+          "name": [
+            "string"
+          ],
+          "family": [
+            "string"
+          ],
+          "parameter": [
+            "set"
+          ]
+        }
+      }
+    },
+    "aws_memorydb_snapshot": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 740,
+      "gap": "Missing: source cluster/KMS and inbound restore references; never reconstruct nodes from computed snapshot configuration. See #718 per-dimension review in aws-semantic-decisions.json.",
+      "review": {
+        "issue": 718,
+        "implementationCommit": "bebadbbeac605bae9efd6810957a89130616d947",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "cluster_name",
+          "kms_key_arn"
+        ],
+        "placement": "Logical historical artifact retained.",
+        "ownership": "Not applicable: historical source is not current ownership.",
+        "network": "Not applicable: computed cluster configuration does not place the snapshot in VPC.",
+        "references": "Missing: source cluster/KMS and inbound restore references; never reconstruct nodes from computed snapshot configuration.",
+        "scope": "Partial: Regional eligibility from provider/static resource-region evidence; unknown evidence stays unresolved. Basic fallback intentionally clears account; existing classified endpoints retain verified provider account. Data sources do not inherit managed fallback.",
+        "summaries": "Intentionally unsupported: credentials, payloads, arbitrary parameters and runtime health. Deferred: service-specific encryption/capacity/retention summaries until a bounded allowlist has known/unknown/sensitive rules; current encryption.rs supports S3/SQS/RDS only.",
+        "officialDocumentation": "website/docs/r/memorydb_snapshot.html.markdown",
+        "shapes": {
+          "cluster_name": [
+            "string"
+          ],
+          "kms_key_arn": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_memorydb_subnet_group": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 740,
+      "gap": "Missing: cluster/subnet references; computed vpc_id is not sufficient proof. See #718 per-dimension review in aws-semantic-decisions.json.",
+      "review": {
+        "issue": 718,
+        "implementationCommit": "bebadbbeac605bae9efd6810957a89130616d947",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "name",
+          "subnet_ids"
+        ],
+        "placement": "Logical shared selector retained.",
+        "ownership": "Not applicable: group is reusable.",
+        "network": "Missing: complete subnet set/common-VPC proof.",
+        "references": "Missing: cluster/subnet references; computed vpc_id is not sufficient proof.",
+        "scope": "Partial: Regional eligibility from provider/static resource-region evidence; unknown evidence stays unresolved. Basic fallback intentionally clears account; existing classified endpoints retain verified provider account. Data sources do not inherit managed fallback.",
+        "summaries": "Intentionally unsupported: credentials, payloads, arbitrary parameters and runtime health. Deferred: service-specific encryption/capacity/retention summaries until a bounded allowlist has known/unknown/sensitive rules; current encryption.rs supports S3/SQS/RDS only.",
+        "officialDocumentation": "website/docs/r/memorydb_subnet_group.html.markdown",
+        "shapes": {
+          "name": [
+            "string"
+          ],
+          "subnet_ids": [
+            [
+              "set",
+              "string"
+            ]
+          ]
+        }
+      }
+    },
+    "aws_memorydb_user": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 740,
+      "gap": "Missing: inbound ACL user_names reference. access_string and passwords intentionally unsupported. See #718 per-dimension review in aws-semantic-decisions.json.",
+      "review": {
+        "issue": 718,
+        "implementationCommit": "bebadbbeac605bae9efd6810957a89130616d947",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "user_name",
+          "access_string",
+          "authentication_mode.type"
+        ],
+        "placement": "Logical shared identity retained.",
+        "ownership": "Not applicable: ACL membership does not establish exclusive owner.",
+        "network": "Not applicable: no subnet contract.",
+        "references": "Missing: inbound ACL user_names reference. access_string and passwords intentionally unsupported.",
+        "scope": "Partial: Regional eligibility from provider/static resource-region evidence; unknown evidence stays unresolved. Basic fallback intentionally clears account; existing classified endpoints retain verified provider account. Data sources do not inherit managed fallback.",
+        "summaries": "Intentionally unsupported: credentials, payloads, arbitrary parameters and runtime health. Deferred: service-specific encryption/capacity/retention summaries until a bounded allowlist has known/unknown/sensitive rules; current encryption.rs supports S3/SQS/RDS only.",
+        "officialDocumentation": "website/docs/r/memorydb_user.html.markdown",
+        "shapes": {
+          "user_name": [
+            "string"
+          ],
+          "access_string": [
+            "string"
+          ],
+          "authentication_mode.type": [
+            "list",
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_qldb_ledger": {
+      "status": "Basic-only",
+      "priority": "P3",
+      "issue": 718,
+      "gap": "Deferred: KMS reference until legacy migration use case; AWS_OWNED_KMS_KEY is a sentinel, not a managed endpoint. Permissions interpretation unsupported. See #718 per-dimension review in aws-semantic-decisions.json.",
+      "review": {
+        "issue": 718,
+        "implementationCommit": "bebadbbeac605bae9efd6810957a89130616d947",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "name",
+          "kms_key",
+          "permissions_mode"
+        ],
+        "placement": "Deferred: logical ledger retained for legacy plans; revisit independent card only with a QLDB migration/archival diagram use case.",
+        "ownership": "Not applicable: ledger is independent; stream is configuration.",
+        "network": "Not applicable: no subnet contract.",
+        "references": "Deferred: KMS reference until legacy migration use case; AWS_OWNED_KMS_KEY is a sentinel, not a managed endpoint. Permissions interpretation unsupported.",
+        "scope": "Partial: Regional eligibility from provider/static resource-region evidence; unknown evidence stays unresolved. Basic fallback intentionally clears account; existing classified endpoints retain verified provider account. Data sources do not inherit managed fallback.",
+        "summaries": "Intentionally unsupported: credentials, payloads, arbitrary parameters and runtime health. Deferred: service-specific encryption/capacity/retention summaries until a bounded allowlist has known/unknown/sensitive rules; current encryption.rs supports S3/SQS/RDS only.",
+        "officialDocumentation": "website/docs/r/qldb_ledger.html.markdown",
+        "shapes": {
+          "name": [
+            "string"
+          ],
+          "kms_key": [
+            "string"
+          ],
+          "permissions_mode": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_qldb_stream": {
+      "status": "Basic-only",
+      "priority": "P3",
+      "issue": 718,
+      "gap": "Deferred: ledger/Kinesis/IAM navigation until a QLDB migration/archival use case; exact strings available but do not justify runtime delivery claims. See #718 per-dimension review in aws-semantic-decisions.json.",
+      "review": {
+        "issue": 718,
+        "implementationCommit": "bebadbbeac605bae9efd6810957a89130616d947",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "ledger_name",
+          "role_arn",
+          "kinesis_configuration.stream_arn"
+        ],
+        "placement": "Deferred: logical journal-export configuration retained for legacy plans.",
+        "ownership": "Not applicable: ledger/stream endpoints are independent.",
+        "network": "Not applicable: no subnet contract.",
+        "references": "Deferred: ledger/Kinesis/IAM navigation until a QLDB migration/archival use case; exact strings available but do not justify runtime delivery claims.",
+        "scope": "Partial: Regional eligibility from provider/static resource-region evidence; unknown evidence stays unresolved. Basic fallback intentionally clears account; existing classified endpoints retain verified provider account. Data sources do not inherit managed fallback.",
+        "summaries": "Intentionally unsupported: credentials, payloads, arbitrary parameters and runtime health. Deferred: service-specific encryption/capacity/retention summaries until a bounded allowlist has known/unknown/sensitive rules; current encryption.rs supports S3/SQS/RDS only.",
+        "officialDocumentation": "website/docs/r/qldb_stream.html.markdown",
+        "shapes": {
+          "ledger_name": [
+            "string"
+          ],
+          "role_arn": [
+            "string"
+          ],
+          "kinesis_configuration.stream_arn": [
+            "list",
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_timestreaminfluxdb_db_cluster": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 742,
+      "gap": "Missing: enabled log S3 reference. db_parameter_group_identifier has no managed endpoint in baseline; initial bucket is InfluxDB, not S3. See #718 per-dimension review in aws-semantic-decisions.json.",
+      "review": {
+        "issue": 718,
+        "implementationCommit": "bebadbbeac605bae9efd6810957a89130616d947",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "vpc_subnet_ids",
+          "vpc_security_group_ids",
+          "db_parameter_group_identifier",
+          "log_delivery_configuration.s3_configuration.bucket_name",
+          "log_delivery_configuration.s3_configuration.enabled"
+        ],
+        "placement": "Spatial cluster retained.",
+        "ownership": "Not applicable: no declared member-instance identity; computed auth secret is not ownership proof.",
+        "network": "Missing: complete subnet/SG sets with common-VPC proof.",
+        "references": "Missing: enabled log S3 reference. db_parameter_group_identifier has no managed endpoint in baseline; initial bucket is InfluxDB, not S3.",
+        "scope": "Partial: Regional eligibility from provider/static resource-region evidence; unknown evidence stays unresolved. Basic fallback intentionally clears account; existing classified endpoints retain verified provider account. Data sources do not inherit managed fallback.",
+        "summaries": "Intentionally unsupported: credentials, payloads, arbitrary parameters and runtime health. Deferred: service-specific encryption/capacity/retention summaries until a bounded allowlist has known/unknown/sensitive rules; current encryption.rs supports S3/SQS/RDS only.",
+        "officialDocumentation": "website/docs/r/timestreaminfluxdb_db_cluster.html.markdown",
+        "shapes": {
+          "vpc_subnet_ids": [
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "vpc_security_group_ids": [
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "db_parameter_group_identifier": [
+            "string"
+          ],
+          "log_delivery_configuration.s3_configuration.bucket_name": [
+            "list",
+            "list",
+            "string"
+          ],
+          "log_delivery_configuration.s3_configuration.enabled": [
+            "list",
+            "list",
+            "bool"
+          ]
+        }
+      }
+    },
+    "aws_timestreaminfluxdb_db_instance": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 742,
+      "gap": "Missing: enabled log S3 reference. No managed parameter-group endpoint; credentials and computed secret contents unsupported. See #718 per-dimension review in aws-semantic-decisions.json.",
+      "review": {
+        "issue": 718,
+        "implementationCommit": "bebadbbeac605bae9efd6810957a89130616d947",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "vpc_subnet_ids",
+          "vpc_security_group_ids",
+          "db_parameter_group_identifier",
+          "log_delivery_configuration.s3_configuration.bucket_name",
+          "log_delivery_configuration.s3_configuration.enabled"
+        ],
+        "placement": "Spatial independent instance retained; do not infer cluster membership.",
+        "ownership": "Not applicable: standby AZ and computed secret do not establish Terraform ownership.",
+        "network": "Missing: complete subnet/SG sets with common-VPC proof.",
+        "references": "Missing: enabled log S3 reference. No managed parameter-group endpoint; credentials and computed secret contents unsupported.",
+        "scope": "Partial: Regional eligibility from provider/static resource-region evidence; unknown evidence stays unresolved. Basic fallback intentionally clears account; existing classified endpoints retain verified provider account. Data sources do not inherit managed fallback.",
+        "summaries": "Intentionally unsupported: credentials, payloads, arbitrary parameters and runtime health. Deferred: service-specific encryption/capacity/retention summaries until a bounded allowlist has known/unknown/sensitive rules; current encryption.rs supports S3/SQS/RDS only.",
+        "officialDocumentation": "website/docs/r/timestreaminfluxdb_db_instance.html.markdown",
+        "shapes": {
+          "vpc_subnet_ids": [
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "vpc_security_group_ids": [
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "db_parameter_group_identifier": [
+            "string"
+          ],
+          "log_delivery_configuration.s3_configuration.bucket_name": [
+            "list",
+            "list",
+            "string"
+          ],
+          "log_delivery_configuration.s3_configuration.enabled": [
+            "list",
+            "list",
+            "bool"
+          ]
+        }
+      }
+    },
+    "aws_timestreamquery_scheduled_query": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 743,
+      "gap": "Missing: destination database+table tuple, role/KMS/SNS/error-bucket references. SQL source parsing and computed run status intentionally unsupported. See #718 per-dimension review in aws-semantic-decisions.json.",
+      "review": {
+        "issue": 718,
+        "implementationCommit": "bebadbbeac605bae9efd6810957a89130616d947",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "execution_role_arn",
+          "kms_key_id",
+          "target_configuration.timestream_configuration.database_name",
+          "target_configuration.timestream_configuration.table_name",
+          "notification_configuration.sns_configuration.topic_arn",
+          "error_report_configuration.s3_configuration.bucket_name"
+        ],
+        "placement": "Logical query configuration retained.",
+        "ownership": "Not applicable: query does not own destination table.",
+        "network": "Not applicable: service execution has no subnet contract.",
+        "references": "Missing: destination database+table tuple, role/KMS/SNS/error-bucket references. SQL source parsing and computed run status intentionally unsupported.",
+        "scope": "Partial: Regional eligibility from provider/static resource-region evidence; unknown evidence stays unresolved. Basic fallback intentionally clears account; existing classified endpoints retain verified provider account. Data sources do not inherit managed fallback.",
+        "summaries": "Intentionally unsupported: credentials, payloads, arbitrary parameters and runtime health. Deferred: service-specific encryption/capacity/retention summaries until a bounded allowlist has known/unknown/sensitive rules; current encryption.rs supports S3/SQS/RDS only.",
+        "officialDocumentation": "website/docs/r/timestreamquery_scheduled_query.html.markdown",
+        "shapes": {
+          "execution_role_arn": [
+            "string"
+          ],
+          "kms_key_id": [
+            "string"
+          ],
+          "target_configuration.timestream_configuration.database_name": [
+            "list",
+            "list",
+            "string"
+          ],
+          "target_configuration.timestream_configuration.table_name": [
+            "list",
+            "list",
+            "string"
+          ],
+          "notification_configuration.sns_configuration.topic_arn": [
+            "list",
+            "list",
+            "string"
+          ],
+          "error_report_configuration.s3_configuration.bucket_name": [
+            "list",
+            "list",
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_timestreamwrite_database": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 743,
+      "gap": "Missing: KMS ARN and inbound table references. kms_key_id contract excludes alias ARN. See #718 per-dimension review in aws-semantic-decisions.json.",
+      "review": {
+        "issue": 718,
+        "implementationCommit": "bebadbbeac605bae9efd6810957a89130616d947",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "database_name",
+          "kms_key_id"
+        ],
+        "placement": "Missing: architecture-bearing database currently logical; review independent card under #743.",
+        "ownership": "Missing: explicit table ownership; never infer from matching names.",
+        "network": "Not applicable: service database has no subnet contract.",
+        "references": "Missing: KMS ARN and inbound table references. kms_key_id contract excludes alias ARN.",
+        "scope": "Partial: Regional eligibility from provider/static resource-region evidence; unknown evidence stays unresolved. Basic fallback intentionally clears account; existing classified endpoints retain verified provider account. Data sources do not inherit managed fallback.",
+        "summaries": "Intentionally unsupported: credentials, payloads, arbitrary parameters and runtime health. Deferred: service-specific encryption/capacity/retention summaries until a bounded allowlist has known/unknown/sensitive rules; current encryption.rs supports S3/SQS/RDS only.",
+        "officialDocumentation": "website/docs/r/timestreamwrite_database.html.markdown",
+        "shapes": {
+          "database_name": [
+            "string"
+          ],
+          "kms_key_id": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_timestreamwrite_table": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 743,
+      "gap": "Missing: database/rejected-record S3/KMS references with encryption option proof; schema and record values excluded. See #718 per-dimension review in aws-semantic-decisions.json.",
+      "review": {
+        "issue": 718,
+        "implementationCommit": "bebadbbeac605bae9efd6810957a89130616d947",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "database_name",
+          "table_name",
+          "magnetic_store_write_properties.magnetic_store_rejected_data_location.s3_configuration.bucket_name",
+          "magnetic_store_write_properties.magnetic_store_rejected_data_location.s3_configuration.kms_key_id"
+        ],
+        "placement": "Missing: logical table needs architecture/proven-child review under #743.",
+        "ownership": "Missing: explicit database ownership with composite identity.",
+        "network": "Not applicable: service table has no subnet contract.",
+        "references": "Missing: database/rejected-record S3/KMS references with encryption option proof; schema and record values excluded.",
+        "scope": "Partial: Regional eligibility from provider/static resource-region evidence; unknown evidence stays unresolved. Basic fallback intentionally clears account; existing classified endpoints retain verified provider account. Data sources do not inherit managed fallback.",
+        "summaries": "Intentionally unsupported: credentials, payloads, arbitrary parameters and runtime health. Deferred: service-specific encryption/capacity/retention summaries until a bounded allowlist has known/unknown/sensitive rules; current encryption.rs supports S3/SQS/RDS only.",
+        "officialDocumentation": "website/docs/r/timestreamwrite_table.html.markdown",
+        "shapes": {
+          "database_name": [
+            "string"
+          ],
+          "table_name": [
+            "string"
+          ],
+          "magnetic_store_write_properties.magnetic_store_rejected_data_location.s3_configuration.bucket_name": [
+            "list",
+            "list",
+            "list",
+            "string"
+          ],
+          "magnetic_store_write_properties.magnetic_store_rejected_data_location.s3_configuration.kms_key_id": [
+            "list",
+            "list",
+            "list",
+            "string"
+          ]
+        }
+      }
     }
   }
 }
