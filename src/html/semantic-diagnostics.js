@@ -42,7 +42,7 @@ function semanticDiagnostics(context, index, selection, coordinator) {
         }));
       } else {
         const identity = document.createElement('p');
-        identity.textContent = `${label} · navigation unavailable in this view`;
+        identity.textContent = `${label} · ${target ? 'hidden by HTML action filters' : 'navigation unavailable in this view'}`;
         row.append(identity);
       }
       const detail = document.createElement('p');

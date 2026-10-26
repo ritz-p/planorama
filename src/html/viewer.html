@@ -20,6 +20,11 @@
 <p>Follows rendered relationships in either direction, including associations and inferred connections; not runtime impact. Adds required context and preserves layout without repacking.</p>
 </section>
 <label for="search">Search resources</label>
+<details id="logical-filters" hidden><summary>Logical Resources action filters</summary>
+<p>Show or hide actions independently for each type/mode card. Diagram-wide totals describe the generated input; counts below describe visible resources. Import, moved and drift remain operation metadata. CLI-excluded resources cannot be restored.</p>
+<button id="logical-filter-reset" type="button">Show all logical actions</button>
+<p id="logical-filter-status" role="status">All generated resources visible.</p>
+<div id="logical-filter-controls"></div></details>
 <input id="search" type="search" placeholder="Address, module, state, type or mode" autocomplete="off" aria-controls="results" aria-describedby="search-help">
 <div id="search-filters">
 <label for="search-action">Action</label><select id="search-action"><option value="">All actions</option></select>

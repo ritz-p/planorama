@@ -1,7 +1,8 @@
 function impactGraph(index, svg) {
   const key = (state, identity) => JSON.stringify([state, identity]);
-  const nodes = new Map(index.resources.map(r => [key(r.state, r.identity), r]));
-  const domKeys = new Map(index.resources.map(r => [r.id, key(r.state, r.identity)]));
+  const visible = index.resources.filter(r => !index.available || index.available(r.id));
+  const nodes = new Map(visible.map(r => [key(r.state, r.identity), r]));
+  const domKeys = new Map(visible.map(r => [r.id, key(r.state, r.identity)]));
   const addresses = new Map(index.resources.filter(r => !r.deposed).map(r => [key(r.state, r.address), key(r.state, r.identity)]));
   const edges = new Map();
   let scanned = 0, truncated = false;

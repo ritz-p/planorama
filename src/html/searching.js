@@ -16,14 +16,16 @@ function searching(context, index, selection, coordinator) {
   function renderResults() {
     const terms = search.value.toLocaleLowerCase().trim().split(/\s+/).filter(Boolean);
     const focused = results.contains(document.activeElement);
-    const matched = resources.filter(r => (!action.value || r.action === action.value) && (!state.value || JSON.stringify(r.state) === state.value) && (!type.value || typeKey(r) === type.value) && terms.every(term => [label(r), r.qualified, r.state + ':' + r.qualified, r.identity, r.module, r.state, r.type, r.provider || '', r.mode, r.deposed || ''].join(' ').toLocaleLowerCase().includes(term)));
+    const visible = resources.filter(r => byId(r.id));
+    const matched = visible.filter(r => (!action.value || r.action === action.value) && (!state.value || JSON.stringify(r.state) === state.value) && (!type.value || typeKey(r) === type.value) && terms.every(term => [label(r), r.qualified, r.state + ':' + r.qualified, r.identity, r.module, r.state, r.type, r.provider || '', r.mode, r.deposed || ''].join(' ').toLocaleLowerCase().includes(term)));
     results.replaceChildren();
     for (const r of matched) {
       const b = button(label(r), () => select(r.id));
       b.dataset.target = r.id; b.setAttribute('aria-pressed', String(coordinator.selected === r.id)); results.append(b);
     }
     byId('result-count').textContent = `${matched.length} of ${resources.length} resources`;
-    if (!matched.length) byId('result-count').textContent += ' match this search. The diagram is unchanged.';
+    if (visible.length !== resources.length) byId('result-count').textContent += `; ${resources.length - visible.length} hidden by HTML action filters`;
+    if (!matched.length) byId('result-count').textContent += '. No visible resources match this search.';
     if (focused) (results.firstElementChild || search).focus();
   }
   for (const control of [action, state, type]) control.addEventListener('change', () => {

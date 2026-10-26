@@ -58,5 +58,9 @@ function navigation(svg, viewport, byId) {
   function restore(saved) {
     box = saved.slice(); updateView();
   }
-  return { fit, zoom, reveal, updateView, keydown, snapshot: () => box.slice(), restore, wasDragged: () => dragged };
+  function resize(height) {
+    original[3] = height;
+    fit();
+  }
+  return { fit, zoom, reveal, updateView, keydown, resize, snapshot: () => box.slice(), restore, wasDragged: () => dragged };
 }

@@ -40,7 +40,7 @@ in the generated searchable index. Actions are Create, Update, Delete, Replace,
 Read, Unchanged and Other; import, moved and drift are separate metadata, not
 actions. Unknown provider sources are labeled explicitly. Search results have no
 display-count limit: the count reports all matches against the generated index.
-Filters only narrow the result list, leaving diagram geometry, coverage counts
+Search facets only narrow the result list, leaving diagram geometry, coverage counts
 and existing selection intact. A missing result does not mean a resource was
 removed from Terraform or the diagram. **Reset search and filters** clears all
 text and facets and focuses search; Clear selection/Escape retains them. Facet
@@ -69,6 +69,7 @@ line patterns, bundles or routing. Clear selection restores their normal styling
 | --- | --- |
 | Search | Type text and optionally select action/state/type filters; Enter in search selects the first result |
 | Reset search | Reset search and filters clears text and all three facets |
+| Logical action filters | Expand Logical Resources action filters; Tab to a card's checkbox and Space to toggle; Show all logical actions restores rows |
 | Results | Arrow Down enters results; Up/Down and Home/End navigate; Enter selects |
 | Resource links | Tab to a resource or link, then Enter; clicking also selects |
 | Relationship numbers | Click, or Tab then Enter/Space; endpoint buttons navigate to resources |
@@ -298,9 +299,22 @@ and explicit counts, equally in offline SVG and HTML. Identity, Policy and Contr
 visible explanations in the card heading. See the synthetic
 [all-action example](../examples/logical-actions.svg).
 
-Search facets filter results, not the diagram. Runtime diagram filtering and
-reflow remain unimplemented; CLI [selection](filtering.md) determines the generated
-view. The viewer cannot restore excluded resources.
+**Logical Resources action filters** offers keyboard-operable checkboxes for each
+provider/type/mode card in each state. Create, Update, Delete, Replace, Read,
+Unchanged and Other start enabled; actions absent from a card are disabled.
+Import, moved and drift remain separate metadata. Counts show visible rows and
+the original generated total. Empty cards retain their heading and controls;
+**Show all logical actions** restores generated rows, never CLI-excluded resources.
+
+Filtering compacts action sections, cards, annotation sections and the canvas.
+Search omits hidden rows; references to them become explanatory text marked
+“hidden by HTML action filters”, distinct from unavailable targets outside the
+generated view. Restoring rows restores their links and search availability.
+Diagram-wide action totals remain generated totals; per-card and filter status
+counts report visible resources. Changes clear selection, selection history and
+transient overlays, then fit the updated view. Routing hotspots are unavailable while any rows are hidden because
+their measurements describe the original generated layout. Static SVG remains
+complete. Search facets independently narrow results within the visible diagram.
 
 SVG and HTML share the [relationship legend](relationships.md#legend-and-meaning),
 including conditional Subscription, Event source and Event target entries and
@@ -330,6 +344,27 @@ relationship navigation; `searching.js` owns search/results; `navigation.js` own
 the view box and pan/zoom; `highlighting.js` owns selection highlighting cleanup.
 `selection-history.js` stores bounded selection/viewport history and restores it
 through selection and navigation, preserving the shared overlay reset lifecycle.
+`action-filtering.js` owns the annotation reflow contract. Rust exports each
+annotation area's measured height and each section's packing width. Existing card
+rectangles and action-section rectangles supply measured widths, heights and
+origins, including wrapped text and nested references. The viewer retains these
+original measurements and uses the renderer's 16px card inset, 48px section heading,
+20px packing gap, 12px action gap and 24px area bottom margin. It translates whole
+action sections without remeasuring or modifying their rows. Empty cards retain
+the measured heading and 16px bottom padding. All updates derive from the original
+measurements, so repeated toggles do not accumulate offsets.
+
+The area-height delta moves its architecture group and resizes its state SVG;
+cumulative deltas move subsequent states and resize the outer canvas. Cross-state
+paths export `data-source-points`, the boundary between their source-side and
+target-side routes. Each side moves by its state's cumulative architecture delta;
+the outside gutter joins them vertically. Source endpoint circles move with their
+route. State-local paths, ports, masks and resource coordinates remain together
+inside the architecture group. This contract preserves routed geometry without
+running a second router. Shared target lookup rejects HTML-hidden descendants;
+filter updates reset overlays through the lifecycle coordinator. Viewport export
+removes hidden sections, and neighborhood traversal excludes hidden resources.
+
 `export.js` clones, cleans and validates standalone SVG downloads without changing
 the live viewer.
 `neighborhood.js` performs bounded traversal using the structured graph index.
@@ -355,9 +390,11 @@ through the same reset lifecycle.
 rebuild Rust; no JavaScript package installation, bundler or runtime imports are
 needed. Keep initialization in the coordinator and add new sources to that list.
 Run `docker compose exec -T dev node --test tests/browser/modules.cjs` for module
-contracts, plus the browser and Rust CLI tests above. Regenerate both maintained
-HTML files after source changes; use `scripts/render-multi-account.sh` for the
-combined example. HTML snapshot comparisons verify deterministic bundling.
+contracts, plus the browser and Rust CLI tests above. Regenerate maintained HTML
+examples after source changes: the viewer fixture, service fixtures documented in
+[AWS support](aws.md), and `scripts/render-multi-account.sh` for the combined
+example. The organization deployment snapshot uses its verification test through
+`scripts/update-examples.sh`. HTML snapshot comparisons verify deterministic bundling.
 
 Organizations member Accounts can navigate to verified AWS Account frames and
 back without moving infrastructure into the organization hierarchy. The account

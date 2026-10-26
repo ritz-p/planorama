@@ -20,9 +20,14 @@ input { width: 100%; }
 p { line-height: 1.5; }
 #search-help { font-size: 12px; color: #475569; }
 #search-filters select { width: 100%; font: inherit; padding: 6px; margin-bottom: 8px; }
+#section-destination { width: 100%; min-width: 0; font: inherit; padding: 6px; margin-bottom: 8px; }
 #results { max-height: 32vh; overflow: auto; display: grid; gap: 6px; padding: 3px; }
 #results button, #selection button { text-align: left; overflow-wrap: anywhere; width: 100%; }
 #selection { overflow-wrap: anywhere; }
+#generation-info { margin-bottom: 16px; overflow-wrap: anywhere; }
+#generation-info summary { cursor: pointer; font-weight: 650; }
+#generation-info dt { font-weight: 650; }
+#generation-info dd { margin: 4px 0 12px; }
 #selection h2 { font-size: 16px; }
 #selection h3 { font-size: 14px; margin-bottom: 8px; }
 .copy-identity textarea { width: 100%; font: inherit; resize: vertical; }
@@ -45,6 +50,10 @@ p { line-height: 1.5; }
 #impact button { width: 100%; text-align: left; }
 #impact-results ol { padding-left: 20px; }
 #impact-results li { margin-bottom: 10px; }
+#logical-filter-controls fieldset { margin: 8px 0; min-width: 0; }
+#logical-filter-controls legend { overflow-wrap: anywhere; }
+#logical-filter-controls label { display: block; }
+#logical-filter-controls input { width: auto; }
 #viewport [data-impact-hop="1"] { outline: 3px dashed #7c3aed; outline-offset: 4px; }
 #viewport [data-impact-hop="2"], #viewport [data-impact-hop="3"] { outline: 3px dotted #0f766e; outline-offset: 4px; }
 #viewport[data-selection] path[data-impact-edge] { opacity: 1; filter: drop-shadow(0 0 2px #0f766e); }
@@ -62,6 +71,8 @@ p { line-height: 1.5; }
 <header><strong>Planorama</strong><button id="selection-back" type="button" aria-label="Back to previous selection" disabled>Back</button><button id="selection-forward" type="button" aria-label="Forward to next selection" disabled>Forward</button><button id="clear" type="button">Clear selection</button><button id="zoom-out" type="button" aria-label="Zoom out">−</button><button id="zoom-in" type="button" aria-label="Zoom in">+</button><button id="fit" type="button">Fit to view</button><output id="zoom-level" aria-live="polite"></output></header>
 <main>
 <aside aria-label="Resources and relationships">
+<details id="generation-info"><summary>Generation information</summary><div id="generation-details"></div></details>
+<nav aria-label="Diagram sections"><label for="section-destination">Diagram section</label><select id="section-destination"></select><button id="section-go" type="button">Go to section</button><p id="section-status" role="status"></p></nav>
 <section aria-label="Export diagram"><button id="export-viewport" type="button">Export viewport SVG</button><p id="export-status" role="status"></p></section>
 <section aria-label="Export resource neighborhood">
 <label for="export-depth">Neighborhood depth</label><select id="export-depth"><option value="0">0</option><option value="1" selected>1</option><option value="2">2</option><option value="3">3</option></select>
@@ -69,6 +80,11 @@ p { line-height: 1.5; }
 <p>Follows rendered relationships in either direction, including associations and inferred connections; not runtime impact. Adds required context and preserves layout without repacking.</p>
 </section>
 <label for="search">Search resources</label>
+<details id="logical-filters" hidden><summary>Logical Resources action filters</summary>
+<p>Show or hide actions independently for each type/mode card. Diagram-wide totals describe the generated input; counts below describe visible resources. Import, moved and drift remain operation metadata. CLI-excluded resources cannot be restored.</p>
+<button id="logical-filter-reset" type="button">Show all logical actions</button>
+<p id="logical-filter-status" role="status">All generated resources visible.</p>
+<div id="logical-filter-controls"></div></details>
 <input id="search" type="search" placeholder="Address, module, state, type or mode" autocomplete="off" aria-controls="results" aria-describedby="search-help">
 <div id="search-filters">
 <label for="search-action">Action</label><select id="search-action"><option value="">All actions</option></select>
@@ -112,9 +128,9 @@ p { line-height: 1.5; }
 </section>
 </aside>
 <section id="viewport" tabindex="0" aria-label="Diagram. Arrow keys pan; plus and minus zoom; F fits the view; Escape clears selection.">
-<svg xmlns="http://www.w3.org/2000/svg" width="1267" height="1592" viewBox="0 0 1267 1592" role="img" aria-labelledby="title description">
+<svg xmlns="http://www.w3.org/2000/svg" width="1363" height="1602" viewBox="0 0 1363 1602" role="img" aria-labelledby="title description">
 <title id="title">Terraform plan</title>
-<desc id="description">5 resources, 3 reference edges. Arrows point from dependencies to dependent resources. References are conservative, not Terraform execution order. Thin solid: dependency. Dashed: association. Thick dotted: connection. Nested boxes: containment. Edge color preserves the Terraform action when available. Service label backgrounds: orange = compute; green = storage; blue = network; red = IAM; gray = unclassified. Spatial card role marks: rounded rectangle = execution; cylinder = data store; hexagon = network.</desc>
+<desc id="description">5 resources, 3 reference edges. Arrows point from dependencies to dependent resources. References are conservative, not Terraform execution order. Thin solid: dependency. Dashed: association. Thick dotted: connection. Nested boxes: containment. Edge color preserves the Terraform action when available. Service label backgrounds: orange = compute; green = storage; blue = network; red = IAM; gray = unclassified.</desc>
 <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/></marker></defs>
 <rect width="100%" height="100%" fill="#ffffff"/>
 <g font-family="ui-monospace, SFMono-Regular, Consolas, monospace">
@@ -206,51 +222,52 @@ p { line-height: 1.5; }
 </g>
 <g transform="translate(0 558)">
 <g data-architecture="true" transform="translate(0 0)">
-<g data-deployment-scope="true" data-scope-provider="AWS" data-region="us-east-1"><rect x="40" y="160" width="1167" height="754" rx="14" fill="#f8fafc" stroke="#94a3b8" stroke-dasharray="9 5"/><text x="56" y="185" font-size="15" font-weight="700" fill="#334155">AWS us-east-1</text></g>
-<path d="M 907 564 L 907 552 Q 907 544 915 544 L 915 544 Q 923 544 923 536 L 923 524 " data-edge-kind="dependency" data-directionality="directed" data-source="resource-6177735f6b696e657369735f73747265616d2e696e7075745b305d-current" data-target="resource-6177735f6b696e657369735f66697265686f73655f64656c69766572795f73747265616d2e61726368697665-current" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>aws_kinesis_stream.input[0] → aws_kinesis_firehose_delivery_stream.archive</title></path>
-<path d="M 1083 793 L 1195 793 Q 1203 793 1203 785 L 1203 474 Q 1203 466 1195 466 L 1187 466 " data-edge-kind="dependency" data-directionality="directed" data-source="resource-6177735f73335f6275636b65742e6261636b7570-current" data-target="resource-6177735f6b696e657369735f66697265686f73655f64656c69766572795f73747265616d2e61726368697665-current" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>aws_s3_bucket.backup → aws_kinesis_firehose_delivery_stream.archive</title></path>
-<path d="M 619 429 L 631 429 Q 639 429 639 421 L 639 399 Q 639 391 647 391 L 659 391 " data-edge-kind="dependency" data-directionality="directed" data-source="resource-6177735f73335f6275636b65742e64656c6976657279-current" data-target="resource-6177735f6b696e657369735f66697265686f73655f64656c69766572795f73747265616d2e61726368697665-current" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>aws_s3_bucket.delivery → aws_kinesis_firehose_delivery_stream.archive</title></path>
+<g data-deployment-scope="true" data-scope-provider="AWS" data-region="us-east-1"><rect x="40" y="160" width="1263" height="764" rx="14" fill="#f8fafc" stroke="#94a3b8" stroke-dasharray="9 5"/><text x="56" y="185" font-size="15" font-weight="700" fill="#334155">AWS us-east-1</text></g>
+<path d="M 971 564 L 971 552 Q 971 544 979 544 L 1109 544 Q 1117 544 1117 536 L 1117 524 " data-edge-kind="dependency" data-directionality="directed" data-source="resource-6177735f6b696e657369735f73747265616d2e696e7075745b305d-current" data-target="resource-6177735f6b696e657369735f66697265686f73655f64656c69766572795f73747265616d2e61726368697665-current" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.root.aws_kinesis_stream.input[0] → module.root.aws_kinesis_firehose_delivery_stream.archive</title></path>
+<path d="M 971 716 L 971 524 " data-edge-kind="dependency" data-directionality="directed" data-source="resource-6177735f73335f6275636b65742e6261636b7570-current" data-target="resource-6177735f6b696e657369735f66697265686f73655f64656c69766572795f73747265616d2e61726368697665-current" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.root.aws_s3_bucket.backup → module.root.aws_kinesis_firehose_delivery_stream.archive</title></path>
+<path d="M 619 429 L 631 429 Q 639 429 639 421 L 639 399 Q 639 391 647 391 L 659 391 " data-edge-kind="dependency" data-directionality="directed" data-source="resource-6177735f73335f6275636b65742e64656c6976657279-current" data-target="resource-6177735f6b696e657369735f66697265686f73655f64656c69766572795f73747265616d2e61726368697665-current" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.root.aws_s3_bucket.delivery → module.root.aws_kinesis_firehose_delivery_stream.archive</title></path>
 <g id="resource-6177735f6b696e657369735f66697265686f73655f64656c69766572795f73747265616d2e61726368697665-current" data-architecture-id="terraform:6177735f6b696e657369735f66697265686f73655f64656c69766572795f73747265616d2e61726368697665-current" data-qualified-address="module.root.aws_kinesis_firehose_delivery_stream.archive" data-terraform-address="aws_kinesis_firehose_delivery_stream.archive"><title>module.root.aws_kinesis_firehose_delivery_stream.archive — update</title>
-<rect x="659" y="334" width="528" height="190" rx="8" fill="#eff6ff" stroke="#1d4ed8" stroke-width="1.5" data-mode="managed"/>
-<text x="671" y="362" font-size="11" fill="#1d4ed8">aws_kinesis_firehose_del… · update</text>
-<rect data-service-badge="true" data-service-category="neutral" data-service-full-name="Amazon Data Firehose" data-display-name="Amazon Data Firehose" x="939" y="342" width="240" height="32" rx="4" fill="#e2e8f0"/><text data-service-name="true" x="949" y="364" font-size="18" font-weight="700" fill="#0f172a" xml:space="preserve">Amazon Data Firehose</text><text x="671" y="395" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_kinesis_firehose_delivery_stream.archive</text>
-<g data-resource-references="true"><title>Kinesis source: aws_kinesis_stream.input[0] [kinesis_source_configuration.kinesis_stream_arn; direct attribute reference]
-S3 backup destination: aws_s3_bucket.backup [extended_s3_configuration.s3_backup_configuration.bucket_arn; direct attribute reference]
-S3 delivery destination: aws_s3_bucket.delivery [extended_s3_configuration.bucket_arn; direct attribute reference]</title><text x="671" y="436" font-size="11" font-weight="700" fill="#475569">Uses</text><a href="#resource-6177735f6b696e657369735f73747265616d2e696e7075745b305d-current" data-reference-attribute="kinesis_source_configuration.kinesis_stream_arn"><title>Kinesis source: aws_kinesis_stream.input[0] [kinesis_source_configuration.kinesis_stream_arn; direct attribute reference]</title><text x="671" y="454" font-size="11" fill="#334155" xml:space="preserve">Kinesis source: aws_kinesis_stream.input[0]</text>
-</a><a href="#resource-6177735f73335f6275636b65742e6261636b7570-current" data-reference-attribute="extended_s3_configuration.s3_backup_configuration.bucket_arn"><title>S3 backup destination: aws_s3_bucket.backup [extended_s3_configuration.s3_backup_configuration.bucket_arn; direct attribute reference]</title><text x="671" y="472" font-size="11" fill="#334155" xml:space="preserve">S3 backup destination: aws_s3_bucket.backup</text>
-</a><a href="#resource-6177735f73335f6275636b65742e64656c6976657279-current" data-reference-attribute="extended_s3_configuration.bucket_arn"><title>S3 delivery destination: aws_s3_bucket.delivery [extended_s3_configuration.bucket_arn; direct attribute reference]</title><text x="671" y="490" font-size="11" fill="#334155" xml:space="preserve">S3 delivery destination: aws_s3_bucket.delivery</text>
+<rect x="659" y="334" width="624" height="190" rx="8" fill="#eff6ff" stroke="#1d4ed8" stroke-width="1.5" data-mode="managed"/>
+<text data-resource-type-heading="true" x="671" y="362" font-size="11" fill="#1d4ed8" xml:space="preserve">aws_kinesis_firehose_delivery_stream · update</text>
+<rect data-service-badge="true" data-presentation-padding="10 4" data-service-category="neutral" data-service-full-name="Amazon Data Firehose" data-display-name="Amazon Data Firehose" x="1035" y="342" width="240" height="32" rx="4" fill="#e2e8f0"/><text data-service-name="true" x="1045" y="364" font-size="18" font-weight="700" fill="#0f172a" xml:space="preserve">Amazon Data Firehose</text><text x="671" y="395" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_kinesis_firehose_delivery_stream.archive</text>
+<g data-resource-references="true"><title>Kinesis source: module.root.aws_kinesis_stream.input[0] [kinesis_source_configuration.kinesis_stream_arn; direct attribute reference]
+S3 backup destination: module.root.aws_s3_bucket.backup [extended_s3_configuration.s3_backup_configuration.bucket_arn; direct attribute reference]
+S3 delivery destination: module.root.aws_s3_bucket.delivery [extended_s3_configuration.bucket_arn; direct attribute reference]</title><text x="671" y="436" font-size="11" font-weight="700" fill="#475569">Uses</text><a href="#resource-6177735f6b696e657369735f73747265616d2e696e7075745b305d-current" data-reference-attribute="kinesis_source_configuration.kinesis_stream_arn"><title>Kinesis source: module.root.aws_kinesis_stream.input[0] [kinesis_source_configuration.kinesis_stream_arn; direct attribute reference]</title><text x="671" y="454" font-size="11" fill="#334155" xml:space="preserve">Kinesis source: module.root.aws_kinesis_stream.input[0]</text>
+</a><a href="#resource-6177735f73335f6275636b65742e6261636b7570-current" data-reference-attribute="extended_s3_configuration.s3_backup_configuration.bucket_arn"><title>S3 backup destination: module.root.aws_s3_bucket.backup [extended_s3_configuration.s3_backup_configuration.bucket_arn; direct attribute reference]</title><text x="671" y="472" font-size="11" fill="#334155" xml:space="preserve">S3 backup destination: module.root.aws_s3_bucket.backup</text>
+</a><a href="#resource-6177735f73335f6275636b65742e64656c6976657279-current" data-reference-attribute="extended_s3_configuration.bucket_arn"><title>S3 delivery destination: module.root.aws_s3_bucket.delivery [extended_s3_configuration.bucket_arn; direct attribute reference]</title><text x="671" y="490" font-size="11" fill="#334155" xml:space="preserve">S3 delivery destination: module.root.aws_s3_bucket.delivery</text>
 </a></g>
 </g>
 <g id="resource-6177735f6b696e657369735f66697265686f73655f64656c69766572795f73747265616d2e6c69746572616c-current" data-architecture-id="terraform:6177735f6b696e657369735f66697265686f73655f64656c69766572795f73747265616d2e6c69746572616c-current" data-qualified-address="module.root.aws_kinesis_firehose_delivery_stream.literal" data-terraform-address="aws_kinesis_firehose_delivery_stream.literal"><title>module.root.aws_kinesis_firehose_delivery_stream.literal — create</title>
-<rect x="60" y="740" width="510" height="154" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
-<text x="72" y="768" font-size="11" fill="#047857">aws_kinesis_firehose_del… · create</text>
-<rect data-service-badge="true" data-service-category="neutral" data-service-full-name="Amazon Data Firehose" data-display-name="Amazon Data Firehose" x="322" y="748" width="240" height="32" rx="4" fill="#e2e8f0"/><text data-service-name="true" x="332" y="770" font-size="18" font-weight="700" fill="#0f172a" xml:space="preserve">Amazon Data Firehose</text><text x="72" y="801" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_kinesis_firehose_delivery_stream.literal</text>
-<g data-resource-references="true"><title>S3 delivery destination: unresolved [extended_s3_configuration.bucket_arn; unresolved attribute reference]</title><text x="72" y="842" font-size="11" font-weight="700" fill="#475569">Uses</text><g data-reference-status="unresolved"><title>S3 delivery destination: unresolved [extended_s3_configuration.bucket_arn; unresolved attribute reference]</title><text x="72" y="860" font-size="11" fill="#334155" xml:space="preserve">S3 delivery destination: unresolved</text>
+<rect x="60" y="740" width="510" height="164" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
+<text data-resource-type-heading="true" x="72" y="768" font-size="11" fill="#047857" xml:space="preserve">aws_kinesis_firehose_delivery_strea</text>
+<text data-resource-type-heading="true" x="72" y="786" font-size="11" fill="#047857" xml:space="preserve">m · create</text>
+<rect data-service-badge="true" data-presentation-padding="10 4" data-service-category="neutral" data-service-full-name="Amazon Data Firehose" data-display-name="Amazon Data Firehose" x="322" y="748" width="240" height="32" rx="4" fill="#e2e8f0"/><text data-service-name="true" x="332" y="770" font-size="18" font-weight="700" fill="#0f172a" xml:space="preserve">Amazon Data Firehose</text><text x="72" y="811" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_kinesis_firehose_delivery_stream.literal</text>
+<g data-resource-references="true"><title>S3 delivery destination: unresolved [extended_s3_configuration.bucket_arn; unresolved attribute reference]</title><text x="72" y="852" font-size="11" font-weight="700" fill="#475569">Uses</text><g data-reference-status="unresolved"><title>S3 delivery destination: unresolved [extended_s3_configuration.bucket_arn; unresolved attribute reference]</title><text x="72" y="870" font-size="11" fill="#334155" xml:space="preserve">S3 delivery destination: unresolved</text>
 </g></g>
 </g>
 <g id="resource-6177735f6b696e657369735f73747265616d2e696e7075745b305d-current" data-architecture-id="terraform:6177735f6b696e657369735f73747265616d2e696e7075745b305d-current" data-qualified-address="module.root.aws_kinesis_stream.input[0]" data-terraform-address="aws_kinesis_stream.input[0]"><title>module.root.aws_kinesis_stream.input[0] — unchanged</title>
-<rect x="628" y="564" width="559" height="112" rx="8" fill="#f8fafc" stroke="#64748b" stroke-width="1.5" data-mode="managed"/>
-<text x="640" y="592" font-size="11" fill="#64748b">aws_kinesis_stream · unchanged</text>
-<rect data-service-badge="true" data-service-category="neutral" data-service-full-name="Amazon Kinesis Data Streams" data-display-name="Amazon Kinesis Data Streams" x="862" y="572" width="317" height="32" rx="4" fill="#e2e8f0"/><text data-service-name="true" x="872" y="594" font-size="18" font-weight="700" fill="#0f172a" xml:space="preserve">Amazon Kinesis Data Streams</text><text x="640" y="625" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_kinesis_stream.input[0]</text>
+<rect x="692" y="564" width="559" height="112" rx="8" fill="#f8fafc" stroke="#64748b" stroke-width="1.5" data-mode="managed"/>
+<text data-resource-type-heading="true" x="704" y="592" font-size="11" fill="#64748b" xml:space="preserve">aws_kinesis_stream · unchanged</text>
+<rect data-service-badge="true" data-presentation-padding="10 4" data-service-category="neutral" data-service-full-name="Amazon Kinesis Data Streams" data-display-name="Amazon Kinesis Data Streams" x="926" y="572" width="317" height="32" rx="4" fill="#e2e8f0"/><text data-service-name="true" x="936" y="594" font-size="18" font-weight="700" fill="#0f172a" xml:space="preserve">Amazon Kinesis Data Streams</text><text x="704" y="625" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_kinesis_stream.input[0]</text>
 </g>
 <g id="resource-6177735f73335f6275636b65742e6261636b7570-current" data-architecture-id="terraform:6177735f73335f6275636b65742e6261636b7570-current" data-qualified-address="module.root.aws_s3_bucket.backup" data-terraform-address="aws_s3_bucket.backup"><title>module.root.aws_s3_bucket.backup — unchanged</title>
-<rect x="763" y="716" width="320" height="154" rx="8" fill="#f8fafc" stroke="#64748b" stroke-width="1.5" data-mode="managed"/>
-<text x="807" y="744" font-size="11" fill="#64748b">aws_s3_bucket · unchanged</text>
-<rect data-service-badge="true" data-service-category="storage" data-service-full-name="Amazon S3" data-display-name="S3" x="1033" y="724" width="42" height="32" rx="4" fill="#dcfce7"/><text data-service-name="true" x="1043" y="746" font-size="18" font-weight="700" fill="#14532d" xml:space="preserve">S3</text><g data-role-shape="data-store" transform="translate(775 731)" role="img" aria-label="Visual role: data-store" pointer-events="none" fill="#f8fafc" stroke="#475569" stroke-width="1"><title>Visual role: data-store</title><path d="M1 4 C1 0 21 0 21 4 V14 C21 18 1 18 1 14 Z"/><path d="M1 4 C1 8 21 8 21 4" fill="none"/></g><text x="775" y="777" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_s3_bucket.backup</text>
-<g data-resource-references="true"><title>At-rest encryption (plan): unknown</title><text x="775" y="818" font-size="11" font-weight="700" fill="#475569">Uses</text><g><title>At-rest encryption (plan): unknown</title><text x="775" y="836" font-size="11" fill="#334155" xml:space="preserve">At-rest encryption (plan): unknown</text>
+<rect x="811" y="716" width="320" height="154" rx="8" fill="#f8fafc" stroke="#64748b" stroke-width="1.5" data-mode="managed"/>
+<text data-resource-type-heading="true" x="823" y="744" font-size="11" fill="#64748b" xml:space="preserve">aws_s3_bucket · unchanged</text>
+<rect data-service-badge="true" data-presentation-padding="10 4" data-service-category="storage" data-service-full-name="Amazon S3" data-display-name="S3" x="1081" y="724" width="42" height="32" rx="4" fill="#dcfce7"/><text data-service-name="true" x="1091" y="746" font-size="18" font-weight="700" fill="#14532d" xml:space="preserve">S3</text><text x="823" y="777" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_s3_bucket.backup</text>
+<g data-resource-references="true"><title>At-rest encryption (plan): unknown</title><text x="823" y="818" font-size="11" font-weight="700" fill="#475569">Uses</text><g><title>At-rest encryption (plan): unknown</title><text x="823" y="836" font-size="11" fill="#334155" xml:space="preserve">At-rest encryption (plan): unknown</text>
 </g></g>
 </g>
 <g id="resource-6177735f73335f6275636b65742e64656c6976657279-current" data-architecture-id="terraform:6177735f73335f6275636b65742e64656c6976657279-current" data-qualified-address="module.root.aws_s3_bucket.delivery" data-terraform-address="aws_s3_bucket.delivery"><title>module.root.aws_s3_bucket.delivery — unchanged</title>
 <rect x="299" y="352" width="320" height="154" rx="8" fill="#f8fafc" stroke="#64748b" stroke-width="1.5" data-mode="managed"/>
-<text x="343" y="380" font-size="11" fill="#64748b">aws_s3_bucket · unchanged</text>
-<rect data-service-badge="true" data-service-category="storage" data-service-full-name="Amazon S3" data-display-name="S3" x="569" y="360" width="42" height="32" rx="4" fill="#dcfce7"/><text data-service-name="true" x="579" y="382" font-size="18" font-weight="700" fill="#14532d" xml:space="preserve">S3</text><g data-role-shape="data-store" transform="translate(311 367)" role="img" aria-label="Visual role: data-store" pointer-events="none" fill="#f8fafc" stroke="#475569" stroke-width="1"><title>Visual role: data-store</title><path d="M1 4 C1 0 21 0 21 4 V14 C21 18 1 18 1 14 Z"/><path d="M1 4 C1 8 21 8 21 4" fill="none"/></g><text x="311" y="413" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_s3_bucket.delivery</text>
+<text data-resource-type-heading="true" x="311" y="380" font-size="11" fill="#64748b" xml:space="preserve">aws_s3_bucket · unchanged</text>
+<rect data-service-badge="true" data-presentation-padding="10 4" data-service-category="storage" data-service-full-name="Amazon S3" data-display-name="S3" x="569" y="360" width="42" height="32" rx="4" fill="#dcfce7"/><text data-service-name="true" x="579" y="382" font-size="18" font-weight="700" fill="#14532d" xml:space="preserve">S3</text><text x="311" y="413" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_s3_bucket.delivery</text>
 <g data-resource-references="true"><title>At-rest encryption (plan): unknown</title><text x="311" y="454" font-size="11" font-weight="700" fill="#475569">Uses</text><g><title>At-rest encryption (plan): unknown</title><text x="311" y="472" font-size="11" fill="#334155" xml:space="preserve">At-rest encryption (plan): unknown</text>
 </g></g>
 </g>
 <g data-endpoints="true" data-source="resource-6177735f6b696e657369735f73747265616d2e696e7075745b305d-current" data-target="resource-6177735f6b696e657369735f66697265686f73655f64656c69766572795f73747265616d2e61726368697665-current" aria-hidden="true">
-<circle data-endpoint="source" cx="907" cy="564" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+<circle data-endpoint="source" cx="971" cy="564" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
 <g data-endpoints="true" data-source="resource-6177735f73335f6275636b65742e6261636b7570-current" data-target="resource-6177735f6b696e657369735f66697265686f73655f64656c69766572795f73747265616d2e61726368697665-current" aria-hidden="true">
-<circle data-endpoint="source" cx="1083" cy="793" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+<circle data-endpoint="source" cx="971" cy="716" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
 <g data-endpoints="true" data-source="resource-6177735f73335f6275636b65742e64656c6976657279-current" data-target="resource-6177735f6b696e657369735f66697265686f73655f64656c69766572795f73747265616d2e61726368697665-current" aria-hidden="true">
 <circle data-endpoint="source" cx="619" cy="429" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
 </g>
@@ -262,11 +279,39 @@ S3 delivery destination: aws_s3_bucket.delivery [extended_s3_configuration.bucke
 </main>
 <noscript>Enable JavaScript for search and navigation. The diagram is included below.</noscript>
 <script id="viewer-data" type="application/json">[{"action":"update","address":"aws_kinesis_firehose_delivery_stream.archive","context":[],"deposed":null,"id":"resource-6177735f6b696e657369735f66697265686f73655f64656c69766572795f73747265616d2e61726368697665-current","identity":"terraform:6177735f6b696e657369735f66697265686f73655f64656c69766572795f73747265616d2e61726368697665-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_kinesis_firehose_delivery_stream.archive","scope":{"account":null,"global":false,"provider":"AWS","region":"us-east-1"},"state":"","type":"aws_kinesis_firehose_delivery_stream"},{"action":"create","address":"aws_kinesis_firehose_delivery_stream.literal","context":[],"deposed":null,"id":"resource-6177735f6b696e657369735f66697265686f73655f64656c69766572795f73747265616d2e6c69746572616c-current","identity":"terraform:6177735f6b696e657369735f66697265686f73655f64656c69766572795f73747265616d2e6c69746572616c-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_kinesis_firehose_delivery_stream.literal","scope":{"account":null,"global":false,"provider":"AWS","region":"us-east-1"},"state":"","type":"aws_kinesis_firehose_delivery_stream"},{"action":"unchanged","address":"aws_kinesis_stream.input[0]","context":[],"deposed":null,"id":"resource-6177735f6b696e657369735f73747265616d2e696e7075745b305d-current","identity":"terraform:6177735f6b696e657369735f73747265616d2e696e7075745b305d-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_kinesis_stream.input[0]","scope":{"account":null,"global":false,"provider":"AWS","region":"us-east-1"},"state":"","type":"aws_kinesis_stream"},{"action":"unchanged","address":"aws_s3_bucket.backup","context":[],"deposed":null,"id":"resource-6177735f73335f6275636b65742e6261636b7570-current","identity":"terraform:6177735f73335f6275636b65742e6261636b7570-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_s3_bucket.backup","scope":{"account":null,"global":false,"provider":"AWS","region":"us-east-1"},"state":"","type":"aws_s3_bucket"},{"action":"unchanged","address":"aws_s3_bucket.delivery","context":[],"deposed":null,"id":"resource-6177735f73335f6275636b65742e64656c6976657279-current","identity":"terraform:6177735f73335f6275636b65742e64656c6976657279-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_s3_bucket.delivery","scope":{"account":null,"global":false,"provider":"AWS","region":"us-east-1"},"state":"","type":"aws_s3_bucket"}]</script>
+<script id="viewer-generation" type="application/json">{"generator":{"name":"Planorama","revision":null,"version":"0.1.0"},"schema_version":1,"selected_view":false,"setting_origins":null,"settings":{"address_format":"qualified","changed_only":false,"focus":null,"focus_depth":null,"html_diagnostics":false,"html_semantic_diagnostics":false,"icon_mode":"service-name","modules":[],"relationship_legend":"full","remote_state_mappings":[],"spatial_types":[],"states":[]}}</script>
 <script id="viewer-provider-data" type="application/json">[]</script>
 
 
 <script>(() => {
   'use strict';
+function generationInformation(byId) {
+  const panel = byId('generation-details');
+  const metadata = JSON.parse(byId('viewer-generation').textContent);
+  const paragraph = text => {
+    const p = document.createElement('p'); p.textContent = text; panel.append(p);
+  };
+  if (!metadata || metadata.schema_version !== 1) {
+    paragraph('Generation metadata unavailable. Selection and generation settings cannot be established from this diagram.');
+    return;
+  }
+  paragraph(`${metadata.generator.name} ${metadata.generator.version}. Revision: ${metadata.generator.revision || 'unavailable'}.`);
+  paragraph(metadata.selected_view ? 'Selected view. Omitted resources may still exist in Terraform.' : 'Full input view: no changed-only, module or focus selection. This describes the supplied inputs, not all resources in Terraform.');
+  paragraph('Values below are effective generation settings. Whether a value was explicitly supplied or defaulted is unavailable; “matches default” describes the value only.');
+  const defaults = { changed_only: false, modules: [], focus: null, focus_depth: null, spatial_types: [], address_format: 'qualified', icon_mode: 'service-name', relationship_legend: 'full', html_diagnostics: false, html_semantic_diagnostics: false, states: [], remote_state_mappings: [] };
+  const labels = { changed_only: 'Changed only', modules: 'Module selection', focus: 'Focus', focus_depth: 'Focus depth', spatial_types: 'Spatial type overrides', address_format: 'Address format', icon_mode: 'Service labels', relationship_legend: 'Relationship legend', html_diagnostics: 'Routing diagnostics', html_semantic_diagnostics: 'Semantic diagnostics', states: 'Named states', remote_state_mappings: 'Remote state mappings' };
+  const list = document.createElement('dl');
+  for (const [key, label] of Object.entries(labels)) {
+    const term = document.createElement('dt'), value = document.createElement('dd');
+    term.textContent = label;
+    const setting = metadata.settings[key];
+    const display = setting === null ? 'disabled / not applicable' : typeof setting === 'boolean' ? (setting ? 'enabled' : 'disabled') : Array.isArray(setting) && !setting.length ? 'none' : typeof setting === 'string' ? setting : JSON.stringify(setting);
+    value.textContent = setting === undefined ? 'unavailable' : `${display}${JSON.stringify(setting) === JSON.stringify(defaults[key]) ? ' (matches default)' : ''}`;
+    list.append(term, value);
+  }
+  panel.append(list);
+}
+
 function metadata(svg, byId) {
   const resources = JSON.parse(byId('viewer-data').textContent).filter(r => byId(r.id));
   const resourceIds = new Set(resources.map(r => r.id));
@@ -320,7 +365,7 @@ function metadata(svg, byId) {
   const relationshipEdges = id => edges.filter(edge => (edge.dataset.relationshipIds || '').split(' ').includes(id));
   const sourceIdentity = source => 'terraform:' + hex(source.address) + (source.deposed_key === null ? '-current' : '-deposed-' + hex(source.deposed_key));
 
-  return { resources, targets, title, label, edges, links, components, relationshipEntries, relationshipEdges, sourceIdentity };
+  return { resources, targets, title, label, edges, links, components, relationshipEntries, relationshipEdges, sourceIdentity, available: id => !!byId(id) };
 }
 function diagramExport(context) {
   const { svg, byId } = context;
@@ -332,7 +377,7 @@ function diagramExport(context) {
     const box = clone.getAttribute('viewBox').trim().split(/[ ,]+/).map(Number);
     if (box.length !== 4 || !box.every(Number.isFinite) || box[2] <= 0 || box[3] <= 0) throw new Error('Invalid export viewport');
     clone.setAttribute('width', box[2]); clone.setAttribute('height', box[3]);
-    for (const el of clone.querySelectorAll('[data-hotspot-overlay], script, foreignObject')) el.remove();
+    for (const el of clone.querySelectorAll('[data-hotspot-overlay], [data-html-filtered], script, foreignObject')) el.remove();
     const ids = new Set();
     for (const el of [clone, ...clone.querySelectorAll('*')]) {
       if (el.id) {
@@ -536,7 +581,7 @@ function exportPresentation(context, index, requested, provenanceSeeds) {
         if (atomic) clone.append(child.cloneNode(true));
         continue;
       }
-      const decoration = !atomic && el.matches(frames) && child.matches('rect, text, title') && !index.targets.has(child.id);
+      const decoration = !atomic && el.matches(frames) && child.matches('rect, text, title, [data-state-heading]') && !index.targets.has(child.id);
       const copied = project(child, atomic || decoration);
       if (copied) clone.append(copied);
     }
@@ -658,7 +703,11 @@ function navigation(svg, viewport, byId) {
   function restore(saved) {
     box = saved.slice(); updateView();
   }
-  return { fit, zoom, reveal, updateView, keydown, snapshot: () => box.slice(), restore, wasDragged: () => dragged };
+  function resize(height) {
+    original[3] = height;
+    fit();
+  }
+  return { fit, zoom, reveal, updateView, keydown, resize, snapshot: () => box.slice(), restore, wasDragged: () => dragged };
 }
 
 function highlighting(svg, viewport) {
@@ -679,6 +728,7 @@ function selection(context, index, navigation, highlights, coordinator) {
   const { reveal } = navigation;
   const history = selectionHistory(context, index, navigation, coordinator, select);
   coordinator.saveHistory = history.save;
+  coordinator.clearHistory = history.clear;
   function button(text, action) {
     const el = document.createElement('button');
     el.type = 'button'; el.textContent = text; el.addEventListener('click', action);
@@ -693,7 +743,7 @@ function selection(context, index, navigation, highlights, coordinator) {
       if (entry.target && byId(entry.target)) {
         li.append(button(entry.text, () => select(entry.target)));
         if (entry.target !== coordinator.selected) byId(entry.target).setAttribute('data-viewer-related', 'true');
-      } else li.textContent = entry.text;
+      } else li.textContent = entry.text + (entry.target && targets.has(entry.target) && !entry.text.includes('hidden by HTML action filters') ? ' (hidden by HTML action filters)' : '');
       list.append(li);
     }
     details.append(h, list);
@@ -886,14 +936,16 @@ function searching(context, index, selection, coordinator) {
   function renderResults() {
     const terms = search.value.toLocaleLowerCase().trim().split(/\s+/).filter(Boolean);
     const focused = results.contains(document.activeElement);
-    const matched = resources.filter(r => (!action.value || r.action === action.value) && (!state.value || JSON.stringify(r.state) === state.value) && (!type.value || typeKey(r) === type.value) && terms.every(term => [label(r), r.qualified, r.state + ':' + r.qualified, r.identity, r.module, r.state, r.type, r.provider || '', r.mode, r.deposed || ''].join(' ').toLocaleLowerCase().includes(term)));
+    const visible = resources.filter(r => byId(r.id));
+    const matched = visible.filter(r => (!action.value || r.action === action.value) && (!state.value || JSON.stringify(r.state) === state.value) && (!type.value || typeKey(r) === type.value) && terms.every(term => [label(r), r.qualified, r.state + ':' + r.qualified, r.identity, r.module, r.state, r.type, r.provider || '', r.mode, r.deposed || ''].join(' ').toLocaleLowerCase().includes(term)));
     results.replaceChildren();
     for (const r of matched) {
       const b = button(label(r), () => select(r.id));
       b.dataset.target = r.id; b.setAttribute('aria-pressed', String(coordinator.selected === r.id)); results.append(b);
     }
     byId('result-count').textContent = `${matched.length} of ${resources.length} resources`;
-    if (!matched.length) byId('result-count').textContent += ' match this search. The diagram is unchanged.';
+    if (visible.length !== resources.length) byId('result-count').textContent += `; ${resources.length - visible.length} hidden by HTML action filters`;
+    if (!matched.length) byId('result-count').textContent += '. No visible resources match this search.';
     if (focused) (results.firstElementChild || search).focus();
   }
   for (const control of [action, state, type]) control.addEventListener('change', () => {
@@ -916,6 +968,166 @@ function searching(context, index, selection, coordinator) {
   });
 
   return { renderResults };
+}
+function actionFiltering(context, index, view, coordinator, renderResults) {
+  const { svg, byId } = context;
+  const panel = byId('logical-filters'), controls = byId('logical-filter-controls');
+  const actions = ['Create', 'Update', 'Delete', 'Replace', 'Read', 'Unchanged', 'Other'];
+  const number = (el, name) => Number(el.getAttribute(name));
+  const translation = el => {
+    const matrix = el.transform.baseVal.consolidate()?.matrix;
+    return [matrix?.e || 0, matrix?.f || 0];
+  };
+  const move = (el, x, y) => el.setAttribute('transform', `translate(${x} ${y})`);
+  const rootHeight = number(svg, 'height');
+  const areas = [...svg.querySelectorAll('[data-annotation-area]')].map(el => ({
+    el, height: Number(el.dataset.measuredHeight),
+    sections: [...el.querySelectorAll(':scope > [data-annotation-card]')].map(frame => {
+      const section = frame.querySelector(':scope > [data-annotation-section]');
+      return { frame, section,
+        cards: [...section.querySelectorAll(':scope > [data-annotation-card]')].map(card => ({
+          el: card, width: number(card.firstElementChild, 'width'), height: number(card.firstElementChild, 'height')
+        })) };
+    }),
+    architecture: el.parentElement.querySelector(':scope > [data-architecture]'),
+    document: el.ownerSVGElement
+  }));
+  for (const area of areas) {
+    area.offset = translation(area.architecture);
+    area.documentHeight = number(area.document, 'height');
+    area.documentBox = area.document.getAttribute('viewBox').split(/\s+/).map(Number);
+  }
+  const states = [...svg.querySelectorAll('[data-state-id]')].map(el => ({
+    el, area: areas.find(area => el.contains(area.el))
+  }));
+  const paths = [...svg.querySelectorAll('path[data-cross-state]')].map(el => ({
+    el, original: el.getAttribute('d'), points: el.getAttribute('d').match(/-?\d+(?:\.\d+)?/g).map(Number),
+    split: Number(el.dataset.sourcePoints), source: el.dataset.sourceState, target: el.dataset.targetState,
+    marker: el.nextElementSibling?.matches('circle[data-endpoint]') ? el.nextElementSibling : null
+  }));
+  const groups = [];
+  for (const area of areas) for (const section of area.sections) for (const card of section.cards) {
+    const group = card.el.querySelector(':scope > [data-logical-group]');
+    if (!group) continue;
+    const sections = [...group.querySelectorAll(':scope > [data-action-section]')].map(el => ({
+      el, action: el.dataset.actionSection, start: number(el.firstElementChild, 'y'),
+      height: number(el.firstElementChild, 'height'), count: el.querySelectorAll('[data-placement="logical"]').length
+    }));
+    const fieldset = document.createElement('fieldset');
+    fieldset.dataset.resourceType = group.dataset.resourceType;
+    fieldset.dataset.mode = group.dataset.mode;
+    const legend = document.createElement('legend');
+    const state = group.closest('[data-state-id]')?.dataset.stateId;
+    legend.textContent = `${state ? state + ': ' : ''}${group.dataset.resourceType} · ${group.dataset.mode} · ${group.dataset.providerSource}`;
+    fieldset.append(legend);
+    const entry = { card, sections, start: sections[0].start, enabled: new Set(actions.map(action => action.toLowerCase())) };
+    for (const action of actions) {
+      const key = action.toLowerCase(), section = sections.find(section => section.action === key);
+      const label = document.createElement('label'), input = document.createElement('input');
+      input.type = 'checkbox'; input.checked = true; input.dataset.action = key;
+      input.disabled = !section;
+      input.addEventListener('change', () => {
+        if (input.checked) entry.enabled.add(key); else entry.enabled.delete(key);
+        update();
+      });
+      label.append(input, document.createTextNode(`${action} (${section?.count || 0})`)); fieldset.append(label);
+    }
+    entry.status = document.createElement('p'); entry.status.setAttribute('role', 'status');
+    fieldset.append(entry.status); controls.append(fieldset); groups.push(entry);
+    entry.status.textContent = `${sections.reduce((sum, section) => sum + section.count, 0)} visible`;
+  }
+  panel.hidden = !groups.length;
+  const links = index.links.map(link => ({ ...link, href: link.el.getAttribute('href'), title: null }));
+  const hotspot = byId('hotspot-toggle'), hotspotStatus = byId('hotspot-status');
+  const hotspotDisabled = hotspot.disabled;
+  const hotspotDescription = hotspotStatus.textContent;
+  function update() {
+    coordinator.clearHistory();
+    coordinator.clear();
+    let hidden = 0;
+    for (const group of groups) {
+      let y = group.start, visible = 0, total = 0;
+      for (const section of group.sections) {
+        total += section.count;
+        const shown = group.enabled.has(section.action);
+        if (shown) {
+          section.el.removeAttribute('data-html-filtered'); section.el.removeAttribute('display');
+          if (y === section.start) section.el.removeAttribute('transform');
+          else move(section.el, 0, y - section.start);
+          y += section.height + 12; visible += section.count;
+        } else {
+          section.el.setAttribute('data-html-filtered', 'true'); section.el.setAttribute('display', 'none');
+        }
+      }
+      hidden += total - visible;
+      group.card.height = y + 16;
+      group.status.textContent = `${visible} of ${total} visible${visible ? '' : ' · All rows hidden by HTML action filters'}`;
+    }
+    for (const area of areas) {
+      let y = 160;
+      for (const { frame, section, cards } of area.sections) {
+        let x = 16, top = 48, rowHeight = 0;
+        const width = Number(section.dataset.packingWidth);
+        for (const card of cards) {
+          if (x > 16 && x + card.width > width - 16) { x = 16; top += rowHeight + 20; rowHeight = 0; }
+          move(card.el, x, top); card.el.firstElementChild.setAttribute('height', card.height);
+          x += card.width + 20; rowHeight = Math.max(rowHeight, card.height);
+        }
+        const height = top + rowHeight + 16;
+        move(frame, 40, y);
+        frame.firstElementChild.setAttribute('height', height);
+        section.firstElementChild.setAttribute('height', height);
+        y += height + 20;
+      }
+      area.delta = y - 160 - 20 + 24 - area.height;
+      move(area.architecture, area.offset[0], area.offset[1] + area.delta);
+      if (area.document !== svg) {
+        area.document.setAttribute('height', area.documentHeight + area.delta);
+        const box = area.documentBox.slice(); box[3] += area.delta;
+        area.document.setAttribute('viewBox', box.join(' '));
+      }
+    }
+    let delta = 0;
+    const offsets = new Map();
+    for (const state of states) {
+      if (delta) move(state.el, 0, delta); else state.el.removeAttribute('transform');
+      offsets.set(state.el.dataset.stateId, delta + (state.area?.delta || 0));
+      delta += state.area?.delta || 0;
+    }
+    if (!states.length) delta = areas[0]?.delta || 0;
+    for (const path of paths) {
+      const from = offsets.get(path.source) || 0, to = offsets.get(path.target) || 0;
+      path.el.setAttribute('d', from || to ? path.points.reduce((parts, value, i) => {
+        if (!(i % 2)) parts.push(`${i ? 'L' : 'M'} ${value} ${path.points[i + 1] + (i / 2 < path.split ? from : to)}`);
+        return parts;
+      }, []).join(' ') : path.original);
+      if (path.marker) { if (from) move(path.marker, 0, from); else path.marker.removeAttribute('transform'); }
+    }
+    svg.setAttribute('height', rootHeight + delta);
+    view.resize(rootHeight + delta);
+    for (const link of links) {
+      if (!byId(link.target)) {
+        link.el.removeAttribute('href'); link.el.setAttribute('aria-disabled', 'true');
+        if (!link.title) {
+          link.title = document.createElementNS(svg.namespaceURI, 'title');
+          link.title.textContent = `${index.title(link.el) || link.el.textContent} (hidden by HTML action filters)`;
+          link.el.prepend(link.title);
+        }
+      } else {
+        link.el.setAttribute('href', link.href); link.el.removeAttribute('aria-disabled');
+        link.title?.remove(); link.title = null;
+      }
+    }
+    hotspot.disabled = hotspotDisabled || hidden > 0;
+    hotspotStatus.textContent = hidden ? 'Routing hotspots describe the generated layout. Restore all HTML action filters to inspect them.' : hotspotDescription;
+    byId('logical-filter-status').textContent = `${index.resources.length - hidden} of ${index.resources.length} generated resources visible; ${hidden} hidden by HTML action filters. Excluded resources are not restored.`;
+    renderResults();
+  }
+  byId('logical-filter-reset').addEventListener('click', () => {
+    for (const group of groups) group.enabled = new Set(actions.map(action => action.toLowerCase()));
+    for (const input of controls.querySelectorAll('input')) input.checked = true;
+    update();
+  });
 }
 
 function lifecycle() {
@@ -1039,7 +1251,7 @@ function semanticDiagnostics(context, index, selection, coordinator) {
         }));
       } else {
         const identity = document.createElement('p');
-        identity.textContent = `${label} · navigation unavailable in this view`;
+        identity.textContent = `${label} · ${target ? 'hidden by HTML action filters' : 'navigation unavailable in this view'}`;
         row.append(identity);
       }
       const detail = document.createElement('p');
@@ -1068,8 +1280,9 @@ function semanticDiagnostics(context, index, selection, coordinator) {
 
 function impactGraph(index, svg) {
   const key = (state, identity) => JSON.stringify([state, identity]);
-  const nodes = new Map(index.resources.map(r => [key(r.state, r.identity), r]));
-  const domKeys = new Map(index.resources.map(r => [r.id, key(r.state, r.identity)]));
+  const visible = index.resources.filter(r => !index.available || index.available(r.id));
+  const nodes = new Map(visible.map(r => [key(r.state, r.identity), r]));
+  const domKeys = new Map(visible.map(r => [r.id, key(r.state, r.identity)]));
   const addresses = new Map(index.resources.filter(r => !r.deposed).map(r => [key(r.state, r.address), key(r.state, r.identity)]));
   const edges = new Map();
   let scanned = 0, truncated = false;
@@ -1141,7 +1354,7 @@ function exploreImpact(graph, origin, depth, direction, associations) {
 
 function impact(context, index, selection, coordinator) {
   const { svg, byId } = context;
-  const graph = impactGraph(index, svg);
+  let graph = impactGraph(index, svg);
   const status = byId('impact-status'), results = byId('impact-results');
   const depth = byId('impact-depth'), direction = byId('impact-direction'), associations = byId('impact-associations');
   const initial = status.textContent;
@@ -1153,11 +1366,14 @@ function impact(context, index, selection, coordinator) {
   }
   const name = key => {
     const r = graph.nodes.get(key);
+    const hidden = !r && index.resources.find(resource => JSON.stringify([resource.state, resource.identity]) === key);
+    if (hidden) return `${index.label(hidden)} · hidden by HTML action filters`;
     return r ? `${index.label(r)} · ${r.action || 'action unknown'}` : `${key} · unavailable in this view`;
   };
   const edgeText = edge => `${name(edge.from)} ${edge.direction === 'undirected' ? '↔' : '→'} ${name(edge.to)} · ${edge.kind} / ${edge.semantics} / ${edge.direction || 'direction unknown'}`;
   function explore() {
     reset();
+    graph = impactGraph(index, svg);
     const origin = graph.domKeys.get(coordinator.selected);
     if (!origin) { status.textContent = 'Select a resource to explore. Relationship index entries and component summaries are not traversal origins.'; return; }
     const result = exploreImpact(graph, origin, depth.value, direction.value, associations.checked);
@@ -1225,7 +1441,11 @@ function impact(context, index, selection, coordinator) {
   return { reset };
 }
 
-  const byId = id => document.getElementById(id);
+  const byId = id => {
+    const el = document.getElementById(id);
+    return el?.closest('[data-html-filtered]') ? null : el;
+  };
+  generationInformation(byId);
   const viewport = byId('viewport');
   const svg = viewport.querySelector('svg');
   const search = byId('search');
@@ -1257,8 +1477,32 @@ function impact(context, index, selection, coordinator) {
   adapters.register(semanticDiagnostics(context, index, { select, button }, coordinator));
   const impactView = impact(context, index, { select, button }, coordinator);
   adapters.register(impactView);
+  actionFiltering(context, index, view, coordinator, renderResults);
   search.addEventListener('input', () => adapters.reset());
   const { fit, zoom, updateView } = view;
+  const destinations = [...svg.querySelectorAll('[data-architecture], [data-annotation-section]')].filter(el => {
+    if (el.hasAttribute('data-architecture') && !el.querySelector('[data-terraform-address]')) return false;
+    const bounds = el.getBBox();
+    return bounds.width > 0 && bounds.height > 0;
+  });
+  const sectionSelect = byId('section-destination');
+  for (const [i, el] of destinations.entries()) {
+    const state = el.closest('[data-state-id]')?.dataset.stateId;
+    const name = el.dataset.annotationSection || 'Architecture';
+    const option = document.createElement('option');
+    option.value = String(i);
+    option.textContent = state ? `${state}: ${name}` : name;
+    sectionSelect.append(option);
+  }
+  sectionSelect.disabled = byId('section-go').disabled = destinations.length === 0;
+  byId('section-go').addEventListener('click', () => {
+    const destination = destinations[Number(sectionSelect.value)];
+    if (!destination) return;
+    coordinator.clear();
+    view.reveal(destination);
+    byId('section-status').textContent = `Showing ${sectionSelect.selectedOptions[0].textContent}`;
+    viewport.focus({ preventScroll: true });
+  });
   for (const r of resources) {
     const el = byId(r.id); el.setAttribute('data-viewer-target', 'true');
     el.setAttribute('tabindex', '0'); el.setAttribute('role', 'button'); el.setAttribute('aria-label', label(r));

@@ -76,7 +76,10 @@ impl Area {
         if self.cards.is_empty() && self.sections.is_empty() {
             return String::new();
         }
-        let mut svg = String::from("<g data-annotation-area=\"true\">\n");
+        let mut svg = format!(
+            "<g data-annotation-area=\"true\" data-packing-width=\"{}\" data-measured-height=\"{}\">\n",
+            self.packing_width, self.height
+        );
         svg.push_str(&self.content());
         svg.push_str("</g>\n");
         svg
@@ -157,7 +160,8 @@ impl MeasuredAnnotationSection {
         let content_width = self.bounds.width;
         let height = self.bounds.height;
         format!(
-            r#"<g data-annotation-section="{heading}"><rect width="{content_width}" height="{height}" rx="12" fill="{}" stroke="{}"/><text x="16" y="28" font-size="15" font-weight="700" fill="{}">{heading}</text>{}</g>"#,
+            r#"<g data-annotation-section="{heading}" data-packing-width="{}"><rect width="{content_width}" height="{height}" rx="12" fill="{}" stroke="{}"/><text x="16" y="28" font-size="15" font-weight="700" fill="{}">{heading}</text>{}</g>"#,
+            self.children.packing_width,
             self.palette.background,
             self.palette.border,
             self.palette.heading,

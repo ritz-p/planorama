@@ -1,7 +1,10 @@
 (() => {
   'use strict';
 /* VIEWER_MODULES */
-  const byId = id => document.getElementById(id);
+  const byId = id => {
+    const el = document.getElementById(id);
+    return el?.closest('[data-html-filtered]') ? null : el;
+  };
   generationInformation(byId);
   const viewport = byId('viewport');
   const svg = viewport.querySelector('svg');
@@ -34,6 +37,7 @@
   adapters.register(semanticDiagnostics(context, index, { select, button }, coordinator));
   const impactView = impact(context, index, { select, button }, coordinator);
   adapters.register(impactView);
+  actionFiltering(context, index, view, coordinator, renderResults);
   search.addEventListener('input', () => adapters.reset());
   const { fit, zoom, updateView } = view;
   const destinations = [...svg.querySelectorAll('[data-architecture], [data-annotation-section]')].filter(el => {

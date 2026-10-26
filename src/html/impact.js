@@ -1,6 +1,6 @@
 function impact(context, index, selection, coordinator) {
   const { svg, byId } = context;
-  const graph = impactGraph(index, svg);
+  let graph = impactGraph(index, svg);
   const status = byId('impact-status'), results = byId('impact-results');
   const depth = byId('impact-depth'), direction = byId('impact-direction'), associations = byId('impact-associations');
   const initial = status.textContent;
@@ -12,11 +12,14 @@ function impact(context, index, selection, coordinator) {
   }
   const name = key => {
     const r = graph.nodes.get(key);
+    const hidden = !r && index.resources.find(resource => JSON.stringify([resource.state, resource.identity]) === key);
+    if (hidden) return `${index.label(hidden)} · hidden by HTML action filters`;
     return r ? `${index.label(r)} · ${r.action || 'action unknown'}` : `${key} · unavailable in this view`;
   };
   const edgeText = edge => `${name(edge.from)} ${edge.direction === 'undirected' ? '↔' : '→'} ${name(edge.to)} · ${edge.kind} / ${edge.semantics} / ${edge.direction || 'direction unknown'}`;
   function explore() {
     reset();
+    graph = impactGraph(index, svg);
     const origin = graph.domKeys.get(coordinator.selected);
     if (!origin) { status.textContent = 'Select a resource to explore. Relationship index entries and component summaries are not traversal origins.'; return; }
     const result = exploreImpact(graph, origin, depth.value, direction.value, associations.checked);
