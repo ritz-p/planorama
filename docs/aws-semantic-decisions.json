@@ -202,7 +202,7 @@
       "status": "Partial",
       "priority": "P1",
       "issue": 687,
-      "gap": "Spatial table, explicit Backup endpoint and configuration navigation implemented (#508, #690; docs/dynamodb.md). Lambda DynamoDB stream lowering and at-rest summaries remain deferred."
+      "gap": "Spatial table, explicit Backup endpoint and configuration navigation implemented (#508, #690; docs/dynamodb.md). Lambda DynamoDB stream lowering and at-rest summaries are NOT implemented and remain deferred."
     },
     "aws_elasticache_replication_group": {
       "status": "Partial",
