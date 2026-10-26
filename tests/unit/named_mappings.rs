@@ -89,6 +89,19 @@ fn mapped_generation_matches_shared_cli_pipeline_and_resumes_with_filters() {
                 OutputFormat::Html => crate::html::render_states(&view, svg::Options::default()),
             };
             let generated = generate_named(&input, &opts).unwrap();
+            let expected = crate::html::generation::attach(
+                expected,
+                &view::Options {
+                    focus: opts.focus.clone(),
+                    depth: opts.focus_depth,
+                    changed_only: opts.changed_only,
+                    ..Default::default()
+                },
+                svg::Options::default(),
+                false,
+                view.states.keys().map(|id| id.as_str()).collect(),
+                vec![serde_json::to_value(mapping()).unwrap()],
+            );
             assert_eq!(generated.content, expected);
             assert_eq!(
                 generated

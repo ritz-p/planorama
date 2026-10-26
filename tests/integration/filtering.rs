@@ -37,7 +37,23 @@ fn modules_cli_union_is_deterministic_in_svg_and_html() {
             ],
         );
         assert!(second.status.success());
-        assert_eq!(first.stdout, second.stdout);
+        if format == "html" {
+            let first_html = String::from_utf8(first.stdout.clone()).unwrap();
+            let second_html = String::from_utf8(second.stdout.clone()).unwrap();
+            let diagram = |html: &str| {
+                html[html.find("<svg ").unwrap()..html.rfind("</svg>").unwrap()].to_owned()
+            };
+            assert_eq!(diagram(&first_html), diagram(&second_html));
+            assert_ne!(first_html, second_html);
+            let reordered = support::run_with_args(
+                input.as_bytes(),
+                &["--format", "html", "--modules", "module.app", "module.db"],
+            );
+            assert!(reordered.status.success());
+            assert_eq!(second.stdout, reordered.stdout);
+        } else {
+            assert_eq!(first.stdout, second.stdout);
+        }
         assert!(
             !String::from_utf8(first.stdout)
                 .unwrap()

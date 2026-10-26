@@ -225,6 +225,13 @@ pub(crate) async fn generate_step(
         }
         OutputFormat::Html => crate::html::render_states_step(&architecture, format).await,
     };
+    let content = crate::html::generation::attach(
+        content, &filter, format, options.html_diagnostics,
+        architecture.states.keys().map(|id| id.as_str()).collect(),
+        options.remote_state_mappings.iter().map(|mapping| serde_json::json!({
+            "consumer": mapping.consumer, "remote": mapping.remote, "producer": mapping.producer,
+        })).collect(),
+    );
     crate::work::check_limit(content.len(), crate::generation::MAX_BROWSER_OUTPUT_BYTES).await;
     Ok(Generated {
         content,

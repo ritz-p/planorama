@@ -1,6 +1,16 @@
 use super::*;
 
 #[test]
+fn low_level_html_rendering_does_not_claim_generation_provenance() {
+    let raw = plan::parse(include_str!("../fixtures/viewer-plan.json")).unwrap();
+    let graph = project(&raw, &view::Options::default()).unwrap();
+    let output = html::render(&graph, &Layout::new(&graph), svg::Options::default());
+    assert!(
+        output.contains("<script id=\"viewer-generation\" type=\"application/json\">null</script>")
+    );
+}
+
+#[test]
 fn html_diagnostics_are_independent_opt_ins_in_shared_generation() {
     let json = include_str!("../fixtures/viewer-plan.json");
     for semantic in [false, true] {
