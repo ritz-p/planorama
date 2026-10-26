@@ -337,3 +337,78 @@ fn serverless_named_states_lifecycle_and_filtering_keep_exact_identity() {
     assert!(out.contains("data-state-id=\"one\""));
     assert!(out.contains("data-state-id=\"two\""));
 }
+
+#[test]
+fn serverless_account_scope_and_filtered_network_proof_are_preserved() {
+    let mut value: Value = serde_json::from_str(FIXTURE).unwrap();
+    value["configuration"]["provider_config"]["aws"]["expressions"]["assume_role"] =
+        json!([{"role_arn":{"constant_value":"arn:aws:iam::123456789012:role/Test"}}]);
+    value["resource_changes"][9]["change"]["after"]["owner_account"] = json!("123456789012");
+    let parsed = crate::plan::evidence::tests::parse_fixture(&value.to_string()).unwrap();
+    assert!(
+        parsed
+            .attributes
+            .iter()
+            .any(|r| r.attribute == "workgroup_name" && r.service_reference_verified)
+    );
+    let graph = semantic::transform(&parsed);
+    assert!(
+        graph
+            .nodes
+            .iter()
+            .flat_map(|n| &n.references)
+            .any(|r| r.attribute == "workgroup_name" && r.complete)
+    );
+    let mut foreign = value.clone();
+    foreign["resource_changes"][9]["change"]["after"]["owner_account"] = json!("210987654321");
+    let foreign = semantic::transform(
+        &crate::plan::evidence::tests::parse_fixture(&foreign.to_string()).unwrap(),
+    );
+    assert!(
+        !foreign
+            .nodes
+            .iter()
+            .flat_map(|n| &n.references)
+            .any(|r| r.attribute == "workgroup_name" && r.complete)
+    );
+    for node in &graph.nodes {
+        assert_eq!(
+            node.entity
+                .scope
+                .as_ref()
+                .unwrap()
+                .account
+                .as_ref()
+                .unwrap()
+                .as_str(),
+            "123456789012",
+            "{}",
+            node.address
+        );
+    }
+    let output = crate::svg::render(&graph, &crate::layout::Layout::new(&graph));
+    let doc = roxmltree::Document::parse(&output).unwrap();
+    assert!(
+        doc.descendants()
+            .any(|n| n.attribute("data-account") == Some("123456789012")
+                && n.attribute("data-region") == Some("us-east-1"))
+    );
+    let groups = crate::view::scope::groups(&graph, &crate::layout::ContainmentTree::new(&graph));
+    assert!(groups.keys().all(Option::is_some));
+    for depth in [0, 1] {
+        let selected = crate::view::single(
+            &graph,
+            &crate::view::Options {
+                focus: Some("aws_redshiftserverless_workgroup.main".into()),
+                depth: Some(depth),
+                ..Default::default()
+            },
+        )
+        .unwrap();
+        let placement = selected.edges.iter().any(|e| {
+            e.kind == EdgeKind::Containment
+                && selected.nodes[e.to].address == "aws_redshiftserverless_workgroup.main"
+        });
+        assert_eq!(placement, depth == 1, "focus depth {depth}");
+    }
+}

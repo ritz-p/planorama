@@ -107,6 +107,7 @@ pub(super) fn annotate(
             continue;
         };
         r.service_reference_verified = false;
+        r.service_reference_owner_account = None;
         if !current(node)
             || !r.complete
             || !r.instances_explicit
@@ -122,6 +123,18 @@ pub(super) fn annotate(
         let Some(actual) = super::streaming::values(value, mask, &r.attribute, collection) else {
             continue;
         };
+        if node.resource_type == "aws_redshiftserverless_endpoint_access"
+            && r.attribute == "workgroup_name"
+            && (!value["owner_account"].is_null()
+                || !matches!(&mask["owner_account"], Value::Null | Value::Bool(false)))
+        {
+            let Some(account) = super::service_references::scalar(value, mask, &["owner_account"])
+                .and_then(crate::model::AwsAccountScope::new)
+            else {
+                continue;
+            };
+            r.service_reference_owner_account = Some(account);
+        }
         let expected = r
             .sources
             .iter()
@@ -142,27 +155,6 @@ pub(super) fn annotate(
                     false,
                 ) {
                     return None;
-                }
-                if node.resource_type == "aws_redshiftserverless_endpoint_access"
-                    && r.attribute == "workgroup_name"
-                {
-                    let (value, mask) = evidence[r.target];
-                    if !value["owner_account"].is_null()
-                        || !matches!(&mask["owner_account"], Value::Null | Value::Bool(false))
-                    {
-                        let owner =
-                            super::service_references::scalar(value, mask, &["owner_account"])?;
-                        if endpoint
-                            .provider_configuration
-                            .as_ref()?
-                            .account
-                            .as_ref()?
-                            .as_str()
-                            != owner
-                        {
-                            return None;
-                        }
-                    }
                 }
                 let (value, mask) = evidence[source];
                 super::service_references::scalar(value, mask, &[field])
@@ -193,14 +185,29 @@ pub(super) fn annotate(
     }
 }
 
+pub(super) fn bindings(raw: &Input, reference: &AttributeReference) -> bool {
+    super::streaming::bindings(raw, reference)
+        && reference
+            .service_reference_owner_account
+            .as_ref()
+            .is_none_or(|account| {
+                reference.sources.iter().all(|&source| {
+                    raw.nodes[source]
+                        .provider_configuration
+                        .as_ref()
+                        .and_then(|binding| binding.account.as_ref())
+                        == Some(account)
+                })
+            })
+}
+
 fn proof<'a>(raw: &'a Input, target: usize, attribute: &str) -> Option<&'a AttributeReference> {
     let mut refs = raw
         .attributes
         .iter()
         .filter(|r| r.target == target && r.attribute == attribute);
     let r = refs.next()?;
-    (refs.next().is_none() && r.service_reference_verified && super::streaming::bindings(raw, r))
-        .then_some(r)
+    (refs.next().is_none() && r.service_reference_verified && bindings(raw, r)).then_some(r)
 }
 
 fn network(raw: &Input, target: usize) -> Option<(usize, Vec<(usize, usize)>)> {

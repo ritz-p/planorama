@@ -103,6 +103,7 @@ pub(super) fn collect(
                     monitoring_verified: false,
                     source_attributes,
                     service_reference_verified: false,
+                    service_reference_owner_account: None,
                     ids_only: resolution.ids_only,
                     issues: resolution.issues,
                 });

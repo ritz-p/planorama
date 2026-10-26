@@ -1821,6 +1821,7 @@ Endpoint `workgroup_name` verifies the exact workgroup's `workgroup_name` for
 `Workgroup owner` navigation. An explicit `owner_account` additionally requires a
 matching verified workgroup account; unknown or foreign ownership cannot borrow a
 same-named workgroup. Cross-account ownership is outside this initial contract.
+Verified provider account scope is retained for all three supported types.
 Namespaces and endpoints are not embedded into network owners by service references.
 
 All references require unique current managed AWS identities, compatible
