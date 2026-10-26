@@ -1,0 +1,25 @@
+{
+  "format_version": "1.2",
+  "resource_changes": [
+    {
+      "address": "test.item",
+      "type": "test",
+      "mode": "managed",
+      "previous_address": "test.old",
+      "change": {
+        "actions": ["delete", "create"],
+        "importing": {"id": "NEVER_IMPORT_VALUE"},
+        "before": {"name": "NEVER_OLD_VALUE", "nested": {"size": 1}, "list": [1, 2], "secret": {"NEVER_KEY": "NEVER_SECRET_VALUE"}},
+        "after": {"name": "NEVER_NEW_VALUE", "nested": {"size": 2}, "list": [1], "secret": {"NEVER_KEY": "NEVER_CHANGED_SECRET"}, "future": null, "</script><script>alert(1)</script>": "NEVER_HOSTILE_VALUE"},
+        "after_unknown": {"future": true},
+        "before_sensitive": {"secret": {"NEVER_KEY": true}},
+        "after_sensitive": {"secret": true},
+        "replace_paths": [["nested", "size"]]
+      }
+    },
+    {"address": "test.item", "type": "test", "deposed": "old", "change": {"actions": ["delete"], "before": {"deposed_only": "NEVER_DEPOSED_VALUE"}, "after": null}},
+    {"address": "data.test.item", "type": "test", "mode": "data", "change": {"actions": ["read"], "before": {"data_only": 1}, "after": {"data_only": null}, "after_unknown": {"data_only": true}}},
+    {"address": "test.excluded", "type": "test", "change": {"actions": ["no-op"], "before": {"EXCLUDED_PATH": 1}, "after": {"EXCLUDED_PATH": 1}}},
+    {"address": "test.unavailable", "type": "test", "change": {"actions": ["update"]}}
+  ]
+}

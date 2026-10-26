@@ -25,6 +25,10 @@ values apply only to current objects.
 
 ## Replacement reasons
 
+The HTML selection panel also lists [changed attribute paths](viewer.md#changed-attribute-paths)
+from shared before/after analysis. These value-free paths stay separate from
+replacement triggers and do not change action inference, graph layout or SVG.
+
 Replacement path strings can also be collection keys or set elements. Before retaining paths, both `before_sensitive` and `after_sensitive` are checked. Paths entering a sensitive subtree are omitted in full (including when only a descendant is marked sensitive), so secret keys never reach the model, SVG titles, or data attributes. Other paths remain available; omitted paths are not replaced with misleading truncated paths.
 
 Resource-level `action_reason` is retained verbatim, including unknown future reason strings. `change.replace_paths` stores paths as typed string keys and unsigned integer indices, independently of the planned action. SVG titles and `data-action-reason` / `data-replace-paths` expose these details on resource elements and lowered relationships, with XML escaping. Paths use JSON-array notation so dotted keys, quoted map keys and numeric indices remain unambiguous. They identify attributes without storing their before/after values.

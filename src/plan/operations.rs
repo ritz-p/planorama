@@ -26,6 +26,7 @@ pub(super) fn parse(change: &Value) -> ChangeMetadata {
         _ => None,
     };
     ChangeMetadata {
+        changed_paths: super::changed_paths::collect(change),
         import,
         state_removal,
         replace_paths: change["replace_paths"].as_array().map(|paths| {

@@ -46,6 +46,28 @@ function selection(context, index, navigation, highlights, coordinator) {
     });
     copy.setAttribute('aria-label', `Copy Terraform address: ${resource.address} · ${caption.textContent}`);
     group.append(caption, field, copy, status); details.append(group);
+    const paths = resource.changed_paths;
+    const changeDetails = document.createElement('details');
+    const summary = document.createElement('summary'); summary.textContent = 'Changed attribute paths';
+    changeDetails.append(summary);
+    const message = text => { const p = document.createElement('p'); p.textContent = text; changeDetails.append(p); };
+    const list = (heading, entries) => {
+      if (!entries?.length) return;
+      const h = document.createElement('h4'); h.textContent = heading;
+      const ul = document.createElement('ul');
+      for (const entry of entries) { const li = document.createElement('li'); li.textContent = entry; ul.append(li); }
+      changeDetails.append(h, ul);
+    };
+    if (!paths?.available) message('Change information unavailable. This does not mean no attributes changed.');
+    else if (!paths.paths?.length && !paths.unknown_paths?.length && !paths.sensitive_omitted && !paths.truncated) message('No changed paths in the supplied before/after metadata.');
+    list('Changed paths', paths?.paths);
+    list('Unknown after values (change cannot be determined)', paths?.unknown_paths);
+    list('Replacement-trigger paths (separate from changed paths)', paths?.replacement_paths);
+    if (!paths?.replacement_available) message('Replacement-trigger information unavailable.');
+    if (paths?.sensitive_omitted) message('Sensitive subtrees omitted; this list is incomplete.');
+    if (paths?.truncated) message('Path or byte limit reached; this list is truncated.');
+    message('Paths only. Collection indices are positional; set elements are not matched by identity.');
+    details.append(changeDetails);
   }
   function select(id, restoring = false) {
     const el = byId(id);

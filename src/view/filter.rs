@@ -1,4 +1,4 @@
-use crate::model::architecture::{Action, ArchitectureGraph, ChangeMetadata, EdgeKind, StateId};
+use crate::model::architecture::{Action, ArchitectureGraph, EdgeKind, StateId};
 use crate::model::architecture::{Architecture, Endpoint};
 use std::collections::{BTreeMap, BTreeSet};
 
@@ -101,7 +101,7 @@ pub fn apply(all: &Architecture, options: &Options) -> Result<Architecture, Stri
             let key = (state.clone(), i);
             keys.insert(key.clone());
             if node.action != Action::Unchanged
-                || node.metadata != ChangeMetadata::default()
+                || node.metadata.has_operations()
                 || node.previous_address.is_some()
             {
                 changed.insert(key.clone());
@@ -129,7 +129,7 @@ pub fn apply(all: &Architecture, options: &Options) -> Result<Architecture, Stri
                     continue;
                 }
                 if change.action != Action::Unchanged
-                    || change.metadata != ChangeMetadata::default()
+                    || change.metadata.has_operations()
                     || change.previous_address.is_some()
                 {
                     changed.extend([from.clone(), to.clone()]);
@@ -468,7 +468,7 @@ fn selection_reasons(
                 continue;
             }
             let changed = change.action != Action::Unchanged
-                || change.metadata != ChangeMetadata::default()
+                || change.metadata.has_operations()
                 || change.previous_address.is_some();
             let reasons = result.reasons.entry(source.clone()).or_default();
             reasons.insert("lowered relationship provenance");

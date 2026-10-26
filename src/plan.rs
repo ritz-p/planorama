@@ -1,5 +1,6 @@
 mod address;
 mod attributes;
+mod changed_paths;
 mod checks;
 mod collections;
 mod drift;

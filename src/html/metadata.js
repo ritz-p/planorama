@@ -2,6 +2,7 @@ function metadata(svg, byId) {
   const resources = JSON.parse(byId('viewer-data').textContent).filter(r => byId(r.id));
   const resourceIds = new Set(resources.map(r => r.id));
   const providers = new Map(JSON.parse(byId('viewer-provider-data').textContent).map(([state, address, deposed, provider]) => [JSON.stringify([state, address, deposed]), provider]));
+  const changedPaths = new Map(JSON.parse(byId('viewer-provider-data').textContent).map(([state, address, deposed, , paths]) => [JSON.stringify([state, address, deposed]), paths]));
   const hex = text => Array.from(new TextEncoder().encode(text), byte => byte.toString(16).padStart(2, '0')).join('');
   const addressParts = address => {
     const parts = []; let start = 0, depth = 0, quoted = false, escaped = false;
@@ -41,6 +42,7 @@ function metadata(svg, byId) {
       }
     }
   }
+  for (const resource of resources) resource.changed_paths ||= changedPaths.get(JSON.stringify([resource.state, resource.address, resource.deposed]));
   const targets = new Map(resources.map(r => [r.id, r]));
   const title = el => el.querySelector(':scope > title')?.textContent || '';
   const label = r => `${r.state ? r.state + ':' : ''}${r.address} · ${r.mode}${r.deposed ? ' · deposed: ' + r.deposed : ''}`;
