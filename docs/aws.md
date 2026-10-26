@@ -1733,6 +1733,11 @@ credentials are copied into the output.
 
 ## DocumentDB (#697)
 
+Verified provider account scope is preserved for the cluster, instance and subnet
+group. Filtered placement requires every intermediate subnet-group, subnet and SG
+identity to remain visible; keeping only the cluster and its direct neighbors does
+not retain inferred VPC placement.
+
 `aws_docdb_cluster` and `aws_docdb_cluster_instance` retain their spatial cards;
 `aws_docdb_subnet_group` remains a shared logical selector. A cluster is placed
 inside a VPC only when its `db_subnet_group_name` explicitly references one group's

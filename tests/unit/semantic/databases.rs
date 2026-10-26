@@ -265,3 +265,52 @@ fn database_filtering_and_named_state_preserve_identity_without_borrowing_proof(
     assert!(out.contains("data-state-id=\"one\""));
     assert!(out.contains("data-state-id=\"two\""));
 }
+
+#[test]
+fn database_account_scope_and_filtered_network_proof_are_preserved() {
+    let mut value: Value = serde_json::from_str(FIXTURE).unwrap();
+    value["configuration"]["provider_config"]["aws"]["expressions"]["assume_role"] =
+        json!([{"role_arn":{"constant_value":"arn:aws:iam::123456789012:role/Test"}}]);
+    let parsed = crate::plan::evidence::tests::parse_fixture(&value.to_string()).unwrap();
+    let graph = semantic::transform(&parsed);
+    for node in &graph.nodes {
+        assert_eq!(
+            node.entity
+                .scope
+                .as_ref()
+                .unwrap()
+                .account
+                .as_ref()
+                .unwrap()
+                .as_str(),
+            "123456789012",
+            "{}",
+            node.address
+        );
+    }
+    let output = crate::svg::render(&graph, &crate::layout::Layout::new(&graph));
+    let doc = roxmltree::Document::parse(&output).unwrap();
+    assert!(
+        doc.descendants()
+            .any(|n| n.attribute("data-account") == Some("123456789012")
+                && n.attribute("data-region") == Some("us-east-1"))
+    );
+    let groups = crate::view::scope::groups(&graph, &crate::layout::ContainmentTree::new(&graph));
+    assert!(groups.keys().all(Option::is_some));
+    for depth in [0, 1, 2] {
+        let selected = view::single(
+            &graph,
+            &view::Options {
+                focus: Some("aws_docdb_cluster.main".into()),
+                depth: Some(depth),
+                ..Default::default()
+            },
+        )
+        .unwrap();
+        let placement = selected.edges.iter().any(|e| {
+            e.kind == EdgeKind::Containment
+                && selected.nodes[e.to].address == "aws_docdb_cluster.main"
+        });
+        assert_eq!(placement, depth == 2, "focus depth {depth}");
+    }
+}
