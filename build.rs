@@ -2,6 +2,8 @@ use std::{env, path::Path, process::Command};
 
 fn git(root: &Path, args: &[&str]) -> Option<String> {
     let output = Command::new("git")
+        .arg("-c")
+        .arg(format!("safe.directory={}", root.display()))
         .arg("-C")
         .arg(root)
         .args(args)

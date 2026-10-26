@@ -47,6 +47,10 @@ Tracked modifications (including staged changes) or non-ignored untracked files 
 Ignored build outputs do not affect this marker. The marker does not fingerprint
 dirty contents. Git must identify this package directory as its repository root;
 source archives inside an unrelated checkout cannot inherit its revision.
+Git acquisition and distribution checks trust only the current package/checkout
+directory through a command-scoped `safe.directory` entry. This supports Docker
+bind mounts owned by another UID without changing global Git configuration or
+trusting unrelated repositories.
 Missing Git, missing metadata, unborn HEAD or failed status checks yield unavailable
 revision without failing the build. No environment or hosting-site revision override
 is accepted. No paths, remotes, timestamps or input contents enter the metadata.

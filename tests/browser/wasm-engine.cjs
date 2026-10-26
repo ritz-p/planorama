@@ -23,8 +23,9 @@ async function main() {
     assert.deepEqual(fs.readdirSync(temp).sort(), ['LICENSE', 'LICENSE-APACHE', 'LICENSE-MIT', 'THIRD-PARTY-NOTICES.txt', 'manifest.json', 'planorama.js', 'planorama_bg.wasm']);
     const manifest = JSON.parse(fs.readFileSync(join(temp, 'manifest.json')));
     assert.equal(manifest.version, version);
-    const revision = execFileSync('git', ['rev-parse', 'HEAD'], {encoding: 'utf8'}).trim();
-    const dirty = execFileSync('git', ['status', '--porcelain', '--untracked-files=normal'], {encoding: 'utf8'}).length > 0;
+    const git = args => execFileSync('git', ['-c', `safe.directory=${process.cwd()}`, ...args], {encoding: 'utf8'});
+    const revision = git(['rev-parse', 'HEAD']).trim();
+    const dirty = git(['status', '--porcelain', '--untracked-files=normal']).length > 0;
     assert.equal(manifest.commit, revision + (dirty ? '-dirty' : ''));
     assert.equal(manifest.icon_artwork, false);
     assert.equal(manifest.memory.maximum_bytes, 4294967296);
