@@ -48,7 +48,7 @@ The following paths were checked against the pinned schema and resource document
 | `aws_batch_compute_environment` | `compute_resources.subnets`, `compute_resources.security_group_ids` | Basic spatial compute environment; scheduling policy stays logical. #700. |
 | `aws_sagemaker_endpoint` | `endpoint_config_name` | Basic spatial endpoint; model ownership is not network containment. #701. |
 | `aws_fsx_lustre_file_system` | `subnet_ids`, `security_group_ids`, `kms_key_id` | Basic spatial filesystem; network/key references missing. #702. |
-| `aws_dynamodb_table` | `replica.region_name`, `server_side_encryption.kms_key_arn` | Spatial table, explicit Backup endpoint and [table/configuration navigation](dynamodb.md) exist. DynamoDB Lambda event-source lowering, inline replica expansion and at-rest summaries remain deferred under #687. |
+| `aws_dynamodb_table` | `replica.region_name`, `server_side_encryption.kms_key_arn` | Spatial table, explicit Backup endpoint and [table/configuration navigation](dynamodb.md) exist. Import/export/restore references are tracked in #744; Lambda stream identity coordinates with #714. Inline replica expansion and at-rest summaries remain explicitly deferred in the #718 review. |
 | `aws_elasticache_replication_group` | `subnet_group_name`, `global_replication_group_id`, `user_group_ids` | Common-VPC placement via subnet group exists (#360); global/user-group references remain #691. No at-rest summary. |
 
 Implementation cross-checks: [classification](../src/provider/aws/classification.rs), [basic defaults](../src/provider/aws/basic_entries.rs), [placement](../src/provider/aws.rs), [containment](../src/provider/aws/containment/indirect.rs), [service references](../src/provider/aws/service_references.rs), [Backup endpoints](../src/provider/aws/backup.rs), [messaging](../src/provider/aws/messaging.rs) and [encryption allowlist](../src/provider/aws/encryption.rs). In particular, #601's summaries cover S3/SQS/RDS, not every service with encryption attributes. This distinction prevents borrowing adjacent-service support.
@@ -57,7 +57,73 @@ Implementation cross-checks: [classification](../src/provider/aws/classification
 
 Retain existing independent MSK/MQ/DocumentDB/Neptune/DMS/FSx/SageMaker endpoint cards while adding evidence in their bounded issues. Retain Batch compute-environment cards; review Network Firewall firewalls for independent cards. App Runner connectors, database subnet groups, namespace/configuration objects and policies need separate ownership/network decisions; do not promote all objects from a service together. Existing embedded EFS access points, KMS aliases and Secrets Manager versions remain examples of proven presentation ownership, not a default for every reference.
 
-MSK replicators/topics, DynamoDB items/exports, Network Firewall endpoint associations/transit-gateway/TLS variants, non-Lustre FSx, DocumentDB elastic/global variants, Neptune Analytics, DMS serverless and SageMaker Studio/training remain deferred outside the initial issue scopes. Their exact types and schema candidates remain in the register. Runtime health, effective IAM/firewall policy, packet routing, credentials, item data and arbitrary attribute dumping are intentionally unsupported. Encryption summaries for additional services require a separate allowlist review; do not copy a boolean from a similarly named field.
+MSK replicators/topics, Network Firewall endpoint associations/transit-gateway/TLS variants, non-Lustre FSx, DocumentDB elastic/global variants, Neptune Analytics, DMS serverless and SageMaker Studio/training remain deferred outside the initial issue scopes. Their exact types and schema candidates remain in the register. Runtime health, effective IAM/firewall policy, packet routing, credentials, item data and arbitrary attribute dumping are intentionally unsupported. Encryption summaries for additional services require a separate allowlist review; do not copy a boolean from a similarly named field.
+
+## NoSQL, caches and time-series review (#718)
+
+Reviewed planorama commit: `bebadbbeac605bae9efd6810957a89130616d947`.
+The 39 exact managed types owned by #718 now have a `review` object in
+[decisions](aws-semantic-decisions.json), with separate placement, ownership,
+network, references, scope and summary dispositions. Each records the official
+resource document at Provider commit `5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f`,
+checked input paths and their full collection ancestry from the pinned schema.
+The schema hash matches the inventory. This review changes no runtime defaults.
+
+Implementation evidence: [basic defaults](../src/provider/aws/basic_entries.rs),
+[classification](../src/provider/aws/classification.rs),
+[scope](../src/provider/aws/scope.rs),
+[DynamoDB verification](../src/provider/aws/dynamodb.rs),
+[service references](../src/provider/aws/service_references.rs),
+[indirect placement](../src/provider/aws/containment/indirect.rs),
+[VPC scope](../src/provider/aws/containment/vpc_scope.rs),
+[network verification](../src/provider/aws/network.rs),
+[Backup](../src/provider/aws/backup.rs), and
+[encryption allowlist](../src/provider/aws/encryption.rs).
+Behavioral evidence: [DynamoDB tests](../tests/unit/semantic/dynamodb.rs),
+[ElastiCache integration tests](../tests/integration/elasticache.rs),
+[indirect placement tests](../tests/unit/semantic/indirect.rs),
+[VPC scope tests](../tests/unit/semantic/vpc_scope.rs),
+[encryption tests](../tests/unit/semantic/encryption.rs) and the generated support
+matrix. Basic-only types have no dedicated behavior to claim from these tests.
+
+Completed #690 table/configuration navigation, #360 subnet-group placement,
+#516 serverless network proof and #508 Backup endpoints remain bounded. Open #691
+owns cache global/user/parameter configuration. New bounded work is #739 (DAX),
+#740 (MemoryDB), #741 (Keyspaces), #742 (InfluxDB), #743 (Timestream) and #744
+(DynamoDB data movement). Cross-service sources belong to these issues; endpoint
+audits #714, #719, #721, #726, #727 and #730 must not duplicate them.
+
+Contract distinctions checked during review:
+
+- DynamoDB legacy V1 `replica` is a set; V2 `global_table_arn` is a string.
+  Inline indexes/replicas/witness regions do not identify managed Terraform nodes.
+  GSI deprecated hash/range keys and newer key-schema blocks remain data schema,
+  not separate architecture resources. Table items contain arbitrary JSON.
+- Cache `user_ids`, `user_group_ids`, subnet and SG attributes are sets.
+  InfluxDB documentation calls its subnet/SG attributes lists, but both managed
+  schemas use sets. Known, complete endpoint evidence is required for every member.
+- ElastiCache replication-group `at_rest_encryption_enabled` is a string in the
+  pinned schema; the global group's similarly named output is computed. Neither
+  is in the existing encryption-summary allowlist. Passwords and access strings
+  must not enter summaries even where the schema omits a sensitive marker.
+- Global group suffixes are not full IDs. MemoryDB multi-region parameter names
+  cannot resolve to ordinary regional parameter groups. InfluxDB's parameter-group
+  identifier has no corresponding managed type in this inventory; its initial
+  `bucket` is an InfluxDB bucket, not S3.
+- Timestream scheduled queries use `execution_role_arn`; destination identity
+  requires both database and table. SQL, computed run histories and column mappings
+  are not reference evidence. Timestream database KMS IDs require key ARNs, excluding
+  alias ARNs. QLDB's `AWS_OWNED_KMS_KEY` is a sentinel, not a key endpoint.
+
+No listed type is a verified alias of another managed type. Data-only entries in
+the support matrix do not inherit these managed decisions. Shared users, ACLs,
+parameter groups and network selectors remain independent. Scope eligibility is
+not account evidence: basic fallback clears account, regional types require known
+provider/resource-region evidence, and global objects do not propagate their
+provider region into members. Plain ARN substrings never supply ownership proof.
+The existing reference contract requires explicit unique current managed endpoints,
+correct output attributes, equal known nonempty values, compatible bindings and
+state identity; current configuration cannot establish historical/deposed links.
 
 ## Maintenance and verification
 

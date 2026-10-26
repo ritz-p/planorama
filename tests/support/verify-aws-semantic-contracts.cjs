@@ -12,3 +12,22 @@ for(const line of text.split('\n').filter(l=>l.startsWith('| `aws_'))){
  const inv=JSON.parse(fs.readFileSync('tests/fixtures/aws-inventory/6.70.0.json'));const resource=inv.resources.find(r=>r.type===type);
  const doc=fs.readFileSync(process.argv[3]+'/'+resource.documentation,'utf8');for(const p of paths)if(!doc.includes('`'+p.split('.').at(-1)+'`'))throw Error('Missing documented field '+type+' '+p);
 }
+
+const reviewed=JSON.parse(fs.readFileSync('docs/aws-semantic-decisions.json')).types;
+for(const [type,{review}] of Object.entries(reviewed)) {
+ if(!review) continue;
+ const doc=fs.readFileSync(process.argv[3]+'/'+review.officialDocumentation,'utf8');
+ for(const [path,expected] of Object.entries(review.shapes)) {
+  let block=schema[type].block; const actual=[]; const parts=path.split('.');
+  for(const part of parts.slice(0,-1)) {
+   const child=block.block_types?.[part];
+   if(!child) throw Error(type+': '+path);
+   actual.push(child.nesting_mode); block=child.block;
+  }
+  const leaf=parts.at(-1); const attr=block.attributes?.[leaf]||block.block_types?.[leaf];
+  if(!attr||!doc.includes('`'+leaf+'`')) throw Error('Missing contract '+type+': '+path);
+  actual.push(attr.type||attr.nesting_mode);
+  if(JSON.stringify(actual)!==JSON.stringify(expected)) throw Error('Shape mismatch '+type+': '+path);
+ }
+ console.log(type+' reviewed shapes verified');
+}

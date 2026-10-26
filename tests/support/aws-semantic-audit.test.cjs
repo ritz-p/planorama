@@ -1,4 +1,4 @@
-﻿'use strict';
+'use strict';
 const test=require('node:test');
 const assert=require('node:assert/strict');
 const fs=require('node:fs');
@@ -28,4 +28,19 @@ test('representative evidence includes nested network paths without asserting im
  assert.equal(decisions.aws_msk_cluster.status,'Basic-only');
  assert.equal(decisions.aws_dynamodb_table.status,'Partial');
  assert.match(decisions.aws_dynamodb_table.gap,/NOT implemented/);
+});
+
+test('NoSQL audit covers its exact managed denominator with six dimensions and pinned contracts',()=>{
+ const services=new Set(['dynamodb','dax','elasticache','memorydb','keyspaces','qldb','timestreaminfluxdb','timestreamquery','timestreamwrite']);
+ const expected=read('tests/fixtures/aws-inventory/6.70.0.json').resources.filter(r=>services.has(r.service));
+ const entries=Object.entries(read('docs/aws-semantic-decisions.json').types).filter(([,d])=>d.review?.issue===718);
+ assert.equal(expected.length,39);
+ assert.deepEqual(entries.map(([type])=>type).sort(),expected.map(r=>r.type).sort());
+ for(const [type,{review}] of entries) {
+  assert.equal(review.providerCommit,'5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f');
+  assert.match(review.implementationCommit,/^[a-f0-9]{40}$/);
+  assert.equal(review.officialDocumentation,expected.find(r=>r.type===type).documentation);
+  assert.deepEqual(Object.keys(review.shapes),review.fields);
+  for(const key of ['placement','ownership','network','references','scope','summaries']) assert.ok(review[key]?.trim().length>0,type+': '+key);
+ }
 });

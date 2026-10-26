@@ -45,8 +45,8 @@ configuration values are emitted. Stream references do not assert delivery,
 authorization, health or reachability. Contributor Insights index selection does
 not invent a separate index owner.
 
-Remaining gaps are recorded under tracking issue #687 in the
-[semantic gap register](aws-semantic-gaps.md): table export/item content handling,
+Remaining gaps are recorded by the #718 review in the
+[semantic gap register](aws-semantic-gaps.md): table export/import/restore references (#744), deliberately excluded item contents,
 inline replica/GSI identity expansion, stream-policy targets, transformed replica
 tag ARNs, Lambda DynamoDB stream lowering and at-rest summaries remain deferred.
 
