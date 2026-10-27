@@ -1,5 +1,6 @@
 mod aliases;
 mod api_gateway;
+mod apprunner;
 mod associations;
 mod autoscaling;
 mod backup;
@@ -211,6 +212,7 @@ pub(super) fn transform(raw: crate::semantic::Input) -> crate::model::Graph {
     let mut graph = security_groups::infer(&raw, containment::infer(&raw));
     streaming::present(&raw, &mut graph);
     databases::present(&raw, &mut graph);
+    apprunner::present(&raw, &mut graph);
     routes::present(&raw, &mut graph);
     members::present(&raw, &mut graph);
     monitoring::present(&raw, &mut graph);

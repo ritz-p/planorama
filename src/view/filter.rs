@@ -86,6 +86,7 @@ fn placement_available(
             | "aws_mq_broker"
             | "aws_redshiftserverless_workgroup"
             | "aws_redshiftserverless_endpoint_access"
+            | "aws_apprunner_vpc_connector"
     ) {
         return true;
     }

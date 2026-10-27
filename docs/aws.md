@@ -1314,6 +1314,48 @@ the omitted source identities as provenance, without creating cards or paths.
 Cached data resources in prior state are
 included when still present in configuration. See [data.svg](../examples/data.svg).
 
+## App Runner networking (#694)
+
+The service remains Spatial; VPC connector and VPC ingress connection remain
+independent Logical resources. Deployment and autoscaling configuration retain
+their Logical defaults. A shared connector is never embedded into a service.
+
+| Managed input | Explicit managed endpoint / output | Proof |
+| --- | --- | --- |
+| `aws_apprunner_service.network_configuration.egress_configuration.vpc_connector_arn` | `aws_apprunner_vpc_connector.arn` | One network/egress block, known `egress_type = VPC`, matching full connector ARN including revision; shown as Egress connector. |
+| `aws_apprunner_vpc_connector.subnets` | `aws_subnet.id` | Complete nonempty set of unique known IDs; shown as Configured subnets. |
+| `aws_apprunner_vpc_connector.security_groups` | `aws_security_group.id` | Complete nonempty set of unique known IDs; shown as Configured security groups. |
+| `aws_apprunner_vpc_ingress_connection.service_arn` | `aws_apprunner_service.arn` | Unique matching known service ARN; shown as Ingress service. |
+
+Connector VPC context additionally requires every subnet and SG to explicitly
+reference the same current managed VPC with matching known `vpc_id`/`id` values.
+Neither this context nor ingress service navigation puts the service in a customer
+VPC or subnet. Egress/ingress references are validated independently of connector
+network proof. Ingress endpoint/VPC-pair navigation is deferred pending a separate
+endpoint-type/service and VPC-consistency contract.
+
+Every proof requires explicit unambiguous Terraform references to the exact output,
+compatible provider/account/region bindings and current managed identities.
+Unknown, partial, duplicate-valued, literal-only, wrong-type/output, deleted or
+deposed evidence stays unproven. Missing/unknown egress mode never defaults to VPC.
+Filtered endpoints show Unavailable without restoring excluded resources; equally
+named resources in another state cannot supply missing proof. Action/import/move
+metadata and exactly-once coverage remain intact. Proven provider account scope is
+retained for these three managed types; ARN strings do not invent account identity.
+
+Service URLs, image identifiers, environment variables/secrets, credentials and
+runtime status are not rendered. Relationships do not imply network reachability.
+Configuration/domain references remain #776. See the maintained
+[SVG](../examples/apprunner.svg) and [HTML](../examples/apprunner.html).
+
+Verified against AWS Provider 6.70.0 commit
+`5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f`:
+[service](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/website/docs/r/apprunner_service.html.markdown),
+[connector](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/website/docs/r/apprunner_vpc_connector.html.markdown),
+[ingress connection](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/website/docs/r/apprunner_vpc_ingress_connection.html.markdown).
+The schema uses sets for connector subnet/SG collections. The synthetic fixture
+models known planned values; it does not claim an applied AWS deployment.
+
 ## ECR repositories
 
 `aws_ecr_repository` is a regional spatial card. `aws_ecr_repository_policy`

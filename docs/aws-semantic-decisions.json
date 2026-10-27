@@ -1,10 +1,10 @@
 {
   "types": {
     "aws_apprunner_service": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 694,
-      "gap": "#713 reviewed: Missing: VPC-only egress connector ARN #694; scaling/repository-auth/instance-role/enabled observability #776. Deferred: KMS until key-only ARN and encryption summary contract is selected. Image identifiers/URLs do not prove ECR ownership.  Intentionally unsupported: egress connector subnets do not contain service; ingress is a separate connection #694. Deferred: network mode and encryption summary require known/unknown allowlist; environment maps, build commands and runtime status excluded.",
+      "gap": "Implemented #694: verified VPC-egress connector ARN, ingress service ARN, complete connector subnet/SG references and common-VPC context. Service remains outside customer subnets; connectors stay independent logical resources. See aws.md#app-runner-networking-694. #713 review preserves the historical baseline; auxiliary configuration #776 and deferred ingress endpoint/VPC-pair proof remain separate.",
       "review": {
         "issue": 713,
         "implementationCommit": "f30289f73269a8a348818dd6e2a8bc44c22f22aa",
@@ -75,10 +75,10 @@
       }
     },
     "aws_apprunner_vpc_connector": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 694,
-      "gap": "#713 reviewed: Missing: complete subnet/SG sets with matching IDs and common VPC #694; ARN includes revision.  Missing: verified common-VPC context #694; retain logical shared connector, no service subnet inheritance. Intentionally unsupported: status/revision activity is not reachability; subnet/SG identity navigation belongs to #694.",
+      "gap": "Implemented #694: verified VPC-egress connector ARN, ingress service ARN, complete connector subnet/SG references and common-VPC context. Service remains outside customer subnets; connectors stay independent logical resources. See aws.md#app-runner-networking-694. #713 review preserves the historical baseline; auxiliary configuration #776 and deferred ingress endpoint/VPC-pair proof remain separate.",
       "review": {
         "issue": 713,
         "implementationCommit": "f30289f73269a8a348818dd6e2a8bc44c22f22aa",
@@ -119,10 +119,10 @@
       }
     },
     "aws_apprunner_vpc_ingress_connection": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 694,
-      "gap": "#713 reviewed: Missing: service ARN #694. Deferred: endpoint/VPC pair navigation until endpoint service/type and VPC consistency have a dedicated contract.  Intentionally unsupported: ingress connection does not place the service in customer VPC or egress subnets. Intentionally unsupported: domain_name and status are computed connectivity metadata, not health proof.",
+      "gap": "Implemented #694: verified VPC-egress connector ARN, ingress service ARN, complete connector subnet/SG references and common-VPC context. Service remains outside customer subnets; connectors stay independent logical resources. See aws.md#app-runner-networking-694. #713 review preserves the historical baseline; auxiliary configuration #776 and deferred ingress endpoint/VPC-pair proof remain separate.",
       "review": {
         "issue": 713,
         "implementationCommit": "f30289f73269a8a348818dd6e2a8bc44c22f22aa",

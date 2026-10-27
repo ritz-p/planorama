@@ -51,6 +51,9 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
                 | "aws_redshiftserverless_namespace"
                 | "aws_redshiftserverless_workgroup"
                 | "aws_redshiftserverless_endpoint_access"
+                | "aws_apprunner_service"
+                | "aws_apprunner_vpc_connector"
+                | "aws_apprunner_vpc_ingress_connection"
         )
     {
         account = None;
