@@ -11,6 +11,7 @@ pub fn collect(plan: &crate::model::TerraformPlan) -> Vec<Diagnostic> {
     found.extend(super::service_references::diagnostics(raw));
     found.extend(super::messaging::diagnostics(raw));
     found.extend(super::streaming::diagnostics(raw));
+    found.extend(super::networkfirewall::diagnostics(raw));
     for node in &plan.nodes {
         if node.provider.is_aws()
             && matches!(

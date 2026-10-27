@@ -32,6 +32,7 @@ mod members;
 mod messaging;
 mod monitoring;
 mod network;
+pub(crate) mod networkfirewall;
 pub(crate) mod organization_accounts;
 pub(crate) mod organization_policies;
 pub(crate) mod organizations;
@@ -213,6 +214,7 @@ pub(super) fn transform(raw: crate::semantic::Input) -> crate::model::Graph {
     streaming::present(&raw, &mut graph);
     databases::present(&raw, &mut graph);
     apprunner::present(&raw, &mut graph);
+    networkfirewall::present(&raw, &mut graph);
     routes::present(&raw, &mut graph);
     members::present(&raw, &mut graph);
     monitoring::present(&raw, &mut graph);

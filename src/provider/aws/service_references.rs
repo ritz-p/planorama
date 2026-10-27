@@ -10,6 +10,9 @@ use serde_json::Value;
 pub(super) mod tests;
 
 pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
+    if let Some(label) = super::networkfirewall::label(resource, attribute) {
+        return Some(label);
+    }
     if let Some(label) = super::apprunner::label(resource, attribute) {
         return Some(label);
     }
@@ -492,6 +495,7 @@ pub(crate) fn annotate(
     super::streaming::annotate(nodes, references, evidence);
     super::databases::annotate(nodes, references, evidence);
     super::apprunner::annotate(nodes, references, evidence);
+    super::networkfirewall::annotate(nodes, references, evidence);
     super::lambda::annotate(nodes, references, evidence);
     super::api_gateway::annotate(nodes, references, evidence);
     super::rds_proxy::validate_targets(nodes, references, evidence);
@@ -512,6 +516,12 @@ pub(crate) fn annotate(
 
 pub(super) fn verified(raw: &Input, reference: &AttributeReference) -> bool {
     reference.service_reference_verified
+        && (super::networkfirewall::label(
+            &raw.nodes[reference.target].resource_type,
+            &reference.attribute,
+        )
+        .is_none()
+            || super::apprunner::bindings(raw, reference))
         && (super::apprunner::label(
             &raw.nodes[reference.target].resource_type,
             &reference.attribute,
@@ -697,7 +707,8 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
         if !node.provider.is_aws() {
             continue;
         }
-        if super::s3::aggregate(raw, reference) {
+        if super::s3::aggregate(raw, reference) || super::networkfirewall::aggregate(raw, reference)
+        {
             graph.nodes[reference.target]
                 .references
                 .retain(|r| r.dependency || r.attribute != reference.attribute);
@@ -770,6 +781,7 @@ pub(super) fn diagnostics(raw: &Input) -> Vec<Diagnostic> {
             let node = &raw.nodes[reference.target];
             (node.provider.is_aws()
                 && !super::s3::aggregate(raw, reference)
+                && !super::networkfirewall::aggregate(raw, reference)
                 && label(&node.resource_type, &reference.attribute).is_some()
                 && !verified(raw, reference))
             .then(|| Diagnostic {

@@ -54,6 +54,10 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
                 | "aws_apprunner_service"
                 | "aws_apprunner_vpc_connector"
                 | "aws_apprunner_vpc_ingress_connection"
+                | "aws_networkfirewall_firewall"
+                | "aws_networkfirewall_firewall_policy"
+                | "aws_networkfirewall_rule_group"
+                | "aws_networkfirewall_logging_configuration"
         )
     {
         account = None;

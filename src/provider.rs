@@ -5,7 +5,9 @@ pub(crate) fn has_indexed_service_references(
     provider: &crate::model::ProviderIdentity,
     resource: &str,
 ) -> bool {
-    provider.is_aws() && aws::s3::indexed_resource(resource)
+    provider.is_aws()
+        && (aws::s3::indexed_resource(resource)
+            || resource == "aws_networkfirewall_logging_configuration")
 }
 
 pub(crate) fn indexed_service_reference(
@@ -13,7 +15,9 @@ pub(crate) fn indexed_service_reference(
     resource: &str,
     attribute: &str,
 ) -> bool {
-    provider.is_aws() && aws::s3::indexed_attribute(resource, attribute).is_some()
+    provider.is_aws()
+        && (aws::s3::indexed_attribute(resource, attribute).is_some()
+            || aws::networkfirewall::indexed_attribute(resource, attribute))
 }
 
 pub(crate) fn reference_label(

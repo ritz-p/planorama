@@ -2663,10 +2663,10 @@
       }
     },
     "aws_networkfirewall_firewall": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 693,
-      "gap": "#716 reviewed: firewall_policy_arn -> policy arn #693; transit_gateway_id variant #792; computed endpoint IDs are not Terraform resources. Current basic Logical display has no dedicated relationships. Follow-up #693; see six dimensions and pinned contracts in review.",
+      "gap": "Implemented #693: independent Firewall card with complete VPC/subnet proof, typed policy/rule-group ARN navigation and verified logging owner/destination map-key references. Shared policies/groups remain logical. See aws.md#network-firewall-693. #716 review preserves the historical baseline; TGW, endpoint, TLS and auxiliary contracts remain #792; KMS summaries deferred pending separate allowlist.",
       "review": {
         "issue": 716,
         "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
@@ -2715,10 +2715,10 @@
       }
     },
     "aws_networkfirewall_firewall_policy": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 693,
-      "gap": "#716 reviewed: Stateful/stateless group ARN sets require exact group type #693; shared TLS configuration ARN #792. Current basic Logical display has no dedicated relationships. Follow-up #693; see six dimensions and pinned contracts in review.",
+      "gap": "Implemented #693: independent Firewall card with complete VPC/subnet proof, typed policy/rule-group ARN navigation and verified logging owner/destination map-key references. Shared policies/groups remain logical. See aws.md#network-firewall-693. #716 review preserves the historical baseline; TGW, endpoint, TLS and auxiliary contracts remain #792; KMS summaries deferred pending separate allowlist.",
       "review": {
         "issue": 716,
         "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
@@ -2762,10 +2762,10 @@
       }
     },
     "aws_networkfirewall_rule_group": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 693,
-      "gap": "#716 reviewed: Incoming typed policy references #693; reference_sets ip_set_references need explicit supported prefix-list/resource-set proof #792. Current basic Logical display has no dedicated relationships. Follow-up #693; see six dimensions and pinned contracts in review.",
+      "gap": "Implemented #693: independent Firewall card with complete VPC/subnet proof, typed policy/rule-group ARN navigation and verified logging owner/destination map-key references. Shared policies/groups remain logical. See aws.md#network-firewall-693. #716 review preserves the historical baseline; TGW, endpoint, TLS and auxiliary contracts remain #792; KMS summaries deferred pending separate allowlist.",
       "review": {
         "issue": 716,
         "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
@@ -2804,10 +2804,10 @@
       }
     },
     "aws_networkfirewall_logging_configuration": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 693,
-      "gap": "#716 reviewed: firewall_arn -> firewall ARN; typed destination map bucketName/logGroup/deliveryStream -> S3 bucket/log group/Firehose name. No prefix inference. Current basic Logical display has no dedicated relationships. Follow-up #693; see six dimensions and pinned contracts in review.",
+      "gap": "Implemented #693: independent Firewall card with complete VPC/subnet proof, typed policy/rule-group ARN navigation and verified logging owner/destination map-key references. Shared policies/groups remain logical. See aws.md#network-firewall-693. #716 review preserves the historical baseline; TGW, endpoint, TLS and auxiliary contracts remain #792; KMS summaries deferred pending separate allowlist.",
       "review": {
         "issue": 716,
         "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
