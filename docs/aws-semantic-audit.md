@@ -38,8 +38,8 @@ The following paths were checked against the pinned schema and resource document
 | --- | --- | --- |
 | `aws_msk_cluster` | `broker_node_group_info.client_subnets`, `broker_node_group_info.security_groups`, `configuration_info.arn` | Verified common-VPC subnet/SG and configuration ARN/revision rules (#688); other dimensions retain the historical #721 review. |
 | `aws_mq_broker` | `subnet_ids`, `security_groups`, `configuration.id` | Verified common-VPC subnet/SG and configuration ID/revision rules (#689); other dimensions retain the historical #721 review. |
-| `aws_apprunner_service` | `network_configuration.egress_configuration.vpc_connector_arn` | Spatial service; connector reference is egress configuration, not service subnet ownership. #694. |
-| `aws_apprunner_vpc_connector` | `subnets`, `security_groups` | Logical basic object; verify network context without turning every configuration into a card. #694. |
+| `aws_apprunner_service` | `network_configuration.egress_configuration.vpc_connector_arn` | Verified VPC-egress connector ARN #694; service remains spatial without customer subnet ownership. |
+| `aws_apprunner_vpc_connector` | `subnets`, `security_groups` | Verified complete subnet/SG references and common-VPC context #694; shared connector remains logical. |
 | `aws_redshiftserverless_workgroup` | `namespace_name`, `subnet_ids`, `security_group_ids` | Verified namespace/workgroup owner navigation and independent workgroup/endpoint VPC proof #695; provisioned Redshift #506 remains separate. |
 | `aws_opensearchserverless_vpc_endpoint` | `vpc_id`, `subnet_ids`, `security_group_ids` | Basic endpoint; policy JSON is not collection ownership evidence. #696. |
 | `aws_docdb_cluster` | `db_subnet_group_name`, `vpc_security_group_ids` | Verified group/SG common-VPC placement and instance membership #697; other dimensions retain historical #717 review. |
@@ -89,7 +89,8 @@ remain bounded by [their contracts](aws.md#ecr-repositories). They do not establ
 embedded service ownership. EKS node-group/Fargate subnet proof is stricter than
 legacy cluster/service placement; this audit does not silently broaden the latter.
 
-App Runner networking remains #694. New bounded work is #775 (App Mesh), #776
+App Runner networking is implemented by #694; historical review objects preserve
+the earlier baseline. New bounded work is #775 (App Mesh), #776
 (App Runner configuration), #777 (ECR Public and registry configuration), #778
 (ECS capacity), #779 (ECS workloads), #780 (EKS auxiliary configuration), #781
 (Beanstalk) and #782 (Cloud Map). Source/helper relationships belong to those

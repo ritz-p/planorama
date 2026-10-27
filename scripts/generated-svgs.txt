@@ -98,3 +98,4 @@ examples/mq.svg
 examples/docdb.svg
 examples/neptune.svg
 examples/redshift-serverless.svg
+examples/apprunner.svg

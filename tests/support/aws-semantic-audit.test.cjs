@@ -71,7 +71,7 @@ test('representative evidence includes nested network paths without asserting im
  assert.ok(candidates.aws_msk_cluster.includes('broker_node_group_info.client_subnets'));
  assert.ok(candidates.aws_apprunner_service.includes('network_configuration.egress_configuration.vpc_connector_arn'));
  const decisions=read('docs/aws-semantic-decisions.json').types;
- assert.equal(decisions.aws_apprunner_service.status,'Basic-only');
+ assert.equal(decisions.aws_apprunner_service.status,'Partial');
  assert.equal(decisions.aws_dynamodb_table.status,'Partial');
  assert.match(decisions.aws_dynamodb_table.gap,/NOT implemented/);
 });
