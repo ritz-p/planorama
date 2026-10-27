@@ -103,6 +103,13 @@ reference/dependency navigation across spatial endpoints without inferring loggi
 delivery or ownership. ECS Clusters are independent cards; verified Service
 membership uses service-reference metadata without changing network placement or
 creating presentation ownership. Task Definitions remain Logical.
+
+Network Firewall logging configurations become embedded members only after a
+unique compatible `firewall_arn` proof. Unproven configurations remain Logical;
+removing a proven owner through selection releases its member to an independent
+card. Shared firewall policies and rule groups remain Logical without embedded
+ownership. [Network Firewall](aws.md#network-firewall-693) defines the separate
+VPC/subnet and destination proofs.
 Glue Database, Crawler and Job are independent cards. Tables reuse service-member
 measurements under an explicitly verified Database with matching catalog IDs and
 regions, compatible provider scope and no incoming attribute references. Catalog

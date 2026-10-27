@@ -1039,7 +1039,7 @@ pub(in crate::provider::aws) const ENTRIES: &[Basic] = &[
     entry!("aws_network_interface_permission", "Amazon VPC", Policy, Logical, Regional, Some(ResourceIcon::Vpc)),
     entry!("aws_network_interface_sg_attachment", "Amazon VPC", Association, Logical, Regional, Some(ResourceIcon::Vpc)),
     entry!("aws_networkfirewall_container_association", "AWS Network Firewall", Association, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AWSNetworkFirewall))),
-    entry!("aws_networkfirewall_firewall", "AWS Network Firewall", Connector, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AWSNetworkFirewall))),
+    entry!("aws_networkfirewall_firewall", "AWS Network Firewall", Connector, Spatial, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AWSNetworkFirewall))),
     entry!("aws_networkfirewall_firewall_policy", "AWS Network Firewall", Policy, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AWSNetworkFirewall))),
     entry!("aws_networkfirewall_firewall_transit_gateway_attachment_accepter", "AWS Network Firewall", Association, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AWSNetworkFirewall))),
     entry!("aws_networkfirewall_logging_configuration", "AWS Network Firewall", Controller, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AWSNetworkFirewall))),

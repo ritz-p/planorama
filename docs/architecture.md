@@ -218,7 +218,7 @@ when placing subsequent text and child bounds. Badges stay separate from service
 icons and external-mode indicators, preserving space for complete addresses.
 
 RDS Cluster Instances, EFS Access Points, KMS Aliases, S3 encryption configurations, Secret Versions and eligible
-ACM certificates reuse
+ACM certificates and verified Network Firewall logging configurations reuse
 the embedded-card measurements and layout projection.
 The [resource presentation contract](resource-presentation.md) distinguishes proposed
 ownership from effective selected presentation.

@@ -15,6 +15,9 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             continue;
         }
         let (attribute, label, section) = match node.resource_type.as_str() {
+            "aws_networkfirewall_logging_configuration" => {
+                ("firewall_arn", "Logging firewall", "Logging")
+            }
             "aws_kms_alias" => ("target_key_id", "Alias key", "Aliases"),
             "aws_secretsmanager_secret_version" => ("secret_id", "Version secret", "Versions"),
             "aws_glue_catalog_table" => {
@@ -61,5 +64,8 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             label,
             section,
         });
+        if node.resource_type == "aws_networkfirewall_logging_configuration" {
+            graph.nodes[index].placement = crate::model::Placement::Spatial;
+        }
     }
 }

@@ -1,5 +1,58 @@
 # AWS architecture relationships
 
+## Network Firewall (#693)
+
+`aws_networkfirewall_firewall` is an independent spatial card. A VPC firewall is
+placed in its VPC only when `vpc_id` and every `subnet_mapping.subnet_id` have
+explicit, unique managed references with matching known IDs, and each subnet's
+verified VPC agrees. A multi-AZ firewall is not placed in one arbitrary subnet.
+Unknown, partial, duplicate or conflicting evidence leaves the card outside the
+VPC with a diagnostic. TGW/AZ-mapping variants do not use this containment rule.
+
+Dedicated navigation uses these Provider 6.70.0 contracts, verified at commit
+`5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f`:
+
+| Consumer / input | Verified endpoint / output |
+| --- | --- |
+| Firewall `firewall_policy_arn` | `aws_networkfirewall_firewall_policy.arn` |
+| Policy `firewall_policy.stateful_rule_group_reference.resource_arn` | Complete set of `aws_networkfirewall_rule_group.arn` with known `type = STATEFUL` |
+| Policy `firewall_policy.stateless_rule_group_reference.resource_arn` | Complete set of rule-group ARNs with known `type = STATELESS` |
+| Logging configuration `firewall_arn` | Firewall `arn`; proven configuration is shown in that firewall's Logging section |
+| Logging destination `bucketName` with type `S3` | `aws_s3_bucket.bucket` |
+| Logging destination `logGroup` with type `CloudWatchLogs` | `aws_cloudwatch_log_group.name` |
+| Logging destination `deliveryStream` with type `KinesisDataFirehose` | `aws_kinesis_firehose_delivery_stream.name` |
+
+Log destinations are under `logging_configuration.log_destination_config.log_destination`.
+Their references must identify the map key, not merely the whole map: a whole-map
+reference cannot distinguish a destination from a `prefix` expression and remains
+generic. Explicit block counts must agree with known values. Set order is not
+identity; the typed destination must match uniquely. Names or equal literal values
+alone never create links. Unknown discriminator/key values and ambiguous matches
+remain unverified. All three destination variants may coexist.
+
+Policies and rule groups remain shared logical resources with independent identity;
+neither ownership nor subnet placement propagates through policy references.
+Logging ownership requires a unique compatible firewall and preserves its own
+Terraform provenance/coverage. No logging configuration values, rule bodies,
+policy actions, TLS material or computed endpoint IDs are displayed.
+
+Only current managed AWS endpoints with explicit instances, compatible provider
+bindings and known equal regions are accepted. Conflicting or unresolved provider
+and account evidence is rejected. Verified account scope is retained for these
+four types; JSON-only account evidence stays unknown. Named states remain isolated;
+current configuration does not fabricate deleted/deposed links. Filtering retains
+unavailable-endpoint explanations rather than dangling navigation.
+
+Endpoint associations, transit-gateway variants/accepters, TLS inspection,
+container monitoring and resource-policy/prefix-list references remain tracked in
+#792 following the [#716 audit](aws-semantic-audit.md). KMS key/alias references
+and summaries await their separate evidence/allowlist contract. No packet inspection,
+effective rule enforcement, health or reachability is inferred.
+
+The maintained [example](../examples/networkfirewall.svg),
+[fixture](../tests/fixtures/networkfirewall-plan.json) and
+[tests](../tests/unit/semantic/networkfirewall.rs) cover these boundaries.
+
 Inventory-wide basic display does not imply the dedicated capabilities described here.
 See the [semantic audit and exact-type gap register](aws-semantic-audit.md) for current
 limits, intentional exclusions and bounded service follow-ups.
