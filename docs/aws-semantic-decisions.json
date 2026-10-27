@@ -2685,7 +2685,7 @@
         "network": "Missing: complete explicit VPC/subnet mapping proof #693; TGW/AZ variant separate #792.",
         "references": "Missing: firewall_policy_arn -> policy arn #693; transit_gateway_id variant #792; computed endpoint IDs are not Terraform resources.",
         "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
-        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "summaries": "Not applicable: aws_networkfirewall_firewall uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (id, arn, vpc_id, subnet_mapping.subnet_id, transit_gateway_id, availability_zone_mapping.availability_zone_id, firewall_policy_arn) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/networkfirewall_firewall.html.markdown",
         "shapes": {
           "id": [
@@ -8864,7 +8864,7 @@
         "network": "Not applicable: BGP peer configuration does not locate a subnet.",
         "references": "Missing: virtual_interface_id -> exact managed VIF id; BGP addresses/ASN are not endpoints.",
         "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
-        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "summaries": "Not applicable: aws_dx_bgp_peer uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (virtual_interface_id, bgp_peer_id) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/dx_bgp_peer.html.markdown",
         "shapes": {
           "virtual_interface_id": [
@@ -8943,7 +8943,7 @@
         "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
         "references": "Missing: connection_id -> connection id; lag_id -> LAG id; require both compatible endpoints.",
         "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
-        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "summaries": "Not applicable: aws_dx_connection_association uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (connection_id, lag_id) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/dx_connection_association.html.markdown",
         "shapes": {
           "connection_id": [
@@ -8973,7 +8973,7 @@
         "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
         "references": "Missing: connection_id -> hosted connection id; id is the connection ID, not a distinct connection. ",
         "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
-        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "summaries": "Not applicable: aws_dx_connection_confirmation uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (connection_id, id) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/dx_connection_confirmation.html.markdown",
         "shapes": {
           "connection_id": [
@@ -9005,7 +9005,7 @@
         "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
         "references": "Not applicable: No outbound resource reference; retain distinct global gateway for VIF/association endpoints.",
         "scope": "Partial: Global management eligibility in basic_entries.rs/scope.rs; account remains unknown. Regional endpoints do not propagate region to global object.",
-        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "summaries": "Not applicable: aws_dx_gateway uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (id, arn, owner_account_id) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/dx_gateway.html.markdown",
         "shapes": {
           "id": [
@@ -9044,7 +9044,7 @@
         "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
         "references": "Missing: Single-account VGW/TGW ID versus cross-account proposal_id; verify both owner accounts. Computed transit attachment does not create a resource.",
         "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
-        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "summaries": "Not applicable: aws_dx_gateway_association uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (dx_gateway_id, associated_gateway_id, associated_gateway_owner_account_id, proposal_id, dx_gateway_owner_account_id) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/dx_gateway_association.html.markdown",
         "shapes": {
           "dx_gateway_id": [
@@ -9086,7 +9086,7 @@
         "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
         "references": "Missing: DX gateway and VGW/TGW with owner-account evidence; proposal is not accepted connectivity.",
         "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
-        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "summaries": "Not applicable: aws_dx_gateway_association_proposal uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (id, dx_gateway_id, associated_gateway_id, dx_gateway_owner_account_id, associated_gateway_owner_account_id) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/dx_gateway_association_proposal.html.markdown",
         "shapes": {
           "id": [
@@ -9128,7 +9128,7 @@
         "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
         "references": "Missing: connection_id -> interconnect/LAG only with supported endpoint; customer owner differs from allocator; connection_region supersedes deprecated region.",
         "scope": "Partial: Unknown target scope (basic.rs); connection_region and customer owner proof #787; deprecated region is not provider override.",
-        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "summaries": "Not applicable: aws_dx_hosted_connection uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (id, connection_id, owner_account_id) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/dx_hosted_connection.html.markdown",
         "shapes": {
           "id": [
@@ -9169,7 +9169,7 @@
         "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
         "references": "Missing: connection_id -> connection/LAG id with allocator and owner_account_id agreement; private VIF must not inherit allocator ownership.",
         "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
-        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "summaries": "Not applicable: aws_dx_hosted_private_virtual_interface uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (id, arn, connection_id, owner_account_id) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/dx_hosted_private_virtual_interface.html.markdown",
         "shapes": {
           "id": [
@@ -9208,7 +9208,7 @@
         "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
         "references": "Missing: virtual_interface_id -> matching hosted private VIF id; exclusive dx_gateway_id/vpn_gateway_id. Require cross-account proof.",
         "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
-        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "summaries": "Not applicable: aws_dx_hosted_private_virtual_interface_accepter uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (id, arn, virtual_interface_id, dx_gateway_id, vpn_gateway_id) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/dx_hosted_private_virtual_interface_accepter.html.markdown",
         "shapes": {
           "id": [
@@ -9250,7 +9250,7 @@
         "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
         "references": "Missing: connection_id -> connection/LAG id with allocator and owner_account_id agreement; public VIF must not inherit allocator ownership.",
         "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
-        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "summaries": "Not applicable: aws_dx_hosted_public_virtual_interface uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (id, arn, connection_id, owner_account_id) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/dx_hosted_public_virtual_interface.html.markdown",
         "shapes": {
           "id": [
@@ -9293,7 +9293,7 @@
         "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
         "references": "Missing: virtual_interface_id -> matching hosted public VIF id; no gateway argument. Require cross-account proof.",
         "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
-        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "summaries": "Not applicable: aws_dx_hosted_public_virtual_interface_accepter uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (id, arn, virtual_interface_id) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/dx_hosted_public_virtual_interface_accepter.html.markdown",
         "shapes": {
           "id": [
@@ -9328,7 +9328,7 @@
         "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
         "references": "Missing: connection_id -> connection/LAG id with allocator and owner_account_id agreement; transit VIF must not inherit allocator ownership.",
         "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
-        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "summaries": "Not applicable: aws_dx_hosted_transit_virtual_interface uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (id, arn, connection_id, owner_account_id) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/dx_hosted_transit_virtual_interface.html.markdown",
         "shapes": {
           "id": [
@@ -9366,7 +9366,7 @@
         "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
         "references": "Missing: virtual_interface_id -> matching hosted transit VIF id; dx_gateway_id -> global gateway. Require cross-account proof.",
         "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
-        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "summaries": "Not applicable: aws_dx_hosted_transit_virtual_interface_accepter uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (id, arn, virtual_interface_id, dx_gateway_id) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/dx_hosted_transit_virtual_interface_accepter.html.markdown",
         "shapes": {
           "id": [
@@ -9405,7 +9405,7 @@
         "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
         "references": "Missing: Optional connection_id migrates a dedicated connection; no ownership from location/provider name.",
         "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
-        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "summaries": "Not applicable: aws_dx_lag uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (id, arn, connection_id, owner_account_id) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/dx_lag.html.markdown",
         "shapes": {
           "id": [
@@ -9477,7 +9477,7 @@
         "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
         "references": "Missing: connection_id -> connection/LAG; exclusive DX/VPN gateway IDs.",
         "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
-        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "summaries": "Not applicable: aws_dx_private_virtual_interface uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (id, arn, connection_id, dx_gateway_id, vpn_gateway_id) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/dx_private_virtual_interface.html.markdown",
         "shapes": {
           "id": [
@@ -9518,7 +9518,7 @@
         "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
         "references": "Missing: connection_id -> connection/LAG; route_filter_prefixes are CIDRs, not resource identities.",
         "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
-        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "summaries": "Not applicable: aws_dx_public_virtual_interface uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (id, arn, connection_id) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/dx_public_virtual_interface.html.markdown",
         "shapes": {
           "id": [
@@ -9559,7 +9559,7 @@
         "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
         "references": "Missing: connection_id -> connection/LAG; required dx_gateway_id.",
         "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
-        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "summaries": "Not applicable: aws_dx_transit_virtual_interface uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (id, arn, connection_id, dx_gateway_id) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/dx_transit_virtual_interface.html.markdown",
         "shapes": {
           "id": [
@@ -9596,7 +9596,7 @@
         "network": "Intentionally unsupported: monitored containers/CIDRs do not place association inside cluster subnets.",
         "references": "Missing: type ECS/EKS discriminates cluster_arn endpoints; same account and region required.",
         "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
-        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "summaries": "Not applicable: aws_networkfirewall_container_association uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (container_monitoring_configuration.cluster_arn, container_association_arn) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/networkfirewall_container_association.html.markdown",
         "shapes": {
           "type": [
@@ -9629,7 +9629,7 @@
         "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
         "references": "Missing: Explicit firewall computed-attachment provenance required; no synthetic EC2 attachment endpoint.",
         "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
-        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "summaries": "Not applicable: aws_networkfirewall_firewall_transit_gateway_attachment_accepter uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (transit_gateway_attachment_id) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/networkfirewall_firewall_transit_gateway_attachment_accepter.html.markdown",
         "shapes": {
           "transit_gateway_attachment_id": [
@@ -9723,7 +9723,7 @@
         "network": "Missing: independent VPC/subnet proof #792; association VPC need not become firewall ownership.",
         "references": "Missing: Explicit firewall/VPC/subnet inputs; computed endpoint_id cannot synthesize a resource.",
         "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
-        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "summaries": "Not applicable: aws_networkfirewall_vpc_endpoint_association uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (firewall_arn, vpc_id, subnet_mapping.subnet_id, vpc_endpoint_association_arn) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/networkfirewall_vpc_endpoint_association.html.markdown",
         "shapes": {
           "firewall_arn": [
@@ -9853,7 +9853,7 @@
         "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
         "references": "Missing: Discriminate CONNECT/DIRECT_CONNECT_GATEWAY/SITE_TO_SITE_VPN/TRANSIT_GATEWAY_ROUTE_TABLE/VPC before matching attachment output.",
         "scope": "Partial: Global management eligibility in basic_entries.rs/scope.rs; account remains unknown. Regional endpoints do not propagate region to global object.",
-        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "summaries": "Not applicable: aws_networkmanager_attachment_accepter uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (attachment_id) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/networkmanager_attachment_accepter.html.markdown",
         "shapes": {
           "attachment_id": [
@@ -9884,7 +9884,7 @@
         "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
         "references": "Missing: Both attachment and core-network IDs must agree; routing_policy_label is not a Terraform policy endpoint.",
         "scope": "Partial: Global management eligibility in basic_entries.rs/scope.rs; account remains unknown. Regional endpoints do not propagate region to global object.",
-        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "summaries": "Not applicable: aws_networkmanager_attachment_routing_policy_label uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (attachment_id, core_network_id) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/networkmanager_attachment_routing_policy_label.html.markdown",
         "shapes": {
           "attachment_id": [
@@ -9920,7 +9920,7 @@
         "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
         "references": "Missing: Core network and transport attachment; GRE/NO_ENCAP and edge location govern peer contract, not runtime routes.",
         "scope": "Partial: Global management eligibility in basic_entries.rs/scope.rs; account remains unknown. Regional endpoints do not propagate region to global object.",
-        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "summaries": "Not applicable: aws_networkmanager_connect_attachment uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (attachment_id, core_network_id, transport_attachment_id) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/networkmanager_connect_attachment.html.markdown",
         "shapes": {
           "attachment_id": [
@@ -9961,7 +9961,7 @@
         "network": "Missing: explicit NO_ENCAP subnet context #789; GRE inside CIDRs never prove containment.",
         "references": "Missing: Connect attachment output attachment_id; subnet ARN only for NO_ENCAP. Peer IPs are not Terraform endpoints.",
         "scope": "Partial: Global management eligibility in basic_entries.rs/scope.rs; account remains unknown. Regional endpoints do not propagate region to global object.",
-        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "summaries": "Not applicable: aws_networkmanager_connect_peer uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (connect_peer_id, connect_attachment_id, subnet_arn) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/networkmanager_connect_peer.html.markdown",
         "shapes": {
           "connect_peer_id": [
@@ -9997,7 +9997,7 @@
         "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
         "references": "Missing: Verify device pair and optional link pair in same global network; no physical connectivity inference.",
         "scope": "Partial: Global management eligibility in basic_entries.rs/scope.rs; account remains unknown. Regional endpoints do not propagate region to global object.",
-        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "summaries": "Not applicable: aws_networkmanager_connection uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (global_network_id, device_id, connected_device_id, link_id, connected_link_id) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/networkmanager_connection.html.markdown",
         "shapes": {
           "global_network_id": [
@@ -10038,7 +10038,7 @@
         "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
         "references": "Missing: global_network_id -> global network; base policy regions and computed edges/segments do not synthesize networks.",
         "scope": "Partial: Global management eligibility in basic_entries.rs/scope.rs; account remains unknown. Regional endpoints do not propagate region to global object.",
-        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "summaries": "Not applicable: aws_networkmanager_core_network uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (id, arn, global_network_id) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/networkmanager_core_network.html.markdown",
         "shapes": {
           "id": [
@@ -10076,7 +10076,7 @@
         "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
         "references": "Missing: core_network_id -> core network id; JSON policy remains opaque.",
         "scope": "Partial: Global management eligibility in basic_entries.rs/scope.rs; account remains unknown. Regional endpoints do not propagate region to global object.",
-        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "summaries": "Not applicable: aws_networkmanager_core_network_policy_attachment uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (core_network_id) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/networkmanager_core_network_policy_attachment.html.markdown",
         "shapes": {
           "core_network_id": [
@@ -10105,7 +10105,7 @@
         "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
         "references": "Missing: Explicit global network/device/optional link and customer-gateway ARN with global-network agreement.",
         "scope": "Partial: Global management eligibility in basic_entries.rs/scope.rs; account remains unknown. Regional endpoints do not propagate region to global object.",
-        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "summaries": "Not applicable: aws_networkmanager_customer_gateway_association uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (global_network_id, device_id, link_id, customer_gateway_arn) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/networkmanager_customer_gateway_association.html.markdown",
         "shapes": {
           "global_network_id": [
@@ -10144,7 +10144,7 @@
         "network": "Missing: explicit subnet ARN context #788; global management scope remains separate.",
         "references": "Missing: global_network_id/site_id and optional AWS subnet ARN; physical address/coordinates and zone do not prove subnet.",
         "scope": "Partial: Global management eligibility in basic_entries.rs/scope.rs; account remains unknown. Regional endpoints do not propagate region to global object.",
-        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "summaries": "Not applicable: aws_networkmanager_device uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (arn, global_network_id, site_id, aws_location.subnet_arn) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/networkmanager_device.html.markdown",
         "shapes": {
           "arn": [
@@ -10187,7 +10187,7 @@
         "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
         "references": "Missing: Global DX gateway ARN and core-network ID; edge_locations set is not a collection of Terraform resources.",
         "scope": "Partial: Global management eligibility in basic_entries.rs/scope.rs; account remains unknown. Regional endpoints do not propagate region to global object.",
-        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "summaries": "Not applicable: aws_networkmanager_dx_gateway_attachment uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (id, core_network_id, direct_connect_gateway_arn) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/networkmanager_dx_gateway_attachment.html.markdown",
         "shapes": {
           "id": [
@@ -10226,7 +10226,7 @@
         "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
         "references": "Not applicable: No outbound managed endpoint; incoming core/site/device/link references and architecture review #788.",
         "scope": "Partial: Global management eligibility in basic_entries.rs/scope.rs; account remains unknown. Regional endpoints do not propagate region to global object.",
-        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "summaries": "Not applicable: aws_networkmanager_global_network uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (arn) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/networkmanager_global_network.html.markdown",
         "shapes": {
           "arn": [
@@ -10259,7 +10259,7 @@
         "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
         "references": "Missing: Site and global-network IDs with parent agreement; link bandwidth does not imply traffic delivery.",
         "scope": "Partial: Global management eligibility in basic_entries.rs/scope.rs; account remains unknown. Regional endpoints do not propagate region to global object.",
-        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "summaries": "Not applicable: aws_networkmanager_link uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (arn, global_network_id, site_id) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/networkmanager_link.html.markdown",
         "shapes": {
           "arn": [
@@ -10301,7 +10301,7 @@
         "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
         "references": "Missing: Global-network/device/link tuple with consistent membership.",
         "scope": "Partial: Global management eligibility in basic_entries.rs/scope.rs; account remains unknown. Regional endpoints do not propagate region to global object.",
-        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "summaries": "Not applicable: aws_networkmanager_link_association uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (global_network_id, device_id, link_id) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/networkmanager_link_association.html.markdown",
         "shapes": {
           "global_network_id": [
@@ -10335,7 +10335,7 @@
         "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
         "references": "Missing: Core-network id and EC2 managed prefix-list arn; alias only names a policy variable.",
         "scope": "Partial: Global management eligibility in basic_entries.rs/scope.rs; account remains unknown. Regional endpoints do not propagate region to global object.",
-        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "summaries": "Not applicable: aws_networkmanager_prefix_list_association uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (core_network_id, prefix_list_arn) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/networkmanager_prefix_list_association.html.markdown",
         "shapes": {
           "core_network_id": [
@@ -10369,7 +10369,7 @@
         "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
         "references": "Missing: Global network ID; geographic address does not identify AWS subnet.",
         "scope": "Partial: Global management eligibility in basic_entries.rs/scope.rs; account remains unknown. Regional endpoints do not propagate region to global object.",
-        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "summaries": "Not applicable: aws_networkmanager_site uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (arn, global_network_id) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/networkmanager_site.html.markdown",
         "shapes": {
           "arn": [
@@ -10404,7 +10404,7 @@
         "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
         "references": "Missing: Core-network ID and site-to-site VPN ARN; no tunnel inference.",
         "scope": "Partial: Global management eligibility in basic_entries.rs/scope.rs; account remains unknown. Regional endpoints do not propagate region to global object.",
-        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "summaries": "Not applicable: aws_networkmanager_site_to_site_vpn_attachment uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (id, core_network_id, vpn_connection_arn) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/networkmanager_site_to_site_vpn_attachment.html.markdown",
         "shapes": {
           "id": [
@@ -10439,7 +10439,7 @@
         "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
         "references": "Missing: Global-network/device/optional link and TGW Connect peer ARN; not Cloud WAN connect-peer ARN.",
         "scope": "Partial: Global management eligibility in basic_entries.rs/scope.rs; account remains unknown. Regional endpoints do not propagate region to global object.",
-        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "summaries": "Not applicable: aws_networkmanager_transit_gateway_connect_peer_association uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (global_network_id, device_id, link_id, transit_gateway_connect_peer_arn) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/networkmanager_transit_gateway_connect_peer_association.html.markdown",
         "shapes": {
           "global_network_id": [
@@ -10476,7 +10476,7 @@
         "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
         "references": "Missing: Core-network ID and TGW ARN; computed attachment ID is not an independent Terraform resource.",
         "scope": "Partial: Global management eligibility in basic_entries.rs/scope.rs; account remains unknown. Regional endpoints do not propagate region to global object.",
-        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "summaries": "Not applicable: aws_networkmanager_transit_gateway_peering uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (id, core_network_id, transit_gateway_arn) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/networkmanager_transit_gateway_peering.html.markdown",
         "shapes": {
           "id": [
@@ -10509,7 +10509,7 @@
         "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
         "references": "Missing: Global network ID and TGW ARN; registration is not containment.",
         "scope": "Partial: Global management eligibility in basic_entries.rs/scope.rs; account remains unknown. Regional endpoints do not propagate region to global object.",
-        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "summaries": "Not applicable: aws_networkmanager_transit_gateway_registration uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (global_network_id, transit_gateway_arn) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/networkmanager_transit_gateway_registration.html.markdown",
         "shapes": {
           "global_network_id": [
@@ -10540,7 +10540,7 @@
         "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
         "references": "Missing: Peering id and TGW route-table ARN with gateway agreement; no route policy interpretation.",
         "scope": "Partial: Global management eligibility in basic_entries.rs/scope.rs; account remains unknown. Regional endpoints do not propagate region to global object.",
-        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "summaries": "Not applicable: aws_networkmanager_transit_gateway_route_table_attachment uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (id, peering_id, transit_gateway_route_table_arn) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/networkmanager_transit_gateway_route_table_attachment.html.markdown",
         "shapes": {
           "id": [
@@ -10575,7 +10575,7 @@
         "network": "Missing: common-VPC proof from vpc_arn/subnet_arns #789; core network stays global.",
         "references": "Missing: Core network ID and VPC/subnet ARNs with complete collections.",
         "scope": "Partial: Global management eligibility in basic_entries.rs/scope.rs; account remains unknown. Regional endpoints do not propagate region to global object.",
-        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "summaries": "Not applicable: aws_networkmanager_vpc_attachment uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (id, core_network_id, vpc_arn) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/networkmanager_vpc_attachment.html.markdown",
         "shapes": {
           "id": [
@@ -10691,7 +10691,7 @@
         "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
         "references": "Missing: Service/network ID or ARN plus explicit supported destination ARN; cross-account resource requires ARN; SERVICE/RESOURCE discriminator.",
         "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
-        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "summaries": "Not applicable: aws_vpclattice_access_log_subscription uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (resource_identifier, destination_arn) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/vpclattice_access_log_subscription.html.markdown",
         "shapes": {
           "resource_identifier": [
@@ -10724,7 +10724,7 @@
         "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
         "references": "Missing: Service/network ID or ARN; auth type controls activation, not effective authorization.",
         "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
-        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "summaries": "Not applicable: aws_vpclattice_auth_policy uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (resource_identifier) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/vpclattice_auth_policy.html.markdown",
         "shapes": {
           "resource_identifier": [
@@ -10799,7 +10799,7 @@
         "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
         "references": "Missing: Exclusive service ARN/ID; forward target-group ID/ARN versus fixed_response; listener_id differs from composite identity.",
         "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
-        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "summaries": "Not applicable: aws_vpclattice_listener uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (arn, listener_id, service_arn, service_identifier, default_action.forward.target_groups.target_group_identifier) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/vpclattice_listener.html.markdown",
         "shapes": {
           "arn": [
@@ -10844,7 +10844,7 @@
         "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
         "references": "Missing: Service/listener parent consistency and typed forward group references; predicates remain opaque.",
         "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
-        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "summaries": "Not applicable: aws_vpclattice_listener_rule uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (arn, rule_id, service_identifier, listener_identifier, action.forward.target_groups.target_group_identifier) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/vpclattice_listener_rule.html.markdown",
         "shapes": {
           "arn": [
@@ -10891,7 +10891,7 @@
         "network": "Intentionally unsupported: gateway attachment does not prove target network containment.",
         "references": "Missing: Gateway/group/domain-verification IDs with SINGLE/GROUP/CHILD/ARN discrimination. ARN target deferred until endpoint allowlist chosen; DNS/IP never reconstruct endpoints.",
         "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
-        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "summaries": "Not applicable: aws_vpclattice_resource_configuration uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (id, arn, resource_gateway_identifier, resource_configuration_group_id, domain_verification_id, resource_configuration_definition.arn_resource.arn) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/vpclattice_resource_configuration.html.markdown",
         "shapes": {
           "id": [
@@ -10941,7 +10941,7 @@
         "network": "Missing: complete common-VPC containment #791.",
         "references": "Missing: Explicit VPC/subnet/SG ids with complete common-VPC proof.",
         "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
-        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "summaries": "Not applicable: aws_vpclattice_resource_gateway uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (id, arn, vpc_id) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/vpclattice_resource_gateway.html.markdown",
         "shapes": {
           "id": [
@@ -10985,7 +10985,7 @@
         "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
         "references": "Missing: Explicit service/network resource identifier; verify API accepted ID/ARN form and owner type rather than trusting field suffix.",
         "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
-        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "summaries": "Not applicable: aws_vpclattice_resource_policy uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (resource_arn) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/vpclattice_resource_policy.html.markdown",
         "shapes": {
           "resource_arn": [
@@ -11013,7 +11013,7 @@
         "network": "Intentionally unsupported: service-network association does not place service in a VPC.",
         "references": "Missing: Certificate ARN -> ACM certificate; custom domain and computed hosted zone are not Route53 ownership.",
         "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
-        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "summaries": "Not applicable: aws_vpclattice_service uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (id, arn, certificate_arn) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/vpclattice_service.html.markdown",
         "shapes": {
           "id": [
@@ -11046,7 +11046,7 @@
         "network": "Intentionally unsupported: service network is not an EC2 VPC container.",
         "references": "Not applicable: No outgoing resource reference; incoming association contracts #790.",
         "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
-        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "summaries": "Not applicable: aws_vpclattice_service_network uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (arn) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/vpclattice_service_network.html.markdown",
         "shapes": {
           "arn": [
@@ -11078,7 +11078,7 @@
         "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
         "references": "Missing: Explicit resource configuration and service network identifiers; no DNS-based links.",
         "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
-        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "summaries": "Not applicable: aws_vpclattice_service_network_resource_association uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (id, arn, resource_configuration_identifier, service_network_identifier) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/vpclattice_service_network_resource_association.html.markdown",
         "shapes": {
           "id": [
@@ -11116,7 +11116,7 @@
         "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
         "references": "Missing: Service and network ID/ARN pair; cross-account network requires ARN; shared service is not embedded.",
         "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
-        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "summaries": "Not applicable: aws_vpclattice_service_network_service_association uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (id, arn, service_identifier, service_network_identifier) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/vpclattice_service_network_service_association.html.markdown",
         "shapes": {
           "id": [
@@ -11155,7 +11155,7 @@
         "network": "Missing: association VPC/SG context #790; never contains entire service network.",
         "references": "Missing: Service network ID/ARN and VPC ID with SG set; cross-account ARN proof.",
         "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
-        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "summaries": "Not applicable: aws_vpclattice_service_network_vpc_association uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (id, arn, service_network_identifier, vpc_identifier) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/vpclattice_service_network_vpc_association.html.markdown",
         "shapes": {
           "id": [
@@ -11199,7 +11199,7 @@
         "network": "Missing: explicit config.vpc_identifier context #790; no Lambda subnet inheritance.",
         "references": "Missing: VPC ID applies to network target variants; LAMBDA/INSTANCE/ALB/IP contract governs attachments.",
         "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
-        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "summaries": "Not applicable: aws_vpclattice_target_group uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (id, arn, config.vpc_identifier) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/vpclattice_target_group.html.markdown",
         "shapes": {
           "id": [
@@ -11237,7 +11237,7 @@
         "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
         "references": "Missing: Group ID/ARN plus target.id: INSTANCE ID, LAMBDA ARN, ALB ARN; IP values intentionally unsupported as Terraform references.",
         "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
-        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "summaries": "Not applicable: aws_vpclattice_target_group_attachment uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (target_group_identifier, target.id) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/vpclattice_target_group_attachment.html.markdown",
         "shapes": {
           "target_group_identifier": [
