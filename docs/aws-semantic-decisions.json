@@ -4,19 +4,159 @@
       "status": "Basic-only",
       "priority": "P1",
       "issue": 694,
-      "gap": "Service/egress/ingress reference separation; complete connector subnet/SG proof; do not contain service in connector subnet."
+      "gap": "#713 reviewed: Missing: VPC-only egress connector ARN #694; scaling/repository-auth/instance-role/enabled observability #776. Deferred: KMS until key-only ARN and encryption summary contract is selected. Image identifiers/URLs do not prove ECR ownership.  Intentionally unsupported: egress connector subnets do not contain service; ingress is a separate connection #694. Deferred: network mode and encryption summary require known/unknown allowlist; environment maps, build commands and runtime status excluded.",
+      "review": {
+        "issue": 713,
+        "implementationCommit": "f30289f73269a8a348818dd6e2a8bc44c22f22aa",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "arn",
+          "network_configuration.egress_configuration.egress_type",
+          "network_configuration.egress_configuration.vpc_connector_arn",
+          "auto_scaling_configuration_arn",
+          "instance_configuration.instance_role_arn",
+          "source_configuration.authentication_configuration.connection_arn",
+          "source_configuration.authentication_configuration.access_role_arn",
+          "observability_configuration.observability_enabled",
+          "observability_configuration.observability_configuration_arn",
+          "encryption_configuration.kms_key"
+        ],
+        "placement": "Supported: retain Spatial default from classification.rs/basic_entries.rs and runtime support matrix; basic presentation is not complete semantics.",
+        "ownership": "Not applicable: independent shared configuration; consumer references do not establish embedded ownership.",
+        "network": "Intentionally unsupported: egress connector subnets do not contain service; ingress is a separate connection #694.",
+        "references": "Missing: VPC-only egress connector ARN #694; scaling/repository-auth/instance-role/enabled observability #776. Deferred: KMS until key-only ARN and encryption summary contract is selected. Image identifiers/URLs do not prove ECR ownership.",
+        "scope": "Partial: Regional conditional eligibility (scope.rs); basic fallback clears account. Require known provider/resource region, compatible binding and state identity; membership does not manufacture scope.",
+        "summaries": "Deferred: network mode and encryption summary require known/unknown allowlist; environment maps, build commands and runtime status excluded.",
+        "officialDocumentation": "website/docs/r/apprunner_service.html.markdown",
+        "shapes": {
+          "arn": [
+            "string"
+          ],
+          "network_configuration.egress_configuration.egress_type": [
+            "list",
+            "list",
+            "string"
+          ],
+          "network_configuration.egress_configuration.vpc_connector_arn": [
+            "list",
+            "list",
+            "string"
+          ],
+          "auto_scaling_configuration_arn": [
+            "string"
+          ],
+          "instance_configuration.instance_role_arn": [
+            "list",
+            "string"
+          ],
+          "source_configuration.authentication_configuration.connection_arn": [
+            "list",
+            "list",
+            "string"
+          ],
+          "source_configuration.authentication_configuration.access_role_arn": [
+            "list",
+            "list",
+            "string"
+          ],
+          "observability_configuration.observability_enabled": [
+            "list",
+            "bool"
+          ],
+          "observability_configuration.observability_configuration_arn": [
+            "list",
+            "string"
+          ],
+          "encryption_configuration.kms_key": [
+            "list",
+            "string"
+          ]
+        }
+      }
     },
     "aws_apprunner_vpc_connector": {
       "status": "Basic-only",
       "priority": "P1",
       "issue": 694,
-      "gap": "Service/egress/ingress reference separation; complete connector subnet/SG proof; do not contain service in connector subnet."
+      "gap": "#713 reviewed: Missing: complete subnet/SG sets with matching IDs and common VPC #694; ARN includes revision.  Missing: verified common-VPC context #694; retain logical shared connector, no service subnet inheritance. Intentionally unsupported: status/revision activity is not reachability; subnet/SG identity navigation belongs to #694.",
+      "review": {
+        "issue": 713,
+        "implementationCommit": "f30289f73269a8a348818dd6e2a8bc44c22f22aa",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "arn",
+          "subnets",
+          "security_groups",
+          "vpc_connector_revision"
+        ],
+        "placement": "Supported: retain Logical default from classification.rs/basic_entries.rs and runtime support matrix; basic presentation is not complete semantics.",
+        "ownership": "Not applicable: independent shared configuration; consumer references do not establish embedded ownership.",
+        "network": "Missing: verified common-VPC context #694; retain logical shared connector, no service subnet inheritance.",
+        "references": "Missing: complete subnet/SG sets with matching IDs and common VPC #694; ARN includes revision.",
+        "scope": "Partial: Regional conditional eligibility (scope.rs); basic fallback clears account. Require known provider/resource region, compatible binding and state identity; membership does not manufacture scope.",
+        "summaries": "Intentionally unsupported: status/revision activity is not reachability; subnet/SG identity navigation belongs to #694.",
+        "officialDocumentation": "website/docs/r/apprunner_vpc_connector.html.markdown",
+        "shapes": {
+          "arn": [
+            "string"
+          ],
+          "subnets": [
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "security_groups": [
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "vpc_connector_revision": [
+            "number"
+          ]
+        }
+      }
     },
     "aws_apprunner_vpc_ingress_connection": {
       "status": "Basic-only",
       "priority": "P1",
       "issue": 694,
-      "gap": "Service/egress/ingress reference separation; complete connector subnet/SG proof; do not contain service in connector subnet."
+      "gap": "#713 reviewed: Missing: service ARN #694. Deferred: endpoint/VPC pair navigation until endpoint service/type and VPC consistency have a dedicated contract.  Intentionally unsupported: ingress connection does not place the service in customer VPC or egress subnets. Intentionally unsupported: domain_name and status are computed connectivity metadata, not health proof.",
+      "review": {
+        "issue": 713,
+        "implementationCommit": "f30289f73269a8a348818dd6e2a8bc44c22f22aa",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "arn",
+          "service_arn",
+          "ingress_vpc_configuration.vpc_id",
+          "ingress_vpc_configuration.vpc_endpoint_id"
+        ],
+        "placement": "Supported: retain Logical default from classification.rs/basic_entries.rs and runtime support matrix; basic presentation is not complete semantics.",
+        "ownership": "Missing: explicit service navigation #694, not embedded ownership.",
+        "network": "Intentionally unsupported: ingress connection does not place the service in customer VPC or egress subnets.",
+        "references": "Missing: service ARN #694. Deferred: endpoint/VPC pair navigation until endpoint service/type and VPC consistency have a dedicated contract.",
+        "scope": "Partial: Regional conditional eligibility (scope.rs); basic fallback clears account. Require known provider/resource region, compatible binding and state identity; membership does not manufacture scope.",
+        "summaries": "Intentionally unsupported: domain_name and status are computed connectivity metadata, not health proof.",
+        "officialDocumentation": "website/docs/r/apprunner_vpc_ingress_connection.html.markdown",
+        "shapes": {
+          "arn": [
+            "string"
+          ],
+          "service_arn": [
+            "string"
+          ],
+          "ingress_vpc_configuration.vpc_id": [
+            "list",
+            "string"
+          ],
+          "ingress_vpc_configuration.vpc_endpoint_id": [
+            "list",
+            "string"
+          ]
+        }
+      }
     },
     "aws_redshiftserverless_namespace": {
       "status": "Partial",
@@ -1069,34 +1209,229 @@
       }
     },
     "aws_eks_cluster": {
-      "status": "Partial (bounded capabilities implemented)",
+      "status": "Partial",
       "priority": "P3",
-      "issue": 512,
-      "gap": "Cluster membership, subnet/SG and role references implemented conditionally; no runtime Kubernetes workloads or effective access inference."
+      "gap": "#713 reviewed: Partial: role ARN and inbound cluster navigation (service_references.rs, tests/unit/semantic/eks.rs). Deferred: encryption key/Outpost/Auto Mode references until type-specific discriminators and key semantics are defined.  Supported: existing vpc_config subnet common-VPC and SG rules (containment/vpc_scope.rs, network.rs, security_groups.rs; EKS tests); no cluster-as-VPC container. Deferred: cluster configuration summary needs a bounded allowlist; versions/repair state, Kubernetes payloads and permission interpretation excluded.",
+      "review": {
+        "issue": 713,
+        "implementationCommit": "f30289f73269a8a348818dd6e2a8bc44c22f22aa",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "name",
+          "id",
+          "arn",
+          "role_arn",
+          "vpc_config.subnet_ids",
+          "vpc_config.security_group_ids",
+          "encryption_config.provider.key_arn"
+        ],
+        "placement": "Supported: retain Spatial default from classification.rs/basic_entries.rs and runtime support matrix; basic presentation is not complete semantics.",
+        "ownership": "Supported: independent identity; cluster references are navigation, not presentation ownership (EKS tests).",
+        "network": "Supported: existing vpc_config subnet common-VPC and SG rules (containment/vpc_scope.rs, network.rs, security_groups.rs; EKS tests); no cluster-as-VPC container.",
+        "references": "Partial: role ARN and inbound cluster navigation (service_references.rs, tests/unit/semantic/eks.rs). Deferred: encryption key/Outpost/Auto Mode references until type-specific discriminators and key semantics are defined.",
+        "scope": "Partial: Regional conditional eligibility (scope.rs); basic fallback clears account. Require known provider/resource region, compatible binding and state identity; membership does not manufacture scope.",
+        "summaries": "Deferred: cluster configuration summary needs a bounded allowlist; versions/repair state, Kubernetes payloads and permission interpretation excluded.",
+        "officialDocumentation": "website/docs/r/eks_cluster.html.markdown",
+        "shapes": {
+          "name": [
+            "string"
+          ],
+          "id": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "role_arn": [
+            "string"
+          ],
+          "vpc_config.subnet_ids": [
+            "list",
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "vpc_config.security_group_ids": [
+            "list",
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "encryption_config.provider.key_arn": [
+            "list",
+            "list",
+            "string"
+          ]
+        }
+      }
     },
     "aws_eks_node_group": {
-      "status": "Partial (bounded capabilities implemented)",
-      "priority": "P3",
-      "issue": 512,
-      "gap": "Cluster membership, subnet/SG and role references implemented conditionally; no runtime Kubernetes workloads or effective access inference."
+      "status": "Partial",
+      "priority": "P2",
+      "issue": 780,
+      "gap": "#713 reviewed: Partial: cluster name and node role; missing launch template version proof #780; remote-access SG deferred pending distinction from workload SG (service_references.rs, tests/unit/semantic/eks.rs).   Supported: complete explicit subnet set/common-VPC proof (containment/vpc_scope.rs, network.rs, security_groups.rs; EKS tests); no cluster-as-VPC container. Deferred: node_group configuration summary needs a bounded allowlist; versions/repair state, Kubernetes payloads and permission interpretation excluded.",
+      "review": {
+        "issue": 713,
+        "implementationCommit": "f30289f73269a8a348818dd6e2a8bc44c22f22aa",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "cluster_name",
+          "node_role_arn",
+          "subnet_ids",
+          "launch_template.id",
+          "launch_template.name",
+          "launch_template.version",
+          "remote_access.source_security_group_ids"
+        ],
+        "placement": "Supported: retain Spatial default from classification.rs/basic_entries.rs and runtime support matrix; basic presentation is not complete semantics.",
+        "ownership": "Supported: independent identity; cluster references are navigation, not presentation ownership (EKS tests).",
+        "network": "Supported: complete explicit subnet set/common-VPC proof (containment/vpc_scope.rs, network.rs, security_groups.rs; EKS tests); no cluster-as-VPC container.",
+        "references": "Partial: cluster name and node role; missing launch template version proof #780; remote-access SG deferred pending distinction from workload SG (service_references.rs, tests/unit/semantic/eks.rs). ",
+        "scope": "Partial: Regional conditional eligibility (scope.rs); basic fallback clears account. Require known provider/resource region, compatible binding and state identity; membership does not manufacture scope.",
+        "summaries": "Deferred: node_group configuration summary needs a bounded allowlist; versions/repair state, Kubernetes payloads and permission interpretation excluded.",
+        "officialDocumentation": "website/docs/r/eks_node_group.html.markdown",
+        "shapes": {
+          "cluster_name": [
+            "string"
+          ],
+          "node_role_arn": [
+            "string"
+          ],
+          "subnet_ids": [
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "launch_template.id": [
+            "list",
+            "string"
+          ],
+          "launch_template.name": [
+            "list",
+            "string"
+          ],
+          "launch_template.version": [
+            "list",
+            "string"
+          ],
+          "remote_access.source_security_group_ids": [
+            "list",
+            [
+              "set",
+              "string"
+            ]
+          ]
+        }
+      }
     },
     "aws_eks_fargate_profile": {
-      "status": "Partial (bounded capabilities implemented)",
+      "status": "Partial",
       "priority": "P3",
-      "issue": 512,
-      "gap": "Cluster membership, subnet/SG and role references implemented conditionally; no runtime Kubernetes workloads or effective access inference."
+      "gap": "#713 reviewed: Partial: cluster name and pod execution role; Kubernetes selectors are not managed node identities (service_references.rs, tests/unit/semantic/eks.rs).   Supported: complete explicit subnet set/common-VPC proof (containment/vpc_scope.rs, network.rs, security_groups.rs; EKS tests); no cluster-as-VPC container. Deferred: fargate_profile configuration summary needs a bounded allowlist; versions/repair state, Kubernetes payloads and permission interpretation excluded.",
+      "review": {
+        "issue": 713,
+        "implementationCommit": "f30289f73269a8a348818dd6e2a8bc44c22f22aa",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "cluster_name",
+          "pod_execution_role_arn",
+          "subnet_ids",
+          "selector.namespace"
+        ],
+        "placement": "Supported: retain Spatial default from classification.rs/basic_entries.rs and runtime support matrix; basic presentation is not complete semantics.",
+        "ownership": "Supported: independent identity; cluster references are navigation, not presentation ownership (EKS tests).",
+        "network": "Supported: complete explicit subnet set/common-VPC proof (containment/vpc_scope.rs, network.rs, security_groups.rs; EKS tests); no cluster-as-VPC container.",
+        "references": "Partial: cluster name and pod execution role; Kubernetes selectors are not managed node identities (service_references.rs, tests/unit/semantic/eks.rs). ",
+        "scope": "Partial: Regional conditional eligibility (scope.rs); basic fallback clears account. Require known provider/resource region, compatible binding and state identity; membership does not manufacture scope.",
+        "summaries": "Deferred: fargate_profile configuration summary needs a bounded allowlist; versions/repair state, Kubernetes payloads and permission interpretation excluded.",
+        "officialDocumentation": "website/docs/r/eks_fargate_profile.html.markdown",
+        "shapes": {
+          "cluster_name": [
+            "string"
+          ],
+          "pod_execution_role_arn": [
+            "string"
+          ],
+          "subnet_ids": [
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "selector.namespace": [
+            "set",
+            "string"
+          ]
+        }
+      }
     },
     "aws_eks_addon": {
-      "status": "Partial (bounded capabilities implemented)",
-      "priority": "P3",
-      "issue": 512,
-      "gap": "Cluster membership, subnet/SG and role references implemented conditionally; no runtime Kubernetes workloads or effective access inference."
+      "status": "Partial",
+      "priority": "P2",
+      "issue": 780,
+      "gap": "#713 reviewed: Partial: cluster name and service-account role; missing inline pod-identity role #780 (service_references.rs, tests/unit/semantic/eks.rs).   Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment. Deferred: addon configuration summary needs a bounded allowlist; versions/repair state, Kubernetes payloads and permission interpretation excluded.",
+      "review": {
+        "issue": 713,
+        "implementationCommit": "f30289f73269a8a348818dd6e2a8bc44c22f22aa",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "cluster_name",
+          "service_account_role_arn",
+          "pod_identity_association.role_arn"
+        ],
+        "placement": "Supported: retain Logical default from classification.rs/basic_entries.rs and runtime support matrix; basic presentation is not complete semantics.",
+        "ownership": "Supported: independent identity; cluster references are navigation, not presentation ownership (EKS tests).",
+        "network": "Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment.",
+        "references": "Partial: cluster name and service-account role; missing inline pod-identity role #780 (service_references.rs, tests/unit/semantic/eks.rs). ",
+        "scope": "Partial: Regional conditional eligibility (scope.rs); basic fallback clears account. Require known provider/resource region, compatible binding and state identity; membership does not manufacture scope.",
+        "summaries": "Deferred: addon configuration summary needs a bounded allowlist; versions/repair state, Kubernetes payloads and permission interpretation excluded.",
+        "officialDocumentation": "website/docs/r/eks_addon.html.markdown",
+        "shapes": {
+          "cluster_name": [
+            "string"
+          ],
+          "service_account_role_arn": [
+            "string"
+          ],
+          "pod_identity_association.role_arn": [
+            "set",
+            "string"
+          ]
+        }
+      }
     },
     "aws_eks_access_entry": {
-      "status": "Partial (bounded capabilities implemented)",
-      "priority": "P3",
-      "issue": 512,
-      "gap": "Cluster membership, subnet/SG and role references implemented conditionally; no runtime Kubernetes workloads or effective access inference."
+      "status": "Partial",
+      "priority": "P2",
+      "issue": 780,
+      "gap": "#713 reviewed: Partial: cluster name and IAM principal; incoming access-policy tuple #780 (service_references.rs, tests/unit/semantic/eks.rs).   Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment. Deferred: access_entry configuration summary needs a bounded allowlist; versions/repair state, Kubernetes payloads and permission interpretation excluded.",
+      "review": {
+        "issue": 713,
+        "implementationCommit": "f30289f73269a8a348818dd6e2a8bc44c22f22aa",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "cluster_name",
+          "principal_arn"
+        ],
+        "placement": "Supported: retain Logical default from classification.rs/basic_entries.rs and runtime support matrix; basic presentation is not complete semantics.",
+        "ownership": "Supported: independent identity; cluster references are navigation, not presentation ownership (EKS tests).",
+        "network": "Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment.",
+        "references": "Partial: cluster name and IAM principal; incoming access-policy tuple #780 (service_references.rs, tests/unit/semantic/eks.rs). ",
+        "scope": "Partial: Regional conditional eligibility (scope.rs); basic fallback clears account. Require known provider/resource region, compatible binding and state identity; membership does not manufacture scope.",
+        "summaries": "Deferred: access_entry configuration summary needs a bounded allowlist; versions/repair state, Kubernetes payloads and permission interpretation excluded.",
+        "officialDocumentation": "website/docs/r/eks_access_entry.html.markdown",
+        "shapes": {
+          "cluster_name": [
+            "string"
+          ],
+          "principal_arn": [
+            "string"
+          ]
+        }
+      }
     },
     "aws_s3_bucket_policy": {
       "status": "Partial (bounded capabilities implemented)",
@@ -1500,22 +1835,102 @@
       "gap": "Identity/membership/direct attachment references implemented; no effective permissions or inherited policy calculation."
     },
     "aws_ecr_repository": {
-      "status": "Partial (bounded capabilities implemented)",
-      "priority": "P3",
-      "issue": 499,
-      "gap": "Repository and bounded explicit image/configuration references implemented; image strings alone do not prove ownership."
+      "status": "Partial",
+      "priority": "P2",
+      "issue": 777,
+      "gap": "#713 reviewed: Partial: existing policy/lifecycle inbound references retained (service_references.rs, ECR tests). Missing: KMS-only key ARN #777.  Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment. Deferred: encryption_type/KMS summary until explicit allowlist covers unknown/default key semantics.",
+      "review": {
+        "issue": 713,
+        "implementationCommit": "f30289f73269a8a348818dd6e2a8bc44c22f22aa",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "name",
+          "arn",
+          "encryption_configuration.encryption_type",
+          "encryption_configuration.kms_key"
+        ],
+        "placement": "Supported: retain Spatial default from classification.rs/basic_entries.rs and runtime support matrix; basic presentation is not complete semantics.",
+        "ownership": "Not applicable: independent shared configuration; consumer references do not establish embedded ownership.",
+        "network": "Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment.",
+        "references": "Partial: existing policy/lifecycle inbound references retained (service_references.rs, ECR tests). Missing: KMS-only key ARN #777.",
+        "scope": "Partial: Regional conditional eligibility (scope.rs); basic fallback clears account. Require known provider/resource region, compatible binding and state identity; membership does not manufacture scope.",
+        "summaries": "Deferred: encryption_type/KMS summary until explicit allowlist covers unknown/default key semantics.",
+        "officialDocumentation": "website/docs/r/ecr_repository.html.markdown",
+        "shapes": {
+          "name": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "encryption_configuration.encryption_type": [
+            "list",
+            "string"
+          ],
+          "encryption_configuration.kms_key": [
+            "list",
+            "string"
+          ]
+        }
+      }
     },
     "aws_ecr_repository_policy": {
-      "status": "Partial (bounded capabilities implemented)",
+      "status": "Partial",
       "priority": "P3",
-      "issue": 499,
-      "gap": "Repository and bounded explicit image/configuration references implemented; image strings alone do not prove ownership."
+      "gap": "#713 reviewed: Supported: repository -> aws_ecr_repository.name/id with known value, unique managed endpoint and scope binding in service_references.rs; tests/unit/semantic/service_references.rs.  Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment. Intentionally unsupported: repository_policy JSON is not interpreted or summarized.",
+      "review": {
+        "issue": 713,
+        "implementationCommit": "f30289f73269a8a348818dd6e2a8bc44c22f22aa",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "repository",
+          "registry_id"
+        ],
+        "placement": "Supported: retain Logical default from classification.rs/basic_entries.rs and runtime support matrix; basic presentation is not complete semantics.",
+        "ownership": "Supported: logical independent policy navigation; no embedded owner (aws.rs and ECR tests).",
+        "network": "Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment.",
+        "references": "Supported: repository -> aws_ecr_repository.name/id with known value, unique managed endpoint and scope binding in service_references.rs; tests/unit/semantic/service_references.rs.",
+        "scope": "Partial: Regional conditional eligibility (scope.rs); basic fallback clears account. Require known provider/resource region, compatible binding and state identity; membership does not manufacture scope.",
+        "summaries": "Intentionally unsupported: repository_policy JSON is not interpreted or summarized.",
+        "officialDocumentation": "website/docs/r/ecr_repository_policy.html.markdown",
+        "shapes": {
+          "repository": [
+            "string"
+          ],
+          "registry_id": [
+            "string"
+          ]
+        }
+      }
     },
     "aws_ecr_lifecycle_policy": {
-      "status": "Partial (bounded capabilities implemented)",
+      "status": "Partial",
       "priority": "P3",
-      "issue": 499,
-      "gap": "Repository and bounded explicit image/configuration references implemented; image strings alone do not prove ownership."
+      "gap": "#713 reviewed: Supported: repository -> aws_ecr_repository.name/id with known value, unique managed endpoint and scope binding in service_references.rs; tests/unit/semantic/service_references.rs.  Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment. Intentionally unsupported: lifecycle_policy JSON is not interpreted or summarized.",
+      "review": {
+        "issue": 713,
+        "implementationCommit": "f30289f73269a8a348818dd6e2a8bc44c22f22aa",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "repository",
+          "registry_id"
+        ],
+        "placement": "Supported: retain Logical default from classification.rs/basic_entries.rs and runtime support matrix; basic presentation is not complete semantics.",
+        "ownership": "Supported: logical independent policy navigation; no embedded owner (aws.rs and ECR tests).",
+        "network": "Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment.",
+        "references": "Supported: repository -> aws_ecr_repository.name/id with known value, unique managed endpoint and scope binding in service_references.rs; tests/unit/semantic/service_references.rs.",
+        "scope": "Partial: Regional conditional eligibility (scope.rs); basic fallback clears account. Require known provider/resource region, compatible binding and state identity; membership does not manufacture scope.",
+        "summaries": "Intentionally unsupported: lifecycle_policy JSON is not interpreted or summarized.",
+        "officialDocumentation": "website/docs/r/ecr_lifecycle_policy.html.markdown",
+        "shapes": {
+          "repository": [
+            "string"
+          ],
+          "registry_id": [
+            "string"
+          ]
+        }
+      }
     },
     "aws_wafv2_web_acl": {
       "status": "Partial (bounded capabilities implemented)",
@@ -6439,6 +6854,1835 @@
           ],
           "db_shard_group_identifier": [
             "string"
+          ]
+        }
+      }
+    },
+    "aws_appmesh_gateway_route": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 775,
+      "gap": "#713 reviewed: Missing: virtual gateway owner and protocol-specific target virtual service #775; same-mesh and known mesh_owner agreement required.  Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment. Intentionally unsupported: gateway_route route matches, TLS materials, DNS/log paths and health are not safe topology summaries.",
+      "review": {
+        "issue": 713,
+        "implementationCommit": "f30289f73269a8a348818dd6e2a8bc44c22f22aa",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "name",
+          "mesh_name",
+          "mesh_owner",
+          "virtual_gateway_name",
+          "spec.http_route.action.target.virtual_service.virtual_service_name"
+        ],
+        "placement": "Supported: retain Logical default from classification.rs/basic_entries.rs and runtime support matrix; basic presentation is not complete semantics.",
+        "ownership": "Missing: verified configuration-parent navigation #775; retain independent logical identity until unique ownership presentation is proven.",
+        "network": "Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment.",
+        "references": "Missing: virtual gateway owner and protocol-specific target virtual service #775; same-mesh and known mesh_owner agreement required.",
+        "scope": "Partial: Regional conditional eligibility (scope.rs); basic fallback clears account. Require known provider/resource region, compatible binding and state identity; membership does not manufacture scope.",
+        "summaries": "Intentionally unsupported: gateway_route route matches, TLS materials, DNS/log paths and health are not safe topology summaries.",
+        "officialDocumentation": "website/docs/r/appmesh_gateway_route.html.markdown",
+        "shapes": {
+          "name": [
+            "string"
+          ],
+          "mesh_name": [
+            "string"
+          ],
+          "mesh_owner": [
+            "string"
+          ],
+          "virtual_gateway_name": [
+            "string"
+          ],
+          "spec.http_route.action.target.virtual_service.virtual_service_name": [
+            "list",
+            "list",
+            "list",
+            "list",
+            "list",
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_appmesh_mesh": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 775,
+      "gap": "#713 reviewed: Missing: incoming mesh-name navigation #775; mesh name is scoped by owner account, not globally unique.  Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment. Intentionally unsupported: egress_filter is configuration, not effective traffic permission.",
+      "review": {
+        "issue": 713,
+        "implementationCommit": "f30289f73269a8a348818dd6e2a8bc44c22f22aa",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "name",
+          "arn",
+          "spec.egress_filter.type"
+        ],
+        "placement": "Supported: retain Logical default from classification.rs/basic_entries.rs and runtime support matrix; basic presentation is not complete semantics.",
+        "ownership": "Not applicable: independent shared configuration; consumer references do not establish embedded ownership.",
+        "network": "Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment.",
+        "references": "Missing: incoming mesh-name navigation #775; mesh name is scoped by owner account, not globally unique.",
+        "scope": "Partial: Regional conditional eligibility (scope.rs); basic fallback clears account. Require known provider/resource region, compatible binding and state identity; membership does not manufacture scope.",
+        "summaries": "Intentionally unsupported: egress_filter is configuration, not effective traffic permission.",
+        "officialDocumentation": "website/docs/r/appmesh_mesh.html.markdown",
+        "shapes": {
+          "name": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "spec.egress_filter.type": [
+            "list",
+            "list",
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_appmesh_route": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 775,
+      "gap": "#713 reviewed: Missing: virtual router owner and complete protocol-specific weighted virtual-node targets #775; same-mesh and known mesh_owner agreement required.  Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment. Intentionally unsupported: route route matches, TLS materials, DNS/log paths and health are not safe topology summaries.",
+      "review": {
+        "issue": 713,
+        "implementationCommit": "f30289f73269a8a348818dd6e2a8bc44c22f22aa",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "name",
+          "mesh_name",
+          "mesh_owner",
+          "virtual_router_name",
+          "spec.http_route.action.weighted_target.virtual_node"
+        ],
+        "placement": "Supported: retain Logical default from classification.rs/basic_entries.rs and runtime support matrix; basic presentation is not complete semantics.",
+        "ownership": "Missing: verified configuration-parent navigation #775; retain independent logical identity until unique ownership presentation is proven.",
+        "network": "Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment.",
+        "references": "Missing: virtual router owner and complete protocol-specific weighted virtual-node targets #775; same-mesh and known mesh_owner agreement required.",
+        "scope": "Partial: Regional conditional eligibility (scope.rs); basic fallback clears account. Require known provider/resource region, compatible binding and state identity; membership does not manufacture scope.",
+        "summaries": "Intentionally unsupported: route route matches, TLS materials, DNS/log paths and health are not safe topology summaries.",
+        "officialDocumentation": "website/docs/r/appmesh_route.html.markdown",
+        "shapes": {
+          "name": [
+            "string"
+          ],
+          "mesh_name": [
+            "string"
+          ],
+          "mesh_owner": [
+            "string"
+          ],
+          "virtual_router_name": [
+            "string"
+          ],
+          "spec.http_route.action.weighted_target.virtual_node": [
+            "list",
+            "list",
+            "list",
+            "set",
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_appmesh_virtual_gateway": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 775,
+      "gap": "#713 reviewed: Missing: mesh membership; defer certificate references until ACM/file/SDS exclusive variant proof is defined #775; same-mesh and known mesh_owner agreement required.  Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment. Intentionally unsupported: virtual_gateway route matches, TLS materials, DNS/log paths and health are not safe topology summaries.",
+      "review": {
+        "issue": 713,
+        "implementationCommit": "f30289f73269a8a348818dd6e2a8bc44c22f22aa",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "name",
+          "mesh_name",
+          "mesh_owner",
+          "spec.listener.tls.certificate.acm.certificate_arn"
+        ],
+        "placement": "Supported: retain Logical default from classification.rs/basic_entries.rs and runtime support matrix; basic presentation is not complete semantics.",
+        "ownership": "Missing: verified configuration-parent navigation #775; retain independent logical identity until unique ownership presentation is proven.",
+        "network": "Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment.",
+        "references": "Missing: mesh membership; defer certificate references until ACM/file/SDS exclusive variant proof is defined #775; same-mesh and known mesh_owner agreement required.",
+        "scope": "Partial: Regional conditional eligibility (scope.rs); basic fallback clears account. Require known provider/resource region, compatible binding and state identity; membership does not manufacture scope.",
+        "summaries": "Intentionally unsupported: virtual_gateway route matches, TLS materials, DNS/log paths and health are not safe topology summaries.",
+        "officialDocumentation": "website/docs/r/appmesh_virtual_gateway.html.markdown",
+        "shapes": {
+          "name": [
+            "string"
+          ],
+          "mesh_name": [
+            "string"
+          ],
+          "mesh_owner": [
+            "string"
+          ],
+          "spec.listener.tls.certificate.acm.certificate_arn": [
+            "list",
+            "list",
+            "list",
+            "list",
+            "list",
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_appmesh_virtual_node": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 775,
+      "gap": "#713 reviewed: Missing: mesh and virtual-service backends; defer Cloud Map until namespace/service tuple is verified, and TLS until ACM/file/SDS discrimination #775; same-mesh and known mesh_owner agreement required.  Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment. Intentionally unsupported: virtual_node route matches, TLS materials, DNS/log paths and health are not safe topology summaries.",
+      "review": {
+        "issue": 713,
+        "implementationCommit": "f30289f73269a8a348818dd6e2a8bc44c22f22aa",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "name",
+          "mesh_name",
+          "mesh_owner",
+          "spec.backend.virtual_service.virtual_service_name",
+          "spec.service_discovery.aws_cloud_map.namespace_name",
+          "spec.service_discovery.aws_cloud_map.service_name"
+        ],
+        "placement": "Supported: retain Logical default from classification.rs/basic_entries.rs and runtime support matrix; basic presentation is not complete semantics.",
+        "ownership": "Missing: verified configuration-parent navigation #775; retain independent logical identity until unique ownership presentation is proven.",
+        "network": "Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment.",
+        "references": "Missing: mesh and virtual-service backends; defer Cloud Map until namespace/service tuple is verified, and TLS until ACM/file/SDS discrimination #775; same-mesh and known mesh_owner agreement required.",
+        "scope": "Partial: Regional conditional eligibility (scope.rs); basic fallback clears account. Require known provider/resource region, compatible binding and state identity; membership does not manufacture scope.",
+        "summaries": "Intentionally unsupported: virtual_node route matches, TLS materials, DNS/log paths and health are not safe topology summaries.",
+        "officialDocumentation": "website/docs/r/appmesh_virtual_node.html.markdown",
+        "shapes": {
+          "name": [
+            "string"
+          ],
+          "mesh_name": [
+            "string"
+          ],
+          "mesh_owner": [
+            "string"
+          ],
+          "spec.backend.virtual_service.virtual_service_name": [
+            "list",
+            "set",
+            "list",
+            "string"
+          ],
+          "spec.service_discovery.aws_cloud_map.namespace_name": [
+            "list",
+            "list",
+            "list",
+            "string"
+          ],
+          "spec.service_discovery.aws_cloud_map.service_name": [
+            "list",
+            "list",
+            "list",
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_appmesh_virtual_router": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 775,
+      "gap": "#713 reviewed: Missing: mesh membership; listener ports do not identify network endpoints #775; same-mesh and known mesh_owner agreement required.  Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment. Intentionally unsupported: virtual_router route matches, TLS materials, DNS/log paths and health are not safe topology summaries.",
+      "review": {
+        "issue": 713,
+        "implementationCommit": "f30289f73269a8a348818dd6e2a8bc44c22f22aa",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "name",
+          "mesh_name",
+          "mesh_owner",
+          "spec.listener.port_mapping.port"
+        ],
+        "placement": "Supported: retain Logical default from classification.rs/basic_entries.rs and runtime support matrix; basic presentation is not complete semantics.",
+        "ownership": "Missing: verified configuration-parent navigation #775; retain independent logical identity until unique ownership presentation is proven.",
+        "network": "Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment.",
+        "references": "Missing: mesh membership; listener ports do not identify network endpoints #775; same-mesh and known mesh_owner agreement required.",
+        "scope": "Partial: Regional conditional eligibility (scope.rs); basic fallback clears account. Require known provider/resource region, compatible binding and state identity; membership does not manufacture scope.",
+        "summaries": "Intentionally unsupported: virtual_router route matches, TLS materials, DNS/log paths and health are not safe topology summaries.",
+        "officialDocumentation": "website/docs/r/appmesh_virtual_router.html.markdown",
+        "shapes": {
+          "name": [
+            "string"
+          ],
+          "mesh_name": [
+            "string"
+          ],
+          "mesh_owner": [
+            "string"
+          ],
+          "spec.listener.port_mapping.port": [
+            "list",
+            "list",
+            "list",
+            "number"
+          ]
+        }
+      }
+    },
+    "aws_appmesh_virtual_service": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 775,
+      "gap": "#713 reviewed: Missing: mesh and exclusive node/router provider selection #775; same-mesh and known mesh_owner agreement required.  Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment. Intentionally unsupported: virtual_service route matches, TLS materials, DNS/log paths and health are not safe topology summaries.",
+      "review": {
+        "issue": 713,
+        "implementationCommit": "f30289f73269a8a348818dd6e2a8bc44c22f22aa",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "name",
+          "mesh_name",
+          "mesh_owner",
+          "spec.provider.virtual_node.virtual_node_name",
+          "spec.provider.virtual_router.virtual_router_name"
+        ],
+        "placement": "Supported: retain Logical default from classification.rs/basic_entries.rs and runtime support matrix; basic presentation is not complete semantics.",
+        "ownership": "Missing: verified configuration-parent navigation #775; retain independent logical identity until unique ownership presentation is proven.",
+        "network": "Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment.",
+        "references": "Missing: mesh and exclusive node/router provider selection #775; same-mesh and known mesh_owner agreement required.",
+        "scope": "Partial: Regional conditional eligibility (scope.rs); basic fallback clears account. Require known provider/resource region, compatible binding and state identity; membership does not manufacture scope.",
+        "summaries": "Intentionally unsupported: virtual_service route matches, TLS materials, DNS/log paths and health are not safe topology summaries.",
+        "officialDocumentation": "website/docs/r/appmesh_virtual_service.html.markdown",
+        "shapes": {
+          "name": [
+            "string"
+          ],
+          "mesh_name": [
+            "string"
+          ],
+          "mesh_owner": [
+            "string"
+          ],
+          "spec.provider.virtual_node.virtual_node_name": [
+            "list",
+            "list",
+            "list",
+            "string"
+          ],
+          "spec.provider.virtual_router.virtual_router_name": [
+            "list",
+            "list",
+            "list",
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_apprunner_auto_scaling_configuration_version": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 776,
+      "gap": "#713 reviewed: Missing: incoming full revision ARN from service #776.  Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment. Deferred: scaling limits require a separate numerical known/unknown allowlist.",
+      "review": {
+        "issue": 713,
+        "implementationCommit": "f30289f73269a8a348818dd6e2a8bc44c22f22aa",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "arn",
+          "auto_scaling_configuration_name",
+          "max_concurrency",
+          "min_size",
+          "max_size"
+        ],
+        "placement": "Supported: retain Logical default from classification.rs/basic_entries.rs and runtime support matrix; basic presentation is not complete semantics.",
+        "ownership": "Not applicable: independent shared configuration; consumer references do not establish embedded ownership.",
+        "network": "Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment.",
+        "references": "Missing: incoming full revision ARN from service #776.",
+        "scope": "Partial: Regional conditional eligibility (scope.rs); basic fallback clears account. Require known provider/resource region, compatible binding and state identity; membership does not manufacture scope.",
+        "summaries": "Deferred: scaling limits require a separate numerical known/unknown allowlist.",
+        "officialDocumentation": "website/docs/r/apprunner_auto_scaling_configuration_version.html.markdown",
+        "shapes": {
+          "arn": [
+            "string"
+          ],
+          "auto_scaling_configuration_name": [
+            "string"
+          ],
+          "max_concurrency": [
+            "number"
+          ],
+          "min_size": [
+            "number"
+          ],
+          "max_size": [
+            "number"
+          ]
+        }
+      }
+    },
+    "aws_apprunner_connection": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 776,
+      "gap": "#713 reviewed: Missing: incoming service authentication connection ARN #776.  Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment. Deferred: connection status and repository credentials are excluded.",
+      "review": {
+        "issue": 713,
+        "implementationCommit": "f30289f73269a8a348818dd6e2a8bc44c22f22aa",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "arn",
+          "connection_name",
+          "provider_type"
+        ],
+        "placement": "Supported: retain Logical default from classification.rs/basic_entries.rs and runtime support matrix; basic presentation is not complete semantics.",
+        "ownership": "Not applicable: independent shared configuration; consumer references do not establish embedded ownership.",
+        "network": "Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment.",
+        "references": "Missing: incoming service authentication connection ARN #776.",
+        "scope": "Partial: Regional conditional eligibility (scope.rs); basic fallback clears account. Require known provider/resource region, compatible binding and state identity; membership does not manufacture scope.",
+        "summaries": "Deferred: connection status and repository credentials are excluded.",
+        "officialDocumentation": "website/docs/r/apprunner_connection.html.markdown",
+        "shapes": {
+          "arn": [
+            "string"
+          ],
+          "connection_name": [
+            "string"
+          ],
+          "provider_type": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_apprunner_custom_domain_association": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 776,
+      "gap": "#713 reviewed: Missing: service ARN #776; domain name and validation records cannot establish Route53/ACM ownership.  Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment. Deferred: DNS validation data and live verification status excluded.",
+      "review": {
+        "issue": 713,
+        "implementationCommit": "f30289f73269a8a348818dd6e2a8bc44c22f22aa",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "service_arn",
+          "domain_name",
+          "enable_www_subdomain"
+        ],
+        "placement": "Supported: retain Logical default from classification.rs/basic_entries.rs and runtime support matrix; basic presentation is not complete semantics.",
+        "ownership": "Not applicable: independent shared configuration; consumer references do not establish embedded ownership.",
+        "network": "Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment.",
+        "references": "Missing: service ARN #776; domain name and validation records cannot establish Route53/ACM ownership.",
+        "scope": "Partial: Regional conditional eligibility (scope.rs); basic fallback clears account. Require known provider/resource region, compatible binding and state identity; membership does not manufacture scope.",
+        "summaries": "Deferred: DNS validation data and live verification status excluded.",
+        "officialDocumentation": "website/docs/r/apprunner_custom_domain_association.html.markdown",
+        "shapes": {
+          "service_arn": [
+            "string"
+          ],
+          "domain_name": [
+            "string"
+          ],
+          "enable_www_subdomain": [
+            "bool"
+          ]
+        }
+      }
+    },
+    "aws_apprunner_default_auto_scaling_configuration_version": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 776,
+      "gap": "#713 reviewed: Missing: full configuration ARN #776; account default is not ownership of all services.  Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment. Deferred: default selection is not current deployed capacity.",
+      "review": {
+        "issue": 713,
+        "implementationCommit": "f30289f73269a8a348818dd6e2a8bc44c22f22aa",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "auto_scaling_configuration_arn"
+        ],
+        "placement": "Supported: retain Logical default from classification.rs/basic_entries.rs and runtime support matrix; basic presentation is not complete semantics.",
+        "ownership": "Not applicable: independent shared configuration; consumer references do not establish embedded ownership.",
+        "network": "Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment.",
+        "references": "Missing: full configuration ARN #776; account default is not ownership of all services.",
+        "scope": "Partial: Regional conditional eligibility (scope.rs); basic fallback clears account. Require known provider/resource region, compatible binding and state identity; membership does not manufacture scope.",
+        "summaries": "Deferred: default selection is not current deployed capacity.",
+        "officialDocumentation": "website/docs/r/apprunner_default_auto_scaling_configuration_version.html.markdown",
+        "shapes": {
+          "auto_scaling_configuration_arn": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_apprunner_deployment": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 776,
+      "gap": "#713 reviewed: Missing: service ARN #776; deployment trigger stays logical.  Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment. Deferred: computed operation/status is not successful deployment evidence.",
+      "review": {
+        "issue": 713,
+        "implementationCommit": "f30289f73269a8a348818dd6e2a8bc44c22f22aa",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "service_arn"
+        ],
+        "placement": "Supported: retain Logical default from classification.rs/basic_entries.rs and runtime support matrix; basic presentation is not complete semantics.",
+        "ownership": "Not applicable: independent shared configuration; consumer references do not establish embedded ownership.",
+        "network": "Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment.",
+        "references": "Missing: service ARN #776; deployment trigger stays logical.",
+        "scope": "Partial: Regional conditional eligibility (scope.rs); basic fallback clears account. Require known provider/resource region, compatible binding and state identity; membership does not manufacture scope.",
+        "summaries": "Deferred: computed operation/status is not successful deployment evidence.",
+        "officialDocumentation": "website/docs/r/apprunner_deployment.html.markdown",
+        "shapes": {
+          "service_arn": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_apprunner_observability_configuration": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 776,
+      "gap": "#713 reviewed: Missing: incoming enabled service observability ARN #776.  Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment. Deferred: trace vendor requires a separate enum allowlist, no runtime telemetry.",
+      "review": {
+        "issue": 713,
+        "implementationCommit": "f30289f73269a8a348818dd6e2a8bc44c22f22aa",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "arn",
+          "observability_configuration_name",
+          "trace_configuration.vendor"
+        ],
+        "placement": "Supported: retain Logical default from classification.rs/basic_entries.rs and runtime support matrix; basic presentation is not complete semantics.",
+        "ownership": "Not applicable: independent shared configuration; consumer references do not establish embedded ownership.",
+        "network": "Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment.",
+        "references": "Missing: incoming enabled service observability ARN #776.",
+        "scope": "Partial: Regional conditional eligibility (scope.rs); basic fallback clears account. Require known provider/resource region, compatible binding and state identity; membership does not manufacture scope.",
+        "summaries": "Deferred: trace vendor requires a separate enum allowlist, no runtime telemetry.",
+        "officialDocumentation": "website/docs/r/apprunner_observability_configuration.html.markdown",
+        "shapes": {
+          "arn": [
+            "string"
+          ],
+          "observability_configuration_name": [
+            "string"
+          ],
+          "trace_configuration.vendor": [
+            "list",
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_ecr_account_setting": {
+      "status": "Basic-only",
+      "priority": "P3",
+      "gap": "#713 reviewed: Not applicable: enum account setting name/value, no managed endpoint selector.  Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment. Deferred: setting enum summary only after a specific BASIC_SCAN_TYPE_VERSION/BLOB_MOUNTING/REGISTRY_POLICY_SCOPE allowlist; no current topology benefit.",
+      "review": {
+        "issue": 713,
+        "implementationCommit": "f30289f73269a8a348818dd6e2a8bc44c22f22aa",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "name",
+          "value"
+        ],
+        "placement": "Supported: retain Logical default from classification.rs/basic_entries.rs and runtime support matrix; basic presentation is not complete semantics.",
+        "ownership": "Not applicable: independent shared configuration; consumer references do not establish embedded ownership.",
+        "network": "Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment.",
+        "references": "Not applicable: enum account setting name/value, no managed endpoint selector.",
+        "scope": "Partial: Regional conditional eligibility (scope.rs); basic fallback clears account. Require known provider/resource region, compatible binding and state identity; membership does not manufacture scope.",
+        "summaries": "Deferred: setting enum summary only after a specific BASIC_SCAN_TYPE_VERSION/BLOB_MOUNTING/REGISTRY_POLICY_SCOPE allowlist; no current topology benefit.",
+        "officialDocumentation": "website/docs/r/ecr_account_setting.html.markdown",
+        "shapes": {
+          "name": [
+            "string"
+          ],
+          "value": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_ecr_pull_through_cache_rule": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 777,
+      "gap": "#713 reviewed: Missing: secret ARN/custom role ARN #777; upstream URL and prefixes are not managed repository identifiers.  Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment. Intentionally unsupported: credentials and upstream registry details are not displayed.",
+      "review": {
+        "issue": 713,
+        "implementationCommit": "f30289f73269a8a348818dd6e2a8bc44c22f22aa",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "credential_arn",
+          "custom_role_arn",
+          "ecr_repository_prefix",
+          "upstream_registry_url"
+        ],
+        "placement": "Supported: retain Logical default from classification.rs/basic_entries.rs and runtime support matrix; basic presentation is not complete semantics.",
+        "ownership": "Not applicable: independent shared configuration; consumer references do not establish embedded ownership.",
+        "network": "Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment.",
+        "references": "Missing: secret ARN/custom role ARN #777; upstream URL and prefixes are not managed repository identifiers.",
+        "scope": "Partial: Regional conditional eligibility (scope.rs); basic fallback clears account. Require known provider/resource region, compatible binding and state identity; membership does not manufacture scope.",
+        "summaries": "Intentionally unsupported: credentials and upstream registry details are not displayed.",
+        "officialDocumentation": "website/docs/r/ecr_pull_through_cache_rule.html.markdown",
+        "shapes": {
+          "credential_arn": [
+            "string"
+          ],
+          "custom_role_arn": [
+            "string"
+          ],
+          "ecr_repository_prefix": [
+            "string"
+          ],
+          "upstream_registry_url": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_ecr_pull_time_update_exclusion": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 777,
+      "gap": "#713 reviewed: Missing: explicit compatible IAM principal ARN #777; exclusion does not own the principal.  Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment. Intentionally unsupported: pull-time exclusion is not image access/activity evidence.",
+      "review": {
+        "issue": 713,
+        "implementationCommit": "f30289f73269a8a348818dd6e2a8bc44c22f22aa",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "principal_arn"
+        ],
+        "placement": "Supported: retain Logical default from classification.rs/basic_entries.rs and runtime support matrix; basic presentation is not complete semantics.",
+        "ownership": "Not applicable: independent shared configuration; consumer references do not establish embedded ownership.",
+        "network": "Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment.",
+        "references": "Missing: explicit compatible IAM principal ARN #777; exclusion does not own the principal.",
+        "scope": "Partial: Regional conditional eligibility (scope.rs); basic fallback clears account. Require known provider/resource region, compatible binding and state identity; membership does not manufacture scope.",
+        "summaries": "Intentionally unsupported: pull-time exclusion is not image access/activity evidence.",
+        "officialDocumentation": "website/docs/r/ecr_pull_time_update_exclusion.html.markdown",
+        "shapes": {
+          "principal_arn": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_ecr_registry_policy": {
+      "status": "Basic-only",
+      "priority": "P3",
+      "gap": "#713 reviewed: Intentionally unsupported: policy JSON cannot prove repository ownership; account registry has no managed registry endpoint.  Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment. Intentionally unsupported: policy body and effective permissions.",
+      "review": {
+        "issue": 713,
+        "implementationCommit": "f30289f73269a8a348818dd6e2a8bc44c22f22aa",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "policy"
+        ],
+        "placement": "Supported: retain Logical default from classification.rs/basic_entries.rs and runtime support matrix; basic presentation is not complete semantics.",
+        "ownership": "Not applicable: independent shared configuration; consumer references do not establish embedded ownership.",
+        "network": "Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment.",
+        "references": "Intentionally unsupported: policy JSON cannot prove repository ownership; account registry has no managed registry endpoint.",
+        "scope": "Partial: Regional conditional eligibility (scope.rs); basic fallback clears account. Require known provider/resource region, compatible binding and state identity; membership does not manufacture scope.",
+        "summaries": "Intentionally unsupported: policy body and effective permissions.",
+        "officialDocumentation": "website/docs/r/ecr_registry_policy.html.markdown",
+        "shapes": {
+          "policy": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_ecr_registry_scanning_configuration": {
+      "status": "Basic-only",
+      "priority": "P3",
+      "gap": "#713 reviewed: Intentionally unsupported: repository filter patterns do not select explicit managed repositories.  Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment. Deferred: scan_type/frequency summary needs a configuration-only enum contract; no vulnerability or scan-result inference.",
+      "review": {
+        "issue": 713,
+        "implementationCommit": "f30289f73269a8a348818dd6e2a8bc44c22f22aa",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "scan_type",
+          "rule.scan_frequency",
+          "rule.repository_filter.filter"
+        ],
+        "placement": "Supported: retain Logical default from classification.rs/basic_entries.rs and runtime support matrix; basic presentation is not complete semantics.",
+        "ownership": "Not applicable: independent shared configuration; consumer references do not establish embedded ownership.",
+        "network": "Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment.",
+        "references": "Intentionally unsupported: repository filter patterns do not select explicit managed repositories.",
+        "scope": "Partial: Regional conditional eligibility (scope.rs); basic fallback clears account. Require known provider/resource region, compatible binding and state identity; membership does not manufacture scope.",
+        "summaries": "Deferred: scan_type/frequency summary needs a configuration-only enum contract; no vulnerability or scan-result inference.",
+        "officialDocumentation": "website/docs/r/ecr_registry_scanning_configuration.html.markdown",
+        "shapes": {
+          "scan_type": [
+            "string"
+          ],
+          "rule.scan_frequency": [
+            "set",
+            "string"
+          ],
+          "rule.repository_filter.filter": [
+            "set",
+            "set",
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_ecr_replication_configuration": {
+      "status": "Basic-only",
+      "priority": "P3",
+      "gap": "#713 reviewed: Deferred: destination account/region tuples have no managed registry resource; revisit with explicit external-registry identity model, not prefix-selected repositories.  Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment. Intentionally unsupported: filters and destinations do not establish completed replication or data location.",
+      "review": {
+        "issue": 713,
+        "implementationCommit": "f30289f73269a8a348818dd6e2a8bc44c22f22aa",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "replication_configuration.rule.destination.region",
+          "replication_configuration.rule.destination.registry_id"
+        ],
+        "placement": "Supported: retain Logical default from classification.rs/basic_entries.rs and runtime support matrix; basic presentation is not complete semantics.",
+        "ownership": "Not applicable: independent shared configuration; consumer references do not establish embedded ownership.",
+        "network": "Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment.",
+        "references": "Deferred: destination account/region tuples have no managed registry resource; revisit with explicit external-registry identity model, not prefix-selected repositories.",
+        "scope": "Partial: Regional conditional eligibility (scope.rs); basic fallback clears account. Require known provider/resource region, compatible binding and state identity; membership does not manufacture scope.",
+        "summaries": "Intentionally unsupported: filters and destinations do not establish completed replication or data location.",
+        "officialDocumentation": "website/docs/r/ecr_replication_configuration.html.markdown",
+        "shapes": {
+          "replication_configuration.rule.destination.region": [
+            "list",
+            "list",
+            "list",
+            "string"
+          ],
+          "replication_configuration.rule.destination.registry_id": [
+            "list",
+            "list",
+            "list",
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_ecr_repository_creation_template": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 777,
+      "gap": "#713 reviewed: Missing: creation role and KMS-only key ARN #777; ROOT/prefix rules never synthesize repositories.  Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment. Intentionally unsupported: policy/lifecycle templates and tags are arbitrary configuration payloads.",
+      "review": {
+        "issue": 713,
+        "implementationCommit": "f30289f73269a8a348818dd6e2a8bc44c22f22aa",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "prefix",
+          "custom_role_arn",
+          "encryption_configuration.encryption_type",
+          "encryption_configuration.kms_key"
+        ],
+        "placement": "Supported: retain Logical default from classification.rs/basic_entries.rs and runtime support matrix; basic presentation is not complete semantics.",
+        "ownership": "Not applicable: independent shared configuration; consumer references do not establish embedded ownership.",
+        "network": "Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment.",
+        "references": "Missing: creation role and KMS-only key ARN #777; ROOT/prefix rules never synthesize repositories.",
+        "scope": "Partial: Regional conditional eligibility (scope.rs); basic fallback clears account. Require known provider/resource region, compatible binding and state identity; membership does not manufacture scope.",
+        "summaries": "Intentionally unsupported: policy/lifecycle templates and tags are arbitrary configuration payloads.",
+        "officialDocumentation": "website/docs/r/ecr_repository_creation_template.html.markdown",
+        "shapes": {
+          "prefix": [
+            "string"
+          ],
+          "custom_role_arn": [
+            "string"
+          ],
+          "encryption_configuration.encryption_type": [
+            "list",
+            "string"
+          ],
+          "encryption_configuration.kms_key": [
+            "list",
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_ecrpublic_repository": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 777,
+      "gap": "#713 reviewed: Missing: incoming public repository policy reference #777. Missing: currently Logical; evaluate independent Spatial repository parity #777. API is us-east-1 only, not inferred global scope. Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment. Intentionally unsupported: catalog Markdown/logo/usage text and image contents are excluded.",
+      "review": {
+        "issue": 713,
+        "implementationCommit": "f30289f73269a8a348818dd6e2a8bc44c22f22aa",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "repository_name",
+          "arn",
+          "registry_id",
+          "repository_uri"
+        ],
+        "placement": "Missing: currently Logical; evaluate independent Spatial repository parity #777. API is us-east-1 only, not inferred global scope.",
+        "ownership": "Not applicable: independent shared configuration; consumer references do not establish embedded ownership.",
+        "network": "Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment.",
+        "references": "Missing: incoming public repository policy reference #777.",
+        "scope": "Partial: current Regional conditional eligibility; pinned API only supports us-east-1. No global account/region inference from public URI. Revisit scope with #777.",
+        "summaries": "Intentionally unsupported: catalog Markdown/logo/usage text and image contents are excluded.",
+        "officialDocumentation": "website/docs/r/ecrpublic_repository.html.markdown",
+        "shapes": {
+          "repository_name": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "registry_id": [
+            "string"
+          ],
+          "repository_uri": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_ecrpublic_repository_policy": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 777,
+      "gap": "#713 reviewed: Missing: repository_name -> public repository.repository_name #777; private repository rule does not apply.  Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment. Intentionally unsupported: policy document is not effective permission evidence.",
+      "review": {
+        "issue": 713,
+        "implementationCommit": "f30289f73269a8a348818dd6e2a8bc44c22f22aa",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "repository_name",
+          "registry_id"
+        ],
+        "placement": "Supported: retain Logical default from classification.rs/basic_entries.rs and runtime support matrix; basic presentation is not complete semantics.",
+        "ownership": "Missing: verified public-repository navigation #777; retain logical independent policy.",
+        "network": "Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment.",
+        "references": "Missing: repository_name -> public repository.repository_name #777; private repository rule does not apply.",
+        "scope": "Partial: current Regional conditional eligibility; pinned API only supports us-east-1. No global account/region inference from public URI. Revisit scope with #777.",
+        "summaries": "Intentionally unsupported: policy document is not effective permission evidence.",
+        "officialDocumentation": "website/docs/r/ecrpublic_repository_policy.html.markdown",
+        "shapes": {
+          "repository_name": [
+            "string"
+          ],
+          "registry_id": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_ecs_account_setting_default": {
+      "status": "Basic-only",
+      "priority": "P3",
+      "gap": "#713 reviewed: Not applicable: principal_arn is computed account-default identity, not configured IAM reference.  Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment. Deferred: account setting enums need a useful configuration-only allowlist; no workload topology inferred.",
+      "review": {
+        "issue": 713,
+        "implementationCommit": "f30289f73269a8a348818dd6e2a8bc44c22f22aa",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "name",
+          "value",
+          "principal_arn"
+        ],
+        "placement": "Supported: retain Logical default from classification.rs/basic_entries.rs and runtime support matrix; basic presentation is not complete semantics.",
+        "ownership": "Not applicable: independent shared configuration; consumer references do not establish embedded ownership.",
+        "network": "Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment.",
+        "references": "Not applicable: principal_arn is computed account-default identity, not configured IAM reference.",
+        "scope": "Partial: Regional conditional eligibility (scope.rs); basic fallback clears account. Require known provider/resource region, compatible binding and state identity; membership does not manufacture scope.",
+        "summaries": "Deferred: account setting enums need a useful configuration-only allowlist; no workload topology inferred.",
+        "officialDocumentation": "website/docs/r/ecs_account_setting_default.html.markdown",
+        "shapes": {
+          "name": [
+            "string"
+          ],
+          "value": [
+            "string"
+          ],
+          "principal_arn": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_ecs_capacity_provider": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 778,
+      "gap": "#713 reviewed: Missing: exclusive ASG/managed-instances variant references #778; cluster only valid for managed instances.  Missing: complete managed-instances subnet/SG context #778; no cluster or service subnet inheritance. Intentionally unsupported: instance requirements and scaling targets do not synthesize instances or current capacity.",
+      "review": {
+        "issue": 713,
+        "implementationCommit": "f30289f73269a8a348818dd6e2a8bc44c22f22aa",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "name",
+          "arn",
+          "cluster",
+          "auto_scaling_group_provider.auto_scaling_group_arn",
+          "managed_instances_provider.infrastructure_role_arn",
+          "managed_instances_provider.instance_launch_template.ec2_instance_profile_arn",
+          "managed_instances_provider.instance_launch_template.network_configuration.subnets",
+          "managed_instances_provider.instance_launch_template.network_configuration.security_groups"
+        ],
+        "placement": "Supported: retain Logical default from classification.rs/basic_entries.rs and runtime support matrix; basic presentation is not complete semantics.",
+        "ownership": "Not applicable: independent shared configuration; consumer references do not establish embedded ownership.",
+        "network": "Missing: complete managed-instances subnet/SG context #778; no cluster or service subnet inheritance.",
+        "references": "Missing: exclusive ASG/managed-instances variant references #778; cluster only valid for managed instances.",
+        "scope": "Partial: Regional conditional eligibility (scope.rs); basic fallback clears account. Require known provider/resource region, compatible binding and state identity; membership does not manufacture scope.",
+        "summaries": "Intentionally unsupported: instance requirements and scaling targets do not synthesize instances or current capacity.",
+        "officialDocumentation": "website/docs/r/ecs_capacity_provider.html.markdown",
+        "shapes": {
+          "name": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "cluster": [
+            "string"
+          ],
+          "auto_scaling_group_provider.auto_scaling_group_arn": [
+            "list",
+            "string"
+          ],
+          "managed_instances_provider.infrastructure_role_arn": [
+            "list",
+            "string"
+          ],
+          "managed_instances_provider.instance_launch_template.ec2_instance_profile_arn": [
+            "list",
+            "list",
+            "string"
+          ],
+          "managed_instances_provider.instance_launch_template.network_configuration.subnets": [
+            "list",
+            "list",
+            "list",
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "managed_instances_provider.instance_launch_template.network_configuration.security_groups": [
+            "list",
+            "list",
+            "list",
+            [
+              "set",
+              "string"
+            ]
+          ]
+        }
+      }
+    },
+    "aws_ecs_cluster": {
+      "status": "Partial",
+      "priority": "P2",
+      "issue": 778,
+      "gap": "#713 reviewed: Partial: verified incoming service cluster membership retained (service_references.rs; ecs_clusters.rs tests). Deferred: execute-command key/log references require enabled/override discrimination.  Not applicable: cluster is independent of service VPCs; never inherit member network. Deferred: execute-command encryption/logging allowlist requires explicit configuration semantics; capacity relationships #778.",
+      "review": {
+        "issue": 713,
+        "implementationCommit": "f30289f73269a8a348818dd6e2a8bc44c22f22aa",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "name",
+          "arn",
+          "configuration.execute_command_configuration.kms_key_id"
+        ],
+        "placement": "Supported: retain Spatial default from classification.rs/basic_entries.rs and runtime support matrix; basic presentation is not complete semantics.",
+        "ownership": "Not applicable: independent shared configuration; consumer references do not establish embedded ownership.",
+        "network": "Not applicable: cluster is independent of service VPCs; never inherit member network.",
+        "references": "Partial: verified incoming service cluster membership retained (service_references.rs; ecs_clusters.rs tests). Deferred: execute-command key/log references require enabled/override discrimination.",
+        "scope": "Partial: Regional conditional eligibility (scope.rs); basic fallback clears account. Require known provider/resource region, compatible binding and state identity; membership does not manufacture scope.",
+        "summaries": "Deferred: execute-command encryption/logging allowlist requires explicit configuration semantics; capacity relationships #778.",
+        "officialDocumentation": "website/docs/r/ecs_cluster.html.markdown",
+        "shapes": {
+          "name": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "configuration.execute_command_configuration.kms_key_id": [
+            "list",
+            "list",
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_ecs_cluster_capacity_providers": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 778,
+      "gap": "#713 reviewed: Missing: cluster and complete capacity provider set/strategy #778; FARGATE/FARGATE_SPOT are builtin sentinels.  Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment. Intentionally unsupported: scheduling weights/base are not runtime task placement.",
+      "review": {
+        "issue": 713,
+        "implementationCommit": "f30289f73269a8a348818dd6e2a8bc44c22f22aa",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "cluster_name",
+          "capacity_providers",
+          "default_capacity_provider_strategy.capacity_provider"
+        ],
+        "placement": "Supported: retain Logical default from classification.rs/basic_entries.rs and runtime support matrix; basic presentation is not complete semantics.",
+        "ownership": "Missing: cluster configuration navigation #778; shared providers stay independent.",
+        "network": "Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment.",
+        "references": "Missing: cluster and complete capacity provider set/strategy #778; FARGATE/FARGATE_SPOT are builtin sentinels.",
+        "scope": "Partial: Regional conditional eligibility (scope.rs); basic fallback clears account. Require known provider/resource region, compatible binding and state identity; membership does not manufacture scope.",
+        "summaries": "Intentionally unsupported: scheduling weights/base are not runtime task placement.",
+        "officialDocumentation": "website/docs/r/ecs_cluster_capacity_providers.html.markdown",
+        "shapes": {
+          "cluster_name": [
+            "string"
+          ],
+          "capacity_providers": [
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "default_capacity_provider_strategy.capacity_provider": [
+            "set",
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_ecs_daemon": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 779,
+      "gap": "#713 reviewed: Missing: cluster, complete provider ARN set and revision-qualified daemon task definition #779. Missing: currently Logical; evaluate independent daemon workload presentation #779 without inventing running tasks. Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment. Intentionally unsupported: API may report stale task definition revision during deployment; no drift/health inference.",
+      "review": {
+        "issue": 713,
+        "implementationCommit": "f30289f73269a8a348818dd6e2a8bc44c22f22aa",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "cluster_arn",
+          "capacity_provider_arns",
+          "daemon_task_definition_arn"
+        ],
+        "placement": "Missing: currently Logical; evaluate independent daemon workload presentation #779 without inventing running tasks.",
+        "ownership": "Missing: verified cluster membership #779, not embedded/network ownership.",
+        "network": "Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment.",
+        "references": "Missing: cluster, complete provider ARN set and revision-qualified daemon task definition #779.",
+        "scope": "Partial: Regional conditional eligibility (scope.rs); basic fallback clears account. Require known provider/resource region, compatible binding and state identity; membership does not manufacture scope.",
+        "summaries": "Intentionally unsupported: API may report stale task definition revision during deployment; no drift/health inference.",
+        "officialDocumentation": "website/docs/r/ecs_daemon.html.markdown",
+        "shapes": {
+          "cluster_arn": [
+            "string"
+          ],
+          "capacity_provider_arns": [
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "daemon_task_definition_arn": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_ecs_daemon_task_definition": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 779,
+      "gap": "#713 reviewed: Missing: execution/task role ARNs and inbound daemon full revision ARN #779.  Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment. Intentionally unsupported: structured container environment, secret fields and command payloads.",
+      "review": {
+        "issue": 713,
+        "implementationCommit": "f30289f73269a8a348818dd6e2a8bc44c22f22aa",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "arn",
+          "execution_role_arn",
+          "task_role_arn"
+        ],
+        "placement": "Supported: retain Logical default from classification.rs/basic_entries.rs and runtime support matrix; basic presentation is not complete semantics.",
+        "ownership": "Not applicable: independent shared configuration; consumer references do not establish embedded ownership.",
+        "network": "Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment.",
+        "references": "Missing: execution/task role ARNs and inbound daemon full revision ARN #779.",
+        "scope": "Partial: Regional conditional eligibility (scope.rs); basic fallback clears account. Require known provider/resource region, compatible binding and state identity; membership does not manufacture scope.",
+        "summaries": "Intentionally unsupported: structured container environment, secret fields and command payloads.",
+        "officialDocumentation": "website/docs/r/ecs_daemon_task_definition.html.markdown",
+        "shapes": {
+          "arn": [
+            "string"
+          ],
+          "execution_role_arn": [
+            "string"
+          ],
+          "task_role_arn": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_ecs_express_gateway_service": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 779,
+      "gap": "#713 reviewed: Missing: cluster and IAM roles #779; default cluster string is not explicit reference. Missing: currently Logical; independent workload Spatial default requires review #779. Missing: explicit complete subnet/SG proof #779; omitted default network cannot be synthesized. Intentionally unsupported: deprecated current_deployment and computed ingress paths cannot prove reachability.",
+      "review": {
+        "issue": 713,
+        "implementationCommit": "f30289f73269a8a348818dd6e2a8bc44c22f22aa",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "cluster",
+          "execution_role_arn",
+          "infrastructure_role_arn",
+          "task_role_arn",
+          "network_configuration",
+          "service_arn",
+          "current_deployment"
+        ],
+        "placement": "Missing: currently Logical; independent workload Spatial default requires review #779.",
+        "ownership": "Not applicable: independent shared configuration; consumer references do not establish embedded ownership.",
+        "network": "Missing: explicit complete subnet/SG proof #779; omitted default network cannot be synthesized.",
+        "references": "Missing: cluster and IAM roles #779; default cluster string is not explicit reference.",
+        "scope": "Partial: Regional conditional eligibility (scope.rs); basic fallback clears account. Require known provider/resource region, compatible binding and state identity; membership does not manufacture scope.",
+        "summaries": "Intentionally unsupported: deprecated current_deployment and computed ingress paths cannot prove reachability.",
+        "officialDocumentation": "website/docs/r/ecs_express_gateway_service.html.markdown",
+        "shapes": {
+          "cluster": [
+            "string"
+          ],
+          "execution_role_arn": [
+            "string"
+          ],
+          "infrastructure_role_arn": [
+            "string"
+          ],
+          "task_role_arn": [
+            "string"
+          ],
+          "network_configuration": [
+            [
+              "list",
+              [
+                "object",
+                {
+                  "security_groups": [
+                    "set",
+                    "string"
+                  ],
+                  "subnets": [
+                    "set",
+                    "string"
+                  ]
+                }
+              ]
+            ]
+          ],
+          "service_arn": [
+            "string"
+          ],
+          "current_deployment": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_ecs_service": {
+      "status": "Partial",
+      "priority": "P2",
+      "issue": 779,
+      "gap": "#713 reviewed: Partial: cluster membership retained (service_references.rs and ecs_clusters.rs tests); task-definition revision and Cloud Map navigation #779, capacity provider #778. Deferred: load-balancer/volume configuration until target-family and same-service proofs are selected.  Supported: existing subnet-spanning/VPC and SG behavior (containment/spanning.rs, security_groups.rs; ecs_clusters.rs tests); no cluster containment. This does not claim newer complete collection proof for all legacy paths. Intentionally unsupported: desired task count and deployment status do not prove running workload health.",
+      "review": {
+        "issue": 713,
+        "implementationCommit": "f30289f73269a8a348818dd6e2a8bc44c22f22aa",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "cluster",
+          "task_definition",
+          "network_configuration.subnets",
+          "network_configuration.security_groups",
+          "capacity_provider_strategy.capacity_provider",
+          "service_registries.registry_arn"
+        ],
+        "placement": "Supported: retain Spatial default from classification.rs/basic_entries.rs and runtime support matrix; basic presentation is not complete semantics.",
+        "ownership": "Not applicable: independent shared configuration; consumer references do not establish embedded ownership.",
+        "network": "Supported: existing subnet-spanning/VPC and SG behavior (containment/spanning.rs, security_groups.rs; ecs_clusters.rs tests); no cluster containment. This does not claim newer complete collection proof for all legacy paths.",
+        "references": "Partial: cluster membership retained (service_references.rs and ecs_clusters.rs tests); task-definition revision and Cloud Map navigation #779, capacity provider #778. Deferred: load-balancer/volume configuration until target-family and same-service proofs are selected.",
+        "scope": "Partial: Regional conditional eligibility (scope.rs); basic fallback clears account. Require known provider/resource region, compatible binding and state identity; membership does not manufacture scope.",
+        "summaries": "Intentionally unsupported: desired task count and deployment status do not prove running workload health.",
+        "officialDocumentation": "website/docs/r/ecs_service.html.markdown",
+        "shapes": {
+          "cluster": [
+            "string"
+          ],
+          "task_definition": [
+            "string"
+          ],
+          "network_configuration.subnets": [
+            "list",
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "network_configuration.security_groups": [
+            "list",
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "capacity_provider_strategy.capacity_provider": [
+            "set",
+            "string"
+          ],
+          "service_registries.registry_arn": [
+            "list",
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_ecs_tag": {
+      "status": "Basic-only",
+      "priority": "P3",
+      "gap": "#713 reviewed: Deferred: heterogeneous resource_arn endpoint whitelist and duplicate inline-tag representation need a separate tagging-navigation use case.  Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment. Intentionally unsupported: arbitrary tag key/value payloads.",
+      "review": {
+        "issue": 713,
+        "implementationCommit": "f30289f73269a8a348818dd6e2a8bc44c22f22aa",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "resource_arn",
+          "key",
+          "value"
+        ],
+        "placement": "Supported: retain Logical default from classification.rs/basic_entries.rs and runtime support matrix; basic presentation is not complete semantics.",
+        "ownership": "Not applicable: independent shared configuration; consumer references do not establish embedded ownership.",
+        "network": "Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment.",
+        "references": "Deferred: heterogeneous resource_arn endpoint whitelist and duplicate inline-tag representation need a separate tagging-navigation use case.",
+        "scope": "Partial: Regional conditional eligibility (scope.rs); basic fallback clears account. Require known provider/resource region, compatible binding and state identity; membership does not manufacture scope.",
+        "summaries": "Intentionally unsupported: arbitrary tag key/value payloads.",
+        "officialDocumentation": "website/docs/r/ecs_tag.html.markdown",
+        "shapes": {
+          "resource_arn": [
+            "string"
+          ],
+          "key": [
+            "string"
+          ],
+          "value": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_ecs_task_definition": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 779,
+      "gap": "#713 reviewed: Missing: typed execution/task role references and revision-qualified incoming service/task-set references #779; existing generic labels in aws.rs remain.  Not applicable: task definition network_mode is configuration, not a network placement. Intentionally unsupported: container_definitions JSON, environment, credentials and runtime task inference.",
+      "review": {
+        "issue": 713,
+        "implementationCommit": "f30289f73269a8a348818dd6e2a8bc44c22f22aa",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "arn",
+          "family",
+          "revision",
+          "execution_role_arn",
+          "task_role_arn",
+          "container_definitions"
+        ],
+        "placement": "Supported: retain Logical default from classification.rs/basic_entries.rs and runtime support matrix; basic presentation is not complete semantics.",
+        "ownership": "Not applicable: independent shared configuration; consumer references do not establish embedded ownership.",
+        "network": "Not applicable: task definition network_mode is configuration, not a network placement.",
+        "references": "Missing: typed execution/task role references and revision-qualified incoming service/task-set references #779; existing generic labels in aws.rs remain.",
+        "scope": "Partial: Regional conditional eligibility (scope.rs); basic fallback clears account. Require known provider/resource region, compatible binding and state identity; membership does not manufacture scope.",
+        "summaries": "Intentionally unsupported: container_definitions JSON, environment, credentials and runtime task inference.",
+        "officialDocumentation": "website/docs/r/ecs_task_definition.html.markdown",
+        "shapes": {
+          "arn": [
+            "string"
+          ],
+          "family": [
+            "string"
+          ],
+          "revision": [
+            "number"
+          ],
+          "execution_role_arn": [
+            "string"
+          ],
+          "task_role_arn": [
+            "string"
+          ],
+          "container_definitions": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_ecs_task_set": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 779,
+      "gap": "#713 reviewed: Missing: same-cluster service, revision-qualified task definition and Cloud Map references #779. Deferred: capacity/load-balancer variants need explicit family agreement.  Missing: explicit complete awsvpc network proof #779; do not borrow service network without evidence. Intentionally unsupported: scale percentage and deployment status are not running task counts.",
+      "review": {
+        "issue": 713,
+        "implementationCommit": "f30289f73269a8a348818dd6e2a8bc44c22f22aa",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "cluster",
+          "service",
+          "task_definition",
+          "network_configuration.subnets",
+          "network_configuration.security_groups",
+          "service_registries.registry_arn"
+        ],
+        "placement": "Supported: retain Logical default from classification.rs/basic_entries.rs and runtime support matrix; basic presentation is not complete semantics.",
+        "ownership": "Missing: same-cluster service membership #779; task-set ID is composite, not service ID.",
+        "network": "Missing: explicit complete awsvpc network proof #779; do not borrow service network without evidence.",
+        "references": "Missing: same-cluster service, revision-qualified task definition and Cloud Map references #779. Deferred: capacity/load-balancer variants need explicit family agreement.",
+        "scope": "Partial: Regional conditional eligibility (scope.rs); basic fallback clears account. Require known provider/resource region, compatible binding and state identity; membership does not manufacture scope.",
+        "summaries": "Intentionally unsupported: scale percentage and deployment status are not running task counts.",
+        "officialDocumentation": "website/docs/r/ecs_task_set.html.markdown",
+        "shapes": {
+          "cluster": [
+            "string"
+          ],
+          "service": [
+            "string"
+          ],
+          "task_definition": [
+            "string"
+          ],
+          "network_configuration.subnets": [
+            "list",
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "network_configuration.security_groups": [
+            "list",
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "service_registries.registry_arn": [
+            "list",
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_eks_access_policy_association": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 780,
+      "gap": "#713 reviewed: Missing: cluster/principal tuple must agree with access entry #780; EKS policy ARN is not IAM policy.  Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment. Intentionally unsupported: RBAC scope and policy are not effective permissions.",
+      "review": {
+        "issue": 713,
+        "implementationCommit": "f30289f73269a8a348818dd6e2a8bc44c22f22aa",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "cluster_name",
+          "principal_arn",
+          "policy_arn",
+          "access_scope.type"
+        ],
+        "placement": "Supported: retain Logical default from classification.rs/basic_entries.rs and runtime support matrix; basic presentation is not complete semantics.",
+        "ownership": "Missing: verified cluster configuration navigation #780; no embedded ownership.",
+        "network": "Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment.",
+        "references": "Missing: cluster/principal tuple must agree with access entry #780; EKS policy ARN is not IAM policy.",
+        "scope": "Partial: Regional conditional eligibility (scope.rs); basic fallback clears account. Require known provider/resource region, compatible binding and state identity; membership does not manufacture scope.",
+        "summaries": "Intentionally unsupported: RBAC scope and policy are not effective permissions.",
+        "officialDocumentation": "website/docs/r/eks_access_policy_association.html.markdown",
+        "shapes": {
+          "cluster_name": [
+            "string"
+          ],
+          "principal_arn": [
+            "string"
+          ],
+          "policy_arn": [
+            "string"
+          ],
+          "access_scope.type": [
+            "list",
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_eks_capability": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 780,
+      "gap": "#713 reviewed: Missing: cluster and IAM role #780; defer ArgoCD/Identity Center selectors until exact nested target identity contract.  Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment. Intentionally unsupported: RBAC mapping and capability status do not prove access or health.",
+      "review": {
+        "issue": 713,
+        "implementationCommit": "f30289f73269a8a348818dd6e2a8bc44c22f22aa",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "cluster_name",
+          "role_arn",
+          "type"
+        ],
+        "placement": "Supported: retain Logical default from classification.rs/basic_entries.rs and runtime support matrix; basic presentation is not complete semantics.",
+        "ownership": "Missing: verified cluster configuration navigation #780; no embedded ownership.",
+        "network": "Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment.",
+        "references": "Missing: cluster and IAM role #780; defer ArgoCD/Identity Center selectors until exact nested target identity contract.",
+        "scope": "Partial: Regional conditional eligibility (scope.rs); basic fallback clears account. Require known provider/resource region, compatible binding and state identity; membership does not manufacture scope.",
+        "summaries": "Intentionally unsupported: RBAC mapping and capability status do not prove access or health.",
+        "officialDocumentation": "website/docs/r/eks_capability.html.markdown",
+        "shapes": {
+          "cluster_name": [
+            "string"
+          ],
+          "role_arn": [
+            "string"
+          ],
+          "type": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_eks_identity_provider_config": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 780,
+      "gap": "#713 reviewed: Missing: cluster-name navigation #780; issuer URL is not IAM OIDC provider identity.  Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment. Intentionally unsupported: claims, client IDs and issuer URL are excluded.",
+      "review": {
+        "issue": 713,
+        "implementationCommit": "f30289f73269a8a348818dd6e2a8bc44c22f22aa",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "cluster_name",
+          "oidc.issuer_url"
+        ],
+        "placement": "Supported: retain Logical default from classification.rs/basic_entries.rs and runtime support matrix; basic presentation is not complete semantics.",
+        "ownership": "Missing: verified cluster configuration navigation #780; no embedded ownership.",
+        "network": "Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment.",
+        "references": "Missing: cluster-name navigation #780; issuer URL is not IAM OIDC provider identity.",
+        "scope": "Partial: Regional conditional eligibility (scope.rs); basic fallback clears account. Require known provider/resource region, compatible binding and state identity; membership does not manufacture scope.",
+        "summaries": "Intentionally unsupported: claims, client IDs and issuer URL are excluded.",
+        "officialDocumentation": "website/docs/r/eks_identity_provider_config.html.markdown",
+        "shapes": {
+          "cluster_name": [
+            "string"
+          ],
+          "oidc.issuer_url": [
+            "list",
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_eks_pod_identity_association": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 780,
+      "gap": "#713 reviewed: Missing: cluster and IAM role/target-role ARNs #780; namespaces/accounts do not create Kubernetes resources.  Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment. Intentionally unsupported: policy, external_id and session data excluded.",
+      "review": {
+        "issue": 713,
+        "implementationCommit": "f30289f73269a8a348818dd6e2a8bc44c22f22aa",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "cluster_name",
+          "role_arn",
+          "target_role_arn",
+          "namespace",
+          "service_account"
+        ],
+        "placement": "Supported: retain Logical default from classification.rs/basic_entries.rs and runtime support matrix; basic presentation is not complete semantics.",
+        "ownership": "Missing: verified cluster configuration navigation #780; no embedded ownership.",
+        "network": "Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment.",
+        "references": "Missing: cluster and IAM role/target-role ARNs #780; namespaces/accounts do not create Kubernetes resources.",
+        "scope": "Partial: Regional conditional eligibility (scope.rs); basic fallback clears account. Require known provider/resource region, compatible binding and state identity; membership does not manufacture scope.",
+        "summaries": "Intentionally unsupported: policy, external_id and session data excluded.",
+        "officialDocumentation": "website/docs/r/eks_pod_identity_association.html.markdown",
+        "shapes": {
+          "cluster_name": [
+            "string"
+          ],
+          "role_arn": [
+            "string"
+          ],
+          "target_role_arn": [
+            "string"
+          ],
+          "namespace": [
+            "string"
+          ],
+          "service_account": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_elastic_beanstalk_application": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 781,
+      "gap": "#713 reviewed: Missing: lifecycle service-role ARN and inbound application membership #781.  Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment. Intentionally unsupported: version lifecycle limits do not establish deployed versions.",
+      "review": {
+        "issue": 713,
+        "implementationCommit": "f30289f73269a8a348818dd6e2a8bc44c22f22aa",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "name",
+          "arn",
+          "appversion_lifecycle.service_role"
+        ],
+        "placement": "Supported: retain Logical default from classification.rs/basic_entries.rs and runtime support matrix; basic presentation is not complete semantics.",
+        "ownership": "Not applicable: independent shared configuration; consumer references do not establish embedded ownership.",
+        "network": "Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment.",
+        "references": "Missing: lifecycle service-role ARN and inbound application membership #781.",
+        "scope": "Partial: Regional conditional eligibility (scope.rs); basic fallback clears account. Require known provider/resource region, compatible binding and state identity; membership does not manufacture scope.",
+        "summaries": "Intentionally unsupported: version lifecycle limits do not establish deployed versions.",
+        "officialDocumentation": "website/docs/r/elastic_beanstalk_application.html.markdown",
+        "shapes": {
+          "name": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "appversion_lifecycle.service_role": [
+            "list",
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_elastic_beanstalk_application_version": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 781,
+      "gap": "#713 reviewed: Missing: application name and source bucket #781; key identifies artifact, not managed application owner.  Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment. Intentionally unsupported: bundle paths/content and processing status.",
+      "review": {
+        "issue": 713,
+        "implementationCommit": "f30289f73269a8a348818dd6e2a8bc44c22f22aa",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "name",
+          "application",
+          "bucket",
+          "key"
+        ],
+        "placement": "Supported: retain Logical default from classification.rs/basic_entries.rs and runtime support matrix; basic presentation is not complete semantics.",
+        "ownership": "Not applicable: independent shared configuration; consumer references do not establish embedded ownership.",
+        "network": "Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment.",
+        "references": "Missing: application name and source bucket #781; key identifies artifact, not managed application owner.",
+        "scope": "Partial: Regional conditional eligibility (scope.rs); basic fallback clears account. Require known provider/resource region, compatible binding and state identity; membership does not manufacture scope.",
+        "summaries": "Intentionally unsupported: bundle paths/content and processing status.",
+        "officialDocumentation": "website/docs/r/elastic_beanstalk_application_version.html.markdown",
+        "shapes": {
+          "name": [
+            "string"
+          ],
+          "application": [
+            "string"
+          ],
+          "bucket": [
+            "string"
+          ],
+          "key": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_elastic_beanstalk_configuration_template": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 781,
+      "gap": "#713 reviewed: Missing: application navigation #781. Deferred: environment_id cloning until historical source identity contract, no inherited topology.  Deferred: settings encode opaque namespace/name/value tuples; revisit only with explicit network option/CSV reference proof. Intentionally unsupported: arbitrary option values may contain credentials.",
+      "review": {
+        "issue": 713,
+        "implementationCommit": "f30289f73269a8a348818dd6e2a8bc44c22f22aa",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "name",
+          "application",
+          "environment_id",
+          "setting.namespace",
+          "setting.name",
+          "setting.value"
+        ],
+        "placement": "Supported: retain Logical default from classification.rs/basic_entries.rs and runtime support matrix; basic presentation is not complete semantics.",
+        "ownership": "Not applicable: independent shared configuration; consumer references do not establish embedded ownership.",
+        "network": "Deferred: settings encode opaque namespace/name/value tuples; revisit only with explicit network option/CSV reference proof.",
+        "references": "Missing: application navigation #781. Deferred: environment_id cloning until historical source identity contract, no inherited topology.",
+        "scope": "Partial: Regional conditional eligibility (scope.rs); basic fallback clears account. Require known provider/resource region, compatible binding and state identity; membership does not manufacture scope.",
+        "summaries": "Intentionally unsupported: arbitrary option values may contain credentials.",
+        "officialDocumentation": "website/docs/r/elastic_beanstalk_configuration_template.html.markdown",
+        "shapes": {
+          "name": [
+            "string"
+          ],
+          "application": [
+            "string"
+          ],
+          "environment_id": [
+            "string"
+          ],
+          "setting.namespace": [
+            "set",
+            "string"
+          ],
+          "setting.name": [
+            "set",
+            "string"
+          ],
+          "setting.value": [
+            "set",
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_elastic_beanstalk_environment": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 781,
+      "gap": "#713 reviewed: Missing: application and same-application version/template navigation #781; solution/platform strings are not managed endpoints. Missing: currently Logical; review independent Spatial environment #781 while keeping app/configuration logical. Deferred: exact setting namespace/option and complete value/reference proof required; computed ASG/ELB/instances do not synthesize network. Intentionally unsupported: settings, CNAME and runtime environment health.",
+      "review": {
+        "issue": 713,
+        "implementationCommit": "f30289f73269a8a348818dd6e2a8bc44c22f22aa",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "name",
+          "application",
+          "template_name",
+          "version_label",
+          "setting.namespace",
+          "setting.name",
+          "setting.value"
+        ],
+        "placement": "Missing: currently Logical; review independent Spatial environment #781 while keeping app/configuration logical.",
+        "ownership": "Not applicable: independent shared configuration; consumer references do not establish embedded ownership.",
+        "network": "Deferred: exact setting namespace/option and complete value/reference proof required; computed ASG/ELB/instances do not synthesize network.",
+        "references": "Missing: application and same-application version/template navigation #781; solution/platform strings are not managed endpoints.",
+        "scope": "Partial: Regional conditional eligibility (scope.rs); basic fallback clears account. Require known provider/resource region, compatible binding and state identity; membership does not manufacture scope.",
+        "summaries": "Intentionally unsupported: settings, CNAME and runtime environment health.",
+        "officialDocumentation": "website/docs/r/elastic_beanstalk_environment.html.markdown",
+        "shapes": {
+          "name": [
+            "string"
+          ],
+          "application": [
+            "string"
+          ],
+          "template_name": [
+            "string"
+          ],
+          "version_label": [
+            "string"
+          ],
+          "setting.namespace": [
+            "set",
+            "string"
+          ],
+          "setting.name": [
+            "set",
+            "string"
+          ],
+          "setting.value": [
+            "set",
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_service_discovery_http_namespace": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 782,
+      "gap": "#713 reviewed: Missing: incoming namespace/service navigation #782; generated DNS hosted-zone outputs are not managed references.  Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment. Intentionally unsupported: namespace DNS configuration does not prove record resolution or health.",
+      "review": {
+        "issue": 713,
+        "implementationCommit": "f30289f73269a8a348818dd6e2a8bc44c22f22aa",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "name",
+          "id",
+          "arn"
+        ],
+        "placement": "Supported: retain Logical default from classification.rs/basic_entries.rs and runtime support matrix; basic presentation is not complete semantics.",
+        "ownership": "Not applicable: independent shared configuration; consumer references do not establish embedded ownership.",
+        "network": "Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment.",
+        "references": "Missing: incoming namespace/service navigation #782; generated DNS hosted-zone outputs are not managed references.",
+        "scope": "Partial: Regional conditional eligibility (scope.rs); basic fallback clears account. Require known provider/resource region, compatible binding and state identity; membership does not manufacture scope.",
+        "summaries": "Intentionally unsupported: namespace DNS configuration does not prove record resolution or health.",
+        "officialDocumentation": "website/docs/r/service_discovery_http_namespace.html.markdown",
+        "shapes": {
+          "name": [
+            "string"
+          ],
+          "id": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_service_discovery_instance": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 782,
+      "gap": "#713 reviewed: Missing: service_id -> service.id #782; arbitrary attributes do not identify EC2 instances.  Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment. Intentionally unsupported: attributes IP/port/custom data and health status.",
+      "review": {
+        "issue": 713,
+        "implementationCommit": "f30289f73269a8a348818dd6e2a8bc44c22f22aa",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "instance_id",
+          "service_id",
+          "attributes"
+        ],
+        "placement": "Supported: retain Logical default from classification.rs/basic_entries.rs and runtime support matrix; basic presentation is not complete semantics.",
+        "ownership": "Missing: unique service navigation #782; retain independent registration identity.",
+        "network": "Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment.",
+        "references": "Missing: service_id -> service.id #782; arbitrary attributes do not identify EC2 instances.",
+        "scope": "Partial: Regional conditional eligibility (scope.rs); basic fallback clears account. Require known provider/resource region, compatible binding and state identity; membership does not manufacture scope.",
+        "summaries": "Intentionally unsupported: attributes IP/port/custom data and health status.",
+        "officialDocumentation": "website/docs/r/service_discovery_instance.html.markdown",
+        "shapes": {
+          "instance_id": [
+            "string"
+          ],
+          "service_id": [
+            "string"
+          ],
+          "attributes": [
+            [
+              "map",
+              "string"
+            ]
+          ]
+        }
+      }
+    },
+    "aws_service_discovery_private_dns_namespace": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 782,
+      "gap": "#713 reviewed: Missing: incoming namespace/service navigation #782; explicit VPC ID #782.  Missing: verified VPC context #782; DNS scope never propagates to service/instance subnet containment. Intentionally unsupported: namespace DNS configuration does not prove record resolution or health.",
+      "review": {
+        "issue": 713,
+        "implementationCommit": "f30289f73269a8a348818dd6e2a8bc44c22f22aa",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "name",
+          "id",
+          "arn",
+          "vpc"
+        ],
+        "placement": "Supported: retain Logical default from classification.rs/basic_entries.rs and runtime support matrix; basic presentation is not complete semantics.",
+        "ownership": "Not applicable: independent shared configuration; consumer references do not establish embedded ownership.",
+        "network": "Missing: verified VPC context #782; DNS scope never propagates to service/instance subnet containment.",
+        "references": "Missing: incoming namespace/service navigation #782; explicit VPC ID #782.",
+        "scope": "Partial: Regional conditional eligibility (scope.rs); basic fallback clears account. Require known provider/resource region, compatible binding and state identity; membership does not manufacture scope.",
+        "summaries": "Intentionally unsupported: namespace DNS configuration does not prove record resolution or health.",
+        "officialDocumentation": "website/docs/r/service_discovery_private_dns_namespace.html.markdown",
+        "shapes": {
+          "name": [
+            "string"
+          ],
+          "id": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "vpc": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_service_discovery_public_dns_namespace": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 782,
+      "gap": "#713 reviewed: Missing: incoming namespace/service navigation #782; generated DNS hosted-zone outputs are not managed references.  Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment. Intentionally unsupported: namespace DNS configuration does not prove record resolution or health.",
+      "review": {
+        "issue": 713,
+        "implementationCommit": "f30289f73269a8a348818dd6e2a8bc44c22f22aa",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "name",
+          "id",
+          "arn"
+        ],
+        "placement": "Supported: retain Logical default from classification.rs/basic_entries.rs and runtime support matrix; basic presentation is not complete semantics.",
+        "ownership": "Not applicable: independent shared configuration; consumer references do not establish embedded ownership.",
+        "network": "Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment.",
+        "references": "Missing: incoming namespace/service navigation #782; generated DNS hosted-zone outputs are not managed references.",
+        "scope": "Partial: Regional conditional eligibility (scope.rs); basic fallback clears account. Require known provider/resource region, compatible binding and state identity; membership does not manufacture scope.",
+        "summaries": "Intentionally unsupported: namespace DNS configuration does not prove record resolution or health.",
+        "officialDocumentation": "website/docs/r/service_discovery_public_dns_namespace.html.markdown",
+        "shapes": {
+          "name": [
+            "string"
+          ],
+          "id": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_service_discovery_service": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 782,
+      "gap": "#713 reviewed: Missing: agreeing direct/DNS namespace ID variants #782; HTTP namespace requires API-only distinction.  Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment. Intentionally unsupported: deprecated custom health checks and DNS routing policy are not runtime health summaries.",
+      "review": {
+        "issue": 713,
+        "implementationCommit": "f30289f73269a8a348818dd6e2a8bc44c22f22aa",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "name",
+          "id",
+          "arn",
+          "namespace_id",
+          "dns_config.namespace_id",
+          "type",
+          "health_check_custom_config.failure_threshold"
+        ],
+        "placement": "Supported: retain Logical default from classification.rs/basic_entries.rs and runtime support matrix; basic presentation is not complete semantics.",
+        "ownership": "Missing: unique namespace navigation #782; retain logical resource identity.",
+        "network": "Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment.",
+        "references": "Missing: agreeing direct/DNS namespace ID variants #782; HTTP namespace requires API-only distinction.",
+        "scope": "Partial: Regional conditional eligibility (scope.rs); basic fallback clears account. Require known provider/resource region, compatible binding and state identity; membership does not manufacture scope.",
+        "summaries": "Intentionally unsupported: deprecated custom health checks and DNS routing policy are not runtime health summaries.",
+        "officialDocumentation": "website/docs/r/service_discovery_service.html.markdown",
+        "shapes": {
+          "name": [
+            "string"
+          ],
+          "id": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "namespace_id": [
+            "string"
+          ],
+          "dns_config.namespace_id": [
+            "list",
+            "string"
+          ],
+          "type": [
+            "string"
+          ],
+          "health_check_custom_config.failure_threshold": [
+            "list",
+            "number"
           ]
         }
       }

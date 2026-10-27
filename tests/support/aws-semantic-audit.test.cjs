@@ -5,6 +5,29 @@ const fs=require('node:fs');
 const {extract,buildEvidence,render}=require('../../scripts/aws-semantic-audit.cjs');
 const read=p=>JSON.parse(fs.readFileSync(p));
 
+test('container audit covers 57 managed types with pinned dimensions and distinct network contracts',()=>{
+ const services=new Set('ecs eks ecr ecrpublic apprunner elasticbeanstalk appmesh servicediscovery'.split(' '));
+ const expected=read('tests/fixtures/aws-inventory/6.70.0.json').resources.filter(r=>services.has(r.service));
+ const entries=Object.entries(read('docs/aws-semantic-decisions.json').types).filter(([,d])=>d.review?.issue===713);
+ assert.equal(expected.length,57);
+ assert.deepEqual(entries.map(([type])=>type).sort(),expected.map(r=>r.type).sort());
+ for(const [type,{review,gap}] of entries) {
+  assert.equal(review.providerCommit,'5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f');
+  assert.match(review.implementationCommit,/^[a-f0-9]{40}$/);
+  assert.equal(review.officialDocumentation,expected.find(r=>r.type===type).documentation);
+  assert.deepEqual(Object.keys(review.shapes),review.fields);
+  for(const key of ['placement','ownership','network','references','scope','summaries']) assert.match(review[key],/^(Supported|Partial|Missing|Not applicable|Intentionally unsupported|Deferred):/,type+': '+key);
+  assert.match(gap,/#713/);
+ }
+ const d=Object.fromEntries(entries);
+ assert.deepEqual(d.aws_apprunner_vpc_connector.review.shapes.subnets,[['set','string']]);
+ assert.deepEqual(d.aws_ecs_daemon.review.shapes.capacity_provider_arns,[['set','string']]);
+ assert.match(d.aws_apprunner_service.review.network,/do not contain service/);
+ assert.match(d.aws_eks_access_policy_association.review.references,/not IAM policy/);
+ assert.match(d.aws_ecrpublic_repository.review.scope,/us-east-1/);
+ assert.match(d.aws_service_discovery_service.review.references,/direct\/DNS/);
+});
+
 test('relational audit covers 59 exact managed types and preserves field distinctions',()=>{
  const services=new Set('rds docdb docdbelastic neptune neptunegraph dsql odb'.split(' '));
  const expected=read('tests/fixtures/aws-inventory/6.70.0.json').resources.filter(r=>services.has(r.service));
