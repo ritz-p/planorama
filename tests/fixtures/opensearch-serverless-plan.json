@@ -1,0 +1,286 @@
+{
+  "format_version": "1.2",
+  "resource_changes": [
+    {
+      "address": "aws_vpc.main",
+      "mode": "managed",
+      "type": "aws_vpc",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "vpc-main"
+        }
+      }
+    },
+    {
+      "address": "aws_subnet.a",
+      "mode": "managed",
+      "type": "aws_subnet",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "subnet-a",
+          "vpc_id": "vpc-main",
+          "availability_zone": "us-east-1a"
+        }
+      }
+    },
+    {
+      "address": "aws_subnet.b",
+      "mode": "managed",
+      "type": "aws_subnet",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "subnet-b",
+          "vpc_id": "vpc-main",
+          "availability_zone": "us-east-1b"
+        }
+      }
+    },
+    {
+      "address": "aws_security_group.connector",
+      "mode": "managed",
+      "type": "aws_security_group",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "sg-connector",
+          "vpc_id": "vpc-main"
+        }
+      }
+    },
+    {
+      "address": "aws_opensearchserverless_vpc_endpoint.shared",
+      "mode": "managed",
+      "type": "aws_opensearchserverless_vpc_endpoint",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "vpce-search",
+          "name": "shared",
+          "vpc_id": "vpc-main",
+          "subnet_ids": [
+            "subnet-a",
+            "subnet-b"
+          ],
+          "security_group_ids": [
+            "sg-connector"
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_opensearchserverless_collection.search",
+      "mode": "managed",
+      "type": "aws_opensearchserverless_collection",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "collection-search",
+          "arn": "arn:aws:aoss:us-east-1:123456789012:collection/collection-search",
+          "name": "search",
+          "type": "SEARCH"
+        }
+      }
+    },
+    {
+      "address": "aws_opensearchserverless_collection.vectors",
+      "mode": "managed",
+      "type": "aws_opensearchserverless_collection",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "collection-vectors",
+          "name": "vectors",
+          "type": "VECTORSEARCH"
+        }
+      }
+    },
+    {
+      "address": "aws_opensearchserverless_security_policy.network",
+      "mode": "managed",
+      "type": "aws_opensearchserverless_security_policy",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "network",
+          "type": "network",
+          "policy": "PRIVATE_POLICY collection/search vpce-search"
+        }
+      }
+    },
+    {
+      "address": "aws_opensearchserverless_access_policy.data",
+      "mode": "managed",
+      "type": "aws_opensearchserverless_access_policy",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "data",
+          "type": "data",
+          "policy": "PRIVATE_CREDENTIALS"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_vpc.main",
+          "mode": "managed",
+          "type": "aws_vpc",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_subnet.a",
+          "mode": "managed",
+          "type": "aws_subnet",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_subnet.b",
+          "mode": "managed",
+          "type": "aws_subnet",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_security_group.connector",
+          "mode": "managed",
+          "type": "aws_security_group",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_opensearchserverless_vpc_endpoint.shared",
+          "mode": "managed",
+          "type": "aws_opensearchserverless_vpc_endpoint",
+          "name": "shared",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.main.id"
+              ]
+            },
+            "subnet_ids": {
+              "references": [
+                "aws_subnet.a.id",
+                "aws_subnet.b.id"
+              ]
+            },
+            "security_group_ids": {
+              "references": [
+                "aws_security_group.connector.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_opensearchserverless_collection.search",
+          "mode": "managed",
+          "type": "aws_opensearchserverless_collection",
+          "name": "search",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_opensearchserverless_collection.vectors",
+          "mode": "managed",
+          "type": "aws_opensearchserverless_collection",
+          "name": "vectors",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_opensearchserverless_security_policy.network",
+          "mode": "managed",
+          "type": "aws_opensearchserverless_security_policy",
+          "name": "network",
+          "provider_config_key": "aws",
+          "expressions": {
+            "policy": {
+              "references": [
+                "aws_opensearchserverless_vpc_endpoint.shared.id",
+                "aws_opensearchserverless_collection.search.name"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_opensearchserverless_access_policy.data",
+          "mode": "managed",
+          "type": "aws_opensearchserverless_access_policy",
+          "name": "data",
+          "provider_config_key": "aws",
+          "expressions": {
+            "policy": {
+              "references": [
+                "aws_opensearchserverless_collection.search.name"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

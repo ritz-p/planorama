@@ -219,7 +219,7 @@ The following paths were checked against the pinned schema and resource document
 | `aws_apprunner_service` | `network_configuration.egress_configuration.vpc_connector_arn` | Verified VPC-egress connector ARN #694; service remains spatial without customer subnet ownership. |
 | `aws_apprunner_vpc_connector` | `subnets`, `security_groups` | Verified complete subnet/SG references and common-VPC context #694; shared connector remains logical. |
 | `aws_redshiftserverless_workgroup` | `namespace_name`, `subnet_ids`, `security_group_ids` | Verified namespace/workgroup owner navigation and independent workgroup/endpoint VPC proof #695; provisioned Redshift #506 remains separate. |
-| `aws_opensearchserverless_vpc_endpoint` | `vpc_id`, `subnet_ids`, `security_group_ids` | Basic endpoint; policy JSON is not collection ownership evidence. #696. |
+| `aws_opensearchserverless_vpc_endpoint` | `vpc_id`, `subnet_ids`, `security_group_ids` | Verified complete VPC/subnet/SG ID navigation and common-VPC context #696; policy JSON is not collection ownership evidence. Historical #724 review remains separate. |
 | `aws_docdb_cluster` | `db_subnet_group_name`, `vpc_security_group_ids` | Verified group/SG common-VPC placement and instance membership #697; other dimensions retain historical #717 review. |
 | `aws_neptune_cluster` | `neptune_subnet_group_name`, `vpc_security_group_ids` | Verified common-VPC group/SG placement and instance membership #698; other dimensions retain historical #717 review. |
 | `aws_dms_replication_instance` | `replication_subnet_group_id`, `vpc_security_group_ids` | Basic spatial instance; no endpoint/database reconstruction from strings. #699. |

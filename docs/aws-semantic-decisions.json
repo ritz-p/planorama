@@ -177,10 +177,10 @@
       "gap": "Implemented #695: verified namespace/workgroup owner navigation and independent workgroup/endpoint common-VPC placement from complete subnet/SG sets. Namespace remains logical service ownership, not a network container; endpoint is spatial. Explicit owner_account requires matching verified workgroup account. See aws.md#redshift-serverless-695. IAM/KMS, snapshots, computed endpoints and runtime connectivity remain outside this contract."
     },
     "aws_opensearchserverless_collection": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 799,
-      "gap": "#724 reviewed: Supported: Spatial basic default; #696 must preserve this existing card. Not applicable: collection groups share capacity; a group reference is not exclusive embedded ownership. Intentionally unsupported: no collection VPC/subnet input; policy JSON and endpoint proximity cannot establish containment. Missing: collection_group_name -> collection_group.name and configured encryption_config.kms_key_arn -> key ARN are separate follow-up work; top-level kms_key_arn is computed. #696 owns the existing card and endpoint network scope. Follow-up #799. Deferred: type/standby-replica/encryption mode requires an allowlist distinguishing AWS-owned key and unknown key; no policy-derived summary.",
+      "gap": "Implemented #696: collection retains its independent Spatial card; endpoint has verified complete VPC/subnet/SG ID navigation and common-VPC context. Optional/computed SGs without explicit complete evidence do not establish containment. Policies never establish collection membership or reachability. See aws.md#opensearch-serverless-696. #724 review preserves the historical baseline; direct collection group/key/identity references remain #799.",
       "review": {
         "issue": 724,
         "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
@@ -240,10 +240,10 @@
       }
     },
     "aws_opensearchserverless_vpc_endpoint": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 696,
-      "gap": "#724 reviewed: Not applicable: shared endpoint does not own collections. Missing: #696 verified same-VPC endpoint context using vpc_id and complete subnet/SG sets. Missing: #696 complete VPC/subnet/SG ID references with matching known values; policy documents cannot associate collections. Follow-up #696. Deferred: subnet/SG counts require complete known collections and explicit treatment of default SGs before a count summary; no reachability statement.",
+      "gap": "Implemented #696: collection retains its independent Spatial card; endpoint has verified complete VPC/subnet/SG ID navigation and common-VPC context. Optional/computed SGs without explicit complete evidence do not establish containment. Policies never establish collection membership or reachability. See aws.md#opensearch-serverless-696. #724 review preserves the historical baseline; direct collection group/key/identity references remain #799.",
       "review": {
         "issue": 724,
         "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",

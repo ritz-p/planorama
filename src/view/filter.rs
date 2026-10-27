@@ -87,6 +87,7 @@ fn placement_available(
             | "aws_redshiftserverless_workgroup"
             | "aws_redshiftserverless_endpoint_access"
             | "aws_apprunner_vpc_connector"
+            | "aws_opensearchserverless_vpc_endpoint"
     ) {
         return true;
     }
