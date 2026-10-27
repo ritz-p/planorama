@@ -1,0 +1,285 @@
+{
+  "format_version": "1.2",
+  "resource_changes": [
+    {
+      "address": "aws_vpc.main",
+      "mode": "managed",
+      "type": "aws_vpc",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "vpc-main"
+        }
+      }
+    },
+    {
+      "address": "aws_vpc.other",
+      "mode": "managed",
+      "type": "aws_vpc",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "vpc-other"
+        }
+      }
+    },
+    {
+      "address": "aws_subnet.a",
+      "mode": "managed",
+      "type": "aws_subnet",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "subnet-a",
+          "vpc_id": "vpc-main",
+          "availability_zone": "us-east-1a"
+        }
+      }
+    },
+    {
+      "address": "aws_subnet.b",
+      "mode": "managed",
+      "type": "aws_subnet",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "subnet-b",
+          "vpc_id": "vpc-main",
+          "availability_zone": "us-east-1b"
+        }
+      }
+    },
+    {
+      "address": "aws_security_group.broker",
+      "mode": "managed",
+      "type": "aws_security_group",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "sg-broker",
+          "vpc_id": "vpc-main"
+        }
+      }
+    },
+    {
+      "address": "aws_docdb_subnet_group.shared",
+      "mode": "managed",
+      "type": "aws_docdb_subnet_group",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "db-subnets",
+          "id": "db-subnets",
+          "subnet_ids": [
+            "subnet-a",
+            "subnet-b"
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_docdb_cluster.main",
+      "mode": "managed",
+      "type": "aws_docdb_cluster",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "cluster_identifier": "cluster-main",
+          "id": "arn:aws:rds:us-east-1:123456789012:cluster:cluster-main",
+          "db_subnet_group_name": "db-subnets",
+          "vpc_security_group_ids": [
+            "sg-broker"
+          ],
+          "master_password": "PRIVATE_PASSWORD",
+          "endpoint": "PRIVATE_ENDPOINT"
+        }
+      }
+    },
+    {
+      "address": "aws_docdb_cluster_instance.member",
+      "mode": "managed",
+      "type": "aws_docdb_cluster_instance",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "identifier": "member",
+          "cluster_identifier": "cluster-main"
+        }
+      }
+    },
+    {
+      "address": "aws_docdb_cluster.other",
+      "mode": "managed",
+      "type": "aws_docdb_cluster",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "cluster_identifier": "cluster-other",
+          "db_subnet_group_name": "db-subnets",
+          "vpc_security_group_ids": [
+            "sg-broker"
+          ]
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_vpc.main",
+          "mode": "managed",
+          "type": "aws_vpc",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_vpc.other",
+          "mode": "managed",
+          "type": "aws_vpc",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_subnet.a",
+          "mode": "managed",
+          "type": "aws_subnet",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_subnet.b",
+          "mode": "managed",
+          "type": "aws_subnet",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_security_group.broker",
+          "mode": "managed",
+          "type": "aws_security_group",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_docdb_subnet_group.shared",
+          "mode": "managed",
+          "type": "aws_docdb_subnet_group",
+          "provider_config_key": "aws",
+          "expressions": {
+            "subnet_ids": {
+              "references": [
+                "aws_subnet.a.id",
+                "aws_subnet.b.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_docdb_cluster.main",
+          "mode": "managed",
+          "type": "aws_docdb_cluster",
+          "provider_config_key": "aws",
+          "expressions": {
+            "db_subnet_group_name": {
+              "references": [
+                "aws_docdb_subnet_group.shared.name"
+              ]
+            },
+            "vpc_security_group_ids": {
+              "references": [
+                "aws_security_group.broker.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_docdb_cluster_instance.member",
+          "mode": "managed",
+          "type": "aws_docdb_cluster_instance",
+          "provider_config_key": "aws",
+          "expressions": {
+            "cluster_identifier": {
+              "references": [
+                "aws_docdb_cluster.main.cluster_identifier"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_docdb_cluster.other",
+          "mode": "managed",
+          "type": "aws_docdb_cluster",
+          "provider_config_key": "aws",
+          "expressions": {
+            "db_subnet_group_name": {
+              "references": [
+                "aws_docdb_subnet_group.shared.name"
+              ]
+            },
+            "vpc_security_group_ids": {
+              "references": [
+                "aws_security_group.broker.id"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

@@ -11,6 +11,9 @@ pub(super) mod tests;
 
 pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
     let resource = super::aliases::canonical(resource);
+    if let Some(label) = super::databases::label(resource, attribute) {
+        return Some(label);
+    }
     if let Some(label) = super::streaming::label(resource, attribute) {
         return Some(label);
     }
@@ -484,6 +487,7 @@ pub(crate) fn annotate(
         }
     }
     super::streaming::annotate(nodes, references, evidence);
+    super::databases::annotate(nodes, references, evidence);
     super::lambda::annotate(nodes, references, evidence);
     super::api_gateway::annotate(nodes, references, evidence);
     super::rds_proxy::validate_targets(nodes, references, evidence);
@@ -504,6 +508,12 @@ pub(crate) fn annotate(
 
 pub(super) fn verified(raw: &Input, reference: &AttributeReference) -> bool {
     reference.service_reference_verified
+        && (super::databases::label(
+            &raw.nodes[reference.target].resource_type,
+            &reference.attribute,
+        )
+        .is_none()
+            || super::streaming::bindings(raw, reference))
         && (super::streaming::label(
             &raw.nodes[reference.target].resource_type,
             &reference.attribute,
