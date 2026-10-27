@@ -5,6 +5,32 @@ const fs=require('node:fs');
 const {extract,buildEvidence,render}=require('../../scripts/aws-semantic-audit.cjs');
 const read=p=>JSON.parse(fs.readFileSync(p));
 
+test('search and BI review covers 65 types without borrowing adjacent-service semantics',()=>{
+ const services=new Set('opensearch opensearchserverless elasticsearch cloudsearch osis kendra qbusiness quicksight finspace'.split(' '));
+ const expected=read('tests/fixtures/aws-inventory/6.70.0.json').resources.filter(r=>services.has(r.service));
+ const entries=Object.entries(read('docs/aws-semantic-decisions.json').types).filter(([,d])=>d.review?.issue===724);
+ assert.equal(expected.length,65);
+ assert.deepEqual(entries.map(([t])=>t).sort(),expected.map(r=>r.type).sort());
+ for(const [type,{review,gap,issue}] of entries){
+  assert.equal(review.providerCommit,'5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f');
+  assert.match(review.implementationCommit,/^[a-f0-9]{40}$/);
+  assert.equal(review.officialDocumentation,expected.find(r=>r.type===type).documentation);
+  assert.deepEqual(Object.keys(review.shapes),review.fields);
+  for(const key of ['placement','ownership','network','references','scope','summaries']) assert.match(review[key],/^(Supported|Partial|Missing|Not applicable|Intentionally unsupported|Deferred):/,type+': '+key);
+  assert.match(gap,/#724/);
+  if(Object.values(review).some(v=>typeof v==='string'&&v.startsWith('Missing:'))) assert.ok(issue===696||(issue>=797&&issue<=806),type);
+ }
+ const d=Object.fromEntries(entries);
+ assert.match(d.aws_opensearch_domain.review.network,/#181.*#182/);
+ assert.match(d.aws_elasticsearch_domain.review.placement,/not a verified alias/);
+ assert.match(d.aws_opensearchserverless_collection.review.network,/no collection VPC/);
+ assert.deepEqual(d.aws_opensearchserverless_vpc_endpoint.review.shapes.subnet_ids,[['set','string']]);
+ assert.deepEqual(d.aws_opensearchserverless_collection.review.shapes.encryption_config,[["list",["object",{"aws_owned_key":"bool","kms_key_arn":"string"}]]]);
+ assert.match(d.aws_osis_pipeline.review.references,/id is deprecated/);
+ assert.match(d.aws_quicksight_role_membership.review.references,/not an IAM role/);
+ assert.match(d.aws_quicksight_ip_restriction.review.references,/map-key reference provenance/);
+});
+
 test('network audit covers 68 types and preserves typed endpoint contracts',()=>{
  const services=new Set('directconnect networkmanager networkfirewall vpclattice networkflowmonitor networkmonitor'.split(' '));
  const expected=read('tests/fixtures/aws-inventory/6.70.0.json').resources.filter(r=>services.has(r.service));

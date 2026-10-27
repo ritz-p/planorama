@@ -178,15 +178,114 @@
     },
     "aws_opensearchserverless_collection": {
       "status": "Basic-only",
-      "priority": "P1",
-      "issue": 696,
-      "gap": "Collection architecture presentation; endpoint VPC/subnet/SG proof without policy-derived collection membership."
+      "priority": "P2",
+      "issue": 799,
+      "gap": "#724 reviewed: Supported: Spatial basic default; #696 must preserve this existing card. Not applicable: collection groups share capacity; a group reference is not exclusive embedded ownership. Intentionally unsupported: no collection VPC/subnet input; policy JSON and endpoint proximity cannot establish containment. Missing: collection_group_name -> collection_group.name and configured encryption_config.kms_key_arn -> key ARN are separate follow-up work; top-level kms_key_arn is computed. #696 owns the existing card and endpoint network scope. Follow-up #799. Deferred: type/standby-replica/encryption mode requires an allowlist distinguishing AWS-owned key and unknown key; no policy-derived summary.",
+      "review": {
+        "issue": 724,
+        "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "id",
+          "arn",
+          "name",
+          "collection_group_name",
+          "encryption_config",
+          "kms_key_arn",
+          "type",
+          "standby_replicas"
+        ],
+        "placement": "Supported: Spatial basic default; #696 must preserve this existing card.",
+        "ownership": "Not applicable: collection groups share capacity; a group reference is not exclusive embedded ownership.",
+        "network": "Intentionally unsupported: no collection VPC/subnet input; policy JSON and endpoint proximity cannot establish containment.",
+        "references": "Missing: collection_group_name -> collection_group.name and configured encryption_config.kms_key_arn -> key ARN are separate follow-up work; top-level kms_key_arn is computed. #696 owns the existing card and endpoint network scope.",
+        "scope": "Partial: Regional eligibility in scope.rs; basic account remains unresolved. Known provider/resource region is conditional, not ARN or owner inference.",
+        "summaries": "Deferred: type/standby-replica/encryption mode requires an allowlist distinguishing AWS-owned key and unknown key; no policy-derived summary.",
+        "officialDocumentation": "website/docs/r/opensearchserverless_collection.html.markdown",
+        "shapes": {
+          "id": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "name": [
+            "string"
+          ],
+          "collection_group_name": [
+            "string"
+          ],
+          "encryption_config": [
+            [
+              "list",
+              [
+                "object",
+                {
+                  "aws_owned_key": "bool",
+                  "kms_key_arn": "string"
+                }
+              ]
+            ]
+          ],
+          "kms_key_arn": [
+            "string"
+          ],
+          "type": [
+            "string"
+          ],
+          "standby_replicas": [
+            "string"
+          ]
+        }
+      }
     },
     "aws_opensearchserverless_vpc_endpoint": {
       "status": "Basic-only",
-      "priority": "P1",
+      "priority": "P2",
       "issue": 696,
-      "gap": "Collection architecture presentation; endpoint VPC/subnet/SG proof without policy-derived collection membership."
+      "gap": "#724 reviewed: Not applicable: shared endpoint does not own collections. Missing: #696 verified same-VPC endpoint context using vpc_id and complete subnet/SG sets. Missing: #696 complete VPC/subnet/SG ID references with matching known values; policy documents cannot associate collections. Follow-up #696. Deferred: subnet/SG counts require complete known collections and explicit treatment of default SGs before a count summary; no reachability statement.",
+      "review": {
+        "issue": 724,
+        "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "id",
+          "name",
+          "vpc_id",
+          "subnet_ids",
+          "security_group_ids"
+        ],
+        "placement": "Supported: retain Logical aws_opensearchserverless_vpc_endpoint basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
+        "ownership": "Not applicable: shared endpoint does not own collections.",
+        "network": "Missing: #696 verified same-VPC endpoint context using vpc_id and complete subnet/SG sets.",
+        "references": "Missing: #696 complete VPC/subnet/SG ID references with matching known values; policy documents cannot associate collections.",
+        "scope": "Partial: Regional eligibility in scope.rs; basic account remains unresolved. Known provider/resource region is conditional, not ARN or owner inference.",
+        "summaries": "Deferred: subnet/SG counts require complete known collections and explicit treatment of default SGs before a count summary; no reachability statement.",
+        "officialDocumentation": "website/docs/r/opensearchserverless_vpc_endpoint.html.markdown",
+        "shapes": {
+          "id": [
+            "string"
+          ],
+          "name": [
+            "string"
+          ],
+          "vpc_id": [
+            "string"
+          ],
+          "subnet_ids": [
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "security_group_ids": [
+            [
+              "set",
+              "string"
+            ]
+          ]
+        }
+      }
     },
     "aws_docdb_cluster": {
       "status": "Partial",
@@ -2158,14 +2257,70 @@
       "gap": "Retain logical administrative record; contact names/emails/phone values are intentionally excluded. No architecture ownership inferred from account strings."
     },
     "aws_opensearchserverless_access_policy": {
-      "status": "Basic-only; policy interpretation intentionally unsupported",
+      "status": "Basic-only",
       "priority": "P3",
-      "gap": "Retain logical policy. Collection association would require interpreting policy JSON, outside this audit and #696."
+      "gap": "#724 reviewed: Intentionally unsupported: policy matching cannot prove network placement. Intentionally unsupported: access policy targets are encoded inside opaque JSON; no independent configured collection/endpoint identity. Intentionally unsupported: no effective access policy, retention, encryption or reachability summary from JSON.",
+      "review": {
+        "issue": 724,
+        "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "name",
+          "type",
+          "policy"
+        ],
+        "placement": "Supported: retain Logical aws_opensearchserverless_access_policy basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
+        "ownership": "Not applicable: independent aws_opensearchserverless_access_policy configuration; no verified embedded owner in runtime.",
+        "network": "Intentionally unsupported: policy matching cannot prove network placement.",
+        "references": "Intentionally unsupported: access policy targets are encoded inside opaque JSON; no independent configured collection/endpoint identity.",
+        "scope": "Partial: Regional eligibility in scope.rs; basic account remains unresolved. Known provider/resource region is conditional, not ARN or owner inference.",
+        "summaries": "Intentionally unsupported: no effective access policy, retention, encryption or reachability summary from JSON.",
+        "officialDocumentation": "website/docs/r/opensearchserverless_access_policy.html.markdown",
+        "shapes": {
+          "name": [
+            "string"
+          ],
+          "type": [
+            "string"
+          ],
+          "policy": [
+            "string"
+          ]
+        }
+      }
     },
     "aws_opensearchserverless_security_policy": {
-      "status": "Basic-only; policy interpretation intentionally unsupported",
+      "status": "Basic-only",
       "priority": "P3",
-      "gap": "Retain logical policy. Collection association would require interpreting policy JSON, outside this audit and #696."
+      "gap": "#724 reviewed: Intentionally unsupported: policy matching cannot prove network placement. Intentionally unsupported: security policy targets are encoded inside opaque JSON; no independent configured collection/endpoint identity. Intentionally unsupported: no effective security policy, retention, encryption or reachability summary from JSON.",
+      "review": {
+        "issue": 724,
+        "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "name",
+          "type",
+          "policy"
+        ],
+        "placement": "Supported: retain Logical aws_opensearchserverless_security_policy basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
+        "ownership": "Not applicable: independent aws_opensearchserverless_security_policy configuration; no verified embedded owner in runtime.",
+        "network": "Intentionally unsupported: policy matching cannot prove network placement.",
+        "references": "Intentionally unsupported: security policy targets are encoded inside opaque JSON; no independent configured collection/endpoint identity.",
+        "scope": "Partial: Regional eligibility in scope.rs; basic account remains unresolved. Known provider/resource region is conditional, not ARN or owner inference.",
+        "summaries": "Intentionally unsupported: no effective security policy, retention, encryption or reachability summary from JSON.",
+        "officialDocumentation": "website/docs/r/opensearchserverless_security_policy.html.markdown",
+        "shapes": {
+          "name": [
+            "string"
+          ],
+          "type": [
+            "string"
+          ],
+          "policy": [
+            "string"
+          ]
+        }
+      }
     },
     "aws_dynamodb_table_replica": {
       "status": "Partial",
@@ -11250,6 +11405,2927 @@
           "target.port": [
             "list",
             "number"
+          ]
+        }
+      }
+    },
+    "aws_cloudsearch_domain": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 797,
+      "gap": "#724 reviewed: Missing: independent search domain is Logical; review Spatial promotion with its policy navigation. Not applicable: no configured managed endpoint identity; domain_id and service endpoint URLs are computed. Follow-up #797. Deferred: HTTPS/multi-AZ flags require an explicit known/unknown summary contract; index fields and document defaults remain private.",
+      "review": {
+        "issue": 724,
+        "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "name",
+          "domain_id",
+          "arn",
+          "endpoint_options.enforce_https",
+          "multi_az"
+        ],
+        "placement": "Missing: independent search domain is Logical; review Spatial promotion with its policy navigation.",
+        "ownership": "Not applicable: independent aws_cloudsearch_domain configuration; no verified embedded owner in runtime.",
+        "network": "Not applicable: reviewed aws_cloudsearch_domain fields provide no configured subnet containment; service references do not propagate network placement.",
+        "references": "Not applicable: no configured managed endpoint identity; domain_id and service endpoint URLs are computed.",
+        "scope": "Partial: Regional eligibility in scope.rs; basic account remains unresolved. Known provider/resource region is conditional, not ARN or owner inference.",
+        "summaries": "Deferred: HTTPS/multi-AZ flags require an explicit known/unknown summary contract; index fields and document defaults remain private.",
+        "officialDocumentation": "website/docs/r/cloudsearch_domain.html.markdown",
+        "shapes": {
+          "name": [
+            "string"
+          ],
+          "domain_id": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "endpoint_options.enforce_https": [
+            "list",
+            "bool"
+          ],
+          "multi_az": [
+            "bool"
+          ]
+        }
+      }
+    },
+    "aws_cloudsearch_domain_service_access_policy": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 797,
+      "gap": "#724 reviewed: Missing: verified domain navigation; policy document is not network ownership. Missing: domain_name -> cloudsearch_domain.name; access_policy is opaque JSON. Follow-up #797. Intentionally unsupported: access_policy contents and effective search access; domain navigation supplies the useful configuration context.",
+      "review": {
+        "issue": 724,
+        "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "domain_name",
+          "access_policy"
+        ],
+        "placement": "Supported: retain Logical aws_cloudsearch_domain_service_access_policy basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
+        "ownership": "Missing: verified domain navigation; policy document is not network ownership.",
+        "network": "Not applicable: reviewed aws_cloudsearch_domain_service_access_policy fields provide no configured subnet containment; service references do not propagate network placement.",
+        "references": "Missing: domain_name -> cloudsearch_domain.name; access_policy is opaque JSON.",
+        "scope": "Partial: Regional eligibility in scope.rs; basic account remains unresolved. Known provider/resource region is conditional, not ARN or owner inference.",
+        "summaries": "Intentionally unsupported: access_policy contents and effective search access; domain navigation supplies the useful configuration context.",
+        "officialDocumentation": "website/docs/r/cloudsearch_domain_service_access_policy.html.markdown",
+        "shapes": {
+          "domain_name": [
+            "string"
+          ],
+          "access_policy": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_elasticsearch_domain": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 797,
+      "gap": "#724 reviewed: Missing: Logical legacy domain needs independent-card review; not a verified alias of opensearch_domain. Missing: complete vpc_options subnet/SG common-VPC proof; no inheritance from OpenSearch type. Missing: enabled Cognito pool/role, enabled custom-endpoint ACM certificate, encryption key and enabled log destination references. KMS input accepts ID but readback normalizes ARN; never infer from endpoint DNS. Follow-up #797. Deferred: encryption/TLS flags require enabled/unknown and key normalization contracts; master credentials, policies and advanced options excluded.",
+      "review": {
+        "issue": 724,
+        "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "domain_name",
+          "domain_id",
+          "arn",
+          "vpc_options.subnet_ids",
+          "vpc_options.security_group_ids",
+          "cognito_options.enabled",
+          "cognito_options.identity_pool_id",
+          "cognito_options.user_pool_id",
+          "cognito_options.role_arn",
+          "domain_endpoint_options.custom_endpoint_enabled",
+          "domain_endpoint_options.custom_endpoint_certificate_arn",
+          "encrypt_at_rest.enabled",
+          "encrypt_at_rest.kms_key_id",
+          "log_publishing_options.enabled",
+          "log_publishing_options.cloudwatch_log_group_arn"
+        ],
+        "placement": "Missing: Logical legacy domain needs independent-card review; not a verified alias of opensearch_domain.",
+        "ownership": "Not applicable: independent aws_elasticsearch_domain configuration; no verified embedded owner in runtime.",
+        "network": "Missing: complete vpc_options subnet/SG common-VPC proof; no inheritance from OpenSearch type.",
+        "references": "Missing: enabled Cognito pool/role, enabled custom-endpoint ACM certificate, encryption key and enabled log destination references. KMS input accepts ID but readback normalizes ARN; never infer from endpoint DNS.",
+        "scope": "Partial: Regional eligibility in scope.rs; basic account remains unresolved. Known provider/resource region is conditional, not ARN or owner inference.",
+        "summaries": "Deferred: encryption/TLS flags require enabled/unknown and key normalization contracts; master credentials, policies and advanced options excluded.",
+        "officialDocumentation": "website/docs/r/elasticsearch_domain.html.markdown",
+        "shapes": {
+          "domain_name": [
+            "string"
+          ],
+          "domain_id": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "vpc_options.subnet_ids": [
+            "list",
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "vpc_options.security_group_ids": [
+            "list",
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "cognito_options.enabled": [
+            "list",
+            "bool"
+          ],
+          "cognito_options.identity_pool_id": [
+            "list",
+            "string"
+          ],
+          "cognito_options.user_pool_id": [
+            "list",
+            "string"
+          ],
+          "cognito_options.role_arn": [
+            "list",
+            "string"
+          ],
+          "domain_endpoint_options.custom_endpoint_enabled": [
+            "list",
+            "bool"
+          ],
+          "domain_endpoint_options.custom_endpoint_certificate_arn": [
+            "list",
+            "string"
+          ],
+          "encrypt_at_rest.enabled": [
+            "list",
+            "bool"
+          ],
+          "encrypt_at_rest.kms_key_id": [
+            "list",
+            "string"
+          ],
+          "log_publishing_options.enabled": [
+            "set",
+            "bool"
+          ],
+          "log_publishing_options.cloudwatch_log_group_arn": [
+            "set",
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_elasticsearch_domain_policy": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 797,
+      "gap": "#724 reviewed: Missing: domain navigation only; preserve policy identity and action. Missing: domain_name -> exact service domain.domain_name; docs call access_policies optional but schema requires it. No policy interpretation. Follow-up #797. Intentionally unsupported: access_policies contents and effective permissions; domain navigation is tracked separately.",
+      "review": {
+        "issue": 724,
+        "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "domain_name",
+          "access_policies"
+        ],
+        "placement": "Supported: retain Logical aws_elasticsearch_domain_policy basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
+        "ownership": "Missing: domain navigation only; preserve policy identity and action.",
+        "network": "Not applicable: reviewed aws_elasticsearch_domain_policy fields provide no configured subnet containment; service references do not propagate network placement.",
+        "references": "Missing: domain_name -> exact service domain.domain_name; docs call access_policies optional but schema requires it. No policy interpretation.",
+        "scope": "Partial: Regional eligibility in scope.rs; basic account remains unresolved. Known provider/resource region is conditional, not ARN or owner inference.",
+        "summaries": "Intentionally unsupported: access_policies contents and effective permissions; domain navigation is tracked separately.",
+        "officialDocumentation": "website/docs/r/elasticsearch_domain_policy.html.markdown",
+        "shapes": {
+          "domain_name": [
+            "string"
+          ],
+          "access_policies": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_elasticsearch_domain_saml_options": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 797,
+      "gap": "#724 reviewed: Missing: verified domain helper navigation. Missing: domain_name -> exact service domain.domain_name; IdP entity_id is not a Terraform resource identifier. Follow-up #797. Intentionally unsupported: XML metadata, SAML subjects and backend roles are not safe architecture summaries.",
+      "review": {
+        "issue": 724,
+        "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "domain_name",
+          "saml_options.enabled",
+          "saml_options.idp.entity_id",
+          "saml_options.idp.metadata_content"
+        ],
+        "placement": "Supported: retain Logical aws_elasticsearch_domain_saml_options basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
+        "ownership": "Missing: verified domain helper navigation.",
+        "network": "Not applicable: reviewed aws_elasticsearch_domain_saml_options fields provide no configured subnet containment; service references do not propagate network placement.",
+        "references": "Missing: domain_name -> exact service domain.domain_name; IdP entity_id is not a Terraform resource identifier.",
+        "scope": "Partial: Regional eligibility in scope.rs; basic account remains unresolved. Known provider/resource region is conditional, not ARN or owner inference.",
+        "summaries": "Intentionally unsupported: XML metadata, SAML subjects and backend roles are not safe architecture summaries.",
+        "officialDocumentation": "website/docs/r/elasticsearch_domain_saml_options.html.markdown",
+        "shapes": {
+          "domain_name": [
+            "string"
+          ],
+          "saml_options.enabled": [
+            "list",
+            "bool"
+          ],
+          "saml_options.idp.entity_id": [
+            "list",
+            "list",
+            "string"
+          ],
+          "saml_options.idp.metadata_content": [
+            "list",
+            "list",
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_elasticsearch_vpc_endpoint": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 797,
+      "gap": "#724 reviewed: Not applicable: endpoint references a shared domain; do not embed domain under endpoint. Missing: endpoint common-VPC proof from configured subnet/SG collections, independent of domain location. Missing: domain_arn -> exact service domain.arn and complete subnet/SG IDs; default SG cannot be synthesized. Follow-up #797. Deferred: default-SG configuration needs omitted/computed-value handling before an attachment summary; endpoint URLs and runtime state excluded.",
+      "review": {
+        "issue": 724,
+        "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "id",
+          "domain_arn",
+          "vpc_options.subnet_ids",
+          "vpc_options.security_group_ids"
+        ],
+        "placement": "Supported: retain Logical aws_elasticsearch_vpc_endpoint basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
+        "ownership": "Not applicable: endpoint references a shared domain; do not embed domain under endpoint.",
+        "network": "Missing: endpoint common-VPC proof from configured subnet/SG collections, independent of domain location.",
+        "references": "Missing: domain_arn -> exact service domain.arn and complete subnet/SG IDs; default SG cannot be synthesized.",
+        "scope": "Partial: Regional eligibility in scope.rs; basic account remains unresolved. Known provider/resource region is conditional, not ARN or owner inference.",
+        "summaries": "Deferred: default-SG configuration needs omitted/computed-value handling before an attachment summary; endpoint URLs and runtime state excluded.",
+        "officialDocumentation": "website/docs/r/elasticsearch_vpc_endpoint.html.markdown",
+        "shapes": {
+          "id": [
+            "string"
+          ],
+          "domain_arn": [
+            "string"
+          ],
+          "vpc_options.subnet_ids": [
+            "list",
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "vpc_options.security_group_ids": [
+            "list",
+            [
+              "set",
+              "string"
+            ]
+          ]
+        }
+      }
+    },
+    "aws_finspace_kx_cluster": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 803,
+      "gap": "#724 reviewed: Missing: Logical cluster merits independent-card review. Missing: environment navigation, not embedding of shared databases/volumes. Missing: verify vpc_configuration subnet/SG/VPC context for PrivateLink endpoint; docs misdescribe vpc_id as endpoint ID, source maps it to VpcId. Do not claim underlying service compute lives in customer subnet. Missing: environment ID, same-environment database/dataview/scaling-group/volume names, IAM execution role and code bucket. Cluster id is composite environment,name. Follow-up #803. Deferred: cluster type/AZ mode summary needs a bounded enum contract that distinguishes compute from PrivateLink placement; command arguments and code paths excluded.",
+      "review": {
+        "issue": 724,
+        "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "arn",
+          "environment_id",
+          "name",
+          "vpc_configuration.vpc_id",
+          "vpc_configuration.subnet_ids",
+          "vpc_configuration.security_group_ids",
+          "execution_role",
+          "database.database_name",
+          "database.dataview_name",
+          "scaling_group_configuration.scaling_group_name",
+          "savedown_storage_configuration.volume_name",
+          "tickerplant_log_configuration.tickerplant_log_volumes",
+          "code.s3_bucket"
+        ],
+        "placement": "Missing: Logical cluster merits independent-card review.",
+        "ownership": "Missing: environment navigation, not embedding of shared databases/volumes.",
+        "network": "Missing: verify vpc_configuration subnet/SG/VPC context for PrivateLink endpoint; docs misdescribe vpc_id as endpoint ID, source maps it to VpcId. Do not claim underlying service compute lives in customer subnet.",
+        "references": "Missing: environment ID, same-environment database/dataview/scaling-group/volume names, IAM execution role and code bucket. Cluster id is composite environment,name.",
+        "scope": "Partial: Regional eligibility in scope.rs; basic account remains unresolved. Known provider/resource region is conditional, not ARN or owner inference.",
+        "summaries": "Deferred: cluster type/AZ mode summary needs a bounded enum contract that distinguishes compute from PrivateLink placement; command arguments and code paths excluded.",
+        "officialDocumentation": "website/docs/r/finspace_kx_cluster.html.markdown",
+        "shapes": {
+          "arn": [
+            "string"
+          ],
+          "environment_id": [
+            "string"
+          ],
+          "name": [
+            "string"
+          ],
+          "vpc_configuration.vpc_id": [
+            "list",
+            "string"
+          ],
+          "vpc_configuration.subnet_ids": [
+            "list",
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "vpc_configuration.security_group_ids": [
+            "list",
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "execution_role": [
+            "string"
+          ],
+          "database.database_name": [
+            "list",
+            "string"
+          ],
+          "database.dataview_name": [
+            "list",
+            "string"
+          ],
+          "scaling_group_configuration.scaling_group_name": [
+            "list",
+            "string"
+          ],
+          "savedown_storage_configuration.volume_name": [
+            "list",
+            "string"
+          ],
+          "tickerplant_log_configuration.tickerplant_log_volumes": [
+            "list",
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "code.s3_bucket": [
+            "list",
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_finspace_kx_database": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 803,
+      "gap": "#724 reviewed: Missing: verified environment navigation; shared query database remains independent. Missing: environment_id -> environment.id; database name is environment-qualified, Terraform id is composite. Follow-up #803. Intentionally unsupported: database contents, changesets and timestamps.",
+      "review": {
+        "issue": 724,
+        "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "arn",
+          "environment_id",
+          "name"
+        ],
+        "placement": "Supported: retain Logical aws_finspace_kx_database basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
+        "ownership": "Missing: verified environment navigation; shared query database remains independent.",
+        "network": "Not applicable: reviewed aws_finspace_kx_database fields provide no configured subnet containment; service references do not propagate network placement.",
+        "references": "Missing: environment_id -> environment.id; database name is environment-qualified, Terraform id is composite.",
+        "scope": "Partial: Regional eligibility in scope.rs; basic account remains unresolved. Known provider/resource region is conditional, not ARN or owner inference.",
+        "summaries": "Intentionally unsupported: database contents, changesets and timestamps.",
+        "officialDocumentation": "website/docs/r/finspace_kx_database.html.markdown",
+        "shapes": {
+          "arn": [
+            "string"
+          ],
+          "environment_id": [
+            "string"
+          ],
+          "name": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_finspace_kx_dataview": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 803,
+      "gap": "#724 reviewed: Missing: database navigation requires environment agreement. Missing: environment, same-environment database name and complete volume references with compatible AZ; db_paths/changeset strings are not managed objects. Follow-up #803. Intentionally unsupported: db_paths, changesets and read/write data contents.",
+      "review": {
+        "issue": 724,
+        "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "arn",
+          "environment_id",
+          "database_name",
+          "name",
+          "availability_zone_id",
+          "segment_configurations.volume_name"
+        ],
+        "placement": "Supported: retain Logical aws_finspace_kx_dataview basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
+        "ownership": "Missing: database navigation requires environment agreement.",
+        "network": "Not applicable: reviewed aws_finspace_kx_dataview fields provide no configured subnet containment; service references do not propagate network placement.",
+        "references": "Missing: environment, same-environment database name and complete volume references with compatible AZ; db_paths/changeset strings are not managed objects.",
+        "scope": "Partial: Regional eligibility in scope.rs; basic account remains unresolved. Known provider/resource region is conditional, not ARN or owner inference.",
+        "summaries": "Intentionally unsupported: db_paths, changesets and read/write data contents.",
+        "officialDocumentation": "website/docs/r/finspace_kx_dataview.html.markdown",
+        "shapes": {
+          "arn": [
+            "string"
+          ],
+          "environment_id": [
+            "string"
+          ],
+          "database_name": [
+            "string"
+          ],
+          "name": [
+            "string"
+          ],
+          "availability_zone_id": [
+            "string"
+          ],
+          "segment_configurations.volume_name": [
+            "list",
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_finspace_kx_environment": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 803,
+      "gap": "#724 reviewed: Missing: Logical environment merits independent architecture review; not automatically a network container. Intentionally unsupported: service-managed environment is not contained by customer TGW; cluster endpoint networking is separate. Missing: KMS key and TGW ID references; routable CIDR and custom DNS IP/name do not identify subnets or resolver resources. Follow-up #803. Deferred: encryption-key mode needs key-ID normalization and unknown handling; custom DNS and ACL content excluded.",
+      "review": {
+        "issue": 724,
+        "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "id",
+          "arn",
+          "kms_key_id",
+          "transit_gateway_configuration.transit_gateway_id",
+          "transit_gateway_configuration.routable_cidr_space",
+          "infrastructure_account_id"
+        ],
+        "placement": "Missing: Logical environment merits independent architecture review; not automatically a network container.",
+        "ownership": "Not applicable: independent aws_finspace_kx_environment configuration; no verified embedded owner in runtime.",
+        "network": "Intentionally unsupported: service-managed environment is not contained by customer TGW; cluster endpoint networking is separate.",
+        "references": "Missing: KMS key and TGW ID references; routable CIDR and custom DNS IP/name do not identify subnets or resolver resources.",
+        "scope": "Partial: Regional eligibility; computed infrastructure_account_id describes service infrastructure, not customer resource ownership.",
+        "summaries": "Deferred: encryption-key mode needs key-ID normalization and unknown handling; custom DNS and ACL content excluded.",
+        "officialDocumentation": "website/docs/r/finspace_kx_environment.html.markdown",
+        "shapes": {
+          "id": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "kms_key_id": [
+            "string"
+          ],
+          "transit_gateway_configuration.transit_gateway_id": [
+            "list",
+            "string"
+          ],
+          "transit_gateway_configuration.routable_cidr_space": [
+            "list",
+            "string"
+          ],
+          "infrastructure_account_id": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_finspace_kx_scaling_group": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 803,
+      "gap": "#724 reviewed: Not applicable: shared scaling capacity remains independent. Missing: environment_id -> environment.id; computed clusters cannot synthesize membership; cluster scaling_group_name is the configured direction. Follow-up #803. Deferred: host type/capacity requires bounded allowlist; status cannot predict performance.",
+      "review": {
+        "issue": 724,
+        "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "arn",
+          "environment_id",
+          "name",
+          "availability_zone_id",
+          "clusters"
+        ],
+        "placement": "Supported: retain Logical aws_finspace_kx_scaling_group basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
+        "ownership": "Not applicable: shared scaling capacity remains independent.",
+        "network": "Not applicable: reviewed aws_finspace_kx_scaling_group fields provide no configured subnet containment; service references do not propagate network placement.",
+        "references": "Missing: environment_id -> environment.id; computed clusters cannot synthesize membership; cluster scaling_group_name is the configured direction.",
+        "scope": "Partial: Regional eligibility in scope.rs; basic account remains unresolved. Known provider/resource region is conditional, not ARN or owner inference.",
+        "summaries": "Deferred: host type/capacity requires bounded allowlist; status cannot predict performance.",
+        "officialDocumentation": "website/docs/r/finspace_kx_scaling_group.html.markdown",
+        "shapes": {
+          "arn": [
+            "string"
+          ],
+          "environment_id": [
+            "string"
+          ],
+          "name": [
+            "string"
+          ],
+          "availability_zone_id": [
+            "string"
+          ],
+          "clusters": [
+            [
+              "list",
+              "string"
+            ]
+          ]
+        }
+      }
+    },
+    "aws_finspace_kx_user": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 803,
+      "gap": "#724 reviewed: Missing: environment navigation, not IAM role ownership. Missing: environment ID and iam_role -> IAM role.arn; user name is environment-qualified. Follow-up #803. Intentionally unsupported: user identity details and effective permissions.",
+      "review": {
+        "issue": 724,
+        "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "arn",
+          "environment_id",
+          "name",
+          "iam_role"
+        ],
+        "placement": "Supported: retain Logical aws_finspace_kx_user basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
+        "ownership": "Missing: environment navigation, not IAM role ownership.",
+        "network": "Not applicable: reviewed aws_finspace_kx_user fields provide no configured subnet containment; service references do not propagate network placement.",
+        "references": "Missing: environment ID and iam_role -> IAM role.arn; user name is environment-qualified.",
+        "scope": "Partial: Regional eligibility in scope.rs; basic account remains unresolved. Known provider/resource region is conditional, not ARN or owner inference.",
+        "summaries": "Intentionally unsupported: user identity details and effective permissions.",
+        "officialDocumentation": "website/docs/r/finspace_kx_user.html.markdown",
+        "shapes": {
+          "arn": [
+            "string"
+          ],
+          "environment_id": [
+            "string"
+          ],
+          "name": [
+            "string"
+          ],
+          "iam_role": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_finspace_kx_volume": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 803,
+      "gap": "#724 reviewed: Not applicable: shared volume is not embedded in one cluster. Not applicable: availability-zone IDs do not identify a subnet or EC2 volume. Missing: environment_id -> environment.id; computed attached_clusters is not configured membership. Follow-up #803. Deferred: NAS type/size requires storage-specific allowlist; attached cluster status excluded.",
+      "review": {
+        "issue": 724,
+        "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "arn",
+          "environment_id",
+          "name",
+          "availability_zones",
+          "attached_clusters"
+        ],
+        "placement": "Supported: retain Logical aws_finspace_kx_volume basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
+        "ownership": "Not applicable: shared volume is not embedded in one cluster.",
+        "network": "Not applicable: availability-zone IDs do not identify a subnet or EC2 volume.",
+        "references": "Missing: environment_id -> environment.id; computed attached_clusters is not configured membership.",
+        "scope": "Partial: Regional eligibility in scope.rs; basic account remains unresolved. Known provider/resource region is conditional, not ARN or owner inference.",
+        "summaries": "Deferred: NAS type/size requires storage-specific allowlist; attached cluster status excluded.",
+        "officialDocumentation": "website/docs/r/finspace_kx_volume.html.markdown",
+        "shapes": {
+          "arn": [
+            "string"
+          ],
+          "environment_id": [
+            "string"
+          ],
+          "name": [
+            "string"
+          ],
+          "availability_zones": [
+            [
+              "list",
+              "string"
+            ]
+          ],
+          "attached_clusters": [
+            [
+              "list",
+              [
+                "object",
+                {
+                  "cluster_name": "string",
+                  "cluster_status": "string",
+                  "cluster_type": "string"
+                }
+              ]
+            ]
+          ]
+        }
+      }
+    },
+    "aws_kendra_data_source": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 802,
+      "gap": "#724 reviewed: Missing: index navigation requires matching index_id; data_source_id is distinct from composite Terraform id. Missing: index ID, non-CUSTOM role, structured legacy S3 bucket and pre/post Lambda/bucket hooks. Deprecated web-crawler secret-ARN navigation is deferred until a legacy-migration use case; template JSON interpretation intentionally unsupported. Follow-up #802. Intentionally unsupported: template JSON, crawler credentials/URLs and enrichment document contents.",
+      "review": {
+        "issue": 724,
+        "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "index_id",
+          "data_source_id",
+          "type",
+          "role_arn",
+          "configuration.s3_configuration.bucket_name",
+          "configuration.template_configuration.template",
+          "custom_document_enrichment_configuration.role_arn",
+          "custom_document_enrichment_configuration.pre_extraction_hook_configuration.lambda_arn",
+          "custom_document_enrichment_configuration.pre_extraction_hook_configuration.s3_bucket",
+          "custom_document_enrichment_configuration.post_extraction_hook_configuration.lambda_arn",
+          "custom_document_enrichment_configuration.post_extraction_hook_configuration.s3_bucket"
+        ],
+        "placement": "Supported: retain Logical aws_kendra_data_source basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
+        "ownership": "Missing: index navigation requires matching index_id; data_source_id is distinct from composite Terraform id.",
+        "network": "Not applicable: reviewed aws_kendra_data_source fields provide no configured subnet containment; service references do not propagate network placement.",
+        "references": "Missing: index ID, non-CUSTOM role, structured legacy S3 bucket and pre/post Lambda/bucket hooks. Deprecated web-crawler secret-ARN navigation is deferred until a legacy-migration use case; template JSON interpretation intentionally unsupported.",
+        "scope": "Partial: Regional eligibility in scope.rs; basic account remains unresolved. Known provider/resource region is conditional, not ARN or owner inference.",
+        "summaries": "Intentionally unsupported: template JSON, crawler credentials/URLs and enrichment document contents.",
+        "officialDocumentation": "website/docs/r/kendra_data_source.html.markdown",
+        "shapes": {
+          "index_id": [
+            "string"
+          ],
+          "data_source_id": [
+            "string"
+          ],
+          "type": [
+            "string"
+          ],
+          "role_arn": [
+            "string"
+          ],
+          "configuration.s3_configuration.bucket_name": [
+            "list",
+            "list",
+            "string"
+          ],
+          "configuration.template_configuration.template": [
+            "list",
+            "list",
+            "string"
+          ],
+          "custom_document_enrichment_configuration.role_arn": [
+            "list",
+            "string"
+          ],
+          "custom_document_enrichment_configuration.pre_extraction_hook_configuration.lambda_arn": [
+            "list",
+            "list",
+            "string"
+          ],
+          "custom_document_enrichment_configuration.pre_extraction_hook_configuration.s3_bucket": [
+            "list",
+            "list",
+            "string"
+          ],
+          "custom_document_enrichment_configuration.post_extraction_hook_configuration.lambda_arn": [
+            "list",
+            "list",
+            "string"
+          ],
+          "custom_document_enrichment_configuration.post_extraction_hook_configuration.s3_bucket": [
+            "list",
+            "list",
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_kendra_experience": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 802,
+      "gap": "#724 reviewed: Missing: index navigation; configured content sources remain independent identities. Missing: index/role and complete data-source/FAQ ID sets require same-index proof; child data_source_id/faq_id differ from composite id. Follow-up #802. Intentionally unsupported: endpoint availability, direct-put document content and SSO identity attributes.",
+      "review": {
+        "issue": 724,
+        "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "index_id",
+          "experience_id",
+          "role_arn",
+          "configuration.content_source_configuration.data_source_ids",
+          "configuration.content_source_configuration.faq_ids"
+        ],
+        "placement": "Supported: retain Logical aws_kendra_experience basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
+        "ownership": "Missing: index navigation; configured content sources remain independent identities.",
+        "network": "Not applicable: reviewed aws_kendra_experience fields provide no configured subnet containment; service references do not propagate network placement.",
+        "references": "Missing: index/role and complete data-source/FAQ ID sets require same-index proof; child data_source_id/faq_id differ from composite id.",
+        "scope": "Partial: Regional eligibility in scope.rs; basic account remains unresolved. Known provider/resource region is conditional, not ARN or owner inference.",
+        "summaries": "Intentionally unsupported: endpoint availability, direct-put document content and SSO identity attributes.",
+        "officialDocumentation": "website/docs/r/kendra_experience.html.markdown",
+        "shapes": {
+          "index_id": [
+            "string"
+          ],
+          "experience_id": [
+            "string"
+          ],
+          "role_arn": [
+            "string"
+          ],
+          "configuration.content_source_configuration.data_source_ids": [
+            "list",
+            "list",
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "configuration.content_source_configuration.faq_ids": [
+            "list",
+            "list",
+            [
+              "set",
+              "string"
+            ]
+          ]
+        }
+      }
+    },
+    "aws_kendra_faq": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 802,
+      "gap": "#724 reviewed: Missing: verified index helper navigation; shared source bucket is not embedded. Missing: index_id -> index.id, role_arn -> IAM role.arn and s3_path.bucket -> bucket.bucket. faq_id is the service identifier; do not compare composite Terraform id. Follow-up #802. Intentionally unsupported: faq contents, file keys and runtime processing status.",
+      "review": {
+        "issue": 724,
+        "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "index_id",
+          "faq_id",
+          "role_arn",
+          "s3_path.bucket",
+          "s3_path.key"
+        ],
+        "placement": "Supported: retain Logical aws_kendra_faq basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
+        "ownership": "Missing: verified index helper navigation; shared source bucket is not embedded.",
+        "network": "Not applicable: reviewed aws_kendra_faq fields provide no configured subnet containment; service references do not propagate network placement.",
+        "references": "Missing: index_id -> index.id, role_arn -> IAM role.arn and s3_path.bucket -> bucket.bucket. faq_id is the service identifier; do not compare composite Terraform id.",
+        "scope": "Partial: Regional eligibility in scope.rs; basic account remains unresolved. Known provider/resource region is conditional, not ARN or owner inference.",
+        "summaries": "Intentionally unsupported: faq contents, file keys and runtime processing status.",
+        "officialDocumentation": "website/docs/r/kendra_faq.html.markdown",
+        "shapes": {
+          "index_id": [
+            "string"
+          ],
+          "faq_id": [
+            "string"
+          ],
+          "role_arn": [
+            "string"
+          ],
+          "s3_path.bucket": [
+            "list",
+            "string"
+          ],
+          "s3_path.key": [
+            "list",
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_kendra_index": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 802,
+      "gap": "#724 reviewed: Missing: Logical search index merits independent-card review. Missing: IAM role, symmetric KMS key and key_location=SECRET_MANAGER secret ARN references; URL signing keys cannot identify resources. Follow-up #802. Deferred: edition/encryption needs an enum/unknown allowlist; document metadata and JWT claims excluded.",
+      "review": {
+        "issue": 724,
+        "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "id",
+          "arn",
+          "role_arn",
+          "server_side_encryption_configuration.kms_key_id",
+          "user_token_configurations.jwt_token_type_configuration.key_location",
+          "user_token_configurations.jwt_token_type_configuration.secrets_manager_arn"
+        ],
+        "placement": "Missing: Logical search index merits independent-card review.",
+        "ownership": "Not applicable: independent aws_kendra_index configuration; no verified embedded owner in runtime.",
+        "network": "Not applicable: reviewed aws_kendra_index fields provide no configured subnet containment; service references do not propagate network placement.",
+        "references": "Missing: IAM role, symmetric KMS key and key_location=SECRET_MANAGER secret ARN references; URL signing keys cannot identify resources.",
+        "scope": "Partial: Regional eligibility in scope.rs; basic account remains unresolved. Known provider/resource region is conditional, not ARN or owner inference.",
+        "summaries": "Deferred: edition/encryption needs an enum/unknown allowlist; document metadata and JWT claims excluded.",
+        "officialDocumentation": "website/docs/r/kendra_index.html.markdown",
+        "shapes": {
+          "id": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "role_arn": [
+            "string"
+          ],
+          "server_side_encryption_configuration.kms_key_id": [
+            "list",
+            "string"
+          ],
+          "user_token_configurations.jwt_token_type_configuration.key_location": [
+            "list",
+            "list",
+            "string"
+          ],
+          "user_token_configurations.jwt_token_type_configuration.secrets_manager_arn": [
+            "list",
+            "list",
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_kendra_query_suggestions_block_list": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 802,
+      "gap": "#724 reviewed: Missing: verified index helper navigation; shared source bucket is not embedded. Missing: index_id -> index.id, role_arn -> IAM role.arn and source_s3_path.bucket -> bucket.bucket. query_suggestions_block_list_id is the service identifier; do not compare composite Terraform id. Follow-up #802. Intentionally unsupported: query_suggestions_block_list contents, file keys and runtime processing status.",
+      "review": {
+        "issue": 724,
+        "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "index_id",
+          "query_suggestions_block_list_id",
+          "role_arn",
+          "source_s3_path.bucket",
+          "source_s3_path.key"
+        ],
+        "placement": "Supported: retain Logical aws_kendra_query_suggestions_block_list basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
+        "ownership": "Missing: verified index helper navigation; shared source bucket is not embedded.",
+        "network": "Not applicable: reviewed aws_kendra_query_suggestions_block_list fields provide no configured subnet containment; service references do not propagate network placement.",
+        "references": "Missing: index_id -> index.id, role_arn -> IAM role.arn and source_s3_path.bucket -> bucket.bucket. query_suggestions_block_list_id is the service identifier; do not compare composite Terraform id.",
+        "scope": "Partial: Regional eligibility in scope.rs; basic account remains unresolved. Known provider/resource region is conditional, not ARN or owner inference.",
+        "summaries": "Intentionally unsupported: query_suggestions_block_list contents, file keys and runtime processing status.",
+        "officialDocumentation": "website/docs/r/kendra_query_suggestions_block_list.html.markdown",
+        "shapes": {
+          "index_id": [
+            "string"
+          ],
+          "query_suggestions_block_list_id": [
+            "string"
+          ],
+          "role_arn": [
+            "string"
+          ],
+          "source_s3_path.bucket": [
+            "list",
+            "string"
+          ],
+          "source_s3_path.key": [
+            "list",
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_kendra_thesaurus": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 802,
+      "gap": "#724 reviewed: Missing: verified index helper navigation; shared source bucket is not embedded. Missing: index_id -> index.id, role_arn -> IAM role.arn and source_s3_path.bucket -> bucket.bucket. thesaurus_id is the service identifier; do not compare composite Terraform id. Follow-up #802. Intentionally unsupported: thesaurus contents, file keys and runtime processing status.",
+      "review": {
+        "issue": 724,
+        "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "index_id",
+          "thesaurus_id",
+          "role_arn",
+          "source_s3_path.bucket",
+          "source_s3_path.key"
+        ],
+        "placement": "Supported: retain Logical aws_kendra_thesaurus basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
+        "ownership": "Missing: verified index helper navigation; shared source bucket is not embedded.",
+        "network": "Not applicable: reviewed aws_kendra_thesaurus fields provide no configured subnet containment; service references do not propagate network placement.",
+        "references": "Missing: index_id -> index.id, role_arn -> IAM role.arn and source_s3_path.bucket -> bucket.bucket. thesaurus_id is the service identifier; do not compare composite Terraform id.",
+        "scope": "Partial: Regional eligibility in scope.rs; basic account remains unresolved. Known provider/resource region is conditional, not ARN or owner inference.",
+        "summaries": "Intentionally unsupported: thesaurus contents, file keys and runtime processing status.",
+        "officialDocumentation": "website/docs/r/kendra_thesaurus.html.markdown",
+        "shapes": {
+          "index_id": [
+            "string"
+          ],
+          "thesaurus_id": [
+            "string"
+          ],
+          "role_arn": [
+            "string"
+          ],
+          "source_s3_path.bucket": [
+            "list",
+            "string"
+          ],
+          "source_s3_path.key": [
+            "list",
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_opensearch_application": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 797,
+      "gap": "#724 reviewed: Missing: Logical application merits independent-card review with data-source navigation. Missing: typed domain/collection data_source_arn, KMS key, enabled Identity Center instance and IAM role references; computed application ARN is not a configured SSO application. Follow-up #797. Deferred: Identity Center enabled flag and key mode need an allowlist distinguishing configured options from computed application identity; app_config values excluded.",
+      "review": {
+        "issue": 724,
+        "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "arn",
+          "data_source.data_source_arn",
+          "kms_key_arn",
+          "iam_identity_center_options.enabled",
+          "iam_identity_center_options.iam_identity_center_instance_arn",
+          "iam_identity_center_options.iam_role_for_identity_center_application_arn"
+        ],
+        "placement": "Missing: Logical application merits independent-card review with data-source navigation.",
+        "ownership": "Not applicable: independent aws_opensearch_application configuration; no verified embedded owner in runtime.",
+        "network": "Not applicable: reviewed aws_opensearch_application fields provide no configured subnet containment; service references do not propagate network placement.",
+        "references": "Missing: typed domain/collection data_source_arn, KMS key, enabled Identity Center instance and IAM role references; computed application ARN is not a configured SSO application.",
+        "scope": "Partial: Regional eligibility in scope.rs; basic account remains unresolved. Known provider/resource region is conditional, not ARN or owner inference.",
+        "summaries": "Deferred: Identity Center enabled flag and key mode need an allowlist distinguishing configured options from computed application identity; app_config values excluded.",
+        "officialDocumentation": "website/docs/r/opensearch_application.html.markdown",
+        "shapes": {
+          "arn": [
+            "string"
+          ],
+          "data_source.data_source_arn": [
+            "set",
+            "string"
+          ],
+          "kms_key_arn": [
+            "string"
+          ],
+          "iam_identity_center_options.enabled": [
+            "list",
+            "bool"
+          ],
+          "iam_identity_center_options.iam_identity_center_instance_arn": [
+            "list",
+            "string"
+          ],
+          "iam_identity_center_options.iam_role_for_identity_center_application_arn": [
+            "list",
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_opensearch_authorize_vpc_endpoint_access": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 797,
+      "gap": "#724 reviewed: Missing: domain navigation, not embedding of grantee account. Intentionally unsupported: authorization does not establish VPC containment or reachability. Missing: domain_name -> opensearch_domain.domain_name. account is a grantee account ID, not a managed VPC endpoint or IAM principal. Follow-up #797. Intentionally unsupported: account authorization is not proof of effective access; authorized_principal output is not permission evaluation.",
+      "review": {
+        "issue": 724,
+        "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "account",
+          "domain_name"
+        ],
+        "placement": "Supported: retain Logical aws_opensearch_authorize_vpc_endpoint_access basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
+        "ownership": "Missing: domain navigation, not embedding of grantee account.",
+        "network": "Intentionally unsupported: authorization does not establish VPC containment or reachability.",
+        "references": "Missing: domain_name -> opensearch_domain.domain_name. account is a grantee account ID, not a managed VPC endpoint or IAM principal.",
+        "scope": "Partial: Regional eligibility in scope.rs; basic account remains unresolved. Known provider/resource region is conditional, not ARN or owner inference.",
+        "summaries": "Intentionally unsupported: account authorization is not proof of effective access; authorized_principal output is not permission evaluation.",
+        "officialDocumentation": "website/docs/r/opensearch_authorize_vpc_endpoint_access.html.markdown",
+        "shapes": {
+          "account": [
+            "string"
+          ],
+          "domain_name": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_opensearch_domain": {
+      "status": "Partial",
+      "priority": "P2",
+      "issue": 797,
+      "gap": "#724 reviewed: Supported: Spatial through classification.rs; retain completed #47. Partial: existing complete-subnet common-VPC placement #181 and SG connections #182 (vpc_scope.rs/security_groups.rs and matching tests). This legacy path does not prove the stricter known-value/common-SG-VPC contract; retain its bounded support. Missing: enabled Cognito pool/role, enabled custom-endpoint ACM certificate, encryption key and enabled log destination references. KMS input accepts ID but readback normalizes ARN; never infer from endpoint DNS. Follow-up #797. Deferred: encryption/TLS flags require enabled/unknown and key normalization contracts; master credentials, policies and advanced options excluded.",
+      "review": {
+        "issue": 724,
+        "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "domain_name",
+          "domain_id",
+          "arn",
+          "vpc_options.subnet_ids",
+          "vpc_options.security_group_ids",
+          "cognito_options.enabled",
+          "cognito_options.identity_pool_id",
+          "cognito_options.user_pool_id",
+          "cognito_options.role_arn",
+          "domain_endpoint_options.custom_endpoint_enabled",
+          "domain_endpoint_options.custom_endpoint_certificate_arn",
+          "encrypt_at_rest.enabled",
+          "encrypt_at_rest.kms_key_id",
+          "log_publishing_options.enabled",
+          "log_publishing_options.cloudwatch_log_group_arn"
+        ],
+        "placement": "Supported: Spatial through classification.rs; retain completed #47.",
+        "ownership": "Not applicable: independent aws_opensearch_domain configuration; no verified embedded owner in runtime.",
+        "network": "Partial: existing complete-subnet common-VPC placement #181 and SG connections #182 (vpc_scope.rs/security_groups.rs and matching tests). This legacy path does not prove the stricter known-value/common-SG-VPC contract; retain its bounded support.",
+        "references": "Missing: enabled Cognito pool/role, enabled custom-endpoint ACM certificate, encryption key and enabled log destination references. KMS input accepts ID but readback normalizes ARN; never infer from endpoint DNS.",
+        "scope": "Supported: pre-existing Regional provider account/region handling in scope.rs; remote connection endpoints still require their own owner/region evidence, not local scope inheritance.",
+        "summaries": "Deferred: encryption/TLS flags require enabled/unknown and key normalization contracts; master credentials, policies and advanced options excluded.",
+        "officialDocumentation": "website/docs/r/opensearch_domain.html.markdown",
+        "shapes": {
+          "domain_name": [
+            "string"
+          ],
+          "domain_id": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "vpc_options.subnet_ids": [
+            "list",
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "vpc_options.security_group_ids": [
+            "list",
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "cognito_options.enabled": [
+            "list",
+            "bool"
+          ],
+          "cognito_options.identity_pool_id": [
+            "list",
+            "string"
+          ],
+          "cognito_options.user_pool_id": [
+            "list",
+            "string"
+          ],
+          "cognito_options.role_arn": [
+            "list",
+            "string"
+          ],
+          "domain_endpoint_options.custom_endpoint_enabled": [
+            "list",
+            "bool"
+          ],
+          "domain_endpoint_options.custom_endpoint_certificate_arn": [
+            "list",
+            "string"
+          ],
+          "encrypt_at_rest.enabled": [
+            "list",
+            "bool"
+          ],
+          "encrypt_at_rest.kms_key_id": [
+            "list",
+            "string"
+          ],
+          "log_publishing_options.enabled": [
+            "set",
+            "bool"
+          ],
+          "log_publishing_options.cloudwatch_log_group_arn": [
+            "set",
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_opensearch_domain_policy": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 797,
+      "gap": "#724 reviewed: Missing: domain navigation only; preserve policy identity and action. Missing: domain_name -> exact service domain.domain_name; docs call access_policies optional but schema requires it. No policy interpretation. Follow-up #797. Intentionally unsupported: access_policies contents and effective permissions; domain navigation is tracked separately.",
+      "review": {
+        "issue": 724,
+        "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "domain_name",
+          "access_policies"
+        ],
+        "placement": "Supported: retain Logical aws_opensearch_domain_policy basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
+        "ownership": "Missing: domain navigation only; preserve policy identity and action.",
+        "network": "Not applicable: reviewed aws_opensearch_domain_policy fields provide no configured subnet containment; service references do not propagate network placement.",
+        "references": "Missing: domain_name -> exact service domain.domain_name; docs call access_policies optional but schema requires it. No policy interpretation.",
+        "scope": "Partial: Regional eligibility in scope.rs; basic account remains unresolved. Known provider/resource region is conditional, not ARN or owner inference.",
+        "summaries": "Intentionally unsupported: access_policies contents and effective permissions; domain navigation is tracked separately.",
+        "officialDocumentation": "website/docs/r/opensearch_domain_policy.html.markdown",
+        "shapes": {
+          "domain_name": [
+            "string"
+          ],
+          "access_policies": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_opensearch_domain_saml_options": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 797,
+      "gap": "#724 reviewed: Missing: verified domain helper navigation. Missing: domain_name -> exact service domain.domain_name; IdP entity_id is not a Terraform resource identifier. Follow-up #797. Intentionally unsupported: XML metadata, SAML subjects and backend roles are not safe architecture summaries.",
+      "review": {
+        "issue": 724,
+        "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "domain_name",
+          "saml_options.enabled",
+          "saml_options.idp.entity_id",
+          "saml_options.idp.metadata_content"
+        ],
+        "placement": "Supported: retain Logical aws_opensearch_domain_saml_options basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
+        "ownership": "Missing: verified domain helper navigation.",
+        "network": "Not applicable: reviewed aws_opensearch_domain_saml_options fields provide no configured subnet containment; service references do not propagate network placement.",
+        "references": "Missing: domain_name -> exact service domain.domain_name; IdP entity_id is not a Terraform resource identifier.",
+        "scope": "Partial: Regional eligibility in scope.rs; basic account remains unresolved. Known provider/resource region is conditional, not ARN or owner inference.",
+        "summaries": "Intentionally unsupported: XML metadata, SAML subjects and backend roles are not safe architecture summaries.",
+        "officialDocumentation": "website/docs/r/opensearch_domain_saml_options.html.markdown",
+        "shapes": {
+          "domain_name": [
+            "string"
+          ],
+          "saml_options.enabled": [
+            "list",
+            "bool"
+          ],
+          "saml_options.idp.entity_id": [
+            "list",
+            "list",
+            "string"
+          ],
+          "saml_options.idp.metadata_content": [
+            "list",
+            "list",
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_opensearch_inbound_connection_accepter": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 798,
+      "gap": "#724 reviewed: Not applicable: accepter lifecycle is distinct even when connection IDs agree. Missing: connection_id -> outbound connection.id, with reversed local/remote account/region proof; accepter stays a separate lifecycle identity. Follow-up #798. Intentionally unsupported: acceptance/connection_status is runtime lifecycle, not connectivity or health.",
+      "review": {
+        "issue": 724,
+        "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "connection_id",
+          "id"
+        ],
+        "placement": "Supported: retain Logical aws_opensearch_inbound_connection_accepter basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
+        "ownership": "Not applicable: accepter lifecycle is distinct even when connection IDs agree.",
+        "network": "Not applicable: reviewed aws_opensearch_inbound_connection_accepter fields provide no configured subnet containment; service references do not propagate network placement.",
+        "references": "Missing: connection_id -> outbound connection.id, with reversed local/remote account/region proof; accepter stays a separate lifecycle identity.",
+        "scope": "Partial: Regional eligibility; inbound target context differs from outbound initiator.",
+        "summaries": "Intentionally unsupported: acceptance/connection_status is runtime lifecycle, not connectivity or health.",
+        "officialDocumentation": "website/docs/r/opensearch_inbound_connection_accepter.html.markdown",
+        "shapes": {
+          "connection_id": [
+            "string"
+          ],
+          "id": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_opensearch_outbound_connection": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 798,
+      "gap": "#724 reviewed: Not applicable: connects independent domains; neither is owned by the connection. Missing: local/remote domain names require matching owner_id and region at each endpoint; mode DIRECT/VPC_ENDPOINT is not a managed endpoint ID. Follow-up #798. Deferred: DIRECT/VPC_ENDPOINT mode summary needs explicit known/unknown enum handling; connection_status does not prove connectivity.",
+      "review": {
+        "issue": 724,
+        "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "id",
+          "connection_mode",
+          "local_domain_info.domain_name",
+          "local_domain_info.owner_id",
+          "local_domain_info.region",
+          "remote_domain_info.domain_name",
+          "remote_domain_info.owner_id",
+          "remote_domain_info.region"
+        ],
+        "placement": "Supported: retain Logical aws_opensearch_outbound_connection basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
+        "ownership": "Not applicable: connects independent domains; neither is owned by the connection.",
+        "network": "Not applicable: reviewed aws_opensearch_outbound_connection fields provide no configured subnet containment; service references do not propagate network placement.",
+        "references": "Missing: local/remote domain names require matching owner_id and region at each endpoint; mode DIRECT/VPC_ENDPOINT is not a managed endpoint ID.",
+        "scope": "Partial: current Regional eligibility is control-plane only; remote owner_id/region cannot be replaced by provider scope.",
+        "summaries": "Deferred: DIRECT/VPC_ENDPOINT mode summary needs explicit known/unknown enum handling; connection_status does not prove connectivity.",
+        "officialDocumentation": "website/docs/r/opensearch_outbound_connection.html.markdown",
+        "shapes": {
+          "id": [
+            "string"
+          ],
+          "connection_mode": [
+            "string"
+          ],
+          "local_domain_info.domain_name": [
+            "list",
+            "string"
+          ],
+          "local_domain_info.owner_id": [
+            "list",
+            "string"
+          ],
+          "local_domain_info.region": [
+            "list",
+            "string"
+          ],
+          "remote_domain_info.domain_name": [
+            "list",
+            "string"
+          ],
+          "remote_domain_info.owner_id": [
+            "list",
+            "string"
+          ],
+          "remote_domain_info.region": [
+            "list",
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_opensearch_package": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 797,
+      "gap": "#724 reviewed: Missing: package_source.s3_bucket_name -> S3 bucket.bucket; key identifies content and is not a bucket or implicit object resource. Follow-up #797. Deferred: package type/engine compatibility needs a selected enum allowlist; package contents and S3 keys excluded.",
+      "review": {
+        "issue": 724,
+        "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "id",
+          "package_name",
+          "package_type",
+          "package_source.s3_bucket_name",
+          "package_source.s3_key"
+        ],
+        "placement": "Supported: retain Logical aws_opensearch_package basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
+        "ownership": "Not applicable: independent aws_opensearch_package configuration; no verified embedded owner in runtime.",
+        "network": "Not applicable: reviewed aws_opensearch_package fields provide no configured subnet containment; service references do not propagate network placement.",
+        "references": "Missing: package_source.s3_bucket_name -> S3 bucket.bucket; key identifies content and is not a bucket or implicit object resource.",
+        "scope": "Partial: Regional eligibility in scope.rs; basic account remains unresolved. Known provider/resource region is conditional, not ARN or owner inference.",
+        "summaries": "Deferred: package type/engine compatibility needs a selected enum allowlist; package contents and S3 keys excluded.",
+        "officialDocumentation": "website/docs/r/opensearch_package.html.markdown",
+        "shapes": {
+          "id": [
+            "string"
+          ],
+          "package_name": [
+            "string"
+          ],
+          "package_type": [
+            "string"
+          ],
+          "package_source.s3_bucket_name": [
+            "list",
+            "string"
+          ],
+          "package_source.s3_key": [
+            "list",
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_opensearch_package_association": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 797,
+      "gap": "#724 reviewed: Not applicable: many-domain package association is not exclusive ownership. Missing: package_id -> package.id and domain_name -> domain.domain_name, with both ends proven; shared packages stay independent. Follow-up #797. Intentionally unsupported: computed reference_path and package version do not establish runtime plugin availability.",
+      "review": {
+        "issue": 724,
+        "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "package_id",
+          "domain_name"
+        ],
+        "placement": "Supported: retain Logical aws_opensearch_package_association basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
+        "ownership": "Not applicable: many-domain package association is not exclusive ownership.",
+        "network": "Not applicable: reviewed aws_opensearch_package_association fields provide no configured subnet containment; service references do not propagate network placement.",
+        "references": "Missing: package_id -> package.id and domain_name -> domain.domain_name, with both ends proven; shared packages stay independent.",
+        "scope": "Partial: Regional eligibility in scope.rs; basic account remains unresolved. Known provider/resource region is conditional, not ARN or owner inference.",
+        "summaries": "Intentionally unsupported: computed reference_path and package version do not establish runtime plugin availability.",
+        "officialDocumentation": "website/docs/r/opensearch_package_association.html.markdown",
+        "shapes": {
+          "package_id": [
+            "string"
+          ],
+          "domain_name": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_opensearch_vpc_endpoint": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 797,
+      "gap": "#724 reviewed: Not applicable: endpoint references a shared domain; do not embed domain under endpoint. Missing: endpoint common-VPC proof from configured subnet/SG collections, independent of domain location. Missing: domain_arn -> exact service domain.arn and complete subnet/SG IDs; default SG cannot be synthesized. Follow-up #797. Deferred: default-SG configuration needs omitted/computed-value handling before an attachment summary; endpoint URLs and runtime state excluded.",
+      "review": {
+        "issue": 724,
+        "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "id",
+          "domain_arn",
+          "vpc_options.subnet_ids",
+          "vpc_options.security_group_ids"
+        ],
+        "placement": "Supported: retain Logical aws_opensearch_vpc_endpoint basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
+        "ownership": "Not applicable: endpoint references a shared domain; do not embed domain under endpoint.",
+        "network": "Missing: endpoint common-VPC proof from configured subnet/SG collections, independent of domain location.",
+        "references": "Missing: domain_arn -> exact service domain.arn and complete subnet/SG IDs; default SG cannot be synthesized.",
+        "scope": "Partial: Regional eligibility in scope.rs; basic account remains unresolved. Known provider/resource region is conditional, not ARN or owner inference.",
+        "summaries": "Deferred: default-SG configuration needs omitted/computed-value handling before an attachment summary; endpoint URLs and runtime state excluded.",
+        "officialDocumentation": "website/docs/r/opensearch_vpc_endpoint.html.markdown",
+        "shapes": {
+          "id": [
+            "string"
+          ],
+          "domain_arn": [
+            "string"
+          ],
+          "vpc_options.subnet_ids": [
+            "list",
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "vpc_options.security_group_ids": [
+            "list",
+            [
+              "set",
+              "string"
+            ]
+          ]
+        }
+      }
+    },
+    "aws_opensearchserverless_collection_group": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 799,
+      "gap": "#724 reviewed: Not applicable: shared capacity group stays independent Logical, not an implicit container. Not applicable: capacity group has no configured resource endpoint; collection_group_name relationship originates at collection. Follow-up #799. Deferred: generation/capacity bounds need a presentation use case and unknown-value policy; no cost/performance prediction.",
+      "review": {
+        "issue": 724,
+        "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "id",
+          "arn",
+          "name",
+          "generation",
+          "standby_replicas",
+          "capacity_limits"
+        ],
+        "placement": "Supported: retain Logical aws_opensearchserverless_collection_group basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
+        "ownership": "Not applicable: shared capacity group stays independent Logical, not an implicit container.",
+        "network": "Not applicable: reviewed aws_opensearchserverless_collection_group fields provide no configured subnet containment; service references do not propagate network placement.",
+        "references": "Not applicable: capacity group has no configured resource endpoint; collection_group_name relationship originates at collection.",
+        "scope": "Partial: Regional eligibility in scope.rs; basic account remains unresolved. Known provider/resource region is conditional, not ARN or owner inference.",
+        "summaries": "Deferred: generation/capacity bounds need a presentation use case and unknown-value policy; no cost/performance prediction.",
+        "officialDocumentation": "website/docs/r/opensearchserverless_collection_group.html.markdown",
+        "shapes": {
+          "id": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "name": [
+            "string"
+          ],
+          "generation": [
+            "string"
+          ],
+          "standby_replicas": [
+            "string"
+          ],
+          "capacity_limits": [
+            [
+              "list",
+              [
+                "object",
+                {
+                  "max_indexing_capacity_in_ocu": "number",
+                  "max_search_capacity_in_ocu": "number",
+                  "min_indexing_capacity_in_ocu": "number",
+                  "min_search_capacity_in_ocu": "number"
+                }
+              ]
+            ]
+          ]
+        }
+      }
+    },
+    "aws_opensearchserverless_lifecycle_policy": {
+      "status": "Basic-only",
+      "priority": "P3",
+      "gap": "#724 reviewed: Intentionally unsupported: policy matching cannot prove network placement. Intentionally unsupported: lifecycle policy targets are encoded inside opaque JSON; no independent configured collection/endpoint identity. Intentionally unsupported: no effective lifecycle policy, retention, encryption or reachability summary from JSON.",
+      "review": {
+        "issue": 724,
+        "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "name",
+          "type",
+          "policy"
+        ],
+        "placement": "Supported: retain Logical aws_opensearchserverless_lifecycle_policy basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
+        "ownership": "Not applicable: independent aws_opensearchserverless_lifecycle_policy configuration; no verified embedded owner in runtime.",
+        "network": "Intentionally unsupported: policy matching cannot prove network placement.",
+        "references": "Intentionally unsupported: lifecycle policy targets are encoded inside opaque JSON; no independent configured collection/endpoint identity.",
+        "scope": "Partial: Regional eligibility in scope.rs; basic account remains unresolved. Known provider/resource region is conditional, not ARN or owner inference.",
+        "summaries": "Intentionally unsupported: no effective lifecycle policy, retention, encryption or reachability summary from JSON.",
+        "officialDocumentation": "website/docs/r/opensearchserverless_lifecycle_policy.html.markdown",
+        "shapes": {
+          "name": [
+            "string"
+          ],
+          "type": [
+            "string"
+          ],
+          "policy": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_opensearchserverless_security_config": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 799,
+      "gap": "#724 reviewed: Missing: type=iamidentitycenter instance_arn reference; saml XML and IAM federation attribute names are not endpoint identities. Follow-up #799. Intentionally unsupported: SAML metadata and federation attribute mappings remain private.",
+      "review": {
+        "issue": 724,
+        "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "name",
+          "type",
+          "iam_identity_center_options.instance_arn",
+          "saml_options.metadata"
+        ],
+        "placement": "Supported: retain Logical aws_opensearchserverless_security_config basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
+        "ownership": "Not applicable: independent aws_opensearchserverless_security_config configuration; no verified embedded owner in runtime.",
+        "network": "Not applicable: reviewed aws_opensearchserverless_security_config fields provide no configured subnet containment; service references do not propagate network placement.",
+        "references": "Missing: type=iamidentitycenter instance_arn reference; saml XML and IAM federation attribute names are not endpoint identities.",
+        "scope": "Partial: Regional eligibility in scope.rs; basic account remains unresolved. Known provider/resource region is conditional, not ARN or owner inference.",
+        "summaries": "Intentionally unsupported: SAML metadata and federation attribute mappings remain private.",
+        "officialDocumentation": "website/docs/r/opensearchserverless_security_config.html.markdown",
+        "shapes": {
+          "name": [
+            "string"
+          ],
+          "type": [
+            "string"
+          ],
+          "iam_identity_center_options.instance_arn": [
+            "list",
+            "string"
+          ],
+          "saml_options.metadata": [
+            "list",
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_osis_pipeline": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 800,
+      "gap": "#724 reviewed: Missing: Logical ingestion pipeline merits independent-card review. Missing: complete VPC subnet/SG proof with CUSTOMER/SERVICE endpoint-management distinction; no invented service ENIs. Missing: role ARN, enabled log-group name, buffer key ARN and configured network IDs; id is deprecated pipeline name, use pipeline_arn for endpoint linkage. YAML source/sink reconstruction excluded. Follow-up #800. Deferred: buffer/encryption flags need enabled/unknown allowlist; pipeline YAML and ingest URLs excluded.",
+      "review": {
+        "issue": 724,
+        "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "pipeline_name",
+          "pipeline_arn",
+          "id",
+          "pipeline_role_arn",
+          "vpc_options.subnet_ids",
+          "vpc_options.security_group_ids",
+          "vpc_options.vpc_endpoint_management",
+          "encryption_at_rest_options.kms_key_arn",
+          "log_publishing_options.is_logging_enabled",
+          "log_publishing_options.cloudwatch_log_destination.log_group",
+          "pipeline_configuration_body"
+        ],
+        "placement": "Missing: Logical ingestion pipeline merits independent-card review.",
+        "ownership": "Not applicable: independent aws_osis_pipeline configuration; no verified embedded owner in runtime.",
+        "network": "Missing: complete VPC subnet/SG proof with CUSTOMER/SERVICE endpoint-management distinction; no invented service ENIs.",
+        "references": "Missing: role ARN, enabled log-group name, buffer key ARN and configured network IDs; id is deprecated pipeline name, use pipeline_arn for endpoint linkage. YAML source/sink reconstruction excluded.",
+        "scope": "Partial: Regional eligibility in scope.rs; basic account remains unresolved. Known provider/resource region is conditional, not ARN or owner inference.",
+        "summaries": "Deferred: buffer/encryption flags need enabled/unknown allowlist; pipeline YAML and ingest URLs excluded.",
+        "officialDocumentation": "website/docs/r/osis_pipeline.html.markdown",
+        "shapes": {
+          "pipeline_name": [
+            "string"
+          ],
+          "pipeline_arn": [
+            "string"
+          ],
+          "id": [
+            "string"
+          ],
+          "pipeline_role_arn": [
+            "string"
+          ],
+          "vpc_options.subnet_ids": [
+            "list",
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "vpc_options.security_group_ids": [
+            "list",
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "vpc_options.vpc_endpoint_management": [
+            "list",
+            "string"
+          ],
+          "encryption_at_rest_options.kms_key_arn": [
+            "list",
+            "string"
+          ],
+          "log_publishing_options.is_logging_enabled": [
+            "list",
+            "bool"
+          ],
+          "log_publishing_options.cloudwatch_log_destination.log_group": [
+            "list",
+            "list",
+            "string"
+          ],
+          "pipeline_configuration_body": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_osis_pipeline_endpoint": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 800,
+      "gap": "#724 reviewed: Missing: endpoint common-VPC proof, without inheriting pipeline ownership as subnet placement. Missing: pipeline_arn -> pipeline.pipeline_arn and complete configured subnet/SG sets. vpc_id is computed corroboration, not configured reference. Follow-up #800. Intentionally unsupported: computed status and VPC ID do not establish endpoint health; network navigation is tracked separately.",
+      "review": {
+        "issue": 724,
+        "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "id",
+          "pipeline_arn",
+          "vpc_options.subnet_ids",
+          "vpc_options.security_group_ids",
+          "vpc_id"
+        ],
+        "placement": "Supported: retain Logical aws_osis_pipeline_endpoint basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
+        "ownership": "Not applicable: independent aws_osis_pipeline_endpoint configuration; no verified embedded owner in runtime.",
+        "network": "Missing: endpoint common-VPC proof, without inheriting pipeline ownership as subnet placement.",
+        "references": "Missing: pipeline_arn -> pipeline.pipeline_arn and complete configured subnet/SG sets. vpc_id is computed corroboration, not configured reference.",
+        "scope": "Partial: Regional eligibility in scope.rs; basic account remains unresolved. Known provider/resource region is conditional, not ARN or owner inference.",
+        "summaries": "Intentionally unsupported: computed status and VPC ID do not establish endpoint health; network navigation is tracked separately.",
+        "officialDocumentation": "website/docs/r/osis_pipeline_endpoint.html.markdown",
+        "shapes": {
+          "id": [
+            "string"
+          ],
+          "pipeline_arn": [
+            "string"
+          ],
+          "vpc_options.subnet_ids": [
+            "list",
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "vpc_options.security_group_ids": [
+            "list",
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "vpc_id": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_osis_resource_policy": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 800,
+      "gap": "#724 reviewed: Missing: verified pipeline helper navigation. Missing: resource_arn -> supported pipeline.pipeline_arn; reject other ARN kinds, preserve opaque policy. Follow-up #800. Intentionally unsupported: policy contents and effective pipeline access; resource ARN navigation is tracked separately.",
+      "review": {
+        "issue": 724,
+        "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "resource_arn",
+          "policy"
+        ],
+        "placement": "Supported: retain Logical aws_osis_resource_policy basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
+        "ownership": "Missing: verified pipeline helper navigation.",
+        "network": "Not applicable: reviewed aws_osis_resource_policy fields provide no configured subnet containment; service references do not propagate network placement.",
+        "references": "Missing: resource_arn -> supported pipeline.pipeline_arn; reject other ARN kinds, preserve opaque policy.",
+        "scope": "Partial: Regional eligibility in scope.rs; basic account remains unresolved. Known provider/resource region is conditional, not ARN or owner inference.",
+        "summaries": "Intentionally unsupported: policy contents and effective pipeline access; resource ARN navigation is tracked separately.",
+        "officialDocumentation": "website/docs/r/osis_resource_policy.html.markdown",
+        "shapes": {
+          "resource_arn": [
+            "string"
+          ],
+          "policy": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_qbusiness_application": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 801,
+      "gap": "#724 reviewed: Missing: Logical hosted Q application merits independent-card review. Missing: IAM role, Identity Center instance and symmetric KMS key references; computed identity_center_application_arn cannot manufacture a managed SSO application. Follow-up #801. Deferred: encryption mode needs symmetric-key and unknown handling; attachment content and display descriptions excluded.",
+      "review": {
+        "issue": 724,
+        "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "id",
+          "arn",
+          "iam_service_role_arn",
+          "identity_center_instance_arn",
+          "identity_center_application_arn",
+          "encryption_configuration.kms_key_id"
+        ],
+        "placement": "Missing: Logical hosted Q application merits independent-card review.",
+        "ownership": "Not applicable: independent aws_qbusiness_application configuration; no verified embedded owner in runtime.",
+        "network": "Not applicable: reviewed aws_qbusiness_application fields provide no configured subnet containment; service references do not propagate network placement.",
+        "references": "Missing: IAM role, Identity Center instance and symmetric KMS key references; computed identity_center_application_arn cannot manufacture a managed SSO application.",
+        "scope": "Partial: Regional eligibility in scope.rs; basic account remains unresolved. Known provider/resource region is conditional, not ARN or owner inference.",
+        "summaries": "Deferred: encryption mode needs symmetric-key and unknown handling; attachment content and display descriptions excluded.",
+        "officialDocumentation": "website/docs/r/qbusiness_application.html.markdown",
+        "shapes": {
+          "id": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "iam_service_role_arn": [
+            "string"
+          ],
+          "identity_center_instance_arn": [
+            "string"
+          ],
+          "identity_center_application_arn": [
+            "string"
+          ],
+          "encryption_configuration.kms_key_id": [
+            "list",
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_quicksight_account_settings": {
+      "status": "Basic-only",
+      "priority": "P3",
+      "gap": "#724 reviewed: Deferred: default_namespace currently documented as default; revisit namespace navigation only with a supported non-default setting/use case. Account number is a scope selector, not managed owner. Deferred: termination protection flag needs a specific account-configuration presentation use case and unknown handling.",
+      "review": {
+        "issue": 724,
+        "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "aws_account_id",
+          "default_namespace",
+          "termination_protection_enabled"
+        ],
+        "placement": "Supported: retain Logical aws_quicksight_account_settings basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
+        "ownership": "Not applicable: independent aws_quicksight_account_settings configuration; no verified embedded owner in runtime.",
+        "network": "Not applicable: reviewed aws_quicksight_account_settings fields provide no configured subnet containment; service references do not propagate network placement.",
+        "references": "Deferred: default_namespace currently documented as default; revisit namespace navigation only with a supported non-default setting/use case. Account number is a scope selector, not managed owner.",
+        "scope": "Partial: Regional eligibility only; aws_account_id can select a different account and namespace/ARN identities require matching account/region. Basic scope.rs intentionally clears account rather than assuming provider ownership.",
+        "summaries": "Deferred: termination protection flag needs a specific account-configuration presentation use case and unknown handling.",
+        "officialDocumentation": "website/docs/r/quicksight_account_settings.html.markdown",
+        "shapes": {
+          "aws_account_id": [
+            "string"
+          ],
+          "default_namespace": [
+            "string"
+          ],
+          "termination_protection_enabled": [
+            "bool"
+          ]
+        }
+      }
+    },
+    "aws_quicksight_account_subscription": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 806,
+      "gap": "#724 reviewed: Missing: authentication-method-discriminated Directory Service ID or Identity Center instance ARN. AD/group names are not unique IAM objects. Follow-up #806. Intentionally unsupported: subscription contact details, billing and runtime status.",
+      "review": {
+        "issue": 724,
+        "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "aws_account_id",
+          "authentication_method",
+          "directory_id",
+          "iam_identity_center_instance_arn"
+        ],
+        "placement": "Supported: retain Logical aws_quicksight_account_subscription basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
+        "ownership": "Not applicable: independent aws_quicksight_account_subscription configuration; no verified embedded owner in runtime.",
+        "network": "Not applicable: reviewed aws_quicksight_account_subscription fields provide no configured subnet containment; service references do not propagate network placement.",
+        "references": "Missing: authentication-method-discriminated Directory Service ID or Identity Center instance ARN. AD/group names are not unique IAM objects.",
+        "scope": "Partial: Regional eligibility only; aws_account_id can select a different account and namespace/ARN identities require matching account/region. Basic scope.rs intentionally clears account rather than assuming provider ownership.",
+        "summaries": "Intentionally unsupported: subscription contact details, billing and runtime status.",
+        "officialDocumentation": "website/docs/r/quicksight_account_subscription.html.markdown",
+        "shapes": {
+          "aws_account_id": [
+            "string"
+          ],
+          "authentication_method": [
+            "string"
+          ],
+          "directory_id": [
+            "string"
+          ],
+          "iam_identity_center_instance_arn": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_quicksight_analysis": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 805,
+      "gap": "#724 reviewed: Not applicable: shared datasets/templates remain independent; visual sheets are not managed children. Missing: template/theme and complete dataset ARN references under selected source_entity or definition; analysis_id differs from composite id. Follow-up #805. Intentionally unsupported: visualization definitions, parameters and calculated fields.",
+      "review": {
+        "issue": 724,
+        "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "analysis_id",
+          "arn",
+          "aws_account_id",
+          "theme_arn",
+          "source_entity.source_template.arn",
+          "source_entity.source_template.data_set_references.data_set_arn",
+          "definition.data_set_identifiers_declarations.data_set_arn"
+        ],
+        "placement": "Supported: retain Logical aws_quicksight_analysis basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
+        "ownership": "Not applicable: shared datasets/templates remain independent; visual sheets are not managed children.",
+        "network": "Not applicable: reviewed aws_quicksight_analysis fields provide no configured subnet containment; service references do not propagate network placement.",
+        "references": "Missing: template/theme and complete dataset ARN references under selected source_entity or definition; analysis_id differs from composite id.",
+        "scope": "Partial: Regional eligibility only; aws_account_id can select a different account and namespace/ARN identities require matching account/region. Basic scope.rs intentionally clears account rather than assuming provider ownership.",
+        "summaries": "Intentionally unsupported: visualization definitions, parameters and calculated fields.",
+        "officialDocumentation": "website/docs/r/quicksight_analysis.html.markdown",
+        "shapes": {
+          "analysis_id": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "aws_account_id": [
+            "string"
+          ],
+          "theme_arn": [
+            "string"
+          ],
+          "source_entity.source_template.arn": [
+            "list",
+            "list",
+            "string"
+          ],
+          "source_entity.source_template.data_set_references.data_set_arn": [
+            "list",
+            "list",
+            "list",
+            "string"
+          ],
+          "definition.data_set_identifiers_declarations.data_set_arn": [
+            "list",
+            "list",
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_quicksight_custom_permissions": {
+      "status": "Basic-only",
+      "priority": "P3",
+      "gap": "#724 reviewed: Not applicable: named permission profile has no configured endpoint; assignments originate user/role helpers. Intentionally unsupported: capability permissions are not evaluated or dumped.",
+      "review": {
+        "issue": 724,
+        "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "custom_permissions_name",
+          "arn",
+          "aws_account_id",
+          "capabilities"
+        ],
+        "placement": "Supported: retain Logical aws_quicksight_custom_permissions basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
+        "ownership": "Not applicable: independent aws_quicksight_custom_permissions configuration; no verified embedded owner in runtime.",
+        "network": "Not applicable: reviewed aws_quicksight_custom_permissions fields provide no configured subnet containment; service references do not propagate network placement.",
+        "references": "Not applicable: named permission profile has no configured endpoint; assignments originate user/role helpers.",
+        "scope": "Partial: Regional eligibility only; aws_account_id can select a different account and namespace/ARN identities require matching account/region. Basic scope.rs intentionally clears account rather than assuming provider ownership.",
+        "summaries": "Intentionally unsupported: capability permissions are not evaluated or dumped.",
+        "officialDocumentation": "website/docs/r/quicksight_custom_permissions.html.markdown",
+        "shapes": {
+          "custom_permissions_name": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "aws_account_id": [
+            "string"
+          ],
+          "capabilities": [
+            "list"
+          ]
+        }
+      }
+    },
+    "aws_quicksight_dashboard": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 805,
+      "gap": "#724 reviewed: Not applicable: shared datasets/templates remain independent; visual sheets are not managed children. Missing: template/theme and complete dataset ARN references under selected source_entity or definition; dashboard_id differs from composite id. Follow-up #805. Intentionally unsupported: visualization definitions, parameters and calculated fields.",
+      "review": {
+        "issue": 724,
+        "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "dashboard_id",
+          "arn",
+          "aws_account_id",
+          "theme_arn",
+          "source_entity.source_template.arn",
+          "source_entity.source_template.data_set_references.data_set_arn",
+          "definition.data_set_identifiers_declarations.data_set_arn"
+        ],
+        "placement": "Supported: retain Logical aws_quicksight_dashboard basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
+        "ownership": "Not applicable: shared datasets/templates remain independent; visual sheets are not managed children.",
+        "network": "Not applicable: reviewed aws_quicksight_dashboard fields provide no configured subnet containment; service references do not propagate network placement.",
+        "references": "Missing: template/theme and complete dataset ARN references under selected source_entity or definition; dashboard_id differs from composite id.",
+        "scope": "Partial: Regional eligibility only; aws_account_id can select a different account and namespace/ARN identities require matching account/region. Basic scope.rs intentionally clears account rather than assuming provider ownership.",
+        "summaries": "Intentionally unsupported: visualization definitions, parameters and calculated fields.",
+        "officialDocumentation": "website/docs/r/quicksight_dashboard.html.markdown",
+        "shapes": {
+          "dashboard_id": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "aws_account_id": [
+            "string"
+          ],
+          "theme_arn": [
+            "string"
+          ],
+          "source_entity.source_template.arn": [
+            "list",
+            "list",
+            "string"
+          ],
+          "source_entity.source_template.data_set_references.data_set_arn": [
+            "list",
+            "list",
+            "list",
+            "string"
+          ],
+          "definition.data_set_identifiers_declarations.data_set_arn": [
+            "list",
+            "list",
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_quicksight_data_set": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 805,
+      "gap": "#724 reviewed: Not applicable: shared datasets/data sources are not embedded children. Missing: complete typed data-source ARNs, parent dataset ARN and RLS dataset reference; table-map IDs are local keys, not Terraform resources. Follow-up #805. Intentionally unsupported: SQL, transforms and row-level policy interpretation; defer import-mode enum summary until explicit unknown handling.",
+      "review": {
+        "issue": 724,
+        "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "data_set_id",
+          "arn",
+          "aws_account_id",
+          "import_mode",
+          "physical_table_map.custom_sql.data_source_arn",
+          "physical_table_map.relational_table.data_source_arn",
+          "physical_table_map.s3_source.data_source_arn",
+          "logical_table_map.source.data_set_arn",
+          "row_level_permission_data_set.arn"
+        ],
+        "placement": "Supported: retain Logical aws_quicksight_data_set basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
+        "ownership": "Not applicable: shared datasets/data sources are not embedded children.",
+        "network": "Not applicable: reviewed aws_quicksight_data_set fields provide no configured subnet containment; service references do not propagate network placement.",
+        "references": "Missing: complete typed data-source ARNs, parent dataset ARN and RLS dataset reference; table-map IDs are local keys, not Terraform resources.",
+        "scope": "Partial: Regional eligibility only; aws_account_id can select a different account and namespace/ARN identities require matching account/region. Basic scope.rs intentionally clears account rather than assuming provider ownership.",
+        "summaries": "Intentionally unsupported: SQL, transforms and row-level policy interpretation; defer import-mode enum summary until explicit unknown handling.",
+        "officialDocumentation": "website/docs/r/quicksight_data_set.html.markdown",
+        "shapes": {
+          "data_set_id": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "aws_account_id": [
+            "string"
+          ],
+          "import_mode": [
+            "string"
+          ],
+          "physical_table_map.custom_sql.data_source_arn": [
+            "set",
+            "list",
+            "string"
+          ],
+          "physical_table_map.relational_table.data_source_arn": [
+            "set",
+            "list",
+            "string"
+          ],
+          "physical_table_map.s3_source.data_source_arn": [
+            "set",
+            "list",
+            "string"
+          ],
+          "logical_table_map.source.data_set_arn": [
+            "set",
+            "list",
+            "string"
+          ],
+          "row_level_permission_data_set.arn": [
+            "list",
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_quicksight_data_source": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 804,
+      "gap": "#724 reviewed: Intentionally unsupported: VPC connection is a connector reference, not containment of data source or remote databases. Missing: VPC connection ARN, secret/copy-source ARN and type-discriminated OpenSearch domain, Athena workgroup/role, RDS instance identifier, Redshift cluster identifier, S3 bucket/role and IoT Analytics dataset names. Host/port/URL strings never reconstruct resources. Follow-up #804. Intentionally unsupported: credentials, SQL, manifest keys, query strings and endpoint URLs.",
+      "review": {
+        "issue": 724,
+        "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "arn",
+          "data_source_id",
+          "aws_account_id",
+          "type",
+          "vpc_connection_properties.vpc_connection_arn",
+          "credentials.copy_source_arn",
+          "credentials.secret_arn",
+          "parameters.amazon_elasticsearch.domain",
+          "parameters.athena.work_group",
+          "parameters.athena.role_arn",
+          "parameters.rds.instance_id",
+          "parameters.redshift.cluster_id",
+          "parameters.s3.manifest_file_location.bucket",
+          "parameters.s3.role_arn",
+          "parameters.aws_iot_analytics.data_set_name"
+        ],
+        "placement": "Supported: retain Logical aws_quicksight_data_source basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
+        "ownership": "Not applicable: independent aws_quicksight_data_source configuration; no verified embedded owner in runtime.",
+        "network": "Intentionally unsupported: VPC connection is a connector reference, not containment of data source or remote databases.",
+        "references": "Missing: VPC connection ARN, secret/copy-source ARN and type-discriminated OpenSearch domain, Athena workgroup/role, RDS instance identifier, Redshift cluster identifier, S3 bucket/role and IoT Analytics dataset names. Host/port/URL strings never reconstruct resources.",
+        "scope": "Partial: Regional eligibility only; aws_account_id can select a different account and namespace/ARN identities require matching account/region. Basic scope.rs intentionally clears account rather than assuming provider ownership.",
+        "summaries": "Intentionally unsupported: credentials, SQL, manifest keys, query strings and endpoint URLs.",
+        "officialDocumentation": "website/docs/r/quicksight_data_source.html.markdown",
+        "shapes": {
+          "arn": [
+            "string"
+          ],
+          "data_source_id": [
+            "string"
+          ],
+          "aws_account_id": [
+            "string"
+          ],
+          "type": [
+            "string"
+          ],
+          "vpc_connection_properties.vpc_connection_arn": [
+            "list",
+            "string"
+          ],
+          "credentials.copy_source_arn": [
+            "list",
+            "string"
+          ],
+          "credentials.secret_arn": [
+            "list",
+            "string"
+          ],
+          "parameters.amazon_elasticsearch.domain": [
+            "list",
+            "list",
+            "string"
+          ],
+          "parameters.athena.work_group": [
+            "list",
+            "list",
+            "string"
+          ],
+          "parameters.athena.role_arn": [
+            "list",
+            "list",
+            "string"
+          ],
+          "parameters.rds.instance_id": [
+            "list",
+            "list",
+            "string"
+          ],
+          "parameters.redshift.cluster_id": [
+            "list",
+            "list",
+            "string"
+          ],
+          "parameters.s3.manifest_file_location.bucket": [
+            "list",
+            "list",
+            "list",
+            "string"
+          ],
+          "parameters.s3.role_arn": [
+            "list",
+            "list",
+            "string"
+          ],
+          "parameters.aws_iot_analytics.data_set_name": [
+            "list",
+            "list",
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_quicksight_folder": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 805,
+      "gap": "#724 reviewed: Missing: organizational navigation only; folder is not a network container. Missing: parent_folder_arn -> folder.arn with cycle rejection; computed folder_path is not configured hierarchy. Follow-up #805. Intentionally unsupported: folder_path, permissions and display content are not infrastructure configuration summaries.",
+      "review": {
+        "issue": 724,
+        "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "folder_id",
+          "arn",
+          "aws_account_id",
+          "parent_folder_arn",
+          "folder_path"
+        ],
+        "placement": "Supported: retain Logical aws_quicksight_folder basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
+        "ownership": "Missing: organizational navigation only; folder is not a network container.",
+        "network": "Not applicable: reviewed aws_quicksight_folder fields provide no configured subnet containment; service references do not propagate network placement.",
+        "references": "Missing: parent_folder_arn -> folder.arn with cycle rejection; computed folder_path is not configured hierarchy.",
+        "scope": "Partial: Regional eligibility only; aws_account_id can select a different account and namespace/ARN identities require matching account/region. Basic scope.rs intentionally clears account rather than assuming provider ownership.",
+        "summaries": "Intentionally unsupported: folder_path, permissions and display content are not infrastructure configuration summaries.",
+        "officialDocumentation": "website/docs/r/quicksight_folder.html.markdown",
+        "shapes": {
+          "folder_id": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "aws_account_id": [
+            "string"
+          ],
+          "parent_folder_arn": [
+            "string"
+          ],
+          "folder_path": [
+            [
+              "list",
+              "string"
+            ]
+          ]
+        }
+      }
+    },
+    "aws_quicksight_folder_membership": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 805,
+      "gap": "#724 reviewed: Not applicable: shared folder association does not justify exclusive embedding. Missing: folder_id and member_type-discriminated analysis_id/dashboard_id/data_set_id; reject ambiguous same IDs across types. Follow-up #805. Deferred: member-type enum summary should accompany verified type-discriminated navigation; no folder-content dumping.",
+      "review": {
+        "issue": 724,
+        "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "aws_account_id",
+          "folder_id",
+          "member_type",
+          "member_id"
+        ],
+        "placement": "Supported: retain Logical aws_quicksight_folder_membership basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
+        "ownership": "Not applicable: shared folder association does not justify exclusive embedding.",
+        "network": "Not applicable: reviewed aws_quicksight_folder_membership fields provide no configured subnet containment; service references do not propagate network placement.",
+        "references": "Missing: folder_id and member_type-discriminated analysis_id/dashboard_id/data_set_id; reject ambiguous same IDs across types.",
+        "scope": "Partial: Regional eligibility only; aws_account_id can select a different account and namespace/ARN identities require matching account/region. Basic scope.rs intentionally clears account rather than assuming provider ownership.",
+        "summaries": "Deferred: member-type enum summary should accompany verified type-discriminated navigation; no folder-content dumping.",
+        "officialDocumentation": "website/docs/r/quicksight_folder_membership.html.markdown",
+        "shapes": {
+          "aws_account_id": [
+            "string"
+          ],
+          "folder_id": [
+            "string"
+          ],
+          "member_type": [
+            "string"
+          ],
+          "member_id": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_quicksight_group": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 806,
+      "gap": "#724 reviewed: Missing: namespace -> namespace.namespace with account/region agreement; default literal does not identify a managed namespace. Follow-up #806. Intentionally unsupported: group descriptions and effective permissions.",
+      "review": {
+        "issue": 724,
+        "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "group_name",
+          "namespace",
+          "arn",
+          "aws_account_id"
+        ],
+        "placement": "Supported: retain Logical aws_quicksight_group basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
+        "ownership": "Not applicable: independent aws_quicksight_group configuration; no verified embedded owner in runtime.",
+        "network": "Not applicable: reviewed aws_quicksight_group fields provide no configured subnet containment; service references do not propagate network placement.",
+        "references": "Missing: namespace -> namespace.namespace with account/region agreement; default literal does not identify a managed namespace.",
+        "scope": "Partial: Regional eligibility only; aws_account_id can select a different account and namespace/ARN identities require matching account/region. Basic scope.rs intentionally clears account rather than assuming provider ownership.",
+        "summaries": "Intentionally unsupported: group descriptions and effective permissions.",
+        "officialDocumentation": "website/docs/r/quicksight_group.html.markdown",
+        "shapes": {
+          "group_name": [
+            "string"
+          ],
+          "namespace": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "aws_account_id": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_quicksight_group_membership": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 806,
+      "gap": "#724 reviewed: Not applicable: membership is not exclusive ownership. Missing: group_name and member_name -> user.user_name under same namespace/account/region; preserve membership identity. Follow-up #806. Intentionally unsupported: group membership does not prove effective user access.",
+      "review": {
+        "issue": 724,
+        "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "group_name",
+          "member_name",
+          "namespace",
+          "aws_account_id"
+        ],
+        "placement": "Supported: retain Logical aws_quicksight_group_membership basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
+        "ownership": "Not applicable: membership is not exclusive ownership.",
+        "network": "Not applicable: reviewed aws_quicksight_group_membership fields provide no configured subnet containment; service references do not propagate network placement.",
+        "references": "Missing: group_name and member_name -> user.user_name under same namespace/account/region; preserve membership identity.",
+        "scope": "Partial: Regional eligibility only; aws_account_id can select a different account and namespace/ARN identities require matching account/region. Basic scope.rs intentionally clears account rather than assuming provider ownership.",
+        "summaries": "Intentionally unsupported: group membership does not prove effective user access.",
+        "officialDocumentation": "website/docs/r/quicksight_group_membership.html.markdown",
+        "shapes": {
+          "group_name": [
+            "string"
+          ],
+          "member_name": [
+            "string"
+          ],
+          "namespace": [
+            "string"
+          ],
+          "aws_account_id": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_quicksight_iam_policy_assignment": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 806,
+      "gap": "#724 reviewed: Missing: IAM policy ARN and complete same-namespace group/user names; assignment_status is configuration, not effective access. Follow-up #806. Intentionally unsupported: effective IAM permissions.",
+      "review": {
+        "issue": 724,
+        "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "aws_account_id",
+          "namespace",
+          "policy_arn",
+          "identities.group",
+          "identities.user",
+          "assignment_status"
+        ],
+        "placement": "Supported: retain Logical aws_quicksight_iam_policy_assignment basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
+        "ownership": "Not applicable: independent aws_quicksight_iam_policy_assignment configuration; no verified embedded owner in runtime.",
+        "network": "Not applicable: reviewed aws_quicksight_iam_policy_assignment fields provide no configured subnet containment; service references do not propagate network placement.",
+        "references": "Missing: IAM policy ARN and complete same-namespace group/user names; assignment_status is configuration, not effective access.",
+        "scope": "Partial: Regional eligibility only; aws_account_id can select a different account and namespace/ARN identities require matching account/region. Basic scope.rs intentionally clears account rather than assuming provider ownership.",
+        "summaries": "Intentionally unsupported: effective IAM permissions.",
+        "officialDocumentation": "website/docs/r/quicksight_iam_policy_assignment.html.markdown",
+        "shapes": {
+          "aws_account_id": [
+            "string"
+          ],
+          "namespace": [
+            "string"
+          ],
+          "policy_arn": [
+            "string"
+          ],
+          "identities.group": [
+            "list",
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "identities.user": [
+            "list",
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "assignment_status": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_quicksight_ingestion": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 805,
+      "gap": "#724 reviewed: Missing: dataset helper navigation. Missing: data_set_id -> dataset.data_set_id with matching account and region, not composite Terraform id. Follow-up #805. Intentionally unsupported: execution status and freshness predictions; scheduling details do not prove successful refresh.",
+      "review": {
+        "issue": 724,
+        "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "aws_account_id",
+          "data_set_id",
+          "ingestion_id",
+          "ingestion_type"
+        ],
+        "placement": "Supported: retain Logical aws_quicksight_ingestion basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
+        "ownership": "Missing: dataset helper navigation.",
+        "network": "Not applicable: reviewed aws_quicksight_ingestion fields provide no configured subnet containment; service references do not propagate network placement.",
+        "references": "Missing: data_set_id -> dataset.data_set_id with matching account and region, not composite Terraform id.",
+        "scope": "Partial: Regional eligibility only; aws_account_id can select a different account and namespace/ARN identities require matching account/region. Basic scope.rs intentionally clears account rather than assuming provider ownership.",
+        "summaries": "Intentionally unsupported: execution status and freshness predictions; scheduling details do not prove successful refresh.",
+        "officialDocumentation": "website/docs/r/quicksight_ingestion.html.markdown",
+        "shapes": {
+          "aws_account_id": [
+            "string"
+          ],
+          "data_set_id": [
+            "string"
+          ],
+          "ingestion_id": [
+            "string"
+          ],
+          "ingestion_type": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_quicksight_ip_restriction": {
+      "status": "Basic-only",
+      "priority": "P3",
+      "gap": "#724 reviewed: Intentionally unsupported: allowed IP/VPC rules are access settings, not containment or reachability. Deferred: map-key VPC/endpoint navigation requires explicit Terraform map-key reference provenance, unsupported by current attribute model; revisit when key evidence can prove complete unique IDs without interpreting policy. Intentionally unsupported: IP restriction maps and effective access.",
+      "review": {
+        "issue": 724,
+        "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "aws_account_id",
+          "enabled",
+          "ip_restriction_rule_map",
+          "vpc_endpoint_id_restriction_rule_map",
+          "vpc_id_restriction_rule_map"
+        ],
+        "placement": "Supported: retain Logical aws_quicksight_ip_restriction basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
+        "ownership": "Not applicable: independent aws_quicksight_ip_restriction configuration; no verified embedded owner in runtime.",
+        "network": "Intentionally unsupported: allowed IP/VPC rules are access settings, not containment or reachability.",
+        "references": "Deferred: map-key VPC/endpoint navigation requires explicit Terraform map-key reference provenance, unsupported by current attribute model; revisit when key evidence can prove complete unique IDs without interpreting policy.",
+        "scope": "Partial: Regional eligibility only; aws_account_id can select a different account and namespace/ARN identities require matching account/region. Basic scope.rs intentionally clears account rather than assuming provider ownership.",
+        "summaries": "Intentionally unsupported: IP restriction maps and effective access.",
+        "officialDocumentation": "website/docs/r/quicksight_ip_restriction.html.markdown",
+        "shapes": {
+          "aws_account_id": [
+            "string"
+          ],
+          "enabled": [
+            "bool"
+          ],
+          "ip_restriction_rule_map": [
+            [
+              "map",
+              "string"
+            ]
+          ],
+          "vpc_endpoint_id_restriction_rule_map": [
+            [
+              "map",
+              "string"
+            ]
+          ],
+          "vpc_id_restriction_rule_map": [
+            [
+              "map",
+              "string"
+            ]
+          ]
+        }
+      }
+    },
+    "aws_quicksight_key_registration": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 806,
+      "gap": "#724 reviewed: Missing: complete KMS key ARN registrations; default_key does not prove every dataset is encrypted with that key. Follow-up #806. Intentionally unsupported: account-wide registration is not per-dataset encryption evidence.",
+      "review": {
+        "issue": 724,
+        "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "aws_account_id",
+          "key_registration.key_arn",
+          "key_registration.default_key"
+        ],
+        "placement": "Supported: retain Logical aws_quicksight_key_registration basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
+        "ownership": "Not applicable: independent aws_quicksight_key_registration configuration; no verified embedded owner in runtime.",
+        "network": "Not applicable: reviewed aws_quicksight_key_registration fields provide no configured subnet containment; service references do not propagate network placement.",
+        "references": "Missing: complete KMS key ARN registrations; default_key does not prove every dataset is encrypted with that key.",
+        "scope": "Partial: Regional eligibility only; aws_account_id can select a different account and namespace/ARN identities require matching account/region. Basic scope.rs intentionally clears account rather than assuming provider ownership.",
+        "summaries": "Intentionally unsupported: account-wide registration is not per-dataset encryption evidence.",
+        "officialDocumentation": "website/docs/r/quicksight_key_registration.html.markdown",
+        "shapes": {
+          "aws_account_id": [
+            "string"
+          ],
+          "key_registration.key_arn": [
+            "set",
+            "string"
+          ],
+          "key_registration.default_key": [
+            "set",
+            "bool"
+          ]
+        }
+      }
+    },
+    "aws_quicksight_namespace": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 806,
+      "gap": "#724 reviewed: Not applicable: namespace stays Logical; not a VPC/container. Not applicable: QUICKSIGHT identity_store enum is not an Identity Store resource identifier; consumers originate namespace links. Follow-up #806. Intentionally unsupported: creation_status is runtime state and identity_store=QUICKSIGHT does not establish external directory integration.",
+      "review": {
+        "issue": 724,
+        "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "namespace",
+          "arn",
+          "aws_account_id",
+          "identity_store"
+        ],
+        "placement": "Supported: retain Logical aws_quicksight_namespace basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
+        "ownership": "Not applicable: namespace stays Logical; not a VPC/container.",
+        "network": "Not applicable: reviewed aws_quicksight_namespace fields provide no configured subnet containment; service references do not propagate network placement.",
+        "references": "Not applicable: QUICKSIGHT identity_store enum is not an Identity Store resource identifier; consumers originate namespace links.",
+        "scope": "Partial: Regional eligibility only; aws_account_id can select a different account and namespace/ARN identities require matching account/region. Basic scope.rs intentionally clears account rather than assuming provider ownership.",
+        "summaries": "Intentionally unsupported: creation_status is runtime state and identity_store=QUICKSIGHT does not establish external directory integration.",
+        "officialDocumentation": "website/docs/r/quicksight_namespace.html.markdown",
+        "shapes": {
+          "namespace": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "aws_account_id": [
+            "string"
+          ],
+          "identity_store": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_quicksight_refresh_schedule": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 805,
+      "gap": "#724 reviewed: Missing: dataset helper navigation. Missing: data_set_id -> dataset.data_set_id with matching account and region, not composite Terraform id. Follow-up #805. Intentionally unsupported: execution status and freshness predictions; scheduling details do not prove successful refresh.",
+      "review": {
+        "issue": 724,
+        "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "aws_account_id",
+          "data_set_id",
+          "schedule_id",
+          "schedule.refresh_type"
+        ],
+        "placement": "Supported: retain Logical aws_quicksight_refresh_schedule basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
+        "ownership": "Missing: dataset helper navigation.",
+        "network": "Not applicable: reviewed aws_quicksight_refresh_schedule fields provide no configured subnet containment; service references do not propagate network placement.",
+        "references": "Missing: data_set_id -> dataset.data_set_id with matching account and region, not composite Terraform id.",
+        "scope": "Partial: Regional eligibility only; aws_account_id can select a different account and namespace/ARN identities require matching account/region. Basic scope.rs intentionally clears account rather than assuming provider ownership.",
+        "summaries": "Intentionally unsupported: execution status and freshness predictions; scheduling details do not prove successful refresh.",
+        "officialDocumentation": "website/docs/r/quicksight_refresh_schedule.html.markdown",
+        "shapes": {
+          "aws_account_id": [
+            "string"
+          ],
+          "data_set_id": [
+            "string"
+          ],
+          "schedule_id": [
+            "string"
+          ],
+          "schedule.refresh_type": [
+            "list",
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_quicksight_role_custom_permission": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 806,
+      "gap": "#724 reviewed: Not applicable: shared permission profile is not embedded. Missing: custom_permissions_name -> custom_permissions.custom_permissions_name and namespace; role is a QuickSight enum, not IAM. Follow-up #806. Intentionally unsupported: effective custom permissions.",
+      "review": {
+        "issue": 724,
+        "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "custom_permissions_name",
+          "role",
+          "namespace",
+          "aws_account_id"
+        ],
+        "placement": "Supported: retain Logical aws_quicksight_role_custom_permission basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
+        "ownership": "Not applicable: shared permission profile is not embedded.",
+        "network": "Not applicable: reviewed aws_quicksight_role_custom_permission fields provide no configured subnet containment; service references do not propagate network placement.",
+        "references": "Missing: custom_permissions_name -> custom_permissions.custom_permissions_name and namespace; role is a QuickSight enum, not IAM.",
+        "scope": "Partial: Regional eligibility only; aws_account_id can select a different account and namespace/ARN identities require matching account/region. Basic scope.rs intentionally clears account rather than assuming provider ownership.",
+        "summaries": "Intentionally unsupported: effective custom permissions.",
+        "officialDocumentation": "website/docs/r/quicksight_role_custom_permission.html.markdown",
+        "shapes": {
+          "custom_permissions_name": [
+            "string"
+          ],
+          "role": [
+            "string"
+          ],
+          "namespace": [
+            "string"
+          ],
+          "aws_account_id": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_quicksight_role_membership": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 806,
+      "gap": "#724 reviewed: Not applicable: role membership is not exclusive ownership. Missing: member_name -> group.group_name in matching namespace; role is QuickSight ADMIN/AUTHOR/READER enum, not an IAM role. Follow-up #806. Deferred: QuickSight role enum needs an allowlist tied to group navigation; no inference of IAM privilege.",
+      "review": {
+        "issue": 724,
+        "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "member_name",
+          "role",
+          "namespace",
+          "aws_account_id"
+        ],
+        "placement": "Supported: retain Logical aws_quicksight_role_membership basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
+        "ownership": "Not applicable: role membership is not exclusive ownership.",
+        "network": "Not applicable: reviewed aws_quicksight_role_membership fields provide no configured subnet containment; service references do not propagate network placement.",
+        "references": "Missing: member_name -> group.group_name in matching namespace; role is QuickSight ADMIN/AUTHOR/READER enum, not an IAM role.",
+        "scope": "Partial: Regional eligibility only; aws_account_id can select a different account and namespace/ARN identities require matching account/region. Basic scope.rs intentionally clears account rather than assuming provider ownership.",
+        "summaries": "Deferred: QuickSight role enum needs an allowlist tied to group navigation; no inference of IAM privilege.",
+        "officialDocumentation": "website/docs/r/quicksight_role_membership.html.markdown",
+        "shapes": {
+          "member_name": [
+            "string"
+          ],
+          "role": [
+            "string"
+          ],
+          "namespace": [
+            "string"
+          ],
+          "aws_account_id": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_quicksight_template": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 805,
+      "gap": "#724 reviewed: Missing: exclusive source analysis/template ARN and complete dataset substitutions. Version-qualified ARN needs known revision proof; computed source_entity_arn is not configured evidence. Follow-up #805. Intentionally unsupported: template definitions and parameter payloads.",
+      "review": {
+        "issue": 724,
+        "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "template_id",
+          "arn",
+          "aws_account_id",
+          "source_entity.source_analysis.arn",
+          "source_entity.source_analysis.data_set_references.data_set_arn",
+          "source_entity.source_template.arn"
+        ],
+        "placement": "Supported: retain Logical aws_quicksight_template basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
+        "ownership": "Not applicable: independent aws_quicksight_template configuration; no verified embedded owner in runtime.",
+        "network": "Not applicable: reviewed aws_quicksight_template fields provide no configured subnet containment; service references do not propagate network placement.",
+        "references": "Missing: exclusive source analysis/template ARN and complete dataset substitutions. Version-qualified ARN needs known revision proof; computed source_entity_arn is not configured evidence.",
+        "scope": "Partial: Regional eligibility only; aws_account_id can select a different account and namespace/ARN identities require matching account/region. Basic scope.rs intentionally clears account rather than assuming provider ownership.",
+        "summaries": "Intentionally unsupported: template definitions and parameter payloads.",
+        "officialDocumentation": "website/docs/r/quicksight_template.html.markdown",
+        "shapes": {
+          "template_id": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "aws_account_id": [
+            "string"
+          ],
+          "source_entity.source_analysis.arn": [
+            "list",
+            "list",
+            "string"
+          ],
+          "source_entity.source_analysis.data_set_references.data_set_arn": [
+            "list",
+            "list",
+            "list",
+            "string"
+          ],
+          "source_entity.source_template.arn": [
+            "list",
+            "list",
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_quicksight_template_alias": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 805,
+      "gap": "#724 reviewed: Missing: verified template navigation; retain alias lifecycle. Missing: template_id -> template.template_id plus matching template_version_number; alias is its own resource, not a provider type alias. Follow-up #805. Deferred: version summary requires known template revision agreement; an alias alone cannot claim current published content.",
+      "review": {
+        "issue": 724,
+        "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "template_id",
+          "template_version_number",
+          "alias_name",
+          "arn",
+          "aws_account_id"
+        ],
+        "placement": "Supported: retain Logical aws_quicksight_template_alias basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
+        "ownership": "Missing: verified template navigation; retain alias lifecycle.",
+        "network": "Not applicable: reviewed aws_quicksight_template_alias fields provide no configured subnet containment; service references do not propagate network placement.",
+        "references": "Missing: template_id -> template.template_id plus matching template_version_number; alias is its own resource, not a provider type alias.",
+        "scope": "Partial: Regional eligibility only; aws_account_id can select a different account and namespace/ARN identities require matching account/region. Basic scope.rs intentionally clears account rather than assuming provider ownership.",
+        "summaries": "Deferred: version summary requires known template revision agreement; an alias alone cannot claim current published content.",
+        "officialDocumentation": "website/docs/r/quicksight_template_alias.html.markdown",
+        "shapes": {
+          "template_id": [
+            "string"
+          ],
+          "template_version_number": [
+            "number"
+          ],
+          "alias_name": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "aws_account_id": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_quicksight_theme": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 805,
+      "gap": "#724 reviewed: Missing: base_theme_id -> explicit managed theme.theme_id; built-in theme IDs are not managed endpoints. Follow-up #805. Intentionally unsupported: theme colors, fonts and permissions are not infrastructure summaries.",
+      "review": {
+        "issue": 724,
+        "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "theme_id",
+          "arn",
+          "aws_account_id",
+          "base_theme_id"
+        ],
+        "placement": "Supported: retain Logical aws_quicksight_theme basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
+        "ownership": "Not applicable: independent aws_quicksight_theme configuration; no verified embedded owner in runtime.",
+        "network": "Not applicable: reviewed aws_quicksight_theme fields provide no configured subnet containment; service references do not propagate network placement.",
+        "references": "Missing: base_theme_id -> explicit managed theme.theme_id; built-in theme IDs are not managed endpoints.",
+        "scope": "Partial: Regional eligibility only; aws_account_id can select a different account and namespace/ARN identities require matching account/region. Basic scope.rs intentionally clears account rather than assuming provider ownership.",
+        "summaries": "Intentionally unsupported: theme colors, fonts and permissions are not infrastructure summaries.",
+        "officialDocumentation": "website/docs/r/quicksight_theme.html.markdown",
+        "shapes": {
+          "theme_id": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "aws_account_id": [
+            "string"
+          ],
+          "base_theme_id": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_quicksight_user": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 806,
+      "gap": "#724 reviewed: Missing: namespace and identity_type=IAM user/role ARN references with exact discriminator; session-qualified role users require separate identity proof. Follow-up #806. Intentionally unsupported: email, session names and invitation URLs.",
+      "review": {
+        "issue": 724,
+        "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "user_name",
+          "namespace",
+          "arn",
+          "aws_account_id",
+          "identity_type",
+          "iam_arn"
+        ],
+        "placement": "Supported: retain Logical aws_quicksight_user basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
+        "ownership": "Not applicable: independent aws_quicksight_user configuration; no verified embedded owner in runtime.",
+        "network": "Not applicable: reviewed aws_quicksight_user fields provide no configured subnet containment; service references do not propagate network placement.",
+        "references": "Missing: namespace and identity_type=IAM user/role ARN references with exact discriminator; session-qualified role users require separate identity proof.",
+        "scope": "Partial: Regional eligibility only; aws_account_id can select a different account and namespace/ARN identities require matching account/region. Basic scope.rs intentionally clears account rather than assuming provider ownership.",
+        "summaries": "Intentionally unsupported: email, session names and invitation URLs.",
+        "officialDocumentation": "website/docs/r/quicksight_user.html.markdown",
+        "shapes": {
+          "user_name": [
+            "string"
+          ],
+          "namespace": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "aws_account_id": [
+            "string"
+          ],
+          "identity_type": [
+            "string"
+          ],
+          "iam_arn": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_quicksight_user_custom_permission": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 806,
+      "gap": "#724 reviewed: Not applicable: shared permission profile is not embedded. Missing: custom_permissions_name -> custom_permissions.custom_permissions_name and user_name -> user.user_name in matching namespace. Follow-up #806. Intentionally unsupported: effective custom permissions.",
+      "review": {
+        "issue": 724,
+        "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "custom_permissions_name",
+          "user_name",
+          "namespace",
+          "aws_account_id"
+        ],
+        "placement": "Supported: retain Logical aws_quicksight_user_custom_permission basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
+        "ownership": "Not applicable: shared permission profile is not embedded.",
+        "network": "Not applicable: reviewed aws_quicksight_user_custom_permission fields provide no configured subnet containment; service references do not propagate network placement.",
+        "references": "Missing: custom_permissions_name -> custom_permissions.custom_permissions_name and user_name -> user.user_name in matching namespace.",
+        "scope": "Partial: Regional eligibility only; aws_account_id can select a different account and namespace/ARN identities require matching account/region. Basic scope.rs intentionally clears account rather than assuming provider ownership.",
+        "summaries": "Intentionally unsupported: effective custom permissions.",
+        "officialDocumentation": "website/docs/r/quicksight_user_custom_permission.html.markdown",
+        "shapes": {
+          "custom_permissions_name": [
+            "string"
+          ],
+          "user_name": [
+            "string"
+          ],
+          "namespace": [
+            "string"
+          ],
+          "aws_account_id": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_quicksight_vpc_connection": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 804,
+      "gap": "#724 reviewed: Missing: verified common-VPC connection context, without putting all QuickSight consumers in those subnets. Missing: IAM role and complete subnet/SG common-VPC proof; dns_resolvers are IPs, not Route53 resource identities. Follow-up #804. Intentionally unsupported: availability status and resolver IPs do not establish connectivity; verified network navigation is the useful context.",
+      "review": {
+        "issue": 724,
+        "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "arn",
+          "vpc_connection_id",
+          "aws_account_id",
+          "role_arn",
+          "subnet_ids",
+          "security_group_ids",
+          "dns_resolvers"
+        ],
+        "placement": "Supported: retain Logical aws_quicksight_vpc_connection basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
+        "ownership": "Not applicable: independent aws_quicksight_vpc_connection configuration; no verified embedded owner in runtime.",
+        "network": "Missing: verified common-VPC connection context, without putting all QuickSight consumers in those subnets.",
+        "references": "Missing: IAM role and complete subnet/SG common-VPC proof; dns_resolvers are IPs, not Route53 resource identities.",
+        "scope": "Partial: Regional eligibility only; aws_account_id can select a different account and namespace/ARN identities require matching account/region. Basic scope.rs intentionally clears account rather than assuming provider ownership.",
+        "summaries": "Intentionally unsupported: availability status and resolver IPs do not establish connectivity; verified network navigation is the useful context.",
+        "officialDocumentation": "website/docs/r/quicksight_vpc_connection.html.markdown",
+        "shapes": {
+          "arn": [
+            "string"
+          ],
+          "vpc_connection_id": [
+            "string"
+          ],
+          "aws_account_id": [
+            "string"
+          ],
+          "role_arn": [
+            "string"
+          ],
+          "subnet_ids": [
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "security_group_ids": [
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "dns_resolvers": [
+            [
+              "set",
+              "string"
+            ]
           ]
         }
       }
