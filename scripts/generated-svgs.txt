@@ -99,4 +99,5 @@ examples/docdb.svg
 examples/neptune.svg
 examples/redshift-serverless.svg
 examples/apprunner.svg
+examples/opensearch-serverless.svg
 examples/networkfirewall.svg

@@ -1,5 +1,44 @@
 # AWS architecture relationships
 
+## OpenSearch Serverless (#696)
+
+Collections retain independent Spatial cards. VPC endpoints remain Logical,
+with dedicated reference navigation and verified common-VPC context. An endpoint
+does not own collections, and collection cards never inherit endpoint subnets.
+
+The managed `aws_opensearchserverless_vpc_endpoint` contracts were checked against
+AWS Provider 6.70.0 commit `5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f`:
+
+| Input | Required endpoint output | Navigation |
+| --- | --- | --- |
+| `vpc_id` | `aws_vpc.id` | Endpoint VPC |
+| `subnet_ids` (set) | `aws_subnet.id` | Configured subnets |
+| `security_group_ids` (optional/computed set) | `aws_security_group.id` | Configured security groups |
+
+Each path requires explicit unique compatible managed Terraform references and
+matching known IDs. Collections must be complete, nonempty and duplicate-free.
+VPC context additionally requires every selected subnet and SG to have a verified
+`vpc_id` reference to the endpoint's configured VPC. A multi-subnet endpoint is
+never assigned to one arbitrary subnet. Individually proven references remain
+available even when their combined network context disagrees.
+
+Omitted, null, empty or unknown SGs do not identify the default SG and cannot
+establish containment. Literal-only IDs, wrong output attributes, ambiguous
+instances, foreign providers, incompatible bindings/accounts/regions, deleted or
+deposed objects and filtered evidence retain conservative fallbacks. Named states
+cannot supply one another's missing evidence. Collection/endpoint scope retains
+verified provider account evidence; ordinary JSON does not prove account ownership.
+Data sources keep their existing unresolved presentation and receive no managed
+reference rules. Lifecycle actions, moves/imports and independent coverage remain.
+
+Access, security and lifecycle policy JSON stays opaque. No collection membership,
+encryption summary or reachability is derived from policies or endpoint URLs.
+Direct collection-group/key and Identity Center references remain in #799.
+The [fixture](../tests/fixtures/opensearch-serverless-plan.json),
+[example](../examples/opensearch-serverless.svg) and
+[tests](../tests/unit/semantic/opensearch_serverless.rs) cover positive references,
+network disagreement, unknown/partial values, identity boundaries and rendering.
+
 ## Network Firewall (#693)
 
 `aws_networkfirewall_firewall` is an independent spatial card. A VPC firewall is

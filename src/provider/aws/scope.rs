@@ -43,6 +43,8 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
         && !matches!(
             resource,
             "aws_docdb_cluster"
+                | "aws_opensearchserverless_collection"
+                | "aws_opensearchserverless_vpc_endpoint"
                 | "aws_docdb_cluster_instance"
                 | "aws_docdb_subnet_group"
                 | "aws_neptune_cluster"
