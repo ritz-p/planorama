@@ -84,6 +84,8 @@ fn placement_available(
             | "aws_msk_serverless_cluster"
             | "aws_msk_vpc_connection"
             | "aws_mq_broker"
+            | "aws_redshiftserverless_workgroup"
+            | "aws_redshiftserverless_endpoint_access"
     ) {
         return true;
     }

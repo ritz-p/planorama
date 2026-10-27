@@ -1,0 +1,359 @@
+{
+  "format_version": "1.2",
+  "resource_changes": [
+    {
+      "address": "aws_vpc.main",
+      "mode": "managed",
+      "type": "aws_vpc",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "vpc-main"
+        }
+      }
+    },
+    {
+      "address": "aws_vpc.other",
+      "mode": "managed",
+      "type": "aws_vpc",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "vpc-other"
+        }
+      }
+    },
+    {
+      "address": "aws_subnet.a",
+      "mode": "managed",
+      "type": "aws_subnet",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "subnet-a",
+          "vpc_id": "vpc-main",
+          "availability_zone": "us-east-1a"
+        }
+      }
+    },
+    {
+      "address": "aws_subnet.b",
+      "mode": "managed",
+      "type": "aws_subnet",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "subnet-b",
+          "vpc_id": "vpc-main",
+          "availability_zone": "us-east-1b"
+        }
+      }
+    },
+    {
+      "address": "aws_security_group.broker",
+      "mode": "managed",
+      "type": "aws_security_group",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "sg-broker",
+          "vpc_id": "vpc-main"
+        }
+      }
+    },
+    {
+      "address": "aws_redshiftserverless_namespace.main",
+      "mode": "managed",
+      "type": "aws_redshiftserverless_namespace",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "namespace_name": "namespace-main",
+          "id": "namespace-main",
+          "namespace_id": "namespace-uuid",
+          "admin_user_password": "PRIVATE_PASSWORD",
+          "admin_password_secret_arn": "PRIVATE_SECRET"
+        }
+      }
+    },
+    {
+      "address": "aws_redshiftserverless_workgroup.main",
+      "mode": "managed",
+      "type": "aws_redshiftserverless_workgroup",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "workgroup_name": "workgroup-main",
+          "id": "workgroup-main",
+          "workgroup_id": "workgroup-uuid",
+          "namespace_name": "namespace-main",
+          "subnet_ids": [
+            "subnet-a",
+            "subnet-b",
+            "subnet-c"
+          ],
+          "security_group_ids": [
+            "sg-broker"
+          ],
+          "endpoint": [
+            {
+              "address": "PRIVATE_ADDRESS"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_subnet.endpoint",
+      "mode": "managed",
+      "type": "aws_subnet",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "subnet-endpoint",
+          "vpc_id": "vpc-other"
+        }
+      }
+    },
+    {
+      "address": "aws_security_group.endpoint",
+      "mode": "managed",
+      "type": "aws_security_group",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "sg-endpoint",
+          "vpc_id": "vpc-other"
+        }
+      }
+    },
+    {
+      "address": "aws_redshiftserverless_endpoint_access.main",
+      "mode": "managed",
+      "type": "aws_redshiftserverless_endpoint_access",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "endpoint_name": "endpoint-main",
+          "workgroup_name": "workgroup-main",
+          "subnet_ids": [
+            "subnet-endpoint"
+          ],
+          "vpc_security_group_ids": [
+            "sg-endpoint"
+          ],
+          "address": "PRIVATE_ADDRESS"
+        }
+      }
+    },
+    {
+      "address": "aws_subnet.c",
+      "mode": "managed",
+      "type": "aws_subnet",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "subnet-c",
+          "vpc_id": "vpc-main",
+          "availability_zone": "us-east-1c"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_vpc.main",
+          "mode": "managed",
+          "type": "aws_vpc",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_vpc.other",
+          "mode": "managed",
+          "type": "aws_vpc",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_subnet.a",
+          "mode": "managed",
+          "type": "aws_subnet",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_subnet.b",
+          "mode": "managed",
+          "type": "aws_subnet",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_security_group.broker",
+          "mode": "managed",
+          "type": "aws_security_group",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_redshiftserverless_namespace.main",
+          "mode": "managed",
+          "type": "aws_redshiftserverless_namespace",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_redshiftserverless_workgroup.main",
+          "mode": "managed",
+          "type": "aws_redshiftserverless_workgroup",
+          "provider_config_key": "aws",
+          "expressions": {
+            "namespace_name": {
+              "references": [
+                "aws_redshiftserverless_namespace.main.namespace_name"
+              ]
+            },
+            "subnet_ids": {
+              "references": [
+                "aws_subnet.a.id",
+                "aws_subnet.b.id",
+                "aws_subnet.c.id"
+              ]
+            },
+            "security_group_ids": {
+              "references": [
+                "aws_security_group.broker.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_subnet.endpoint",
+          "mode": "managed",
+          "type": "aws_subnet",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.other.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_security_group.endpoint",
+          "mode": "managed",
+          "type": "aws_security_group",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.other.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_redshiftserverless_endpoint_access.main",
+          "mode": "managed",
+          "type": "aws_redshiftserverless_endpoint_access",
+          "provider_config_key": "aws",
+          "expressions": {
+            "workgroup_name": {
+              "references": [
+                "aws_redshiftserverless_workgroup.main.workgroup_name"
+              ]
+            },
+            "subnet_ids": {
+              "references": [
+                "aws_subnet.endpoint.id"
+              ]
+            },
+            "vpc_security_group_ids": {
+              "references": [
+                "aws_security_group.endpoint.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_subnet.c",
+          "mode": "managed",
+          "type": "aws_subnet",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.main.id"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

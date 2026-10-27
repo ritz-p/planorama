@@ -48,6 +48,9 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
                 | "aws_neptune_cluster"
                 | "aws_neptune_cluster_instance"
                 | "aws_neptune_subnet_group"
+                | "aws_redshiftserverless_namespace"
+                | "aws_redshiftserverless_workgroup"
+                | "aws_redshiftserverless_endpoint_access"
         )
     {
         account = None;

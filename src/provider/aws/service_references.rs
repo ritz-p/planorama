@@ -513,7 +513,7 @@ pub(super) fn verified(raw: &Input, reference: &AttributeReference) -> bool {
             &reference.attribute,
         )
         .is_none()
-            || super::streaming::bindings(raw, reference))
+            || super::databases::bindings(raw, reference))
         && (super::streaming::label(
             &raw.nodes[reference.target].resource_type,
             &reference.attribute,
