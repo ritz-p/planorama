@@ -57,7 +57,7 @@ Implementation cross-checks: [classification](../src/provider/aws/classification
 
 Retain existing independent MSK/MQ/DocumentDB/Neptune/DMS/FSx/SageMaker endpoint cards while adding evidence in their bounded issues. Retain Batch compute-environment cards; review Network Firewall firewalls for independent cards. App Runner connectors, database subnet groups, namespace/configuration objects and policies need separate ownership/network decisions; do not promote all objects from a service together. Existing embedded EFS access points, KMS aliases and Secrets Manager versions remain examples of proven presentation ownership, not a default for every reference.
 
-MSK replicators (topics are tracked in #754), Network Firewall endpoint associations/transit-gateway/TLS variants, non-Lustre FSx, DocumentDB elastic/global variants, Neptune Analytics, DMS serverless and SageMaker Studio/training remain deferred outside the initial issue scopes. Their exact types and schema candidates remain in the register. Runtime health, effective IAM/firewall policy, packet routing, credentials, item data and arbitrary attribute dumping are intentionally unsupported. Encryption summaries for additional services require a separate allowlist review; do not copy a boolean from a similarly named field.
+MSK replicators (topics are tracked in #754), Network Firewall endpoint associations/transit-gateway/TLS variants, non-Lustre FSx, DocumentDB/Neptune global variants, DMS serverless and SageMaker Studio/training remain deferred outside the initial issue scopes. DocumentDB Elastic and Neptune Analytics now have bounded follow-up #766 from the #717 review. Their exact types and schema candidates remain in the register. Runtime health, effective IAM/firewall policy, packet routing, credentials, item data and arbitrary attribute dumping are intentionally unsupported. Encryption summaries for additional services require a separate allowlist review; do not copy a boolean from a similarly named field.
 
 ## NoSQL, caches and time-series review (#718)
 
@@ -225,3 +225,94 @@ and checks its leaf field is documented; the behavioral interpretation remains t
 explicit manual review above. It performs no AWS calls.
 
 The extractor rejects a schema hash or managed-type denominator mismatch. Ordinary CI checks the committed evidence, exact-type coverage, decision references and deterministic output offline. Update the explicit decisions when service work lands; a closed issue does not automatically upgrade semantic status. Review the scope/placement decisions when #615 identifies changed contracts. Runtime changes still require their normal tests, examples and Layout quality; this audit changes documentation/tooling only.
+
+## Relational and graph database review (#717)
+
+Reviewed planorama commit: `5d233e4a467f323b46082a35ede1467eec999898`.
+All 59 managed types in `rds`, `docdb`, `docdbelastic`, `neptune`,
+`neptunegraph`, `dsql` and `odb` have separate placement, ownership, network,
+reference, scope and summary conclusions in [decisions](aws-semantic-decisions.json).
+Their `review` objects record this historical baseline, exact reviewed fields,
+collection ancestry and resource documentation at Provider commit
+`5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f`. Subsequent implementation updates the
+current status/gap, while preserving the historical review.
+
+Runtime evidence is [classification](../src/provider/aws/classification.rs),
+[basic defaults](../src/provider/aws/basic_entries.rs), [scope](../src/provider/aws/scope.rs),
+[indirect placement](../src/provider/aws/containment/indirect.rs),
+[VPC placement](../src/provider/aws/containment/vpc_scope.rs),
+[SG attachment](../src/provider/aws/security_groups.rs),
+[network verification](../src/provider/aws/network.rs),
+[membership](../src/provider/aws/members.rs),
+[references](../src/provider/aws/service_references.rs),
+[proxy validation](../src/provider/aws/rds_proxy.rs),
+[Backup](../src/provider/aws/backup.rs) and [encryption](../src/provider/aws/encryption.rs).
+Behavioral evidence is [membership tests](../tests/unit/semantic/members.rs),
+[indirect tests](../tests/unit/semantic/indirect.rs),
+[VPC tests](../tests/unit/semantic/vpc_scope.rs),
+[proxy tests](../tests/unit/semantic/rds_proxy.rs),
+[global tests](../tests/unit/semantic/rds_global.rs),
+[reference tests](../tests/unit/semantic/service_references.rs),
+[encryption tests](../tests/unit/semantic/encryption.rs) and the runtime support matrix.
+Basic-only types have no dedicated behavior to claim from adjacent RDS tests.
+
+The review preserves RDS subnet-group placement, instance presentation membership,
+Global Cluster references, Proxy #514, Backup #508 and encryption #601. Legacy RDS
+indirect placement does not implement the same strict complete-known-value proof
+as newer service-specific network validators; its existing bounded behavior is
+recorded without extending that claim to DocumentDB or Neptune.
+
+Existing work is #697 (DocumentDB) and #698 (Neptune). Additional bounded gaps are
+#762 (database configuration/IAM), #763 (snapshots/export), #764 (notifications),
+#765 (proxy/custom endpoints), #766 (Elastic/Analytics), #767 (DSQL), #768 (ODB)
+and #769 (RDS auxiliary/zero-ETL). These own the listed source/helper relationships;
+endpoint audits #719, #721, #722, #726 and #727 must not duplicate them. Redshift
+Serverless #695 owns its namespace/workgroup architecture, not RDS integration.
+
+Contract distinctions checked against pinned docs and schema:
+
+- RDS `aws_db_instance.id` is a resource ID, distinct from `identifier`.
+  RDS cluster membership currently verifies the referenced cluster `id`.
+  DocumentDB cluster `id` is documented as a deprecated ARN; new membership must
+  use the verified `cluster_identifier` contract instead of copying RDS logic.
+- Subnet/SG collections and event `source_ids` are sets. RDS notification input is
+  `sns_topic`; DocumentDB/Neptune use `sns_topic_arn`. DocumentDB's argument list
+  incorrectly says `sns_topic`, while its example and pinned schema use
+  `sns_topic_arn`; the verifier checks that explicit example as evidence.
+- Snapshot VPC/AZ/KMS fields are computed source provenance, not configured network
+  containment. DocumentDB/Neptune snapshot docs also spell the copied-source output
+  `source_db_cluster_snapshot_identifier`, while schema uses
+  `source_db_cluster_snapshot_arn`; neither establishes a configured reference.
+- DocumentDB instance subnet-group/KMS outputs are computed. Neptune instances have
+  a configurable subnet-group name that must agree with their cluster. Neither
+  instance membership nor a multi-subnet selector chooses an individual subnet.
+- Global database creation source fields accept ARNs despite their identifier suffix.
+  Computed global members cannot synthesize managed regional clusters. Global
+  objects do not propagate their provider region to members.
+- DSQL peer clusters are a set inside a list block. `AWS_OWNED_KMS_KEY` is a sentinel;
+  Neptune Analytics uses `AWS_OWNED_KEY`. Neither is a KMS endpoint. Witness region
+  and graph public connectivity are not Terraform resource or reachability proof.
+- Neptune Analytics endpoint SG configuration is not returned by its API. ODB network
+  CIDRs and OCI IDs do not identify EC2 subnets. ODB VM cluster infrastructure/network
+  ID and ARN forms are paired alternatives; peering documentation contains misleading
+  connection-ID examples and cannot justify string-based endpoint inference.
+- ODB Secrets Manager integration enables an account/region Oracle service role;
+  its role ARN is computed, with no configured secret/database owner. RDS reserved
+  instances are financial reservations, and RDS certificates configure regional
+  account defaults rather than managed ACM certificates.
+- Proxy target group `name` is distinct from its composite ID; database targets
+  require proxy/group consistency and exclusive instance/cluster selection. RDS
+  integration's deprecated `id` is an ARN, distinct from `integration_identifier`.
+
+No reviewed type is a verified managed alias. Registered data schemas remain
+separate lookup contracts; managed defaults and ownership decisions do not extend
+to them. New reference contracts require explicit unique compatible endpoints,
+matching known output values and complete collections. Named-state, provider,
+account/region, current/deposed, deletion and filtering boundaries remain intact.
+Shared parameter/option/subnet groups remain independent. Passwords, policy bodies,
+SQL, connection endpoints, clone data and runtime health are excluded. Type-specific
+remaining deferrals state their contract or use-case prerequisite in the decisions.
+
+This audit changes no runtime, rendering input or geometry; SVG regeneration and
+Layout quality are not required. Docker checks include the complete pinned-contract
+verifier, semantic register/tests and resource-support consistency.
