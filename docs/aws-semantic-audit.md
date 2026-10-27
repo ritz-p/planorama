@@ -13,6 +13,91 @@ Each exact type has current managed defaults, a semantic status, missing capabil
 
 P1 prioritizes network placement and explicit service relationships with high architecture value. P2 covers bounded workload/storage configuration chains. P3 retains current defaults until a concrete use case and exact evidence contract justify additional semantics. P3 is not a claim of completeness or a prohibition on future implementation. The initial triage selects 15 bounded service issues (#688–#702); other services remain explicitly deferred per type rather than being hidden from the denominator.
 
+## Network connectivity and traffic protection review (#716)
+
+Reviewed planorama commit: `d906716ae153a3d5bd320e64a6205f835850489b`.
+All 68 managed types in `directconnect`, `networkmanager`, `networkfirewall`,
+`vpclattice`, `networkflowmonitor` and `networkmonitor` have six separate
+dimensions, exact fields and collection shapes in [decisions](aws-semantic-decisions.json).
+The pinned Provider source archive identifies commit `5e13eed`, and the schema
+is checked against the inventory SHA-256 before inspecting fields. Resource docs
+are linked per type at the full Provider commit. These are historical conclusions;
+later implementations update current gap text without rewriting this baseline.
+
+At this commit all 68 types have basic Logical presentation. Runtime evidence is
+[basic defaults](../src/provider/aws/basic_entries.rs),
+[classification](../src/provider/aws/classification.rs),
+[presentation](../src/provider/aws.rs), [scope](../src/provider/aws/scope.rs),
+[unknown scope reasons](../src/provider/aws/basic.rs),
+[containment](../src/provider/aws/containment/indirect.rs),
+[dedicated references](../src/provider/aws/service_references.rs) and
+[summary allowlists](../src/provider/aws/encryption.rs).
+The [runtime matrix](resource-support.md) and
+[inventory tests](../tests/unit/aws_inventory.rs) verify basic support; there
+are no dedicated behavioral tests to borrow from adjacent services. Generic
+Terraform dependencies do not establish dedicated service semantics.
+
+Existing #693 owns VPC Firewall placement, policy/rule-group references and logging
+ownership/destinations. Other actionable gaps are #786 (Direct Connect), #787
+(hosted/cross-account DX), #788 (Network Manager topology), #789 (Cloud WAN),
+#790 (Lattice services), #791 (Lattice resources), #792 (Firewall auxiliaries)
+and #793 (network monitors). Source/helper types belong to these issues; endpoint
+audits #713, #714, #715, #719, #721, #726 and #727 must not duplicate them.
+No completed #688–#702 implementation is reopened.
+
+Contract distinctions checked against the pinned documentation and schema:
+
+- DX connection locations, public route-prefix sets and BGP addresses are not
+  subnet/resource identities. Connection/LAG/gateway architecture deserves a
+  separate card review; configuration helpers do not all become cards.
+  Hosted allocator and accepter are separate lifecycle identities even where
+  their IDs match. Confirmation removal does not delete the hosted connection.
+  Hosted `connection_region` replaces deprecated output `region`; provider-region
+  overrides cannot substitute for that target evidence. DX gateway is global.
+  Some DX docs mention `bgp_asn_long` where a particular schema still only has
+  `bgp_asn`; no ASN summary is added. Unmarked BGP auth strings remain secrets.
+- Network Manager management objects remain global. `subnet_arns` and edge-location
+  collections do not make the core network a regional VPC. Device `aws_location`
+  is separate from physical site coordinates. NO_ENCAP peers can carry subnet
+  ARNs; GRE CIDRs cannot identify subnets. Accepters require an attachment-type
+  discriminator; Connect attachment exports `attachment_id`, while other
+  attachments expose `id`. Routing labels and JSON policy segments are not
+  independently managed Terraform objects.
+- Firewall VPC/subnet mapping and TGW/AZ mapping are different variants. Policy
+  stateful/stateless reference blocks are sets under a single list block; group
+  type must agree. Computed firewall endpoints are not Terraform resources.
+  Logging uses a destination-type discriminator and a string map with `bucketName`,
+  `logGroup` or `deliveryStream`; prefixes and arbitrary map entries stay private.
+  Rule-group prefix references have the extra `ip_set_reference` block under
+  `rule_group.reference_sets.ip_set_references`. TLS `certificate_authority_arn`
+  identifies an imported ACM certificate, not an ACM PCA authority. Container
+  monitoring requires ECS/EKS type and same-account/region cluster evidence.
+- Lattice listener `listener_id` is distinct from composite Terraform identity.
+  Listener rules require service/listener agreement and an action discriminator.
+  Target IDs vary between instance ID, Lambda ARN, ALB ARN and IP; IP/DNS values
+  cannot reconstruct Terraform endpoints. Resource-configuration docs mislabel
+  their `id`/`arn` as resource-gateway outputs; the registered
+  `internal/service/vpclattice/resource_configuration.go` resource confirms the
+  distinct resource-configuration identity. CHILD/GROUP ownership and gateway
+  subnet context need separate proofs. Domain TXT outputs do not create DNS records.
+- Flow Monitor selectors have explicit types; account IDs, regions and AZs are
+  scope selectors rather than managed resource identities. Network Monitor probe
+  `source_arn` is a subnet; destination is an IP and monitor linkage uses
+  `monitor_name`, not ARN. Monitoring does not imply endpoint health or reachability.
+
+No reviewed type shares a verified managed alias factory. Registered data sources
+remain lookup contracts outside this managed denominator; managed basic defaults
+and future ownership rules do not transfer to them. Dedicated links require unique
+explicit references, matching known output values, complete collections and compatible
+provider/account/region/state evidence. Current configuration must not create
+historical/deposed links. Shared resources keep independent coverage.
+Per-type summary deferrals require a bounded allowlist before revisiting; secrets,
+rule/policy contents, runtime status and arbitrary values remain excluded.
+
+This audit changes no rendering input or runtime geometry. Docker checks cover
+the pinned-contract verifier, semantic register/tests and support-matrix consistency;
+SVG regeneration and Layout quality do not apply to this audit-only change.
+
 ## Method and limits
 
 The runtime-generated [support matrix](resource-support.md) supplies role, display and conditional scope. All pinned managed schemas were traversed for configurable, non-sensitive identifier/name/network fields. The compact [schema evidence](aws-semantic-evidence.json) records **paths only**, with the source schema SHA-256. Candidate names are an audit index, not inferred endpoint types. Nested JSON policy strings, URI contents and dynamically selected references are not interpreted. No candidate field is automatically added to runtime behavior.
@@ -57,7 +142,7 @@ Implementation cross-checks: [classification](../src/provider/aws/classification
 
 Retain existing independent MSK/MQ/DocumentDB/Neptune/DMS/FSx/SageMaker endpoint cards while adding evidence in their bounded issues. Retain Batch compute-environment cards; review Network Firewall firewalls for independent cards. App Runner connectors, database subnet groups, namespace/configuration objects and policies need separate ownership/network decisions; do not promote all objects from a service together. Existing embedded EFS access points, KMS aliases and Secrets Manager versions remain examples of proven presentation ownership, not a default for every reference.
 
-MSK replicators (topics are tracked in #754), Network Firewall endpoint associations/transit-gateway/TLS variants, non-Lustre FSx, DocumentDB/Neptune global variants, DMS serverless and SageMaker Studio/training remain deferred outside the initial issue scopes. DocumentDB Elastic and Neptune Analytics now have bounded follow-up #766 from the #717 review. Their exact types and schema candidates remain in the register. Runtime health, effective IAM/firewall policy, packet routing, credentials, item data and arbitrary attribute dumping are intentionally unsupported. Encryption summaries for additional services require a separate allowlist review; do not copy a boolean from a similarly named field.
+MSK replicators (topics are tracked in #754), Network Firewall endpoint associations/transit-gateway/TLS variants (now tracked by #792), non-Lustre FSx, DocumentDB/Neptune global variants, DMS serverless and SageMaker Studio/training remain deferred outside the initial issue scopes. DocumentDB Elastic and Neptune Analytics now have bounded follow-up #766 from the #717 review. Their exact types and schema candidates remain in the register. Runtime health, effective IAM/firewall policy, packet routing, credentials, item data and arbitrary attribute dumping are intentionally unsupported. Encryption summaries for additional services require a separate allowlist review; do not copy a boolean from a similarly named field.
 
 ## Containers and application hosting review (#713)
 

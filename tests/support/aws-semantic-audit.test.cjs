@@ -5,6 +5,30 @@ const fs=require('node:fs');
 const {extract,buildEvidence,render}=require('../../scripts/aws-semantic-audit.cjs');
 const read=p=>JSON.parse(fs.readFileSync(p));
 
+test('network audit covers 68 types and preserves typed endpoint contracts',()=>{
+ const services=new Set('directconnect networkmanager networkfirewall vpclattice networkflowmonitor networkmonitor'.split(' '));
+ const expected=read('tests/fixtures/aws-inventory/6.70.0.json').resources.filter(r=>services.has(r.service));
+ const entries=Object.entries(read('docs/aws-semantic-decisions.json').types).filter(([,d])=>d.review?.issue===716);
+ assert.equal(expected.length,68);
+ assert.deepEqual(entries.map(([type])=>type).sort(),expected.map(r=>r.type).sort());
+ for(const [type,{review,gap,issue}] of entries){
+  assert.equal(review.providerCommit,'5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f');
+  assert.match(review.implementationCommit,/^[a-f0-9]{40}$/);
+  assert.equal(review.officialDocumentation,expected.find(r=>r.type===type).documentation);
+  assert.deepEqual(Object.keys(review.shapes),review.fields);
+  for(const key of ['placement','ownership','network','references','scope','summaries']) assert.match(review[key],/^(Supported|Partial|Missing|Not applicable|Intentionally unsupported|Deferred):/,type+': '+key);
+  assert.match(gap,/#716/);
+  assert.ok(issue===693 || (issue>=786 && issue<=793));
+ }
+ const d=Object.fromEntries(entries);
+ assert.deepEqual(d.aws_networkfirewall_firewall.review.shapes['subnet_mapping.subnet_id'],['set','string']);
+ assert.deepEqual(d.aws_networkfirewall_logging_configuration.review.shapes['logging_configuration.log_destination_config.log_destination'],['list','set',['map','string']]);
+ assert.match(d.aws_networkfirewall_tls_inspection_configuration.review.references,/not ACM PCA/);
+ assert.match(d.aws_dx_hosted_connection.review.scope,/deprecated region/);
+ assert.match(d.aws_vpclattice_target_group_attachment.review.references,/IP values intentionally unsupported/);
+ assert.match(d.aws_networkmanager_vpc_attachment.review.network,/core network stays global/);
+});
+
 test('container audit covers 57 managed types with pinned dimensions and distinct network contracts',()=>{
  const services=new Set('ecs eks ecr ecrpublic apprunner elasticbeanstalk appmesh servicediscovery'.split(' '));
  const expected=read('tests/fixtures/aws-inventory/6.70.0.json').resources.filter(r=>services.has(r.service));

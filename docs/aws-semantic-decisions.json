@@ -2666,25 +2666,183 @@
       "status": "Basic-only",
       "priority": "P1",
       "issue": 693,
-      "gap": "Firewall architecture presentation, VPC/subnet and explicit policy/group/logging references missing; computed endpoint IDs do not create nodes."
+      "gap": "#716 reviewed: firewall_policy_arn -> policy arn #693; transit_gateway_id variant #792; computed endpoint IDs are not Terraform resources. Current basic Logical display has no dedicated relationships. Follow-up #693; see six dimensions and pinned contracts in review.",
+      "review": {
+        "issue": 716,
+        "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "id",
+          "arn",
+          "vpc_id",
+          "subnet_mapping.subnet_id",
+          "transit_gateway_id",
+          "availability_zone_mapping.availability_zone_id",
+          "firewall_policy_arn"
+        ],
+        "placement": "Missing: independent architecture representation review is tracked with the linked implementation issue; current default is Logical, not a spatial network container.",
+        "ownership": "Not applicable: retain independent identity; related resources may be shared and references do not prove embedded ownership.",
+        "network": "Missing: complete explicit VPC/subnet mapping proof #693; TGW/AZ variant separate #792.",
+        "references": "Missing: firewall_policy_arn -> policy arn #693; transit_gateway_id variant #792; computed endpoint IDs are not Terraform resources.",
+        "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
+        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "officialDocumentation": "website/docs/r/networkfirewall_firewall.html.markdown",
+        "shapes": {
+          "id": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "vpc_id": [
+            "string"
+          ],
+          "subnet_mapping.subnet_id": [
+            "set",
+            "string"
+          ],
+          "transit_gateway_id": [
+            "string"
+          ],
+          "availability_zone_mapping.availability_zone_id": [
+            "set",
+            "string"
+          ],
+          "firewall_policy_arn": [
+            "string"
+          ]
+        }
+      }
     },
     "aws_networkfirewall_firewall_policy": {
       "status": "Basic-only",
       "priority": "P1",
       "issue": 693,
-      "gap": "Firewall architecture presentation, VPC/subnet and explicit policy/group/logging references missing; computed endpoint IDs do not create nodes."
+      "gap": "#716 reviewed: Stateful/stateless group ARN sets require exact group type #693; shared TLS configuration ARN #792. Current basic Logical display has no dedicated relationships. Follow-up #693; see six dimensions and pinned contracts in review.",
+      "review": {
+        "issue": 716,
+        "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "id",
+          "arn",
+          "firewall_policy.stateful_rule_group_reference.resource_arn",
+          "firewall_policy.stateless_rule_group_reference.resource_arn",
+          "firewall_policy.tls_inspection_configuration_arn"
+        ],
+        "placement": "Supported: retain Logical basic presentation; configuration/helper identity is not an independent workload card.",
+        "ownership": "Not applicable: shared policy/rule groups remain independent, not embedded under one firewall.",
+        "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
+        "references": "Missing: Stateful/stateless group ARN sets require exact group type #693; shared TLS configuration ARN #792.",
+        "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
+        "summaries": "Intentionally unsupported: rule actions/policy bodies and enforcement claims; KMS summary deferred until key/alias and AWS-owned variants have an allowlist.",
+        "officialDocumentation": "website/docs/r/networkfirewall_firewall_policy.html.markdown",
+        "shapes": {
+          "id": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "firewall_policy.stateful_rule_group_reference.resource_arn": [
+            "list",
+            "set",
+            "string"
+          ],
+          "firewall_policy.stateless_rule_group_reference.resource_arn": [
+            "list",
+            "set",
+            "string"
+          ],
+          "firewall_policy.tls_inspection_configuration_arn": [
+            "list",
+            "string"
+          ]
+        }
+      }
     },
     "aws_networkfirewall_rule_group": {
       "status": "Basic-only",
       "priority": "P1",
       "issue": 693,
-      "gap": "Firewall architecture presentation, VPC/subnet and explicit policy/group/logging references missing; computed endpoint IDs do not create nodes."
+      "gap": "#716 reviewed: Incoming typed policy references #693; reference_sets ip_set_references need explicit supported prefix-list/resource-set proof #792. Current basic Logical display has no dedicated relationships. Follow-up #693; see six dimensions and pinned contracts in review.",
+      "review": {
+        "issue": 716,
+        "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "id",
+          "arn",
+          "type",
+          "rule_group.reference_sets.ip_set_references.ip_set_reference.reference_arn"
+        ],
+        "placement": "Supported: retain Logical basic presentation; configuration/helper identity is not an independent workload card.",
+        "ownership": "Not applicable: shared rule group is not owned by one policy.",
+        "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
+        "references": "Missing: Incoming typed policy references #693; reference_sets ip_set_references need explicit supported prefix-list/resource-set proof #792.",
+        "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
+        "summaries": "Intentionally unsupported: Suricata rules, packet match fields and credentials; KMS summary deferred pending separate key/alias contract.",
+        "officialDocumentation": "website/docs/r/networkfirewall_rule_group.html.markdown",
+        "shapes": {
+          "id": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "type": [
+            "string"
+          ],
+          "rule_group.reference_sets.ip_set_references.ip_set_reference.reference_arn": [
+            "list",
+            "list",
+            "set",
+            "list",
+            "string"
+          ]
+        }
+      }
     },
     "aws_networkfirewall_logging_configuration": {
       "status": "Basic-only",
       "priority": "P1",
       "issue": 693,
-      "gap": "Firewall architecture presentation, VPC/subnet and explicit policy/group/logging references missing; computed endpoint IDs do not create nodes."
+      "gap": "#716 reviewed: firewall_arn -> firewall ARN; typed destination map bucketName/logGroup/deliveryStream -> S3 bucket/log group/Firehose name. No prefix inference. Current basic Logical display has no dedicated relationships. Follow-up #693; see six dimensions and pinned contracts in review.",
+      "review": {
+        "issue": 716,
+        "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "firewall_arn",
+          "logging_configuration.log_destination_config.log_destination_type",
+          "logging_configuration.log_destination_config.log_destination"
+        ],
+        "placement": "Supported: retain Logical basic presentation; configuration/helper identity is not an independent workload card.",
+        "ownership": "Missing: verified firewall owner navigation #693; unknown owner stays logical without inherited containment.",
+        "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
+        "references": "Missing: firewall_arn -> firewall ARN; typed destination map bucketName/logGroup/deliveryStream -> S3 bucket/log group/Firehose name. No prefix inference.",
+        "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
+        "summaries": "Intentionally unsupported: log destination values, prefixes and payloads are not output summaries.",
+        "officialDocumentation": "website/docs/r/networkfirewall_logging_configuration.html.markdown",
+        "shapes": {
+          "firewall_arn": [
+            "string"
+          ],
+          "logging_configuration.log_destination_config.log_destination_type": [
+            "list",
+            "set",
+            "string"
+          ],
+          "logging_configuration.log_destination_config.log_destination": [
+            "list",
+            "set",
+            [
+              "map",
+              "string"
+            ]
+          ]
+        }
+      }
     },
     "aws_dynamodb_table_export": {
       "status": "Basic-only",
@@ -8681,6 +8839,2415 @@
             "string"
           ],
           "health_check_custom_config.failure_threshold": [
+            "list",
+            "number"
+          ]
+        }
+      }
+    },
+    "aws_dx_bgp_peer": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 786,
+      "gap": "#716 reviewed: virtual_interface_id -> exact managed VIF id; BGP addresses/ASN are not endpoints. Current basic Logical display has no dedicated relationships. Follow-up #786; see six dimensions and pinned contracts in review.",
+      "review": {
+        "issue": 716,
+        "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "virtual_interface_id",
+          "bgp_peer_id",
+          "address_family"
+        ],
+        "placement": "Supported: retain Logical basic presentation; configuration/helper identity is not an independent workload card.",
+        "ownership": "Deferred: VIF navigation first; embedding requires unique VIF owner and allocator/accepter identity contract.",
+        "network": "Not applicable: BGP peer configuration does not locate a subnet.",
+        "references": "Missing: virtual_interface_id -> exact managed VIF id; BGP addresses/ASN are not endpoints.",
+        "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
+        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "officialDocumentation": "website/docs/r/dx_bgp_peer.html.markdown",
+        "shapes": {
+          "virtual_interface_id": [
+            "string"
+          ],
+          "bgp_peer_id": [
+            "string"
+          ],
+          "address_family": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_dx_connection": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 786,
+      "gap": "#716 reviewed: No outbound Terraform endpoint field; incoming LAG/VIF relationships and independent card review #786. Current basic Logical display has no dedicated relationships. Follow-up #786; see six dimensions and pinned contracts in review.",
+      "review": {
+        "issue": 716,
+        "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "id",
+          "arn",
+          "location",
+          "owner_account_id",
+          "encryption_mode",
+          "request_macsec"
+        ],
+        "placement": "Missing: independent architecture representation review is tracked with the linked implementation issue; current default is Logical, not a spatial network container.",
+        "ownership": "Not applicable: retain independent identity; related resources may be shared and references do not prove embedded ownership.",
+        "network": "Not applicable: physical location is not a Terraform VPC or subnet.",
+        "references": "Not applicable: No outbound Terraform endpoint field; incoming LAG/VIF relationships and independent card review #786.",
+        "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
+        "summaries": "Deferred: configured encryption_mode/request_macsec needs a MACsec configuration-only summary contract; port status is not protection evidence.",
+        "officialDocumentation": "website/docs/r/dx_connection.html.markdown",
+        "shapes": {
+          "id": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "location": [
+            "string"
+          ],
+          "owner_account_id": [
+            "string"
+          ],
+          "encryption_mode": [
+            "string"
+          ],
+          "request_macsec": [
+            "bool"
+          ]
+        }
+      }
+    },
+    "aws_dx_connection_association": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 786,
+      "gap": "#716 reviewed: connection_id -> connection id; lag_id -> LAG id; require both compatible endpoints. Current basic Logical display has no dedicated relationships. Follow-up #786; see six dimensions and pinned contracts in review.",
+      "review": {
+        "issue": 716,
+        "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "connection_id",
+          "lag_id"
+        ],
+        "placement": "Supported: retain Logical basic presentation; configuration/helper identity is not an independent workload card.",
+        "ownership": "Not applicable: retain independent identity; related resources may be shared and references do not prove embedded ownership.",
+        "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
+        "references": "Missing: connection_id -> connection id; lag_id -> LAG id; require both compatible endpoints.",
+        "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
+        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "officialDocumentation": "website/docs/r/dx_connection_association.html.markdown",
+        "shapes": {
+          "connection_id": [
+            "string"
+          ],
+          "lag_id": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_dx_connection_confirmation": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 787,
+      "gap": "#716 reviewed: connection_id -> hosted connection id; id is the connection ID, not a distinct connection.  Current basic Logical display has no dedicated relationships. Follow-up #787; see six dimensions and pinned contracts in review.",
+      "review": {
+        "issue": 716,
+        "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "connection_id",
+          "id"
+        ],
+        "placement": "Supported: retain Logical basic presentation; configuration/helper identity is not an independent workload card.",
+        "ownership": "Intentionally unsupported: confirmation removal does not delete hosted connection; do not embed or merge allocator identity.",
+        "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
+        "references": "Missing: connection_id -> hosted connection id; id is the connection ID, not a distinct connection. ",
+        "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
+        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "officialDocumentation": "website/docs/r/dx_connection_confirmation.html.markdown",
+        "shapes": {
+          "connection_id": [
+            "string"
+          ],
+          "id": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_dx_gateway": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 786,
+      "gap": "#716 reviewed: No outbound resource reference; retain distinct global gateway for VIF/association endpoints. Current basic Logical display has no dedicated relationships. Follow-up #786; see six dimensions and pinned contracts in review.",
+      "review": {
+        "issue": 716,
+        "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "id",
+          "arn",
+          "owner_account_id",
+          "amazon_side_asn"
+        ],
+        "placement": "Missing: independent architecture representation review is tracked with the linked implementation issue; current default is Logical, not a spatial network container.",
+        "ownership": "Not applicable: retain independent identity; related resources may be shared and references do not prove embedded ownership.",
+        "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
+        "references": "Not applicable: No outbound resource reference; retain distinct global gateway for VIF/association endpoints.",
+        "scope": "Partial: Global management eligibility in basic_entries.rs/scope.rs; account remains unknown. Regional endpoints do not propagate region to global object.",
+        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "officialDocumentation": "website/docs/r/dx_gateway.html.markdown",
+        "shapes": {
+          "id": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "owner_account_id": [
+            "string"
+          ],
+          "amazon_side_asn": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_dx_gateway_association": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 787,
+      "gap": "#716 reviewed: Single-account VGW/TGW ID versus cross-account proposal_id; verify both owner accounts. Computed transit attachment does not create a resource. Current basic Logical display has no dedicated relationships. Follow-up #787; see six dimensions and pinned contracts in review.",
+      "review": {
+        "issue": 716,
+        "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "dx_gateway_id",
+          "associated_gateway_id",
+          "associated_gateway_owner_account_id",
+          "proposal_id",
+          "dx_gateway_owner_account_id"
+        ],
+        "placement": "Supported: retain Logical basic presentation; configuration/helper identity is not an independent workload card.",
+        "ownership": "Not applicable: retain independent identity; related resources may be shared and references do not prove embedded ownership.",
+        "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
+        "references": "Missing: Single-account VGW/TGW ID versus cross-account proposal_id; verify both owner accounts. Computed transit attachment does not create a resource.",
+        "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
+        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "officialDocumentation": "website/docs/r/dx_gateway_association.html.markdown",
+        "shapes": {
+          "dx_gateway_id": [
+            "string"
+          ],
+          "associated_gateway_id": [
+            "string"
+          ],
+          "associated_gateway_owner_account_id": [
+            "string"
+          ],
+          "proposal_id": [
+            "string"
+          ],
+          "dx_gateway_owner_account_id": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_dx_gateway_association_proposal": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 787,
+      "gap": "#716 reviewed: DX gateway and VGW/TGW with owner-account evidence; proposal is not accepted connectivity. Current basic Logical display has no dedicated relationships. Follow-up #787; see six dimensions and pinned contracts in review.",
+      "review": {
+        "issue": 716,
+        "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "id",
+          "dx_gateway_id",
+          "associated_gateway_id",
+          "dx_gateway_owner_account_id",
+          "associated_gateway_owner_account_id"
+        ],
+        "placement": "Supported: retain Logical basic presentation; configuration/helper identity is not an independent workload card.",
+        "ownership": "Not applicable: retain independent identity; related resources may be shared and references do not prove embedded ownership.",
+        "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
+        "references": "Missing: DX gateway and VGW/TGW with owner-account evidence; proposal is not accepted connectivity.",
+        "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
+        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "officialDocumentation": "website/docs/r/dx_gateway_association_proposal.html.markdown",
+        "shapes": {
+          "id": [
+            "string"
+          ],
+          "dx_gateway_id": [
+            "string"
+          ],
+          "associated_gateway_id": [
+            "string"
+          ],
+          "dx_gateway_owner_account_id": [
+            "string"
+          ],
+          "associated_gateway_owner_account_id": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_dx_hosted_connection": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 787,
+      "gap": "#716 reviewed: connection_id -> interconnect/LAG only with supported endpoint; customer owner differs from allocator; connection_region supersedes deprecated region. Current basic Logical display has no dedicated relationships. Follow-up #787; see six dimensions and pinned contracts in review.",
+      "review": {
+        "issue": 716,
+        "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "id",
+          "connection_id",
+          "owner_account_id",
+          "connection_region",
+          "region"
+        ],
+        "placement": "Missing: independent architecture representation review is tracked with the linked implementation issue; current default is Logical, not a spatial network container.",
+        "ownership": "Not applicable: retain independent identity; related resources may be shared and references do not prove embedded ownership.",
+        "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
+        "references": "Missing: connection_id -> interconnect/LAG only with supported endpoint; customer owner differs from allocator; connection_region supersedes deprecated region.",
+        "scope": "Partial: Unknown target scope (basic.rs); connection_region and customer owner proof #787; deprecated region is not provider override.",
+        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "officialDocumentation": "website/docs/r/dx_hosted_connection.html.markdown",
+        "shapes": {
+          "id": [
+            "string"
+          ],
+          "connection_id": [
+            "string"
+          ],
+          "owner_account_id": [
+            "string"
+          ],
+          "connection_region": [
+            "string"
+          ],
+          "region": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_dx_hosted_private_virtual_interface": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 787,
+      "gap": "#716 reviewed: connection_id -> connection/LAG id with allocator and owner_account_id agreement; private VIF must not inherit allocator ownership. Current basic Logical display has no dedicated relationships. Follow-up #787; see six dimensions and pinned contracts in review.",
+      "review": {
+        "issue": 716,
+        "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "id",
+          "arn",
+          "connection_id",
+          "owner_account_id"
+        ],
+        "placement": "Supported: retain Logical basic presentation; configuration/helper identity is not an independent workload card.",
+        "ownership": "Intentionally unsupported: allocator and accepter remain distinct Terraform lifecycle identities.",
+        "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
+        "references": "Missing: connection_id -> connection/LAG id with allocator and owner_account_id agreement; private VIF must not inherit allocator ownership.",
+        "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
+        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "officialDocumentation": "website/docs/r/dx_hosted_private_virtual_interface.html.markdown",
+        "shapes": {
+          "id": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "connection_id": [
+            "string"
+          ],
+          "owner_account_id": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_dx_hosted_private_virtual_interface_accepter": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 787,
+      "gap": "#716 reviewed: virtual_interface_id -> matching hosted private VIF id; exclusive dx_gateway_id/vpn_gateway_id. Require cross-account proof. Current basic Logical display has no dedicated relationships. Follow-up #787; see six dimensions and pinned contracts in review.",
+      "review": {
+        "issue": 716,
+        "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "id",
+          "arn",
+          "virtual_interface_id",
+          "dx_gateway_id",
+          "vpn_gateway_id"
+        ],
+        "placement": "Supported: retain Logical basic presentation; configuration/helper identity is not an independent workload card.",
+        "ownership": "Intentionally unsupported: acceptance is not resource deletion ownership; keep allocator/accepter coverage separately.",
+        "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
+        "references": "Missing: virtual_interface_id -> matching hosted private VIF id; exclusive dx_gateway_id/vpn_gateway_id. Require cross-account proof.",
+        "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
+        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "officialDocumentation": "website/docs/r/dx_hosted_private_virtual_interface_accepter.html.markdown",
+        "shapes": {
+          "id": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "virtual_interface_id": [
+            "string"
+          ],
+          "dx_gateway_id": [
+            "string"
+          ],
+          "vpn_gateway_id": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_dx_hosted_public_virtual_interface": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 787,
+      "gap": "#716 reviewed: connection_id -> connection/LAG id with allocator and owner_account_id agreement; public VIF must not inherit allocator ownership. Current basic Logical display has no dedicated relationships. Follow-up #787; see six dimensions and pinned contracts in review.",
+      "review": {
+        "issue": 716,
+        "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "id",
+          "arn",
+          "connection_id",
+          "owner_account_id",
+          "route_filter_prefixes"
+        ],
+        "placement": "Supported: retain Logical basic presentation; configuration/helper identity is not an independent workload card.",
+        "ownership": "Intentionally unsupported: allocator and accepter remain distinct Terraform lifecycle identities.",
+        "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
+        "references": "Missing: connection_id -> connection/LAG id with allocator and owner_account_id agreement; public VIF must not inherit allocator ownership.",
+        "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
+        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "officialDocumentation": "website/docs/r/dx_hosted_public_virtual_interface.html.markdown",
+        "shapes": {
+          "id": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "connection_id": [
+            "string"
+          ],
+          "owner_account_id": [
+            "string"
+          ],
+          "route_filter_prefixes": [
+            [
+              "set",
+              "string"
+            ]
+          ]
+        }
+      }
+    },
+    "aws_dx_hosted_public_virtual_interface_accepter": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 787,
+      "gap": "#716 reviewed: virtual_interface_id -> matching hosted public VIF id; no gateway argument. Require cross-account proof. Current basic Logical display has no dedicated relationships. Follow-up #787; see six dimensions and pinned contracts in review.",
+      "review": {
+        "issue": 716,
+        "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "id",
+          "arn",
+          "virtual_interface_id"
+        ],
+        "placement": "Supported: retain Logical basic presentation; configuration/helper identity is not an independent workload card.",
+        "ownership": "Intentionally unsupported: acceptance is not resource deletion ownership; keep allocator/accepter coverage separately.",
+        "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
+        "references": "Missing: virtual_interface_id -> matching hosted public VIF id; no gateway argument. Require cross-account proof.",
+        "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
+        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "officialDocumentation": "website/docs/r/dx_hosted_public_virtual_interface_accepter.html.markdown",
+        "shapes": {
+          "id": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "virtual_interface_id": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_dx_hosted_transit_virtual_interface": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 787,
+      "gap": "#716 reviewed: connection_id -> connection/LAG id with allocator and owner_account_id agreement; transit VIF must not inherit allocator ownership. Current basic Logical display has no dedicated relationships. Follow-up #787; see six dimensions and pinned contracts in review.",
+      "review": {
+        "issue": 716,
+        "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "id",
+          "arn",
+          "connection_id",
+          "owner_account_id"
+        ],
+        "placement": "Supported: retain Logical basic presentation; configuration/helper identity is not an independent workload card.",
+        "ownership": "Intentionally unsupported: allocator and accepter remain distinct Terraform lifecycle identities.",
+        "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
+        "references": "Missing: connection_id -> connection/LAG id with allocator and owner_account_id agreement; transit VIF must not inherit allocator ownership.",
+        "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
+        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "officialDocumentation": "website/docs/r/dx_hosted_transit_virtual_interface.html.markdown",
+        "shapes": {
+          "id": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "connection_id": [
+            "string"
+          ],
+          "owner_account_id": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_dx_hosted_transit_virtual_interface_accepter": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 787,
+      "gap": "#716 reviewed: virtual_interface_id -> matching hosted transit VIF id; dx_gateway_id -> global gateway. Require cross-account proof. Current basic Logical display has no dedicated relationships. Follow-up #787; see six dimensions and pinned contracts in review.",
+      "review": {
+        "issue": 716,
+        "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "id",
+          "arn",
+          "virtual_interface_id",
+          "dx_gateway_id"
+        ],
+        "placement": "Supported: retain Logical basic presentation; configuration/helper identity is not an independent workload card.",
+        "ownership": "Intentionally unsupported: acceptance is not resource deletion ownership; keep allocator/accepter coverage separately.",
+        "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
+        "references": "Missing: virtual_interface_id -> matching hosted transit VIF id; dx_gateway_id -> global gateway. Require cross-account proof.",
+        "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
+        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "officialDocumentation": "website/docs/r/dx_hosted_transit_virtual_interface_accepter.html.markdown",
+        "shapes": {
+          "id": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "virtual_interface_id": [
+            "string"
+          ],
+          "dx_gateway_id": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_dx_lag": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 786,
+      "gap": "#716 reviewed: Optional connection_id migrates a dedicated connection; no ownership from location/provider name. Current basic Logical display has no dedicated relationships. Follow-up #786; see six dimensions and pinned contracts in review.",
+      "review": {
+        "issue": 716,
+        "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "id",
+          "arn",
+          "connection_id",
+          "location",
+          "owner_account_id"
+        ],
+        "placement": "Missing: independent architecture representation review is tracked with the linked implementation issue; current default is Logical, not a spatial network container.",
+        "ownership": "Not applicable: retain independent identity; related resources may be shared and references do not prove embedded ownership.",
+        "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
+        "references": "Missing: Optional connection_id migrates a dedicated connection; no ownership from location/provider name.",
+        "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
+        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "officialDocumentation": "website/docs/r/dx_lag.html.markdown",
+        "shapes": {
+          "id": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "connection_id": [
+            "string"
+          ],
+          "location": [
+            "string"
+          ],
+          "owner_account_id": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_dx_macsec_key_association": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 786,
+      "gap": "#716 reviewed: connection_id -> dedicated connection; explicit secret_arn -> Secrets Manager secret; never CAK/CKN values. Current basic Logical display has no dedicated relationships. Follow-up #786; see six dimensions and pinned contracts in review.",
+      "review": {
+        "issue": 716,
+        "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "connection_id",
+          "secret_arn"
+        ],
+        "placement": "Supported: retain Logical basic presentation; configuration/helper identity is not an independent workload card.",
+        "ownership": "Not applicable: retain independent identity; related resources may be shared and references do not prove embedded ownership.",
+        "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
+        "references": "Missing: connection_id -> dedicated connection; explicit secret_arn -> Secrets Manager secret; never CAK/CKN values.",
+        "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
+        "summaries": "Intentionally unsupported: CAK/CKN, write-only variants and runtime key state are excluded; association is not effective encryption.",
+        "officialDocumentation": "website/docs/r/dx_macsec_key_association.html.markdown",
+        "shapes": {
+          "connection_id": [
+            "string"
+          ],
+          "secret_arn": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_dx_private_virtual_interface": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 786,
+      "gap": "#716 reviewed: connection_id -> connection/LAG; exclusive DX/VPN gateway IDs. Current basic Logical display has no dedicated relationships. Follow-up #786; see six dimensions and pinned contracts in review.",
+      "review": {
+        "issue": 716,
+        "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "id",
+          "arn",
+          "connection_id",
+          "dx_gateway_id",
+          "vpn_gateway_id"
+        ],
+        "placement": "Supported: retain Logical basic presentation; configuration/helper identity is not an independent workload card.",
+        "ownership": "Deferred: connection navigation is useful; embedding waits for a unique owner contract across VIF variants.",
+        "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
+        "references": "Missing: connection_id -> connection/LAG; exclusive DX/VPN gateway IDs.",
+        "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
+        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "officialDocumentation": "website/docs/r/dx_private_virtual_interface.html.markdown",
+        "shapes": {
+          "id": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "connection_id": [
+            "string"
+          ],
+          "dx_gateway_id": [
+            "string"
+          ],
+          "vpn_gateway_id": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_dx_public_virtual_interface": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 786,
+      "gap": "#716 reviewed: connection_id -> connection/LAG; route_filter_prefixes are CIDRs, not resource identities. Current basic Logical display has no dedicated relationships. Follow-up #786; see six dimensions and pinned contracts in review.",
+      "review": {
+        "issue": 716,
+        "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "id",
+          "arn",
+          "connection_id",
+          "route_filter_prefixes"
+        ],
+        "placement": "Supported: retain Logical basic presentation; configuration/helper identity is not an independent workload card.",
+        "ownership": "Deferred: connection navigation is useful; embedding waits for a unique owner contract across VIF variants.",
+        "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
+        "references": "Missing: connection_id -> connection/LAG; route_filter_prefixes are CIDRs, not resource identities.",
+        "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
+        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "officialDocumentation": "website/docs/r/dx_public_virtual_interface.html.markdown",
+        "shapes": {
+          "id": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "connection_id": [
+            "string"
+          ],
+          "route_filter_prefixes": [
+            [
+              "set",
+              "string"
+            ]
+          ]
+        }
+      }
+    },
+    "aws_dx_transit_virtual_interface": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 786,
+      "gap": "#716 reviewed: connection_id -> connection/LAG; required dx_gateway_id. Current basic Logical display has no dedicated relationships. Follow-up #786; see six dimensions and pinned contracts in review.",
+      "review": {
+        "issue": 716,
+        "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "id",
+          "arn",
+          "connection_id",
+          "dx_gateway_id"
+        ],
+        "placement": "Supported: retain Logical basic presentation; configuration/helper identity is not an independent workload card.",
+        "ownership": "Deferred: connection navigation is useful; embedding waits for a unique owner contract across VIF variants.",
+        "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
+        "references": "Missing: connection_id -> connection/LAG; required dx_gateway_id.",
+        "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
+        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "officialDocumentation": "website/docs/r/dx_transit_virtual_interface.html.markdown",
+        "shapes": {
+          "id": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "connection_id": [
+            "string"
+          ],
+          "dx_gateway_id": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_networkfirewall_container_association": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 792,
+      "gap": "#716 reviewed: type ECS/EKS discriminates cluster_arn endpoints; same account and region required. Current basic Logical display has no dedicated relationships. Follow-up #792; see six dimensions and pinned contracts in review.",
+      "review": {
+        "issue": 716,
+        "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "type",
+          "container_monitoring_configuration.cluster_arn",
+          "container_association_arn"
+        ],
+        "placement": "Supported: retain Logical basic presentation; configuration/helper identity is not an independent workload card.",
+        "ownership": "Not applicable: retain independent identity; related resources may be shared and references do not prove embedded ownership.",
+        "network": "Intentionally unsupported: monitored containers/CIDRs do not place association inside cluster subnets.",
+        "references": "Missing: type ECS/EKS discriminates cluster_arn endpoints; same account and region required.",
+        "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
+        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "officialDocumentation": "website/docs/r/networkfirewall_container_association.html.markdown",
+        "shapes": {
+          "type": [
+            "string"
+          ],
+          "container_monitoring_configuration.cluster_arn": [
+            "list",
+            "string"
+          ],
+          "container_association_arn": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_networkfirewall_firewall_transit_gateway_attachment_accepter": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 792,
+      "gap": "#716 reviewed: Explicit firewall computed-attachment provenance required; no synthetic EC2 attachment endpoint. Current basic Logical display has no dedicated relationships. Follow-up #792; see six dimensions and pinned contracts in review.",
+      "review": {
+        "issue": 716,
+        "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "transit_gateway_attachment_id"
+        ],
+        "placement": "Supported: retain Logical basic presentation; configuration/helper identity is not an independent workload card.",
+        "ownership": "Intentionally unsupported: accepter identity does not own the firewall or transit gateway.",
+        "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
+        "references": "Missing: Explicit firewall computed-attachment provenance required; no synthetic EC2 attachment endpoint.",
+        "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
+        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "officialDocumentation": "website/docs/r/networkfirewall_firewall_transit_gateway_attachment_accepter.html.markdown",
+        "shapes": {
+          "transit_gateway_attachment_id": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_networkfirewall_resource_policy": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 792,
+      "gap": "#716 reviewed: resource_arn accepts rule group or firewall policy; verify exact type and ARN, never policy JSON. Current basic Logical display has no dedicated relationships. Follow-up #792; see six dimensions and pinned contracts in review.",
+      "review": {
+        "issue": 716,
+        "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "resource_arn"
+        ],
+        "placement": "Supported: retain Logical basic presentation; configuration/helper identity is not an independent workload card.",
+        "ownership": "Not applicable: retain independent identity; related resources may be shared and references do not prove embedded ownership.",
+        "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
+        "references": "Missing: resource_arn accepts rule group or firewall policy; verify exact type and ARN, never policy JSON.",
+        "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
+        "summaries": "Intentionally unsupported: access policy evaluation and arbitrary JSON rendering.",
+        "officialDocumentation": "website/docs/r/networkfirewall_resource_policy.html.markdown",
+        "shapes": {
+          "resource_arn": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_networkfirewall_tls_inspection_configuration": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 792,
+      "gap": "#716 reviewed: Outbound CA certificate and inbound certificate ARNs reference ACM certificates, not ACM PCA authorities. Current basic Logical display has no dedicated relationships. Follow-up #792; see six dimensions and pinned contracts in review.",
+      "review": {
+        "issue": 716,
+        "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "arn",
+          "tls_inspection_configuration.server_certificate_configuration.certificate_authority_arn",
+          "tls_inspection_configuration.server_certificate_configuration.server_certificate.resource_arn"
+        ],
+        "placement": "Supported: retain Logical basic presentation; configuration/helper identity is not an independent workload card.",
+        "ownership": "Not applicable: retain independent identity; related resources may be shared and references do not prove embedded ownership.",
+        "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
+        "references": "Missing: Outbound CA certificate and inbound certificate ARNs reference ACM certificates, not ACM PCA authorities.",
+        "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
+        "summaries": "Intentionally unsupported: certificate material, packet scopes and inspection/security claims; KMS alias/key summaries deferred to a dedicated allowlist.",
+        "officialDocumentation": "website/docs/r/networkfirewall_tls_inspection_configuration.html.markdown",
+        "shapes": {
+          "arn": [
+            "string"
+          ],
+          "tls_inspection_configuration.server_certificate_configuration.certificate_authority_arn": [
+            "list",
+            "list",
+            "string"
+          ],
+          "tls_inspection_configuration.server_certificate_configuration.server_certificate.resource_arn": [
+            "list",
+            "list",
+            "list",
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_networkfirewall_vpc_endpoint_association": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 792,
+      "gap": "#716 reviewed: Explicit firewall/VPC/subnet inputs; computed endpoint_id cannot synthesize a resource. Current basic Logical display has no dedicated relationships. Follow-up #792; see six dimensions and pinned contracts in review.",
+      "review": {
+        "issue": 716,
+        "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "firewall_arn",
+          "vpc_id",
+          "subnet_mapping.subnet_id",
+          "vpc_endpoint_association_arn"
+        ],
+        "placement": "Supported: retain Logical basic presentation; configuration/helper identity is not an independent workload card.",
+        "ownership": "Not applicable: retain independent identity; related resources may be shared and references do not prove embedded ownership.",
+        "network": "Missing: independent VPC/subnet proof #792; association VPC need not become firewall ownership.",
+        "references": "Missing: Explicit firewall/VPC/subnet inputs; computed endpoint_id cannot synthesize a resource.",
+        "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
+        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "officialDocumentation": "website/docs/r/networkfirewall_vpc_endpoint_association.html.markdown",
+        "shapes": {
+          "firewall_arn": [
+            "string"
+          ],
+          "vpc_id": [
+            "string"
+          ],
+          "subnet_mapping.subnet_id": [
+            "list",
+            "string"
+          ],
+          "vpc_endpoint_association_arn": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_networkflowmonitor_monitor": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 793,
+      "gap": "#716 reviewed: scope_arn -> scope output; typed VPC/subnet/EKS selectors require exact endpoint contracts; AZ/Region selectors are not resources. Current basic Logical display has no dedicated relationships. Follow-up #793; see six dimensions and pinned contracts in review.",
+      "review": {
+        "issue": 716,
+        "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "scope_arn",
+          "local_resource.type",
+          "local_resource.identifier",
+          "remote_resource.type",
+          "remote_resource.identifier",
+          "monitor_arn"
+        ],
+        "placement": "Supported: retain Logical basic presentation; configuration/helper identity is not an independent workload card.",
+        "ownership": "Not applicable: retain independent identity; related resources may be shared and references do not prove embedded ownership.",
+        "network": "Intentionally unsupported: monitored endpoints do not contain the monitor.",
+        "references": "Missing: scope_arn -> scope output; typed VPC/subnet/EKS selectors require exact endpoint contracts; AZ/Region selectors are not resources.",
+        "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
+        "summaries": "Intentionally unsupported: agent availability, measured network metrics and health; type summaries deferred until an explicit non-runtime allowlist exists.",
+        "officialDocumentation": "website/docs/r/networkflowmonitor_monitor.html.markdown",
+        "shapes": {
+          "scope_arn": [
+            "string"
+          ],
+          "local_resource.type": [
+            "set",
+            "string"
+          ],
+          "local_resource.identifier": [
+            "set",
+            "string"
+          ],
+          "remote_resource.type": [
+            "set",
+            "string"
+          ],
+          "remote_resource.identifier": [
+            "set",
+            "string"
+          ],
+          "monitor_arn": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_networkflowmonitor_scope": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 793,
+      "gap": "#716 reviewed: No direct managed endpoint from account ID; scope_arn is incoming monitor endpoint. Current basic Logical display has no dedicated relationships. Follow-up #793; see six dimensions and pinned contracts in review.",
+      "review": {
+        "issue": 716,
+        "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "scope_arn",
+          "scope_id",
+          "target.target_identifier.target_id.account_id",
+          "target.target_identifier.target_type"
+        ],
+        "placement": "Supported: retain Logical basic presentation; configuration/helper identity is not an independent workload card.",
+        "ownership": "Not applicable: retain independent identity; related resources may be shared and references do not prove embedded ownership.",
+        "network": "Not applicable: account/region selectors are monitoring scope, not network containment.",
+        "references": "Not applicable: No direct managed endpoint from account ID; scope_arn is incoming monitor endpoint.",
+        "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
+        "summaries": "Intentionally unsupported: target account IDs do not establish Organizations ownership or monitoring health.",
+        "officialDocumentation": "website/docs/r/networkflowmonitor_scope.html.markdown",
+        "shapes": {
+          "scope_arn": [
+            "string"
+          ],
+          "scope_id": [
+            "string"
+          ],
+          "target.target_identifier.target_id.account_id": [
+            "set",
+            "list",
+            "list",
+            "string"
+          ],
+          "target.target_identifier.target_type": [
+            "set",
+            "list",
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_networkmanager_attachment_accepter": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 789,
+      "gap": "#716 reviewed: Discriminate CONNECT/DIRECT_CONNECT_GATEWAY/SITE_TO_SITE_VPN/TRANSIT_GATEWAY_ROUTE_TABLE/VPC before matching attachment output. Current basic Logical display has no dedicated relationships. Follow-up #789; see six dimensions and pinned contracts in review.",
+      "review": {
+        "issue": 716,
+        "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "attachment_id",
+          "attachment_type"
+        ],
+        "placement": "Supported: retain Logical basic presentation; configuration/helper identity is not an independent workload card.",
+        "ownership": "Intentionally unsupported: accepting attachment does not establish ownership of source network.",
+        "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
+        "references": "Missing: Discriminate CONNECT/DIRECT_CONNECT_GATEWAY/SITE_TO_SITE_VPN/TRANSIT_GATEWAY_ROUTE_TABLE/VPC before matching attachment output.",
+        "scope": "Partial: Global management eligibility in basic_entries.rs/scope.rs; account remains unknown. Regional endpoints do not propagate region to global object.",
+        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "officialDocumentation": "website/docs/r/networkmanager_attachment_accepter.html.markdown",
+        "shapes": {
+          "attachment_id": [
+            "string"
+          ],
+          "attachment_type": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_networkmanager_attachment_routing_policy_label": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 789,
+      "gap": "#716 reviewed: Both attachment and core-network IDs must agree; routing_policy_label is not a Terraform policy endpoint. Current basic Logical display has no dedicated relationships. Follow-up #789; see six dimensions and pinned contracts in review.",
+      "review": {
+        "issue": 716,
+        "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "attachment_id",
+          "core_network_id",
+          "routing_policy_label"
+        ],
+        "placement": "Supported: retain Logical basic presentation; configuration/helper identity is not an independent workload card.",
+        "ownership": "Not applicable: retain independent identity; related resources may be shared and references do not prove embedded ownership.",
+        "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
+        "references": "Missing: Both attachment and core-network IDs must agree; routing_policy_label is not a Terraform policy endpoint.",
+        "scope": "Partial: Global management eligibility in basic_entries.rs/scope.rs; account remains unknown. Regional endpoints do not propagate region to global object.",
+        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "officialDocumentation": "website/docs/r/networkmanager_attachment_routing_policy_label.html.markdown",
+        "shapes": {
+          "attachment_id": [
+            "string"
+          ],
+          "core_network_id": [
+            "string"
+          ],
+          "routing_policy_label": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_networkmanager_connect_attachment": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 789,
+      "gap": "#716 reviewed: Core network and transport attachment; GRE/NO_ENCAP and edge location govern peer contract, not runtime routes. Current basic Logical display has no dedicated relationships. Follow-up #789; see six dimensions and pinned contracts in review.",
+      "review": {
+        "issue": 716,
+        "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "attachment_id",
+          "core_network_id",
+          "transport_attachment_id",
+          "edge_location",
+          "options.protocol"
+        ],
+        "placement": "Supported: retain Logical basic presentation; configuration/helper identity is not an independent workload card.",
+        "ownership": "Not applicable: retain independent identity; related resources may be shared and references do not prove embedded ownership.",
+        "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
+        "references": "Missing: Core network and transport attachment; GRE/NO_ENCAP and edge location govern peer contract, not runtime routes.",
+        "scope": "Partial: Global management eligibility in basic_entries.rs/scope.rs; account remains unknown. Regional endpoints do not propagate region to global object.",
+        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "officialDocumentation": "website/docs/r/networkmanager_connect_attachment.html.markdown",
+        "shapes": {
+          "attachment_id": [
+            "string"
+          ],
+          "core_network_id": [
+            "string"
+          ],
+          "transport_attachment_id": [
+            "string"
+          ],
+          "edge_location": [
+            "string"
+          ],
+          "options.protocol": [
+            "list",
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_networkmanager_connect_peer": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 789,
+      "gap": "#716 reviewed: Connect attachment output attachment_id; subnet ARN only for NO_ENCAP. Peer IPs are not Terraform endpoints. Current basic Logical display has no dedicated relationships. Follow-up #789; see six dimensions and pinned contracts in review.",
+      "review": {
+        "issue": 716,
+        "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "connect_peer_id",
+          "connect_attachment_id",
+          "subnet_arn"
+        ],
+        "placement": "Supported: retain Logical basic presentation; configuration/helper identity is not an independent workload card.",
+        "ownership": "Not applicable: retain independent identity; related resources may be shared and references do not prove embedded ownership.",
+        "network": "Missing: explicit NO_ENCAP subnet context #789; GRE inside CIDRs never prove containment.",
+        "references": "Missing: Connect attachment output attachment_id; subnet ARN only for NO_ENCAP. Peer IPs are not Terraform endpoints.",
+        "scope": "Partial: Global management eligibility in basic_entries.rs/scope.rs; account remains unknown. Regional endpoints do not propagate region to global object.",
+        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "officialDocumentation": "website/docs/r/networkmanager_connect_peer.html.markdown",
+        "shapes": {
+          "connect_peer_id": [
+            "string"
+          ],
+          "connect_attachment_id": [
+            "string"
+          ],
+          "subnet_arn": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_networkmanager_connection": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 788,
+      "gap": "#716 reviewed: Verify device pair and optional link pair in same global network; no physical connectivity inference. Current basic Logical display has no dedicated relationships. Follow-up #788; see six dimensions and pinned contracts in review.",
+      "review": {
+        "issue": 716,
+        "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "global_network_id",
+          "device_id",
+          "connected_device_id",
+          "link_id",
+          "connected_link_id"
+        ],
+        "placement": "Supported: retain Logical basic presentation; configuration/helper identity is not an independent workload card.",
+        "ownership": "Not applicable: retain independent identity; related resources may be shared and references do not prove embedded ownership.",
+        "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
+        "references": "Missing: Verify device pair and optional link pair in same global network; no physical connectivity inference.",
+        "scope": "Partial: Global management eligibility in basic_entries.rs/scope.rs; account remains unknown. Regional endpoints do not propagate region to global object.",
+        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "officialDocumentation": "website/docs/r/networkmanager_connection.html.markdown",
+        "shapes": {
+          "global_network_id": [
+            "string"
+          ],
+          "device_id": [
+            "string"
+          ],
+          "connected_device_id": [
+            "string"
+          ],
+          "link_id": [
+            "string"
+          ],
+          "connected_link_id": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_networkmanager_core_network": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 788,
+      "gap": "#716 reviewed: global_network_id -> global network; base policy regions and computed edges/segments do not synthesize networks. Current basic Logical display has no dedicated relationships. Follow-up #788; see six dimensions and pinned contracts in review.",
+      "review": {
+        "issue": 716,
+        "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "id",
+          "arn",
+          "global_network_id",
+          "base_policy_regions"
+        ],
+        "placement": "Missing: independent architecture representation review is tracked with the linked implementation issue; current default is Logical, not a spatial network container.",
+        "ownership": "Not applicable: retain independent identity; related resources may be shared and references do not prove embedded ownership.",
+        "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
+        "references": "Missing: global_network_id -> global network; base policy regions and computed edges/segments do not synthesize networks.",
+        "scope": "Partial: Global management eligibility in basic_entries.rs/scope.rs; account remains unknown. Regional endpoints do not propagate region to global object.",
+        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "officialDocumentation": "website/docs/r/networkmanager_core_network.html.markdown",
+        "shapes": {
+          "id": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "global_network_id": [
+            "string"
+          ],
+          "base_policy_regions": [
+            [
+              "set",
+              "string"
+            ]
+          ]
+        }
+      }
+    },
+    "aws_networkmanager_core_network_policy_attachment": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 789,
+      "gap": "#716 reviewed: core_network_id -> core network id; JSON policy remains opaque. Current basic Logical display has no dedicated relationships. Follow-up #789; see six dimensions and pinned contracts in review.",
+      "review": {
+        "issue": 716,
+        "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "core_network_id"
+        ],
+        "placement": "Supported: retain Logical basic presentation; configuration/helper identity is not an independent workload card.",
+        "ownership": "Not applicable: retain independent identity; related resources may be shared and references do not prove embedded ownership.",
+        "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
+        "references": "Missing: core_network_id -> core network id; JSON policy remains opaque.",
+        "scope": "Partial: Global management eligibility in basic_entries.rs/scope.rs; account remains unknown. Regional endpoints do not propagate region to global object.",
+        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "officialDocumentation": "website/docs/r/networkmanager_core_network_policy_attachment.html.markdown",
+        "shapes": {
+          "core_network_id": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_networkmanager_customer_gateway_association": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 788,
+      "gap": "#716 reviewed: Explicit global network/device/optional link and customer-gateway ARN with global-network agreement. Current basic Logical display has no dedicated relationships. Follow-up #788; see six dimensions and pinned contracts in review.",
+      "review": {
+        "issue": 716,
+        "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "global_network_id",
+          "device_id",
+          "link_id",
+          "customer_gateway_arn"
+        ],
+        "placement": "Supported: retain Logical basic presentation; configuration/helper identity is not an independent workload card.",
+        "ownership": "Not applicable: retain independent identity; related resources may be shared and references do not prove embedded ownership.",
+        "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
+        "references": "Missing: Explicit global network/device/optional link and customer-gateway ARN with global-network agreement.",
+        "scope": "Partial: Global management eligibility in basic_entries.rs/scope.rs; account remains unknown. Regional endpoints do not propagate region to global object.",
+        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "officialDocumentation": "website/docs/r/networkmanager_customer_gateway_association.html.markdown",
+        "shapes": {
+          "global_network_id": [
+            "string"
+          ],
+          "device_id": [
+            "string"
+          ],
+          "link_id": [
+            "string"
+          ],
+          "customer_gateway_arn": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_networkmanager_device": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 788,
+      "gap": "#716 reviewed: global_network_id/site_id and optional AWS subnet ARN; physical address/coordinates and zone do not prove subnet. Current basic Logical display has no dedicated relationships. Follow-up #788; see six dimensions and pinned contracts in review.",
+      "review": {
+        "issue": 716,
+        "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "arn",
+          "global_network_id",
+          "site_id",
+          "aws_location.subnet_arn",
+          "aws_location.zone"
+        ],
+        "placement": "Missing: independent architecture representation review is tracked with the linked implementation issue; current default is Logical, not a spatial network container.",
+        "ownership": "Not applicable: retain independent identity; related resources may be shared and references do not prove embedded ownership.",
+        "network": "Missing: explicit subnet ARN context #788; global management scope remains separate.",
+        "references": "Missing: global_network_id/site_id and optional AWS subnet ARN; physical address/coordinates and zone do not prove subnet.",
+        "scope": "Partial: Global management eligibility in basic_entries.rs/scope.rs; account remains unknown. Regional endpoints do not propagate region to global object.",
+        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "officialDocumentation": "website/docs/r/networkmanager_device.html.markdown",
+        "shapes": {
+          "arn": [
+            "string"
+          ],
+          "global_network_id": [
+            "string"
+          ],
+          "site_id": [
+            "string"
+          ],
+          "aws_location.subnet_arn": [
+            "list",
+            "string"
+          ],
+          "aws_location.zone": [
+            "list",
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_networkmanager_dx_gateway_attachment": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 789,
+      "gap": "#716 reviewed: Global DX gateway ARN and core-network ID; edge_locations set is not a collection of Terraform resources. Current basic Logical display has no dedicated relationships. Follow-up #789; see six dimensions and pinned contracts in review.",
+      "review": {
+        "issue": 716,
+        "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "id",
+          "core_network_id",
+          "direct_connect_gateway_arn",
+          "edge_locations"
+        ],
+        "placement": "Supported: retain Logical basic presentation; configuration/helper identity is not an independent workload card.",
+        "ownership": "Not applicable: retain independent identity; related resources may be shared and references do not prove embedded ownership.",
+        "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
+        "references": "Missing: Global DX gateway ARN and core-network ID; edge_locations set is not a collection of Terraform resources.",
+        "scope": "Partial: Global management eligibility in basic_entries.rs/scope.rs; account remains unknown. Regional endpoints do not propagate region to global object.",
+        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "officialDocumentation": "website/docs/r/networkmanager_dx_gateway_attachment.html.markdown",
+        "shapes": {
+          "id": [
+            "string"
+          ],
+          "core_network_id": [
+            "string"
+          ],
+          "direct_connect_gateway_arn": [
+            "string"
+          ],
+          "edge_locations": [
+            [
+              "list",
+              "string"
+            ]
+          ]
+        }
+      }
+    },
+    "aws_networkmanager_global_network": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 788,
+      "gap": "#716 reviewed: No outbound managed endpoint; incoming core/site/device/link references and architecture review #788. Current basic Logical display has no dedicated relationships. Follow-up #788; see six dimensions and pinned contracts in review.",
+      "review": {
+        "issue": 716,
+        "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "arn",
+          "description"
+        ],
+        "placement": "Missing: independent architecture representation review is tracked with the linked implementation issue; current default is Logical, not a spatial network container.",
+        "ownership": "Not applicable: retain independent identity; related resources may be shared and references do not prove embedded ownership.",
+        "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
+        "references": "Not applicable: No outbound managed endpoint; incoming core/site/device/link references and architecture review #788.",
+        "scope": "Partial: Global management eligibility in basic_entries.rs/scope.rs; account remains unknown. Regional endpoints do not propagate region to global object.",
+        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "officialDocumentation": "website/docs/r/networkmanager_global_network.html.markdown",
+        "shapes": {
+          "arn": [
+            "string"
+          ],
+          "description": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_networkmanager_link": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 788,
+      "gap": "#716 reviewed: Site and global-network IDs with parent agreement; link bandwidth does not imply traffic delivery. Current basic Logical display has no dedicated relationships. Follow-up #788; see six dimensions and pinned contracts in review.",
+      "review": {
+        "issue": 716,
+        "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "arn",
+          "global_network_id",
+          "site_id",
+          "bandwidth.upload_speed",
+          "bandwidth.download_speed"
+        ],
+        "placement": "Missing: independent architecture representation review is tracked with the linked implementation issue; current default is Logical, not a spatial network container.",
+        "ownership": "Not applicable: retain independent identity; related resources may be shared and references do not prove embedded ownership.",
+        "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
+        "references": "Missing: Site and global-network IDs with parent agreement; link bandwidth does not imply traffic delivery.",
+        "scope": "Partial: Global management eligibility in basic_entries.rs/scope.rs; account remains unknown. Regional endpoints do not propagate region to global object.",
+        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "officialDocumentation": "website/docs/r/networkmanager_link.html.markdown",
+        "shapes": {
+          "arn": [
+            "string"
+          ],
+          "global_network_id": [
+            "string"
+          ],
+          "site_id": [
+            "string"
+          ],
+          "bandwidth.upload_speed": [
+            "list",
+            "number"
+          ],
+          "bandwidth.download_speed": [
+            "list",
+            "number"
+          ]
+        }
+      }
+    },
+    "aws_networkmanager_link_association": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 788,
+      "gap": "#716 reviewed: Global-network/device/link tuple with consistent membership. Current basic Logical display has no dedicated relationships. Follow-up #788; see six dimensions and pinned contracts in review.",
+      "review": {
+        "issue": 716,
+        "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "global_network_id",
+          "device_id",
+          "link_id"
+        ],
+        "placement": "Supported: retain Logical basic presentation; configuration/helper identity is not an independent workload card.",
+        "ownership": "Not applicable: retain independent identity; related resources may be shared and references do not prove embedded ownership.",
+        "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
+        "references": "Missing: Global-network/device/link tuple with consistent membership.",
+        "scope": "Partial: Global management eligibility in basic_entries.rs/scope.rs; account remains unknown. Regional endpoints do not propagate region to global object.",
+        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "officialDocumentation": "website/docs/r/networkmanager_link_association.html.markdown",
+        "shapes": {
+          "global_network_id": [
+            "string"
+          ],
+          "device_id": [
+            "string"
+          ],
+          "link_id": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_networkmanager_prefix_list_association": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 789,
+      "gap": "#716 reviewed: Core-network id and EC2 managed prefix-list arn; alias only names a policy variable. Current basic Logical display has no dedicated relationships. Follow-up #789; see six dimensions and pinned contracts in review.",
+      "review": {
+        "issue": 716,
+        "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "core_network_id",
+          "prefix_list_arn",
+          "prefix_list_alias"
+        ],
+        "placement": "Supported: retain Logical basic presentation; configuration/helper identity is not an independent workload card.",
+        "ownership": "Not applicable: retain independent identity; related resources may be shared and references do not prove embedded ownership.",
+        "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
+        "references": "Missing: Core-network id and EC2 managed prefix-list arn; alias only names a policy variable.",
+        "scope": "Partial: Global management eligibility in basic_entries.rs/scope.rs; account remains unknown. Regional endpoints do not propagate region to global object.",
+        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "officialDocumentation": "website/docs/r/networkmanager_prefix_list_association.html.markdown",
+        "shapes": {
+          "core_network_id": [
+            "string"
+          ],
+          "prefix_list_arn": [
+            "string"
+          ],
+          "prefix_list_alias": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_networkmanager_site": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 788,
+      "gap": "#716 reviewed: Global network ID; geographic address does not identify AWS subnet. Current basic Logical display has no dedicated relationships. Follow-up #788; see six dimensions and pinned contracts in review.",
+      "review": {
+        "issue": 716,
+        "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "arn",
+          "global_network_id",
+          "location.address"
+        ],
+        "placement": "Missing: independent architecture representation review is tracked with the linked implementation issue; current default is Logical, not a spatial network container.",
+        "ownership": "Not applicable: retain independent identity; related resources may be shared and references do not prove embedded ownership.",
+        "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
+        "references": "Missing: Global network ID; geographic address does not identify AWS subnet.",
+        "scope": "Partial: Global management eligibility in basic_entries.rs/scope.rs; account remains unknown. Regional endpoints do not propagate region to global object.",
+        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "officialDocumentation": "website/docs/r/networkmanager_site.html.markdown",
+        "shapes": {
+          "arn": [
+            "string"
+          ],
+          "global_network_id": [
+            "string"
+          ],
+          "location.address": [
+            "list",
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_networkmanager_site_to_site_vpn_attachment": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 789,
+      "gap": "#716 reviewed: Core-network ID and site-to-site VPN ARN; no tunnel inference. Current basic Logical display has no dedicated relationships. Follow-up #789; see six dimensions and pinned contracts in review.",
+      "review": {
+        "issue": 716,
+        "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "id",
+          "core_network_id",
+          "vpn_connection_arn"
+        ],
+        "placement": "Supported: retain Logical basic presentation; configuration/helper identity is not an independent workload card.",
+        "ownership": "Not applicable: retain independent identity; related resources may be shared and references do not prove embedded ownership.",
+        "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
+        "references": "Missing: Core-network ID and site-to-site VPN ARN; no tunnel inference.",
+        "scope": "Partial: Global management eligibility in basic_entries.rs/scope.rs; account remains unknown. Regional endpoints do not propagate region to global object.",
+        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "officialDocumentation": "website/docs/r/networkmanager_site_to_site_vpn_attachment.html.markdown",
+        "shapes": {
+          "id": [
+            "string"
+          ],
+          "core_network_id": [
+            "string"
+          ],
+          "vpn_connection_arn": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_networkmanager_transit_gateway_connect_peer_association": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 788,
+      "gap": "#716 reviewed: Global-network/device/optional link and TGW Connect peer ARN; not Cloud WAN connect-peer ARN. Current basic Logical display has no dedicated relationships. Follow-up #788; see six dimensions and pinned contracts in review.",
+      "review": {
+        "issue": 716,
+        "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "global_network_id",
+          "device_id",
+          "link_id",
+          "transit_gateway_connect_peer_arn"
+        ],
+        "placement": "Supported: retain Logical basic presentation; configuration/helper identity is not an independent workload card.",
+        "ownership": "Not applicable: retain independent identity; related resources may be shared and references do not prove embedded ownership.",
+        "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
+        "references": "Missing: Global-network/device/optional link and TGW Connect peer ARN; not Cloud WAN connect-peer ARN.",
+        "scope": "Partial: Global management eligibility in basic_entries.rs/scope.rs; account remains unknown. Regional endpoints do not propagate region to global object.",
+        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "officialDocumentation": "website/docs/r/networkmanager_transit_gateway_connect_peer_association.html.markdown",
+        "shapes": {
+          "global_network_id": [
+            "string"
+          ],
+          "device_id": [
+            "string"
+          ],
+          "link_id": [
+            "string"
+          ],
+          "transit_gateway_connect_peer_arn": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_networkmanager_transit_gateway_peering": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 789,
+      "gap": "#716 reviewed: Core-network ID and TGW ARN; computed attachment ID is not an independent Terraform resource. Current basic Logical display has no dedicated relationships. Follow-up #789; see six dimensions and pinned contracts in review.",
+      "review": {
+        "issue": 716,
+        "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "id",
+          "core_network_id",
+          "transit_gateway_arn"
+        ],
+        "placement": "Supported: retain Logical basic presentation; configuration/helper identity is not an independent workload card.",
+        "ownership": "Not applicable: retain independent identity; related resources may be shared and references do not prove embedded ownership.",
+        "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
+        "references": "Missing: Core-network ID and TGW ARN; computed attachment ID is not an independent Terraform resource.",
+        "scope": "Partial: Global management eligibility in basic_entries.rs/scope.rs; account remains unknown. Regional endpoints do not propagate region to global object.",
+        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "officialDocumentation": "website/docs/r/networkmanager_transit_gateway_peering.html.markdown",
+        "shapes": {
+          "id": [
+            "string"
+          ],
+          "core_network_id": [
+            "string"
+          ],
+          "transit_gateway_arn": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_networkmanager_transit_gateway_registration": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 788,
+      "gap": "#716 reviewed: Global network ID and TGW ARN; registration is not containment. Current basic Logical display has no dedicated relationships. Follow-up #788; see six dimensions and pinned contracts in review.",
+      "review": {
+        "issue": 716,
+        "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "global_network_id",
+          "transit_gateway_arn"
+        ],
+        "placement": "Supported: retain Logical basic presentation; configuration/helper identity is not an independent workload card.",
+        "ownership": "Not applicable: retain independent identity; related resources may be shared and references do not prove embedded ownership.",
+        "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
+        "references": "Missing: Global network ID and TGW ARN; registration is not containment.",
+        "scope": "Partial: Global management eligibility in basic_entries.rs/scope.rs; account remains unknown. Regional endpoints do not propagate region to global object.",
+        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "officialDocumentation": "website/docs/r/networkmanager_transit_gateway_registration.html.markdown",
+        "shapes": {
+          "global_network_id": [
+            "string"
+          ],
+          "transit_gateway_arn": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_networkmanager_transit_gateway_route_table_attachment": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 789,
+      "gap": "#716 reviewed: Peering id and TGW route-table ARN with gateway agreement; no route policy interpretation. Current basic Logical display has no dedicated relationships. Follow-up #789; see six dimensions and pinned contracts in review.",
+      "review": {
+        "issue": 716,
+        "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "id",
+          "peering_id",
+          "transit_gateway_route_table_arn"
+        ],
+        "placement": "Supported: retain Logical basic presentation; configuration/helper identity is not an independent workload card.",
+        "ownership": "Not applicable: retain independent identity; related resources may be shared and references do not prove embedded ownership.",
+        "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
+        "references": "Missing: Peering id and TGW route-table ARN with gateway agreement; no route policy interpretation.",
+        "scope": "Partial: Global management eligibility in basic_entries.rs/scope.rs; account remains unknown. Regional endpoints do not propagate region to global object.",
+        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "officialDocumentation": "website/docs/r/networkmanager_transit_gateway_route_table_attachment.html.markdown",
+        "shapes": {
+          "id": [
+            "string"
+          ],
+          "peering_id": [
+            "string"
+          ],
+          "transit_gateway_route_table_arn": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_networkmanager_vpc_attachment": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 789,
+      "gap": "#716 reviewed: Core network ID and VPC/subnet ARNs with complete collections. Current basic Logical display has no dedicated relationships. Follow-up #789; see six dimensions and pinned contracts in review.",
+      "review": {
+        "issue": 716,
+        "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "id",
+          "core_network_id",
+          "vpc_arn",
+          "subnet_arns"
+        ],
+        "placement": "Supported: retain Logical basic presentation; configuration/helper identity is not an independent workload card.",
+        "ownership": "Not applicable: retain independent identity; related resources may be shared and references do not prove embedded ownership.",
+        "network": "Missing: common-VPC proof from vpc_arn/subnet_arns #789; core network stays global.",
+        "references": "Missing: Core network ID and VPC/subnet ARNs with complete collections.",
+        "scope": "Partial: Global management eligibility in basic_entries.rs/scope.rs; account remains unknown. Regional endpoints do not propagate region to global object.",
+        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "officialDocumentation": "website/docs/r/networkmanager_vpc_attachment.html.markdown",
+        "shapes": {
+          "id": [
+            "string"
+          ],
+          "core_network_id": [
+            "string"
+          ],
+          "vpc_arn": [
+            "string"
+          ],
+          "subnet_arns": [
+            [
+              "set",
+              "string"
+            ]
+          ]
+        }
+      }
+    },
+    "aws_networkmonitor_monitor": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 793,
+      "gap": "#716 reviewed: No outgoing endpoint; incoming probe monitor_name requires explicit reference to monitor_name output. Current basic Logical display has no dedicated relationships. Follow-up #793; see six dimensions and pinned contracts in review.",
+      "review": {
+        "issue": 716,
+        "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "arn",
+          "monitor_name",
+          "aggregation_period"
+        ],
+        "placement": "Supported: retain Logical basic presentation; configuration/helper identity is not an independent workload card.",
+        "ownership": "Not applicable: retain independent identity; related resources may be shared and references do not prove embedded ownership.",
+        "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
+        "references": "Not applicable: No outgoing endpoint; incoming probe monitor_name requires explicit reference to monitor_name output.",
+        "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
+        "summaries": "Deferred: aggregation_period is configuration, needs a known-value summary contract; measured latency/loss is excluded.",
+        "officialDocumentation": "website/docs/r/networkmonitor_monitor.html.markdown",
+        "shapes": {
+          "arn": [
+            "string"
+          ],
+          "monitor_name": [
+            "string"
+          ],
+          "aggregation_period": [
+            "number"
+          ]
+        }
+      }
+    },
+    "aws_networkmonitor_probe": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 793,
+      "gap": "#716 reviewed: Explicit monitor_name and subnet source_arn; destination IP cannot reconstruct an endpoint. Current basic Logical display has no dedicated relationships. Follow-up #793; see six dimensions and pinned contracts in review.",
+      "review": {
+        "issue": 716,
+        "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "arn",
+          "monitor_name",
+          "source_arn",
+          "destination",
+          "protocol"
+        ],
+        "placement": "Supported: retain Logical basic presentation; configuration/helper identity is not an independent workload card.",
+        "ownership": "Missing: explicit unique monitor navigation #793; never merge probe and monitor identities.",
+        "network": "Missing: verified source subnet context #793; monitor ownership does not imply containment.",
+        "references": "Missing: Explicit monitor_name and subnet source_arn; destination IP cannot reconstruct an endpoint.",
+        "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
+        "summaries": "Intentionally unsupported: destination IP, packet values and observed reachability; protocol summary deferred to bounded allowlist.",
+        "officialDocumentation": "website/docs/r/networkmonitor_probe.html.markdown",
+        "shapes": {
+          "arn": [
+            "string"
+          ],
+          "monitor_name": [
+            "string"
+          ],
+          "source_arn": [
+            "string"
+          ],
+          "destination": [
+            "string"
+          ],
+          "protocol": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_vpclattice_access_log_subscription": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 790,
+      "gap": "#716 reviewed: Service/network ID or ARN plus explicit supported destination ARN; cross-account resource requires ARN; SERVICE/RESOURCE discriminator. Current basic Logical display has no dedicated relationships. Follow-up #790; see six dimensions and pinned contracts in review.",
+      "review": {
+        "issue": 716,
+        "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "resource_identifier",
+          "destination_arn",
+          "service_network_log_type"
+        ],
+        "placement": "Supported: retain Logical basic presentation; configuration/helper identity is not an independent workload card.",
+        "ownership": "Not applicable: retain independent identity; related resources may be shared and references do not prove embedded ownership.",
+        "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
+        "references": "Missing: Service/network ID or ARN plus explicit supported destination ARN; cross-account resource requires ARN; SERVICE/RESOURCE discriminator.",
+        "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
+        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "officialDocumentation": "website/docs/r/vpclattice_access_log_subscription.html.markdown",
+        "shapes": {
+          "resource_identifier": [
+            "string"
+          ],
+          "destination_arn": [
+            "string"
+          ],
+          "service_network_log_type": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_vpclattice_auth_policy": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 790,
+      "gap": "#716 reviewed: Service/network ID or ARN; auth type controls activation, not effective authorization. Current basic Logical display has no dedicated relationships. Follow-up #790; see six dimensions and pinned contracts in review.",
+      "review": {
+        "issue": 716,
+        "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "resource_identifier",
+          "state"
+        ],
+        "placement": "Supported: retain Logical basic presentation; configuration/helper identity is not an independent workload card.",
+        "ownership": "Not applicable: retain independent identity; related resources may be shared and references do not prove embedded ownership.",
+        "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
+        "references": "Missing: Service/network ID or ARN; auth type controls activation, not effective authorization.",
+        "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
+        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "officialDocumentation": "website/docs/r/vpclattice_auth_policy.html.markdown",
+        "shapes": {
+          "resource_identifier": [
+            "string"
+          ],
+          "state": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_vpclattice_domain_verification": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 791,
+      "gap": "#716 reviewed: No outbound Terraform endpoint: incoming resource_configuration.domain_verification_id only. Domain/TXT strings never imply Route53 ownership. Current basic Logical display has no dedicated relationships. Follow-up #791; see six dimensions and pinned contracts in review.",
+      "review": {
+        "issue": 716,
+        "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "id",
+          "arn",
+          "domain_name",
+          "txt_record_name",
+          "txt_record_value"
+        ],
+        "placement": "Supported: retain Logical basic presentation; configuration/helper identity is not an independent workload card.",
+        "ownership": "Not applicable: retain independent identity; related resources may be shared and references do not prove embedded ownership.",
+        "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
+        "references": "Not applicable: No outbound Terraform endpoint: incoming resource_configuration.domain_verification_id only. Domain/TXT strings never imply Route53 ownership.",
+        "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
+        "summaries": "Intentionally unsupported: DNS TXT contents and verified status are not architecture/security summaries.",
+        "officialDocumentation": "website/docs/r/vpclattice_domain_verification.html.markdown",
+        "shapes": {
+          "id": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "domain_name": [
+            "string"
+          ],
+          "txt_record_name": [
+            "string"
+          ],
+          "txt_record_value": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_vpclattice_listener": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 790,
+      "gap": "#716 reviewed: Exclusive service ARN/ID; forward target-group ID/ARN versus fixed_response; listener_id differs from composite identity. Current basic Logical display has no dedicated relationships. Follow-up #790; see six dimensions and pinned contracts in review.",
+      "review": {
+        "issue": 716,
+        "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "arn",
+          "listener_id",
+          "service_arn",
+          "service_identifier",
+          "default_action.forward.target_groups.target_group_identifier"
+        ],
+        "placement": "Supported: retain Logical basic presentation; configuration/helper identity is not an independent workload card.",
+        "ownership": "Missing: unique service ownership navigation #790; preserve shared target groups.",
+        "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
+        "references": "Missing: Exclusive service ARN/ID; forward target-group ID/ARN versus fixed_response; listener_id differs from composite identity.",
+        "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
+        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "officialDocumentation": "website/docs/r/vpclattice_listener.html.markdown",
+        "shapes": {
+          "arn": [
+            "string"
+          ],
+          "listener_id": [
+            "string"
+          ],
+          "service_arn": [
+            "string"
+          ],
+          "service_identifier": [
+            "string"
+          ],
+          "default_action.forward.target_groups.target_group_identifier": [
+            "list",
+            "list",
+            "list",
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_vpclattice_listener_rule": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 790,
+      "gap": "#716 reviewed: Service/listener parent consistency and typed forward group references; predicates remain opaque. Current basic Logical display has no dedicated relationships. Follow-up #790; see six dimensions and pinned contracts in review.",
+      "review": {
+        "issue": 716,
+        "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "arn",
+          "rule_id",
+          "service_identifier",
+          "listener_identifier",
+          "action.forward.target_groups.target_group_identifier"
+        ],
+        "placement": "Supported: retain Logical basic presentation; configuration/helper identity is not an independent workload card.",
+        "ownership": "Missing: unique listener/service navigation #790; no embedding by matching names.",
+        "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
+        "references": "Missing: Service/listener parent consistency and typed forward group references; predicates remain opaque.",
+        "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
+        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "officialDocumentation": "website/docs/r/vpclattice_listener_rule.html.markdown",
+        "shapes": {
+          "arn": [
+            "string"
+          ],
+          "rule_id": [
+            "string"
+          ],
+          "service_identifier": [
+            "string"
+          ],
+          "listener_identifier": [
+            "string"
+          ],
+          "action.forward.target_groups.target_group_identifier": [
+            "list",
+            "list",
+            "list",
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_vpclattice_resource_configuration": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 791,
+      "gap": "#716 reviewed: Gateway/group/domain-verification IDs with SINGLE/GROUP/CHILD/ARN discrimination. ARN target deferred until endpoint allowlist chosen; DNS/IP never reconstruct endpoints. Current basic Logical display has no dedicated relationships. Follow-up #791; see six dimensions and pinned contracts in review.",
+      "review": {
+        "issue": 716,
+        "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "id",
+          "arn",
+          "type",
+          "resource_gateway_identifier",
+          "resource_configuration_group_id",
+          "domain_verification_id",
+          "resource_configuration_definition.arn_resource.arn"
+        ],
+        "placement": "Supported: retain Logical basic presentation; configuration/helper identity is not an independent workload card.",
+        "ownership": "Missing: CHILD parent-group navigation #791; shared targets retain identity.",
+        "network": "Intentionally unsupported: gateway attachment does not prove target network containment.",
+        "references": "Missing: Gateway/group/domain-verification IDs with SINGLE/GROUP/CHILD/ARN discrimination. ARN target deferred until endpoint allowlist chosen; DNS/IP never reconstruct endpoints.",
+        "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
+        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "officialDocumentation": "website/docs/r/vpclattice_resource_configuration.html.markdown",
+        "shapes": {
+          "id": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "type": [
+            "string"
+          ],
+          "resource_gateway_identifier": [
+            "string"
+          ],
+          "resource_configuration_group_id": [
+            "string"
+          ],
+          "domain_verification_id": [
+            "string"
+          ],
+          "resource_configuration_definition.arn_resource.arn": [
+            "list",
+            "list",
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_vpclattice_resource_gateway": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 791,
+      "gap": "#716 reviewed: Explicit VPC/subnet/SG ids with complete common-VPC proof. Current basic Logical display has no dedicated relationships. Follow-up #791; see six dimensions and pinned contracts in review.",
+      "review": {
+        "issue": 716,
+        "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "id",
+          "arn",
+          "vpc_id",
+          "subnet_ids",
+          "security_group_ids"
+        ],
+        "placement": "Missing: independent architecture representation review is tracked with the linked implementation issue; current default is Logical, not a spatial network container.",
+        "ownership": "Not applicable: retain independent identity; related resources may be shared and references do not prove embedded ownership.",
+        "network": "Missing: complete common-VPC containment #791.",
+        "references": "Missing: Explicit VPC/subnet/SG ids with complete common-VPC proof.",
+        "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
+        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "officialDocumentation": "website/docs/r/vpclattice_resource_gateway.html.markdown",
+        "shapes": {
+          "id": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "vpc_id": [
+            "string"
+          ],
+          "subnet_ids": [
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "security_group_ids": [
+            [
+              "set",
+              "string"
+            ]
+          ]
+        }
+      }
+    },
+    "aws_vpclattice_resource_policy": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 790,
+      "gap": "#716 reviewed: Explicit service/network resource identifier; verify API accepted ID/ARN form and owner type rather than trusting field suffix. Current basic Logical display has no dedicated relationships. Follow-up #790; see six dimensions and pinned contracts in review.",
+      "review": {
+        "issue": 716,
+        "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "resource_arn"
+        ],
+        "placement": "Supported: retain Logical basic presentation; configuration/helper identity is not an independent workload card.",
+        "ownership": "Not applicable: retain independent identity; related resources may be shared and references do not prove embedded ownership.",
+        "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
+        "references": "Missing: Explicit service/network resource identifier; verify API accepted ID/ARN form and owner type rather than trusting field suffix.",
+        "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
+        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "officialDocumentation": "website/docs/r/vpclattice_resource_policy.html.markdown",
+        "shapes": {
+          "resource_arn": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_vpclattice_service": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 790,
+      "gap": "#716 reviewed: Certificate ARN -> ACM certificate; custom domain and computed hosted zone are not Route53 ownership. Current basic Logical display has no dedicated relationships. Follow-up #790; see six dimensions and pinned contracts in review.",
+      "review": {
+        "issue": 716,
+        "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "id",
+          "arn",
+          "certificate_arn"
+        ],
+        "placement": "Missing: independent architecture representation review is tracked with the linked implementation issue; current default is Logical, not a spatial network container.",
+        "ownership": "Not applicable: retain independent identity; related resources may be shared and references do not prove embedded ownership.",
+        "network": "Intentionally unsupported: service-network association does not place service in a VPC.",
+        "references": "Missing: Certificate ARN -> ACM certificate; custom domain and computed hosted zone are not Route53 ownership.",
+        "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
+        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "officialDocumentation": "website/docs/r/vpclattice_service.html.markdown",
+        "shapes": {
+          "id": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "certificate_arn": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_vpclattice_service_network": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 790,
+      "gap": "#716 reviewed: No outgoing resource reference; incoming association contracts #790. Current basic Logical display has no dedicated relationships. Follow-up #790; see six dimensions and pinned contracts in review.",
+      "review": {
+        "issue": 716,
+        "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "arn",
+          "auth_type"
+        ],
+        "placement": "Missing: independent architecture representation review is tracked with the linked implementation issue; current default is Logical, not a spatial network container.",
+        "ownership": "Not applicable: retain independent identity; related resources may be shared and references do not prove embedded ownership.",
+        "network": "Intentionally unsupported: service network is not an EC2 VPC container.",
+        "references": "Not applicable: No outgoing resource reference; incoming association contracts #790.",
+        "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
+        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "officialDocumentation": "website/docs/r/vpclattice_service_network.html.markdown",
+        "shapes": {
+          "arn": [
+            "string"
+          ],
+          "auth_type": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_vpclattice_service_network_resource_association": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 791,
+      "gap": "#716 reviewed: Explicit resource configuration and service network identifiers; no DNS-based links. Current basic Logical display has no dedicated relationships. Follow-up #791; see six dimensions and pinned contracts in review.",
+      "review": {
+        "issue": 716,
+        "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "id",
+          "arn",
+          "resource_configuration_identifier",
+          "service_network_identifier"
+        ],
+        "placement": "Supported: retain Logical basic presentation; configuration/helper identity is not an independent workload card.",
+        "ownership": "Not applicable: retain independent identity; related resources may be shared and references do not prove embedded ownership.",
+        "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
+        "references": "Missing: Explicit resource configuration and service network identifiers; no DNS-based links.",
+        "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
+        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "officialDocumentation": "website/docs/r/vpclattice_service_network_resource_association.html.markdown",
+        "shapes": {
+          "id": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "resource_configuration_identifier": [
+            "string"
+          ],
+          "service_network_identifier": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_vpclattice_service_network_service_association": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 790,
+      "gap": "#716 reviewed: Service and network ID/ARN pair; cross-account network requires ARN; shared service is not embedded. Current basic Logical display has no dedicated relationships. Follow-up #790; see six dimensions and pinned contracts in review.",
+      "review": {
+        "issue": 716,
+        "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "id",
+          "arn",
+          "service_identifier",
+          "service_network_identifier"
+        ],
+        "placement": "Supported: retain Logical basic presentation; configuration/helper identity is not an independent workload card.",
+        "ownership": "Not applicable: retain independent identity; related resources may be shared and references do not prove embedded ownership.",
+        "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
+        "references": "Missing: Service and network ID/ARN pair; cross-account network requires ARN; shared service is not embedded.",
+        "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
+        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "officialDocumentation": "website/docs/r/vpclattice_service_network_service_association.html.markdown",
+        "shapes": {
+          "id": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "service_identifier": [
+            "string"
+          ],
+          "service_network_identifier": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_vpclattice_service_network_vpc_association": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 790,
+      "gap": "#716 reviewed: Service network ID/ARN and VPC ID with SG set; cross-account ARN proof. Current basic Logical display has no dedicated relationships. Follow-up #790; see six dimensions and pinned contracts in review.",
+      "review": {
+        "issue": 716,
+        "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "id",
+          "arn",
+          "service_network_identifier",
+          "vpc_identifier",
+          "security_group_ids"
+        ],
+        "placement": "Supported: retain Logical basic presentation; configuration/helper identity is not an independent workload card.",
+        "ownership": "Not applicable: retain independent identity; related resources may be shared and references do not prove embedded ownership.",
+        "network": "Missing: association VPC/SG context #790; never contains entire service network.",
+        "references": "Missing: Service network ID/ARN and VPC ID with SG set; cross-account ARN proof.",
+        "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
+        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "officialDocumentation": "website/docs/r/vpclattice_service_network_vpc_association.html.markdown",
+        "shapes": {
+          "id": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "service_network_identifier": [
+            "string"
+          ],
+          "vpc_identifier": [
+            "string"
+          ],
+          "security_group_ids": [
+            [
+              "list",
+              "string"
+            ]
+          ]
+        }
+      }
+    },
+    "aws_vpclattice_target_group": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 790,
+      "gap": "#716 reviewed: VPC ID applies to network target variants; LAMBDA/INSTANCE/ALB/IP contract governs attachments. Current basic Logical display has no dedicated relationships. Follow-up #790; see six dimensions and pinned contracts in review.",
+      "review": {
+        "issue": 716,
+        "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "id",
+          "arn",
+          "type",
+          "config.vpc_identifier"
+        ],
+        "placement": "Supported: retain Logical basic presentation; configuration/helper identity is not an independent workload card.",
+        "ownership": "Not applicable: retain independent identity; related resources may be shared and references do not prove embedded ownership.",
+        "network": "Missing: explicit config.vpc_identifier context #790; no Lambda subnet inheritance.",
+        "references": "Missing: VPC ID applies to network target variants; LAMBDA/INSTANCE/ALB/IP contract governs attachments.",
+        "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
+        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "officialDocumentation": "website/docs/r/vpclattice_target_group.html.markdown",
+        "shapes": {
+          "id": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "type": [
+            "string"
+          ],
+          "config.vpc_identifier": [
+            "list",
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_vpclattice_target_group_attachment": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 790,
+      "gap": "#716 reviewed: Group ID/ARN plus target.id: INSTANCE ID, LAMBDA ARN, ALB ARN; IP values intentionally unsupported as Terraform references. Current basic Logical display has no dedicated relationships. Follow-up #790; see six dimensions and pinned contracts in review.",
+      "review": {
+        "issue": 716,
+        "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "target_group_identifier",
+          "target.id",
+          "target.port"
+        ],
+        "placement": "Supported: retain Logical basic presentation; configuration/helper identity is not an independent workload card.",
+        "ownership": "Not applicable: retain independent identity; related resources may be shared and references do not prove embedded ownership.",
+        "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
+        "references": "Missing: Group ID/ARN plus target.id: INSTANCE ID, LAMBDA ARN, ALB ARN; IP values intentionally unsupported as Terraform references.",
+        "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
+        "summaries": "Deferred: a useful summary requires a bounded allowlist with unknown/sensitive handling; no runtime status, policy, credentials or arbitrary values.",
+        "officialDocumentation": "website/docs/r/vpclattice_target_group_attachment.html.markdown",
+        "shapes": {
+          "target_group_identifier": [
+            "string"
+          ],
+          "target.id": [
+            "list",
+            "string"
+          ],
+          "target.port": [
             "list",
             "number"
           ]
