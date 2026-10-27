@@ -59,6 +59,89 @@ Retain existing independent MSK/MQ/DocumentDB/Neptune/DMS/FSx/SageMaker endpoint
 
 MSK replicators (topics are tracked in #754), Network Firewall endpoint associations/transit-gateway/TLS variants, non-Lustre FSx, DocumentDB/Neptune global variants, DMS serverless and SageMaker Studio/training remain deferred outside the initial issue scopes. DocumentDB Elastic and Neptune Analytics now have bounded follow-up #766 from the #717 review. Their exact types and schema candidates remain in the register. Runtime health, effective IAM/firewall policy, packet routing, credentials, item data and arbitrary attribute dumping are intentionally unsupported. Encryption summaries for additional services require a separate allowlist review; do not copy a boolean from a similarly named field.
 
+## Containers and application hosting review (#713)
+
+Reviewed planorama commit: `f30289f73269a8a348818dd6e2a8bc44c22f22aa`.
+All 57 managed types in `ecs`, `eks`, `ecr`, `ecrpublic`, `apprunner`,
+`elasticbeanstalk`, `appmesh` and `servicediscovery` have six separate dimensions
+in [decisions](aws-semantic-decisions.json). Each records the pinned official
+document, inspected fields and schema shapes. These are historical conclusions;
+subsequent implementations update current gap text without rewriting the baseline.
+
+Implementation evidence is [classification](../src/provider/aws/classification.rs),
+[basic defaults](../src/provider/aws/basic_entries.rs),
+[presentation](../src/provider/aws.rs), [scope](../src/provider/aws/scope.rs),
+[references](../src/provider/aws/service_references.rs),
+[network proof](../src/provider/aws/network.rs),
+[spanning placement](../src/provider/aws/containment/spanning.rs),
+[VPC placement](../src/provider/aws/containment/vpc_scope.rs),
+[SGs](../src/provider/aws/security_groups.rs), and
+[summary allowlists](../src/provider/aws/encryption.rs).
+Behavioral evidence is [ECR reference tests](../tests/unit/semantic/service_references.rs),
+[ECS tests](../tests/unit/semantic/ecs_clusters.rs),
+[EKS tests](../tests/unit/semantic/eks.rs),
+[basic inventory tests](../tests/unit/aws_inventory.rs) and the runtime support matrix.
+Basic-only types do not inherit adjacent services' tested semantics.
+
+Existing ECR repository-policy/lifecycle references, ECS cluster navigation and
+service network placement, and EKS cluster/role references and network placement
+remain bounded by [their contracts](aws.md#ecr-repositories). They do not establish
+embedded service ownership. EKS node-group/Fargate subnet proof is stricter than
+legacy cluster/service placement; this audit does not silently broaden the latter.
+
+App Runner networking remains #694. New bounded work is #775 (App Mesh), #776
+(App Runner configuration), #777 (ECR Public and registry configuration), #778
+(ECS capacity), #779 (ECS workloads), #780 (EKS auxiliary configuration), #781
+(Beanstalk) and #782 (Cloud Map). Source/helper relationships belong to those
+issues; endpoint audits #709, #710, #712, #715, #719, #726, #727 and #730 must not
+duplicate them. Each remaining deferral records a concrete contract/use-case
+prerequisite; policy, payload and runtime interpretation remain excluded.
+
+Contract distinctions checked against Provider 6.70.0 at
+`5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f`:
+
+- App Runner egress requires `egress_type = VPC`; the connector ARN includes its
+  revision. Connector subnet/SG inputs are schema sets despite the docs calling
+  them lists. Connector context never places the service in a customer subnet.
+  Ingress `service_arn` is separate from its endpoint/VPC pair. Deployment and
+  autoscaling resources stay logical; image URLs are not ECR reference evidence.
+- App Mesh names require mesh and owner-account agreement. Weighted targets and
+  mutually exclusive virtual-node/router providers require protocol/variant
+  discrimination. Mesh ownership is not network containment; DNS, SDS names,
+  certificate paths and routing predicates do not identify managed endpoints.
+- ECR Public is restricted to the us-east-1 API; current conditional Regional
+  eligibility is not global-scope proof. Its `repository_name` differs from private
+  policy `repository`. Registry IDs/prefixes, `ROOT` and filters do not identify
+  managed repositories. KMS references need the encryption discriminator.
+- ECS capacity providers distinguish ASG from managed-instances configuration.
+  `FARGATE`/`FARGATE_SPOT` are builtins, not managed endpoints. Daemon provider ARNs
+  form a set and its task-definition ARN includes revision; the API can report a
+  stale revision during deployment. Express `network_configuration` is a typed
+  list-of-object attribute with subnet/SG sets, not a nested schema block; omitted
+  default subnets cannot be reconstructed. Its `current_deployment` is deprecated.
+- EKS access policy ARNs are not IAM policy ARNs. Access associations require the
+  cluster/principal tuple. Pod namespace/service-account selectors are not managed
+  Kubernetes resources. Node-group launch-template versions need explicit revision
+  proof; computed ASGs and OIDC URLs do not establish configured references.
+- Beanstalk versions/templates are application-scoped; shared versions are not
+  embedded in environments. Network settings are opaque namespace/name/value
+  tuples, not direct subnet inputs. Computed ASG/ELB/instance lists cannot create
+  managed objects. Cloud Map direct/DNS namespace alternatives must agree;
+  registrations' arbitrary attributes do not identify EC2 instances. Its custom
+  health-check configuration is deprecated and not runtime health evidence.
+
+No reviewed type is a verified managed alias. Data schemas remain separate lookup
+contracts; managed ownership does not extend to data/deposed identities. References
+require explicit unique compatible endpoints, correct output attributes, matching
+known nonempty values and complete collections. Provider/account/region, named-state,
+deletion and filtering boundaries remain intact. Scope eligibility alone supplies
+neither account identity nor member region. Environment/secret maps, container JSON,
+policy bodies and catalog payloads are excluded even without sensitive markers.
+
+This audit changes no runtime defaults, rendering input or geometry. Docker checks
+cover all pinned contracts, register consistency, audit tests and support-matrix
+consistency; SVG regeneration and Layout quality are not applicable.
+
 ## NoSQL, caches and time-series review (#718)
 
 Reviewed planorama commit: `bebadbbeac605bae9efd6810957a89130616d947`.
