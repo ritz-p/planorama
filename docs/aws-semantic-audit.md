@@ -98,6 +98,99 @@ This audit changes no rendering input or runtime geometry. Docker checks cover
 the pinned-contract verifier, semantic register/tests and support-matrix consistency;
 SVG regeneration and Layout quality do not apply to this audit-only change.
 
+## Search and business intelligence review (#724)
+
+Reviewed planorama commit: `09b71007288ddc6a7d8662e750acc39278f64ba6`.
+All 65 managed types in `opensearch`, `opensearchserverless`, `elasticsearch`,
+`cloudsearch`, `osis`, `kendra`, `qbusiness`, `quicksight` and `finspace` have
+six separate conclusions and exact schema shapes in
+[decisions](aws-semantic-decisions.json). The official source archive identifies
+`5e13eed`; its full pinned commit and schema SHA-256 are verified against the
+inventory. These review objects preserve the historical baseline; subsequent
+implementation updates current gap descriptions separately.
+
+Runtime evidence is [classification](../src/provider/aws/classification.rs),
+[basic defaults](../src/provider/aws/basic_entries.rs),
+[presentation](../src/provider/aws.rs), [scope](../src/provider/aws/scope.rs),
+[VPC placement](../src/provider/aws/containment/vpc_scope.rs),
+[SG connections](../src/provider/aws/security_groups.rs),
+[service references](../src/provider/aws/service_references.rs),
+[members](../src/provider/aws/members.rs),
+[aliases](../src/provider/aws/aliases.rs) and
+[summary allowlists](../src/provider/aws/encryption.rs).
+The [runtime matrix](resource-support.md) and
+[inventory tests](../tests/unit/aws_inventory.rs) establish basic behavior.
+OpenSearch domain retains its Spatial card, common-VPC subnet placement #181
+and SG connections #182, covered by
+[VPC tests](../tests/unit/semantic/vpc_scope.rs) and
+[SG tests](../tests/unit/semantic/security_groups.rs). Those legacy rules do
+not establish the stricter known-value network contract for other services.
+No other reviewed type has dedicated relationship/ownership behavior at this
+commit. Serverless collection already has a Spatial card; the other 63 types
+are Logical. Basic regional eligibility clears account evidence; OpenSearch
+domain retains its pre-existing provider-account handling in scope.rs.
+
+Bounded follow-ups are #797 (search domain/endpoints/configuration), #798
+(cross-domain connections), #799 (Serverless group/direct key/identity),
+#800 (OSIS), #801 (Q Business), #802 (Kendra), #803 (FinSpace), #804
+(QuickSight connectors), #805 (QuickSight content), and #806 (QuickSight
+identity/key registration). Existing #696 owns Serverless collection/card and
+endpoint VPC/subnet/SG support. Source/helper ownership is assigned to these
+issues; endpoint audits must not duplicate their cross-service relationships.
+The review does not reopen completed #181/#182 or adjacent #688–#702 work.
+
+Contract distinctions checked against pinned resource documentation and schema:
+
+- OpenSearch and Elasticsearch registrations live in different service packages;
+  identically named factories do not make them verified aliases. Their managed
+  and registered data schemas remain separate contracts. Data-source lookup
+  results do not inherit managed ownership or enter this denominator.
+- Domain policy docs describe `access_policies` as optional, while the schema
+  requires it. Domain `domain_name`, `domain_id`, and ARN are distinct identities.
+  KMS ID inputs may normalize to ARNs. Connection local/remote domain names need
+  their respective owner IDs and regions; accepter and initiator remain separate.
+- Serverless collection has no VPC input. Collection-group names and direct
+  `encryption_config` are configured inputs; top-level `kms_key_arn` is computed.
+  The direct encryption configuration is a list-of-object attribute, distinct
+  from SDK block schemas. Endpoint `subnet_ids` and `security_group_ids` are sets;
+  the latter is optional/computed. Policy JSON cannot prove collection membership.
+- OSIS pipeline `id` is deprecated and means its name, while endpoint
+  `pipeline_arn` references the ARN. Endpoint `vpc_id` is computed. CUSTOMER and
+  SERVICE endpoint-management modes need separate proofs; pipeline YAML remains
+  opaque. Enabled log destination uses a log-group name, not ARN.
+- Kendra child service IDs differ from composite Terraform IDs. Experience
+  data-source/FAQ collections require same-index proof. Legacy S3/web-crawler
+  configuration is deprecated; template JSON is opaque. Structured Lambda hooks
+  and S3 bucket references remain actionable without reading documents or secrets.
+- FinSpace cluster/network settings describe the PrivateLink endpoint, not the
+  location of service compute. Its docs misdescribe `vpc_id` as endpoint ID;
+  `internal/service/finspace/kx_cluster.go` maps it to API `VpcId`. Environment
+  infrastructure account is service infrastructure, not customer ownership.
+  Database/volume/scaling-group names need environment qualification; AZ IDs and
+  computed attached clusters do not establish subnet or resource membership.
+- QuickSight IDs are commonly composite; relationships use the resource-specific
+  ID or ARN plus `aws_account_id`, region and namespace. Role membership targets
+  a group and a QuickSight enum, not an IAM role. Folder member type discriminates
+  analysis/dashboard/dataset. Built-in themes and default namespace literals do
+  not manufacture managed nodes. Dataset table-map keys are local identities;
+  SQL, visual definitions and RLS policy contents are not interpreted.
+- QuickSight VPC connection does not contain its consumers. Data-source parameter
+  variants need type evidence; host/port/URL values cannot reconstruct databases.
+  IP restriction maps require map-key reference provenance before safe navigation
+  can be reconsidered. Key registration does not prove encryption of each dataset.
+
+Dedicated references require explicit unique compatible Terraform endpoints,
+matching known values, complete collections and provider/account/region/state
+agreement. Current configuration cannot establish deposed or deleted links.
+Shared resources remain independent and filtering cannot create new evidence.
+No safe-summary allowlist currently covers these services; each type records a
+specific exclusion or revisit condition. Credentials, payloads, policies, health
+and effective reachability are excluded.
+
+Docker validation uses the pinned-contract verifier, the 65-type audit test,
+register consistency and support-matrix check. This review changes no runtime,
+rendering input or geometry; SVG regeneration and Layout quality do not apply.
+
 ## Method and limits
 
 The runtime-generated [support matrix](resource-support.md) supplies role, display and conditional scope. All pinned managed schemas were traversed for configurable, non-sensitive identifier/name/network fields. The compact [schema evidence](aws-semantic-evidence.json) records **paths only**, with the source schema SHA-256. Candidate names are an audit index, not inferred endpoint types. Nested JSON policy strings, URI contents and dynamically selected references are not interpreted. No candidate field is automatically added to runtime behavior.
