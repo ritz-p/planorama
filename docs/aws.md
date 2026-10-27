@@ -1772,3 +1772,33 @@ computed. See [fixture](../tests/fixtures/docdb-plan.json), [SVG](../examples/do
 and [HTML](../examples/docdb.html). Regenerate HTML with
 `cargo run --locked -- tests/fixtures/docdb-plan.json --format html -o examples/docdb.html`
 inside Docker. Native/Wasm parity includes both output formats.
+
+## Neptune (#698)
+
+`aws_neptune_cluster`, `aws_neptune_cluster_instance` and
+`aws_neptune_subnet_group` use the same conservative proof requirements as
+[DocumentDB](#documentdb-697), with Neptune-specific endpoint types and paths.
+Cluster `neptune_subnet_group_name` references the group's `name`; the group's
+complete `subnet_ids` and cluster `vpc_security_group_ids` must identify managed
+subnets and SGs in one proven VPC. The shared subnet group stays logical.
+
+Instance `cluster_identifier` references cluster `cluster_identifier`, independently
+of cluster network placement. If the instance configures `neptune_subnet_group_name`,
+its verified group must equal the cluster's verified group; missing, unknown,
+literal-only or mismatching configured evidence cannot establish membership.
+An absent optional instance group does not prevent otherwise proven membership.
+Neither the group nor membership assigns an individual subnet to the instance.
+
+The pinned Provider 6.70.0 [cluster contract](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/website/docs/r/neptune_cluster.html.markdown),
+[instance contract](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/website/docs/r/neptune_cluster_instance.html.markdown)
+and [subnet group contract](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/website/docs/r/neptune_subnet_group.html.markdown)
+were checked against schema. Network collections are sets. RDS/DocumentDB types
+and cluster `id` are not accepted as substitutes for these exact contracts.
+Analytics, snapshots, global databases, parameters and encryption summaries remain
+outside this scope. Credentials, graph data and endpoint strings are not rendered.
+
+See [fixture](../tests/fixtures/neptune-plan.json), [SVG](../examples/neptune.svg)
+and [HTML](../examples/neptune.html). Regenerate HTML inside Docker with
+`cargo run --locked -- tests/fixtures/neptune-plan.json --format html -o examples/neptune.html`.
+Native/Wasm parity covers SVG and HTML; lifecycle, named-state and filtering
+boundaries follow the DocumentDB contract.

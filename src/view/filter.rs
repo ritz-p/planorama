@@ -48,7 +48,10 @@ fn placement_available(
     selected: impl Fn(usize) -> bool,
 ) -> bool {
     let node = &graph.nodes[child];
-    if node.resource_type == "aws_docdb_cluster" {
+    if matches!(
+        node.resource_type.as_str(),
+        "aws_docdb_cluster" | "aws_neptune_cluster"
+    ) {
         return graph
             .relationships
             .iter()

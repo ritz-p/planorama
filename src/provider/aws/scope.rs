@@ -42,7 +42,12 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
     if basic.is_some()
         && !matches!(
             resource,
-            "aws_docdb_cluster" | "aws_docdb_cluster_instance" | "aws_docdb_subnet_group"
+            "aws_docdb_cluster"
+                | "aws_docdb_cluster_instance"
+                | "aws_docdb_subnet_group"
+                | "aws_neptune_cluster"
+                | "aws_neptune_cluster_instance"
+                | "aws_neptune_subnet_group"
         )
     {
         account = None;
