@@ -212,6 +212,34 @@ test('relational audit covers 59 exact managed types and preserves field distinc
  assert.match(decisions.aws_db_snapshot.review.network,/Not applicable:.*VPC/);
  assert.match(decisions.aws_rds_cluster_instance.review.ownership,/Supported:.*members.rs/);
 });
+test('ML audit covers all 90 managed contracts without conflating model and runtime identities',()=>{
+ const services=new Set('sagemaker bedrock bedrockagent bedrockagentcore agentregistry comprehend rekognition transcribe'.split(' '));
+ const expected=read('tests/fixtures/aws-inventory/6.70.0.json').resources.filter(r=>services.has(r.service));
+ const entries=Object.entries(read('docs/aws-semantic-decisions.json').types).filter(([,d])=>d.review?.issue===725);
+ assert.equal(expected.length,90);
+ assert.deepEqual(entries.map(([type])=>type).sort(),expected.map(r=>r.type).sort());
+ for(const [type,{review,issue,gap}] of entries){
+  assert.equal(review.providerCommit,'5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f');
+  assert.equal(review.implementationCommit,'f5c320438d8abf81de31c884bbd03dde5369773e');
+  assert.equal(review.officialDocumentation,expected.find(r=>r.type===type).documentation);
+  assert.deepEqual(Object.keys(review.shapes),review.fields);
+  assert.deepEqual(Object.keys(review.contracts),review.fields);
+  for(const key of ['placement','ownership','network','references','scope','summaries']) assert.match(review[key],/^(Supported|Partial|Missing|Not applicable|Intentionally unsupported|Deferred):/,type+': '+key);
+  if(Object.values(review).some(v=>typeof v==='string'&&v.startsWith('Missing:'))) assert.ok(issue===701||(issue>=872&&issue<=881),type);
+  assert.match(gap,/#725/);
+ }
+ const d=Object.fromEntries(entries);
+ assert.deepEqual(d.aws_sagemaker_model.review.shapes['vpc_config.subnets'],['list',['set','string']]);
+ assert.deepEqual(d.aws_sagemaker_training_job.review.shapes['vpc_config.subnets'],['list',['list','string']]);
+ assert.equal(d.aws_sagemaker_endpoint_configuration.review.contracts['production_variants.model_name'],'optional');
+ assert.match(d.aws_sagemaker_endpoint.review.network,/do not inherit model network/);
+ assert.match(d.aws_bedrock_custom_model.review.references,/customization-job ARNs/);
+ assert.match(d.aws_bedrockagentcore_registry.review.references,/distinct service factory/);
+ assert.equal(d.aws_bedrockagent_agent.review.shapes.guardrail_configuration[0][0],'list');
+ assert.match(d.aws_bedrockagentcore_api_key_credential_provider.review.references,/EXTERNAL.*MANAGED/);
+ assert.match(d.aws_bedrock_use_case_for_model_access.review.scope,/Unknown.*disables region override/);
+});
+
 test('candidate extraction respects nested collections and sensitive boundaries',()=>{
  assert.deepEqual(extract({attributes:{role_arn:{optional:true,type:'string'},computed_id:{computed:true},secret_id:{optional:true,sensitive:true},write_id:{optional:true,write_only:true},secret:{sensitive:true,nested_type:{attributes:{target_id:{optional:true}}}}},block_types:{network:{block:{attributes:{subnets:{required:true,type:['set','string']},security_groups:{optional:true}}}}}}),['network.security_groups','network.subnets','role_arn']);
 });

@@ -156,6 +156,90 @@ scripts, schema contents, policy effects and runtime health remain excluded.
 This audit changes no rendering/input/geometry. Docker contract verification,
 register/tests and support-matrix checks apply; SVG/Layout quality do not.
 
+## Machine learning and generative AI review (#725)
+
+Reviewed planorama commit: `f5c320438d8abf81de31c884bbd03dde5369773e`.
+All 90 managed types in `sagemaker`, `bedrock`, `bedrockagent`,
+`bedrockagentcore`, `agentregistry`, `comprehend`, `rekognition` and `transcribe`
+have six separate decisions in [the review data](aws-semantic-decisions.json).
+Each entry records pinned documentation, registration, selected field shapes,
+required/optional/computed contracts, managed/data distinctions and implementation
+evidence. The schema hash is checked against the inventory before verification.
+These conclusions describe the reviewed commit; subsequent implementations update
+the current gap text without rewriting this historical baseline.
+
+The runtime [matrix](resource-support.md), `basic_entries.rs`, `classification.rs`
+and `scope.rs` establish basic support. `service_references.rs`, containment,
+ownership rules and summary allowlists have no dedicated rules for these types
+at this commit. Inventory and support-matrix tests verify defaults, not complete
+relationships. Endpoint and notebook are Spatial; other reviewed types retain
+Logical presentation. Architecture-bearing Studio domains, AgentCore runtimes,
+gateways, agents, knowledge bases, flows, MLflow services and stream processors
+need individual presentation work, not blanket promotion of configuration objects.
+
+Existing [#701](https://github.com/ritz-p/planorama/issues/701) owns the endpoint
+configuration/model chain and model role/network references. Remaining source-type
+work is bounded by [#872](https://github.com/ritz-p/planorama/issues/872)
+(Bedrock), [#873](https://github.com/ritz-p/planorama/issues/873) (agents and RAG),
+[#874](https://github.com/ritz-p/planorama/issues/874) (AgentCore execution),
+[#875](https://github.com/ritz-p/planorama/issues/875) (gateways and identity),
+[#876](https://github.com/ritz-p/planorama/issues/876) (memory/evaluation/policies),
+[#877](https://github.com/ritz-p/planorama/issues/877) (Studio/notebooks/images),
+[#878](https://github.com/ritz-p/planorama/issues/878) (training/monitoring),
+[#879](https://github.com/ritz-p/planorama/issues/879) (catalog/inference auxiliaries),
+[#880](https://github.com/ritz-p/planorama/issues/880) (workforce/labeling), and
+[#881](https://github.com/ritz-p/planorama/issues/881) (specialized AI services).
+Cross-service endpoint audits retain their own types; these issues own the source
+paths. No completed #688–#702 scope is reopened.
+
+Contract distinctions checked against the pinned Provider documentation and schema:
+
+- SageMaker `endpoint_config_name` and production-variant `model_name` match
+  exported `name`, not ARN. Model names can be omitted for inference components.
+  Models/configurations are shared resources, not exclusive endpoint children.
+  Model `vpc_config` is a list block containing subnet/SG sets; training-job
+  subnet/SG attributes instead use lists. Model connectivity does not establish
+  endpoint subnet placement. Container environment and artifact URIs stay opaque.
+- Bedrock custom models expose both `custom_model_arn` and `job_arn`.
+  Foundation-model IDs, public JumpStart content and builtin evaluators are not
+  managed Terraform nodes. Agent guardrail/prompt configurations and alias
+  routing are nested **attributes**, unlike many nested blocks elsewhere.
+  DRAFT agent configuration, published aliases and numerical guardrail versions
+  require distinct identities and version agreement.
+- Knowledge-base storage and query-engine discriminators select different
+  OpenSearch, RDS, Redshift, Kendra, Neptune and S3 Vectors endpoints. Their VPC
+  does not contain the knowledge base. Database/index/variant names need their
+  parent context. Flow nodes and prompt variables are internal labels.
+- AgentCore runtime VPC mode differs from JWT/OAuth discovery private endpoints.
+  Private endpoints can select managed VPC/subnet/SG configuration or an explicit
+  Lattice resource; neither proves gateway/registry containment. Browser PUBLIC,
+  interpreter SANDBOX and runtime PUBLIC do not inherit VPC context.
+  Service-created harness runtimes/memory and MANAGED credential secrets are not
+  automatically Terraform-owned children. EXTERNAL secret references never expose
+  API keys, OAuth secrets or write-only values.
+- Deprecated `aws_bedrockagentcore_registry` and `aws_agentregistry_registry`
+  have distinct service registrations and schemas; migration advice is not an
+  alias contract. Memory-strategy role/namespaces are deprecated, logging `id`
+  denotes region, and Rekognition `stream_processor_arn` is deprecated in favor
+  of `arn`. Preserve those distinctions instead of inventing additional identities.
+- Studio ownership requires domain-qualified profile/space identity. Generated
+  home EFS/ENI outputs do not prove independently managed children. Workforce
+  Cognito references need pool/client/group agreement; OIDC usernames, URLs and
+  IP policy conditions do not establish resource or network identity.
+
+All dedicated links remain missing at this baseline. Future rules require unique
+explicit Terraform references, matching known target outputs, complete collections,
+compatible provider/account/region/state and current/deposed identity evidence.
+Data lookups and list registrations are separate from the managed denominator.
+Shared objects keep independent action and exactly-once coverage. Form bodies,
+policies, scripts, prompts, model data and runtime health remain excluded. Per-type
+summary deferrals name a candidate and require an allowlist and unknown-value tests;
+they do not claim current summary support.
+
+This audit changes no runtime or rendering input. Validate with the pinned-contract
+verifier, semantic audit tests/register and resource-support check in Docker;
+SVG regeneration and Layout quality do not apply to this audit-only change.
+
 ## Reading the register
 
 Each exact type has current managed defaults, a semantic status, missing capability or explicit deferral, priority, issue/disposition and schema input candidates. Official contracts are linked at commit `5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f`. Generic Terraform dependencies remain available in every category.
@@ -486,7 +570,7 @@ Implementation cross-checks: [classification](../src/provider/aws/classification
 
 Retain existing independent MSK/MQ/DocumentDB/Neptune/DMS/FSx/SageMaker endpoint cards while adding evidence in their bounded issues. Retain Batch compute-environment cards; Network Firewall cards and verified VPC/policy/logging relationships are implemented by #693. App Runner connectors, database subnet groups, namespace/configuration objects and policies need separate ownership/network decisions; do not promote all objects from a service together. Existing embedded EFS access points, KMS aliases and Secrets Manager versions remain examples of proven presentation ownership, not a default for every reference.
 
-MSK replicators (topics are tracked in #754), Network Firewall endpoint associations/transit-gateway/TLS variants (now tracked by #792), non-Lustre FSx, DocumentDB/Neptune global variants, DMS serverless and SageMaker Studio/training remain deferred outside the initial issue scopes. DocumentDB Elastic and Neptune Analytics now have bounded follow-up #766 from the #717 review. Their exact types and schema candidates remain in the register. Runtime health, effective IAM/firewall policy, packet routing, credentials, item data and arbitrary attribute dumping are intentionally unsupported. Encryption summaries for additional services require a separate allowlist review; do not copy a boolean from a similarly named field.
+MSK replicators (topics are tracked in #754), Network Firewall endpoint associations/transit-gateway/TLS variants (now tracked by #792), non-Lustre FSx, DocumentDB/Neptune global variants, DMS serverless remain outside the initial issue scopes; SageMaker Studio/training now have bounded follow-ups #877 and #878 from #725. DocumentDB Elastic and Neptune Analytics now have bounded follow-up #766 from the #717 review. Their exact types and schema candidates remain in the register. Runtime health, effective IAM/firewall policy, packet routing, credentials, item data and arbitrary attribute dumping are intentionally unsupported. Encryption summaries for additional services require a separate allowlist review; do not copy a boolean from a similarly named field.
 
 ## Containers and application hosting review (#713)
 
