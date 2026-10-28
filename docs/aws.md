@@ -2023,3 +2023,41 @@ See [fixture](../tests/fixtures/redshift-serverless-plan.json),
 Regenerate HTML inside Docker with
 `cargo run --locked -- tests/fixtures/redshift-serverless-plan.json --format html -o examples/redshift-serverless.html`.
 Both output formats are covered by native/Wasm parity.
+
+## FSx Lustre networking and encryption (#702)
+
+`aws_fsx_lustre_file_system` retains its independent Spatial card. Dedicated
+references require current managed AWS endpoints, unique explicit Terraform
+provenance, compatible provider/account/region evidence and matching known values:
+
+- `subnet_ids` references Subnet `id`. The pinned contract supports one subnet;
+  the entire nonempty list must match, without literals or duplicate values.
+- `security_group_ids` references Security Group `id`. The entire nonempty set
+  must match; order is irrelevant and partial/unknown collections are unverified.
+- `kms_key_id` references KMS Key `arn`, only with known `deployment_type` of
+  `PERSISTENT_1` or `PERSISTENT_2`. Key IDs, aliases, absent/unknown deployment
+  mode and implicit AWS-managed keys do not establish this reference.
+
+When both network references are verified and every referenced subnet/SG has
+matching explicit VPC ID proof for the same current managed VPC, the filesystem
+is placed in that VPC. It is not embedded into a subnet, SG or key. Omitted/default
+SGs, missing VPC proof or conflicting VPCs retain regional fallback; individually
+proven references remain available. Computed filesystem `vpc_id`/ENI outputs do
+not establish configured placement. Account scope is retained only from existing
+verified provider evidence; JSON values do not manufacture account evidence.
+
+Unknown, ambiguous, incompatible, deleted/deposed, data-source and filtered
+endpoints retain conservative fallback and ordinary Terraform references.
+Identity, actions, named-state boundaries and exactly-once coverage are preserved.
+Import/export S3 paths, mount names/DNS, credentials, content and root-squash
+settings are not emitted or interpreted. Windows/OpenZFS/ONTAP/cache contracts
+remain #826; Lustre source-backup/logging references remain #825.
+
+The pinned [Provider 6.70.0 contract](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/website/docs/r/fsx_lustre_file_system.html.markdown)
+and schema distinguish the subnet list, SG set and persistent-only KMS ARN.
+[Tests](../tests/unit/semantic/fsx.rs) and the synthetic
+[fixture](../tests/fixtures/fsx-lustre-plan.json) cover verified, literal and
+unknown evidence, with [SVG](../examples/fsx-lustre.svg) and
+[HTML](../examples/fsx-lustre.html) examples. Regenerate HTML in Docker with
+`cargo run --locked -- tests/fixtures/fsx-lustre-plan.json --format html -o examples/fsx-lustre.html`.
+Native/Wasm parity covers the same fixture and conservative fallbacks.

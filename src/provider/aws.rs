@@ -25,6 +25,7 @@ mod elasticache;
 pub(crate) mod encryption;
 mod eventbridge;
 mod firehose;
+mod fsx;
 mod glue;
 mod iam;
 mod icons;
@@ -218,6 +219,7 @@ pub(super) fn transform(raw: crate::semantic::Input) -> crate::model::Graph {
     apprunner::present(&raw, &mut graph);
     opensearch_serverless::present(&raw, &mut graph);
     batch::present(&raw, &mut graph);
+    fsx::present(&raw, &mut graph);
     networkfirewall::present(&raw, &mut graph);
     routes::present(&raw, &mut graph);
     members::present(&raw, &mut graph);
