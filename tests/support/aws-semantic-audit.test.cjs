@@ -5,6 +5,32 @@ const fs=require('node:fs');
 const {extract,buildEvidence,render}=require('../../scripts/aws-semantic-audit.cjs');
 const read=p=>JSON.parse(fs.readFileSync(p));
 
+test('compute audit covers 52 types and keeps names, ARNs and collection evidence distinct',()=>{
+ const services=new Set('autoscaling autoscalingplans appautoscaling batch imagebuilder lightsail outposts computeoptimizer'.split(' '));
+ const expected=read('tests/fixtures/aws-inventory/6.70.0.json').resources.filter(r=>services.has(r.service));
+ const entries=Object.entries(read('docs/aws-semantic-decisions.json').types).filter(([,d])=>d.review?.issue===712);
+ assert.equal(expected.length,52);
+ assert.deepEqual(entries.map(([t])=>t).sort(),expected.map(r=>r.type).sort());
+ for(const [type,{review,gap,issue}] of entries){
+  assert.equal(review.providerCommit,'5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f');
+  assert.equal(review.implementationCommit,'2bef52d045db4c5cf72374a0dca24d0629ed84e3');
+  assert.equal(review.officialDocumentation,expected.find(r=>r.type===type).documentation);
+  assert.deepEqual(Object.keys(review.shapes),review.fields);
+  for(const key of ['placement','ownership','network','references','scope','summaries']) assert.match(review[key],/^(Supported|Partial|Missing|Not applicable|Intentionally unsupported|Deferred):/,type+': '+key);
+  assert.match(gap,/#712/);
+  if(['placement','ownership','network','references'].some(k=>review[k].startsWith('Missing:'))) assert.ok(issue===700||(issue>=810&&issue<=816),type);
+ }
+ const d=Object.fromEntries(entries);
+ assert.match(d.aws_autoscaling_group.review.placement,/Spatial Controller/);
+ assert.match(d.aws_autoscaling_policy.review.references,/#362/);
+ assert.deepEqual(d.aws_batch_compute_environment.review.shapes['compute_resources.subnets'],['list',['set','string']]);
+ assert.deepEqual(d.aws_batch_job_queue.review.shapes['compute_environment_order.compute_environment'],['list','string']);
+ assert.match(d.aws_batch_job_definition.review.references,/revision-qualified/);
+ assert.match(d.aws_lightsail_instance.review.references,/id\/arn are ARN/);
+ assert.match(d.aws_lightsail_lb_certificate.review.references,/LB-qualified/);
+ assert.match(d.aws_outposts_capacity_task.review.references,/exclusion-label/);
+});
+
 test('search and BI review covers 65 types without borrowing adjacent-service semantics',()=>{
  const services=new Set('opensearch opensearchserverless elasticsearch cloudsearch osis kendra qbusiness quicksight finspace'.split(' '));
  const expected=read('tests/fixtures/aws-inventory/6.70.0.json').resources.filter(r=>services.has(r.service));

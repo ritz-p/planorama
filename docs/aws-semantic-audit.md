@@ -13,6 +13,103 @@ Each exact type has current managed defaults, a semantic status, missing capabil
 
 P1 prioritizes network placement and explicit service relationships with high architecture value. P2 covers bounded workload/storage configuration chains. P3 retains current defaults until a concrete use case and exact evidence contract justify additional semantics. P3 is not a claim of completeness or a prohibition on future implementation. The initial triage selects 15 bounded service issues (#688–#702); other services remain explicitly deferred per type rather than being hidden from the denominator.
 
+## Compute and scaling review (#712)
+
+Reviewed planorama commit: `2bef52d045db4c5cf72374a0dca24d0629ed84e3`.
+All 52 managed types in `autoscaling`, `autoscalingplans`, `appautoscaling`,
+`batch`, `imagebuilder`, `lightsail`, `outposts` and `computeoptimizer` have
+separate placement, ownership, network, reference, scope and summary decisions
+in [the explicit register](aws-semantic-decisions.json). Each review records
+exact fields, schema collection ancestry and resource documentation at Provider
+commit `5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f`. The source archive identifies
+`5e13eed`; the schema hash and managed denominator match the pinned inventory.
+These reviews preserve the historical baseline; implementation changes update
+current gap descriptions separately.
+
+Runtime evidence is [classification](../src/provider/aws/classification.rs),
+[basic defaults](../src/provider/aws/basic_entries.rs),
+[presentation/reference labels](../src/provider/aws.rs),
+[scope](../src/provider/aws/scope.rs), [basic scope limitations](../src/provider/aws/basic.rs),
+[containment](../src/provider/aws/containment/indirect.rs),
+[service references](../src/provider/aws/service_references.rs),
+[members](../src/provider/aws/members.rs) and
+[summary allowlists](../src/provider/aws/encryption.rs).
+The [runtime support matrix](resource-support.md) and
+[inventory tests](../tests/unit/aws_inventory.rs) establish basic defaults.
+Auto Scaling groups are Spatial Controllers because explicit classification
+overrides their basic inventory entry. Batch compute environments and six
+Lightsail endpoint types already have Spatial defaults. Configuration resources
+are not promoted simply because the schema contains an ARN.
+
+Existing #361 Launch Template Uses presentation is covered by
+[logical rendering tests](../tests/unit/svg/logical.rs); it is not a complete
+known-value network validator. #362 policy/group name verification and inverse
+policy context are implemented in [autoscaling.rs](../src/provider/aws/autoscaling.rs)
+and [its tests](../tests/unit/semantic/autoscaling.rs). Neither implies subnet
+containment, instance ownership or complete support for other ASG helpers.
+The other reviewed types have basic presentation and generic dependencies,
+without dedicated semantic rules or behavioral tests to borrow from ASG.
+
+Actionable gaps are #700 (Batch network/queue), #810 (ASG network/launch/traffic),
+#811 (ASG auxiliary owners/notifications), #812 (typed scaling targets),
+#813 (Image Builder chains/build infrastructure), #814 (distribution/lifecycle),
+#815 (Lightsail relationships and distribution/static-IP presentation), and
+#816 (Batch auxiliary compute references). These issues own the listed source
+and helper types; endpoint audits must not duplicate their relationships.
+Compute Optimizer selectors, Outposts exclusions and Batch job-definition
+payloads have concrete deferred contracts in the decisions, not unreviewed
+fallbacks. Existing completed #361/#362 and #688–#702 scopes remain intact.
+
+Contract distinctions checked against the pinned schema and documentation:
+
+- ASG subnet IDs are a set; AZ names do not identify default subnets. Direct
+  launch templates and base mixed-policy templates retain #361; overrides do
+  not inherit that claim. Classic ELB names, ELBv2 and VPC Lattice target-group
+  ARNs require their traffic-source discriminator. Shared notifications can
+  refer to multiple ASGs and cannot be embedded under an arbitrary one.
+- Application Auto Scaling identity includes namespace, scalable dimension
+  and resource ID. Formatted ECS/DynamoDB identifiers require complete explicit
+  provenance. Scaling-plan tags and metric resource labels are not ownership.
+- Batch `compute_resources` is a list block containing subnet/SG sets.
+  `compute_environment_order` is a list of blocks in the schema and
+  `internal/service/batch/job_queue.go` (`ListNestedBlock`), despite the docs
+  calling it a set. It has an explicit numeric `order` and an environment ARN.
+  Queue policy input is an ARN. The environment
+  name is `name`, while `ecs_cluster_arn` is computed. `instance_role` uses an
+  instance profile (the official example references its ARN). Deprecated
+  `image_id` differs from `ec2_configuration.image_id_override`. MANAGED and
+  UNMANAGED environments and EC2/SPOT/FARGATE variants cannot share assumed
+  network evidence. Job definition ARN includes revision; `arn_prefix` does not.
+- Image Builder recipes/components/workflows are reusable versioned resources.
+  Build infrastructure subnet context does not contain a pipeline or produced
+  image. Distribution region/account selectors qualify destination references,
+  not the configuration's own scope. Wildcard recipe versions, parent image
+  strings, YAML, Dockerfiles and policy/tag selection remain opaque.
+- Lightsail attachment inputs use names; instance/database `id` is an ARN,
+  while disk/LB/bucket IDs are names. LB certificates are LB-qualified and
+  distinct from general Lightsail certificates and ACM. Domain-entry composite
+  IDs changed separator from underscore to comma; parse neither as ownership.
+  Origin region differs from distribution control region. AZs, public IPs and
+  service-default networking cannot prove customer VPC containment. Public-port
+  CIDRs and certificate validation records do not identify managed endpoints.
+- Compute Optimizer enrollment/member counts do not identify Organizations
+  resources. Recommendation selectors distinguish Organization, AccountId and
+  ResourceArn. Outposts accepts an Outpost ID or ARN, but the managed denominator
+  has no Outpost endpoint; excluded instance IDs are workflow exclusions, not
+  children, and the API does not return them after import.
+
+Managed and data registrations remain separate contracts. No reviewed type is
+treated as an alias by [the runtime alias table](../src/provider/aws/aliases.rs).
+New links require unique explicit compatible references, matching known output
+values, complete collections and provider/account/region/state consistency.
+Current configuration cannot create historical/deposed links. Shared resources
+retain independent coverage. Credentials, key material, commands, environment
+maps, policy interpretation and runtime health/capacity inference stay excluded.
+
+The pinned-contract verifier, semantic audit tests/register check and runtime
+support-matrix check run in Docker. This audit changes no rendering input or
+geometry, so SVG regeneration and Layout quality do not apply.
+
 ## Network connectivity and traffic protection review (#716)
 
 Reviewed planorama commit: `d906716ae153a3d5bd320e64a6205f835850489b`.
