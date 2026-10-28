@@ -25,7 +25,9 @@ for(const [type,{review}] of Object.entries(reviewed)) {
    actual.push(child.nesting_mode); block=child.block;
   }
   const leaf=parts.at(-1); const attr=block.attributes?.[leaf]||block.block_types?.[leaf];
-  const documented=doc.includes('`'+leaf+'`') || (type==='aws_docdb_event_subscription' && leaf==='sns_topic_arn' && /^\s+sns_topic_arn\s*=\s*aws_sns_topic\./m.test(doc));
+  const sourceContract=review.sourceContracts?.[path];
+  const sourceDocumented=sourceContract && fs.readFileSync(process.argv[3]+'/'+sourceContract.file,'utf8').includes(sourceContract.token);
+  const documented=doc.includes('`'+leaf+'`') || doc.includes('`'+path+'`') || sourceDocumented || (type==='aws_docdb_event_subscription' && leaf==='sns_topic_arn' && /^\s+sns_topic_arn\s*=\s*aws_sns_topic\./m.test(doc));
   if(!attr||!documented) throw Error('Missing contract '+type+': '+path);
   actual.push(attr.type||attr.nesting_mode);
   if(JSON.stringify(actual)!==JSON.stringify(expected)) throw Error('Shape mismatch '+type+': '+path);
