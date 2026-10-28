@@ -2,6 +2,89 @@
 
 The [gap register](aws-semantic-gaps.md) covers every **1,742 managed type in 249 service packages** from the pinned AWS Provider 6.70.0 inventory. Basic role, display and scope eligibility are implemented for that denominator. This is not 1,742 complete architecture integrations.
 
+## Lambda, APIs and application integration review (#714)
+
+Reviewed planorama commit: `80b70c8fec8b5a3c75b0457bf0f4061fccea441e`
+(stack base [#929](https://github.com/ritz-p/planorama/pull/929), based on main
+`f7f5d8bfb39ded416c786a21037935232b8f1eda`). All **71 exact managed types** in
+`lambda`, `lambdacore`, `lambdamicrovms`, `apigateway`, `apigatewayv2`, `appsync`
+and `serverlessrepo` have individual placement, ownership, network, reference,
+scope and summary decisions in [the explicit register](aws-semantic-decisions.json).
+The pinned Provider 6.70.0 schema hash matches the inventory; field shapes,
+input/output flags, same-name data selectors and official resource documentation
+are checked at `5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f`.
+The records describe this baseline, not future implementations.
+
+Runtime evidence includes classification/basic defaults, scope, reference and
+membership rules, [Lambda proofs](../src/provider/aws/lambda.rs),
+[API Gateway proofs](../src/provider/aws/api_gateway.rs),
+[messaging](../src/provider/aws/messaging.rs),
+[subnet-derived placement](../src/provider/aws/containment/vpc_scope.rs) and
+[SG relationships](../src/provider/aws/security_groups.rs). Per-type records link
+their behavioral tests. Inventory and support-matrix tests establish basic
+presentation only; AppSync has no dedicated backend/owner rules at this baseline.
+
+Preserved completed scopes: #513 function/alias/version, layer and URL navigation;
+#509 REST/v2 API context, Lambda/private integration, stage and VPC-link proofs;
+#394/#502 SQS/Kinesis event-source lowering; #181/#182 Lambda network context.
+The older Lambda subnet/SG paths do not enforce every modern known-value,
+provider and lifecycle gate. Strengthening those proofs is a bounded extension,
+not a claim that all new contracts already exist. #688–#702 remain separate.
+
+Contract distinctions checked:
+
+- Lambda function/layer `version` outputs are strings, while layer permission
+  `version_number` is numeric. A layer `arn` includes its version; `layer_arn`
+  does not. Alias names, published versions, `$LATEST` and `$LATEST.PUBLISHED`
+  belong to different qualifier contracts and never create extra Terraform nodes.
+- Event-source `function_arn` is computed and differs from configured
+  `function_name`. DynamoDB needs `stream_arn`, not table ARN. Kafka/MQ/DocumentDB
+  require typed source contracts; poller access and failure destinations do not
+  imply function network containment. Kafka URLs, topic/queue names and schema
+  payloads remain opaque.
+- REST integration `integration_target` supports ALB/NLB with VPC Link V2;
+  its `uri` then carries Host context rather than backend identity. Legacy REST
+  VPC links use one NLB ARN. V2 private integration uses listener or Cloud Map
+  service ARN. Neither places the API inside endpoint subnets.
+- REST model, resource, method, response, stage and documentation identities are
+  API-qualified. Built-in models, wildcard method paths, OpenAPI bodies and
+  deployment triggers cannot manufacture endpoints. Private domain access uses
+  `VPCE` plus endpoint ID; its deprecated `id` is distinct from `arn`.
+- Despite its package name, `aws_apigatewayv2_routing_rule.action.invoke_api`
+  targets a **REST** API and stage. V2 route targets require explicit
+  `integrations/ID` provenance. Auto-deployed stages differ from explicit
+  deployment selection; HTTP/WebSocket discriminators remain necessary.
+- AppSync Event API `api_id`/`api_arn` differs from GraphQL `id`/`arn`. Event log
+  configuration is nested under `event_config`. GraphQL `GLOBAL` visibility is
+  not global deployment scope. Current basic API cards are Logical; architecture
+  presentation belongs to the linked implementation work, not this audit.
+- AppSync data-source names and pipeline `function_id` values require API
+  agreement; function names need not be unique. Backend and Cognito regions are
+  endpoint selectors, not the API's deployment region. Source association
+  configuration is a list-of-object attribute in the schema, not a nested block.
+  Custom-domain certificates require us-east-1 evidence; generated CloudFront
+  names do not prove managed distribution ownership.
+- Lambda Core egress subnet/SG sets describe connector ENIs. MicroVM ingress
+  connectors and image egress settings are distinct; `INTERNET_EGRESS` and
+  AWS-managed base-image ARNs are not managed resources. MicroVM workload
+  presentation needs review; image code, environment maps and hook payloads do not.
+- Serverless Repository application ARNs have no managed application endpoint in
+  this denominator. Stack outputs and parameters cannot discover deployed children;
+  revisit only with an explicit supported application/stack provenance contract.
+
+Bounded follow-ups: REST settings/auth/domain/helpers/integrations/private API/
+usage plans #930–#936; V2 integrations/routes/domains/helpers/stages #937–#941;
+AppSync Event/helpers/backends/domains/resolvers/GraphQL #942–#947; Lambda capacity,
+configuration, event sources, async destinations, qualified helpers and policies
+#948–#953; Core networking and MicroVMs #954–#955. Every actionable type links its
+own issue. Shared resources remain independent; payloads, credentials, arbitrary
+summaries, policy interpretation and runtime reachability remain excluded.
+
+Validation: Docker audit denominator/contract tests, pinned schema/documentation
+and same-name data selector verification, gap-register and support-matrix checks.
+This audit changes no runtime code, fixture, diagram or geometry, so it requires
+neither SVG regeneration nor a separate Layout quality run.
+
 ## EC2 VPC, subnet, endpoint and network-interface review (#710)
 
 Reviewed planorama commit: `a874b24ecfe4f0361ac81dc5afcb87e6570cd1d3`.
