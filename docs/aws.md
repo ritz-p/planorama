@@ -1,5 +1,51 @@
 # AWS architecture relationships
 
+## Batch compute environments and queues (#700)
+
+Managed `aws_batch_compute_environment` retains an independent Spatial card.
+`aws_batch_job_queue` and `aws_batch_scheduling_policy` remain independent Logical
+resources. Job definitions remain basic Logical configuration; capacity does not
+create jobs, instances or ECS clusters.
+
+Contracts are pinned to AWS Provider 6.70.0 commit
+`5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f`:
+
+| Resource input | Required managed endpoint output | Navigation |
+| --- | --- | --- |
+| Environment `compute_resources.subnets` (set inside one list block) | `aws_subnet.id` | Configured subnets |
+| Environment `compute_resources.security_group_ids` (set inside one list block) | `aws_security_group.id` | Configured security groups |
+| Queue `compute_environment_order.compute_environment` (list of blocks) | `aws_batch_compute_environment.arn` | Compute environments |
+| Queue `scheduling_policy_arn` | `aws_batch_scheduling_policy.arn` | Scheduling policy |
+
+Each reference requires complete explicit unique Terraform provenance and matching
+known values, correct output attributes, compatible provider binding/account/region,
+and current managed endpoints. Literal equality, dynamic instance selection,
+unknown values, duplicate endpoints and partial collections do not establish links.
+Queue collection proof covers every block, including distinct known numeric `order`
+values; it does not interpret scheduling or claim job placement. The official
+[queue documentation](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/website/docs/r/batch_job_queue.html.markdown)
+calls this a set, while its schema and
+[registered implementation](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/internal/service/batch/job_queue.go)
+use `ListNestedBlock`.
+
+Environment network proof additionally requires `type = MANAGED` and a known
+`compute_resources.type` of `EC2`, `SPOT`, `FARGATE` or `FARGATE_SPOT`.
+All subnets and SGs must independently prove the same current VPC through explicit
+known `vpc_id` references before the environment receives VPC containment.
+Multiple subnets never select one subnet. Missing/empty/unknown SGs (including
+an implicit default group), split VPCs and UNMANAGED environments retain the
+independent card without inferred containment. Complete configured references
+can remain available even when common-VPC placement cannot be established.
+
+State-qualified identities, actions, replacement/import/moved metadata and
+current/deposed distinctions remain intact. Filtered endpoints cannot leave
+dangling navigation or be repaired from another named state. No resource is
+embedded or counted twice. Role/profile/AMI/EKS/launch-template references remain
+follow-up #816; job-definition payloads, credentials, policy interpretation and
+runtime scheduling/health are excluded.
+
+Examples: [SVG](../examples/batch.svg), [HTML](../examples/batch.html).
+
 ## OpenSearch Serverless (#696)
 
 Collections retain independent Spatial cards. VPC endpoints remain Logical,

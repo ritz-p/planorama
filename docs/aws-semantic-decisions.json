@@ -575,10 +575,10 @@
       "gap": "Replication instance network proof and task source/target endpoint references; no database inference from strings."
     },
     "aws_batch_compute_environment": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 700,
-      "gap": "#712 reviewed: Missing: #700 subnet/SG identities; #816 owns IAM instance-profile/role, launch-template/AMI and EKS references. ecs_cluster_arn is computed, not configured ownership. Missing: #700 MANAGED compute_resources complete subnet and SG sets with common VPC; UNMANAGED has no inferred placement. See per-dimension review; Intentionally unsupported: desired_vcpus and state/status do not create instances or imply health.",
+      "gap": "Implemented #700: complete known managed subnet/SG references and common-VPC placement for MANAGED compute environments, queue environment ARN collections and scheduling-policy ARN navigation. Environments remain independent Spatial cards; queues/policies stay Logical. No inferred instances, jobs or ownership. #712 review preserves its historical baseline; auxiliary compute references remain #816. See aws.md#batch-compute-environments-and-queues-700.",
       "review": {
         "issue": 712,
         "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
@@ -672,10 +672,10 @@
       }
     },
     "aws_batch_job_queue": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 700,
-      "gap": "#712 reviewed: Missing: #700 complete set of environment ARNs and policy ARN. order is numeric scheduling priority, not collection position. See per-dimension review; Intentionally unsupported: scheduling order/priority does not prove where jobs actually run.",
+      "gap": "Implemented #700: complete known managed subnet/SG references and common-VPC placement for MANAGED compute environments, queue environment ARN collections and scheduling-policy ARN navigation. Environments remain independent Spatial cards; queues/policies stay Logical. No inferred instances, jobs or ownership. #712 review preserves its historical baseline; auxiliary compute references remain #816. See aws.md#batch-compute-environments-and-queues-700.",
       "review": {
         "issue": 712,
         "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
@@ -712,10 +712,10 @@
       }
     },
     "aws_batch_scheduling_policy": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 700,
-      "gap": "#712 reviewed: Not applicable: outgoing fair-share selectors are not Terraform references; #700 owns incoming queue usage. See per-dimension review; Intentionally unsupported: share identifiers, weights and scheduling policy interpretation.",
+      "gap": "Implemented #700: complete known managed subnet/SG references and common-VPC placement for MANAGED compute environments, queue environment ARN collections and scheduling-policy ARN navigation. Environments remain independent Spatial cards; queues/policies stay Logical. No inferred instances, jobs or ownership. #712 review preserves its historical baseline; auxiliary compute references remain #816. See aws.md#batch-compute-environments-and-queues-700.",
       "review": {
         "issue": 712,
         "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",

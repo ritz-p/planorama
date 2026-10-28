@@ -100,4 +100,5 @@ examples/neptune.svg
 examples/redshift-serverless.svg
 examples/apprunner.svg
 examples/opensearch-serverless.svg
+examples/batch.svg
 examples/networkfirewall.svg
