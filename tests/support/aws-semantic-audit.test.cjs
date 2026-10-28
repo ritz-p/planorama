@@ -5,6 +5,36 @@ const fs=require('node:fs');
 const {extract,buildEvidence,render}=require('../../scripts/aws-semantic-audit.cjs');
 const read=p=>JSON.parse(fs.readFileSync(p));
 
+test('analytics batch 1 covers 81 exact types and preserves qualified identities',()=>{
+ const services=new Set('athena redshift redshiftserverless redshiftdata glue lakeformation emr emrcontainers emrserverless'.split(' '));
+ const expected=read('tests/fixtures/aws-inventory/6.70.0.json').resources.filter(r=>services.has(r.service));
+ const entries=Object.entries(read('docs/aws-semantic-decisions.json').types).filter(([,d])=>d.review?.issue===722);
+ assert.equal(expected.length,81);
+ assert.deepEqual(entries.map(([t])=>t).sort(),expected.map(r=>r.type).sort());
+ for(const [type,{review,gap,issue}] of entries){
+  assert.equal(review.implementationCommit,'c50d830c5737a51a362708b71f67e6c407884dbe');
+  assert.equal(review.providerCommit,'5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f');
+  assert.equal(review.officialDocumentation,expected.find(r=>r.type===type).documentation);
+  assert.deepEqual(Object.keys(review.shapes),review.fields);
+  assert.deepEqual(Object.keys(review.contracts),review.fields);
+  for(const key of ['placement','ownership','network','references','scope','summaries']) assert.match(review[key],/^(Supported|Partial|Missing|Not applicable|Intentionally unsupported|Deferred):/,type+': '+key);
+  assert.match(gap,/#722/);
+  if(['placement','ownership','network','references'].some(k=>review[k].includes('Missing:'))) assert.ok(issue>=840&&issue<=855,type);
+ }
+ const d=Object.fromEntries(entries);
+ assert.equal(d.aws_athena_database.review.contracts.bucket,'optional');
+ assert.deepEqual(d.aws_emr_cluster.review.shapes['ec2_attributes.additional_master_security_groups'],['list','string']);
+ assert.match(d.aws_emr_cluster.review.placement,/Spatial/);
+ assert.match(d.aws_emrserverless_application.review.placement,/Spatial/);
+ assert.match(d.aws_glue_catalog_table.review.ownership,/#545/);
+ assert.equal(d.aws_glue_catalog.review.contracts['catalog_properties.data_lake_access_properties.managed_workgroup_name'],'computed');
+ assert.deepEqual(d.aws_lakeformation_resource_lf_tag.review.shapes['lf_tag.key'],['list','string']);
+ assert.deepEqual(d.aws_lakeformation_resource_lf_tags.review.shapes['lf_tag.key'],['set','string']);
+ assert.deepEqual(d.aws_redshift_cluster.review.shapes.encrypted,['string']);
+ assert.match(d.aws_redshiftserverless_workgroup.review.network,/#695/);
+ assert.equal(d.aws_redshiftserverless_snapshot.review.contracts.namespace_arn,'computed');
+});
+
 test('filesystem audit covers 70 exact types and distinguishes configured references from service outputs',()=>{
  const services=new Set('efs fsx storagegateway datasync transfer backup dlm rbin drs'.split(' '));
  const expected=read('tests/fixtures/aws-inventory/6.70.0.json').resources.filter(r=>services.has(r.service));
