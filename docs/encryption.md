@@ -46,7 +46,7 @@ Unchanged cached data resources recovered only from prior state use those prior
 values and their sensitive masks; present planned values take precedence.
 State-qualified identities and shared coverage accounting are preserved.
 
-The [icon SVG](../examples/encryption.svg),
+The [default SVG](../examples/encryption.svg),
 [service-name SVG](../examples/encryption-service-names.svg) and
 [offline HTML](../examples/encryption.html) exercise enabled, disabled, unknown,
 external-key and long-address cases. Both outputs use the same provider facts and

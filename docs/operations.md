@@ -51,7 +51,7 @@ Every retained import object adds a purple `import` badge to the individual spat
 or logical resource, embedded Route, and component member presentation. Empty and
 unknown imports receive the same indicator. The synthetic component does not inherit
 an import operation, and inline Route entries do not duplicate the table's badge.
-The badge has its own measured row, separate from addresses, service icons and the
+The badge has its own measured row, separate from addresses, service labels and the
 gray `external` indicator. Spatial action headings omit the redundant `import /`
 prefix; embedded type/action headings and annotation operation fields retain the
 composed label. Accessible titles preserve the full operation and its order.

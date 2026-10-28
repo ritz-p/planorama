@@ -1,7 +1,7 @@
 # Resource presentation policy
 
-This is the design contract for #540 and the service follow-ups, not a claim
-that the proposed placements are implemented. The [generated support matrix](resource-support.md)
+This defines shared presentation requirements; service-specific proofs are in
+[AWS relationships](aws.md), [Route cards](routes.md) and [encryption](encryption.md). The [generated support matrix](resource-support.md)
 records current defaults. Role, placement, deployment scope, network containment,
 semantic membership and presentation ownership are independent.
 
@@ -11,33 +11,12 @@ optional independent presentation uses the shared [Spatial type option](configur
 
 ## Audit of the 42 AWS Logical types
 
-The audit uses `provider/aws.rs` at `ac700bb`. Every type below then defaulted
-to Logical for managed and data resources. Names in the table omit `aws_`.
-
-| Types | Proposed treatment and reason |
-| --- | --- |
-| `acmpca_certificate_authority`, `kms_key`, `secretsmanager_secret`, `cloudwatch_log_group` | Independent cards: service authorities and storage endpoints have architectural identity outside VPCs. |
-| `glue_job`, `glue_crawler`, `glue_catalog_database` | Independent cards: execution subjects and catalog storage. Database is not network containment. |
-| `ecs_cluster` | Independent card: workload membership does not make the cluster a VPC/Subnet container or an automatic display owner. |
-| `athena_data_catalog`, `athena_workgroup` | Independent cards: neither implies ownership of the other. |
-| `glue_catalog_table` | Conditional child of a proven catalog database; shared or unresolved database identity requires an independent card. |
-| `efs_access_point` | Conditional child of its verified file system, never of a mount target or subnet. |
-| `kms_alias`, `secretsmanager_secret_version` | Conditional children of the verified key/secret; retain each object's own identity and scope. |
-| `acm_certificate`, `acmpca_certificate` | Conditional owner/consumer presentation only with unique service-specific proof; shared certificates remain independent. Issuance and use are different relationships. |
-| `acmpca_certificate_authority_certificate`, `acm_certificate_validation` | Keep Logical: installation/validation configuration, not another authority. |
-| `s3_bucket_server_side_encryption_configuration` | Configuration child of a uniquely verified, scope-compatible bucket; independent fallback retains identity and action. See [encryption](encryption.md). |
-| `ecs_task_definition`, `ami`, `launch_template` | Keep Logical: definitions/templates rather than deployed execution subjects. |
-| `iam_policy`, `iam_role_policy`, `iam_user_policy`, `iam_group_policy`, `autoscaling_policy` | Keep Logical: policy/configuration objects, irrespective of role names. |
-| `iam_group_membership`, `iam_user_group_membership`, `iam_user_policy_attachment`, `iam_group_policy_attachment` | Keep existing provenance-backed relationship presentation; do not turn membership/attachment into containment. |
-| `sns_topic_subscription`, `lambda_event_source_mapping`, `cloudwatch_event_target` | Keep existing association presentation and provenance; not independent execution resources. |
-| `iam_role`, `iam_instance_profile`, `iam_group` | Keep Logical for this work: identity/access configuration with existing navigable references. |
-| `iam_user`, `iam_openid_connect_provider`, `iam_saml_provider` | Retain Logical placement; the later #551 classification correction uses Identity, also for Role/Group. Presentation review remains separate. |
-| `ssm_parameter` | Conditional future review as a stored object; retain Logical in this series and never expose parameter values. |
-| `cloudwatch_metric_alarm` | Keep Logical: monitoring configuration with existing verified monitor relationships. |
-
-These are 10 independent-card candidates, 6 conditional child candidates and
-26 retained types (including 4 deferred semantic/display reviews). Route 53 zones
-and records are already Spatial and are outside this migration.
+The [original 42-type audit](https://github.com/ritz-p/planorama/blob/8fb4aef052f7d941b0a5da6b08a4fc610661a504/docs/resource-presentation.md#audit-of-the-42-aws-logical-types)
+and [PR #552](https://github.com/ritz-p/planorama/pull/552) record defaults at
+`ac700bb` and the reasons for proposed migrations. Those proposals are historical;
+use the support matrix for current defaults and the service contracts above for
+implemented ownership. The seven purpose-dependent types retain their separate
+[comparison and decision](purpose-placement.md).
 
 ## Provider and selection contract
 
@@ -84,41 +63,11 @@ target, verified attribute and provider-supplied labels. `view/presentation.rs`
 resolves Independent, Logical or Embedded after selection, rejecting ambiguous
 identity, self/cyclic/nested owners and incompatible member scopes. Route-specific
 proof remains in `RoutePresentation`; both paths share effective owner lookup.
-EFS Access Points now use this model with verified `file_system_id` service
-references and independent Spatial fallback. KMS Keys are independent cards;
-Aliases reuse the same presentation model with verified `target_key_id` references
-and compatible scope. Keys never become children of encryption consumers.
-Secrets are independent cards; managed/data Versions use the same service-member
-proof and scope checks with `secret_id`. Data Secrets remain separate, and missing
-or incompatible parents leave selected Versions as independent cards.
-Private CA authorities and issued certificates are independent cards. ACM certificates
-reuse service-member measurements under a verified signing CA only with compatible
-scope and no incoming attribute references. Used/shared certificates stay independent;
-Private CA certificate account uncertainty never inherits the issuer's scope.
-Installation and validation resources remain Logical. Detailed proof and fallback
-rules are in [AWS relationships](aws.md#aws-private-ca).
-The audit above remains a historical inventory of defaults at its recorded commit;
-CloudWatch Log Groups are independent cards and preserve ordinary consumer
-reference/dependency navigation across spatial endpoints without inferring logging
-delivery or ownership. ECS Clusters are independent cards; verified Service
-membership uses service-reference metadata without changing network placement or
-creating presentation ownership. Task Definitions remain Logical.
+Service contracts own their endpoint, scope and fallback requirements. Do not
+copy another service's proof merely because both use this shared presentation
+model. Network containment, configured references and embedding remain separate.
 
-Network Firewall logging configurations become embedded members only after a
-unique compatible `firewall_arn` proof. Unproven configurations remain Logical;
-removing a proven owner through selection releases its member to an independent
-card. Shared firewall policies and rule groups remain Logical without embedded
-ownership. [Network Firewall](aws.md#network-firewall-693) defines the separate
-VPC/subnet and destination proofs.
-Glue Database, Crawler and Job are independent cards. Tables reuse service-member
-measurements under an explicitly verified Database with matching catalog IDs and
-regions, compatible provider scope and no incoming attribute references. Catalog
-account scope stays unknown; data tables and unresolved/shared tables stay independent.
-Athena Workgroups and Data Catalogs are independent cards. Matching names and co-presence
-never create ownership or usage; explicit configuration references keep their ordinary
-Terraform provenance and navigation.
-
-Measure headers, service icons, references, import/move badges and wrapped child
+Measure headers, service labels, references, import/move badges and wrapped child
 addresses before packing. Reserve parent height and actual child bounds/ports;
 feed the same effective ownership into routing ancestry, masks, named-state offsets,
 SVG metadata and HTML presentation/export indices. Avoid unrelated Route/RDS

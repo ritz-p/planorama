@@ -98,12 +98,6 @@ Long headings wrap and reserve their height in the parent layout. Import and sta
 operations retain their composed labels. Inline route entries have no independent
 Terraform identity and do not receive a resource-type heading.
 
-| Presentation | Text | Height | Horizontal padding |
-| --- | --- | --- | --- |
-| Former service icon | SVG artwork | 24px (24×24px square) | 8px gap to address |
-| Previous compact label | 13px bold | 18px | 6px |
-| Current label | 18px bold | 32px per first line; +24px per extra line | 10px |
-
 Formal service names remain in SVG metadata and determine category color separately
 from display names: Subnet and VPC share Network blue. The
 [label example](../examples/service-labels.svg) includes VPC/Subnet containment,

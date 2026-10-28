@@ -71,7 +71,7 @@ families, not the actual fallback face selected for every glyph.
 Axis-aligned bounding boxes approximate rotated/skewed text, rounded corners,
 glyph ink and stroke joins. Clipping, opacity and custom CSS effects are not
 modeled. The check targets generated static diagrams, not arbitrary SVG or
-interactive viewer states. Canvas titles, legends, routing paths and artwork
+interactive viewer states. Canvas titles, legends and routing paths
 are outside this focused card check. A passing result is not proof of perfect
 typography on every system; review representative rendered output when changing
 fonts or geometry. Keep ordinary rendering, routing and browser tests enabled.

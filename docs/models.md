@@ -122,7 +122,7 @@ from `aws_` types, or `InferredTerraform` from the exact types `terraform_data`
 and `terraform_remote_state`. No other `terraform_` type is inferred. An explicit
 foreign or empty source, or an unresolved configuration binding, blocks this fallback;
 resource type spelling cannot override it. The fallback records its inferred
-identity separately from an explicit source. Icon selection consumes this
+identity separately from an explicit source. Service classification consumes this
 identity without changing roles, relationships or lifecycle metadata.
 
 Configuration keys are state-local: cross-state identity requires `(StateId, key)`.

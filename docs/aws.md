@@ -226,7 +226,7 @@ The six [verified `aws_alb*` resource aliases](aws-inventory.md#verified-resourc
 reuse their canonical `aws_lb*` rules, subject to the documented mode limits,
 while preserving their original Terraform identities.
 The generated [resource support matrix](resource-support.md) lists exact-type
-roles, display modes, icons and scope eligibility. This document defines the
+roles, display modes, service classification and scope eligibility. This document defines the
 conditional relationship and placement proofs behind that catalog.
 
 The [AWS managed inventory](aws-inventory.md) supplies basic capabilities for all
@@ -235,8 +235,8 @@ relationships or containment. Existing rules below retain their evidence contrac
 
 ## RDS Global Clusters
 
-`aws_rds_global_cluster` is a Global spatial resource with the RDS icon and
-service name. It never inherits the execution provider's region. Regional
+`aws_rds_global_cluster` is a Global spatial resource with the RDS service
+label. It never inherits the execution provider's region. Regional
 `aws_rds_cluster` cards retain their own provider/account/region identity and
 existing embedded Instance ownership and coverage.
 
@@ -266,7 +266,7 @@ Regenerate HTML with
 
 `aws_cloudfront_distribution` remains a Global spatial connector. Exact AWS
 OAC, OAI, cache, origin-request and response-headers policy resources are Global
-logical policy rows with their original identity, action and CloudFront icon.
+logical policy rows with their original identity, action and CloudFront service label.
 Inline origins and behaviors do not become Terraform resources.
 
 Dedicated configured references require a complete, explicit, unique managed
@@ -296,7 +296,7 @@ Regenerate HTML with
 ## WAFv2
 
 Exact AWS Web ACLs and Rule Groups are spatial Policy cards with the AWS WAF
-icon. Known `scope = CLOUDFRONT` means Global even when the API provider uses
+service label. Known `scope = CLOUDFRONT` means Global even when the API provider uses
 `us-east-1`; `REGIONAL` uses verified resource/provider region evidence. Unknown
 scope stays unknown with a diagnostic. Deleted/deposed scope can use its own
 before-value, but current configuration cannot establish historical links.
@@ -330,7 +330,7 @@ ALB/stage associations and unresolved configuration. Regenerate HTML with
 
 ## S3 bucket configuration
 
-`aws_s3_bucket_policy` is a regional Logical Policy resource with the S3 icon,
+`aws_s3_bucket_policy` is a regional Logical Policy resource with the S3 service label,
 independent identity, action and coverage. Its `Policy bucket reference` requires
 a complete explicit unique current managed AWS Bucket reference to `id` or
 `bucket` and matching known evaluated values. Bucket names alone, unknown/dynamic
@@ -402,7 +402,7 @@ show two rules, regional separation and a literal fallback. Regenerate HTML with
 Exact AWS `aws_acmpca_certificate_authority` and `aws_acmpca_certificate` are
 independent spatial Nodes; `aws_acmpca_certificate_authority_certificate` is a logical
 Controller that preserves the installation resource's own identity. All three
-use the AWS Private CA icon/service name and their proven regional provider
+use the AWS Private CA service label and their proven regional provider
 scope. Managed authorities and certificate installations retain the verified
 provider account. Issued certificates and authority data sources keep account
 scope unknown because they can use a CA shared by another account.
@@ -459,7 +459,7 @@ offline plan. Regenerate HTML in Docker with
 
 `aws_cognito_user_pool`, `aws_cognito_user_pool_client` and
 `aws_cognito_identity_pool` are independent regional spatial Nodes with the
-Amazon Cognito icon and service name. Their identity, lifecycle and coverage
+Amazon Cognito service label. Their identity, lifecycle and coverage
 remain independent of any verified reference.
 
 Client `user_pool_id` references require an explicit unique User Pool `id`
@@ -486,7 +486,7 @@ documentation. Create-time unknown IDs remain unverified.
 ## Step Functions
 
 `aws_sfn_state_machine` and `aws_sfn_activity` are independent regional spatial
-Nodes with the AWS Step Functions icon/service name. A State Machine's `role_arn`
+Nodes with the AWS Step Functions service label. A State Machine's `role_arn`
 is an Execution role reference only with a complete unique explicit reference to
 a current managed AWS IAM Role's `arn` and matching known evaluated values.
 Unknown, ambiguous, wrong-provider/type and deleted/deposed endpoints stay
@@ -509,7 +509,7 @@ schema defines regional resources and a scalar `role_arn`; ASL is an opaque stri
 
 `aws_redshift_cluster` and `aws_redshift_subnet_group` are regional spatial Nodes;
 `aws_redshift_parameter_group` is a regional Logical Policy. All use Amazon
-Redshift icons/service names. Serverless resources follow the separate #695 contract below.
+Redshift service labels. Serverless resources follow the separate #695 contract below.
 
 Cluster subnet/parameter group references require complete unique explicit
 references to the corresponding group's `name` or `id`, matching known values
@@ -536,8 +536,8 @@ contracts define these scalar names and set-valued ID collections.
 
 ## CloudTrail
 
-`aws_cloudtrail` is one regional spatial Node with the AWS CloudTrail icon/service
-name. Provider region describes the trail's home region. Multi-region and
+`aws_cloudtrail` is one regional spatial Node with the AWS CloudTrail service
+label. Provider region describes the trail's home region. Multi-region and
 organization settings do not clone the trail into other regions/accounts or
 make it Global; they do not prove collection coverage or successful delivery.
 
@@ -564,7 +564,7 @@ define the home-region requirement and scalar destination references.
 
 `aws_backup_vault` is a regional spatial Node; `aws_backup_plan` and
 `aws_backup_selection` are regional spatial Controllers. All have independent
-identity, coverage and AWS Backup icons/service names.
+identity, coverage and AWS Backup service labels.
 
 Plan `rule.target_vault_name` references require a unique explicit Vault
 `name`/`id` reference and matching known value. Since rules are a set, only a
@@ -599,7 +599,7 @@ schema and reference contracts.
 ## Athena Workgroup and Data Catalog
 
 Exact AWS `aws_athena_workgroup` and `aws_athena_data_catalog` are independent
-regional spatial Nodes with the Amazon Athena icon/service name. Neither is a
+regional spatial Nodes with the Amazon Athena service label. Neither is a
 presentation owner of the other. Their own deployment region comes
 from the verified provider binding; a catalog's parameters do not relocate it to
 the region/account of a backend. Missing or unresolved region overrides remain
@@ -635,8 +635,8 @@ catalogs. Regenerate HTML in Docker with
 ## Glue Catalog, Crawler and Job
 
 Exact AWS `aws_glue_catalog_database`, `aws_glue_catalog_table`, `aws_glue_crawler`
-and `aws_glue_job` are regional spatial Nodes using the AWS Glue icon/service
-name. Every resource retains its own identity, lifecycle and coverage entry.
+and `aws_glue_job` are regional spatial Nodes using the AWS Glue service
+label. Every resource retains its own identity, lifecycle and coverage entry.
 Catalog Database/Table account scope remains unknown: an explicit catalog can
 belong to a different account from the execution provider.
 
@@ -686,7 +686,7 @@ policies remain Policy, as does the existing instance-profile auxiliary
 configuration. Classification does not promote any of these resources to Spatial.
 `aws_iam_group_membership`, `aws_iam_user_group_membership`,
 `aws_iam_user_policy_attachment` and `aws_iam_group_policy_attachment` are logical
-Associations. All use the IAM icon/service name and Global scope, independently
+Associations. All use the IAM service label and Global scope, independently
 of the provider region. Each stays a separate resource with its own action,
 provenance, selection/search identity and coverage entry.
 
@@ -726,7 +726,7 @@ Regenerate SVGs with the standard script and HTML in Docker with
 ## IAM identity providers
 
 Exact AWS `aws_iam_openid_connect_provider` and `aws_iam_saml_provider` use logical
-Identity rows with the IAM icon/service name and Global scope. These represent
+Identity rows with the IAM service label and Global scope. These represent
 federation configuration, not IAM users or principals. Provider region
 does not make them regional. Managed/data instances, independent actions, moves,
 imports, deposed resources and state-qualified identities use the shared resource
@@ -759,7 +759,7 @@ Regenerate HTML in Docker with
 ## Deployment scopes
 
 EFS File Systems, Mount Targets and Access Points are regional spatial Nodes.
-All three use the Amazon EFS icon. A File System is never
+All three use the Amazon EFS service label. A File System is never
 placed inside a Subnet, including One Zone file systems; no AZ layer is inferred.
 Mount Targets reuse Subnet containment and SG connections. `File system` and
 `Mount target subnet` require a complete, explicit, unique managed-resource `id`
@@ -790,7 +790,7 @@ documentation, installed schema and Terraform 1.9.8 offline plan confirm these
 fields and reference shapes. Regenerate HTML in Docker with
 `cargo run --locked -- tests/fixtures/efs-plan.json --format html -o examples/efs.html`.
 
-EBS Volumes are regional spatial Nodes with the Amazon EBS icon. A volume belongs
+EBS Volumes are regional spatial Nodes with the Amazon EBS service label. A volume belongs
 to an Availability Zone in AWS; this view groups it by its proven region without
 adding an AZ layer or placing it inside the attached instance's Subnet. An AZ
 string does not infer a region, attachment, co-location or attachment success.
@@ -815,7 +815,7 @@ fields and reference shapes. Regenerate HTML in Docker with
 `cargo run --locked -- tests/fixtures/ebs-plan.json --format html -o examples/ebs.html`.
 
 SSM Parameter Store `aws_ssm_parameter` is a regional logical Node with the AWS
-Systems Manager icon. Managed parameters and data lookups keep separate identities,
+Systems Manager service label. Managed parameters and data lookups keep separate identities,
 even with equal names. Parameter paths create no inferred hierarchy, environment,
 containment or deployment scope. Values (including ordinary String/StringList),
 SecureString payloads, descriptions and arbitrary type strings are omitted.
@@ -830,7 +830,7 @@ and ECS reference shape. Regenerate HTML in Docker with
 `cargo run --locked -- tests/fixtures/ssm-plan.json --format html -o examples/ssm.html`.
 
 Secrets Manager Secrets are independent regional cards, including separate data
-lookups, with the AWS Secrets Manager icon. `Version secret` requires
+lookups, with the AWS Secrets Manager service label. `Version secret` requires
 an explicit `secret_id` reference from a managed or data Version to a managed
 Secret's `id` or `arn`, matching known planned values. Name-based references remain
 ordinary Terraform references because names resolve in the consumer's account and
@@ -864,7 +864,7 @@ Regenerate HTML in Docker with
 `cargo run --locked -- tests/fixtures/secrets-manager-plan.json --format html -o examples/secrets-manager.html`.
 
 KMS Keys are independent regional cards with the AWS Key
-Management Service icon. `Alias key` verifies `target_key_id` against an explicitly
+Management Service service label. `Alias key` verifies `target_key_id` against an explicitly
 referenced Key's `id`, `key_id` or `arn`. Encryption-key links use an exact allowlist:
 SQS Queue `kms_master_key_id`, RDS Instance/Cluster `kms_key_id`, and S3 Bucket
 Server-Side Encryption Configuration
@@ -896,7 +896,7 @@ schemas, checked with Terraform 1.9.8. Regenerate HTML in Docker with
 
 ACM certificates are regional cards, optionally grouped under a verified signing CA
 as described above; certificate-validation resources remain separate Logical
-configuration with the AWS Certificate Manager icon. `Certificate reference`
+configuration with the AWS Certificate Manager service label. `Certificate reference`
 links on validation resources, LB listeners and CloudFront viewer certificates
 require a complete explicit reference to `aws_acm_certificate.arn` / `.id` or,
 for consumers, `aws_acm_certificate_validation.certificate_arn`, and matching known
@@ -912,7 +912,7 @@ Regenerate HTML in Docker with
 `cargo run --locked -- tests/fixtures/acm-plan.json --format html -o examples/acm.html`.
 
 Route 53 Hosted Zones and Records are spatial nodes with Global scope and the
-Amazon Route 53 icon. The [synthetic example](../examples/route53.svg) also has
+Amazon Route 53 service label. The [synthetic example](../examples/route53.svg) also has
 [offline HTML](../examples/route53.html). `Hosted zone` links require a complete,
 unique explicit `zone_id` reference to a managed Zone's `zone_id` or `id`, with
 equal known planned values. `Alias target` requires both `alias.name` and
@@ -940,13 +940,13 @@ Regenerate the Route 53 SVG with `sh scripts/update-examples.sh` and HTML with
 inside the development container.
 
 `aws_cloudwatch_event_bus` and `aws_cloudwatch_event_rule` are regional spatial
-nodes with the Amazon EventBridge icon. They preserve Terraform identities,
+nodes with the Amazon EventBridge service label. They preserve Terraform identities,
 managed/data mode, actions and lifecycle metadata. Explicit references remain
 ordinary dependencies; event patterns, names and policy text do not establish
 message flow or VPC/Subnet containment. Literal-only and implicit default buses
 do not create resources or ownership. See the [EventBridge example](../examples/eventbridge.svg).
 
-`aws_rds_cluster_instance` is a supported regional resource with the RDS icon.
+`aws_rds_cluster_instance` is a supported regional resource with the RDS service label.
 Managed instances with a complete, explicit, unique `cluster_identifier` reference
 to a managed AWS `aws_rds_cluster` appear as individual cards inside that cluster
 when the known `cluster_identifier` matches its referenced `id`.
@@ -1262,7 +1262,7 @@ endpoints, a cross-region data queue, an unsupported source and a literal fallba
 ## Kinesis Data Streams
 
 Exact AWS `aws_kinesis_stream` resources are regional spatial nodes with the
-Amazon Kinesis Data Streams icon/service name. Static provider regions are used
+Amazon Kinesis Data Streams service label. Static provider regions are used
 when no resource override is present. Stream region overrides are not yet in the
 verified override allowlist and conservatively leave deployment region unknown.
 The Lambda mapping rules above support stream `.arn` references, including
@@ -1288,7 +1288,7 @@ ARN retains ordinary references without an event-source edge.
 ## Amazon Data Firehose
 
 Exact AWS `aws_kinesis_firehose_delivery_stream` resources are regional spatial
-Nodes with the Amazon Data Firehose icon/service name. They retain their own
+Nodes with the Amazon Data Firehose service label. They retain their own
 action, identity, lifecycle metadata and coverage record. Static provider regions
 apply when no resource override is present; explicit overrides remain unknown
 until supported by the verified override allowlist.
@@ -1379,8 +1379,8 @@ these explanations once per role, separately from Terraform action and managed/d
 mode. Their action subsections change presentation only, not role or placement.
 
 Placement is independent of role. The [generated matrix](resource-support.md)
-records current behavior; the [42-type placement audit and migration policy](resource-presentation.md)
-separately describe proposed service cards and conditional child presentations.
+records current behavior; the [presentation policy](resource-presentation.md)
+defines ownership, selection and conditional child presentation.
 The [purpose-dependent review](purpose-placement.md) retains Logical defaults for
 SSM Parameters, metric alarms and the five IAM Identity types.
 The [explicit generation-time option](configuration.md#explicit-spatial-types)
@@ -1498,7 +1498,7 @@ models known planned values; it does not claim an applied AWS deployment.
 
 `aws_ecr_repository` is a regional spatial card. `aws_ecr_repository_policy`
 and `aws_ecr_lifecycle_policy` remain individually selectable logical resources,
-with the Amazon ECR icon and service name. `Configured repository` requires a
+with the Amazon ECR service label. `Configured repository` requires a
 complete, unique explicit `repository` reference to a managed AWS repository's
 `name` or `id`, matching known values and compatible provider bindings.
 Unknown, ambiguous, foreign-provider, deleted and deposed endpoints do not prove
@@ -1549,7 +1549,7 @@ two VPCs, a multi-subnet Service, data lookup and an unknown-scope Cluster.
 
 Cluster and Node Group retain spatial cards. Fargate Profile is a regional spatial
 Controller; Add-on and Access Entry are regional logical Controllers. All use the
-Amazon EKS icon and retain separate identity, search, selection and coverage.
+Amazon EKS service label and retain separate identity, search, selection and coverage.
 
 Node Group, Add-on and Fargate Profile show `Cluster membership` only for complete,
 unique explicit `cluster_name` references to a current managed AWS Cluster's
@@ -1584,7 +1584,7 @@ contracts. See the maintained [SVG](../examples/eks.svg) and
 
 `aws_db_proxy` is an independent regional Connector card. Its default target group
 and targets are regional logical Controllers, with their own identities, actions,
-search and coverage. They use the Amazon RDS icon.
+search and coverage. They use the Amazon RDS service label.
 
 `Proxy owner` and `Configured proxy` require an explicit reference to a current
 managed AWS Proxy's `name`/`id`, matching known values and compatible provider scope.
@@ -1679,7 +1679,7 @@ checks and native/Wasm SVG/HTML parity cover these contracts.
 ## ElastiCache Serverless
 
 `aws_elasticache_serverless_cache` is an independent regional Node card, using
-the Amazon ElastiCache icon/service name. It is distinct from provisioned Cluster
+the Amazon ElastiCache service label. It is distinct from provisioned Cluster
 and Replication Group resources: no cache nodes, replication members or subnet
 groups are synthesized.
 
@@ -1742,7 +1742,7 @@ do not invent a common container.
 LB/ECS subnet references outside the chosen parent become Connection edges.
 Subnet groups, RDS and the other workloads retain their original dependencies.
 ElastiCache subnet and replication groups are supported visible resources with
-AWS account/region scope and the ElastiCache icon. Replication placement requires
+AWS account/region scope and the ElastiCache service label. Replication placement requires
 a complete, static reference to exactly one AWS ElastiCache subnet group with
 the same provider-configuration identity and deployment scope and verified VPC
 placement; unresolved, dynamic or incompatible references stay

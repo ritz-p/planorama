@@ -28,7 +28,7 @@ legacy global-table, streaming-destination and table-configuration contracts.
 ## Capability policy
 
 [`basic_entries.rs`](../src/provider/aws/basic_entries.rs) is the exact-type runtime
-table. The existing classification, presentation, icon and scope rules take
+table. The existing role, presentation, service classification and scope rules take
 precedence. New policies, identities, associations and configuration controllers
 remain distinct. Independent compute/service resources can be Spatial; other new
 types default to Logical without inventing a verified owner. Basic capabilities
@@ -102,7 +102,7 @@ cargo test --locked --lib provider::aws::aliases
 the schema hash, full schema equality, shared factories and official alias notes.
 Ordinary Rust tests use committed fixtures offline. The
 [mixed fixture](../tests/fixtures/aws-aliases-plan.json),
-[icon SVG](../examples/aws-aliases.svg),
+[default SVG](../examples/aws-aliases.svg),
 [service-name SVG](../examples/aws-aliases-service-names.svg) and
 [offline HTML](../examples/aws-aliases.html) retain original alias names alongside
 separate canonical instances. Regenerate the HTML with:
@@ -212,7 +212,7 @@ An unsupported future schema representation requires updating the reader explici
 Review every `review` entry against its attached runtime matrix row and linked
 conditional rule sources. New types require a classification decision even if an
 existing implementation row exists; absent rows are `null`. Changed types require
-review of role, scope, icon and dedicated relationships. Removed types retain their
+review of role, scope, service labels and dedicated relationships. Removed types retain their
 historical runtime support. A similar name is not rename evidence: without explicit
 registration/documentation proof, removal and addition remain separate. Alias
 metadata likewise does not establish full schema or behavior equivalence.
@@ -229,7 +229,7 @@ node --test tests/support/aws-inventory.test.cjs tests/support/aws-inventory-dif
 ```
 
 The small [fixture](../tests/fixtures/aws-basic-plan.json),
-[icon example](../examples/aws-basic.svg),
+[default SVG](../examples/aws-basic.svg),
 [service-name example](../examples/aws-basic-service-names.svg) and
 [offline HTML](../examples/aws-basic.html) exercise new services, role/presentation
 boundaries, scope, references, long addresses and foreign-provider fallback.

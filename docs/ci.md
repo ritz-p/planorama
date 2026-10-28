@@ -1,4 +1,4 @@
-# SVG generation and PR validation
+# CI validation and recovery
 
 Native CLI distribution has a separate [release workflow and recovery procedure](releases.md).
 Native release builds run only through `workflow_dispatch`, never automatically on
@@ -134,36 +134,13 @@ runner elapsed seconds measure compute use, not an account's billed price.
 
 ### Observed timing and runner cost
 
-On 2026-10-12, the [serial baseline](https://github.com/ritz-p/planorama/actions/runs/38224372411)
-at `754ffd2` and [parallel run](https://github.com/ritz-p/planorama/actions/runs/38225451104)
-at `e365bd2` used identical Rust sources, fixtures, Rust 1.85.1 and Ubuntu runner
-image `20261004.327.1`. Both parallel jobs restored the exact same 17,658,308-byte
-dependency cache as the serial job. Each arrangement was measured once; these are
-observations rather than a latency guarantee or a billed-cost estimate.
-
-| Measurement | Serial | Parallel | Change |
-| --- | ---: | ---: | ---: |
-| First job start to final job completion | 170 s | 141 s | -29 s (-17.1%) |
-| Sum of all test-workflow job durations | 170 s | 201 s | +31 s (+18.2%) |
-| Workflow creation to final update | 204 s | 184 s | -20 s (-9.8%) |
-| Queue/provisioning before the first job | 33 s | 42 s | +9 s |
-| Passed / ignored / failed tests | 506 / 1 / 0 | 506 / 1 / 0 | Unchanged |
-
-| Parallel job | Total job time | Compile tests | Run tests |
-| --- | ---: | ---: | ---: |
-| [standard](https://github.com/ritz-p/planorama/actions/runs/38225451104/job/114731950802) | 137 s | 77 s | 48 s |
-| [large](https://github.com/ritz-p/planorama/actions/runs/38225451104/job/114731950398) | 62 s | 29 s | 19 s |
-| [Tests aggregate](https://github.com/ritz-p/planorama/actions/runs/38225451104/job/114732772522) | 2 s | — | — |
-| Total runner time | 201 s | 106 s | 67 s |
-
-Both suites started together and overlapped for 62 seconds. The large suite
-finished while the standard suite was still compiling; their test-execution steps
-did not overlap in this run. The serial compile/test steps took 82/70 seconds.
-Its ordinary integration targets accounted for only 1.40 seconds, supporting the
-choice to keep those targets with unit tests instead of adding a third runner.
-Parallelism saves waiting time at the documented cost of additional workspace
-compilation and runner setup. Workflow, Clippy and formatting validation outside
-**Cargo test** are excluded from both sides of this comparison.
+The 2026-10-12 [serial baseline](https://github.com/ritz-p/planorama/actions/runs/38224372411)
+and [parallel run](https://github.com/ritz-p/planorama/actions/runs/38225451104)
+used identical Rust sources, fixtures, toolchain and dependency cache. Active
+workflow time fell from 170 to 141 seconds, while summed job time rose from
+170 to 201 seconds. This single comparison supports two suites as a latency/cost
+tradeoff, not a performance guarantee. Ordinary integration tests stayed in
+standard because their measured execution was only 1.40 seconds.
 
 ## Layout quality comparison (#390)
 
@@ -188,53 +165,18 @@ Text/badge overlaps and content overflow fail independently of routing budgets;
 browser observations are retained as `presentation.json` and `presentation.md`,
 alongside the routing artifacts. The Rust diagnostic schema is unchanged.
 
-#648's initial presentation check exposed NAT/Internet Gateway headings hidden
-behind service labels in the large and multi-account examples. Spatial projection
-now preserves the original header width when reserving height for incoming route
-ports; that reservation previously removed the role-mark inset from measurement
-while rendering retained it. The large fixture's baseline reflects this required
-width change and the resulting rerouting, with unchanged budgets. Review covered
-all 11 newly affected crossing pairs (13 intersections), including the Internet
-Gateway route and load-balancer listener paths, against the SVG and per-pair
-report. These new crossings are explicitly accepted consequences of the changed
-geometry, not offset by improvements on other pairs or fixtures. Border deficits
-remain unchanged and bend changes stay within their existing per-edge budget.
+Historical baseline decisions are recorded in their implementation PRs. These
+are accepted geometry tradeoffs, not additional budgets or permission to offset
+regressions against improvements elsewhere:
 
-#666 removes the 32px role-mark reservation from spatial headers. Narrower
-NAT/Internet Gateway cards change packing and route selection in the large
-fixture. Its reviewed baseline accepts 28 crossing-pair increases (31 added
-intersections, total 78 -> 94) and three parallel-pair increases: target group ->
-listener against database security group -> DB instance (22,316 px^2), private-b
-subnet -> DB subnet group against private-b -> VPC endpoint (1,854 px^2), and that
-endpoint path against the private-b route-table association (2,610 px^2).
-The first pair has a 0.5px visible gap over 1,594px; this close parallel run is an
-accepted consequence of the requested width change, not a routing improvement.
-Independent overlap and border deficits do not increase; per-edge bends stay
-within existing budgets. Other fixture baselines and all budgets are unchanged.
-The PR records each increased pair; improvements elsewhere do not excuse them.
+| Change | Fixture and reviewed consequence | Evidence |
+| --- | --- | --- |
+| #648: preserve header width during port-height reservation | Large: 11 newly affected crossing pairs / 13 intersections after fixing hidden gateway headings. Border deficits unchanged; bends within budget. | [PR #661](https://github.com/ritz-p/planorama/pull/661) |
+| #666: remove the 32px role-mark reservation | Large: 28 crossing-pair increases / 31 intersections and three parallel-pair increases. Includes a 0.5px visible gap over 1,594px (22,316 px² deficit); explicitly accepted for narrower headers. | [PR #671, individual pairs](https://github.com/ritz-p/planorama/pull/671) |
+| #667: shorten labeled headings | Large: 24 crossing-pair increases / 25 intersections despite the aggregate decrease. A 2.25px gap over 600px adds 7,200 px² parallel deficit. | [PR #672, individual pairs](https://github.com/ritz-p/planorama/pull/672) |
+| #660: increase named-state heading allocation from 40 to 76px | Multi-state: three paths lengthen by 36px; two parallel pairs each add 144 px² (total 3,680 → 3,968). Other gated metrics unchanged. | [PR #663](https://github.com/ritz-p/planorama/pull/663) |
 
-#667 shortens specifically labeled resource headings and moves the external
-indicator beside the operation. The large fixture's resulting packing changes
-24 crossing pairs (25 added intersections), including Internet/NAT routes,
-load-balancer/security-group paths and target attachments. Each increase was
-reviewed against its SVG location and is recorded in the PR, independently of
-the aggregate reduction from 94 to 72 crossings. The private-b subnet's DB subnet
-group path and route-table association now run with 2.25px visible clearance for
-600px (7,200 px² parallel deficit); that pair is explicitly accepted for this
-header-width change. Independent overlap and border deficits remain unchanged,
-and per-edge bends remain within budget. Only the large baseline changes;
-budgets and the other five baselines remain unchanged.
-
-#660 enlarges each named-state heading allocation from 40 to 76 pixels for
-title-size text and a padded background. In the multi-state fixture, all three
-cross-state paths become 36 pixels longer at their existing gutter positions.
-The two parallel pairs involving `producer:aws_subnet.app` →
-`consumer:aws_instance.other` (paired with the `subnet` path to
-`consumer:aws_instance.app`, and the `both` path from `producer:aws_subnet.other`)
-each increase their parallel deficit by 144 px², from 1,840 to 1,984 px².
-The reviewed multi-state baseline accepts these two height-induced increases
-(total 3,680 → 3,968 px²). Crossings, independent overlap, bends and border deficits
-are unchanged. Other fixture baselines and all budgets remain unchanged.
+Each change updated only the named fixture baseline and retained all budgets.
 
 The [manifest](../tests/layout-quality/manifest.json) is the ordered fixture and
 budget authority. Each checked-in baseline records exact CLI arguments, SHA-256
@@ -428,30 +370,11 @@ non-gating failures. No automatic retry or success suppression hides failures.
 
 ### Local timing
 
-Measured once per selection on 2026-10-15 in Docker Desktop Linux, Rust 1.85.1,
-32 visible logical CPUs, default libtest concurrency and the optimized test
-profile. Baseline `25d3927` used `cargo test --locked --all-targets`; after adding
-only ignore attributes and name prefixes, the two existing suite selectors ran
-with `--all-features` (this package declares no features). Sources, assertions,
-fixtures and dependencies were otherwise identical. Compilation was completed
-before the after measurements; no other Rust tests ran concurrently. Host load
-was not controlled, and Node workflow tests overlapped part of the after run.
-
-| Harness execution time, excluding compilation/startup | Before | After |
-| --- | ---: | ---: |
-| Unit binary | 115.89 s | 67.12 s |
-| Standard suite, sum of harness times | 119.49 s | 70.98 s |
-| Large suite | 71.36 s | 75.93 s |
-| Ordinary passed / ignored / failed | 630 / 5 / 0 | 627 / 8 / 0 |
-
-Standard harness time fell 40.6%; the unchanged large suite is now the longer
-test phase. The complete after Standard command took 72.150 s. These local
-observations exclude hosted checkout, queueing, cache and job startup, so they
-do not establish an end-to-end CI speedup. Deferred execution retains the three
-remaining assertion sets without putting them back on the PR critical path.
-The deferred command passed all three tests in 140.201 s (139.51 s in the
-harness), with its explicit two-thread limit; it is additional post-merge/nightly
-compute, not work that disappears.
+The [#253 comparison](https://github.com/ritz-p/planorama/pull/410) measured local
+standard-suite harness time falling from 119.49 to 70.98 seconds after deferring
+three repeated large-fixture tests. Their separate two-thread run took 140.201
+seconds. This moves work off PRs; it does not eliminate it or establish hosted
+end-to-end savings.
 
 ## Test runner evaluation (#254)
 
@@ -459,27 +382,12 @@ Keep `cargo test` as the CI runner. Nextest did not improve the Standard suite
 at either tested concurrency, so adding installation and configuration is not
 justified by this experiment. Re-evaluate if the suite distribution changes.
 
-Measured on 2026-10-15. Each cell contains the first and second command wall times:
-
-| Suite | Test threads | Cargo test | Nextest |
-| --- | ---: | ---: | ---: |
-| Standard | 2 | 179.839 / 182.069 s | 188.001 / 186.936 s |
-| Standard | 8 | 89.290 / 89.395 s | 89.542 / 91.723 s |
-| Large | 2 | 77.464 / 76.551 s | 76.745 / 76.313 s |
-
-For Standard, nextest was 3.6% slower at two threads and 1.4% slower at eight
-threads on the two-run means. Mean child CPU time was 299.8 / 313.2 seconds
-(Cargo / nextest) at two threads and 306.3 / 320.6 seconds at eight. Higher
-concurrency reduced elapsed time while slightly increasing CPU work for both
-runners; nextest used more CPU without reducing wall time. Every Standard run
-passed the same 624 tests and skipped the same seven ignored tests.
-Every Large run passed three tests and skipped the same manual snapshot test.
-Its mean difference was only 0.479 seconds (0.6% in nextest's favor), with
-approximately one CPU core occupied throughout. A single large rendering test
-dominates that job, limiting scheduling gains. Keep the existing two independent
-jobs: combining them into one nextest command would measure a different CI
-architecture. These observations do not demonstrate a consistent reduction in
-the current parallel workflow's critical path.
+The 2026-10-15 two-repeat comparison found nextest slower for standard by 3.6%
+at two threads and 1.4% at eight. Large differed by less than one second.
+[PR #411](https://github.com/ritz-p/planorama/pull/411) records the decision;
+[the original measurements](https://github.com/ritz-p/planorama/blob/8fb4aef052f7d941b0a5da6b08a4fc610661a504/docs/ci.md#test-runner-evaluation-254)
+retain per-run timings, CPU, inventories and failure probes. These historical
+results do not predict the current suite's runtime.
 
 The comparison uses the post-#253 test selection at `efb7de9`, Rust 1.85.1,
 the optimized test profile and cargo-nextest 0.9.148 in Docker Desktop Linux
@@ -519,22 +427,9 @@ previous evidence. The downloaded binary is temporary and is not a Docker image
 or CI dependency. See nextest's [binary installation](https://nexte.st/docs/installation/pre-built-binaries/)
 and [test inventory format](https://nexte.st/docs/machine-readable/list/).
 
-Both runners reuse the same Cargo artifacts and dependency volumes; warm compile
-checks take approximately 0.7 seconds without rebuilding workspace code. This
-verifies local build-cache compatibility, not hosted cache restore/install cost.
-The existing Actions dependency cache can remain unchanged, but nextest would
-require a separately installed binary. Download, cold compilation, checkout,
-queueing and cache transfer are excluded from the timings. Host load is not
-controlled; no other Rust build or test runs alongside the measured commands.
-
-After timing, a temporary dependency-free crate containing one deliberate
-assertion failure and one ignored passing test checked failure handling. Both
-runners displayed the failed test name, assertion message, source file/line and
-captured stdout. Cargo exited 101 and nextest exited 100; both are failures.
-Both skipped the ignored test normally and passed it with `-- --ignored`,
-returning zero. The probe did not run repository benchmarks or alter fixtures.
-Nextest's failure output and ignored-test compatibility are adequate; measured
-performance, rather than compatibility, is the reason for retaining Cargo.
+The measurement excludes download, cold compilation, checkout, queueing and
+cache transfer. Both runners passed failure-output and ignored-test compatibility
+probes; measured performance was the reason for retaining Cargo.
 
 ## On-demand spacing calibration
 
@@ -566,42 +461,11 @@ the same job and captured `github.sha` without adding a dependency to **Tests**.
 
 ### Calibration split timing (#406)
 
-Measured on 2026-10-15 in the existing Docker Desktop Linux development container,
-Rust/Cargo 1.85.1, optimized test profile. Both observations used identical Rust,
-fixtures, assets, Cargo metadata/lockfile and toolchain from `c5e09b3`; #405/#406
-only change workflows, their Node tests and documentation. Before each observation,
-`cargo clean -p planorama` removed workspace build products while retaining the
-same warm dependency cache. Both compile logs rebuilt only `planorama`. No other
-Rust build or test ran concurrently; host/background load was not controlled.
-
-Each phase was timed with Python's monotonic clock around its complete process.
-The before sequence ran `node .github/scripts/test-suites.cjs standard compile`,
-then `standard run`, then the exact ignored calibration command above with
-`PLANORAMA_SPACING_REPORT_DIR=output/spacing-calibration`. The after sequence used
-the same first two commands without calibration. Each was measured once.
-
-| Local Standard measurement | Before | After |
-| --- | ---: | ---: |
-| Compile command wall time | 45.232 s | 44.969 s |
-| Ordinary test command wall time | 122.460 s | 121.468 s |
-| Additional calibration command | 74.663 s | Not run |
-| Sum of command wall times | 242.355 s | 166.437 s |
-| Ordinary tests passed / ignored / failed | 627 / 4 / 0 | 627 / 4 / 0 |
-
-Calibration itself reported 73.96 s of test execution and 0.63 s of cached Cargo
-build preparation; its remaining process overhead was about 0.07 s. It passed
-one test and wrote JSON plus nine SVG comparisons. The observed 75.918 s reduction
-includes 1.255 s of unrelated compile/ordinary-test variation; it is not a fixed
-speedup. The remaining ordinary tests dominate the after measurement.
-
-These totals measure local command execution, not end-to-end GitHub job time.
-Queue/provisioning, checkout, toolchain installation, cache restore/save, artifact
-upload, the Large job and the Tests aggregate are excluded. They were not measured
-as zero. Local single-container occupied time falls by the same command-time
-delta; billed runner savings cannot be inferred. An on-demand run incurs its own
-startup, compilation and artifact costs, unlike the measured calibration which
-reused Standard's compiled binary. Record those separately when comparing hosted
-runs; the large suite and aggregate remain unchanged.
+[PR #408](https://github.com/ritz-p/planorama/pull/408) records identical-source,
+warm-dependency Docker measurements: standard command time changed from 242.355
+to 166.437 seconds, with calibration alone costing 74.663 seconds. The single
+comparison excludes hosted setup, queue, transfers and the large suite; a manual
+calibration run still pays its own setup, compilation and artifact costs.
 
 ## When generation runs
 
@@ -1002,70 +866,13 @@ rejection use `viewer-plan` as the representative fixture.
 
 ### Browser Wasm comparison, 2026-10-26
 
-GitHub measurements use Ubuntu 24.04 image `20261012.334.1`, four x86_64 CPUs,
-Rust/Cargo 1.85.1, wasm-bindgen 0.2.100, mold 2.40.4 and sccache 0.10.0 in the
-same Dockerfile environment. Durations below are job elapsed time, including
-cache/artifact transfers and cleanup, but excluding runner queue time.
-
-| Hosted run | Environment step | Build and validation | Cargo restore / save | Measurement upload | Complete job |
-| --- | ---: | ---: | ---: | ---: | ---: |
-| [Before, no persistent cache](https://github.com/ritz-p/planorama/actions/runs/40209178857), `2fee66b` | 135 s | 567 s | — | — | 707 s |
-| [Initial cold candidate](https://github.com/ritz-p/planorama/actions/runs/40211432756), `3ec1d8c` | 277 s | 565 s | 2 / 11 s | 1 s | 885 s |
-| [Final orchestration, Docker warm / Cargo cold](https://github.com/ritz-p/planorama/actions/runs/40212680609), `025acd7` | 65 s | 565 s | 1 / 10 s | 1 s | 665 s |
-
-Before this change a new runner had no persistent Docker/container Cargo cache,
-so repeating CI did not produce a warm-cache case. The cold candidate had zero
-hits in all five Cargo caches. Its environment step included 40.5 s exporting
-and loading the image and 89.8 s exporting BuildKit layers. That initial cost
-is a regression, not a cold speedup. In the
-[next run](https://github.com/ritz-p/planorama/actions/runs/40212680609), BuildKit
-reuse reduced the environment step to 65 s; the revised Cargo key deliberately
-missed after changing orchestration inputs. [PR #675](https://github.com/ritz-p/planorama/pull/675)
-records the complete hosted warm comparison and final validation links.
-
-The initial BuildKit cache stored about 1.0 GB of compressed layers; the five
-Cargo archives totaled about 205 MB (13 MB registry/git, 50 MB default native,
-6 MB default Wasm, 129 MB standalone native, 6 MB standalone Wasm). The final
-version also removes CLI test binaries and uses immutable dependency keys rather
-than a new upload for each source revision. Main-branch cache warming amortizes
-the environment setup across PRs. There is no second transferred sccache archive.
-
-Local Docker Desktop/WSL2 checks used the final working-tree implementation,
-32 CPUs and Chromium 155.0.8059.79. Registry data and the image were already
-present. Cold used empty target/compiler caches; warm retained dependencies but
-removed workspace products and CLI test binaries, matching CI preparation.
-The local compiler cache was retained to measure whether it added useful hits.
-Cold overlapped the required SVG regeneration, so these local phase differences
-are diagnostic rather than a controlled performance comparison.
-
-| Phase | Cold seconds | Warm seconds |
-| --- | ---: | ---: |
-| Default native | 30.08 | 19.34 |
-| Browser Wasm build, including bindings/preparation | 22.66 | 17.82 |
-| Browser memory | 0.97 | 0.97 |
-| Browser suite | 85.36 | 84.44 |
-| Standalone library tests, including compilation | 129.53 | 122.25 |
-| Standalone CLI help tests, including compilation | 31.98 | 30.24 |
-| Standalone native | 30.84 | 19.39 |
-| Standalone Wasm build, including bindings/package | 22.11 | 17.83 |
-| Standalone memory | 0.98 | 0.95 |
-| Standalone distribution suite | 15.12 | 15.61 |
-| Sum of measured phases, excluding transfers | 369.63 | 328.84 |
-
-Browser/standalone binding generation was 0.40/0.40 s cold and 0.41/0.38 s warm,
-already included in the build rows. sccache recorded 0 hits/180 misses cold,
-then 0 hits/0 misses and 13 non-cacheable calls warm: Cargo dependencies avoided
-compiler requests altogether. Cache read/write errors were zero. Seven cold
-compiler-probe failures were expected dependency feature detection; every suite
-succeeded. Native references reused 8 of 68 calls in each browser run. Local
-gzip packing took 21.13 s for 208 MB; this is not GitHub's zstd/network transfer
-cost. Local phase totals do not establish a hosted end-to-end improvement.
-
-The standalone library suite was the largest validation phase (258.88 s in
-the hosted cold run, including 148.31 s of tests). Binding generation was small.
-That cache experiment retained all tests and builds without sharding or PR filtering.
-The current test consolidation is described above; these historical measurements
-predate it.
+[PR #675](https://github.com/ritz-p/planorama/pull/675) records the original cache
+comparison and hosted phase timings. Complete job time was 707 seconds before,
+885 seconds with initial cold caches, and 585 seconds with fully warm caches.
+Initial BuildKit export added cost; warm reuse reduced it. These single-run
+measurements predate test consolidation and do not establish current latency.
+[The original local measurements](https://github.com/ritz-p/planorama/blob/8fb4aef052f7d941b0a5da6b08a4fc610661a504/docs/ci.md#browser-wasm-comparison-2026-10-26)
+retain environment, phase and cache-size details.
 
 ### Browser Wasm test scope audit (#885)
 
@@ -1104,83 +911,13 @@ hostile previews; large-input progress/cancel/retry and full native/Wasm parity.
 The semantic counterparts are in `tests/unit/semantic`, rendering checks in
 `tests/unit/svg` and `tests/integration`; they do not replace browser boundary tests.
 
-Three recent successful hosted runs show why cache and runner conditions matter.
-Queue is workflow creation to job start; job time includes setup, transfers and
-cleanup. With one job, summed runner time equals job time. All three missed all
-three Cargo caches and reused BuildKit tool layers; none is a warm-Cargo sample.
-PR `head_sha` can differ from the tested merge SHA shown in the artifact.
-
-| Run / tested SHA | Queue | Job / summed runner | Environment | Build + validation | Library phase / test execution | Browser suite |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| [40660392326](https://github.com/ritz-p/planorama/actions/runs/40660392326) / `f5c3204` | 2 s | 789 s | 38 s | 724 s | 349.92 / 198.57 s | 117.00 s |
-| [40665336687](https://github.com/ritz-p/planorama/actions/runs/40665336687) / `244e6bb` | 2 s | 774 s | 42 s | 701 s | 340.46 / 197.88 s | 113.50 s |
-| [40671433186](https://github.com/ritz-p/planorama/actions/runs/40671433186) / `9da190b` | 3 s | 491 s | 48 s | 422 s | 197.26 / 104.41 s | 67.80 s |
-
-The first two slow runs spent almost half of build/validation in the library
-phase. Bindings took 0.26–0.40 s each. Cargo saves took 6–10 s total; restore steps
-missed in 0–1 s. Even cold runs vary substantially, so one run below ten minutes
-does not establish a guarantee. The parallel-job alternative would add at least
-another environment/checkout/transfer sequence (38–48 s for environment alone in
-these samples), before duplicate compilation; that is an estimate, not a measured
-parallel implementation.
-
-#### Controlled scope comparison
-
-Both hosted modes below use the implementation in `3b59bef`, four x86_64 CPUs,
-Rust/Cargo 1.85.1 and Chromium 156.0.8078.47 in the same Dockerfile environment.
-The focused PR tested merge `a96c21c`; its implementation and inputs match the
-manual full-suite checkout. Both runs missed registry, native and Wasm caches
-under the same `931cd50...` configuration key and reused BuildKit tool layers.
-Both completed every requested validation successfully.
-
-| Cold Cargo hosted measurement | Full library, [run 40684755203 attempt 1](https://github.com/ritz-p/planorama/actions/runs/40684755203/attempts/1) | Focused library, [run 40684662975](https://github.com/ritz-p/planorama/actions/runs/40684662975) |
-| --- | ---: | ---: |
-| Queue | 3 s | 3 s |
-| Complete job / summed runner time | 782 s | 570 s |
-| Workflow creation to final update | 785 s | 574 s |
-| Environment preparation | 44 s | 46 s |
-| Build and validation step | 711 s | 498 s |
-| Cargo restore / save | 1 / 6 s | 1 / 6 s |
-| Measurement upload | 1 s | 1 s |
-| Library phase | 344.10 s | 140.31 s |
-| Browser suite | 116.36 s | 112.39 s |
-
-This pair reduced both active waiting and runner time by 212 s (27.1%). The
-focused job took 9 min 30 s; this meets the ten-minute goal in this sample only.
-Runner variability remains visible in the earlier runs, even with four CPUs.
-No second job, artifact transfer or duplicated environment was introduced.
-The final commit checks and hosted warm-cache comparison are recorded in
-[PR #886](https://github.com/ritz-p/planorama/pull/886).
-
-Local Docker Desktop/WSL2 measurements used 32 CPUs, Chromium 155.0.8059.79,
-the same Rust sources/fixtures, image and pre-existing Cargo registry. Cold means
-empty target and compiler caches in separate directories; warm retains their
-dependencies but removes workspace products and CLI test binaries as the workflow
-does. No other local build ran concurrently. The full warm run used the candidate
-working tree before commit; the other rows use `3b59bef`. All four complete
-validation runs succeeded. These are sums of measured phases, excluding image,
-queue and GitHub transfer costs, and are not hosted PR-duration predictions.
-
-| Local phase seconds | Full cold | Focused cold | Full warm | Focused warm |
-| --- | ---: | ---: | ---: | ---: |
-| All measured phases | 403.14 | 339.29 | 397.29 | 327.75 |
-| Library compile + execution | 136.95 | 72.94 | 131.27 | 66.59 |
-| Browser suite | 89.31 | 89.14 | 90.71 | 90.08 |
-| sccache hits / misses | 0 / 116 | 0 / 116 | 0 / 0 | 0 / 0 |
-
-Cold compiler probes produced five expected feature-detection failures in each
-mode; there were no cache read/write errors. Warm Cargo reuse avoided eligible
-compiler requests. Phase totals fell 15.8% cold and 17.5% warm, largely by removing
-library execution (64–65 s locally, 195.18 s in the hosted full comparison).
-Compilation of the library test target is still required; filtering does not
-eliminate that cost.
-
-The full warm browser breakdown measured 5.09 s for all 30 complete-service
-fixture/format comparisons, 0.52 s for large-input UI progress/cancel/retry,
-28.28 s for large Wasm completion and 28.41 s for its native comparison. This
-supports retaining inexpensive service parity and explicitly paying for the
-large completion regression coverage. All 50 measured browser sections remain
-in both modes; timings are observations, never test thresholds.
+[PR #886](https://github.com/ritz-p/planorama/pull/886) records the controlled
+full/focused comparison, final checks and warm-cache results. Hosted cold job
+time fell from 782 to 570 seconds; warm time fell from 721 to 453 seconds.
+Runner variability also affected unchanged browser work, so the whole difference
+cannot be attributed to filtering. These are observations, not a ten-minute SLA.
+[The original audit](https://github.com/ritz-p/planorama/blob/8fb4aef052f7d941b0a5da6b08a4fc610661a504/docs/ci.md#browser-wasm-test-scope-audit-885)
+retains the earlier runs, local phases and browser breakdown.
 
 To reproduce, use separate empty `CARGO_TARGET_DIR` and `SCCACHE_DIR` directories
 for each cold mode and isolate sccache servers when sharing a container. Run
@@ -1189,5 +926,5 @@ for each cold mode and isolate sccache servers when sharing a container. Run
 `WASM_CI_REPORT_DIR` paths. For each warm repeat, remove only workspace products
 and CLI test binaries with the workflow's cache-preparation command, reset
 sccache statistics, and retain dependencies. Record environment and complete
-job durations alongside the TSV files; do not compare a cold full run with a
-warm focused run as if scope were their only difference.
+job durations alongside the TSV files; do not compare cold full and warm focused
+runs as if scope were their only difference.
