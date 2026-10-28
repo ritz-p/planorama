@@ -44,6 +44,7 @@ mod rds_proxy;
 #[cfg(test)]
 #[path = "../../tests/unit/semantic/redshift.rs"]
 mod redshift_tests;
+mod sagemaker;
 #[cfg(test)]
 #[path = "../../tests/unit/semantic/step_functions.rs"]
 mod step_functions_tests;
@@ -217,6 +218,7 @@ pub(super) fn transform(raw: crate::semantic::Input) -> crate::model::Graph {
     streaming::present(&raw, &mut graph);
     databases::present(&raw, &mut graph);
     apprunner::present(&raw, &mut graph);
+    sagemaker::present(&raw, &mut graph);
     opensearch_serverless::present(&raw, &mut graph);
     batch::present(&raw, &mut graph);
     fsx::present(&raw, &mut graph);

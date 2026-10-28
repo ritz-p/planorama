@@ -1156,10 +1156,10 @@
       }
     },
     "aws_sagemaker_endpoint": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 701,
-      "gap": "Reviewed #725: Endpoint configuration name #701; rollback alarm references deferred until typed alarm contract is selected. #701. No direct subnet input; do not inherit model network across configuration chain. Six dimensions, pinned field shapes and input/output contracts in review decisions.",
+      "gap": "Implemented #701: explicit endpoint configuration name, complete production variant model names, model role ARN and complete subnet/SG references with verified common-VPC context. Shared models/configurations remain independent; endpoint does not inherit model network. See aws.md#sagemaker-inference-configuration-701. #725 review preserves historical baseline; shadow variants, inference components and other auxiliaries remain outside this contract.",
       "review": {
         "issue": 725,
         "implementationCommit": "f5c320438d8abf81de31c884bbd03dde5369773e",
@@ -1220,10 +1220,10 @@
       }
     },
     "aws_sagemaker_endpoint_configuration": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 701,
-      "gap": "Reviewed #725: Production model-name references #701; model_name optional for inference components. Shadow variants, config role, KMS/SNS/data-capture remain separately deferred until inference auxiliary contract selected. #701. Shared configuration is independent; endpoint consumption does not prove exclusive ownership. Six dimensions, pinned field shapes and input/output contracts in review decisions.",
+      "gap": "Implemented #701: explicit endpoint configuration name, complete production variant model names, model role ARN and complete subnet/SG references with verified common-VPC context. Shared models/configurations remain independent; endpoint does not inherit model network. See aws.md#sagemaker-inference-configuration-701. #725 review preserves historical baseline; shadow variants, inference components and other auxiliaries remain outside this contract.",
       "review": {
         "issue": 725,
         "implementationCommit": "f5c320438d8abf81de31c884bbd03dde5369773e",
@@ -1288,10 +1288,10 @@
       }
     },
     "aws_sagemaker_model": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 701,
-      "gap": "Reviewed #725: Role and VPC references #701; containers, artifact URIs and registry Lambda credentials-provider relation deferred until explicit container variant contract. #701. Shared model not embedded under every consuming configuration. Complete subnet/SG and common VPC proof; hosting/batch connection context does not make endpoint a subnet child. Six dimensions, pinned field shapes and input/output contracts in review decisions.",
+      "gap": "Implemented #701: explicit endpoint configuration name, complete production variant model names, model role ARN and complete subnet/SG references with verified common-VPC context. Shared models/configurations remain independent; endpoint does not inherit model network. See aws.md#sagemaker-inference-configuration-701. #725 review preserves historical baseline; shadow variants, inference components and other auxiliaries remain outside this contract.",
       "review": {
         "issue": 725,
         "implementationCommit": "f5c320438d8abf81de31c884bbd03dde5369773e",
