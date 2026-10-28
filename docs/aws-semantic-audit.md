@@ -675,3 +675,107 @@ remaining deferrals state their contract or use-case prerequisite in the decisio
 This audit changes no runtime, rendering input or geometry; SVG regeneration and
 Layout quality are not required. Docker checks include the complete pinned-contract
 verifier, semantic register/tests and resource-support consistency.
+
+## Filesystems, transfer and backup review (#720)
+
+Reviewed planorama commit: `514c17316e596fbbd0a8c7aa4942a91e3462e09d`.
+All 70 managed types in `efs`, `fsx`, `storagegateway`, `datasync`, `transfer`,
+`backup`, `dlm`, `rbin` and `drs` have six separate dimensions in
+[decisions](aws-semantic-decisions.json). Each review records exact fields,
+collection ancestry, required/optional/computed contracts, managed/data distinction
+and official documentation at Provider commit
+`5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f`. The source archive identifies
+`5e13eed`; the schema hash and managed denominator match the pinned inventory.
+These are historical review conclusions; subsequent implementation updates current
+gaps without rewriting the reviewed baseline.
+
+Runtime evidence is [classification](../src/provider/aws/classification.rs),
+[basic defaults](../src/provider/aws/basic_entries.rs),
+[scope](../src/provider/aws/scope.rs), [aliases](../src/provider/aws/aliases.rs),
+[containment](../src/provider/aws/containment.rs),
+[SG proof](../src/provider/aws/security_groups.rs),
+[references](../src/provider/aws/service_references.rs),
+[EFS ownership](../src/provider/aws/efs.rs),
+[Backup selection](../src/provider/aws/backup.rs) and
+[summary allowlists](../src/provider/aws/encryption.rs).
+The [runtime matrix](resource-support.md) and
+[inventory tests](../tests/unit/aws_inventory.rs) establish basic defaults.
+EFS #497/#548 is covered by [EFS tests](../tests/unit/semantic/efs.rs) and
+[reference tests](../tests/unit/semantic/service_references.rs); Backup #508 by
+[Backup tests](../tests/unit/semantic/backup.rs). Other types cannot borrow those
+behavioral guarantees from a shared service label.
+
+EFS filesystems stay regional; access-point embedding is ownership, while mount
+target subnet placement is network containment. Existing EFS SG collection proof
+is less strict than newer complete known-value network validators; #824 owns that
+bounded extension. Backup retains single-rule vault proof and explicit supported
+resource selections; multiple rules, tag filters and wildcards are not verified
+coverage. FSx filesystems are already Spatial; cache, Transfer server/connector/web
+app, DataSync agent, Storage Gateway and air-gapped vault defaults need explicit
+architecture review in their follow-ups. Helpers do not all become spatial cards.
+
+Actionable gaps are Backup vault/helpers #820, plan rules #821, reports #822,
+restore testing #823, EFS extensions #824, Lustre backup/logging #825, other FSx
+networking #826, FSx children/associations #827, DataSync agents/locations #828,
+tasks #829, DLM/DRS #830, Storage Gateway #831, Transfer servers #832,
+identity/key helpers #833, AS2/connectors #834, web apps #835 and workflows #836.
+Existing #702 exclusively owns Lustre subnet/SG/KMS proof. These source/helper
+relationships coordinate with endpoint audits #710/#719/#726/#727/#730 and
+VPC Lattice #791, without reopening completed EFS/Backup implementations.
+
+Contract distinctions verified against pinned documentation and schema:
+
+- Lustre `subnet_ids` is a list and `security_group_ids` a set. Its KMS input is
+  an ARN for persistent deployment types. Computed VPC/ENI outputs and S3 import/
+  export URI strings are not configured endpoint proof. Other FSx variants have
+  different preferred-subnet, route-table, AD and volume contracts.
+- OpenZFS `parent_volume_id` can match a filesystem `root_volume_id` or another
+  volume `id`; an origin snapshot is clone provenance, not ownership. ONTAP
+  volume ownership uses SVM ID, while its filesystem ID is computed. Repository
+  association `arn` is not a filesystem endpoint despite its documentation label.
+- EFS replication destination KMS accepts ID/ARN/alias/alias ARN, unlike the
+  filesystem's documented ARN input. Optional/computed destination filesystem
+  output cannot create a configured replica link. Destination region must remain
+  distinct from source/control scope.
+- DataSync uses subnet/SG ARNs, not IDs. ONTAP location configures SVM ARN and
+  exports filesystem ARN. Lustre/OpenZFS/Windows location SG ARNs are **required**
+  in schema, despite docs calling them optional (confirmed in
+  `internal/service/datasync/location_fsx_lustre_file_system.go` and sibling
+  resource schemas). HDFS KMS URI is not AWS KMS. S3 input can be an Outposts
+  access-point ARN. Task report `bucket_access_role_arn` is an IAM role despite
+  the docs saying policy; `internal/service/datasync/task.go` maps it to
+  `BucketAccessRoleArn`.
+- Storage Gateway iSCSI `network_interface_id` accepts IPv4 addresses, not EC2
+  ENI IDs. Local disk IDs/paths are not EBS IDs. Gateway EC2 host is computed;
+  endpoint DNS and activation IP do not establish configured containment.
+  File-share backing storage can include a prefix and has its own bucket region.
+- Backup vault ID is its name; plan ID is distinct from display name. Plan rules
+  are sets, so positional matching cannot extend existing single-rule proof.
+  Copy destinations have independent scope; restore include/exclude wildcards,
+  framework controls and tag conditions do not identify concrete protected sets.
+- DLM tags and snapshot regex selectors remain opaque. SSM execution handlers
+  accept custom name/ARN or AWS-owned sentinels; copy keys require destination
+  scope. DRS `ebs_encryption_key_arn` is optional in schema and
+  `internal/service/drs/replication_configuration_template.go`, despite required
+  wording in docs. Templates do not synthesize EC2 replication servers.
+- Transfer server FTPS certificate is ACM, while AS2 profiles use Transfer
+  `certificate_id`. User ownership is server-qualified; SSH key proof needs both
+  server ID and username. PUBLIC/VPC/VPC_ENDPOINT and identity-provider modes
+  need separate contracts. VPC Lattice egress does not contain the connector.
+  Web app computed outputs are nested at
+  `identity_provider_details.identity_center_config.application_arn` and
+  `endpoint_details.vpc.vpc_endpoint_id`, despite the flat documentation list.
+  Workflow normal/exception steps need type-gated Lambda/EFS/S3 references;
+  file expressions and object paths remain opaque.
+
+No reviewed type is a runtime alias. Data registrations are separate lookup
+contracts, not additional managed types. New links require explicit unique
+compatible references, matching known values, complete collections and independent
+provider/account/region/state proof. Current/deposed identities and filtering remain
+conservative. Shared resources retain independent coverage. Credentials, policy
+interpretation, contents and runtime health/recoverability remain excluded.
+
+The pinned-contract verifier checks both shapes and input/output flags for this
+review. Run it with the schema and extracted Provider source paths, followed by
+semantic register/tests and resource-support checks in Docker. This audit changes
+no rendering input or geometry; SVG regeneration and Layout quality do not apply.

@@ -5,6 +5,35 @@ const fs=require('node:fs');
 const {extract,buildEvidence,render}=require('../../scripts/aws-semantic-audit.cjs');
 const read=p=>JSON.parse(fs.readFileSync(p));
 
+test('filesystem audit covers 70 exact types and distinguishes configured references from service outputs',()=>{
+ const services=new Set('efs fsx storagegateway datasync transfer backup dlm rbin drs'.split(' '));
+ const expected=read('tests/fixtures/aws-inventory/6.70.0.json').resources.filter(r=>services.has(r.service));
+ const entries=Object.entries(read('docs/aws-semantic-decisions.json').types).filter(([,d])=>d.review?.issue===720);
+ assert.equal(expected.length,70);
+ assert.deepEqual(entries.map(([t])=>t).sort(),expected.map(r=>r.type).sort());
+ for(const [type,{review,gap,issue}] of entries){
+  assert.equal(review.providerCommit,'5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f');
+  assert.equal(review.implementationCommit,'514c17316e596fbbd0a8c7aa4942a91e3462e09d');
+  assert.equal(review.officialDocumentation,expected.find(r=>r.type===type).documentation);
+  assert.deepEqual(Object.keys(review.shapes),review.fields);
+  assert.deepEqual(Object.keys(review.contracts),review.fields);
+  for(const key of ['placement','ownership','network','references','scope','summaries']) assert.match(review[key],/^(Supported|Partial|Missing|Not applicable|Intentionally unsupported|Deferred):/,type+': '+key);
+  assert.match(gap,/#720/);
+  if(['placement','ownership','network','references'].some(k=>review[k].includes('Missing:'))) assert.ok(issue===702||(issue>=820&&issue<=836),type);
+ }
+ const d=Object.fromEntries(entries);
+ assert.deepEqual(d.aws_fsx_lustre_file_system.review.shapes.subnet_ids,[['list','string']]);
+ assert.deepEqual(d.aws_fsx_lustre_file_system.review.shapes.security_group_ids,[['set','string']]);
+ assert.match(d.aws_storagegateway_cached_iscsi_volume.review.references,/IPv4 address, NOT EC2 ENI ID/);
+ assert.equal(d.aws_datasync_location_fsx_ontap_file_system.review.contracts.fsx_filesystem_arn,'computed');
+ assert.equal(d.aws_datasync_location_fsx_lustre_file_system.review.contracts.security_group_arns,'required');
+ assert.equal(d.aws_drs_replication_configuration_template.review.contracts.ebs_encryption_key_arn,'optional');
+ assert.equal(d.aws_transfer_web_app.review.contracts['endpoint_details.vpc.vpc_endpoint_id'],'computed');
+ assert.match(d.aws_transfer_ssh_key.review.references,/server ID AND user_name/);
+ assert.match(d.aws_efs_access_point.review.ownership,/#548/);
+ assert.match(d.aws_backup_plan.review.references,/#508.*one rule/);
+});
+
 test('compute audit covers 52 types and keeps names, ARNs and collection evidence distinct',()=>{
  const services=new Set('autoscaling autoscalingplans appautoscaling batch imagebuilder lightsail outposts computeoptimizer'.split(' '));
  const expected=read('tests/fixtures/aws-inventory/6.70.0.json').resources.filter(r=>services.has(r.service));
