@@ -1,0 +1,558 @@
+{
+  "format_version": "1.2",
+  "resource_changes": [
+    {
+      "address": "aws_vpc.main",
+      "mode": "managed",
+      "type": "aws_vpc",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "vpc-main"
+        }
+      }
+    },
+    {
+      "address": "aws_subnet.a",
+      "mode": "managed",
+      "type": "aws_subnet",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "subnet-a",
+          "vpc_id": "vpc-main",
+          "availability_zone": "us-east-1a"
+        }
+      }
+    },
+    {
+      "address": "aws_subnet.b",
+      "mode": "managed",
+      "type": "aws_subnet",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "subnet-b",
+          "vpc_id": "vpc-main",
+          "availability_zone": "us-east-1b"
+        }
+      }
+    },
+    {
+      "address": "aws_security_group.app",
+      "mode": "managed",
+      "type": "aws_security_group",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "sg-app",
+          "vpc_id": "vpc-main"
+        }
+      }
+    },
+    {
+      "address": "aws_ami.app",
+      "mode": "managed",
+      "type": "aws_ami",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "ami-app"
+        }
+      }
+    },
+    {
+      "address": "aws_iam_instance_profile.app",
+      "mode": "managed",
+      "type": "aws_iam_instance_profile",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "profile-app"
+        }
+      }
+    },
+    {
+      "address": "aws_key_pair.app",
+      "mode": "managed",
+      "type": "aws_key_pair",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "key_name": "key-app"
+        }
+      }
+    },
+    {
+      "address": "aws_launch_configuration.app",
+      "mode": "managed",
+      "type": "aws_launch_configuration",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "launch-app",
+          "image_id": "ami-app",
+          "security_groups": [
+            "sg-app"
+          ],
+          "iam_instance_profile": "profile-app",
+          "key_name": "key-app",
+          "user_data": "PRIVATE_BOOTSTRAP"
+        }
+      }
+    },
+    {
+      "address": "aws_elb.classic",
+      "mode": "managed",
+      "type": "aws_elb",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "classic-app"
+        }
+      }
+    },
+    {
+      "address": "aws_lb_target_group.app",
+      "mode": "managed",
+      "type": "aws_lb_target_group",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:elasticloadbalancing:us-east-1:123456789012:targetgroup/app/1234567890123456"
+        }
+      }
+    },
+    {
+      "address": "aws_vpclattice_target_group.app",
+      "mode": "managed",
+      "type": "aws_vpclattice_target_group",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:vpc-lattice:us-east-1:123456789012:targetgroup/tg-12345678901234567"
+        }
+      }
+    },
+    {
+      "address": "aws_autoscaling_group.app",
+      "mode": "managed",
+      "type": "aws_autoscaling_group",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "asg-app",
+          "id": "asg-app",
+          "vpc_zone_identifier": [
+            "subnet-a",
+            "subnet-b"
+          ],
+          "launch_configuration": "launch-app",
+          "load_balancers": [
+            "classic-app"
+          ],
+          "target_group_arns": [
+            "arn:aws:elasticloadbalancing:us-east-1:123456789012:targetgroup/app/1234567890123456"
+          ],
+          "traffic_source": [
+            {
+              "identifier": "arn:aws:vpc-lattice:us-east-1:123456789012:targetgroup/tg-12345678901234567",
+              "type": "vpc-lattice"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_autoscaling_attachment.classic",
+      "mode": "managed",
+      "type": "aws_autoscaling_attachment",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "autoscaling_group_name": "asg-app",
+          "elb": "classic-app"
+        }
+      }
+    },
+    {
+      "address": "aws_autoscaling_attachment.target",
+      "mode": "managed",
+      "type": "aws_autoscaling_attachment",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "autoscaling_group_name": "asg-app",
+          "lb_target_group_arn": "arn:aws:elasticloadbalancing:us-east-1:123456789012:targetgroup/app/1234567890123456"
+        }
+      }
+    },
+    {
+      "address": "aws_autoscaling_traffic_source_attachment.app",
+      "mode": "managed",
+      "type": "aws_autoscaling_traffic_source_attachment",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "autoscaling_group_name": "asg-app",
+          "traffic_source": [
+            {
+              "identifier": "arn:aws:elasticloadbalancing:us-east-1:123456789012:targetgroup/app/1234567890123456",
+              "type": "elbv2"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_vpc.main",
+          "mode": "managed",
+          "type": "aws_vpc",
+          "name": "main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "id": {
+              "constant_value": "vpc-main"
+            }
+          }
+        },
+        {
+          "address": "aws_subnet.a",
+          "mode": "managed",
+          "type": "aws_subnet",
+          "name": "a",
+          "provider_config_key": "aws",
+          "expressions": {
+            "id": {
+              "constant_value": "subnet-a"
+            },
+            "vpc_id": {
+              "references": [
+                "aws_vpc.main.id"
+              ]
+            },
+            "availability_zone": {
+              "constant_value": "us-east-1a"
+            }
+          }
+        },
+        {
+          "address": "aws_subnet.b",
+          "mode": "managed",
+          "type": "aws_subnet",
+          "name": "b",
+          "provider_config_key": "aws",
+          "expressions": {
+            "id": {
+              "constant_value": "subnet-b"
+            },
+            "vpc_id": {
+              "references": [
+                "aws_vpc.main.id"
+              ]
+            },
+            "availability_zone": {
+              "constant_value": "us-east-1b"
+            }
+          }
+        },
+        {
+          "address": "aws_security_group.app",
+          "mode": "managed",
+          "type": "aws_security_group",
+          "name": "app",
+          "provider_config_key": "aws",
+          "expressions": {
+            "id": {
+              "constant_value": "sg-app"
+            },
+            "vpc_id": {
+              "references": [
+                "aws_vpc.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_ami.app",
+          "mode": "managed",
+          "type": "aws_ami",
+          "name": "app",
+          "provider_config_key": "aws",
+          "expressions": {
+            "id": {
+              "constant_value": "ami-app"
+            }
+          }
+        },
+        {
+          "address": "aws_iam_instance_profile.app",
+          "mode": "managed",
+          "type": "aws_iam_instance_profile",
+          "name": "app",
+          "provider_config_key": "aws",
+          "expressions": {
+            "name": {
+              "constant_value": "profile-app"
+            }
+          }
+        },
+        {
+          "address": "aws_key_pair.app",
+          "mode": "managed",
+          "type": "aws_key_pair",
+          "name": "app",
+          "provider_config_key": "aws",
+          "expressions": {
+            "key_name": {
+              "constant_value": "key-app"
+            }
+          }
+        },
+        {
+          "address": "aws_launch_configuration.app",
+          "mode": "managed",
+          "type": "aws_launch_configuration",
+          "name": "app",
+          "provider_config_key": "aws",
+          "expressions": {
+            "name": {
+              "constant_value": "launch-app"
+            },
+            "image_id": {
+              "references": [
+                "aws_ami.app.id"
+              ]
+            },
+            "security_groups": {
+              "references": [
+                "aws_security_group.app.id"
+              ]
+            },
+            "iam_instance_profile": {
+              "references": [
+                "aws_iam_instance_profile.app.name"
+              ]
+            },
+            "key_name": {
+              "references": [
+                "aws_key_pair.app.key_name"
+              ]
+            },
+            "user_data": {
+              "constant_value": "PRIVATE_BOOTSTRAP"
+            }
+          }
+        },
+        {
+          "address": "aws_elb.classic",
+          "mode": "managed",
+          "type": "aws_elb",
+          "name": "classic",
+          "provider_config_key": "aws",
+          "expressions": {
+            "name": {
+              "constant_value": "classic-app"
+            }
+          }
+        },
+        {
+          "address": "aws_lb_target_group.app",
+          "mode": "managed",
+          "type": "aws_lb_target_group",
+          "name": "app",
+          "provider_config_key": "aws",
+          "expressions": {
+            "arn": {
+              "constant_value": "arn:aws:elasticloadbalancing:us-east-1:123456789012:targetgroup/app/1234567890123456"
+            }
+          }
+        },
+        {
+          "address": "aws_vpclattice_target_group.app",
+          "mode": "managed",
+          "type": "aws_vpclattice_target_group",
+          "name": "app",
+          "provider_config_key": "aws",
+          "expressions": {
+            "arn": {
+              "constant_value": "arn:aws:vpc-lattice:us-east-1:123456789012:targetgroup/tg-12345678901234567"
+            }
+          }
+        },
+        {
+          "address": "aws_autoscaling_group.app",
+          "mode": "managed",
+          "type": "aws_autoscaling_group",
+          "name": "app",
+          "provider_config_key": "aws",
+          "expressions": {
+            "name": {
+              "constant_value": "asg-app"
+            },
+            "id": {
+              "constant_value": "asg-app"
+            },
+            "vpc_zone_identifier": {
+              "references": [
+                "aws_subnet.a.id",
+                "aws_subnet.b.id"
+              ]
+            },
+            "launch_configuration": {
+              "references": [
+                "aws_launch_configuration.app.name"
+              ]
+            },
+            "load_balancers": {
+              "references": [
+                "aws_elb.classic.name"
+              ]
+            },
+            "target_group_arns": {
+              "references": [
+                "aws_lb_target_group.app.arn"
+              ]
+            },
+            "traffic_source": [
+              {
+                "identifier": {
+                  "references": [
+                    "aws_vpclattice_target_group.app.arn"
+                  ]
+                },
+                "type": {
+                  "constant_value": "vpc-lattice"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_autoscaling_attachment.classic",
+          "mode": "managed",
+          "type": "aws_autoscaling_attachment",
+          "name": "classic",
+          "provider_config_key": "aws",
+          "expressions": {
+            "autoscaling_group_name": {
+              "references": [
+                "aws_autoscaling_group.app.name"
+              ]
+            },
+            "elb": {
+              "references": [
+                "aws_elb.classic.name"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_autoscaling_attachment.target",
+          "mode": "managed",
+          "type": "aws_autoscaling_attachment",
+          "name": "target",
+          "provider_config_key": "aws",
+          "expressions": {
+            "autoscaling_group_name": {
+              "references": [
+                "aws_autoscaling_group.app.name"
+              ]
+            },
+            "lb_target_group_arn": {
+              "references": [
+                "aws_lb_target_group.app.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_autoscaling_traffic_source_attachment.app",
+          "mode": "managed",
+          "type": "aws_autoscaling_traffic_source_attachment",
+          "name": "app",
+          "provider_config_key": "aws",
+          "expressions": {
+            "autoscaling_group_name": {
+              "references": [
+                "aws_autoscaling_group.app.name"
+              ]
+            },
+            "traffic_source": [
+              {
+                "identifier": {
+                  "references": [
+                    "aws_lb_target_group.app.arn"
+                  ]
+                },
+                "type": {
+                  "constant_value": "elbv2"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

@@ -395,7 +395,8 @@ containment, instance ownership or complete support for other ASG helpers.
 The other reviewed types have basic presentation and generic dependencies,
 without dedicated semantic rules or behavioral tests to borrow from ASG.
 
-Actionable gaps are #700 (Batch network/queue), #810 (ASG network/launch/traffic),
+Follow-up implementations #700 (Batch network/queue) and #810 (ASG
+network/launch/traffic) are documented in [AWS semantics](aws.md). Remaining gaps are
 #811 (ASG auxiliary owners/notifications), #812 (typed scaling targets),
 #813 (Image Builder chains/build infrastructure), #814 (distribution/lifecycle),
 #815 (Lightsail relationships and distribution/static-IP presentation), and
