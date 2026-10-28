@@ -5,6 +5,33 @@ const fs=require('node:fs');
 const {extract,buildEvidence,render}=require('../../scripts/aws-semantic-audit.cjs');
 const read=p=>JSON.parse(fs.readFileSync(p));
 
+test('analytics batch 2 covers 31 exact types without borrowing DMS implementation',()=>{
+ const services=new Set('dms datazone dataexchange datapipeline cleanrooms'.split(' '));
+ const expected=read('tests/fixtures/aws-inventory/6.70.0.json').resources.filter(r=>services.has(r.service));
+ const entries=Object.entries(read('docs/aws-semantic-decisions.json').types).filter(([,d])=>d.review?.issue===723);
+ assert.equal(expected.length,31);
+ assert.deepEqual(entries.map(([t])=>t).sort(),expected.map(r=>r.type).sort());
+ for(const [type,{review,gap,issue}] of entries){
+  assert.equal(review.implementationCommit,'c50d830c5737a51a362708b71f67e6c407884dbe');
+  assert.equal(review.providerCommit,'5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f');
+  assert.equal(review.officialDocumentation,expected.find(r=>r.type===type).documentation);
+  assert.deepEqual(Object.keys(review.shapes),review.fields);
+  assert.deepEqual(Object.keys(review.contracts),review.fields);
+  for(const key of ['placement','ownership','network','references','scope','summaries']) assert.match(review[key],/^(Supported|Partial|Missing|Not applicable|Intentionally unsupported|Deferred):/,type+': '+key);
+  assert.match(gap,/#723/);
+  if(['placement','ownership','network','references','scope'].some(k=>review[k].includes('Missing:'))) assert.ok(issue===699||(issue>=857&&issue<=866),type);
+ }
+ const d=Object.fromEntries(entries);
+ assert.match(d.aws_dms_replication_instance.review.placement,/Spatial/);
+ assert.deepEqual(d.aws_dms_replication_subnet_group.review.shapes.subnet_ids,[['set','string']]);
+ assert.equal(d.aws_dms_replication_config.review.contracts['compute_config.replication_subnet_group_id'],'required');
+ assert.match(d.aws_dms_replication_task.review.references,/endpoint_arn/);
+ assert.match(d.aws_dataexchange_revision.review.references,/combines dataset and revision/);
+ assert.match(d.aws_datapipeline_pipeline_definition.review.references,/internal pipeline objects/);
+ assert.equal(d.aws_datazone_environment_profile.review.contracts.aws_account_id,'optional/computed');
+ assert.deepEqual(d.aws_cleanrooms_membership.review.shapes['default_result_configuration.output_configuration.s3.bucket'],['list','list','list','string']);
+});
+
 test('analytics batch 1 covers 81 exact types and preserves qualified identities',()=>{
  const services=new Set('athena redshift redshiftserverless redshiftdata glue lakeformation emr emrcontainers emrserverless'.split(' '));
  const expected=read('tests/fixtures/aws-inventory/6.70.0.json').resources.filter(r=>services.has(r.service));

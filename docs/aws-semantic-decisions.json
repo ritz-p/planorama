@@ -711,25 +711,271 @@
       "status": "Basic-only",
       "priority": "P1",
       "issue": 699,
-      "gap": "Replication instance network proof and task source/target endpoint references; no database inference from strings."
+      "gap": "#723 reviewed: Missing: subnet group ID and complete SG collections #699. KMS and Kerberos secret/role references belong to #864; DNS/IP and krb5 contents cannot create endpoints. Follow-up #699.",
+      "review": {
+        "issue": 723,
+        "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "replication_instance_id",
+          "replication_instance_arn",
+          "replication_subnet_group_id",
+          "vpc_security_group_ids",
+          "kms_key_arn",
+          "kerberos_authentication_settings.key_cache_secret_iam_arn",
+          "kerberos_authentication_settings.key_cache_secret_id"
+        ],
+        "placement": "Supported: retain Spatial Node default (basic_entries.rs/classification.rs/runtime matrix); basic presentation does not establish semantics.",
+        "ownership": "Not applicable: aws_dms_replication_instance remains independently represented; shared endpoints do not establish exclusive embedded ownership.",
+        "network": "Missing: #699 subnet-group common-VPC placement with complete known subnet/SG evidence; service defaults cannot select customer VPC.",
+        "references": "Missing: subnet group ID and complete SG collections #699. KMS and Kerberos secret/role references belong to #864; DNS/IP and krb5 contents cannot create endpoints.",
+        "scope": "Partial: Regional (conditional) in scope.rs; basic fallback clears account. Known effective provider/resource region and independent account/state proof required; target IDs do not manufacture scope.",
+        "summaries": "Deferred: replication_instance_id/replication_instance_arn identity navigation belongs to #699; extra summaries need explicit known/unknown allowlist in that contract. Payloads, policy effects and observed runtime state remain excluded.",
+        "officialDocumentation": "website/docs/r/dms_replication_instance.html.markdown",
+        "shapes": {
+          "replication_instance_id": [
+            "string"
+          ],
+          "replication_instance_arn": [
+            "string"
+          ],
+          "replication_subnet_group_id": [
+            "string"
+          ],
+          "vpc_security_group_ids": [
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "kms_key_arn": [
+            "string"
+          ],
+          "kerberos_authentication_settings.key_cache_secret_iam_arn": [
+            "list",
+            "string"
+          ],
+          "kerberos_authentication_settings.key_cache_secret_id": [
+            "list",
+            "string"
+          ]
+        },
+        "contracts": {
+          "replication_instance_id": "required",
+          "replication_instance_arn": "computed",
+          "replication_subnet_group_id": "optional/computed",
+          "vpc_security_group_ids": "optional/computed",
+          "kms_key_arn": "optional/computed",
+          "kerberos_authentication_settings.key_cache_secret_iam_arn": "required",
+          "kerberos_authentication_settings.key_cache_secret_id": "required"
+        }
+      }
     },
     "aws_dms_replication_subnet_group": {
       "status": "Basic-only",
       "priority": "P1",
       "issue": 699,
-      "gap": "Replication instance network proof and task source/target endpoint references; no database inference from strings."
+      "gap": "#723 reviewed: Missing: complete explicit subnet IDs #699; computed vpc_id only corroborates, never creates configured VPC proof. Follow-up #699.",
+      "review": {
+        "issue": 723,
+        "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "replication_subnet_group_id",
+          "replication_subnet_group_arn",
+          "subnet_ids",
+          "vpc_id"
+        ],
+        "placement": "Supported: retain Logical Node default (basic_entries.rs/classification.rs/runtime matrix); basic presentation does not establish semantics.",
+        "ownership": "Not applicable: aws_dms_replication_subnet_group remains independently represented; shared endpoints do not establish exclusive embedded ownership.",
+        "network": "Missing: #699 common-VPC context from complete subnet set; group itself stays shared logical configuration.",
+        "references": "Missing: complete explicit subnet IDs #699; computed vpc_id only corroborates, never creates configured VPC proof.",
+        "scope": "Partial: Regional (conditional) in scope.rs; basic fallback clears account. Known effective provider/resource region and independent account/state proof required; target IDs do not manufacture scope.",
+        "summaries": "Deferred: replication_subnet_group_id/replication_subnet_group_arn identity navigation belongs to #699; extra summaries need explicit known/unknown allowlist in that contract. Payloads, policy effects and observed runtime state remain excluded.",
+        "officialDocumentation": "website/docs/r/dms_replication_subnet_group.html.markdown",
+        "shapes": {
+          "replication_subnet_group_id": [
+            "string"
+          ],
+          "replication_subnet_group_arn": [
+            "string"
+          ],
+          "subnet_ids": [
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "vpc_id": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "replication_subnet_group_id": "required",
+          "replication_subnet_group_arn": "computed",
+          "subnet_ids": "required",
+          "vpc_id": "computed"
+        },
+        "sourceContracts": {
+          "replication_subnet_group_arn": {
+            "file": "internal/service/dms/replication_subnet_group.go",
+            "token": "\"replication_subnet_group_arn\": {"
+          }
+        }
+      }
     },
     "aws_dms_endpoint": {
       "status": "Basic-only",
-      "priority": "P1",
-      "issue": 699,
-      "gap": "Replication instance network proof and task source/target endpoint references; no database inference from strings."
+      "priority": "P2",
+      "issue": 863,
+      "gap": "#723 reviewed: Missing: #699 accepts endpoint_arn as task endpoint only. Additional engine-gated certificate/KMS/secret/role/Kinesis/S3 references belong here; URLs, broker/server names and database strings do not identify RDS/Redshift/MSK resources. Follow-up #863.",
+      "review": {
+        "issue": 723,
+        "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "endpoint_id",
+          "endpoint_arn",
+          "endpoint_type",
+          "engine_name",
+          "certificate_arn",
+          "kms_key_arn",
+          "secrets_manager_access_role_arn",
+          "secrets_manager_arn",
+          "service_access_role",
+          "kinesis_settings.stream_arn",
+          "kinesis_settings.service_access_role_arn",
+          "redshift_settings.bucket_name",
+          "redshift_settings.service_access_role_arn",
+          "redshift_settings.server_side_encryption_kms_key_id"
+        ],
+        "placement": "Supported: retain Logical Connector default (basic_entries.rs/classification.rs/runtime matrix); basic presentation does not establish semantics.",
+        "ownership": "Not applicable: aws_dms_endpoint remains independently represented; shared endpoints do not establish exclusive embedded ownership.",
+        "network": "Not applicable: aws_dms_endpoint has no customer-subnet placement contract; typed service references do not inherit endpoint network.",
+        "references": "Missing: #699 accepts endpoint_arn as task endpoint only. Additional engine-gated certificate/KMS/secret/role/Kinesis/S3 references belong here; URLs, broker/server names and database strings do not identify RDS/Redshift/MSK resources.",
+        "scope": "Partial: Regional (conditional) in scope.rs; basic fallback clears account. Known effective provider/resource region and independent account/state proof required; target IDs do not manufacture scope.",
+        "summaries": "Deferred: endpoint_id/endpoint_arn identity navigation belongs to #863; extra summaries need explicit known/unknown allowlist in that contract. Payloads, policy effects and observed runtime state remain excluded.",
+        "officialDocumentation": "website/docs/r/dms_endpoint.html.markdown",
+        "shapes": {
+          "endpoint_id": [
+            "string"
+          ],
+          "endpoint_arn": [
+            "string"
+          ],
+          "endpoint_type": [
+            "string"
+          ],
+          "engine_name": [
+            "string"
+          ],
+          "certificate_arn": [
+            "string"
+          ],
+          "kms_key_arn": [
+            "string"
+          ],
+          "secrets_manager_access_role_arn": [
+            "string"
+          ],
+          "secrets_manager_arn": [
+            "string"
+          ],
+          "service_access_role": [
+            "string"
+          ],
+          "kinesis_settings.stream_arn": [
+            "list",
+            "string"
+          ],
+          "kinesis_settings.service_access_role_arn": [
+            "list",
+            "string"
+          ],
+          "redshift_settings.bucket_name": [
+            "list",
+            "string"
+          ],
+          "redshift_settings.service_access_role_arn": [
+            "list",
+            "string"
+          ],
+          "redshift_settings.server_side_encryption_kms_key_id": [
+            "list",
+            "string"
+          ]
+        },
+        "contracts": {
+          "endpoint_id": "required",
+          "endpoint_arn": "computed",
+          "endpoint_type": "required",
+          "engine_name": "required",
+          "certificate_arn": "optional/computed",
+          "kms_key_arn": "optional/computed",
+          "secrets_manager_access_role_arn": "optional",
+          "secrets_manager_arn": "optional",
+          "service_access_role": "optional",
+          "kinesis_settings.stream_arn": "optional",
+          "kinesis_settings.service_access_role_arn": "optional",
+          "redshift_settings.bucket_name": "optional",
+          "redshift_settings.service_access_role_arn": "optional",
+          "redshift_settings.server_side_encryption_kms_key_id": "optional"
+        }
+      }
     },
     "aws_dms_replication_task": {
       "status": "Basic-only",
-      "priority": "P1",
+      "priority": "P2",
       "issue": 699,
-      "gap": "Replication instance network proof and task source/target endpoint references; no database inference from strings."
+      "gap": "#723 reviewed: Missing: #699 exact instance replication_instance_arn and source/target endpoint_arn; source/target direction remains distinct. SQL/table mappings/settings and task status excluded. Follow-up #699.",
+      "review": {
+        "issue": 723,
+        "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "replication_task_id",
+          "replication_task_arn",
+          "replication_instance_arn",
+          "source_endpoint_arn",
+          "target_endpoint_arn",
+          "migration_type"
+        ],
+        "placement": "Supported: retain Logical Controller default (basic_entries.rs/classification.rs/runtime matrix); basic presentation does not establish semantics.",
+        "ownership": "Not applicable: task references instance and reusable endpoints; do not embed endpoints or copy instance VPC into task.",
+        "network": "Not applicable: aws_dms_replication_task has no customer-subnet placement contract; typed service references do not inherit endpoint network.",
+        "references": "Missing: #699 exact instance replication_instance_arn and source/target endpoint_arn; source/target direction remains distinct. SQL/table mappings/settings and task status excluded.",
+        "scope": "Partial: Regional (conditional) in scope.rs; basic fallback clears account. Known effective provider/resource region and independent account/state proof required; target IDs do not manufacture scope.",
+        "summaries": "Deferred: replication_task_id/replication_task_arn identity navigation belongs to #699; extra summaries need explicit known/unknown allowlist in that contract. Payloads, policy effects and observed runtime state remain excluded.",
+        "officialDocumentation": "website/docs/r/dms_replication_task.html.markdown",
+        "shapes": {
+          "replication_task_id": [
+            "string"
+          ],
+          "replication_task_arn": [
+            "string"
+          ],
+          "replication_instance_arn": [
+            "string"
+          ],
+          "source_endpoint_arn": [
+            "string"
+          ],
+          "target_endpoint_arn": [
+            "string"
+          ],
+          "migration_type": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "replication_task_id": "required",
+          "replication_task_arn": "computed",
+          "replication_instance_arn": "required",
+          "source_endpoint_arn": "required",
+          "target_endpoint_arn": "required",
+          "migration_type": "required"
+        }
+      }
     },
     "aws_batch_compute_environment": {
       "status": "Partial",
@@ -24930,6 +25176,1555 @@
           "resource_arn": "required",
           "usage_type": "required",
           "amount": "required"
+        }
+      }
+    },
+    "aws_cleanrooms_collaboration": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 857,
+      "gap": "#723 reviewed: Not applicable: member account IDs are invitation selectors, not Organizations ownership; query/encryption permissions never imply access. Follow-up #857.",
+      "review": {
+        "issue": 723,
+        "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "id",
+          "arn",
+          "member.account_id",
+          "analytics_engine"
+        ],
+        "placement": "Missing: Logical collaboration is a shared analytics identity; review independent architecture presentation.",
+        "ownership": "Not applicable: aws_cleanrooms_collaboration remains independently represented; shared endpoints do not establish exclusive embedded ownership.",
+        "network": "Not applicable: aws_cleanrooms_collaboration has no customer-subnet placement contract; typed service references do not inherit endpoint network.",
+        "references": "Not applicable: member account IDs are invitation selectors, not Organizations ownership; query/encryption permissions never imply access.",
+        "scope": "Partial: Regional (conditional) in scope.rs; basic fallback clears account. Known effective provider/resource region and independent account/state proof required; target IDs do not manufacture scope.",
+        "summaries": "Deferred: id/arn identity navigation belongs to #857; extra summaries need explicit known/unknown allowlist in that contract. Payloads, policy effects and observed runtime state remain excluded.",
+        "officialDocumentation": "website/docs/r/cleanrooms_collaboration.html.markdown",
+        "shapes": {
+          "id": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "member.account_id": [
+            "set",
+            "string"
+          ],
+          "analytics_engine": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "id": "computed",
+          "arn": "computed",
+          "member.account_id": "required",
+          "analytics_engine": "optional"
+        }
+      }
+    },
+    "aws_cleanrooms_configured_table": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 857,
+      "gap": "#723 reviewed: Missing: Glue table reference needs database name plus verified provider-account/catalog identity; names alone cannot borrow a cross-account catalog. No membership field implies collaboration ownership. Follow-up #857.",
+      "review": {
+        "issue": 723,
+        "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "id",
+          "arn",
+          "table_reference.database_name",
+          "table_reference.table_name"
+        ],
+        "placement": "Supported: retain Logical Node default (basic_entries.rs/classification.rs/runtime matrix); basic presentation does not establish semantics.",
+        "ownership": "Not applicable: aws_cleanrooms_configured_table remains independently represented; shared endpoints do not establish exclusive embedded ownership.",
+        "network": "Not applicable: aws_cleanrooms_configured_table has no customer-subnet placement contract; typed service references do not inherit endpoint network.",
+        "references": "Missing: Glue table reference needs database name plus verified provider-account/catalog identity; names alone cannot borrow a cross-account catalog. No membership field implies collaboration ownership.",
+        "scope": "Partial: Regional (conditional) in scope.rs; basic fallback clears account. Known effective provider/resource region and independent account/state proof required; target IDs do not manufacture scope.",
+        "summaries": "Deferred: id/arn identity navigation belongs to #857; extra summaries need explicit known/unknown allowlist in that contract. Payloads, policy effects and observed runtime state remain excluded.",
+        "officialDocumentation": "website/docs/r/cleanrooms_configured_table.html.markdown",
+        "shapes": {
+          "id": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "table_reference.database_name": [
+            "list",
+            "string"
+          ],
+          "table_reference.table_name": [
+            "list",
+            "string"
+          ]
+        },
+        "contracts": {
+          "id": "optional/computed",
+          "arn": "computed",
+          "table_reference.database_name": "required",
+          "table_reference.table_name": "required"
+        }
+      }
+    },
+    "aws_cleanrooms_membership": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 857,
+      "gap": "#723 reviewed: Missing: collaboration ID plus creator-account consistency, IAM role ARN and S3 bucket name. Cross-account membership does not relocate collaboration or transfer ownership. Follow-up #857.",
+      "review": {
+        "issue": 723,
+        "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "id",
+          "collaboration_id",
+          "collaboration_creator_account_id",
+          "default_result_configuration.role_arn",
+          "default_result_configuration.output_configuration.s3.bucket"
+        ],
+        "placement": "Supported: retain Logical Association default (basic_entries.rs/classification.rs/runtime matrix); basic presentation does not establish semantics.",
+        "ownership": "Missing: verified collaboration membership context; preserve member-account lifecycle independently.",
+        "network": "Not applicable: aws_cleanrooms_membership has no customer-subnet placement contract; typed service references do not inherit endpoint network.",
+        "references": "Missing: collaboration ID plus creator-account consistency, IAM role ARN and S3 bucket name. Cross-account membership does not relocate collaboration or transfer ownership.",
+        "scope": "Partial: Regional (conditional) in scope.rs; basic fallback clears account. Known effective provider/resource region and independent account/state proof required; target IDs do not manufacture scope.",
+        "summaries": "Deferred: id/collaboration_id identity navigation belongs to #857; extra summaries need explicit known/unknown allowlist in that contract. Payloads, policy effects and observed runtime state remain excluded.",
+        "officialDocumentation": "website/docs/r/cleanrooms_membership.html.markdown",
+        "shapes": {
+          "id": [
+            "string"
+          ],
+          "collaboration_id": [
+            "string"
+          ],
+          "collaboration_creator_account_id": [
+            "string"
+          ],
+          "default_result_configuration.role_arn": [
+            "list",
+            "string"
+          ],
+          "default_result_configuration.output_configuration.s3.bucket": [
+            "list",
+            "list",
+            "list",
+            "string"
+          ]
+        },
+        "contracts": {
+          "id": "computed",
+          "collaboration_id": "required",
+          "collaboration_creator_account_id": "computed",
+          "default_result_configuration.role_arn": "optional",
+          "default_result_configuration.output_configuration.s3.bucket": "required"
+        },
+        "sourceContracts": {
+          "default_result_configuration.output_configuration.s3.bucket": {
+            "file": "internal/service/cleanrooms/membership.go",
+            "token": "names.AttrBucket: schema.StringAttribute"
+          }
+        }
+      }
+    },
+    "aws_dataexchange_data_set": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 858,
+      "gap": "#723 reviewed: Not applicable: dataset has no configured backing resource field; asset_type is a discriminator, not endpoint evidence. Follow-up #858.",
+      "review": {
+        "issue": 723,
+        "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "id",
+          "arn",
+          "asset_type"
+        ],
+        "placement": "Missing: Logical dataset is an independent data-product identity; review Spatial presentation with revisions.",
+        "ownership": "Not applicable: aws_dataexchange_data_set remains independently represented; shared endpoints do not establish exclusive embedded ownership.",
+        "network": "Not applicable: aws_dataexchange_data_set has no customer-subnet placement contract; typed service references do not inherit endpoint network.",
+        "references": "Not applicable: dataset has no configured backing resource field; asset_type is a discriminator, not endpoint evidence.",
+        "scope": "Partial: Regional (conditional) in scope.rs; basic fallback clears account. Known effective provider/resource region and independent account/state proof required; target IDs do not manufacture scope.",
+        "summaries": "Deferred: id/arn identity navigation belongs to #858; extra summaries need explicit known/unknown allowlist in that contract. Payloads, policy effects and observed runtime state remain excluded.",
+        "officialDocumentation": "website/docs/r/dataexchange_data_set.html.markdown",
+        "shapes": {
+          "id": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "asset_type": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "id": "optional/computed",
+          "arn": "computed",
+          "asset_type": "required"
+        }
+      }
+    },
+    "aws_dataexchange_revision": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 858,
+      "gap": "#723 reviewed: Missing: dataset ID owner; revision_id is revision identity, Terraform id combines dataset and revision despite documentation describing dataset ID. Follow-up #858.",
+      "review": {
+        "issue": 723,
+        "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "data_set_id",
+          "revision_id",
+          "arn"
+        ],
+        "placement": "Supported: retain Logical Node default (basic_entries.rs/classification.rs/runtime matrix); basic presentation does not establish semantics.",
+        "ownership": "Missing: dataset-qualified revision helper; preserve independent revision identity.",
+        "network": "Not applicable: aws_dataexchange_revision has no customer-subnet placement contract; typed service references do not inherit endpoint network.",
+        "references": "Missing: dataset ID owner; revision_id is revision identity, Terraform id combines dataset and revision despite documentation describing dataset ID.",
+        "scope": "Partial: Regional (conditional) in scope.rs; basic fallback clears account. Known effective provider/resource region and independent account/state proof required; target IDs do not manufacture scope.",
+        "summaries": "Deferred: data_set_id/revision_id identity navigation belongs to #858; extra summaries need explicit known/unknown allowlist in that contract. Payloads, policy effects and observed runtime state remain excluded.",
+        "officialDocumentation": "website/docs/r/dataexchange_revision.html.markdown",
+        "shapes": {
+          "data_set_id": [
+            "string"
+          ],
+          "revision_id": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "data_set_id": "required",
+          "revision_id": "computed",
+          "arn": "computed"
+        }
+      }
+    },
+    "aws_dataexchange_revision_assets": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 858,
+      "gap": "#723 reviewed: Missing: dataset ID and type-gated S3 bucket/KMS references in asset set; this creates a revision, not attachment to aws_dataexchange_revision. Computed access points do not create Terraform children. Signed URL/files remain opaque. Follow-up #858.",
+      "review": {
+        "issue": 723,
+        "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "id",
+          "data_set_id",
+          "asset.create_s3_data_access_from_s3_bucket.asset_source.bucket",
+          "asset.create_s3_data_access_from_s3_bucket.asset_source.kms_keys_to_grant.kms_key_arn",
+          "asset.import_assets_from_s3.asset_source.bucket"
+        ],
+        "placement": "Supported: retain Logical Node default (basic_entries.rs/classification.rs/runtime matrix); basic presentation does not establish semantics.",
+        "ownership": "Missing: dataset-qualified revision/asset identity; embedded asset blocks are not separately managed resources.",
+        "network": "Not applicable: aws_dataexchange_revision_assets has no customer-subnet placement contract; typed service references do not inherit endpoint network.",
+        "references": "Missing: dataset ID and type-gated S3 bucket/KMS references in asset set; this creates a revision, not attachment to aws_dataexchange_revision. Computed access points do not create Terraform children. Signed URL/files remain opaque.",
+        "scope": "Partial: Regional (conditional) in scope.rs; basic fallback clears account. Known effective provider/resource region and independent account/state proof required; target IDs do not manufacture scope.",
+        "summaries": "Deferred: id/data_set_id identity navigation belongs to #858; extra summaries need explicit known/unknown allowlist in that contract. Payloads, policy effects and observed runtime state remain excluded.",
+        "officialDocumentation": "website/docs/r/dataexchange_revision_assets.html.markdown",
+        "shapes": {
+          "id": [
+            "string"
+          ],
+          "data_set_id": [
+            "string"
+          ],
+          "asset.create_s3_data_access_from_s3_bucket.asset_source.bucket": [
+            "set",
+            "list",
+            "list",
+            "string"
+          ],
+          "asset.create_s3_data_access_from_s3_bucket.asset_source.kms_keys_to_grant.kms_key_arn": [
+            "set",
+            "list",
+            "list",
+            "list",
+            "string"
+          ],
+          "asset.import_assets_from_s3.asset_source.bucket": [
+            "set",
+            "list",
+            "list",
+            "string"
+          ]
+        },
+        "contracts": {
+          "id": "computed",
+          "data_set_id": "required",
+          "asset.create_s3_data_access_from_s3_bucket.asset_source.bucket": "required",
+          "asset.create_s3_data_access_from_s3_bucket.asset_source.kms_keys_to_grant.kms_key_arn": "required",
+          "asset.import_assets_from_s3.asset_source.bucket": "required"
+        }
+      }
+    },
+    "aws_dataexchange_event_action": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 858,
+      "gap": "#723 reviewed: Missing: dataset ID, S3 bucket and encryption-mode-gated KMS ARN. Event configuration is not observed publication/delivery; key patterns excluded. Follow-up #858.",
+      "review": {
+        "issue": 723,
+        "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "event.revision_published.data_set_id",
+          "action.export_revision_to_s3.revision_destination.bucket",
+          "action.export_revision_to_s3.encryption.type",
+          "action.export_revision_to_s3.encryption.kms_key_arn"
+        ],
+        "placement": "Supported: retain Logical Controller default (basic_entries.rs/classification.rs/runtime matrix); basic presentation does not establish semantics.",
+        "ownership": "Not applicable: aws_dataexchange_event_action remains independently represented; shared endpoints do not establish exclusive embedded ownership.",
+        "network": "Not applicable: aws_dataexchange_event_action has no customer-subnet placement contract; typed service references do not inherit endpoint network.",
+        "references": "Missing: dataset ID, S3 bucket and encryption-mode-gated KMS ARN. Event configuration is not observed publication/delivery; key patterns excluded.",
+        "scope": "Partial: Regional (conditional) in scope.rs; basic fallback clears account. Known effective provider/resource region and independent account/state proof required; target IDs do not manufacture scope.",
+        "summaries": "Deferred: event.revision_published.data_set_id/action.export_revision_to_s3.revision_destination.bucket identity navigation belongs to #858; extra summaries need explicit known/unknown allowlist in that contract. Payloads, policy effects and observed runtime state remain excluded.",
+        "officialDocumentation": "website/docs/r/dataexchange_event_action.html.markdown",
+        "shapes": {
+          "event.revision_published.data_set_id": [
+            "list",
+            "list",
+            "string"
+          ],
+          "action.export_revision_to_s3.revision_destination.bucket": [
+            "list",
+            "list",
+            "list",
+            "string"
+          ],
+          "action.export_revision_to_s3.encryption.type": [
+            "list",
+            "list",
+            "list",
+            "string"
+          ],
+          "action.export_revision_to_s3.encryption.kms_key_arn": [
+            "list",
+            "list",
+            "list",
+            "string"
+          ]
+        },
+        "contracts": {
+          "event.revision_published.data_set_id": "required",
+          "action.export_revision_to_s3.revision_destination.bucket": "required",
+          "action.export_revision_to_s3.encryption.type": "optional",
+          "action.export_revision_to_s3.encryption.kms_key_arn": "optional"
+        }
+      }
+    },
+    "aws_datapipeline_pipeline": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 859,
+      "gap": "#723 reviewed: Not applicable: pipeline has no outgoing managed resource fields; id is pipeline ID despite client-certificate wording in docs. Follow-up #859.",
+      "review": {
+        "issue": 723,
+        "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "id",
+          "name"
+        ],
+        "placement": "Missing: Logical pipeline is an independent workflow endpoint; review architecture presentation with its definition.",
+        "ownership": "Not applicable: aws_datapipeline_pipeline remains independently represented; shared endpoints do not establish exclusive embedded ownership.",
+        "network": "Not applicable: aws_datapipeline_pipeline has no customer-subnet placement contract; typed service references do not inherit endpoint network.",
+        "references": "Not applicable: pipeline has no outgoing managed resource fields; id is pipeline ID despite client-certificate wording in docs.",
+        "scope": "Partial: Regional (conditional) in scope.rs; basic fallback clears account. Known effective provider/resource region and independent account/state proof required; target IDs do not manufacture scope.",
+        "summaries": "Deferred: id/name identity navigation belongs to #859; extra summaries need explicit known/unknown allowlist in that contract. Payloads, policy effects and observed runtime state remain excluded.",
+        "officialDocumentation": "website/docs/r/datapipeline_pipeline.html.markdown",
+        "shapes": {
+          "id": [
+            "string"
+          ],
+          "name": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "id": "optional/computed",
+          "name": "required"
+        }
+      }
+    },
+    "aws_datapipeline_pipeline_definition": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 859,
+      "gap": "#723 reviewed: Missing: pipeline_id ownership only. pipeline_object.field.ref_value identifies internal pipeline objects, not Terraform resources; string_value/parameters/scripts remain opaque. Follow-up #859.",
+      "review": {
+        "issue": 723,
+        "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "pipeline_id",
+          "pipeline_object.id",
+          "pipeline_object.field.ref_value"
+        ],
+        "placement": "Supported: retain Logical Controller default (basic_entries.rs/classification.rs/runtime matrix); basic presentation does not establish semantics.",
+        "ownership": "Missing: verified pipeline definition helper with separate lifecycle.",
+        "network": "Not applicable: aws_datapipeline_pipeline_definition has no customer-subnet placement contract; typed service references do not inherit endpoint network.",
+        "references": "Missing: pipeline_id ownership only. pipeline_object.field.ref_value identifies internal pipeline objects, not Terraform resources; string_value/parameters/scripts remain opaque.",
+        "scope": "Partial: Regional (conditional) in scope.rs; basic fallback clears account. Known effective provider/resource region and independent account/state proof required; target IDs do not manufacture scope.",
+        "summaries": "Deferred: pipeline_id/pipeline_object.id identity navigation belongs to #859; extra summaries need explicit known/unknown allowlist in that contract. Payloads, policy effects and observed runtime state remain excluded.",
+        "officialDocumentation": "website/docs/r/datapipeline_pipeline_definition.html.markdown",
+        "shapes": {
+          "pipeline_id": [
+            "string"
+          ],
+          "pipeline_object.id": [
+            "set",
+            "string"
+          ],
+          "pipeline_object.field.ref_value": [
+            "set",
+            "set",
+            "string"
+          ]
+        },
+        "contracts": {
+          "pipeline_id": "required",
+          "pipeline_object.id": "required",
+          "pipeline_object.field.ref_value": "optional"
+        }
+      }
+    },
+    "aws_datazone_domain": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 860,
+      "gap": "#723 reviewed: Missing: execution role, V2 service role and KMS ARN; root_domain_unit_id is computed service identity, not configured child. Follow-up #860.",
+      "review": {
+        "issue": 723,
+        "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "id",
+          "arn",
+          "domain_version",
+          "domain_execution_role",
+          "service_role",
+          "kms_key_identifier"
+        ],
+        "placement": "Missing: Logical domain is a governance architecture endpoint; review Spatial card.",
+        "ownership": "Not applicable: aws_datazone_domain remains independently represented; shared endpoints do not establish exclusive embedded ownership.",
+        "network": "Not applicable: aws_datazone_domain has no customer-subnet placement contract; typed service references do not inherit endpoint network.",
+        "references": "Missing: execution role, V2 service role and KMS ARN; root_domain_unit_id is computed service identity, not configured child.",
+        "scope": "Partial: Regional (conditional) in scope.rs; basic fallback clears account. Known effective provider/resource region and independent account/state proof required; target IDs do not manufacture scope.",
+        "summaries": "Deferred: id/arn identity navigation belongs to #860; extra summaries need explicit known/unknown allowlist in that contract. Payloads, policy effects and observed runtime state remain excluded.",
+        "officialDocumentation": "website/docs/r/datazone_domain.html.markdown",
+        "shapes": {
+          "id": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "domain_version": [
+            "string"
+          ],
+          "domain_execution_role": [
+            "string"
+          ],
+          "service_role": [
+            "string"
+          ],
+          "kms_key_identifier": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "id": "computed",
+          "arn": "computed",
+          "domain_version": "optional/computed",
+          "domain_execution_role": "required",
+          "service_role": "optional",
+          "kms_key_identifier": "optional"
+        }
+      }
+    },
+    "aws_datazone_project": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 860,
+      "gap": "#723 reviewed: Missing: domain ID owner and complete domain-qualified glossary term IDs; created_by is not a configured principal. Follow-up #860.",
+      "review": {
+        "issue": 723,
+        "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "id",
+          "domain_identifier",
+          "glossary_terms"
+        ],
+        "placement": "Supported: retain Logical Node default (basic_entries.rs/classification.rs/runtime matrix); basic presentation does not establish semantics.",
+        "ownership": "Missing: verified domain/project hierarchy; lifecycle remains independent.",
+        "network": "Not applicable: aws_datazone_project has no customer-subnet placement contract; typed service references do not inherit endpoint network.",
+        "references": "Missing: domain ID owner and complete domain-qualified glossary term IDs; created_by is not a configured principal.",
+        "scope": "Partial: Regional (conditional) in scope.rs; basic fallback clears account. Known effective provider/resource region and independent account/state proof required; target IDs do not manufacture scope.",
+        "summaries": "Deferred: id/domain_identifier identity navigation belongs to #860; extra summaries need explicit known/unknown allowlist in that contract. Payloads, policy effects and observed runtime state remain excluded.",
+        "officialDocumentation": "website/docs/r/datazone_project.html.markdown",
+        "shapes": {
+          "id": [
+            "string"
+          ],
+          "domain_identifier": [
+            "string"
+          ],
+          "glossary_terms": [
+            [
+              "list",
+              "string"
+            ]
+          ]
+        },
+        "contracts": {
+          "id": "computed",
+          "domain_identifier": "required",
+          "glossary_terms": "optional"
+        }
+      }
+    },
+    "aws_datazone_environment": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 861,
+      "gap": "#723 reviewed: Missing: domain/project/profile IDs and glossary terms with consistent domain. Blueprint identifiers are lookup contracts, not managed blueprint resources. Provisioned resources are computed and cannot synthesize Terraform children. Follow-up #861.",
+      "review": {
+        "issue": 723,
+        "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "id",
+          "domain_identifier",
+          "project_identifier",
+          "profile_identifier",
+          "blueprint_identifier",
+          "account_identifier",
+          "account_region",
+          "glossary_terms"
+        ],
+        "placement": "Missing: Logical environment warrants independent architecture review.",
+        "ownership": "Not applicable: aws_datazone_environment remains independently represented; shared endpoints do not establish exclusive embedded ownership.",
+        "network": "Not applicable: aws_datazone_environment has no customer-subnet placement contract; typed service references do not inherit endpoint network.",
+        "references": "Missing: domain/project/profile IDs and glossary terms with consistent domain. Blueprint identifiers are lookup contracts, not managed blueprint resources. Provisioned resources are computed and cannot synthesize Terraform children.",
+        "scope": "Missing: basic scope uses provider region and clears account; explicit account_identifier/account_region describe deployment destination and need distinct verified target scope, not relocation by profile-name inference.",
+        "summaries": "Deferred: id/domain_identifier identity navigation belongs to #861; extra summaries need explicit known/unknown allowlist in that contract. Payloads, policy effects and observed runtime state remain excluded.",
+        "officialDocumentation": "website/docs/r/datazone_environment.html.markdown",
+        "shapes": {
+          "id": [
+            "string"
+          ],
+          "domain_identifier": [
+            "string"
+          ],
+          "project_identifier": [
+            "string"
+          ],
+          "profile_identifier": [
+            "string"
+          ],
+          "blueprint_identifier": [
+            "string"
+          ],
+          "account_identifier": [
+            "string"
+          ],
+          "account_region": [
+            "string"
+          ],
+          "glossary_terms": [
+            [
+              "list",
+              "string"
+            ]
+          ]
+        },
+        "contracts": {
+          "id": "computed",
+          "domain_identifier": "required",
+          "project_identifier": "required",
+          "profile_identifier": "required",
+          "blueprint_identifier": "optional/computed",
+          "account_identifier": "optional/computed",
+          "account_region": "optional/computed",
+          "glossary_terms": "optional"
+        }
+      }
+    },
+    "aws_datazone_environment_profile": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 861,
+      "gap": "#723 reviewed: Missing: domain/project references; blueprint is service lookup, not managed configuration identity. aws_account_id is optional/computed in schema despite required docs. Follow-up #861.",
+      "review": {
+        "issue": 723,
+        "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "id",
+          "domain_identifier",
+          "project_identifier",
+          "environment_blueprint_identifier",
+          "aws_account_id",
+          "aws_account_region"
+        ],
+        "placement": "Supported: retain Logical Node default (basic_entries.rs/classification.rs/runtime matrix); basic presentation does not establish semantics.",
+        "ownership": "Not applicable: aws_datazone_environment_profile remains independently represented; shared endpoints do not establish exclusive embedded ownership.",
+        "network": "Not applicable: aws_datazone_environment_profile has no customer-subnet placement contract; typed service references do not inherit endpoint network.",
+        "references": "Missing: domain/project references; blueprint is service lookup, not managed configuration identity. aws_account_id is optional/computed in schema despite required docs.",
+        "scope": "Partial: regional control-plane identity from scope.rs; aws_account_id/aws_account_region describe intended deployment target and must not replace profile control scope without proof.",
+        "summaries": "Deferred: id/domain_identifier identity navigation belongs to #861; extra summaries need explicit known/unknown allowlist in that contract. Payloads, policy effects and observed runtime state remain excluded.",
+        "officialDocumentation": "website/docs/r/datazone_environment_profile.html.markdown",
+        "shapes": {
+          "id": [
+            "string"
+          ],
+          "domain_identifier": [
+            "string"
+          ],
+          "project_identifier": [
+            "string"
+          ],
+          "environment_blueprint_identifier": [
+            "string"
+          ],
+          "aws_account_id": [
+            "string"
+          ],
+          "aws_account_region": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "id": "computed",
+          "domain_identifier": "required",
+          "project_identifier": "required",
+          "environment_blueprint_identifier": "required",
+          "aws_account_id": "optional/computed",
+          "aws_account_region": "required"
+        }
+      }
+    },
+    "aws_datazone_environment_blueprint_configuration": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 861,
+      "gap": "#723 reviewed: Missing: domain ID and IAM role ARNs; environment_blueprint_id is not configuration Terraform ID. enabled_regions configure availability, not multi-region resource ownership; arbitrary parameters opaque. Follow-up #861.",
+      "review": {
+        "issue": 723,
+        "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "domain_id",
+          "environment_blueprint_id",
+          "enabled_regions",
+          "manage_access_role_arn",
+          "provisioning_role_arn"
+        ],
+        "placement": "Supported: retain Logical Controller default (basic_entries.rs/classification.rs/runtime matrix); basic presentation does not establish semantics.",
+        "ownership": "Missing: domain-qualified blueprint configuration helper, not ownership of a built-in blueprint.",
+        "network": "Not applicable: aws_datazone_environment_blueprint_configuration has no customer-subnet placement contract; typed service references do not inherit endpoint network.",
+        "references": "Missing: domain ID and IAM role ARNs; environment_blueprint_id is not configuration Terraform ID. enabled_regions configure availability, not multi-region resource ownership; arbitrary parameters opaque.",
+        "scope": "Partial: Regional (conditional) in scope.rs; basic fallback clears account. Known effective provider/resource region and independent account/state proof required; target IDs do not manufacture scope.",
+        "summaries": "Deferred: domain_id/environment_blueprint_id identity navigation belongs to #861; extra summaries need explicit known/unknown allowlist in that contract. Payloads, policy effects and observed runtime state remain excluded.",
+        "officialDocumentation": "website/docs/r/datazone_environment_blueprint_configuration.html.markdown",
+        "shapes": {
+          "domain_id": [
+            "string"
+          ],
+          "environment_blueprint_id": [
+            "string"
+          ],
+          "enabled_regions": [
+            [
+              "list",
+              "string"
+            ]
+          ],
+          "manage_access_role_arn": [
+            "string"
+          ],
+          "provisioning_role_arn": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "domain_id": "required",
+          "environment_blueprint_id": "required",
+          "enabled_regions": "required",
+          "manage_access_role_arn": "optional",
+          "provisioning_role_arn": "optional"
+        }
+      }
+    },
+    "aws_datazone_asset_type": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 860,
+      "gap": "#723 reviewed: Missing: domain/project and revision-qualified form type references; forms_input map_block_key is local alias, not form identity. Follow-up #860.",
+      "review": {
+        "issue": 723,
+        "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "domain_identifier",
+          "owning_project_identifier",
+          "name",
+          "revision",
+          "forms_input.type_identifier",
+          "forms_input.type_revision"
+        ],
+        "placement": "Supported: retain Logical Node default (basic_entries.rs/classification.rs/runtime matrix); basic presentation does not establish semantics.",
+        "ownership": "Missing: domain/project-qualified metadata type with version identity.",
+        "network": "Not applicable: aws_datazone_asset_type has no customer-subnet placement contract; typed service references do not inherit endpoint network.",
+        "references": "Missing: domain/project and revision-qualified form type references; forms_input map_block_key is local alias, not form identity.",
+        "scope": "Partial: Regional (conditional) in scope.rs; basic fallback clears account. Known effective provider/resource region and independent account/state proof required; target IDs do not manufacture scope.",
+        "summaries": "Deferred: domain_identifier/owning_project_identifier identity navigation belongs to #860; extra summaries need explicit known/unknown allowlist in that contract. Payloads, policy effects and observed runtime state remain excluded.",
+        "officialDocumentation": "website/docs/r/datazone_asset_type.html.markdown",
+        "shapes": {
+          "domain_identifier": [
+            "string"
+          ],
+          "owning_project_identifier": [
+            "string"
+          ],
+          "name": [
+            "string"
+          ],
+          "revision": [
+            "string"
+          ],
+          "forms_input.type_identifier": [
+            "set",
+            "string"
+          ],
+          "forms_input.type_revision": [
+            "set",
+            "string"
+          ]
+        },
+        "contracts": {
+          "domain_identifier": "required",
+          "owning_project_identifier": "required",
+          "name": "required",
+          "revision": "computed",
+          "forms_input.type_identifier": "required",
+          "forms_input.type_revision": "required"
+        },
+        "sourceContracts": {
+          "forms_input.type_identifier": {
+            "file": "internal/service/datazone/asset_type.go",
+            "token": "\"type_identifier\": schema.StringAttribute"
+          },
+          "forms_input.type_revision": {
+            "file": "internal/service/datazone/asset_type.go",
+            "token": "\"type_revision\": schema.StringAttribute"
+          }
+        }
+      }
+    },
+    "aws_datazone_form_type": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 860,
+      "gap": "#723 reviewed: Missing: domain/project owner; Smithy model and computed imports do not establish Terraform dependencies. Follow-up #860.",
+      "review": {
+        "issue": 723,
+        "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "domain_identifier",
+          "owning_project_identifier",
+          "name",
+          "revision"
+        ],
+        "placement": "Supported: retain Logical Node default (basic_entries.rs/classification.rs/runtime matrix); basic presentation does not establish semantics.",
+        "ownership": "Missing: verified project/form type hierarchy; retain revision identity.",
+        "network": "Not applicable: aws_datazone_form_type has no customer-subnet placement contract; typed service references do not inherit endpoint network.",
+        "references": "Missing: domain/project owner; Smithy model and computed imports do not establish Terraform dependencies.",
+        "scope": "Partial: Regional (conditional) in scope.rs; basic fallback clears account. Known effective provider/resource region and independent account/state proof required; target IDs do not manufacture scope.",
+        "summaries": "Deferred: domain_identifier/owning_project_identifier identity navigation belongs to #860; extra summaries need explicit known/unknown allowlist in that contract. Payloads, policy effects and observed runtime state remain excluded.",
+        "officialDocumentation": "website/docs/r/datazone_form_type.html.markdown",
+        "shapes": {
+          "domain_identifier": [
+            "string"
+          ],
+          "owning_project_identifier": [
+            "string"
+          ],
+          "name": [
+            "string"
+          ],
+          "revision": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "domain_identifier": "required",
+          "owning_project_identifier": "required",
+          "name": "required",
+          "revision": "computed"
+        }
+      }
+    },
+    "aws_datazone_glossary": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 860,
+      "gap": "#723 reviewed: Missing: domain/project owner; display names are not unique qualified IDs. Follow-up #860.",
+      "review": {
+        "issue": 723,
+        "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "id",
+          "domain_identifier",
+          "owning_project_identifier"
+        ],
+        "placement": "Supported: retain Logical Node default (basic_entries.rs/classification.rs/runtime matrix); basic presentation does not establish semantics.",
+        "ownership": "Missing: verified project glossary helper with independent ID.",
+        "network": "Not applicable: aws_datazone_glossary has no customer-subnet placement contract; typed service references do not inherit endpoint network.",
+        "references": "Missing: domain/project owner; display names are not unique qualified IDs.",
+        "scope": "Partial: Regional (conditional) in scope.rs; basic fallback clears account. Known effective provider/resource region and independent account/state proof required; target IDs do not manufacture scope.",
+        "summaries": "Deferred: id/domain_identifier identity navigation belongs to #860; extra summaries need explicit known/unknown allowlist in that contract. Payloads, policy effects and observed runtime state remain excluded.",
+        "officialDocumentation": "website/docs/r/datazone_glossary.html.markdown",
+        "shapes": {
+          "id": [
+            "string"
+          ],
+          "domain_identifier": [
+            "string"
+          ],
+          "owning_project_identifier": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "id": "computed",
+          "domain_identifier": "required",
+          "owning_project_identifier": "required"
+        }
+      }
+    },
+    "aws_datazone_glossary_term": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 860,
+      "gap": "#723 reviewed: Missing: glossary owner and domain-qualified term IDs; classifies/is_a are semantic taxonomy links, not resource containment. domain_identifier is optional in schema despite required docs. Follow-up #860.",
+      "review": {
+        "issue": 723,
+        "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "id",
+          "domain_identifier",
+          "glossary_identifier",
+          "term_relations.classifies",
+          "term_relations.is_a"
+        ],
+        "placement": "Supported: retain Logical Node default (basic_entries.rs/classification.rs/runtime matrix); basic presentation does not establish semantics.",
+        "ownership": "Missing: verified glossary-owned term; other term relationships remain independent.",
+        "network": "Not applicable: aws_datazone_glossary_term has no customer-subnet placement contract; typed service references do not inherit endpoint network.",
+        "references": "Missing: glossary owner and domain-qualified term IDs; classifies/is_a are semantic taxonomy links, not resource containment. domain_identifier is optional in schema despite required docs.",
+        "scope": "Partial: Regional (conditional) in scope.rs; basic fallback clears account. Known effective provider/resource region and independent account/state proof required; target IDs do not manufacture scope.",
+        "summaries": "Deferred: id/domain_identifier identity navigation belongs to #860; extra summaries need explicit known/unknown allowlist in that contract. Payloads, policy effects and observed runtime state remain excluded.",
+        "officialDocumentation": "website/docs/r/datazone_glossary_term.html.markdown",
+        "shapes": {
+          "id": [
+            "string"
+          ],
+          "domain_identifier": [
+            "string"
+          ],
+          "glossary_identifier": [
+            "string"
+          ],
+          "term_relations.classifies": [
+            "list",
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "term_relations.is_a": [
+            "list",
+            [
+              "set",
+              "string"
+            ]
+          ]
+        },
+        "contracts": {
+          "id": "computed",
+          "domain_identifier": "optional",
+          "glossary_identifier": "required",
+          "term_relations.classifies": "optional",
+          "term_relations.is_a": "optional"
+        },
+        "sourceContracts": {
+          "term_relations.is_a": {
+            "file": "internal/service/datazone/glossary_term.go",
+            "token": "\"is_a\": schema.SetAttribute"
+          }
+        }
+      }
+    },
+    "aws_datazone_policy_grant": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 862,
+      "gap": "#723 reviewed: Missing: entity-type-gated domain-qualified asset/profile/blueprint configuration and typed principal links. Domain-unit/group endpoints absent from managed denominator stay deferred until typed resources exist. Policy/wildcard effects not interpreted. Follow-up #862.",
+      "review": {
+        "issue": 723,
+        "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "domain_identifier",
+          "entity_identifier",
+          "entity_type",
+          "policy_type",
+          "principal.project.project_identifier",
+          "principal.user.user_identifier",
+          "principal.group.group_identifier"
+        ],
+        "placement": "Supported: retain Logical Policy default (basic_entries.rs/classification.rs/runtime matrix); basic presentation does not establish semantics.",
+        "ownership": "Not applicable: aws_datazone_policy_grant remains independently represented; shared endpoints do not establish exclusive embedded ownership.",
+        "network": "Not applicable: aws_datazone_policy_grant has no customer-subnet placement contract; typed service references do not inherit endpoint network.",
+        "references": "Missing: entity-type-gated domain-qualified asset/profile/blueprint configuration and typed principal links. Domain-unit/group endpoints absent from managed denominator stay deferred until typed resources exist. Policy/wildcard effects not interpreted.",
+        "scope": "Partial: Regional (conditional) in scope.rs; basic fallback clears account. Known effective provider/resource region and independent account/state proof required; target IDs do not manufacture scope.",
+        "summaries": "Deferred: domain_identifier/entity_identifier identity navigation belongs to #862; extra summaries need explicit known/unknown allowlist in that contract. Payloads, policy effects and observed runtime state remain excluded.",
+        "officialDocumentation": "website/docs/r/datazone_policy_grant.html.markdown",
+        "shapes": {
+          "domain_identifier": [
+            "string"
+          ],
+          "entity_identifier": [
+            "string"
+          ],
+          "entity_type": [
+            "string"
+          ],
+          "policy_type": [
+            "string"
+          ],
+          "principal.project.project_identifier": [
+            "list",
+            "list",
+            "string"
+          ],
+          "principal.user.user_identifier": [
+            "list",
+            "list",
+            "string"
+          ],
+          "principal.group.group_identifier": [
+            "list",
+            "list",
+            "string"
+          ]
+        },
+        "contracts": {
+          "domain_identifier": "required",
+          "entity_identifier": "required",
+          "entity_type": "required",
+          "policy_type": "required",
+          "principal.project.project_identifier": "optional",
+          "principal.user.user_identifier": "optional",
+          "principal.group.group_identifier": "required"
+        }
+      }
+    },
+    "aws_datazone_user_profile": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 862,
+      "gap": "#723 reviewed: Missing: domain owner and IAM/SSO-type-gated configured user identity. Computed details contain personal data; no display or name matching. Defer SSO GUID mapping until Identity Store proof is explicit. Follow-up #862.",
+      "review": {
+        "issue": 723,
+        "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "id",
+          "domain_identifier",
+          "user_identifier",
+          "user_type"
+        ],
+        "placement": "Supported: retain Logical Node default (basic_entries.rs/classification.rs/runtime matrix); basic presentation does not establish semantics.",
+        "ownership": "Missing: domain-qualified profile identity; not ownership of external IAM/SSO user.",
+        "network": "Not applicable: aws_datazone_user_profile has no customer-subnet placement contract; typed service references do not inherit endpoint network.",
+        "references": "Missing: domain owner and IAM/SSO-type-gated configured user identity. Computed details contain personal data; no display or name matching. Defer SSO GUID mapping until Identity Store proof is explicit.",
+        "scope": "Partial: Regional (conditional) in scope.rs; basic fallback clears account. Known effective provider/resource region and independent account/state proof required; target IDs do not manufacture scope.",
+        "summaries": "Deferred: id/domain_identifier identity navigation belongs to #862; extra summaries need explicit known/unknown allowlist in that contract. Payloads, policy effects and observed runtime state remain excluded.",
+        "officialDocumentation": "website/docs/r/datazone_user_profile.html.markdown",
+        "shapes": {
+          "id": [
+            "string"
+          ],
+          "domain_identifier": [
+            "string"
+          ],
+          "user_identifier": [
+            "string"
+          ],
+          "user_type": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "id": "computed",
+          "domain_identifier": "required",
+          "user_identifier": "required",
+          "user_type": "optional/computed"
+        }
+      }
+    },
+    "aws_dms_certificate": {
+      "status": "Basic-only",
+      "priority": "P3",
+      "gap": "#723 reviewed: Not applicable: DMS-specific imported certificate is reusable endpoint configuration, not ACM certificate alias; certificate/wallet bodies excluded. Incoming references belong to endpoint/data-provider follow-up.",
+      "review": {
+        "issue": 723,
+        "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "certificate_id",
+          "certificate_arn"
+        ],
+        "placement": "Supported: retain Logical Node default (basic_entries.rs/classification.rs/runtime matrix); basic presentation does not establish semantics.",
+        "ownership": "Not applicable: aws_dms_certificate remains independently represented; shared endpoints do not establish exclusive embedded ownership.",
+        "network": "Not applicable: aws_dms_certificate has no customer-subnet placement contract; typed service references do not inherit endpoint network.",
+        "references": "Not applicable: DMS-specific imported certificate is reusable endpoint configuration, not ACM certificate alias; certificate/wallet bodies excluded. Incoming references belong to endpoint/data-provider follow-up.",
+        "scope": "Partial: Regional (conditional) in scope.rs; basic fallback clears account. Known effective provider/resource region and independent account/state proof required; target IDs do not manufacture scope.",
+        "summaries": "Intentionally unsupported: DMS certificate PEM/wallet bodies and authentication contents are not architecture summaries; retain identity only.",
+        "officialDocumentation": "website/docs/r/dms_certificate.html.markdown",
+        "shapes": {
+          "certificate_id": [
+            "string"
+          ],
+          "certificate_arn": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "certificate_id": "required",
+          "certificate_arn": "computed"
+        }
+      }
+    },
+    "aws_dms_s3_endpoint": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 863,
+      "gap": "#723 reviewed: Missing: exact S3 endpoint task-target support separate from #699 initial aws_dms_endpoint scope; bucket name, IAM role, mode-gated KMS and DMS certificate. No runtime alias or object/column contents. Follow-up #863.",
+      "review": {
+        "issue": 723,
+        "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "endpoint_id",
+          "endpoint_arn",
+          "endpoint_type",
+          "bucket_name",
+          "expected_bucket_owner",
+          "service_access_role_arn",
+          "encryption_mode",
+          "server_side_encryption_kms_key_id",
+          "kms_key_arn",
+          "certificate_arn"
+        ],
+        "placement": "Supported: retain Logical Connector default (basic_entries.rs/classification.rs/runtime matrix); basic presentation does not establish semantics.",
+        "ownership": "Not applicable: aws_dms_s3_endpoint remains independently represented; shared endpoints do not establish exclusive embedded ownership.",
+        "network": "Not applicable: aws_dms_s3_endpoint has no customer-subnet placement contract; typed service references do not inherit endpoint network.",
+        "references": "Missing: exact S3 endpoint task-target support separate from #699 initial aws_dms_endpoint scope; bucket name, IAM role, mode-gated KMS and DMS certificate. No runtime alias or object/column contents.",
+        "scope": "Partial: Regional (conditional) in scope.rs; basic fallback clears account. Known effective provider/resource region and independent account/state proof required; target IDs do not manufacture scope.",
+        "summaries": "Deferred: endpoint_id/endpoint_arn identity navigation belongs to #863; extra summaries need explicit known/unknown allowlist in that contract. Payloads, policy effects and observed runtime state remain excluded.",
+        "officialDocumentation": "website/docs/r/dms_s3_endpoint.html.markdown",
+        "shapes": {
+          "endpoint_id": [
+            "string"
+          ],
+          "endpoint_arn": [
+            "string"
+          ],
+          "endpoint_type": [
+            "string"
+          ],
+          "bucket_name": [
+            "string"
+          ],
+          "expected_bucket_owner": [
+            "string"
+          ],
+          "service_access_role_arn": [
+            "string"
+          ],
+          "encryption_mode": [
+            "string"
+          ],
+          "server_side_encryption_kms_key_id": [
+            "string"
+          ],
+          "kms_key_arn": [
+            "string"
+          ],
+          "certificate_arn": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "endpoint_id": "required",
+          "endpoint_arn": "computed",
+          "endpoint_type": "required",
+          "bucket_name": "required",
+          "expected_bucket_owner": "optional",
+          "service_access_role_arn": "required",
+          "encryption_mode": "optional",
+          "server_side_encryption_kms_key_id": "optional",
+          "kms_key_arn": "optional/computed",
+          "certificate_arn": "optional/computed"
+        }
+      }
+    },
+    "aws_dms_event_subscription": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 864,
+      "gap": "#723 reviewed: Missing: SNS ARN and source-type-gated complete replication-instance/task identifiers; names and ARNs are not interchangeable. No inferred sources when collection is absent. Follow-up #864.",
+      "review": {
+        "issue": 723,
+        "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "sns_topic_arn",
+          "source_ids",
+          "source_type"
+        ],
+        "placement": "Supported: retain Logical Controller default (basic_entries.rs/classification.rs/runtime matrix); basic presentation does not establish semantics.",
+        "ownership": "Not applicable: aws_dms_event_subscription remains independently represented; shared endpoints do not establish exclusive embedded ownership.",
+        "network": "Not applicable: aws_dms_event_subscription has no customer-subnet placement contract; typed service references do not inherit endpoint network.",
+        "references": "Missing: SNS ARN and source-type-gated complete replication-instance/task identifiers; names and ARNs are not interchangeable. No inferred sources when collection is absent.",
+        "scope": "Partial: Regional (conditional) in scope.rs; basic fallback clears account. Known effective provider/resource region and independent account/state proof required; target IDs do not manufacture scope.",
+        "summaries": "Deferred: sns_topic_arn/source_ids identity navigation belongs to #864; extra summaries need explicit known/unknown allowlist in that contract. Payloads, policy effects and observed runtime state remain excluded.",
+        "officialDocumentation": "website/docs/r/dms_event_subscription.html.markdown",
+        "shapes": {
+          "sns_topic_arn": [
+            "string"
+          ],
+          "source_ids": [
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "source_type": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "sns_topic_arn": "required",
+          "source_ids": "optional",
+          "source_type": "required"
+        }
+      }
+    },
+    "aws_dms_instance_profile": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 865,
+      "gap": "#723 reviewed: Missing: subnet-group identifier, complete SGs and KMS ARN; instance profile is DMS migration configuration, not IAM instance profile. Follow-up #865.",
+      "review": {
+        "issue": 723,
+        "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "arn",
+          "subnet_group_identifier",
+          "vpc_security_group_ids",
+          "kms_key_arn"
+        ],
+        "placement": "Supported: retain Logical Node default (basic_entries.rs/classification.rs/runtime matrix); basic presentation does not establish semantics.",
+        "ownership": "Not applicable: aws_dms_instance_profile remains independently represented; shared endpoints do not establish exclusive embedded ownership.",
+        "network": "Missing: configured subnet-group/SG common-VPC context; availability_zone alone cannot select subnets and does not relocate migration project.",
+        "references": "Missing: subnet-group identifier, complete SGs and KMS ARN; instance profile is DMS migration configuration, not IAM instance profile.",
+        "scope": "Partial: Regional (conditional) in scope.rs; basic fallback clears account. Known effective provider/resource region and independent account/state proof required; target IDs do not manufacture scope.",
+        "summaries": "Deferred: arn/subnet_group_identifier identity navigation belongs to #865; extra summaries need explicit known/unknown allowlist in that contract. Payloads, policy effects and observed runtime state remain excluded.",
+        "officialDocumentation": "website/docs/r/dms_instance_profile.html.markdown",
+        "shapes": {
+          "arn": [
+            "string"
+          ],
+          "subnet_group_identifier": [
+            "string"
+          ],
+          "vpc_security_group_ids": [
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "kms_key_arn": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "arn": "computed",
+          "subnet_group_identifier": "optional/computed",
+          "vpc_security_group_ids": "optional/computed",
+          "kms_key_arn": "optional/computed"
+        }
+      }
+    },
+    "aws_dms_data_provider": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 865,
+      "gap": "#723 reviewed: Missing: engine-gated DMS certificates, S3 roles and Oracle secret references; all pinned engine variants are enumerated in fields; engine must match the settings variant. server_name/port/database are connection data, not managed database proof. Follow-up #865.",
+      "review": {
+        "issue": 723,
+        "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "arn",
+          "engine",
+          "virtual",
+          "settings.doc_db_settings.certificate_arn",
+          "settings.mysql_settings.certificate_arn",
+          "settings.postgresql_settings.certificate_arn",
+          "settings.oracle_settings.certificate_arn",
+          "settings.oracle_settings.secrets_manager_oracle_asm_access_role_arn",
+          "settings.oracle_settings.secrets_manager_oracle_asm_secret_id",
+          "settings.oracle_settings.secrets_manager_security_db_encryption_access_role_arn",
+          "settings.oracle_settings.secrets_manager_security_db_encryption_secret_id",
+          "settings.redshift_settings.s3_access_role_arn",
+          "settings.ibm_db2_luw_settings.certificate_arn",
+          "settings.ibm_db2_luw_settings.s3_access_role_arn",
+          "settings.ibm_db2_zos_settings.certificate_arn",
+          "settings.ibm_db2_zos_settings.s3_access_role_arn",
+          "settings.maria_db_settings.certificate_arn",
+          "settings.maria_db_settings.s3_access_role_arn",
+          "settings.microsoft_sql_server_settings.certificate_arn",
+          "settings.microsoft_sql_server_settings.s3_access_role_arn",
+          "settings.mongo_db_settings.certificate_arn",
+          "settings.mysql_settings.s3_access_role_arn",
+          "settings.oracle_settings.s3_access_role_arn",
+          "settings.postgresql_settings.s3_access_role_arn",
+          "settings.sybase_ase_settings.certificate_arn"
+        ],
+        "placement": "Supported: retain Logical Node default (basic_entries.rs/classification.rs/runtime matrix); basic presentation does not establish semantics.",
+        "ownership": "Not applicable: aws_dms_data_provider remains independently represented; shared endpoints do not establish exclusive embedded ownership.",
+        "network": "Not applicable: aws_dms_data_provider has no customer-subnet placement contract; typed service references do not inherit endpoint network.",
+        "references": "Missing: engine-gated DMS certificates, S3 roles and Oracle secret references; all pinned engine variants are enumerated in fields; engine must match the settings variant. server_name/port/database are connection data, not managed database proof.",
+        "scope": "Partial: Regional (conditional) in scope.rs; basic fallback clears account. Known effective provider/resource region and independent account/state proof required; target IDs do not manufacture scope.",
+        "summaries": "Deferred: arn/engine identity navigation belongs to #865; extra summaries need explicit known/unknown allowlist in that contract. Payloads, policy effects and observed runtime state remain excluded.",
+        "officialDocumentation": "website/docs/r/dms_data_provider.html.markdown",
+        "shapes": {
+          "arn": [
+            "string"
+          ],
+          "engine": [
+            "string"
+          ],
+          "virtual": [
+            "bool"
+          ],
+          "settings.doc_db_settings.certificate_arn": [
+            "list",
+            "list",
+            "string"
+          ],
+          "settings.mysql_settings.certificate_arn": [
+            "list",
+            "list",
+            "string"
+          ],
+          "settings.postgresql_settings.certificate_arn": [
+            "list",
+            "list",
+            "string"
+          ],
+          "settings.oracle_settings.certificate_arn": [
+            "list",
+            "list",
+            "string"
+          ],
+          "settings.oracle_settings.secrets_manager_oracle_asm_access_role_arn": [
+            "list",
+            "list",
+            "string"
+          ],
+          "settings.oracle_settings.secrets_manager_oracle_asm_secret_id": [
+            "list",
+            "list",
+            "string"
+          ],
+          "settings.oracle_settings.secrets_manager_security_db_encryption_access_role_arn": [
+            "list",
+            "list",
+            "string"
+          ],
+          "settings.oracle_settings.secrets_manager_security_db_encryption_secret_id": [
+            "list",
+            "list",
+            "string"
+          ],
+          "settings.redshift_settings.s3_access_role_arn": [
+            "list",
+            "list",
+            "string"
+          ],
+          "settings.ibm_db2_luw_settings.certificate_arn": [
+            "list",
+            "list",
+            "string"
+          ],
+          "settings.ibm_db2_luw_settings.s3_access_role_arn": [
+            "list",
+            "list",
+            "string"
+          ],
+          "settings.ibm_db2_zos_settings.certificate_arn": [
+            "list",
+            "list",
+            "string"
+          ],
+          "settings.ibm_db2_zos_settings.s3_access_role_arn": [
+            "list",
+            "list",
+            "string"
+          ],
+          "settings.maria_db_settings.certificate_arn": [
+            "list",
+            "list",
+            "string"
+          ],
+          "settings.maria_db_settings.s3_access_role_arn": [
+            "list",
+            "list",
+            "string"
+          ],
+          "settings.microsoft_sql_server_settings.certificate_arn": [
+            "list",
+            "list",
+            "string"
+          ],
+          "settings.microsoft_sql_server_settings.s3_access_role_arn": [
+            "list",
+            "list",
+            "string"
+          ],
+          "settings.mongo_db_settings.certificate_arn": [
+            "list",
+            "list",
+            "string"
+          ],
+          "settings.mysql_settings.s3_access_role_arn": [
+            "list",
+            "list",
+            "string"
+          ],
+          "settings.oracle_settings.s3_access_role_arn": [
+            "list",
+            "list",
+            "string"
+          ],
+          "settings.postgresql_settings.s3_access_role_arn": [
+            "list",
+            "list",
+            "string"
+          ],
+          "settings.sybase_ase_settings.certificate_arn": [
+            "list",
+            "list",
+            "string"
+          ]
+        },
+        "contracts": {
+          "arn": "computed",
+          "engine": "required",
+          "virtual": "optional/computed",
+          "settings.doc_db_settings.certificate_arn": "optional",
+          "settings.mysql_settings.certificate_arn": "optional",
+          "settings.postgresql_settings.certificate_arn": "optional",
+          "settings.oracle_settings.certificate_arn": "optional",
+          "settings.oracle_settings.secrets_manager_oracle_asm_access_role_arn": "optional",
+          "settings.oracle_settings.secrets_manager_oracle_asm_secret_id": "optional",
+          "settings.oracle_settings.secrets_manager_security_db_encryption_access_role_arn": "optional",
+          "settings.oracle_settings.secrets_manager_security_db_encryption_secret_id": "optional",
+          "settings.redshift_settings.s3_access_role_arn": "optional",
+          "settings.ibm_db2_luw_settings.certificate_arn": "optional",
+          "settings.ibm_db2_luw_settings.s3_access_role_arn": "optional",
+          "settings.ibm_db2_zos_settings.certificate_arn": "optional",
+          "settings.ibm_db2_zos_settings.s3_access_role_arn": "optional",
+          "settings.maria_db_settings.certificate_arn": "optional",
+          "settings.maria_db_settings.s3_access_role_arn": "optional",
+          "settings.microsoft_sql_server_settings.certificate_arn": "optional",
+          "settings.microsoft_sql_server_settings.s3_access_role_arn": "optional",
+          "settings.mongo_db_settings.certificate_arn": "optional",
+          "settings.mysql_settings.s3_access_role_arn": "optional",
+          "settings.oracle_settings.s3_access_role_arn": "optional",
+          "settings.postgresql_settings.s3_access_role_arn": "optional",
+          "settings.sybase_ase_settings.certificate_arn": "optional"
+        }
+      }
+    },
+    "aws_dms_migration_project": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 865,
+      "gap": "#723 reviewed: Missing: DMS profile/data-provider ARNs and configured secret/role/S3 paths with known values. Descriptor names are computed; source/target remain distinct and reusable. Follow-up #865.",
+      "review": {
+        "issue": 723,
+        "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "arn",
+          "instance_profile_arn",
+          "source_data_provider_descriptor.data_provider_arn",
+          "source_data_provider_descriptor.secrets_manager_access_role_arn",
+          "source_data_provider_descriptor.secrets_manager_secret_id",
+          "target_data_provider_descriptor.data_provider_arn",
+          "target_data_provider_descriptor.secrets_manager_access_role_arn",
+          "target_data_provider_descriptor.secrets_manager_secret_id",
+          "schema_conversion_application_attributes.s3_bucket_path",
+          "schema_conversion_application_attributes.s3_bucket_role_arn"
+        ],
+        "placement": "Supported: retain Logical Node default (basic_entries.rs/classification.rs/runtime matrix); basic presentation does not establish semantics.",
+        "ownership": "Not applicable: aws_dms_migration_project remains independently represented; shared endpoints do not establish exclusive embedded ownership.",
+        "network": "Not applicable: referencing a DMS instance profile does not contain project in its VPC.",
+        "references": "Missing: DMS profile/data-provider ARNs and configured secret/role/S3 paths with known values. Descriptor names are computed; source/target remain distinct and reusable.",
+        "scope": "Partial: Regional (conditional) in scope.rs; basic fallback clears account. Known effective provider/resource region and independent account/state proof required; target IDs do not manufacture scope.",
+        "summaries": "Deferred: arn/instance_profile_arn identity navigation belongs to #865; extra summaries need explicit known/unknown allowlist in that contract. Payloads, policy effects and observed runtime state remain excluded.",
+        "officialDocumentation": "website/docs/r/dms_migration_project.html.markdown",
+        "shapes": {
+          "arn": [
+            "string"
+          ],
+          "instance_profile_arn": [
+            "string"
+          ],
+          "source_data_provider_descriptor.data_provider_arn": [
+            "list",
+            "string"
+          ],
+          "source_data_provider_descriptor.secrets_manager_access_role_arn": [
+            "list",
+            "string"
+          ],
+          "source_data_provider_descriptor.secrets_manager_secret_id": [
+            "list",
+            "string"
+          ],
+          "target_data_provider_descriptor.data_provider_arn": [
+            "list",
+            "string"
+          ],
+          "target_data_provider_descriptor.secrets_manager_access_role_arn": [
+            "list",
+            "string"
+          ],
+          "target_data_provider_descriptor.secrets_manager_secret_id": [
+            "list",
+            "string"
+          ],
+          "schema_conversion_application_attributes.s3_bucket_path": [
+            "list",
+            "string"
+          ],
+          "schema_conversion_application_attributes.s3_bucket_role_arn": [
+            "list",
+            "string"
+          ]
+        },
+        "contracts": {
+          "arn": "computed",
+          "instance_profile_arn": "required",
+          "source_data_provider_descriptor.data_provider_arn": "required",
+          "source_data_provider_descriptor.secrets_manager_access_role_arn": "optional",
+          "source_data_provider_descriptor.secrets_manager_secret_id": "optional",
+          "target_data_provider_descriptor.data_provider_arn": "required",
+          "target_data_provider_descriptor.secrets_manager_access_role_arn": "optional",
+          "target_data_provider_descriptor.secrets_manager_secret_id": "optional",
+          "schema_conversion_application_attributes.s3_bucket_path": "optional",
+          "schema_conversion_application_attributes.s3_bucket_role_arn": "optional"
+        }
+      }
+    },
+    "aws_dms_replication_config": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 866,
+      "gap": "#723 reviewed: Missing: independent serverless endpoint/network/KMS contract; compute_config.replication_subnet_group_id required in schema despite optional docs. Not covered by provisioned instance/task #699. Follow-up #866.",
+      "review": {
+        "issue": 723,
+        "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "arn",
+          "replication_config_identifier",
+          "replication_type",
+          "source_endpoint_arn",
+          "target_endpoint_arn",
+          "compute_config.replication_subnet_group_id",
+          "compute_config.vpc_security_group_ids",
+          "compute_config.kms_key_id"
+        ],
+        "placement": "Missing: Logical serverless replication configuration is workload endpoint; review Spatial card without synthesizing replication instance.",
+        "ownership": "Not applicable: aws_dms_replication_config remains independently represented; shared endpoints do not establish exclusive embedded ownership.",
+        "network": "Missing: complete subnet-group and nested SG common-VPC proof, independent of provisioned replication instances.",
+        "references": "Missing: independent serverless endpoint/network/KMS contract; compute_config.replication_subnet_group_id required in schema despite optional docs. Not covered by provisioned instance/task #699.",
+        "scope": "Partial: Regional (conditional) in scope.rs; basic fallback clears account. Known effective provider/resource region and independent account/state proof required; target IDs do not manufacture scope.",
+        "summaries": "Deferred: arn/replication_config_identifier identity navigation belongs to #866; extra summaries need explicit known/unknown allowlist in that contract. Payloads, policy effects and observed runtime state remain excluded.",
+        "officialDocumentation": "website/docs/r/dms_replication_config.html.markdown",
+        "shapes": {
+          "arn": [
+            "string"
+          ],
+          "replication_config_identifier": [
+            "string"
+          ],
+          "replication_type": [
+            "string"
+          ],
+          "source_endpoint_arn": [
+            "string"
+          ],
+          "target_endpoint_arn": [
+            "string"
+          ],
+          "compute_config.replication_subnet_group_id": [
+            "list",
+            "string"
+          ],
+          "compute_config.vpc_security_group_ids": [
+            "list",
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "compute_config.kms_key_id": [
+            "list",
+            "string"
+          ]
+        },
+        "contracts": {
+          "arn": "computed",
+          "replication_config_identifier": "required",
+          "replication_type": "required",
+          "source_endpoint_arn": "required",
+          "target_endpoint_arn": "required",
+          "compute_config.replication_subnet_group_id": "required",
+          "compute_config.vpc_security_group_ids": "optional/computed",
+          "compute_config.kms_key_id": "optional/computed"
         }
       }
     }

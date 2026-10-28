@@ -90,6 +90,72 @@ Run the pinned-contract verifier, semantic register/tests and support-matrix che
 in Docker. This audit changes no rendering input or geometry; SVG regeneration and
 Layout quality do not apply.
 
+## Analytics and data governance review, batch 2 (#723)
+
+Reviewed runtime commit: `c50d830c5737a51a362708b71f67e6c407884dbe` on main;
+the documentation change is stacked on #722. All 31 managed types in DMS,
+DataZone, Data Exchange, Data Pipeline and Clean Rooms have six separate decisions,
+selected exact fields, shapes and input/output flags in the explicit register.
+Official documentation and schema are pinned to Provider 6.70.0 commit
+`5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f`; the schema hash matches the inventory.
+
+At this baseline these types have basic display only: no dedicated originating
+rules in service_references.rs, databases.rs, containment, service_members.rs or
+encryption.rs. Runtime evidence is basic_entries.rs, classification.rs and scope.rs;
+[inventory tests](../tests/unit/aws_inventory.rs) and the
+[support matrix](resource-support.md) verify defaults. No adjacent service's tests
+establish these missing capabilities. DMS replication instance is already Spatial;
+its subnet group, task and endpoint are logical configuration identities.
+Collaboration/dataset/pipeline/domain/environment/serverless replication defaults
+need architecture review in their follow-ups, without promoting every helper.
+
+Keep #699 for provisioned DMS instance/subnet-group/task relationships and exact
+`aws_dms_endpoint` task endpoints. Other bounded work is Clean Rooms #857,
+Data Exchange #858, Data Pipeline #859, DataZone metadata #860,
+environments/deployment scope #861, users/grants #862, DMS endpoint auxiliaries
+and distinct S3 endpoints #863, encryption/events #864, migration projects #865,
+and Serverless replication #866. These own their source/helper relationships;
+coordinate Glue/Lake Formation #722 and IAM/KMS/S3 endpoint audits without duplication.
+
+Contract distinctions checked against official docs, schema and source:
+
+- DMS uses `replication_instance_arn` and `endpoint_arn`, not a generic `arn`
+  output. Subnet group identifier is a name; subnet/SG collections are sets.
+  `replication_subnet_group_arn` is computed in
+  `internal/service/dms/replication_subnet_group.go` but omitted from its docs.
+  Serverless nested subnet group is required in schema, despite optional wording.
+  DMS certificate is not ACM, and DMS instance profile is not IAM instance profile.
+  Engine variants gate certificates, roles and secrets; hostnames, URLs, broker
+  lists and database names never reconstruct managed databases or network topology.
+- Clean Rooms membership's result bucket is under three list blocks, confirmed by
+  `internal/service/cleanrooms/membership.go`. Collaboration accounts are invitations,
+  not account-resource ownership. Configured table names need Glue catalog/account
+  qualification; the schema has no catalog ID or collaboration-owner input.
+- Data Exchange revision Terraform ID combines dataset and revision (confirmed in
+  `internal/service/dataexchange/revision.go`), despite misleading dataset-ID docs.
+  Revision assets creates its own revision; there is no existing revision ID input.
+  Asset blocks form a set and computed access points are not managed children.
+- Data Pipeline ID is a pipeline ID (`internal/service/datapipeline/pipeline.go`),
+  despite client-certificate wording. Definition `ref_value` references internal
+  pipeline objects, not Terraform resources; object fields remain opaque.
+- DataZone domain/project/form/glossary references require domain qualification.
+  Asset form `type_identifier` and `type_revision` are required under a set in
+  `internal/service/datazone/asset_type.go`. Glossary `is_a` is an optional set in
+  `internal/service/datazone/glossary_term.go`. These omitted nested docs are verified
+  through explicit source-contract entries as well as schema shapes. Environment
+  profile `aws_account_id` and glossary-term `domain_identifier` are optional in
+  schema despite required documentation. Environment deployment account/region are
+  distinct from domain control scope. Built-in blueprints and computed provisioned
+  resources are not managed configuration aliases or synthesized children.
+
+No reviewed type is a runtime alias; managed/data lookup contracts stay distinct.
+New relationships need explicit unique compatible references, matching known values,
+complete collections and independent provider/account/region/state proof. Preserve
+current/deposed/deleted and filtered fallback. Credentials, personal data, SQL,
+scripts, schema contents, policy effects and runtime health remain excluded.
+This audit changes no rendering/input/geometry. Docker contract verification,
+register/tests and support-matrix checks apply; SVG/Layout quality do not.
+
 ## Reading the register
 
 Each exact type has current managed defaults, a semantic status, missing capability or explicit deferral, priority, issue/disposition and schema input candidates. Official contracts are linked at commit `5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f`. Generic Terraform dependencies remain available in every category.
