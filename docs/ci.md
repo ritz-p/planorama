@@ -921,8 +921,9 @@ Docker environment on pull requests, manual dispatch and cache-input pushes to
 parity, offline generation, isolated previews, downloads and cancellation using
 Chromium. It also builds and checks the standalone artwork-free engine archive,
 including native output parity, JS/Wasm artwork exclusion and reproducible
-packaging. The no-default-feature build runs the full library suite and CLI help
-checks. Both distributions run memory-budget tests with small fixtures at every
+packaging. The no-default-feature build runs the `artwork_free::` library tests
+and CLI help checks. The full library suite is available through the manual
+`full_library` input. Both distributions run memory-budget tests with small fixtures at every
 configured maximum, binary import/capability checks and tiny-memory allocation
 failure/trap recovery. Multi-GiB growth and pointer tests remain opt-in; see the
 [memory contract](browser.md#per-generation-memory-selection). Artwork-exclusion tests also run with all features enabled. The manual
@@ -981,6 +982,11 @@ environment layers. Cache hits never bypass build or validation commands.
 `output/wasm-ci/{timings,bindings}.tsv` (phase, wall seconds, user seconds,
 system seconds, peak RSS KiB), environment, cache sizes and sccache statistics.
 `WASM_CI_REPORT_DIR` selects another repository-relative report directory.
+`browser.tsv` records non-overlapping browser test sections in wall seconds,
+including each service fixture/format, incomplete inputs, large-input UI
+progress/cancellation/retry, Wasm completion, and native comparison separately.
+It contains fixed test labels and timings, not input or generated content.
+`selection.txt` records whether the complete library suite was selected.
 The seven-day `wasm-ci-<sha>-<attempt>` artifact carries these records. Action
 step timestamps include environment import/export, cache restore/save and
 artifact upload overhead; use the complete job duration when comparing runs.
@@ -1060,3 +1066,59 @@ the hosted cold run, including 148.31 s of tests). Binding generation was small.
 That cache experiment retained all tests and builds without sharding or PR filtering.
 The current test consolidation is described above; these historical measurements
 predate it.
+
+### Browser Wasm test scope audit (#885)
+
+The 2026-10-28 audit uses Rust sources and fixtures from `9da190b`. The deprecated
+`icon-artwork = []` feature is a no-op: there are no feature predicates in Rust
+sources or feature-environment checks in `build.rs`. `default = []` is also empty.
+This is an inspected property of this revision, not an assumption that
+`--all-features` and `--no-default-features` are always equivalent.
+
+| Candidate | Decision and coverage |
+| --- | --- |
+| Repeat the complete no-default-feature library suite | Run `artwork_free::` (two tests) on PRs. They cover direct rendering, SVG/HTML defaults, missing artwork and explicit icon rejection. Keep no-default CLI help, native/Wasm builds, memory, archive dependency/byte scans, manifest/provenance, reproducibility and extracted-engine parity. Normal Rust CI retains the complete all-feature suite. |
+| Split browser and standalone into jobs | Keep one required `browser` job. Independent jobs duplicate environment setup, Cargo restore and shared compilation; transferring built products adds a serial prerequisite and revision/feature matching requirements. The dominant duplicate library execution can be removed without those costs. Both distributions still fail the same check and use freshly built products from the same checkout. |
+| Consolidate service fixture SVG/HTML parity | Retain all cases. Native semantic tests overlap in graph assertions but cannot detect Wasm target, ABI, worker serialization or output differences. Instrument individual fixture/format costs before considering a narrower representative set. |
+| Move large completion to scheduled/manual CI | Retain it on every PR along with progress, cancellation and retry. Moving completion would delay detection of large-input Wasm traps, deterministic output differences and missing progress stages. |
+| Bindings/cache changes | Keep the existing caches and both bindings builds; binding generation is below one second per distribution in the sampled runs. |
+
+The default selection no longer repeats 898 of the 900 passing library tests
+under no-default-features (eight ignored tests were not running before either).
+No browser assertion or fixture/format pair is removed. A future feature-specific
+implementation outside `artwork_free` could therefore escape the focused native
+suite; feature changes must revisit this audit. Manual `full_library: true`, or
+`WASM_CI_FULL_LIB=1 sh scripts/wasm-ci.sh` in Docker, restores the complete suite
+for investigation. It is not a scheduled replacement or a claim of identical
+coverage for arbitrary future feature combinations.
+
+The browser inventory is unchanged: `viewer-plan` SVG/HTML and selection options;
+15 complete service fixtures in both formats (DynamoDB, ElastiCache, EventBridge,
+MSK, MQ, DocumentDB, Neptune, Redshift Serverless, App Runner, Network Firewall,
+OpenSearch Serverless, Batch, FSx Lustre, DMS, SageMaker); four incomplete fixtures
+(OpenSearch Serverless, Batch, DMS, SageMaker) in both formats; aliases, spatial
+identity/SSM, basic/service labels; named inputs, module/resource selection and
+options; malformed/unsupported/oversized inputs; offline downloads, isolated and
+hostile previews; large-input progress/cancel/retry and full native/Wasm parity.
+The semantic counterparts are in `tests/unit/semantic`, rendering checks in
+`tests/unit/svg` and `tests/integration`; they do not replace browser boundary tests.
+
+Three recent successful hosted runs show why cache and runner conditions matter.
+Queue is workflow creation to job start; job time includes setup, transfers and
+cleanup. With one job, summed runner time equals job time. All three missed all
+three Cargo caches and reused BuildKit tool layers; none is a warm-Cargo sample.
+PR `head_sha` can differ from the tested merge SHA shown in the artifact.
+
+| Run / tested SHA | Queue | Job / summed runner | Environment | Build + validation | Library phase / test execution | Browser suite |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| [40660392326](https://github.com/ritz-p/planorama/actions/runs/40660392326) / `f5c3204` | 2 s | 789 s | 38 s | 724 s | 349.92 / 198.57 s | 117.00 s |
+| [40665336687](https://github.com/ritz-p/planorama/actions/runs/40665336687) / `244e6bb` | 2 s | 774 s | 42 s | 701 s | 340.46 / 197.88 s | 113.50 s |
+| [40671433186](https://github.com/ritz-p/planorama/actions/runs/40671433186) / `9da190b` | 3 s | 491 s | 48 s | 422 s | 197.26 / 104.41 s | 67.80 s |
+
+The first two slow runs spent almost half of build/validation in the library
+phase. Bindings took 0.26–0.40 s each. Cargo saves took 6–10 s total; restore steps
+missed in 0–1 s. Even cold runs vary substantially, so one run below ten minutes
+does not establish a guarantee. The parallel-job alternative would add at least
+another environment/checkout/transfer sequence (38–48 s for environment alone in
+these samples), before duplicate compilation; that is an estimate, not a measured
+parallel implementation.

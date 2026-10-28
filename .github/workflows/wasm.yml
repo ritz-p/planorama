@@ -16,6 +16,11 @@ on:
       - scripts/**
       - .github/workflows/wasm.yml
   workflow_dispatch:
+    inputs:
+      full_library:
+        description: 'Run the complete no-default-feature library suite for comparison'
+        type: boolean
+        default: false
 permissions:
   contents: read
 concurrency:
@@ -76,7 +81,9 @@ jobs:
       - name: Verify native reference cache
         run: docker compose exec -T dev node --test tests/support/native-reference.test.cjs
       - name: Build and verify both distributions
-        run: docker compose exec -T dev sh scripts/wasm-ci.sh
+        env:
+          WASM_CI_FULL_LIB: ${{ inputs.full_library && '1' || '0' }}
+        run: docker compose exec -T -e WASM_CI_FULL_LIB dev sh scripts/wasm-ci.sh
       - name: Prepare dependency caches
         run: |
           docker compose exec -T dev sh -c 'find /workspace/target -depth \( -name "*planorama*" -o -name "cli-*" \) -exec rm -rf {} +'

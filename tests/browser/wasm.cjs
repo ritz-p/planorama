@@ -1,6 +1,6 @@
 const assert = require('node:assert/strict');
 const {fork} = require('node:child_process');
-const {readFileSync, mkdtempSync, rmSync, existsSync} = require('node:fs');
+const {readFileSync, mkdtempSync, rmSync, existsSync, appendFileSync} = require('node:fs');
 const {join, resolve} = require('node:path');
 const {tmpdir} = require('node:os');
 const {Driver, By, wait} = require('./webdriver.cjs');
@@ -11,6 +11,15 @@ const nativeReference = require('../support/native-reference.cjs')(binary);
 const small = readFileSync(join(root, 'tests/fixtures/viewer-plan.json'), 'utf8');
 const server = fork(join(root, 'scripts/serve-browser.cjs'), [], {env: {...process.env, PORT: '0'}, stdio: ['ignore', 'inherit', 'inherit', 'ipc']});
 const temp = mkdtempSync(join(tmpdir(), 'planorama-wasm-'));
+let phaseStart = performance.now();
+const checkpoint = phase => {
+  const now = performance.now();
+  const seconds = ((now - phaseStart) / 1000).toFixed(3);
+  if (process.env.WASM_BROWSER_TIMINGS) {
+    appendFileSync(process.env.WASM_BROWSER_TIMINGS, `${phase}\t${seconds}\n`);
+  }
+  phaseStart = now;
+};
 
 async function main() {
   const port = await new Promise((resolve, reject) => {
@@ -48,18 +57,23 @@ async function main() {
     driver.execute_cdp_cmd('Network.enable', {});
     driver.execute_cdp_cmd('Network.emulateNetworkConditions', {offline: true, latency: 0, downloadThroughput: 0, uploadThroughput: 0});
     driver.get_log('performance');
+    checkpoint('startup');
     require('./wasm-named.cjs')({driver, root, binary});
+    checkpoint('named-inputs');
     require('./wasm-modules.cjs')({
       driver, small, run, status,
       native: nativeReference,
     });
+    checkpoint('modules');
     require('./wasm-resources.cjs')({driver, run,
       native: nativeReference,
     });
+    checkpoint('resources');
     require('./wasm-options.cjs')({
       driver, small, run, submit, status,
       native: nativeReference,
     });
+    checkpoint('options');
     for (const [options, args] of [
       [{}, []],
       [{format: 'html'}, ['--format', 'html']],
@@ -73,6 +87,7 @@ async function main() {
       assert.equal(result.content, native, `Native/Wasm exact parity: ${JSON.stringify(options)}`);
       console.log(JSON.stringify({fixture: 'viewer-plan', options, elapsed_ms: result.elapsed_ms, memory_bytes: result.memory_bytes, output_bytes: Buffer.byteLength(result.content)}));
     }
+    checkpoint('viewer-parity');
     const aliases = readFileSync(join(root, 'tests/fixtures/aws-aliases-plan.json'), 'utf8');
     const serverless = JSON.parse(readFileSync(join(root, 'tests/fixtures/opensearch-serverless-plan.json'), 'utf8'));
     serverless.resource_changes[4].change.after_unknown = {subnet_ids: [false, true]};
@@ -83,6 +98,7 @@ async function main() {
       assert.equal(result.content, nativeReference(input, ['--format', format]), 'Serverless unknown network native/Wasm '+format);
       assert.ok(!result.content.includes('PRIVATE_'));
     }
+    checkpoint('incomplete-serverless');
     const batch = JSON.parse(readFileSync(join(root, 'tests/fixtures/batch-plan.json'), 'utf8'));
     batch.resource_changes[7].change.after_unknown = {compute_environment_order: [{}, {compute_environment: true}]};
     for (const format of ['svg', 'html']) {
@@ -92,6 +108,7 @@ async function main() {
       assert.equal(result.content, nativeReference(input, ['--format', format]), 'Batch incomplete queue native/Wasm '+format);
       assert.ok(!result.content.includes('PRIVATE_'));
     }
+    checkpoint('incomplete-batch');
     const dms = JSON.parse(readFileSync(join(root, 'tests/fixtures/dms-plan.json'), 'utf8'));
     dms.resource_changes[5].change.after_unknown = {subnet_ids: [false, true]};
     dms.resource_changes[7].change.after_unknown = {endpoint_type: true};
@@ -102,6 +119,7 @@ async function main() {
       assert.equal(result.content, nativeReference(input, ['--format', format]), 'DMS incomplete network/direction native/Wasm '+format);
       assert.ok(!result.content.includes('PRIVATE_'));
     }
+    checkpoint('incomplete-dms');
     const sagemaker = JSON.parse(readFileSync(join(root, 'tests/fixtures/sagemaker-plan.json'), 'utf8'));
     sagemaker.resource_changes[7].change.after_unknown = {production_variants: [{}, {model_name: true}]};
     sagemaker.resource_changes[5].change.after_unknown = {vpc_config: [{subnets: [false, true]}]};
@@ -112,6 +130,7 @@ async function main() {
       assert.equal(result.content, nativeReference(input, ['--format', format]), 'SageMaker incomplete model/network native/Wasm '+format);
       assert.ok(!result.content.includes('PRIVATE_'));
     }
+    checkpoint('incomplete-sagemaker');
     for (const fixture of ['dynamodb-plan', 'elasticache-configuration-plan', 'eventbridge-configuration-plan', 'msk-plan', 'mq-plan', 'docdb-plan', 'neptune-plan', 'redshift-serverless-plan', 'apprunner-plan', 'networkfirewall-plan', 'opensearch-serverless-plan', 'batch-plan', 'fsx-lustre-plan', 'dms-plan', 'sagemaker-plan']) {
       const input = readFileSync(join(root, 'tests/fixtures/'+fixture+'.json'), 'utf8');
       for (const format of ['svg', 'html']) {
@@ -119,6 +138,7 @@ async function main() {
         assert.equal(result.ok, true, JSON.stringify(result));
         assert.equal(result.content, nativeReference(input, ['--format', format]), fixture+' native/Wasm '+format);
         assert.ok(!result.content.includes('PRIVATE_'));
+        checkpoint(`${fixture}-${format}`);
       }
     }
     for (const format of ['svg', 'html']) {
@@ -130,6 +150,7 @@ async function main() {
         assert.ok(result.content.includes('aws_alb.web'));
       }
     }
+    checkpoint('aliases');
     for (const [json, options, code] of [
       ['secret{', {}, 'invalid_json'],
       ['{"format_version":"secret"}', {}, 'unsupported_input'],
@@ -146,6 +167,7 @@ async function main() {
       assert.equal(result.error?.code, code);
       assert.ok(!JSON.stringify(result).includes('secret'));
     }
+    checkpoint('errors');
     for (const fixture of ['iam', 'identity-providers', 'ssm']) {
       const json = readFileSync(join(root, `tests/fixtures/${fixture}-plan.json`), 'utf8');
       const spatial_types = ['aws_ssm_parameter', 'aws_cloudwatch_metric_alarm', 'aws_iam_role', 'aws_iam_user', 'aws_iam_group', 'aws_iam_openid_connect_provider', 'aws_iam_saml_provider'];
@@ -156,6 +178,7 @@ async function main() {
         assert.equal(result.content, native, `Spatial native/Wasm parity: ${fixture}/${format}`);
       }
     }
+    checkpoint('spatial-parity');
     for (const fixture of ['aws-basic', 'service-labels']) {
       const basic = readFileSync(join(root, `tests/fixtures/${fixture}-plan.json`), 'utf8');
       for (const format of ['svg', 'html']) {
@@ -168,6 +191,7 @@ async function main() {
         }
       }
     }
+    checkpoint('labels-parity');
     submit('secret{', 'svg');
     wait(() => status() === 'Input is not valid plan JSON.', 'UI error');
     driver.execute_cdp_cmd('Browser.setDownloadBehavior', {behavior: 'allow', downloadPath: temp});
@@ -189,6 +213,7 @@ async function main() {
       assert.equal(driver.execute_script('try { parent.document.body; return true; } catch { return false; }'), false);
       driver.command('POST', '/frame', {id: null});
     }
+    checkpoint('offline-download-preview');
     const hostile = JSON.stringify({format_version: '1.2', resource_changes: [{
       address: 'terraform_data.<img src="https://example.invalid/leak" onerror="parent.pwned=1"><script>parent.pwned=1</script>',
       type: 'terraform_data', change: {actions: ['create'], after: {input: 'PRIVATE_VALUE_SENTINEL'}},
@@ -204,6 +229,7 @@ async function main() {
       driver.command('POST', '/frame', {id: null});
       assert.equal(driver.execute_script('return window.pwned || null'), null);
     }
+    checkpoint('hostile-preview');
     const largePath = join(root, 'examples/terraform-large/plan.json');
     const large = readFileSync(largePath, 'utf8');
     submit(large, 'svg');
@@ -250,12 +276,15 @@ async function main() {
     driver.execute_script("oldCompletion({data: {type: 'progress', request: serial, stage: 'routing'}});");
     assert.equal(status(), currentStatus, 'Stale completion cannot replace a newer result');
     assert.equal(driver.execute_script('return elapsedTimer === undefined'), true);
+    checkpoint('large-progress-cancel-retry');
     const largeResult = run(large);
     assert.equal(largeResult.ok, true);
     assert.deepEqual(driver.execute_script('return progressStages.map(event => event.stage)'), ['parsing', 'selection', 'placement', 'routing', 'output']);
     assert.equal(driver.execute_script("return progressStages.every(event => Object.keys(event).sort().join(',') === 'request,stage,type')"), true);
+    checkpoint('large-wasm-completion');
     const native = nativeReference(large, [], {timeout: 180000, maxBuffer: 64 * 1024 * 1024});
     assert.equal(largeResult.content, native, 'Large native/Wasm exact parity');
+    checkpoint('large-native-parity');
     console.log(JSON.stringify({fixture: 'terraform-large', input_bytes: Buffer.byteLength(large), elapsed_ms: largeResult.elapsed_ms, memory_bytes: largeResult.memory_bytes, output_bytes: Buffer.byteLength(largeResult.content)}));
     const requests = driver.get_log('performance').map(entry => JSON.parse(entry.message).message)
       .filter(entry => entry.method === 'Network.requestWillBeSent' && /^https?:/.test(entry.params.request.url));
@@ -265,6 +294,7 @@ async function main() {
     assert.deepEqual(wait(() => driver.execute_script('return window.databaseNames'), 'IndexedDB check'), []);
     const errors = driver.get_log('browser').filter(entry => entry.level === 'SEVERE');
     assert.deepEqual(errors, []);
+    checkpoint('offline-storage-console');
     console.log('Browser Wasm: parity, errors, isolated previews, downloads, cancellation and offline checks passed.');
   } finally {
     console.log({nativeReference: nativeReference.stats});
