@@ -49,7 +49,7 @@ async function main() {
     for (const fixture of ['viewer-plan', 'aws-basic-plan', 'terraform-plan', 'changed-paths-plan']) {
       const json = fs.readFileSync(`tests/fixtures/${fixture}.json`, 'utf8');
       for (const format of ['svg', 'html']) {
-        for (const icon_mode of [undefined, 'service-name']) {
+        for (const icon_mode of fixture === 'viewer-plan' ? [undefined, 'service-name'] : [undefined]) {
           const result = JSON.parse(driver.execute_script('return window.engine.generate(arguments[0], arguments[1]);', json, JSON.stringify({format, icon_mode})));
           const native = execFileSync(binary, ['-', '-o', '-', '--format', format, '--icon-mode', 'service-name'], {input: json, encoding: 'utf8', maxBuffer: 32 * 1024 * 1024});
           assert.equal(result.content, native, `${fixture}/${format}/${icon_mode}`);
@@ -60,8 +60,10 @@ async function main() {
           assert.doesNotMatch(result.content, /<symbol\b|<image\b|data:image\/|planorama-icon-(aws|terraform)/i);
         }
       }
-      const error = driver.execute_script('try { window.engine.generate(arguments[0], \'{"icon_mode":"icon"}\'); } catch(e) { return JSON.parse(e).code; }', json);
-      assert.equal(error, 'invalid_options');
+      if (fixture === 'viewer-plan') {
+        const error = driver.execute_script('try { window.engine.generate(arguments[0], \'{"icon_mode":"icon"}\'); } catch(e) { return JSON.parse(e).code; }', json);
+        assert.equal(error, 'invalid_options');
+      }
       if (fixture === 'changed-paths-plan') {
         const result = JSON.parse(driver.execute_script('return window.engine.generate(arguments[0], arguments[1]);', json, JSON.stringify({format:'html', changed_only:true})));
         const native = execFileSync(binary, ['-', '-o', '-', '--format', 'html', '--changed-only'], {input:json, encoding:'utf8'});

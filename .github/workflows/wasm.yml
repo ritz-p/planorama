@@ -35,7 +35,7 @@ jobs:
         id: identity
         env:
           CONFIG: ${{ hashFiles('Dockerfile', '.dockerignore', 'compose*.yaml', 'rust-toolchain.toml', 'Cargo.lock', 'Cargo.toml', '.cargo/**', 'build.rs', 'assets/**', 'scripts/**', '.github/workflows/wasm.yml') }}
-        run: echo "key=wasm-ci-v1-${{ runner.os }}-${{ runner.arch }}-$CONFIG" >> "$GITHUB_OUTPUT"
+        run: echo "key=wasm-ci-v2-${{ runner.os }}-${{ runner.arch }}-$CONFIG" >> "$GITHUB_OUTPUT"
       - uses: docker/setup-buildx-action@v3
       - name: Build pinned environment
         uses: docker/build-push-action@v6
@@ -53,35 +53,21 @@ jobs:
             .wasm-ci/registry
             .wasm-ci/git
           key: ${{ steps.identity.outputs.key }}-registry
-      - name: Restore default-native
-        id: default-native
+      - name: Restore native
+        id: native
         uses: actions/cache/restore@v6.1.0
         with:
           path: |
-            .wasm-ci/target/default/release
-          key: ${{ steps.identity.outputs.key }}-default-native
-      - name: Restore default-wasm
-        id: default-wasm
+            .wasm-ci/target/shared/release
+            .wasm-ci/target/shared/debug
+          key: ${{ steps.identity.outputs.key }}-native
+      - name: Restore wasm
+        id: wasm
         uses: actions/cache/restore@v6.1.0
         with:
           path: |
-            .wasm-ci/target/default/wasm32-unknown-unknown/release
-          key: ${{ steps.identity.outputs.key }}-default-wasm
-      - name: Restore standalone-native
-        id: standalone-native
-        uses: actions/cache/restore@v6.1.0
-        with:
-          path: |
-            .wasm-ci/target/standalone/release
-            .wasm-ci/target/standalone/debug
-          key: ${{ steps.identity.outputs.key }}-standalone-native
-      - name: Restore standalone-wasm
-        id: standalone-wasm
-        uses: actions/cache/restore@v6.1.0
-        with:
-          path: |
-            .wasm-ci/target/standalone/wasm32-unknown-unknown/release
-          key: ${{ steps.identity.outputs.key }}-standalone-wasm
+            .wasm-ci/target/shared/wasm32-unknown-unknown/release
+          key: ${{ steps.identity.outputs.key }}-wasm
       - name: Start environment
         run: |
           mkdir -p .wasm-ci/registry .wasm-ci/git .wasm-ci/target
@@ -103,35 +89,21 @@ jobs:
             .wasm-ci/registry
             .wasm-ci/git
           key: ${{ steps.registry.outputs.cache-primary-key }}
-      - name: Save default-native
-        if: success() && steps.default-native.outputs.cache-hit != 'true'
+      - name: Save native
+        if: success() && steps.native.outputs.cache-hit != 'true'
         uses: actions/cache/save@v6.1.0
         with:
           path: |
-            .wasm-ci/target/default/release
-          key: ${{ steps.default-native.outputs.cache-primary-key }}
-      - name: Save default-wasm
-        if: success() && steps.default-wasm.outputs.cache-hit != 'true'
+            .wasm-ci/target/shared/release
+            .wasm-ci/target/shared/debug
+          key: ${{ steps.native.outputs.cache-primary-key }}
+      - name: Save wasm
+        if: success() && steps.wasm.outputs.cache-hit != 'true'
         uses: actions/cache/save@v6.1.0
         with:
           path: |
-            .wasm-ci/target/default/wasm32-unknown-unknown/release
-          key: ${{ steps.default-wasm.outputs.cache-primary-key }}
-      - name: Save standalone-native
-        if: success() && steps.standalone-native.outputs.cache-hit != 'true'
-        uses: actions/cache/save@v6.1.0
-        with:
-          path: |
-            .wasm-ci/target/standalone/release
-            .wasm-ci/target/standalone/debug
-          key: ${{ steps.standalone-native.outputs.cache-primary-key }}
-      - name: Save standalone-wasm
-        if: success() && steps.standalone-wasm.outputs.cache-hit != 'true'
-        uses: actions/cache/save@v6.1.0
-        with:
-          path: |
-            .wasm-ci/target/standalone/wasm32-unknown-unknown/release
-          key: ${{ steps.standalone-wasm.outputs.cache-primary-key }}
+            .wasm-ci/target/shared/wasm32-unknown-unknown/release
+          key: ${{ steps.wasm.outputs.cache-primary-key }}
       - name: Upload measurements
         if: always()
         uses: actions/upload-artifact@v7.0.2

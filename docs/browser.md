@@ -318,7 +318,7 @@ Verify the extracted release archive in Chromium with
 the standalone engine. It checks archive membership, provenance and hashes,
 scans JS/Wasm for embedded artwork markers, compares AWS and Terraform SVG/HTML
 outputs exactly with native service-name generation, and tests omitted/explicit
-icon options and archive reproducibility. `cargo test --locked --no-default-features --lib`
+icon options on `viewer-plan` and archive reproducibility. `cargo test --locked --no-default-features --lib`
 runs the complete library suite, including the native API contract. The same artwork-exclusion contract applies with all features enabled.
 
 ## API and supported options

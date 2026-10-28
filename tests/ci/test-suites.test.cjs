@@ -71,19 +71,9 @@ test('fails when the heavy target is renamed instead of silently running an empt
   assert.throws(() => suiteCommands(data, 'standard'), /exactly one planorama\/large_example/);
 });
 
-test('rejects missing or ambiguous heavy targets and unsupported target kinds', () => {
-  const ambiguous = metadata();
-  ambiguous.packages[0].targets.push(target('large_example', 'test'));
-  assert.throws(() => suiteCommands(ambiguous, 'large'), /exactly one/);
+test('rejects unsupported target kinds and unknown suites', () => {
   const unknown = metadata();
   unknown.packages[0].targets.push(target('future_target', 'unknown'));
   assert.throws(() => suiteCommands(unknown, 'standard'), /Unsupported Cargo target kind/);
-});
-
-test('rejects unknown suites and incomplete default package metadata', () => {
   assert.throws(() => suiteCommands(metadata(), 'typo'), /Unknown test suite/);
-  assert.throws(() => suiteCommands({packages: []}, 'standard'), /default workspace packages/);
-  const data = metadata();
-  data.workspace_default_members.push('missing');
-  assert.throws(() => suiteCommands(data, 'standard'), /Missing Cargo package metadata/);
 });

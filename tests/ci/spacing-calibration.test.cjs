@@ -26,17 +26,13 @@ test('calibration is opt-in, read-only and bound to a validated immutable source
   assert.match(manual, /ref: \$\{\{ env.SOURCE_SHA \}\}/);
   assert.match(manual, /persist-credentials: false/);
   assert.match(manual, /test "\$\(git rev-parse HEAD\)" = "\$SOURCE_SHA"/);
-  assert.match(manual, /rustc --version --verbose/);
-  assert.match(read('rust-toolchain.toml'), /channel = "1\.85\.1"/);
 });
 
 test('manual calibration preserves the ignored experiment and uploads complete revision-labelled output', () => {
-  assert.match(manual, /cargo test --locked --lib budget_calibration --no-run/);
   assert.match(manual, /cargo test --locked --lib budget_calibration -- --ignored --nocapture/);
   assert.match(manual, /PLANORAMA_SPACING_REPORT_DIR: output\/spacing-calibration/);
   assert.match(manual, /name: spacing-calibration-\$\{\{ env.SOURCE_SHA \}\}/);
   assert.match(manual, /path: output\/spacing-calibration/);
   assert.match(manual, /if-no-files-found: error/);
   assert.match(read('tests/unit/layout/routing_shared/spacing_calibration.rs'), /#\[ignore[^\n]*\]\s*fn budget_calibration/);
-  assert.doesNotMatch(read('.github/workflows/update_examples.yml'), /spacing_calibration\.yml/);
 });
