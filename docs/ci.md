@@ -1091,6 +1091,7 @@ suite; feature changes must revisit this audit. Manual `full_library: true`, or
 `WASM_CI_FULL_LIB=1 sh scripts/wasm-ci.sh` in Docker, restores the complete suite
 for investigation. It is not a scheduled replacement or a claim of identical
 coverage for arbitrary future feature combinations.
+The separate Wasm engine release workflow still runs the complete library suite.
 
 The browser inventory is unchanged: `viewer-plan` SVG/HTML and selection options;
 15 complete service fixtures in both formats (DynamoDB, ElastiCache, EventBridge,
@@ -1122,3 +1123,71 @@ does not establish a guarantee. The parallel-job alternative would add at least
 another environment/checkout/transfer sequence (38–48 s for environment alone in
 these samples), before duplicate compilation; that is an estimate, not a measured
 parallel implementation.
+
+#### Controlled scope comparison
+
+Both hosted modes below use the implementation in `3b59bef`, four x86_64 CPUs,
+Rust/Cargo 1.85.1 and Chromium 156.0.8078.47 in the same Dockerfile environment.
+The focused PR tested merge `a96c21c`; its implementation and inputs match the
+manual full-suite checkout. Both runs missed registry, native and Wasm caches
+under the same `931cd50...` configuration key and reused BuildKit tool layers.
+Both completed every requested validation successfully.
+
+| Cold Cargo hosted measurement | Full library, [run 40684755203 attempt 1](https://github.com/ritz-p/planorama/actions/runs/40684755203/attempts/1) | Focused library, [run 40684662975](https://github.com/ritz-p/planorama/actions/runs/40684662975) |
+| --- | ---: | ---: |
+| Queue | 3 s | 3 s |
+| Complete job / summed runner time | 782 s | 570 s |
+| Workflow creation to final update | 785 s | 574 s |
+| Environment preparation | 44 s | 46 s |
+| Build and validation step | 711 s | 498 s |
+| Cargo restore / save | 1 / 6 s | 1 / 6 s |
+| Measurement upload | 1 s | 1 s |
+| Library phase | 344.10 s | 140.31 s |
+| Browser suite | 116.36 s | 112.39 s |
+
+This pair reduced both active waiting and runner time by 212 s (27.1%). The
+focused job took 9 min 30 s; this meets the ten-minute goal in this sample only.
+Runner variability remains visible in the earlier runs, even with four CPUs.
+No second job, artifact transfer or duplicated environment was introduced.
+The final commit checks and hosted warm-cache comparison are recorded in
+[PR #886](https://github.com/ritz-p/planorama/pull/886).
+
+Local Docker Desktop/WSL2 measurements used 32 CPUs, Chromium 155.0.8059.79,
+the same Rust sources/fixtures, image and pre-existing Cargo registry. Cold means
+empty target and compiler caches in separate directories; warm retains their
+dependencies but removes workspace products and CLI test binaries as the workflow
+does. No other local build ran concurrently. The full warm run used the candidate
+working tree before commit; the other rows use `3b59bef`. All four complete
+validation runs succeeded. These are sums of measured phases, excluding image,
+queue and GitHub transfer costs, and are not hosted PR-duration predictions.
+
+| Local phase seconds | Full cold | Focused cold | Full warm | Focused warm |
+| --- | ---: | ---: | ---: | ---: |
+| All measured phases | 403.14 | 339.29 | 397.29 | 327.75 |
+| Library compile + execution | 136.95 | 72.94 | 131.27 | 66.59 |
+| Browser suite | 89.31 | 89.14 | 90.71 | 90.08 |
+| sccache hits / misses | 0 / 116 | 0 / 116 | 0 / 0 | 0 / 0 |
+
+Cold compiler probes produced five expected feature-detection failures in each
+mode; there were no cache read/write errors. Warm Cargo reuse avoided eligible
+compiler requests. Phase totals fell 15.8% cold and 17.5% warm, largely by removing
+library execution (64–65 s locally, 195.18 s in the hosted full comparison).
+Compilation of the library test target is still required; filtering does not
+eliminate that cost.
+
+The full warm browser breakdown measured 5.09 s for all 30 complete-service
+fixture/format comparisons, 0.52 s for large-input UI progress/cancel/retry,
+28.28 s for large Wasm completion and 28.41 s for its native comparison. This
+supports retaining inexpensive service parity and explicitly paying for the
+large completion regression coverage. All 50 measured browser sections remain
+in both modes; timings are observations, never test thresholds.
+
+To reproduce, use separate empty `CARGO_TARGET_DIR` and `SCCACHE_DIR` directories
+for each cold mode and isolate sccache servers when sharing a container. Run
+`WASM_CI_FULL_LIB=1 sh scripts/wasm-ci.sh` and
+`WASM_CI_FULL_LIB=0 sh scripts/wasm-ci.sh`, selecting distinct
+`WASM_CI_REPORT_DIR` paths. For each warm repeat, remove only workspace products
+and CLI test binaries with the workflow's cache-preparation command, reset
+sccache statistics, and retain dependencies. Record environment and complete
+job durations alongside the TSV files; do not compare a cold full run with a
+warm focused run as if scope were their only difference.
