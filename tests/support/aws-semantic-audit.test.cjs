@@ -4,6 +4,145 @@ const assert=require('node:assert/strict');
 const fs=require('node:fs');
 const {extract,buildEvidence,render}=require('../../scripts/aws-semantic-audit.cjs');
 const read=p=>JSON.parse(fs.readFileSync(p));
+const ec2VpcExpected=[
+  "aws_default_network_acl",
+  "aws_default_route_table",
+  "aws_default_security_group",
+  "aws_default_subnet",
+  "aws_default_vpc",
+  "aws_default_vpc_dhcp_options",
+  "aws_ec2_instance_connect_endpoint",
+  "aws_ec2_managed_prefix_list",
+  "aws_ec2_managed_prefix_list_entry",
+  "aws_ec2_network_insights_access_scope",
+  "aws_ec2_network_insights_analysis",
+  "aws_ec2_network_insights_path",
+  "aws_ec2_secondary_network",
+  "aws_ec2_secondary_subnet",
+  "aws_ec2_subnet_cidr_reservation",
+  "aws_ec2_traffic_mirror_filter",
+  "aws_ec2_traffic_mirror_filter_rule",
+  "aws_ec2_traffic_mirror_session",
+  "aws_ec2_traffic_mirror_target",
+  "aws_egress_only_internet_gateway",
+  "aws_eip",
+  "aws_eip_association",
+  "aws_eip_domain_name",
+  "aws_flow_log",
+  "aws_internet_gateway",
+  "aws_internet_gateway_attachment",
+  "aws_main_route_table_association",
+  "aws_nat_gateway",
+  "aws_nat_gateway_eip_association",
+  "aws_network_acl",
+  "aws_network_acl_association",
+  "aws_network_acl_rule",
+  "aws_network_interface",
+  "aws_network_interface_attachment",
+  "aws_network_interface_permission",
+  "aws_network_interface_sg_attachment",
+  "aws_route",
+  "aws_route_table",
+  "aws_route_table_association",
+  "aws_security_group",
+  "aws_security_group_rule",
+  "aws_subnet",
+  "aws_vpc",
+  "aws_vpc_block_public_access_exclusion",
+  "aws_vpc_block_public_access_options",
+  "aws_vpc_dhcp_options",
+  "aws_vpc_dhcp_options_association",
+  "aws_vpc_encryption_control",
+  "aws_vpc_endpoint",
+  "aws_vpc_endpoint_connection_accepter",
+  "aws_vpc_endpoint_connection_notification",
+  "aws_vpc_endpoint_policy",
+  "aws_vpc_endpoint_private_dns",
+  "aws_vpc_endpoint_route_table_association",
+  "aws_vpc_endpoint_security_group_association",
+  "aws_vpc_endpoint_service",
+  "aws_vpc_endpoint_service_allowed_principal",
+  "aws_vpc_endpoint_service_private_dns_verification",
+  "aws_vpc_endpoint_subnet_association",
+  "aws_vpc_ipam",
+  "aws_vpc_ipam_organization_admin_account",
+  "aws_vpc_ipam_pool",
+  "aws_vpc_ipam_pool_cidr",
+  "aws_vpc_ipam_pool_cidr_allocation",
+  "aws_vpc_ipam_preview_next_cidr",
+  "aws_vpc_ipam_resource_discovery",
+  "aws_vpc_ipam_resource_discovery_association",
+  "aws_vpc_ipam_scope",
+  "aws_vpc_ipv4_cidr_block_association",
+  "aws_vpc_ipv6_cidr_block_association",
+  "aws_vpc_network_performance_metric_subscription",
+  "aws_vpc_peering_connection",
+  "aws_vpc_peering_connection_accepter",
+  "aws_vpc_peering_connection_options",
+  "aws_vpc_route_server",
+  "aws_vpc_route_server_endpoint",
+  "aws_vpc_route_server_peer",
+  "aws_vpc_route_server_propagation",
+  "aws_vpc_route_server_vpc_association",
+  "aws_vpc_security_group_egress_rule",
+  "aws_vpc_security_group_ingress_rule",
+  "aws_vpc_security_group_rules_exclusive",
+  "aws_vpc_security_group_vpc_association"
+];
+const dimensions=['placement','ownership','network','references','scope','summaries'];
+
+test('#710 retains exactly its 83 managed types and six evidenced decisions',()=>{
+ const inventory=read('tests/fixtures/aws-inventory/6.70.0.json');
+ const entries=Object.entries(read('docs/aws-semantic-decisions.json').types).filter(([,d])=>d.review?.issue===710);
+ assert.equal(ec2VpcExpected.length,83);
+ assert.deepEqual(entries.map(([t])=>t).sort(),[...ec2VpcExpected].sort());
+ for(const [type,{review:r,gap,issue}] of entries){
+  assert.equal(r.implementationCommit,'a874b24ecfe4f0361ac81dc5afcb87e6570cd1d3');
+  assert.equal(r.providerCommit,inventory.commit);
+  assert.equal(r.officialDocumentation,inventory.resources.find(x=>x.type===type).documentation);
+  assert.deepEqual(Object.keys(r.shapes),r.fields);
+  assert.deepEqual(Object.keys(r.contracts),r.fields);
+  for(const key of dimensions)assert.match(r[key],/^(Supported|Partial|Missing|Not applicable|Intentionally unsupported|Deferred):/,type+': '+key);
+  for(const path of r.implementationEvidence)assert.ok(fs.existsSync(path),type+': '+path);
+  assert.ok(r.managedDataContract);
+  assert.match(gap,/#710 audit:/);
+  if(dimensions.some(k=>/Missing:|missing[: ]/i.test(r[k])))assert.ok(Number.isInteger(issue)&&issue>0,type+' missing follow-up');
+ }
+});
+
+test('#710 preserves adoption, mode, collection and identity distinctions',()=>{
+ const d=read('docs/aws-semantic-decisions.json').types;
+ const r=t=>d['aws_'+t].review;
+ assert.equal(r('default_subnet').contracts.vpc_id,'computed');
+ assert.match(r('default_vpc').placement,/Missing:.*Logical/);
+ assert.deepEqual(r('default_vpc_dhcp_options').shapes.netbios_name_servers,['string']);
+ assert.equal(r('default_vpc_dhcp_options').contracts.netbios_name_servers,'computed');
+ assert.deepEqual(r('nat_gateway').shapes['availability_zone_address.allocation_ids'],['set',['set','string']]);
+ assert.equal(r('nat_gateway').contracts['availability_zone_address.allocation_ids'],'optional');
+ assert.match(r('nat_gateway').network,/regional/);
+ assert.ok(r('nat_gateway_eip_association').sourceContracts.association_id);
+ assert.deepEqual(r('network_interface').shapes['attachment.instance'],['set','string']);
+ assert.match(r('network_interface').references,/incoming.*route/);
+ assert.equal(r('route').contracts.instance_id,'computed');
+ assert.match(r('route').ownership,/Supported:.*matching planned value/);
+ assert.equal(r('route_table').shapes.route[0][0],'set');
+ assert.equal(r('route_table').shapes.route[0][1][0],'object');
+ assert.match(r('route_table_association').references,/Partial:.*gateway_id/);
+ assert.match(r('vpc_endpoint_subnet_association').references,/no lowering rule/);
+ assert.match(r('vpc_endpoint').references,/service_region differs/);
+ assert.deepEqual(r('vpc_security_group_rules_exclusive').shapes.ingress_rule_ids,[['set','string']]);
+ assert.match(r('vpc_ipam_organization_admin_account').scope,/Global/);
+ assert.match(r('vpc_peering_connection').scope,/no dedicated peering region/);
+ assert.match(r('vpc_route_server').references,/no generic id/);
+ assert.equal(r('vpc_ipam_pool_cidr_allocation').contracts.resource_id,'computed');
+ assert.deepEqual(r('ec2_network_insights_access_scope').shapes['match_paths.source.resource_statement.resources'],['list','list','list',['list','string']]);
+ assert.match(r('ec2_network_insights_analysis').network,/Intentionally unsupported:.*computed/);
+ assert.match(r('vpc').managedDataContract,/default \(optional\/computed\)/);
+ assert.match(r('vpc_network_performance_metric_subscription').references,/region or AZ selectors/);
+});
+
+
+
 
 test('analytics batch 2 covers 31 exact types without borrowing DMS implementation',()=>{
  const services=new Set('dms datazone dataexchange datapipeline cleanrooms'.split(' '));

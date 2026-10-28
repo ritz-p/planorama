@@ -2,6 +2,113 @@
 
 The [gap register](aws-semantic-gaps.md) covers every **1,742 managed type in 249 service packages** from the pinned AWS Provider 6.70.0 inventory. Basic role, display and scope eligibility are implemented for that denominator. This is not 1,742 complete architecture integrations.
 
+## EC2 VPC, subnet, endpoint and network-interface review (#710)
+
+Reviewed planorama commit: `a874b24ecfe4f0361ac81dc5afcb87e6570cd1d3`.
+All 83 exact managed types assigned to #710 have separate placement, ownership,
+network, references, scope and summary decisions in
+[the explicit register](aws-semantic-decisions.json). Selected field shapes and
+required/optional/computed flags use AWS Provider 6.70.0 schema, whose SHA-256
+matches the inventory, and official documentation/source at
+`5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f`. These are historical review conclusions;
+future implementation updates must also update current gap text.
+
+Runtime evidence includes classification/basic defaults, scope and aliases,
+[containment](../src/provider/aws/containment.rs),
+[associations](../src/provider/aws/associations.rs),
+[routes](../src/provider/aws/routes.rs),
+[SG connections](../src/provider/aws/security_groups.rs), service references,
+service members and summary allowlists. Per-type evidence paths identify the
+applicable tests; inventory and support-matrix tests establish defaults only.
+The [support matrix](resource-support.md) already agrees with runtime defaults.
+In particular, an ENI or egress-only gateway mentioned in routes.rs is an incoming
+next-hop target, not proof of originating subnet/VPC or attachment support.
+
+Preserve #19/#173 explicit containment, #106/#182 SG connections and #107/#296
+route ownership/presentation. Route ownership and standalone next hops require
+matching known ID values; legacy direct containment and two-endpoint association
+lowering do not enforce that same complete proof contract. Association tests even
+exercise reference-only inputs. Inline routes have their own bounded literal-ID
+resolution described in [routes.md](routes.md). New capabilities must not be
+described as already guaranteed by those older rules. None of completed
+#688–#702 service work is reopened: for example, an App Runner ingress connection
+does not supply missing PrivateLink endpoint/service pair proof.
+
+Contract distinctions checked:
+
+- Default VPC/subnet adoption is not an alias of ordinary resources. Default
+  subnet `vpc_id` and default VPC CIDR/tenancy are computed. Default ACL/table
+  adoption references VPC `default_network_acl_id` / `default_route_table_id`,
+  not VPC `id`. Their current Logical defaults omit architecture-bearing context.
+  Default DHCP server fields are computed strings, including NetBIOS fields that
+  the docs describe as optional lists; see
+  `internal/service/ec2/vpc_default_vpc_dhcp_options.go` at the pinned commit.
+- Regional NAT uses `availability_mode` and `vpc_id`, not the existing zonal
+  subnet rule. `availability_zone_address` is a set, and its `allocation_ids`
+  set is optional in schema despite required wording in docs. Generated ENIs,
+  route tables and automatic EIPs are not configured managed children.
+  `aws_nat_gateway_eip_association.association_id` is computed in
+  `internal/service/ec2/vpc_nat_gateway_eip_association.go`, omitted from its docs.
+  EIP `allocation_id`, association ID and deprecated EC2-Classic `public_ip`
+  are distinct contracts.
+- ENI `attachment` is a set with `instance`, while standalone attachment uses
+  `instance_id`. ENI SG sets are not covered by the workload SG allowlist.
+  Instance Connect generated ENI IDs do not prove Terraform ownership.
+  Secondary RDMA networks/subnets are distinct from ordinary VPC/subnet types.
+- Route-table `route` and SG inline rules are attribute-as-blocks set objects;
+  default ACL rules are actual set blocks. Route `instance_id` is computed.
+  New endpoint/core-network/ODB next hops and gateway table associations remain
+  missing. `aws_vpc_endpoint_subnet_association` has an Association classification
+  but no lowering rule. SG exclusivity sets contain rule IDs, not SG IDs; legacy
+  multi-CIDR rules are discouraged but not aliases of modern one-rule resources.
+- PrivateLink supports Gateway, Interface, GatewayLoadBalancer, Resource and
+  ServiceNetwork variants. `service_region` is producer scope, not endpoint
+  deployment region. Service name is distinct from service ID/ARN; service-created
+  ENIs/private hosted zones and allowed account-root/wildcard principals do not
+  establish managed children. Shared producer LBs remain independent.
+- IPAM pool locale, planning resource region and control/home region differ.
+  Pool `source_resource` is a list; CIDR allocation consumer fields are computed.
+  Preview is not reservation. OU wildcard paths do not enumerate accounts.
+  IPAM organization admin is Global in current defaults; delegated account does
+  not overwrite provider account. VPC peering currently has Unknown scope despite
+  Spatial Connector classification; requester/accepter orientation needs separate
+  evidence and neither VPC contains the other.
+- Network Insights path/access-scope selectors configure analyses, not runtime
+  topology. Access-scope statements are lists despite set wording in docs.
+  Traffic mirror filter/rule/session IDs come from API ID fields despite docs
+  calling them names (`vpc_traffic_mirror_filter.go`,
+  `vpc_traffic_mirror_filter_rule.go`, `vpc_traffic_mirror_session.go`). Mirror
+  target variants require ENI/NLB/GWLB-endpoint discrimination.
+- Route Server uses `route_server_id`, endpoint `route_server_endpoint_id`, and
+  peer `route_server_peer_id`, without generic `id` outputs. Generated SNS/ENI
+  outputs are not configured children; peer IP and ASN do not identify appliances.
+  Flow-log source variants and destination type/ARN need separate gates and scope.
+  VPC encryption exclusions and block-access flags are configuration, not proof
+  of effective encryption, policy compliance or reachability.
+
+Same-name data lookups were checked separately in the pinned schema; per-type
+records list selectors and flags. A data VPC's `default` lookup, for example, is
+not `aws_default_vpc` adoption. No reviewed managed type is a runtime alias.
+New relationships need unique explicit compatible references, matching known
+values, complete collections and independent provider/account/region/named-state
+proof. Unknown, mismatched, deposed/deleted and filtered evidence stays
+conservative. Shared resources remain independent of embedded helper ownership.
+No payloads, credentials, arbitrary maps or policy/runtime inference are included.
+
+Actionable follow-ups are adopted defaults #889; ENI/Instance Connect #890;
+prefix-list entries #891; Network Insights #892; secondary networks #893;
+traffic mirroring #894; gateways/NAT/EIP #895; flow logs #896; routes/tables #897;
+ACLs #898; SG rules #899; IPAM/CIDR #900; VPC controls/DHCP #901;
+PrivateLink #902; peering #903; and Route Server #904. These own the listed
+source/helper relationships, coordinating endpoint audits without duplicating
+their work. Eight types retain sufficient logical identity with concrete
+exclusions or summary deferrals; missing functionality remains in these issues.
+
+Docker validation uses the pinned-contract verifier, semantic audit/register tests
+and resource-support check. All repository Markdown was checked for affected
+claims; other service contracts and rendering behavior are unchanged. This is
+audit data/documentation only, so SVG regeneration and Layout quality do not apply.
+
 ## Analytics and data governance review, batch 1 (#722)
 
 Reviewed planorama commit: `c50d830c5737a51a362708b71f67e6c407884dbe`.
