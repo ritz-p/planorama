@@ -29,6 +29,10 @@ for(const [type,{review}] of Object.entries(reviewed)) {
   if(!attr||!documented) throw Error('Missing contract '+type+': '+path);
   actual.push(attr.type||attr.nesting_mode);
   if(JSON.stringify(actual)!==JSON.stringify(expected)) throw Error('Shape mismatch '+type+': '+path);
+  if(review.contracts) {
+   const contract=attr.block?'block':attr.required?'required':attr.optional?'optional'+(attr.computed?'/computed':''):'computed';
+   if(review.contracts[path]!==contract) throw Error('Input/output mismatch '+type+': '+path);
+  }
  }
  console.log(type+' reviewed shapes verified');
 }
