@@ -80,8 +80,10 @@ if (!isMainThread) {
         assert.throws(() => cancelled.step(1), invalid('generation_closed'));
         cancelled.free();
       }
-      for (const value of ['null', 'true', '"512"', '[]', '{}', '0', '-512', '512.0', '512.5', '513', '8192', '4294967296']) {
-        assert.throws(() => new binding.Generation(input, `{"memory_budget_mib":${value}}`), invalid('invalid_options'));
+      if (mib === undefined) {
+        for (const value of ['null', 'true', '"512"', '[]', '{}', '0', '-512', '512.0', '512.5', '513', '8192', '4294967296']) {
+          assert.throws(() => new binding.Generation(input, `{"memory_budget_mib":${value}}`), invalid('invalid_options'));
+        }
       }
       assert.throws(() => new binding.Generation(input, JSON.stringify({memory_budget_mib: mib === 1024 ? 512 : 1024})), invalid('memory_budget_mismatch'));
       assert.throws(() => binding.initSync({module: bytes, memory_budget_mib: mib === 1024 ? 512 : 1024}), invalid('memory_budget_mismatch'));

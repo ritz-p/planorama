@@ -12,12 +12,11 @@ measure() {
 }
 { rustc -vV; cargo -V; wasm-bindgen --version; sccache --version; node --version; chromium --version; uname -a; nproc; git -c safe.directory="$PWD" rev-parse HEAD; } > "$report/environment.txt"
 target=${CARGO_TARGET_DIR:-/workspace/target}
-export CARGO_TARGET_DIR="$target/default"
+export CARGO_TARGET_DIR="$target/shared"
 measure native cargo build --locked --release --bin planorama
 measure browser-build sh scripts/build-wasm.sh
 measure browser-memory node tests/browser/memory.cjs output/browser/pkg
 measure browser-tests node tests/browser/wasm.cjs
-export CARGO_TARGET_DIR="$target/standalone"
 measure standalone-lib cargo test --locked --no-default-features --lib
 measure standalone-cli cargo test --locked --no-default-features --test cli help_
 measure standalone-native cargo build --locked --release --bin planorama --no-default-features

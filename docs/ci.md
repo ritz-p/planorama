@@ -936,10 +936,12 @@ The required `browser` job still runs on every PR and manual dispatch, with the
 same 20-minute timeout. PR coverage has no path-based skip or cross-job binary transfer.
 Pushes to `main` that change cache inputs run the same validation to seed trusted
 caches for later PRs; manual dispatch on `main` can also populate an empty cache.
-Default and `--no-default-features` builds remain independent even though the
+Default and `--no-default-features` build commands both run even though the
 current default feature list is empty: Cargo exposes the `default` feature to
-the compiler, and future manifest changes must not silently remove coverage.
-Both binding, memory and distribution paths run on every invocation.
+the compiler. They share `target/shared` so Cargo can reuse common dependencies
+while tracking each feature configuration. Browser validation completes before
+the standalone build replaces the native reference executable. Both binding,
+memory and distribution paths run on every invocation.
 
 Buildx loads the pinned Dockerfile image as `planorama-wasm-ci:local`, restoring
 and exporting GitHub Actions BuildKit layers under `browser-wasm`. Tool layers
@@ -950,8 +952,9 @@ the restored host files are actually visible inside the container. The local
 Compose setup retains its named volumes. Container-created cache files are
 returned to the runner's ownership before upload.
 
-Cargo caches separate default/standalone modes and native/Wasm targets; release
-and test artifacts occupy Cargo's separate profile directories. Keys include
+Cargo caches separate native and Wasm targets; the native cache includes release
+and test profile directories shared by both feature configurations. Together with
+the registry/git cache, this uses three archives instead of five. Keys include
 runner OS/architecture, Docker/Compose, toolchain, manifests/lock, Cargo config,
 build script, assets, scripts and workflow. A changed key starts empty, without
 a broad fallback. Workspace products and CLI test binaries are removed before
@@ -970,7 +973,7 @@ All jobs use `contents: read` and checkout without persisted credentials.
 GitHub's [PR cache scope](https://docs.github.com/en/actions/reference/workflows-and-actions/dependency-caching#restrictions-for-accessing-a-cache) isolates untrusted writes from the base branch and
 other PRs; the workflow never uses `pull_request_target`. No secrets or external
 cache service are required. A miss rebuilds everything. If a restored cache
-causes failures, delete the affected `wasm-ci-v1-*` entry and rerun; bump the
+causes failures, delete the affected `wasm-ci-v2-*` entry and rerun; bump the
 prefix for a full Cargo reset. Delete the `browser-wasm` BuildKit cache to reset
 environment layers. Cache hits never bypass build or validation commands.
 
@@ -984,6 +987,12 @@ artifact upload overhead; use the complete job duration when comparing runs.
 Native reference reuse is process-local, bounded to 64 MiB of UTF-8 output and keyed by input
 bytes, the full argument vector/options and executable SHA-256. Failures are
 never cached. Named/file-based cases remain uncached, and every Wasm case runs.
+
+Invalid memory-option values are checked once at the default memory budget;
+each configured maximum retains generation, output equality, cancellation and
+budget-mismatch checks. Extracted-engine parity retains all four fixtures in SVG
+and HTML; omitted/explicit icon-mode equivalence and unsupported icon-mode
+rejection use `viewer-plan` as the representative fixture.
 
 ### Browser Wasm comparison, 2026-10-26
 
@@ -1046,7 +1055,8 @@ succeeded. Native references reused 8 of 68 calls in each browser run. Local
 gzip packing took 21.13 s for 208 MB; this is not GitHub's zstd/network transfer
 cost. Local phase totals do not establish a hosted end-to-end improvement.
 
-The standalone library suite remains the largest validation phase (258.88 s in
-the hosted cold run, including 148.31 s of tests). Binding generation is small,
-and default/standalone contracts differ. No tests or builds are removed, and no
-sharding or PR filtering is introduced without a measured end-to-end benefit.
+The standalone library suite was the largest validation phase (258.88 s in
+the hosted cold run, including 148.31 s of tests). Binding generation was small.
+That cache experiment retained all tests and builds without sharding or PR filtering.
+The current test consolidation is described above; these historical measurements
+predate it.
