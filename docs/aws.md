@@ -2069,6 +2069,52 @@ Regenerate HTML inside Docker with
 `cargo run --locked -- tests/fixtures/redshift-serverless-plan.json --format html -o examples/redshift-serverless.html`.
 Both output formats are covered by native/Wasm parity.
 
+## SageMaker inference configuration (#701)
+
+Endpoints retain Spatial cards; endpoint configurations and models remain
+independent Logical resources, including shared models and configurations.
+Dedicated references require explicit unique current managed AWS endpoints,
+matching known values and compatible provider/account/region/state evidence:
+
+| Consumer input | Managed endpoint output | Contract |
+| --- | --- | --- |
+| Endpoint `endpoint_config_name` | Endpoint configuration `name` | One matching known name; ARN/ID are not substitutes. |
+| Endpoint configuration `production_variants.model_name` | Model `name` | Every variant must have a known model name and the complete referenced model set must match. Multiple variants may reuse one model. |
+| Model `execution_role_arn` | IAM Role `arn` | Compatible account/binding; IAM role is global, so regional equality is not required for the role. |
+| Model `vpc_config.subnets` | Subnet `id` | One VPC configuration list block with a complete nonempty subnet set. |
+| Model `vpc_config.security_group_ids` | Security Group `id` | Complete nonempty SG set in the same configuration block. |
+
+The pinned schema makes production variants a list of blocks and `model_name`
+optional for inference components. An omitted model, unknown member or partially
+literal collection leaves the production-model reference unverified. Distinct
+managed models with the same output name are ambiguous. Shadow variants and
+inference-component relationships remain outside this initial contract.
+
+Only the model receives VPC context, after both network collections are verified
+and every subnet/SG has explicit matching VPC-ID proof for one current managed VPC.
+This is hosting/batch connection configuration; neither an endpoint nor its
+configuration inherits that VPC. A subnet/SG is not a service owner, and consuming
+a shared model/configuration does not embed it. Missing or conflicting VPC proof
+retains regional fallback and individually verified references. Account scope uses
+existing verified provider evidence; ordinary JSON does not manufacture an account.
+
+Unknown, ambiguous, data, deleted/deposed, foreign-provider and filtered targets
+retain conservative fallback. Actions, identities, named-state boundaries and
+exactly-once coverage remain intact. Containers, environment variables, model
+artifact URIs, policy contents, Studio/training jobs and runtime inference are not
+interpreted or exposed. No network reachability or health claim is made.
+
+Pinned Provider 6.70.0 contracts:
+[endpoint](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/website/docs/r/sagemaker_endpoint.html.markdown),
+[configuration](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/website/docs/r/sagemaker_endpoint_configuration.html.markdown),
+[model](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/website/docs/r/sagemaker_model.html.markdown).
+[Tests](../tests/unit/semantic/sagemaker.rs) and the synthetic
+[fixture](../tests/fixtures/sagemaker-plan.json) cover positive/negative evidence;
+native/Wasm parity covers SVG/HTML and incomplete model/network collections.
+Examples: [SVG](../examples/sagemaker.svg), [HTML](../examples/sagemaker.html).
+Regenerate HTML in Docker with
+`cargo run --locked -- tests/fixtures/sagemaker-plan.json --format html -o examples/sagemaker.html`.
+
 ## FSx Lustre networking and encryption (#702)
 
 `aws_fsx_lustre_file_system` retains its independent Spatial card. Dedicated

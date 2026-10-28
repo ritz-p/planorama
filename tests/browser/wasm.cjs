@@ -102,7 +102,17 @@ async function main() {
       assert.equal(result.content, nativeReference(input, ['--format', format]), 'DMS incomplete network/direction native/Wasm '+format);
       assert.ok(!result.content.includes('PRIVATE_'));
     }
-    for (const fixture of ['dynamodb-plan', 'elasticache-configuration-plan', 'eventbridge-configuration-plan', 'msk-plan', 'mq-plan', 'docdb-plan', 'neptune-plan', 'redshift-serverless-plan', 'apprunner-plan', 'networkfirewall-plan', 'opensearch-serverless-plan', 'batch-plan', 'fsx-lustre-plan', 'dms-plan']) {
+    const sagemaker = JSON.parse(readFileSync(join(root, 'tests/fixtures/sagemaker-plan.json'), 'utf8'));
+    sagemaker.resource_changes[7].change.after_unknown = {production_variants: [{}, {model_name: true}]};
+    sagemaker.resource_changes[5].change.after_unknown = {vpc_config: [{subnets: [false, true]}]};
+    for (const format of ['svg', 'html']) {
+      const input = JSON.stringify(sagemaker);
+      const result = run(input, {format});
+      assert.equal(result.ok, true, JSON.stringify(result));
+      assert.equal(result.content, nativeReference(input, ['--format', format]), 'SageMaker incomplete model/network native/Wasm '+format);
+      assert.ok(!result.content.includes('PRIVATE_'));
+    }
+    for (const fixture of ['dynamodb-plan', 'elasticache-configuration-plan', 'eventbridge-configuration-plan', 'msk-plan', 'mq-plan', 'docdb-plan', 'neptune-plan', 'redshift-serverless-plan', 'apprunner-plan', 'networkfirewall-plan', 'opensearch-serverless-plan', 'batch-plan', 'fsx-lustre-plan', 'dms-plan', 'sagemaker-plan']) {
       const input = readFileSync(join(root, 'tests/fixtures/'+fixture+'.json'), 'utf8');
       for (const format of ['svg', 'html']) {
         const result = run(input, {format});
