@@ -509,7 +509,7 @@ schema defines regional resources and a scalar `role_arn`; ASL is an opaque stri
 
 `aws_redshift_cluster` and `aws_redshift_subnet_group` are regional spatial Nodes;
 `aws_redshift_parameter_group` is a regional Logical Policy. All use Amazon
-Redshift icons/service names. Serverless resources retain their existing fallback.
+Redshift icons/service names. Serverless resources follow the separate #695 contract below.
 
 Cluster subnet/parameter group references require complete unique explicit
 references to the corresponding group's `name` or `id`, matching known values

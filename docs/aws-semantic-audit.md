@@ -2,6 +2,94 @@
 
 The [gap register](aws-semantic-gaps.md) covers every **1,742 managed type in 249 service packages** from the pinned AWS Provider 6.70.0 inventory. Basic role, display and scope eligibility are implemented for that denominator. This is not 1,742 complete architecture integrations.
 
+## Analytics and data governance review, batch 1 (#722)
+
+Reviewed planorama commit: `c50d830c5737a51a362708b71f67e6c407884dbe`.
+All 81 managed types in Athena, provisioned/Serverless Redshift, Redshift Data,
+Glue, Lake Formation and the three EMR packages have six separate decisions in
+[the explicit register](aws-semantic-decisions.json). Each records selected exact
+fields, collection ancestry, input/output flags and documentation at Provider
+commit `5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f`. The schema hash is checked against
+the pinned inventory before inspecting contracts. Historical review conclusions
+remain separate from subsequent implementation updates to current gap text.
+
+Runtime evidence is [classification](../src/provider/aws/classification.rs),
+[basic defaults](../src/provider/aws/basic_entries.rs),
+[scope](../src/provider/aws/scope.rs), [references](../src/provider/aws/service_references.rs),
+[network collections](../src/provider/aws/network.rs),
+[indirect placement](../src/provider/aws/containment/indirect.rs),
+[VPC scope](../src/provider/aws/containment/vpc_scope.rs),
+[database proof](../src/provider/aws/databases.rs),
+[Glue catalog proof](../src/provider/aws/glue.rs),
+[embedded presentation](../src/provider/aws/service_members.rs) and
+[summary allowlists](../src/provider/aws/encryption.rs).
+[Inventory tests](../tests/unit/aws_inventory.rs) and the
+[runtime support matrix](resource-support.md) establish defaults, not full semantics.
+[Redshift](../tests/unit/semantic/redshift.rs),
+[Serverless](../tests/unit/semantic/redshift_serverless.rs) and
+[Glue](../tests/unit/semantic/glue.rs) tests establish their bounded existing proof.
+Other types do not borrow those behavioral guarantees merely from a source mention.
+
+Preserve #504/#545 Glue role and catalog/table ownership, #505/#547 independent
+Athena cards and generic provenance, #506 provisioned Redshift subnet/parameter
+and complete network collection proof, and #695 Serverless networking/name references.
+EMR cluster and Serverless application are already Spatial; Studio, virtual cluster,
+Glue catalog/development endpoint and provisioned Redshift endpoint need architecture
+review in their follow-ups. Shared configurations do not become embedded children.
+
+Actionable extensions are Athena #840; EMR cluster/helpers #841, Studio #842,
+Containers #843, Serverless #844; Glue catalog hierarchy #845, networking #846,
+workloads #847, encryption #848; Lake Formation #849; Redshift core #850,
+snapshots/copy/schedules #851, endpoints #852, workload helpers #853,
+catalog integrations #854 and Serverless auxiliaries #855. These issues own the
+listed source/helper relationships, coordinating IAM/KMS/S3/EKS/catalog endpoint
+audits without duplicating them. RDS-origin zero ETL remains #769, and DMS remains
+#699/#723. No runtime behavior changes to close this audit.
+
+Contract distinctions checked against pinned schema and official documentation:
+
+- Athena database `bucket` is optional in schema despite required wording in docs;
+  bucket/encryption are not read after import. Workgroup customer-content KMS uses
+  `kms_key`, and managed logging uses `kms_key`, despite docs saying `kms_key_arn`
+  and `kms_keys`. These paths are confirmed in `internal/service/athena/workgroup.go`.
+  Prepared statement uses `name`, qualified by workgroup. SQL and catalog parameter
+  values do not prove runtime lineage; typed Lambda parameters need catalog-type gates.
+- EMR additional SG inputs are comma-delimited strings, unlike subnet sets.
+  Optional/computed service-created SGs and subnets do not supply configuration
+  provenance. Instance profile differs from service/scaling role. Fleet/group IDs
+  are not EC2 instance identities. Containers provider `id` is EKS cluster name;
+  Kubernetes namespace is not an AWS managed child. Templates have no cluster owner.
+- Glue names need catalog/database qualification. Existing table ownership requires
+  equal known catalog IDs and region; crawler database name alone lacks that proof.
+  Connection network belongs to the connection, not every consuming job/crawler.
+  Catalog managed workgroup is computed. Registry `id` is ARN; schema version ID is
+  distinct from schema ARN. Encryption fields ending `_id` can require KMS ARNs.
+  Metastore function owners are not automatically IAM principals.
+- Lake Formation principal selectors include account IDs and special principals;
+  they are not all IAM ARNs. Tag expressions and wildcards never enumerate matched
+  resources. Singular `resource_lf_tag.lf_tag` is a list; plural resource uses a set.
+  Federated resource registration can identify Glue connections, not just S3.
+  Computed Identity Center application/RAM share are not configured children.
+- Provisioned Redshift `encrypted` is a string in schema. Snapshot source ownership
+  differs from destination cluster scope; copy grants require destination region.
+  Namespace ARN differs from cluster ARN. Data share consumer accepts account/ADX
+  selectors; the inventory has no managed datashare producer. Authorization VPCs
+  belong to the grantee account. Logging CloudWatch exports contain no log-group
+  identifier, and logging `id` is deprecated. Serverless namespace name, UUID and
+  ARN remain distinct; snapshot KMS/namespace ARNs are computed outputs.
+
+Data registrations and managed resources remain separate contracts. None of these
+types is a runtime alias. New links need unique explicit compatible references,
+matching known values, complete collections and independent provider/account/region/
+named-state evidence. Current/deposed/deleted/filtered identities stay conservative.
+Credentials, query/script/schema bodies, arbitrary maps, policy interpretation and
+runtime reachability/health are excluded. Safe capacity summaries are deferred until
+configured-versus-observed and unknown-value display contracts are selected.
+
+Run the pinned-contract verifier, semantic register/tests and support-matrix check
+in Docker. This audit changes no rendering input or geometry; SVG regeneration and
+Layout quality do not apply.
+
 ## Reading the register
 
 Each exact type has current managed defaults, a semantic status, missing capability or explicit deferral, priority, issue/disposition and schema input candidates. Official contracts are linked at commit `5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f`. Generic Terraform dependencies remain available in every category.
