@@ -17,11 +17,42 @@ mod neptune_tests;
 #[path = "../../../tests/unit/semantic/redshift_serverless.rs"]
 mod redshift_serverless_tests;
 
+#[cfg(test)]
+#[path = "../../../tests/unit/semantic/dms.rs"]
+mod dms_tests;
+
 fn rule(
     resource: &str,
     attribute: &str,
 ) -> Option<(&'static str, &'static str, bool, &'static str)> {
     match (resource, attribute) {
+        ("aws_dms_replication_instance", "replication_subnet_group_id") => Some((
+            "aws_dms_replication_subnet_group",
+            "id",
+            false,
+            "Subnet group",
+        )),
+        ("aws_dms_replication_instance", "vpc_security_group_ids") => Some((
+            "aws_security_group",
+            "id",
+            true,
+            "Configured security groups",
+        )),
+        ("aws_dms_replication_subnet_group", "subnet_ids") => {
+            Some(("aws_subnet", "id", true, "Configured subnets"))
+        }
+        ("aws_dms_replication_task", "replication_instance_arn") => Some((
+            "aws_dms_replication_instance",
+            "replication_instance_arn",
+            false,
+            "Replication instance",
+        )),
+        ("aws_dms_replication_task", "source_endpoint_arn") => {
+            Some(("aws_dms_endpoint", "endpoint_arn", false, "Source endpoint"))
+        }
+        ("aws_dms_replication_task", "target_endpoint_arn") => {
+            Some(("aws_dms_endpoint", "endpoint_arn", false, "Target endpoint"))
+        }
         ("aws_docdb_cluster", "db_subnet_group_name") => {
             Some(("aws_docdb_subnet_group", "name", false, "Subnet group"))
         }
@@ -106,6 +137,13 @@ pub(super) fn annotate(
         let Some((kind, field, collection, _)) = rule(&node.resource_type, &r.attribute) else {
             continue;
         };
+        let field = if kind == "aws_dms_replication_subnet_group"
+            && r.source_attributes.contains("replication_subnet_group_id")
+        {
+            "replication_subnet_group_id"
+        } else {
+            field
+        };
         r.service_reference_verified = false;
         r.service_reference_owner_account = None;
         if !current(node)
@@ -157,6 +195,18 @@ pub(super) fn annotate(
                     return None;
                 }
                 let (value, mask) = evidence[source];
+                if kind == "aws_dms_endpoint" {
+                    let expected_type = if r.attribute == "source_endpoint_arn" {
+                        "source"
+                    } else {
+                        "target"
+                    };
+                    if super::service_references::scalar(value, mask, &["endpoint_type"])
+                        != Some(expected_type)
+                    {
+                        return None;
+                    }
+                }
                 super::service_references::scalar(value, mask, &[field])
             })
             .collect::<Option<BTreeSet<_>>>();
@@ -213,9 +263,11 @@ fn proof<'a>(raw: &'a Input, target: usize, attribute: &str) -> Option<&'a Attri
 fn network(raw: &Input, target: usize) -> Option<(usize, Vec<(usize, usize)>)> {
     let node = &raw.nodes[target];
     let (subnet_target, group_attribute, mut edges) = match node.resource_type.as_str() {
-        "aws_docdb_cluster" | "aws_neptune_cluster" => {
+        "aws_docdb_cluster" | "aws_neptune_cluster" | "aws_dms_replication_instance" => {
             let attribute = if node.resource_type == "aws_docdb_cluster" {
                 "db_subnet_group_name"
+            } else if node.resource_type == "aws_dms_replication_instance" {
+                "replication_subnet_group_id"
             } else {
                 "neptune_subnet_group_name"
             };

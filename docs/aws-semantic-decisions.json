@@ -708,10 +708,10 @@
       }
     },
     "aws_dms_replication_instance": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 699,
-      "gap": "#723 reviewed: Missing: subnet group ID and complete SG collections #699. KMS and Kerberos secret/role references belong to #864; DNS/IP and krb5 contents cannot create endpoints. Follow-up #699.",
+      "gap": "Implemented #699: exact subnet-group identifier and complete subnet/SG common-VPC proof; instance remains Spatial. #864 owns KMS/Kerberos extensions. See aws.md#dms-replication-configuration-699. #723 review retains the historical baseline.",
       "review": {
         "issue": 723,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
@@ -772,10 +772,10 @@
       }
     },
     "aws_dms_replication_subnet_group": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 699,
-      "gap": "#723 reviewed: Missing: complete explicit subnet IDs #699; computed vpc_id only corroborates, never creates configured VPC proof. Follow-up #699.",
+      "gap": "Implemented #699: complete explicit subnet IDs and common-VPC evidence for instance placement; shared group remains Logical, computed VPC is not provenance. See aws.md#dms-replication-configuration-699. #723 review retains the historical baseline.",
       "review": {
         "issue": 723,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
@@ -825,10 +825,10 @@
       }
     },
     "aws_dms_endpoint": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 863,
-      "gap": "#723 reviewed: Missing: #699 accepts endpoint_arn as task endpoint only. Additional engine-gated certificate/KMS/secret/role/Kinesis/S3 references belong here; URLs, broker/server names and database strings do not identify RDS/Redshift/MSK resources. Follow-up #863.",
+      "gap": "Implemented #699: exact endpoint_arn and known source/target type as task endpoint; independent Logical configuration, no database reconstruction. Auxiliary references and distinct S3 endpoint remain #863. See aws.md#dms-replication-configuration-699. #723 review retains the historical baseline.",
       "review": {
         "issue": 723,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
@@ -924,10 +924,10 @@
       }
     },
     "aws_dms_replication_task": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 699,
-      "gap": "#723 reviewed: Missing: #699 exact instance replication_instance_arn and source/target endpoint_arn; source/target direction remains distinct. SQL/table mappings/settings and task status excluded. Follow-up #699.",
+      "gap": "Implemented #699: exact instance ARN and directional source/target endpoint ARN navigation; known endpoint_type required. No task VPC or embedded endpoint ownership. See aws.md#dms-replication-configuration-699. #723 review retains the historical baseline.",
       "review": {
         "issue": 723,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
