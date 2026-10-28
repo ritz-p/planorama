@@ -578,19 +578,179 @@
       "status": "Basic-only",
       "priority": "P2",
       "issue": 700,
-      "gap": "Compute environment subnet/SG proof; queue environment/policy navigation. Policy stays logical; do not synthesize jobs."
+      "gap": "#712 reviewed: Missing: #700 subnet/SG identities; #816 owns IAM instance-profile/role, launch-template/AMI and EKS references. ecs_cluster_arn is computed, not configured ownership. Missing: #700 MANAGED compute_resources complete subnet and SG sets with common VPC; UNMANAGED has no inferred placement. See per-dimension review; Intentionally unsupported: desired_vcpus and state/status do not create instances or imply health.",
+      "review": {
+        "issue": 712,
+        "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "arn",
+          "type",
+          "compute_resources.type",
+          "compute_resources.subnets",
+          "compute_resources.security_group_ids",
+          "service_role",
+          "compute_resources.instance_role",
+          "compute_resources.spot_iam_fleet_role",
+          "compute_resources.launch_template.launch_template_id",
+          "compute_resources.launch_template.launch_template_name",
+          "compute_resources.image_id",
+          "compute_resources.ec2_configuration.image_id_override",
+          "eks_configuration.eks_cluster_arn",
+          "ecs_cluster_arn"
+        ],
+        "placement": "Supported: retain Spatial default from runtime support matrix/classification.rs/basic_entries.rs; no automatic card promotion.",
+        "ownership": "Not applicable: retain independent reusable configuration; references do not prove exclusive ownership.",
+        "network": "Missing: #700 MANAGED compute_resources complete subnet and SG sets with common VPC; UNMANAGED has no inferred placement.",
+        "references": "Missing: #700 subnet/SG identities; #816 owns IAM instance-profile/role, launch-template/AMI and EKS references. ecs_cluster_arn is computed, not configured ownership.",
+        "scope": "Partial: Regional eligibility in scope.rs/basic.rs requires known provider/resource region; basic fallback clears account and delete/deposed region. Does not prove endpoint compatibility.",
+        "summaries": "Intentionally unsupported: desired_vcpus and state/status do not create instances or imply health.",
+        "officialDocumentation": "website/docs/r/batch_compute_environment.html.markdown",
+        "shapes": {
+          "arn": [
+            "string"
+          ],
+          "type": [
+            "string"
+          ],
+          "compute_resources.type": [
+            "list",
+            "string"
+          ],
+          "compute_resources.subnets": [
+            "list",
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "compute_resources.security_group_ids": [
+            "list",
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "service_role": [
+            "string"
+          ],
+          "compute_resources.instance_role": [
+            "list",
+            "string"
+          ],
+          "compute_resources.spot_iam_fleet_role": [
+            "list",
+            "string"
+          ],
+          "compute_resources.launch_template.launch_template_id": [
+            "list",
+            "list",
+            "string"
+          ],
+          "compute_resources.launch_template.launch_template_name": [
+            "list",
+            "list",
+            "string"
+          ],
+          "compute_resources.image_id": [
+            "list",
+            "string"
+          ],
+          "compute_resources.ec2_configuration.image_id_override": [
+            "list",
+            "list",
+            "string"
+          ],
+          "eks_configuration.eks_cluster_arn": [
+            "list",
+            "string"
+          ],
+          "ecs_cluster_arn": [
+            "string"
+          ]
+        }
+      }
     },
     "aws_batch_job_queue": {
       "status": "Basic-only",
       "priority": "P2",
       "issue": 700,
-      "gap": "Compute environment subnet/SG proof; queue environment/policy navigation. Policy stays logical; do not synthesize jobs."
+      "gap": "#712 reviewed: Missing: #700 complete set of environment ARNs and policy ARN. order is numeric scheduling priority, not collection position. See per-dimension review; Intentionally unsupported: scheduling order/priority does not prove where jobs actually run.",
+      "review": {
+        "issue": 712,
+        "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "arn",
+          "compute_environment_order.compute_environment",
+          "compute_environment_order.order",
+          "scheduling_policy_arn"
+        ],
+        "placement": "Supported: retain Logical default from runtime support matrix/classification.rs/basic_entries.rs; no automatic card promotion.",
+        "ownership": "Not applicable: retain independent reusable configuration; references do not prove exclusive ownership.",
+        "network": "Not applicable: configuration has no configured VPC/subnet; consumer context cannot establish containment.",
+        "references": "Missing: #700 complete set of environment ARNs and policy ARN. order is numeric scheduling priority, not collection position.",
+        "scope": "Partial: Regional eligibility in scope.rs/basic.rs requires known provider/resource region; basic fallback clears account and delete/deposed region. Does not prove endpoint compatibility.",
+        "summaries": "Intentionally unsupported: scheduling order/priority does not prove where jobs actually run.",
+        "officialDocumentation": "website/docs/r/batch_job_queue.html.markdown",
+        "shapes": {
+          "arn": [
+            "string"
+          ],
+          "compute_environment_order.compute_environment": [
+            "list",
+            "string"
+          ],
+          "compute_environment_order.order": [
+            "list",
+            "number"
+          ],
+          "scheduling_policy_arn": [
+            "string"
+          ]
+        }
+      }
     },
     "aws_batch_scheduling_policy": {
       "status": "Basic-only",
       "priority": "P2",
       "issue": 700,
-      "gap": "Compute environment subnet/SG proof; queue environment/policy navigation. Policy stays logical; do not synthesize jobs."
+      "gap": "#712 reviewed: Not applicable: outgoing fair-share selectors are not Terraform references; #700 owns incoming queue usage. See per-dimension review; Intentionally unsupported: share identifiers, weights and scheduling policy interpretation.",
+      "review": {
+        "issue": 712,
+        "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "arn",
+          "name",
+          "fair_share_policy.compute_reservation",
+          "fair_share_policy.share_distribution.share_identifier"
+        ],
+        "placement": "Supported: retain Logical default from runtime support matrix/classification.rs/basic_entries.rs; no automatic card promotion.",
+        "ownership": "Not applicable: retain independent reusable configuration; references do not prove exclusive ownership.",
+        "network": "Not applicable: configuration has no configured VPC/subnet; consumer context cannot establish containment.",
+        "references": "Not applicable: outgoing fair-share selectors are not Terraform references; #700 owns incoming queue usage.",
+        "scope": "Partial: Regional eligibility in scope.rs/basic.rs requires known provider/resource region; basic fallback clears account and delete/deposed region. Does not prove endpoint compatibility.",
+        "summaries": "Intentionally unsupported: share identifiers, weights and scheduling policy interpretation.",
+        "officialDocumentation": "website/docs/r/batch_scheduling_policy.html.markdown",
+        "shapes": {
+          "arn": [
+            "string"
+          ],
+          "name": [
+            "string"
+          ],
+          "fair_share_policy.compute_reservation": [
+            "list",
+            "number"
+          ],
+          "fair_share_policy.share_distribution.share_identifier": [
+            "list",
+            "set",
+            "string"
+          ]
+        }
+      }
     },
     "aws_sagemaker_endpoint": {
       "status": "Basic-only",
@@ -14322,6 +14482,1968 @@
             ]
           ],
           "dns_resolvers": [
+            [
+              "set",
+              "string"
+            ]
+          ]
+        }
+      }
+    },
+    "aws_appautoscaling_policy": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 812,
+      "gap": "#712 reviewed: Missing: #812 matching full target tuple; policy/scheduled-action names are not resource identities. See per-dimension review; Intentionally unsupported: metric expressions, scheduling and capacity changes are not runtime architecture.",
+      "review": {
+        "issue": 712,
+        "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "resource_id",
+          "service_namespace",
+          "scalable_dimension"
+        ],
+        "placement": "Supported: retain Logical default from runtime support matrix/classification.rs/basic_entries.rs; no automatic card promotion.",
+        "ownership": "Missing: #812 unique target context; do not embed solely on equal resource_id.",
+        "network": "Not applicable: configuration has no configured VPC/subnet; consumer context cannot establish containment.",
+        "references": "Missing: #812 matching full target tuple; policy/scheduled-action names are not resource identities.",
+        "scope": "Partial: Regional eligibility in scope.rs/basic.rs requires known provider/resource region; basic fallback clears account and delete/deposed region. Does not prove endpoint compatibility.",
+        "summaries": "Intentionally unsupported: metric expressions, scheduling and capacity changes are not runtime architecture.",
+        "officialDocumentation": "website/docs/r/appautoscaling_policy.html.markdown",
+        "shapes": {
+          "resource_id": [
+            "string"
+          ],
+          "service_namespace": [
+            "string"
+          ],
+          "scalable_dimension": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_appautoscaling_scheduled_action": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 812,
+      "gap": "#712 reviewed: Missing: #812 matching full target tuple; policy/scheduled-action names are not resource identities. See per-dimension review; Intentionally unsupported: metric expressions, scheduling and capacity changes are not runtime architecture.",
+      "review": {
+        "issue": 712,
+        "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "resource_id",
+          "service_namespace",
+          "scalable_dimension"
+        ],
+        "placement": "Supported: retain Logical default from runtime support matrix/classification.rs/basic_entries.rs; no automatic card promotion.",
+        "ownership": "Missing: #812 unique target context; do not embed solely on equal resource_id.",
+        "network": "Not applicable: configuration has no configured VPC/subnet; consumer context cannot establish containment.",
+        "references": "Missing: #812 matching full target tuple; policy/scheduled-action names are not resource identities.",
+        "scope": "Partial: Regional eligibility in scope.rs/basic.rs requires known provider/resource region; basic fallback clears account and delete/deposed region. Does not prove endpoint compatibility.",
+        "summaries": "Intentionally unsupported: metric expressions, scheduling and capacity changes are not runtime architecture.",
+        "officialDocumentation": "website/docs/r/appautoscaling_scheduled_action.html.markdown",
+        "shapes": {
+          "resource_id": [
+            "string"
+          ],
+          "service_namespace": [
+            "string"
+          ],
+          "scalable_dimension": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_appautoscaling_target": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 812,
+      "gap": "#712 reviewed: Missing: #812 typed namespace/dimension/resource_id tuple and role ARN; formatted ECS/table IDs need complete provenance, not name suffix matching. See per-dimension review; Deferred: min/max capacity summary until units are qualified by scalable_dimension; no synthetic capacity.",
+      "review": {
+        "issue": 712,
+        "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "resource_id",
+          "service_namespace",
+          "scalable_dimension",
+          "role_arn"
+        ],
+        "placement": "Supported: retain Logical default from runtime support matrix/classification.rs/basic_entries.rs; no automatic card promotion.",
+        "ownership": "Not applicable: retain independent reusable configuration; references do not prove exclusive ownership.",
+        "network": "Not applicable: configuration has no configured VPC/subnet; consumer context cannot establish containment.",
+        "references": "Missing: #812 typed namespace/dimension/resource_id tuple and role ARN; formatted ECS/table IDs need complete provenance, not name suffix matching.",
+        "scope": "Partial: Regional eligibility in scope.rs/basic.rs requires known provider/resource region; basic fallback clears account and delete/deposed region. Does not prove endpoint compatibility.",
+        "summaries": "Deferred: min/max capacity summary until units are qualified by scalable_dimension; no synthetic capacity.",
+        "officialDocumentation": "website/docs/r/appautoscaling_target.html.markdown",
+        "shapes": {
+          "resource_id": [
+            "string"
+          ],
+          "service_namespace": [
+            "string"
+          ],
+          "scalable_dimension": [
+            "string"
+          ],
+          "role_arn": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_autoscaling_attachment": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 810,
+      "gap": "#712 reviewed: Missing: #810 ASG name plus exclusive Classic ELB name or ELBv2 target-group ARN. See per-dimension review; Intentionally unsupported: attachment does not establish health or runtime traffic.",
+      "review": {
+        "issue": 712,
+        "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "autoscaling_group_name",
+          "elb",
+          "lb_target_group_arn"
+        ],
+        "placement": "Supported: retain Logical default from runtime support matrix/classification.rs/basic_entries.rs; no automatic card promotion.",
+        "ownership": "Missing: #810 verified association must preserve helper identity and both endpoints.",
+        "network": "Not applicable: configuration has no configured VPC/subnet; consumer context cannot establish containment.",
+        "references": "Missing: #810 ASG name plus exclusive Classic ELB name or ELBv2 target-group ARN.",
+        "scope": "Partial: Regional eligibility in scope.rs/basic.rs requires known provider/resource region; basic fallback clears account and delete/deposed region. Does not prove endpoint compatibility.",
+        "summaries": "Intentionally unsupported: attachment does not establish health or runtime traffic.",
+        "officialDocumentation": "website/docs/r/autoscaling_attachment.html.markdown",
+        "shapes": {
+          "autoscaling_group_name": [
+            "string"
+          ],
+          "elb": [
+            "string"
+          ],
+          "lb_target_group_arn": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_autoscaling_group": {
+      "status": "Partial",
+      "priority": "P2",
+      "issue": 810,
+      "gap": "#712 reviewed: Partial: #361 direct/base mixed-template Uses labels (aws.rs; tests/unit/svg/logical.rs) and #362 inverse policy context (autoscaling.rs/tests) remain. #810 owns launch configuration, typed traffic, role and placement-group references; override templates require separate complete evidence. Missing: #810 complete subnet-set common-VPC proof; availability_zones do not identify default subnets. See per-dimension review; Intentionally unsupported: desired/predicted capacity and warm pools cannot synthesize instances or health.",
+      "review": {
+        "issue": 712,
+        "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "name",
+          "arn",
+          "vpc_zone_identifier",
+          "availability_zones",
+          "launch_configuration",
+          "launch_template.id",
+          "launch_template.name",
+          "mixed_instances_policy.launch_template.launch_template_specification.launch_template_id",
+          "mixed_instances_policy.launch_template.launch_template_specification.launch_template_name",
+          "target_group_arns",
+          "load_balancers",
+          "traffic_source.identifier",
+          "traffic_source.type",
+          "service_linked_role_arn",
+          "placement_group",
+          "termination_policies"
+        ],
+        "placement": "Supported: actual Spatial Controller from classification.rs and aws.rs overrides basic_entries Logical Node; retain architecture card.",
+        "ownership": "Not applicable: ASG does not own Terraform instances merely through desired capacity.",
+        "network": "Missing: #810 complete subnet-set common-VPC proof; availability_zones do not identify default subnets.",
+        "references": "Partial: #361 direct/base mixed-template Uses labels (aws.rs; tests/unit/svg/logical.rs) and #362 inverse policy context (autoscaling.rs/tests) remain. #810 owns launch configuration, typed traffic, role and placement-group references; override templates require separate complete evidence.",
+        "scope": "Partial: existing scope.rs preserves provider account/region; this does not verify referenced endpoints.",
+        "summaries": "Intentionally unsupported: desired/predicted capacity and warm pools cannot synthesize instances or health.",
+        "officialDocumentation": "website/docs/r/autoscaling_group.html.markdown",
+        "shapes": {
+          "name": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "vpc_zone_identifier": [
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "availability_zones": [
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "launch_configuration": [
+            "string"
+          ],
+          "launch_template.id": [
+            "list",
+            "string"
+          ],
+          "launch_template.name": [
+            "list",
+            "string"
+          ],
+          "mixed_instances_policy.launch_template.launch_template_specification.launch_template_id": [
+            "list",
+            "list",
+            "list",
+            "string"
+          ],
+          "mixed_instances_policy.launch_template.launch_template_specification.launch_template_name": [
+            "list",
+            "list",
+            "list",
+            "string"
+          ],
+          "target_group_arns": [
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "load_balancers": [
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "traffic_source.identifier": [
+            "set",
+            "string"
+          ],
+          "traffic_source.type": [
+            "set",
+            "string"
+          ],
+          "service_linked_role_arn": [
+            "string"
+          ],
+          "placement_group": [
+            "string"
+          ],
+          "termination_policies": [
+            [
+              "list",
+              "string"
+            ]
+          ]
+        }
+      }
+    },
+    "aws_autoscaling_group_tag": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 811,
+      "gap": "#712 reviewed: Missing: #811 group name identity; composite id includes tag key. See per-dimension review; Intentionally unsupported: arbitrary tag values and propagation do not establish instance ownership.",
+      "review": {
+        "issue": 712,
+        "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "autoscaling_group_name",
+          "tag.key",
+          "tag.propagate_at_launch"
+        ],
+        "placement": "Supported: retain Logical default from runtime support matrix/classification.rs/basic_entries.rs; no automatic card promotion.",
+        "ownership": "Missing: #811 unique group owner before any embedding.",
+        "network": "Not applicable: configuration has no configured VPC/subnet; consumer context cannot establish containment.",
+        "references": "Missing: #811 group name identity; composite id includes tag key.",
+        "scope": "Partial: Regional eligibility in scope.rs/basic.rs requires known provider/resource region; basic fallback clears account and delete/deposed region. Does not prove endpoint compatibility.",
+        "summaries": "Intentionally unsupported: arbitrary tag values and propagation do not establish instance ownership.",
+        "officialDocumentation": "website/docs/r/autoscaling_group_tag.html.markdown",
+        "shapes": {
+          "autoscaling_group_name": [
+            "string"
+          ],
+          "tag.key": [
+            "list",
+            "string"
+          ],
+          "tag.propagate_at_launch": [
+            "list",
+            "bool"
+          ]
+        }
+      }
+    },
+    "aws_autoscaling_lifecycle_hook": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 811,
+      "gap": "#712 reviewed: Missing: #811 ASG owner, notification endpoint and IAM role; validate documented SNS/SQS/Lambda type instead of ARN guessing. See per-dimension review; Intentionally unsupported: notification_metadata, transitions and heartbeat are not runtime delivery.",
+      "review": {
+        "issue": 712,
+        "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "autoscaling_group_name",
+          "notification_target_arn",
+          "role_arn",
+          "lifecycle_transition"
+        ],
+        "placement": "Supported: retain Logical default from runtime support matrix/classification.rs/basic_entries.rs; no automatic card promotion.",
+        "ownership": "Missing: #811 group-qualified hook owner; name alone is insufficient.",
+        "network": "Not applicable: configuration has no configured VPC/subnet; consumer context cannot establish containment.",
+        "references": "Missing: #811 ASG owner, notification endpoint and IAM role; validate documented SNS/SQS/Lambda type instead of ARN guessing.",
+        "scope": "Partial: Regional eligibility in scope.rs/basic.rs requires known provider/resource region; basic fallback clears account and delete/deposed region. Does not prove endpoint compatibility.",
+        "summaries": "Intentionally unsupported: notification_metadata, transitions and heartbeat are not runtime delivery.",
+        "officialDocumentation": "website/docs/r/autoscaling_lifecycle_hook.html.markdown",
+        "shapes": {
+          "autoscaling_group_name": [
+            "string"
+          ],
+          "notification_target_arn": [
+            "string"
+          ],
+          "role_arn": [
+            "string"
+          ],
+          "lifecycle_transition": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_autoscaling_notification": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 811,
+      "gap": "#712 reviewed: Missing: #811 complete group-name set and SNS topic ARN. See per-dimension review; Intentionally unsupported: notification types do not establish successful delivery.",
+      "review": {
+        "issue": 712,
+        "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "group_names",
+          "topic_arn"
+        ],
+        "placement": "Supported: retain Logical default from runtime support matrix/classification.rs/basic_entries.rs; no automatic card promotion.",
+        "ownership": "Not applicable: multiple groups can share a notification configuration; no unique embedding owner.",
+        "network": "Not applicable: configuration has no configured VPC/subnet; consumer context cannot establish containment.",
+        "references": "Missing: #811 complete group-name set and SNS topic ARN.",
+        "scope": "Partial: Regional eligibility in scope.rs/basic.rs requires known provider/resource region; basic fallback clears account and delete/deposed region. Does not prove endpoint compatibility.",
+        "summaries": "Intentionally unsupported: notification types do not establish successful delivery.",
+        "officialDocumentation": "website/docs/r/autoscaling_notification.html.markdown",
+        "shapes": {
+          "group_names": [
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "topic_arn": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_autoscaling_policy": {
+      "status": "Partial",
+      "priority": "P2",
+      "issue": 362,
+      "gap": "#712 reviewed: Supported: #362 complete unique name-matching ASG reference and inverse Scaling policy label; autoscaling.rs and tests/unit/semantic/autoscaling.rs. Metric resource labels do not prove LB links. See per-dimension review; Intentionally unsupported: metric math and scaling rules are not runtime predictions.",
+      "review": {
+        "issue": 712,
+        "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "autoscaling_group_name",
+          "arn",
+          "policy_type"
+        ],
+        "placement": "Supported: retain Logical default from runtime support matrix/classification.rs/basic_entries.rs; no automatic card promotion.",
+        "ownership": "Intentionally unsupported: keep independent logical policy; verified ASG context is not embedded ownership.",
+        "network": "Not applicable: configuration has no configured VPC/subnet; consumer context cannot establish containment.",
+        "references": "Supported: #362 complete unique name-matching ASG reference and inverse Scaling policy label; autoscaling.rs and tests/unit/semantic/autoscaling.rs. Metric resource labels do not prove LB links.",
+        "scope": "Partial: scope.rs retains existing provider account/region handling; preserve #362 evidence boundaries.",
+        "summaries": "Intentionally unsupported: metric math and scaling rules are not runtime predictions.",
+        "officialDocumentation": "website/docs/r/autoscaling_policy.html.markdown",
+        "shapes": {
+          "autoscaling_group_name": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "policy_type": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_autoscaling_schedule": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 811,
+      "gap": "#712 reviewed: Missing: #811 group-qualified schedule name. See per-dimension review; Intentionally unsupported: cron/capacity values do not predict active instances.",
+      "review": {
+        "issue": 712,
+        "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "autoscaling_group_name",
+          "scheduled_action_name"
+        ],
+        "placement": "Supported: retain Logical default from runtime support matrix/classification.rs/basic_entries.rs; no automatic card promotion.",
+        "ownership": "Missing: #811 exact group owner, retaining schedule identity.",
+        "network": "Not applicable: configuration has no configured VPC/subnet; consumer context cannot establish containment.",
+        "references": "Missing: #811 group-qualified schedule name.",
+        "scope": "Partial: Regional eligibility in scope.rs/basic.rs requires known provider/resource region; basic fallback clears account and delete/deposed region. Does not prove endpoint compatibility.",
+        "summaries": "Intentionally unsupported: cron/capacity values do not predict active instances.",
+        "officialDocumentation": "website/docs/r/autoscaling_schedule.html.markdown",
+        "shapes": {
+          "autoscaling_group_name": [
+            "string"
+          ],
+          "scheduled_action_name": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_autoscaling_traffic_source_attachment": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 810,
+      "gap": "#712 reviewed: Missing: #810 type discriminates elb name, elbv2 ARN and vpc-lattice ARN; not aliases of each other. See per-dimension review; Intentionally unsupported: traffic-source attachment is not reachability.",
+      "review": {
+        "issue": 712,
+        "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "autoscaling_group_name",
+          "traffic_source.identifier",
+          "traffic_source.type"
+        ],
+        "placement": "Supported: retain Logical default from runtime support matrix/classification.rs/basic_entries.rs; no automatic card promotion.",
+        "ownership": "Missing: #810 distinct association provenance; do not merge with inline ASG traffic_source.",
+        "network": "Not applicable: configuration has no configured VPC/subnet; consumer context cannot establish containment.",
+        "references": "Missing: #810 type discriminates elb name, elbv2 ARN and vpc-lattice ARN; not aliases of each other.",
+        "scope": "Partial: Regional eligibility in scope.rs/basic.rs requires known provider/resource region; basic fallback clears account and delete/deposed region. Does not prove endpoint compatibility.",
+        "summaries": "Intentionally unsupported: traffic-source attachment is not reachability.",
+        "officialDocumentation": "website/docs/r/autoscaling_traffic_source_attachment.html.markdown",
+        "shapes": {
+          "autoscaling_group_name": [
+            "string"
+          ],
+          "traffic_source.identifier": [
+            "list",
+            "string"
+          ],
+          "traffic_source.type": [
+            "list",
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_autoscalingplans_scaling_plan": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 812,
+      "gap": "#712 reviewed: Missing: #812 stack ARN and typed instruction targets; tag filters cannot prove members. See per-dimension review; Intentionally unsupported: predictive metrics, tag selection and capacity policies are not topology.",
+      "review": {
+        "issue": 712,
+        "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "application_source.cloudformation_stack_arn",
+          "scaling_instruction.resource_id",
+          "scaling_instruction.service_namespace",
+          "scaling_instruction.scalable_dimension"
+        ],
+        "placement": "Supported: retain Logical default from runtime support matrix/classification.rs/basic_entries.rs; no automatic card promotion.",
+        "ownership": "Not applicable: retain independent reusable configuration; references do not prove exclusive ownership.",
+        "network": "Not applicable: configuration has no configured VPC/subnet; consumer context cannot establish containment.",
+        "references": "Missing: #812 stack ARN and typed instruction targets; tag filters cannot prove members.",
+        "scope": "Partial: Regional eligibility in scope.rs/basic.rs requires known provider/resource region; basic fallback clears account and delete/deposed region. Does not prove endpoint compatibility.",
+        "summaries": "Intentionally unsupported: predictive metrics, tag selection and capacity policies are not topology.",
+        "officialDocumentation": "website/docs/r/autoscalingplans_scaling_plan.html.markdown",
+        "shapes": {
+          "application_source.cloudformation_stack_arn": [
+            "list",
+            "string"
+          ],
+          "scaling_instruction.resource_id": [
+            "set",
+            "string"
+          ],
+          "scaling_instruction.service_namespace": [
+            "set",
+            "string"
+          ],
+          "scaling_instruction.scalable_dimension": [
+            "set",
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_batch_job_definition": {
+      "status": "Basic-only",
+      "priority": "P3",
+      "issue": 712,
+      "gap": "#712 reviewed: Deferred: container/ECS/node properties are JSON strings; typed payload parser and revision-qualified endpoint contract required before references. Kubernetes service-account names are not AWS IAM identities. See per-dimension review; Intentionally unsupported: commands, environment, secrets and job scheduling remain opaque; no jobs inferred.",
+      "review": {
+        "issue": 712,
+        "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "arn",
+          "arn_prefix",
+          "container_properties",
+          "ecs_properties",
+          "node_properties",
+          "eks_properties.pod_properties.service_account_name"
+        ],
+        "placement": "Supported: retain Logical default from runtime support matrix/classification.rs/basic_entries.rs; no automatic card promotion.",
+        "ownership": "Not applicable: retain independent reusable configuration; references do not prove exclusive ownership.",
+        "network": "Not applicable: configuration has no configured VPC/subnet; consumer context cannot establish containment.",
+        "references": "Deferred: container/ECS/node properties are JSON strings; typed payload parser and revision-qualified endpoint contract required before references. Kubernetes service-account names are not AWS IAM identities.",
+        "scope": "Partial: Regional eligibility in scope.rs/basic.rs requires known provider/resource region; basic fallback clears account and delete/deposed region. Does not prove endpoint compatibility.",
+        "summaries": "Intentionally unsupported: commands, environment, secrets and job scheduling remain opaque; no jobs inferred.",
+        "officialDocumentation": "website/docs/r/batch_job_definition.html.markdown",
+        "shapes": {
+          "arn": [
+            "string"
+          ],
+          "arn_prefix": [
+            "string"
+          ],
+          "container_properties": [
+            "string"
+          ],
+          "ecs_properties": [
+            "string"
+          ],
+          "node_properties": [
+            "string"
+          ],
+          "eks_properties.pod_properties.service_account_name": [
+            "list",
+            "list",
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_computeoptimizer_enrollment_status": {
+      "status": "Basic-only",
+      "priority": "P3",
+      "issue": 712,
+      "gap": "#712 reviewed: Not applicable: account enrollment has no configured managed-resource endpoint; member count does not identify Organizations accounts. See per-dimension review; Deferred: configured enrollment toggle only after an account-control summary use case; runtime recommendation quality excluded.",
+      "review": {
+        "issue": 712,
+        "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "status",
+          "include_member_accounts",
+          "number_of_member_accounts_opted_in"
+        ],
+        "placement": "Supported: retain Logical default from runtime support matrix/classification.rs/basic_entries.rs; no automatic card promotion.",
+        "ownership": "Not applicable: retain independent reusable configuration; references do not prove exclusive ownership.",
+        "network": "Not applicable: configuration has no configured VPC/subnet; consumer context cannot establish containment.",
+        "references": "Not applicable: account enrollment has no configured managed-resource endpoint; member count does not identify Organizations accounts.",
+        "scope": "Partial: Regional eligibility in scope.rs/basic.rs requires known provider/resource region; basic fallback clears account and delete/deposed region. Does not prove endpoint compatibility.",
+        "summaries": "Deferred: configured enrollment toggle only after an account-control summary use case; runtime recommendation quality excluded.",
+        "officialDocumentation": "website/docs/r/computeoptimizer_enrollment_status.html.markdown",
+        "shapes": {
+          "status": [
+            "string"
+          ],
+          "include_member_accounts": [
+            "bool"
+          ],
+          "number_of_member_accounts_opted_in": [
+            "number"
+          ]
+        }
+      }
+    },
+    "aws_computeoptimizer_recommendation_preferences": {
+      "status": "Basic-only",
+      "priority": "P3",
+      "issue": 712,
+      "gap": "#712 reviewed: Deferred: ResourceArn selectors need resource_type-qualified EC2/ASG/RDS contract and a recommendation-context use case; Organization/AccountId scopes are not managed-resource links. See per-dimension review; Intentionally unsupported: preferred instance lists/utilization thresholds do not demonstrate savings or workload health.",
+      "review": {
+        "issue": 712,
+        "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "resource_type",
+          "scope.name",
+          "scope.value"
+        ],
+        "placement": "Supported: retain Logical default from runtime support matrix/classification.rs/basic_entries.rs; no automatic card promotion.",
+        "ownership": "Not applicable: retain independent reusable configuration; references do not prove exclusive ownership.",
+        "network": "Not applicable: configuration has no configured VPC/subnet; consumer context cannot establish containment.",
+        "references": "Deferred: ResourceArn selectors need resource_type-qualified EC2/ASG/RDS contract and a recommendation-context use case; Organization/AccountId scopes are not managed-resource links.",
+        "scope": "Partial: Regional eligibility in scope.rs/basic.rs requires known provider/resource region; basic fallback clears account and delete/deposed region. Does not prove endpoint compatibility.",
+        "summaries": "Intentionally unsupported: preferred instance lists/utilization thresholds do not demonstrate savings or workload health.",
+        "officialDocumentation": "website/docs/r/computeoptimizer_recommendation_preferences.html.markdown",
+        "shapes": {
+          "resource_type": [
+            "string"
+          ],
+          "scope.name": [
+            "list",
+            "string"
+          ],
+          "scope.value": [
+            "list",
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_imagebuilder_component": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 813,
+      "gap": "#712 reviewed: Missing: #813 exact KMS key ARN; component/workflow version identity must remain distinct. See per-dimension review; Intentionally unsupported: data/uri YAML and parameters cannot supply inferred topology.",
+      "review": {
+        "issue": 712,
+        "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "arn",
+          "kms_key_id"
+        ],
+        "placement": "Supported: retain Logical default from runtime support matrix/classification.rs/basic_entries.rs; no automatic card promotion.",
+        "ownership": "Not applicable: retain independent reusable configuration; references do not prove exclusive ownership.",
+        "network": "Not applicable: configuration has no configured VPC/subnet; consumer context cannot establish containment.",
+        "references": "Missing: #813 exact KMS key ARN; component/workflow version identity must remain distinct.",
+        "scope": "Partial: Regional eligibility in scope.rs/basic.rs requires known provider/resource region; basic fallback clears account and delete/deposed region. Does not prove endpoint compatibility.",
+        "summaries": "Intentionally unsupported: data/uri YAML and parameters cannot supply inferred topology.",
+        "officialDocumentation": "website/docs/r/imagebuilder_component.html.markdown",
+        "shapes": {
+          "arn": [
+            "string"
+          ],
+          "kms_key_id": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_imagebuilder_container_recipe": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 813,
+      "gap": "#712 reviewed: Missing: #813 component ARNs, KMS and service-qualified target repository. Parent image may be Docker image, Image Builder image or AMI; never infer ECR from arbitrary image strings. See per-dimension review; Intentionally unsupported: Dockerfile template, URI and parameters remain opaque.",
+      "review": {
+        "issue": 712,
+        "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "arn",
+          "parent_image",
+          "component.component_arn",
+          "kms_key_id",
+          "target_repository.repository_name",
+          "target_repository.service"
+        ],
+        "placement": "Supported: retain Logical default from runtime support matrix/classification.rs/basic_entries.rs; no automatic card promotion.",
+        "ownership": "Not applicable: retain independent reusable configuration; references do not prove exclusive ownership.",
+        "network": "Not applicable: configuration has no configured VPC/subnet; consumer context cannot establish containment.",
+        "references": "Missing: #813 component ARNs, KMS and service-qualified target repository. Parent image may be Docker image, Image Builder image or AMI; never infer ECR from arbitrary image strings.",
+        "scope": "Partial: Regional eligibility in scope.rs/basic.rs requires known provider/resource region; basic fallback clears account and delete/deposed region. Does not prove endpoint compatibility.",
+        "summaries": "Intentionally unsupported: Dockerfile template, URI and parameters remain opaque.",
+        "officialDocumentation": "website/docs/r/imagebuilder_container_recipe.html.markdown",
+        "shapes": {
+          "arn": [
+            "string"
+          ],
+          "parent_image": [
+            "string"
+          ],
+          "component.component_arn": [
+            "list",
+            "string"
+          ],
+          "kms_key_id": [
+            "string"
+          ],
+          "target_repository.repository_name": [
+            "list",
+            "string"
+          ],
+          "target_repository.service": [
+            "list",
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_imagebuilder_distribution_configuration": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 814,
+      "gap": "#712 reviewed: Missing: #814 per-destination KMS/repository/template/S3/role/SSM references; region/account qualified, not literal name equality. See per-dimension review; Intentionally unsupported: AMI naming templates/launch permissions do not create artifacts or prove access.",
+      "review": {
+        "issue": 712,
+        "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "arn",
+          "distribution.region",
+          "distribution.ami_distribution_configuration.kms_key_id",
+          "distribution.ami_distribution_configuration.target_account_ids",
+          "distribution.container_distribution_configuration.target_repository.repository_name",
+          "distribution.launch_template_configuration.launch_template_id",
+          "distribution.s3_export_configuration.s3_bucket",
+          "distribution.s3_export_configuration.role_name",
+          "distribution.ssm_parameter_configuration.parameter_name"
+        ],
+        "placement": "Supported: retain Logical default from runtime support matrix/classification.rs/basic_entries.rs; no automatic card promotion.",
+        "ownership": "Not applicable: retain independent reusable configuration; references do not prove exclusive ownership.",
+        "network": "Not applicable: configuration has no configured VPC/subnet; consumer context cannot establish containment.",
+        "references": "Missing: #814 per-destination KMS/repository/template/S3/role/SSM references; region/account qualified, not literal name equality.",
+        "scope": "Partial: basic regional eligibility describes configuration control region only; distribution.region/account selectors do not relocate configuration or create member scopes.",
+        "summaries": "Intentionally unsupported: AMI naming templates/launch permissions do not create artifacts or prove access.",
+        "officialDocumentation": "website/docs/r/imagebuilder_distribution_configuration.html.markdown",
+        "shapes": {
+          "arn": [
+            "string"
+          ],
+          "distribution.region": [
+            "set",
+            "string"
+          ],
+          "distribution.ami_distribution_configuration.kms_key_id": [
+            "set",
+            "list",
+            "string"
+          ],
+          "distribution.ami_distribution_configuration.target_account_ids": [
+            "set",
+            "list",
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "distribution.container_distribution_configuration.target_repository.repository_name": [
+            "set",
+            "list",
+            "list",
+            "string"
+          ],
+          "distribution.launch_template_configuration.launch_template_id": [
+            "set",
+            "set",
+            "string"
+          ],
+          "distribution.s3_export_configuration.s3_bucket": [
+            "set",
+            "list",
+            "string"
+          ],
+          "distribution.s3_export_configuration.role_name": [
+            "set",
+            "list",
+            "string"
+          ],
+          "distribution.ssm_parameter_configuration.parameter_name": [
+            "set",
+            "set",
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_imagebuilder_image": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 813,
+      "gap": "#712 reviewed: Missing: #813 exclusive image/container recipe, infrastructure, distribution, workflow and execution-role references; exact ARN versions required. See per-dimension review; Intentionally unsupported: output artifacts/build status do not synthesize AMIs, containers or runtime hosts.",
+      "review": {
+        "issue": 712,
+        "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "arn",
+          "infrastructure_configuration_arn",
+          "distribution_configuration_arn",
+          "image_recipe_arn",
+          "container_recipe_arn",
+          "workflow.workflow_arn",
+          "execution_role"
+        ],
+        "placement": "Supported: retain Logical default from runtime support matrix/classification.rs/basic_entries.rs; no automatic card promotion.",
+        "ownership": "Not applicable: retain independent reusable configuration; references do not prove exclusive ownership.",
+        "network": "Intentionally unsupported: build infrastructure network does not contain the pipeline or resulting image.",
+        "references": "Missing: #813 exclusive image/container recipe, infrastructure, distribution, workflow and execution-role references; exact ARN versions required.",
+        "scope": "Partial: Regional eligibility in scope.rs/basic.rs requires known provider/resource region; basic fallback clears account and delete/deposed region. Does not prove endpoint compatibility.",
+        "summaries": "Intentionally unsupported: output artifacts/build status do not synthesize AMIs, containers or runtime hosts.",
+        "officialDocumentation": "website/docs/r/imagebuilder_image.html.markdown",
+        "shapes": {
+          "arn": [
+            "string"
+          ],
+          "infrastructure_configuration_arn": [
+            "string"
+          ],
+          "distribution_configuration_arn": [
+            "string"
+          ],
+          "image_recipe_arn": [
+            "string"
+          ],
+          "container_recipe_arn": [
+            "string"
+          ],
+          "workflow.workflow_arn": [
+            "set",
+            "string"
+          ],
+          "execution_role": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_imagebuilder_image_pipeline": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 813,
+      "gap": "#712 reviewed: Missing: #813 exclusive image/container recipe, infrastructure, distribution, workflow and execution-role references; exact ARN versions required. See per-dimension review; Intentionally unsupported: output artifacts/build status do not synthesize AMIs, containers or runtime hosts.",
+      "review": {
+        "issue": 712,
+        "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "arn",
+          "infrastructure_configuration_arn",
+          "distribution_configuration_arn",
+          "image_recipe_arn",
+          "container_recipe_arn",
+          "workflow.workflow_arn",
+          "execution_role"
+        ],
+        "placement": "Supported: retain Logical default from runtime support matrix/classification.rs/basic_entries.rs; no automatic card promotion.",
+        "ownership": "Not applicable: retain independent reusable configuration; references do not prove exclusive ownership.",
+        "network": "Intentionally unsupported: build infrastructure network does not contain the pipeline or resulting image.",
+        "references": "Missing: #813 exclusive image/container recipe, infrastructure, distribution, workflow and execution-role references; exact ARN versions required.",
+        "scope": "Partial: Regional eligibility in scope.rs/basic.rs requires known provider/resource region; basic fallback clears account and delete/deposed region. Does not prove endpoint compatibility.",
+        "summaries": "Intentionally unsupported: output artifacts/build status do not synthesize AMIs, containers or runtime hosts.",
+        "officialDocumentation": "website/docs/r/imagebuilder_image_pipeline.html.markdown",
+        "shapes": {
+          "arn": [
+            "string"
+          ],
+          "infrastructure_configuration_arn": [
+            "string"
+          ],
+          "distribution_configuration_arn": [
+            "string"
+          ],
+          "image_recipe_arn": [
+            "string"
+          ],
+          "container_recipe_arn": [
+            "string"
+          ],
+          "workflow.workflow_arn": [
+            "list",
+            "string"
+          ],
+          "execution_role": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_imagebuilder_image_recipe": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 813,
+      "gap": "#712 reviewed: Missing: #813 versioned components, exact parent AMI/Image Builder identity and EBS KMS/snapshot references. Wildcards/public catalog IDs cannot match local resources. See per-dimension review; Intentionally unsupported: user data and component parameters are payloads, not summaries.",
+      "review": {
+        "issue": 712,
+        "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "arn",
+          "parent_image",
+          "component.component_arn",
+          "block_device_mapping.ebs.kms_key_id",
+          "block_device_mapping.ebs.snapshot_id"
+        ],
+        "placement": "Supported: retain Logical default from runtime support matrix/classification.rs/basic_entries.rs; no automatic card promotion.",
+        "ownership": "Not applicable: retain independent reusable configuration; references do not prove exclusive ownership.",
+        "network": "Not applicable: configuration has no configured VPC/subnet; consumer context cannot establish containment.",
+        "references": "Missing: #813 versioned components, exact parent AMI/Image Builder identity and EBS KMS/snapshot references. Wildcards/public catalog IDs cannot match local resources.",
+        "scope": "Partial: Regional eligibility in scope.rs/basic.rs requires known provider/resource region; basic fallback clears account and delete/deposed region. Does not prove endpoint compatibility.",
+        "summaries": "Intentionally unsupported: user data and component parameters are payloads, not summaries.",
+        "officialDocumentation": "website/docs/r/imagebuilder_image_recipe.html.markdown",
+        "shapes": {
+          "arn": [
+            "string"
+          ],
+          "parent_image": [
+            "string"
+          ],
+          "component.component_arn": [
+            "list",
+            "string"
+          ],
+          "block_device_mapping.ebs.kms_key_id": [
+            "set",
+            "list",
+            "string"
+          ],
+          "block_device_mapping.ebs.snapshot_id": [
+            "set",
+            "list",
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_imagebuilder_infrastructure_configuration": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 813,
+      "gap": "#712 reviewed: Missing: #813 profile name, SNS, S3 logging and exclusive host/resource-group targets. Missing: #813 verified subnet/SG build context; retain Logical infrastructure configuration, not a synthetic build instance. See per-dimension review; Intentionally unsupported: instance types/log prefixes do not establish produced workloads.",
+      "review": {
+        "issue": 712,
+        "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "arn",
+          "subnet_id",
+          "security_group_ids",
+          "instance_profile_name",
+          "sns_topic_arn",
+          "logging.s3_logs.s3_bucket_name",
+          "placement.host_id",
+          "placement.host_resource_group_arn"
+        ],
+        "placement": "Supported: retain Logical default from runtime support matrix/classification.rs/basic_entries.rs; no automatic card promotion.",
+        "ownership": "Not applicable: retain independent reusable configuration; references do not prove exclusive ownership.",
+        "network": "Missing: #813 verified subnet/SG build context; retain Logical infrastructure configuration, not a synthetic build instance.",
+        "references": "Missing: #813 profile name, SNS, S3 logging and exclusive host/resource-group targets.",
+        "scope": "Partial: Regional eligibility in scope.rs/basic.rs requires known provider/resource region; basic fallback clears account and delete/deposed region. Does not prove endpoint compatibility.",
+        "summaries": "Intentionally unsupported: instance types/log prefixes do not establish produced workloads.",
+        "officialDocumentation": "website/docs/r/imagebuilder_infrastructure_configuration.html.markdown",
+        "shapes": {
+          "arn": [
+            "string"
+          ],
+          "subnet_id": [
+            "string"
+          ],
+          "security_group_ids": [
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "instance_profile_name": [
+            "string"
+          ],
+          "sns_topic_arn": [
+            "string"
+          ],
+          "logging.s3_logs.s3_bucket_name": [
+            "list",
+            "list",
+            "string"
+          ],
+          "placement.host_id": [
+            "list",
+            "string"
+          ],
+          "placement.host_resource_group_arn": [
+            "list",
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_imagebuilder_lifecycle_policy": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 814,
+      "gap": "#712 reviewed: Missing: #814 execution role and exact recipe name/version/type; tags and wildcard versions cannot prove members. See per-dimension review; Intentionally unsupported: lifecycle policy filters/actions do not establish actual retention/deletion.",
+      "review": {
+        "issue": 712,
+        "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "arn",
+          "execution_role",
+          "resource_type",
+          "resource_selection.recipe.name",
+          "resource_selection.recipe.semantic_version"
+        ],
+        "placement": "Supported: retain Logical default from runtime support matrix/classification.rs/basic_entries.rs; no automatic card promotion.",
+        "ownership": "Not applicable: retain independent reusable configuration; references do not prove exclusive ownership.",
+        "network": "Not applicable: configuration has no configured VPC/subnet; consumer context cannot establish containment.",
+        "references": "Missing: #814 execution role and exact recipe name/version/type; tags and wildcard versions cannot prove members.",
+        "scope": "Partial: Regional eligibility in scope.rs/basic.rs requires known provider/resource region; basic fallback clears account and delete/deposed region. Does not prove endpoint compatibility.",
+        "summaries": "Intentionally unsupported: lifecycle policy filters/actions do not establish actual retention/deletion.",
+        "officialDocumentation": "website/docs/r/imagebuilder_lifecycle_policy.html.markdown",
+        "shapes": {
+          "arn": [
+            "string"
+          ],
+          "execution_role": [
+            "string"
+          ],
+          "resource_type": [
+            "string"
+          ],
+          "resource_selection.recipe.name": [
+            "list",
+            "set",
+            "string"
+          ],
+          "resource_selection.recipe.semantic_version": [
+            "list",
+            "set",
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_imagebuilder_workflow": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 813,
+      "gap": "#712 reviewed: Missing: #813 exact KMS key ARN; component/workflow version identity must remain distinct. See per-dimension review; Intentionally unsupported: data/uri YAML and parameters cannot supply inferred topology.",
+      "review": {
+        "issue": 712,
+        "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "arn",
+          "kms_key_id"
+        ],
+        "placement": "Supported: retain Logical default from runtime support matrix/classification.rs/basic_entries.rs; no automatic card promotion.",
+        "ownership": "Not applicable: retain independent reusable configuration; references do not prove exclusive ownership.",
+        "network": "Not applicable: configuration has no configured VPC/subnet; consumer context cannot establish containment.",
+        "references": "Missing: #813 exact KMS key ARN; component/workflow version identity must remain distinct.",
+        "scope": "Partial: Regional eligibility in scope.rs/basic.rs requires known provider/resource region; basic fallback clears account and delete/deposed region. Does not prove endpoint compatibility.",
+        "summaries": "Intentionally unsupported: data/uri YAML and parameters cannot supply inferred topology.",
+        "officialDocumentation": "website/docs/r/imagebuilder_workflow.html.markdown",
+        "shapes": {
+          "arn": [
+            "string"
+          ],
+          "kms_key_id": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_launch_configuration": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 810,
+      "gap": "#712 reviewed: Missing: #810 AMI ID, complete SG IDs, instance-profile name and key-pair name; configuration is not an instance. See per-dimension review; Intentionally unsupported: user_data/base64, spot price and metadata payloads remain opaque.",
+      "review": {
+        "issue": 712,
+        "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "name",
+          "arn",
+          "image_id",
+          "security_groups",
+          "iam_instance_profile",
+          "key_name"
+        ],
+        "placement": "Supported: retain Logical default from runtime support matrix/classification.rs/basic_entries.rs; no automatic card promotion.",
+        "ownership": "Not applicable: retain independent reusable configuration; references do not prove exclusive ownership.",
+        "network": "Not applicable: configuration has no configured VPC/subnet; consumer context cannot establish containment.",
+        "references": "Missing: #810 AMI ID, complete SG IDs, instance-profile name and key-pair name; configuration is not an instance.",
+        "scope": "Partial: Regional eligibility in scope.rs/basic.rs requires known provider/resource region; basic fallback clears account and delete/deposed region. Does not prove endpoint compatibility.",
+        "summaries": "Intentionally unsupported: user_data/base64, spot price and metadata payloads remain opaque.",
+        "officialDocumentation": "website/docs/r/launch_configuration.html.markdown",
+        "shapes": {
+          "name": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "image_id": [
+            "string"
+          ],
+          "security_groups": [
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "iam_instance_profile": [
+            "string"
+          ],
+          "key_name": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_lightsail_bucket": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 815,
+      "gap": "#712 reviewed: Not applicable: bucket is an endpoint; #815 owns access-helper relationships. See per-dimension review; Intentionally unsupported: access rules/versioning are not permission analysis.",
+      "review": {
+        "issue": 712,
+        "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "name",
+          "arn",
+          "bundle_id"
+        ],
+        "placement": "Supported: retain Spatial default from runtime support matrix/classification.rs/basic_entries.rs; no automatic card promotion.",
+        "ownership": "Not applicable: independent bucket; access helpers do not own it.",
+        "network": "Intentionally unsupported: Lightsail service networking/AZ/IP does not identify a customer VPC or subnet; no EC2 containment inheritance.",
+        "references": "Not applicable: bucket is an endpoint; #815 owns access-helper relationships.",
+        "scope": "Partial: Regional eligibility in scope.rs/basic.rs requires known provider/resource region; basic fallback clears account and delete/deposed region. Does not prove endpoint compatibility.",
+        "summaries": "Intentionally unsupported: access rules/versioning are not permission analysis.",
+        "officialDocumentation": "website/docs/r/lightsail_bucket.html.markdown",
+        "shapes": {
+          "name": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "bundle_id": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_lightsail_bucket_access_key": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 815,
+      "gap": "#712 reviewed: Missing: #815 bucket_name owner; never expose access-key material. See per-dimension review; Intentionally unsupported: access_key_id, secret_access_key and session credentials are not summaries.",
+      "review": {
+        "issue": 712,
+        "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "bucket_name",
+          "access_key_id"
+        ],
+        "placement": "Supported: retain Logical default from runtime support matrix/classification.rs/basic_entries.rs; no automatic card promotion.",
+        "ownership": "Missing: #815 exact bucket owner before embedding key identity.",
+        "network": "Intentionally unsupported: Lightsail service networking/AZ/IP does not identify a customer VPC or subnet; no EC2 containment inheritance.",
+        "references": "Missing: #815 bucket_name owner; never expose access-key material.",
+        "scope": "Partial: Regional eligibility in scope.rs/basic.rs requires known provider/resource region; basic fallback clears account and delete/deposed region. Does not prove endpoint compatibility.",
+        "summaries": "Intentionally unsupported: access_key_id, secret_access_key and session credentials are not summaries.",
+        "officialDocumentation": "website/docs/r/lightsail_bucket_access_key.html.markdown",
+        "shapes": {
+          "bucket_name": [
+            "string"
+          ],
+          "access_key_id": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_lightsail_bucket_resource_access": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 815,
+      "gap": "#712 reviewed: Missing: #815 typed Lightsail instance resource_name and bucket_name endpoints. See per-dimension review; Intentionally unsupported: access association is not effective permission proof.",
+      "review": {
+        "issue": 712,
+        "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "bucket_name",
+          "resource_name"
+        ],
+        "placement": "Supported: retain Logical default from runtime support matrix/classification.rs/basic_entries.rs; no automatic card promotion.",
+        "ownership": "Not applicable: relationship has two endpoints and does not own either.",
+        "network": "Intentionally unsupported: Lightsail service networking/AZ/IP does not identify a customer VPC or subnet; no EC2 containment inheritance.",
+        "references": "Missing: #815 typed Lightsail instance resource_name and bucket_name endpoints.",
+        "scope": "Partial: Regional eligibility in scope.rs/basic.rs requires known provider/resource region; basic fallback clears account and delete/deposed region. Does not prove endpoint compatibility.",
+        "summaries": "Intentionally unsupported: access association is not effective permission proof.",
+        "officialDocumentation": "website/docs/r/lightsail_bucket_resource_access.html.markdown",
+        "shapes": {
+          "bucket_name": [
+            "string"
+          ],
+          "resource_name": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_lightsail_certificate": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 815,
+      "gap": "#712 reviewed: Not applicable: general Lightsail certificate endpoint; consumers in #815, not an ACM alias. See per-dimension review; Intentionally unsupported: domain validation does not prove DNS-resource ownership.",
+      "review": {
+        "issue": 712,
+        "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "name",
+          "arn",
+          "domain_name"
+        ],
+        "placement": "Supported: retain Logical default from runtime support matrix/classification.rs/basic_entries.rs; no automatic card promotion.",
+        "ownership": "Not applicable: independent certificate; domain strings are not owner references.",
+        "network": "Intentionally unsupported: Lightsail service networking/AZ/IP does not identify a customer VPC or subnet; no EC2 containment inheritance.",
+        "references": "Not applicable: general Lightsail certificate endpoint; consumers in #815, not an ACM alias.",
+        "scope": "Partial: basic scope.rs uses provider/resource region; DNS/distribution service control-region versus global-serving semantics need explicit #815 contract, not CloudFront/Route53 alias assumptions.",
+        "summaries": "Intentionally unsupported: domain validation does not prove DNS-resource ownership.",
+        "officialDocumentation": "website/docs/r/lightsail_certificate.html.markdown",
+        "shapes": {
+          "name": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "domain_name": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_lightsail_container_service": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 815,
+      "gap": "#712 reviewed: Missing: #815 certificate-name references with complete nested set evidence. See per-dimension review; Intentionally unsupported: private domain/ECR principal outputs do not establish customer VPC or repository ownership.",
+      "review": {
+        "issue": 712,
+        "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "name",
+          "arn",
+          "public_domain_names.certificate.certificate_name"
+        ],
+        "placement": "Supported: retain Spatial default from runtime support matrix/classification.rs/basic_entries.rs; no automatic card promotion.",
+        "ownership": "Not applicable: independent service; deployments handled separately by #815.",
+        "network": "Intentionally unsupported: Lightsail service networking/AZ/IP does not identify a customer VPC or subnet; no EC2 containment inheritance.",
+        "references": "Missing: #815 certificate-name references with complete nested set evidence.",
+        "scope": "Partial: Regional eligibility in scope.rs/basic.rs requires known provider/resource region; basic fallback clears account and delete/deposed region. Does not prove endpoint compatibility.",
+        "summaries": "Intentionally unsupported: private domain/ECR principal outputs do not establish customer VPC or repository ownership.",
+        "officialDocumentation": "website/docs/r/lightsail_container_service.html.markdown",
+        "shapes": {
+          "name": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "public_domain_names.certificate.certificate_name": [
+            "list",
+            "set",
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_lightsail_container_service_deployment_version": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 815,
+      "gap": "#712 reviewed: Missing: #815 service name; container names identify entries inside deployment, not Terraform resources. See per-dimension review; Intentionally unsupported: image/env/commands are payloads; health-check output is not reachability.",
+      "review": {
+        "issue": 712,
+        "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "service_name",
+          "container.container_name",
+          "public_endpoint.container_name"
+        ],
+        "placement": "Supported: retain Logical default from runtime support matrix/classification.rs/basic_entries.rs; no automatic card promotion.",
+        "ownership": "Missing: #815 unique service ownership; preserve each deployment version identity.",
+        "network": "Intentionally unsupported: Lightsail service networking/AZ/IP does not identify a customer VPC or subnet; no EC2 containment inheritance.",
+        "references": "Missing: #815 service name; container names identify entries inside deployment, not Terraform resources.",
+        "scope": "Partial: Regional eligibility in scope.rs/basic.rs requires known provider/resource region; basic fallback clears account and delete/deposed region. Does not prove endpoint compatibility.",
+        "summaries": "Intentionally unsupported: image/env/commands are payloads; health-check output is not reachability.",
+        "officialDocumentation": "website/docs/r/lightsail_container_service_deployment_version.html.markdown",
+        "shapes": {
+          "service_name": [
+            "string"
+          ],
+          "container.container_name": [
+            "set",
+            "string"
+          ],
+          "public_endpoint.container_name": [
+            "list",
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_lightsail_database": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 815,
+      "gap": "#712 reviewed: Not applicable: blueprint/bundle are service catalog IDs, not Terraform database or RDS references. See per-dimension review; Intentionally unsupported: credentials, master endpoint and public accessibility are not safe connection/health summaries.",
+      "review": {
+        "issue": 712,
+        "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "relational_database_name",
+          "arn",
+          "availability_zone",
+          "blueprint_id",
+          "bundle_id"
+        ],
+        "placement": "Supported: retain Spatial default from runtime support matrix/classification.rs/basic_entries.rs; no automatic card promotion.",
+        "ownership": "Not applicable: independent managed database.",
+        "network": "Intentionally unsupported: Lightsail service networking/AZ/IP does not identify a customer VPC or subnet; no EC2 containment inheritance.",
+        "references": "Not applicable: blueprint/bundle are service catalog IDs, not Terraform database or RDS references.",
+        "scope": "Partial: Regional eligibility in scope.rs/basic.rs requires known provider/resource region; basic fallback clears account and delete/deposed region. Does not prove endpoint compatibility.",
+        "summaries": "Intentionally unsupported: credentials, master endpoint and public accessibility are not safe connection/health summaries.",
+        "officialDocumentation": "website/docs/r/lightsail_database.html.markdown",
+        "shapes": {
+          "relational_database_name": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "availability_zone": [
+            "string"
+          ],
+          "blueprint_id": [
+            "string"
+          ],
+          "bundle_id": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_lightsail_disk": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 815,
+      "gap": "#712 reviewed: Not applicable: disk is an endpoint; #815 owns disk attachments. See per-dimension review; Deferred: size summary only with bounded storage-unit presentation; no mount-path dump.",
+      "review": {
+        "issue": 712,
+        "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "name",
+          "arn",
+          "availability_zone"
+        ],
+        "placement": "Supported: retain Spatial default from runtime support matrix/classification.rs/basic_entries.rs; no automatic card promotion.",
+        "ownership": "Not applicable: independent disk, not automatically embedded in instance.",
+        "network": "Intentionally unsupported: Lightsail service networking/AZ/IP does not identify a customer VPC or subnet; no EC2 containment inheritance.",
+        "references": "Not applicable: disk is an endpoint; #815 owns disk attachments.",
+        "scope": "Partial: Regional eligibility in scope.rs/basic.rs requires known provider/resource region; basic fallback clears account and delete/deposed region. Does not prove endpoint compatibility.",
+        "summaries": "Deferred: size summary only with bounded storage-unit presentation; no mount-path dump.",
+        "officialDocumentation": "website/docs/r/lightsail_disk.html.markdown",
+        "shapes": {
+          "name": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "availability_zone": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_lightsail_disk_attachment": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 815,
+      "gap": "#712 reviewed: Missing: #815 disk and instance names; instance id is ARN, not name. See per-dimension review; Intentionally unsupported: disk_path is not proof of mount health.",
+      "review": {
+        "issue": 712,
+        "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "disk_name",
+          "instance_name"
+        ],
+        "placement": "Supported: retain Logical default from runtime support matrix/classification.rs/basic_entries.rs; no automatic card promotion.",
+        "ownership": "Not applicable: preserve association identity and independently managed disk.",
+        "network": "Intentionally unsupported: Lightsail service networking/AZ/IP does not identify a customer VPC or subnet; no EC2 containment inheritance.",
+        "references": "Missing: #815 disk and instance names; instance id is ARN, not name.",
+        "scope": "Partial: Regional eligibility in scope.rs/basic.rs requires known provider/resource region; basic fallback clears account and delete/deposed region. Does not prove endpoint compatibility.",
+        "summaries": "Intentionally unsupported: disk_path is not proof of mount health.",
+        "officialDocumentation": "website/docs/r/lightsail_disk_attachment.html.markdown",
+        "shapes": {
+          "disk_name": [
+            "string"
+          ],
+          "instance_name": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_lightsail_distribution": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 815,
+      "gap": "#712 reviewed: Missing: #815 typed origin name/region and general certificate name; computed resource_type is not sole configured evidence. Missing: #815 evaluate independent architecture-bearing distribution card; current basic default is Logical. See per-dimension review; Intentionally unsupported: cache behavior/health and origin DNS cannot reconstruct resources.",
+      "review": {
+        "issue": 712,
+        "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "name",
+          "arn",
+          "origin.name",
+          "origin.region_name",
+          "origin.resource_type",
+          "certificate_name"
+        ],
+        "placement": "Missing: #815 evaluate independent architecture-bearing distribution card; current basic default is Logical.",
+        "ownership": "Not applicable: shared origin is not owned by distribution.",
+        "network": "Intentionally unsupported: Lightsail service networking/AZ/IP does not identify a customer VPC or subnet; no EC2 containment inheritance.",
+        "references": "Missing: #815 typed origin name/region and general certificate name; computed resource_type is not sole configured evidence.",
+        "scope": "Partial: basic scope.rs uses provider/resource region; DNS/distribution service control-region versus global-serving semantics need explicit #815 contract, not CloudFront/Route53 alias assumptions.",
+        "summaries": "Intentionally unsupported: cache behavior/health and origin DNS cannot reconstruct resources.",
+        "officialDocumentation": "website/docs/r/lightsail_distribution.html.markdown",
+        "shapes": {
+          "name": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "origin.name": [
+            "list",
+            "string"
+          ],
+          "origin.region_name": [
+            "list",
+            "string"
+          ],
+          "origin.resource_type": [
+            "list",
+            "string"
+          ],
+          "certificate_name": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_lightsail_domain": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 815,
+      "gap": "#712 reviewed: Not applicable: DNS-zone endpoint; #815 owns entry relationships. See per-dimension review; Intentionally unsupported: no DNS-health inference.",
+      "review": {
+        "issue": 712,
+        "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "domain_name",
+          "arn"
+        ],
+        "placement": "Supported: retain Logical default from runtime support matrix/classification.rs/basic_entries.rs; no automatic card promotion.",
+        "ownership": "Not applicable: independent DNS domain; matching certificate strings do not establish ownership.",
+        "network": "Intentionally unsupported: Lightsail service networking/AZ/IP does not identify a customer VPC or subnet; no EC2 containment inheritance.",
+        "references": "Not applicable: DNS-zone endpoint; #815 owns entry relationships.",
+        "scope": "Partial: basic scope.rs uses provider/resource region; DNS/distribution service control-region versus global-serving semantics need explicit #815 contract, not CloudFront/Route53 alias assumptions.",
+        "summaries": "Intentionally unsupported: no DNS-health inference.",
+        "officialDocumentation": "website/docs/r/lightsail_domain.html.markdown",
+        "shapes": {
+          "domain_name": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_lightsail_domain_entry": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 815,
+      "gap": "#712 reviewed: Missing: #815 explicit domain owner; target IP/DNS and alias flag cannot identify Terraform target. See per-dimension review; Intentionally unsupported: record values and DNS interpretation.",
+      "review": {
+        "issue": 712,
+        "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "domain_name",
+          "name",
+          "type",
+          "target"
+        ],
+        "placement": "Supported: retain Logical default from runtime support matrix/classification.rs/basic_entries.rs; no automatic card promotion.",
+        "ownership": "Missing: #815 exact domain owner; composite ID separator changed from underscore to comma.",
+        "network": "Intentionally unsupported: Lightsail service networking/AZ/IP does not identify a customer VPC or subnet; no EC2 containment inheritance.",
+        "references": "Missing: #815 explicit domain owner; target IP/DNS and alias flag cannot identify Terraform target.",
+        "scope": "Partial: basic scope.rs uses provider/resource region; DNS/distribution service control-region versus global-serving semantics need explicit #815 contract, not CloudFront/Route53 alias assumptions.",
+        "summaries": "Intentionally unsupported: record values and DNS interpretation.",
+        "officialDocumentation": "website/docs/r/lightsail_domain_entry.html.markdown",
+        "shapes": {
+          "domain_name": [
+            "string"
+          ],
+          "name": [
+            "string"
+          ],
+          "type": [
+            "string"
+          ],
+          "target": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_lightsail_instance": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 815,
+      "gap": "#712 reviewed: Missing: #815 Lightsail key-pair name (not aws_key_pair); id/arn are ARN, not attachment names. See per-dimension review; Intentionally unsupported: user_data, addresses and credentials remain excluded.",
+      "review": {
+        "issue": 712,
+        "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "name",
+          "arn",
+          "id",
+          "availability_zone",
+          "key_pair_name"
+        ],
+        "placement": "Supported: retain Spatial default from runtime support matrix/classification.rs/basic_entries.rs; no automatic card promotion.",
+        "ownership": "Not applicable: independent compute instance; bundle/blueprint IDs are catalog selections.",
+        "network": "Intentionally unsupported: Lightsail service networking/AZ/IP does not identify a customer VPC or subnet; no EC2 containment inheritance.",
+        "references": "Missing: #815 Lightsail key-pair name (not aws_key_pair); id/arn are ARN, not attachment names.",
+        "scope": "Partial: Regional eligibility in scope.rs/basic.rs requires known provider/resource region; basic fallback clears account and delete/deposed region. Does not prove endpoint compatibility.",
+        "summaries": "Intentionally unsupported: user_data, addresses and credentials remain excluded.",
+        "officialDocumentation": "website/docs/r/lightsail_instance.html.markdown",
+        "shapes": {
+          "name": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "id": [
+            "string"
+          ],
+          "availability_zone": [
+            "string"
+          ],
+          "key_pair_name": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_lightsail_instance_public_ports": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 815,
+      "gap": "#712 reviewed: Missing: #815 explicit instance-name owner; CIDRs/aliases are not endpoint references. See per-dimension review; Intentionally unsupported: port rules are not reachability/security analysis.",
+      "review": {
+        "issue": 712,
+        "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "instance_name",
+          "port_info.cidrs",
+          "port_info.ipv6_cidrs",
+          "port_info.cidr_list_aliases"
+        ],
+        "placement": "Supported: retain Logical default from runtime support matrix/classification.rs/basic_entries.rs; no automatic card promotion.",
+        "ownership": "Missing: #815 owner context for full port configuration.",
+        "network": "Intentionally unsupported: Lightsail service networking/AZ/IP does not identify a customer VPC or subnet; no EC2 containment inheritance.",
+        "references": "Missing: #815 explicit instance-name owner; CIDRs/aliases are not endpoint references.",
+        "scope": "Partial: Regional eligibility in scope.rs/basic.rs requires known provider/resource region; basic fallback clears account and delete/deposed region. Does not prove endpoint compatibility.",
+        "summaries": "Intentionally unsupported: port rules are not reachability/security analysis.",
+        "officialDocumentation": "website/docs/r/lightsail_instance_public_ports.html.markdown",
+        "shapes": {
+          "instance_name": [
+            "string"
+          ],
+          "port_info.cidrs": [
+            "set",
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "port_info.ipv6_cidrs": [
+            "set",
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "port_info.cidr_list_aliases": [
+            "set",
+            [
+              "set",
+              "string"
+            ]
+          ]
+        }
+      }
+    },
+    "aws_lightsail_key_pair": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 815,
+      "gap": "#712 reviewed: Not applicable: key-pair endpoint; #815 owns instance usage. See per-dimension review; Intentionally unsupported: private/public/encrypted key material and fingerprints.",
+      "review": {
+        "issue": 712,
+        "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "name",
+          "arn"
+        ],
+        "placement": "Supported: retain Logical default from runtime support matrix/classification.rs/basic_entries.rs; no automatic card promotion.",
+        "ownership": "Not applicable: shared key configuration remains independent.",
+        "network": "Intentionally unsupported: Lightsail service networking/AZ/IP does not identify a customer VPC or subnet; no EC2 containment inheritance.",
+        "references": "Not applicable: key-pair endpoint; #815 owns instance usage.",
+        "scope": "Partial: Regional eligibility in scope.rs/basic.rs requires known provider/resource region; basic fallback clears account and delete/deposed region. Does not prove endpoint compatibility.",
+        "summaries": "Intentionally unsupported: private/public/encrypted key material and fingerprints.",
+        "officialDocumentation": "website/docs/r/lightsail_key_pair.html.markdown",
+        "shapes": {
+          "name": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_lightsail_lb": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 815,
+      "gap": "#712 reviewed: Not applicable: LB endpoint; #815 owns attachments and LB-qualified settings. See per-dimension review; Intentionally unsupported: health-check paths and public ports do not prove traffic.",
+      "review": {
+        "issue": 712,
+        "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "name",
+          "arn",
+          "instance_port"
+        ],
+        "placement": "Supported: retain Spatial default from runtime support matrix/classification.rs/basic_entries.rs; no automatic card promotion.",
+        "ownership": "Not applicable: independent load balancer does not own instances.",
+        "network": "Intentionally unsupported: Lightsail service networking/AZ/IP does not identify a customer VPC or subnet; no EC2 containment inheritance.",
+        "references": "Not applicable: LB endpoint; #815 owns attachments and LB-qualified settings.",
+        "scope": "Partial: Regional eligibility in scope.rs/basic.rs requires known provider/resource region; basic fallback clears account and delete/deposed region. Does not prove endpoint compatibility.",
+        "summaries": "Intentionally unsupported: health-check paths and public ports do not prove traffic.",
+        "officialDocumentation": "website/docs/r/lightsail_lb.html.markdown",
+        "shapes": {
+          "name": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "instance_port": [
+            "number"
+          ]
+        }
+      }
+    },
+    "aws_lightsail_lb_attachment": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 815,
+      "gap": "#712 reviewed: Missing: #815 unique LB and instance name endpoints. See per-dimension review; Intentionally unsupported: attachment is not runtime health.",
+      "review": {
+        "issue": 712,
+        "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "lb_name",
+          "instance_name"
+        ],
+        "placement": "Supported: retain Logical default from runtime support matrix/classification.rs/basic_entries.rs; no automatic card promotion.",
+        "ownership": "Not applicable: association is not instance ownership.",
+        "network": "Intentionally unsupported: Lightsail service networking/AZ/IP does not identify a customer VPC or subnet; no EC2 containment inheritance.",
+        "references": "Missing: #815 unique LB and instance name endpoints.",
+        "scope": "Partial: Regional eligibility in scope.rs/basic.rs requires known provider/resource region; basic fallback clears account and delete/deposed region. Does not prove endpoint compatibility.",
+        "summaries": "Intentionally unsupported: attachment is not runtime health.",
+        "officialDocumentation": "website/docs/r/lightsail_lb_attachment.html.markdown",
+        "shapes": {
+          "lb_name": [
+            "string"
+          ],
+          "instance_name": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_lightsail_lb_certificate": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 815,
+      "gap": "#712 reviewed: Missing: #815 LB-qualified certificate; distinct from general Lightsail certificate and ACM. See per-dimension review; Intentionally unsupported: certificate validation records do not identify DNS resources.",
+      "review": {
+        "issue": 712,
+        "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "lb_name",
+          "name",
+          "arn"
+        ],
+        "placement": "Supported: retain Logical default from runtime support matrix/classification.rs/basic_entries.rs; no automatic card promotion.",
+        "ownership": "Missing: #815 exact LB owner; certificate name alone is ambiguous.",
+        "network": "Intentionally unsupported: Lightsail service networking/AZ/IP does not identify a customer VPC or subnet; no EC2 containment inheritance.",
+        "references": "Missing: #815 LB-qualified certificate; distinct from general Lightsail certificate and ACM.",
+        "scope": "Partial: Regional eligibility in scope.rs/basic.rs requires known provider/resource region; basic fallback clears account and delete/deposed region. Does not prove endpoint compatibility.",
+        "summaries": "Intentionally unsupported: certificate validation records do not identify DNS resources.",
+        "officialDocumentation": "website/docs/r/lightsail_lb_certificate.html.markdown",
+        "shapes": {
+          "lb_name": [
+            "string"
+          ],
+          "name": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_lightsail_lb_certificate_attachment": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 815,
+      "gap": "#712 reviewed: Missing: #815 certificate_name plus same lb_name consistency. See per-dimension review; Intentionally unsupported: TLS attachment does not prove endpoint health.",
+      "review": {
+        "issue": 712,
+        "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "lb_name",
+          "certificate_name"
+        ],
+        "placement": "Supported: retain Logical default from runtime support matrix/classification.rs/basic_entries.rs; no automatic card promotion.",
+        "ownership": "Not applicable: retain association identity, do not merge certificate and attachment.",
+        "network": "Intentionally unsupported: Lightsail service networking/AZ/IP does not identify a customer VPC or subnet; no EC2 containment inheritance.",
+        "references": "Missing: #815 certificate_name plus same lb_name consistency.",
+        "scope": "Partial: Regional eligibility in scope.rs/basic.rs requires known provider/resource region; basic fallback clears account and delete/deposed region. Does not prove endpoint compatibility.",
+        "summaries": "Intentionally unsupported: TLS attachment does not prove endpoint health.",
+        "officialDocumentation": "website/docs/r/lightsail_lb_certificate_attachment.html.markdown",
+        "shapes": {
+          "lb_name": [
+            "string"
+          ],
+          "certificate_name": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_lightsail_lb_https_redirection_policy": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 815,
+      "gap": "#712 reviewed: Missing: #815 LB name owner. See per-dimension review; Deferred: enabled toggle only with explicit configured-versus-effective redirect wording.",
+      "review": {
+        "issue": 712,
+        "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "lb_name",
+          "enabled"
+        ],
+        "placement": "Supported: retain Logical default from runtime support matrix/classification.rs/basic_entries.rs; no automatic card promotion.",
+        "ownership": "Missing: #815 verified owner before embedding redirect configuration.",
+        "network": "Intentionally unsupported: Lightsail service networking/AZ/IP does not identify a customer VPC or subnet; no EC2 containment inheritance.",
+        "references": "Missing: #815 LB name owner.",
+        "scope": "Partial: Regional eligibility in scope.rs/basic.rs requires known provider/resource region; basic fallback clears account and delete/deposed region. Does not prove endpoint compatibility.",
+        "summaries": "Deferred: enabled toggle only with explicit configured-versus-effective redirect wording.",
+        "officialDocumentation": "website/docs/r/lightsail_lb_https_redirection_policy.html.markdown",
+        "shapes": {
+          "lb_name": [
+            "string"
+          ],
+          "enabled": [
+            "bool"
+          ]
+        }
+      }
+    },
+    "aws_lightsail_lb_stickiness_policy": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 815,
+      "gap": "#712 reviewed: Missing: #815 LB name owner; same-name settings remain separate Terraform identities. See per-dimension review; Deferred: configured stickiness toggle only; cookie_duration is not observed session behavior.",
+      "review": {
+        "issue": 712,
+        "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "lb_name",
+          "enabled",
+          "cookie_duration"
+        ],
+        "placement": "Supported: retain Logical default from runtime support matrix/classification.rs/basic_entries.rs; no automatic card promotion.",
+        "ownership": "Missing: #815 verified LB owner.",
+        "network": "Intentionally unsupported: Lightsail service networking/AZ/IP does not identify a customer VPC or subnet; no EC2 containment inheritance.",
+        "references": "Missing: #815 LB name owner; same-name settings remain separate Terraform identities.",
+        "scope": "Partial: Regional eligibility in scope.rs/basic.rs requires known provider/resource region; basic fallback clears account and delete/deposed region. Does not prove endpoint compatibility.",
+        "summaries": "Deferred: configured stickiness toggle only; cookie_duration is not observed session behavior.",
+        "officialDocumentation": "website/docs/r/lightsail_lb_stickiness_policy.html.markdown",
+        "shapes": {
+          "lb_name": [
+            "string"
+          ],
+          "enabled": [
+            "bool"
+          ],
+          "cookie_duration": [
+            "number"
+          ]
+        }
+      }
+    },
+    "aws_lightsail_static_ip": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 815,
+      "gap": "#712 reviewed: Not applicable: address endpoint; #815 owns attachment references. Missing: #815 evaluate independent architecture-bearing static_ip card; current basic default is Logical. See per-dimension review; Intentionally unsupported: IP equality cannot establish resources or traffic.",
+      "review": {
+        "issue": 712,
+        "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "name",
+          "arn",
+          "ip_address"
+        ],
+        "placement": "Missing: #815 evaluate independent architecture-bearing static_ip card; current basic default is Logical.",
+        "ownership": "Not applicable: independently allocated address does not own instance.",
+        "network": "Intentionally unsupported: Lightsail service networking/AZ/IP does not identify a customer VPC or subnet; no EC2 containment inheritance.",
+        "references": "Not applicable: address endpoint; #815 owns attachment references.",
+        "scope": "Partial: Regional eligibility in scope.rs/basic.rs requires known provider/resource region; basic fallback clears account and delete/deposed region. Does not prove endpoint compatibility.",
+        "summaries": "Intentionally unsupported: IP equality cannot establish resources or traffic.",
+        "officialDocumentation": "website/docs/r/lightsail_static_ip.html.markdown",
+        "shapes": {
+          "name": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "ip_address": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_lightsail_static_ip_attachment": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 815,
+      "gap": "#712 reviewed: Missing: #815 explicit names for address and instance; ip_address output is not reference evidence. See per-dimension review; Intentionally unsupported: public IP assignment is not reachability.",
+      "review": {
+        "issue": 712,
+        "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "static_ip_name",
+          "instance_name"
+        ],
+        "placement": "Supported: retain Logical default from runtime support matrix/classification.rs/basic_entries.rs; no automatic card promotion.",
+        "ownership": "Not applicable: preserve association and both independent endpoint identities.",
+        "network": "Intentionally unsupported: Lightsail service networking/AZ/IP does not identify a customer VPC or subnet; no EC2 containment inheritance.",
+        "references": "Missing: #815 explicit names for address and instance; ip_address output is not reference evidence.",
+        "scope": "Partial: Regional eligibility in scope.rs/basic.rs requires known provider/resource region; basic fallback clears account and delete/deposed region. Does not prove endpoint compatibility.",
+        "summaries": "Intentionally unsupported: public IP assignment is not reachability.",
+        "officialDocumentation": "website/docs/r/lightsail_static_ip_attachment.html.markdown",
+        "shapes": {
+          "static_ip_name": [
+            "string"
+          ],
+          "instance_name": [
+            "string"
+          ]
+        }
+      }
+    },
+    "aws_outposts_capacity_task": {
+      "status": "Basic-only",
+      "priority": "P3",
+      "issue": 712,
+      "gap": "#712 reviewed: Deferred: Outpost ID/ARN and asset/order are lookup identities with no managed Outpost endpoint in this denominator; excluded EC2 IDs require a dedicated exclusion-label use case, not ownership. See per-dimension review; Intentionally unsupported: task status/count is provisioning workflow, not running capacity; excluded instances are not returned after import.",
+      "review": {
+        "issue": 712,
+        "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "outpost_identifier",
+          "asset_id",
+          "order_id",
+          "instance_pool.instance_type",
+          "instance_pool.count",
+          "instances_to_exclude.instances"
+        ],
+        "placement": "Supported: retain Logical default from runtime support matrix/classification.rs/basic_entries.rs; no automatic card promotion.",
+        "ownership": "Not applicable: retain independent reusable configuration; references do not prove exclusive ownership.",
+        "network": "Not applicable: configuration has no configured VPC/subnet; consumer context cannot establish containment.",
+        "references": "Deferred: Outpost ID/ARN and asset/order are lookup identities with no managed Outpost endpoint in this denominator; excluded EC2 IDs require a dedicated exclusion-label use case, not ownership.",
+        "scope": "Partial: Regional eligibility in scope.rs/basic.rs requires known provider/resource region; basic fallback clears account and delete/deposed region. Does not prove endpoint compatibility.",
+        "summaries": "Intentionally unsupported: task status/count is provisioning workflow, not running capacity; excluded instances are not returned after import.",
+        "officialDocumentation": "website/docs/r/outposts_capacity_task.html.markdown",
+        "shapes": {
+          "outpost_identifier": [
+            "string"
+          ],
+          "asset_id": [
+            "string"
+          ],
+          "order_id": [
+            "string"
+          ],
+          "instance_pool.instance_type": [
+            "list",
+            "string"
+          ],
+          "instance_pool.count": [
+            "list",
+            "number"
+          ],
+          "instances_to_exclude.instances": [
+            "list",
             [
               "set",
               "string"
