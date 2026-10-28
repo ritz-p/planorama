@@ -80,6 +80,7 @@ line patterns, bundles or routing. Clear selection restores their normal styling
 | Zoom | +/− buttons, +/− keys in the diagram, or Ctrl/Command+scroll |
 | Fit entire view | Fit to view or F while the diagram has focus |
 | Jump to section | Choose Diagram section, then Go to section; Tab and Enter also work |
+| Overview map | Expand Overview map; click or drag to move; focus the map for arrow keys, +/− and F; Escape closes it and returns focus to its summary |
 | Export visible area | Export viewport SVG; Tab then Enter also works |
 
 Diagram section lists the nonempty Architecture, Logical Resources, Logical
@@ -89,6 +90,23 @@ area using its final state translation and current viewport size, clears selecti
 and transient overlays, and retains selection history without adding an entry.
 It focuses the diagram for keyboard pan/zoom. Excluded content is never restored.
 The controls remain outside SVG exports and use no storage or network access.
+
+The **Overview map** shows simplified scope/card outlines and a blue frame for
+the current viewBox. It follows pan, zoom, Fit, resource/section navigation and
+selection history, including translated named states. Clicking or dragging
+centers the view at that location without changing zoom or selection. It starts
+collapsed on screens at most 700 pixels wide and stays in the scrollable sidebar,
+separate from the diagram. Opening it again uses the current view.
+
+The map uses only existing SVG rectangles and their final transforms. At most
+256 outlines are sampled evenly in document order; the caption reports omissions.
+Labels, individual logical rows and relationship paths are omitted, so this is
+an orientation aid, not an inventory or relationship diagram. HTML action filters
+refresh the overview from the remaining geometry; search filters only affect
+search results. CLI-excluded resources cannot appear. Pan/zoom updates only the
+frame, without copying the detailed SVG or rebuilding outlines. Resize retains
+the same diagram coordinates. The map adds no plan data, attributes, network or
+stored preferences and is absent from both SVG export modes.
 
 **Export viewport SVG** downloads a standalone `planorama-viewport.svg` using the
 current viewBox. The file intentionally crops content outside that viewport;
@@ -371,6 +389,8 @@ Build the CLI with `cargo build --locked` in the same container first.
 `metadata.js` owns identity and DOM indexes; `selection.js` renders details and
 relationship navigation; `searching.js` owns search/results; `navigation.js` owns
 the view box and pan/zoom; `highlighting.js` owns selection highlighting cleanup.
+`overview.js` subscribes to navigation updates for its frame and refreshes bounded
+SVG outlines only when generated geometry changes, such as HTML action filtering.
 `selection-history.js` stores bounded selection/viewport history and restores it
 through selection and navigation, preserving the shared overlay reset lifecycle.
 `action-filtering.js` owns the annotation reflow contract. Rust exports each

@@ -15,6 +15,7 @@
   const index = metadata(svg, byId);
   const { resources, label, title, components } = index;
   const view = navigation(svg, viewport, byId);
+  overview(context, view);
   const exporter = diagramExport(context);
   const highlights = highlighting(svg, viewport);
   const adapters = lifecycle();

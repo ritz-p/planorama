@@ -231,6 +231,8 @@ fn document(
                     "\n",
                     include_str!("html/navigation.js"),
                     "\n",
+                    include_str!("html/overview.js"),
+                    "\n",
                     include_str!("html/highlighting.js"),
                     "\n",
                     include_str!("html/selection.js"),
