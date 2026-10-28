@@ -23,5 +23,5 @@ Linux uses system libc/libgcc; Alpine/musl, Linux arm64, Windows arm64 and
 SHA256SUMS detects corruption, not authenticity. Verify the archive before
 extracting; see https://github.com/ritz-p/planorama for platform-specific steps.
 Project code is MIT OR Apache-2.0, at your option; see LICENSE, LICENSE-MIT
-and LICENSE-APACHE. Icon notices and THIRD-PARTY-NOTICES.txt cover
-separate bundled material and dependencies.
+and LICENSE-APACHE. THIRD-PARTY-NOTICES.txt covers bundled dependencies;
+RUST-*.txt contains Rust runtime notices and license texts.

@@ -27,10 +27,10 @@ verified routes/members can become child cards. Logical resources remain rows.
 The table records defaults; the explicit [Spatial type option](configuration.md#explicit-spatial-types)
 can present seven Logical AWS types as independent cards while preserving references.
 Unknown roles and unresolved placement are visible fallbacks, not rejected input.
-Unlisted types also use these fallbacks, without an icon or dedicated type rule.
+Unlisted types also use these fallbacks, without a service mapping or dedicated type rule.
 AWS `aws_iam_*` and `aws_cloudfront_*` types have global scope even when unlisted;
 other unlisted types have unknown regional scope. Non-AWS/non-built-in providers
-use Unknown / unresolved spatial / no icon / unknown scope, even for lookalike names.
+use Unknown / unresolved spatial / no service mapping / unknown scope, even for lookalike names.
 See [provider identity and inference](models.md).
 
 Regional means eligible with a known static provider region or a verified resource
@@ -53,5 +53,5 @@ limits and filtering. Names, literal IDs and proximity alone do not prove relati
 
 Terraform remote-output resolution lives in the plan layer, also linked below.
 Explicit [remote-state mappings](multi-plan.md) can connect complete data-source
-output provenance across loaded states; the built-in icon does not establish such
+output provenance across loaded states; built-in service classification does not establish such
 a mapping, and managed resources do not act as remote-state data lookups.
