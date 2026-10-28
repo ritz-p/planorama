@@ -771,10 +771,10 @@
       "gap": "Endpoint/configuration/model references and model VPC proof; no endpoint containment inferred from model ownership."
     },
     "aws_fsx_lustre_file_system": {
-      "status": "Basic-only",
-      "priority": "P2",
+      "status": "Partial",
+      "priority": "P1",
       "issue": 702,
-      "gap": "#720 reviewed: Missing: #702 complete subnet/SG IDs and KMS ARN (PERSISTENT_1/PERSISTENT_2). Auxiliary backup_id/log destination belong to #825; import/export S3 URIs are not endpoint proof. Follow-up #825. Deferred: deployment/storage/encryption modes require variant-specific applicability and unknown-value tests before a bounded summary; no mount endpoints, passwords, quotas or filesystem content.",
+      "gap": "Implemented #702: complete known explicit subnet/SG IDs, persistent-only KMS Key ARN and common-VPC placement; independent filesystem card and conservative fallback. See aws.md#fsx-lustre-networking-and-encryption-702. #720 review preserves the historical baseline; source-backup/logging #825 and other FSx variants #826 remain separate. Import/export paths, mount endpoints and filesystem content are excluded.",
       "review": {
         "issue": 720,
         "implementationCommit": "514c17316e596fbbd0a8c7aa4942a91e3462e09d",

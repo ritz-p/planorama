@@ -42,7 +42,8 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
     if basic.is_some()
         && !matches!(
             resource,
-            "aws_docdb_cluster"
+            "aws_fsx_lustre_file_system"
+                | "aws_docdb_cluster"
                 | "aws_batch_compute_environment"
                 | "aws_batch_job_queue"
                 | "aws_batch_scheduling_policy"

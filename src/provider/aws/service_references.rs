@@ -10,6 +10,9 @@ use serde_json::Value;
 pub(super) mod tests;
 
 pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
+    if let Some(label) = super::fsx::label(resource, attribute) {
+        return Some(label);
+    }
     if let Some(label) = super::batch::label(resource, attribute) {
         return Some(label);
     }
@@ -503,6 +506,7 @@ pub(crate) fn annotate(
     super::apprunner::annotate(nodes, references, evidence);
     super::opensearch_serverless::annotate(nodes, references, evidence);
     super::batch::annotate(nodes, references, evidence);
+    super::fsx::annotate(nodes, references, evidence);
     super::networkfirewall::annotate(nodes, references, evidence);
     super::lambda::annotate(nodes, references, evidence);
     super::api_gateway::annotate(nodes, references, evidence);
@@ -524,6 +528,12 @@ pub(crate) fn annotate(
 
 pub(super) fn verified(raw: &Input, reference: &AttributeReference) -> bool {
     reference.service_reference_verified
+        && (super::fsx::label(
+            &raw.nodes[reference.target].resource_type,
+            &reference.attribute,
+        )
+        .is_none()
+            || super::apprunner::bindings(raw, reference))
         && (super::batch::label(
             &raw.nodes[reference.target].resource_type,
             &reference.attribute,
