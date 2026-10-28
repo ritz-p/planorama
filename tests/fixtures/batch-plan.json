@@ -1,0 +1,345 @@
+{
+  "format_version": "1.2",
+  "resource_changes": [
+    {
+      "address": "aws_vpc.main",
+      "mode": "managed",
+      "type": "aws_vpc",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "vpc-main"
+        }
+      }
+    },
+    {
+      "address": "aws_subnet.a",
+      "mode": "managed",
+      "type": "aws_subnet",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "subnet-a",
+          "vpc_id": "vpc-main",
+          "availability_zone": "us-east-1a"
+        }
+      }
+    },
+    {
+      "address": "aws_subnet.b",
+      "mode": "managed",
+      "type": "aws_subnet",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "subnet-b",
+          "vpc_id": "vpc-main",
+          "availability_zone": "us-east-1b"
+        }
+      }
+    },
+    {
+      "address": "aws_security_group.connector",
+      "mode": "managed",
+      "type": "aws_security_group",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "sg-connector",
+          "vpc_id": "vpc-main"
+        }
+      }
+    },
+    {
+      "address": "aws_batch_compute_environment.ec2",
+      "mode": "managed",
+      "type": "aws_batch_compute_environment",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:batch:us-east-1:123456789012:compute-environment/ec2",
+          "name": "ec2",
+          "type": "MANAGED",
+          "compute_resources": [
+            {
+              "type": "EC2",
+              "subnets": [
+                "subnet-a",
+                "subnet-b"
+              ],
+              "security_group_ids": [
+                "sg-connector"
+              ],
+              "max_vcpus": 16
+            }
+          ],
+          "service_role": "PRIVATE_ROLE"
+        }
+      }
+    },
+    {
+      "address": "aws_batch_compute_environment.fargate",
+      "mode": "managed",
+      "type": "aws_batch_compute_environment",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:batch:us-east-1:123456789012:compute-environment/fargate",
+          "name": "fargate",
+          "type": "MANAGED",
+          "compute_resources": [
+            {
+              "type": "FARGATE",
+              "subnets": [
+                "subnet-a",
+                "subnet-b"
+              ],
+              "security_group_ids": [
+                "sg-connector"
+              ],
+              "max_vcpus": 16
+            }
+          ],
+          "service_role": "PRIVATE_ROLE"
+        }
+      }
+    },
+    {
+      "address": "aws_batch_scheduling_policy.fair",
+      "mode": "managed",
+      "type": "aws_batch_scheduling_policy",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:batch:us-east-1:123456789012:scheduling-policy/fair",
+          "name": "fair",
+          "fair_share_policy": [
+            {
+              "share_distribution": [
+                {
+                  "share_identifier": "PRIVATE_SHARE",
+                  "weight_factor": 1
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_batch_job_queue.jobs",
+      "mode": "managed",
+      "type": "aws_batch_job_queue",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:batch:us-east-1:123456789012:job-queue/jobs",
+          "name": "jobs",
+          "state": "ENABLED",
+          "priority": 1,
+          "scheduling_policy_arn": "arn:aws:batch:us-east-1:123456789012:scheduling-policy/fair",
+          "compute_environment_order": [
+            {
+              "compute_environment": "arn:aws:batch:us-east-1:123456789012:compute-environment/ec2",
+              "order": 1
+            },
+            {
+              "compute_environment": "arn:aws:batch:us-east-1:123456789012:compute-environment/fargate",
+              "order": 2
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_batch_job_definition.job",
+      "mode": "managed",
+      "type": "aws_batch_job_definition",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "job",
+          "container_properties": "PRIVATE_PAYLOAD"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_vpc.main",
+          "mode": "managed",
+          "type": "aws_vpc",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_subnet.a",
+          "mode": "managed",
+          "type": "aws_subnet",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_subnet.b",
+          "mode": "managed",
+          "type": "aws_subnet",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_security_group.connector",
+          "mode": "managed",
+          "type": "aws_security_group",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_batch_compute_environment.ec2",
+          "mode": "managed",
+          "type": "aws_batch_compute_environment",
+          "provider_config_key": "aws",
+          "expressions": {
+            "compute_resources": [
+              {
+                "subnets": {
+                  "references": [
+                    "aws_subnet.a.id",
+                    "aws_subnet.b.id"
+                  ]
+                },
+                "security_group_ids": {
+                  "references": [
+                    "aws_security_group.connector.id"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_batch_compute_environment.fargate",
+          "mode": "managed",
+          "type": "aws_batch_compute_environment",
+          "provider_config_key": "aws",
+          "expressions": {
+            "compute_resources": [
+              {
+                "subnets": {
+                  "references": [
+                    "aws_subnet.a.id",
+                    "aws_subnet.b.id"
+                  ]
+                },
+                "security_group_ids": {
+                  "references": [
+                    "aws_security_group.connector.id"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_batch_scheduling_policy.fair",
+          "mode": "managed",
+          "type": "aws_batch_scheduling_policy",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_batch_job_queue.jobs",
+          "mode": "managed",
+          "type": "aws_batch_job_queue",
+          "provider_config_key": "aws",
+          "expressions": {
+            "scheduling_policy_arn": {
+              "references": [
+                "aws_batch_scheduling_policy.fair.arn"
+              ]
+            },
+            "compute_environment_order": [
+              {
+                "compute_environment": {
+                  "references": [
+                    "aws_batch_compute_environment.ec2.arn"
+                  ]
+                }
+              },
+              {
+                "compute_environment": {
+                  "references": [
+                    "aws_batch_compute_environment.fargate.arn"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_batch_job_definition.job",
+          "mode": "managed",
+          "type": "aws_batch_job_definition",
+          "provider_config_key": "aws",
+          "expressions": {}
+        }
+      ]
+    }
+  }
+}

@@ -5,6 +5,7 @@ mod associations;
 mod autoscaling;
 mod backup;
 mod basic;
+mod batch;
 mod classification;
 mod cloudfront;
 #[cfg(test)]
@@ -216,6 +217,7 @@ pub(super) fn transform(raw: crate::semantic::Input) -> crate::model::Graph {
     databases::present(&raw, &mut graph);
     apprunner::present(&raw, &mut graph);
     opensearch_serverless::present(&raw, &mut graph);
+    batch::present(&raw, &mut graph);
     networkfirewall::present(&raw, &mut graph);
     routes::present(&raw, &mut graph);
     members::present(&raw, &mut graph);
