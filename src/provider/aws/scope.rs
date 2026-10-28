@@ -43,6 +43,10 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
         && !matches!(
             resource,
             "aws_fsx_lustre_file_system"
+                | "aws_dms_replication_instance"
+                | "aws_dms_replication_subnet_group"
+                | "aws_dms_replication_task"
+                | "aws_dms_endpoint"
                 | "aws_docdb_cluster"
                 | "aws_batch_compute_environment"
                 | "aws_batch_job_queue"

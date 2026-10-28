@@ -92,7 +92,17 @@ async function main() {
       assert.equal(result.content, nativeReference(input, ['--format', format]), 'Batch incomplete queue native/Wasm '+format);
       assert.ok(!result.content.includes('PRIVATE_'));
     }
-    for (const fixture of ['dynamodb-plan', 'elasticache-configuration-plan', 'eventbridge-configuration-plan', 'msk-plan', 'mq-plan', 'docdb-plan', 'neptune-plan', 'redshift-serverless-plan', 'apprunner-plan', 'networkfirewall-plan', 'opensearch-serverless-plan', 'batch-plan', 'fsx-lustre-plan']) {
+    const dms = JSON.parse(readFileSync(join(root, 'tests/fixtures/dms-plan.json'), 'utf8'));
+    dms.resource_changes[5].change.after_unknown = {subnet_ids: [false, true]};
+    dms.resource_changes[7].change.after_unknown = {endpoint_type: true};
+    for (const format of ['svg', 'html']) {
+      const input = JSON.stringify(dms);
+      const result = run(input, {format});
+      assert.equal(result.ok, true, JSON.stringify(result));
+      assert.equal(result.content, nativeReference(input, ['--format', format]), 'DMS incomplete network/direction native/Wasm '+format);
+      assert.ok(!result.content.includes('PRIVATE_'));
+    }
+    for (const fixture of ['dynamodb-plan', 'elasticache-configuration-plan', 'eventbridge-configuration-plan', 'msk-plan', 'mq-plan', 'docdb-plan', 'neptune-plan', 'redshift-serverless-plan', 'apprunner-plan', 'networkfirewall-plan', 'opensearch-serverless-plan', 'batch-plan', 'fsx-lustre-plan', 'dms-plan']) {
       const input = readFileSync(join(root, 'tests/fixtures/'+fixture+'.json'), 'utf8');
       for (const format of ['svg', 'html']) {
         const result = run(input, {format});

@@ -103,3 +103,4 @@ examples/opensearch-serverless.svg
 examples/batch.svg
 examples/networkfirewall.svg
 examples/fsx-lustre.svg
+examples/dms.svg

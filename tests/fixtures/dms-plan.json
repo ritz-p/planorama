@@ -1,0 +1,389 @@
+{
+  "format_version": "1.2",
+  "resource_changes": [
+    {
+      "address": "aws_vpc.main",
+      "mode": "managed",
+      "type": "aws_vpc",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "vpc-main"
+        }
+      }
+    },
+    {
+      "address": "aws_vpc.other",
+      "mode": "managed",
+      "type": "aws_vpc",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "vpc-other"
+        }
+      }
+    },
+    {
+      "address": "aws_subnet.a",
+      "mode": "managed",
+      "type": "aws_subnet",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "subnet-a",
+          "vpc_id": "vpc-main",
+          "availability_zone": "us-east-1a"
+        }
+      }
+    },
+    {
+      "address": "aws_subnet.b",
+      "mode": "managed",
+      "type": "aws_subnet",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "subnet-b",
+          "vpc_id": "vpc-main",
+          "availability_zone": "us-east-1b"
+        }
+      }
+    },
+    {
+      "address": "aws_security_group.replication",
+      "mode": "managed",
+      "type": "aws_security_group",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "sg-replication",
+          "vpc_id": "vpc-main"
+        }
+      }
+    },
+    {
+      "address": "aws_dms_replication_subnet_group.shared",
+      "mode": "managed",
+      "type": "aws_dms_replication_subnet_group",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "dms-subnets",
+          "replication_subnet_group_id": "dms-subnets",
+          "replication_subnet_group_arn": "arn:aws:dms:us-east-1:123456789012:subgrp:GROUP",
+          "subnet_ids": [
+            "subnet-a",
+            "subnet-b"
+          ],
+          "vpc_id": "vpc-main"
+        }
+      }
+    },
+    {
+      "address": "aws_dms_replication_instance.main",
+      "mode": "managed",
+      "type": "aws_dms_replication_instance",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "arn:aws:dms:us-east-1:123456789012:rep:INSTANCE",
+          "replication_instance_id": "replication-main",
+          "replication_instance_arn": "arn:aws:dms:us-east-1:123456789012:rep:INSTANCE",
+          "replication_instance_class": "dms.t3.medium",
+          "replication_subnet_group_id": "dms-subnets",
+          "vpc_security_group_ids": [
+            "sg-replication"
+          ],
+          "replication_instance_private_ips": [
+            "PRIVATE_IP"
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_dms_endpoint.source",
+      "mode": "managed",
+      "type": "aws_dms_endpoint",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "arn:aws:dms:us-east-1:123456789012:endpoint:SOURCE",
+          "endpoint_id": "source",
+          "endpoint_arn": "arn:aws:dms:us-east-1:123456789012:endpoint:SOURCE",
+          "endpoint_type": "source",
+          "engine_name": "postgres",
+          "server_name": "PRIVATE_HOST",
+          "database_name": "PRIVATE_DATABASE",
+          "username": "PRIVATE_USER",
+          "password": "PRIVATE_PASSWORD",
+          "extra_connection_attributes": "PRIVATE_CONNECTION"
+        }
+      }
+    },
+    {
+      "address": "aws_dms_endpoint.target",
+      "mode": "managed",
+      "type": "aws_dms_endpoint",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "arn:aws:dms:us-east-1:123456789012:endpoint:TARGET",
+          "endpoint_id": "target",
+          "endpoint_arn": "arn:aws:dms:us-east-1:123456789012:endpoint:TARGET",
+          "endpoint_type": "target",
+          "engine_name": "postgres",
+          "server_name": "PRIVATE_HOST",
+          "database_name": "PRIVATE_DATABASE",
+          "username": "PRIVATE_USER",
+          "password": "PRIVATE_PASSWORD",
+          "extra_connection_attributes": "PRIVATE_CONNECTION"
+        }
+      }
+    },
+    {
+      "address": "aws_dms_replication_task.verified",
+      "mode": "managed",
+      "type": "aws_dms_replication_task",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "replication_task_id": "migrate",
+          "replication_task_arn": "arn:aws:dms:us-east-1:123456789012:task:TASK",
+          "migration_type": "full-load-and-cdc",
+          "replication_instance_arn": "arn:aws:dms:us-east-1:123456789012:rep:INSTANCE",
+          "source_endpoint_arn": "arn:aws:dms:us-east-1:123456789012:endpoint:SOURCE",
+          "target_endpoint_arn": "arn:aws:dms:us-east-1:123456789012:endpoint:TARGET",
+          "table_mappings": "PRIVATE_TABLE_MAPPINGS",
+          "replication_task_settings": "PRIVATE_TASK_SETTINGS"
+        }
+      }
+    },
+    {
+      "address": "aws_dms_replication_instance.literal",
+      "mode": "managed",
+      "type": "aws_dms_replication_instance",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "arn:aws:dms:us-east-1:123456789012:rep:LITERAL",
+          "replication_instance_id": "literal",
+          "replication_instance_arn": "arn:aws:dms:us-east-1:123456789012:rep:LITERAL",
+          "replication_instance_class": "dms.t3.medium",
+          "replication_subnet_group_id": "dms-subnets",
+          "vpc_security_group_ids": [
+            "sg-replication"
+          ],
+          "replication_instance_private_ips": [
+            "PRIVATE_IP"
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_dms_replication_task.literal",
+      "mode": "managed",
+      "type": "aws_dms_replication_task",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "replication_task_id": "literal",
+          "replication_task_arn": "arn:aws:dms:us-east-1:123456789012:task:LITERAL",
+          "migration_type": "full-load-and-cdc",
+          "replication_instance_arn": "arn:aws:dms:us-east-1:123456789012:rep:INSTANCE",
+          "source_endpoint_arn": "arn:aws:dms:us-east-1:123456789012:endpoint:SOURCE",
+          "target_endpoint_arn": "arn:aws:dms:us-east-1:123456789012:endpoint:TARGET",
+          "table_mappings": "PRIVATE_TABLE_MAPPINGS",
+          "replication_task_settings": "PRIVATE_TASK_SETTINGS"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_vpc.main",
+          "mode": "managed",
+          "type": "aws_vpc",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_vpc.other",
+          "mode": "managed",
+          "type": "aws_vpc",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_subnet.a",
+          "mode": "managed",
+          "type": "aws_subnet",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_subnet.b",
+          "mode": "managed",
+          "type": "aws_subnet",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_security_group.replication",
+          "mode": "managed",
+          "type": "aws_security_group",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_dms_replication_subnet_group.shared",
+          "mode": "managed",
+          "type": "aws_dms_replication_subnet_group",
+          "provider_config_key": "aws",
+          "expressions": {
+            "subnet_ids": {
+              "references": [
+                "aws_subnet.a.id",
+                "aws_subnet.b.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_dms_replication_instance.main",
+          "mode": "managed",
+          "type": "aws_dms_replication_instance",
+          "provider_config_key": "aws",
+          "expressions": {
+            "replication_subnet_group_id": {
+              "references": [
+                "aws_dms_replication_subnet_group.shared.id"
+              ]
+            },
+            "vpc_security_group_ids": {
+              "references": [
+                "aws_security_group.replication.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_dms_endpoint.source",
+          "mode": "managed",
+          "type": "aws_dms_endpoint",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_dms_endpoint.target",
+          "mode": "managed",
+          "type": "aws_dms_endpoint",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_dms_replication_task.verified",
+          "mode": "managed",
+          "type": "aws_dms_replication_task",
+          "provider_config_key": "aws",
+          "expressions": {
+            "replication_instance_arn": {
+              "references": [
+                "aws_dms_replication_instance.main.replication_instance_arn"
+              ]
+            },
+            "source_endpoint_arn": {
+              "references": [
+                "aws_dms_endpoint.source.endpoint_arn"
+              ]
+            },
+            "target_endpoint_arn": {
+              "references": [
+                "aws_dms_endpoint.target.endpoint_arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_dms_replication_instance.literal",
+          "mode": "managed",
+          "type": "aws_dms_replication_instance",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_dms_replication_task.literal",
+          "mode": "managed",
+          "type": "aws_dms_replication_task",
+          "provider_config_key": "aws",
+          "expressions": {}
+        }
+      ]
+    }
+  }
+}

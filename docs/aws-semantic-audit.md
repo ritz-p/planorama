@@ -473,7 +473,7 @@ The following paths were checked against the pinned schema and resource document
 | `aws_opensearchserverless_vpc_endpoint` | `vpc_id`, `subnet_ids`, `security_group_ids` | Verified complete VPC/subnet/SG ID navigation and common-VPC context #696; policy JSON is not collection ownership evidence. Historical #724 review remains separate. |
 | `aws_docdb_cluster` | `db_subnet_group_name`, `vpc_security_group_ids` | Verified group/SG common-VPC placement and instance membership #697; other dimensions retain historical #717 review. |
 | `aws_neptune_cluster` | `neptune_subnet_group_name`, `vpc_security_group_ids` | Verified common-VPC group/SG placement and instance membership #698; other dimensions retain historical #717 review. |
-| `aws_dms_replication_instance` | `replication_subnet_group_id`, `vpc_security_group_ids` | Basic spatial instance; no endpoint/database reconstruction from strings. #699. |
+| `aws_dms_replication_instance` | `replication_subnet_group_id`, `vpc_security_group_ids` | Verified common-VPC group/SG placement and directional task/endpoint navigation #699; no database reconstruction from strings. Other dimensions retain historical #723 review. |
 | `aws_batch_compute_environment` | `compute_resources.subnets`, `compute_resources.security_group_ids` | Basic spatial compute environment; scheduling policy stays logical. #700. |
 | `aws_sagemaker_endpoint` | `endpoint_config_name` | Basic spatial endpoint; model ownership is not network containment. #701. |
 | `aws_fsx_lustre_file_system` | `subnet_ids`, `security_group_ids`, `kms_key_id` | Basic spatial filesystem; network/key references missing. #702. |

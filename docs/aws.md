@@ -1983,6 +1983,51 @@ and [HTML](../examples/neptune.html). Regenerate HTML inside Docker with
 Native/Wasm parity covers SVG and HTML; lifecycle, named-state and filtering
 boundaries follow the DocumentDB contract.
 
+## DMS replication configuration (#699)
+
+Provisioned `aws_dms_replication_instance` retains its independent spatial card.
+Its `replication_subnet_group_id` must explicitly reference a managed
+`aws_dms_replication_subnet_group` `id` or `replication_subnet_group_id` with the
+same known value. Complete `subnet_ids` in that group and the instance's complete
+`vpc_security_group_ids` must match explicit managed Subnet/SG `id` references.
+Every network endpoint must have a proven VPC reference to the same VPC. The
+instance is placed once in that VPC, even when one subnet is selected. Unknown,
+missing/default-only, extra literal or mixed-VPC evidence leaves placement unproven.
+The shared logical subnet group is not a network container; computed group VPC and
+instance IP outputs cannot substitute for configured proof.
+
+`aws_dms_replication_task` shows separate `Replication instance`, `Source endpoint`
+and `Target endpoint` navigation. Inputs must reference the exact instance's
+`replication_instance_arn` or an `aws_dms_endpoint`'s `endpoint_arn`, respectively,
+with equal known values. Endpoint `endpoint_type` must be known `source` or `target`
+for the corresponding task input. A generic `arn`, wrong output, matching literal
+or opposite-direction endpoint cannot establish the relationship. Tasks and
+endpoints stay independent logical resources; they do not inherit instance VPC
+placement or become embedded database children.
+
+All proof requires unique explicit current managed AWS identities, compatible
+provider/account/known-region evidence and complete collections. Verified provider
+account scope is retained for these four exact types. Deleted/deposed/data/ambiguous
+or incompatible references keep conservative fallback and diagnostics. Filtering
+invalidates incomplete placement proof; named states never borrow matching endpoints.
+Actions, moved addresses and current/deposed coverage remain distinct and exactly once.
+Serverless replication, `aws_dms_s3_endpoint`, certificates, KMS, credentials and
+auxiliary migration relationships remain separate #863–#866. No database is
+reconstructed from hostnames, URLs or connection strings. Passwords, SQL/table
+mappings, task settings, IPs and runtime status are not rendered as summaries.
+
+Pinned Provider 6.70.0 contracts:
+[instance](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/website/docs/r/dms_replication_instance.html.markdown),
+[subnet group](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/website/docs/r/dms_replication_subnet_group.html.markdown),
+[endpoint](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/website/docs/r/dms_endpoint.html.markdown),
+[task](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/website/docs/r/dms_replication_task.html.markdown).
+Schema confirms subnet/SG sets; subnet group source assigns Terraform `id` from its
+configured identifier. Instance and endpoint ARN output names differ from generic
+`arn`. See [fixture](../tests/fixtures/dms-plan.json), [SVG](../examples/dms.svg)
+and [HTML](../examples/dms.html), with positive/negative native/Wasm parity tests.
+Regenerate HTML in Docker with
+`cargo run --locked -- tests/fixtures/dms-plan.json --format html -o examples/dms.html`.
+
 ## Redshift Serverless (#695)
 
 Workgroups are independent spatial resources. `namespace_name` must explicitly
