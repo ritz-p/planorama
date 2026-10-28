@@ -68,9 +68,9 @@ the collector never changes graph or layout data.
 | `model` | Shared domain contracts, architecture identity and value-free provenance |
 | `semantic` | Architecture transformation and final relationship evidence |
 | `coverage` | Input/effective resource accounting and structured semantic findings; [contract](coverage.md) |
-| `provider/aws` | AWS classification, containment, connections, lowering, components, diagnostics and icons |
-| `provider/terraform` | Exact built-in Terraform resource icon mapping |
-| `icons` | Provider dispatch, shared artwork IDs and presentation measurements |
+| `provider/aws` | AWS classification, containment, connections, lowering, components, diagnostics and service classification |
+| `provider/terraform` | Exact built-in Terraform resource service mapping |
+| `icons` / `services` | Provider-aware service classification and resource/service display labels |
 | `view` | Immutable selection, neighbor expansion, required context and shared presentation measurements |
 | `layout` | Containment hierarchy, placement, bounds, ports and routes |
 | `svg` | Drawing, text, legends and metadata |
@@ -204,7 +204,7 @@ reserve separate columns for top-right resource/service labels and
 external indicators; extra heading lines move import badges, addresses, references
 and children down before layout and routing. Logical Resources retain their full
 group-level type heading without adding redundant per-resource type fields.
-Address measurements reserve enough height for both native and qualified headings, including icon
+Address measurements reserve enough height for both native and qualified headings, including service-label
 space, and for wrapped move annotations before packing. Uses rows and embedded
 Route cards start below that complete header; rendering, child bounds and routing
 obstacles use the same offsets. Address formatting never changes resource identity,
@@ -215,7 +215,7 @@ defines the conservative fallback for historical and unresolved identities.
 Imported resources reserve a separate badge row in spatial, logical, embedded
 Route and component-member presentations. Shared measurements include this height
 when placing subsequent text and child bounds. Badges stay separate from service
-icons and external-mode indicators, preserving space for complete addresses.
+labels and external-mode indicators, preserving space for complete addresses.
 
 RDS Cluster Instances, EFS Access Points, KMS Aliases, S3 encryption configurations, Secret Versions and eligible
 ACM certificates and verified Network Firewall logging configurations reuse
@@ -237,12 +237,10 @@ Ingestion does not import provider rules, layout or SVG. Layout, view and SVG us
 the `model::architecture` facade, which excludes Terraform ingestion contracts.
 AWS resource-type and attribute rules belong in `provider/aws`; rendering and
 layout do not infer semantic relationships.
-Terraform built-in icon rules belong in `provider/terraform` and use the provider
-identity resolved during ingestion. They add no resource classification,
-containment or layout semantics. AWS artwork and Planorama's original built-in
-provider icon share the validated build-time SVG parser, symbol reuse and state
-namespacing; source notices follow the icon families actually used. See
-[icon sources and licenses](icons.md).
+Terraform built-in service mappings belong in `provider/terraform` and use the
+provider identity resolved during ingestion. They add no resource classification,
+containment or layout semantics. All builds render service labels without bundled
+artwork; see [service labels and migration](icons.md).
 
 The semantic input projects Terraform facts into classified cards without mutating
 the plan. AWS transformation applies containment, SG connections, association

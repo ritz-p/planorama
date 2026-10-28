@@ -92,7 +92,7 @@ The controls remain outside SVG exports and use no storage or network access.
 
 **Export viewport SVG** downloads a standalone `planorama-viewport.svg` using the
 current viewBox. The file intentionally crops content outside that viewport;
-it retains the generated layout, nested state offsets, definitions, icons, action
+it retains the generated layout, nested state offsets, definitions, service labels, action
 colors and font fallback lists. Font availability can vary between computers.
 Selection, impact and routing diagnostic overlays are omitted from the clone;
 the live selection and viewport remain unchanged. Internal links remain active

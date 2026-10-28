@@ -13,7 +13,11 @@ plain checkout needs no additional tool and `.cargo/config.toml` stays unchanged
 Wasm uses `wasm-ld` with its import-memory and 4 GiB maximum. macOS, Windows,
 cross compilation and published native releases are outside this rollout.
 
-Install and disable commands are in [CONTRIBUTING](../CONTRIBUTING.md).
+Outside Docker, run `sudo sh scripts/install-mold.sh`, then set
+`CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_LINKER="$PWD/scripts/native-linker.sh"`
+for Cargo. To disable mold in Compose, run
+`docker compose exec -T -e CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_LINKER=cc dev cargo test --locked`.
+Changing the Cargo linker setting triggers rebuilding.
 `PLANORAMA_LINKER=system` selects `cc` inside the wrapper for controlled
 measurements; clean the benchmark target when changing this variable because
 Cargo cannot detect changes inside a linker wrapper. For normal use, override
@@ -23,8 +27,9 @@ Run `docker compose exec -T dev sh scripts/benchmark-linker.sh` from the reposit
 root. The script uses an isolated `/tmp/planorama-linker-benchmark-target`, cleans
 it between linkers and at completion, disables incremental compilation and compiler
 wrappers, and retains measurements under `output/linker-benchmark`.
-The script copies tracked source into a temporary directory so edits and generated
-reports cannot invalidate the empty build script during a warm run.
+The script copies tracked source into a temporary directory without Git metadata,
+isolating it from working-tree edits and generated reports. Build provenance is
+unavailable in that copy; the current build script still runs on every build.
 Cold means an empty target/profile with downloaded dependencies already available;
 warm means an immediate unchanged build using that target. This does not measure
 network or image construction time. Test compilation uses all targets/features;
@@ -63,7 +68,9 @@ The system pass preceded the mold pass; filesystem caches were not dropped.
 
 Other build CPU is total CPU minus driver CPU: compilation plus Cargo/build-script
 overhead, not pure rustc code generation. Detailed compilation-unit timing is in
-the generated Cargo HTML reports. Warm builds invoked no compiler or linker.
+the generated Cargo HTML reports. Warm builds at this historical
+revision invoked no compiler or linker. The later [provenance recheck](../CONTRIBUTING.md#build-provenance)
+can rebuild the workspace crate, so these warm timings do not describe current builds.
 Test linking is substantially faster but uses more CPU and peak memory; total
 build speed also depends on compilation variability. Release linking is a small
 part of the total, so this result does not justify changing release publication.
