@@ -1,10 +1,18 @@
 #!/bin/sh
 set -eu
+case ${WASM_CI_FULL_LIB:-0} in
+    0) set -- artwork_free:: ;;
+    1) set -- ;;
+    *) echo 'WASM_CI_FULL_LIB must be 0 or 1' >&2; exit 2 ;;
+esac
 report=${WASM_CI_REPORT_DIR:-output/wasm-ci}
 mkdir -p "$report"
 export WASM_BUILD_TIMINGS="$PWD/$report/bindings.tsv"
+export WASM_BROWSER_TIMINGS="$PWD/$report/browser.tsv"
 : > "$report/timings.tsv"
 : > "$WASM_BUILD_TIMINGS"
+: > "$WASM_BROWSER_TIMINGS"
+printf 'full_library=%s\n' "${WASM_CI_FULL_LIB:-0}" > "$report/selection.txt"
 measure() {
     name=$1
     shift
@@ -17,7 +25,7 @@ measure native cargo build --locked --release --bin planorama
 measure browser-build sh scripts/build-wasm.sh
 measure browser-memory node tests/browser/memory.cjs output/browser/pkg
 measure browser-tests node tests/browser/wasm.cjs
-measure standalone-lib cargo test --locked --no-default-features --lib
+measure standalone-lib cargo test --locked --no-default-features --lib "$@"
 measure standalone-cli cargo test --locked --no-default-features --test cli help_
 measure standalone-native cargo build --locked --release --bin planorama --no-default-features
 measure standalone-build sh scripts/build-wasm-engine.sh

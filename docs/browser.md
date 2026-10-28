@@ -318,8 +318,13 @@ Verify the extracted release archive in Chromium with
 the standalone engine. It checks archive membership, provenance and hashes,
 scans JS/Wasm for embedded artwork markers, compares AWS and Terraform SVG/HTML
 outputs exactly with native service-name generation, and tests omitted/explicit
-icon options on `viewer-plan` and archive reproducibility. `cargo test --locked --no-default-features --lib`
-runs the complete library suite, including the native API contract. The same artwork-exclusion contract applies with all features enabled.
+icon options on `viewer-plan` and archive reproducibility. PR CI runs
+`cargo test --locked --no-default-features --lib artwork_free::` for the native
+artwork-exclusion contract, also covered with all features in Rust CI. For the
+complete no-default-feature library suite, select `full_library` in the Browser
+Wasm manual workflow or run `WASM_CI_FULL_LIB=1 sh scripts/wasm-ci.sh` in Docker.
+The [coverage audit and measurements](ci.md#browser-wasm-test-scope-audit-885)
+explain the selection and its limits.
 
 ## API and supported options
 
