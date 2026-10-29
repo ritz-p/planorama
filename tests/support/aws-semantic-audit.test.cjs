@@ -382,6 +382,41 @@ test('ML audit covers all 90 managed contracts without conflating model and runt
 test('candidate extraction respects nested collections and sensitive boundaries',()=>{
  assert.deepEqual(extract({attributes:{role_arn:{optional:true,type:'string'},computed_id:{computed:true},secret_id:{optional:true,sensitive:true},write_id:{optional:true,write_only:true},secret:{sensitive:true,nested_type:{attributes:{target_id:{optional:true}}}}},block_types:{network:{block:{attributes:{subnets:{required:true,type:['set','string']},security_groups:{optional:true}}}}}}),['network.security_groups','network.subnets','role_arn']);
 });
+
+test('application audit covers 71 exact managed types with six decisions and source evidence',()=>{
+ const services=new Set('lambda lambdacore lambdamicrovms apigateway apigatewayv2 appsync serverlessrepo'.split(' '));
+ const expected=read('tests/fixtures/aws-inventory/6.70.0.json').resources.filter(r=>services.has(r.service));
+ const entries=Object.entries(read('docs/aws-semantic-decisions.json').types).filter(([,d])=>d.review?.issue===714);
+ assert.equal(expected.length,71);
+ assert.deepEqual(entries.map(([t])=>t).sort(),expected.map(r=>r.type).sort());
+ for(const [type,{review,gap,issue}] of entries){
+  assert.equal(review.providerCommit,'5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f');
+  assert.equal(review.implementationCommit,'80b70c8fec8b5a3c75b0457bf0f4061fccea441e');
+  assert.equal(review.officialDocumentation,expected.find(r=>r.type===type).documentation);
+  assert.deepEqual(Object.keys(review.shapes),review.fields);
+  assert.deepEqual(Object.keys(review.contracts),review.fields);
+  for(const key of ['placement','ownership','network','references','scope','summaries'])assert.match(review[key],/^(Supported|Partial|Missing|Not applicable|Intentionally unsupported|Deferred):/,type+': '+key);
+  for(const file of review.implementationEvidence)assert.ok(fs.existsSync(file),file);
+  assert.match(review.managedDataContract,/No managed alias/);
+  assert.match(gap,/#714/);
+  if(Object.values(review).some(v=>typeof v==='string' && v.startsWith('Missing:')))assert.ok(issue>=930&&issue<=955,type);
+ }
+});
+
+test('application audit preserves qualifiers, API families and nested attribute contracts',()=>{
+ const d=read('docs/aws-semantic-decisions.json').types;
+ assert.deepEqual(d.aws_lambda_layer_version.review.shapes.version,['string']);
+ assert.deepEqual(d.aws_lambda_layer_version_permission.review.shapes.version_number,['number']);
+ assert.match(d.aws_lambda_function_scaling_config.review.references,/\$LATEST\.PUBLISHED/);
+ assert.match(d.aws_apigatewayv2_routing_rule.review.references,/REST API\/stage/);
+ assert.match(d.aws_api_gateway_integration.review.references,/integration_target/);
+ assert.deepEqual(d.aws_appsync_source_api_association.review.shapes.source_api_association_config, [['list',['object',{merge_type:'string'}]]]);
+ assert.deepEqual(d.aws_appsync_api.review.shapes['event_config.log_config.cloudwatch_logs_role_arn'],['list','list','string']);
+ assert.match(d.aws_appsync_graphql_api.review.network,/GLOBAL.*not global/);
+ assert.match(d.aws_lambda_function.review.network,/older paths.*known-value/);
+ assert.match(d.aws_lambdamicrovms_image.review.references,/INTERNET_EGRESS/);
+ assert.match(d.aws_serverlessapplicationrepository_cloudformation_stack.review.references,/no managed SAR application/);
+});
 test('untrusted schema bytes cannot replace pinned evidence',()=>{
  assert.throws(()=>buildEvidence(Buffer.from('{}')),/SHA-256/);
 });
