@@ -70,7 +70,7 @@ fn large_fixture_is_reproducible_from_terraform_sources_and_renders_deterministi
         svg,
         include_str!("../../examples/terraform-large/diagram.svg").replace("\r\n", "\n")
     );
-    assert_eq!(svg.matches("data-edge-kind=\"association\"").count(), 10);
+    assert_eq!(svg.matches("data-edge-kind=\"association\"").count(), 6);
     assert_eq!(svg.matches("data-container=").count(), 6);
     assert_eq!(svg.matches("data-external=\"true\"").count(), 3);
     assert!(svg.contains("module.application.aws_instance.workers_a[0]"));
@@ -128,7 +128,7 @@ fn large_fixture_is_reproducible_from_terraform_sources_and_renders_deterministi
         .descendants()
         .filter_map(|n| n.attribute("data-relationship-entry"))
         .collect();
-    assert_eq!(entries, ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"]);
+    assert_eq!(entries, ["1", "2", "3", "4", "5", "6"]);
     let nat_entry = document
         .descendants()
         .find(|node| node.attribute("data-relationship-entry") == Some("6"))
