@@ -78,7 +78,10 @@ fn matrix() -> String {
             }
         }
     }
-    let mut output = String::from(include_str!("resource_support_intro.txt")).replace("\r\n", "\n");
+    let filter = std::env::var("RESOURCE_SUPPORT_FILTER").unwrap_or_default();
+    let mut output = String::from(
+        "# Resource support\n\nRuntime defaults, not a guarantee of dedicated relationships. Rule paths are conditional source references.\n",
+    );
     for (source, prefix, title) in [
         (
             "registry.terraform.io/hashicorp/aws",
@@ -93,11 +96,11 @@ fn matrix() -> String {
     ] {
         writeln!(output, "\n## {title}\n\nProvider source: `{source}`.\n").unwrap();
         if prefix == "aws_" {
-            writeln!(output, "Baseline: AWS Provider **{}**, commit `{}`; **{} managed resource types**. [Inventory and update procedure](aws-inventory.md). Counts describe types, not input instances.\n", inventory["version"].as_str().unwrap(), inventory["commit"].as_str().unwrap(), baseline.len()).unwrap();
+            writeln!(output, "Baseline: AWS Provider **{}**, commit `{}`; **{} managed resource types**. [Inventory and update procedure](../docs/aws-inventory.md). Counts describe types, not input instances.\n", inventory["version"].as_str().unwrap(), inventory["commit"].as_str().unwrap(), baseline.len()).unwrap();
         }
         output.push_str("| Resource type | Role (managed / data) | Display (managed / data) | Service mapping / name | Deployment scope | Baseline / basic display notes | Conditional rule source references |\n| --- | --- | --- | --- | --- | --- | --- |\n");
         for (resource_type, paths) in &catalog {
-            if !resource_type.starts_with(prefix) {
+            if !resource_type.starts_with(prefix) || !resource_type.starts_with(&filter) {
                 continue;
             }
             let input = serde_json::json!({"format_version":"1.2", "resource_changes": [
@@ -199,7 +202,7 @@ fn matrix() -> String {
                     notes.push("Deprecated".into());
                 }
                 if let Some(alias) = entry["aliasOf"].as_str() {
-                    notes.push(format!("Verified managed alias of `{alias}`; [mode limits and evidence](aws-inventory.md#verified-resource-aliases)"));
+                    notes.push(format!("Verified managed alias of `{alias}`; [mode limits and evidence](../docs/aws-inventory.md#verified-resource-aliases)"));
                 }
                 if scope == "Unknown" {
                     notes.push(format!(
@@ -260,15 +263,9 @@ fn discovers_type_literals_in_rust_expressions_and_macros_only() {
 }
 
 #[test]
-fn generated_resource_support_is_current() {
+#[ignore = "on-demand runtime catalog; use scripts/update-resource-support.sh"]
+fn export_resource_support() {
     let generated = matrix();
-    let path = Path::new("docs/resource-support.md");
-    if std::env::var_os("UPDATE_RESOURCE_SUPPORT").as_deref() == Some(std::ffi::OsStr::new("1")) {
-        fs::write(path, &generated).unwrap();
-    }
-    assert_eq!(
-        fs::read_to_string(path).unwrap().replace("\r\n", "\n"),
-        generated,
-        "Run sh scripts/update-resource-support.sh inside the development container"
-    );
+    fs::create_dir_all("output").unwrap();
+    fs::write("output/resource-support.md", generated).unwrap();
 }

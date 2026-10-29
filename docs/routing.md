@@ -433,49 +433,12 @@ Mask IDs and groups sort by resource identity and are namespaced in named states
 
 ## Verification
 
-Tests cover hierarchy, variable-sized bounds, dense routing, bundles, input/module
-reordering and SVG regressions. `src/layout/metrics.rs` measures pairwise
-overlap, internal orthogonal crossings, bends and length; endpoint contacts and
-self-crossings are excluded. Run the [Docker checks](../CONTRIBUTING.md#検証).
-The large fixture also checks every visible edge: at most 14 bends and a length
-at most twice its shortest valid reference plus 128 pixels.
-The reference keeps the rendered ports and terminal clearance, protects container
-endpoint boundaries, ancestor headers and numbered corridors, and ignores occlusion and edge-conflict
-costs. Its rectilinear search includes exact obstacle boundaries, so necessary
-container detours are included in the baseline. Failures name both endpoint
-addresses and report bends, length, reference length, excess distance and stretch.
-The test counts extreme routes and verifies identical metrics after edge reordering;
-aggregate quality checks remain in place.
-The large fixture records every edge's shape and compares the subnet-to-private
-Route Table, VPC Endpoint and ECS routes with a reference that also protects foreign
-cards and containers. This distinguishes required marker/header detours from
-avoidable steps. The [per-edge comparison](../examples/terraform-large/routing-comparison.md)
-records initial-PR and revised results, including residual violations and runtime.
-The [#317 calibration](../examples/terraform-large/README.md#317-calibration)
-compares the #322 baseline and final SVGs using the same border metric, including
-the resulting changes in bends and crossings.
-The crossing policy replaces older tests that demanded crossing-free detours:
-they now require short crossing routes, including at stub/grid junctions and after
-shortcutting. Hard obstacles, overlap avoidance and terminal reservations remain tested.
-The large-fixture regression checks short subnet-to-ECS paths, a short IGW-to-NAT
-path with limited hidden length, and zero visible straight-frame overlap. The
-gateway limit is its shortest valid route plus 128 pixels and at most three bends,
-so larger content-driven cards do not fail an obsolete absolute-distance cap. These
-checks use the current card geometry and repeat after edge reordering; they do
-not require a path to pass behind a particular container.
-Performance measurements are documented in [benchmarks](benchmarks.md).
-Opt-in [layout diagnostics](layout-diagnostics.md) report the final selected
-diagram, visible spatial findings and explicitly labelled raw-polyline metrics.
-The single-path border fixture covers all three relationship widths, both axes,
-and 32px/300px frame spans. A 12px card gap grows by 8px, followed by a coherent
-two-bend reroute into the resulting 20px corridor. A protected-junction variant
-keeps its original bounds, paths, scopes and bands with measurable residual
-proximity. Border tests cover 0/1/2/4/8px offsets, rounded corners, masked path
-pieces and additive search subdivision.
-Protected-peer fixtures verify that both routing orientations use the peer's
-actual position while preserving its path and junction. Bounded-track fixtures
-retain useful alternatives across the endpoint interval and keep the same
-32-coordinate selection after peer reordering or adding distant paths.
-Thread-local test counters verify that unobstructed horizontal/vertical side
-selection evaluates one pair without grid search, while blocked ports expand the
-search. Focused cases compare selected quality with exhaustive side evaluation.
+Run the [Docker checks](../CONTRIBUTING.md#検証). Ordinary tests cover containment,
+ports, geometry, deterministic ordering and snapshots; expensive per-edge large
+fixture comparisons run in [Routing regressions](ci.md#deferred-routing-regressions-253).
+The route-stretch reference preserves ports, terminal/header clearance and hard
+obstacles, but ignores edge-conflict cost. Foreign-card occlusion requires its
+separate reference checks. Raw-polyline metrics therefore cannot substitute for
+[visible final-layout diagnostics](layout-diagnostics.md) or the
+[Layout quality gate](ci.md#layout-quality-comparison-390).
+Performance measurement uses [benchmarks](benchmarks.md), without timing gates.
