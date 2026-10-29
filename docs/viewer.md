@@ -449,4 +449,4 @@ Organizations member Accounts can navigate to verified AWS Account frames and
 back without moving infrastructure into the organization hierarchy. The account
 frame is a navigation target, not a searchable Terraform resource, so it does not
 change resource counts or expose a copyable synthetic Terraform address. See
-[the evidence and selection contract](aws.md#organizations-member-account-deployment-navigation).
+[the evidence and selection contract](aws-security.md#organizations-member-account-deployment-navigation).

@@ -111,4 +111,4 @@ Organizations member-account correspondence is separate from remote-output
 resolution. Verified provider-account frames can link to one unambiguous member
 Account in another input state, using explicit state-qualified navigation without
 adding a Terraform edge or ownership. Selection retains only available endpoints;
-see [Organizations deployment navigation](aws.md#organizations-member-account-deployment-navigation).
+see [Organizations deployment navigation](aws-security.md#organizations-member-account-deployment-navigation).

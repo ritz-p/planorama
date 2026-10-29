@@ -90,4 +90,4 @@ source row identifies the originating Organization, not membership of the
 Organization in the Root. They do not assign `data-component-id` membership to
 the source card. Verified parent links target the derived Root card; filtering
 its source removes the card and disables those links. See
-[Organizations hierarchy](aws.md#organizations-hierarchy).
+[Organizations hierarchy](aws-security.md#organizations-hierarchy).

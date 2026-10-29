@@ -1,5 +1,11 @@
 # CI validation and recovery
 
+現行の起動条件・判定・復旧手順の正本です。過去の性能比較と採否は [計測履歴](ci-history.md)、ローカル環境は [CONTRIBUTING](../CONTRIBUTING.md) を参照してください。
+
+- [通常テスト](#parallel-rust-test-suites) / [Layout quality](#layout-quality-comparison-390) / [Routing regressions](#deferred-routing-regressions-253)
+- [SVG 生成・レビュー](#generation-and-review) / [復旧](#recovery) / [マージ後](#validation-after-merging)
+- [Browser Wasm と cache 復旧](#browser-wasm-432) / [リソース一覧](#resource-support-catalog)
+
 Native CLI distribution has a separate [release workflow and recovery procedure](releases.md).
 Native release builds run only through `workflow_dispatch`, never automatically on
 PR updates or tag pushes. Manual runs verify artifacts by default; publication
@@ -134,13 +140,7 @@ runner elapsed seconds measure compute use, not an account's billed price.
 
 ### Observed timing and runner cost
 
-The 2026-10-12 [serial baseline](https://github.com/ritz-p/planorama/actions/runs/38224372411)
-and [parallel run](https://github.com/ritz-p/planorama/actions/runs/38225451104)
-used identical Rust sources, fixtures, toolchain and dependency cache. Active
-workflow time fell from 170 to 141 seconds, while summed job time rose from
-170 to 201 seconds. This single comparison supports two suites as a latency/cost
-tradeoff, not a performance guarantee. Ordinary integration tests stayed in
-standard because their measured execution was only 1.40 seconds.
+2 suite は待ち時間と総 runner 時間のトレードオフです。 [判断・計測記録](ci-history.md#observed-timing-and-runner-cost)。
 
 ## Layout quality comparison (#390)
 
@@ -370,66 +370,11 @@ non-gating failures. No automatic retry or success suppression hides failures.
 
 ### Local timing
 
-The [#253 comparison](https://github.com/ritz-p/planorama/pull/410) measured local
-standard-suite harness time falling from 119.49 to 70.98 seconds after deferring
-three repeated large-fixture tests. Their separate two-thread run took 140.201
-seconds. This moves work off PRs; it does not eliminate it or establish hosted
-end-to-end savings.
+大型回帰は削除せず別 workflow で検証します。 [判断・計測記録](ci-history.md#local-timing)。
 
 ## Test runner evaluation (#254)
 
-Keep `cargo test` as the CI runner. Nextest did not improve the Standard suite
-at either tested concurrency, so adding installation and configuration is not
-justified by this experiment. Re-evaluate if the suite distribution changes.
-
-The 2026-10-15 two-repeat comparison found nextest slower for standard by 3.6%
-at two threads and 1.4% at eight. Large differed by less than one second.
-[PR #411](https://github.com/ritz-p/planorama/pull/411) records the decision;
-[the original measurements](https://github.com/ritz-p/planorama/blob/8fb4aef052f7d941b0a5da6b08a4fc610661a504/docs/ci.md#test-runner-evaluation-254)
-retain per-run timings, CPU, inventories and failure probes. These historical
-results do not predict the current suite's runtime.
-
-The comparison uses the post-#253 test selection at `efb7de9`, Rust 1.85.1,
-the optimized test profile and cargo-nextest 0.9.148 in Docker Desktop Linux
-on an AMD Ryzen 9 5950X with 32 visible logical CPUs and no container CPU quota.
-The experiment varies test concurrency, not the VM's CPU allocation. Rust sources and fixtures stay identical across
-runners. These historical observations used the former Python tool; they are not
-measurements from its JavaScript replacement. The
-[comparison script](../tests/support/compare_test_runners.cjs) reuses
-the CI suite selector, verifies names and ignored attributes against each
-libtest binary, and rejects unexpected nextest filters. It compiles before
-timing, then alternates runner order and reverses concurrency order on the second
-repeat. JSON records command wall time, child-process CPU time, revision,
-tool versions, inventories and per-run logs. Existing ignored benchmarks and
-deferred regressions are excluded from both runners.
-
-The JavaScript tool uses Node's monotonic `performance.now()` for elapsed time
-and GNU `time` for the command's user plus system CPU time, including descendants
-(CPU precision: 0.01 seconds). Both stdout and stderr go to the per-run log;
-failed runs are recorded before the tool exits unsuccessfully. This development
-tool uses only Node built-ins and the Docker image's `time` package.
-After downloading nextest as below, run
-`docker compose exec -T -e NEXTEST_BIN=/tmp/planorama-nextest dev node --test tests/support/tooling.test.cjs`
-to exercise both runners against a temporary dependency-free crate, including
-ignored inventory, execution order and failed-run logs. These probes validate the
-tool and do not replace repository performance measurements.
-
-Reproduce inside the existing development container from the repository root:
-
-```sh
-docker compose exec -T dev sh -c 'mkdir -p /tmp/planorama-nextest && curl -LsSf https://get.nexte.st/0.9.148/linux -o /tmp/planorama-nextest/archive.tar.gz && tar xzf /tmp/planorama-nextest/archive.tar.gz -C /tmp/planorama-nextest'
-docker compose exec -T dev node tests/support/compare_test_runners.cjs --suite standard --threads 2 8 --repeats 2 --nextest-bin /tmp/planorama-nextest --output output/nextest-standard-runs
-docker compose exec -T dev node tests/support/compare_test_runners.cjs --suite large --threads 2 --repeats 2 --nextest-bin /tmp/planorama-nextest --output output/nextest-large-runs
-```
-
-Use a new output directory for each experiment; the script refuses to overwrite
-previous evidence. The downloaded binary is temporary and is not a Docker image
-or CI dependency. See nextest's [binary installation](https://nexte.st/docs/installation/pre-built-binaries/)
-and [test inventory format](https://nexte.st/docs/machine-readable/list/).
-
-The measurement excludes download, cold compilation, checkout, queueing and
-cache transfer. Both runners passed failure-output and ignored-test compatibility
-probes; measured performance was the reason for retaining Cargo.
+CI は `cargo test` を継続します。比較で Standard suite の短縮が得られず、suite 分布が変わった場合に再検討します。 [判断・計測記録](ci-history.md#test-runner-evaluation-254)。
 
 ## On-demand spacing calibration
 
@@ -461,11 +406,7 @@ the same job and captured `github.sha` without adding a dependency to **Tests**.
 
 ### Calibration split timing (#406)
 
-[PR #408](https://github.com/ritz-p/planorama/pull/408) records identical-source,
-warm-dependency Docker measurements: standard command time changed from 242.355
-to 166.437 seconds, with calibration alone costing 74.663 seconds. The single
-comparison excludes hosted setup, queue, transfers and the large suite; a manual
-calibration run still pays its own setup, compilation and artifact costs.
+calibration は通常の Tests から独立した手動実行です。 [判断・計測記録](ci-history.md#calibration-split-timing-406)。
 
 ## When generation runs
 
@@ -790,7 +731,7 @@ and CLI help checks. The full library suite is available through the manual
 `full_library` input. Both distributions run memory-budget tests with small fixtures at every
 configured maximum, binary import/capability checks and tiny-memory allocation
 failure/trap recovery. Multi-GiB growth and pointer tests remain opt-in; see the
-[memory contract](browser.md#per-generation-memory-selection). Artwork-exclusion tests also run with all features enabled. The manual
+[memory contract](browser-engine.md#per-generation-memory-selection). Artwork-exclusion tests also run with all features enabled. The manual
 **Wasm engine release** workflow distributes this engine separately from the UI;
 see [browser build, distribution and verification](browser.md). Unit tests now run
 from the library target (`--lib`); suite discovery includes that target automatically.
@@ -866,65 +807,8 @@ rejection use `viewer-plan` as the representative fixture.
 
 ### Browser Wasm comparison, 2026-10-26
 
-[PR #675](https://github.com/ritz-p/planorama/pull/675) records the original cache
-comparison and hosted phase timings. Complete job time was 707 seconds before,
-885 seconds with initial cold caches, and 585 seconds with fully warm caches.
-Initial BuildKit export added cost; warm reuse reduced it. These single-run
-measurements predate test consolidation and do not establish current latency.
-[The original local measurements](https://github.com/ritz-p/planorama/blob/8fb4aef052f7d941b0a5da6b08a4fc610661a504/docs/ci.md#browser-wasm-comparison-2026-10-26)
-retain environment, phase and cache-size details.
+cold/warm cache の差を現在の所要時間として扱わないでください。 [判断・計測記録](ci-history.md#browser-wasm-comparison-2026-10-26)。
 
 ### Browser Wasm test scope audit (#885)
 
-The 2026-10-28 audit uses Rust sources and fixtures from `9da190b`. The deprecated
-`icon-artwork = []` feature is a no-op: there are no feature predicates in Rust
-sources or feature-environment checks in `build.rs`. `default = []` is also empty.
-This is an inspected property of this revision, not an assumption that
-`--all-features` and `--no-default-features` are always equivalent.
-
-| Candidate | Decision and coverage |
-| --- | --- |
-| Repeat the complete no-default-feature library suite | Run `artwork_free::` (two tests) on PRs. They cover direct rendering, SVG/HTML defaults, missing artwork and explicit icon rejection. Keep no-default CLI help, native/Wasm builds, memory, archive dependency/byte scans, manifest/provenance, reproducibility and extracted-engine parity. Normal Rust CI retains the complete all-feature suite. |
-| Split browser and standalone into jobs | Keep one required `browser` job. Independent jobs duplicate environment setup, Cargo restore and shared compilation; transferring built products adds a serial prerequisite and revision/feature matching requirements. The dominant duplicate library execution can be removed without those costs. Both distributions still fail the same check and use freshly built products from the same checkout. |
-| Consolidate service fixture SVG/HTML parity | Retain all cases. Native semantic tests overlap in graph assertions but cannot detect Wasm target, ABI, worker serialization or output differences. Instrument individual fixture/format costs before considering a narrower representative set. |
-| Move large completion to scheduled/manual CI | Retain it on every PR along with progress, cancellation and retry. Moving completion would delay detection of large-input Wasm traps, deterministic output differences and missing progress stages. |
-| Bindings/cache changes | Keep the existing caches and both bindings builds; binding generation is below one second per distribution in the sampled runs. |
-
-The default selection no longer repeats 898 of the 900 passing library tests
-under no-default-features (eight ignored tests were not running before either).
-No browser assertion or fixture/format pair is removed. A future feature-specific
-implementation outside `artwork_free` could therefore escape the focused native
-suite; feature changes must revisit this audit. Manual `full_library: true`, or
-`WASM_CI_FULL_LIB=1 sh scripts/wasm-ci.sh` in Docker, restores the complete suite
-for investigation. It is not a scheduled replacement or a claim of identical
-coverage for arbitrary future feature combinations.
-The separate Wasm engine release workflow still runs the complete library suite.
-
-The browser inventory is unchanged: `viewer-plan` SVG/HTML and selection options;
-15 complete service fixtures in both formats (DynamoDB, ElastiCache, EventBridge,
-MSK, MQ, DocumentDB, Neptune, Redshift Serverless, App Runner, Network Firewall,
-OpenSearch Serverless, Batch, FSx Lustre, DMS, SageMaker); four incomplete fixtures
-(OpenSearch Serverless, Batch, DMS, SageMaker) in both formats; aliases, spatial
-identity/SSM, basic/service labels; named inputs, module/resource selection and
-options; malformed/unsupported/oversized inputs; offline downloads, isolated and
-hostile previews; large-input progress/cancel/retry and full native/Wasm parity.
-The semantic counterparts are in `tests/unit/semantic`, rendering checks in
-`tests/unit/svg` and `tests/integration`; they do not replace browser boundary tests.
-
-[PR #886](https://github.com/ritz-p/planorama/pull/886) records the controlled
-full/focused comparison, final checks and warm-cache results. Hosted cold job
-time fell from 782 to 570 seconds; warm time fell from 721 to 453 seconds.
-Runner variability also affected unchanged browser work, so the whole difference
-cannot be attributed to filtering. These are observations, not a ten-minute SLA.
-[The original audit](https://github.com/ritz-p/planorama/blob/8fb4aef052f7d941b0a5da6b08a4fc610661a504/docs/ci.md#browser-wasm-test-scope-audit-885)
-retains the earlier runs, local phases and browser breakdown.
-
-To reproduce, use separate empty `CARGO_TARGET_DIR` and `SCCACHE_DIR` directories
-for each cold mode and isolate sccache servers when sharing a container. Run
-`WASM_CI_FULL_LIB=1 sh scripts/wasm-ci.sh` and
-`WASM_CI_FULL_LIB=0 sh scripts/wasm-ci.sh`, selecting distinct
-`WASM_CI_REPORT_DIR` paths. For each warm repeat, remove only workspace products
-and CLI test binaries with the workflow's cache-preparation command, reset
-sccache statistics, and retain dependencies. Record environment and complete
-job durations alongside the TSV files; do not compare cold full and warm focused
-runs as if scope were their only difference.
+PR では `artwork_free::`、両 distribution の build・memory・archive・browser parity を維持します。feature 固有の実装が増えた場合は選択範囲を再検討してください。`full_library: true` または `WASM_CI_FULL_LIB=1 sh scripts/wasm-ci.sh` で完全な library suite を実行できます。Wasm engine release は完全な suite を維持します。 [判断・計測記録](ci-history.md#browser-wasm-test-scope-audit-885)。
