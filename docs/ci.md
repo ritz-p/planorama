@@ -136,6 +136,7 @@ regressions against improvements elsewhere:
 
 | Change | Fixture and reviewed consequence | Evidence |
 | --- | --- | --- |
+| #910: require typed, evaluated target attachment proof | Large: four unproven attachments remain Logical helpers, changing edge identities and routed paths 45 → 41. Reviewed SVG and diagnostics: crossings 197 → 127, overlap 7 → 313px, parallel deficit 294 → 9,516px², border deficit 0 → 0.25px, bends 90 → 91. Only this topology baseline changes; budgets and other fixtures remain unchanged. These residuals are recorded for the new topology, not offset by its crossing reduction. | [PR #966](https://github.com/ritz-p/planorama/pull/966) |
 | #648: preserve header width during port-height reservation | Large: 11 newly affected crossing pairs / 13 intersections after fixing hidden gateway headings. Border deficits unchanged; bends within budget. | [PR #661](https://github.com/ritz-p/planorama/pull/661) |
 | #666: remove the 32px role-mark reservation | Large: 28 crossing-pair increases / 31 intersections and three parallel-pair increases. Includes a 0.5px visible gap over 1,594px (22,316 px² deficit); explicitly accepted for narrower headers. | [PR #671, individual pairs](https://github.com/ritz-p/planorama/pull/671) |
 | #667: shorten labeled headings | Large: 24 crossing-pair increases / 25 intersections despite the aggregate decrease. A 2.25px gap over 600px adds 7,200 px² parallel deficit. | [PR #672, individual pairs](https://github.com/ritz-p/planorama/pull/672) |
