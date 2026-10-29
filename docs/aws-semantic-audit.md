@@ -279,14 +279,16 @@ Contract distinctions checked:
   default ACL rules are actual set blocks. Route `instance_id` is computed.
   Endpoint/core-network/ODB next hops and gateway/main table associations now have
   bounded [#897 contracts](routes.md#typed-route-references-897).
-  `aws_vpc_endpoint_subnet_association` has an Association classification
-  but no lowering rule. SG exclusivity sets contain rule IDs, not SG IDs; legacy
+  #902 adds subtype/value/VPC-checked endpoint subnet, SG and route-table
+  associations. SG exclusivity sets contain rule IDs, not SG IDs; legacy
   multi-CIDR rules are discouraged but not aliases of modern one-rule resources.
 - PrivateLink supports Gateway, Interface, GatewayLoadBalancer, Resource and
   ServiceNetwork variants. `service_region` is producer scope, not endpoint
   deployment region. Service name is distinct from service ID/ARN; service-created
   ENIs/private hosted zones and allowed account-root/wildcard principals do not
-  establish managed children. Shared producer LBs remain independent.
+  establish managed children. Shared producer LBs remain independent. The bounded
+  [#902 implementation](aws.md#privatelink-endpoints-and-services-902) adds these
+  references and helper owners while preserving the historical review below.
 - IPAM pool locale, planning resource region and control/home region differ.
   Pool `source_resource` is a list; CIDR allocation consumer fields are computed.
   Preview is not reservation. OU wildcard paths do not enumerate accounts.

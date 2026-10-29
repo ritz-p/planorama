@@ -176,7 +176,7 @@ fn expanded_resource_instances_remain_visible_when_endpoint_is_ambiguous() {
 
 fn relationship_input(kind: &str) -> Value {
     let [(from_attr, from_type), (to_attr, to_type)] = rule(kind).unwrap();
-    json!({
+    let mut input = json!({
         "format_version":"1.2",
         "resource_changes":[
             {"address":format!("{from_type}.main"),"type":from_type},
@@ -189,7 +189,23 @@ fn relationship_input(kind: &str) -> Value {
                 (to_attr):{"references":[format!("{to_type}.main.id")]}
             }
         }]}}
-    })
+    });
+    if kind == "aws_vpc_endpoint_route_table_association" {
+        input["configuration"]["provider_config"] = json!({"aws":{"name":"aws","full_name":"registry.terraform.io/hashicorp/aws","expressions":{"region":{"constant_value":"us-east-1"}}}});
+        input["configuration"]["root_module"]["resources"][0]["provider_config_key"] = "aws".into();
+        for (index, id) in [(0, "endpoint"), (1, "table")] {
+            input["resource_changes"][index]["change"]["after"] =
+                json!({"id":id,"vpc_id":"vpc-main","vpc_endpoint_type":"Gateway"});
+            let address = input["resource_changes"][index]["address"].clone();
+            input["configuration"]["root_module"]["resources"]
+                .as_array_mut()
+                .unwrap()
+                .push(json!({"address":address,"provider_config_key":"aws"}));
+        }
+        input["resource_changes"][2]["change"]["after"] =
+            json!({"vpc_endpoint_id":"endpoint","route_table_id":"table"});
+    }
+    input
 }
 
 fn assert_relationship_actions(kind: &str) {
@@ -207,6 +223,10 @@ fn assert_relationship_actions(kind: &str) {
         let original = raw.clone();
         let graph = semantic::transform(&raw);
         assert_eq!(raw, original);
+        if kind == "aws_vpc_endpoint_route_table_association" && action == Action::Delete {
+            assert_resources_and_edges_preserved(&raw);
+            continue;
+        }
         assert_eq!(graph.nodes.len(), 2);
         assert_eq!(graph.edges.len(), 1);
         let edge = &graph.edges[0];
@@ -310,11 +330,7 @@ fn new_relationships_preserve_helpers_when_lowering_is_uncertain() {
                         .issues
                         .insert(crate::model::DiagnosticReason::DynamicInstanceSelection);
                 }
-                assert_eq!(
-                    semantic::transform(&raw).0,
-                    crate::semantic::base_graph(&raw),
-                    "{kind} {attribute} {scenario}"
-                );
+                assert_resources_and_edges_preserved(&raw);
             }
         }
     }

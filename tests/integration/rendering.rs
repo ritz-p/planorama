@@ -1010,18 +1010,17 @@ fn rds_subnet_group_fixture_preserves_cards_and_infers_common_scope() {
 fn mixed_aws_relationships_preserve_unproven_helper_cards_and_actions() {
     let input = include_bytes!("../fixtures/aws-relationships-plan.json");
     let svg = render(input);
-    assert!(svg.contains("9 resources (7 cards), 8 relationships"));
-    assert_eq!(svg.matches("data-edge-kind=\"association\"").count(), 2);
+    assert!(svg.contains("9 resources (8 cards), 9 relationships"));
+    assert_eq!(svg.matches("data-edge-kind=\"association\"").count(), 1);
     assert_eq!(svg.matches("data-edge-kind=\"containment\"").count(), 4);
-    for (kind, action) in [
-        ("aws_lb_target_group_attachment", "replace"),
-        ("aws_vpc_endpoint_route_table_association", "delete"),
-    ] {
-        assert!(!svg.contains(&format!("data-terraform-address=\"{kind}.main\"")));
-        assert!(svg.contains(&format!("data-source-address=\"{kind}.main\"")));
-        assert!(svg.contains(&format!("association; {action}: module.root.{kind}.main")));
-        assert!(svg.contains(&format!("{action} (1)")));
-    }
+    assert!(!svg.contains("data-terraform-address=\"aws_lb_target_group_attachment.main\""));
+    assert!(svg.contains("data-source-address=\"aws_lb_target_group_attachment.main\""));
+    assert!(svg.contains("association; replace: module.root.aws_lb_target_group_attachment.main"));
+    assert!(svg.contains("replace (1)"));
     assert!(svg.contains("data-terraform-address=\"aws_route_table_association.main\""));
+    assert!(
+        svg.contains("data-terraform-address=\"aws_vpc_endpoint_route_table_association.main\"")
+    );
+    assert!(svg.contains("delete (1)"));
     assert!(svg.contains("create (1)"));
 }

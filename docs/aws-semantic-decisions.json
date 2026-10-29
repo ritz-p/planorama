@@ -37870,7 +37870,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 902,
-      "gap": "#710 audit: Partial: VPC containment and complete SG collection connection exist. Missing: type-gated subnet/route-table sets and service_name to endpoint-service.service_name, Lattice resource/service-network ARNs; service_region differs from endpoint region. Follow-up #902.",
+      "gap": "Implemented #902: typed PrivateLink network sets, independently scoped endpoint/service relationships, subtype-gated load balancers, allowlisted principals and verified helper ownership/associations as applicable. See aws.md#privatelink-endpoints-and-services-902. Generated ENIs/zones, policy interpretation, runtime connectivity and summary deferrals remain excluded; historical #710 review retained.",
       "review": {
         "issue": 710,
         "implementationCommit": "a874b24ecfe4f0361ac81dc5afcb87e6570cd1d3",
@@ -37978,10 +37978,10 @@
       }
     },
     "aws_vpc_endpoint_connection_accepter": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 902,
-      "gap": "#710 audit: Missing: consumer endpoint/provider service pair with independent accounts/regions; acceptance state is not connectivity. Follow-up #902.",
+      "gap": "Implemented #902: typed PrivateLink network sets, independently scoped endpoint/service relationships, subtype-gated load balancers, allowlisted principals and verified helper ownership/associations as applicable. See aws.md#privatelink-endpoints-and-services-902. Generated ENIs/zones, policy interpretation, runtime connectivity and summary deferrals remain excluded; historical #710 review retained.",
       "review": {
         "issue": 710,
         "implementationCommit": "a874b24ecfe4f0361ac81dc5afcb87e6570cd1d3",
@@ -38029,10 +38029,10 @@
       }
     },
     "aws_vpc_endpoint_connection_notification": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 902,
-      "gap": "#710 audit: Missing: exactly one endpoint/service owner and SNS topic ARN; event set is configuration, not delivery proof. Follow-up #902.",
+      "gap": "Implemented #902: typed PrivateLink network sets, independently scoped endpoint/service relationships, subtype-gated load balancers, allowlisted principals and verified helper ownership/associations as applicable. See aws.md#privatelink-endpoints-and-services-902. Generated ENIs/zones, policy interpretation, runtime connectivity and summary deferrals remain excluded; historical #710 review retained.",
       "review": {
         "issue": 710,
         "implementationCommit": "a874b24ecfe4f0361ac81dc5afcb87e6570cd1d3",
@@ -38093,10 +38093,10 @@
       }
     },
     "aws_vpc_endpoint_policy": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 902,
-      "gap": "#710 audit: Missing: endpoint policy owner identity; policy body excluded from interpretation and display. Follow-up #902.",
+      "gap": "Implemented #902: typed PrivateLink network sets, independently scoped endpoint/service relationships, subtype-gated load balancers, allowlisted principals and verified helper ownership/associations as applicable. See aws.md#privatelink-endpoints-and-services-902. Generated ENIs/zones, policy interpretation, runtime connectivity and summary deferrals remain excluded; historical #710 review retained.",
       "review": {
         "issue": 710,
         "implementationCommit": "a874b24ecfe4f0361ac81dc5afcb87e6570cd1d3",
@@ -38144,10 +38144,10 @@
       }
     },
     "aws_vpc_endpoint_private_dns": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 902,
-      "gap": "#710 audit: Missing: Interface endpoint owner proof; private_dns_enabled does not identify Route53 hosted zone. Follow-up #902.",
+      "gap": "Implemented #902: typed PrivateLink network sets, independently scoped endpoint/service relationships, subtype-gated load balancers, allowlisted principals and verified helper ownership/associations as applicable. See aws.md#privatelink-endpoints-and-services-902. Generated ENIs/zones, policy interpretation, runtime connectivity and summary deferrals remain excluded; historical #710 review retained.",
       "review": {
         "issue": 710,
         "implementationCommit": "a874b24ecfe4f0361ac81dc5afcb87e6570cd1d3",
@@ -38198,7 +38198,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 902,
-      "gap": "#710 audit: Partial: existing two-endpoint helper lowering (associations.rs/tests) retained; missing Gateway subtype, known-value and VPC coherence checks. Follow-up #902.",
+      "gap": "Implemented #902: typed PrivateLink network sets, independently scoped endpoint/service relationships, subtype-gated load balancers, allowlisted principals and verified helper ownership/associations as applicable. See aws.md#privatelink-endpoints-and-services-902. Generated ENIs/zones, policy interpretation, runtime connectivity and summary deferrals remain excluded; historical #710 review retained.",
       "review": {
         "issue": 710,
         "implementationCommit": "a874b24ecfe4f0361ac81dc5afcb87e6570cd1d3",
@@ -38247,10 +38247,10 @@
       }
     },
     "aws_vpc_endpoint_security_group_association": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 902,
-      "gap": "#710 audit: Missing: endpoint/SG pair and mode/VPC proof; replacement flag does not prove default SG identity. Follow-up #902.",
+      "gap": "Implemented #902: typed PrivateLink network sets, independently scoped endpoint/service relationships, subtype-gated load balancers, allowlisted principals and verified helper ownership/associations as applicable. See aws.md#privatelink-endpoints-and-services-902. Generated ENIs/zones, policy interpretation, runtime connectivity and summary deferrals remain excluded; historical #710 review retained.",
       "review": {
         "issue": 710,
         "implementationCommit": "a874b24ecfe4f0361ac81dc5afcb87e6570cd1d3",
@@ -38303,10 +38303,10 @@
       }
     },
     "aws_vpc_endpoint_service": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 902,
-      "gap": "#710 audit: Missing: complete subtype-gated NLB/GWLB references; endpoint service is not a load balancer alias. Principal ARN variants need allowlist; wildcard/account roots never invent IAM resources. Missing: current Logical connector needs independent endpoint-service architecture. Follow-up #902.",
+      "gap": "Implemented #902: typed PrivateLink network sets, independently scoped endpoint/service relationships, subtype-gated load balancers, allowlisted principals and verified helper ownership/associations as applicable. See aws.md#privatelink-endpoints-and-services-902. Generated ENIs/zones, policy interpretation, runtime connectivity and summary deferrals remain excluded; historical #710 review retained.",
       "review": {
         "issue": 710,
         "implementationCommit": "a874b24ecfe4f0361ac81dc5afcb87e6570cd1d3",
@@ -38386,10 +38386,10 @@
       }
     },
     "aws_vpc_endpoint_service_allowed_principal": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 902,
-      "gap": "#710 audit: Missing: service owner and allowlisted principal references; account-root/wildcard principal does not identify IAM role. Follow-up #902.",
+      "gap": "Implemented #902: typed PrivateLink network sets, independently scoped endpoint/service relationships, subtype-gated load balancers, allowlisted principals and verified helper ownership/associations as applicable. See aws.md#privatelink-endpoints-and-services-902. Generated ENIs/zones, policy interpretation, runtime connectivity and summary deferrals remain excluded; historical #710 review retained.",
       "review": {
         "issue": 710,
         "implementationCommit": "a874b24ecfe4f0361ac81dc5afcb87e6570cd1d3",
@@ -38437,10 +38437,10 @@
       }
     },
     "aws_vpc_endpoint_service_private_dns_verification": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 902,
-      "gap": "#710 audit: Missing: service_id to endpoint-service id; DNS verification outputs never synthesize records. Follow-up #902.",
+      "gap": "Implemented #902: typed PrivateLink network sets, independently scoped endpoint/service relationships, subtype-gated load balancers, allowlisted principals and verified helper ownership/associations as applicable. See aws.md#privatelink-endpoints-and-services-902. Generated ENIs/zones, policy interpretation, runtime connectivity and summary deferrals remain excluded; historical #710 review retained.",
       "review": {
         "issue": 710,
         "implementationCommit": "a874b24ecfe4f0361ac81dc5afcb87e6570cd1d3",
@@ -38491,7 +38491,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 902,
-      "gap": "#710 audit: Missing: classified Spatial Association but no lowering rule; add endpoint/subnet pair with subtype and VPC consistency. Follow-up #902.",
+      "gap": "Implemented #902: typed PrivateLink network sets, independently scoped endpoint/service relationships, subtype-gated load balancers, allowlisted principals and verified helper ownership/associations as applicable. See aws.md#privatelink-endpoints-and-services-902. Generated ENIs/zones, policy interpretation, runtime connectivity and summary deferrals remain excluded; historical #710 review retained.",
       "review": {
         "issue": 710,
         "implementationCommit": "a874b24ecfe4f0361ac81dc5afcb87e6570cd1d3",

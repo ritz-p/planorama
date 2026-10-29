@@ -41,6 +41,7 @@ pub(crate) mod organization_accounts;
 pub(crate) mod organization_policies;
 pub(crate) mod organizations;
 mod placement;
+mod privatelink;
 mod rds_proxy;
 #[cfg(test)]
 #[path = "../../tests/unit/semantic/redshift.rs"]
@@ -123,7 +124,9 @@ pub(super) fn reference_label(resource_type: &str, attribute: &str) -> &'static 
 pub(super) fn placement(resource_type: &str) -> crate::model::Placement {
     let resource_type = aliases::canonical(resource_type);
     match resource_type {
-        "aws_egress_only_internet_gateway" => crate::model::Placement::Spatial,
+        "aws_egress_only_internet_gateway" | "aws_vpc_endpoint_service" => {
+            crate::model::Placement::Spatial
+        }
         "aws_redshift_parameter_group" => crate::model::Placement::Logical,
         "aws_organizations_policy" | "aws_organizations_policy_attachment" => {
             crate::model::Placement::Logical

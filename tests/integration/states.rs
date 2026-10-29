@@ -88,7 +88,7 @@ fn relationship_indexes_fit_inside_each_named_state_and_outer_canvas() {
                 .descendants()
                 .filter(|n| n.attribute("data-relationship-entry").is_some())
                 .count(),
-            2
+            1
         );
         assert!(
             nested

@@ -53,7 +53,7 @@ pub(super) fn label(kind: &str, field: &str) -> Option<&'static str> {
     })
 }
 
-fn absent(value: &Value, unknown: &Value, field: &str) -> bool {
+pub(super) fn absent(value: &Value, unknown: &Value, field: &str) -> bool {
     matches!(unknown, Value::Null | Value::Bool(false) | Value::Object(_))
         && matches!(&unknown[field], Value::Null | Value::Bool(false))
         && (value[field].is_null()

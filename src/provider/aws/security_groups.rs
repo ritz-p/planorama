@@ -23,6 +23,11 @@ pub(super) fn attribute(resource_type: &str) -> Option<&'static str> {
 
 pub(super) fn failure(raw: &Input, reference: &AttributeReference) -> Option<DiagnosticReason> {
     let node = &raw.nodes[reference.target];
+    if node.resource_type == "aws_vpc_endpoint"
+        && !super::service_references::verified(raw, reference)
+    {
+        return Some(DiagnosticReason::UnprovenEndpointValue);
+    }
     if super::network::endpoint_type(&node.resource_type, &reference.attribute).is_some()
         && !reference.service_reference_verified
     {
