@@ -133,8 +133,8 @@ fn state_removal_matches_only_supported_complete_action_sequences() {
 fn lowering_keeps_lifecycle_metadata_on_the_relationship() {
     let mut input: Value =
         serde_json::from_str(include_str!("../../fixtures/association-plan.json")).unwrap();
-    input["resource_changes"][2]["change"] =
-        json!({"actions":["forget"],"importing":{"id":"TOP_SECRET"}});
+    input["resource_changes"][2]["change"]["actions"] = json!(["forget"]);
+    input["resource_changes"][2]["change"]["importing"] = json!({"id":"TOP_SECRET"});
     let raw = crate::plan::parse(&input.to_string()).unwrap();
     let graph = crate::semantic::transform(&raw);
     let change = graph.edges.iter().find_map(|e| e.change.as_ref()).unwrap();

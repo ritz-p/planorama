@@ -6,6 +6,18 @@ fn input() -> Value {
     serde_json::from_str(include_str!("../../fixtures/association-plan.json")).unwrap()
 }
 
+fn assert_resources_and_edges_preserved(raw: &crate::model::TerraformPlan) {
+    let graph = semantic::transform(raw);
+    let base = crate::semantic::base_graph(raw);
+    assert_eq!(graph.edges, base.edges);
+    assert_eq!(graph.nodes.len(), base.nodes.len());
+    for (actual, expected) in graph.nodes.iter().zip(&base.nodes) {
+        assert_eq!(actual.entity, expected.entity);
+        assert_eq!(actual.metadata, expected.metadata);
+        assert_eq!(actual.action, expected.action);
+    }
+}
+
 #[test]
 fn lowers_resolved_relationship_and_remaps_indices_without_mutating_raw() {
     let raw = plan::parse(&input().to_string()).unwrap();
@@ -50,6 +62,11 @@ fn lowering_preserves_every_action_in_relationship_and_legend() {
         input["resource_changes"][2]["change"]["actions"] = json!(actions);
         let raw = plan::parse(&input.to_string()).unwrap();
         let graph = semantic::transform(&raw);
+        if expected == Action::Delete {
+            assert_resources_and_edges_preserved(&raw);
+            assert!(svg::render(&graph, &Layout::new(&graph)).contains("delete (1)"));
+            continue;
+        }
         let change = graph.edges[0].change.as_ref().unwrap();
         assert_eq!(change.action, expected);
         assert_eq!(change.address, "aws_route_table_association.private");
@@ -114,10 +131,7 @@ fn unresolved_ambiguous_or_non_attribute_dependencies_preserve_original_node() {
         input["configuration"]["root_module"]["resources"][2]["depends_on"] =
             json!(["aws_subnet.private", "aws_route_table.private"]);
         let raw = plan::parse(&input.to_string()).unwrap();
-        assert_eq!(
-            semantic::transform(&raw).0,
-            crate::semantic::base_graph(&raw)
-        );
+        assert_resources_and_edges_preserved(&raw);
     }
 }
 
@@ -144,10 +158,7 @@ fn extra_incoming_or_outgoing_edges_and_data_mode_are_preserved() {
             _ => input["resource_changes"][2]["mode"] = json!("data"),
         }
         let raw = plan::parse(&input.to_string()).unwrap();
-        assert_eq!(
-            semantic::transform(&raw).0,
-            crate::semantic::base_graph(&raw)
-        );
+        assert_resources_and_edges_preserved(&raw);
     }
 }
 
@@ -160,10 +171,7 @@ fn expanded_resource_instances_remain_visible_when_endpoint_is_ambiguous() {
         .unwrap()
         .push(json!({"address":"aws_subnet.private[1]","type":"aws_subnet"}));
     let raw = plan::parse(&input.to_string()).unwrap();
-    assert_eq!(
-        semantic::transform(&raw).0,
-        crate::semantic::base_graph(&raw)
-    );
+    assert_resources_and_edges_preserved(&raw);
 }
 
 fn relationship_input(kind: &str) -> Value {

@@ -36328,10 +36328,10 @@
       }
     },
     "aws_main_route_table_association": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 897,
-      "gap": "#710 audit: Missing: explicit main-table/VPC association; original_route_table_id is restoration bookkeeping, not a second configured target. Follow-up #897.",
+      "gap": "Implemented #897: verified VPC/table pair with matching known IDs, compatible scope and table VPC coherence; exactly two incident dependencies required for lowering. original_route_table_id is restoration bookkeeping. Logical fallback retained. See routes.md#typed-route-references-897.",
       "review": {
         "issue": 710,
         "implementationCommit": "a874b24ecfe4f0361ac81dc5afcb87e6570cd1d3",
@@ -37008,7 +37008,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 897,
-      "gap": "#710 audit: Partial: routes.rs verifies table owner and eight next-hop fields with matching known ID values (#107/#296). Missing: subtype-gated vpc_endpoint_id, core_network_arn/odb_network_arn and managed prefix-list navigation; instance_id is computed. Follow-up #897.",
+      "gap": "Implemented #897: GatewayLoadBalancer endpoint id, core network/ODB arn and managed prefix-list id references require explicit current managed provenance, known matching values and compatible scope. Existing eight next hops and owner proof retained. instance_id remains computed. See routes.md#typed-route-references-897.",
       "review": {
         "issue": 710,
         "implementationCommit": "a874b24ecfe4f0361ac81dc5afcb87e6570cd1d3",
@@ -37086,7 +37086,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 897,
-      "gap": "#710 audit: Partial: inline route presentation and supported typed next hops retained; missing new target variants and propagating_vgws identity navigation. Follow-up #897.",
+      "gap": "Implemented #897: complete configured propagation ID set and inline endpoint/core-network/ODB/prefix-list navigation. Single-entry sets identify a row target; multi-entry set row pairing remains unresolved. Legacy inline ID resolution and VPC containment retained. See routes.md#typed-route-references-897.",
       "review": {
         "issue": 710,
         "implementationCommit": "a874b24ecfe4f0361ac81dc5afcb87e6570cd1d3",
@@ -37168,7 +37168,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 897,
-      "gap": "#710 audit: Partial: subnet/table helper lowering requires two complete unique typed endpoints and only their two dependency edges (associations.rs/tests). Missing: gateway_id variant and additional known-value/scope coherence. Follow-up #897.",
+      "gap": "Implemented #897: subnet or Internet/VPN gateway and table pair require known matching IDs, current managed identities, compatible scope and common known VPC; extra dependencies preserve helper. Deleted helpers retain original action cards. See routes.md#typed-route-references-897.",
       "review": {
         "issue": 710,
         "implementationCommit": "a874b24ecfe4f0361ac81dc5afcb87e6570cd1d3",

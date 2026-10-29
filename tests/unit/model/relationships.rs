@@ -101,7 +101,9 @@ fn rendered_relationship_provenance_preserves_redacted_change_details() {
         .find(|r| r["type"] == "aws_route_table_association")
         .unwrap();
     helper["action_reason"] = serde_json::json!("replace_because_cannot_update");
-    helper["change"] = serde_json::json!({"actions":["forget"],"importing":{"id":"PRIVATE_IMPORT"},"replace_paths":[["subnet_id"]]});
+    helper["change"]["actions"] = serde_json::json!(["forget"]);
+    helper["change"]["importing"] = serde_json::json!({"id":"PRIVATE_IMPORT"});
+    helper["change"]["replace_paths"] = serde_json::json!([["subnet_id"]]);
     let mut graph = crate::semantic::transform(&crate::plan::parse(&input.to_string()).unwrap());
     let RelationshipProvenance::Resource { change, .. } =
         &mut graph.0.relationships[0].provenance[0]

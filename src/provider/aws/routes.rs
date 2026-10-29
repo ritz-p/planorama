@@ -96,6 +96,21 @@ pub(super) fn target(raw: &Input, route: usize) -> Result<usize, Diagnostic> {
             Reason::UnsupportedRouteTarget,
         )
     })?;
+    if matches!(
+        reference.attribute.as_str(),
+        "vpc_endpoint_id" | "core_network_arn" | "odb_network_arn"
+    ) {
+        return if super::service_references::verified(raw, reference) {
+            Ok(reference.sources[0])
+        } else {
+            Err(failure(
+                raw,
+                route,
+                &reference.attribute,
+                Reason::UnprovenEndpointValue,
+            ))
+        };
+    }
     endpoint(raw, route, reference, kinds)
 }
 
@@ -109,6 +124,9 @@ fn target_types(attribute: &str) -> Option<&'static [&'static str]> {
         "egress_only_gateway_id" => &["aws_egress_only_internet_gateway"],
         "carrier_gateway_id" => &["aws_ec2_carrier_gateway"],
         "local_gateway_id" => &["aws_ec2_local_gateway"],
+        "vpc_endpoint_id" => &["aws_vpc_endpoint"],
+        "core_network_arn" => &["aws_networkmanager_core_network"],
+        "odb_network_arn" => &["aws_odb_network"],
         _ => return None,
     })
 }
@@ -121,6 +139,14 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
         {
             graph.nodes[index].routes.inline = !node.routes.entries.is_empty();
             for entry in &mut graph.nodes[index].routes.entries {
+                if matches!(
+                    entry.target_attribute.as_deref(),
+                    Some("vpc_endpoint_id" | "core_network_arn" | "odb_network_arn")
+                ) {
+                    entry.target = None;
+                    entry.target_kind = None;
+                    continue;
+                }
                 let resolved = entry
                     .target
                     .as_ref()
@@ -138,6 +164,34 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
                     entry.target_kind = Some(target.resource_type.clone());
                 } else {
                     entry.target = None;
+                }
+            }
+            if graph.nodes[index].routes.entries.len() == 1 {
+                let refs = raw
+                    .attributes
+                    .iter()
+                    .filter(|r| {
+                        r.target == index
+                            && matches!(
+                                r.attribute.as_str(),
+                                "route.vpc_endpoint_id"
+                                    | "route.core_network_arn"
+                                    | "route.odb_network_arn"
+                            )
+                            && super::service_references::verified(raw, r)
+                    })
+                    .collect::<Vec<_>>();
+                if let [r] = refs.as_slice() {
+                    if let [source] = r.sources.as_slice() {
+                        let entry = &mut graph.nodes[index].routes.entries[0];
+                        if entry.target_attribute.as_deref() != r.attribute.strip_prefix("route.") {
+                            continue;
+                        }
+                        entry.target = raw.nodes[*source].entity.provenance.first().cloned();
+                        entry.target_kind = Some(raw.nodes[*source].resource_type.clone());
+                        entry.target_attribute =
+                            r.attribute.strip_prefix("route.").map(str::to_owned);
+                    }
                 }
             }
         }

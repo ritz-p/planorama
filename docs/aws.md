@@ -1792,7 +1792,8 @@ Examples: [security-groups.svg](../examples/security-groups.svg),
 
 | Resource | Endpoint attributes | Relationship |
 | --- | --- | --- |
-| `aws_route_table_association` | `subnet_id`, `route_table_id` | Subnet ↔ Route Table |
+| `aws_route_table_association` | exactly one `subnet_id` / `gateway_id`, `route_table_id` | Subnet or Internet/VPN Gateway ↔ Route Table |
+| `aws_main_route_table_association` | `vpc_id`, `route_table_id` | VPC ↔ Main Route Table |
 | `aws_volume_attachment` | `instance_id`, `volume_id`, with known ID proof | EC2 Instance ↔ EBS Volume |
 | `aws_lb_target_group_attachment` | `target_group_arn`, `target_id` | Target Group ↔ EC2 Instance |
 | `aws_vpc_endpoint_route_table_association` | `vpc_endpoint_id`, `route_table_id` | VPC Endpoint ↔ Route Table |
@@ -1802,6 +1803,10 @@ statically and uniquely resolved and the helper has exactly those two incident
 dependencies. Extra consumers/dependencies, data helpers and unsupported target
 types leave the card visible. Every lowered edge retains its source address,
 action and lifecycle metadata. Parallel associations remain distinct.
+
+Route-table associations additionally require matching known endpoint values,
+compatible scope, current managed endpoints and common known VPC context.
+Deleted helpers remain cards. See the [typed route contracts](routes.md#typed-route-references-897).
 
 `aws_route` remains a graph node and uses verified [Route Table child-card ownership](routes.md).
 Other Association-role resources remain cards. Examples:

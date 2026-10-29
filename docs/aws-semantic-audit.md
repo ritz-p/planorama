@@ -275,8 +275,9 @@ Contract distinctions checked:
   Secondary RDMA networks/subnets are distinct from ordinary VPC/subnet types.
 - Route-table `route` and SG inline rules are attribute-as-blocks set objects;
   default ACL rules are actual set blocks. Route `instance_id` is computed.
-  New endpoint/core-network/ODB next hops and gateway table associations remain
-  missing. `aws_vpc_endpoint_subnet_association` has an Association classification
+  Endpoint/core-network/ODB next hops and gateway/main table associations now have
+  bounded [#897 contracts](routes.md#typed-route-references-897).
+  `aws_vpc_endpoint_subnet_association` has an Association classification
   but no lowering rule. SG exclusivity sets contain rule IDs, not SG IDs; legacy
   multi-CIDR rules are discouraged but not aliases of modern one-rule resources.
 - PrivateLink supports Gateway, Interface, GatewayLoadBalancer, Resource and

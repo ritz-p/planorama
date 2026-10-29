@@ -10,6 +10,9 @@ use serde_json::Value;
 pub(super) mod tests;
 
 pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
+    if let Some(label) = super::vpc_routes::label(resource, attribute) {
+        return Some(label);
+    }
     if let Some(label) = super::autoscaling_network::label(resource, attribute) {
         return Some(label);
     }
@@ -508,6 +511,7 @@ pub(crate) fn annotate(
         }
     }
     super::streaming::annotate(nodes, references, evidence);
+    super::vpc_routes::annotate(nodes, references, evidence);
     super::databases::annotate(nodes, references, evidence);
     super::apprunner::annotate(nodes, references, evidence);
     super::sagemaker::annotate(nodes, references, evidence);
@@ -536,6 +540,12 @@ pub(crate) fn annotate(
 
 pub(super) fn verified(raw: &Input, reference: &AttributeReference) -> bool {
     reference.service_reference_verified
+        && (super::vpc_routes::label(
+            &raw.nodes[reference.target].resource_type,
+            &reference.attribute,
+        )
+        .is_none()
+            || super::vpc_routes::bindings(raw, reference))
         && (super::autoscaling_network::label(
             &raw.nodes[reference.target].resource_type,
             &reference.attribute,

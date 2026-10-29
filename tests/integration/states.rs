@@ -88,7 +88,13 @@ fn relationship_indexes_fit_inside_each_named_state_and_outer_canvas() {
                 .descendants()
                 .filter(|n| n.attribute("data-relationship-entry").is_some())
                 .count(),
-            3
+            2
+        );
+        assert!(
+            nested
+                .descendants()
+                .any(|n| n.attribute("data-terraform-address")
+                    == Some("aws_route_table_association.main"))
         );
         for marker in nested
             .descendants()

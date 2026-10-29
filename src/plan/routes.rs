@@ -153,7 +153,7 @@ fn inline_entry(
         .into_iter()
         .flatten()
         .filter(|(name, value)| {
-            name.ends_with("_id")
+            (name.ends_with("_id") || name.ends_with("_arn"))
                 && name.as_str() != "destination_prefix_list_id"
                 && !value.is_null()
                 && value.as_str() != Some("")

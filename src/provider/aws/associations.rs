@@ -25,6 +25,9 @@ pub(super) fn rule(resource_type: &str) -> Option<[(&'static str, &'static str);
             ("subnet_id", "aws_subnet"),
             ("route_table_id", "aws_route_table"),
         ]),
+        "aws_main_route_table_association" => {
+            Some([("vpc_id", "aws_vpc"), ("route_table_id", "aws_route_table")])
+        }
         "aws_lb_target_group_attachment" => Some([
             ("target_group_arn", "aws_lb_target_group"),
             ("target_id", "aws_instance"),
@@ -54,16 +57,23 @@ pub(super) fn lower(raw: &Input) -> Graph {
         {
             continue;
         }
-        let endpoints = rule(&node.resource_type).and_then(
-            |[(from_attribute, from_type), (to_attribute, to_type)]| {
-                endpoint(raw, index, from_attribute, from_type).zip(endpoint(
-                    raw,
-                    index,
-                    to_attribute,
-                    to_type,
-                ))
-            },
-        );
+        let endpoints = if matches!(
+            node.resource_type.as_str(),
+            "aws_route_table_association" | "aws_main_route_table_association"
+        ) {
+            super::vpc_routes::association(raw, index)
+        } else {
+            rule(&node.resource_type).and_then(
+                |[(from_attribute, from_type), (to_attribute, to_type)]| {
+                    endpoint(raw, index, from_attribute, from_type).zip(endpoint(
+                        raw,
+                        index,
+                        to_attribute,
+                        to_type,
+                    ))
+                },
+            )
+        };
         if let Some((from, to)) = endpoints {
             let incident = &incident_edges[index];
             if can_lower(index, from, to, incident) {
@@ -176,6 +186,9 @@ pub(super) fn endpoint_type_matches(
     actual: &str,
 ) -> bool {
     super::aliases::canonical(actual) == super::aliases::canonical(expected)
+        || (resource == "aws_route_table_association"
+            && attribute == "gateway_id"
+            && actual == "aws_vpn_gateway")
         || (resource == "aws_wafv2_web_acl_association"
             && attribute == "resource_arn"
             && actual == "aws_api_gateway_stage")

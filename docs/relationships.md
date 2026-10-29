@@ -172,10 +172,10 @@ scope appended to each linked endpoint. Region, AWS Global, unknown and not
 applicable use the common scope labels; known accounts are included. The
 relationship itself never inherits an endpoint's scope. Missing endpoints remain
 unavailable text without a scope claim or link. Multiple provenance sources keep
-their own scope evidence and measured lines. See the synthetic
-[cross-region example](../examples/relationship-scopes.svg); its JSON-only input
-leaves accounts unknown. It illustrates
-scope presentation, not deployability or network reachability.
+their own scope evidence and measured lines. The synthetic
+[cross-region example](../examples/relationship-scopes.svg) retains the route-table
+association helper because its endpoints have incompatible scopes. Its JSON-only
+input leaves accounts unknown; scope presentation does not establish reachability.
 Entry targets derive from provenance and endpoint identities, independently of
 the visible number, and named states namespace all links and path memberships.
 The hierarchy and all wrapped lines are measured before packing cards.

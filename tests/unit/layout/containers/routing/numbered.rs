@@ -129,7 +129,7 @@ fn packed_siblings_leave_room_for_both_numbered_terminals() {
 #[test]
 fn numbered_relationships_choose_facing_source_and_target_sides() {
     use crate::layout::Point;
-    let graph = crate::semantic::transform(
+    let mut graph = crate::semantic::transform(
         &crate::plan::parse(include_str!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/tests/fixtures/association-plan.json"
@@ -137,6 +137,9 @@ fn numbered_relationships_choose_facing_source_and_target_sides() {
         .unwrap(),
     )
     .0;
+    for node in &mut graph.nodes {
+        node.entity.scope = None;
+    }
     for (positions, sides) in [
         ([(100, 100), (600, 100)], [Side::Right, Side::Left]),
         ([(600, 100), (100, 100)], [Side::Left, Side::Right]),
@@ -204,17 +207,16 @@ fn independent_associations(count: usize) -> Graph {
             }}),
         ]);
     }
-    crate::semantic::transform(
-        &crate::plan::parse(
-            &serde_json::json!({
-                "format_version": "1.2", "resource_changes": changes,
-                "configuration": {"root_module": {"resources": resources}}
-            })
-            .to_string(),
-        )
-        .unwrap(),
-    )
-    .0
+    let mut input = serde_json::json!({
+        "format_version": "1.2", "resource_changes": changes,
+        "configuration": {"root_module": {"resources": resources}}
+    });
+    crate::association_evidence::known_associations(&mut input);
+    let mut graph = crate::semantic::transform(&crate::plan::parse(&input.to_string()).unwrap()).0;
+    for node in &mut graph.nodes {
+        node.entity.scope = None;
+    }
+    graph
 }
 
 #[test]
