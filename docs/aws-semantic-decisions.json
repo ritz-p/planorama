@@ -43910,7 +43910,7 @@
       "status": "Partial",
       "priority": "P1",
       "issue": 907,
-      "gap": "#715 audit: Partial: existing subnets/SG and incoming WAF/CloudFront/Route53 references retained. Missing: subnet_mapping, EIP allocation/IPAM pool and enabled log bucket references. Follow-up #907. Six dimensions and pinned fields: aws-semantic-decisions.json.",
+      "gap": "#715 audit: Implemented #907: element-correlated subnet mappings, public NLB EIP allocations, application LB IPv4 IPAM pool, and enabled typed log-bucket references. Existing subnet/SG and incoming WAF/CloudFront/Route53 contracts remain unchanged.",
       "review": {
         "issue": 715,
         "implementationCommit": "f7f5d8bfb39ded416c786a21037935232b8f1eda",
@@ -43932,8 +43932,8 @@
         ],
         "placement": "Supported: retain Spatial Connector for aws_lb; this presentation alone does not prove relationships.",
         "ownership": "Not applicable: independent shared identity; consumer references do not establish exclusive ownership or embedding.",
-        "network": "Partial: containment/spanning.rs handles subnets; security_groups.rs handles SG edges. Missing: subnet_mapping and complete known-value collection proof; no address-string placement.",
-        "references": "Partial: existing subnets/SG and incoming WAF/CloudFront/Route53 references retained. Missing: subnet_mapping, EIP allocation/IPAM pool and enabled log bucket references.",
+        "network": "Supported: explicit complete subnet_mapping sets with matching known subnet IDs, compatible scope and one known VPC feed existing spanning containment. Legacy subnets/security_groups proof strength is unchanged.",
+        "references": "Supported: Implemented #907: subnet_mapping.subnet_id and allocation_id are correlated per configured element despite set reordering; application IPAM IDs and enabled log bucket id/bucket outputs require exact known values. Existing incoming WAF/CloudFront/Route53 rules are preserved.",
         "scope": "Partial: Regional (conditional) eligibility in scope.rs; account requires provider evidence. Require known resource/provider region and compatible account/state; names do not supply scope.",
         "summaries": "Intentionally unsupported: addresses, log prefixes and effective reachability; no arbitrary aws_lb attribute summary.",
         "officialDocumentation": "website/docs/r/lb.html.markdown",
@@ -44024,7 +44024,9 @@
           "tests/unit/aws_aliases.rs",
           "tests/unit/semantic/components.rs",
           "tests/unit/semantic/associations.rs",
-          "tests/unit/semantic/spanning.rs"
+          "tests/unit/semantic/spanning.rs",
+          "src/provider/aws/elbv2_network.rs",
+          "tests/unit/semantic/elbv2_network.rs"
         ],
         "managedDataContract": "No runtime alias. Same-name data selectors: arn (optional/computed), id (optional/computed), name (optional/computed), region (optional/computed), tags (optional/computed). Lookup outputs are not managed configuration or ownership proof.",
         "dataContracts": {
@@ -48321,7 +48323,7 @@
       "status": "Partial",
       "priority": "P1",
       "issue": 907,
-      "gap": "#715 audit: Partial: existing subnets/SG and incoming WAF/CloudFront/Route53 references retained. Missing: subnet_mapping, EIP allocation/IPAM pool and enabled log bucket references. Follow-up #907. Six dimensions and pinned fields: aws-semantic-decisions.json.",
+      "gap": "#715 audit: Implemented #907: element-correlated subnet mappings, public NLB EIP allocations, application LB IPv4 IPAM pool, and enabled typed log-bucket references. Existing subnet/SG and incoming WAF/CloudFront/Route53 contracts remain unchanged.",
       "review": {
         "issue": 715,
         "implementationCommit": "f7f5d8bfb39ded416c786a21037935232b8f1eda",
@@ -48343,8 +48345,8 @@
         ],
         "placement": "Supported: retain Spatial Connector for aws_alb; this presentation alone does not prove relationships.",
         "ownership": "Not applicable: independent shared identity; consumer references do not establish exclusive ownership or embedding.",
-        "network": "Partial: containment/spanning.rs handles subnets; security_groups.rs handles SG edges. Missing: subnet_mapping and complete known-value collection proof; no address-string placement.",
-        "references": "Partial: existing subnets/SG and incoming WAF/CloudFront/Route53 references retained. Missing: subnet_mapping, EIP allocation/IPAM pool and enabled log bucket references.",
+        "network": "Supported: explicit complete subnet_mapping sets with matching known subnet IDs, compatible scope and one known VPC feed existing spanning containment. Legacy subnets/security_groups proof strength is unchanged.",
+        "references": "Supported: Implemented #907: subnet_mapping.subnet_id and allocation_id are correlated per configured element despite set reordering; application IPAM IDs and enabled log bucket id/bucket outputs require exact known values. Existing incoming WAF/CloudFront/Route53 rules are preserved.",
         "scope": "Partial: Regional (conditional) eligibility in scope.rs; account requires provider evidence. Require known resource/provider region and compatible account/state; names do not supply scope.",
         "summaries": "Intentionally unsupported: addresses, log prefixes and effective reachability; no arbitrary aws_alb attribute summary.",
         "officialDocumentation": "website/docs/r/lb.html.markdown",
@@ -48435,7 +48437,9 @@
           "tests/unit/aws_aliases.rs",
           "tests/unit/semantic/components.rs",
           "tests/unit/semantic/associations.rs",
-          "tests/unit/semantic/spanning.rs"
+          "tests/unit/semantic/spanning.rs",
+          "src/provider/aws/elbv2_network.rs",
+          "tests/unit/semantic/elbv2_network.rs"
         ],
         "managedDataContract": "Verified managed alias of aws_lb; preserve original identity. Registered lookup alias only for LB/listener/target group. Same-name data selectors: arn (optional/computed), id (optional/computed), name (optional/computed), region (optional/computed), tags (optional/computed). Lookup outputs are not managed configuration or ownership proof.",
         "dataContracts": {

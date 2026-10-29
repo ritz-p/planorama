@@ -195,7 +195,7 @@ do not invent a common container.
 
 | Resource | Reference path | Placement |
 | --- | --- | --- |
-| Load Balancer | `subnets` | Single subnet or nearest common ancestor |
+| Load Balancer | `subnets`; verified `subnet_mapping.subnet_id` | Single subnet or nearest common ancestor |
 | ECS Service | `network_configuration.subnets` | Single subnet or nearest common ancestor |
 | RDS Instance / Cluster | `db_subnet_group_name` → group's `subnet_ids` | Single subnet or nearest common ancestor |
 | DB / ElastiCache Subnet Group | `subnet_ids` | Common VPC, including a single-subnet group |
@@ -322,3 +322,35 @@ Deleted helpers remain cards. See the [typed route contracts](routes.md#typed-ro
 `aws_route` remains a graph node and uses verified [Route Table child-card ownership](routes.md).
 Other Association-role resources remain cards. Examples:
 [association.svg](../examples/association.svg), [aws-relationships.svg](../examples/aws-relationships.svg).
+
+## ELBv2 subnet mappings and destinations (#907)
+
+Managed `aws_lb` and verified `aws_alb` aliases support complete configured
+`subnet_mapping` sets. Each `subnet_id` must reference one managed `aws_subnet.id`
+with a matching known value, compatible scope and the same known VPC as the other
+mapped subnets. Configuration elements are correlated by unique subnet IDs rather
+than evaluated set order. Mapping relationships use the existing spanning
+placement rules; legacy `subnets` and `security_groups` contracts are unchanged.
+Both input forms configured together, partial sets, ambiguous elements and
+unknown/sensitive endpoint values retain conservative fallback.
+
+For a known internet-facing `network` LB, each configured mapping `allocation_id`
+must reference a managed `aws_eip.allocation_id` in the same mapping element and
+scope, with known EIP `domain=vpc`. `id`, `association_id`, literal allocation IDs
+and computed service-created interfaces do not prove this relationship. EIPs
+remain independent. Optional allocations may be absent on other mapped subnets.
+
+An `application` LB's singleton `ipam_pools.ipv4_ipam_pool_id` may reference
+`aws_vpc_ipam_pool.id`. Singleton `access_logs`, `connection_logs` and
+`health_check_logs` blocks require known `enabled=true` and an explicit bucket
+reference matching `aws_s3_bucket.bucket` or `id`. Access logs accept application
+or network LBs; connection and health-check logs accept application LBs only.
+No omitted default, unknown flag, prefix, policy or ARN-string search establishes
+a log destination. Shared pools/buckets keep independent identities and scope.
+
+All new relationships require current managed endpoints, complete unique explicit
+references and compatible provider/account/region. Filtering, named-state identity,
+deleted/deposed objects, sensitive values and data-mode boundaries remain intact.
+No health, traffic, successful log delivery or effective permission is inferred.
+Contracts follow AWS Provider 6.70.0 schema and `load_balancer.go` at
+`5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f`.
