@@ -248,7 +248,8 @@ Examples: [security-groups.svg](../examples/security-groups.svg),
 ## ELBv2 certificates and trust stores (#908)
 
 Listeners reference ACM or IAM server certificates by explicit ARN reference and
-matching known value. Listener-certificate helpers additionally prove the listener
+matching known value; existing ACM validation `certificate_arn` references remain
+supported. Listener-certificate helpers additionally prove the listener
 ARN; helpers with only those two dependencies become associations with original
 actions and provenance. Otherwise they remain Logical resources. Certificates stay
 independent, and Global IAM scope never changes the listener's regional scope.
@@ -281,6 +282,7 @@ follow AWS Provider 6.70.0 schemas and official sources in the semantic decision
 | `aws_volume_attachment` | `instance_id`, `volume_id`, with known ID proof | EC2 Instance ↔ EBS Volume |
 | `aws_lb_target_group_attachment` | `target_group_arn`, `target_id` | Target Group ↔ EC2 Instance / Lambda Function / Application Load Balancer |
 | `aws_lb_listener_certificate` | `listener_arn`, `certificate_arn` | Listener ↔ ACM / IAM Server Certificate |
+| `aws_vpc_endpoint_route_table_association` | `vpc_endpoint_id`, `route_table_id` | VPC Endpoint ↔ Route Table |
 
 Target-group attachments (including verified `aws_alb_*` aliases) require unique
 explicit managed references and matching known evaluated values. The group's known
@@ -289,12 +291,12 @@ explicit managed references and matching known evaluated values. The group's kno
 account and region must be compatible. Unknown/sensitive values, deleted/deposed
 objects, data sources, dynamic selection and IP targets do not prove an attachment.
 An omitted target type is not assumed to be `instance` without its evaluated value.
-Extra dependencies or consumers retain the helper and its verified references.
+Extra dependencies or consumers retain the Logical helper and its verified references.
+Unproven attachments remain in the Logical Resources section, not workload cards.
 Attachments do not establish LB ownership or network containment, and computed
 `load_balancer_arns` is not ownership evidence. Port/AZ values do not establish
 traffic, health or reachability. The contract follows the pinned AWS Provider
 6.70.0 target-group and attachment schemas recorded in the semantic decision ledger.
-| `aws_vpc_endpoint_route_table_association` | `vpc_endpoint_id`, `route_table_id` | VPC Endpoint ↔ Route Table |
 
 These managed helper cards become Association edges only when both endpoints are
 statically and uniquely resolved and the helper has exactly those two incident

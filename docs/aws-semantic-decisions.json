@@ -44270,7 +44270,7 @@
       "status": "Partial",
       "priority": "P1",
       "issue": 910,
-      "gap": "#715 audit: Implemented #910: explicit unique managed target-group ARN/id and target references require matching known values, compatible provider/account/region and current lifecycle. Known target_type selects instance ID, Lambda function ARN or application LB ARN; IP targets remain unproven. Additional dependencies retain the helper and verified references. No load_balancer_arns ownership or target subnet inference.",
+      "gap": "#715 audit: Implemented #910: explicit unique managed target-group ARN/id and target references require matching known values, compatible provider/account/region and current lifecycle. Known target_type selects instance ID, Lambda function ARN or application LB ARN; IP targets remain unproven. Additional dependencies retain the helper and verified references. No load_balancer_arns ownership or target subnet inference. Unproven helpers stay Logical.",
       "review": {
         "issue": 715,
         "implementationCommit": "f7f5d8bfb39ded416c786a21037935232b8f1eda",
@@ -44281,7 +44281,7 @@
           "availability_zone",
           "port"
         ],
-        "placement": "Supported: retain Spatial Association for aws_lb_target_group_attachment; this presentation alone does not prove relationships.",
+        "placement": "Supported: Association; proven attachments become relationships. Unproven helpers retain identity, actions and references in Logical Resources, without workload cards or inferred containment.",
         "ownership": "Not applicable: attachment is a relation, not ownership of the target.",
         "network": "Not applicable: logical service configuration has no subnet attachment contract; references do not imply network containment.",
         "references": "Supported: Implemented #910: explicit unique managed target-group ARN/id and target references require matching known values, compatible provider/account/region and current lifecycle. Known target_type selects instance ID, Lambda function ARN or application LB ARN; IP targets remain unproven. Additional dependencies retain the helper and verified references. No load_balancer_arns ownership or target subnet inference.",
@@ -48664,7 +48664,7 @@
       "status": "Partial",
       "priority": "P1",
       "issue": 910,
-      "gap": "#715 audit: Implemented #910: explicit unique managed target-group ARN/id and target references require matching known values, compatible provider/account/region and current lifecycle. Known target_type selects instance ID, Lambda function ARN or application LB ARN; IP targets remain unproven. Additional dependencies retain the helper and verified references. No load_balancer_arns ownership or target subnet inference.",
+      "gap": "#715 audit: Implemented #910: explicit unique managed target-group ARN/id and target references require matching known values, compatible provider/account/region and current lifecycle. Known target_type selects instance ID, Lambda function ARN or application LB ARN; IP targets remain unproven. Additional dependencies retain the helper and verified references. No load_balancer_arns ownership or target subnet inference. Unproven helpers stay Logical.",
       "review": {
         "issue": 715,
         "implementationCommit": "f7f5d8bfb39ded416c786a21037935232b8f1eda",
@@ -48675,7 +48675,7 @@
           "availability_zone",
           "port"
         ],
-        "placement": "Supported: retain Spatial Association for aws_alb_target_group_attachment; this presentation alone does not prove relationships.",
+        "placement": "Supported: Association; proven attachments become relationships. Unproven helpers retain identity, actions and references in Logical Resources, without workload cards or inferred containment.",
         "ownership": "Not applicable: attachment is a relation, not ownership of the target.",
         "network": "Not applicable: logical service configuration has no subnet attachment contract; references do not imply network containment.",
         "references": "Supported: Implemented #910: explicit unique managed target-group ARN/id and target references require matching known values, compatible provider/account/region and current lifecycle. Known target_type selects instance ID, Lambda function ARN or application LB ARN; IP targets remain unproven. Additional dependencies retain the helper and verified references. No load_balancer_arns ownership or target subnet inference.",
