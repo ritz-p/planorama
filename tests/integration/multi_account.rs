@@ -30,7 +30,16 @@ fn multi_account_inputs_and_committed_topology_are_current() {
         main.descendants()
             .filter(|n| n.attribute("data-relationship-entry").is_some())
             .count(),
-        38
+        6
+    );
+    assert_eq!(
+        main.descendants()
+            .filter(|n| {
+                n.attribute("data-terraform-address")
+                    .is_some_and(|a| a.contains(".aws_route_table_association."))
+            })
+            .count(),
+        32
     );
     assert_eq!(
         main.descendants()
