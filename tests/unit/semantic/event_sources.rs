@@ -315,13 +315,7 @@ fn event_sources_require_complete_unique_matching_source_and_function_evidence_w
                 .any(|r| r.attribute == attribute && !r.complete)
         );
     }
-    for resource_type in [
-        "aws_kinesis_stream_consumer",
-        "aws_dynamodb_table",
-        "aws_msk_cluster",
-        "aws_mq_broker",
-        "aws_docdb_cluster",
-    ] {
+    for resource_type in ["aws_kinesis_stream_consumer", "aws_dynamodb_table"] {
         let mut input = fixture();
         input["resource_changes"][1]["type"] = json!(resource_type);
         assert!(

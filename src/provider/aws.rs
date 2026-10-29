@@ -34,6 +34,7 @@ mod iam;
 mod icons;
 mod lambda;
 pub(crate) mod lambda_config;
+pub(crate) mod lambda_events;
 mod members;
 mod messaging;
 mod monitoring;

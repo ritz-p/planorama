@@ -24,6 +24,11 @@ fn endpoint(raw: &Input, index: usize, attribute: &str) -> Option<usize> {
         return None;
     };
     let node = &raw.nodes[*source];
+    if raw.nodes[index].resource_type == "aws_lambda_event_source_mapping"
+        && super::lambda_events::extended(raw, index)
+    {
+        return super::lambda_events::endpoint(raw, reference).then_some(*source);
+    }
     (reference.complete
         && reference.instances_explicit
         && reference.issues.is_empty()
@@ -158,7 +163,12 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
                 issues: Default::default(),
             });
         }
-        if let Some((from, to)) = from.zip(to) {
+        let edge_to = if kind == EdgeKind::EventSource {
+            to.and_then(|to| super::lambda_events::function(raw, to))
+        } else {
+            to
+        };
+        if let Some((from, to)) = from.zip(edge_to) {
             graph.edges.push(Edge {
                 from,
                 to,

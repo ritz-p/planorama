@@ -26,6 +26,8 @@ pub struct AttributeReference {
     pub messaging_endpoint_verified: bool,
     pub monitoring_verified: bool,
     pub source_attributes: std::collections::BTreeSet<String>,
+    pub source_attributes_by_instance:
+        std::collections::BTreeMap<usize, std::collections::BTreeSet<String>>,
     pub service_reference_verified: bool,
     pub service_reference_owner_account: Option<super::AwsAccountScope>,
     pub ids_only: bool,

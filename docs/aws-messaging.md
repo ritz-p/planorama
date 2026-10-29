@@ -268,10 +268,55 @@ own scope; the mapping's provider binding does not assign scope to either endpoi
 
 The relationship describes configured event consumption, not active mapping state,
 processing success, access permissions, reachability or delivery guarantees.
-DynamoDB Streams, Kinesis consumers, MSK, Kafka, MQ and DocumentDB require separate explicit
-type, endpoint and direction rules before they can produce event-source edges.
+The additional managed-source and qualified-function contracts are described below.
+Kinesis consumers and Kafka URLs do not identify managed event-source endpoints.
 See [the event-source example](../examples/event-sources.svg), including duplicate
 endpoints, a cross-region data queue, an unsupported source and a literal fallback.
+
+### Additional managed sources and configuration (#950)
+
+The extension requires current, non-deleted managed endpoints with complete unique
+Terraform provenance, matching known values and compatible provider/account/region
+evidence. It does not broaden the legacy SQS/Kinesis data/deletion contract above.
+New source types use DynamoDB Table `stream_arn` (never table `arn`), MSK Cluster or
+Serverless Cluster `arn`, MQ Broker `arn`, and DocumentDB Cluster `arn`.
+Conflicting self-managed Kafka, managed Kafka and DocumentDB source settings cannot
+prove these endpoints. Unknown, sensitive, literal-only or ambiguous values retain
+the mapping's Logical row and unresolved context.
+
+Function `qualified_arn` must equal the same Function's `arn` plus its known positive
+numeric `version`. An Alias `arn` must agree with its name and the ARN of its
+explicitly verified parent Function. Neither qualifier creates an extra Terraform
+resource or merges the Alias into its Function. The mapping links to the Alias;
+its event-source edge ends at the verified parent Function's card.
+New references remain state-local;
+filtered destinations become unavailable. Replacement and moved mapping identities
+retain their actions and exactly-once coverage.
+
+| Mapping input | Verified configuration reference |
+| --- | --- |
+| `destination_config.on_failure.destination_arn` | SQS/SNS ARN for proven DynamoDB/Kinesis/Kafka sources; S3 bucket ARN for Kafka only |
+| `kms_key_arn` | KMS Key `arn`, describing configured filter encryption, not encryption effectiveness |
+| `source_access_configuration.uri` | Secret or Secret Version `arn` for BASIC_AUTH, SASL_SCRAM_256_AUTH, SASL_SCRAM_512_AUTH, CLIENT_CERTIFICATE_TLS_AUTH and SERVER_ROOT_CA_CERTIFICATE |
+| `source_access_configuration.uri` | Subnet `id` with the exact `subnet:` prefix for VPC_SUBNET; Security Group `id` with `security_group:` for VPC_SECURITY_GROUP |
+| `amazon_managed_kafka_event_source_config.schema_registry_config.schema_registry_uri` | Glue Registry `arn` with a proven MSK source |
+| `self_managed_kafka_event_source_config.schema_registry_config.schema_registry_uri` | Glue Registry `arn` with explicit self-managed Kafka configuration |
+
+Access configuration is a set of typed URI entries: every known entry must match
+exactly one compatible referenced instance and the correct output attribute, and
+every referenced instance must be represented. Mixed secret/subnet/SG collections
+are checked per instance. Unknown types, VIRTUAL_HOST, incomplete sets and duplicate
+entries remain unresolved. These references do not place the Function or mapping
+inside poller subnets or imply ownership, permissions or network reachability.
+Confluent URLs, Kafka broker URLs, queue/topic names, schema bodies and credentials
+remain opaque. No additional summaries are inferred.
+
+Shapes and identities were checked against the pinned AWS Provider 6.70.0
+[schema](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/internal/service/lambda/event_source_mapping.go)
+and [resource documentation](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/website/docs/r/lambda_event_source_mapping.html.markdown).
+Nested configuration blocks are singleton lists; access configuration is a set.
+The [SVG](../examples/lambda-events.svg) / [HTML](../examples/lambda-events.html)
+exercise each new source and configuration family in native/Wasm parity checks.
 
 ## Kinesis Data Streams
 

@@ -186,6 +186,9 @@ Contract distinctions checked:
   require typed source contracts; poller access and failure destinations do not
   imply function network containment. Kafka URLs, topic/queue names and schema
   payloads remain opaque.
+  [#950](aws-messaging.md#additional-managed-sources-and-configuration-950) subsequently
+  implements these bounded managed-source and configuration references while
+  preserving the legacy SQS/Kinesis contract.
 - REST integration `integration_target` supports ALB/NLB with VPC Link V2;
   its `uri` then carries Host context rather than backend identity. Legacy REST
   VPC links use one NLB ARN. V2 private integration uses listener or Cloud Map

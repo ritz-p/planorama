@@ -5871,7 +5871,7 @@
       "status": "Partial",
       "priority": "P1",
       "issue": 950,
-      "gap": "#714 audit: Partial: #394/#502 lower SQS/Kinesis to Function with provenance; missing DynamoDB stream_arn, MSK/MQ/DocumentDB typed sources, qualified functions and typed failure/KMS/auth/registry references. Kafka URLs and queue/topic names are not managed endpoints. Follow-up #950. Six dimensions and pinned field contracts recorded here.",
+      "gap": "Implemented #950: current compatible managed DynamoDB stream_arn, MSK/Serverless, MQ and DocumentDB sources; qualified Function/Alias identity; typed failure, KMS, complete access-configuration and Glue registry references. Existing #394/#502 SQS/Kinesis data/deletion contracts remain. Kafka URLs, queue/topic names, payloads and runtime outcomes remain opaque. See aws-messaging.md#additional-managed-sources-and-configuration-950; the #714 review is historical.",
       "review": {
         "issue": 714,
         "implementationCommit": "80b70c8fec8b5a3c75b0457bf0f4061fccea441e",
