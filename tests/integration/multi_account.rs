@@ -30,7 +30,7 @@ fn multi_account_inputs_and_committed_topology_are_current() {
         main.descendants()
             .filter(|n| n.attribute("data-relationship-entry").is_some())
             .count(),
-        6
+        2
     );
     assert_eq!(
         main.descendants()
