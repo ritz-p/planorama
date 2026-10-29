@@ -328,6 +328,13 @@ fn gateway_association_pairs_preserve_resource_action_coverage() {
         let g = semantic::transform(&plan::parse(&v.to_string()).unwrap());
         assert_eq!(g.coverage.selected.resources, 3);
         assert_eq!(g.nodes.len(), 2, "{kind} {field}");
+        if kind == "aws_internet_gateway_attachment" {
+            assert!(
+                !semantic::diagnostics::collect(&plan::parse(&v.to_string()).unwrap())
+                    .iter()
+                    .any(|d| d.address == "aws_internet_gateway.endpoint")
+            );
+        }
         assert_eq!(
             g.edges
                 .iter()
@@ -352,4 +359,21 @@ fn gateway_association_pairs_preserve_resource_action_coverage() {
         assert_eq!(g.nodes.len(), 3);
         assert_eq!(g.coverage.selected.resources, 3);
     }
+}
+
+#[test]
+fn internet_gateway_only_diagnoses_configured_vpc_references() {
+    let mut v = input("aws_internet_gateway", "vpc_id", "aws_vpc", "id");
+    let diagnostics = |v: &Value| {
+        semantic::diagnostics::collect(&plan::parse(&v.to_string()).unwrap())
+            .into_iter()
+            .filter(|d| d.address == "aws_internet_gateway.main" && d.attribute == "vpc_id")
+            .collect::<Vec<_>>()
+    };
+    assert!(diagnostics(&v).is_empty());
+    v["resource_changes"][1]["change"]["after"]["vpc_id"] = "mismatch".into();
+    assert!(!diagnostics(&v).is_empty());
+    v["resource_changes"][1]["change"]["after"] = json!({"id":"igw-main"});
+    v["configuration"]["root_module"]["resources"][1]["expressions"] = json!({});
+    assert!(diagnostics(&v).is_empty());
 }
