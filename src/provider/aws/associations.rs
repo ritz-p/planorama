@@ -85,7 +85,9 @@ pub(super) fn lower(raw: &Input) -> Graph {
         {
             continue;
         }
-        let endpoints = if node.resource_type == "aws_vpc_security_group_vpc_association" {
+        let endpoints = if super::aliases::node_type(node) == "aws_lb_target_group_attachment" {
+            super::elbv2::association(raw, index)
+        } else if node.resource_type == "aws_vpc_security_group_vpc_association" {
             super::security_group_rules::association(raw, index)
         } else if matches!(
             node.resource_type.as_str(),
@@ -231,6 +233,12 @@ pub(super) fn endpoint_type_matches(
     actual: &str,
 ) -> bool {
     super::aliases::canonical(actual) == super::aliases::canonical(expected)
+        || (super::aliases::canonical(resource) == "aws_lb_target_group_attachment"
+            && attribute == "target_id"
+            && matches!(
+                super::aliases::canonical(actual),
+                "aws_lambda_function" | "aws_lb"
+            ))
         || (resource == "aws_route_table_association"
             && attribute == "gateway_id"
             && actual == "aws_vpn_gateway")

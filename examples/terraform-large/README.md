@@ -66,10 +66,11 @@ per card, with full addresses wrapped before horizontal packing. In HTML, number
 selection emphasizes the entry, both badges, endpoints and corresponding path.
 
 The generated plan has 50 resource changes. After omitting two AWS metadata data
-sources, the renderer retains 48 resources and produces 31 spatial cards, 2 embedded
-Route cards, 7 logical resources in 6 group cards within one cyan Logical Resources
-section and 79 relationships. Four route-table associations and four target-group
-attachments become edges.
+sources, the renderer retains 48 resources. Two Route resources embed in their
+route tables and produce directed associations. Route-table associations and the
+four target-group attachments retain their cards because this input lacks the
+known endpoint values required to prove them. Logical resources share the cyan
+Logical Resources section; selected resource counts include embedded resources.
 
 The managed VPC contains four subnet boxes, network policy/route resources, the
 target group, ALB, ECS Service, DB subnet group and RDS workload. EC2 workers sit

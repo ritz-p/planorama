@@ -5,24 +5,30 @@ fn embedded_routes_preserve_room_for_concentrated_numbered_attachments() {
     use serde_json::json;
     let mut input: serde_json::Value =
         serde_json::from_str(include_str!("../../fixtures/routes-plan.json")).unwrap();
+    input["configuration"]["provider_config"] = json!({"aws":{"name":"aws","full_name":"registry.terraform.io/hashicorp/aws","expressions":{"region":{"constant_value":"us-east-1"}}}});
     let mut resources = Vec::new();
     for (address, kind) in [
         ("aws_lb_target_group.app", "aws_lb_target_group"),
         ("aws_instance.worker", "aws_instance"),
     ] {
-        resources
-            .push(json!({"address": address, "type": kind, "change": {"actions": ["create"]}}));
-    }
-    for index in 0..12 {
-        let address = format!("aws_lb_target_group_attachment.worker_{index}");
-        resources.push(json!({"address": address, "type": "aws_lb_target_group_attachment", "change": {"actions": ["create"]}}));
+        resources.push(json!({"address": address, "type": kind, "change": {"actions": ["create"],"after":{"id":"instance","arn":"group","target_type":"instance"}}}));
         input["configuration"]["root_module"]["resources"]
             .as_array_mut()
             .unwrap()
-            .push(json!({"address": address, "expressions": {
-                "target_group_arn": {"references": ["aws_lb_target_group.app.arn"]},
-                "target_id": {"references": ["aws_instance.worker.id"]}
-            }}));
+            .push(json!({"address":address,"provider_config_key":"aws"}));
+    }
+    for index in 0..12 {
+        let address = format!("aws_lb_target_group_attachment.worker_{index}");
+        resources.push(json!({"address": address, "type": "aws_lb_target_group_attachment", "change": {"actions": ["create"],"after":{"target_group_arn":"group","target_id":"instance"}}}));
+        input["configuration"]["root_module"]["resources"]
+            .as_array_mut()
+            .unwrap()
+            .push(
+                json!({"address": address, "provider_config_key":"aws", "expressions": {
+                    "target_group_arn": {"references": ["aws_lb_target_group.app.arn"]},
+                    "target_id": {"references": ["aws_instance.worker.id"]}
+                }}),
+            );
     }
     input["resource_changes"]
         .as_array_mut()

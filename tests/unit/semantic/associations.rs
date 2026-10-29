@@ -190,6 +190,23 @@ fn relationship_input(kind: &str) -> Value {
             }
         }]}}
     });
+    if kind == "aws_lb_target_group_attachment" {
+        input["configuration"]["provider_config"] = json!({"aws":{"name":"aws","full_name":"registry.terraform.io/hashicorp/aws","expressions":{"region":{"constant_value":"us-east-1"}}}});
+        input["configuration"]["root_module"]["resources"][0]["provider_config_key"] = "aws".into();
+        for (index, value) in [
+            (0, json!({"id":"group", "target_type":"instance"})),
+            (1, json!({"id":"instance"})),
+        ] {
+            input["resource_changes"][index]["change"]["after"] = value;
+            let address = input["resource_changes"][index]["address"].clone();
+            input["configuration"]["root_module"]["resources"]
+                .as_array_mut()
+                .unwrap()
+                .push(json!({"address":address,"provider_config_key":"aws"}));
+        }
+        input["resource_changes"][2]["change"]["after"] =
+            json!({"target_group_arn":"group","target_id":"instance"});
+    }
     if kind == "aws_vpc_endpoint_route_table_association" {
         input["configuration"]["provider_config"] = json!({"aws":{"name":"aws","full_name":"registry.terraform.io/hashicorp/aws","expressions":{"region":{"constant_value":"us-east-1"}}}});
         input["configuration"]["root_module"]["resources"][0]["provider_config_key"] = "aws".into();
@@ -223,7 +240,7 @@ fn assert_relationship_actions(kind: &str) {
         let original = raw.clone();
         let graph = semantic::transform(&raw);
         assert_eq!(raw, original);
-        if kind == "aws_vpc_endpoint_route_table_association" && action == Action::Delete {
+        if action == Action::Delete {
             assert_resources_and_edges_preserved(&raw);
             continue;
         }

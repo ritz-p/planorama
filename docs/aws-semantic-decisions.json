@@ -44164,7 +44164,7 @@
       "status": "Partial",
       "priority": "P1",
       "issue": 910,
-      "gap": "#715 audit: Partial: direct vpc_id containment and unambiguously owned forward-action component membership retained. Missing: target-type-qualified attachment extension; computed load_balancer_arns is not configured ownership. Follow-up #910. Six dimensions and pinned fields: aws-semantic-decisions.json.",
+      "gap": "#715 audit: Implemented #910: explicit unique managed target-group ARN/id and target references require matching known values, compatible provider/account/region and current lifecycle. Known target_type selects instance ID, Lambda function ARN or application LB ARN; IP targets remain unproven. Additional dependencies retain the helper and verified references. No load_balancer_arns ownership or target subnet inference.",
       "review": {
         "issue": 715,
         "implementationCommit": "f7f5d8bfb39ded416c786a21037935232b8f1eda",
@@ -44179,7 +44179,7 @@
         "placement": "Supported: retain Spatial Controller for aws_lb_target_group; this presentation alone does not prove relationships.",
         "ownership": "Supported: components.rs includes target group only with complete verified forward ownership by one LB; shared/unproven groups remain independent.",
         "network": "Partial: direct vpc_id reference placement exists; Lambda target groups legitimately omit VPC. Do not inherit target subnet.",
-        "references": "Partial: direct vpc_id containment and unambiguously owned forward-action component membership retained. Missing: target-type-qualified attachment extension; computed load_balancer_arns is not configured ownership.",
+        "references": "Supported: Implemented #910: explicit unique managed target-group ARN/id and target references require matching known values, compatible provider/account/region and current lifecycle. Known target_type selects instance ID, Lambda function ARN or application LB ARN; IP targets remain unproven. Additional dependencies retain the helper and verified references. No load_balancer_arns ownership or target subnet inference.",
         "scope": "Partial: Regional (conditional) eligibility in scope.rs; account requires provider evidence. Require known resource/provider region and compatible account/state; names do not supply scope.",
         "summaries": "Intentionally unsupported: target health, IP target discovery and runtime load distribution; no arbitrary aws_lb_target_group attribute summary.",
         "officialDocumentation": "website/docs/r/lb_target_group.html.markdown",
@@ -44226,7 +44226,9 @@
           "tests/unit/aws_aliases.rs",
           "tests/unit/semantic/components.rs",
           "tests/unit/semantic/associations.rs",
-          "tests/unit/semantic/spanning.rs"
+          "tests/unit/semantic/spanning.rs",
+          "src/provider/aws/elbv2.rs",
+          "tests/unit/semantic/elbv2.rs"
         ],
         "managedDataContract": "No runtime alias. Same-name data selectors: arn (optional/computed), id (optional/computed), load_balancing_anomaly_mitigation (optional/computed), name (optional/computed), region (optional/computed), tags (optional/computed). Lookup outputs are not managed configuration or ownership proof.",
         "dataContracts": {
@@ -44264,7 +44266,7 @@
       "status": "Partial",
       "priority": "P1",
       "issue": 910,
-      "gap": "#715 audit: Partial: associations.rs lowers target_group_arn plus aws_instance target_id from references. Missing: matching known values and target_type proof, Lambda/ALB typed targets; IP literals do not identify managed workloads. Follow-up #910. Six dimensions and pinned fields: aws-semantic-decisions.json.",
+      "gap": "#715 audit: Implemented #910: explicit unique managed target-group ARN/id and target references require matching known values, compatible provider/account/region and current lifecycle. Known target_type selects instance ID, Lambda function ARN or application LB ARN; IP targets remain unproven. Additional dependencies retain the helper and verified references. No load_balancer_arns ownership or target subnet inference.",
       "review": {
         "issue": 715,
         "implementationCommit": "f7f5d8bfb39ded416c786a21037935232b8f1eda",
@@ -44278,7 +44280,7 @@
         "placement": "Supported: retain Spatial Association for aws_lb_target_group_attachment; this presentation alone does not prove relationships.",
         "ownership": "Not applicable: attachment is a relation, not ownership of the target.",
         "network": "Not applicable: logical service configuration has no subnet attachment contract; references do not imply network containment.",
-        "references": "Partial: associations.rs lowers target_group_arn plus aws_instance target_id from references. Missing: matching known values and target_type proof, Lambda/ALB typed targets; IP literals do not identify managed workloads.",
+        "references": "Supported: Implemented #910: explicit unique managed target-group ARN/id and target references require matching known values, compatible provider/account/region and current lifecycle. Known target_type selects instance ID, Lambda function ARN or application LB ARN; IP targets remain unproven. Additional dependencies retain the helper and verified references. No load_balancer_arns ownership or target subnet inference.",
         "scope": "Partial: Regional (conditional) eligibility in scope.rs; account requires provider evidence. Require known resource/provider region and compatible account/state; names do not supply scope.",
         "summaries": "Intentionally unsupported: target health, IP target discovery and runtime load distribution; no arbitrary aws_lb_target_group_attachment attribute summary.",
         "officialDocumentation": "website/docs/r/lb_target_group_attachment.html.markdown",
@@ -44318,7 +44320,9 @@
           "tests/unit/aws_aliases.rs",
           "tests/unit/semantic/components.rs",
           "tests/unit/semantic/associations.rs",
-          "tests/unit/semantic/spanning.rs"
+          "tests/unit/semantic/spanning.rs",
+          "src/provider/aws/elbv2.rs",
+          "tests/unit/semantic/elbv2.rs"
         ],
         "managedDataContract": "No runtime alias. No same-name registered data source in the pinned schema; other lookup names do not expand the managed denominator.",
         "dataContracts": {}
@@ -48546,7 +48550,7 @@
       "status": "Partial",
       "priority": "P1",
       "issue": 910,
-      "gap": "#715 audit: Partial: direct vpc_id containment and unambiguously owned forward-action component membership retained. Missing: target-type-qualified attachment extension; computed load_balancer_arns is not configured ownership. Follow-up #910. Six dimensions and pinned fields: aws-semantic-decisions.json.",
+      "gap": "#715 audit: Implemented #910: explicit unique managed target-group ARN/id and target references require matching known values, compatible provider/account/region and current lifecycle. Known target_type selects instance ID, Lambda function ARN or application LB ARN; IP targets remain unproven. Additional dependencies retain the helper and verified references. No load_balancer_arns ownership or target subnet inference.",
       "review": {
         "issue": 715,
         "implementationCommit": "f7f5d8bfb39ded416c786a21037935232b8f1eda",
@@ -48561,7 +48565,7 @@
         "placement": "Supported: retain Spatial Controller for aws_alb_target_group; this presentation alone does not prove relationships.",
         "ownership": "Supported: components.rs includes target group only with complete verified forward ownership by one LB; shared/unproven groups remain independent.",
         "network": "Partial: direct vpc_id reference placement exists; Lambda target groups legitimately omit VPC. Do not inherit target subnet.",
-        "references": "Partial: direct vpc_id containment and unambiguously owned forward-action component membership retained. Missing: target-type-qualified attachment extension; computed load_balancer_arns is not configured ownership.",
+        "references": "Supported: Implemented #910: explicit unique managed target-group ARN/id and target references require matching known values, compatible provider/account/region and current lifecycle. Known target_type selects instance ID, Lambda function ARN or application LB ARN; IP targets remain unproven. Additional dependencies retain the helper and verified references. No load_balancer_arns ownership or target subnet inference.",
         "scope": "Partial: Regional (conditional) eligibility in scope.rs; account requires provider evidence. Require known resource/provider region and compatible account/state; names do not supply scope.",
         "summaries": "Intentionally unsupported: target health, IP target discovery and runtime load distribution; no arbitrary aws_alb_target_group attribute summary.",
         "officialDocumentation": "website/docs/r/lb_target_group.html.markdown",
@@ -48608,7 +48612,9 @@
           "tests/unit/aws_aliases.rs",
           "tests/unit/semantic/components.rs",
           "tests/unit/semantic/associations.rs",
-          "tests/unit/semantic/spanning.rs"
+          "tests/unit/semantic/spanning.rs",
+          "src/provider/aws/elbv2.rs",
+          "tests/unit/semantic/elbv2.rs"
         ],
         "managedDataContract": "Verified managed alias of aws_lb_target_group; preserve original identity. Registered lookup alias only for LB/listener/target group. Same-name data selectors: arn (optional/computed), id (optional/computed), load_balancing_anomaly_mitigation (optional/computed), name (optional/computed), region (optional/computed), tags (optional/computed). Lookup outputs are not managed configuration or ownership proof.",
         "dataContracts": {
@@ -48646,7 +48652,7 @@
       "status": "Partial",
       "priority": "P1",
       "issue": 910,
-      "gap": "#715 audit: Partial: associations.rs lowers target_group_arn plus aws_instance target_id from references. Missing: matching known values and target_type proof, Lambda/ALB typed targets; IP literals do not identify managed workloads. Follow-up #910. Six dimensions and pinned fields: aws-semantic-decisions.json.",
+      "gap": "#715 audit: Implemented #910: explicit unique managed target-group ARN/id and target references require matching known values, compatible provider/account/region and current lifecycle. Known target_type selects instance ID, Lambda function ARN or application LB ARN; IP targets remain unproven. Additional dependencies retain the helper and verified references. No load_balancer_arns ownership or target subnet inference.",
       "review": {
         "issue": 715,
         "implementationCommit": "f7f5d8bfb39ded416c786a21037935232b8f1eda",
@@ -48660,7 +48666,7 @@
         "placement": "Supported: retain Spatial Association for aws_alb_target_group_attachment; this presentation alone does not prove relationships.",
         "ownership": "Not applicable: attachment is a relation, not ownership of the target.",
         "network": "Not applicable: logical service configuration has no subnet attachment contract; references do not imply network containment.",
-        "references": "Partial: associations.rs lowers target_group_arn plus aws_instance target_id from references. Missing: matching known values and target_type proof, Lambda/ALB typed targets; IP literals do not identify managed workloads.",
+        "references": "Supported: Implemented #910: explicit unique managed target-group ARN/id and target references require matching known values, compatible provider/account/region and current lifecycle. Known target_type selects instance ID, Lambda function ARN or application LB ARN; IP targets remain unproven. Additional dependencies retain the helper and verified references. No load_balancer_arns ownership or target subnet inference.",
         "scope": "Partial: Regional (conditional) eligibility in scope.rs; account requires provider evidence. Require known resource/provider region and compatible account/state; names do not supply scope.",
         "summaries": "Intentionally unsupported: target health, IP target discovery and runtime load distribution; no arbitrary aws_alb_target_group_attachment attribute summary.",
         "officialDocumentation": "website/docs/r/lb_target_group_attachment.html.markdown",
@@ -48700,7 +48706,9 @@
           "tests/unit/aws_aliases.rs",
           "tests/unit/semantic/components.rs",
           "tests/unit/semantic/associations.rs",
-          "tests/unit/semantic/spanning.rs"
+          "tests/unit/semantic/spanning.rs",
+          "src/provider/aws/elbv2.rs",
+          "tests/unit/semantic/elbv2.rs"
         ],
         "managedDataContract": "Verified managed alias of aws_lb_target_group_attachment; preserve original identity. No same-name data registration; managed alias rules do not invent one. No same-name registered data source in the pinned schema; other lookup names do not expand the managed denominator.",
         "dataContracts": {}

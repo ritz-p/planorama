@@ -252,7 +252,20 @@ Examples: [security-groups.svg](../examples/security-groups.svg),
 | `aws_route_table_association` | exactly one `subnet_id` / `gateway_id`, `route_table_id` | Subnet or Internet/VPN Gateway ↔ Route Table |
 | `aws_main_route_table_association` | `vpc_id`, `route_table_id` | VPC ↔ Main Route Table |
 | `aws_volume_attachment` | `instance_id`, `volume_id`, with known ID proof | EC2 Instance ↔ EBS Volume |
-| `aws_lb_target_group_attachment` | `target_group_arn`, `target_id` | Target Group ↔ EC2 Instance |
+| `aws_lb_target_group_attachment` | `target_group_arn`, `target_id` | Target Group ↔ EC2 Instance / Lambda Function / Application Load Balancer |
+
+Target-group attachments (including verified `aws_alb_*` aliases) require unique
+explicit managed references and matching known evaluated values. The group's known
+`target_type` selects an instance `id`, Lambda function `arn`, or application LB
+`arn`; the group reference accepts its `arn` or ARN-valued `id`. Provider binding,
+account and region must be compatible. Unknown/sensitive values, deleted/deposed
+objects, data sources, dynamic selection and IP targets do not prove an attachment.
+An omitted target type is not assumed to be `instance` without its evaluated value.
+Extra dependencies or consumers retain the helper and its verified references.
+Attachments do not establish LB ownership or network containment, and computed
+`load_balancer_arns` is not ownership evidence. Port/AZ values do not establish
+traffic, health or reachability. The contract follows the pinned AWS Provider
+6.70.0 target-group and attachment schemas recorded in the semantic decision ledger.
 | `aws_vpc_endpoint_route_table_association` | `vpc_endpoint_id`, `route_table_id` | VPC Endpoint ↔ Route Table |
 
 These managed helper cards become Association edges only when both endpoints are

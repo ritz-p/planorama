@@ -23,6 +23,7 @@ pub(super) mod diagnostics;
 mod dynamodb;
 mod efs;
 mod elasticache;
+pub(crate) mod elbv2;
 pub(crate) mod encryption;
 mod eventbridge;
 mod firehose;

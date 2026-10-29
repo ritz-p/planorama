@@ -131,7 +131,7 @@ test('#715 preserves alias, collection, identity and managed/data distinctions',
  assert.deepEqual(r('proxy_protocol_policy').shapes.instance_ports,[['set','string']]);
  assert.deepEqual(r('lb').shapes['subnet_mapping.subnet_id'],['set','string']);
  assert.match(r('lb_listener').network,/not containment/);
- assert.match(r('lb_target_group_attachment').references,/Missing: matching known values and target_type/);
+ assert.match(r('lb_target_group_attachment').references,/Supported: Implemented #910:.*matching known values.*target_type/);
  assert.match(r('lb_target_group').ownership,/Supported:.*one LB/);
  assert.deepEqual(r('cloudfront_distribution').shapes['origin.domain_name'],['set','string']);
  assert.deepEqual(r('cloudfront_multitenant_distribution').shapes['default_cache_behavior.trusted_key_groups.items'],['list','list',['list','string']]);
